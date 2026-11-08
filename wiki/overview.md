@@ -3,7 +3,7 @@ title: Overview — non-invasive brain-to-text, where things stand
 type: overview
 tags: [synthesis]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # Overview
@@ -37,6 +37,7 @@ On 2026-11-07 we chose **trustworthy neural text entry**. On 2026-11-08 the user
 - The decision and the evidence: [direction-decision](questions/direction-decision.md).
 - The six-layer design and the roadmap: [architecture](questions/architecture.md).
 - Project plan: milestones M0–M7, tasks, risks and the working process: [project-plan](questions/project-plan.md).
+- Open-source path: NeuralTextStream as a vendor-neutral spec, credibility from Paper 1 and benchmarks, a company later. Success means decoders that emit NeuralTextStream, not stars: [open-source playbook](questions/open-source-playbook.md).
 
 ## Where this project might fit
 See [research directions](questions/research-directions.md).

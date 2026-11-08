@@ -60,7 +60,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 
 ## M0: Setup (target 11-08 → 11-09)
 - [x] Test PyTorch on the GPU. Choose one path: ROCm native, WSL2 + ROCm, DirectML, or cloud. Record the result in the wiki. *(done 2026-11-08: native Windows ROCm, see [compute setup](compute-setup.md))*
-- [ ] Download SpanishBCBL MEG to `C:\Users\zhang\bci-data\` ([dataset](../entities/spanishbcbl-dataset.md)). *(started 2026-11-08; continues in the background)*
+- [ ] Download SpanishBCBL MEG to `C:\Users\zhang\bci-data\` ([dataset](../entities/spanishbcbl-dataset.md)). *(started 2026-11-08; 239/316 files at 14:02 on 2026-11-08; continues in the background)*
 - [x] Inspect one subject in MNE. Check whether the files carry head digitisation. *(done 2026-11-08: S25, digitisation present, see [inspection results](../../experiments/2026-11-08-inspect-spanishbcbl/results.md))*
 - [x] Create the Python package skeleton. *(done 2026-11-08)*
 - [x] Write the NeuralTextStream spec v0.1 ([architecture](architecture.md#neuraltextstream-explained-simply)). *(done 2026-11-08)*
@@ -74,10 +74,12 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 **M0 done 2026-11-08 (target 11-09).** All three criteria are met. The bulk MEG download continues in the background.
 
 ## M1: Baseline decoder (target 11-09 → 11-11)
+- [x] SpanishBCBL data loader and alignment. *(done 2026-11-08: 81 typing blocks, 15570/15571 keys aligned, see [M1-A results](../../experiments/2026-11-08-m1a-data/results.md))*
+- [ ] Preprocess the SpanishBCBL cache (tSSS, 0.5–45 Hz, 100 Hz). *(running in the background)*
 - [ ] Write our own conv + [CTC](../concepts/ctc.md) decoder. Copy no Meta code.
 - [ ] Train it on SpanishBCBL MEG in offline (non-causal) mode first.
 - [ ] Make it emit NeuralTextStream.
-- [ ] Add a character n-gram LM with beam search as a baseline.
+- [x] Add a character n-gram LM with beam search as a baseline. *(done 2026-11-08: 6-gram MKN + CTC prefix beam; simulator median CER 0.281 → 0.200, see [LM beam results](../../experiments/2026-11-08-lm-beam/results.md))*
 - [ ] Report greedy CER and beam CER on fixed splits.
 
 **Done when:** greedy CER approaches v2's async SpanishBCBL CER (≈0.59) or is better.
@@ -89,21 +91,39 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 > **Our take:** Our setup is continuous CTC, like v2's async encoder, and the dataset is small. So we expect a CER worse than v1's 0.29. The honest target is v2's async number, not v1's number.
 
 ## M2: Trust core v0 (target 11-09 → 11-11)
-- [ ] **Calibration:** temperature scaling, per session.
-- [ ] **n-best beam with LM fusion.**
-- [ ] **Conformal prediction sets:** split conformal first. Then adaptive conformal, to handle autocorrelation.
-- [ ] **Hallucination guard:** null-input and shuffled-input audit. LM-prior vs evidence score.
-- [ ] **Decision policy:** COMMIT / OFFER / ASK / ABSTAIN.
-- [ ] **Simulated user:** selection time and correction cost.
-- [ ] **Effective WPM** metric ([architecture](architecture.md#effective-words-per-minute)).
-- [ ] **Evaluation harness** with fixed splits. Metrics: CER, WER, ECE, coverage, hallucination rate, effective WPM ([error metrics](../concepts/error-metrics.md)).
+- [x] **Calibration:** temperature scaling, per session.
+- [x] **n-best beam with LM fusion.**
+- [x] **Conformal prediction sets:** split conformal first. Then adaptive conformal, to handle autocorrelation.
+- [x] **Hallucination guard:** null-input and shuffled-input audit. LM-prior vs evidence score.
+- [x] **Decision policy:** COMMIT / OFFER / ASK / ABSTAIN.
+- [x] **Simulated user:** selection time and correction cost.
+- [x] **Effective WPM** metric ([architecture](architecture.md#effective-words-per-minute)).
+- [x] **Evaluation harness** with fixed splits. Metrics: CER, WER, ECE, coverage, hallucination rate, effective WPM ([error metrics](../concepts/error-metrics.md)).
 - [ ] **Provenance ledger v0.**
+- [ ] **Run the trust core on real decoder outputs.** It needs the M1 decoder streams.
+
+*Status 2026-11-08:* trust core v0 runs end to end on the simulator. See [M2 simulator results](../../experiments/2026-11-08-m2-trust-sim/results.md) and [trust core v0 results](trust-core-v0-results.md).
+
+**Known gaps (from the simulator run, 2026-11-08):**
+- [ ] n-best recall is low. The truth is missing in 28–37 % of n-best lists with the reference decoder, and in 73 % with the LM beam at default settings ([M2 results](../../experiments/2026-11-08-m2-trust-sim/results.md)). Re-tune the beam (`prune_topk`, insertion bonus).
+- [ ] The guard AUROC is weak (0.57–0.71). The n-best-inconsistency signal alone is better (0.65–0.88). Re-design the guard score.
+- [ ] The user time costs are assumptions. Get them from the literature or from real data (Cai et al. 2024).
 
 **Done when:** the full pipeline runs end to end on the simulator AND on real decoder outputs, with all metrics reported.
 
 ## M3: Paper 1, "Calibrated, abstaining brain-to-text" (target 11-11 → 11-13)
+
+**Revised claim (2026-11-08).** Source: [M2 simulator results](../../experiments/2026-11-08-m2-trust-sim/results.md).
+- The simulator shows that the trust policy cuts wrong commits from 0.29–0.47 to 0.02–0.09.
+- It commits 0 % fluent text on shuffled or flat input. Always-commit commits 98–100 %.
+- But its effective WPM is 7–16 % lower than always committing the LM top-1.
+- So Paper 1 claims "far fewer wrong and hallucinated commits for a small speed cost", not "higher eWPM".
+- Details: [trust core v0 results](trust-core-v0-results.md).
+
 - [ ] Run experiments on SpanishBCBL and on the simulator.
 - [ ] Run ablations: each trust-core module on and off.
+- [ ] The test set is small (24 test sentences in SpanishBCBL). Use cross-validation or multiple seeds for Paper 1.
+- [ ] Check the RAS formula (arXiv 2604.24278) before we cite the comparison.
 - [ ] Position the paper against the closest work ([reading list](reading-list.md)):
   - Huang et al. 2025, co-control BCIs.
   - Conformal ASR: Ernez et al. 2023; Damri & Laufer-Goldshtein 2026.
@@ -127,6 +147,8 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [ ] Publish the harness, the metrics and fixed splits.
 - [ ] Publish a leaderboard.
 - [ ] Make NC dataset loaders download-only. Ship no data and no weights.
+
+**Open-source growth.** The benchmark release is the launch moment (Stage 1) of the [open-source playbook](open-source-playbook.md). That page lists the launch steps, the cheap repo actions (CONTRIBUTING, CoC, GOVERNANCE, CITATION.cff) and the path to a standard.
 
 ## M6: Device adapters (target 11-14 → 11-15)
 - [ ] Add Lab Streaming Layer (LSL) input.
@@ -179,7 +201,7 @@ The live status is in the [progress dashboard](../progress/index.html).
 | Task | Status on 2026-11-08 |
 |---|---|
 | GPU / PyTorch test (ROCm, WSL2, DirectML or cloud) | Done: native Windows ROCm ([compute setup](compute-setup.md)) |
-| SpanishBCBL MEG download | Running in the background |
+| SpanishBCBL MEG download | Running in the background (239/316 files at 14:02 on 2026-11-08) |
 | Package skeleton + NeuralTextStream spec v0.1 + simulator with tests | Done (41 tests) |
 | Inspect one subject in MNE; check head digitisation | Done: S25, digitisation present |
 | Decide the project name | Done (Fidetype) |
@@ -189,6 +211,7 @@ The live status is in the [progress dashboard](../progress/index.html).
 ## Related pages
 - [Architecture](architecture.md)
 - [Compute setup](compute-setup.md)
+- [Trust core v0 results](trust-core-v0-results.md)
 - [Direction decision](direction-decision.md)
 - [Reading list](reading-list.md)
 - [Research directions](research-directions.md)

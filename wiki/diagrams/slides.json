@@ -55,6 +55,12 @@
       "title": "9. Milestones (1-week target)",
       "caption": "The user set the targets on 2026-11-08. M0 ends on 11-09. M1 and M2 run in parallel, then M3 and M4, then M5, then the code parts of M6 and M7. All end by 11-15. The dashed lane holds items that depend on outside people. They have no dates.",
       "wiki": "../questions/project-plan.md"
+    },
+    {
+      "file": "10-open-source-path.drawio",
+      "title": "10. Open-source path",
+      "caption": "Six stages take Fidetype from a paper to a neutral standard, then to a company. Each stage borrows from SGLang, LangChain, OpenTelemetry or BIDS. Success means decoders that emit NeuralTextStream, not stars.",
+      "wiki": "../questions/open-source-playbook.md"
     }
   ]
 }
