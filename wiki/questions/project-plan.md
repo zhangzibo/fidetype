@@ -62,7 +62,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 
 ## M0: Setup (target 11-08 → 11-09)
 - [x] Test PyTorch on the GPU. Choose one path: ROCm native, WSL2 + ROCm, DirectML, or cloud. Record the result in the wiki. *(done 2026-11-08: native Windows ROCm, see [compute setup](compute-setup.md))*
-- [ ] Download SpanishBCBL MEG to `C:\Users\zhang\bci-data\` ([dataset](../entities/spanishbcbl-dataset.md)). *(started 2026-11-08; 239/316 files at 14:02 on 2026-11-08; continues in the background)*
+- [x] Download SpanishBCBL MEG to `C:\Users\zhang\bci-data\` ([dataset](../entities/spanishbcbl-dataset.md)). *(done 2026-11-08 14:59: 316/316 files, 251.36 GB, STATUS=COMPLETE)*
 - [x] Inspect one subject in MNE. Check whether the files carry head digitisation. *(done 2026-11-08: S25, digitisation present, see [inspection results](../../experiments/2026-11-08-inspect-spanishbcbl/results.md))*
 - [x] Create the Python package skeleton. *(done 2026-11-08)*
 - [x] Write the NeuralTextStream spec v0.1 ([architecture](architecture.md#neuraltextstream-explained-simply)). *(done 2026-11-08)*
@@ -73,20 +73,21 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 
 **Done when:** the simulator tests pass in CI, one subject loads in MNE, and the GPU path is chosen.
 
-**M0 done 2026-11-08 (target 11-09).** All three criteria are met. The bulk MEG download continues in the background.
+**M0 done 2026-11-08 (target 11-09).** All three criteria are met. The bulk MEG download finished at 14:59 on 2026-11-08 (316/316 files).
 
 ## M1: Baseline decoder (target 11-09 → 11-11)
 - [x] SpanishBCBL data loader and alignment. *(done 2026-11-08: 81 typing blocks, 15570/15571 keys aligned, see [M1-A results](../../experiments/2026-11-08-m1a-data/results.md))*
-- [ ] Preprocess the SpanishBCBL cache (tSSS, 0.5–45 Hz, 100 Hz). *(running in the background: 10 of 47 blocks at 14:24 on 2026-11-08)*
+- [ ] Preprocess the SpanishBCBL cache (tSSS, 0.5–45 Hz, 100 Hz). *(running in the background: 23 of 47 blocks at 15:38 on 2026-11-08)*
 - [x] Write our own conv + [CTC](../concepts/ctc.md) decoder. Copy no Meta code. *(done 2026-11-08: `src/fidetype/decoders/`, 10.06 M params, causal mode via `lookahead_frames`)*
 - [x] Train it on SpanishBCBL MEG in offline (non-causal) mode first. *(done 2026-11-08: S25 only, and 5 subjects / about 2.5 h)*
 - [x] Make it emit NeuralTextStream. *(done 2026-11-08: `fidetype.decoders.infer`)*
 - [x] Add a character n-gram LM with beam search as a baseline. *(done 2026-11-08: 6-gram MKN + CTC prefix beam; simulator median CER 0.281 → 0.200, see [LM beam results](../../experiments/2026-11-08-lm-beam/results.md))*
 - [x] Report greedy CER and beam CER on fixed splits. *(done 2026-11-08: greedy test CER 0.670; shuffled-MEG control 0.669. See [decoder M1 results](decoder-m1-results.md). Beam CER follows the beam re-tune.)*
-- [ ] Sanity check: keystroke-locked hand/char decoding (v1-style). Does the cache hold keystroke signal? *(running)*
+- [x] Sanity check: keystroke-locked hand/char decoding (v1-style). Does the cache hold keystroke signal? *(done 2026-11-08: yes. Hand window 0.83–0.96, letter 0.31–0.49 (chance about 0.14), controls at chance. See [M1 sanity results](../../experiments/2026-11-08-m1-sanity/results.md))*
 - [ ] Retrain the decoder on the full cache (all subjects).
 - [ ] Low-data tuning: a smaller model, more dropout and masking.
 - [ ] Cross-subject pretraining, then a per-subject fine-tune.
+- [ ] CTC decoder + keystroke auxiliary loss. *(running)*
 
 **Done when:** greedy CER approaches v2's async SpanishBCBL CER (≈0.59) or is better.
 
@@ -108,12 +109,16 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [x] **Effective WPM** metric ([architecture](architecture.md#effective-words-per-minute)).
 - [x] **Evaluation harness** with fixed splits. Metrics: CER, WER, ECE, coverage, hallucination rate, effective WPM ([error metrics](../concepts/error-metrics.md)).
 - [ ] **Provenance ledger v0.**
-- [ ] **Run the trust core on real decoder outputs.** It needs the M1 decoder streams.
+- [ ] **Run the trust core on real decoder outputs.** It needs the M1 decoder streams. *(running: keystroke-synchronous decoder on real MEG)*
+- [x] **Re-tune the CTC beam** (search errors → n-best recall). *(done 2026-11-08: `RETUNED` preset; recall@10 0.075 → 0.47 on median Tatoeba; n-best miss 0.73 → 0.00 in the trust pipeline. See [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.md))*
+- [ ] **Re-tune the guard** for the retuned beam (n-best inconsistency + `p_top1`).
+- [ ] **Wrong-commit limit:** a finite-sample guarantee (conformal risk control).
+- [ ] **Simulated user:** a per-word OFFER action.
 
 *Status 2026-11-08:* trust core v0 runs end to end on the simulator. See [M2 simulator results](../../experiments/2026-11-08-m2-trust-sim/results.md) and [trust core v0 results](trust-core-v0-results.md).
 
 **Known gaps (from the simulator run, 2026-11-08):**
-- [ ] n-best recall is low. The truth is missing in 28–37 % of n-best lists with the reference decoder, and in 73 % with the LM beam at default settings ([M2 results](../../experiments/2026-11-08-m2-trust-sim/results.md)). Re-tune the beam (`prune_topk`, insertion bonus).
+- [ ] n-best recall is low. The truth is missing in 28–37 % of n-best lists with the reference decoder, and in 73 % with the LM beam at default settings ([M2 results](../../experiments/2026-11-08-m2-trust-sim/results.md)). Re-tune the beam (`prune_topk`, insertion bonus). *(fixed 2026-11-08: the misses were search errors; the `RETUNED` beam gives a miss rate of 0.00–0.03, see [trust core v0 results](trust-core-v0-results.md#5-beam-re-tune-2026-11-08))*
 - [ ] The guard AUROC is weak (0.57–0.71). The n-best-inconsistency signal alone is better (0.65–0.88). Re-design the guard score.
 - [ ] The user time costs are assumptions. Get them from the literature or from real data (Cai et al. 2024).
 
@@ -126,6 +131,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - It commits 0 % fluent text on shuffled or flat input. Always-commit commits 98–100 %.
 - But its effective WPM is 7–16 % lower than always committing the LM top-1.
 - So Paper 1 claims "far fewer wrong and hallucinated commits for a small speed cost", not "higher eWPM".
+- **Update after the beam re-tune (2026-11-08, simulator only; real-data confirmation is pending):** the trust policy now matches always-commit speed (25.3 vs 25.8 eWPM) with about 3× fewer wrong commits (0.033 vs 0.108). Median preset, T = 1.0. The speed cost was a recall problem of the old beam. Source: [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.md).
 - Details: [trust core v0 results](trust-core-v0-results.md).
 
 - [ ] Run experiments on SpanishBCBL and on the simulator.
@@ -216,7 +222,7 @@ The live status is in the [progress dashboard](../progress/index.html).
 | Task | Status on 2026-11-08 |
 |---|---|
 | GPU / PyTorch test (ROCm, WSL2, DirectML or cloud) | Done: native Windows ROCm ([compute setup](compute-setup.md)) |
-| SpanishBCBL MEG download | Running in the background (239/316 files at 14:02 on 2026-11-08) |
+| SpanishBCBL MEG download | Done at 14:59 on 2026-11-08 (316/316 files, 251.36 GB) |
 | Package skeleton + NeuralTextStream spec v0.1 + simulator with tests | Done (41 tests) |
 | Inspect one subject in MNE; check head digitisation | Done: S25, digitisation present |
 | Decide the project name | Done (Fidetype) |

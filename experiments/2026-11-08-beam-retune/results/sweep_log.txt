@@ -1,0 +1,109 @@
+== reachability
+{
+ "best": {
+  "top10/logp-6": {
+   "sentences_cut": 0.77,
+   "chars_cut": 0.0426367081754196
+  },
+  "top20/logp-6": {
+   "sentences_cut": 0.355,
+   "chars_cut": 0.01245262587980509
+  },
+  "top27/logp-6": {
+   "sentences_cut": 0.31,
+   "chars_cut": 0.01028695181375203
+  },
+  "top27/logp-9": {
+   "sentences_cut": 0.025,
+   "chars_cut": 0.0006767731456415809
+  },
+  "top27/logp-12": {
+   "sentences_cut": 0.015,
+   "chars_cut": 0.0004060638873849486
+  },
+  "sentences_with_deletion": 0.24,
+  "sentences_with_insertion": 0.305
+ },
+ "median": {
+  "top10/logp-6": {
+   "sentences_cut": 0.9,
+   "chars_cut": 0.06970763400108283
+  },
+  "top20/logp-6": {
+   "sentences_cut": 0.37,
+   "chars_cut": 0.012317271250676774
+  },
+  "top27/logp-6": {
+   "sentences_cut": 0.295,
+   "chars_cut": 0.008933405522468869
+  },
+  "top27/logp-9": {
+   "sentences_cut": 0.01,
+   "chars_cut": 0.0002707092582566324
+  },
+  "top27/logp-12": {
+   "sentences_cut": 0.01,
+   "chars_cut": 0.0002707092582566324
+  },
+  "sentences_with_deletion": 0.29,
+  "sentences_with_insertion": 0.22
+ },
+ "worst": {
+  "top10/logp-6": {
+   "sentences_cut": 0.96,
+   "chars_cut": 0.09989171629669735
+  },
+  "top20/logp-6": {
+   "sentences_cut": 0.445,
+   "chars_cut": 0.01570113697888468
+  },
+  "top27/logp-6": {
+   "sentences_cut": 0.31,
+   "chars_cut": 0.01028695181375203
+  },
+  "top27/logp-9": {
+   "sentences_cut": 0.025,
+   "chars_cut": 0.0006767731456415809
+  },
+  "top27/logp-12": {
+   "sentences_cut": 0.01,
+   "chars_cut": 0.0002707092582566324
+  },
+  "sentences_with_deletion": 0.29,
+  "sentences_with_insertion": 0.275
+ }
+}
+== sweep (median test)
+old default (loop) {"recall@1": 0.055, "recall@5": 0.075, "recall@10": 0.075, "recall@20": 0.075, "cer@1": 0.21041761508595186, "oracle_cer@10": 0.18752494169702658, "ms_mean": 37.121925501851365, "ms_p95": 60.16208505025133, "mean_list_len": 15.76, "mean_words_changed": 1.285, "search_error": 0.925, "model_error": 0.0}
+old default (vector) {"recall@1": 0.055, "recall@5": 0.075, "recall@10": 0.075, "recall@20": 0.075, "cer@1": 0.21041761508595186, "oracle_cer@10": 0.18752494169702658, "ms_mean": 26.133121995953843, "ms_p95": 43.48291009664533, "mean_list_len": 15.76, "mean_words_changed": 1.285, "search_error": 0.925, "model_error": 0.0}
+prune_topk 20 {"recall@1": 0.125, "recall@5": 0.135, "recall@10": 0.135, "recall@20": 0.135, "cer@1": 0.18700663105043622, "oracle_cer@10": 0.16594057949769048, "ms_mean": 27.87249199463986, "ms_p95": 46.64244500454514, "mean_list_len": 14.8, "mean_words_changed": 1.39, "search_error": 0.865, "model_error": 0.0}
+prune_topk None {"recall@1": 0.125, "recall@5": 0.135, "recall@10": 0.135, "recall@20": 0.135, "cer@1": 0.18981627576079732, "oracle_cer@10": 0.169680102185337, "ms_mean": 28.091283497633412, "ms_p95": 51.2269550585188, "mean_list_len": 14.21, "mean_words_changed": 1.3711111111111112, "search_error": 0.865, "model_error": 0.0}
+prune_topk None, prune_logp -9 {"recall@1": 0.11, "recall@5": 0.13, "recall@10": 0.13, "recall@20": 0.13, "cer@1": 0.20422958045230274, "oracle_cer@10": 0.18291519569334555, "ms_mean": 44.37217700644396, "ms_p95": 71.89608007902277, "mean_list_len": 14.005, "mean_words_changed": 1.4227777777777777, "search_error": 0.87, "model_error": 0.0}
+beam 64, topk 10 {"recall@1": 0.095, "recall@5": 0.12, "recall@10": 0.13, "recall@20": 0.13, "cer@1": 0.18719507729322413, "oracle_cer@10": 0.1542020853819055, "ms_mean": 141.44322549109347, "ms_p95": 281.7152399453333, "mean_list_len": 20.0, "mean_words_changed": 1.4494444444444443, "search_error": 0.78, "model_error": 0.09}
+beam 32, topk None {"recall@1": 0.155, "recall@5": 0.195, "recall@10": 0.205, "recall@20": 0.205, "cer@1": 0.17454967377135483, "oracle_cer@10": 0.14421906408824944, "ms_mean": 53.391040498390794, "ms_p95": 98.74435004312542, "mean_list_len": 19.855, "mean_words_changed": 1.494444444444444, "search_error": 0.7, "model_error": 0.095}
+beam 64, topk None {"recall@1": 0.2, "recall@5": 0.28, "recall@10": 0.295, "recall@20": 0.3, "cer@1": 0.15901273066967098, "oracle_cer@10": 0.12116719182259367, "ms_mean": 113.58115000184625, "ms_p95": 224.99497003154826, "mean_list_len": 19.99, "mean_words_changed": 1.5094444444444444, "search_error": 0.52, "model_error": 0.18}
+beam 128, topk None {"recall@1": 0.235, "recall@5": 0.335, "recall@10": 0.36, "recall@20": 0.38, "cer@1": 0.15025365482988526, "oracle_cer@10": 0.10577028423369336, "ms_mean": 150.2490340010263, "ms_p95": 371.18016985477874, "mean_list_len": 20.0, "mean_words_changed": 1.5822222222222222, "search_error": 0.38, "model_error": 0.24}
+beam 256, topk None {"recall@1": 0.225, "recall@5": 0.365, "recall@10": 0.4, "recall@20": 0.435, "cer@1": 0.1485011530971308, "oracle_cer@10": 0.09613822942063364, "ms_mean": 218.41483650146984, "ms_p95": 482.9654749482869, "mean_list_len": 20.0, "mean_words_changed": 1.593888888888889, "search_error": 0.28, "model_error": 0.285}
+beam 512, topk None {"recall@1": 0.245, "recall@5": 0.395, "recall@10": 0.445, "recall@20": 0.485, "cer@1": 0.14396525906348315, "oracle_cer@10": 0.0873910809494031, "ms_mean": 340.60840500169434, "ms_p95": 647.6270652143285, "mean_list_len": 20.0, "mean_words_changed": 1.5583333333333331, "search_error": 0.195, "model_error": 0.32}
+beam 256, topk None, logp -9 {"recall@1": 0.205, "recall@5": 0.345, "recall@10": 0.375, "recall@20": 0.405, "cer@1": 0.1680078923823946, "oracle_cer@10": 0.11165928239375997, "ms_mean": 268.51654949830845, "ms_p95": 600.4360649269074, "mean_list_len": 20.0, "mean_words_changed": 1.62, "search_error": 0.225, "model_error": 0.37}
+beam 256 + space_rules {"recall@1": 0.225, "recall@5": 0.365, "recall@10": 0.4, "recall@20": 0.435, "cer@1": 0.14901082271840393, "oracle_cer@10": 0.09627521572200351, "ms_mean": 206.23708950704895, "ms_p95": 464.6654749056315, "mean_list_len": 20.0, "mean_words_changed": 1.593333333333333, "search_error": 0.28, "model_error": 0.285}
+beam 256 + space + lm_cand 3 {"recall@1": 0.205, "recall@5": 0.355, "recall@10": 0.38, "recall@20": 0.405, "cer@1": 0.16504841201874293, "oracle_cer@10": 0.10919903795875388, "ms_mean": 227.72165149799548, "ms_p95": 456.84400002937747, "mean_list_len": 20.0, "mean_words_changed": 1.6455555555555554, "search_error": 0.245, "model_error": 0.35}
+RETUNED (beam 256, space, w 1.25, bonus 1.0) {"recall@1": 0.275, "recall@5": 0.42, "recall@10": 0.47, "recall@20": 0.495, "cer@1": 0.12642136459695086, "oracle_cer@10": 0.0778781299258487, "ms_mean": 147.95138399931602, "ms_p95": 340.42226007441013, "mean_list_len": 20.0, "mean_words_changed": 1.5233333333333332, "search_error": 0.26, "model_error": 0.245}
+RETUNED, beam 64 {"recall@1": 0.24, "recall@5": 0.325, "recall@10": 0.335, "recall@20": 0.34, "cer@1": 0.14406991255355603, "oracle_cer@10": 0.10988810410055287, "ms_mean": 93.17218249780126, "ms_p95": 207.52709500957272, "mean_list_len": 20.0, "mean_words_changed": 1.5422222222222224, "search_error": 0.545, "model_error": 0.115}
+RETUNED, beam 128 {"recall@1": 0.265, "recall@5": 0.375, "recall@10": 0.395, "recall@20": 0.405, "cer@1": 0.1328588166546282, "oracle_cer@10": 0.09553777853890699, "ms_mean": 129.48075249092653, "ms_p95": 308.7252699653618, "mean_list_len": 20.0, "mean_words_changed": 1.5511111111111113, "search_error": 0.405, "model_error": 0.19}
+RETUNED, beam 512 {"recall@1": 0.28, "recall@5": 0.45, "recall@10": 0.52, "recall@20": 0.54, "cer@1": 0.12277832187547269, "oracle_cer@10": 0.07158284983933372, "ms_mean": 237.52686399733648, "ms_p95": 499.41029995679844, "mean_list_len": 20.0, "mean_words_changed": 1.5366666666666668, "search_error": 0.18, "model_error": 0.28}
+RETUNED + lm_cand 3 {"recall@1": 0.265, "recall@5": 0.405, "recall@10": 0.45, "recall@20": 0.475, "cer@1": 0.1355701422381869, "oracle_cer@10": 0.08851776432012791, "ms_mean": 252.78461600770243, "ms_p95": 504.45068503031507, "mean_list_len": 20.0, "mean_words_changed": 1.58, "search_error": 0.25, "model_error": 0.275}
+RETUNED + lm_cand 5 {"recall@1": 0.265, "recall@5": 0.405, "recall@10": 0.445, "recall@20": 0.47, "cer@1": 0.13579581213956435, "oracle_cer@10": 0.08946677678187126, "ms_mean": 236.97219649446197, "ms_p95": 477.1162049146367, "mean_list_len": 20.0, "mean_words_changed": 1.5788888888888888, "search_error": 0.255, "model_error": 0.275}
+RETUNED + stem cap 4 {"recall@1": 0.165, "recall@5": 0.22, "recall@10": 0.25, "recall@20": 0.25, "cer@1": 0.16478660004730913, "oracle_cer@10": 0.12243995788397947, "ms_mean": 207.16309850220568, "ms_p95": 428.5011050174943, "mean_list_len": 20.0, "mean_words_changed": 1.6738888888888888, "search_error": 0.57, "model_error": 0.18}
+RETUNED + stem cap 8 (drop 2) {"recall@1": 0.2, "recall@5": 0.285, "recall@10": 0.305, "recall@20": 0.31, "cer@1": 0.1454686825405863, "oracle_cer@10": 0.10832444489979794, "ms_mean": 187.93624199111946, "ms_p95": 387.9522650502617, "mean_list_len": 20.0, "mean_words_changed": 1.6283333333333334, "search_error": 0.495, "model_error": 0.195}
+RETUNED + beam_logp 12 {"recall@1": 0.27, "recall@5": 0.41, "recall@10": 0.455, "recall@20": 0.485, "cer@1": 0.1277884920931106, "oracle_cer@10": 0.07973961145226789, "ms_mean": 127.1034694975242, "ms_p95": 322.73038991261257, "mean_list_len": 19.995, "mean_words_changed": 1.5261111111111108, "search_error": 0.27, "model_error": 0.245}
+RETUNED, no space_rules {"recall@1": 0.28, "recall@5": 0.42, "recall@10": 0.47, "recall@20": 0.495, "cer@1": 0.12561491298404764, "oracle_cer@10": 0.0778781299258487, "ms_mean": 159.27493500057608, "ms_p95": 355.5900748469866, "mean_list_len": 20.0, "mean_words_changed": 1.5194444444444446, "search_error": 0.26, "model_error": 0.245}
+RETUNED, topk 10 (old cut) {"recall@1": 0.115, "recall@5": 0.155, "recall@10": 0.17, "recall@20": 0.17, "cer@1": 0.1826184608031824, "oracle_cer@10": 0.13733335493392573, "ms_mean": 172.27752999518998, "ms_p95": 331.95579514140235, "mean_list_len": 20.0, "mean_words_changed": 1.5633333333333335, "search_error": 0.69, "model_error": 0.14}
+== dev tuning
+== final (all presets)
+best {"old": {"recall@1": 0.165, "recall@5": 0.18, "recall@10": 0.18, "recall@20": 0.18, "cer@1": 0.10225098480701174, "oracle_cer@10": 0.08543693318970914, "ms_mean": 27.471576009411365, "ms_p95": 52.457045088522136, "mean_list_len": 15.755, "mean_words_changed": 1.2472222222222222, "search_error": 0.82, "model_error": 0.0}, "new": {"recall@1": 0.455, "recall@5": 0.68, "recall@10": 0.715, "recall@20": 0.735, "cer@1": 0.050168761364011945, "oracle_cer@10": 0.021510972729650638, "ms_mean": 192.77761300792918, "ms_p95": 377.46213511563815, "mean_list_len": 20.0, "mean_words_changed": 1.3244444444444443, "search_error": 0.17, "model_error": 0.095}, "new_align_ms": 281.6293899901211}
+median {"old": {"recall@1": 0.055, "recall@5": 0.075, "recall@10": 0.075, "recall@20": 0.075, "cer@1": 0.21041761508595186, "oracle_cer@10": 0.18752494169702658, "ms_mean": 26.717274502152577, "ms_p95": 46.41173513373358, "mean_list_len": 15.76, "mean_words_changed": 1.285, "search_error": 0.925, "model_error": 0.0}, "new": {"recall@1": 0.275, "recall@5": 0.42, "recall@10": 0.47, "recall@20": 0.495, "cer@1": 0.12642136459695086, "oracle_cer@10": 0.0778781299258487, "ms_mean": 162.3041084886063, "ms_p95": 353.92030512448395, "mean_list_len": 20.0, "mean_words_changed": 1.5233333333333332, "search_error": 0.26, "model_error": 0.245}, "new_align_ms": 250.83644598256797}
+worst {"old": {"recall@1": 0.02, "recall@5": 0.025, "recall@10": 0.025, "recall@20": 0.025, "cer@1": 0.35571603258043, "oracle_cer@10": 0.3222737352656956, "ms_mean": 25.72878800914623, "ms_p95": 44.96241986053064, "mean_list_len": 15.72, "mean_words_changed": 1.3672222222222223, "search_error": 0.975, "model_error": 0.0}, "new": {"recall@1": 0.105, "recall@5": 0.175, "recall@10": 0.195, "recall@20": 0.22, "cer@1": 0.2646772847859029, "oracle_cer@10": 0.19988150591728254, "ms_mean": 166.20856350520626, "ms_p95": 331.01628504227807, "mean_list_len": 20.0, "mean_words_changed": 1.836666666666667, "search_error": 0.26, "model_error": 0.52}, "new_align_ms": 299.4425579952076}
+speed40 {'old_noalign': 32.31969602406025, 'new_noalign': 178.9976600278169, 'new_align': 261.35705599561334, 'new_noalign_p95': 262.2508950298652}
+word alternatives {'sentence_recall@3': 0.38, 'sentence_recall@5': 0.42, 'word_reachable@2': 0.415, 'word_reachable@3': 0.465, 'mean_uncertain_slots': 1.855}
+wrote C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-08-beam-retune\results

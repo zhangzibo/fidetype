@@ -12,12 +12,14 @@ import pytest
 from fidetype.eval.metrics import cer, ctc_greedy_decode
 from fidetype.lm import (
     EOS,
+    RETUNED,
     CharNgramLM,
     align_pairs,
     ctc_forced_align,
     ctc_prefix_beam_search,
     exclude_sentences,
     n_best_to_posteriors,
+    word_alternatives,
 )
 from fidetype.streams.corpus import sentences
 from fidetype.streams.simulator import NoisyDecoderSimulator, SimConfig
@@ -254,3 +256,189 @@ def test_lm_needs_default_vocab(lm):
     with pytest.raises(ValueError):
         ctc_prefix_beam_search(np.log(np.full((3, 5), 0.2)), lm=lm)
     assert encode("ab") == [1, 2]
+
+
+# --- re-tuned search options (experiments/2026-11-08-beam-retune) ----------
+
+
+def _lse(a, b):
+    if a == -math.inf:
+        return b
+    if b == -math.inf:
+        return a
+    m = max(a, b)
+    return m + math.log1p(math.exp(min(a, b) - m))
+
+
+def _beam_v0(lp, lm, lm_weight=1.0, insertion_bonus=None, beam=16, prune_logp=-6.0, prune_topk=10):
+    """Frozen copy of the search of the first version (texts and scores only)."""
+    lp = np.asarray(lp, dtype=np.float64)
+    T, V = lp.shape
+    w = lm_weight if lm is not None else 0.0
+    bonus = (2.0 if lm is not None else 0.0) if insertion_bonus is None else insertion_bonus
+    k = V if prune_topk is None else max(1, min(prune_topk, V))
+    order = np.argsort(-lp, axis=1, kind="stable")[:, :k]
+    rows = lp.tolist()
+    beams = {"": [0.0, -math.inf]}
+    lm_score, last_id = {"": 0.0}, {}
+    for t in range(T):
+        row = rows[t]
+        ct = [(c, row[c]) for c in order[t].tolist() if c != 0 and row[c] >= prune_logp]
+        nxt = {}
+        for prefix, (pb, pnb) in beams.items():
+            ptot = _lse(pb, pnb)
+            e = nxt.setdefault(prefix, [-math.inf, -math.inf])
+            e[0] = _lse(e[0], ptot + row[0])
+            last = last_id.get(prefix, -1)
+            if last >= 0:
+                e[1] = _lse(e[1], pnb + row[last])
+            if not ct:
+                continue
+            lmr = lm.logprobs_vocab(prefix) if lm is not None else None
+            for c, lpc in ct:
+                new = prefix + VOCAB[c]
+                add = (pb if c == last else ptot) + lpc
+                en = nxt.get(new)
+                if en is None:
+                    en = nxt[new] = [-math.inf, -math.inf]
+                    if new not in lm_score:
+                        lm_score[new] = lm_score[prefix] + (lmr[c] if lmr is not None else 0.0)
+                        last_id[new] = c
+                en[1] = _lse(en[1], add)
+        if len(nxt) > beam:
+            sc = lambda kv: -(_lse(*kv[1]) + w * lm_score[kv[0]] + bonus * len(kv[0]))  # noqa: E731
+            nxt = dict(sorted(nxt.items(), key=sc)[:beam])
+        beams = nxt
+    final = []
+    for p, (pb, pnb) in beams.items():
+        lmt = lm_score[p] + (lm.logprobs_vocab(p)[0] if lm is not None else 0.0)
+        final.append((_lse(pb, pnb) + w * lmt + bonus * len(p), p))
+    final.sort(key=lambda x: (-x[0], x[1]))
+    return final
+
+
+@pytest.mark.parametrize("preset,seed", [("median", 21), ("worst", 22)])
+@pytest.mark.parametrize("kw", [{}, {"beam": 8, "prune_topk": None}, {"insertion_bonus": 0.5, "prune_logp": -4.0}])
+def test_old_defaults_unchanged(lm, preset, seed, kw):
+    sim = NoisyDecoderSimulator(SimConfig.preset(preset), seed=seed)
+    for s in TEST[:4]:
+        r = sim.simulate(s)
+        for model in (lm, None):
+            new = ctc_prefix_beam_search(r.stream, lm=model, n_best=50, align=False, **kw)
+            old = _beam_v0(r.stream.log_probs, model, **kw)
+            assert [h.text for h in new] == [t for _, t in old]
+            assert [h.score for h in new] == pytest.approx([sc for sc, _ in old], abs=1e-9)
+
+
+def test_vector_search_matches_loop(lm):
+    sim = NoisyDecoderSimulator(SimConfig.preset("median"), seed=23)
+    for s in TEST[:6]:
+        r = sim.simulate(s)
+        for kw in ({}, {"beam": 24, "prune_topk": None}, {"beam": 24, "lm_candidates": 3, "space_rules": True}):
+            a = ctc_prefix_beam_search(r.stream, lm=lm, n_best=10, align=False, **kw)
+            b = ctc_prefix_beam_search(r.stream, lm=lm, n_best=10, align=False, search="vector", **kw)
+            assert [h.text for h in a] == [h.text for h in b]
+            assert [h.score for h in a] == pytest.approx([h.score for h in b], abs=1e-6)
+
+
+def test_retuned_deterministic_and_valid(lm):
+    r = NoisyDecoderSimulator(SimConfig.preset("worst"), seed=24).simulate(TEST[5])
+    kw = dict(RETUNED, beam=64)
+    a = ctc_prefix_beam_search(r.stream, lm=lm, **kw)
+    b = ctc_prefix_beam_search(r.stream, lm=lm, **kw)
+    assert [(h.text, h.score) for h in a] == [(h.text, h.score) for h in b]
+    for x, y in zip(a, b):
+        np.testing.assert_array_equal(x.char_confidences, y.char_confidences)
+    assert len(a) <= kw["n_best"]
+    assert len({h.text for h in a}) == len(a)
+    for h in a:
+        # space_rules: no leading, trailing or double space.
+        assert h.text == " ".join(h.text.split())
+        assert h.score == pytest.approx(
+            h.logp_acoustic + kw["lm_weight"] * h.logp_lm + kw["insertion_bonus"] * len(h.text)
+        )
+        assert len(h.frame_spans) == len(h.text)
+
+
+def test_options_with_stem_cap_and_threshold(lm):
+    r = NoisyDecoderSimulator(SimConfig.preset("median"), seed=25).simulate(TEST[6])
+    for search in ("loop", "vector"):
+        h = ctc_prefix_beam_search(
+            r.stream, lm=lm, beam=32, max_per_stem=2, beam_logp=8.0, search=search, align=False, n_best=32
+        )
+        assert h and [x.score for x in h] == sorted((x.score for x in h), reverse=True)
+    with pytest.raises(ValueError):
+        ctc_prefix_beam_search(r.stream, lm=lm, search="fast")
+    with pytest.raises(ValueError):
+        ctc_prefix_beam_search(r.stream, lm=lm, beam_logp=0.0)
+    with pytest.raises(ValueError):
+        ctc_prefix_beam_search(r.stream, lm=lm, max_per_stem=0)
+
+
+def test_lm_candidates_restore_a_deleted_character(lm):
+    # "the cat" with no peak for "h": only the LM can put it back.
+    labels = []
+    for c in "te cat":
+        labels += [0, 0, 0, VOCAB.index(c)]
+    labels += [0, 0, 0]
+    p = np.full((len(labels), 28), 1e-3)
+    for t, lab in enumerate(labels):
+        p[t, lab] = 1.0
+    lp = np.log(p / p.sum(axis=1, keepdims=True))
+    old = [h.text for h in ctc_prefix_beam_search(lp, lm=lm, n_best=10, align=False)]
+    new = [h.text for h in ctc_prefix_beam_search(lp, lm=lm, align=False, **dict(RETUNED, lm_candidates=3))]
+    assert "the cat" not in old
+    assert "the cat" in new[:5]
+
+
+def test_recall_improves_on_simulator(lm):
+    sim = NoisyDecoderSimulator(SimConfig.preset("median"), seed=26)
+    sims = [sim.simulate(s) for s in TEST[:20]]
+    kw = dict(RETUNED, beam=128)
+    old = sum(r.text in [h.text for h in ctc_prefix_beam_search(r.stream, lm=lm, align=False)] for r in sims)
+    new = sum(r.text in [h.text for h in ctc_prefix_beam_search(r.stream, lm=lm, align=False, **kw)[:10]] for r in sims)
+    assert new >= old + 4
+
+
+def test_retuned_speed_40_chars(lm):
+    s = "the old man walked slowly up the hill ok"
+    r = NoisyDecoderSimulator(SimConfig.preset("median"), seed=6).simulate(s)
+    t0 = time.perf_counter()
+    ctc_prefix_beam_search(r.stream, lm=lm, align=False, **RETUNED)
+    assert time.perf_counter() - t0 < 3.0  # about 0.3 s on a laptop; slack for CI
+
+
+def test_word_alternatives():
+    class H:
+        def __init__(self, text, score):
+            self.text, self.score = text, score
+
+    hyps = [H("we ve bought our tickets", 0.0), H("we ve bought hour tickets", -1.0), H("we re bought our tickets", -2.0)]
+    slots = word_alternatives(hyps)
+    assert [s.word for s in slots] == ["we", "ve", "bought", "our", "tickets"]
+    assert slots[3].span == (13, 16) and "we ve bought our tickets"[13:16] == "our"
+    for s in slots:
+        assert sum(m for _, m in s.alternatives) == pytest.approx(1.0)
+        assert s.alternatives == sorted(s.alternatives, key=lambda a: (-a[1], a[0]))
+    assert [a for a, _ in slots[3].alternatives] == ["our", "hour"]
+    assert [a for a, _ in slots[1].alternatives] == ["ve", "re"]
+    assert slots[0].alternatives == [("we", pytest.approx(1.0))]
+    z = 1 + math.exp(-1.0) + math.exp(-2.0)
+    assert slots[3].mass_of_reference == pytest.approx((1 + math.exp(-2.0)) / z)
+    # A missing word gives "", an extra word joins the slot before it.
+    s2 = word_alternatives([H("a b c", 0.0), H("a c", 0.0), H("a b x c", 0.0)])
+    assert dict(s2[1].alternatives) == pytest.approx({"b": 1 / 3, "": 1 / 3, "b x": 1 / 3})
+    # Given posteriors win over the scores; a reference can be set.
+    s3 = word_alternatives(hyps, reference="we ve bought hour tickets", posteriors=[0.2, 0.7, 0.1])
+    assert s3[3].alternatives[0] == ("hour", pytest.approx(0.7))
+    with pytest.raises(ValueError):
+        word_alternatives(hyps, posteriors=[1.0])
+    assert word_alternatives([]) == []
+
+
+def test_word_alternatives_on_beam_output(lm):
+    r = NoisyDecoderSimulator(SimConfig.preset("median"), seed=27).simulate(TEST[7])
+    hyps = ctc_prefix_beam_search(r.stream, lm=lm, align=False, **dict(RETUNED, beam=64))
+    slots = word_alternatives(hyps)
+    assert [s.word for s in slots] == hyps[0].text.split()
+    assert all(1 <= len(s.alternatives) <= 5 for s in slots)

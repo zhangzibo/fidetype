@@ -1,0 +1,5 @@
+S1: n=4917 hand peak 0.836@50ms (chance 0.600, win 0.931) | char peak 0.245 (chance 0.137, win 0.399) | perm 0.600 rand 0.600 | 444.2s
+S11: n=4817 hand peak 0.689@-10ms (chance 0.604, win 0.842) | char peak 0.252 (chance 0.138, win 0.335) | perm 0.605 rand 0.604 | 423.2s
+S16: n=2442 hand peak 0.843@60ms (chance 0.603, win 0.957) | char peak 0.296 (chance 0.136, win 0.492) | perm 0.605 rand 0.603 | 228.7s
+S25: n=8769 hand peak 0.801@-10ms (chance 0.600, win 0.934) | char peak 0.239 (chance 0.135, win 0.437) | perm 0.600 rand 0.600 | 697.1s
+S3: n=2252 hand peak 0.718@50ms (chance 0.604, win 0.875) | char peak 0.206 (chance 0.144, win 0.306) | perm 0.604 rand 0.604 | 203.6s
