@@ -75,7 +75,7 @@ def decode(ids: Iterable[int]) -> str:
     """Return the text for token ids. Blank ids are skipped.
 
     This function does not collapse repeats. For CTC decoding, use
-    :func:`neurotext.eval.metrics.ctc_greedy_decode`.
+    :func:`fidetype.eval.metrics.ctc_greedy_decode`.
     """
     out = []
     for i in ids:

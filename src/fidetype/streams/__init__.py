@@ -1,8 +1,8 @@
 """The NeuralTextStream format, the vocabulary and stream sources."""
 
-from neurotext.streams.simulator import NoisyDecoderSimulator, SimConfig, SimResult
-from neurotext.streams.spec import SPEC_VERSION, NeuralTextStream
-from neurotext.streams.vocab import BLANK_ID, SPACE_ID, VOCAB, decode, encode, normalize_text
+from fidetype.streams.simulator import NoisyDecoderSimulator, SimConfig, SimResult
+from fidetype.streams.spec import SPEC_VERSION, NeuralTextStream
+from fidetype.streams.vocab import BLANK_ID, SPACE_ID, VOCAB, decode, encode, normalize_text
 
 __all__ = [
     "BLANK_ID",

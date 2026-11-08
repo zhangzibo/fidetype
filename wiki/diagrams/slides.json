@@ -1,6 +1,6 @@
 {
   "title": "Brain2Qwerty and where this project starts",
-  "subtitle": "Diagrams for the stealth-project wiki. Edit the .drawio files, then run: node tools/drawio/build.js",
+  "subtitle": "Diagrams for the Fidetype wiki. Edit the .drawio files, then run: node tools/drawio/build.js",
   "slides": [
     {
       "file": "01-what-brain2qwerty-does.drawio",

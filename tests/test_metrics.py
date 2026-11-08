@@ -1,15 +1,15 @@
 import numpy as np
 import pytest
 
-from neurotext.eval.metrics import (
+from fidetype.eval.metrics import (
     cer,
     ctc_greedy_decode,
     edit_distance,
     expected_calibration_error,
     wer,
 )
-from neurotext.streams.spec import NeuralTextStream
-from neurotext.streams.vocab import VOCAB
+from fidetype.streams.spec import NeuralTextStream
+from fidetype.streams.vocab import VOCAB
 
 
 def test_edit_distance():

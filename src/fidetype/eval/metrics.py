@@ -12,7 +12,7 @@ from typing import Sequence
 
 import numpy as np
 
-from neurotext.streams.spec import NeuralTextStream
+from fidetype.streams.spec import NeuralTextStream
 
 
 def edit_distance(ref: Sequence, hyp: Sequence) -> int:

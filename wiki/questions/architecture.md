@@ -3,7 +3,7 @@ title: Architecture of the trustworthy neural text entry layer
 type: question
 tags: [planning, architecture, calibration, uncertainty, streaming, open-core]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # Architecture: trustworthy neural text entry
@@ -81,10 +81,10 @@ This format is the contract between the decoder and the trust core. The trust co
 - Meta's Brain2Qwerty code is also CC BY-NC ([code](../sources/brain2qwerty-code.md)). So our decoder is our own reimplementation, not copied code.
 
 ## Proposed code layout
-This is a proposal only. The working name `neurotext` is a **placeholder**. The repo now has only `src/core/__init__.py` from the first scaffold. Nobody has created these folders yet.
+This is a proposal. The project is named **Fidetype**, and the package is `fidetype` (named by the user on 2026-11-08). Today the package has `streams/` (spec, vocabulary, simulator) and `eval/` (metrics). The other folders are planned.
 
 ```
-src/neurotext/
+src/fidetype/
   streams/      NeuralTextStream spec + adapters (replay, simulator, LSL later)
   decoders/     conv+CTC (causal + offline), baselines
   lm/           char n-gram, small-LLM scorer, beam search
@@ -111,7 +111,7 @@ experiments/    configs + results per experiment
 1. **Stream format details.** What is the step rate? Which character set? Do we include blank and space tokens from CTC? Do we send embeddings by default? How do we mark the end of a word or sentence?
 2. **Which small LLM fits in 16 GB?** The GPU is an AMD RX 7800 XT with 16 GB. The LLM must run in real time next to the decoder.
 3. **Does ROCm work?** The GPU uses ROCm, not CUDA. Phase 0 must test PyTorch on it. CPU fallback must work.
-4. **Project name.** `neurotext` is a placeholder. We must choose a final name before the first public release.
+4. **Project name.** Resolved on 2026-11-08: the project is **Fidetype**, and the package is `fidetype`.
 
 ## Related pages
 - [Direction decision](direction-decision.md): why we chose this direction.

@@ -7,10 +7,10 @@ enough to measure a mean CER to about +-0.01 and keeps the run short.
 import numpy as np
 import pytest
 
-from neurotext.eval.metrics import cer, ctc_greedy_decode, expected_calibration_error
-from neurotext.streams.corpus import sentences
-from neurotext.streams.simulator import PRESET_CER, NoisyDecoderSimulator, SimConfig
-from neurotext.streams.vocab import LETTERS, VOCAB, key_distance
+from fidetype.eval.metrics import cer, ctc_greedy_decode, expected_calibration_error
+from fidetype.streams.corpus import sentences
+from fidetype.streams.simulator import PRESET_CER, NoisyDecoderSimulator, SimConfig
+from fidetype.streams.vocab import LETTERS, VOCAB, key_distance
 
 SENTENCES = sentences(200)
 

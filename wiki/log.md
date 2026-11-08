@@ -50,3 +50,17 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Updated [questions/project-plan](questions/project-plan.md): target windows and a "Timeline policy (2026-11-08)" section.
 - Redrew diagram `09-milestones` on a day scale (11-07 → 11-16) with an externally blocked lane. Updated its caption and rebuilt `diagrams/index.html`.
 - Added a "Progress tracking" section to `CLAUDE.md`. Added a Progress line to [index](index.md).
+
+## [2026-11-08] setup | Session continuity (memory mirror, HANDOFF.md, snapshot script)
+- Created `HANDOFF.md`: project summary, read-first list, working rules, background processes, status, next steps, how to resume.
+- Created `tools/session/snapshot.js`: mirrors Claude's memory notes into `agent-memory/` and rebuilds the progress dashboard.
+- Created `tools/session/start.js`: prints a resume context block.
+- Added a "Session continuity" section and layout rows to `CLAUDE.md`.
+- Claude Code hooks for automatic snapshots: not set up. This waits for a user decision.
+
+## [2026-11-08] setup | Project named Fidetype
+- The user named the project **Fidetype** (*fides*, Latin: trust, + type). The package is `fidetype`. The placeholder `neurotext` is retired. "Veritype" was rejected: it has a pending US software trademark.
+- Renamed `src/neurotext/` to `src/fidetype/`. Updated all imports, `pyproject.toml` (name, description, keywords, classifiers, repository URL) and `uv.lock`. 41 tests pass.
+- Rewrote `README.md`: what it does, why, architecture, status, quick start, layout, data and licences.
+- Replaced the placeholder name in [questions/architecture](questions/architecture.md), [questions/project-plan](questions/project-plan.md), [overview](overview.md), `diagrams/slides.json`, `CLAUDE.md` and `HANDOFF.md`. Marked tracker task M0-07 done.
+- The GitHub repo and the local folder keep the name `stealth-project` until the rename.

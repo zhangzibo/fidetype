@@ -1,23 +1,47 @@
 [project]
-name = "neurotext"
+name = "fidetype"
 version = "0.0.1"
-description = "A decoder-agnostic trust layer for neural text entry (placeholder name)."
+description = "An open trust layer for neural text entry: calibrated, abstaining, hallucination-aware BCI text decoding."
 readme = "README.md"
 requires-python = ">=3.12"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 authors = [{ name = "zhangzibo" }]
+keywords = [
+    "brain-computer-interface",
+    "bci",
+    "meg",
+    "eeg",
+    "emg",
+    "neural-decoding",
+    "text-entry",
+    "calibration",
+    "conformal-prediction",
+    "hallucination-detection",
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
 dependencies = ["numpy"]
 
 [project.optional-dependencies]
 dev = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/zhangzibo/fidetype"
 
 [build-system]
 requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/neurotext"]
+packages = ["src/fidetype"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

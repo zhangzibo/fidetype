@@ -30,7 +30,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 ## Fixed facts
 | Item | Value |
 |---|---|
-| Package name | `neurotext` (a **placeholder**; M0 decides the final name) |
+| Project / package name | **Fidetype** / `fidetype` (named by the user on 2026-11-08) |
 | Team | 1 developer. AI agents write most code. The developer reviews it. |
 | GPU | AMD RX 7800 XT, 16 GB. ROCm status: test started on 2026-11-08. |
 | RAM | 31 GB |
@@ -65,7 +65,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [ ] Create the Python package skeleton. *(started 2026-11-08)*
 - [ ] Write the NeuralTextStream spec v0.1 ([architecture](architecture.md#neuraltextstream-explained-simply)). *(started 2026-11-08)*
 - [ ] Build the noisy-decoder simulator with tests. *(started 2026-11-08)*
-- [ ] Decide the project name.
+- [x] Decide the project name. *(done 2026-11-08: Fidetype)*
 - [ ] Rewrite the README.
 - [ ] Add CI: GitHub Actions runs pytest on CPU.
 
@@ -180,7 +180,7 @@ The live status is in the [progress dashboard](../progress/index.html).
 | SpanishBCBL MEG download | Started |
 | Package skeleton + NeuralTextStream spec v0.1 + simulator with tests | Started |
 | Inspect one subject in MNE; check head digitisation | Not started |
-| Decide the project name | Not started |
+| Decide the project name | Done (Fidetype) |
 | README rewrite | Not started |
 | CI (GitHub Actions, pytest on CPU) | Not started |
 

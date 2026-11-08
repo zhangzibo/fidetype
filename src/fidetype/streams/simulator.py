@@ -57,8 +57,8 @@ from typing import Any
 
 import numpy as np
 
-from neurotext.streams.spec import NeuralTextStream
-from neurotext.streams.vocab import (
+from fidetype.streams.spec import NeuralTextStream
+from fidetype.streams.vocab import (
     BLANK_ID,
     LETTERS,
     SPACE_ID,
@@ -327,7 +327,7 @@ class NoisyDecoderSimulator:
         """Simulate the decoder output for ``text``.
 
         ``text`` is normalised first (see
-        :func:`neurotext.streams.vocab.normalize_text`).
+        :func:`fidetype.streams.vocab.normalize_text`).
         """
         cfg = self.config
         rng = np.random.default_rng(seed) if seed is not None else self._rng

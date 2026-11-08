@@ -5,8 +5,8 @@ Run: uv run python examples/simulate_demo.py
 
 import numpy as np
 
-from neurotext.eval.metrics import cer, ctc_greedy_decode
-from neurotext.streams.simulator import PRESET_CER, NoisyDecoderSimulator, SimConfig
+from fidetype.eval.metrics import cer, ctc_greedy_decode
+from fidetype.streams.simulator import PRESET_CER, NoisyDecoderSimulator, SimConfig
 
 SENTENCES = [
     "the quick brown fox jumps over the lazy dog",

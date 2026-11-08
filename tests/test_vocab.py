@@ -1,4 +1,4 @@
-from neurotext.streams.vocab import (
+from fidetype.streams.vocab import (
     BLANK_ID,
     KEY_POS,
     SPACE_ID,

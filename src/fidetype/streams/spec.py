@@ -23,7 +23,7 @@ decoding step.
     choice (for example, the start of the trial).
 ``vocab``
     List of V strings. ``vocab[i]`` is the token of column i. The
-    default vocabulary is :data:`neurotext.streams.vocab.VOCAB`
+    default vocabulary is :data:`fidetype.streams.vocab.VOCAB`
     (blank, ``a``-``z``, space), as in Brain2Qwerty.
 ``blank_id``
     Index of the CTC blank token in ``vocab``.

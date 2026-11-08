@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from neurotext.streams.spec import NeuralTextStream
-from neurotext.streams.vocab import VOCAB
+from fidetype.streams.spec import NeuralTextStream
+from fidetype.streams.vocab import VOCAB
 
 
 def _stream(T=5, V=len(VOCAB), **kw):

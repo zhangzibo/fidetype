@@ -1,0 +1,4 @@
+- [Fidetype project goal](project-bci-research-goal.md) — Fidetype: trust layer for neural text entry, from Brain2Qwerty; M1-M7 by 2026-11-15; refs layout + licence notes
+- [Output style](feedback-output-style.md) — write ~80% ASD-STE100; prefer diagrams > HTML pages > explainer videos
+- [Orchestrator mode](feedback-orchestrator-mode.md) — main chat only plans/delegates; all writing, code, tool use via subagents
+- [Commit authority](feedback-commit-authority.md) — Claude decides commits/pushes itself; never third-party/data/secrets; ask only for risky git ops

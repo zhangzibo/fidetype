@@ -1,4 +1,4 @@
-"""neurotext: a trust layer for neural text entry (placeholder name).
+"""fidetype: a trust layer for neural text entry.
 
 The package reads decoder output in one standard format, the
 NeuralTextStream. It then calibrates the output, abstains when unsure,
