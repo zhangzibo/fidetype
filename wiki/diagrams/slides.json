@@ -1,0 +1,54 @@
+{
+  "title": "Brain2Qwerty and where this project starts",
+  "subtitle": "Diagrams for the stealth-project wiki. Edit the .drawio files, then run: node tools/drawio/build.js",
+  "slides": [
+    {
+      "file": "01-what-brain2qwerty-does.drawio",
+      "title": "1. What Brain2Qwerty does",
+      "caption": "Meta's model reads brain signals while a person types. Then it predicts the typed text. The signal comes from finger movement, not from thought.",
+      "wiki": "../sources/brain2qwerty-v1.md"
+    },
+    {
+      "file": "02-v1-vs-v2-pipeline.drawio",
+      "title": "2. Version 1 and version 2",
+      "caption": "v1 needs the time of each key press. v2 does not. v2 uses 10 times more data per person and an LLM to write the sentence.",
+      "wiki": "../sources/brain2qwerty-v2.md"
+    },
+    {
+      "file": "03-bci-stack.drawio",
+      "title": "3. The five layers of a BCI",
+      "caption": "Layers 2 to 5 are software. Layer 1 needs a lab and money. Start at layers 3 and 4: data and decoding.",
+      "wiki": "../questions/research-directions.md"
+    },
+    {
+      "file": "04-project-options.drawio",
+      "title": "4. Long-term project options",
+      "caption": "Four options. A, B and D can start now on your computer. C needs more compute.",
+      "wiki": "../questions/research-directions.md"
+    },
+    {
+      "file": "05-roadmap.drawio",
+      "title": "5. Proposed roadmap",
+      "caption": "Start with learning. Then build an open toolkit. Then do research on a small real-time decoder.",
+      "wiki": "../questions/research-directions.md"
+    },
+    {
+      "file": "06-architecture-layers.drawio",
+      "title": "6. Architecture: six layers",
+      "caption": "Six layers turn neural data into reliable text. The trust core is the heart of the project. Green parts are open source; red dashed parts stay private later.",
+      "wiki": "../questions/architecture.md"
+    },
+    {
+      "file": "07-data-flow.drawio",
+      "title": "7. Data flow",
+      "caption": "Data goes from a source through a decoder into the NeuralTextStream format. The trust core then picks an action: commit, offer choices, ask, or abstain.",
+      "wiki": "../questions/architecture.md"
+    },
+    {
+      "file": "08-roadmap-v2.drawio",
+      "title": "8. Roadmap (trust-layer direction)",
+      "caption": "Set up first. Then write two papers: calibrated text, then causal decoding. Then release the benchmark and connect real devices.",
+      "wiki": "../questions/direction-decision.md"
+    }
+  ]
+}

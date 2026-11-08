@@ -8,6 +8,13 @@ updated: 2026-11-07
 
 # Candidate directions (as of 2026-11-07)
 
+## Decision (2026-11-07)
+We chose **trustworthy neural text entry**: a decoder-agnostic layer that makes neural text reliable (calibration, abstention, n-best choices, a hallucination guard, causal decoding). It combines the causal-decoding and hallucination-aware rows of section 2 below.
+- Why, with the evidence: [direction-decision.md](direction-decision.md).
+- The design: [architecture.md](architecture.md).
+
+The rest of this page keeps the earlier candidate directions for reference.
+
 **Question asked:** Given no hardware, what could a long-term public BCI project realistically do, starting from Brain2Qwerty?
 
 **Constraints:**

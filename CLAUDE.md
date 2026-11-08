@@ -2,6 +2,11 @@
 
 A long-term, public project exploring non-invasive brain-computer interfaces (BCI), starting from Meta FAIR's Brain2Qwerty. Its direction is still open: it might produce research papers, real-world tools, or both. The research knowledge base is an **LLM wiki** (pattern: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). The human curates sources and asks questions. Claude writes and maintains the wiki.
 
+## Working mode: orchestrator + subagents
+- The main conversation is the **orchestrator**. It plans, delegates, reviews, and reports to the user.
+- **Subagents do all actual work:** writing, wiki edits, code, commands, research, and web fetches. Brief each subagent fully. Subagents do not see this conversation.
+- Run independent subagent tasks in parallel. Check subagent results before reporting them as done.
+
 ## Layout
 ```
 references/   RAW SOURCES (immutable). Claude reads them, never edits them.
@@ -18,10 +23,19 @@ wiki/         THE WIKI. Claude owns this layer entirely.
   concepts/     ideas, methods, techniques (MEG, CTC, model soup, ...)
   entities/     concrete things: labs, datasets, models, devices, people
   questions/    answers to queries worth keeping (analyses, comparisons, plans)
+  diagrams/     draw.io diagrams (*.drawio) + slides.json -> generated index.html
+tools/drawio/ local draw.io viewer (Apache-2.0) + build.js
 src/ notebooks/ data/   code, experiments, local datasets (data/ is git-ignored)
 ```
 
+## Diagrams
+- Draw diagrams as draw.io files in `wiki/diagrams/NN-name.drawio`. Edit them in VS Code with the `hediet.vscode-drawio` extension, or at diagrams.net.
+- To add a diagram to the page, list it in `wiki/diagrams/slides.json` (file, title, a 1–2 sentence STE caption, and a wiki link). Then run `node tools/drawio/build.js`. This regenerates `wiki/diagrams/index.html`, which works offline. Never edit `index.html` by hand.
+- Prefer a diagram over long prose. Link each diagram from the wiki pages it explains.
+- Check the rendering with headless Edge: `msedge --headless=new --allow-file-access-from-files --screenshot=...`.
+
 ## Page conventions
+- **Writing style: "80% ASD-STE100"** (Simplified Technical English). Use short sentences, active voice, one idea per sentence, and simple words with one meaning each. No idioms or filler. Keep exact technical terms. If a diagram or table explains something better than prose, use it.
 - File names are `kebab-case.md`. Each page covers exactly one subject.
 - Every wiki page starts with YAML frontmatter:
   ```yaml

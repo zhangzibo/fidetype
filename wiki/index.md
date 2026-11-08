@@ -2,6 +2,20 @@
 
 Claude maintains this wiki. The conventions are in [`../CLAUDE.md`](../CLAUDE.md), the history is in [log.md](log.md), and the big picture is in [overview.md](overview.md).
 
+## Diagrams
+To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browser.
+
+| Diagram | Shows |
+|---|---|
+| `01-what-brain2qwerty-does` | Typing → MEG → AI → text. The signal is motor, not thought |
+| `02-v1-vs-v2-pipeline` | v1 and v2 pipelines side by side, with results |
+| `03-bci-stack` | The five BCI layers. Where to start |
+| `04-project-options` | Long-term options A–D |
+| `05-roadmap` | Phases 0 to later |
+| `06-architecture-layers` | The six layers of the trust layer. Open vs later-private parts |
+| `07-data-flow` | Source → decoder → NeuralTextStream → trust core → action → evaluation |
+| `08-roadmap-v2` | Phase 0 → Paper 1 → Paper 2 → benchmark → devices → pilots. Deferred side tracks |
+
 ## Sources
 | Page | Summary | Date |
 |---|---|---|
@@ -37,3 +51,6 @@ Claude maintains this wiki. The conventions are in [`../CLAUDE.md`](../CLAUDE.md
 | Page | Summary |
 |---|---|
 | [Research directions](questions/research-directions.md) | What this project could do without hardware. Candidate directions and the reading queue |
+| [Direction decision](questions/direction-decision.md) | 2026-11-07: we chose trustworthy neural text entry. Evidence, licence trap, rejected options |
+| [Architecture](questions/architecture.md) | Six-layer design, NeuralTextStream, open-core split, code layout, roadmap |
+| [Reading list](questions/reading-list.md) | Verified papers to read for the trust-layer direction |

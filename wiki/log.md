@@ -25,3 +25,15 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 ## [2026-11-07] query | What could this project do?
 - Filed [questions/research-directions](questions/research-directions.md).
 - Wrote [overview](overview.md).
+
+## [2026-11-07] setup | Diagram system (draw.io)
+- Added the local draw.io viewer (`tools/drawio/`, Apache-2.0) and `build.js`, which generates `wiki/diagrams/index.html` from `slides.json`.
+- Created 5 diagrams: what Brain2Qwerty does, v1 vs v2 pipeline, BCI stack, project options, roadmap.
+- Installed the VS Code extension `hediet.vscode-drawio` for editing.
+
+## [2026-11-07] query | Direction decision + architecture
+- Filed [questions/direction-decision](questions/direction-decision.md): the chosen direction (trustworthy neural text entry), the novelty, commercial and licence evidence, and the rejected or deferred options. Secondary-source figures are marked.
+- Filed [questions/architecture](questions/architecture.md): six layers, trust-core modules, data flow, NeuralTextStream, open-core split, provenance rule, proposed code layout (`neurotext` is a placeholder), roadmap, open design questions.
+- Added a "Decision (2026-11-07)" section to [questions/research-directions](questions/research-directions.md) and a "Project direction" section to [overview](overview.md).
+- Created diagrams `06-architecture-layers`, `07-data-flow` and `08-roadmap-v2`. Added them to `slides.json` and rebuilt `diagrams/index.html`.
+- Updated [index](index.md): 3 diagrams and 3 question pages (including [reading-list](questions/reading-list.md)).
