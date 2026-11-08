@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-08T00:34:00-08:00",
+  "updated": "2026-11-08T00:30:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8).",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -141,8 +141,8 @@
      "agent_runs": [{"label": "commit 663e20c", "duration_s": 86, "tokens": 65237, "tool_uses": 16}],
      "orchestrator_only": false, "notes": "Commit + push 663e20c."},
     {"id": "M0-13", "milestone": "M0", "title": "Commit + GitHub rename to fidetype", "status": "done",
-     "started_at": "2026-11-08T00:26:00-08:00", "finished_at": "2026-11-08T00:34:00-08:00", "approx_times": true,
-     "agent_runs": [{"label": "commit + GitHub rename", "duration_s": 480, "tool_uses": 13}],
+     "started_at": "2026-11-08T00:27:00-08:00", "finished_at": "2026-11-08T00:30:00-08:00", "approx_times": true,
+     "agent_runs": [{"label": "commit + GitHub rename", "duration_s": 180, "tool_uses": 14}],
      "orchestrator_only": false, "notes": "Commit dd3a314. Repo renamed to zhangzibo/fidetype; description and 9 topics set; origin remote updated. Tokens not recorded."},
 
     {"id": "M1-01", "milestone": "M1", "title": "Write our own conv + CTC decoder. Copy no Meta code", "status": "todo",
