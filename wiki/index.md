@@ -46,7 +46,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 |---|---|
 | [Meta FAIR Brain & AI](entities/meta-fair-brain-ai.md) | J.-R. King's Paris team. Authors of Brain2Qwerty |
 | [BCBL](entities/bcbl.md) | Basque lab that recorded and owns the data |
-| [SpanishBCBL dataset](entities/spanishbcbl-dataset.md) | v1 data. Public (gated HF), ~262 GB. The only public typing-MEG set we know of |
+| [SpanishBCBL dataset](entities/spanishbcbl-dataset.md) | v1 data. Public (HF, not gated), CC BY-NC 4.0, ~268 GB MEG. The only public typing-MEG set we know of. Inspection findings for M1 |
 | [EnglishBCBL dataset](entities/englishbcbl-dataset.md) | v2 data. 90 h MEG. Embargoed |
 | [emg2qwerty](entities/emg2qwerty.md) | *Stub.* Meta's public wrist-EMG typing dataset. Template for causal decoding |
 
@@ -58,3 +58,9 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Architecture](questions/architecture.md) | Six-layer design, NeuralTextStream, open-core split, code layout, roadmap |
 | [Reading list](questions/reading-list.md) | Verified papers to read for the trust-layer direction |
 | [Project plan](questions/project-plan.md) | Milestones M0–M7 with targets (M0 by 11-09, M1–M7 by 11-15), tasks, "done when" criteria, timeline policy, risks, working process |
+| [Compute setup](questions/compute-setup.md) | GPU path: native Windows ROCm 7.2.1 + torch 2.9.1 on the RX 7800 XT. Short venv path (MAX_PATH). Benchmarks, caveats, usage |
+
+## Experiments
+| Page | Summary | Date |
+|---|---|---|
+| [SpanishBCBL inspection, S25](../experiments/2026-11-08-inspect-spanishbcbl/results.md) | S25 loads in MNE. Head digitisation present. Key triggers aligned to the log (<1 ms) with a per-block drift fit | 2026-11-08 |

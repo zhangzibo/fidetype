@@ -1,0 +1,1 @@
+Run: `uv sync --extra data` then `uv run python experiments/2026-11-08-inspect-spanishbcbl/inspect_subject.py C:/Users/zhang/bci-data/SpanishBCBL 25_12032` (writes `results.md` and `results/*.png` here; data stays outside the repo).

@@ -32,7 +32,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 |---|---|
 | Project / package name | **Fidetype** / `fidetype` (named by the user on 2026-11-08) |
 | Team | 1 developer. AI agents write most code. The developer reviews it. |
-| GPU | AMD RX 7800 XT, 16 GB. ROCm status: test started on 2026-11-08. |
+| GPU | AMD RX 7800 XT, 16 GB. Native Windows ROCm 7.2.1 + torch 2.9.1 works ([compute setup](compute-setup.md)). |
 | RAM | 31 GB |
 | Data root | `C:\Users\zhang\bci-data\`. It is outside OneDrive, so large data does not sync to the cloud. |
 | Code licence | Apache-2.0 for all code in the public repo. |
@@ -59,17 +59,19 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 > **Our take:** M2 can start before M1 ends. The simulator emits NeuralTextStream, so the trust core does not wait for a real decoder.
 
 ## M0: Setup (target 11-08 → 11-09)
-- [ ] Test PyTorch on the GPU. Choose one path: ROCm native, WSL2 + ROCm, DirectML, or cloud. Record the result in the wiki. *(started 2026-11-08)*
-- [ ] Download SpanishBCBL MEG to `C:\Users\zhang\bci-data\` ([dataset](../entities/spanishbcbl-dataset.md)). *(started 2026-11-08)*
-- [ ] Inspect one subject in MNE. Check whether the files carry head digitisation.
-- [ ] Create the Python package skeleton. *(started 2026-11-08)*
-- [ ] Write the NeuralTextStream spec v0.1 ([architecture](architecture.md#neuraltextstream-explained-simply)). *(started 2026-11-08)*
-- [ ] Build the noisy-decoder simulator with tests. *(started 2026-11-08)*
+- [x] Test PyTorch on the GPU. Choose one path: ROCm native, WSL2 + ROCm, DirectML, or cloud. Record the result in the wiki. *(done 2026-11-08: native Windows ROCm, see [compute setup](compute-setup.md))*
+- [ ] Download SpanishBCBL MEG to `C:\Users\zhang\bci-data\` ([dataset](../entities/spanishbcbl-dataset.md)). *(started 2026-11-08; continues in the background)*
+- [x] Inspect one subject in MNE. Check whether the files carry head digitisation. *(done 2026-11-08: S25, digitisation present, see [inspection results](../../experiments/2026-11-08-inspect-spanishbcbl/results.md))*
+- [x] Create the Python package skeleton. *(done 2026-11-08)*
+- [x] Write the NeuralTextStream spec v0.1 ([architecture](architecture.md#neuraltextstream-explained-simply)). *(done 2026-11-08)*
+- [x] Build the noisy-decoder simulator with tests. *(done 2026-11-08: 41 tests)*
 - [x] Decide the project name. *(done 2026-11-08: Fidetype)*
-- [ ] Rewrite the README.
-- [ ] Add CI: GitHub Actions runs pytest on CPU.
+- [x] Rewrite the README. *(done 2026-11-08)*
+- [x] Add CI: GitHub Actions runs pytest on CPU. *(done 2026-11-08: commit c95a3c7, first run green)*
 
 **Done when:** the simulator tests pass in CI, one subject loads in MNE, and the GPU path is chosen.
+
+**M0 done 2026-11-08 (target 11-09).** All three criteria are met. The bulk MEG download continues in the background.
 
 ## M1: Baseline decoder (target 11-09 → 11-11)
 - [ ] Write our own conv + [CTC](../concepts/ctc.md) decoder. Copy no Meta code.
@@ -176,16 +178,17 @@ The live status is in the [progress dashboard](../progress/index.html).
 
 | Task | Status on 2026-11-08 |
 |---|---|
-| GPU / PyTorch test (ROCm, WSL2, DirectML or cloud) | Started |
-| SpanishBCBL MEG download | Started |
-| Package skeleton + NeuralTextStream spec v0.1 + simulator with tests | Started |
-| Inspect one subject in MNE; check head digitisation | Not started |
+| GPU / PyTorch test (ROCm, WSL2, DirectML or cloud) | Done: native Windows ROCm ([compute setup](compute-setup.md)) |
+| SpanishBCBL MEG download | Running in the background |
+| Package skeleton + NeuralTextStream spec v0.1 + simulator with tests | Done (41 tests) |
+| Inspect one subject in MNE; check head digitisation | Done: S25, digitisation present |
 | Decide the project name | Done (Fidetype) |
-| README rewrite | Not started |
-| CI (GitHub Actions, pytest on CPU) | Not started |
+| README rewrite | Done |
+| CI (GitHub Actions, pytest on CPU) | Done (green) |
 
 ## Related pages
 - [Architecture](architecture.md)
+- [Compute setup](compute-setup.md)
 - [Direction decision](direction-decision.md)
 - [Reading list](reading-list.md)
 - [Research directions](research-directions.md)

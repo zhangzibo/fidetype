@@ -110,7 +110,7 @@ experiments/    configs + results per experiment
 ## Open design questions
 1. **Stream format details.** What is the step rate? Which character set? Do we include blank and space tokens from CTC? Do we send embeddings by default? How do we mark the end of a word or sentence?
 2. **Which small LLM fits in 16 GB?** The GPU is an AMD RX 7800 XT with 16 GB. The LLM must run in real time next to the decoder.
-3. **Does ROCm work?** The GPU uses ROCm, not CUDA. Phase 0 must test PyTorch on it. CPU fallback must work.
+3. **Does ROCm work?** *Resolved 2026-11-08: yes.* Native Windows ROCm 7.2.1 + torch 2.9.1 runs on the RX 7800 XT. See [compute setup](compute-setup.md). CPU fallback must still work.
 4. **Project name.** Resolved on 2026-11-08: the project is **Fidetype**, and the package is `fidetype`.
 
 ## Related pages
