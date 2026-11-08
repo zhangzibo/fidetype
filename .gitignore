@@ -33,3 +33,7 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+
+# Reference material with third-party licences (see references/README.md)
+references/papers/
+references/repos/
