@@ -1,5 +1,7 @@
 # Fidetype
 
+![tests](https://github.com/zhangzibo/fidetype/actions/workflows/tests.yml/badge.svg)
+
 **An open trust layer for neural text entry: calibrated, abstaining, hallucination-aware BCI text decoding.**
 
 **Name:** *fides* (Latin: trust) + type.

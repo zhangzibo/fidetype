@@ -1,0 +1,29 @@
+# Run the test suite on every push to main and on every pull request.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Read-only token: the job only checks out code and runs tests.
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Install uv and Python 3.12; cache uv downloads between runs.
+      - uses: astral-sh/setup-uv@v10.3.3  # no floating major tag exists after v7
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      # Dev extra only: the "data" extra (mne, scipy) is not needed, and CI has no MEG data.
+      - run: uv sync --extra dev
+
+      - run: uv run pytest -q
