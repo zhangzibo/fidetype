@@ -8,6 +8,7 @@ Inspired by Meta AI's [Brain2Qwerty](https://facebookresearch.github.io/brain2qw
 Early exploration. Name and scope will change.
 
 ## Layout
-- `src/core/` – main package code
+- `src/neurotext/` – main package code (placeholder name)
+- `tests/` – pytest tests; `examples/` – small runnable scripts
 - `notebooks/` – experiments and exploration
 - `data/` – local datasets (git-ignored, never committed)

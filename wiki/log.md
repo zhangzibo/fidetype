@@ -37,3 +37,16 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Added a "Decision (2026-11-07)" section to [questions/research-directions](questions/research-directions.md) and a "Project direction" section to [overview](overview.md).
 - Created diagrams `06-architecture-layers`, `07-data-flow` and `08-roadmap-v2`. Added them to `slides.json` and rebuilt `diagrams/index.html`.
 - Updated [index](index.md): 3 diagrams and 3 question pages (including [reading-list](questions/reading-list.md)).
+
+## [2026-11-08] query | Project plan
+- Filed [questions/project-plan](questions/project-plan.md): milestones M0–M7 with estimated windows, task checklists and "done when" criteria; licence rule; risks and fallbacks; working process; year-1 success metrics; the M0 checklist for the next 2 weeks.
+- Created diagram `09-milestones` (Gantt-like timeline, dates marked as estimates). Added it to `slides.json` as slide 9 and rebuilt `diagrams/index.html`.
+- Updated [overview](overview.md) ("Project direction") and [index](index.md) (diagram row and Questions row).
+
+## [2026-11-08] setup | Progress tracker (effort + timeline)
+- The user replaced the estimated windows with targets: M0 by 2026-11-09, M1–M7 by 2026-11-15.
+- Created `progress/tracker.json` (source of truth). Seeded milestones R and M0–M7 with 66 tasks. R holds the 19 done tasks of 2026-11-07 with their agent effort (approximate times). 6 tasks are `externally_blocked`.
+- Created `tools/progress/build.js`. It generates the offline dashboard [progress/index.html](progress/index.html): summary cards, milestone rows, SVG timeline, task table.
+- Updated [questions/project-plan](questions/project-plan.md): target windows and a "Timeline policy (2026-11-08)" section.
+- Redrew diagram `09-milestones` on a day scale (11-07 → 11-16) with an externally blocked lane. Updated its caption and rebuilt `diagrams/index.html`.
+- Added a "Progress tracking" section to `CLAUDE.md`. Added a Progress line to [index](index.md).

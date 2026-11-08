@@ -49,6 +49,12 @@
       "title": "8. Roadmap (trust-layer direction)",
       "caption": "Set up first. Then write two papers: calibrated text, then causal decoding. Then release the benchmark and connect real devices.",
       "wiki": "../questions/direction-decision.md"
+    },
+    {
+      "file": "09-milestones.drawio",
+      "title": "9. Milestones (1-week target)",
+      "caption": "The user set the targets on 2026-11-08. M0 ends on 11-09. M1 and M2 run in parallel, then M3 and M4, then M5, then the code parts of M6 and M7. All end by 11-15. The dashed lane holds items that depend on outside people. They have no dates.",
+      "wiki": "../questions/project-plan.md"
     }
   ]
 }

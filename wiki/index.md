@@ -2,6 +2,8 @@
 
 Claude maintains this wiki. The conventions are in [`../CLAUDE.md`](../CLAUDE.md), the history is in [log.md](log.md), and the big picture is in [overview.md](overview.md).
 
+**Progress:** open [progress/index.html](progress/index.html) for actual effort and dates against the targets (source: `progress/tracker.json`).
+
 ## Diagrams
 To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browser.
 
@@ -15,6 +17,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | `06-architecture-layers` | The six layers of the trust layer. Open vs later-private parts |
 | `07-data-flow` | Source → decoder → NeuralTextStream → trust core → action → evaluation |
 | `08-roadmap-v2` | Phase 0 → Paper 1 → Paper 2 → benchmark → devices → pilots. Deferred side tracks |
+| `09-milestones` | Day-scale timeline of M0–M7 against the 1-week target (11-08 → 11-15). Externally blocked lane |
 
 ## Sources
 | Page | Summary | Date |
@@ -54,3 +57,4 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Direction decision](questions/direction-decision.md) | 2026-11-07: we chose trustworthy neural text entry. Evidence, licence trap, rejected options |
 | [Architecture](questions/architecture.md) | Six-layer design, NeuralTextStream, open-core split, code layout, roadmap |
 | [Reading list](questions/reading-list.md) | Verified papers to read for the trust-layer direction |
+| [Project plan](questions/project-plan.md) | Milestones M0–M7 with targets (M0 by 11-09, M1–M7 by 11-15), tasks, "done when" criteria, timeline policy, risks, working process |

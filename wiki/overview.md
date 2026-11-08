@@ -36,6 +36,7 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 On 2026-11-07 we chose **trustworthy neural text entry**. We build a layer that makes text from any neural decoder reliable: it calibrates confidence, abstains or asks when it is not sure, offers n-best choices, guards against LLM hallucination, and works in real time.
 - The decision and the evidence: [direction-decision](questions/direction-decision.md).
 - The six-layer design and the roadmap: [architecture](questions/architecture.md).
+- Project plan: milestones M0–M7, tasks, risks and the working process: [project-plan](questions/project-plan.md).
 
 ## Where this project might fit
 See [research directions](questions/research-directions.md).

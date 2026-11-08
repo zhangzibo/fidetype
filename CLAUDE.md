@@ -24,7 +24,9 @@ wiki/         THE WIKI. Claude owns this layer entirely.
   entities/     concrete things: labs, datasets, models, devices, people
   questions/    answers to queries worth keeping (analyses, comparisons, plans)
   diagrams/     draw.io diagrams (*.drawio) + slides.json -> generated index.html
+  progress/     tracker.json (task times + agent effort) -> generated index.html
 tools/drawio/ local draw.io viewer (Apache-2.0) + build.js
+tools/progress/ build.js for the progress dashboard
 src/ notebooks/ data/   code, experiments, local datasets (data/ is git-ignored)
 ```
 
@@ -33,6 +35,11 @@ src/ notebooks/ data/   code, experiments, local datasets (data/ is git-ignored)
 - To add a diagram to the page, list it in `wiki/diagrams/slides.json` (file, title, a 1–2 sentence STE caption, and a wiki link). Then run `node tools/drawio/build.js`. This regenerates `wiki/diagrams/index.html`, which works offline. Never edit `index.html` by hand.
 - Prefer a diagram over long prose. Link each diagram from the wiki pages it explains.
 - Check the rendering with headless Edge: `msedge --headless=new --allow-file-access-from-files --screenshot=...`.
+
+## Progress tracking
+- The orchestrator records every task in `wiki/progress/tracker.json`: the start and finish times, and each subagent run's duration, tokens and tool uses from its completion notice.
+- After each update, run `node tools/progress/build.js`. This regenerates `wiki/progress/index.html`, an offline dashboard. Never edit `index.html` by hand.
+- Mark items that depend on outside people (ethics approval, volunteers, partners, arXiv endorsement, peer review) as `externally_blocked`. They are tracked, but they never count as late.
 
 ## Page conventions
 - **Writing style: "80% ASD-STE100"** (Simplified Technical English). Use short sentences, active voice, one idea per sentence, and simple words with one meaning each. No idioms or filler. Keep exact technical terms. If a diagram or table explains something better than prose, use it.

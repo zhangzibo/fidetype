@@ -1,0 +1,23 @@
+[project]
+name = "neurotext"
+version = "0.0.1"
+description = "A decoder-agnostic trust layer for neural text entry (placeholder name)."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "zhangzibo" }]
+dependencies = ["numpy"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/neurotext"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
