@@ -1,0 +1,35 @@
+# Data – never commit recordings or participant data
+data/*
+!data/.gitkeep
+*.fif
+*.edf
+*.bdf
+*.mat
+*.npy
+*.npz
+*.h5
+*.hdf5
+
+# Models / outputs
+checkpoints/
+runs/
+*.pt
+*.ckpt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Secrets / env
+.env
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
