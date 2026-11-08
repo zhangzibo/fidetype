@@ -2,7 +2,7 @@
 
 This file tells a new Claude Code session where the last session stopped. The orchestrator updates it after each finished task.
 
-Last update: 2026-11-08 14:25 (scope decision, landscape research, spec v0.1 + OSS foundation files published).
+Last update: 2026-11-08 14:40 (M1-B decoder code done; first real results: no MEG use yet).
 
 ## Project in one paragraph
 **Fidetype** is an open trust layer for neural text entry. It was first called "neurotext" (a placeholder name). It lives in the GitHub repo https://github.com/zhangzibo/fidetype (renamed from `stealth-project` on 2026-11-08). The local folder is still named `stealth-project`. The project started on 2026-11-07 from Meta FAIR's Brain2Qwerty (MEG typing decoding). Fidetype adds calibration, abstention and provenance on top of brain-to-text decoders. It works with public datasets, because the user has no MEG or EEG hardware.
@@ -25,9 +25,10 @@ Last update: 2026-11-08 14:25 (scope decision, landscape research, spec v0.1 + O
 ## Background processes
 | Process | Check | Stop | Resume |
 |---|---|---|---|
-| SpanishBCBL MEG download: [253/316] files at 14:23 on 2026-11-08 (S8 in progress). No final SUMMARY yet | `tail C:\Users\zhang\bci-data\SpanishBCBL\_download.log`; `tasklist /FI "PID eq 37808"` | `taskkill /PID 37808 /T /F` | Rerun `C:\Users\zhang\bci-data\SpanishBCBL\_download_meg.sh` |
-| SpanishBCBL preprocessing cache (tSSS, 0.5–45 Hz, 100 Hz): 9 of 47 blocks ok, 0 failed, 38 queued at 14:18. Launcher PID 49364 | `Get-Content C:\Users\zhang\bci-data\cache\spanishbcbl\v1\_preprocess.log -Tail 20`; `tasklist /FI "PID eq 49364"` | `taskkill /T /F /PID 49364` | From the repo root: `C:\venvs\fidetype-rocm\Scripts\python.exe tools/data/preprocess_spanishbcbl.py --workers 2 --mem-budget-gb 14`. It skips cached blocks. Rerun it after the download ends, to add the new subjects |
-| M1 decoder training (an agent is still working on it). A beam re-tune agent also runs (`experiments/2026-11-08-beam-retune/`) | Check `experiments/2026-11-08-m1b-decoder/` and `C:\Users\zhang\bci-data\runs\` | See `experiments/2026-11-08-m1b-decoder/` (launch.ps1, results.md) | See the same folder |
+| SpanishBCBL MEG download: [260/316] files at 14:27 on 2026-11-08 (S8 in progress). No final SUMMARY yet | `tail C:\Users\zhang\bci-data\SpanishBCBL\_download.log`; `tasklist /FI "PID eq 37808"` | `taskkill /PID 37808 /T /F` | Rerun `C:\Users\zhang\bci-data\SpanishBCBL\_download_meg.sh` |
+| SpanishBCBL preprocessing cache (tSSS, 0.5–45 Hz, 100 Hz): 10 of 47 blocks ok, 0 failed, 37 queued at 14:24. Launcher PID 49364 | `Get-Content C:\Users\zhang\bci-data\cache\spanishbcbl\v1\_preprocess.log -Tail 20`; `tasklist /FI "PID eq 49364"` | `taskkill /T /F /PID 49364` | From the repo root: `C:\venvs\fidetype-rocm\Scripts\python.exe tools/data/preprocess_spanishbcbl.py --workers 2 --mem-budget-gb 14`. It skips cached blocks. Rerun it after the download ends, to add the new subjects |
+| M1 decoder training: no run active now. Runs live in `C:\Users\zhang\bci-data\runs\<run_name>\`, streams in `C:\Users\zhang\bci-data\streams\<run_name>\` | `Get-Content C:\Users\zhang\bci-data\runs\<run_name>\status.json`; `Get-Content C:\Users\zhang\bci-data\runs\<run_name>\train.log -Tail 5`; `Get-Process -Id (Get-Content C:\Users\zhang\bci-data\runs\<run_name>\pid.txt)` | `Stop-Process -Id (Get-Content C:\Users\zhang\bci-data\runs\<run_name>\pid.txt)` (last checkpoint is at most 5 min old) | `.\experiments\2026-11-08-m1b-decoder\launch.ps1 -RunName <run_name> -Resume` |
+| Agents still working: beam re-tune (`experiments/2026-11-08-beam-retune/`, edits `src/fidetype/lm/`) and the keystroke sanity check (`experiments/2026-11-08-m1-sanity/`). Both are not committed yet | Check their folders | — | — |
 | Static server, http://localhost:8000 | `tasklist /FI "PID eq 50528"` or open the URL | `taskkill /PID 50528 /F` | `node tools/serve.js` (it stops at reboot) |
 
 Note: PIDs change after a restart. Note: `tools/serve.js` is tracked in git, so a fresh clone has it.
@@ -40,7 +41,9 @@ Note: PIDs change after a restart. Note: `tools/serve.js` is tracked in git, so 
   - Data loader + alignment: **done** (`src/fidetype/data/`, `tools/data/preprocess_spanishbcbl.py`). 81 typing blocks; 15570/15571 keys aligned; 224 unique sentences, split by sentence hash (184/16/24). Results: `experiments/2026-11-08-m1a-data/results.md`.
   - Char n-gram LM + CTC beam: **done** (`src/fidetype/lm/`). Simulator median CER 0.281 → 0.200. LM fusion makes the confidences over-confident. Results: `experiments/2026-11-08-lm-beam/results.md`.
   - Preprocessing cache: **running** in the background (see below).
-  - Conv + CTC decoder: an agent is training it now (`src/fidetype/decoders/`, `experiments/2026-11-08-m1b-decoder/`; not committed yet).
+  - Conv + CTC decoder: **code done** (`src/fidetype/decoders/`; our own ConvCTC, 10 M params, custom Conformer, causal mode via `lookahead_frames`). It emits NeuralTextStream. Results: `experiments/2026-11-08-m1b-decoder/results.md` and `wiki/questions/decoder-m1-results.md`.
+  - **Result:** 5 subjects (about 2.5 h of about 20 h): test greedy CER **0.670**. The shuffled-MEG control gives **0.669**, zeros 0.858. So the model uses a text prior, **not the MEG**. The M1 target (≈0.59) is **not met**. Always report the shuffled-MEG control with a CER.
+  - **Sanity check running:** keystroke-locked left/right-hand and char decoding (v1-style). Does the cache hold keystroke signal?
 - **M2 Trust core v0: done on the simulator** (`src/fidetype/trust/`, `src/fidetype/interact/`, `src/fidetype/eval/ewpm.py`, `src/fidetype/eval/harness.py`). Still open: provenance ledger v0, and a run on real decoder outputs. Results: `experiments/2026-11-08-m2-trust-sim/results.md` and `wiki/questions/trust-core-v0-results.md`.
 - **Revised Paper 1 claim:** "far fewer wrong and hallucinated commits for a small speed cost" (wrong commits 0.29–0.47 → 0.02–0.09; eWPM 7–16 % below LM top-1), not "higher eWPM".
 - **Scope decision (2026-11-08):** Fidetype targets an OpenTelemetry-level, vendor-neutral standard for neural input (EMG, EEG, MEG, implants). Research MEG stays the credibility base. See [direction-decision](wiki/questions/direction-decision.md).
@@ -52,8 +55,8 @@ Note: PIDs change after a restart. Note: `tools/serve.js` is tracked in git, so 
 
 ## Next steps
 1. **Re-tune the beam** (`prune_topk`, insertion bonus): an agent runs it now (`experiments/2026-11-08-beam-retune/`). With default settings, the n-best misses the truth in 73 % of lists.
-2. **Decoder results** (M1): an agent trains the conv + CTC decoder now. Get greedy and beam CER on the fixed splits. Then make the decoder emit NeuralTextStream.
-3. **Run the trust core on real decoder streams** (M2-10). This closes M2.
+2. **Decoder** (M1): wait for the sanity check. Then wait for the full cache (download + preprocessing) and **retrain on all subjects** (`config-real.json`, subjects `null`). In parallel: **low-data tuning** (smaller model, more dropout and masking), then cross-subject pretraining + per-subject fine-tune. Report beam CER after the beam re-tune. Report the shuffled-MEG control every time.
+3. **Run the trust core on real decoder streams** (M2-10). This closes M2. Streams exist now (`C:\Users\zhang\bci-data\streams\`), but the decoder does not use the MEG yet. The run is a good null-input test, not a real result.
 4. **First adapters** (M6), in priority order: LSL/BrainFlow, the Apple BCI HID bridge, Dryad CC0 replay.
 5. **Conformance test suite** for the spec (M5-10). The validator exists; the suite does not.
 6. **Move producers' `meta` keys** to the namespaced conventions before spec v0.2.
@@ -67,6 +70,25 @@ The Claude memory folder slug (`~/.claude/projects/C--Users-zhang-OneDrive-Docum
 3. Rename `~/.claude/projects/C--Users-zhang-OneDrive-Documents-GitHub-stealth-project` to `~/.claude/projects/C--Users-zhang-OneDrive-Documents-GitHub-fidetype` (keeps the memory notes and the session history).
 4. In `tools/session/snapshot.js`, change the `SLUG` constant to `C--Users-zhang-OneDrive-Documents-GitHub-fidetype`.
 5. Start Claude Code in the new folder. Run `node tools/session/snapshot.js` and check that `agent-memory/` is unchanged. Commit the script change.
+
+## Decoder commands (from experiments/2026-11-08-m1b-decoder/results.md)
+Launch (detached, hidden window; it outlives the session):
+
+```powershell
+.\experiments\2026-11-08-m1b-decoder\launch.ps1 -Config experiments\2026-11-08-m1b-decoder\config-real.json -RunName <run_name>
+```
+
+Check: `Get-Content C:\Users\zhang\bci-data\runs\<run_name>\status.json` and `Get-Content C:\Users\zhang\bci-data\runs\<run_name>\train.log -Tail 5`.
+
+Resume: `.\experiments\2026-11-08-m1b-decoder\launch.ps1 -RunName <run_name> -Resume`
+
+Inference, metrics and the MEG control (GPU env):
+
+```bash
+C:/venvs/fidetype-rocm/Scripts/python.exe -m fidetype.decoders.infer --run-dir C:/Users/zhang/bci-data/runs/<run_name>          # add --control for real/shuffled/zeros
+```
+
+ROCm notes: `MIOPEN_FIND_MODE=FAST` (set by train/infer), lengths padded to a multiple of 100 samples, `train.torch_threads = 4`. CPU contention with preprocessing slows training 10x or more. Details: `wiki/questions/compute-setup.md`.
 
 ## How to resume
 - In the repo folder, run `claude --continue`. Or start a new session and say "read HANDOFF.md".

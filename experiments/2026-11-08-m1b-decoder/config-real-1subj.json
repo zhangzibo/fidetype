@@ -1,0 +1,41 @@
+{
+  "run_name": "m1-baseline-2026-11-08-1subj",
+  "runs_dir": "C:/Users/zhang/bci-data/runs",
+  "data": {
+    "root": "C:/Users/zhang/bci-data/cache/spanishbcbl/v1",
+    "subjects": ["S25"],
+    "batch_size": 16,
+    "eval_batch_size": 16,
+    "num_workers": 0,
+    "augment": {
+      "start_jitter_s": 0.3,
+      "end_jitter_s": 0.1,
+      "channel_offset_std": 0.3,
+      "time_mask_n": 2,
+      "time_mask_max_s": 0.3,
+      "channel_mask_n": 1,
+      "channel_mask_max": 30,
+      "stretch_min": 0.9,
+      "stretch_max": 1.1
+    }
+  },
+  "model": {
+    "spatial_dim": 256,
+    "conv_dim": 320,
+    "conv_blocks": 5,
+    "model_dim": 256,
+    "conformer_layers": 4,
+    "conformer_heads": 4,
+    "conformer_ffn": 1024,
+    "conformer_kernel": 15,
+    "dropout": 0.2,
+    "input_dropout": 0.0,
+    "self_condition": true,
+    "lookahead_frames": null
+  },
+  "optim": {"lr": 5e-4, "weight_decay": 0.05, "betas": [0.9, 0.98], "warmup_steps": 300,
+            "min_lr_ratio": 0.02, "epochs": 150, "grad_clip": 1.0},
+  "train": {"seed": 0, "device": "cuda", "bf16": true, "ckpt_every_min": 5, "eval_every_epochs": 1,
+            "patience_evals": 25, "early_stop_metric": "val_cer_typed", "log_every_steps": 25,
+            "max_minutes": null}
+}

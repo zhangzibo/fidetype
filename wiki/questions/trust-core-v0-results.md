@@ -106,6 +106,7 @@ Source: [LM beam results](../../experiments/2026-11-08-lm-beam/results.md). LM: 
 - The hallucination result connects to [NeuroLLM](../concepts/neuro-llm.md): a strong language prior writes fluent text that the neural evidence does not support. The null-input audit is our direct test of this risk.
 
 ## Related pages
+- [Decoder M1 results](decoder-m1-results.md): the decoder-side shuffled-MEG control
 - [Architecture](architecture.md): the six layers, NeuralTextStream, effective WPM.
 - [Project plan](project-plan.md): M2 known gaps and the M3 revised claim.
 - [Error metrics](../concepts/error-metrics.md): CER, WER and why they disagree.

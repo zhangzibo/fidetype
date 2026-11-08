@@ -1,0 +1,25 @@
+{
+  "run_name": "m1b-synthetic-smoke",
+  "runs_dir": "C:/Users/zhang/bci-data/runs",
+  "data": {
+    "root": "C:/Users/zhang/bci-data/synthetic/spanishbcbl-v1",
+    "batch_size": 16,
+    "eval_batch_size": 16,
+    "num_workers": 0,
+    "augment": {}
+  },
+  "model": {
+    "spatial_dim": 256,
+    "conv_dim": 320,
+    "conv_blocks": 5,
+    "model_dim": 256,
+    "conformer_layers": 4,
+    "conformer_heads": 4,
+    "conformer_ffn": 1024,
+    "conformer_kernel": 15,
+    "dropout": 0.1
+  },
+  "optim": {"lr": 5e-4, "weight_decay": 0.05, "warmup_steps": 100, "epochs": 40, "grad_clip": 1.0},
+  "train": {"seed": 0, "device": "cuda", "bf16": true, "ckpt_every_min": 2, "patience_evals": 10,
+            "early_stop_metric": "val_cer_typed", "log_every_steps": 10, "max_minutes": 8}
+}

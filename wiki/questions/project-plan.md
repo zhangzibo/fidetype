@@ -77,14 +77,20 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 
 ## M1: Baseline decoder (target 11-09 → 11-11)
 - [x] SpanishBCBL data loader and alignment. *(done 2026-11-08: 81 typing blocks, 15570/15571 keys aligned, see [M1-A results](../../experiments/2026-11-08-m1a-data/results.md))*
-- [ ] Preprocess the SpanishBCBL cache (tSSS, 0.5–45 Hz, 100 Hz). *(running in the background)*
-- [ ] Write our own conv + [CTC](../concepts/ctc.md) decoder. Copy no Meta code.
-- [ ] Train it on SpanishBCBL MEG in offline (non-causal) mode first.
-- [ ] Make it emit NeuralTextStream.
+- [ ] Preprocess the SpanishBCBL cache (tSSS, 0.5–45 Hz, 100 Hz). *(running in the background: 10 of 47 blocks at 14:24 on 2026-11-08)*
+- [x] Write our own conv + [CTC](../concepts/ctc.md) decoder. Copy no Meta code. *(done 2026-11-08: `src/fidetype/decoders/`, 10.06 M params, causal mode via `lookahead_frames`)*
+- [x] Train it on SpanishBCBL MEG in offline (non-causal) mode first. *(done 2026-11-08: S25 only, and 5 subjects / about 2.5 h)*
+- [x] Make it emit NeuralTextStream. *(done 2026-11-08: `fidetype.decoders.infer`)*
 - [x] Add a character n-gram LM with beam search as a baseline. *(done 2026-11-08: 6-gram MKN + CTC prefix beam; simulator median CER 0.281 → 0.200, see [LM beam results](../../experiments/2026-11-08-lm-beam/results.md))*
-- [ ] Report greedy CER and beam CER on fixed splits.
+- [x] Report greedy CER and beam CER on fixed splits. *(done 2026-11-08: greedy test CER 0.670; shuffled-MEG control 0.669. See [decoder M1 results](decoder-m1-results.md). Beam CER follows the beam re-tune.)*
+- [ ] Sanity check: keystroke-locked hand/char decoding (v1-style). Does the cache hold keystroke signal? *(running)*
+- [ ] Retrain the decoder on the full cache (all subjects).
+- [ ] Low-data tuning: a smaller model, more dropout and masking.
+- [ ] Cross-subject pretraining, then a per-subject fine-tune.
 
 **Done when:** greedy CER approaches v2's async SpanishBCBL CER (≈0.59) or is better.
+
+**Status (2026-11-08):** the decoder code is done and emits NeuralTextStream. Best test greedy CER is 0.670 (5 subjects, about 2.5 h of about 20 h). The shuffled-MEG control gives 0.669, so the model does not use the MEG yet. The "done when" criterion is **not met**. See [decoder M1 results](decoder-m1-results.md).
 
 **Reference numbers.**
 - Brain2Qwerty v1 is keystroke-locked. Its MEG CER is 0.36 for Conv+Trans and 0.29 for the full model with LM ([v1](../sources/brain2qwerty-v1.md), Fig. 2).
@@ -221,6 +227,7 @@ The live status is in the [progress dashboard](../progress/index.html).
 - [Architecture](architecture.md)
 - [Compute setup](compute-setup.md)
 - [Trust core v0 results](trust-core-v0-results.md)
+- [Decoder M1 results](decoder-m1-results.md)
 - [Direction decision](direction-decision.md)
 - [Reading list](reading-list.md)
 - [Research directions](research-directions.md)

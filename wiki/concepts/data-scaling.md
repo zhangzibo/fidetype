@@ -3,7 +3,7 @@ title: Data scaling in non-invasive decoding
 type: concept
 tags: [scaling, data]
 sources: [brain2qwerty-v1, brain2qwerty-v2]
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # Data scaling
@@ -22,5 +22,7 @@ updated: 2026-11-07
 Invasive BCIs train on thousands of sentences over 10–40 h ([v2](../sources/brain2qwerty-v2.md), intro).
 
 > **Our take:** If the scaling holds, the bottleneck is data collection, which needs a scanner, rather than modelling. Without a lab, the levers we have are (a) making better use of existing data, through cross-subject and self-supervised pretraining on *all* public MEG, including non-typing datasets such as LibriBrain, and (b) arguing for a shared open data effort. Whether pretraining on public MEG from other tasks transfers to typing is an open question.
+
+> **Our take (2026-11-08):** Our first decoder, trained on about 2.5 h, does not beat a shuffled-MEG control ([decoder M1 results](../questions/decoder-m1-results.md)). This fits the scaling law: at low volume, the async decoder learns only the text prior.
 
 Related: [MEG](meg.md) · [Model soup](model-soup.md)

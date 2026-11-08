@@ -3,7 +3,7 @@ title: Error metrics for brain-to-text (HER, CER, WER, SemER)
 type: concept
 tags: [evaluation, metrics]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # Error metrics
@@ -21,6 +21,20 @@ updated: 2026-11-07
 - **Implementation quirk**: v1's *training-time* CER is computed per batch, not per sentence. The offline scripts compute it per sentence ([code](../sources/brain2qwerty-code.md)).
 - **Missing from both papers**: neither reports information transfer rate or characters/words per minute in a closed-loop setting. Both evaluate offline only.
 
-> **Our take:** Any work of ours should report all three (CER, WER, SemER). It should also add a **latency or streaming metric** once decoding becomes causal.
+## Control conditions
+
+A CER alone does not show that a model decodes the brain signal. A strong text prior can give a CER well below 1.0 with no neural input. So we report every CER next to two controls. The same trained model decodes each input.
+
+| Input | What it is | What it measures |
+|---|---|---|
+| **Real** | The MEG of the trial | Decoder performance |
+| **Shuffled** | The MEG of another trial in the same split | The text prior plus generic signal statistics (for example, segment length) |
+| **Zeros** | A flat (all-zero) input of the same length | The text prior alone, with no signal |
+
+- A model decodes the signal only if the real-input CER is clearly **below** the shuffled-input CER.
+- If real equals shuffled, the CER comes from the text prior. Example: our first M1 decoder got test CER 0.671 (real), 0.669 (shuffled) and 0.858 (zeros) ([decoder M1 results](../questions/decoder-m1-results.md)).
+- This is the same test as the null-input audit of the trust layer ([trust core v0 results](../questions/trust-core-v0-results.md#null-input-audit-median-t--10)). There, the trust policy must not commit text for shuffled or flat input.
+
+> **Our take:** Any work of ours should report all three (CER, WER, SemER). It should also add a **latency or streaming metric** once decoding becomes causal. It should always report the shuffled-input control next to CER.
 
 Related: [NeuroLLM](neuro-llm.md) · [CTC](ctc.md)

@@ -100,6 +100,15 @@ An earlier run in the same venv gave 14.30 ms (9.6 TFLOPS) fp32, 2.66 ms (51.7 T
 - **WSL was not tested.**
 - **uv hardlinks can fail.** On this machine, a hardlink from the uv cache failed with `os error 396`. The setup script sets `UV_LINK_MODE=copy` to avoid this.
 
+## Training notes from the M1-B decoder (2026-11-08)
+
+Source: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.md), "GPU memory and speed".
+
+- **MIOpen searches convolution kernels for each new input shape.** With variable segment lengths, the first run spent minutes per batch. Fix 1: set `MIOPEN_FIND_MODE=FAST`. `fidetype.decoders.train` and `infer` set it. Fix 2: pad the lengths to a multiple of 100 samples (`data.pad_multiple`). This gives few distinct shapes. The model masks the padding, so the outputs do not change.
+- **CPU contention slows the GPU by 10x or more.** Kernel dispatch needs CPU time. When preprocessing uses most of the 16 threads, a training step becomes very slow. Set `train.torch_threads = 4`, and do not run training at the same time as heavy preprocessing if you can avoid it.
+- **Fallback without MIOpen:** `FIDETYPE_CONV_IMPL=gemm` runs the convolutions as unfold + matmul. The result and the speed are the same. It uses about 70 % more memory, so the default stays `native`.
+- **Size:** the 10 M-parameter decoder uses 1.07 to 1.74 GB of GPU memory at batch 16, and an epoch takes 1.2 to 3.3 s on 1 to 5 subjects.
+
 ## How to use it
 
 Two environments exist. Each has one job:
@@ -141,3 +150,4 @@ The `fidetype` package is an editable install. Code changes in `src/fidetype` ta
 ## Related pages
 - [Architecture](architecture.md): the decoders that we train on this GPU.
 - [Project plan](project-plan.md)
+- [Decoder M1 results](decoder-m1-results.md)

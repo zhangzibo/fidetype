@@ -73,6 +73,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Project plan](questions/project-plan.md) | Milestones M0–M7 with targets (M0 by 11-09, M1–M7 by 11-15), tasks, "done when" criteria, timeline policy, risks, working process |
 | [Open-source playbook](questions/open-source-playbook.md) | How Fidetype grows: OTel/BIDS for the standard, SGLang for credibility, LangChain for the company. Stages 0–5, cheap actions now, risks |
 | [Compute setup](questions/compute-setup.md) | GPU path: native Windows ROCm 7.2.1 + torch 2.9.1 on the RX 7800 XT. Short venv path (MAX_PATH). Benchmarks, caveats, usage |
+| [Decoder M1 results](questions/decoder-m1-results.md) | 2026-11-08 first real decoder runs: test CER 0.670 equals the shuffled-MEG control 0.669, so no MEG use yet. Target 0.59 not met. Always report the control |
 | [Trust core v0 results](questions/trust-core-v0-results.md) | 2026-11-08 simulator run: trust policy cuts wrong commits 0.29–0.47 → 0.02–0.09 for a 7–16 % eWPM cost. LM fusion breaks calibration. Revised Paper 1 claim |
 
 ## Experiments
@@ -81,4 +82,5 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [SpanishBCBL inspection, S25](../experiments/2026-11-08-inspect-spanishbcbl/results.md) | S25 loads in MNE. Head digitisation present. Key triggers aligned to the log (<1 ms) with a per-block drift fit | 2026-11-08 |
 | [M1-A data layer, SpanishBCBL cache](../experiments/2026-11-08-m1a-data/results.md) | Loader + preprocessing cache. 81 typing blocks. 15570/15571 keys aligned. tSSS removes the 23.3 Hz peak. 224 sentences, hash split | 2026-11-08 |
 | [CTC beam + 6-gram char LM](../experiments/2026-11-08-lm-beam/results.md) | Simulator: median CER 0.281 → 0.200 with the LM. 91 ms/sentence. Fused confidences over-confident | 2026-11-08 |
+| [M1-B conv + CTC decoder](../experiments/2026-11-08-m1b-decoder/results.md) | Own ConvCTC (10 M params, custom Conformer, causal-capable). 5 subjects, 2.5 h: test CER 0.670 vs shuffled-MEG 0.669, zeros 0.858. ROCm fixes | 2026-11-08 |
 | [Trust core on the simulator (M2)](../experiments/2026-11-08-m2-trust-sim/results.md) | eWPM, wrong-commit, calibration, conformal, guard, null-input audit, ablations over 9 simulator conditions | 2026-11-08 |
