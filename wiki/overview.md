@@ -34,6 +34,8 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 
 ## Project direction
 On 2026-11-07 we chose **trustworthy neural text entry**. On 2026-11-08 the user named the project **Fidetype** (package `fidetype`). We build a layer that makes text from any neural decoder reliable: it calibrates confidence, abstains or asks when it is not sure, offers n-best choices, guards against LLM hallucination, and works in real time.
+
+On 2026-11-08 the user widened the scope to an OpenTelemetry-level project. Fidetype now aims to be **the vendor-neutral standard and trust layer for neural input**: text or intent decoded from wrist EMG, EEG, MEG/OPM-MEG or implants. NeuralTextStream becomes a modality-agnostic and vocabulary-agnostic spec ([spec v0.1](../spec/neuraltextstream-v0.1.md)), and adapters for every modality are first-class. Research MEG stays the credibility base and the hardest test case for Paper 1. Success is the number of decoders and devices that emit NeuralTextStream. The user accepts a multi-year horizon and the need for outside partners ([scope decision](questions/direction-decision.md#scope-decision-2026-11-08-neural-input-opentelemetry-level)).
 - The decision and the evidence: [direction-decision](questions/direction-decision.md).
 - The six-layer design and the roadmap: [architecture](questions/architecture.md).
 - Project plan: milestones M0–M7, tasks, risks and the working process: [project-plan](questions/project-plan.md).

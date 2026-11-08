@@ -1,8 +1,8 @@
 ---
 title: Project plan — trustworthy neural text entry
 type: question
-tags: [planning, roadmap, milestones, risks, process]
-sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
+tags: [planning, roadmap, milestones, risks, process, scope]
+sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, neural-input-landscape-2026]
 updated: 2026-11-08
 ---
 
@@ -18,6 +18,8 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - The papers to read first: [reading list, "Start here"](reading-list.md#start-here-reading-order).
 - The timeline diagram: `09-milestones` on [the diagram page](../diagrams/index.html#s9).
 - The actual progress: [progress dashboard](../progress/index.html).
+
+**Scope (2026-11-08).** The user widened the scope. Fidetype is now the vendor-neutral standard and trust layer for **neural input** from any device: wrist EMG, EEG, MEG/OPM-MEG and implants. It is an OpenTelemetry-level project. Research MEG stays the credibility base and the test case for Paper 1. The user accepts a multi-year horizon and the need for outside partners, people and funding. The targets below apply to building the code, not to adoption. Details: [scope decision](direction-decision.md#scope-decision-2026-11-08-neural-input-opentelemetry-level).
 
 **Targets (set by the user on 2026-11-08):** M0 is done by 2026-11-09. M1–M7 are done by 2026-11-15. Items that depend on outside people are not in these targets. See [Timeline policy](#timeline-policy-2026-11-08).
 
@@ -147,12 +149,18 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [ ] Publish the harness, the metrics and fixed splits.
 - [ ] Publish a leaderboard.
 - [ ] Make NC dataset loaders download-only. Ship no data and no weights.
+- [ ] Publish NeuralTextStream spec v0.1 ([spec](../../spec/neuraltextstream-v0.1.md)).
+- [ ] Publish a conformance test suite: a decoder or device passes it when its output is valid NeuralTextStream.
 
 **Open-source growth.** The benchmark release is the launch moment (Stage 1) of the [open-source playbook](open-source-playbook.md). That page lists the launch steps, the cheap repo actions (CONTRIBUTING, CoC, GOVERNANCE, CITATION.cff) and the path to a standard.
 
 ## M6: Device adapters (target 11-14 → 11-15)
-- [ ] Add Lab Streaming Layer (LSL) input.
-- [ ] Add adapters for consumer EMG/EEG devices.
+- [ ] Add adapters in priority order ([adapter priority](architecture.md#adapter-priority-2026-11-08), set on 2026-11-08 from the [neural input landscape report](../sources/neural-input-landscape-2026.md#top-adapters)). Each adapter emits NeuralTextStream.
+  1. [ ] **LSL ⇄ NTS bridge plus a [BrainFlow](../entities/brainflow.md) source** (EEG and other boards). Both are MIT.
+  2. [ ] **NTS → [Apple BCI HID](../entities/apple-bci-hid.md) bridge, and an HID-report → NTS logger** (implants; Synchron first).
+  3. [ ] **Offline replay of the [Dryad intracortical datasets](../entities/dryad-intracortical-datasets.md)** (CC0). This data enables commercially clean evaluation of the trust layer on real decoded text.
+  4. [ ] Follow-ups: Neurosity and Emotiv adapters (probability-like scores); a Meta Web Apps shim with `score_semantics=none` ([Meta Neural Band](../entities/meta-neural-band.md)).
+  5. [ ] Research only: replay [emg2qwerty](../entities/emg2qwerty.md) (CC BY-NC: no product weights).
 - [ ] Collect our own consented data. Product weights need it. *(externally blocked: ethics approval and volunteers)*
 - [ ] Test effective WPM with real users. *(externally blocked: volunteers)*
 
@@ -194,6 +202,7 @@ We do not schedule these. We review them when M3 is done.
 | Open benchmark | v0.1 released |
 | External use | At least 1 external user or citation |
 | Demo | Works on at least one real-device stream |
+| Spec adoption | ≥1 decoder outside the project emits NeuralTextStream |
 
 ## M0 status (target 2026-11-09)
 The live status is in the [progress dashboard](../progress/index.html).

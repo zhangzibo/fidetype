@@ -29,6 +29,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Case study: SGLang](sources/case-study-sglang.md) | Lab project (LMSYS). Paper + reproducible benchmarks + day-0 model support. 38,583 stars. Spin-out RadixArk | 2026-11 |
 | [Case study: LangChain](sources/case-study-langchain.md) | Side project → open-core company. Integrations first. 149,213 stars. Criticised for abstraction and churn | 2026-11 |
 | [Case study: OpenTelemetry](sources/case-study-opentelemetry.md) | Merged rival standards. Vendor-neutral spec, company-capped governance. CNCF Graduated 2026-05-21. BCI standards gap | 2026-11 |
+| [Neural input landscape 2026](sources/neural-input-landscape-2026.md) | Devices, SDKs, standards, regulation. No standard for decoded neural output with confidence. Closest: Apple BCI HID, W3C EMMA. Adapter priority. Data and regulatory warnings | 2026-11 |
 
 ## Concepts
 | Page | Summary |
@@ -52,10 +53,15 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [BCBL](entities/bcbl.md) | Basque lab that recorded and owns the data |
 | [SpanishBCBL dataset](entities/spanishbcbl-dataset.md) | v1 data. Public (HF, not gated), CC BY-NC 4.0, ~268 GB MEG. The only public typing-MEG set we know of. Inspection findings for M1 |
 | [EnglishBCBL dataset](entities/englishbcbl-dataset.md) | v2 data. 90 h MEG. Embargoed |
-| [emg2qwerty](entities/emg2qwerty.md) | *Stub.* Meta's public wrist-EMG typing dataset. Template for causal decoding |
+| [emg2qwerty](entities/emg2qwerty.md) | *Partial.* Meta's public wrist-EMG typing dataset. CC-BY-NC-4.0, HDF5 at 2 kHz. Sibling Meta EMG sets are also NC. Template for causal decoding |
 | [BIDS](entities/bids.md) | Brain Imaging Data Structure. Community data standard. Model for NeuralTextStream governance. Bridge, not rival |
 | [Lab Streaming Layer](entities/lab-streaming-layer.md) | De facto real-time lab streaming tool (SCCN/UCSD). Raw signals, not decoder output |
-| [IEEE P2731](entities/ieee-p2731.md) | Draft IEEE BCI terminology standard. Authorised 2018, unpublished. No stream format |
+| [IEEE P2731](entities/ieee-p2731.md) | Draft IEEE BCI terminology standard. Authorised 2018, unpublished. No stream format. Related venues: ISO/IEC SC 43, TS 27571 |
+| [Apple BCI HID](entities/apple-bci-hid.md) | Apple's BCI HID reference (Usage Page 0x60). Strength, buttons, pointer, scan context. No text, no n-best. Closest neural standard |
+| [W3C EMMA](entities/w3c-emma.md) | W3C multimodal annotation (1.0 Rec 2009). Confidence, n-best, timestamps. Closest non-neural precedent |
+| [Meta Neural Band](entities/meta-neural-band.md) | Consumer wrist sEMG. Web Apps get DOM events only. No raw EMG, no scores |
+| [BrainFlow](entities/brainflow.md) | MIT library. Uniform raw-data API across many boards. Adapter priority 1 with LSL |
+| [Dryad intracortical datasets](entities/dryad-intracortical-datasets.md) | CC0. Willett 2021 handwriting, Brain-to-Text '24/'25. The only commercially clean decoded-text data found |
 
 ## Questions
 | Page | Summary |

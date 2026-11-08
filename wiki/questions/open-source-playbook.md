@@ -10,6 +10,8 @@ updated: 2026-11-08
 
 **Question asked:** How does Fidetype grow as an open-source project, and how does it become the standard for trustworthy neural text entry?
 
+> **Status (2026-11-08):** The user chose the OpenTelemetry-level target on 2026-11-08: Fidetype aims to be the vendor-neutral standard and trust layer for neural input from any modality ([scope decision](direction-decision.md#scope-decision-2026-11-08-neural-input-opentelemetry-level)). Cheap actions done 2026-11-08 (commit 677ba0e). Only the GitHub Pages site is still open ([cheap actions](#cheap-actions-now)).
+
 **Diagram:** `10-open-source-path` on [the diagram page](../diagrams/index.html#s10).
 
 **Case studies:** [SGLang](../sources/case-study-sglang.md), [LangChain](../sources/case-study-langchain.md), [OpenTelemetry](../sources/case-study-opentelemetry.md) (with BIDS).
@@ -41,7 +43,7 @@ Diagram 10 shows these stages from left to right.
 ### Stage 0: Credibility core (now → Paper 1)
 Borrows from: SGLang (paper + benchmarks), OpenTelemetry (spec + stability levels), LangChain (lesson: no churn).
 - [ ] Paper 1 with a reproducible benchmark harness ([project plan, M3](project-plan.md#m3-paper-1-calibrated-abstaining-brain-to-text-target-11-11--11-13)).
-- [ ] NeuralTextStream spec v0.1 as a document, with stability levels.
+- [x] NeuralTextStream spec v0.1 as a document, with stability levels. *(done 2026-11-08: [spec/neuraltextstream-v0.1.md](../../spec/neuraltextstream-v0.1.md), commit 677ba0e)*
 - [ ] A validator and conformance tests. *(Partly there: `fidetype.streams` already validates streams.)*
 - [ ] A small, stable core API with semver from day one.
 - [ ] No hidden prompts or magic. Everything is inspectable.
@@ -122,16 +124,16 @@ Borrows from: LangChain (open core), SGLang (non-profit project first, company s
 | Adoption by at least one device maker | The path to the company stage |
 
 ## Cheap actions now
-Low effort, high signal. **None of these is done yet** (2026-11-08).
-- [ ] `CONTRIBUTING.md`
-- [ ] `CODE_OF_CONDUCT.md` (Contributor Covenant)
-- [ ] `GOVERNANCE.md`: founder-led now, with a written path to neutral governance
-- [ ] `SECURITY.md`
-- [ ] `spec/neuraltextstream-v0.1.md`, with stability levels
-- [ ] Issue and PR templates
-- [ ] A public roadmap issue
-- [ ] GitHub Discussions
-- [ ] A `CITATION.cff` file
+Low effort, high signal. **All done on 2026-11-08 (commit 677ba0e), except the project site.**
+- [x] [`CONTRIBUTING.md`](../../CONTRIBUTING.md)
+- [x] [`CODE_OF_CONDUCT.md`](../../CODE_OF_CONDUCT.md) (Contributor Covenant)
+- [x] [`GOVERNANCE.md`](../../GOVERNANCE.md): founder-led now, with a written path to neutral governance
+- [x] [`SECURITY.md`](../../SECURITY.md)
+- [x] [`spec/neuraltextstream-v0.1.md`](../../spec/neuraltextstream-v0.1.md), with stability levels
+- [x] Issue and PR templates ([`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/), [`PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUEST_TEMPLATE.md))
+- [x] A public roadmap issue ([#1](https://github.com/zhangzibo/fidetype/issues/1))
+- [x] GitHub Discussions
+- [x] A [`CITATION.cff`](../../CITATION.cff) file
 - [ ] A project site, later (GitHub Pages)
 
 > **Our take:** A CoC and a governance document are entry rules for NumFOCUS and the foundations ([OpenTelemetry case study](../sources/case-study-opentelemetry.md#foundation-path)). Writing them now costs an hour and removes a later blocker.

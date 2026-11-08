@@ -1,9 +1,9 @@
 ---
 title: Direction decision — trustworthy neural text entry
 type: question
-tags: [planning, decision, directions, licence, market]
-sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-07
+tags: [planning, decision, directions, licence, market, scope, standard]
+sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, case-study-opentelemetry, neural-input-landscape-2026]
+updated: 2026-11-08
 ---
 
 # Direction decision (2026-11-07)
@@ -53,6 +53,53 @@ We did three research checks on 2026-11-07.
 - **Rule:** keep a provenance ledger that records which data trained which weights.
 
 > **Our take:** The trust layer helps here. Much of it (calibration, policy, simulator, metrics) needs little or no neural training data. So the product part depends less on NC data than a decoder would.
+
+## Scope decision (2026-11-08): neural input, OpenTelemetry-level
+**Question asked:** How big is the project?
+
+### The decision
+On 2026-11-08 the user decided that Fidetype is a big project, at the level of OpenTelemetry ([OpenTelemetry case study](../sources/case-study-opentelemetry.md)).
+
+| | Scope |
+|---|---|
+| **From** | A trust layer for research brain-to-text (MEG). |
+| **To** | **The vendor-neutral standard and trust layer for neural input.** |
+
+"Neural input" means text or intent that a decoder gets from any neural or biosignal device:
+- consumer wrist EMG (for example, Meta Neural Band),
+- EEG headsets,
+- MEG and OPM-MEG ([OPM-MEG](../concepts/opm-meg.md)),
+- implants (Synchron, Neuralink and others), through interfaces such as Apple's BCI HID protocol.
+
+Research MEG ([SpanishBCBL](../entities/spanishbcbl-dataset.md)) stays the credibility base. It is also the hardest test case for Paper 1. The ceiling of the project comes from consumer neural input.
+
+### Reasons
+1. **Market ceiling.** Consumer EMG, EEG and implant input is a much larger market than research MEG.
+2. **No standard exists.** We know of no standard for decoded output with confidence.
+3. **The standards gap is open.** IEEE P2731 (a BCI standard project) started in 2018. It has no published standard.
+
+**Novelty check (2026-11-08).** A landscape search confirmed reason 2 ([neural input landscape report](../sources/neural-input-landscape-2026.md#novelty-verdict)). No standard for decoded neural output with confidence exists. Existing work covers raw data (BIDS, ISO/IEC TS 27571, NWB), transport (LSL/XDF), terminology (IEEE P2731, P2794) and vendor control. The closest are:
+- [Apple BCI HID](../entities/apple-bci-hid.md): the closest neural standard. It has a strength byte, buttons and a pointer, but no text, no n-best and no provenance.
+- [W3C EMMA 1.0](../entities/w3c-emma.md): the closest non-neural precedent. It has confidence, n-best lists and timestamps, but not for neural input.
+
+The positioning is: **NTS = "EMMA for neural input, OpenTelemetry-style".**
+
+### Implications
+1. **NeuralTextStream becomes modality-agnostic and vocabulary-agnostic.** A stream can carry chars, keys, words, phonemes or commands. The spec gets OTel-style semantic conventions, for example `device.modality` and `decoder.causal`. Spec v0.1: [neuraltextstream-v0.1.md](../../spec/neuraltextstream-v0.1.md).
+2. **Adapters for all modalities are first-class.** EMG, EEG and implants get adapters, not only MEG ([architecture](architecture.md)).
+3. **Governance.** The project is founder-led now. A written path leads to neutral governance and a foundation (LF AI & Data or NumFOCUS). See GOVERNANCE.md in the repo root ([open-source playbook](open-source-playbook.md)).
+4. **Success metric.** We count the decoders and devices that emit NeuralTextStream. We do not count stars.
+5. **Licence-clean data is more important now.** Product weights need CC0 or CC BY data, or our own data. The EMG dataset [emg2qwerty](../entities/emg2qwerty.md) is CC BY-NC, so it is for research only ([licence trap](#3-the-licence-trap)).
+6. **Time and resources.** The user accepts that this takes years. It also needs outside partners, people and funding. The 1-week targets in the [project plan](project-plan.md) apply to building the code, not to adoption.
+
+### Risks
+| Risk | Effect | Mitigation |
+|---|---|---|
+| **Spread too thin** | One developer cannot build adapters for every modality. | Research MEG and Paper 1 come first. Add adapters one at a time: EMG first. Ask device makers to write their own adapters against the spec. |
+| **Data licences** | Most public neural typing data is NC. | Provenance ledger. CC0/CC BY data or own consented data for product weights. |
+| **Big players build their own** | Meta, Apple or an implant company can define their own format. | Stay vendor-neutral. Make adoption cheap (a small spec, adapters, a conformance test suite). Offer the spec to a neutral foundation. |
+
+> **Our take:** The wide scope changes the target, not the first steps. The code for Paper 1 (MEG, trust core, benchmark) is the same. The difference is that every interface must now work for any modality and any vocabulary. The largest risk is adoption: a spec has value only when other people emit it. So the first external decoder that emits NeuralTextStream is a more important milestone than any feature.
 
 ## Rejected or deferred options
 | Option | Status | Reason |
