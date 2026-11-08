@@ -1,0 +1,56 @@
+name: Adapter request
+description: Propose an adapter for a neural device or a decoder.
+title: "[adapter] "
+labels: ["adapter"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An adapter turns the output of a device or a decoder into a NeuralTextStream. See [CONTRIBUTING.md, section 7](https://github.com/zhangzibo/fidetype/blob/main/CONTRIBUTING.md#7-adapters-add-a-decoder-or-a-device).
+        Do not attach datasets, raw recordings or personal data.
+  - type: input
+    id: target
+    attributes:
+      label: Device or decoder
+      description: Name, maker and a link.
+    validations:
+      required: true
+  - type: dropdown
+    id: modality
+    attributes:
+      label: Modality
+      options:
+        - emg
+        - eeg
+        - meg
+        - opm-meg
+        - ecog
+        - intracortical
+        - fnirs
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output format
+      description: What does the device or decoder output today? For example, per-frame log-probabilities, class probabilities, discrete events with a "power" score, text. Give the vocabulary, the frame rate and the transport (LSL, SDK, file).
+    validations:
+      required: true
+  - type: textarea
+    id: licence
+    attributes:
+      label: Licence of any data
+      description: The licence of any example data or dataset that the adapter needs (for example, CC0, CC BY, CC BY-NC). Write "none" if no data is needed.
+    validations:
+      required: true
+  - type: dropdown
+    id: owner
+    attributes:
+      label: Can you maintain this adapter?
+      options:
+        - "Yes, I can own it"
+        - "I can help"
+        - "No"
+    validations:
+      required: true

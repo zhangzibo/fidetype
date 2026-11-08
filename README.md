@@ -105,6 +105,14 @@ data/         local datasets (git-ignored, never committed)
 ## Research notes
 The [wiki/](wiki/) folder is an LLM-maintained knowledge base. It follows Andrej Karpathy's [LLM-wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). The human selects the sources and asks the questions. An LLM agent writes and maintains the pages. Start at [wiki/overview.md](wiki/overview.md) or [wiki/index.md](wiki/index.md).
 
+## Project goals and governance
+- **Goal:** become the vendor-neutral standard for the confidence of neural input. Any decoder, on any device, emits one open format. Any consumer can read and check it.
+- **Spec:** the NeuralTextStream format is a written spec in [spec/](spec/) (v0.1, Development). Changes go through FEPs (Fidetype Enhancement Proposals).
+- **Governance:** founder-led today, with a written path to neutral governance and a foundation home: [GOVERNANCE.md](GOVERNANCE.md).
+- **Contribute:** [CONTRIBUTING.md](CONTRIBUTING.md). All participants follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
+
+**Cite:** if you use Fidetype, cite it with the metadata in [CITATION.cff](CITATION.cff) (GitHub shows a "Cite this repository" button).
+
 ## Acknowledgements
 Fidetype is inspired by Meta FAIR's [Brain2Qwerty](https://facebookresearch.github.io/brain2qwerty/) research. Fidetype is an independent project. It is **not affiliated with or endorsed by Meta**.
 

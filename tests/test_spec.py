@@ -74,3 +74,74 @@ def test_npz_round_trip(tmp_path):
     assert r.source == "test"
     assert r.meta == {"subject": "s01", "settings": {"a": 1}}
     assert r.version == "0.1"
+
+
+# --- spec v0.1 document fields (vocab_type, spec_version, optional fields) --
+
+
+def test_new_fields_have_backward_compatible_defaults():
+    s = _stream()
+    assert s.vocab_type == "char"
+    assert s.spec_version == "0.1" == s.version
+    assert s.frame_period is None and s.latency is None
+
+
+def test_non_ctc_word_vocab():
+    lp = np.log(np.full((3, 4), 0.25))
+    s = NeuralTextStream(
+        lp, np.arange(3) * 0.5, ["yes", "no", "help", "stop"], blank_id=None,
+        source="test", vocab_type="command", frame_period=0.5, latency=0.1,
+    )
+    assert s.blank_id is None and s.vocab_type == "command"
+
+
+@pytest.mark.parametrize(
+    "kw, msg",
+    [
+        (dict(vocab_type="emoji"), "vocab_type"),
+        (dict(frame_period=0.0), "frame_period"),
+        (dict(latency=-0.1), "latency"),
+        (dict(latency=float("nan")), "latency"),
+    ],
+)
+def test_invalid_new_fields(kw, msg):
+    with pytest.raises(ValueError, match=msg):
+        _stream(**kw)
+
+
+def test_npz_round_trip_new_fields(tmp_path):
+    s = _stream(vocab_type="key", blank_id=None, frame_period=0.04, latency=0.2)
+    path = tmp_path / "stream.npz"
+    s.to_npz(path)
+    r = NeuralTextStream.from_npz(path)
+    assert r.vocab_type == "key"
+    assert r.blank_id is None
+    assert r.frame_period == 0.04 and r.latency == 0.2
+
+
+def test_npz_layout_without_optional_keys(tmp_path):
+    path = tmp_path / "stream.npz"
+    _stream().to_npz(path)
+    with np.load(path, allow_pickle=False) as z:
+        assert sorted(z.files) == sorted(
+            ["version", "log_probs", "frame_times", "vocab", "vocab_type", "blank_id", "source", "meta_json"]
+        )
+
+
+def test_from_npz_reads_old_files(tmp_path):
+    """A file from before vocab_type existed loads with the defaults."""
+    s = _stream()
+    path = tmp_path / "old.npz"
+    np.savez_compressed(
+        path,
+        version=np.array("0.1"),
+        log_probs=s.log_probs,
+        frame_times=s.frame_times,
+        vocab=np.array(s.vocab, dtype=np.str_),
+        blank_id=np.array(0, dtype=np.int64),
+        source=np.array("old"),
+        meta_json=np.array("{}"),
+    )
+    r = NeuralTextStream.from_npz(path)
+    assert r.vocab_type == "char" and r.blank_id == 0 and r.spec_version == "0.1"
+    assert r.frame_period is None and r.latency is None

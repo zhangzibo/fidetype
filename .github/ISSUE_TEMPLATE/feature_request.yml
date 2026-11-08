@@ -1,0 +1,38 @@
+name: Feature request
+description: Propose a new feature or an improvement.
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A change to a spec in `spec/` needs a FEP. See [CONTRIBUTING.md](https://github.com/zhangzibo/fidetype/blob/main/CONTRIBUTING.md#8-spec-changes-feps). You can use this issue to discuss the idea first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Which problem does the feature solve? Who needs it?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the feature.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Other solutions that you considered. Does another standard (LSL, BIDS, EMMA, HID) already solve it?
+  - type: dropdown
+    id: spec
+    attributes:
+      label: Does this change a spec?
+      options:
+        - "No"
+        - "Yes (a FEP is needed)"
+        - "Not sure"
+    validations:
+      required: true

@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a problem in the Fidetype code or the spec.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for the report. Do not report security problems here. Use [SECURITY.md](https://github.com/zhangzibo/fidetype/blob/main/SECURITY.md).
+        Do not attach datasets, raw recordings or personal data.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Describe the problem. Include the full error message.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: A minimal code example. Use synthetic data or the simulator.
+      render: python
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Fidetype version or commit
+      placeholder: "0.0.1 or a commit hash"
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "OS, Python version, CPU or GPU (CUDA / ROCm)"

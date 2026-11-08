@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use Fidetype, please cite it with the metadata in this file."
+type: software
+title: "Fidetype: an open trust layer for neural text entry"
+abstract: >-
+  Fidetype is an open, decoder-agnostic trust layer for neural text entry.
+  It defines the NeuralTextStream format for the output of any neural input
+  decoder, and it calibrates, abstains and flags hallucinated text.
+authors:
+  - alias: zhangzibo
+repository-code: "https://github.com/zhangzibo/fidetype"
+url: "https://github.com/zhangzibo/fidetype"
+license: Apache-2.0
+version: 0.0.1
+date-released: "2026-11-08"
+keywords:
+  - brain-computer interface
+  - neural decoding
+  - text entry
+  - calibration
+  - uncertainty
