@@ -17,6 +17,7 @@ updated: 2026-11-08
 - The M1 target (greedy CER near 0.59, the v2 async encoder on SpanishBCBL with all data) is **not met**.
 - The main suspect is data volume: about 2.5 h of roughly 20 h. The sanity check (2026-11-08) shows that the cache holds keystroke signal: linear hand decoding reaches 0.83–0.96 (chance 0.60).
 - **Update (2026-11-08, M1-C):** a [keystroke auxiliary loss](#ctc-decoder--keystroke-auxiliary-loss-m1-c-2026-11-08) makes the async CTC decoder use the MEG. Shuffled-MEG gap +0.116 to +0.156 CER (CI excludes 0). Best test CER 0.619. The 0.59 target is still not met.
+- **Update (2026-11-08, M1-C2):** the [beam + char LM](#m1-c2-beam--char-lm-on-the-r4b-streams-2026-11-08), tuned on val, gives test CER **0.590** [0.576, 0.604] on the r4b streams. Shuffled-MEG gap +0.132 (CI excludes 0). Greedy CER is still 0.619.
 - **Update (2026-11-08):** a [synchronous keystroke decoder](#synchronous-keystroke-decoder-2026-11-08) (oracle key timing) does use the MEG: test key accuracy 0.390 (controls 0.10–0.11), greedy CER 0.59 (controls 0.77).
 
 Full details: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.md).
@@ -134,6 +135,25 @@ Source: [M1-C results](../../experiments/2026-11-08-m1c-decoder-aux/results.md).
 
 > **Our take:** The keystroke heads read 38–44 % of keys from real MEG. This is close to the [sanity check](#sanity-check-2026-11-08-signal-present) letter window (0.31–0.49) and the [synchronous keystroke decoder](#synchronous-keystroke-decoder-2026-11-08) (0.390).
 
+### M1-C2: beam + char LM on the r4b streams (2026-11-08)
+Source: [M1-C2 results](../../experiments/2026-11-08-m1c2-beam-lm/results.md).
+
+- **Setting:** `RETUNED` beam (beam 256, 20-best, no top-k cut) + Spanish Tatoeba 6-gram char LM, on the r4b streams. `lm_weight` and `insertion_bonus` tuned on real-MEG val only. Test decoded once.
+- **Controls:** shuffled MEG and zeros, CPU re-run of the r4b checkpoint (same derangement as M1-C).
+
+| decoder (test, 209 sentences) | real MEG [95 % CI] | shuffled MEG | zeros | gap shuffled − real [95 % CI] |
+|---|---|---|---|---|
+| greedy | 0.619 [0.607, 0.632] | 0.775 | 1.000 | +0.156 [+0.141, +0.171] |
+| beam, no LM | 0.605 [0.592, 0.618] | 0.745 | 0.844 | +0.140 [+0.125, +0.156] |
+| beam + LM, RETUNED as is (w 1.25, bonus 1.0) | 0.633 [0.618, 0.647] | 0.783 | 0.828 | +0.150 [+0.133, +0.167] |
+| **beam + LM, val-tuned (w 0.25, bonus 1.0)** | **0.590** [0.576, 0.604] | 0.723 | 0.765 | **+0.132** [+0.117, +0.147] |
+
+- Val CER (same rows): 0.605, 0.591, 0.613, 0.570.
+- Val-tuned beam vs greedy (test, paired): −0.029 [−0.037, −0.021]. The true sentence is never in the 20-best.
+- The RETUNED weight 1.25 makes CER worse (+0.013): the LM writes short, fluent, wrong Spanish.
+
+> **Our take:** Test CER 0.590 with beam + LM reaches the M1 number (≈ 0.59), and the decoder still uses the MEG (gap CI excludes 0). But the v2 target is a greedy CER. Our greedy CER is still 0.619. Report this as "0.59 with beam + LM", not as the M1 target met.
+
 **Process-exit hang fixed.** On ROCm/Windows, a process that ran MIOpen convolutions does not end after `sys.exit`. It spins one CPU core. `train.hard_exit()` calls `TerminateProcess`. See [compute setup](compute-setup.md).
 
 **Resolved (2026-11-08):** S1 and S18 are one person (P01), as the dataset card says. The 11 subject IDs are 10 participants. No train/test leakage (splits are by sentence). Test mean CER over participants differs from the mean over subject IDs by at most 0.003 (r4b 0.621). See [SpanishBCBL repeated participants](spanishbcbl-repeated-participants.md).
@@ -141,13 +161,13 @@ Source: [M1-C results](../../experiments/2026-11-08-m1c-decoder-aux/results.md).
 ## Next steps
 - [x] **Sanity check:** keystroke-locked left/right-hand and character decoding with a linear model, v1-style. Signal present ([above](#sanity-check-2026-11-08-signal-present)).
 - [x] **CTC decoder + keystroke auxiliary loss** ([above](#ctc-decoder--keystroke-auxiliary-loss-m1-c-2026-11-08)): the decoder now uses the MEG; best test CER 0.619.
-- [ ] **M1-C follow-ups:** 3 seeds for r1, r2 and r4b; the `RETUNED` beam + char LM on the r4b streams; re-run r4a/r4b on the full cache; try other read-out shifts and pooling.
+- [ ] **M1-C follow-ups:** 3 seeds for r1, r2 and r4b; ~~the `RETUNED` beam + char LM on the r4b streams~~ (done, M1-C2: test CER 0.590); re-run r4a/r4b on the full cache; try other read-out shifts and pooling.
 - [x] **Keystroke-synchronous decoder + trust core on real MEG** ([above](#synchronous-keystroke-decoder-2026-11-08)).
 - [ ] **Sentence-context keystroke decoder** (Transformer over key embeddings, v1 Conv+Trans style).
 - [ ] **Retrain on the full cache** (all subjects) when preprocessing and the download are complete (`config-real.json`, subjects `null`).
 - [x] **Low-data tuning:** a smaller model, more dropout and time masking, fewer Conformer layers. *(M1-C r1: 3.54 M params; alone it does not help, test CER 0.684, gap −0.002)*
 - [ ] **Cross-subject pretraining** and a per-subject fine-tune (joint training was best in v2, Table 1).
-- [ ] Beam CER with the char LM, after the beam re-tune, for the CTC decoder. Report it with the same controls. (Keystroke decoder: done, 0.531.)
+- [x] Beam CER with the char LM, after the beam re-tune, for the CTC decoder. Report it with the same controls. (Keystroke decoder: 0.531. CTC r4b: 0.590, gap +0.132; [M1-C2](#m1-c2-beam--char-lm-on-the-r4b-streams-2026-11-08).)
 
 ## ROCm / MIOpen notes
 - MIOpen searches kernels for each new input shape. Fixes: `MIOPEN_FIND_MODE=FAST` and lengths padded to a multiple of 100 samples.
@@ -159,6 +179,7 @@ Details: [compute setup](compute-setup.md#training-notes-from-the-m1-b-decoder-2
 ## Related pages
 - [M1-B decoder experiment](../../experiments/2026-11-08-m1b-decoder/results.md)
 - [M1-C keystroke auxiliary loss experiment](../../experiments/2026-11-08-m1c-decoder-aux/results.md)
+- [M1-C2 beam + char LM experiment](../../experiments/2026-11-08-m1c2-beam-lm/results.md)
 - [CTC](../concepts/ctc.md)
 - [Brain2Qwerty v2](../sources/brain2qwerty-v2.md) (data scaling, async encoder)
 - [Data scaling](../concepts/data-scaling.md)
