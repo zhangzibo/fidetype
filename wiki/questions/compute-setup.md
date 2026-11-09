@@ -108,6 +108,12 @@ Source: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.
 - **CPU contention slows the GPU by 10x or more.** Kernel dispatch needs CPU time. When preprocessing uses most of the 16 threads, a training step becomes very slow. Set `train.torch_threads = 4`, and do not run training at the same time as heavy preprocessing if you can avoid it.
 - **Fallback without MIOpen:** `FIDETYPE_CONV_IMPL=gemm` runs the convolutions as unfold + matmul. The result and the speed are the same. It uses about 70 % more memory, so the default stays `native`.
 - **Size:** the 10 M-parameter decoder uses 1.07 to 1.74 GB of GPU memory at batch 16, and an epoch takes 1.2 to 3.3 s on 1 to 5 subjects.
+- **Process-exit hang (found in M1-C, 2026-11-08).** A process that ran MIOpen convolutions does not end after `sys.exit` or `os._exit`. It spins one CPU core and keeps about 3.6 GB. Fix: `fidetype.decoders.train.hard_exit()` calls `TerminateProcess`, which skips the HIP DLL-detach code. Source: [M1-C results](../../experiments/2026-11-08-m1c-decoder-aux/results.md).
+
+## Driver crash (2026-11-08)
+- At about 16:44 on 2026-11-08 the PC blue-screened: bugcheck 0x7E in the AMD driver `amdkmdag` (`DMM_PowerManagement::GetPowerState`).
+- Likely cause: the iGPU and the RX 7800 XT use different AMD driver versions (32.0.21045.16010 vs 32.0.32015.7029).
+- Until the drivers match, run at most one heavy job (GPU training OR preprocessing, never both).
 
 ## How to use it
 

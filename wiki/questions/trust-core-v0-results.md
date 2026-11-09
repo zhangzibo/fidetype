@@ -1,7 +1,7 @@
 ---
-title: Trust core v0 results (simulator, char LM, first real MEG)
+title: Trust core v0 results (simulator, char LM, first real MEG, per-word OFFER)
 type: question
-tags: [trust-core, calibration, conformal, hallucination, ewpm, language-model, paper-1]
+tags: [trust-core, calibration, conformal, hallucination, ewpm, language-model, paper-1, offer-words, user-model]
 sources: [brain2qwerty-v2]
 updated: 2026-11-08
 ---
@@ -18,6 +18,7 @@ updated: 2026-11-08
 - Sections 1–5 come from the simulator. Section 6 is the first run on real MEG decoder output.
 - **Update (2026-11-08, [beam re-tune](#5-beam-re-tune-2026-11-08)):** the old n-best misses were search errors. With the `RETUNED` beam, the trust policy matches always-commit speed (25.3 vs 25.8 eWPM) with about 3× fewer wrong commits (0.033 vs 0.108).
 - **Update (2026-11-08, [real MEG](#6-real-meg-first-test-2026-11-08)):** on real MEG, the trust policy cuts wrong commits from 100 % to 0 % and fluent hallucination on null input from 83–100 % to 0 %. But no candidate is ever correct, so the test is degenerate: it shows safety, not usefulness.
+- **Update (2026-11-08, [per-word OFFER](#7-per-word-offer-and-partial-correction-2026-11-08)):** a new action OFFER_WORDS gives +0.4 to +1.7 eWPM at the worst simulator preset (paired CIs exclude 0) and no change at the median preset. On real MEG, the fit never selects it. **No BCI policy on real MEG beats gaze typing alone** (trust 2.96 vs gaze 3.14 eWPM).
 
 Raw results:
 - [M2-10 trust core on real MEG](../../experiments/2026-11-08-m2-real-keystroke/results.md) (tables: [tables.md](../../experiments/2026-11-08-m2-real-keystroke/results/tables.md)).
@@ -148,7 +149,7 @@ Source: [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.
 - **The wrong-commit limit is exceeded on test:** 0.058–0.075 in three of four conditions, against the 0.05 validation target. The grid fit on 120 sentences has no finite-sample guarantee. The new beam commits more often, so this matters more now. Next: conformal risk control.
 - **The guard needs re-tuning.** Its combined risk has AUROC 0.49–0.68 for a wrong top-1. n-best inconsistency alone gives 0.78–0.90, and `p_top1` 0.75–0.91.
 - **Frame calibration is required before the beam.** Without it (T = 0.5, always-commit), both LM beams commit a wrong text in almost every sentence. The CTC prefix probability sums the evidence of all frames of a peak, so the LM cannot overrule an over-confident stream.
-- **Word-level alternatives need a per-word OFFER action.** Three choices per word reach the truth more often than three whole sentences (Tatoeba 0.465 vs 0.38). The simulated user cannot choose words yet, so the harness cannot measure this.
+- **Word-level alternatives need a per-word OFFER action.** Three choices per word reach the truth more often than three whole sentences (Tatoeba 0.465 vs 0.38). The simulated user cannot choose words yet, so the harness cannot measure this. *(Done: see [section 7](#7-per-word-offer-and-partial-correction-2026-11-08).)*
 
 ## 6. Real MEG, first test (2026-11-08)
 Source: [M2-10 results](../../experiments/2026-11-08-m2-real-keystroke/results.md).
@@ -204,7 +205,54 @@ No candidate is ever correct. So the best policy is to commit nothing, and the t
 
 > **Our take:** Next: a sentence-context decoder (v1 went from Conv 0.67 to Conv+Trans 0.36 CER), the full cache, and a per-word OFFER with partial correction in the user model. Known bug: `TemperatureScaler.transform_stream` drops `vocab_type`, `frame_period` and `latency` from the stream.
 
+## 7. Per-word OFFER and partial correction (2026-11-08)
+Source: [OFFER_WORDS results](../../experiments/2026-11-08-m2-offer-words/results.md) (all tables: [tables.md](../../experiments/2026-11-08-m2-offer-words/results/tables.md)). Code: `src/fidetype/trust/policy.py`, `src/fidetype/interact/simulated_user.py`, `src/fidetype/eval/harness.py`, `src/fidetype/eval/ewpm.py`. Tests: `tests/test_trust_offer_words.py`.
+
+### What changed
+- **New action `OFFER_WORDS`:** show the top-1 sentence. Highlight each word slot with confidence below `word_conf_threshold`. Show the `offer_words_k` best alternatives for each highlighted slot.
+- Slot confidence: the mass of the top-1 word in its own slot of `word_alternatives` (calibrated sentence posteriors).
+- The policy fit searches `word_conf_threshold` × `offer_words_min_conf` (7 × 5) with `OFFER_WORDS_GRID`.
+- **Word-level user model** (`UserConfig.aac_gaze()`): the user fixes wrong words one by one, selects from alternatives, misses an unhighlighted wrong word with `p_miss_unflagged` (0.05), and retypes the sentence if that is cheaper. Fallback typing is 20 chars/min (gaze keyboard, Cai et al. 2024).
+- An OFFER_WORDS sentence counts as a **wrong commit** if an unhighlighted word is wrong. So the 0.05 wrong-commit limit still applies.
+- Defaults are unchanged (`offer_words=False`, `UserConfig()`). A before/after harness snapshot is identical.
+
+### Simulator (test, eWPM)
+| condition | always commit | trust | trust + OFFER_WORDS | OW − trust (paired CI) | OW rate | gaze only |
+|---|---|---|---|---|---|---|
+| median/T=0.5 | 24.55 (wc 0.100) | 24.45 (wc 0.067) | 24.41 (wc 0.067) | [−0.16, 0.05] | 0.10 | 4.10 |
+| median/T=1.0 | 24.44 (wc 0.100) | 24.48 (wc 0.033) | 24.84 (wc 0.042) | [−0.07, 0.85] | 0.14 | 4.10 |
+| worst/T=0.5 | 21.04 (wc 0.250) | 19.49 (wc 0.050) | **20.45** (wc 0.058) | **[0.36, 1.57]** | 0.63 | 4.10 |
+| worst/T=1.0 | 19.95 (wc 0.333) | 19.40 (wc 0.025) | **20.46** (wc 0.042) | **[0.40, 1.74]** | 0.73 | 4.10 |
+
+wc = wrong-commit rate.
+
+- At the worst preset, OFFER_WORDS replaces most sentence OFFERs. It closes the gap to always commit with 6–8× fewer wrong commits.
+- At the median preset, 86–90 % of sentences are committed. OFFER_WORDS has little to replace.
+- OFFER_WORDS on every sentence with all slots highlighted halves eWPM (12.2–12.7). The highlight threshold is necessary.
+- The word-level user makes always commit much faster at T = 0.5 (24.55 vs 17.17 with the old user). So the eWPM cost of the trust policy depends on the correction model.
+
+### Real MEG (test, 209 trials, user `aac_gaze()`)
+| policy | eWPM | wrong-commit | silent error | KSR |
+|---|---|---|---|---|
+| always commit LM top-1 | 2.31 | 1.000 | 0.254 | 0.02 |
+| trust, no OFFER_WORDS | 2.96 | 0.000 | 0.000 | −0.04 |
+| trust + OFFER_WORDS | 2.96 (identical; OW rate 0) | 0.000 | 0.000 | −0.04 |
+| diag: OFFER_WORDS always, all slots | 2.86 | 0.000 | 0.000 | 0.09 |
+| **gaze typing only (no BCI)** | **3.14** | 0 | 0 | 0.00 |
+
+- The policy fit never selects OFFER_WORDS (0 of 209 trials). System word accuracy is 0.10. In the forced row, the true word is among the 3 alternatives of a wrong highlighted slot only 7 % of the time.
+- Trust − always commit: +0.65 eWPM (sentence CI [0.51, 0.79]). The gain comes from silent errors: with `p_miss_unflagged` 0, always commit is level with trust (3.00 vs 2.96).
+- **No BCI policy beats gaze typing alone (3.14 eWPM)**, in every user-model variant.
+- These eWPM values use the new `aac_gaze()` user. The section 6 values (9.61 / 9.70) use the old sentence-level user. Do not compare them directly.
+
+> **Our take:** OFFER_WORDS helps when the decoder is close: most words right, a few uncertain words, and the right word among the alternatives. The simulator worst preset (system word accuracy 0.96–0.97) is that regime. Real MEG (0.10) is not. The action does not rescue a weak decoder, and the fit correctly refuses it.
+
+> **Our take:** The more important real-data result is the comparison with gaze typing. At key accuracy 0.39, the BCI costs the user time. Paper 1 must report eWPM against a no-BCI fallback baseline, not only against other BCI policies.
+
+**Limits:** the word-model time values are partly assumptions. Only the per-slot sum (4.5 s) and the 20 chars/min fallback are matched to Cai et al. 2024. `p_miss_unflagged` has no measurement. Real MEG has 17 test sentences and oracle key timing. The simulator uses one seed per condition.
+
 ## Related pages
+- [OFFER_WORDS experiment](../../experiments/2026-11-08-m2-offer-words/results.md)
 - [M2-10 real-MEG experiment](../../experiments/2026-11-08-m2-real-keystroke/results.md)
 - [Beam re-tune experiment](../../experiments/2026-11-08-beam-retune/results.md)
 - [Decoder M1 results](decoder-m1-results.md): the decoder-side shuffled-MEG control

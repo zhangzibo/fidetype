@@ -25,6 +25,12 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 5. **LLMs help meaning but can hallucinate.** They give better WER and SemER but worse CER ([error metrics](concepts/error-metrics.md)).
 6. **Wearables look plausible.** Halving the sensor count costs about 6 points of WER ([OPM-MEG](concepts/opm-meg.md)).
 
+## What our own experiments show (2026-11-08)
+- **With small data, a CTC decoder needs a keystroke hint.** CTC alone learned only a text prior. A keystroke auxiliary loss makes it use the MEG (best test CER 0.619, target 0.59) ([decoder M1 results](questions/decoder-m1-results.md)).
+- **The trust layer is safe on real MEG, but not yet useful.** It stops all wrong and hallucinated commits. But at key accuracy 0.39, no BCI policy beats gaze typing alone (2.96 vs 3.14 eWPM) ([trust core v0 results](questions/trust-core-v0-results.md#7-per-word-offer-and-partial-correction-2026-11-08)).
+
+> **Our take:** Usefulness needs a stronger decoder, and every speed claim needs a no-BCI baseline.
+
 ## The big open problems
 1. **Real-time causal decoding**: v2 still waits for the end of the sentence.
 2. **Patients with no movement**: going from overt typing to attempted or imagined typing, without labels.

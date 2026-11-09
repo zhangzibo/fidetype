@@ -1,5 +1,5 @@
 ---
-title: Decoder M1 results (first real runs, keystroke decoder uses MEG)
+title: Decoder M1 results (first real runs, keystroke decoder and keystroke loss use MEG)
 type: question
 tags: [decoder, ctc, meg, spanishbcbl, evaluation, controls, rocm]
 sources: [brain2qwerty-v2]
@@ -16,6 +16,7 @@ updated: 2026-11-08
 - With the MEG of another trial, the CER is **0.669**. So the model **does not use the MEG yet**. The CER comes from a Spanish text prior.
 - The M1 target (greedy CER near 0.59, the v2 async encoder on SpanishBCBL with all data) is **not met**.
 - The main suspect is data volume: about 2.5 h of roughly 20 h. The sanity check (2026-11-08) shows that the cache holds keystroke signal: linear hand decoding reaches 0.83–0.96 (chance 0.60).
+- **Update (2026-11-08, M1-C):** a [keystroke auxiliary loss](#ctc-decoder--keystroke-auxiliary-loss-m1-c-2026-11-08) makes the async CTC decoder use the MEG. Shuffled-MEG gap +0.116 to +0.156 CER (CI excludes 0). Best test CER 0.619. The 0.59 target is still not met.
 - **Update (2026-11-08):** a [synchronous keystroke decoder](#synchronous-keystroke-decoder-2026-11-08) (oracle key timing) does use the MEG: test key accuracy 0.390 (controls 0.10–0.11), greedy CER 0.59 (controls 0.77).
 
 Full details: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.md).
@@ -94,13 +95,57 @@ Source: [M2-10 results](../../experiments/2026-11-08-m2-real-keystroke/results.m
 - With the `RETUNED` LM beam (`lm_weight = 0.5`): test CER 0.531, WER 1.023. The true sentence is never in the n-best.
 - Greedy CER 0.59 meets the M1 number (≈0.59). **But it does so in the synchronous oracle-timing setting, not in the async setting** of the v2 target. The CTC decoder above is still the async path.
 
+## CTC decoder + keystroke auxiliary loss (M1-C, 2026-11-08)
+Source: [M1-C results](../../experiments/2026-11-08-m1c-decoder-aux/results.md). Code: `src/fidetype/decoders/` (`conv_ctc.py`, `dataset.py`, `train.py`, `infer.py`).
+
+**Question:** if we add a direct per-keystroke loss, does the async CTC decoder use the MEG?
+
+**Answer: yes.** With the keystroke loss, real MEG gives a test CER 0.116 to 0.156 lower than shuffled MEG. The 95 % CI excludes zero. Without the loss, on the same data and model, the gap is zero.
+
+### Method
+- A key press at sample `s` (100 Hz) maps to encoder frame `s // 4` (40 ms frames).
+- A linear head (27 classes: a–z and space) reads the frame features. The read-out is shifted 1 frame (40 ms) after the key and mean-pooled over 3 frames.
+- Two heads (`aux_key_layer = "both"`): one on the conv-stack frames, one on the Conformer output.
+- Total loss: `ctc_weight × (0.3 CTC_final + 0.7 CTC_aux) + aux_keystroke_weight × CE_keys`.
+- The keystroke heads are not used for decoding. They do not change the CTC logits (tested).
+- r4: r4a trains on the keystroke loss only. r4b starts from r4a and trains with CTC + 0.5 × keystroke loss.
+- The gap CI is a paired bootstrap over sentences (10,000 resamples) of "shuffled CER − real CER".
+
+**Data:** 20 pinned blocks, 11 subjects (S1, S3, S5, S9, S11, S12, S15, S16, S18, S19, S25). Segments train / val / test 947 / 114 / 209. This is about twice the M1-B 5-subject data.
+
+### Results (test, CER against the target, greedy CTC)
+| Run | Params | Keystroke loss | Real MEG | Shuffled MEG | Zeros | Gap [95 % CI] | Key acc real / shuffled (conv, Conformer) |
+|---|---|---|---|---|---|---|---|
+| r0 baseline (M1-B config) | 10.65 M | no | 0.670 | 0.669 | 0.851 | −0.001 [−0.006, +0.004] | – |
+| r1 small | 3.54 M | no | 0.684 | 0.681 | 0.833 | −0.002 [−0.008, +0.003] | – |
+| r2 small, weight 0.5 | 3.55 M | yes | 0.628 | 0.744 | 0.906 | **+0.116** [+0.103, +0.130] | 0.378/0.099, 0.415/0.107 |
+| r3 small, weight 1.0 | 3.55 M | yes | 0.639 | 0.754 | 0.880 | **+0.116** [+0.102, +0.129] | 0.389/0.092, 0.418/0.107 |
+| r4b small, weight 0.5, keystroke-pretrained | 3.55 M | yes | **0.619** | 0.776 | 1.000 | **+0.156** [+0.141, +0.172] | 0.377/0.097, 0.411/0.107 |
+
+- Mean over subjects (test CER): r0 0.669, r1 0.682, r2 0.635, r3 0.648, r4b 0.624.
+- The majority-class key accuracy is 0.132 (test).
+- **The M1 target (greedy CER near 0.59) is still not met.** The best test CER is 0.619.
+- Example (r4b, S15): target "el cuaderno presenta las divisiones enteras", output "el cuaer preta las daicioos eitrs". M1-B gave outputs like "las ... as".
+- Each run is one seed. Differences of about 0.01 are within noise.
+
+> **Our take:** The keystroke loss causes the MEG use. r1 and r2 have the same model, data, augmentation and optimiser. Only the loss differs. Twice the data alone (r0, r1) does not help.
+
+> **Our take:** The CER gain is smaller than the gap. Shuffled-MEG CER goes up (0.68 → 0.74–0.78), because the model now depends on the MEG. Real-MEG CER goes down only 0.04–0.06 (0.670 → 0.619). In r4b, zeros give CER 1.000: the model emits nothing without MEG.
+
+> **Our take:** The keystroke heads read 38–44 % of keys from real MEG. This is close to the [sanity check](#sanity-check-2026-11-08-signal-present) letter window (0.31–0.49) and the [synchronous keystroke decoder](#synchronous-keystroke-decoder-2026-11-08) (0.390).
+
+**Process-exit hang fixed.** On ROCm/Windows, a process that ran MIOpen convolutions does not end after `sys.exit`. It spins one CPU core. `train.hard_exit()` calls `TerminateProcess`. See [compute setup](compute-setup.md).
+
+**Open item:** S1 and S18 both map to participant P01 in the index. Check this before any per-participant claim.
+
 ## Next steps
 - [x] **Sanity check:** keystroke-locked left/right-hand and character decoding with a linear model, v1-style. Signal present ([above](#sanity-check-2026-11-08-signal-present)).
-- [ ] **CTC decoder + keystroke auxiliary loss** (running: `experiments/2026-11-08-m1c-decoder-aux/`).
+- [x] **CTC decoder + keystroke auxiliary loss** ([above](#ctc-decoder--keystroke-auxiliary-loss-m1-c-2026-11-08)): the decoder now uses the MEG; best test CER 0.619.
+- [ ] **M1-C follow-ups:** 3 seeds for r1, r2 and r4b; the `RETUNED` beam + char LM on the r4b streams; re-run r4a/r4b on the full cache; try other read-out shifts and pooling.
 - [x] **Keystroke-synchronous decoder + trust core on real MEG** ([above](#synchronous-keystroke-decoder-2026-11-08)).
 - [ ] **Sentence-context keystroke decoder** (Transformer over key embeddings, v1 Conv+Trans style).
 - [ ] **Retrain on the full cache** (all subjects) when preprocessing and the download are complete (`config-real.json`, subjects `null`).
-- [ ] **Low-data tuning:** a smaller model, more dropout and time masking, fewer Conformer layers.
+- [x] **Low-data tuning:** a smaller model, more dropout and time masking, fewer Conformer layers. *(M1-C r1: 3.54 M params; alone it does not help, test CER 0.684, gap −0.002)*
 - [ ] **Cross-subject pretraining** and a per-subject fine-tune (joint training was best in v2, Table 1).
 - [ ] Beam CER with the char LM, after the beam re-tune, for the CTC decoder. Report it with the same controls. (Keystroke decoder: done, 0.531.)
 
@@ -113,6 +158,8 @@ Details: [compute setup](compute-setup.md#training-notes-from-the-m1-b-decoder-2
 
 ## Related pages
 - [M1-B decoder experiment](../../experiments/2026-11-08-m1b-decoder/results.md)
+- [M1-C keystroke auxiliary loss experiment](../../experiments/2026-11-08-m1c-decoder-aux/results.md)
+- [CTC](../concepts/ctc.md)
 - [Brain2Qwerty v2](../sources/brain2qwerty-v2.md) (data scaling, async encoder)
 - [Data scaling](../concepts/data-scaling.md)
 - [Error metrics](../concepts/error-metrics.md)
