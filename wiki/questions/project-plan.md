@@ -77,7 +77,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 
 ## M1: Baseline decoder (target 11-09 → 11-11)
 - [x] SpanishBCBL data loader and alignment. *(done 2026-11-08: 81 typing blocks, 15570/15571 keys aligned, see [M1-A results](../../experiments/2026-11-08-m1a-data/results.md))*
-- [ ] Preprocess the SpanishBCBL cache (tSSS, 0.5–45 Hz, 100 Hz). *(running in the background: 23 of 47 blocks at 15:38 on 2026-11-08)*
+- [ ] Preprocess the SpanishBCBL cache (tSSS, 0.5–45 Hz, 100 Hz). *(running in the background: 27 of 47 blocks at 16:01 on 2026-11-08; the remaining blocks of the 81 are queued after this pass with `tools/data/queue_after.ps1`)*
 - [x] Write our own conv + [CTC](../concepts/ctc.md) decoder. Copy no Meta code. *(done 2026-11-08: `src/fidetype/decoders/`, 10.06 M params, causal mode via `lookahead_frames`)*
 - [x] Train it on SpanishBCBL MEG in offline (non-causal) mode first. *(done 2026-11-08: S25 only, and 5 subjects / about 2.5 h)*
 - [x] Make it emit NeuralTextStream. *(done 2026-11-08: `fidetype.decoders.infer`)*
@@ -88,10 +88,15 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [ ] Low-data tuning: a smaller model, more dropout and masking.
 - [ ] Cross-subject pretraining, then a per-subject fine-tune.
 - [ ] CTC decoder + keystroke auxiliary loss. *(running)*
+- [x] Synchronous keystroke decoder (v1 oracle timing) → NeuralTextStream. *(done 2026-11-08: test key acc 0.390, controls 0.10–0.11; greedy CER 0.59 vs 0.77. See [decoder M1 results](decoder-m1-results.md#synchronous-keystroke-decoder-2026-11-08))*
+- [ ] Sentence-context keystroke decoder (Transformer over key embeddings, v1 Conv+Trans style).
+- [ ] Re-run preprocessing for the remaining blocks after the current job. *(queued)*
 
 **Done when:** greedy CER approaches v2's async SpanishBCBL CER (≈0.59) or is better.
 
 **Status (2026-11-08):** the decoder code is done and emits NeuralTextStream. Best test greedy CER is 0.670 (5 subjects, about 2.5 h of about 20 h). The shuffled-MEG control gives 0.669, so the model does not use the MEG yet. The "done when" criterion is **not met**. See [decoder M1 results](decoder-m1-results.md).
+
+**Status (2026-11-08, later):** first real MEG decoding. The synchronous keystroke decoder (oracle timing) reaches test key accuracy 0.390 and greedy CER 0.59 (controls 0.77). This meets the number, but in the synchronous oracle-timing setting, not async. The async criterion stays open.
 
 **Reference numbers.**
 - Brain2Qwerty v1 is keystroke-locked. Its MEG CER is 0.36 for Conv+Trans and 0.29 for the full model with LM ([v1](../sources/brain2qwerty-v1.md), Fig. 2).
@@ -109,11 +114,12 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [x] **Effective WPM** metric ([architecture](architecture.md#effective-words-per-minute)).
 - [x] **Evaluation harness** with fixed splits. Metrics: CER, WER, ECE, coverage, hallucination rate, effective WPM ([error metrics](../concepts/error-metrics.md)).
 - [ ] **Provenance ledger v0.**
-- [ ] **Run the trust core on real decoder outputs.** It needs the M1 decoder streams. *(running: keystroke-synchronous decoder on real MEG)*
+- [x] **Run the trust core on real decoder outputs.** *(done 2026-11-08: keystroke decoder on real MEG; wrong-commit 100 % → 0 %, but no correct candidates. See [trust core v0 results](trust-core-v0-results.md#6-real-meg-first-test-2026-11-08))*
 - [x] **Re-tune the CTC beam** (search errors → n-best recall). *(done 2026-11-08: `RETUNED` preset; recall@10 0.075 → 0.47 on median Tatoeba; n-best miss 0.73 → 0.00 in the trust pipeline. See [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.md))*
 - [ ] **Re-tune the guard** for the retuned beam (n-best inconsistency + `p_top1`).
 - [ ] **Wrong-commit limit:** a finite-sample guarantee (conformal risk control).
-- [ ] **Simulated user:** a per-word OFFER action.
+- [ ] **Simulated user:** a per-word OFFER action, with partial correction. *(in progress)*
+- [ ] Fix `TemperatureScaler.transform_stream`: it drops `vocab_type`, `frame_period` and `latency`.
 
 *Status 2026-11-08:* trust core v0 runs end to end on the simulator. See [M2 simulator results](../../experiments/2026-11-08-m2-trust-sim/results.md) and [trust core v0 results](trust-core-v0-results.md).
 
@@ -132,6 +138,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - But its effective WPM is 7–16 % lower than always committing the LM top-1.
 - So Paper 1 claims "far fewer wrong and hallucinated commits for a small speed cost", not "higher eWPM".
 - **Update after the beam re-tune (2026-11-08, simulator only; real-data confirmation is pending):** the trust policy now matches always-commit speed (25.3 vs 25.8 eWPM) with about 3× fewer wrong commits (0.033 vs 0.108). Median preset, T = 1.0. The speed cost was a recall problem of the old beam. Source: [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.md).
+- Real MEG (2026-11-08): wrong-commit 100% → 0% and fluent hallucination 83–100% → 0%, but no correct candidates yet, so usefulness is untested. Source: [M2-10 results](../../experiments/2026-11-08-m2-real-keystroke/results.md).
 - Details: [trust core v0 results](trust-core-v0-results.md).
 
 - [ ] Run experiments on SpanishBCBL and on the simulator.

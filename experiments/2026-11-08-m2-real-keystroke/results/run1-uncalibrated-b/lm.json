@@ -1,0 +1,558 @@
+{
+ "settings": {
+  "default": {},
+  "retuned": {
+   "search": "vector",
+   "beam": 256,
+   "n_best": 20,
+   "prune_topk": null,
+   "prune_logp": -6.0,
+   "space_rules": true,
+   "lm_weight": 1.25,
+   "insertion_bonus": 1.0
+  }
+ },
+ "results": {
+  "default/w=0.5": {
+   "val": {
+    "cer_target": 0.5333066613322665,
+    "wer_target": 1.0535475234270415,
+    "cer_typed": 0.5154639175257731,
+    "sentence_acc": 0.008771929824561403,
+    "target_in_nbest": 0.008771929824561403
+   },
+   "test": {
+    "cer_target": 0.552148691843258,
+    "wer_target": 1.095632530120482,
+    "cer_typed": 0.5452061304502792,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test_examples": [
+    {
+     "target": "la fuerza atrae el electron primero",
+     "top1": "la energia atrapolas estro tiene el"
+    },
+    {
+     "target": "los ninos mayores acaba la escuela",
+     "top1": "los a apartanle a ese a la senosla"
+    },
+    {
+     "target": "la teoria erronea reduce el numero",
+     "top1": "la saliera es para traia lea nada i"
+    },
+    {
+     "target": "el algoritmo de los controles recorre el nodo",
+     "top1": "el llante el de las contra es pedire las nada"
+    },
+    {
+     "target": "el cliente establece la conexion creada",
+     "top1": "el sol se toda la eterna de esopo se aca"
+    },
+    {
+     "target": "el centro describe las parabolas asociadas",
+     "top1": "el senor carecen a la piscina es la coalas"
+    },
+    {
+     "target": "el cuaderno presenta las divisiones enteras",
+     "top1": "el en serio la senta la es disenar la teles"
+    },
+    {
+     "target": "los grupos del organismo exigen la liberacion",
+     "top1": "los arabes al laura nos la cia a la polemicion"
+    },
+    {
+     "target": "la revolucion nueva abarca las esferas",
+     "top1": "la resolucion pie siente a las pagaras"
+    },
+    {
+     "target": "los productos cumplen la propiedad asociada",
+     "top1": "los ponen las papeles la la llama al sino se"
+    },
+    {
+     "target": "los motores rapidos consumen las energias",
+     "top1": "los interes la pasa es el cielos alergica"
+    },
+    {
+     "target": "las versiones del programa soportan el comando",
+     "top1": "mas de ellos solo lei esos de la en el sin eci"
+    }
+   ]
+  },
+  "default/w=1.0": {
+   "val": {
+    "cer_target": 0.5617123424684937,
+    "wer_target": 1.0896921017402945,
+    "cer_typed": 0.5472164948453608,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.008771929824561403
+   },
+   "test": {
+    "cer_target": 0.557002486089736,
+    "wer_target": 1.0805722891566265,
+    "cer_typed": 0.5509088748960437,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test_examples": [
+    {
+     "target": "la fuerza atrae el electron primero",
+     "top1": "la tierra atraen los esta a pena en"
+    },
+    {
+     "target": "los ninos mayores acaba la escuela",
+     "top1": "los bandera no es ese a la escuela"
+    },
+    {
+     "target": "la teoria erronea reduce el numero",
+     "top1": "la saliera la para treinta a la sal"
+    },
+    {
+     "target": "el algoritmo de los controles recorre el nodo",
+     "top1": "el llante el de las contra es pedire las nada"
+    },
+    {
+     "target": "el cliente establece la conexion creada",
+     "top1": "ella lentamos a eleccion de ellos se aca"
+    },
+    {
+     "target": "el centro describe las parabolas asociadas",
+     "top1": "el centro descalar la piscina es la con as"
+    },
+    {
+     "target": "el cuaderno presenta las divisiones enteras",
+     "top1": "el en serio en el cielo es conocer la teles"
+    },
+    {
+     "target": "los grupos del organismo exigen la liberacion",
+     "top1": "los problemas natura es la carta la polemica a"
+    },
+    {
+     "target": "la revolucion nueva abarca las esferas",
+     "top1": "la resolucion pie de la callas seguras"
+    },
+    {
+     "target": "los productos cumplen la propiedad asociada",
+     "top1": "los precio a la penas la le llamar los no se"
+    },
+    {
+     "target": "los motores rapidos consumen las energias",
+     "top1": "los interes de la casa el cielos anos nos"
+    },
+    {
+     "target": "las versiones del programa soportan el comando",
+     "top1": "mas de ellos solo a mareas de la en el concedi"
+    }
+   ]
+  },
+  "default/w=2.0": {
+   "val": {
+    "cer_target": 0.5899179835967193,
+    "wer_target": 1.1030789825970548,
+    "cer_typed": 0.582680412371134,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test": {
+    "cer_target": 0.5983189297975613,
+    "wer_target": 1.1046686746987953,
+    "cer_typed": 0.5965308304621599,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test_examples": [
+    {
+     "target": "la fuerza atrae el electron primero",
+     "top1": "la tierra nos en los esta la con el"
+    },
+    {
+     "target": "los ninos mayores acaba la escuela",
+     "top1": "los ninos ninos en la cena escuela"
+    },
+    {
+     "target": "la teoria erronea reduce el numero",
+     "top1": "la saliera la para tienen en la sal"
+    },
+    {
+     "target": "el algoritmo de los controles recorre el nodo",
+     "top1": "el accidente a las contra es la carta a nada"
+    },
+    {
+     "target": "el cliente establece la conexion creada",
+     "top1": "ella sentado en el colecciones de estado"
+    },
+    {
+     "target": "el centro describe las parabolas asociadas",
+     "top1": "el centro descansado a las para el conoces"
+    },
+    {
+     "target": "el cuaderno presenta las divisiones enteras",
+     "top1": "el pasar la manana a las cosas en la biblia"
+    },
+    {
+     "target": "los grupos del organismo exigen la liberacion",
+     "top1": "los problemas larga no le dio a las no tienes"
+    },
+    {
+     "target": "la revolucion nueva abarca las esferas",
+     "top1": "la resolucion por suerte a las seguros"
+    },
+    {
+     "target": "los productos cumplen la propiedad asociada",
+     "top1": "los anos dias manana se casa nada al cine es"
+    },
+    {
+     "target": "los motores rapidos consumen las energias",
+     "top1": "los interesado a la es el dia de los dias"
+    },
+    {
+     "target": "las versiones del programa soportan el comando",
+     "top1": "esa presiones de la manana a los en la ciudad"
+    }
+   ]
+  },
+  "default/w=3.0": {
+   "val": {
+    "cer_target": 0.626125225045009,
+    "wer_target": 1.0816599732262382,
+    "cer_typed": 0.6216494845360825,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test": {
+    "cer_target": 0.6353735053865278,
+    "wer_target": 1.1204819277108433,
+    "cer_typed": 0.6343115124153499,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test_examples": [
+    {
+     "target": "la fuerza atrae el electron primero",
+     "top1": "la tierra estan los esta cancional"
+    },
+    {
+     "target": "los ninos mayores acaba la escuela",
+     "top1": "los ninos de la casa a la escuela"
+    },
+    {
+     "target": "la teoria erronea reduce el numero",
+     "top1": "la televisor estaba en la manera"
+    },
+    {
+     "target": "el algoritmo de los controles recorre el nodo",
+     "top1": "ella vida no es una contra en la cartas cosa"
+    },
+    {
+     "target": "el cliente establece la conexion creada",
+     "top1": "ella sentado en el colecciones de esta a"
+    },
+    {
+     "target": "el centro describe las parabolas asociadas",
+     "top1": "ella noticias en el colecciones en la es"
+    },
+    {
+     "target": "el cuaderno presenta las divisiones enteras",
+     "top1": "el es un poco de todos los con ella tiene"
+    },
+    {
+     "target": "los grupos del organismo exigen la liberacion",
+     "top1": "los problemas personalidad de la manana en"
+    },
+    {
+     "target": "la revolucion nueva abarca las esferas",
+     "top1": "la resolucion nosotros de las para es"
+    },
+    {
+     "target": "los productos cumplen la propiedad asociada",
+     "top1": "los anos dias manana a la llamar a casa es"
+    },
+    {
+     "target": "los motores rapidos consumen las energias",
+     "top1": "los interesado a la esperando a los dias"
+    },
+    {
+     "target": "las versiones del programa soportan el comando",
+     "top1": "esa personas de la manana a los en la ciudad"
+    }
+   ]
+  },
+  "retuned/w=0.5": {
+   "val": {
+    "cer_target": 0.4958991798359672,
+    "wer_target": 0.9598393574297188,
+    "cer_typed": 0.4762886597938144,
+    "sentence_acc": 0.008771929824561403,
+    "target_in_nbest": 0.008771929824561403
+   },
+   "test": {
+    "cer_target": 0.5313128921510596,
+    "wer_target": 1.0233433734939759,
+    "cer_typed": 0.5246524890103362,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test_examples": [
+    {
+     "target": "la fuerza atrae el electron primero",
+     "top1": "la alardeante en las estro tiene el"
+    },
+    {
+     "target": "los ninos mayores acaba la escuela",
+     "top1": "los a apartanle a ese a la celosos"
+    },
+    {
+     "target": "la teoria erronea reduce el numero",
+     "top1": "la saliera es para revisalen madre"
+    },
+    {
+     "target": "el algoritmo de los controles recorre el nodo",
+     "top1": "el llante el de las contra es pedire las nada"
+    },
+    {
+     "target": "el cliente establece la conexion creada",
+     "top1": "ella lana rosa le ensena con solo se aca"
+    },
+    {
+     "target": "el centro describe las parabolas asociadas",
+     "top1": "el senor maestro a las naran las asociales"
+    },
+    {
+     "target": "el cuaderno presenta las divisiones enteras",
+     "top1": "el en serio se senta las sido en ella a las"
+    },
+    {
+     "target": "los grupos del organismo exigen la liberacion",
+     "top1": "los arabes alla organismo a ir a las operacion"
+    },
+    {
+     "target": "la revolucion nueva abarca las esferas",
+     "top1": "la resolucion pie siente a las pagaras"
+    },
+    {
+     "target": "los productos cumplen la propiedad asociada",
+     "top1": "los ponen las papeles la la llama al sino se"
+    },
+    {
+     "target": "los motores rapidos consumen las energias",
+     "top1": "los interes la nasa es el cielos los dias"
+    },
+    {
+     "target": "las versiones del programa soportan el comando",
+     "top1": "mas de ellos solo o asesina a la en el concedi"
+    }
+   ]
+  },
+  "retuned/w=1.0": {
+   "val": {
+    "cer_target": 0.5013002600520104,
+    "wer_target": 0.9370816599732262,
+    "cer_typed": 0.485979381443299,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.008771929824561403
+   },
+   "test": {
+    "cer_target": 0.5352196045933467,
+    "wer_target": 0.9578313253012049,
+    "cer_typed": 0.5311868836877748,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test_examples": [
+    {
+     "target": "la fuerza atrae el electron primero",
+     "top1": "la tierra estar el cascara tiene el"
+    },
+    {
+     "target": "los ninos mayores acaba la escuela",
+     "top1": "los bandera no es una a la escuela"
+    },
+    {
+     "target": "la teoria erronea reduce el numero",
+     "top1": "la policia es para nadie le llamas"
+    },
+    {
+     "target": "el algoritmo de los controles recorre el nodo",
+     "top1": "el llante el de las contra es pedire la casa"
+    },
+    {
+     "target": "el cliente establece la conexion creada",
+     "top1": "ella casa toda la eternacion solo siento"
+    },
+    {
+     "target": "el centro describe las parabolas asociadas",
+     "top1": "el senor maestro a la piscina es la cocina"
+    },
+    {
+     "target": "el cuaderno presenta las divisiones enteras",
+     "top1": "el misterio no estan las cosas en la manana"
+    },
+    {
+     "target": "los grupos del organismo exigen la liberacion",
+     "top1": "los problema el organismo a ir a la politicas"
+    },
+    {
+     "target": "la revolucion nueva abarca las esferas",
+     "top1": "la resolucion de arena de las pagaras"
+    },
+    {
+     "target": "los productos cumplen la propiedad asociada",
+     "top1": "los productos papeles la le llamar las cosas"
+    },
+    {
+     "target": "los motores rapidos consumen las energias",
+     "top1": "los interes la casa es el aire a los dias"
+    },
+    {
+     "target": "las versiones del programa soportan el comando",
+     "top1": "las personas de los persona a la en la ciudad"
+    }
+   ]
+  },
+  "retuned/w=2.0": {
+   "val": {
+    "cer_target": 0.5683136627325465,
+    "wer_target": 0.9196787148594378,
+    "cer_typed": 0.5548453608247422,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test": {
+    "cer_target": 0.5752338108204096,
+    "wer_target": 0.947289156626506,
+    "cer_typed": 0.5730070096233812,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test_examples": [
+    {
+     "target": "la fuerza atrae el electron primero",
+     "top1": "las personas en la puerta siempre"
+    },
+    {
+     "target": "los ninos mayores acaba la escuela",
+     "top1": "los ninos de la casa a la escuela"
+    },
+    {
+     "target": "la teoria erronea reduce el numero",
+     "top1": "la policia la personas en el lunes"
+    },
+    {
+     "target": "el algoritmo de los controles recorre el nodo",
+     "top1": "el accidente de la gente las personas cosa"
+    },
+    {
+     "target": "el cliente establece la conexion creada",
+     "top1": "ella nosotros tiene una persona semana"
+    },
+    {
+     "target": "el centro describe las parabolas asociadas",
+     "top1": "el senor manera de la piscina de la cocina"
+    },
+    {
+     "target": "el cuaderno presenta las divisiones enteras",
+     "top1": "el misterio no estan las cosas en la manana"
+    },
+    {
+     "target": "los grupos del organismo exigen la liberacion",
+     "top1": "los problemas natura de los para la politicos"
+    },
+    {
+     "target": "la revolucion nueva abarca las esferas",
+     "top1": "la resolucion de arena de las manana"
+    },
+    {
+     "target": "los productos cumplen la propiedad asociada",
+     "top1": "los productor primera la manana es la manana"
+    },
+    {
+     "target": "los motores rapidos consumen las energias",
+     "top1": "los nino es la casa es la ciudadanos dias"
+    },
+    {
+     "target": "las versiones del programa soportan el comando",
+     "top1": "las personas de los persona a la televisiones"
+    }
+   ]
+  },
+  "retuned/w=3.0": {
+   "val": {
+    "cer_target": 0.5995199039807961,
+    "wer_target": 0.9022757697456493,
+    "cer_typed": 0.589278350515464,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test": {
+    "cer_target": 0.6201018112939505,
+    "wer_target": 0.9262048192771084,
+    "cer_typed": 0.6177973149578234,
+    "sentence_acc": 0.0,
+    "target_in_nbest": 0.0
+   },
+   "test_examples": [
+    {
+     "target": "la fuerza atrae el electron primero",
+     "top1": "las personas en la puerta siempre"
+    },
+    {
+     "target": "los ninos mayores acaba la escuela",
+     "top1": "los ninos en la casa a la escuela"
+    },
+    {
+     "target": "la teoria erronea reduce el numero",
+     "top1": "la policia la para todos los dias"
+    },
+    {
+     "target": "el algoritmo de los controles recorre el nodo",
+     "top1": "el accidente de la gente las personas cosa"
+    },
+    {
+     "target": "el cliente establece la conexion creada",
+     "top1": "ella nosotros tiene una persona semana"
+    },
+    {
+     "target": "el centro describe las parabolas asociadas",
+     "top1": "el senor idea de la puerta de la casa"
+    },
+    {
+     "target": "el cuaderno presenta las divisiones enteras",
+     "top1": "el estudiantes de las cosas en la manana"
+    },
+    {
+     "target": "los grupos del organismo exigen la liberacion",
+     "top1": "los problemas personalidad de la politicos"
+    },
+    {
+     "target": "la revolucion nueva abarca las esferas",
+     "top1": "la resolucion nosotros de la manana"
+    },
+    {
+     "target": "los productos cumplen la propiedad asociada",
+     "top1": "las palabras palabra la manana a los dias"
+    },
+    {
+     "target": "los motores rapidos consumen las energias",
+     "top1": "los interesantes de la ciudadanos dias"
+    },
+    {
+     "target": "las versiones del programa soportan el comando",
+     "top1": "las personas de la manana a la televisiones"
+    }
+   ]
+  }
+ },
+ "best_on_val": "retuned/w=0.5",
+ "best_default_on_val": "default/w=0.5",
+ "chosen_kwargs": {
+  "search": "vector",
+  "beam": 256,
+  "n_best": 20,
+  "prune_topk": null,
+  "prune_logp": -6.0,
+  "space_rules": true,
+  "lm_weight": 0.5,
+  "insertion_bonus": 1.0
+ },
+ "seconds": 355.6
+}

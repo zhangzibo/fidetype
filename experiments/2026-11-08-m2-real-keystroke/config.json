@@ -1,0 +1,52 @@
+{
+ "description": "M2-10: trust core on real MEG decoder output. Synchronous keystroke decoder with oracle key timing (Brain2Qwerty v1 setting), not a real-time device setting.",
+ "cache": "C:/Users/zhang/bci-data/cache/spanishbcbl/v1",
+ "stream_root": "C:/Users/zhang/bci-data/streams/keystroke-sync-2026-11-08",
+ "lm": "C:/Users/zhang/bci-data/lm/spa_tatoeba_6gram_mkn.npz",
+ "lexicon_corpus": "C:/Users/zhang/bci-data/corpora/tatoeba/spa_sentences.tsv.bz2",
+ "seed": 0,
+ "window_s": [
+  -0.2,
+  0.3
+ ],
+ "n_bins": 10,
+ "lr_lams": [
+  0.03,
+  0.1,
+  0.3,
+  1.0,
+  3.0,
+  10.0,
+  30.0
+ ],
+ "mlp": {
+  "enabled": true,
+  "hidden": 256,
+  "dropout": 0.4,
+  "lr": 0.001,
+  "weight_decay": 0.01,
+  "epochs": 40,
+  "batch_size": 256
+ },
+ "key_blank": 0.001,
+ "gap_nonblank": 0.0001,
+ "lm_weights": [
+  0.5,
+  1.0,
+  1.25,
+  2.0,
+  3.0
+ ],
+ "try_retuned_beam": true,
+ "max_wrong_commit": 0.05,
+ "pareto_limits": [
+  0.02,
+  0.1,
+  0.2
+ ],
+ "bootstrap_B": 1000,
+ "train_trials": "split == 'train' and not is_training; labels = key_chars (what was typed); keys other than a-z and space dropped",
+ "eval_trials": "split in (val, test) and not is_training",
+ "harness": "TrustPipeline.fit(val, val): frame T (before the beam), sentence T, conformal and policy thresholds all on val; report on test. Truth = target_text. Decoder = RETUNED beam, lm_weight picked on val on frame-calibrated streams, n_best=10.",
+ "trust_n_best": 10
+}

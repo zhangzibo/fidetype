@@ -1,5 +1,5 @@
 ---
-title: Trust core v0 results (simulator + char LM)
+title: Trust core v0 results (simulator, char LM, first real MEG)
 type: question
 tags: [trust-core, calibration, conformal, hallucination, ewpm, language-model, paper-1]
 sources: [brain2qwerty-v2]
@@ -15,10 +15,12 @@ updated: 2026-11-08
 - The trust policy cuts wrong commits by about 5–20×. It costs 7–16 % effective WPM (eWPM) against "always commit the LM top-1".
 - On shuffled or flat input, the trust policy commits no fluent text. Always-commit commits fluent text 98–100 % of the time.
 - The character LM gives the largest single gain. But LM fusion breaks the calibration of the character confidences.
-- All numbers come from the simulator. No real decoder output is in this page yet.
+- Sections 1–5 come from the simulator. Section 6 is the first run on real MEG decoder output.
 - **Update (2026-11-08, [beam re-tune](#5-beam-re-tune-2026-11-08)):** the old n-best misses were search errors. With the `RETUNED` beam, the trust policy matches always-commit speed (25.3 vs 25.8 eWPM) with about 3× fewer wrong commits (0.033 vs 0.108).
+- **Update (2026-11-08, [real MEG](#6-real-meg-first-test-2026-11-08)):** on real MEG, the trust policy cuts wrong commits from 100 % to 0 % and fluent hallucination on null input from 83–100 % to 0 %. But no candidate is ever correct, so the test is degenerate: it shows safety, not usefulness.
 
 Raw results:
+- [M2-10 trust core on real MEG](../../experiments/2026-11-08-m2-real-keystroke/results.md) (tables: [tables.md](../../experiments/2026-11-08-m2-real-keystroke/results/tables.md)).
 - [M2 trust core on the simulator](../../experiments/2026-11-08-m2-trust-sim/results.md) (full tables: [tables.md](../../experiments/2026-11-08-m2-trust-sim/results/tables.md)).
 - [CTC beam + 6-gram char LM](../../experiments/2026-11-08-lm-beam/results.md).
 - [M1-A data layer](../../experiments/2026-11-08-m1a-data/results.md) (the SpanishBCBL splits that Paper 1 will use).
@@ -148,7 +150,62 @@ Source: [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.
 - **Frame calibration is required before the beam.** Without it (T = 0.5, always-commit), both LM beams commit a wrong text in almost every sentence. The CTC prefix probability sums the evidence of all frames of a peak, so the LM cannot overrule an over-confident stream.
 - **Word-level alternatives need a per-word OFFER action.** Three choices per word reach the truth more often than three whole sentences (Tatoeba 0.465 vs 0.38). The simulated user cannot choose words yet, so the harness cannot measure this.
 
+## 6. Real MEG, first test (2026-11-08)
+Source: [M2-10 results](../../experiments/2026-11-08-m2-real-keystroke/results.md).
+
+### Setup
+- **Decoder:** a synchronous keystroke decoder (`fidetype.decoders.keystroke`). The key-press times come from the keyboard log (oracle timing, the Brain2Qwerty v1 setting). This is not a real-time device setting.
+- Features: −0.2..+0.3 s around each key press, 306 channels, 10 bins. Model: per-subject multinomial logistic regression. It beat a shared MLP on val (key accuracy 0.419 vs 0.336).
+- Data: 20 cached blocks, 11 subjects. Train 947 trials / 38 204 keys. Val 114 trials / 11 sentences. Test 209 trials / 17 unique sentences.
+- The decoder emits a CTC-form NeuralTextStream with no text in `meta`. The trust pipeline is fitted on val. Beam: `RETUNED`, frame-calibrated, `lm_weight = 0.5` (best on val), n-best 10.
+
+### Decoder (test)
+| input | key acc | greedy CER vs typed | greedy CER vs target |
+|---|---|---|---|
+| real MEG | **0.390** | 0.590 | 0.597 |
+| control: shuffled MEG | 0.111 | 0.774 | 0.774 |
+| control: labels permuted at train time | 0.099 | 0.767 | 0.768 |
+
+- Majority-class chance is 0.13. Both controls are at chance. So the decoder uses the MEG.
+- With the LM beam: test CER **0.531**, WER 1.023.
+- **The true sentence is in the n-best in 0 % of trials**, at every beam setting.
+
+### Trust pipeline (test, 209 trials)
+| policy | wrong-commit | commits | eWPM |
+|---|---|---|---|
+| (b) always commit LM top-1 | 100 % (83 % fluent Spanish) | all | 9.61 |
+| (c) trust policy | **0 %** | none (always OFFER) | 9.70 |
+| (d) no calibration | 1 % | 1 % | 9.69 |
+| (e) no guard; (f) inconsistency + p_top1 only | 0 % | none | 9.70 |
+
+- The 95 % CI of the eWPM difference (c) − (b) crosses 0: [−0.11, +0.35] (trial bootstrap).
+- eWPM comes from the simulated user only. No candidate is right, so eWPM measures correction time only.
+
+### Null-input audit and guard
+| input | LM top-1: fluent commits | trust variants (c, e, f): fluent commits |
+|---|---|---|
+| real MEG | 83 % | 0 % |
+| shuffled MEG | 84 % | 0 % |
+| frame-shuffled stream | 86 % | 0 % |
+| uniform stream | 100 % | 0 % |
+
+| guard AUROC (combined risk) | value |
+|---|---|
+| top-1 CER above median | 0.85 |
+| uniform vs real | 0.98 |
+| shuffled MEG vs real | about 0.5 (no signal separates them) |
+
+- On real MEG, the evidence term carries the guard. n-best inconsistency and `p_top1` are near chance. This is the opposite of the simulator.
+- The shuffled-MEG stream is real classifier output for real key presses. Its confidence statistics are the same as real, so no signal detects it.
+- **Conformal coverage is 0**, because the truth is never in the n-best. The calibrator correctly makes the set the full list. Word-level coverage is 0.27.
+
+### Caveat: a degenerate test
+No candidate is ever correct. So the best policy is to commit nothing, and the trust policy finds that. This is a real safety result: the trust layer did not let the LM's fluent text through. But it does not show usefulness. It cannot show that the policy picks the correct commits from the wrong ones. That needs a stronger decoder, whose LM top-1 is right for a real share of sentences.
+
+> **Our take:** Next: a sentence-context decoder (v1 went from Conv 0.67 to Conv+Trans 0.36 CER), the full cache, and a per-word OFFER with partial correction in the user model. Known bug: `TemperatureScaler.transform_stream` drops `vocab_type`, `frame_period` and `latency` from the stream.
+
 ## Related pages
+- [M2-10 real-MEG experiment](../../experiments/2026-11-08-m2-real-keystroke/results.md)
 - [Beam re-tune experiment](../../experiments/2026-11-08-beam-retune/results.md)
 - [Decoder M1 results](decoder-m1-results.md): the decoder-side shuffled-MEG control
 - [Architecture](architecture.md): the six layers, NeuralTextStream, effective WPM.

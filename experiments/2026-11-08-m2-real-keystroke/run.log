@@ -1,0 +1,36 @@
+15:41:51 start ['lm', 'trust']
+15:42:06 LM default/w=0.5: val CER 0.533 WER 1.054 | test CER 0.552 WER 1.096 in-nbest 0.00
+15:42:20 LM default/w=1.0: val CER 0.562 WER 1.090 | test CER 0.557 WER 1.081 in-nbest 0.00
+15:42:33 LM default/w=1.25: val CER 0.562 WER 1.084 | test CER 0.572 WER 1.093 in-nbest 0.00
+15:42:46 LM default/w=2.0: val CER 0.590 WER 1.103 | test CER 0.598 WER 1.105 in-nbest 0.00
+15:42:58 LM default/w=3.0: val CER 0.626 WER 1.082 | test CER 0.635 WER 1.120 in-nbest 0.00
+15:44:27 LM retuned/w=0.5: val CER 0.496 WER 0.960 | test CER 0.531 WER 1.023 in-nbest 0.00
+15:45:48 LM retuned/w=1.0: val CER 0.501 WER 0.937 | test CER 0.535 WER 0.958 in-nbest 0.00
+15:47:13 LM retuned/w=1.25: val CER 0.514 WER 0.922 | test CER 0.544 WER 0.957 in-nbest 0.00
+15:48:38 LM retuned/w=2.0: val CER 0.568 WER 0.920 | test CER 0.575 WER 0.947 in-nbest 0.00
+15:49:55 LM retuned/w=3.0: val CER 0.600 WER 0.902 | test CER 0.620 WER 0.926 in-nbest 0.00
+15:50:44 LM retuned_calT/w=0.5: val CER 0.496 WER 0.960 | test CER 0.531 WER 1.023 in-nbest 0.00
+15:51:24 LM retuned_calT/w=1.0: val CER 0.501 WER 0.924 | test CER 0.536 WER 0.958 in-nbest 0.00
+15:52:07 LM retuned_calT/w=1.25: val CER 0.516 WER 0.922 | test CER 0.542 WER 0.956 in-nbest 0.00
+15:52:46 LM retuned_calT/w=2.0: val CER 0.568 WER 0.921 | test CER 0.575 WER 0.944 in-nbest 0.00
+15:53:22 LM retuned_calT/w=3.0: val CER 0.602 WER 0.905 | test CER 0.622 WER 0.925 in-nbest 0.00
+15:53:22 LM best on val: retuned_calT/w=0.5 {'search': 'vector', 'beam': 256, 'n_best': 10, 'prune_topk': None, 'prune_logp': -6.0, 'space_rules': True, 'lm_weight': 0.5, 'insertion_bonus': 1.0}
+15:53:23 a_greedy_commit: eWPM 9.21 wrong-commit 1.000 CER 0.597 commit 1.00 offer 0.00 abstain 0.00 (0.5s)
+15:54:10 b_top1_commit: eWPM 9.61 wrong-commit 1.000 CER 0.530 commit 1.00 offer 0.00 abstain 0.00 (47.7s)
+15:54:46 b0_top1_commit_uncal: eWPM 9.59 wrong-commit 1.000 CER 0.531 commit 1.00 offer 0.00 abstain 0.00 (35.4s)
+15:54:52 c_trust: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (5.7s)
+15:55:04 d_trust_no_calib: eWPM 9.69 wrong-commit 0.010 CER 0.531 commit 0.01 offer 0.99 abstain 0.00 (12.5s)
+15:55:05 e_trust_no_guard: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (0.8s)
+15:55:10 f_trust_consistency_ptop1: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (5.5s)
+15:55:16 pareto_trust_0.02: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (5.1s)
+15:55:21 pareto_trust_0.1: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (5.2s)
+15:55:26 pareto_trust_0.2: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (5.2s)
+15:55:35 bootstrap done
+15:55:39 audit a_greedy_commit: real=0.00 shuffled_meg=0.00 frame_shuffled=0.01 uniform=0.00
+15:57:10 audit b_top1_commit: real=0.83 shuffled_meg=0.84 frame_shuffled=0.86 uniform=1.00
+15:58:43 audit b0_top1_commit_uncal: real=0.82 shuffled_meg=0.83 frame_shuffled=0.85 uniform=1.00
+15:58:43 audit c_trust: real=0.00 shuffled_meg=0.00 frame_shuffled=0.00 uniform=0.00
+15:58:43 audit d_trust_no_calib: real=0.01 shuffled_meg=0.01 frame_shuffled=0.01 uniform=0.02
+15:58:43 audit e_trust_no_guard: real=0.00 shuffled_meg=0.00 frame_shuffled=0.00 uniform=0.00
+15:58:43 audit f_trust_consistency_ptop1: real=0.00 shuffled_meg=0.00 frame_shuffled=0.00 uniform=0.00
+15:58:43 done

@@ -1,0 +1,50 @@
+15:19:17 start ['decoder', 'lm', 'trust']
+15:19:18 loaded S1: 197 trials, 7857 keys
+15:19:18 loaded S3: 131 trials, 4728 keys
+15:19:18 loaded S5: 66 trials, 2161 keys
+15:19:19 loaded S9: 66 trials, 2893 keys
+15:19:19 loaded S11: 130 trials, 5564 keys
+15:19:19 loaded S12: 66 trials, 2635 keys
+15:19:20 loaded S15: 132 trials, 5763 keys
+15:19:20 loaded S16: 66 trials, 2827 keys
+15:19:20 loaded S18: 66 trials, 2813 keys
+15:19:21 loaded S19: 129 trials, 5617 keys
+15:19:21 loaded S25: 264 trials, 10086 keys
+15:20:04 LR S1: lam=0.1 cv_acc=0.422 (42s)
+15:20:34 LR S3: lam=0.3 cv_acc=0.345 (31s)
+15:20:55 LR S5: lam=1.0 cv_acc=0.302 (20s)
+15:21:18 LR S9: lam=0.3 cv_acc=0.374 (24s)
+15:21:48 LR S11: lam=0.3 cv_acc=0.333 (29s)
+15:22:10 LR S12: lam=1.0 cv_acc=0.270 (22s)
+15:22:42 LR S15: lam=0.1 cv_acc=0.477 (33s)
+15:23:05 LR S16: lam=0.3 cv_acc=0.499 (22s)
+15:23:27 LR S18: lam=0.3 cv_acc=0.294 (22s)
+15:24:01 LR S19: lam=0.3 cv_acc=0.339 (34s)
+15:25:10 LR S25: lam=0.1 cv_acc=0.446 (68s)
+15:25:30 mlp: best epoch 33, holdout acc 0.335 (18s)
+15:25:42 mlp_perm: best epoch 2, holdout acc 0.123 (12s)
+15:25:42 model selection {'lr': {'val_acc': 0.4191555097837281, 'val_nll': 1.8960170804397798}, 'mlp': {'val_acc': 0.33553038105046346, 'val_nll': 2.1103896613937025}} -> lr
+15:25:59 LM default/w=0.5: val CER 0.533 WER 1.054 | test CER 0.552 WER 1.096 in-nbest 0.00
+15:26:10 LM default/w=1.0: val CER 0.562 WER 1.090 | test CER 0.557 WER 1.081 in-nbest 0.00
+15:26:20 LM default/w=2.0: val CER 0.590 WER 1.103 | test CER 0.598 WER 1.105 in-nbest 0.00
+15:26:30 LM default/w=3.0: val CER 0.626 WER 1.082 | test CER 0.635 WER 1.120 in-nbest 0.00
+15:27:51 LM retuned/w=0.5: val CER 0.496 WER 0.960 | test CER 0.531 WER 1.023 in-nbest 0.00
+15:29:13 LM retuned/w=1.0: val CER 0.501 WER 0.937 | test CER 0.535 WER 0.958 in-nbest 0.00
+15:30:32 LM retuned/w=2.0: val CER 0.568 WER 0.920 | test CER 0.575 WER 0.947 in-nbest 0.00
+15:31:43 LM retuned/w=3.0: val CER 0.600 WER 0.902 | test CER 0.620 WER 0.926 in-nbest 0.00
+15:31:43 LM best on val: retuned/w=0.5 {'search': 'vector', 'beam': 256, 'n_best': 20, 'prune_topk': None, 'prune_logp': -6.0, 'space_rules': True, 'lm_weight': 0.5, 'insertion_bonus': 1.0}
+15:31:43 a_greedy_commit: eWPM 9.21 wrong-commit 1.000 CER 0.597 commit 1.00 offer 0.00 abstain 0.00 (0.5s)
+15:32:53 b_top1_commit: eWPM 9.59 wrong-commit 1.000 CER 0.531 commit 1.00 offer 0.00 abstain 0.00 (69.2s)
+15:34:16 c_trust: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (83.7s)
+15:34:37 d_trust_no_calib: eWPM 9.69 wrong-commit 0.014 CER 0.531 commit 0.01 offer 0.99 abstain 0.00 (20.3s)
+15:34:38 e_trust_no_guard: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (1.0s)
+15:34:44 pareto_trust_0.02: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (5.9s)
+15:34:50 pareto_trust_0.1: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (6.0s)
+15:34:55 pareto_trust_0.2: eWPM 9.70 wrong-commit 0.000 CER 0.530 commit 0.00 offer 1.00 abstain 0.00 (5.7s)
+15:35:02 bootstrap done
+15:35:07 audit a_greedy_commit: real=0.00 shuffled_meg=0.00 frame_shuffled=0.01 uniform=0.00
+15:38:15 audit b_top1_commit: real=0.82 shuffled_meg=0.83 frame_shuffled=0.85 uniform=1.00
+15:41:22 audit c_trust: real=0.00 shuffled_meg=0.00 frame_shuffled=0.00 uniform=0.00
+15:41:22 audit d_trust_no_calib: real=0.01 shuffled_meg=0.02 frame_shuffled=0.01 uniform=0.02
+15:41:22 audit e_trust_no_guard: real=0.00 shuffled_meg=0.00 frame_shuffled=0.00 uniform=0.00
+15:41:23 done

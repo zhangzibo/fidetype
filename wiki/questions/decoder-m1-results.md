@@ -1,5 +1,5 @@
 ---
-title: Decoder M1 results (first real runs, no MEG use yet)
+title: Decoder M1 results (first real runs, keystroke decoder uses MEG)
 type: question
 tags: [decoder, ctc, meg, spanishbcbl, evaluation, controls, rocm]
 sources: [brain2qwerty-v2]
@@ -16,6 +16,7 @@ updated: 2026-11-08
 - With the MEG of another trial, the CER is **0.669**. So the model **does not use the MEG yet**. The CER comes from a Spanish text prior.
 - The M1 target (greedy CER near 0.59, the v2 async encoder on SpanishBCBL with all data) is **not met**.
 - The main suspect is data volume: about 2.5 h of roughly 20 h. The sanity check (2026-11-08) shows that the cache holds keystroke signal: linear hand decoding reaches 0.83–0.96 (chance 0.60).
+- **Update (2026-11-08):** a [synchronous keystroke decoder](#synchronous-keystroke-decoder-2026-11-08) (oracle key timing) does use the MEG: test key accuracy 0.390 (controls 0.10–0.11), greedy CER 0.59 (controls 0.77).
 
 Full details: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.md).
 
@@ -76,14 +77,32 @@ A linear ridge classifier decodes keystroke-locked epochs (−0.5..+0.5 s, 306 c
 - The evoked GFP is 2–4.5× above baseline near the key press. At random times it is flat.
 - **Verdict:** the cache and the alignment are correct. Cause 3 above is ruled out. The CTC failure comes from data volume or the model.
 
+## Synchronous keystroke decoder (2026-11-08)
+Source: [M2-10 results](../../experiments/2026-11-08-m2-real-keystroke/results.md). Code: `src/fidetype/decoders/keystroke.py`.
+
+- **Setting:** synchronous, with oracle key timing from the keyboard log (the v1 setting). One window per key press: −0.2..+0.3 s, 10 bins, 306 channels.
+- **Model:** per-subject multinomial logistic regression. It beat a shared MLP on val (key accuracy 0.419 vs 0.336).
+- **Data:** 20 cached blocks, 11 subjects. Train 947 trials / 38 204 keys; test 209 trials / 17 unique sentences.
+
+| input (test) | key acc | greedy CER vs typed | greedy CER vs target |
+|---|---|---|---|
+| real MEG | **0.390** | **0.590** | 0.597 |
+| control: shuffled MEG | 0.111 | 0.774 | 0.774 |
+| control: labels permuted at train time | 0.099 | 0.767 | 0.768 |
+
+- Chance (majority class) is 0.13. Both controls are at chance. **This is the first real neural decoding in the project.**
+- With the `RETUNED` LM beam (`lm_weight = 0.5`): test CER 0.531, WER 1.023. The true sentence is never in the n-best.
+- Greedy CER 0.59 meets the M1 number (≈0.59). **But it does so in the synchronous oracle-timing setting, not in the async setting** of the v2 target. The CTC decoder above is still the async path.
+
 ## Next steps
 - [x] **Sanity check:** keystroke-locked left/right-hand and character decoding with a linear model, v1-style. Signal present ([above](#sanity-check-2026-11-08-signal-present)).
 - [ ] **CTC decoder + keystroke auxiliary loss** (running: `experiments/2026-11-08-m1c-decoder-aux/`).
-- [ ] **Keystroke-synchronous decoder + trust core on real MEG** (running: `experiments/2026-11-08-m2-real-keystroke/`).
+- [x] **Keystroke-synchronous decoder + trust core on real MEG** ([above](#synchronous-keystroke-decoder-2026-11-08)).
+- [ ] **Sentence-context keystroke decoder** (Transformer over key embeddings, v1 Conv+Trans style).
 - [ ] **Retrain on the full cache** (all subjects) when preprocessing and the download are complete (`config-real.json`, subjects `null`).
 - [ ] **Low-data tuning:** a smaller model, more dropout and time masking, fewer Conformer layers.
 - [ ] **Cross-subject pretraining** and a per-subject fine-tune (joint training was best in v2, Table 1).
-- [ ] Beam CER with the char LM, after the beam re-tune. Report it with the same controls.
+- [ ] Beam CER with the char LM, after the beam re-tune, for the CTC decoder. Report it with the same controls. (Keystroke decoder: done, 0.531.)
 
 ## ROCm / MIOpen notes
 - MIOpen searches kernels for each new input shape. Fixes: `MIOPEN_FIND_MODE=FAST` and lengths padded to a multiple of 100 samples.
