@@ -28,6 +28,21 @@ With N Conformer layers, the total lookahead is ``N * lookahead_frames``
 frames (see :meth:`ConvCTC.total_lookahead_frames`). ``None`` (the
 default) gives the offline, bidirectional model.
 
+Keystroke auxiliary loss
+------------------------
+Set ``aux_keystroke_weight`` > 0 to train with direct per-key labels:
+
+- Keystroke sample ``s`` (100 Hz, relative to the segment start) maps to
+  encoder frame ``s // downsample`` (see :meth:`ConvCTC.key_frames`).
+- A linear head (27 classes: a-z and space) reads the frame features,
+  mean-pooled over ``+/- aux_key_pool`` frames. ``aux_key_layer``
+  selects the conv-stack frames, the Conformer output, or both (one head
+  each, mean of the two losses).
+- Loss = ``ctc_weight * CTC + aux_keystroke_weight * CE(keys)``.
+
+The keystroke heads are used only in training and for analysis. They do
+not change ``logits``, so CTC inference is the same.
+
 LayerNorm (per time step) is used everywhere instead of BatchNorm. Thus
 the model has no statistics across time, and causal mode stays causal.
 """
@@ -43,6 +58,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from fidetype.streams.vocab import BLANK_ID, VOCAB_SIZE
+
+N_KEY_CLASSES = VOCAB_SIZE - 1  # a-z and space (same as dataset.N_KEY_CLASSES)
+KEY_IGNORE = -100
 
 
 @dataclass
@@ -68,6 +86,13 @@ class ModelConfig:
     lookahead_frames: int | None = None
     vocab_size: int = VOCAB_SIZE
     aux_weight: float = 0.7  # loss = (1 - aux_weight) * final + aux_weight * aux
+    # Keystroke-supervised auxiliary loss (see the module docstring). 0 = off:
+    # no extra modules, so the model and its loss are the same as before.
+    aux_keystroke_weight: float = 0.0
+    aux_key_layer: str = "both"  # "conv" (frame features), "conformer" (final features) or "both"
+    aux_key_pool: int = 1  # mean-pool the features over +/- this many frames around the key
+    aux_key_shift_frames: int = 0  # read the features this many frames after the key frame
+    ctc_weight: float = 1.0  # 0 = keystroke loss only (pretraining)
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> "ModelConfig":
@@ -266,6 +291,19 @@ class ConvCTC(nn.Module):
             for _ in range(cfg.conformer_layers)
         )
         self.head = nn.Linear(cfg.model_dim, cfg.vocab_size)
+        # Keystroke heads are made last, so the other parameters get the same
+        # initial values as a model without them.
+        self.key_heads = nn.ModuleDict()
+        if cfg.aux_keystroke_weight > 0:
+            if cfg.aux_key_layer not in ("conv", "conformer", "both"):
+                raise ValueError(f"aux_key_layer must be conv, conformer or both, not {cfg.aux_key_layer!r}")
+            layers = ("conv", "conformer") if cfg.aux_key_layer == "both" else (cfg.aux_key_layer,)
+            for name in layers:
+                self.key_heads[name] = nn.Linear(cfg.model_dim, N_KEY_CLASSES)
+
+    @property
+    def has_key_head(self) -> bool:
+        return len(self.key_heads) > 0
 
     # --- helpers -----------------------------------------------------------
 
@@ -305,6 +343,8 @@ class ConvCTC(nn.Module):
             "conformer": n(self.conformer),
             "head": n(self.head),
         }
+        if self.has_key_head:
+            parts["key_heads"] = n(self.key_heads)
         parts["total"] = sum(p.numel() for p in self.parameters())
         return parts
 
@@ -326,17 +366,62 @@ class ConvCTC(nn.Module):
         mf = _time_mask(out_len, Tp)
         h = self.frame_norm(h.transpose(1, 2)) * mf[..., None].to(h.dtype)  # [B, T', D]
         aux_logits = self.aux_head(h)
+        feats = {"conv": h} if self.has_key_head else {}
         if self.cfg.self_condition:
             h = h + self.cond(aux_logits.float().softmax(-1).to(h.dtype))
         am = self.attention_mask(out_len, Tp)
         mfd = mf.to(h.dtype)
         for blk in self.conformer:
             h = blk(h, mfd, am)
-        return {"logits": self.head(h), "aux_logits": aux_logits, "out_lengths": out_len}
+        out = {"logits": self.head(h), "aux_logits": aux_logits, "out_lengths": out_len}
+        if self.has_key_head:
+            feats["conformer"] = h
+            out["key_feats"] = {k: feats[k] for k in self.key_heads}
+        return out
+
+    # --- keystroke head ----------------------------------------------------
+
+    def key_frames(self, key_samples: torch.Tensor) -> torch.Tensor:
+        """Map keystroke samples (100 Hz, relative to the segment start) to
+        encoder frame indices: ``s // downsample``.
+
+        In offline mode, frame j is centred near input sample
+        ``downsample * j``, so this is the frame of the key press.
+        """
+        return torch.div(key_samples, self.cfg.downsample, rounding_mode="floor")
+
+    def key_logits(self, out: dict[str, Any], key_samples: torch.Tensor) -> dict[str, torch.Tensor]:
+        """Return keystroke logits [B, K, 27] for each keystroke head.
+
+        The features are mean-pooled over ``key_frame + shift + (-pool..pool)``.
+        Indices are clamped to the valid frames of each item.
+        """
+        if not self.has_key_head:
+            return {}
+        frames = self.key_frames(key_samples) + self.cfg.aux_key_shift_frames  # [B, K]
+        last = (out["out_lengths"] - 1).clamp(min=0)[:, None]
+        p = self.cfg.aux_key_pool
+        res = {}
+        for name, head in self.key_heads.items():
+            f = out["key_feats"][name]  # [B, T', D]
+            D = f.shape[-1]
+            acc = None
+            for o in range(-p, p + 1):
+                idx = torch.minimum((frames + o).clamp(min=0), last)
+                g = torch.gather(f, 1, idx[..., None].expand(-1, -1, D)).float()
+                acc = g if acc is None else acc + g
+            res[name] = head(acc / (2 * p + 1))
+        return res
 
     def loss(self, out: dict[str, torch.Tensor], targets: torch.Tensor,
-             target_lengths: torch.Tensor) -> dict[str, torch.Tensor]:
-        """Return the CTC losses (mean over the batch, per target char)."""
+             target_lengths: torch.Tensor, key_samples: torch.Tensor | None = None,
+             key_labels: torch.Tensor | None = None) -> dict[str, torch.Tensor]:
+        """Return the CTC losses (mean over the batch, per target char).
+
+        With a keystroke head and ``key_samples``/``key_labels`` [B, K]
+        (labels padded with -100), the loss also has the keystroke
+        cross-entropy (mean over the labelled keys).
+        """
 
         def ctc(logits: torch.Tensor) -> torch.Tensor:
             lp = logits.float().log_softmax(-1).transpose(0, 1)  # [T', B, V]
@@ -345,7 +430,28 @@ class ConvCTC(nn.Module):
 
         final, aux = ctc(out["logits"]), ctc(out["aux_logits"])
         w = self.cfg.aux_weight
-        return {"loss": (1 - w) * final + w * aux, "ctc_final": final, "ctc_aux": aux}
+        ctc_loss = (1 - w) * final + w * aux
+        res = {"loss": ctc_loss, "ctc_final": final, "ctc_aux": aux}
+        if not self.has_key_head or key_samples is None or key_labels is None:
+            return res
+        if self.cfg.ctc_weight != 1.0:
+            res["loss"] = self.cfg.ctc_weight * ctc_loss
+        logits = self.key_logits(out, key_samples)
+        valid = key_labels != KEY_IGNORE
+        n_valid = valid.sum()
+        ces = []
+        for name, lg in logits.items():
+            ce = F.cross_entropy(lg.reshape(-1, lg.shape[-1]), key_labels.reshape(-1), ignore_index=KEY_IGNORE,
+                                 reduction="sum") / n_valid.clamp(min=1)
+            ces.append(ce)
+            hit = ((lg.argmax(-1) == key_labels) & valid).sum()
+            res[f"key_ce_{name}"] = ce.detach()
+            res[f"key_correct_{name}"] = hit.detach()
+        key_ce = torch.stack(ces).mean()
+        res["key_ce"] = key_ce
+        res["key_n"] = n_valid.detach()
+        res["loss"] = res["loss"] + self.cfg.aux_keystroke_weight * key_ce
+        return res
 
 
 def greedy_decode_batch(logits: torch.Tensor, out_lengths: torch.Tensor) -> list[str]:

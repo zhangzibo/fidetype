@@ -16,6 +16,14 @@ The labels for evaluation go to a separate ``labels.jsonl`` in each
 split directory. The script then computes greedy-CTC CER and WER
 against the target and the typed text. It writes ``metrics.json`` and
 ``per_sentence_<split>.jsonl`` to ``<out_root>/<run_name>/``.
+
+If the model has a keystroke head (``aux_keystroke_weight`` > 0), the
+script also reports the head's accuracy on the true keystroke times
+(``keystroke_head``). The head does not change the CTC output.
+
+``--control`` adds the MEG control (real vs shuffled vs zeros), with the
+keystroke-head accuracy for each input, and a paired bootstrap 95% CI
+over sentences of the gap "shuffled CER - real CER" (``meg_control_gap``).
 """
 
 from __future__ import annotations
@@ -73,8 +81,32 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 @torch.no_grad()
+def bootstrap_mean_ci(d: np.ndarray, n_boot: int = 10000, seed: int = 0) -> dict[str, float]:
+    """Mean of ``d`` and its bootstrap 95% CI (resampling the elements)."""
+    d = np.asarray(d, dtype=np.float64)
+    rng = np.random.default_rng(seed)
+    means = d[rng.integers(0, len(d), size=(n_boot, len(d)))].mean(axis=1)
+    lo, hi = np.percentile(means, [2.5, 97.5])
+    return {"mean": float(d.mean()), "ci95_lo": float(lo), "ci95_hi": float(hi), "n": int(len(d)),
+            "frac_boot_le_0": float(np.mean(means <= 0))}
+
+
+def _key_hits(model: ConvCTC, out: dict[str, Any], item: dict[str, Any], dev: torch.device) -> dict[str, int]:
+    """Number of correct keystroke-head predictions per head, and "n"."""
+    if not model.has_key_head or "key_pos" not in item:
+        return {}
+    lab = item["key_label"].to(dev)
+    valid = lab != -100
+    if not bool(valid.any()):
+        return {"n": 0}
+    lg = model.key_logits(out, item["key_pos"][None].to(dev))
+    res = {name: int(((v[0].argmax(-1) == lab) & valid).sum()) for name, v in lg.items()}
+    res["n"] = int(valid.sum())
+    return res
+
+
 def meg_control(model: ConvCTC, ds: MEGSegments, dev: torch.device, use_bf16: bool, pad_multiple: int = 1,
-                seed: int = 0) -> dict[str, dict[str, float]]:
+                seed: int = 0, per_sentence: dict[str, Any] | None = None) -> dict[str, dict[str, float]]:
     """Check that the decoder uses the MEG.
 
     The function decodes each segment three times: with its own MEG
@@ -82,6 +114,10 @@ def meg_control(model: ConvCTC, ds: MEGSegments, dev: torch.device, use_bf16: bo
     zero-padded to the same length ("shuffled"), and with zeros. It
     returns the mean CER (vs target and typed text) for each input. If
     "real" is not lower than "shuffled", the model uses only a text prior.
+
+    With a keystroke head, each input also gets ``key_acc_<head>``: the
+    head reads the frames at the TRUE keystroke times of the segment.
+    ``per_sentence`` (a dict), if given, gets the per-sentence CER lists.
     """
     from fidetype.decoders.conv_ctc import greedy_decode_batch
 
@@ -92,6 +128,7 @@ def meg_control(model: ConvCTC, ds: MEGSegments, dev: torch.device, use_bf16: bo
     perm = np.where(perm == np.arange(n), (np.arange(n) + 1) % n, perm)
     res: dict[str, dict[str, list[float]]] = {k: {"cer_target": [], "cer_typed": []}
                                              for k in ("real", "shuffled", "zeros")}
+    hits: dict[str, dict[str, int]] = {k: {} for k in res}
     for i in range(n):
         item, other = ds[i], ds[int(perm[i])]["x"]
         T = item["x"].shape[1]
@@ -104,7 +141,18 @@ def meg_control(model: ConvCTC, ds: MEGSegments, dev: torch.device, use_bf16: bo
             hyp = greedy_decode_batch(out["logits"].float(), out["out_lengths"])[0]
             res[name]["cer_target"].append(cer(item["target_text"], hyp))
             res[name]["cer_typed"].append(cer(item["typed_text"], hyp))
-    return {k: {m: float(np.mean(v)) for m, v in d.items()} for k, d in res.items()}
+            for k, v in _key_hits(model, out, item, dev).items():
+                hits[name][k] = hits[name].get(k, 0) + v
+    if per_sentence is not None:
+        per_sentence.update({k: {m: list(v) for m, v in d.items()} for k, d in res.items()})
+    summary = {k: {m: float(np.mean(v)) for m, v in d.items()} for k, d in res.items()}
+    for k, h in hits.items():
+        n = h.pop("n", 0)
+        for name, c in h.items():
+            summary[k][f"key_acc_{name}"] = c / max(1, n)
+        if n:
+            summary[k]["key_n"] = n
+    return summary
 
 
 @torch.no_grad()
@@ -126,7 +174,9 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
                                "checkpoint_state": ck.get("state", {}), "splits": {}}
     for split in splits:
         ds = MEGSegments(root, (split,), cfg["data"].get("subjects"), ck["subject_map"], None,
-                         mmap_dir=cfg["data"].get("mmap_dir"))
+                         mmap_dir=cfg["data"].get("mmap_dir"), blocks=cfg["data"].get("blocks"))
+        key_hits: dict[str, int] = {}
+        key_labels_all: list[int] = []
         sdir = out_dir / split
         sdir.mkdir(parents=True, exist_ok=True)
         rows: list[dict[str, Any]] = []
@@ -141,6 +191,9 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
                 s = torch.tensor([item["subject"]], device=dev)
                 with torch.autocast(dev.type, dtype=torch.bfloat16, enabled=use_bf16):
                     out = model(x, L, s)
+                for k, v in _key_hits(model, out, item, dev).items():
+                    key_hits[k] = key_hits.get(k, 0) + v
+                key_labels_all += [int(v) for v in item["key_label"] if int(v) != -100]
                 n = int(out["out_lengths"][0])
                 lp = out["logits"][0, :n].float().log_softmax(-1).cpu().numpy()
                 name = f"{seg.subject}_{seg.session}_{seg.block}_{seg.trial_idx}"
@@ -177,9 +230,28 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
             for r in rows:
                 f.write(json.dumps(r) + "\n")
         results["splits"][split] = summarize(rows)
+        if key_hits.get("n"):
+            n_k = key_hits.pop("n")
+            counts = np.bincount(key_labels_all)
+            kh = {f"acc_{k}": v / n_k for k, v in key_hits.items()}
+            kh.update(n=n_k, majority_class_acc=float(counts.max() / counts.sum()))
+            results["splits"][split]["keystroke_head"] = kh
+            if echo:
+                print(f"[{split}] keystroke head: " + " ".join(f"{k}={v:.4f}" for k, v in kh.items()), flush=True)
         if control:
-            ctl = meg_control(model, ds, dev, use_bf16, pad_multiple)
+            per_sent: dict[str, Any] = {}
+            ctl = meg_control(model, ds, dev, use_bf16, pad_multiple, per_sentence=per_sent)
             results["splits"][split]["meg_control"] = ctl
+            if per_sent:
+                gap = {m: bootstrap_mean_ci(np.array(per_sent["shuffled"][m]) - np.array(per_sent["real"][m]))
+                       for m in ("cer_target", "cer_typed")}
+                results["splits"][split]["meg_control_gap"] = gap
+                with open(out_dir / f"control_per_sentence_{split}.json", "w", encoding="utf-8") as f:
+                    json.dump(per_sent, f)
+                if echo:
+                    g = gap["cer_target"]
+                    print(f"[{split}] gap shuffled-real CER target {g['mean']:+.4f} "
+                          f"[{g['ci95_lo']:+.4f}, {g['ci95_hi']:+.4f}]", flush=True)
             if echo and ctl:
                 print(f"[{split}] control CER target: " + " ".join(
                     f"{k}={v['cer_target']:.4f}" for k, v in ctl.items()), flush=True)
@@ -204,6 +276,9 @@ def main(argv: list[str] | None = None) -> None:
     res = run_inference(a.run_dir, a.ckpt, tuple(a.splits), a.out_root, a.device, a.data_root,
                         control=a.control)
     print(json.dumps({s: v.get("mean_over_subjects") for s, v in res["splits"].items()}, indent=2))
+    from fidetype.decoders.train import hard_exit
+
+    hard_exit(0)  # avoid the ROCm/Windows hang at process exit (see train.hard_exit)
 
 
 if __name__ == "__main__":

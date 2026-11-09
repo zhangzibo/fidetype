@@ -20,6 +20,12 @@ Item
 ``x``           float32 tensor [306, T] (after augmentation)
 ``target``      int64 tensor of CTC ids from ``typed_text`` (no blanks)
 ``subject``     int index of the participant
+``key_pos``     int64 tensor [K]: the sample of each keystroke in ``x``
+                (after jitter and time stretch). Only keystrokes inside
+                ``x`` are kept.
+``key_label``   int64 tensor [K]: keystroke class (a-z = 0..25, space = 26)
+                or -100 for other keys (return, unknown). See
+                :data:`N_KEY_CLASSES`.
 ``target_text`` and ``typed_text`` strings, plus ids for bookkeeping.
 
 Trials with ``is_training=True`` (practice trials with visual feedback)
@@ -38,7 +44,18 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset, Sampler
 
-from fidetype.streams.vocab import encode
+from fidetype.streams.vocab import BLANK_ID, VOCAB, encode
+
+#: Keystroke classes for the auxiliary keystroke loss: a-z (0..25) and space (26).
+N_KEY_CLASSES = len(VOCAB) - 1
+#: Label for keys outside the classes. ``F.cross_entropy`` ignores it.
+KEY_IGNORE = -100
+_KEY_CLASS = {c: i - 1 for i, c in enumerate(VOCAB) if i != BLANK_ID}
+
+
+def key_class(ch: str) -> int:
+    """Return the keystroke class of a ``key_chars`` entry, or :data:`KEY_IGNORE`."""
+    return _KEY_CLASS.get(ch, KEY_IGNORE) if len(ch) == 1 else KEY_IGNORE
 
 
 @dataclass
@@ -76,6 +93,13 @@ class Segment:
     first_key: int
     last_key: int
     n_samples: int
+    key_abs: tuple[int, ...] = ()  # keystroke samples in the block (absolute)
+    key_labels: tuple[int, ...] = ()  # key_class() of each keystroke
+
+
+def block_id(npz_rel: str) -> str:
+    """Return the block id ``<subject>/<session>_<block>`` of a cache-relative npz path."""
+    return npz_rel[: -len(".npz")] if npz_rel.endswith(".npz") else npz_rel
 
 
 def _block_meta(sidecar: Path) -> tuple[str, str]:
@@ -87,11 +111,14 @@ def _block_meta(sidecar: Path) -> tuple[str, str]:
     return session, block
 
 
-def scan_cache(root: str | Path, subjects: Sequence[str] | None = None) -> list[Segment]:
+def scan_cache(root: str | Path, subjects: Sequence[str] | None = None,
+               blocks: Sequence[str] | None = None) -> list[Segment]:
     """Return all non-practice segments in the cache.
 
     The function globs ``<root>/<subject>/*.json`` sidecars that have a
     matching ``.npz``. It does not depend on the ``_index.json`` schema.
+    ``blocks`` (ids like ``"S1/ses1_block2"``) keeps only those blocks. Use
+    it to pin a run to a fixed data set while the cache still grows.
     """
     root = Path(root)
     out: list[Segment] = []
@@ -102,6 +129,9 @@ def scan_cache(root: str | Path, subjects: Sequence[str] | None = None) -> list[
         meta = json.loads(sidecar.read_text(encoding="utf-8"))
         subject = str(meta.get("subject", sidecar.parent.name))
         if subjects is not None and subject not in subjects:
+            continue
+        rel = str(npz.relative_to(root)).replace("\\", "/")
+        if blocks is not None and block_id(rel) not in blocks:
             continue
         participant = str(meta.get("participant", meta.get("participant_id", subject)))
         session, block = _block_meta(sidecar)
@@ -115,16 +145,20 @@ def scan_cache(root: str | Path, subjects: Sequence[str] | None = None) -> list[
             if not typed.strip():
                 continue
             start, end = int(seg["start_sample"]), int(seg["end_sample"])
-            keys = [int(k) for k in (seg.get("key_samples") or [])] or [start + 1, end - 1]
-            if min(keys) < start:  # key_samples are relative to the segment start
-                keys = [start + k for k in keys]
+            raw = [int(k) for k in (seg.get("key_samples") or [])]
+            chars = list(seg.get("key_chars") or [])
+            if raw and min(raw) < start:  # key_samples are relative to the segment start
+                raw = [start + k for k in raw]
+            if len(chars) != len(raw):
+                chars = [""] * len(raw)  # no usable labels
+            keys = raw or [start + 1, end - 1]
             out.append(
                 Segment(
                     subject=subject,
                     participant=participant,
                     session=session,
                     block=block,
-                    npz=str(npz.relative_to(root)).replace("\\", "/"),
+                    npz=rel,
                     trial_idx=int(seg["trial_idx"]),
                     split=str(seg.get("split", "train")),
                     start=start,
@@ -134,6 +168,8 @@ def scan_cache(root: str | Path, subjects: Sequence[str] | None = None) -> list[
                     first_key=int(min(keys)),
                     last_key=int(max(keys)),
                     n_samples=n_samples,
+                    key_abs=tuple(raw),
+                    key_labels=tuple(key_class(c) for c in chars),
                 )
             )
     return out
@@ -213,9 +249,10 @@ class MEGSegments(Dataset):
         mmap_dir: str | Path | None = None,
         pad_s: float = 0.0,
         max_segments: int | None = None,
+        blocks: Sequence[str] | None = None,
     ) -> None:
         self.root = Path(root)
-        all_segs = scan_cache(self.root, subjects)
+        all_segs = scan_cache(self.root, subjects, blocks)
         if subject_map is None:
             subject_map = {p: i for i, p in enumerate(sorted({s.participant for s in all_segs}))}
         self.subject_map = dict(subject_map)
@@ -276,6 +313,8 @@ class MEGSegments(Dataset):
             end = end + int(rng.integers(0, int(round(a.end_jitter_s * sf)) + 1))
         start, end = max(0, start), min(T_block, end)
         x = np.asarray(arr[:, start:end], dtype=np.float32)
+        T0 = x.shape[1]
+        kpos = np.asarray(seg.key_abs, dtype=np.float64) - start
         if a is not None:
             C, T = x.shape
             if a.stretch_max > a.stretch_min or a.stretch_min != 1.0:
@@ -283,6 +322,7 @@ class MEGSegments(Dataset):
                 if abs(f - 1.0) > 1e-3:
                     x = time_stretch(x, f)
                     T = x.shape[1]
+                    kpos = kpos * (T - 1) / max(1, T0 - 1)  # same map as time_stretch
             if a.channel_offset_std > 0:
                 x = x + rng.normal(0, a.channel_offset_std, size=(C, 1)).astype(np.float32)
             for _ in range(a.time_mask_n):
@@ -295,8 +335,13 @@ class MEGSegments(Dataset):
                 if 0 < w < C:
                     idx = rng.choice(C, size=w, replace=False)
                     x[idx] = 0.0
+        kpos = np.round(kpos).astype(np.int64)
+        klab = np.asarray(seg.key_labels, dtype=np.int64)
+        keep = (kpos >= 0) & (kpos < x.shape[1])
         return {
             "x": torch.from_numpy(np.ascontiguousarray(x)),
+            "key_pos": torch.from_numpy(kpos[keep]),
+            "key_label": torch.from_numpy(klab[keep]),
             "target": torch.tensor(encode(seg.typed_text), dtype=torch.long),
             "subject": self.subject_map[seg.participant],
             "target_text": seg.target_text,
@@ -317,7 +362,10 @@ def collate(batch: list[dict[str, Any]], pad_multiple: int = 1) -> dict[str, Any
 
     Returns ``x`` [B, C, T_pad] (zero padded), ``lengths`` [B],
     ``targets`` [B, L_max] (zero padded), ``target_lengths`` [B],
-    ``subjects`` [B] and the text lists.
+    ``subjects`` [B] and the text lists. If the items have keystrokes,
+    it also returns ``key_samples`` [B, K_max] (padded with 0),
+    ``key_labels`` [B, K_max] (padded with :data:`KEY_IGNORE`) and
+    ``key_mask`` [B, K_max] (True at real keystrokes).
     """
     B = len(batch)
     C = batch[0]["x"].shape[0]
@@ -341,7 +389,24 @@ def collate(batch: list[dict[str, Any]], pad_multiple: int = 1) -> dict[str, Any
         "typed_text": [b["typed_text"] for b in batch],
         "index": [b["index"] for b in batch],
         "start_sample": [b["start_sample"] for b in batch],
+        **_collate_keys(batch),
     }
+
+
+def _collate_keys(batch: list[dict[str, Any]]) -> dict[str, torch.Tensor]:
+    if "key_pos" not in batch[0]:
+        return {}
+    B = len(batch)
+    K = max(1, max(len(b["key_pos"]) for b in batch))
+    ks = torch.zeros(B, K, dtype=torch.long)
+    kl = torch.full((B, K), KEY_IGNORE, dtype=torch.long)
+    km = torch.zeros(B, K, dtype=torch.bool)
+    for i, b in enumerate(batch):
+        n = len(b["key_pos"])
+        ks[i, :n] = b["key_pos"]
+        kl[i, :n] = b["key_label"]
+        km[i, :n] = True
+    return {"key_samples": ks, "key_labels": kl, "key_mask": km}
 
 
 class BucketBatchSampler(Sampler[list[int]]):
@@ -398,6 +463,10 @@ def augment_from_dict(d: dict[str, Any] | None) -> AugmentConfig | None:
 __all__ = [
     "AugmentConfig",
     "BucketBatchSampler",
+    "KEY_IGNORE",
+    "N_KEY_CLASSES",
+    "block_id",
+    "key_class",
     "MEGSegments",
     "Segment",
     "augment_from_dict",

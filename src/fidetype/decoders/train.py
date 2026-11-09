@@ -15,6 +15,17 @@ The run directory (``<runs_dir>/<run_name>``) gets:
 - ``train.log``: human-readable log.
 - ``status.json``: state, PID, epoch, step and best metric.
 
+Config keys added for M1-C:
+
+- ``data.blocks``: list of block ids (``"S1/ses1_block2"``). It pins a run
+  to a fixed set of blocks while the cache still grows.
+- ``model.aux_keystroke_weight`` (and the other ``aux_key_*`` keys): the
+  keystroke auxiliary loss (see :mod:`fidetype.decoders.conv_ctc`).
+- ``train.init_from``: a checkpoint. Its weights (with matching names and
+  shapes) initialise a new run, for example after keystroke pretraining.
+- ``train.early_stop_metric`` can also be ``"val_key_err"`` (1 - keystroke
+  head accuracy on val).
+
 Long runs must be detached (see ``experiments/2026-11-08-m1b-decoder/launch.ps1``).
 """
 
@@ -54,6 +65,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "data": {
         "root": "C:/Users/zhang/bci-data/cache/spanishbcbl/v1",
         "subjects": None,
+        "blocks": None,
         "mmap_dir": None,
         "train_splits": ["train"],
         "val_splits": ["val"],
@@ -86,6 +98,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "max_minutes": None,
         "deterministic": False,
         "torch_threads": 4,
+        "init_from": None,
     },
 }
 
@@ -174,15 +187,26 @@ def evaluate(model: ConvCTC, ds: MEGSegments, cfg: dict[str, Any], device: torch
     dl = DataLoader(ds, batch_sampler=sampler, collate_fn=coll, num_workers=0,
                     generator=torch.Generator().manual_seed(0))
     per_subj: dict[int, list[tuple[float, float, float, float]]] = {}
-    losses = []
+    losses, ctc_losses = [], []
+    key_hits: dict[str, float] = {}
+    key_n, key_ce = 0.0, []
     for batch in dl:
         x = batch["x"].to(device, non_blocking=True)
         lengths = batch["lengths"].to(device)
         subj = batch["subjects"].to(device)
         with torch.autocast(device.type, dtype=torch.bfloat16, enabled=use_bf16):
             out = model(x, lengths, subj)
-        ls = model.loss(out, batch["targets"].to(device), batch["target_lengths"].to(device))
+        ls = model.loss(out, batch["targets"].to(device), batch["target_lengths"].to(device),
+                        *key_args(batch, device))
         losses.append(float(ls["loss"]))
+        w = model.cfg.aux_weight
+        ctc_losses.append(float((1 - w) * ls["ctc_final"] + w * ls["ctc_aux"]))
+        if "key_n" in ls:
+            key_n += float(ls["key_n"])
+            key_ce.append(float(ls["key_ce"]) * float(ls["key_n"]))
+            for k, v in ls.items():
+                if k.startswith("key_correct_"):
+                    key_hits[k[len("key_correct_"):]] = key_hits.get(k[len("key_correct_"):], 0.0) + float(v)
         hyps = greedy_decode_batch(out["logits"].float(), out["out_lengths"])
         for s, h, tgt, typ in zip(batch["subjects"].tolist(), hyps, batch["target_text"], batch["typed_text"]):
             per_subj.setdefault(s, []).append((cer(typ, h), cer(tgt, h), wer(typ, h), wer(tgt, h)))
@@ -192,7 +216,15 @@ def evaluate(model: ConvCTC, ds: MEGSegments, cfg: dict[str, Any], device: torch
     keys = ["cer_typed", "cer_target", "wer_typed", "wer_target"]
     subj_means = {s: np.mean(np.array(v), axis=0) for s, v in per_subj.items()}
     allv = np.concatenate([np.array(v) for v in per_subj.values()])
-    res: dict[str, Any] = {"val_loss": float(np.mean(losses)), "n": int(len(allv))}
+    res: dict[str, Any] = {"val_loss": float(np.mean(losses)), "val_ctc": float(np.mean(ctc_losses)),
+                           "n": int(len(allv))}
+    if key_n > 0:
+        res["val_key_n"] = int(key_n)
+        res["val_key_ce"] = float(sum(key_ce) / key_n)
+        for name, h in key_hits.items():
+            res[f"val_key_acc_{name}"] = h / key_n
+        res["val_key_acc"] = max(h / key_n for h in key_hits.values())
+        res["val_key_err"] = 1.0 - res["val_key_acc"]
     for i, k in enumerate(keys):
         res[f"val_{k}"] = float(np.mean([m[i] for m in subj_means.values()]))
         res[f"val_{k}_micro"] = float(allv[:, i].mean())
@@ -200,15 +232,35 @@ def evaluate(model: ConvCTC, ds: MEGSegments, cfg: dict[str, Any], device: torch
     return res
 
 
+def key_args(batch: dict[str, Any], device: torch.device) -> tuple[torch.Tensor, ...]:
+    """Return (key_samples, key_labels) on ``device``, or () if the batch has none."""
+    if "key_samples" not in batch:
+        return ()
+    return batch["key_samples"].to(device), batch["key_labels"].to(device)
+
+
 def build_datasets(cfg: dict[str, Any], subject_map: dict[str, int] | None):
     d = cfg["data"]
     seed = cfg["train"]["seed"]
     train_ds = MEGSegments(d["root"], d["train_splits"], d["subjects"], subject_map,
                            augment_from_dict(d.get("augment", {})), seed, d.get("mmap_dir"),
-                           max_segments=d.get("max_train_segments"))
+                           max_segments=d.get("max_train_segments"), blocks=d.get("blocks"))
     val_ds = MEGSegments(d["root"], d["val_splits"], d["subjects"], train_ds.subject_map, None, seed,
-                         d.get("mmap_dir"))
+                         d.get("mmap_dir"), blocks=d.get("blocks"))
     return train_ds, val_ds
+
+
+def init_weights_from(model: ConvCTC, path: str | Path) -> tuple[list[str], list[str]]:
+    """Copy the weights with the same name and shape from checkpoint ``path``.
+
+    Returns (loaded names, skipped names).
+    """
+    src = torch.load(path, map_location="cpu", weights_only=False)["model"]
+    own = model.state_dict()
+    ok = {k: v for k, v in src.items() if k in own and own[k].shape == v.shape}
+    own.update(ok)
+    model.load_state_dict(own)
+    return sorted(ok), sorted(k for k in own if k not in ok)
 
 
 def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool = False,
@@ -252,6 +304,9 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
 
     state = {"epoch": 0, "step_in_epoch": 0, "global_step": 0, "best": float("inf"), "best_epoch": -1,
              "bad_evals": 0, "done": False}
+    if ckpt is None and tcfg.get("init_from"):
+        loaded, skipped = init_weights_from(model, tcfg["init_from"])
+        log.log(f"init_from {tcfg['init_from']}: {len(loaded)} tensors loaded, skipped {skipped}")
     if ckpt is not None:
         model.load_state_dict(ckpt["model"])
         opt.load_state_dict(ckpt["optimizer"])
@@ -305,7 +360,8 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
             subj = batch["subjects"].to(device)
             with torch.autocast(device.type, dtype=torch.bfloat16, enabled=use_bf16):
                 out = model(x, lengths, subj)
-            ls = model.loss(out, batch["targets"].to(device), batch["target_lengths"].to(device))
+            ls = model.loss(out, batch["targets"].to(device), batch["target_lengths"].to(device),
+                            *key_args(batch, device))
             opt.zero_grad(set_to_none=True)
             ls["loss"].backward()
             gnorm = torch.nn.utils.clip_grad_norm_(model.parameters(), ocfg["grad_clip"])
@@ -317,11 +373,20 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
             run_n += 1
             if state["global_step"] % tcfg["log_every_steps"] == 0:
                 rec = {"type": "train", "epoch": ep, "step": state["global_step"], "loss": run_loss / run_n,
-                       "ctc_final": float(ls["ctc_final"]), "ctc_aux": float(ls["ctc_aux"]),
+                       "ctc_final": float(ls["ctc_final"].detach()), "ctc_aux": float(ls["ctc_aux"].detach()),
                        "grad_norm": float(gnorm), "lr": sched.get_last_lr()[0]}
+                if "key_ce" in ls:
+                    rec["key_ce"] = float(ls["key_ce"].detach())
+                    n_k = max(1.0, float(ls["key_n"]))
+                    for k, v in ls.items():
+                        if k.startswith("key_correct_"):
+                            rec["key_acc_" + k[len("key_correct_"):]] = float(v) / n_k
                 log.metrics(rec)
-                log.log(f"ep {ep} step {state['global_step']} loss {rec['loss']:.4f} "
-                        f"(final {rec['ctc_final']:.3f} aux {rec['ctc_aux']:.3f}) lr {rec['lr']:.2e}")
+                msg = (f"ep {ep} step {state['global_step']} loss {rec['loss']:.4f} "
+                       f"(final {rec['ctc_final']:.3f} aux {rec['ctc_aux']:.3f}")
+                if "key_ce" in rec:
+                    msg += f" key {rec['key_ce']:.3f}"
+                log.log(msg + f") lr {rec['lr']:.2e}")
             if time.time() - last_ckpt > tcfg["ckpt_every_min"] * 60:
                 save(latest)
                 write_status("running")
@@ -362,6 +427,8 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
             msg += (f" val_loss {rec['val_loss']:.4f} val CER typed {rec['val_cer_typed']:.4f} "
                     f"target {rec['val_cer_target']:.4f} WER typed {rec['val_wer_typed']:.4f} "
                     f"(best {state['best']:.4f} @ {state['best_epoch']})")
+        if "val_key_acc" in rec:
+            msg += f" val key acc {rec['val_key_acc']:.3f}"
         if "max_mem_gb" in rec:
             msg += f" mem {rec['max_mem_gb']:.2f} GB"
         log.log(msg)
@@ -405,7 +472,30 @@ def main(argv: list[str] | None = None) -> None:
         cfg["train"]["max_minutes"] = a.max_minutes
     res = train(cfg, a.run_dir, resume=a.resume, max_steps=a.max_steps)
     print(json.dumps(res, indent=2, default=str))
-    sys.exit(0)
+    hard_exit(0)
+
+
+def hard_exit(code: int = 0) -> None:
+    """End the process at once, after flushing stdout and stderr.
+
+    On ROCm/Windows the process can hang at exit and spin one CPU core
+    (seen 2026-11-08: finished runs stayed alive for hours). ``sys.exit``
+    and ``os._exit`` both call ``ExitProcess``, which runs the DLL detach
+    code of the HIP runtime, where the hang is. ``TerminateProcess`` skips
+    the DLL detach. Call this only when all files are closed.
+    """
+    sys.stdout.flush()
+    sys.stderr.flush()
+    if sys.platform == "win32":
+        import ctypes
+        from ctypes import wintypes
+
+        k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        k32.GetCurrentProcess.restype = wintypes.HANDLE
+        k32.TerminateProcess.argtypes = (wintypes.HANDLE, wintypes.UINT)
+        k32.TerminateProcess.restype = wintypes.BOOL
+        k32.TerminateProcess(k32.GetCurrentProcess(), code)
+    os._exit(code)
 
 
 if __name__ == "__main__":

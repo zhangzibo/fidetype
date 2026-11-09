@@ -200,3 +200,165 @@ def test_infer_writes_valid_streams(cache, tmp_path):
     assert tr["n_sentences"] == len(files)
     assert tr["mean_over_subjects"]["cer_target"] >= 0
     assert (tmp_path / "streams" / "run" / "metrics.json").exists()
+
+
+# --- M1-C: keystroke auxiliary loss ---------------------------------------------------------
+
+
+def test_key_frame_mapping():
+    m = _model(aux_keystroke_weight=0.5)
+    assert m.cfg.downsample == 4
+    s = torch.tensor([[0, 3, 4, 7, 8, 399, 400]])
+    assert m.key_frames(s).tolist() == [[0, 0, 1, 1, 2, 99, 100]]
+    # Pooling clamps to the valid frames of each item (out length 10 for 37 samples).
+    out = m(torch.randn(1, 306, 37), torch.tensor([37]), torch.tensor([0]))
+    lg = m.key_logits(out, torch.tensor([[44, 200]]))  # frames 11 and 50: both clamp to 9
+    torch.testing.assert_close(lg["conv"][0, 0], lg["conv"][0, 1])
+
+
+def test_dataset_key_positions(cache):
+    from fidetype.decoders.dataset import KEY_IGNORE, N_KEY_CLASSES, key_class
+
+    assert N_KEY_CLASSES == 27
+    assert key_class("a") == 0 and key_class("z") == 25 and key_class(" ") == 26
+    assert key_class("<ret>") == KEY_IGNORE and key_class("") == KEY_IGNORE
+    plain = MEGSegments(cache, ("train", "val", "test"), augment=None)
+    i = next(k for k, sg in enumerate(plain.segments) if sg.subject == "S90")
+    item, seg = plain[i], plain.segments[i]
+    side = json.loads((cache / (seg.npz[: -len(".npz")] + ".json")).read_text())
+    raw = next(sg for sg in side["segments"] if sg["trial_idx"] == seg.trial_idx)
+    assert item["key_pos"].tolist() == raw["key_samples"]  # relative to the segment start
+    assert item["key_label"].tolist() == [key_class(c) for c in raw["key_chars"]]
+    # With start jitter and a time stretch, the keys move with the data.
+    aug = MEGSegments(cache, ("train", "val", "test"), seed=0,
+                      augment=AugmentConfig(end_jitter_s=0.0, stretch_min=1.2, stretch_max=1.2))
+    it2 = aug[i]
+    T_new = it2["x"].shape[1]
+    T0 = seg.end - it2["start_sample"]
+    shift = it2["start_sample"] - seg.start
+    expect = np.round((np.array(raw["key_samples"]) - shift) * (T_new - 1) / (T0 - 1))
+    np.testing.assert_array_equal(it2["key_pos"].numpy(), expect)
+    assert int(it2["key_pos"].max()) < T_new
+    # Collate pads and masks the keys.
+    b = collate([plain[0], plain[1], plain[2]])
+    K = max(len(plain[j]["key_pos"]) for j in range(3))
+    assert b["key_samples"].shape == b["key_labels"].shape == b["key_mask"].shape == (3, K)
+    for j in range(3):
+        n = len(plain[j]["key_pos"])
+        assert int(b["key_mask"][j].sum()) == n
+        assert (b["key_labels"][j, n:] == KEY_IGNORE).all()
+
+
+def test_blocks_filter(cache):
+    from fidetype.decoders.dataset import block_id
+
+    allseg = MEGSegments(cache, ("train", "val", "test"))
+    ids = sorted({block_id(sg.npz) for sg in allseg.segments})
+    assert len(ids) == 2
+    one = MEGSegments(cache, ("train", "val", "test"), blocks=[ids[0]])
+    assert {block_id(sg.npz) for sg in one.segments} == {ids[0]}
+    assert 0 < len(one) < len(allseg)
+
+
+@pytest.mark.parametrize("layer", ["conv", "conformer", "both"])
+def test_key_head_shapes_and_loss(layer):
+    m = _model(aux_keystroke_weight=0.5, aux_key_layer=layer).train()
+    x = torch.randn(2, 306, 300)
+    L = torch.tensor([300, 250])
+    out = m(x, L, torch.tensor([0, 1]))
+    ks = torch.tensor([[10, 50, 299, 0], [5, 100, 249, 0]])
+    kl = torch.tensor([[0, 26, 3, -100], [4, 5, -100, -100]])
+    lg = m.key_logits(out, ks)
+    assert set(lg) == ({"conv", "conformer"} if layer == "both" else {layer})
+    assert all(v.shape == (2, 4, 27) for v in lg.values())
+    tg = torch.randint(1, 28, (2, 20))
+    ls = m.loss(out, tg, torch.tensor([20, 15]), ks, kl)
+    assert int(ls["key_n"]) == 5
+    assert torch.isfinite(ls["loss"]) and torch.isfinite(ls["key_ce"])
+    w = m.cfg.aux_weight
+    ctc = (1 - w) * ls["ctc_final"] + w * ls["ctc_aux"]
+    torch.testing.assert_close(ls["loss"], ctc + 0.5 * ls["key_ce"])
+    ls["loss"].backward()
+    assert all(h.weight.grad is not None for h in m.key_heads.values())
+    # All labels ignored: the loss stays finite.
+    ls0 = m.loss(m(x, L, torch.tensor([0, 1])), tg, torch.tensor([20, 15]), ks, torch.full_like(kl, -100))
+    assert torch.isfinite(ls0["loss"])
+    assert out["logits"].shape == (2, 75, 28)
+
+
+def test_key_weight_zero_is_unchanged():
+    base = _model()
+    off = _model(aux_keystroke_weight=0.0)
+    on = _model(aux_keystroke_weight=1.0)
+    assert not off.has_key_head and on.has_key_head
+    assert set(base.state_dict()) == set(off.state_dict())
+    assert base.param_count() == off.param_count()
+    # The key heads are made last: all other parameters have the same initial values.
+    for k, v in base.state_dict().items():
+        torch.testing.assert_close(on.state_dict()[k], v, msg=k)
+    x = torch.randn(2, 306, 300)
+    L, s = torch.tensor([300, 250]), torch.tensor([0, 1])
+    tg, tl = torch.randint(1, 28, (2, 20)), torch.tensor([20, 15])
+    ks, kl = torch.tensor([[10, 50]]).repeat(2, 1), torch.tensor([[1, 2]]).repeat(2, 1)
+    ob, oo, on_ = base(x, L, s), off(x, L, s), on(x, L, s)
+    torch.testing.assert_close(ob["logits"], on_["logits"])  # the head does not change the CTC output
+    lb = base.loss(ob, tg, tl)
+    lo = off.loss(oo, tg, tl, ks, kl)  # keys are ignored without a head
+    assert set(lo) == {"loss", "ctc_final", "ctc_aux"}
+    torch.testing.assert_close(lb["loss"], lo["loss"])
+    lon = on.loss(on_, tg, tl, ks, kl)
+    torch.testing.assert_close(lon["ctc_final"], lb["ctc_final"])
+    # Pretraining mode: ctc_weight = 0 leaves only the keystroke loss.
+    pre = _model(aux_keystroke_weight=1.0, ctc_weight=0.0)
+    lp = pre.loss(pre(x, L, s), tg, tl, ks, kl)
+    torch.testing.assert_close(lp["loss"], lp["key_ce"])
+
+
+def test_tiny_overfit_with_key_aux(tmp_path):
+    from fidetype.decoders.train import train
+
+    # A stronger signal than the shared cache. The synthetic response peaks
+    # 100 ms after the key, so the head reads 2 frames (80 ms) after it.
+    strong = write_synthetic_cache(tmp_path / "v1", n_subjects=2, blocks_per_subject=1, trials_per_block=14,
+                                   amplitude=12.0, seed=1)
+    cfg = _cfg(strong, tmp_path, patience_evals=1000, log_every_steps=1)
+    cfg["optim"]["epochs"] = 25
+    cfg["model"] = {**TINY, "aux_keystroke_weight": 1.0, "aux_key_layer": "both", "aux_key_shift_frames": 2}
+    train(cfg, tmp_path / "run", echo=False)
+    recs = [json.loads(line) for line in (tmp_path / "run" / "metrics.jsonl").read_text().splitlines()]
+    tr = [r for r in recs if r["type"] == "train"]
+    ep = [r for r in recs if r["type"] == "epoch"]
+    assert len(ep) == 25
+    assert ep[-1]["train_loss"] < 0.6 * ep[0]["train_loss"]
+    first = np.mean([r["key_ce"] for r in tr[:6]])
+    last = np.mean([r["key_ce"] for r in tr[-6:]])
+    assert last < 0.5 * first, (first, last)
+    assert np.mean([r["key_acc_conv"] for r in tr[-6:]]) > 0.5  # chance is about 0.15
+    assert "val_key_acc" in ep[-1] and "val_key_acc_conformer" in ep[-1]
+
+
+def test_init_from_and_infer_key_head(cache, tmp_path):
+    from fidetype.decoders.infer import bootstrap_mean_ci, run_inference
+    from fidetype.decoders.train import train
+
+    cfg = _cfg(cache, tmp_path)
+    cfg["optim"]["epochs"] = 2
+    cfg["model"] = {**TINY, "aux_keystroke_weight": 1.0, "ctc_weight": 0.0}
+    cfg["train"]["early_stop_metric"] = "val_key_err"
+    train(cfg, tmp_path / "pre", echo=False)
+    cfg2 = _cfg(cache, tmp_path)
+    cfg2["optim"]["epochs"] = 1
+    cfg2["model"] = {**TINY, "aux_keystroke_weight": 0.5}
+    cfg2["train"]["init_from"] = str(tmp_path / "pre" / "best.pt")
+    train(cfg2, tmp_path / "ft", echo=False)
+    assert "init_from" in (tmp_path / "ft" / "train.log").read_text()
+    res = run_inference(tmp_path / "ft", splits=("val",), out_root=tmp_path / "streams", device="cpu",
+                        echo=False, control=True)
+    v = res["splits"]["val"]
+    assert 0 <= v["keystroke_head"]["acc_conv"] <= 1
+    assert set(v["meg_control"]) == {"real", "shuffled", "zeros"}
+    assert "key_acc_conv" in v["meg_control"]["real"]
+    g = v["meg_control_gap"]["cer_target"]
+    assert g["ci95_lo"] <= g["mean"] <= g["ci95_hi"]
+    ci = bootstrap_mean_ci(np.ones(10))
+    assert ci["mean"] == ci["ci95_lo"] == ci["ci95_hi"] == 1.0
