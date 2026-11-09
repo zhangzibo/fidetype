@@ -2,7 +2,7 @@
 
 This file tells a new Claude Code session where the last session stopped. The orchestrator updates it after each finished task.
 
-Last update: 2026-11-08 18:35 (crash recovery: M1-C keystroke loss and M2-14 OFFER_WORDS recorded and committed; preprocessing paused until the GPU check passes). 18:35: corrected the crash note (driver versions are by design; cause open).
+Last update: 2026-11-08 17:58 (GPU stress test started; see "Stress test in progress"). Earlier: 2026-11-08 18:35 (crash recovery: M1-C keystroke loss and M2-14 OFFER_WORDS recorded and committed; preprocessing paused until the GPU check passes). 18:35: corrected the crash note (driver versions are by design; cause open).
 
 ## Project in one paragraph
 **Fidetype** is an open trust layer for neural text entry. It was first called "neurotext" (a placeholder name). It lives in the GitHub repo https://github.com/zhangzibo/fidetype (renamed from `stealth-project` on 2026-11-08). The local folder is still named `stealth-project`. The project started on 2026-11-07 from Meta FAIR's Brain2Qwerty (MEG typing decoding). Fidetype adds calibration, abstention and provenance on top of brain-to-text decoders. It works with public datasets, because the user has no MEG or EEG hardware.
@@ -22,6 +22,17 @@ Last update: 2026-11-08 18:35 (crash recovery: M1-C keystroke loss and M2-14 OFF
 - Record **every task** in `wiki/progress/tracker.json`. Then run `node tools/progress/build.js`.
 - Run **long jobs detached**, with checkpoints and a log file.
 - **Load limits (new, 2026-11-08, after the crash):** at most **2 subagents** at the same time. At most **1 heavy job**: GPU training OR preprocessing, never both. **Record and commit right after each result** (tracker, HANDOFF, wiki, commit, push), so a crash loses nothing.
+
+## Stress test in progress (started 2026-11-08 about 17:58)
+- **What it does:** repeats the crash condition of 16:44. Real ConvCTC training (config `experiments/2026-11-08-m1c-decoder-aux/config-r2-small-aux0.5.json`, no early stop) for about 12 min. Then the GPU idles for 20 min. The process keeps its torch CUDA context during the idle phase. Then it writes `RESULT PASS` and exits. Total: about 35 min.
+- **Before it:** the user disabled the iGPU in Device Manager. After the reboot at 17:52, `tools/env/gpu_smoke.py` passed and the event log was clean.
+- **Folder:** `C:\Users\zhang\bci-data\runs\stress-2026-11-08\` (outside the repo). Script `stress.py`, launcher `launch.ps1`, heartbeat `heartbeat.log`, training run `train\`, output `stdout.log` / `stderr.log`, PID `pid.txt`.
+- **Check:** `Get-Content C:\Users\zhang\bci-data\runs\stress-2026-11-08\heartbeat.log -Tail 5`. The script writes one line every 20 s (flush + fsync): time, phase (`train`, `idle`, `end`), step, loss, GPU memory.
+- **After a reboot, PASS or crash?**
+  1. Read the last line of `heartbeat.log`. `RESULT PASS` = the test finished. Another last line = the process died at that time, in that phase.
+  2. Compare with the System event log: `Get-WinEvent -FilterHashtable @{LogName='System'; StartTime='2026-11-08 17:55'} | Where-Object { $_.Id -in 41,1001,4101 -or $_.ProviderName -match 'WHEA|amdkmdag' } | Format-List TimeCreated,Id,ProviderName,Message`. Kernel-Power 41 or BugCheck 1001 a short time after the last heartbeat line = a crash.
+- **Stop:** `taskkill /T /F /PID (Get-Content C:\Users\zhang\bci-data\runs\stress-2026-11-08\pid.txt)`.
+- **Rule:** no other GPU job or preprocessing during the test. Resume the SpanishBCBL preprocessing only on PASS.
 
 ## Crash on 2026-11-08 (read this)
 - At about **16:44** on 2026-11-08 the PC blue-screened: bugcheck **0x7E** in the AMD driver `amdkmdag` (`DMM_PowerManagement::GetPowerState`).
