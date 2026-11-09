@@ -45,7 +45,7 @@ Assumptions
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Callable, Sequence
 
 import numpy as np
@@ -168,16 +168,19 @@ class TemperatureScaler:
         return log_softmax(np.asarray(logits, dtype=np.float64) / self.temperature, axis=-1)
 
     def transform_stream(self, stream: NeuralTextStream) -> NeuralTextStream:
-        """Return a copy of the stream with calibrated frame log-probs."""
+        """Return a copy of the stream with calibrated frame log-probs.
+
+        All other stream fields (vocab, vocab_type, frame_period, latency,
+        version, ...) are kept. ``meta`` gets ``calibration_temperature``.
+        """
         lp = self.transform_logits(stream.log_probs).astype(np.float32)
         meta = dict(stream.meta)
         meta["calibration_temperature"] = self.temperature
-        return NeuralTextStream(
+        return replace(
+            stream,
             log_probs=lp,
-            frame_times=stream.frame_times,
-            vocab=stream.vocab,
-            blank_id=stream.blank_id,
-            source=stream.source,
+            frame_times=np.array(stream.frame_times, copy=True),
+            vocab=list(stream.vocab),
             meta=meta,
         )
 

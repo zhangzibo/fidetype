@@ -79,6 +79,36 @@ def test_transform_stream_keeps_argmax_and_validates():
     assert st2.meta["calibration_temperature"] == 2.0
 
 
+def test_transform_stream_keeps_all_metadata():
+    """M2-15: vocab_type, frame_period, latency (and all other fields) survive."""
+    import dataclasses
+
+    from fidetype.streams.spec import NeuralTextStream
+
+    rng = np.random.default_rng(0)
+    vocab = ["_", "a", "b", " "]
+    logits = rng.normal(size=(12, len(vocab)))
+    lp = logits - np.log(np.exp(logits).sum(1, keepdims=True))
+    st = NeuralTextStream(
+        log_probs=lp, frame_times=np.arange(12) * 0.04, vocab=vocab, blank_id=0,
+        source="unit-test", meta={"subject": "S1"}, vocab_type="char",
+        frame_period=0.04, latency=0.25,
+    )
+    st2 = TemperatureScaler(temperature=1.7).transform_stream(st)
+    for f in dataclasses.fields(NeuralTextStream):
+        if f.name in ("log_probs", "meta"):
+            continue
+        a, b = getattr(st, f.name), getattr(st2, f.name)
+        if isinstance(a, np.ndarray):
+            np.testing.assert_array_equal(a, b)
+        else:
+            assert a == b, f.name
+    assert st2.frame_period == 0.04 and st2.latency == 0.25 and st2.vocab_type == "char"
+    assert st2.meta == {"subject": "S1", "calibration_temperature": 1.7}
+    assert st.meta == {"subject": "S1"}  # the input is not changed
+    assert not np.allclose(st.log_probs, st2.log_probs)
+
+
 def _sharpen(nb, factor):
     """Multiply all scores: an over-confident decoder."""
     return NBest([Candidate(c.text, c.score * factor, c.logp_acoustic, c.logp_lm, c.char_confidences)
