@@ -7,6 +7,8 @@ The policy reads three signals for one input and selects one action:
   includes ``OTHER``).
 - ``guard_risk``: the risk score of the hallucination guard, in [0, 1].
 
+With ``offer_words`` it also reads the word slots of the top-1 sentence.
+
 Actions
 -------
 ``COMMIT``
@@ -21,6 +23,12 @@ Actions
 ``ABSTAIN``
     Show no text. Use it when the guard says the text is not supported by
     the neural evidence (for example, no real input).
+``OFFER_WORDS`` (only if ``PolicyConfig.offer_words`` is true)
+    Show the top-1 sentence. Highlight each word slot with a low
+    confidence, and show its ``offer_words_k`` best alternatives. The
+    user corrects the sentence word by word. The policy needs
+    ``PolicyInputs.word_slots`` for this action (the harness fills it
+    from ``fidetype.lm.word_alternatives``).
 
 Rules, in this order
 --------------------
@@ -30,12 +38,30 @@ Rules, in this order
    -> COMMIT.
 3. ``1 <= set_size <= offer_max_k`` and not ``includes_other``
    -> OFFER the set.
-4. Otherwise ASK. On the final attempt (no repeat is possible), ASK is
+4. Only if ``offer_words``: the top-1 sentence has word slots,
+   ``word_confidence >= offer_words_min_conf``, and
+   (``offer_words_max_slots`` is None or the number of highlighted slots
+   is ``<= offer_words_max_slots``) -> OFFER_WORDS.
+5. Otherwise ASK. On the final attempt (no repeat is possible), ASK is
    replaced by ``final_fallback``: OFFER the top ``offer_max_k`` (if
    ``offer_max_k >= 1``) or ABSTAIN.
 
+Word slots
+----------
+A word slot is one word of the top-1 sentence with its alternatives and
+their posterior mass (see :class:`WordSlotInfo`). The *slot confidence*
+is the mass of the top-1 word in its own slot. A slot is highlighted if
+its confidence is ``< word_conf_threshold``. ``word_confidence`` (the
+sentence-level signal of rule 4) is the mean slot confidence.
+
+Backward compatibility: with the default ``offer_words=False`` the
+policy never reads the word slots and gives the same decisions as
+before. :data:`DEFAULT_GRID` does not change.
+
 :func:`fit_thresholds` selects the thresholds on a validation set. It
-maximises effective WPM subject to a maximum wrong-commit rate.
+maximises effective WPM subject to a maximum wrong-commit rate (and,
+optionally, a maximum silent-error rate). :data:`OFFER_WORDS_GRID` is
+the grid of the OFFER_WORDS thresholds.
 """
 
 from __future__ import annotations
@@ -52,6 +78,45 @@ class Action(str, Enum):
     OFFER = "OFFER"
     ASK = "ASK"
     ABSTAIN = "ABSTAIN"
+    OFFER_WORDS = "OFFER_WORDS"
+
+
+@dataclass(frozen=True)
+class WordSlotInfo:
+    """One word slot of the top-1 sentence, as the policy sees it.
+
+    ``alternatives`` holds (text, posterior mass) pairs, best first. A
+    text can be "" (no word in that hypothesis) or two words (a split).
+    :class:`fidetype.lm.WordSlot` objects have the same attributes, so
+    the policy accepts them too.
+    """
+
+    word: str
+    alternatives: tuple[tuple[str, float], ...]
+
+    @property
+    def confidence(self) -> float:
+        """Posterior mass of the top-1 word in this slot."""
+        return slot_confidence(self)
+
+
+def slot_confidence(slot: Any) -> float:
+    """Return the mass of ``slot.word`` among ``slot.alternatives`` (0 if absent)."""
+    return float(next((m for a, m in slot.alternatives if a == slot.word), 0.0))
+
+
+@dataclass(frozen=True)
+class WordChoice:
+    """One highlighted word slot of an OFFER_WORDS decision."""
+
+    #: Index of the word in ``top1.split()``.
+    index: int
+    #: The top-1 word (shown in the sentence).
+    word: str
+    #: The alternatives shown to the user, best first (at most k). They
+    #: can include ``word``.
+    alternatives: tuple[str, ...]
+    confidence: float
 
 
 @dataclass(frozen=True)
@@ -65,10 +130,20 @@ class PolicyInputs:
     set_indices: tuple[int, ...]
     includes_other: bool = False
     guard_risk: float = 0.0
+    #: One slot per word of ``texts[0]`` (objects with ``word`` and
+    #: ``alternatives``). Empty if not computed. Only OFFER_WORDS reads it.
+    word_slots: tuple[Any, ...] = ()
 
     @property
     def set_size(self) -> int:
         return len(self.set_indices)
+
+    @property
+    def word_confidence(self) -> float:
+        """Mean slot confidence of the top-1 sentence (nan if no slots)."""
+        if not self.word_slots:
+            return math.nan
+        return sum(slot_confidence(s) for s in self.word_slots) / len(self.word_slots)
 
 
 @dataclass(frozen=True)
@@ -76,6 +151,8 @@ class Decision:
     action: Action
     shown_candidates: tuple[str, ...] = ()
     reason: str = ""
+    #: OFFER_WORDS only: the highlighted slots of ``shown_candidates[0]``.
+    word_choices: tuple[WordChoice, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -86,6 +163,33 @@ class PolicyConfig:
     offer_max_k: int = 5
     abstain_risk: float = 1.01  # > 1 means "never abstain on risk"
     final_fallback: Literal["offer", "abstain"] = "offer"
+    #: Enable OFFER_WORDS (rule 4). False keeps the old policy exactly.
+    offer_words: bool = False
+    #: Highlight a slot if its confidence is below this value. 0 means no
+    #: highlight; a value above 1 highlights every slot.
+    word_conf_threshold: float = 0.9
+    #: Number of alternatives shown per highlighted slot.
+    offer_words_k: int = 3
+    #: Use OFFER_WORDS (not ASK) only if the mean slot confidence of the
+    #: top-1 sentence is at least this value.
+    offer_words_min_conf: float = 0.0
+    #: Use OFFER_WORDS only if at most this many slots are highlighted.
+    offer_words_max_slots: int | None = None
+
+
+def highlight_slots(slots: Sequence[Any], threshold: float, k: int) -> tuple[WordChoice, ...]:
+    """Return a :class:`WordChoice` for each slot with confidence < ``threshold``.
+
+    Each choice shows the ``k`` best alternatives of the slot, best
+    first. The top-1 word is among them if its mass is in the top k.
+    """
+    out = []
+    for i, s in enumerate(slots):
+        conf = slot_confidence(s)
+        if conf < threshold:
+            alts = tuple(a for a, _ in list(s.alternatives)[: max(0, k)])
+            out.append(WordChoice(i, s.word, alts, conf))
+    return tuple(out)
 
 
 class DecisionPolicy:
@@ -108,11 +212,32 @@ class DecisionPolicy:
         if 1 <= x.set_size <= c.offer_max_k and not x.includes_other:
             shown = tuple(x.texts[i] for i in x.set_indices)
             return Decision(Action.OFFER, shown, f"conformal set of {x.set_size} <= {c.offer_max_k}")
+        if c.offer_words:
+            d = self._offer_words(x)
+            if d is not None:
+                return d
         if final_attempt:
             if c.final_fallback == "offer" and c.offer_max_k >= 1:
                 return Decision(Action.OFFER, tuple(x.texts[: c.offer_max_k]), "final attempt: offer top-k")
             return Decision(Action.ABSTAIN, (), "final attempt: low confidence")
         return Decision(Action.ASK, (), f"p_top1 {x.p_top1:.2f} low; set of {x.set_size} too large")
+
+    def _offer_words(self, x: PolicyInputs) -> Decision | None:
+        c = self.config
+        if not x.word_slots or len(x.word_slots) != len(x.texts[0].split()):
+            return None
+        wc = x.word_confidence
+        if wc < c.offer_words_min_conf:
+            return None
+        choices = highlight_slots(x.word_slots, c.word_conf_threshold, c.offer_words_k)
+        if c.offer_words_max_slots is not None and len(choices) > c.offer_words_max_slots:
+            return None
+        return Decision(
+            Action.OFFER_WORDS,
+            (x.texts[0],),
+            f"word confidence {wc:.2f} >= {c.offer_words_min_conf:.2f}; {len(choices)} slots highlighted",
+            choices,
+        )
 
 
 class AlwaysCommitPolicy:
@@ -132,6 +257,13 @@ DEFAULT_GRID: dict[str, Sequence[Any]] = {
     "final_fallback": ("offer", "abstain"),
 }
 
+#: Grid of the OFFER_WORDS thresholds. Pass it as ``word_grid`` to
+#: :func:`fit_thresholds` (this also sets ``offer_words=True``).
+OFFER_WORDS_GRID: dict[str, Sequence[Any]] = {
+    "word_conf_threshold": (0.5, 0.7, 0.8, 0.9, 0.95, 0.99, 1.01),
+    "offer_words_min_conf": (0.0, 0.3, 0.5, 0.7, 0.9),
+}
+
 
 @dataclass
 class FitResult:
@@ -148,6 +280,8 @@ def fit_thresholds(
     max_wrong_commit: float = 0.05,
     base: PolicyConfig | None = None,
     keep_table: bool = False,
+    word_grid: dict[str, Sequence[Any]] | None = None,
+    max_silent_error: float | None = None,
 ) -> FitResult:
     """Grid search for the policy thresholds.
 
@@ -157,9 +291,18 @@ def fit_thresholds(
     max_wrong_commit``. If no config is feasible, it returns the config
     with the lowest wrong-commit rate (ties: highest eWPM) and
     ``feasible=False``.
+
+    ``word_grid`` (for example :data:`OFFER_WORDS_GRID`) adds the
+    OFFER_WORDS thresholds to the search and sets ``offer_words=True``
+    on the base config. ``max_silent_error`` (if not None) is a second
+    limit, on ``"silent_error_rate"``. With the defaults (None, None)
+    the search is the same as before.
     """
     grid = dict(DEFAULT_GRID if grid is None else grid)
     base = base or PolicyConfig()
+    if word_grid is not None:
+        grid.update(word_grid)
+        base = replace(base, offer_words=True)
     keys = list(grid)
     best: tuple[PolicyConfig, dict[str, float]] | None = None
     fallback: tuple[PolicyConfig, dict[str, float]] | None = None
@@ -171,7 +314,8 @@ def fit_thresholds(
         n += 1
         if keep_table:
             table.append((asdict(cfg), m))
-        if m["wrong_commit_rate"] <= max_wrong_commit + 1e-12:
+        ok_silent = max_silent_error is None or m.get("silent_error_rate", 0.0) <= max_silent_error + 1e-12
+        if m["wrong_commit_rate"] <= max_wrong_commit + 1e-12 and ok_silent:
             if best is None or m["ewpm"] > best[1]["ewpm"] + 1e-12:
                 best = (cfg, m)
         key = (m["wrong_commit_rate"], -m["ewpm"])

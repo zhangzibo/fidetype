@@ -22,17 +22,22 @@ from fidetype.trust.guard import (
     semantic_entropy,
 )
 from fidetype.trust.policy import (
+    OFFER_WORDS_GRID,
     Action,
     AlwaysCommitPolicy,
     Decision,
     DecisionPolicy,
     PolicyConfig,
     PolicyInputs,
+    WordChoice,
+    WordSlotInfo,
     fit_thresholds,
+    highlight_slots,
 )
 from fidetype.trust.types import Candidate, NBest, from_lm_hypotheses
 
 __all__ = [
+    "OFFER_WORDS_GRID",
     "Action",
     "AdaptiveConformal",
     "AlwaysCommitPolicy",
@@ -49,13 +54,16 @@ __all__ = [
     "PredictionSet",
     "SplitConformal",
     "TemperatureScaler",
+    "WordChoice",
     "WordConformal",
+    "WordSlotInfo",
     "auroc",
     "ece",
     "fit_frame_temperature",
     "fit_thresholds",
     "from_lm_hypotheses",
     "greedy_peaks",
+    "highlight_slots",
     "nbest_consistency",
     "null_input_audit",
     "reliability_diagram",

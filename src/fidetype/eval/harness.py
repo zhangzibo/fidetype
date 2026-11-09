@@ -28,6 +28,16 @@ plus typing time) and decodes ``regen(attempt)``: a new, independent
 input of the same sentence. Without ``regen`` the item has one attempt.
 The last attempt cannot repeat: there, the policy runs with
 ``final_attempt=True``.
+
+Per-word choices
+----------------
+With ``HarnessConfig.offer_words`` (or a ``policy_config`` with
+``offer_words=True``), :meth:`TrustPipeline.analyze` also computes the
+word slots of the top-1 sentence with ``fidetype.lm.word_alternatives``
+(calibrated sentence posteriors), and the policy fit adds ``word_grid``
+(default :data:`~fidetype.trust.policy.OFFER_WORDS_GRID`). The word
+model of the simulated user is set in ``user_config`` (see
+``UserConfig.aac_gaze``). With the defaults nothing changes.
 """
 
 from __future__ import annotations
@@ -47,11 +57,13 @@ from fidetype.trust.conformal import PredictionSet, SplitConformal, WordConforma
 from fidetype.trust.guard import GuardConfig, GuardScore, HallucinationGuard, auroc
 from fidetype.trust.policy import (
     DEFAULT_GRID,
+    OFFER_WORDS_GRID,
     Action,
     AlwaysCommitPolicy,
     DecisionPolicy,
     PolicyConfig,
     PolicyInputs,
+    WordSlotInfo,
     fit_thresholds,
 )
 from fidetype.trust.types import NBest
@@ -108,6 +120,14 @@ class HarnessConfig:
     guard_config: GuardConfig = field(default_factory=GuardConfig)
     user_config: UserConfig = field(default_factory=UserConfig)
     seed: int = 0
+    #: Fit the OFFER_WORDS thresholds too (and compute the word slots).
+    offer_words: bool = False
+    #: OFFER_WORDS grid for the fit (None = OFFER_WORDS_GRID).
+    word_grid: dict[str, Sequence[Any]] | None = None
+    #: Optional second fit limit, on the silent-error rate.
+    max_silent_error: float | None = None
+    #: Alternatives kept per word slot.
+    word_max_alternatives: int = 5
 
 
 @dataclass
@@ -173,14 +193,25 @@ class TrustPipeline:
         else:
             pset = self.conformal.predict(post)
         g = self.guard.score(nb, post)
+        slots: tuple = ()
+        if self._needs_word_slots() and len(nb):
+            from fidetype.lm import word_alternatives  # lazy: only for OFFER_WORDS
+
+            ws = word_alternatives(nb.candidates, posteriors=post, max_alternatives=self.config.word_max_alternatives)
+            slots = tuple(WordSlotInfo(w.word, tuple(w.alternatives)) for w in ws)
         inputs = PolicyInputs(
             texts=tuple(nb.texts),
             p_top1=float(post[0]) if len(post) else 0.0,
             set_indices=tuple(pset.indices),
             includes_other=pset.includes_other,
             guard_risk=g.risk,
+            word_slots=slots,
         )
         return Analysis(nb, raw, raw_post, post, pset, g, inputs)
+
+    def _needs_word_slots(self) -> bool:
+        pc = self.config.policy_config
+        return self.config.offer_words or (pc is not None and pc.offer_words)
 
     # --- fitting ----------------------------------------------------------
 
@@ -230,7 +261,13 @@ class TrustPipeline:
             pol = DecisionPolicy(pc, use_guard=cfg.use_guard)
             return summarize(self.run_items(val_items, pol, cache))
 
-        res = fit_thresholds(evaluate, grid, cfg.max_wrong_commit, base=cfg.policy_config or PolicyConfig())
+        word_grid = None
+        if cfg.offer_words:
+            word_grid = dict(cfg.word_grid if cfg.word_grid is not None else OFFER_WORDS_GRID)
+        res = fit_thresholds(
+            evaluate, grid, cfg.max_wrong_commit, base=cfg.policy_config or PolicyConfig(),
+            word_grid=word_grid, max_silent_error=cfg.max_silent_error,
+        )
         self.policy = DecisionPolicy(res.config, use_guard=cfg.use_guard)
         self.fit_report.update(
             {
@@ -260,6 +297,9 @@ class TrustPipeline:
             actions: list[str] = []
             committed, wrong, silent, final, comm = None, False, False, None, False
             breakdown: dict[str, float] = {"typing": t}
+            keys = 0
+            o = None
+            system_text = None
             for a in range(max_a):
                 if a > 0:
                     rc = user.repeat_cost(it.text)
@@ -278,15 +318,25 @@ class TrustPipeline:
                     d, it.text, can_repeat=not final_attempt, rng=np.random.default_rng([cfg.seed, i, a])
                 )
                 t += o.time_s
+                keys += o.keystrokes
+                system_text = an.inputs.texts[0] if an.inputs.texts else None
                 for k, v in o.breakdown.items():
                     breakdown[k] = breakdown.get(k, 0.0) + v
                 if d.action == Action.COMMIT:
                     committed = d.shown_candidates[0] if d.shown_candidates else ""
                     wrong = o.wrong_commit
+                elif d.action == Action.OFFER_WORDS:
+                    wrong = o.wrong_commit
                 final, comm, silent = o.final_text, o.communicated, o.silent_error
                 if not o.needs_repeat:
                     break
-            records.append(SentenceRecord(it.text, final, comm, t, actions, committed, wrong, silent, breakdown))
+            rec = SentenceRecord(it.text, final, comm, t, actions, committed, wrong, silent, breakdown)
+            if o is not None:
+                rec.words_system, rec.words_selected, rec.words_typed = o.words_system, o.words_selected, o.words_typed
+                rec.n_missed = o.n_missed
+            rec.keystrokes = keys
+            rec.system_text = system_text
+            records.append(rec)
         return records
 
     # --- evaluation ----------------------------------------------------------
@@ -363,7 +413,9 @@ def run_harness(
     ``ece_sentence_before/after``, ``ece_char_before/after``, conformal
     ``coverage``/``coverage_in_nbest``/``mean_set_size``/``miss_rate``,
     ``word_coverage``/``word_mean_set_size``, ``guard_auroc`` (risk vs.
-    wrong top-1), action rates ``rate_commit/offer/ask/abstain``,
+    wrong top-1), action rates ``rate_commit/offer/ask/abstain/offer_words``,
+    ``system_word_accuracy``, ``keystrokes_saved``,
+    ``share_words_system/selected/typed``,
     ``ewpm``, ``wrong_commit_rate``, ``silent_error_rate``,
     ``abstain_rate``, ``committed_cer``, the fit results (``fit_*``) and
     the per-sentence ``records``.

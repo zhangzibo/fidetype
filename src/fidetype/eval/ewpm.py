@@ -10,7 +10,10 @@ interaction (decode, policy, user) gives:
   overheads, all repeats (overhead + typing again) and all corrections.
 - ``final_i``: the text that the sentence ends with (``None`` if no text).
 - ``communicated_i``: ``final_i == y_i`` exactly, after the corrections
-  of the user.
+  of the user. With the word model of the simulated user (partial
+  correction, OFFER_WORDS), the user fixes single words. The sentence
+  counts if the final text equals the target; it does not matter who
+  made each word right.
 
 Then::
 
@@ -29,13 +32,40 @@ Safety metrics
 --------------
 - ``wrong_commit_rate``: share of sentences where the system COMMITted a
   text that is not the intended text (whether or not the user then
-  corrected it). The policy fit puts a limit on this rate.
+  corrected it). For OFFER_WORDS, the system asserts the words that it
+  does not highlight: the sentence counts as a wrong commit if one of
+  them is wrong. The policy fit puts a limit on this rate.
 - ``silent_error_rate``: share of sentences that end with a wrong text
-  that the user did not correct (missed wrong commits and accepted
-  wrong-but-close offers). These errors reach the reader.
+  that the user did not correct (missed wrong commits, missed wrong
+  words that were not highlighted, and accepted wrong-but-close
+  offers). These errors reach the reader. This is the "not corrected
+  error" of Soukoreff & MacKenzie (2003), at sentence level.
 - ``abstain_rate``: share of sentences that end with ABSTAIN.
 - ``committed_cer``: CER of the committed texts (before corrections),
   pooled over the sentences that end with a COMMIT.
+
+Word-level and effort metrics
+-----------------------------
+- ``system_word_accuracy``: share of the intended words that the
+  system's top-1 sentence (of the last attempt) has right, before any
+  user action: ``sum_i max(0, words(y_i) - wed(top1_i, y_i)) / sum_i
+  words(y_i)``. A sentence without a top-1 text counts 0.
+- ``keystrokes_saved``: the keystroke saving rate (KSR) of AAC research
+  (as in Cai et al. 2024), against typing every sentence with the
+  fallback method (one keystroke per character, spaces included)::
+
+      KSR = 1 - sum_i keystrokes_i / sum_i len(y_i)
+
+  ``keystrokes_i`` counts the fallback-method actions of the user:
+  selections, navigation, typed characters, confirms. The neural input
+  is not counted. KSR = 1 means no fallback action; KSR < 0 means more
+  actions than typing the sentence.
+- ``share_words_system`` / ``share_words_selected`` /
+  ``share_words_typed``: of all intended words, the share that ends
+  right because the system showed it right, because the user selected it
+  from system alternatives (a word choice or a whole candidate), or
+  because the user typed it. They sum to ``communicated`` words / all
+  words.
 
 Relation to other metrics
 -------------------------
@@ -79,6 +109,16 @@ class SentenceRecord:
     wrong_commit: bool = False
     silent_error: bool = False
     breakdown: dict[str, float] = field(default_factory=dict)
+    #: Words right at the end: shown by the system / selected / typed.
+    words_system: int = 0
+    words_selected: int = 0
+    words_typed: int = 0
+    #: Fallback-method actions of the user (see ``keystrokes_saved``).
+    keystrokes: int = 0
+    #: Top-1 text of the last attempt (None if no text).
+    system_text: str | None = None
+    #: Wrong unhighlighted words that the user missed.
+    n_missed: int = 0
 
     @property
     def n_words(self) -> int:
@@ -148,4 +188,21 @@ def summarize(records: Sequence[SentenceRecord]) -> dict[str, float]:
     }
     for a in ("COMMIT", "OFFER", "ASK", "ABSTAIN"):
         out[f"rate_{a.lower()}"] = decisions.get(a, 0) / n_dec if n_dec else 0.0
+    out["rate_offer_words"] = decisions.get("OFFER_WORDS", 0) / n_dec if n_dec else 0.0
+    n_words = sum(r.n_words for r in records)
+    n_chars = sum(len(r.truth) for r in records)
+    out["system_word_accuracy"] = (
+        sum(system_correct_words(r) for r in records) / n_words if n_words else math.nan
+    )
+    out["keystrokes_saved"] = 1.0 - sum(r.keystrokes for r in records) / n_chars if n_chars else math.nan
+    for k in ("system", "selected", "typed"):
+        out[f"share_words_{k}"] = sum(getattr(r, f"words_{k}") for r in records) / n_words if n_words else math.nan
     return out
+
+
+def system_correct_words(r: SentenceRecord) -> int:
+    """Intended words that the system's top-1 text has right (word alignment)."""
+    if r.system_text is None:
+        return 0
+    d = cached_edit_distance(tuple(r.system_text.split()), tuple(r.truth.split()))
+    return max(0, r.n_words - d)
