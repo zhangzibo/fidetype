@@ -73,6 +73,24 @@ def test_participant_ids():
     assert sb.participant_id(25) == "P25"
 
 
+def test_participant_groups_match_dataset_card():
+    """The HF dataset card ("Repeated participants (MEG)") lists S1=S18,
+    S4=S14, S5=S10=S21, and S23 excluded. The Brain2Qwerty code uses the
+    same merge (SUBJECT_MERGE). 25 IDs - 4 merged - S23 = 20 people; the
+    release has no logs for S13, so discovery finds 19 (the card's count)."""
+    assert set(sb.PARTICIPANT_GROUPS) == {(1, 18), (4, 14), (5, 10, 21)}
+    ids = {sb.participant_id(n) for n in range(1, 26) if n not in sb.EXCLUDED_SUBJECTS}
+    assert len(ids) == 20
+    assert len(ids - {sb.participant_id(13)}) == 19
+    # The recording-folder codes agree: S1 and S18 share code 9228.
+    disc = sb.discover_blocks(
+        ["MEG/FIF/01_9228/220411/d2_block1.fif", "MEG/FIF/18_9228/231121/block1.fif"],
+        ["S1-session1-1.mat", "S18-session1_block1_list1.mat"],
+    )
+    assert {b.participant for b in disc.blocks} == {"P01"}
+    assert {b.subject for b in disc.blocks} == {"S1", "S18"}
+
+
 def test_discover_blocks_synthetic():
     fifs = [
         "MEG/FIF/14_9875/231108/block1.fif",

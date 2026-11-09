@@ -24,7 +24,7 @@ updated: 2026-11-08
 Source: our own inspection of subject S25 (`25_12032`, 2 sessions × 2 typing blocks) in MNE 1.13.2. Full results: [experiments/2026-11-08-inspect-spanishbcbl/results.md](../../experiments/2026-11-08-inspect-spanishbcbl/results.md).
 
 ### Files and layout
-- The MEG tree has **25 participant IDs**, but only **19 unique MEG participants**. Some people have more than one ID.
+- The MEG tree has **25 participant IDs**, but only **19 unique MEG participants**. Some people have more than one ID: S1 = S18, S4 = S14, S5 = S10 = S21 (dataset card). S23 is excluded (metal), and S13 has no logs. Evidence and leakage check: [SpanishBCBL repeated participants](../questions/spanishbcbl-repeated-participants.md).
 - Some session folders are duplicates (3 found). The download hard-links them, so they use no extra disk space.
 - File names are messy (for example `bolck2.fif`). The loader must match them with tolerance, not with a fixed pattern.
 - Each typing block is one `.fif` file, 13–16 min long, 1000 Hz, online filter 0.10–330 Hz, line frequency 50 Hz.

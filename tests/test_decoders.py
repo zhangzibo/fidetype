@@ -362,3 +362,38 @@ def test_init_from_and_infer_key_head(cache, tmp_path):
     assert g["ci95_lo"] <= g["mean"] <= g["ci95_hi"]
     ci = bootstrap_mean_ci(np.ones(10))
     assert ci["mean"] == ci["ci95_lo"] == ci["ci95_hi"] == 1.0
+
+
+def test_one_person_two_subject_ids_share_a_subject_layer(tmp_path):
+    """SpanishBCBL S1 and S18 are one person (P01). Segments of both IDs
+    must use one subject index, and the summary must count the person once."""
+    root = tmp_path / "v1"
+    write_synthetic_cache(root, n_subjects=2, blocks_per_subject=1, trials_per_block=6, amplitude=1.0, seed=3)
+    subjects = sorted({p.parent.name for p in root.glob("*/*.json")})
+    assert len(subjects) == 2
+    for sc in root.glob("*/*.json"):  # give both subject IDs one participant
+        meta = json.loads(sc.read_text())
+        meta["participant"] = "P01"
+        sc.write_text(json.dumps(meta))
+    ds = MEGSegments(root, ("train", "val", "test"))
+    assert ds.subject_map == {"P01": 0}
+    assert {s.subject for s in ds.segments} == set(subjects)
+
+
+def test_summarize_counts_each_participant_once():
+    from fidetype.decoders.infer import summarize
+
+    def row(subject, participant, c):
+        return {"subject": subject, "participant": participant,
+                "cer_target": c, "cer_typed": c, "wer_target": c, "wer_typed": c}
+
+    rows = [row("S1", "P01", 0.2), row("S18", "P01", 0.4), row("S18", "P01", 0.4), row("S3", "P03", 0.8)]
+    out = summarize(rows)
+    assert set(out["per_subject"]) == {"S1", "S18", "S3"}
+    assert set(out["per_participant"]) == {"P01", "P03"}
+    assert out["per_participant"]["P01"]["n"] == 3
+    assert out["mean_over_subjects"]["cer_target"] == pytest.approx((0.2 + 0.4 + 0.8) / 3)
+    assert out["mean_over_participants"]["cer_target"] == pytest.approx(((0.2 + 0.4 + 0.4) / 3 + 0.8) / 2)
+    # Rows without a participant key fall back to the subject ID.
+    legacy = summarize([{k: v for k, v in r.items() if k != "participant"} for r in rows])
+    assert set(legacy["per_participant"]) == {"S1", "S18", "S3"}

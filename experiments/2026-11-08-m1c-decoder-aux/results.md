@@ -43,6 +43,8 @@ All configs pin the 20 blocks that were cached at 15:10 (`data.blocks`). The cac
 This is about twice the M1-B 5-subject data (477 train segments).
 
 > **Our take:** S1 and S18 map to the same participant (P01). This can be one person recorded twice, or an index error from M1-A. Check it before any per-participant claim.
+>
+> **Resolved (2026-11-08):** one person, recorded twice (dataset card; recording code 9228 for both). No leakage: splits are by sentence. Test mean CER over 10 participants: r0 0.669, r1 0.681, r2 0.634, r3 0.646, r4b 0.621. See [SpanishBCBL repeated participants](../../wiki/questions/spanishbcbl-repeated-participants.md).
 
 ## Models
 

@@ -136,7 +136,7 @@ Source: [M1-C results](../../experiments/2026-11-08-m1c-decoder-aux/results.md).
 
 **Process-exit hang fixed.** On ROCm/Windows, a process that ran MIOpen convolutions does not end after `sys.exit`. It spins one CPU core. `train.hard_exit()` calls `TerminateProcess`. See [compute setup](compute-setup.md).
 
-**Open item:** S1 and S18 both map to participant P01 in the index. Check this before any per-participant claim.
+**Resolved (2026-11-08):** S1 and S18 are one person (P01), as the dataset card says. The 11 subject IDs are 10 participants. No train/test leakage (splits are by sentence). Test mean CER over participants differs from the mean over subject IDs by at most 0.003 (r4b 0.621). See [SpanishBCBL repeated participants](spanishbcbl-repeated-participants.md).
 
 ## Next steps
 - [x] **Sanity check:** keystroke-locked left/right-hand and character decoding with a linear model, v1-style. Signal present ([above](#sanity-check-2026-11-08-signal-present)).

@@ -59,17 +59,32 @@ def load_checkpoint(path: str | Path, device: torch.device) -> tuple[ConvCTC, di
 
 
 def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
-    """Return per-subject means, the mean across subjects, and the
-    distribution over sentences."""
+    """Return per-subject and per-participant means, the means across them,
+    and the distribution over sentences.
+
+    A "subject" is a recording ID (S1, S18, ...). A "participant" is one
+    person. In SpanishBCBL some people have more than one subject ID (for
+    example S1 and S18 are both P01). ``mean_over_participants`` counts each
+    person once. Use it for per-person claims. A row without a
+    ``participant`` key counts as its own participant.
+    """
     keys = ["cer_target", "cer_typed", "wer_target", "wer_typed"]
-    by_subj: dict[str, list[dict[str, Any]]] = {}
-    for r in rows:
-        by_subj.setdefault(r["subject"], []).append(r)
-    per_subject = {s: {k: float(np.mean([r[k] for r in rs])) for k in keys} | {"n": len(rs)}
-                   for s, rs in sorted(by_subj.items())}
-    out: dict[str, Any] = {"n_sentences": len(rows), "per_subject": per_subject}
+
+    def _means(group_key: str) -> dict[str, dict[str, float]]:
+        groups: dict[str, list[dict[str, Any]]] = {}
+        for r in rows:
+            groups.setdefault(str(r.get(group_key) or r["subject"]), []).append(r)
+        return {g: {k: float(np.mean([r[k] for r in rs])) for k in keys} | {"n": len(rs)}
+                for g, rs in sorted(groups.items())}
+
+    per_subject = _means("subject")
+    per_participant = _means("participant")
+    out: dict[str, Any] = {"n_sentences": len(rows), "per_subject": per_subject,
+                           "per_participant": per_participant}
     if rows:
         out["mean_over_subjects"] = {k: float(np.mean([v[k] for v in per_subject.values()])) for k in keys}
+        out["mean_over_participants"] = {k: float(np.mean([v[k] for v in per_participant.values()]))
+                                         for k in keys}
         out["mean_over_sentences"] = {k: float(np.mean([r[k] for r in rows])) for k in keys}
         out["sentence_distribution"] = {
             k: {q: float(np.percentile([r[k] for r in rows], p))
@@ -222,7 +237,8 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
                 hyp = ctc_greedy_decode(stream)
                 lab.write(json.dumps({"file": f"{name}.npz", "subject": seg.subject,
                                       "target_text": seg.target_text, "typed_text": seg.typed_text}) + "\n")
-                rows.append({"file": f"{name}.npz", "subject": seg.subject, "hyp": hyp,
+                rows.append({"file": f"{name}.npz", "subject": seg.subject,
+                             "participant": seg.participant, "hyp": hyp,
                              "target_text": seg.target_text, "typed_text": seg.typed_text,
                              "cer_target": cer(seg.target_text, hyp), "cer_typed": cer(seg.typed_text, hyp),
                              "wer_target": wer(seg.target_text, hyp), "wer_typed": wer(seg.typed_text, hyp)})
