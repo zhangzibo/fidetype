@@ -186,3 +186,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - ROCm 7.2.1 PyTorch needs driver 26.2.2 or newer; 26.10.1 works; 26.10.2 is very likely safe. Do not install the "ROCm 10.1" driver (26.10.41.05).
 - Plan: disable the iGPU, optional Adrenalin 26.10.2 with Factory Reset, then verify (torch check, `gpu_smoke.py`, short training + 10–20 min idle). Preprocessing stays paused until this passes.
 - Updated the "Driver crash" section of [compute setup](questions/compute-setup.md), `HANDOFF.md` and tracker task M0-15.
+
+## [2026-11-08] query | GPU stress test after iGPU disable
+- Repeated the crash condition of 16:44 (bugcheck 0x7E in `amdkmdag`) with the iGPU disabled in Device Manager.
+- Real ConvCTC training (`config-r2-small-aux0.5.json`): 721 s, epoch 161, best val CER 0.606. Then 1200 s GPU idle with the CUDA context alive. Result: `RESULT PASS`, no crash.
+- System event log since 17:55: no ID 41/1001/4101, WHEA or amdkmdag events.
+- The SpanishBCBL preprocessing resumed at 18:38 (`--workers 1 --mem-budget-gb 14`). The crash cause stays unconfirmed.
+- Updated the "Driver crash" section of [compute setup](questions/compute-setup.md), `HANDOFF.md` and tracker tasks M0-15 (real finish time), M0-16 and M1-07.

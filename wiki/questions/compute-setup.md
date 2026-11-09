@@ -146,6 +146,7 @@ Source: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.
    C:\venvs\fidetype-rocm\Scripts\python.exe tools\env\gpu_smoke.py
    ```
    Then run a short training job, followed by 10–20 min idle. This repeats the crash condition.
+- **Result (2026-11-08):** with the iGPU disabled, the stress test **passed**: 721 s ConvCTC training, then 1200 s idle with the CUDA context alive. No crash. The event log has no ID 41/1001/4101, WHEA or amdkmdag events. The preprocessing resumed at 18:38. The cause stays unconfirmed.
 - Preprocessing stays paused until step 3 passes. After that, run at most one heavy job (GPU training OR preprocessing, never both).
 
 ## How to use it
