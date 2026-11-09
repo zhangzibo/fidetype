@@ -2,7 +2,7 @@
 
 This file tells a new Claude Code session where the last session stopped. The orchestrator updates it after each finished task.
 
-Last update: 2026-11-08 18:00 (crash recovery: M1-C keystroke loss and M2-14 OFFER_WORDS recorded and committed; preprocessing paused until the AMD driver fix).
+Last update: 2026-11-08 18:35 (crash recovery: M1-C keystroke loss and M2-14 OFFER_WORDS recorded and committed; preprocessing paused until the GPU check passes). 18:35: corrected the crash note (driver versions are by design; cause open).
 
 ## Project in one paragraph
 **Fidetype** is an open trust layer for neural text entry. It was first called "neurotext" (a placeholder name). It lives in the GitHub repo https://github.com/zhangzibo/fidetype (renamed from `stealth-project` on 2026-11-08). The local folder is still named `stealth-project`. The project started on 2026-11-07 from Meta FAIR's Brain2Qwerty (MEG typing decoding). Fidetype adds calibration, abstention and provenance on top of brain-to-text decoders. It works with public datasets, because the user has no MEG or EEG hardware.
@@ -25,7 +25,8 @@ Last update: 2026-11-08 18:00 (crash recovery: M1-C keystroke loss and M2-14 OFF
 
 ## Crash on 2026-11-08 (read this)
 - At about **16:44** on 2026-11-08 the PC blue-screened: bugcheck **0x7E** in the AMD driver `amdkmdag` (`DMM_PowerManagement::GetPowerState`).
-- Likely cause: the iGPU and the RX 7800 XT run **different AMD driver versions** (32.0.21045.16010 vs 32.0.32015.7029). **To do (user):** install one matching AMD driver for both GPUs before the next GPU or preprocessing job.
+- **Cause not confirmed** (AMD driver bug, or hardware). The two AMD driver versions (iGPU vs RX 7800 XT) are **by design**: both come from Adrenalin 26.10.1. An earlier note called them a "mismatch". That was wrong.
+- **To do (user), before the next GPU or preprocessing job:** (1) disable the iGPU; (2) optional: reinstall Adrenalin 26.10.2 with Factory Reset; (3) verify (torch check, `gpu_smoke.py`, short training + 10–20 min idle). Details and commands: [compute-setup, "Driver crash"](wiki/questions/compute-setup.md#driver-crash-2026-11-08).
 - The old session transcript (19d95f58) was lost. The recovery session is e302da03.
 - Only the "record and commit" step was lost. M1-C and M2-14 had finished on disk. They are now recorded and committed.
 
@@ -33,7 +34,7 @@ Last update: 2026-11-08 18:00 (crash recovery: M1-C keystroke loss and M2-14 OFF
 | Process | Check | Stop | Resume |
 |---|---|---|---|
 | SpanishBCBL MEG download: **done** at 14:59 on 2026-11-08 (316/316 files, 251.36 GB, `STATUS=COMPLETE`). No process runs | `tail C:\Users\zhang\bci-data\SpanishBCBL\_download.log` | — | Rerun `C:\Users\zhang\bci-data\SpanishBCBL\_download_meg.sh` only to verify (it skips finished files) |
-| SpanishBCBL preprocessing cache (tSSS, 0.5–45 Hz, 100 Hz): **paused – resume after driver fix.** The PC crash stopped it. `_preprocess.log` stopped at 16:41:49 with 40 ok, 1 failed, 1 running, 5 queued. S24/ses1_block1 and S11/ses1_block1 have no output. No process runs | `Get-Content C:\Users\zhang\bci-data\cache\spanishbcbl\v1\_preprocess.log -Tail 20` | Find the python PID in Task Manager, then `taskkill /T /F /PID <pid>` | From the repo root, run detached: `C:\venvs\fidetype-rocm\Scripts\python.exe tools/data/preprocess_spanishbcbl.py --workers 1 --mem-budget-gb 14`. It skips cached blocks. Do not run it at the same time as GPU training |
+| SpanishBCBL preprocessing cache (tSSS, 0.5–45 Hz, 100 Hz): **paused – resume after the GPU check passes.** The PC crash stopped it. `_preprocess.log` stopped at 16:41:49 with 40 ok, 1 failed, 1 running, 5 queued. S24/ses1_block1 and S11/ses1_block1 have no output. No process runs | `Get-Content C:\Users\zhang\bci-data\cache\spanishbcbl\v1\_preprocess.log -Tail 20` | Find the python PID in Task Manager, then `taskkill /T /F /PID <pid>` | From the repo root, run detached: `C:\venvs\fidetype-rocm\Scripts\python.exe tools/data/preprocess_spanishbcbl.py --workers 1 --mem-budget-gb 14`. It skips cached blocks. Do not run it at the same time as GPU training |
 | M1 decoder training: no run active now (M1-C runs `m1c-*` all finished; queue log `C:\Users\zhang\bci-data\runs\m1c-queue.log`). Runs live in `C:\Users\zhang\bci-data\runs\<run_name>\`, streams in `C:\Users\zhang\bci-data\streams\<run_name>\` | `Get-Content C:\Users\zhang\bci-data\runs\<run_name>\status.json`; `Get-Content C:\Users\zhang\bci-data\runs\<run_name>\train.log -Tail 5`; `Get-Process -Id (Get-Content C:\Users\zhang\bci-data\runs\<run_name>\pid.txt)` | `Stop-Process -Id (Get-Content C:\Users\zhang\bci-data\runs\<run_name>\pid.txt)` (last checkpoint is at most 5 min old) | `.\experiments\2026-11-08-m1b-decoder\launch.ps1 -RunName <run_name> -Resume` |
 | Static server, http://localhost:8000: not running (stopped by the crash) | Open the URL | Stop its node process | `node tools/serve.js` (it stops at reboot) |
 
@@ -46,7 +47,7 @@ Note: no PIDs are listed, because the crash ended all processes. PIDs change aft
 - **M1 Baseline decoder: in progress.**
   - Data loader + alignment: **done** (`src/fidetype/data/`, `tools/data/preprocess_spanishbcbl.py`). 81 typing blocks; 15570/15571 keys aligned; 224 unique sentences, split by sentence hash (184/16/24). Results: `experiments/2026-11-08-m1a-data/results.md`.
   - Char n-gram LM + CTC beam: **done** (`src/fidetype/lm/`). Simulator median CER 0.281 → 0.200. LM fusion makes the confidences over-confident. Results: `experiments/2026-11-08-lm-beam/results.md`.
-  - Preprocessing cache: **paused** (40 blocks ok at the crash, 16:41:49). Resume after the AMD driver fix (see above).
+  - Preprocessing cache: **paused** (40 blocks ok at the crash, 16:41:49). Resume after the GPU check passes (see above).
   - Conv + CTC decoder: **code done** (`src/fidetype/decoders/`; our own ConvCTC, 10 M params, custom Conformer, causal mode via `lookahead_frames`). It emits NeuralTextStream. Results: `experiments/2026-11-08-m1b-decoder/results.md` and `wiki/questions/decoder-m1-results.md`.
   - **Result:** 5 subjects (about 2.5 h of about 20 h): test greedy CER **0.670**. The shuffled-MEG control gives **0.669**, zeros 0.858. So the model uses a text prior, **not the MEG**. The M1 target (≈0.59) is **not met**. Always report the shuffled-MEG control with a CER.
   - **Sanity check: passed.** Keystroke-locked linear decoding (v1-style), 6 subjects: hand window 0.83–0.96 (chance 0.60), letter 0.31–0.49 (chance about 0.14). Both controls at chance. Peaks at −10..+60 ms. So the cache and the alignment are correct. The CTC failure comes from data volume or the model. Results: `experiments/2026-11-08-m1-sanity/results.md`.
@@ -65,7 +66,7 @@ Note: no PIDs are listed, because the crash ended all processes. PIDs change aft
 - **CI:** GitHub Actions (`.github/workflows/tests.yml`) runs pytest on CPU.
 
 ## Next steps
-1. **User: fix the AMD driver mismatch** (one driver version for the iGPU and the RX 7800 XT). Then resume the preprocessing (command above), as the only heavy job.
+1. **User: disable the iGPU and verify the GPU** (plan in [compute-setup](wiki/questions/compute-setup.md#driver-crash-2026-11-08)). When the check passes, resume the preprocessing (command above), as the only heavy job.
 2. **Sentence-context keystroke decoder** (M1-15): a Transformer over key embeddings, v1 Conv+Trans style (v1: Conv 0.67 → Conv+Trans 0.36 CER). Goal: an LM top-1 that is right for a real share of sentences, so the real-MEG trust test is no longer degenerate and can beat gaze typing. Then re-run the M2-10 / M2-14 pipeline on it.
 3. **M1-C follow-ups:** 3 seeds for r1, r2, r4b; the `RETUNED` beam + char LM on the r4b streams; check S1/S18 = P01.
 4. **Full-cache retrain** when the preprocessing finishes (M1-14): the keystroke decoder and the CTC decoder (r4a/r4b) on all subjects. Pin the new block list.

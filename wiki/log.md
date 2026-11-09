@@ -179,3 +179,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Simulator worst preset: trust + OFFER_WORDS 20.45 / 20.46 vs trust 19.49 / 19.40 eWPM (paired CIs [0.36, 1.57], [0.40, 1.74]). Median preset: no change.
 - Real MEG: the fit never selects OFFER_WORDS (system word accuracy 0.10). Trust 2.96, always commit 2.31, gaze typing alone 3.14 eWPM. No BCI policy beats the no-BCI baseline.
 - Added section 7 to [trust core v0 results](questions/trust-core-v0-results.md). Added "Usefulness metrics: a no-BCI baseline" to [error metrics](concepts/error-metrics.md). Ticked the item and added the no-BCI baseline to the M3 claim in [project plan](questions/project-plan.md). Added a note to [overview](overview.md). Updated [index](index.md).
+
+## [2026-11-08] query | AMD driver check: versions are by design, crash cause open
+- Correction: the two AMD driver versions (iGPU 32.0.21045.16010, RX 7800 XT 32.0.32015.7029) both come from Adrenalin 26.10.1. Since Adrenalin 25.10.2, RDNA1/RDNA2 GPUs (incl. Ryzen iGPUs) use a separate maintenance branch. The earlier "mismatch" note was wrong.
+- The cause of the 16:44 blue screen (0x7E in `amdkmdag`) is not confirmed: a driver bug in either branch, or hardware. The minidump is not analysed yet.
+- ROCm 7.2.1 PyTorch needs driver 26.2.2 or newer; 26.10.1 works; 26.10.2 is very likely safe. Do not install the "ROCm 10.1" driver (26.10.41.05).
+- Plan: disable the iGPU, optional Adrenalin 26.10.2 with Factory Reset, then verify (torch check, `gpu_smoke.py`, short training + 10–20 min idle). Preprocessing stays paused until this passes.
+- Updated the "Driver crash" section of [compute setup](questions/compute-setup.md), `HANDOFF.md` and tracker task M0-15.

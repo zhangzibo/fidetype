@@ -111,9 +111,42 @@ Source: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.
 - **Process-exit hang (found in M1-C, 2026-11-08).** A process that ran MIOpen convolutions does not end after `sys.exit` or `os._exit`. It spins one CPU core and keeps about 3.6 GB. Fix: `fidetype.decoders.train.hard_exit()` calls `TerminateProcess`, which skips the HIP DLL-detach code. Source: [M1-C results](../../experiments/2026-11-08-m1c-decoder-aux/results.md).
 
 ## Driver crash (2026-11-08)
+
+### What happened
 - At about 16:44 on 2026-11-08 the PC blue-screened: bugcheck 0x7E in the AMD driver `amdkmdag` (`DMM_PowerManagement::GetPowerState`).
-- Likely cause: the iGPU and the RX 7800 XT use different AMD driver versions (32.0.21045.16010 vs 32.0.32015.7029).
-- Until the drivers match, run at most one heavy job (GPU training OR preprocessing, never both).
+- **The cause is not confirmed.** It can be a driver bug in either AMD driver branch, or a hardware fault.
+- The minidump `C:\WINDOWS\Minidump\110826-18843-01.dmp` can show which device's driver failed (WinDbg `!analyze -v`). Nobody has analysed it yet.
+
+### The two driver versions are by design
+- The iGPU (AMD Radeon(TM) Graphics) has driver 32.0.21045.16010. The RX 7800 XT has driver 32.0.32015.7029.
+- Both come from **one package, AMD Adrenalin 26.10.1**. The registry value `RadeonSoftwareVersion` is 26.10.1 on both devices.
+- Since Adrenalin 25.10.2, AMD ships RDNA1/RDNA2 GPUs (this includes Ryzen iGPUs) on a separate "maintenance" driver branch ([HotHardware](https://hothardware.com/news/amd-addresses-confusion-radeon-gpu-driver-strategy)). So two versions are expected. A reinstall cannot make them the same.
+- An earlier note called this a "driver mismatch" and the likely cause. That was wrong.
+
+### Training stack and driver needs
+| Item | Value |
+|---|---|
+| torch | 2.9.1+rocm7.2.1 (wheels from repo.radeon.com/rocm/windows/rocm-rel-7.2.1) |
+| HIP runtime | inside the venv; no system HIP SDK |
+| GPU that torch sees | RX 7800 XT (`gfx1101`) only. torch does not use the iGPU |
+| Monitors | both on the RX 7800 XT |
+| Driver needed | 26.2.2 or newer for the 7.2.1 PyTorch release ([AMD guide](https://rocm.docs.amd.com/projects/radeon-ryzen/en/latest/docs/install/installrad/windows/install-pytorch.html)). The guide gives no upper limit |
+| Driver now | 26.10.1 (works) |
+| Newest driver | 26.10.2 (bug-fix release, 2026-10-30; [release notes](https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-10-2.html)). Very likely safe |
+
+- Do **not** install AMD's separate "ROCm 10.1" driver (26.10.41.05). It targets a newer ROCm.
+- A driver update does not need a venv reinstall. Fallback: `tools\env\setup_rocm.ps1`.
+
+### Plan
+1. Disable the iGPU: Device Manager → Display adapters → AMD Radeon(TM) Graphics → Disable device. Or disable it in the BIOS.
+2. Optional: reinstall Adrenalin 26.10.2 with Factory Reset. Use DDU only if the crash occurs again.
+3. Verify, in this order:
+   ```powershell
+   C:\venvs\fidetype-rocm\Scripts\python.exe -c "import torch;print(torch.__version__,torch.version.hip,torch.cuda.is_available(),torch.cuda.get_device_name(0))"
+   C:\venvs\fidetype-rocm\Scripts\python.exe tools\env\gpu_smoke.py
+   ```
+   Then run a short training job, followed by 10–20 min idle. This repeats the crash condition.
+- Preprocessing stays paused until step 3 passes. After that, run at most one heavy job (GPU training OR preprocessing, never both).
 
 ## How to use it
 
