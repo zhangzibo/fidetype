@@ -3,7 +3,7 @@ title: Decoder M1 results (first real runs, keystroke decoder and keystroke loss
 type: question
 tags: [decoder, ctc, meg, spanishbcbl, evaluation, controls, rocm]
 sources: [brain2qwerty-v2]
-updated: 2026-11-08
+updated: 2026-11-09
 ---
 
 # Decoder M1 results: first real runs
@@ -19,6 +19,7 @@ updated: 2026-11-08
 - **Update (2026-11-08, M1-C):** a [keystroke auxiliary loss](#ctc-decoder--keystroke-auxiliary-loss-m1-c-2026-11-08) makes the async CTC decoder use the MEG. Shuffled-MEG gap +0.116 to +0.156 CER (CI excludes 0). Best test CER 0.619. The 0.59 target is still not met.
 - **Update (2026-11-08, M1-C2):** the [beam + char LM](#m1-c2-beam--char-lm-on-the-r4b-streams-2026-11-08), tuned on val, gives test CER **0.590** [0.576, 0.604] on the r4b streams. Shuffled-MEG gap +0.132 (CI excludes 0). Greedy CER is still 0.619.
 - **Update (2026-11-08):** a [synchronous keystroke decoder](#synchronous-keystroke-decoder-2026-11-08) (oracle key timing) does use the MEG: test key accuracy 0.390 (controls 0.10–0.11), greedy CER 0.59 (controls 0.77).
+- **Update (2026-11-09, M1-15 r1):** a [sentence-context keystroke decoder](#m1-15-r1-sentence-context-keystroke-decoder-first-real-run-2026-11-09) trained only 9 epochs (the PC slept). Test greedy CER 0.619, beam + LM 0.532 (logistic regression: 0.597 / 0.531). It uses the MEG (gap +0.172). r2 with the full schedule is next.
 
 Full details: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.md).
 
@@ -158,6 +159,26 @@ Source: [M1-C2 results](../../experiments/2026-11-08-m1c2-beam-lm/results.md).
 
 **Resolved (2026-11-08):** S1 and S18 are one person (P01), as the dataset card says. The 11 subject IDs are 10 participants. No train/test leakage (splits are by sentence). Test mean CER over participants differs from the mean over subject IDs by at most 0.003 (r4b 0.621). See [SpanishBCBL repeated participants](spanishbcbl-repeated-participants.md).
 
+## M1-15 r1: sentence-context keystroke decoder, first real run (2026-11-09)
+Source: [M1-15 results](../../experiments/2026-11-09-m1-15-sentence-context/results.md).
+
+- **r1 is undertrained.** The PC went into S3 sleep from 20:32:38 to 22:00:03. `max_minutes` (60) counts wall-clock time, so the run stopped after the wake-up. Real compute: about 5 min, 9 of 150 epochs, at peak learning rate. Best val CER typed 0.6003 at epoch 8.
+- Metric below: test, mean over sentences, CER vs target (as M1-C and M2-10).
+
+| decoder (test, 209 sentences) | setting | greedy | beam + LM | gap shuffled − real (greedy; beam) |
+|---|---|---|---|---|
+| M2-10 logistic regression | sync, oracle timing | 0.597 | 0.531 (w 0.5) | ≈ +0.18; — |
+| M1-C r4b CTC (+ M1-C2) | async | 0.619 | 0.590 (w 0.25, bonus 1.0) | +0.156; +0.132 |
+| **M1-15 r1, 9 epochs** | sync, oracle timing | **0.619** | **0.532** (w 1.0, bonus 1.0) | **+0.172** [+0.158, +0.186]; **+0.219** [+0.200, +0.238] |
+
+- Controls (test): shuffled MEG 0.791 greedy / 0.751 beam + LM; zeros 0.845 / 0.735. Every participant is below its shuffled control.
+- Mean over participants (test): greedy 0.623, beam + LM 0.542 (vs target).
+- Conv-only head vs Conv + Transformer (val key accuracy, epoch 8): 0.387 vs 0.397. The Transformer adds +0.01 to +0.03 at epochs 5–8. Both are below the M2-10 logistic regression (val 0.419).
+- WER above 1 (up to 1.17 for controls) is expected: insertions have no upper limit, and a wrong space makes two wrong words.
+- Trust harness (M2-14 set-up, CPU) on the r1 streams: trust 2.98 eWPM, always commit 2.38, gaze typing only 3.14. The true sentence is never in the n-best. See [trust core v0 results](trust-core-v0-results.md).
+
+> **Our take:** r1 does not beat the like-for-like baseline (M2-10) yet: greedy is worse (0.619 vs 0.597), beam + LM is level (0.532 vs 0.531). It is far below v1's Conv + Trans (0.36). But 9 epochs at peak lr say little about the model. The next run (r2) trains the full schedule, with sleep prevented.
+
 ## M1-15 code ready: sentence-context keystroke decoder (2026-11-09)
 Code: `src/fidetype/decoders/sentence_context.py` (+ `train_sentence.py`, `infer_sentence.py`). Plan: [M1-15 experiment](../../experiments/2026-11-09-m1-15-sentence-context/README.md). **Not trained on real MEG yet.**
 
@@ -172,7 +193,7 @@ Code: `src/fidetype/decoders/sentence_context.py` (+ `train_sentence.py`, `infer
 - [x] **CTC decoder + keystroke auxiliary loss** ([above](#ctc-decoder--keystroke-auxiliary-loss-m1-c-2026-11-08)): the decoder now uses the MEG; best test CER 0.619.
 - [ ] **M1-C follow-ups:** 3 seeds for r1, r2 and r4b; ~~the `RETUNED` beam + char LM on the r4b streams~~ (done, M1-C2: test CER 0.590); re-run r4a/r4b on the full cache; try other read-out shifts and pooling.
 - [x] **Keystroke-synchronous decoder + trust core on real MEG** ([above](#synchronous-keystroke-decoder-2026-11-08)).
-- [ ] **Sentence-context keystroke decoder** (Transformer over key embeddings, v1 Conv+Trans style). Code ready ([M1-15](#m1-15-code-ready-sentence-context-keystroke-decoder-2026-11-09)); GPU run pending.
+- [ ] **Sentence-context keystroke decoder** (Transformer over key embeddings, v1 Conv+Trans style). Code ready ([M1-15](#m1-15-code-ready-sentence-context-keystroke-decoder-2026-11-09)). r1 ran 9 epochs only ([r1](#m1-15-r1-sentence-context-keystroke-decoder-first-real-run-2026-11-09): greedy 0.619, beam + LM 0.532); r2 with the full schedule is next.
 - [ ] **Retrain on the full cache** (all subjects) when preprocessing and the download are complete (`config-real.json`, subjects `null`).
 - [x] **Low-data tuning:** a smaller model, more dropout and time masking, fewer Conformer layers. *(M1-C r1: 3.54 M params; alone it does not help, test CER 0.684, gap −0.002)*
 - [ ] **Cross-subject pretraining** and a per-subject fine-tune (joint training was best in v2, Table 1).

@@ -1,6 +1,6 @@
 # M1-15: sentence-context keystroke decoder (planned run)
 
-**Status:** code ready and tested on synthetic data (2026-11-09). **Not run on real MEG yet.**
+**Status:** r1 done 2026-11-09, undertrained (9 epochs; the PC slept during the run). See [results.md](results.md). r2 = r1 config with the full schedule (next). The causal run moves to r3.
 
 ## Question
 Does a Transformer over the key embeddings of one sentence lower the CER of the

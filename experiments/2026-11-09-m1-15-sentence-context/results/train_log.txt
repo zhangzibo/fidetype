@@ -1,0 +1,35 @@
+[2026-11-09 20:27:45] new run C:\Users\zhang\bci-data\runs\m1-15-sentence-context-r1
+[2026-11-09 20:27:45] model parameters: {"spatial": 39296, "subject_layer": 165120, "conv_stack": 1609984, "pool": 492608, "transformer": 1385600, "head": 5211, "key_head": 5211, "total": 3703030}
+[2026-11-09 20:27:45] device=cuda bf16=True train=947 val=114 participants=10 steps/epoch=60
+[2026-11-09 20:28:11] ep 0 step 25 loss 4.2611 acc 0.131 lr 2.60e-05
+[2026-11-09 20:28:28] ep 0 step 50 loss 4.0068 acc 0.135 lr 5.10e-05
+[2026-11-09 20:28:37] epoch 0 done in 49.8s train_loss 3.9477 val CER typed 0.8386 target 0.8332 key acc 0.145 (conv only 0.135) (best 0.8386 @ 0)
+[2026-11-09 20:28:46] ep 1 step 75 loss 3.6326 acc 0.136 lr 7.60e-05
+[2026-11-09 20:29:02] ep 1 step 100 loss 3.5929 acc 0.183 lr 1.01e-04
+[2026-11-09 20:29:17] epoch 1 done in 39.0s train_loss 3.5432 val CER typed 0.7424 target 0.7420 key acc 0.229 (conv only 0.216) (best 0.7424 @ 1)
+[2026-11-09 20:29:21] ep 2 step 125 loss 3.3546 acc 0.245 lr 1.26e-04
+[2026-11-09 20:29:36] ep 2 step 150 loss 3.2937 acc 0.263 lr 1.51e-04
+[2026-11-09 20:29:50] ep 2 step 175 loss 3.2641 acc 0.261 lr 1.76e-04
+[2026-11-09 20:29:53] epoch 2 done in 35.4s train_loss 3.2593 val CER typed 0.6853 target 0.6856 key acc 0.305 (conv only 0.275) (best 0.6853 @ 2)
+[2026-11-09 20:30:05] ep 3 step 200 loss 3.0997 acc 0.254 lr 2.01e-04
+[2026-11-09 20:30:17] ep 3 step 225 loss 3.0848 acc 0.258 lr 2.26e-04
+[2026-11-09 20:30:26] epoch 3 done in 32.3s train_loss 3.0758 val CER typed 0.6567 target 0.6630 key acc 0.335 (conv only 0.301) (best 0.6567 @ 3)
+[2026-11-09 20:30:30] ep 4 step 250 loss 2.9893 acc 0.295 lr 2.51e-04
+[2026-11-09 20:30:41] ep 4 step 275 loss 2.9704 acc 0.345 lr 2.76e-04
+[2026-11-09 20:30:54] ep 4 step 300 loss 2.9508 acc 0.323 lr 3.00e-04
+[2026-11-09 20:30:55] epoch 4 done in 28.3s train_loss 2.9508 val CER typed 0.6589 target 0.6630 key acc 0.340 (conv only 0.332) (best 0.6567 @ 3)
+[2026-11-09 20:31:07] ep 5 step 325 loss 2.8364 acc 0.355 lr 3.00e-04
+[2026-11-09 20:31:18] ep 5 step 350 loss 2.8432 acc 0.344 lr 3.00e-04
+[2026-11-09 20:31:20] epoch 5 done in 24.3s train_loss 2.8421 val CER typed 0.6338 target 0.6388 key acc 0.366 (conv only 0.339) (best 0.6338 @ 5)
+[2026-11-09 20:31:27] ep 6 step 375 loss 2.7494 acc 0.379 lr 3.00e-04
+[2026-11-09 20:31:37] ep 6 step 400 loss 2.7489 acc 0.374 lr 3.00e-04
+[2026-11-09 20:31:47] epoch 6 done in 26.4s train_loss 2.7507 val CER typed 0.6127 target 0.6180 key acc 0.382 (conv only 0.352) (best 0.6127 @ 6)
+[2026-11-09 20:31:50] ep 7 step 425 loss 2.6282 acc 0.402 lr 3.00e-04
+[2026-11-09 20:31:59] ep 7 step 450 loss 2.6691 acc 0.396 lr 3.00e-04
+[2026-11-09 20:32:10] ep 7 step 475 loss 2.6687 acc 0.360 lr 3.00e-04
+[2026-11-09 20:32:13] epoch 7 done in 24.9s train_loss 2.6779 val CER typed 0.6020 target 0.6118 key acc 0.400 (conv only 0.372) (best 0.6020 @ 7)
+[2026-11-09 20:32:20] ep 8 step 500 loss 2.5772 acc 0.421 lr 3.00e-04
+[2026-11-09 20:32:29] ep 8 step 525 loss 2.5970 acc 0.390 lr 3.00e-04
+[2026-11-09 20:32:36] epoch 8 done in 22.1s train_loss 2.6044 val CER typed 0.6003 target 0.6098 key acc 0.397 (conv only 0.387) (best 0.6003 @ 8)
+[2026-11-09 22:00:06] checkpoint (timer) at step 547
+[2026-11-09 22:00:06] finished: max_minutes at epoch 9 step 547 best val_cer_typed=0.6003 @ epoch 8

@@ -220,3 +220,12 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Hard stop: if it still waits at 2026-11-10 08:00, it exits without training. It changes no power settings.
 - Dry run of the stage-1 check: "not finished" (preprocessing 2 ok, 0 failed, 0 running, 29 queued).
 - Updated `HANDOFF.md` (background processes, next steps) and tracker tasks M0-19 (done), M0-20 (new, done), M1-15 (in progress).
+
+## [2026-11-09] query | M1-15 r1 sentence-context decoder results
+- The overnight queue finished ("QUEUE DONE" 22:05:05). Preprocessing ended at 20:24:09: ok=30, failed=1. 80 of 81 typing blocks are now cached.
+- The failed block is S1/ses1_block1 (it also failed on 2026-11-08): "sidecar invalid: segment 48+ empty, key sample outside the segment". `Block1.fif` (1.90 GB) ends before the typing log, and the dataset has no `Block1-1.fif` split part.
+- M1-15 r1 is undertrained: the PC was in S3 sleep from 20:32:38 to 22:00:03, and `max_minutes` counts wall-clock time. Only 9 of 150 epochs ran (about 5 min of compute). Best val CER typed 0.6003 at epoch 8, at peak lr.
+- Test (mean over sentences, vs target): greedy 0.619, beam + LM (w 1.0) 0.532. M2-10 logistic regression: 0.597 / 0.531. Shuffled-MEG gap +0.172 [+0.158, +0.186] greedy, +0.219 [+0.200, +0.238] beam + LM. Conv-only vs Conv + Trans val key accuracy 0.387 vs 0.397. WER above 1 comes from insertions (not a bug).
+- Trust harness (M2-14 set-up, CPU, 250 s) on the r1 streams: trust 2.98 eWPM, always commit 2.38, gaze typing only 3.14. No change to the trust picture.
+- New: `experiments/2026-11-09-m1-15-sentence-context/results.md`, `results/` (metrics copy, training curve, logs, eWPM json), `ewpm_check.py`. Updated `wiki/questions/decoder-m1-results.md`, `wiki/index.md`, the experiment README, `HANDOFF.md`, tracker (M0-20, M1-14 done, M1-15, new M1-18).
+- Next: M1-15 r2 (full schedule, sleep prevented, same 20 blocks), then the full-cache r4a → r4b retrain.
