@@ -213,3 +213,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Restarted at 18:13:44 on 2026-11-09 (`--workers 1 --mem-budget-gb 14`): launcher PID 1584, script PID 16724. 50 blocks cached, 31 queued. First block S2/ses1_block2 (est 16.1 GB).
 - RAM: 31.2 GB total, 15.9 GB free at the start, pagefile 6.9 GB. Blocks of 16–19 GB can page. See the memory warning in `HANDOFF.md`.
 - Updated `HANDOFF.md` and tracker tasks M0-17, M0-18, M0-19, M1-07, M1-14, M1-16, M1-17, M2-15.
+
+## [2026-11-09] setup | Queue M1-15 training after preprocessing
+- New detached queue (PID 1128): `C:\Users\zhang\bci-data\runs\queue-2026-11-09\queue.ps1`, log `queue.log` in the same folder. It runs outside the repo.
+- It waits until the SpanishBCBL preprocessing ends (2 checks in a row), waits 2 min, then trains M1-15 r1 (`m1-15-sentence-context-r1`, one `-Resume` on failure), then runs `infer_sentence` with controls and the LM weight grid. Max 1 heavy job at a time.
+- Hard stop: if it still waits at 2026-11-10 08:00, it exits without training. It changes no power settings.
+- Dry run of the stage-1 check: "not finished" (preprocessing 2 ok, 0 failed, 0 running, 29 queued).
+- Updated `HANDOFF.md` (background processes, next steps) and tracker tasks M0-19 (done), M0-20 (new, done), M1-15 (in progress).
