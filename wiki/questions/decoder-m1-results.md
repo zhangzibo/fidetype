@@ -158,12 +158,21 @@ Source: [M1-C2 results](../../experiments/2026-11-08-m1c2-beam-lm/results.md).
 
 **Resolved (2026-11-08):** S1 and S18 are one person (P01), as the dataset card says. The 11 subject IDs are 10 participants. No train/test leakage (splits are by sentence). Test mean CER over participants differs from the mean over subject IDs by at most 0.003 (r4b 0.621). See [SpanishBCBL repeated participants](spanishbcbl-repeated-participants.md).
 
+## M1-15 code ready: sentence-context keystroke decoder (2026-11-09)
+Code: `src/fidetype/decoders/sentence_context.py` (+ `train_sentence.py`, `infer_sentence.py`). Plan: [M1-15 experiment](../../experiments/2026-11-09-m1-15-sentence-context/README.md). **Not trained on real MEG yet.**
+
+- Same setting as the synchronous decoder: oracle key timing, one −0.2..+0.3 s window per key.
+- Per-key conv encoder (participant layer) → key embedding → Transformer over the keys of one sentence → 27 classes. This is the v1 Conv + Trans idea ([v1](../sources/brain2qwerty-v1.md), Fig. 2: CER 0.67 → 0.36), in our own code.
+- Non-causal (v1) or causal mode (`lookahead_keys = 0`: the output at key i uses keys 0..i only).
+- Output: the same CTC-form keystroke streams as above, so the beam + char LM and the trust core read them unchanged.
+- Controls: shuffled-sentence MEG and zeros. Metrics: greedy and beam + LM CER, per-participant means.
+
 ## Next steps
 - [x] **Sanity check:** keystroke-locked left/right-hand and character decoding with a linear model, v1-style. Signal present ([above](#sanity-check-2026-11-08-signal-present)).
 - [x] **CTC decoder + keystroke auxiliary loss** ([above](#ctc-decoder--keystroke-auxiliary-loss-m1-c-2026-11-08)): the decoder now uses the MEG; best test CER 0.619.
 - [ ] **M1-C follow-ups:** 3 seeds for r1, r2 and r4b; ~~the `RETUNED` beam + char LM on the r4b streams~~ (done, M1-C2: test CER 0.590); re-run r4a/r4b on the full cache; try other read-out shifts and pooling.
 - [x] **Keystroke-synchronous decoder + trust core on real MEG** ([above](#synchronous-keystroke-decoder-2026-11-08)).
-- [ ] **Sentence-context keystroke decoder** (Transformer over key embeddings, v1 Conv+Trans style).
+- [ ] **Sentence-context keystroke decoder** (Transformer over key embeddings, v1 Conv+Trans style). Code ready ([M1-15](#m1-15-code-ready-sentence-context-keystroke-decoder-2026-11-09)); GPU run pending.
 - [ ] **Retrain on the full cache** (all subjects) when preprocessing and the download are complete (`config-real.json`, subjects `null`).
 - [x] **Low-data tuning:** a smaller model, more dropout and time masking, fewer Conformer layers. *(M1-C r1: 3.54 M params; alone it does not help, test CER 0.684, gap −0.002)*
 - [ ] **Cross-subject pretraining** and a per-subject fine-tune (joint training was best in v2, Table 1).
