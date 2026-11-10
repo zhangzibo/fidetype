@@ -193,3 +193,23 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - System event log since 17:55: no ID 41/1001/4101, WHEA or amdkmdag events.
 - The SpanishBCBL preprocessing resumed at 18:38 (`--workers 1 --mem-budget-gb 14`). The crash cause stays unconfirmed.
 - Updated the "Driver crash" section of [compute setup](questions/compute-setup.md), `HANDOFF.md` and tracker tasks M0-15 (real finish time), M0-16 and M1-07.
+
+## [2026-11-08] query | M1-C2: beam + char LM on the r4b CTC streams
+- Source: [experiments/2026-11-08-m1c2-beam-lm/results.md](../experiments/2026-11-08-m1c2-beam-lm/results.md) (commit dcff1de). CPU only, about 14 min.
+- Test CER (209 sentences): greedy 0.619 → beam no LM 0.605 → beam + Spanish 6-gram char LM, val-tuned (w 0.25, bonus 1.0) 0.590 [0.576, 0.604]. Shuffled-MEG gap +0.132 [+0.117, +0.147].
+- The `RETUNED` settings as they are (w 1.25, bonus 1.0) make it worse: 0.633. The true sentence is in the 20-best for 0 test sentences.
+- Greedy is still 0.619, so the M1 greedy target (0.59) is not met.
+- Added an M1-C2 section to [decoder M1 results](questions/decoder-m1-results.md). Updated [index](index.md) and [overview](overview.md) (one line, on 2026-11-09).
+
+## [2026-11-08] query | S1/S18 check (repeated participants) + M2-15
+- S1/S18 are one person (P01); so are S4/S14 and S5/S10/S21. The data index is correct. Splits are by sentence hash, so there is no train/test leakage (commit 9f8808e).
+- M1-C mean CER over people 0.6210 vs over subjects 0.6237 (effect ≤ 0.003). From now on, report means over participants.
+- The paper says 20 MEG participants. The release has usable data for 19 (S13 has no logs).
+- New page [SpanishBCBL repeated participants](questions/spanishbcbl-repeated-participants.md). Updated [SpanishBCBL dataset](entities/spanishbcbl-dataset.md), [decoder M1 results](questions/decoder-m1-results.md) and [index](index.md).
+- M2-15 done (commit 422406b): `TemperatureScaler.transform_stream` keeps all stream metadata.
+
+## [2026-11-09] setup | Resume preprocessing
+- The user stopped the SpanishBCBL preprocessing at about 23:35 on 2026-11-08 for a shutdown (9 ok in that run, 31 queued; S2/ses1_block2 discarded). An auto-sleep watcher set up at about 23:20 was cancelled; sleep settings were restored.
+- Restarted at 18:13:44 on 2026-11-09 (`--workers 1 --mem-budget-gb 14`): launcher PID 1584, script PID 16724. 50 blocks cached, 31 queued. First block S2/ses1_block2 (est 16.1 GB).
+- RAM: 31.2 GB total, 15.9 GB free at the start, pagefile 6.9 GB. Blocks of 16–19 GB can page. See the memory warning in `HANDOFF.md`.
+- Updated `HANDOFF.md` and tracker tasks M0-17, M0-18, M0-19, M1-07, M1-14, M1-16, M1-17, M2-15.
