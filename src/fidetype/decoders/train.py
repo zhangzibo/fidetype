@@ -26,6 +26,14 @@ Config keys added for M1-C:
 - ``train.early_stop_metric`` can also be ``"val_key_err"`` (1 - keystroke
   head accuracy on val).
 
+Config keys added for M1-09 (trend-based early stop, opt-in):
+
+- ``train.smooth_alpha``: if set, the patience counter follows an EMA of the
+  val metric (weight of the newest value), not the raw value. An eval counts
+  as an improvement when the EMA falls below its best value minus
+  ``train.min_delta``. ``best.pt`` still holds the best RAW val metric.
+  ``None`` (default) keeps the old rule, so old runs stay reproducible.
+
 Long runs must be detached (see ``experiments/2026-11-08-m1b-decoder/launch.ps1``).
 """
 
@@ -101,6 +109,8 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "deterministic": False,
         "torch_threads": 4,
         "init_from": None,
+        "smooth_alpha": None,  # None = raw-metric patience (old rule); e.g. 0.3 = EMA trend stop
+        "min_delta": 0.0,  # trend stop: smallest drop of the smoothed metric that counts
     },
 }
 
@@ -147,6 +157,20 @@ def lr_lambda(warmup: int, total: int, min_ratio: float):
         return min_ratio + (1 - min_ratio) * 0.5 * (1 + math.cos(math.pi * p))
 
     return f
+
+
+def trend_update(state: dict[str, Any], metric: float, alpha: float, min_delta: float) -> bool:
+    """Update the EMA trend of the val metric in ``state``. Return True on an improvement.
+
+    ``state["smooth"]`` is the EMA (``alpha`` = weight of the newest value); the
+    first value starts it. An improvement is ``smooth < best_smooth - min_delta``.
+    """
+    prev = state.get("smooth")
+    state["smooth"] = float(metric) if prev is None else alpha * float(metric) + (1 - alpha) * float(prev)
+    if state["smooth"] < state.get("best_smooth", float("inf")) - min_delta:
+        state["best_smooth"] = state["smooth"]
+        return True
+    return False
 
 
 def atomic_save(obj: Any, path: Path) -> None:
@@ -305,7 +329,7 @@ def _train(keep_awake_on: bool, cfg: dict[str, Any], run_dir: str | Path | None 
         opt, lr_lambda(ocfg["warmup_steps"], total_steps, ocfg["min_lr_ratio"]))
 
     state = {"epoch": 0, "step_in_epoch": 0, "global_step": 0, "best": float("inf"), "best_epoch": -1,
-             "bad_evals": 0, "done": False, "active_s": 0.0}
+             "bad_evals": 0, "done": False, "active_s": 0.0, "smooth": None, "best_smooth": float("inf")}
     if ckpt is None and tcfg.get("init_from"):
         loaded, skipped = init_weights_from(model, tcfg["init_from"])
         log.log(f"init_from {tcfg['init_from']}: {len(loaded)} tensors loaded, skipped {skipped}")
@@ -336,7 +360,7 @@ def _train(keep_awake_on: bool, cfg: dict[str, Any], run_dir: str | Path | None 
         st = {"status": status, "pid": os.getpid(), "run_dir": str(run_dir), "updated": time.strftime("%Y-%m-%d %H:%M:%S"),
               **{k: state[k] for k in ("epoch", "global_step", "best", "best_epoch", "bad_evals")},
               "active_min": round(state.get("active_s", 0.0) / 60, 2),
-              "metric": tcfg["early_stop_metric"]}
+              "metric": tcfg["early_stop_metric"], "smooth": state.get("smooth")}
         (run_dir / "status.json").write_text(json.dumps(st, indent=2))
 
     last_ckpt = time.time()
@@ -421,11 +445,16 @@ def _train(keep_awake_on: bool, cfg: dict[str, Any], run_dir: str | Path | None 
             ev = evaluate(model, val_ds, cfg, device, use_bf16)
             rec.update(ev)
             metric = ev[tcfg["early_stop_metric"]]
-            if metric < state["best"] - 1e-4:
-                state["best"], state["best_epoch"], state["bad_evals"] = metric, ep, 0
+            improved_raw = metric < state["best"] - 1e-4
+            if improved_raw:
+                state["best"], state["best_epoch"] = metric, ep
                 save(run_dir / "best.pt", full=False)
+            if tcfg.get("smooth_alpha") is not None:
+                improved = trend_update(state, metric, float(tcfg["smooth_alpha"]), float(tcfg.get("min_delta") or 0.0))
+                rec["val_smooth"] = state["smooth"]
             else:
-                state["bad_evals"] += 1
+                improved = improved_raw
+            state["bad_evals"] = 0 if improved else state["bad_evals"] + 1
             if state["bad_evals"] >= tcfg["patience_evals"]:
                 state["done"] = True
                 stop_reason = "early_stop"
@@ -439,6 +468,8 @@ def _train(keep_awake_on: bool, cfg: dict[str, Any], run_dir: str | Path | None 
             msg += f" val key acc {rec['val_key_acc']:.3f}"
         if "max_mem_gb" in rec:
             msg += f" mem {rec['max_mem_gb']:.2f} GB"
+        if "val_smooth" in rec:
+            msg += f" trend: smoothed {rec['val_smooth']:.4f} evals_since_improve {state['bad_evals']}"
         log.log(msg)
         state["active_s"] = timer.tick()
         save(latest)

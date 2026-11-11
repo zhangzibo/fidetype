@@ -1,0 +1,70 @@
+{
+  "run_name": "m1-09-r4a-full",
+  "runs_dir": "C:/Users/zhang/bci-data/runs",
+  "data": {
+    "root": "C:/Users/zhang/bci-data/cache/spanishbcbl/v1",
+    "subjects": null,
+    "batch_size": 16,
+    "eval_batch_size": 16,
+    "num_workers": 0,
+    "augment": {
+      "start_jitter_s": 0.3,
+      "end_jitter_s": 0.1,
+      "channel_offset_std": 0.3,
+      "time_mask_n": 4,
+      "time_mask_max_s": 0.4,
+      "channel_mask_n": 2,
+      "channel_mask_max": 60,
+      "stretch_min": 0.9,
+      "stretch_max": 1.1
+    },
+    "blocks": null,
+    "pad_multiple": 100
+  },
+  "model": {
+    "spatial_dim": 128,
+    "conv_dim": 256,
+    "conv_blocks": 4,
+    "model_dim": 192,
+    "conformer_layers": 2,
+    "conformer_heads": 4,
+    "conformer_ffn": 512,
+    "conformer_kernel": 15,
+    "dropout": 0.35,
+    "input_dropout": 0.1,
+    "self_condition": true,
+    "lookahead_frames": null,
+    "aux_keystroke_weight": 1.0,
+    "ctc_weight": 0.0,
+    "aux_key_layer": "both",
+    "aux_key_pool": 1,
+    "aux_key_shift_frames": 1
+  },
+  "optim": {
+    "lr": 0.0003,
+    "weight_decay": 0.1,
+    "betas": [
+      0.9,
+      0.98
+    ],
+    "warmup_steps": 800,
+    "min_lr_ratio": 0.02,
+    "epochs": 80,
+    "grad_clip": 1.0
+  },
+  "train": {
+    "seed": 0,
+    "device": "cuda",
+    "bf16": true,
+    "ckpt_every_min": 5,
+    "eval_every_epochs": 1,
+    "patience_evals": 12,
+    "early_stop_metric": "val_key_err",
+    "log_every_steps": 25,
+    "max_minutes": 60,
+    "torch_threads": 4,
+    "smooth_alpha": 0.3,
+    "min_delta": 0.003
+  },
+  "_comment": "M1-09 stage 1: M1-C r4a (keystroke-head pretraining, ctc_weight 0) on the FULL cache (subjects null, blocks null = all 80 cached blocks, same hash split by sentence as M1-15 full-r1). Changes vs M1-C r4a: all blocks; epochs 80 (cosine fits about 4x the steps per epoch); max_minutes 60 ACTIVE; trend stop (EMA alpha 0.3 of val_key_err, min_delta 0.003, patience 12)."
+}

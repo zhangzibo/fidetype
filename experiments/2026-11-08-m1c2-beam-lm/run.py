@@ -17,6 +17,12 @@ Stages (each stage saves its output; a re-run skips finished work):
 Run (repo root, CPU only; see results.md):
 
     C:\\venvs\\fidetype-rocm\\Scripts\\python.exe experiments/2026-11-08-m1c2-beam-lm/run.py
+
+Other runs (added for M1-09): ``--run-name <run>`` reads
+``runs/<run>/best.pt`` and ``streams/<run>/``; ``--out`` and ``--data-dir`` set
+the output folders; ``--grid-w`` / ``--grid-b`` set the val grid;
+``--no-calibrated`` drops the frame-calibrated grid half. The defaults
+reproduce M1-C2. ``score`` also reports the mean over participants.
 """
 
 from __future__ import annotations
@@ -50,6 +56,7 @@ N_WORKERS = 3
 N_BOOT = 10000
 GRID_W = (0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0)
 GRID_B = (0.0, 0.5, 1.0, 1.5, 2.0)
+NO_CAL = False
 
 
 def log(*a) -> None:
@@ -213,6 +220,14 @@ def bootstrap_mean_ci(d, n_boot: int = N_BOOT, seed: int = 0) -> dict:
     return {"mean": float(d.mean()), "ci95_lo": float(lo), "ci95_hi": float(hi), "n": int(len(d))}
 
 
+def _mean_over(labels: list[dict], vals: list[float], key: str) -> float:
+    """Mean of the group means; a row without ``key`` is its own group (its subject)."""
+    g: dict[str, list[float]] = {}
+    for r, v in zip(labels, vals):
+        g.setdefault(str(r.get(key) or r["subject"]), []).append(v)
+    return float(np.mean([np.mean(v) for v in g.values()]))
+
+
 def score(labels: list[dict], tops: list[str], nbests: list[list[str]] | None = None) -> dict:
     from fidetype.eval.metrics import cer, edit_distance, wer
 
@@ -227,6 +242,7 @@ def score(labels: list[dict], tops: list[str], nbests: list[list[str]] | None = 
         "wer_target": float(np.mean([wer(t, h) for t, h in zip(tg, tops)])),
         "cer_target_pooled": sum(edit_distance(t, h) for t, h in zip(tg, tops)) / sum(len(t) for t in tg),
         "cer_target_mean_over_subjects": float(np.mean([np.mean(v) for v in subj.values()])),
+        "cer_target_mean_over_participants": _mean_over(labels, c, "participant"),
         "sentence_acc": float(np.mean([t == h for t, h in zip(tg, tops)])),
         "per_sentence_cer": c,
     }
@@ -250,7 +266,7 @@ def stage_grid(pool: Pool) -> dict:
     log(f"grid: frame temperature fitted on real val = {T_cal:.3f}")
     from fidetype.lm.beam import RETUNED
 
-    cells = list(itertools.product((1.0, T_cal), GRID_W, GRID_B))
+    cells = list(itertools.product((1.0,) if NO_CAL else (1.0, T_cal), GRID_W, GRID_B))
     jobs = []
     for T, w, b in cells:
         kw = {**dict(RETUNED), "lm_weight": w, "insertion_bonus": b}
@@ -328,14 +344,15 @@ def write_tables(res: dict, grid: dict) -> str:
     for split in SPLITS:
         s = res["splits"][split]
         L += [f"### {split} (n = {s['n']} sentences)", "",
-              "| decoder | real MEG | shuffled MEG | zeros | gap shuffled - real | WER real | pooled CER real | mean over subjects real | true sentence in n-best (real) |",
-              "|---|---|---|---|---|---|---|---|---|"]
+              "| decoder | real MEG | shuffled MEG | zeros | gap shuffled - real | WER real | pooled CER real | mean over subjects real | mean over participants real | true sentence in n-best (real) |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
         for d, label in names.items():
             r = s["results"]
             L.append(f"| {label} | {ci(r['real'][d]['cer_target'])} | {f3(r['shuffled'][d]['cer_target']['mean'])} | "
                      f"{f3(r['zeros'][d]['cer_target']['mean'])} | {gci(s['gaps'][f'shuffled_minus_real/{d}'])} | "
                      f"{f3(r['real'][d]['wer_target'])} | {f3(r['real'][d]['cer_target_pooled'])} | "
                      f"{f3(r['real'][d]['cer_target_mean_over_subjects'])} | "
+                     f"{f3(r['real'][d]['cer_target_mean_over_participants'])} | "
                      f"{f3(r['real'][d]['target_in_nbest']) if 'target_in_nbest' in r['real'][d] else '-'} |")
         L.append("")
         L.append("Beam minus greedy (real MEG, paired): " + "; ".join(
@@ -369,8 +386,33 @@ def strip(o):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--stages", default="controls,grid,eval")
+    ap.add_argument("--run-name", default=None, help="run name (runs/<run>/best.pt, streams/<run>/)")
+    ap.add_argument("--out", default=None, help="results folder (default: this folder's results/)")
+    ap.add_argument("--data-dir", default=None, help="folder for control log-probs and decode caches")
+    ap.add_argument("--workers", type=int, default=None)
+    ap.add_argument("--grid-w", type=float, nargs="+", default=None)
+    ap.add_argument("--grid-b", type=float, nargs="+", default=None)
+    ap.add_argument("--no-calibrated", action="store_true")
     args = ap.parse_args()
+    global RUN_DIR, STREAM_DIR, DATA_DIR, OUT, N_WORKERS, GRID_W, GRID_B, NO_CAL
+    if args.run_name:
+        RUN_DIR = Path("C:/Users/zhang/bci-data/runs") / args.run_name
+        STREAM_DIR = Path("C:/Users/zhang/bci-data/streams") / args.run_name
+        DATA_DIR = Path("C:/Users/zhang/bci-data/streams") / f"{args.run_name}_beam-controls"
+    if args.out:
+        OUT = Path(args.out)
+    if args.data_dir:
+        DATA_DIR = Path(args.data_dir)
+    if args.workers:
+        N_WORKERS = args.workers
+    if args.grid_w:
+        GRID_W = tuple(args.grid_w)
+    if args.grid_b:
+        GRID_B = tuple(args.grid_b)
+    NO_CAL = bool(args.no_calibrated)
     OUT.mkdir(parents=True, exist_ok=True)
+    log(f"run_dir={RUN_DIR} streams={STREAM_DIR} data={DATA_DIR} out={OUT} workers={N_WORKERS} "
+        f"grid_w={GRID_W} grid_b={GRID_B} calibrated={not NO_CAL}")
     t0 = time.time()
     stages = args.stages.split(",")
     if "controls" in stages:

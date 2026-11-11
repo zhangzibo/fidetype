@@ -398,3 +398,31 @@ def test_summarize_counts_each_participant_once():
     # Rows without a participant key fall back to the subject ID.
     legacy = summarize([{k: v for k, v in r.items() if k != "participant"} for r in rows])
     assert set(legacy["per_participant"]) == {"S1", "S18", "S3"}
+
+
+def test_trend_update_ema_and_min_delta():
+    from fidetype.decoders.train import trend_update
+
+    st: dict = {}
+    assert trend_update(st, 1.0, 0.5, 0.01)  # first value starts the EMA
+    assert st["smooth"] == 1.0
+    assert trend_update(st, 0.8, 0.5, 0.01)  # EMA 0.9 < 1.0 - 0.01
+    assert abs(st["smooth"] - 0.9) < 1e-12
+    assert not trend_update(st, 0.88, 0.5, 0.01)  # EMA 0.89: drop 0.01 is not > min_delta
+    assert not trend_update(st, 1.5, 0.5, 0.01)  # one bad value raises the EMA: no improvement
+    assert st["best_smooth"] == 0.9
+
+
+def test_trend_stop_in_training(cache, tmp_path):
+    from fidetype.decoders.train import train
+
+    cfg = _cfg(cache, tmp_path, patience_evals=2, smooth_alpha=0.3, min_delta=10.0)
+    cfg["optim"]["epochs"] = 20
+    res = train(cfg, tmp_path / "run", echo=False)
+    # min_delta 10 > any CER drop: only the first eval improves, so the stop fires after 1 + 2 evals.
+    assert res["stop_reason"] == "early_stop" and res["epoch"] == 3, res
+    recs = [json.loads(x) for x in (tmp_path / "run" / "metrics.jsonl").read_text().splitlines()]
+    assert all("val_smooth" in r for r in recs if r["type"] == "epoch")
+    assert (tmp_path / "run" / "best.pt").exists()
+    st = json.loads((tmp_path / "run" / "status.json").read_text())
+    assert st["status"] == "early_stopped" and st["smooth"] is not None
