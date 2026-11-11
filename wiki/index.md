@@ -53,7 +53,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [BCBL](entities/bcbl.md) | Basque lab that recorded and owns the data |
 | [SpanishBCBL dataset](entities/spanishbcbl-dataset.md) | v1 data. Public (HF, not gated), CC BY-NC 4.0, ~268 GB MEG. The only public typing-MEG set we know of. Inspection findings for M1 |
 | [EnglishBCBL dataset](entities/englishbcbl-dataset.md) | v2 data. 90 h MEG. Embargoed |
-| [emg2qwerty](entities/emg2qwerty.md) | *Partial.* Meta's public wrist-EMG typing dataset. CC-BY-NC-4.0, HDF5 at 2 kHz. Sibling Meta EMG sets are also NC. Template for causal decoding |
+| [emg2qwerty](entities/emg2qwerty.md) | *Partial.* Meta's wrist-EMG typing dataset. 108 users, 346 h, 308.4 GB. CC-BY-NC-4.0, HDF5 at 2 kHz. Sibling Meta EMG sets are also NC. CC BY alternatives listed |
 | [BIDS](entities/bids.md) | Brain Imaging Data Structure. Community data standard. Model for NeuralTextStream governance. Bridge, not rival |
 | [Lab Streaming Layer](entities/lab-streaming-layer.md) | De facto real-time lab streaming tool (SCCN/UCSD). Raw signals, not decoder output |
 | [IEEE P2731](entities/ieee-p2731.md) | Draft IEEE BCI terminology standard. Authorised 2018, unpublished. No stream format. Related venues: ISO/IEC SC 43, TS 27571 |
@@ -61,7 +61,11 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [W3C EMMA](entities/w3c-emma.md) | W3C multimodal annotation (1.0 Rec 2009). Confidence, n-best, timestamps. Closest non-neural precedent |
 | [Meta Neural Band](entities/meta-neural-band.md) | Consumer wrist sEMG. Web Apps get DOM events only. No raw EMG, no scores |
 | [BrainFlow](entities/brainflow.md) | MIT library. Uniform raw-data API across many boards. Adapter priority 1 with LSL |
-| [Dryad intracortical datasets](entities/dryad-intracortical-datasets.md) | CC0. Willett 2021 handwriting, Brain-to-Text '24/'25. The only commercially clean decoded-text data found |
+| [Dryad intracortical datasets](entities/dryad-intracortical-datasets.md) | CC0. Willett 2021 handwriting, Brain-to-Text '24/'25, inner speech. Sizes. Code repos unlicensed |
+| [Brain-to-Text '25](entities/brain-to-text-25.md) | CC0 intracortical speech (T15), 11.59 GB. RNN logits + cue sentences in a 58 MB file. First download for licence-clean trust evaluation |
+| [Willett 2021 handwriting](entities/willett-handwriting-2021.md) | CC0 intracortical handwriting (T5), 1.41 GB, 1,000 sentences. FALCON H2 copy on DANDI (CC BY 4.0) |
+| [KT-sEMG (Nokia)](entities/kt-semg-dataset.md) | CC BY 4.0 forearm sEMG typing, 32 ch at 2000 Hz, ms keystrokes, one typist, 21.0 GB |
+| [Toronto sEMG typing](entities/toronto-semg-typing-dataset.md) | CC BY 4.0 sEMG typing, 19 people × 2 sessions, 16 ch at 2 kHz, 2.77 GB |
 
 ## Questions
 | Page | Summary |
@@ -75,6 +79,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Compute setup](questions/compute-setup.md) | GPU path: native Windows ROCm 7.2.1 + torch 2.9.1 on the RX 7800 XT. Short venv path (MAX_PATH). Benchmarks, caveats, usage |
 | [Decoder M1 results](questions/decoder-m1-results.md) | 2026-11-08/09 decoder runs. CTC alone: test CER 0.670 equals the shuffled-MEG control 0.669 (no MEG use). With a keystroke auxiliary loss (M1-C): gap +0.116 to +0.156, greedy CER 0.619. Beam + char LM, val-tuned (M1-C2): 0.590, gap +0.132. Greedy target 0.59 not met. M1-15 r1 (sentence context, 9 epochs): 0.619 greedy, 0.532 beam + LM. Report the control and means over participants |
 | [SpanishBCBL repeated participants](questions/spanishbcbl-repeated-participants.md) | S1/S18, S4/S14 and S5/S10/S21 are one person each. Index correct. Sentence splits, so no leakage. Effect on M1-C ≤ 0.003 CER. Report means over participants |
+| [Public datasets](questions/public-datasets.md) | 2026-11-10 survey of about 30 datasets (EMG, EEG, MEG, implants, ECoG, pretraining) with licence and fit. Top 5: Brain-to-Text '25, KT-sEMG, emg2qwerty, Willett handwriting, Toronto sEMG. Licence warnings. First download: B2T '25 logits (58 MB) |
 | [Trust core v0 results](questions/trust-core-v0-results.md) | 2026-11-08 simulator run: trust policy cuts wrong commits 0.29–0.47 → 0.02–0.09 for a 7–16 % eWPM cost. LM fusion breaks calibration. Revised Paper 1 claim. Beam re-tune, first real MEG, per-word OFFER: no BCI policy on real MEG beats gaze typing alone |
 
 ## Experiments

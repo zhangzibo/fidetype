@@ -3,7 +3,7 @@ title: Overview — non-invasive brain-to-text, where things stand
 type: overview
 tags: [synthesis]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-09
+updated: 2026-11-10
 ---
 
 # Overview
@@ -36,7 +36,9 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 2. **Patients with no movement**: going from overt typing to attempted or imagined typing, without labels.
 3. **Cross-subject generalisation**: the encoder is the bottleneck.
 4. **Hardware**: moving from cryogenic MEG to room-temperature [OPM-MEG](concepts/opm-meg.md).
-5. **Data**: only one small public typing-MEG dataset exists ([SpanishBCBL](entities/spanishbcbl-dataset.md)), and the larger one is embargoed ([EnglishBCBL](entities/englishbcbl-dataset.md)).
+5. **Data**: only one small public typing-MEG dataset exists ([SpanishBCBL](entities/spanishbcbl-dataset.md)), and the larger one is embargoed ([EnglishBCBL](entities/englishbcbl-dataset.md)). All public non-invasive brain typing data is NC. Commercially clean data with text and timing exists only for implants (CC0, [Brain-to-Text '25](entities/brain-to-text-25.md)) and wrist sEMG typing (CC BY 4.0, [KT-sEMG](entities/kt-semg-dataset.md), [Toronto](entities/toronto-semg-typing-dataset.md)) ([public datasets survey](questions/public-datasets.md)).
+
+> **Our take (2026-11-10):** Wrist sEMG typing is the natural **second testbed modality** after MEG: the most typing data ([emg2qwerty](entities/emg2qwerty.md), 346 h, NC), two CC BY sets, and a consumer device. Brain-to-Text '25 is the licence-clean testbed for the trust layer on real decoder output.
 
 ## Project direction
 On 2026-11-07 we chose **trustworthy neural text entry**. On 2026-11-08 the user named the project **Fidetype** (package `fidetype`). We build a layer that makes text from any neural decoder reliable: it calibrates confidence, abstains or asks when it is not sure, offers n-best choices, guards against LLM hallucination, and works in real time.

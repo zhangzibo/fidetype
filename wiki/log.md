@@ -237,3 +237,12 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New config `experiments/2026-11-09-m1-15-sentence-context/config-r2.json`: r1 config (same 20 blocks, same subjects), plateau schedule, `epochs` 2000, `max_minutes` 300 (active-time cap). README run plan: r2 = this rerun; the causal run is r3.
 - Queue `C:\Users\zhang\bci-data\runs\queue-2026-11-10\queue.ps1` (PID 31416) started 19:16: r2 training on the GPU (cuda, bf16, about 37 s per epoch at the start), then inference with the final head and the conv head. AC sleep set from 1800 s to never; the queue restores it at the end. Hard stop 8 h after start.
 - 13 new tests (`tests/test_power_budget.py`); 72 decoder tests pass on CPU.
+
+## [2026-11-10] query | Public datasets survey
+- Web survey of about 30 public datasets for Fidetype: wrist sEMG, EEG, MEG, intracortical, sEEG/ECoG, classic P300/SSVEP spellers, pretraining corpora. Metadata only (repository APIs, dataset cards, papers). No data downloaded.
+- New: `wiki/questions/public-datasets.md` (comparison table, top 5, licence warnings, next actions, lab leads, open questions); entity pages `brain-to-text-25.md`, `willett-handwriting-2021.md`, `kt-semg-dataset.md`, `toronto-semg-typing-dataset.md`.
+- Updated: `emg2qwerty.md` (108 users, 346 h, 308.4 GB archive, CC BY alternatives), `dryad-intracortical-datasets.md` (sizes, B2T '24, inner speech, unlicensed code repos), `overview.md` (data problem, sEMG as second testbed), `index.md`, `references/README.md` (links + licences), `HANDOFF.md` (one next-step line).
+- Top 5: Brain-to-Text '25 (CC0), KT-sEMG (CC BY 4.0), emg2qwerty (NC), Willett 2021 handwriting (CC0), Toronto sEMG typing (CC BY 4.0).
+- Licence flags: all Meta EMG sets and LibriBrain NC (emg2pose NC-SA); BNCI P300 CC BY-NC-ND; Dryad code repos have no licence; Toronto code CC BY-SA; TUEG, Armeni, MOUS, Cam-CAN under DUAs; Tsinghua SSVEP terms not stated. Contradiction noted: Du-IN listed as OpenNeuro ds005170, which is Chisco.
+- Recommended first download: Brain-to-Text '25 `t15_copyTask.pkl` (57.79 MB, real RNN logits), then the 11.05 GB neural data; then KT-sEMG (21.0 GB).
+- Tracker: M1-19 real agent numbers; new task M6-05.

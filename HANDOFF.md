@@ -94,6 +94,7 @@ Last update: 2026-11-10 19:30 (M1-15 r2 launched in queue-2026-11-10 with sleep 
 5. **Sentence-context keystroke decoder** (M1-15; code + tests done in b56056e, r1 undertrained, r2 is step 1): a Transformer over key embeddings, v1 Conv+Trans style (v1: Conv 0.67 → Conv+Trans 0.36 CER). Goal: an LM top-1 that is right for a real share of sentences, so the real-MEG trust test is no longer degenerate and can beat gaze typing. Then re-run the M2-10 / M2-14 pipeline on it.
 6. **Trust core follow-ups** (M2, simulator, light work): re-tune the guard for the new beam (M2-12); conformal risk control for the wrong-commit limit (M2-13). Report every eWPM next to the no-BCI (gaze typing) baseline.
 7. **First adapters** (M6), in priority order: LSL/BrainFlow, the Apple BCI HID bridge, Dryad CC0 replay.
+7b. **Public datasets** (M6-05, [survey](wiki/questions/public-datasets.md)): first download Brain-to-Text '25 `t15_copyTask.pkl` (58 MB, CC0, real RNN logits) and write a `b2t25` adapter to NeuralTextStream for a licence-clean trust run; then KT-sEMG (21 GB, CC BY 4.0) for the EMG adapter.
 8. **Conformance test suite** for the spec (M5-10). The validator exists; the suite does not.
 9. **Move producers' `meta` keys** to the namespaced conventions before spec v0.2.
 10. **Pending user decision:** enable Claude Code hooks for automatic snapshots, or not.

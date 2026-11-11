@@ -24,3 +24,17 @@ PDFs and cloned repos are git-ignored because this repo is public and they carry
 |---|---|
 | SpanishBCBL (v1) | https://huggingface.co/datasets/bcbl190626/SpanishBCBL (gated, ~262 GB) |
 | EnglishBCBL (v2) | embargoed |
+
+### Survey 2026-11-10 (links only, no files; see [wiki/questions/public-datasets.md](../wiki/questions/public-datasets.md))
+| Dataset | Link | Licence |
+|---|---|---|
+| Brain-to-Text '25 (Card et al.) | https://datadryad.org/dataset/doi:10.5061/dryad.dncjsxm85 | CC0 (Dryad); code repo unlicensed |
+| Willett 2021 handwriting | https://datadryad.org/dataset/doi:10.5061/dryad.wh70rxwmv | CC0 (Dryad) |
+| Brain-to-Text '24 (Willett 2023) | https://datadryad.org/dataset/doi:10.5061/dryad.x69p8czpq | CC0 (Dryad) |
+| KT-sEMG (Nokia) | https://doi.org/10.7910/DVN/AV6XIR | CC BY 4.0 |
+| Toronto sEMG typing (Achituve et al. 2025) | https://doi.org/10.5683/SP3/KV65VI | CC BY 4.0 (code CC BY-SA 4.0) |
+| emg2qwerty | https://github.com/facebookresearch/emg2qwerty | CC BY-NC 4.0 |
+| LibriBrain | https://huggingface.co/datasets/pnpl/LibriBrain | CC BY-NC 4.0 |
+| MEG-MASC | https://osf.io/ag3kj/ | CC0 (part 1) |
+| Chisco | https://openneuro.org/datasets/ds005170 | CC0 |
+| ZuCo 2.0 | https://osf.io/2urht/ | CC BY 4.0 |
