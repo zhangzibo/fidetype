@@ -133,6 +133,20 @@ def test_plateau_floor_allows_stop_before_max_reductions():
     assert stops.index(True) == 3  # since_improve 3 (first eval sets the best) and LR at the floor
 
 
+def test_plateau_max_lr_reductions_is_a_cap():
+    pytest.importorskip("torch")
+    from fidetype.decoders.train_sentence import plateau_init_state, plateau_update
+
+    # Patience for the stop is long, so without a cap the LR would keep halving down to the floor.
+    ocfg = {"lr": 1e-3, "plateau_patience": 1, "plateau_factor": 0.5, "min_lr": 1e-6, "max_lr_reductions": 2}
+    tcfg = {"patience_evals": 12, "smooth_alpha": 1.0, "min_delta": 0.002}
+    st = plateau_init_state()
+    trs = [plateau_update(st, 0.5, ocfg, tcfg) for _ in range(14)]
+    assert st["lr_reductions"] == 2 and st["lr_scale"] == pytest.approx(0.25)
+    assert sum(t["lr_reduced"] for t in trs) == 2
+    assert [t["stop"] for t in trs].index(True) == 12  # since_improve reaches 12 (the first eval sets the best)
+
+
 # --- training (synthetic cache, CPU) ---------------------------------------------------------
 
 torch = pytest.importorskip("torch")

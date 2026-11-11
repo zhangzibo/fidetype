@@ -168,7 +168,8 @@ def plateau_update(state: dict[str, Any], metric: float, ocfg: dict[str, Any],
     - An improvement is ``smooth < best_smooth - train.min_delta``. It resets
       ``since_improve`` and ``plateau_count``.
     - After ``optim.plateau_patience`` evals without improvement, the LR scale is
-      multiplied by ``optim.plateau_factor`` (floor ``optim.min_lr``).
+      multiplied by ``optim.plateau_factor`` (floor ``optim.min_lr``). At most
+      ``optim.max_lr_reductions`` reductions occur (a cap): after that the LR stays.
     - Stop when ``since_improve >= train.patience_evals`` AND (the LR is at
       ``min_lr`` OR ``lr_reductions >= optim.max_lr_reductions``).
 
@@ -186,15 +187,17 @@ def plateau_update(state: dict[str, Any], metric: float, ocfg: dict[str, Any],
         state["since_improve"] += 1
         state["plateau_count"] += 1
     reduced = False
+    max_red = int(ocfg.get("max_lr_reductions", 3))
     at_floor = base_lr * state["lr_scale"] <= min_lr * (1 + 1e-9)
-    if state["plateau_count"] >= int(ocfg.get("plateau_patience", 5)) and not at_floor:
+    if (state["plateau_count"] >= int(ocfg.get("plateau_patience", 5)) and not at_floor
+            and state["lr_reductions"] < max_red):
         state["lr_scale"] = max(state["lr_scale"] * float(ocfg.get("plateau_factor", 0.5)), min_lr / base_lr)
         state["lr_reductions"] += 1
         state["plateau_count"] = 0
         reduced = True
         at_floor = base_lr * state["lr_scale"] <= min_lr * (1 + 1e-9)
     stop = state["since_improve"] >= int(tcfg["patience_evals"]) and (
-        at_floor or state["lr_reductions"] >= int(ocfg.get("max_lr_reductions", 3)))
+        at_floor or state["lr_reductions"] >= max_red)
     return {"val_smooth": state["smooth"], "lr_now": base_lr * state["lr_scale"], "lr_reduced": reduced,
             "since_improve": state["since_improve"], "lr_reductions": state["lr_reductions"], "stop": stop}
 

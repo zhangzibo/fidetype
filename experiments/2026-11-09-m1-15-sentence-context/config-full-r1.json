@@ -1,0 +1,81 @@
+{
+  "_comment": "M1-15 full-r1: r2 settings on the FULL cache (subjects null, blocks null = all 80 cached blocks, 23 subject IDs = 19 participants; S1/ses1_block1 is not cached). Train 4026 / val 437 / test 637 sentence instances (r2: 947 / 114 / 209); the unique sentences are the same (101 / 11 / 17). Stop settings from the r2 analysis: patience_evals 12, max_lr_reductions 2 (now a cap on LR reductions, not only a stop condition); plateau_patience 5, min_delta 0.002, smooth_alpha 0.3 unchanged. max_minutes 300 = cap of ACTIVE compute time.",
+  "run_name": "m1-15-sentence-context-full-r1",
+  "runs_dir": "C:/Users/zhang/bci-data/runs",
+  "data": {
+    "root": "C:/Users/zhang/bci-data/cache/spanishbcbl/v1",
+    "subjects": null,
+    "blocks": null,
+    "train_splits": [
+      "train"
+    ],
+    "val_splits": [
+      "val"
+    ],
+    "window_s": [
+      -0.2,
+      0.3
+    ],
+    "batch_size": 16,
+    "eval_batch_size": 32,
+    "num_workers": 0,
+    "augment": {
+      "key_jitter_s": 0.02,
+      "channel_offset_std": 0.3,
+      "channel_mask_n": 2,
+      "channel_mask_max": 60,
+      "scale_std": 0.1
+    }
+  },
+  "model": {
+    "spatial_dim": 128,
+    "subject_layer": true,
+    "conv_dim": 256,
+    "conv_blocks": 4,
+    "conv_kernel": 5,
+    "pool": "flatten",
+    "time_bins": 10,
+    "key_dim": 192,
+    "trans_layers": 4,
+    "trans_heads": 4,
+    "trans_ffn": 512,
+    "dropout": 0.3,
+    "input_dropout": 0.1,
+    "lookahead_keys": null,
+    "use_key_intervals": false,
+    "key_head_weight": 0.3,
+    "label_smoothing": 0.05
+  },
+  "optim": {
+    "lr": 0.0003,
+    "weight_decay": 0.1,
+    "betas": [
+      0.9,
+      0.98
+    ],
+    "warmup_steps": 300,
+    "min_lr_ratio": 0.02,
+    "grad_clip": 1.0,
+    "epochs": 2000,
+    "schedule": "plateau",
+    "plateau_patience": 5,
+    "plateau_factor": 0.5,
+    "min_lr": 1e-05,
+    "max_lr_reductions": 2
+  },
+  "train": {
+    "seed": 0,
+    "device": "cuda",
+    "bf16": true,
+    "ckpt_every_min": 5,
+    "eval_every_epochs": 1,
+    "patience_evals": 12,
+    "early_stop_metric": "val_cer_typed",
+    "log_every_steps": 25,
+    "max_minutes": 300,
+    "torch_threads": 4,
+    "init_from": null,
+    "smooth_alpha": 0.3,
+    "min_delta": 0.002
+  }
+}
