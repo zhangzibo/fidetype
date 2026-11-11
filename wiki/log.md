@@ -229,3 +229,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Trust harness (M2-14 set-up, CPU, 250 s) on the r1 streams: trust 2.98 eWPM, always commit 2.38, gaze typing only 3.14. No change to the trust picture.
 - New: `experiments/2026-11-09-m1-15-sentence-context/results.md`, `results/` (metrics copy, training curve, logs, eWPM json), `ewpm_check.py`. Updated `wiki/questions/decoder-m1-results.md`, `wiki/index.md`, the experiment README, `HANDOFF.md`, tracker (M0-20, M1-14 done, M1-15, new M1-18).
 - Next: M1-15 r2 (full schedule, sleep prevented, same 20 blocks), then the full-cache r4a → r4b retrain.
+
+## [2026-11-10] setup | M1-15 r2 launch with sleep prevention
+- Code (commit 6132c60): `src/fidetype/utils/power.py` keeps Windows awake during training (`SetThreadExecutionState`, cleared on exit). `max_minutes` now counts active compute time: a gap over 5 min ("suspend gap detected") is not counted, and the total is in the checkpoint, so a resume keeps the budget. Applies to `train.py` and `train_sentence.py`.
+- `train_sentence.py`: opt-in `optim.schedule: "plateau"`. Constant LR after warm-up, halved after 5 evals without improvement of the smoothed val CER. Training stops on the val trend, not at a fixed epoch count. The trend is logged per eval in `train.log` and `status.json`.
+- `infer_sentence.py --head conv` gives the Conv-only (pre-Transformer) head its own CER, in a separate output folder.
+- New config `experiments/2026-11-09-m1-15-sentence-context/config-r2.json`: r1 config (same 20 blocks, same subjects), plateau schedule, `epochs` 2000, `max_minutes` 300 (active-time cap). README run plan: r2 = this rerun; the causal run is r3.
+- Queue `C:\Users\zhang\bci-data\runs\queue-2026-11-10\queue.ps1` (PID 31416) started 19:16: r2 training on the GPU (cuda, bf16, about 37 s per epoch at the start), then inference with the final head and the conv head. AC sleep set from 1800 s to never; the queue restores it at the end. Hard stop 8 h after start.
+- 13 new tests (`tests/test_power_budget.py`); 72 decoder tests pass on CPU.
