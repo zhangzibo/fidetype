@@ -270,3 +270,15 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New diagram `11-roadmap-standard` (slides.json slide 11; rendering checked with headless Edge).
 - Tracker: milestones P1–P11 (dates chosen because the schema needs them), 55 tasks (15 `externally_blocked`), and this run as M5-11.
 - Linked from overview, project-plan, open-source-playbook, index; HANDOFF next steps.
+
+## [2026-11-10] ingest | Brain-to-Text '25 copy-task logits
+- Downloaded `t15_copyTask.pkl` (57,786,348 bytes; SHA-256 `7313b9a1…5e165e3`, equal to the Dryad API digest) and the dataset card to `C:\Users\zhang\bci-data\brain-to-text-25\` (outside the repo). Dryad file downloads need a login, so we used the HF mirror `Paulownia/Brain-to-text_25_data` and checked the digest.
+- Pickle safety: opcode scan (no load) found only 4 numpy globals and no risky opcodes. Loaded only with a whitelist Unpickler (`fidetype.adapters.b2t25.safe_load`).
+- Contents: 1,718 trials (1,628 with the 125k vocabulary), 15 days, logits (T, 41): blank, `SIL`, 39 ARPAbet (order checked: greedy path = stored raw phonemes in 1,709 trials). Published WER 0.0434 pooled, day 25 0.0044.
+- Also downloaded CMUdict (BSD-2-Clause style, pinned commit) to `bci-data\lexicon\cmudict\`.
+- New: `wiki/sources/brain-to-text-25-copytask.md`. Updated: `wiki/entities/brain-to-text-25.md`, `references/README.md` (downloaded-files table with SHA-256; SpanishBCBL row now "not gated, 280.4 GB"), `wiki/questions/public-datasets.md` (contradiction resolved), `index.md`.
+
+## [2026-11-10] query | B2T '25 cross-device trust result
+- Own adapter `src/fidetype/adapters/b2t25.py` (NTS, `vocab_type="phoneme"`, 80 ms frames, latency 0) and licence-clean phoneme → word route `src/fidetype/lm/phoneme_words.py` (CMUdict fuzzy lookup + Tatoeba unigram + char 6-gram; test WER 0.149). Harness: optional `Item.stream_text`. 17 new tests; 221 pass on CPU.
+- `experiments/2026-11-10-b2t25-trust` (fit 812 / test 816 trials, `aac_gaze` user at the measured 159.3 chars/min): trust 11.55 eWPM, wrong-commit 0.059 vs always commit 11.45 / 0.610. Published-sentence gate 18.77 / 0.044 vs 19.61 / 0.194. Gaze only 4.08. AUROC −p_top1 0.797 (word), 0.884 (phoneme); word confidence 0.844. Null audit: shuffled/uniform 0 % commits; another trial's stream 22 % (ours), 0 % (gate).
+- New: `wiki/questions/b2t25-trust-result.md`. Updated: `wiki/questions/trust-core-v0-results.md` (section 8), `index.md`, tracker (M6-05 real numbers, M6-06), `HANDOFF.md`.

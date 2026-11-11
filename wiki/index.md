@@ -31,6 +31,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Case study: LangChain](sources/case-study-langchain.md) | Side project → open-core company. Integrations first. 149,213 stars. Criticised for abstraction and churn | 2026-11 |
 | [Case study: OpenTelemetry](sources/case-study-opentelemetry.md) | Merged rival standards. Vendor-neutral spec, company-capped governance. CNCF Graduated 2026-05-21. BCI standards gap | 2026-11 |
 | [Neural input landscape 2026](sources/neural-input-landscape-2026.md) | Devices, SDKs, standards, regulation. No standard for decoded neural output with confidence. Closest: Apple BCI HID, W3C EMMA. Adapter priority. Data and regulatory warnings | 2026-11 |
+| [Brain-to-Text '25 copy-task logits](sources/brain-to-text-25-copytask.md) | Card et al. 2024 (NEJM), Dryad CC0. 1,718 trials of T15 phoneme CTC logits (41 tokens, 80 ms) + cue sentences + published output (WER 0.043). Safe-loaded pickle | 2026-11 |
 
 ## Concepts
 | Page | Summary |
@@ -63,7 +64,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Meta Neural Band](entities/meta-neural-band.md) | Consumer wrist sEMG. Web Apps get DOM events only. No raw EMG, no scores |
 | [BrainFlow](entities/brainflow.md) | MIT library. Uniform raw-data API across many boards. Adapter priority 1 with LSL |
 | [Dryad intracortical datasets](entities/dryad-intracortical-datasets.md) | CC0. Willett 2021 handwriting, Brain-to-Text '24/'25, inner speech. Sizes. Code repos unlicensed |
-| [Brain-to-Text '25](entities/brain-to-text-25.md) | CC0 intracortical speech (T15), 11.59 GB. RNN logits + cue sentences in a 58 MB file. First download for licence-clean trust evaluation |
+| [Brain-to-Text '25](entities/brain-to-text-25.md) | CC0 intracortical speech (T15), 11.59 GB. RNN logits + cue sentences in a 58 MB file: downloaded 2026-11-10, adapter `fidetype.adapters.b2t25` |
 | [Willett 2021 handwriting](entities/willett-handwriting-2021.md) | CC0 intracortical handwriting (T5), 1.41 GB, 1,000 sentences. FALCON H2 copy on DANDI (CC BY 4.0) |
 | [KT-sEMG (Nokia)](entities/kt-semg-dataset.md) | CC BY 4.0 forearm sEMG typing, 32 ch at 2000 Hz, ms keystrokes, one typist, 21.0 GB |
 | [Toronto sEMG typing](entities/toronto-semg-typing-dataset.md) | CC BY 4.0 sEMG typing, 19 people × 2 sessions, 16 ch at 2 kHz, 2.77 GB |
@@ -82,6 +83,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Decoder M1 results](questions/decoder-m1-results.md) | 2026-11-08/09 decoder runs. CTC alone: test CER 0.670 equals the shuffled-MEG control 0.669 (no MEG use). With a keystroke auxiliary loss (M1-C): gap +0.116 to +0.156, greedy CER 0.619. Beam + char LM, val-tuned (M1-C2): 0.590, gap +0.132. Greedy target 0.59 not met. M1-15 r1 (sentence context, 9 epochs): 0.619 greedy, 0.532 beam + LM. Report the control and means over participants |
 | [SpanishBCBL repeated participants](questions/spanishbcbl-repeated-participants.md) | S1/S18, S4/S14 and S5/S10/S21 are one person each. Index correct. Sentence splits, so no leakage. Effect on M1-C ≤ 0.003 CER. Report means over participants |
 | [Public datasets](questions/public-datasets.md) | 2026-11-10 survey of about 30 datasets (EMG, EEG, MEG, implants, ECoG, pretraining) with licence and fit. Top 5: Brain-to-Text '25, KT-sEMG, emg2qwerty, Willett handwriting, Toronto sEMG. Licence warnings. First download: B2T '25 logits (58 MB) |
+| [B2T '25 trust result](questions/b2t25-trust-result.md) | First cross-device test (intracortical speech). Trust: wrong-commit 0.610 → 0.059 at 11.55 vs 11.45 eWPM; published-sentence gate 0.194 → 0.044 at 18.77 vs 19.61; gaze only 4.08. −p_top1 AUROC 0.80, word conf 0.84 |
 | [Trust core v0 results](questions/trust-core-v0-results.md) | 2026-11-08 simulator run: trust policy cuts wrong commits 0.29–0.47 → 0.02–0.09 for a 7–16 % eWPM cost. LM fusion breaks calibration. Revised Paper 1 claim. Beam re-tune, first real MEG, per-word OFFER: no BCI policy on real MEG beats gaze typing alone |
 
 ## Experiments
@@ -99,3 +101,4 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [OFFER_WORDS: per-word choices + partial correction](../experiments/2026-11-08-m2-offer-words/results.md) | New trust action + word-level gaze user model. Simulator worst preset +0.4 to +1.7 eWPM; median no change. Real MEG: never selected; trust 2.96 vs gaze typing alone 3.14 eWPM | 2026-11-08 |
 | [M1-C2 beam + char LM on the r4b CTC streams](../experiments/2026-11-08-m1c2-beam-lm/results.md) | Test CER greedy 0.619 → beam no LM 0.605 → beam + LM val-tuned (w 0.25, bonus 1.0) 0.590 [0.576, 0.604]. Shuffled-MEG gap +0.132. `RETUNED` as is: 0.633 (worse). Truth in the 20-best for 0 sentences | 2026-11-08 |
 | [M1-15 r1 sentence-context keystroke decoder](../experiments/2026-11-09-m1-15-sentence-context/results.md) | Conv + Transformer over key embeddings, oracle timing. Undertrained (9 of 150 epochs; the PC slept). Test greedy CER 0.619, beam + LM 0.532 (logistic regression 0.597 / 0.531); shuffled gap +0.172 / +0.219. Trust 2.98 eWPM vs gaze only 3.14 | 2026-11-09 |
+| [Trust core on Brain-to-Text '25](../experiments/2026-11-10-b2t25-trust/results.md) | Own b2t25 adapter (phoneme NTS) + CMUdict/Tatoeba word route (WER 0.149). Word- and phoneme-level harness, published-sentence gate, null audit, day-cluster CIs | 2026-11-10 |
