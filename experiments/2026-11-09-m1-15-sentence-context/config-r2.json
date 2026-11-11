@@ -1,0 +1,114 @@
+{
+  "_comment": "M1-15 r2: r1 config (same 20 pinned blocks / 11 subject IDs, same model) trained until the val trend stops improving. optim.schedule 'plateau': warm-up, constant LR, x0.5 after 5 evals without improvement of the EMA-smoothed val CER (min_delta 0.002), floor 1e-5; stop when 20 evals show no improvement AND (LR at floor OR 3 LR reductions). epochs 2000 = effectively unlimited. max_minutes 300 = safety cap of ACTIVE compute time only (sleep not counted).",
+  "run_name": "m1-15-sentence-context-r2",
+  "runs_dir": "C:/Users/zhang/bci-data/runs",
+  "data": {
+    "root": "C:/Users/zhang/bci-data/cache/spanishbcbl/v1",
+    "subjects": [
+      "S1",
+      "S11",
+      "S12",
+      "S15",
+      "S16",
+      "S18",
+      "S19",
+      "S25",
+      "S3",
+      "S5",
+      "S9"
+    ],
+    "blocks": [
+      "S1/ses1_block2",
+      "S1/ses2_block1",
+      "S1/ses2_block2",
+      "S11/ses1_block2",
+      "S11/ses2_block1",
+      "S12/ses1_block2",
+      "S15/ses1_block2",
+      "S15/ses2_block1",
+      "S16/ses1_block2",
+      "S18/ses1_block2",
+      "S19/ses1_block2",
+      "S19/ses2_block1",
+      "S25/ses1_block1",
+      "S25/ses1_block2",
+      "S25/ses2_block1",
+      "S25/ses2_block2",
+      "S3/ses1_block1",
+      "S3/ses1_block2",
+      "S5/ses1_block1",
+      "S9/ses1_block2"
+    ],
+    "train_splits": [
+      "train"
+    ],
+    "val_splits": [
+      "val"
+    ],
+    "window_s": [
+      -0.2,
+      0.3
+    ],
+    "batch_size": 16,
+    "eval_batch_size": 32,
+    "num_workers": 0,
+    "augment": {
+      "key_jitter_s": 0.02,
+      "channel_offset_std": 0.3,
+      "channel_mask_n": 2,
+      "channel_mask_max": 60,
+      "scale_std": 0.1
+    }
+  },
+  "model": {
+    "spatial_dim": 128,
+    "subject_layer": true,
+    "conv_dim": 256,
+    "conv_blocks": 4,
+    "conv_kernel": 5,
+    "pool": "flatten",
+    "time_bins": 10,
+    "key_dim": 192,
+    "trans_layers": 4,
+    "trans_heads": 4,
+    "trans_ffn": 512,
+    "dropout": 0.3,
+    "input_dropout": 0.1,
+    "lookahead_keys": null,
+    "use_key_intervals": false,
+    "key_head_weight": 0.3,
+    "label_smoothing": 0.05
+  },
+  "optim": {
+    "lr": 0.0003,
+    "weight_decay": 0.1,
+    "betas": [
+      0.9,
+      0.98
+    ],
+    "warmup_steps": 300,
+    "min_lr_ratio": 0.02,
+    "grad_clip": 1.0,
+    "epochs": 2000,
+    "schedule": "plateau",
+    "plateau_patience": 5,
+    "plateau_factor": 0.5,
+    "min_lr": 1e-05,
+    "max_lr_reductions": 3
+  },
+  "train": {
+    "seed": 0,
+    "device": "cuda",
+    "bf16": true,
+    "ckpt_every_min": 5,
+    "eval_every_epochs": 1,
+    "patience_evals": 20,
+    "early_stop_metric": "val_cer_typed",
+    "log_every_steps": 25,
+    "max_minutes": 300,
+    "torch_threads": 4,
+    "init_from": null,
+    "smooth_alpha": 0.3,
+    "min_delta": 0.002
+  }
+}

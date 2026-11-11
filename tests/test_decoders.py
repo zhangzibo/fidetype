@@ -168,7 +168,8 @@ def test_checkpoint_resume_identical(cache, tmp_path):
     b = torch.load(tmp_path / "b" / "latest.pt", weights_only=False)
     for k in a["model"]:
         torch.testing.assert_close(a["model"][k], b["model"][k], atol=1e-6, rtol=1e-6, msg=k)
-    assert a["state"] == b["state"]
+    drop = {"active_s"}  # wall time differs between runs
+    assert {k: v for k, v in a["state"].items() if k not in drop} == {k: v for k, v in b["state"].items() if k not in drop}
 
 
 def test_infer_writes_valid_streams(cache, tmp_path):

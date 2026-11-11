@@ -21,6 +21,8 @@ $argList = @("-m", "fidetype.decoders.train_sentence", "--run-dir", "`"$runDir`"
 if ($Config -ne "") { $argList += @("--config", "`"$((Resolve-Path $Config).Path)`"") }
 if ($Resume) { $argList += "--resume" }
 if ($MaxMinutes -gt 0) { $argList += @("--max-minutes", "$MaxMinutes") }
+# GPU run: never inherit a CPU-only test setting.
+Remove-Item Env:HIP_VISIBLE_DEVICES, Env:CUDA_VISIBLE_DEVICES -ErrorAction SilentlyContinue
 $env:TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL = "1"
 $env:PYTHONUNBUFFERED = "1"
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"

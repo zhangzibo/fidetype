@@ -1,6 +1,6 @@
 # M1-15: sentence-context keystroke decoder (planned run)
 
-**Status:** r1 done 2026-11-09, undertrained (9 epochs; the PC slept during the run). See [results.md](results.md). r2 = r1 config with the full schedule (next). The causal run moves to r3.
+**Status:** r1 done 2026-11-09, undertrained (9 epochs; the PC slept during the run). See [results.md](results.md). r2 = r1 config trained until the val trend stops improving (`config-r2.json`, launched 2026-11-10). The causal run moves to r3.
 
 ## Question
 Does a Transformer over the key embeddings of one sentence lower the CER of the
@@ -32,9 +32,10 @@ The true sentence is never in the n-best (0/209).
 | run | change | why |
 |---|---|---|
 | r1 | `config.json` as is (non-causal) | main result |
-| r2 | `lookahead_keys: 0` | online variant; cost of causality |
-| r3 (optional) | `use_key_intervals: true` | do key intervals help? (timing only, no MEG) |
-| r4 (optional) | `train.init_from` = M1-C r4a `best.pt` (only weights with matching names and shapes load) | conv pretraining |
+| r2 | `config-r2.json`: r1 config, `optim.schedule: plateau` (constant LR, halved on a val plateau), stop on the smoothed val CER trend, `epochs` 2000 (no fixed limit), `max_minutes` 300 (active-time safety cap) | r1 was undertrained (9 epochs, PC sleep) |
+| r3 | `lookahead_keys: 0` | online variant; cost of causality |
+| r4 (optional) | `use_key_intervals: true` | do key intervals help? (timing only, no MEG) |
+| r5 (optional) | `train.init_from` = M1-C r4a `best.pt` (only weights with matching names and shapes load) | conv pretraining |
 
 ## Controls
 `--control` in `infer_sentence.py` decodes each sentence three times:
@@ -62,5 +63,10 @@ C:\venvs\fidetype-rocm\Scripts\python.exe -m fidetype.decoders.infer_sentence --
 Check: `Get-Content C:\Users\zhang\bci-data\runs\m1-15-sentence-context-r1\status.json`.
 Stop: `Stop-Process -Id (Get-Content C:\Users\zhang\bci-data\runs\m1-15-sentence-context-r1\pid.txt)`.
 
+### r2 additions (2026-11-10)
+- Training keeps Windows awake (`SetThreadExecutionState`, `src/fidetype/utils/power.py`). `max_minutes` counts active compute time only: a gap longer than 5 min between steps is logged as "suspend gap detected" and not counted. The total (`active_s`) is in the checkpoint, so a resume keeps the budget.
+- Watch the trend: `Get-Content C:\Users\zhang\bci-data\runs\m1-15-sentence-context-r2\train.log -Wait | Select-String "trend|plateau|finished|suspend"`. Each eval line shows val CER, smoothed val CER, LR, evals since improvement and LR reductions. `status.json` has the same fields.
+- Conv-only head CER: `infer_sentence ... --head conv` (outputs in `<streams>/<run_name>_head-conv/`).
+
 ## Tests
-`tests/test_sentence_context_decoder.py` (CPU, synthetic): shapes, causal mask, padding, tiny overfit, stream export, participant layer, train/resume/infer wiring.
+`tests/test_sentence_context_decoder.py` (CPU, synthetic): shapes, causal mask, padding, tiny overfit, stream export, participant layer, train/resume/infer wiring. `tests/test_power_budget.py`: sleep prevention, active-time budget, plateau schedule, `--head conv`.

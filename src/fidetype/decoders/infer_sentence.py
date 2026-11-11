@@ -20,6 +20,11 @@ Metrics (``<out_root>/<run_name>/metrics.json``), per input condition:
 - ``--control``: the same for "shuffled" (the windows of another sentence of
   the split, a seed-0 derangement, cycled to the same key count) and "zeros".
   ``gap_*`` holds the paired bootstrap 95% CI of "shuffled CER - real CER".
+
+``--head conv`` uses the per-key head before the Transformer (the "Conv only"
+ablation) instead of the final head. Its outputs go to a separate directory,
+``<out_root>/<run_name>_head-conv/``, so they never overwrite the final-head
+results.
 """
 
 from __future__ import annotations
@@ -51,6 +56,8 @@ from fidetype.eval.metrics import cer, wer  # noqa: E402
 
 DEFAULT_OUT_ROOT = "C:/Users/zhang/bci-data/streams"
 CONDITIONS = ("real", "shuffled", "zeros")
+HEADS = ("final", "conv")
+HEAD_KEYS = {"final": "logits", "conv": "key_logits"}
 
 
 def load_checkpoint(path: str | Path, device: torch.device) -> tuple[SentenceContextDecoder, dict[str, Any]]:
@@ -83,8 +90,15 @@ def condition_item(ds: KeySentences, i: int, condition: str, perm: np.ndarray | 
 
 @torch.no_grad()
 def decode_split(model: SentenceContextDecoder, ds: KeySentences, device: torch.device, use_bf16: bool,
-                 condition: str = "real", batch_size: int = 16, seed: int = 0) -> list[dict[str, Any]]:
-    """Return per-sentence ``log_probs`` [K, 27] (float64), ``key_times`` and ids."""
+                 condition: str = "real", batch_size: int = 16, seed: int = 0,
+                 head: str = "final") -> list[dict[str, Any]]:
+    """Return per-sentence ``log_probs`` [K, 27] (float64), ``key_times`` and ids.
+
+    ``head``: "final" (after the Transformer) or "conv" (the per-key head before it)."""
+    if head not in HEADS:
+        raise ValueError(f"head must be one of {HEADS}, got {head!r}")
+    if head == "conv" and not model.has_key_head:
+        raise ValueError("--head conv needs a model with a per-key head (key_head_weight > 0)")
     perm = derangement(len(ds), seed) if condition == "shuffled" and len(ds) > 1 else None
     if condition == "shuffled" and perm is None:
         return []
@@ -95,7 +109,7 @@ def decode_split(model: SentenceContextDecoder, ds: KeySentences, device: torch.
         km = batch["key_mask"].to(device)
         with torch.autocast(device.type, dtype=torch.bfloat16, enabled=use_bf16):
             res = model(batch["x"].to(device), km, batch["subjects"].to(device), batch["key_times"].to(device))
-        lp = res["logits"].float().log_softmax(-1).cpu().numpy().astype(np.float64)
+        lp = res[HEAD_KEYS[head]].float().log_softmax(-1).cpu().numpy().astype(np.float64)
         for j, it in enumerate(items):
             n = int(km[j].sum())
             out.append({"index": it["index"], "log_probs": lp[j, :n], "key_times": it["key_time"].numpy()})
@@ -115,13 +129,14 @@ def _rows(ds: KeySentences, decoded: list[dict[str, Any]], hyps: Sequence[str]) 
 
 
 def _streams(model: SentenceContextDecoder, ds: KeySentences, decoded: list[dict[str, Any]], run_name: str,
-             split: str, condition: str):
+             split: str, condition: str, head: str = "final"):
     metas = []
     for d in decoded:
         seg = ds.segments[d["index"]]
         metas.append(sentence_stream_meta(model, seg.subject, seg.session, {
             "subject.participant": seg.participant, "run_name": run_name, "split": split,
-            "block": seg.block, "trial_idx": seg.trial_idx, "input.condition": condition}))
+            "block": seg.block, "trial_idx": seg.trial_idx, "input.condition": condition,
+            "decoder.head": head}))
     out = []
     for d, m in zip(decoded, metas):
         lp = torch.from_numpy(d["log_probs"])[None]
@@ -145,7 +160,9 @@ def beam_hyps(streams, lm, lm_weight: float) -> list[str]:
 def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple[str, ...] = ("val", "test"),
                   out_root: str | Path = DEFAULT_OUT_ROOT, device: str = "cuda", data_root: str | None = None,
                   control: bool = False, lm_path: str | None = None, lm_weights: Sequence[float] = (0.5,),
-                  echo: bool = True) -> dict[str, Any]:
+                  echo: bool = True, head: str = "final") -> dict[str, Any]:
+    if head not in HEADS:
+        raise ValueError(f"head must be one of {HEADS}, got {head!r}")
     run_dir = Path(run_dir)
     dev = torch.device(device if (device != "cuda" or torch.cuda.is_available()) else "cpu")
     model, ck = load_checkpoint(run_dir / ckpt_name, dev)
@@ -153,7 +170,7 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
     d = cfg["data"]
     run_name = run_dir.name
     use_bf16 = bool(cfg["train"].get("bf16")) and dev.type == "cuda"
-    out_dir = Path(out_root) / run_name
+    out_dir = Path(out_root) / (run_name if head == "final" else f"{run_name}_head-{head}")
     out_dir.mkdir(parents=True, exist_ok=True)
     conds = CONDITIONS if control else ("real",)
     lm = None
@@ -161,7 +178,7 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
         from fidetype.lm import CharNgramLM
 
         lm = CharNgramLM.load(lm_path)
-    results: dict[str, Any] = {"run_name": run_name, "checkpoint": ckpt_name, "kind": "sentence_context",
+    results: dict[str, Any] = {"run_name": run_name, "checkpoint": ckpt_name, "kind": "sentence_context", "head": head,
                                "lookahead_keys": model.cfg.lookahead_keys,
                                "checkpoint_state": ck.get("state", {}), "splits": {}}
     cache: dict[tuple[str, str], tuple[KeySentences, list, list]] = {}
@@ -170,8 +187,8 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
                           mmap_dir=d.get("mmap_dir"), window_s=tuple(d.get("window_s", [-0.2, 0.3])),
                           blocks=d.get("blocks"))
         for c in conds:
-            dec = decode_split(model, ds, dev, use_bf16, c)
-            cache[(split, c)] = (ds, dec, _streams(model, ds, dec, run_name, split, c))
+            dec = decode_split(model, ds, dev, use_bf16, c, head=head)
+            cache[(split, c)] = (ds, dec, _streams(model, ds, dec, run_name, split, c, head))
     # LM weight: the lowest real val CER (mean over participants).
     lm_weight = None
     if lm is not None:
@@ -244,9 +261,11 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--lm", default=None, help="char n-gram LM (.npz) for the RETUNED beam")
     p.add_argument("--lm-weights", nargs="+", type=float, default=[0.5],
                    help="LM weights; with several, pick the best on real val")
+    p.add_argument("--head", choices=HEADS, default="final",
+                   help="final = after the Transformer; conv = per-key head before it (own output dir)")
     a = p.parse_args(argv)
     res = run_inference(a.run_dir, a.ckpt, tuple(a.splits), a.out_root, a.device, a.data_root, a.control,
-                        a.lm, a.lm_weights)
+                        a.lm, a.lm_weights, head=a.head)
     print(json.dumps({s: {k: v.get("mean_over_participants") for k, v in r.items() if not k.startswith("gap_")}
                       for s, r in res["splits"].items()}, indent=2))
     from fidetype.decoders.train import hard_exit

@@ -56,8 +56,10 @@ from torch.utils.data import DataLoader  # noqa: E402
 from fidetype.decoders.conv_ctc import ConvCTC, ModelConfig, format_param_report, greedy_decode_batch
 from fidetype.decoders.dataset import BucketBatchSampler, MEGSegments, augment_from_dict, collate
 from fidetype.eval.metrics import cer, wer
+from fidetype.utils.power import ActiveTimer, keep_awake
 
 DEFAULT_RUNS_DIR = "C:/Users/zhang/bci-data/runs"
+SUSPEND_GAP_S = 300.0  # a gap between steps longer than this is a suspend: not counted in max_minutes
 
 DEFAULT_CONFIG: dict[str, Any] = {
     "run_name": "debug",
@@ -263,7 +265,7 @@ def init_weights_from(model: ConvCTC, path: str | Path) -> tuple[list[str], list
     return sorted(ok), sorted(k for k in own if k not in ok)
 
 
-def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool = False,
+def _train(keep_awake_on: bool, cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool = False,
           max_steps: int | None = None, echo: bool = True) -> dict[str, Any]:
     """Train (or resume) a run. Returns a summary dict.
 
@@ -303,7 +305,7 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
         opt, lr_lambda(ocfg["warmup_steps"], total_steps, ocfg["min_lr_ratio"]))
 
     state = {"epoch": 0, "step_in_epoch": 0, "global_step": 0, "best": float("inf"), "best_epoch": -1,
-             "bad_evals": 0, "done": False}
+             "bad_evals": 0, "done": False, "active_s": 0.0}
     if ckpt is None and tcfg.get("init_from"):
         loaded, skipped = init_weights_from(model, tcfg["init_from"])
         log.log(f"init_from {tcfg['init_from']}: {len(loaded)} tensors loaded, skipped {skipped}")
@@ -333,11 +335,16 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
     def write_status(status: str) -> None:
         st = {"status": status, "pid": os.getpid(), "run_dir": str(run_dir), "updated": time.strftime("%Y-%m-%d %H:%M:%S"),
               **{k: state[k] for k in ("epoch", "global_step", "best", "best_epoch", "bad_evals")},
+              "active_min": round(state.get("active_s", 0.0) / 60, 2),
               "metric": tcfg["early_stop_metric"]}
         (run_dir / "status.json").write_text(json.dumps(st, indent=2))
 
-    t_start = time.time()
     last_ckpt = time.time()
+    timer = ActiveTimer(state.get("active_s", 0.0), SUSPEND_GAP_S,
+                        on_gap=lambda dt: log.log(f"suspend gap detected: {dt:.0f} s not counted "
+                                                  f"(gap > {SUSPEND_GAP_S:.0f} s)"))
+    log.log(f"keep_awake={'on' if keep_awake_on else 'off'}; active time so far {timer.active_s:.0f} s; "
+            f"max_minutes={tcfg.get('max_minutes')} (active compute time)")
     stop_reason = None
     write_status("running")
     model.train()
@@ -387,6 +394,7 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
                 if "key_ce" in rec:
                     msg += f" key {rec['key_ce']:.3f}"
                 log.log(msg + f") lr {rec['lr']:.2e}")
+            state["active_s"] = timer.tick()
             if time.time() - last_ckpt > tcfg["ckpt_every_min"] * 60:
                 save(latest)
                 write_status("running")
@@ -396,7 +404,7 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
                 stop_reason = "max_steps"
                 break
             mm = tcfg.get("max_minutes")
-            if mm is not None and time.time() - t_start > mm * 60:
+            if timer.exceeded(mm):
                 stop_reason = "max_minutes"
                 break
         if stop_reason is not None:
@@ -432,6 +440,7 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
         if "max_mem_gb" in rec:
             msg += f" mem {rec['max_mem_gb']:.2f} GB"
         log.log(msg)
+        state["active_s"] = timer.tick()
         save(latest)
         last_ckpt = time.time()
         write_status("running")
@@ -448,6 +457,18 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
             f"best {tcfg['early_stop_metric']}={state['best']:.4f} @ epoch {state['best_epoch']}")
     log.close()
     return {"run_dir": str(run_dir), "stop_reason": stop_reason, **state}
+
+
+def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool = False,
+          max_steps: int | None = None, echo: bool = True) -> dict[str, Any]:
+    """Train (or resume) a run while Windows is kept awake. Returns a summary dict.
+
+    ``max_minutes`` counts active compute time (:class:`fidetype.utils.power.ActiveTimer`):
+    a gap longer than ``SUSPEND_GAP_S`` between steps (PC sleep) is not counted.
+    The total is stored in the checkpoint state (``active_s``), so a resume keeps the budget.
+    """
+    with keep_awake() as on:
+        return _train(on, cfg, run_dir, resume, max_steps, echo)
 
 
 def main(argv: list[str] | None = None) -> None:

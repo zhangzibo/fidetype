@@ -49,6 +49,7 @@ from fidetype.decoders.sentence_context import (  # noqa: E402
 )
 from fidetype.decoders.train import (  # noqa: E402
     DEFAULT_RUNS_DIR,
+    SUSPEND_GAP_S,
     Logger,
     atomic_save,
     hard_exit,
@@ -59,6 +60,7 @@ from fidetype.decoders.train import (  # noqa: E402
     set_seed,
 )
 from fidetype.eval.metrics import cer, wer  # noqa: E402
+from fidetype.utils.power import ActiveTimer, keep_awake  # noqa: E402
 
 DEFAULT_CONFIG: dict[str, Any] = {
     "run_name": "debug-sentence",
@@ -86,6 +88,14 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "min_lr_ratio": 0.02,
         "grad_clip": 1.0,
         "epochs": 150,
+        # "cosine" (r1, default): cosine decay over ``epochs``, stop after patience_evals bad evals.
+        # "plateau" (opt-in): warm-up, then constant LR, halved on a val plateau; stop on the val trend
+        # (see plateau_update). Set ``epochs`` very large to make it effectively unlimited.
+        "schedule": "cosine",
+        "plateau_patience": 5,
+        "plateau_factor": 0.5,
+        "min_lr": 1e-5,
+        "max_lr_reductions": 3,
     },
     "train": {
         "seed": 0,
@@ -95,6 +105,8 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "eval_every_epochs": 1,
         "patience_evals": 20,
         "early_stop_metric": "val_cer_typed",
+        "smooth_alpha": 0.3,  # plateau schedule: EMA weight of the newest val value
+        "min_delta": 0.002,  # plateau schedule: smallest drop of the smoothed val metric that counts
         "log_every_steps": 25,
         "max_minutes": None,
         "deterministic": False,
@@ -127,6 +139,64 @@ def participant_means(rows: list[dict[str, Any]], keys: tuple[str, ...]) -> dict
     for r in rows:
         g.setdefault(r["participant"], []).append(r)
     return {k: float(np.mean([np.mean([r[k] for r in rs]) for rs in g.values()])) for k in keys}
+
+
+def plateau_init_state() -> dict[str, Any]:
+    """Checkpoint state keys of the "plateau" schedule (also present, unused, for "cosine")."""
+    return {"lr_scale": 1.0, "lr_reductions": 0, "plateau_count": 0, "since_improve": 0,
+            "smooth": None, "best_smooth": float("inf"), "last_val": None}
+
+
+def plateau_lr_lambda(warmup: int, state: dict[str, Any]):
+    """LR multiplier: linear warm-up, then constant times ``state["lr_scale"]``
+    (reduced on a plateau). It reads ``state`` at each step, so a resume that
+    restores ``state`` also restores the LR."""
+
+    def f(step: int) -> float:
+        w = (step + 1) / max(1, warmup) if step < warmup else 1.0
+        return w * float(state["lr_scale"])
+
+    return f
+
+
+def plateau_update(state: dict[str, Any], metric: float, ocfg: dict[str, Any],
+                   tcfg: dict[str, Any]) -> dict[str, Any]:
+    """One validation step of the "plateau" schedule (training stops on the val trend).
+
+    - ``smooth``: EMA of the val metric (``train.smooth_alpha``, default 0.3, about a
+      5-eval window).
+    - An improvement is ``smooth < best_smooth - train.min_delta``. It resets
+      ``since_improve`` and ``plateau_count``.
+    - After ``optim.plateau_patience`` evals without improvement, the LR scale is
+      multiplied by ``optim.plateau_factor`` (floor ``optim.min_lr``).
+    - Stop when ``since_improve >= train.patience_evals`` AND (the LR is at
+      ``min_lr`` OR ``lr_reductions >= optim.max_lr_reductions``).
+
+    Mutates ``state``; returns the trend values to log."""
+    alpha = float(tcfg.get("smooth_alpha", 0.3))
+    min_delta = float(tcfg.get("min_delta", 0.002))
+    base_lr = float(ocfg["lr"])
+    min_lr = float(ocfg.get("min_lr", 1e-5))
+    prev = state["smooth"]
+    state["smooth"] = float(metric) if prev is None else alpha * float(metric) + (1 - alpha) * prev
+    state["last_val"] = float(metric)
+    if state["smooth"] < state["best_smooth"] - min_delta:
+        state["best_smooth"], state["since_improve"], state["plateau_count"] = state["smooth"], 0, 0
+    else:
+        state["since_improve"] += 1
+        state["plateau_count"] += 1
+    reduced = False
+    at_floor = base_lr * state["lr_scale"] <= min_lr * (1 + 1e-9)
+    if state["plateau_count"] >= int(ocfg.get("plateau_patience", 5)) and not at_floor:
+        state["lr_scale"] = max(state["lr_scale"] * float(ocfg.get("plateau_factor", 0.5)), min_lr / base_lr)
+        state["lr_reductions"] += 1
+        state["plateau_count"] = 0
+        reduced = True
+        at_floor = base_lr * state["lr_scale"] <= min_lr * (1 + 1e-9)
+    stop = state["since_improve"] >= int(tcfg["patience_evals"]) and (
+        at_floor or state["lr_reductions"] >= int(ocfg.get("max_lr_reductions", 3)))
+    return {"val_smooth": state["smooth"], "lr_now": base_lr * state["lr_scale"], "lr_reduced": reduced,
+            "since_improve": state["since_improve"], "lr_reductions": state["lr_reductions"], "stop": stop}
 
 
 @torch.no_grad()
@@ -168,7 +238,7 @@ def evaluate(model: SentenceContextDecoder, ds: KeySentences, cfg: dict[str, Any
     return res
 
 
-def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool = False,
+def _train(keep_awake_on: bool, cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool = False,
           max_steps: int | None = None, echo: bool = True) -> dict[str, Any]:
     """Train (or resume) a run. Returns a summary dict."""
     run_dir = Path(run_dir) if run_dir is not None else Path(cfg["runs_dir"]) / cfg["run_name"]
@@ -200,10 +270,16 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
                             weight_decay=ocfg["weight_decay"])
     sampler = BucketBatchSampler(train_ds.lengths(), cfg["data"]["batch_size"], seed=tcfg["seed"])
     steps_per_epoch = len(sampler.batches())
-    sched = torch.optim.lr_scheduler.LambdaLR(
-        opt, lr_lambda(ocfg["warmup_steps"], steps_per_epoch * ocfg["epochs"], ocfg["min_lr_ratio"]))
     state = {"epoch": 0, "step_in_epoch": 0, "global_step": 0, "best": float("inf"), "best_epoch": -1,
-             "bad_evals": 0, "done": False}
+             "bad_evals": 0, "done": False, "active_s": 0.0, **plateau_init_state()}
+    schedule = ocfg.get("schedule", "cosine")
+    if schedule == "plateau":
+        sched = torch.optim.lr_scheduler.LambdaLR(opt, plateau_lr_lambda(ocfg["warmup_steps"], state))
+    elif schedule == "cosine":
+        sched = torch.optim.lr_scheduler.LambdaLR(
+            opt, lr_lambda(ocfg["warmup_steps"], steps_per_epoch * ocfg["epochs"], ocfg["min_lr_ratio"]))
+    else:
+        raise ValueError(f"optim.schedule must be 'cosine' or 'plateau', got {schedule!r}")
     if ckpt is None and tcfg.get("init_from"):
         loaded, skipped = init_from_convctc(model, tcfg["init_from"])
         log.log(f"init_from {tcfg['init_from']}: {len(loaded)} tensors loaded {loaded}, skipped {len(skipped)}")
@@ -234,10 +310,20 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
         st = {"status": status, "pid": os.getpid(), "run_dir": str(run_dir),
               "updated": time.strftime("%Y-%m-%d %H:%M:%S"),
               **{k: state[k] for k in ("epoch", "global_step", "best", "best_epoch", "bad_evals")},
-              "metric": tcfg["early_stop_metric"]}
+              "active_min": round(state.get("active_s", 0.0) / 60, 2),
+              "metric": tcfg["early_stop_metric"], "schedule": schedule,
+              "lr": sched.get_last_lr()[0] if schedule == "cosine" else ocfg["lr"] * state["lr_scale"]}
+        if schedule == "plateau":
+            st.update({k: state[k] for k in ("last_val", "smooth", "best_smooth", "since_improve",
+                                             "lr_reductions")})
         (run_dir / "status.json").write_text(json.dumps(st, indent=2))
 
-    t_start = last_ckpt = time.time()
+    last_ckpt = time.time()
+    timer = ActiveTimer(state.get("active_s", 0.0), SUSPEND_GAP_S,
+                        on_gap=lambda dt: log.log(f"suspend gap detected: {dt:.0f} s not counted "
+                                                  f"(gap > {SUSPEND_GAP_S:.0f} s)"))
+    log.log(f"keep_awake={'on' if keep_awake_on else 'off'}; active time so far {timer.active_s:.0f} s; "
+            f"max_minutes={tcfg.get('max_minutes')} (active compute time)")
     stop_reason = None
     write_status("running")
     model.train()
@@ -274,6 +360,7 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
                 log.metrics(rec)
                 log.log(f"ep {ep} step {state['global_step']} loss {rec['loss']:.4f} acc {rec['key_acc']:.3f} "
                         f"lr {rec['lr']:.2e}")
+            state["active_s"] = timer.tick()
             if time.time() - last_ckpt > tcfg["ckpt_every_min"] * 60:
                 save(latest)
                 write_status("running")
@@ -283,7 +370,7 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
                 stop_reason = "max_steps"
                 break
             mm = tcfg.get("max_minutes")
-            if mm is not None and time.time() - t_start > mm * 60:
+            if timer.exceeded(mm):
                 stop_reason = "max_minutes"
                 break
         if stop_reason is not None:
@@ -302,7 +389,16 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
                 save(run_dir / "best.pt", full=False)
             else:
                 state["bad_evals"] += 1
-            if state["bad_evals"] >= tcfg["patience_evals"]:
+            if schedule == "plateau":
+                tr = plateau_update(state, metric, ocfg, tcfg)
+                rec2.update(tr)
+                if tr["lr_reduced"]:
+                    log.log(f"plateau: LR scale reduced to {state['lr_scale']:.4g} "
+                            f"(reduction {state['lr_reductions']}, lr {ocfg['lr'] * state['lr_scale']:.2e})")
+                if tr["stop"]:
+                    state["done"] = True
+                    stop_reason = "early_stop"
+            elif state["bad_evals"] >= tcfg["patience_evals"]:
                 state["done"] = True
                 stop_reason = "early_stop"
         log.metrics(rec2)
@@ -313,7 +409,12 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
             if "val_key_acc_conv" in rec2:
                 msg += f" (conv only {rec2['val_key_acc_conv']:.3f})"
             msg += f" (best {state['best']:.4f} @ {state['best_epoch']})"
+            if "val_smooth" in rec2:
+                msg += (f" | trend: smoothed {rec2['val_smooth']:.4f} (best {state['best_smooth']:.4f})"
+                        f" lr {rec2['lr_now']:.2e} evals_since_improve {state['since_improve']}"
+                        f" lr_reductions {state['lr_reductions']}")
         log.log(msg)
+        state["active_s"] = timer.tick()
         save(latest)
         last_ckpt = time.time()
         write_status("running")
@@ -329,6 +430,18 @@ def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool =
             f"best {tcfg['early_stop_metric']}={state['best']:.4f} @ epoch {state['best_epoch']}")
     log.close()
     return {"run_dir": str(run_dir), "stop_reason": stop_reason, **state}
+
+
+def train(cfg: dict[str, Any], run_dir: str | Path | None = None, resume: bool = False,
+          max_steps: int | None = None, echo: bool = True) -> dict[str, Any]:
+    """Train (or resume) a run while Windows is kept awake. Returns a summary dict.
+
+    ``max_minutes`` counts active compute time (:class:`fidetype.utils.power.ActiveTimer`):
+    a gap longer than ``SUSPEND_GAP_S`` between steps (PC sleep) is not counted.
+    The total is stored in the checkpoint state (``active_s``), so a resume keeps the budget.
+    """
+    with keep_awake() as on:
+        return _train(on, cfg, run_dir, resume, max_steps, echo)
 
 
 def main(argv: list[str] | None = None) -> None:
