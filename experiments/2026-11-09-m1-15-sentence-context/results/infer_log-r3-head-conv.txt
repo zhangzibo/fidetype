@@ -1,0 +1,94 @@
+[val] greedy_real: n=114 cer_target=0.6078 cer_typed=0.6003 wer_target=0.9877 wer_typed=0.9935
+[val] beam_lm_real: n=114 cer_target=0.5017 cer_typed=0.4916 wer_target=0.8912 wer_typed=0.8967
+[val] greedy_shuffled: n=114 cer_target=0.7910 cer_typed=0.8001 wer_target=1.1470 wer_typed=1.1557
+[val] beam_lm_shuffled: n=114 cer_target=0.7522 cer_typed=0.7557 wer_target=1.2740 wer_typed=1.2931
+[val] greedy_zeros: n=114 cer_target=0.9011 cer_typed=0.8938 wer_target=1.0000 wer_typed=1.0000
+[val] beam_lm_zeros: n=114 cer_target=0.7357 cer_typed=0.7426 wer_target=1.7143 wer_typed=1.7590
+[val] gap_greedy CER target +0.1966 [+0.1743, +0.2189]
+[val] gap_beam_lm CER target +0.2652 [+0.2345, +0.2963]
+[test] greedy_real: n=209 cer_target=0.6081 cer_typed=0.5963 wer_target=0.9734 wer_typed=0.9750
+[test] beam_lm_real: n=209 cer_target=0.4903 cer_typed=0.4840 wer_target=0.8807 wer_typed=0.8840
+[test] greedy_shuffled: n=209 cer_target=0.8101 cer_typed=0.8102 wer_target=1.1110 wer_typed=1.1136
+[test] beam_lm_shuffled: n=209 cer_target=0.7662 cer_typed=0.7696 wer_target=1.1821 wer_typed=1.1960
+[test] greedy_zeros: n=209 cer_target=0.9020 cer_typed=0.8925 wer_target=1.0000 wer_typed=1.0000
+[test] beam_lm_zeros: n=209 cer_target=0.7640 cer_typed=0.7657 wer_target=1.6809 wer_typed=1.7009
+[test] gap_greedy CER target +0.1984 [+0.1831, +0.2141]
+[test] gap_beam_lm CER target +0.2717 [+0.2497, +0.2943]
+{
+  "val": {
+    "greedy_real": {
+      "cer_target": 0.6077817117316778,
+      "cer_typed": 0.6002927227748153,
+      "wer_target": 0.9876904840328754,
+      "wer_typed": 0.9934545532969444
+    },
+    "beam_lm_real": {
+      "cer_target": 0.5016993477837702,
+      "cer_typed": 0.49164454504202276,
+      "wer_target": 0.8911678900809337,
+      "wer_typed": 0.8966664078674947
+    },
+    "greedy_shuffled": {
+      "cer_target": 0.7910435621845965,
+      "cer_typed": 0.8000579387633225,
+      "wer_target": 1.147000854821507,
+      "wer_typed": 1.155653546332894
+    },
+    "beam_lm_shuffled": {
+      "cer_target": 0.7522273877833988,
+      "cer_typed": 0.75568117761509,
+      "wer_target": 1.2739697126544953,
+      "wer_typed": 1.2930680955517913
+    },
+    "greedy_zeros": {
+      "cer_target": 0.9010506647743952,
+      "cer_typed": 0.8937965729128765,
+      "wer_target": 1.0,
+      "wer_typed": 1.0
+    },
+    "beam_lm_zeros": {
+      "cer_target": 0.7357138700035476,
+      "cer_typed": 0.7426012110818476,
+      "wer_target": 1.714277048434657,
+      "wer_typed": 1.759016704310183
+    }
+  },
+  "test": {
+    "greedy_real": {
+      "cer_target": 0.6081144610555298,
+      "cer_typed": 0.5962511993897095,
+      "wer_target": 0.9733929228071672,
+      "wer_typed": 0.9749554307933668
+    },
+    "beam_lm_real": {
+      "cer_target": 0.4902966552408218,
+      "cer_typed": 0.4839771558577638,
+      "wer_target": 0.8806813852329842,
+      "wer_typed": 0.8839673151460943
+    },
+    "greedy_shuffled": {
+      "cer_target": 0.8100878642816476,
+      "cer_typed": 0.8101538872552319,
+      "wer_target": 1.1109604168441378,
+      "wer_typed": 1.113567155067155
+    },
+    "beam_lm_shuffled": {
+      "cer_target": 0.7662343774796717,
+      "cer_typed": 0.7695613369467303,
+      "wer_target": 1.1821273168853108,
+      "wer_typed": 1.195950576958571
+    },
+    "greedy_zeros": {
+      "cer_target": 0.9020280191185442,
+      "cer_typed": 0.8924551987655059,
+      "wer_target": 1.0,
+      "wer_typed": 1.0
+    },
+    "beam_lm_zeros": {
+      "cer_target": 0.7639839625650805,
+      "cer_typed": 0.7656905549046772,
+      "wer_target": 1.6809260131825539,
+      "wer_typed": 1.70087893009768
+    }
+  }
+}

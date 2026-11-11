@@ -3,7 +3,7 @@ title: SpanishBCBL repeated participants (are S1 and S18 one person?)
 type: question
 tags: [spanishbcbl, meg, dataset, participants, evaluation, leakage]
 sources: [brain2qwerty-v1, brain2qwerty-code]
-updated: 2026-11-08
+updated: 2026-11-10
 ---
 
 # SpanishBCBL repeated participants
@@ -33,6 +33,8 @@ The merge rule is in our code as `PARTICIPANT_GROUPS` in `src/fidetype/data/span
 - So a test sentence of S18 is also a test sentence of S1. The same person never trains on a sentence that they are tested on.
 - Every participant is in train, val and test. This is a **within-subject** design by intent (the same as [Brain2Qwerty v1](../sources/brain2qwerty-v1.md)). The S1/S18 merge does not change this.
 - Check on the real cache: S1 + S18 have 129 distinct target sentences, and 0 sentences have more than one split.
+
+> **Update (2026-11-10):** the sentence split was re-checked on all 80 cached blocks (0 split mismatches, 0 shared sentences). But SpanishBCBL has close sentence variants (short / long, singular / plural) that can fall in different splits. See [M1-15 full-r1 and r3 result](m1-15-full-r1-r3-result.md#leakage-checks).
 
 ## Effect on past results
 

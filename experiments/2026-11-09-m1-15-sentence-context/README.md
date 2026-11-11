@@ -1,6 +1,6 @@
 # M1-15: sentence-context keystroke decoder (planned run)
 
-**Status:** r1 done 2026-11-09, undertrained (9 epochs; the PC slept during the run). See [results.md](results.md). r2 = r1 config trained until the val trend stops improving (`config-r2.json`, launched 2026-11-10). The causal run moves to r3.
+**Status:** r1, r2, full-r1 and r3 done (2026-11-10). Current results: [results-full-r1-r3.md](results-full-r1-r3.md) (full cache + causal, leakage checks). r1 and r2: [results.md](results.md).
 
 ## Question
 Does a Transformer over the key embeddings of one sentence lower the CER of the

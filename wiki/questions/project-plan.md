@@ -3,7 +3,7 @@ title: Project plan — trustworthy neural text entry
 type: question
 tags: [planning, roadmap, milestones, risks, process, scope]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, neural-input-landscape-2026]
-updated: 2026-11-08
+updated: 2026-11-10
 ---
 
 # Project plan: trustworthy neural text entry
@@ -101,6 +101,8 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 **Status (2026-11-08, later):** first real MEG decoding. The synchronous keystroke decoder (oracle timing) reaches test key accuracy 0.390 and greedy CER 0.59 (controls 0.77). This meets the number, but in the synchronous oracle-timing setting, not async. The async criterion stays open.
 
 **Status (2026-11-08, M1-C):** with a keystroke auxiliary loss, the async CTC decoder uses the MEG (shuffled-MEG gap +0.116 to +0.156, CI excludes 0). Best test CER 0.619 (11 subjects, 20 blocks). The async criterion (≈0.59) is still **not met**.
+
+**Status (2026-11-10, M1-15 full-r1 and r3):** the synchronous sentence-context decoder reaches test greedy CER 0.508 on the full cache (0.525 on the test sentences with no close train variant; causal r3 0.574). No exact leakage. The criterion is met only with oracle key timing. The async criterion stays **not met** (best async 0.619 greedy, M1-C r4b). See [M1-15 full-r1 and r3 result](m1-15-full-r1-r3-result.md).
 
 **Reference numbers.**
 - Brain2Qwerty v1 is keystroke-locked. Its MEG CER is 0.36 for Conv+Trans and 0.29 for the full model with LM ([v1](../sources/brain2qwerty-v1.md), Fig. 2).

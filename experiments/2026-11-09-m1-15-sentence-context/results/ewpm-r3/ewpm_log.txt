@@ -1,0 +1,149 @@
+22:59:13 real: 114 val trials (11 sentences), 209 test trials (17 sentences)
+22:59:13 main run (aac_gaze user)
+22:59:40   commit: eWPM 2.57 wrong-commit 0.995 silent 0.196 KSR 0.075 OW 0.00 commit 1.00 (26.6s)
+22:59:41   trust: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (0.7s)
+23:00:07   trust_ow: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (26.5s)
+23:00:08   trust_silent: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (0.7s)
+23:00:34   trust_ow_silent: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (26.5s)
+23:00:35   ow_all: eWPM 2.97 wrong-commit 0.000 silent 0.000 KSR 0.136 OW 1.00 commit 0.00 (0.3s)
+23:00:42 sensitivity: fallback_40cpm (FP1, 8.1 WPM)
+23:00:42   commit: eWPM 4.32 wrong-commit 0.995 silent 0.163 KSR 0.100 OW 0.00 commit 1.00 (0.2s)
+23:00:42   trust: eWPM 4.98 wrong-commit 0.000 silent 0.000 KSR 0.044 OW 0.00 commit 0.00 (0.7s)
+23:01:09   trust_ow: eWPM 4.98 wrong-commit 0.000 silent 0.000 KSR 0.044 OW 0.00 commit 0.00 (26.9s)
+23:01:10 sensitivity: p_miss_unflagged 0
+23:01:10   commit: eWPM 3.13 wrong-commit 0.995 silent 0.000 KSR 0.038 OW 0.00 commit 1.00 (0.2s)
+23:01:11   trust: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (0.7s)
+23:01:37   trust_ow: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (26.6s)
+23:01:38 sensitivity: p_miss_unflagged 0.2
+23:01:38   commit: eWPM 1.14 wrong-commit 0.995 silent 0.694 KSR 0.226 OW 0.00 commit 1.00 (0.2s)
+23:01:39   trust: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (0.7s)
+23:02:05   trust_ow: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (26.4s)
+23:02:06 sensitivity: slow selection (scan, select, nav x2)
+23:02:06   commit: eWPM 2.52 wrong-commit 0.995 silent 0.153 KSR 0.100 OW 0.00 commit 1.00 (0.2s)
+23:02:07   trust: eWPM 2.89 wrong-commit 0.000 silent 0.000 KSR 0.044 OW 0.00 commit 0.00 (0.7s)
+23:02:33   trust_ow: eWPM 2.89 wrong-commit 0.000 silent 0.000 KSR 0.044 OW 0.00 commit 0.00 (26.9s)
+23:02:34 sensitivity: no full retype
+23:02:34   commit: eWPM 2.57 wrong-commit 0.995 silent 0.196 KSR 0.058 OW 0.00 commit 1.00 (0.2s)
+23:02:35   trust: eWPM 3.08 wrong-commit 0.000 silent 0.000 KSR -0.009 OW 0.00 commit 0.00 (0.7s)
+23:03:01   trust_ow: eWPM 3.08 wrong-commit 0.000 silent 0.000 KSR -0.009 OW 0.00 commit 0.00 (26.4s)
+23:03:02 sensitivity: no typing after ABSTAIN
+23:03:02   commit: eWPM 2.57 wrong-commit 0.995 silent 0.196 KSR 0.075 OW 0.00 commit 1.00 (0.2s)
+23:03:03   trust: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (0.7s)
+23:03:29   trust_ow: eWPM 3.09 wrong-commit 0.000 silent 0.000 KSR 0.013 OW 0.00 commit 0.00 (26.4s)
+{
+ "commit": {
+  "ewpm": 2.5742005668550823,
+  "wrong_commit_rate": 0.9952153110047847,
+  "silent_error_rate": 0.19617224880382775,
+  "cer": 0.4786314667929442,
+  "wer": 0.8381024096385542,
+  "system_word_accuracy": 0.1927710843373494,
+  "rate_commit": 1.0,
+  "rate_offer": 0.0
+ },
+ "trust": {
+  "ewpm": 3.0933427705024985,
+  "wrong_commit_rate": 0.0,
+  "silent_error_rate": 0.0,
+  "cer": 0.4786314667929442,
+  "wer": 0.8381024096385542,
+  "system_word_accuracy": 0.1927710843373494,
+  "rate_commit": 0.0,
+  "rate_offer": 1.0
+ },
+ "trust_ow": {
+  "ewpm": 3.0933427705024985,
+  "wrong_commit_rate": 0.0,
+  "silent_error_rate": 0.0,
+  "cer": 0.4786314667929442,
+  "wer": 0.8381024096385542,
+  "system_word_accuracy": 0.1927710843373494,
+  "rate_commit": 0.0,
+  "rate_offer": 1.0
+ },
+ "trust_silent": {
+  "ewpm": 3.0933427705024985,
+  "wrong_commit_rate": 0.0,
+  "silent_error_rate": 0.0,
+  "cer": 0.4786314667929442,
+  "wer": 0.8381024096385542,
+  "system_word_accuracy": 0.1927710843373494,
+  "rate_commit": 0.0,
+  "rate_offer": 1.0
+ },
+ "trust_ow_silent": {
+  "ewpm": 3.0933427705024985,
+  "wrong_commit_rate": 0.0,
+  "silent_error_rate": 0.0,
+  "cer": 0.4786314667929442,
+  "wer": 0.8381024096385542,
+  "system_word_accuracy": 0.1927710843373494,
+  "rate_commit": 0.0,
+  "rate_offer": 1.0
+ },
+ "ow_all": {
+  "ewpm": 2.9729985377130137,
+  "wrong_commit_rate": 0.0,
+  "silent_error_rate": 0.0,
+  "cer": 0.4786314667929442,
+  "wer": 0.8381024096385542,
+  "system_word_accuracy": 0.1927710843373494,
+  "rate_commit": 0.0,
+  "rate_offer": 0.0
+ },
+ "gaze_only": {
+  "ewpm": 3.144311589913579,
+  "wrong_commit_rate": 0.0,
+  "silent_error_rate": 0.0,
+  "cer": null,
+  "wer": null,
+  "system_word_accuracy": null,
+  "rate_commit": null,
+  "rate_offer": null
+ }
+}
+diffs {
+ "trust_ow-commit:ewpm": {
+  "ci": [
+   0.2901829360578584,
+   0.8289615480020918
+  ],
+  "p_le_0": 0.0
+ },
+ "trust_ow-trust:ewpm": {
+  "ci": [
+   0.0,
+   0.0
+  ],
+  "p_le_0": 1.0
+ },
+ "trust-commit:ewpm": {
+  "ci": [
+   0.2901829360578584,
+   0.8289615480020918
+  ],
+  "p_le_0": 0.0
+ },
+ "trust_ow_silent-commit:ewpm": {
+  "ci": [
+   0.2901829360578584,
+   0.8289615480020918
+  ],
+  "p_le_0": 0.0
+ },
+ "trust_ow_silent-trust_silent:ewpm": {
+  "ci": [
+   0.0,
+   0.0
+  ],
+  "p_le_0": 1.0
+ },
+ "ow_all-commit:ewpm": {
+  "ci": [
+   0.16700730708208159,
+   0.7089813491588599
+  ],
+  "p_le_0": 0.0
+ }
+}
+seconds 257.5

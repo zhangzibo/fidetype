@@ -6,7 +6,9 @@ updated: 2026-11-10
 
 # M1-15: sentence-context keystroke decoder
 
-**r2 (2026-11-10) is the current result.** See [r2 results](#r2-results-2026-11-10) first. The r1 text below the r2 section is kept as it was.
+**Newer results (2026-11-10): full-r1 (full cache) and r3 (causal), with leakage checks, are in [results-full-r1-r3.md](results-full-r1-r3.md).** full-r1 test greedy 0.508 / beam + LM 0.447 (mean over sentences); on the r2 test instances 0.497 / 0.437. r3 (causal) 0.574 / 0.472.
+
+**r2 (2026-11-10)** is described below. The r1 text below the r2 section is kept as it was.
 
 ## r2 results (2026-11-10)
 

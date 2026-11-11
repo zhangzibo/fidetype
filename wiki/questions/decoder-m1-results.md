@@ -21,6 +21,7 @@ updated: 2026-11-10
 - **Update (2026-11-08):** a [synchronous keystroke decoder](#synchronous-keystroke-decoder-2026-11-08) (oracle key timing) does use the MEG: test key accuracy 0.390 (controls 0.10–0.11), greedy CER 0.59 (controls 0.77).
 - **Update (2026-11-09, M1-15 r1):** a [sentence-context keystroke decoder](#m1-15-r1-sentence-context-keystroke-decoder-first-real-run-2026-11-09) trained only 9 epochs (the PC slept). Test greedy CER 0.619, beam + LM 0.532 (logistic regression: 0.597 / 0.531). It uses the MEG (gap +0.172). r2 with the full schedule is next.
 - **Update (2026-11-10, M1-15 r2):** [trained to the end of the val trend](#m1-15-r2-sentence-context-decoder-trained-to-the-val-plateau-2026-11-10) (43 epochs, 13 min). Test greedy CER **0.577**, beam + LM **0.488**. This is the first decoder below the like-for-like logistic regression (0.597 / 0.531). Gap +0.214 greedy. Sentence context adds only 0.025 CER over the Conv-only head (0.602). The model overfits from about epoch 12–19.
+- **Update (2026-11-10, M1-15 full-r1 and r3):** [full cache and causal runs, with leakage checks](m1-15-full-r1-r3-result.md). full-r1 (80 blocks, 19 participants): test greedy **0.508**, beam + LM **0.447**; on the r2 test instances 0.497 / 0.437. r3 (causal over keys): 0.574 / 0.472, so causality costs nothing measurable. No exact leakage (train and LM text). 6 of 17 test sentences have a close variant in train: about 0.013 greedy CER. On the 11 other sentences: 0.525 / 0.474. All with oracle key timing, so the async M1 target stays **not met**.
 
 Full details: [M1-B decoder results](../../experiments/2026-11-08-m1b-decoder/results.md).
 
@@ -231,6 +232,7 @@ Code: `src/fidetype/decoders/sentence_context.py` (+ `train_sentence.py`, `infer
 Details: [compute setup](compute-setup.md#training-notes-from-the-m1-b-decoder-2026-11-08).
 
 ## Related pages
+- [M1-15 full-r1 and r3 result](m1-15-full-r1-r3-result.md)
 - [M1-B decoder experiment](../../experiments/2026-11-08-m1b-decoder/results.md)
 - [M1-C keystroke auxiliary loss experiment](../../experiments/2026-11-08-m1c-decoder-aux/results.md)
 - [M1-C2 beam + char LM experiment](../../experiments/2026-11-08-m1c2-beam-lm/results.md)

@@ -282,3 +282,13 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Own adapter `src/fidetype/adapters/b2t25.py` (NTS, `vocab_type="phoneme"`, 80 ms frames, latency 0) and licence-clean phoneme → word route `src/fidetype/lm/phoneme_words.py` (CMUdict fuzzy lookup + Tatoeba unigram + char 6-gram; test WER 0.149). Harness: optional `Item.stream_text`. 17 new tests; 221 pass on CPU.
 - `experiments/2026-11-10-b2t25-trust` (fit 812 / test 816 trials, `aac_gaze` user at the measured 159.3 chars/min): trust 11.55 eWPM, wrong-commit 0.059 vs always commit 11.45 / 0.610. Published-sentence gate 18.77 / 0.044 vs 19.61 / 0.194. Gaze only 4.08. AUROC −p_top1 0.797 (word), 0.884 (phoneme); word confidence 0.844. Null audit: shuffled/uniform 0 % commits; another trial's stream 22 % (ours), 0 % (gate).
 - New: `wiki/questions/b2t25-trust-result.md`. Updated: `wiki/questions/trust-core-v0-results.md` (section 8), `index.md`, tracker (M6-05 real numbers, M6-06), `HANDOFF.md`.
+
+## [2026-11-10] query | M1-15 full-r1 + r3 results, leakage checks
+- queue-2026-11-10b finished at 23:04 (QUEUE DONE; AC sleep restored to 30 min). full-r1: 66.5 active min, early stop epoch 79, `best.pt` epoch 77. r3: 11.5 active min, early stop epoch 37, `best.pt` epoch 24. No suspend gap.
+- Test (mean over sentences, CER vs target): full-r1 greedy 0.508, beam + LM 0.447 (mean over participants 0.498 / 0.436); Conv-only head 0.590 / 0.489. r3 (causal) 0.574 / 0.472; Conv-only 0.612 / 0.494. Shuffled gaps all exclude 0 (full-r1 +0.276 greedy).
+- Like for like on the 209 r2 test instances (from the per-sentence files, no new inference): full-r1 0.497 / 0.437 vs r2 0.577 / 0.488 (−0.080 [−0.093, −0.067] greedy). r3 − r2: −0.003 greedy, −0.016 beam.
+- Leakage: 0 test / val sentences in train (hash split re-checked on 80 sidecars). 0 in the Tatoeba LM text (exact, containment; 0 of 54 test word 4-grams). Near variants: 6 of 17 test sentences have a train sentence within CER 0.25. Difference-in-differences against the Conv-only head: about 0.013 greedy / 0.022 beam CER. Far sentences: 0.525 / 0.474.
+- Zeros ≈ 0.8: the output length is known from the key times. Text-only baselines: fixed train sentence 0.688, positional prior 0.750, "eee" 0.888.
+- eWPM: full-r1 trust 3.23 [3.08, 3.40] vs gaze only 3.15 (parity, first time above); commit 2.71. r3 trust 3.09 vs 3.14.
+- M1 async target not met (sync only). M1 stays in progress.
+- New: `wiki/questions/m1-15-full-r1-r3-result.md`, `experiments/2026-11-09-m1-15-sentence-context/results-full-r1-r3.md`, `analysis/*.py`, result files. Updated: `decoder-m1-results.md`, `overview.md`, `project-plan.md`, `spanishbcbl-repeated-participants.md`, `index.md`, tracker, `HANDOFF.md`.

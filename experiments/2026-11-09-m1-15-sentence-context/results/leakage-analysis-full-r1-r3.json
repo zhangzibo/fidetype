@@ -1,0 +1,775 @@
+{
+ "like_for_like": {
+  "test/final/greedy": {
+   "r2": {
+    "n": 209,
+    "sent": 0.5769413551382728,
+    "part": 0.5768055353045269
+   },
+   "full_r1_on_r2": {
+    "n": 209,
+    "sent": 0.4970266370318831,
+    "part": 0.5038251952628354
+   },
+   "full_r1_other": {
+    "n": 428,
+    "sent": 0.5136102177976227,
+    "part": 0.4808180791743443
+   },
+   "r3": {
+    "n": 209,
+    "sent": 0.5738432454175749,
+    "part": 0.5739695652224496
+   },
+   "diff_full_minus_r2": [
+    -0.07991471810638971,
+    -0.0932598211101001,
+    -0.06697978915125546
+   ],
+   "diff_r3_minus_r2": [
+    -0.003098109720697891,
+    -0.011215927413829712,
+    0.0050510488243642486
+   ]
+  },
+  "test/final/beam_lm": {
+   "r2": {
+    "n": 209,
+    "sent": 0.4883328779914595,
+    "part": 0.49273399349561914
+   },
+   "full_r1_on_r2": {
+    "n": 209,
+    "sent": 0.4365397864652377,
+    "part": 0.44507290566486446
+   },
+   "full_r1_other": {
+    "n": 428,
+    "sent": 0.45196341362362563,
+    "part": 0.4200147437926171
+   },
+   "r3": {
+    "n": 209,
+    "sent": 0.4718905687978768,
+    "part": 0.47984282766458797
+   },
+   "diff_full_minus_r2": [
+    -0.05179309152622186,
+    -0.07140639391570511,
+    -0.03289702939607327
+   ],
+   "diff_r3_minus_r2": [
+    -0.01644230919358272,
+    -0.0320157129433214,
+    -0.0008110796607372454
+   ]
+  },
+  "test/conv/greedy": {
+   "r2": {
+    "n": 209,
+    "sent": 0.6017461189492774,
+    "part": 0.6045872558372192
+   },
+   "full_r1_on_r2": {
+    "n": 209,
+    "sent": 0.5798655122428399,
+    "part": 0.5816357480679162
+   },
+   "full_r1_other": {
+    "n": 428,
+    "sent": 0.5948183513088925,
+    "part": 0.5754700647182324
+   },
+   "r3": {
+    "n": 209,
+    "sent": 0.6117314117784943,
+    "part": 0.6081144610555297
+   },
+   "diff_full_minus_r2": [
+    -0.021880606706437513,
+    -0.03369125619669096,
+    -0.01035781356656474
+   ],
+   "diff_r3_minus_r2": [
+    0.009985292829216964,
+    0.0020981622553368487,
+    0.017887779289328616
+   ]
+  },
+  "test/conv/beam_lm": {
+   "r2": {
+    "n": 209,
+    "sent": 0.5031364022553271,
+    "part": 0.5004294329386021
+   },
+   "full_r1_on_r2": {
+    "n": 209,
+    "sent": 0.4839283325457843,
+    "part": 0.4832542655696699
+   },
+   "full_r1_other": {
+    "n": 428,
+    "sent": 0.49123350218256245,
+    "part": 0.46110212394399697
+   },
+   "r3": {
+    "n": 209,
+    "sent": 0.49370100546223883,
+    "part": 0.4902966552408217
+   },
+   "diff_full_minus_r2": [
+    -0.019208069709542717,
+    -0.03724245284034609,
+    -0.0018084801447824804
+   ],
+   "diff_r3_minus_r2": [
+    -0.009435396793088227,
+    -0.021742387208972362,
+    0.0028438728601640566
+   ]
+  },
+  "val/final/greedy": {
+   "r2": {
+    "n": 114,
+    "sent": 0.5598201338080121,
+    "part": 0.5720899784548087
+   },
+   "full_r1_on_r2": {
+    "n": 114,
+    "sent": 0.5023735223154103,
+    "part": 0.508252147744566
+   },
+   "full_r1_other": {
+    "n": 323,
+    "sent": 0.5174521425559048,
+    "part": 0.5063231746016028
+   },
+   "r3": {
+    "n": 114,
+    "sent": 0.5579871811486337,
+    "part": 0.5701849585578425
+   },
+   "diff_full_minus_r2": [
+    -0.057446611492601704,
+    -0.07361054391091124,
+    -0.04087341094474009
+   ],
+   "diff_r3_minus_r2": [
+    -0.001832952659378312,
+    -0.0130876736482652,
+    0.009671644150813412
+   ]
+  },
+  "val/final/beam_lm": {
+   "r2": {
+    "n": 114,
+    "sent": 0.45411902898045914,
+    "part": 0.4650394798967965
+   },
+   "full_r1_on_r2": {
+    "n": 114,
+    "sent": 0.4614138098346127,
+    "part": 0.47441162858314484
+   },
+   "full_r1_other": {
+    "n": 323,
+    "sent": 0.4665332457670066,
+    "part": 0.45185849730429045
+   },
+   "r3": {
+    "n": 114,
+    "sent": 0.45030580495476136,
+    "part": 0.47134118956727306
+   },
+   "diff_full_minus_r2": [
+    0.007294780854153674,
+    -0.018147936317347332,
+    0.03185502720846617
+   ],
+   "diff_r3_minus_r2": [
+    -0.0038132240256978124,
+    -0.02319894991339301,
+    0.016079398031656967
+   ]
+  },
+  "val/conv/greedy": {
+   "r2": {
+    "n": 114,
+    "sent": 0.5879437079920201,
+    "part": 0.6034439400078571
+   },
+   "full_r1_on_r2": {
+    "n": 114,
+    "sent": 0.5886783108185909,
+    "part": 0.5957695525364335
+   },
+   "full_r1_other": {
+    "n": 323,
+    "sent": 0.5907259815592585,
+    "part": 0.5783902581221371
+   },
+   "r3": {
+    "n": 114,
+    "sent": 0.5964547522203819,
+    "part": 0.6077817117316779
+   },
+   "diff_full_minus_r2": [
+    0.0007346028265707664,
+    -0.01435684942472213,
+    0.01608185452061069
+   ],
+   "diff_r3_minus_r2": [
+    0.008511044228361707,
+    -0.0016472582005826349,
+    0.018899181154686487
+   ]
+  },
+  "val/conv/beam_lm": {
+   "r2": {
+    "n": 114,
+    "sent": 0.48037546079466575,
+    "part": 0.49861879212373045
+   },
+   "full_r1_on_r2": {
+    "n": 114,
+    "sent": 0.49303695374584466,
+    "part": 0.5080171867839037
+   },
+   "full_r1_other": {
+    "n": 323,
+    "sent": 0.49568395353081146,
+    "part": 0.4740303308861986
+   },
+   "r3": {
+    "n": 114,
+    "sent": 0.4861658058208792,
+    "part": 0.5016993477837701
+   },
+   "diff_full_minus_r2": [
+    0.012661492951178861,
+    -0.012324657880271518,
+    0.03775766331660855
+   ],
+   "diff_r3_minus_r2": [
+    0.005790345026213394,
+    -0.014139559961390021,
+    0.026626146159853894
+   ]
+  }
+ },
+ "per_participant_full_r1_test": {
+  "P01": {
+   "subjects": [
+    "S1",
+    "S18"
+   ],
+   "n": 61,
+   "n_in_r2_set": 43,
+   "greedy": 0.5388701769373929,
+   "beam_lm": 0.4874777139369947,
+   "conv_greedy": 0.6274752358221811
+  },
+  "P02": {
+   "subjects": [
+    "S2"
+   ],
+   "n": 32,
+   "n_in_r2_set": 0,
+   "greedy": 0.5306201395141477,
+   "beam_lm": 0.45388128660385696,
+   "conv_greedy": 0.6114150026347773
+  },
+  "P03": {
+   "subjects": [
+    "S3"
+   ],
+   "n": 18,
+   "n_in_r2_set": 15,
+   "greedy": 0.5464750260498753,
+   "beam_lm": 0.4976787991402493,
+   "conv_greedy": 0.6545395371123357
+  },
+  "P04": {
+   "subjects": [
+    "S14",
+    "S4"
+   ],
+   "n": 64,
+   "n_in_r2_set": 0,
+   "greedy": 0.5576286393377387,
+   "beam_lm": 0.48917641352480024,
+   "conv_greedy": 0.6289165256002576
+  },
+  "P05": {
+   "subjects": [
+    "S10",
+    "S21",
+    "S5"
+   ],
+   "n": 66,
+   "n_in_r2_set": 3,
+   "greedy": 0.5908993916037879,
+   "beam_lm": 0.5450738989161721,
+   "conv_greedy": 0.6574698181866638
+  },
+  "P06": {
+   "subjects": [
+    "S6"
+   ],
+   "n": 29,
+   "n_in_r2_set": 0,
+   "greedy": 0.4139841412418275,
+   "beam_lm": 0.3596254228592452,
+   "conv_greedy": 0.5225862896916573
+  },
+  "P07": {
+   "subjects": [
+    "S7"
+   ],
+   "n": 32,
+   "n_in_r2_set": 0,
+   "greedy": 0.4442311292053859,
+   "beam_lm": 0.3750992631815543,
+   "conv_greedy": 0.5290851913183728
+  },
+  "P08": {
+   "subjects": [
+    "S8"
+   ],
+   "n": 29,
+   "n_in_r2_set": 0,
+   "greedy": 0.48672751663617025,
+   "beam_lm": 0.4366968953837845,
+   "conv_greedy": 0.577107979666868
+  },
+  "P09": {
+   "subjects": [
+    "S9"
+   ],
+   "n": 19,
+   "n_in_r2_set": 13,
+   "greedy": 0.45295246583230425,
+   "beam_lm": 0.4097495142671822,
+   "conv_greedy": 0.5350260566495857
+  },
+  "P11": {
+   "subjects": [
+    "S11"
+   ],
+   "n": 32,
+   "n_in_r2_set": 26,
+   "greedy": 0.5507376630304444,
+   "beam_lm": 0.49539298370619234,
+   "conv_greedy": 0.6627860627248542
+  },
+  "P12": {
+   "subjects": [
+    "S12"
+   ],
+   "n": 16,
+   "n_in_r2_set": 13,
+   "greedy": 0.6081087134167578,
+   "beam_lm": 0.5473947525021774,
+   "conv_greedy": 0.6823388510424119
+  },
+  "P15": {
+   "subjects": [
+    "S15"
+   ],
+   "n": 32,
+   "n_in_r2_set": 26,
+   "greedy": 0.3514631232253178,
+   "beam_lm": 0.26049326253214045,
+   "conv_greedy": 0.45456823128882384
+  },
+  "P16": {
+   "subjects": [
+    "S16"
+   ],
+   "n": 16,
+   "n_in_r2_set": 13,
+   "greedy": 0.3837820093423375,
+   "beam_lm": 0.3139127219184098,
+   "conv_greedy": 0.475451988244021
+  },
+  "P17": {
+   "subjects": [
+    "S17"
+   ],
+   "n": 32,
+   "n_in_r2_set": 0,
+   "greedy": 0.4941053675121534,
+   "beam_lm": 0.4191642048201264,
+   "conv_greedy": 0.5737362055977845
+  },
+  "P19": {
+   "subjects": [
+    "S19"
+   ],
+   "n": 31,
+   "n_in_r2_set": 25,
+   "greedy": 0.49419946028305856,
+   "beam_lm": 0.4273377373048647,
+   "conv_greedy": 0.5544192856047802
+  },
+  "P20": {
+   "subjects": [
+    "S20"
+   ],
+   "n": 32,
+   "n_in_r2_set": 0,
+   "greedy": 0.6319126436229048,
+   "beam_lm": 0.5794889328382115,
+   "conv_greedy": 0.6938427416277418
+  },
+  "P22": {
+   "subjects": [
+    "S22"
+   ],
+   "n": 32,
+   "n_in_r2_set": 0,
+   "greedy": 0.47067488510245764,
+   "beam_lm": 0.4110079835659473,
+   "conv_greedy": 0.5574413595065172
+  },
+  "P24": {
+   "subjects": [
+    "S24"
+   ],
+   "n": 32,
+   "n_in_r2_set": 0,
+   "greedy": 0.4408169935512054,
+   "beam_lm": 0.36788542561033927,
+   "conv_greedy": 0.517405834030609
+  },
+  "P25": {
+   "subjects": [
+    "S25"
+   ],
+   "n": 32,
+   "n_in_r2_set": 32,
+   "greedy": 0.472667635526797,
+   "beam_lm": 0.41238828920744985,
+   "conv_greedy": 0.5342349824260715
+  }
+ },
+ "per_test_sentence_full_r1": [
+  {
+   "sentence": "el algoritmo de los controles recorre el nodo",
+   "n": 40,
+   "greedy": 0.5288888888888887,
+   "beam_lm": 0.48722222222222217,
+   "nearest_train": "el algoritmo recorre el nodo",
+   "cer_nearest_train_vs_target": 0.37777777777777777,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 1
+  },
+  {
+   "sentence": "el centro describe las parabolas asociadas",
+   "n": 39,
+   "greedy": 0.43894993894993906,
+   "beam_lm": 0.3644688644688645,
+   "nearest_train": "el centro describe las parabolas",
+   "cer_nearest_train_vs_target": 0.23809523809523808,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 1
+  },
+  {
+   "sentence": "el cliente establece la conexion creada",
+   "n": 39,
+   "greedy": 0.4799474030243259,
+   "beam_lm": 0.3971071663379356,
+   "nearest_train": "el cliente establece las conexiones",
+   "cer_nearest_train_vs_target": 0.1794871794871795,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 6
+  },
+  {
+   "sentence": "el cuaderno presenta las divisiones enteras",
+   "n": 40,
+   "greedy": 0.4877906976744186,
+   "beam_lm": 0.4063953488372093,
+   "nearest_train": "los cuadernos presentan la division",
+   "cer_nearest_train_vs_target": 0.37209302325581395,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 0
+  },
+  {
+   "sentence": "el signo radical conserva el resultado",
+   "n": 40,
+   "greedy": 0.593421052631579,
+   "beam_lm": 0.5605263157894737,
+   "nearest_train": "el signo conserva los resultados",
+   "cer_nearest_train_vs_target": 0.3157894736842105,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 3
+  },
+  {
+   "sentence": "la ciencia rompe la vision",
+   "n": 40,
+   "greedy": 0.4817307692307692,
+   "beam_lm": 0.40192307692307694,
+   "nearest_train": "la ciencia de la idea rompe la vision",
+   "cer_nearest_train_vs_target": 0.4230769230769231,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 5
+  },
+  {
+   "sentence": "la diversidad dificulta la relacion",
+   "n": 40,
+   "greedy": 0.44071428571428567,
+   "beam_lm": 0.3664285714285714,
+   "nearest_train": "la diversidad previa dificulta la relacion",
+   "cer_nearest_train_vs_target": 0.2,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 3
+  },
+  {
+   "sentence": "la fuerza atrae el electron primero",
+   "n": 40,
+   "greedy": 0.5528571428571428,
+   "beam_lm": 0.53,
+   "nearest_train": "las fuerzas atraen los electrones",
+   "cer_nearest_train_vs_target": 0.37142857142857144,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 8
+  },
+  {
+   "sentence": "la revolucion nueva abarca las esferas",
+   "n": 40,
+   "greedy": 0.4855263157894737,
+   "beam_lm": 0.4032894736842104,
+   "nearest_train": "las revoluciones abarcan las esferas",
+   "cer_nearest_train_vs_target": 0.18421052631578946,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 2
+  },
+  {
+   "sentence": "la teoria erronea reduce el numero",
+   "n": 40,
+   "greedy": 0.5838235294117646,
+   "beam_lm": 0.5463235294117647,
+   "nearest_train": "las teorias reducen los numeros",
+   "cer_nearest_train_vs_target": 0.4117647058823529,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 1
+  },
+  {
+   "sentence": "las agencias disponen los equipos por la manana",
+   "n": 40,
+   "greedy": 0.4835106382978724,
+   "beam_lm": 0.38776595744680853,
+   "nearest_train": "las agencias disponen los equipos",
+   "cer_nearest_train_vs_target": 0.2978723404255319,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 0
+  },
+  {
+   "sentence": "las funciones leen los archivos",
+   "n": 40,
+   "greedy": 0.4540322580645161,
+   "beam_lm": 0.3887096774193548,
+   "nearest_train": "la funcion lee los archivos contenidos",
+   "cer_nearest_train_vs_target": 0.4838709677419355,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 0
+  },
+  {
+   "sentence": "las versiones del programa soportan el comando",
+   "n": 39,
+   "greedy": 0.552396878483835,
+   "beam_lm": 0.49888517279821626,
+   "nearest_train": "las versiones soportan el comando",
+   "cer_nearest_train_vs_target": 0.2826086956521739,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 1
+  },
+  {
+   "sentence": "los grupos del organismo exigen la liberacion",
+   "n": 40,
+   "greedy": 0.5616666666666668,
+   "beam_lm": 0.5294444444444444,
+   "nearest_train": "el grupo exige la liberacion",
+   "cer_nearest_train_vs_target": 0.4222222222222222,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 0
+  },
+  {
+   "sentence": "los motores rapidos consumen las energias",
+   "n": 39,
+   "greedy": 0.49468417761100697,
+   "beam_lm": 0.47342088805503435,
+   "nearest_train": "el motor consume la energia",
+   "cer_nearest_train_vs_target": 0.3902439024390244,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 0
+  },
+  {
+   "sentence": "los ninos mayores acaba la escuela",
+   "n": 1,
+   "greedy": 0.5,
+   "beam_lm": 0.17647058823529413,
+   "nearest_train": "los ninos mayores acaban la escuela",
+   "cer_nearest_train_vs_target": 0.029411764705882353,
+   "beam_hyp_equals_train_sentence": 0,
+   "beam_hyp_closer_to_nearest_train": 0
+  },
+  {
+   "sentence": "los productos cumplen la propiedad asociada",
+   "n": 40,
+   "greedy": 0.5093023255813953,
+   "beam_lm": 0.41395348837209306,
+   "nearest_train": "los productos cumplen la propiedad",
+   "cer_nearest_train_vs_target": 0.20930232558139536,
+   "beam_hyp_equals_train_sentence": 1,
+   "beam_hyp_closer_to_nearest_train": 6
+  }
+ ],
+ "near_variant_split": {
+  "threshold_cer": 0.25,
+  "close": {
+   "n_sent": 6,
+   "n_inst": 199,
+   "greedy": 0.47114931367036444,
+   "beam_lm": 0.3880643071813844
+  },
+  "far": {
+   "n_sent": 11,
+   "n_inst": 438,
+   "greedy": 0.524988645974072,
+   "beam_lm": 0.4736355234544542
+  }
+ },
+ "hyp_equals_train": {
+  "r2/greedy": [
+   0,
+   209
+  ],
+  "r2/beam_lm": [
+   0,
+   209
+  ],
+  "full-r1/greedy": [
+   0,
+   637
+  ],
+  "full-r1/beam_lm": [
+   1,
+   637
+  ],
+  "r3/greedy": [
+   0,
+   209
+  ],
+  "r3/beam_lm": [
+   0,
+   209
+  ]
+ },
+ "prior_baselines_test_full_r1": {
+  "all_e": 0.88766095523162,
+  "all_space": 0.8674131593605117,
+  "positional_prior": 0.7500095260157587,
+  "empty": 1.0,
+  "best_constant_train_sentence": [
+   0.6671486417524475,
+   "las teorias reducen los numeros"
+  ]
+ },
+ "positional_prior_string": "la  eoer c  a  e    a la  aaas ea  e asascasssoaoo",
+ "near_variant_by_run": {
+  "full-r1/final/greedy": {
+   "close": 0.47114931367036444,
+   "far": 0.524988645974072,
+   "gap": 0.05383933230370758,
+   "n_close": 199,
+   "n_far": 438
+  },
+  "full-r1/final/beam_lm": {
+   "close": 0.3880643071813844,
+   "far": 0.4736355234544542,
+   "gap": 0.0855712162730698,
+   "n_close": 199,
+   "n_far": 438
+  },
+  "full-r1/conv/greedy": {
+   "close": 0.5814452030741918,
+   "far": 0.5937592488748753,
+   "gap": 0.012314045800683515,
+   "n_close": 199,
+   "n_far": 438
+  },
+  "full-r1/conv/beam_lm": {
+   "close": 0.4780763430406996,
+   "far": 0.49372549810754884,
+   "gap": 0.01564915506684922,
+   "n_close": 199,
+   "n_far": 438
+  },
+  "r2/final/greedy": {
+   "close": 0.5616095151158871,
+   "far": 0.5840175889947585,
+   "gap": 0.02240807387887145,
+   "n_close": 66,
+   "n_far": 143
+  },
+  "r2/final/beam_lm": {
+   "close": 0.46065296013096435,
+   "far": 0.5011082246963035,
+   "gap": 0.0404552645653391,
+   "n_close": 66,
+   "n_far": 143
+  },
+  "r2/conv/greedy": {
+   "close": 0.594344000093154,
+   "far": 0.6051624814982574,
+   "gap": 0.01081848140510333,
+   "n_close": 66,
+   "n_far": 143
+  },
+  "r2/conv/beam_lm": {
+   "close": 0.49288701394684553,
+   "far": 0.507866889166934,
+   "gap": 0.014979875220088479,
+   "n_close": 66,
+   "n_far": 143
+  },
+  "r3/final/greedy": {
+   "close": 0.560702540953099,
+   "far": 0.5799081859396407,
+   "gap": 0.019205644986541648,
+   "n_close": 66,
+   "n_far": 143
+  },
+  "r3/final/beam_lm": {
+   "close": 0.44303007813699724,
+   "far": 0.48521079525674427,
+   "gap": 0.042180717119747024,
+   "n_close": 66,
+   "n_far": 143
+  },
+  "r3/conv/greedy": {
+   "close": 0.6030985326542962,
+   "far": 0.6157158175281243,
+   "gap": 0.012617284873828072,
+   "n_close": 66,
+   "n_far": 143
+  },
+  "r3/conv/beam_lm": {
+   "close": 0.4827665290765586,
+   "far": 0.4987476868710144,
+   "gap": 0.015981157794455803,
+   "n_close": 66,
+   "n_far": 143
+  },
+  "constant_sentence_picked_on_train": {
+   "sentence": "las calles marcan las lineas",
+   "train_cer": 0.6630757676797387,
+   "test_cer": 0.687657630367063
+  },
+  "shuffled_same_text_partners_full_r1_test": [
+   32,
+   637
+  ]
+ }
+}

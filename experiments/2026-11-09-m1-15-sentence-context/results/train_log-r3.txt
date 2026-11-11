@@ -1,0 +1,132 @@
+[2026-11-10 22:21:53] new run C:\Users\zhang\bci-data\runs\m1-15-sentence-context-r3
+[2026-11-10 22:21:53] model parameters: {"spatial": 39296, "subject_layer": 165120, "conv_stack": 1609984, "pool": 492608, "transformer": 1385600, "head": 5211, "key_head": 5211, "total": 3703030}
+[2026-11-10 22:21:53] device=cuda bf16=True train=947 val=114 participants=10 steps/epoch=60
+[2026-11-10 22:21:53] keep_awake=on; active time so far 0 s; max_minutes=300 (active compute time)
+[2026-11-10 22:22:13] ep 0 step 25 loss 4.2691 acc 0.128 lr 2.60e-05
+[2026-11-10 22:22:29] ep 0 step 50 loss 4.0136 acc 0.138 lr 5.10e-05
+[2026-11-10 22:22:37] epoch 0 done in 42.0s train_loss 3.9536 val CER typed 0.8324 target 0.8302 key acc 0.153 (conv only 0.135) (best 0.8324 @ 0) | trend: smoothed 0.8324 (best 0.8324) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:22:45] ep 1 step 75 loss 3.6329 acc 0.135 lr 7.60e-05
+[2026-11-10 22:23:00] ep 1 step 100 loss 3.5935 acc 0.174 lr 1.01e-04
+[2026-11-10 22:23:14] epoch 1 done in 36.0s train_loss 3.5443 val CER typed 0.7393 target 0.7404 key acc 0.230 (conv only 0.217) (best 0.7393 @ 1) | trend: smoothed 0.8045 (best 0.8045) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:23:17] ep 2 step 125 loss 3.3583 acc 0.242 lr 1.26e-04
+[2026-11-10 22:23:31] ep 2 step 150 loss 3.2948 acc 0.252 lr 1.51e-04
+[2026-11-10 22:23:44] ep 2 step 175 loss 3.2638 acc 0.269 lr 1.76e-04
+[2026-11-10 22:23:47] epoch 2 done in 32.7s train_loss 3.2589 val CER typed 0.6860 target 0.6889 key acc 0.302 (conv only 0.268) (best 0.6860 @ 2) | trend: smoothed 0.7689 (best 0.7689) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:23:58] ep 3 step 200 loss 3.0973 acc 0.249 lr 2.01e-04
+[2026-11-10 22:24:08] ep 3 step 225 loss 3.0824 acc 0.267 lr 2.26e-04
+[2026-11-10 22:24:17] epoch 3 done in 29.4s train_loss 3.0724 val CER typed 0.6599 target 0.6653 key acc 0.331 (conv only 0.300) (best 0.6599 @ 3) | trend: smoothed 0.7362 (best 0.7362) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:24:21] ep 4 step 250 loss 2.9850 acc 0.302 lr 2.51e-04
+[2026-11-10 22:24:30] ep 4 step 275 loss 2.9679 acc 0.362 lr 2.76e-04
+[2026-11-10 22:24:43] ep 4 step 300 loss 2.9480 acc 0.344 lr 3.00e-04
+[2026-11-10 22:24:43] epoch 4 done in 25.5s train_loss 2.9480 val CER typed 0.6488 target 0.6541 key acc 0.347 (conv only 0.327) (best 0.6488 @ 4) | trend: smoothed 0.7100 (best 0.7100) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:24:54] ep 5 step 325 loss 2.8355 acc 0.350 lr 3.00e-04
+[2026-11-10 22:25:03] ep 5 step 350 loss 2.8403 acc 0.379 lr 3.00e-04
+[2026-11-10 22:25:05] epoch 5 done in 21.7s train_loss 2.8387 val CER typed 0.6389 target 0.6432 key acc 0.363 (conv only 0.335) (best 0.6389 @ 5) | trend: smoothed 0.6887 (best 0.6887) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:25:12] ep 6 step 375 loss 2.7477 acc 0.371 lr 3.00e-04
+[2026-11-10 22:25:21] ep 6 step 400 loss 2.7452 acc 0.382 lr 3.00e-04
+[2026-11-10 22:25:30] epoch 6 done in 24.0s train_loss 2.7474 val CER typed 0.6164 target 0.6205 key acc 0.380 (conv only 0.353) (best 0.6164 @ 6) | trend: smoothed 0.6670 (best 0.6670) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:25:33] ep 7 step 425 loss 2.6175 acc 0.400 lr 3.00e-04
+[2026-11-10 22:25:40] ep 7 step 450 loss 2.6650 acc 0.422 lr 3.00e-04
+[2026-11-10 22:25:50] ep 7 step 475 loss 2.6636 acc 0.377 lr 3.00e-04
+[2026-11-10 22:25:53] epoch 7 done in 22.3s train_loss 2.6728 val CER typed 0.6015 target 0.6106 key acc 0.403 (conv only 0.380) (best 0.6015 @ 7) | trend: smoothed 0.6474 (best 0.6474) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:25:59] ep 8 step 500 loss 2.5730 acc 0.432 lr 3.00e-04
+[2026-11-10 22:26:07] ep 8 step 525 loss 2.5933 acc 0.396 lr 3.00e-04
+[2026-11-10 22:26:13] epoch 8 done in 19.5s train_loss 2.6020 val CER typed 0.5992 target 0.6096 key acc 0.401 (conv only 0.384) (best 0.5992 @ 8) | trend: smoothed 0.6329 (best 0.6329) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:26:15] ep 9 step 550 loss 2.5492 acc 0.418 lr 3.00e-04
+[2026-11-10 22:26:25] ep 9 step 575 loss 2.5138 acc 0.432 lr 3.00e-04
+[2026-11-10 22:26:31] ep 9 step 600 loss 2.5295 acc 0.427 lr 3.00e-04
+[2026-11-10 22:26:32] epoch 9 done in 18.0s train_loss 2.5295 val CER typed 0.6005 target 0.6120 key acc 0.399 (conv only 0.388) (best 0.5992 @ 8) | trend: smoothed 0.6232 (best 0.6232) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:26:40] ep 10 step 625 loss 2.4673 acc 0.446 lr 3.00e-04
+[2026-11-10 22:26:47] ep 10 step 650 loss 2.4677 acc 0.444 lr 3.00e-04
+[2026-11-10 22:26:50] epoch 10 done in 17.8s train_loss 2.4677 val CER typed 0.5815 target 0.5922 key acc 0.424 (conv only 0.395) (best 0.5815 @ 10) | trend: smoothed 0.6107 (best 0.6107) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:26:54] ep 11 step 675 loss 2.3569 acc 0.458 lr 3.00e-04
+[2026-11-10 22:27:02] ep 11 step 700 loss 2.3997 acc 0.421 lr 3.00e-04
+[2026-11-10 22:27:07] epoch 11 done in 16.1s train_loss 2.4018 val CER typed 0.5640 target 0.5781 key acc 0.436 (conv only 0.400) (best 0.5640 @ 11) | trend: smoothed 0.5967 (best 0.5967) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:27:09] ep 12 step 725 loss 2.2709 acc 0.475 lr 3.00e-04
+[2026-11-10 22:27:15] ep 12 step 750 loss 2.3237 acc 0.487 lr 3.00e-04
+[2026-11-10 22:27:21] ep 12 step 775 loss 2.3592 acc 0.435 lr 3.00e-04
+[2026-11-10 22:27:22] epoch 12 done in 14.6s train_loss 2.3600 val CER typed 0.5741 target 0.5865 key acc 0.429 (conv only 0.407) (best 0.5640 @ 11) | trend: smoothed 0.5899 (best 0.5899) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:27:27] ep 13 step 800 loss 2.2973 acc 0.462 lr 3.00e-04
+[2026-11-10 22:27:34] ep 13 step 825 loss 2.3038 acc 0.416 lr 3.00e-04
+[2026-11-10 22:27:41] epoch 13 done in 17.4s train_loss 2.2960 val CER typed 0.5645 target 0.5792 key acc 0.440 (conv only 0.411) (best 0.5640 @ 11) | trend: smoothed 0.5823 (best 0.5823) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:27:43] ep 14 step 850 loss 2.1689 acc 0.518 lr 3.00e-04
+[2026-11-10 22:27:48] ep 14 step 875 loss 2.2291 acc 0.480 lr 3.00e-04
+[2026-11-10 22:27:54] ep 14 step 900 loss 2.2305 acc 0.503 lr 3.00e-04
+[2026-11-10 22:27:54] epoch 14 done in 12.9s train_loss 2.2305 val CER typed 0.5719 target 0.5845 key acc 0.439 (conv only 0.412) (best 0.5640 @ 11) | trend: smoothed 0.5792 (best 0.5792) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:28:00] ep 15 step 925 loss 2.1614 acc 0.550 lr 3.00e-04
+[2026-11-10 22:28:07] ep 15 step 950 loss 2.1660 acc 0.531 lr 3.00e-04
+[2026-11-10 22:28:10] epoch 15 done in 14.9s train_loss 2.1710 val CER typed 0.5738 target 0.5842 key acc 0.429 (conv only 0.404) (best 0.5640 @ 11) | trend: smoothed 0.5776 (best 0.5792) lr 3.00e-04 evals_since_improve 1 lr_reductions 0
+[2026-11-10 22:28:15] ep 16 step 975 loss 2.0698 acc 0.559 lr 3.00e-04
+[2026-11-10 22:28:22] ep 16 step 1000 loss 2.0820 acc 0.590 lr 3.00e-04
+[2026-11-10 22:28:28] epoch 16 done in 17.0s train_loss 2.1127 val CER typed 0.5559 target 0.5712 key acc 0.442 (conv only 0.412) (best 0.5559 @ 16) | trend: smoothed 0.5711 (best 0.5711) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:28:29] ep 17 step 1025 loss 1.9900 acc 0.571 lr 3.00e-04
+[2026-11-10 22:28:35] ep 17 step 1050 loss 2.0195 acc 0.547 lr 3.00e-04
+[2026-11-10 22:28:42] ep 17 step 1075 loss 2.0418 acc 0.571 lr 3.00e-04
+[2026-11-10 22:28:43] epoch 17 done in 14.9s train_loss 2.0517 val CER typed 0.5583 target 0.5722 key acc 0.446 (conv only 0.415) (best 0.5559 @ 16) | trend: smoothed 0.5672 (best 0.5672) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:28:48] ep 18 step 1100 loss 1.9581 acc 0.630 lr 3.00e-04
+[2026-11-10 22:28:54] ep 18 step 1125 loss 1.9893 acc 0.566 lr 3.00e-04
+[2026-11-10 22:29:00] epoch 18 done in 15.6s train_loss 1.9996 val CER typed 0.5653 target 0.5776 key acc 0.443 (conv only 0.412) (best 0.5559 @ 16) | trend: smoothed 0.5667 (best 0.5672) lr 3.00e-04 evals_since_improve 1 lr_reductions 0
+[2026-11-10 22:29:02] ep 19 step 1150 loss 1.9351 acc 0.581 lr 3.00e-04
+[2026-11-10 22:29:09] ep 19 step 1175 loss 1.9196 acc 0.546 lr 3.00e-04
+[2026-11-10 22:29:16] ep 19 step 1200 loss 1.9435 acc 0.678 lr 3.00e-04
+[2026-11-10 22:29:17] epoch 19 done in 16.4s train_loss 1.9435 val CER typed 0.5587 target 0.5732 key acc 0.445 (conv only 0.419) (best 0.5559 @ 16) | trend: smoothed 0.5643 (best 0.5643) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:29:24] ep 20 step 1225 loss 1.8421 acc 0.623 lr 3.00e-04
+[2026-11-10 22:29:31] ep 20 step 1250 loss 1.8699 acc 0.638 lr 3.00e-04
+[2026-11-10 22:29:34] epoch 20 done in 16.1s train_loss 1.8872 val CER typed 0.5610 target 0.5758 key acc 0.442 (conv only 0.408) (best 0.5559 @ 16) | trend: smoothed 0.5633 (best 0.5643) lr 3.00e-04 evals_since_improve 1 lr_reductions 0
+[2026-11-10 22:29:38] ep 21 step 1275 loss 1.7437 acc 0.684 lr 3.00e-04
+[2026-11-10 22:29:45] ep 21 step 1300 loss 1.8065 acc 0.614 lr 3.00e-04
+[2026-11-10 22:29:51] epoch 21 done in 15.9s train_loss 1.8301 val CER typed 0.5591 target 0.5726 key acc 0.447 (conv only 0.420) (best 0.5559 @ 16) | trend: smoothed 0.5620 (best 0.5620) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:29:52] ep 22 step 1325 loss 1.7474 acc 0.621 lr 3.00e-04
+[2026-11-10 22:29:58] ep 22 step 1350 loss 1.7866 acc 0.620 lr 3.00e-04
+[2026-11-10 22:30:04] ep 22 step 1375 loss 1.7881 acc 0.606 lr 3.00e-04
+[2026-11-10 22:30:07] epoch 22 done in 15.2s train_loss 1.7894 val CER typed 0.5597 target 0.5707 key acc 0.453 (conv only 0.421) (best 0.5559 @ 16) | trend: smoothed 0.5613 (best 0.5620) lr 3.00e-04 evals_since_improve 1 lr_reductions 0
+[2026-11-10 22:30:12] ep 23 step 1400 loss 1.6801 acc 0.638 lr 3.00e-04
+[2026-11-10 22:30:17] ep 23 step 1425 loss 1.7346 acc 0.643 lr 3.00e-04
+[2026-11-10 22:30:21] epoch 23 done in 13.7s train_loss 1.7424 val CER typed 0.5580 target 0.5726 key acc 0.446 (conv only 0.407) (best 0.5559 @ 16) | trend: smoothed 0.5603 (best 0.5620) lr 3.00e-04 evals_since_improve 2 lr_reductions 0
+[2026-11-10 22:30:24] ep 24 step 1450 loss 1.6499 acc 0.684 lr 3.00e-04
+[2026-11-10 22:30:29] ep 24 step 1475 loss 1.6662 acc 0.676 lr 3.00e-04
+[2026-11-10 22:30:35] ep 24 step 1500 loss 1.6988 acc 0.640 lr 3.00e-04
+[2026-11-10 22:30:35] epoch 24 done in 13.6s train_loss 1.6988 val CER typed 0.5551 target 0.5708 key acc 0.449 (conv only 0.404) (best 0.5551 @ 24) | trend: smoothed 0.5587 (best 0.5587) lr 3.00e-04 evals_since_improve 0 lr_reductions 0
+[2026-11-10 22:30:43] ep 25 step 1525 loss 1.6258 acc 0.711 lr 3.00e-04
+[2026-11-10 22:30:48] ep 25 step 1550 loss 1.6379 acc 0.673 lr 3.00e-04
+[2026-11-10 22:30:51] epoch 25 done in 14.7s train_loss 1.6502 val CER typed 0.5609 target 0.5753 key acc 0.443 (conv only 0.409) (best 0.5551 @ 24) | trend: smoothed 0.5594 (best 0.5587) lr 3.00e-04 evals_since_improve 1 lr_reductions 0
+[2026-11-10 22:30:54] ep 26 step 1575 loss 1.5353 acc 0.710 lr 3.00e-04
+[2026-11-10 22:31:00] ep 26 step 1600 loss 1.5826 acc 0.672 lr 3.00e-04
+[2026-11-10 22:31:05] epoch 26 done in 13.3s train_loss 1.6056 val CER typed 0.5618 target 0.5738 key acc 0.443 (conv only 0.404) (best 0.5551 @ 24) | trend: smoothed 0.5601 (best 0.5587) lr 3.00e-04 evals_since_improve 2 lr_reductions 0
+[2026-11-10 22:31:06] ep 27 step 1625 loss 1.4884 acc 0.738 lr 3.00e-04
+[2026-11-10 22:31:12] ep 27 step 1650 loss 1.5336 acc 0.767 lr 3.00e-04
+[2026-11-10 22:31:18] ep 27 step 1675 loss 1.5467 acc 0.683 lr 3.00e-04
+[2026-11-10 22:31:21] epoch 27 done in 14.9s train_loss 1.5561 val CER typed 0.5599 target 0.5711 key acc 0.448 (conv only 0.412) (best 0.5551 @ 24) | trend: smoothed 0.5601 (best 0.5587) lr 3.00e-04 evals_since_improve 3 lr_reductions 0
+[2026-11-10 22:31:25] ep 28 step 1700 loss 1.4832 acc 0.725 lr 3.00e-04
+[2026-11-10 22:31:30] ep 28 step 1725 loss 1.5128 acc 0.772 lr 3.00e-04
+[2026-11-10 22:31:35] epoch 28 done in 13.9s train_loss 1.5254 val CER typed 0.5642 target 0.5802 key acc 0.441 (conv only 0.404) (best 0.5551 @ 24) | trend: smoothed 0.5613 (best 0.5587) lr 3.00e-04 evals_since_improve 4 lr_reductions 0
+[2026-11-10 22:31:38] ep 29 step 1750 loss 1.3782 acc 0.771 lr 3.00e-04
+[2026-11-10 22:31:43] ep 29 step 1775 loss 1.4538 acc 0.687 lr 3.00e-04
+[2026-11-10 22:31:49] ep 29 step 1800 loss 1.4851 acc 0.687 lr 3.00e-04
+[2026-11-10 22:31:50] plateau: LR scale reduced to 0.5 (reduction 1, lr 1.50e-04)
+[2026-11-10 22:31:50] epoch 29 done in 13.4s train_loss 1.4851 val CER typed 0.5569 target 0.5705 key acc 0.445 (conv only 0.400) (best 0.5551 @ 24) | trend: smoothed 0.5600 (best 0.5587) lr 1.50e-04 evals_since_improve 5 lr_reductions 1
+[2026-11-10 22:31:56] ep 30 step 1825 loss 1.3541 acc 0.759 lr 1.50e-04
+[2026-11-10 22:32:01] ep 30 step 1850 loss 1.3753 acc 0.767 lr 1.50e-04
+[2026-11-10 22:32:04] epoch 30 done in 13.1s train_loss 1.3825 val CER typed 0.5627 target 0.5762 key acc 0.443 (conv only 0.409) (best 0.5551 @ 24) | trend: smoothed 0.5608 (best 0.5587) lr 1.50e-04 evals_since_improve 6 lr_reductions 1
+[2026-11-10 22:32:06] ep 31 step 1875 loss 1.3044 acc 0.767 lr 1.50e-04
+[2026-11-10 22:32:13] ep 31 step 1900 loss 1.3208 acc 0.765 lr 1.50e-04
+[2026-11-10 22:32:18] epoch 31 done in 14.1s train_loss 1.3223 val CER typed 0.5633 target 0.5765 key acc 0.439 (conv only 0.408) (best 0.5551 @ 24) | trend: smoothed 0.5615 (best 0.5587) lr 1.50e-04 evals_since_improve 7 lr_reductions 1
+[2026-11-10 22:32:19] ep 32 step 1925 loss 1.3517 acc 0.686 lr 1.50e-04
+[2026-11-10 22:32:25] ep 32 step 1950 loss 1.3073 acc 0.769 lr 1.50e-04
+[2026-11-10 22:32:30] ep 32 step 1975 loss 1.3055 acc 0.796 lr 1.50e-04
+[2026-11-10 22:32:32] epoch 32 done in 12.6s train_loss 1.3038 val CER typed 0.5566 target 0.5705 key acc 0.444 (conv only 0.411) (best 0.5551 @ 24) | trend: smoothed 0.5601 (best 0.5587) lr 1.50e-04 evals_since_improve 8 lr_reductions 1
+[2026-11-10 22:32:36] ep 33 step 2000 loss 1.2429 acc 0.791 lr 1.50e-04
+[2026-11-10 22:32:41] ep 33 step 2025 loss 1.2580 acc 0.841 lr 1.50e-04
+[2026-11-10 22:32:45] epoch 33 done in 12.8s train_loss 1.2735 val CER typed 0.5598 target 0.5734 key acc 0.447 (conv only 0.406) (best 0.5551 @ 24) | trend: smoothed 0.5600 (best 0.5587) lr 1.50e-04 evals_since_improve 9 lr_reductions 1
+[2026-11-10 22:32:47] ep 34 step 2050 loss 1.2392 acc 0.728 lr 1.50e-04
+[2026-11-10 22:32:52] ep 34 step 2075 loss 1.2432 acc 0.800 lr 1.50e-04
+[2026-11-10 22:32:57] ep 34 step 2100 loss 1.2503 acc 0.791 lr 1.50e-04
+[2026-11-10 22:32:58] plateau: LR scale reduced to 0.25 (reduction 2, lr 7.50e-05)
+[2026-11-10 22:32:58] epoch 34 done in 12.0s train_loss 1.2503 val CER typed 0.5619 target 0.5719 key acc 0.449 (conv only 0.409) (best 0.5551 @ 24) | trend: smoothed 0.5606 (best 0.5587) lr 7.50e-05 evals_since_improve 10 lr_reductions 2
+[2026-11-10 22:33:03] ep 35 step 2125 loss 1.1926 acc 0.787 lr 7.50e-05
+[2026-11-10 22:33:08] ep 35 step 2150 loss 1.1989 acc 0.757 lr 7.50e-05
+[2026-11-10 22:33:11] epoch 35 done in 12.2s train_loss 1.2040 val CER typed 0.5640 target 0.5768 key acc 0.443 (conv only 0.405) (best 0.5551 @ 24) | trend: smoothed 0.5616 (best 0.5587) lr 7.50e-05 evals_since_improve 11 lr_reductions 2
+[2026-11-10 22:33:15] ep 36 step 2175 loss 1.1797 acc 0.810 lr 7.50e-05
+[2026-11-10 22:33:19] ep 36 step 2200 loss 1.1676 acc 0.818 lr 7.50e-05
+[2026-11-10 22:33:26] epoch 36 done in 13.9s train_loss 1.1808 val CER typed 0.5655 target 0.5763 key acc 0.443 (conv only 0.406) (best 0.5551 @ 24) | trend: smoothed 0.5628 (best 0.5587) lr 7.50e-05 evals_since_improve 12 lr_reductions 2
+[2026-11-10 22:33:26] finished: early_stop at epoch 37 step 2220 best val_cer_typed=0.5551 @ epoch 24

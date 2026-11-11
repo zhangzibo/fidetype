@@ -1,0 +1,1701 @@
+{
+ "n_val": 114,
+ "n_test": 209,
+ "n_test_sentences": 17,
+ "n_val_sentences": 11,
+ "decode_kwargs": {
+  "search": "vector",
+  "beam": 256,
+  "n_best": 10,
+  "prune_topk": null,
+  "prune_logp": -6.0,
+  "space_rules": true,
+  "lm_weight": 0.5,
+  "insertion_bonus": 1.0
+ },
+ "user": {
+  "chars_per_min": 152.0,
+  "read_s_per_word": 0.3,
+  "read_s_per_candidate": 0.5,
+  "select_a_s": 1.0,
+  "select_b_s_per_bit": 0.5,
+  "verify_commit": true,
+  "p_detect_error": 0.9,
+  "correction_overhead_s": 2.0,
+  "correction_s_per_char": 0.7894736842105263,
+  "p_accept_close": 0.0,
+  "close_max_cer": 0.1,
+  "select_and_correct": true,
+  "ask_overhead_s": 0.5,
+  "abstain_overhead_s": 0.5,
+  "repeat_overhead_s": 1.0,
+  "partial_correction": true,
+  "fallback_chars_per_min": 20.0,
+  "word_scan_a_s": 1.0,
+  "word_scan_b_s_per_bit": 1.0,
+  "word_select_s": 1.5,
+  "nav_s": 3.0,
+  "nav_keystrokes": 2,
+  "p_miss_unflagged": 0.05,
+  "confirm_offer_words": true,
+  "allow_full_retype": true,
+  "retype_overhead_s": 1.5,
+  "fallback_after_abstain": true
+ },
+ "base_grid": {
+  "commit_p": [
+   0.5,
+   0.7,
+   0.8,
+   0.9,
+   0.95,
+   0.98,
+   1.01
+  ],
+  "commit_max_risk": [
+   0.3,
+   1.0
+  ],
+  "offer_max_k": [
+   0,
+   1,
+   3,
+   5
+  ],
+  "abstain_risk": [
+   0.8,
+   1.01
+  ],
+  "final_fallback": [
+   "offer",
+   "abstain"
+  ]
+ },
+ "offer_words_grid": {
+  "word_conf_threshold": [
+   0.5,
+   0.7,
+   0.8,
+   0.9,
+   0.95,
+   0.99,
+   1.01
+  ],
+  "offer_words_min_conf": [
+   0.0,
+   0.3,
+   0.5,
+   0.7,
+   0.9
+  ]
+ },
+ "policies": {
+  "commit": {
+   "ewpm": 2.5742005668550823,
+   "wrong_commit_rate": 0.9952153110047847,
+   "silent_error_rate": 0.19617224880382775,
+   "keystrokes_saved": 0.07541138865869534,
+   "system_word_accuracy": 0.1927710843373494,
+   "communicated_rate": 0.8038277511961722,
+   "share_words_system": 0.21159638554216867,
+   "share_words_selected": 0.0,
+   "share_words_typed": 0.5813253012048193,
+   "rate_commit": 1.0,
+   "rate_offer": 0.0,
+   "rate_ask": 0.0,
+   "rate_abstain": 0.0,
+   "rate_offer_words": 0.0,
+   "mean_time_s": 117.43321581465625,
+   "cer": 0.4786314667929442,
+   "wer": 0.8381024096385542,
+   "top1_sentence_acc": 0.004784688995215311,
+   "miss_rate": 0.9952153110047847,
+   "fit_temperature_frame": 1.4418473643423741,
+   "fit_temperature_sentence": 19.999915690182068,
+   "fit_policy_config": null,
+   "fit_feasible": null,
+   "val_ewpm": null,
+   "seconds": 26.6
+  },
+  "trust": {
+   "ewpm": 3.0933427705024985,
+   "wrong_commit_rate": 0.0,
+   "silent_error_rate": 0.0,
+   "keystrokes_saved": 0.01349591570971942,
+   "system_word_accuracy": 0.1927710843373494,
+   "communicated_rate": 1.0,
+   "share_words_system": 0.0,
+   "share_words_selected": 0.26506024096385544,
+   "share_words_typed": 0.7349397590361446,
+   "rate_commit": 0.0,
+   "rate_offer": 1.0,
+   "rate_ask": 0.0,
+   "rate_abstain": 0.0,
+   "rate_offer_words": 0.0,
+   "mean_time_s": 123.24661294384286,
+   "cer": 0.4786314667929442,
+   "wer": 0.8381024096385542,
+   "top1_sentence_acc": 0.004784688995215311,
+   "miss_rate": 0.9952153110047847,
+   "fit_temperature_frame": 1.4418473643423741,
+   "fit_temperature_sentence": 19.999915690182068,
+   "fit_policy_config": {
+    "commit_p": 0.5,
+    "commit_max_risk": 0.3,
+    "commit_max_set": null,
+    "offer_max_k": 1,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "fit_feasible": true,
+   "val_ewpm": 3.0093282177792715,
+   "seconds": 0.7
+  },
+  "trust_ow": {
+   "ewpm": 3.0933427705024985,
+   "wrong_commit_rate": 0.0,
+   "silent_error_rate": 0.0,
+   "keystrokes_saved": 0.01349591570971942,
+   "system_word_accuracy": 0.1927710843373494,
+   "communicated_rate": 1.0,
+   "share_words_system": 0.0,
+   "share_words_selected": 0.26506024096385544,
+   "share_words_typed": 0.7349397590361446,
+   "rate_commit": 0.0,
+   "rate_offer": 1.0,
+   "rate_ask": 0.0,
+   "rate_abstain": 0.0,
+   "rate_offer_words": 0.0,
+   "mean_time_s": 123.24661294384286,
+   "cer": 0.4786314667929442,
+   "wer": 0.8381024096385542,
+   "top1_sentence_acc": 0.004784688995215311,
+   "miss_rate": 0.9952153110047847,
+   "fit_temperature_frame": 1.4418473643423741,
+   "fit_temperature_sentence": 19.999915690182068,
+   "fit_policy_config": {
+    "commit_p": 0.5,
+    "commit_max_risk": 0.3,
+    "commit_max_set": null,
+    "offer_max_k": 1,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": true,
+    "word_conf_threshold": 0.5,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.9,
+    "offer_words_max_slots": null
+   },
+   "fit_feasible": true,
+   "val_ewpm": 3.0093282177792715,
+   "word_diag": {
+    "n_offer_words": 0,
+    "mean_highlighted": null,
+    "highlight_precision": null,
+    "alt_hit_rate": null,
+    "wrong_slots_per_sentence": 5.2727272727272725,
+    "unflagged_wrong_per_ow": null
+   },
+   "seconds": 26.5
+  },
+  "trust_silent": {
+   "ewpm": 3.0933427705024985,
+   "wrong_commit_rate": 0.0,
+   "silent_error_rate": 0.0,
+   "keystrokes_saved": 0.01349591570971942,
+   "system_word_accuracy": 0.1927710843373494,
+   "communicated_rate": 1.0,
+   "share_words_system": 0.0,
+   "share_words_selected": 0.26506024096385544,
+   "share_words_typed": 0.7349397590361446,
+   "rate_commit": 0.0,
+   "rate_offer": 1.0,
+   "rate_ask": 0.0,
+   "rate_abstain": 0.0,
+   "rate_offer_words": 0.0,
+   "mean_time_s": 123.24661294384286,
+   "cer": 0.4786314667929442,
+   "wer": 0.8381024096385542,
+   "top1_sentence_acc": 0.004784688995215311,
+   "miss_rate": 0.9952153110047847,
+   "fit_temperature_frame": 1.4418473643423741,
+   "fit_temperature_sentence": 19.999915690182068,
+   "fit_policy_config": {
+    "commit_p": 0.5,
+    "commit_max_risk": 0.3,
+    "commit_max_set": null,
+    "offer_max_k": 1,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "fit_feasible": true,
+   "val_ewpm": 3.0093282177792715,
+   "seconds": 0.7
+  },
+  "trust_ow_silent": {
+   "ewpm": 3.0933427705024985,
+   "wrong_commit_rate": 0.0,
+   "silent_error_rate": 0.0,
+   "keystrokes_saved": 0.01349591570971942,
+   "system_word_accuracy": 0.1927710843373494,
+   "communicated_rate": 1.0,
+   "share_words_system": 0.0,
+   "share_words_selected": 0.26506024096385544,
+   "share_words_typed": 0.7349397590361446,
+   "rate_commit": 0.0,
+   "rate_offer": 1.0,
+   "rate_ask": 0.0,
+   "rate_abstain": 0.0,
+   "rate_offer_words": 0.0,
+   "mean_time_s": 123.24661294384286,
+   "cer": 0.4786314667929442,
+   "wer": 0.8381024096385542,
+   "top1_sentence_acc": 0.004784688995215311,
+   "miss_rate": 0.9952153110047847,
+   "fit_temperature_frame": 1.4418473643423741,
+   "fit_temperature_sentence": 19.999915690182068,
+   "fit_policy_config": {
+    "commit_p": 0.5,
+    "commit_max_risk": 0.3,
+    "commit_max_set": null,
+    "offer_max_k": 1,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": true,
+    "word_conf_threshold": 0.5,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.9,
+    "offer_words_max_slots": null
+   },
+   "fit_feasible": true,
+   "val_ewpm": 3.0093282177792715,
+   "word_diag": {
+    "n_offer_words": 0,
+    "mean_highlighted": null,
+    "highlight_precision": null,
+    "alt_hit_rate": null,
+    "wrong_slots_per_sentence": 5.2727272727272725,
+    "unflagged_wrong_per_ow": null
+   },
+   "seconds": 26.5
+  },
+  "ow_all": {
+   "ewpm": 2.9729985377130137,
+   "wrong_commit_rate": 0.0,
+   "silent_error_rate": 0.0,
+   "keystrokes_saved": 0.13555108322481357,
+   "system_word_accuracy": 0.1927710843373494,
+   "communicated_rate": 1.0,
+   "share_words_system": 0.22665662650602408,
+   "share_words_selected": 0.022590361445783132,
+   "share_words_typed": 0.7507530120481928,
+   "rate_commit": 0.0,
+   "rate_offer": 0.0,
+   "rate_ask": 0.0,
+   "rate_abstain": 0.0,
+   "rate_offer_words": 1.0,
+   "mean_time_s": 128.23552191587314,
+   "cer": 0.4786314667929442,
+   "wer": 0.8381024096385542,
+   "top1_sentence_acc": 0.004784688995215311,
+   "miss_rate": 0.9952153110047847,
+   "fit_temperature_frame": 1.4418473643423741,
+   "fit_temperature_sentence": 19.999915690182068,
+   "fit_policy_config": null,
+   "fit_feasible": null,
+   "val_ewpm": null,
+   "word_diag": {
+    "n_offer_words": 209,
+    "mean_highlighted": 6.980861244019139,
+    "highlight_precision": 0.7553118574366005,
+    "alt_hit_rate": 0.05263157894736842,
+    "wrong_slots_per_sentence": 5.2727272727272725,
+    "unflagged_wrong_per_ow": 0.0
+   },
+   "seconds": 0.3
+  },
+  "gaze_only": {
+   "ewpm": 3.144311589913579,
+   "keystrokes_saved": 0.0,
+   "silent_error_rate": 0.0,
+   "wrong_commit_rate": 0.0
+  }
+ },
+ "bootstrap_sentences": {
+  "policies": {
+   "commit": {
+    "ewpm": [
+     2.2651084645576987,
+     2.8086589407604277
+    ],
+    "wrong_commit_rate": [
+     0.9829545454545454,
+     1.0
+    ],
+    "silent_error_rate": [
+     0.12303398058252428,
+     0.2953397315120113
+    ],
+    "keystrokes_saved": [
+     0.04205981632358587,
+     0.1063206589695955
+    ],
+    "communicated_rate": [
+     0.7046602684879887,
+     0.8769660194174757
+    ]
+   },
+   "trust": {
+    "ewpm": [
+     2.9682785574472548,
+     3.2319872989193166
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     -0.017609783005404334,
+     0.04498391328080104
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   },
+   "trust_ow": {
+    "ewpm": [
+     2.9682785574472548,
+     3.2319872989193166
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     -0.017609783005404334,
+     0.04498391328080104
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   },
+   "trust_silent": {
+    "ewpm": [
+     2.9682785574472548,
+     3.2319872989193166
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     -0.017609783005404334,
+     0.04498391328080104
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   },
+   "trust_ow_silent": {
+    "ewpm": [
+     2.9682785574472548,
+     3.2319872989193166
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     -0.017609783005404334,
+     0.04498391328080104
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   },
+   "ow_all": {
+    "ewpm": [
+     2.8481336354958633,
+     3.111879360222377
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     0.10242751230249578,
+     0.16533165615720527
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "diffs": {
+   "trust_ow-commit:ewpm": {
+    "ci": [
+     0.2901829360578584,
+     0.8289615480020918
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow-commit:wrong_commit_rate": {
+    "ci": [
+     -1.0,
+     -0.9829545454545454
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-commit:silent_error_rate": {
+    "ci": [
+     -0.2953397315120113,
+     -0.12303398058252432
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-commit:keystrokes_saved": {
+    "ci": [
+     -0.07823464606081991,
+     -0.04758020014391634
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-commit:communicated_rate": {
+    "ci": [
+     0.12303398058252428,
+     0.29533973151201137
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow-trust:ewpm": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-trust:wrong_commit_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-trust:silent_error_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-trust:keystrokes_saved": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-trust:communicated_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust-commit:ewpm": {
+    "ci": [
+     0.2901829360578584,
+     0.8289615480020918
+    ],
+    "p_le_0": 0.0
+   },
+   "trust-commit:wrong_commit_rate": {
+    "ci": [
+     -1.0,
+     -0.9829545454545454
+    ],
+    "p_le_0": 1.0
+   },
+   "trust-commit:silent_error_rate": {
+    "ci": [
+     -0.2953397315120113,
+     -0.12303398058252432
+    ],
+    "p_le_0": 1.0
+   },
+   "trust-commit:keystrokes_saved": {
+    "ci": [
+     -0.07823464606081991,
+     -0.04758020014391634
+    ],
+    "p_le_0": 1.0
+   },
+   "trust-commit:communicated_rate": {
+    "ci": [
+     0.12303398058252428,
+     0.29533973151201137
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow_silent-commit:ewpm": {
+    "ci": [
+     0.2901829360578584,
+     0.8289615480020918
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow_silent-commit:wrong_commit_rate": {
+    "ci": [
+     -1.0,
+     -0.9829545454545454
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-commit:silent_error_rate": {
+    "ci": [
+     -0.2953397315120113,
+     -0.12303398058252432
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-commit:keystrokes_saved": {
+    "ci": [
+     -0.07823464606081991,
+     -0.04758020014391634
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-commit:communicated_rate": {
+    "ci": [
+     0.12303398058252428,
+     0.29533973151201137
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow_silent-trust_silent:ewpm": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-trust_silent:wrong_commit_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-trust_silent:silent_error_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-trust_silent:keystrokes_saved": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-trust_silent:communicated_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "ow_all-commit:ewpm": {
+    "ci": [
+     0.16700730708208159,
+     0.7089813491588599
+    ],
+    "p_le_0": 0.0
+   },
+   "ow_all-commit:wrong_commit_rate": {
+    "ci": [
+     -1.0,
+     -0.9829545454545454
+    ],
+    "p_le_0": 1.0
+   },
+   "ow_all-commit:silent_error_rate": {
+    "ci": [
+     -0.2953397315120113,
+     -0.12303398058252432
+    ],
+    "p_le_0": 1.0
+   },
+   "ow_all-commit:keystrokes_saved": {
+    "ci": [
+     0.044325614793893624,
+     0.07307271963009662
+    ],
+    "p_le_0": 0.0
+   },
+   "ow_all-commit:communicated_rate": {
+    "ci": [
+     0.12303398058252428,
+     0.29533973151201137
+    ],
+    "p_le_0": 0.0
+   }
+  }
+ },
+ "bootstrap_trials": {
+  "policies": {
+   "commit": {
+    "ewpm": [
+     2.388247889739863,
+     2.739693109426792
+    ],
+    "wrong_commit_rate": [
+     0.9808612440191388,
+     1.0
+    ],
+    "silent_error_rate": [
+     0.14354066985645933,
+     0.2583732057416268
+    ],
+    "keystrokes_saved": [
+     0.05024278464051707,
+     0.10408306530708075
+    ],
+    "communicated_rate": [
+     0.7416267942583732,
+     0.8564593301435407
+    ]
+   },
+   "trust": {
+    "ewpm": [
+     3.025352627950576,
+     3.165162545934245
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     -0.00911451332236642,
+     0.03832334736476655
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   },
+   "trust_ow": {
+    "ewpm": [
+     3.025352627950576,
+     3.165162545934245
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     -0.00911451332236642,
+     0.03832334736476655
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   },
+   "trust_silent": {
+    "ewpm": [
+     3.025352627950576,
+     3.165162545934245
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     -0.00911451332236642,
+     0.03832334736476655
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   },
+   "trust_ow_silent": {
+    "ewpm": [
+     3.025352627950576,
+     3.165162545934245
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     -0.00911451332236642,
+     0.03832334736476655
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   },
+   "ow_all": {
+    "ewpm": [
+     2.911288775109898,
+     3.0370139566223213
+    ],
+    "wrong_commit_rate": [
+     0.0,
+     0.0
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.0
+    ],
+    "keystrokes_saved": [
+     0.11245486193280473,
+     0.16059148873797813
+    ],
+    "communicated_rate": [
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "diffs": {
+   "trust_ow-commit:ewpm": {
+    "ci": [
+     0.3660796811371688,
+     0.7039943264045923
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow-commit:wrong_commit_rate": {
+    "ci": [
+     -1.0,
+     -0.9808612440191388
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-commit:silent_error_rate": {
+    "ci": [
+     -0.2583732057416268,
+     -0.14354066985645933
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-commit:keystrokes_saved": {
+    "ci": [
+     -0.07603592694727368,
+     -0.04967557034378127
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-commit:communicated_rate": {
+    "ci": [
+     0.1435406698564593,
+     0.2583732057416268
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow-trust:ewpm": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-trust:wrong_commit_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-trust:silent_error_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-trust:keystrokes_saved": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow-trust:communicated_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust-commit:ewpm": {
+    "ci": [
+     0.3660796811371688,
+     0.7039943264045923
+    ],
+    "p_le_0": 0.0
+   },
+   "trust-commit:wrong_commit_rate": {
+    "ci": [
+     -1.0,
+     -0.9808612440191388
+    ],
+    "p_le_0": 1.0
+   },
+   "trust-commit:silent_error_rate": {
+    "ci": [
+     -0.2583732057416268,
+     -0.14354066985645933
+    ],
+    "p_le_0": 1.0
+   },
+   "trust-commit:keystrokes_saved": {
+    "ci": [
+     -0.07603592694727368,
+     -0.04967557034378127
+    ],
+    "p_le_0": 1.0
+   },
+   "trust-commit:communicated_rate": {
+    "ci": [
+     0.1435406698564593,
+     0.2583732057416268
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow_silent-commit:ewpm": {
+    "ci": [
+     0.3660796811371688,
+     0.7039943264045923
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow_silent-commit:wrong_commit_rate": {
+    "ci": [
+     -1.0,
+     -0.9808612440191388
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-commit:silent_error_rate": {
+    "ci": [
+     -0.2583732057416268,
+     -0.14354066985645933
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-commit:keystrokes_saved": {
+    "ci": [
+     -0.07603592694727368,
+     -0.04967557034378127
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-commit:communicated_rate": {
+    "ci": [
+     0.1435406698564593,
+     0.2583732057416268
+    ],
+    "p_le_0": 0.0
+   },
+   "trust_ow_silent-trust_silent:ewpm": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-trust_silent:wrong_commit_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-trust_silent:silent_error_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-trust_silent:keystrokes_saved": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "trust_ow_silent-trust_silent:communicated_rate": {
+    "ci": [
+     0.0,
+     0.0
+    ],
+    "p_le_0": 1.0
+   },
+   "ow_all-commit:ewpm": {
+    "ci": [
+     0.24073766711841965,
+     0.5828750899740436
+    ],
+    "p_le_0": 0.0
+   },
+   "ow_all-commit:wrong_commit_rate": {
+    "ci": [
+     -1.0,
+     -0.9808612440191388
+    ],
+    "p_le_0": 1.0
+   },
+   "ow_all-commit:silent_error_rate": {
+    "ci": [
+     -0.2583732057416268,
+     -0.14354066985645933
+    ],
+    "p_le_0": 1.0
+   },
+   "ow_all-commit:keystrokes_saved": {
+    "ci": [
+     0.04469892567726795,
+     0.07475498028112042
+    ],
+    "p_le_0": 0.0
+   },
+   "ow_all-commit:communicated_rate": {
+    "ci": [
+     0.1435406698564593,
+     0.2583732057416268
+    ],
+    "p_le_0": 0.0
+   }
+  }
+ },
+ "examples": [
+  {
+   "truth": "la fuerza atrae el electron primero",
+   "commit": {
+    "system": "la enerva esta palaciecttiasiclosan",
+    "final": "la fuerza atrae el esta palaciecttiasiclosan",
+    "actions": [
+     "COMMIT"
+    ],
+    "time_s": 72.5,
+    "keystrokes": 21
+   },
+   "trust": {
+    "system": "la enerva esta palaciecttiasiclosan",
+    "final": "la fuerza atrae el electron primero",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 123.5,
+    "keystrokes": 37
+   },
+   "trust_ow": {
+    "system": "la enerva esta palaciecttiasiclosan",
+    "final": "la fuerza atrae el electron primero",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 123.5,
+    "keystrokes": 37
+   },
+   "trust_silent": {
+    "system": "la enerva esta palaciecttiasiclosan",
+    "final": "la fuerza atrae el electron primero",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 123.5,
+    "keystrokes": 37
+   },
+   "trust_ow_silent": {
+    "system": "la enerva esta palaciecttiasiclosan",
+    "final": "la fuerza atrae el electron primero",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 123.5,
+    "keystrokes": 37
+   },
+   "ow_all": {
+    "system": "la enerva esta palaciecttiasiclosan",
+    "final": "la fuerza atrae el electron primero",
+    "actions": [
+     "OFFER_WORDS"
+    ],
+    "time_s": 122.0,
+    "keystrokes": 36
+   }
+  },
+  {
+   "truth": "los ninos mayores acaba la escuela",
+   "commit": {
+    "system": "los copostmomoes secandalo denosis",
+    "final": "los ninos mayores acaba la escuela",
+    "actions": [
+     "COMMIT"
+    ],
+    "time_s": 118.6,
+    "keystrokes": 35
+   },
+   "trust": {
+    "system": "los copostmomoes secandalo denosis",
+    "final": "los ninos mayores acaba la escuela",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 120.1,
+    "keystrokes": 36
+   },
+   "trust_ow": {
+    "system": "los copostmomoes secandalo denosis",
+    "final": "los ninos mayores acaba la escuela",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 120.1,
+    "keystrokes": 36
+   },
+   "trust_silent": {
+    "system": "los copostmomoes secandalo denosis",
+    "final": "los ninos mayores acaba la escuela",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 120.1,
+    "keystrokes": 36
+   },
+   "trust_ow_silent": {
+    "system": "los copostmomoes secandalo denosis",
+    "final": "los ninos mayores acaba la escuela",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 120.1,
+    "keystrokes": 36
+   },
+   "ow_all": {
+    "system": "los copostmomoes secandalo denosis",
+    "final": "los ninos mayores acaba la escuela",
+    "actions": [
+     "OFFER_WORDS"
+    ],
+    "time_s": 118.6,
+    "keystrokes": 35
+   }
+  },
+  {
+   "truth": "la teoria erronea reduce el numero",
+   "commit": {
+    "system": "las aliada de pasa decidio a pensa",
+    "final": "la teoria erronea reduce el numero",
+    "actions": [
+     "COMMIT"
+    ],
+    "time_s": 119.5,
+    "keystrokes": 35
+   },
+   "trust": {
+    "system": "las aliada de pasa decidio a pensa",
+    "final": "la teoria erronea reduce el numero",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 121.0,
+    "keystrokes": 36
+   },
+   "trust_ow": {
+    "system": "las aliada de pasa decidio a pensa",
+    "final": "la teoria erronea reduce el numero",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 121.0,
+    "keystrokes": 36
+   },
+   "trust_silent": {
+    "system": "las aliada de pasa decidio a pensa",
+    "final": "la teoria erronea reduce el numero",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 121.0,
+    "keystrokes": 36
+   },
+   "trust_ow_silent": {
+    "system": "las aliada de pasa decidio a pensa",
+    "final": "la teoria erronea reduce el numero",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 121.0,
+    "keystrokes": 36
+   },
+   "ow_all": {
+    "system": "las aliada de pasa decidio a pensa",
+    "final": "la teoria erronea reduce el numero",
+    "actions": [
+     "OFFER_WORDS"
+    ],
+    "time_s": 119.5,
+    "keystrokes": 35
+   }
+  },
+  {
+   "truth": "el algoritmo de los controles recorre el nodo",
+   "commit": {
+    "system": "el alcornemo de los contra ese crisarial lado",
+    "final": "el algoritmo de los controles recorre el nodo",
+    "actions": [
+     "COMMIT"
+    ],
+    "time_s": 128.7,
+    "keystrokes": 41
+   },
+   "trust": {
+    "system": "el alcornemo de los contra ese crisarial lado",
+    "final": "el algoritmo de los controles recorre el nodo",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 130.2,
+    "keystrokes": 42
+   },
+   "trust_ow": {
+    "system": "el alcornemo de los contra ese crisarial lado",
+    "final": "el algoritmo de los controles recorre el nodo",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 130.2,
+    "keystrokes": 42
+   },
+   "trust_silent": {
+    "system": "el alcornemo de los contra ese crisarial lado",
+    "final": "el algoritmo de los controles recorre el nodo",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 130.2,
+    "keystrokes": 42
+   },
+   "trust_ow_silent": {
+    "system": "el alcornemo de los contra ese crisarial lado",
+    "final": "el algoritmo de los controles recorre el nodo",
+    "actions": [
+     "OFFER"
+    ],
+    "time_s": 130.2,
+    "keystrokes": 42
+   },
+   "ow_all": {
+    "system": "el alcornemo de los contra ese crisarial lado",
+    "final": "el algoritmo de los controles recorre el nodo",
+    "actions": [
+     "OFFER_WORDS"
+    ],
+    "time_s": 141.4,
+    "keystrokes": 37
+   }
+  }
+ ],
+ "sensitivity": {
+  "fallback_40cpm (FP1, 8.1 WPM)": {
+   "policies": {
+    "commit": {
+     "ewpm": 4.316845711166961,
+     "wrong_commit_rate": 0.9952153110047847,
+     "silent_error_rate": 0.16267942583732056,
+     "keystrokes_saved": 0.10039067124422874,
+     "rate_offer_words": 0.0,
+     "rate_commit": 1.0
+    },
+    "trust": {
+     "ewpm": 4.982010831345415,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.043684148218302354,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    },
+    "trust_ow": {
+     "ewpm": 4.982010831345415,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.043684148218302354,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    }
+   },
+   "gaze_only_ewpm": 6.288623179827158,
+   "diffs": {
+    "trust_ow-commit:ewpm": {
+     "ci": [
+      0.3303597329492729,
+      1.0353535337873923
+     ],
+     "p_le_0": 0.0
+    },
+    "trust_ow-commit:silent_error_rate": {
+     "ci": [
+      -0.2344324954651464,
+      -0.09756189213085766
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:ewpm": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:silent_error_rate": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust-commit:ewpm": {
+     "ci": [
+      0.3303597329492729,
+      1.0353535337873923
+     ],
+     "p_le_0": 0.0
+    },
+    "trust-commit:silent_error_rate": {
+     "ci": [
+      -0.2344324954651464,
+      -0.09756189213085766
+     ],
+     "p_le_0": 1.0
+    }
+   }
+  },
+  "p_miss_unflagged 0": {
+   "policies": {
+    "commit": {
+     "ewpm": 3.1314548299968683,
+     "wrong_commit_rate": 0.9952153110047847,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.03823842784420506,
+     "rate_offer_words": 0.0,
+     "rate_commit": 1.0
+    },
+    "trust": {
+     "ewpm": 3.0933427705024985,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.01349591570971942,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    },
+    "trust_ow": {
+     "ewpm": 3.0933427705024985,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.01349591570971942,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    }
+   },
+   "gaze_only_ewpm": 3.144311589913579,
+   "diffs": {
+    "trust_ow-commit:ewpm": {
+     "ci": [
+      -0.041179191005185314,
+      -0.035135589132083055
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-commit:silent_error_rate": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:ewpm": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:silent_error_rate": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust-commit:ewpm": {
+     "ci": [
+      -0.041179191005185314,
+      -0.035135589132083055
+     ],
+     "p_le_0": 1.0
+    },
+    "trust-commit:silent_error_rate": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    }
+   }
+  },
+  "p_miss_unflagged 0.2": {
+   "policies": {
+    "commit": {
+     "ewpm": 1.1402963627388873,
+     "wrong_commit_rate": 0.9952153110047847,
+     "silent_error_rate": 0.69377990430622,
+     "keystrokes_saved": 0.2264709364271339,
+     "rate_offer_words": 0.0,
+     "rate_commit": 1.0
+    },
+    "trust": {
+     "ewpm": 3.0933427705024985,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.01349591570971942,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    },
+    "trust_ow": {
+     "ewpm": 3.0933427705024985,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.01349591570971942,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    }
+   },
+   "gaze_only_ewpm": 3.144311589913579,
+   "diffs": {
+    "trust_ow-commit:ewpm": {
+     "ci": [
+      1.726058875110926,
+      2.1952985681785826
+     ],
+     "p_le_0": 0.0
+    },
+    "trust_ow-commit:silent_error_rate": {
+     "ci": [
+      -0.7523499543008022,
+      -0.631221590909091
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:ewpm": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:silent_error_rate": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust-commit:ewpm": {
+     "ci": [
+      1.726058875110926,
+      2.1952985681785826
+     ],
+     "p_le_0": 0.0
+    },
+    "trust-commit:silent_error_rate": {
+     "ci": [
+      -0.7523499543008022,
+      -0.631221590909091
+     ],
+     "p_le_0": 1.0
+    }
+   }
+  },
+  "slow selection (scan, select, nav x2)": {
+   "policies": {
+    "commit": {
+     "ewpm": 2.5159279786639908,
+     "wrong_commit_rate": 0.9952153110047847,
+     "silent_error_rate": 0.15311004784688995,
+     "keystrokes_saved": 0.10039067124422874,
+     "rate_offer_words": 0.0,
+     "rate_commit": 1.0
+    },
+    "trust": {
+     "ewpm": 2.8853317344371106,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.043684148218302354,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    },
+    "trust_ow": {
+     "ewpm": 2.8853317344371106,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.043684148218302354,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    }
+   },
+   "gaze_only_ewpm": 3.144311589913579,
+   "diffs": {
+    "trust_ow-commit:ewpm": {
+     "ci": [
+      0.19722421072506083,
+      0.5518736874418531
+     ],
+     "p_le_0": 0.0
+    },
+    "trust_ow-commit:silent_error_rate": {
+     "ci": [
+      -0.21541702900404114,
+      -0.09566158156911582
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:ewpm": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:silent_error_rate": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust-commit:ewpm": {
+     "ci": [
+      0.19722421072506083,
+      0.5518736874418531
+     ],
+     "p_le_0": 0.0
+    },
+    "trust-commit:silent_error_rate": {
+     "ci": [
+      -0.21541702900404114,
+      -0.09566158156911582
+     ],
+     "p_le_0": 1.0
+    }
+   }
+  },
+  "no full retype": {
+   "policies": {
+    "commit": {
+     "ewpm": 2.5682360872235805,
+     "wrong_commit_rate": 0.9952153110047847,
+     "silent_error_rate": 0.19617224880382775,
+     "keystrokes_saved": 0.05765360483011717,
+     "rate_offer_words": 0.0,
+     "rate_commit": 1.0
+    },
+    "trust": {
+     "ewpm": 3.0848995357734807,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": -0.009115662365336785,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    },
+    "trust_ow": {
+     "ewpm": 3.0848995357734807,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": -0.009115662365336785,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    }
+   },
+   "gaze_only_ewpm": 3.144311589913579,
+   "diffs": {
+    "trust_ow-commit:ewpm": {
+     "ci": [
+      0.28661963502963717,
+      0.824135216666094
+     ],
+     "p_le_0": 0.0
+    },
+    "trust_ow-commit:silent_error_rate": {
+     "ci": [
+      -0.29395483263879557,
+      -0.12004882514494969
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:ewpm": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:silent_error_rate": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust-commit:ewpm": {
+     "ci": [
+      0.28661963502963717,
+      0.824135216666094
+     ],
+     "p_le_0": 0.0
+    },
+    "trust-commit:silent_error_rate": {
+     "ci": [
+      -0.29395483263879557,
+      -0.12004882514494969
+     ],
+     "p_le_0": 1.0
+    }
+   }
+  },
+  "no typing after ABSTAIN": {
+   "policies": {
+    "commit": {
+     "ewpm": 2.5742005668550823,
+     "wrong_commit_rate": 0.9952153110047847,
+     "silent_error_rate": 0.19617224880382775,
+     "keystrokes_saved": 0.07541138865869534,
+     "rate_offer_words": 0.0,
+     "rate_commit": 1.0
+    },
+    "trust": {
+     "ewpm": 3.0933427705024985,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.01349591570971942,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    },
+    "trust_ow": {
+     "ewpm": 3.0933427705024985,
+     "wrong_commit_rate": 0.0,
+     "silent_error_rate": 0.0,
+     "keystrokes_saved": 0.01349591570971942,
+     "rate_offer_words": 0.0,
+     "rate_commit": 0.0
+    }
+   },
+   "gaze_only_ewpm": 3.144311589913579,
+   "diffs": {
+    "trust_ow-commit:ewpm": {
+     "ci": [
+      0.29008652297897564,
+      0.8260863191241994
+     ],
+     "p_le_0": 0.0
+    },
+    "trust_ow-commit:silent_error_rate": {
+     "ci": [
+      -0.29395483263879557,
+      -0.12004882514494969
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:ewpm": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust_ow-trust:silent_error_rate": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "p_le_0": 1.0
+    },
+    "trust-commit:ewpm": {
+     "ci": [
+      0.29008652297897564,
+      0.8260863191241994
+     ],
+     "p_le_0": 0.0
+    },
+    "trust-commit:silent_error_rate": {
+     "ci": [
+      -0.29395483263879557,
+      -0.12004882514494969
+     ],
+     "p_le_0": 1.0
+    }
+   }
+  }
+ },
+ "seconds": 257.5
+}
