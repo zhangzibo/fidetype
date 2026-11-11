@@ -1,7 +1,9 @@
-"""Run the M2-14 OFFER_WORDS real-MEG harness (part_real) on the M1-15 r1 streams.
+"""Run the M2-14 OFFER_WORDS real-MEG harness (part_real) on M1-15 streams.
 
-CPU only, about 4 min. Output: results/ewpm/real.json. Run with the repo .venv:
-    .venv/Scripts/python.exe experiments/2026-11-09-m1-15-sentence-context/ewpm_check.py
+CPU only, about 4 min. Run with the repo .venv:
+    .venv/Scripts/python.exe experiments/2026-11-09-m1-15-sentence-context/ewpm_check.py            # r1 -> results/ewpm/real.json
+    .venv/Scripts/python.exe experiments/2026-11-09-m1-15-sentence-context/ewpm_check.py r2 ewpm-r2 # r2 -> results/ewpm-r2/real.json
+Arg 1: run suffix (streams dir m1-15-sentence-context-<suffix>), default r1. Arg 2: output folder under results/, default ewpm.
 """
 import importlib.util, json, sys
 from pathlib import Path
@@ -10,8 +12,10 @@ sys.path.insert(0, str(REPO / "src"))
 spec = importlib.util.spec_from_file_location("m2ow", REPO / "experiments/2026-11-08-m2-offer-words/run.py")
 m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
 from fidetype.streams.spec import NeuralTextStream
-ROOT = Path("C:/Users/zhang/bci-data/streams/m1-15-sentence-context-r1")
-m.OUT = Path(__file__).resolve().parent / "results" / "ewpm"; m.OUT.mkdir(parents=True, exist_ok=True)
+RUN = sys.argv[1] if len(sys.argv) > 1 else "r1"
+OUTDIR = sys.argv[2] if len(sys.argv) > 2 else "ewpm"
+ROOT = Path(f"C:/Users/zhang/bci-data/streams/m1-15-sentence-context-{RUN}")
+m.OUT = Path(__file__).resolve().parent / "results" / OUTDIR; m.OUT.mkdir(parents=True, exist_ok=True)
 def load_split(split):
     rows = [json.loads(x) for x in (ROOT / split / "labels.jsonl").read_text(encoding="utf-8").splitlines() if x]
     return [(NeuralTextStream.from_npz(ROOT / split / r["file"]), r) for r in rows]

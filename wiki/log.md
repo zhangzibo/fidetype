@@ -246,3 +246,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Licence flags: all Meta EMG sets and LibriBrain NC (emg2pose NC-SA); BNCI P300 CC BY-NC-ND; Dryad code repos have no licence; Toronto code CC BY-SA; TUEG, Armeni, MOUS, Cam-CAN under DUAs; Tsinghua SSVEP terms not stated. Contradiction noted: Du-IN listed as OpenNeuro ds005170, which is Chisco.
 - Recommended first download: Brain-to-Text '25 `t15_copyTask.pkl` (57.79 MB, real RNN logits), then the 11.05 GB neural data; then KT-sEMG (21.0 GB).
 - Tracker: M1-19 real agent numbers; new task M6-05.
+
+## [2026-11-10] query | M1-15 r2 results
+- r2 (plateau schedule, trend stop, sleep prevented) stopped after the epoch-42 eval: 13.0 active min, no suspend gap, `best.pt` epoch 19. Queue `queue-2026-11-10` done 19:38:47; AC sleep back to 30 min.
+- Test (mean over sentences, CER vs target): greedy 0.577, beam + LM (w 1.25) 0.488. M2-10 logistic regression 0.597 / 0.531; r1 0.619 / 0.532 (r1 − r2 paired +0.042 greedy). Shuffled gap +0.214 [+0.200, +0.228] greedy, +0.258 beam.
+- Conv-only head (`--head conv`): 0.602 / 0.503. Sentence context adds −0.025 [−0.031, −0.018] greedy, −0.015 beam. v1 had 0.31.
+- Training curve: val CE minimum 1.991 at epoch 12, 2.498 at the end; val CER flat 0.557–0.573 from epoch 16. Overfitting; the stop fired correctly. LR cut every 5 evals after the last gain (4 cuts; `max_lr_reductions` is only a stop condition). r3 (causal): `patience_evals` 12, `max_lr_reductions` 2.
+- eWPM check on the r2 streams (`ewpm_check.py r2 ewpm-r2`, CPU 284 s): trust 3.06, always commit 2.49, gaze only 3.14. True sentence in the 10-best for 1 of 209 test trials.
+- Updated: `experiments/2026-11-09-m1-15-sentence-context/results.md` (r2 section, results files, `train_curve-r2.png`), `ewpm_check.py` (run suffix + output args), `wiki/questions/decoder-m1-results.md`, `wiki/overview.md`, tracker (M1-15 note, new M1-20), `HANDOFF.md`.

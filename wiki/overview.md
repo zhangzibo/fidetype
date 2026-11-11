@@ -27,7 +27,8 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 
 ## What our own experiments show (2026-11-08)
 - **With small data, a CTC decoder needs a keystroke hint.** CTC alone learned only a text prior. A keystroke auxiliary loss makes it use the MEG (greedy test CER 0.619, target 0.59) ([decoder M1 results](questions/decoder-m1-results.md)). A beam with a Spanish char LM, tuned on val, lowers it to 0.590; greedy stays at 0.619, and the true sentence is never in the 20-best ([M1-C2](../experiments/2026-11-08-m1c2-beam-lm/results.md)).
-- **The trust layer is safe on real MEG, but not yet useful.** It stops all wrong and hallucinated commits. But at key accuracy 0.39, no BCI policy beats gaze typing alone (2.96 vs 3.14 eWPM) ([trust core v0 results](questions/trust-core-v0-results.md#7-per-word-offer-and-partial-correction-2026-11-08)).
+- **Sentence context helps a little at this data size (2026-11-10).** With oracle key timing, a Conv + Transformer keystroke decoder reaches test CER 0.577 greedy and 0.488 with the char LM. The per-key logistic regression gives 0.597 / 0.531. The Transformer itself adds only about 0.02 CER; v1 got 0.31 from it. The model overfits the about 200 unique training sentences ([M1-15 r2](questions/decoder-m1-results.md#m1-15-r2-sentence-context-decoder-trained-to-the-val-plateau-2026-11-10)).
+- **The trust layer is safe on real MEG, but not yet useful.** It stops all wrong and hallucinated commits. But at key accuracy 0.39, no BCI policy beats gaze typing alone (2.96 vs 3.14 eWPM; with the r2 decoder 3.06 vs 3.14) ([trust core v0 results](questions/trust-core-v0-results.md#7-per-word-offer-and-partial-correction-2026-11-08)).
 
 > **Our take:** Usefulness needs a stronger decoder, and every speed claim needs a no-BCI baseline.
 
