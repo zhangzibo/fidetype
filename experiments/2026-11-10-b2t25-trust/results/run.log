@@ -1,0 +1,61 @@
+20:49:31 prep {'n_trials': 1718, 'n_fit': 812, 'n_test': 816, 'n_fit_sentences': 812, 'n_test_sentences': 816, 'fit_test_sentence_overlap': 1, 'days': [25, 27, 34, 46, 48, 69, 74, 76, 81, 83, 88, 90, 95, 223, 244], 'frames': {'min': 71, 'median': 188.0, 'max': 627}, 'greedy_equals_raw': 1709, 'speech_rate_125k': {'chars_per_min': 159.2741387635318, 'words_per_min': 32.410416984559305}, 'published': {'all_1718': {'n': 1718, 'wer_published': 0.04337708275155915, 'sentence_exact_published': 0.8096623981373691, 'per_raw_greedy': 0.09540582591408073, 'per_published_sentence': 0.026558043046071397}, 'vocab_50': {'n': 90, 'wer_published': 0.0024630541871921183, 'sentence_exact_published': 0.9888888888888889, 'per_raw_greedy': 0.018610421836228287, 'per_published_sentence': 0.0012406947890818859}, 'vocab_125k': {'n': 1628, 'wer_published': 0.04498403792202767, 'sentence_exact_published': 0.7997542997542998, 'per_raw_greedy': 0.0981775031345155, 'per_published_sentence': 0.02747178936055884}, 'fit': {'n': 812, 'wer_published': 0.04681504221028396, 'sentence_exact_published': 0.7931034482758621, 'per_raw_greedy': 0.10298547129695251, 'per_published_sentence': 0.028038625088589654}, 'test': {'n': 816, 'wer_published': 0.04312195121951219, 'sentence_exact_published': 0.8063725490196079, 'per_raw_greedy': 0.0932633103947845, 'per_published_sentence': 0.026892430278884463}}, 'lexicon_words': 124926, 'tatoeba_word_types': 82442, 'cue_word_tokens_125k': 10337, 'cue_word_oov_tokens': 2, 'cue_sentences_in_tatoeba': 64, 'seconds': 25.3}
+20:49:31 done
+20:50:18 tune: phoneme beam on 400 fit trials (38s)
+20:50:24 tune {'lm_weight': 0.0, 'edit_penalty': 2.0, 'word_bonus': 0.0, 'wer': 0.23382519863791146, 'sentence_exact': 0.1825, 'truth_in_nbest': 0.4125}
+20:50:25 tune {'lm_weight': 0.0, 'edit_penalty': 2.0, 'word_bonus': 3.0, 'wer': 0.23193340900491866, 'sentence_exact': 0.1825, 'truth_in_nbest': 0.415}
+20:50:26 tune {'lm_weight': 0.0, 'edit_penalty': 4.0, 'word_bonus': 0.0, 'wer': 0.19296254256526674, 'sentence_exact': 0.275, 'truth_in_nbest': 0.475}
+20:50:27 tune {'lm_weight': 0.0, 'edit_penalty': 4.0, 'word_bonus': 3.0, 'wer': 0.19069239500567536, 'sentence_exact': 0.2825, 'truth_in_nbest': 0.4825}
+20:50:29 tune {'lm_weight': 0.0, 'edit_penalty': 8.0, 'word_bonus': 0.0, 'wer': 0.18766553159288688, 'sentence_exact': 0.295, 'truth_in_nbest': 0.48}
+20:50:30 tune {'lm_weight': 0.0, 'edit_penalty': 8.0, 'word_bonus': 3.0, 'wer': 0.18577374195989407, 'sentence_exact': 0.3025, 'truth_in_nbest': 0.4825}
+20:50:31 tune {'lm_weight': 0.5, 'edit_penalty': 2.0, 'word_bonus': 0.0, 'wer': 0.23420355656451003, 'sentence_exact': 0.205, 'truth_in_nbest': 0.43}
+20:50:32 tune {'lm_weight': 0.5, 'edit_penalty': 2.0, 'word_bonus': 3.0, 'wer': 0.23117669315172154, 'sentence_exact': 0.21, 'truth_in_nbest': 0.4375}
+20:50:33 tune {'lm_weight': 0.5, 'edit_penalty': 4.0, 'word_bonus': 0.0, 'wer': 0.19069239500567536, 'sentence_exact': 0.2775, 'truth_in_nbest': 0.4825}
+20:50:34 tune {'lm_weight': 0.5, 'edit_penalty': 4.0, 'word_bonus': 3.0, 'wer': 0.1872871736662883, 'sentence_exact': 0.2875, 'truth_in_nbest': 0.4925}
+20:50:35 tune {'lm_weight': 0.5, 'edit_penalty': 8.0, 'word_bonus': 0.0, 'wer': 0.17669315172152858, 'sentence_exact': 0.3275, 'truth_in_nbest': 0.5175}
+20:50:36 tune {'lm_weight': 0.5, 'edit_penalty': 8.0, 'word_bonus': 3.0, 'wer': 0.1744230041619372, 'sentence_exact': 0.3325, 'truth_in_nbest': 0.52}
+20:50:37 tune {'lm_weight': 1.0, 'edit_penalty': 2.0, 'word_bonus': 0.0, 'wer': 0.2436625047294741, 'sentence_exact': 0.1725, 'truth_in_nbest': 0.42}
+20:50:38 tune {'lm_weight': 1.0, 'edit_penalty': 2.0, 'word_bonus': 3.0, 'wer': 0.23798713583049566, 'sentence_exact': 0.185, 'truth_in_nbest': 0.4225}
+20:50:39 tune {'lm_weight': 1.0, 'edit_penalty': 4.0, 'word_bonus': 0.0, 'wer': 0.200529701097238, 'sentence_exact': 0.25, 'truth_in_nbest': 0.4825}
+20:50:40 tune {'lm_weight': 1.0, 'edit_penalty': 4.0, 'word_bonus': 3.0, 'wer': 0.1952326901248581, 'sentence_exact': 0.2625, 'truth_in_nbest': 0.4825}
+20:50:41 tune {'lm_weight': 1.0, 'edit_penalty': 8.0, 'word_bonus': 0.0, 'wer': 0.17858494135452138, 'sentence_exact': 0.315, 'truth_in_nbest': 0.5175}
+20:50:42 tune {'lm_weight': 1.0, 'edit_penalty': 8.0, 'word_bonus': 3.0, 'wer': 0.17517972001513432, 'sentence_exact': 0.325, 'truth_in_nbest': 0.52}
+20:50:44 tune {'lm_weight': 1.5, 'edit_penalty': 2.0, 'word_bonus': 0.0, 'wer': 0.24782444192205827, 'sentence_exact': 0.1675, 'truth_in_nbest': 0.4125}
+20:50:45 tune {'lm_weight': 1.5, 'edit_penalty': 2.0, 'word_bonus': 3.0, 'wer': 0.246311010215664, 'sentence_exact': 0.1775, 'truth_in_nbest': 0.4175}
+20:50:46 tune {'lm_weight': 1.5, 'edit_penalty': 4.0, 'word_bonus': 0.0, 'wer': 0.2103670071888006, 'sentence_exact': 0.225, 'truth_in_nbest': 0.475}
+20:50:47 tune {'lm_weight': 1.5, 'edit_penalty': 4.0, 'word_bonus': 3.0, 'wer': 0.20734014377601212, 'sentence_exact': 0.24, 'truth_in_nbest': 0.475}
+20:50:48 tune {'lm_weight': 1.5, 'edit_penalty': 8.0, 'word_bonus': 0.0, 'wer': 0.18501702610669693, 'sentence_exact': 0.2925, 'truth_in_nbest': 0.5175}
+20:50:49 tune {'lm_weight': 1.5, 'edit_penalty': 8.0, 'word_bonus': 3.0, 'wer': 0.18274687854710556, 'sentence_exact': 0.305, 'truth_in_nbest': 0.5225}
+20:50:50 tune best {'lm_weight': 0.5, 'edit_penalty': 8.0, 'word_bonus': 3.0, 'wer': 0.1744230041619372, 'sentence_exact': 0.3325, 'truth_in_nbest': 0.52}
+20:50:50 done
+20:52:52 tune: phoneme beam on 400 fit trials (31s)
+20:54:04 tune {'lm_weight': 0.5, 'edit_penalty': 4.0, 'word_bonus': 3.0, 'wer': 0.19107075293227394, 'sentence_exact': 0.2825, 'truth_in_nbest': 0.4825}
+20:54:12 tune {'lm_weight': 0.5, 'edit_penalty': 4.0, 'word_bonus': 6.0, 'wer': 0.19107075293227394, 'sentence_exact': 0.2825, 'truth_in_nbest': 0.4825}
+20:54:21 tune {'lm_weight': 0.5, 'edit_penalty': 8.0, 'word_bonus': 3.0, 'wer': 0.16761256148316309, 'sentence_exact': 0.3525, 'truth_in_nbest': 0.54}
+20:54:29 tune {'lm_weight': 0.5, 'edit_penalty': 8.0, 'word_bonus': 6.0, 'wer': 0.16761256148316309, 'sentence_exact': 0.3525, 'truth_in_nbest': 0.54}
+20:54:37 tune {'lm_weight': 0.5, 'edit_penalty': 12.0, 'word_bonus': 3.0, 'wer': 0.16874763526295877, 'sentence_exact': 0.35, 'truth_in_nbest': 0.5275}
+20:54:45 tune {'lm_weight': 0.5, 'edit_penalty': 12.0, 'word_bonus': 6.0, 'wer': 0.16874763526295877, 'sentence_exact': 0.35, 'truth_in_nbest': 0.5275}
+20:54:53 tune {'lm_weight': 1.0, 'edit_penalty': 4.0, 'word_bonus': 3.0, 'wer': 0.2024214907302308, 'sentence_exact': 0.25, 'truth_in_nbest': 0.4725}
+20:55:01 tune {'lm_weight': 1.0, 'edit_penalty': 4.0, 'word_bonus': 6.0, 'wer': 0.20279984865682937, 'sentence_exact': 0.2475, 'truth_in_nbest': 0.4725}
+20:55:09 tune {'lm_weight': 1.0, 'edit_penalty': 8.0, 'word_bonus': 3.0, 'wer': 0.16799091940976163, 'sentence_exact': 0.3475, 'truth_in_nbest': 0.545}
+20:55:17 tune {'lm_weight': 1.0, 'edit_penalty': 8.0, 'word_bonus': 6.0, 'wer': 0.1683692773363602, 'sentence_exact': 0.345, 'truth_in_nbest': 0.545}
+20:55:25 tune {'lm_weight': 1.0, 'edit_penalty': 12.0, 'word_bonus': 3.0, 'wer': 0.16647748770336737, 'sentence_exact': 0.3625, 'truth_in_nbest': 0.5425}
+20:55:33 tune {'lm_weight': 1.0, 'edit_penalty': 12.0, 'word_bonus': 6.0, 'wer': 0.16685584562996594, 'sentence_exact': 0.36, 'truth_in_nbest': 0.5425}
+20:55:33 tune best {'lm_weight': 1.0, 'edit_penalty': 12.0, 'word_bonus': 3.0, 'wer': 0.16647748770336737, 'sentence_exact': 0.3625, 'truth_in_nbest': 0.5425}
+20:55:33 done
+21:06:24 w_a_greedy_commit: eWPM 10.49 wrong-commit 0.665 silent 0.051 WER 0.172 CER 0.110 exact 0.335 commit 1.00 offer 0.00 abstain 0.00 guardAUROC 0.621 (20.7s)
+21:06:24 w_p_published_commit: eWPM 19.61 wrong-commit 0.194 silent 0.025 WER 0.043 CER 0.031 exact 0.806 commit 1.00 offer 0.00 abstain 0.00 guardAUROC 0.500 (0.7s)
+21:13:20 w_b_top1_commit: eWPM 11.45 wrong-commit 0.610 silent 0.044 WER 0.149 CER 0.095 exact 0.390 commit 1.00 offer 0.00 abstain 0.00 guardAUROC 0.702 (415.7s)
+21:14:06 w_c_trust: eWPM 11.55 wrong-commit 0.059 silent 0.002 WER 0.149 CER 0.095 exact 0.390 commit 0.23 offer 0.77 abstain 0.00 guardAUROC 0.702 (45.5s)
+21:20:13 w_d_trust_no_calib: eWPM 11.57 wrong-commit 0.071 silent 0.006 WER 0.145 CER 0.096 exact 0.403 commit 0.26 offer 0.74 abstain 0.00 guardAUROC 0.737 (367.3s)
+21:20:17 w_e_trust_no_guard: eWPM 11.51 wrong-commit 0.036 silent 0.000 WER 0.149 CER 0.095 exact 0.390 commit 0.17 offer 0.83 abstain 0.00 guardAUROC 0.702 (4.2s)
+21:20:58 w_q_published_trust: eWPM 18.77 wrong-commit 0.044 silent 0.004 WER 0.043 CER 0.031 exact 0.806 commit 0.47 offer 0.53 abstain 0.00 guardAUROC 0.667 (41.2s)
+21:27:22 audit w_b_top1_commit: real: commit 1.00 fluent+commit 1.00 other_trial: commit 1.00 fluent+commit 1.00 frame_shuffled: commit 1.00 fluent+commit 1.00 uniform: commit 1.00 fluent+commit 0.09
+21:27:22 audit w_c_trust: real: commit 0.22 fluent+commit 0.22 other_trial: commit 0.22 fluent+commit 0.22 frame_shuffled: commit 0.00 fluent+commit 0.00 uniform: commit 0.00 fluent+commit 0.00
+21:31:02 audit w_d_trust_no_calib: real: commit 0.25 fluent+commit 0.25 other_trial: commit 0.25 fluent+commit 0.25 frame_shuffled: commit 0.00 fluent+commit 0.00 uniform: commit 0.00 fluent+commit 0.00
+21:31:32 audit w_q_published_trust: real: commit 0.48 fluent+commit 0.48 other_trial: commit 0.00 fluent+commit 0.00 frame_shuffled: commit 0.00 fluent+commit 0.00 uniform: commit 0.00 fluent+commit 0.00
+21:31:33 p_a_greedy_commit: eWPM 10.16 wrong-commit 0.756 silent 0.064 WER 0.213 CER 0.097 exact 0.244 commit 1.00 offer 0.00 abstain 0.00 guardAUROC 0.602 (0.7s)
+21:33:51 p_b_top1_commit: eWPM 10.21 wrong-commit 0.754 silent 0.062 WER 0.211 CER 0.094 exact 0.246 commit 1.00 offer 0.00 abstain 0.00 guardAUROC 0.825 (138.3s)
+21:34:26 p_c_trust: eWPM 10.20 wrong-commit 0.054 silent 0.002 WER 0.211 CER 0.094 exact 0.246 commit 0.19 offer 0.81 abstain 0.00 guardAUROC 0.825 (35.1s)
+21:34:44 done
+21:44:38 extra {'word_conf_auroc': 0.8442556615842852, 'n_words_top1': 5118, 'top1_word_error_share': 0.14712778429073858, 'auroc_published_wrong_risk': 0.6610605594244161, 'auroc_published_wrong_neg_p_top1': 0.662450463622023, 'extra_check_ewpm': 11.545649629165748}
+21:44:38 done

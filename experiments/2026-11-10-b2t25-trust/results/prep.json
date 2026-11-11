@@ -1,0 +1,227 @@
+{
+ "n_trials": 1718,
+ "n_fit": 812,
+ "n_test": 816,
+ "n_fit_sentences": 812,
+ "n_test_sentences": 816,
+ "fit_test_sentence_overlap": 1,
+ "days": [
+  25,
+  27,
+  34,
+  46,
+  48,
+  69,
+  74,
+  76,
+  81,
+  83,
+  88,
+  90,
+  95,
+  223,
+  244
+ ],
+ "frames": {
+  "min": 71,
+  "median": 188.0,
+  "max": 627
+ },
+ "greedy_equals_raw": 1709,
+ "speech_rate_125k": {
+  "chars_per_min": 159.2741387635318,
+  "words_per_min": 32.410416984559305
+ },
+ "published": {
+  "all_1718": {
+   "n": 1718,
+   "wer_published": 0.04337708275155915,
+   "sentence_exact_published": 0.8096623981373691,
+   "per_raw_greedy": 0.09540582591408073,
+   "per_published_sentence": 0.026558043046071397
+  },
+  "vocab_50": {
+   "n": 90,
+   "wer_published": 0.0024630541871921183,
+   "sentence_exact_published": 0.9888888888888889,
+   "per_raw_greedy": 0.018610421836228287,
+   "per_published_sentence": 0.0012406947890818859
+  },
+  "vocab_125k": {
+   "n": 1628,
+   "wer_published": 0.04498403792202767,
+   "sentence_exact_published": 0.7997542997542998,
+   "per_raw_greedy": 0.0981775031345155,
+   "per_published_sentence": 0.02747178936055884
+  },
+  "fit": {
+   "n": 812,
+   "wer_published": 0.04681504221028396,
+   "sentence_exact_published": 0.7931034482758621,
+   "per_raw_greedy": 0.10298547129695251,
+   "per_published_sentence": 0.028038625088589654
+  },
+  "test": {
+   "n": 816,
+   "wer_published": 0.04312195121951219,
+   "sentence_exact_published": 0.8063725490196079,
+   "per_raw_greedy": 0.0932633103947845,
+   "per_published_sentence": 0.026892430278884463
+  }
+ },
+ "published_by_day": {
+  "25": {
+   "n": 50,
+   "vocab_sizes": [
+    50
+   ],
+   "wer_published": 0.0044444444444444444,
+   "per_raw_greedy": 0.016666666666666666
+  },
+  "27": {
+   "n": 70,
+   "vocab_sizes": [
+    50,
+    125000
+   ],
+   "wer_published": 0.05080213903743316,
+   "per_raw_greedy": 0.09174311926605505
+  },
+  "34": {
+   "n": 100,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.1360544217687075,
+   "per_raw_greedy": 0.1288559156579461
+  },
+  "46": {
+   "n": 99,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.04607508532423208,
+   "per_raw_greedy": 0.0950463149416029
+  },
+  "48": {
+   "n": 115,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.054016620498614956,
+   "per_raw_greedy": 0.11704119850187265
+  },
+  "69": {
+   "n": 115,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.06151645207439199,
+   "per_raw_greedy": 0.12445488091244548
+  },
+  "74": {
+   "n": 74,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.038876889848812095,
+   "per_raw_greedy": 0.10173697270471464
+  },
+  "76": {
+   "n": 208,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.046021840873634944,
+   "per_raw_greedy": 0.1036101083032491
+  },
+  "81": {
+   "n": 138,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.04055619930475087,
+   "per_raw_greedy": 0.10576142818501488
+  },
+  "83": {
+   "n": 169,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.04368029739776952,
+   "per_raw_greedy": 0.10133967156439067
+  },
+  "88": {
+   "n": 90,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.025390625,
+   "per_raw_greedy": 0.0692757534862798
+  },
+  "90": {
+   "n": 148,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.03252885624344176,
+   "per_raw_greedy": 0.07268722466960352
+  },
+  "95": {
+   "n": 50,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.009933774834437087,
+   "per_raw_greedy": 0.07756024096385543
+  },
+  "223": {
+   "n": 146,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.030969030969030968,
+   "per_raw_greedy": 0.09329379562043795
+  },
+  "244": {
+   "n": 146,
+   "vocab_sizes": [
+    125000
+   ],
+   "wer_published": 0.018231540565177756,
+   "per_raw_greedy": 0.07330508474576271
+  }
+ },
+ "lexicon_words": 124926,
+ "tatoeba_word_types": 82442,
+ "cue_word_tokens_125k": 10337,
+ "cue_word_oov_tokens": 2,
+ "cue_oov_words": [
+  "pike's",
+  "shallows"
+ ],
+ "cue_sentences_in_tatoeba": 64,
+ "cue_sentences_in_tatoeba_examples": [
+  "buy one get one free",
+  "desperate times call for desperate measures",
+  "enjoy the rest of your day",
+  "go over there",
+  "have you ever been to hawaii",
+  "he ate a piece of the pie",
+  "he made me laugh",
+  "how do you like it",
+  "i can relate to that",
+  "i can't really complain",
+  "i can't think of the name",
+  "i changed that",
+  "i didn't know that",
+  "i don't know why",
+  "i don't want to do anything",
+  "i grew up in new jersey",
+  "i have a garden",
+  "i have four children",
+  "i like classical music",
+  "i like that kind of stuff"
+ ],
+ "seconds": 25.3
+}

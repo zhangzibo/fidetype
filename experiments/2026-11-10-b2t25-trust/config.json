@@ -1,0 +1,22 @@
+{
+ "description": "Trust core on Brain-to-Text '25 copy-task logits (Card et al. 2024, T15, intracortical attempted speech). First test of NeuralTextStream + trust layer on a second device type. CPU only.",
+ "pkl": "C:/Users/zhang/bci-data/brain-to-text-25/t15_copyTask.pkl",
+ "cmudict": "C:/Users/zhang/bci-data/lexicon/cmudict/cmudict.dict",
+ "char_lm": "C:/Users/zhang/bci-data/lm/eng_tatoeba_6gram_mkn.npz",
+ "tatoeba_eng": "C:/Users/zhang/bci-data/corpora/tatoeba/eng_sentences.tsv.bz2",
+ "word_counts_cache": "C:/Users/zhang/bci-data/lm/eng_tatoeba_word_counts.json",
+ "seed": 0,
+ "vocab_size_main": 125000,
+ "split": "per post-implant day, trials in file order: first half -> fit (calibration + policy), second half -> test",
+ "phoneme_beam": {"search": "vector", "beam": 64, "n_best": 20, "prune_topk": null, "prune_logp": -8.0, "space_rules": true},
+ "word_decoder_grid": {"lm_weight": [0.5, 1.0], "edit_penalty": [4.0, 8.0, 12.0], "word_bonus": [3.0, 6.0]},
+ "fallback_min_count": 5,
+ "word_decoder_fixed": {"unigram_weight": 1.0, "per_slot": 6, "per_hyp": 8, "n_best": 10, "drop_penalty": 15.0, "oov_logp": -20.0},
+ "tune_trials": 400,
+ "max_wrong_commit": 0.05,
+ "published_margin": 2.0,
+ "audit_n": 300,
+ "bootstrap_B": 1000,
+ "user": "UserConfig.aac_gaze(chars_per_min = measured T15 copy-task speech rate)",
+ "gaze_chars_per_min": 20.0
+}

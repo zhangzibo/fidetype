@@ -1,0 +1,112 @@
+{
+ "n": 400,
+ "rows": [
+  {
+   "lm_weight": 0.5,
+   "edit_penalty": 4.0,
+   "word_bonus": 3.0,
+   "wer": 0.19107075293227394,
+   "sentence_exact": 0.2825,
+   "truth_in_nbest": 0.4825
+  },
+  {
+   "lm_weight": 0.5,
+   "edit_penalty": 4.0,
+   "word_bonus": 6.0,
+   "wer": 0.19107075293227394,
+   "sentence_exact": 0.2825,
+   "truth_in_nbest": 0.4825
+  },
+  {
+   "lm_weight": 0.5,
+   "edit_penalty": 8.0,
+   "word_bonus": 3.0,
+   "wer": 0.16761256148316309,
+   "sentence_exact": 0.3525,
+   "truth_in_nbest": 0.54
+  },
+  {
+   "lm_weight": 0.5,
+   "edit_penalty": 8.0,
+   "word_bonus": 6.0,
+   "wer": 0.16761256148316309,
+   "sentence_exact": 0.3525,
+   "truth_in_nbest": 0.54
+  },
+  {
+   "lm_weight": 0.5,
+   "edit_penalty": 12.0,
+   "word_bonus": 3.0,
+   "wer": 0.16874763526295877,
+   "sentence_exact": 0.35,
+   "truth_in_nbest": 0.5275
+  },
+  {
+   "lm_weight": 0.5,
+   "edit_penalty": 12.0,
+   "word_bonus": 6.0,
+   "wer": 0.16874763526295877,
+   "sentence_exact": 0.35,
+   "truth_in_nbest": 0.5275
+  },
+  {
+   "lm_weight": 1.0,
+   "edit_penalty": 4.0,
+   "word_bonus": 3.0,
+   "wer": 0.2024214907302308,
+   "sentence_exact": 0.25,
+   "truth_in_nbest": 0.4725
+  },
+  {
+   "lm_weight": 1.0,
+   "edit_penalty": 4.0,
+   "word_bonus": 6.0,
+   "wer": 0.20279984865682937,
+   "sentence_exact": 0.2475,
+   "truth_in_nbest": 0.4725
+  },
+  {
+   "lm_weight": 1.0,
+   "edit_penalty": 8.0,
+   "word_bonus": 3.0,
+   "wer": 0.16799091940976163,
+   "sentence_exact": 0.3475,
+   "truth_in_nbest": 0.545
+  },
+  {
+   "lm_weight": 1.0,
+   "edit_penalty": 8.0,
+   "word_bonus": 6.0,
+   "wer": 0.1683692773363602,
+   "sentence_exact": 0.345,
+   "truth_in_nbest": 0.545
+  },
+  {
+   "lm_weight": 1.0,
+   "edit_penalty": 12.0,
+   "word_bonus": 3.0,
+   "wer": 0.16647748770336737,
+   "sentence_exact": 0.3625,
+   "truth_in_nbest": 0.5425
+  },
+  {
+   "lm_weight": 1.0,
+   "edit_penalty": 12.0,
+   "word_bonus": 6.0,
+   "wer": 0.16685584562996594,
+   "sentence_exact": 0.36,
+   "truth_in_nbest": 0.5425
+  }
+ ],
+ "best": {
+  "lm_weight": 1.0,
+  "edit_penalty": 12.0,
+  "word_bonus": 3.0,
+  "wer": 0.16647748770336737,
+  "sentence_exact": 0.3625,
+  "truth_in_nbest": 0.5425
+ },
+ "phoneme_beam_per": 0.11123149151318165,
+ "phoneme_greedy_per": 0.11222462983026363,
+ "seconds": 192.3
+}

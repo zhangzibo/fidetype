@@ -72,15 +72,24 @@ DecodeFn = Callable[[NeuralTextStream], NBest]
 
 
 class Item:
-    """One intended sentence: its first stream and an optional ``regen``."""
+    """One intended sentence: its first stream and an optional ``regen``.
+
+    ``stream_text`` is the truth in the token space of the stream, if it
+    differs from ``text``. Example: a phoneme stream (``text`` is words,
+    ``stream_text`` is the phoneme string). Only the frame-level steps use
+    it: the frame temperature fit, the character ECE and ``greedy_cer``.
+    The default (None) means ``text``.
+    """
 
     def __init__(
         self,
         stream: NeuralTextStream,
         text: str,
         regen: Callable[[int], NeuralTextStream] | None = None,
+        stream_text: str | None = None,
     ) -> None:
         self.text = text
+        self.stream_text = text if stream_text is None else stream_text
         self._streams: dict[int, NeuralTextStream] = {0: stream}
         self.regen = regen
 
@@ -223,7 +232,7 @@ class TrustPipeline:
         if cfg.use_calibration and temp_items:
             # 1. Frame level, before LM fusion. 2. Sentence level, on the n-best scores.
             self.frame_scaler = fit_frame_temperature(
-                [it.stream(0) for it in temp_items], [it.text for it in temp_items]
+                [it.stream(0) for it in temp_items], [it.stream_text for it in temp_items]
             )
             nbs = [self.decode(it, 0) for it in temp_items]
             self.calibrator = NBestCalibrator.fit(nbs, [it.text for it in temp_items], fit_char=False)
@@ -357,8 +366,8 @@ class TrustPipeline:
             "n_test": len(items),
             "cer": sum(edit_distance(t, h) for t, h in zip(truths, tops)) / n_chars,
             "wer": sum(edit_distance(t.split(), h.split()) for t, h in zip(truths, tops)) / n_words,
-            "greedy_cer": sum(edit_distance(t, ctc_greedy_decode(it.stream(0))) for t, it in zip(truths, items))
-            / n_chars,
+            "greedy_cer": sum(edit_distance(it.stream_text, ctc_greedy_decode(it.stream(0))) for it in items)
+            / max(1, sum(len(it.stream_text) for it in items)),
             "top1_sentence_acc": float(np.mean([t == h for t, h in zip(truths, tops)])),
         }
         top1_ok = np.array([t == h for t, h in zip(truths, tops)])
@@ -368,9 +377,9 @@ class TrustPipeline:
         m["ece_sentence_after"] = expected_calibration_error(p_cal, top1_ok)
         # Character ECE on the greedy CTC peaks (acoustic evidence only).
         c_raw, c_cal, c_ok = [], [], []
-        for it, t in zip(items, truths):
+        for it in items:
             s = it.stream(0)
-            pk = greedy_peaks(s, t)
+            pk = greedy_peaks(s, it.stream_text)
             c_raw.append(pk["confidence"])
             c_ok.append(pk["correct"])
             lp = self.frame_scaler.transform_logits(s.log_probs[pk["centres"]]) if pk["centres"].size else np.zeros((0, 1))

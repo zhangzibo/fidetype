@@ -22,8 +22,17 @@ PDFs and cloned repos are git-ignored because this repo is public and they carry
 ## Datasets (not stored here)
 | Dataset | Access |
 |---|---|
-| SpanishBCBL (v1) | https://huggingface.co/datasets/bcbl190626/SpanishBCBL (gated, ~262 GB) |
+| SpanishBCBL (v1) | https://huggingface.co/datasets/bcbl190626/SpanishBCBL (not gated, 280.4 GB for the whole repo per the HF API on 2026-11-10; an earlier note said "gated, ~262 GB") |
 | EnglishBCBL (v2) | embargoed |
+
+### Downloaded datasets (files outside the repo, never committed)
+| Slug | File | Source | Licence | Local path | Size (bytes) | SHA-256 |
+|---|---|---|---|---|---|---|
+| brain-to-text-25 | `t15_copyTask.pkl` | Card et al. 2024, Dryad https://doi.org/10.5061/dryad.dncjsxm85 (version 2025-07-03). Downloaded 2026-11-10 from the HF mirror `Paulownia/Brain-to-text_25_data` (`additional_files/`), because Dryad file downloads need a login. The digest equals the Dryad API digest. | CC0 1.0 (Dryad). Companion code `Neuroprosthetics-Lab/nejm-brain-to-text`: no licence, do not copy | `C:\Users\zhang\bci-data\brain-to-text-25\t15_copyTask.pkl` | 57 786 348 | `7313b9a1102794cfd31455a85d3d16a1aca962aa730a7134d9346fb8f5e165e3` |
+| brain-to-text-25 | `README.md` (dataset card) | same | CC0 1.0 | `C:\Users\zhang\bci-data\brain-to-text-25\README.md` | 3 183 | `3516e6c4c20cfc8c66e5b73fe70474208093ce807034f32f1500087622908e70` |
+| cmudict | `cmudict.dict` | https://github.com/cmusphinx/cmudict, commit `74790861f652b15e4ac49015a90074ad62a27690` | BSD-2-Clause style (CMU; keep the copyright notice). Commercial use allowed | `C:\Users\zhang\bci-data\lexicon\cmudict\cmudict.dict` (+ `LICENSE`) | 3 618 488 | `81917843c7f44ce2b094ac63873c2c7a4cf802040792c455ba3ca406891c3d22` |
+
+Pickle safety (`t15_copyTask.pkl`): an opcode scan (`pickletools.genops`, no load) found only 4 imports: `numpy.core.multiarray._reconstruct`, `numpy.ndarray`, `numpy.dtype`, `numpy.core.multiarray.scalar`. No `INST`/`OBJ`/`NEWOBJ`/extension/persistent-id opcodes. We load it only with the whitelist Unpickler in `src/fidetype/adapters/b2t25.py`.
 
 ### Survey 2026-11-10 (links only, no files; see [wiki/questions/public-datasets.md](../wiki/questions/public-datasets.md))
 | Dataset | Link | Licence |

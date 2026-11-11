@@ -1,0 +1,1689 @@
+{
+ "n_fit": 812,
+ "n_test": 816,
+ "word_decoder": {
+  "unigram_weight": 1.0,
+  "per_slot": 6,
+  "per_hyp": 8,
+  "n_best": 10,
+  "drop_penalty": 15.0,
+  "oov_logp": -20.0,
+  "lm_weight": 1.0,
+  "edit_penalty": 12.0,
+  "word_bonus": 3.0
+ },
+ "phoneme_beam": {
+  "search": "vector",
+  "beam": 64,
+  "n_best": 20,
+  "prune_topk": null,
+  "prune_logp": -8.0,
+  "space_rules": true
+ },
+ "user_chars_per_min": 159.2741387635318,
+ "levels": {
+  "word": {
+   "policies": {
+    "w_a_greedy_commit": {
+     "n_test": 816,
+     "cer": 0.10977599172402817,
+     "wer": 0.17151219512195123,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.33455882352941174,
+     "ece_sentence_before": 0.6654411764705883,
+     "ece_sentence_after": 0.6654411764705883,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.08984242318168206,
+     "coverage": 0.33455882352941174,
+     "coverage_in_nbest": 1.0,
+     "coverage_with_other": 0.33455882352941174,
+     "mean_set_size": 1.0,
+     "empty_rate": 0.0,
+     "miss_rate": 0.6654411764705883,
+     "word_coverage": 0.8303693570451436,
+     "word_mean_set_size": 1.0,
+     "guard_auroc": 0.6212703809388892,
+     "guard_auroc_low_evidence": 0.6212703809388892,
+     "guard_auroc_inconsistency": 0.5,
+     "p_top1_auroc": 0.5,
+     "n_sentences": 816.0,
+     "ewpm": 10.490967827399016,
+     "ewpm_partial": 10.997234371348567,
+     "communicated_rate": 0.9485294117647058,
+     "wrong_commit_rate": 0.6654411764705882,
+     "silent_error_rate": 0.051470588235294115,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.10977599172402817,
+     "commit_share": 1.0,
+     "mean_time_s": 33.98581746823023,
+     "mean_attempts": 1.0,
+     "rate_commit": 1.0,
+     "rate_offer": 0.0,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.8284878048780487,
+     "keystrokes_saved": 0.7504078303425775,
+     "share_words_system": 0.790829268292683,
+     "share_words_selected": 0.0,
+     "share_words_typed": 0.1553170731707317,
+     "fit_temperature_frame": 1.0,
+     "fit_temperature_sentence": 1.0,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.0,
+     "fit_word_conformal_q": "inf",
+     "fit_calib_miss_rate": 0.6527093596059114,
+     "truth_in_nbest": 0.33455882352941174,
+     "wer_by_day": {
+      "27": 0.3125,
+      "34": 0.21403508771929824,
+      "46": 0.18421052631578946,
+      "48": 0.19363395225464192,
+      "69": 0.19637462235649547,
+      "74": 0.17094017094017094,
+      "76": 0.20198675496688742,
+      "81": 0.19212962962962962,
+      "83": 0.18929254302103252,
+      "88": 0.11587982832618025,
+      "90": 0.13673469387755102,
+      "95": 0.14193548387096774,
+      "223": 0.13076923076923078,
+      "244": 0.12199630314232902
+     },
+     "seconds": 20.7
+    },
+    "w_p_published_commit": {
+     "n_test": 816,
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.8063725490196079,
+     "ece_sentence_before": 0.19362745098039214,
+     "ece_sentence_after": 0.19362745098039214,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.08984242318168206,
+     "coverage": 0.8063725490196079,
+     "coverage_in_nbest": 1.0,
+     "coverage_with_other": 0.8063725490196079,
+     "mean_set_size": 1.0,
+     "empty_rate": 0.0,
+     "miss_rate": 0.19362745098039214,
+     "word_coverage": 0.9575214341387374,
+     "word_mean_set_size": 1.0,
+     "guard_auroc": 0.5,
+     "guard_auroc_low_evidence": 0.3658670308953099,
+     "guard_auroc_inconsistency": 0.5,
+     "p_top1_auroc": 0.5,
+     "n_sentences": 816.0,
+     "ewpm": 19.612129926967807,
+     "ewpm_partial": 19.972057306437392,
+     "communicated_rate": 0.9754901960784313,
+     "wrong_commit_rate": 0.19362745098039216,
+     "silent_error_rate": 0.024509803921568627,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.03091552938367883,
+     "commit_share": 1.0,
+     "mean_time_s": 18.79464099764199,
+     "mean_attempts": 1.0,
+     "rate_commit": 1.0,
+     "rate_offer": 0.0,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.9568780487804878,
+     "keystrokes_saved": 0.940038992559583,
+     "share_words_system": 0.9432195121951219,
+     "share_words_selected": 0.0,
+     "share_words_typed": 0.034926829268292686,
+     "fit_temperature_frame": 1.0,
+     "fit_temperature_sentence": 1.0,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.0,
+     "fit_word_conformal_q": 0.0,
+     "fit_calib_miss_rate": 0.17733990147783252,
+     "truth_in_nbest": 0.8063725490196079,
+     "wer_by_day": {
+      "27": 0.11458333333333333,
+      "34": 0.1368421052631579,
+      "46": 0.04276315789473684,
+      "48": 0.04509283819628647,
+      "69": 0.0634441087613293,
+      "74": 0.01282051282051282,
+      "76": 0.061258278145695365,
+      "81": 0.03935185185185185,
+      "83": 0.04780114722753346,
+      "88": 0.030042918454935622,
+      "90": 0.024489795918367346,
+      "95": 0.0064516129032258064,
+      "223": 0.023076923076923078,
+      "244": 0.011090573012939002
+     },
+     "seconds": 0.7
+    },
+    "w_b_top1_commit": {
+     "n_test": 816,
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.3897058823529412,
+     "ece_sentence_before": 0.4481117937902753,
+     "ece_sentence_after": 0.06692354956349712,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.12957462565157926,
+     "coverage": 0.5588235294117647,
+     "coverage_in_nbest": 0.8976377952755905,
+     "coverage_with_other": 0.5588235294117647,
+     "mean_set_size": 3.403186274509804,
+     "empty_rate": 0.0,
+     "miss_rate": 0.37745098039215685,
+     "word_coverage": 0.8948808128175069,
+     "word_mean_set_size": 1.2532239155920282,
+     "guard_auroc": 0.7021103281048723,
+     "guard_auroc_low_evidence": 0.7005316864944053,
+     "guard_auroc_inconsistency": 0.7152951428354929,
+     "p_top1_auroc": 0.7967341062362658,
+     "n_sentences": 816.0,
+     "ewpm": 11.449637382561223,
+     "ewpm_partial": 11.905844838548031,
+     "communicated_rate": 0.9558823529411765,
+     "wrong_commit_rate": 0.6102941176470589,
+     "silent_error_rate": 0.04411764705882353,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.09533282934786934,
+     "commit_share": 1.0,
+     "mean_time_s": 31.429199821171405,
+     "mean_attempts": 1.0,
+     "rate_commit": 1.0,
+     "rate_offer": 0.0,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.8509268292682927,
+     "keystrokes_saved": 0.7822384912266741,
+     "share_words_system": 0.8187317073170731,
+     "share_words_selected": 0.0,
+     "share_words_typed": 0.13619512195121952,
+     "fit_temperature_frame": 3.780895226360392,
+     "fit_temperature_sentence": 4.555122539314097,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.9175417258727783,
+     "fit_word_conformal_q": 0.8690946954224263,
+     "fit_calib_miss_rate": 0.4014778325123153,
+     "truth_in_nbest": 0.6225490196078431,
+     "wer_by_day": {
+      "27": 0.25,
+      "34": 0.17192982456140352,
+      "46": 0.16776315789473684,
+      "48": 0.15915119363395225,
+      "69": 0.15709969788519637,
+      "74": 0.1282051282051282,
+      "76": 0.19039735099337748,
+      "81": 0.16203703703703703,
+      "83": 0.17973231357552583,
+      "88": 0.11158798283261803,
+      "90": 0.12244897959183673,
+      "95": 0.1032258064516129,
+      "223": 0.11346153846153846,
+      "244": 0.10720887245841035
+     },
+     "seconds": 415.7
+    },
+    "w_c_trust": {
+     "n_test": 816,
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.3897058823529412,
+     "ece_sentence_before": 0.4481117937902753,
+     "ece_sentence_after": 0.06692354956349712,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.12957462565157926,
+     "coverage": 0.5588235294117647,
+     "coverage_in_nbest": 0.8976377952755905,
+     "coverage_with_other": 0.5588235294117647,
+     "mean_set_size": 3.403186274509804,
+     "empty_rate": 0.0,
+     "miss_rate": 0.37745098039215685,
+     "word_coverage": 0.8948808128175069,
+     "word_mean_set_size": 1.2532239155920282,
+     "guard_auroc": 0.7021103281048723,
+     "guard_auroc_low_evidence": 0.7005316864944053,
+     "guard_auroc_inconsistency": 0.7152951428354929,
+     "p_top1_auroc": 0.7967341062362658,
+     "n_sentences": 816.0,
+     "ewpm": 11.545649629165748,
+     "ewpm_partial": 11.563707341195723,
+     "communicated_rate": 0.9975490196078431,
+     "wrong_commit_rate": 0.058823529411764705,
+     "silent_error_rate": 0.0024509803921568627,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.03552923760177646,
+     "commit_share": 0.23161764705882354,
+     "mean_time_s": 32.57529487352429,
+     "mean_attempts": 1.0,
+     "rate_commit": 0.23161764705882354,
+     "rate_offer": 0.7683823529411765,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.8509268292682927,
+     "keystrokes_saved": 0.7832331993793021,
+     "share_words_system": 0.20897560975609755,
+     "share_words_selected": 0.6638048780487805,
+     "share_words_typed": 0.12526829268292683,
+     "fit_temperature_frame": 3.780895226360392,
+     "fit_temperature_sentence": 4.555122539314097,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.9175417258727783,
+     "fit_word_conformal_q": 0.8690946954224263,
+     "fit_calib_miss_rate": 0.4014778325123153,
+     "fit_policy_config": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.5,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_policy_fit_feasible": true,
+     "fit_val_ewpm": 10.7405871803911,
+     "fit_val_wrong_commit_rate": 0.04556650246305419,
+     "truth_in_nbest": 0.6225490196078431,
+     "wer_by_day": {
+      "27": 0.25,
+      "34": 0.17192982456140352,
+      "46": 0.16776315789473684,
+      "48": 0.15915119363395225,
+      "69": 0.15709969788519637,
+      "74": 0.1282051282051282,
+      "76": 0.19039735099337748,
+      "81": 0.16203703703703703,
+      "83": 0.17973231357552583,
+      "88": 0.11158798283261803,
+      "90": 0.12244897959183673,
+      "95": 0.1032258064516129,
+      "223": 0.11346153846153846,
+      "244": 0.10720887245841035
+     },
+     "seconds": 45.5,
+     "word_conf_auroc": 0.8442556615842852,
+     "n_words_top1": 5118,
+     "top1_word_error_share": 0.14712778429073858,
+     "auroc_published_wrong_risk": 0.6610605594244161,
+     "auroc_published_wrong_neg_p_top1": 0.662450463622023,
+     "published_selective_by_our_p_top1": [
+      {
+       "coverage": 0.5,
+       "published_wer": 0.026079869600651995,
+       "published_sentence_error": 0.12990196078431374
+      },
+      {
+       "coverage": 0.7,
+       "published_wer": 0.028546959748786755,
+       "published_sentence_error": 0.13660245183887915
+      },
+      {
+       "coverage": 0.8,
+       "published_wer": 0.032595172928589204,
+       "published_sentence_error": 0.1546707503828484
+      },
+      {
+       "coverage": 0.9,
+       "published_wer": 0.03912947900637503,
+       "published_sentence_error": 0.17574931880108993
+      },
+      {
+       "coverage": 1.0,
+       "published_wer": 0.04312195121951219,
+       "published_sentence_error": 0.19362745098039216
+      }
+     ],
+     "extra_check_ewpm": 11.545649629165748
+    },
+    "w_d_trust_no_calib": {
+     "n_test": 816,
+     "cer": 0.09636732582660247,
+     "wer": 0.14536585365853658,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.40318627450980393,
+     "ece_sentence_before": 0.4457792086297703,
+     "ece_sentence_after": 0.4457792086297703,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.08984242318168206,
+     "coverage": 0.5526960784313726,
+     "coverage_in_nbest": 0.9056224899598394,
+     "coverage_with_other": 0.5526960784313726,
+     "mean_set_size": 3.8186274509803924,
+     "empty_rate": 0.0,
+     "miss_rate": 0.3897058823529411,
+     "word_coverage": 0.8976115896632733,
+     "word_mean_set_size": 1.2873923257635083,
+     "guard_auroc": 0.7369041897854864,
+     "guard_auroc_low_evidence": 0.7074702133900875,
+     "guard_auroc_inconsistency": 0.7876709336362445,
+     "p_top1_auroc": 0.7885322331999776,
+     "n_sentences": 816.0,
+     "ewpm": 11.57284325526267,
+     "ewpm_partial": 11.631911556133662,
+     "communicated_rate": 0.9938725490196079,
+     "wrong_commit_rate": 0.07107843137254902,
+     "silent_error_rate": 0.006127450980392157,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.03669415923245245,
+     "commit_share": 0.26348039215686275,
+     "mean_time_s": 32.36532417036615,
+     "mean_attempts": 1.0,
+     "rate_commit": 0.26348039215686275,
+     "rate_offer": 0.7365196078431373,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.8546341463414634,
+     "keystrokes_saved": 0.7834321410098277,
+     "share_words_system": 0.2288780487804878,
+     "share_words_selected": 0.639219512195122,
+     "share_words_typed": 0.12585365853658537,
+     "fit_temperature_frame": 1.0,
+     "fit_temperature_sentence": 1.0,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.999152633175573,
+     "fit_word_conformal_q": 0.9959760523921484,
+     "fit_calib_miss_rate": 0.4014778325123153,
+     "fit_policy_config": {
+      "commit_p": 0.95,
+      "commit_max_risk": 0.1,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_policy_fit_feasible": true,
+     "fit_val_ewpm": 10.733019709277954,
+     "fit_val_wrong_commit_rate": 0.04556650246305419,
+     "truth_in_nbest": 0.6102941176470589,
+     "wer_by_day": {
+      "27": 0.23958333333333334,
+      "34": 0.19298245614035087,
+      "46": 0.16776315789473684,
+      "48": 0.15384615384615385,
+      "69": 0.15709969788519637,
+      "74": 0.1282051282051282,
+      "76": 0.18874172185430463,
+      "81": 0.15046296296296297,
+      "83": 0.1701720841300191,
+      "88": 0.09871244635193133,
+      "90": 0.12244897959183673,
+      "95": 0.1032258064516129,
+      "223": 0.10384615384615385,
+      "244": 0.10166358595194085
+     },
+     "seconds": 367.3
+    },
+    "w_e_trust_no_guard": {
+     "n_test": 816,
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.3897058823529412,
+     "ece_sentence_before": 0.4481117937902753,
+     "ece_sentence_after": 0.06692354956349712,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.12957462565157926,
+     "coverage": 0.5588235294117647,
+     "coverage_in_nbest": 0.8976377952755905,
+     "coverage_with_other": 0.5588235294117647,
+     "mean_set_size": 3.403186274509804,
+     "empty_rate": 0.0,
+     "miss_rate": 0.37745098039215685,
+     "word_coverage": 0.8948808128175069,
+     "word_mean_set_size": 1.2532239155920282,
+     "guard_auroc": 0.7021103281048723,
+     "guard_auroc_low_evidence": 0.7005316864944053,
+     "guard_auroc_inconsistency": 0.7152951428354929,
+     "p_top1_auroc": 0.7967341062362658,
+     "n_sentences": 816.0,
+     "ewpm": 11.51445965893824,
+     "ewpm_partial": 11.51445965893824,
+     "communicated_rate": 1.0,
+     "wrong_commit_rate": 0.03553921568627451,
+     "silent_error_rate": 0.0,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.03844100373731981,
+     "commit_share": 0.16544117647058823,
+     "mean_time_s": 32.72739203194762,
+     "mean_attempts": 1.0,
+     "rate_commit": 0.16544117647058823,
+     "rate_offer": 0.8345588235294118,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.8509268292682927,
+     "keystrokes_saved": 0.7832331993793021,
+     "share_words_system": 0.14185365853658535,
+     "share_words_selected": 0.7346341463414634,
+     "share_words_typed": 0.12351219512195122,
+     "fit_temperature_frame": 3.780895226360392,
+     "fit_temperature_sentence": 4.555122539314097,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.9175417258727783,
+     "fit_word_conformal_q": 0.8690946954224263,
+     "fit_calib_miss_rate": 0.4014778325123153,
+     "fit_policy_config": {
+      "commit_p": 0.6,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_policy_fit_feasible": true,
+     "fit_val_ewpm": 10.639445325769554,
+     "fit_val_wrong_commit_rate": 0.03571428571428571,
+     "truth_in_nbest": 0.6225490196078431,
+     "wer_by_day": {
+      "27": 0.25,
+      "34": 0.17192982456140352,
+      "46": 0.16776315789473684,
+      "48": 0.15915119363395225,
+      "69": 0.15709969788519637,
+      "74": 0.1282051282051282,
+      "76": 0.19039735099337748,
+      "81": 0.16203703703703703,
+      "83": 0.17973231357552583,
+      "88": 0.11158798283261803,
+      "90": 0.12244897959183673,
+      "95": 0.1032258064516129,
+      "223": 0.11346153846153846,
+      "244": 0.10720887245841035
+     },
+     "seconds": 4.2
+    },
+    "w_q_published_trust": {
+     "n_test": 816,
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.8063725490196079,
+     "ece_sentence_before": 0.1023158094943043,
+     "ece_sentence_after": 0.05829136082075782,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.12957462565157926,
+     "coverage": 0.7659313725490197,
+     "coverage_in_nbest": 0.9084302325581395,
+     "coverage_with_other": 0.7659313725490197,
+     "mean_set_size": 0.9350490196078431,
+     "empty_rate": 0.06495098039215687,
+     "miss_rate": 0.1568627450980392,
+     "word_coverage": 0.896921278254092,
+     "word_mean_set_size": 0.921278254091972,
+     "guard_auroc": 0.6671684429225501,
+     "guard_auroc_low_evidence": 0.666735600784887,
+     "guard_auroc_inconsistency": 0.7374379592936017,
+     "p_top1_auroc": 0.7101881420491709,
+     "n_sentences": 816.0,
+     "ewpm": 18.767072914257195,
+     "ewpm_partial": 18.814826280451232,
+     "communicated_rate": 0.9963235294117647,
+     "wrong_commit_rate": 0.04411764705882353,
+     "silent_error_rate": 0.003676470588235294,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.011014948859166011,
+     "commit_share": 0.4730392156862745,
+     "mean_time_s": 20.01706746823023,
+     "mean_attempts": 1.0,
+     "rate_commit": 0.4730392156862745,
+     "rate_offer": 0.5269607843137255,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.9568780487804878,
+     "keystrokes_saved": 0.9177177416146103,
+     "share_words_system": 0.46575609756097563,
+     "share_words_selected": 0.4901463414634146,
+     "share_words_typed": 0.04097560975609756,
+     "fit_temperature_frame": 3.780895226360392,
+     "fit_temperature_sentence": 1.7173567757767445,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.4612257605342842,
+     "fit_word_conformal_q": 0.3049989980305571,
+     "fit_calib_miss_rate": 0.1354679802955665,
+     "fit_policy_config": {
+      "commit_p": 0.7,
+      "commit_max_risk": 0.5,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_policy_fit_feasible": true,
+     "fit_val_ewpm": 18.405960401719092,
+     "fit_val_wrong_commit_rate": 0.04187192118226601,
+     "truth_in_nbest": 0.8431372549019608,
+     "wer_by_day": {
+      "27": 0.11458333333333333,
+      "34": 0.1368421052631579,
+      "46": 0.04276315789473684,
+      "48": 0.04509283819628647,
+      "69": 0.0634441087613293,
+      "74": 0.01282051282051282,
+      "76": 0.061258278145695365,
+      "81": 0.03935185185185185,
+      "83": 0.04780114722753346,
+      "88": 0.030042918454935622,
+      "90": 0.024489795918367346,
+      "95": 0.0064516129032258064,
+      "223": 0.023076923076923078,
+      "244": 0.011090573012939002
+     },
+     "seconds": 41.2
+    }
+   },
+   "bootstrap_trials": {
+    "policies": {
+     "w_a_greedy_commit": {
+      "ewpm": [
+       10.008510523280892,
+       10.976185420130228
+      ],
+      "wrong_commit_rate": [
+       0.633578431372549,
+       0.6973039215686274
+      ],
+      "silent_error_rate": [
+       0.03799019607843137,
+       0.06740196078431372
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_p_published_commit": {
+      "ewpm": [
+       18.677677287427077,
+       20.505781181873502
+      ],
+      "wrong_commit_rate": [
+       0.16666666666666666,
+       0.221844362745098
+      ],
+      "silent_error_rate": [
+       0.014705882352941176,
+       0.03553921568627451
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_b_top1_commit": {
+      "ewpm": [
+       10.95001706040714,
+       12.041285573354994
+      ],
+      "wrong_commit_rate": [
+       0.5735294117647058,
+       0.6446078431372549
+      ],
+      "silent_error_rate": [
+       0.030637254901960783,
+       0.058823529411764705
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_c_trust": {
+      "ewpm": [
+       11.025512905699506,
+       12.062591939368982
+      ],
+      "wrong_commit_rate": [
+       0.0428921568627451,
+       0.07475490196078431
+      ],
+      "silent_error_rate": [
+       0.0,
+       0.006127450980392157
+      ],
+      "rate_commit": [
+       0.20098039215686275,
+       0.25986519607843134
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_d_trust_no_calib": {
+      "ewpm": [
+       11.035155887216089,
+       12.121790143186141
+      ],
+      "wrong_commit_rate": [
+       0.05392156862745098,
+       0.08823529411764706
+      ],
+      "silent_error_rate": [
+       0.0012254901960784314,
+       0.011060049019607816
+      ],
+      "rate_commit": [
+       0.23161764705882354,
+       0.29414828431372547
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_e_trust_no_guard": {
+      "ewpm": [
+       11.002670986301055,
+       12.019000447636813
+      ],
+      "wrong_commit_rate": [
+       0.023284313725490197,
+       0.04779411764705882
+      ],
+      "silent_error_rate": [
+       0.0,
+       0.0
+      ],
+      "rate_commit": [
+       0.13970588235294118,
+       0.19117647058823528
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_q_published_trust": {
+      "ewpm": [
+       17.877935096096202,
+       19.621035083247676
+      ],
+      "wrong_commit_rate": [
+       0.030637254901960783,
+       0.058823529411764705
+      ],
+      "silent_error_rate": [
+       0.0,
+       0.00857843137254902
+      ],
+      "rate_commit": [
+       0.4387254901960784,
+       0.5061274509803921
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.036926141601474,
+       4.121320501450528
+      ]
+     }
+    },
+    "diffs": {
+     "w_c_trust-w_b_top1_commit:ewpm": {
+      "ci": [
+       -0.10476167258783975,
+       0.30309659927355437
+      ],
+      "p_le_0": 0.18
+     },
+     "w_c_trust-w_b_top1_commit:wrong_commit_rate": {
+      "ci": [
+       -0.5870404411764706,
+       -0.5159313725490196
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-w_b_top1_commit:silent_error_rate": {
+      "ci": [
+       -0.05517769607843137,
+       -0.029411764705882353
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-w_p_published_commit:ewpm": {
+      "ci": [
+       -8.912075347810546,
+       -7.345513699482295
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-w_p_published_commit:wrong_commit_rate": {
+      "ci": [
+       -0.1691176470588235,
+       -0.10539215686274508
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-w_p_published_commit:silent_error_rate": {
+      "ci": [
+       -0.03308823529411765,
+       -0.012224264705882379
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-gaze_only:ewpm": {
+      "ci": [
+       6.958957188624438,
+       7.973681059415332
+      ],
+      "p_le_0": 0.0
+     },
+     "w_c_trust-gaze_only:wrong_commit_rate": {
+      "ci": [
+       0.0428921568627451,
+       0.07475490196078431
+      ],
+      "p_le_0": 0.0
+     },
+     "w_c_trust-gaze_only:silent_error_rate": {
+      "ci": [
+       0.0,
+       0.006127450980392157
+      ],
+      "p_le_0": 0.121
+     },
+     "w_q_published_trust-w_p_published_commit:ewpm": {
+      "ci": [
+       -0.9806399143058272,
+       -0.7197507918221973
+      ],
+      "p_le_0": 1.0
+     },
+     "w_q_published_trust-w_p_published_commit:wrong_commit_rate": {
+      "ci": [
+       -0.17524509803921567,
+       -0.12622549019607843
+      ],
+      "p_le_0": 1.0
+     },
+     "w_q_published_trust-w_p_published_commit:silent_error_rate": {
+      "ci": [
+       -0.031862745098039214,
+       -0.011029411764705885
+      ],
+      "p_le_0": 1.0
+     },
+     "w_q_published_trust-gaze_only:ewpm": {
+      "ci": [
+       13.808665784376297,
+       15.531787985995233
+      ],
+      "p_le_0": 0.0
+     },
+     "w_q_published_trust-gaze_only:wrong_commit_rate": {
+      "ci": [
+       0.030637254901960783,
+       0.058823529411764705
+      ],
+      "p_le_0": 0.0
+     },
+     "w_q_published_trust-gaze_only:silent_error_rate": {
+      "ci": [
+       0.0,
+       0.00857843137254902
+      ],
+      "p_le_0": 0.048
+     },
+     "w_p_published_commit-gaze_only:ewpm": {
+      "ci": [
+       14.611003974588614,
+       16.425319305157913
+      ],
+      "p_le_0": 0.0
+     },
+     "w_p_published_commit-gaze_only:wrong_commit_rate": {
+      "ci": [
+       0.16666666666666666,
+       0.221844362745098
+      ],
+      "p_le_0": 0.0
+     },
+     "w_p_published_commit-gaze_only:silent_error_rate": {
+      "ci": [
+       0.014705882352941176,
+       0.03553921568627451
+      ],
+      "p_le_0": 0.0
+     },
+     "w_b_top1_commit-gaze_only:ewpm": {
+      "ci": [
+       6.886870032502373,
+       7.948725157365713
+      ],
+      "p_le_0": 0.0
+     },
+     "w_b_top1_commit-gaze_only:wrong_commit_rate": {
+      "ci": [
+       0.5735294117647058,
+       0.6446078431372549
+      ],
+      "p_le_0": 0.0
+     },
+     "w_b_top1_commit-gaze_only:silent_error_rate": {
+      "ci": [
+       0.030637254901960783,
+       0.058823529411764705
+      ],
+      "p_le_0": 0.0
+     }
+    }
+   },
+   "bootstrap_days": {
+    "policies": {
+     "w_a_greedy_commit": {
+      "ewpm": [
+       9.840942952993824,
+       11.228312720584697
+      ],
+      "wrong_commit_rate": [
+       0.6218914196095914,
+       0.7091765336574017
+      ],
+      "silent_error_rate": [
+       0.03571322405299813,
+       0.06577841639599404
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_p_published_commit": {
+      "ewpm": [
+       17.76269807988123,
+       21.448510942319615
+      ],
+      "wrong_commit_rate": [
+       0.14437747819191118,
+       0.2588253338145074
+      ],
+      "silent_error_rate": [
+       0.015087874006002661,
+       0.03413196381993018
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_b_top1_commit": {
+      "ewpm": [
+       10.723368025927213,
+       12.316589685370028
+      ],
+      "wrong_commit_rate": [
+       0.5697609239753885,
+       0.6463785844137041
+      ],
+      "silent_error_rate": [
+       0.030745301494459903,
+       0.05654902291105121
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_c_trust": {
+      "ewpm": [
+       10.854477478340916,
+       12.382077438048267
+      ],
+      "wrong_commit_rate": [
+       0.045032796364392,
+       0.06997752728829279
+      ],
+      "silent_error_rate": [
+       0.0,
+       0.005982123790120106
+      ],
+      "rate_commit": [
+       0.20215698653198655,
+       0.2592176565966889
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_d_trust_no_calib": {
+      "ewpm": [
+       10.790983637807429,
+       12.532321074326669
+      ],
+      "wrong_commit_rate": [
+       0.05841100609314605,
+       0.0872218028850398
+      ],
+      "silent_error_rate": [
+       0.002267001076524886,
+       0.010963920434190727
+      ],
+      "rate_commit": [
+       0.23050637567743934,
+       0.2916719543147208
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_e_trust_no_guard": {
+      "ewpm": [
+       10.806657173921128,
+       12.364148099601401
+      ],
+      "wrong_commit_rate": [
+       0.024866123274119318,
+       0.046308344599819404
+      ],
+      "silent_error_rate": [
+       0.0,
+       0.0
+      ],
+      "rate_commit": [
+       0.14337092218366956,
+       0.18788170493153505
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "w_q_published_trust": {
+      "ewpm": [
+       17.04609253564655,
+       20.461710739061214
+      ],
+      "wrong_commit_rate": [
+       0.026498029151692085,
+       0.06948359005571422
+      ],
+      "silent_error_rate": [
+       0.0,
+       0.008335674157303368
+      ],
+      "rate_commit": [
+       0.446090030637049,
+       0.5026264693625712
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.043418506779568,
+       4.117120833597302
+      ]
+     }
+    },
+    "diffs": {
+     "w_c_trust-w_b_top1_commit:ewpm": {
+      "ci": [
+       -0.16945604651341875,
+       0.3335063923854787
+      ],
+      "p_le_0": 0.216
+     },
+     "w_c_trust-w_b_top1_commit:wrong_commit_rate": {
+      "ci": [
+       -0.5851627312168382,
+       -0.5151914428883464
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-w_b_top1_commit:silent_error_rate": {
+      "ci": [
+       -0.053880141072696244,
+       -0.029112332932607312
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-w_p_published_commit:ewpm": {
+      "ci": [
+       -9.286829055920665,
+       -6.583348818555769
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-w_p_published_commit:wrong_commit_rate": {
+      "ci": [
+       -0.19648538411692706,
+       -0.08585084953582064
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-w_p_published_commit:silent_error_rate": {
+      "ci": [
+       -0.031326922037927495,
+       -0.013143356685444654
+      ],
+      "p_le_0": 1.0
+     },
+     "w_c_trust-gaze_only:ewpm": {
+      "ci": [
+       6.784058608687772,
+       8.309213356332727
+      ],
+      "p_le_0": 0.0
+     },
+     "w_c_trust-gaze_only:wrong_commit_rate": {
+      "ci": [
+       0.045032796364392,
+       0.06997752728829279
+      ],
+      "p_le_0": 0.0
+     },
+     "w_c_trust-gaze_only:silent_error_rate": {
+      "ci": [
+       0.0,
+       0.005982123790120106
+      ],
+      "p_le_0": 0.114
+     },
+     "w_q_published_trust-w_p_published_commit:ewpm": {
+      "ci": [
+       -1.007465530216038,
+       -0.6769414512243862
+      ],
+      "p_le_0": 1.0
+     },
+     "w_q_published_trust-w_p_published_commit:wrong_commit_rate": {
+      "ci": [
+       -0.19066372776140886,
+       -0.11436445270634397
+      ],
+      "p_le_0": 1.0
+     },
+     "w_q_published_trust-w_p_published_commit:silent_error_rate": {
+      "ci": [
+       -0.029374369303630802,
+       -0.01193599362762732
+      ],
+      "p_le_0": 1.0
+     },
+     "w_q_published_trust-gaze_only:ewpm": {
+      "ci": [
+       12.957638046975552,
+       16.399563642772115
+      ],
+      "p_le_0": 0.0
+     },
+     "w_q_published_trust-gaze_only:wrong_commit_rate": {
+      "ci": [
+       0.026498029151692085,
+       0.06948359005571422
+      ],
+      "p_le_0": 0.0
+     },
+     "w_q_published_trust-gaze_only:silent_error_rate": {
+      "ci": [
+       0.0,
+       0.008335674157303368
+      ],
+      "p_le_0": 0.035
+     },
+     "w_p_published_commit-gaze_only:ewpm": {
+      "ci": [
+       13.684806594928135,
+       17.382899495966722
+      ],
+      "p_le_0": 0.0
+     },
+     "w_p_published_commit-gaze_only:wrong_commit_rate": {
+      "ci": [
+       0.14437747819191118,
+       0.2588253338145074
+      ],
+      "p_le_0": 0.0
+     },
+     "w_p_published_commit-gaze_only:silent_error_rate": {
+      "ci": [
+       0.015087874006002661,
+       0.03413196381993018
+      ],
+      "p_le_0": 0.0
+     },
+     "w_b_top1_commit-gaze_only:ewpm": {
+      "ci": [
+       6.640261982571319,
+       8.233763473567636
+      ],
+      "p_le_0": 0.0
+     },
+     "w_b_top1_commit-gaze_only:wrong_commit_rate": {
+      "ci": [
+       0.5697609239753885,
+       0.6463785844137041
+      ],
+      "p_le_0": 0.0
+     },
+     "w_b_top1_commit-gaze_only:silent_error_rate": {
+      "ci": [
+       0.030745301494459903,
+       0.05654902291105121
+      ],
+      "p_le_0": 0.0
+     }
+    }
+   },
+   "gaze_only_ewpm": 4.078303425774878,
+   "null_audit": {
+    "w_b_top1_commit": {
+     "real": {
+      "fluent_rate": 1.0,
+      "commit_rate": 1.0,
+      "fluent_commit_rate": 1.0,
+      "wrong_commit_rate": 0.6366666666666667
+     },
+     "other_trial": {
+      "fluent_rate": 1.0,
+      "commit_rate": 1.0,
+      "fluent_commit_rate": 1.0,
+      "wrong_commit_rate": 1.0
+     },
+     "frame_shuffled": {
+      "fluent_rate": 1.0,
+      "commit_rate": 1.0,
+      "fluent_commit_rate": 1.0,
+      "wrong_commit_rate": 1.0
+     },
+     "uniform": {
+      "fluent_rate": 0.09333333333333334,
+      "commit_rate": 1.0,
+      "fluent_commit_rate": 0.09333333333333334,
+      "wrong_commit_rate": 1.0
+     },
+     "risk_auroc_null_vs_real": {
+      "other_trial": 0.5,
+      "frame_shuffled": 0.9809055555555556,
+      "uniform": 0.9983333333333333
+     }
+    },
+    "w_c_trust": {
+     "real": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.21666666666666667,
+      "fluent_commit_rate": 0.21666666666666667,
+      "wrong_commit_rate": 0.07333333333333333
+     },
+     "other_trial": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.21666666666666667,
+      "fluent_commit_rate": 0.21666666666666667,
+      "wrong_commit_rate": 0.21666666666666667
+     },
+     "frame_shuffled": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.0,
+      "fluent_commit_rate": 0.0,
+      "wrong_commit_rate": 0.0
+     },
+     "uniform": {
+      "fluent_rate": 0.09333333333333334,
+      "commit_rate": 0.0,
+      "fluent_commit_rate": 0.0,
+      "wrong_commit_rate": 0.0
+     },
+     "risk_auroc_null_vs_real": {
+      "other_trial": 0.5,
+      "frame_shuffled": 0.9809055555555556,
+      "uniform": 0.9983333333333333
+     }
+    },
+    "w_d_trust_no_calib": {
+     "real": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.24666666666666667,
+      "fluent_commit_rate": 0.24666666666666667,
+      "wrong_commit_rate": 0.08333333333333333
+     },
+     "other_trial": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.24666666666666667,
+      "fluent_commit_rate": 0.24666666666666667,
+      "wrong_commit_rate": 0.24666666666666667
+     },
+     "frame_shuffled": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.0,
+      "fluent_commit_rate": 0.0,
+      "wrong_commit_rate": 0.0
+     },
+     "uniform": {
+      "fluent_rate": 0.11,
+      "commit_rate": 0.0,
+      "fluent_commit_rate": 0.0,
+      "wrong_commit_rate": 0.0
+     },
+     "risk_auroc_null_vs_real": {
+      "other_trial": 0.5,
+      "frame_shuffled": 0.9872611111111111,
+      "uniform": 0.9983333333333333
+     }
+    },
+    "w_q_published_trust": {
+     "real": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.48333333333333334,
+      "fluent_commit_rate": 0.48333333333333334,
+      "wrong_commit_rate": 0.05333333333333334
+     },
+     "other_trial": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.0,
+      "fluent_commit_rate": 0.0,
+      "wrong_commit_rate": 0.0
+     },
+     "frame_shuffled": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.0,
+      "fluent_commit_rate": 0.0,
+      "wrong_commit_rate": 0.0
+     },
+     "uniform": {
+      "fluent_rate": 1.0,
+      "commit_rate": 0.0,
+      "fluent_commit_rate": 0.0,
+      "wrong_commit_rate": 0.0
+     },
+     "risk_auroc_null_vs_real": {
+      "other_trial": 0.9938388888888889,
+      "frame_shuffled": 0.9957777777777778,
+      "uniform": 0.9966666666666667
+     }
+    }
+   },
+   "null_audit_n": 300
+  },
+  "phoneme": {
+   "policies": {
+    "p_a_greedy_commit": {
+     "n_test": 816,
+     "cer": 0.09680300893276916,
+     "wer": 0.2128365197034725,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.24387254901960784,
+     "ece_sentence_before": 0.7561274509803921,
+     "ece_sentence_after": 0.7561274509803921,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.08984242318168206,
+     "coverage": 0.24387254901960784,
+     "coverage_in_nbest": 1.0,
+     "coverage_with_other": 0.24387254901960784,
+     "mean_set_size": 1.0,
+     "empty_rate": 0.0,
+     "miss_rate": 0.7561274509803921,
+     "word_coverage": 0.7888671875,
+     "word_mean_set_size": 1.0,
+     "guard_auroc": 0.6015287132583501,
+     "guard_auroc_low_evidence": 0.6015287132583501,
+     "guard_auroc_inconsistency": 0.5,
+     "p_top1_auroc": 0.5,
+     "n_sentences": 816.0,
+     "ewpm": 10.158401879308391,
+     "ewpm_partial": 10.778697435301291,
+     "communicated_rate": 0.9362745098039216,
+     "wrong_commit_rate": 0.7561274509803921,
+     "silent_error_rate": 0.06372549019607843,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.09680300893276916,
+     "commit_share": 1.0,
+     "mean_time_s": 34.61348066717385,
+     "mean_attempts": 1.0,
+     "rate_commit": 1.0,
+     "rate_offer": 0.0,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.7871634802965275,
+     "keystrokes_saved": 0.6652562294311237,
+     "share_words_system": 0.740538431525556,
+     "share_words_selected": 0.0,
+     "share_words_typed": 0.1923527116660164,
+     "fit_temperature_frame": 1.0,
+     "fit_temperature_sentence": 1.0,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.0,
+     "fit_word_conformal_q": "inf",
+     "fit_calib_miss_rate": 0.7241379310344828,
+     "truth_in_nbest": 0.24387254901960784,
+     "seconds": 0.7
+    },
+    "p_b_top1_commit": {
+     "n_test": 816,
+     "cer": 0.09426422190879173,
+     "wer": 0.21088568084276238,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.24632352941176472,
+     "ece_sentence_before": 0.12916157500363615,
+     "ece_sentence_after": 0.12401893407993492,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.12957462565157926,
+     "coverage": 0.3737745098039216,
+     "coverage_in_nbest": 0.8714285714285714,
+     "coverage_with_other": 0.3737745098039216,
+     "mean_set_size": 5.514705882352941,
+     "empty_rate": 0.0,
+     "miss_rate": 0.571078431372549,
+     "word_coverage": 0.8596251464271769,
+     "word_mean_set_size": 3.2176884029675907,
+     "guard_auroc": 0.8245479917485742,
+     "guard_auroc_low_evidence": 0.8424867532257412,
+     "guard_auroc_inconsistency": 0.7521983578044735,
+     "p_top1_auroc": 0.884124094972293,
+     "n_sentences": 816.0,
+     "ewpm": 10.212693263992508,
+     "ewpm_partial": 10.824857626307848,
+     "communicated_rate": 0.9375,
+     "wrong_commit_rate": 0.7536764705882353,
+     "silent_error_rate": 0.0625,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.09426422190879173,
+     "commit_share": 1.0,
+     "mean_time_s": 34.47267184364444,
+     "mean_attempts": 1.0,
+     "rate_commit": 1.0,
+     "rate_offer": 0.0,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.7891143191572376,
+     "keystrokes_saved": 0.667748001880583,
+     "share_words_system": 0.7434646898166212,
+     "share_words_selected": 0.0,
+     "share_words_typed": 0.1905969566913773,
+     "fit_temperature_frame": 3.780895226360392,
+     "fit_temperature_sentence": 0.9483229877581463,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.9468055960448725,
+     "fit_word_conformal_q": "inf",
+     "fit_calib_miss_rate": 0.5467980295566502,
+     "truth_in_nbest": 0.42892156862745096,
+     "seconds": 138.3
+    },
+    "p_c_trust": {
+     "n_test": 816,
+     "cer": 0.09426422190879173,
+     "wer": 0.21088568084276238,
+     "greedy_cer": 0.13422661024917726,
+     "top1_sentence_acc": 0.24632352941176472,
+     "ece_sentence_before": 0.12916157500363615,
+     "ece_sentence_after": 0.12401893407993492,
+     "ece_char_before": 0.08984242318148548,
+     "ece_char_after": 0.12957462565157926,
+     "coverage": 0.3737745098039216,
+     "coverage_in_nbest": 0.8714285714285714,
+     "coverage_with_other": 0.3737745098039216,
+     "mean_set_size": 5.514705882352941,
+     "empty_rate": 0.0,
+     "miss_rate": 0.571078431372549,
+     "word_coverage": 0.8596251464271769,
+     "word_mean_set_size": 3.2176884029675907,
+     "guard_auroc": 0.8245479917485742,
+     "guard_auroc_low_evidence": 0.8424867532257412,
+     "guard_auroc_inconsistency": 0.7521983578044735,
+     "p_top1_auroc": 0.884124094972293,
+     "n_sentences": 816.0,
+     "ewpm": 10.196831608439854,
+     "ewpm_partial": 10.216770661252603,
+     "communicated_rate": 0.9975490196078431,
+     "wrong_commit_rate": 0.05392156862745098,
+     "silent_error_rate": 0.0024509803921568627,
+     "abstain_rate": 0.0,
+     "committed_cer": 0.02090176171991639,
+     "commit_share": 0.18504901960784315,
+     "mean_time_s": 36.877083608350326,
+     "mean_attempts": 1.0,
+     "rate_commit": 0.18504901960784315,
+     "rate_offer": 0.8149509803921569,
+     "rate_ask": 0.0,
+     "rate_abstain": 0.0,
+     "rate_offer_words": 0.0,
+     "system_word_accuracy": 0.7891143191572376,
+     "keystrokes_saved": 0.619134931828867,
+     "share_words_system": 0.1628950448692938,
+     "share_words_selected": 0.6240733515411627,
+     "share_words_typed": 0.21069059695669137,
+     "fit_temperature_frame": 3.780895226360392,
+     "fit_temperature_sentence": 0.9483229877581463,
+     "fit_temperature_char": 1.0,
+     "fit_conformal_q": 0.9468055960448725,
+     "fit_word_conformal_q": "inf",
+     "fit_calib_miss_rate": 0.5467980295566502,
+     "fit_policy_config": {
+      "commit_p": 0.3,
+      "commit_max_risk": 0.1,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 0.8,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_policy_fit_feasible": true,
+     "fit_val_ewpm": 9.700632485971608,
+     "fit_val_wrong_commit_rate": 0.04064039408866995,
+     "truth_in_nbest": 0.42892156862745096,
+     "seconds": 35.1
+    }
+   },
+   "bootstrap_trials": {
+    "policies": {
+     "p_a_greedy_commit": {
+      "ewpm": [
+       9.667461497877934,
+       10.620309736629743
+      ],
+      "wrong_commit_rate": [
+       0.7254901960784313,
+       0.7867647058823529
+      ],
+      "silent_error_rate": [
+       0.04779411764705882,
+       0.0821078431372549
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "p_b_top1_commit": {
+      "ewpm": [
+       9.745833791299397,
+       10.680694624127076
+      ],
+      "wrong_commit_rate": [
+       0.7218137254901961,
+       0.7843137254901961
+      ],
+      "silent_error_rate": [
+       0.04656862745098039,
+       0.08088235294117647
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "p_c_trust": {
+      "ewpm": [
+       9.79629857419191,
+       10.609157452297696
+      ],
+      "wrong_commit_rate": [
+       0.0392156862745098,
+       0.06862745098039216
+      ],
+      "silent_error_rate": [
+       0.0,
+       0.006127450980392157
+      ],
+      "rate_commit": [
+       0.1568627450980392,
+       0.2107843137254902
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.771614349017635,
+       4.869155692688519
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "bootstrap_days": {
+    "policies": {
+     "p_a_greedy_commit": {
+      "ewpm": [
+       9.585022149783024,
+       10.790296788770611
+      ],
+      "wrong_commit_rate": [
+       0.7208993739502214,
+       0.7968318253453973
+      ],
+      "silent_error_rate": [
+       0.05369712824963421,
+       0.07632732918459098
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "p_b_top1_commit": {
+      "ewpm": [
+       9.655528641235646,
+       10.86470251798169
+      ],
+      "wrong_commit_rate": [
+       0.7156381330551946,
+       0.7917303733744819
+      ],
+      "silent_error_rate": [
+       0.05153399080500379,
+       0.07503502428994895
+      ],
+      "rate_commit": [
+       1.0,
+       1.0
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "p_c_trust": {
+      "ewpm": [
+       9.596065214758818,
+       10.849870376850431
+      ],
+      "wrong_commit_rate": [
+       0.03822415254045285,
+       0.06996500824122075
+      ],
+      "silent_error_rate": [
+       0.0,
+       0.005858131512151339
+      ],
+      "rate_commit": [
+       0.15469125969539324,
+       0.21835182052819913
+      ],
+      "abstain_rate": [
+       0.0,
+       0.0
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.7728082245584025,
+       4.876127956220298
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "gaze_only_ewpm": 4.819934179595674
+  }
+ },
+ "seconds": 1725.4
+}

@@ -2,8 +2,8 @@
 title: Trust core v0 results (simulator, char LM, first real MEG, per-word OFFER)
 type: question
 tags: [trust-core, calibration, conformal, hallucination, ewpm, language-model, paper-1, offer-words, user-model]
-sources: [brain2qwerty-v2]
-updated: 2026-11-08
+sources: [brain2qwerty-v2, brain-to-text-25-copytask]
+updated: 2026-11-10
 ---
 
 # Trust core v0 results (simulator + char LM)
@@ -19,6 +19,8 @@ updated: 2026-11-08
 - **Update (2026-11-08, [beam re-tune](#5-beam-re-tune-2026-11-08)):** the old n-best misses were search errors. With the `RETUNED` beam, the trust policy matches always-commit speed (25.3 vs 25.8 eWPM) with about 3× fewer wrong commits (0.033 vs 0.108).
 - **Update (2026-11-08, [real MEG](#6-real-meg-first-test-2026-11-08)):** on real MEG, the trust policy cuts wrong commits from 100 % to 0 % and fluent hallucination on null input from 83–100 % to 0 %. But no candidate is ever correct, so the test is degenerate: it shows safety, not usefulness.
 - **Update (2026-11-08, [per-word OFFER](#7-per-word-offer-and-partial-correction-2026-11-08)):** a new action OFFER_WORDS gives +0.4 to +1.7 eWPM at the worst simulator preset (paired CIs exclude 0) and no change at the median preset. On real MEG, the fit never selects it. **No BCI policy on real MEG beats gaze typing alone** (trust 2.96 vs gaze 3.14 eWPM).
+
+- **Update (2026-11-10, [cross-device](#8-cross-device-intracortical-speech-2026-11-10)):** on intracortical speech logits (Brain-to-Text '25, CC0), the test is not degenerate. Trust cuts wrong commits 0.610 → 0.059 (our decoder, eWPM 11.45 → 11.55) and 0.194 → 0.044 (published decoder, eWPM 19.61 → 18.77). All BCI policies beat gaze typing alone (4.08).
 
 Raw results:
 - [M2-10 trust core on real MEG](../../experiments/2026-11-08-m2-real-keystroke/results.md) (tables: [tables.md](../../experiments/2026-11-08-m2-real-keystroke/results/tables.md)).
@@ -250,6 +252,27 @@ wc = wrong-commit rate.
 > **Our take:** The more important real-data result is the comparison with gaze typing. At key accuracy 0.39, the BCI costs the user time. Paper 1 must report eWPM against a no-BCI fallback baseline, not only against other BCI policies.
 
 **Limits:** the word-model time values are partly assumptions. Only the per-slot sum (4.5 s) and the 20 chars/min fallback are matched to Cai et al. 2024. `p_miss_unflagged` has no measurement. Real MEG has 17 test sentences and oracle key timing. The simulator uses one seed per condition.
+
+## 8. Cross-device: intracortical speech (2026-11-10)
+Full page: [B2T '25 trust result](b2t25-trust-result.md). Experiment: [2026-11-10-b2t25-trust](../../experiments/2026-11-10-b2t25-trust/results.md). Source: [copy-task logits](../sources/brain-to-text-25-copytask.md).
+
+- Device: 256-electrode intracortical speech BCI (T15). Stream: phoneme CTC (41 tokens), 80 ms frames, `vocab_type="phoneme"`. Adapter `fidetype.adapters.b2t25` (our code).
+- Words: our licence-clean route (phoneme beam → CMUdict lookup → Tatoeba word unigram → char 6-gram). Test WER 0.149; published decoder 0.043.
+- User: `aac_gaze()` with the measured speech rate (159.3 chars/min). Fit 812 trials, test 816.
+
+| policy | eWPM [trial CI] | wrong-commit | silent error |
+|---|---|---|---|
+| always commit our top-1 | 11.45 [10.95, 12.04] | 0.610 | 0.044 |
+| trust (ours) | 11.55 [11.03, 12.06] | 0.059 | 0.002 |
+| always commit published | 19.61 [18.68, 20.51] | 0.194 | 0.025 |
+| trust gate on published | 18.77 [17.88, 19.62] | 0.044 | 0.004 |
+| gaze typing only | 4.08 | 0 | 0 |
+
+- AUROC "top-1 wrong": −p_top1 0.797 (word), 0.884 (phoneme); guard risk 0.702 / 0.825. Word confidence vs word wrong: 0.844. Sentence ECE 0.448 → 0.067 (frame T 3.78).
+- The guard did not help here: without it, wrong commits were 0.036 at the same eWPM.
+- Null input: shuffled / uniform streams → 0 % commits. Another trial's real stream → 22 % commits (ours), 0 % (published gate).
+
+> **Our take:** The MEG result showed safety only. This one shows usefulness too: the trust core passes correct commits and blocks most wrong ones, on a second device, with the spec unchanged.
 
 ## Related pages
 - [OFFER_WORDS experiment](../../experiments/2026-11-08-m2-offer-words/results.md)

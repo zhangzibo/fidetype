@@ -97,10 +97,10 @@ Close runners-up: MEG-MASC (CC0 MEG, pretraining), Chisco (CC0 imagined speech, 
 
 > **Contradiction:** The NeuroSketch paper (arXiv 2512.09524) lists Du-IN on OpenNeuro "ds005170". But OpenNeuro ds005170 is **Chisco** (its `dataset_description.json` says `"Name": "Chisco"`). The Du-IN licence (CC BY 4.0) is therefore unverified.
 
-> **Contradiction:** `references/README.md` lists SpanishBCBL as "gated, ~262 GB". The HF API on 2026-11-10 reports `gated=False` and 280.4 GB for the whole repo. The [entity page](../entities/spanishbcbl-dataset.md) already says "not gated". Both size figures may be correct for different subsets (MEG only vs all).
+> **Resolved (2026-11-10):** `references/README.md` listed SpanishBCBL as "gated, ~262 GB". The HF API on 2026-11-10 reports `gated=False` and 280.4 GB for the whole repo. `references/README.md` now gives the API values. The older ~262 GB figure was probably a subset (for example, MEG only); we keep 280.4 GB as the whole-repo size.
 
 ## Recommended next actions
-1. **First download: Brain-to-Text '25, in two steps.**
+1. **First download: Brain-to-Text '25, in two steps.** Step 1 is done (2026-11-10): see [B2T '25 trust result](b2t25-trust-result.md).
    - Step 1: `t15_copyTask.pkl` (57.79 MB). It has, per evaluation trial, the cue sentence, the decoded phonemes and words, the duration and the RNN logits (1,718 trials). This is enough for a first trust-layer run on real CC0 decoder output, with no GPU.
    - Step 2: `t15_copyTask_neuralData.zip` (11.05 GB) + `t15_pretrained_rnn_baseline.zip` (484.94 MB), to get frame-level timing and to rerun the decoder. Disk: about 12 GB of 882 GB free on C:. Put it under `C:\Users\zhang\bci-data\`.
    - Code: `fidetype.adapters.b2t25` (own code) that reads the pickle and emits NeuralTextStream events (phoneme logits → CTC beam → word n-best with per-word times and confidences). Then run the M2 trust harness (calibration, conformal sets, policy, eWPM) on it.
