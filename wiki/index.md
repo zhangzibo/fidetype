@@ -19,6 +19,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | `08-roadmap-v2` | Phase 0 → Paper 1 → Paper 2 → benchmark → devices → pilots. Deferred side tracks |
 | `09-milestones` | Day-scale timeline of M0–M7 against the 1-week target (11-08 → 11-15). Externally blocked lane |
 | `10-open-source-path` | Open-source stages 0–5 (credibility → launch → community → standard → foundation → company). What each borrows from SGLang, LangChain, OTel, BIDS. Exit criteria |
+| `11-roadmap-standard` | Long-term roadmap after v0.1: phases P1–P11 in lanes (spec + SDKs, runtime, ecosystem, research, outside people) over Q4 2026 → H2 2027. Critical path and gates |
 
 ## Sources
 | Page | Summary | Date |
@@ -75,6 +76,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Architecture](questions/architecture.md) | Six-layer design, NeuralTextStream, open-core split, code layout, roadmap |
 | [Reading list](questions/reading-list.md) | Verified papers to read for the trust-layer direction |
 | [Project plan](questions/project-plan.md) | Milestones M0–M7 with targets (M0 by 11-09, M1–M7 by 11-15), tasks, "done when" criteria, timeline policy, risks, working process |
+| [Long-term standard roadmap](questions/roadmap-standard.md) | 2026-11-10: full standardisation at OTel scale, built by us. M0–M7 = v0.1. Phases P1–P11: spec 1.0 (protobuf source of truth), SDKs in 6 languages, collector, adapters (replay first), product-grade trust layer, benchmark, conformance, docs + 3-device demo, governance, adoption (externally blocked), research. Scale reference, sequencing, risks |
 | [Open-source playbook](questions/open-source-playbook.md) | How Fidetype grows: OTel/BIDS for the standard, SGLang for credibility, LangChain for the company. Stages 0–5, cheap actions now, risks |
 | [Compute setup](questions/compute-setup.md) | GPU path: native Windows ROCm 7.2.1 + torch 2.9.1 on the RX 7800 XT. Short venv path (MAX_PATH). Benchmarks, caveats, usage |
 | [Decoder M1 results](questions/decoder-m1-results.md) | 2026-11-08/09 decoder runs. CTC alone: test CER 0.670 equals the shuffled-MEG control 0.669 (no MEG use). With a keystroke auxiliary loss (M1-C): gap +0.116 to +0.156, greedy CER 0.619. Beam + char LM, val-tuned (M1-C2): 0.590, gap +0.132. Greedy target 0.59 not met. M1-15 r1 (sentence context, 9 epochs): 0.619 greedy, 0.532 beam + LM. Report the control and means over participants |

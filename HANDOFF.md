@@ -101,6 +101,7 @@ Last update: 2026-11-10 21:05 (queue-2026-11-10b RUNNING: M1-15 full-r1 on all 8
 9. **Move producers' `meta` keys** to the namespaced conventions before spec v0.2.
 10. **Pending user decision:** enable Claude Code hooks for automatic snapshots, or not.
 11. Optional: rename the local folder to `fidetype`. Do this only BETWEEN sessions (see below).
+12. **After v0.1 (M0–M7):** follow the long-term roadmap [wiki/questions/roadmap-standard.md](wiki/questions/roadmap-standard.md) (phases P1–P11 in the tracker; diagram 11). First: P6 leaderboard, P1 proto schema + semconv registry, P4 replay adapters.
 
 ## Optional: rename the local folder to fidetype
 The Claude memory folder slug (`~/.claude/projects/C--Users-zhang-OneDrive-Documents-GitHub-stealth-project/`) and `tools/session/snapshot.js` depend on the folder path. So do this only when no Claude session is open and no job writes into the repo.

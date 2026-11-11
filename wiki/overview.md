@@ -49,6 +49,7 @@ On 2026-11-08 the user widened the scope to an OpenTelemetry-level project. Fide
 - The six-layer design and the roadmap: [architecture](questions/architecture.md).
 - Project plan: milestones M0–M7, tasks, risks and the working process: [project-plan](questions/project-plan.md).
 - Open-source path: NeuralTextStream as a vendor-neutral spec, credibility from Paper 1 and benchmarks, a company later. Success means decoders that emit NeuralTextStream, not stars: [open-source playbook](questions/open-source-playbook.md).
+- **Long-term roadmap (2026-11-10).** The user decided on full standardisation at OpenTelemetry scale, built by us. M0–M7 are only v0.1. Eleven phases follow (P1–P11): spec 1.0, SDKs in six languages, a collector, adapters, a product-grade trust layer, a benchmark, conformance, docs and demo, governance, adoption and research. The gap to OpenTelemetry scale is mostly SDKs, adapters and integrations, not the core: [roadmap-standard](questions/roadmap-standard.md).
 
 ## Where this project might fit
 See [research directions](questions/research-directions.md).

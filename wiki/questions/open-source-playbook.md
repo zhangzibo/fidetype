@@ -164,6 +164,7 @@ Low effort, high signal. **All done on 2026-11-08 (commit 677ba0e), except the p
 - [Direction decision](direction-decision.md)
 - [Architecture](architecture.md)
 - [Project plan](project-plan.md)
+- [Long-term roadmap](roadmap-standard.md) (phases P1–P11 after v0.1)
 - Case studies: [SGLang](../sources/case-study-sglang.md), [LangChain](../sources/case-study-langchain.md), [OpenTelemetry](../sources/case-study-opentelemetry.md)
 - Entities: [BIDS](../entities/bids.md), [Lab Streaming Layer](../entities/lab-streaming-layer.md), [IEEE P2731](../entities/ieee-p2731.md)
 - [Diagrams](../diagrams/index.html) (diagram 10: open-source path)

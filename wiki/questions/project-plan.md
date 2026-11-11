@@ -21,6 +21,8 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 
 **Scope (2026-11-08).** The user widened the scope. Fidetype is now the vendor-neutral standard and trust layer for **neural input** from any device: wrist EMG, EEG, MEG/OPM-MEG and implants. It is an OpenTelemetry-level project. Research MEG stays the credibility base and the test case for Paper 1. The user accepts a multi-year horizon and the need for outside partners, people and funding. The targets below apply to building the code, not to adoption. Details: [scope decision](direction-decision.md#scope-decision-2026-11-08-neural-input-opentelemetry-level).
 
+**After v0.1 (2026-11-10).** The user decided that Fidetype aims for full standardisation at OpenTelemetry scale, and that we build all of it. M0–M7 are **v0.1**. The phases after v0.1 (P1–P11: spec 1.0, SDKs, collector, adapters, trust layer, benchmark, conformance, docs, governance, adoption, research) are in the [long-term roadmap](roadmap-standard.md).
+
 **Targets (set by the user on 2026-11-08):** M0 is done by 2026-11-09. M1–M7 are done by 2026-11-15. Items that depend on outside people are not in these targets. See [Timeline policy](#timeline-policy-2026-11-08).
 
 ## Timeline policy (2026-11-08)
@@ -247,5 +249,6 @@ The live status is in the [progress dashboard](../progress/index.html).
 - [Direction decision](direction-decision.md)
 - [Reading list](reading-list.md)
 - [Research directions](research-directions.md)
+- [Long-term roadmap after v0.1](roadmap-standard.md)
 - [Progress dashboard](../progress/index.html)
-- [Diagrams](../diagrams/index.html) (diagram 9: milestones; diagram 8: roadmap)
+- [Diagrams](../diagrams/index.html) (diagram 9: milestones; diagram 8: roadmap; diagram 11: long-term roadmap)

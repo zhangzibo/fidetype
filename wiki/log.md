@@ -261,3 +261,12 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Data, full vs r2 (sentence instances train/val/test): 4026/437/637 vs 947/114/209. Keys: 149910/17354/24828 vs 38204/4855/8423. Unique sentences are the same (101/11/17): the full cache adds people and repetitions, not new sentences. The full test set is larger, so compare with r2 on the r2 blocks only.
 - Memory: the cache is 4.4 GB (80 uncompressed `.npz`). The loader memory-maps each block and reads only the windows of one sentence. No loader change.
 - Queue `C:\Users\zhang\bci-data\runs\queue-2026-11-10b\` (PID 8692): train full-r1, inference (final + conv head), train r3, inference, eWPM check for both. AC sleep set to never at the start, restored in `finally`. Hard stop 2026-11-11 06:53.
+
+## [2026-11-10] query | Long-term standard roadmap
+- User decision: Fidetype aims for full standardisation at OpenTelemetry scale; we build all of it (agents write code and docs, the user does outward-facing actions). M0–M7 are v0.1.
+- New page `wiki/questions/roadmap-standard.md`: phases P1–P11 (spec 1.0, SDKs, collector, adapters, product-grade trust layer, benchmark + leaderboard, conformance + certification, docs + three-device demo, governance, adoption, research), each with goals, deliverables, exit criteria, effort and dependencies. Decisions: proto3 as source of truth and primary wire form, JSON Lines kept, Arrow for bulk, NPZ read-only, FlatBuffers not chosen; transports in-process, files, LSL, WebSocket, gRPC.
+- Scale reference: `src/` 11,532 Python lines on disk (10,795 committed) vs Brain2Qwerty 5,555; LangChain and OpenTelemetry sizes marked rough. The gap is SDKs, adapters and integrations.
+- Neural-data laws: Colorado, California, Montana, Connecticut cited from the landscape source; Chile, EU and US federal marked "to check".
+- New diagram `11-roadmap-standard` (slides.json slide 11; rendering checked with headless Edge).
+- Tracker: milestones P1–P11 (dates chosen because the schema needs them), 55 tasks (15 `externally_blocked`), and this run as M5-11.
+- Linked from overview, project-plan, open-source-playbook, index; HANDOFF next steps.

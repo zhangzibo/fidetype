@@ -61,6 +61,12 @@
       "title": "10. Open-source path",
       "caption": "Six stages take Fidetype from a paper to a neutral standard, then to a company. Each stage borrows from SGLang, LangChain, OpenTelemetry or BIDS. Success means decoders that emit NeuralTextStream, not stars.",
       "wiki": "../questions/open-source-playbook.md"
+    },
+    {
+      "file": "11-roadmap-standard.drawio",
+      "title": "11. Long-term roadmap: from v0.1 to a full standard",
+      "caption": "After v0.1, eleven phases run in four lanes. We build the spec, SDKs, collector, adapters, trust layer, benchmark and demo. Grey dashed items depend on outside people. Replay comes before hardware, and the demo and benchmark come before outreach.",
+      "wiki": "../questions/roadmap-standard.md"
     }
   ]
 }
