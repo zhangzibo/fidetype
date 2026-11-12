@@ -1,0 +1,243 @@
+{
+ "paper_choice": {
+  "lm_weight": 1.0,
+  "edit_penalty": 12.0,
+  "word_bonus": 3.0
+ },
+ "splits": {
+  "split A": {
+   "n": 411,
+   "rows": [
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 4.0,
+     "word_bonus": 3.0,
+     "wer": 0.18270676691729323,
+     "sentence_exact": 0.2895377128953771,
+     "truth_in_nbest": 0.49148418491484186
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 4.0,
+     "word_bonus": 6.0,
+     "wer": 0.18270676691729323,
+     "sentence_exact": 0.2895377128953771,
+     "truth_in_nbest": 0.49148418491484186
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 8.0,
+     "word_bonus": 3.0,
+     "wer": 0.1593984962406015,
+     "sentence_exact": 0.36253041362530414,
+     "truth_in_nbest": 0.5547445255474452
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 8.0,
+     "word_bonus": 6.0,
+     "wer": 0.1593984962406015,
+     "sentence_exact": 0.36253041362530414,
+     "truth_in_nbest": 0.5547445255474452
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 12.0,
+     "word_bonus": 3.0,
+     "wer": 0.1593984962406015,
+     "sentence_exact": 0.36496350364963503,
+     "truth_in_nbest": 0.5401459854014599
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 12.0,
+     "word_bonus": 6.0,
+     "wer": 0.1593984962406015,
+     "sentence_exact": 0.36496350364963503,
+     "truth_in_nbest": 0.5401459854014599
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 4.0,
+     "word_bonus": 3.0,
+     "wer": 0.19548872180451127,
+     "sentence_exact": 0.26277372262773724,
+     "truth_in_nbest": 0.48905109489051096
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 4.0,
+     "word_bonus": 6.0,
+     "wer": 0.19586466165413532,
+     "sentence_exact": 0.26034063260340634,
+     "truth_in_nbest": 0.48905109489051096
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 8.0,
+     "word_bonus": 3.0,
+     "wer": 0.1593984962406015,
+     "sentence_exact": 0.35766423357664234,
+     "truth_in_nbest": 0.5644768856447688
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 8.0,
+     "word_bonus": 6.0,
+     "wer": 0.15977443609022557,
+     "sentence_exact": 0.35523114355231145,
+     "truth_in_nbest": 0.5644768856447688
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 12.0,
+     "word_bonus": 3.0,
+     "wer": 0.15714285714285714,
+     "sentence_exact": 0.3771289537712895,
+     "truth_in_nbest": 0.559610705596107
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 12.0,
+     "word_bonus": 6.0,
+     "wer": 0.1575187969924812,
+     "sentence_exact": 0.3746958637469586,
+     "truth_in_nbest": 0.559610705596107
+    }
+   ],
+   "best": {
+    "lm_weight": 1.0,
+    "edit_penalty": 12.0,
+    "word_bonus": 3.0,
+    "wer": 0.15714285714285714,
+    "sentence_exact": 0.3771289537712895,
+    "truth_in_nbest": 0.559610705596107
+   },
+   "seconds": 272.3,
+   "same_as_paper": true,
+   "overlap_tuning_set_with_clean_cal": {
+    "n_cal": 401,
+    "n_overlap": 187,
+    "n_fitA_overlap": 213
+   },
+   "paper_point_rank": 1
+  },
+  "split B": {
+   "n": 411,
+   "rows": [
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 4.0,
+     "word_bonus": 3.0,
+     "wer": 0.18952802359882007,
+     "sentence_exact": 0.30656934306569344,
+     "truth_in_nbest": 0.49148418491484186
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 4.0,
+     "word_bonus": 6.0,
+     "wer": 0.18952802359882007,
+     "sentence_exact": 0.30656934306569344,
+     "truth_in_nbest": 0.49148418491484186
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 8.0,
+     "word_bonus": 3.0,
+     "wer": 0.16740412979351033,
+     "sentence_exact": 0.36253041362530414,
+     "truth_in_nbest": 0.5474452554744526
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 8.0,
+     "word_bonus": 6.0,
+     "wer": 0.16740412979351033,
+     "sentence_exact": 0.36253041362530414,
+     "truth_in_nbest": 0.5474452554744526
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 12.0,
+     "word_bonus": 3.0,
+     "wer": 0.16592920353982302,
+     "sentence_exact": 0.36009732360097324,
+     "truth_in_nbest": 0.5352798053527981
+    },
+    {
+     "lm_weight": 0.5,
+     "edit_penalty": 12.0,
+     "word_bonus": 6.0,
+     "wer": 0.16592920353982302,
+     "sentence_exact": 0.36009732360097324,
+     "truth_in_nbest": 0.5352798053527981
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 4.0,
+     "word_bonus": 3.0,
+     "wer": 0.20353982300884957,
+     "sentence_exact": 0.26277372262773724,
+     "truth_in_nbest": 0.49391727493917276
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 4.0,
+     "word_bonus": 6.0,
+     "wer": 0.20353982300884957,
+     "sentence_exact": 0.26277372262773724,
+     "truth_in_nbest": 0.49391727493917276
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 8.0,
+     "word_bonus": 3.0,
+     "wer": 0.16482300884955753,
+     "sentence_exact": 0.36982968369829683,
+     "truth_in_nbest": 0.5450121654501217
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 8.0,
+     "word_bonus": 6.0,
+     "wer": 0.16482300884955753,
+     "sentence_exact": 0.36982968369829683,
+     "truth_in_nbest": 0.5450121654501217
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 12.0,
+     "word_bonus": 3.0,
+     "wer": 0.16150442477876106,
+     "sentence_exact": 0.3844282238442822,
+     "truth_in_nbest": 0.537712895377129
+    },
+    {
+     "lm_weight": 1.0,
+     "edit_penalty": 12.0,
+     "word_bonus": 6.0,
+     "wer": 0.16150442477876106,
+     "sentence_exact": 0.3844282238442822,
+     "truth_in_nbest": 0.537712895377129
+    }
+   ],
+   "best": {
+    "lm_weight": 1.0,
+    "edit_penalty": 12.0,
+    "word_bonus": 3.0,
+    "wer": 0.16150442477876106,
+    "sentence_exact": 0.3844282238442822,
+    "truth_in_nbest": 0.537712895377129
+   },
+   "seconds": 209.0,
+   "same_as_paper": true,
+   "overlap_tuning_set_with_clean_cal": {
+    "n_cal": 401,
+    "n_overlap": 189,
+    "n_fitA_overlap": 211
+   },
+   "paper_point_rank": 1
+  }
+ }
+}

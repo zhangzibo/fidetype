@@ -1,0 +1,9 @@
+00:56:15 b2t-ours/split A: SGR β=0.05: commit 0.000 EAC 0/0; SGR β=0.10: commit 0.000 EAC 0/0; SGR β=0.20: commit 0.000 EAC 0/0
+00:56:15 b2t-ours/split B: SGR β=0.05: commit 0.000 EAC 0/0; SGR β=0.10: commit 0.000 EAC 0/0; SGR β=0.20: commit 0.000 EAC 0/0
+00:56:15 b2t-published/split A: SGR β=0.05: commit 0.000 EAC 0/0; SGR β=0.10: commit 0.000 EAC 0/0; SGR β=0.20: commit 0.527 EAC 50/430
+00:56:15 b2t-published/split B: SGR β=0.05: commit 0.000 EAC 0/0; SGR β=0.10: commit 0.000 EAC 0/0; SGR β=0.20: commit 0.570 EAC 59/465
+00:56:15 emg-calib: SGR β=0.05: commit 0.000 EAC 0/0; SGR β=0.10: commit 0.000 EAC 0/0; SGR β=0.20: commit 0.000 EAC 0/0
+00:56:16 emg-xsession: SGR β=0.05: commit 0.000 EAC 0/0; SGR β=0.10: commit 0.000 EAC 0/0; SGR β=0.20: commit 0.000 EAC 0/0
+00:56:16 emg-xsubject: SGR β=0.05: commit 0.000 EAC 0/0; SGR β=0.10: commit 0.000 EAC 0/0; SGR β=0.20: commit 0.000 EAC 0/0
+00:56:16 meg-async (val-B, instance level): SGR β=0.05: commit 0.000 EAC 0/0; SGR β=0.10: commit 0.000 EAC 0/0; SGR β=0.20: commit 0.000 EAC 0/0
+00:56:17 done

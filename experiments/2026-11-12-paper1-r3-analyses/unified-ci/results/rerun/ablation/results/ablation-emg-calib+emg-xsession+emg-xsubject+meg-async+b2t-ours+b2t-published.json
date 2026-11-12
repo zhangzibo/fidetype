@@ -1,0 +1,6435 @@
+{
+ "conditions": {
+  "emg-calib": {
+   "n_test": 551,
+   "ci_unit": "cluster",
+   "point": {
+    "trust": {
+     "ewpm": 8.024406619765061,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0
+    },
+    "always_commit": {
+     "ewpm": 7.80927658662851,
+     "wrong_commit": 0.5408348457350273,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.5408348457350273,
+     "silent_error": 0.05989110707803993
+    },
+    "no_calib": {
+     "ewpm": 8.153465573090056,
+     "wrong_commit": 0.045372050816696916,
+     "commit_rate": 0.2831215970961887,
+     "error_among_commits": 0.16025641025641027,
+     "silent_error": 0.0
+    },
+    "conf_only": {
+     "ewpm": 8.0654013037105,
+     "wrong_commit": 0.018148820326678767,
+     "commit_rate": 0.15063520871143377,
+     "error_among_commits": 0.12048192771084337,
+     "silent_error": 0.0
+    },
+    "beam_only": {
+     "ewpm": 8.11042206583008,
+     "wrong_commit": 0.039927404718693285,
+     "commit_rate": 0.2413793103448276,
+     "error_among_commits": 0.16541353383458646,
+     "silent_error": 0.0054446460980036296
+    },
+    "no_guard": {
+     "ewpm": 8.024406619765061,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0
+    },
+    "no_conformal": {
+     "ewpm": 8.06896524413217,
+     "wrong_commit": 0.019963702359346643,
+     "commit_rate": 0.17422867513611615,
+     "error_among_commits": 0.11458333333333333,
+     "silent_error": 0.0018148820326678765
+    },
+    "ow_off_base": {
+     "ewpm": 7.976984532053385,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0
+    },
+    "ow_on": {
+     "ewpm": 7.9867248643762805,
+     "wrong_commit": 0.014519056261343012,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0018148820326678765
+    },
+    "lm_retuned:trust": {
+     "ewpm": 8.024406619765061,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0
+    },
+    "lm_retuned:always_commit": {
+     "ewpm": 7.80927658662851,
+     "wrong_commit": 0.5408348457350273,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.5408348457350273,
+     "silent_error": 0.05989110707803993
+    },
+    "lm_retuned:no_calib": {
+     "ewpm": 8.153465573090056,
+     "wrong_commit": 0.045372050816696916,
+     "commit_rate": 0.2831215970961887,
+     "error_among_commits": 0.16025641025641027,
+     "silent_error": 0.0
+    },
+    "crc_off (fit-A plug-in)": {
+     "ewpm": 7.976984532053385,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0
+    },
+    "crc_on (clean CRC)": {
+     "ewpm": 8.072438785182742,
+     "wrong_commit": 0.039927404718693285,
+     "commit_rate": 0.2413793103448276,
+     "error_among_commits": 0.16541353383458646,
+     "silent_error": 0.0054446460980036296
+    },
+    "gaze_only": {
+     "ewpm": 4.274594721133025,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    }
+   },
+   "decoder": {
+    "trust": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.1483479448747447,
+     "frame_T": 1.2543394008842113,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.2543394008842113,
+      "temperature_sentence": 2.424255839802356,
+      "temperature_char": 1.0,
+      "conformal_q": 0.900175134259405,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5563380281690141,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.663430023502901,
+      "val_wrong_commit_rate": 0.0035087719298245615
+     },
+     "seconds": 17.4
+    },
+    "always_commit": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.1483479448747447,
+     "frame_T": 1.2543394008842113,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 1.2543394008842113,
+      "temperature_sentence": 2.424255839802356,
+      "temperature_char": 1.0,
+      "conformal_q": 0.900175134259405,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5563380281690141
+     },
+     "seconds": 0.5
+    },
+    "no_calib": {
+     "cer": 0.1162872359103412,
+     "wer": 0.21248630887185105,
+     "sentence_acc": 0.46098003629764067,
+     "truth_in_nbest": 0.6261343012704175,
+     "ece_sentence_raw": 0.174293641815998,
+     "ece_sentence_cal": 0.174293641815998,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.85,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": 0.92046141670122,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5352112676056338,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.6198742387697695,
+      "val_wrong_commit_rate": 0.04912280701754386
+     },
+     "seconds": 16.8
+    },
+    "conf_only": {
+     "cer": 0.1162872359103412,
+     "wer": 0.21248630887185105,
+     "sentence_acc": 0.46098003629764067,
+     "truth_in_nbest": 0.6261343012704175,
+     "ece_sentence_raw": 0.174293641815998,
+     "ece_sentence_cal": 0.1620455164385034,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 1.2543394008842113,
+      "temperature_frame_used": 1.0,
+      "temperature_sentence": 2.75903506752658,
+      "conformal_q": 0.8884877189580677,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.582447550575123,
+      "val_wrong_commit_rate": 0.017543859649122806
+     },
+     "seconds": 16.3
+    },
+    "beam_only": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.15390406135680776,
+     "frame_T": 1.2543394008842113,
+     "policy": {
+      "commit_p": 0.85,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 1.2543394008842113,
+      "temperature_frame_used": 1.2543394008842113,
+      "temperature_sentence": 1.0,
+      "conformal_q": 0.9386648047721375,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.692041150698142,
+      "val_wrong_commit_rate": 0.04912280701754386
+     },
+     "seconds": 16.1
+    },
+    "no_guard": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.1483479448747447,
+     "frame_T": 1.2543394008842113,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.2543394008842113,
+      "temperature_sentence": 2.424255839802356,
+      "temperature_char": 1.0,
+      "conformal_q": 0.900175134259405,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5563380281690141,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.663430023502901,
+      "val_wrong_commit_rate": 0.0035087719298245615
+     },
+     "seconds": 1.7
+    },
+    "no_conformal": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.1483479448747447,
+     "frame_T": 1.2543394008842113,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.2543394008842113,
+      "temperature_sentence": 2.424255839802356,
+      "temperature_char": 1.0,
+      "conformal_q": 0.900175134259405,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5563380281690141,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.659865706214095,
+      "val_wrong_commit_rate": 0.02456140350877193
+     },
+     "seconds": 15.8
+    },
+    "ow_off_base": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.1483479448747447,
+     "frame_T": 1.2543394008842113,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 3,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.2543394008842113,
+      "temperature_sentence": 2.424255839802356,
+      "temperature_char": 1.0,
+      "conformal_q": 0.900175134259405,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5563380281690141,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.6485488428507455,
+      "val_wrong_commit_rate": 0.0035087719298245615
+     },
+     "seconds": 2.3
+    },
+    "ow_on": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.1483479448747447,
+     "frame_T": 1.2543394008842113,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 3,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": true,
+      "word_conf_threshold": 0.5,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.9,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.2543394008842113,
+      "temperature_sentence": 2.424255839802356,
+      "temperature_char": 1.0,
+      "conformal_q": 0.900175134259405,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5563380281690141,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.6564886850763765,
+      "val_wrong_commit_rate": 0.010526315789473684
+     },
+     "seconds": 80.0
+    },
+    "lm_retuned:trust": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.1483479448747447,
+     "frame_T": 1.2543394008842113,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.2543394008842113,
+      "temperature_sentence": 2.424255839802356,
+      "temperature_char": 1.0,
+      "conformal_q": 0.900175134259405,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5563380281690141,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.663430023502901,
+      "val_wrong_commit_rate": 0.0035087719298245615
+     },
+     "seconds": 16.0
+    },
+    "lm_retuned:always_commit": {
+     "cer": 0.12254930649031427,
+     "wer": 0.21358159912376778,
+     "sentence_acc": 0.4591651542649728,
+     "truth_in_nbest": 0.6388384754990926,
+     "ece_sentence_raw": 0.15390406135680776,
+     "ece_sentence_cal": 0.1483479448747447,
+     "frame_T": 1.2543394008842113,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 1.2543394008842113,
+      "temperature_sentence": 2.424255839802356,
+      "temperature_char": 1.0,
+      "conformal_q": 0.900175134259405,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5563380281690141
+     },
+     "seconds": 0.4
+    },
+    "lm_retuned:no_calib": {
+     "cer": 0.1162872359103412,
+     "wer": 0.21248630887185105,
+     "sentence_acc": 0.46098003629764067,
+     "truth_in_nbest": 0.6261343012704175,
+     "ece_sentence_raw": 0.174293641815998,
+     "ece_sentence_cal": 0.174293641815998,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.85,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": 0.92046141670122,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.5352112676056338,
+      "policy_fit_feasible": true,
+      "val_ewpm": 6.6198742387697695,
+      "val_wrong_commit_rate": 0.04912280701754386
+     },
+     "seconds": 15.7
+    }
+   },
+   "extra": {
+    "lm_retune": {
+     "frame_T": 1.2543394008842113,
+     "fitA_cer_by_weight_calibrated": {
+      "0.5": 0.2259512852171961,
+      "1.0": 0.201593893815243,
+      "1.5": 0.26972724211471544,
+      "2.0": 0.32865641486137614,
+      "3.0": 0.4847906611291952
+     },
+     "chosen": 1.0,
+     "original_weight_raw_tuned": 1.0
+    }
+   },
+   "bootstrap": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "trust": {
+      "ewpm": [
+       6.934939356792407,
+       9.19140436768888
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "always_commit": {
+      "ewpm": [
+       6.656239137081901,
+       9.040456065338372
+      ],
+      "wrong_commit": [
+       0.4627949183303085,
+       0.6210526315789474
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.4627949183303085,
+       0.6210526315789474
+      ],
+      "silent_error": [
+       0.03333333333333333,
+       0.08771929824561403
+      ]
+     },
+     "no_calib": {
+      "ewpm": [
+       7.05311929778747,
+       9.37963717454227
+      ],
+      "wrong_commit": [
+       0.032667876588021776,
+       0.05789473684210526
+      ],
+      "commit_rate": [
+       0.22367286751361162,
+       0.3466424682395644
+      ],
+      "error_among_commits": [
+       0.11299207217058502,
+       0.21701435025245797
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "conf_only": {
+      "ewpm": [
+       6.998395345471972,
+       9.237193374159926
+      ],
+      "wrong_commit": [
+       0.007259528130671506,
+       0.03007518796992481
+      ],
+      "commit_rate": [
+       0.10521929824561403,
+       0.20526315789473684
+      ],
+      "error_among_commits": [
+       0.05169685726756875,
+       0.19773255813953455
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "beam_only": {
+      "ewpm": [
+       6.988523653028699,
+       9.323144931784437
+      ],
+      "wrong_commit": [
+       0.025321637426900585,
+       0.0544464609800363
+      ],
+      "commit_rate": [
+       0.1869328493647913,
+       0.29945553539019965
+      ],
+      "error_among_commits": [
+       0.10869143916413886,
+       0.22690030557677612
+      ],
+      "silent_error": [
+       0.0,
+       0.011278195488721804
+      ]
+     },
+     "no_guard": {
+      "ewpm": [
+       6.934939356792407,
+       9.19140436768888
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal": {
+      "ewpm": [
+       6.958179857988507,
+       9.272069440228883
+      ],
+      "wrong_commit": [
+       0.009074410163339383,
+       0.03119883040935667
+      ],
+      "commit_rate": [
+       0.12159709618874773,
+       0.23049001814882034
+      ],
+      "error_among_commits": [
+       0.05880925185608224,
+       0.17722925457102665
+      ],
+      "silent_error": [
+       0.0,
+       0.005639097744360902
+      ]
+     },
+     "ow_off_base": {
+      "ewpm": [
+       6.946047759558501,
+       9.108288798777892
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on": {
+      "ewpm": [
+       6.933555225046548,
+       9.12922473496318
+      ],
+      "wrong_commit": [
+       0.005847953216374269,
+       0.02443609022556391
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.005639097744360902
+      ]
+     },
+     "lm_retuned:trust": {
+      "ewpm": [
+       6.934939356792407,
+       9.19140436768888
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:always_commit": {
+      "ewpm": [
+       6.656239137081901,
+       9.040456065338372
+      ],
+      "wrong_commit": [
+       0.4627949183303085,
+       0.6210526315789474
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.4627949183303085,
+       0.6210526315789474
+      ],
+      "silent_error": [
+       0.03333333333333333,
+       0.08771929824561403
+      ]
+     },
+     "lm_retuned:no_calib": {
+      "ewpm": [
+       7.05311929778747,
+       9.37963717454227
+      ],
+      "wrong_commit": [
+       0.032667876588021776,
+       0.05789473684210526
+      ],
+      "commit_rate": [
+       0.22367286751361162,
+       0.3466424682395644
+      ],
+      "error_among_commits": [
+       0.11299207217058502,
+       0.21701435025245797
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "crc_off (fit-A plug-in)": {
+      "ewpm": [
+       6.946047759558501,
+       9.108288798777892
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "crc_on (clean CRC)": {
+      "ewpm": [
+       6.975451232259857,
+       9.256467895816545
+      ],
+      "wrong_commit": [
+       0.02455827067669173,
+       0.056140350877192984
+      ],
+      "commit_rate": [
+       0.1824561403508772,
+       0.30672262552934054
+      ],
+      "error_among_commits": [
+       0.109375,
+       0.23134328358208955
+      ],
+      "silent_error": [
+       0.0,
+       0.011278195488721804
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.218706938088986,
+       4.318591735652422
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "diffs": {
+     "always_commit-trust": {
+      "ewpm": [
+       -0.3922555664503926,
+       -0.021067482205306073
+      ],
+      "wrong_commit": [
+       0.45788112522686025,
+       0.6184429824561403
+      ],
+      "commit_rate": [
+       0.9415204678362573,
+       0.9782214156079855
+      ],
+      "error_among_commits": [
+       0.2874195080330983,
+       0.5894804318488528
+      ],
+      "silent_error": [
+       0.03333333333333333,
+       0.08771929824561403
+      ]
+     },
+     "no_calib-trust": {
+      "ewpm": [
+       -0.1169207865019938,
+       0.365076918092572
+      ],
+      "wrong_commit": [
+       0.029239766081871343,
+       0.054385964912280704
+      ],
+      "commit_rate": [
+       0.19055563311461676,
+       0.3035233918128654
+      ],
+      "error_among_commits": [
+       -0.06631907308377898,
+       0.18440261865793778
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "conf_only-trust": {
+      "ewpm": [
+       -0.21280339340429394,
+       0.263947939821518
+      ],
+      "wrong_commit": [
+       0.005639097744360902,
+       0.02443609022556391
+      ],
+      "commit_rate": [
+       0.07142857142857142,
+       0.1631578947368421
+      ],
+      "error_among_commits": [
+       -0.08442702980472766,
+       0.13462752525252522
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "beam_only-trust": {
+      "ewpm": [
+       0.035376793415331134,
+       0.15554564825026865
+      ],
+      "wrong_commit": [
+       0.02177858439201452,
+       0.05081669691470054
+      ],
+      "commit_rate": [
+       0.15603750756200846,
+       0.2558983666061706
+      ],
+      "error_among_commits": [
+       -0.05366156559877956,
+       0.19266859810075646
+      ],
+      "silent_error": [
+       0.0,
+       0.011278195488721804
+      ]
+     },
+     "no_guard-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal-trust": {
+      "ewpm": [
+       0.005275181700176735,
+       0.09111724567962856
+      ],
+      "wrong_commit": [
+       0.007259528130671507,
+       0.025408348457350273
+      ],
+      "commit_rate": [
+       0.08966374269005847,
+       0.18609022556390975
+      ],
+      "error_among_commits": [
+       -0.08297944001874415,
+       0.11688311688311688
+      ],
+      "silent_error": [
+       0.0,
+       0.005639097744360902
+      ]
+     },
+     "ow_off_base-trust": {
+      "ewpm": [
+       -0.13813209883963165,
+       0.02504377132820963
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on-trust": {
+      "ewpm": [
+       -0.11995579090681843,
+       0.035278423910305
+      ],
+      "wrong_commit": [
+       0.00389515455304929,
+       0.018148820326678767
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.005639097744360902
+      ]
+     },
+     "lm_retuned:trust-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:always_commit-trust": {
+      "ewpm": [
+       -0.3922555664503926,
+       -0.021067482205306073
+      ],
+      "wrong_commit": [
+       0.45788112522686025,
+       0.6184429824561403
+      ],
+      "commit_rate": [
+       0.9415204678362573,
+       0.9782214156079855
+      ],
+      "error_among_commits": [
+       0.2874195080330983,
+       0.5894804318488528
+      ],
+      "silent_error": [
+       0.03333333333333333,
+       0.08771929824561403
+      ]
+     },
+     "lm_retuned:no_calib-trust": {
+      "ewpm": [
+       -0.1169207865019938,
+       0.365076918092572
+      ],
+      "wrong_commit": [
+       0.029239766081871343,
+       0.054385964912280704
+      ],
+      "commit_rate": [
+       0.19055563311461676,
+       0.3035233918128654
+      ],
+      "error_among_commits": [
+       -0.06631907308377898,
+       0.18440261865793778
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "gaze_only-trust": {
+      "ewpm": [
+       -4.913079367896404,
+       -2.7063805817368
+      ],
+      "wrong_commit": [
+       -0.009074410163339383,
+       0.0
+      ],
+      "commit_rate": [
+       -0.05847953216374269,
+       -0.021778584392014518
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on-ow_off_base": {
+      "ewpm": [
+       -0.01662507753928446,
+       0.033206778836135535
+      ],
+      "wrong_commit": [
+       0.00389515455304929,
+       0.018148820326678767
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.005639097744360902
+      ]
+     },
+     "crc_on (clean CRC)-crc_off (fit-A plug-in)": {
+      "ewpm": [
+       0.035837317071061595,
+       0.17543712570910294
+      ],
+      "wrong_commit": [
+       0.02280701754385965,
+       0.05087719298245614
+      ],
+      "commit_rate": [
+       0.14978070175438596,
+       0.2649122807017544
+      ],
+      "error_among_commits": [
+       -0.04746093628814593,
+       0.18920398500690463
+      ],
+      "silent_error": [
+       0.0,
+       0.011278195488721804
+      ]
+     },
+     "lm_retuned:trust-lm_retuned:always_commit": {
+      "ewpm": [
+       0.02106748220530603,
+       0.3922555664503926
+      ],
+      "wrong_commit": [
+       -0.6184429824561404,
+       -0.4578811252268603
+      ],
+      "commit_rate": [
+       -0.9782214156079855,
+       -0.9415204678362573
+      ],
+      "error_among_commits": [
+       -0.5894804318488528,
+       -0.28741950803309835
+      ],
+      "silent_error": [
+       -0.08771929824561403,
+       -0.03333333333333333
+      ]
+     },
+     "trust-gaze_only": {
+      "ewpm": [
+       2.7063805817367994,
+       4.913079367896404
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_calib-gaze_only": {
+      "ewpm": [
+       2.810897407079067,
+       5.091558306753913
+      ],
+      "wrong_commit": [
+       0.032667876588021776,
+       0.05789473684210526
+      ],
+      "commit_rate": [
+       0.22367286751361162,
+       0.3466424682395644
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust-gaze_only": {
+      "ewpm": [
+       2.7063805817367994,
+       4.913079367896404
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "seconds": 303.1
+  },
+  "emg-xsession": {
+   "n_test": 551,
+   "ci_unit": "cluster",
+   "point": {
+    "trust": {
+     "ewpm": 4.67692102383024,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.018148820326678767,
+     "error_among_commits": 0.2,
+     "silent_error": 0.0
+    },
+    "always_commit": {
+     "ewpm": 4.102092009154985,
+     "wrong_commit": 0.8820326678765881,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.8820326678765881,
+     "silent_error": 0.14882032667876588
+    },
+    "no_calib": {
+     "ewpm": 4.753854346287148,
+     "wrong_commit": 0.012704174228675136,
+     "commit_rate": 0.041742286751361164,
+     "error_among_commits": 0.30434782608695654,
+     "silent_error": 0.003629764065335753
+    },
+    "conf_only": {
+     "ewpm": 4.757443403169862,
+     "wrong_commit": 0.007259528130671506,
+     "commit_rate": 0.019963702359346643,
+     "error_among_commits": 0.36363636363636365,
+     "silent_error": 0.0
+    },
+    "beam_only": {
+     "ewpm": 4.670497795017221,
+     "wrong_commit": 0.018148820326678767,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.47619047619047616,
+     "silent_error": 0.003629764065335753
+    },
+    "no_guard": {
+     "ewpm": 4.67692102383024,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.018148820326678767,
+     "error_among_commits": 0.2,
+     "silent_error": 0.0
+    },
+    "no_conformal": {
+     "ewpm": 4.67692102383024,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.018148820326678767,
+     "error_among_commits": 0.2,
+     "silent_error": 0.0
+    },
+    "ow_off_base": {
+     "ewpm": 4.641113880887059,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "ow_on": {
+     "ewpm": 4.643179141869636,
+     "wrong_commit": 0.0054446460980036296,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "lm_retuned:trust": {
+     "ewpm": 4.725489027298886,
+     "wrong_commit": 0.012704174228675136,
+     "commit_rate": 0.032667876588021776,
+     "error_among_commits": 0.3888888888888889,
+     "silent_error": 0.0
+    },
+    "lm_retuned:always_commit": {
+     "ewpm": 4.158071494402391,
+     "wrong_commit": 0.8457350272232305,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.8457350272232305,
+     "silent_error": 0.1542649727767695
+    },
+    "lm_retuned:no_calib": {
+     "ewpm": 4.106808376682978,
+     "wrong_commit": 0.05263157894736842,
+     "commit_rate": 0.09618874773139746,
+     "error_among_commits": 0.5471698113207547,
+     "silent_error": 0.0054446460980036296
+    },
+    "crc_off (fit-A plug-in)": {
+     "ewpm": 4.67692102383024,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.018148820326678767,
+     "error_among_commits": 0.2,
+     "silent_error": 0.0
+    },
+    "crc_on (clean CRC)": {
+     "ewpm": 4.663391079180326,
+     "wrong_commit": 0.056261343012704176,
+     "commit_rate": 0.0925589836660617,
+     "error_among_commits": 0.6078431372549019,
+     "silent_error": 0.007259528130671506
+    },
+    "gaze_only": {
+     "ewpm": 4.274594721133025,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    }
+   },
+   "decoder": {
+    "trust": {
+     "cer": 0.39772926786445834,
+     "wer": 0.5791347207009858,
+     "sentence_acc": 0.11796733212341198,
+     "truth_in_nbest": 0.21052631578947367,
+     "ece_sentence_raw": 0.3280428941455715,
+     "ece_sentence_cal": 0.07183391832808693,
+     "frame_T": 1.777648155892916,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.777648155892916,
+      "temperature_sentence": 5.42059653311194,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9114739467746436,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.8098591549295775,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.589338389754442,
+      "val_wrong_commit_rate": 0.0035087719298245615
+     },
+     "seconds": 16.9
+    },
+    "always_commit": {
+     "cer": 0.39772926786445834,
+     "wer": 0.5791347207009858,
+     "sentence_acc": 0.11796733212341198,
+     "truth_in_nbest": 0.21052631578947367,
+     "ece_sentence_raw": 0.3280428941455715,
+     "ece_sentence_cal": 0.07183391832808693,
+     "frame_T": 1.777648155892916,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 1.777648155892916,
+      "temperature_sentence": 5.42059653311194,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9114739467746436,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.8098591549295775
+     },
+     "seconds": 0.5
+    },
+    "no_calib": {
+     "cer": 0.38672675133142154,
+     "wer": 0.5769441401971522,
+     "sentence_acc": 0.1560798548094374,
+     "truth_in_nbest": 0.24319419237749546,
+     "ece_sentence_raw": 0.33286115141433026,
+     "ece_sentence_cal": 0.33286115141433026,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.95,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9380830026932285,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.8169014084507042,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.737089262167336,
+      "val_wrong_commit_rate": 0.010526315789473684
+     },
+     "seconds": 16.3
+    },
+    "conf_only": {
+     "cer": 0.38672675133142154,
+     "wer": 0.5769441401971522,
+     "sentence_acc": 0.1560798548094374,
+     "truth_in_nbest": 0.24319419237749546,
+     "ece_sentence_raw": 0.33286115141433026,
+     "ece_sentence_cal": 0.10342708811748896,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.4,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 1.777648155892916,
+      "temperature_frame_used": 1.0,
+      "temperature_sentence": 4.198360904817231,
+      "conformal_q": 0.9023020734550546,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.726831447661117,
+      "val_wrong_commit_rate": 0.0035087719298245615
+     },
+     "seconds": 15.7
+    },
+    "beam_only": {
+     "cer": 0.39772926786445834,
+     "wer": 0.5791347207009858,
+     "sentence_acc": 0.11796733212341198,
+     "truth_in_nbest": 0.21052631578947367,
+     "ece_sentence_raw": 0.3280428941455715,
+     "ece_sentence_cal": 0.3280428941455715,
+     "frame_T": 1.777648155892916,
+     "policy": {
+      "commit_p": 0.9,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 1.777648155892916,
+      "temperature_frame_used": 1.777648155892916,
+      "temperature_sentence": 1.0,
+      "conformal_q": 0.9554412824128123,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.595557861880065,
+      "val_wrong_commit_rate": 0.017543859649122806
+     },
+     "seconds": 16.0
+    },
+    "no_guard": {
+     "cer": 0.39772926786445834,
+     "wer": 0.5791347207009858,
+     "sentence_acc": 0.11796733212341198,
+     "truth_in_nbest": 0.21052631578947367,
+     "ece_sentence_raw": 0.3280428941455715,
+     "ece_sentence_cal": 0.07183391832808693,
+     "frame_T": 1.777648155892916,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.777648155892916,
+      "temperature_sentence": 5.42059653311194,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9114739467746436,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.8098591549295775,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.589338389754442,
+      "val_wrong_commit_rate": 0.0035087719298245615
+     },
+     "seconds": 1.8
+    },
+    "no_conformal": {
+     "cer": 0.39772926786445834,
+     "wer": 0.5791347207009858,
+     "sentence_acc": 0.11796733212341198,
+     "truth_in_nbest": 0.21052631578947367,
+     "ece_sentence_raw": 0.3280428941455715,
+     "ece_sentence_cal": 0.07183391832808693,
+     "frame_T": 1.777648155892916,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.777648155892916,
+      "temperature_sentence": 5.42059653311194,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9114739467746436,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.8098591549295775,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.589338389754442,
+      "val_wrong_commit_rate": 0.0035087719298245615
+     },
+     "seconds": 16.7
+    },
+    "ow_off_base": {
+     "cer": 0.39772926786445834,
+     "wer": 0.5791347207009858,
+     "sentence_acc": 0.11796733212341198,
+     "truth_in_nbest": 0.21052631578947367,
+     "ece_sentence_raw": 0.3280428941455715,
+     "ece_sentence_cal": 0.07183391832808693,
+     "frame_T": 1.777648155892916,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.777648155892916,
+      "temperature_sentence": 5.42059653311194,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9114739467746436,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.8098591549295775,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.550387197013546,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 2.4
+    },
+    "ow_on": {
+     "cer": 0.39772926786445834,
+     "wer": 0.5791347207009858,
+     "sentence_acc": 0.11796733212341198,
+     "truth_in_nbest": 0.21052631578947367,
+     "ece_sentence_raw": 0.3280428941455715,
+     "ece_sentence_cal": 0.07183391832808693,
+     "frame_T": 1.777648155892916,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": true,
+      "word_conf_threshold": 0.5,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.9,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.777648155892916,
+      "temperature_sentence": 5.42059653311194,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9114739467746436,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.8098591549295775,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.550387197013546,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 88.4
+    },
+    "lm_retuned:trust": {
+     "cer": 0.3874290396207643,
+     "wer": 0.5750273822562979,
+     "sentence_acc": 0.1542649727767695,
+     "truth_in_nbest": 0.24682395644283123,
+     "ece_sentence_raw": 0.16894576371215664,
+     "ece_sentence_cal": 0.1157440497252426,
+     "frame_T": 1.777648155892916,
+     "policy": {
+      "commit_p": 0.4,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.777648155892916,
+      "temperature_sentence": 2.0036964507141524,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9066396773670373,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.795774647887324,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.7946575098598405,
+      "val_wrong_commit_rate": 0.007017543859649123
+     },
+     "seconds": 16.1
+    },
+    "lm_retuned:always_commit": {
+     "cer": 0.3874290396207643,
+     "wer": 0.5750273822562979,
+     "sentence_acc": 0.1542649727767695,
+     "truth_in_nbest": 0.24682395644283123,
+     "ece_sentence_raw": 0.16894576371215664,
+     "ece_sentence_cal": 0.1157440497252426,
+     "frame_T": 1.777648155892916,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 1.777648155892916,
+      "temperature_sentence": 2.0036964507141524,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9066396773670373,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.795774647887324
+     },
+     "seconds": 0.4
+    },
+    "lm_retuned:no_calib": {
+     "cer": 0.47743898870486334,
+     "wer": 0.6900328587075575,
+     "sentence_acc": 0.0852994555353902,
+     "truth_in_nbest": 0.13430127041742287,
+     "ece_sentence_raw": 0.20869502914482663,
+     "ece_sentence_cal": 0.20869502914482663,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9655147266754067,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9154929577464789,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.033717938445003,
+      "val_wrong_commit_rate": 0.02456140350877193
+     },
+     "seconds": 16.0
+    }
+   },
+   "extra": {
+    "lm_retune": {
+     "frame_T": 1.777648155892916,
+     "fitA_cer_by_weight_calibrated": {
+      "0.5": 0.3802895947917836,
+      "1.0": 0.3912897070378269,
+      "1.5": 0.465147603546975,
+      "2.0": 0.5587608036816702,
+      "3.0": 0.6556291390728477
+     },
+     "chosen": 0.5,
+     "original_weight_raw_tuned": 1.0
+    }
+   },
+   "bootstrap": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "trust": {
+      "ewpm": [
+       4.189545371508256,
+       5.252148846546565
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.007017543859649123,
+       0.030871143375680483
+      ],
+      "error_among_commits": [
+       0.0,
+       0.5
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "always_commit": {
+      "ewpm": [
+       3.5645925409247528,
+       4.727345694700475
+      ],
+      "wrong_commit": [
+       0.8312159709618875,
+       0.9280827067669172
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.8312159709618875,
+       0.9280827067669172
+      ],
+      "silent_error": [
+       0.11070780399274047,
+       0.1877255639097744
+      ]
+     },
+     "no_calib": {
+      "ewpm": [
+       4.1758968032678325,
+       5.517504596803451
+      ],
+      "wrong_commit": [
+       0.0018148820326678765,
+       0.02631578947368421
+      ],
+      "commit_rate": [
+       0.023593466424682397,
+       0.06140350877192982
+      ],
+      "error_among_commits": [
+       0.05,
+       0.5789473684210527
+      ],
+      "silent_error": [
+       0.0,
+       0.009074410163339383
+      ]
+     },
+     "conf_only": {
+      "ewpm": [
+       4.183767381908459,
+       5.520385421282508
+      ],
+      "wrong_commit": [
+       0.0,
+       0.01949317738791423
+      ],
+      "commit_rate": [
+       0.007518796992481203,
+       0.03383458646616541
+      ],
+      "error_among_commits": [
+       0.0,
+       0.7142857142857143
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "beam_only": {
+      "ewpm": [
+       4.186319234081267,
+       5.247552174613801
+      ],
+      "wrong_commit": [
+       0.008771929824561403,
+       0.029038112522686024
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.056140350877192984
+      ],
+      "error_among_commits": [
+       0.30434782608695654,
+       0.6521739130434783
+      ],
+      "silent_error": [
+       0.0,
+       0.009074410163339383
+      ]
+     },
+     "no_guard": {
+      "ewpm": [
+       4.189545371508256,
+       5.252148846546565
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.007017543859649123,
+       0.030871143375680483
+      ],
+      "error_among_commits": [
+       0.0,
+       0.5
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal": {
+      "ewpm": [
+       4.189545371508256,
+       5.252148846546565
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.007017543859649123,
+       0.030871143375680483
+      ],
+      "error_among_commits": [
+       0.0,
+       0.5
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_off_base": {
+      "ewpm": [
+       4.19116506607383,
+       5.169945325224327
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on": {
+      "ewpm": [
+       4.19201725295272,
+       5.175059464640896
+      ],
+      "wrong_commit": [
+       0.0,
+       0.01089901477832507
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust": {
+      "ewpm": [
+       4.197843028113437,
+       5.4151294457899315
+      ],
+      "wrong_commit": [
+       0.0035087719298245615,
+       0.02631578947368421
+      ],
+      "commit_rate": [
+       0.018148820326678767,
+       0.04873642439431911
+      ],
+      "error_among_commits": [
+       0.125,
+       0.6818181818181818
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:always_commit": {
+      "ewpm": [
+       3.5234735888960778,
+       4.968036934293632
+      ],
+      "wrong_commit": [
+       0.7736842105263158,
+       0.9105263157894737
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.7736842105263158,
+       0.9105263157894737
+      ],
+      "silent_error": [
+       0.11403508771929824,
+       0.19827067669172918
+      ]
+     },
+     "lm_retuned:no_calib": {
+      "ewpm": [
+       3.747292016341369,
+       4.566186292900773
+      ],
+      "wrong_commit": [
+       0.03333333333333333,
+       0.07192982456140351
+      ],
+      "commit_rate": [
+       0.05847431077694235,
+       0.13859649122807016
+      ],
+      "error_among_commits": [
+       0.3766195569136746,
+       0.7941510695187164
+      ],
+      "silent_error": [
+       0.0,
+       0.011278195488721804
+      ]
+     },
+     "crc_off (fit-A plug-in)": {
+      "ewpm": [
+       4.189545371508256,
+       5.252148846546565
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.007017543859649123,
+       0.030871143375680483
+      ],
+      "error_among_commits": [
+       0.0,
+       0.5
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "crc_on (clean CRC)": {
+      "ewpm": [
+       4.1756509302867135,
+       5.241013204353337
+      ],
+      "wrong_commit": [
+       0.039473684210526314,
+       0.07368421052631578
+      ],
+      "commit_rate": [
+       0.06533575317604355,
+       0.11796733212341198
+      ],
+      "error_among_commits": [
+       0.5,
+       0.7254901960784313
+      ],
+      "silent_error": [
+       0.0017543859649122807,
+       0.014035087719298246
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.218706938088986,
+       4.318591735652422
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "diffs": {
+     "always_commit-trust": {
+      "ewpm": [
+       -0.6851379108562086,
+       -0.4591083094730328
+      ],
+      "wrong_commit": [
+       0.825187969924812,
+       0.9263157894736842
+      ],
+      "commit_rate": [
+       0.9691288566243194,
+       0.9929824561403509
+      ],
+      "error_among_commits": [
+       0.3660698081410423,
+       0.9140350877192982
+      ],
+      "silent_error": [
+       0.11070780399274047,
+       0.1877255639097744
+      ]
+     },
+     "no_calib-trust": {
+      "ewpm": [
+       -0.08668135866597293,
+       0.2817631735605486
+      ],
+      "wrong_commit": [
+       -0.0018148820326678765,
+       0.02105263157894737
+      ],
+      "commit_rate": [
+       0.009398496240601503,
+       0.03811252268602541
+      ],
+      "error_among_commits": [
+       -0.2824264705882353,
+       0.375
+      ],
+      "silent_error": [
+       0.0,
+       0.009074410163339383
+      ]
+     },
+     "conf_only-trust": {
+      "ewpm": [
+       -0.08293459845425144,
+       0.28186321823201466
+      ],
+      "wrong_commit": [
+       -0.0037593984962406013,
+       0.01364522417153996
+      ],
+      "commit_rate": [
+       -0.007017543859649123,
+       0.012280701754385965
+      ],
+      "error_among_commits": [
+       -0.3,
+       0.41666666666666663
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "beam_only-trust": {
+      "ewpm": [
+       -0.02362026570725915,
+       0.005812000199716282
+      ],
+      "wrong_commit": [
+       0.007259528130671506,
+       0.022556390977443608
+      ],
+      "commit_rate": [
+       0.010526315789473682,
+       0.030852994555353907
+      ],
+      "error_among_commits": [
+       0.06739002932551325,
+       0.4738721804511279
+      ],
+      "silent_error": [
+       0.0,
+       0.009074410163339383
+      ]
+     },
+     "no_guard-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_off_base-trust": {
+      "ewpm": [
+       -0.11381366262254107,
+       0.019377058926951487
+      ],
+      "wrong_commit": [
+       -0.009074410163339383,
+       0.0
+      ],
+      "commit_rate": [
+       -0.03087114337568058,
+       -0.007017543859649123
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on-trust": {
+      "ewpm": [
+       -0.11032584826959306,
+       0.021103612027555525
+      ],
+      "wrong_commit": [
+       -0.0037593984962406013,
+       0.007518796992481203
+      ],
+      "commit_rate": [
+       -0.03087114337568058,
+       -0.007017543859649123
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust-trust": {
+      "ewpm": [
+       -0.08242394715762491,
+       0.20292894673607417
+      ],
+      "wrong_commit": [
+       0.0,
+       0.01949317738791423
+      ],
+      "commit_rate": [
+       0.00389515455304929,
+       0.02456140350877193
+      ],
+      "error_among_commits": [
+       -0.2,
+       0.44457264957264964
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:always_commit-trust": {
+      "ewpm": [
+       -0.7205045719611969,
+       -0.2648505139073561
+      ],
+      "wrong_commit": [
+       0.7695099818511797,
+       0.9070281306715063
+      ],
+      "commit_rate": [
+       0.9691288566243194,
+       0.9929824561403509
+      ],
+      "error_among_commits": [
+       0.3245098443601166,
+       0.8838475499092558
+      ],
+      "silent_error": [
+       0.11403508771929824,
+       0.19827067669172918
+      ]
+     },
+     "lm_retuned:no_calib-trust": {
+      "ewpm": [
+       -0.8625962883410051,
+       -0.34019942281648874
+      ],
+      "wrong_commit": [
+       0.027223230490018152,
+       0.06896551724137931
+      ],
+      "commit_rate": [
+       0.043233082706766915,
+       0.12159709618874773
+      ],
+      "error_among_commits": [
+       -0.059173881673881615,
+       0.6970554602630076
+      ],
+      "silent_error": [
+       0.0,
+       0.011278195488721804
+      ]
+     },
+     "gaze_only-trust": {
+      "ewpm": [
+       -0.968694403772655,
+       0.07115230366922823
+      ],
+      "wrong_commit": [
+       -0.009074410163339383,
+       0.0
+      ],
+      "commit_rate": [
+       -0.03087114337568058,
+       -0.007017543859649123
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on-ow_off_base": {
+      "ewpm": [
+       -0.0009129952726925516,
+       0.00694330522507642
+      ],
+      "wrong_commit": [
+       0.0,
+       0.01089901477832507
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "crc_on (clean CRC)-crc_off (fit-A plug-in)": {
+      "ewpm": [
+       -0.042507060436311826,
+       0.010167054354793084
+      ],
+      "wrong_commit": [
+       0.03758006126427179,
+       0.06766917293233082
+      ],
+      "commit_rate": [
+       0.052631578947368425,
+       0.09473684210526316
+      ],
+      "error_among_commits": [
+       0.09999999999999998,
+       0.6666666666666666
+      ],
+      "silent_error": [
+       0.0017543859649122807,
+       0.014035087719298246
+      ]
+     },
+     "lm_retuned:trust-lm_retuned:always_commit": {
+      "ewpm": [
+       0.41533734113687526,
+       0.6998771532237711
+      ],
+      "wrong_commit": [
+       -0.8983666061705989,
+       -0.7604355716878404
+      ],
+      "commit_rate": [
+       -0.9818511796733213,
+       -0.9512635756056809
+      ],
+      "error_among_commits": [
+       -0.7152903811252269,
+       -0.19985144642652394
+      ],
+      "silent_error": [
+       -0.19827067669172932,
+       -0.11403508771929824
+      ]
+     },
+     "trust-gaze_only": {
+      "ewpm": [
+       -0.07115230366922838,
+       0.9686944037726544
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.007017543859649123,
+       0.030871143375680483
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_calib-gaze_only": {
+      "ewpm": [
+       -0.09210583784794359,
+       1.2274604669961648
+      ],
+      "wrong_commit": [
+       0.0018148820326678765,
+       0.02631578947368421
+      ],
+      "commit_rate": [
+       0.023593466424682397,
+       0.06140350877192982
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.009074410163339383
+      ]
+     },
+     "lm_retuned:trust-gaze_only": {
+      "ewpm": [
+       -0.07223603185286114,
+       1.1302258318718923
+      ],
+      "wrong_commit": [
+       0.0035087719298245615,
+       0.02631578947368421
+      ],
+      "commit_rate": [
+       0.018148820326678767,
+       0.04873642439431911
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "seconds": 310.4
+  },
+  "emg-xsubject": {
+   "n_test": 551,
+   "ci_unit": "cluster",
+   "point": {
+    "trust": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "always_commit": {
+     "ewpm": 3.5312246360482913,
+     "wrong_commit": 0.9618874773139746,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.9618874773139746,
+     "silent_error": 0.16696914700544466
+    },
+    "no_calib": {
+     "ewpm": 4.761580683609149,
+     "wrong_commit": 0.0054446460980036296,
+     "commit_rate": 0.007259528130671506,
+     "error_among_commits": 0.75,
+     "silent_error": 0.0
+    },
+    "conf_only": {
+     "ewpm": 4.750583404411674,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "beam_only": {
+     "ewpm": 4.071363172751485,
+     "wrong_commit": 0.043557168784029036,
+     "commit_rate": 0.050816696914700546,
+     "error_among_commits": 0.8571428571428571,
+     "silent_error": 0.003629764065335753
+    },
+    "no_guard": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "no_conformal": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "ow_off_base": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "ow_on": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "lm_retuned:trust": {
+     "ewpm": 4.837918684637206,
+     "wrong_commit": 0.0018148820326678765,
+     "commit_rate": 0.010889292196007259,
+     "error_among_commits": 0.16666666666666666,
+     "silent_error": 0.0
+    },
+    "lm_retuned:always_commit": {
+     "ewpm": 4.217659232058552,
+     "wrong_commit": 0.8584392014519057,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.8584392014519057,
+     "silent_error": 0.1560798548094374
+    },
+    "lm_retuned:no_calib": {
+     "ewpm": 3.8772073292383196,
+     "wrong_commit": 0.010889292196007259,
+     "commit_rate": 0.029038112522686024,
+     "error_among_commits": 0.375,
+     "silent_error": 0.0
+    },
+    "crc_off (fit-A plug-in)": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "crc_on (clean CRC)": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "gaze_only": {
+     "ewpm": 4.274594721133025,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    }
+   },
+   "decoder": {
+    "trust": {
+     "cer": 0.4789606133317727,
+     "wer": 0.6809967141292442,
+     "sentence_acc": 0.038112522686025406,
+     "truth_in_nbest": 0.08166969147005444,
+     "ece_sentence_raw": 0.49982767405958395,
+     "ece_sentence_cal": 0.0826777197441454,
+     "frame_T": 2.1650787672465803,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 0.1,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 2.1650787672465803,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9052765407095249,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9084507042253521,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.054683190713068,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 16.7
+    },
+    "always_commit": {
+     "cer": 0.4789606133317727,
+     "wer": 0.6809967141292442,
+     "sentence_acc": 0.038112522686025406,
+     "truth_in_nbest": 0.08166969147005444,
+     "ece_sentence_raw": 0.49982767405958395,
+     "ece_sentence_cal": 0.0826777197441454,
+     "frame_T": 2.1650787672465803,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 2.1650787672465803,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9052765407095249,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9084507042253521
+     },
+     "seconds": 0.4
+    },
+    "no_calib": {
+     "cer": 0.3687598759290689,
+     "wer": 0.562157721796276,
+     "sentence_acc": 0.1161524500907441,
+     "truth_in_nbest": 0.19600725952813067,
+     "ece_sentence_raw": 0.4591603437982174,
+     "ece_sentence_cal": 0.4591603437982174,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 0.5,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9862552267408226,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.8169014084507042,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.64553179665557,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 16.9
+    },
+    "conf_only": {
+     "cer": 0.3687598759290689,
+     "wer": 0.562157721796276,
+     "sentence_acc": 0.1161524500907441,
+     "truth_in_nbest": 0.19600725952813067,
+     "ece_sentence_raw": 0.4591603437982174,
+     "ece_sentence_cal": 0.08627596856920895,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 0.1,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 2.1650787672465803,
+      "temperature_frame_used": 1.0,
+      "temperature_sentence": 16.417645316689697,
+      "conformal_q": 0.8996803192283709,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.641888311697643,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 16.3
+    },
+    "beam_only": {
+     "cer": 0.4789606133317727,
+     "wer": 0.6809967141292442,
+     "sentence_acc": 0.038112522686025406,
+     "truth_in_nbest": 0.08166969147005444,
+     "ece_sentence_raw": 0.49982767405958395,
+     "ece_sentence_cal": 0.49982767405958395,
+     "frame_T": 2.1650787672465803,
+     "policy": {
+      "commit_p": 0.95,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 2.1650787672465803,
+      "temperature_frame_used": 2.1650787672465803,
+      "temperature_sentence": 1.0,
+      "conformal_q": 0.9947486226980073,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.057035633979858,
+      "val_wrong_commit_rate": 0.031578947368421054
+     },
+     "seconds": 15.6
+    },
+    "no_guard": {
+     "cer": 0.4789606133317727,
+     "wer": 0.6809967141292442,
+     "sentence_acc": 0.038112522686025406,
+     "truth_in_nbest": 0.08166969147005444,
+     "ece_sentence_raw": 0.49982767405958395,
+     "ece_sentence_cal": 0.0826777197441454,
+     "frame_T": 2.1650787672465803,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 2.1650787672465803,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9052765407095249,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9084507042253521,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.054683190713068,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 1.7
+    },
+    "no_conformal": {
+     "cer": 0.4789606133317727,
+     "wer": 0.6809967141292442,
+     "sentence_acc": 0.038112522686025406,
+     "truth_in_nbest": 0.08166969147005444,
+     "ece_sentence_raw": 0.49982767405958395,
+     "ece_sentence_cal": 0.0826777197441454,
+     "frame_T": 2.1650787672465803,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 0.1,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 2.1650787672465803,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9052765407095249,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9084507042253521,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.054683190713068,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 15.2
+    },
+    "ow_off_base": {
+     "cer": 0.4789606133317727,
+     "wer": 0.6809967141292442,
+     "sentence_acc": 0.038112522686025406,
+     "truth_in_nbest": 0.08166969147005444,
+     "ece_sentence_raw": 0.49982767405958395,
+     "ece_sentence_cal": 0.0826777197441454,
+     "frame_T": 2.1650787672465803,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 2.1650787672465803,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9052765407095249,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9084507042253521,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.054683190713068,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 2.2
+    },
+    "ow_on": {
+     "cer": 0.4789606133317727,
+     "wer": 0.6809967141292442,
+     "sentence_acc": 0.038112522686025406,
+     "truth_in_nbest": 0.08166969147005444,
+     "ece_sentence_raw": 0.49982767405958395,
+     "ece_sentence_cal": 0.0826777197441454,
+     "frame_T": 2.1650787672465803,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": true,
+      "word_conf_threshold": 0.5,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.9,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 2.1650787672465803,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9052765407095249,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9084507042253521,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.054683190713068,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 77.7
+    },
+    "lm_retuned:trust": {
+     "cer": 0.36039094048106746,
+     "wer": 0.559145673603505,
+     "sentence_acc": 0.14156079854809436,
+     "truth_in_nbest": 0.2395644283121597,
+     "ece_sentence_raw": 0.17115611732935493,
+     "ece_sentence_cal": 0.0720407244062655,
+     "frame_T": 2.1650787672465803,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 2.1650787672465803,
+      "temperature_sentence": 3.3522761055157013,
+      "temperature_char": 1.0,
+      "conformal_q": 0.8921253301804107,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.7605633802816901,
+      "policy_fit_feasible": true,
+      "val_ewpm": 4.6459779312424265,
+      "val_wrong_commit_rate": 0.007017543859649123
+     },
+     "seconds": 16.2
+    },
+    "lm_retuned:always_commit": {
+     "cer": 0.36039094048106746,
+     "wer": 0.559145673603505,
+     "sentence_acc": 0.14156079854809436,
+     "truth_in_nbest": 0.2395644283121597,
+     "ece_sentence_raw": 0.17115611732935493,
+     "ece_sentence_cal": 0.0720407244062655,
+     "frame_T": 2.1650787672465803,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 2.1650787672465803,
+      "temperature_sentence": 3.3522761055157013,
+      "temperature_char": 1.0,
+      "conformal_q": 0.8921253301804107,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.7605633802816901
+     },
+     "seconds": 0.5
+    },
+    "lm_retuned:no_calib": {
+     "cer": 0.5194592380172061,
+     "wer": 0.7497261774370209,
+     "sentence_acc": 0.05989110707803993,
+     "truth_in_nbest": 0.09800362976406533,
+     "ece_sentence_raw": 0.18598217481202972,
+     "ece_sentence_cal": 0.18598217481202972,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": 0.957127894841296,
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9225352112676056,
+      "policy_fit_feasible": true,
+      "val_ewpm": 3.8847197789810606,
+      "val_wrong_commit_rate": 0.007017543859649123
+     },
+     "seconds": 16.4
+    }
+   },
+   "extra": {
+    "lm_retune": {
+     "frame_T": 2.1650787672465803,
+     "fitA_cer_by_weight_calibrated": {
+      "0.5": 0.37389157032214615,
+      "1.0": 0.39690200920417557,
+      "1.5": 0.47715793018296104,
+      "2.0": 0.5684139634077898,
+      "3.0": 0.6631496239757548
+     },
+     "chosen": 0.5,
+     "original_weight_raw_tuned": 1.5
+    }
+   },
+   "bootstrap": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "trust": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "always_commit": {
+      "ewpm": [
+       3.1890153797935716,
+       3.9046569434708283
+      ],
+      "wrong_commit": [
+       0.941923774954628,
+       0.980701754385965
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.941923774954628,
+       0.980701754385965
+      ],
+      "silent_error": [
+       0.132486388384755,
+       0.20177875243664703
+      ]
+     },
+     "no_calib": {
+      "ewpm": [
+       4.231911644942851,
+       5.401272005039151
+      ],
+      "wrong_commit": [
+       0.0,
+       0.014519056261343012
+      ],
+      "commit_rate": [
+       0.0,
+       0.019963702359346643
+      ],
+      "error_among_commits": [
+       0.6666666666666666,
+       1.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "conf_only": {
+      "ewpm": [
+       4.226911727800135,
+       5.38272840134345
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "beam_only": {
+      "ewpm": [
+       3.817750884705866,
+       4.356708974594618
+      ],
+      "wrong_commit": [
+       0.02982456140350877,
+       0.05639097744360902
+      ],
+      "commit_rate": [
+       0.03508771929824561,
+       0.06666666666666667
+      ],
+      "error_among_commits": [
+       0.7142857142857143,
+       1.0
+      ],
+      "silent_error": [
+       0.0,
+       0.009074410163339383
+      ]
+     },
+     "no_guard": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_off_base": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust": {
+      "ewpm": [
+       4.277818824358686,
+       5.513574687346617
+      ],
+      "wrong_commit": [
+       0.0,
+       0.005639097744360902
+      ],
+      "commit_rate": [
+       0.0035087719298245615,
+       0.019963702359346643
+      ],
+      "error_among_commits": [
+       0.0,
+       0.6666666666666666
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:always_commit": {
+      "ewpm": [
+       3.5849555801502206,
+       5.017860483717166
+      ],
+      "wrong_commit": [
+       0.7894736842105263,
+       0.9237749546279492
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.7894736842105263,
+       0.9237749546279492
+      ],
+      "silent_error": [
+       0.11978221415607986,
+       0.19298245614035087
+      ]
+     },
+     "lm_retuned:no_calib": {
+      "ewpm": [
+       3.5669955487864633,
+       4.273328943047631
+      ],
+      "wrong_commit": [
+       0.0,
+       0.02456140350877193
+      ],
+      "commit_rate": [
+       0.008771929824561403,
+       0.05263157894736842
+      ],
+      "error_among_commits": [
+       0.0,
+       0.8571428571428571
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "crc_off (fit-A plug-in)": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "crc_on (clean CRC)": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.218706938088986,
+       4.318591735652422
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "diffs": {
+     "always_commit-trust": {
+      "ewpm": [
+       -0.6627257030809782,
+       -0.43187469313390703
+      ],
+      "wrong_commit": [
+       0.941923774954628,
+       0.980701754385965
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.132486388384755,
+       0.20177875243664703
+      ]
+     },
+     "no_calib-trust": {
+      "ewpm": [
+       0.38839890021880596,
+       1.0616559366314897
+      ],
+      "wrong_commit": [
+       0.0,
+       0.014519056261343012
+      ],
+      "commit_rate": [
+       0.0,
+       0.019963702359346643
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "conf_only-trust": {
+      "ewpm": [
+       0.3822922643640777,
+       1.0443165230443514
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "beam_only-trust": {
+      "ewpm": [
+       -0.027973856766173078,
+       0.00357452302343206
+      ],
+      "wrong_commit": [
+       0.02982456140350877,
+       0.05639097744360902
+      ],
+      "commit_rate": [
+       0.03508771929824561,
+       0.06666666666666667
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.009074410163339383
+      ]
+     },
+     "no_guard-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_off_base-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust-trust": {
+      "ewpm": [
+       0.4443197398306908,
+       1.1872009843157894
+      ],
+      "wrong_commit": [
+       0.0,
+       0.005639097744360902
+      ],
+      "commit_rate": [
+       0.0035087719298245615,
+       0.019963702359346643
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:always_commit-trust": {
+      "ewpm": [
+       -0.258239619203927,
+       0.6864449882282065
+      ],
+      "wrong_commit": [
+       0.7894736842105263,
+       0.9237749546279492
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.11978221415607986,
+       0.19298245614035087
+      ]
+     },
+     "lm_retuned:no_calib-trust": {
+      "ewpm": [
+       -0.4199852045283214,
+       0.049973073212394456
+      ],
+      "wrong_commit": [
+       0.0,
+       0.02456140350877193
+      ],
+      "commit_rate": [
+       0.008771929824561403,
+       0.05263157894736842
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "gaze_only-trust": {
+      "ewpm": [
+       -0.08916527689590403,
+       0.4443350498927968
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on-ow_off_base": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "crc_on (clean CRC)-crc_off (fit-A plug-in)": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust-lm_retuned:always_commit": {
+      "ewpm": [
+       0.4728706994780297,
+       0.7495617866949993
+      ],
+      "wrong_commit": [
+       -0.9219600725952813,
+       -0.7877177858439202
+      ],
+      "commit_rate": [
+       -0.9964912280701754,
+       -0.9800362976406534
+      ],
+      "error_among_commits": [
+       -0.908832425892317,
+       -0.25092256503327287
+      ],
+      "silent_error": [
+       -0.19298245614035087,
+       -0.11978221415607986
+      ]
+     },
+     "trust-gaze_only": {
+      "ewpm": [
+       -0.4443350498927971,
+       0.08916527689590398
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_calib-gaze_only": {
+      "ewpm": [
+       -0.03462483817521151,
+       1.115978724576408
+      ],
+      "wrong_commit": [
+       0.0,
+       0.014519056261343012
+      ],
+      "commit_rate": [
+       0.0,
+       0.019963702359346643
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust-gaze_only": {
+      "ewpm": [
+       -0.0031901148060453836,
+       1.2498065980951036
+      ],
+      "wrong_commit": [
+       0.0,
+       0.005639097744360902
+      ],
+      "commit_rate": [
+       0.0035087719298245615,
+       0.019963702359346643
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "seconds": 285.1
+  },
+  "meg-async": {
+   "n_test": 637,
+   "ci_unit": "two_way",
+   "point": {
+    "trust": {
+     "ewpm": 3.202971571465368,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "always_commit": {
+     "ewpm": 2.5804621654337954,
+     "wrong_commit": 0.9968602825745683,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.9968602825745683,
+     "silent_error": 0.23547880690737832
+    },
+    "no_calib": {
+     "ewpm": 3.041904541501989,
+     "wrong_commit": 0.004709576138147566,
+     "commit_rate": 0.006279434850863423,
+     "error_among_commits": 0.75,
+     "silent_error": 0.0
+    },
+    "conf_only": {
+     "ewpm": 3.0416697668489183,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "beam_only": {
+     "ewpm": 3.203036651618486,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0015698587127158557,
+     "error_among_commits": 0.0,
+     "silent_error": 0.0
+    },
+    "no_guard": {
+     "ewpm": 3.202971571465368,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "no_conformal": {
+     "ewpm": 3.202971571465368,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "ow_off_base": {
+     "ewpm": 3.202971571465368,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "ow_on": {
+     "ewpm": 3.202060726929093,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "lm_retuned:trust": {
+     "ewpm": 3.137052218009607,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    },
+    "lm_retuned:always_commit": {
+     "ewpm": 2.5807213783871488,
+     "wrong_commit": 0.9952904238618524,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.9952904238618524,
+     "silent_error": 0.21664050235478807
+    },
+    "gaze_only": {
+     "ewpm": 3.1545665572720725,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    }
+   },
+   "decoder": {
+    "trust": {
+     "cer": 0.5216521251901065,
+     "wer": 0.9023090586145648,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.015698587127158554,
+     "ece_sentence_raw": 0.20490473263650794,
+     "ece_sentence_cal": 0.10092296965421581,
+     "frame_T": 3.295918403993801,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.295918403993801,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973,
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.9408093927500167,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 4.6
+    },
+    "always_commit": {
+     "cer": 0.5216521251901065,
+     "wer": 0.9023090586145648,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.015698587127158554,
+     "ece_sentence_raw": 0.20490473263650794,
+     "ece_sentence_cal": 0.10092296965421581,
+     "frame_T": 3.295918403993801,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 3.295918403993801,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973
+     },
+     "seconds": 0.7
+    },
+    "no_calib": {
+     "cer": 0.48327063155367006,
+     "wer": 0.7919309819842679,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.004709576138147566,
+     "ece_sentence_raw": 0.22247559610097772,
+     "ece_sentence_cal": 0.22247559610097772,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 0.8,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973,
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.83847803414697,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 3.9
+    },
+    "conf_only": {
+     "cer": 0.48327063155367006,
+     "wer": 0.7919309819842679,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.004709576138147566,
+     "ece_sentence_raw": 0.22247559610097772,
+     "ece_sentence_cal": 0.10141127669165827,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 0.8,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 3.295918403993801,
+      "temperature_frame_used": 1.0,
+      "temperature_sentence": 19.999915690182068,
+      "conformal_q": "inf",
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.838402198846768,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 3.5
+    },
+    "beam_only": {
+     "cer": 0.5216521251901065,
+     "wer": 0.9023090586145648,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.015698587127158554,
+     "ece_sentence_raw": 0.20490473263650794,
+     "ece_sentence_cal": 0.20490473263650794,
+     "frame_T": 3.295918403993801,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 3.295918403993801,
+      "temperature_frame_used": 3.295918403993801,
+      "temperature_sentence": 1.0,
+      "conformal_q": "inf",
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.9408093927500167,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 3.6
+    },
+    "no_guard": {
+     "cer": 0.5216521251901065,
+     "wer": 0.9023090586145648,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.015698587127158554,
+     "ece_sentence_raw": 0.20490473263650794,
+     "ece_sentence_cal": 0.10092296965421581,
+     "frame_T": 3.295918403993801,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.295918403993801,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973,
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.9408093927500167,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 1.5
+    },
+    "no_conformal": {
+     "cer": 0.5216521251901065,
+     "wer": 0.9023090586145648,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.015698587127158554,
+     "ece_sentence_raw": 0.20490473263650794,
+     "ece_sentence_cal": 0.10092296965421581,
+     "frame_T": 3.295918403993801,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.295918403993801,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973,
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.9408093927500167,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 3.7
+    },
+    "ow_off_base": {
+     "cer": 0.5216521251901065,
+     "wer": 0.9023090586145648,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.015698587127158554,
+     "ece_sentence_raw": 0.20490473263650794,
+     "ece_sentence_cal": 0.10092296965421581,
+     "frame_T": 3.295918403993801,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.295918403993801,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973,
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.9408093927500167,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 3.5
+    },
+    "ow_on": {
+     "cer": 0.5216521251901065,
+     "wer": 0.9023090586145648,
+     "sentence_acc": 0.0031397174254317113,
+     "truth_in_nbest": 0.015698587127158554,
+     "ece_sentence_raw": 0.20490473263650794,
+     "ece_sentence_cal": 0.10092296965421581,
+     "frame_T": 3.295918403993801,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": true,
+      "word_conf_threshold": 1.01,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.9,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.295918403993801,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973,
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.9399142214311267,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 163.8
+    },
+    "lm_retuned:trust": {
+     "cer": 0.47654686624509723,
+     "wer": 0.8094392286221771,
+     "sentence_acc": 0.004709576138147566,
+     "truth_in_nbest": 0.009419152276295133,
+     "ece_sentence_raw": 0.16833955800312622,
+     "ece_sentence_cal": 0.09821398139331894,
+     "frame_T": 3.295918403993801,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 0.8,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.295918403993801,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973,
+      "policy_fit_feasible": true,
+      "val_ewpm": 2.9120165789825734,
+      "val_wrong_commit_rate": 0.0
+     },
+     "seconds": 4.2
+    },
+    "lm_retuned:always_commit": {
+     "cer": 0.47654686624509723,
+     "wer": 0.8094392286221771,
+     "sentence_acc": 0.004709576138147566,
+     "truth_in_nbest": 0.009419152276295133,
+     "ece_sentence_raw": 0.16833955800312622,
+     "ece_sentence_cal": 0.09821398139331894,
+     "frame_T": 3.295918403993801,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 3.295918403993801,
+      "temperature_sentence": 19.999915690182068,
+      "temperature_char": 1.0,
+      "conformal_q": "inf",
+      "word_conformal_q": "inf",
+      "calib_miss_rate": 0.9954128440366973
+     },
+     "seconds": 0.6
+    }
+   },
+   "extra": {
+    "lm_retune": {
+     "lm_weight": 0.25,
+     "insertion_bonus": 0.0,
+     "source": "M1-09 val grid choice on calibrated streams (experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/results.json)"
+    }
+   },
+   "bootstrap": {
+    "scheme": "two_way",
+    "B": 2000,
+    "policies": {
+     "trust": {
+      "ewpm": [
+       3.014759018127739,
+       3.4388812266761786
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "always_commit": {
+      "ewpm": [
+       2.312836378421334,
+       2.878820756035563
+      ],
+      "wrong_commit": [
+       0.9865470852017937,
+       1.0
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.9865470852017937,
+       1.0
+      ],
+      "silent_error": [
+       0.17618112536826472,
+       0.30430334037496687
+      ]
+     },
+     "no_calib": {
+      "ewpm": [
+       2.8761384197861117,
+       3.2354352917893214
+      ],
+      "wrong_commit": [
+       0.0,
+       0.016360146435874964
+      ],
+      "commit_rate": [
+       0.0,
+       0.018626315507591775
+      ],
+      "error_among_commits": [
+       0.0,
+       1.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "conf_only": {
+      "ewpm": [
+       2.876037335081441,
+       3.2351400894932154
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "beam_only": {
+      "ewpm": [
+       3.014759018127739,
+       3.4393607377984683
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.008797653958944282
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_guard": {
+      "ewpm": [
+       3.014759018127739,
+       3.4388812266761786
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal": {
+      "ewpm": [
+       3.014759018127739,
+       3.4388812266761786
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_off_base": {
+      "ewpm": [
+       3.014759018127739,
+       3.4388812266761786
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on": {
+      "ewpm": [
+       3.0126224842627294,
+       3.438315173905865
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust": {
+      "ewpm": [
+       2.9570934754534406,
+       3.346976424393196
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:always_commit": {
+      "ewpm": [
+       2.3328806681836194,
+       2.878839359142421
+      ],
+      "wrong_commit": [
+       0.9839639599523778,
+       1.0
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.9839639599523778,
+       1.0
+      ],
+      "silent_error": [
+       0.15671611650953635,
+       0.2802626785470331
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       3.0245231460761177,
+       3.305217544402687
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "diffs": {
+     "always_commit-trust": {
+      "ewpm": [
+       -0.8349687666902941,
+       -0.44672873331058743
+      ],
+      "wrong_commit": [
+       0.9865470852017937,
+       1.0
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.17618112536826472,
+       0.30430334037496687
+      ]
+     },
+     "no_calib-trust": {
+      "ewpm": [
+       -0.2404476859363656,
+       -0.1026015749639393
+      ],
+      "wrong_commit": [
+       0.0,
+       0.016360146435874964
+      ],
+      "commit_rate": [
+       0.0,
+       0.018626315507591775
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "conf_only-trust": {
+      "ewpm": [
+       -0.24045458656074292,
+       -0.1030052968872999
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "beam_only-trust": {
+      "ewpm": [
+       0.0,
+       0.00037880780641701367
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.008797653958944282
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_guard-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_off_base-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on-trust": {
+      "ewpm": [
+       -0.00322260859929826,
+       0.0004571982421770918
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust-trust": {
+      "ewpm": [
+       -0.12760194364982216,
+       -0.013304651394809176
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:always_commit-trust": {
+      "ewpm": [
+       -0.8184294056442449,
+       -0.4407356748985751
+      ],
+      "wrong_commit": [
+       0.9839639599523778,
+       1.0
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.15671611650953635,
+       0.2802626785470331
+      ]
+     },
+     "gaze_only-trust": {
+      "ewpm": [
+       -0.25015448011929753,
+       0.10228087834886122
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_on-ow_off_base": {
+      "ewpm": [
+       -0.00322260859929826,
+       0.0004571982421770918
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust-lm_retuned:always_commit": {
+      "ewpm": [
+       0.3862807064619386,
+       0.7432815947142436
+      ],
+      "wrong_commit": [
+       -1.0,
+       -0.9839639599523778
+      ],
+      "commit_rate": [
+       -1.0,
+       -1.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       -0.2802626785470332,
+       -0.15671611650953635
+      ]
+     },
+     "trust-gaze_only": {
+      "ewpm": [
+       -0.10228087834886126,
+       0.25015448011929753
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_calib-gaze_only": {
+      "ewpm": [
+       -0.22615173564676738,
+       0.03001743925033535
+      ],
+      "wrong_commit": [
+       0.0,
+       0.016360146435874964
+      ],
+      "commit_rate": [
+       0.0,
+       0.018626315507591775
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "lm_retuned:trust-gaze_only": {
+      "ewpm": [
+       -0.15350751308552413,
+       0.15851527568918464
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "seconds": 196.3
+  },
+  "b2t-ours": {
+   "n_test": 816,
+   "ci_unit": "cluster",
+   "point": {
+    "trust": {
+     "ewpm": 11.545649629165746,
+     "wrong_commit": 0.058823529411764705,
+     "commit_rate": 0.23161764705882354,
+     "error_among_commits": 0.25396825396825395,
+     "silent_error": 0.0024509803921568627
+    },
+    "always_commit": {
+     "ewpm": 11.449637382561221,
+     "wrong_commit": 0.6102941176470589,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.6102941176470589,
+     "silent_error": 0.04411764705882353
+    },
+    "no_calib": {
+     "ewpm": 11.57284325526267,
+     "wrong_commit": 0.07107843137254902,
+     "commit_rate": 0.26348039215686275,
+     "error_among_commits": 0.26976744186046514,
+     "silent_error": 0.006127450980392157
+    },
+    "conf_only": {
+     "ewpm": 11.536970108415609,
+     "wrong_commit": 0.07352941176470588,
+     "commit_rate": 0.26715686274509803,
+     "error_among_commits": 0.27522935779816515,
+     "silent_error": 0.004901960784313725
+    },
+    "beam_only": {
+     "ewpm": 11.499215992555463,
+     "wrong_commit": 0.07598039215686274,
+     "commit_rate": 0.2426470588235294,
+     "error_among_commits": 0.31313131313131315,
+     "silent_error": 0.006127450980392157
+    },
+    "no_guard": {
+     "ewpm": 11.51445965893824,
+     "wrong_commit": 0.03553921568627451,
+     "commit_rate": 0.16544117647058823,
+     "error_among_commits": 0.21481481481481482,
+     "silent_error": 0.0
+    },
+    "no_conformal": {
+     "ewpm": 11.529136627266121,
+     "wrong_commit": 0.058823529411764705,
+     "commit_rate": 0.23161764705882354,
+     "error_among_commits": 0.25396825396825395,
+     "silent_error": 0.0024509803921568627
+    },
+    "ow_off_base": {
+     "ewpm": 11.246278574913509,
+     "wrong_commit": 0.031862745098039214,
+     "commit_rate": 0.14338235294117646,
+     "error_among_commits": 0.2222222222222222,
+     "silent_error": 0.0012254901960784314
+    },
+    "ow_on": {
+     "ewpm": 11.32121062865739,
+     "wrong_commit": 0.05392156862745098,
+     "commit_rate": 0.14338235294117646,
+     "error_among_commits": 0.2222222222222222,
+     "silent_error": 0.003676470588235294
+    },
+    "crc_off (fit-A plug-in)": {
+     "ewpm": 11.477549766206314,
+     "wrong_commit": 0.024509803921568627,
+     "commit_rate": 0.10049019607843138,
+     "error_among_commits": 0.24390243902439024,
+     "silent_error": 0.0012254901960784314
+    },
+    "crc_on (clean CRC)": {
+     "ewpm": 11.477549766206314,
+     "wrong_commit": 0.024509803921568627,
+     "commit_rate": 0.10049019607843138,
+     "error_among_commits": 0.24390243902439024,
+     "silent_error": 0.0012254901960784314
+    },
+    "gaze_only": {
+     "ewpm": 4.078303425774878,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    }
+   },
+   "decoder": {
+    "trust": {
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "sentence_acc": 0.3897058823529412,
+     "truth_in_nbest": 0.6225490196078431,
+     "ece_sentence_raw": 0.4481117937902753,
+     "ece_sentence_cal": 0.06692354956349712,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.5,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 4.555122539314097,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9175417258727783,
+      "word_conformal_q": 0.8690946954224263,
+      "calib_miss_rate": 0.4014778325123153,
+      "policy_fit_feasible": true,
+      "val_ewpm": 10.7405871803911,
+      "val_wrong_commit_rate": 0.04556650246305419
+     },
+     "seconds": 46.3
+    },
+    "always_commit": {
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "sentence_acc": 0.3897058823529412,
+     "truth_in_nbest": 0.6225490196078431,
+     "ece_sentence_raw": 0.4481117937902753,
+     "ece_sentence_cal": 0.06692354956349712,
+     "frame_T": 3.780895226360392,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 4.555122539314097,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9175417258727783,
+      "word_conformal_q": 0.8690946954224263,
+      "calib_miss_rate": 0.4014778325123153
+     },
+     "seconds": 0.8
+    },
+    "no_calib": {
+     "cer": 0.09636732582660247,
+     "wer": 0.14536585365853658,
+     "sentence_acc": 0.40318627450980393,
+     "truth_in_nbest": 0.6102941176470589,
+     "ece_sentence_raw": 0.4457792086297703,
+     "ece_sentence_cal": 0.4457792086297703,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.95,
+      "commit_max_risk": 0.1,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": 0.999152633175573,
+      "word_conformal_q": 0.9959760523921484,
+      "calib_miss_rate": 0.4014778325123153,
+      "policy_fit_feasible": true,
+      "val_ewpm": 10.733019709277954,
+      "val_wrong_commit_rate": 0.04556650246305419
+     },
+     "seconds": 48.5
+    },
+    "conf_only": {
+     "cer": 0.09636732582660247,
+     "wer": 0.14536585365853658,
+     "sentence_acc": 0.40318627450980393,
+     "truth_in_nbest": 0.6102941176470589,
+     "ece_sentence_raw": 0.4457792086297703,
+     "ece_sentence_cal": 0.09321187552370354,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.3,
+      "commit_max_risk": 0.1,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 3.780895226360392,
+      "temperature_frame_used": 1.0,
+      "temperature_sentence": 4.7834103237328245,
+      "conformal_q": 0.9116493975795454,
+      "policy_fit_feasible": true,
+      "val_ewpm": 10.719370713789273,
+      "val_wrong_commit_rate": 0.04556650246305419
+     },
+     "seconds": 47.1
+    },
+    "beam_only": {
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "sentence_acc": 0.3897058823529412,
+     "truth_in_nbest": 0.6225490196078431,
+     "ece_sentence_raw": 0.4481117937902753,
+     "ece_sentence_cal": 0.4481117937902753,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.9,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 3.780895226360392,
+      "temperature_frame_used": 3.780895226360392,
+      "temperature_sentence": 1.0,
+      "conformal_q": 0.9973109569846246,
+      "policy_fit_feasible": true,
+      "val_ewpm": 10.758867588907064,
+      "val_wrong_commit_rate": 0.04310344827586207
+     },
+     "seconds": 45.7
+    },
+    "no_guard": {
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "sentence_acc": 0.3897058823529412,
+     "truth_in_nbest": 0.6225490196078431,
+     "ece_sentence_raw": 0.4481117937902753,
+     "ece_sentence_cal": 0.06692354956349712,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.6,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 4.555122539314097,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9175417258727783,
+      "word_conformal_q": 0.8690946954224263,
+      "calib_miss_rate": 0.4014778325123153,
+      "policy_fit_feasible": true,
+      "val_ewpm": 10.639445325769554,
+      "val_wrong_commit_rate": 0.03571428571428571
+     },
+     "seconds": 4.0
+    },
+    "no_conformal": {
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "sentence_acc": 0.3897058823529412,
+     "truth_in_nbest": 0.6225490196078431,
+     "ece_sentence_raw": 0.4481117937902753,
+     "ece_sentence_cal": 0.06692354956349712,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.5,
+      "commit_max_set": null,
+      "offer_max_k": 2,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 4.555122539314097,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9175417258727783,
+      "word_conformal_q": 0.8690946954224263,
+      "calib_miss_rate": 0.4014778325123153,
+      "policy_fit_feasible": true,
+      "val_ewpm": 10.736486530930327,
+      "val_wrong_commit_rate": 0.04556650246305419
+     },
+     "seconds": 43.6
+    },
+    "ow_off_base": {
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "sentence_acc": 0.3897058823529412,
+     "truth_in_nbest": 0.6225490196078431,
+     "ece_sentence_raw": 0.4481117937902753,
+     "ece_sentence_cal": 0.06692354956349712,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 3,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 4.555122539314097,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9175417258727783,
+      "word_conformal_q": 0.8690946954224263,
+      "calib_miss_rate": 0.4014778325123153,
+      "policy_fit_feasible": true,
+      "val_ewpm": 10.54510959874932,
+      "val_wrong_commit_rate": 0.017241379310344827
+     },
+     "seconds": 6.0
+    },
+    "ow_on": {
+     "cer": 0.09533282934786934,
+     "wer": 0.1490731707317073,
+     "sentence_acc": 0.3897058823529412,
+     "truth_in_nbest": 0.6225490196078431,
+     "ece_sentence_raw": 0.4481117937902753,
+     "ece_sentence_cal": 0.06692354956349712,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.5,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 3,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": true,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.9,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 4.555122539314097,
+      "temperature_char": 1.0,
+      "conformal_q": 0.9175417258727783,
+      "word_conformal_q": 0.8690946954224263,
+      "calib_miss_rate": 0.4014778325123153,
+      "policy_fit_feasible": true,
+      "val_ewpm": 10.647335404636097,
+      "val_wrong_commit_rate": 0.038177339901477834
+     },
+     "seconds": 246.0
+    }
+   },
+   "extra": {},
+   "bootstrap": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "trust": {
+      "ewpm": [
+       10.832146816038904,
+       12.341351378276888
+      ],
+      "wrong_commit": [
+       0.04494307808766123,
+       0.07035232918280392
+      ],
+      "commit_rate": [
+       0.2013255134398563,
+       0.25817839697928685
+      ],
+      "error_among_commits": [
+       0.19177602099603122,
+       0.3207591048705572
+      ],
+      "silent_error": [
+       0.0,
+       0.005889542095333395
+      ]
+     },
+     "always_commit": {
+      "ewpm": [
+       10.70152107112499,
+       12.313923762694852
+      ],
+      "wrong_commit": [
+       0.5679735276444188,
+       0.647066076738957
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.5679735276444188,
+       0.647066076738957
+      ],
+      "silent_error": [
+       0.03128972457627119,
+       0.05604173199423026
+      ]
+     },
+     "no_calib": {
+      "ewpm": [
+       10.776968555754888,
+       12.493578959167388
+      ],
+      "wrong_commit": [
+       0.057947283822553666,
+       0.0864216264823245
+      ],
+      "commit_rate": [
+       0.23191689650047068,
+       0.29190438602236923
+      ],
+      "error_among_commits": [
+       0.22264539930555555,
+       0.3287671232876712
+      ],
+      "silent_error": [
+       0.0022494042271561693,
+       0.010510905642484589
+      ]
+     },
+     "conf_only": {
+      "ewpm": [
+       10.76179832526359,
+       12.443699973282596
+      ],
+      "wrong_commit": [
+       0.061926337563234166,
+       0.08478821221799303
+      ],
+      "commit_rate": [
+       0.22713585266682612,
+       0.30749401542085625
+      ],
+      "error_among_commits": [
+       0.23246964523587144,
+       0.3232342219184325
+      ],
+      "silent_error": [
+       0.0012254152883647345,
+       0.009112286409297177
+      ]
+     },
+     "beam_only": {
+      "ewpm": [
+       10.790024365618319,
+       12.310456792863407
+      ],
+      "wrong_commit": [
+       0.0635101827179292,
+       0.088643166328974
+      ],
+      "commit_rate": [
+       0.21084980171293363,
+       0.2789123301066076
+      ],
+      "error_among_commits": [
+       0.2653061224489796,
+       0.36258698422032726
+      ],
+      "silent_error": [
+       0.002222160562338143,
+       0.011153109053545449
+      ]
+     },
+     "no_guard": {
+      "ewpm": [
+       10.786034029624147,
+       12.35449211755694
+      ],
+      "wrong_commit": [
+       0.024861449504135068,
+       0.046260488135885285
+      ],
+      "commit_rate": [
+       0.14386149157552597,
+       0.1867546781004458
+      ],
+      "error_among_commits": [
+       0.13906317977473776,
+       0.3064826302729527
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "no_conformal": {
+      "ewpm": [
+       10.820748165546275,
+       12.328115409689817
+      ],
+      "wrong_commit": [
+       0.04494307808766123,
+       0.07035232918280392
+      ],
+      "commit_rate": [
+       0.2013255134398563,
+       0.25817839697928685
+      ],
+      "error_among_commits": [
+       0.19177602099603122,
+       0.3207591048705572
+      ],
+      "silent_error": [
+       0.0,
+       0.005889542095333395
+      ]
+     },
+     "ow_off_base": {
+      "ewpm": [
+       10.534549449752928,
+       12.046395556570062
+      ],
+      "wrong_commit": [
+       0.022284122562674095,
+       0.040001053740779766
+      ],
+      "commit_rate": [
+       0.11450249305034638,
+       0.17310913756532326
+      ],
+      "error_among_commits": [
+       0.16249732905982905,
+       0.2845818815331009
+      ],
+      "silent_error": [
+       0.0,
+       0.0037641154328732747
+      ]
+     },
+     "ow_on": {
+      "ewpm": [
+       10.59730453202648,
+       12.114393965108476
+      ],
+      "wrong_commit": [
+       0.037647775787836034,
+       0.06856083910108518
+      ],
+      "commit_rate": [
+       0.11450249305034638,
+       0.17310913756532326
+      ],
+      "error_among_commits": [
+       0.16249732905982905,
+       0.2845818815331009
+      ],
+      "silent_error": [
+       0.0,
+       0.006951686453531743
+      ]
+     },
+     "crc_off (fit-A plug-in)": {
+      "ewpm": [
+       10.788081774551685,
+       12.285749891887479
+      ],
+      "wrong_commit": [
+       0.014557630022282317,
+       0.03476667326340787
+      ],
+      "commit_rate": [
+       0.08157894736842106,
+       0.12139796307846988
+      ],
+      "error_among_commits": [
+       0.15853658536585366,
+       0.3229319852941176
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "crc_on (clean CRC)": {
+      "ewpm": [
+       10.788081774551685,
+       12.285749891887479
+      ],
+      "wrong_commit": [
+       0.014557630022282317,
+       0.03476667326340787
+      ],
+      "commit_rate": [
+       0.08157894736842106,
+       0.12139796307846988
+      ],
+      "error_among_commits": [
+       0.15853658536585366,
+       0.3229319852941176
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.0459983351116104,
+       4.118525637241211
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "diffs": {
+     "always_commit-trust": {
+      "ewpm": [
+       -0.33042045094558836,
+       0.14120732448709927
+      ],
+      "wrong_commit": [
+       0.5130166492609255,
+       0.5856807760407996
+      ],
+      "commit_rate": [
+       0.7418216030207132,
+       0.7986744865601436
+      ],
+      "error_among_commits": [
+       0.3077049887326132,
+       0.40730099661876834
+      ],
+      "silent_error": [
+       0.029642387480906175,
+       0.05374896521316607
+      ]
+     },
+     "no_calib-trust": {
+      "ewpm": [
+       -0.22187197531479547,
+       0.28223498746324227
+      ],
+      "wrong_commit": [
+       -0.006322012601633452,
+       0.03318926136762946
+      ],
+      "commit_rate": [
+       0.0011789600967351936,
+       0.05974460849233988
+      ],
+      "error_among_commits": [
+       -0.06866482766104573,
+       0.09862485746356411
+      ],
+      "silent_error": [
+       0.0,
+       0.007633587786259542
+      ]
+     },
+     "conf_only-trust": {
+      "ewpm": [
+       -0.2703294933556203,
+       0.2581046087605187
+      ],
+      "wrong_commit": [
+       -0.005220652634941969,
+       0.03829330987836141
+      ],
+      "commit_rate": [
+       0.0,
+       0.07372297810958853
+      ],
+      "error_among_commits": [
+       -0.05801867340980524,
+       0.10373320151063624
+      ],
+      "silent_error": [
+       -0.0020307158396353463,
+       0.00730692113848634
+      ]
+     },
+     "beam_only-trust": {
+      "ewpm": [
+       -0.12405212370425574,
+       0.0386427975646721
+      ],
+      "wrong_commit": [
+       0.0011623906550031968,
+       0.035674215025480835
+      ],
+      "commit_rate": [
+       -0.016890378511951482,
+       0.04341691310639903
+      ],
+      "error_among_commits": [
+       -0.0023091595833379143,
+       0.12150935586922684
+      ],
+      "silent_error": [
+       -0.0011948146717318052,
+       0.009479424069219847
+      ]
+     },
+     "no_guard-trust": {
+      "ewpm": [
+       -0.09659147716674728,
+       0.04172384947927356
+      ],
+      "wrong_commit": [
+       -0.03504114737146637,
+       -0.010818082795928162
+      ],
+      "commit_rate": [
+       -0.08872887487345318,
+       -0.04181087777537228
+      ],
+      "error_among_commits": [
+       -0.08924081021320407,
+       0.015718716431846406
+      ],
+      "silent_error": [
+       -0.005889542095333396,
+       0.0
+      ]
+     },
+     "no_conformal-trust": {
+      "ewpm": [
+       -0.026855308489156692,
+       -0.008556120315929984
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_off_base-trust": {
+      "ewpm": [
+       -0.44888075785724624,
+       -0.14689204065626932
+      ],
+      "wrong_commit": [
+       -0.037887731270298874,
+       -0.015623696468298117
+      ],
+      "commit_rate": [
+       -0.10914941898582506,
+       -0.06849270822271777
+      ],
+      "error_among_commits": [
+       -0.0772474646302216,
+       0.003821845411610489
+      ],
+      "silent_error": [
+       -0.003886389362404576,
+       0.0
+      ]
+     },
+     "ow_on-trust": {
+      "ewpm": [
+       -0.4030086153367978,
+       -0.04786734414495233
+      ],
+      "wrong_commit": [
+       -0.01892446520369245,
+       0.008373299681855753
+      ],
+      "commit_rate": [
+       -0.10914941898582506,
+       -0.06849270822271777
+      ],
+      "error_among_commits": [
+       -0.0772474646302216,
+       0.003821845411610489
+      ],
+      "silent_error": [
+       -0.0028530670470756064,
+       0.005149463301729537
+      ]
+     },
+     "gaze_only-trust": {
+      "ewpm": [
+       -8.279170314432003,
+       -6.749719986203756
+      ],
+      "wrong_commit": [
+       -0.07035232918280392,
+       -0.04494307808766123
+      ],
+      "commit_rate": [
+       -0.25817839697928685,
+       -0.20132551343985636
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       -0.005889542095333396,
+       0.0
+      ]
+     },
+     "ow_on-ow_off_base": {
+      "ewpm": [
+       0.033660067375890536,
+       0.11430998351046352
+      ],
+      "wrong_commit": [
+       0.012856975967957275,
+       0.03145469943244287
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.005549389567147614
+      ]
+     },
+     "crc_on (clean CRC)-crc_off (fit-A plug-in)": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "trust-gaze_only": {
+      "ewpm": [
+       6.749719986203756,
+       8.279170314432003
+      ],
+      "wrong_commit": [
+       0.04494307808766123,
+       0.07035232918280392
+      ],
+      "commit_rate": [
+       0.2013255134398563,
+       0.25817839697928685
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.005889542095333395
+      ]
+     },
+     "no_calib-gaze_only": {
+      "ewpm": [
+       6.697825134958882,
+       8.416351154345909
+      ],
+      "wrong_commit": [
+       0.057947283822553666,
+       0.0864216264823245
+      ],
+      "commit_rate": [
+       0.23191689650047068,
+       0.29190438602236923
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0022494042271561693,
+       0.010510905642484589
+      ]
+     }
+    }
+   },
+   "seconds": 495.7
+  },
+  "b2t-published": {
+   "n_test": 816,
+   "ci_unit": "cluster",
+   "point": {
+    "trust": {
+     "ewpm": 18.767072914257195,
+     "wrong_commit": 0.04411764705882353,
+     "commit_rate": 0.4730392156862745,
+     "error_among_commits": 0.09326424870466321,
+     "silent_error": 0.003676470588235294
+    },
+    "always_commit": {
+     "ewpm": 19.612129926967807,
+     "wrong_commit": 0.19362745098039216,
+     "commit_rate": 1.0,
+     "error_among_commits": 0.19362745098039216,
+     "silent_error": 0.024509803921568627
+    },
+    "no_calib": {
+     "ewpm": 18.72830120166546,
+     "wrong_commit": 0.0428921568627451,
+     "commit_rate": 0.4485294117647059,
+     "error_among_commits": 0.09562841530054644,
+     "silent_error": 0.003676470588235294
+    },
+    "conf_only": {
+     "ewpm": 18.740231381651896,
+     "wrong_commit": 0.04656862745098039,
+     "commit_rate": 0.4632352941176471,
+     "error_among_commits": 0.10052910052910052,
+     "silent_error": 0.0024509803921568627
+    },
+    "beam_only": {
+     "ewpm": 18.658163656835075,
+     "wrong_commit": 0.031862745098039214,
+     "commit_rate": 0.40808823529411764,
+     "error_among_commits": 0.07807807807807808,
+     "silent_error": 0.0012254901960784314
+    },
+    "no_guard": {
+     "ewpm": 18.620834721513045,
+     "wrong_commit": 0.024509803921568627,
+     "commit_rate": 0.38112745098039214,
+     "error_among_commits": 0.06430868167202572,
+     "silent_error": 0.0012254901960784314
+    },
+    "no_conformal": {
+     "ewpm": 18.767072914257195,
+     "wrong_commit": 0.04411764705882353,
+     "commit_rate": 0.4730392156862745,
+     "error_among_commits": 0.09326424870466321,
+     "silent_error": 0.003676470588235294
+    },
+    "ow_off_base": {
+     "ewpm": 18.620834721513045,
+     "wrong_commit": 0.024509803921568627,
+     "commit_rate": 0.38112745098039214,
+     "error_among_commits": 0.06430868167202572,
+     "silent_error": 0.0012254901960784314
+    },
+    "ow_on": {
+     "ewpm": 18.592912978541854,
+     "wrong_commit": 0.025735294117647058,
+     "commit_rate": 0.38112745098039214,
+     "error_among_commits": 0.06430868167202572,
+     "silent_error": 0.0024509803921568627
+    },
+    "crc_off (fit-A plug-in)": {
+     "ewpm": 18.791626769729074,
+     "wrong_commit": 0.04779411764705882,
+     "commit_rate": 0.49142156862745096,
+     "error_among_commits": 0.09725685785536159,
+     "silent_error": 0.004901960784313725
+    },
+    "crc_on (clean CRC)": {
+     "ewpm": 18.791626769729074,
+     "wrong_commit": 0.04779411764705882,
+     "commit_rate": 0.49142156862745096,
+     "error_among_commits": 0.09725685785536159,
+     "silent_error": 0.004901960784313725
+    },
+    "gaze_only": {
+     "ewpm": 4.078303425774878,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0
+    }
+   },
+   "decoder": {
+    "trust": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8431372549019608,
+     "ece_sentence_raw": 0.1023158094943043,
+     "ece_sentence_cal": 0.05829136082075782,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 0.5,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 1.7173567757767445,
+      "temperature_char": 1.0,
+      "conformal_q": 0.4612257605342842,
+      "word_conformal_q": 0.3049989980305571,
+      "calib_miss_rate": 0.1354679802955665,
+      "policy_fit_feasible": true,
+      "val_ewpm": 18.405960401719092,
+      "val_wrong_commit_rate": 0.04187192118226601
+     },
+     "seconds": 42.7
+    },
+    "always_commit": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8431372549019608,
+     "ece_sentence_raw": 0.1023158094943043,
+     "ece_sentence_cal": 0.05829136082075782,
+     "frame_T": 3.780895226360392,
+     "policy": "always commit",
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 1.7173567757767445,
+      "temperature_char": 1.0,
+      "conformal_q": 0.4612257605342842,
+      "word_conformal_q": 0.3049989980305571,
+      "calib_miss_rate": 0.1354679802955665
+     },
+     "seconds": 0.8
+    },
+    "no_calib": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8345588235294118,
+     "ece_sentence_raw": 0.10411212170694872,
+     "ece_sentence_cal": 0.10411212170694872,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.85,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 1.0,
+      "temperature_sentence": 1.0,
+      "temperature_char": 1.0,
+      "conformal_q": 0.21728069786673265,
+      "word_conformal_q": 0.12944311849602486,
+      "calib_miss_rate": 0.13793103448275862,
+      "policy_fit_feasible": true,
+      "val_ewpm": 18.325442780572295,
+      "val_wrong_commit_rate": 0.04064039408866995
+     },
+     "seconds": 43.3
+    },
+    "conf_only": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8345588235294118,
+     "ece_sentence_raw": 0.10411212170694872,
+     "ece_sentence_cal": 0.054056506789045375,
+     "frame_T": 1.0,
+     "policy": {
+      "commit_p": 0.6,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 3.780895226360392,
+      "temperature_frame_used": 1.0,
+      "temperature_sentence": 1.7902240249690782,
+      "conformal_q": 0.48083541310142996,
+      "policy_fit_feasible": true,
+      "val_ewpm": 18.346471908147908,
+      "val_wrong_commit_rate": 0.04926108374384237
+     },
+     "seconds": 43.4
+    },
+    "beam_only": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8431372549019608,
+     "ece_sentence_raw": 0.1023158094943043,
+     "ece_sentence_cal": 0.1023158094943043,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.9,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame_fitted": 3.780895226360392,
+      "temperature_frame_used": 3.780895226360392,
+      "temperature_sentence": 1.0,
+      "conformal_q": 0.20969970448211273,
+      "policy_fit_feasible": true,
+      "val_ewpm": 18.30392647001545,
+      "val_wrong_commit_rate": 0.022167487684729065
+     },
+     "seconds": 42.2
+    },
+    "no_guard": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8431372549019608,
+     "ece_sentence_raw": 0.1023158094943043,
+     "ece_sentence_cal": 0.05829136082075782,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.8,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 1.7173567757767445,
+      "temperature_char": 1.0,
+      "conformal_q": 0.4612257605342842,
+      "word_conformal_q": 0.3049989980305571,
+      "calib_miss_rate": 0.1354679802955665,
+      "policy_fit_feasible": true,
+      "val_ewpm": 18.275006782949674,
+      "val_wrong_commit_rate": 0.019704433497536946
+     },
+     "seconds": 3.8
+    },
+    "no_conformal": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8431372549019608,
+     "ece_sentence_raw": 0.1023158094943043,
+     "ece_sentence_cal": 0.05829136082075782,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.7,
+      "commit_max_risk": 0.5,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 1.7173567757767445,
+      "temperature_char": 1.0,
+      "conformal_q": 0.4612257605342842,
+      "word_conformal_q": 0.3049989980305571,
+      "calib_miss_rate": 0.1354679802955665,
+      "policy_fit_feasible": true,
+      "val_ewpm": 18.405960401719092,
+      "val_wrong_commit_rate": 0.04187192118226601
+     },
+     "seconds": 42.1
+    },
+    "ow_off_base": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8431372549019608,
+     "ece_sentence_raw": 0.1023158094943043,
+     "ece_sentence_cal": 0.05829136082075782,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.8,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": false,
+      "word_conf_threshold": 0.9,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.0,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 1.7173567757767445,
+      "temperature_char": 1.0,
+      "conformal_q": 0.4612257605342842,
+      "word_conformal_q": 0.3049989980305571,
+      "calib_miss_rate": 0.1354679802955665,
+      "policy_fit_feasible": true,
+      "val_ewpm": 18.275006782949674,
+      "val_wrong_commit_rate": 0.019704433497536946
+     },
+     "seconds": 5.7
+    },
+    "ow_on": {
+     "cer": 0.03091552938367883,
+     "wer": 0.04312195121951219,
+     "sentence_acc": 0.8063725490196079,
+     "truth_in_nbest": 0.8431372549019608,
+     "ece_sentence_raw": 0.1023158094943043,
+     "ece_sentence_cal": 0.05829136082075782,
+     "frame_T": 3.780895226360392,
+     "policy": {
+      "commit_p": 0.8,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "offer_max_k": 1,
+      "abstain_risk": 1.01,
+      "final_fallback": "offer",
+      "offer_words": true,
+      "word_conf_threshold": 0.5,
+      "offer_words_k": 3,
+      "offer_words_min_conf": 0.9,
+      "offer_words_max_slots": null
+     },
+     "fit_report": {
+      "temperature_frame": 3.780895226360392,
+      "temperature_sentence": 1.7173567757767445,
+      "temperature_char": 1.0,
+      "conformal_q": 0.4612257605342842,
+      "word_conformal_q": 0.3049989980305571,
+      "calib_miss_rate": 0.1354679802955665,
+      "policy_fit_feasible": true,
+      "val_ewpm": 18.263784902302206,
+      "val_wrong_commit_rate": 0.022167487684729065
+     },
+     "seconds": 168.1
+    }
+   },
+   "extra": {},
+   "bootstrap": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "trust": {
+      "ewpm": [
+       17.128187478390664,
+       20.346397036584253
+      ],
+      "wrong_commit": [
+       0.02715340035402284,
+       0.0677782103760448
+      ],
+      "commit_rate": [
+       0.44458908173861444,
+       0.5031135193710229
+      ],
+      "error_among_commits": [
+       0.056648017297104516,
+       0.14557387750468295
+      ],
+      "silent_error": [
+       0.0,
+       0.0077822526879765316
+      ]
+     },
+     "always_commit": {
+      "ewpm": [
+       17.81388415534888,
+       21.321490368301006
+      ],
+      "wrong_commit": [
+       0.1458624659120657,
+       0.2533203754431195
+      ],
+      "commit_rate": [
+       1.0,
+       1.0
+      ],
+      "error_among_commits": [
+       0.1458624659120657,
+       0.2533203754431195
+      ],
+      "silent_error": [
+       0.014908221266169013,
+       0.03352824896192243
+      ]
+     },
+     "no_calib": {
+      "ewpm": [
+       17.05827419688971,
+       20.33910547693984
+      ],
+      "wrong_commit": [
+       0.027808243187186107,
+       0.06280217319057321
+      ],
+      "commit_rate": [
+       0.4010640272075866,
+       0.4953281844929041
+      ],
+      "error_among_commits": [
+       0.0591225340111493,
+       0.14895385859402627
+      ],
+      "silent_error": [
+       0.0,
+       0.00760043431053203
+      ]
+     },
+     "conf_only": {
+      "ewpm": [
+       17.068776495478826,
+       20.331816155341908
+      ],
+      "wrong_commit": [
+       0.02971282833418065,
+       0.06611843905642821
+      ],
+      "commit_rate": [
+       0.4151141030866423,
+       0.5094568249806729
+      ],
+      "error_among_commits": [
+       0.06059221457393781,
+       0.15384615384615385
+      ],
+      "silent_error": [
+       0.0,
+       0.005896313380085712
+      ]
+     },
+     "beam_only": {
+      "ewpm": [
+       17.037447384142844,
+       20.212735994274894
+      ],
+      "wrong_commit": [
+       0.01878998390831665,
+       0.045863195437841064
+      ],
+      "commit_rate": [
+       0.3770588558671093,
+       0.4423473588038234
+      ],
+      "error_among_commits": [
+       0.04450116346713205,
+       0.11525749674054757
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "no_guard": {
+      "ewpm": [
+       17.012563088211063,
+       20.174600078649004
+      ],
+      "wrong_commit": [
+       0.01358978929854732,
+       0.0383656305331497
+      ],
+      "commit_rate": [
+       0.3519358305600483,
+       0.41602772417995326
+      ],
+      "error_among_commits": [
+       0.03384586466165414,
+       0.1019627851140456
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "no_conformal": {
+      "ewpm": [
+       17.128187478390664,
+       20.346397036584253
+      ],
+      "wrong_commit": [
+       0.02715340035402284,
+       0.0677782103760448
+      ],
+      "commit_rate": [
+       0.44458908173861444,
+       0.5031135193710229
+      ],
+      "error_among_commits": [
+       0.056648017297104516,
+       0.14557387750468295
+      ],
+      "silent_error": [
+       0.0,
+       0.0077822526879765316
+      ]
+     },
+     "ow_off_base": {
+      "ewpm": [
+       17.012563088211063,
+       20.174600078649004
+      ],
+      "wrong_commit": [
+       0.01358978929854732,
+       0.0383656305331497
+      ],
+      "commit_rate": [
+       0.3519358305600483,
+       0.41602772417995326
+      ],
+      "error_among_commits": [
+       0.03384586466165414,
+       0.1019627851140456
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "ow_on": {
+      "ewpm": [
+       16.990603647624233,
+       20.128872846146265
+      ],
+      "wrong_commit": [
+       0.014665408038976858,
+       0.039190564110622245
+      ],
+      "commit_rate": [
+       0.3519358305600483,
+       0.41602772417995326
+      ],
+      "error_among_commits": [
+       0.03384586466165414,
+       0.1019627851140456
+      ],
+      "silent_error": [
+       0.0,
+       0.006157825284116792
+      ]
+     },
+     "crc_off (fit-A plug-in)": {
+      "ewpm": [
+       17.131595739602147,
+       20.373138129882445
+      ],
+      "wrong_commit": [
+       0.02914985526978487,
+       0.07119025738679474
+      ],
+      "commit_rate": [
+       0.4569856470814132,
+       0.5257456541193046
+      ],
+      "error_among_commits": [
+       0.059005257374822595,
+       0.14794748168687663
+      ],
+      "silent_error": [
+       0.0011918596401611897,
+       0.009576046265881369
+      ]
+     },
+     "crc_on (clean CRC)": {
+      "ewpm": [
+       17.131595739602147,
+       20.373138129882445
+      ],
+      "wrong_commit": [
+       0.02914985526978487,
+       0.07119025738679474
+      ],
+      "commit_rate": [
+       0.4569856470814132,
+       0.5257456541193046
+      ],
+      "error_among_commits": [
+       0.059005257374822595,
+       0.14794748168687663
+      ],
+      "silent_error": [
+       0.0011918596401611897,
+       0.009576046265881369
+      ]
+     },
+     "gaze_only": {
+      "ewpm": [
+       4.0459983351116104,
+       4.118525637241211
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "diffs": {
+     "always_commit-trust": {
+      "ewpm": [
+       0.6611528664477725,
+       1.0093653469816337
+      ],
+      "wrong_commit": [
+       0.1140924879312375,
+       0.1870356073906637
+      ],
+      "commit_rate": [
+       0.49688648062897717,
+       0.5554109182613856
+      ],
+      "error_among_commits": [
+       0.0765200890906835,
+       0.11934292546780623
+      ],
+      "silent_error": [
+       0.012044253112330415,
+       0.02922544068903712
+      ]
+     },
+     "no_calib-trust": {
+      "ewpm": [
+       -0.08985298910915755,
+       0.015630598310456975
+      ],
+      "wrong_commit": [
+       -0.011268629547885054,
+       0.008645775172157063
+      ],
+      "commit_rate": [
+       -0.058745178399228555,
+       0.00986954200091306
+      ],
+      "error_among_commits": [
+       -0.01803985690176031,
+       0.022565656654111366
+      ],
+      "silent_error": [
+       -0.00356718192627824,
+       0.0034642032332563508
+      ]
+     },
+     "conf_only-trust": {
+      "ewpm": [
+       -0.0806669744775503,
+       0.029766613343995073
+      ],
+      "wrong_commit": [
+       -0.009572469873464688,
+       0.015195654458909526
+      ],
+      "commit_rate": [
+       -0.04687805972584856,
+       0.02669302518946402
+      ],
+      "error_among_commits": [
+       -0.015883680392136935,
+       0.03092603396618784
+      ],
+      "silent_error": [
+       -0.00405446661043676,
+       0.0
+      ]
+     },
+     "beam_only-trust": {
+      "ewpm": [
+       -0.16129895460264443,
+       -0.06733527145140208
+      ],
+      "wrong_commit": [
+       -0.02806194106856226,
+       0.0011619550086078316
+      ],
+      "commit_rate": [
+       -0.08530835419553187,
+       -0.03987776404340068
+      ],
+      "error_among_commits": [
+       -0.04730586131750546,
+       0.011921120539087938
+      ],
+      "silent_error": [
+       -0.006024460159478494,
+       0.0
+      ]
+     },
+     "no_guard-trust": {
+      "ewpm": [
+       -0.2033593423080185,
+       -0.101662432731215
+      ],
+      "wrong_commit": [
+       -0.033803483961958494,
+       -0.006503171047234407
+      ],
+      "commit_rate": [
+       -0.11255424078291379,
+       -0.06721123211492788
+      ],
+      "error_among_commits": [
+       -0.05504682138039297,
+       -0.0030335655040176755
+      ],
+      "silent_error": [
+       -0.006024460159478494,
+       0.0
+      ]
+     },
+     "no_conformal-trust": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "ow_off_base-trust": {
+      "ewpm": [
+       -0.2033593423080185,
+       -0.101662432731215
+      ],
+      "wrong_commit": [
+       -0.033803483961958494,
+       -0.006503171047234407
+      ],
+      "commit_rate": [
+       -0.11255424078291379,
+       -0.06721123211492788
+      ],
+      "error_among_commits": [
+       -0.05504682138039297,
+       -0.0030335655040176755
+      ],
+      "silent_error": [
+       -0.006024460159478494,
+       0.0
+      ]
+     },
+     "ow_on-trust": {
+      "ewpm": [
+       -0.24505791653446582,
+       -0.11675344510410685
+      ],
+      "wrong_commit": [
+       -0.033334326579261025,
+       -0.004549654358455586
+      ],
+      "commit_rate": [
+       -0.11255424078291379,
+       -0.06721123211492788
+      ],
+      "error_among_commits": [
+       -0.05504682138039297,
+       -0.0030335655040176755
+      ],
+      "silent_error": [
+       -0.005476902615456832,
+       0.002762911194953086
+      ]
+     },
+     "gaze_only-trust": {
+      "ewpm": [
+       -16.273124170153185,
+       -13.033507548144115
+      ],
+      "wrong_commit": [
+       -0.06777821037604481,
+       -0.027153400354022847
+      ],
+      "commit_rate": [
+       -0.5031135193710229,
+       -0.44458908173861444
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       -0.007782252687976532,
+       0.0
+      ]
+     },
+     "ow_on-ow_off_base": {
+      "ewpm": [
+       -0.0706929596644251,
+       -0.0030681229822381146
+      ],
+      "wrong_commit": [
+       0.0,
+       0.003811944091486656
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0038119440914866584
+      ]
+     },
+     "crc_on (clean CRC)-crc_off (fit-A plug-in)": {
+      "ewpm": [
+       0.0,
+       0.0
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "trust-gaze_only": {
+      "ewpm": [
+       13.033507548144115,
+       16.273124170153185
+      ],
+      "wrong_commit": [
+       0.02715340035402284,
+       0.0677782103760448
+      ],
+      "commit_rate": [
+       0.44458908173861444,
+       0.5031135193710229
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0077822526879765316
+      ]
+     },
+     "no_calib-gaze_only": {
+      "ewpm": [
+       12.970854817043264,
+       16.268592675715805
+      ],
+      "wrong_commit": [
+       0.027808243187186107,
+       0.06280217319057321
+      ],
+      "commit_rate": [
+       0.4010640272075866,
+       0.4953281844929041
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.00760043431053203
+      ]
+     }
+    }
+   },
+   "seconds": 392.4
+  }
+ }
+}

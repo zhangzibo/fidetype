@@ -1,0 +1,22 @@
+00:30:20 tab2 b2t-ours: trust eWPM 11.546 CI [10.832146816038904, 12.341351378276888]
+00:30:20 tab2 b2t-published: trust eWPM 18.767 CI [17.128187478390664, 20.346397036584253]
+00:30:20 tab2 emg-calib: trust eWPM 8.024 CI [6.934939356792407, 9.19140436768888]
+00:30:20 tab2 emg-xsession: trust eWPM 4.677 CI [4.189545371508256, 5.252148846546565]
+00:30:21 tab2 emg-xsubject: trust eWPM 4.080 CI [3.8219830491016595, 4.36543823895195]
+00:30:21 tab2 meg-async: trust eWPM 3.203 CI [3.014759018127739, 3.4388812266761786]
+00:30:23 day-stratified reference b2t-ours/split A: obs 0.0245 mean 0.0181 p 0.0140
+00:30:23 day-stratified reference b2t-ours/split B: obs 0.0600 mean 0.0486 p 0.2104
+00:30:24 day-stratified reference b2t-published/split A: obs 0.0478 mean 0.0491 p 0.5407
+00:30:24 day-stratified reference b2t-published/split B: obs 0.0490 mean 0.0490 p 0.4918
+00:30:25 assembled
+01:10:38 tab2 b2t-ours: trust eWPM 11.546 CI [10.832146816038904, 12.341351378276888]
+01:10:38 tab2 b2t-published: trust eWPM 18.767 CI [17.128187478390664, 20.346397036584253]
+01:10:39 tab2 emg-calib: trust eWPM 8.024 CI [6.934939356792407, 9.19140436768888]
+01:10:39 tab2 emg-xsession: trust eWPM 4.677 CI [4.189545371508256, 5.252148846546565]
+01:10:39 tab2 emg-xsubject: trust eWPM 4.080 CI [3.8219830491016595, 4.36543823895195]
+01:10:40 tab2 meg-async: trust eWPM 3.203 CI [3.014759018127739, 3.4388812266761786]
+01:10:40 day-stratified reference b2t-ours/split A: obs 0.0245 mean 0.0181 p 0.0140
+01:10:41 day-stratified reference b2t-ours/split B: obs 0.0600 mean 0.0486 p 0.2104
+01:10:41 day-stratified reference b2t-published/split A: obs 0.0478 mean 0.0491 p 0.5407
+01:10:42 day-stratified reference b2t-published/split B: obs 0.0490 mean 0.0490 p 0.4918
+01:10:42 assembled

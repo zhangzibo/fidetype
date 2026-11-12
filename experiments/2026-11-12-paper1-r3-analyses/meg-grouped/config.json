@@ -1,0 +1,1 @@
+{"description": "R3 item 5: MEG sentence-grouped and participant-grouped CRC on the G1 item table; group-level CRC feasibility. Settings fixed before the first run.", "alpha": 0.05, "delta": 0.1, "seed": 5, "reps": 1000, "sentence_k": [5, 8, 11], "participant_k": [6, 12]}

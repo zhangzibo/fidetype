@@ -1,0 +1,6 @@
+00:26:11 sentence k=5: grouped CRC wc 0.0159 p95 0.0251 >a 0.000 commit 0.017; group-level feasible 0.00
+00:26:14 sentence k=8: grouped CRC wc 0.0180 p95 0.0307 >a 0.000 commit 0.020; group-level feasible 0.00
+00:26:17 sentence k=11: grouped CRC wc 0.0193 p95 0.0377 >a 0.000 commit 0.021; group-level feasible 0.00
+00:26:18 participant k=6: grouped CRC wc 0.0153 p95 0.0261 >a 0.000
+00:26:19 participant k=12: grouped CRC wc 0.0193 p95 0.0390 >a 0.003
+00:26:20 done

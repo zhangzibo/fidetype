@@ -1,0 +1,7 @@
+01:10:59 emg-calib: trust median 0.188 ms p95 0.987; decoder 66.9 ms
+01:11:14 emg-xsession: trust median 0.182 ms p95 0.961; decoder 72.0 ms
+01:11:29 emg-xsubject: trust median 0.185 ms p95 0.890; decoder 44.9 ms
+01:11:36 meg: trust median 0.240 ms p95 1.061
+01:12:29 b2t-ours: trust median 0.304 ms p95 1.040
+01:13:11 b2t-published: trust median 0.283 ms p95 0.491
+01:13:11 done

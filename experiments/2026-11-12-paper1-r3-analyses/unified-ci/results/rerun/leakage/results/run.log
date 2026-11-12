@@ -1,0 +1,6 @@
+00:58:16 emg-calib (w 1.0): original:always_commit eWPM 7.809 wc 0.5408; original:trust eWPM 8.024 wc 0.0036; clean_lm:always_commit eWPM 7.806 wc 0.5445; clean_lm:trust eWPM 7.983 wc 0.0054; gaze_only eWPM 4.275 wc 0.0000
+00:59:54 emg-xsession (w 1.0): original:always_commit eWPM 4.102 wc 0.8820; original:trust eWPM 4.677 wc 0.0036; clean_lm:always_commit eWPM 4.088 wc 0.8838; clean_lm:trust eWPM 4.651 wc 0.0018; gaze_only eWPM 4.275 wc 0.0000
+01:01:35 emg-xsubject (w 1.5): original:always_commit eWPM 3.531 wc 0.9619; original:trust eWPM 4.080 wc 0.0000; clean_lm:always_commit eWPM 3.540 wc 0.9637; clean_lm:trust eWPM 4.089 wc 0.0000; gaze_only eWPM 4.275 wc 0.0000
+01:02:40 b2t-ours: original:always_commit eWPM 11.450 wc 0.6103; original:trust eWPM 11.546 wc 0.0588; clean_lm:always_commit eWPM 11.450 wc 0.6103; clean_lm:trust eWPM 11.546 wc 0.0588; gaze_only eWPM 4.078 wc 0.0000
+01:03:23 b2t-published: original:always_commit eWPM 19.612 wc 0.1936; original:trust eWPM 18.767 wc 0.0441; clean_lm:always_commit eWPM 19.612 wc 0.1936; clean_lm:trust eWPM 18.767 wc 0.0441; gaze_only eWPM 4.078 wc 0.0000
+01:03:23 done

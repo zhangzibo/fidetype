@@ -1,0 +1,7 @@
+00:34:22 b2t-ours split A: plug-in (fit-A) 0.0245/0.100; CRC max-rule (clean) [deployable] 0.0245/0.100; LTT max-rule (clean) 0.0245/0.100; CRC pure (clean) 0.0245/0.100; LTT pure (clean) 0.0270/0.104
+00:34:22 b2t-ours split B: plug-in (fit-A) 0.0600/0.217; CRC max-rule (clean) [deployable] 0.0600/0.212; LTT max-rule (clean) 0.0515/0.192; CRC pure (clean) 0.0600/0.212; LTT pure (clean) 0.0515/0.192
+00:34:22 b2t-published split A: plug-in (fit-A) 0.0478/0.491; CRC max-rule (clean) [deployable] 0.0478/0.491; LTT max-rule (clean) 0.0294/0.403; CRC pure (clean) 0.0478/0.491; LTT pure (clean) 0.0294/0.403
+00:34:22 b2t-published split B: plug-in (fit-A) 0.0478/0.485; CRC max-rule (clean) [deployable] 0.0478/0.485; LTT max-rule (clean) 0.0306/0.415; CRC pure (clean) 0.0490/0.495; LTT pure (clean) 0.0306/0.415
+00:34:22 emg-calib: plug-in (fit-A) 0.0036/0.038; CRC max-rule (clean) [deployable] 0.0036/0.038; LTT max-rule (clean) 0.0036/0.038; CRC pure (clean) 0.0399/0.241; LTT pure (clean) 0.0218/0.183
+00:34:23 emg-xsession: plug-in (fit-A) 0.0036/0.018; CRC max-rule (clean) [deployable] 0.0036/0.018; LTT max-rule (clean) 0.0036/0.018; CRC pure (clean) 0.0563/0.093; LTT pure (clean) 0.0309/0.054
+00:34:23 emg-xsubject: plug-in (fit-A) 0.0000/0.000; CRC max-rule (clean) [deployable] 0.0000/0.000; LTT max-rule (clean) 0.0000/0.000; CRC pure (clean) 0.0000/0.000; LTT pure (clean) 0.0000/0.000

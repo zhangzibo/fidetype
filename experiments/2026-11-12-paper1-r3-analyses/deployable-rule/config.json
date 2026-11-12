@@ -1,0 +1,7 @@
+{
+ "description": "R3 item 3: deployable rule rows (fit-A plug-in + clean CRC / LTT with the max rule lambda = max(lambda_plug-in, lambda_CRC)), both B2T splits, sEMG, MEG; attribution of the B2T-ours change 0.0588 -> 0.0245 / 0.0600 (refit of calibration, refit of policy grid, CRC).",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "bootstrap": "unified: seed 20261112, B 2000 (common3.UNIFIED_SEED / UNIFIED_B)",
+ "inputs": ["experiments/2026-11-12-paper1-r1-analyses/clean-drift/results/items-*.json", "MEG: baselines meg_clean_crc rebuilt from cached decodes"]
+}

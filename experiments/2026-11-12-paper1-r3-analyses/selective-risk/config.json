@@ -1,0 +1,1 @@
+{"description": "R3 item 2: selective-risk controllers (SGR, LTT on error among commits, joint with CRC max-rule) at beta 0.05 / 0.10 / 0.20, delta 0.1, on repeated splits, the fixed clean splits and MEG sentence-grouped splits. Settings fixed before the first run.", "betas": [0.05, 0.10, 0.20], "delta": 0.1, "alpha": 0.05, "seed": 7}

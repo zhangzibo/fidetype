@@ -1,0 +1,20 @@
+{
+ "description": "R3 item 1: repeated deployment splits. B2T: day-stratified random fit-A (1/4) / clean calibration (1/4) / test (1/2) of all main-vocabulary trials; pipeline fitted on fit-A only (paper recipe pipe.fit(A, A)); reused calibration = fit-A. sEMG: participant-stratified random fit-A (1/2) / fit-B1 policy grid (1/4) / fit-B2 clean calibration (1/4) of the fit sentences; fixed test; reused calibration = fit-B1. Frame temperature snapped to 0.02 (B2T) / 0.01 (sEMG) to share decodes. Settings fixed before the first run.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "seed": 3,
+ "R_b2t": 50,
+ "R_emg": 50,
+ "selective_targets": [
+  0.05,
+  0.1,
+  0.2
+ ],
+ "selective_methods": [
+  "SGR (Geifman & El-Yaniv 2017, Alg. 1, exact binomial bound, Bonferroni over ceil(log2 m) steps)",
+  "LTT on error among commits (exact binomial conditional on commits, Bonferroni over lambda grid 0.05..1.00 step 0.05)",
+  "joint: max(SGR, CRC max-rule)"
+ ],
+ "frame_T_snap_b2t": 0.02,
+ "frame_T_snap_emg": 0.01
+}

@@ -1,0 +1,1 @@
+{"description": "R3 item 9: per-decision run time of the trust layer (frame temperature, analyze, decide) on CPU, one thread, per device; decoder timed on a few uncached items for scale.", "passes": 3, "decoder_items": 10}

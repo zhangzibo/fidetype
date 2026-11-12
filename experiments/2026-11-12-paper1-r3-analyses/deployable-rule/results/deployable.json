@@ -1,0 +1,1694 @@
+{
+ "config": {
+  "description": "R3 item 3: deployable rule rows (fit-A plug-in + clean CRC / LTT with the max rule lambda = max(lambda_plug-in, lambda_CRC)), both B2T splits, sEMG, MEG; attribution of the B2T-ours change 0.0588 -> 0.0245 / 0.0600 (refit of calibration, refit of policy grid, CRC).",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "bootstrap": "unified: seed 20261112, B 2000 (common3.UNIFIED_SEED / UNIFIED_B)",
+  "inputs": [
+   "experiments/2026-11-12-paper1-r1-analyses/clean-drift/results/items-*.json",
+   "MEG: baselines meg_clean_crc rebuilt from cached decodes"
+  ]
+ },
+ "rows": {
+  "b2t-ours/split A": {
+   "point": {
+    "plug-in (fit-A)": {
+     "ewpm": 11.477549766206314,
+     "wrong_commit": 0.024509803921568627,
+     "commit_rate": 0.10049019607843138,
+     "error_among_commits": 0.24390243902439024,
+     "silent_error": 0.0012254901960784314,
+     "n_commit": 82,
+     "n_commit_wrong": 20,
+     "n_wrong_commit": 20,
+     "wrong_commit_cp95_upper": 0.03541705978561934
+    },
+    "CRC max-rule (clean) [deployable]": {
+     "ewpm": 11.477549766206314,
+     "wrong_commit": 0.024509803921568627,
+     "commit_rate": 0.10049019607843138,
+     "error_among_commits": 0.24390243902439024,
+     "silent_error": 0.0012254901960784314,
+     "n_commit": 82,
+     "n_commit_wrong": 20,
+     "n_wrong_commit": 20,
+     "wrong_commit_cp95_upper": 0.03541705978561934
+    },
+    "LTT max-rule (clean)": {
+     "ewpm": 11.477549766206314,
+     "wrong_commit": 0.024509803921568627,
+     "commit_rate": 0.10049019607843138,
+     "error_among_commits": 0.24390243902439024,
+     "silent_error": 0.0012254901960784314,
+     "n_commit": 82,
+     "n_commit_wrong": 20,
+     "n_wrong_commit": 20,
+     "wrong_commit_cp95_upper": 0.03541705978561934
+    },
+    "CRC pure (clean)": {
+     "ewpm": 11.477549766206314,
+     "wrong_commit": 0.024509803921568627,
+     "commit_rate": 0.10049019607843138,
+     "error_among_commits": 0.24390243902439024,
+     "silent_error": 0.0012254901960784314,
+     "n_commit": 82,
+     "n_commit_wrong": 20,
+     "n_wrong_commit": 20,
+     "wrong_commit_cp95_upper": 0.03541705978561934
+    },
+    "LTT pure (clean)": {
+     "ewpm": 11.483462036629938,
+     "wrong_commit": 0.02696078431372549,
+     "commit_rate": 0.10416666666666667,
+     "error_among_commits": 0.25882352941176473,
+     "silent_error": 0.0012254901960784314,
+     "n_commit": 85,
+     "n_commit_wrong": 22,
+     "n_wrong_commit": 22,
+     "wrong_commit_cp95_upper": 0.03827590058391851
+    }
+   },
+   "ci": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "plug-in (fit-A)": {
+      "ewpm": [
+       10.788081774551685,
+       12.285749891887479
+      ],
+      "wrong_commit": [
+       0.014557630022282317,
+       0.03476667326340787
+      ],
+      "commit_rate": [
+       0.08157894736842106,
+       0.12139796307846988
+      ],
+      "error_among_commits": [
+       0.15853658536585366,
+       0.3229319852941176
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "CRC max-rule (clean) [deployable]": {
+      "ewpm": [
+       10.788081774551685,
+       12.285749891887479
+      ],
+      "wrong_commit": [
+       0.014557630022282317,
+       0.03476667326340787
+      ],
+      "commit_rate": [
+       0.08157894736842106,
+       0.12139796307846988
+      ],
+      "error_among_commits": [
+       0.15853658536585366,
+       0.3229319852941176
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "LTT max-rule (clean)": {
+      "ewpm": [
+       10.788081774551685,
+       12.285749891887479
+      ],
+      "wrong_commit": [
+       0.014557630022282317,
+       0.03476667326340787
+      ],
+      "commit_rate": [
+       0.08157894736842106,
+       0.12139796307846988
+      ],
+      "error_among_commits": [
+       0.15853658536585366,
+       0.3229319852941176
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "CRC pure (clean)": {
+      "ewpm": [
+       10.788081774551685,
+       12.285749891887479
+      ],
+      "wrong_commit": [
+       0.014557630022282317,
+       0.03476667326340787
+      ],
+      "commit_rate": [
+       0.08157894736842106,
+       0.12139796307846988
+      ],
+      "error_among_commits": [
+       0.15853658536585366,
+       0.3229319852941176
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "LTT pure (clean)": {
+      "ewpm": [
+       10.793294445516825,
+       12.292950481686352
+      ],
+      "wrong_commit": [
+       0.0161444012219017,
+       0.038168601569126374
+      ],
+      "commit_rate": [
+       0.08376923727156979,
+       0.1273410949771541
+      ],
+      "error_among_commits": [
+       0.17282886334610473,
+       0.34043137713350474
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "info": {
+    "lambda": {
+     "plug-in (fit-A)": 0.3,
+     "CRC max-rule (clean) [deployable]": 0.30745733902594785,
+     "LTT max-rule (clean)": 0.3,
+     "CRC pure (clean)": 0.30745733902594785,
+     "LTT pure (clean)": 0.0
+    },
+    "crc_bound_at_crc": 0.007462686567164179,
+    "cal_bound_at_plugin": 0.007462686567164179,
+    "plugin_certified": true,
+    "crc_active": false,
+    "crc_stricter_than_plugin": true,
+    "maxrule_changes_plugin_on_test": false,
+    "ltt_maxrule_changes_plugin_on_test": false,
+    "n_cal": 401,
+    "n_test": 816,
+    "eligible_cal": 0.07231920199501247,
+    "eligible_test": 0.10416666666666667
+   }
+  },
+  "b2t-ours/split B": {
+   "point": {
+    "plug-in (fit-A)": {
+     "ewpm": 11.548503341778583,
+     "wrong_commit": 0.06004901960784314,
+     "commit_rate": 0.21691176470588236,
+     "error_among_commits": 0.2768361581920904,
+     "silent_error": 0.0024509803921568627,
+     "n_commit": 177,
+     "n_commit_wrong": 49,
+     "n_wrong_commit": 49,
+     "wrong_commit_cp95_upper": 0.07556948150593276
+    },
+    "CRC max-rule (clean) [deployable]": {
+     "ewpm": 11.540217310262143,
+     "wrong_commit": 0.06004901960784314,
+     "commit_rate": 0.21200980392156862,
+     "error_among_commits": 0.2832369942196532,
+     "silent_error": 0.0024509803921568627,
+     "n_commit": 173,
+     "n_commit_wrong": 49,
+     "n_wrong_commit": 49,
+     "wrong_commit_cp95_upper": 0.07556948150593276
+    },
+    "LTT max-rule (clean)": {
+     "ewpm": 11.536406457959504,
+     "wrong_commit": 0.051470588235294115,
+     "commit_rate": 0.19240196078431374,
+     "error_among_commits": 0.267515923566879,
+     "silent_error": 0.0024509803921568627,
+     "n_commit": 157,
+     "n_commit_wrong": 42,
+     "n_wrong_commit": 42,
+     "wrong_commit_cp95_upper": 0.06606703956322456
+    },
+    "CRC pure (clean)": {
+     "ewpm": 11.540217310262143,
+     "wrong_commit": 0.06004901960784314,
+     "commit_rate": 0.21200980392156862,
+     "error_among_commits": 0.2832369942196532,
+     "silent_error": 0.0024509803921568627,
+     "n_commit": 173,
+     "n_commit_wrong": 49,
+     "n_wrong_commit": 49,
+     "wrong_commit_cp95_upper": 0.07556948150593276
+    },
+    "LTT pure (clean)": {
+     "ewpm": 11.536406457959504,
+     "wrong_commit": 0.051470588235294115,
+     "commit_rate": 0.19240196078431374,
+     "error_among_commits": 0.267515923566879,
+     "silent_error": 0.0024509803921568627,
+     "n_commit": 157,
+     "n_commit_wrong": 42,
+     "n_wrong_commit": 42,
+     "wrong_commit_cp95_upper": 0.06606703956322456
+    }
+   },
+   "ci": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "plug-in (fit-A)": {
+      "ewpm": [
+       10.846671747103322,
+       12.36078035723146
+      ],
+      "wrong_commit": [
+       0.04869740966487248,
+       0.07095474881591203
+      ],
+      "commit_rate": [
+       0.18402022349683544,
+       0.25
+      ],
+      "error_among_commits": [
+       0.2315717866093806,
+       0.3235294117647059
+      ],
+      "silent_error": [
+       0.0,
+       0.005896313380085712
+      ]
+     },
+     "CRC max-rule (clean) [deployable]": {
+      "ewpm": [
+       10.83800979538809,
+       12.352262670468141
+      ],
+      "wrong_commit": [
+       0.04869740966487248,
+       0.07095474881591203
+      ],
+      "commit_rate": [
+       0.18100358858235327,
+       0.24406024949219307
+      ],
+      "error_among_commits": [
+       0.23716787439613526,
+       0.32934307854878475
+      ],
+      "silent_error": [
+       0.0,
+       0.005896313380085712
+      ]
+     },
+     "LTT max-rule (clean)": {
+      "ewpm": [
+       10.82684734147366,
+       12.338643666047078
+      ],
+      "wrong_commit": [
+       0.043080342713887027,
+       0.05918638400829899
+      ],
+      "commit_rate": [
+       0.16624624279869749,
+       0.22135828718354428
+      ],
+      "error_among_commits": [
+       0.22435897435897437,
+       0.3087272996446901
+      ],
+      "silent_error": [
+       0.0,
+       0.005896313380085712
+      ]
+     },
+     "CRC pure (clean)": {
+      "ewpm": [
+       10.83800979538809,
+       12.352262670468141
+      ],
+      "wrong_commit": [
+       0.04869740966487248,
+       0.07095474881591203
+      ],
+      "commit_rate": [
+       0.18100358858235327,
+       0.24406024949219307
+      ],
+      "error_among_commits": [
+       0.23716787439613526,
+       0.32934307854878475
+      ],
+      "silent_error": [
+       0.0,
+       0.005896313380085712
+      ]
+     },
+     "LTT pure (clean)": {
+      "ewpm": [
+       10.82684734147366,
+       12.338643666047078
+      ],
+      "wrong_commit": [
+       0.043080342713887027,
+       0.05918638400829899
+      ],
+      "commit_rate": [
+       0.16624624279869749,
+       0.22135828718354428
+      ],
+      "error_among_commits": [
+       0.22435897435897437,
+       0.3087272996446901
+      ],
+      "silent_error": [
+       0.0,
+       0.005896313380085712
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "info": {
+    "lambda": {
+     "plug-in (fit-A)": 0.4,
+     "CRC max-rule (clean) [deployable]": 0.40833157513601565,
+     "LTT max-rule (clean)": 0.43,
+     "CRC pure (clean)": 0.40833157513601565,
+     "LTT pure (clean)": 0.43
+    },
+    "crc_bound_at_crc": 0.04975124378109453,
+    "cal_bound_at_plugin": 0.05721393034825871,
+    "plugin_certified": false,
+    "crc_active": true,
+    "crc_stricter_than_plugin": true,
+    "maxrule_changes_plugin_on_test": true,
+    "ltt_maxrule_changes_plugin_on_test": true,
+    "n_cal": 401,
+    "n_test": 816,
+    "eligible_cal": 0.30174563591022446,
+    "eligible_test": 0.33455882352941174
+   }
+  },
+  "b2t-published/split A": {
+   "point": {
+    "plug-in (fit-A)": {
+     "ewpm": 18.791626769729074,
+     "wrong_commit": 0.04779411764705882,
+     "commit_rate": 0.49142156862745096,
+     "error_among_commits": 0.09725685785536159,
+     "silent_error": 0.004901960784313725,
+     "n_commit": 401,
+     "n_commit_wrong": 39,
+     "n_wrong_commit": 39,
+     "wrong_commit_cp95_upper": 0.06196642773281904
+    },
+    "CRC max-rule (clean) [deployable]": {
+     "ewpm": 18.791626769729074,
+     "wrong_commit": 0.04779411764705882,
+     "commit_rate": 0.49142156862745096,
+     "error_among_commits": 0.09725685785536159,
+     "silent_error": 0.004901960784313725,
+     "n_commit": 401,
+     "n_commit_wrong": 39,
+     "n_wrong_commit": 39,
+     "wrong_commit_cp95_upper": 0.06196642773281904
+    },
+    "LTT max-rule (clean)": {
+     "ewpm": 18.651365449587917,
+     "wrong_commit": 0.029411764705882353,
+     "commit_rate": 0.40318627450980393,
+     "error_among_commits": 0.0729483282674772,
+     "silent_error": 0.0012254901960784314,
+     "n_commit": 329,
+     "n_commit_wrong": 24,
+     "n_wrong_commit": 24,
+     "wrong_commit_cp95_upper": 0.041115339803463734
+    },
+    "CRC pure (clean)": {
+     "ewpm": 18.791626769729074,
+     "wrong_commit": 0.04779411764705882,
+     "commit_rate": 0.49142156862745096,
+     "error_among_commits": 0.09725685785536159,
+     "silent_error": 0.004901960784313725,
+     "n_commit": 401,
+     "n_commit_wrong": 39,
+     "n_wrong_commit": 39,
+     "wrong_commit_cp95_upper": 0.06196642773281904
+    },
+    "LTT pure (clean)": {
+     "ewpm": 18.651365449587917,
+     "wrong_commit": 0.029411764705882353,
+     "commit_rate": 0.40318627450980393,
+     "error_among_commits": 0.0729483282674772,
+     "silent_error": 0.0012254901960784314,
+     "n_commit": 329,
+     "n_commit_wrong": 24,
+     "n_wrong_commit": 24,
+     "wrong_commit_cp95_upper": 0.041115339803463734
+    }
+   },
+   "ci": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "plug-in (fit-A)": {
+      "ewpm": [
+       17.131595739602147,
+       20.373138129882445
+      ],
+      "wrong_commit": [
+       0.02914985526978487,
+       0.07119025738679474
+      ],
+      "commit_rate": [
+       0.4569856470814132,
+       0.5257456541193046
+      ],
+      "error_among_commits": [
+       0.059005257374822595,
+       0.14794748168687663
+      ],
+      "silent_error": [
+       0.0011918596401611897,
+       0.009576046265881369
+      ]
+     },
+     "CRC max-rule (clean) [deployable]": {
+      "ewpm": [
+       17.131595739602147,
+       20.373138129882445
+      ],
+      "wrong_commit": [
+       0.02914985526978487,
+       0.07119025738679474
+      ],
+      "commit_rate": [
+       0.4569856470814132,
+       0.5257456541193046
+      ],
+      "error_among_commits": [
+       0.059005257374822595,
+       0.14794748168687663
+      ],
+      "silent_error": [
+       0.0011918596401611897,
+       0.009576046265881369
+      ]
+     },
+     "LTT max-rule (clean)": {
+      "ewpm": [
+       17.036416814094316,
+       20.198292630807067
+      ],
+      "wrong_commit": [
+       0.013070830938238487,
+       0.05049214940683844
+      ],
+      "commit_rate": [
+       0.37485028782666796,
+       0.42708432351077313
+      ],
+      "error_among_commits": [
+       0.03225570647047727,
+       0.12749003984063745
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     },
+     "CRC pure (clean)": {
+      "ewpm": [
+       17.131595739602147,
+       20.373138129882445
+      ],
+      "wrong_commit": [
+       0.02914985526978487,
+       0.07119025738679474
+      ],
+      "commit_rate": [
+       0.4569856470814132,
+       0.5257456541193046
+      ],
+      "error_among_commits": [
+       0.059005257374822595,
+       0.14794748168687663
+      ],
+      "silent_error": [
+       0.0011918596401611897,
+       0.009576046265881369
+      ]
+     },
+     "LTT pure (clean)": {
+      "ewpm": [
+       17.036416814094316,
+       20.198292630807067
+      ],
+      "wrong_commit": [
+       0.013070830938238487,
+       0.05049214940683844
+      ],
+      "commit_rate": [
+       0.37485028782666796,
+       0.42708432351077313
+      ],
+      "error_among_commits": [
+       0.03225570647047727,
+       0.12749003984063745
+      ],
+      "silent_error": [
+       0.0,
+       0.0042383459464687195
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "info": {
+    "lambda": {
+     "plug-in (fit-A)": 0.7,
+     "CRC max-rule (clean) [deployable]": 0.7,
+     "LTT max-rule (clean)": 0.76,
+     "CRC pure (clean)": 0.6982538031852685,
+     "LTT pure (clean)": 0.76
+    },
+    "crc_bound_at_crc": 0.04975124378109453,
+    "cal_bound_at_plugin": 0.04975124378109453,
+    "plugin_certified": true,
+    "crc_active": true,
+    "crc_stricter_than_plugin": false,
+    "maxrule_changes_plugin_on_test": false,
+    "ltt_maxrule_changes_plugin_on_test": true,
+    "n_cal": 401,
+    "n_test": 816,
+    "eligible_cal": 0.5660847880299252,
+    "eligible_test": 0.5992647058823529
+   }
+  },
+  "b2t-published/split B": {
+   "point": {
+    "plug-in (fit-A)": {
+     "ewpm": 18.78432319626293,
+     "wrong_commit": 0.04779411764705882,
+     "commit_rate": 0.4852941176470588,
+     "error_among_commits": 0.09848484848484848,
+     "silent_error": 0.003676470588235294,
+     "n_commit": 396,
+     "n_commit_wrong": 39,
+     "n_wrong_commit": 39,
+     "wrong_commit_cp95_upper": 0.06196642773281904
+    },
+    "CRC max-rule (clean) [deployable]": {
+     "ewpm": 18.78432319626293,
+     "wrong_commit": 0.04779411764705882,
+     "commit_rate": 0.4852941176470588,
+     "error_among_commits": 0.09848484848484848,
+     "silent_error": 0.003676470588235294,
+     "n_commit": 396,
+     "n_commit_wrong": 39,
+     "n_wrong_commit": 39,
+     "wrong_commit_cp95_upper": 0.06196642773281904
+    },
+    "LTT max-rule (clean)": {
+     "ewpm": 18.681274547231588,
+     "wrong_commit": 0.030637254901960783,
+     "commit_rate": 0.41544117647058826,
+     "error_among_commits": 0.07374631268436578,
+     "silent_error": 0.0024509803921568627,
+     "n_commit": 339,
+     "n_commit_wrong": 25,
+     "n_wrong_commit": 25,
+     "wrong_commit_cp95_upper": 0.042528502987545465
+    },
+    "CRC pure (clean)": {
+     "ewpm": 18.7968181687809,
+     "wrong_commit": 0.049019607843137254,
+     "commit_rate": 0.4950980392156863,
+     "error_among_commits": 0.09900990099009901,
+     "silent_error": 0.004901960784313725,
+     "n_commit": 404,
+     "n_commit_wrong": 40,
+     "n_wrong_commit": 40,
+     "wrong_commit_cp95_upper": 0.06333536398892085
+    },
+    "LTT pure (clean)": {
+     "ewpm": 18.681274547231588,
+     "wrong_commit": 0.030637254901960783,
+     "commit_rate": 0.41544117647058826,
+     "error_among_commits": 0.07374631268436578,
+     "silent_error": 0.0024509803921568627,
+     "n_commit": 339,
+     "n_commit_wrong": 25,
+     "n_wrong_commit": 25,
+     "wrong_commit_cp95_upper": 0.042528502987545465
+    }
+   },
+   "ci": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "plug-in (fit-A)": {
+      "ewpm": [
+       17.134906656777424,
+       20.364431481911957
+      ],
+      "wrong_commit": [
+       0.02914985526978487,
+       0.07119025738679474
+      ],
+      "commit_rate": [
+       0.4512611586690751,
+       0.5197442787850127
+      ],
+      "error_among_commits": [
+       0.05994528919794737,
+       0.14895237814581236
+      ],
+      "silent_error": [
+       0.0,
+       0.0077822526879765316
+      ]
+     },
+     "CRC max-rule (clean) [deployable]": {
+      "ewpm": [
+       17.134906656777424,
+       20.364431481911957
+      ],
+      "wrong_commit": [
+       0.02914985526978487,
+       0.07119025738679474
+      ],
+      "commit_rate": [
+       0.4512611586690751,
+       0.5197442787850127
+      ],
+      "error_among_commits": [
+       0.05994528919794737,
+       0.14895237814581236
+      ],
+      "silent_error": [
+       0.0,
+       0.0077822526879765316
+      ]
+     },
+     "LTT max-rule (clean)": {
+      "ewpm": [
+       17.057971477588037,
+       20.230071372115614
+      ],
+      "wrong_commit": [
+       0.014120667522464698,
+       0.05222007904898687
+      ],
+      "commit_rate": [
+       0.3843566978319673,
+       0.4436307078455609
+      ],
+      "error_among_commits": [
+       0.034482758620689655,
+       0.12629188097870492
+      ],
+      "silent_error": [
+       0.0,
+       0.006188118811881188
+      ]
+     },
+     "CRC pure (clean)": {
+      "ewpm": [
+       17.135005518068326,
+       20.384091576592713
+      ],
+      "wrong_commit": [
+       0.029560185902134675,
+       0.07283788401049152
+      ],
+      "commit_rate": [
+       0.459417680442727,
+       0.5311773181022948
+      ],
+      "error_among_commits": [
+       0.05995704507058165,
+       0.149268982065151
+      ],
+      "silent_error": [
+       0.0011918596401611897,
+       0.009576046265881369
+      ]
+     },
+     "LTT pure (clean)": {
+      "ewpm": [
+       17.057971477588037,
+       20.230071372115614
+      ],
+      "wrong_commit": [
+       0.014120667522464698,
+       0.05222007904898687
+      ],
+      "commit_rate": [
+       0.3843566978319673,
+       0.4436307078455609
+      ],
+      "error_among_commits": [
+       0.034482758620689655,
+       0.12629188097870492
+      ],
+      "silent_error": [
+       0.0,
+       0.006188118811881188
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "info": {
+    "lambda": {
+     "plug-in (fit-A)": 0.7,
+     "CRC max-rule (clean) [deployable]": 0.7,
+     "LTT max-rule (clean)": 0.75,
+     "CRC pure (clean)": 0.6841439300746445,
+     "LTT pure (clean)": 0.75
+    },
+    "crc_bound_at_crc": 0.04975124378109453,
+    "cal_bound_at_plugin": 0.0472636815920398,
+    "plugin_certified": true,
+    "crc_active": true,
+    "crc_stricter_than_plugin": false,
+    "maxrule_changes_plugin_on_test": false,
+    "ltt_maxrule_changes_plugin_on_test": true,
+    "n_cal": 401,
+    "n_test": 816,
+    "eligible_cal": 0.5610972568578554,
+    "eligible_test": 0.6004901960784313
+   }
+  },
+  "emg-calib": {
+   "point": {
+    "plug-in (fit-A)": {
+     "ewpm": 7.976984532053385,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0,
+     "n_commit": 21,
+     "n_commit_wrong": 2,
+     "n_wrong_commit": 2,
+     "wrong_commit_cp95_upper": 0.011381663130897014
+    },
+    "CRC max-rule (clean) [deployable]": {
+     "ewpm": 7.976984532053385,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0,
+     "n_commit": 21,
+     "n_commit_wrong": 2,
+     "n_wrong_commit": 2,
+     "wrong_commit_cp95_upper": 0.011381663130897014
+    },
+    "LTT max-rule (clean)": {
+     "ewpm": 7.976984532053385,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.038112522686025406,
+     "error_among_commits": 0.09523809523809523,
+     "silent_error": 0.0,
+     "n_commit": 21,
+     "n_commit_wrong": 2,
+     "n_wrong_commit": 2,
+     "wrong_commit_cp95_upper": 0.011381663130897014
+    },
+    "CRC pure (clean)": {
+     "ewpm": 8.072438785182742,
+     "wrong_commit": 0.039927404718693285,
+     "commit_rate": 0.2413793103448276,
+     "error_among_commits": 0.16541353383458646,
+     "silent_error": 0.0054446460980036296,
+     "n_commit": 133,
+     "n_commit_wrong": 22,
+     "n_wrong_commit": 22,
+     "wrong_commit_cp95_upper": 0.05652528313312063
+    },
+    "LTT pure (clean)": {
+     "ewpm": 8.038958612076183,
+     "wrong_commit": 0.021778584392014518,
+     "commit_rate": 0.18330308529945555,
+     "error_among_commits": 0.1188118811881188,
+     "silent_error": 0.0018148820326678765,
+     "n_commit": 101,
+     "n_commit_wrong": 12,
+     "n_wrong_commit": 12,
+     "wrong_commit_cp95_upper": 0.035047544386392425
+    }
+   },
+   "ci": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "plug-in (fit-A)": {
+      "ewpm": [
+       6.946047759558501,
+       9.108288798777892
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "CRC max-rule (clean) [deployable]": {
+      "ewpm": [
+       6.946047759558501,
+       9.108288798777892
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "LTT max-rule (clean)": {
+      "ewpm": [
+       6.946047759558501,
+       9.108288798777892
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.021778584392014518,
+       0.05847953216374269
+      ],
+      "error_among_commits": [
+       0.0,
+       0.21751207729468533
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "CRC pure (clean)": {
+      "ewpm": [
+       6.975451232259857,
+       9.256467895816545
+      ],
+      "wrong_commit": [
+       0.02455827067669173,
+       0.056140350877192984
+      ],
+      "commit_rate": [
+       0.1824561403508772,
+       0.30672262552934054
+      ],
+      "error_among_commits": [
+       0.109375,
+       0.23134328358208955
+      ],
+      "silent_error": [
+       0.0,
+       0.011278195488721804
+      ]
+     },
+     "LTT pure (clean)": {
+      "ewpm": [
+       6.969855496953734,
+       9.211864270890288
+      ],
+      "wrong_commit": [
+       0.009390394088669951,
+       0.03571428571428571
+      ],
+      "commit_rate": [
+       0.13065033272837265,
+       0.24139745916515418
+      ],
+      "error_among_commits": [
+       0.058823529411764705,
+       0.18805555555555545
+      ],
+      "silent_error": [
+       0.0,
+       0.005639097744360902
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "info": {
+    "lambda": {
+     "plug-in (fit-A)": 0.7,
+     "CRC max-rule (clean) [deployable]": 0.7,
+     "LTT max-rule (clean)": 0.7,
+     "CRC pure (clean)": 0.4480289413056333,
+     "LTT pure (clean)": 0.49
+    },
+    "crc_bound_at_crc": 0.04861111111111111,
+    "cal_bound_at_plugin": 0.006944444444444444,
+    "plugin_certified": true,
+    "crc_active": true,
+    "crc_stricter_than_plugin": false,
+    "maxrule_changes_plugin_on_test": false,
+    "ltt_maxrule_changes_plugin_on_test": false,
+    "n_cal": 143,
+    "n_test": 551,
+    "eligible_cal": 1.0,
+    "eligible_test": 1.0
+   }
+  },
+  "emg-xsession": {
+   "point": {
+    "plug-in (fit-A)": {
+     "ewpm": 4.67692102383024,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.018148820326678767,
+     "error_among_commits": 0.2,
+     "silent_error": 0.0,
+     "n_commit": 10,
+     "n_commit_wrong": 2,
+     "n_wrong_commit": 2,
+     "wrong_commit_cp95_upper": 0.011381663130897014
+    },
+    "CRC max-rule (clean) [deployable]": {
+     "ewpm": 4.67692102383024,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.018148820326678767,
+     "error_among_commits": 0.2,
+     "silent_error": 0.0,
+     "n_commit": 10,
+     "n_commit_wrong": 2,
+     "n_wrong_commit": 2,
+     "wrong_commit_cp95_upper": 0.011381663130897014
+    },
+    "LTT max-rule (clean)": {
+     "ewpm": 4.67692102383024,
+     "wrong_commit": 0.003629764065335753,
+     "commit_rate": 0.018148820326678767,
+     "error_among_commits": 0.2,
+     "silent_error": 0.0,
+     "n_commit": 10,
+     "n_commit_wrong": 2,
+     "n_wrong_commit": 2,
+     "wrong_commit_cp95_upper": 0.011381663130897014
+    },
+    "CRC pure (clean)": {
+     "ewpm": 4.663391079180326,
+     "wrong_commit": 0.056261343012704176,
+     "commit_rate": 0.0925589836660617,
+     "error_among_commits": 0.6078431372549019,
+     "silent_error": 0.007259528130671506,
+     "n_commit": 51,
+     "n_commit_wrong": 31,
+     "n_wrong_commit": 31,
+     "wrong_commit_cp95_upper": 0.07517848165095639
+    },
+    "LTT pure (clean)": {
+     "ewpm": 4.667158745976655,
+     "wrong_commit": 0.030852994555353903,
+     "commit_rate": 0.0544464609800363,
+     "error_among_commits": 0.5666666666666667,
+     "silent_error": 0.0054446460980036296,
+     "n_commit": 30,
+     "n_commit_wrong": 17,
+     "n_wrong_commit": 17,
+     "wrong_commit_cp95_upper": 0.04592044885471481
+    }
+   },
+   "ci": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "plug-in (fit-A)": {
+      "ewpm": [
+       4.189545371508256,
+       5.252148846546565
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.007017543859649123,
+       0.030871143375680483
+      ],
+      "error_among_commits": [
+       0.0,
+       0.5
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "CRC max-rule (clean) [deployable]": {
+      "ewpm": [
+       4.189545371508256,
+       5.252148846546565
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.007017543859649123,
+       0.030871143375680483
+      ],
+      "error_among_commits": [
+       0.0,
+       0.5
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "LTT max-rule (clean)": {
+      "ewpm": [
+       4.189545371508256,
+       5.252148846546565
+      ],
+      "wrong_commit": [
+       0.0,
+       0.009074410163339383
+      ],
+      "commit_rate": [
+       0.007017543859649123,
+       0.030871143375680483
+      ],
+      "error_among_commits": [
+       0.0,
+       0.5
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "CRC pure (clean)": {
+      "ewpm": [
+       4.1756509302867135,
+       5.241013204353337
+      ],
+      "wrong_commit": [
+       0.039473684210526314,
+       0.07368421052631578
+      ],
+      "commit_rate": [
+       0.06533575317604355,
+       0.11796733212341198
+      ],
+      "error_among_commits": [
+       0.5,
+       0.7254901960784313
+      ],
+      "silent_error": [
+       0.0017543859649122807,
+       0.014035087719298246
+      ]
+     },
+     "LTT pure (clean)": {
+      "ewpm": [
+       4.17661424804236,
+       5.247560598897291
+      ],
+      "wrong_commit": [
+       0.020676691729323307,
+       0.041742286751361164
+      ],
+      "commit_rate": [
+       0.03571428571428571,
+       0.07330827067669173
+      ],
+      "error_among_commits": [
+       0.45714285714285713,
+       0.700092592592592
+      ],
+      "silent_error": [
+       0.0,
+       0.011707152496626119
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "info": {
+    "lambda": {
+     "plug-in (fit-A)": 0.3,
+     "CRC max-rule (clean) [deployable]": 0.3,
+     "LTT max-rule (clean)": 0.3,
+     "CRC pure (clean)": 0.20359210958258184,
+     "LTT pure (clean)": 0.23
+    },
+    "crc_bound_at_crc": 0.04861111111111111,
+    "cal_bound_at_plugin": 0.013888888888888888,
+    "plugin_certified": true,
+    "crc_active": true,
+    "crc_stricter_than_plugin": false,
+    "maxrule_changes_plugin_on_test": false,
+    "ltt_maxrule_changes_plugin_on_test": false,
+    "n_cal": 143,
+    "n_test": 551,
+    "eligible_cal": 1.0,
+    "eligible_test": 1.0
+   }
+  },
+  "emg-xsubject": {
+   "point": {
+    "plug-in (fit-A)": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0,
+     "n_commit": 0,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.005422147482793943
+    },
+    "CRC max-rule (clean) [deployable]": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0,
+     "n_commit": 0,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.005422147482793943
+    },
+    "LTT max-rule (clean)": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0,
+     "n_commit": 0,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.005422147482793943
+    },
+    "CRC pure (clean)": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0,
+     "n_commit": 0,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.005422147482793943
+    },
+    "LTT pure (clean)": {
+     "ewpm": 4.0800135493987755,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0,
+     "n_commit": 0,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.005422147482793943
+    }
+   },
+   "ci": {
+    "scheme": "cluster",
+    "B": 2000,
+    "policies": {
+     "plug-in (fit-A)": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "CRC max-rule (clean) [deployable]": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "LTT max-rule (clean)": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "CRC pure (clean)": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "LTT pure (clean)": {
+      "ewpm": [
+       3.8219830491016595,
+       4.36543823895195
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "info": {
+    "lambda": {
+     "plug-in (fit-A)": 0.3,
+     "CRC max-rule (clean) [deployable]": "inf",
+     "LTT max-rule (clean)": 0.3,
+     "CRC pure (clean)": "inf",
+     "LTT pure (clean)": 0.0
+    },
+    "crc_bound_at_crc": 0.006944444444444444,
+    "cal_bound_at_plugin": 0.006944444444444444,
+    "plugin_certified": true,
+    "crc_active": false,
+    "crc_stricter_than_plugin": true,
+    "maxrule_changes_plugin_on_test": false,
+    "ltt_maxrule_changes_plugin_on_test": false,
+    "n_cal": 143,
+    "n_test": 551,
+    "eligible_cal": 0.0,
+    "eligible_test": 0.0
+   }
+  },
+  "meg-async": {
+   "point": {
+    "plug-in (fit-A)": {
+     "ewpm": 3.202464037020431,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0,
+     "n_commit": 0,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.004691835202596177
+    },
+    "CRC max-rule (clean) [deployable]": {
+     "ewpm": 3.202464037020431,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0,
+     "n_commit": 0,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.004691835202596177
+    },
+    "LTT max-rule (clean)": {
+     "ewpm": 3.202464037020431,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0,
+     "error_among_commits": null,
+     "silent_error": 0.0,
+     "n_commit": 0,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.004691835202596177
+    },
+    "CRC pure (clean)": {
+     "ewpm": 3.1950132083304035,
+     "wrong_commit": 0.0282574568288854,
+     "commit_rate": 0.029827315541601257,
+     "error_among_commits": 0.9473684210526315,
+     "silent_error": 0.004709576138147566,
+     "n_commit": 19,
+     "n_commit_wrong": 18,
+     "n_wrong_commit": 18,
+     "wrong_commit_cp95_upper": 0.04161585362724207
+    },
+    "LTT pure (clean)": {
+     "ewpm": 3.2025290965501143,
+     "wrong_commit": 0.0,
+     "commit_rate": 0.0015698587127158557,
+     "error_among_commits": 0.0,
+     "silent_error": 0.0,
+     "n_commit": 1,
+     "n_commit_wrong": 0,
+     "n_wrong_commit": 0,
+     "wrong_commit_cp95_upper": 0.004691835202596177
+    }
+   },
+   "ci": {
+    "scheme": "two_way",
+    "B": 2000,
+    "policies": {
+     "plug-in (fit-A)": {
+      "ewpm": [
+       3.0089957624682486,
+       3.443966041465236
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "CRC max-rule (clean) [deployable]": {
+      "ewpm": [
+       3.0089957624682486,
+       3.443966041465236
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "LTT max-rule (clean)": {
+      "ewpm": [
+       3.0089957624682486,
+       3.443966041465236
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.0
+      ],
+      "error_among_commits": null,
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     },
+     "CRC pure (clean)": {
+      "ewpm": [
+       3.006046424594779,
+       3.4319988016316842
+      ],
+      "wrong_commit": [
+       0.006492459153749477,
+       0.06137803808410024
+      ],
+      "commit_rate": [
+       0.0069343331741108,
+       0.06389569093610696
+      ],
+      "error_among_commits": [
+       0.7427188940092166,
+       1.0
+      ],
+      "silent_error": [
+       0.0,
+       0.018046883513130645
+      ]
+     },
+     "LTT pure (clean)": {
+      "ewpm": [
+       3.0089957624682486,
+       3.4441343608084085
+      ],
+      "wrong_commit": [
+       0.0,
+       0.0
+      ],
+      "commit_rate": [
+       0.0,
+       0.008797653958944282
+      ],
+      "error_among_commits": [
+       0.0,
+       0.0
+      ],
+      "silent_error": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "diffs": {}
+   },
+   "info": {
+    "lambda": {
+     "plug-in (fit-A)": 0.5,
+     "CRC max-rule (clean) [deployable]": 0.5,
+     "LTT max-rule (clean)": 0.5,
+     "CRC pure (clean)": 0.10303061293405673,
+     "LTT pure (clean)": 0.11
+    },
+    "crc_bound_at_crc": 0.04,
+    "cal_bound_at_plugin": 0.005,
+    "plugin_certified": true,
+    "crc_active": false,
+    "crc_stricter_than_plugin": false,
+    "maxrule_changes_plugin_on_test": false,
+    "ltt_maxrule_changes_plugin_on_test": false,
+    "n_cal": 199,
+    "n_test": 637,
+    "eligible_cal": 0.035175879396984924,
+    "eligible_test": 0.0423861852433281
+   },
+   "note": "Instance-level CRC on 5 calibration sentences (199 instances). Instances of one sentence are dependent; the exchangeable unit is the sentence, so this row carries no guarantee for new sentences."
+  }
+ },
+ "attribution": {
+  "full_fit": {
+   "policy": {
+    "commit_p": 0.5,
+    "commit_max_risk": 0.5,
+    "commit_max_set": null,
+    "offer_max_k": 2,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "frame_T": 3.780895226360392,
+   "test": {
+    "ewpm": 11.545649629165746,
+    "wrong_commit": 0.058823529411764705,
+    "commit_rate": 0.23161764705882354,
+    "error_among_commits": 0.25396825396825395,
+    "silent_error": 0.0024509803921568627
+   }
+  },
+  "split A": {
+   "fitA_policy": {
+    "commit_p": 0.3,
+    "commit_max_risk": 0.1,
+    "commit_max_set": null,
+    "offer_max_k": 2,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "fitA_frame_T": 3.815074655927598,
+   "fitA_plugin": {
+    "ewpm": 11.477549766206314,
+    "wrong_commit": 0.024509803921568627,
+    "commit_rate": 0.10049019607843138,
+    "error_among_commits": 0.24390243902439024,
+    "silent_error": 0.0012254901960784314
+   },
+   "full_calibration + fitA_policy": {
+    "ewpm": 11.425256846520428,
+    "wrong_commit": 0.024509803921568627,
+    "commit_rate": 0.09926470588235294,
+    "error_among_commits": 0.24691358024691357,
+    "silent_error": 0.0012254901960784314
+   },
+   "fitA_calibration + full_policy": {
+    "ewpm": 11.592832788081768,
+    "wrong_commit": 0.0625,
+    "commit_rate": 0.24509803921568626,
+    "error_among_commits": 0.255,
+    "silent_error": 0.0024509803921568627
+   },
+   "fitA + CRC max-rule": {
+    "n": 816,
+    "wrong_commit": 0.024509803921568627,
+    "commit_rate": 0.10049019607843138,
+    "n_commit": 82,
+    "n_commit_wrong": 20.0,
+    "error_among_commits": 0.24390243902439024,
+    "ewpm": 11.477549766206314
+   },
+   "fitA + CRC pure": {
+    "n": 816,
+    "wrong_commit": 0.024509803921568627,
+    "commit_rate": 0.10049019607843138,
+    "n_commit": 82,
+    "n_commit_wrong": 20.0,
+    "error_among_commits": 0.24390243902439024,
+    "ewpm": 11.477549766206314
+   }
+  },
+  "split B": {
+   "fitA_policy": {
+    "commit_p": 0.4,
+    "commit_max_risk": 0.3,
+    "commit_max_set": null,
+    "offer_max_k": 2,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "fitA_frame_T": 3.8021461225215205,
+   "fitA_plugin": {
+    "ewpm": 11.548503341778583,
+    "wrong_commit": 0.06004901960784314,
+    "commit_rate": 0.21691176470588236,
+    "error_among_commits": 0.2768361581920904,
+    "silent_error": 0.0024509803921568627
+   },
+   "full_calibration + fitA_policy": {
+    "ewpm": 11.510056708727477,
+    "wrong_commit": 0.06004901960784314,
+    "commit_rate": 0.22058823529411764,
+    "error_among_commits": 0.2722222222222222,
+    "silent_error": 0.0024509803921568627
+   },
+   "fitA_calibration + full_policy": {
+    "ewpm": 11.590470874078024,
+    "wrong_commit": 0.058823529411764705,
+    "commit_rate": 0.23284313725490197,
+    "error_among_commits": 0.25263157894736843,
+    "silent_error": 0.0024509803921568627
+   },
+   "fitA + CRC max-rule": {
+    "n": 816,
+    "wrong_commit": 0.06004901960784314,
+    "commit_rate": 0.21200980392156862,
+    "n_commit": 173,
+    "n_commit_wrong": 49.0,
+    "error_among_commits": 0.2832369942196532,
+    "ewpm": 11.540217310262143
+   },
+   "fitA + CRC pure": {
+    "n": 816,
+    "wrong_commit": 0.06004901960784314,
+    "commit_rate": 0.21200980392156862,
+    "n_commit": 173,
+    "n_commit_wrong": 49.0,
+    "error_among_commits": 0.2832369942196532,
+    "ewpm": 11.540217310262143
+   }
+  }
+ }
+}
