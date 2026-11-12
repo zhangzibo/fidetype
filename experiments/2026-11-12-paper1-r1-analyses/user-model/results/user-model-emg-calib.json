@@ -1,0 +1,1475 @@
+{
+ "conditions": {
+  "emg-calib": {
+   "n_test": 551,
+   "vocab_completer": 76957,
+   "variants": {
+    "main": {
+     "point": {
+      "always_commit": {
+       "ewpm": 7.80927658662851,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.05989110707803993
+      },
+      "trust": {
+       "ewpm": 8.024406619765061,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit": {
+       "ewpm": 8.009843608640296,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_only": {
+       "ewpm": 4.274594721133025,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 6.188257222739981,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 4.835591649379882,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "trust",
+      "never_commit",
+      "always_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.8680175246440307,
+     "gaze_lm_glance_completion_share": 0.8680175246440307,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        6.5852456437991655,
+        9.088552527223653
+       ],
+       "trust": [
+        6.872233144651907,
+        9.188125435944217
+       ],
+       "never_commit": [
+        6.86174649597484,
+        9.169066444457236
+       ],
+       "gaze_only": [
+        4.215570844168304,
+        4.3204375281033185
+       ],
+       "gaze_lm": [
+        6.110249001144361,
+        6.255743365481587
+       ],
+       "gaze_lm_glance1s": [
+        4.772066351052061,
+        4.891484288426457
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        2.6501218328687544,
+        4.882198627911577
+       ],
+       "trust-gaze_lm": [
+        0.7415032794992982,
+        2.992749487217073
+       ],
+       "trust-never_commit": [
+        0.0062704067379038666,
+        0.026291445547104917
+       ],
+       "trust-always_commit": [
+        0.012651865511252414,
+        0.41039337232699885
+       ],
+       "never_commit-gaze_lm": [
+        0.7344364634229839,
+        2.9739218615176317
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.0,
+        0.0
+       ],
+       "trust-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.0
+       ],
+       "trust-always_commit": [
+        -0.09023852735286492,
+        -0.034482758620689655
+       ],
+       "never_commit-gaze_lm": [
+        0.0,
+        0.0
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 1.0
+    },
+    "fallback 10 cpm": {
+     "point": {
+      "always_commit": {
+       "ewpm": 5.755371011546819,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.05989110707803993
+      },
+      "trust": {
+       "ewpm": 6.24281924742008,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit": {
+       "ewpm": 6.234001414322842,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "trust (misspecified: fit under main)": {
+       "ewpm": 6.145442361272517,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit (misspecified: fit under main)": {
+       "ewpm": 6.1368972795423495,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_only": {
+       "ewpm": 2.1372973605665124,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 3.886967165132244,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 3.3060744138326443,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "trust",
+      "never_commit",
+      "always_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.9008762322015335,
+     "gaze_lm_glance_completion_share": 0.9008762322015335,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        4.658558973238076,
+        7.002739393036163
+       ],
+       "trust": [
+        5.099176272951006,
+        7.487402019165363
+       ],
+       "never_commit": [
+        5.0946695183509005,
+        7.474720796709138
+       ],
+       "trust (misspecified: fit under main)": [
+        5.009175915622017,
+        7.43313154183302
+       ],
+       "never_commit (misspecified: fit under main)": [
+        5.003575595962826,
+        7.420653185499394
+       ],
+       "gaze_only": [
+        2.107785422084152,
+        2.1602187640516592
+       ],
+       "gaze_lm": [
+        3.8297747546107845,
+        3.940498226829507
+       ],
+       "gaze_lm_glance1s": [
+        3.2569336481439084,
+        3.3515209671217523
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        2.9834073968147594,
+        5.34790158686233
+       ],
+       "trust-gaze_lm": [
+        1.2546689598240506,
+        3.629309513774847
+       ],
+       "trust-never_commit": [
+        0.00360538142904121,
+        0.017110166116200354
+       ],
+       "trust-always_commit": [
+        0.30731109148223257,
+        0.6801031588878793
+       ],
+       "never_commit-gaze_lm": [
+        1.2502105386204736,
+        3.6176595282626742
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        -0.17492856812672217,
+        -0.024139481944008116
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        2.8943106882761866,
+        5.280168137816698
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.0,
+        0.0
+       ],
+       "trust-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.0
+       ],
+       "trust-always_commit": [
+        -0.09023852735286492,
+        -0.034482758620689655
+       ],
+       "never_commit-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.0,
+        0.0
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 17.8
+    },
+    "fallback 40 cpm": {
+     "point": {
+      "always_commit": {
+       "ewpm": 9.569866864389102,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.05807622504537205
+      },
+      "trust": {
+       "ewpm": 9.634738243966066,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit": {
+       "ewpm": 9.621412015102702,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "trust (misspecified: fit under main)": {
+       "ewpm": 9.510750205897132,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit (misspecified: fit under main)": {
+       "ewpm": 9.49029947144625,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_only": {
+       "ewpm": 8.54918944226605,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 9.428165741577384,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 6.34670528602462,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "trust",
+      "never_commit",
+      "always_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.2661555312157722,
+     "gaze_lm_glance_completion_share": 0.2661555312157722,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        8.387722162462133,
+        10.685303125456223
+       ],
+       "trust": [
+        8.66074899023196,
+        10.589489602190653
+       ],
+       "never_commit": [
+        8.651761898444759,
+        10.572552330443703
+       ],
+       "trust (misspecified: fit under main)": [
+        8.508759319986098,
+        10.435625717245346
+       ],
+       "never_commit (misspecified: fit under main)": [
+        8.494493982636156,
+        10.40757466702716
+       ],
+       "gaze_only": [
+        8.431141688336607,
+        8.640875056206637
+       ],
+       "gaze_lm": [
+        9.32640591101517,
+        9.520488700101485
+       ],
+       "gaze_lm_glance1s": [
+        6.272139646351194,
+        6.416934605141536
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        0.1979500931672921,
+        1.9716339679353312
+       ],
+       "trust-gaze_lm": [
+        -0.6842078372039553,
+        1.080200117215056
+       ],
+       "trust-never_commit": [
+        0.006712255635479858,
+        0.022140257967778208
+       ],
+       "trust-always_commit": [
+        -0.15059126448832214,
+        0.3102813552185591
+       ],
+       "never_commit-gaze_lm": [
+        -0.6923595444894051,
+        1.058315441894854
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        -0.22314195976171441,
+        -0.00852656915837213
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.04884668557366508,
+        1.8282731674280803
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.0,
+        0.0
+       ],
+       "trust-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.0
+       ],
+       "trust-always_commit": [
+        -0.08892921960072596,
+        -0.03333333333333333
+       ],
+       "never_commit-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.0,
+        0.0
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 17.8
+    },
+    "selection x0.5": {
+     "point": {
+      "always_commit": {
+       "ewpm": 8.13464769767753,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.05989110707803993
+      },
+      "trust": {
+       "ewpm": 8.454177295180523,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit": {
+       "ewpm": 8.443468056994064,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "trust (misspecified: fit under main)": {
+       "ewpm": 8.454177295180523,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit (misspecified: fit under main)": {
+       "ewpm": 8.443468056994064,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_only": {
+       "ewpm": 4.274594721133025,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 7.773934330264488,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 5.752464460575194,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "trust",
+      "never_commit",
+      "always_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.9008762322015335,
+     "gaze_lm_glance_completion_share": 0.9008762322015335,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        6.905651115992548,
+        9.387303814149085
+       ],
+       "trust": [
+        7.284780763517917,
+        9.628581828294982
+       ],
+       "never_commit": [
+        7.278003856862839,
+        9.614618690020299
+       ],
+       "trust (misspecified: fit under main)": [
+        7.284780763517917,
+        9.628581828294982
+       ],
+       "never_commit (misspecified: fit under main)": [
+        7.278003856862839,
+        9.614618690020299
+       ],
+       "gaze_only": [
+        4.215570844168304,
+        4.3204375281033185
+       ],
+       "gaze_lm": [
+        7.659549509221569,
+        7.880996453659014
+       ],
+       "gaze_lm_glance1s": [
+        5.667311164236047,
+        5.831100096532756
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        3.0601823600013636,
+        5.32265502026234
+       ],
+       "trust-gaze_lm": [
+        -0.4036437780162892,
+        1.8342426651711894
+       ],
+       "trust-never_commit": [
+        0.004417392455193836,
+        0.019731494718566632
+       ],
+       "trust-always_commit": [
+        0.12105884625643433,
+        0.5190315985364579
+       ],
+       "never_commit-gaze_lm": [
+        -0.41071897735075913,
+        1.8222252543906519
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        3.0601823600013636,
+        5.32265502026234
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.0,
+        0.0
+       ],
+       "trust-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.0
+       ],
+       "trust-always_commit": [
+        -0.09023852735286492,
+        -0.034482758620689655
+       ],
+       "never_commit-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.0,
+        0.0
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 17.9
+    },
+    "selection x2": {
+     "point": {
+      "always_commit": {
+       "ewpm": 7.322648584422018,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.056261343012704176
+      },
+      "trust": {
+       "ewpm": 7.383752782564868,
+       "wrong_commit": 0.019963702359346643,
+       "commit_rate": 0.17422867513611615,
+       "error_among_commits": 0.11458333333333333,
+       "silent_error": 0.0018148820326678765
+      },
+      "never_commit": {
+       "ewpm": 7.288270972851697,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "trust (misspecified: fit under main)": {
+       "ewpm": 7.338004314963611,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit (misspecified: fit under main)": {
+       "ewpm": 7.317616932496295,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_only": {
+       "ewpm": 4.274594721133025,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 4.714082870788692,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 3.793234774781013,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "trust",
+      "always_commit",
+      "never_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.2661555312157722,
+     "gaze_lm_glance_completion_share": 0.2661555312157722,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        6.140468083659646,
+        8.568717852641678
+       ],
+       "trust": [
+        6.292504790509814,
+        8.494715825813483
+       ],
+       "never_commit": [
+        6.243584408559428,
+        8.339386392210306
+       ],
+       "trust (misspecified: fit under main)": [
+        6.264323421534893,
+        8.446459845538437
+       ],
+       "never_commit (misspecified: fit under main)": [
+        6.248520669175195,
+        8.421012523425022
+       ],
+       "gaze_only": [
+        4.215570844168304,
+        4.3204375281033185
+       ],
+       "gaze_lm": [
+        4.663202955507585,
+        4.760244350050742
+       ],
+       "gaze_lm_glance1s": [
+        3.7511429010628112,
+        3.8328920105337345
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        2.0640205659575033,
+        4.19737486907362
+       ],
+       "trust-gaze_lm": [
+        1.6202702727839906,
+        3.7595759690253416
+       ],
+       "trust-never_commit": [
+        0.0331629781422315,
+        0.1746994851118415
+       ],
+       "trust-always_commit": [
+        -0.14694231241069416,
+        0.25993258842933176
+       ],
+       "never_commit-gaze_lm": [
+        1.5695354972224158,
+        3.6117162011214057
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        -0.11497234639820175,
+        0.022364441262914484
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        2.0208233023016513,
+        4.1443317176884396
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.0,
+        0.005639097744360902
+       ],
+       "trust-gaze_lm": [
+        0.0,
+        0.005639097744360902
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.005639097744360902
+       ],
+       "trust-always_commit": [
+        -0.08578738512949038,
+        -0.03083354939071819
+       ],
+       "never_commit-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        -0.005639097744360902,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.0,
+        0.0
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 17.9
+    },
+    "p_miss 0": {
+     "point": {
+      "always_commit": {
+       "ewpm": 8.108887047111335,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.0
+      },
+      "trust": {
+       "ewpm": 8.08783656258049,
+       "wrong_commit": 0.019963702359346643,
+       "commit_rate": 0.17422867513611615,
+       "error_among_commits": 0.11458333333333333,
+       "silent_error": 0.0
+      },
+      "never_commit": {
+       "ewpm": 8.009843608640296,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "trust (misspecified: fit under main)": {
+       "ewpm": 8.024406619765061,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit (misspecified: fit under main)": {
+       "ewpm": 8.009843608640296,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_only": {
+       "ewpm": 4.274594721133025,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 6.188257222739981,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 4.835591649379882,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "always_commit",
+      "trust",
+      "never_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.8680175246440307,
+     "gaze_lm_glance_completion_share": 0.8680175246440307,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        6.981432665446123,
+        9.292060645879104
+       ],
+       "trust": [
+        6.917454298632564,
+        9.284158895260452
+       ],
+       "never_commit": [
+        6.86174649597484,
+        9.169066444457236
+       ],
+       "trust (misspecified: fit under main)": [
+        6.872233144651907,
+        9.188125435944217
+       ],
+       "never_commit (misspecified: fit under main)": [
+        6.86174649597484,
+        9.169066444457236
+       ],
+       "gaze_only": [
+        4.215570844168304,
+        4.3204375281033185
+       ],
+       "gaze_lm": [
+        6.110249001144361,
+        6.255743365481587
+       ],
+       "gaze_lm_glance1s": [
+        4.772066351052061,
+        4.891484288426457
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        2.6813328724220384,
+        4.984685260169653
+       ],
+       "trust-gaze_lm": [
+        0.7714564974112846,
+        3.0640534627592695
+       ],
+       "trust-never_commit": [
+        0.041190371413785384,
+        0.12910811678615558
+       ],
+       "trust-always_commit": [
+        -0.13700233333877582,
+        0.13369308293774645
+       ],
+       "never_commit-gaze_lm": [
+        0.7344364634229839,
+        2.9739218615176317
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        -0.10686884818149398,
+        -0.03168458208829492
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        2.6501218328687544,
+        4.882198627911577
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.0,
+        0.0
+       ],
+       "trust-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.0
+       ],
+       "trust-always_commit": [
+        0.0,
+        0.0
+       ],
+       "never_commit-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.0,
+        0.0
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 17.7
+    },
+    "p_miss 0.2": {
+     "point": {
+      "always_commit": {
+       "ewpm": 6.898234042321211,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.22141560798548093
+      },
+      "trust": {
+       "ewpm": 8.024406619765061,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit": {
+       "ewpm": 8.009843608640296,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "trust (misspecified: fit under main)": {
+       "ewpm": 8.024406619765061,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.0
+      },
+      "never_commit (misspecified: fit under main)": {
+       "ewpm": 8.009843608640296,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_only": {
+       "ewpm": 4.274594721133025,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 6.188257222739981,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 4.835591649379882,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "trust",
+      "never_commit",
+      "always_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.8680175246440307,
+     "gaze_lm_glance_completion_share": 0.8680175246440307,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        5.505314744404391,
+        8.275768105869627
+       ],
+       "trust": [
+        6.872233144651907,
+        9.188125435944217
+       ],
+       "never_commit": [
+        6.86174649597484,
+        9.169066444457236
+       ],
+       "trust (misspecified: fit under main)": [
+        6.872233144651907,
+        9.188125435944217
+       ],
+       "never_commit (misspecified: fit under main)": [
+        6.86174649597484,
+        9.169066444457236
+       ],
+       "gaze_only": [
+        4.215570844168304,
+        4.3204375281033185
+       ],
+       "gaze_lm": [
+        6.110249001144361,
+        6.255743365481587
+       ],
+       "gaze_lm_glance1s": [
+        4.772066351052061,
+        4.891484288426457
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        2.6501218328687544,
+        4.882198627911577
+       ],
+       "trust-gaze_lm": [
+        0.7415032794992982,
+        2.992749487217073
+       ],
+       "trust-never_commit": [
+        0.0062704067379038666,
+        0.026291445547104917
+       ],
+       "trust-always_commit": [
+        0.8274642427526253,
+        1.457252085795977
+       ],
+       "never_commit-gaze_lm": [
+        0.7344364634229839,
+        2.9739218615176317
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        2.6501218328687544,
+        4.882198627911577
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.0,
+        0.0
+       ],
+       "trust-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.0
+       ],
+       "trust-always_commit": [
+        -0.29945553539019965,
+        -0.16540705211304121
+       ],
+       "never_commit-gaze_lm": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.0,
+        0.0
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.0,
+        0.0
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 17.3
+    },
+    "symmetric offer (p_miss 0.05, no oracle retype)": {
+     "point": {
+      "always_commit": {
+       "ewpm": 7.7973491728082065,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.05989110707803993
+      },
+      "trust": {
+       "ewpm": 7.821511475841891,
+       "wrong_commit": 0.019963702359346643,
+       "commit_rate": 0.17422867513611615,
+       "error_among_commits": 0.11458333333333333,
+       "silent_error": 0.041742286751361164
+      },
+      "never_commit": {
+       "ewpm": 7.752424546952837,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.039927404718693285
+      },
+      "trust (misspecified: fit under main)": {
+       "ewpm": 7.761694175963143,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.050816696914700546
+      },
+      "never_commit (misspecified: fit under main)": {
+       "ewpm": 7.747375551048926,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.050816696914700546
+      },
+      "gaze_only": {
+       "ewpm": 4.274594721133025,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 6.188257222739981,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 4.835591649379882,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "trust",
+      "always_commit",
+      "never_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.8680175246440307,
+     "gaze_lm_glance_completion_share": 0.8680175246440307,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        6.568003186501687,
+        9.083182434897997
+       ],
+       "trust": [
+        6.60147514297931,
+        9.030421815768607
+       ],
+       "never_commit": [
+        6.5751028520213115,
+        8.916976784606558
+       ],
+       "trust (misspecified: fit under main)": [
+        6.547261895764215,
+        8.992405521955108
+       ],
+       "never_commit (misspecified: fit under main)": [
+        6.539247145484288,
+        8.97341491722734
+       ],
+       "gaze_only": [
+        4.215570844168304,
+        4.3204375281033185
+       ],
+       "gaze_lm": [
+        6.110249001144361,
+        6.255743365481587
+       ],
+       "gaze_lm_glance1s": [
+        4.772066351052061,
+        4.891484288426457
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        2.3550008153563446,
+        4.7268787369054355
+       ],
+       "trust-gaze_lm": [
+        0.4578012252315296,
+        2.82159083116968
+       ],
+       "trust-never_commit": [
+        0.00955885716276903,
+        0.1357284156521134
+       ],
+       "trust-always_commit": [
+        -0.1358682083740433,
+        0.20026182981794433
+       ],
+       "never_commit-gaze_lm": [
+        0.4382243700238261,
+        2.7228286483958803
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        -0.1481394925093513,
+        0.023981589750711404
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        2.3131162233905265,
+        4.677719184874001
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.02280701754385965,
+        0.06390977443609022
+       ],
+       "trust-gaze_lm": [
+        0.02280701754385965,
+        0.06390977443609022
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.005639097744360902
+       ],
+       "trust-always_commit": [
+        -0.03158834586466165,
+        -0.007259528130671503
+       ],
+       "never_commit-gaze_lm": [
+        0.021025408348457352,
+        0.06352087114337568
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.0035087719298245584,
+        0.016333938294010884
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.02722323049001815,
+        0.07806261343012702
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 17.5
+    },
+    "symmetric offer, p_miss 0.2": {
+     "point": {
+      "always_commit": {
+       "ewpm": 6.89612987044256,
+       "wrong_commit": 0.5408348457350273,
+       "commit_rate": 1.0,
+       "error_among_commits": 0.5408348457350273,
+       "silent_error": 0.22141560798548093
+      },
+      "trust": {
+       "ewpm": 7.160945519010501,
+       "wrong_commit": 0.019963702359346643,
+       "commit_rate": 0.17422867513611615,
+       "error_among_commits": 0.11458333333333333,
+       "silent_error": 0.16878402903811252
+      },
+      "never_commit": {
+       "ewpm": 7.091691049789706,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.16696914700544466
+      },
+      "trust (misspecified: fit under main)": {
+       "ewpm": 7.092980878348829,
+       "wrong_commit": 0.003629764065335753,
+       "commit_rate": 0.038112522686025406,
+       "error_among_commits": 0.09523809523809523,
+       "silent_error": 0.17967332123411978
+      },
+      "never_commit (misspecified: fit under main)": {
+       "ewpm": 7.07907591809622,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.17967332123411978
+      },
+      "gaze_only": {
+       "ewpm": 4.274594721133025,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm": {
+       "ewpm": 6.188257222739981,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      },
+      "gaze_lm_glance1s": {
+       "ewpm": 4.835591649379882,
+       "wrong_commit": 0.0,
+       "commit_rate": 0.0,
+       "error_among_commits": null,
+       "silent_error": 0.0
+      }
+     },
+     "ranking_by_ewpm": [
+      "trust",
+      "never_commit",
+      "always_commit",
+      "gaze_lm",
+      "gaze_only"
+     ],
+     "gaze_lm_completion_share": 0.8680175246440307,
+     "gaze_lm_glance_completion_share": 0.8680175246440307,
+     "ci": {
+      "policies": {
+       "always_commit": [
+        5.502572953505717,
+        8.274193834887269
+       ],
+       "trust": [
+        5.722257675015855,
+        8.518899226005844
+       ],
+       "never_commit": [
+        5.6879285189331465,
+        8.411429519428097
+       ],
+       "trust (misspecified: fit under main)": [
+        5.6542272490845225,
+        8.47109200761642
+       ],
+       "never_commit (misspecified: fit under main)": [
+        5.648893228602847,
+        8.447874397426803
+       ],
+       "gaze_only": [
+        4.215570844168304,
+        4.3204375281033185
+       ],
+       "gaze_lm": [
+        6.110249001144361,
+        6.255743365481587
+       ],
+       "gaze_lm_glance1s": [
+        4.772066351052061,
+        4.891484288426457
+       ]
+      },
+      "diffs_ewpm": {
+       "trust-gaze_only": [
+        1.5008311754144819,
+        4.22924617890546
+       ],
+       "trust-gaze_lm": [
+        -0.41960073996555053,
+        2.319544698003796
+       ],
+       "trust-never_commit": [
+        0.013896676587862023,
+        0.13258937088511283
+       ],
+       "trust-always_commit": [
+        0.09780216628408345,
+        0.44859036456332685
+       ],
+       "never_commit-gaze_lm": [
+        -0.44145895200662616,
+        2.205519951430161
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        -0.17143767588666686,
+        0.018916526668221686
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        1.4360475483246262,
+        4.187279387296051
+       ]
+      },
+      "diffs_silent": {
+       "trust-gaze_only": [
+        0.11403508771929824,
+        0.24682395644283123
+       ],
+       "trust-gaze_lm": [
+        0.11403508771929824,
+        0.24682395644283123
+       ],
+       "trust-never_commit": [
+        0.0,
+        0.005639097744360888
+       ],
+       "trust-always_commit": [
+        -0.06768309663046505,
+        -0.03811252268602541
+       ],
+       "never_commit-gaze_lm": [
+        0.11252268602540835,
+        0.24500907441016334
+       ],
+       "trust (misspecified: fit under main)-trust": [
+        0.005263157894736831,
+        0.018148820326678777
+       ],
+       "trust (misspecified: fit under main)-gaze_only": [
+        0.12453266787658802,
+        0.2579288499025341
+       ]
+      }
+     },
+     "ci_unit": "cluster",
+     "seconds": 17.8
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,33 @@
+22:20:32 emg-calib always_commit: {'ewpm': 7.80927658662851, 'wrong_commit': 0.5408348457350273, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.5408348457350273, 'silent_error': 0.05989110707803993}
+22:20:34 emg-calib never_commit: {'ewpm': 8.009843608640296, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:21:35 emg-calib raw_no_guard: {'ewpm': 8.153465573090056, 'wrong_commit': 0.045372050816696916, 'commit_rate': np.float64(0.2831215970961887), 'error_among_commits': 0.16025641025641027, 'silent_error': 0.0}
+22:21:37 emg-calib no_guard: {'ewpm': 8.024406619765061, 'wrong_commit': 0.003629764065335753, 'commit_rate': np.float64(0.038112522686025406), 'error_among_commits': 0.09523809523809523, 'silent_error': 0.0}
+22:21:53 emg-calib trust: {'ewpm': 8.024406619765061, 'wrong_commit': 0.003629764065335753, 'commit_rate': np.float64(0.038112522686025406), 'error_among_commits': 0.09523809523809523, 'silent_error': 0.0}
+22:21:54 done
+22:22:03 emg-xsession always_commit: {'ewpm': 4.102092009154985, 'wrong_commit': 0.8820326678765881, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.8820326678765881, 'silent_error': 0.14882032667876588}
+22:22:05 emg-xsession never_commit: {'ewpm': 4.674454178439975, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:23:09 emg-xsession raw_no_guard: {'ewpm': 4.753854346287148, 'wrong_commit': 0.012704174228675136, 'commit_rate': np.float64(0.041742286751361164), 'error_among_commits': 0.30434782608695654, 'silent_error': 0.003629764065335753}
+22:23:10 emg-xsession no_guard: {'ewpm': 4.67692102383024, 'wrong_commit': 0.003629764065335753, 'commit_rate': np.float64(0.018148820326678767), 'error_among_commits': 0.2, 'silent_error': 0.0}
+22:23:26 emg-xsession trust: {'ewpm': 4.67692102383024, 'wrong_commit': 0.003629764065335753, 'commit_rate': np.float64(0.018148820326678767), 'error_among_commits': 0.2, 'silent_error': 0.0}
+22:23:27 emg-xsubject always_commit: {'ewpm': 3.5312246360482913, 'wrong_commit': 0.9618874773139746, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.9618874773139746, 'silent_error': 0.16696914700544466}
+22:23:29 emg-xsubject never_commit: {'ewpm': 4.0800135493987755, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:24:29 emg-xsubject raw_no_guard: {'ewpm': 4.760011547673734, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:24:30 emg-xsubject no_guard: {'ewpm': 4.0800135493987755, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:24:47 emg-xsubject trust: {'ewpm': 4.0800135493987755, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:30:40 meg-async always_commit: {'ewpm': 2.5804621654337954, 'wrong_commit': 0.9968602825745683, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.9968602825745683, 'silent_error': 0.23547880690737832}
+22:30:42 meg-async never_commit: {'ewpm': 3.202971571465368, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:33:24 meg-async raw_no_guard: {'ewpm': 3.041904541501989, 'wrong_commit': 0.004709576138147566, 'commit_rate': np.float64(0.006279434850863423), 'error_among_commits': 0.75, 'silent_error': 0.0}
+22:33:26 meg-async no_guard: {'ewpm': 3.202971571465368, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:33:31 meg-async trust: {'ewpm': 3.202971571465368, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:33:33 done
+22:45:42 b2t-ours always_commit: {'ewpm': 11.449637382561221, 'wrong_commit': 0.6102941176470589, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.6102941176470589, 'silent_error': 0.04411764705882353}
+22:45:48 b2t-ours never_commit: {'ewpm': 11.368608371320716, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:51:23 b2t-ours raw_no_guard: {'ewpm': 11.388476600492679, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:51:28 b2t-ours no_guard: {'ewpm': 11.51445965893824, 'wrong_commit': 0.03553921568627451, 'commit_rate': np.float64(0.16544117647058823), 'error_among_commits': 0.21481481481481482, 'silent_error': 0.0}
+22:52:18 b2t-ours trust: {'ewpm': 11.545649629165746, 'wrong_commit': 0.058823529411764705, 'commit_rate': np.float64(0.23161764705882354), 'error_among_commits': 0.25396825396825395, 'silent_error': 0.0024509803921568627}
+22:52:20 b2t-published always_commit: {'ewpm': 19.612129926967807, 'wrong_commit': 0.19362745098039216, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.19362745098039216, 'silent_error': 0.024509803921568627}
+22:52:26 b2t-published never_commit: {'ewpm': 18.11388556397986, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:52:30 b2t-published raw_no_guard: {'ewpm': 18.678588045541794, 'wrong_commit': 0.03308823529411765, 'commit_rate': np.float64(0.4227941176470588), 'error_among_commits': 0.0782608695652174, 'silent_error': 0.0012254901960784314}
+22:52:34 b2t-published no_guard: {'ewpm': 18.620834721513045, 'wrong_commit': 0.024509803921568627, 'commit_rate': np.float64(0.38112745098039214), 'error_among_commits': 0.06430868167202572, 'silent_error': 0.0012254901960784314}
+22:53:22 b2t-published trust: {'ewpm': 18.767072914257195, 'wrong_commit': 0.04411764705882353, 'commit_rate': np.float64(0.4730392156862745), 'error_among_commits': 0.09326424870466321, 'silent_error': 0.003676470588235294}
+22:53:23 done

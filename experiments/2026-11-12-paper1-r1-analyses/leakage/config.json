@@ -1,0 +1,1 @@
+{"description": "R1 item 5 (G9): leakage-cleaned LMs (near variant = edit distance <= 0.25 x sentence length) and re-run of the affected main numbers. Settings fixed before the first run.", "seed": 0, "bootstrap_B": 2000, "max_cer": 0.25}

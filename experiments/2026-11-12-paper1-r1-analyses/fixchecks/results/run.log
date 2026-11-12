@@ -1,0 +1,8 @@
+22:32:07 done
+22:34:26 meg cer: {'setting': 'harness: T_harness, lm 0.5, bonus 1.0 (RETUNED, n_best 10)', 'frame_T': 3.295918403993801, 'lm_weight': 0.5, 'insertion_bonus': 1.0, 'cer_pooled': 0.5216521251901065, 'cer_mean_over_instances': 0.5218823606754379, 'sentence_acc': 0.0031397174254317113, 'seconds': 0.5}
+22:34:26 meg cer: {'setting': 'T = 1 (raw stream), lm 0.5, bonus 1.0', 'frame_T': 1.0, 'lm_weight': 0.5, 'insertion_bonus': 1.0, 'cer_pooled': 0.48327063155367006, 'cer_mean_over_instances': 0.48103837506930813, 'sentence_acc': 0.0031397174254317113, 'seconds': 0.3}
+22:36:32 meg cer: {'setting': 'T_harness, lm 0.25, bonus 1.0', 'frame_T': 3.295918403993801, 'lm_weight': 0.25, 'insertion_bonus': 1.0, 'cer_pooled': 0.5653966221083807, 'cer_mean_over_instances': 0.5665686779337423, 'sentence_acc': 0.0015698587127158557, 'seconds': 125.7}
+22:38:00 meg cer: {'setting': 'T_harness, lm 0.5, bonus 0.0', 'frame_T': 3.295918403993801, 'lm_weight': 0.5, 'insertion_bonus': 0.0, 'cer_pooled': 0.4771872248459137, 'cer_mean_over_instances': 0.47470254303191556, 'sentence_acc': 0.0031397174254317113, 'seconds': 88.8}
+22:39:38 meg cer: {'setting': 'T_harness, lm 0.25, bonus 0.0 (= M1-09 val choice)', 'frame_T': 3.295918403993801, 'lm_weight': 0.25, 'insertion_bonus': 0.0, 'cer_pooled': 0.47654686624509723, 'cer_mean_over_instances': 0.47499178595829, 'sentence_acc': 0.004709576138147566, 'seconds': 97.9}
+22:41:17 meg cer: {'setting': 'T_M1-09, lm 0.25, bonus 0.0, n_best 10 (M1-09 val-tuned beam)', 'frame_T': 3.285049792642652, 'lm_weight': 0.25, 'insertion_bonus': 0.0, 'cer_pooled': 0.4767870007204034, 'cer_mean_over_instances': 0.4752081089408127, 'sentence_acc': 0.004709576138147566, 'seconds': 98.9}
+22:41:17 done

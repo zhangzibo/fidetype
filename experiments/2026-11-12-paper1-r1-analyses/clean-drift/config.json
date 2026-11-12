@@ -1,0 +1,12 @@
+{
+ "description": "R1 item 1: clean drift baseline. CRC / LTT calibration data disjoint from the data that fit the temperatures, conformal sets, guard and policy grid. Settings fixed before the first run.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "seed": 0,
+ "b2t_splits": ["alternate", "chrono"],
+ "emg_conditions": ["xsession", "calib", "xsubject"],
+ "online_methods": "as experiments/2026-11-11-m2-16-online-recal/config.json (window 200, decay 0.99, aci eta 0.05, aci_window window 200 gamma 0.005; delays 0 and 10)",
+ "shuffles": 20,
+ "exch_reps": 1000,
+ "bootstrap_B": 2000
+}

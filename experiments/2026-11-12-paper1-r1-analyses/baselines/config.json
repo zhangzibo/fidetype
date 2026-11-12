@@ -1,0 +1,9 @@
+{
+ "description": "R1 item 2: baselines (always commit, never commit / always offer, plain thresholds, trust, CRC, LTT, gaze only) and selective risk, all six main-table conditions. Settings fixed before the first run.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "seed": 0,
+ "bootstrap_B": 2000,
+ "meg_val_a_sentences": 6,
+ "ci_units": {"b2t": "day cluster (14 test days)", "emg": "participant cluster (19)", "meg": "two-way: 17 sentences x 19 participants (also sentences, participants)"}
+}

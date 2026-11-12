@@ -1,0 +1,70 @@
+{
+  "run_name": "m1-09-r4b-full-medium-s1",
+  "runs_dir": "C:/Users/zhang/bci-data/runs",
+  "data": {
+    "root": "C:/Users/zhang/bci-data/cache/spanishbcbl/v1",
+    "subjects": null,
+    "batch_size": 16,
+    "eval_batch_size": 16,
+    "num_workers": 0,
+    "augment": {
+      "start_jitter_s": 0.3,
+      "end_jitter_s": 0.1,
+      "channel_offset_std": 0.3,
+      "time_mask_n": 4,
+      "time_mask_max_s": 0.4,
+      "channel_mask_n": 2,
+      "channel_mask_max": 60,
+      "stretch_min": 0.9,
+      "stretch_max": 1.1
+    },
+    "blocks": null,
+    "pad_multiple": 100
+  },
+  "model": {
+    "spatial_dim": 128,
+    "conv_dim": 320,
+    "conv_blocks": 4,
+    "model_dim": 256,
+    "conformer_layers": 4,
+    "conformer_heads": 4,
+    "conformer_ffn": 768,
+    "conformer_kernel": 15,
+    "dropout": 0.35,
+    "input_dropout": 0.1,
+    "self_condition": true,
+    "lookahead_frames": null,
+    "aux_keystroke_weight": 0.5,
+    "aux_key_layer": "both",
+    "aux_key_pool": 1,
+    "aux_key_shift_frames": 1
+  },
+  "optim": {
+    "lr": 0.0003,
+    "weight_decay": 0.1,
+    "betas": [
+      0.9,
+      0.98
+    ],
+    "warmup_steps": 300,
+    "min_lr_ratio": 0.02,
+    "epochs": 100,
+    "grad_clip": 1.0
+  },
+  "train": {
+    "seed": 1,
+    "device": "cuda",
+    "bf16": true,
+    "ckpt_every_min": 5,
+    "eval_every_epochs": 1,
+    "patience_evals": 15,
+    "early_stop_metric": "val_cer_typed",
+    "log_every_steps": 25,
+    "max_minutes": 120,
+    "torch_threads": 4,
+    "init_from": "C:/Users/zhang/bci-data/runs/m1-09-r4a-full-medium-s1/best.pt",
+    "smooth_alpha": 0.3,
+    "min_delta": 0.002
+  },
+  "_comment": "Paper 1 R1 (Major 7 / G2): seed 1 of the r4b-full-medium recipe (the Paper 1 MEG decoder), init from r4a-full-medium-s1. Only seed, run name and init_from differ from config-r4b-full-medium.json."
+}

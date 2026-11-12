@@ -1,0 +1,9 @@
+22:29:33   near variants: 0/2
+22:30:03 original split: held-out 5000, train 600000 (23s)
+22:34:44   near variants: 400/1717
+22:48:11   near variants: 1600/1717
+22:49:37 b2t: 22 exact / 310 near; removed 849 train sentences, 910 word-count sentences (1197s)
+22:53:57   near variants: 400/551
+22:59:52   near variants: 400/570
+23:01:41 emg: test near 295 / 551; removed 2895 (1921s)
+23:01:41 done

@@ -1,0 +1,10 @@
+{
+ "description": "R1 item 6: CRC / LTT with small calibration sets. Analysis of committed per-item tables only. Settings fixed before the first run.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "seed": 0,
+ "reps": 500,
+ "n_cal": [20, 50, 100],
+ "per_session_n_cal": [20, 30],
+ "pools": {"random": "M2-13 items (B2T), M2-16 items (sEMG), G1 items (MEG): test pools", "deploy": "clean-drift items: clean calibration pool -> whole test half"}
+}

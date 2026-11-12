@@ -1,0 +1,11 @@
+22:45:42 b2t-ours always_commit: {'ewpm': 11.449637382561221, 'wrong_commit': 0.6102941176470589, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.6102941176470589, 'silent_error': 0.04411764705882353}
+22:45:48 b2t-ours never_commit: {'ewpm': 11.368608371320716, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:51:23 b2t-ours raw_no_guard: {'ewpm': 11.388476600492679, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:51:28 b2t-ours no_guard: {'ewpm': 11.51445965893824, 'wrong_commit': 0.03553921568627451, 'commit_rate': np.float64(0.16544117647058823), 'error_among_commits': 0.21481481481481482, 'silent_error': 0.0}
+22:52:18 b2t-ours trust: {'ewpm': 11.545649629165746, 'wrong_commit': 0.058823529411764705, 'commit_rate': np.float64(0.23161764705882354), 'error_among_commits': 0.25396825396825395, 'silent_error': 0.0024509803921568627}
+22:52:20 b2t-published always_commit: {'ewpm': 19.612129926967807, 'wrong_commit': 0.19362745098039216, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.19362745098039216, 'silent_error': 0.024509803921568627}
+22:52:26 b2t-published never_commit: {'ewpm': 18.11388556397986, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:52:30 b2t-published raw_no_guard: {'ewpm': 18.678588045541794, 'wrong_commit': 0.03308823529411765, 'commit_rate': np.float64(0.4227941176470588), 'error_among_commits': 0.0782608695652174, 'silent_error': 0.0012254901960784314}
+22:52:34 b2t-published no_guard: {'ewpm': 18.620834721513045, 'wrong_commit': 0.024509803921568627, 'commit_rate': np.float64(0.38112745098039214), 'error_among_commits': 0.06430868167202572, 'silent_error': 0.0012254901960784314}
+22:53:22 b2t-published trust: {'ewpm': 18.767072914257195, 'wrong_commit': 0.04411764705882353, 'commit_rate': np.float64(0.4730392156862745), 'error_among_commits': 0.09326424870466321, 'silent_error': 0.003676470588235294}
+22:53:23 done

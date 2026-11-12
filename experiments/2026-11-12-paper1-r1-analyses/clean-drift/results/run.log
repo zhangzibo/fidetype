@@ -1,0 +1,9 @@
+22:15:22 emg-xsession: crc lam 0.2036 -> test wc 0.0563 (commit 0.093); LTT 0.0309; plug-in 0.0036; online aci 0.0526 aci_window 0.0490 window 0.0472 decay 0.0381; exch p 0.299 (73s)
+22:16:36 emg-calib: crc lam 0.4480 -> test wc 0.0399 (commit 0.241); LTT 0.0218; plug-in 0.0036; online aci 0.0490 aci_window 0.0490 window 0.0490 decay 0.0454; exch p 0.596 (74s)
+22:17:42 emg-xsubject: crc lam — -> test wc 0.0000 (commit 0.000); LTT 0.0000; plug-in 0.0000; online aci 0.0000 aci_window 0.0000 window 0.0000 decay 0.0000; exch p 1.000 (66s)
+22:17:42 done
+22:28:31 b2t-ours/alternate: crc lam 0.3075 -> test wc 0.0245 (commit 0.100); LTT 0.0270; plug-in 0.0245; online aci 0.0270 aci_window 0.0245 window 0.0245 decay 0.0257; exch p 0.012 (576s)
+22:29:06 b2t-published/alternate: crc lam 0.6983 -> test wc 0.0478 (commit 0.491); LTT 0.0294; plug-in 0.0478; online aci 0.0478 aci_window 0.0453 window 0.0429 decay 0.0392; exch p 0.539 (35s)
+22:34:38 b2t-ours/chrono: crc lam 0.4083 -> test wc 0.0600 (commit 0.212); LTT 0.0515; plug-in 0.0600; online aci 0.0527 aci_window 0.0490 window 0.0478 decay 0.0453; exch p 0.210 (332s)
+22:35:17 b2t-published/chrono: crc lam 0.6841 -> test wc 0.0490 (commit 0.495); LTT 0.0306; plug-in 0.0478; online aci 0.0478 aci_window 0.0453 window 0.0441 decay 0.0392; exch p 0.499 (39s)
+22:35:17 done

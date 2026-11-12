@@ -1,0 +1,6 @@
+22:20:32 emg-calib always_commit: {'ewpm': 7.80927658662851, 'wrong_commit': 0.5408348457350273, 'commit_rate': np.float64(1.0), 'error_among_commits': 0.5408348457350273, 'silent_error': 0.05989110707803993}
+22:20:34 emg-calib never_commit: {'ewpm': 8.009843608640296, 'wrong_commit': 0.0, 'commit_rate': np.float64(0.0), 'error_among_commits': nan, 'silent_error': 0.0}
+22:21:35 emg-calib raw_no_guard: {'ewpm': 8.153465573090056, 'wrong_commit': 0.045372050816696916, 'commit_rate': np.float64(0.2831215970961887), 'error_among_commits': 0.16025641025641027, 'silent_error': 0.0}
+22:21:37 emg-calib no_guard: {'ewpm': 8.024406619765061, 'wrong_commit': 0.003629764065335753, 'commit_rate': np.float64(0.038112522686025406), 'error_among_commits': 0.09523809523809523, 'silent_error': 0.0}
+22:21:53 emg-calib trust: {'ewpm': 8.024406619765061, 'wrong_commit': 0.003629764065335753, 'commit_rate': np.float64(0.038112522686025406), 'error_among_commits': 0.09523809523809523, 'silent_error': 0.0}
+22:21:54 done

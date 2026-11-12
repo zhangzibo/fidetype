@@ -1,0 +1,10 @@
+{
+ "description": "R1 item 3: unified ablation (G5) on all six main-table conditions. Settings fixed before the first run.",
+ "alpha": 0.05,
+ "seed": 0,
+ "bootstrap_B": 2000,
+ "variants": ["trust", "always_commit", "no_calib", "conf_only", "beam_only", "no_guard", "no_conformal", "ow_off_base", "ow_on"],
+ "emg_lm_weights": [0.5, 1.0, 1.5, 2.0, 3.0],
+ "meg_retuned": {"lm_weight": 0.25, "insertion_bonus": 0.0, "source": "M1-09 val grid choice on calibrated streams (experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/results.json)"},
+ "crc_rows": "from clean-drift/results/items-*.json (B2T: alternate split)"
+}
