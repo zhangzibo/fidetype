@@ -1,0 +1,24 @@
+\section{Ethics and data licences}
+\label{sec:ethics}
+
+This study uses only public, de-identified datasets. No new data were collected and no experiment with human participants was run, so no new ethics approval was required. \todo{the user decides the final wording of this statement; check the venue's policy on secondary use of public data.} We did not attempt re-identification. Raw recordings and participant data are not redistributed; our repository contains code, configurations, derived summary statistics and audit logs only. \Cref{tab:licences} lists every dataset and resource and how we use it.
+
+\begin{table}[!htb]
+  \centering
+  \caption{\textbf{Datasets, resources and licences.}}
+  \label{tab:licences}
+  \small
+  \begin{tabular}{@{}p{4.3cm}p{2.4cm}p{3.6cm}p{4.2cm}@{}}
+    \toprule
+    \textbf{Dataset / resource} & \textbf{Licence} & \textbf{Use} & \textbf{Note} \\
+    \midrule
+    SpanishBCBL \citep{levy2026brain2qwerty,spanishbcbl} & CC BY-NC 4.0 & MEG decoder training and evaluation & Research only; weights trained on it are not released for commercial use \\
+    Brain-to-Text '25 copy-task logits \citep{card2024accurate,card2025data} & CC0 1.0 & intracortical trust evaluation & Companion code has no licence; we wrote our own loader \\
+    Toronto sEMG typing \citep{achituve2025emg,achituve2024data} & CC BY 4.0 & sEMG decoder and trust evaluation & Baseline code (CC BY-SA 4.0) not used \\
+    Tatoeba English / Spanish sentences & CC BY 2.0 FR (some CC0) & character LMs; composed sEMG sentences & Sentences from Tatoeba (\url{https://tatoeba.org}), by the Tatoeba contributors \\
+    CMUdict (commit 7479086) & BSD-2-Clause style & phoneme-to-word lexicon & Copyright notice kept \\
+    Brain2Qwerty code (Meta) & CC BY-NC 4.0 & read only, not copied & Our decoders are our own implementations \\
+    Fidetype code and specification & Apache-2.0 & all methods & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}

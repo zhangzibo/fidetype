@@ -1,0 +1,17 @@
+\section{Limitations}
+\label{sec:limitations}
+
+\begin{enumerate}
+  \item \textbf{One implant participant.} B2T '25 contains participant T15 only, in a copy task, with online logits that we cannot re-run. Our intervals cover trials and days, not people.
+  \item \textbf{Few unique MEG test sentences.} The MEG test set has 637 instances but only 17 unique sentences. Our MEG trust intervals use a cluster bootstrap over these 17 sentences, which is still a small number of clusters; the decoder CER intervals are over instances and understate the variance across sentences. Six of the 17 test sentences have a close training variant (about 0.013 greedy CER effect); we report the far-sentence numbers next to the headline.
+  \item \textbf{No head-to-head MEG comparison.} Our MEG test split differs from that of Brain2Qwerty v2, and our decoder uses key times as training labels (not as inputs). The comparison of 0.495 with 0.59 is not a head-to-head result, and we do not claim a better decoder.
+  \item \textbf{MEG reaches only parity with gaze typing} (trust minus gaze $+0.05$, 95\% CI over sentences $[-0.04, +0.15]$). The true sentence is in the 10-best list for 1.6\% of test instances, so the trust layer commits nothing on MEG; the MEG results show safety, not usefulness, and the MEG null audit shows a closed gate rather than null detection.
+  \item \textbf{Composed sEMG sentences.} The Toronto data has isolated key presses only; sentences are composed with oracle timing and without inter-key context. Natural typing is untested. \todo{G4: natural-typing sEMG (KT-sEMG) or keep as limitation.}
+  \item \textbf{No live users.} All \ewpm{} values come from a simulated user. Only the fallback typing speed and the selection time are matched to measurements \citep{cai2024gaze}; the probability of missing an unflagged error has no measurement. With a 40 characters-per-minute fallback, gaze typing becomes clearly faster than the MEG system (6.31 vs 5.15 \ewpm{}). \todo{G14: user study (needs ethics approval).}
+  \item \textbf{Silent errors are outside every guarantee.} With noticed-only feedback, \texttt{aci} gave 0.0515 (B2T '25) and 0.0635 (sEMG).
+  \item \textbf{Guarantees are marginal or long-run.} CRC bounds the mean over sessions (41--45\% of splits exceeded 0.05); online bounds are long-run averages; 50-trial windows reached 0.10--0.12.
+  \item \textbf{Stream-only gating cannot detect intent mismatch.} A real stream of another sentence was committed as often as real input.
+  \item \textbf{One seed and one split.} Every decoder and harness run used one seed, and the B2T '25 and sEMG trust runs one fit/test split. \todo{G2, G7.}
+  \item \textbf{Simple language models.} We use a character 6-gram and a word unigram trained on Tatoeba. 64 of the 1,628 B2T '25 cue sentences occur in Tatoeba English (a possible small leak that we did not remove). \todo{G9: rebuild the LM without them and rerun.}
+  \item \textbf{The ledger is tamper-evident, not tamper-proof}; it has no signature, and in live use a wrong commit is known only after a correction.
+\end{enumerate}

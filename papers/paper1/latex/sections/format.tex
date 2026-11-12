@@ -1,0 +1,42 @@
+\section{The NeuralTextStream format}
+\label{sec:format}
+
+\nts{} (NTS) is the contract between a decoder and any consumer of its output (\cref{fig:arch}). A consumer does not need to know how the decoder works. The full specification, v0.1, is in the repository (\texttt{spec/neuraltextstream-v0.1.md}); here we summarise its design.
+
+\paragraph{Frame core.} A stream of $T$ frames over a vocabulary of $V$ tokens holds a $T \times V$ array \code{log\_probs} of natural-log probabilities (row $t$ is a distribution at frame $t$), the frame times in seconds, the ordered vocabulary \code{vocab}, its type \code{vocab\_type} (\code{char}, \code{key}, \code{word}, \code{phoneme}, \code{command} or \code{other}) and \code{blank\_id}, the index of the CTC blank or \code{null} for non-CTC decoders. Optional fields give the nominal \code{frame\_period}, the algorithmic \code{latency} (look-ahead in seconds; 0 means causal), the producer name and a \code{meta} object. A stream may have $T = 0$.
+
+\paragraph{Semantic conventions.} Following the OpenTelemetry approach of named attribute namespaces, \code{meta} keys use defined prefixes: \code{device.*} (for example \code{device.modality}), \code{decoder.*} (name, version, \code{decoder.causal}, \code{decoder.weights\_sha256}), \code{lm.*}, \code{adapter.*}, \code{calibration.*}, \code{data.derived} and \code{language}. Each field has a stability level; v0.1 is a Development release.
+
+\paragraph{Honest probabilities.} A producer must emit the decoder's own output and must not sharpen or smooth the probabilities for display; calibration is the consumer's job. A number is a probability only if the stream says so. Ground-truth text must not appear in the header or \code{meta} (a leakage rule), and raw signals and direct identifiers stay out of the stream (privacy rules).
+
+\paragraph{Serialisations and conformance.} The reference serialisations are an NPZ file and a JSON Lines streaming form; WebSocket, LSL and HID bridges are sketched. A conformance suite (our code) runs 60 checks, each tied to a specification clause, and reports one of three cumulative levels: \emph{core} (a consumer must accept the stream), \emph{trust-ready} (a trust layer can use it safely: modality, causality, calibration state and language are declared) and \emph{provenance} (a decision can be traced to the producing model: stream id, decoder name, version and weights hash). It ships 52 golden test vectors (32 NPZ, 20 JSON Lines); the reference consumer passes 52 of 52. On synthetic inputs, our MEG and sEMG adapters reach the provenance level and the intracortical adapter reaches trust-ready, because the published online decoder has no weights file to hash. Writing the suite found five bugs in our own producers and ten ambiguities in the specification text, now listed as open questions.
+
+\paragraph{Three device types, no breaking change.} \Cref{tab:devices} lists the three adapters. The MEG decoder emits character CTC frames; the intracortical stream carries the published online phoneme CTC logits (41 tokens, 0.08\,s frames); the sEMG stream has one frame per key press over W3C key codes with \code{blank\_id = null}. Mapping the second and third device types into NTS needed no change to the frame core. The trust harness needed one optional field (the truth in the stream's token space, because phoneme truth differs from the word truth that the user sees), and provenance added optional, non-breaking \code{meta} keys.
+
+\begin{table}[t]
+  \centering
+  \caption{\textbf{Devices, data and streams.} One adapter per device type maps decoder output into \nts{}. All datasets are public. Test units are those of the trust evaluation.}
+  \label{tab:devices}
+  \small
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}llll@{}}
+    \toprule
+    & \textbf{MEG (typing)} & \textbf{Intracortical (speech)} & \textbf{Forearm sEMG (keys)} \\
+    \midrule
+    Dataset (licence) & SpanishBCBL (CC BY-NC 4.0) & B2T '25 copy task (CC0) & Toronto sEMG (CC BY 4.0) \\
+    Participants & 19 & 1 (T15) & 19 \\
+    Test unit & 637 instances, & 816 trials, 14 days & 551 composed \\
+     & 17 unique sentences & & sentences \\
+    Decoder & own async ConvCTC & published online RNN; & own CNN \\
+     & (medium) & own phoneme-to-word route & \\
+    NTS \code{vocab\_type} & \code{char} (CTC) & \code{phoneme} (CTC, 41 tokens) & \code{key} (W3C codes) \\
+    Frame & one per MEG frame & 0.08\,s & one per key press \\
+    \bottomrule
+  \end{tabular}\end{adjustbox}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \resizebox{\linewidth}{!}{\input{../figures/tikz-architecture.tex}}
+  \caption{\textbf{Architecture.} Each device's decoder emits a \nts{} through a small adapter. The trust layer reads only the stream: it calibrates confidence, builds candidate sentences with a neural-evidence guard, and chooses an action under a risk-control rule. The user's corrections and picks (dashed) feed the online re-calibration. Every context, decision and correction goes to an append-only, hash-chained provenance ledger that stores no raw signals.}
+  \label{fig:arch}
+\end{figure}

@@ -1,0 +1,32 @@
+{
+ "_comment": "Numbers that exist only in committed markdown result pages, copied verbatim so that make_figures.py reads JSON only. Each block names its source file and table. Do not edit the numbers; fix the source page first.",
+ "meg_trust_sync_m1_15": {
+  "_source": "wiki/questions/m1-15-full-r1-r3-result.md, table 'Trust layer' (full-r1 column); experiments/2026-11-09-m1-15-sentence-context/results-full-r1-r3.md. 637 test instances; CI over instances.",
+  "commit": {
+   "ewpm": 2.71,
+   "wrong_commit": 1.0
+  },
+  "trust": {
+   "ewpm": 3.23,
+   "ewpm_ci": [
+    3.08,
+    3.4
+   ],
+   "wrong_commit": 0.0
+  },
+  "gaze_only": {
+   "ewpm": 3.15
+  },
+  "_note": "Fallback only: make_figures.py uses it if the G1 async harness JSON is not tracked by git."
+ },
+ "meg_v2_reference": {
+  "_source": "wiki/sources/brain2qwerty-v2.md / wiki/questions/m1-09-async-full-result.md: v2 Encoder Async, SpanishBCBL, Fig. 1E, mean +/- SEM over participants, own split.",
+  "cer": 0.59,
+  "sem": 0.02
+ },
+ "meg_m1c_r4b": {
+  "_source": "wiki/questions/m1-09-async-full-result.md, Main numbers: M1-C r4b, 20 blocks, 209 instances.",
+  "greedy": 0.619,
+  "beam_lm": 0.59
+ }
+}

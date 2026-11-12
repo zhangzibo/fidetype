@@ -1,0 +1,4 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We introduced an open stream format for neural decoder output and a trust layer that reads only this format. On three device types with public data, the same layer reduced wrong commits from 0.19--1.0 to at most 0.059, committed nothing from null input, controlled the mean wrong-commit rate at the target with conformal risk control, and kept it there under drift with online re-calibration, while a hash-chained ledger traced every wrong commit. Where the decoder was good, safety came at no speed cost; where it was weak, the layer made the system safe but not useful. Next steps are a study with gaze-typing users, which needs ethics approval; a streaming MEG decoder; a version 1.0 of the specification with third-party conformance; and a public benchmark built on the same harness and controls.

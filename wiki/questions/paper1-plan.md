@@ -10,6 +10,8 @@ updated: 2026-11-11
 
 **Question:** What does Paper 1 claim, which results back it, and what is still missing before submission?
 
+**Draft v0 (2026-11-11):** the first full LaTeX draft is [papers/paper1/draft-v0.pdf](../../papers/paper1/draft-v0.pdf) (23 pages; source in `papers/paper1/latex/`, build notes in [papers/paper1/README.md](../../papers/paper1/README.md)). A guide for the author is [how-to-read-this-draft.md](../../papers/paper1/how-to-read-this-draft.md). It lists every red TODO in the draft and the decisions the user owns (venue, authors, arXiv endorsement, ethics wording). Style lessons from published papers: [style-notes.md](../../papers/paper1/style-notes.md). Data figures come from `papers/paper1/make_figures.py`, which reads only committed result files.
+
 The full outline is in [papers/paper1/outline.md](../../papers/paper1/outline.md). It holds the title options, the abstract draft, the section plan with each table and figure, the related-work map, the limitations, the licence statement, the results inventory and the reproducibility plan.
 
 ## Claim in one paragraph
@@ -37,7 +39,7 @@ A vendor-neutral stream format ([NeuralTextStream](../../spec/neuraltextstream-v
 6. **eWPM sensitivity** to the user-model costs on all three devices.
 7. Repeated fit/test splits for B2T and EMG; a B2T LM without the 64 Tatoeba-overlap sentences.
 8. Source pages for the closest work (Huang 2025, Kim 2025, Cai 2024, Ernez 2023, Damri 2026, RAS).
-9. Figure scripts that read only committed JSON.
+9. ~~Figure scripts that read only committed JSON.~~ **Done 2026-11-11 (draft v0):** `papers/paper1/make_figures.py` (8 data figures) plus 3 TikZ diagrams. Reliability diagrams (F5) still need per-bin data in the harness output.
 10. A user study (future work) and arXiv endorsement: both depend on outside people (`externally_blocked`).
 
 ## Venues

@@ -1,0 +1,58 @@
+\section{User model parameters}
+\label{app:user}
+
+\Cref{tab:user} lists the parameters of the simulated user (\code{UserConfig.aac\_gaze()} in module \nolinkurl{fidetype.interact.simulated_user}). Only the fallback typing speed and the sum of the per-slot selection time are matched to measurements \citep{cai2024gaze}; all other values are assumptions.
+
+\begin{table}[!htb]
+  \centering
+  \caption{\textbf{Simulated-user parameters.}}
+  \label{tab:user}
+  \small
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Parameter} & \textbf{Value} & \textbf{Basis} \\
+    \midrule
+    Fallback (gaze keyboard) speed & 20 characters/min & measured, eye-gaze user LP1 \citep{cai2024gaze} \\
+    Per-slot scan + select ($k = 3$) & $1.0 + 1.0\log_2(k+1) + 1.5 = 4.5$\,s & sum matched to 4.7\,s \citep{cai2024gaze} \\
+    One gaze selection of a highlighted target & 1.5\,s & assumption \\
+    Navigate to a wrong word & 3.0\,s (2 selections) & assumption \\
+    Reading time & 0.3\,s per word, 0.5\,s per candidate & assumption \\
+    Probability of noticing a wrong commit & 0.9 & assumption \\
+    Miss probability of an unflagged wrong word & 0.05 & assumption (no measurement) \\
+    Correction overhead & 2.0\,s & assumption \\
+    Neural input speed, MEG / B2T '25 / sEMG & 152 / 159.3 / 75.8 characters/min & device setting \\
+    \bottomrule
+  \end{tabular}\end{adjustbox}
+\end{table}
+
+\todo{G6: sensitivity of \ewpm{} and of the policy ranking to these values on all three devices.}
+
+\section{MEG decoder and leakage checks}
+\label{app:meg}
+
+The M1-09 decoder is a convolutional front end (320 channels) followed by 4 Conformer layers of width 256 \citep{gulati2020conformer}, trained with CTC \citep{graves2006ctc} and a keystroke auxiliary loss that uses key times as training labels (stage r4a pretraining, then r4b on all 80 cached blocks). At inference, the forward pass \code{ConvCTC.forward(x,} \code{lengths,} \code{subjects)} takes the MEG segment, its length and the participant index; it has no key input. \Cref{tab:async} compares the inference inputs with the published asynchronous decoder.
+
+\begin{table}[!htb]
+  \centering
+  \caption{\textbf{Asynchronous setting: our decoder vs v2.}}
+  \label{tab:async}
+  \small
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Input at inference} & \textbf{M1-09 (ours)} & \textbf{v2 async \citep{zhang2026brain2qwertyv2}} \\
+    \midrule
+    MEG of the sentence segment & yes & yes \\
+    Segment start & first key $-$ 0.4\,s & first key $-$ 400\,ms \\
+    Segment end & last key press + 0.5\,s & last key release + 400--500\,ms \\
+    Per-key times or key count & no & no \\
+    Participant index & yes & yes \\
+    Key times as training labels & yes (auxiliary loss) & no \\
+    \bottomrule
+  \end{tabular}\end{adjustbox}
+\end{table}
+
+Leakage checks: the split is by a hash of the sentence text, and no test sentence occurs in the LM training text. On the synchronous M1-15 decoder we found no exact leakage and a near-variant memorisation effect of about 0.013 CER. With the synchronous M1-15 decoder (oracle key timing; greedy CER 0.508, beam + LM 0.447), the trust results were the same as with the asynchronous decoder: always-commit 2.714, trust 3.229 and gaze typing 3.155 eWPM, trust minus gaze $[-0.02, +0.18]$ over sentences. Both decoders take the sentence bounds from the keyboard log, so neither is a free-running, real-time decoder. \todo{G8: k-fold over sentence hashes to increase the number of unique test sentences.}
+
+\section{Additional results}
+\label{app:more}
+\todo{Appendix D: full CRC/LTT tables at 100 and 408 calibration items and online hyper-parameter sensitivity ($\eta$ grid). Appendix E: simulator results (supplementary only). Appendix F: provenance schema and a full audit report.}
