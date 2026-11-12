@@ -1,0 +1,11 @@
+{
+ "description": "R4 shared input: item tables for repeated splits. B2T: R3 generator (seed 3) extended to R = 200 (first 50 = R3 splits); guard on for r >= 50 (r < 50 from the R3 cache), guard off (plain threshold) for all 200; published-sentence bonus 0 / 0.5 / 1 / 4 for r < 50 (2.0 = R3). sEMG: R3 generator (seed 3 + 100), 50 splits per condition, guard off. Settings fixed before the first run.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "seed": 3,
+ "R_b2t": 200,
+ "R_emg": 50,
+ "margins": [0, 0.5, 1, 4],
+ "frame_T_snap_b2t": 0.02,
+ "frame_T_snap_emg": 0.01
+}

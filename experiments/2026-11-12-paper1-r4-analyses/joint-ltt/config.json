@@ -1,0 +1,8 @@
+{
+ "description": "R4 item 4: joint LTT. H0(lambda): marginal wrong-commit > alpha or error among commits > beta; p = max(exact binomial p_marg, exact conditional binomial p_sel); Bonferroni over a fixed grid; smallest rejected lambda; no max rule. Candidate frozen configuration: plain threshold (guard off) + joint LTT, alpha 0.05, beta 0.10, delta 0.1, grid 0.05..1.00 step 0.05. Analysis of cached item tables only.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "betas": [0.1, 0.2],
+ "grid": "0.05..1.00 step 0.05 (20); sensitivity 0.01..1.00 step 0.01 (100)",
+ "frozen_candidate": {"guard": false, "rule": "joint LTT", "alpha": 0.05, "beta": 0.1, "delta": 0.1, "grid_step": 0.05}
+}

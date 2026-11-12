@@ -1,0 +1,6 @@
+{
+ "description": "R4 item 7: all 12 reuse comparisons (B2T ours/published, sEMG calib/xsession x CRC pure, CRC max, LTT pure); Wilcoxon over splits (conditional) and exact cluster (day / participant) sign-flip test of per-cluster mean differences; Holm over 12 per family. R = 50 (paper) and 200 (B2T). Analysis of cached item tables only.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "families": ["R50", "R200"]
+}

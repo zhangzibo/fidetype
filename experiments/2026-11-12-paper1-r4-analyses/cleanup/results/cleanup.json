@@ -1,0 +1,1994 @@
+{
+ "config": {
+  "description": "R4 item 8: clean-up numbers from committed files and cached split tables (MEG Tab. 1 CIs, CP bounds, temperature snapping, no-commit comparator, trust vs always commit in 9 user-model variants).",
+  "counts": [
+   [
+    0,
+    816,
+    "B2T test set (fixed), zero wrong commits"
+   ],
+   [
+    0,
+    551,
+    "sEMG test set, zero wrong commits"
+   ],
+   [
+    0,
+    637,
+    "MEG test instances / MEG controls"
+   ],
+   [
+    0,
+    300,
+    "B2T controls per control stream"
+   ],
+   [
+    0,
+    200,
+    "sEMG controls per condition"
+   ],
+   [
+    0,
+    256,
+    "sEMG non-templated sentences"
+   ],
+   [
+    1,
+    256,
+    "sEMG non-templated, session-calibrated (1 wrong commit)"
+   ],
+   [
+    2,
+    551,
+    "sEMG session-cal. / cross-session (2 wrong commits)"
+   ],
+   [
+    4,
+    50,
+    "LTT max, B2T ours: splits above alpha"
+   ],
+   [
+    1,
+    50,
+    "LTT max, B2T published: splits above alpha"
+   ],
+   [
+    7,
+    50,
+    "CRC max, B2T ours/published: splits above alpha"
+   ]
+  ]
+ },
+ "meg_tab1": {
+  "unified_two_way": {
+   "trust": {
+    "ewpm": 3.202971571465368,
+    "ewpm_ci": [
+     3.014759018127739,
+     3.4388812266761786
+    ]
+   },
+   "never_commit": {
+    "ewpm": 3.202971571465368,
+    "ewpm_ci": [
+     3.014759018127739,
+     3.4388812266761786
+    ]
+   },
+   "gaze_only": {
+    "ewpm": 3.1545665572720725,
+    "ewpm_ci": [
+     3.0245231460761177,
+     3.305217544402687
+    ]
+   },
+   "always_commit": {
+    "ewpm": 2.5804621654337954,
+    "ewpm_ci": [
+     2.312836378421334,
+     2.878820756035563
+    ]
+   }
+  },
+  "printed_in_v3_tab1": {
+   "trust": [
+    3.02,
+    3.44
+   ],
+   "gaze_only": [
+    3.03,
+    3.31
+   ]
+  },
+  "teaser_figure_source_G1_sentence_bootstrap": {
+   "commit": {
+    "ewpm": 2.580462165433796,
+    "ewpm_ci": [
+     2.4135505590916675,
+     2.7625920440454683
+    ]
+   },
+   "trust": {
+    "ewpm": 3.202971571465368,
+    "ewpm_ci": [
+     3.068696888944652,
+     3.358897044312673
+    ]
+   }
+  }
+ },
+ "cp_bounds": {
+  "0/816": {
+   "what": "B2T test set (fixed), zero wrong commits",
+   "k": 0,
+   "n": 816,
+   "cp95_one_sided_upper": 0.003664509767067588,
+   "cp95_two_sided": [
+    0.0,
+    0.004510482686879195
+   ],
+   "rule_of_three": 0.003676470588235294
+  },
+  "0/551": {
+   "what": "sEMG test set, zero wrong commits",
+   "k": 0,
+   "n": 551,
+   "cp95_one_sided_upper": 0.005422147482793943,
+   "cp95_two_sided": [
+    0.0,
+    0.0066725202546308125
+   ],
+   "rule_of_three": 0.0054446460980036296
+  },
+  "0/637": {
+   "what": "MEG test instances / MEG controls",
+   "k": 0,
+   "n": 637,
+   "cp95_one_sided_upper": 0.004691835202596177,
+   "cp95_two_sided": [
+    0.0,
+    0.005774283918520871
+   ],
+   "rule_of_three": 0.004709576138147566
+  },
+  "0/300": {
+   "what": "B2T controls per control stream",
+   "k": 0,
+   "n": 300,
+   "cp95_one_sided_upper": 0.009936081944457708,
+   "cp95_two_sided": [
+    0.0,
+    0.012220974694293552
+   ],
+   "rule_of_three": 0.01
+  },
+  "0/200": {
+   "what": "sEMG controls per condition",
+   "k": 0,
+   "n": 200,
+   "cp95_one_sided_upper": 0.014867039231272056,
+   "cp95_two_sided": [
+    0.0,
+    0.018275340355136237
+   ],
+   "rule_of_three": 0.015
+  },
+  "0/256": {
+   "what": "sEMG non-templated sentences",
+   "k": 0,
+   "n": 256,
+   "cp95_one_sided_upper": 0.011633876163163283,
+   "cp95_two_sided": [
+    0.0,
+    0.014306362729039374
+   ],
+   "rule_of_three": 0.01171875
+  },
+  "1/256": {
+   "what": "sEMG non-templated, session-calibrated (1 wrong commit)",
+   "k": 1,
+   "n": 256,
+   "cp95_one_sided_upper": 0.018395769886273644,
+   "cp95_two_sided": [
+    9.889279722355371e-05,
+    0.021570890352533498
+   ],
+   "rule_of_three": null
+  },
+  "2/551": {
+   "what": "sEMG session-cal. / cross-session (2 wrong commits)",
+   "k": 2,
+   "n": 551,
+   "cp95_one_sided_upper": 0.011381663130897014,
+   "cp95_two_sided": [
+    0.00043988394295788475,
+    0.013049937807368258
+   ],
+   "rule_of_three": null
+  },
+  "4/50": {
+   "what": "LTT max, B2T ours: splits above alpha",
+   "k": 4,
+   "n": 50,
+   "cp95_one_sided_upper": 0.17379115816419352,
+   "cp95_two_sided": [
+    0.022227963654929767,
+    0.19234278359596277
+   ],
+   "rule_of_three": null
+  },
+  "1/50": {
+   "what": "LTT max, B2T published: splits above alpha",
+   "k": 1,
+   "n": 50,
+   "cp95_one_sided_upper": 0.09139813071969738,
+   "cp95_two_sided": [
+    0.0005062279830408294,
+    0.1064695457114999
+   ],
+   "rule_of_three": null
+  },
+  "7/50": {
+   "what": "CRC max, B2T ours/published: splits above alpha",
+   "k": 7,
+   "n": 50,
+   "cp95_one_sided_upper": 0.2469352017312092,
+   "cp95_two_sided": [
+    0.0581917003403721,
+    0.2673960024970084
+   ],
+   "rule_of_three": null
+  }
+ },
+ "temperature_snapping": {
+  "R3 b2t-ours": {
+   "R": 50,
+   "max_abs": 0.009376771985430299,
+   "max_rel_pct": 0.26719194303338906,
+   "T_fitted_range": [
+    3.395912359396592,
+    3.661097483573427
+   ]
+  },
+  "R3 b2t-published": {
+   "R": 50,
+   "max_abs": 0.009376771985430299,
+   "max_rel_pct": 0.26719194303338906,
+   "T_fitted_range": [
+    3.395912359396592,
+    3.661097483573427
+   ]
+  },
+  "R3 emg-calib": {
+   "R": 50,
+   "max_abs": 0.004944317322068903,
+   "max_rel_pct": 0.384327698084705,
+   "T_fitted_range": [
+    1.2279317347634158,
+    1.3357442986302532
+   ]
+  },
+  "R3 emg-xsession": {
+   "R": 50,
+   "max_abs": 0.0048546459815861365,
+   "max_rel_pct": 0.275073417102067,
+   "T_fitted_range": [
+    1.6720240044468733,
+    1.878017668803857
+   ]
+  },
+  "R3 emg-xsubject": {
+   "R": 50,
+   "max_abs": 0.004917152465897079,
+   "max_rel_pct": 0.22736285258181627,
+   "T_fitted_range": [
+    2.0838187620139283,
+    2.277221389749004
+   ]
+  },
+  "R4 b2t-ours guard 1": {
+   "R": 200,
+   "max_abs": 0.009956519410017073,
+   "max_rel_pct": 0.2829096373196056
+  },
+  "R4 b2t-ours guard 0": {
+   "R": 200,
+   "max_abs": 0.009956519410017073,
+   "max_rel_pct": 0.2829096373196056
+  },
+  "R4 b2t-published guard 0": {
+   "R": 200,
+   "max_abs": 0.009956519410017073,
+   "max_rel_pct": 0.2829096373196056
+  },
+  "R4 emg-calib guard 0": {
+   "R": 50,
+   "max_abs": 0.004944317322068903,
+   "max_rel_pct": 0.384327698084705
+  },
+  "R4 emg-xsession guard 0": {
+   "R": 50,
+   "max_abs": 0.0048546459815861365,
+   "max_rel_pct": 0.275073417102067
+  },
+  "R4 emg-xsubject guard 0": {
+   "R": 50,
+   "max_abs": 0.004917152465897079,
+   "max_rel_pct": 0.22736285258181627
+  }
+ },
+ "no_commit_comparator": {
+  "b2t-ours/guard/R200": {
+   "no_commit_ewpm_mean": 10.98698117963747,
+   "LTT max": {
+    "mean": 0.11129380455839717,
+    "mc_se": 0.002377392617088245,
+    "p05": 0.06094848387619703,
+    "p95": 0.16793612970266494,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "CRC max": {
+    "mean": 0.1184124882052386,
+    "mc_se": 0.002480591206800147,
+    "p05": 0.06276917126782404,
+    "p95": 0.17168126691378852,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "plug-in": {
+    "mean": 0.12177214127843974,
+    "mc_se": 0.0026830508508198076,
+    "p05": 0.061688078449457874,
+    "p95": 0.18335413829600894,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "joint LTT b0.10": {
+    "mean": 0.0,
+    "mc_se": 0.0,
+    "p05": 0.0,
+    "p95": 0.0,
+    "share_pos": 0.0,
+    "share_neg": 0.0,
+    "R": 200
+   }
+  },
+  "b2t-ours/guard/R50": {
+   "no_commit_ewpm_mean": 10.950893325530162,
+   "LTT max": {
+    "mean": 0.1143912106951538,
+    "mc_se": 0.0045654543420492605,
+    "p05": 0.06339474485935473,
+    "p95": 0.16393494003844464,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "CRC max": {
+    "mean": 0.12451015010509395,
+    "mc_se": 0.004990068253398755,
+    "p05": 0.07679083069965058,
+    "p95": 0.18216936336651032,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "plug-in": {
+    "mean": 0.13206141904490803,
+    "mc_se": 0.005401005004597339,
+    "p05": 0.07545945837876591,
+    "p95": 0.18422136621460714,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "joint LTT b0.10": {
+    "mean": 0.0,
+    "mc_se": 0.0,
+    "p05": 0.0,
+    "p95": 0.0,
+    "share_pos": 0.0,
+    "share_neg": 0.0,
+    "R": 50
+   }
+  },
+  "b2t-ours/no guard/R200": {
+   "no_commit_ewpm_mean": 10.98311234659938,
+   "LTT max": {
+    "mean": 0.10409993119361773,
+    "mc_se": 0.002087383254382558,
+    "p05": 0.06247860918194181,
+    "p95": 0.15492947991606773,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "CRC max": {
+    "mean": 0.11105952575708107,
+    "mc_se": 0.002179474511785001,
+    "p05": 0.06457821090613632,
+    "p95": 0.1652003996807453,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "plug-in": {
+    "mean": 0.11239687942607914,
+    "mc_se": 0.002264980547010941,
+    "p05": 0.06495981380097868,
+    "p95": 0.1726185482771697,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "joint LTT b0.10": {
+    "mean": 0.0,
+    "mc_se": 0.0,
+    "p05": 0.0,
+    "p95": 0.0,
+    "share_pos": 0.0,
+    "share_neg": 0.0,
+    "R": 200
+   }
+  },
+  "b2t-ours/no guard/R50": {
+   "no_commit_ewpm_mean": 10.946680946313215,
+   "LTT max": {
+    "mean": 0.10634353524275912,
+    "mc_se": 0.004731352099789945,
+    "p05": 0.06254731339311785,
+    "p95": 0.166333010140037,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "CRC max": {
+    "mean": 0.11576100579838564,
+    "mc_se": 0.0046369141299746645,
+    "p05": 0.06651388418939651,
+    "p95": 0.17440738145404777,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "plug-in": {
+    "mean": 0.1202128629042047,
+    "mc_se": 0.00466488827118343,
+    "p05": 0.07210076164048625,
+    "p95": 0.18022990727364874,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "joint LTT b0.10": {
+    "mean": 0.0,
+    "mc_se": 0.0,
+    "p05": 0.0,
+    "p95": 0.0,
+    "share_pos": 0.0,
+    "share_neg": 0.0,
+    "R": 50
+   }
+  },
+  "b2t-published/guard/R200": {
+   "no_commit_ewpm_mean": 18.00125324262302,
+   "LTT max": {
+    "mean": 0.5136309555138335,
+    "mc_se": 0.0039214173147979125,
+    "p05": 0.4343042447860784,
+    "p95": 0.6075440325608377,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "CRC max": {
+    "mean": 0.5530988855454853,
+    "mc_se": 0.004572835538433806,
+    "p05": 0.45201225493105907,
+    "p95": 0.6555893704119606,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "plug-in": {
+    "mean": 0.570680108893706,
+    "mc_se": 0.0053213422093774925,
+    "p05": 0.45201225493105907,
+    "p95": 0.6865530794784394,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "joint LTT b0.10": {
+    "mean": 0.09254245241363643,
+    "mc_se": 0.011984751833238511,
+    "p05": 0.0,
+    "p95": 0.43785767012766574,
+    "share_pos": 0.24,
+    "share_neg": 0.0,
+    "R": 200
+   }
+  },
+  "b2t-published/guard/R50": {
+   "no_commit_ewpm_mean": 17.97788193088867,
+   "LTT max": {
+    "mean": 0.5096723064459421,
+    "mc_se": 0.0071987760770455345,
+    "p05": 0.4390364656653981,
+    "p95": 0.5994046031879916,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "CRC max": {
+    "mean": 0.5459887755035887,
+    "mc_se": 0.008514297715110223,
+    "p05": 0.4619150789788401,
+    "p95": 0.6480125642075846,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "plug-in": {
+    "mean": 0.5642802335136579,
+    "mc_se": 0.009794592928884432,
+    "p05": 0.4619150789788401,
+    "p95": 0.6737710306646898,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "joint LTT b0.10": {
+    "mean": 0.09297335258723848,
+    "mc_se": 0.024029145509823848,
+    "p05": 0.0,
+    "p95": 0.4316285167365055,
+    "share_pos": 0.24,
+    "share_neg": 0.0,
+    "R": 50
+   }
+  },
+  "b2t-published/no guard/R200": {
+   "no_commit_ewpm_mean": 18.00125324262302,
+   "LTT max": {
+    "mean": 0.4773732283029994,
+    "mc_se": 0.002565847294352567,
+    "p05": 0.42814548072570896,
+    "p95": 0.5370051190662884,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "CRC max": {
+    "mean": 0.4840307267008576,
+    "mc_se": 0.003408614338527878,
+    "p05": 0.4293471405568969,
+    "p95": 0.6149499844605092,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "plug-in": {
+    "mean": 0.48611063677752386,
+    "mc_se": 0.003823430603632473,
+    "p05": 0.4293471405568969,
+    "p95": 0.6283443418481615,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 200
+   },
+   "joint LTT b0.10": {
+    "mean": 0.07630352085204839,
+    "mc_se": 0.011516790235258603,
+    "p05": 0.0,
+    "p95": 0.47345035275464326,
+    "share_pos": 0.19,
+    "share_neg": 0.0,
+    "R": 200
+   }
+  },
+  "b2t-published/no guard/R50": {
+   "no_commit_ewpm_mean": 17.97788193088867,
+   "LTT max": {
+    "mean": 0.4713206931064116,
+    "mc_se": 0.003340688829911268,
+    "p05": 0.43525363452144783,
+    "p95": 0.4998141340545537,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "CRC max": {
+    "mean": 0.4713206931064116,
+    "mc_se": 0.003340688829911268,
+    "p05": 0.43525363452144783,
+    "p95": 0.4998141340545537,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "plug-in": {
+    "mean": 0.4713206931064116,
+    "mc_se": 0.003340688829911268,
+    "p05": 0.43525363452144783,
+    "p95": 0.4998141340545537,
+    "share_pos": 1.0,
+    "share_neg": 0.0,
+    "R": 50
+   },
+   "joint LTT b0.10": {
+    "mean": 0.06965685676742289,
+    "mc_se": 0.023127459961010018,
+    "p05": 0.0,
+    "p95": 0.4753483824369361,
+    "share_pos": 0.16,
+    "share_neg": 0.0,
+    "R": 50
+   }
+  },
+  "emg-calib/guard/R50": {
+   "no_commit_ewpm_mean": 7.971602719445382,
+   "LTT max": {
+    "mean": 0.033203919212619316,
+    "mc_se": 0.0021828456746686383,
+    "p05": 0.010698353067981392,
+    "p95": 0.05646059334232474,
+    "share_pos": 0.96,
+    "share_neg": 0.02,
+    "R": 50
+   },
+   "CRC max": {
+    "mean": 0.036529819574730296,
+    "mc_se": 0.0024556637435140818,
+    "p05": 0.010698353067981392,
+    "p95": 0.061705638968257925,
+    "share_pos": 0.96,
+    "share_neg": 0.02,
+    "R": 50
+   },
+   "plug-in": {
+    "mean": 0.040257744164225874,
+    "mc_se": 0.0031186588509164452,
+    "p05": 0.010698353067981392,
+    "p95": 0.0841182864546707,
+    "share_pos": 0.96,
+    "share_neg": 0.02,
+    "R": 50
+   },
+   "joint LTT b0.10": {
+    "mean": 0.0,
+    "mc_se": 0.0,
+    "p05": 0.0,
+    "p95": 0.0,
+    "share_pos": 0.0,
+    "share_neg": 0.0,
+    "R": 50
+   }
+  },
+  "emg-calib/no guard/R50": {
+   "no_commit_ewpm_mean": 7.971602719445382,
+   "LTT max": {
+    "mean": 0.03325670217323621,
+    "mc_se": 0.0021670409638771078,
+    "p05": 0.010698353067981392,
+    "p95": 0.05646059334232474,
+    "share_pos": 0.98,
+    "share_neg": 0.02,
+    "R": 50
+   },
+   "CRC max": {
+    "mean": 0.03658260253534719,
+    "mc_se": 0.0024401578595179847,
+    "p05": 0.010698353067981392,
+    "p95": 0.061705638968257925,
+    "share_pos": 0.98,
+    "share_neg": 0.02,
+    "R": 50
+   },
+   "plug-in": {
+    "mean": 0.04031052712484277,
+    "mc_se": 0.0031051710937373767,
+    "p05": 0.010698353067981392,
+    "p95": 0.0841182864546707,
+    "share_pos": 0.98,
+    "share_neg": 0.02,
+    "R": 50
+   },
+   "joint LTT b0.10": {
+    "mean": 0.0,
+    "mc_se": 0.0,
+    "p05": 0.0,
+    "p95": 0.0,
+    "share_pos": 0.0,
+    "share_neg": 0.0,
+    "R": 50
+   }
+  },
+  "emg-xsession/guard/R50": {
+   "no_commit_ewpm_mean": 4.680989676389218,
+   "LTT max": {
+    "mean": -0.0007183203590791898,
+    "mc_se": 0.0005393029120766276,
+    "p05": -0.0065903731748879315,
+    "p95": 0.0035000799324329535,
+    "share_pos": 0.42,
+    "share_neg": 0.24,
+    "R": 50
+   },
+   "CRC max": {
+    "mean": -0.0009169077838938833,
+    "mc_se": 0.0005995381964789648,
+    "p05": -0.007898144874847678,
+    "p95": 0.0035000799324329535,
+    "share_pos": 0.42,
+    "share_neg": 0.24,
+    "R": 50
+   },
+   "plug-in": {
+    "mean": -0.0010454267264322504,
+    "mc_se": 0.0006255502669968781,
+    "p05": -0.010628175627087486,
+    "p95": 0.0035000799324329535,
+    "share_pos": 0.4,
+    "share_neg": 0.26,
+    "R": 50
+   },
+   "joint LTT b0.10": {
+    "mean": 0.0,
+    "mc_se": 0.0,
+    "p05": 0.0,
+    "p95": 0.0,
+    "share_pos": 0.0,
+    "share_neg": 0.0,
+    "R": 50
+   }
+  },
+  "emg-xsession/no guard/R50": {
+   "no_commit_ewpm_mean": 4.680989676389218,
+   "LTT max": {
+    "mean": -0.000718584254574175,
+    "mc_se": 0.0005392958032571801,
+    "p05": -0.0065903731748879315,
+    "p95": 0.0035000799324329535,
+    "share_pos": 0.42,
+    "share_neg": 0.26,
+    "R": 50
+   },
+   "CRC max": {
+    "mean": -0.0009171716793888685,
+    "mc_se": 0.0005995300179640555,
+    "p05": -0.007898144874847678,
+    "p95": 0.0035000799324329535,
+    "share_pos": 0.42,
+    "share_neg": 0.26,
+    "R": 50
+   },
+   "plug-in": {
+    "mean": -0.0010456906219272356,
+    "mc_se": 0.0006255413220832166,
+    "p05": -0.010628175627087486,
+    "p95": 0.0035000799324329535,
+    "share_pos": 0.4,
+    "share_neg": 0.28,
+    "R": 50
+   },
+   "joint LTT b0.10": {
+    "mean": 0.0,
+    "mc_se": 0.0,
+    "p05": 0.0,
+    "p95": 0.0,
+    "share_pos": 0.0,
+    "share_neg": 0.0,
+    "R": 50
+   }
+  },
+  "check_v3": {
+   "b2t-ours": {
+    "v3 LTT max - no commit": 0.1143912106951538,
+    "r4 LTT max - no commit": 0.1143912106951538
+   },
+   "b2t-published": {
+    "v3 LTT max - no commit": 0.5096723064459421,
+    "r4 LTT max - no commit": 0.5096723064459421
+   }
+  },
+  "fixed_splits": {
+   "b2t-ours/split A": {
+    "LTT max": {
+     "diff": 0.057873553682696866,
+     "ci95": [
+      0.03401987208997106,
+      0.08965161996326687
+     ],
+     "ewpm": 11.477549766206314,
+     "no_commit_ewpm": 11.419676212523617
+    },
+    "CRC max": {
+     "diff": 0.057873553682696866,
+     "ci95": [
+      0.03401987208997106,
+      0.08965161996326687
+     ],
+     "ewpm": 11.477549766206314,
+     "no_commit_ewpm": 11.419676212523617
+    },
+    "plug-in": {
+     "diff": 0.057873553682696866,
+     "ci95": [
+      0.03401987208997106,
+      0.08965161996326687
+     ],
+     "ewpm": 11.477549766206314,
+     "no_commit_ewpm": 11.419676212523617
+    },
+    "joint LTT b0.10": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "ewpm": 11.419676212523617,
+     "no_commit_ewpm": 11.419676212523617
+    }
+   },
+   "b2t-ours/split B": {
+    "LTT max": {
+     "diff": 0.1254544979340455,
+     "ci95": [
+      0.07739864506792035,
+      0.18846223491581646
+     ],
+     "ewpm": 11.536406457959504,
+     "no_commit_ewpm": 11.410951960025459
+    },
+    "CRC max": {
+     "diff": 0.12926535023668428,
+     "ci95": [
+      0.081666480143386,
+      0.19694197805870906
+     ],
+     "ewpm": 11.540217310262143,
+     "no_commit_ewpm": 11.410951960025459
+    },
+    "plug-in": {
+     "diff": 0.13755138175312354,
+     "ci95": [
+      0.08858225465423786,
+      0.20763055597220473
+     ],
+     "ewpm": 11.548503341778583,
+     "no_commit_ewpm": 11.410951960025459
+    },
+    "joint LTT b0.10": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "ewpm": 11.410951960025459,
+     "no_commit_ewpm": 11.410951960025459
+    }
+   },
+   "b2t-published/split A": {
+    "LTT max": {
+     "diff": 0.5374798856080574,
+     "ci95": [
+      0.4387834437138089,
+      0.6363104482481424
+     ],
+     "ewpm": 18.651365449587917,
+     "no_commit_ewpm": 18.11388556397986
+    },
+    "CRC max": {
+     "diff": 0.6777412057492143,
+     "ci95": [
+      0.5384209680058603,
+      0.831431456040629
+     ],
+     "ewpm": 18.791626769729074,
+     "no_commit_ewpm": 18.11388556397986
+    },
+    "plug-in": {
+     "diff": 0.6777412057492143,
+     "ci95": [
+      0.5384209680058603,
+      0.831431456040629
+     ],
+     "ewpm": 18.791626769729074,
+     "no_commit_ewpm": 18.11388556397986
+    },
+    "joint LTT b0.10": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "ewpm": 18.11388556397986,
+     "no_commit_ewpm": 18.11388556397986
+    }
+   },
+   "b2t-published/split B": {
+    "LTT max": {
+     "diff": 0.5673889832517283,
+     "ci95": [
+      0.45576088693298483,
+      0.6944924327981171
+     ],
+     "ewpm": 18.681274547231588,
+     "no_commit_ewpm": 18.11388556397986
+    },
+    "CRC max": {
+     "diff": 0.6704376322830683,
+     "ci95": [
+      0.5362980525388483,
+      0.8264835213871662
+     ],
+     "ewpm": 18.78432319626293,
+     "no_commit_ewpm": 18.11388556397986
+    },
+    "plug-in": {
+     "diff": 0.6704376322830683,
+     "ci95": [
+      0.5362980525388483,
+      0.8264835213871662
+     ],
+     "ewpm": 18.78432319626293,
+     "no_commit_ewpm": 18.11388556397986
+    },
+    "joint LTT b0.10": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "ewpm": 18.11388556397986,
+     "no_commit_ewpm": 18.11388556397986
+    }
+   }
+  }
+ },
+ "user_models_trust_vs_always_commit": {
+  "emg-calib": {
+   "main": {
+    "always_commit": 7.80927658662851,
+    "trust": 8.024406619765061,
+    "never_commit": 8.009843608640296,
+    "trust_minus_always_commit": 0.21513003313655155,
+    "ci95": [
+     0.02106748220530603,
+     0.3922555664503926
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 10 cpm": {
+    "always_commit": 5.755371011546819,
+    "trust": 6.24281924742008,
+    "never_commit": 6.234001414322842,
+    "trust_minus_always_commit": 0.487448235873261,
+    "ci95": [
+     0.31830868819743274,
+     0.6800817425668482
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 40 cpm": {
+    "always_commit": 9.569866864389102,
+    "trust": 9.634738243966066,
+    "never_commit": 9.621412015102702,
+    "trust_minus_always_commit": 0.06487137957696376,
+    "ci95": [
+     -0.15832227666253768,
+     0.2856659932376082
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x0.5": {
+    "always_commit": 8.13464769767753,
+    "trust": 8.454177295180523,
+    "never_commit": 8.443468056994064,
+    "trust_minus_always_commit": 0.3195295975029939,
+    "ci95": [
+     0.13166889470847565,
+     0.49903773603217216
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x2": {
+    "always_commit": 7.322648584422018,
+    "trust": 7.383752782564868,
+    "never_commit": 7.288270972851697,
+    "trust_minus_always_commit": 0.06110419814284995,
+    "ci95": [
+     -0.13720100439240507,
+     0.2520133773347122
+    ],
+    "ranking": [
+     "trust",
+     "always_commit",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "p_miss 0": {
+    "always_commit": 8.108887047111335,
+    "trust": 8.08783656258049,
+    "never_commit": 8.009843608640296,
+    "trust_minus_always_commit": -0.02105048453084457,
+    "ci95": [
+     -0.13756927174536937,
+     0.1211125602013216
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "p_miss 0.2": {
+    "always_commit": 6.898234042321211,
+    "trust": 8.024406619765061,
+    "never_commit": 8.009843608640296,
+    "trust_minus_always_commit": 1.1261725774438505,
+    "ci95": [
+     0.8281470995999546,
+     1.4206405093944066
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "symmetric offer (p_miss 0.05, no oracle retype)": {
+    "always_commit": 7.7973491728082065,
+    "trust": 7.821511475841891,
+    "never_commit": 7.752424546952837,
+    "trust_minus_always_commit": 0.02416230303368483,
+    "ci95": [
+     -0.13969427001565132,
+     0.193055859616018
+    ],
+    "ranking": [
+     "trust",
+     "always_commit",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "symmetric offer, p_miss 0.2": {
+    "always_commit": 6.89612987044256,
+    "trust": 7.160945519010501,
+    "never_commit": 7.091691049789706,
+    "trust_minus_always_commit": 0.26481564856794115,
+    "ci95": [
+     0.08066910328033088,
+     0.4528382431471153
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   }
+  },
+  "emg-xsession": {
+   "main": {
+    "always_commit": 4.102092009154985,
+    "trust": 4.67692102383024,
+    "never_commit": 4.674454178439975,
+    "trust_minus_always_commit": 0.574829014675255,
+    "ci95": [
+     0.45910830947303277,
+     0.6851379108562086
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "gaze_only",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 10 cpm": {
+    "always_commit": 2.629826603844845,
+    "trust": 3.0852894578058025,
+    "never_commit": 3.0842705405622963,
+    "trust_minus_always_commit": 0.45546285396095776,
+    "ci95": [
+     0.3792129658766007,
+     0.5409547293285619
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 40 cpm": {
+    "always_commit": 6.016011875906898,
+    "trust": 6.580416521866673,
+    "never_commit": 6.5774535985143,
+    "trust_minus_always_commit": 0.5644046459597751,
+    "ci95": [
+     0.3754003762582495,
+     0.7239016217927489
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x0.5": {
+    "always_commit": 4.335202400558729,
+    "trust": 4.998463622767489,
+    "never_commit": 4.9964960925921575,
+    "trust_minus_always_commit": 0.6632612222087602,
+    "ci95": [
+     0.53797664861697,
+     0.7803059669296205
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x2": {
+    "always_commit": 3.985814751676477,
+    "trust": 4.286043844252018,
+    "never_commit": 4.2827223493194815,
+    "trust_minus_always_commit": 0.30022909257554087,
+    "ci95": [
+     0.18327078697661217,
+     0.4172270109370124
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "gaze_only",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "p_miss 0": {
+    "always_commit": 4.723808130951758,
+    "trust": 4.67692102383024,
+    "never_commit": 4.674454178439975,
+    "trust_minus_always_commit": -0.04688710712151778,
+    "ci95": [
+     -0.09503551943025498,
+     0.01702489898429886
+    ],
+    "ranking": [
+     "gaze_lm",
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": true
+   },
+   "p_miss 0.2": {
+    "always_commit": 2.691419169438112,
+    "trust": 4.674454178439975,
+    "never_commit": 4.674454178439975,
+    "trust_minus_always_commit": 1.9830350090018625,
+    "ci95": [
+     1.7813683343875037,
+     2.168056654827314
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "gaze_only",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "symmetric offer (p_miss 0.05, no oracle retype)": {
+    "always_commit": 4.059519819324624,
+    "trust": 4.045447120070039,
+    "never_commit": 4.043250868498549,
+    "trust_minus_always_commit": -0.01407269925458543,
+    "ci95": [
+     -0.06162062977004549,
+     0.054279311799640295
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "always_commit",
+     "trust",
+     "never_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": true
+   },
+   "symmetric offer, p_miss 0.2": {
+    "always_commit": 2.672358769507555,
+    "trust": 3.389218058347189,
+    "never_commit": 3.383946436049186,
+    "trust_minus_always_commit": 0.7168592888396339,
+    "ci95": [
+     0.03928217452705586,
+     1.2694784866840292
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   }
+  },
+  "emg-xsubject": {
+   "main": {
+    "always_commit": 3.5312246360482913,
+    "trust": 4.0800135493987755,
+    "never_commit": 4.0800135493987755,
+    "trust_minus_always_commit": 0.5487889133504842,
+    "ci95": [
+     0.43187469313390686,
+     0.6627257030809782
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 10 cpm": {
+    "always_commit": 2.208655673254576,
+    "trust": 2.6015107597744365,
+    "never_commit": 2.6015107597744365,
+    "trust_minus_always_commit": 0.39285508651986056,
+    "ci95": [
+     0.3273135951766838,
+     0.4569230106070508
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 40 cpm": {
+    "always_commit": 5.445081225177004,
+    "trust": 6.011076709151673,
+    "never_commit": 6.011076709151673,
+    "trust_minus_always_commit": 0.5659954839746684,
+    "ci95": [
+     0.4458909247392549,
+     0.681996150829248
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x0.5": {
+    "always_commit": 3.737025634758896,
+    "trust": 4.36133874628708,
+    "never_commit": 4.36133874628708,
+    "trust_minus_always_commit": 0.6243131115281839,
+    "ci95": [
+     0.5015466531639227,
+     0.7386021059551672
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "gaze_only",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x2": {
+    "always_commit": 3.5227276379660117,
+    "trust": 3.801315416124336,
+    "never_commit": 3.801315416124336,
+    "trust_minus_always_commit": 0.27858777815832436,
+    "ci95": [
+     0.21056029776064497,
+     0.3393842162656536
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "p_miss 0": {
+    "always_commit": 4.143784010061877,
+    "trust": 4.0800135493987755,
+    "never_commit": 4.0800135493987755,
+    "trust_minus_always_commit": -0.06377046066310132,
+    "ci95": [
+     -0.07296919574752983,
+     -0.056003615600497984
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "always_commit",
+     "trust",
+     "never_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": true
+   },
+   "p_miss 0.2": {
+    "always_commit": 1.9759914611051734,
+    "trust": 4.0800135493987755,
+    "never_commit": 4.0800135493987755,
+    "trust_minus_always_commit": 2.1040220882936023,
+    "ci95": [
+     1.949579276061366,
+     2.2636869498025427
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "symmetric offer (p_miss 0.05, no oracle retype)": {
+    "always_commit": 3.495753802636955,
+    "trust": 3.4520752328137836,
+    "never_commit": 3.4520752328137836,
+    "trust_minus_always_commit": -0.0436785698231712,
+    "ci95": [
+     -0.07069903775330341,
+     -0.01411130060395033
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "always_commit",
+     "trust",
+     "never_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": true
+   },
+   "symmetric offer, p_miss 0.2": {
+    "always_commit": 1.9577039147301798,
+    "trust": 3.3286685530862576,
+    "never_commit": 3.3286685530862576,
+    "trust_minus_always_commit": 1.3709646383560778,
+    "ci95": [
+     0.9817825559376283,
+     1.7303381224444596
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   }
+  },
+  "b2t-ours": {
+   "main": {
+    "always_commit": 11.449637382561221,
+    "trust": 11.545649629165746,
+    "never_commit": 11.368608371320716,
+    "trust_minus_always_commit": 0.09601224660452523,
+    "ci95": [
+     -0.14120732448709936,
+     0.33042045094558836
+    ],
+    "ranking": [
+     "trust",
+     "always_commit",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 10 cpm": {
+    "always_commit": 7.789432352113851,
+    "trust": 8.284984452549978,
+    "never_commit": 8.221428629383558,
+    "trust_minus_always_commit": 0.49555210043612696,
+    "ci95": [
+     0.35475079178409835,
+     0.6396778956790975
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 40 cpm": {
+    "always_commit": 14.965806271638712,
+    "trust": 14.650404504771057,
+    "never_commit": 14.462606881271778,
+    "trust_minus_always_commit": -0.3154017668676552,
+    "ci95": [
+     -0.430368002633161,
+     -0.17646471527521018
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "selection x0.5": {
+    "always_commit": 11.95883704069835,
+    "trust": 12.240510434241349,
+    "never_commit": 12.10961446039687,
+    "trust_minus_always_commit": 0.2816733935429987,
+    "ci95": [
+     0.03293122378613504,
+     0.5290859356231785
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x2": {
+    "always_commit": 10.551117654535812,
+    "trust": 10.37372653591667,
+    "never_commit": 10.133998211054923,
+    "trust_minus_always_commit": -0.17739111861914125,
+    "ci95": [
+     -0.40474774998399665,
+     0.03512013668331377
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "p_miss 0": {
+    "always_commit": 11.652040710748938,
+    "trust": 11.544768657068737,
+    "never_commit": 11.368608371320716,
+    "trust_minus_always_commit": -0.10727205368020165,
+    "ci95": [
+     -0.29762716666086286,
+     0.06077939913443471
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "p_miss 0.2": {
+    "always_commit": 10.774932597368071,
+    "trust": 11.516379792511104,
+    "never_commit": 11.368608371320716,
+    "trust_minus_always_commit": 0.7414471951430333,
+    "ci95": [
+     0.46682965409807936,
+     1.0503693713831435
+    ],
+    "ranking": [
+     "trust",
+     "never_commit",
+     "always_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "symmetric offer (p_miss 0.05, no oracle retype)": {
+    "always_commit": 11.449637382561221,
+    "trust": 11.361956573307433,
+    "never_commit": 11.184289979552396,
+    "trust_minus_always_commit": -0.08768080925378818,
+    "ci95": [
+     -0.2901657917295247,
+     0.0872353008217821
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "symmetric offer, p_miss 0.2": {
+    "always_commit": 10.774932597368071,
+    "trust": 10.773780354104316,
+    "never_commit": 10.603461146960699,
+    "trust_minus_always_commit": -0.0011522432637551816,
+    "ci95": [
+     -0.24130985919488768,
+     0.24506093714470814
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   }
+  },
+  "b2t-published": {
+   "main": {
+    "always_commit": 19.612129926967807,
+    "trust": 18.767072914257195,
+    "never_commit": 18.11388556397986,
+    "trust_minus_always_commit": -0.8450570127106118,
+    "ci95": [
+     -1.009365346981634,
+     -0.6611528664477726
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "fallback 10 cpm": {
+    "always_commit": 16.12119394213535,
+    "trust": 15.358156282216639,
+    "never_commit": 14.887128656065334,
+    "trust_minus_always_commit": -0.7630376599187105,
+    "ci95": [
+     -1.0159956377437789,
+     -0.522803454388905
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "fallback 40 cpm": {
+    "always_commit": 21.99339019656133,
+    "trust": 21.115311883997848,
+    "never_commit": 20.32060018535995,
+    "trust_minus_always_commit": -0.8780783125634812,
+    "ci95": [
+     -1.000598602812314,
+     -0.741207476362919
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "selection x0.5": {
+    "always_commit": 20.003422283651403,
+    "trust": 19.54048926846519,
+    "never_commit": 19.176290033500543,
+    "trust_minus_always_commit": -0.46293301518621277,
+    "ci95": [
+     -0.5913690366194676,
+     -0.31848136433106594
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "selection x2": {
+    "always_commit": 18.87374120807544,
+    "trust": 17.400804320821493,
+    "never_commit": 16.316090000385394,
+    "trust_minus_always_commit": -1.4729368872539474,
+    "ci95": [
+     -1.7249123067966312,
+     -1.2026696850423
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "p_miss 0": {
+    "always_commit": 19.521421026415513,
+    "trust": 18.753513935012794,
+    "never_commit": 18.11388556397986,
+    "trust_minus_always_commit": -0.7679070914027193,
+    "ci95": [
+     -0.8715580161384849,
+     -0.6683217086508446
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "p_miss 0.2": {
+    "always_commit": 19.68756615679311,
+    "trust": 18.72495332978942,
+    "never_commit": 18.11388556397986,
+    "trust_minus_always_commit": -0.9626128270036887,
+    "ci95": [
+     -1.2144516416574747,
+     -0.6284731873770235
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "symmetric offer (p_miss 0.05, no oracle retype)": {
+    "always_commit": 19.612129926967807,
+    "trust": 18.820597120786516,
+    "never_commit": 18.1625750965143,
+    "trust_minus_always_commit": -0.7915328061812907,
+    "ci95": [
+     -0.8981869253294635,
+     -0.6826071090868039
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   },
+   "symmetric offer, p_miss 0.2": {
+    "always_commit": 19.68756615679311,
+    "trust": 18.85582940598666,
+    "never_commit": 18.166871245966718,
+    "trust_minus_always_commit": -0.8317367508064493,
+    "ci95": [
+     -0.9392932451991405,
+     -0.7232155322770925
+    ],
+    "ranking": [
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_lm",
+     "gaze_only"
+    ],
+    "always_commit_fastest": true,
+    "always_commit_faster_than_trust": true
+   }
+  },
+  "meg-async": {
+   "main": {
+    "always_commit": 2.5804621654337954,
+    "trust": 3.202971571465368,
+    "never_commit": 3.202971571465368,
+    "trust_minus_always_commit": 0.6225094060315728,
+    "ci95": [
+     0.44672873331058743,
+     0.834968766690294
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "gaze_only",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 10 cpm": {
+    "always_commit": 1.5061126354008079,
+    "trust": 1.8850417164614865,
+    "never_commit": 1.8850417164614865,
+    "trust_minus_always_commit": 0.3789290810606787,
+    "ci95": [
+     0.27691268300156435,
+     0.5001689727426595
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "gaze_only",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "fallback 40 cpm": {
+    "always_commit": 4.3138626950826735,
+    "trust": 5.153150210232709,
+    "never_commit": 5.153150210232709,
+    "trust_minus_always_commit": 0.8392875151500352,
+    "ci95": [
+     0.5852433375407575,
+     1.1230079606654346
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x0.5": {
+    "always_commit": 2.743618587846801,
+    "trust": 3.4509408236934584,
+    "never_commit": 3.4509408236934584,
+    "trust_minus_always_commit": 0.7073222358466573,
+    "ci95": [
+     0.5193453064927872,
+     0.9322431807024739
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "gaze_only",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "selection x2": {
+    "always_commit": 2.540346385737795,
+    "trust": 2.9632137896810344,
+    "never_commit": 2.9632137896810344,
+    "trust_minus_always_commit": 0.4228674039432394,
+    "ci95": [
+     0.280891124899889,
+     0.5822770523073941
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "p_miss 0": {
+    "always_commit": 3.2449703659928804,
+    "trust": 3.202971571465368,
+    "never_commit": 3.202971571465368,
+    "trust_minus_always_commit": -0.04199879452751221,
+    "ci95": [
+     -0.049539590896652885,
+     -0.03666101700155803
+    ],
+    "ranking": [
+     "gaze_lm",
+     "always_commit",
+     "trust",
+     "never_commit",
+     "gaze_only"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": true
+   },
+   "p_miss 0.2": {
+    "always_commit": 1.2371094187157377,
+    "trust": 3.202971571465368,
+    "never_commit": 3.202971571465368,
+    "trust_minus_always_commit": 1.9658621527496305,
+    "ci95": [
+     1.7495446122437412,
+     2.202986451138829
+    ],
+    "ranking": [
+     "gaze_lm",
+     "trust",
+     "never_commit",
+     "gaze_only",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "symmetric offer (p_miss 0.05, no oracle retype)": {
+    "always_commit": 2.54083503653757,
+    "trust": 2.746504316228788,
+    "never_commit": 2.746504316228788,
+    "trust_minus_always_commit": 0.20566927969121807,
+    "ci95": [
+     -0.08872351612679025,
+     0.4905700942291366
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   },
+   "symmetric offer, p_miss 0.2": {
+    "always_commit": 1.2002734338385408,
+    "trust": 2.746504316228788,
+    "never_commit": 2.746504316228788,
+    "trust_minus_always_commit": 1.546230882390247,
+    "ci95": [
+     1.246513375706751,
+     1.8237570495009272
+    ],
+    "ranking": [
+     "gaze_lm",
+     "gaze_only",
+     "trust",
+     "never_commit",
+     "always_commit"
+    ],
+    "always_commit_fastest": false,
+    "always_commit_faster_than_trust": false
+   }
+  }
+ }
+}

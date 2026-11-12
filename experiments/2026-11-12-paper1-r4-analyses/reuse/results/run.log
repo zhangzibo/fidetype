@@ -1,0 +1,24 @@
+02:45:15 R50 b2t-ours: CRC pure +0.0091 W p 0.00275 cl p 0.000122; CRC max +0.0066 W p 1.08e-05 cl p 0.000122; LTT pure +0.0052 W p 0.0336 cl p 0.000122
+02:45:15 R50 b2t-published: CRC pure +0.0009 W p 0.716 cl p 0.259; CRC max +0.0035 W p 0.00136 cl p 0.000244; LTT pure +0.0013 W p 0.494 cl p 0.382
+02:45:15 R50 emg-calib: CRC pure -0.0016 W p 0.714 cl p 0.00549; CRC max +0.0019 W p 0.0106 cl p 0.000488; LTT pure -0.0038 W p 0.0198 cl p 0.000488
+02:45:16 R50 emg-xsession: CRC pure +0.0073 W p 0.036 cl p 1.53e-05; CRC max +0.0012 W p 0.109 cl p 0.000488; LTT pure +0.0008 W p 0.811 cl p 0.119
+02:45:16 R200 b2t-ours: CRC pure +0.0085 W p 0.00164 cl p 0.000122; CRC max +0.0060 W p 3.82e-06 cl p 0.000122; LTT pure +0.0047 W p 0.0282 cl p 0.000122
+02:45:17 R200 b2t-published: CRC pure +0.0005 W p 0.835 cl p 0.554; CRC max +0.0034 W p 0.00114 cl p 0.000244; LTT pure +0.0018 W p 0.361 cl p 0.144
+02:45:17 R200 emg-calib: CRC pure -0.0016 W p 0.714 cl p 0.00549; CRC max +0.0019 W p 0.0106 cl p 0.000488; LTT pure -0.0038 W p 0.0198 cl p 0.000488
+02:45:18 R200 emg-xsession: CRC pure +0.0073 W p 0.036 cl p 1.53e-05; CRC max +0.0012 W p 0.109 cl p 0.000488; LTT pure +0.0008 W p 0.811 cl p 0.119
+02:46:43 R50 b2t-ours: CRC pure +0.0091 W p 0.00275 cl p 0.000122 jk p 0.000319; CRC max +0.0066 W p 1.08e-05 cl p 0.000122 jk p 0.00419; LTT pure +0.0052 W p 0.0336 cl p 0.000122 jk p 0.13
+02:46:44 R50 b2t-published: CRC pure +0.0009 W p 0.716 cl p 0.259 jk p 0.76; CRC max +0.0035 W p 0.00136 cl p 0.000244 jk p 0.156; LTT pure +0.0013 W p 0.494 cl p 0.382 jk p 0.495
+02:46:47 R50 emg-calib: CRC pure -0.0016 W p 0.714 cl p 0.00549 jk p 0.713; CRC max +0.0019 W p 0.0106 cl p 0.000488 jk p 0.102; LTT pure -0.0038 W p 0.0198 cl p 0.000488 jk p 0.281
+02:46:49 R50 emg-xsession: CRC pure +0.0073 W p 0.036 cl p 1.53e-05 jk p 0.0214; CRC max +0.0012 W p 0.109 cl p 0.000488 jk p 0.189; LTT pure +0.0008 W p 0.811 cl p 0.119 jk p 0.839
+02:46:52 R200 b2t-ours: CRC pure +0.0086 W p 0.000906 cl p 0.000122 jk p 0.0011; CRC max +0.0061 W p 2.52e-06 cl p 0.000122 jk p 0.00338; LTT pure +0.0049 W p 0.0196 cl p 0.000122 jk p 0.124
+02:46:54 R200 b2t-published: CRC pure +0.0001 W p 0.952 cl p 0.907 jk p 0.97; CRC max +0.0032 W p 0.00114 cl p 0.000244 jk p 0.161; LTT pure +0.0012 W p 0.511 cl p 0.307 jk p 0.6
+02:46:56 R200 emg-calib: CRC pure -0.0016 W p 0.714 cl p 0.00549 jk p 0.713; CRC max +0.0019 W p 0.0106 cl p 0.000488 jk p 0.102; LTT pure -0.0038 W p 0.0198 cl p 0.000488 jk p 0.281
+02:46:59 R200 emg-xsession: CRC pure +0.0073 W p 0.036 cl p 1.53e-05 jk p 0.0214; CRC max +0.0012 W p 0.109 cl p 0.000488 jk p 0.189; LTT pure +0.0008 W p 0.811 cl p 0.119 jk p 0.839
+03:15:57 R50 b2t-ours: CRC pure +0.0091 W p 0.00275 cl p 0.000122 jk p 0.000319; CRC max +0.0066 W p 1.08e-05 cl p 0.000122 jk p 0.00419; LTT pure +0.0052 W p 0.0336 cl p 0.000122 jk p 0.13
+03:15:58 R50 b2t-published: CRC pure +0.0009 W p 0.716 cl p 0.259 jk p 0.76; CRC max +0.0035 W p 0.00136 cl p 0.000244 jk p 0.156; LTT pure +0.0013 W p 0.494 cl p 0.382 jk p 0.495
+03:15:59 R50 emg-calib: CRC pure -0.0016 W p 0.714 cl p 0.00549 jk p 0.713; CRC max +0.0019 W p 0.0106 cl p 0.000488 jk p 0.102; LTT pure -0.0038 W p 0.0198 cl p 0.000488 jk p 0.281
+03:16:01 R50 emg-xsession: CRC pure +0.0073 W p 0.036 cl p 1.53e-05 jk p 0.0214; CRC max +0.0012 W p 0.109 cl p 0.000488 jk p 0.189; LTT pure +0.0008 W p 0.811 cl p 0.119 jk p 0.839
+03:16:07 R200 b2t-ours: CRC pure +0.0032 W p 0.00727 cl p 0.000122 jk p 0.0158; CRC max +0.0036 W p 3.21e-11 cl p 0.000122 jk p 0.00483; LTT pure +0.0017 W p 0.0955 cl p 0.000244 jk p 0.222
+03:16:11 R200 b2t-published: CRC pure +0.0002 W p 0.751 cl p 0.894 jk p 0.932; CRC max +0.0029 W p 3.63e-09 cl p 0.000122 jk p 0.159; LTT pure +0.0009 W p 0.261 cl p 0.175 jk p 0.406
+03:16:13 R200 emg-calib: CRC pure -0.0016 W p 0.714 cl p 0.00549 jk p 0.713; CRC max +0.0019 W p 0.0106 cl p 0.000488 jk p 0.102; LTT pure -0.0038 W p 0.0198 cl p 0.000488 jk p 0.281
+03:16:14 R200 emg-xsession: CRC pure +0.0073 W p 0.036 cl p 1.53e-05 jk p 0.0214; CRC max +0.0012 W p 0.109 cl p 0.000488 jk p 0.189; LTT pure +0.0008 W p 0.811 cl p 0.119 jk p 0.839

@@ -1,0 +1,6 @@
+{
+ "description": "R4 item 2: per-day (B2T) / per-participant (sEMG) test wrong-commit under all rules over the repeated splits (R3 split tables, guard on; R = 50 and R = 200 for B2T), the fixed splits A/B (committed clean-drift items), and Mondrian (per-day) LTT max. Analysis of cached item tables only.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "R": [50, 200]
+}

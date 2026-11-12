@@ -1,0 +1,9 @@
+{
+ "description": "R4 item 3: exact population risk via with-replacement calibration draws; App. R designs (incl-cal = biased, held-out, with-replacement) on the full-fit test pools; repeated-split pools (cal + test of each split); test-set exceedance with CP CIs and exact McNemar LTT max vs CRC max. Analysis of cached item tables only.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "seed": 20261112,
+ "M_pool": 2000,
+ "n_cal_small": 100,
+ "M_split": 200
+}

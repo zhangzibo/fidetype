@@ -1,0 +1,5462 @@
+{
+ "config": {
+  "description": "R4 item 4: joint LTT. H0(lambda): marginal wrong-commit > alpha or error among commits > beta; p = max(exact binomial p_marg, exact conditional binomial p_sel); Bonferroni over a fixed grid; smallest rejected lambda; no max rule. Candidate frozen configuration: plain threshold (guard off) + joint LTT, alpha 0.05, beta 0.10, delta 0.1, grid 0.05..1.00 step 0.05. Analysis of cached item tables only.",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "betas": [
+   0.1,
+   0.2
+  ],
+  "grid": "0.05..1.00 step 0.05 (20); sensitivity 0.01..1.00 step 0.01 (100)",
+  "frozen_candidate": {
+   "guard": false,
+   "rule": "joint LTT",
+   "alpha": 0.05,
+   "beta": 0.1,
+   "delta": 0.1,
+   "grid_step": 0.05
+  }
+ },
+ "repeated": {
+  "b2t-ours/guard/R200": {
+   "LTT max": {
+    "R": 200,
+    "wrong_commit_mean": 0.03214547677261614,
+    "wrong_commit_p95": 0.05140586797066013,
+    "share_gt_alpha": 0.075,
+    "share_gt_alpha_cp95": [
+     0.04258280373709265,
+     0.1206842253996613
+    ],
+    "commit_rate_mean": 0.15152200488997555,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.2121505506474646,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 11.098274984195864
+   },
+   "CRC max": {
+    "R": 200,
+    "wrong_commit_mean": 0.03772616136919315,
+    "wrong_commit_p95": 0.06234718826405868,
+    "share_gt_alpha": 0.185,
+    "share_gt_alpha_cp95": [
+     0.13372866017976165,
+     0.24586346244867838
+    ],
+    "commit_rate_mean": 0.1678484107579462,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.2247632920611799,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 11.105393667842707
+   },
+   "joint LTT b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98698117963747
+   },
+   "joint LTT b0.10 g01": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98698117963747
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98698117963747
+   },
+   "LTT-sel b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98698117963747
+   },
+   "SGR b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98698117963747
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98698117963747
+   },
+   "joint LTT b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.000421760391198044,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0019559902200489,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.215625,
+    "n_committing_splits": 4,
+    "share_eac_gt_beta_of_committing": 0.5,
+    "share_eac_gt_beta_cp95": [
+     0.067585986488543,
+     0.932414013511457
+    ],
+    "ewpm_mean": 10.988968182583514
+   },
+   "joint LTT b0.20 g01": {
+    "R": 200,
+    "wrong_commit_mean": 0.00027506112469437657,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.001332518337408313,
+    "share_no_commit": 0.99,
+    "eac_pooled": 0.20642201834862386,
+    "n_committing_splits": 2,
+    "share_eac_gt_beta_of_committing": 0.5,
+    "share_eac_gt_beta_cp95": [
+     0.01257911709342506,
+     0.9874208829065749
+    ],
+    "ewpm_mean": 10.98830576202933
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 200,
+    "wrong_commit_mean": 0.000421760391198044,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0019559902200489,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.215625,
+    "n_committing_splits": 4,
+    "share_eac_gt_beta_of_committing": 0.5,
+    "share_eac_gt_beta_cp95": [
+     0.067585986488543,
+     0.932414013511457
+    ],
+    "ewpm_mean": 10.988968182583514
+   },
+   "LTT-sel b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.000421760391198044,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0019559902200489,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.215625,
+    "n_committing_splits": 4,
+    "share_eac_gt_beta_of_committing": 0.5,
+    "share_eac_gt_beta_cp95": [
+     0.067585986488543,
+     0.932414013511457
+    ],
+    "ewpm_mean": 10.988968182583514
+   },
+   "SGR b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.0003422982885085574,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0016992665036674817,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.2014388489208633,
+    "n_committing_splits": 4,
+    "share_eac_gt_beta_of_committing": 0.5,
+    "share_eac_gt_beta_cp95": [
+     0.067585986488543,
+     0.932414013511457
+    ],
+    "ewpm_mean": 10.988453431617417
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.0003422982885085574,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0016992665036674817,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.2014388489208633,
+    "n_committing_splits": 4,
+    "share_eac_gt_beta_of_committing": 0.5,
+    "share_eac_gt_beta_cp95": [
+     0.067585986488543,
+     0.932414013511457
+    ],
+    "ewpm_mean": 10.988453431617417
+   }
+  },
+  "b2t-ours/guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.03036674816625917,
+    "wrong_commit_p95": 0.052139364303178476,
+    "share_gt_alpha": 0.08,
+    "share_gt_alpha_cp95": [
+     0.022227963654929767,
+     0.19234278359596277
+    ],
+    "commit_rate_mean": 0.14677261613691933,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.20689655172413793,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 11.065284536225313
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.03679706601466992,
+    "wrong_commit_p95": 0.0593520782396088,
+    "share_gt_alpha": 0.14,
+    "share_gt_alpha_cp95": [
+     0.0581917003403721,
+     0.2673960024970084
+    ],
+    "commit_rate_mean": 0.16621026894865526,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.2213886437187408,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 11.075403475635255
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.950893325530162
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.950893325530162
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.950893325530162
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.950893325530162
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.950893325530162
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.950893325530162
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.00022004889975550123,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0007579462102689486,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.2903225806451613,
+    "n_committing_splits": 1,
+    "share_eac_gt_beta_of_committing": 1.0,
+    "share_eac_gt_beta_cp95": [
+     0.025000000000000022,
+     1.0
+    ],
+    "ewpm_mean": 10.951535572779951
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.950893325530162
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.00022004889975550123,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0007579462102689486,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.2903225806451613,
+    "n_committing_splits": 1,
+    "share_eac_gt_beta_of_committing": 1.0,
+    "share_eac_gt_beta_cp95": [
+     0.025000000000000022,
+     1.0
+    ],
+    "ewpm_mean": 10.951535572779951
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.00022004889975550123,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0007579462102689486,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.2903225806451613,
+    "n_committing_splits": 1,
+    "share_eac_gt_beta_of_committing": 1.0,
+    "share_eac_gt_beta_cp95": [
+     0.025000000000000022,
+     1.0
+    ],
+    "ewpm_mean": 10.951535572779951
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0006601466992665037,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0031784841075794623,
+    "share_no_commit": 0.96,
+    "eac_pooled": 0.2076923076923077,
+    "n_committing_splits": 2,
+    "share_eac_gt_beta_of_committing": 0.5,
+    "share_eac_gt_beta_cp95": [
+     0.01257911709342506,
+     0.9874208829065749
+    ],
+    "ewpm_mean": 10.953659121988023
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0006601466992665037,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0031784841075794623,
+    "share_no_commit": 0.96,
+    "eac_pooled": 0.2076923076923077,
+    "n_committing_splits": 2,
+    "share_eac_gt_beta_of_committing": 0.5,
+    "share_eac_gt_beta_cp95": [
+     0.01257911709342506,
+     0.9874208829065749
+    ],
+    "ewpm_mean": 10.953659121988023
+   }
+  },
+  "b2t-ours/no guard/R200": {
+   "LTT max": {
+    "R": 200,
+    "wrong_commit_mean": 0.02955378973105135,
+    "wrong_commit_p95": 0.04523227383863081,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.14127750611246945,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.2091896335395665,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 11.087212277792997
+   },
+   "CRC max": {
+    "R": 200,
+    "wrong_commit_mean": 0.03292176039119804,
+    "wrong_commit_p95": 0.04902200488997551,
+    "share_gt_alpha": 0.05,
+    "share_gt_alpha_cp95": [
+     0.024234165472108556,
+     0.09002753770135137
+    ],
+    "commit_rate_mean": 0.15303789731051345,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.21512162000239646,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 11.09417187235646
+   },
+   "joint LTT b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98311234659938
+   },
+   "joint LTT b0.10 g01": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98311234659938
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98311234659938
+   },
+   "LTT-sel b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98311234659938
+   },
+   "SGR b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98311234659938
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.98311234659938
+   },
+   "joint LTT b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.00039731051344743274,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.001687041564792176,
+    "share_no_commit": 0.985,
+    "eac_pooled": 0.23550724637681159,
+    "n_committing_splits": 3,
+    "share_eac_gt_beta_of_committing": 0.6666666666666666,
+    "share_eac_gt_beta_cp95": [
+     0.09429932405024612,
+     0.9915962413403874
+    ],
+    "ewpm_mean": 10.984725890750624
+   },
+   "joint LTT b0.20 g01": {
+    "R": 200,
+    "wrong_commit_mean": 0.0003484107579462103,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0015036674816625917,
+    "share_no_commit": 0.99,
+    "eac_pooled": 0.23170731707317074,
+    "n_committing_splits": 2,
+    "share_eac_gt_beta_of_committing": 1.0,
+    "share_eac_gt_beta_cp95": [
+     0.15811388300841903,
+     1.0
+    ],
+    "ewpm_mean": 10.984497239958948
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 200,
+    "wrong_commit_mean": 0.00039731051344743274,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.001687041564792176,
+    "share_no_commit": 0.985,
+    "eac_pooled": 0.23550724637681159,
+    "n_committing_splits": 3,
+    "share_eac_gt_beta_of_committing": 0.6666666666666666,
+    "share_eac_gt_beta_cp95": [
+     0.09429932405024612,
+     0.9915962413403874
+    ],
+    "ewpm_mean": 10.984725890750624
+   },
+   "LTT-sel b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.00039731051344743274,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.001687041564792176,
+    "share_no_commit": 0.985,
+    "eac_pooled": 0.23550724637681159,
+    "n_committing_splits": 3,
+    "share_eac_gt_beta_of_committing": 0.6666666666666666,
+    "share_eac_gt_beta_cp95": [
+     0.09429932405024612,
+     0.9915962413403874
+    ],
+    "ewpm_mean": 10.984725890750624
+   },
+   "SGR b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.0003850855745721271,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.005,
+    "share_gt_alpha_cp95": [
+     0.00012658102786701836,
+     0.02754189845720562
+    ],
+    "commit_rate_mean": 0.001528117359413203,
+    "share_no_commit": 0.99,
+    "eac_pooled": 0.252,
+    "n_committing_splits": 2,
+    "share_eac_gt_beta_of_committing": 1.0,
+    "share_eac_gt_beta_cp95": [
+     0.15811388300841903,
+     1.0
+    ],
+    "ewpm_mean": 10.984428676515313
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.00033618581907090465,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0013508557457212714,
+    "share_no_commit": 0.99,
+    "eac_pooled": 0.248868778280543,
+    "n_committing_splits": 2,
+    "share_eac_gt_beta_of_committing": 1.0,
+    "share_eac_gt_beta_cp95": [
+     0.15811388300841903,
+     1.0
+    ],
+    "ewpm_mean": 10.984382828538436
+   }
+  },
+  "b2t-ours/no guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.030488997555012224,
+    "wrong_commit_p95": 0.04345965770171149,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.14290953545232274,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.2133447390932421,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 11.053024481555976
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.0341320293398533,
+    "wrong_commit_p95": 0.04645476772616137,
+    "share_gt_alpha": 0.04,
+    "share_gt_alpha_cp95": [
+     0.004881433426164382,
+     0.1371376256039674
+    ],
+    "commit_rate_mean": 0.15645476772616138,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.21815908735739958,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 11.062441952111604
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.946680946313215
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.946680946313215
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.946680946313215
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.946680946313215
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.946680946313215
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.946680946313215
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0001711491442542787,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0008801955990220049,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.19444444444444445,
+    "n_committing_splits": 1,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.975
+    ],
+    "ewpm_mean": 10.947241049639647
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 10.946680946313215
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0001711491442542787,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0008801955990220049,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.19444444444444445,
+    "n_committing_splits": 1,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.975
+    ],
+    "ewpm_mean": 10.947241049639647
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0001711491442542787,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0008801955990220049,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.19444444444444445,
+    "n_committing_splits": 1,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.975
+    ],
+    "ewpm_mean": 10.947241049639647
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0005378973105134474,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0021515892420537895,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.25,
+    "n_committing_splits": 1,
+    "share_eac_gt_beta_of_committing": 1.0,
+    "share_eac_gt_beta_cp95": [
+     0.025000000000000022,
+     1.0
+    ],
+    "ewpm_mean": 10.948523941877319
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0005378973105134474,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0021515892420537895,
+    "share_no_commit": 0.98,
+    "eac_pooled": 0.25,
+    "n_committing_splits": 1,
+    "share_eac_gt_beta_of_committing": 1.0,
+    "share_eac_gt_beta_cp95": [
+     0.025000000000000022,
+     1.0
+    ],
+    "ewpm_mean": 10.948523941877319
+   }
+  },
+  "b2t-published/guard/R200": {
+   "LTT max": {
+    "R": 200,
+    "wrong_commit_mean": 0.030336185819070903,
+    "wrong_commit_p95": 0.05012224938875306,
+    "share_gt_alpha": 0.055,
+    "share_gt_alpha_cp95": [
+     0.02777225455200654,
+     0.09627764443391285
+    ],
+    "commit_rate_mean": 0.3938325183374083,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.07702813862892086,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 18.51488419813685
+   },
+   "CRC max": {
+    "R": 200,
+    "wrong_commit_mean": 0.03636919315403423,
+    "wrong_commit_p95": 0.05990220048899755,
+    "share_gt_alpha": 0.175,
+    "share_gt_alpha_cp95": [
+     0.12502441077371187,
+     0.23488397063020916
+    ],
+    "commit_rate_mean": 0.4236430317848411,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.08584867547757835,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 18.554352128168503
+   },
+   "joint LTT b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.004633251833740831,
+    "wrong_commit_p95": 0.02567237163814181,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.07175427872860635,
+    "share_no_commit": 0.76,
+    "eac_pooled": 0.06457108782690178,
+    "n_committing_splits": 48,
+    "share_eac_gt_beta_of_committing": 0.041666666666666664,
+    "share_eac_gt_beta_cp95": [
+     0.0050864679300329785,
+     0.1425409732013774
+    ],
+    "ewpm_mean": 18.093795695036658
+   },
+   "joint LTT b0.10 g01": {
+    "R": 200,
+    "wrong_commit_mean": 0.002995110024449878,
+    "wrong_commit_p95": 0.024511002444987755,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.04544621026894866,
+    "share_no_commit": 0.84,
+    "eac_pooled": 0.06590450571620712,
+    "n_committing_splits": 32,
+    "share_eac_gt_beta_of_committing": 0.03125,
+    "share_eac_gt_beta_cp95": [
+     0.0007908685979525579,
+     0.16217099418151154
+    ],
+    "ewpm_mean": 18.060014018326843
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 200,
+    "wrong_commit_mean": 0.004529339853300733,
+    "wrong_commit_p95": 0.02567237163814181,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.07135085574572127,
+    "share_no_commit": 0.76,
+    "eac_pooled": 0.06347982523772809,
+    "n_committing_splits": 48,
+    "share_eac_gt_beta_of_committing": 0.020833333333333332,
+    "share_eac_gt_beta_cp95": [
+     0.0005273152534231205,
+     0.11069616059315221
+    ],
+    "ewpm_mean": 18.0932430449977
+   },
+   "LTT-sel b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.004633251833740831,
+    "wrong_commit_p95": 0.02567237163814181,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.07175427872860635,
+    "share_no_commit": 0.76,
+    "eac_pooled": 0.06457108782690178,
+    "n_committing_splits": 48,
+    "share_eac_gt_beta_of_committing": 0.041666666666666664,
+    "share_eac_gt_beta_cp95": [
+     0.0050864679300329785,
+     0.1425409732013774
+    ],
+    "ewpm_mean": 18.093795695036658
+   },
+   "SGR b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.00786674816625917,
+    "wrong_commit_p95": 0.034290953545232254,
+    "share_gt_alpha": 0.01,
+    "share_gt_alpha_cp95": [
+     0.001213349013736031,
+     0.035654668397239776
+    ],
+    "commit_rate_mean": 0.1120354523227384,
+    "share_no_commit": 0.635,
+    "eac_pooled": 0.0702165966501173,
+    "n_committing_splits": 73,
+    "share_eac_gt_beta_of_committing": 0.0410958904109589,
+    "share_eac_gt_beta_cp95": [
+     0.008556489507786058,
+     0.11543607876686146
+    ],
+    "ewpm_mean": 18.14660837907335
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.007622249388753056,
+    "wrong_commit_p95": 0.03300733496332518,
+    "share_gt_alpha": 0.005,
+    "share_gt_alpha_cp95": [
+     0.00012658102786701836,
+     0.02754189845720562
+    ],
+    "commit_rate_mean": 0.110880195599022,
+    "share_no_commit": 0.635,
+    "eac_pooled": 0.06874310915104741,
+    "n_committing_splits": 73,
+    "share_eac_gt_beta_of_committing": 0.0273972602739726,
+    "share_eac_gt_beta_cp95": [
+     0.003335328893116663,
+     0.09548916383778924
+    ],
+    "ewpm_mean": 18.145041337441388
+   },
+   "joint LTT b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.019480440097799513,
+    "wrong_commit_p95": 0.03300733496332518,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.31904645476772614,
+    "share_no_commit": 0.03,
+    "eac_pooled": 0.061058318645106906,
+    "n_committing_splits": 194,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018835200849895994
+    ],
+    "ewpm_mean": 18.41440063654975
+   },
+   "joint LTT b0.20 g01": {
+    "R": 200,
+    "wrong_commit_mean": 0.018551344743276285,
+    "wrong_commit_p95": 0.03184596577017113,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.3004767726161369,
+    "share_no_commit": 0.055,
+    "eac_pooled": 0.06173969648887261,
+    "n_committing_splits": 189,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.01932864006790232
+    ],
+    "ewpm_mean": 18.390274633019338
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 200,
+    "wrong_commit_mean": 0.019376528117359414,
+    "wrong_commit_p95": 0.03300733496332518,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.31864303178484105,
+    "share_no_commit": 0.03,
+    "eac_pooled": 0.06080951467485134,
+    "n_committing_splits": 194,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018835200849895994
+    ],
+    "ewpm_mean": 18.413847986510792
+   },
+   "LTT-sel b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.07527506112469437,
+    "wrong_commit_p95": 0.11613691931540342,
+    "share_gt_alpha": 0.79,
+    "share_gt_alpha_cp95": [
+     0.7269312953862012,
+     0.8442602432758717
+    ],
+    "commit_rate_mean": 0.5733007334963325,
+    "share_no_commit": 0.005,
+    "eac_pooled": 0.13130117707267144,
+    "n_committing_splits": 199,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.01836632769441527
+    ],
+    "ewpm_mean": 18.75925035373279
+   },
+   "SGR b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.08975550122249387,
+    "wrong_commit_p95": 0.1466992665036675,
+    "share_gt_alpha": 0.93,
+    "share_gt_alpha_cp95": [
+     0.8853402664628894,
+     0.9612044295704372
+    ],
+    "commit_rate_mean": 0.6291870415647922,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.1426531306164084,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.005,
+    "share_eac_gt_beta_cp95": [
+     0.00012658102786701836,
+     0.02754189845720562
+    ],
+    "ewpm_mean": 18.836451682954454
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.03636919315403423,
+    "wrong_commit_p95": 0.05990220048899755,
+    "share_gt_alpha": 0.175,
+    "share_gt_alpha_cp95": [
+     0.12502441077371187,
+     0.23488397063020916
+    ],
+    "commit_rate_mean": 0.4236369193154034,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.08584991415008585,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 18.55434313619272
+   }
+  },
+  "b2t-published/guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.030684596577017116,
+    "wrong_commit_p95": 0.047127139364303176,
+    "share_gt_alpha": 0.02,
+    "share_gt_alpha_cp95": [
+     0.0005062279830408294,
+     0.1064695457114999
+    ],
+    "commit_rate_mean": 0.39151589242053786,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.07837382127021794,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 18.487554237334614
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.03569682151589242,
+    "wrong_commit_p95": 0.05513447432762836,
+    "share_gt_alpha": 0.14,
+    "share_gt_alpha_cp95": [
+     0.0581917003403721,
+     0.2673960024970084
+    ],
+    "commit_rate_mean": 0.41836185819070904,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.08532522938460639,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 18.52387070639226
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.004303178484107579,
+    "wrong_commit_p95": 0.023471882640586784,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0723716381418093,
+    "share_no_commit": 0.76,
+    "eac_pooled": 0.05945945945945946,
+    "n_committing_splits": 12,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.2646484693970512
+    ],
+    "ewpm_mean": 18.07085528347591
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.002420537897310513,
+    "wrong_commit_p95": 0.02078239608801956,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0397799511002445,
+    "share_no_commit": 0.86,
+    "eac_pooled": 0.06084818684695759,
+    "n_committing_splits": 7,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "ewpm_mean": 18.02854362168846
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.004303178484107579,
+    "wrong_commit_p95": 0.023471882640586784,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0723716381418093,
+    "share_no_commit": 0.76,
+    "eac_pooled": 0.05945945945945946,
+    "n_committing_splits": 12,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.2646484693970512
+    ],
+    "ewpm_mean": 18.07085528347591
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.004303178484107579,
+    "wrong_commit_p95": 0.023471882640586784,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0723716381418093,
+    "share_no_commit": 0.76,
+    "eac_pooled": 0.05945945945945946,
+    "n_committing_splits": 12,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.2646484693970512
+    ],
+    "ewpm_mean": 18.07085528347591
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.00765281173594132,
+    "wrong_commit_p95": 0.030562347188264057,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.11166259168704157,
+    "share_no_commit": 0.64,
+    "eac_pooled": 0.06853514342018831,
+    "n_committing_splits": 18,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.1853019681378522
+    ],
+    "ewpm_mean": 18.12210298559124
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0075061124694376525,
+    "wrong_commit_p95": 0.02891198044009779,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.11088019559902199,
+    "share_no_commit": 0.64,
+    "eac_pooled": 0.06769570011025358,
+    "n_committing_splits": 18,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.1853019681378522
+    ],
+    "ewpm_mean": 18.121008427400344
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.019731051344743275,
+    "wrong_commit_p95": 0.032823960880195575,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.3184841075794621,
+    "share_no_commit": 0.02,
+    "eac_pooled": 0.0619530170428374,
+    "n_committing_splits": 49,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07251926366427738
+    ],
+    "ewpm_mean": 18.38855131166663
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.01921760391198044,
+    "wrong_commit_p95": 0.031234718826405865,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.30386308068459655,
+    "share_no_commit": 0.06,
+    "eac_pooled": 0.06324428709365948,
+    "n_committing_splits": 47,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07548573369105858
+    ],
+    "ewpm_mean": 18.369641875976864
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.019731051344743275,
+    "wrong_commit_p95": 0.032823960880195575,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.3184841075794621,
+    "share_no_commit": 0.02,
+    "eac_pooled": 0.0619530170428374,
+    "n_committing_splits": 49,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07251926366427738
+    ],
+    "ewpm_mean": 18.38855131166663
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.07361858190709046,
+    "wrong_commit_p95": 0.10647921760391198,
+    "share_gt_alpha": 0.76,
+    "share_gt_alpha_cp95": [
+     0.6183092518959619,
+     0.8693900838025427
+    ],
+    "commit_rate_mean": 0.5641075794621027,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.13050450762829405,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 18.7208417436927
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.08775061124694378,
+    "wrong_commit_p95": 0.14853300733496327,
+    "share_gt_alpha": 0.92,
+    "share_gt_alpha_cp95": [
+     0.8076572164040372,
+     0.9777720363450703
+    ],
+    "commit_rate_mean": 0.6169682151589242,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.14222873900293256,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 18.79304864416918
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.03569682151589242,
+    "wrong_commit_p95": 0.05513447432762836,
+    "share_gt_alpha": 0.14,
+    "share_gt_alpha_cp95": [
+     0.0581917003403721,
+     0.2673960024970084
+    ],
+    "commit_rate_mean": 0.41836185819070904,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.08532522938460639,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 18.52387070639226
+   }
+  },
+  "b2t-published/no guard/R200": {
+   "LTT max": {
+    "R": 200,
+    "wrong_commit_mean": 0.023942542787286067,
+    "wrong_commit_p95": 0.03184596577017113,
+    "share_gt_alpha": 0.005,
+    "share_gt_alpha_cp95": [
+     0.00012658102786701836,
+     0.02754189845720562
+    ],
+    "commit_rate_mean": 0.36687652811735944,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.06526049216107696,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 18.47862647092602
+   },
+   "CRC max": {
+    "R": 200,
+    "wrong_commit_mean": 0.024798288508557458,
+    "wrong_commit_p95": 0.03808068459657696,
+    "share_gt_alpha": 0.025,
+    "share_gt_alpha_cp95": [
+     0.008166166190842514,
+     0.05737435112684586
+    ],
+    "commit_rate_mean": 0.37159535452322734,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.06673465695063577,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 18.485283969323877
+   },
+   "joint LTT b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.003985330073349633,
+    "wrong_commit_p95": 0.026955990220048878,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.05885085574572127,
+    "share_no_commit": 0.81,
+    "eac_pooled": 0.0677191524719568,
+    "n_committing_splits": 38,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.09251276141587829
+    ],
+    "ewpm_mean": 18.07755676347507
+   },
+   "joint LTT b0.10 g01": {
+    "R": 200,
+    "wrong_commit_mean": 0.0024388753056234723,
+    "wrong_commit_p95": 0.018398533007334943,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.03557457212713936,
+    "share_no_commit": 0.875,
+    "eac_pooled": 0.06855670103092784,
+    "n_committing_splits": 25,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.1371851715307125
+    ],
+    "ewpm_mean": 18.047162025086603
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 200,
+    "wrong_commit_mean": 0.003930317848410758,
+    "wrong_commit_p95": 0.02689486552567237,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.0578239608801956,
+    "share_no_commit": 0.81,
+    "eac_pooled": 0.06797040169133192,
+    "n_committing_splits": 38,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.09251276141587829
+    ],
+    "ewpm_mean": 18.076164443893518
+   },
+   "LTT-sel b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.003985330073349633,
+    "wrong_commit_p95": 0.026955990220048878,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.05885085574572127,
+    "share_no_commit": 0.81,
+    "eac_pooled": 0.0677191524719568,
+    "n_committing_splits": 38,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.09251276141587829
+    ],
+    "ewpm_mean": 18.07755676347507
+   },
+   "SGR b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.006045232273838631,
+    "wrong_commit_p95": 0.03300733496332518,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.08294621026894866,
+    "share_no_commit": 0.73,
+    "eac_pooled": 0.07288135593220339,
+    "n_committing_splits": 54,
+    "share_eac_gt_beta_of_committing": 0.018518518518518517,
+    "share_eac_gt_beta_cp95": [
+     0.00046873840381796074,
+     0.09891515950785125
+    ],
+    "ewpm_mean": 18.109509298936658
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 200,
+    "wrong_commit_mean": 0.00523838630806846,
+    "wrong_commit_p95": 0.025733496332518317,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.07764058679706601,
+    "share_no_commit": 0.73,
+    "eac_pooled": 0.06746968981262794,
+    "n_committing_splits": 54,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.06603151424442182
+    ],
+    "ewpm_mean": 18.102183136488758
+   },
+   "joint LTT b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.020470660146699265,
+    "wrong_commit_p95": 0.030562347188264057,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.3220232273838631,
+    "share_no_commit": 0.05,
+    "eac_pooled": 0.06356889319135205,
+    "n_committing_splits": 190,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.019227894753327812
+    ],
+    "ewpm_mean": 18.419779461588686
+   },
+   "joint LTT b0.20 g01": {
+    "R": 200,
+    "wrong_commit_mean": 0.018863080684596578,
+    "wrong_commit_p95": 0.030562347188264057,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.2976589242053789,
+    "share_no_commit": 0.06,
+    "eac_pooled": 0.0633714602542251,
+    "n_committing_splits": 188,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.019430446626823313
+    ],
+    "ewpm_mean": 18.38803656264912
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 200,
+    "wrong_commit_mean": 0.020189486552567238,
+    "wrong_commit_p95": 0.030562347188264057,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "commit_rate_mean": 0.3178545232273839,
+    "share_no_commit": 0.05,
+    "eac_pooled": 0.06351800926905252,
+    "n_committing_splits": 190,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.019227894753327812
+    ],
+    "ewpm_mean": 18.41427295013141
+   },
+   "LTT-sel b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.08181540342298288,
+    "wrong_commit_p95": 0.15055012224938868,
+    "share_gt_alpha": 0.745,
+    "share_gt_alpha_cp95": [
+     0.6787246033612795,
+     0.8038591847995418
+    ],
+    "commit_rate_mean": 0.6212958435207824,
+    "share_no_commit": 0.005,
+    "eac_pooled": 0.13168509700523395,
+    "n_committing_splits": 199,
+    "share_eac_gt_beta_of_committing": 0.005025125628140704,
+    "share_eac_gt_beta_cp95": [
+     0.00012721707297200574,
+     0.0276787129163816
+    ],
+    "ewpm_mean": 18.833174578504632
+   },
+   "SGR b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.10845354523227384,
+    "wrong_commit_p95": 0.16992665036674817,
+    "share_gt_alpha": 0.95,
+    "share_gt_alpha_cp95": [
+     0.9099724622986486,
+     0.9757658345278915
+    ],
+    "commit_rate_mean": 0.7255684596577018,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.14947389703714312,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.015,
+    "share_eac_gt_beta_cp95": [
+     0.00310410762155351,
+     0.0432082819177126
+    ],
+    "ewpm_mean": 18.980182880728584
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 200,
+    "wrong_commit_mean": 0.024798288508557458,
+    "wrong_commit_p95": 0.03808068459657696,
+    "share_gt_alpha": 0.025,
+    "share_gt_alpha_cp95": [
+     0.008166166190842514,
+     0.05737435112684586
+    ],
+    "commit_rate_mean": 0.37159535452322734,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.06673465695063577,
+    "n_committing_splits": 200,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.018275340355136237
+    ],
+    "ewpm_mean": 18.485283969323877
+   }
+  },
+  "b2t-published/no guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.024376528117359415,
+    "wrong_commit_p95": 0.031234718826405865,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.3633007334963325,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.06709738205801198,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 18.44920262399508
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.024376528117359415,
+    "wrong_commit_p95": 0.031234718826405865,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.3633007334963325,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.06709738205801198,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 18.44920262399508
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.003985330073349633,
+    "wrong_commit_p95": 0.02689486552567237,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.053887530562347186,
+    "share_no_commit": 0.84,
+    "eac_pooled": 0.07395644283121597,
+    "n_committing_splits": 8,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.36941664755281917
+    ],
+    "ewpm_mean": 18.04753878765609
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0014180929095354523,
+    "wrong_commit_p95": 0.014119804400977992,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.020048899755501223,
+    "share_no_commit": 0.92,
+    "eac_pooled": 0.07073170731707316,
+    "n_committing_splits": 4,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.6023646356164746
+    ],
+    "ewpm_mean": 18.00352397196329
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0039119804400978,
+    "wrong_commit_p95": 0.026344743276283614,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.052762836185819076,
+    "share_no_commit": 0.84,
+    "eac_pooled": 0.07414272474513438,
+    "n_committing_splits": 8,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.36941664755281917
+    ],
+    "ewpm_mean": 18.046040571454924
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.003985330073349633,
+    "wrong_commit_p95": 0.02689486552567237,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.053887530562347186,
+    "share_no_commit": 0.84,
+    "eac_pooled": 0.07395644283121597,
+    "n_committing_splits": 8,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.36941664755281917
+    ],
+    "ewpm_mean": 18.04753878765609
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.004743276283618582,
+    "wrong_commit_p95": 0.03190709046454767,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.06354523227383863,
+    "share_no_commit": 0.78,
+    "eac_pooled": 0.07464409388226241,
+    "n_committing_splits": 11,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.28491415291815436
+    ],
+    "ewpm_mean": 18.060142751975462
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.004009779951100244,
+    "wrong_commit_p95": 0.02402200488997554,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.058997555012224936,
+    "share_no_commit": 0.78,
+    "eac_pooled": 0.06796518856195607,
+    "n_committing_splits": 11,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.28491415291815436
+    ],
+    "ewpm_mean": 18.05401353771405
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.021760391198044012,
+    "wrong_commit_p95": 0.029339853300733496,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.3319070904645477,
+    "share_no_commit": 0.02,
+    "eac_pooled": 0.06556169429097605,
+    "n_committing_splits": 49,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07251926366427738
+    ],
+    "ewpm_mean": 18.40745174732879
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.020317848410757944,
+    "wrong_commit_p95": 0.029339853300733496,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.30804400977995106,
+    "share_no_commit": 0.04,
+    "eac_pooled": 0.06595761568378443,
+    "n_committing_splits": 48,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.0739727853472802
+    ],
+    "ewpm_mean": 18.377021310216907
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.021515892420537898,
+    "wrong_commit_p95": 0.029339853300733496,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.3279217603911981,
+    "share_no_commit": 0.02,
+    "eac_pooled": 0.0656128839844915,
+    "n_committing_splits": 49,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07251926366427738
+    ],
+    "ewpm_mean": 18.402273181948324
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.08767726161369195,
+    "wrong_commit_p95": 0.15647921760391198,
+    "share_gt_alpha": 0.78,
+    "share_gt_alpha_cp95": [
+     0.6403881114342106,
+     0.8847341739621514
+    ],
+    "commit_rate_mean": 0.6395354523227383,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.13709523263371182,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.02,
+    "share_eac_gt_beta_cp95": [
+     0.0005062279830408294,
+     0.1064695457114999
+    ],
+    "ewpm_mean": 18.831404921593005
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.11616136919315403,
+    "wrong_commit_p95": 0.17683374083129583,
+    "share_gt_alpha": 1.0,
+    "share_gt_alpha_cp95": [
+     0.9288782635358024,
+     1.0
+    ],
+    "commit_rate_mean": 0.7489486552567237,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.15509924262209454,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.02,
+    "share_eac_gt_beta_cp95": [
+     0.0005062279830408294,
+     0.1064695457114999
+    ],
+    "ewpm_mean": 18.987032553280308
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.024376528117359415,
+    "wrong_commit_p95": 0.031234718826405865,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.3633007334963325,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.06709738205801198,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 18.44920262399508
+   }
+  },
+  "emg-calib/guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.0105989110707804,
+    "wrong_commit_p95": 0.019147005444646092,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.09255898366606172,
+    "share_no_commit": 0.02,
+    "eac_pooled": 0.11450980392156863,
+    "n_committing_splits": 49,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07251926366427738
+    ],
+    "ewpm_mean": 8.004806638658
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.012486388384754991,
+    "wrong_commit_p95": 0.023593466424682397,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.10450090744101635,
+    "share_no_commit": 0.02,
+    "eac_pooled": 0.1194859326154915,
+    "n_committing_splits": 49,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07251926366427738
+    ],
+    "ewpm_mean": 8.008132539020114
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   }
+  },
+  "emg-calib/no guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.0105989110707804,
+    "wrong_commit_p95": 0.019147005444646092,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.09277676950998184,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.11424100156494522,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 8.004859421618617
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.012486388384754991,
+    "wrong_commit_p95": 0.023593466424682397,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.10471869328493648,
+    "share_no_commit": 0.0,
+    "eac_pooled": 0.11923743500866552,
+    "n_committing_splits": 50,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "ewpm_mean": 8.00818532198073
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 7.971602719445382
+   }
+  },
+  "emg-xsession/guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.00573502722323049,
+    "wrong_commit_p95": 0.022776769509981847,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.015027223230490019,
+    "share_no_commit": 0.34,
+    "eac_pooled": 0.38164251207729466,
+    "n_committing_splits": 33,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.10576281007457927
+    ],
+    "ewpm_mean": 4.680271356030138
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.006787658802177858,
+    "wrong_commit_p95": 0.02722323049001815,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.016406533575317607,
+    "share_no_commit": 0.34,
+    "eac_pooled": 0.413716814159292,
+    "n_committing_splits": 33,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.10576281007457927
+    ],
+    "ewpm_mean": 4.680072768605323
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   }
+  },
+  "emg-xsession/no guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.005771324863883848,
+    "wrong_commit_p95": 0.022776769509981847,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.01517241379310345,
+    "share_no_commit": 0.32,
+    "eac_pooled": 0.3803827751196172,
+    "n_committing_splits": 34,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "ewpm_mean": 4.680271092134643
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.006823956442831216,
+    "wrong_commit_p95": 0.02722323049001815,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.016551724137931035,
+    "share_no_commit": 0.32,
+    "eac_pooled": 0.41228070175438597,
+    "n_committing_splits": 34,
+    "share_eac_gt_beta_of_committing": 0.0,
+    "share_eac_gt_beta_cp95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "ewpm_mean": 4.680072504709829
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.680989676389218
+   }
+  },
+  "emg-xsubject/guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   }
+  },
+  "emg-xsubject/no guard/R50": {
+   "LTT max": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "CRC max": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.10 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "LTT-sel b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "SGR b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.20 g01": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "LTT-sel b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "SGR b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "R": 50,
+    "wrong_commit_mean": 0.0,
+    "wrong_commit_p95": 0.0,
+    "share_gt_alpha": 0.0,
+    "share_gt_alpha_cp95": [
+     0.0,
+     0.07112173646419764
+    ],
+    "commit_rate_mean": 0.0,
+    "share_no_commit": 1.0,
+    "eac_pooled": null,
+    "n_committing_splits": 0,
+    "share_eac_gt_beta_of_committing": null,
+    "share_eac_gt_beta_cp95": null,
+    "ewpm_mean": 4.07338436586409
+   }
+  }
+ },
+ "fixed": {
+  "b2t-ours/split A": {
+   "LTT max": {
+    "n": 816,
+    "wrong_commit": 0.024509803921568627,
+    "commit_rate": 0.10049019607843138,
+    "n_commit": 82,
+    "n_commit_wrong": 20.0,
+    "error_among_commits": 0.24390243902439024,
+    "ewpm": 11.477549766206314,
+    "threshold": 0.3,
+    "n_wrong": 20,
+    "wrong_commit_cp95": [
+     0.01503403122353423,
+     0.037600515324418306
+    ],
+    "eac_cp95": [
+     0.15579071279561826,
+     0.3512487750975379
+    ]
+   },
+   "CRC max": {
+    "n": 816,
+    "wrong_commit": 0.024509803921568627,
+    "commit_rate": 0.10049019607843138,
+    "n_commit": 82,
+    "n_commit_wrong": 20.0,
+    "error_among_commits": 0.24390243902439024,
+    "ewpm": 11.477549766206314,
+    "threshold": 0.30745733902594785,
+    "n_wrong": 20,
+    "wrong_commit_cp95": [
+     0.01503403122353423,
+     0.037600515324418306
+    ],
+    "eac_cp95": [
+     0.15579071279561826,
+     0.3512487750975379
+    ]
+   },
+   "joint LTT b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 g01": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 g01": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.20": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.20": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.419676212523617,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   }
+  },
+  "b2t-ours/split B": {
+   "LTT max": {
+    "n": 816,
+    "wrong_commit": 0.051470588235294115,
+    "commit_rate": 0.19240196078431374,
+    "n_commit": 157,
+    "n_commit_wrong": 42.0,
+    "error_among_commits": 0.267515923566879,
+    "ewpm": 11.536406457959506,
+    "threshold": 0.43,
+    "n_wrong": 42,
+    "wrong_commit_cp95": [
+     0.037343809962527785,
+     0.06893948398131786
+    ],
+    "eac_cp95": [
+     0.2000981935089451,
+     0.3439292813133837
+    ]
+   },
+   "CRC max": {
+    "n": 816,
+    "wrong_commit": 0.06004901960784314,
+    "commit_rate": 0.21200980392156862,
+    "n_commit": 173,
+    "n_commit_wrong": 49.0,
+    "error_among_commits": 0.2832369942196532,
+    "ewpm": 11.540217310262143,
+    "threshold": 0.40833157513601565,
+    "n_wrong": 49,
+    "wrong_commit_cp95": [
+     0.044751142624947594,
+     0.07861403412028728
+    ],
+    "eac_cp95": [
+     0.21745980527403735,
+     0.3566060085706296
+    ]
+   },
+   "joint LTT b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 g01": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 g01": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.20": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.20": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 11.410951960025459,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   }
+  },
+  "b2t-published/split A": {
+   "LTT max": {
+    "n": 816,
+    "wrong_commit": 0.029411764705882353,
+    "commit_rate": 0.40318627450980393,
+    "n_commit": 329,
+    "n_commit_wrong": 24.0,
+    "error_among_commits": 0.0729483282674772,
+    "ewpm": 18.65136544958792,
+    "threshold": 0.76,
+    "n_wrong": 24,
+    "wrong_commit_cp95": [
+     0.018933655679061974,
+     0.04344767322485269
+    ],
+    "eac_cp95": [
+     0.04729588112190292,
+     0.10659868737329954
+    ]
+   },
+   "CRC max": {
+    "n": 816,
+    "wrong_commit": 0.04779411764705882,
+    "commit_rate": 0.49142156862745096,
+    "n_commit": 401,
+    "n_commit_wrong": 39.0,
+    "error_among_commits": 0.09725685785536159,
+    "ewpm": 18.791626769729074,
+    "threshold": 0.7,
+    "n_wrong": 39,
+    "wrong_commit_cp95": [
+     0.03420374109214964,
+     0.06475979179984277
+    ],
+    "eac_cp95": [
+     0.07007599772564985,
+     0.13055181111781072
+    ]
+   },
+   "joint LTT b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 g01": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20": {
+    "n": 816,
+    "wrong_commit": 0.01838235294117647,
+    "commit_rate": 0.32107843137254904,
+    "n_commit": 262,
+    "n_commit_wrong": 15.0,
+    "error_among_commits": 0.05725190839694656,
+    "ewpm": 18.53822744375499,
+    "threshold": 0.8,
+    "n_wrong": 15,
+    "wrong_commit_cp95": [
+     0.010324048943547446,
+     0.030137886229138513
+    ],
+    "eac_cp95": [
+     0.032393991990407024,
+     0.09267108714390199
+    ]
+   },
+   "joint LTT b0.20 g01": {
+    "n": 816,
+    "wrong_commit": 0.015931372549019607,
+    "commit_rate": 0.3125,
+    "n_commit": 255,
+    "n_commit_wrong": 13.0,
+    "error_among_commits": 0.050980392156862744,
+    "ewpm": 18.526486197886218,
+    "threshold": 0.82,
+    "n_wrong": 13,
+    "wrong_commit_cp95": [
+     0.008509345432479278,
+     0.02708905791819452
+    ],
+    "eac_cp95": [
+     0.027420732523276713,
+     0.0856003634523705
+    ]
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "n": 816,
+    "wrong_commit": 0.01838235294117647,
+    "commit_rate": 0.32107843137254904,
+    "n_commit": 262,
+    "n_commit_wrong": 15.0,
+    "error_among_commits": 0.05725190839694656,
+    "ewpm": 18.53822744375499,
+    "threshold": 0.8,
+    "n_wrong": 15,
+    "wrong_commit_cp95": [
+     0.010324048943547446,
+     0.030137886229138513
+    ],
+    "eac_cp95": [
+     0.032393991990407024,
+     0.09267108714390199
+    ]
+   },
+   "LTT-sel b0.20": {
+    "n": 816,
+    "wrong_commit": 0.04779411764705882,
+    "commit_rate": 0.49142156862745096,
+    "n_commit": 401,
+    "n_commit_wrong": 39.0,
+    "error_among_commits": 0.09725685785536159,
+    "ewpm": 18.791626769729074,
+    "threshold": 0.7,
+    "n_wrong": 39,
+    "wrong_commit_cp95": [
+     0.03420374109214964,
+     0.06475979179984277
+    ],
+    "eac_cp95": [
+     0.07007599772564985,
+     0.13055181111781072
+    ]
+   },
+   "SGR b0.20": {
+    "n": 816,
+    "wrong_commit": 0.061274509803921566,
+    "commit_rate": 0.5269607843137255,
+    "n_commit": 430,
+    "n_commit_wrong": 50.0,
+    "error_among_commits": 0.11627906976744186,
+    "ewpm": 18.841930734895378,
+    "threshold": 0.6532374628420895,
+    "n_wrong": 50,
+    "wrong_commit_cp95": [
+     0.04581752157912738,
+     0.07998815232610276
+    ],
+    "eac_cp95": [
+     0.087547594205607,
+     0.15041458490907325
+    ]
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "n": 816,
+    "wrong_commit": 0.04779411764705882,
+    "commit_rate": 0.49142156862745096,
+    "n_commit": 401,
+    "n_commit_wrong": 39.0,
+    "error_among_commits": 0.09725685785536159,
+    "ewpm": 18.791626769729074,
+    "threshold": 0.7,
+    "n_wrong": 39,
+    "wrong_commit_cp95": [
+     0.03420374109214964,
+     0.06475979179984277
+    ],
+    "eac_cp95": [
+     0.07007599772564985,
+     0.13055181111781072
+    ]
+   }
+  },
+  "b2t-published/split B": {
+   "LTT max": {
+    "n": 816,
+    "wrong_commit": 0.030637254901960783,
+    "commit_rate": 0.41544117647058826,
+    "n_commit": 339,
+    "n_commit_wrong": 25.0,
+    "error_among_commits": 0.07374631268436578,
+    "ewpm": 18.681274547231588,
+    "threshold": 0.75,
+    "n_wrong": 25,
+    "wrong_commit_cp95": [
+     0.019922914550189397,
+     0.044895916522033286
+    ],
+    "eac_cp95": [
+     0.048290675240414443,
+     0.10694097957070672
+    ]
+   },
+   "CRC max": {
+    "n": 816,
+    "wrong_commit": 0.04779411764705882,
+    "commit_rate": 0.4852941176470588,
+    "n_commit": 396,
+    "n_commit_wrong": 39.0,
+    "error_among_commits": 0.09848484848484848,
+    "ewpm": 18.78432319626293,
+    "threshold": 0.7,
+    "n_wrong": 39,
+    "wrong_commit_cp95": [
+     0.03420374109214964,
+     0.06475979179984277
+    ],
+    "eac_cp95": [
+     0.07097294845349511,
+     0.13216909351849776
+    ]
+   },
+   "joint LTT b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 g01": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "n": 816,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 18.11388556397986,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.004510482686879195
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20": {
+    "n": 816,
+    "wrong_commit": 0.015931372549019607,
+    "commit_rate": 0.31862745098039214,
+    "n_commit": 260,
+    "n_commit_wrong": 13.0,
+    "error_among_commits": 0.05,
+    "ewpm": 18.534871283767696,
+    "threshold": 0.8,
+    "n_wrong": 13,
+    "wrong_commit_cp95": [
+     0.008509345432479278,
+     0.02708905791819452
+    ],
+    "eac_cp95": [
+     0.026888103235697847,
+     0.08398395996482774
+    ]
+   },
+   "joint LTT b0.20 g01": {
+    "n": 816,
+    "wrong_commit": 0.01838235294117647,
+    "commit_rate": 0.32107843137254904,
+    "n_commit": 262,
+    "n_commit_wrong": 15.0,
+    "error_among_commits": 0.05725190839694656,
+    "ewpm": 18.53822744375499,
+    "threshold": 0.78,
+    "n_wrong": 15,
+    "wrong_commit_cp95": [
+     0.010324048943547446,
+     0.030137886229138513
+    ],
+    "eac_cp95": [
+     0.032393991990407024,
+     0.09267108714390199
+    ]
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "n": 816,
+    "wrong_commit": 0.015931372549019607,
+    "commit_rate": 0.31862745098039214,
+    "n_commit": 260,
+    "n_commit_wrong": 13.0,
+    "error_among_commits": 0.05,
+    "ewpm": 18.534871283767696,
+    "threshold": 0.8,
+    "n_wrong": 13,
+    "wrong_commit_cp95": [
+     0.008509345432479278,
+     0.02708905791819452
+    ],
+    "eac_cp95": [
+     0.026888103235697847,
+     0.08398395996482774
+    ]
+   },
+   "LTT-sel b0.20": {
+    "n": 816,
+    "wrong_commit": 0.058823529411764705,
+    "commit_rate": 0.5208333333333334,
+    "n_commit": 425,
+    "n_commit_wrong": 48.0,
+    "error_among_commits": 0.11294117647058824,
+    "ewpm": 18.83323843198412,
+    "threshold": 0.65,
+    "n_wrong": 48,
+    "wrong_commit_cp95": [
+     0.043686689222054084,
+     0.07723804161347292
+    ],
+    "eac_cp95": [
+     0.08445752064139929,
+     0.14694452458304252
+    ]
+   },
+   "SGR b0.20": {
+    "n": 816,
+    "wrong_commit": 0.07230392156862746,
+    "commit_rate": 0.5698529411764706,
+    "n_commit": 465,
+    "n_commit_wrong": 59.0,
+    "error_among_commits": 0.12688172043010754,
+    "ewpm": 18.903253269456467,
+    "threshold": 0.5812872037459317,
+    "n_wrong": 59,
+    "wrong_commit_cp95": [
+     0.05549346434918954,
+     0.09227863285705964
+    ],
+    "eac_cp95": [
+     0.09800872047783867,
+     0.16059862883788228
+    ]
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "n": 816,
+    "wrong_commit": 0.04779411764705882,
+    "commit_rate": 0.4852941176470588,
+    "n_commit": 396,
+    "n_commit_wrong": 39.0,
+    "error_among_commits": 0.09848484848484848,
+    "ewpm": 18.78432319626293,
+    "threshold": 0.7,
+    "n_wrong": 39,
+    "wrong_commit_cp95": [
+     0.03420374109214964,
+     0.06475979179984277
+    ],
+    "eac_cp95": [
+     0.07097294845349511,
+     0.13216909351849776
+    ]
+   }
+  },
+  "emg-calib": {
+   "LTT max": {
+    "n": 551,
+    "wrong_commit": 0.003629764065335753,
+    "commit_rate": 0.038112522686025406,
+    "n_commit": 21,
+    "n_commit_wrong": 2.0,
+    "error_among_commits": 0.09523809523809523,
+    "ewpm": 7.976984532053385,
+    "threshold": 0.7,
+    "n_wrong": 2,
+    "wrong_commit_cp95": [
+     0.00043988394295788475,
+     0.013049937807368258
+    ],
+    "eac_cp95": [
+     0.011749317884445809,
+     0.3037744069139242
+    ]
+   },
+   "CRC max": {
+    "n": 551,
+    "wrong_commit": 0.003629764065335753,
+    "commit_rate": 0.038112522686025406,
+    "n_commit": 21,
+    "n_commit_wrong": 2.0,
+    "error_among_commits": 0.09523809523809523,
+    "ewpm": 7.976984532053385,
+    "threshold": 0.7,
+    "n_wrong": 2,
+    "wrong_commit_cp95": [
+     0.00043988394295788475,
+     0.013049937807368258
+    ],
+    "eac_cp95": [
+     0.011749317884445809,
+     0.3037744069139242
+    ]
+   },
+   "joint LTT b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 g01": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 g01": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 7.962592984932157,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   }
+  },
+  "emg-xsession": {
+   "LTT max": {
+    "n": 551,
+    "wrong_commit": 0.003629764065335753,
+    "commit_rate": 0.018148820326678767,
+    "n_commit": 10,
+    "n_commit_wrong": 2.0,
+    "error_among_commits": 0.2,
+    "ewpm": 4.676921023830239,
+    "threshold": 0.3,
+    "n_wrong": 2,
+    "wrong_commit_cp95": [
+     0.00043988394295788475,
+     0.013049937807368258
+    ],
+    "eac_cp95": [
+     0.025210726326833386,
+     0.5560954623076415
+    ]
+   },
+   "CRC max": {
+    "n": 551,
+    "wrong_commit": 0.003629764065335753,
+    "commit_rate": 0.018148820326678767,
+    "n_commit": 10,
+    "n_commit_wrong": 2.0,
+    "error_among_commits": 0.2,
+    "ewpm": 4.676921023830239,
+    "threshold": 0.3,
+    "n_wrong": 2,
+    "wrong_commit_cp95": [
+     0.00043988394295788475,
+     0.013049937807368258
+    ],
+    "eac_cp95": [
+     0.025210726326833386,
+     0.5560954623076415
+    ]
+   },
+   "joint LTT b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 g01": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 g01": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.674454178439975,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   }
+  },
+  "emg-xsubject": {
+   "LTT max": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": 0.3,
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "CRC max": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 g01": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 g01": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "LTT-sel b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "SGR b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "n": 551,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 4.080013549398776,
+    "threshold": "inf",
+    "n_wrong": 0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0066725202546308125
+    ],
+    "eac_cp95": null
+   }
+  },
+  "meg-async (instance level, no guarantee for new sentences)": {
+   "LTT max": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": 0.5
+   },
+   "CRC max": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": 0.5
+   },
+   "joint LTT b0.10": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "joint LTT b0.10 g01": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "joint LTT b0.10 + max rule (no sel. guarantee)": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "LTT-sel b0.10": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "SGR b0.10": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "R3 joint max(SGR, CRC max) b0.10": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "joint LTT b0.20": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "joint LTT b0.20 g01": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "joint LTT b0.20 + max rule (no sel. guarantee)": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "LTT-sel b0.20": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "SGR b0.20": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   },
+   "R3 joint max(SGR, CRC max) b0.20": {
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "n_commit": 0,
+    "n_commit_wrong": 0.0,
+    "error_among_commits": null,
+    "ewpm": 3.202464037020431,
+    "threshold": "inf"
+   }
+  }
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "description": "R4 item 6: published_margin in {0, 0.5, 1, 2, 4} (2.0 = paper) on the full fit (Tab. 1 plug-in), fixed splits A/B (LTT max, CRC max, joint LTT) and the 50 repeated splits (split-tables); 'published alone' = Decoders.published_fn (no confidence independent of our decoder). Guard on. Unified bootstrap seed 20261112, B 2000.",
+ "margins": [0, 0.5, 1, 2, 4],
+ "alpha": 0.05,
+ "delta": 0.1
+}

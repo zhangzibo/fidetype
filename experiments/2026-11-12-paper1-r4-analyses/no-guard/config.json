@@ -1,0 +1,7 @@
+{
+ "description": "R4 item 5: plain threshold (use_guard = False) in every Tab. 1 / Tab. 2 row and on the control streams. Recipes of R1 policies.build('no_guard'), clean-drift (B2T splits A/B, sEMG fit-A/B1/B2), baselines meg_clean_crc (MEG val-A 6 / val-B 5 sentences), source null audits (B2T audit_n 300, sEMG 200, MEG 637; source seeds). Rules: plug-in, LTT/CRC pure and max, joint LTT beta 0.10/0.20. Unified bootstrap seed 20261112, B 2000.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "bootstrap_seed": 20261112,
+ "bootstrap_B": 2000
+}

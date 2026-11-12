@@ -1,0 +1,7 @@
+{
+ "description": "R4 item 1: forward-chaining deployment on B2T '25 (14 post-implant days, file order inside a day). For every prefix j: fit on all trials of days 1..j (pipe.fit(F, F)), item tables for every later day. Variants V1 (fit 1..k-2, cal k-1, test k), V4 (fit 1..k-3, cal k-2..k-1), V2 (fit 1..3, cal 4..k-1, test k), V3 (fit 1..k-1, cal first half of day k, test second half). Guard on and off. Rules: plug-in, CRC/LTT pure and max, joint LTT (beta 0.10, 0.20; grid 0.05..1.00, Bonferroni). Settings fixed before the first run.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "betas": [0.1, 0.2],
+ "frame_T_snap_b2t": 0.02
+}

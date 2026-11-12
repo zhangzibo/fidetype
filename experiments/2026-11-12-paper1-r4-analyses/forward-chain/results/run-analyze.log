@@ -1,0 +1,5 @@
+03:12:21 b2t-ours/guard: V1 plug-in: 5/12 days > a, pooled 0.0521; CRC max: 4/12 days > a, pooled 0.0360; LTT max: 2/12 days > a, pooled 0.0220; joint LTT b0.10: 0/12 days > a, pooled 0.0000; joint LTT b0.20: 0/12 days > a, pooled 0.0000
+03:12:21 b2t-ours/no guard: V1 plug-in: 1/12 days > a, pooled 0.0381; CRC max: 0/12 days > a, pooled 0.0287; LTT max: 0/12 days > a, pooled 0.0180; joint LTT b0.10: 0/12 days > a, pooled 0.0000; joint LTT b0.20: 0/12 days > a, pooled 0.0000
+03:12:21 b2t-published/guard: V1 plug-in: 1/12 days > a, pooled 0.0234; CRC max: 1/12 days > a, pooled 0.0214; LTT max: 0/12 days > a, pooled 0.0160; joint LTT b0.10: 0/12 days > a, pooled 0.0000; joint LTT b0.20: 0/12 days > a, pooled 0.0027
+03:12:21 b2t-published/no guard: V1 plug-in: 1/12 days > a, pooled 0.0160; CRC max: 0/12 days > a, pooled 0.0147; LTT max: 0/12 days > a, pooled 0.0100; joint LTT b0.10: 0/12 days > a, pooled 0.0000; joint LTT b0.20: 0/12 days > a, pooled 0.0033
+03:12:21 done analyze

@@ -1,0 +1,16 @@
+{
+ "description": "R4 item 8: clean-up numbers from committed files and cached split tables (MEG Tab. 1 CIs, CP bounds, temperature snapping, no-commit comparator, trust vs always commit in 9 user-model variants).",
+ "counts": [
+  [0, 816, "B2T test set (fixed), zero wrong commits"],
+  [0, 551, "sEMG test set, zero wrong commits"],
+  [0, 637, "MEG test instances / MEG controls"],
+  [0, 300, "B2T controls per control stream"],
+  [0, 200, "sEMG controls per condition"],
+  [0, 256, "sEMG non-templated sentences"],
+  [1, 256, "sEMG non-templated, session-calibrated (1 wrong commit)"],
+  [2, 551, "sEMG session-cal. / cross-session (2 wrong commits)"],
+  [4, 50, "LTT max, B2T ours: splits above alpha"],
+  [1, 50, "LTT max, B2T published: splits above alpha"],
+  [7, 50, "CRC max, B2T ours/published: splits above alpha"]
+ ]
+}

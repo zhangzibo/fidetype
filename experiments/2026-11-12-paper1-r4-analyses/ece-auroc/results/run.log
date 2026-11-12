@@ -1,0 +1,6 @@
+02:54:56 b2t-ours: ece_raw 0.448, ece_cal 0.067, auroc_1mp_cal 0.797, auroc_1mp_raw 0.765, auroc_guard_risk 0.702, top1_acc 0.390
+02:55:53 b2t-published: ece_raw 0.102, ece_cal 0.058, auroc_1mp_cal 0.710, auroc_1mp_raw 0.707, auroc_guard_risk 0.667, top1_acc 0.806
+02:56:14 emg-calib: ece_raw 0.154, ece_cal 0.148, auroc_1mp_cal 0.828, auroc_1mp_raw 0.837, auroc_guard_risk 0.647, top1_acc 0.459
+02:56:36 emg-xsession: ece_raw 0.328, ece_cal 0.072, auroc_1mp_cal 0.755, auroc_1mp_raw 0.751, auroc_guard_risk 0.555, top1_acc 0.118
+02:56:58 emg-xsubject: ece_raw 0.500, ece_cal 0.083, auroc_1mp_cal 0.674, auroc_1mp_raw 0.681, auroc_guard_risk 0.497, top1_acc 0.038
+02:57:07 meg-async: ece_raw 0.205, ece_cal 0.101, auroc_1mp_cal 0.952, auroc_1mp_raw 0.961, auroc_guard_risk 0.958, top1_acc 0.003

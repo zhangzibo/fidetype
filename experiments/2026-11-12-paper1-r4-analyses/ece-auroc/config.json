@@ -1,0 +1,7 @@
+{
+ "description": "R4 item 9: sentence ECE (15 bins, raw / calibrated) and AUROC (1 - p_top1 calibrated / raw, guard risk) for a wrong top-1, full-fit trust pipelines (policies.build 'trust'), fixed test sets; percentile bootstrap at the condition's unit; reliability data (10 bins).",
+ "ece_bins": 15,
+ "reliability_bins": 10,
+ "bootstrap_seed": 20261112,
+ "bootstrap_B": 2000
+}

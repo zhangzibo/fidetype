@@ -1,0 +1,25 @@
+02:43:22 b2t-ours/guard/R51: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.001 wc 0.0002 eac 0.290
+02:43:23 b2t-ours/guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.001 wc 0.0002 eac 0.290
+02:43:24 b2t-ours/no guard/R30: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+02:43:25 b2t-published/guard/R50: joint b0.10 commit 0.072 wc 0.0043 eac 0.059; joint b0.20 commit 0.318 wc 0.0197 eac 0.062
+02:43:27 b2t-published/no guard/R30: joint b0.10 commit 0.045 wc 0.0035 eac 0.077; joint b0.20 commit 0.331 wc 0.0215 eac 0.065
+02:43:28 emg-calib/guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+02:43:29 emg-calib/no guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+02:43:29 emg-xsession/guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+02:43:31 emg-xsession/no guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+02:43:31 emg-xsubject/guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+02:43:32 emg-xsubject/no guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+03:15:35 b2t-ours/guard/R200: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.002 wc 0.0004 eac 0.216
+03:15:35 b2t-ours/guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.001 wc 0.0002 eac 0.290
+03:15:41 b2t-ours/no guard/R200: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.002 wc 0.0004 eac 0.236
+03:15:43 b2t-ours/no guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.001 wc 0.0002 eac 0.194
+03:15:46 b2t-published/guard/R200: joint b0.10 commit 0.072 wc 0.0046 eac 0.065; joint b0.20 commit 0.319 wc 0.0195 eac 0.061
+03:15:46 b2t-published/guard/R50: joint b0.10 commit 0.072 wc 0.0043 eac 0.059; joint b0.20 commit 0.318 wc 0.0197 eac 0.062
+03:15:51 b2t-published/no guard/R200: joint b0.10 commit 0.059 wc 0.0040 eac 0.068; joint b0.20 commit 0.322 wc 0.0205 eac 0.064
+03:15:52 b2t-published/no guard/R50: joint b0.10 commit 0.054 wc 0.0040 eac 0.074; joint b0.20 commit 0.332 wc 0.0218 eac 0.066
+03:15:52 emg-calib/guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+03:15:53 emg-calib/no guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+03:15:53 emg-xsession/guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+03:15:54 emg-xsession/no guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+03:15:54 emg-xsubject/guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
+03:15:55 emg-xsubject/no guard/R50: joint b0.10 commit 0.000 wc 0.0000 eac —; joint b0.20 commit 0.000 wc 0.0000 eac —
