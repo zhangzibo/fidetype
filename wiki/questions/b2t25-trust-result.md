@@ -50,3 +50,5 @@ updated: 2026-11-10
 - Next device: wrist sEMG (KT-sEMG, CC BY 4.0), see the [datasets survey](public-datasets.md).
 
 Related: [Brain-to-Text '25](../entities/brain-to-text-25.md) · [Trust core v0 results](trust-core-v0-results.md) · [Public datasets](public-datasets.md) · [CTC](../concepts/ctc.md)
+
+> **Update 2026-11-11:** the third device type (forearm sEMG) gave the same pattern: see [EMG Toronto trust result](emg-toronto-trust-result.md).

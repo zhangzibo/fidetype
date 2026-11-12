@@ -1,0 +1,23 @@
+{
+ "description": "M6-07: forearm sEMG key-press decoder on the Toronto sEMG typing dataset (Achituve et al. 2025, CC BY 4.0) + NeuralTextStream adapter + trust layer on composed sentences. Oracle key timing (keylogger).",
+ "raw_root": "C:/Users/zhang/bci-data/raw/toronto-semg/extracted",
+ "cache": "C:/Users/zhang/bci-data/cache/toronto-semg/v1",
+ "runs": "C:/Users/zhang/bci-data/runs/emg-toronto",
+ "window_s": [-0.35, 0.35],
+ "crop_s": 0.5,
+ "seed": 0,
+ "train": {"epochs": 60, "batch_size": 256, "lr": 0.002, "weight_decay": 0.05, "dropout": 0.3,
+           "shift_s": 0.05, "amp_jitter": 0.2, "noise": 0.05, "val_fraction": 0.1, "patience": 15},
+ "xsubject_folds": 4,
+ "char_lm": "C:/Users/zhang/bci-data/lm/eng_tatoeba_6gram_mkn.npz",
+ "heldout_sentences": "C:/Users/zhang/bci-data/lm/eng_tatoeba_heldout.txt",
+ "sentence_chars": [12, 50],
+ "sentences_per_participant": {"fit": 30, "test": 30},
+ "beam": {"search": "vector", "beam": 64, "n_best": 10, "prune_topk": null, "prune_logp": -8.0, "space_rules": true, "insertion_bonus": 1.0},
+ "lm_weights": [0.5, 1.0, 1.5, 2.0, 3.0],
+ "max_wrong_commit": 0.05,
+ "risk_control_delta": 0.1,
+ "audit_n": 200,
+ "bootstrap_B": 1000,
+ "gaze_chars_per_min": 20.0
+}

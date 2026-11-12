@@ -43,3 +43,5 @@ Gaze typing alone: 4.08 eWPM (B2T), 3.15 (MEG).
 ## Related
 - [Conformal Risk Control](../sources/conformal-risk-control.md), [Learn then Test](../sources/learn-then-test.md)
 - [B2T '25 trust result](b2t25-trust-result.md), [Trust core v0 results](trust-core-v0-results.md)
+
+> **Update 2026-11-11:** CRC and LTT were also run on forearm sEMG (n = 142 calibration sentences; feasible; equal to the plug-in policy there): [EMG Toronto trust result](emg-toronto-trust-result.md).

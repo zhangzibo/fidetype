@@ -321,3 +321,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - P13 "Public benchmark hub" (2027-07-01 → 2027-12-31): extends P6, adds dataset registry, CRC/LTT guarantee reporting, PR submissions scored in CI, later intent tracks. Tasks P13-01..P13-05 (P13-05 externally blocked).
 - Spec: informative open question 11 "Future output profiles" (no field change).
 - Updated: `roadmap-standard.md`, `direction-decision.md` (scope note 2026-11-11), `spec/neuraltextstream-v0.1.md`, diagram 11 + `slides.json`, tracker, `index.md`, `HANDOFF.md`.
+
+## [2026-11-11] ingest | Toronto sEMG typing dataset + EMG adapter + trust run (M6-07)
+- Downloaded `EMG typing dataset.zip` (Borealis doi:10.5683/SP3/KV65VI, CC BY 4.0, 2,766,730,294 bytes, MD5 equals the Borealis digest). Extracted only data files (the zip also holds `.git` and Python code). Isolated, metronome-paced key presses (5 space + 10 of one letter per file), 19 people × 2 days, 16 forearm channels at 2 kHz; no text.
+- New adapter `src/fidetype/adapters/toronto_semg.py`: own Intan RHD reader, keylog alignment (keylog time − file start + Lag), canonical key-press stream (`vocab_type="key"`, `blank_id=null`) and CTC character form. 10 tests; suite 249 passed, 4 skipped. **No spec change.**
+- Experiment `experiments/2026-11-11-emg-toronto/`: small CNN (GPU, 48 min for 9 runs). Day-2 key accuracy: cross-session 0.168, cross-subject 0.209, session-calibrated 0.299; label-permuted control 0.022.
+- Trust on 551 composed test sentences (held-out Tatoeba, real day-2 presses): wrong-commit always-commit 0.541 / 0.882 / 0.962 → trust 0.004 / 0.004 / 0.000; eWPM 7.81 → 8.02 (calib), 4.10 → 4.68 (xsession), 3.53 → 4.08 (xsubject); gaze only 4.27. CRC/LTT feasible (n 142), equal to the plug-in policy here. Null audit: trust commits 0 % on shuffled, zeros and permuted-decoder streams.
+- New: `wiki/sources/toronto-semg-typing.md`, `wiki/questions/emg-toronto-trust-result.md`. Updated: entity page, `references/README.md`, `index.md`, tracker (M6-07), `HANDOFF.md`.

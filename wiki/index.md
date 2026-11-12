@@ -34,6 +34,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Conformal Risk Control](sources/conformal-risk-control.md) | Angelopoulos et al., arXiv:2208.02814 (ICLR 2024). Controls E[monotone loss] ≤ α with a (n R̂ + B)/(n + 1) rule. Basis of M2-13 | 2022-08 |
 | [Learn then Test](sources/learn-then-test.md) | Angelopoulos et al., arXiv:2110.01052. Risk control as multiple testing: P(R ≤ α) ≥ 1 − δ. HB / binomial p-values, fixed-sequence testing | 2021-10 |
 | [Brain-to-Text '25 copy-task logits](sources/brain-to-text-25-copytask.md) | Card et al. 2024 (NEJM), Dryad CC0. 1,718 trials of T15 phoneme CTC logits (41 tokens, 80 ms) + cue sentences + published output (WER 0.043). Safe-loaded pickle | 2026-11 |
+| [Toronto sEMG typing (source)](sources/toronto-semg-typing.md) | Achituve et al. 2025, Borealis CC BY 4.0. 19 people × 2 days, 1,968 RHD files, 29,824 isolated key presses (16 forearm ch, 2 kHz) + keylogs. MD5 verified; own RHD reader | 2026-11 |
 
 ## Concepts
 | Page | Summary |
@@ -70,7 +71,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Brain-to-Text '25](entities/brain-to-text-25.md) | CC0 intracortical speech (T15), 11.59 GB. RNN logits + cue sentences in a 58 MB file: downloaded 2026-11-10, adapter `fidetype.adapters.b2t25` |
 | [Willett 2021 handwriting](entities/willett-handwriting-2021.md) | CC0 intracortical handwriting (T5), 1.41 GB, 1,000 sentences. FALCON H2 copy on DANDI (CC BY 4.0) |
 | [KT-sEMG (Nokia)](entities/kt-semg-dataset.md) | CC BY 4.0 forearm sEMG typing, 32 ch at 2000 Hz, ms keystrokes, one typist, 21.0 GB |
-| [Toronto sEMG typing](entities/toronto-semg-typing-dataset.md) | CC BY 4.0 sEMG typing, 19 people × 2 sessions, 16 ch at 2 kHz, 2.77 GB |
+| [Toronto sEMG typing](entities/toronto-semg-typing-dataset.md) | CC BY 4.0 sEMG typing, 19 people × 2 sessions, 16 ch at 2 kHz, 2.77 GB. Isolated key presses, no text. Downloaded 2026-11-11, adapter `fidetype.adapters.toronto_semg` |
 
 ## Questions
 | Page | Summary |
@@ -90,6 +91,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Public datasets](questions/public-datasets.md) | 2026-11-10 survey of about 30 datasets (EMG, EEG, MEG, implants, ECoG, pretraining) with licence and fit. Top 5: Brain-to-Text '25, KT-sEMG, emg2qwerty, Willett handwriting, Toronto sEMG. Licence warnings. First download: B2T '25 logits (58 MB) |
 | [M2-13 conformal result](questions/m2-13-conformal-result.md) | 2026-11-11: CRC on B2T '25: mean test wrong-commit 0.046–0.048 (old gate 0.059), eWPM cost ≤ 0.4 %; LTT mean 0.035, p95 0.056. Marginal only; drift (earlier → later half of day) breaks it (0.0625). MEG: no gain |
 | [B2T '25 trust result](questions/b2t25-trust-result.md) | First cross-device test (intracortical speech). Trust: wrong-commit 0.610 → 0.059 at 11.55 vs 11.45 eWPM; published-sentence gate 0.194 → 0.044 at 18.77 vs 19.61; gaze only 4.08. −p_top1 AUROC 0.80, word conf 0.84 |
+| [EMG Toronto trust result](questions/emg-toronto-trust-result.md) | Third device type (forearm sEMG, composed sentences). Trust wrong-commit ≤ 0.004 vs 0.54–0.96 always-commit, eWPM up in all 3 conditions; session-calibrated 8.02 vs gaze 4.27; cross-subject below gaze. CRC/LTT feasible (n 142). No spec change |
 | [Trust core v0 results](questions/trust-core-v0-results.md) | 2026-11-08 simulator run: trust policy cuts wrong commits 0.29–0.47 → 0.02–0.09 for a 7–16 % eWPM cost. LM fusion breaks calibration. Revised Paper 1 claim. Beam re-tune, first real MEG, per-word OFFER: no BCI policy on real MEG beats gaze typing alone |
 
 ## Experiments
@@ -110,3 +112,4 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [M1-15 full-r1 (full cache) and r3 (causal)](../experiments/2026-11-09-m1-15-sentence-context/results-full-r1-r3.md) | 80 blocks, 19 participants: test greedy 0.508 / beam + LM 0.447; like for like on r2 instances 0.497 / 0.437 (r2 0.577 / 0.488). r3 causal 0.574 / 0.472. Leakage checks (split, LM text, near-variant sentences), zeros-floor baselines, per participant, eWPM | 2026-11-10 |
 | [M1-09 async decoder, full cache](../experiments/2026-11-11-m1-09-async-full/results.md) | Async check vs v2, small + medium runs, controls, near variants, per participant, like for like vs M1-C and sync. r5: no gain | 2026-11-11 |
 | [Trust core on Brain-to-Text '25](../experiments/2026-11-10-b2t25-trust/results.md) | Own b2t25 adapter (phoneme NTS) + CMUdict/Tatoeba word route (WER 0.149). Word- and phoneme-level harness, published-sentence gate, null audit, day-cluster CIs | 2026-11-10 |
+| [EMG key-press decoder + trust on Toronto sEMG](../experiments/2026-11-11-emg-toronto/results.md) | Own adapter + CNN (key acc 0.168 cross-session, 0.209 cross-subject, 0.299 session-calibrated; permuted 0.022). Composed held-out Tatoeba sentences, CRC/LTT, null audit, participant CIs | 2026-11-11 |

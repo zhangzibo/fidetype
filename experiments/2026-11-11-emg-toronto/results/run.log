@@ -1,0 +1,54 @@
+19:10:17 trust: 4135 held-out sentences usable; fit 152, test 152; period 0.792 s, user 75.8 chars/min
+19:10:35 xsession: LM weight CER on fit-A {0.5: 0.48723591549295775, 1.0: 0.3921654929577465, 1.5: 0.4005281690140845, 2.0: 0.41241197183098594, 3.0: 0.5431338028169014} -> 1.0
+19:10:36 xsession a_greedy_commit: eWPM 3.33 wrong-commit 1.000 silent 0.059 CER 0.810 WER 1.000 exact 0.000 in-nbest 0.00 commit 1.00 offer 0.00 abstain 0.00 rc None (0.2s)
+19:10:46 xsession b_top1_commit: eWPM 4.30 wrong-commit 0.842 silent 0.105 CER 0.404 WER 0.594 exact 0.158 in-nbest 0.24 commit 1.00 offer 0.00 abstain 0.00 rc None (10.7s)
+19:10:54 xsession c_trust: eWPM 4.66 wrong-commit 0.026 silent 0.007 CER 0.404 WER 0.594 exact 0.158 in-nbest 0.24 commit 0.07 offer 0.93 abstain 0.00 rc None (7.5s)
+19:10:56 xsession c_crc: eWPM 4.66 wrong-commit 0.000 silent 0.000 CER 0.404 WER 0.594 exact 0.158 in-nbest 0.24 commit 0.00 offer 1.00 abstain 0.00 rc inf (2.0s)
+19:10:58 xsession c_ltt: eWPM 4.66 wrong-commit 0.000 silent 0.000 CER 0.404 WER 0.594 exact 0.158 in-nbest 0.24 commit 0.00 offer 1.00 abstain 0.00 rc inf (2.0s)
+19:11:16 xsession d_trust_no_calib: eWPM 4.75 wrong-commit 0.053 silent 0.007 CER 0.400 WER 0.593 exact 0.204 in-nbest 0.25 commit 0.11 offer 0.89 abstain 0.00 rc None (17.9s)
+19:11:58 xsession audit b_top1_commit: real commit 1.00/wrong 0.84 other_sentence commit 1.00/wrong 1.00 frame_shuffled commit 1.00/wrong 1.00 zeros_input commit 1.00/wrong 1.00 permuted_label_decoder commit 1.00/wrong 1.00
+19:12:25 xsession audit c_trust: real commit 0.07/wrong 0.03 other_sentence commit 0.07/wrong 0.07 frame_shuffled commit 0.02/wrong 0.02 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:12:51 xsession audit c_crc: real commit 0.00/wrong 0.00 other_sentence commit 0.00/wrong 0.00 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:13:24 xsession audit c_ltt: real commit 0.00/wrong 0.00 other_sentence commit 0.00/wrong 0.00 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+--- full run Wed, Nov 11, 2026  7:37:48 PM ---
+19:37:49 trust: 4135 held-out sentences usable; fit 570, test 551; period 0.792 s, user 75.8 chars/min
+19:39:03 xsession: LM weight CER on fit-A {0.5: 0.4989336625883938, 1.0: 0.38118756313839935, 1.5: 0.3967897631608486, 2.0: 0.4250757660792457, 3.0: 0.5211583791671344} -> 1.0
+19:39:04 xsession a_greedy_commit: eWPM 3.28 wrong-commit 1.000 silent 0.054 CER 0.801 WER 1.000 exact 0.000 in-nbest 0.00 commit 1.00 offer 0.00 abstain 0.00 rc None (0.6s)
+19:39:47 xsession b_top1_commit: eWPM 4.10 wrong-commit 0.882 silent 0.149 CER 0.398 WER 0.579 exact 0.118 in-nbest 0.21 commit 1.00 offer 0.00 abstain 0.00 rc None (42.5s)
+19:40:14 xsession c_trust: eWPM 4.68 wrong-commit 0.004 silent 0.000 CER 0.398 WER 0.579 exact 0.118 in-nbest 0.21 commit 0.02 offer 0.98 abstain 0.00 rc None (27.9s)
+19:40:22 xsession c_crc: eWPM 4.68 wrong-commit 0.004 silent 0.000 CER 0.398 WER 0.579 exact 0.118 in-nbest 0.21 commit 0.02 offer 0.98 abstain 0.00 rc 0.20359210958258184 (7.4s)
+19:40:29 xsession c_ltt: eWPM 4.68 wrong-commit 0.004 silent 0.000 CER 0.398 WER 0.579 exact 0.118 in-nbest 0.21 commit 0.02 offer 0.98 abstain 0.00 rc 0.23 (7.3s)
+19:41:38 xsession d_trust_no_calib: eWPM 4.75 wrong-commit 0.013 silent 0.004 CER 0.387 WER 0.577 exact 0.156 in-nbest 0.24 commit 0.04 offer 0.96 abstain 0.00 rc None (69.0s)
+19:42:55 xsession audit b_top1_commit: real commit 1.00/wrong 0.88 other_sentence commit 1.00/wrong 1.00 frame_shuffled commit 1.00/wrong 1.00 zeros_input commit 1.00/wrong 1.00 permuted_label_decoder commit 1.00/wrong 1.00
+19:43:42 xsession audit c_trust: real commit 0.03/wrong 0.01 other_sentence commit 0.03/wrong 0.03 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:44:28 xsession audit c_crc: real commit 0.03/wrong 0.01 other_sentence commit 0.03/wrong 0.03 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:45:15 xsession audit c_ltt: real commit 0.03/wrong 0.01 other_sentence commit 0.03/wrong 0.03 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:46:23 calib: LM weight CER on fit-A {0.5: 0.27208440902458186, 1.0: 0.19452239308564373, 1.5: 0.2205634751375014, 2.0: 0.27578852845437196, 3.0: 0.40262655741385117} -> 1.0
+19:46:23 calib a_greedy_commit: eWPM 3.09 wrong-commit 1.000 silent 0.094 CER 0.619 WER 0.989 exact 0.000 in-nbest 0.00 commit 1.00 offer 0.00 abstain 0.00 rc None (0.6s)
+19:46:57 calib b_top1_commit: eWPM 7.81 wrong-commit 0.541 silent 0.060 CER 0.123 WER 0.214 exact 0.459 in-nbest 0.64 commit 1.00 offer 0.00 abstain 0.00 rc None (34.1s)
+19:47:26 calib c_trust: eWPM 8.02 wrong-commit 0.004 silent 0.000 CER 0.123 WER 0.214 exact 0.459 in-nbest 0.64 commit 0.04 offer 0.96 abstain 0.00 rc None (28.4s)
+19:47:34 calib c_crc: eWPM 7.98 wrong-commit 0.004 silent 0.000 CER 0.123 WER 0.214 exact 0.459 in-nbest 0.64 commit 0.04 offer 0.96 abstain 0.00 rc 0.4480289413056333 (7.8s)
+19:47:41 calib c_ltt: eWPM 7.98 wrong-commit 0.004 silent 0.000 CER 0.123 WER 0.214 exact 0.459 in-nbest 0.64 commit 0.04 offer 0.96 abstain 0.00 rc 0.49 (7.4s)
+19:48:49 calib d_trust_no_calib: eWPM 8.15 wrong-commit 0.045 silent 0.000 CER 0.116 WER 0.212 exact 0.461 in-nbest 0.63 commit 0.28 offer 0.72 abstain 0.00 rc None (68.0s)
+19:50:09 calib audit b_top1_commit: real commit 1.00/wrong 0.57 other_sentence commit 1.00/wrong 1.00 frame_shuffled commit 1.00/wrong 1.00 zeros_input commit 1.00/wrong 1.00 permuted_label_decoder commit 1.00/wrong 1.00
+19:50:57 calib audit c_trust: real commit 0.04/wrong 0.01 other_sentence commit 0.04/wrong 0.04 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:51:45 calib audit c_crc: real commit 0.04/wrong 0.01 other_sentence commit 0.04/wrong 0.04 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:52:27 calib audit c_ltt: real commit 0.04/wrong 0.01 other_sentence commit 0.04/wrong 0.04 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:53:00 decoder xsession: T2 acc 0.168 letters 0.249 space 0.010 balanced 0.240 top5 0.571 nll 2.751 participants 0.059-0.248
+19:53:05 decoder xsession_linear: T2 acc 0.162 letters 0.177 space 0.132 balanced 0.175 top5 0.525 nll 2.944 participants 0.092-0.305
+19:53:09 decoder xsession_permuted: T2 acc 0.022 letters 0.034 space 0.000 balanced 0.032 top5 0.137 nll 3.313 participants 0.008-0.035
+19:53:14 decoder calib: T2 acc 0.299 letters 0.375 space 0.151 balanced 0.367 top5 0.772 nll 2.121 participants 0.171-0.454
+19:53:18 decoder xsubject: T2 acc 0.209 letters 0.228 space 0.172 balanced 0.226 top5 0.672 nll 2.833 participants 0.099-0.386
+19:53:19 trust: 4135 held-out sentences usable; fit 570, test 551; period 0.792 s, user 75.8 chars/min
+19:54:14 xsubject: LM weight CER on fit-A {0.5: 0.5359748568862948, 1.0: 0.3883713099113256, 1.5: 0.38343248400493884, 2.0: 0.403187787630486, 3.0: 0.48871927264563925} -> 1.5
+19:54:14 xsubject a_greedy_commit: eWPM 3.02 wrong-commit 1.000 silent 0.118 CER 0.761 WER 0.999 exact 0.000 in-nbest 0.00 commit 1.00 offer 0.00 abstain 0.00 rc None (0.4s)
+19:54:40 xsubject b_top1_commit: eWPM 3.53 wrong-commit 0.962 silent 0.167 CER 0.479 WER 0.681 exact 0.038 in-nbest 0.08 commit 1.00 offer 0.00 abstain 0.00 rc None (25.8s)
+19:54:59 xsubject c_trust: eWPM 4.08 wrong-commit 0.000 silent 0.000 CER 0.479 WER 0.681 exact 0.038 in-nbest 0.08 commit 0.00 offer 1.00 abstain 0.00 rc None (19.4s)
+19:55:05 xsubject c_crc: eWPM 4.08 wrong-commit 0.000 silent 0.000 CER 0.479 WER 0.681 exact 0.038 in-nbest 0.08 commit 0.00 offer 1.00 abstain 0.00 rc inf (5.8s)
+19:55:12 xsubject c_ltt: eWPM 4.08 wrong-commit 0.000 silent 0.000 CER 0.479 WER 0.681 exact 0.038 in-nbest 0.08 commit 0.00 offer 1.00 abstain 0.00 rc 0.0 (6.3s)
+19:56:02 xsubject d_trust_no_calib: eWPM 4.76 wrong-commit 0.005 silent 0.000 CER 0.369 WER 0.562 exact 0.116 in-nbest 0.20 commit 0.01 offer 0.99 abstain 0.00 rc None (50.9s)
+19:56:54 xsubject audit b_top1_commit: real commit 1.00/wrong 0.95 other_sentence commit 1.00/wrong 1.00 frame_shuffled commit 1.00/wrong 1.00 zeros_input commit 1.00/wrong 1.00 permuted_label_decoder commit 1.00/wrong 1.00
+19:57:22 xsubject audit c_trust: real commit 0.00/wrong 0.00 other_sentence commit 0.00/wrong 0.00 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:57:49 xsubject audit c_crc: real commit 0.00/wrong 0.00 other_sentence commit 0.00/wrong 0.00 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:58:16 xsubject audit c_ltt: real commit 0.00/wrong 0.00 other_sentence commit 0.00/wrong 0.00 frame_shuffled commit 0.00/wrong 0.00 zeros_input commit 0.00/wrong 0.00 permuted_label_decoder commit 0.00/wrong 0.00
+19:58:16 tables written

@@ -132,3 +132,5 @@ Close runners-up: MEG-MASC (CC0 MEG, pretraining), Chisco (CC0 imagined speech, 
 6. Do the Dryad CC0 datasets carry any patent or consent restriction that affects products? CC0 covers copyright only.
 
 Related: [Neural input landscape](../sources/neural-input-landscape-2026.md) · [Dryad intracortical datasets](../entities/dryad-intracortical-datasets.md) · [Architecture: adapter priority](architecture.md#adapter-priority-2026-11-08) · [Project plan](project-plan.md)
+
+> **Update 2026-11-11:** the Toronto sEMG set is downloaded and has an adapter (`fidetype.adapters.toronto_semg`). It holds isolated key presses only, no text. Result: [EMG Toronto trust result](emg-toronto-trust-result.md).
