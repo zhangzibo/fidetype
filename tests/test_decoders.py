@@ -196,7 +196,8 @@ def test_infer_writes_valid_streams(cache, tmp_path):
         assert "target_text" not in st.meta and "typed_text" not in st.meta
         meta_s = json.dumps(st.meta)
         assert not any(lab["target_text"] in meta_s for lab in labels if lab["target_text"])
-        assert st.meta["split"] == "train"
+        assert st.meta["spanishbcbl.split"] == "train"
+        assert st.frame_period == pytest.approx(0.04) and st.meta["device.modality"] == "meg"
     tr = res["splits"]["train"]
     assert tr["n_sentences"] == len(files)
     assert tr["mean_over_subjects"]["cer_target"] >= 0

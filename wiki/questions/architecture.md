@@ -151,5 +151,6 @@ experiments/    configs + results per experiment
 - [Direction decision](direction-decision.md): why we chose this direction.
 - [Reading list](reading-list.md): verified papers to read for this direction.
 - [Research directions](research-directions.md): the earlier candidate directions.
+- [Conformance suite](../concepts/conformance-suite.md): checks producers and consumers of NeuralTextStream (levels core, trust-ready, provenance).
 - [NeuroLLM](../concepts/neuro-llm.md), [Error metrics](../concepts/error-metrics.md), [CTC](../concepts/ctc.md), [Synchronous vs asynchronous decoding](../concepts/synchronous-vs-asynchronous-decoding.md).
 - [Brain2Qwerty v2](../sources/brain2qwerty-v2.md), [SpanishBCBL dataset](../entities/spanishbcbl-dataset.md), [emg2qwerty](../entities/emg2qwerty.md).

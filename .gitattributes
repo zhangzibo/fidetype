@@ -1,0 +1,3 @@
+# Golden conformance vectors: keep LF bytes on every platform (M5-10).
+spec/conformance/** text eol=lf
+spec/conformance/**/*.npz binary

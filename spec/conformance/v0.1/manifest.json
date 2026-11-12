@@ -1,0 +1,590 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "0.1",
+ "generator": "python -m fidetype.conformance vectors",
+ "how_to_use": "For each vector, load the file with your consumer. A conforming consumer accepts exactly the vectors with expect = accept and rejects the others. For accepted files, check the values in 'expected'. 'failing_check' names the suite check that the file breaks.",
+ "vectors": [
+  {
+   "id": "V01",
+   "file": "v01-char-valid.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": "C1",
+   "clause": "3.1 / 6.1",
+   "description": "Valid char stream, 28 tokens, CTC blank at 0",
+   "expected": {
+    "n_frames": 6,
+    "vocab_size": 28,
+    "vocab_type": "char",
+    "blank_id": 0
+   }
+  },
+  {
+   "id": "V02",
+   "file": "v02-char-valid.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": "C1",
+   "clause": "6.2",
+   "description": "Valid char stream in JSON Lines with an end line",
+   "expected": {
+    "n_frames": 5,
+    "vocab_type": "char",
+    "blank_id": 0
+   }
+  },
+  {
+   "id": "V03",
+   "file": "v03-command-no-blank.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": "C2",
+   "clause": "3.1",
+   "description": "Valid command stream, blank_id null (-1 in NPZ)",
+   "expected": {
+    "n_frames": 6,
+    "vocab_type": "command",
+    "blank_id": null
+   }
+  },
+  {
+   "id": "V04",
+   "file": "v04-empty.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": "C3",
+   "clause": "3.0",
+   "description": "Empty stream (T = 0)",
+   "expected": {
+    "n_frames": 0
+   }
+  },
+  {
+   "id": "V05",
+   "file": "v05-empty.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": "C3",
+   "clause": "6.2.6",
+   "description": "Header only, no frames, no end line",
+   "expected": {
+    "n_frames": 0
+   }
+  },
+  {
+   "id": "V06",
+   "file": "v06-single-frame.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "3.1",
+   "description": "Single frame",
+   "expected": {
+    "n_frames": 1
+   }
+  },
+  {
+   "id": "V07",
+   "file": "v07-minus-inf-row.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": "C4",
+   "clause": "5.2.2",
+   "description": "Rows of -inf except one 0",
+   "expected": {
+    "n_frames": 3,
+    "neg_inf_cells": 81
+   }
+  },
+  {
+   "id": "V08",
+   "file": "v08-row-sums-to-2.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C5",
+   "clause": "5.2.1",
+   "description": "A row sums to 2 in probability space",
+   "failing_check": "NTS-NORM"
+  },
+  {
+   "id": "V09",
+   "file": "v09-nan.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C6",
+   "clause": "5.2.2",
+   "description": "NaN in log_probs",
+   "failing_check": "NTS-LP-FINITE"
+  },
+  {
+   "id": "V10",
+   "file": "v10-plus-inf.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C6",
+   "clause": "5.2.2",
+   "description": "+inf in log_probs",
+   "failing_check": "NTS-LP-FINITE"
+  },
+  {
+   "id": "V11",
+   "file": "v11-equal-times.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C7",
+   "clause": "5.2.3",
+   "description": "Two equal frame_times",
+   "failing_check": "NTS-FT-MONO"
+  },
+  {
+   "id": "V12",
+   "file": "v12-duplicate-token.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C8",
+   "clause": "5.2.4",
+   "description": "Duplicate token in vocab",
+   "failing_check": "NTS-VOCAB-UNIQUE"
+  },
+  {
+   "id": "V13",
+   "file": "v13-v-mismatch.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C9",
+   "clause": "5.1.2",
+   "description": "V differs from the length of vocab",
+   "failing_check": "NTS-V-MATCH"
+  },
+  {
+   "id": "V14",
+   "file": "v14-blank-out-of-range.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C10",
+   "clause": "5.1.6",
+   "description": "blank_id = V",
+   "failing_check": "NTS-BLANK"
+  },
+  {
+   "id": "V15",
+   "file": "v15-unknown-vocab-type.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C11",
+   "clause": "5.1.5",
+   "description": "Unknown vocab_type",
+   "failing_check": "NTS-VOCAB-TYPE"
+  },
+  {
+   "id": "V16",
+   "file": "v16-unknown-version.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C12",
+   "clause": "5.1.4",
+   "description": "Unknown spec_version \"9.9\"",
+   "failing_check": "NTS-VERSION"
+  },
+  {
+   "id": "V17",
+   "file": "v17-future-minor-version.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "5.1.4 / 6.1",
+   "description": "Future minor version \"0.2\" (see ambiguity A6)",
+   "failing_check": "NTS-VERSION"
+  },
+  {
+   "id": "V18",
+   "file": "v18-negative-latency.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C13",
+   "clause": "5.2.5",
+   "description": "Negative latency",
+   "failing_check": "NTS-LATENCY"
+  },
+  {
+   "id": "V19",
+   "file": "v19-zero-frame-period.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": "C13",
+   "clause": "5.2.5",
+   "description": "frame_period = 0",
+   "failing_check": "NTS-FRAME-PERIOD"
+  },
+  {
+   "id": "V20",
+   "file": "v20-no-vocab-type.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": "C14",
+   "clause": "6.1",
+   "description": "NPZ without vocab_type: read as char",
+   "expected": {
+    "vocab_type": "char",
+    "vocab_type_defaulted": true
+   }
+  },
+  {
+   "id": "V21",
+   "file": "v21-unknown-npz-key.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": "C15",
+   "clause": "6.1",
+   "description": "NPZ with an unknown extra key: ignore it",
+   "expected": {
+    "n_frames": 6,
+    "unknown_keys": [
+     "acme_extra"
+    ]
+   }
+  },
+  {
+   "id": "V22",
+   "file": "v22-key-vocab.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "3.1 / 8.2",
+   "description": "Key stream (W3C codes), no blank",
+   "expected": {
+    "vocab_type": "key",
+    "blank_id": null,
+    "vocab_size": 28
+   }
+  },
+  {
+   "id": "V23",
+   "file": "v23-unnormalised-logits.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "5.2.1",
+   "description": "Raw logits instead of log_softmax output",
+   "failing_check": "NTS-NORM"
+  },
+  {
+   "id": "V24",
+   "file": "v24-all-minus-inf-row.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "5.2.1",
+   "description": "A row of only -inf (total probability 0)",
+   "failing_check": "NTS-NORM"
+  },
+  {
+   "id": "V25",
+   "file": "v25-meta-nan.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "4.1",
+   "description": "meta_json holds NaN (not a JSON value)",
+   "failing_check": "NTS-META-JSON"
+  },
+  {
+   "id": "V26",
+   "file": "v26-pickled-object.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "6.1",
+   "description": "vocab stored as a pickled object array",
+   "failing_check": "NTS-PARSE"
+  },
+  {
+   "id": "V27",
+   "file": "v27-float64-log-probs.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "6.1",
+   "description": "log_probs stored as float64 (table says float32; see A7)",
+   "expected": {
+    "n_frames": 6
+   }
+  },
+  {
+   "id": "V28",
+   "file": "v28-missing-meta-json.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "6.1",
+   "description": "Required NPZ key meta_json missing",
+   "failing_check": "NTS-NPZ-KEYS"
+  },
+  {
+   "id": "V29",
+   "file": "v29-provenance-valid.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "4.2 / 4.3",
+   "description": "All four provenance keys, valid",
+   "expected": {
+    "n_frames": 6
+   }
+  },
+  {
+   "id": "V30",
+   "file": "v30-bad-weights-sha.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "4.1 / 4.2",
+   "description": "decoder.weights_sha256 is not 64 lowercase hex",
+   "failing_check": "NTS-META-TYPES"
+  },
+  {
+   "id": "V31",
+   "file": "v31-lookahead-mismatch.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "4.2",
+   "description": "decoder.lookahead_s differs from latency",
+   "failing_check": "NTS-META-LOOKAHEAD"
+  },
+  {
+   "id": "V32",
+   "file": "v32-bad-modality.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "4.1 / 4.2",
+   "description": "device.modality \"ultrasound\" is not in the enum",
+   "failing_check": "NTS-META-TYPES"
+  },
+  {
+   "id": "V33",
+   "file": "v33-leak-target-text.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "5.3.1",
+   "description": "meta carries the target text (heuristic check)",
+   "failing_check": "NTS-LEAK-KEYS"
+  },
+  {
+   "id": "V34",
+   "file": "v34-unknown-meta-keys.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "4.1",
+   "description": "Custom namespaced meta keys: allowed",
+   "expected": {
+    "n_frames": 6
+   }
+  },
+  {
+   "id": "V35",
+   "file": "v35-null-is-minus-inf.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": "C16",
+   "clause": "6.2.3",
+   "description": "null in log_probs reads as -inf",
+   "expected": {
+    "n_frames": 3,
+    "neg_inf_cells": 1
+   }
+  },
+  {
+   "id": "V36",
+   "file": "v36-decision-prob-out-of-range.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": "C17",
+   "clause": "3.5",
+   "description": "decision, uncalibrated_prob, score 1.5",
+   "failing_check": "NTS-EVT-DECISION"
+  },
+  {
+   "id": "V37",
+   "file": "v37-strength-no-range.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": "C18",
+   "clause": "3.5",
+   "description": "decision, strength, no score_range",
+   "failing_check": "NTS-EVT-DECISION"
+  },
+  {
+   "id": "V38",
+   "file": "v38-unknown-event-type.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": "C19",
+   "clause": "6.2.5",
+   "description": "Unknown event type: ignore the event",
+   "expected": {
+    "n_frames": 2,
+    "ignored_events": 1
+   }
+  },
+  {
+   "id": "V39",
+   "file": "v39-timing-order.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": "C20",
+   "clause": "3.8",
+   "description": "t_decoded earlier than t_signal_end",
+   "failing_check": "NTS-EVT-TIMING"
+  },
+  {
+   "id": "V40",
+   "file": "v40-unknown-keys.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "6.2.5",
+   "description": "Unknown header keys, frame keys and meta keys: ignore",
+   "expected": {
+    "n_frames": 2,
+    "unknown_keys": [
+     "acme_header_extra"
+    ]
+   }
+  },
+  {
+   "id": "V41",
+   "file": "v41-nan-token.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": "C6",
+   "clause": "6.2 / 5.2.2",
+   "description": "JSON NaN token in log_probs (not valid JSON)",
+   "failing_check": "NTS-PARSE"
+  },
+  {
+   "id": "V42",
+   "file": "v42-sparse-valid.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "3.3",
+   "description": "Sparse top-k frame plus rest mass",
+   "expected": {
+    "n_frames": 1
+   }
+  },
+  {
+   "id": "V43",
+   "file": "v43-sparse-unnormalised.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "3.3",
+   "description": "Sparse frame: top-k plus rest sums to 1.4",
+   "failing_check": "NTS-SPARSE"
+  },
+  {
+   "id": "V44",
+   "file": "v44-time-goes-back.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "6.2.4",
+   "description": "Frame t decreases",
+   "failing_check": "NTS-FT-MONO"
+  },
+  {
+   "id": "V45",
+   "file": "v45-header-not-first.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "6.2.1",
+   "description": "A frame comes before the header",
+   "failing_check": "NTS-JSONL-HEADER"
+  },
+  {
+   "id": "V46",
+   "file": "v46-short-frame.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "5.1.2 / 6.2.2",
+   "description": "A frame with V-1 values",
+   "failing_check": "NTS-V-MATCH"
+  },
+  {
+   "id": "V47",
+   "file": "v47-blank-bool.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "3.1",
+   "description": "blank_id is a boolean",
+   "failing_check": "NTS-BLANK"
+  },
+  {
+   "id": "V48",
+   "file": "v48-lines-after-end.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "6.2",
+   "description": "Lines after the end marker: ignored (see A5)",
+   "expected": {
+    "n_frames": 1
+   }
+  },
+  {
+   "id": "V49",
+   "file": "v49-phoneme-ctc.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "3.1 / 8.2",
+   "description": "Phoneme CTC stream (ARPAbet + SIL)",
+   "expected": {
+    "n_frames": 4,
+    "vocab_type": "phoneme",
+    "blank_id": 0
+   }
+  },
+  {
+   "id": "V50",
+   "file": "v50-missing-header-field.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "6.2.1",
+   "description": "Header without vocab_type",
+   "failing_check": "NTS-JSONL-HEADER"
+  },
+  {
+   "id": "V51",
+   "file": "v51-events-valid.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "3.5-3.9",
+   "description": "Valid decision, hypothesis, pointer and signal_quality events",
+   "expected": {
+    "n_frames": 2,
+    "events": 4
+   }
+  },
+  {
+   "id": "V52",
+   "file": "v52-bad-clock-domain.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "3.8",
+   "description": "clock_domain \"gps\" is not in the enum",
+   "failing_check": "NTS-CLOCK"
+  }
+ ]
+}

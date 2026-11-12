@@ -171,11 +171,19 @@ class TemperatureScaler:
         """Return a copy of the stream with calibrated frame log-probs.
 
         All other stream fields (vocab, vocab_type, frame_period, latency,
-        version, ...) are kept. ``meta`` gets ``calibration_temperature``.
+        version, ...) are kept. ``meta`` gets ``calibration_temperature``
+        and the spec 4.2 keys ``calibration.applied = true``,
+        ``decoder.calibration_method = "temperature"`` and
+        ``decoder.calibration_id`` (conformance finding M5-10: before, a
+        calibrated stream still said, by the default of
+        ``calibration.applied``, that no calibration step had run).
         """
         lp = self.transform_logits(stream.log_probs).astype(np.float32)
         meta = dict(stream.meta)
         meta["calibration_temperature"] = self.temperature
+        meta["calibration.applied"] = True
+        meta["decoder.calibration_method"] = "temperature"
+        meta["decoder.calibration_id"] = f"temperature:{float(self.temperature):.6g}"
         return replace(
             stream,
             log_probs=lp,

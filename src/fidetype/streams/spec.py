@@ -72,6 +72,11 @@ def _logsumexp_rows(x: np.ndarray) -> np.ndarray:
     return out
 
 
+def _reject_json_constant(name: str) -> Any:
+    """``json.loads`` hook: NaN and Infinity are not JSON values (spec 4.1)."""
+    raise ValueError(f"meta_json holds {name}, which is not a JSON value (spec 4.1)")
+
+
 #: Allowed values of :attr:`NeuralTextStream.vocab_type`.
 VOCAB_TYPES = ("char", "key", "word", "phoneme", "command", "other")
 
@@ -184,7 +189,8 @@ class NeuralTextStream:
     def to_npz(self, path: str | PathLike[str]) -> None:
         """Save the stream to a compressed ``.npz`` file.
 
-        ``meta`` is stored as a JSON string. The file loads without
+        ``meta`` is stored as a JSON string (NaN and infinity are refused,
+        spec 4.1). The file loads without
         pickle. A ``blank_id`` of None is stored as ``-1``. The keys
         ``frame_period`` and ``latency`` are written only if they are set.
         """
@@ -196,7 +202,7 @@ class NeuralTextStream:
             vocab_type=np.array(self.vocab_type),
             blank_id=np.array(NPZ_NO_BLANK if self.blank_id is None else self.blank_id, dtype=np.int64),
             source=np.array(self.source),
-            meta_json=np.array(json.dumps(self.meta)),
+            meta_json=np.array(json.dumps(self.meta, allow_nan=False)),
         )
         if self.frame_period is not None:
             arrays["frame_period"] = np.array(self.frame_period, dtype=np.float64)
@@ -219,7 +225,7 @@ class NeuralTextStream:
                 vocab=[str(t) for t in z["vocab"]],
                 blank_id=None if blank_id == NPZ_NO_BLANK else blank_id,
                 source=str(z["source"]),
-                meta=json.loads(str(z["meta_json"])),
+                meta=json.loads(str(z["meta_json"]), parse_constant=_reject_json_constant),
                 version=str(z["version"]),
                 vocab_type=str(z["vocab_type"]) if "vocab_type" in z.files else "char",
                 frame_period=float(z["frame_period"]) if "frame_period" in z.files else None,

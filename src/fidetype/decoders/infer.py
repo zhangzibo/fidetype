@@ -9,8 +9,10 @@ For each segment of each split, the script writes one stream to
 
 - ``log_probs`` holds the per-frame log-softmax (40 ms frames).
 - ``frame_times`` is relative to the segment start, in seconds.
-- ``meta`` has run, subject, split and position data. It does NOT hold
-  the target text.
+- ``meta`` has the spec section 4.2 keys plus run, subject, split and
+  position data under ``spanishbcbl.`` (see
+  :mod:`fidetype.adapters.spanishbcbl_meg`). It does NOT hold the target
+  text.
 
 The labels for evaluation go to a separate ``labels.jsonl`` in each
 split directory. The script then computes greedy-CTC CER and WER
@@ -44,11 +46,10 @@ import torch  # noqa: E402
 from fidetype.decoders.conv_ctc import ConvCTC, ModelConfig
 from fidetype.decoders.dataset import MEGSegments
 from fidetype.eval.metrics import cer, ctc_greedy_decode, wer
-from fidetype.streams.spec import NeuralTextStream
-from fidetype.streams.vocab import BLANK_ID, VOCAB
+from fidetype.adapters.spanishbcbl_meg import SOURCE, opaque_stream_id, segment_stream
+from fidetype.trust.provenance import file_sha256
 
 DEFAULT_OUT_ROOT = "C:/Users/zhang/bci-data/streams"
-SOURCE = "spanishbcbl-convctc"
 
 
 def load_checkpoint(path: str | Path, device: torch.device) -> tuple[ConvCTC, dict[str, Any]]:
@@ -177,6 +178,7 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
     run_dir = Path(run_dir)
     dev = torch.device(device if (device != "cuda" or torch.cuda.is_available()) else "cpu")
     model, ck = load_checkpoint(run_dir / ckpt_name, dev)
+    weights_sha256 = file_sha256(run_dir / ckpt_name)
     cfg = ck["config"]
     run_name = run_dir.name
     root = data_root or cfg["data"]["root"]
@@ -212,26 +214,16 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
                 n = int(out["out_lengths"][0])
                 lp = out["logits"][0, :n].float().log_softmax(-1).cpu().numpy()
                 name = f"{seg.subject}_{seg.session}_{seg.block}_{seg.trial_idx}"
-                stream = NeuralTextStream(
-                    log_probs=lp,
-                    frame_times=np.arange(n) * period,
-                    vocab=list(VOCAB),
-                    blank_id=BLANK_ID,
-                    source=SOURCE,
-                    meta={
-                        "run_name": run_name,
-                        "checkpoint": ckpt_name,
-                        "subject": seg.subject,
-                        "participant": seg.participant,
-                        "session": seg.session,
-                        "block": seg.block,
-                        "trial_idx": seg.trial_idx,
-                        "split": split,
-                        "segment_start_s": seg.start / item["sfreq"],
-                        "frame_period_s": period,
-                        "lookahead_frames": model.cfg.lookahead_frames,
-                        "model": "conv_ctc",
-                    },
+                stream = segment_stream(
+                    lp, period,
+                    subject=seg.subject, session=seg.session, participant=seg.participant,
+                    block=seg.block, trial_idx=seg.trial_idx, split=split,
+                    run_name=run_name, checkpoint=ckpt_name,
+                    segment_start_s=seg.start / item["sfreq"],
+                    conformer_layers=model.cfg.conformer_layers,
+                    lookahead_frames=model.cfg.lookahead_frames,
+                    weights_sha256=weights_sha256,
+                    stream_id=opaque_stream_id(run_name, ckpt_name, split, name),
                 )
                 stream.to_npz(sdir / f"{name}.npz")
                 hyp = ctc_greedy_decode(stream)

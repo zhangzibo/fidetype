@@ -1,0 +1,5 @@
+{"type": "header", "spec_version": "0.1", "vocab": ["<blank>", "SIL", "AA", "AE", "AH", "B", "D", "K", "S", "T"], "vocab_type": "phoneme", "blank_id": 0, "source": "conformance-vector", "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial", "meta": {"device.modality": "other", "decoder.name": "conformance-vector", "decoder.version": "1", "decoder.causal": true, "data.derived": true, "language": "en"}}
+{"type": "frame", "t": 0.0, "log_probs": [-3.144174, -3.659844, -2.114789, -3.185835, -4.466974, -2.672445, -0.787635, -1.501473, -4.803105, -5.926478]}
+{"type": "frame", "t": 0.04, "log_probs": [-3.85171, -2.522509, -7.255223, -3.042744, -5.096983, -4.069696, -3.693679, -3.237761, -1.7819, -0.520134]}
+{"type": "frame", "t": 0.08, "log_probs": [-3.591841, -0.601845, -4.665161, -2.631752, -1.527831, -3.146747, -4.82177, -5.178223, -4.250223, -2.894382]}
+{"type": "frame", "t": 0.12, "log_probs": [-5.536789, -3.935904, -3.836002, -2.435861, -3.088234, -2.806807, -4.82521, -3.77678, -1.949601, -0.53069]}

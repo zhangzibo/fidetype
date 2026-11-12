@@ -13,6 +13,16 @@ This folder holds the written specifications of Fidetype. A spec is the normativ
 
 The model is OpenTelemetry (a data model plus semantic conventions) and BIDS (80/20, adoption first).
 
+## Conformance
+Check a producer or a consumer with the conformance suite (levels core, trust-ready, provenance; each check cites its spec clause):
+
+```bash
+python -m fidetype.conformance check my_stream.npz --level trust-ready
+python -m fidetype.conformance consumer --cmd "my-reader {path}"   # exit 0 = accept
+```
+
+The golden vectors are in [`conformance/v0.1/`](conformance/v0.1/). Details: [wiki/concepts/conformance-suite.md](../wiki/concepts/conformance-suite.md).
+
 ## Stability levels
 | Level | Meaning |
 |---|---|
@@ -32,6 +42,7 @@ The model is OpenTelemetry (a data model plus semantic conventions) and BIDS (80
 spec/
   README.md                   this file
   neuraltextstream-v0.1.md    the NeuralTextStream spec
+  conformance/v0.1/           golden test vectors (manifest.json + small synthetic .npz / .jsonl files)
   feps/                       Fidetype Enhancement Proposals
     0000-template.md          the template for a new FEP
 ```

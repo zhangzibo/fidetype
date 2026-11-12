@@ -37,3 +37,6 @@ Thumbs.db
 # Reference material with third-party licences (see references/README.md)
 references/papers/
 references/repos/
+
+# Golden conformance vectors are small synthetic fixtures (M5-10); commit them.
+!spec/conformance/**/*.npz

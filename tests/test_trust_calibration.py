@@ -104,7 +104,8 @@ def test_transform_stream_keeps_all_metadata():
         else:
             assert a == b, f.name
     assert st2.frame_period == 0.04 and st2.latency == 0.25 and st2.vocab_type == "char"
-    assert st2.meta == {"subject": "S1", "calibration_temperature": 1.7}
+    assert st2.meta == {"subject": "S1", "calibration_temperature": 1.7, "calibration.applied": True,
+                        "decoder.calibration_method": "temperature", "decoder.calibration_id": "temperature:1.7"}
     assert st.meta == {"subject": "S1"}  # the input is not changed
     assert not np.allclose(st.log_probs, st2.log_probs)
 

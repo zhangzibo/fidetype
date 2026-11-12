@@ -73,6 +73,7 @@ The M6-06 trust pipeline replayed the B2T '25 test half (816 trials) with a ledg
 > **Our take:** The record format follows the IEC 62304 idea of traceability (each output traces to a versioned software item and its configuration) and the "audit trail" idea of medical device software. This is our interpretation. We did not check the standards' text. The ledger supports such a story; it is not a compliance claim.
 
 ## Related
+- [Conformance suite](conformance-suite.md): its level "provenance" checks that producers emit the keys this ledger copies (`stream.id`, `decoder.weights_sha256`, `adapter.*`).
 - [Conformal risk control](conformal-risk-control.md): its threshold, α and δ go into the calibration block.
 - [Brain-to-Text '25 trust result](../questions/b2t25-trust-result.md): the replay of the demo.
 - [Standard roadmap](../questions/roadmap-standard.md), [architecture](../questions/architecture.md), [project plan](../questions/project-plan.md).

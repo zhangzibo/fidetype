@@ -59,6 +59,7 @@ from typing import Any, Iterable, Sequence
 
 import numpy as np
 
+from fidetype import __version__ as _FIDETYPE_VERSION
 from fidetype.streams.spec import NeuralTextStream
 
 # --- vocabulary ---------------------------------------------------------------
@@ -76,6 +77,7 @@ SIL_ID = 1
 VOCAB: tuple[str, ...] = (BLANK_TOKEN, SIL_TOKEN, *PHONEMES)
 #: Our name for this vocabulary (spec section 3.4 namespace ``phoneme.*``).
 VOCAB_ID = "phoneme.arpabet-39-sil"
+ADAPTER_NAME = "fidetype.adapters.b2t25"
 SYMBOL_VOCAB_ID = "phoneme.arpabet-39-sil.sym1"
 
 _SYMBOL_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLM"
@@ -329,6 +331,17 @@ def frame_times(n_frames: int) -> np.ndarray:
     return (np.arange(n_frames) * PATCH_STRIDE + PATCH_SIZE) * BIN_S
 
 
+def stream_id(trial: CopyTaskTrial) -> str:
+    """An opaque, deterministic ``stream.id`` for a trial (spec 4.2): 32 hex characters.
+
+    It hashes the dataset file digest, the trial index and the logits, so
+    it changes if the source data change. It holds no text.
+    """
+    h = hashlib.sha256(f"{DRYAD_SHA256}/{trial.index}/".encode("utf-8"))
+    h.update(np.ascontiguousarray(trial.logits, dtype=np.float32).tobytes())
+    return h.hexdigest()[:32]
+
+
 def stream_meta(trial: CopyTaskTrial) -> dict[str, Any]:
     """The ``meta`` of a trial stream (spec section 4 keys). No text, no labels."""
     return {
@@ -341,12 +354,16 @@ def stream_meta(trial: CopyTaskTrial) -> dict[str, Any]:
         "decoder.causal": True,
         "decoder.lookahead_s": 0.0,
         "decoder.calibration_method": "none",
+        "adapter.name": ADAPTER_NAME,
+        "adapter.version": _FIDETYPE_VERSION,
         "lm.name": "none",
         "user.personalized": True,
+        "calibration.applied": False,
         "subject.id": "T15",
         "session.id": f"day{trial.post_implant_day:03d}",
         "language": "en-US",
         "data.derived": True,
+        "stream.id": stream_id(trial),
         "fidetype.vocab_id": VOCAB_ID,
         "fidetype.trial_index": trial.index,
         "fidetype.timing": "inferred: 80 ms frames, frame time = end of a 14 x 20 ms patch",

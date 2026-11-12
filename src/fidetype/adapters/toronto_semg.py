@@ -64,6 +64,7 @@ from typing import Any, BinaryIO, Iterable, Sequence
 
 import numpy as np
 
+from fidetype import __version__ as _FIDETYPE_VERSION
 from fidetype.streams.spec import NeuralTextStream
 from fidetype.streams.vocab import BLANK_ID as CHAR_BLANK_ID
 from fidetype.streams.vocab import VOCAB as CHAR_VOCAB
@@ -91,6 +92,7 @@ KEY_VOCAB_ID = "key.w3c-code.az-space"
 SPACE_INDEX = 26
 assert CHAR_VOCAB == ("<blank>", *KEY_CHARS)
 CTC_VOCAB_ID = "char.b2q-28"
+ADAPTER_NAME = "fidetype.adapters.toronto_semg"
 
 #: Default mass given to the blank token on a key frame and to the 27 keys
 #: on a blank frame (CTC form). Same values as the MEG run M2-10.
@@ -396,8 +398,15 @@ def stream_meta(
     personalized: bool = False,
     composed: bool = False,
     extra: dict[str, Any] | None = None,
+    weights_sha256: str | None = None,
+    stream_id: str | None = None,
 ) -> dict[str, Any]:
-    """The ``meta`` of a key-press stream (spec section 4 keys). No text, no labels."""
+    """The ``meta`` of a key-press stream (spec section 4 keys). No text, no labels.
+
+    ``weights_sha256`` (SHA-256 of the decoder weights file) and
+    ``stream_id`` (an opaque id) are the optional provenance keys of spec
+    4.2 / 4.3. Give them to reach the conformance level "provenance".
+    """
     m: dict[str, Any] = {
         "device.modality": "emg",
         "device.vendor": "Intan Technologies",
@@ -409,14 +418,21 @@ def stream_meta(
         "decoder.version": decoder_version,
         "decoder.causal": False,
         "decoder.calibration_method": "none",
+        "adapter.name": ADAPTER_NAME,
+        "adapter.version": _FIDETYPE_VERSION,
         "lm.name": "none",
         "user.personalized": bool(personalized),
+        "calibration.applied": False,
         "language": "en",
         "data.derived": True,
         "fidetype.vocab_id": KEY_VOCAB_ID,
         "fidetype.timing": "oracle-keystroke: one frame per key press; key times from the keylogger",
         "fidetype.composed": bool(composed),
     }
+    if weights_sha256 is not None:
+        m["decoder.weights_sha256"] = weights_sha256
+    if stream_id is not None:
+        m["stream.id"] = stream_id
     if subject is not None:
         m["subject.id"] = subject
     if session is not None:
@@ -438,19 +454,28 @@ def keypress_stream(
     ``log_probs`` is (K, 27) in the order of :data:`KEY_VOCAB` (logits are
     fine: the function applies ``log_softmax``). ``key_times`` must
     increase strictly. ``latency`` is the window time after the key press
-    that the decoder used (the decoder is not causal, so the default
-    leaves it out and ``meta`` says ``decoder.causal = false``).
+    that the decoder used. The default leaves it out and ``meta`` says
+    ``decoder.causal = false``. If ``latency`` is given, the decoder uses
+    no signal after ``key_time + latency``, which is the spec 4.2
+    definition of a causal decoder: the stream then sets
+    ``decoder.causal = true`` and ``decoder.lookahead_s = latency``
+    (conformance finding M5-10: before, a stream could carry a latency
+    and ``decoder.causal = false`` at the same time).
     """
     lp = np.asarray(log_probs, dtype=np.float64)
     if lp.ndim != 2 or lp.shape[1] != len(KEY_VOCAB):
         raise ValueError(f"log_probs must be (K, {len(KEY_VOCAB)}), got {lp.shape}")
+    meta = dict(meta) if meta is not None else stream_meta()
+    if latency is not None:
+        meta["decoder.causal"] = True
+        meta["decoder.lookahead_s"] = float(latency)
     return NeuralTextStream(
         log_probs=log_softmax(lp).astype(np.float32),
         frame_times=np.asarray(key_times, dtype=np.float64),
         vocab=list(KEY_VOCAB),
         blank_id=None,
         source=source,
-        meta=dict(meta) if meta is not None else stream_meta(),
+        meta=meta,
         vocab_type="key",
         latency=latency,
     )

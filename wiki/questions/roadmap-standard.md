@@ -33,7 +33,7 @@ updated: 2026-11-11
 | `fidetype` Python package (about 11.5k lines) | Decoders, LM, trust core, eval harness, first adapter (B2T '25) | P2, P3, P5 |
 | Trust core v0 | Runs on the simulator, real MEG and B2T '25 | P5 |
 | Benchmark v0.1 (M5) | Harness exists; leaderboard not yet | P6 |
-| Validator; conformance cases C1–C20 | Validator exists; no suite | P7 |
+| Validator; conformance cases C1–C20 | Validator exists. 2026-11-11 (M5-10): [conformance suite](../concepts/conformance-suite.md) v0 (`fidetype.conformance`, 60 checks, levels core / trust-ready / provenance, 52 golden vectors in `spec/conformance/v0.1/`) | P7 |
 | Adapters (M6) | B2T '25 replay in progress; LSL/BrainFlow not yet | P4 |
 | OSS files, FEP template, GOVERNANCE.md | Done (commit 677ba0e) | P9 |
 | Paper 1, Paper 2 (M3, M4) | Not written | P10, P11 |

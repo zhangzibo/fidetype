@@ -28,4 +28,4 @@ updated: 2026-11-11
 
 > **Our take:** Small, but the only commercially clean EMG typing set with many people. Use it for cross-subject tests of an EMG adapter, together with [KT-sEMG](kt-semg-dataset.md).
 
-Related: [emg2qwerty](emg2qwerty.md) · [Public datasets survey](../questions/public-datasets.md)
+Related: [Conformance suite](../concepts/conformance-suite.md) (adapter level: provenance) · [emg2qwerty](emg2qwerty.md) · [Public datasets survey](../questions/public-datasets.md)
