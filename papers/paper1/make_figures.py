@@ -13,6 +13,8 @@ Inputs (all committed):
   experiments/2026-11-11-m1-09-async-full/analysis/analysis.json    (MEG CER)
   experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json  (MEG trust, async; used only if git tracks it)
   papers/paper1/data/markdown-only-numbers.json                     (numbers that exist only in markdown; sources inside)
+  papers/paper1/data/r1-derived.json                                (analysis_r1.py: split percentiles from committed items)
+  experiments/2026-11-11-g1-async-meg-trust/results/null-audit-async.json (MEG guard-risk AUROC)
 
 The script recomputes two things from per-trial items: the risk-coverage curves (Fig. risk) and the
 running wrong-commit trace under drift (Fig. drift a). The drift trace re-runs fidetype.trust.online_risk
@@ -79,6 +81,8 @@ def panel_label(ax, s: str) -> None:
 B2T = load("experiments/2026-11-10-b2t25-trust/results/trust.json")["levels"]["word"]
 EMG = load("experiments/2026-11-11-emg-toronto/results/trust.json")["conditions"]
 MD = load("papers/paper1/data/markdown-only-numbers.json")
+R1 = load("papers/paper1/data/r1-derived.json")
+SPLITS = load("experiments/2026-11-11-m2-13-conformal/results/splits.json")
 G1_REL = "experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json"
 G1 = load(G1_REL) if tracked(G1_REL) else None
 
@@ -117,7 +121,7 @@ def errbar(ax, r: dict, color: str, marker: str, filled: bool, label: str | None
 
 # ---------------------------------------------------------------- Fig 1: teaser
 def fig_teaser() -> None:
-    fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.25), sharey=True)
+    fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.5), sharey=True)
     # (a) B2T
     ax = axes[0]
     for ck, tk, name in (("w_b_top1_commit", "w_c_trust", "our decoder"), ("w_p_published_commit", "w_q_published_trust", "published decoder")):
@@ -127,6 +131,9 @@ def fig_teaser() -> None:
         errbar(ax, a, C["commit"], "o", False)
         errbar(ax, b, C["trust"], "o", True)
         ax.text(a["ewpm"], a["wc"] + 0.06, name, ha="center", fontsize=6.5)
+    for dk in ("b2t-ours", "b2t-published"):
+        nc = SPLITS["datasets"][dk]["whole_test"]["never_commit"]
+        ax.plot(nc["ewpm"], nc["wrong_commit"], "^", ms=5, color=C["gaze"], mfc="white", mew=1.0, zorder=4)
     ax.axvline(B2T["gaze_only_ewpm"], color=C["gaze"], ls="--", lw=0.9)
     ax.set_title("Intracortical (B2T '25)")
     ax.set_xlim(2, 22)
@@ -139,7 +146,9 @@ def fig_teaser() -> None:
                     arrowprops=dict(arrowstyle="->", color="#888888", lw=0.8, shrinkA=4, shrinkB=4))
         errbar(ax, a, C["commit"], "s", False)
         errbar(ax, b, C["trust"], "s", True)
-        ax.text(a["ewpm"] + 0.15, a["wc"] + 0.03, names[cond], fontsize=6.5)
+        off = {"calib": (0.15, 0.03), "xsession": (0.25, -0.06), "xsubject": (0.0, 0.05)}[cond]
+        ax.text(a["ewpm"] + off[0], a["wc"] + off[1], names[cond], fontsize=6.3,
+                ha="center" if off[0] == 0 else "left")
     ax.axvline(EMG["calib"]["gaze_only_ewpm"], color=C["gaze"], ls="--", lw=0.9)
     ax.set_title("sEMG (Toronto)")
     ax.set_xlim(2.5, 9.5)
@@ -150,17 +159,21 @@ def fig_teaser() -> None:
                 arrowprops=dict(arrowstyle="->", color="#888888", lw=0.8, shrinkA=4, shrinkB=4))
     errbar(ax, a, C["commit"], "D", False, "always commit")
     errbar(ax, b, C["trust"], "D", True, "trust layer")
+    ax.annotate("commits 0%", xy=(b["ewpm"], b["wc"]), xytext=(2.9, 0.35), fontsize=6.3,
+                ha="center", arrowprops=dict(arrowstyle="-", color="#888888", lw=0.6))
+    ax.plot([], [], "^", ms=5, color=C["gaze"], mfc="white", label="always offer")
     ax.axvline(gaze, color=C["gaze"], ls="--", lw=0.9, label="gaze typing only")
-    ax.set_title(f"MEG ({title.split('(')[1][:-1]})")
+    ax.set_title("MEG (asynchronous)")
     ax.set_xlim(2.0, 4.0)
     for i, ax in enumerate(axes):
         ax.set_xlabel("eWPM (higher is better)")
         ax.axhline(ALPHA, color="#BBBBBB", lw=0.6, ls=":")
         panel_label(ax, "abc"[i])
-    axes[0].set_ylabel("wrong-commit rate\n(lower is better)")
+    axes[0].set_ylabel("wrong commits / all sentences\n(lower is better)")
     axes[0].set_ylim(-0.04, 1.08)
-    axes[2].legend(loc="center right", frameon=False, handlelength=1.2)
-    fig.tight_layout(w_pad=0.6)
+    h, lab = axes[2].get_legend_handles_labels()
+    fig.legend(h, lab, loc="lower center", ncol=4, frameon=False, handlelength=1.2, bbox_to_anchor=(0.5, -0.01))
+    fig.tight_layout(w_pad=0.6, rect=(0, 0.08, 1, 1))
     save(fig, "fig1_teaser")
 
 
@@ -207,49 +220,68 @@ def _items(rel: str) -> dict:
     return {"s": s, "wc_c": np.asarray(d["wc_c"], float), "wc_f": np.asarray(d["wc_f"], float)}
 
 
-def fig_risk() -> None:
-    sets = [("B2T '25, our decoder", "experiments/2026-11-11-m2-13-conformal/results/items-b2t-ours.json", C["trust"], "-"),
+RISK_SETS = [("B2T '25, our decoder", "experiments/2026-11-11-m2-13-conformal/results/items-b2t-ours.json", C["trust"], "-"),
             ("B2T '25, published", "experiments/2026-11-11-m2-13-conformal/results/items-b2t-published.json", C["pub"], "-"),
             ("sEMG session-cal.", "experiments/2026-11-11-m2-16-online-recal/results/items-emg-calib.json", C["crc"], "--"),
             ("sEMG cross-session", "experiments/2026-11-11-m2-16-online-recal/results/items-emg-xsession.json", C["old"], "--"),
-            ("MEG (async M1-09)", "experiments/2026-11-11-g1-async-meg-trust/results/items-meg-async.json", C["gaze"], ":")]
-    fig, ax = plt.subplots(figsize=(HALF + 0.4, 2.4))
-    for name, rel, col, ls in sets:
-        it = _items(rel)
-        fin = np.sort(np.unique(it["s"][np.isfinite(it["s"])]))[::-1]
-        cov, wc = [0.0], [float(it["wc_f"].mean())]
-        for lam in fin:
-            on = it["s"] >= lam
-            cov.append(on.mean())
-            wc.append(np.where(on, it["wc_c"], it["wc_f"]).mean())
-        ax.plot(cov, wc, ls=ls, color=col, label=name, lw=1.1)
-    ax.axhline(ALPHA, color="black", lw=0.6, ls=":")
-    ax.text(0.005, ALPHA + 0.005, r"$\alpha = 0.05$", fontsize=6.5)
-    ax.set_xlabel("commit rate (share of sentences committed)")
-    ax.set_ylabel("wrong-commit rate")
-    ax.set_xlim(0, 0.7)
-    ax.set_ylim(0, 0.32)
-    ax.legend(frameon=False, fontsize=6.2, loc="upper left")
-    save(fig, "fig_risk_coverage")
+            ("MEG (asynchronous)", "experiments/2026-11-11-g1-async-meg-trust/results/items-meg-async.json", C["gaze"], ":")]
+SMALL = (2.15, 2.0)
+
+
+def _curve(it: dict, min_commits: int = 10):
+    fin = np.sort(np.unique(it["s"][np.isfinite(it["s"])]))[::-1]
+    cov, marg, sel = [], [], []
+    for lam in fin:
+        on = it["s"] >= lam
+        if on.sum() < min_commits:
+            continue
+        cov.append(on.mean())
+        marg.append(np.where(on, it["wc_c"], it["wc_f"]).mean())
+        sel.append(it["wc_c"][on].mean())
+    return np.array(cov), np.array(marg), np.array(sel)
+
+
+def fig_risk() -> None:
+    for kind in ("marginal", "selective"):
+        fig, ax = plt.subplots(figsize=SMALL)
+        for name, rel, col, ls in RISK_SETS:
+            cov, marg, sel = _curve(_items(rel))
+            ax.plot(cov, marg if kind == "marginal" else sel, ls=ls, color=col, label=name, lw=1.1)
+        ax.axhline(ALPHA, color="black", lw=0.6, ls=":")
+        ax.set_xlabel("commit rate")
+        ax.set_xlim(0, 0.7)
+        if kind == "marginal":
+            ax.set_ylabel("wrong commits / all items")
+            ax.set_ylim(0, 0.32)
+            ax.legend(frameon=True, framealpha=0.9, edgecolor="none", fontsize=5.4, loc="upper left")
+            save(fig, "fig_risk_coverage")
+        else:
+            ax.set_ylabel("wrong commits / commits")
+            ax.set_ylim(0, 1.02)
+            save(fig, "fig_selective_risk")
 
 
 # ---------------------------------------------------------------- Fig: CRC / LTT over splits
 def fig_crc() -> None:
     S = load("experiments/2026-11-11-m2-13-conformal/results/splits.json")
     MEGCRC = load("experiments/2026-11-11-g1-async-meg-trust/results/crc-splits-async.json")
-    ds = [("b2t-ours", "B2T '25\nours"), ("b2t-published", "B2T '25\npublished"), ("meg-async", "MEG\n(async M1-09)")]
-    meth = [("old", "plug-in gate", C["old"]), ("crc", "CRC", C["crc"]), ("ltt", "LTT", C["ltt"])]
+    ds = [("b2t-ours", "B2T '25\nours"), ("b2t-published", "B2T '25\npublished"), ("meg-async", "MEG\n(asynchronous)")]
+    meth = [("old", "fixed gate", C["old"]), ("crc", "CRC", C["crc"]), ("ltt", "LTT", C["ltt"])]
     fig, axes = plt.subplots(1, 2, figsize=(FULL, 2.2), sharey=True)
     for ax, ncal in zip(axes, ("100", "408")):
         for i, (dk, dn) in enumerate(ds):
             for j, (mk, mn, col) in enumerate(meth):
                 if dk == "meg-async":
-                    w = MEGCRC["splits"][f"random_{ncal}"][mk]["wrong_commit"]
+                    w = R1["splits_meg_async"][ncal][mk]
+                    ref = MEGCRC["splits"][f"random_{ncal}"][mk]["wrong_commit"]["mean"]
                 else:
-                    w = S["datasets"][dk]["splits"][ncal][mk]["wrong_commit"]
+                    w = R1["splits_m213"][dk][ncal][mk]
+                    ref = S["datasets"][dk]["splits"][ncal][mk]["wrong_commit"]["mean"]
+                assert abs(w["wrong_commit_mean"] - ref) < 1e-4
                 x = i + (j - 1) * 0.22
-                ax.plot([x, x], [w["p05"], w["p95"]], color=col, lw=2.2, alpha=0.55, solid_capstyle="butt")
-                ax.plot(x, w["mean"], "o", color=col, ms=4.5, label=mn if i == 0 else None)
+                ax.plot([x, x], [w["wrong_commit_p05"], w["wrong_commit_p90"]], color=col, lw=2.2, alpha=0.55,
+                        solid_capstyle="butt")
+                ax.plot(x, w["wrong_commit_mean"], "o", color=col, ms=4.5, label=mn if i == 0 else None)
         ax.axhline(ALPHA, color="black", lw=0.6, ls=":")
         ax.set_xticks(range(len(ds)))
         ax.set_xticklabels([d[1] for d in ds])
@@ -335,7 +367,7 @@ def fig_drift() -> None:
 
 # ---------------------------------------------------------------- Fig: null-input audit
 def fig_null() -> None:
-    fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.2), sharey=True, gridspec_kw={"width_ratios": [4, 5, 6]})
+    fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.2), gridspec_kw={"width_ratios": [4, 5, 5]})
     # B2T: commit_rate of always-commit vs trust (wrong commits on null input = commits)
     na = B2T["null_audit"]
     cats = [("real", "real"), ("other_trial", "other\nsentence"), ("frame_shuffled", "frame-\nshuffled"), ("uniform", "uniform")]
@@ -347,10 +379,21 @@ def fig_null() -> None:
     _null_panel(axes[1], cats, [ne["b_top1_commit"][c]["commit_rate"] for c, _ in cats],
                 [ne["c_trust"][c]["commit_rate"] for c, _ in cats], f"sEMG cross-session\n({EMG['xsession']['null_audit_n']} sentences)")
     nm = load("experiments/2026-11-11-g1-async-meg-trust/results/null-audit-async.json")
-    cats = [("real", "real"), ("other_sentence", "other\nsentence"), ("frame_shuffled", "frame-\nshuffled"),
+    cats = [("other_sentence", "other\nsentence"), ("frame_shuffled", "frame-\nshuffled"),
             ("uniform", "uniform"), ("shuffled_meg", "shuffled\nMEG"), ("zeros_meg", "zeros")]
-    _null_panel(axes[2], cats, [nm["policies"]["commit"][c]["commit_rate"] for c, _ in cats],
-                [nm["policies"]["trust"][c]["commit_rate"] for c, _ in cats], f"MEG, async M1-09\n({nm['n']} instances)")
+    ax = axes[2]
+    au = [_meg_auroc(nm, c) for c, _ in cats]
+    x = np.arange(len(cats))
+    ax.bar(x, au, 0.55, color=C["trust"], alpha=0.85)
+    for xi, v in zip(x, au):
+        ax.text(xi, v + 0.02, f"{v:.2f}", ha="center", fontsize=5.8)
+    ax.axhline(0.5, color="black", lw=0.6, ls=":")
+    ax.set_xticks(x)
+    ax.set_xticklabels([c[1] for c in cats], fontsize=5.2)
+    ax.set_ylim(0, 1.12)
+    ax.set_ylabel("guard-risk AUROC vs real", fontsize=6.5)
+    ax.yaxis.set_tick_params(labelleft=True)
+    ax.set_title(f"MEG, asynchronous decoder\n({nm['n']} instances; no commits)", fontsize=7.5)
     axes[0].set_ylabel("commit rate")
     for i, ax in enumerate(axes):
         panel_label(ax, "abc"[i])
@@ -360,14 +403,19 @@ def fig_null() -> None:
     save(fig, "fig_null_audit")
 
 
+def _meg_auroc(nm: dict, cat: str) -> float:
+    """Guard-risk AUROC null vs real, as stored by the G1 null audit."""
+    return float(nm["policies"]["trust"]["risk_auroc_null_vs_real"][cat])
+
+
 def _null_panel(ax, cats, commit, trust, title):
     x = np.arange(len(cats))
     ax.bar(x - 0.19, commit, 0.36, color=C["commit"], label="always commit")
     ax.bar(x + 0.19, trust, 0.36, color=C["trust"], label="trust layer")
     for xi, t in zip(x, trust):
-        ax.text(xi + 0.19, t + 0.02, f"{t:.0%}" if t < 0.995 else "100%", ha="center", fontsize=5.8)
+        ax.text(xi + 0.19, t + 0.02, (f"{t:.1%}" if 0 < t < 0.1 else f"{t:.0%}") if t < 0.995 else "100%", ha="center", fontsize=5.8)
     ax.set_xticks(x)
-    ax.set_xticklabels([c[1] for c in cats], fontsize=5.8)
+    ax.set_xticklabels([c[1] for c in cats], fontsize=5.2)
     ax.set_ylim(0, 1.12)
     ax.set_title(title, fontsize=7.5)
 
@@ -399,32 +447,31 @@ def fig_meg_cer() -> None:
 
 # ---------------------------------------------------------------- Fig: calibration (ECE)
 def fig_ece() -> None:
-    rows = [("B2T '25", B2T["policies"]["w_c_trust"])] + \
-           [(f"sEMG\n{n}", EMG[c]["policies"]["c_trust"]) for c, n in (("calib", "session-cal."), ("xsession", "cross-session"), ("xsubject", "cross-subject"))]
-    fig, ax = plt.subplots(figsize=(HALF + 0.3, 2.1))
+    rows = [("B2T\n'25", B2T["policies"]["w_c_trust"])] + \
+           [(f"sEMG\n{n}", EMG[c]["policies"]["c_trust"]) for c, n in (("calib", "s.-cal."), ("xsession", "x-sess."), ("xsubject", "x-subj."))]
+    fig, ax = plt.subplots(figsize=SMALL)
     x = np.arange(len(rows))
     b = [r[1]["ece_sentence_before"] for r in rows]
     a = [r[1]["ece_sentence_after"] for r in rows]
     ax.bar(x - 0.19, b, 0.36, color=C["commit"], label="before")
-    ax.bar(x + 0.19, a, 0.36, color=C["trust"], label="after temperature scaling")
+    ax.bar(x + 0.19, a, 0.36, color=C["trust"], label="after scaling")
     for xi, v1, v2 in zip(x, b, a):
-        ax.text(xi - 0.19, v1 + 0.01, f"{v1:.3f}", ha="center", fontsize=5.6)
-        ax.text(xi + 0.19, v2 + 0.01, f"{v2:.3f}", ha="center", fontsize=5.6)
+        ax.text(xi - 0.21, v1 + 0.01, f"{v1:.2f}", ha="center", fontsize=5.0)
+        ax.text(xi + 0.21, v2 + 0.01, f"{v2:.2f}", ha="center", fontsize=5.0)
     ax.set_xticks(x)
     ax.set_xticklabels([r[0] for r in rows], fontsize=6.5)
     ax.set_ylabel("sentence-level ECE")
     ax.set_ylim(0, 0.62)
-    ax.legend(frameon=False, fontsize=6.3, loc="upper center", ncol=2)
+    ax.legend(frameon=False, fontsize=5.8, loc="upper left")
     save(fig, "fig_ece")
 
 
 if __name__ == "__main__":
     print("MEG trust source:", "G1 async (committed)" if G1 is not None else "M1-15 sync (markdown JSON); G1 not committed")
     fig_teaser()
-    fig_ewpm()
     fig_risk()
     fig_crc()
     fig_drift()
     fig_null()
-    fig_meg_cer()
     fig_ece()
+    # fig_ewpm() and fig_meg_cer() are no longer in the paper (v1): Table 4 and Table 3 carry their numbers.

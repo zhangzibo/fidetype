@@ -7,14 +7,14 @@
   arr/.style={-{Stealth[length=2mm]}, thick},
   node distance=5mm and 8mm]
   \node[box, fill=blue!10] (in) {NTS of one sentence\\\scriptsize calibrated $\log p_t(v)$};
-  \node[box, right=of in] (cand) {n-best candidates\\\scriptsize beam + LM; $\hat p_{\mathrm{top1}}$, guard risk};
+  \node[box, right=of in] (cand) {$K$-best candidates\\\scriptsize beam + LM; $\hat p_{\mathrm{top1}}$, guard risk};
   \node[dec, right=of cand] (g) {guard risk\\$\le r_{\max}$?};
   \node[dec, right=10mm of g] (lam) {$\hat p_{\mathrm{top1}} \ge \hat\lambda$?};
   \node[act, draw=teal!70!black, fill=teal!10, right=10mm of lam] (commit) {\textsc{commit}\\\scriptsize top-1 sentence};
   \node[dec, below=9mm of g] (off) {useful\\alternatives?};
   \node[act, draw=orange!80!black, fill=orange!10, right=10mm of off] (offer) {\textsc{offer}\\\scriptsize pick from $k$, or words};
   \node[act, draw=gray, fill=gray!10, below=6mm of offer] (abst) {\textsc{abstain}\\\scriptsize user types (gaze)};
-  \node[box, fill=violet!8, above=7mm of lam, text width=44mm] (thr) {\scriptsize $\hat\lambda = \max(\lambda_{\mathrm{tuned}}, \lambda_{\mathrm{CRC}})$\\\scriptsize CRC: $\mathbb{E}[\text{wrong-commit}] \le \alpha$\\\scriptsize or online $\lambda_t$ (\cref{fig:online})};
+  \node[box, fill=violet!8, above=7mm of lam, text width=44mm] (thr) {\scriptsize $\hat\lambda = \max(\lambda_{\mathrm{tuned}}, \lambda_{\mathrm{CRC}})$\\\scriptsize CRC: $\mathbb{E}[\text{wrong commit}] \le \alpha$\\\scriptsize or online $\lambda_t$ (\cref{sec:online})};
   \draw[arr] (in) -- (cand);
   \draw[arr] (cand) -- (g);
   \draw[arr] (g) -- node[above, font=\scriptsize] {yes} (lam);

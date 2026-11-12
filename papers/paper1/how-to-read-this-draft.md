@@ -1,6 +1,24 @@
-# How to read this draft (Paper 1, draft v0)
+# How to read this draft (Paper 1, draft v1)
 
-This guide is for you, the author. It explains what each part of a science paper does, what reviewers check, where the open items (TODOs) are, and what you must decide. The draft itself is [`draft-v0.pdf`](draft-v0.pdf) (23 pages). The paper is in normal academic English. This guide is in simple English.
+This guide is for you, the author. The current draft is [`draft-v1.pdf`](draft-v1.pdf) (32 pages: main text 1–20, references 21–28, appendix 28–32). The first draft, [`draft-v0.pdf`](draft-v0.pdf), stays for comparison. The paper is in normal academic English. This guide is in simple English.
+
+## 0. What changed in v1 (review round 1)
+
+Two reviewers read v0 ([domain](reviews/round-1-domain.md), [methods](reviews/round-1-methods.md)). Both said "major revision". The point-by-point answer is [reviews/round-1-response.md](reviews/round-1-response.md).
+
+- **New title.** "When should a neural text-entry decoder commit? A decoder-agnostic, risk-controlled trust layer evaluated on intracortical, EMG and MEG data". "Fidetype" is no longer in the title.
+- **Honest scope.** The commit decision is tested on one implant participant. The EMG sentences are composed. MEG is a *negative control*: the layer correctly never commits. "Unchanged" is now "the same code, re-fitted per device" (new Table 9).
+- **New baseline: always offer.** On B2T '25 the trust layer is only 1.6% faster than always offering (published gate: 3.6%), for 59 (44) wrong commits per 1,000 sentences.
+- **New metric: error among commits.** One committed sentence in four is wrong on our B2T decoder; under CRC on MEG, 92% of the few commits are wrong. The paper now says the guarantee bounds wrong commits per attempt, not per commit.
+- **Guarantees stated with their assumptions.** Random-split CRC is an implementation check. LTT is checked with its real target (calibration-conditional risk). ACI certificates and a-priori bounds are printed.
+- **Controls in two classes.** Signal-destroying streams: never committed. Real stream of another sentence: cannot be detected.
+- **Problem setting section** with clean notation; structured abstract; 33 new verified references; the related work now covers BCI spellers, ErrPs, adaptive decoders, dialogue systems.
+- **Figures.** Removed: MEG CER bars, eWPM bars, online loop. New: selective-risk panel (Fig. 4c), MEG guard AUROC (Fig. 5c), always-offer points in Fig. 1. Ledger, conformance and the CRC-split figure moved to the appendix.
+- **New script** `analysis_r1.py` re-draws the committed CRC splits and computes the new derived numbers into `data/r1-derived.json`.
+
+**Still open from the reviews (red `[TODO: R1: ...]` in the PDF):** the parallel analysis run (clean drift baseline, always-offer rows for sEMG, selective-risk controller, unified ablation, user-model sensitivity on all devices, LM-assisted gaze baseline, LM leakage rebuilds, small-n CRC, seeds and repeated splits, reliability diagrams, one-word tolerance). These come in round 2.
+
+**Your decisions now:** (1) keep or drop "Fidetype" in the title; (2) length: the main text is about 20 pages in this class; choose what moves to the appendix if the venue needs ~14 (candidates in the response, §H); (3) authors and affiliations; (4) ethics wording (now names the BrainGate2 trial); (5) AI-assistance statement.
 
 ## 1. Read in this order
 

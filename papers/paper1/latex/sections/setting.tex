@@ -1,0 +1,17 @@
+\section{Problem setting}
+\label{sec:setting}
+
+\paragraph{Items, streams and candidates.} An \emph{item} is one attempt by the user to enter one sentence. We use ``item'' for the generic unit and keep the dataset's own word where it matters: a \emph{trial} of the intracortical data, an \emph{instance} (one participant typing one sentence) of the MEG data, and a composed \emph{sentence} of the sEMG data. For item $i$, the decoder emits a stream of $F_i$ frames: a matrix of log-probabilities $\log p_t(v)$ over a vocabulary of $V$ tokens, $t = 1, \dots, F_i$. A search over the stream with an LM returns a ranked list of $K$ candidate sentences (the $K$-best list; $K = 10$ in all experiments) with scores, from which we compute $\hat p_{\mathrm{top1}}$, the normalised probability of the top candidate.
+
+\paragraph{Actions and losses.} For each item, the system takes one action $a_i$: \act{commit} the top candidate (the text is sent without further input); \act{offer} the top $k$ candidates for the user to pick; \act{offer\_words}, an offer of the top candidate with uncertain words marked; or \act{abstain}, after which the user types the sentence with a fallback keyboard. Let $c_i \in \{0,1\}$ indicate that the top candidate differs from the intended sentence (exact match after normalisation of case and punctuation), and let $f_i \in \{0,1\}$ be the wrong-commit loss of the non-commit action ($f_i = 0$ for \act{offer} and \act{abstain}; for \act{offer\_words}, $f_i = 1$ if a wrong word is not marked). A \emph{wrong commit} is a committed sentence that differs from the intended one.
+
+\paragraph{The two error quantities.} We report two rates over the $n_{\mathrm{test}}$ test items:
+\begin{align}
+  \text{wrong-commit rate} &= \frac{\#\{\text{wrong commits}\}}{n_{\mathrm{test}}} \approx \Pr(\text{commit} \wedge \text{wrong}), \\
+  \text{error among commits} &= \frac{\#\{\text{wrong commits}\}}{\#\{\text{commits}\}} \approx \Pr(\text{wrong} \mid \text{commit}).
+\end{align}
+The first is the \emph{marginal} risk: the rate at which wrong sentences reach the recipient per sentence attempted. It is the quantity that our risk controllers bound, because it is monotone in the commit threshold (\cref{sec:crc}). It can be made small by committing rarely, so we always report it together with the \emph{commit rate}. The second is the \emph{selective} risk that a user sees when looking at committed text. Our controllers do not bound it, and we report it next to every result.
+
+\paragraph{Notation.} \Cref{tab:notation} in \cref{app:notation} collects the symbols. $\alpha = 0.05$ is the target wrong-commit rate and $\delta = 0.1$ the failure probability of Learn-then-Test.
+
+
