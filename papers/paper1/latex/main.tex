@@ -1,5 +1,5 @@
-% Paper 1 -- Fidetype. Draft v4 (revision round 4), 2026-11-12. Main text + references + Appendix A.
-% The appendices of v3 moved to supplement.tex (Supplementary Sections S1-S24). Cross-references between
+% Paper 1 -- Fidetype. Draft v5 (final review round 5), 2026-11-12. Main text + references + Appendix A.
+% The appendices of v3 moved to supplement.tex (Supplementary Sections S1-S22). Cross-references between
 % the two files use xr-hyper (\externaldocument), so build both (see ../README.md):
 %   tectonic -X compile supplement.tex --outdir build --keep-intermediates   (pass 1)
 %   tectonic -X compile main.tex       --outdir build --keep-intermediates
@@ -64,6 +64,9 @@
 \maketitle
 
 \input{sections/abstract}
+% v5: keywords (JNE / IOP asks for them)
+\noindent\textbf{Keywords:} brain--computer interface, text entry, language model, risk control, Learn then Test, selective prediction, safety
+\medskip
 \input{sections/introduction}
 \input{sections/related}
 \input{sections/setting}

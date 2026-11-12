@@ -1,6 +1,6 @@
 # Paper 1: Fidetype (draft)
 
-Status: **draft v4 (2026-11-12, after review round 4)**. Read [`draft-v4.pdf`](draft-v4.pdf) and [`draft-v4-supplement.pdf`](draft-v4-supplement.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`round-4-response.md`](round-4-response.md). `draft-v0.pdf` ... `draft-v3.pdf` are the earlier drafts.
+Status: **draft v5 (2026-11-12, after the final review, round 5; the review loop is finished)**. Read [`draft-v5.pdf`](draft-v5.pdf) and [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`reviews/round-5-final.md`](reviews/round-5-final.md). `draft-v0.pdf` ... `draft-v4.pdf` are the earlier drafts.
 
 | File | What it is |
 |---|---|
@@ -39,8 +39,8 @@ From the repo root (Git Bash):
 # 2. compile main paper + supplement (xr cross-references: two passes each; checks undefined refs)
 bash papers/paper1/build.sh
 # 3. publish the draft
-cp papers/paper1/latex/build/main.pdf papers/paper1/draft-v4.pdf
-cp papers/paper1/latex/build/supplement.pdf papers/paper1/draft-v4-supplement.pdf
+cp papers/paper1/latex/build/main.pdf papers/paper1/draft-v5.pdf
+cp papers/paper1/latex/build/supplement.pdf papers/paper1/draft-v5-supplement.pdf
 # 4. word count
 .venv/Scripts/python -I papers/paper1/wordcount.py
 ```

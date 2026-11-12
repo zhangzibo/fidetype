@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Paper 1 (draft v4): build the main paper and the supplement with Tectonic.
+# Paper 1 (draft v5): build the main paper and the supplement with Tectonic.
 # Cross-references between the two files use xr-hyper, so the files are built in turn twice.
 # Usage (Git Bash, repo root or anywhere):  bash papers/paper1/build.sh
 set -euo pipefail

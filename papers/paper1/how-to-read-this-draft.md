@@ -1,6 +1,21 @@
-# How to read this draft (Paper 1, draft v4)
+# How to read this draft (Paper 1, draft v5)
 
-This guide is for you, the author. The current draft is [`draft-v4.pdf`](draft-v4.pdf) (22 pages: main text 1-15, references 15-20, Appendix A 21-22) with a separate supplement [`draft-v4-supplement.pdf`](draft-v4-supplement.pdf) (Sections S1-S22, 17 pages). The earlier drafts ([v0](draft-v0.pdf) ... [v3](draft-v3.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
+This guide is for you, the author. The current draft is [`draft-v5.pdf`](draft-v5.pdf) (22 pages: main text, references, Appendix A) with a separate supplement [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) (Sections S1-S22, 17 pages). The earlier drafts ([v0](draft-v0.pdf) ... [v4](draft-v4.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
+
+## What changed in v5 (final review, round 5)
+
+One final pre-submission check ([round-5-final.md](reviews/round-5-final.md)). Recommendation: **minor revision**. All 32 traced numbers matched the result files. The fix pass changed only text, references and formatting. No result changed. The frozen configuration and the git tags did not change.
+
+- **Guard on real data, said more carefully.** The guard did not lower wrong commits on real data. It raised them only with the full-fit pipeline (0.036 -> 0.059). In the other tests, the rates without the guard were lower on the published gate and mixed on our decoder (Sec. 6.6, Discussion, Limitation 3).
+- **Abstract (250 words).** The published-sentence gate is now named in "Approach". The commit and error-among-commits numbers are now marked as re-split results. "198 of 300" now says "on our decoder".
+- **Frozen configuration text.** Sec. 7 now says that the tag `paper1-v4-frozen-config` is on the commit that added draft v4, and that later versions changed only the text.
+- **Keywords** line added (JNE asks for it).
+- **Small fixes:** "Algorithm SS1" -> "Algorithm S1"; user model "4.5 s close to the measured 4.7 s" (was "matched"); policy-grid pointer (Section S6); supplement "Tables 1-5"; Table 3 caption; Figure S5 caption; control counts in Sec. 6.6, plus the published gate on the intent-mismatch control (0 of 300); no "draft v3" in the supplement text.
+- **References completed:** Wolpaw 2002 (issue, DOI), Willett 2023 (volume, pages), Cai 2024 and Metzger 2022 (volume, article number), Dryad and Borealis data DOIs now printed.
+- **Formatting:** supplement table of contents fixed (S10-S22 touched their titles); no overfull lines in either PDF; no undefined or duplicate references.
+- **Length:** main text about 7,900 words (6,632 text + 1,254 in tables, captions and the algorithm).
+
+**The review-and-revise loop for Paper 1 is finished.** What is left is in the table below (author decisions) and new data for a confirmatory test.
 
 ## What changed in v4 (review round 4)
 
@@ -32,6 +47,7 @@ These are red `[TODO]` markers in the PDFs, or steps before submission. Claude c
 | Switch to the IOP JNE template | `latex/main.tex`, `latex/supplement.tex` (block marked CLASS) | do it at submission |
 | arXiv first or JNE directly | - | arXiv may need an endorsement (externally blocked) |
 | Confirmatory test of the frozen configuration | Sec. 7 | needs new data (a second participant or new sessions) |
+| Keywords (check), cover letter, suggested reviewers | after the abstract; submission system | v5 has 7 draft keywords |
 
 ## What changed in v3 (review round 3)
 

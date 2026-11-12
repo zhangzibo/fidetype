@@ -9,7 +9,7 @@ Sentence-level LM decoders for speech, handwriting, typing and sEMG share one st
 
 \paragraph{This work.} We define the problem (\cref{sec:setting}), a trust layer on a per-frame output stream (\cref{sec:trust}) and an evaluation protocol (\cref{sec:protocol}), and test them offline on public data. Our contributions are:
 \begin{enumerate}[leftmargin=*,itemsep=1pt]
-  \item \textbf{A stream-level commit rule with a stated guarantee.} The layer calibrates the per-frame log-probabilities and chooses \act{commit}, \act{offer} or \act{abstain}. LTT with a max rule bounds the wrong-commit rate with high probability (Algorithm~\ref{alg:decide}; Algorithm~S\ref{alg:calibrate} in the supplement).
+  \item \textbf{A stream-level commit rule with a stated guarantee.} The layer calibrates the per-frame log-probabilities and chooses \act{commit}, \act{offer} or \act{abstain}. LTT with a max rule bounds the wrong-commit rate with high probability (Algorithm~\ref{alg:decide}; Algorithm~\ref{alg:calibrate} in the supplement).
   \item \textbf{A time-ordered test of the guarantee on one participant.} We calibrate on earlier days or on the start of a session and test on later data, over 14 days. We also show the scope of the guarantee: it bounds the risk over the mix of days, not on each day.
   \item \textbf{A safety-first evaluation protocol}: the wrong-commit rate with the commit rate and the error among commits; always-commit, always-offer and gaze-typing baselines; a simulated-user speed metric with a sensitivity analysis; and signal-destroying controls. These controls show that a plain confidence threshold commits no-information streams, so a commit rule needs an input-validity check.
 \end{enumerate}
