@@ -21,16 +21,17 @@ A vendor-neutral stream format ([NeuralTextStream](../../spec/neuraltextstream-v
 | intracortical (our decoder) | 0.610 → 0.059 | 11.55 vs 4.08 | [B2T '25](b2t25-trust-result.md) |
 | intracortical (published gate) | 0.194 → 0.044 | 18.77 vs 4.08 | [B2T '25](b2t25-trust-result.md) |
 | sEMG (3 conditions) | 0.54–0.96 → ≤ 0.004 | 8.02 / 4.68 / 4.08 vs 4.27 | [EMG Toronto](emg-toronto-trust-result.md) |
-| MEG (sync streams) | 1.0 → 0 | 3.23 [3.08, 3.40] vs 3.15 (parity) | [M1-15](m1-15-full-r1-r3-result.md) |
+| MEG (async M1-09 streams) | 0.997 → 0 | 3.20 [3.07, 3.36] vs 3.155 (parity; CI over sentences) | [M1-09](m1-09-async-full-result.md#trust-layer-on-the-async-streams-g1-2026-11-11) |
+| MEG (sync streams, secondary) | 1.0 → 0 | 3.23 [3.08, 3.40] vs 3.155 (parity) | [M1-15](m1-15-full-r1-r3-result.md) |
 
 - CRC: mean wrong-commit 0.046–0.048 on B2T (target 0.05) ([M2-13](m2-13-conformal-result.md)).
 - Drift: offline CRC 0.0625 (B2T) and 0.0635 (EMG); `aci_window` 0.0478 and 0.0490 ([M2-16](m2-16-online-recal-result.md)).
 - Async MEG decoder: greedy CER 0.506 (participants 0.495) ([M1-09](m1-09-async-full-result.md)).
 
 ## Gaps before submission (short list)
-1. Run the trust harness on the **async M1-09 streams**. All MEG trust numbers now come from synchronous decoders.
+1. ~~Run the trust harness on the async M1-09 streams~~ **Done 2026-11-11 (G1):** same safety result and parity with gaze typing; null input 0 % commits; CRC 0.0193 / LTT 0.0214 ([G1 results](../../experiments/2026-11-11-g1-async-meg-trust/results.md)).
 2. **Multiple seeds** for the MEG and EMG decoders and the simulator.
-3. **CIs over sentences and participants** for MEG (17 unique test sentences).
+3. **CIs over sentences and participants** for MEG (17 unique test sentences). Done for the trust rows in G1; still open for the CER rows.
 4. **Natural-typing sEMG** ([KT-sEMG](../entities/kt-semg-dataset.md)), or keep it as a limitation.
 5. **One ablation table** over the three devices (M3-02).
 6. **eWPM sensitivity** to the user-model costs on all three devices.

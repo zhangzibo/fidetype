@@ -1,0 +1,178 @@
+{
+ "lexicon_size": 77396,
+ "n": 637,
+ "policies": {
+  "commit": {
+   "real": {
+    "fluent_rate": 0.847723704866562,
+    "commit_rate": 1.0,
+    "fluent_commit_rate": 0.847723704866562,
+    "wrong_commit_rate": 0.9968602825745683,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "shuffled_meg": {
+    "fluent_rate": 0.9183673469387755,
+    "commit_rate": 1.0,
+    "fluent_commit_rate": 0.9183673469387755,
+    "wrong_commit_rate": 1.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "zeros_meg": {
+    "fluent_rate": 1.0,
+    "commit_rate": 1.0,
+    "fluent_commit_rate": 1.0,
+    "wrong_commit_rate": 1.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "other_sentence": {
+    "fluent_rate": 0.8540031397174255,
+    "commit_rate": 1.0,
+    "fluent_commit_rate": 0.8540031397174255,
+    "wrong_commit_rate": 1.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "frame_shuffled": {
+    "fluent_rate": 0.8916797488226059,
+    "commit_rate": 1.0,
+    "fluent_commit_rate": 0.8916797488226059,
+    "wrong_commit_rate": 1.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "uniform": {
+    "fluent_rate": 1.0,
+    "commit_rate": 1.0,
+    "fluent_commit_rate": 1.0,
+    "wrong_commit_rate": 1.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "risk_auroc_null_vs_real": {
+    "shuffled_meg": 0.9157340752990002,
+    "zeros_meg": 1.0,
+    "other_sentence": 0.4938437879680311,
+    "frame_shuffled": 0.4720764770103187,
+    "uniform": 1.0
+   }
+  },
+  "trust": {
+   "real": {
+    "fluent_rate": 0.847723704866562,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "shuffled_meg": {
+    "fluent_rate": 0.9183673469387755,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "zeros_meg": {
+    "fluent_rate": 1.0,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "other_sentence": {
+    "fluent_rate": 0.8540031397174255,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "frame_shuffled": {
+    "fluent_rate": 0.8916797488226059,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "uniform": {
+    "fluent_rate": 1.0,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.0,
+    "nonempty_rate": 1.0
+   },
+   "risk_auroc_null_vs_real": {
+    "shuffled_meg": 0.9157340752990002,
+    "zeros_meg": 1.0,
+    "other_sentence": 0.4938437879680311,
+    "frame_shuffled": 0.4720764770103187,
+    "uniform": 1.0
+   }
+  },
+  "trust_ow": {
+   "real": {
+    "fluent_rate": 0.847723704866562,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.0141287284144427,
+    "nonempty_rate": 1.0
+   },
+   "shuffled_meg": {
+    "fluent_rate": 0.9183673469387755,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.05023547880690738,
+    "nonempty_rate": 1.0
+   },
+   "zeros_meg": {
+    "fluent_rate": 1.0,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.49607535321821034,
+    "nonempty_rate": 1.0
+   },
+   "other_sentence": {
+    "fluent_rate": 0.8540031397174255,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.0031397174254317113,
+    "nonempty_rate": 1.0
+   },
+   "frame_shuffled": {
+    "fluent_rate": 0.8916797488226059,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.02511773940345369,
+    "nonempty_rate": 1.0
+   },
+   "uniform": {
+    "fluent_rate": 1.0,
+    "commit_rate": 0.0,
+    "fluent_commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "offer_words_rate": 0.22291993720565148,
+    "nonempty_rate": 1.0
+   },
+   "risk_auroc_null_vs_real": {
+    "shuffled_meg": 0.9157340752990002,
+    "zeros_meg": 1.0,
+    "other_sentence": 0.4938437879680311,
+    "frame_shuffled": 0.4720764770103187,
+    "uniform": 1.0
+   }
+  }
+ },
+ "seconds": 385.3
+}

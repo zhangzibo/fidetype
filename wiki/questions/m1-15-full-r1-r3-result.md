@@ -3,7 +3,7 @@ title: M1-15 full-cache (full-r1) and causal (r3) result, with leakage checks
 type: question
 tags: [decoder, meg, spanishbcbl, sentence-context, evaluation, leakage, controls, trust, ewpm]
 sources: [brain2qwerty-v1, brain2qwerty-v2]
-updated: 2026-11-10
+updated: 2026-11-11
 ---
 
 # M1-15 full-r1 and r3 result
@@ -69,6 +69,7 @@ So the no-signal floor is about 0.69, not 1.0. The MEG explains the step from ab
 | gaze typing only (no BCI) | 3.14 | **3.15** | 3.14 |
 
 - full-r1 is the first decoder where trust is above gaze only. The CI contains 3.15, so it is parity, not a clear gain.
+- **Update 2026-11-11 (G1):** the async M1-09 decoder gives the same picture: trust 3.20 vs gaze 3.155, wrong-commit 0.997 → 0. With CIs over unique sentences, trust − gaze is [−0.02, +0.18] here (sync) and [−0.04, +0.15] for async. See [M1-09, trust layer](m1-09-async-full-result.md#trust-layer-on-the-async-streams-g1-2026-11-11).
 - Trust still removes all wrong commits (1.0 → 0) and is faster than always commit (+0.40 to +0.63).
 - The true sentence is in the 10-best for fewer than 1 % of trials. The gain comes from word offers (31 % of the words).
 - In the sensitivity runs, gaze only stays faster with a 40 cpm fallback (6.31 vs 5.15) and with slow selection (3.15 vs 2.99).

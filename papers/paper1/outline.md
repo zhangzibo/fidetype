@@ -1,6 +1,6 @@
 # Paper 1: detailed outline and results inventory
 
-Status: **outline v0 (2026-11-11)**. Milestone M3. Not yet a draft.
+Status: **outline v0 (2026-11-11)**, updated 2026-11-11 for gap G1 (async MEG trust numbers). Milestone M3. Not yet a draft.
 Wiki plan page: [wiki/questions/paper1-plan.md](../../wiki/questions/paper1-plan.md).
 
 Rules for this file:
@@ -31,7 +31,7 @@ What the paper does **not** claim:
 
 > Neural text-entry decoders, from non-invasive MEG to intracortical arrays and wearable EMG, now produce fluent text, but they rarely signal when that text is wrong, and each device reports confidence in its own format. We present Fidetype, an open, vendor-neutral stream format for per-frame decoder output (NeuralTextStream) and a decoder-agnostic trust layer that reads only this stream. The layer calibrates confidence, chooses between committing, offering choices and abstaining, bounds the expected wrong-commit rate with conformal risk control, keeps that bound under within-session drift with online re-calibration from user corrections, and records each decision in a hash-chained provenance ledger. We apply the same layer, unchanged, to three device types with public data: MEG typing (19 participants), intracortical speech (one participant) and forearm sEMG key presses (19 participants). We report effective words per minute against a gaze-typing baseline, with shuffled and null-input controls. The layer cut wrong commits from 0.610 to 0.059 on intracortical speech with no measurable speed cost, from 0.54–0.96 to at most 0.004 on sEMG, and from 1.0 to 0 on MEG, and it committed no text from null input. Conformal risk control brought the mean wrong-commit rate to 0.046–0.048 (target 0.05); under drift, online re-calibration held it at 0.048–0.049 where offline calibration gave 0.0625–0.0635. On MEG, the system only reached parity with gaze typing.
 
-(Word count: about 215. Numbers: B2T [b2t25-trust-result](../../wiki/questions/b2t25-trust-result.md); EMG [emg-toronto-trust-result](../../wiki/questions/emg-toronto-trust-result.md); CRC [m2-13-conformal-result](../../wiki/questions/m2-13-conformal-result.md); drift `aci_window` [m2-16-online-recal-result](../../wiki/questions/m2-16-online-recal-result.md); MEG parity [m1-15-full-r1-r3-result](../../wiki/questions/m1-15-full-r1-r3-result.md). Update the MEG sentence after gap G1 is closed.)
+(Word count: about 215. Numbers: B2T [b2t25-trust-result](../../wiki/questions/b2t25-trust-result.md); EMG [emg-toronto-trust-result](../../wiki/questions/emg-toronto-trust-result.md); CRC [m2-13-conformal-result](../../wiki/questions/m2-13-conformal-result.md); drift `aci_window` [m2-16-online-recal-result](../../wiki/questions/m2-16-online-recal-result.md); MEG parity and null input: async M1-09 streams, [G1 async trust](../../experiments/2026-11-11-g1-async-meg-trust/results.md) (G1 closed: trust 3.20 vs gaze 3.155 eWPM, trust − gaze CI over sentences [−0.04, +0.15]; 0 % commits on null input). The MEG sentence of the abstract stays true for the async decoder.)
 
 ## 4. Contributions
 
@@ -127,13 +127,15 @@ Sources: [M1-09](../../wiki/questions/m1-09-async-full-result.md) "Main numbers"
 | EMG cross-subject | always commit LM top-1 | 3.53 [3.37, 3.72] | 0.962 | 0.167 |
 | | trust | 4.08 [3.98, 4.20] | 0.000 | 0.000 |
 | EMG | gaze only | 4.27 | 0 | 0 |
-| MEG (M1-15 full-r1 sync streams) | always commit LM top-1 | 2.71 | 1.0 | — |
-| | trust | 3.23 [3.08, 3.40] | 0 | — |
-| MEG | gaze only | 3.15 | 0 | 0 |
+| **MEG, async M1-09 (main)** | always commit LM top-1 | 2.58 [2.41, 2.76] {2.41, 2.79} | 0.997 | 0.235 |
+| | trust | 3.20 [3.07, 3.36] {3.08, 3.37} | 0 | 0 |
+| MEG, sync M1-15 full-r1 (secondary) | always commit LM top-1 | 2.71 [2.54, 2.90] {2.54, 2.90} | 1.0 | 0.199 |
+| | trust | 3.23 [3.08, 3.40] {3.12, 3.37} | 0 | 0 |
+| MEG | gaze only | 3.155 [3.02, 3.29] {3.15, 3.16} | 0 | 0 |
 
-Brackets: B2T `[trial] {day}`; EMG `[sent] {participant}`; MEG `[instances]`. Paired: B2T trust − commit eWPM [−0.11, +0.30], wrong-commit [−0.587, −0.516]; published gate − commit eWPM [−0.98, −0.72] (−4.3 %), wrong-commit [−0.175, −0.126]; EMG trust − commit eWPM [+0.05, +0.38] / [+0.44, +0.72] / [+0.43, +0.67]; EMG session-calibrated trust − gaze [+3.38, +4.16].
-Sources: [B2T experiment](../../experiments/2026-11-10-b2t25-trust/results.md) "Trust harness, word level"; [EMG experiment](../../experiments/2026-11-11-emg-toronto/results.md) "Trust harness"; [M1-15 full-r1](../../wiki/questions/m1-15-full-r1-r3-result.md) "Trust layer".
-**Caveat in the text:** the MEG trust row uses the synchronous M1-15 full-r1 streams (oracle key times), not the async M1-09 decoder of T4. Gap G1 replaces it.
+Brackets: B2T `[trial] {day}`; EMG `[sent] {participant}`; MEG `[unique sentence] {participant}` (cluster bootstrap; the two-way sentence × participant CI is in the G1 results). MEG paired (async): trust − commit [+0.49, +0.75]; trust − gaze +0.05 [−0.04, +0.15] (sentences), [−0.07, +0.22] (participants), [−0.11, +0.26] (two-way); sync trust − gaze [−0.02, +0.18] (sentences). Paired: B2T trust − commit eWPM [−0.11, +0.30], wrong-commit [−0.587, −0.516]; published gate − commit eWPM [−0.98, −0.72] (−4.3 %), wrong-commit [−0.175, −0.126]; EMG trust − commit eWPM [+0.05, +0.38] / [+0.44, +0.72] / [+0.43, +0.67]; EMG session-calibrated trust − gaze [+3.38, +4.16].
+Sources: [B2T experiment](../../experiments/2026-11-10-b2t25-trust/results.md) "Trust harness, word level"; [EMG experiment](../../experiments/2026-11-11-emg-toronto/results.md) "Trust harness"; MEG [G1 async trust](../../experiments/2026-11-11-g1-async-meg-trust/results.md) (async and sync rows from the same script; the sync row reproduces [M1-15 full-r1](../../wiki/questions/m1-15-full-r1-r3-result.md) "Trust layer" exactly).
+**Note in the text:** the main MEG row is the async M1-09 decoder of T4 (G1 closed). The sync row is secondary: it shows the result does not depend on oracle key timing.
 
 - **F3: eWPM per policy per device, with gaze-only line** (bar or dot plot with CIs). Data: T3.
 - **F4: wrong-commit vs commit rate (risk–coverage) per device**, for −p_top1 and the guard score. Data: harness `trust.json` per experiment; AUROC B2T −p_top1 0.797 (word) / 0.884 (phoneme); EMG 0.83 / 0.76 / 0.67.
@@ -143,13 +145,14 @@ Sources: [B2T experiment](../../experiments/2026-11-10-b2t25-trust/results.md) "
 
 | device | input | always commit | trust |
 |---|---|---|---|
-| MEG (M2-10 keystroke decoder) | real / shuffled MEG / frame-shuffled / uniform: fluent commits | 83 % / 84 % / 86 % / 100 % | 0 % in all |
+| **MEG (async M1-09, main)** | real / shuffled MEG / zeros MEG / other sentence / frame-shuffled / uniform: commits (fluent) | 100 % (85 % / 92 % / 100 % / 85 % / 89 % / 100 %) | 0 % in all |
+| MEG (M2-10 sync keystroke decoder, secondary) | real / shuffled MEG / frame-shuffled / uniform: fluent commits | 83 % / 84 % / 86 % / 100 % | 0 % in all |
 | B2T | frame-shuffled, uniform | 100 % | 0 % |
 | B2T | real stream of another sentence | — | 22 % (ours), 0 % (published gate) |
 | EMG | frame-shuffled, zeros, permuted decoder | 100 % wrong | 0 % |
 | EMG | real stream of another sentence | — | as often as real input |
 
-Sources: [trust core v0](../../wiki/questions/trust-core-v0-results.md) section 6; [B2T](../../wiki/questions/b2t25-trust-result.md); [EMG](../../wiki/questions/emg-toronto-trust-result.md) "Controls".
+Sources: [G1 async trust](../../experiments/2026-11-11-g1-async-meg-trust/results.md) "Null-input audit" (async; guard-risk AUROC null vs real: shuffled 0.92, zeros / uniform 1.00, other sentence 0.49); [trust core v0](../../wiki/questions/trust-core-v0-results.md) section 6; [B2T](../../wiki/questions/b2t25-trust-result.md); [EMG](../../wiki/questions/emg-toronto-trust-result.md) "Controls".
 - Discussion point: no stream-only signal can detect a real stream of a different intended sentence. This is a limit of any decoder-agnostic layer.
 
 **5.6.4 Calibration**
@@ -157,12 +160,12 @@ Sources: [trust core v0](../../wiki/questions/trust-core-v0-results.md) section 
 - **F5: reliability diagrams**, before / after, B2T and EMG cross-session.
 
 **5.6.5 Finite-sample risk control (CRC / LTT)**
-- **T6: CRC / LTT on B2T and MEG (n_cal 408, 200 splits).** Copy the M2-13 main table: B2T ours old gate 0.0586 → CRC 0.0483 → LTT 0.0345 (eWPM 11.57 / 11.53 / 11.52); published 0.0441 / 0.0478 / 0.0345 (18.77 / 18.78 / 18.70); MEG 0.0000 / 0.0186 / 0.0207 (3.23 / 3.22 / 3.22). p95: CRC 0.071–0.076, LTT 0.056–0.061; 41–45 % of CRC splits above 0.05 ([M2-13](../../wiki/questions/m2-13-conformal-result.md)).
+- **T6: CRC / LTT on B2T and MEG (n_cal 408, 200 splits).** Copy the M2-13 main table: B2T ours old gate 0.0586 → CRC 0.0483 → LTT 0.0345 (eWPM 11.57 / 11.53 / 11.52); published 0.0441 / 0.0478 / 0.0345 (18.77 / 18.78 / 18.70); MEG async M1-09 (G1) 0 / 0.0193 / 0.0214 (eWPM 3.204 / 3.199 / 3.199; p95 CRC 0.031, LTT 0.035; splits grouped by sentence or participant: CRC 0.0194 / 0.0201); MEG sync M1-15 (secondary) 0.0000 / 0.0186 / 0.0207 (3.23 / 3.22 / 3.22). p95: CRC 0.071–0.076, LTT 0.056–0.061; 41–45 % of CRC splits above 0.05 ([M2-13](../../wiki/questions/m2-13-conformal-result.md)).
 - EMG: CRC / LTT feasible with n = 142; equal to the plug-in policy (thresholds xsession CRC 0.204, bound 0.049).
 - **F6: distribution of test wrong-commit over 200 splits** (violin per method, α line). Data: `experiments/2026-11-11-m2-13-conformal/results/splits.json`.
 
 **5.6.6 Drift and online re-calibration**
-- **T7: drift protocol** (copy the M2-16 results table): B2T ours offline CRC 0.0625 → window 0.0453 / decay 0.0417 / aci 0.0502 / aci_window 0.0478; EMG cross-session 0.0635 → 0.0508 / 0.0399 / 0.0526 / 0.0490; eWPM B2T 11.553 → 11.490–11.510; EMG 4.657 → 4.667–4.670.
+- **T7: drift protocol** (copy the M2-16 results table): B2T ours offline CRC 0.0625 → window 0.0453 / decay 0.0417 / aci 0.0502 / aci_window 0.0478; EMG cross-session 0.0635 → 0.0508 / 0.0399 / 0.0526 / 0.0490; eWPM B2T 11.553 → 11.490–11.510; EMG 4.657 → 4.667–4.670. MEG async (G1): offline CRC 0.0204 → `aci` 0.0188, `aci_window` 0.0078 (degenerate: every commit is wrong).
 - Robustness: feedback 10 trials late 0.0404–0.0502 (B2T ours); cold start `aci` 0.0442, `aci_window` 0.0491; max over 50-trial windows 0.10–0.12 for all methods (i.i.d. Bernoulli(0.05) median 0.120); noticed-only feedback `aci` 0.0515 (B2T), 0.0635 (EMG).
 - **F7: running wrong-commit rate over the later half of the session**, offline CRC vs `aci` vs `aci_window`, B2T ours. Data: `experiments/2026-11-11-m2-16-online-recal/results/online.json`.
 - Note the reported contradiction: M6-07 CRC 0.004 (with `combine="max"`) vs M2-16 offline CRC 0.0635 (pure threshold) on EMG cross-session. Both are right; explain once.
@@ -219,7 +222,7 @@ Closest-work positioning (M3-03): Huang et al. 2025 (calibration and alternative
 1. **One implant participant.** B2T '25 is T15 only, copy task, online logits we cannot re-run. CIs over trials and over 14 days, not over people.
 2. **17 unique MEG test sentences** (637 instances, 19 participants). Instance-level CIs understate sentence-level variance. 6 of 17 test sentences have a close train variant (about 0.013 greedy CER effect); "far" numbers are reported next to the headline.
 3. **MEG test split differs from v2**; our async decoder uses key times as training labels (aux loss) though not as inputs. "0.495 vs 0.59" is not a head-to-head result.
-4. **MEG decoder only reaches parity with gaze typing** (3.23 [3.08, 3.40] vs 3.15 eWPM, and those streams are the synchronous oracle-timing decoder). On MEG the trust layer shows safety, not usefulness. The true sentence is in the 10-best for fewer than 1 % of trials.
+4. **MEG decoder only reaches parity with gaze typing** (async M1-09: trust 3.20 vs gaze 3.155 eWPM; trust − gaze [−0.04, +0.15] over sentences; sync M1-15: 3.23). On MEG the trust layer shows safety, not usefulness. The true sentence is in the 10-best for 1.6 % (async) / 0.6 % (sync) of trials. Trial-level CIs would make the sync result look like a small gain ([+0.03, +0.12]); we report sentence-level CIs.
 5. **Composed EMG sentences.** The Toronto data has isolated key presses only; sentences are composed from single presses with oracle timing and no inter-key context. Natural typing is untested.
 6. **No live users.** All eWPM values come from a simulated user. Several time costs are literature-based assumptions; only the 20 chars/min fallback and the 4.5 s per-slot sum are matched to Cai et al. 2024; `p_miss_unflagged` has no measurement. On MEG, a 40 chars/min fallback makes gaze typing clearly faster (6.31 vs 5.15).
 7. **Silent errors** (wrong commits the user does not notice) are outside every guarantee. With noticed-only feedback, `aci` gave 0.0515 (B2T) and 0.0635 (EMG).
@@ -256,8 +259,8 @@ Status key: **final** = usable as is (with the stated scope); **needs rerun** = 
 | R3 | MEG decoder uses the signal | shuffled 0.760, zeros 0.925; gap +0.254 [+0.241, +0.265] (instances) | same | final for the claim; CI unit instances |
 | R4 | Near-variant effect is small | far sentences 0.519 / 0.492; effect about 0.013 greedy, 0.017 beam | same | final |
 | R5 | Longer training does not help | r5 − r4b greedy +0.009 [+0.003, +0.015] | same, section 7 | final (appendix only) |
-| R6 | MEG trust: safe, parity with gaze | always 2.71, trust 3.23 [3.08, 3.40], gaze 3.15; wrong-commit 1.0 → 0 | `experiments/2026-11-09-m1-15-sentence-context/results-full-r1-r3.md`; `wiki/questions/m1-15-full-r1-r3-result.md` | **needs rerun** on M1-09 async streams (G1); needs CI (sentence) |
-| R7 | MEG null input: no fluent commits | always commit 83–100 % fluent; trust 0 % | `experiments/2026-11-08-m2-real-keystroke/results.md` | **needs rerun** on M1-09 async streams (G1) |
+| R6 | MEG trust: safe, parity with gaze | async M1-09: always 2.58, trust 3.20 [3.07, 3.36] (sentences) {3.08, 3.37} (participants), gaze 3.155; wrong-commit 0.997 → 0; trust − gaze [−0.04, +0.15]. Sync M1-15 (secondary): 2.71 / 3.23 [3.08, 3.40] | `experiments/2026-11-11-g1-async-meg-trust/results.md`; `wiki/questions/m1-09-async-full-result.md` | **final** (G1 done; sentence, participant and two-way CIs done); needs seeds |
+| R7 | MEG null input: no fluent commits | async M1-09: always commit 100 % commits, 85–100 % fluent (real, shuffled, zeros, other sentence, frame-shuffled, uniform); trust 0 %. Sync M2-10: 83–100 % / 0 % | `experiments/2026-11-11-g1-async-meg-trust/results.md` | **final** (G1 done) |
 | R8 | B2T trust cuts wrong commits at no speed cost | 0.610 → 0.059 [0.043, 0.075]; eWPM 11.45 → 11.55; paired eWPM [−0.11, +0.30] | `experiments/2026-11-10-b2t25-trust/results.md` (`results/trust.json`) | final for one participant; needs seeds (repeated fit/test splits) |
 | R9 | B2T published-sentence gate | 0.194 → 0.044; eWPM 19.61 → 18.77 (−4.3 %) | same | final; needs seeds (splits) |
 | R10 | All B2T BCI policies beat gaze | gaze 4.08; trust − gaze [+6.96, +7.97]; gate − gaze [+13.81, +15.53] | same | final |
@@ -269,7 +272,7 @@ Status key: **final** = usable as is (with the stated scope); **needs rerun** = 
 | R16 | EMG null input | always commit 100 % wrong on null streams; trust 0 %; permuted decoder key acc 0.022 | same; `wiki/questions/emg-toronto-trust-result.md` | final |
 | R17 | CRC fixes the mean wrong-commit (B2T) | ours 0.0586 → CRC 0.0483, LTT 0.0345; published 0.0441 → 0.0478 / 0.0345; p95 CRC 0.071–0.076, LTT 0.056–0.061 | `experiments/2026-11-11-m2-13-conformal/results.md` (`results/splits.json`) | final (200 splits) |
 | R18 | CRC cost is small | −0.3 % eWPM (ours), +0.1 % (published) at n_cal 408 | same | final |
-| R19 | CRC spends budget on useless MEG commits | MEG CRC 0.0186, LTT 0.0207; eWPM 3.22 vs 3.23 | same | needs rerun on M1-09 streams (G1) |
+| R19 | CRC spends budget on useless MEG commits | async M1-09: CRC 0.0193, LTT 0.0214, old gate 0; eWPM 3.199 vs 3.204; grouped by sentence / participant: CRC 0.0194 / 0.0201. Sync: 0.0186 / 0.0207 | `experiments/2026-11-11-g1-async-meg-trust/results.md` | **final** (G1 done; sentence- and participant-grouped splits done) |
 | R20 | Drift breaks offline CRC | B2T 0.0625; EMG cross-session 0.0635 | `experiments/2026-11-11-m2-16-online-recal/results.md` | final (one time order) |
 | R21 | Online re-calibration restores the target | `aci_window` 0.0478 (B2T), 0.0490 (EMG); `aci` 0.0502 / 0.0526; eWPM cost ≤ 0.6 % | same (`results/online.json`) | final; add CI over sessions / days (G3) |
 | R22 | Online robustness | delay 10: 0.0404–0.0502; cold start `aci` 0.0442, `aci_window` 0.0491; 50-trial max 0.10–0.12; noticed-only `aci` 0.0515 / 0.0635 | same | final |
@@ -285,9 +288,9 @@ Ordered by importance. Items marked (ext) depend on outside people (`externally_
 
 | id | gap | why the paper needs it | how |
 |---|---|---|---|
-| G1 | **Trust harness on the M1-09 async streams** | The headline MEG decoder is async; all MEG trust / CRC / null numbers come from sync oracle-timing decoders | Run `run_harness` + null audit + CRC on `m1-09-r4b-full-medium` streams (CPU only) |
+| G1 | ~~Trust harness on the M1-09 async streams~~ **DONE 2026-11-11** | — | Done: harness, null audit, CRC / LTT, online on `m1-09-r4b-full-medium` streams: [G1 async trust](../../experiments/2026-11-11-g1-async-meg-trust/results.md). R6, R7, R19 updated |
 | G2 | **Multiple seeds** | Every decoder and trust run is one seed | MEG ConvCTC × 3 seeds (about 3 GPU runs; one heavy job at a time); EMG CNN × 3 seeds per condition; simulator × 5 seeds |
-| G3 | **CIs over sentences and participants** | MEG CIs are over instances of 17 sentences | Cluster bootstrap by sentence and by participant for R2, R3, R6, R19; by day/session for R20–R21 |
+| G3 | **CIs over sentences and participants** (partly done) | MEG CIs are over instances of 17 sentences | Done for R6 (sentence, participant, two-way) and R19 (grouped splits) in G1. Still open: R2, R3 (CER) and day/session CIs for R20–R21 |
 | G4 | **Natural-typing sEMG (KT-sEMG, CC BY 4.0)** | EMG sentences are composed from isolated presses | New adapter + decoder on KT-sEMG (one typist); or state as limitation only |
 | G5 | **Unified ablation table** (M3-02) | Reviewers will ask which module matters | Calibration, guard, conformal sets, OFFER_WORDS, CRC on/off × 3 devices, same seeds |
 | G6 | **eWPM user-model sensitivity on all devices** | eWPM depends on assumed costs | Fallback 10 / 20 / 40 chars/min, selection time × 0.5 / 2, `p_miss_unflagged` 0 / 0.05 / 0.2; report whether the ranking of policies changes |
@@ -308,7 +311,7 @@ Principle: every table and figure is generated by a script from committed JSON r
 | artefact | regenerate with | inputs (outside repo) | committed results |
 |---|---|---|---|
 | T1, T4 (MEG rows), R2–R5 | `tools/data/preprocess_spanishbcbl.py`; `experiments/2026-11-11-m1-09-async-full/queue.ps1` (configs `config-r4a-full-medium.json`, `config-r4b-full-medium.json`); `analysis/analyse.py` | SpanishBCBL raw + cache (`C:\Users\zhang\bci-data\...`) | `experiments/2026-11-11-m1-09-async-full/results/`, `analysis/analysis.json` |
-| T3 / T5 MEG rows, R6 | `experiments/2026-11-09-m1-15-sentence-context/launch.ps1`, `ewpm_check.py` (to be replaced by the G1 run) | M1-15 streams | `experiments/2026-11-09-m1-15-sentence-context/results/` |
+| T3 / T5 / T6 / T7 MEG rows, R6, R7, R19 | `experiments/2026-11-11-g1-async-meg-trust/run.py` + `config.json` (+ `--streams sync` for the secondary row), `tables.py` | M1-09 and M1-15 streams, M1-09 control log-probs | `experiments/2026-11-11-g1-async-meg-trust/results/` |
 | T5 MEG null rows, R7 | `experiments/2026-11-08-m2-real-keystroke/run.py` + `config.json` | cache | `results/tables.md` |
 | T3 / T5 B2T rows, F4, R8–R12 | `python -I experiments/2026-11-10-b2t25-trust/run.py` + `config.json` | `t15_copyTask.pkl` (SHA-256 in references) + CMUdict + Tatoeba LM | `results/trust.json`, `tables.md` |
 | T3 / T5 EMG rows, R13–R16 | `experiments/2026-11-11-emg-toronto/prep.py` → `train.py` (`launch.ps1`) → `trust.py` + `config.json` | Toronto zip (SHA-256 in references) | `results/decoder.json`, `trust.json` |

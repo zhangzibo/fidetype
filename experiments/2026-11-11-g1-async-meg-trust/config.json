@@ -1,0 +1,18 @@
+{
+ "description": "G1 (Paper 1): trust harness, null audit, CRC / LTT and online re-calibration on the async M1-09 r4b-full-medium MEG streams. CPU only. Settings copied from the M1-15 full-r1 run (ewpm_check.py), M2-13 and M2-16; fixed before the first evaluation run.",
+ "streams": {
+  "async": "C:/Users/zhang/bci-data/streams/m1-09-r4b-full-medium",
+  "sync": "C:/Users/zhang/bci-data/streams/m1-15-sentence-context-full-r1"
+ },
+ "controls_npz": "C:/Users/zhang/bci-data/streams/m1-09-r4b-full-medium_beam-controls/logprobs_test.npz",
+ "lexicon_corpus": "C:/Users/zhang/bci-data/corpora/tatoeba/spa_sentences.tsv.bz2",
+ "beam": "RETUNED, n_best 10, lm_weight 0.5, frame confidence (as M2-14 / M1-15 full-r1)",
+ "seed": 0,
+ "bootstrap_B": 2000,
+ "bootstrap_B_sensitivity": 300,
+ "alpha": 0.05,
+ "delta": 0.1,
+ "reps": 200,
+ "n_cal": [100, 408],
+ "grouped_cal": {"sentence": 11, "participant": 12}
+}

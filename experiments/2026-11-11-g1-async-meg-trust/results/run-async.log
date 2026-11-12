@@ -1,0 +1,55 @@
+20:53:22 harness [async]: 437 val (11 sentences), 637 test (17 sentences, 19 participants)
+20:55:15   commit: eWPM 2.580 wrong-commit 0.997 silent 0.235 KSR 0.113 OW 0.00 commit 1.00 offer 0.00 (113.7s)
+20:55:18   trust: eWPM 3.203 wrong-commit 0.000 silent 0.000 KSR 0.047 OW 0.00 commit 0.00 offer 1.00 (2.8s)
+20:57:10   trust_ow: eWPM 3.202 wrong-commit 0.000 silent 0.000 KSR 0.049 OW 0.01 commit 0.00 offer 0.99 (111.3s)
+20:57:12   trust_silent: eWPM 3.203 wrong-commit 0.000 silent 0.000 KSR 0.047 OW 0.00 commit 0.00 offer 1.00 (2.7s)
+20:59:03   trust_ow_silent: eWPM 3.202 wrong-commit 0.000 silent 0.000 KSR 0.049 OW 0.01 commit 0.00 offer 0.99 (111.2s)
+20:59:04   ow_all: eWPM 3.097 wrong-commit 0.000 silent 0.000 KSR 0.178 OW 1.00 commit 0.00 offer 0.00 (0.8s)
+20:59:04 bootstrap ...
+20:59:05 sensitivity: fallback_40cpm (FP1, 8.1 WPM)
+20:59:05   commit: eWPM 4.314 wrong-commit 0.997 silent 0.196 KSR 0.138 OW 0.00 commit 1.00 offer 0.00 (0.6s)
+20:59:08   trust: eWPM 5.153 wrong-commit 0.000 silent 0.000 KSR 0.081 OW 0.00 commit 0.00 offer 0.91 (2.6s)
+21:00:53   trust_ow: eWPM 5.145 wrong-commit 0.008 silent 0.002 KSR 0.081 OW 0.01 commit 0.00 offer 0.90 (105.2s)
+21:00:53 sensitivity: p_miss_unflagged 0
+21:00:54   commit: eWPM 3.245 wrong-commit 0.997 silent 0.000 KSR 0.073 OW 0.00 commit 1.00 offer 0.00 (0.6s)
+21:00:56   trust: eWPM 3.203 wrong-commit 0.000 silent 0.000 KSR 0.047 OW 0.00 commit 0.00 offer 1.00 (2.5s)
+21:02:42   trust_ow: eWPM 3.203 wrong-commit 0.014 silent 0.000 KSR 0.047 OW 0.01 commit 0.00 offer 0.99 (105.3s)
+21:02:42 sensitivity: p_miss_unflagged 0.2
+21:02:42   commit: eWPM 1.237 wrong-commit 0.997 silent 0.678 KSR 0.243 OW 0.00 commit 1.00 offer 0.00 (0.7s)
+21:02:45   trust: eWPM 3.203 wrong-commit 0.000 silent 0.000 KSR 0.047 OW 0.00 commit 0.00 offer 1.00 (2.5s)
+21:04:31   trust_ow: eWPM 3.202 wrong-commit 0.000 silent 0.000 KSR 0.049 OW 0.01 commit 0.00 offer 0.99 (106.5s)
+21:04:31 sensitivity: slow selection (scan, select, nav x2)
+21:04:32   commit: eWPM 2.540 wrong-commit 0.997 silent 0.184 KSR 0.138 OW 0.00 commit 1.00 offer 0.00 (0.6s)
+21:04:34   trust: eWPM 2.996 wrong-commit 0.000 silent 0.000 KSR 0.081 OW 0.00 commit 0.00 offer 0.91 (2.5s)
+21:06:20   trust_ow: eWPM 2.991 wrong-commit 0.008 silent 0.002 KSR 0.081 OW 0.01 commit 0.00 offer 0.90 (105.7s)
+21:06:20 sensitivity: no full retype
+21:06:21   commit: eWPM 2.541 wrong-commit 0.997 silent 0.243 KSR 0.085 OW 0.00 commit 1.00 offer 0.00 (0.7s)
+21:06:24   trust: eWPM 3.184 wrong-commit 0.000 silent 0.000 KSR 0.025 OW 0.00 commit 0.00 offer 0.91 (2.7s)
+21:08:15   trust_ow: eWPM 3.182 wrong-commit 0.000 silent 0.000 KSR 0.027 OW 0.01 commit 0.00 offer 0.90 (111.1s)
+21:08:15 sensitivity: no typing after ABSTAIN
+21:08:15   commit: eWPM 2.580 wrong-commit 0.997 silent 0.235 KSR 0.113 OW 0.00 commit 1.00 offer 0.00 (0.7s)
+21:08:18   trust: eWPM 3.203 wrong-commit 0.000 silent 0.000 KSR 0.047 OW 0.00 commit 0.00 offer 1.00 (2.6s)
+21:10:09   trust_ow: eWPM 3.202 wrong-commit 0.000 silent 0.000 KSR 0.049 OW 0.01 commit 0.00 offer 0.99 (111.1s)
+21:10:09 harness done (1007.3 s)
+21:16:33 audit commit: real: commit 1.000 fluent+commit 0.848 shuffled_meg: commit 1.000 fluent+commit 0.918 zeros_meg: commit 1.000 fluent+commit 1.000 other_sentence: commit 1.000 fluent+commit 0.854 frame_shuffled: commit 1.000 fluent+commit 0.892 uniform: commit 1.000 fluent+commit 1.000
+21:16:34 audit trust: real: commit 0.000 fluent+commit 0.000 shuffled_meg: commit 0.000 fluent+commit 0.000 zeros_meg: commit 0.000 fluent+commit 0.000 other_sentence: commit 0.000 fluent+commit 0.000 frame_shuffled: commit 0.000 fluent+commit 0.000 uniform: commit 0.000 fluent+commit 0.000
+21:16:34 audit trust_ow: real: commit 0.000 fluent+commit 0.000 shuffled_meg: commit 0.000 fluent+commit 0.000 zeros_meg: commit 0.000 fluent+commit 0.000 other_sentence: commit 0.000 fluent+commit 0.000 frame_shuffled: commit 0.000 fluent+commit 0.000 uniform: commit 0.000 fluent+commit 0.000
+21:16:35 items: eligible 0.024, top-1 right overall 0.0031 (0s)
+21:16:35 splits random_100: old wc 0.0000/p95 0.0000 eWPM 3.204; plugin wc 0.0100/p95 0.0223 eWPM 3.200; crc wc 0.0129/p95 0.0223 eWPM 3.200; crc_tune wc 0.0099/p95 0.0223 eWPM 3.200; ltt wc 0.0085/p95 0.0261 eWPM 3.202
+21:16:35 splits random_408: old wc 0.0000/p95 0.0000 eWPM 3.204; plugin wc 0.0066/p95 0.0262 eWPM 3.200; crc wc 0.0193/p95 0.0306 eWPM 3.199; crc_tune wc 0.0066/p95 0.0262 eWPM 3.200; ltt wc 0.0214/p95 0.0349 eWPM 3.199
+21:16:35 splits grouped_sentence_11of17: old wc 0.0000/p95 0.0000 eWPM 3.204; plugin wc 0.0046/p95 0.0251 eWPM 3.201; crc wc 0.0194/p95 0.0377 eWPM 3.199; crc_tune wc 0.0046/p95 0.0251 eWPM 3.201; ltt wc 0.0218/p95 0.0382 eWPM 3.199
+21:16:35 splits grouped_participant_12of19: old wc 0.0000/p95 0.0000 eWPM 3.216; plugin wc 0.0051/p95 0.0287 eWPM 3.213; crc wc 0.0201/p95 0.0390 eWPM 3.211; crc_tune wc 0.0051/p95 0.0287 eWPM 3.213; ltt wc 0.0232/p95 0.0467 eWPM 3.211
+21:16:36 online window@d0: wc 0.0078 commit 0.009 eWPM 3.201
+21:16:36 online decay@d0: wc 0.0204 commit 0.022 eWPM 3.198
+21:16:36 online aci@d0: wc 0.0188 commit 0.019 eWPM 3.200
+21:16:36 online aci_window@d0: wc 0.0078 commit 0.009 eWPM 3.201
+21:16:36 online window@d10: wc 0.0063 commit 0.008 eWPM 3.201
+21:16:36 online decay@d10: wc 0.0204 commit 0.022 eWPM 3.198
+21:16:36 online aci@d10: wc 0.0173 commit 0.017 eWPM 3.200
+21:16:36 online aci_window@d10: wc 0.0063 commit 0.008 eWPM 3.201
+21:16:36 online aci@d10-noticed: wc 0.0173 commit 0.017 eWPM 3.200
+21:16:36 online aci_window@d10-noticed: wc 0.0063 commit 0.008 eWPM 3.201
+21:16:36 offline old: wc 0.0000 commit 0.000 eWPM 3.203
+21:16:36 offline crc: wc 0.0204 commit 0.022 eWPM 3.198
+21:16:36 offline ltt: wc 0.0220 commit 0.024 eWPM 3.198
+21:16:36 done

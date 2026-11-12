@@ -1,0 +1,10 @@
+20:53:58 harness [sync]: 437 val (11 sentences), 637 test (17 sentences, 19 participants)
+20:55:26   commit: eWPM 2.714 wrong-commit 1.000 silent 0.199 KSR 0.123 OW 0.00 commit 1.00 offer 0.00 (87.4s)
+20:55:29   trust: eWPM 3.229 wrong-commit 0.000 silent 0.000 KSR 0.058 OW 0.00 commit 0.00 offer 1.00 (2.8s)
+20:57:18   trust_ow: eWPM 3.229 wrong-commit 0.002 silent 0.000 KSR 0.058 OW 0.00 commit 0.00 offer 1.00 (108.9s)
+20:57:20   trust_silent: eWPM 3.229 wrong-commit 0.000 silent 0.000 KSR 0.058 OW 0.00 commit 0.00 offer 1.00 (2.6s)
+20:59:09   trust_ow_silent: eWPM 3.229 wrong-commit 0.002 silent 0.000 KSR 0.058 OW 0.00 commit 0.00 offer 1.00 (109.2s)
+20:59:10   ow_all: eWPM 3.114 wrong-commit 0.000 silent 0.000 KSR 0.188 OW 1.00 commit 0.00 offer 0.00 (0.8s)
+20:59:10 bootstrap ...
+20:59:11 harness done (312.4 s)
+20:59:11 done

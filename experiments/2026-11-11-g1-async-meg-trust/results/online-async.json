@@ -1,0 +1,327 @@
+{
+ "order": "test file order (participant by participant)",
+ "n_fit": 437,
+ "n_test": 637,
+ "drift": {
+  "offline": {
+   "old": {
+    "threshold": 0.5,
+    "n": 637,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0,
+    "ewpm": 3.202971571465368,
+    "silent_error": 0.0,
+    "roll_max": 0.0,
+    "roll_share_gt_alpha": 0.0
+   },
+   "crc": {
+    "threshold": 0.10239239302166811,
+    "n": 637,
+    "wrong_commit": 0.02040816326530612,
+    "commit_rate": 0.02197802197802198,
+    "ewpm": 3.1978330883464774,
+    "silent_error": 0.0031397174254317113,
+    "roll_max": 0.12,
+    "roll_share_gt_alpha": 0.1870748299319728
+   },
+   "ltt": {
+    "threshold": 0.0,
+    "n": 637,
+    "wrong_commit": 0.02197802197802198,
+    "commit_rate": 0.023547880690737835,
+    "ewpm": 3.197898124879401,
+    "silent_error": 0.0031397174254317113,
+    "roll_max": 0.14,
+    "roll_share_gt_alpha": 0.21428571428571427
+   }
+  },
+  "online": {
+   "window@d0": {
+    "n": 637,
+    "wrong_commit": 0.007849293563579277,
+    "commit_rate": 0.009419152276295133,
+    "ewpm": 3.200598714193933,
+    "silent_error": 0.0015698587127158557,
+    "roll_max": 0.04,
+    "roll_share_gt_alpha": 0.0,
+    "report": {
+     "method": "window",
+     "alpha": 0.05,
+     "n_observed": 637,
+     "n_missing": 0,
+     "pending": 0,
+     "mean_loss": 0.007849293563579277,
+     "certificate": null,
+     "threshold": 0.10300682511451223,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.05,
+     "upper_clip_hits": 0,
+     "guarantee": "approximate (weighted CRC; exact only under exchangeability)"
+    },
+    "threshold_mean": 0.17513770801672746
+   },
+   "decay@d0": {
+    "n": 637,
+    "wrong_commit": 0.02040816326530612,
+    "commit_rate": 0.02197802197802198,
+    "ewpm": 3.1978330883464774,
+    "silent_error": 0.0031397174254317113,
+    "roll_max": 0.12,
+    "roll_share_gt_alpha": 0.1870748299319728,
+    "report": {
+     "method": "window",
+     "alpha": 0.05,
+     "n_observed": 637,
+     "n_missing": 0,
+     "pending": 0,
+     "mean_loss": 0.02040816326530612,
+     "certificate": null,
+     "threshold": 0.10212537155835612,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.05,
+     "upper_clip_hits": 0,
+     "guarantee": "approximate (weighted CRC; exact only under exchangeability)"
+    },
+    "threshold_mean": 0.10223423536397076
+   },
+   "aci@d0": {
+    "n": 637,
+    "wrong_commit": 0.018838304552590265,
+    "commit_rate": 0.018838304552590265,
+    "ewpm": 3.200468589503227,
+    "silent_error": 0.0015698587127158557,
+    "roll_max": 0.1,
+    "roll_share_gt_alpha": 0.17517006802721088,
+    "report": {
+     "method": "aci",
+     "alpha": 0.05,
+     "n_observed": 637,
+     "n_missing": 0,
+     "pending": 0,
+     "mean_loss": 0.018838304552590265,
+     "certificate": 0.046785168193982166,
+     "threshold": 0.0,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.05,
+     "upper_clip_hits": 0,
+     "guarantee": "long-run average, any sequence (realised-loss feedback)",
+     "prior_bound": 0.07975220116101514
+    },
+    "threshold_mean": 0.028489934244722723
+   },
+   "aci_window@d0": {
+    "n": 637,
+    "wrong_commit": 0.007849293563579277,
+    "commit_rate": 0.009419152276295133,
+    "ewpm": 3.200598714193933,
+    "silent_error": 0.0015698587127158557,
+    "roll_max": 0.04,
+    "roll_share_gt_alpha": 0.0,
+    "report": {
+     "method": "aci_window",
+     "alpha": 0.05,
+     "n_observed": 637,
+     "n_missing": 0,
+     "pending": 0,
+     "mean_loss": 0.007849293563579277,
+     "certificate": 0.03430141287284144,
+     "threshold": 0.10300682511451223,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.1,
+     "upper_clip_hits": 0,
+     "guarantee": "long-run average, any sequence (window needs full feedback)"
+    },
+    "threshold_mean": 0.17513770801672746
+   },
+   "window@d10": {
+    "n": 637,
+    "wrong_commit": 0.006279434850863423,
+    "commit_rate": 0.007849293563579277,
+    "ewpm": 3.200533650525954,
+    "silent_error": 0.0015698587127158557,
+    "roll_max": 0.04,
+    "roll_share_gt_alpha": 0.0,
+    "report": {
+     "method": "window",
+     "alpha": 0.05,
+     "n_observed": 627,
+     "n_missing": 0,
+     "pending": 10,
+     "mean_loss": 0.006379585326953748,
+     "certificate": null,
+     "threshold": 0.10300682511451223,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.05,
+     "upper_clip_hits": 0,
+     "guarantee": "approximate (weighted CRC; exact only under exchangeability)"
+    },
+    "threshold_mean": 0.17514798263609577
+   },
+   "decay@d10": {
+    "n": 637,
+    "wrong_commit": 0.02040816326530612,
+    "commit_rate": 0.02197802197802198,
+    "ewpm": 3.1978330883464774,
+    "silent_error": 0.0031397174254317113,
+    "roll_max": 0.12,
+    "roll_share_gt_alpha": 0.1870748299319728,
+    "report": {
+     "method": "window",
+     "alpha": 0.05,
+     "n_observed": 627,
+     "n_missing": 0,
+     "pending": 10,
+     "mean_loss": 0.02073365231259968,
+     "certificate": null,
+     "threshold": 0.10212537155835612,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.05,
+     "upper_clip_hits": 0,
+     "guarantee": "approximate (weighted CRC; exact only under exchangeability)"
+    },
+    "threshold_mean": 0.1022384272236774
+   },
+   "aci@d10": {
+    "n": 637,
+    "wrong_commit": 0.01726844583987441,
+    "commit_rate": 0.01726844583987441,
+    "ewpm": 3.2004035311255903,
+    "silent_error": 0.0015698587127158557,
+    "roll_max": 0.08,
+    "roll_share_gt_alpha": 0.17346938775510204,
+    "report": {
+     "method": "aci",
+     "alpha": 0.05,
+     "n_observed": 627,
+     "n_missing": 0,
+     "pending": 10,
+     "mean_loss": 0.017543859649122806,
+     "certificate": 0.046733894959436424,
+     "threshold": 0.0,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.05,
+     "upper_clip_hits": 0,
+     "guarantee": "long-run average, any sequence (realised-loss feedback)",
+     "prior_bound": 0.09617568124332798
+    },
+    "threshold_mean": 0.02770331561083997
+   },
+   "aci_window@d10": {
+    "n": 637,
+    "wrong_commit": 0.006279434850863423,
+    "commit_rate": 0.007849293563579277,
+    "ewpm": 3.200533650525954,
+    "silent_error": 0.0015698587127158557,
+    "roll_max": 0.04,
+    "roll_share_gt_alpha": 0.0,
+    "report": {
+     "method": "aci_window",
+     "alpha": 0.05,
+     "n_observed": 627,
+     "n_missing": 0,
+     "pending": 10,
+     "mean_loss": 0.006379585326953748,
+     "certificate": 0.03405103668261564,
+     "threshold": 0.10300682511451223,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.1,
+     "upper_clip_hits": 0,
+     "guarantee": "long-run average, any sequence (window needs full feedback)"
+    },
+    "threshold_mean": 0.17514798263609577
+   },
+   "aci@d10-noticed": {
+    "n": 637,
+    "wrong_commit": 0.01726844583987441,
+    "commit_rate": 0.01726844583987441,
+    "ewpm": 3.2004035311255903,
+    "silent_error": 0.0015698587127158557,
+    "roll_max": 0.08,
+    "roll_share_gt_alpha": 0.17346938775510204,
+    "report": {
+     "method": "aci",
+     "alpha": 0.05,
+     "n_observed": 627,
+     "n_missing": 0,
+     "pending": 10,
+     "mean_loss": 0.01594896331738437,
+     "certificate": 0.046733894959436424,
+     "threshold": 0.0,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.05,
+     "upper_clip_hits": 0,
+     "guarantee": "long-run average, any sequence (realised-loss feedback)",
+     "prior_bound": 0.09617568124332798
+    }
+   },
+   "aci_window@d10-noticed": {
+    "n": 637,
+    "wrong_commit": 0.006279434850863423,
+    "commit_rate": 0.007849293563579277,
+    "ewpm": 3.200533650525954,
+    "silent_error": 0.0015698587127158557,
+    "roll_max": 0.04,
+    "roll_share_gt_alpha": 0.0,
+    "report": {
+     "method": "aci_window",
+     "alpha": 0.05,
+     "n_observed": 627,
+     "n_missing": 0,
+     "pending": 10,
+     "mean_loss": 0.004784688995215311,
+     "certificate": 0.03405103668261564,
+     "threshold": 0.10300682511451223,
+     "lam_1": 0.10239239302166811,
+     "alpha_t": 0.1,
+     "upper_clip_hits": 0,
+     "guarantee": "long-run average, any sequence (window needs full feedback)"
+    }
+   }
+  }
+ },
+ "iid_reference": {
+  "n": 637,
+  "median": 0.12,
+  "p95": 0.16
+ },
+ "config": {
+  "description": "M2-16: online re-calibration of the COMMIT threshold under drift. CPU only. Reuses the M2-13 per-trial item files (B2T '25 both decoders, MEG M1-15 full-r1) and the EMG items of emg_items.py. Settings fixed before the first evaluation run.",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "rolling_window": 50,
+  "delays": [
+   0,
+   10
+  ],
+  "shuffles": 20,
+  "seed": 0,
+  "methods": {
+   "window": {
+    "method": "window",
+    "window": 200
+   },
+   "decay": {
+    "method": "window",
+    "window": null,
+    "decay": 0.99
+   },
+   "aci": {
+    "method": "aci",
+    "eta": 0.05
+   },
+   "aci_window": {
+    "method": "aci_window",
+    "window": 200,
+    "gamma": 0.005
+   }
+  },
+  "eta_sensitivity": [
+   0.01,
+   0.02,
+   0.05,
+   0.1,
+   0.2
+  ],
+  "m213_items": "experiments/2026-11-11-m2-13-conformal/results"
+ }
+}

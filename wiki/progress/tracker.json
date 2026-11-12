@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11T21:02:00-08:00",
+  "updated": "2026-11-11T21:25:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8).",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -385,9 +385,13 @@
      "orchestrator_only": false, "notes": "Depends on venue reviewers. Not counted as late."},
     {"id": "M3-09", "milestone": "M3", "title": "Paper 1 detailed outline + results inventory", "status": "done",
      "started_at": "2026-11-11T20:25:00-08:00", "finished_at": "2026-11-11T20:50:00-08:00", "approx_times": true,
-     "agent_runs": [],
+     "agent_runs": [{"label": "outline + results inventory", "duration_s": 442.6, "tokens": 170468, "tool_uses": 40}],
      "orchestrator_only": false, "notes": "papers/paper1/outline.md + wiki/questions/paper1-plan.md: titles, abstract, contributions, T1-T7 / F1-F7 plan, related-work map, limitations, licence statement, 27 inventory rows, 15 gaps (G1: trust harness on the async M1-09 streams), reproducibility plan, venues."},
 
+    {"id": "M3-10", "milestone": "M3", "title": "Paper 1 gap G1: trust harness, null audit, CRC/LTT, online on the async M1-09 MEG streams (+ sentence/participant CIs)", "status": "done",
+     "started_at": "2026-11-11T20:52:00-08:00", "finished_at": "2026-11-11T21:25:00-08:00", "approx_times": true,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "experiments/2026-11-11-g1-async-meg-trust/ (CPU only). Async: always commit 2.58, trust 3.20, gaze 3.155 eWPM; wrong-commit 0.997 -> 0; trust - gaze CI sentences [-0.04, +0.15], participants [-0.07, +0.22]. Null input: trust 0 % commits. CRC 0.0193 / LTT 0.0214. Online aci 0.0188, aci_window 0.0078. Outline R6, R7, R19 final; G1 done; G3 partly."},
     {"id": "M4-01", "milestone": "M4", "title": "Add a causal mode with configurable lookahead", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,
      "agent_runs": [],
