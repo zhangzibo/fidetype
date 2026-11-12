@@ -36,6 +36,30 @@ import numpy as np
 from fidetype.streams.vocab import normalize_text
 
 # ---------------------------------------------------------------------------
+# Licence (M5-03: download-only, research only)
+# ---------------------------------------------------------------------------
+
+#: The dataset licence. Non-commercial: research and benchmark use only.
+LICENCE = "CC-BY-NC-4.0"
+NON_COMMERCIAL = True
+#: The only source. Fidetype never mirrors, vendors or redistributes the data.
+SOURCE_URL = "https://huggingface.co/datasets/bcbl190626/SpanishBCBL"
+DOWNLOAD_COMMAND = (
+    "huggingface-cli download bcbl190626/SpanishBCBL --repo-type dataset --include 'MEG/*' --local-dir <root>"
+)
+LICENCE_NOTICE = (
+    "SpanishBCBL is CC BY-NC 4.0 (research use only). Download it yourself from "
+    f"{SOURCE_URL}. Fidetype ships no SpanishBCBL data and no weights trained on it; "
+    "anything derived from it (caches, streams, weights, results) is for non-commercial research only."
+)
+
+
+def licence_notice() -> str:
+    """Return the licence notice that every SpanishBCBL entry point shows."""
+    return LICENCE_NOTICE
+
+
+# ---------------------------------------------------------------------------
 # Dataset facts
 # ---------------------------------------------------------------------------
 

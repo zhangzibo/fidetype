@@ -370,3 +370,12 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Honest MEG framing: parity with gaze typing (+0.05, CI over sentences [-0.04, +0.15]); the trust layer commits 0 % also on real MEG, so the MEG null audit shows a closed gate, not null detection.
 - Missing data marked with red `\todo{}` (G2-G10, G12, G14, F5, appendix D-F) and user decisions (authors, ethics wording, AI statement, venue). 18 bib entries carry `% TODO-verify` (mostly venue names from our own knowledge). No reference was invented.
 - New: `papers/paper1/README.md` (toolchain + build), `how-to-read-this-draft.md` (STE guide for the author), `style-notes.md` (lessons from 5-6 published papers), `data/markdown-only-numbers.json`. Updated: `paper1-plan.md`, `index.md`, tracker (M3-11; M5-10 agent run), `HANDOFF.md`.
+
+## [2026-11-11] setup | M5-01..03 open benchmark v0.1
+- New package `src/fidetype/benchmark/` (registry, splits, prepare, submission, scoring, harness, leaderboard) and CLI `python -m fidetype.benchmark` (tracks, info, prepare, check, score, leaderboard).
+- Fixed splits committed as ids + cluster labels + text SHA-256 (no text): MEG 4026/437/637, B2T cal 812 / test 816, Toronto composed cal 570 / test 551.
+- Leaderboard v0.1 in `benchmark/site/` (21 baseline entries, 3 tracks); B2T published-sentence entry scored end to end from 816 NTS files and matches M6-06 exactly (CER 0.0309, WER 0.0431, wrong-commit 0.194). Other entries scored from committed per-trial or aggregate results.
+- Findings: B2T CRC on the fixed day-half split 0.062 > alpha 0.05 (drift; M2-13's 0.048 is over random splits); MEG CRC commits 2.2% with 93% of commits wrong; M1-09 MEG streams reach only conformance level core.
+- M5-03 licence audit: `LICENSES/DATA.md`; SpanishBCBL loader/adapter carry licence constants and a `spanishbcbl.licence` meta key; no NC code vendored; judgement call on `experiments/2026-11-08-m2-real-keystroke/results/trials.json` (SpanishBCBL typed texts).
+- Pages: [open-benchmark](concepts/open-benchmark.md), `benchmark/README.md`, README section, index.
+

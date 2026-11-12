@@ -269,6 +269,8 @@ Reasons:
 
 **Effort:** 15–25 agent-days. **Depends on:** M5 harness, P4 replay adapters.
 
+**Status (2026-11-11):** v0.1 is done as M5-01..03: [open benchmark](../concepts/open-benchmark.md) (3 tracks, NTS submissions, fixed splits, static leaderboard with our baselines).
+
 **Later extension:** [P13](#p13-public-benchmark-hub-added-2026-11-11) grows this leaderboard into a hub. P6 scope and dates do not change.
 
 ## P7. Conformance + certification

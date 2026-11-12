@@ -1,0 +1,129 @@
+{
+ "schema": "fidetype.benchmark.result/0.1",
+ "benchmark_version": "0.1",
+ "entry_id": "b2t25-t15-copytask/ours/trust",
+ "track": "b2t25-t15-copytask",
+ "decoder": {
+  "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+  "version": "m6-06",
+  "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+  "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+  "training_data": [
+   "none (decoding only)"
+  ]
+ },
+ "policy": {
+  "name": "trust gate (plug-in fit)",
+  "description": "Fidetype trust core: COMMIT only above a calibrated p_top1 threshold fitted on the calibration split (empirical wrong-commit <= 0.05); else OFFER"
+ },
+ "scored_from": "committed-per-trial",
+ "sources": [
+  "experiments/2026-11-10-b2t25-trust/results/trust.json",
+  "experiments/2026-11-11-m2-13-conformal/results/items-b2t-ours.json"
+ ],
+ "n_trials": 816,
+ "ci": {
+  "unit": "day",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95
+ },
+ "metrics": {
+  "ewpm": {
+   "value": 11.545649629165746,
+   "ci": [
+    10.847230673357748,
+    12.338739495487184
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 4.078303425774878,
+   "ci": [
+    4.046502581121035,
+    4.120701295710305
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 7.467346203390869,
+   "ci": [
+    6.771795787631832,
+    8.263148094730004
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.058823529411764705,
+   "ci": [
+    0.04473643347499183,
+    0.07009436824857385
+   ]
+  },
+  "commit_rate": {
+   "value": 0.23161764705882354,
+   "ci": [
+    0.20166647226658532,
+    0.2570662537019734
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.25396825396825395,
+   "ci": [
+    0.19510104529616729,
+    0.3225806451612903
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.0024509803921568627,
+   "ci": [
+    0.0,
+    0.005668934240362812
+   ]
+  },
+  "cer": {
+   "value": 0.09533282934786934,
+   "ci": null,
+   "basis": "aggregate of the committed run (no per-trial CER)"
+  },
+  "wer": {
+   "value": 0.1490731707317073,
+   "ci": null,
+   "basis": "aggregate of the committed run"
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "basis": "aggregate null audit of the top-1 decoder (n=300): wrong-commit real 0.637 vs frame-shuffled 1.000"
+  },
+  "zeros": {
+   "status": "pass",
+   "basis": "aggregate null audit (uniform logits stand in for zeros input, n=300): wrong-commit real 0.637 vs uniform 1.000"
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "basis": "null audit, uniform logits, n=300"
+  },
+  "passed": true
+ },
+ "guarantee": {
+  "method": "none"
+ },
+ "conformance": {
+  "level": "trust-ready",
+  "gate": "trust-ready",
+  "passed": true,
+  "checked": "adapter streams (fidetype.adapters.b2t25), all 816 test files of the stream submission"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 159.27 chars/min",
+  "config": {
+   "chars_per_min": 159.2741387635318
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+ ],
+ "status": "baseline"
+}

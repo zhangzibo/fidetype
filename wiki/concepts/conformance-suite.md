@@ -103,3 +103,6 @@ The suite found 10 points where the spec text is unclear. They are listed as inf
 - [Long-term standard roadmap](../questions/roadmap-standard.md): phase P7 (conformance and certification).
 - [Architecture](../questions/architecture.md): where NeuralTextStream sits.
 - Adapters: [Brain-to-Text '25](../entities/brain-to-text-25.md), [Toronto sEMG typing dataset](../entities/toronto-semg-typing-dataset.md).
+
+## Used by
+- [Open benchmark v0.1](open-benchmark.md): every submitted stream must reach the `trust-ready` level (the entry gate).

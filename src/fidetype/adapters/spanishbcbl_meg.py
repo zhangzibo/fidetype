@@ -27,6 +27,13 @@ Spec section 4.2 keys, plus dataset keys under the ``spanishbcbl.``
 namespace. Before 2026-11-11 the producer wrote flat keys (``subject``,
 ``split``, ...). The conformance suite (M5-10) flagged them, so they now
 live under ``spanishbcbl.``. No key holds the target or typed text.
+
+Licence
+-------
+The source data are CC BY-NC 4.0 (research only; see
+:data:`fidetype.data.spanishbcbl.LICENCE_NOTICE`). The streams carry
+``spanishbcbl.licence`` so a consumer can see that the output is
+derived from non-commercial data. Fidetype ships no such streams or weights.
 """
 
 from __future__ import annotations
@@ -102,6 +109,7 @@ def stream_meta(
         "spanishbcbl.checkpoint": checkpoint,
         "spanishbcbl.lookahead_frames": lookahead_frames,
         "spanishbcbl.model": model,
+        "spanishbcbl.licence": "CC-BY-NC-4.0",
     }
     if latency is not None:
         m["decoder.lookahead_s"] = float(latency)

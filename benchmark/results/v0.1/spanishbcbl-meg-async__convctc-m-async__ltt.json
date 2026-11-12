@@ -1,0 +1,156 @@
+{
+ "schema": "fidetype.benchmark.result/0.1",
+ "benchmark_version": "0.1",
+ "entry_id": "spanishbcbl-meg-async/convctc-m-async/ltt",
+ "track": "spanishbcbl-meg-async",
+ "decoder": {
+  "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+  "version": "m1-09-r4b-full-medium",
+  "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+  "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+  "training_data": [
+   "SpanishBCBL train split (CC BY-NC 4.0)",
+   "Tatoeba es (CC BY 2.0 FR) for the char LM"
+  ]
+ },
+ "policy": {
+  "name": "trust gate + LTT",
+  "description": "commit threshold by Learn then Test, alpha 0.05, delta 0.1"
+ },
+ "scored_from": "committed-per-trial",
+ "sources": [
+  "experiments/2026-11-11-g1-async-meg-trust/results/items-meg-async.json",
+  "experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json",
+  "experiments/2026-11-11-g1-async-meg-trust/results/null-audit-async.json",
+  "experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/per_sentence_cer.json"
+ ],
+ "n_trials": 637,
+ "ci": {
+  "unit": "two_way:sentence,participant",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95
+ },
+ "metrics": {
+  "ewpm": {
+   "value": 3.197898124879401,
+   "ci": [
+    3.0077867494903217,
+    3.4405417688560203
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 3.1545665572720725,
+   "ci": [
+    3.0188793906102207,
+    3.290162383053619
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 0.04333156760732848,
+   "ci": [
+    -0.11224101010266757,
+    0.24363259452176722
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.02197802197802198,
+   "ci": [
+    0.002923869893712383,
+    0.055012243979682754
+   ]
+  },
+  "commit_rate": {
+   "value": 0.023547880690737835,
+   "ci": [
+    0.0029281506597141956,
+    0.05831165387343166
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.9333333333333333,
+   "ci": [
+    0.75,
+    1.0
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.0031397174254317113,
+   "ci": [
+    0.0,
+    0.013016260162601581
+   ]
+  },
+  "cer": {
+   "value": 0.5216521251901065,
+   "ci": null,
+   "basis": "aggregate of the committed run (no per-trial CER)"
+  },
+  "wer": {
+   "value": 0.9023090586145648,
+   "ci": null,
+   "basis": "aggregate of the committed run"
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 0.7307692307692307,
+   "cer_gap": 0.25398223004882736,
+   "cer_gap_ci": [
+    0.21002648654816594,
+    0.3074153515387623
+   ],
+   "basis": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)"
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 0.7680300968542384,
+   "cer_gap": 0.2912430961338349,
+   "cer_gap_ci": [
+    0.2371404818721217,
+    0.34842882586651414
+   ],
+   "basis": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)"
+  },
+  "null_commit": {
+   "status": "missing",
+   "basis": "no null audit at this threshold"
+  },
+  "passed": false
+ },
+ "guarantee": {
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 437,
+  "scope": "marginal wrong-commit rate over test trials; assumes calibration and test trials are exchangeable",
+  "calibration_split": "val",
+  "measured_wrong_commit": 0.02197802197802198,
+  "measured_wrong_commit_ci": [
+   0.002923869893712383,
+   0.055012243979682754
+  ],
+  "met_on_test": true,
+  "threshold": 0.0
+ },
+ "conformance": {
+  "level": "core",
+  "gate": "trust-ready",
+  "passed": false,
+  "checked": "the M1-09 stream files (local); they predate the M5-10 adapter and lack device.modality, decoder.causal, data.derived and language. The current adapter reaches provenance on synthetic input; rerun infer.py to get trust-ready streams."
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 152 chars/min",
+  "config": {
+   "chars_per_min": 152.0
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
+  "trust gate + LTT: commit threshold on calibrated p_top1 0.0000 (fitted on the 437 val trials)."
+ ],
+ "status": "baseline"
+}

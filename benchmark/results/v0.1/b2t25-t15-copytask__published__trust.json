@@ -1,0 +1,130 @@
+{
+ "schema": "fidetype.benchmark.result/0.1",
+ "benchmark_version": "0.1",
+ "entry_id": "b2t25-t15-copytask/published/trust",
+ "track": "b2t25-t15-copytask",
+ "decoder": {
+  "name": "Card et al. 2024 online decoder (published sentence)",
+  "version": "t15-copytask-online",
+  "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+  "weights_licence": "not released (outputs in the CC0 dataset)",
+  "training_data": [
+   "T15 sessions (Card et al. 2024)"
+  ],
+  "training_regime": "online, per-user"
+ },
+ "policy": {
+  "name": "trust gate (plug-in fit)",
+  "description": "Fidetype trust core: COMMIT only above a calibrated p_top1 threshold fitted on the calibration split (empirical wrong-commit <= 0.05); else OFFER"
+ },
+ "scored_from": "committed-per-trial",
+ "sources": [
+  "experiments/2026-11-10-b2t25-trust/results/trust.json",
+  "experiments/2026-11-11-m2-13-conformal/results/items-b2t-published.json"
+ ],
+ "n_trials": 816,
+ "ci": {
+  "unit": "day",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95
+ },
+ "metrics": {
+  "ewpm": {
+   "value": 18.767072914257195,
+   "ci": [
+    17.216493007164118,
+    20.34623075141451
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 4.078303425774878,
+   "ci": [
+    4.046502581121035,
+    4.120701295710305
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 14.688769488482318,
+   "ci": [
+    13.125831151389841,
+    16.256924850169963
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.04411764705882353,
+   "ci": [
+    0.026504431186283598,
+    0.06733406369967197
+   ]
+  },
+  "commit_rate": {
+   "value": 0.4730392156862745,
+   "ci": [
+    0.44502492547408506,
+    0.5013697462680724
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.09326424870466321,
+   "ci": [
+    0.056601455658059435,
+    0.14480921424533635
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.003676470588235294,
+   "ci": [
+    0.0,
+    0.00816326530612245
+   ]
+  },
+  "cer": {
+   "value": 0.03091552938367883,
+   "ci": null,
+   "basis": "aggregate of the committed run (no per-trial CER)"
+  },
+  "wer": {
+   "value": 0.04312195121951219,
+   "ci": null,
+   "basis": "aggregate of the committed run"
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "missing",
+   "basis": "text-only decoder: cannot rerun on shuffled input"
+  },
+  "zeros": {
+   "status": "missing",
+   "basis": "text-only decoder: cannot rerun on zero input"
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "basis": "null audit, uniform logits, n=300 (tests the gate; the text is fixed)"
+  },
+  "passed": false
+ },
+ "guarantee": {
+  "method": "none"
+ },
+ "conformance": {
+  "level": "trust-ready",
+  "gate": "trust-ready",
+  "passed": true,
+  "checked": "adapter streams (fidetype.adapters.b2t25), all 816 test files of the stream submission"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 159.27 chars/min",
+  "config": {
+   "chars_per_min": 159.2741387635318
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+ ],
+ "status": "baseline"
+}

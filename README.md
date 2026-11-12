@@ -52,7 +52,8 @@ node tools/serve.js        # then open http://127.0.0.1:8000/wiki/diagrams/index
 | M2 | Trust core v0 | Planned |
 | M3 | Paper 1: "Calibrated, abstaining brain-to-text", with the new metric effective words per minute | Planned |
 | M4 | Paper 2: causal / streaming decoder | Planned |
-| M5–M7 | Open benchmark, device adapters, pilots | Planned |
+| M5 | Open benchmark v0.1: harness, fixed splits, leaderboard, licence audit | Done (2026-11-11) |
+| M6–M7 | Device adapters, pilots | In progress |
 
 - Full plan: [wiki/questions/project-plan.md](wiki/questions/project-plan.md).
 - Actual progress: [wiki/progress/index.html](wiki/progress/index.html) (a generated dashboard; it also opens through `node tools/serve.js`).
@@ -96,9 +97,21 @@ notebooks/    experiments
 data/         local datasets (git-ignored, never committed)
 ```
 
+## Open benchmark v0.1
+Score neural text entry from NeuralTextStream files, with fixed splits, required controls and eWPM next to a no-BCI reference. Three tracks: SpanishBCBL MEG (research only), Brain-to-Text '25 (CC0), Toronto sEMG (CC BY). No data and no weights are shipped.
+
+```bash
+python -m fidetype.benchmark tracks
+python -m fidetype.benchmark prepare b2t25-t15-copytask --data t15_copyTask.pkl --out truth.jsonl
+python -m fidetype.benchmark score my-submission --truth truth.jsonl --out result.json
+python -m fidetype.benchmark leaderboard
+```
+
+Leaderboard: [benchmark/site/leaderboard.md](benchmark/site/leaderboard.md) (also `benchmark/site/index.html`). How to submit: [benchmark/README.md](benchmark/README.md). Concept: [wiki/concepts/open-benchmark.md](wiki/concepts/open-benchmark.md).
+
 ## Data and licences
 - All code in this repository is **Apache-2.0**.
-- The research datasets that we use for experiments (SpanishBCBL, emg2qwerty) are **CC BY-NC**. We use them for research and benchmarks only. We do not redistribute them. Dataset loaders (planned) only download the data from the original source.
+- Some research datasets (SpanishBCBL; emg2qwerty, not used yet) are **CC BY-NC**. We use them for research and benchmarks only. We do not redistribute them. All datasets are download-only: you fetch them from the original source. Details and the M5-03 audit: [LICENSES/DATA.md](LICENSES/DATA.md).
 - **Provenance rule:** product model weights come only from CC0 data or from our own consented data. A provenance ledger (planned) records which data trained which weights.
 - Meta's Brain2Qwerty code is CC BY-NC. Fidetype contains no Meta code. Our decoder will be our own implementation.
 

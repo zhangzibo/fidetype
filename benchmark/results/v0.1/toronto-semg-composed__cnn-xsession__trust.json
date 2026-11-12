@@ -1,0 +1,119 @@
+{
+ "schema": "fidetype.benchmark.result/0.1",
+ "benchmark_version": "0.1",
+ "entry_id": "toronto-semg-composed/cnn-xsession/trust",
+ "track": "toronto-semg-composed",
+ "decoder": {
+  "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+  "version": "m6-07",
+  "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+  "weights_licence": "not released (trained on CC BY 4.0 data)",
+  "training_regime": "cross-session",
+  "training_data": [
+   "Toronto sEMG (cross-session; CC BY 4.0)",
+   "Tatoeba en (CC BY 2.0 FR) for the char LM"
+  ]
+ },
+ "policy": {
+  "name": "trust gate (plug-in fit)",
+  "description": "Fidetype trust core: COMMIT only above a calibrated p_top1 threshold fitted on the calibration split (empirical wrong-commit <= 0.05); else OFFER"
+ },
+ "scored_from": "committed-aggregate",
+ "sources": [
+  "experiments/2026-11-11-emg-toronto/results/trust.json"
+ ],
+ "n_trials": 551,
+ "ci": {
+  "unit": "participant",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.39772926786445834,
+   "ci": null
+  },
+  "wer": {
+   "value": 0.5791347207009858,
+   "ci": null
+  },
+  "ewpm": {
+   "value": 4.676921023830239,
+   "ci": [
+    4.212462641950116,
+    5.246704619022795
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 4.274594721133025,
+   "ci": null
+  },
+  "ewpm_minus_gaze": {
+   "value": 0.40232630269721437,
+   "ci": null
+  },
+  "wrong_commit_rate": {
+   "value": 0.003629764065335753,
+   "ci": [
+    0.0,
+    0.009074410163339383
+   ]
+  },
+  "commit_rate": {
+   "value": 0.018148820326678767,
+   "ci": [
+    0.007017543859649123,
+    0.030852994555353903
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.19999999999999998,
+   "ci": null
+  },
+  "silent_error_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "basis": "aggregate null audit (n=200): wrong-commit real 0.875 vs frame-shuffled 1.000"
+  },
+  "zeros": {
+   "status": "pass",
+   "basis": "aggregate null audit: wrong-commit real 0.875 vs zeros input 1.000"
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "basis": "null audit, zeros input"
+  },
+  "passed": true
+ },
+ "guarantee": {
+  "method": "none"
+ },
+ "conformance": {
+  "level": "trust-ready",
+  "gate": "trust-ready",
+  "passed": true,
+  "checked": "local composed streams (cache streams/calib/test00_ctc.npz); provenance fails only on decoder.weights_sha256 and stream.id"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 75.76 chars/min",
+  "config": {
+   "chars_per_min": 75.75757575757575
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "Composed sentences from isolated key presses: not natural typing."
+ ],
+ "status": "baseline"
+}

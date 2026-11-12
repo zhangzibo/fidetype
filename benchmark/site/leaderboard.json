@@ -1,0 +1,622 @@
+{
+ "benchmark_version": "0.1",
+ "tracks": {
+  "spanishbcbl-meg-async": [
+   {
+    "entry_id": "spanishbcbl-meg-async/convctc-m-async/trust",
+    "track": "spanishbcbl-meg-async",
+    "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.5216521251901065,
+    "wer": 0.9023090586145648,
+    "ewpm": 3.202971571465368,
+    "ewpm_ci": [
+     3.01053224257128,
+     3.4508138664391157
+    ],
+    "gaze_ewpm": 3.1545665572720725,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "core",
+    "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 637,
+    "ci_unit": "two_way:sentence,participant",
+    "notes": [
+     "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
+     "trust gate (plug-in fit): commit threshold on calibrated p_top1 0.5000 (fitted on the 437 val trials)."
+    ],
+    "file": "spanishbcbl-meg-async__convctc-m-async__trust.json"
+   },
+   {
+    "entry_id": "spanishbcbl-meg-async/convctc-m-async/ltt",
+    "track": "spanishbcbl-meg-async",
+    "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+    "policy": "trust gate + LTT",
+    "cer": 0.5216521251901065,
+    "wer": 0.9023090586145648,
+    "ewpm": 3.197898124879401,
+    "ewpm_ci": [
+     3.0077867494903217,
+     3.4405417688560203
+    ],
+    "gaze_ewpm": 3.1545665572720725,
+    "wrong_commit_rate": 0.02197802197802198,
+    "error_among_commits": 0.9333333333333333,
+    "commit_rate": 0.023547880690737835,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null missing)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met)",
+    "conformance": "core",
+    "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 637,
+    "ci_unit": "two_way:sentence,participant",
+    "notes": [
+     "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
+     "trust gate + LTT: commit threshold on calibrated p_top1 0.0000 (fitted on the 437 val trials)."
+    ],
+    "file": "spanishbcbl-meg-async__convctc-m-async__ltt.json"
+   },
+   {
+    "entry_id": "spanishbcbl-meg-async/convctc-m-async/crc",
+    "track": "spanishbcbl-meg-async",
+    "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+    "policy": "trust gate + CRC",
+    "cer": 0.5216521251901065,
+    "wer": 0.9023090586145648,
+    "ewpm": 3.1978330883464774,
+    "ewpm_ci": [
+     3.0076417876965547,
+     3.4403588315362077
+    ],
+    "gaze_ewpm": 3.1545665572720725,
+    "wrong_commit_rate": 0.02040816326530612,
+    "error_among_commits": 0.9285714285714286,
+    "commit_rate": 0.02197802197802198,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null missing)",
+    "guarantee": "CRC a=0.05, n_cal=437; test 0.020 (met)",
+    "conformance": "core",
+    "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 637,
+    "ci_unit": "two_way:sentence,participant",
+    "notes": [
+     "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
+     "trust gate + CRC: commit threshold on calibrated p_top1 0.1024 (fitted on the 437 val trials)."
+    ],
+    "file": "spanishbcbl-meg-async__convctc-m-async__crc.json"
+   },
+   {
+    "entry_id": "spanishbcbl-meg-async/convctc-m-async/always-commit",
+    "track": "spanishbcbl-meg-async",
+    "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+    "policy": "always-commit",
+    "cer": 0.5216521251901065,
+    "wer": 0.9023090586145648,
+    "ewpm": 2.580462165433796,
+    "ewpm_ci": [
+     2.318153551678217,
+     2.8830400809432626
+    ],
+    "gaze_ewpm": 3.1545665572720725,
+    "wrong_commit_rate": 0.9968602825745683,
+    "error_among_commits": 0.9968602825745683,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "core",
+    "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 637,
+    "ci_unit": "two_way:sentence,participant",
+    "notes": [
+     "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522."
+    ],
+    "file": "spanishbcbl-meg-async__convctc-m-async__always-commit.json"
+   }
+  ],
+  "b2t25-t15-copytask": [
+   {
+    "entry_id": "b2t25-t15-copytask/published/always-commit",
+    "track": "b2t25-t15-copytask",
+    "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "policy": "always-commit",
+    "cer": 0.03091552938367883,
+    "wer": 0.04312195121951219,
+    "ewpm": 19.553301122360153,
+    "ewpm_ci": [
+     17.916113765148484,
+     21.20565041763584
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.19362745098039216,
+    "error_among_commits": 0.19362745098039216,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf missing, zeros missing, null missing)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (outputs in the CC0 dataset)",
+    "scored_from": "stream-submission",
+    "n_trials": 816,
+    "ci_unit": "day",
+    "notes": [
+     "Scored end to end from NTS files by `python -m fidetype.benchmark score`. Matches the committed M6-06 numbers: CER 0.0309, WER 0.0431, wrong-commit 0.194 (eWPM differs only by the user-model random draws: 19.61 committed).",
+     "Text-only result: the published decoder cannot be rerun on shuffled or zero input, so the controls are missing."
+    ],
+    "file": "b2t25-t15-copytask__published__always-commit.json"
+   },
+   {
+    "entry_id": "b2t25-t15-copytask/published/crc",
+    "track": "b2t25-t15-copytask",
+    "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "policy": "trust gate + CRC",
+    "cer": 0.03091552938367883,
+    "wer": 0.04312195121951219,
+    "ewpm": 18.7985492726047,
+    "ewpm_ci": [
+     17.236796441605744,
+     20.386596177482396
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.049019607843137254,
+    "error_among_commits": 0.09876543209876543,
+    "commit_rate": 0.4963235294117647,
+    "controls_passed": false,
+    "controls": "no (shuf missing, zeros missing, null missing)",
+    "guarantee": "CRC a=0.05, n_cal=812; test 0.049 (met)",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (outputs in the CC0 dataset)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 816,
+    "ci_unit": "day",
+    "notes": [
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+    ],
+    "file": "b2t25-t15-copytask__published__crc.json"
+   },
+   {
+    "entry_id": "b2t25-t15-copytask/published/trust",
+    "track": "b2t25-t15-copytask",
+    "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.03091552938367883,
+    "wer": 0.04312195121951219,
+    "ewpm": 18.767072914257195,
+    "ewpm_ci": [
+     17.216493007164118,
+     20.34623075141451
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.04411764705882353,
+    "error_among_commits": 0.09326424870466321,
+    "commit_rate": 0.4730392156862745,
+    "controls_passed": false,
+    "controls": "no (shuf missing, zeros missing, null pass)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (outputs in the CC0 dataset)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 816,
+    "ci_unit": "day",
+    "notes": [
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+    ],
+    "file": "b2t25-t15-copytask__published__trust.json"
+   },
+   {
+    "entry_id": "b2t25-t15-copytask/published/ltt",
+    "track": "b2t25-t15-copytask",
+    "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "policy": "trust gate + LTT",
+    "cer": 0.03091552938367883,
+    "wer": 0.04312195121951219,
+    "ewpm": 18.729233593282384,
+    "ewpm_ci": [
+     17.181731717642894,
+     20.31054751002315
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.04044117647058824,
+    "error_among_commits": 0.09065934065934066,
+    "commit_rate": 0.44607843137254904,
+    "controls_passed": false,
+    "controls": "no (shuf missing, zeros missing, null missing)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met)",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (outputs in the CC0 dataset)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 816,
+    "ci_unit": "day",
+    "notes": [
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+    ],
+    "file": "b2t25-t15-copytask__published__ltt.json"
+   },
+   {
+    "entry_id": "b2t25-t15-copytask/ours/crc",
+    "track": "b2t25-t15-copytask",
+    "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+    "policy": "trust gate + CRC",
+    "cer": 0.09533282934786934,
+    "wer": 0.1490731707317073,
+    "ewpm": 11.553005605711514,
+    "ewpm_ci": [
+     10.857474425303996,
+     12.348979928405726
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.0625,
+    "error_among_commits": 0.2562814070351759,
+    "commit_rate": 0.24387254901960784,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null missing)",
+    "guarantee": "CRC a=0.05, n_cal=812; test 0.062 (NOT met)",
+    "conformance": "trust-ready",
+    "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 816,
+    "ci_unit": "day",
+    "notes": [
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+    ],
+    "file": "b2t25-t15-copytask__ours__crc.json"
+   },
+   {
+    "entry_id": "b2t25-t15-copytask/ours/trust",
+    "track": "b2t25-t15-copytask",
+    "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.09533282934786934,
+    "wer": 0.1490731707317073,
+    "ewpm": 11.545649629165746,
+    "ewpm_ci": [
+     10.847230673357748,
+     12.338739495487184
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.058823529411764705,
+    "error_among_commits": 0.25396825396825395,
+    "commit_rate": 0.23161764705882354,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 816,
+    "ci_unit": "day",
+    "notes": [
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+    ],
+    "file": "b2t25-t15-copytask__ours__trust.json"
+   },
+   {
+    "entry_id": "b2t25-t15-copytask/ours/ltt",
+    "track": "b2t25-t15-copytask",
+    "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+    "policy": "trust gate + LTT",
+    "cer": 0.09533282934786934,
+    "wer": 0.1490731707317073,
+    "ewpm": 11.51463409412569,
+    "ewpm_ci": [
+     10.80299566192251,
+     12.305391485507718
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.04656862745098039,
+    "error_among_commits": 0.2389937106918239,
+    "commit_rate": 0.1948529411764706,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null missing)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met)",
+    "conformance": "trust-ready",
+    "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+    "scored_from": "committed-per-trial",
+    "n_trials": 816,
+    "ci_unit": "day",
+    "notes": [
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+    ],
+    "file": "b2t25-t15-copytask__ours__ltt.json"
+   },
+   {
+    "entry_id": "b2t25-t15-copytask/ours/always-commit",
+    "track": "b2t25-t15-copytask",
+    "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+    "policy": "always-commit",
+    "cer": 0.09533282934786934,
+    "wer": 0.1490731707317073,
+    "ewpm": 11.449637382561223,
+    "ewpm_ci": [
+     10.723368025927213,
+     12.316589685370028
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.6102941176470589,
+    "error_among_commits": 0.6102941176470589,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 816,
+    "ci_unit": "day",
+    "notes": [],
+    "file": "b2t25-t15-copytask__ours__always-commit.json"
+   }
+  ],
+  "toronto-semg-composed": [
+   {
+    "entry_id": "toronto-semg-composed/cnn-calib/trust",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.12254930649031427,
+    "wer": 0.21358159912376778,
+    "ewpm": 8.02440661976506,
+    "ewpm_ci": [
+     6.896019828013727,
+     9.150176589176764
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.003629764065335753,
+    "error_among_commits": 0.09523809523809525,
+    "commit_rate": 0.038112522686025406,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-calib__trust.json"
+   },
+   {
+    "entry_id": "toronto-semg-composed/cnn-calib/crc",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "policy": "trust gate + CRC",
+    "cer": 0.12254930649031427,
+    "wer": 0.21358159912376778,
+    "ewpm": 7.976984532053387,
+    "ewpm_ci": [
+     6.906811858304512,
+     9.029818161703103
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.003629764065335753,
+    "error_among_commits": 0.09523809523809525,
+    "commit_rate": 0.038112522686025406,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=142; test 0.004 (met)",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-calib__crc.json"
+   },
+   {
+    "entry_id": "toronto-semg-composed/cnn-calib/commit",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "policy": "always-commit",
+    "cer": 0.12254930649031427,
+    "wer": 0.21358159912376778,
+    "ewpm": 7.809276586628506,
+    "ewpm_ci": [
+     6.604057042275558,
+     9.006841620946759
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.5408348457350273,
+    "error_among_commits": 0.5408348457350273,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-calib__commit.json"
+   },
+   {
+    "entry_id": "toronto-semg-composed/cnn-xsession/crc",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "policy": "trust gate + CRC",
+    "cer": 0.39772926786445834,
+    "wer": 0.5791347207009858,
+    "ewpm": 4.676921023830239,
+    "ewpm_ci": [
+     4.212462641950116,
+     5.246704619022795
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.003629764065335753,
+    "error_among_commits": 0.19999999999999998,
+    "commit_rate": 0.018148820326678767,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=142; test 0.004 (met)",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-xsession__crc.json"
+   },
+   {
+    "entry_id": "toronto-semg-composed/cnn-xsession/trust",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.39772926786445834,
+    "wer": 0.5791347207009858,
+    "ewpm": 4.676921023830239,
+    "ewpm_ci": [
+     4.212462641950116,
+     5.246704619022795
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.003629764065335753,
+    "error_among_commits": 0.19999999999999998,
+    "commit_rate": 0.018148820326678767,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-xsession__trust.json"
+   },
+   {
+    "entry_id": "toronto-semg-composed/cnn-xsession/commit",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "policy": "always-commit",
+    "cer": 0.39772926786445834,
+    "wer": 0.5791347207009858,
+    "ewpm": 4.102092009154984,
+    "ewpm_ci": [
+     3.5861256526960106,
+     4.70187253789044
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.8820326678765881,
+    "error_among_commits": 0.8820326678765881,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-xsession__commit.json"
+   },
+   {
+    "entry_id": "toronto-semg-composed/cnn-xsubject/crc",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "policy": "trust gate + CRC",
+    "cer": 0.4789606133317727,
+    "wer": 0.6809967141292442,
+    "ewpm": 4.0800135493987755,
+    "ewpm_ci": [
+     3.8322742031878128,
+     4.357668714760438
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=142; test 0.000 (met)",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-xsubject__crc.json"
+   },
+   {
+    "entry_id": "toronto-semg-composed/cnn-xsubject/trust",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.4789606133317727,
+    "wer": 0.6809967141292442,
+    "ewpm": 4.0800135493987755,
+    "ewpm_ci": [
+     3.8322742031878128,
+     4.357668714760438
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-xsubject__trust.json"
+   },
+   {
+    "entry_id": "toronto-semg-composed/cnn-xsubject/commit",
+    "track": "toronto-semg-composed",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "policy": "always-commit",
+    "cer": 0.4789606133317727,
+    "wer": 0.6809967141292442,
+    "ewpm": 3.5312246360482913,
+    "ewpm_ci": [
+     3.1913136133730284,
+     3.878734306083434
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.9618874773139746,
+    "error_among_commits": 0.9618874773139746,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "trust-ready",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "committed-aggregate",
+    "n_trials": 551,
+    "ci_unit": "participant",
+    "notes": [
+     "Composed sentences from isolated key presses: not natural typing."
+    ],
+    "file": "toronto-semg-composed__cnn-xsubject__commit.json"
+   }
+  ]
+ }
+}

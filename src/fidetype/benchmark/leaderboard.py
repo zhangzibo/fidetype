@@ -1,0 +1,227 @@
+"""Build the static leaderboard from a folder of result JSON files.
+
+    python -m fidetype.benchmark leaderboard --results benchmark/results/v0.1 --out benchmark/site
+
+Writes ``leaderboard.json`` (all rows), ``leaderboard.md`` (Markdown
+tables, one per track) and ``index.html`` (one self-contained page, no
+scripts, no network). The output folder can be served as is (for example
+by GitHub Pages later). Never edit the outputs by hand.
+"""
+
+from __future__ import annotations
+
+import html
+import json
+import math
+from os import PathLike
+from pathlib import Path
+from typing import Any
+
+from fidetype.benchmark.registry import BENCHMARK_VERSION, DATASETS, TRACKS
+from fidetype.benchmark.scoring import RESULT_SCHEMA
+
+COLUMNS = ("Decoder", "Policy", "CER", "eWPM [95% CI]", "Wrong-commit", "Error among commits", "Commit rate",
+           "Controls", "Guarantee", "Conformance", "Weights licence", "Scored from")
+
+
+def load_results(folder: str | PathLike[str]) -> list[dict[str, Any]]:
+    out = []
+    for p in sorted(Path(folder).glob("*.json")):
+        d = json.loads(p.read_text(encoding="utf-8"))
+        if d.get("schema") != RESULT_SCHEMA:
+            continue
+        d["_file"] = p.name
+        out.append(d)
+    return out
+
+
+def _v(m: dict[str, Any], key: str) -> float | None:
+    x = (m.get(key) or {}).get("value")
+    return None if x is None or (isinstance(x, float) and not math.isfinite(x)) else x
+
+
+def _ci(m: dict[str, Any], key: str) -> list[float] | None:
+    c = (m.get(key) or {}).get("ci")
+    if not c or any(x is None for x in c):
+        return None
+    return c
+
+
+def fmt(x: float | None, nd: int = 3) -> str:
+    return "n/a" if x is None else f"{x:.{nd}f}"
+
+
+def fmt_pct(x: float | None) -> str:
+    return "n/a" if x is None else f"{100 * x:.1f}%"
+
+
+def controls_text(c: dict[str, Any]) -> str:
+    if not c:
+        return "n/a"
+    parts = []
+    for k, label in (("shuffled", "shuf"), ("zeros", "zeros"), ("null_commit", "null")):
+        st = (c.get(k) or {}).get("status", "missing")
+        parts.append(f"{label} {st}")
+    head = "yes" if c.get("passed") else "no"
+    return f"{head} ({', '.join(parts)})"
+
+
+def guarantee_text(g: dict[str, Any]) -> str:
+    if not g or g.get("method", "none") == "none":
+        return "none"
+    s = f"{g['method'].upper()} a={g.get('alpha')}"
+    if g.get("delta") is not None and g["method"] == "ltt":
+        s += f" d={g['delta']}"
+    if g.get("n_cal") is not None:
+        s += f", n_cal={g['n_cal']}"
+    if g.get("measured_wrong_commit") is not None:
+        s += f"; test {fmt(g['measured_wrong_commit'])}"
+        if g.get("met_on_test") is not None:
+            s += " (met)" if g["met_on_test"] else " (NOT met)"
+    return s
+
+
+def row(d: dict[str, Any]) -> dict[str, Any]:
+    m = d.get("metrics", {})
+    ew, ci = _v(m, "ewpm"), _ci(m, "ewpm")
+    ew_s = fmt(ew, 2) + (f" [{ci[0]:.2f}, {ci[1]:.2f}]" if ci else "")
+    dec = d.get("decoder", {})
+    name = dec.get("name", "?")
+    if dec.get("training_regime"):
+        name += f" ({dec['training_regime']})"
+    return {
+        "entry_id": d.get("entry_id"), "track": d.get("track"), "decoder": name,
+        "policy": d.get("policy", {}).get("name", ""),
+        "cer": _v(m, "cer"), "wer": _v(m, "wer"), "ewpm": ew, "ewpm_ci": ci, "gaze_ewpm": _v(m, "gaze_ewpm"),
+        "wrong_commit_rate": _v(m, "wrong_commit_rate"), "error_among_commits": _v(m, "error_among_commits"),
+        "commit_rate": _v(m, "commit_rate"),
+        "controls_passed": (d.get("controls") or {}).get("passed"), "controls": controls_text(d.get("controls") or {}),
+        "guarantee": guarantee_text(d.get("guarantee") or {}),
+        "conformance": (d.get("conformance") or {}).get("level", "unknown"),
+        "weights_licence": dec.get("weights_licence", "?"), "scored_from": d.get("scored_from", "?"),
+        "n_trials": d.get("n_trials"), "ci_unit": (d.get("ci") or {}).get("unit"), "notes": d.get("notes", []),
+        "file": d.get("_file"), "ewpm_s": ew_s,
+    }
+
+
+def cells(r: dict[str, Any]) -> list[str]:
+    return [r["decoder"], r["policy"], fmt(r["cer"]), r["ewpm_s"], fmt(r["wrong_commit_rate"]),
+            fmt(r["error_among_commits"]), fmt(r["commit_rate"]), r["controls"], r["guarantee"], r["conformance"],
+            r["weights_licence"], r["scored_from"]]
+
+
+def build_rows(results: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    by: dict[str, list[dict[str, Any]]] = {t: [] for t in TRACKS}
+    for d in results:
+        by.setdefault(d.get("track", "?"), []).append(row(d))
+    for t in by:
+        by[t].sort(key=lambda r: -(r["ewpm"] if r["ewpm"] is not None else -1))
+    return by
+
+
+def _gaze(rows: list[dict[str, Any]]) -> float | None:
+    for r in rows:
+        if r["gaze_ewpm"] is not None:
+            return r["gaze_ewpm"]
+    return None
+
+
+def markdown(by: dict[str, list[dict[str, Any]]]) -> str:
+    L = [f"# Fidetype open benchmark v{BENCHMARK_VERSION}: leaderboard", "",
+         "Generated by `python -m fidetype.benchmark leaderboard`. Do not edit by hand.", ""]
+    for slug, rows in by.items():
+        t = TRACKS.get(slug)
+        L += [f"## {t.title if t else slug}", ""]
+        if t:
+            ds = DATASETS[t.dataset]
+            L += [f"Track `{slug}`. Data: {ds.title} ({ds.licence}{', research only' if t.research_only else ''}). "
+                  f"CI unit: {t.ci_unit}. User model: {t.user_model.name}.", ""]
+        g = _gaze(rows)
+        if g is not None:
+            L += [f"No-BCI reference (gaze typing only, {TRACKS[slug].user_model.gaze_chars_per_min:.0f} chars/min): "
+                  f"**{g:.2f} eWPM**.", ""]
+        if not rows:
+            L += ["No entries yet.", ""]
+            continue
+        L += ["| " + " | ".join(COLUMNS) + " |", "|" + "---|" * len(COLUMNS)]
+        L += ["| " + " | ".join(c.replace("|", "/") for c in cells(r)) + " |" for r in rows]
+        L.append("")
+    return "\n".join(L) + "\n"
+
+
+CSS = """
+:root{--bg:#fbfaf8;--fg:#1d1d1f;--muted:#5c5c66;--line:#dedbd5;--card:#ffffff;--accent:#2f5d8a;--ok:#2d7a3e;--bad:#a8322d;--head:#f1efea}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#16171a;--fg:#e8e6e1;--muted:#a3a3ad;--line:#33353b;--card:#1d1f23;--accent:#8bb6e0;--ok:#7fc58d;--bad:#ef8a84;--head:#24262b}}
+:root[data-theme="dark"]{--bg:#16171a;--fg:#e8e6e1;--muted:#a3a3ad;--line:#33353b;--card:#1d1f23;--accent:#8bb6e0;--ok:#7fc58d;--bad:#ef8a84;--head:#24262b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1280px;margin:0 auto;padding:24px 16px 48px}h1{font-size:1.6rem;margin:0 0 4px}h2{font-size:1.2rem;margin:32px 0 6px}
+p{margin:6px 0;color:var(--muted)}a{color:var(--accent)}.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--head);font-weight:600;white-space:nowrap}td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.ref td{color:var(--muted);font-style:italic}.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+.note{font-size:13px}ul{margin:6px 0 0 18px;color:var(--muted);font-size:13px}code{font-size:12.5px}
+"""
+
+
+def _td(text: str, cls: str = "") -> str:
+    c = f' class="{cls}"' if cls else ""
+    return f"<td{c}>{html.escape(text)}</td>"
+
+
+def page(by: dict[str, list[dict[str, Any]]]) -> str:
+    parts = ["<!doctype html>", '<html lang="en"><head><meta charset="utf-8">',
+             '<meta name="viewport" content="width=device-width, initial-scale=1">',
+             f"<title>Fidetype Benchmark v{BENCHMARK_VERSION}</title><style>{CSS}</style></head><body><main>",
+             f"<h1>Fidetype open benchmark v{BENCHMARK_VERSION}</h1>",
+             "<p>Neural text entry, scored from NeuralTextStream outputs. Every eWPM sits next to the no-BCI "
+             "reference (gaze typing). Wrong-commit is marginal (wrong commits / all trials); error among commits "
+             "is wrong commits / commits. CIs are cluster bootstraps at the track unit. No data and no weights "
+             "are shipped: every dataset is download-only.</p>",
+             '<p class="note">How to submit: <code>benchmark/README.md</code>. Generated by '
+             "<code>python -m fidetype.benchmark leaderboard</code>; do not edit by hand.</p>"]
+    for slug, rows in by.items():
+        t = TRACKS.get(slug)
+        parts.append(f"<h2>{html.escape(t.title if t else slug)}</h2>")
+        if t:
+            ds = DATASETS[t.dataset]
+            ro = " Research only (non-commercial data)." if t.research_only else ""
+            parts.append(f'<p>Track <code>{slug}</code>. Data: <a href="{html.escape(ds.url)}">'
+                         f"{html.escape(ds.title)}</a>, {html.escape(ds.licence)}.{ro} CI unit: "
+                         f"<code>{html.escape(t.ci_unit)}</code>. User model: {html.escape(t.user_model.name)}.</p>")
+        if not rows:
+            parts.append("<p>No entries yet.</p>")
+            continue
+        parts.append('<div class="wrap"><table><thead><tr>' + "".join(f"<th>{html.escape(c)}</th>" for c in COLUMNS)
+                     + "</tr></thead><tbody>")
+        g = _gaze(rows)
+        if g is not None:
+            cpm = TRACKS[slug].user_model.gaze_chars_per_min
+            parts.append('<tr class="ref">' + _td(f"No-BCI reference: gaze typing ({cpm:.0f} chars/min)") + _td("type all")
+                         + _td("n/a", "num") + _td(f"{g:.2f}", "num") + _td("0.000", "num") + _td("n/a", "num")
+                         + _td("0.000", "num") + "".join(_td("") for _ in range(5)) + "</tr>")
+        for r in rows:
+            c = cells(r)
+            ctl_cls = "ok" if r["controls_passed"] else "bad"
+            tds = [_td(c[0]), _td(c[1])] + [_td(x, "num") for x in c[2:7]] + [_td(c[7], ctl_cls)] + [_td(x) for x in c[8:]]
+            parts.append("<tr>" + "".join(tds) + "</tr>")
+        parts.append("</tbody></table></div>")
+        notes = sorted({n for r in rows for n in r["notes"]})
+        if t:
+            notes = list(t.notes) + notes
+        if notes:
+            parts.append("<ul>" + "".join(f"<li>{html.escape(n)}</li>" for n in notes) + "</ul>")
+    parts.append("</main></body></html>")
+    return "\n".join(parts) + "\n"
+
+
+def build(results_dir: str | PathLike[str], out_dir: str | PathLike[str]) -> dict[str, Any]:
+    results = load_results(results_dir)
+    by = build_rows(results)
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    payload = {"benchmark_version": BENCHMARK_VERSION, "tracks": {k: [{kk: vv for kk, vv in r.items() if kk != "ewpm_s"}
+                                                                       for r in v] for k, v in by.items()}}
+    (out / "leaderboard.json").write_text(json.dumps(payload, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    (out / "leaderboard.md").write_text(markdown(by), encoding="utf-8")
+    (out / "index.html").write_text(page(by), encoding="utf-8")
+    return {"n_results": len(results), "tracks": {k: len(v) for k, v in by.items()}, "out": str(out)}
