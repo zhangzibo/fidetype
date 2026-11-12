@@ -1,9 +1,9 @@
 ---
 title: Direction decision — trustworthy neural text entry
 type: question
-tags: [planning, decision, directions, licence, market, scope, standard]
+tags: [planning, decision, directions, licence, market, scope, standard, intent, benchmark]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, case-study-opentelemetry, neural-input-landscape-2026]
-updated: 2026-11-08
+updated: 2026-11-11
 ---
 
 # Direction decision (2026-11-07)
@@ -100,6 +100,18 @@ The positioning is: **NTS = "EMMA for neural input, OpenTelemetry-style".**
 | **Big players build their own** | Meta, Apple or an implant company can define their own format. | Stay vendor-neutral. Make adoption cheap (a small spec, adapters, a conformance test suite). Offer the spec to a neutral foundation. |
 
 > **Our take:** The wide scope changes the target, not the first steps. The code for Paper 1 (MEG, trust core, benchmark) is the same. The difference is that every interface must now work for any modality and any vocabulary. The largest risk is adoption: a spec has value only when other people emit it. So the first external decoder that emits NeuralTextStream is a more important milestone than any feature.
+
+## Scope note (2026-11-11): intent beyond text and a benchmark hub
+**Decision (user, 2026-11-11):** the long-term roadmap explicitly includes two items. Priorities do not change. Text entry stays first. The user said: "if it is part of the roadmap anyway, then let's include it, no need to change prio."
+
+| Item | Content | Roadmap phase |
+|---|---|---|
+| **Intent beyond text** | Cursor movement (continuous 2D), clicks and selections, commands (wheelchair, robot arm, smart home), decoded speech. The trust layer generalises: COMMIT / OFFER / ABSTAIN for discrete intents; confidence-gated, rate-limited actuation for continuous control (velocity scaling, dead-man hold, safe-stop). A modality- and output-agnostic core with output profiles (text, discrete intent, continuous control), with no breaking change to the text profile. Target interface: [Apple BCI HID](../entities/apple-bci-hid.md). | [P12](roadmap-standard.md#p12-beyond-text-intent-and-control-added-2026-11-11), 2027-07 → 2027-12 |
+| **Public benchmark hub** | A public, reproducible leaderboard ("ImageNet for BCI text entry", later all intent): replay adapters for standard datasets, CER / WER, eWPM, wrong-commit rate, CRC / LTT guarantee reports, shuffled and zeros controls, NeuralTextStream submissions, a static site. It extends the P6 leaderboard. | [P13](roadmap-standard.md#p13-public-benchmark-hub-added-2026-11-11), 2027-07 → 2027-12 |
+
+Both phases come at the end of the order. P1–P11 keep their order and dates.
+
+> **Our take:** This makes the 2026-11-08 definition of "neural input" ("text or intent") explicit in the plan. It changes no near-term work. Spec v0.1 already has `vocab_type = "command"` and a `pointer` event, so the later profiles can grow without a break.
 
 ## Rejected or deferred options
 | Option | Status | Reason |

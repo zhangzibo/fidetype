@@ -314,3 +314,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - r5 − r4b-full-medium, paired per sentence: test greedy +0.009 [+0.003, +0.015], beam + LM +0.009 [+0.002, +0.016]; val greedy +0.003 [−0.004, +0.009], beam +0.004 [−0.004, +0.012]. CIs over instances of 17 sentences, so too narrow.
 - Headline M1 model stays r4b-full-medium (0.506 / 0.475). More epochs of the same model do not help; next gains need more data, model changes or seed / checkpoint ensembles.
 - New: `experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r5-medium/`. Updated: `experiments/2026-11-11-m1-09-async-full/results.md` (section 7), `wiki/questions/m1-09-async-full-result.md`, tracker (M1-26 done; M1-25, M2-13 agent runs), `HANDOFF.md`.
+
+## [2026-11-11] query | Roadmap scope: intent beyond text (P12) and public benchmark hub (P13)
+- User decision: the long-term roadmap explicitly includes intent beyond text and a public benchmark hub. Priorities and the order of P1–P11 do not change; text entry stays first.
+- P12 "Beyond text: intent and control" (2027-07-01 → 2027-12-31): output-agnostic core + output profiles (text, discrete intent, continuous control), COMMIT/OFFER/ABSTAIN for intents, confidence-gated and rate-limited actuation (velocity scaling, dead-man hold, safe-stop), Apple BCI HID target, cursor/click datasets to survey (licences not verified). Tasks P12-01..P12-07 (P12-07 externally blocked).
+- P13 "Public benchmark hub" (2027-07-01 → 2027-12-31): extends P6, adds dataset registry, CRC/LTT guarantee reporting, PR submissions scored in CI, later intent tracks. Tasks P13-01..P13-05 (P13-05 externally blocked).
+- Spec: informative open question 11 "Future output profiles" (no field change).
+- Updated: `roadmap-standard.md`, `direction-decision.md` (scope note 2026-11-11), `spec/neuraltextstream-v0.1.md`, diagram 11 + `slides.json`, tracker, `index.md`, `HANDOFF.md`.

@@ -455,6 +455,7 @@ Rule: Fidetype does not create a rival format where one exists. It bridges.
 8. **Clock domains.** How do we relate two clock domains (for example, `lsl` and `unix`) across devices?
 9. **Semantic convention schema.** Should the conventions live in a machine-readable schema, as in OpenTelemetry's semantic-conventions repository?
 10. **Extensions in NPZ.** Do decisions, hypotheses and signal quality need an NPZ form, or only the streaming forms?
+11. **Future output profiles** *(informative note, 2026-11-11; it adds or changes no field)*. The project roadmap (phase P12) plans to cover neural input beyond text: discrete intents (clicks, selections, commands) and continuous control (2D cursor). The preferred design is a modality- and output-agnostic core (header, frames, timing, provenance, `meta`) plus output profiles: *text* (this spec), *discrete intent* and *continuous control*. The text profile stays as it is; a profile adds event kinds or conventions only, through FEPs. The present `vocab_type = "command"`, `decision` (3.5) and `pointer` (3.7) parts are the starting point. Open: one stream type with profiles, or a sibling stream type; and how a consumer gates actuation (for example velocity scaling by confidence, a dead-man hold, a safe-stop).
 
 ## 11. Changelog
 | Version | Date | Change |

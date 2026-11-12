@@ -65,7 +65,7 @@
     {
       "file": "11-roadmap-standard.drawio",
       "title": "11. Long-term roadmap: from v0.1 to a full standard",
-      "caption": "After v0.1, eleven phases run in four lanes. We build the spec, SDKs, collector, adapters, trust layer, benchmark and demo. Grey dashed items depend on outside people. Replay comes before hardware, and the demo and benchmark come before outreach.",
+      "caption": "After v0.1, thirteen phases run in four lanes. We build the spec, SDKs, collector, adapters, trust layer, benchmark and demo. Yellow phases P12 (intent beyond text) and P13 (benchmark hub) come last and do not change priorities. Grey dashed items depend on outside people. Replay comes before hardware, and the demo and benchmark come before outreach.",
       "wiki": "../questions/roadmap-standard.md"
     }
   ]

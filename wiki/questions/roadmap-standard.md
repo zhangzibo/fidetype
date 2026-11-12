@@ -1,9 +1,9 @@
 ---
 title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
-tags: [planning, roadmap, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption]
+tags: [planning, roadmap, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-10
+updated: 2026-11-11
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -12,11 +12,14 @@ updated: 2026-11-10
 
 **Diagram:** `11-roadmap-standard` on [the diagram page](../diagrams/index.html#s11).
 
+**Update (2026-11-11):** the user added two scope items at the end: [P12](#p12-beyond-text-intent-and-control-added-2026-11-11) (intent beyond text) and [P13](#p13-public-benchmark-hub-added-2026-11-11) (public benchmark hub). Priorities and the order of P1–P11 do not change.
+
 **Context:** [project plan](project-plan.md) (M0–M7 = v0.1), [open-source playbook](open-source-playbook.md) (stages 0–5), [architecture](architecture.md), [direction decision](direction-decision.md#scope-decision-2026-11-08-neural-input-opentelemetry-level), [spec v0.1](../../spec/neuraltextstream-v0.1.md), [public datasets](public-datasets.md), [progress dashboard](../progress/index.html) (milestones P1–P11).
 
 ## Summary
 - v0.1 (M0–M7) gives one spec draft, one Python package, one trust core, a first benchmark and first adapters.
-- After v0.1, the roadmap has **11 phases (P1–P11)**. Most of them run in parallel.
+- After v0.1, the roadmap has **13 phases (P1–P13)**. Most of them run in parallel.
+- **P12 (beyond text: intent and control)** and **P13 (public benchmark hub)** were added on 2026-11-11 at the end of the order. They do not change priorities. Text entry stays first ([decision](direction-decision.md#scope-note-2026-11-11-intent-beyond-text-and-a-benchmark-hub)).
 - The critical path is: **benchmark (P6) + spec 1.0 RC (P1) → Python + C SDKs (P2) → replay adapters (P4) → collector (P3) → "three devices, one stream" demo (P8) → paper and launch (P10)**.
 - The gap to an OpenTelemetry-scale project is **not the core**. It is the **SDKs, adapters and integrations** (see [scale reference](#scale-reference)).
 - **Dataset replay** lets us test devices we do not own. Real hardware, outreach, partners, ethics, user studies, peer review and arXiv endorsement depend on outside people. They are **`externally_blocked`** or user-owned.
@@ -77,6 +80,8 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 | **P9** | Governance + community | Licences, process, a later neutral home | 5–10 / 20 h | — | 2026-11-16 → 2027-03-31 (code parts) |
 | **P10** | Adoption | Users outside the project | 5–10 / 60+ h | P6, P8, Paper 1 | 2027-01-15 → 2027-12-31 (mostly ext. blocked) |
 | **P11** | Research track | Better decoders, papers | ongoing | GPU, datasets | 2026-11-16 → 2027-12-31 |
+| **P12** | Beyond text: intent and control | Output profiles for discrete intent, continuous control and speech; trust policies for actuation | 20–35 / 8 h | P1 1.0 RC, P2, P3, P5 | 2027-07-01 → 2027-12-31 |
+| **P13** | Public benchmark hub | Extend the P6 leaderboard into a reproducible hub; later all intent | 10–20 / 6 h | P6, P4 replay, P12 (intent tracks) | 2027-07-01 → 2027-12-31 |
 
 ## P1. Spec to 1.0
 **Goal:** NeuralTextStream 1.0. Every part has a stability level. A machine-readable schema is the source of truth. The prose spec and the docs are generated from it or checked against it.
@@ -264,6 +269,8 @@ Reasons:
 
 **Effort:** 15–25 agent-days. **Depends on:** M5 harness, P4 replay adapters.
 
+**Later extension:** [P13](#p13-public-benchmark-hub-added-2026-11-11) grows this leaderboard into a hub. P6 scope and dates do not change.
+
 ## P7. Conformance + certification
 **Goal:** anyone can prove that an implementation speaks NTS correctly.
 
@@ -353,13 +360,65 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 **Effort:** ongoing; GPU-bound (one heavy job at a time on this PC). **Depends on:** GPU, datasets.
 
+## P12. Beyond text: intent and control (added 2026-11-11)
+**Goal:** the standard and the trust layer cover all neural input, not only text. Text entry stays first. This phase comes after the text work and does not change its priority.
+
+**Scope (user decision, 2026-11-11):**
+| Output | Examples | Trust behaviour |
+|---|---|---|
+| **Discrete intent** | Clicks, selections; commands for a wheelchair, a robot arm, a smart home | COMMIT / OFFER / ABSTAIN, as for text. A wrong-commit limit per command class (a "stop" is safer than a "go") |
+| **Continuous control** | 2D cursor movement (velocity or position) | Confidence-gated and rate-limited actuation: velocity scaling by confidence, a dead-man hold, a safe-stop when confidence or signal quality drops |
+| **Decoded speech** | Phonemes, words, optional synthesis audio | Same as text for the token output |
+
+### Design rule
+- A **modality- and output-agnostic core** (stream header, frame, timing, provenance, `meta`) plus **output profiles**: *text* (today's NTS), *discrete intent*, *continuous control*.
+- The text profile does not change. No field of spec v0.1 changes. A profile adds event kinds or conventions only, through FEPs.
+- Spec v0.1 already has parts to build on: `vocab_type = "command"`, the `pointer` event (3.7) and the Apple BCI HID bridge sketch (6.5) ([spec](../../spec/neuraltextstream-v0.1.md)). A non-normative note in [spec section 10](../../spec/neuraltextstream-v0.1.md#10-open-questions) records the idea.
+- Name: "NeuralTextStream" stays the name of the text profile. The name of the core (a sibling name or an umbrella name) is an open decision for the FEP.
+- **Target interface:** [Apple BCI HID](../entities/apple-bci-hid.md) (BCIs as standard input devices: buttons, pointer). The P3 HID exporter grows into an intent and pointer bridge.
+
+### Deliverables
+1. FEP: core + output profiles; mapping of the v0.1 `pointer` and `decision` events into the profiles.
+2. Discrete-intent profile: command vocabularies (`intent.*` conventions, to define), a risk level per command class, COMMIT / OFFER / ABSTAIN for intents.
+3. Continuous-control profile: pointer semantics with confidence; a trust policy for actuation (velocity scaling, dead-man hold, safe-stop, rate limits). A simulator test shows that the policy stops within a set time when confidence drops.
+4. Speech profile notes (the token output reuses the text profile).
+5. Apple BCI HID mapping for intents and pointer, with a replay test.
+6. Evaluation data: **to survey**. Candidates to check: BCI Competition data sets (cursor and motor-imagery tasks), intracortical cursor and reach data on DANDI (for example the FALCON benchmark sets), BrainGate cursor data. This wiki has **not verified** their licences. Product work uses only CC0 / CC BY data ([licence rule](project-plan.md#licence-rule)).
+
+### Exit criteria
+- The profile FEP is accepted. The text profile passes the conformance kit unchanged.
+- One discrete-intent replay and one cursor replay emit valid streams. The actuation policy passes its simulator safety tests.
+- Tests with real assistive devices (wheelchair, robot arm) and users: **externally blocked** (hardware, ethics approval, volunteers).
+
+**Effort:** 20–35 agent-days; about 8 h user review. **Depends on:** P1 1.0 RC, P2, P3, P5.
+
+## P13. Public benchmark hub (added 2026-11-11)
+**Goal:** "ImageNet for BCI text entry", later for all intent: a public, reproducible leaderboard. It **extends P6** and does not duplicate it. P6 builds the first leaderboard (tracks, NTS submissions, controls). P13 makes it a hub.
+
+### Deliverables
+| Part | Content | New compared with P6 |
+|---|---|---|
+| Datasets | Replay adapters for SpanishBCBL MEG (research-only), Brain-to-Text '25 (CC0), one EMG dataset (Toronto sEMG or KT-sEMG, commercially clean) | A versioned dataset registry; adapter hashes |
+| Metrics | CER / WER, eWPM against no-BCI, wrong-commit rate | **Guarantee reporting:** each entry states its CRC / LTT bound (α, δ, method, number and scope of calibration items) and the measured wrong-commit rate on test |
+| Controls | Shuffled input and zeros (null) input, required | Shown next to each score |
+| Submission | NeuralTextStream files (Arrow or JSON Lines) | Submission by pull request; CI scores it |
+| Site | Static site (GitHub Pages) | Per-track pages, history, a rerun command per entry |
+| Later | Intent tracks after P12 (discrete intent, cursor) | Metrics to define (for example time to target, wrong-action rate) |
+
+### Exit criteria
+- Three tracks (MEG, implant, EMG) with guarantee columns and controls. Every entry reruns from one command.
+- CI scores a pull-request submission with no manual step.
+- Outside datasets or outside tracks: **externally blocked**.
+
+**Effort:** 10–20 agent-days; about 6 h user review. **Depends on:** P6, P4 replay adapters; P12 for intent tracks.
+
 ## Sequencing
 | Window | First (critical path) | In parallel |
 |---|---|---|
 | 2026-11-16 → 12-31 | P6 leaderboard; P1 proto + semconv registry; P4 replay adapters (B2T '25, KT-sEMG, Willett) | P9 licence + DCO; P11 decoders; P5 conformal risk control |
 | 2027-01 → 02 | P2 Python 1.0-rc + C core; P1 1.0 RC | P3 collector skeleton; P8 quickstarts; P10 step 2 (Paper 1) |
 | 2027-03 → 06 | P3 collector + OS exporter; P8 three-device demo; P7 conformance kit | P2 Rust, TS, C#, Kotlin; P4 LSL, BrainFlow, MNE, toolkits; P10 steps 3–4 (user) |
-| 2027-07 → 12 | P5 product grade; P7 certification list | P10 steps 5–6; P11 papers; 1.0 Stable when outside reviewers exist |
+| 2027-07 → 12 | P5 product grade; P7 certification list | P10 steps 5–6; P11 papers; 1.0 Stable when outside reviewers exist; P12 intent profiles and P13 benchmark hub (added 2026-11-11, after the text work) |
 
 Rules:
 - **Replay before hardware.** Every adapter has a replay test before anyone buys a device.
@@ -398,5 +457,6 @@ These steps need the user or outside people. They are tracked as `externally_blo
 - [Neural input landscape 2026](../sources/neural-input-landscape-2026.md)
 - [OpenTelemetry case study](../sources/case-study-opentelemetry.md)
 - [Spec v0.1](../../spec/neuraltextstream-v0.1.md)
-- [Progress dashboard](../progress/index.html) (milestones P1–P11)
+- [Progress dashboard](../progress/index.html) (milestones P1–P13)
+- [Apple BCI HID](../entities/apple-bci-hid.md)
 - [Diagrams](../diagrams/index.html) (diagram 11: long-term roadmap)
