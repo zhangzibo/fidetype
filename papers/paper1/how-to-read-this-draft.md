@@ -1,6 +1,24 @@
-# How to read this draft (Paper 1, draft v2)
+# How to read this draft (Paper 1, draft v3)
 
-This guide is for you, the author. The current draft is [`draft-v2.pdf`](draft-v2.pdf) (29 pages: main text 1–15, references 16–21, appendix 22–29). The earlier drafts, [`draft-v0.pdf`](draft-v0.pdf) and [`draft-v1.pdf`](draft-v1.pdf), stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1–7 below were written for v1; section and figure numbers there refer to v1.
+This guide is for you, the author. The current draft is [`draft-v3.pdf`](draft-v3.pdf) (37 pages: main text 1-17 with the ethics statement, references 17-25, appendices A-Q 26-37). The earlier drafts ([v0](draft-v0.pdf), [v1](draft-v1.pdf), [v2](draft-v2.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
+
+## What changed in v3 (review round 3)
+
+Two reviewers read v2 ([editor](reviews/round-3-editor.md), [statistics](reviews/round-3-stats.md)). Both said "major revision". The point-by-point answer is [round-3-response.md](round-3-response.md). The new numbers are in the [R3 analyses SUMMARY](../../experiments/2026-11-12-paper1-r3-analyses/SUMMARY.md).
+
+- **New title:** "When should a neural text-entry decoder commit? Risk-controlled commits from a decoder-agnostic trust layer" (15 words).
+- **The guaranteed rule leads.** The primary row is now LTT with the max rule on clean calibration data. Over 50 repeated deployments it gave a mean wrong-commit rate of 3.0 % (our decoder) and 3.1 % (published), above 5 % in only 8 % and 2 % of deployments. The plug-in row (5.9 %) is labelled "no guarantee".
+- **CRC holds only on average.** Its mean is <= 5 %, but 34-42 % of single deployments exceed 5 %. This is what CRC promises; LTT is the per-deployment guarantee.
+- **The old 0.059 -> 0.0245 story was wrong.** The change came from the policy grid fitted on fit-A, not from CRC.
+- **Error among commits.** A guaranteed "at most 1 wrong in 10 committed sentences" is possible only for the published decoder (Table 3). Our decoder, sEMG and MEG then commit nothing.
+- **Data reuse:** real but small, and only on our decoder (+0.9 percentage points). We no longer say that reuse caused the old drift result. No Holm-corrected test is significant.
+- **sEMG near-variant exclusion** is now reported: speeds drop (8.02 -> 6.97 eWPM), and gaze typing beats the layer on the cross-subject decoder.
+- **MEG:** no guarantee for new sentences is possible (needs >= 19 calibration sentences). Three seeds: CER 0.533 +/- 0.051; the layer commits nothing on every seed.
+- **New in the paper:** Algorithms 1-2 (App. B); repeated-deployment table (Table 2); selective-risk table (Table 3); AAC / BCI user-priority references (all checked on the web); one bootstrap for all CIs; day sign tests; exact zero-event bounds; run time (0.18-0.30 ms per decision).
+- **Moved to the appendix:** devices table, architecture figure, controls figure, clean-vs-reused table, online results.
+- **Figure 1** has a square-root y-axis, so the region near 5 % is readable, and green diamonds for the guaranteed rule.
+
+**Still open (red `[TODO]` in the PDF):** your author items (authors, ethics wording, funding, AI statement) and the archive DOI. **Next step:** round-4 fresh reviews. **Big open experiment:** a second intracortical participant for a confirmatory test of the frozen configuration (git tag `paper1-v3-frozen-config`).
 
 ## What changed in v2 (review round 2)
 

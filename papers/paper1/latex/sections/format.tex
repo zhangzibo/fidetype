@@ -1,37 +1,4 @@
-\section{The NeuralTextStream format}
+\section{The stream interface}
 \label{sec:format}
 
-\nts{} (NTS) is the contract between a decoder and any consumer of its output (\cref{fig:arch}). A stream of $F$ frames over $V$ tokens holds an $F \times V$ array \code{log\_probs} of natural-log probabilities, the frame times, the ordered vocabulary, its type (\code{char}, \code{key}, \code{word}, \code{phoneme}, \code{command} or \code{other}) and the CTC blank index (or \code{null}). Optional fields give the frame period, latency, producer and a \code{meta} object with named key prefixes (\code{device.*}, \code{decoder.*}, \code{lm.*}, \code{calibration.*}, \code{adapter.*}).
-
-\paragraph{Unmodified probabilities.} A producer must emit the decoder's own output distribution and must not sharpen or smooth it, for example for display. Calibration is left to the consumer, which can fit it on data with known truth. A field is interpreted as a probability only if the stream declares it as one in \code{calibration.*}. Ground-truth text must not appear in the stream (a leakage rule), and raw signals and direct identifiers stay out of it (privacy rules). \Cref{app:format} summarises the serialisations, the conformance suite and the audit log.
-
-\paragraph{Three device types.} \Cref{tab:devices} lists the adapters (148, 412 and 568 lines of Python for MEG, intracortical and sEMG). Mapping the intracortical and sEMG decoders into NTS needed no change to the frame core of v0.1, a Development release written by the same authors; the trust harness added one optional field (the truth in the stream's token space) and provenance keys. Every other part of the pipeline is the same code for all devices, with parameters re-fitted per device (\cref{tab:settings}).
-
-\begin{table}[t]
-  \centering
-  \caption{\textbf{Devices, data and streams.} One adapter per device type maps decoder output into \nts{}. All datasets are public. Test units are those of the trust evaluation.}
-  \label{tab:devices}
-  \small
-  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}llll@{}}
-    \toprule
-    & \textbf{MEG (typing)} & \textbf{Intracortical (speech)} & \textbf{Forearm sEMG (keys)} \\
-    \midrule
-    Dataset (licence) & SpanishBCBL (CC BY-NC 4.0) & B2T '25 copy task (CC0) & Toronto sEMG (CC BY 4.0) \\
-    Participants & 19 (healthy typists) & 1 (T15, ALS) & 19 (healthy typists) \\
-    Test unit & 637 instances of & 816 trials, 14 days & 551 sentences composed \\
-     & 17 unique sentences & & from isolated presses \\
-    Decoder & own asynchronous ConvCTC & published online RNN; & own CNN \\
-     & & own phoneme-to-word decoder & \\
-    NTS vocabulary & \code{char} (CTC) & \code{phoneme} (CTC, 41 tokens) & \code{key} (W3C codes) \\
-    Frame & 40\,ms & 80\,ms & one per key press \\
-    Commit decision tested? & no (no right top-1) & yes & weakly (0--4\% committed) \\
-    \bottomrule
-  \end{tabular}\end{adjustbox}
-\end{table}
-
-\begin{figure}[t]
-  \centering
-  \begin{adjustbox}{max width=0.85\linewidth}\input{../figures/tikz-architecture.tex}\end{adjustbox}
-  \caption{\textbf{Architecture.} Each device's decoder emits a \nts{} through a small adapter. The trust layer reads only the stream: it calibrates confidence, builds candidate sentences with a neural-evidence guard, and chooses an action under a risk-control rule. The user's corrections and picks (dashed) feed the online re-calibration. Contexts, decisions and corrections can be written to an append-only, hash-chained audit log that stores no raw signals (\cref{app:format}).}
-  \label{fig:arch}
-\end{figure}
+The trust layer reads one output stream per item (architecture: \cref{fig:arch} in \cref{app:format}). In our open format, \nts{} (NTS) v0.1, a stream of $F$ frames over $V$ tokens holds an $F \times V$ array of natural-log probabilities, the frame times, the ordered vocabulary with its type (\code{char}, \code{key}, \code{phoneme}, \ldots) and the CTC blank index. Two rules matter for the commit decision: a producer must emit the decoder's own, unmodified output distribution (calibration is left to the consumer, which can fit it on data with known truth), and ground-truth text must not appear in the stream. One small adapter per device maps decoder output into the stream (devices and data: \cref{tab:devices} in \cref{app:format}); every later step is the same code for all devices, with parameters re-fitted per device (\cref{tab:settings}). \Cref{app:format} describes the serialisations, the conformance suite, the adapters and the audit log.

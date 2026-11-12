@@ -1,13 +1,13 @@
 # Paper 1: Fidetype (draft)
 
-Status: **draft v2 (2026-11-11, after review round 2)**. Read [`draft-v2.pdf`](draft-v2.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`reviews/round-2-changes.md`](reviews/round-2-changes.md). `draft-v0.pdf` and `draft-v1.pdf` are the earlier drafts.
+Status: **draft v3 (2026-11-12, after review round 3)**. Read [`draft-v3.pdf`](draft-v3.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`round-3-response.md`](round-3-response.md). `draft-v0.pdf`, `draft-v1.pdf` and `draft-v2.pdf` are the earlier drafts.
 
 | File | What it is |
 |---|---|
 | `outline.md` | The plan: claims, tables T1–T7, figures F1–F7, results inventory R1–R27, gaps G1–G15 |
 | `style-notes.md` | What we learned from 5–6 published papers about structure, numbers and figures |
 | `how-to-read-this-draft.md` | Guide for the author: what each section is for, where the TODOs are, what to decide |
-| `draft-v0.pdf`, `draft-v1.pdf`, `draft-v2.pdf` | The compiled drafts (our own work, committed) |
+| `draft-v0.pdf` ... `draft-v3.pdf` | The compiled drafts (our own work, committed) |
 | `reviews/` | Round-1 reviews, the point-by-point response, and the round-2 change list |
 | `analysis_r1.py` | Re-analysis of committed result files for v1 → `data/r1-derived.json` |
 | `latex/main.tex`, `latex/sections/*.tex`, `latex/refs.bib` | LaTeX source. One file per section |
@@ -41,7 +41,7 @@ mkdir -p build
 # 3. check: no undefined references or citations
 grep -ciE "Citation .* undefined|Reference .* undefined" build/main.log   # must print 0
 # 4. publish the draft
-cp build/main.pdf ../draft-v2.pdf
+cp build/main.pdf ../draft-v3.pdf
 ```
 
 PowerShell: `& C:\Users\zhang\tools\tectonic\tectonic.exe -X compile main.tex --outdir build --keep-logs`.

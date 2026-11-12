@@ -1,4 +1,4 @@
-% Paper 1 -- Fidetype. Draft v2 (revision round 2), 2026-11-11.
+% Paper 1 -- Fidetype. Draft v3 (revision round 3), 2026-11-12.
 % Build:  tectonic -X compile main.tex --outdir build      (see ../README.md)
 % Class: generic one-column article for arXiv. To switch to the IOP Journal of Neural
 % Engineering template later, replace the preamble block marked "CLASS" and keep sections/*.tex.
@@ -25,6 +25,8 @@
 \usepackage{subcaption}
 \usepackage{placeins}
 \usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
 \usepackage{url}
@@ -43,11 +45,11 @@
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\ci}[2]{\ensuremath{[#1,\,#2]}}  % math mode: "-0.11" prints a true minus sign
 
-% Title (v2): the subtitle names the claim that survived review round 2 (risk-controlled commit
-% decisions, i.e. safety); speed is secondary. "Fidetype" stays out of the title (open author decision).
-\title{When should a neural text-entry decoder commit?\\Risk-controlled commit decisions from a decoder-agnostic\\trust layer, evaluated on intracortical, EMG and MEG data}
+% Title (v3): shortened after review round 3 (25 -> 15 words). It names the claim (risk-controlled commits)
+% and no longer suggests three tests of the commit decision. "Fidetype" stays out of the title (open author decision).
+\title{When should a neural text-entry decoder commit?\\Risk-controlled commits from a decoder-agnostic trust layer}
 \author{\todo{authors, affiliations, e-mail}}
-\date{Draft v2 (revision round 2) --- 11 November 2026 --- not for distribution}
+\date{Draft v3 (revision round 3) --- 12 November 2026 --- not for distribution}
 
 \begin{document}
 \maketitle

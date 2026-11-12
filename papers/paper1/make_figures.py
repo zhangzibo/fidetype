@@ -123,14 +123,15 @@ def errbar(ax, r: dict, color: str, marker: str, filled: bool, label: str | None
 
 # ---------------------------------------------------------------- Fig 1: teaser (v2)
 R1X = "experiments/2026-11-12-paper1-r1-analyses"
-BASE = load(f"{R1X}/baselines/results/baselines.json")["conditions"]
-UM: dict = {}
-for _f in ("user-model-b2t-ours+b2t-published.json", "user-model-emg-calib.json",
-           "user-model-emg-xsession+emg-xsubject+meg-async.json"):
-    UM.update(load(f"{R1X}/user-model/results/{_f}")["conditions"])
+R3X = "experiments/2026-11-12-paper1-r3-analyses"
+# v3: one bootstrap for every CI (seed 20261112, B = 2000; R3 unified-ci). Point values equal the R1 files.
+BASE = load(f"{R3X}/unified-ci/results/ci.json")["table2_baselines"]
+UM: dict = load(f"{R3X}/unified-ci/results/rerun/user-model/results/"
+                "user-model-emg-calib+emg-xsession+emg-xsubject+b2t-ours+b2t-published+meg-async.json")["conditions"]
+DEPLOY = load(f"{R3X}/deployable-rule/results/deployable.json")["rows"]
 UM_VARIANTS = [("main", "main user model"), ("fallback 10 cpm", "fallback 10 cpm"), ("fallback 40 cpm", "fallback 40 cpm"),
                ("selection x0.5", "selection ×0.5"), ("selection x2", "selection ×2"), ("p_miss 0", "miss prob. 0"),
-               ("p_miss 0.2", "miss prob. 0.2"), ("symmetric offer (p_miss 0.05, no oracle retype)", "symmetric offer"),
+               ("p_miss 0.2", "miss prob. 0.2"), ("symmetric offer (p_miss 0.05, no oracle retype)", "symmetric (miss 0.05)"),
                ("symmetric offer, p_miss 0.2", "symmetric, miss 0.2")]
 CONDS = [("b2t-ours", "B2T '25, ours"), ("b2t-published", "B2T '25, published"), ("emg-calib", "sEMG session-cal."),
          ("emg-xsession", "sEMG cross-session"), ("emg-xsubject", "sEMG cross-subject"), ("meg-async", "MEG")]
@@ -138,8 +139,17 @@ CONDS = [("b2t-ours", "B2T '25, ours"), ("b2t-published", "B2T '25, published"),
 
 def base_row(cond: str, key: str) -> dict:
     c = BASE[cond]
-    p, ci = c["point"][key], c["bootstrap"]["policies"][key]
+    p, ci = c["point"][key], c["ci"]["policies"][key]
     return {"ewpm": p["ewpm"], "ewpm_ci": ci["ewpm"], "wc": p["wrong_commit"], "wc_ci": ci["wrong_commit"]}
+
+
+def _sqrt_axis(ax) -> None:
+    """Signed square-root y-axis: expands the safety region (0-0.1) while showing 0-1."""
+    f = lambda y: np.sign(y) * np.sqrt(np.abs(y))  # noqa: E731
+    g = lambda y: np.sign(y) * y ** 2  # noqa: E731
+    ax.set_yscale("function", functions=(f, g))
+    ax.set_yticks([0, 0.01, 0.05, 0.1, 0.25, 0.5, 1.0])
+    ax.set_yticklabels(["0", "0.01", "0.05", "0.1", "0.25", "0.5", "1"])
 
 
 def _check_teaser_sources() -> None:
@@ -154,50 +164,62 @@ def _check_teaser_sources() -> None:
 
 
 def fig_teaser() -> None:
+    """v3: signed-sqrt y-axis (safety region readable), guaranteed rule (fit-A + clean LTT max-rule) added."""
     _check_teaser_sources()
-    fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.35), sharey=True)
-    groups = [(("b2t-ours", "our decoder"), ("b2t-published", "published decoder")),
+    fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.6), sharey=True)
+    groups = [(("b2t-ours", "our decoder"), ("b2t-published", "published")),
               (("emg-calib", "session-cal."), ("emg-xsession", "cross-session"), ("emg-xsubject", "cross-subject")),
               (("meg-async", None),)]
     marks = ["o", "s", "D"]
-    offs = {"b2t-ours": (0, 0.06), "b2t-published": (0, 0.06), "emg-calib": (0.15, 0.03),
-            "emg-xsession": (0.25, -0.06), "emg-xsubject": (0.0, 0.05)}
+    # label position (dx in eWPM, y in data units, ha) next to the always-commit marker
+    lab = {"b2t-ours": (0.6, 0.66, "left"), "b2t-published": (0.0, 0.27, "center"), "emg-calib": (0.25, 0.47, "left"),
+           "emg-xsession": (0.25, 0.80, "left"), "emg-xsubject": (-0.2, 1.0, "right")}
     for gi, (ax, grp) in enumerate(zip(axes, groups)):
+        _sqrt_axis(ax)
         for cond, name in grp:
             a, b, n = base_row(cond, "always_commit"), base_row(cond, "trust"), base_row(cond, "never_commit")
-            ax.annotate("", xy=(b["ewpm"], b["wc"]), xytext=(a["ewpm"], a["wc"]),
+            ax.annotate("", xy=(b["ewpm"], max(b["wc"], 0.002)), xytext=(a["ewpm"], a["wc"]),
                         arrowprops=dict(arrowstyle="->", color="#888888", lw=0.8, shrinkA=4, shrinkB=4))
             errbar(ax, a, C["commit"], marks[gi], False, "always commit" if gi == 2 else None)
             # always offer has no wrong commits; drawn just below 0 so that it does not hide the trust marker
-            ax.plot(n["ewpm"], -0.035, "^", ms=4.5, color=C["gaze"], mfc="white", mew=1.0, zorder=4,
+            ax.plot(n["ewpm"], -0.006, "^", ms=4.5, color=C["gaze"], mfc="white", mew=1.0, zorder=4,
                     label="always offer" if gi == 2 else None)
-            errbar(ax, b, C["trust"], marks[gi], True, "trust layer" if gi == 2 else None)
+            errbar(ax, b, C["trust"], marks[gi], True, "trust, plug-in (no guarantee)" if gi == 2 else None)
             if name:
-                o = offs[cond]
-                ax.text(a["ewpm"] + o[0], a["wc"] + o[1], name, fontsize=6.3, ha="center" if o[0] == 0 else "left")
+                dx, y, ha = lab[cond]
+                ax.text(a["ewpm"] + dx, y, name, fontsize=6.2, ha=ha, va="center")
         c0 = grp[0][0]
         gaze = BASE[c0]["point"]["gaze_only"]["ewpm"]
         glm = UM[c0]["variants"]["main"]["point"]["gaze_lm"]["ewpm"]
         ax.axvline(gaze, color=C["gaze"], ls="--", lw=0.9, label="gaze typing" if gi == 2 else None)
         ax.axvline(glm, color=C["gaze"], ls="-.", lw=0.9, label="gaze + word completion" if gi == 2 else None)
-    axes[0].set_title("Intracortical (B2T '25)")
+    # guaranteed rule: fit-A pipeline + clean calibration, LTT max-rule, splits A and B (same 816 test trials)
+    for k, row in DEPLOY.items():
+        if not k.startswith("b2t-"):
+            continue
+        pt = row["point"]["LTT max-rule (clean)"]
+        axes[0].plot(pt["ewpm"], pt["wrong_commit"], "D", ms=4.0, color=C["crc"], mfc=C["crc"], mec="white", mew=0.6, zorder=6, alpha=0.95)
+    pt = DEPLOY["meg-async"]["point"]["LTT max-rule (clean)"]
+    axes[2].plot([], [], "D", ms=4.2, color=C["crc"], label="trust, LTT max-rule (guaranteed)")
+    axes[0].set_title("Intracortical (1 participant)")
     axes[0].set_xlim(2, 22)
-    axes[1].set_title("sEMG (Toronto)")
-    axes[1].set_xlim(2.5, 9.5)
-    axes[2].set_title("MEG (asynchronous)")
+    axes[1].set_title("sEMG (composed)")
+    axes[1].set_xlim(1.6, 9.5)
+    axes[2].set_title("MEG (negative control)")
     axes[2].set_xlim(2.0, 4.6)
     b = base_row("meg-async", "trust")
-    axes[2].annotate("commits 0%", xy=(b["ewpm"], b["wc"]), xytext=(2.9, 0.35), fontsize=6.3,
+    axes[2].annotate("commits 0%", xy=(b["ewpm"], 0.0), xytext=(2.75, 0.2), fontsize=6.3,
                      ha="center", arrowprops=dict(arrowstyle="-", color="#888888", lw=0.6))
     for i, ax in enumerate(axes):
         ax.set_xlabel("eWPM (higher is better)")
-        ax.axhline(ALPHA, color="#BBBBBB", lw=0.6, ls=":")
+        ax.axhline(ALPHA, color="#999999", lw=0.7, ls=":")
         panel_label(ax, "abc"[i])
-    axes[0].set_ylabel("wrong commits / all sentences\n(lower is better)")
-    axes[0].set_ylim(-0.07, 1.08)
-    h, lab = axes[2].get_legend_handles_labels()
-    fig.legend(h, lab, loc="lower center", ncol=5, frameon=False, handlelength=1.4, bbox_to_anchor=(0.5, -0.01))
-    fig.tight_layout(w_pad=0.6, rect=(0, 0.08, 1, 1))
+    axes[0].text(2.3, ALPHA * 1.12, "α = 0.05", fontsize=6, color="#666666", va="bottom")
+    axes[0].set_ylabel("wrong commits / all sentences\n(lower is better; √ scale)")
+    axes[0].set_ylim(-0.012, 1.05)
+    h, lab_ = axes[2].get_legend_handles_labels()
+    fig.legend(h, lab_, loc="lower center", ncol=3, frameon=False, handlelength=1.4, bbox_to_anchor=(0.5, -0.02))
+    fig.tight_layout(w_pad=0.6, rect=(0, 0.13, 1, 1))
     save(fig, "fig1_teaser")
 
 
@@ -206,8 +228,9 @@ def fig_user_model() -> None:
     cols = {"b2t-ours": C["trust"], "b2t-published": C["pub"], "emg-calib": C["crc"], "emg-xsession": C["old"],
             "emg-xsubject": C["aci"], "meg-async": "#000000"}
     mk = {"b2t-ours": "o", "b2t-published": "o", "emg-calib": "s", "emg-xsession": "s", "emg-xsubject": "s", "meg-async": "D"}
-    panels = [("trust-always_commit", "trust − always commit"), ("trust-never_commit", "trust − always offer"),
-              ("trust-gaze_lm", "trust − gaze + word completion")]
+    panels = [("trust-always_commit", "trust − always commit\n(> 0: trust faster)"),
+              ("trust-never_commit", "trust − always offer\n(> 0: trust faster)"),
+              ("trust-gaze_lm", "trust − gaze + completion\n(> 0: trust faster)")]
     fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.45), sharey=True)
     nv = len(UM_VARIANTS)
     for ax, (dk, title) in zip(axes, panels):
@@ -321,6 +344,8 @@ def fig_risk() -> None:
         else:
             ax.set_ylabel("wrong commits / commits")
             ax.set_ylim(0, 1.02)
+            ax.axhline(0.10, color="#CC0000", lw=0.7, ls="--")
+            ax.text(0.69, 0.115, "β = 0.10", fontsize=6, color="#CC0000", ha="right", va="bottom")
             save(fig, "fig_selective_risk")
 
 
