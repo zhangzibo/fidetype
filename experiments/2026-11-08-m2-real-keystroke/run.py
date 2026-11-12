@@ -56,6 +56,10 @@ from fidetype.streams.vocab import normalize_text
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results"
+# Per-trial texts (target + typed) are participant data: they live outside the repo.
+# Override the root with FIDETYPE_DERIVED (default ~/bci-data/derived). See LICENSES/DATA.md.
+DERIVED = Path(os.environ.get("FIDETYPE_DERIVED", str(Path.home() / "bci-data" / "derived"))) / HERE.name
+TRIALS = DERIVED / "trials.json"
 CONFIG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
 CACHE = Path(CONFIG["cache"])
 STREAM_ROOT = Path(CONFIG["stream_root"])
@@ -254,7 +258,8 @@ def stage_decoder() -> dict:
         }
         for t in allev
     ]
-    dump(tinfo, OUT / "trials.json")
+    DERIVED.mkdir(parents=True, exist_ok=True)
+    dump(tinfo, TRIALS)
     write_streams(tinfo, preds["real"], info)
     info["decoder_metrics"] = decoder_metrics(tinfo, preds)
     info["seconds"] = round(time.time() - t0, 1)
@@ -327,7 +332,7 @@ def decoder_metrics(tinfo: list[dict], preds: dict) -> dict:
 
 
 def load_streams(kind: str = "real") -> tuple[list[dict], dict[str, NeuralTextStream]]:
-    tinfo = json.loads((OUT / "trials.json").read_text(encoding="utf-8"))
+    tinfo = json.loads(TRIALS.read_text(encoding="utf-8"))
     with np.load(OUT / "predictions.npz") as z:
         streams = {t["trial_id"]: make_stream(t, z[f"{kind}__{t['trial_id']}"].astype(np.float64)) for t in tinfo}
     return tinfo, streams

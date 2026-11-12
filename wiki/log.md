@@ -379,3 +379,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - M5-03 licence audit: `LICENSES/DATA.md`; SpanishBCBL loader/adapter carry licence constants and a `spanishbcbl.licence` meta key; no NC code vendored; judgement call on `experiments/2026-11-08-m2-real-keystroke/results/trials.json` (SpanishBCBL typed texts).
 - Pages: [open-benchmark](concepts/open-benchmark.md), `benchmark/README.md`, README section, index.
 
+
+## [2026-11-11] setup | M5-12 trials.json out of the tree; M7-02 outreach drafts
+- M5-12: `experiments/2026-11-08-m2-real-keystroke/results/trials.json` (SpanishBCBL per-trial target and typed texts, key labels) removed from the tip with `git rm --cached`; local copy at `~/bci-data/derived/2026-11-08-m2-real-keystroke/trials.json`. `run.py` reads and writes it there (`FIDETYPE_DERIVED` overrides the root). New `.gitignore` rule `experiments/**/results/trials.json`. No other committed file holds per-participant typed text (others hold a few target sentences only). History not rewritten: older commits (from `074c3b0`) still contain the file; noted in `LICENSES/DATA.md`. pytest 388 passed, 4 skipped.
+- M7-02: new page [partner targets](questions/partner-targets.md): 15 targets with public organisational channels only, offer, priority 1-3 and timing. No target is "now" (roadmap rule: demo + benchmark before outreach).
+- New `papers/outreach/`: `outreach-one-pager.md` (B2T '25 published decoder wrong-commit 0.194 -> 0.044 at -4.3 % eWPM; always-offer caveat +1.6 % / +3.6 %; EMG composed-sentence caveat; MEG parity with gaze) and `templates.md` (4 messages, 141-163 words). The user is the sender; agents sent nothing.
+- Tracker: M5-12 done; M7-02 in progress; M7-05 "User sends outreach" externally blocked; agent runs added to M5-01 and M3-13.

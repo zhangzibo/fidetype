@@ -44,9 +44,9 @@ No weights are in the repository or in any release. The benchmark asks every ent
 
 ## Committed results that quote non-commercial data (judgement call)
 
-Some committed experiment results contain short texts from SpanishBCBL. CC BY-NC 4.0 allows non-commercial sharing with attribution, so this is not a licence breach. But these files are **not** covered by Apache-2.0 as data; they keep the CC BY-NC 4.0 terms of the source:
+Some committed experiment results contain short texts from SpanishBCBL. A check on 2026-11-11 found no other committed file with per-participant typed text; the rest hold only a few target (stimulus) sentences as examples. CC BY-NC 4.0 allows non-commercial sharing with attribution, so this is not a licence breach. But these files are **not** covered by Apache-2.0 as data; they keep the CC BY-NC 4.0 terms of the source:
 
-- `experiments/2026-11-08-m2-real-keystroke/results/trials.json`: per-trial target **and typed** texts plus key labels of 20 test blocks. This is per-participant behavioural data. **Recommendation:** remove it from the tip of the tree (it is not needed to rerun anything) and keep only aggregates.
+- `experiments/2026-11-08-m2-real-keystroke/results/trials.json`: per-trial target **and typed** texts plus key labels of 20 test blocks. This is per-participant behavioural data. **Removed from the tip of the tree on 2026-11-11** (task M5-12). The file now lives outside the repository, at `~/bci-data/derived/2026-11-08-m2-real-keystroke/trials.json`. `run.py` reads and writes it there; the environment variable `FIDETYPE_DERIVED` overrides the root. A `.gitignore` rule (`experiments/**/results/trials.json`) blocks it from coming back. **History note:** we did not rewrite git history. Older commits (first added in `074c3b0`, 2026-11-08) still contain the file.
 - Example sentences in `results.md` files and in `examples` fields of `experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json` (a few target sentences each).
 
 The benchmark split files (`src/fidetype/benchmark/splits/v0.1/`) hold only trial ids, cluster labels and SHA-256 hashes of the truth texts. No text.
