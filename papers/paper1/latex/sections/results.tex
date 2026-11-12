@@ -4,88 +4,83 @@
 \subsection{The decoders use the neural signal}
 \label{sec:res-decoders}
 
-Before we evaluate the trust layer, we check that each decoder reads its input and how often its top sentence is right (\cref{tab:decoders}). Our asynchronous MEG decoder reached a test CER of 0.506 with greedy decoding and 0.475 with a beam search and character LM tuned on validation CER. With shuffled MEG the greedy CER rose to 0.760, and with zero input to 0.925. A text-only output that ignores the MEG (one fixed training sentence) reaches a CER of 0.688 on the same test instances, so the MEG accounts for the step from about 0.69 to 0.51, not from 1.0. Word error rates stayed high (0.842 greedy, 0.809 beam), and in the trust harness the top-1 sentence was exactly right for 2 of 637 instances. Six of the 17 test sentences have a close variant in the training set; excluding them gave 0.519 (greedy) and 0.492 (beam), so memorisation of near variants explains at most 0.02 of the CER. We selected the training schedule on validation CER; a longer schedule gave the same validation CER and is not reported further. For context, the published asynchronous encoder reports $0.59 \pm 0.02$ on SpanishBCBL with another split and without key-time training labels \citep{zhang2026brain2qwertyv2}, and the published synchronous decoder 0.29 \citep{levy2026brain2qwerty}. Our MEG results describe one weak decoder on 17 unique test sentences, not MEG decoding in general.
+Each decoder reads its input (\cref{tab:decoders} in \cref{app:decoders}). Our asynchronous MEG decoder reached a test CER of 0.506 (greedy) and 0.475 (beam and LM tuned on validation); shuffled MEG gave 0.760 and zero input 0.925, and a text-only output that ignores the MEG reaches 0.688. In the trust harness the top-1 sentence was right for 2 of 637 instances. For context, the published asynchronous encoder reports $0.59 \pm 0.02$ with another split and without key-time training labels \citep{zhang2026brain2qwertyv2}. Our MEG results describe one weak decoder on 17 unique test sentences. \todo{seeds: test CER of MEG decoder seeds 1 and 2 (training in progress), seed SD next to seed 0 (0.506 / 0.475), and MEG trust numbers per seed.} On Brain-to-Text '25, our phoneme-to-word decoder reached WER 0.149 with the right sentence first for 39\% of test trials, and the published decoder WER 0.043 with 81\%. On sEMG, balanced key accuracies (0.367, 0.240, 0.226) were well above uniform chance (0.037; permuted labels 0.032), and after the LM the right sentence was first for 46\%, 12\% and 4\% of composed sentences.
 
-On Brain-to-Text '25, our phoneme-to-word decoder reached WER 0.149 with the right sentence first for 39\% of test trials, and the published decoder WER 0.043 with 81\%. On sEMG, the CNN reached key accuracies of 0.299 (session-calibrated), 0.168 (cross-session) and 0.209 (cross-subject). These are below the majority-class rate (space, 0.338), but balanced accuracies (0.367, 0.240, 0.226) are well above uniform chance (0.037); with permuted training labels, accuracy fell to 0.022 and balanced accuracy to 0.032. After the LM, the right sentence was first for 46\%, 12\% and 4\% of composed sentences.
-
-\begin{table}[t]
-  \centering
-  \caption{\textbf{Decoder quality and input controls (test sets).} Lower CER/WER is better. Exact: share of items whose top-1 sentence is exactly right; in $K$-best: share whose intended sentence is in the 10-best list. MEG: the beam row tuned on validation CER is the decoder result; the trust harness uses a fixed beam setting (\cref{sec:protocol}). ``---'': not applicable or not computed.}
-  \label{tab:decoders}
-  \small
-  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lllll@{}}
-    \toprule
-    \textbf{Device / decoder} & \textbf{CER} & \textbf{WER} & \textbf{Exact / in $K$-best} & \textbf{Controls and floors} \\
-    \midrule
-    MEG, asynchronous, greedy & 0.506 & 0.842 & --- & shuffled 0.760, zeros 0.925 \\
-    MEG, beam + LM tuned on validation & 0.475 & 0.809 & --- & text-only floor 0.688 \\
-    MEG, beam in the trust harness & 0.522 & --- & 0.003 / 0.016 & --- \\
-    MEG, 11 sentences without close variant & 0.519 / 0.492 & --- & --- & (greedy / beam) \\
-    \midrule
-    B2T '25, our phoneme-to-word decoder & 0.095 & 0.149 & 0.390 / 0.623 & --- \\
-    B2T '25, published decoder & 0.031 & 0.043 & 0.806 / --- & --- \\
-    \midrule
-    sEMG, key accuracy (balanced) & \multicolumn{2}{l}{0.299 (0.367) / 0.168 (0.240) / 0.209 (0.226)} & --- & permuted 0.022 (0.032); \\
-    \quad session-cal.\ / cross-session / cross-subject & & & & majority 0.338, uniform 0.037 \\
-    sEMG, sentences after LM & 0.123 / 0.398 / 0.479 & 0.214 / 0.579 / 0.681 & 0.459 / 0.118 / 0.038 & in $K$-best 0.64 / 0.21 / 0.08 \\
-    \bottomrule
-  \end{tabular}\end{adjustbox}
-\end{table}
-
-\subsection{The commit decision: trust layer vs always commit and always offer}
+\subsection{The layer cuts wrong commits; its speed gain over always offering is small}
 \label{sec:res-main}
 
-\Cref{tab:main} and \cref{fig:teaser} give the main result. The comparison that matters for a speller is with always offering: the trust layer can only gain speed by committing, and it pays for each commit with some risk of a wrong sentence.
+\Cref{tab:main} and \cref{fig:teaser} give the main result.
 
-\paragraph{Intracortical speech, our decoder.} Always committing the top sentence gave 11.45 \ewpm{} and a wrong-commit rate of 0.610. The trust layer, on the same output, gave 11.55 \ewpm{} and a wrong-commit rate of 0.059 \ci{0.043}{0.075}. It committed 23\% of trials, and 48 of these 189 commits were wrong (error among commits 0.25). The paired \ewpm{} difference to always commit was \ci{-0.11}{+0.30} over trials and \ci{-0.17}{+0.33} over days, so the data exclude a slowdown larger than about 1.5\%. Always offering gave 11.37 \ewpm{} with no wrong commits. The commit decision therefore bought $+0.18$ \ewpm{} (1.6\%) over always offering, at a cost of 59 wrong commits per 1,000 sentences, of which 2 per 1,000 were silent. \todo{R1: paired CI of trust minus always offer (always-offer analysis).}
+\paragraph{Intracortical speech.} On our decoder, the trust layer cut the wrong-commit rate from 0.610 (always commit) to 0.059 \ci{0.045}{0.071}. It committed 23\% of trials, and 48 of these 189 commits were wrong (error among commits 0.25 \ci{0.19}{0.32}). It was 0.18 \ewpm{} (1.6\%) faster than always offering \ci{+0.12}{+0.24}; the difference to always committing was \ci{-0.16}{+0.33}. With CRC on the clean calibration set (split A), the rate fell to 0.0245 at a commit rate of 0.10, still faster than always offering \ci{+0.07}{+0.16}, with error among commits 0.24. On the published sentence, whose WER is only 0.043, always committing gave a wrong-commit rate of 0.194, because one wrong word makes a sentence wrong. The gate reduced it to 0.044 \ci{0.027}{0.067} (36 of 386 commits wrong, 0.09), at a cost of 4.3\% against always committing \ci{-1.01}{-0.67} and 0.66 \ewpm{} (3.6\%) faster than always offering \ci{+0.53}{+0.80}. All policies were far faster than gaze typing, with or without word completion.
 
-\paragraph{Intracortical speech, gate on the published sentence.} Always committing the published sentence gave 19.61 \ewpm{} and a wrong-commit rate of 0.194, although its WER is only 0.043. The gate reduced the wrong-commit rate to 0.044 \ci{0.031}{0.059}, at a speed cost of 4.3\% (paired \ewpm{} \ci{-0.98}{-0.72}). It committed 47\% of trials, and 36 of 386 commits were wrong (0.09). Always offering gave 18.11 \ewpm{}, so the gate was 0.66 \ewpm{} (3.6\%) faster than always offering. All policies on this device were far faster than gaze typing alone (4.08 \ewpm{}; trust minus gaze \ci{+6.96}{+7.97}, gate minus gaze \ci{+13.81}{+15.53} over trials).
+\paragraph{Forearm sEMG (composed sentences).} The layer cut the wrong-commit rate from 0.541, 0.882 and 0.962 to 0.004, 0.004 and 0, committing 21, 10 and 0 of 551 sentences, so it was nearly always offer (paired differences \ci{+0.01}{+0.03}, \ci{-0.00}{+0.01}, 0). Only the session-calibrated decoder clearly beat gaze typing \ci{+2.73}{+4.84} and gaze typing with word completion \ci{+0.74}{+2.99}. For the cross-session and cross-subject decoders, the difference to gaze typing was \ci{-0.05}{+0.98} and \ci{-0.45}{+0.10}, and word completion was faster than the layer (\ci{-1.99}{-0.95}, \ci{-2.35}{-1.84}). CRC on clean calibration data raised the commit rate to 0.24 and 0.09 for at most $+0.05$ \ewpm{}; on cross-session, 61\% of these commits were wrong.
 
-\paragraph{Forearm sEMG (composed sentences).} In all three decoder conditions, the trust layer reduced the wrong-commit rate from 0.541, 0.882 and 0.962 to 0.004, 0.004 and 0 (2 of 551 sentences in the first two conditions). It committed 21, 10 and 0 of 551 sentences, with 2, 2 and 0 of them wrong. The policy therefore acted almost as an always-offer policy, and its speed gain over always commit (participant CIs \{+0.01, +0.41\}, \{+0.46, +0.69\} and \{+0.44, +0.67\}) came from offers, from which the user picks the right sentence when it is in the list. Only the session-calibrated decoder clearly beat gaze typing (8.02 vs 4.27 \ewpm{}; trust minus gaze \{+2.66, +4.85\} over participants). With the cross-session decoder, the trust layer was 0.41 \ewpm{} above gaze typing over sentences \ci{+0.26}{+0.56}, but not over participants \{$-$0.04, +0.96\}. With the cross-subject decoder it was below gaze typing (4.08 vs 4.27; \ci{-0.28}{-0.09} over sentences, \{$-$0.43, +0.08\} over participants). \todo{R1: always-offer rows for sEMG.}
-
-\paragraph{MEG (negative control for the commit decision).} The top sentence was right for 2 of 637 test instances, and the intended sentence was in the 10-best list for 1.6\%. Always committing gave a wrong-commit rate of 0.997 and 2.580 \ewpm{}. The trust layer committed nothing and offered candidates on every instance, so it was the always-offer policy: 3.203 \ewpm{}. Gaze typing alone gave 3.155. The paired difference to gaze typing was $+0.05$ \ewpm{}, with 95\% CIs of \ci{-0.04}{+0.15} over sentences, \ci{-0.07}{+0.22} over participants and \ci{-0.11}{+0.26} two-way. The two-way interval lies within $\pm 0.32$ \ewpm{} (10\% of gaze speed), but we set this margin after seeing the data, so we read the result as ``no detectable difference'', not as equivalence. The trust layer was above gaze typing for 10 of 19 participants. Its advantage over always commit ($+0.62$ \ewpm{}, \ci{+0.49}{+0.75}) depends on the unmeasured miss probability: with a miss probability of 0, always commit gave 3.24 and the trust layer 3.20 (\cref{tab:megsens}). Two other plausible settings reverse the comparison with gaze typing: with a 40 characters-per-minute fallback (the measured speed of a second gaze user in \citep{cai2024gaze}), gaze typing gave 6.31 and the trust layer 5.15 \ewpm{}; with selection, scanning and navigation times doubled, 3.15 and 3.00 (trust minus gaze \ci{-0.23}{-0.08} over sentences).
+\paragraph{MEG (negative control for the commit decision).} The intended sentence was in the 10-best list for 1.6\% of instances, and always committing gave a wrong-commit rate of 0.997. The trust layer committed nothing, so it equals always offering. Its difference to gaze typing was \ci{-0.11}{+0.26} two-way (sentences \ci{-0.05}{+0.15}, participants \ci{-0.08}{+0.22}): no detectable difference. Gaze typing with word completion was faster \ci{-1.14}{-0.64}. CRC on clean calibration data committed 3.0\% of instances, and 95\% of these commits were wrong.
 
 \begin{table}[t]
   \centering
-  \caption{\textbf{Safety and speed on three device types (test sets).} \ewpm{} with 95\% bootstrap CIs; square brackets: trials (B2T '25), sentences (sEMG) or unique-sentence clusters (MEG); curly brackets: days (B2T '25) or participants (sEMG, MEG; primary for sEMG). Wrong-commit: wrong commits / all items. Commit: commits / all items. Err.\,$|$\,commit: wrong commits / commits (counts in brackets). Silent: silent errors / all items. Always offer: never commit (B2T '25 point values from the per-trial item tables; on MEG the trust policy offered on every instance and is the always-offer policy). ``---'': no commits.}
+  \caption{\textbf{Safety and speed (test sets).} 95\% cluster-bootstrap CIs over days (B2T '25), participants (sEMG) or sentences $\times$ participants (MEG). Wrong-commit and commit: per item; Err.\,$|$\,commit: wrong commits / commits; Silent: uncorrected wrong final texts per item. Trust: configuration fixed before evaluation (with guard). Plain threshold: calibrated $\hat p_{\mathrm{top1}}$, no guard (= trust on sEMG, MEG). CRC: fit-A pipeline, clean calibration (B2T split A, $n = 401$; sEMG 143; MEG 199). ``---'': no commits.}
   \label{tab:main}
   \small
-  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}llllll l@{}}
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lllllll@{}}
     \toprule
-    \textbf{Device / condition} & \textbf{Policy} & \textbf{\ewpm{} [CI] \{CI\}} & \textbf{Wrong-commit} & \textbf{Commit} & \textbf{Err.\,$|$\,commit} & \textbf{Silent} \\
+    \textbf{Device} & \textbf{Policy} & \textbf{\ewpm{} [CI]} & \textbf{Wrong-commit [CI]} & \textbf{Commit} & \textbf{Err.\,$|$\,commit} & \textbf{Silent} \\
     \midrule
-    B2T '25, our decoder & always commit & 11.45 \ci{10.95}{12.04} \{10.72, 12.32\} & 0.610 & 1.00 & 0.61 & 0.044 \\
-     & trust & 11.55 \ci{11.03}{12.06} \{10.85, 12.38\} & 0.059 & 0.23 & 0.25 (48/189) & 0.002 \\
-     & always offer & 11.37 & 0 & 0 & --- & 0 \\
-    B2T '25, published & always commit & 19.61 \ci{18.68}{20.51} \{17.76, 21.45\} & 0.194 & 1.00 & 0.19 & 0.025 \\
-     & trust gate & 18.77 \ci{17.88}{19.62} \{17.05, 20.46\} & 0.044 & 0.47 & 0.09 (36/386) & 0.004 \\
-     & always offer & 18.11 & 0 & 0 & --- & 0 \\
-    B2T '25 & gaze typing only & 4.08 \ci{4.04}{4.12} & 0 & --- & --- & 0 \\
+    B2T '25, our decoder & always commit & 11.45 \ci{10.69}{12.32} & 0.610 \ci{0.569}{0.648} & 1.00 & 0.61 & 0.044 \\
+     & always offer & 11.37 \ci{10.66}{12.20} & 0 & 0 & --- & 0 \\
+     & plain threshold & 11.51 \ci{10.77}{12.38} & 0.036 \ci{0.025}{0.047} & 0.17 & 0.22 & 0 \\
+     & trust & 11.55 \ci{10.82}{12.38} & 0.059 \ci{0.045}{0.071} & 0.23 & 0.25 (48/189) & 0.002 \\
+     & trust, CRC (clean cal.) & 11.48 \ci{10.78}{12.28} & 0.025 \ci{0.015}{0.035} & 0.10 & 0.24 & 0.001 \\
+    B2T '25, published & always commit & 19.61 \ci{17.82}{21.35} & 0.194 \ci{0.145}{0.253} & 1.00 & 0.19 & 0.025 \\
+     & always offer & 18.11 \ci{16.61}{19.61} & 0 & 0 & --- & 0 \\
+     & plain threshold & 18.62 \ci{17.03}{20.22} & 0.025 \ci{0.014}{0.039} & 0.38 & 0.06 & 0.001 \\
+     & trust gate & 18.77 \ci{17.15}{20.40} & 0.044 \ci{0.027}{0.067} & 0.47 & 0.09 (36/386) & 0.004 \\
+     & trust, CRC (clean cal.) & 18.79 \ci{17.16}{20.44} & 0.048 \ci{0.029}{0.070} & 0.49 & 0.10 & 0.005 \\
+    B2T '25 & gaze / gaze + completion & 4.08 \ci{4.05}{4.12} / 5.84 \ci{5.77}{5.90} & 0 & --- & --- & 0 \\
     \midrule
-    sEMG session-cal. & always commit & 7.81 \ci{7.36}{8.30} \{6.60, 9.01\} & 0.541 & 1.00 & 0.54 & 0.060 \\
-     & trust & 8.02 \ci{7.63}{8.45} \{6.90, 9.15\} & 0.004 & 0.04 & 0.10 (2/21) & 0 \\
-    sEMG cross-session & always commit & 4.10 \ci{3.89}{4.34} \{3.59, 4.70\} & 0.882 & 1.00 & 0.88 & 0.149 \\
-     & trust & 4.68 \ci{4.52}{4.86} \{4.21, 5.25\} & 0.004 & 0.02 & 0.20 (2/10) & 0 \\
-    sEMG cross-subject & always commit & 3.53 \ci{3.37}{3.72} \{3.19, 3.88\} & 0.962 & 1.00 & 0.96 & 0.167 \\
-     & trust & 4.08 \ci{3.98}{4.20} \{3.83, 4.36\} & 0 & 0 & --- & 0 \\
-    sEMG & gaze typing only & 4.27 & 0 & --- & --- & 0 \\
+    sEMG session-cal. & always commit & 7.81 \ci{6.68}{9.00} & 0.541 \ci{0.468}{0.623} & 1.00 & 0.54 & 0.060 \\
+     & always offer & 8.01 \ci{6.96}{9.11} & 0 & 0 & --- & 0 \\
+     & trust & 8.02 \ci{6.97}{9.13} & 0.004 \ci{0}{0.009} & 0.04 & 0.10 (2/21) & 0 \\
+     & trust, CRC (clean cal.) & 8.07 \ci{7.03}{9.18} & 0.040 \ci{0.024}{0.055} & 0.24 & 0.17 & 0.005 \\
+    sEMG cross-session & always commit & 4.10 \ci{3.59}{4.73} & 0.882 \ci{0.833}{0.927} & 1.00 & 0.88 & 0.149 \\
+     & always offer & 4.67 \ci{4.22}{5.25} & 0 & 0 & --- & 0 \\
+     & trust & 4.68 \ci{4.22}{5.25} & 0.004 \ci{0}{0.009} & 0.02 & 0.20 (2/10) & 0 \\
+     & trust, CRC (clean cal.) & 4.66 \ci{4.20}{5.25} & 0.056 \ci{0.040}{0.073} & 0.09 & 0.61 & 0.007 \\
+    sEMG cross-subject & always commit & 3.53 \ci{3.19}{3.92} & 0.962 \ci{0.940}{0.980} & 1.00 & 0.96 & 0.167 \\
+     & trust (= always offer, = CRC) & 4.08 \ci{3.82}{4.38} & 0 & 0 & --- & 0 \\
+     & trust, LM weight re-tuned & 4.84 \ci{4.25}{5.51} & 0.002 \ci{0}{0.006} & 0.01 & 0.17 (1/6) & 0 \\
+    sEMG & gaze / gaze + completion & 4.27 \ci{4.22}{4.32} / 6.19 \ci{6.11}{6.26} & 0 & --- & --- & 0 \\
     \midrule
-    MEG (asynchronous) & always commit & 2.580 \ci{2.41}{2.76} \{2.41, 2.79\} & 0.997 & 1.00 & 1.00 & 0.235 \\
-     & trust (= always offer) & 3.203 \ci{3.07}{3.36} \{3.08, 3.37\} & 0 & 0 & --- & 0 \\
-    MEG & gaze typing only & 3.155 \ci{3.02}{3.29} & 0 & --- & --- & 0 \\
+    MEG (asynchronous) & always commit & 2.58 \ci{2.31}{2.88} & 0.997 \ci{0.986}{1.000} & 1.00 & 1.00 & 0.235 \\
+     & trust (= always offer) & 3.20 \ci{3.02}{3.43} & 0 & 0 & --- & 0 \\
+     & trust, CRC (clean cal.) & 3.20 \ci{3.01}{3.42} & 0.028 \ci{0.008}{0.061} & 0.03 & 0.95 & 0.005 \\
+    MEG & gaze / gaze + completion & 3.15 \ci{3.02}{3.30} / 4.10 \ci{3.89}{4.33} & 0 & --- & --- & 0 \\
     \bottomrule
   \end{tabular}\end{adjustbox}
 \end{table}
 
-\subsection{Confidence predicts errors; calibration fixes sentence-level ECE but can hurt decoding}
-\label{sec:res-calib}
-On Brain-to-Text '25, the calibrated top-1 probability predicted a wrong top sentence with AUROC 0.797 at the word level and 0.884 at the phoneme level; per word, the acoustic word confidence gave AUROC 0.844. On sEMG, AUROC was 0.83, 0.76 and 0.67 in the three conditions. We did not compute CIs for these AUROCs. The raw intracortical logits were over-confident (frame temperature 3.78), and sentence ECE fell from 0.448 to 0.067. The same temperature made the ECE of the per-frame phoneme peaks worse (0.090 to 0.130): the temperature that is optimal for the likelihood is not optimal for the peak confidences. On sEMG, sentence ECE fell from 0.154 to 0.148, from 0.328 to 0.072 and from 0.500 to 0.083 (frame temperatures 1.25, 1.78 and 2.17; \cref{fig:ece}). \todo{R1: reliability diagrams before and after calibration (harness re-run with per-bin output).}
+\subsection{Speed rankings depend on the user model; wrong-commit rates do not}
+\label{sec:res-user}
 
-Because the frame temperature is applied before the LM search, it also changes the decoded text. On sEMG, the LM weight was tuned on raw streams; the flatter calibrated streams give the LM relatively more weight, and the CER of the top sentence rose from 0.369 to 0.479 (cross-subject), 0.387 to 0.398 (cross-session) and 0.116 to 0.123 (session-calibrated). Without calibration, the cross-subject trust layer reached 4.76 \ewpm{} \ci{4.60}{4.94} \{4.25, 5.35\} with a wrong-commit rate of 0.005, above gaze typing (4.27); with calibration it reached 4.08, below gaze typing. Without calibration, the session-calibrated layer was faster (8.15 vs 8.02 \ewpm{}) but had a wrong-commit rate of 0.045 instead of 0.004. On Brain-to-Text '25, removing calibration raised the wrong-commit rate from 0.059 to 0.071 at the same speed (11.57 vs 11.55 \ewpm{}).
+\Cref{fig:usermodel} refits every policy under eight user-model variants. First, the trust layer was at least as fast as always offering in every variant and condition; on Brain-to-Text '25 all intervals of the difference were above 0. Second, the comparison with always committing depends on the user model: on our intracortical decoder, always committing was at least as fast in 5 of 8 variants (fallback 40 characters per minute, selection $\times 2$, miss probability 0, both symmetric-offer variants), and on the published decoder it was the fastest policy in all 9, by 0.46--1.47 \ewpm{}. On sEMG and MEG, the gain over always committing came from offers and disappeared with miss probability 0 or symmetric offers. Third, gaze typing with word completion was faster than the layer in every variant on MEG and in all but one on the two weaker sEMG decoders (with a 1\,s glance cost per look: 3.16 and 4.84 \ewpm{}). On MEG, the comparison with plain gaze typing flipped either way across variants (40 characters-per-minute fallback \ci{-1.36}{-0.89}; 10 characters per minute \ci{+0.21}{+0.45}). In contrast, the wrong-commit rate of the refitted trust layer was unchanged in 49 of 54 condition--variant pairs and at most 0.059 in all. Silent errors rose under symmetric offers (0.02--0.17), because offers then also let errors through. Policies fitted under the main user lost at most 0.2 \ewpm{} against refitting, except with symmetric offers and miss probability 0.2 on the weak decoders (MEG 1.18 vs 2.75).
 
-The guard did not help on real intracortical data: without it, the wrong-commit rate fell from 0.059 to 0.036 at the same speed (11.51 \ewpm{}), and its AUROC for a wrong top sentence (0.702) was below that of $\hat p_{\mathrm{top1}}$ (0.797). On sEMG its AUROC was 0.65, 0.56 and 0.50. The guard's value lies in the signal-destroying controls (\cref{sec:res-null}). \todo{R1: unified ablation over all devices and conditions (calibration applied to the beam vs to the confidence only, guard, CRC), and LM weight re-tuned after the frame temperature.}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_user_model.pdf}
+  \caption{\textbf{User-model sensitivity.} Paired \ewpm{} difference between the trust layer and (a)~always committing, (b)~always offering and (c)~gaze typing with word completion, all policies refitted under each variant (rows); 95\% cluster-bootstrap CIs at the primary unit.}
+  \label{fig:usermodel}
+\end{figure}
 
-\Cref{fig:risk,fig:selrisk} show the trade-off as the commit threshold varies. For the marginal risk (\cref{fig:risk}), the published decoder can commit about half of its sentences at the 0.05 level, and our weaker decoder about a fifth. For the selective risk (\cref{fig:selrisk}), the error among commits of our decoder falls to about 0.1--0.2 only when fewer than about 10\% of trials are committed and rises to about 0.5 at a commit rate of 0.6, while that of the published decoder stays near or below 0.15. On sEMG cross-session, most commits are wrong at all but the lowest commit rates. A rule that controls the marginal risk can therefore accept a high error among commits on a weak decoder.
+\subsection{What makes the layer safe: sentence calibration and a threshold, not the guard}
+\label{sec:res-ablation}
+
+\paragraph{Calibration.} Sentence ECE fell from 0.448 to 0.067 on our intracortical decoder (frame temperature 3.78; the ECE of per-frame phoneme peaks rose from 0.090 to 0.130) and from 0.154, 0.328 and 0.500 to 0.148, 0.072 and 0.083 on sEMG (\cref{fig:ece}). The calibrated top-1 probability predicted a wrong top sentence with AUROC 0.797 (intracortical) and 0.83, 0.76 and 0.67 (sEMG); we did not compute CIs for these AUROCs or reliability diagrams.
+
+\paragraph{Ablation} (\cref{tab:ablation}, \cref{app:ablation}; nine variants, six conditions). (1) The \emph{sentence} temperature keeps wrong commits low: without it, the rate rose on 4 of 6 conditions (our intracortical decoder 0.076; sEMG 0.040, 0.018, 0.044). (2) The \emph{frame} temperature changes decoding, because it is applied before an LM search whose weight was tuned on raw streams. On sEMG cross-subject, decoding the raw stream gave top-1 CER 0.369 instead of 0.479 and 4.75--4.76 instead of 4.08 \ewpm{}; re-tuning the LM weight on the calibrated streams gave 4.84 \ci{4.25}{5.51} at CER 0.360. This is above gaze typing as a point value, but the interval of the difference \ci{-0.02}{+1.25} includes 0, and it stays below gaze typing with word completion; our earlier conclusion that this decoder stays below gaze typing was an artefact of the LM weight. (3) The guard did not help on real data: without it, the wrong-commit rate fell from 0.059 to 0.036 on our intracortical decoder (paired \ci{-0.036}{-0.011}; \ewpm{} \ci{-0.10}{+0.04}) and from 0.044 to 0.025 on the published gate (\ci{-0.034}{-0.006}; \ewpm{} \ci{-0.20}{-0.10}), and changed nothing on sEMG and MEG. Its AUROC for a wrong top sentence (0.702) was below that of $\hat p_{\mathrm{top1}}$. Conformal sets and \act{offer\_words} changed little.
+
+\paragraph{Why the guard stays in the reported configuration.} We report the configuration fixed before evaluation, with the plain threshold next to it (\cref{tab:main}): choosing it from a test-set ablation would bias the reported rates downwards, and the plain threshold was not run on the control streams, where the guard separated signal-destroying streams from real ones (\cref{sec:res-null}). A future pre-specified configuration should use the plain threshold, with the guard as an optional check that must pass the controls.
+
+\paragraph{The commit trade-off.} As the threshold varies (\cref{fig:risk,fig:selrisk}), the published decoder can commit about half of its sentences at the 0.05 marginal level and our decoder about a fifth. The error among commits of our decoder falls to 0.1--0.2 only below about 10\% commits and rises to about 0.5 at 60\%, while that of the published decoder stays near or below 0.15; on sEMG cross-session, most commits are wrong at all but the lowest rates. A rule that controls the marginal risk can therefore accept a high error among commits on a weak decoder.
 
 \begin{figure}[t]
   \centering
@@ -107,81 +102,49 @@ The guard did not help on real intracortical data: without it, the wrong-commit 
     \caption{Selective risk.}
     \label{fig:selrisk}
   \end{subfigure}
-  \caption{\textbf{Calibration and the commit trade-off.} (a)~Expected calibration error of the sentence confidence before and after temperature scaling (test sets). (b)~For each commit threshold on the calibrated score: share of all test items committed (x) and committed wrongly (y). (c)~The same thresholds: error among commits (wrong commits / commits). Items blocked by the guard or other policy rules are never committed. Curves start at 10 commits. Dotted line: $\alpha = 0.05$. The cross-subject sEMG condition is absent because no candidate passed the guard; on MEG all but a few commits are wrong.}
+  \caption{\textbf{Calibration and the commit trade-off.} (a)~Sentence-level expected calibration error before and after temperature scaling (test sets). (b)~For each commit threshold on the calibrated score: share of test items committed (x) and committed wrongly (y). (c)~The same thresholds: error among commits. Items blocked by the guard or other policy rules are never committed. Curves start at 10 commits. Dotted line: $\alpha = 0.05$. sEMG cross-subject is absent because no candidate passed the guard.}
   \label{fig:calib}
 \end{figure}
 
 \subsection{Controls: signal-destroying streams are not committed; intent mismatch is not detectable}
 \label{sec:res-null}
-Always commit wrote a sentence for every control stream, and on MEG 85--100\% of these sentences were fluent Spanish (85\% on real input). The trust layer committed none of the signal-destroying controls on Brain-to-Text '25 (frame-shuffled and uniform streams, 300 trials) or on sEMG (frame-shuffled, zero-input and permuted-decoder streams, 200 sentences per condition) (\cref{fig:null}a, b). This is an informative test on these two devices, because the same layer committed 22\% (Brain-to-Text '25) and 2.5--4\% (sEMG) of the real inputs in the same audit. On Brain-to-Text '25, the guard risk separated frame-shuffled and uniform streams from real ones with AUROC 0.981 and 0.998. On MEG the trust layer committed nothing on real input either, so its zero commits on control streams carry no information. The guard risk is the informative MEG result (\cref{fig:null}c): it separated shuffled MEG, zero input and uniform streams from real streams (AUROC 0.92, 1.00 and 1.00), but not frame-shuffled streams (0.47), whose per-frame evidence for this weak decoder looks like that of real streams.
-
-The intent-mismatch control behaves differently. Given the real stream of another sentence, the trust layer on our Brain-to-Text '25 decoder committed 22\% of items, the same rate as on matched input, and on sEMG it also committed at the matched rate. This is expected: the stream is genuine neural evidence, only for a sentence the user did not intend, and nothing in the stream reveals the intent. The gate on the published sentence committed none of these items, but only because its text came from the matched trial and disagreed with the mismatched stream; this is a property of the test construction, not a capability of the gate.
+Always commit wrote a sentence for every control stream (on MEG, 85--100\% fluent Spanish). The trust layer committed none of the signal-destroying controls on Brain-to-Text '25 (300 trials) or sEMG (200 sentences per condition) (\cref{fig:null}a, b), an informative result because the same layer committed 22\% and 2.5--4\% of the real inputs in the same audit. On Brain-to-Text '25, the guard risk separated frame-shuffled and uniform streams from real ones with AUROC 0.981 and 0.998. On MEG, the layer committed nothing on real input either, so its zero commits on controls carry no information; the guard risk separated shuffled MEG, zero input and uniform streams (AUROC 0.92, 1.00, 1.00), but not frame-shuffled streams (0.47) (\cref{fig:null}c). Given the real stream of another sentence, the layer committed at the matched rate on our intracortical decoder (22\%) and on sEMG: nothing in the stream reveals the intent. The published gate committed none of these, but only because its text came from the matched trial.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_null_audit.pdf}
-  \caption{\textbf{Controls.} (a, b)~Commit rate of always commit (orange) and the trust layer (blue) on real input, the intent-mismatch control (other sentence) and signal-destroying controls. (a)~B2T '25, our decoder, 300 random test trials. (b)~sEMG cross-session, 200 random test sentences. For ``real'' and ``other sentence'', commits are a mix of right and wrong; for all other inputs any commit is wrong. (c)~MEG, asynchronous decoder, all 637 test instances: AUROC of the guard risk for separating each control from real input (0.5: no separation). The MEG trust layer committed nothing on any input, including real input.}
+  \caption{\textbf{Controls.} (a, b)~Commit rate of always commit (orange) and the trust layer (blue) on real input, the intent-mismatch control (other sentence) and signal-destroying controls: (a)~B2T '25, our decoder, 300 test trials; (b)~sEMG cross-session, 200 test sentences. On controls other than ``other sentence'', any commit is wrong. (c)~MEG, 637 instances: AUROC of the guard risk for separating each control from real input; the MEG layer committed nothing.}
   \label{fig:null}
 \end{figure}
 
-\subsection{Conformal risk control bounds the mean marginal risk, not the error among commits}
+\subsection{CRC bounds the mean marginal risk, not the error among commits}
 \label{sec:res-crc}
-The plug-in policy exceeded the target on our Brain-to-Text '25 decoder (0.059 on the full test set). We drew 200 random calibration/test splits of the 816 test trials, with 408 trials for calibration (\cref{tab:crc}). A random split of one fixed pool is exchangeable by construction, so the CRC theorem guarantees a mean over splits of at most $\alpha$; the observed means of 0.0483 (our decoder) and 0.0478 (published gate) confirm the implementation rather than test the assumption. They came at \ewpm{} changes of $-0.3\%$ and $+0.06\%$ relative to the fixed plug-in gate. Individual splits vary: the test rate exceeded 0.05 in 41--45\% of CRC splits, and part of this spread is test-sampling noise (standard error about 0.011 with 408 test items). LTT gave a mean of 0.0345 for both decoders and a 90th percentile of the test rate of 0.0515 (ours) and 0.0542 (published), against 0.0686 for CRC. Because the 816 trials are the population of this experiment, we can compute the calibration-conditional risk that LTT bounds: the wrong-commit rate of the chosen threshold on all 816 trials. It exceeded $\alpha$ in 0.5\% (ours) and 1.5\% (published) of LTT splits, within $\delta = 0.1$, and in 33\% and 29\% of CRC splits, which CRC does not promise to avoid.
+On random splits of the test pool, which are exchangeable by construction, CRC held the mean wrong-commit rate at or below $\alpha$ at every calibration size (\cref{tab:crc} in \cref{app:more}); this checks the implementation, not the assumption. With 408 calibration trials, single splits exceeded 0.05 in 43\% (our decoder) and 46\% (published) of cases, partly from test-sampling noise (standard error about 0.011); LTT had a 90th percentile of 0.052 and 0.054, against 0.069 and 0.071 for CRC. Because the pool is the population of this experiment, we can compute the risk that LTT bounds, the rate of the chosen threshold on the whole pool: over 200 splits it exceeded $\alpha$ in 0.5\% and 1.5\% of LTT splits (within $\delta = 0.1$) and in 33\% and 29\% of CRC splits, which CRC does not promise to avoid. Small calibration sets keep the mean valid but make the layer commit rarely: with 20 trials, CRC had a 90th percentile of 0.089 and never committed in 17\% of splits, and LTT cannot commit below 45 items ($0.95^n > \delta$). A session-start block of the first 20 trials of each day gave CRC rates of 0.009 (ours) and 0.025 (published) at commit rates of 0.04 and 0.32, and 6 of 14 days never committed; on sEMG, 9 of 18 participants never committed. The error among commits did not change with the calibration size: about 0.25 (ours), 0.10 (published) and 0.93 on MEG, where CRC still committed 2.1\% of instances because this is within the budget. This is control without utility; the deployable rule $\max(\lambda_{\mathrm{tuned}}, \hat\lambda_{\mathrm{CRC}})$ inherits the plug-in threshold, which committed nothing on MEG.
 
-Neither method bounds the error among commits. Under CRC, 25\% of commits of our decoder were wrong (10\% for the published gate), and under LTT 22\% (8\%). On MEG, where almost every possible commit is wrong, CRC still committed 2.1\% of instances, because this is within the budget, and 92\% of these commits were wrong (LTT: 2.3\% committed, 93\% wrong). LTT committed slightly more than CRC on MEG because its fixed grid extends to $\lambda = 0$, while CRC only considers thresholds at calibration scores, so test items scoring below the lowest calibration score commit under LTT but not under CRC. Neither gained speed (\ewpm{} 3.199 vs 3.204 for the plug-in gate, which committed nothing). Calibration splits grouped by sentence (11 of 17) or by participant (12 of 19) gave the same means (CRC 0.0194 and 0.0201). This is control without utility: the marginal bound is met by spending the budget on commits that are almost always wrong. The deployable rule $\max(\lambda_{\mathrm{tuned}}, \hat\lambda_{\mathrm{CRC}})$ inherits the plug-in threshold, which committed nothing on MEG. On sEMG, with 142 calibration sentences, both methods were feasible (cross-session CRC threshold 0.204, bound 0.049), but the plug-in thresholds were stricter, so the combined rule equalled the plug-in policy. With 100 calibration trials, CRC on our decoder still had a mean of 0.0464, but the 95th percentile of the test rate rose to 0.094, and LTT committed only 9.7\% of trials. \todo{R1: calibration sets of 20--50 trials and calibration within a day (small-n CRC analysis).}
 
-\begin{table}[t]
-  \centering
-  \caption{\textbf{CRC and LTT for the commit threshold} ($\alpha = 0.05$, $\delta = 0.1$; 408 calibration items; 200 random splits of the test pool). Wrong-commit: mean test rate over splits; p90: its 90th percentile; $P_{>\alpha}$: share of splits with a test rate above $\alpha$; Pool$_{>\alpha}$: share of splits in which the chosen threshold's rate on the whole pool exceeds $\alpha$ (the calibration-conditional risk that LTT bounds with probability $1-\delta$); Err.\,$|$\,commit: mean wrong-commit / mean commit rate. Fixed gate: the plug-in policy fitted on the fit data. MEG: asynchronous decoder, pool of 637 instances.}
-  \label{tab:crc}
-  \small
-  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lllllllll@{}}
-    \toprule
-    \textbf{Data ($n_{\mathrm{test}}$)} & \textbf{Method} & \textbf{Wrong-commit} & \textbf{p90} & $\boldsymbol{P_{>\alpha}}$ & \textbf{Pool$_{>\alpha}$} & \textbf{Commit} & \textbf{Err.\,$|$\,commit} & \textbf{\ewpm{}} \\
-    \midrule
-    B2T '25, our decoder (408) & fixed gate & 0.059 & 0.069 & 0.86 & 1.00 & 0.233 & 0.25 & 11.57 \\
-     & CRC & 0.048 & 0.069 & 0.45 & 0.33 & 0.194 & 0.25 & 11.53 \\
-     & LTT & 0.035 & 0.052 & 0.14 & 0.005 & 0.156 & 0.22 & 11.52 \\
-    B2T '25, published gate (408) & fixed gate & 0.044 & 0.054 & 0.20 & 0 & 0.471 & 0.09 & 18.77 \\
-     & CRC & 0.048 & 0.069 & 0.41 & 0.29 & 0.479 & 0.10 & 18.78 \\
-     & LTT & 0.035 & 0.054 & 0.14 & 0.015 & 0.427 & 0.08 & 18.70 \\
-    MEG, asynchronous (229) & fixed gate & 0 & 0 & 0 & 0 & 0 & --- & 3.204 \\
-     & CRC & 0.019 & 0.031 & 0 & 0 & 0.021 & 0.92 & 3.199 \\
-     & LTT & 0.021 & 0.031 & 0 & 0 & 0.023 & 0.93 & 3.199 \\
-    \bottomrule
-  \end{tabular}\end{adjustbox}
-\end{table}
-
-\subsection{Online re-calibration under a shift between the halves of each day}
+\subsection{No detectable shift after clean calibration: the earlier drift was a data-reuse artefact}
 \label{sec:res-drift}
-When we calibrated CRC on the first half of each Brain-to-Text '25 day and applied the threshold to the second half in file order, the test wrong-commit rate was 0.0625 (\cref{tab:drift}). On sEMG cross-session, pure CRC calibrated on fit data gave 0.0635. Two caveats apply. First, both calibration sets had also fitted the temperatures and the policy grid (\cref{sec:crc}), so part of the excess may be a reuse effect. \todo{R1: offline CRC with calibration data disjoint from the data that fitted temperatures, guard and policy (clean drift baseline); rename the phenomenon if the excess disappears.} Second, when we shuffled the order of the test half, offline CRC still gave 0.0625, so the excess is a level difference between the calibration data and the test half, not a trend within the test half. We therefore call it a shift between halves, not within-session drift.
+In our earlier analysis, CRC calibrated on the fit half of each Brain-to-Text '25 day gave 0.0625 on the test half, and pure CRC on sEMG cross-session gave 0.0635; we read this as within-day drift. But those calibration items had also fitted the temperatures, the conformal sets and the policy grid, which violates the separate-data requirement (\cref{sec:crc}). With clean calibration data (\cref{tab:drift}), offline CRC gave 0.0245 and 0.0600 on our decoder (splits A and B), 0.0478 and 0.0490 on the published gate, and 0.0563 and 0.0399 on sEMG cross-session and session-calibrated; on sEMG cross-subject it could not commit. No value above $\alpha$ was significantly above the rate that exchangeable splits of the same items give (one-sided $p \ge 0.21$); in split A the test rate was above the exchangeable reference ($p = 0.012$) but below $\alpha$. The earlier 0.0625 thus came from data reuse and split-to-split variation, and we do not claim within-day drift for these data.
 
-The four online methods brought the rate to 0.040--0.053 on both data sets, at an \ewpm{} cost of at most 0.6\%. \texttt{aci\_window} ended below 0.05 in both cases (0.0478 and 0.0490). \texttt{aci} ended at 0.0502 and 0.0526: the update drives the long-run rate towards $\alpha$, not below it. Its certificate after the fact equalled these values and was within the a-priori bounds of 0.064 (Brain-to-Text '25, 816 trials) and 0.081 (sEMG, 551 sentences). These a-priori bounds are weaker than the 0.0625 of offline CRC, so at this sequence length the guarantee is loose. The \texttt{window} and \texttt{decay} methods gave 0.0399--0.0508 without any guarantee. With the test order shuffled, the online methods gave 0.0444--0.0510. Feedback delayed by 10 trials gave 0.0404--0.0502 on Brain-to-Text '25. Without a calibration block (cold start over all 1,628 trials), \texttt{aci} gave 0.0442 and \texttt{aci\_window} 0.0491, but \texttt{window} gave 0.0516. On the published gate, offline CRC was already below the target (0.0490) and the online methods gave 0.0392--0.0478.
-
-No method controlled short windows. The maximum wrong-commit rate over 50-trial windows was 0.10--0.12 on our Brain-to-Text '25 decoder and up to 0.18 on the published gate, against a median of 0.120 and a 95th percentile of 0.180 for an i.i.d.\ Bernoulli(0.05) sequence of the same length. When only noticed errors were fed back, \texttt{aci} gave 0.0515 on Brain-to-Text '25 and 0.0635 on sEMG cross-session, while its certificate on the observed losses stayed at 0.0496 and 0.0518: silent errors look correct to the controller. On MEG, in participant order (a sequence across participants, not a session), the online methods gave 0.0078--0.0204, and every commit was wrong.
+The online methods kept the long-run rate at 0.0245--0.0527 (Brain-to-Text '25) and 0.0381--0.0526 (sEMG), at \ewpm{} within 0.06 of offline CRC. The \texttt{aci} and \texttt{aci\_window} certificates were 0.038--0.053, within loose a-priori bounds of 0.059--0.081. Shuffling the test order changed the online rates by at most 0.007, and a feedback delay of 10 items by at most 0.009. When only noticed errors were fed back (delay 10), \texttt{aci} reached 0.0527 (Brain-to-Text '25, split B) and 0.0581 (sEMG cross-session) while its certificate on the observed losses was 0.0509 and 0.0499: silent errors look correct to the controller. On these data the online controller is a safeguard with an any-sequence guarantee, not a fix for an observed failure.
 
 \begin{table}[t]
   \centering
-  \caption{\textbf{Wrong-commit rate when calibration data and test data differ in level.} Offline CRC: calibrated on the first half of each day (B2T '25) or on fit data (sEMG cross-session, pure CRC), then fixed. Online methods: warm start on the same data, then the test data in file order. Shuffled: test order randomised (mean of 20). Certificate / a priori: the \texttt{aci} bound after the fact and in advance (\cref{tab:online}). Single runs; trial order is the file order (the data have no time stamps). \todo{R1: clean-calibration offline baseline; CIs over days.}}
+  \caption{\textbf{Wrong-commit rate on later data with clean calibration.} Reused: our earlier offline CRC, calibrated on data that also fitted the pipeline. Clean CRC: calibration data disjoint from all fitted parts (95\% CI over days or participants). Exch.\ ref.: mean [5th, 95th percentile] over 1,000 random splits of the pooled calibration and test items; $p$: share of these splits at least as high as observed. Online: warm start on the clean calibration data, then the test data in order, delay 0. Cert.\ / a priori: \texttt{aci} bound after the fact and in advance. sEMG cross-subject: no method committed.}
   \label{tab:drift}
   \small
-  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lllllll@{}}
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lllllllllll@{}}
     \toprule
-    \textbf{Data} & \textbf{Offline CRC} & \texttt{window} & \texttt{decay} & \texttt{aci} & \texttt{aci\_window} & \textbf{\texttt{aci} cert.\ / a priori} \\
+    & & \multicolumn{4}{c}{\textbf{Offline}} & \multicolumn{4}{c}{\textbf{Online}} & \\
+    \cmidrule(lr){3-6}\cmidrule(lr){7-10}
+    \textbf{Data ($n_{\mathrm{test}}$)} & \textbf{Reused} & \textbf{Clean CRC [CI]} & \textbf{Exch.\ ref.} & $\boldsymbol{p}$ & \textbf{LTT} & \texttt{window} & \texttt{decay} & \texttt{aci} & \texttt{aci\_w.} & \textbf{Cert.\ / a priori} \\
     \midrule
-    B2T '25, ours (816) & 0.0625 & 0.0453 & 0.0417 & 0.0502 & 0.0478 & 0.0502 / 0.0637 \\
-    B2T '25, ours, shuffled & 0.0625 & 0.0502 & 0.0444 & 0.0510 & 0.0492 & --- \\
-    B2T '25, published (816) & 0.0490 & 0.0429 & 0.0392 & 0.0478 & 0.0453 & 0.0478 / 0.0593 \\
-    sEMG cross-session (551) & 0.0635 & 0.0508 & 0.0399 & 0.0526 & 0.0490 & 0.0526 / 0.0809 \\
-    \midrule
-    \ewpm{}, B2T '25, ours & 11.553 & 11.490 & 11.500 & 11.510 & 11.489 & \\
+    B2T '25 ours, A (816) & 0.0625 & 0.0245 \ci{0.014}{0.035} & 0.018 \ci{0.014}{0.022} & 0.012 & 0.0270 & 0.0245 & 0.0257 & 0.0270 & 0.0245 & 0.043 / 0.068 \\
+    B2T '25 ours, B (816) & 0.0625 & 0.0600 \ci{0.049}{0.071} & 0.049 \ci{0.029}{0.071} & 0.21 & 0.0515 & 0.0478 & 0.0453 & 0.0527 & 0.0490 & 0.053 / 0.066 \\
+    B2T '25 published, A (816) & 0.0490 & 0.0478 \ci{0.029}{0.071} & 0.049 \ci{0.029}{0.074} & 0.54 & 0.0294 & 0.0429 & 0.0392 & 0.0478 & 0.0453 & 0.048 / 0.059 \\
+    B2T '25 published, B (816) & 0.0490 & 0.0490 \ci{0.030}{0.074} & 0.050 \ci{0.031}{0.074} & 0.50 & 0.0306 & 0.0441 & 0.0392 & 0.0478 & 0.0453 & 0.048 / 0.059 \\
+    sEMG cross-session (551) & 0.0635 & 0.0563 \ci{0.040}{0.074} & 0.045 \ci{0.018}{0.080} & 0.30 & 0.0309 & 0.0472 & 0.0381 & 0.0526 & 0.0490 & 0.053 / 0.081 \\
+    sEMG session-cal.\ (551) & 0.0417 & 0.0399 \ci{0.024}{0.056} & 0.047 \ci{0.018}{0.082} & 0.60 & 0.0218 & 0.0490 & 0.0454 & 0.0490 & 0.0490 & 0.049 / 0.072 \\
     \bottomrule
   \end{tabular}\end{adjustbox}
 \end{table}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig_drift.pdf}
-  \caption{\textbf{Online re-calibration keeps the long-run rate near the target when calibration and test data differ in level.} (a)~Running wrong-commit rate over the second half-days of B2T '25 (our decoder, 816 trials in file order; the data have no time stamps), recomputed from the committed per-trial items; final values equal \cref{tab:drift}. The first 50 trials are not shown. (b)~Final wrong-commit rate per method and data set; single runs, no uncertainty shown. Dotted line: $\alpha = 0.05$. The offline baselines were calibrated on data that also fitted the temperatures and the policy.}
-  \label{fig:drift}
-\end{figure}

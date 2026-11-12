@@ -1,6 +1,18 @@
-# How to read this draft (Paper 1, draft v1)
+# How to read this draft (Paper 1, draft v2)
 
-This guide is for you, the author. The current draft is [`draft-v1.pdf`](draft-v1.pdf) (32 pages: main text 1–20, references 21–28, appendix 28–32). The first draft, [`draft-v0.pdf`](draft-v0.pdf), stays for comparison. The paper is in normal academic English. This guide is in simple English.
+This guide is for you, the author. The current draft is [`draft-v2.pdf`](draft-v2.pdf) (29 pages: main text 1–15, references 16–21, appendix 22–29). The earlier drafts, [`draft-v0.pdf`](draft-v0.pdf) and [`draft-v1.pdf`](draft-v1.pdf), stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1–7 below were written for v1; section and figure numbers there refer to v1.
+
+## What changed in v2 (review round 2)
+
+The new analyses ([SUMMARY](../../experiments/2026-11-12-paper1-r1-analyses/SUMMARY.md)) changed the story. Full list: [reviews/round-2-changes.md](reviews/round-2-changes.md).
+
+- **No more drift claim.** With clean calibration data (not used to fit anything else), offline CRC met its target up to noise (B2T 0.025 / 0.060, sEMG 0.040 / 0.056). The old 0.0625 came from reusing fit data. The paper now reports this as a lesson. Online re-calibration is a *safeguard*, not a fix.
+- **Safety, not speed, is the main claim.** The layer cuts wrong commits (61% → 5.9%, 19% → 4.4%). It is only 1.6% / 3.6% faster than always offering. Always committing is often as fast or faster under other user models, and gaze typing with word completion beats it on MEG and weak sEMG. New title subtitle: "Risk-controlled commit decisions from a decoder-agnostic trust layer".
+- **Guard.** It raised wrong commits on B2T. We keep it in the reported configuration (it was fixed before the tests; the version without it was never run on the control streams) and show the plain threshold next to it. We recommend the plain threshold for the future.
+- **New:** main table with all baselines at the right CI unit; user-model sensitivity figure (Fig. 3); clean-calibration table (Table 3); ablation table, leakage check and small-n CRC table in the appendix.
+- **Length:** main text 20 → 15 pages; 5 main figures, 3 main tables.
+
+**Still open:** MEG seeds 1–2 (GPU job, one red `\todo{seeds}`); Card et al. supplement check; your author items (authors, funding, AI statement, ethics wording); tag + DOI; run time per decision.
 
 ## 0. What changed in v1 (review round 1)
 

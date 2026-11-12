@@ -1,11 +1,11 @@
 \section{The NeuralTextStream format}
 \label{sec:format}
 
-\nts{} (NTS) is the contract between a decoder and any consumer of its output (\cref{fig:arch}). A stream of $F$ frames over a vocabulary of $V$ tokens holds an $F \times V$ array \code{log\_probs} of natural-log probabilities (row $t$ is a distribution at frame $t$), the frame times in seconds, the ordered vocabulary, its type (\code{char}, \code{key}, \code{word}, \code{phoneme}, \code{command} or \code{other}) and the index of the CTC blank (or \code{null} for non-CTC decoders). Optional fields give the frame period, the algorithmic latency, the producer and a \code{meta} object with named key prefixes (\code{device.*}, \code{decoder.*}, \code{lm.*}, \code{calibration.*}, \code{adapter.*}).
+\nts{} (NTS) is the contract between a decoder and any consumer of its output (\cref{fig:arch}). A stream of $F$ frames over $V$ tokens holds an $F \times V$ array \code{log\_probs} of natural-log probabilities, the frame times, the ordered vocabulary, its type (\code{char}, \code{key}, \code{word}, \code{phoneme}, \code{command} or \code{other}) and the CTC blank index (or \code{null}). Optional fields give the frame period, latency, producer and a \code{meta} object with named key prefixes (\code{device.*}, \code{decoder.*}, \code{lm.*}, \code{calibration.*}, \code{adapter.*}).
 
 \paragraph{Unmodified probabilities.} A producer must emit the decoder's own output distribution and must not sharpen or smooth it, for example for display. Calibration is left to the consumer, which can fit it on data with known truth. A field is interpreted as a probability only if the stream declares it as one in \code{calibration.*}. Ground-truth text must not appear in the stream (a leakage rule), and raw signals and direct identifiers stay out of it (privacy rules). \Cref{app:format} summarises the serialisations, the conformance suite and the audit log.
 
-\paragraph{Three device types.} \Cref{tab:devices} lists the adapters. Mapping the intracortical and sEMG decoders into NTS needed no change to the frame core of v0.1, a Development release written by the same authors. The trust harness needed one optional field (the truth in the stream's token space, because phoneme truth differs from the word truth that the user sees), and provenance added optional \code{meta} keys. The adapters have 148 (MEG), 412 (intracortical) and 568 (sEMG, including a file reader) lines of Python, with documentation. Every other part of the pipeline is the same code for all devices, but its parameters are re-fitted per device (\cref{tab:settings}).
+\paragraph{Three device types.} \Cref{tab:devices} lists the adapters (148, 412 and 568 lines of Python for MEG, intracortical and sEMG). Mapping the intracortical and sEMG decoders into NTS needed no change to the frame core of v0.1, a Development release written by the same authors; the trust harness added one optional field (the truth in the stream's token space) and provenance keys. Every other part of the pipeline is the same code for all devices, with parameters re-fitted per device (\cref{tab:settings}).
 
 \begin{table}[t]
   \centering
@@ -31,7 +31,7 @@
 
 \begin{figure}[t]
   \centering
-  \begin{adjustbox}{max width=\linewidth}\input{../figures/tikz-architecture.tex}\end{adjustbox}
+  \begin{adjustbox}{max width=0.85\linewidth}\input{../figures/tikz-architecture.tex}\end{adjustbox}
   \caption{\textbf{Architecture.} Each device's decoder emits a \nts{} through a small adapter. The trust layer reads only the stream: it calibrates confidence, builds candidate sentences with a neural-evidence guard, and chooses an action under a risk-control rule. The user's corrections and picks (dashed) feed the online re-calibration. Contexts, decisions and corrections can be written to an append-only, hash-chained audit log that stores no raw signals (\cref{app:format}).}
   \label{fig:arch}
 \end{figure}

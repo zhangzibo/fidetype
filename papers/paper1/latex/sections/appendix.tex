@@ -1,7 +1,7 @@
 \section{Notation}
 \label{app:notation}
 
-\begin{table}[!htb]
+\begin{table}[H]
   \centering
   \caption{\textbf{Notation.}}
   \label{tab:notation}
@@ -20,14 +20,30 @@
   \end{tabular}
 \end{table}
 
-\section{User model parameters}
+\FloatBarrier
+\section{Decision flow}
+\label{app:decision}
+
+\begin{figure}[H]
+  \centering
+  \begin{adjustbox}{max width=\linewidth}\input{../figures/tikz-decision.tex}\end{adjustbox}
+  \caption{\textbf{Trust decision for one item.} Candidates come from the calibrated stream. A candidate is committed only if the neural-evidence guard accepts it and its calibrated confidence reaches the threshold $\hat\lambda$, which is the larger of the \ewpm{}-tuned threshold and the CRC threshold (or the online threshold $\lambda_t$). Otherwise the layer offers alternatives or abstains, and the user types with the fallback keyboard.}
+  \label{fig:decision}
+\end{figure}
+
+\FloatBarrier
+\section{User model, variants and baselines}
 \label{app:user}
 
-\Cref{tab:user} lists the parameters of the simulated gaze-typing user (word model: the user fixes single words). Only the fallback typing speed and the per-slot scan-and-select time are matched to measurements of one eye-gaze user with ALS \citep{cai2024gaze}; all other values are assumptions. The baseline ``gaze typing only'' uses the fallback speed alone.
+\Cref{tab:user} lists the parameters of the main simulated gaze-typing user (word model: the user fixes single words). Only the fallback typing speed and the per-slot scan-and-select time are matched to measurements of one eye-gaze user with ALS \citep{cai2024gaze}; all other values are assumptions.
 
-\begin{table}[!htb]
+\paragraph{Variants.} Each variant changes one group of parameters and refits every policy: fallback speed 10 or 40 characters per minute (main 20); all selection, scanning, word-selection and navigation times scaled by 0.5 or 2; miss probability of a wrong committed word 0 or 0.2 (main 0.05). In the \emph{symmetric-offer} variants, an offer without the intended sentence makes the user fix the closest candidate word by word, missing each wrong word with the same probability as after a commit; there is no oracle choice between fixing, repeating and retyping, and full retyping is disabled for all actions. In the \emph{misspecified} evaluation, the trust and always-offer policies fitted under the main user are scored under each variant without refitting.
+
+\paragraph{Gaze typing with word completion.} The user types letter by letter at the fallback speed. Before each letter, the keyboard shows the three most frequent vocabulary words (counts $\ge 2$) that start with the typed prefix; there is no sentence context. If the intended word is shown and selecting it is faster than typing the rest of the word and its space, the user selects it at the scan-and-select cost for three slots plus the word-selection time (4.5\,s at the main costs, close to the 4.7\,s measured for one word choice \citep{cai2024gaze}). The main baseline charges no time for looking at the list, which favours it; the \emph{glance} variant charges 1\,s per look. Unigram corpora: Brain-to-Text '25, the word unigram of the decoder (Tatoeba English); sEMG, Tatoeba English without the held-out test pool; MEG, Tatoeba Spanish without the SpanishBCBL sentences.
+
+\begin{table}[H]
   \centering
-  \caption{\textbf{Simulated-user parameters.}}
+  \caption{\textbf{Main simulated-user parameters.}}
   \label{tab:user}
   \small
   \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lll@{}}
@@ -40,7 +56,7 @@
     Reading time & 0.3\,s per word, 0.5\,s per candidate & assumption \\
     Navigate to and delete a wrong word & 3.0\,s (2 selections) & assumption \\
     Miss probability of a wrong, unmarked word (commit, \act{offer\_words}) & 0.05 & assumption (no measurement) \\
-    Errors in offered candidates & always seen & assumption \\
+    Errors in offered candidates & always seen (main model) & assumption \\
     Full retype overhead & 1.5\,s; chosen when cheaper than fixing words & assumption (rational user) \\
     Abstain overhead & 0.5\,s, then fallback typing & assumption \\
     Neural input speed, MEG / B2T '25 / sEMG & 152 / 159.3 / 75.8 characters/min & device setting \\
@@ -48,12 +64,41 @@
   \end{tabular}\end{adjustbox}
 \end{table}
 
+\FloatBarrier
+\section{Decoder quality}
+\label{app:decoders}
+
+\Cref{tab:decoders} gives the decoder metrics and input controls. Excluding the 6 MEG test sentences with a close training variant (CER $\le 0.25$ to a training sentence) gave 0.519 (greedy) and 0.492 (beam), so memorisation of near variants explains at most 0.02 of the CER. On sEMG, plain key accuracies (0.299, 0.168, 0.209) are below the majority-class rate (space, 0.338) because the CNNs rarely predict space; balanced accuracy is the fair metric.
+
+\begin{table}[H]
+  \centering
+  \caption{\textbf{Decoder quality and input controls (test sets).} Exact: share of items whose top-1 sentence is right; in $K$-best: share whose intended sentence is in the 10-best list. MEG: the trust harness keeps an insertion bonus of 1.0 tuned on raw streams; the validation-tuned bonus of 0 gives the 0.475 row (\cref{sec:protocol}). sEMG chance: majority class 0.338, uniform 0.037. ``---'': not applicable or not computed.}
+  \label{tab:decoders}
+  \small
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lllll@{}}
+    \toprule
+    \textbf{Device / decoder} & \textbf{CER} & \textbf{WER} & \textbf{Exact / in $K$-best} & \textbf{Controls and floors} \\
+    \midrule
+    MEG, asynchronous, greedy & 0.506 & 0.842 & --- & shuffled 0.760, zeros 0.925 \\
+    MEG, beam + LM tuned on validation & 0.475 & 0.809 & 0.005 / --- & text-only floor 0.688 \\
+    MEG, beam in the trust harness & 0.522 & --- & 0.003 / 0.016 & --- \\
+    \midrule
+    B2T '25, our phoneme-to-word decoder & 0.095 & 0.149 & 0.390 / 0.623 & --- \\
+    B2T '25, published decoder & 0.031 & 0.043 & 0.806 / --- & --- \\
+    \midrule
+    sEMG keys: accuracy (balanced) & \multicolumn{2}{l}{0.299 (0.367) / 0.168 (0.240) / 0.209 (0.226)} & --- & permuted labels 0.022 (0.032) \\
+    sEMG sentences after LM & 0.123 / 0.398 / 0.479 & 0.214 / 0.579 / 0.681 & 0.459 / 0.118 / 0.038 & in $K$-best 0.64 / 0.21 / 0.08 \\
+    \bottomrule
+  \end{tabular}\end{adjustbox}
+\end{table}
+
+\FloatBarrier
 \section{Per-device settings}
 \label{app:settings}
 
 \Cref{tab:settings} lists the parameters that the shared implementation fitted or used per device. The policy grid and all decoder settings are in the experiment configurations in the repository.
 
-\begin{table}[!htb]
+\begin{table}[H]
   \centering
   \caption{\textbf{Per-device settings of the shared trust-layer implementation.} Fitted on each device's fit data (MEG: validation set). $\tau_s = 20.0$ is the upper end of the search interval. Max.\ guard risk: largest guard risk that still allows a commit.}
   \label{tab:settings}
@@ -64,7 +109,7 @@
     \midrule
     Frame temperature $\tau_f$ & 3.30 & 3.78 & 3.78 & 1.25 / 1.78 / 2.17 \\
     Sentence temperature $\tau_s$ & 20.0 & 4.56 & 1.72 & 2.42 / 5.42 / 20.0 \\
-    LM weight (beam) & 0.5 & 1.0 (word LM; edit penalty 12, word bonus 3) & as ours & 1.0 / 1.0 / 1.5 \\
+    LM weight (beam) & 0.5 (insertion bonus 1.0) & 1.0 (word LM; edit penalty 12, word bonus 3) & as ours & 1.0 / 1.0 / 1.5 \\
     Candidate list $K$ & 10 & 10 & published sentence + our 10 (bonus +2.0) & 10 \\
     Plug-in commit threshold & 0.5 & 0.5 & 0.7 & 0.7 / 0.3 / 0.3 \\
     Max.\ guard risk for commit & 0.3 & 0.5 & 0.5 & 1.0 / 1.0 / 0.1 \\
@@ -76,12 +121,73 @@
   \end{tabular}\end{adjustbox}
 \end{table}
 
-\section{MEG decoder, leakage checks and sensitivity}
+\FloatBarrier
+\section{Ablation}
+\label{app:ablation}
+
+\Cref{tab:ablation} refits each variant on the condition's fit data and scores it on the same test items. \emph{No calibration}: no temperature. \emph{Confidence only}: both temperatures fitted, but the beam decodes the raw stream. \emph{No sentence temperature}: the frame temperature is applied before the beam and the sentence calibrator is the identity. \emph{No conformal sets}: \act{offer} shows the fitted top $k$. The \act{offer\_words} rows use a smaller common grid so that they are comparable. \emph{LM weight re-tuned}: on sEMG, the LM weight is chosen on fit-A CER with the frame-calibrated streams (cross-session 1.0 to 0.5, cross-subject 1.5 to 0.5); on MEG, the validation-tuned beam (LM weight 0.25, insertion bonus 0). Top-1 CER on sEMG cross-subject: 0.479 (trust), 0.369 (raw decoding), 0.360 (LM weight re-tuned).
+
+\begin{table}[H]
+  \centering
+  \caption{\textbf{Unified ablation} (\ewpm{} / wrong-commit rate; point values; ``='': equal to trust). CIs and paired differences at the primary unit are in the repository (\texttt{ablation/results/tables.md}).}
+  \label{tab:ablation}
+  \small
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lllllll@{}}
+    \toprule
+    \textbf{Variant} & \textbf{B2T '25 ours} & \textbf{B2T '25 published} & \textbf{sEMG s.-cal.} & \textbf{sEMG x-sess.} & \textbf{sEMG x-subj.} & \textbf{MEG} \\
+    \midrule
+    trust (as reported) & 11.55 / 0.059 & 18.77 / 0.044 & 8.02 / 0.004 & 4.68 / 0.004 & 4.08 / 0 & 3.20 / 0 \\
+    no calibration & 11.57 / 0.071 & 18.73 / 0.043 & 8.15 / 0.045 & 4.75 / 0.013 & 4.76 / 0.005 & 3.04 / 0.005 \\
+    confidence only (raw decoding) & 11.54 / 0.074 & 18.74 / 0.047 & 8.07 / 0.018 & 4.76 / 0.007 & 4.75 / 0 & 3.04 / 0 \\
+    no sentence temperature & 11.50 / 0.076 & 18.66 / 0.032 & 8.11 / 0.040 & 4.67 / 0.018 & 4.07 / 0.044 & 3.20 / 0 \\
+    no guard & 11.51 / 0.036 & 18.62 / 0.025 & = & = & = & = \\
+    no conformal sets & 11.53 / 0.059 & = & 8.07 / 0.020 & = & = & = \\
+    \act{offer\_words} off (small grid) & 11.25 / 0.032 & 18.62 / 0.025 & 7.98 / 0.004 & 4.64 / 0 & 4.08 / 0 & 3.20 / 0 \\
+    \act{offer\_words} on (small grid) & 11.32 / 0.054 & 18.59 / 0.026 & 7.99 / 0.015 & 4.64 / 0.005 & 4.08 / 0 & 3.20 / 0 \\
+    LM weight re-tuned & --- & --- & 8.02 / 0.004 & 4.73 / 0.013 & 4.84 / 0.002 & 3.14 / 0 \\
+    CRC, clean cal.\ (wrong-commit, off $\to$ on) & 0.025 $\to$ 0.025 & 0.048 $\to$ 0.048 & 0.004 $\to$ 0.040 & 0.004 $\to$ 0.056 & 0 $\to$ 0 & 0 $\to$ 0.028 \\
+    gaze typing only & 4.08 & 4.08 & 4.27 & 4.27 & 4.27 & 3.15 \\
+    \bottomrule
+  \end{tabular}\end{adjustbox}
+\end{table}
+
+\FloatBarrier
+\section{LM leakage check}
+\label{app:leakage}
+
+A near variant is a sentence within a character edit distance of 0.25 times its length, after normalisation, in the 600,000-sentence training slice of the English character LM. Of the 1,717 unique Brain-to-Text '25 cue sentences, 22 have an exact copy and 310 an exact or near variant; of the 551 sEMG test sentences, none has an exact copy and 295 have a near variant (Tatoeba is heavily templated). We rebuilt the LMs without these sentences (849 removed for Brain-to-Text '25, plus 910 from the word unigram; 2,895 for sEMG, including near variants of the fit sentences) and re-ran the trust harness. On Brain-to-Text '25, 2 of 1,628 top-1 sentences changed and all main numbers were identical to three decimals. On sEMG, trust \ewpm{} changed from 8.02, 4.68 and 4.08 to 7.98, 4.65 and 4.09 (paired participant CIs \ci{-0.08}{-0.01}, \ci{-0.05}{-0.01}, \ci{-0.01}{+0.03}), and no wrong-commit rate changed by more than 0.002. The re-tuned LM weights were unchanged.
+
+\FloatBarrier
+\section{Datasets and licences}
+\label{app:licences}
+
+\begin{table}[H]
+  \centering
+  \caption{\textbf{Datasets, resources and licences.}}
+  \label{tab:licences}
+  \small
+  \begin{tabular}{@{}p{4.3cm}p{2.4cm}p{3.6cm}p{4.2cm}@{}}
+    \toprule
+    \textbf{Dataset / resource} & \textbf{Licence} & \textbf{Use} & \textbf{Note} \\
+    \midrule
+    SpanishBCBL \citep{levy2026brain2qwerty,spanishbcbl} & CC BY-NC 4.0 & MEG decoder training and evaluation & Research only; weights trained on it are not released for commercial use \\
+    Brain-to-Text '25 copy-task logits \citep{card2024accurate,card2025data} & CC0 1.0 & intracortical trust evaluation & Companion code has no licence; we wrote our own loader \\
+    Toronto sEMG typing \citep{achituve2025emg,achituve2024data} & CC BY 4.0 & sEMG decoder and trust evaluation & Baseline code (CC BY-SA 4.0) not used \\
+    Tatoeba English / Spanish sentences & CC BY 2.0 FR (some CC0) & character LMs; composed sEMG sentences & Sentences from Tatoeba (\url{https://tatoeba.org}), by the Tatoeba contributors \\
+    CMUdict (commit 7479086) & BSD-2-Clause style & phoneme-to-word lexicon & Copyright notice kept \\
+    Brain2Qwerty code (Meta) & CC BY-NC 4.0 & read only, not copied & Our decoders are our own implementations \\
+    Fidetype code and specification & Apache-2.0 & all methods & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\FloatBarrier
+\section{MEG decoder details}
 \label{app:meg}
 
-The asynchronous MEG decoder is a convolutional front end (320 channels) followed by 4 Conformer layers of width 256 \citep{gulati2020conformer}, trained with CTC \citep{graves2006ctc} and a keystroke auxiliary loss that uses key times as training labels (key pretraining, then CTC training on all 80 recording blocks). At inference, the forward pass takes the MEG segment, its length and the participant index; it has no key input. \Cref{tab:async} compares the inference inputs with the published asynchronous decoder.
+The asynchronous MEG decoder is a convolutional front end (320 channels) followed by 4 Conformer layers of width 256 \citep{gulati2020conformer}, trained with CTC \citep{graves2006ctc} and a keystroke auxiliary loss that uses key times as training labels (key pretraining, then CTC training on all 80 recording blocks). At inference, the forward pass takes the MEG segment, its length and the participant index; it has no key input. \Cref{tab:async} compares the inference inputs with the published asynchronous decoder. A longer training schedule gave the same validation CER and is not reported.
 
-\begin{table}[!htb]
+\begin{table}[H]
   \centering
   \caption{\textbf{Asynchronous setting: our decoder vs Brain2Qwerty v2.}}
   \label{tab:async}
@@ -102,29 +208,9 @@ The asynchronous MEG decoder is a convolutional front end (320 channels) followe
 
 \paragraph{Leakage checks.} The split is by a hash of the sentence text, and no test sentence occurs in the LM training text. A test sentence is ``close'' if a training sentence is within CER 0.25; 6 of the 17 test sentences are close. Without them, the CER was 0.519 (greedy) and 0.492 (beam).
 
-\paragraph{Synchronous control decoder.} A synchronous decoder with oracle key times (greedy CER 0.508, beam + LM 0.447; harness top-1 CER 0.451) gave the same trust results as the asynchronous decoder: always commit 2.714, trust 3.229 and gaze typing 3.155 \ewpm{}, trust minus gaze \ci{-0.02}{+0.18} over sentences and \ci{-0.07}{+0.26} two-way. Over trials, this difference excluded 0 (\ci{+0.03}{+0.12}): trial-level intervals make the MEG result look like a gain, and sentence-level intervals do not. Both decoders take the sentence bounds from the keyboard log, so neither is a free-running decoder. \todo{R1: k-fold over sentence hashes to increase the number of unique MEG test sentences.}
+\paragraph{Synchronous control decoder.} A synchronous decoder with oracle key times (greedy CER 0.508, beam + LM 0.447; harness top-1 CER 0.451) gave the same trust results as the asynchronous decoder: always commit 2.714, trust 3.229 and gaze typing 3.155 \ewpm{}, trust minus gaze \ci{-0.02}{+0.18} over sentences and \ci{-0.07}{+0.26} two-way. Over trials, this difference excluded 0 (\ci{+0.03}{+0.12}): trial-level intervals make the MEG result look like a gain, and sentence-level intervals do not.
 
-\paragraph{User-model sensitivity on MEG.} \Cref{tab:megsens} refits the policy under each user-model variant (asynchronous decoder). The trust layer equals always offering in every variant. The advantage over always commit depends on the miss probability, and the comparison with gaze typing reverses with a faster fallback or slower selection. \todo{R1: the same grid on B2T '25 and sEMG, with the policy ranking and a misspecified-user evaluation.}
-
-\begin{table}[!htb]
-  \centering
-  \caption{\textbf{User-model sensitivity, MEG (asynchronous decoder; policy refitted per variant).} \ewpm{}; CIs over the 17 unique sentences and over the 19 participants.}
-  \label{tab:megsens}
-  \small
-  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lllllll@{}}
-    \toprule
-    \textbf{Variant} & \textbf{Always commit} & \textbf{Trust} & \textbf{Gaze only} & \textbf{Trust $-$ gaze [sent.]} & \textbf{\{part.\}} \\
-    \midrule
-    Main (miss 0.05, fallback 20 cpm) & 2.58 & 3.20 & 3.15 & \ci{-0.04}{+0.15} & \{$-$0.07, +0.22\} \\
-    Fallback 40 characters/min & 4.31 & 5.15 & 6.31 & \ci{-1.29}{-1.01} & \{$-$1.31, $-$0.95\} \\
-    Miss probability 0 & 3.24 & 3.20 & 3.15 & \ci{-0.04}{+0.15} & \{$-$0.08, +0.22\} \\
-    Miss probability 0.2 & 1.24 & 3.20 & 3.15 & \ci{-0.04}{+0.15} & \{$-$0.08, +0.22\} \\
-    Selection, scan and navigation $\times 2$ & 2.54 & 3.00 & 3.15 & \ci{-0.23}{-0.08} & \{$-$0.26, $-$0.02\} \\
-    No full retype & 2.54 & 3.18 & 3.15 & \ci{-0.06}{+0.13} & \{$-$0.10, +0.21\} \\
-    \bottomrule
-  \end{tabular}\end{adjustbox}
-\end{table}
-
+\FloatBarrier
 \section{Format details and audit log}
 \label{app:format}
 
@@ -134,7 +220,7 @@ The asynchronous MEG decoder is a convolutional front end (320 channels) followe
 
 \paragraph{Replay.} We replayed the Brain-to-Text '25 test half (816 trials) with the log attached, for the plug-in gate and a CRC gate. The log held 1,723 entries and passed verification. It recorded the same wrong commits as the harness: 48 of 48 (plug-in) and 39 of 39 (CRC), of which 2 and 1 were silent. This is a consistency check of the replay: the corrections come from the known cue sentences, and in live use silent errors would be missing from the log. Every tampering case we tried was detected: editing an entry, editing with re-hashing, deleting, reordering, and cutting the tail (with the head anchor). The cost was about 0.1\,ms and about 1.1\,kB per decision. \Cref{fig:audit} shows one entry of the audit report.
 
-\begin{figure}[!htb]
+\begin{figure}[H]
   \centering
   \fbox{\begin{minipage}{0.94\linewidth}\footnotesize\raggedright
   \textbf{Wrong commit} \texttt{dec-000041-ed60b4bd} (entry 44, hash \texttt{8cf2c6c67053b185...})\\
@@ -150,10 +236,11 @@ The asynchronous MEG decoder is a convolutional front end (320 channels) followe
   \label{fig:audit}
 \end{figure}
 
+\FloatBarrier
 \section{Online re-calibration methods}
 \label{app:online}
 
-\begin{table}[!htb]
+\begin{table}[H]
   \centering
   \caption{\textbf{Online re-calibration methods for the commit threshold.} $L_t$: realised loss of item $t$; $T$: number of items in the sequence; $d$: feedback delay in items. The two \texttt{aci} variants bound the long-run average of the \emph{observed} losses for any sequence of items, without exchangeability; \texttt{window} and \texttt{decay} have no guarantee under shift.}
   \label{tab:online}
@@ -170,18 +257,50 @@ The asynchronous MEG decoder is a convolutional front end (320 channels) followe
   \end{tabular}\end{adjustbox}
   \begin{minipage}{\linewidth}\footnotesize\smallskip
   $^{a}$ The weighted-CRC bound $\alpha + \sum_i \tilde w_i\, d_{\mathrm{TV}}(Z, Z^{(i)})$ \citep{barber2023beyond,farinhas2024nonexch} cannot be computed. Items whose truth is unknown are left out of the window, which can bias it. \\
-  $^{b}$ The right-hand side is a certificate computed after the fact. It is bounded in advance only if $\lambda_t$ stays bounded, which holds for scores $\le 1$ and $f \equiv 0$; then $\frac1T\sum_t L_t \le \alpha + \frac{1 - \lambda_1 + \eta(1+d)}{\eta T}$, which is 0.064 for $T = 816$, $\eta = 0.05$, $d = 0$ and the B2T '25 start threshold. \\
+  $^{b}$ The right-hand side is a certificate computed after the fact. It is bounded in advance only if $\lambda_t$ stays bounded, which holds for scores $\le 1$ and $f \equiv 0$; then $\frac1T\sum_t L_t \le \alpha + \frac{1 - \lambda_1 + \eta(1+d)}{\eta T}$. \\
   $^{c}$ The upper clip at $2\alpha$ only lowers $\alpha_t$, so the bound stays valid. $\alpha_t$ stays bounded below because below the CRC feasibility level ($\approx 1/(N+1)$) nothing is committed and $\alpha_t$ rises. \\
   All bounds count only the losses that the controller observes. Items whose feedback has not arrived are skipped; in our runs all feedback arrived after the delay, except in the ``noticed errors only'' runs, where a silent error is fed back as a correct commit.
   \end{minipage}
 \end{table}
 
-\section{Additional risk-control results}
+\FloatBarrier
+\section{How to state the guarantees}
+\label{app:guarantees}
+
+With CRC: ``if the calibration sentences and later sentences are exchangeable, and the calibration sentences fitted no other part of the system, then, averaged over the choice of the $n$ calibration sentences and over a new sentence, the probability that the new sentence is committed wrongly is at most 0.05''. A single session can exceed 0.05. With LTT: ``under the same assumptions, with probability at least 0.9 over the calibration sentences, the long-run wrong-commit rate at the chosen threshold is at most 0.05''. With adaptive online re-calibration: ``for any sequence of sentences, the average observed wrong-commit rate over the first $T$ sentences is at most $0.05 + (1 - \lambda_1 + \eta)/(\eta T)$''. All three count only the errors that the system observes, so each should be reported with the measured silent-error rate, and none of them says anything about the error among commits.
+
+\FloatBarrier
+\section{CRC and LTT on random splits}
 \label{app:more}
 
-\Cref{fig:crc} shows the spread of the test wrong-commit rate over the 200 random calibration/test splits for 100 and 408 calibration items. For \texttt{aci} on Brain-to-Text '25 (our decoder), step sizes $\eta$ of 0.01, 0.02, 0.05, 0.1 and 0.2 gave wrong-commit rates of 0.0527, 0.0515, 0.0502, 0.0502 and 0.0502, with a-priori bounds of 0.114, 0.083, 0.064, 0.058 and 0.054. On sEMG session-calibrated, pure offline CRC was below the target (0.0417), and the online methods gave 0.0454--0.0490; on sEMG cross-subject nothing could be committed.
+\Cref{tab:crc} gives CRC and LTT at four calibration sizes (500 random splits). \Cref{fig:crc} shows the spread of the test wrong-commit rate over 200 random calibration/test splits of the test pool for 100 and 408 calibration items (the splits behind the pool-risk numbers in \cref{sec:res-crc}). The fixed gate is the plug-in policy fitted on the fit data.
 
-\begin{figure}[!htb]
+\begin{table}[H]
+  \centering
+  \caption{\textbf{CRC and LTT on random calibration/test splits of the test pool} ($\alpha = 0.05$, $\delta = 0.1$; 500 splits). Wrong-commit: mean test rate; p90: its 90th percentile; $P_{>\alpha}$: share of splits with a test rate above $\alpha$; Commit: mean commit rate; Err.\,$|$\,commit: pooled over splits; Never: share of splits without a commit. MEG: pool of 637 instances.}
+  \label{tab:crc}
+  \small
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}llllllll@{}}
+    \toprule
+    \textbf{Data} & \textbf{Method, $n_{\mathrm{cal}}$} & \textbf{Wrong-commit} & \textbf{p90} & $\boldsymbol{P_{>\alpha}}$ & \textbf{Commit} & \textbf{Err.\,$|$\,commit} & \textbf{Never} \\
+    \midrule
+    B2T '25, our decoder & CRC, 20 & 0.0308 & 0.089 & 0.22 & 0.123 & 0.25 & 0.17 \\
+     & CRC, 50 & 0.0342 & 0.071 & 0.21 & 0.146 & 0.23 & 0 \\
+     & CRC, 100 & 0.0456 & 0.075 & 0.38 & 0.186 & 0.25 & 0 \\
+     & CRC, 408 & 0.0479 & 0.069 & 0.43 & 0.192 & 0.25 & 0 \\
+     & LTT, 20 & 0 & 0 & 0 & 0 & --- & 1.00 \\
+     & LTT, 50 & 0.0201 & 0.046 & 0.09 & 0.097 & 0.21 & 0 \\
+     & LTT, 408 & 0.0356 & 0.052 & 0.15 & 0.156 & 0.23 & 0 \\
+    B2T '25, published gate & CRC, 20 & 0.0308 & 0.073 & 0.23 & 0.345 & 0.09 & 0.03 \\
+     & CRC, 408 & 0.0495 & 0.071 & 0.46 & 0.484 & 0.10 & 0 \\
+     & LTT, 408 & 0.0355 & 0.054 & 0.15 & 0.429 & 0.08 & 0 \\
+    MEG, asynchronous & CRC, 408 & 0.0197 & 0.031 & 0 & 0.021 & 0.93 & 0 \\
+     & LTT, 408 & 0.0220 & 0.031 & 0 & 0.024 & 0.93 & 0 \\
+    \bottomrule
+  \end{tabular}\end{adjustbox}
+\end{table}
+
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{fig_crc_splits.pdf}
   \caption{\textbf{CRC bounds the mean over splits; LTT bounds the calibration-conditional risk with probability $1 - \delta$.} Test wrong-commit rate over 200 random calibration/test splits with (a)~100 and (b)~408 calibration items. Dots: mean; bars: 5th to 90th percentile (the 90th percentile matches $\delta = 0.1$). Dotted line: $\alpha = 0.05$. A test rate above $\alpha$ in a single split is not a violation of either guarantee.}

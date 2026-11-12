@@ -1,21 +1,10 @@
 \section{Limitations}
 \label{sec:limitations}
 
-\paragraph{Validity of the evidence.}
-\begin{enumerate}[leftmargin=*,itemsep=1pt]
-  \item \textbf{One implant participant.} The only non-trivial test of the commit decision is Brain-to-Text '25, which contains one participant in a copy task, with online logits that we cannot re-run. Our intervals cover trials and days, not people.
-  \item \textbf{Composed sEMG sentences.} The Toronto data has isolated key presses only. Sentences are composed with oracle timing and no inter-key context, from a limited pool of presses that recur across sentences, and the test sentences come from the same corpus as the LM. Natural typing is untested, and the layer committed only 0--4\% of sentences.
-  \item \textbf{MEG is a negative control.} The true sentence is in the 10-best list for 1.6\% of MEG test instances, the layer commits nothing, and the 17 unique test sentences give few clusters. Our MEG decoder is weak, uses key times as training labels and sentence bounds from the keyboard log, and is not comparable head-to-head with published decoders.
-  \item \textbf{No live users.} All \ewpm{} values come from a simulated user. Only two of its costs are matched to measurements of one gaze-typing user; the miss probability of a wrong committed word has no measurement; the model gives offers a more careful user than commits; and the populations of the MEG and sEMG data do not match the gaze-typing user. On MEG, two plausible settings reverse the comparison with gaze typing. A user study needs ethics approval.
-  \item \textbf{One seed, one split, simple LMs.} Every decoder and harness run used one seed, and the Brain-to-Text '25 and sEMG trust runs one fit/test split. The LMs are a character 6-gram and a word unigram trained on Tatoeba; 64 of the 1,628 Brain-to-Text '25 cue sentences occur in Tatoeba English, and near-duplicates of the sEMG test sentences were not removed from the LM text. \todo{R1: LM rebuilds without these sentences and re-runs; decoder seeds.}
-  \item \textbf{Drift baselines reuse data.} The offline CRC baselines of the drift experiment were calibrated on data that also fitted the temperatures and the policy, and the trial order is taken from the file. \todo{R1: clean-calibration baseline.}
-\end{enumerate}
-
-\paragraph{Scope of the system.}
-\begin{enumerate}[leftmargin=*,itemsep=1pt,resume]
-  \item \textbf{Silent errors are outside every guarantee.} With feedback on noticed errors only, \texttt{aci} gave 0.0515 (Brain-to-Text '25) and 0.0635 (sEMG).
-  \item \textbf{Guarantees are marginal or long-run.} CRC bounds the mean over calibration draws (41--45\% of splits exceeded 0.05); online bounds are long-run averages; 50-trial windows reached 0.10--0.18. None bounds the error among commits.
-  \item \textbf{Stream-only gating cannot detect intent mismatch.} A real stream of another sentence was committed as often as matched input.
-  \item \textbf{Exact-match loss.} One wrong character makes a sentence wrong; a word- or meaning-tolerant loss could change the trade-offs. \todo{R1: sensitivity of the main results to a one-word-edit tolerance.}
-  \item \textbf{The audit log is tamper-evident, not tamper-proof}; it has no signature, and in live use a wrong commit is known only after a correction.
+\begin{enumerate}[leftmargin=*,itemsep=0pt]
+  \item \textbf{One implant participant} in a copy task, with online logits we cannot re-run, is the only non-trivial test of the commit decision; our intervals cover days, not people.
+  \item \textbf{Composed sEMG sentences}: isolated presses with oracle timing, recurring presses, and test sentences from the LM's corpus (295 of 551 have a near variant in the LM text; removing them changed trust \ewpm{} by at most $-0.04$, \cref{app:leakage}). \textbf{MEG is a negative control}: 17 unique test sentences, and a decoder that uses key times as training labels and keyboard-log sentence bounds.
+  \item \textbf{No live users.} Only two user costs are measured, in one gaze-typing user; the miss probability is unmeasured; the MEG and sEMG populations do not match; speed rankings change across plausible variants; the word-completion baseline uses only a unigram. A user study needs ethics approval.
+  \item \textbf{One seed and one split per run.} MEG decoder seeds 1 and 2 are still training; sEMG seeds, repeated Brain-to-Text '25 fit/test assignments and a k-fold over MEG sentences were not run. The two deployment splits moved offline CRC from 0.0245 to 0.0600. Trial order is file order (no time stamps), so ``no detectable within-day shift'' holds for this order only.
+  \item \textbf{Scope of the guarantees.} They are marginal or long-run (43--46\% of single CRC splits exceeded 0.05), count only observed errors, and do not bound the error among commits. Stream-only gating cannot detect intent mismatch; the loss is exact match (we did not test a tolerant loss); the audit log is tamper-evident, not tamper-proof.
 \end{enumerate}
