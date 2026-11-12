@@ -1,0 +1,15 @@
+01:14:55 harness [seed1]: 437 val (11 sentences), 637 test (17 sentences, 19 participants)
+01:17:33   commit: eWPM 2.547 wrong-commit 0.994 silent 0.232 KSR 0.097 OW 0.00 commit 1.00 offer 0.00 (157.8s)
+01:17:37   trust: eWPM 3.163 wrong-commit 0.000 silent 0.000 KSR 0.036 OW 0.00 commit 0.00 offer 1.00 (3.8s)
+01:20:05   trust_ow: eWPM 3.161 wrong-commit 0.000 silent 0.000 KSR 0.037 OW 0.01 commit 0.00 offer 0.99 (147.8s)
+01:20:08   trust_silent: eWPM 3.163 wrong-commit 0.000 silent 0.000 KSR 0.036 OW 0.00 commit 0.00 offer 1.00 (3.6s)
+01:22:36   trust_ow_silent: eWPM 3.161 wrong-commit 0.000 silent 0.000 KSR 0.037 OW 0.01 commit 0.00 offer 0.99 (147.7s)
+01:22:37   ow_all: eWPM 3.060 wrong-commit 0.000 silent 0.000 KSR 0.163 OW 1.00 commit 0.00 offer 0.00 (1.2s)
+01:22:37 bootstrap ...
+01:22:38 harness done (462.6 s)
+01:22:38 items: eligible 0.036, top-1 right overall 0.0063 (0s)
+01:22:38 splits random_100: old wc 0.0000/p95 0.0000 eWPM 3.163; plugin wc 0.0203/p95 0.0335 eWPM 3.159; crc wc 0.0218/p95 0.0335 eWPM 3.159; crc_tune wc 0.0195/p95 0.0335 eWPM 3.159; ltt wc 0.0049/p95 0.0372 eWPM 3.162
+01:22:39 splits random_408: old wc 0.0000/p95 0.0000 eWPM 3.162; plugin wc 0.0194/p95 0.0393 eWPM 3.158; crc wc 0.0309/p95 0.0437 eWPM 3.158; crc_tune wc 0.0194/p95 0.0393 eWPM 3.158; ltt wc 0.0261/p95 0.0480 eWPM 3.159
+01:22:39 splits grouped_sentence_11of17: old wc 0.0000/p95 0.0000 eWPM 3.168; plugin wc 0.0194/p95 0.0418 eWPM 3.163; crc wc 0.0316/p95 0.0546 eWPM 3.164; crc_tune wc 0.0194/p95 0.0418 eWPM 3.163; ltt wc 0.0253/p95 0.0555 eWPM 3.165
+01:22:39 splits grouped_participant_12of19: old wc 0.0000/p95 0.0000 eWPM 3.177; plugin wc 0.0222/p95 0.0590 eWPM 3.172; crc wc 0.0299/p95 0.0590 eWPM 3.172; crc_tune wc 0.0222/p95 0.0590 eWPM 3.172; ltt wc 0.0269/p95 0.0732 eWPM 3.172
+01:22:39 done

@@ -1,6 +1,6 @@
 # Paper 1, review round 3: new numbers (summary)
 
-Date: 2026-11-12 (00:13–01:30). Tracker: M3-17. CPU only (the MEG seed GPU queue ran at the same time). Reviews: `papers/paper1/reviews/round-3-editor.md` (Ed-Mx), `round-3-stats.md` (St-Mx, St-mx). Draft under review: `papers/paper1/draft-v2.pdf` (commit `7cec5f1`).
+Date: 2026-11-12 (00:13–01:55). Tracker: M3-17. CPU only (the MEG seed GPU queue ran at the same time). Reviews: `papers/paper1/reviews/round-3-editor.md` (Ed-Mx), `round-3-stats.md` (St-Mx, St-mx). Draft under review: `papers/paper1/draft-v2.pdf` (commit `7cec5f1`).
 
 Shared code: [common3.py](common3.py) (re-uses the round-1 [common.py](../2026-11-12-paper1-r1-analyses/common.py) and policies; adds frame-temperature snapping with per-temperature decode caches, SGR and selective LTT, Clopper-Pearson, Holm, sign and sign-flip tests). Each folder has `run.py`, `config.json`, `results/*.json`, `results/tables.md`, `results.md`. Item tables of the repeated splits live outside the repo (`C:/Users/zhang/bci-data/cache/paper1-r3/splits/`); the committed files are the per-split and aggregated metrics.
 
@@ -13,6 +13,8 @@ Shared code: [common3.py](common3.py) (re-uses the round-1 [common.py](../2026-1
 6. **MEG:** no sentence-level guarantee is possible (needs ≥ 19 calibration sentences; the data set has 17 test / 11 val / 5 clean-cal sentences). Sentence-grouped instance CRC stayed ≤ α empirically (mean 0.016–0.019), because the decoder almost never has an eligible candidate.
 7. **B2T decoder retune on fit-A only:** same grid point in both splits; nothing changes.
 8. **Holm:** ours-A p = 0.012 → 0.072 (0.084 with the day-stratified reference). No Tab. 3 test is significant after correction.
+9. **MEG seeds 0 / 1 / 2:** test CER 0.533 ± 0.051 (greedy), 0.503 ± 0.056 (beam + LM); seed 2 is worse (0.592). The layer committed nothing on every seed; on seed 2 gaze typing is faster ([−0.30, −0.05]).
+10. **Run time:** 0.18–0.30 ms per decision (95th pct ≤ 1.1 ms), one CPU thread.
 
 ## Map: review item → numbers → file
 
@@ -27,7 +29,7 @@ Shared code: [common3.py](common3.py) (re-uses the round-1 [common.py](../2026-1
 | 7 | St-M6 (1–4, 6), St-M1(d), St-m13 | One bootstrap (seed 20261112, B 2000) for every CI → [ci.json](unified-ci/results/ci.json). Holm over six Tab. 3 tests: 0.072 (ours-A), others 1.0; day-stratified reference: ours-A p 0.014 → Holm 0.084. Day sign tests: trust − always offer positive on 12 of 13 non-zero days (ours, p 0.003) and 14 of 14 (published, p 0.0001); trust − always commit 7 / 7 days (ours, p 1.0), 1 / 13 (published). Zero events: 0/300 → one-sided upper 0.0099, CP two-sided upper 0.0122; 0/200 → 0.0149 / 0.0183; 0/637 → 0.0047 / 0.0058; 0/551 → 0.0054 / 0.0067 | [unified-ci/results.md](unified-ci/results.md) |
 | 8 | Ed-M5(b, c) | Fit-A plug-in over 50 splits: ours commit 0.186 [0.130, 0.259], WC 0.044 [0.021, 0.072]; published commit 0.433 [0.356, 0.506], WC 0.039 [0.021, 0.060]. Per-day rows (repeated splits and full-fit) in the tables | [repeated-splits/results.md](repeated-splits/results.md) |
 | 9 | Ed-M8 (run time) | Trust layer per decision, one CPU thread (Ryzen 7 9800X3D, under load): median 0.18–0.30 ms, 95th pct 0.49–1.06 ms (B2T ours 0.30 / 1.04; published 0.28 / 0.49; sEMG 0.18–0.19 / 0.89–0.99; MEG 0.24 / 1.06); decoder 45–232 ms | [runtime/results.md](runtime/results.md) |
-| 10 | St-M5, Ed-M8 (seeds) | Not run: the GPU queue had not finished (seed 2 r4a training started 00:13; no QUEUE DONE in queue.log). Seed 1 is finished: test CER greedy 0.502, beam + LM (val-tuned) 0.467 (seed 0: 0.506 / 0.475), in `../2026-11-12-paper1-r1-analyses/gpu-seeds/results/beam-m1-09-r4b-full-medium-s1/tables.md` (left for the M3-14 seed step) | — |
+| 10 | St-M5, Ed-M8 (seeds) | Queue finished 01:49 (QUEUE DONE). Test CER seeds 0 / 1 / 2: greedy 0.506 / 0.502 / 0.592 (0.533 ± 0.051); beam + LM val-tuned 0.475 / 0.467 / 0.567 (0.503 ± 0.056); shuffled greedy 0.746 ± 0.014. Trust harness (G1 settings): 0 commits on every seed (0/637); trust eWPM 3.20 / 3.16 / 2.96 vs gaze 3.15; trust − gaze two-way [−0.11, +0.26] / [−0.15, +0.23] / [−0.30, −0.05]; always commit wrong 0.997 / 0.994 / 1.000 | [meg-seeds/results.md](meg-seeds/results.md) |
 
 ## Not done here
 - Second intracortical participant (Ed-M5a, Ed-M7 confirmatory test): new data and decoder work; not in scope.

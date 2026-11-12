@@ -1,3 +1,6 @@
 01:14:50 seed 0: greedy 0.5063; beam_nolm 0.4998; beam_lm_retuned 0.4926; beam_lm_valtuned 0.4752
 01:14:50 seed 1: greedy 0.5017; beam_nolm 0.4942; beam_lm_retuned 0.4897; beam_lm_valtuned 0.4667
 01:14:50 seed 2: C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-12-paper1-r1-analyses\gpu-seeds\results\beam-m1-09-r4b-full-medium-s2\results.json missing
+01:50:01 seed 0: greedy 0.5063; beam_nolm 0.4998; beam_lm_retuned 0.4926; beam_lm_valtuned 0.4752
+01:50:01 seed 1: greedy 0.5017; beam_nolm 0.4942; beam_lm_retuned 0.4897; beam_lm_valtuned 0.4667
+01:50:01 seed 2: greedy 0.5918; beam_nolm 0.5865; beam_lm_retuned 0.5729; beam_lm_valtuned 0.5669

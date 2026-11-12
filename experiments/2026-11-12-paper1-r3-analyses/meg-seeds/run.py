@@ -113,7 +113,7 @@ def stage_table() -> None:
         g = S["splits"].get("grouped_sentence_11of17", {})
         rows[s] = {"policies": {k: {"ewpm": pol[k]["ewpm"], "wrong_commit": pol[k]["wrong_commit_rate"],
                                     "commit_rate": pol[k].get("rate_commit", pol[k].get("commit_rate"))} for k in pol},
-                   "trust_minus_gaze_ci_two_way": H["bootstrap"].get("two_way", {}).get("diffs", {}).get("trust-gaze_only", {}).get("ewpm"),
+                   "trust_minus_gaze_ci_two_way": H["bootstrap"].get("two_way", {}).get("diffs", {}).get("trust-gaze_only", {}).get("ewpm", {}).get("ci"),
                    "eligible_rate": float(np.isfinite(a["s"]).mean()), "top1_right": float(1 - a["c"].mean()),
                    "nbest": H.get("nbest"),
                    "grouped_sentence_crc_wrong_commit_mean": (g.get("crc", {}).get("wrong_commit", {}) or {}).get("mean"),
@@ -129,8 +129,7 @@ def stage_table() -> None:
         L.append(f"| {s} | {p['commit']['ewpm']:.3f} / {p['commit']['wrong_commit']:.3f} | {p['trust']['ewpm']:.3f} / {p['trust']['wrong_commit']:.4f} / "
                  f"{C.fmt(p['trust']['commit_rate'], 3)} | {C.fmt(gz, 3)} | {C.fci(r['trust_minus_gaze_ci_two_way'], 2)} | {r['eligible_rate']:.3f} | "
                  f"{r['top1_right']:.4f} | {C.fmt(r['grouped_sentence_crc_wrong_commit_mean'], 4)} |")
-    (OUT / "trust.md").write_text("
-".join(L), encoding="utf-8")
+    (OUT / "trust.md").write_text("\n".join(L), encoding="utf-8")
 
 
 def main() -> None:

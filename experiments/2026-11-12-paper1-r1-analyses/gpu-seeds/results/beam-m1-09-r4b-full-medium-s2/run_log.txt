@@ -1,0 +1,9 @@
+01:09:46 run_dir=C:\Users\zhang\bci-data\runs\m1-09-r4b-full-medium-s2 streams=C:\Users\zhang\bci-data\streams\m1-09-r4b-full-medium-s2 data=C:\Users\zhang\bci-data\streams\m1-09-r4b-full-medium-s2_beam-controls out=C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-12-paper1-r1-analyses\gpu-seeds\results\beam-m1-09-r4b-full-medium-s2 workers=10 grid_w=(0.0, 0.05, 0.1, 0.15, 0.25, 0.5, 0.75, 1.0) grid_b=(0.0, 0.5, 1.0, 1.5) calibrated=True
+01:22:38 controls: val n=437 in 771 s
+01:40:37 controls: test n=637 in 1079 s
+01:40:38 grid: frame temperature fitted on real val = 2.663
+01:48:03 grid: best on val {'temperature': 1.0, 'calibrated': False, 'lm_weight': 0.5, 'insertion_bonus': 0.5, 'val_cer_target': 0.5613686144817686, 'val_wer_target': 0.8676773455377573}
+01:48:45 eval: val done
+01:49:44 eval: test done
+01:49:45 eval: wrote results.json, tables.md
+01:49:45 total 2399 s

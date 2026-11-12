@@ -1,0 +1,155 @@
+{
+ "0": {
+  "policies": {
+   "commit": {
+    "ewpm": 2.580462165433796,
+    "wrong_commit": 0.9968602825745683,
+    "commit_rate": 1.0
+   },
+   "trust": {
+    "ewpm": 3.202971571465368,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "trust_ow": {
+    "ewpm": 3.202060726929093,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "trust_silent": {
+    "ewpm": 3.202971571465368,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "trust_ow_silent": {
+    "ewpm": 3.202060726929093,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "ow_all": {
+    "ewpm": 3.096896559130993,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "gaze_only": {
+    "ewpm": 3.1545665572720725,
+    "wrong_commit": 0.0,
+    "commit_rate": null
+   }
+  },
+  "trust_minus_gaze_ci_two_way": [
+   -0.1054007455927754,
+   0.2596191035304812
+  ],
+  "eligible_rate": 0.023547880690737835,
+  "top1_right": 0.0031397174254317317,
+  "nbest": {
+   "top1_sentence_acc": 0.0031397174254317113,
+   "in_nbest": 0.015698587127158554
+  },
+  "grouped_sentence_crc_wrong_commit_mean": 0.019440910569025034,
+  "grouped_sentence_crc_commit_mean": 0.021159359405907154
+ },
+ "1": {
+  "policies": {
+   "commit": {
+    "ewpm": 2.547096033929755,
+    "wrong_commit": 0.9937205651491365,
+    "commit_rate": 1.0
+   },
+   "trust": {
+    "ewpm": 3.1627311979074784,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "trust_ow": {
+    "ewpm": 3.1605640562683215,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "trust_silent": {
+    "ewpm": 3.1627311979074784,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "trust_ow_silent": {
+    "ewpm": 3.1605640562683215,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "ow_all": {
+    "ewpm": 3.059510090402116,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "gaze_only": {
+    "ewpm": 3.1545665572720725,
+    "wrong_commit": 0.0,
+    "commit_rate": null
+   }
+  },
+  "trust_minus_gaze_ci_two_way": [
+   -0.1518556047733402,
+   0.22794873374804453
+  ],
+  "eligible_rate": 0.03610675039246468,
+  "top1_right": 0.006279434850863463,
+  "nbest": {
+   "top1_sentence_acc": 0.006279434850863423,
+   "in_nbest": 0.018838304552590265
+  },
+  "grouped_sentence_crc_wrong_commit_mean": 0.031605765490735696,
+  "grouped_sentence_crc_commit_mean": 0.03464199511949001
+ },
+ "2": {
+  "policies": {
+   "commit": {
+    "ewpm": 2.345558518872286,
+    "wrong_commit": 1.0,
+    "commit_rate": 1.0
+   },
+   "trust": {
+    "ewpm": 2.9547935799727982,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "trust_ow": {
+    "ewpm": 2.9507928212438137,
+    "wrong_commit": 0.004709576138147566,
+    "commit_rate": 0.0
+   },
+   "trust_silent": {
+    "ewpm": 2.9547935799727982,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "trust_ow_silent": {
+    "ewpm": 2.9507928212438137,
+    "wrong_commit": 0.004709576138147566,
+    "commit_rate": 0.0
+   },
+   "ow_all": {
+    "ewpm": 2.8827885966894287,
+    "wrong_commit": 0.0,
+    "commit_rate": 0.0
+   },
+   "gaze_only": {
+    "ewpm": 3.1545665572720725,
+    "wrong_commit": 0.0,
+    "commit_rate": null
+   }
+  },
+  "trust_minus_gaze_ci_two_way": [
+   -0.30019442795180024,
+   -0.054165405164013414
+  ],
+  "eligible_rate": 0.0015698587127158557,
+  "top1_right": 0.0,
+  "nbest": {
+   "top1_sentence_acc": 0.0,
+   "in_nbest": 0.0
+  },
+  "grouped_sentence_crc_wrong_commit_mean": 0.0,
+  "grouped_sentence_crc_commit_mean": 0.0
+ }
+}
