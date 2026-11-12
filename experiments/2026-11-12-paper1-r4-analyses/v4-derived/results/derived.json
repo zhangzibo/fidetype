@@ -1,0 +1,23 @@
+{
+ "description": "v4-derived: small numbers used in draft v4 that no committed file holds yet.",
+ "selective_bound_examples": {
+  "0/40": {
+   "one_sided_upper_90": 0.055939123714076625,
+   "one_sided_upper_bonferroni_delta_over_20": 0.12406021952937568
+  },
+  "3/40": {
+   "one_sided_upper_90": 0.15944931303445956,
+   "one_sided_upper_bonferroni_delta_over_20": 0.24837227476949525
+  }
+ },
+ "meg_seed_gap_to_shuffled_greedy": {
+  "0": 0.254,
+  "1": 0.243,
+  "2": 0.14
+ },
+ "published_guaranteed_A_share_of_always_commit_ewpm": {
+  "guaranteed_A": 18.651365449587917,
+  "always_commit": 19.612129926967807,
+  "share": 0.9510117217784294
+ }
+}

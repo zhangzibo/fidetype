@@ -1,6 +1,37 @@
-# How to read this draft (Paper 1, draft v3)
+# How to read this draft (Paper 1, draft v4)
 
-This guide is for you, the author. The current draft is [`draft-v3.pdf`](draft-v3.pdf) (37 pages: main text 1-17 with the ethics statement, references 17-25, appendices A-Q 26-37). The earlier drafts ([v0](draft-v0.pdf), [v1](draft-v1.pdf), [v2](draft-v2.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
+This guide is for you, the author. The current draft is [`draft-v4.pdf`](draft-v4.pdf) (22 pages: main text 1-15, references 15-20, Appendix A 21-22) with a separate supplement [`draft-v4-supplement.pdf`](draft-v4-supplement.pdf) (Sections S1-S22, 17 pages). The earlier drafts ([v0](draft-v0.pdf) ... [v3](draft-v3.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
+
+## What changed in v4 (review round 4)
+
+Two reviewers read v3 ([editor](reviews/round-4-editor.md), [statistics](reviews/round-4-stats.md)). Both said "major revision". The point-by-point answer is [round-4-response.md](round-4-response.md). The new numbers are in the [R4 analyses SUMMARY](../../experiments/2026-11-12-paper1-r4-analyses/SUMMARY.md) and [v4-derived](../../experiments/2026-11-12-paper1-r4-analyses/v4-derived/results.md).
+
+- **New title:** "When should a neural text-entry decoder commit? Risk-controlled commits from a stream-level trust layer". "Decoder-agnostic" is gone: sEMG and MEG show that the format works on many devices, not that the commit rule works on many decoders.
+- **A real deployment test.** We now calibrate on earlier days and test on later days (14 days, four designs). The guaranteed rule (LTT max) kept wrong commits at 1.0-2.7 %. It was above 5 % on 0-2 of 10-13 days, never significantly (Table 1, Figure 2a).
+- **"Repeated deployments" are now "random re-splits".** They are exchangeable by construction, so they only check the theorems.
+- **The guarantee covers the mix of days, not each day.** On the published gate, day 34 ran at about 10 % (Figure 2b). Per-session control needs per-session calibration (at least 45 sentences per session) or a calibration block at the start of each session.
+- **Important safety finding: a plain threshold commits garbage.** Without the guard, our decoder committed 198 of 300 no-information (uniform) streams. With the guard, it committed none. So the frozen configuration is now the guarded one.
+- **New git tag `paper1-v4-frozen-config`.** The old tag `paper1-v3-frozen-config` stays (we never move or delete tags), but the paper says it must not be used.
+- **Joint rule fixed.** The old "max(SGR, CRC)" rule had no valid guarantee for the error among commits. The new joint LTT rule has one, but with beta = 0.10 it almost never commits.
+- **Published gate = two decoders agreeing.** The published sentence alone never commits. Its bonus (2.0) was set by hand; other values change little (Table S11).
+- **Abstract:** 249 words; says the rule was chosen after seeing the splits; no reuse p-value; clinical trial number NCT00912041 at the end (JNE rule).
+- **Shorter:** main text about 7,800 words (was about 10,000). All old appendices are in the supplement. Cross-references between the two PDFs work (xr-hyper). Build both with `bash papers/paper1/build.sh`.
+- **Fixed:** the truncated sentence in the Introduction (unescaped %), two MEG CIs, the 0/816 bound (0.0037), stale decision-flow figure, references (LTT now in Annals of Applied Statistics; Brain2Qwerty v2 now arXiv:2608.18114).
+
+## Decisions for the author
+
+These are red `[TODO]` markers in the PDFs, or steps before submission. Claude cannot decide them for you.
+
+| Decision | Where | Note |
+|---|---|---|
+| Authors, affiliations, corresponding e-mail | title of both PDFs | independent researcher is allowed |
+| Funding statement | Acknowledgements | "none" is a valid answer |
+| AI-assistance statement, final wording | Acknowledgements | JNE/IOP asks for disclosure in the methods or acknowledgements |
+| Ethics wording | Ethics, data and code availability | secondary analysis of CC0 data from BrainGate2 (NCT00912041); ask the JNE office if more is needed |
+| Archive with a DOI (Zenodo): paper commit + per-split item tables | Ethics, data and code availability | Claude can do it after your go |
+| Switch to the IOP JNE template | `latex/main.tex`, `latex/supplement.tex` (block marked CLASS) | do it at submission |
+| arXiv first or JNE directly | - | arXiv may need an endorsement (externally blocked) |
+| Confirmatory test of the frozen configuration | Sec. 7 | needs new data (a second participant or new sessions) |
 
 ## What changed in v3 (review round 3)
 

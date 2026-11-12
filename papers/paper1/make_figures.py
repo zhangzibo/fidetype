@@ -66,7 +66,7 @@ def tracked(rel: str) -> bool:
 
 
 def save(fig, name: str) -> None:
-    fig.savefig(OUT / f"{name}.pdf")
+    fig.savefig(OUT / f"{name}.pdf", metadata={"CreationDate": None})  # v4: byte-identical re-runs
     if PNG:
         fig.savefig(OUT / f"{name}.png", dpi=200)
     plt.close(fig)
@@ -101,6 +101,11 @@ def emg_row(cond: str, key: str) -> dict:
 
 
 def meg_rows() -> tuple[dict, dict, float, str]:
+    # v4: unified two-way bootstrap (R3 unified-ci), the same intervals as Table 1
+    c = load("experiments/2026-11-12-paper1-r3-analyses/unified-ci/results/ci.json")["table2_baselines"]["meg-async"]
+    r = {k: {"ewpm": c["point"][k]["ewpm"], "ewpm_ci": c["ci"]["policies"][k]["ewpm"], "wc": c["point"][k]["wrong_commit"],
+             "wc_ci": c["ci"]["policies"][k]["wrong_commit"]} for k in ("always_commit", "trust")}
+    return r["always_commit"], r["trust"], c["point"]["gaze_only"]["ewpm"], "MEG (async, unified CIs)"
     if G1 is not None:
         # sentence-cluster CIs (17 unique test sentences) are the primary MEG intervals
         p, ci = G1["policies"], G1["bootstrap"]["sentences"]["policies"]
@@ -185,6 +190,10 @@ def fig_teaser() -> None:
             ax.plot(n["ewpm"], -0.006, "^", ms=4.5, color=C["gaze"], mfc="white", mew=1.0, zorder=4,
                     label="always offer" if gi == 2 else None)
             errbar(ax, b, C["trust"], marks[gi], True, "trust, plug-in (no guarantee)" if gi == 2 else None)
+            cr = BASE[cond]["point"]["trust"]["commit_rate"]
+            if cond.startswith("b2t-") or cr > 0:
+                ax.text(b["ewpm"] + (0.35 if gi == 0 else 0.12), max(b["wc"], 0.002) * 1.35 + 0.004, f"{cr:.0%}",
+                        fontsize=5.6, color=C["trust"], ha="left", va="bottom")
             if name:
                 dx, y, ha = lab[cond]
                 ax.text(a["ewpm"] + dx, y, name, fontsize=6.2, ha=ha, va="center")
@@ -199,6 +208,15 @@ def fig_teaser() -> None:
             continue
         pt = row["point"]["LTT max-rule (clean)"]
         axes[0].plot(pt["ewpm"], pt["wrong_commit"], "D", ms=4.0, color=C["crc"], mfc=C["crc"], mec="white", mew=0.6, zorder=6, alpha=0.95)
+        if k.startswith("b2t-published"):
+            if k.endswith("split A"):  # A and B lie on top of each other: one label for both
+                pb = DEPLOY["b2t-published/split B"]["point"]["LTT max-rule (clean)"]
+                axes[0].text(pt["ewpm"] - 0.35, 0.022, f"{pt['commit_rate']:.0%}, {pb['commit_rate']:.0%}", fontsize=5.6,
+                             color=C["crc"], ha="right", va="center")
+            continue
+        dy = 0.0 if k.endswith("split A") else 0.012
+        axes[0].text(pt["ewpm"] - 0.35, pt["wrong_commit"] + dy, f"{pt['commit_rate']:.0%}", fontsize=5.6, color=C["crc"],
+                     ha="right", va="center")
     pt = DEPLOY["meg-async"]["point"]["LTT max-rule (clean)"]
     axes[2].plot([], [], "D", ms=4.2, color=C["crc"], label="trust, LTT max-rule (guaranteed)")
     axes[0].set_title("Intracortical (1 participant)")
@@ -221,6 +239,49 @@ def fig_teaser() -> None:
     fig.legend(h, lab_, loc="lower center", ncol=3, frameon=False, handlelength=1.4, bbox_to_anchor=(0.5, -0.02))
     fig.tight_layout(w_pad=0.6, rect=(0, 0.13, 1, 1))
     save(fig, "fig1_teaser")
+
+
+# ---------------------------------------------------------------- Fig: deployment across days (v4)
+R4X = "experiments/2026-11-12-paper1-r4-analyses"
+
+
+def fig_deploy() -> None:
+    """v4: (a) forward chain V1, LTT max per test day with CP95; (b) per-day rates pooled over 50 random re-splits."""
+    fc = load(f"{R4X}/forward-chain/results/forward_chain.json")["conditions"]
+    pdy = load(f"{R4X}/per-day/results/per_day.json")["repeated"]
+    fig, axes = plt.subplots(1, 2, figsize=(FULL, 2.4), sharey=True)
+    sets = [("b2t-ours", "our decoder", C["trust"], -0.17, "o"), ("b2t-published", "published gate", C["pub"], 0.17, "s")]
+    for cond, name, col, dx, m in sets:
+        folds = fc[f"{cond}/guard"]["variants"]["V1 previous day"]["folds"]
+        days = [f["test_day"] for f in folds]
+        x = np.arange(len(days)) + dx
+        for xi, fo in zip(x, folds):
+            r = fo["rules"]["LTT max"]
+            lo, hi = r["wrong_commit_cp95"]
+            axes[0].plot([xi, xi], [lo, hi], color=col, lw=0.8, alpha=0.8)
+            axes[0].plot(xi + 0.08, fo["rules"]["plug-in"]["wrong_commit"], "_", ms=4, color="#888888", mew=1.0)
+        axes[0].plot(x, [fo["rules"]["LTT max"]["wrong_commit"] for fo in folds], m, ms=3.4, color=col, mfc=col, ls="none", label=name)
+        axes[0].set_xticks(np.arange(len(days)))
+        axes[0].set_xticklabels([str(d) for d in days], rotation=90, fontsize=6)
+        rr = pdy[f"{cond}/R50"]["rules"]["LTT max"]
+        dk = list(rr.keys())
+        x2 = np.arange(len(dk)) + dx
+        axes[1].vlines(x2, [rr[k]["p05"] for k in dk], [rr[k]["p95"] for k in dk], color=col, lw=0.8, alpha=0.8)
+        axes[1].plot(x2, [rr[k]["pooled"] for k in dk], m, ms=3.4, color=col, mfc=col, ls="none", label=name)
+        axes[1].set_xticks(np.arange(len(dk)))
+        axes[1].set_xticklabels(dk, rotation=90, fontsize=6)
+    for i, ax in enumerate(axes):
+        ax.axhline(ALPHA, color="#999999", lw=0.7, ls=":")
+        ax.set_xlabel("post-implant day")
+        panel_label(ax, "ab"[i])
+    axes[0].set_title("time order: calibrate on the previous day", loc="right")
+    axes[0].plot([], [], "_", ms=5, color="#888888", mew=1.0, label="plug-in (no guarantee)")
+    axes[1].set_title("random re-splits: per day, pooled over 50", loc="right")
+    axes[0].set_ylabel("wrong-commit rate (LTT max rule)")
+    axes[0].set_ylim(-0.005, 0.30)
+    axes[0].legend(frameon=False, loc="upper right", fontsize=6.5)
+    fig.tight_layout(w_pad=0.6)
+    save(fig, "fig_deploy")
 
 
 # ---------------------------------------------------------------- Fig: user-model sensitivity (v2)
@@ -250,7 +311,10 @@ def fig_user_model() -> None:
             ax.axhline(yy + 0.5, color="#E6E6E6", lw=0.5, zorder=0)
         ax.set_title(title)
         ax.set_xlabel("eWPM difference")
-    axes[2].set_xlim(-4.2, 15)
+    axes[2].set_xscale("symlog", linthresh=1.0)
+    axes[2].set_xlim(-5, 16)
+    axes[2].set_xticks([-4, -1, 0, 1, 4, 15])
+    axes[2].set_xticklabels(["−4", "−1", "0", "1", "4", "15"])
     axes[0].set_yticks(range(nv))
     axes[0].set_yticklabels([lab for _, lab in UM_VARIANTS][::-1], fontsize=6.5)
     axes[0].set_ylim(-0.6, nv - 0.4)
@@ -486,6 +550,7 @@ def fig_ece() -> None:
 if __name__ == "__main__":
     print("MEG trust source:", "G1 async (committed)" if G1 is not None else "M1-15 sync (markdown JSON); G1 not committed")
     fig_teaser()
+    fig_deploy()
     fig_risk()
     fig_crc()
     fig_user_model()

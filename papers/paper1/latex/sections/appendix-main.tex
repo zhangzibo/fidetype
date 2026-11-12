@@ -1,0 +1,57 @@
+\section{Trust decision and main user model}
+\label{app:algorithm}
+
+Algorithm~\ref{alg:decide} is the decision for one item; Algorithm~\ref{alg:calibrate} (supplement) gives the fitting and calibration. The reference implementation is \code{fidetype.trust} and \code{fidetype.eval.harness}. \Cref{tab:user} lists the main simulated user; only the first two values are measured \citep{cai2024gaze}.
+
+\begin{algorithm}[H]
+\caption{Trust decision for one item}
+\label{alg:decide}
+\small
+\begin{algorithmic}[1]
+\Require stream $\log p_t(v)$, $t = 1..F$; fitted $\tau_f, \tau_s, q$; policy $(\lambda, r_{\max}, r_{\mathrm{abst}}, k_{\max}, \text{fallback})$
+\State $\tilde\ell_t(v) \gets \log p_t(v)/\tau_f - \log\sum_{u} p_t(u)^{1/\tau_f}$ \Comment{frame calibration, before the LM}
+\State $(y_1..y_K, \text{score}_1..\text{score}_K) \gets$ CTC prefix beam search with LM on $\tilde\ell$ \Comment{$K$-best list}
+\If{the list is empty} \Return \act{abstain}
+\EndIf
+\State $\hat p_j \gets \mathrm{softmax}_j(\text{score}/\tau_s)$; \quad $\hat p_{\mathrm{top1}} \gets \hat p_1$
+\State $C \gets \{\, j : 1 - \hat p_j \le q \,\}$, ordered by $\hat p_j$ \Comment{conformal sentence set}
+\For{each character $m$ of $y_1$} \Comment{acoustic confidence}
+  \State char streams: $a_m \gets \max_{t \in \mathrm{span}(m)} \exp\tilde\ell_t(y_{1,m})$ (CTC forced alignment of $y_1$)
+  \State phoneme path: $a_m \gets 0.5^{e}\min_{\text{phonemes of the word}} \exp\tilde\ell$ at their peak frames ($e$ = lexicon edits)
+\EndFor
+\State $\mathrm{low} \gets \frac{1}{|y_1|}\#\{m : a_m < 0.5\}$ \Comment{low-evidence share}
+\State $\mathrm{cons} \gets \sum_{j \le 5} \hat p_j\, \mathrm{sim}(y_1, y_j) / \sum_{j \le 5} \hat p_j$, \quad $\mathrm{sim}(a,b) = 1 - \mathrm{WED}(a,b)/\max(|a|_w, |b|_w)$
+\State $g \gets \min\bigl(1, \max(\mathrm{low},\, 1 - \mathrm{cons})\bigr)$ \Comment{guard risk; WED = word edit distance}
+\If{$g \ge r_{\mathrm{abst}}$} \Return \act{abstain}
+\EndIf
+\State $s \gets \hat p_{\mathrm{top1}}$ if $g \le r_{\max}$ else $-\infty$ \Comment{commit score}
+\If{$s \ge \lambda$} \Return \act{commit} $y_1$
+\EndIf
+\If{$1 \le |C| \le k_{\max}$ and $C$ does not contain the ``other'' option} \Return \act{offer} $C$
+\EndIf
+\State \Return \act{offer} $y_1..y_{k_{\max}}$ if fallback = offer and $k_{\max} \ge 1$, else \act{abstain}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{table}[H]
+  \centering
+  \caption{\textbf{Main simulated-user parameters.} Variants: \cref{app:user}.}
+  \label{tab:user}
+  \small
+  \begin{adjustbox}{max width=\linewidth}\begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Parameter} & \textbf{Value} & \textbf{Basis} \\
+    \midrule
+    Fallback (gaze keyboard) speed & 20 characters/min & measured, eye-gaze user LP1 \citep{cai2024gaze} \\
+    Scan and select one of $k$ word alternatives & $1.0 + 1.0\log_2(k+1) + 1.5$\,s (4.5\,s for $k = 3$) & sum matched to 4.7\,s \citep{cai2024gaze} \\
+    Select one of $k$ offered sentences & $1.0 + 0.5\log_2(k+1)$\,s & assumption \\
+    Reading time & 0.3\,s per word, 0.5\,s per candidate & assumption \\
+    Navigate to and delete a wrong word & 3.0\,s (2 selections) & assumption \\
+    Miss probability of a wrong, unmarked word after a commit & 0.05 & assumption (no measurement) \\
+    Errors in offered candidates & always seen (main model) & assumption \\
+    Full retype overhead & 1.5\,s; chosen when cheaper than fixing words & assumption (rational user) \\
+    Abstain overhead & 0.5\,s, then fallback typing & assumption \\
+    Neural input speed, MEG / B2T '25 / sEMG & 152 / 159.3 / 75.8 characters/min & device setting \\
+    \bottomrule
+  \end{tabular}\end{adjustbox}
+\end{table}

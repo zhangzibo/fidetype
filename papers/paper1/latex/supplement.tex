@@ -1,0 +1,73 @@
+% Paper 1 -- Fidetype. Draft v4: supplementary material (Sections S1-S24). Build after main.tex (see main.tex).
+\documentclass[11pt,a4paper]{article}
+% ---------------------------------------------------------------- CLASS (swap for IOP template)
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+% ---------------------------------------------------------------- packages
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc,backgrounds}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xr-hyper}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\usepackage{url}
+\usepackage[capitalise,noabbrev]{cleveref}
+
+\graphicspath{{../figures/}}
+\emergencystretch=2em
+
+% ---------------------------------------------------------------- macros
+% \todo{...}: visible red marker for missing data or open decisions. Never remove one
+% without filling the gap it names. Grep "\todo" to list them.
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\nts}{NeuralTextStream}
+\newcommand{\ewpm}{eWPM}
+\newcommand{\act}[1]{\textsc{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\ci}[2]{\ensuremath{[#1,\,#2]}}  % math mode: "-0.11" prints a true minus sign
+\newcommand{\papertitle}{When should a neural text-entry decoder commit?\\Risk-controlled commits from a stream-level trust layer}
+% import only the labels of the main paper, not its citation numbers (each file has its own reference list)
+\let\origbibcite\bibcite\def\bibcite#1#2{}
+\externaldocument{build/main}
+\let\bibcite\origbibcite
+% generated table rows (make_supp_tables.py): primitive input, so that \midrule may follow inside a tabular
+\makeatletter\newcommand{\inputrows}[1]{\@@input #1 }\makeatother
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thealgorithm}{S\arabic{algorithm}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{Supplementary material for:\\[2pt] \papertitle}
+\author{\todo{authors, affiliations, e-mail}}
+\date{}
+
+\begin{document}
+\maketitle
+\noindent References to Sections 1--9, Tables 1--4, Figures 1--3, Algorithm 1 and Appendix A point to the main paper. All numbers come from committed result files; the round-4 analyses are in \code{experiments/2026-11-12-paper1-r4-analyses/} of the repository.
+
+\tableofcontents
+
+\input{sections/supplement-body}
+
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+
+\end{document}

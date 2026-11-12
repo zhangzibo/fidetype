@@ -4,22 +4,26 @@
 % carry a "% TODO-verify" comment. Do not add references that nobody has read.
 
 % ---------------------------------------------------------------- MEG / non-invasive
+% v4: verified at https://api.crossref.org/works/10.1038/s41593-026-02303-2 (doi.org resolves to nature.com/articles/s41593-026-02303-2; vol. 29, no. 10, pp. 2438-2444; online 29 Jun 2026)
 @article{levy2026brain2qwerty,
   author  = {L{\'e}vy, Jarod and Zhang, Mingfang and Pinet, Svetlana and Rapin, J{\'e}r{\'e}my and Banville, Hubert and d'Ascoli, St{\'e}phane and King, Jean-R{\'e}mi},
   title   = {Noninvasive decoding of typed sentences from human brain activity},
   journal = {Nature Neuroscience},
   volume  = {29},
+  number  = {10},
   pages   = {2438--2444},
   year    = {2026},
   doi     = {10.1038/s41593-026-02303-2}
 }
 
+% v4: verified at https://arxiv.org/abs/2608.18114 (v1 submitted 29 Jun 2026; same title and author list)
 @misc{zhang2026brain2qwertyv2,
-  author       = {Zhang, Mingfang and L{\'e}vy, Jarod and Rommel, Cedric and Rapin, J{\'e}r{\'e}my and Bel, Corentin and Bonnaire, Julie and Nieto, Daniel and Bourdillon, Pierre and Pinet, Svetlana and d'Ascoli, St{\'e}phane and Moreau, Thomas and King, Jean-R{\'e}mi},
-  title        = {Accurate Decoding of Natural Sentences from Non-Invasive Brain Recordings},
-  howpublished = {Meta preprint, \url{https://facebookresearch.github.io/brain2qwerty/assets/brain2qwerty_v2.pdf}},
-  year         = {2026},
-  note         = {29 June 2026}
+  author        = {Zhang, Mingfang and L{\'e}vy, Jarod and Rommel, Cedric and Rapin, J{\'e}r{\'e}my and Bel, Corentin and Bonnaire, Julie and Nieto, Daniel and Bourdillon, Pierre and Pinet, Svetlana and d'Ascoli, St{\'e}phane and Moreau, Thomas and King, Jean-R{\'e}mi},
+  title         = {Accurate Decoding of Natural Sentences from Non-Invasive Brain Recordings},
+  year          = {2026},
+  eprint        = {2608.18114},
+  note          = {arXiv:2608.18114},
+  archivePrefix = {arXiv}
 }
 
 @misc{spanishbcbl,
@@ -228,13 +232,50 @@
   note      = {arXiv:2208.02814}
 }
 
-@misc{angelopoulos2021ltt,
-  author        = {Angelopoulos, Anastasios N. and Bates, Stephen and Cand{\`e}s, Emmanuel J. and Jordan, Michael I. and Lei, Lihua},
-  title         = {Learn then Test: Calibrating Predictive Algorithms to Achieve Risk Control},
-  year          = {2021},
-  eprint        = {2110.01052},
-  note          = {arXiv:2110.01052},
-  archivePrefix = {arXiv}
+% v4: published version; verified at https://api.crossref.org/works/10.1214/24-AOAS1998 (Annals of Applied Statistics 19(2):1641-1662, 2025)
+@article{angelopoulos2025ltt,
+  author  = {Angelopoulos, Anastasios N. and Bates, Stephen and Cand{\`e}s, Emmanuel J. and Jordan, Michael I. and Lei, Lihua},
+  title   = {Learn then Test: Calibrating Predictive Algorithms to Achieve Risk Control},
+  journal = {The Annals of Applied Statistics},
+  volume  = {19},
+  number  = {2},
+  pages   = {1641--1662},
+  year    = {2025},
+  doi     = {10.1214/24-AOAS1998}
+}
+
+% v4: verified at https://www.jmlr.org/papers/v24/22-1176.html (JMLR 24(244):1-41, 2023)
+@article{jin2023selection,
+  author  = {Jin, Ying and Cand{\`e}s, Emmanuel J.},
+  title   = {Selection by Prediction with Conformal p-values},
+  journal = {Journal of Machine Learning Research},
+  volume  = {24},
+  number  = {244},
+  pages   = {1--41},
+  year    = {2023},
+  url     = {https://www.jmlr.org/papers/v24/22-1176.html}
+}
+
+% v4: verified at https://proceedings.neurips.cc/paper_files/paper/2024/hash/870ccde24673d3970a680bb48496ed63-Abstract.html (NeurIPS 37; DOI 10.52202/079017-2350; arXiv:2405.10301)
+@inproceedings{gui2024alignment,
+  author    = {Gui, Yu and Jin, Ying and Ren, Zhimei},
+  title     = {Conformal Alignment: Knowing When to Trust Foundation Models with Guarantees},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {37},
+  year      = {2024},
+  doi       = {10.52202/079017-2350}
+}
+
+% v4: verified with https://api.crossref.org/works?query.bibliographic=Jiang+Confidence+measures+for+speech+recognition+a+survey (Speech Communication 45(4):455-470, 2005)
+@article{jiang2005confidence,
+  author  = {Jiang, Hui},
+  title   = {Confidence measures for speech recognition: A survey},
+  journal = {Speech Communication},
+  volume  = {45},
+  number  = {4},
+  pages   = {455--470},
+  year    = {2005},
+  doi     = {10.1016/j.specom.2004.12.004}
 }
 
 @inproceedings{gibbs2021aci,
@@ -780,6 +821,8 @@
   url       = {https://openreview.net/forum?id=vECJkkSzEX}
 }
 
+% v4: title checked at https://proceedings.iclr.cc/paper_files/paper/2026/hash/96c7270f52625148c6dee3e3910a844d-Abstract-Conference.html
+% (the ICLR proceedings title has no "Conformal"; the round-4 editor's suggested title was not found there)
 @inproceedings{damri2026risk,
   author    = {Damri, Amit and Laufer-Goldshtein, Bracha},
   title     = {Confident and Adaptive Generative Speech Recognition via Risk Control},

@@ -1,9 +1,12 @@
-% Paper 1 -- Fidetype. Draft v3 (revision round 3), 2026-11-12.
-% Build:  tectonic -X compile main.tex --outdir build      (see ../README.md)
-% Class: generic one-column article for arXiv. To switch to the IOP Journal of Neural
-% Engineering template later, replace the preamble block marked "CLASS" and keep sections/*.tex.
+% Paper 1 -- Fidetype. Draft v4 (revision round 4), 2026-11-12. Main text + references + Appendix A.
+% The appendices of v3 moved to supplement.tex (Supplementary Sections S1-S24). Cross-references between
+% the two files use xr-hyper (\externaldocument), so build both (see ../README.md):
+%   tectonic -X compile supplement.tex --outdir build --keep-intermediates   (pass 1)
+%   tectonic -X compile main.tex       --outdir build --keep-intermediates
+%   tectonic -X compile supplement.tex --outdir build --keep-intermediates   (pass 2)
+% Class: generic one-column article. To switch to the IOP Journal of Neural Engineering template,
+% replace the preamble block marked "CLASS" (in both files) and keep sections/*.tex.
 \documentclass[11pt,a4paper]{article}
-
 % ---------------------------------------------------------------- CLASS (swap for IOP template)
 \usepackage[a4paper,margin=2.5cm]{geometry}
 \usepackage[T1]{fontenc}
@@ -28,6 +31,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage[numbers,sort&compress]{natbib}
+\usepackage{xr-hyper}
 \usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
 \usepackage{url}
 \usepackage[capitalise,noabbrev]{cleveref}
@@ -44,12 +48,17 @@
 \newcommand{\act}[1]{\textsc{#1}}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\ci}[2]{\ensuremath{[#1,\,#2]}}  % math mode: "-0.11" prints a true minus sign
+\newcommand{\papertitle}{When should a neural text-entry decoder commit?\\Risk-controlled commits from a stream-level trust layer}
+% import only the labels of the supplement, not its citation numbers (each file has its own reference list)
+\let\origbibcite\bibcite\def\bibcite#1#2{}
+\externaldocument{build/supplement}
+\let\bibcite\origbibcite
 
-% Title (v3): shortened after review round 3 (25 -> 15 words). It names the claim (risk-controlled commits)
-% and no longer suggests three tests of the commit decision. "Fidetype" stays out of the title (open author decision).
-\title{When should a neural text-entry decoder commit?\\Risk-controlled commits from a decoder-agnostic trust layer}
+% Title (v4): "decoder-agnostic" replaced by "stream-level" after review round 4 (editor M3): the sEMG and MEG
+% data show that the stream format works across devices, not that the commit rule works across decoders.
+\title{\papertitle}
 \author{\todo{authors, affiliations, e-mail}}
-\date{Draft v3 (revision round 3) --- 12 November 2026 --- not for distribution}
+\date{}
 
 \begin{document}
 \maketitle
@@ -58,7 +67,6 @@
 \input{sections/introduction}
 \input{sections/related}
 \input{sections/setting}
-\input{sections/format}
 \input{sections/trust}
 \input{sections/protocol}
 \input{sections/results}
@@ -68,12 +76,12 @@
 \input{sections/ethics}
 
 \section*{Acknowledgements}
-\todo{funding.} AI coding and writing assistants were used under human review; all numbers come from committed scripts and result files. \todo{author: final AI-assistance wording.}
+\todo{funding.} AI coding and writing assistants were used under human review; all numbers come from committed scripts and result files. \todo{author: final AI-assistance wording (JNE/IOP policy: disclose in the methods or acknowledgements).}
 
 \bibliographystyle{unsrtnat}
 \bibliography{refs}
 
 \appendix
-\input{sections/appendix}
+\input{sections/appendix-main}
 
 \end{document}
