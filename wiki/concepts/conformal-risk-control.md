@@ -53,6 +53,7 @@ Offline CRC fails when the session drifts. `fidetype.trust.online_risk` (M2-16) 
 - Silent errors are invisible to the controller. With noticed-only feedback the true rate can exceed α (EMG 0.058–0.064).
 
 ## Related
+- [Provenance ledger](provenance-ledger.md): each decision records the CRC / LTT method, α, δ, threshold and n of its calibration.
 - [B2T '25 trust result](../questions/b2t25-trust-result.md) (the 0.059 that motivated M2-13)
 - [Trust core v0 results](../questions/trust-core-v0-results.md)
 - [Error metrics](error-metrics.md)

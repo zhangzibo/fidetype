@@ -1,0 +1,5 @@
+20:19:39 loaded 812 fit / 816 test trials (4s)
+20:38:29 plug-in (M6-06): eWPM 11.546 wrong-commit 0.0588 commit 0.232 entries 865 (1130s)
+20:38:45 crc: eWPM 11.516 wrong-commit 0.0478 commit 0.196 entries 856 (16s)
+20:38:46 time: run_items 0.03s without, 0.12s with an in-memory hash-mode ledger (816 decisions; 0.10 ms per decision)
+20:38:46 verify True (gz True); entries 1723; wrong commits in ledger 87; tamper all detected True; done (1151s)

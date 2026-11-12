@@ -108,7 +108,7 @@ Since the scope decision of 2026-11-08, the format is also modality-agnostic and
 ## Licence and provenance rule
 - SpanishBCBL, emg2qwerty and LibriBrain are **CC BY-NC**. Use them only for research and benchmarks.
 - Product model weights must come **only** from CC0 data (the OpenNeuro default) or from our own consented data.
-- Keep a **provenance ledger**. It records which data trained which weights.
+- Keep a **provenance ledger**. It records which data trained which weights. v0 (M2-09, 2026-11-11) records each trust decision with its full provenance; see [provenance ledger](../concepts/provenance-ledger.md).
 - Meta's Brain2Qwerty code is also CC BY-NC ([code](../sources/brain2qwerty-code.md)). So our decoder is our own reimplementation, not copied code.
 
 ## Proposed code layout

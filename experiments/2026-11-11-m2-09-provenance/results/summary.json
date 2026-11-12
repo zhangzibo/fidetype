@@ -1,0 +1,136 @@
+{
+ "anchor": {
+  "ledger_id": "47b88a82-0a00-4e66-b4e8-b0cc5583c9d3",
+  "seq": 1722,
+  "hash": "906bb70598ca4767efd04bd134466e1ea747cd4220b9d503f90a6d2ed34624ea"
+ },
+ "verify": {
+  "ok": true,
+  "ok_gz": true,
+  "n_entries": 1723,
+  "errors": []
+ },
+ "entry_kinds": {
+  "genesis": 1,
+  "note": 1,
+  "context": 2,
+  "decision": 1632,
+  "correction": 87
+ },
+ "per_gate": {
+  "plug-in (M6-06)": {
+   "policy_config": {
+    "commit_p": 0.5,
+    "commit_max_risk": 0.5,
+    "commit_max_set": null,
+    "offer_max_k": 2,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "ewpm": 11.545649629165748,
+   "wrong_commit_rate": 0.058823529411764705,
+   "rate_commit": 0.23161764705882354,
+   "n_test": 816,
+   "n_decisions_expected": 816,
+   "n_wrong_commits_harness": 48,
+   "n_silent_wrong_commits_harness": 2,
+   "ledger_entries_written": 865,
+   "eval_s": 154.24462938308716
+  },
+  "crc": {
+   "policy_config": {
+    "commit_p": 0.5355409929093704,
+    "commit_max_risk": 0.5,
+    "commit_max_set": null,
+    "offer_max_k": 2,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "ewpm": 11.516399980500767,
+   "wrong_commit_rate": 0.04779411764705882,
+   "rate_commit": 0.19607843137254902,
+   "n_test": 816,
+   "n_decisions_expected": 816,
+   "n_wrong_commits_harness": 39,
+   "n_silent_wrong_commits_harness": 1,
+   "ledger_entries_written": 856,
+   "eval_s": 0.9541721343994141
+  }
+ },
+ "ledger_summary": [
+  {
+   "extra.gate": "plug-in (M6-06)",
+   "calibration.id": "cal-692fb52a73417552",
+   "policy.version": "pol-2eaa4ff51919527a",
+   "n_decisions": 816,
+   "actions": {
+    "OFFER": 627,
+    "COMMIT": 189
+   },
+   "n_commits": 189,
+   "n_wrong_commits": 48,
+   "n_with_correction": 48,
+   "wrong_commit_rate": 0.058823529411764705,
+   "commit_precision": 0.746031746031746
+  },
+  {
+   "extra.gate": "crc",
+   "calibration.id": "cal-e6a13a7844c815a6",
+   "policy.version": "pol-92a5150a77905417",
+   "n_decisions": 816,
+   "actions": {
+    "OFFER": 656,
+    "COMMIT": 160
+   },
+   "n_commits": 160,
+   "n_wrong_commits": 39,
+   "n_with_correction": 39,
+   "wrong_commit_rate": 0.04779411764705882,
+   "commit_precision": 0.75625
+  }
+ ],
+ "wrong_commits_in_ledger": 87,
+ "tamper": {
+  "edit_score": [
+   "entry 31: hash mismatch (entry edited)"
+  ],
+  "edit_with_rehash": [
+   "entry 32: prev_hash does not match the previous entry (chain broken)"
+  ],
+  "delete_correction": [
+   "entry 45: seq 46 != 45 (entry deleted, inserted or reordered)",
+   "entry 45: prev_hash does not match the previous entry (chain broken)"
+  ],
+  "reorder": [
+   "entry 31: seq 32 != 31 (entry deleted, inserted or reordered)",
+   "entry 31: prev_hash does not match the previous entry (chain broken)"
+  ],
+  "truncate_without_anchor_ok": true,
+  "truncate_with_anchor": [
+   "head hash != expected head (entries cut or added at the end)"
+  ],
+  "all_detected": true
+ },
+ "bytes": {
+  "store_jsonl": 1796908,
+  "store_jsonl_gz": 302997,
+  "hash_mode_plugin_only": 976895,
+  "per_decision_store": 1101.046568627451
+ },
+ "time": {
+  "run_items_without_s": 0.031244277954101562,
+  "run_items_with_hash_ledger_s": 0.116058349609375,
+  "ms_per_decision": 0.10393881330303117
+ },
+ "elapsed_s": 1151.1841666698456
+}

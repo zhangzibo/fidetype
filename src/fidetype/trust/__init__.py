@@ -1,5 +1,5 @@
 """The trust core: calibration, conformal sets, hallucination guard and
-decision policy and risk control. It reads only :mod:`fidetype.trust.types`."""
+decision policy, risk control and the provenance ledger. It reads only :mod:`fidetype.trust.types`."""
 
 from fidetype.trust.calibration import (
     NBestCalibrator,
@@ -61,6 +61,8 @@ __all__ = [
     "GuardConfig",
     "GuardScore",
     "HallucinationGuard",
+    "LedgerView",
+    "LedgeredPolicy",
     "NBest",
     "NBestCalibrator",
     "OnlineCommitRiskControl",
@@ -68,6 +70,7 @@ __all__ = [
     "PolicyConfig",
     "PolicyInputs",
     "PredictionSet",
+    "ProvenanceLedger",
     "RiskControlResult",
     "SplitConformal",
     "TemperatureScaler",
@@ -75,6 +78,7 @@ __all__ = [
     "WordChoice",
     "WordConformal",
     "WordSlotInfo",
+    "audit_report",
     "auroc",
     "commit_calibration_data",
     "crc_threshold",
@@ -93,3 +97,21 @@ __all__ = [
     "session_recalibration",
     "weighted_crc_threshold",
 ]
+
+#: Provenance names, imported on first use (so that
+#: ``python -m fidetype.trust.provenance`` runs without a double import).
+_PROVENANCE = {
+    "LedgerView": "LedgerView",
+    "LedgeredPolicy": "LedgeredPolicy",
+    "ProvenanceLedger": "ProvenanceLedger",
+    "audit_report": "audit_report",
+    "verify_ledger": "verify",
+}
+
+
+def __getattr__(name: str):
+    if name in _PROVENANCE:
+        from fidetype.trust import provenance
+
+        return getattr(provenance, _PROVENANCE[name])
+    raise AttributeError(f"module 'fidetype.trust' has no attribute {name!r}")

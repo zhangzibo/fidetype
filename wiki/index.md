@@ -56,6 +56,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Data scaling](concepts/data-scaling.md) | Log-linear gains with hours. Diversity matters. No plateau yet |
 | [Auto Research](concepts/auto-research.md) | AI agents tuning the pipeline. Works when constrained, fails when open-ended |
 | [Error metrics](concepts/error-metrics.md) | HER, CER, WER, SemER, and why they disagree |
+| [Provenance ledger](concepts/provenance-ledger.md) | M2-09: append-only, SHA-256 hash-chained JSON Lines record of every trust decision (stream hash, frame range, decoder / LM / calibration / policy versions, scores) + linked user corrections; no raw signals; text store / hash / omit. API `fidetype.trust.provenance` |
 | [Conformal risk control](concepts/conformal-risk-control.md) | CRC / LTT for the COMMIT threshold: E[wrong-commit] ≤ α (or with prob. 1 − δ) under per-user, per-session exchangeable calibration. API `fidetype.trust.risk_control`. Online re-calibration under drift: `fidetype.trust.online_risk` (M2-16) |
 
 ## Entities
@@ -119,5 +120,6 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [M1-15 full-r1 (full cache) and r3 (causal)](../experiments/2026-11-09-m1-15-sentence-context/results-full-r1-r3.md) | 80 blocks, 19 participants: test greedy 0.508 / beam + LM 0.447; like for like on r2 instances 0.497 / 0.437 (r2 0.577 / 0.488). r3 causal 0.574 / 0.472. Leakage checks (split, LM text, near-variant sentences), zeros-floor baselines, per participant, eWPM | 2026-11-10 |
 | [M1-09 async decoder, full cache](../experiments/2026-11-11-m1-09-async-full/results.md) | Async check vs v2, small + medium runs, controls, near variants, per participant, like for like vs M1-C and sync. r5: no gain | 2026-11-11 |
 | [Trust core on Brain-to-Text '25](../experiments/2026-11-10-b2t25-trust/results.md) | Own b2t25 adapter (phoneme NTS) + CMUdict/Tatoeba word route (WER 0.149). Word- and phoneme-level harness, published-sentence gate, null audit, day-cluster CIs | 2026-11-10 |
+| [M2-09 provenance ledger demo](../experiments/2026-11-11-m2-09-provenance/results.md) | B2T '25 replay, plug-in and CRC gates: 1,723 verified entries, ledger wrong commits = harness (48 / 39), all tamper cases detected, about 0.1 ms per decision, audit report | 2026-11-11 |
 | [EMG key-press decoder + trust on Toronto sEMG](../experiments/2026-11-11-emg-toronto/results.md) | Own adapter + CNN (key acc 0.168 cross-session, 0.209 cross-subject, 0.299 session-calibrated; permuted 0.022). Composed held-out Tatoeba sentences, CRC/LTT, null audit, participant CIs | 2026-11-11 |
 | [M2-16 online re-calibration under drift](../experiments/2026-11-11-m2-16-online-recal/results.md) | `OnlineCommitRiskControl` (window / decay / aci / aci_window) on B2T '25 (drift, shuffled, full-day cold start), Toronto sEMG, MEG M1-15; delay 0 and 10; rolling-50 maxima; noticed-only feedback | 2026-11-11 |

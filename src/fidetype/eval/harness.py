@@ -316,6 +316,8 @@ class TrustPipeline:
                 "risk_control_n": r.n,
                 "risk_control_bound": r.bound,
                 "risk_control_commit_p": self.policy.config.commit_p,
+                "risk_control_alpha": r.alpha,
+                "risk_control_delta": r.delta,
             }
         )
         return r
@@ -356,8 +358,20 @@ class TrustPipeline:
         items: Sequence[Item],
         policy: Any = None,
         cache: dict[tuple[int, int], Analysis] | None = None,
+        ledger: Any = None,
     ) -> list[SentenceRecord]:
+        """Run the policy and the simulated user on ``items``.
+
+        ``ledger`` (a :class:`~fidetype.trust.provenance.ProvenanceLedger`)
+        records one decision entry per attempt, under the context of
+        :meth:`ledger_context`, and a correction entry per wrong commit
+        (see ``corrections`` in :meth:`attach_ledger`). The policy fit
+        never passes a ledger.
+        """
         policy = policy or self.policy
+        ctx_id = None
+        if ledger is not None:
+            ctx_id = ledger.record_context(self.ledger_context(items[0].stream(0) if items else None))
         cache = {} if cache is None else cache
         cfg = self.config
         user = self.user
@@ -388,6 +402,8 @@ class TrustPipeline:
                 o = user.respond(
                     d, it.text, can_repeat=not final_attempt, rng=np.random.default_rng([cfg.seed, i, a])
                 )
+                if ledger is not None:
+                    self._ledger_record(ledger, ctx_id, it, i, a, final_attempt, an, d, o)
                 t += o.time_s
                 keys += o.keystrokes
                 system_text = an.inputs.texts[0] if an.inputs.texts else None
@@ -412,7 +428,64 @@ class TrustPipeline:
 
     # --- evaluation ----------------------------------------------------------
 
-    def evaluate(self, test: Sequence[Any]) -> dict[str, Any]:
+    # --- provenance (M2-09) ----------------------------------------------------
+
+    def attach_ledger(
+        self,
+        ledger: Any,
+        context: dict | None = None,
+        corrections: Literal["none", "user", "oracle"] = "user",
+    ) -> "TrustPipeline":
+        """Record every test decision of :meth:`evaluate` in ``ledger``.
+
+        ``context``: extra provenance (keys ``adapter``, ``decoder``, ``lm``,
+        ``calibration_set_id``, ``extra``) for
+        :func:`~fidetype.trust.provenance.pipeline_context`.
+        ``corrections``: ``"user"`` writes a correction when the simulated
+        user saw a wrong COMMIT / OFFER_WORDS text (not for silent errors);
+        ``"oracle"`` writes one for every wrong one, with the ground truth
+        (replay audits only); ``"none"`` writes no correction.
+        """
+        self.ledger = ledger
+        self.ledger_extra = dict(context or {})
+        self.ledger_corrections = corrections
+        return self
+
+    def ledger_context(self, stream: NeuralTextStream | None = None) -> dict:
+        """The provenance context of the fitted pipeline (see :meth:`attach_ledger`)."""
+        from fidetype.trust.provenance import pipeline_context
+
+        ex = dict(getattr(self, "ledger_extra", {}) or {})
+        return pipeline_context(
+            self,
+            adapter=ex.get("adapter"),
+            decoder=ex.get("decoder"),
+            lm=ex.get("lm"),
+            calibration_set_id=ex.get("calibration_set_id"),
+            stream_meta=stream.meta if stream is not None else None,
+            extra=ex.get("extra"),
+        )
+
+    def _ledger_record(self, ledger, ctx_id, it, i, a, final_attempt, an, d, o) -> None:
+        mode = getattr(self, "ledger_corrections", "user")
+        e = ledger.record_decision(
+            context_id=ctx_id, decision=d, inputs=an.inputs, stream=it.stream(a), attempt=a,
+            final_attempt=final_attempt, item_ref=getattr(it, "ref", None) or f"item-{i}",
+        )
+        if mode == "none" or d.action not in (Action.COMMIT, Action.OFFER_WORDS) or not o.wrong_commit:
+            return
+        did = e["body"]["decision_id"]
+        if mode == "oracle":
+            ledger.record_correction(did, it.text, source="oracle-ground-truth",
+                                     note={"user_noticed": not o.silent_error})
+        elif not o.silent_error:
+            ledger.record_correction(did, o.final_text if o.communicated else None, source="simulated-user")
+
+    # --- evaluation ----------------------------------------------------------
+
+    def evaluate(self, test: Sequence[Any], ledger: Any = None) -> dict[str, Any]:
+        """Evaluate on ``test``. ``ledger`` (default: the attached one) records the decisions."""
+        ledger = ledger if ledger is not None else getattr(self, "ledger", None)
         items = as_items(test)
         cache: dict[tuple[int, int], Analysis] = {}
         analyses = []
@@ -458,7 +531,7 @@ class TrustPipeline:
         m["guard_auroc_low_evidence"] = auroc([an.guard.low_evidence_frac for an in analyses], wrong)
         m["guard_auroc_inconsistency"] = auroc([1 - an.guard.consistency for an in analyses], wrong)
         m["p_top1_auroc"] = auroc(-p_cal, wrong)
-        records = self.run_items(items, self.policy, cache)
+        records = self.run_items(items, self.policy, cache, ledger=ledger)
         m.update(summarize(records))
         m.update({f"fit_{k}": v for k, v in self.fit_report.items()})
         m["records"] = records
@@ -472,6 +545,7 @@ def run_harness(
     val: Sequence[Any] | None = None,
     config: HarnessConfig | None = None,
     decode_cache: dict | None = None,
+    ledger: Any = None,
 ) -> dict[str, Any]:
     """Fit the trust core on ``calib`` (and the policy on ``val``), then
     evaluate on ``test``.
@@ -490,7 +564,12 @@ def run_harness(
     ``ewpm``, ``wrong_commit_rate``, ``silent_error_rate``,
     ``abstain_rate``, ``committed_cer``, the fit results (``fit_*``) and
     the per-sentence ``records``.
+
+    ``ledger``: an optional
+    :class:`~fidetype.trust.provenance.ProvenanceLedger` that records
+    every test decision (no corrections; use
+    :meth:`TrustPipeline.attach_ledger` for those).
     """
     pipe = TrustPipeline(decode_fn, config, decode_cache)
     pipe.fit(calib, val)
-    return pipe.evaluate(test)
+    return pipe.evaluate(test, ledger=ledger)

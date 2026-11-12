@@ -227,7 +227,7 @@ Reasons:
 ### Deliverables
 1. **Personalisation:** per-user calibration profiles; online recalibration from user corrections; drift detection.
 2. **Safety guarantees:** conformal risk control for a wrong-commit limit (finite-sample, as in M2-13); adaptive conformal for non-exchangeable streams; a written guarantee sheet per policy (what holds, under which assumptions).
-3. **Provenance ledger:** an append-only, hash-chained ledger: data → weights → calibration → each committed output. Licence flags (NC data cannot reach product weights; [licence rule](project-plan.md#licence-rule)).
+3. **Provenance ledger:** an append-only, hash-chained ledger: data → weights → calibration → each committed output. Licence flags (NC data cannot reach product weights; [licence rule](project-plan.md#licence-rule)). v0 done (M2-09, 2026-11-11): decision-level ledger, [provenance ledger](../concepts/provenance-ledger.md); licence checks still open.
 4. **Privacy and consent:** consent records referenced by `consent.ref`; the privacy processor (P3); data minimisation defaults (`data.derived = true`, no raw samples); deletion on request.
 5. **Neural-data law review** (information for design, not legal advice):
 

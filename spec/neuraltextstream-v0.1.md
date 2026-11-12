@@ -260,6 +260,10 @@ Semantic conventions are shared key names. They let different producers describe
 | `decoder.lookahead_s` | float ≥ 0 | The lookahead in seconds. If both are present, it MUST be equal to `latency` | Development |
 | `decoder.calibration_id` | string | An identifier of the calibration that was applied (for example, a hash of its parameters) | Development |
 | `decoder.calibration_method` | string | For example `temperature`, `platt`, `isotonic`, `none` | Development |
+| `decoder.weights_sha256` | string | The SHA-256 (64 lowercase hex characters) of the weights file that produced the stream. Optional. For provenance (section 4.3) | Development |
+| `adapter.name` | string | The name of the adapter that converted a device or dataset output into NTS, if there is one | Development |
+| `adapter.version` | string | The version of that adapter (for example, a release or a commit id) | Development |
+| `stream.id` | string | An **opaque**, unique identifier of this stream (for example, a UUID). It MUST NOT contain personal data. Optional. For provenance (section 4.3) | Development |
 | `lm.name` | string | The language model inside the decoder, if any. `"none"` if there is no LM | Development |
 | `user.personalized` | boolean | `true` if the decoder was adapted to this user | Development |
 | `session.id` | string | A **pseudonymous** session identifier | Development |
@@ -270,6 +274,18 @@ Semantic conventions are shared key names. They let different producers describe
 | `consent.ref` | string | An **opaque** reference to a consent record that is kept elsewhere. It MUST NOT contain the consent text or personal data | Development |
 
 > **Note.** Today, some reference producers in this repository still use older, flat meta keys (for example, `subject`, `session`). They will move to these conventions before v0.2.
+
+### 4.3 Provenance (informative)
+*Added 2026-11-11 (M2-09). This section is informative. It adds four optional `meta` keys (4.2) and no required field. Every valid v0.1 stream stays valid.*
+
+A consumer that acts on decoded text (for example, a trust layer that commits text for the user) SHOULD keep a provenance record for each decision. The record links the text to the stream, the models and the settings that produced it. Then a wrong output can be traced and audited later. The Fidetype reference is `fidetype.trust.provenance` (an append-only JSON Lines ledger with a SHA-256 hash chain).
+
+Recommendations:
+1. Refer to a stream by `stream.id` if present. Otherwise use a content hash of the stream (the reference uses SHA-256 over the canonical JSON header plus the `log_probs` and `frame_times` bytes). Record the frame range `[start, end)` that the decision used.
+2. Copy the provenance keys of `meta` (`device.*`, `adapter.*`, `decoder.*` with `decoder.weights_sha256`, `decoder.calibration_id`, `lm.*`) into the record. Add the consumer's own calibration, policy version and decision scores.
+3. Do not copy raw signals or frame arrays into the record. Store hashes and identifiers. Store text only if the deployment allows it; otherwise store a keyed hash (HMAC) or nothing.
+4. Treat `subject.id` and `session.id` as in 5.4. A record SHOULD store them pseudonymised again (for example, hashed) or not at all.
+5. A later user correction SHOULD be a new record that refers to the decision it corrects. Do not change the old record.
 
 ## 5. Normative rules
 
@@ -463,3 +479,4 @@ Rule: Fidetype does not create a rival format where one exists. It bridges.
 | Version | Date | Change |
 |---|---|---|
 | 0.1 | 2026-11-08 | First written spec (Development). Frame core: fields `spec_version`, `vocab_type` and the optional `frame_period` and `latency` added to the reference implementation in a backward-compatible way; `blank_id` can be null. Semantic conventions for `meta`. NPZ and JSON Lines serialisations. From landscape research (same day): event kinds `decision`, `hypothesis`, `pointer`, `signal_quality`; `score_semantics`; sparse frames; vocabulary identity and registries; extended timing and `clock_domain`; conventions `device.invasive`, `device.regulatory_status`, `decoder.calibration_id`, `decoder.calibration_method`, `lm.name`, `user.personalized`, `data.derived`, `consent.ref`; neural-data-law note; LSL, WebSocket and Apple BCI HID binding sketches; EMMA and ISO/IEC TS 27571 in the related standards. The extensions are not in the reference implementation yet. |
+| 0.1 (non-breaking addition) | 2026-11-11 | M2-09: optional `meta` keys `decoder.weights_sha256`, `adapter.name`, `adapter.version`, `stream.id`; informative section 4.3 (provenance records). No required field changes; all v0.1 streams stay valid. |

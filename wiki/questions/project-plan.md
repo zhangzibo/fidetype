@@ -121,7 +121,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [x] **Simulated user:** selection time and correction cost.
 - [x] **Effective WPM** metric ([architecture](architecture.md#effective-words-per-minute)).
 - [x] **Evaluation harness** with fixed splits. Metrics: CER, WER, ECE, coverage, hallucination rate, effective WPM ([error metrics](../concepts/error-metrics.md)).
-- [ ] **Provenance ledger v0.**
+- [x] **Provenance ledger v0.** Done 2026-11-11 (M2-09): `fidetype.trust.provenance`, hash-chained decision ledger with linked corrections; [concept](../concepts/provenance-ledger.md), [demo](../../experiments/2026-11-11-m2-09-provenance/results.md). Training-data licence checks are still open.
 - [x] **Run the trust core on real decoder outputs.** *(done 2026-11-08: keystroke decoder on real MEG; wrong-commit 100 % → 0 %, but no correct candidates. See [trust core v0 results](trust-core-v0-results.md#6-real-meg-first-test-2026-11-08))*
 - [x] **Re-tune the CTC beam** (search errors → n-best recall). *(done 2026-11-08: `RETUNED` preset; recall@10 0.075 → 0.47 on median Tatoeba; n-best miss 0.73 → 0.00 in the trust pipeline. See [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.md))*
 - [ ] **Re-tune the guard** for the retuned beam (n-best inconsistency + `p_top1`).
