@@ -342,3 +342,8 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Demo `experiments/2026-11-11-m2-09-provenance/` (B2T '25 replay, plug-in and CRC gates): 1,723 entries verified; wrong commits in the ledger equal the harness (48 / 39); all tamper cases detected; about 0.1 ms per decision.
 - Spec: optional `meta` keys `decoder.weights_sha256`, `adapter.name`, `adapter.version`, `stream.id` and informative section 4.3 (non-breaking; v0.1 streams stay valid).
 - New: `wiki/concepts/provenance-ledger.md`. Updated: `overview.md`, `index.md`, `project-plan.md`, `architecture.md`, `roadmap-standard.md`, `b2t25-trust-result.md`, `conformal-risk-control.md`, tracker (M2-09), `HANDOFF.md`.
+
+## [2026-11-11] query | Paper 1 outline and results inventory (M3)
+- New: `papers/paper1/outline.md` (first file in `papers/`): 4 title options, abstract draft (about 215 words), 6 contributions, section plan with tables T1–T7 and figures F1–F7 (each number copied from a named result page), related-work map (existing source pages + "to add"), 12 candid limitations, ethics and data-licence statement, results inventory R1–R27 with status, gaps G1–G15, reproducibility plan, venues.
+- Main gap: all MEG trust numbers come from synchronous decoders; the trust harness must run on the async M1-09 streams (G1). Also: seeds, sentence/participant CIs, KT-sEMG natural typing, unified ablations, eWPM sensitivity.
+- New: `wiki/questions/paper1-plan.md`. Updated: `index.md`, tracker (M3-03, M3-06, M3-09), `HANDOFF.md`.

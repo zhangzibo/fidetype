@@ -149,6 +149,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - Real MEG (2026-11-08): wrong-commit 100% → 0% and fluent hallucination 83–100% → 0%, but no correct candidates yet, so usefulness is untested. Source: [M2-10 results](../../experiments/2026-11-08-m2-real-keystroke/results.md).
 - Per-word OFFER (2026-11-08): on real MEG, no BCI policy beats gaze typing alone (trust 2.96 vs gaze 3.14 eWPM). **Paper 1 must report eWPM against a no-BCI fallback baseline.** Source: [OFFER_WORDS results](../../experiments/2026-11-08-m2-offer-words/results.md).
 - Details: [trust core v0 results](trust-core-v0-results.md).
+- **Outline (2026-11-11):** claim, tables and figures, results inventory and the gaps before submission: [Paper 1 plan](paper1-plan.md) and [papers/paper1/outline.md](../../papers/paper1/outline.md).
 
 - [ ] Run experiments on SpanishBCBL and on the simulator.
 - [ ] Run ablations: each trust-core module on and off.
