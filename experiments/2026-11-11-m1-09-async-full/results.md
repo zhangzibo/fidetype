@@ -8,6 +8,7 @@ Queue `C:\Users\zhang\bci-data\runs\queue-2026-11-11-m1-09\` ran from 23:31 on 2
 - **The near-variant effect is small.** On the 11 test sentences with no close train variant: greedy 0.519 (participants 0.508), beam + LM 0.492 (0.479).
 - **The inference setting is the v2 async setting** (see section 1). The training differs: our aux loss uses the key times as training labels.
 - **Async now equals our sync decoder at greedy.** Medium async − M1-15 full-r1 sync, same 637 instances: greedy −0.002 [−0.011, +0.007]; beam + LM +0.028 [+0.016, +0.041].
+- **A longer run (r5, M1-26) did not help.** Test greedy 0.516, beam + LM 0.484 (r4b-full-medium: 0.506 / 0.475). r5 − r4b, paired: greedy +0.009 [+0.003, +0.015], beam + LM +0.009 [+0.002, +0.016]. The headline M1 model stays r4b-full-medium (section 7).
 
 ## 1. Async check (code read, 2026-11-11)
 What the model gets at inference (`fidetype.decoders.infer.run_inference`, `ConvCTC.forward`):
@@ -53,6 +54,7 @@ Comparison:
 | r4b-full (small) | trend stop, epoch 90 | 74 | 35.9 (cap 120) | CER typed 0.533 |
 | r4a-full-medium | trend stop, epoch 51 | 47 | 27.2 | key err 0.502 (key acc 0.49) |
 | r4b-full-medium | **epoch cap 100** | 79 | 51.8 (cap 120) | CER typed 0.494 |
+| r5-medium (M1-26, cosine over 200 epochs) | trend stop, epoch 76 | 55 | 30.4 (cap 180) | CER typed 0.4958 |
 
 The medium r4b stopped at the epoch cap, not by trend. Its smoothed val CER was 0.5027 at epoch 69, 0.4988 at epoch 79 and 0.4985 at epoch 99. The cosine LR was at its floor (6e-6) at the end. So it was close to a plateau, but the stop did not fire. r5 (section 6) tests a longer schedule.
 
@@ -113,16 +115,41 @@ On the far sentences of these 209 instances (143): medium − M1-C −0.105 [−
 - **Only 17 unique test sentences.** The CIs are over 637 instances. They do not include the variance across sentences, so they are too narrow for a claim about new sentences.
 - **Different test split from v2.** Our 0.495 and v2's 0.59 use different test sentences. We cannot say that we beat v2. We can say that we reach the same range or better in the same input setting.
 - **Training labels differ** (key times, see section 1).
-- **One seed.** No seed variance yet.
+- **One seed.** No seed variance yet. r5 (section 7) is a second run, but from the same init and a different schedule, so it is not a seed estimate.
 - **The val set chose the checkpoint and the beam settings.** Test was decoded once per setting.
 - **The no-signal floor is not 1.0.** Text-only decoding with a known length gives about 0.69 ([M1-15 analysis](../2026-11-09-m1-15-sentence-context/results-full-r1-r3.md)). Here the decoder knows only the segment duration; zeros give 0.925 greedy and 0.771 beam + LM.
 
-## 7. r5: longer medium run (launched 2026-11-11 17:36)
+## 7. r5: longer medium run (M1-26, 2026-11-11)
 - Config `config-r5-medium.json`: medium r4b, init from `m1-09-r4a-full-medium/best.pt`, epochs 200 (cosine over 200), `max_minutes` 180 active, patience 20, EMA trend stop (alpha 0.3, min_delta 0.002).
-- Queue `queue-r5.ps1` (copy that runs: `C:\Users\zhang\bci-data\runs\queue-2026-11-11-m1-09-r5\queue.ps1`, PID 28220; training PID 25648): train → `infer --control` → beam + LM (same grid). Hard stop 01:00 on 2026-11-12. AC sleep never until the end; the finally block restores 30 min. The queue does not put the PC to sleep.
-- Expected: training ≤ 200 epochs × about 30 s ≈ 100 min (max 180 min), then about 10 min inference and about 40 min beam. Results about 20:15 (latest about 21:45).
+- Queue `queue-r5.ps1` (copy that ran: `C:\Users\zhang\bci-data\runs\queue-2026-11-11-m1-09-r5\queue.ps1`) ran from 17:36 to 18:45 ("QUEUE DONE", beam exit code 0, AC sleep restored to 30 min).
+- Training: `early_stopped` at epoch 76 (trend stop, 20 evals without a smoothed gain), best epoch 55, best val CER typed 0.4958, 30.4 active min. r4b-full-medium: best val 0.4944 at epoch 79.
+- The cosine span is 200 epochs, so the LR stayed high: 2.09e-04 at epoch 75. r4b-full-medium reached its LR floor (6e-6) at epoch 100. The trend stop fired before the LR decayed.
+
+Test (637 instances, CER vs target; participant means from `labels.jsonl`, now correct in `tables.md`):
+
+| decoder | input | r4b-full-medium: sentences | r4b: participants | r5-medium: sentences | r5: participants |
+|---|---|---|---|---|---|
+| greedy | real MEG | **0.506** [0.495, 0.518] | **0.495** | 0.516 [0.504, 0.527] | 0.504 |
+| greedy | shuffled MEG | 0.760 | 0.761 | 0.759 | — |
+| greedy | zeros | 0.925 | 0.924 | 0.922 | — |
+| beam + LM, val-tuned | real MEG | **0.475** [0.461, 0.489] | **0.462** | 0.484 [0.471, 0.498] | 0.470 |
+
+r5 − r4b-full-medium, paired per sentence (same files, bootstrap over sentences, 10 000 resamples):
+
+| split | decoder | r5 | r4b | r5 − r4b [95 % CI] | r5 better / worse (sentences) |
+|---|---|---|---|---|---|
+| val (437) | greedy | 0.515 | 0.512 | +0.003 [−0.004, +0.009] | 168 / 185 |
+| val (437) | beam + LM | 0.488 | 0.485 | +0.004 [−0.004, +0.012] | 174 / 193 |
+| test (637) | greedy | 0.516 | 0.506 | +0.009 [+0.003, +0.015] | 247 / 294 |
+| test (637) | beam + LM | 0.484 | 0.475 | +0.009 [+0.002, +0.016] | 244 / 310 |
+
+- r5 val beam settings: w 0.25, bonus 0, calibrated (T 2.96). Same choice as r4b except T.
+- **Conclusion: r5 did not improve on r4b-full-medium.** On val it is the same within noise. On test it is about 0.009 CER worse. The test CI excludes 0, but it is over sentence instances (17 unique sentences, 19 participants), so it is too narrow. We read it as "no gain, maybe slightly worse".
+- **The headline M1 model stays r4b-full-medium** (0.506 / 0.475).
+
+> **Our take:** more epochs of the same model on the same data do not help. Both runs plateau at val CER about 0.495. The next gains need more data, a model change, or ensembling over seeds and checkpoints.
 
 ## Files
-- `results/beam-m1-09-r4b-full/`, `results/beam-m1-09-r4b-full-medium/`: beam tables, val grid, per-sentence CER.
+- `results/beam-m1-09-r4b-full/`, `results/beam-m1-09-r4b-full-medium/`, `results/beam-m1-09-r5-medium/`: beam tables, val grid, per-sentence CER.
 - `analysis/analyse.py` (writes `analysis/analysis.json`, git-ignored like the M1-15 one; rerun the script to rebuild it).
 - Greedy metrics: `C:\Users\zhang\bci-data\streams\m1-09-r4b-full*\metrics.json`. Runs: `C:\Users\zhang\bci-data\runs\m1-09-*`.

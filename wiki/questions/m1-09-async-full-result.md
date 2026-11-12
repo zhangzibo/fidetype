@@ -17,6 +17,8 @@ Full tables and the scripts: [experiment results](../../experiments/2026-11-11-m
 2. **Yes at inference, with one training difference.** The model gets the MEG segment, its length and the participant index. It gets no key times. The segment runs from the first key press − 0.4 s to the last key press + 0.5 s. v2 uses the same bounds: "400 ms before sentence onset (first key pressed) through sentence offset (last key released)" plus 400–500 ms ([v2](../sources/brain2qwerty-v2.md), Methods 4.2, p. 12). The difference: our keystroke aux loss uses the key times as **training labels**. v2 trains with CTC only.
 3. **A little.** On the 11 test sentences with no close train variant: greedy 0.519 (participants 0.508), beam + LM 0.492 (0.479). The effect on the headline is about 0.013 greedy and 0.017 beam CER.
 
+4. **A longer run does not help (r5, M1-26).** Cosine over 200 epochs, trend stop at epoch 76 (best 55). Test greedy 0.516, beam + LM 0.484. r5 − r4b-full-medium, paired per sentence: greedy +0.009 [+0.003, +0.015], beam + LM +0.009 [+0.002, +0.016] on test; +0.003 [−0.004, +0.009] greedy on val. The headline model stays r4b-full-medium.
+
 **M1 status:** the criterion "greedy CER approaches v2's async SpanishBCBL CER (≈ 0.59) or is better" is met in the v2 async input setting. M1 is closed in the tracker on 2026-11-11.
 
 ## Main numbers (test, CER vs target)
@@ -26,6 +28,7 @@ Full tables and the scripts: [experiment results](../../experiments/2026-11-11-m
 | M1-C r4b (+ M1-C2 beam) | async, 20 blocks, 209 instances | 0.619 | 0.590 | +0.156 |
 | M1-09 small (r4b-full) | async, 80 blocks, 637 instances | 0.553 | 0.524 | +0.208 |
 | **M1-09 medium (r4b-full-medium)** | async, 80 blocks, 637 instances | **0.506** | **0.475** | +0.254 [+0.241, +0.265] |
+| M1-09 medium r5 (longer schedule, M1-26) | async, 80 blocks, 637 instances | 0.516 | 0.484 | +0.244 [+0.232, +0.256] |
 | M1-09 medium, mean over participants | | 0.495 ± 0.020 (SEM) | 0.462 ± 0.022 | |
 | M1-09 medium, far sentences only | async, 438 instances | 0.519 | 0.492 | +0.240 |
 | M1-09 medium on the 209 M1-C instances | async | 0.494 | 0.461 | |
@@ -53,10 +56,12 @@ The code path: `ConvCTC.forward(x, lengths, subjects)` has no key input. The key
 - **17 unique test sentences only.** The CIs are over instances and do not include the variance across sentences.
 - **Different test split from v2.** So "0.495 vs 0.59" is not a head-to-head result. We do not claim to beat v2.
 - **Near variants:** the medium model gains more on the 6 "close" sentences (close 0.477, far 0.519) than the small model (0.549 vs 0.555). A larger model learns the templates more.
-- **One seed.** The medium run stopped at its 100-epoch cap (best epoch 79). A longer run (r5) is running; see [HANDOFF](../../HANDOFF.md).
+- **One seed.** The medium run stopped at its 100-epoch cap (best epoch 79). A longer run (r5: cosine over 200 epochs, same init) trend-stopped at epoch 76 with best val 0.4958 (r4b: 0.4944). It is not better: same on val, about 0.009 worse on test. The test CI ([+0.003, +0.015] greedy) excludes 0, but it is over instances of 17 sentences, so it is too narrow.
 - WER is still high (0.84 greedy). The true sentence is almost never in the n-best (0.9 %).
 
 > **Our take:** the jump from 0.619 (20 blocks) to 0.494 on the same instances comes from 4x data and a larger model, as v2's scaling result predicts ([v2](../sources/brain2qwerty-v2.md), Fig. 1F). Async now matches our synchronous decoder at greedy. The next gains for the trust layer need a better LM step (sentence n-best recall), not only a lower CER.
+
+> **Our take (r5):** more epochs of the same model do not help. Both medium runs plateau at val CER about 0.495. The long cosine span kept the LR high (2.09e-04 at epoch 75), and the trend stop fired first. Next CER gains need more data, a model change, or ensembling over seeds and checkpoints.
 
 ## Related pages
 - [Decoder M1 results](decoder-m1-results.md)
