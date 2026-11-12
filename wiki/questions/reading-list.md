@@ -116,7 +116,7 @@ The first paper is "calibrated, abstaining brain-to-text" on SpanishBCBL ([Brain
   It builds sets of sampled sentences with a coverage guarantee. This maps directly to n-best sets.
 - [must] **Applying the conformal prediction paradigm for the uncertainty quantification of an end-to-end automatic speech recognition model (wav2vec 2.0)**. Ernez et al. COPA 2023, PMLR 204. https://proceedings.mlr.press/v204/ernez23a.html
   It builds conformal sets of ASR transcripts with WER control and flags uncertain words. It is the closest ASR template.
-- [should] **Conformal Risk Control**. Angelopoulos et al. ICLR, 2024 (arXiv 2022). https://arxiv.org/abs/2208.02814
+- [should] **Conformal Risk Control**. Angelopoulos et al. ICLR, 2024 (arXiv 2022). https://arxiv.org/abs/2208.02814 (abstract read, used in M2-13: [source page](../sources/conformal-risk-control.md))
   It controls expected loss, such as WER, not only miscoverage.
 - [should] **Confident and Adaptive Generative Speech Recognition via Risk Control**. Damri & Laufer-Goldshtein. ICLR, 2026. https://openreview.net/forum?id=ck5T7QeiDh
   It decides when to trust LLM error correction of ASR, with a risk guarantee. This matches our hallucination guard.

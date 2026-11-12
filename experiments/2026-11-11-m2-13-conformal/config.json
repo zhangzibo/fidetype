@@ -1,0 +1,10 @@
+{
+ "description": "M2-13: CRC and LTT for the COMMIT threshold of the trust gate. CPU only. Reuses the M6-06 B2T '25 pipeline and the M1-15 full-r1 MEG streams.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "seed": 0,
+ "reps": 200,
+ "n_cal": [100, 408],
+ "datasets": ["b2t-ours", "b2t-published", "meg-full-r1"],
+ "meg_streams": "C:/Users/zhang/bci-data/streams/m1-15-sentence-context-full-r1"
+}

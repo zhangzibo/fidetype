@@ -137,6 +137,16 @@ class HarnessConfig:
     max_silent_error: float | None = None
     #: Alternatives kept per word slot.
     word_max_alternatives: int = 5
+    #: Finite-sample control of the wrong-commit rate (M2-13; see
+    #: :mod:`fidetype.trust.risk_control`). "crc" or "ltt": the last
+    #: ``risk_control_fraction`` of ``val`` is held out; the policy grid is
+    #: fitted on the rest; then ``commit_p`` is calibrated on the held-out
+    #: part with target ``max_wrong_commit``. "none" keeps the old fit.
+    risk_control: Literal["none", "crc", "ltt"] = "none"
+    risk_control_fraction: float = 0.5
+    risk_control_delta: float = 0.1
+    #: "max": keep the grid commit_p if it is stricter (still valid).
+    risk_control_combine: Literal["replace", "max"] = "max"
 
 
 @dataclass
@@ -255,8 +265,60 @@ class TrustPipeline:
             "calib_miss_rate": self.conformal.calibration_miss_rate,
         }
         if val is not None and cfg.policy == "trust" and cfg.fit_policy:
-            self._fit_policy(as_items(val))
+            val_items = as_items(val)
+            if cfg.risk_control != "none":
+                n_rc = int(round(len(val_items) * cfg.risk_control_fraction))
+                if n_rc <= 0 or n_rc >= len(val_items):
+                    raise ValueError("risk_control_fraction must leave items for both the grid fit and the calibration")
+                self._fit_policy(val_items[: len(val_items) - n_rc])
+                self.calibrate_commit(val_items[len(val_items) - n_rc :])
+            else:
+                self._fit_policy(val_items)
         return self
+
+    def calibrate_commit(
+        self,
+        items: Sequence[Any],
+        method: Literal["crc", "ltt"] | None = None,
+        alpha: float | None = None,
+        delta: float | None = None,
+        combine: Literal["replace", "max"] | None = None,
+    ) -> Any:
+        """Set ``commit_p`` with conformal risk control (or LTT) on ``items``.
+
+        ``items`` must have known truth, must not have been used for any
+        other fit, and must be exchangeable with the items of use (same
+        user, same session). Defaults come from the config; ``alpha``
+        defaults to ``max_wrong_commit``. Returns the
+        :class:`~fidetype.trust.risk_control.RiskControlResult`.
+        """
+        from fidetype.trust.risk_control import CommitRiskControl
+
+        cfg = self.config
+        if not isinstance(self.policy, DecisionPolicy):
+            raise TypeError("calibrate_commit needs a DecisionPolicy")
+        method = method or (cfg.risk_control if cfg.risk_control != "none" else "crc")
+        rc = CommitRiskControl(
+            alpha=cfg.max_wrong_commit if alpha is None else alpha,
+            method=method,
+            delta=cfg.risk_control_delta if delta is None else delta,
+        )
+        its = as_items(items)
+        inputs = [self.analyze(self.decode(it, 0)).inputs for it in its]
+        rc.fit_policy(self.policy, inputs, [it.text for it in its])
+        self.policy = rc.apply(self.policy, combine or cfg.risk_control_combine)
+        r = rc.result
+        self.fit_report.update(
+            {
+                "risk_control_method": r.method,
+                "risk_control_threshold": r.threshold,
+                "risk_control_feasible": r.feasible,
+                "risk_control_n": r.n,
+                "risk_control_bound": r.bound,
+                "risk_control_commit_p": self.policy.config.commit_p,
+            }
+        )
+        return r
 
     def _fit_policy(self, val_items: list[Item]) -> None:
         cfg = self.config

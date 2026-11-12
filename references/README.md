@@ -18,6 +18,8 @@ PDFs and cloned repos are git-ignored because this repo is public and they carry
 | brain2qwerty-v1 | paper | Lévy et al., Nature Neuroscience 29 (2026): https://doi.org/10.1038/s41593-026-02303-2 | CC BY-NC-ND 4.0 | `papers/brain2qwerty_v1_nature_neuroscience_s41593-026-02303-2.pdf` |
 | brain2qwerty-v2 | paper | Zhang, Lévy et al., Meta preprint (Jun 2026): https://facebookresearch.github.io/brain2qwerty/assets/brain2qwerty_v2.pdf | unspecified | `papers/brain2qwerty_v2_meta_preprint.pdf` |
 | brain2qwerty-code | repo | https://github.com/facebookresearch/brain2qwerty (cloned 2026-11-07) | CC BY-NC 4.0 | `repos/brain2qwerty/` |
+| conformal-risk-control | paper | Angelopoulos, Bates, Fisch, Lei, Schuster, arXiv:2208.02814 (v4, 2025-06-13): https://arxiv.org/abs/2208.02814 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| learn-then-test | paper | Angelopoulos, Bates, Candès, Jordan, Lei, arXiv:2110.01052 (v5, 2022-09-29): https://arxiv.org/abs/2110.01052 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
 
 ## Datasets (not stored here)
 | Dataset | Access |

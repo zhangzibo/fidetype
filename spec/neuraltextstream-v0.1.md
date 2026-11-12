@@ -65,6 +65,8 @@ NTS fills this gap. It bridges to these formats and does not replace them (secti
 | Trust decisions: calibration, abstention, the choice to commit, hallucination flags | The Fidetype trust layer. It *consumes* NeuralTextStreams. Its outputs are not part of this spec. |
 | Final input events to an operating system | HID-level protocols (section 9) |
 
+*Informative note (2026-11-11).* The reference trust layer can set its COMMIT threshold with conformal risk control (`fidetype.trust.risk_control`). It then bounds the expected wrong-commit rate by a target α (default 0.05), or bounds it with probability 1 − δ (Learn then Test). The bound holds only if the calibration items and the later items are exchangeable. In practice: calibrate per user and per session, on items with known truth, and re-calibrate after drift. A consumer that reports such a bound SHOULD state α (and δ), the method, the number of calibration items and their scope (user, session). This note adds no field to the stream.
+
 ### 2.4 Design principles
 1. **80/20.** Define the small set of fields that most decoders need. Put the rest in `meta`.
 2. **Adoption first.** A decoder that emits log-softmax output already has most of the data. Emitting a stream must be cheap.

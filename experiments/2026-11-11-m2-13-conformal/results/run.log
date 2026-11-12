@@ -1,0 +1,22 @@
+17:43:39 b2t-ours: lam_old 0.5 test wrong-commit 0.0588 eWPM 11.546 eligible 0.664 (376s)
+17:44:09 b2t-published: lam_old 0.7 test wrong-commit 0.0441 eWPM 18.767 eligible 0.603 (30s)
+17:44:09 b2t done (411s)
+17:44:50 meg: fitted on 437 val (41s); policy PolicyConfig(commit_p=0.5, commit_max_risk=0.3, commit_max_set=None, offer_max_k=1, abstain_risk=1.01, final_fallback='offer', offer_words=False, word_conf_threshold=0.9, offer_words_k=3, offer_words_min_conf=0.0, offer_words_max_slots=None)
+17:45:39 meg: eligible 0.022, top-1 right among eligible 0.000, top-1 right overall 0.0000
+17:45:39 meg done (90s)
+17:45:40 b2t-ours n_cal 100: old wc 0.0586/p95 0.0642 eWPM 11.55; plugin wc 0.0492/p95 0.0978 eWPM 11.52; crc wc 0.0464/p95 0.0936 eWPM 11.52; crc_tune wc 0.0412/p95 0.0828 eWPM 11.51; ltt wc 0.0189/p95 0.0475 eWPM 11.45
+17:45:41 b2t-ours n_cal 408: old wc 0.0586/p95 0.0711 eWPM 11.57; plugin wc 0.0435/p95 0.0760 eWPM 11.52; crc wc 0.0483/p95 0.0712 eWPM 11.53; crc_tune wc 0.0403/p95 0.0712 eWPM 11.52; ltt wc 0.0345/p95 0.0564 eWPM 11.52
+17:45:41 b2t-published n_cal 100: old wc 0.0442/p95 0.0489 eWPM 18.75; plugin wc 0.0549/p95 0.0880 eWPM 18.79; crc wc 0.0468/p95 0.0839 eWPM 18.74; crc_tune wc 0.0468/p95 0.0839 eWPM 18.74; ltt wc 0.0195/p95 0.0489 eWPM 18.49
+17:45:43 b2t-published n_cal 408: old wc 0.0441/p95 0.0588 eWPM 18.77; plugin wc 0.0503/p95 0.0786 eWPM 18.79; crc wc 0.0478/p95 0.0761 eWPM 18.78; crc_tune wc 0.0478/p95 0.0761 eWPM 18.78; ltt wc 0.0345/p95 0.0614 eWPM 18.70
+17:45:43 meg-full-r1 n_cal 100: old wc 0.0000/p95 0.0000 eWPM 3.23; plugin wc 0.0107/p95 0.0223 eWPM 3.23; crc wc 0.0126/p95 0.0223 eWPM 3.23; crc_tune wc 0.0107/p95 0.0223 eWPM 3.23; ltt wc 0.0058/p95 0.0261 eWPM 3.23
+17:45:43 meg-full-r1 n_cal 408: old wc 0.0000/p95 0.0000 eWPM 3.23; plugin wc 0.0108/p95 0.0306 eWPM 3.22; crc wc 0.0186/p95 0.0306 eWPM 3.22; crc_tune wc 0.0108/p95 0.0306 eWPM 3.22; ltt wc 0.0207/p95 0.0349 eWPM 3.22
+17:45:43 tables written
+17:45:43 done
+17:46:09 b2t-ours n_cal 100: old wc 0.0586/p95 0.0642 eWPM 11.55; plugin wc 0.0492/p95 0.0978 eWPM 11.52; crc wc 0.0464/p95 0.0936 eWPM 11.52; crc_tune wc 0.0412/p95 0.0828 eWPM 11.51; ltt wc 0.0189/p95 0.0475 eWPM 11.45
+17:46:10 b2t-ours n_cal 408: old wc 0.0586/p95 0.0711 eWPM 11.57; plugin wc 0.0435/p95 0.0760 eWPM 11.52; crc wc 0.0483/p95 0.0712 eWPM 11.53; crc_tune wc 0.0403/p95 0.0712 eWPM 11.52; ltt wc 0.0345/p95 0.0564 eWPM 11.52
+17:46:11 b2t-published n_cal 100: old wc 0.0442/p95 0.0489 eWPM 18.75; plugin wc 0.0549/p95 0.0880 eWPM 18.79; crc wc 0.0468/p95 0.0839 eWPM 18.74; crc_tune wc 0.0468/p95 0.0839 eWPM 18.74; ltt wc 0.0195/p95 0.0489 eWPM 18.49
+17:46:12 b2t-published n_cal 408: old wc 0.0441/p95 0.0588 eWPM 18.77; plugin wc 0.0503/p95 0.0786 eWPM 18.79; crc wc 0.0478/p95 0.0761 eWPM 18.78; crc_tune wc 0.0478/p95 0.0761 eWPM 18.78; ltt wc 0.0345/p95 0.0614 eWPM 18.70
+17:46:12 meg-full-r1 n_cal 100: old wc 0.0000/p95 0.0000 eWPM 3.23; plugin wc 0.0107/p95 0.0223 eWPM 3.23; crc wc 0.0126/p95 0.0223 eWPM 3.23; crc_tune wc 0.0107/p95 0.0223 eWPM 3.23; ltt wc 0.0058/p95 0.0261 eWPM 3.23
+17:46:12 meg-full-r1 n_cal 408: old wc 0.0000/p95 0.0000 eWPM 3.23; plugin wc 0.0108/p95 0.0306 eWPM 3.22; crc wc 0.0186/p95 0.0306 eWPM 3.22; crc_tune wc 0.0108/p95 0.0306 eWPM 3.22; ltt wc 0.0207/p95 0.0349 eWPM 3.22
+17:46:12 tables written
+17:46:12 done

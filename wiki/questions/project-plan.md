@@ -125,7 +125,7 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [x] **Run the trust core on real decoder outputs.** *(done 2026-11-08: keystroke decoder on real MEG; wrong-commit 100 % → 0 %, but no correct candidates. See [trust core v0 results](trust-core-v0-results.md#6-real-meg-first-test-2026-11-08))*
 - [x] **Re-tune the CTC beam** (search errors → n-best recall). *(done 2026-11-08: `RETUNED` preset; recall@10 0.075 → 0.47 on median Tatoeba; n-best miss 0.73 → 0.00 in the trust pipeline. See [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.md))*
 - [ ] **Re-tune the guard** for the retuned beam (n-best inconsistency + `p_top1`).
-- [ ] **Wrong-commit limit:** a finite-sample guarantee (conformal risk control).
+- [x] **Wrong-commit limit:** a finite-sample guarantee (conformal risk control). Done 2026-11-11 (M2-13): `fidetype.trust.risk_control`; [result](m2-13-conformal-result.md).
 - [x] **Simulated user:** a per-word OFFER action, with partial correction. *(done 2026-11-08: +0.4 to +1.7 eWPM at the worst simulator preset; never selected on real MEG; no BCI policy beats gaze typing alone on real MEG. See [trust core v0 results](trust-core-v0-results.md#7-per-word-offer-and-partial-correction-2026-11-08))*
 - [ ] Fix `TemperatureScaler.transform_stream`: it drops `vocab_type`, `frame_period` and `latency`.
 

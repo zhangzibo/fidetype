@@ -66,3 +66,29 @@ def test_harness_ablations_run(setup):
         m = run_harness(test, dec, cal, val, cfg, cache)
         assert m["n_sentences"] == len(test)
     assert m["fit_policy_config"]["commit_max_risk"] == 1.0
+
+
+@pytest.mark.parametrize("method", ["crc", "ltt"])
+def test_harness_risk_control(setup, method):
+    """M2-13: commit_p is calibrated on the held-out part of val."""
+    dec, cal, val, test = setup
+    cache: dict = {}
+    cfg = HarnessConfig(grid=SMALL_GRID, max_wrong_commit=0.1, risk_control=method, risk_control_combine="replace")
+    m = run_harness(test, dec, cal, val, cfg, cache)
+    assert m["fit_risk_control_n"] == 15
+    assert m["fit_risk_control_method"].startswith(method)
+    assert m["fit_risk_control_commit_p"] == m["fit_risk_control_threshold"]
+    assert m["n_sentences"] == len(test)
+    if not m["fit_risk_control_feasible"]:
+        assert m["rate_commit"] == 0.0
+
+
+def test_harness_calibrate_commit_method(setup):
+    from fidetype.eval.harness import TrustPipeline
+
+    dec, cal, val, test = setup
+    pipe = TrustPipeline(dec, HarnessConfig(grid=SMALL_GRID, max_wrong_commit=0.1), {})
+    pipe.fit(cal, val)
+    r = pipe.calibrate_commit(val + test[:10], method="crc", combine="max")
+    assert r.n == 40
+    assert pipe.policy.config.commit_p >= r.threshold

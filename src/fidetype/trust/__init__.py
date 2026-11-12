@@ -1,5 +1,5 @@
 """The trust core: calibration, conformal sets, hallucination guard and
-decision policy. It reads only :mod:`fidetype.trust.types`."""
+decision policy and risk control. It reads only :mod:`fidetype.trust.types`."""
 
 from fidetype.trust.calibration import (
     NBestCalibrator,
@@ -34,6 +34,13 @@ from fidetype.trust.policy import (
     fit_thresholds,
     highlight_slots,
 )
+from fidetype.trust.risk_control import (
+    CommitRiskControl,
+    RiskControlResult,
+    commit_calibration_data,
+    crc_threshold,
+    ltt_threshold,
+)
 from fidetype.trust.types import Candidate, NBest, from_lm_hypotheses
 
 __all__ = [
@@ -41,6 +48,7 @@ __all__ = [
     "Action",
     "AdaptiveConformal",
     "AlwaysCommitPolicy",
+    "CommitRiskControl",
     "Candidate",
     "Decision",
     "DecisionPolicy",
@@ -52,18 +60,22 @@ __all__ = [
     "PolicyConfig",
     "PolicyInputs",
     "PredictionSet",
+    "RiskControlResult",
     "SplitConformal",
     "TemperatureScaler",
     "WordChoice",
     "WordConformal",
     "WordSlotInfo",
     "auroc",
+    "commit_calibration_data",
+    "crc_threshold",
     "ece",
     "fit_frame_temperature",
     "fit_thresholds",
     "from_lm_hypotheses",
     "greedy_peaks",
     "highlight_slots",
+    "ltt_threshold",
     "nbest_consistency",
     "null_input_audit",
     "reliability_diagram",

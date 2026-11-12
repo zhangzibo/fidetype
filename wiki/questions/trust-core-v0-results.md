@@ -148,7 +148,7 @@ Source: [beam re-tune results](../../experiments/2026-11-08-beam-retune/results.
 > **Our take:** The trust layer did not change. Only the n-best recall changed. So the old eWPM cost was a recall problem in the decoder, not a cost of the trust policy.
 
 ### Open problems
-- **The wrong-commit limit is exceeded on test:** 0.058–0.075 in three of four conditions, against the 0.05 validation target. The grid fit on 120 sentences has no finite-sample guarantee. The new beam commits more often, so this matters more now. Next: conformal risk control.
+- **The wrong-commit limit is exceeded on test:** 0.058–0.075 in three of four conditions, against the 0.05 validation target. The grid fit on 120 sentences has no finite-sample guarantee. The new beam commits more often, so this matters more now. Next: conformal risk control. **Done in M2-13** ([result](m2-13-conformal-result.md)): on B2T '25, CRC gives a mean test wrong-commit of 0.046–0.048.
 - **The guard needs re-tuning.** Its combined risk has AUROC 0.49–0.68 for a wrong top-1. n-best inconsistency alone gives 0.78–0.90, and `p_top1` 0.75–0.91.
 - **Frame calibration is required before the beam.** Without it (T = 0.5, always-commit), both LM beams commit a wrong text in almost every sentence. The CTC prefix probability sums the evidence of all frames of a peak, so the LM cannot overrule an over-confident stream.
 - **Word-level alternatives need a per-word OFFER action.** Three choices per word reach the truth more often than three whole sentences (Tatoeba 0.465 vs 0.38). The simulated user cannot choose words yet, so the harness cannot measure this. *(Done: see [section 7](#7-per-word-offer-and-partial-correction-2026-11-08).)*

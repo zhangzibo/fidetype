@@ -42,6 +42,8 @@ updated: 2026-11-10
 
 > **Our take:** The wrong-commit limit (0.05) was met only approximately on test (0.059). A finite-sample method (conformal risk control, M2-13) is now worth doing, because real data finally gives non-trivial commit rates.
 
+**Update 2026-11-11 (M2-13):** with conformal risk control on per-session calibration data, the mean test wrong-commit is 0.046–0.048 (both decoders), at ≤ 0.4 % eWPM cost. See [M2-13 result](m2-13-conformal-result.md).
+
 ## Open questions
 - Does the result hold for the conversation-mode data (user ratings, no text)?
 - Can a real word LM (not our char 6-gram + unigram) close the gap from WER 0.149 to 0.043 with licence-clean parts?

@@ -31,6 +31,8 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Case study: LangChain](sources/case-study-langchain.md) | Side project → open-core company. Integrations first. 149,213 stars. Criticised for abstraction and churn | 2026-11 |
 | [Case study: OpenTelemetry](sources/case-study-opentelemetry.md) | Merged rival standards. Vendor-neutral spec, company-capped governance. CNCF Graduated 2026-05-21. BCI standards gap | 2026-11 |
 | [Neural input landscape 2026](sources/neural-input-landscape-2026.md) | Devices, SDKs, standards, regulation. No standard for decoded neural output with confidence. Closest: Apple BCI HID, W3C EMMA. Adapter priority. Data and regulatory warnings | 2026-11 |
+| [Conformal Risk Control](sources/conformal-risk-control.md) | Angelopoulos et al., arXiv:2208.02814 (ICLR 2024). Controls E[monotone loss] ≤ α with a (n R̂ + B)/(n + 1) rule. Basis of M2-13 | 2022-08 |
+| [Learn then Test](sources/learn-then-test.md) | Angelopoulos et al., arXiv:2110.01052. Risk control as multiple testing: P(R ≤ α) ≥ 1 − δ. HB / binomial p-values, fixed-sequence testing | 2021-10 |
 | [Brain-to-Text '25 copy-task logits](sources/brain-to-text-25-copytask.md) | Card et al. 2024 (NEJM), Dryad CC0. 1,718 trials of T15 phoneme CTC logits (41 tokens, 80 ms) + cue sentences + published output (WER 0.043). Safe-loaded pickle | 2026-11 |
 
 ## Concepts
@@ -47,6 +49,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Data scaling](concepts/data-scaling.md) | Log-linear gains with hours. Diversity matters. No plateau yet |
 | [Auto Research](concepts/auto-research.md) | AI agents tuning the pipeline. Works when constrained, fails when open-ended |
 | [Error metrics](concepts/error-metrics.md) | HER, CER, WER, SemER, and why they disagree |
+| [Conformal risk control](concepts/conformal-risk-control.md) | CRC / LTT for the COMMIT threshold: E[wrong-commit] ≤ α (or with prob. 1 − δ) under per-user, per-session exchangeable calibration. API `fidetype.trust.risk_control` |
 
 ## Entities
 | Page | Summary |
@@ -85,6 +88,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [M1-15 full-r1 and r3 result](questions/m1-15-full-r1-r3-result.md) | 2026-11-10: sentence-context decoder on the full cache: test greedy 0.508, beam + LM 0.447 (r2 instances 0.497 / 0.437). Causal r3 0.574 / 0.472. No exact leakage (train, LM); 6 of 17 test sentences have a close train variant (≈0.013 CER); far sentences 0.525. No-signal floor ≈0.69. Trust 3.23 vs gaze 3.15 (parity). Async M1 target still not met |
 | [SpanishBCBL repeated participants](questions/spanishbcbl-repeated-participants.md) | S1/S18, S4/S14 and S5/S10/S21 are one person each. Index correct. Sentence splits, so no leakage. Effect on M1-C ≤ 0.003 CER. Report means over participants |
 | [Public datasets](questions/public-datasets.md) | 2026-11-10 survey of about 30 datasets (EMG, EEG, MEG, implants, ECoG, pretraining) with licence and fit. Top 5: Brain-to-Text '25, KT-sEMG, emg2qwerty, Willett handwriting, Toronto sEMG. Licence warnings. First download: B2T '25 logits (58 MB) |
+| [M2-13 conformal result](questions/m2-13-conformal-result.md) | 2026-11-11: CRC on B2T '25: mean test wrong-commit 0.046–0.048 (old gate 0.059), eWPM cost ≤ 0.4 %; LTT mean 0.035, p95 0.056. Marginal only; drift (earlier → later half of day) breaks it (0.0625). MEG: no gain |
 | [B2T '25 trust result](questions/b2t25-trust-result.md) | First cross-device test (intracortical speech). Trust: wrong-commit 0.610 → 0.059 at 11.55 vs 11.45 eWPM; published-sentence gate 0.194 → 0.044 at 18.77 vs 19.61; gaze only 4.08. −p_top1 AUROC 0.80, word conf 0.84 |
 | [Trust core v0 results](questions/trust-core-v0-results.md) | 2026-11-08 simulator run: trust policy cuts wrong commits 0.29–0.47 → 0.02–0.09 for a 7–16 % eWPM cost. LM fusion breaks calibration. Revised Paper 1 claim. Beam re-tune, first real MEG, per-word OFFER: no BCI policy on real MEG beats gaze typing alone |
 
