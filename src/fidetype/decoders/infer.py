@@ -235,7 +235,7 @@ def run_inference(run_dir: str | Path, ckpt_name: str = "best.pt", splits: tuple
                 )
                 stream.to_npz(sdir / f"{name}.npz")
                 hyp = ctc_greedy_decode(stream)
-                lab.write(json.dumps({"file": f"{name}.npz", "subject": seg.subject,
+                lab.write(json.dumps({"file": f"{name}.npz", "subject": seg.subject, "participant": seg.participant,
                                       "target_text": seg.target_text, "typed_text": seg.typed_text}) + "\n")
                 rows.append({"file": f"{name}.npz", "subject": seg.subject,
                              "participant": seg.participant, "hyp": hyp,

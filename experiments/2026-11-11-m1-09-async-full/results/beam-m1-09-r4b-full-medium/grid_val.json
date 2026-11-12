@@ -1,0 +1,526 @@
+{
+ "frame_temperature_val": 3.285049792642652,
+ "rows": [
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.0,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5078314561294296,
+   "val_wer_target": 0.8416666666666667
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.0,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5137699802838656,
+   "val_wer_target": 0.8563446660128581
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.0,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.5273993817056585,
+   "val_wer_target": 0.8740301841560424
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.0,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.5542899589636929,
+   "val_wer_target": 0.8963631905851586
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.05,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5051542820467404,
+   "val_wer_target": 0.8351367549308052
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.05,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5080181434503425,
+   "val_wer_target": 0.8415113871635611
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.05,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.5172706078434067,
+   "val_wer_target": 0.8579873597036067
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.05,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.5375223703006282,
+   "val_wer_target": 0.8803939195815625
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.1,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5014687773483404,
+   "val_wer_target": 0.827389124986379
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.1,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5034374570461625,
+   "val_wer_target": 0.8381524463332244
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.1,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.5108978001648237,
+   "val_wer_target": 0.8446496676473793
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.1,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.5273670646457491,
+   "val_wer_target": 0.8663942464857797
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.15,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5004479062171181,
+   "val_wer_target": 0.820723003160074
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.15,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.499740502938438,
+   "val_wer_target": 0.8311621444916638
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.15,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.5054089538358901,
+   "val_wer_target": 0.8414460063201482
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.15,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.5168244592150038,
+   "val_wer_target": 0.8536694998365478
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.25,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.4987071147883559,
+   "val_wer_target": 0.8078102865860303
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.25,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.4971575020263356,
+   "val_wer_target": 0.8201100577530782
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.25,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.5002782339574401,
+   "val_wer_target": 0.8321918927754167
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.25,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.5042647927181457,
+   "val_wer_target": 0.8396425847226762
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.5,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5046750913300757,
+   "val_wer_target": 0.7904680178707639
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.5,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.4962142007049659,
+   "val_wer_target": 0.7981611637790126
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.5,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.49223974526540426,
+   "val_wer_target": 0.8070638552903998
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.5,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.49253129230826703,
+   "val_wer_target": 0.8208728342595618
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.75,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5089291617427867,
+   "val_wer_target": 0.777451781627983
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.75,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5010496119615677,
+   "val_wer_target": 0.7833415059387598
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.75,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.493781050237928,
+   "val_wer_target": 0.7933284297700772
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 0.75,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.49181407455645515,
+   "val_wer_target": 0.8066715702299225
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 1.0,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5213724422743188,
+   "val_wer_target": 0.7746022665359049
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 1.0,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5073684856605918,
+   "val_wer_target": 0.7781491772910536
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 1.0,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.498686766100487,
+   "val_wer_target": 0.7819385420071917
+  },
+  {
+   "temperature": 1.0,
+   "calibrated": false,
+   "lm_weight": 1.0,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.4921676902763718,
+   "val_wer_target": 0.7967391304347825
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.0,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5451597296749686,
+   "val_wer_target": 0.9159883404162581
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.0,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.6414987352739198,
+   "val_wer_target": 1.0127955758962626
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.0,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.8110071475122995,
+   "val_wer_target": 1.1510406450909882
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.0,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 1.0726791604739674,
+   "val_wer_target": 1.3402173913043478
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.05,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5187994751765925,
+   "val_wer_target": 0.878497875122589
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.05,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.588037315833165,
+   "val_wer_target": 0.9549825651084233
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.05,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.7194299985462779,
+   "val_wer_target": 1.0790617848970252
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.05,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.9353944460397104,
+   "val_wer_target": 1.247973193854201
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.1,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5037685918353821,
+   "val_wer_target": 0.8622098725073554
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.1,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5576666647900674,
+   "val_wer_target": 0.9264737931785986
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.1,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.6597130270033486,
+   "val_wer_target": 1.046940721368639
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.1,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.8291468542898749,
+   "val_wer_target": 1.2118284842541134
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.15,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.4956955275461055,
+   "val_wer_target": 0.857396207911082
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.15,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5388156344349434,
+   "val_wer_target": 0.9217663724528713
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.15,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.6252161258060112,
+   "val_wer_target": 1.0341860084995096
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.15,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.7626087501017483,
+   "val_wer_target": 1.1950909883404162
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.25,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.4846409104139272,
+   "val_wer_target": 0.8341696632886564
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.25,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5179912747078963,
+   "val_wer_target": 0.9052141222621771
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.25,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.5801238199300067,
+   "val_wer_target": 1.0112809196905306
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.25,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.694231810828306,
+   "val_wer_target": 1.1773373651520105
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.5,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.4877939300732876,
+   "val_wer_target": 0.7966683011877519
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.5,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.49387043800208863,
+   "val_wer_target": 0.8572327558025498
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.5,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.5335448713397597,
+   "val_wer_target": 0.948804075405906
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.5,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.6221608219074285,
+   "val_wer_target": 1.0987713849841996
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.75,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5003499065384647,
+   "val_wer_target": 0.7697259452980276
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.75,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.48908495850118483,
+   "val_wer_target": 0.8126511932003923
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.75,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.514620157246862,
+   "val_wer_target": 0.8970905524681267
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 0.75,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.577840175447118,
+   "val_wer_target": 1.020325269695979
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 1.0,
+   "insertion_bonus": 0.0,
+   "val_cer_target": 0.5238062586756296,
+   "val_wer_target": 0.7667674621335949
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 1.0,
+   "insertion_bonus": 0.5,
+   "val_cer_target": 0.5004024166992471,
+   "val_wer_target": 0.7974038356761469
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 1.0,
+   "insertion_bonus": 1.0,
+   "val_cer_target": 0.5047467639894224,
+   "val_wer_target": 0.8541571319603356
+  },
+  {
+   "temperature": 3.285049792642652,
+   "calibrated": true,
+   "lm_weight": 1.0,
+   "insertion_bonus": 1.5,
+   "val_cer_target": 0.5526631371829082,
+   "val_wer_target": 0.9633458646616541
+  }
+ ],
+ "best": {
+  "temperature": 3.285049792642652,
+  "calibrated": true,
+  "lm_weight": 0.25,
+  "insertion_bonus": 0.0,
+  "val_cer_target": 0.4846409104139272,
+  "val_wer_target": 0.8341696632886564
+ },
+ "seconds": 403.0
+}

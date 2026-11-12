@@ -292,3 +292,13 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - eWPM: full-r1 trust 3.23 [3.08, 3.40] vs gaze only 3.15 (parity, first time above); commit 2.71. r3 trust 3.09 vs 3.14.
 - M1 async target not met (sync only). M1 stays in progress.
 - New: `wiki/questions/m1-15-full-r1-r3-result.md`, `experiments/2026-11-09-m1-15-sentence-context/results-full-r1-r3.md`, `analysis/*.py`, result files. Updated: `decoder-m1-results.md`, `overview.md`, `project-plan.md`, `spanishbcbl-repeated-participants.md`, `index.md`, tracker, `HANDOFF.md`.
+
+## [2026-11-11] query | M1-09 async decoder on the full cache, async check, M1 closed
+- queue-2026-11-11-m1-09 finished at 02:45 (QUEUE DONE, all exit 0, no suspend gap). Small r4b-full: trend stop epoch 90 (best 74, 35.9 active min). Medium r4b-full-medium: epoch cap 100 (best 79, 51.8 active min; LR at the cosine floor).
+- Test (CER vs target, 637 instances): medium greedy 0.506 (participants 0.495 ± 0.020), beam + LM val-tuned 0.475 (0.462); shuffled 0.760 / 0.732, zeros 0.925 / 0.771. Small 0.553 / 0.524.
+- Async check (code read): `ConvCTC.forward(x, lengths, subjects)` has no key input. Segment = first key − 0.4 s to last key + 0.5 s; v2 uses first key − 400 ms to last key release + 400–500 ms (Methods 4.2, p. 12). Difference: our training uses key times as aux-loss labels; test split differs from v2.
+- Near variants (same rule as M1-15): far 11 sentences medium 0.519 / 0.492; close 0.477 / 0.438. Per participant: 17 of 19 ≤ 0.59 greedy.
+- Like for like: medium − M1-C on the 209 M1-C instances −0.125 [−0.142, −0.109] greedy; async medium − sync full-r1 −0.002 greedy, +0.028 beam.
+- Fix: `infer.py` writes `participant` into `labels.jsonl` (the beam tables' participant mean fell back to subjects). 221 + 27 tests pass.
+- M1 closed in the tracker. r5 (longer medium run) launched 17:36: queue-2026-11-11-m1-09-r5.
+- New: `wiki/questions/m1-09-async-full-result.md`, `experiments/2026-11-11-m1-09-async-full/results.md`, `analysis/analyse.py`, `config-r5-medium.json`, `queue-r5.ps1`. Updated: `decoder-m1-results.md`, `overview.md`, `project-plan.md`, `synchronous-vs-asynchronous-decoding.md`, `index.md`, tracker, `HANDOFF.md`.

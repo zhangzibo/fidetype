@@ -3,7 +3,7 @@ title: Overview — non-invasive brain-to-text, where things stand
 type: overview
 tags: [synthesis]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-10
+updated: 2026-11-11
 ---
 
 # Overview
@@ -29,6 +29,7 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 - **With small data, a CTC decoder needs a keystroke hint.** CTC alone learned only a text prior. A keystroke auxiliary loss makes it use the MEG (greedy test CER 0.619, target 0.59) ([decoder M1 results](questions/decoder-m1-results.md)). A beam with a Spanish char LM, tuned on val, lowers it to 0.590; greedy stays at 0.619, and the true sentence is never in the 20-best ([M1-C2](../experiments/2026-11-08-m1c2-beam-lm/results.md)).
 - **Sentence context helps a little at this data size (2026-11-10).** With oracle key timing, a Conv + Transformer keystroke decoder reaches test CER 0.577 greedy and 0.488 with the char LM. The per-key logistic regression gives 0.597 / 0.531. The Transformer itself adds only about 0.02 CER; v1 got 0.31 from it. The model overfits the about 200 unique training sentences ([M1-15 r2](questions/decoder-m1-results.md#m1-15-r2-sentence-context-decoder-trained-to-the-val-plateau-2026-11-10)).
 - **More data helps the sentence-context decoder (2026-11-10).** On the full cache (19 participants, the same 101 training sentences), test CER is 0.508 greedy and 0.447 with the LM (0.497 / 0.437 on the r2 test instances). A causal version costs nothing. Part of the gain (about 0.013 CER) is template memorisation: 6 of 17 test sentences have a close variant in train. The no-signal floor is about 0.69 CER, not 1.0. All M1-15 runs use oracle key timing, so the async M1 target is still open ([M1-15 full-r1 and r3](questions/m1-15-full-r1-r3-result.md)).
+- **More data makes the async decoder reach the v2 number (2026-11-11).** The async ConvCTC with a keystroke aux loss, on all 80 cached blocks with a medium model, gives test CER 0.506 greedy (0.495 over participants) and 0.475 with the LM. v2's async encoder gives 0.59 on SpanishBCBL. Our inputs match v2's async setting (segment from the first key − 0.4 s, no key times). But our training also uses key times as labels, and the test split differs. Async now equals our sync decoder at greedy (−0.002) ([M1-09](questions/m1-09-async-full-result.md)).
 - **The trust layer is safe on real MEG, but not yet useful.** It stops all wrong and hallucinated commits. But at key accuracy 0.39, no BCI policy beats gaze typing alone (2.96 vs 3.14 eWPM; with the r2 decoder 3.06 vs 3.14; with the full-cache decoder 3.23 vs 3.15, CI [3.08, 3.40], so parity) ([trust core v0 results](questions/trust-core-v0-results.md#7-per-word-offer-and-partial-correction-2026-11-08)).
 
 > **Our take:** Usefulness needs a stronger decoder, and every speed claim needs a no-BCI baseline.

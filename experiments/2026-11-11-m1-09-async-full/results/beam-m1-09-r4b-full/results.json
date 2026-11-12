@@ -1,0 +1,667 @@
+{
+ "grid_choice": {
+  "temperature": 2.7807556188617992,
+  "calibrated": true,
+  "lm_weight": 0.25,
+  "insertion_bonus": 0.0,
+  "val_cer_target": 0.5173181251614886,
+  "val_wer_target": 0.882186444371799
+ },
+ "frame_temperature_val": 2.7807556188617992,
+ "splits": {
+  "val": {
+   "n": 437,
+   "results": {
+    "real": {
+     "greedy": {
+      "cer_target": {
+       "mean": 0.5498259639029899,
+       "ci95_lo": 0.5385646299718766,
+       "ci95_hi": 0.5610661075607827,
+       "n": 437
+      },
+      "cer_typed": 0.548579674270427,
+      "wer_target": 0.8598616105481094,
+      "cer_target_pooled": 0.5518213600992444,
+      "cer_target_mean_over_subjects": 0.5512718476094863,
+      "cer_target_mean_over_participants": 0.5512718476094863,
+      "sentence_acc": 0.0
+     },
+     "beam_nolm": {
+      "cer_target": {
+       "mean": 0.5413243264416903,
+       "ci95_lo": 0.5302096833266089,
+       "ci95_hi": 0.5525878163080886,
+       "n": 437
+      },
+      "cer_typed": 0.5429797139426422,
+      "wer_target": 0.8670861937452325,
+      "cer_target_pooled": 0.5434194203225443,
+      "cer_target_mean_over_subjects": 0.5424982165242348,
+      "cer_target_mean_over_participants": 0.5424982165242348,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_retuned": {
+      "cer_target": {
+       "mean": 0.5481529033744306,
+       "ci95_lo": 0.5358378409750695,
+       "ci95_hi": 0.5602844182076601,
+       "n": 437
+      },
+      "cer_typed": 0.5454475187062233,
+      "wer_target": 0.8026969597907813,
+      "cer_target_pooled": 0.5506371940904478,
+      "cer_target_mean_over_subjects": 0.5507262465110851,
+      "cer_target_mean_over_participants": 0.5507262465110851,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_valtuned": {
+      "cer_target": {
+       "mean": 0.5173181251614886,
+       "ci95_lo": 0.5050898715288921,
+       "ci95_hi": 0.5296573032309551,
+       "n": 437
+      },
+      "cer_typed": 0.5287920055970246,
+      "wer_target": 0.882186444371799,
+      "cer_target_pooled": 0.5193977670012405,
+      "cer_target_mean_over_subjects": 0.5191066124289478,
+      "cer_target_mean_over_participants": 0.5191066124289478,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     }
+    },
+    "shuffled": {
+     "greedy": {
+      "cer_target": {
+       "mean": 0.7675722466982144,
+       "ci95_lo": 0.7615398476798299,
+       "ci95_hi": 0.7735218531561615,
+       "n": 437
+      },
+      "cer_typed": 0.7694154113027742,
+      "wer_target": 0.9609213250517598,
+      "cer_target_pooled": 0.7710612382993121,
+      "cer_target_mean_over_subjects": 0.7660882134353839,
+      "cer_target_mean_over_participants": 0.7660882134353839,
+      "sentence_acc": 0.0
+     },
+     "beam_nolm": {
+      "cer_target": {
+       "mean": 0.7461154040590446,
+       "ci95_lo": 0.7405054707299406,
+       "ci95_hi": 0.7516614290211623,
+       "n": 437
+      },
+      "cer_typed": 0.7499889435208952,
+      "wer_target": 0.9712950855399368,
+      "cer_target_pooled": 0.7486748618472989,
+      "cer_target_mean_over_subjects": 0.7453311108750711,
+      "cer_target_mean_over_participants": 0.7453311108750711,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_retuned": {
+      "cer_target": {
+       "mean": 0.7775558685058944,
+       "ci95_lo": 0.771310390081145,
+       "ci95_hi": 0.7837426799793951,
+       "n": 437
+      },
+      "cer_typed": 0.7815534086239061,
+      "wer_target": 0.9365724092840797,
+      "cer_target_pooled": 0.7801398443667531,
+      "cer_target_mean_over_subjects": 0.776982026768315,
+      "cer_target_mean_over_participants": 0.776982026768315,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_valtuned": {
+      "cer_target": {
+       "mean": 0.7144850737033888,
+       "ci95_lo": 0.7074072677439619,
+       "ci95_hi": 0.7218644379779544,
+       "n": 437
+      },
+      "cer_typed": 0.7387798841866706,
+      "wer_target": 1.0713631905851586,
+      "cer_target_pooled": 0.71382654787414,
+      "cer_target_mean_over_subjects": 0.713404384925808,
+      "cer_target_mean_over_participants": 0.713404384925808,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     }
+    },
+    "zeros": {
+     "greedy": {
+      "cer_target": {
+       "mean": 0.9234889586366634,
+       "ci95_lo": 0.9220838913611908,
+       "ci95_hi": 0.924913223372739,
+       "n": 437
+      },
+      "cer_typed": 0.9224971779921035,
+      "wer_target": 0.933257055682685,
+      "cer_target_pooled": 0.9264125408819217,
+      "cer_target_mean_over_subjects": 0.9231319501115662,
+      "cer_target_mean_over_participants": 0.9231319501115662,
+      "sentence_acc": 0.0
+     },
+     "beam_nolm": {
+      "cer_target": {
+       "mean": 0.8347660725353421,
+       "ci95_lo": 0.8320004130862154,
+       "ci95_hi": 0.8375732865523299,
+       "n": 437
+      },
+      "cer_typed": 0.834838814352249,
+      "wer_target": 0.9355453852021358,
+      "cer_target_pooled": 0.8372617570768016,
+      "cer_target_mean_over_subjects": 0.8345931947285454,
+      "cer_target_mean_over_participants": 0.8345931947285454,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_retuned": {
+      "cer_target": {
+       "mean": 0.8314176539364502,
+       "ci95_lo": 0.8278714943163916,
+       "ci95_hi": 0.8348465102809176,
+       "n": 437
+      },
+      "cer_typed": 0.8326678275938132,
+      "wer_target": 0.9336384439359268,
+      "cer_target_pooled": 0.8339348144806586,
+      "cer_target_mean_over_subjects": 0.8314277050620611,
+      "cer_target_mean_over_participants": 0.8314277050620611,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_valtuned": {
+      "cer_target": {
+       "mean": 0.7158689047813351,
+       "ci95_lo": 0.707932241939234,
+       "ci95_hi": 0.724126115509614,
+       "n": 437
+      },
+      "cer_typed": 0.747521167098144,
+      "wer_target": 1.041157240928408,
+      "cer_target_pooled": 0.7164204353219804,
+      "cer_target_mean_over_subjects": 0.7141981253612919,
+      "cer_target_mean_over_participants": 0.7141981253612919,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     }
+    },
+    "real_cpu": {
+     "greedy": {
+      "cer_target": {
+       "mean": 0.549161191696168,
+       "ci95_lo": 0.537831266774808,
+       "ci95_hi": 0.560470283647022,
+       "n": 437
+      },
+      "cer_typed": 0.5480087507798851,
+      "wer_target": 0.8598970251716247,
+      "cer_target_pooled": 0.5512010826660652,
+      "cer_target_mean_over_subjects": 0.5506450131568728,
+      "cer_target_mean_over_participants": 0.5506450131568728,
+      "sentence_acc": 0.0
+     }
+    }
+   },
+   "gaps": {
+    "shuffled_minus_real/greedy": {
+     "mean": 0.2177462827952246,
+     "ci95_lo": 0.2052645590656781,
+     "ci95_hi": 0.23061308239443376,
+     "n": 437
+    },
+    "shuffled_minus_real/beam_nolm": {
+     "mean": 0.20479107761735452,
+     "ci95_lo": 0.1923013340380308,
+     "ci95_hi": 0.21723180273723397,
+     "n": 437
+    },
+    "beam_nolm_minus_greedy/real": {
+     "mean": -0.008501637461299684,
+     "ci95_lo": -0.011251216057465216,
+     "ci95_hi": -0.005837946386923615,
+     "n": 437
+    },
+    "shuffled_minus_real/beam_lm_retuned": {
+     "mean": 0.22940296513146374,
+     "ci95_lo": 0.21549411895214118,
+     "ci95_hi": 0.2433678477188592,
+     "n": 437
+    },
+    "beam_lm_retuned_minus_greedy/real": {
+     "mean": -0.0016730605285592503,
+     "ci95_lo": -0.008001438582114414,
+     "ci95_hi": 0.004614796300719406,
+     "n": 437
+    },
+    "shuffled_minus_real/beam_lm_valtuned": {
+     "mean": 0.19716694854190026,
+     "ci95_lo": 0.18378280014128004,
+     "ci95_hi": 0.21029675269278053,
+     "n": 437
+    },
+    "beam_lm_valtuned_minus_greedy/real": {
+     "mean": -0.03250783874150129,
+     "ci95_lo": -0.038507446100897305,
+     "ci95_hi": -0.026416791256879582,
+     "n": 437
+    }
+   }
+  },
+  "test": {
+   "n": 637,
+   "results": {
+    "real": {
+     "greedy": {
+      "cer_target": {
+       "mean": 0.5530502575973535,
+       "ci95_lo": 0.5440620696420719,
+       "ci95_hi": 0.5622666781951078,
+       "n": 637
+      },
+      "cer_typed": 0.5521088961827038,
+      "wer_target": 0.8577969649398222,
+      "cer_target_pooled": 0.5541503241815416,
+      "cer_target_mean_over_subjects": 0.5534055640399769,
+      "cer_target_mean_over_participants": 0.5534055640399769,
+      "sentence_acc": 0.0
+     },
+     "beam_nolm": {
+      "cer_target": {
+       "mean": 0.5461374996537245,
+       "ci95_lo": 0.5369214698331303,
+       "ci95_hi": 0.5554111181736704,
+       "n": 637
+      },
+      "cer_typed": 0.5462219525249733,
+      "wer_target": 0.8641941391941392,
+      "cer_target_pooled": 0.5468262226847035,
+      "cer_target_mean_over_subjects": 0.5465161951248266,
+      "cer_target_mean_over_participants": 0.5465161951248266,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0,
+      "examples": [
+       {
+        "subject": "S1",
+        "target": "la fuerza atrae el electron primero",
+        "top1": "la prorgodg caraon la cne entio pla"
+       },
+       {
+        "subject": "S1",
+        "target": "los ninos mayores acaba la escuela",
+        "top1": "los posayessicianrie es oea"
+       },
+       {
+        "subject": "S1",
+        "target": "la teoria erronea reduce el numero",
+        "top1": "la etlaeerieia enci"
+       },
+       {
+        "subject": "S1",
+        "target": "el algoritmo de los controles recorre el nodo",
+        "top1": "los eltabimo sgontenegas re l s"
+       },
+       {
+        "subject": "S1",
+        "target": "el cliente establece la conexion creada",
+        "top1": "el cile te gmula or aeglo rra"
+       },
+       {
+        "subject": "S1",
+        "target": "el centro describe las parabolas asociadas",
+        "top1": "el antieroca lesola lo raargoa"
+       },
+       {
+        "subject": "S1",
+        "target": "el cuaderno presenta las divisiones enteras",
+        "top1": "los ietoeeenta lasaetifientraseas"
+       },
+       {
+        "subject": "S1",
+        "target": "los grupos del organismo exigen la liberacion",
+        "top1": "los atoboeran las tgan lns een previmdicion"
+       },
+       {
+        "subject": "S1",
+        "target": "la revolucion nueva abarca las esferas",
+        "top1": "la tolonuci onos lerce la ecuontais"
+       },
+       {
+        "subject": "S1",
+        "target": "los productos cumplen la propiedad asociada",
+        "top1": "los prnen mienplala gionedra enelneds"
+       }
+      ]
+     },
+     "beam_lm_retuned": {
+      "cer_target": {
+       "mean": 0.5543481287254467,
+       "ci95_lo": 0.5436846381466264,
+       "ci95_hi": 0.5649562146337285,
+       "n": 637
+      },
+      "cer_typed": 0.5550497553865988,
+      "wer_target": 0.8157696045451146,
+      "cer_target_pooled": 0.5561514448090931,
+      "cer_target_mean_over_subjects": 0.5543742278642847,
+      "cer_target_mean_over_participants": 0.5543742278642847,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0015698587127158557,
+      "examples": [
+       {
+        "subject": "S1",
+        "target": "la fuerza atrae el electron primero",
+        "top1": "la poesia con la contentana"
+       },
+       {
+        "subject": "S1",
+        "target": "los ninos mayores acaba la escuela",
+        "top1": "los por es con mi esposa"
+       },
+       {
+        "subject": "S1",
+        "target": "la teoria erronea reduce el numero",
+        "top1": "la entendiendo"
+       },
+       {
+        "subject": "S1",
+        "target": "el algoritmo de los controles recorre el nodo",
+        "top1": "los estabamos contengas de la mas"
+       },
+       {
+        "subject": "S1",
+        "target": "el cliente establece la conexion creada",
+        "top1": "el cielo largo"
+       },
+       {
+        "subject": "S1",
+        "target": "el centro describe las parabolas asociadas",
+        "top1": "el contienda es lo raro"
+       },
+       {
+        "subject": "S1",
+        "target": "el cuaderno presenta las divisiones enteras",
+        "top1": "los intenta la tierra"
+       },
+       {
+        "subject": "S1",
+        "target": "los grupos del organismo exigen la liberacion",
+        "top1": "los con las ganas en precio"
+       },
+       {
+        "subject": "S1",
+        "target": "la revolucion nueva abarca las esferas",
+        "top1": "la soluciones para la cuentas"
+       },
+       {
+        "subject": "S1",
+        "target": "los productos cumplen la propiedad asociada",
+        "top1": "los para mis palaciones nada"
+       }
+      ]
+     },
+     "beam_lm_valtuned": {
+      "cer_target": {
+       "mean": 0.5238397356319711,
+       "ci95_lo": 0.5127519950590831,
+       "ci95_hi": 0.5351632038920432,
+       "n": 637
+      },
+      "cer_typed": 0.5262253057031974,
+      "wer_target": 0.8682851162443,
+      "cer_target_pooled": 0.5240934923557192,
+      "cer_target_mean_over_subjects": 0.5244705411505063,
+      "cer_target_mean_over_participants": 0.5244705411505063,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0,
+      "examples": [
+       {
+        "subject": "S1",
+        "target": "la fuerza atrae el electron primero",
+        "top1": "la poesia cara con el cine entia pena"
+       },
+       {
+        "subject": "S1",
+        "target": "los ninos mayores acaba la escuela",
+        "top1": "los esposa tres canadie es cosas"
+       },
+       {
+        "subject": "S1",
+        "target": "la teoria erronea reduce el numero",
+        "top1": "la esta en series en eso"
+       },
+       {
+        "subject": "S1",
+        "target": "el algoritmo de los controles recorre el nodo",
+        "top1": "los estabamos los contre las carden el paso"
+       },
+       {
+        "subject": "S1",
+        "target": "el cliente establece la conexion creada",
+        "top1": "el color de ella lo largo lo arras"
+       },
+       {
+        "subject": "S1",
+        "target": "el centro describe las parabolas asociadas",
+        "top1": "el continero pero la lo raros"
+       },
+       {
+        "subject": "S1",
+        "target": "el cuaderno presenta las divisiones enteras",
+        "top1": "los ciertos desentan las a reticentras en las"
+       },
+       {
+        "subject": "S1",
+        "target": "los grupos del organismo exigen la liberacion",
+        "top1": "los atomieran las tan las ese previacion"
+       },
+       {
+        "subject": "S1",
+        "target": "la revolucion nueva abarca las esferas",
+        "top1": "la toalonucios nos ejerce la cuentas"
+       },
+       {
+        "subject": "S1",
+        "target": "los productos cumplen la propiedad asociada",
+        "top1": "los para tiempos las tienes en es"
+       }
+      ]
+     }
+    },
+    "shuffled": {
+     "greedy": {
+      "cer_target": {
+       "mean": 0.7607496986397801,
+       "ci95_lo": 0.7562335069180323,
+       "ci95_hi": 0.7652625013837442,
+       "n": 637
+      },
+      "cer_typed": 0.7630483750621195,
+      "wer_target": 0.954741347088286,
+      "cer_target_pooled": 0.7621868246217882,
+      "cer_target_mean_over_subjects": 0.7588676379089343,
+      "cer_target_mean_over_participants": 0.7588676379089343,
+      "sentence_acc": 0.0
+     },
+     "beam_nolm": {
+      "cer_target": {
+       "mean": 0.7423153672673618,
+       "ci95_lo": 0.7381817853922064,
+       "ci95_hi": 0.7464795242845931,
+       "n": 637
+      },
+      "cer_typed": 0.7457594444522193,
+      "wer_target": 0.9606694326082081,
+      "cer_target_pooled": 0.7430160890098455,
+      "cer_target_mean_over_subjects": 0.7407684373364817,
+      "cer_target_mean_over_participants": 0.7407684373364817,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_retuned": {
+      "cer_target": {
+       "mean": 0.7736263641978792,
+       "ci95_lo": 0.7687539428549414,
+       "ci95_hi": 0.7784839415896578,
+       "n": 637
+      },
+      "cer_typed": 0.7752194422948117,
+      "wer_target": 0.9239552964042761,
+      "cer_target_pooled": 0.774553750100056,
+      "cer_target_mean_over_subjects": 0.7717090572475428,
+      "cer_target_mean_over_participants": 0.7717090572475428,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_valtuned": {
+      "cer_target": {
+       "mean": 0.7155684207923325,
+       "ci95_lo": 0.7096969475488356,
+       "ci95_hi": 0.7217844381520695,
+       "n": 637
+      },
+      "cer_typed": 0.7219377674314362,
+      "wer_target": 1.0258839799656125,
+      "cer_target_pooled": 0.7145601536860642,
+      "cer_target_mean_over_subjects": 0.7125417869180722,
+      "cer_target_mean_over_participants": 0.7125417869180722,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     }
+    },
+    "zeros": {
+     "greedy": {
+      "cer_target": {
+       "mean": 0.9218214899541414,
+       "ci95_lo": 0.9207894740422616,
+       "ci95_hi": 0.9228465469123496,
+       "n": 637
+      },
+      "cer_typed": 0.9211395692690999,
+      "wer_target": 0.9213949315990131,
+      "cer_target_pooled": 0.9237172816777396,
+      "cer_target_mean_over_subjects": 0.9209556781365953,
+      "cer_target_mean_over_participants": 0.9209556781365953,
+      "sentence_acc": 0.0
+     },
+     "beam_nolm": {
+      "cer_target": {
+       "mean": 0.8353079656380221,
+       "ci95_lo": 0.8323143133879044,
+       "ci95_hi": 0.8382183658705187,
+       "n": 637
+      },
+      "cer_typed": 0.8359683700647063,
+      "wer_target": 0.9245533378186439,
+      "cer_target_pooled": 0.834667413751701,
+      "cer_target_mean_over_subjects": 0.8365229816105482,
+      "cer_target_mean_over_participants": 0.8365229816105482,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_retuned": {
+      "cer_target": {
+       "mean": 0.8341384137531558,
+       "ci95_lo": 0.8314719461406682,
+       "ci95_hi": 0.8367385926751887,
+       "n": 637
+      },
+      "cer_typed": 0.8345633467489936,
+      "wer_target": 0.9192588024220676,
+      "cer_target_pooled": 0.8348675258144561,
+      "cer_target_mean_over_subjects": 0.834053612784353,
+      "cer_target_mean_over_participants": 0.834053612784353,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     },
+     "beam_lm_valtuned": {
+      "cer_target": {
+       "mean": 0.730704690027018,
+       "ci95_lo": 0.7248280862103031,
+       "ci95_hi": 0.7369588325134643,
+       "n": 637
+      },
+      "cer_typed": 0.7398124293212169,
+      "wer_target": 0.9978302309934963,
+      "cer_target_pooled": 0.7321299927959657,
+      "cer_target_mean_over_subjects": 0.7274091396390092,
+      "cer_target_mean_over_participants": 0.7274091396390092,
+      "sentence_acc": 0.0,
+      "target_in_nbest": 0.0
+     }
+    },
+    "real_cpu": {
+     "greedy": {
+      "cer_target": {
+       "mean": 0.5526898690140684,
+       "ci95_lo": 0.5437020368673712,
+       "ci95_hi": 0.5617988151171317,
+       "n": 637
+      },
+      "cer_typed": 0.5519264531809083,
+      "wer_target": 0.8587519623233909,
+      "cer_target_pooled": 0.5536700552309293,
+      "cer_target_mean_over_subjects": 0.5527572614035635,
+      "cer_target_mean_over_participants": 0.5527572614035635,
+      "sentence_acc": 0.0
+     }
+    }
+   },
+   "gaps": {
+    "shuffled_minus_real/greedy": {
+     "mean": 0.20769944104242669,
+     "ci95_lo": 0.19742059714675958,
+     "ci95_hi": 0.21777419662575911,
+     "n": 637
+    },
+    "shuffled_minus_real/beam_nolm": {
+     "mean": 0.19617786761363734,
+     "ci95_lo": 0.1858177319342164,
+     "ci95_hi": 0.20646653519287847,
+     "n": 637
+    },
+    "beam_nolm_minus_greedy/real": {
+     "mean": -0.00691275794362893,
+     "ci95_lo": -0.009345201365013137,
+     "ci95_hi": -0.004490812723474722,
+     "n": 637
+    },
+    "shuffled_minus_real/beam_lm_retuned": {
+     "mean": 0.21927823547243247,
+     "ci95_lo": 0.2076267728345964,
+     "ci95_hi": 0.23094622328160752,
+     "n": 637
+    },
+    "beam_lm_retuned_minus_greedy/real": {
+     "mean": 0.0012978711280932896,
+     "ci95_lo": -0.004022320656444991,
+     "ci95_hi": 0.006735051951075404,
+     "n": 637
+    },
+    "shuffled_minus_real/beam_lm_valtuned": {
+     "mean": 0.19172868516036143,
+     "ci95_lo": 0.17995484990389027,
+     "ci95_hi": 0.20343566334653776,
+     "n": 637
+    },
+    "beam_lm_valtuned_minus_greedy/real": {
+     "mean": -0.029210521965382326,
+     "ci95_lo": -0.034970841734825425,
+     "ci95_hi": -0.02348072016015929,
+     "n": 637
+    }
+   }
+  }
+ },
+ "seconds": 82.0,
+ "total_seconds": 961.7
+}

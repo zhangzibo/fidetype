@@ -1,0 +1,9 @@
+00:30:05 run_dir=C:\Users\zhang\bci-data\runs\m1-09-r4b-full streams=C:\Users\zhang\bci-data\streams\m1-09-r4b-full data=C:\Users\zhang\bci-data\streams\m1-09-r4b-full_beam-controls out=C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-11-m1-09-async-full\results\beam-m1-09-r4b-full workers=10 grid_w=(0.0, 0.05, 0.1, 0.15, 0.25, 0.5, 0.75, 1.0) grid_b=(0.0, 0.5, 1.0, 1.5) calibrated=True
+00:33:22 controls: val n=437 in 196 s
+00:37:57 controls: test n=637 in 274 s
+00:37:59 grid: frame temperature fitted on real val = 2.781
+00:44:45 grid: best on val {'temperature': 2.7807556188617992, 'calibrated': True, 'lm_weight': 0.25, 'insertion_bonus': 0.0, 'val_cer_target': 0.5173181251614886, 'val_wer_target': 0.882186444371799}
+00:45:18 eval: val done
+00:46:07 eval: test done
+00:46:07 eval: wrote results.json, tables.md
+00:46:07 total 962 s

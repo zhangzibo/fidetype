@@ -3,7 +3,7 @@ title: Project plan — trustworthy neural text entry
 type: question
 tags: [planning, roadmap, milestones, risks, process, scope]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, neural-input-landscape-2026]
-updated: 2026-11-10
+updated: 2026-11-11
 ---
 
 # Project plan: trustworthy neural text entry
@@ -103,6 +103,8 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 **Status (2026-11-08, M1-C):** with a keystroke auxiliary loss, the async CTC decoder uses the MEG (shuffled-MEG gap +0.116 to +0.156, CI excludes 0). Best test CER 0.619 (11 subjects, 20 blocks). The async criterion (≈0.59) is still **not met**.
 
 **Status (2026-11-10, M1-15 full-r1 and r3):** the synchronous sentence-context decoder reaches test greedy CER 0.508 on the full cache (0.525 on the test sentences with no close train variant; causal r3 0.574). No exact leakage. The criterion is met only with oracle key timing. The async criterion stays **not met** (best async 0.619 greedy, M1-C r4b). See [M1-15 full-r1 and r3 result](m1-15-full-r1-r3-result.md).
+
+**Status (2026-11-11, M1-09): M1 done.** The async ConvCTC (M1-C recipe, medium model) on the full cache gives test greedy CER **0.506** (0.495 over participants; 0.519 on the far sentences) and beam + LM 0.475. Shuffled MEG 0.760. The inference inputs match v2's async setting; the training also uses key times as labels. A longer r5 run is in progress. See [M1-09 async full result](m1-09-async-full-result.md).
 
 **Reference numbers.**
 - Brain2Qwerty v1 is keystroke-locked. Its MEG CER is 0.36 for Conv+Trans and 0.29 for the full model with LM ([v1](../sources/brain2qwerty-v1.md), Fig. 2).
@@ -248,6 +250,7 @@ The live status is in the [progress dashboard](../progress/index.html).
 - [Compute setup](compute-setup.md)
 - [Trust core v0 results](trust-core-v0-results.md)
 - [Decoder M1 results](decoder-m1-results.md)
+- [M1-09 async full result](m1-09-async-full-result.md)
 - [Direction decision](direction-decision.md)
 - [Reading list](reading-list.md)
 - [Research directions](research-directions.md)

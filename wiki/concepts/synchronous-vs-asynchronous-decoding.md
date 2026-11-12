@@ -3,7 +3,7 @@ title: Synchronous vs asynchronous decoding
 type: concept
 tags: [decoding, real-time, ctc]
 sources: [brain2qwerty-v1, brain2qwerty-v2]
-updated: 2026-11-07
+updated: 2026-11-11
 ---
 
 # Synchronous vs asynchronous decoding
@@ -26,4 +26,6 @@ v2 is asynchronous but **not causal**. The Conformer and the LLM both see the wh
 
 > **Our take:** A causal, low-latency MEG typing decoder that shows text as you go is an open problem with a clear definition. It is directly motivated by both papers and can be trained on public data (SpanishBCBL). It is a strong candidate for a first research contribution.
 
-Related: [CTC](ctc.md) · [NeuroLLM](neuro-llm.md)
+> **Our result (2026-11-11):** our async ConvCTC reaches test CER 0.506 greedy on SpanishBCBL (19 participants), with the same segment bounds as v2 and no key times at inference. Its training uses key times as aux-loss labels ([M1-09](../questions/m1-09-async-full-result.md)).
+
+Related: [CTC](ctc.md) · [NeuroLLM](neuro-llm.md) · [M1-09 result](../questions/m1-09-async-full-result.md)
