@@ -2,7 +2,7 @@
 title: Conformal risk control (CRC) and Learn then Test (LTT)
 type: concept
 tags: [conformal, risk-control, trust, calibration, wrong-commit, guarantee]
-sources: [conformal-risk-control, learn-then-test, brain-to-text-25-copytask]
+sources: [conformal-risk-control, learn-then-test, brain-to-text-25-copytask, adaptive-conformal-inference, conformal-pid-control, rolling-risk-control, conformal-beyond-exchangeability, non-exchangeable-crc]
 updated: 2026-11-11
 ---
 
@@ -37,7 +37,20 @@ API (all in `fidetype.trust`):
 ## Evidence
 - B2T '25: CRC mean wrong-commit 0.046–0.048 vs old gate 0.059; LTT 0.019–0.035; eWPM cost ≤ 0.4 % at 408 calibration trials ([M2-13 result](../questions/m2-13-conformal-result.md)).
 
-> **Our take:** CRC is the right default for the 0.05 promise, but the promise must carry its scope: "expected wrong-commit ≤ 0.05 for this user in this session, given n calibration sentences". For a claim about single sessions, LTT is the safer wording. For live drift, pair it with adaptive conformal inference (`AdaptiveConformal`, Gibbs & Candès 2021).
+> **Our take:** CRC is the right default for the 0.05 promise, but the promise must carry its scope: "expected wrong-commit ≤ 0.05 for this user in this session, given n calibration sentences". For a claim about single sessions, LTT is the safer wording. For live drift, pair it with adaptive conformal inference (`AdaptiveConformal`, Gibbs & Candès 2021). M2-16 did this for the COMMIT threshold (`OnlineCommitRiskControl`, section below).
+
+## Online re-calibration under drift
+Offline CRC fails when the session drifts. `fidetype.trust.online_risk` (M2-16) re-fits the threshold during the session from the user's feedback ([M2-16 result](../questions/m2-16-online-recal-result.md)).
+
+| method | rule | guarantee | feedback |
+|---|---|---|---|
+| `window` / `decay` | weighted CRC on recent items with known truth ([non-exchangeable CRC](../sources/non-exchangeable-crc.md)) | approximate: α + B Σ w̃_i d_TV | full (final text known) |
+| `aci` | λ ← max(λ_min, λ + η (L − α)) ([rolling RC](../sources/rolling-risk-control.md), [conformal PID](../sources/conformal-pid-control.md)) | (1/T) Σ L ≤ α + (λ_{T+1} − λ_1)/(η T), any sequence | realised loss |
+| `aci_window` | window CRC at level α_t, α_t ← α_t + γ (α − L) ([ACI](../sources/adaptive-conformal-inference.md)) | (1/T) Σ L ≤ α + (α_1 − α_{T+1})/(γ T), any sequence | full + realised |
+
+- B2T '25 drift case: offline CRC 0.0625 → window 0.0453, decay 0.0417, `aci` 0.0502, `aci_window` 0.0478; eWPM −0.3 % to −0.6 %. EMG cross-session: 0.0635 → 0.040–0.053.
+- These are long-run averages. Windows of 50 trials still reach 0.10–0.12 (as i.i.d. noise at α does).
+- Silent errors are invisible to the controller. With noticed-only feedback the true rate can exceed α (EMG 0.058–0.064).
 
 ## Related
 - [B2T '25 trust result](../questions/b2t25-trust-result.md) (the 0.059 that motivated M2-13)

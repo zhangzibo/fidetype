@@ -1,0 +1,17 @@
+{
+ "description": "M2-16: online re-calibration of the COMMIT threshold under drift. CPU only. Reuses the M2-13 per-trial item files (B2T '25 both decoders, MEG M1-15 full-r1) and the EMG items of emg_items.py. Settings fixed before the first evaluation run.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "rolling_window": 50,
+ "delays": [0, 10],
+ "shuffles": 20,
+ "seed": 0,
+ "methods": {
+  "window": {"method": "window", "window": 200},
+  "decay": {"method": "window", "window": null, "decay": 0.99},
+  "aci": {"method": "aci", "eta": 0.05},
+  "aci_window": {"method": "aci_window", "window": 200, "gamma": 0.005}
+ },
+ "eta_sensitivity": [0.01, 0.02, 0.05, 0.1, 0.2],
+ "m213_items": "experiments/2026-11-11-m2-13-conformal/results"
+}

@@ -67,6 +67,8 @@ NTS fills this gap. It bridges to these formats and does not replace them (secti
 
 *Informative note (2026-11-11).* The reference trust layer can set its COMMIT threshold with conformal risk control (`fidetype.trust.risk_control`). It then bounds the expected wrong-commit rate by a target α (default 0.05), or bounds it with probability 1 − δ (Learn then Test). The bound holds only if the calibration items and the later items are exchangeable. In practice: calibrate per user and per session, on items with known truth, and re-calibrate after drift. A consumer that reports such a bound SHOULD state α (and δ), the method, the number of calibration items and their scope (user, session). This note adds no field to the stream.
 
+*Informative note (2026-11-11, M2-16).* Under drift inside a session the offline bound can fail. The reference trust layer can then re-calibrate the threshold online from the user's feedback (`fidetype.trust.online_risk`). Two of its methods bound the **long-run average** wrong-commit rate over the T items of a session by α plus a term of order 1/T, for any sequence of items. The bound does not cover short windows, and it covers only the errors that the system observes (a wrong commit that the user does not notice is outside it). A consumer that reports such a bound SHOULD state the method, α, T, the feedback it used (corrections only, or the final text) and the measured silent-error rate. This note adds no field to the stream.
+
 ### 2.4 Design principles
 1. **80/20.** Define the small set of fields that most decoders need. Put the rest in `meta`.
 2. **Adoption first.** A decoder that emits log-softmax output already has most of the data. Emitting a stream must be cheap.

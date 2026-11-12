@@ -35,6 +35,12 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Learn then Test](sources/learn-then-test.md) | Angelopoulos et al., arXiv:2110.01052. Risk control as multiple testing: P(R ≤ α) ≥ 1 − δ. HB / binomial p-values, fixed-sequence testing | 2021-10 |
 | [Brain-to-Text '25 copy-task logits](sources/brain-to-text-25-copytask.md) | Card et al. 2024 (NEJM), Dryad CC0. 1,718 trials of T15 phoneme CTC logits (41 tokens, 80 ms) + cue sentences + published output (WER 0.043). Safe-loaded pickle | 2026-11 |
 | [Toronto sEMG typing (source)](sources/toronto-semg-typing.md) | Achituve et al. 2025, Borealis CC BY 4.0. 19 people × 2 days, 1,968 RHD files, 29,824 isolated key presses (16 forearm ch, 2 kHz) + keylogs. MD5 verified; own RHD reader | 2026-11 |
+| [Adaptive conformal inference](sources/adaptive-conformal-inference.md) | Gibbs & Candès, arXiv:2106.00170. Online level update α_t ← α_t + γ(α − err): long-run coverage for any sequence. Basis of `aci_window` (M2-16) | 2021-06 |
+| [Conformal PID control](sources/conformal-pid-control.md) | Angelopoulos, Candès & Tibshirani, arXiv:2307.16895. Online threshold update (P = quantile tracking, I, D terms). Basis of `aci` (M2-16) | 2023-07 |
+| [Rolling risk control](sources/rolling-risk-control.md) | Feldman et al., arXiv:2205.09095. Online risk control for any bounded loss, any (adversarial) sequence | 2022-05 |
+| [Conformal prediction beyond exchangeability](sources/conformal-beyond-exchangeability.md) | Barber et al., arXiv:2202.13415. Fixed weights (e.g. recent points): coverage gap ≤ Σ w̃ d_TV | 2022-02 |
+| [Non-exchangeable CRC](sources/non-exchangeable-crc.md) | Farinhas et al., arXiv:2310.01262 (ICLR 2024). Weighted CRC for monotone losses under drift. Basis of `window` (M2-16) | 2023-10 |
+| [Conformal prediction under covariate shift](sources/conformal-covariate-shift.md) | Tibshirani et al., arXiv:1904.06019. Likelihood-ratio weights; covariate shift only (background) | 2019-04 |
 
 ## Concepts
 | Page | Summary |
@@ -50,7 +56,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Data scaling](concepts/data-scaling.md) | Log-linear gains with hours. Diversity matters. No plateau yet |
 | [Auto Research](concepts/auto-research.md) | AI agents tuning the pipeline. Works when constrained, fails when open-ended |
 | [Error metrics](concepts/error-metrics.md) | HER, CER, WER, SemER, and why they disagree |
-| [Conformal risk control](concepts/conformal-risk-control.md) | CRC / LTT for the COMMIT threshold: E[wrong-commit] ≤ α (or with prob. 1 − δ) under per-user, per-session exchangeable calibration. API `fidetype.trust.risk_control` |
+| [Conformal risk control](concepts/conformal-risk-control.md) | CRC / LTT for the COMMIT threshold: E[wrong-commit] ≤ α (or with prob. 1 − δ) under per-user, per-session exchangeable calibration. API `fidetype.trust.risk_control`. Online re-calibration under drift: `fidetype.trust.online_risk` (M2-16) |
 
 ## Entities
 | Page | Summary |
@@ -90,6 +96,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [SpanishBCBL repeated participants](questions/spanishbcbl-repeated-participants.md) | S1/S18, S4/S14 and S5/S10/S21 are one person each. Index correct. Sentence splits, so no leakage. Effect on M1-C ≤ 0.003 CER. Report means over participants |
 | [Public datasets](questions/public-datasets.md) | 2026-11-10 survey of about 30 datasets (EMG, EEG, MEG, implants, ECoG, pretraining) with licence and fit. Top 5: Brain-to-Text '25, KT-sEMG, emg2qwerty, Willett handwriting, Toronto sEMG. Licence warnings. First download: B2T '25 logits (58 MB) |
 | [M2-13 conformal result](questions/m2-13-conformal-result.md) | 2026-11-11: CRC on B2T '25: mean test wrong-commit 0.046–0.048 (old gate 0.059), eWPM cost ≤ 0.4 %; LTT mean 0.035, p95 0.056. Marginal only; drift (earlier → later half of day) breaks it (0.0625). MEG: no gain |
+| [M2-16 online re-calibration result](questions/m2-16-online-recal-result.md) | 2026-11-11: online CRC / ACI for the COMMIT threshold from user feedback. Drift case: offline CRC 0.0625 → window 0.045, `aci` 0.050, `aci_window` 0.048 (B2T); EMG cross-session 0.0635 → 0.040–0.053; eWPM −0.3 to −0.6 %. Long-run bound for any sequence (`aci`, `aci_window`); 50-trial windows not controlled; silent errors outside the guarantee |
 | [B2T '25 trust result](questions/b2t25-trust-result.md) | First cross-device test (intracortical speech). Trust: wrong-commit 0.610 → 0.059 at 11.55 vs 11.45 eWPM; published-sentence gate 0.194 → 0.044 at 18.77 vs 19.61; gaze only 4.08. −p_top1 AUROC 0.80, word conf 0.84 |
 | [EMG Toronto trust result](questions/emg-toronto-trust-result.md) | Third device type (forearm sEMG, composed sentences). Trust wrong-commit ≤ 0.004 vs 0.54–0.96 always-commit, eWPM up in all 3 conditions; session-calibrated 8.02 vs gaze 4.27; cross-subject below gaze. CRC/LTT feasible (n 142). No spec change |
 | [Trust core v0 results](questions/trust-core-v0-results.md) | 2026-11-08 simulator run: trust policy cuts wrong commits 0.29–0.47 → 0.02–0.09 for a 7–16 % eWPM cost. LM fusion breaks calibration. Revised Paper 1 claim. Beam re-tune, first real MEG, per-word OFFER: no BCI policy on real MEG beats gaze typing alone |
@@ -113,3 +120,4 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [M1-09 async decoder, full cache](../experiments/2026-11-11-m1-09-async-full/results.md) | Async check vs v2, small + medium runs, controls, near variants, per participant, like for like vs M1-C and sync. r5: no gain | 2026-11-11 |
 | [Trust core on Brain-to-Text '25](../experiments/2026-11-10-b2t25-trust/results.md) | Own b2t25 adapter (phoneme NTS) + CMUdict/Tatoeba word route (WER 0.149). Word- and phoneme-level harness, published-sentence gate, null audit, day-cluster CIs | 2026-11-10 |
 | [EMG key-press decoder + trust on Toronto sEMG](../experiments/2026-11-11-emg-toronto/results.md) | Own adapter + CNN (key acc 0.168 cross-session, 0.209 cross-subject, 0.299 session-calibrated; permuted 0.022). Composed held-out Tatoeba sentences, CRC/LTT, null audit, participant CIs | 2026-11-11 |
+| [M2-16 online re-calibration under drift](../experiments/2026-11-11-m2-16-online-recal/results.md) | `OnlineCommitRiskControl` (window / decay / aci / aci_window) on B2T '25 (drift, shuffled, full-day cold start), Toronto sEMG, MEG M1-15; delay 0 and 10; rolling-50 maxima; noticed-only feedback | 2026-11-11 |

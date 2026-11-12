@@ -34,6 +34,12 @@ from fidetype.trust.policy import (
     fit_thresholds,
     highlight_slots,
 )
+from fidetype.trust.online_risk import (
+    OnlineCommitRiskControl,
+    OnlineTrustPolicy,
+    Ticket,
+    weighted_crc_threshold,
+)
 from fidetype.trust.risk_control import (
     CommitRiskControl,
     RiskControlResult,
@@ -57,12 +63,15 @@ __all__ = [
     "HallucinationGuard",
     "NBest",
     "NBestCalibrator",
+    "OnlineCommitRiskControl",
+    "OnlineTrustPolicy",
     "PolicyConfig",
     "PolicyInputs",
     "PredictionSet",
     "RiskControlResult",
     "SplitConformal",
     "TemperatureScaler",
+    "Ticket",
     "WordChoice",
     "WordConformal",
     "WordSlotInfo",
@@ -82,4 +91,5 @@ __all__ = [
     "scores_to_posteriors",
     "semantic_entropy",
     "session_recalibration",
+    "weighted_crc_threshold",
 ]

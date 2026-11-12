@@ -1,0 +1,4 @@
+xsession: lm_weight 1.0, old gate 0.3, test wrong-commit 0.0036 eWPM 4.677 (M6-07 c_trust 0.0036 / 4.677); eligible 1.000 (62s)
+calib: lm_weight 1.0, old gate 0.7, test wrong-commit 0.0036 eWPM 8.024 (M6-07 c_trust 0.0036 / 8.024); eligible 1.000 (76s)
+xsubject: lm_weight 1.5, old gate 0.3, test wrong-commit 0.0000 eWPM 4.080 (M6-07 c_trust 0.0000 / 4.080); eligible 0.000 (69s)
+done (207s)

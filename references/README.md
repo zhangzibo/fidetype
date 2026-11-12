@@ -20,6 +20,12 @@ PDFs and cloned repos are git-ignored because this repo is public and they carry
 | brain2qwerty-code | repo | https://github.com/facebookresearch/brain2qwerty (cloned 2026-11-07) | CC BY-NC 4.0 | `repos/brain2qwerty/` |
 | conformal-risk-control | paper | Angelopoulos, Bates, Fisch, Lei, Schuster, arXiv:2208.02814 (v4, 2025-06-13): https://arxiv.org/abs/2208.02814 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
 | learn-then-test | paper | Angelopoulos, Bates, Candès, Jordan, Lei, arXiv:2110.01052 (v5, 2022-09-29): https://arxiv.org/abs/2110.01052 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| adaptive-conformal-inference | paper | Gibbs, Candès, arXiv:2106.00170 (v3, 2021-10-28): https://arxiv.org/abs/2106.00170 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| conformal-pid-control | paper | Angelopoulos, Candès, Tibshirani, arXiv:2307.16895 (v1, 2023-07-31): https://arxiv.org/abs/2307.16895 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| conformal-beyond-exchangeability | paper | Barber, Candès, Ramdas, Tibshirani, arXiv:2202.13415 (v5, 2023-03-17): https://arxiv.org/abs/2202.13415 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| non-exchangeable-crc | paper | Farinhas, Zerva, Ulmer, Martins, arXiv:2310.01262 (v2, 2024-01-26; ICLR 2024): https://arxiv.org/abs/2310.01262 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| rolling-risk-control | paper | Feldman, Ringel, Bates, Romano, arXiv:2205.09095 (v7, 2023-01-27): https://arxiv.org/abs/2205.09095 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| conformal-covariate-shift | paper | Tibshirani, Barber, Candès, Ramdas, arXiv:1904.06019 (v3, 2020-07-06): https://arxiv.org/abs/1904.06019 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
 
 ## Datasets (not stored here)
 | Dataset | Access |
