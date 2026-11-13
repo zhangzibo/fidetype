@@ -32,7 +32,9 @@ import re
 from dataclasses import dataclass, field
 from itertools import combinations
 from os import PathLike
-from typing import Callable, Iterable, Sequence
+from typing import Callable, Iterable, Iterator, Sequence
+
+import numpy as np
 
 _VARIANT = re.compile(r"\(\d+\)$")
 
@@ -57,6 +59,20 @@ def edit_distance_str(a: str, b: str, max_d: int | None = None) -> int:
             return max_d + 1
         prev = cur
     return prev[-1]
+
+
+def _levenshtein_many(q: np.ndarray, codes: np.ndarray) -> np.ndarray:
+    """Exact Levenshtein distances of the query ``q`` (code points) to each row of ``codes`` (``N x n``)."""
+    N, n = codes.shape
+    ar = np.arange(n + 1, dtype=np.int32)
+    prev = np.broadcast_to(ar, (N, n + 1))
+    tmp = np.empty((N, n + 1), dtype=np.int32)
+    for i, c in enumerate(q.tolist(), 1):
+        tmp[:, 0] = i
+        np.minimum(prev[:, 1:] + 1, prev[:, :-1] + (codes != c), out=tmp[:, 1:])
+        # Insertions: cur[j] = min over k <= j of tmp[k] + (j - k).
+        prev = np.minimum.accumulate(tmp - ar, axis=1) + ar
+    return np.asarray(prev[:, n])
 
 
 def _deletes(s: str, d: int) -> set[str]:
@@ -99,9 +115,55 @@ class PronLexicon:
         for w in words:
             for p in self.prons.get(w, ()):
                 self._fallback.setdefault(len(p), []).append(p)
+        self._fb_index = None
+
+    def _fallback_index(self) -> dict[int, tuple[list[str], np.ndarray]]:
+        """Per length ``n``: the unique fallback pronunciations and their code points (``N x n``)."""
+        idx = getattr(self, "_fb_index", None)
+        if idx is None:
+            idx = {}
+            for n, ps in self._fallback.items():
+                uniq = list(dict.fromkeys(ps))
+                codes = np.array([[ord(c) for c in p] for p in uniq], dtype=np.int32).reshape(len(uniq), n)
+                idx[n] = (uniq, codes)
+            self._fb_index = idx
+        return idx
 
     def nearest(self, seg: str, max_len_diff: int = 2) -> list[tuple[str, int]]:
-        """Brute-force nearest fallback words, when :meth:`candidates` finds none.
+        """Nearest fallback words, when :meth:`candidates` finds none.
+
+        Searches only the pronunciations of the fallback words (see
+        :meth:`set_fallback_words`) whose length is within ``max_len_diff``.
+        Returns the words at the smallest distance, if it is at most
+        ``max(3, len(seg) // 2)``, sorted by word.
+
+        Exact and equal to :meth:`nearest_bruteforce` (same words, same
+        distance, same order). It computes the full Levenshtein distance to
+        all pronunciations of one length at once (NumPy, one row of the DP
+        table per query symbol; the insertion chain of a row is a running
+        minimum).
+        """
+        lim = max(3, len(seg) // 2)
+        idx = self._fallback_index()
+        q = np.array([ord(c) for c in seg], dtype=np.int32)
+        best_d, hits = lim + 1, []
+        for n in range(len(seg) - max_len_diff, len(seg) + max_len_diff + 1):
+            got = idx.get(n)
+            if got is None or abs(n - len(seg)) > best_d:
+                continue
+            prons, codes = got
+            d = _levenshtein_many(q, codes)
+            m = int(d.min())
+            if m < best_d:
+                best_d, hits = m, []
+            if m == best_d:
+                hits.extend(prons[i] for i in np.flatnonzero(d == m))
+        if best_d > lim:
+            return []
+        return sorted({(w, best_d) for p in hits for w in self._by_pron[p]}, key=lambda x: x[0])
+
+    def nearest_bruteforce(self, seg: str, max_len_diff: int = 2) -> list[tuple[str, int]]:
+        """Reference for :meth:`nearest`: one Python edit distance per pronunciation (slow).
 
         Searches only the pronunciations of the fallback words (see
         :meth:`set_fallback_words`) whose length is within ``max_len_diff``.
@@ -233,6 +295,35 @@ class PhonemeWordDecoder:
             v = float(self.sentence_lm(text))
             self._lm_cache[text] = v
         return v
+
+    def warm(self, texts: Iterable[str]) -> Iterator[None]:
+        """Fill the caches that :meth:`decode` of these phoneme texts would use, one small step per ``next()``.
+
+        One step = the lexicon candidates of one new segment, its
+        :meth:`PronLexicon.nearest` fallback (if it has no candidates), or the
+        sentence-LM score of one new word sentence. The steps already in
+        the caches are skipped. The caches hold values that :meth:`decode`
+        would compute anyway, so a result never changes. Use it as a
+        time-budgeted prewarm (``CTCBeamSpec(on_prewarm=wdec.warm, prewarm_budget_s=...)``).
+        """
+        for raw in texts:
+            text = " ".join(str(raw).split())
+            segs = text.split()
+            for seg in segs:
+                if seg not in self._cand_cache:
+                    c = self.lexicon.candidates(seg)  # as _slot, in two steps
+                    if not c:
+                        yield
+                        c = self.lexicon.nearest(seg)
+                    self._cand_cache[seg] = c
+                    yield
+            if self.sentence_lm is None:
+                continue
+            for words, _, _, _ in self._combine(segs, [[0.0] * len(s) for s in segs]):
+                wt = " ".join(words)
+                if wt and wt not in self._lm_cache:
+                    self._lm(wt)
+                    yield
 
     def decode(self, phoneme_hyps: Iterable) -> list[WordHypothesis]:
         """Decode phoneme hypotheses (objects with ``text``, ``logp_acoustic``

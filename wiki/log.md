@@ -449,3 +449,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Own causal GRU-CTC decoder (2 runs; run 1 collapsed at lr 2e-3, run 2 lr 5e-4): validation PER 0.471; test PER 0.542, WER 0.751, right sentence first 3/400.
 - Frozen configuration on 400 test trials (10 later sessions): 0 wrong commits, 0 commits; controls 0/400; guard AUROC 0.966. Outcome by the pre-registered rule: **uninformative** (safe; the LTT bound not tested).
 - New page [Confirmatory test on T12](questions/confirmatory-t12.md); update note on [B2T '25 trust result](questions/b2t25-trust-result.md); index.
+
+## [2026-11-13] query | M4-09 fast exact lexicon fallback + bounded prewarm
+- `PronLexicon.nearest`: exact NumPy Levenshtein per length bucket, about 20x faster; `nearest_bruteforce` kept as the reference. Equal on 5,667/5,667 B2T-decode calls and 9,000/9,000 synthetic calls.
+- `CTCBeamSpec(prewarm_budget_s=...)`, `PhonemeWordDecoder.warm`, `IncrementalPrefixBeam.prewarm(deadline=...)`: prewarm in steps under a per-push time budget.
+- B2T 816 test utterances: decisions equal M4-06 in every condition (ours and published gate). Batch end p95 676 -> 172 ms (fast `nearest`); budget 1 ms: push p95 3.1 ms, max 30 ms, end p50/p95 52/118 ms, CPU 2.7x search only.
+- Push spikes came from Python's gen-2 GC (80-280 ms). Rule: freeze after load, GC off while an utterance streams, collect after its final decision.
+- Experiment `experiments/2026-11-13-m4-09-fast-lexicon/`; tests `tests/test_fast_lexicon.py`; page [streaming trust layer](concepts/streaming-trust-layer.md) updated.

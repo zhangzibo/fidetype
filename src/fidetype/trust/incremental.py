@@ -47,8 +47,9 @@ incremental factory from one setting, so the two cannot drift apart.
 from __future__ import annotations
 
 import math
+import time
 from dataclasses import dataclass, field
-from typing import Any, Callable, Protocol, Sequence, runtime_checkable
+from typing import Any, Callable, Iterator, Protocol, Sequence, runtime_checkable
 
 import numpy as np
 
@@ -256,9 +257,21 @@ class CTCBeamSpec:
     decoder runs speculative end-of-utterance work
     (:meth:`IncrementalPrefixBeam.prewarm` and ``on_prewarm``); None: off.
     ``on_prewarm(texts)`` gets the current candidate texts, for example to
-    fill the caches of a word decoder. ``prewarm_max_new`` caps the new
-    alignments per prewarm (bounded push cost). Prewarming never changes a
-    result.
+    fill the caches of a word decoder. It may return an iterator: each
+    step is then one small unit of work (for example
+    :meth:`fidetype.lm.phoneme_words.PhonemeWordDecoder.warm`).
+    ``prewarm_max_new`` caps the new alignments per prewarm.
+    ``prewarm_budget_s``: None runs each prewarm to its end inside the push
+    that starts it (push spikes are possible). A number bounds the prewarm
+    work per ``push_frames`` call to about this many seconds (measured from
+    the start of the call): the work runs in steps, continues in the next
+    pushes, and a new prewarm replaces an unfinished one. A push can exceed
+    the budget by at most one step. The alignments run first, then the
+    ``on_prewarm`` steps. Prewarming never changes a result.
+    For hard push bounds in a live process, also call ``gc.collect()`` and
+    ``gc.freeze()`` once after loading the models: with a large heap
+    (lexicon, LMs) one full cyclic-GC pass can take 0.3 s inside a push
+    (M4-09).
     """
 
     beam_kwargs: dict = field(default_factory=dict)
@@ -270,10 +283,13 @@ class CTCBeamSpec:
     on_prewarm: Callable[[list[str]], None] | None = None
     prewarm_max_new: int | None = None
     preview_n: int = 10
+    prewarm_budget_s: float | None = None
 
     def __post_init__(self) -> None:
         if self.prewarm_every is not None and self.prewarm_every < 1:
             raise ValueError("prewarm_every must be >= 1 or None")
+        if self.prewarm_budget_s is not None and not self.prewarm_budget_s > 0:
+            raise ValueError("prewarm_budget_s must be > 0 or None")
         if self.post is None:
             self.post = _default_post(self.confidence_variant)
 
@@ -300,27 +316,72 @@ class IncrementalCTCBeam:
         self.spec = spec
         self.beam = IncrementalPrefixBeam(list(vocab), blank_id, spec.lm, **kw)
         self._since_prewarm = 0
+        self._pending: Iterator[None] | None = None
+        self._deadline: float | None = None
         self.prewarm_s = 0.0
-        self.n_prewarm = 0
+        self.n_prewarm = 0  # prewarms run to their end
+        self.n_prewarm_dropped = 0  # budgeted prewarms replaced or cut by the end of the utterance
 
     def push_frames(self, chunk: np.ndarray) -> None:
+        t0 = time.perf_counter()
         self.beam.push(_as_chunk(chunk))
         pe = self.spec.prewarm_every
         if pe is not None:
             self._since_prewarm += int(np.shape(chunk)[0])
             if self._since_prewarm >= pe:
                 self._since_prewarm = 0
-                self.prewarm()
+                if self.spec.prewarm_budget_s is None:
+                    self.prewarm()
+                else:
+                    if self._pending is not None:
+                        self.n_prewarm_dropped += 1
+                    self._pending = self._prewarm_steps()
+        if self._pending is not None:
+            self._run_pending(t0 + self.spec.prewarm_budget_s)  # type: ignore[operator]
 
     def prewarm(self) -> None:
-        import time
-
+        """One full prewarm now (no time budget)."""
         t0 = time.perf_counter()
-        self.beam.prewarm(self.spec.prewarm_max_new)
-        if self.spec.on_prewarm is not None:
-            self.spec.on_prewarm(self.beam.end_candidates()[0])
+        self._deadline = None
+        for _ in self._prewarm_steps():
+            pass
         self.prewarm_s += time.perf_counter() - t0
         self.n_prewarm += 1
+
+    def _prewarm_steps(self) -> Iterator[None]:
+        yield from self._align_steps()
+        yield  # the on_prewarm work starts in its own step
+        yield from self._post_steps()
+
+    def _align_steps(self) -> Iterator[None]:
+        # The alignments stop at the deadline and continue in the next step.
+        while True:
+            self.beam.prewarm(self.spec.prewarm_max_new, deadline=self._deadline)
+            if self._deadline is None or time.perf_counter() < self._deadline:
+                return
+            yield
+
+    def _post_steps(self) -> Iterator[None]:
+        if self.spec.on_prewarm is None:
+            return
+        r = self.spec.on_prewarm(self.beam.end_candidates()[0])
+        if r is not None and hasattr(r, "__next__"):
+            for _ in r:
+                yield
+
+    def _run_pending(self, deadline: float) -> None:
+        t0 = time.perf_counter()
+        self._deadline = deadline
+        try:
+            while self._pending is not None and time.perf_counter() < deadline:
+                try:
+                    next(self._pending)
+                except StopIteration:
+                    self._pending = None
+                    self.n_prewarm += 1
+        finally:
+            self._deadline = None
+            self.prewarm_s += time.perf_counter() - t0
 
     def partial(self) -> NBest:
         hyps = self.beam.partial(self.spec.preview_n)
@@ -331,6 +392,9 @@ class IncrementalCTCBeam:
         return from_lm_hypotheses(hyps, None, confidence_variant=None)
 
     def finalize(self, stream: NeuralTextStream) -> NBest:
+        if self._pending is not None:  # unfinished speculative work: not needed now
+            self._pending = None
+            self.n_prewarm_dropped += 1
         return self.spec.post(self.beam.finalize(), stream)  # type: ignore[misc]
 
 

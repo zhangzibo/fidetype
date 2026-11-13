@@ -156,9 +156,29 @@ The layer applies the frozen frame temperature to each chunk row by row, as the 
 - Full prewarm runs the word work during the utterance: end p95 falls 14×. The cost: push spikes up to 2.2 s and about 4.5× CPU. This is a deployment choice.
 - Synthetic: the demo segment beam goes from 10.9 to 0.9 ms (p50); the CTC beam + LM from 226 to 87 ms with prewarm.
 
+**Fast lexicon fallback and bounded prewarm (M4-09).** Experiment: [2026-11-13-m4-09-fast-lexicon](../../experiments/2026-11-13-m4-09-fast-lexicon/results.md) ([tables](../../experiments/2026-11-13-m4-09-fast-lexicon/results/tables.md)).
+
+- `PronLexicon.nearest` is now exact and about 20x faster: a NumPy Levenshtein to all fallback pronunciations of one length at once. It equals `nearest_bruteforce` (kept as the reference) on 5,667/5,667 calls from the B2T test decode and 9,000/9,000 synthetic calls (same words, distance and order).
+- `CTCBeamSpec(prewarm_budget_s=...)` runs the prewarm in small steps, about the budget per push, and continues in the next pushes. `PhonemeWordDecoder.warm` gives the word-decoder steps. A push overshoots by at most one step.
+- Final decisions equal M4-06 in every condition: 816/816 for our decoder and for the published gate.
+
+| condition (B2T, ms) | end p50 | end p95 | end max | push p95 | push max | CPU per utterance |
+|---|---|---|---|---|---|---|
+| batch, brute-force `nearest` (same-run baseline) | 106 | 676 | 2361 | 0.02 | 0.2 | 108 |
+| batch, fast `nearest` | 95 | 172 | 265 | 0.02 | 0.2 | 97 |
+| incremental search only, fast | 81 | 148 | 249 | 0.18 | 8.2 | 102 |
+| incremental + full prewarm, fast | 33 | 74 | 131 | 20.4 | 119 | 519 |
+| incremental + prewarm, **budget 1 ms**, fast | 52 | 118 | 220 | **3.1** | **30** | 271 |
+| incremental + prewarm, budget 0.5 ms, fast | 70 | 138 | 236 | 0.8 | 13 | 192 |
+
+- The push target (p95 < 5 ms, max < 50 ms) holds at budgets 0.5 and 1 ms. It needs a GC rule too: Python's gen-2 garbage collection took 80-280 ms inside a push (about 2.5 M objects on the heap). Rule: `gc.collect(); gc.freeze()` after the models load, `gc.disable()` while an utterance streams, `gc.collect()` after its final decision (p50 40-90 ms, at an idle point).
+- The brute-force baseline here (106/676/2361 ms) is lower than the M4-08 numbers (175/1010/3242 ms), because M4-08 ran next to the T12 GPU job.
+
+> **Our take:** the end-of-utterance tail was our lexicon search, and the push spikes were the garbage collector. Both are fixed with no change to any decision. A worker thread is not needed for this route.
+
 **Preview stability (B2T, word previews every 0.4 s).** The top-1 changes in 29 % of steps. The shown text is rewritten (not only extended) 4.4 times per utterance. In 35 % of utterances the final top-1 differs from the last preview.
 
-> **Our take:** incremental decoding removes the decoder's search from the wait after the user stops, with no change to any decision. The real-data tail sits in our word decoder, not in the layer; a faster exact lexicon search is the next fix. The unstable previews confirm the rule: never act on `is_final = false`. Show previews as grey text that can change.
+> **Our take:** incremental decoding removes the decoder's search from the wait after the user stops, with no change to any decision. The real-data tail sits in our word decoder, not in the layer; a faster exact lexicon search is the next fix (done in M4-09, below). The unstable previews confirm the rule: never act on `is_final = false`. Show previews as grey text that can change.
 
 ## Spec additions (proposal, not breaking v0.1)
 [FEP-0001](../../spec/feps/0001-streaming-trust-events.md) (status Draft) proposes four Development parts. A v0.1 consumer ignores all four.
@@ -207,7 +227,7 @@ fidetype conformance check --profile fep-0001 decisions.jsonl  # check an input 
 - A test runs the layer on synthetic streams (both routes, provisional decisions, ASK and retry) and checks its decision log with the profile: no failure.
 
 ## Limits and follow-ups
-- Incremental decoding is done (M4-08). Open: a faster exact lexicon fallback for the B2T word decoder; prewarm in a worker thread or with a time budget per push. M4-01 (neural decoder lookahead) and M4-02 (lookahead sweep) are still open.
+- Incremental decoding is done (M4-08). The fast exact lexicon fallback and the per-push prewarm budget are done (M4-09). Open: bound the word-decoder caches (LRU) for long sessions. M4-01 (neural decoder lookahead) and M4-02 (lookahead sweep) are still open.
 - Real-data frozen configs exist for one participant and one split only (M4-06, B2T '25 split A). Each new user and session needs its own fit.
 - FEP-0001 conformance is done (M4-07, profile `fep-0001`). The FEP stays Draft until review.
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.

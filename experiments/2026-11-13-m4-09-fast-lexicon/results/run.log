@@ -1,0 +1,62 @@
+01:15:55 stage b2t
+01:18:27 b2t-batch-bf: end p50/p95/max 100.88/677.51/2204.1 ms; push p95 0.016 max 0.1 ms; equal 816/816 (148s)
+01:20:56 b2t-inc-bf: end p50/p95/max 84.60/651.04/2215.8 ms; push p95 0.167 max 0.7 ms; equal 816/816 (149s)
+01:32:01 b2t-inc-full-bf: end p50/p95/max 31.83/69.24/594.3 ms; push p95 19.878 max 2212.4 ms; equal 816/816 (665s)
+01:33:25 b2t-batch: end p50/p95/max 92.74/167.49/376.2 ms; push p95 0.016 max 0.2 ms; equal 816/816 (83s)
+01:34:52 b2t-inc: end p50/p95/max 77.82/145.76/232.5 ms; push p95 0.175 max 0.8 ms; equal 816/816 (87s)
+01:42:59 b2t-inc-full: end p50/p95/max 32.88/70.20/139.1 ms; push p95 19.973 max 242.1 ms; equal 816/816 (486s)
+01:46:52 b2t-inc-budget1: end p50/p95/max 49.35/112.01/198.6 ms; push p95 3.114 max 302.6 ms; equal 816/816 (233s)
+01:52:27 b2t-inc-budget2: end p50/p95/max 33.43/93.15/200.0 ms; push p95 5.443 max 402.3 ms; equal 816/816 (334s)
+01:59:00 b2t-inc-budget3: end p50/p95/max 29.57/77.57/166.9 ms; push p95 7.020 max 39.5 ms; equal 816/816 (393s)
+02:00:26 b2t-pub-batch: end p50/p95/max 94.27/168.47/371.8 ms; push p95 0.016 max 0.1 ms; equal 816/816 (86s)
+02:01:56 b2t-pub-inc: end p50/p95/max 80.21/150.42/259.6 ms; push p95 0.183 max 0.7 ms; equal 816/816 (90s)
+02:01:56 recorded 1888 distinct nearest() queries
+02:01:56 stage nearest
+02:11:49 nearest b2t-test-queries: 5664/5664 equal; brute p50/p95/max 109.6/188.5/242.7 ms; fast 5.47/9.66/19.99 ms
+02:20:44 nearest synthetic: 9000/9000 equal; brute p50/p95/max 32.0/169.3/257.0 ms; fast 1.77/8.45/14.97 ms
+02:20:44 stage tables
+10:19:37 note: lines above = first run (default GC, results/b2t-gc-default.json). Rerun of stage b2t with gc.freeze() follows.
+10:19:43 stage b2t
+10:19:48 gc.freeze(): 2524195 objects
+10:22:20 b2t-batch-bf: end p50/p95/max 104.44/689.65/2317.2 ms; push p95 0.016 max 0.1 ms; equal 816/816 (152s)
+10:24:57 b2t-inc-bf: end p50/p95/max 88.31/685.19/2212.7 ms; push p95 0.185 max 75.7 ms; equal 816/816 (156s)
+10:36:33 b2t-inc-full-bf: end p50/p95/max 32.99/73.98/641.1 ms; push p95 20.626 max 2243.0 ms; equal 816/816 (696s)
+10:38:02 b2t-batch: end p50/p95/max 97.44/176.92/320.5 ms; push p95 0.016 max 0.1 ms; equal 816/816 (88s)
+10:39:35 b2t-inc: end p50/p95/max 83.27/159.23/296.7 ms; push p95 0.189 max 0.7 ms; equal 816/816 (93s)
+10:48:02 b2t-inc-full: end p50/p95/max 33.95/74.52/239.6 ms; push p95 20.559 max 265.2 ms; equal 816/816 (507s)
+10:50:53 b2t-inc-budget0.5: end p50/p95/max 70.71/146.13/248.8 ms; push p95 0.832 max 119.2 ms; equal 816/816 (171s)
+10:54:54 b2t-inc-budget1: end p50/p95/max 52.40/120.61/254.2 ms; push p95 3.097 max 147.5 ms; equal 816/816 (240s)
+11:00:36 b2t-inc-budget2: end p50/p95/max 35.30/93.30/205.6 ms; push p95 5.473 max 202.6 ms; equal 816/816 (342s)
+11:02:05 b2t-pub-batch: end p50/p95/max 98.13/182.21/269.1 ms; push p95 0.016 max 0.2 ms; equal 816/816 (89s)
+11:03:38 b2t-pub-inc: end p50/p95/max 83.04/157.62/252.2 ms; push p95 0.184 max 49.3 ms; equal 816/816 (92s)
+11:03:38 recorded 1884 distinct nearest() queries
+11:03:38 stage tables
+11:04:10 note: the run above froze the GC once after setup only (results/b2t-gc-freeze-once.json); gen-2 pauses remained. Rerun with a freeze before each condition follows.
+11:04:10 stage b2t
+11:04:15 gc.freeze() after setup: 2524196 objects (again before each condition)
+11:06:50 b2t-batch-bf: end p50/p95/max 108.92/682.25/2235.0 ms; push p95 0.016 max 0.3 ms; equal 816/816 (155s)
+11:09:27 b2t-inc-bf: end p50/p95/max 90.54/690.59/2321.7 ms; push p95 0.186 max 66.4 ms; equal 816/816 (158s)
+11:21:23 b2t-inc-full-bf: end p50/p95/max 34.12/74.46/616.9 ms; push p95 21.470 max 2254.1 ms; equal 816/816 (715s)
+11:22:51 b2t-batch: end p50/p95/max 97.07/177.77/276.8 ms; push p95 0.016 max 0.3 ms; equal 816/816 (88s)
+11:24:24 b2t-inc: end p50/p95/max 83.17/156.83/253.7 ms; push p95 0.187 max 63.2 ms; equal 816/816 (93s)
+11:25:26 note: the partial run above (freeze before each condition, automatic GC on) still had 60-70 ms push maxima without prewarm; stopped. Main run with automatic GC off during a condition and gc.collect() between utterances follows.
+11:27:16 stage b2t
+11:27:21 gc.freeze() after setup: 2524198 objects (again before each condition)
+11:30:23 b2t-batch-bf: end p50/p95/max 105.47/675.55/2361.3 ms; push p95 0.016 max 0.2 ms; equal 816/816 (183s)
+11:33:30 b2t-inc-bf: end p50/p95/max 87.92/679.42/2253.8 ms; push p95 0.184 max 0.7 ms; equal 816/816 (186s)
+11:46:54 b2t-inc-full-bf: end p50/p95/max 32.86/70.78/602.3 ms; push p95 20.435 max 2239.6 ms; equal 816/816 (804s)
+11:48:52 b2t-batch: end p50/p95/max 94.91/172.16/265.0 ms; push p95 0.016 max 0.2 ms; equal 816/816 (117s)
+11:50:53 b2t-inc: end p50/p95/max 80.69/147.76/248.8 ms; push p95 0.179 max 8.2 ms; equal 816/816 (121s)
+12:01:11 b2t-inc-full: end p50/p95/max 32.58/73.66/130.7 ms; push p95 20.388 max 118.7 ms; equal 816/816 (618s)
+12:04:47 b2t-inc-budget0.5: end p50/p95/max 69.84/137.56/236.4 ms; push p95 0.841 max 12.7 ms; equal 816/816 (215s)
+12:09:52 b2t-inc-budget1: end p50/p95/max 52.31/117.93/219.7 ms; push p95 3.101 max 30.3 ms; equal 816/816 (305s)
+12:16:58 b2t-inc-budget2: end p50/p95/max 34.93/95.08/212.7 ms; push p95 5.463 max 36.7 ms; equal 816/816 (426s)
+12:18:59 b2t-pub-batch: end p50/p95/max 97.59/170.60/286.6 ms; push p95 0.016 max 0.2 ms; equal 816/816 (120s)
+12:21:02 b2t-pub-inc: end p50/p95/max 82.06/150.40/235.1 ms; push p95 0.186 max 0.8 ms; equal 816/816 (123s)
+12:21:02 recorded 1889 distinct nearest() queries
+12:21:02 stage tables
+12:21:14 stage tables
+12:21:36 stage nearest
+12:31:25 nearest b2t-test-queries: 5667/5667 equal; brute p50/p95/max 108.9/188.6/253.6 ms; fast 5.16/9.27/25.16 ms
+12:40:19 nearest synthetic: 9000/9000 equal; brute p50/p95/max 31.9/170.0/252.8 ms; fast 1.70/7.99/14.24 ms
+12:40:19 stage tables

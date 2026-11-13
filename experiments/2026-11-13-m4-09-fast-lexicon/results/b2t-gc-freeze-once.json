@@ -1,0 +1,807 @@
+{
+ "n": 816,
+ "frame_period_s": 0.08,
+ "config_ids": {
+  "ours": "tcfg-f5ca0020b3b8fce2",
+  "published": "tcfg-ea22af7ec91eea3f"
+ },
+ "beam": {
+  "search": "vector",
+  "beam": 64,
+  "n_best": 20,
+  "prune_topk": null,
+  "prune_logp": -8.0,
+  "space_rules": true
+ },
+ "settings": {
+  "data": "Brain-to-Text '25 copy task (Card et al. 2024, T15, CC0): the 816 split-A test trials as full-precision NTS JSON Lines written by M4-06",
+  "decoder": "as M4-08: phoneme CTC prefix beam (vector, beam 64, n_best 20, no LM) -> PhonemeWordDecoder (CMUdict, word unigram, char 6-gram)",
+  "chunk_frames": 1,
+  "prewarm_every": 5,
+  "prewarm_top_k": 20,
+  "prewarm_max_new": 256,
+  "budgets_ms": [
+   0.5,
+   1,
+   2
+  ],
+  "limit": null,
+  "only": null,
+  "caches": "word decoder caches cleared at the start of each condition, kept across the trials of a condition (as in a live session)",
+  "gc_freeze": true,
+  "gc_note": "gc.collect() + gc.freeze() once after setup, for all conditions. The first run (results/b2t-gc-default.json, budgets 1/2/3 ms) used the default GC: a full collection took up to 0.3 s inside a push."
+ },
+ "conditions": {
+  "batch-bruteforce": {
+   "condition": "b2t-batch-bf",
+   "wall_s": 152.27750182151794,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 104.44370000186609,
+     "p95": 689.6452750042954,
+     "max": 2317.245800004457,
+     "mean": 182.13118553930877,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 104.39360000600573,
+     "p95": 689.5676249951066,
+     "max": 2317.1852999948896,
+     "mean": 182.09397965702186,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.0092999980552122,
+     "p95": 0.015700003132224083,
+     "max": 0.14989999181125313,
+     "mean": 0.010292748730235318,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 0.0337999954354018,
+     "p95": 0.08164999599102885,
+     "max": 0.14989999181125313,
+     "mean": 0.039811274469755915,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 106.57095000351546,
+     "p95": 692.0442250193446,
+     "max": 2318.65490002383,
+     "mean": 184.16832989982245,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 7290,
+    "n_over_5ms": 0,
+    "max_ms": 0.7216999947559088,
+    "n_gen2": 0
+   },
+   "nearest": "bruteforce",
+   "decoder": "ours"
+  },
+  "incremental-bruteforce": {
+   "condition": "b2t-inc-bf",
+   "wall_s": 156.34408617019653,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 88.31155000370927,
+     "p95": 685.1890249963617,
+     "max": 2212.7092000009725,
+     "mean": 166.66562095562375,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 88.1414500036044,
+     "p95": 684.7100999948452,
+     "max": 2212.125999998534,
+     "mean": 166.43066066152124,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.10630000906530768,
+     "p95": 0.18490000948077068,
+     "max": 75.65330000943504,
+     "mean": 0.11323368670618009,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 0.2977500043925829,
+     "p95": 0.5259250028757378,
+     "max": 75.65330000943504,
+     "mean": 0.42004571061589363,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 112.40024989820085,
+     "p95": 708.3979250128323,
+     "max": 2227.618199874996,
+     "mean": 189.07687108320735,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 8013,
+    "n_over_5ms": 21,
+    "max_ms": 86.37689999886788,
+    "n_gen2": 21
+   },
+   "nearest": "bruteforce",
+   "decoder": "ours"
+  },
+  "incremental+full-prewarm-bruteforce": {
+   "condition": "b2t-inc-full-bf",
+   "wall_s": 696.1899743080139,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 32.988099999784026,
+     "p95": 73.98074999582605,
+     "max": 641.1035000055563,
+     "mean": 37.91694803890006,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 32.803349997266196,
+     "p95": 73.66604999697302,
+     "max": 640.7878000027267,
+     "mean": 37.69256911749051,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.15110000094864517,
+     "p95": 20.62633999157693,
+     "max": 2242.964800010668,
+     "mean": 4.105530887993011,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 51.728550002735574,
+     "p95": 1142.7864500001306,
+     "max": 2242.964800010668,
+     "mean": 208.37414607842007,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 618.3167999479338,
+     "p95": 2154.2544250260107,
+     "max": 6558.428300122614,
+     "mean": 850.4850301510754,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 24461,
+    "n_over_5ms": 45,
+    "max_ms": 251.32969999685884,
+    "n_gen2": 45
+   },
+   "nearest": "bruteforce",
+   "decoder": "ours"
+  },
+  "batch": {
+   "condition": "b2t-batch",
+   "wall_s": 88.45672416687012,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 97.43715000513475,
+     "p95": 176.92420000457787,
+     "max": 320.4859999968903,
+     "mean": 103.78937879907907,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 97.38795000885148,
+     "p95": 176.87507500886568,
+     "max": 320.4018999967957,
+     "mean": 103.75275845600817,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.0092999980552122,
+     "p95": 0.01579998934175819,
+     "max": 0.14980000560171902,
+     "mean": 0.010380174993988066,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 0.03229999856557697,
+     "p95": 0.06940000093891285,
+     "max": 0.14980000560171902,
+     "mean": 0.03763259799455352,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 99.49005009548273,
+     "p95": 179.18749999444117,
+     "max": 323.58219992602244,
+     "mean": 105.84382659571394,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 7472,
+    "n_over_5ms": 49,
+    "max_ms": 89.72349998657592,
+    "n_gen2": 49
+   },
+   "nearest": "fast",
+   "decoder": "ours"
+  },
+  "incremental": {
+   "condition": "b2t-inc",
+   "wall_s": 92.65899872779846,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 83.26849999139085,
+     "p95": 159.2266500047117,
+     "max": 296.74740000336897,
+     "mean": 88.5222264705233,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 83.10700000583893,
+     "p95": 159.02890000143088,
+     "max": 296.07499999110587,
+     "mean": 88.32259767176782,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.10639999527484179,
+     "p95": 0.18859999545384198,
+     "max": 0.7353999972110614,
+     "mean": 0.11353417708531599,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 0.3079000016441569,
+     "p95": 0.5238500016275793,
+     "max": 0.7353999972110614,
+     "mean": 0.33455821051343354,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 105.14625001815148,
+     "p95": 191.0797499876935,
+     "max": 353.1818000628846,
+     "mean": 110.9929497570549,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 8130,
+    "n_over_5ms": 53,
+    "max_ms": 88.96209999511484,
+    "n_gen2": 53
+   },
+   "nearest": "fast",
+   "decoder": "ours"
+  },
+  "incremental+full-prewarm": {
+   "condition": "b2t-inc-full",
+   "wall_s": 506.63490056991577,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 33.9458000016748,
+     "p95": 74.51985000443528,
+     "max": 239.63840000214987,
+     "mean": 37.96296176485568,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 33.7378499971237,
+     "p95": 74.24025000727852,
+     "max": 239.4607000023825,
+     "mean": 37.74124007309985,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.15190000704023987,
+     "p95": 20.558549994893834,
+     "max": 265.2261000039289,
+     "mean": 2.9316461576574713,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 46.52720000012778,
+     "p95": 96.14705000058166,
+     "max": 265.2261000039289,
+     "mean": 53.04251617633104,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 523.0174999742303,
+     "p95": 1386.0714999755146,
+     "max": 2273.2053998333868,
+     "mean": 618.1953752454373,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 24451,
+    "n_over_5ms": 44,
+    "max_ms": 248.93599998904392,
+    "n_gen2": 44
+   },
+   "nearest": "fast",
+   "decoder": "ours"
+  },
+  "incremental+full-prewarm-budget-0.5ms": {
+   "condition": "b2t-inc-budget0.5",
+   "wall_s": 170.90762639045715,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 70.70930000190856,
+     "p95": 146.13107499826583,
+     "max": 248.81389999063686,
+     "mean": 76.56905624992528,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 70.49120000010589,
+     "p95": 145.77789999748347,
+     "max": 248.45210000057705,
+     "mean": 76.35886262263132,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.6362999993143603,
+     "p95": 0.8319899920024904,
+     "max": 119.17689999972936,
+     "mean": 0.6582145093100982,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 3.844899998512119,
+     "p95": 9.067275001143571,
+     "max": 119.17689999972936,
+     "mean": 6.032787990293667,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 196.28595001995564,
+     "p95": 353.8508249184815,
+     "max": 537.902700190898,
+     "mean": 206.84309779049974,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 14196,
+    "n_over_5ms": 56,
+    "max_ms": 127.52029999683145,
+    "n_gen2": 56
+   },
+   "nearest": "fast",
+   "decoder": "ours"
+  },
+  "incremental+full-prewarm-budget-1ms": {
+   "condition": "b2t-inc-budget1",
+   "wall_s": 240.04929542541504,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 52.39845001051435,
+     "p95": 120.60687499615597,
+     "max": 254.22549998620525,
+     "mean": 58.66883504905655,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 52.18539999623317,
+     "p95": 120.20427499737707,
+     "max": 253.86640000215266,
+     "mean": 58.46615232819792,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 1.127199997426942,
+     "p95": 3.096769993135238,
+     "max": 147.45340000081342,
+     "mean": 1.1768280490123495,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 7.1060000045690686,
+     "p95": 22.74787499845843,
+     "max": 147.45340000081342,
+     "mean": 11.570653553623261,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 276.3488000637153,
+     "p95": 503.57237494245055,
+     "max": 811.8297999899369,
+     "mean": 291.58704632312697,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 18775,
+    "n_over_5ms": 51,
+    "max_ms": 148.82040000520647,
+    "n_gen2": 51
+   },
+   "nearest": "fast",
+   "decoder": "ours"
+  },
+  "incremental+full-prewarm-budget-2ms": {
+   "condition": "b2t-inc-budget2",
+   "wall_s": 341.90853691101074,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 35.30075000162469,
+     "p95": 93.29632500157459,
+     "max": 205.62429999699816,
+     "mean": 42.20127818672493,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 35.05664999829605,
+     "p95": 92.89289999651373,
+     "max": 204.939999995986,
+     "mean": 41.990183210823574,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 2.0967000018572435,
+     "p95": 5.473329999949779,
+     "max": 202.56900000094902,
+     "mean": 1.8904302489570999,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 12.110700001358055,
+     "p95": 36.34405000411789,
+     "max": 202.56900000094902,
+     "mean": 18.38423725453764,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 382.989349825948,
+     "p95": 740.8258499235671,
+     "max": 1221.8866999464808,
+     "mean": 416.3558817373604,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 82,
+    "n_wrong_commit": 20,
+    "commit_rate": 0.10049019607843138,
+    "wrong_commit": 0.024509803921568627,
+    "actions": {
+     "COMMIT": 82,
+     "OFFER": 734,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 21694,
+    "n_over_5ms": 48,
+    "max_ms": 198.63269999041222,
+    "n_gen2": 48
+   },
+   "nearest": "fast",
+   "decoder": "ours"
+  },
+  "published-batch": {
+   "condition": "b2t-pub-batch",
+   "wall_s": 88.61215353012085,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 98.13189999840688,
+     "p95": 182.21257500044885,
+     "max": 269.1373999987263,
+     "mean": 104.06429730395686,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 98.08450000127777,
+     "p95": 182.1429000046919,
+     "max": 269.06929998949636,
+     "mean": 104.0228757350918,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.009399998816661537,
+     "p95": 0.01580000389367342,
+     "max": 0.16080000204965472,
+     "mean": 0.010430590144798071,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 0.03260000084992498,
+     "p95": 0.06887500057928264,
+     "max": 0.16080000204965472,
+     "mean": 0.037287377309956925,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 99.98399994947249,
+     "p95": 184.49812497055973,
+     "max": 272.1496999874944,
+     "mean": 106.12872328453936,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 329,
+    "n_wrong_commit": 24,
+    "commit_rate": 0.40318627450980393,
+    "wrong_commit": 0.029411764705882353,
+    "actions": {
+     "COMMIT": 329,
+     "OFFER": 487,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 7439,
+    "n_over_5ms": 49,
+    "max_ms": 105.91740001109429,
+    "n_gen2": 49
+   },
+   "nearest": "fast",
+   "decoder": "published"
+  },
+  "published-incremental": {
+   "condition": "b2t-pub-inc",
+   "wall_s": 92.30981206893921,
+   "timing": {
+    "end_of_utterance_ms": {
+     "p50": 83.04240000143182,
+     "p95": 157.62382499451633,
+     "max": 252.24590000289027,
+     "mean": 88.21492806392224,
+     "n": 816
+    },
+    "decision_latency_ms": {
+     "p50": 82.84455000102753,
+     "p95": 157.39235000364715,
+     "max": 251.75869998929556,
+     "mean": 88.01373578444327,
+     "n": 816
+    },
+    "push_frame_ms": {
+     "p50": 0.10649999603629112,
+     "p95": 0.18360000103712082,
+     "max": 49.336600000970066,
+     "mean": 0.11320889581604611,
+     "n": 161503
+    },
+    "push_frame_max_per_utterance_ms": {
+     "p50": 0.2935999946203083,
+     "p95": 0.5219250015215948,
+     "max": 49.336600000970066,
+     "mean": 0.38623553921877146,
+     "n": 816
+    },
+    "total_cpu_per_utterance_ms": {
+     "p50": 104.44964998168871,
+     "p95": 188.90442497649929,
+     "max": 298.8394999119919,
+     "mean": 110.62127157002382,
+     "n": 816
+    }
+   },
+   "outcome": {
+    "n": 816,
+    "n_commit": 329,
+    "n_wrong_commit": 24,
+    "commit_rate": 0.40318627450980393,
+    "wrong_commit": 0.029411764705882353,
+    "actions": {
+     "COMMIT": 329,
+     "OFFER": 487,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "equivalence": {
+    "n": 816,
+    "n_equal": 816,
+    "action_agree": 816,
+    "shown_agree": 816,
+    "max_abs_dp_top1": 0.0
+   },
+   "gc_pauses": {
+    "n": 8142,
+    "n_over_5ms": 51,
+    "max_ms": 86.59370000532363,
+    "n_gen2": 51
+   },
+   "nearest": "fast",
+   "decoder": "published"
+  }
+ },
+ "gc_freeze": true
+}

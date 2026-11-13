@@ -1,0 +1,42 @@
+{
+ "description": "M4-09: exact fast lexicon fallback (PronLexicon.nearest, NumPy Levenshtein per length bucket; nearest_bruteforce = reference) and time-budgeted prewarm (CTCBeamSpec.prewarm_budget_s, PhonemeWordDecoder.warm). Equality of nearest() on all B2T test queries + synthetic queries; equality of final decisions vs M4-06 (ours and published gate); end-of-utterance and push latency. CPU only. Main run with gc.freeze() after setup.",
+ "derived_dir": "C:/Users/zhang/bci-data/derived/m4-09-fast-lexicon",
+ "m408_run": "experiments/2026-11-13-m4-08-incremental/run.py",
+ "m406_derived": "C:/Users/zhang/bci-data/derived/m4-06-real-replay",
+ "m406_configs": {
+  "ours": "experiments/2026-11-13-m4-06-real-replay/configs/trust-config-b2t25-ours-splitA.json",
+  "published": "experiments/2026-11-13-m4-06-real-replay/configs/trust-config-b2t25-published-splitA.json"
+ },
+ "b2t": {
+  "data": "Brain-to-Text '25 copy task (Card et al. 2024, T15, CC0): the 816 split-A test trials as full-precision NTS JSON Lines written by M4-06",
+  "decoder": "as M4-08: phoneme CTC prefix beam (vector, beam 64, n_best 20, no LM) -> PhonemeWordDecoder (CMUdict, word unigram, char 6-gram)",
+  "chunk_frames": 1,
+  "prewarm_every": 5,
+  "prewarm_top_k": 20,
+  "prewarm_max_new": 256,
+  "budgets_ms": [
+   0.5,
+   1,
+   2
+  ],
+  "limit": null,
+  "only": null,
+  "caches": "word decoder caches cleared at the start of each condition, kept across the trials of a condition (as in a live session)",
+  "gc_freeze": true,
+  "gc_note": "Main run: gc.collect() + gc.freeze() after setup and before each condition; automatic GC off during a condition, one gc.collect() before each utterance (idle point, not timed; its time is reported as gc_idle_collect_ms). Earlier runs: results/b2t-gc-default.json (default GC, budgets 1/2/3 ms: a gen-2 collection took up to 0.3 s inside a push) and results/b2t-gc-freeze-once.json (freeze once after setup: gen-2 pauses up to 0.25 s remained). A partial third run (freeze before each condition, automatic GC on) still showed 60-70 ms push maxima in the search-only conditions and was stopped.",
+  "gc_idle": true
+ },
+ "nearest": {
+  "seed": 9,
+  "n_random": 1500,
+  "max_len": 16,
+  "n_edited": 1500,
+  "max_edits": 4,
+  "max_len_diffs": [
+   2,
+   0,
+   4
+  ]
+ },
+ "timing": "time.perf_counter around each StreamingTrustLayer.push (M4-08 harness); end of utterance = push of the end event; CPU per utterance = sum of all push times of the utterance"
+}
