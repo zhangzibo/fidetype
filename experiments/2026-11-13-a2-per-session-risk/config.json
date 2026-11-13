@@ -1,0 +1,32 @@
+{
+ "description": "Track A item 2: per-session (per-day) risk control on cached item tables of Paper 1 (B2T '25 ours + published, guard on; sEMG calib / xsession / xsubject). Methods: global LTT max (baseline), Mondrian LTT (fallback never / global / mixture), session-start block (LTT, exact block test, empirical Bayes) with k labelled items as offer-only warm-up (W) or as feedback at the global threshold (F), online anytime-valid e-process monitor, ACI (online_risk, floor = global threshold). Settings fixed before the first run.",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "gamma": 0.1,
+ "block_k": [10, 20, 40, 45, 60],
+ "eb_k": [0, 10, 20, 40],
+ "R_b2t": 200,
+ "R_emg": 50,
+ "monitor_alternatives": [0.075, 0.1, 0.15, 0.2, 0.3],
+ "monitor_max_bet_fraction": 0.5,
+ "aci_eta": 0.05,
+ "eb_kappa_min": 2.0,
+ "eb_kappa_max": 100.0,
+ "eb_kappa_max_sens": 20.0,
+ "eb_sens_k": [0, 20, 40],
+ "eb_sens_note": "Added after an R = 3 smoke run showed that the kappa <= 100 prior shrinks day 34 to the pooled rate; labelled as a sensitivity analysis. Forward chain uses fc_prior_kappa for both.",
+ "fc_prior_kappa": 20.0,
+ "ltt_grid": "fidetype.trust.risk_control.DEFAULT_LTT_GRID (1.00 down to 0.00, step 0.01), as Paper 1",
+ "seed": 20261112,
+ "bootstrap_B": 2000,
+ "power_sim_reps": 5000,
+ "power_sim_T": 400,
+ "power_rhos": [0.05, 0.075, 0.1, 0.125, 0.15, 0.2, 0.3],
+ "feedback_model": "zero delay; the truth of every item is known after its decision (commit: correction or no correction; offer: the pick). Silent errors are not modelled.",
+ "session_definition": {
+  "B2T random re-splits": "session = all non-fit items of one day (calibration + test items of the split), in file order; global threshold = LTT max on the calibration items of the OTHER days (leave-day-out); EB references = the other days' calibration items",
+  "B2T forward chain V1": "model fitted on days 1..k-2; global threshold = LTT max on day k-1; session = all of day k; EB prior mean = day k-1 risk at each lambda, kappa = fc_prior_kappa",
+  "B2T forward chain V3": "model fitted on days 1..k-1; global threshold = the fitted policy's plug-in commit_p (no held-out data); session = all of day k; EB prior Beta(alpha*kappa, (1-alpha)*kappa)",
+  "sEMG random re-splits": "session = the test items of one test participant (table order); global threshold = Paper 1 LTT max on the full calibration set; EB references = the other test participants (leave-one-out)"
+ }
+}

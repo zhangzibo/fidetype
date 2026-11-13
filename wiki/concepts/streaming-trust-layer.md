@@ -3,7 +3,7 @@ title: Streaming trust layer
 type: concept
 tags: [trust, streaming, real-time, provenance, risk-control, neuraltextstream, m4]
 sources: [brain-to-text-25-copytask]
-updated: 2026-11-12
+updated: 2026-11-13
 ---
 
 # Streaming trust layer
@@ -65,6 +65,9 @@ The policy needs `final_attempt`, because ASK is not possible on the last attemp
 Pass an `OnlineCommitRiskControl` ([conformal risk control](conformal-risk-control.md), M2-16) as `online`. Each session gets its own copy. Final decisions then carry a ticket. `feedback()` closes it. With `online_floor=True` (default), the frozen `commit_p` is the floor (`lam_min`) of the online threshold. So the online loop can make the gate stricter than the frozen configuration, never looser.
 
 > **Our take:** the floor keeps the Paper 1 guarantee (LTT on the calibration half) as the minimum. The online loop adds protection against drift inside the session. It cannot remove the offline protection.
+
+## Per-session risk monitor (A2, opt-in)
+Pass a `SessionRiskMonitor` (`fidetype.trust.session_risk`) as `session_risk` (default None: off). Each session gets its own copy. `feedback()` gives it the realised loss of each final decision: 1 for a COMMIT or OFFER_WORDS whose top-1 text is not the truth, else 0. When its e-process reaches 1/γ, the session becomes offer-only (`commit_p = +inf`) until it closes. So the gate can only get stricter. A session whose risk stays ≤ α raises a false alarm with probability ≤ γ. The state is in `session_state()["session_risk"]` and in each decision's provenance (`session_risk`). Evaluation and the recommended "certify, then commit" profile: [per-session risk control](../questions/per-session-risk-control.md).
 
 ## Provenance
 Each decision carries: `config_id`, session, utterance, route, the input reference (frame range, time range and the SHA-256 of the raw stream; or the hypothesis id, `revision_of` and its SHA-256), the event range, the commit threshold in effect and the computation time. With a [provenance ledger](provenance-ledger.md), each final decision is also a hash-chained ledger entry. One context entry per session holds the full frozen configuration. `feedback()` writes the linked correction.
@@ -166,6 +169,6 @@ fidetype conformance check --profile fep-0001 decisions.jsonl  # check an input 
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.
 
 ## Related
-[Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [LSL input](lsl-input.md)
+[Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [LSL input](lsl-input.md) · [Per-session risk control](../questions/per-session-risk-control.md)
 
 SDK and demo: the [Python SDK and offline demo](python-sdk.md) page shows the public API (`fidetype.TrustLayer`) and `fidetype demo`.

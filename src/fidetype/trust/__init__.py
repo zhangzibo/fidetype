@@ -47,6 +47,14 @@ from fidetype.trust.risk_control import (
     crc_threshold,
     ltt_threshold,
 )
+from fidetype.trust.session_risk import (
+    SessionRiskMonitor,
+    block_ltt,
+    block_test,
+    eb_session_threshold,
+    min_ltt_items,
+    mondrian_ltt,
+)
 from fidetype.trust.frozen import PAPER1_V4_RECIPE, FrozenTrustConfig, paper1_v4_harness_config
 from fidetype.trust.streaming import (
     StreamDecision,
@@ -92,6 +100,7 @@ __all__ = [
     "PredictionSet",
     "ProvenanceLedger",
     "RiskControlResult",
+    "SessionRiskMonitor",
     "SplitConformal",
     "TemperatureScaler",
     "Ticket",
@@ -100,6 +109,11 @@ __all__ = [
     "WordSlotInfo",
     "audit_report",
     "auroc",
+    "block_ltt",
+    "block_test",
+    "eb_session_threshold",
+    "min_ltt_items",
+    "mondrian_ltt",
     "commit_calibration_data",
     "crc_threshold",
     "ece",

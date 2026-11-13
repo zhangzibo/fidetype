@@ -56,6 +56,7 @@ API: same as `CommitRiskControl` (`fit`, `fit_policy`, `threshold`, `apply(polic
 ## Related
 - [Conformal risk control (concept)](../concepts/conformal-risk-control.md)
 - [M2-13 conformal result](m2-13-conformal-result.md)
+- [Per-session risk control](per-session-risk-control.md) (A2: per-day guarantee, session-start block, e-process monitor)
 - [B2T '25 trust result](b2t25-trust-result.md)
 - [EMG Toronto trust result](emg-toronto-trust-result.md)
 - Spec section 2.3 informative note (`spec/neuraltextstream-v0.1.md`)

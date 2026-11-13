@@ -1,0 +1,22 @@
+[23:30:28] power tables done
+[23:30:29] forward chain done
+[23:30:48] sEMG done
+[23:30:48] b2t-published: split 0 done
+[23:30:51] b2t-published: split 25 done
+[23:30:54] b2t-published: split 50 done
+[23:30:57] b2t-published: split 75 done
+[23:31:01] b2t-published: split 100 done
+[23:31:04] b2t-published: split 125 done
+[23:31:07] b2t-published: split 150 done
+[23:31:10] b2t-published: split 175 done
+[23:31:14] b2t-published done
+[23:31:14] b2t-ours: split 0 done
+[23:31:17] b2t-ours: split 25 done
+[23:31:21] b2t-ours: split 50 done
+[23:31:24] b2t-ours: split 75 done
+[23:31:28] b2t-ours: split 100 done
+[23:31:31] b2t-ours: split 125 done
+[23:31:35] b2t-ours: split 150 done
+[23:31:38] b2t-ours: split 175 done
+[23:31:42] b2t-ours done
+[23:31:42] all done in 75 s

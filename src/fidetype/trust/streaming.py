@@ -67,6 +67,19 @@ text (or None). With ``online_floor=True`` (default) the frozen
 online loop can make the gate stricter than the frozen configuration,
 never looser.
 
+Per-session risk policy (opt-in)
+--------------------------------
+Pass a :class:`~fidetype.trust.session_risk.SessionRiskMonitor` as
+``session_risk`` (default None: off). Each session gets its own copy.
+:meth:`StreamingTrustLayer.feedback` feeds it the realised loss of each
+final decision (1 for a COMMIT or OFFER_WORDS whose top-1 text is not the
+truth, else 0). When its anytime-valid e-process passes ``1 / gamma``,
+the session switches to **offer-only** (``commit_p = +inf``) until it is
+closed: the gate can only get stricter. Guarantee: a session whose
+conditional wrong-commit rate stays <= alpha raises a false alarm with
+probability <= gamma. The state is in ``session_state()["session_risk"]``
+and each decision's provenance (``session_risk``).
+
 Bounds
 ------
 - Memory per session: at most ``max_frames`` frame rows (the current
@@ -273,6 +286,9 @@ class _Session:
     ledger_ids: dict[int, str] = field(default_factory=dict)
     #: Declaration mismatches already logged (one log line per session and mismatch).
     decl_warned: set = field(default_factory=set)
+    #: Per-session risk monitor (opt-in) and its final decisions awaiting feedback.
+    risk_monitor: Any = None
+    risk_pending: "OrderedDict[int, tuple[bool, str | None]]" = field(default_factory=OrderedDict)
 
     @property
     def has_input(self) -> bool:
@@ -415,9 +431,19 @@ class StreamingTrustLayer:
         online: Any = None,
         ledger: Any = None,
         clock: Callable[[], float] = time.perf_counter,
+        session_risk: Any = None,
     ) -> None:
         self.config = config
         self.components = config.build()
+        self.session_risk_template = session_risk
+        self._offer_only = None
+        if session_risk is not None:
+            from dataclasses import replace as _replace
+
+            pol = self.components.policy
+            if not isinstance(pol, DecisionPolicy):
+                raise ValueError("session_risk needs a DecisionPolicy (it sets commit_p = +inf on alarm)")
+            self._offer_only = DecisionPolicy(_replace(pol.config, commit_p=math.inf), use_guard=pol.use_guard)
         self.decode_fn = decode_fn
         self.streaming = streaming or StreamingConfig()
         route = self.streaming.route
@@ -457,6 +483,9 @@ class StreamingTrustLayer:
                     ctrl._cache = None
                 s.controller = ctrl
                 s.online_policy = OnlineTrustPolicy(pol, ctrl)
+            if self.session_risk_template is not None:
+                s.risk_monitor = copy.deepcopy(self.session_risk_template)
+                s.risk_monitor.reset()
             self._sessions[sid] = s
         return s
 
@@ -481,6 +510,7 @@ class StreamingTrustLayer:
             "aborted_utterances": s.aborted_utterances,
             "pending_feedback": len(s.tickets),
             "online_threshold": None if s.controller is None else s.controller.threshold,
+            "session_risk": None if s.risk_monitor is None else s.risk_monitor.state(),
         }
 
     def new_item(self, session_id: str = "default") -> None:
@@ -745,6 +775,9 @@ class StreamingTrustLayer:
             d = Decision(Action.ABSTAIN, (), "decode declaration mismatch: " + "; ".join(decl["mismatches"]))
         elif msq is not None and q is not None and q < msq:
             d = Decision(Action.ABSTAIN, (), f"signal quality {q:.2f} < {msq:.2f}")
+        elif s.risk_monitor is not None and s.risk_monitor.alarmed:
+            thr = math.inf
+            d = self._offer_only.decide(inputs, final_attempt=final_attempt)
         elif s.online_policy is not None and final:
             d, ticket = s.online_policy.decide(inputs, final_attempt=final_attempt)
             thr = ticket.threshold
@@ -776,6 +809,9 @@ class StreamingTrustLayer:
         }
         if declaration is not None:
             prov["declaration"] = declaration
+        if s.risk_monitor is not None:
+            prov["session_risk"] = {"alarm": s.risk_monitor.alarmed, "e_value": s.risk_monitor.e_value,
+                                    "n": s.risk_monitor.n}
         tr = ref.get("t_range")
         if tr:
             prov["t_signal_end"] = tr[1]
@@ -792,6 +828,12 @@ class StreamingTrustLayer:
                 while len(s.tickets) > self.streaming.max_pending_feedback:
                     _, old = s.tickets.popitem(last=False)
                     s.online_policy.feedback(old, None)
+            if s.risk_monitor is not None and not s.risk_monitor.alarmed:
+                at_risk = d.action in (Action.COMMIT, Action.OFFER_WORDS)
+                top1 = d.shown_candidates[0] if d.shown_candidates else None
+                s.risk_pending[sd.seq] = (at_risk, top1)
+                while len(s.risk_pending) > self.streaming.max_pending_feedback:
+                    s.risk_pending.popitem(last=False)
             s.attempt = s.attempt + 1 if d.action == Action.ASK else 0
         return sd
 
@@ -863,8 +905,10 @@ class StreamingTrustLayer:
     def feedback(self, decision: StreamDecision, truth: str | None) -> float | None:
         """Give the user's final text for a final decision (None: unknown).
 
-        Feeds the online controller (if any; returns the realised loss) and
-        writes a correction to the ledger (if any and the truth is known).
+        Feeds the online controller (if any; returns the realised loss), the
+        per-session risk monitor (if any; it returns that loss when there is
+        no online controller) and writes a correction to the ledger (if any
+        and the truth is known).
         """
         if not decision.final:
             raise ValueError("feedback applies to final decisions only")
@@ -875,6 +919,16 @@ class StreamingTrustLayer:
         tk = s.tickets.pop(decision.seq, None)
         if tk is not None:
             loss = s.online_policy.feedback(tk, truth)
+        pend = s.risk_pending.pop(decision.seq, None)
+        if pend is not None:
+            at_risk, top1 = pend
+            if not at_risk:
+                r_loss: float | None = 0.0
+            else:
+                r_loss = None if truth is None else float(top1 != truth)
+            s.risk_monitor.update(r_loss)
+            if loss is None and tk is None:
+                loss = r_loss
         did = s.ledger_ids.pop(decision.seq, None)
         if did is not None and truth is not None:
             self.ledger.record_correction(did, truth)
