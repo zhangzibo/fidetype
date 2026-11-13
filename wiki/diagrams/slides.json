@@ -73,6 +73,12 @@
       "title": "12. Streaming trust layer (M4-03)",
       "caption": "The layer reads NeuralTextStream events one at a time and keeps a state per session. At the end of each utterance it runs the frozen trust core and emits one final decision with provenance. A partial result gives only a preview. User feedback moves the online threshold, but never below the frozen commit_p.",
       "wiki": "../concepts/streaming-trust-layer.md"
+    },
+    {
+      "file": "13-lsl-input.drawio",
+      "title": "13. LSL input (M6-01)",
+      "caption": "Four kinds of LSL streams can feed Fidetype. The LSL source builds the NTS header, corrects the clock, fixes the order, marks gaps and merges two inlets by time. The streaming trust layer then emits decisions to stdout and to an LSL outlet. A lost stream drops the cut utterance without a decision.",
+      "wiki": "../concepts/lsl-input.md"
     }
   ]
 }

@@ -33,6 +33,8 @@ dependencies = ["numpy"]
 [project.optional-dependencies]
 dev = ["pytest"]
 data = ["mne>=1.8", "scipy>=1.13"]
+# Lab Streaming Layer adapter (fidetype.adapters.lsl). pylsl is MIT; its Windows wheel includes liblsl.
+lsl = ["pylsl>=1.16"]
 
 [project.urls]
 Repository = "https://github.com/zhangzibo/fidetype"

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T21:05:00-08:00",
+  "updated": "2026-11-12T21:25:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8).",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -463,7 +463,7 @@
      "orchestrator_only": false, "notes": ""},
     {"id": "M4-03", "milestone": "M4", "title": "Make the trust core work in streaming mode", "status": "done",
      "started_at": "2026-11-12T20:41:00-08:00", "finished_at": "2026-11-12T21:05:00-08:00", "approx_times": false,
-     "agent_runs": [{"label": "streaming trust layer (M4-03)", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "agent_runs": [{"label": "streaming trust layer (M4-03)", "duration_s": 989.5, "tokens": 263188, "tool_uses": 72}],
      "orchestrator_only": false, "notes": "src/fidetype/trust/streaming.py (StreamingTrustLayer: push(event) -> decisions, end_of_utterance / flush / close, frames and hypothesis routes, per-session state, bounded memory, attempts, online re-calibration hook with the frozen commit_p as floor, provenance + ledger, replay + CLI) and trust/frozen.py (FrozenTrustConfig JSON; paper1_v4_harness_config = guard + LTT max). tests/test_trust_streaming.py (29 tests): final decisions equal the batch path exactly on synthetic streams (JSONL + NPZ, 3 configs), segment_end, interleaved sessions, hypothesis route and all accept golden vectors. Latency (synthetic, CPU): push(frame) p50 0.008 ms; final decision greedy 0.72 ms / beam 8.1 ms p50; push(hypothesis) 0.19 ms; 100/100 equal to batch (experiments/2026-11-12-m4-streaming/). Spec proposal spec/feps/0001-streaming-trust-events.md. Wiki concepts/streaming-trust-layer.md + diagram 12."},
     {"id": "M4-04", "milestone": "M4", "title": "Write and release the preprint", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,
@@ -534,10 +534,10 @@
      "agent_runs": [],
      "orchestrator_only": false, "notes": "experiments/2026-11-08-m2-real-keystroke/results/trials.json moved to ~/bci-data/derived/2026-11-08-m2-real-keystroke/ (run.py reads/writes it there; FIDETYPE_DERIVED overrides); git rm --cached + .gitignore rule experiments/**/results/trials.json. No other committed file holds per-participant typed text. History not rewritten: older commits (from 074c3b0) still contain it, noted in LICENSES/DATA.md. pytest 388 passed, 4 skipped."},
 
-    {"id": "M6-01", "milestone": "M6", "title": "Add Lab Streaming Layer (LSL) input", "status": "todo",
-     "started_at": null, "finished_at": null, "approx_times": false,
-     "agent_runs": [],
-     "orchestrator_only": false, "notes": ""},
+    {"id": "M6-01", "milestone": "M6", "title": "Add Lab Streaming Layer (LSL) input", "status": "done",
+     "started_at": "2026-11-12T20:52:00-08:00", "finished_at": "2026-11-12T21:25:00-08:00", "approx_times": false,
+     "agent_runs": [{"label": "LSL adapter (M6-01)", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "orchestrator_only": false, "notes": "src/fidetype/adapters/lsl.py (optional pylsl 1.18.6, MIT; the Windows wheel ships liblsl): LSLEventSource (header from desc/fidetype/nts_header or labels + options; values log_probs/probs/logits; SignalDecoder hook for raw EEG/EMG; receiver clock = timestamp + time_correction, one offset per sender host; clamp/drop/error for non-increasing times; gaps mark/segment/abort; 2-inlet watermark merge; loss -> abort utterance + re-resolve + new header), LSLTrustRunner (trust_decision JSONL + lsl provenance, optional LSL outlet fidetype.decisions), replay_to_lsl, CLI run / replay-to-lsl / list. StreamingTrustLayer.abort_utterance added. tests/test_adapter_lsl.py 26 tests (22 fake inlet, 4 real localhost loopback, skipped without pylsl); pytest 443 passed / 4 skipped. Loopback (localhost, synthetic, experiments/2026-11-12-m6-lsl): all decisions equal the file replay path (12/12 frames route float32 and double64, 30/30 hypothesis route, 12/12 two-process CLIs); transport p50 3.5 ms / p95 6.6 ms; e2e final 60.6 ms p50 with a 50 ms merge window, 17.2 ms with 10 ms, 3.0 ms on the hypothesis route. pyproject extra [lsl] + uv.lock. Wiki concepts/lsl-input.md, diagram 13."},
     {"id": "M6-02", "milestone": "M6", "title": "Add adapters for consumer EMG/EEG devices", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,
      "agent_runs": [],
@@ -560,6 +560,26 @@
     {"id": "M6-07", "milestone": "M6", "title": "Toronto sEMG typing adapter + EMG decoder + cross-device trust run (forearm EMG, third device type)", "status": "done",
      "started_at": "2026-11-11T18:50:00-08:00", "finished_at": "2026-11-11T20:05:00-08:00", "approx_times": true,
      "agent_runs": [{"label": "Toronto sEMG adapter, EMG decoder, trust run", "duration_s": 4094.6, "tokens": 312192, "tool_uses": 136}], "orchestrator_only": false, "notes": "Toronto sEMG typing (CC BY 4.0, MD5 verified). Own adapter src/fidetype/adapters/toronto_semg.py (RHD reader, keylog alignment, key stream + CTC form), no spec change. CNN key acc xsession 0.168 / xsubject 0.209 / calib 0.299 (permuted 0.022), GPU 48 min. Trust on 551 composed sentences: wrong-commit 0.54-0.96 -> <=0.004; eWPM calib 7.81 -> 8.02 (gaze 4.27). CRC/LTT feasible n=142. experiments/2026-11-11-emg-toronto."},
+
+    {"id": "M6-08", "milestone": "M6", "title": "BrainFlow Synthetic board -> LSL -> trust layer live test (P4 exit criterion)", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Follow-up of M6-01. BrainFlow (MIT) Synthetic board (no hardware), a toy SignalDecoder or a decoder script that publishes NTS, through python -m fidetype.adapters.lsl run."},
+
+    {"id": "M6-09", "milestone": "M6", "title": "FEP-0002: NTS-over-LSL binding (stream types, desc keys, float32 vs double64, gap / lsl_t, hypothesis times) + conformance vectors", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Follow-up of M6-01. As implemented: frames type NTS, events type Markers, desc/fidetype nts_header, values, events_source_id / frames_source_id; gap and lsl_t are extension keys; hypothesis t_start/t_end stay in the producer clock."},
+
+    {"id": "M6-10", "milestone": "M6", "title": "LSL loopback latency across two machines (LAN, Wi-Fi)", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Follow-up of M6-01 (localhost only so far). Needs a second machine on the network (user-owned)."},
+
+    {"id": "M6-11", "milestone": "M6", "title": "WebSocket input adapter (spec 6.3) with the LSL runner pattern", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Follow-up of M6-01."},
 
     {"id": "M7-01", "milestone": "M7", "title": "Build the SDK", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,

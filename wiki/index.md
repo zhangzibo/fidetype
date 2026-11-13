@@ -21,6 +21,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | `10-open-source-path` | Open-source stages 0–5 (credibility → launch → community → standard → foundation → company). What each borrows from SGLang, LangChain, OTel, BIDS. Exit criteria |
 | `11-roadmap-standard` | Long-term roadmap after v0.1: phases P1–P13 in lanes (P12 intent, P13 benchmark hub added 2026-11-11 in yellow) (spec + SDKs, runtime, ecosystem, research, outside people) over Q4 2026 → H2 2027. Critical path and gates |
 | `12-streaming-trust-layer` | M4-03: events → per-session state → frozen trust core → provisional / final decisions, feedback, ledger |
+| `13-lsl-input` | M6-01: four kinds of LSL streams → LSL source (header, clock, order, gaps, merge, loss) → streaming trust layer → stdout + `fidetype.decisions` outlet |
 
 ## Sources
 | Page | Summary | Date |
@@ -61,6 +62,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [Conformance suite](concepts/conformance-suite.md) | M5-10: `fidetype.conformance` checks NeuralTextStream producers and consumers; 60 checks cite spec clauses; levels core / trust-ready / provenance; 52 golden vectors in `spec/conformance/v0.1/`; CLI with JSON report and badge; adapter results (MEG and sEMG provenance, B2T '25 trust-ready); 5 bugs fixed; spec ambiguities A1–A10 |
 | [Open benchmark v0.1](concepts/open-benchmark.md) | M5-01..03: `fidetype.benchmark`; 3 tracks (SpanishBCBL MEG research-only, B2T '25 CC0, Toronto sEMG CC BY) with committed id/hash splits; NTS submissions + trust-ready gate; CER/WER, eWPM vs no-BCI, wrong-commit and error among commits, controls, cluster CIs, CRC/LTT guarantee column; static leaderboard with 21 baseline entries; licence audit in LICENSES/DATA.md |
 | [Conformal risk control](concepts/conformal-risk-control.md) | CRC / LTT for the COMMIT threshold: E[wrong-commit] ≤ α (or with prob. 1 − δ) under per-user, per-session exchangeable calibration. API `fidetype.trust.risk_control`. Online re-calibration under drift: `fidetype.trust.online_risk` (M2-16) |
+| [LSL input](concepts/lsl-input.md) | M6-01: `fidetype.adapters.lsl` (optional pylsl, MIT): LSL inlet → NTS events (header from desc / labels, clock correction, clamp/drop, gaps, merge, loss → abort + reconnect), runner → streaming trust layer → `trust_decision` JSONL + LSL outlet `fidetype.decisions`; `replay-to-lsl`; localhost loopback equals the file replay path |
 | [Streaming trust layer](concepts/streaming-trust-layer.md) | M4-03: `StreamingTrustLayer` consumes NTS events per session (frames or hypothesis route), runs a frozen trust configuration (`FrozenTrustConfig` JSON; Paper 1 recipe guard + LTT max), emits final / provisional decisions with provenance, online re-calibration hook (floor = frozen commit_p), ledger; final decisions equal the batch path exactly (synthetic + golden vectors); push(frame) 0.008 ms p50, trust core 0.19 ms p50; FEP-0001 proposal |
 
 ## Entities

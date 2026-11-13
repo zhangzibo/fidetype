@@ -1,0 +1,224 @@
+{
+  "description": "M6-01 LSL loopback through the streaming trust layer (synthetic, localhost)",
+  "machine": {
+    "python": "3.12.16",
+    "system": "Windows",
+    "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+    "pylsl": "1.18.6",
+    "liblsl": 118
+  },
+  "config_id": "tcfg-d3a8a4b94122b35e",
+  "n_utterances": 12,
+  "frames_in_file": 4378,
+  "A_float32_rt_merge50": {
+    "channel_format": "float32",
+    "speed": 1.0,
+    "merge_window_s": 0.05,
+    "stop": "end",
+    "frames_sent": 4378,
+    "events_sent": 12,
+    "wall_s": 180.3440000000046,
+    "equality": {
+      "n_ref": 12,
+      "n_got": 12,
+      "exact": "12/12",
+      "action_and_shown": "12/12",
+      "max_abs_dp_top1": 0.0
+    },
+    "actions": {
+      "COMMIT": 12
+    },
+    "transport": {
+      "n": 4390,
+      "p50_ms": 3.4931500085804146,
+      "p95_ms": 6.601152504663333,
+      "max_ms": 496.98104999697534,
+      "mean_ms": 4.378836120140104
+    },
+    "e2e_final": {
+      "n": 12,
+      "p50_ms": 60.57870000950061,
+      "p95_ms": 61.55347249950864,
+      "max_ms": 61.58979999599978,
+      "mean_ms": 59.65896250563674
+    },
+    "time_correction_s": -1.4100001862971112e-05,
+    "clock_updates": 36,
+    "source_stats": {
+      "samples": 4390,
+      "frames": 4378,
+      "markers": 12,
+      "ignored_markers": 0,
+      "bad_markers": 0,
+      "clamped": 0,
+      "dropped_out_of_order": 0,
+      "gaps": 0,
+      "lost": 0,
+      "reconnects": 0,
+      "late_releases": 0
+    },
+    "rejected": 0,
+    "aborted": 0
+  },
+  "B_double64_x4_merge50": {
+    "channel_format": "double64",
+    "speed": 4.0,
+    "merge_window_s": 0.05,
+    "stop": "end",
+    "frames_sent": 4378,
+    "events_sent": 12,
+    "wall_s": 45.25,
+    "equality": {
+      "n_ref": 12,
+      "n_got": 12,
+      "exact": "12/12",
+      "action_and_shown": "12/12",
+      "max_abs_dp_top1": 0.0
+    },
+    "actions": {
+      "COMMIT": 12
+    },
+    "transport": {
+      "n": 4390,
+      "p50_ms": 3.5916249980800785,
+      "p95_ms": 6.714404999365797,
+      "max_ms": 496.31534999934956,
+      "mean_ms": 6.471221332734566
+    },
+    "e2e_final": {
+      "n": 12,
+      "p50_ms": 56.269025000801776,
+      "p95_ms": 60.43786249902041,
+      "max_ms": 60.57934999989811,
+      "mean_ms": 57.15303333514991
+    },
+    "time_correction_s": -9.999999747378752e-06,
+    "clock_updates": 10,
+    "source_stats": {
+      "samples": 4390,
+      "frames": 4378,
+      "markers": 12,
+      "ignored_markers": 0,
+      "bad_markers": 0,
+      "clamped": 0,
+      "dropped_out_of_order": 0,
+      "gaps": 0,
+      "lost": 0,
+      "reconnects": 0,
+      "late_releases": 0
+    },
+    "rejected": 0,
+    "aborted": 0
+  },
+  "C_float32_x4_merge10": {
+    "channel_format": "float32",
+    "speed": 4.0,
+    "merge_window_s": 0.01,
+    "stop": "end",
+    "frames_sent": 4378,
+    "events_sent": 12,
+    "wall_s": 45.20300000000134,
+    "equality": {
+      "n_ref": 12,
+      "n_got": 12,
+      "exact": "12/12",
+      "action_and_shown": "12/12",
+      "max_abs_dp_top1": 0.0
+    },
+    "actions": {
+      "COMMIT": 12
+    },
+    "transport": {
+      "n": 4390,
+      "p50_ms": 3.5942000031354837,
+      "p95_ms": 7.048120000399649,
+      "max_ms": 496.38490000506863,
+      "mean_ms": 6.526710626352401
+    },
+    "e2e_final": {
+      "n": 12,
+      "p50_ms": 17.198174999066396,
+      "p95_ms": 19.055537497843034,
+      "max_ms": 19.288050003524404,
+      "mean_ms": 16.979300001063773
+    },
+    "time_correction_s": 2.9000002541579306e-06,
+    "clock_updates": 10,
+    "source_stats": {
+      "samples": 4390,
+      "frames": 4378,
+      "markers": 12,
+      "ignored_markers": 0,
+      "bad_markers": 0,
+      "clamped": 0,
+      "dropped_out_of_order": 0,
+      "gaps": 0,
+      "lost": 0,
+      "reconnects": 0,
+      "late_releases": 0
+    },
+    "rejected": 0,
+    "aborted": 0
+  },
+  "D_hypothesis_rt": {
+    "events_sent": 213,
+    "pacing_s": 0.05,
+    "stop": "end",
+    "equality": {
+      "n_ref": 30,
+      "n_got": 30,
+      "exact": "30/30",
+      "action_and_shown": "30/30",
+      "max_abs_dp_top1": 0.0
+    },
+    "provisional_decisions": 182,
+    "e2e_final": {
+      "n": 30,
+      "p50_ms": 3.040999999939231,
+      "p95_ms": 7.218867503979709,
+      "max_ms": 45.733049999398645,
+      "mean_ms": 4.688754999612381
+    },
+    "e2e_provisional": {
+      "n": 182,
+      "p50_ms": 3.467574995738687,
+      "p95_ms": 7.259495003381744,
+      "max_ms": 446.62234999850625,
+      "mean_ms": 15.232032141984046
+    },
+    "transport": {
+      "n": 213,
+      "p50_ms": 3.2010499999159947,
+      "p95_ms": 7.037839999247808,
+      "max_ms": 446.30414999846835,
+      "mean_ms": 13.435408919136927
+    }
+  },
+  "E_cli_two_processes": {
+    "exit_codes": {
+      "replay-to-lsl": 0,
+      "run": 0,
+      "streaming replay": 0
+    },
+    "decisions": 12,
+    "reference_decisions": 12,
+    "equal_fields": [
+      "action",
+      "shown",
+      "p_top1",
+      "set_size",
+      "guard_risk",
+      "is_final",
+      "utterance"
+    ],
+    "equal": "12/12",
+    "stop": "end",
+    "e2e_latency_ms": {
+      "n": 12,
+      "p50": 91.94775000287336,
+      "p95": 99.06628249700589,
+      "max": 101.26840000157245
+    },
+    "note": "max_attempts 1 in run; the streaming replay CLI uses the default (2), so the attempt fields are not compared"
+  }
+}

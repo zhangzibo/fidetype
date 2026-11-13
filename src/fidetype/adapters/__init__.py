@@ -9,4 +9,7 @@ and emits streams that follow ``spec/neuraltextstream-v0.1.md``.
   (Achituve et al. 2025, forearm sEMG, 19 participants, CC BY 4.0). Own
   Intan RHD reader, keylog alignment, key-press streams
   (``vocab_type="key"``) and their CTC character form.
+- :mod:`fidetype.adapters.lsl`: Lab Streaming Layer, live. LSL inlets ->
+  NTS events -> the streaming trust layer; NTS files -> LSL outlets.
+  Needs the optional ``pylsl`` (extra ``[lsl]``) only for the network.
 """

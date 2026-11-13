@@ -26,6 +26,7 @@ It runs a **frozen configuration**: the fitted state of the trust core, loaded f
 | `layer.push(event, session_id)` | Consume one event (dict or JSON string). Returns the decisions it causes, often none |
 | `layer.end_of_utterance(session_id, final_attempt=None)` | Close the utterance when the producer sends no boundary |
 | `layer.flush()`, `layer.close(sid)`, `layer.new_item(sid)` | End all pending utterances; drop a session; reset the attempt count |
+| `layer.abort_utterance(sid)` | Drop the pending utterance **without** a decision (for example after a transport loss; added in M6-01) |
 | `layer.feedback(decision, truth)` | The user's final text (or None). Feeds the online controller and writes a ledger correction |
 | `replay(path, layer)`, `iter_events(path)` | File (JSON Lines or NPZ) → events → layer |
 | `python -m fidetype.trust.streaming replay --config trust.json [--decoder greedy] files...` | Print `trust_decision` events as JSON Lines |
@@ -99,7 +100,7 @@ On the same input, the final decision equals the batch decision (`TrustPipeline.
 - The frames route decodes the whole utterance at its end. A truly incremental decoder (prefix beam state carried across frames) is M4-01 (causal mode).
 - No frozen configuration fitted on real data is committed yet. Fit the Paper 1 recipe per user and session, then freeze it (follow-up M4-06).
 - FEP-0001 needs conformance checks and golden vectors (follow-up M4-07).
-- An LSL / WebSocket input adapter for live use is M6-01.
+- Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.
 
 ## Related
-[Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md)
+[Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [LSL input](lsl-input.md)

@@ -44,6 +44,8 @@ An utterance ends at: a final hypothesis (hypothesis route), a
 ``segment_end`` event (proposed in FEP-0001), an ``end`` event, a new
 ``header`` event, or a call of :meth:`StreamingTrustLayer.end_of_utterance`.
 An utterance with no input (no frame and no hypothesis) gives no decision.
+:meth:`StreamingTrustLayer.abort_utterance` drops the pending utterance
+without a decision (for example after a transport loss).
 
 Attempts
 --------
@@ -247,6 +249,7 @@ class _Session:
     utt_first_event: int | None = None
     frames_since_partial: int = 0
     ignored_events: int = 0
+    aborted_utterances: int = 0
     controller: Any = None
     online_policy: Any = None
     tickets: "OrderedDict[int, Any]" = field(default_factory=OrderedDict)
@@ -457,6 +460,7 @@ class StreamingTrustLayer:
             "events": s.n_events,
             "ignored_events": s.ignored_events,
             "dropped_frames": s.dropped_frames,
+            "aborted_utterances": s.aborted_utterances,
             "pending_feedback": len(s.tickets),
             "online_threshold": None if s.controller is None else s.controller.threshold,
         }
@@ -520,6 +524,26 @@ class StreamingTrustLayer:
         """Close the current utterance and return its final decision (if it had input)."""
         s = self._session(session_id)
         return self._end(s, final_attempt, self.clock())
+
+    def abort_utterance(self, session_id: str = "default") -> int:
+        """Drop the pending utterance **without** a decision. Return the number of frames dropped.
+
+        Use it when the input of the utterance is incomplete, for example
+        when the transport connection broke (``fidetype.adapters.lsl``). A
+        decision on a part of an utterance could commit a cut text. The
+        header, the attempt count and the online state stay. The next event
+        starts a new utterance.
+        """
+        s = self._sessions.get(session_id)
+        if s is None:
+            return 0
+        n = len(s.rows)
+        if s.has_input or s.overflow:
+            s.aborted_utterances += 1
+        if s.overflow:
+            s.utterance += 1  # its ABSTAIN was already emitted
+        s.reset_utterance()
+        return n
 
     def _read_header(self, s: _Session, ev: dict[str, Any]) -> None:
         if ev.get("spec_version") != SPEC_VERSION:

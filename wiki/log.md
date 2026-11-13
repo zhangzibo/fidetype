@@ -394,3 +394,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Spec proposal `spec/feps/0001-streaming-trust-events.md` (segment_end, hypothesis evidence fields, trust_decision); no v0.1 change.
 - Pages: new [streaming trust layer](concepts/streaming-trust-layer.md), diagram 12; links from provenance-ledger and conformal-risk-control; index; tracker (M4-03 done; follow-ups M4-06..M4-08).
 
+
+## [2026-11-12] setup | M6-01 LSL input
+- New `src/fidetype/adapters/lsl.py` (own code; optional `pylsl`, MIT, extra `[lsl]`; imports without it and raises `LSLUnavailableError` with the install command). `LSLEventSource`: LSL inlet(s) → NTS events (header from `desc/fidetype/nts_header` or channel labels + options; values log_probs / probs / logits; `SignalDecoder` hook for raw EEG/EMG; receiver clock = timestamp + `time_correction()`, one offset per sender host; clamp / drop / error for non-increasing times; gaps mark / segment / abort; watermark merge of a frames and a marker inlet; loss → abort the cut utterance, re-resolve, new header). `LSLTrustRunner`: → `StreamingTrustLayer` → `trust_decision` JSON Lines with an `lsl` provenance record, optional LSL outlet `fidetype.decisions`. `replay_to_lsl`. CLI `python -m fidetype.adapters.lsl run | replay-to-lsl | list`.
+- `StreamingTrustLayer.abort_utterance()` added (drop the pending utterance without a decision).
+- `tests/test_adapter_lsl.py` (26 tests: 22 with a fake inlet, 4 real localhost loopbacks skipped without pylsl). pytest 443 passed / 4 skipped.
+- Loopback benchmark `experiments/2026-11-12-m6-lsl/` (localhost, synthetic): every decision equals the file replay path (frames route 12/12 with float32 and double64, hypothesis route 30/30, two-process CLIs 12/12). Transport p50 3.5 ms, p95 6.6 ms; e2e final p50 60.6 ms with a 50 ms merge window, 17.2 ms with 10 ms, 3.0 ms on the hypothesis route.
+- Pages: new [LSL input](concepts/lsl-input.md) (tool connection notes from the OpenBCI, BrainFlow and LSL docs), diagram 13; updated streaming-trust-layer, lab-streaming-layer, brainflow, index. Tracker: M6-01 done; M4-03 agent run filled; follow-ups M6-08..M6-11.
