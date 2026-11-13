@@ -104,3 +104,5 @@ On the same input, the final decision equals the batch decision (`TrustPipeline.
 
 ## Related
 [Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [LSL input](lsl-input.md)
+
+SDK and demo: the [Python SDK and offline demo](python-sdk.md) page shows the public API (`fidetype.TrustLayer`) and `fidetype demo`.

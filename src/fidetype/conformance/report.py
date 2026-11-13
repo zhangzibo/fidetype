@@ -41,6 +41,16 @@ class TargetReport:
         lv = self.levels
         return lv[-1] if lv else "none"
 
+    def passes(self, level: str = "core") -> bool:
+        """True if the target reaches ``level`` (``core``, ``trust-ready`` or ``provenance``)."""
+        if level not in LEVELS:
+            raise ValueError(f"unknown level {level!r}; known: {list(LEVELS)}")
+        return level in self.levels
+
+    def failures(self, level: str | None = None) -> list[CheckResult]:
+        """The failed checks (only those that block ``level``, if given)."""
+        return [r for r in self.results if r.outcome == "fail" and (level is None or r.blocks(level))]
+
     def counts(self) -> dict[str, int]:
         c = {"pass": 0, "fail": 0, "warn": 0, "skip": 0}
         for r in self.results:

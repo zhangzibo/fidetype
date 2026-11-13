@@ -870,6 +870,21 @@ def replay(
     return out
 
 
+def frame_decoder(name: str) -> DecodeFn | None:
+    """A named frame decoder for the command lines: ``none``, ``greedy`` or ``demo``."""
+    if name == "none":
+        return None
+    if name == "greedy":
+        from fidetype.trust.testing import greedy_nbest
+
+        return greedy_nbest
+    if name == "demo":
+        from fidetype.demo import build_decoder
+
+        return build_decoder()
+    raise ValueError(f"unknown decoder {name!r} (none, greedy or demo)")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """``python -m fidetype.trust.streaming replay --config trust.json stream.jsonl``"""
     import argparse
@@ -880,16 +895,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     r = sub.add_parser("replay", help="replay stream files; print trust_decision events as JSON Lines")
     r.add_argument("files", nargs="+")
     r.add_argument("--config", required=True, help="FrozenTrustConfig JSON file")
-    r.add_argument("--decoder", choices=("none", "greedy"), default="none",
-                   help="frame decoder: none (hypothesis route) or greedy (CTC greedy, frame route)")
+    r.add_argument("--decoder", choices=("none", "greedy", "demo"), default="none",
+                   help="frame decoder: none (hypothesis route), greedy (CTC greedy, frame route) or demo "
+                        "(the beam + LM decoder of fidetype.demo, frame route)")
+    r.add_argument("--max-attempts", type=int, default=2, help="attempts per item (1: no ASK; default 2)")
     r.add_argument("--no-text", action="store_true", help="omit the shown texts from the output")
     a = ap.parse_args(argv)
-    dec = None
-    if a.decoder == "greedy":
-        from fidetype.trust.testing import greedy_nbest
-
-        dec = greedy_nbest
-    layer = StreamingTrustLayer.from_file(a.config, decode_fn=dec)
+    dec = frame_decoder(a.decoder)
+    layer = StreamingTrustLayer.from_file(a.config, decode_fn=dec,
+                                          streaming=StreamingConfig(max_attempts=a.max_attempts))
     for i, fp in enumerate(a.files):
         for d in replay(fp, layer, session_id=f"file-{i}"):
             sys.stdout.write(json.dumps(d.to_event(include_text=not a.no_text), ensure_ascii=False) + "\n")

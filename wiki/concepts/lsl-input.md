@@ -115,3 +115,5 @@ We state only what their documentation says (checked 2026-11-12).
 
 ## Related
 [Streaming trust layer](streaming-trust-layer.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [BrainFlow](../entities/brainflow.md) · [Conformance suite](conformance-suite.md) · [Standard roadmap](../questions/roadmap-standard.md)
+
+Live demo over LSL: see [Python SDK and offline demo](python-sdk.md) and `examples/lsl_bridge.py`.

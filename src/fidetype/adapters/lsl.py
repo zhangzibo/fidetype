@@ -1339,8 +1339,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     r.add_argument("--stream-type")
     r.add_argument("--source-id")
     r.add_argument("--events", default="auto", help='"auto" (from the desc), "none", or a marker stream name')
-    r.add_argument("--decoder", choices=("none", "greedy"), default="none",
-                   help="frame decoder: none (hypothesis route) or greedy (CTC greedy, frames route)")
+    r.add_argument("--decoder", choices=("none", "greedy", "demo"), default="none",
+                   help="frame decoder: none (hypothesis route), greedy (CTC greedy, frames route) or demo "
+                        "(the beam + LM decoder of fidetype.demo)")
     r.add_argument("--values", choices=("auto", "log_probs", "probs", "logits"), default="auto")
     r.add_argument("--vocab", help="comma-separated vocab of a foreign stream (default: channel labels)")
     r.add_argument("--vocab-type", choices=VOCAB_TYPES)
@@ -1410,11 +1411,9 @@ def _run_cli(a: Any) -> int:
                          blank=blank, clock=a.clock, on_gap=a.on_gap, out_of_order=a.out_of_order,
                          boundary_markers=tuple(a.boundary_marker or ("segment_end",)),
                          plain_markers=a.plain_markers, merge_window_s=a.merge_window)
-    dec = None
-    if a.decoder == "greedy":
-        from fidetype.trust.testing import greedy_nbest
+    from fidetype.trust.streaming import frame_decoder
 
-        dec = greedy_nbest
+    dec = frame_decoder(a.decoder)
     cfg = FrozenTrustConfig.load(a.config)
     layer = StreamingTrustLayer(cfg, decode_fn=dec, streaming=StreamingConfig(max_attempts=a.max_attempts))
     src = open_source(a.stream_name, a.stream_type, a.source_id, a.events, mapping, timeout=a.resolve_timeout,

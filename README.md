@@ -6,7 +6,7 @@
 
 **Name:** *fides* (Latin: trust) + type.
 
-> Status: early research (milestone M0). Only the first component exists today. Most parts below are **planned**.
+> Status: research software, v0.0.1 (pre-alpha). The NeuralTextStream spec v0.1, the trust core, the streaming trust layer, the conformance suite, the open benchmark, LSL input and a Python SDK with an offline demo exist. The API can still change.
 
 ## What it does
 Brain-computer interfaces (BCIs) and other neural input devices (MEG, EEG, wrist EMG, implants) can now decode text. But they make errors. Their AI language models can also write fluent sentences that are wrong. Fidetype sits between any decoder and the user. Its goal is to make the decoded text reliable. When it is complete, Fidetype will:
@@ -53,39 +53,67 @@ node tools/serve.js        # then open http://127.0.0.1:8000/wiki/diagrams/index
 | M3 | Paper 1: "Calibrated, abstaining brain-to-text", with the new metric effective words per minute | Planned |
 | M4 | Paper 2: causal / streaming decoder | Planned |
 | M5 | Open benchmark v0.1: harness, fixed splits, leaderboard, licence audit | Done (2026-11-11) |
-| M6–M7 | Device adapters, pilots | In progress |
+| M6–M7 | Device adapters (LSL input done), SDK + offline demo (done 2026-11-12), pilots | In progress |
 
 - Full plan: [wiki/questions/project-plan.md](wiki/questions/project-plan.md).
 - Actual progress: [wiki/progress/index.html](wiki/progress/index.html) (a generated dashboard; it also opens through `node tools/serve.js`).
 
 ## Quick start
-You need Python 3.12 and [uv](https://docs.astral.sh/uv/).
+You need Python 3.12. Install from a clone (the package is not on PyPI yet):
 
 ```sh
-uv sync --extra dev                       # create .venv and install fidetype + pytest
-uv run pytest -q                          # run the tests (41 tests)
-uv run python examples/simulate_demo.py   # simulate noisy decoders at four error levels
+pip install .                 # or: uv sync --extra dev   (adds pytest; then: uv run pytest -q)
+fidetype demo                 # offline demo: the trust layer on synthetic decoder streams (about 30 s)
+fidetype demo --fast --html demo.html   # no waiting; also write the static demo page
 ```
 
-Use the simulator from Python:
+The demo needs no data and no network. It shows the trust layer commit, offer and abstain phrase by phrase. It also shows the key safety result: on a flat (no-signal) stream the decoder's language model still writes fluent text, "always commit" types it, and the trust layer abstains. A prebuilt page is in [demo/index.html](demo/index.html) (open it in a browser; no server).
+
+### Emit a stream from your decoder, run the trust layer
+Your CTC decoder gives one row of log-probabilities per frame over `fidetype.VOCAB` (blank first). Write the rows as a NeuralTextStream, check it, and feed it to the streaming trust layer:
+
+```sh
+fidetype demo --write-streams demo-streams    # gives demo-streams/trust-config-demo.json (a frozen config)
+```
 
 ```python
-from fidetype.eval.metrics import cer, ctc_greedy_decode, expected_calibration_error
-from fidetype.streams.simulator import NoisyDecoderSimulator, SimConfig
+import fidetype
+from fidetype.demo import build_decoder, make_stream   # stand-ins for your decoder
 
-sim = NoisyDecoderSimulator(SimConfig.preset("median", confidence_temperature=0.5), seed=0)
-res = sim.simulate("please close the window before you leave")
-hyp = ctc_greedy_decode(res.stream)
-print(hyp, cer(res.text, hyp), expected_calibration_error(res.peak_confidence, res.peak_correct))
+log_probs = make_stream("the boy found a red box", "strong", seed=0).log_probs   # (T, V) from your decoder
+meta = fidetype.stream_meta(modality="eeg", decoder_name="my-ctc", decoder_version="1.0")
+with fidetype.open_stream("utt.jsonl", "w", source="my-ctc", meta=meta, frame_period=0.04) as w:
+    for i, row in enumerate(log_probs):
+        w.frame(0.04 * i, row)                 # or w.frame(t, logits=raw_scores)
+print(fidetype.validate("utt.jsonl").level)    # "trust-ready"
+
+config = fidetype.FrozenTrustConfig.load("demo-streams/trust-config-demo.json")
+layer = fidetype.TrustLayer(config, decode_fn=build_decoder())   # the decoder the config was fitted with
+for event in fidetype.open_stream("utt.jsonl"):
+    for d in layer.push(event):
+        print("final" if d.final else "preview", d.action.value, d.shown)
 ```
 
-The presets `perfect`, `best`, `median` and `worst` target a CER of 0.00, 0.17, 0.28 and 0.41. A `confidence_temperature` below 1 makes the simulated decoder over-confident.
+A frozen configuration is valid only with the `decode_fn` it was fitted with (the demo config: the demo beam search + LM). With another decoder its guarantee does not hold. For real use, fit your own configuration on labelled calibration data of the same user: `fidetype.calibrate(streams, texts, decode_fn).save("trust.json")`. More: [examples/](examples/) (CTC log-probs, hypothesis-only stream, streaming trust, LSL bridge) and the SDK page [wiki/concepts/python-sdk.md](wiki/concepts/python-sdk.md).
+
+### Command line
+```
+fidetype validate FILE [--level trust-ready]       conformance check (= python -m fidetype.conformance check)
+fidetype trust --config trust.json FILE            trust_decision JSON Lines (= python -m fidetype.trust.streaming replay)
+fidetype demo [--fast] [--html F] [--json F]       offline demo
+fidetype conformance | lsl | benchmark | ledger    the full tools; the python -m entry points still work
+```
 
 ## Repository layout
 ```
 src/fidetype/
+  __init__.py public SDK API (lazy imports); api.py, writer.py, cli.py (the `fidetype` command)
   streams/    NeuralTextStream spec, vocabulary, noisy-decoder simulator, test corpus
+  trust/      trust core, frozen config, streaming trust layer, provenance ledger
+  conformance/ benchmark/ adapters/   conformance suite, open benchmark, adapters (LSL, datasets)
+  demo/       offline demo (synthetic streams, frozen demo config, static page)
   eval/       metrics: CER, WER, CTC greedy decode, ECE
+demo/         prebuilt static demo page + decision log (`fidetype demo --html`)
 tests/        pytest tests
 examples/     small runnable scripts
 wiki/         research knowledge base (see "Research notes")

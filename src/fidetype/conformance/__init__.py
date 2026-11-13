@@ -56,6 +56,27 @@ def check_stream(stream: NeuralTextStream, name: str = "<stream>", truth: Iterab
     return TargetReport(name, "adapter", run_checks(from_stream(stream), truth), info)
 
 
+def check(
+    target: str | PathLike[str] | NeuralTextStream,
+    level: str | None = None,
+    truth: Iterable[str] | None = None,
+) -> TargetReport:
+    """Check one stream (a file path or an in-memory stream). The stable SDK entry point.
+
+    Return a :class:`TargetReport`: ``report.level`` is the highest level
+    reached, ``report.passes("trust-ready")`` tests one level and
+    ``report.failures()`` lists the failed checks. With ``level`` given,
+    raise :class:`StreamRejected` if the stream does not reach it.
+    ``truth`` (the intended texts, optional) enables the leakage check.
+    """
+    rep = check_stream(target, truth=truth) if isinstance(target, NeuralTextStream) else check_file(target, truth)
+    if level is not None and not rep.passes(level):
+        first = rep.failures(level)
+        msg = f"[{first[0].check_id}, spec {first[0].clause}] {first[0].message}" if first else "level not reached"
+        raise StreamRejected(f"{rep.target} does not reach level {level!r}: {msg}", first[0].clause if first else "")
+    return rep
+
+
 def check_adapter(name: str) -> list[TargetReport]:
     """Run an adapter on synthetic inputs and check every stream it emits."""
     from fidetype.conformance.producers import TARGETS
@@ -72,6 +93,6 @@ def check_adapter(name: str) -> list[TargetReport]:
 
 __all__ = [
     "LEVELS", "REGISTRY", "CheckResult", "ConsumedStream", "NeuralTextStream", "RawStream", "StreamRejected",
-    "TargetReport", "build_report", "check_adapter", "check_file", "check_stream", "check_table", "from_stream",
+    "TargetReport", "build_report", "check", "check_adapter", "check_file", "check_stream", "check_table", "from_stream",
     "levels_passed", "load_stream", "read_raw", "run_checks", "summary_text", "write_jsonl",
 ]

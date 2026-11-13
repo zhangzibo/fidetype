@@ -36,6 +36,9 @@ data = ["mne>=1.8", "scipy>=1.13"]
 # Lab Streaming Layer adapter (fidetype.adapters.lsl). pylsl is MIT; its Windows wheel includes liblsl.
 lsl = ["pylsl>=1.16"]
 
+[project.scripts]
+fidetype = "fidetype.cli:main"
+
 [project.urls]
 Repository = "https://github.com/zhangzibo/fidetype"
 
@@ -45,6 +48,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/fidetype"]
+
+# The sdist holds the package, its tests, examples and the spec; not the research files.
+[tool.hatch.build.targets.sdist]
+include = ["src/fidetype", "tests", "examples", "spec", "README.md", "LICENSE", "CITATION.cff"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
