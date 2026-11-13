@@ -1,0 +1,14 @@
+\section{Problem setting and stream interface}
+\label{sec:setting}
+\label{sec:format}
+
+\paragraph{Items, streams and actions.} An \emph{item} is one attempt to enter one sentence: a \emph{trial} of the intracortical data, an \emph{instance} (one participant typing one sentence) of the MEG data, or a composed \emph{sentence} of the sEMG data. For item $i$, the decoder emits a stream of $F_i$ frames of log-probabilities $\log p_t(v)$ over $V$ tokens. In our open format, \nts{} v0.1, a stream holds this $F \times V$ array, the frame times, the typed vocabulary and the CTC blank index. A producer must emit the decoder's own, unmodified distribution, and ground-truth text must not appear in the stream. One small adapter per device maps decoder output into the stream; every later step is the same code for all devices, with parameters re-fitted per device (format, conformance suite, adapters and audit log: \cref{app:format}).
+
+An LM search returns $K = 10$ ranked candidate sentences with scores, from which we compute $\hat p_{\mathrm{top1}}$, the calibrated probability of the top candidate. The system then takes one action: \act{commit} the top candidate (sent without further input); \act{offer} up to $k$ candidates for the user to pick; or \act{abstain}, after which the user types with a fallback keyboard. Let $c_i \in \{0,1\}$ indicate that the top candidate differs from the intended sentence (exact match after normalising case and punctuation).
+
+\paragraph{The two error quantities.} Over the $n_{\mathrm{test}}$ test items,
+\begin{align}
+  \text{wrong-commit rate} &= \#\{\text{wrong commits}\} / n_{\mathrm{test}} \approx \Pr(\text{commit} \wedge \text{wrong}), \\
+  \text{error among commits (EAC)} &= \#\{\text{wrong commits}\} / \#\{\text{commits}\} \approx \Pr(\text{wrong} \mid \text{commit}).
+\end{align}
+The first is the \emph{marginal} risk: how often wrong sentences reach the recipient per sentence attempted. It is monotone in the commit threshold, so CRC and LTT can bound it (\cref{sec:crc}). Committing rarely makes it small, so we always report it with the \emph{commit rate}. The second is the \emph{selective} risk that a user sees in committed text (\cref{sec:selective}). $\alpha = 0.05$ is the target wrong-commit rate, $\beta$ the target error among commits and $\delta = 0.1$ the failure probability of the high-probability guarantees (notation: \cref{tab:notation}).

@@ -1,4 +1,4 @@
-% Supplementary material of Paper 1 (draft v4). Section, table, figure and algorithm numbers carry the prefix S.
+% Supplementary material of Paper 1. Section, table, figure and algorithm numbers carry the prefix S.
 % References to the main paper (sections, Tables 1-4, Figures 1-3, Algorithm 1) resolve through xr (main.aux).
 
 \section{Notation}
@@ -56,7 +56,7 @@
 
 \begin{figure}[H]
   \centering
-  \begin{adjustbox}{max width=\linewidth}\input{../figures/tikz-decision.tex}\end{adjustbox}
+  \begin{adjustbox}{max width=\linewidth}\input{\figdir tikz-decision.tex}\end{adjustbox}
   \caption{\textbf{Trust decision for one item} (primary rule). A candidate is committed only if the guard (input-validity check) accepts it and its calibrated confidence reaches $\hat\lambda = \max(\lambda_{\mathrm{tuned}}, \hat\lambda_{\mathrm{LTT}})$. LTT bounds the risk over the mix of sessions that the calibration data come from. Otherwise the layer offers alternatives or abstains, and the user types with the fallback keyboard.}
   \label{fig:decision}
 \end{figure}
@@ -508,7 +508,7 @@ We split 19 participants' data by a hash of the sentence text into 101 training,
 
 \begin{figure}[H]
   \centering
-  \begin{adjustbox}{max width=0.85\linewidth}\input{../figures/tikz-architecture.tex}\end{adjustbox}
+  \begin{adjustbox}{max width=0.85\linewidth}\input{\figdir tikz-architecture.tex}\end{adjustbox}
   \caption{\textbf{Architecture.} Each device's decoder emits a stream through a small adapter. The trust layer reads the stream: it calibrates confidence, builds candidate sentences, and chooses an action under a risk-control rule. The user's corrections and picks (dashed) can feed online re-calibration. Decisions can be written to a hash-chained audit log that stores no raw signals.}
   \label{fig:arch}
 \end{figure}
@@ -538,7 +538,7 @@ Both guarantees need the parts that define $s_i$ (temperatures, conformal sets, 
 \section{Controls}
 \label{app:controls}
 
-\Cref{tab:controls} gives the commits on the Brain-to-Text '25 control streams for the frozen configurations of drafts v3 and v4. With the guard, the split-A pipeline committed no frame-shuffled or uniform stream on either decoder, and its real-trial test rate was unchanged (0.0245 ours, 0.0294 published; a refit that reproduces the committed values). On Brain-to-Text '25, the guard risk separated frame-shuffled and uniform streams from real ones with AUROC 0.981 and 0.998. On MEG the layer committed nothing on real input either, so its zero commits on controls carry no information; the guard risk separated shuffled MEG, zero input and uniform streams (AUROC 0.92, 1.00, 1.00), but not frame-shuffled streams (0.47) (\cref{fig:null}c).
+\Cref{tab:controls} gives the commits on the Brain-to-Text '25 control streams for the frozen configurations tagged \code{paper1-v3-frozen-config} (frozen v3) and \code{paper1-v4-frozen-config} (frozen v4). With the guard, the split-A pipeline committed no frame-shuffled or uniform stream on either decoder, and its real-trial test rate was unchanged (0.0245 ours, 0.0294 published; a refit that reproduces the committed values). On Brain-to-Text '25, the guard risk separated frame-shuffled and uniform streams from real ones with AUROC 0.981 and 0.998. On MEG the layer committed nothing on real input either, so its zero commits on controls carry no information; the guard risk separated shuffled MEG, zero input and uniform streams (AUROC 0.92, 1.00, 1.00), but not frame-shuffled streams (0.47) (\cref{fig:null}c).
 
 \begin{table}[H]
   \centering

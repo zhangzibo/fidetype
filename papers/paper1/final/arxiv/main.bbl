@@ -1,0 +1,780 @@
+\begin{thebibliography}{85}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Willett et~al.(2023)Willett, Kunz, Fan, Avansino, Wilson, Choi,
+  Kamdar, Glasser, Hochberg, Druckmann, Shenoy, and
+  Henderson]{willett2023speech}
+Francis~R. Willett, Erin~M. Kunz, Chaofei Fan, Donald~T. Avansino, Guy~H.
+  Wilson, Eun~Young Choi, Foram Kamdar, Matthew~F. Glasser, Leigh~R. Hochberg,
+  Shaul Druckmann, Krishna~V. Shenoy, and Jaimie~M. Henderson.
+\newblock A high-performance speech neuroprosthesis.
+\newblock \emph{Nature}, 620\penalty0 (7976):\penalty0 1031--1036, 2023.
+\newblock \doi{10.1038/s41586-023-06377-x}.
+
+\bibitem[Card et~al.(2024)Card, Wairagkar, Iacobacci, Hou, Singer-Clark,
+  Willett, Kunz, Fan, Vahdati~Nia, Deo, Srinivasan, Choi, Glasser, Hochberg,
+  Henderson, Shahlaie, Stavisky, and Brandman]{card2024accurate}
+Nicholas~S. Card, Maitreyee Wairagkar, Carrina Iacobacci, Xianda Hou, Tyler
+  Singer-Clark, Francis~R. Willett, Erin~M. Kunz, Chaofei Fan, Maryam
+  Vahdati~Nia, Darrel~R. Deo, Aparna Srinivasan, Eun~Young Choi, Matthew~F.
+  Glasser, Leigh~R. Hochberg, Jaimie~M. Henderson, Kiarash Shahlaie, Sergey~D.
+  Stavisky, and David~M. Brandman.
+\newblock An accurate and rapidly calibrating speech neuroprosthesis.
+\newblock \emph{New England Journal of Medicine}, 391\penalty0 (7):\penalty0
+  609--618, 2024.
+\newblock \doi{10.1056/NEJMoa2314132}.
+
+\bibitem[Metzger et~al.(2023)Metzger, Littlejohn, Silva, Moses, Seaton, Wang,
+  Dougherty, Liu, Wu, Berger, Zhuravleva, Tu-Chan, Ganguly, Anumanchipalli, and
+  Chang]{metzger2023avatar}
+Sean~L. Metzger, Kaylo~T. Littlejohn, Alexander~B. Silva, David~A. Moses,
+  Margaret~P. Seaton, Ran Wang, Maximilian~E. Dougherty, Jessie~R. Liu, Peter
+  Wu, Michael~A. Berger, Inga Zhuravleva, Adelyn Tu-Chan, Karunesh Ganguly,
+  Gopala~K. Anumanchipalli, and Edward~F. Chang.
+\newblock A high-performance neuroprosthesis for speech decoding and avatar
+  control.
+\newblock \emph{Nature}, 620\penalty0 (7976):\penalty0 1037--1046, 2023.
+\newblock \doi{10.1038/s41586-023-06443-4}.
+
+\bibitem[Willett et~al.(2021)Willett, Avansino, Hochberg, Henderson, and
+  Shenoy]{willett2021handwriting}
+Francis~R. Willett, Donald~T. Avansino, Leigh~R. Hochberg, Jaimie~M. Henderson,
+  and Krishna~V. Shenoy.
+\newblock High-performance brain-to-text communication via handwriting.
+\newblock \emph{Nature}, 593\penalty0 (7858):\penalty0 249--254, 2021.
+\newblock \doi{10.1038/s41586-021-03506-2}.
+
+\bibitem[Jude et~al.(2026)Jude, Levi-Aharoni, Acosta, Allcroft, Nicolas,
+  Lacayo, Card, Wairagkar, Levin, Brandman, Stavisky, Willett, Williams,
+  Simeral, Hochberg, and Rubin]{jude2026bimanual}
+Justin~J. Jude, Hadar Levi-Aharoni, Alexander~J. Acosta, Shane~B. Allcroft,
+  Claire Nicolas, Bayardo~E. Lacayo, Nicholas~S. Card, Maitreyee Wairagkar,
+  Alisa~D. Levin, David~M. Brandman, Sergey~D. Stavisky, Francis~R. Willett,
+  Ziv~M. Williams, John~D. Simeral, Leigh~R. Hochberg, and Daniel~B. Rubin.
+\newblock Restoring rapid natural bimanual typing with a neuroprosthesis after
+  paralysis.
+\newblock \emph{Nature Neuroscience}, 29\penalty0 (10):\penalty0 2613--2622,
+  2026.
+\newblock \doi{10.1038/s41593-026-02218-y}.
+
+\bibitem[L{\'e}vy et~al.(2026)L{\'e}vy, Zhang, Pinet, Rapin, Banville,
+  d'Ascoli, and King]{levy2026brain2qwerty}
+Jarod L{\'e}vy, Mingfang Zhang, Svetlana Pinet, J{\'e}r{\'e}my Rapin, Hubert
+  Banville, St{\'e}phane d'Ascoli, and Jean-R{\'e}mi King.
+\newblock Noninvasive decoding of typed sentences from human brain activity.
+\newblock \emph{Nature Neuroscience}, 29\penalty0 (10):\penalty0 2438--2444,
+  2026.
+\newblock \doi{10.1038/s41593-026-02303-2}.
+
+\bibitem[Zhang et~al.(2026)Zhang, L{\'e}vy, Rommel, Rapin, Bel, Bonnaire,
+  Nieto, Bourdillon, Pinet, d'Ascoli, Moreau, and
+  King]{zhang2026brain2qwertyv2}
+Mingfang Zhang, Jarod L{\'e}vy, Cedric Rommel, J{\'e}r{\'e}my Rapin, Corentin
+  Bel, Julie Bonnaire, Daniel Nieto, Pierre Bourdillon, Svetlana Pinet,
+  St{\'e}phane d'Ascoli, Thomas Moreau, and Jean-R{\'e}mi King.
+\newblock Accurate decoding of natural sentences from non-invasive brain
+  recordings, 2026.
+\newblock arXiv:2608.18114.
+
+\bibitem[Sivakumar et~al.(2024)Sivakumar, Seely, Du, Bittner, Berenzweig,
+  Bolarinwa, Gramfort, and Mandel]{sivakumar2024emg2qwerty}
+Viswanath Sivakumar, Jeffrey Seely, Alan Du, Sean~R. Bittner, Adam Berenzweig,
+  Anuoluwapo Bolarinwa, Alexandre Gramfort, and Michael~I. Mandel.
+\newblock emg2qwerty: A large dataset with baselines for touch typing using
+  surface electromyography, 2024.
+\newblock arXiv:2410.20081.
+
+\bibitem[Eby et~al.(2025)Eby, Beutel, Koivisto, Achituve, Fetaya, and
+  Zariffa]{achituve2025emg}
+Jonathan Eby, Moshe Beutel, David Koivisto, Idan Achituve, Ethan Fetaya, and
+  Jos{\'e} Zariffa.
+\newblock Electromyographic typing gesture classification dataset for
+  neurotechnological human-machine interfaces.
+\newblock \emph{Scientific Data}, 12:\penalty0 440, 2025.
+\newblock \doi{10.1038/s41597-025-04763-w}.
+
+\bibitem[Kaifosh et~al.(2025)Kaifosh, Reardon, and {CTRL-labs at Reality
+  Labs}]{ctrllabs2025generic}
+Patrick Kaifosh, Thomas~R. Reardon, and {CTRL-labs at Reality Labs}.
+\newblock A generic non-invasive neuromotor interface for human-computer
+  interaction.
+\newblock \emph{Nature}, 645\penalty0 (8081):\penalty0 702--711, 2025.
+\newblock \doi{10.1038/s41586-025-09255-w}.
+
+\bibitem[Koenecke et~al.(2024)Koenecke, Choi, Mei, Schellmann, and
+  Sloane]{koenecke2024careless}
+Allison Koenecke, Anna Seo~Gyeong Choi, Katelyn~X. Mei, Hilke Schellmann, and
+  Mona Sloane.
+\newblock Careless whisper: Speech-to-text hallucination harms.
+\newblock In \emph{Proceedings of the 2024 ACM Conference on Fairness,
+  Accountability, and Transparency (FAccT)}, 2024.
+\newblock \doi{10.1145/3630106.3658996}.
+
+\bibitem[Huggins et~al.(2011)Huggins, Wren, and Gruis]{huggins2011als}
+Jane~E. Huggins, Patricia~A. Wren, and Kirsten~L. Gruis.
+\newblock What would brain-computer interface users want? {Opinions} and
+  priorities of potential users with amyotrophic lateral sclerosis.
+\newblock \emph{Amyotrophic Lateral Sclerosis}, 12\penalty0 (5):\penalty0
+  318--324, 2011.
+\newblock \doi{10.3109/17482968.2011.572978}.
+
+\bibitem[Huggins et~al.(2015)Huggins, Moinuddin, Chiodo, and
+  Wren]{huggins2015sci}
+Jane~E. Huggins, Aisha~A. Moinuddin, Anthony~E. Chiodo, and Patricia~A. Wren.
+\newblock What would brain-computer interface users want: opinions and
+  priorities of potential users with spinal cord injury.
+\newblock \emph{Archives of Physical Medicine and Rehabilitation}, 96\penalty0
+  (3 Suppl):\penalty0 S38--S45.e5, 2015.
+\newblock \doi{10.1016/j.apmr.2014.05.028}.
+
+\bibitem[Blabe et~al.(2015)Blabe, Gilja, Chestek, Shenoy, Anderson, and
+  Henderson]{blabe2015assessment}
+Christine~H. Blabe, Vikash Gilja, Cindy~A. Chestek, Krishna~V. Shenoy, Kim~D.
+  Anderson, and Jaimie~M. Henderson.
+\newblock Assessment of brain--machine interfaces from the perspective of
+  people with paralysis.
+\newblock \emph{Journal of Neural Engineering}, 12\penalty0 (4):\penalty0
+  043002, 2015.
+\newblock \doi{10.1088/1741-2560/12/4/043002}.
+
+\bibitem[K{\"u}bler et~al.(2014)K{\"u}bler, Holz, Riccio, Zickler, Kaufmann,
+  Kleih, Staiger-S{\"a}lzer, Desideri, Hoogerwerf, and Mattia]{kubler2014ucd}
+Andrea K{\"u}bler, Elisa~M. Holz, Angela Riccio, Claudia Zickler, Tobias
+  Kaufmann, Sonja~C. Kleih, Pit Staiger-S{\"a}lzer, Lorenzo Desideri, Evert-Jan
+  Hoogerwerf, and Donatella Mattia.
+\newblock The user-centered design as novel perspective for evaluating the
+  usability of {BCI}-controlled applications.
+\newblock \emph{PLoS ONE}, 9\penalty0 (12):\penalty0 e112392, 2014.
+\newblock \doi{10.1371/journal.pone.0112392}.
+
+\bibitem[Valencia et~al.(2023)Valencia, Cave, Kallarackal, Seaver, Terry, and
+  Kane]{valencia2023aac}
+Stephanie Valencia, Richard Cave, Krystal Kallarackal, Katie Seaver, Michael
+  Terry, and Shaun~K. Kane.
+\newblock ``{The} less {I} type, the better'': How {AI} language models can
+  enhance or impede communication for {AAC} users.
+\newblock In \emph{Proceedings of the 2023 CHI Conference on Human Factors in
+  Computing Systems (CHI '23)}, pages 1--14. ACM, 2023.
+\newblock \doi{10.1145/3544548.3581560}.
+
+\bibitem[Kane et~al.(2017)Kane, Morris, Paradiso, and
+  Campbell]{kane2017avuncular}
+Shaun~K. Kane, Meredith~Ringel Morris, Ann Paradiso, and Jon Campbell.
+\newblock ``{At} times avuncular and cantankerous, with the reflexes of a
+  mongoose'': Understanding self-expression through augmentative and
+  alternative communication devices.
+\newblock In \emph{Proceedings of the 2017 ACM Conference on Computer Supported
+  Cooperative Work and Social Computing (CSCW '17)}, pages 1166--1179. ACM,
+  2017.
+\newblock \doi{10.1145/2998181.2998284}.
+
+\bibitem[Wairagkar et~al.(2025)Wairagkar, Card, Singer-Clark, Hou, Iacobacci,
+  Miller, Hochberg, Brandman, and Stavisky]{wairagkar2025voice}
+Maitreyee Wairagkar, Nicholas~S. Card, Tyler Singer-Clark, Xianda Hou, Carrina
+  Iacobacci, Lee~M. Miller, Leigh~R. Hochberg, David~M. Brandman, and Sergey~D.
+  Stavisky.
+\newblock An instantaneous voice-synthesis neuroprosthesis.
+\newblock \emph{Nature}, 644\penalty0 (8075):\penalty0 145--152, 2025.
+\newblock \doi{10.1038/s41586-025-09127-3}.
+
+\bibitem[Guo et~al.(2017)Guo, Pleiss, Sun, and Weinberger]{guo2017calibration}
+Chuan Guo, Geoff Pleiss, Yu~Sun, and Kilian~Q. Weinberger.
+\newblock On calibration of modern neural networks.
+\newblock In \emph{Proceedings of the 34th International Conference on Machine
+  Learning (ICML)}, 2017.
+\newblock arXiv:1706.04599.
+
+\bibitem[Geifman and El-Yaniv(2017)]{geifman2017selective}
+Yonatan Geifman and Ran El-Yaniv.
+\newblock Selective classification for deep neural networks.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~30, 2017.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper_files/paper/2017/hash/4a8423d5e91fda00bb7e46540e2b0cf1-Abstract.html}.
+\newblock arXiv:1705.08500.
+
+\bibitem[Bates et~al.(2021)Bates, Angelopoulos, Lei, Malik, and
+  Jordan]{bates2021rcps}
+Stephen Bates, Anastasios Angelopoulos, Lihua Lei, Jitendra Malik, and
+  Michael~I. Jordan.
+\newblock Distribution-free, risk-controlling prediction sets.
+\newblock \emph{Journal of the ACM}, 68\penalty0 (6):\penalty0 43:1--43:34,
+  2021.
+\newblock \doi{10.1145/3478535}.
+
+\bibitem[Angelopoulos et~al.(2024)Angelopoulos, Bates, Fisch, Lei, and
+  Schuster]{angelopoulos2024crc}
+Anastasios~N. Angelopoulos, Stephen Bates, Adam Fisch, Lihua Lei, and Tal
+  Schuster.
+\newblock Conformal risk control.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2024.
+\newblock arXiv:2208.02814.
+
+\bibitem[Angelopoulos et~al.(2025)Angelopoulos, Bates, Cand{\`e}s, Jordan, and
+  Lei]{angelopoulos2025ltt}
+Anastasios~N. Angelopoulos, Stephen Bates, Emmanuel~J. Cand{\`e}s, Michael~I.
+  Jordan, and Lihua Lei.
+\newblock Learn then test: Calibrating predictive algorithms to achieve risk
+  control.
+\newblock \emph{The Annals of Applied Statistics}, 19\penalty0 (2):\penalty0
+  1641--1662, 2025.
+\newblock \doi{10.1214/24-AOAS1998}.
+
+\bibitem[Kim et~al.(2025)Kim, Ko, and Lee]{kim2025confidence}
+Soowon Kim, Byung-Kwan Ko, and Seo-Hyun Lee.
+\newblock Confidence-aware neural decoding of overt speech from {EEG}: Toward
+  robust brain--computer interfaces, 2025.
+\newblock arXiv:2511.07890.
+
+\bibitem[Huang et~al.(2025)Huang, Narasimha, Patel, Mishne, and
+  Gilja]{huang2025cocontrol}
+Jingya Huang, Sowmya~Manojna Narasimha, Aashish~N. Patel, Gal Mishne, and
+  Vikash Gilja.
+\newblock Prototyping co-control brain--computer interfaces through
+  brain-to-text.
+\newblock In \emph{Data on the Brain \& Mind Workshop (Findings track), NeurIPS
+  2025}, 2025.
+\newblock URL \url{https://openreview.net/forum?id=vECJkkSzEX}.
+
+\bibitem[Damri and Laufer-Goldshtein(2026)]{damri2026risk}
+Amit Damri and Bracha Laufer-Goldshtein.
+\newblock Confident and adaptive generative speech recognition via risk
+  control.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2026.
+\newblock URL \url{https://openreview.net/forum?id=ck5T7QeiDh}.
+
+\bibitem[Cai et~al.(2024)Cai, Venugopalan, Seaver, Xiao, Tomanek, Jalasutram,
+  Morris, Kane, Narayanan, MacDonald, Kornman, Vance, Casey, Gleason, Nelson,
+  and Brenner]{cai2024gaze}
+Shanqing Cai, Subhashini Venugopalan, Katie Seaver, Xiang Xiao, Katrin Tomanek,
+  Sri Jalasutram, Meredith~Ringel Morris, Shaun Kane, Ajit Narayanan, Robert~L.
+  MacDonald, Emily Kornman, Daniel Vance, Blair Casey, Steve~M. Gleason,
+  Philip~Q. Nelson, and Michael~P. Brenner.
+\newblock Using large language models to accelerate communication for eye gaze
+  typing users with {ALS}.
+\newblock \emph{Nature Communications}, 15:\penalty0 9449, 2024.
+\newblock \doi{10.1038/s41467-024-53873-3}.
+
+\bibitem[Metzger et~al.(2022)Metzger, Liu, Moses, Dougherty, Seaton,
+  Littlejohn, Chartier, Anumanchipalli, Tu-Chan, Ganguly, and
+  Chang]{metzger2022spelling}
+Sean~L. Metzger, Jessie~R. Liu, David~A. Moses, Maximilian~E. Dougherty,
+  Margaret~P. Seaton, Kaylo~T. Littlejohn, Josh Chartier, Gopala~K.
+  Anumanchipalli, Adelyn Tu-Chan, Karunesh Ganguly, and Edward~F. Chang.
+\newblock Generalizable spelling using a speech neuroprosthesis in an
+  individual with severe limb and vocal paralysis.
+\newblock \emph{Nature Communications}, 13:\penalty0 6510, 2022.
+\newblock \doi{10.1038/s41467-022-33611-3}.
+
+\bibitem[Willett et~al.(2024)Willett, Li, Le, Fan, Chen, Shlizerman,
+  et~al.]{willett2024lessons}
+Francis~R. Willett, Jingyuan Li, Trung Le, Chaofei Fan, Mingfei Chen, Eli
+  Shlizerman, et~al.
+\newblock Brain-to-text benchmark '24: Lessons learned, 2024.
+\newblock arXiv:2412.17227.
+
+\bibitem[Card et~al.(2025)]{card2025data}
+Nicholas~S. Card et~al.
+\newblock Data for: An accurate and rapidly calibrating speech neuroprosthesis.
+\newblock Dryad, version 5, 2025.
+\newblock doi:
+  \href{https://doi.org/10.5061/dryad.dncjsxm85}{10.5061/dryad.dncjsxm85}. CC0
+  1.0.
+
+\bibitem[Graves et~al.(2006)Graves, Fern{\'a}ndez, Gomez, and
+  Schmidhuber]{graves2006ctc}
+Alex Graves, Santiago Fern{\'a}ndez, Faustino Gomez, and J{\"u}rgen
+  Schmidhuber.
+\newblock Connectionist temporal classification: Labelling unsegmented sequence
+  data with recurrent neural networks.
+\newblock In \emph{Proceedings of the 23rd International Conference on Machine
+  Learning (ICML)}, pages 369--376, 2006.
+\newblock \doi{10.1145/1143844.1143891}.
+
+\bibitem[Hannun et~al.(2014)Hannun, Case, Casper, Catanzaro, Diamos, Elsen,
+  Prenger, Satheesh, Sengupta, Coates, and Ng]{hannun2014deepspeech}
+Awni Hannun, Carl Case, Jared Casper, Bryan Catanzaro, Greg Diamos, Erich
+  Elsen, Ryan Prenger, Sanjeev Satheesh, Shubho Sengupta, Adam Coates, and
+  Andrew~Y. Ng.
+\newblock Deep speech: Scaling up end-to-end speech recognition, 2014.
+\newblock arXiv:1412.5567.
+
+\bibitem[Moses et~al.(2021)Moses, Metzger, Liu, Anumanchipalli, Makin, Sun,
+  Chartier, Dougherty, Liu, Abrams, Tu-Chan, Ganguly, and
+  Chang]{moses2021neuroprosthesis}
+David~A. Moses, Sean~L. Metzger, Jessie~R. Liu, Gopala~K. Anumanchipalli,
+  Joseph~G. Makin, Pengfei~F. Sun, Josh Chartier, Maximilian~E. Dougherty,
+  Patricia~M. Liu, Gary~M. Abrams, Adelyn Tu-Chan, Karunesh Ganguly, and
+  Edward~F. Chang.
+\newblock Neuroprosthesis for decoding speech in a paralyzed person with
+  anarthria.
+\newblock \emph{New England Journal of Medicine}, 385\penalty0 (3):\penalty0
+  217--227, 2021.
+\newblock \doi{10.1056/NEJMoa2027540}.
+
+\bibitem[Schreuder et~al.(2013)Schreuder, H{\"o}hne, Blankertz, Haufe,
+  Dickhaus, and Tangermann]{schreuder2013dynamic}
+Martijn Schreuder, Johannes H{\"o}hne, Benjamin Blankertz, Stefan Haufe,
+  Thorsten Dickhaus, and Michael Tangermann.
+\newblock Optimizing event-related potential based brain--computer interfaces:
+  a systematic evaluation of dynamic stopping methods.
+\newblock \emph{Journal of Neural Engineering}, 10\penalty0 (3):\penalty0
+  036025, 2013.
+\newblock \doi{10.1088/1741-2560/10/3/036025}.
+
+\bibitem[Throckmorton et~al.(2013)Throckmorton, Colwell, Ryan, Sellers, and
+  Collins]{throckmorton2013bayesian}
+Chandra~S. Throckmorton, Kenneth~A. Colwell, David~B. Ryan, Eric~W. Sellers,
+  and Leslie~M. Collins.
+\newblock Bayesian approach to dynamically controlling data collection in
+  {P300} spellers.
+\newblock \emph{IEEE Transactions on Neural Systems and Rehabilitation
+  Engineering}, 21\penalty0 (3):\penalty0 508--517, 2013.
+\newblock \doi{10.1109/TNSRE.2013.2253125}.
+
+\bibitem[Mainsah et~al.(2015)Mainsah, Collins, Colwell, Sellers, Ryan, Caves,
+  and Throckmorton]{mainsah2015dynamic}
+Boyla~O. Mainsah, Leslie~M. Collins, Kenneth~A. Colwell, Eric~W. Sellers,
+  David~B. Ryan, K.~Caves, and Chandra~S. Throckmorton.
+\newblock Increasing {BCI} communication rates with dynamic stopping towards
+  more practical use: an {ALS} study.
+\newblock \emph{Journal of Neural Engineering}, 12\penalty0 (1):\penalty0
+  016013, 2015.
+\newblock \doi{10.1088/1741-2560/12/1/016013}.
+
+\bibitem[Orhan et~al.(2012)Orhan, Hild, Erdogmus, Roark, Oken, and
+  Fried-Oken]{orhan2012rsvp}
+Umut Orhan, Kenneth~E. Hild, Deniz Erdogmus, Brian Roark, Barry Oken, and
+  Melanie Fried-Oken.
+\newblock {RSVP} keyboard: An {EEG} based typing interface.
+\newblock In \emph{2012 IEEE International Conference on Acoustics, Speech and
+  Signal Processing (ICASSP)}, pages 645--648, 2012.
+\newblock \doi{10.1109/ICASSP.2012.6287966}.
+
+\bibitem[Oken et~al.(2014)Oken, Orhan, Roark, Erdogmus, Fowler, Mooney, Peters,
+  Miller, and Fried-Oken]{oken2014rsvp}
+Barry~S. Oken, Umut Orhan, Brian Roark, Deniz Erdogmus, Andrew Fowler, Aimee
+  Mooney, Betts Peters, Meghan Miller, and Melanie~B. Fried-Oken.
+\newblock Brain--computer interface with language model--electroencephalography
+  fusion for locked-in syndrome.
+\newblock \emph{Neurorehabilitation and Neural Repair}, 28\penalty0
+  (4):\penalty0 387--394, 2014.
+\newblock \doi{10.1177/1545968313516867}.
+
+\bibitem[Speier et~al.(2016)Speier, Arnold, and Pouratian]{speier2016nlp}
+William Speier, Corey Arnold, and Nader Pouratian.
+\newblock Integrating language models into classifiers for {BCI} communication:
+  a review.
+\newblock \emph{Journal of Neural Engineering}, 13\penalty0 (3):\penalty0
+  031002, 2016.
+\newblock \doi{10.1088/1741-2560/13/3/031002}.
+
+\bibitem[Schalk et~al.(2000)Schalk, Wolpaw, McFarland, and
+  Pfurtscheller]{schalk2000errp}
+Gerwin Schalk, Jonathan~R. Wolpaw, Dennis~J. McFarland, and Gert Pfurtscheller.
+\newblock {EEG}-based communication: presence of an error potential.
+\newblock \emph{Clinical Neurophysiology}, 111\penalty0 (12):\penalty0
+  2138--2144, 2000.
+\newblock \doi{10.1016/S1388-2457(00)00457-0}.
+
+\bibitem[Ferrez and Mill{\'a}n(2008)]{ferrez2008errp}
+Pierre~W. Ferrez and Jos{\'e} del~R. Mill{\'a}n.
+\newblock Error-related {EEG} potentials generated during simulated
+  brain--computer interaction.
+\newblock \emph{IEEE Transactions on Biomedical Engineering}, 55\penalty0
+  (3):\penalty0 923--929, 2008.
+\newblock \doi{10.1109/TBME.2007.908083}.
+
+\bibitem[Sp{\"u}ler et~al.(2012)Sp{\"u}ler, Bensch, Kleih, Rosenstiel, Bogdan,
+  and K{\"u}bler]{spuler2012errp}
+Martin Sp{\"u}ler, Michael Bensch, Sonja Kleih, Wolfgang Rosenstiel, Martin
+  Bogdan, and Andrea K{\"u}bler.
+\newblock Online use of error-related potentials in healthy users and people
+  with severe motor impairment increases performance of a {P300-BCI}.
+\newblock \emph{Clinical Neurophysiology}, 123\penalty0 (7):\penalty0
+  1328--1337, 2012.
+\newblock \doi{10.1016/j.clinph.2011.11.082}.
+
+\bibitem[Chavarriaga et~al.(2014)Chavarriaga, Sobolewski, and
+  Mill{\'a}n]{chavarriaga2014errare}
+Ricardo Chavarriaga, Aleksander Sobolewski, and Jos{\'e} del~R. Mill{\'a}n.
+\newblock Errare machinale est: the use of error-related potentials in
+  brain-machine interfaces.
+\newblock \emph{Frontiers in Neuroscience}, 8:\penalty0 208, 2014.
+\newblock \doi{10.3389/fnins.2014.00208}.
+
+\bibitem[Mason and Birch(2000)]{mason2000asynchronous}
+S.~G. Mason and G.~E. Birch.
+\newblock A brain-controlled switch for asynchronous control applications.
+\newblock \emph{IEEE Transactions on Biomedical Engineering}, 47\penalty0
+  (10):\penalty0 1297--1307, 2000.
+\newblock \doi{10.1109/10.871402}.
+
+\bibitem[Zhang et~al.(2008)Zhang, Guan, and Wang]{zhang2008asynchronous}
+Haihong Zhang, Cuntai Guan, and Chuanchu Wang.
+\newblock Asynchronous {P300}-based brain--computer interfaces: A computational
+  approach with statistical models.
+\newblock \emph{IEEE Transactions on Biomedical Engineering}, 55\penalty0
+  (6):\penalty0 1754--1763, 2008.
+\newblock \doi{10.1109/TBME.2008.919128}.
+
+\bibitem[Aloise et~al.(2011)Aloise, Schettini, Aric{\`o}, Leotta, Salinari,
+  Mattia, Babiloni, and Cincotti]{aloise2011asynchronous}
+Fabio Aloise, Francesca Schettini, Pietro Aric{\`o}, F.~Leotta, Serenella
+  Salinari, Donatella Mattia, F.~Babiloni, and Febo Cincotti.
+\newblock {P300}-based brain--computer interface for environmental control: an
+  asynchronous approach.
+\newblock \emph{Journal of Neural Engineering}, 8\penalty0 (2):\penalty0
+  025025, 2011.
+\newblock \doi{10.1088/1741-2560/8/2/025025}.
+
+\bibitem[Scheme et~al.(2013)Scheme, Hudgins, and
+  Englehart]{scheme2013rejection}
+Erik~J. Scheme, B.~S. Hudgins, and Kevin~B. Englehart.
+\newblock Confidence-based rejection for improved pattern recognition
+  myoelectric control.
+\newblock \emph{IEEE Transactions on Biomedical Engineering}, 60\penalty0
+  (6):\penalty0 1563--1570, 2013.
+\newblock \doi{10.1109/TBME.2013.2238939}.
+
+\bibitem[Orsborn et~al.(2014)Orsborn, Moorman, Overduin, Shanechi, Dimitrov,
+  and Carmena]{orsborn2014clda}
+Amy~L. Orsborn, Helene~G. Moorman, Simon~A. Overduin, Maryam~M. Shanechi,
+  Dragan~F. Dimitrov, and Jose~M. Carmena.
+\newblock Closed-loop decoder adaptation shapes neural plasticity for skillful
+  neuroprosthetic control.
+\newblock \emph{Neuron}, 82\penalty0 (6):\penalty0 1380--1393, 2014.
+\newblock \doi{10.1016/j.neuron.2014.04.048}.
+
+\bibitem[Jarosiewicz et~al.(2015)Jarosiewicz, Sarma, Bacher, Masse, Simeral,
+  Sorice, Oakley, Blabe, Pandarinath, Gilja, Cash, Eskandar, Friehs, Henderson,
+  Shenoy, Donoghue, and Hochberg]{jarosiewicz2015selfcal}
+Beata Jarosiewicz, Anish~A. Sarma, Daniel Bacher, Nicolas~Y. Masse, John~D.
+  Simeral, Brittany Sorice, Erin~M. Oakley, Christine Blabe, Chethan
+  Pandarinath, Vikash Gilja, Sydney~S. Cash, Emad~N. Eskandar, Gerhard Friehs,
+  Jaimie~M. Henderson, Krishna~V. Shenoy, John~P. Donoghue, and Leigh~R.
+  Hochberg.
+\newblock Virtual typing by people with tetraplegia using a self-calibrating
+  intracortical brain-computer interface.
+\newblock \emph{Science Translational Medicine}, 7\penalty0 (313):\penalty0
+  313ra179, 2015.
+\newblock \doi{10.1126/scitranslmed.aac7328}.
+
+\bibitem[Degenhart et~al.(2020)Degenhart, Bishop, Oby, Tyler-Kabara, Chase,
+  Batista, and Yu]{degenhart2020stabilization}
+Alan~D. Degenhart, William~E. Bishop, Emily~R. Oby, Elizabeth~C. Tyler-Kabara,
+  Steven~M. Chase, Aaron~P. Batista, and Byron~M. Yu.
+\newblock Stabilization of a brain--computer interface via the alignment of
+  low-dimensional spaces of neural activity.
+\newblock \emph{Nature Biomedical Engineering}, 4\penalty0 (7):\penalty0
+  672--685, 2020.
+\newblock \doi{10.1038/s41551-020-0542-9}.
+
+\bibitem[Fan et~al.(2023)Fan, Hahn, Kamdar, Avansino, Wilson, Hochberg, Shenoy,
+  Henderson, and Willett]{fan2023plugandplay}
+Chaofei Fan, Nick Hahn, Foram Kamdar, Donald Avansino, Guy Wilson, Leigh
+  Hochberg, Krishna~V. Shenoy, Jaimie Henderson, and Francis Willett.
+\newblock Plug-and-play stability for intracortical brain-computer interfaces:
+  A one-year demonstration of seamless brain-to-text communication.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~36, pages 42258--42270, 2023.
+\newblock \doi{10.52202/075280-1831}.
+
+\bibitem[Wilson et~al.(2026)Wilson, Stein, Kamdar, Avansino, Pun, Gross,
+  Hosman, Singer-Clark, Kapitonava, Hochberg, Simeral, Shenoy, Druckmann,
+  Henderson, and Willett]{wilson2023recal}
+Guy~H. Wilson, Elias~A. Stein, Foram Kamdar, Donald~T. Avansino, Tsam~Kiu Pun,
+  Ronnie Gross, Tommy Hosman, Tyler Singer-Clark, Anastasia Kapitonava,
+  Leigh~R. Hochberg, John~D. Simeral, Krishna~V. Shenoy, Shaul Druckmann,
+  Jaimie~M. Henderson, and Francis~R. Willett.
+\newblock Long-term unsupervised recalibration of cursor-based intracortical
+  brain--computer interfaces using a hidden {Markov} model.
+\newblock \emph{Nature Biomedical Engineering}, 10\penalty0 (7):\penalty0
+  1466--1484, 2026.
+\newblock \doi{10.1038/s41551-025-01536-z}.
+\newblock Published online 8 December 2025. Preprint: bioRxiv 2023,
+  doi:10.1101/2023.02.03.527022.
+
+\bibitem[Jiang(2005)]{jiang2005confidence}
+Hui Jiang.
+\newblock Confidence measures for speech recognition: A survey.
+\newblock \emph{Speech Communication}, 45\penalty0 (4):\penalty0 455--470,
+  2005.
+\newblock \doi{10.1016/j.specom.2004.12.004}.
+
+\bibitem[Bohus and Rudnicky(2005)]{bohus2005error}
+Dan Bohus and Alexander~I. Rudnicky.
+\newblock A principled approach for rejection threshold optimization in spoken
+  dialog systems.
+\newblock In \emph{Proceedings of Interspeech 2005}, pages 2781--2784, 2005.
+\newblock \doi{10.21437/Interspeech.2005-820}.
+
+\bibitem[Ovadia et~al.(2019)Ovadia, Fertig, Ren, Nado, Sculley, Nowozin,
+  Dillon, Lakshminarayanan, and Snoek]{ovadia2019trust}
+Yaniv Ovadia, Emily Fertig, Jie Ren, Zachary Nado, D.~Sculley, Sebastian
+  Nowozin, Joshua~V. Dillon, Balaji Lakshminarayanan, and Jasper Snoek.
+\newblock Can you trust your model's uncertainty? evaluating predictive
+  uncertainty under dataset shift.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~32, 2019.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper_files/paper/2019/hash/8558cb408c1d76621371888657d2eb1d-Abstract.html}.
+\newblock arXiv:1906.02530.
+
+\bibitem[Angelopoulos and Bates(2021)]{angelopoulos2021gentle}
+Anastasios~N. Angelopoulos and Stephen Bates.
+\newblock A gentle introduction to conformal prediction and distribution-free
+  uncertainty quantification, 2021.
+\newblock arXiv:2107.07511.
+
+\bibitem[Tibshirani et~al.(2019)Tibshirani, Barber, Cand{\`e}s, and
+  Ramdas]{tibshirani2019covariate}
+Ryan~J. Tibshirani, Rina~Foygel Barber, Emmanuel~J. Cand{\`e}s, and Aaditya
+  Ramdas.
+\newblock Conformal prediction under covariate shift.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~32, 2019.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper_files/paper/2019/hash/8fb21ee7a2207526da55a679f0332de2-Abstract.html}.
+\newblock arXiv:1904.06019.
+
+\bibitem[Barber et~al.(2023)Barber, Cand{\`e}s, Ramdas, and
+  Tibshirani]{barber2023beyond}
+Rina~Foygel Barber, Emmanuel~J. Cand{\`e}s, Aaditya Ramdas, and Ryan~J.
+  Tibshirani.
+\newblock Conformal prediction beyond exchangeability.
+\newblock \emph{The Annals of Statistics}, 51\penalty0 (2):\penalty0 816--845,
+  2023.
+\newblock \doi{10.1214/23-AOS2276}.
+\newblock arXiv:2202.13415.
+
+\bibitem[Farinhas et~al.(2024)Farinhas, Zerva, Ulmer, and
+  Martins]{farinhas2024nonexch}
+Ant{\'o}nio Farinhas, Chrysoula Zerva, Dennis Ulmer, and Andr{\'e} F.~T.
+  Martins.
+\newblock Non-exchangeable conformal risk control.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2024.
+\newblock arXiv:2310.01262.
+
+\bibitem[Gibbs and Cand{\`e}s(2021)]{gibbs2021aci}
+Isaac Gibbs and Emmanuel Cand{\`e}s.
+\newblock Adaptive conformal inference under distribution shift.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~34, pages 1660--1672, 2021.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper_files/paper/2021/hash/0d441de75945e5acbc865406fc9a2559-Abstract.html}.
+\newblock arXiv:2106.00170.
+
+\bibitem[Gibbs and Cand{\`e}s(2022)]{gibbs2022online}
+Isaac Gibbs and Emmanuel Cand{\`e}s.
+\newblock Conformal inference for online prediction with arbitrary distribution
+  shifts, 2022.
+\newblock arXiv:2208.08401.
+
+\bibitem[Angelopoulos et~al.(2023)Angelopoulos, Cand{\`e}s, and
+  Tibshirani]{angelopoulos2023pid}
+Anastasios~N. Angelopoulos, Emmanuel~J. Cand{\`e}s, and Ryan~J. Tibshirani.
+\newblock Conformal {PID} control for time series prediction.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~36, pages 23047--23074, 2023.
+\newblock \doi{10.52202/075280-1000}.
+\newblock arXiv:2307.16895.
+
+\bibitem[Feldman et~al.(2023)Feldman, Ringel, Bates, and
+  Romano]{feldman2023rolling}
+Shai Feldman, Liran Ringel, Stephen Bates, and Yaniv Romano.
+\newblock Achieving risk control in online learning settings.
+\newblock \emph{Transactions on Machine Learning Research}, 2023.
+\newblock URL \url{https://openreview.net/forum?id=5Y04GWvoJu}.
+\newblock arXiv:2205.09095.
+
+\bibitem[Jin and Cand{\`e}s(2023)]{jin2023selection}
+Ying Jin and Emmanuel~J. Cand{\`e}s.
+\newblock Selection by prediction with conformal p-values.
+\newblock \emph{Journal of Machine Learning Research}, 24\penalty0
+  (244):\penalty0 1--41, 2023.
+\newblock URL \url{https://www.jmlr.org/papers/v24/22-1176.html}.
+
+\bibitem[Gui et~al.(2024)Gui, Jin, and Ren]{gui2024alignment}
+Yu~Gui, Ying Jin, and Zhimei Ren.
+\newblock Conformal alignment: Knowing when to trust foundation models with
+  guarantees.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~37, 2024.
+\newblock \doi{10.52202/079017-2350}.
+
+\bibitem[Ernez et~al.(2023)Ernez, Arnold, Galametz, Kobus, and
+  Ould-Amer]{ernez2023conformal}
+Fares Ernez, Alexandre Arnold, Audrey Galametz, Catherine Kobus, and Nawal
+  Ould-Amer.
+\newblock Applying the conformal prediction paradigm for the uncertainty
+  quantification of an end-to-end automatic speech recognition model (wav2vec
+  2.0).
+\newblock In \emph{Proceedings of the Twelfth Symposium on Conformal and
+  Probabilistic Prediction with Applications}, volume 204 of \emph{Proceedings
+  of Machine Learning Research}, pages 1--20, 2023.
+
+\bibitem[Quach et~al.(2024)Quach, Fisch, Schuster, Yala, Sohn, Jaakkola, and
+  Barzilay]{quach2024conformal}
+Victor Quach, Adam Fisch, Tal Schuster, Adam Yala, Jae~Ho Sohn, Tommi Jaakkola,
+  and Regina Barzilay.
+\newblock Conformal language modeling.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2024.
+\newblock arXiv:2306.10193.
+
+\bibitem[Mohri and Hashimoto(2024)]{mohri2024factuality}
+Christopher Mohri and Tatsunori Hashimoto.
+\newblock Language models with conformal factuality guarantees, 2024.
+\newblock arXiv:2402.10978.
+
+\bibitem[Abbasi-Yadkori et~al.(2024)Abbasi-Yadkori, Kuzborskij, Stutz,
+  Gy{\"o}rgy, Fisch, Doucet, Beloshapka, Weng, Yang, Szepesv{\'a}ri, Cemgil,
+  and Tomasev]{abbasiyadkori2024abstention}
+Yasin Abbasi-Yadkori, Ilja Kuzborskij, David Stutz, Andr{\'a}s Gy{\"o}rgy, Adam
+  Fisch, Arnaud Doucet, Iuliya Beloshapka, Wei-Hung Weng, Yao-Yuan Yang, Csaba
+  Szepesv{\'a}ri, Ali~Taylan Cemgil, and Nenad Tomasev.
+\newblock Mitigating {LLM} hallucinations via conformal abstention, 2024.
+\newblock arXiv:2405.01563.
+
+\bibitem[Dal~Seno et~al.(2010)Dal~Seno, Matteucci, and
+  Mainardi]{dalseno2010utility}
+Bernardo Dal~Seno, Matteo Matteucci, and Luca~T. Mainardi.
+\newblock The utility metric: A novel method to assess the overall performance
+  of discrete brain--computer interfaces.
+\newblock \emph{IEEE Transactions on Neural Systems and Rehabilitation
+  Engineering}, 18\penalty0 (1):\penalty0 20--28, 2010.
+\newblock \doi{10.1109/TNSRE.2009.2032642}.
+
+\bibitem[Soukoreff and MacKenzie(2003)]{soukoreff2003metrics}
+R.~William Soukoreff and I.~Scott MacKenzie.
+\newblock Metrics for text entry research: An evaluation of {MSD} and {KSPC},
+  and a new unified error metric.
+\newblock In \emph{Proceedings of the SIGCHI Conference on Human Factors in
+  Computing Systems (CHI)}, pages 113--120, 2003.
+\newblock \doi{10.1145/642611.642632}.
+
+\bibitem[Wolpaw et~al.(2002)Wolpaw, Birbaumer, McFarland, Pfurtscheller, and
+  Vaughan]{wolpaw2002bci}
+Jonathan~R. Wolpaw, Niels Birbaumer, Dennis~J. McFarland, Gert Pfurtscheller,
+  and Theresa~M. Vaughan.
+\newblock Brain--computer interfaces for communication and control.
+\newblock \emph{Clinical Neurophysiology}, 113\penalty0 (6):\penalty0 767--791,
+  2002.
+\newblock \doi{10.1016/S1388-2457(02)00057-3}.
+
+\bibitem[Ward et~al.(2000)Ward, Blackwell, and MacKay]{ward2000dasher}
+David~J. Ward, Alan~F. Blackwell, and David J.~C. MacKay.
+\newblock Dasher---a data entry interface using continuous gestures and
+  language models.
+\newblock In \emph{Proceedings of the 13th Annual ACM Symposium on User
+  Interface Software and Technology (UIST)}, pages 129--137, 2000.
+\newblock \doi{10.1145/354401.354427}.
+
+\bibitem[Koester and Levine(1994)]{koester1994wordprediction}
+Heidi~Horstmann Koester and Simon~P. Levine.
+\newblock Modeling the speed of text entry with a word prediction interface.
+\newblock \emph{IEEE Transactions on Rehabilitation Engineering}, 2\penalty0
+  (3):\penalty0 177--187, 1994.
+\newblock \doi{10.1109/86.331567}.
+
+\bibitem[Zariffa(2024)]{achituve2024data}
+Jos{\'e} Zariffa.
+\newblock Electromyographic typing gesture classification dataset for
+  neurotechnological human-machine interfaces.
+\newblock Borealis (University of Toronto Dataverse), version 1.0, 2024.
+\newblock doi: \href{https://doi.org/10.5683/SP3/KV65VI}{10.5683/SP3/KV65VI}.
+  CC BY 4.0.
+
+\bibitem[{BCBL}(2026)]{spanishbcbl}
+{BCBL}.
+\newblock {DECOMEG} --- brain activity during typing ({MEG} \& {EEG})
+  (dataset).
+\newblock Hugging Face,
+  \url{https://huggingface.co/datasets/bcbl190626/SpanishBCBL}, 2026.
+\newblock Basque Center on Cognition, Brain and Language. CC BY-NC 4.0.
+
+\bibitem[Gulati et~al.(2020)Gulati, Qin, Chiu, Parmar, Zhang, Yu, Han, Wang,
+  Zhang, Wu, and Pang]{gulati2020conformer}
+Anmol Gulati, James Qin, Chung-Cheng Chiu, Niki Parmar, Yu~Zhang, Jiahui Yu,
+  Wei Han, Shibo Wang, Zhengdong Zhang, Yonghui Wu, and Ruoming Pang.
+\newblock Conformer: Convolution-augmented transformer for speech recognition,
+  2020.
+\newblock arXiv:2005.08100.
+
+\bibitem[R{\"u}bel et~al.(2022)R{\"u}bel, Tritt, Ly, Dichter, Ghosh, Niu,
+  Baker, Soltesz, Ng, Svoboda, Frank, and Bouchard]{rubel2022nwb}
+Oliver R{\"u}bel, Andrew Tritt, Ryan Ly, Benjamin~K. Dichter, Satrajit Ghosh,
+  Lawrence Niu, Pamela Baker, Ivan Soltesz, Lydia Ng, Karel Svoboda, Loren
+  Frank, and Kristofer~E. Bouchard.
+\newblock The {Neurodata Without Borders} ecosystem for neurophysiological data
+  science.
+\newblock \emph{eLife}, 11:\penalty0 e78362, 2022.
+\newblock \doi{10.7554/eLife.78362}.
+
+\bibitem[Schalk et~al.(2004)Schalk, McFarland, Hinterberger, Birbaumer, and
+  Wolpaw]{schalk2004bci2000}
+Gerwin Schalk, Dennis~J. McFarland, T.~Hinterberger, Niels Birbaumer, and
+  Jonathan~R. Wolpaw.
+\newblock {BCI2000}: A general-purpose brain-computer interface ({BCI}) system.
+\newblock \emph{IEEE Transactions on Biomedical Engineering}, 51\penalty0
+  (6):\penalty0 1034--1043, 2004.
+\newblock \doi{10.1109/TBME.2004.827072}.
+
+\bibitem[Renard et~al.(2010)Renard, Lotte, Gibert, Congedo, Maby, Delannoy,
+  Bertrand, and L{\'e}cuyer]{renard2010openvibe}
+Yann Renard, Fabien Lotte, Guillaume Gibert, Marco Congedo, Emmanuel Maby,
+  Vincent Delannoy, Olivier Bertrand, and Anatole L{\'e}cuyer.
+\newblock {OpenViBE}: An open-source software platform to design, test, and use
+  brain--computer interfaces in real and virtual environments.
+\newblock \emph{Presence: Teleoperators and Virtual Environments}, 19\penalty0
+  (1):\penalty0 35--53, 2010.
+\newblock \doi{10.1162/pres.19.1.35}.
+
+\bibitem[{IEEE}(2018)]{ieeep2731}
+{IEEE}.
+\newblock {P2731}: {IEEE} draft standard for a unified terminology for
+  brain-computer interfaces.
+\newblock IEEE Standards Association project page, 2018.
+\newblock URL \url{https://standards.ieee.org/ieee/2731/7383/}.
+\newblock Active PAR, approved 27 September 2018.
+
+\bibitem[{IEEE}(2022)]{ieeep2794}
+{IEEE}.
+\newblock {P2794}: {IEEE} draft trial-use standard for reporting standards for
+  in vivo neural interface research ({RSNIR}).
+\newblock IEEE Standards Association project page, 2022.
+\newblock URL \url{https://standards.ieee.org/ieee/2794/11108/}.
+\newblock Active PAR, approved 3 December 2022.
+
+\bibitem[Eiber et~al.(2021)Eiber, Delbeke, Cardoso, de~Neeling, John, Lee,
+  Skefos, Sun, Prodanov, and McKinney]{eiber2021reporting}
+Calvin Eiber, Jean Delbeke, Jorge Cardoso, Martijn de~Neeling, Sam John,
+  Chang~Won Lee, Jerry Skefos, Argus Sun, Dimiter Prodanov, and Zach McKinney.
+\newblock Preliminary minimum reporting requirements for in-vivo neural
+  interface research: {I}. implantable neural interfaces.
+\newblock \emph{IEEE Open Journal of Engineering in Medicine and Biology},
+  2:\penalty0 74--83, 2021.
+\newblock \doi{10.1109/OJEMB.2021.3060919}.
+
+\bibitem[Jayaram and Barachant(2018)]{jayaram2018moabb}
+Vinay Jayaram and Alexandre Barachant.
+\newblock {MOABB}: Trustworthy algorithm benchmarking for {BCIs}, 2018.
+\newblock arXiv:1805.06427.
+
+\bibitem[Banville et~al.(2026)Banville, d'Ascoli, Dahan, Rapin,
+  et~al.]{banville2026neuralbench}
+Hubert Banville, St{\'e}phane d'Ascoli, Simon Dahan, J{\'e}r{\'e}my Rapin,
+  et~al.
+\newblock {NeuralBench}: A unifying framework to benchmark {NeuroAI} models,
+  2026.
+\newblock arXiv:2605.08495.
+
+\end{thebibliography}

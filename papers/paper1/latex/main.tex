@@ -1,4 +1,4 @@
-% Paper 1 -- Fidetype. Draft v5 (final review round 5), 2026-11-12. Main text + references + Appendix A.
+% Paper 1 -- Fidetype. Final version (arXiv), 2026-11-12. Main text + references + Appendix A.
 % The appendices of v3 moved to supplement.tex (Supplementary Sections S1-S22). Cross-references between
 % the two files use xr-hyper (\externaldocument), so build both (see ../README.md):
 %   tectonic -X compile supplement.tex --outdir build --keep-intermediates   (pass 1)
@@ -37,12 +37,10 @@
 \usepackage[capitalise,noabbrev]{cleveref}
 
 \graphicspath{{../figures/}}
+\newcommand{\figdir}{../figures/}  % folder of the TikZ figure sources
 \emergencystretch=2em
 
 % ---------------------------------------------------------------- macros
-% \todo{...}: visible red marker for missing data or open decisions. Never remove one
-% without filling the gap it names. Grep "\todo" to list them.
-\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 \newcommand{\nts}{NeuralTextStream}
 \newcommand{\ewpm}{eWPM}
 \newcommand{\act}[1]{\textsc{#1}}
@@ -57,14 +55,13 @@
 % Title (v4): "decoder-agnostic" replaced by "stream-level" after review round 4 (editor M3): the sEMG and MEG
 % data show that the stream format works across devices, not that the commit rule works across decoders.
 \title{\papertitle}
-\author{\todo{authors, affiliations, e-mail}}
+\author{Zibo Zhang\\[2pt] \normalsize Independent researcher}
 \date{}
 
 \begin{document}
 \maketitle
 
 \input{sections/abstract}
-% v5: keywords (JNE / IOP asks for them)
 \noindent\textbf{Keywords:} brain--computer interface, text entry, language model, risk control, Learn then Test, selective prediction, safety
 \medskip
 \input{sections/introduction}
@@ -78,8 +75,14 @@
 \input{sections/conclusion}
 \input{sections/ethics}
 
-\section*{Acknowledgements}
-\todo{funding.} AI coding and writing assistants were used under human review; all numbers come from committed scripts and result files. \todo{author: final AI-assistance wording (JNE/IOP policy: disclose in the methods or acknowledgements).}
+\section*{Funding}
+This work received no specific funding.
+
+\section*{Competing interests}
+The author declares no competing interests.
+
+\section*{Use of AI assistance}
+Code, analyses and manuscript drafting were carried out with substantial assistance from an AI system (Claude, Anthropic). The author directed the work, reviewed the results and takes full responsibility for the content. All numbers come from committed scripts and result files.
 
 \bibliographystyle{unsrtnat}
 \bibliography{refs}

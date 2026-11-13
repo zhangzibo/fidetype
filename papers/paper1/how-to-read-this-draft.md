@@ -1,6 +1,39 @@
-# How to read this draft (Paper 1, draft v5)
+# How to read this draft (Paper 1, final version)
 
-This guide is for you, the author. The current draft is [`draft-v5.pdf`](draft-v5.pdf) (22 pages: main text, references, Appendix A) with a separate supplement [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) (Sections S1-S22, 17 pages). The earlier drafts ([v0](draft-v0.pdf) ... [v4](draft-v4.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
+This guide is for you, the author.
+
+## Final version for arXiv (2026-11-12)
+
+The paper is final. All placeholders are filled. The files are in [`final/`](final/):
+
+| File | What it is |
+|---|---|
+| [`final/fidetype-paper1.pdf`](final/fidetype-paper1.pdf) | Main paper (22 pages: main text, references, Appendix A) |
+| [`final/fidetype-paper1-supplement.pdf`](final/fidetype-paper1-supplement.pdf) | Supplement (Sections S1-S22, 17 pages) |
+| [`final/fidetype-paper1-arxiv.pdf`](final/fidetype-paper1-arxiv.pdf) | The arXiv document: main text + supplement in one PDF (37 pages) |
+| [`final/arxiv-source.zip`](final/arxiv-source.zip) | The file to upload to arXiv (LaTeX source + `main.bbl`, works with pdfLaTeX) |
+| [`final/SUBMIT.md`](final/SUBMIT.md) | arXiv form values and upload steps |
+| [`final/make-arxiv.sh`](final/make-arxiv.sh) | Rebuilds and checks the arXiv package |
+
+**Placeholders filled (your decisions):**
+
+| Item | Final text |
+|---|---|
+| Author | Zibo Zhang, Independent researcher. No e-mail address. Single author. |
+| Funding | "This work received no specific funding." |
+| Competing interests | "The author declares no competing interests." |
+| AI assistance | "Code, analyses and manuscript drafting were carried out with substantial assistance from an AI system (Claude, Anthropic). The author directed the work, reviewed the results and takes full responsibility for the content." |
+| Ethics | Secondary analysis of public, de-identified data sets (Brain-to-Text '25 / BrainGate2 NCT00912041, CC0; Toronto sEMG, CC BY 4.0; SpanishBCBL MEG, CC BY-NC 4.0). The original studies report their ethics procedures (BrainGate2: consent and IRB approval; MEG: local ethics committee and informed consent; sEMG: data descriptor). No new data. No further approval required. |
+| Licence | CC BY 4.0 (one sentence in "Ethics, data and code availability"; choose it again on the arXiv form) |
+| Archive | No Zenodo DOI. The paper gives https://github.com/zhangzibo/fidetype and the tag `paper1-v4-frozen-config`. |
+
+Also removed: every red TODO marker, the `\todo` macro, and all "draft" and review-round wording in the PDFs. No result changed. The arXiv submission itself is your step (tracker item M3-23).
+
+Still open for a journal (not for arXiv): the IOP JNE template switch, a cover letter, suggested reviewers, and a confirmatory test on new data.
+
+## Earlier drafts
+
+The last draft before the final version was [`draft-v5.pdf`](draft-v5.pdf) (22 pages: main text, references, Appendix A) with a separate supplement [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) (Sections S1-S22, 17 pages). The earlier drafts ([v0](draft-v0.pdf) ... [v4](draft-v4.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
 
 ## What changed in v5 (final review, round 5)
 
@@ -35,7 +68,7 @@ Two reviewers read v3 ([editor](reviews/round-4-editor.md), [statistics](reviews
 
 ## Decisions for the author
 
-These are red `[TODO]` markers in the PDFs, or steps before submission. Claude cannot decide them for you.
+**Status 2026-11-12: the author items below are filled; arXiv first was chosen (see "Final version for arXiv" at the top). The journal items (IOP template, cover letter, reviewers) and the confirmatory test stay open.** The table is kept as it was for v5.
 
 | Decision | Where | Note |
 |---|---|---|

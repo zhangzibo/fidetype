@@ -1,4 +1,4 @@
-% Paper 1 -- Fidetype. Draft v5: supplementary material (Sections S1-S22). Build after main.tex (see main.tex).
+% Paper 1 -- Fidetype. Final version: supplementary material (Sections S1-S22). Build after main.tex (see main.tex).
 \documentclass[11pt,a4paper]{article}
 % ---------------------------------------------------------------- CLASS (swap for IOP template)
 \usepackage[a4paper,margin=2.5cm]{geometry}
@@ -31,12 +31,10 @@
 \usepackage[capitalise,noabbrev]{cleveref}
 
 \graphicspath{{../figures/}}
+\newcommand{\figdir}{../figures/}  % folder of the TikZ figure sources
 \emergencystretch=2em
 
 % ---------------------------------------------------------------- macros
-% \todo{...}: visible red marker for missing data or open decisions. Never remove one
-% without filling the gap it names. Grep "\todo" to list them.
-\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 \newcommand{\nts}{NeuralTextStream}
 \newcommand{\ewpm}{eWPM}
 \newcommand{\act}[1]{\textsc{#1}}
@@ -50,7 +48,7 @@
 % generated table rows (make_supp_tables.py): primitive input, so that \midrule may follow inside a tabular
 \makeatletter\newcommand{\inputrows}[1]{\@@input #1 }\makeatother
 
-% v5: wider number box in the table of contents, so that S10-S22 do not touch their titles
+% wider number box in the table of contents, so that S10-S22 do not touch their titles
 \makeatletter\patchcmd{\l@section}{\setlength\@tempdima{1.5em}}{\setlength\@tempdima{2.4em}}{}{}\makeatother
 \renewcommand{\thesection}{S\arabic{section}}
 \renewcommand{\thetable}{S\arabic{table}}
@@ -59,12 +57,12 @@
 \renewcommand{\theequation}{S\arabic{equation}}
 
 \title{Supplementary material for:\\[2pt] \papertitle}
-\author{\todo{authors, affiliations, e-mail}}
+\author{Zibo Zhang\\[2pt] \normalsize Independent researcher}
 \date{}
 
 \begin{document}
 \maketitle
-\noindent References to Sections 1--9, Tables 1--5, Figures 1--3, Algorithm 1 and Appendix A point to the main paper. All numbers come from committed result files; the round-4 analyses are in \code{experiments/2026-11-12-paper1-r4-analyses/} of the repository.
+\noindent References to Sections 1--9, Tables 1--5, Figures 1--3, Algorithm 1 and Appendix A point to the main paper. All numbers come from committed result files and scripts in the repository (\url{https://github.com/zhangzibo/fidetype}).
 
 \tableofcontents
 

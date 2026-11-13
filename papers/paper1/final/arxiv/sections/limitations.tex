@@ -1,0 +1,10 @@
+\section{Limitations}
+\label{sec:limitations}
+
+\begin{enumerate}[leftmargin=*,itemsep=0pt]
+  \item \textbf{One implant participant} in a copy task, with online logits we cannot re-run, is the only non-trivial test of the commit decision. Our intervals cover days and splits of this person, not people. The time-ordered test has 10--13 test days, too few to confirm per-day control.
+  \item \textbf{The guarantee covers the mix of sessions}, not each session; one day ran at about $2\alpha$. All guarantees count only observed errors, and stream-level gating cannot detect intent mismatch.
+  \item \textbf{The input-validity check} that made the layer safe on no-information streams (the guard) did not lower wrong commits on real data (it raised them with the full-fit pipeline), and it was tested on synthetic controls only.
+  \item \textbf{Composed sEMG sentences and a weak MEG decoder}: isolated presses with oracle timing and templated test sentences (295 of 551 with a near variant in the LM text); 17 unique MEG test sentences, too few for a sentence-level guarantee.
+  \item \textbf{No live users.} Only two user costs are measured, in one gaze-typing user; speed rankings change across plausible variants; the word-completion baseline is weaker than clinical AAC; the loss is exact match. A user study needs ethics approval.
+\end{enumerate}

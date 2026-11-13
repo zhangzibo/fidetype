@@ -1,0 +1,113 @@
+% Paper 1 -- Fidetype. arXiv version, 2026-11-12: main text, references, Appendix A and the
+% supplementary material (Sections S1-S22) in ONE document, so that all cross-references resolve
+% without xr-hyper. Works with pdflatex (arXiv) and Tectonic. Do not edit sections/, generated/ or
+% figures/ here: make-arxiv.sh copies them from ../../latex/ and ../../figures/.
+% The bibliography is in main.bbl (generated from ../../latex/refs.bib by make-arxiv.sh).
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc,backgrounds}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\usepackage{url}
+\usepackage{etoolbox}
+\usepackage[capitalise,noabbrev]{cleveref}
+
+\graphicspath{{figures/}}
+\newcommand{\figdir}{figures/}  % folder of the TikZ figure sources
+\emergencystretch=2em
+
+\newcommand{\nts}{NeuralTextStream}
+\newcommand{\ewpm}{eWPM}
+\newcommand{\act}[1]{\textsc{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\ci}[2]{\ensuremath{[#1,\,#2]}}
+\newcommand{\papertitle}{When should a neural text-entry decoder commit?\\Risk-controlled commits from a stream-level trust layer}
+% generated table rows: primitive input, so that \midrule may follow inside a tabular
+\makeatletter\newcommand{\inputrows}[1]{\@@input #1 }\makeatother
+
+\title{\papertitle}
+\author{Zibo Zhang\\[2pt] \normalsize Independent researcher}
+\date{}
+
+\begin{document}
+\maketitle
+
+\input{sections/abstract}
+\noindent\textbf{Keywords:} brain--computer interface, text entry, language model, risk control, Learn then Test, selective prediction, safety
+\medskip
+\input{sections/introduction}
+\input{sections/related}
+\input{sections/setting}
+\input{sections/trust}
+\input{sections/protocol}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/limitations}
+\input{sections/conclusion}
+\input{sections/ethics}
+
+\section*{Funding}
+This work received no specific funding.
+
+\section*{Competing interests}
+The author declares no competing interests.
+
+\section*{Use of AI assistance}
+Code, analyses and manuscript drafting were carried out with substantial assistance from an AI system (Claude, Anthropic). The author directed the work, reviewed the results and takes full responsibility for the content. All numbers come from committed scripts and result files.
+
+\bibliographystyle{unsrtnat}
+\bibliography{main}
+
+\appendix
+\input{sections/appendix-main}
+
+% ---------------------------------------------------------------- supplementary material
+\clearpage
+\setcounter{section}{0}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+\setcounter{algorithm}{0}
+\setcounter{equation}{0}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thealgorithm}{S\arabic{algorithm}}
+\renewcommand{\theequation}{S\arabic{equation}}
+% unique hyperref anchors for the S-numbered objects
+\renewcommand{\theHsection}{S\arabic{section}}
+\renewcommand{\theHtable}{S\arabic{table}}
+\renewcommand{\theHfigure}{S\arabic{figure}}
+\providecommand{\theHalgorithm}{}\renewcommand{\theHalgorithm}{S\arabic{algorithm}}
+\renewcommand{\theHequation}{S\arabic{equation}}
+% S-sections are "Section S1", not "Appendix S1" (undo the \appendix switch of cleveref)
+\crefalias{appendix}{section}
+\crefalias{subappendix}{subsection}
+
+\begin{center}
+  {\Large\bfseries Supplementary material}
+\end{center}
+\noindent The supplementary material follows. Its sections, tables, figures, algorithms and equations carry the prefix S. Sections 1--9, Tables 1--5, Figures 1--3, Algorithm 1 and Appendix A are in the main text above. All numbers come from committed result files and scripts in the repository (\url{https://github.com/zhangzibo/fidetype}).
+\addcontentsline{toc}{section}{Supplementary material}
+
+\input{sections/supplement-body}
+
+\end{document}

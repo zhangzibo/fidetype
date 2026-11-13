@@ -1,0 +1,45 @@
+% System architecture of Fidetype (paper version of wiki/diagrams/06 and 07).
+% Included from latex/sections/format.tex with \input.
+\begin{tikzpicture}[
+  font=\footnotesize,
+  box/.style={draw, rounded corners=2pt, align=center, minimum height=9mm, inner sep=3pt, fill=white},
+  dev/.style={box, fill=orange!12, minimum width=24mm},
+  ada/.style={box, fill=gray!10, minimum width=20mm},
+  nts/.style={box, fill=blue!10, minimum width=22mm, minimum height=34mm, very thick},
+  tl/.style={box, fill=teal!10, minimum width=26mm},
+  usr/.style={box, fill=yellow!20, minimum width=20mm},
+  led/.style={box, fill=violet!8, minimum width=118mm, dashed},
+  arr/.style={-{Stealth[length=2mm]}, thick},
+  fb/.style={-{Stealth[length=2mm]}, thick, densely dashed, red!60!black},
+  node distance=4mm and 7mm]
+  % devices
+  \node[dev] (meg) {MEG typing\\\scriptsize SpanishBCBL};
+  \node[dev, below=of meg] (ic) {Intracortical speech\\\scriptsize B2T '25 (T15)};
+  \node[dev, below=of ic] (emg) {Forearm sEMG\\\scriptsize Toronto};
+  % decoders + adapters
+  \node[ada, right=of meg] (dmeg) {ConvCTC\\\scriptsize char CTC};
+  \node[ada, right=of ic] (dic) {online RNN\\\scriptsize phoneme CTC};
+  \node[ada, right=of emg] (demg) {CNN\\\scriptsize key classes};
+  % NTS
+  \node[nts, right=8mm of dic] (nts) {\textbf{Neural-}\\\textbf{TextStream}\\[2pt]\scriptsize $\log p_t(v)$\\\scriptsize vocab, timing\\\scriptsize \texttt{meta}:\\\scriptsize device.*, decoder.*\\\scriptsize calibration.*};
+  % trust layer
+  \node[tl, right=8mm of nts, yshift=13mm] (cal) {calibration\\\scriptsize $\tau_f$, $\tau_s$};
+  \node[tl, below=3mm of cal] (cand) {candidates + guard\\\scriptsize beam + LM, evidence};
+  \node[tl, below=3mm of cand] (pol) {policy + risk control\\\scriptsize CRC / LTT / online};
+  \node[draw, rounded corners=3pt, dashed, teal!60!black, fit=(cal)(cand)(pol), inner sep=3pt, label={[teal!50!black,font=\scriptsize\bfseries]above:trust layer (reads only NTS)}] (tlbox) {};
+  % user
+  \node[usr, right=17mm of pol] (user) {user\\[1pt]\scriptsize \textsc{commit}\\\scriptsize \textsc{offer}\\\scriptsize \textsc{abstain}};
+  % ledger
+  \node[led, below=10mm of demg.south west, anchor=north west] (led) {audit log: append-only, SHA-256 hash chain of contexts, decisions and corrections (no raw signals)};
+  % arrows
+  \foreach \a/\b in {meg/dmeg, ic/dic, emg/demg} \draw[arr] (\a) -- (\b);
+  \foreach \a in {dmeg, dic, demg} \draw[arr] (\a.east) -- (\a.east -| nts.west);
+  \node[font=\scriptsize, gray, above=0mm of dmeg] {decoder + adapter};
+  \draw[arr] (nts.east) -- (nts.east -| tlbox.west);
+  \draw[arr] (cal) -- (cand);
+  \draw[arr] (cand) -- (pol);
+  \draw[arr] ([yshift=2mm]pol.east) -- ([yshift=2mm]pol.east -| user.west);
+  \draw[fb] ([yshift=-2mm]user.west) -- node[below, font=\scriptsize, align=center] {corrections,\\picks} ([yshift=-2mm]user.west -| pol.east);
+  \draw[arr, violet!70!black] (tlbox.south) -- (tlbox.south |- led.north);
+  \draw[arr, violet!70!black] (user.south) -- (user.south |- led.north);
+\end{tikzpicture}

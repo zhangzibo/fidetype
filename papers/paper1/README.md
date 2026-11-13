@@ -1,6 +1,6 @@
-# Paper 1: Fidetype (draft)
+# Paper 1: Fidetype
 
-Status: **draft v5 (2026-11-12, after the final review, round 5; the review loop is finished)**. Read [`draft-v5.pdf`](draft-v5.pdf) and [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`reviews/round-5-final.md`](reviews/round-5-final.md). `draft-v0.pdf` ... `draft-v4.pdf` are the earlier drafts.
+Status: **final version for arXiv (2026-11-12).** The final PDFs, the arXiv source package and the submission sheet are in [`final/`](final/) (see [`final/SUBMIT.md`](final/SUBMIT.md)). Draft v5 was the last draft before it. Read [`draft-v5.pdf`](draft-v5.pdf) and [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`reviews/round-5-final.md`](reviews/round-5-final.md). `draft-v0.pdf` ... `draft-v4.pdf` are the earlier drafts.
 
 | File | What it is |
 |---|---|
@@ -16,6 +16,7 @@ Status: **draft v5 (2026-11-12, after the final review, round 5; the review loop
 | `make_figures.py` | Makes every data figure from committed result files only |
 | `make_supp_tables.py` | Writes the supplementary tables (`latex/generated/*.tex`) from committed round-4 result files |
 | `build.sh` | Builds `latex/main.tex` and `latex/supplement.tex` (two passes each, for the xr cross-references) |
+| `final/` | Final PDFs, `arxiv-source.zip` (one combined document for arXiv), `make-arxiv.sh`, `SUBMIT.md` |
 | `wordcount.py` | Approximate word count (texcount is not installed) |
 | `data/markdown-only-numbers.json` | The few numbers that exist only in markdown result pages (sources inside) |
 
@@ -38,9 +39,11 @@ From the repo root (Git Bash):
 .venv/Scripts/python -I papers/paper1/make_supp_tables.py
 # 2. compile main paper + supplement (xr cross-references: two passes each; checks undefined refs)
 bash papers/paper1/build.sh
-# 3. publish the draft
-cp papers/paper1/latex/build/main.pdf papers/paper1/draft-v5.pdf
-cp papers/paper1/latex/build/supplement.pdf papers/paper1/draft-v5-supplement.pdf
+# 3. publish the final PDFs
+cp papers/paper1/latex/build/main.pdf papers/paper1/final/fidetype-paper1.pdf
+cp papers/paper1/latex/build/supplement.pdf papers/paper1/final/fidetype-paper1-supplement.pdf
+# 3b. arXiv package (combined document) + clean rebuild check from the zip
+bash papers/paper1/final/make-arxiv.sh
 # 4. word count
 .venv/Scripts/python -I papers/paper1/wordcount.py
 ```
@@ -52,6 +55,6 @@ PowerShell: `& C:\Users\zhang\tools\tectonic\tectonic.exe -X compile main.tex --
 ## Rules
 
 - Every number in the paper comes from a committed result file or a wiki result page. Quote it as the source gives it.
-- Missing data is marked in red with `\todo{...}` in the text. Never remove a `\todo` without filling the gap.
+- The final version has no `\todo` markers (the macro was removed). If you add one again, define the macro first.
 - References in `refs.bib` were checked against wiki source pages or the local text copies. Fields we could not check carry `% TODO-verify`. Do not add a reference nobody has read.
 - To switch to the IOP *Journal of Neural Engineering* template: replace the block marked `CLASS` in `main.tex`; keep `sections/*.tex`.
