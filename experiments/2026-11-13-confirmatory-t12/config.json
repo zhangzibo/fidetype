@@ -1,0 +1,30 @@
+{
+ "description": "M3-27 confirmatory test of the Paper 1 frozen configuration (paper1-v4-frozen-config) on participant T12 (Willett et al. 2023, B2T '24 competitionData, CC0). Pre-registration: PROTOCOL.md (commit a7cf624).",
+ "preregistration_commit": "a7cf6244ee78bda5b7a1783968e0d82507b14a9a",
+ "frozen_tag": "paper1-v4-frozen-config",
+ "raw_dir": "C:/Users/zhang/bci-data/raw/b2t24",
+ "archive": "C:/Users/zhang/bci-data/raw/b2t24/competitionData.tar.gz",
+ "archive_md5": "a7e9d972ac5b65171a37674eb47730b8",
+ "archive_source": "https://zenodo.org/records/8047896 (Zenodo deposit of Dryad doi:10.5061/dryad.x69p8czpq), CC0 1.0",
+ "extract_dir": "C:/Users/zhang/bci-data/raw/b2t24/extracted",
+ "derived_dir": "C:/Users/zhang/bci-data/derived/2026-11-13-confirmatory-t12",
+ "run_dir": "C:/Users/zhang/bci-data/runs/t12-gru",
+ "cmudict": "C:/Users/zhang/bci-data/lexicon/cmudict/cmudict.dict",
+ "split_fractions": {"fit_a": "round(N/3)", "calibration": "round(N/4)", "test": "rest"},
+ "decoder": {
+  "n_in": 512, "input_layer": "per-session affine 512->512 (identity init) + softsign",
+  "smooth_sd_bins": 2.0, "smooth": "causal half-Gaussian (past bins only, so latency 0)",
+  "patch": 14, "stride": 4, "gru_layers": 5, "hidden": 512, "dropout": 0.4,
+  "lr": 0.002, "warmup_steps": 500, "weight_decay": 1e-5, "batch": 32,
+  "white_noise_sd": 0.8, "offset_sd": 0.2, "max_epochs": 150, "patience": 20, "seed": 0,
+  "checkpoint_minutes": 5
+ },
+ "word_route": "B2T '25 config unchanged: experiments/2026-11-10-b2t25-trust/config.json + tuned lm_weight 1.0, edit_penalty 12, word_bonus 3",
+ "word_decoder_tuned": {"lm_weight": 1.0, "edit_penalty": 12.0, "word_bonus": 3.0},
+ "trust": {"seed": 0, "alpha": 0.05, "delta": 0.1, "method": "ltt", "combine": "max", "use_guard": true},
+ "joint_ltt_betas": [0.10, 0.20],
+ "joint_ltt_grid": "0.05..1.00 step 0.05",
+ "controls_seed": 20261112, "uniform_jitter": 0.05,
+ "bootstrap": {"B": 2000, "seed": 20261112, "cluster": "test session"},
+ "gaze_chars_per_min": 20.0
+}
