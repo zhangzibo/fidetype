@@ -500,7 +500,7 @@
      "orchestrator_only": false, "notes": "PronLexicon.nearest = exact NumPy Levenshtein per length bucket (nearest_bruteforce kept as reference): equal on 5,667/5,667 B2T-decode calls and 9,000/9,000 synthetic calls, about 20x faster. CTCBeamSpec(prewarm_budget_s), PhonemeWordDecoder.warm (step generator), IncrementalPrefixBeam.prewarm(deadline). B2T 816 test utterances: decisions equal M4-06 in every condition (ours + published gate). Batch end p50/p95/max 106/676/2361 -> 95/172/265 ms (fast nearest); incremental search only 81/148/249; full prewarm 33/74/131 (push p95 20 ms, max 119); budget 1 ms: end 52/118/220, push p95 3.1 ms, max 30 ms, CPU 2.7x search only. Push spikes were Python gen-2 GC (80-280 ms): rule = gc.freeze() after load, GC off while an utterance streams, gc.collect() after its final decision. Earlier GC runs kept (b2t-gc-default.json, b2t-gc-freeze-once.json). tests/test_fast_lexicon.py 14; pytest 549 passed / 4 skipped."},
     {"id": "M4-10", "milestone": "M4", "title": "Bounded word-decoder caches (LRU) for long live sessions", "status": "done",
      "started_at": "2026-11-13T12:40:00-08:00", "finished_at": "2026-11-13T13:55:00-08:00", "approx_times": true,
-     "agent_runs": [{"label": "M4-10 bounded caches (LRUCache, word-decoder + char-LM bounds, tests, long-session + B2T experiment, wiki, records)", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "agent_runs": [{"label": "M4-09 stats + M4-10 bounded caches", "duration_s": 3696.8, "tokens": 210831, "tool_uses": 74}],
      "orchestrator_only": false, "notes": "fidetype.lm.cache.LRUCache; PhonemeWordDecoder(cand_cache_size=5000, lm_cache_size=50000), CharNgramLM memo LRU (200000; before: clear-all); None = unbounded. Decisions equal the unbounded run: synthetic 2,000-utterance session 2000/2000 (bounds default, 2000, 50000) and B2T 816/816 vs M4-06 (unbounded, default, 256 with ~250k evictions). Session RSS 640 -> 1387 MB unbounded (candidate memo ~17 KB/entry, 692 MB) vs 641 -> 707 MB default (flat after ~1000 utt); idle gc.collect p50 last 10 % 208 -> 43 ms. Push p95 2.47 -> 2.32 ms (session), B2T 3.19 ms default (target < 5 ms). experiments/2026-11-13-m4-10-bounded-caches; tests/test_bounded_caches.py 8; pytest 557 passed / 4 skipped."},
 
     {"id": "M5-01", "milestone": "M5", "title": "Publish the harness, the metrics and fixed splits", "status": "done",
@@ -608,9 +608,9 @@
      "agent_runs": [],
      "orchestrator_only": false, "notes": "Follow-up of M6-08. Needs hardware (the user has none) or a partner/volunteer with a board. Check serial/Bluetooth stamps, dropouts, channel names/units, latency; same toy decoders (no text claim)."},
 
-    {"id": "M6-13", "milestone": "M6", "title": "Long soak test of the BrainFlow -> LSL -> trust live path (1 h+, memory, clock drift, repeated reconnects)", "status": "todo",
-     "started_at": null, "finished_at": null, "approx_times": false,
-     "agent_runs": [],
+    {"id": "M6-13", "milestone": "M6", "title": "Long soak test of the BrainFlow -> LSL -> trust live path (1 h+, memory, clock drift, repeated reconnects)", "status": "in_progress",
+     "started_at": "2026-11-13T13:35:00-08:00", "finished_at": null, "approx_times": true,
+     "agent_runs": [{"label": "M6-13 soak test (harness, plan, 7 h run, results, wiki, records)", "duration_s": null, "tokens": null, "tool_uses": null}],
      "orchestrator_only": false, "notes": "Follow-up of M6-08 (runs were 70 s per mode). Synthetic board, CPU only."},
 
     {"id": "M7-01", "milestone": "M7", "title": "Build the SDK and the offline demo", "status": "done",
