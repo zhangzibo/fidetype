@@ -1,0 +1,20 @@
+00:13:00 stage synthetic
+00:13:01 syn-greedy-batch: end p50/p95/max 0.71/0.95/6.9 ms; push p95 0.012 max 0.2 ms; equal None/200 (1s)
+00:13:04 syn-greedy-incremental: end p50/p95/max 0.59/0.96/1.2 ms; push p95 0.041 max 0.7 ms; equal 200/200 (3s)
+00:13:09 syn-greedy-previews: end p50/p95/max 0.77/1.02/1.4 ms; push p95 0.125 max 53.8 ms; equal 200/200 (5s)
+00:13:12 syn-demo-segment-beam-batch: end p50/p95/max 10.86/14.06/16.4 ms; push p95 0.014 max 0.3 ms; equal None/200 (3s)
+00:13:17 syn-demo-segment-beam-incremental: end p50/p95/max 0.86/1.09/1.2 ms; push p95 0.264 max 0.8 ms; equal 200/200 (5s)
+00:13:26 syn-demo-segment-beam-previews: end p50/p95/max 0.81/1.06/1.2 ms; push p95 0.339 max 98.0 ms; equal 200/200 (9s)
+00:14:14 syn-ctc-beam-retuned-lm-batch: end p50/p95/max 225.58/352.33/436.2 ms; push p95 0.014 max 0.2 ms; equal None/200 (48s)
+00:15:04 syn-ctc-beam-retuned-lm-incremental: end p50/p95/max 153.24/283.97/374.2 ms; push p95 0.475 max 65.5 ms; equal 200/200 (50s)
+00:18:38 syn-ctc-beam-retuned-lm-incremental+prewarm: end p50/p95/max 87.07/175.76/255.6 ms; push p95 13.901 max 97.0 ms; equal 200/200 (214s)
+00:22:07 syn-ctc-beam-retuned-lm-previews: end p50/p95/max 85.05/172.98/240.8 ms; push p95 13.581 max 129.6 ms; equal 200/200 (208s)
+00:22:07 stage b2t
+00:26:16 b2t-ours-batch-pre: end p50/p95/max 174.65/1010.08/3241.8 ms; push p95 0.017 max 0.2 ms; equal 816/816 (243s)
+00:29:42 b2t-ours-batch: end p50/p95/max 136.28/967.87/3124.2 ms; push p95 0.017 max 0.4 ms; equal 816/816 (206s)
+00:33:24 b2t-inc-ours: end p50/p95/max 122.22/1004.86/3099.4 ms; push p95 0.249 max 0.9 ms; equal 816/816 (221s)
+00:39:13 b2t-inc-ours+prewarm-light: end p50/p95/max 80.31/843.30/3514.9 ms; push p95 6.001 max 1042.8 ms; equal 816/816 (349s)
+00:50:42 b2t-inc-ours+prewarm-full: end p50/p95/max 33.18/70.88/594.8 ms; push p95 20.830 max 2153.2 ms; equal 816/816 (689s)
+00:55:40 b2t-inc-ours-previews: end p50/p95/max 49.84/469.47/1804.1 ms; push p95 7.055 max 437.0 ms; equal 816/816 (297s)
+00:58:11 b2t-inc-published: end p50/p95/max 85.22/644.55/2154.6 ms; push p95 0.167 max 0.7 ms; equal 816/816 (150s)
+00:58:11 stage tables

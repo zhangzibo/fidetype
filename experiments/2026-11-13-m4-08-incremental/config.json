@@ -1,0 +1,36 @@
+{
+ "description": "M4-08: incremental decoding in the streaming trust layer. Default frame route (decode at end of utterance) vs opt-in incremental route (search while frames arrive, finalize at end). Equality of final decisions, end-of-utterance latency, per-frame push cost, provisional top-1 stability. CPU only.",
+ "derived_dir": "C:/Users/zhang/bci-data/derived/m4-08-incremental",
+ "m406_derived": "C:/Users/zhang/bci-data/derived/m4-06-real-replay",
+ "m406_configs": {
+  "ours": "experiments/2026-11-13-m4-06-real-replay/configs/trust-config-b2t25-ours-splitA.json",
+  "published": "experiments/2026-11-13-m4-06-real-replay/configs/trust-config-b2t25-published-splitA.json"
+ },
+ "pre_m408_commit": "bc0dd3e",
+ "char_lm": "C:/Users/zhang/bci-data/lm/eng_tatoeba_6gram_mkn.npz",
+ "b2t": {
+  "data": "Brain-to-Text '25 copy task (Card et al. 2024, T15, CC0): the 816 split-A test trials as full-precision NTS JSON Lines written by M4-06",
+  "decoder": "experiments/2026-11-10-b2t25-trust Decoders: phoneme CTC prefix beam (vector, beam 64, n_best 20, prune_logp -8, space rules, no LM) -> PhonemeWordDecoder (CMUdict, word unigram, char 6-gram; tuned lm_weight 1.0 / edit_penalty 12 / word_bonus 3)",
+  "chunk_frames": 1,
+  "prewarm_every": 5,
+  "prewarm_top_k": 20,
+  "prewarm_light_top_k": 5,
+  "prewarm_max_new": 256,
+  "partial_every_frames": 5,
+  "preview_hyps": 3,
+  "limit": null,
+  "caches": "the word decoder caches (_cand_cache, _lm_cache) are cleared at the start of each condition and kept across the trials of a condition (as in a live session)"
+ },
+ "synthetic": {
+  "n": 200,
+  "seed": 13,
+  "preset": "median",
+  "config": "src/fidetype/demo/trust-config-demo.json (frame temperature 2.02)",
+  "decoders": "greedy; demo segment beam (ReferenceDecoder + RefCharLM 5-gram, beam 8); CTC prefix beam RETUNED (vector, beam 256, n_best 20) + Tatoeba char 6-gram",
+  "prewarm_every": 5,
+  "prewarm_max_new": 256,
+  "partial_every_frames": 5
+ },
+ "timing": "time.perf_counter around each StreamingTrustLayer.push; end of utterance = push of the end event (stream build + frame temperature + decode or finalize + trust core); no ledger",
+ "seed": 0
+}

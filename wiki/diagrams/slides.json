@@ -79,6 +79,12 @@
       "title": "13. LSL input (M6-01)",
       "caption": "Four kinds of LSL streams can feed Fidetype. The LSL source builds the NTS header, corrects the clock, fixes the order, marks gaps and merges two inlets by time. The streaming trust layer then emits decisions to stdout and to an LSL outlet. A lost stream drops the cut utterance without a decision.",
       "wiki": "../concepts/lsl-input.md"
+    },
+    {
+      "file": "14-incremental-decoding.drawio",
+      "title": "14. Incremental decoding (M4-08)",
+      "caption": "The default frame route decodes the whole utterance at its end. The opt-in incremental route runs the search on each chunk while the frames arrive, and does speculative end work every few frames. At the end only finalize() and the trust core run. The final decision is the same; previews stay provisional.",
+      "wiki": "../concepts/streaming-trust-layer.md"
     }
   ]
 }

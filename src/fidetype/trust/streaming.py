@@ -27,8 +27,24 @@ Two input routes
     false``) gives a *provisional* decision. A final hypothesis gives the
     final decision of the utterance at once.
 
-``route="auto"`` (default) selects ``frames`` if a ``decode_fn`` is given,
-else ``hypothesis``.
+``route="auto"`` (default) selects ``frames`` if a ``decode_fn`` (or an
+``incremental`` factory) is given, else ``hypothesis``.
+
+Incremental decoding (opt-in, M4-08)
+------------------------------------
+Pass ``incremental=factory`` (see :mod:`fidetype.trust.incremental`). The
+frame route then creates one :class:`~fidetype.trust.incremental.IncrementalDecoder`
+per utterance and pushes the frames to it in chunks of
+``StreamingConfig.incremental_chunk_frames`` (after the frozen frame
+temperature, row by row as the batch path applies it). The decoder does
+its search while the frames arrive. At the end of the utterance the layer
+calls ``finalize(stream)`` with the same stream that the batch path gives
+to ``decode_fn``. Provisional decisions (``partial_every_frames``) come
+from ``partial()``: no decode of the buffer. The final decision equals the
+batch path when ``finalize`` equals ``decode_fn`` (true for the decoders
+in :mod:`fidetype.trust.incremental`; tests and
+``experiments/2026-11-13-m4-08-incremental``). The default (no factory)
+does not change.
 
 Decisions
 ---------
@@ -90,7 +106,9 @@ Bounds
 - Work per event: a frame costs O(V) (checks and one append). A final
   decision on the frame route costs one decode of at most ``max_frames``
   frames. A provisional decode on the frame route runs only every
-  ``partial_every_frames`` frames (off by default).
+  ``partial_every_frames`` frames (off by default). With an incremental
+  decoder a frame also costs the decoder's search step (once per chunk),
+  and the final decision costs only ``finalize``.
 - ``latency_budget_s``: a decision that takes longer is flagged in its
   provenance (``over_budget``). The decision itself does not change, so
   replay stays deterministic.
@@ -223,6 +241,8 @@ class StreamingConfig:
     max_attempts: int = 2
     #: Frame route: a provisional decode every N frames (None: off).
     partial_every_frames: int | None = None
+    #: Incremental decoder (opt-in): frames per ``push_frames`` call.
+    incremental_chunk_frames: int = 1
     #: Hypothesis route: a provisional decision for each partial hypothesis.
     provisional: bool = True
     #: ABSTAIN while the latest ``signal_quality`` index is below this (None: off).
@@ -254,6 +274,8 @@ class StreamingConfig:
             raise ValueError("max_frames, max_sessions and max_attempts must be >= 1")
         if self.partial_every_frames is not None and self.partial_every_frames < 1:
             raise ValueError("partial_every_frames must be >= 1 or None")
+        if self.incremental_chunk_frames < 1:
+            raise ValueError("incremental_chunk_frames must be >= 1")
 
 
 @dataclass
@@ -289,6 +311,10 @@ class _Session:
     #: Per-session risk monitor (opt-in) and its final decisions awaiting feedback.
     risk_monitor: Any = None
     risk_pending: "OrderedDict[int, tuple[bool, str | None]]" = field(default_factory=OrderedDict)
+    #: Incremental decoder of the current utterance (opt-in) and the rows not yet pushed to it.
+    inc: Any = None
+    inc_pending: list[np.ndarray] = field(default_factory=list)
+    inc_pushed: int = 0
 
     @property
     def has_input(self) -> bool:
@@ -302,6 +328,9 @@ class _Session:
         self.overflow = False
         self.utt_first_event = None
         self.frames_since_partial = 0
+        self.inc = None
+        self.inc_pending = []
+        self.inc_pushed = 0
 
     def reset_stream(self) -> None:
         self.reset_utterance()
@@ -432,6 +461,7 @@ class StreamingTrustLayer:
         ledger: Any = None,
         clock: Callable[[], float] = time.perf_counter,
         session_risk: Any = None,
+        incremental: Callable[[dict[str, Any]], Any] | None = None,
     ) -> None:
         self.config = config
         self.components = config.build()
@@ -445,11 +475,13 @@ class StreamingTrustLayer:
                 raise ValueError("session_risk needs a DecisionPolicy (it sets commit_p = +inf on alarm)")
             self._offer_only = DecisionPolicy(_replace(pol.config, commit_p=math.inf), use_guard=pol.use_guard)
         self.decode_fn = decode_fn
+        self.incremental = incremental
         self.streaming = streaming or StreamingConfig()
         route = self.streaming.route
-        self.route = ("frames" if decode_fn is not None else "hypothesis") if route == "auto" else route
-        if self.route == "frames" and decode_fn is None:
-            raise ValueError('route "frames" needs a decode_fn')
+        has_dec = decode_fn is not None or incremental is not None
+        self.route = ("frames" if has_dec else "hypothesis") if route == "auto" else route
+        if self.route == "frames" and not has_dec:
+            raise ValueError('route "frames" needs a decode_fn or an incremental factory')
         self.online_template = online
         self.ledger = ledger
         self.clock = clock
@@ -500,6 +532,7 @@ class StreamingTrustLayer:
             "has_header": s.header is not None,
             "buffered_frames": len(s.rows),
             "buffered_bytes": int(sum(r.nbytes for r in s.rows)),
+            "incremental_frames_pushed": s.inc_pushed if self.incremental is not None else None,
             "has_hypothesis": s.hyp is not None,
             "utterance": s.utterance,
             "attempt": s.attempt,
@@ -642,6 +675,10 @@ class StreamingTrustLayer:
             return out
         s.rows.append(row)
         s.times.append(float(t))
+        if self.incremental is not None:
+            s.inc_pending.append(row)
+            if len(s.inc_pending) >= self.streaming.incremental_chunk_frames:
+                self._inc_flush(s)
         p = self.streaming.partial_every_frames
         if p is not None:
             s.frames_since_partial += 1
@@ -722,14 +759,38 @@ class StreamingTrustLayer:
             latency=h.get("latency"),
         )
 
+    def _inc_flush(self, s: _Session) -> None:
+        """Push the pending rows to the utterance's incremental decoder (as one chunk)."""
+        if not s.inc_pending:
+            return
+        if s.inc is None:
+            s.inc = self.incremental(s.header or {})  # type: ignore[misc]
+        # The same values as the batch path: float32 rows (NeuralTextStream), then the frozen
+        # frame temperature row by row (FrameScaler.transform_stream), then float32 again.
+        chunk = np.stack(s.inc_pending).astype(np.float32)
+        fs = self.components.frame_scaler
+        if fs.temperature != 1.0:
+            chunk = fs.transform_logits(chunk).astype(np.float32)
+        s.inc.push_frames(chunk)
+        s.inc_pushed += len(s.inc_pending)
+        s.inc_pending = []
+
     def _decide_frames(self, s: _Session, final: bool, final_attempt: bool, t0: float) -> list[StreamDecision]:
-        assert self.decode_fn is not None
+        ref: dict[str, Any] = {"kind": "frames", "frame_range": [0, len(s.rows)],
+                               "t_range": [s.times[0], s.times[-1]]}
+        if self.incremental is not None:
+            self._inc_flush(s)
+            ref["decoder_mode"] = "incremental"
+            if not final:
+                return [self._decide_nbest(s, s.inc.partial(), False, final_attempt, "frames", ref, t0, None)]
         raw_stream = self.stream_of(s)
         fs = self.components.frame_scaler
         stream = fs.transform_stream(raw_stream) if fs.temperature != 1.0 else raw_stream
-        nb = self.decode_fn(stream)
-        ref: dict[str, Any] = {"kind": "frames", "frame_range": [0, len(s.rows)],
-                               "t_range": [s.times[0], s.times[-1]]}
+        if self.incremental is not None:
+            nb = s.inc.finalize(stream)
+        else:
+            assert self.decode_fn is not None
+            nb = self.decode_fn(stream)
         if final and self.streaming.fingerprint_streams:
             from fidetype.trust.provenance import stream_fingerprint
 
@@ -1002,6 +1063,19 @@ def frame_decoder(name: str) -> DecodeFn | None:
     raise ValueError(f"unknown decoder {name!r} (none, greedy or demo)")
 
 
+def incremental_decoder(name: str) -> Callable[[dict[str, Any]], Any]:
+    """The incremental factory of a named frame decoder (``greedy`` or ``demo``), M4-08."""
+    from fidetype.trust.incremental import IncrementalGreedy, IncrementalReferenceDecoder
+
+    if name == "greedy":
+        return IncrementalGreedy.factory
+    if name == "demo":
+        from fidetype.demo import build_decoder
+
+        return IncrementalReferenceDecoder.factory_for(build_decoder())
+    raise ValueError(f"no incremental decoder for {name!r} (greedy or demo)")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """``python -m fidetype.trust.streaming replay --config trust.json stream.jsonl``"""
     import argparse
@@ -1017,9 +1091,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "(the beam + LM decoder of fidetype.demo, frame route)")
     r.add_argument("--max-attempts", type=int, default=2, help="attempts per item (1: no ASK; default 2)")
     r.add_argument("--no-text", action="store_true", help="omit the shown texts from the output")
+    r.add_argument("--incremental", action="store_true",
+                   help="decode as the frames arrive (greedy or demo; the same final decisions)")
     a = ap.parse_args(argv)
     dec = frame_decoder(a.decoder)
-    layer = StreamingTrustLayer.from_file(a.config, decode_fn=dec,
+    inc = incremental_decoder(a.decoder) if a.incremental else None
+    if inc is not None:
+        dec = None
+    layer = StreamingTrustLayer.from_file(a.config, decode_fn=dec, incremental=inc,
                                           streaming=StreamingConfig(max_attempts=a.max_attempts))
     for i, fp in enumerate(a.files):
         for d in replay(fp, layer, session_id=f"file-{i}"):

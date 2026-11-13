@@ -1,0 +1,659 @@
+{
+ "config_id": "tcfg-a34f63a757f55371",
+ "frame_temperature": 2.0245646970321203,
+ "n": 200,
+ "frames": {
+  "median": 440.5,
+  "max": 580
+ },
+ "frame_period_s": 0.04,
+ "decoders": {
+  "greedy": {
+   "batch": {
+    "condition": "syn-greedy-batch",
+    "wall_s": 0.913271427154541,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 0.70929999492364,
+      "p95": 0.9468599921092391,
+      "max": 6.906499998876825,
+      "mean": 0.7496265007648617,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 0.6785500008845702,
+      "p95": 0.904550000996096,
+      "max": 6.8715999950654805,
+      "mean": 0.7209540003532311,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.008100003469735384,
+      "p95": 0.01239999255631119,
+      "max": 0.15539999003522098,
+      "mean": 0.008658494975789114,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 0.025449997338000685,
+      "p95": 0.11109998740721491,
+      "max": 0.15539999003522098,
+      "mean": 0.03973850027250592,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 4.477150047023315,
+      "p95": 5.828699965059059,
+      "max": 10.771900153486058,
+      "mean": 4.474207992025185,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 156,
+     "n_wrong_commit": 156,
+     "commit_rate": 0.78,
+     "wrong_commit": 0.78,
+     "actions": {
+      "COMMIT": 156,
+      "OFFER": 44,
+      "ASK": 0,
+      "ABSTAIN": 0,
+      "OFFER_WORDS": 0
+     }
+    }
+   },
+   "incremental": {
+    "condition": "syn-greedy-incremental",
+    "wall_s": 2.549964427947998,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 0.5939499969827011,
+      "p95": 0.9604650076653343,
+      "max": 1.1652000102913007,
+      "mean": 0.6487700000434415,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 0.5641999960062094,
+      "p95": 0.9080550014914479,
+      "max": 1.1169000063091516,
+      "mean": 0.614128999368404,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.02300000051036477,
+      "p95": 0.04089999129064381,
+      "max": 0.6879000138724223,
+      "mean": 0.027860809226755958,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 0.11999999696854502,
+      "p95": 0.22697500971844417,
+      "max": 0.6879000138724223,
+      "mean": 0.13065299957816023,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 11.858949990710244,
+      "p95": 18.676065139152342,
+      "max": 21.05999995546881,
+      "mean": 12.633515001070919,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 156,
+     "n_wrong_commit": 156,
+     "commit_rate": 0.78,
+     "wrong_commit": 0.78,
+     "actions": {
+      "COMMIT": 156,
+      "OFFER": 44,
+      "ASK": 0,
+      "ABSTAIN": 0,
+      "OFFER_WORDS": 0
+     }
+    },
+    "equivalence": {
+     "n": 200,
+     "n_equal": 200,
+     "action_agree": 200,
+     "shown_agree": 200,
+     "max_abs_dp_top1": 0.0
+    }
+   },
+   "previews": {
+    "condition": "syn-greedy-previews",
+    "wall_s": 4.733335733413696,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 0.7730000070296228,
+      "p95": 1.0206800005107652,
+      "max": 1.3831999967806041,
+      "mean": 0.7687549995898735,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 0.7261500068125315,
+      "p95": 0.9686549958132672,
+      "max": 1.203499996336177,
+      "mean": 0.7269749997794861,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.03819999983534217,
+      "p95": 0.1247000036528334,
+      "max": 53.78550000023097,
+      "mean": 0.052829349212709785,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 0.23434999457094818,
+      "p95": 0.7074649998685344,
+      "max": 53.78550000023097,
+      "mean": 0.7576554996921914,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 23.164100071880966,
+      "p95": 30.561469874373863,
+      "max": 77.6743999304017,
+      "mean": 23.494092003675178,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 156,
+     "n_wrong_commit": 156,
+     "commit_rate": 0.78,
+     "wrong_commit": 0.78,
+     "actions": {
+      "COMMIT": 156,
+      "OFFER": 44,
+      "ASK": 0,
+      "ABSTAIN": 0,
+      "OFFER_WORDS": 0
+     }
+    },
+    "equivalence": {
+     "n": 200,
+     "n_equal": 200,
+     "action_agree": 200,
+     "shown_agree": 200,
+     "max_abs_dp_top1": 0.0
+    },
+    "stability": {
+     "n_utterances": 200,
+     "previews_per_utterance_median": 88.0,
+     "top1_change_rate_mean": 0.41845364180535816,
+     "top1_changes_per_utterance_median": 36.0,
+     "rewrites_per_utterance_median": 0.0,
+     "rewrites_per_utterance_mean": 0.0,
+     "last_preview_equals_final": 1.0,
+     "stable_before_end_fraction": 1.0,
+     "time_to_stable_before_end_s_median": 0.28000000000000114,
+     "time_to_stable_before_end_s_p10": 0.23999999999999844,
+     "stable_share_of_utterance_median": 0.01661229437912108,
+     "prefix_ok_fraction_mean": 1.0
+    }
+   }
+  },
+  "demo-segment-beam": {
+   "batch": {
+    "condition": "syn-demo-segment-beam-batch",
+    "wall_s": 3.195528507232666,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 10.858050001843367,
+      "p95": 14.06204000522848,
+      "max": 16.368299999157898,
+      "mean": 10.693195499916328,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 10.812350003106985,
+      "p95": 14.021485007106092,
+      "max": 16.298799993819557,
+      "mean": 10.644516999745974,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.012400007108226418,
+      "p95": 0.01440000778529793,
+      "max": 0.3129999968223274,
+      "mean": 0.01200023596650511,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 0.03170000127283856,
+      "p95": 0.08801999938441434,
+      "max": 0.3129999968223274,
+      "mean": 0.04260249923390802,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 15.98310012195725,
+      "p95": 20.35826004866976,
+      "max": 23.748099963995628,
+      "mean": 15.855277004447998,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 0,
+     "n_wrong_commit": 0,
+     "commit_rate": 0.0,
+     "wrong_commit": 0.0,
+     "actions": {
+      "COMMIT": 0,
+      "OFFER": 199,
+      "ASK": 0,
+      "ABSTAIN": 1,
+      "OFFER_WORDS": 0
+     }
+    }
+   },
+   "incremental": {
+    "condition": "syn-demo-segment-beam-incremental",
+    "wall_s": 5.096853256225586,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 0.8559999987483025,
+      "p95": 1.0852849984075874,
+      "max": 1.1760000052163377,
+      "mean": 0.8397219998005312,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 0.8123000006889924,
+      "p95": 1.024459999462124,
+      "max": 1.1156000109622255,
+      "mean": 0.7943624999461463,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.03519999154377729,
+      "p95": 0.2638000005390495,
+      "max": 0.8368999988306314,
+      "mean": 0.05693023140245242,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 0.3484999906504527,
+      "p95": 0.5225800014159174,
+      "max": 0.8368999988306314,
+      "mean": 0.37029449973488227,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 25.40534994477639,
+      "p95": 32.044080021296395,
+      "max": 37.50359985860996,
+      "mean": 25.329114991036477,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 0,
+     "n_wrong_commit": 0,
+     "commit_rate": 0.0,
+     "wrong_commit": 0.0,
+     "actions": {
+      "COMMIT": 0,
+      "OFFER": 199,
+      "ASK": 0,
+      "ABSTAIN": 1,
+      "OFFER_WORDS": 0
+     }
+    },
+    "equivalence": {
+     "n": 200,
+     "n_equal": 200,
+     "action_agree": 200,
+     "shown_agree": 200,
+     "max_abs_dp_top1": 0.0
+    }
+   },
+   "previews": {
+    "condition": "syn-demo-segment-beam-previews",
+    "wall_s": 8.712063074111938,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 0.8139500059769489,
+      "p95": 1.062639999872772,
+      "max": 1.2101999891456217,
+      "mean": 0.8069775005424162,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 0.7687500037718564,
+      "p95": 1.0034049984824378,
+      "max": 1.1469999881228432,
+      "mean": 0.7621714996639639,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.041099992813542485,
+      "p95": 0.3392400016309688,
+      "max": 98.02649999619462,
+      "mean": 0.09894067276635472,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 0.8241000032285228,
+      "p95": 1.2290449973079374,
+      "max": 98.02649999619462,
+      "mean": 1.6685940000024857,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 43.66850007500034,
+      "p95": 56.009530225855976,
+      "max": 142.89339985407423,
+      "mean": 43.3677920010814,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 0,
+     "n_wrong_commit": 0,
+     "commit_rate": 0.0,
+     "wrong_commit": 0.0,
+     "actions": {
+      "COMMIT": 0,
+      "OFFER": 199,
+      "ASK": 0,
+      "ABSTAIN": 1,
+      "OFFER_WORDS": 0
+     }
+    },
+    "equivalence": {
+     "n": 200,
+     "n_equal": 200,
+     "action_agree": 200,
+     "shown_agree": 200,
+     "max_abs_dp_top1": 0.0
+    },
+    "stability": {
+     "n_utterances": 200,
+     "previews_per_utterance_median": 88.0,
+     "top1_change_rate_mean": 0.3767526709402827,
+     "top1_changes_per_utterance_median": 32.0,
+     "rewrites_per_utterance_median": 15.0,
+     "rewrites_per_utterance_mean": 14.855,
+     "last_preview_equals_final": 0.995,
+     "stable_before_end_fraction": 0.995,
+     "time_to_stable_before_end_s_median": 0.28000000000000114,
+     "time_to_stable_before_end_s_p10": 0.15200000000000033,
+     "stable_share_of_utterance_median": 0.016427104722792622,
+     "prefix_ok_fraction_mean": 0.5785982232314828
+    }
+   }
+  },
+  "ctc-beam-retuned-lm": {
+   "batch": {
+    "condition": "syn-ctc-beam-retuned-lm-batch",
+    "wall_s": 48.23990726470947,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 225.57819999929052,
+      "p95": 352.3338050050369,
+      "max": 436.1926000128733,
+      "mean": 235.94485350018658,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 225.45750000426779,
+      "p95": 352.16025001063815,
+      "max": 436.02300000202376,
+      "mean": 235.81947499937087,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.01239999255631119,
+      "p95": 0.01440000778529793,
+      "max": 0.19029999384656549,
+      "mean": 0.01191372961232589,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 0.03659999492811039,
+      "p95": 0.08478999079670754,
+      "max": 0.19029999384656549,
+      "mean": 0.04578599997330457,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 230.40754995599855,
+      "p95": 358.51507514089457,
+      "max": 441.748500088579,
+      "mean": 241.06972299887275,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 0,
+     "n_wrong_commit": 0,
+     "commit_rate": 0.0,
+     "wrong_commit": 0.0,
+     "actions": {
+      "COMMIT": 0,
+      "OFFER": 200,
+      "ASK": 0,
+      "ABSTAIN": 0,
+      "OFFER_WORDS": 0
+     }
+    }
+   },
+   "incremental": {
+    "condition": "syn-ctc-beam-retuned-lm-incremental",
+    "wall_s": 50.276238441467285,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 153.24460000556428,
+      "p95": 283.97051499196095,
+      "max": 374.19709999812767,
+      "mean": 162.1357929999067,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 151.55240000603953,
+      "p95": 282.44984999109874,
+      "max": 372.12149999686517,
+      "mean": 160.75722649904492,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.2339999919058755,
+      "p95": 0.4752999957418069,
+      "max": 65.49069999891799,
+      "mean": 0.20695632841101413,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 0.6767500017303973,
+      "p95": 0.870025001495378,
+      "max": 65.49069999891799,
+      "mean": 1.0428794998733792,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 242.11870001454372,
+      "p95": 381.1595048267918,
+      "max": 481.8634001276223,
+      "mean": 251.1611620108306,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 0,
+     "n_wrong_commit": 0,
+     "commit_rate": 0.0,
+     "wrong_commit": 0.0,
+     "actions": {
+      "COMMIT": 0,
+      "OFFER": 200,
+      "ASK": 0,
+      "ABSTAIN": 0,
+      "OFFER_WORDS": 0
+     }
+    },
+    "equivalence": {
+     "n": 200,
+     "n_equal": 200,
+     "action_agree": 200,
+     "shown_agree": 200,
+     "max_abs_dp_top1": 0.0
+    }
+   },
+   "incremental+prewarm": {
+    "condition": "syn-ctc-beam-retuned-lm-incremental+prewarm",
+    "wall_s": 213.76968359947205,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 87.07069999945816,
+      "p95": 175.76174999921923,
+      "max": 255.55119999626186,
+      "mean": 98.27487249945989,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 81.46035000390839,
+      "p95": 168.6429899993526,
+      "max": 247.6979999919422,
+      "mean": 93.03891449984803,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.31489999673794955,
+      "p95": 13.901139999506986,
+      "max": 96.9619999959832,
+      "mean": 2.2556349180146693,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 30.224649992305785,
+      "p95": 71.6778499918291,
+      "max": 96.9619999959832,
+      "mean": 35.254484999677516,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 996.7346999546862,
+      "p95": 1943.5611449007397,
+      "max": 2902.420799990068,
+      "mean": 1068.5700670072401,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 0,
+     "n_wrong_commit": 0,
+     "commit_rate": 0.0,
+     "wrong_commit": 0.0,
+     "actions": {
+      "COMMIT": 0,
+      "OFFER": 200,
+      "ASK": 0,
+      "ABSTAIN": 0,
+      "OFFER_WORDS": 0
+     }
+    },
+    "equivalence": {
+     "n": 200,
+     "n_equal": 200,
+     "action_agree": 200,
+     "shown_agree": 200,
+     "max_abs_dp_top1": 0.0
+    }
+   },
+   "previews": {
+    "condition": "syn-ctc-beam-retuned-lm-previews",
+    "wall_s": 208.39415407180786,
+    "timing": {
+     "end_of_utterance_ms": {
+      "p50": 85.04520000133198,
+      "p95": 172.9759499918145,
+      "max": 240.77249999390915,
+      "mean": 93.1772564995481,
+      "n": 200
+     },
+     "decision_latency_ms": {
+      "p50": 79.3081500014523,
+      "p95": 166.2075449879921,
+      "max": 235.2973000088241,
+      "mean": 88.00753950010403,
+      "n": 200
+     },
+     "push_frame_ms": {
+      "p50": 0.2930999908130616,
+      "p95": 13.58091999136377,
+      "max": 129.59569999657106,
+      "mean": 2.2050307847473523,
+      "n": 86033
+     },
+     "push_frame_max_per_utterance_ms": {
+      "p50": 29.502199999114964,
+      "p95": 91.7963250016327,
+      "max": 129.59569999657106,
+      "mean": 36.04603899962967,
+      "n": 200
+     },
+     "total_cpu_per_utterance_ms": {
+      "p50": 974.0347499682684,
+      "p95": 1853.5093750928331,
+      "max": 2722.1278999204515,
+      "mean": 1041.704324020393,
+      "n": 200
+     }
+    },
+    "outcome": {
+     "n": 200,
+     "n_commit": 0,
+     "n_wrong_commit": 0,
+     "commit_rate": 0.0,
+     "wrong_commit": 0.0,
+     "actions": {
+      "COMMIT": 0,
+      "OFFER": 200,
+      "ASK": 0,
+      "ABSTAIN": 0,
+      "OFFER_WORDS": 0
+     }
+    },
+    "equivalence": {
+     "n": 200,
+     "n_equal": 200,
+     "action_agree": 200,
+     "shown_agree": 200,
+     "max_abs_dp_top1": 0.0
+    },
+    "stability": {
+     "n_utterances": 200,
+     "previews_per_utterance_median": 88.0,
+     "top1_change_rate_mean": 0.38016605386270813,
+     "top1_changes_per_utterance_median": 33.0,
+     "rewrites_per_utterance_median": 9.0,
+     "rewrites_per_utterance_mean": 9.28,
+     "last_preview_equals_final": 0.715,
+     "stable_before_end_fraction": 0.715,
+     "time_to_stable_before_end_s_median": 0.28000000000000114,
+     "time_to_stable_before_end_s_p10": 0.23999999999999844,
+     "stable_share_of_utterance_median": 0.01662707838479817,
+     "prefix_ok_fraction_mean": 0.7043343098580455
+    }
+   }
+  }
+ }
+}

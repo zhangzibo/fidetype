@@ -8,7 +8,7 @@ updated: 2026-11-13
 
 # Streaming trust layer
 
-Diagram: [12-streaming-trust-layer.drawio](../diagrams/12-streaming-trust-layer.drawio) (rendered in [diagrams/index.html](../diagrams/index.html#s12)).
+Diagram: [12-streaming-trust-layer.drawio](../diagrams/12-streaming-trust-layer.drawio) (rendered in [diagrams/index.html](../diagrams/index.html#s12)). Incremental decoding: [14-incremental-decoding.drawio](../diagrams/14-incremental-decoding.drawio) ([rendered](../diagrams/index.html#s14)).
 
 ## What it is
 The batch trust core reads a complete stream and selects one action. A live system gets the stream one event at a time. The **streaming trust layer** (`fidetype.trust.streaming.StreamingTrustLayer`, task **M4-03**) reads NeuralTextStream events as they arrive. It keeps a state per session. It emits commit / offer / ask / abstain decisions with provenance.
@@ -22,7 +22,7 @@ It runs a **frozen configuration**: the fitted state of the trust core, loaded f
 | `FrozenTrustConfig.from_pipeline(pipe, name, recipe)` | Freeze a fitted `TrustPipeline`: frame, sentence and character temperatures, conformal q, guard settings, policy thresholds, risk-control record |
 | `cfg.save(path)` / `FrozenTrustConfig.load(path)` | Canonical JSON. `inf` and `nan` are written as strings. `cfg.config_id` = SHA-256 content id |
 | `paper1_v4_harness_config()` | Harness settings of the Paper 1 frozen recipe (guard on, LTT α 0.05, δ 0.1, combine max). Fit on the user's calibration data, then freeze |
-| `StreamingTrustLayer(cfg, decode_fn=None, streaming=StreamingConfig(), online=None, ledger=None)` | The layer. `decode_fn(stream) -> NBest` selects the frames route; without it the layer uses the hypothesis route |
+| `StreamingTrustLayer(cfg, decode_fn=None, streaming=StreamingConfig(), online=None, ledger=None, incremental=None)` | The layer. `decode_fn(stream) -> NBest` selects the frames route; without it the layer uses the hypothesis route. `incremental=factory` (opt-in, M4-08) decodes as the frames arrive (next sections) |
 | `layer.push(event, session_id)` | Consume one event (dict or JSON string). Returns the decisions it causes, often none |
 | `layer.end_of_utterance(session_id, final_attempt=None)` | Close the utterance when the producer sends no boundary |
 | `layer.flush()`, `layer.close(sid)`, `layer.new_item(sid)` | End all pending utterances; drop a session; reset the attempt count |
@@ -116,6 +116,50 @@ The benchmark v0.1 NTS files round log-probs to 6 decimals. With them, p_top1 mo
 
 > **Our take:** the frozen config file is enough to rebuild the paper's split-A row in a streaming consumer, bit for bit. It is valid only with the decode_fn it was fitted with. On the hypothesis route the producer must apply the frozen frame temperature. M4-07 added a declaration for this (next sections).
 
+## Incremental decoding (M4-08, opt-in)
+Experiment: [2026-11-13-m4-08-incremental](../../experiments/2026-11-13-m4-08-incremental/results.md) ([tables](../../experiments/2026-11-13-m4-08-incremental/results/tables.md)). Diagram: [14](../diagrams/index.html#s14).
+
+The default frame route decodes the whole utterance at its end. On B2T this took p50 175 ms, p95 1010 ms, max 3.2 s (M4-06). All of it falls after the user stops. The incremental route does the search while the frames arrive.
+
+```python
+from fidetype.trust.incremental import CTCBeamSpec, IncrementalGreedy
+spec = CTCBeamSpec(dict(RETUNED), lm=lm, prewarm_every=5)      # one setting -> batch and incremental
+layer = StreamingTrustLayer(cfg, incremental=spec.factory,
+                            streaming=StreamingConfig(incremental_chunk_frames=1, partial_every_frames=5))
+```
+
+| Part | What it does |
+|---|---|
+| `IncrementalDecoder` (`fidetype.trust.incremental`) | `push_frames(chunk)`; `partial() -> NBest` (provisional); `finalize(stream) -> NBest` |
+| `IncrementalGreedy`, `IncrementalReferenceDecoder` | CTC greedy and the demo segment beam, one closed peak at a time |
+| `IncrementalPrefixBeam` (`fidetype.lm`) | The CTC prefix beam search with its state carried across chunks. `ctc_prefix_beam_search` is this class with one chunk |
+| `CTCBeamSpec` | Builds the batch `decode_fn` and the incremental factory from one setting. `post` makes the final n-best (for example a lexicon word decoder) |
+| `prewarm_every`, `prewarm_max_new`, `on_prewarm` | Speculative end work every N frames: align the current candidate texts; fill a word decoder's caches. It never changes a result |
+| `StreamingConfig.incremental_chunk_frames` | Frames per `push_frames` call (default 1) |
+| `BufferedDecoder` | Any batch `decode_fn` behind the interface (no time saved) |
+| `stability_metrics` | Top-1 changes, rewrites, time to stable of the previews |
+| CLI | `replay --decoder greedy|demo --incremental` |
+
+The layer applies the frozen frame temperature to each chunk row by row, as the batch path does. Previews come from `partial()`, so a preview no longer decodes the whole buffer. The default (no factory) does not change.
+
+**Equality.** The final decision equals the batch path exactly (`==` on action, shown texts, p_top1, guard risk and prediction set): 816/816 B2T test trials for our decoder (4 incremental variants) and for the published gate, 200/200 synthetic streams for greedy, segment beam and CTC beam + LM. The beam needs no documented difference, because the batch search is the same per-frame code.
+
+**Latency, B2T '25 (816 utterances, 80 ms frames, ms):**
+
+| condition | end p50 | end p95 | end max | push p95 | push max | CPU per utterance |
+|---|---|---|---|---|---|---|
+| batch (M4-06 path) | 175 | 1010 | 3242 | 0.02 | 0.2 | 178 |
+| incremental search only | 122 | 1005 | 3099 | 0.25 | 0.9 | 154 |
+| incremental + full prewarm | **33** | **71** | **595** | 21 | 2153 | 622 |
+
+- The search moves out of the end path for free. The tail is the lexicon word decoder (a slow fallback search for a word with no close lexicon entry).
+- Full prewarm runs the word work during the utterance: end p95 falls 14×. The cost: push spikes up to 2.2 s and about 4.5× CPU. This is a deployment choice.
+- Synthetic: the demo segment beam goes from 10.9 to 0.9 ms (p50); the CTC beam + LM from 226 to 87 ms with prewarm.
+
+**Preview stability (B2T, word previews every 0.4 s).** The top-1 changes in 29 % of steps. The shown text is rewritten (not only extended) 4.4 times per utterance. In 35 % of utterances the final top-1 differs from the last preview.
+
+> **Our take:** incremental decoding removes the decoder's search from the wait after the user stops, with no change to any decision. The real-data tail sits in our word decoder, not in the layer; a faster exact lexicon search is the next fix. The unstable previews confirm the rule: never act on `is_final = false`. Show previews as grey text that can change.
+
 ## Spec additions (proposal, not breaking v0.1)
 [FEP-0001](../../spec/feps/0001-streaming-trust-events.md) (status Draft) proposes four Development parts. A v0.1 consumer ignores all four.
 
@@ -163,7 +207,7 @@ fidetype conformance check --profile fep-0001 decisions.jsonl  # check an input 
 - A test runs the layer on synthetic streams (both routes, provisional decisions, ASK and retry) and checks its decision log with the profile: no failure.
 
 ## Limits and follow-ups
-- The frames route decodes the whole utterance at its end. A truly incremental decoder (prefix beam state carried across frames) is M4-01 (causal mode).
+- Incremental decoding is done (M4-08). Open: a faster exact lexicon fallback for the B2T word decoder; prewarm in a worker thread or with a time budget per push. M4-01 (neural decoder lookahead) and M4-02 (lookahead sweep) are still open.
 - Real-data frozen configs exist for one participant and one split only (M4-06, B2T '25 split A). Each new user and session needs its own fit.
 - FEP-0001 conformance is done (M4-07, profile `fep-0001`). The FEP stays Draft until review.
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.

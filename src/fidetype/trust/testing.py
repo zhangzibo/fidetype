@@ -132,41 +132,49 @@ class ReferenceDecoder:
         self.allow_drop = allow_drop
 
     def __call__(self, stream: NeuralTextStream) -> NBest:
-        vocab = stream.vocab
-        blank = stream.blank_id
-        lm = self.lm
-        w = self.lm_weight
-        # state: text -> (logp_ac, logp_lm, confs)
-        beams: dict[str, tuple[float, float, tuple[float, ...]]] = {"": (0.0, 0.0, ())}
+        beams = self.start()
         for s, e, c in find_segments(stream):
-            row = stream.log_probs[c].astype(np.float64)
-            order = [int(i) for i in np.argsort(-row) if i != blank][: self.top_m]
-            options = [(vocab[i], float(row[i])) for i in order]
-            if self.allow_drop:
-                options.append(("", float(row[blank])))
-            new: dict[str, tuple[float, float, tuple[float, ...]]] = {}
-            for text, (ac, lml, conf) in beams.items():
-                any_ok = False
-                for ch, lp in options:
-                    if ch == " " and (not text or text.endswith(" ")):
-                        continue  # no leading or double space
-                    any_ok = True
-                    t2 = text + ch
-                    ac2 = ac + lp
-                    lm2 = lml + (lm.logprob(text, ch) if (lm is not None and ch) else 0.0)
-                    conf2 = conf + ((math.exp(lp),) if ch else ())
-                    old = new.get(t2)
-                    if old is None:
-                        new[t2] = (ac2, lm2, conf2)
-                    else:
-                        # Merge paths with the same text (sum of acoustic probabilities).
-                        best_conf = conf2 if ac2 > old[0] else old[2]
-                        new[t2] = (float(np.logaddexp(old[0], ac2)), lm2, best_conf)
-                if not any_ok:
-                    new.setdefault(text, (ac, lml, conf))
-            beams = dict(
-                sorted(new.items(), key=lambda kv: -self._score(kv[0], kv[1][0], kv[1][1]))[: self.beam]
-            )
+            beams = self.extend(beams, stream.log_probs[c], stream.vocab, stream.blank_id)
+        return self.finish(beams, stream.meta)
+
+    @staticmethod
+    def start() -> dict[str, tuple[float, float, tuple[float, ...]]]:
+        """The empty beam (text -> (logp_ac, logp_lm, confs))."""
+        return {"": (0.0, 0.0, ())}
+
+    def extend(self, beams: dict, centre_row: np.ndarray, vocab: Sequence[str], blank: int) -> dict:
+        """Extend the beam by one peak (``centre_row``: the log-probs of its centre frame)."""
+        lm = self.lm
+        row = np.asarray(centre_row).astype(np.float64)
+        order = [int(i) for i in np.argsort(-row) if i != blank][: self.top_m]
+        options = [(vocab[i], float(row[i])) for i in order]
+        if self.allow_drop:
+            options.append(("", float(row[blank])))
+        new: dict[str, tuple[float, float, tuple[float, ...]]] = {}
+        for text, (ac, lml, conf) in beams.items():
+            any_ok = False
+            for ch, lp in options:
+                if ch == " " and (not text or text.endswith(" ")):
+                    continue  # no leading or double space
+                any_ok = True
+                t2 = text + ch
+                ac2 = ac + lp
+                lm2 = lml + (lm.logprob(text, ch) if (lm is not None and ch) else 0.0)
+                conf2 = conf + ((math.exp(lp),) if ch else ())
+                old = new.get(t2)
+                if old is None:
+                    new[t2] = (ac2, lm2, conf2)
+                else:
+                    # Merge paths with the same text (sum of acoustic probabilities).
+                    best_conf = conf2 if ac2 > old[0] else old[2]
+                    new[t2] = (float(np.logaddexp(old[0], ac2)), lm2, best_conf)
+            if not any_ok:
+                new.setdefault(text, (ac, lml, conf))
+        return dict(sorted(new.items(), key=lambda kv: -self._score(kv[0], kv[1][0], kv[1][1]))[: self.beam])
+
+    def finish(self, beams: dict, meta: dict) -> NBest:
+        """The n-best list of a beam (end-of-sentence LM term added)."""
+        lm = self.lm
         cands: dict[str, Candidate] = {}
         for text, (ac, lml, conf) in beams.items():
             t = text.rstrip(" ")
@@ -177,7 +185,7 @@ class ReferenceDecoder:
             if t not in cands or score > cands[t].score:
                 cands[t] = Candidate(t, score, ac, lml if lm is not None else 0.0, conf)
         nb = sorted(cands.values(), key=lambda c: -c.score)[: self.n_best]
-        return NBest(nb, {"decoder": "ReferenceDecoder", **{k: v for k, v in stream.meta.items() if k == "seed"}})
+        return NBest(nb, {"decoder": "ReferenceDecoder", **{k: v for k, v in meta.items() if k == "seed"}})
 
     def _score(self, text: str, ac: float, lml: float) -> float:
         return ac + self.lm_weight * lml + self.insertion_bonus * len(text)
@@ -194,6 +202,11 @@ def greedy_nbest(stream: NeuralTextStream) -> NBest:
         i = int(np.argmax(stream.log_probs[c]))
         chars.append(stream.vocab[i])
         conf.append(float(np.exp(stream.log_probs[c, i])))
+    return greedy_candidate(chars, conf)
+
+
+def greedy_candidate(chars: Sequence[str], conf: Sequence[float]) -> NBest:
+    """The greedy 1-best list from the peak characters and their confidences."""
     text = "".join(chars)
     # Same normalisation as the other decoders (no double or edge spaces).
     out_t, out_c = [], []

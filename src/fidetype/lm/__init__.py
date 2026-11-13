@@ -3,6 +3,7 @@
 from fidetype.lm.beam import (
     RETUNED,
     Hypothesis,
+    IncrementalPrefixBeam,
     WordSlot,
     align_pairs,
     ctc_forced_align,
@@ -17,6 +18,7 @@ __all__ = [
     "EOS",
     "CharNgramLM",
     "Hypothesis",
+    "IncrementalPrefixBeam",
     "RETUNED",
     "WordSlot",
     "align_pairs",
