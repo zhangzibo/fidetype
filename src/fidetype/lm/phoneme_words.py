@@ -36,6 +36,8 @@ from typing import Callable, Iterable, Iterator, Sequence
 
 import numpy as np
 
+from fidetype.lm.cache import LRUCache
+
 _VARIANT = re.compile(r"\(\d+\)$")
 
 
@@ -242,6 +244,17 @@ class PronLexicon:
         return sorted(found.items(), key=lambda x: (x[1], x[0]))
 
 
+#: Default entry bounds of the :class:`PhonemeWordDecoder` memos (M4-10).
+DEFAULT_CAND_CACHE_SIZE = 5_000
+DEFAULT_LM_CACHE_SIZE = 50_000
+
+
+def _info(c) -> dict:
+    if isinstance(c, LRUCache):
+        return c.info()
+    return {"size": len(c), "maxsize": None}
+
+
 @dataclass
 class WordHypothesis:
     """A word sentence from :class:`PhonemeWordDecoder` (duck-types ``Hypothesis``)."""
@@ -263,6 +276,15 @@ class PhonemeWordDecoder:
     ``unigram_logp`` maps a word to its log prior; words not in it get
     ``oov_logp``. ``sentence_lm`` returns the log-probability of a word
     sentence (for example ``CharNgramLM.score_sentence``), or is None.
+
+    ``cand_cache_size`` bounds the memo segment -> lexicon candidates and
+    ``lm_cache_size`` the memo word sentence -> sentence-LM score, in
+    entries, with least-recently-used eviction
+    (:class:`fidetype.lm.cache.LRUCache`). None: no bound. The memos hold
+    pure function values, so a bound never changes a result, only the
+    cost (M4-10). A candidate entry is large (B2T '25 with CMUdict: about
+    17 KB, often hundreds of candidate words); a sentence-LM entry is about
+    0.2 KB. The defaults bound the two memos to about 85 MB and 8 MB.
     """
 
     lexicon: PronLexicon
@@ -277,8 +299,28 @@ class PhonemeWordDecoder:
     per_slot: int = 6
     per_hyp: int = 8
     n_best: int = 10
-    _lm_cache: dict[str, float] = field(default_factory=dict, repr=False)
-    _cand_cache: dict[str, list[tuple[str, int]]] = field(default_factory=dict, repr=False)
+    cand_cache_size: int | None = DEFAULT_CAND_CACHE_SIZE
+    lm_cache_size: int | None = DEFAULT_LM_CACHE_SIZE
+    _lm_cache: LRUCache = field(init=False, repr=False)
+    _cand_cache: LRUCache = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self._lm_cache = LRUCache(self.lm_cache_size)
+        self._cand_cache = LRUCache(self.cand_cache_size)
+
+    def set_cache_sizes(self, cand: int | None, lm: int | None) -> None:
+        """Change the bounds of the two memos (the oldest entries go first)."""
+        self._cand_cache.resize(cand)
+        self._lm_cache.resize(lm)
+        self.cand_cache_size, self.lm_cache_size = cand, lm
+
+    def clear_caches(self) -> None:
+        self._lm_cache.clear()
+        self._cand_cache.clear()
+
+    def cache_info(self) -> dict[str, dict]:
+        """Size, bound and hit/miss/eviction counters of the two memos."""
+        return {"candidates": _info(self._cand_cache), "sentence_lm": _info(self._lm_cache)}
 
     def _slot(self, seg: str) -> list[tuple[str, int]]:
         c = self._cand_cache.get(seg)

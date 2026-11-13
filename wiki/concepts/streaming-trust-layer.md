@@ -176,6 +176,20 @@ The layer applies the frozen frame temperature to each chunk row by row, as the 
 
 > **Our take:** the end-of-utterance tail was our lexicon search, and the push spikes were the garbage collector. Both are fixed with no change to any decision. A worker thread is not needed for this route.
 
+**Bounded decoder caches (M4-10).** Experiment: [2026-11-13-m4-10-bounded-caches](../../experiments/2026-11-13-m4-10-bounded-caches/results.md) ([tables](../../experiments/2026-11-13-m4-10-bounded-caches/results/tables.md)).
+
+- The memos that live across utterances now have an LRU entry bound: `PhonemeWordDecoder(cand_cache_size=5000, lm_cache_size=50000)` and `CharNgramLM(cache_size=200000)` (`fidetype.lm.cache.LRUCache`; None = unbounded). The beam memos live in one utterance only.
+- Decisions do not change: 2,000/2,000 on a long synthetic session (3 bound settings) and 816/816 on B2T (default bounds, and 256-entry memos with about 250,000 evictions).
+
+| 2,000-utterance synthetic session, budget 1 ms | RSS after setup -> end | candidate memo | idle GC p50 (last 10 %) | push p95 | end p50 / p95 |
+|---|---|---|---|---|---|
+| unbounded | 640 -> 1,387 MB | 39,977 entries, about 692 MB | 208 ms | 2.47 ms | 80 / 153 ms |
+| default bounds | 641 -> 707 MB (flat after about 1,000 utterances) | 5,000 entries, about 89 MB | 43 ms | 2.32 ms | 85 / 158 ms |
+
+- The candidate memo caused the growth: one entry holds about 17 KB, because a short phoneme segment often matches hundreds of lexicon words. B2T with default bounds: push p95 3.19 ms, max 31 ms. The push target still holds.
+
+> **Our take:** the bound costs nothing measurable and stops memory growth in a long session. It also keeps the idle `gc.collect()` short.
+
 **Preview stability (B2T, word previews every 0.4 s).** The top-1 changes in 29 % of steps. The shown text is rewritten (not only extended) 4.4 times per utterance. In 35 % of utterances the final top-1 differs from the last preview.
 
 > **Our take:** incremental decoding removes the decoder's search from the wait after the user stops, with no change to any decision. The real-data tail sits in our word decoder, not in the layer; a faster exact lexicon search is the next fix (done in M4-09, below). The unstable previews confirm the rule: never act on `is_final = false`. Show previews as grey text that can change.
@@ -227,7 +241,7 @@ fidetype conformance check --profile fep-0001 decisions.jsonl  # check an input 
 - A test runs the layer on synthetic streams (both routes, provisional decisions, ASK and retry) and checks its decision log with the profile: no failure.
 
 ## Limits and follow-ups
-- Incremental decoding is done (M4-08). The fast exact lexicon fallback and the per-push prewarm budget are done (M4-09). Open: bound the word-decoder caches (LRU) for long sessions. M4-01 (neural decoder lookahead) and M4-02 (lookahead sweep) are still open.
+- Incremental decoding is done (M4-08). The fast exact lexicon fallback and the per-push prewarm budget are done (M4-09). The decoder caches are bounded (LRU, M4-10). M4-01 (neural decoder lookahead) and M4-02 (lookahead sweep) are still open.
 - Real-data frozen configs exist for one participant and one split only (M4-06, B2T '25 split A). Each new user and session needs its own fit.
 - FEP-0001 conformance is done (M4-07, profile `fep-0001`). The FEP stays Draft until review.
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.

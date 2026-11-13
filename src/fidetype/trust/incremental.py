@@ -272,6 +272,10 @@ class CTCBeamSpec:
     ``gc.freeze()`` once after loading the models: with a large heap
     (lexicon, LMs) one full cyclic-GC pass can take 0.3 s inside a push
     (M4-09).
+    Memory: the beam memos (LM rows, alignments) live in one
+    :class:`IncrementalPrefixBeam` per utterance and go with it. The memos
+    that live across utterances (``PhonemeWordDecoder``, ``CharNgramLM``)
+    have an LRU entry bound (``cache_size``; M4-10).
     """
 
     beam_kwargs: dict = field(default_factory=dict)

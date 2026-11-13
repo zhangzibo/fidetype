@@ -63,6 +63,7 @@ from typing import Any, Iterable
 
 import numpy as np
 
+from fidetype.lm.cache import LRUCache
 from fidetype.streams.vocab import VOCAB, normalize_text
 
 EOS_ID = 0
@@ -116,14 +117,15 @@ class CharNgramLM:
     module docstring for the symbols and the smoothing.
     """
 
-    def __init__(self, order: int = 6, smoothing: str = "mkn", cache_size: int = 200_000) -> None:
+    def __init__(self, order: int = 6, smoothing: str = "mkn", cache_size: int | None = 200_000) -> None:
         if order < 1:
             raise ValueError("order must be at least 1")
         if smoothing not in ("mkn", "kn", "mle"):
             raise ValueError("smoothing must be 'mkn', 'kn' or 'mle'")
         self.order = int(order)
         self.smoothing = smoothing
-        self.cache_size = int(cache_size)
+        # LRU bound of the next-symbol memo (M4-10; before: cleared when full). None: no bound.
+        self.cache_size = None if cache_size is None else int(cache_size)
         self.meta: dict[str, Any] = {}
         self.discounts: list[tuple[float, float, float]] = []
         # Per order k (index k-1): sorted context codes, back-off weights,
@@ -133,7 +135,7 @@ class CharNgramLM:
         self._off: list[np.ndarray] = []
         self._out: list[np.ndarray] = []
         self._alpha: list[np.ndarray] = []
-        self._cache: dict[str, np.ndarray] = {}
+        self._cache: LRUCache = LRUCache(self.cache_size)
         self._trained = False
 
     # --- training -------------------------------------------------------
@@ -206,7 +208,7 @@ class CharNgramLM:
             self._off.append(np.concatenate([start, [grams.shape[0]]]).astype(np.int64))
             self._out.append(out)
             self._alpha.append(alpha)
-        self._cache = {}
+        self._cache = LRUCache(self.cache_size)
         self._trained = True
         self.meta.update(
             n_sentences=n_sent,
@@ -276,9 +278,7 @@ class CharNgramLM:
         with np.errstate(divide="ignore"):
             lp = np.log(p)
         lp.setflags(write=False)
-        if len(self._cache) >= self.cache_size:
-            self._cache.clear()
-        self._cache[key] = lp
+        self._cache[key] = lp  # LRU: the least recently used entry goes when full
         return lp
 
     def logprob(self, next_char: str, context: str = "", bos: bool = True) -> float:

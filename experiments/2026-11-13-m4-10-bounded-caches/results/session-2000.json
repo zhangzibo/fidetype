@@ -1,0 +1,416 @@
+{
+ "cache_size": {
+  "candidates": 2000,
+  "sentence_lm": 2000,
+  "char_lm": 2000
+ },
+ "char_lm_bound": 2000,
+ "n": 2000,
+ "settings": {
+  "data": "synthetic phoneme streams: Tatoeba English sentences (3-12 words, all words in CMUdict; seed-sampled) -> CMUdict pronunciations with random phoneme substitutions / deletions / insertions -> frames (1-2 frames per symbol, optional blank, Gaussian logits with a peak on the symbol and a smaller peak on a random other symbol)",
+  "decoder": "as M4-09: phoneme CTC prefix beam (vector, beam 64, n_best 20, no LM) -> PhonemeWordDecoder (CMUdict, word unigram, char 6-gram); frozen M4-06 split-A config (ours)",
+  "n_utterances": 2000,
+  "seed": 10,
+  "min_words": 3,
+  "max_words": 12,
+  "p_sub": 0.1,
+  "p_del": 0.04,
+  "p_ins": 0.04,
+  "peak": 5.0,
+  "peak_sd": 1.0,
+  "alt": 3.0,
+  "prewarm_every": 5,
+  "prewarm_top_k": 20,
+  "prewarm_max_new": 256,
+  "budget_ms": 1,
+  "checkpoint_every": 100,
+  "deep_every": 500,
+  "runs": "none = all memos unbounded; default = library defaults (word candidates 5000, sentence-LM 50000, char-LM 200000); an int n = n for both word memos and min(n, 200000) for the char-LM memo. The run '50000' was made before the defaults were split (then the default was 50000 for both word memos); it is kept as a measured setting.",
+  "gc": "gc.collect() + gc.freeze() after setup; automatic GC off during the session; one gc.collect() after each final decision (idle point, timed separately)"
+ },
+ "wall_s": 437.41041684150696,
+ "frames": {
+  "median": 56.0,
+  "total": 117709
+ },
+ "timing": {
+  "end_of_utterance_ms": {
+   "p50": 114.63710000680294,
+   "p95": 231.68159999841006,
+   "max": 514.775899995584,
+   "mean": 125.66557990000001,
+   "n": 2000
+  },
+  "decision_latency_ms": {
+   "p50": 114.27394999918761,
+   "p95": 231.01980999999793,
+   "max": 513.3425999956671,
+   "mean": 125.19137125027918,
+   "n": 2000
+  },
+  "push_frame_ms": {
+   "p50": 1.2054999970132485,
+   "p95": 1.3646600011270484,
+   "max": 16.384000002290122,
+   "mean": 1.2047083969555452,
+   "n": 117709
+  },
+  "push_frame_max_per_utterance_ms": {
+   "p50": 1.7245999988517724,
+   "p95": 5.77997999935178,
+   "max": 16.384000002290122,
+   "mean": 2.691380649957864,
+   "n": 2000
+  },
+  "total_cpu_per_utterance_ms": {
+   "p50": 182.68784994870657,
+   "p95": 332.98192000365816,
+   "max": 677.5125999993179,
+   "mean": 196.56809024862014,
+   "n": 2000
+  }
+ },
+ "timing_first_10pct": {
+  "end_of_utterance_ms": {
+   "p50": 88.75620000617346,
+   "p95": 168.85181501129398,
+   "max": 260.3598999994574,
+   "mean": 96.20602300048631,
+   "n": 200
+  },
+  "decision_latency_ms": {
+   "p50": 88.53470000030939,
+   "p95": 168.532315007178,
+   "max": 259.79549999465235,
+   "mean": 95.96021250079502,
+   "n": 200
+  },
+  "push_frame_ms": {
+   "p50": 1.1640000011539087,
+   "p95": 1.9384199986234278,
+   "max": 16.384000002290122,
+   "mean": 1.2217763637832189,
+   "n": 12007
+  },
+  "push_frame_max_per_utterance_ms": {
+   "p50": 3.555600007530302,
+   "p95": 5.768120009452104,
+   "max": 16.384000002290122,
+   "mean": 3.5863555005926173,
+   "n": 200
+  },
+  "total_cpu_per_utterance_ms": {
+   "p50": 163.5038999374956,
+   "p95": 272.22912500365044,
+   "max": 391.6246998705901,
+   "mean": 169.55536700021185,
+   "n": 200
+  }
+ },
+ "timing_last_10pct": {
+  "end_of_utterance_ms": {
+   "p50": 136.846900000819,
+   "p95": 242.17071000966823,
+   "max": 514.775899995584,
+   "mean": 146.98799599958875,
+   "n": 200
+  },
+  "decision_latency_ms": {
+   "p50": 136.35685000190279,
+   "p95": 241.47047999795174,
+   "max": 513.3425999956671,
+   "mean": 146.40513650068897,
+   "n": 200
+  },
+  "push_frame_ms": {
+   "p50": 1.2283500036573969,
+   "p95": 1.3283300009788945,
+   "max": 14.302299998234957,
+   "mean": 1.1946117222394654,
+   "n": 11508
+  },
+  "push_frame_max_per_utterance_ms": {
+   "p50": 1.3887499953852966,
+   "p95": 5.8001449891889925,
+   "max": 14.302299998234957,
+   "mean": 2.1636415002285503,
+   "n": 200
+  },
+  "total_cpu_per_utterance_ms": {
+   "p50": 202.20474999950966,
+   "p95": 351.95585006003955,
+   "max": 677.5125999993179,
+   "mean": 215.72595449724759,
+   "n": 200
+  }
+ },
+ "idle_gc_ms": {
+  "p50": 21.53905000159284,
+  "p95": 34.82662999376771,
+  "max": 47.033599999849685,
+  "mean": 21.192184149978857,
+  "n": 2000
+ },
+ "idle_gc_first_10pct_ms": {
+  "p50": 8.95420000597369,
+  "p95": 13.040849995013543,
+  "max": 22.800599996116944,
+  "mean": 8.045654000306968,
+  "n": 200
+ },
+ "idle_gc_last_10pct_ms": {
+  "p50": 31.616899999789894,
+  "p95": 39.293224997527425,
+  "max": 43.719199995393865,
+  "mean": 31.13722400041297,
+  "n": 200
+ },
+ "outcome": {
+  "n": 2000,
+  "n_commit": 0,
+  "n_wrong_commit": 0,
+  "commit_rate": 0.0,
+  "wrong_commit": 0.0,
+  "actions": {
+   "COMMIT": 0,
+   "OFFER": 2000,
+   "ASK": 0,
+   "ABSTAIN": 0,
+   "OFFER_WORDS": 0
+  }
+ },
+ "snapshots": [
+  {
+   "utt": 0,
+   "rss_mb": 640.375,
+   "private_mb": 1112.78515625,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 0,
+   "word_sentence_lm": 0,
+   "char_lm_rows": 0,
+   "word_candidates_mb": 0.0001220703125,
+   "word_sentence_lm_mb": 0.0001220703125,
+   "char_lm_rows_mb": 0.0001220703125
+  },
+  {
+   "utt": 100,
+   "rss_mb": 651.25,
+   "private_mb": 1121.4375,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 200,
+   "rss_mb": 652.41015625,
+   "private_mb": 1122.31640625,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 300,
+   "rss_mb": 653.453125,
+   "private_mb": 1123.4609375,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 400,
+   "rss_mb": 654.3203125,
+   "private_mb": 1124.25390625,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 500,
+   "rss_mb": 655.6640625,
+   "private_mb": 1125.53515625,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000,
+   "word_candidates_mb": 34.7233772277832,
+   "word_sentence_lm_mb": 0.3919801712036133,
+   "char_lm_rows_mb": 0.950688362121582
+  },
+  {
+   "utt": 600,
+   "rss_mb": 655.46875,
+   "private_mb": 1125.3984375,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 700,
+   "rss_mb": 655.7890625,
+   "private_mb": 1125.71484375,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 800,
+   "rss_mb": 655.734375,
+   "private_mb": 1125.66015625,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 900,
+   "rss_mb": 657.76171875,
+   "private_mb": 1127.71484375,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 1000,
+   "rss_mb": 657.48046875,
+   "private_mb": 1127.4140625,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000,
+   "word_candidates_mb": 33.85744571685791,
+   "word_sentence_lm_mb": 0.4009218215942383,
+   "char_lm_rows_mb": 0.9509258270263672
+  },
+  {
+   "utt": 1100,
+   "rss_mb": 658.0,
+   "private_mb": 1128.11328125,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 1200,
+   "rss_mb": 655.87890625,
+   "private_mb": 1125.75,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 1300,
+   "rss_mb": 660.06640625,
+   "private_mb": 1130.01953125,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 1400,
+   "rss_mb": 659.015625,
+   "private_mb": 1128.8359375,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 1500,
+   "rss_mb": 659.01171875,
+   "private_mb": 1128.83203125,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000,
+   "word_candidates_mb": 31.5167818069458,
+   "word_sentence_lm_mb": 0.4032459259033203,
+   "char_lm_rows_mb": 0.9508504867553711
+  },
+  {
+   "utt": 1600,
+   "rss_mb": 659.9765625,
+   "private_mb": 1129.82421875,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 1700,
+   "rss_mb": 659.98046875,
+   "private_mb": 1129.8046875,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 1800,
+   "rss_mb": 662.47265625,
+   "private_mb": 1132.25390625,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 1900,
+   "rss_mb": 661.4921875,
+   "private_mb": 1131.26953125,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000
+  },
+  {
+   "utt": 2000,
+   "rss_mb": 661.328125,
+   "private_mb": 1131.11328125,
+   "peak_rss_mb": 731.15625,
+   "word_candidates": 2000,
+   "word_sentence_lm": 2000,
+   "char_lm_rows": 2000,
+   "word_candidates_mb": 28.325729370117188,
+   "word_sentence_lm_mb": 0.4052400588989258,
+   "char_lm_rows_mb": 0.9508419036865234
+  }
+ ],
+ "process_start_mem": {
+  "rss_mb": 33.2109375,
+  "private_mb": 504.6953125,
+  "peak_rss_mb": 33.2109375
+ },
+ "word_cache_info": {
+  "candidates": {
+   "size": 2000,
+   "maxsize": 2000,
+   "hits": 216313,
+   "misses": 33759,
+   "evictions": 36897
+  },
+  "sentence_lm": {
+   "size": 2000,
+   "maxsize": 2000,
+   "hits": 198930,
+   "misses": 136400,
+   "evictions": 134400
+  }
+ },
+ "char_lm_cache_info": {
+  "size": 2000,
+  "maxsize": 2000,
+  "hits": 3398196,
+  "misses": 266140,
+  "evictions": 264140
+ }
+}

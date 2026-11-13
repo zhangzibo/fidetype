@@ -1,0 +1,412 @@
+{
+ "cache_size": null,
+ "char_lm_bound": null,
+ "n": 2000,
+ "settings": {
+  "data": "synthetic phoneme streams: Tatoeba English sentences (3-12 words, all words in CMUdict; seed-sampled) -> CMUdict pronunciations with random phoneme substitutions / deletions / insertions -> frames (1-2 frames per symbol, optional blank, Gaussian logits with a peak on the symbol and a smaller peak on a random other symbol)",
+  "decoder": "as M4-09: phoneme CTC prefix beam (vector, beam 64, n_best 20, no LM) -> PhonemeWordDecoder (CMUdict, word unigram, char 6-gram); frozen M4-06 split-A config (ours)",
+  "n_utterances": 2000,
+  "seed": 10,
+  "min_words": 3,
+  "max_words": 12,
+  "p_sub": 0.1,
+  "p_del": 0.04,
+  "p_ins": 0.04,
+  "peak": 5.0,
+  "peak_sd": 1.0,
+  "alt": 3.0,
+  "prewarm_every": 5,
+  "prewarm_top_k": 20,
+  "prewarm_max_new": 256,
+  "budget_ms": 1,
+  "checkpoint_every": 100,
+  "deep_every": 500,
+  "char_lm_bound_rule": "word cache bound None -> char-LM memo unbounded too; otherwise min(word bound, 200000)",
+  "gc": "gc.collect() + gc.freeze() after setup; automatic GC off during the session; one gc.collect() after each final decision (idle point, timed separately)"
+ },
+ "wall_s": 554.9631605148315,
+ "frames": {
+  "median": 56.0,
+  "total": 117709
+ },
+ "timing": {
+  "end_of_utterance_ms": {
+   "p50": 80.24884999758797,
+   "p95": 152.9329899989534,
+   "max": 319.9465999932727,
+   "mean": 86.47746724987519,
+   "n": 2000
+  },
+  "decision_latency_ms": {
+   "p50": 79.96840000123484,
+   "p95": 152.56816499531848,
+   "max": 319.342399991001,
+   "mean": 86.247148249975,
+   "n": 2000
+  },
+  "push_frame_ms": {
+   "p50": 1.1615999974310398,
+   "p95": 2.471379996859466,
+   "max": 11.896900003193878,
+   "mean": 1.2434674757081727,
+   "n": 117709
+  },
+  "push_frame_max_per_utterance_ms": {
+   "p50": 4.121000005397946,
+   "p95": 6.853324990515828,
+   "max": 11.896900003193878,
+   "mean": 4.102521599874308,
+   "n": 2000
+  },
+  "total_cpu_per_utterance_ms": {
+   "p50": 150.88634999847272,
+   "p95": 259.5591750483436,
+   "max": 489.32809999678284,
+   "mean": 159.66112379894184,
+   "n": 2000
+  }
+ },
+ "timing_first_10pct": {
+  "end_of_utterance_ms": {
+   "p50": 85.97649999865098,
+   "p95": 159.45737500005635,
+   "max": 262.0430000097258,
+   "mean": 93.9991534998262,
+   "n": 200
+  },
+  "decision_latency_ms": {
+   "p50": 85.72695000475505,
+   "p95": 159.2385049953009,
+   "max": 261.41170000482816,
+   "mean": 93.73992649991123,
+   "n": 200
+  },
+  "push_frame_ms": {
+   "p50": 1.1626000050455332,
+   "p95": 2.220770000712946,
+   "max": 11.896900003193878,
+   "mean": 1.239993353830239,
+   "n": 12007
+  },
+  "push_frame_max_per_utterance_ms": {
+   "p50": 3.744649999134708,
+   "p95": 5.912164993060287,
+   "max": 11.896900003193878,
+   "mean": 3.787475500139408,
+   "n": 200
+  },
+  "total_cpu_per_utterance_ms": {
+   "p50": 160.49069994915044,
+   "p95": 260.09506002301345,
+   "max": 396.10639998863917,
+   "mean": 168.4421544970246,
+   "n": 200
+  }
+ },
+ "timing_last_10pct": {
+  "end_of_utterance_ms": {
+   "p50": 77.72134999686386,
+   "p95": 151.18263499971363,
+   "max": 319.9465999932727,
+   "mean": 84.72181649980485,
+   "n": 200
+  },
+  "decision_latency_ms": {
+   "p50": 77.56530000187922,
+   "p95": 150.9842299965385,
+   "max": 319.342399991001,
+   "mean": 84.48364550000406,
+   "n": 200
+  },
+  "push_frame_ms": {
+   "p50": 1.1616999981924891,
+   "p95": 2.5031849982042313,
+   "max": 10.642299996106885,
+   "mean": 1.2342148941045399,
+   "n": 11508
+  },
+  "push_frame_max_per_utterance_ms": {
+   "p50": 4.280799999833107,
+   "p95": 7.267854999372502,
+   "max": 10.642299996106885,
+   "mean": 4.214324000058696,
+   "n": 200
+  },
+  "total_cpu_per_utterance_ms": {
+   "p50": 146.2644500134047,
+   "p95": 253.73450507322553,
+   "max": 489.32809999678284,
+   "mean": 155.73854150658008,
+   "n": 200
+  }
+ },
+ "idle_gc_ms": {
+  "p50": 117.17074999614852,
+  "p95": 208.35666499333456,
+  "max": 258.79819999681786,
+  "mean": 115.38651144999312,
+  "n": 2000
+ },
+ "idle_gc_first_10pct_ms": {
+  "p50": 13.54150000406662,
+  "p95": 25.36745499528478,
+  "max": 30.689100007293746,
+  "mean": 13.150738500335137,
+  "n": 200
+ },
+ "idle_gc_last_10pct_ms": {
+  "p50": 207.67519999935757,
+  "p95": 232.60949499890557,
+  "max": 258.79819999681786,
+  "mean": 209.17461949953577,
+  "n": 200
+ },
+ "outcome": {
+  "n": 2000,
+  "n_commit": 0,
+  "n_wrong_commit": 0,
+  "commit_rate": 0.0,
+  "wrong_commit": 0.0,
+  "actions": {
+   "COMMIT": 0,
+   "OFFER": 2000,
+   "ASK": 0,
+   "ABSTAIN": 0,
+   "OFFER_WORDS": 0
+  }
+ },
+ "snapshots": [
+  {
+   "utt": 0,
+   "rss_mb": 640.3359375,
+   "private_mb": 1112.86328125,
+   "peak_rss_mb": 731.19921875,
+   "word_candidates": 0,
+   "word_sentence_lm": 0,
+   "char_lm_rows": 0,
+   "word_candidates_mb": 0.0001220703125,
+   "word_sentence_lm_mb": 0.0001220703125,
+   "char_lm_rows_mb": 0.0001220703125
+  },
+  {
+   "utt": 100,
+   "rss_mb": 654.75390625,
+   "private_mb": 1124.9765625,
+   "peak_rss_mb": 731.19921875,
+   "word_candidates": 2361,
+   "word_sentence_lm": 7865,
+   "char_lm_rows": 12325
+  },
+  {
+   "utt": 200,
+   "rss_mb": 665.33203125,
+   "private_mb": 1135.37890625,
+   "peak_rss_mb": 731.19921875,
+   "word_candidates": 4624,
+   "word_sentence_lm": 14959,
+   "char_lm_rows": 21917
+  },
+  {
+   "utt": 300,
+   "rss_mb": 673.40625,
+   "private_mb": 1143.37109375,
+   "peak_rss_mb": 731.19921875,
+   "word_candidates": 6700,
+   "word_sentence_lm": 22092,
+   "char_lm_rows": 29399
+  },
+  {
+   "utt": 400,
+   "rss_mb": 708.49609375,
+   "private_mb": 1178.46875,
+   "peak_rss_mb": 731.19921875,
+   "word_candidates": 8863,
+   "word_sentence_lm": 28890,
+   "char_lm_rows": 36963
+  },
+  {
+   "utt": 500,
+   "rss_mb": 753.5078125,
+   "private_mb": 1223.71875,
+   "peak_rss_mb": 753.5078125,
+   "word_candidates": 10830,
+   "word_sentence_lm": 35542,
+   "char_lm_rows": 42817,
+   "word_candidates_mb": 195.8594102859497,
+   "word_sentence_lm_mb": 5.553187370300293,
+   "char_lm_rows_mb": 18.31489658355713
+  },
+  {
+   "utt": 600,
+   "rss_mb": 800.89453125,
+   "private_mb": 1270.953125,
+   "peak_rss_mb": 800.89453125,
+   "word_candidates": 12767,
+   "word_sentence_lm": 41765,
+   "char_lm_rows": 47817
+  },
+  {
+   "utt": 700,
+   "rss_mb": 844.19921875,
+   "private_mb": 1314.86328125,
+   "peak_rss_mb": 844.203125,
+   "word_candidates": 14725,
+   "word_sentence_lm": 48709,
+   "char_lm_rows": 52859
+  },
+  {
+   "utt": 800,
+   "rss_mb": 888.4140625,
+   "private_mb": 1358.9921875,
+   "peak_rss_mb": 888.4140625,
+   "word_candidates": 16740,
+   "word_sentence_lm": 56098,
+   "char_lm_rows": 57863
+  },
+  {
+   "utt": 900,
+   "rss_mb": 933.01953125,
+   "private_mb": 1403.62890625,
+   "peak_rss_mb": 933.71484375,
+   "word_candidates": 18791,
+   "word_sentence_lm": 63237,
+   "char_lm_rows": 62096
+  },
+  {
+   "utt": 1000,
+   "rss_mb": 981.6171875,
+   "private_mb": 1452.17578125,
+   "peak_rss_mb": 981.6171875,
+   "word_candidates": 20805,
+   "word_sentence_lm": 69933,
+   "char_lm_rows": 66219,
+   "word_candidates_mb": 374.7371606826782,
+   "word_sentence_lm_mb": 11.015974044799805,
+   "char_lm_rows_mb": 28.968907356262207
+  },
+  {
+   "utt": 1100,
+   "rss_mb": 1023.98828125,
+   "private_mb": 1494.21875,
+   "peak_rss_mb": 1024.28125,
+   "word_candidates": 22764,
+   "word_sentence_lm": 77013,
+   "char_lm_rows": 70291
+  },
+  {
+   "utt": 1200,
+   "rss_mb": 1069.5234375,
+   "private_mb": 1540.37109375,
+   "peak_rss_mb": 1070.203125,
+   "word_candidates": 24795,
+   "word_sentence_lm": 83502,
+   "char_lm_rows": 73778
+  },
+  {
+   "utt": 1300,
+   "rss_mb": 1116.671875,
+   "private_mb": 1587.203125,
+   "peak_rss_mb": 1117.3046875,
+   "word_candidates": 26724,
+   "word_sentence_lm": 90521,
+   "char_lm_rows": 77452
+  },
+  {
+   "utt": 1400,
+   "rss_mb": 1157.21875,
+   "private_mb": 1628.5234375,
+   "peak_rss_mb": 1158.8046875,
+   "word_candidates": 28764,
+   "word_sentence_lm": 97451,
+   "char_lm_rows": 80783
+  },
+  {
+   "utt": 1500,
+   "rss_mb": 1199.18359375,
+   "private_mb": 1669.953125,
+   "peak_rss_mb": 1200.265625,
+   "word_candidates": 30691,
+   "word_sentence_lm": 104452,
+   "char_lm_rows": 83934,
+   "word_candidates_mb": 546.7539939880371,
+   "word_sentence_lm_mb": 17.911710739135742,
+   "char_lm_rows_mb": 35.96152210235596
+  },
+  {
+   "utt": 1600,
+   "rss_mb": 1234.6953125,
+   "private_mb": 1705.87890625,
+   "peak_rss_mb": 1234.6953125,
+   "word_candidates": 32568,
+   "word_sentence_lm": 111596,
+   "char_lm_rows": 87361
+  },
+  {
+   "utt": 1700,
+   "rss_mb": 1273.2734375,
+   "private_mb": 1744.171875,
+   "peak_rss_mb": 1275.14453125,
+   "word_candidates": 34304,
+   "word_sentence_lm": 118664,
+   "char_lm_rows": 90671
+  },
+  {
+   "utt": 1800,
+   "rss_mb": 1311.9921875,
+   "private_mb": 1783.5234375,
+   "peak_rss_mb": 1312.7734375,
+   "word_candidates": 36169,
+   "word_sentence_lm": 125340,
+   "char_lm_rows": 93422
+  },
+  {
+   "utt": 1900,
+   "rss_mb": 1349.265625,
+   "private_mb": 1821.15234375,
+   "peak_rss_mb": 1350.30859375,
+   "word_candidates": 38103,
+   "word_sentence_lm": 132233,
+   "char_lm_rows": 96170
+  },
+  {
+   "utt": 2000,
+   "rss_mb": 1386.53125,
+   "private_mb": 1858.3515625,
+   "peak_rss_mb": 1387.671875,
+   "word_candidates": 39977,
+   "word_sentence_lm": 138799,
+   "char_lm_rows": 98847,
+   "word_candidates_mb": 691.8146648406982,
+   "word_sentence_lm_mb": 21.918265342712402,
+   "char_lm_rows_mb": 44.68144989013672
+  }
+ ],
+ "process_start_mem": {
+  "rss_mb": 33.34375,
+  "private_mb": 504.828125,
+  "peak_rss_mb": 33.34375
+ },
+ "word_cache_info": {
+  "candidates": {
+   "size": 39977,
+   "maxsize": null,
+   "hits": 245805,
+   "misses": 29590,
+   "evictions": 0
+  },
+  "sentence_lm": {
+   "size": 138799,
+   "maxsize": null,
+   "hits": 199180,
+   "misses": 138799,
+   "evictions": 0
+  }
+ },
+ "char_lm_cache_info": {
+  "size": 98847,
+  "maxsize": null,
+  "hits": 3616956,
+  "misses": 98847,
+  "evictions": 0
+ }
+}

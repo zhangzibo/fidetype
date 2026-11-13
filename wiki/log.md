@@ -456,3 +456,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - B2T 816 test utterances: decisions equal M4-06 in every condition (ours and published gate). Batch end p95 676 -> 172 ms (fast `nearest`); budget 1 ms: push p95 3.1 ms, max 30 ms, end p50/p95 52/118 ms, CPU 2.7x search only.
 - Push spikes came from Python's gen-2 GC (80-280 ms). Rule: freeze after load, GC off while an utterance streams, collect after its final decision.
 - Experiment `experiments/2026-11-13-m4-09-fast-lexicon/`; tests `tests/test_fast_lexicon.py`; page [streaming trust layer](concepts/streaming-trust-layer.md) updated.
+
+## [2026-11-13] query | M4-10 bounded decoder caches (LRU)
+- `fidetype.lm.cache.LRUCache`; `PhonemeWordDecoder(cand_cache_size=5000, lm_cache_size=50000)`; `CharNgramLM` memo is now LRU (200,000; before: cleared when full). None = unbounded.
+- Decisions equal the unbounded caches: synthetic 2,000-utterance session 2000/2000 (3 bound settings); B2T 816/816 vs M4-06 (unbounded, default, 256).
+- Session RSS 640 -> 1,387 MB unbounded (candidate memo about 17 KB per entry) vs 641 -> 707 MB with default bounds; idle GC p50 208 -> 43 ms; push p95 2.32 ms (B2T 3.19 ms).
+- Experiment `experiments/2026-11-13-m4-10-bounded-caches/`; tests `tests/test_bounded_caches.py`; page [streaming trust layer](concepts/streaming-trust-layer.md) updated.

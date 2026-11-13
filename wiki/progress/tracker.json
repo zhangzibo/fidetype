@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T12:50:00-08:00",
+  "updated": "2026-11-13T13:55:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8).",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -496,8 +496,12 @@
     {"id": "M4-09", "milestone": "M4", "title": "Fast exact lexicon fallback + bounded prewarm (per-push time budget)", "status": "done",
      "started_at": "2026-11-13T01:10:00-08:00", "finished_at": "2026-11-13T12:50:00-08:00", "approx_times": true,
      "agent_runs": [{"label": "M4-09 first agent (fast nearest, warm, prewarm budget, tests, first B2T + nearest run; died from an API error before its report; numbers approximate)", "duration_s": 2385, "tokens": 158846, "tool_uses": 53, "approx": true},
-                    {"label": "Finish M3-27 records + M4-09 (GC diagnosis, idle-GC harness, B2T reruns, results, wiki, records)", "duration_s": null, "tokens": null, "tool_uses": null}],
+                    {"label": "Finish T12 commit + fast-lexicon work (M4-09 GC diagnosis, idle-GC harness, B2T reruns, results, wiki, records; this one run also covered the M3-27 commit work)", "duration_s": 9661.3, "tokens": 211654, "tool_uses": 114}],
      "orchestrator_only": false, "notes": "PronLexicon.nearest = exact NumPy Levenshtein per length bucket (nearest_bruteforce kept as reference): equal on 5,667/5,667 B2T-decode calls and 9,000/9,000 synthetic calls, about 20x faster. CTCBeamSpec(prewarm_budget_s), PhonemeWordDecoder.warm (step generator), IncrementalPrefixBeam.prewarm(deadline). B2T 816 test utterances: decisions equal M4-06 in every condition (ours + published gate). Batch end p50/p95/max 106/676/2361 -> 95/172/265 ms (fast nearest); incremental search only 81/148/249; full prewarm 33/74/131 (push p95 20 ms, max 119); budget 1 ms: end 52/118/220, push p95 3.1 ms, max 30 ms, CPU 2.7x search only. Push spikes were Python gen-2 GC (80-280 ms): rule = gc.freeze() after load, GC off while an utterance streams, gc.collect() after its final decision. Earlier GC runs kept (b2t-gc-default.json, b2t-gc-freeze-once.json). tests/test_fast_lexicon.py 14; pytest 549 passed / 4 skipped."},
+    {"id": "M4-10", "milestone": "M4", "title": "Bounded word-decoder caches (LRU) for long live sessions", "status": "done",
+     "started_at": "2026-11-13T12:40:00-08:00", "finished_at": "2026-11-13T13:55:00-08:00", "approx_times": true,
+     "agent_runs": [{"label": "M4-10 bounded caches (LRUCache, word-decoder + char-LM bounds, tests, long-session + B2T experiment, wiki, records)", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "orchestrator_only": false, "notes": "fidetype.lm.cache.LRUCache; PhonemeWordDecoder(cand_cache_size=5000, lm_cache_size=50000), CharNgramLM memo LRU (200000; before: clear-all); None = unbounded. Decisions equal the unbounded run: synthetic 2,000-utterance session 2000/2000 (bounds default, 2000, 50000) and B2T 816/816 vs M4-06 (unbounded, default, 256 with ~250k evictions). Session RSS 640 -> 1387 MB unbounded (candidate memo ~17 KB/entry, 692 MB) vs 641 -> 707 MB default (flat after ~1000 utt); idle gc.collect p50 last 10 % 208 -> 43 ms. Push p95 2.47 -> 2.32 ms (session), B2T 3.19 ms default (target < 5 ms). experiments/2026-11-13-m4-10-bounded-caches; tests/test_bounded_caches.py 8; pytest 557 passed / 4 skipped."},
 
     {"id": "M5-01", "milestone": "M5", "title": "Publish the harness, the metrics and fixed splits", "status": "done",
      "started_at": "2026-11-11T22:59:00-08:00", "finished_at": "2026-11-11T23:25:00-08:00", "approx_times": false,
@@ -929,8 +933,8 @@
      "agent_runs": [{"label": "T12 data, pre-registration, GRU-CTC decoder (GPU), single trust run, report (agent died from an API error before its report; numbers approximate, from the harness)", "duration_s": 13191.3, "tokens": 278695, "tool_uses": 139, "approx": true}],
      "orchestrator_only": false, "notes": "Pre-registration experiments/2026-11-13-confirmatory-t12/PROTOCOL.md (commit a7cf624) before decoding. Data: Willett 2023 / B2T '24 competitionData, CC0, Zenodo copy of Dryad (Dryad needs a login token); MD5 OK. 24 sessions; trust pool = last block per session: fit-A 1-8 (240), calibration 9-14 (240), test 15-24 (400). Own causal GRU-CTC (run 1 lr 2e-3 collapsed; run 2 lr 5e-4, 150 epochs): val PER 0.471, test PER 0.542, WER 0.751, right sentence first 3/400. Frozen config tcfg-fe35888dac333cff: 0/400 wrong commits, 0/400 commits, 0/10 sessions above alpha, controls 0/400 (frame-shuffled, uniform, intent mismatch), guard AUROC 0.966. Outcome by the pre-registered rule: UNINFORMATIVE (safe; LTT bound not tested; decoder too weak). Follow-up: stronger T12 decoder + pre-registration v2 (M3-28). Outcome: uninformative (0 commits; decoder too weak)."},
 
-    {"id": "M3-28", "milestone": "M3", "title": "T12 confirmatory v2 (better decoder, new pre-registration)", "status": "todo",
-     "started_at": null, "finished_at": null, "approx_times": false,
+    {"id": "M3-28", "milestone": "M3", "title": "T12 confirmatory v2 (better decoder, new pre-registration)", "status": "in_progress",
+     "started_at": "2026-11-13T12:30:00-08:00", "finished_at": null, "approx_times": false,
      "agent_runs": [],
      "orchestrator_only": false, "notes": "Follow-up of M3-27 (uninformative). Needs a T12 decoder with a right top-1 sentence for a fair share of trials (T15: 39 %): per-block normalisation with a causal running estimate, larger GRU, better licence-clean word LM. The M3-27 test sessions were decoded once, so v2 needs a new pre-registration that says so (or other data: Dryad sentences, competitionHoldOut)."}
   ]

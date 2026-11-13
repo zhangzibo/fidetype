@@ -1,0 +1,105 @@
+12:52:55 stage session none
+12:53:10 session cache=none: setup done, 2000 utterances; mem 640 MB RSS (process start 33 MB); char LM bound None
+12:53:28   100: RSS 655 MB, private 1125 MB; caches cand 2361 lm 7865 charlm 12325; idle gc last-100 p50 6.1 ms (18s)
+12:53:47   200: RSS 665 MB, private 1135 MB; caches cand 4624 lm 14959 charlm 21917; idle gc last-100 p50 20.0 ms (36s)
+12:54:06   300: RSS 673 MB, private 1143 MB; caches cand 6700 lm 22092 charlm 29399; idle gc last-100 p50 33.0 ms (55s)
+12:54:27   400: RSS 708 MB, private 1178 MB; caches cand 8863 lm 28890 charlm 36963; idle gc last-100 p50 43.9 ms (76s)
+12:54:49   500: RSS 754 MB, private 1224 MB; caches cand 10830 lm 35542 charlm 42817; idle gc last-100 p50 56.8 ms (98s)
+12:55:11   600: RSS 801 MB, private 1271 MB; caches cand 12767 lm 41765 charlm 47817; idle gc last-100 p50 67.6 ms (121s)
+12:55:35   700: RSS 844 MB, private 1315 MB; caches cand 14725 lm 48709 charlm 52859; idle gc last-100 p50 78.5 ms (144s)
+12:56:00   800: RSS 888 MB, private 1359 MB; caches cand 16740 lm 56098 charlm 57863; idle gc last-100 p50 90.1 ms (169s)
+12:56:27   900: RSS 933 MB, private 1404 MB; caches cand 18791 lm 63237 charlm 62096; idle gc last-100 p50 100.1 ms (196s)
+12:56:55   1000: RSS 982 MB, private 1452 MB; caches cand 20805 lm 69933 charlm 66219; idle gc last-100 p50 112.2 ms (225s)
+12:57:23   1100: RSS 1024 MB, private 1494 MB; caches cand 22764 lm 77013 charlm 70291; idle gc last-100 p50 122.0 ms (253s)
+12:57:52   1200: RSS 1070 MB, private 1540 MB; caches cand 24795 lm 83502 charlm 73778; idle gc last-100 p50 133.8 ms (282s)
+12:58:22   1300: RSS 1117 MB, private 1587 MB; caches cand 26724 lm 90521 charlm 77452; idle gc last-100 p50 145.6 ms (312s)
+12:58:55   1400: RSS 1157 MB, private 1629 MB; caches cand 28764 lm 97451 charlm 80783; idle gc last-100 p50 155.6 ms (344s)
+12:59:29   1500: RSS 1199 MB, private 1670 MB; caches cand 30691 lm 104452 charlm 83934; idle gc last-100 p50 164.5 ms (379s)
+13:00:02   1600: RSS 1235 MB, private 1706 MB; caches cand 32568 lm 111596 charlm 87361; idle gc last-100 p50 173.9 ms (411s)
+13:00:36   1700: RSS 1273 MB, private 1744 MB; caches cand 34304 lm 118664 charlm 90671; idle gc last-100 p50 182.9 ms (445s)
+13:01:11   1800: RSS 1312 MB, private 1784 MB; caches cand 36169 lm 125340 charlm 93422; idle gc last-100 p50 193.3 ms (481s)
+13:01:46   1900: RSS 1349 MB, private 1821 MB; caches cand 38103 lm 132233 charlm 96170; idle gc last-100 p50 202.3 ms (516s)
+13:02:25   2000: RSS 1387 MB, private 1858 MB; caches cand 39977 lm 138799 charlm 98847; idle gc last-100 p50 214.2 ms (555s)
+13:02:25 session cache=none: push p95 2.47 max 11.9 ms; end p50/p95 80.2/152.9 ms; RSS 640 -> 1387 MB
+13:02:26 stage session default
+13:02:41 session cache=50000: setup done, 2000 utterances; mem 641 MB RSS (process start 33 MB); char LM bound 50000
+13:02:58   100: RSS 655 MB, private 1126 MB; caches cand 2349 lm 7823 charlm 12245; idle gc last-100 p50 5.6 ms (18s)
+13:03:17   200: RSS 664 MB, private 1134 MB; caches cand 4643 lm 14879 charlm 21803; idle gc last-100 p50 18.9 ms (36s)
+13:03:36   300: RSS 674 MB, private 1144 MB; caches cand 6780 lm 22150 charlm 29515; idle gc last-100 p50 33.2 ms (55s)
+13:03:57   400: RSS 709 MB, private 1179 MB; caches cand 8922 lm 28914 charlm 37067; idle gc last-100 p50 44.7 ms (76s)
+13:04:19   500: RSS 753 MB, private 1223 MB; caches cand 10885 lm 35551 charlm 42946; idle gc last-100 p50 56.7 ms (98s)
+13:04:42   600: RSS 800 MB, private 1271 MB; caches cand 12807 lm 41717 charlm 47919; idle gc last-100 p50 68.2 ms (121s)
+13:05:06   700: RSS 843 MB, private 1313 MB; caches cand 14762 lm 48793 charlm 50000; idle gc last-100 p50 79.3 ms (145s)
+13:05:30   800: RSS 883 MB, private 1354 MB; caches cand 16731 lm 50000 charlm 50000; idle gc last-100 p50 88.5 ms (169s)
+13:05:57   900: RSS 922 MB, private 1392 MB; caches cand 18725 lm 50000 charlm 50000; idle gc last-100 p50 97.8 ms (196s)
+13:06:25   1000: RSS 965 MB, private 1436 MB; caches cand 20664 lm 50000 charlm 50000; idle gc last-100 p50 108.4 ms (224s)
+13:06:53   1100: RSS 1003 MB, private 1473 MB; caches cand 22544 lm 50000 charlm 50000; idle gc last-100 p50 118.3 ms (252s)
+13:07:21   1200: RSS 1044 MB, private 1515 MB; caches cand 24538 lm 50000 charlm 50000; idle gc last-100 p50 130.8 ms (280s)
+13:07:51   1300: RSS 1087 MB, private 1558 MB; caches cand 26419 lm 50000 charlm 50000; idle gc last-100 p50 140.4 ms (310s)
+13:08:23   1400: RSS 1125 MB, private 1597 MB; caches cand 28405 lm 50000 charlm 50000; idle gc last-100 p50 152.3 ms (342s)
+13:08:57   1500: RSS 1167 MB, private 1638 MB; caches cand 30324 lm 50000 charlm 50000; idle gc last-100 p50 158.5 ms (376s)
+13:09:29   1600: RSS 1198 MB, private 1668 MB; caches cand 32122 lm 50000 charlm 50000; idle gc last-100 p50 169.6 ms (408s)
+13:10:03   1700: RSS 1231 MB, private 1703 MB; caches cand 33827 lm 50000 charlm 50000; idle gc last-100 p50 176.2 ms (442s)
+13:10:37   1800: RSS 1266 MB, private 1736 MB; caches cand 35616 lm 50000 charlm 50000; idle gc last-100 p50 185.8 ms (476s)
+13:11:12   1900: RSS 1299 MB, private 1770 MB; caches cand 37495 lm 50000 charlm 50000; idle gc last-100 p50 192.9 ms (511s)
+13:11:49   2000: RSS 1331 MB, private 1803 MB; caches cand 39302 lm 50000 charlm 50000; idle gc last-100 p50 201.7 ms (548s)
+13:11:49 session cache=50000: push p95 2.29 max 17.4 ms; end p50/p95 80.9/153.7 ms; RSS 641 -> 1331 MB
+13:12:05 stage session default
+13:12:19 session cache=default: setup done, 2000 utterances; mem 641 MB RSS (process start 33 MB); char LM bound 200000
+13:12:37   100: RSS 655 MB, private 1125 MB; caches cand 2367 lm 7793 charlm 12191; idle gc last-100 p50 5.1 ms (17s)
+13:12:56   200: RSS 664 MB, private 1135 MB; caches cand 4638 lm 14952 charlm 21866; idle gc last-100 p50 18.9 ms (36s)
+13:13:14   300: RSS 670 MB, private 1140 MB; caches cand 5000 lm 22089 charlm 29390; idle gc last-100 p50 27.8 ms (55s)
+13:13:34   400: RSS 672 MB, private 1142 MB; caches cand 5000 lm 28688 charlm 36742; idle gc last-100 p50 30.2 ms (74s)
+13:13:53   500: RSS 675 MB, private 1145 MB; caches cand 5000 lm 35218 charlm 42576; idle gc last-100 p50 31.1 ms (94s)
+13:14:13   600: RSS 679 MB, private 1149 MB; caches cand 5000 lm 41191 charlm 47437; idle gc last-100 p50 32.8 ms (114s)
+13:14:33   700: RSS 682 MB, private 1152 MB; caches cand 5000 lm 47924 charlm 52366; idle gc last-100 p50 34.5 ms (133s)
+13:14:53   800: RSS 684 MB, private 1154 MB; caches cand 5000 lm 50000 charlm 57164; idle gc last-100 p50 36.0 ms (153s)
+13:15:13   900: RSS 687 MB, private 1157 MB; caches cand 5000 lm 50000 charlm 61214; idle gc last-100 p50 35.6 ms (174s)
+13:15:35   1000: RSS 688 MB, private 1158 MB; caches cand 5000 lm 50000 charlm 65089; idle gc last-100 p50 36.6 ms (195s)
+13:15:55   1100: RSS 690 MB, private 1160 MB; caches cand 5000 lm 50000 charlm 68888; idle gc last-100 p50 37.6 ms (215s)
+13:16:15   1200: RSS 691 MB, private 1161 MB; caches cand 5000 lm 50000 charlm 72210; idle gc last-100 p50 39.9 ms (236s)
+13:16:35   1300: RSS 695 MB, private 1165 MB; caches cand 5000 lm 50000 charlm 75811; idle gc last-100 p50 39.1 ms (256s)
+13:16:57   1400: RSS 697 MB, private 1167 MB; caches cand 5000 lm 50000 charlm 78977; idle gc last-100 p50 39.2 ms (277s)
+13:17:18   1500: RSS 697 MB, private 1167 MB; caches cand 5000 lm 50000 charlm 82010; idle gc last-100 p50 40.0 ms (299s)
+13:17:38   1600: RSS 698 MB, private 1168 MB; caches cand 5000 lm 50000 charlm 85225; idle gc last-100 p50 40.7 ms (319s)
+13:17:59   1700: RSS 703 MB, private 1173 MB; caches cand 5000 lm 50000 charlm 88328; idle gc last-100 p50 41.3 ms (339s)
+13:18:20   1800: RSS 705 MB, private 1176 MB; caches cand 5000 lm 50000 charlm 90970; idle gc last-100 p50 42.3 ms (360s)
+13:18:40   1900: RSS 706 MB, private 1176 MB; caches cand 5000 lm 50000 charlm 93656; idle gc last-100 p50 43.0 ms (380s)
+13:19:01   2000: RSS 707 MB, private 1177 MB; caches cand 5000 lm 50000 charlm 96228; idle gc last-100 p50 42.5 ms (402s)
+13:19:01 session cache=default: push p95 2.32 max 16.4 ms; end p50/p95 85.1/157.5 ms; RSS 641 -> 707 MB
+13:19:02 stage session 2000
+13:19:17 session cache=2000: setup done, 2000 utterances; mem 640 MB RSS (process start 33 MB); char LM bound 2000
+13:19:34   100: RSS 651 MB, private 1121 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 5.1 ms (18s)
+13:19:52   200: RSS 652 MB, private 1122 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 10.6 ms (36s)
+13:20:09   300: RSS 653 MB, private 1123 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 12.3 ms (53s)
+13:20:28   400: RSS 654 MB, private 1124 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 11.8 ms (71s)
+13:20:45   500: RSS 656 MB, private 1126 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 13.3 ms (89s)
+13:21:03   600: RSS 655 MB, private 1125 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 13.4 ms (106s)
+13:21:21   700: RSS 656 MB, private 1126 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 15.1 ms (124s)
+13:21:42   800: RSS 656 MB, private 1126 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 18.6 ms (145s)
+13:22:06   900: RSS 658 MB, private 1128 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 21.6 ms (169s)
+13:22:30   1000: RSS 657 MB, private 1127 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 23.8 ms (194s)
+13:22:54   1100: RSS 658 MB, private 1128 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 23.9 ms (218s)
+13:23:18   1200: RSS 656 MB, private 1126 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 26.3 ms (241s)
+13:23:41   1300: RSS 660 MB, private 1130 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 26.2 ms (264s)
+13:24:06   1400: RSS 659 MB, private 1129 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 27.0 ms (290s)
+13:24:31   1500: RSS 659 MB, private 1129 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 27.0 ms (315s)
+13:24:55   1600: RSS 660 MB, private 1130 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 28.3 ms (339s)
+13:25:20   1700: RSS 660 MB, private 1130 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 28.8 ms (363s)
+13:25:44   1800: RSS 662 MB, private 1132 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 30.3 ms (388s)
+13:26:08   1900: RSS 661 MB, private 1131 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 32.7 ms (412s)
+13:26:34   2000: RSS 661 MB, private 1131 MB; caches cand 2000 lm 2000 charlm 2000; idle gc last-100 p50 31.1 ms (437s)
+13:26:34 session cache=2000: push p95 1.36 max 16.4 ms; end p50/p95 114.6/231.7 ms; RSS 640 -> 661 MB
+13:26:35 stage compare 
+13:26:35 compare session-2000 vs none: 2000/2000
+13:26:35 compare session-50000 vs none: 2000/2000
+13:26:35 compare session-default vs none: 2000/2000
+13:26:35 compare session-none vs none: 2000/2000
+13:26:35 stage b2t 
+13:32:08 b2t-budget-1ms-cache-none: end p50/p95/max 68.61/165.69/285.8 ms; push p95 2.906 max 30.3 ms; equal 816/816 (326s)
+13:32:08   budget-1ms-cache-none: equal 816/816; caches {'candidates': {'size': 18056, 'maxsize': None, 'hits': 445970, 'misses': 6169, 'evictions': 0}, 'sentence_lm': {'size': 171364, 'maxsize': None, 'hits': 72046, 'misses': 171364, 'evictions': 0}}; char LM {'size': 85890, 'maxsize': None, 'hits': 3405428, 'misses': 85890, 'evictions': 0}
+13:36:49 b2t-budget-1ms-cache-default: end p50/p95/max 55.65/124.01/219.4 ms; push p95 3.193 max 31.0 ms; equal 816/816 (281s)
+13:36:49   budget-1ms-cache-default: equal 816/816; caches {'candidates': {'size': 5000, 'maxsize': 5000, 'hits': 501575, 'misses': 5794, 'evictions': 17026}, 'sentence_lm': {'size': 50000, 'maxsize': 50000, 'hits': 74293, 'misses': 202075, 'evictions': 152075}}; char LM {'size': 88699, 'maxsize': 200000, 'hits': 3787515, 'misses': 88699, 'evictions': 0}
+13:41:18 b2t-budget-1ms-cache-256: end p50/p95/max 64.47/139.22/242.6 ms; push p95 3.366 max 31.1 ms; equal 816/816 (269s)
+13:41:18   budget-1ms-cache-256: equal 816/816; caches {'candidates': {'size': 256, 'maxsize': 256, 'hits': 421340, 'misses': 7858, 'evictions': 31777}, 'sentence_lm': {'size': 256, 'maxsize': 256, 'hits': 72756, 'misses': 252381, 'evictions': 252125}}; char LM {'size': 256, 'maxsize': 256, 'hits': 3457291, 'misses': 441387, 'evictions': 441131}
+13:41:19 stage tables 
