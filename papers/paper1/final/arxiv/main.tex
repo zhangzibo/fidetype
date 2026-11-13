@@ -1,3 +1,5 @@
+\pdfoutput=1
+% Line 1 selects PDF output for pdflatex (arXiv recommends it). make-arxiv.sh removes it for Tectonic builds.
 % Paper 1 -- Fidetype. arXiv version, 2026-11-12: main text, references, Appendix A and the
 % supplementary material (Sections S1-S22) in ONE document, so that all cross-references resolve
 % without xr-hyper. Works with pdflatex (arXiv) and Tectonic. Do not edit sections/, generated/ or
@@ -30,6 +32,8 @@
 \usepackage{url}
 \usepackage{etoolbox}
 \usepackage[capitalise,noabbrev]{cleveref}
+% unique hyperref anchors for algorithm lines (Algorithm 1 and Algorithm S1 both number their lines from 1)
+\makeatletter\providecommand{\theHALG@line}{}\renewcommand{\theHALG@line}{\thealgorithm.\arabic{ALG@line}}\makeatother
 
 \graphicspath{{figures/}}
 \newcommand{\figdir}{figures/}  % folder of the TikZ figure sources

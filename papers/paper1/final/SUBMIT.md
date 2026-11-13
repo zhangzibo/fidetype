@@ -15,6 +15,8 @@ Use this sheet to fill the arXiv form. Copy each value exactly.
 
 The zip was unzipped into an empty folder and built again without the `.bib` file (as arXiv does). Result: 0 undefined references or citations, 0 multiply defined labels, 0 overfull lines, no `??` in the text.
 
+pdfLaTeX check (2026-11-12): the zip was also built from scratch with **pdflatex** (portable TinyTeX, TeX Live 2026; three passes, no BibTeX, reads `main.bbl`), which is what arXiv runs. Result: 37 pages, 0 undefined references or citations, 0 duplicate anchors, 0 overfull lines, no `??`. The text equals the Tectonic build except for ligatures and hyphenation. `main.tex` starts with `\pdfoutput=1` (arXiv recommends it). `fidetype-paper1-arxiv.pdf` is this pdflatex build.
+
 ## Form values
 
 **Title** (one line, no line break):

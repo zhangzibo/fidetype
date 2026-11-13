@@ -1,7 +1,7 @@
 \section{The trust layer}
 \label{sec:trust}
 
-The trust layer reads one stream per item and returns one action. It never reads raw signals or decoder weights. Algorithm~\ref{alg:decide} (\cref{app:algorithm}) gives the decision for one item, and Algorithm~\ref{alg:calibrate} the fitting and calibration. All parameters are fitted per device on that device's fit data (fitted values: \cref{tab:settings}; policy grid: \cref{app:settings}).
+The trust layer reads one stream per item and returns one action. It never reads raw signals or decoder weights. Algorithm~\ref{alg:decide} (Appendix~\ref{app:algorithm}) gives the decision for one item, and Algorithm~\ref{alg:calibrate} the fitting and calibration. All parameters are fitted per device on that device's fit data (fitted values: \cref{tab:settings}; policy grid: \cref{app:settings}).
 
 \subsection{Calibration, candidates, guard and policy}
 \label{sec:policy}
@@ -24,7 +24,7 @@ The commit score $s_i$ is $\hat p_{\mathrm{top1}}$ if the other policy rules all
 
 \paragraph{Scope of the guarantee.} $P$ is the distribution that the calibration items come from. In our data it is a mixture of days (intracortical) or participants (sEMG). LTT therefore bounds the risk averaged over that mixture. It does not bound the risk on each day, and a user meets one session at a time (\cref{sec:res-perday}). Per-session control needs per-session (Mondrian) calibration, with at least 45 calibration items per session for LTT, or a calibration block at the start of each session.
 
-\paragraph{Primary rule.} Our primary rule is LTT with the max rule, calibrated on clean data. The theory gives an a-priori reason (a high-probability bound instead of a mean), but we chose it in revision 3, after we saw the random re-splits of \cref{sec:res-resplits}; it is exploratory like every other result here. CRC with the max rule is reported next to it.
+\paragraph{Primary rule.} Our primary rule is LTT with the max rule, calibrated on clean data. The theory gives an a-priori reason (a high-probability bound instead of a mean), but we chose it in the third revision of our analysis plan, after we saw the random re-splits of \cref{sec:res-resplits}; it is exploratory like every other result here. CRC with the max rule is reported next to it.
 
 \subsection{Controllers for the error among commits}
 \label{sec:selective}

@@ -26,6 +26,7 @@ Status: **final version for arXiv (2026-11-12).** The final PDFs, the arXiv sour
   - Installed on 2026-11-11 from the official GitHub release `tectonic@0.17.0`, file `tectonic-0.17.0-x86_64-pc-windows-msvc.zip`.
   - SHA-256 `f61ce51f0b0ade1015b7de7ef368541c5424e9756ecbd0d7af97d6d48030845f` (equal to the digest on the GitHub release page).
   - Location: `C:\Users\zhang\tools\tectonic\tectonic.exe` (not on PATH; winget was not available).
+- **pdfLaTeX check: portable TinyTeX** (TeX Live 2026, `TinyTeX-1-windows-v2026.11.exe` from the `rstudio/tinytex-releases` GitHub release, plus `collection-latexrecommended` and `collection-pictures`) in `C:\Users\zhang\tools\TinyTeX` (not on PATH). `final/make-arxiv.sh` uses it, if present, to build the zip as arXiv does and to write `final/fidetype-paper1-arxiv.pdf`.
 - **Bibliography: natbib + BibTeX** (`unsrtnat` style). Tectonic runs BibTeX automatically.
 - **Figures:** matplotlib in the repo `.venv` (matplotlib 3.11.2). Since v2 the figures read only committed JSON (the drift figure, which imported `fidetype.trust.online_risk`, was removed).
 

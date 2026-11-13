@@ -519,7 +519,7 @@ Dan Bohus and Alexander~I. Rudnicky.
   Dillon, Lakshminarayanan, and Snoek]{ovadia2019trust}
 Yaniv Ovadia, Emily Fertig, Jie Ren, Zachary Nado, D.~Sculley, Sebastian
   Nowozin, Joshua~V. Dillon, Balaji Lakshminarayanan, and Jasper Snoek.
-\newblock Can you trust your model's uncertainty? evaluating predictive
+\newblock Can you trust your model's uncertainty? {E}valuating predictive
   uncertainty under dataset shift.
 \newblock In \emph{Advances in Neural Information Processing Systems},
   volume~32, 2019.
