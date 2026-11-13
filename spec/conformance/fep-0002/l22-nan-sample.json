@@ -1,0 +1,140 @@
+{
+ "schema": "fidetype.conformance.lsl-scenario/1",
+ "kind": "inlet",
+ "fep": "FEP-0002",
+ "description": "NaN",
+ "route": "frames",
+ "inlets": {
+  "primary": {
+   "info_xml": "<info><name>acme.nts</name><type>NTS</type><channel_count>28</channel_count><channel_format>float32</channel_format><source_id>acme-1</source_id><nominal_srate>8.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1</uid><hostname /><desc><channels><channel><label>&lt;blank&gt;</label><unit>log_prob</unit></channel><channel><label>a</label><unit>log_prob</unit></channel><channel><label>b</label><unit>log_prob</unit></channel><channel><label>c</label><unit>log_prob</unit></channel><channel><label>d</label><unit>log_prob</unit></channel><channel><label>e</label><unit>log_prob</unit></channel><channel><label>f</label><unit>log_prob</unit></channel><channel><label>g</label><unit>log_prob</unit></channel><channel><label>h</label><unit>log_prob</unit></channel><channel><label>i</label><unit>log_prob</unit></channel><channel><label>j</label><unit>log_prob</unit></channel><channel><label>k</label><unit>log_prob</unit></channel><channel><label>l</label><unit>log_prob</unit></channel><channel><label>m</label><unit>log_prob</unit></channel><channel><label>n</label><unit>log_prob</unit></channel><channel><label>o</label><unit>log_prob</unit></channel><channel><label>p</label><unit>log_prob</unit></channel><channel><label>q</label><unit>log_prob</unit></channel><channel><label>r</label><unit>log_prob</unit></channel><channel><label>s</label><unit>log_prob</unit></channel><channel><label>t</label><unit>log_prob</unit></channel><channel><label>u</label><unit>log_prob</unit></channel><channel><label>v</label><unit>log_prob</unit></channel><channel><label>w</label><unit>log_prob</unit></channel><channel><label>x</label><unit>log_prob</unit></channel><channel><label>y</label><unit>log_prob</unit></channel><channel><label>z</label><unit>log_prob</unit></channel><channel><label> </label><unit>log_prob</unit></channel></channels><fidetype><nts_header>{\"spec_version\": \"0.1\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"conformance-vector\", \"frame_period\": 0.125, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"other\", \"decoder.name\": \"conformance-vector\", \"decoder.version\": \"1\", \"decoder.causal\": true, \"data.derived\": true, \"language\": \"en\"}}</nts_header><values>log_probs</values><role>nts_frames</role><binding>nts-lsl/0.1</binding><events_source_id>acme-1.events</events_source_id></fidetype></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [
+      [
+       -3.1087820529937744,
+       -1.6620309352874756,
+       -10.3215970993042,
+       -5.490943908691406,
+       -3.187574863433838,
+       -2.510730028152466,
+       -3.9074368476867676,
+       -2.220777750015259,
+       -4.635098457336426,
+       -4.112479209899902,
+       -4.857538223266602,
+       -7.362730979919434,
+       -6.908271312713623,
+       -4.455844879150391,
+       -6.375403881072998,
+       -2.6719107627868652,
+       -2.6302404403686523,
+       -1.617440938949585,
+       -5.2671613693237305,
+       -2.447594165802002,
+       -7.026700019836426,
+       -6.84764289855957,
+       -5.052407264709473,
+       -4.652152061462402,
+       -8.41299057006836,
+       -8.676462173461914,
+       -4.504856586456299,
+       -6.939389705657959
+      ],
+      [
+       -2.5917418003082275,
+       -4.219363689422607,
+       -4.394086837768555,
+       "NaN",
+       -3.217505931854248,
+       -5.314548492431641,
+       -2.8371939659118652,
+       -6.060284614562988,
+       -5.458451271057129,
+       -6.369466304779053,
+       -3.8131322860717773,
+       -4.936687469482422,
+       -6.732990264892578,
+       -1.0046961307525635,
+       -5.735884189605713,
+       -5.241055488586426,
+       -4.220126628875732,
+       -1.513154149055481,
+       -5.30522346496582,
+       -3.6020894050598145,
+       -4.81086540222168,
+       -7.9360432624816895,
+       -3.424501419067383,
+       -2.967177391052246,
+       -5.488428592681885,
+       -5.039328575134277,
+       -8.011088371276855,
+       -8.054360389709473
+      ],
+      [
+       -5.103450298309326,
+       -3.0685434341430664,
+       -5.259559631347656,
+       -3.7363643646240234,
+       -2.384875535964966,
+       -4.128885269165039,
+       -3.171473503112793,
+       -1.4246631860733032,
+       -6.812466621398926,
+       -2.8322601318359375,
+       -8.0897798538208,
+       -3.457124948501587,
+       -3.9144208431243896,
+       -5.407079696655273,
+       -6.475036144256592,
+       -4.444072246551514,
+       -5.14088773727417,
+       -4.125166893005371,
+       -6.136013507843018,
+       -3.229355573654175,
+       -6.392110824584961,
+       -4.92888069152832,
+       -5.104386329650879,
+       -1.7846351861953735,
+       -7.311797618865967,
+       -5.148458003997803,
+       -1.955488920211792,
+       -5.637092590332031
+      ]
+     ],
+     "timestamps": [
+      100.0,
+      100.125,
+      100.25
+     ]
+    }
+   ]
+  },
+  "events": {
+   "info_xml": "<info><name>acme.nts.events</name><type>Markers</type><channel_count>1</channel_count><channel_format>string</channel_format><source_id>acme-1.events</source_id><nominal_srate>0.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1.events</uid><hostname /><desc><fidetype><nts_header>{\"spec_version\": \"0.1\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"conformance-vector\", \"frame_period\": 0.125, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"other\", \"decoder.name\": \"conformance-vector\", \"decoder.version\": \"1\", \"decoder.causal\": true, \"data.derived\": true, \"language\": \"en\"}}</nts_header><role>nts_events</role><binding>nts-lsl/0.1</binding><frames_source_id>acme-1</frames_source_id><event_clock>lsl</event_clock></fidetype></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [
+      [
+       "{\"type\": \"segment_end\", \"t\": 100.26}"
+      ]
+     ],
+     "timestamps": [
+      100.26
+     ]
+    },
+    {
+     "samples": [
+      [
+       "{\"type\": \"end\"}"
+      ]
+     ],
+     "timestamps": [
+      100.27
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -3,7 +3,7 @@ title: NeuralTextStream conformance suite
 type: concept
 tags: [spec, neuraltextstream, conformance, testing, standard, adapters, provenance]
 sources: [brain-to-text-25-copytask, toronto-semg-typing]
-updated: 2026-11-11
+updated: 2026-11-12
 ---
 
 # NeuralTextStream conformance suite
@@ -91,6 +91,23 @@ Synthetic inputs (fixed seed, no data from people). The table shows the level **
 
 ## Spec ambiguities found
 The suite found 10 points where the spec text is unclear. They are listed as informative open questions in [spec section 10, item 12](../../spec/neuraltextstream-v0.1.md#10-open-questions) (A1–A10). The most important: what `decoder.causal = true` means without `latency` (A1); whether custom keys may live in a defined namespace such as `decoder.*` (A2); encoded vocabularies (A3); whether a v0.1 consumer must reject a future minor version (A6); whether NPZ dtypes are normative (A7).
+
+## Opt-in FEP profiles (M4-07, M6-09)
+A profile tests one draft FEP on top of v0.1. It does not change the v0.1 levels or the 52 v0.1 vectors.
+
+| Profile | FEP | Checks | Vectors | Wiki |
+|---|---|---|---|---|
+| `fep-0001` | [Streaming trust events](../../spec/feps/0001-streaming-trust-events.md) | 10 (`FEP1-*`) | 40 JSON Lines (12 accept, 28 reject) | [Streaming trust layer](streaming-trust-layer.md#conformance-profile-fep-0001-m4-07) |
+| `fep-0002` | [NTS over LSL](../../spec/feps/0002-nts-over-lsl.md) | 6 (`FEP2-*`) | 31 JSON scenarios (15 accept, 16 reject) | [LSL input](lsl-input.md#conformance-profile-fep-0002) |
+
+```bash
+fidetype conformance --profile fep-0001                       # reference consumer over the profile vectors
+fidetype conformance consumer --profile fep-0002 --cmd "my-reader {path}"
+fidetype conformance check --profile fep-0001 decisions.jsonl
+fidetype conformance list --profile fep-0002
+```
+
+Code: `src/fidetype/conformance/profiles/` (`fep0001.py`, `fep0002.py`). Tests: `tests/test_fep_profiles.py`.
 
 ## Limits
 - Leakage (5.3) and privacy (5.4) checks are heuristics. They find clear signs (a `target_text` key, an e-mail address). They cannot prove that a stream is clean. With `--truth`, the suite also searches the header for the real truth texts.

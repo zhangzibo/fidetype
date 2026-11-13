@@ -27,17 +27,44 @@ Diagram: [13-lsl-input.drawio](../diagrams/13-lsl-input.drawio) (rendered in [di
 - `pylsl` 1.18.6: licence MIT (package classifier). The Windows wheel includes liblsl (`pylsl/lib/lsl.dll`, liblsl 1.18). We checked this on Windows 11. PyPI also lists wheels for macOS (universal2) and Linux (manylinux_2_35 x86_64), and a pure-Python wheel without liblsl. We did not test those.
 - We copy no LSL code. The adapter is our own code (Apache-2.0).
 
-## NTS over LSL (spec 6.4, as implemented)
+## NTS over LSL (FEP-0002)
+
+[FEP-0002](../../spec/feps/0002-nts-over-lsl.md) (status Draft, M6-09) is the normative binding. The adapter is its reference implementation. Binding version: `nts-lsl/0.1`.
+
 
 | NTS part | LSL stream | Details |
 |---|---|---|
 | Frames | type `NTS`, V numeric channels | One sample per frame. Channel labels = vocab tokens, unit `log_prob`. `nominal_srate` = 1 / `frame_period`. The desc element `fidetype` holds `nts_header` (the NTS header as JSON), `values` and `events_source_id` |
 | Other events | type `Markers`, 1 string channel | One sample = one NTS event as JSON (`hypothesis`, `segment_end`, `end`, `signal_quality`, ...). Its desc holds the same `nts_header` and `frames_source_id` |
 | Times | LSL timestamps | The inlet sets `clock_domain = "lsl"`. It replaces the `t` of a frame with the LSL time. It adds `lsl_t` to marker events |
+| Decisions | `fidetype.decisions`, type `Markers`, 1 string channel | One sample = one `trust_decision` (FEP-0001). Desc: `role`, `event_type`, `spec`, `binding`, `config_id` |
 
 The header is in the desc, so a program that connects late still gets it.
 
 Spec 6.4 says "float32". `replay-to-lsl` sends float32 by default. It can also send `double64`. Then the received rows are bit-equal to the file rows.
+
+### FEP-0002 rules in brief
+
+| Topic | Rule |
+|---|---|
+| Channel format | An NTS-native frames stream is `float32` or `double64`. float32 rounds by about 6e-8 (relative); the row still meets the 1e-3 normalisation rule. Use `double64` for exact replay (audit, provenance hash) |
+| Channels | `channel_count` = V. Labels, if present, are the vocab in order (trimmed; an empty label matches any token, because XML loses the space token) |
+| Rate | `nominal_srate` = 1 / `frame_period` (relative tolerance 1e-6), or 0 if irregular |
+| desc keys | `nts_header` (JSON object, spec_version 0.1), `values`, `binding`, `role`, `events_source_id` / `frames_source_id`, `event_clock` |
+| Clock | t = LSL timestamp + `time_correction` (receiver mode), one offset per sender host. Out-of-order frames: clamp (at most 5 ms back) or drop, counted |
+| Times inside marker JSON | `event_clock = lsl`: `t`, `t_start`, `t_end`, `t_signal_*`, `t_decoded`, `t_emitted` are in the sender's LSL clock; the inlet adds the same offset. `source` (or absent): left as sent. Hypothesis times and frame times are then on one axis |
+| Gaps and loss | `gap` extension event, or `segment_end`, or abort. A loss never gives a decision on the cut utterance; after a reconnect the header comes again |
+| Versioning | `binding` absent = `nts-lsl/0.1`. An unknown version is refused |
+
+Adapter changes for FEP-0002 (small): it refuses an NTS-native frames stream with an integer format, labels out of order or a wrong `nominal_srate`, and any stream with an unknown `binding` or `event_clock`. It applies `event_clock = lsl`. `replay-to-lsl` now writes `binding` and `event_clock = lsl` and maps the time fields of marker events to the LSL clock. The decisions outlet writes `binding`. New helpers: `info_to_xml`, `ScriptedInlet` (a scripted inlet without pylsl), `check_binding`, `check_native_frames`, `decisions_desc`, `LSLTrustRunner.flush()`. Streams from before FEP-0002 still read the same way (no `binding` = 0.1, no `event_clock` = source).
+
+### Conformance profile `fep-0002`
+31 golden vectors (15 accept, 16 reject) in `spec/conformance/fep-0002/`. Each vector is a JSON scenario: stream infos as liblsl XML, scripted chunks with LSL timestamps (or `"lost"`), the clock correction and the consumer settings. No network and no pylsl are needed. The expected values include the header, frame count and times, `-inf` cells, a SHA-256 of the double64 rows, the event types, hypothesis times, decisions, and the counts of gaps, clamps, drops, reconnects and bad markers.
+
+```bash
+fidetype conformance --profile fep-0002                         # reference consumer over the 31 scenarios
+fidetype conformance check --profile fep-0002 frames-info.xml   # producer check of a stream info (pylsl: info.as_xml())
+```
 
 ## Which streams work
 
@@ -110,7 +137,7 @@ We state only what their documentation says (checked 2026-11-12).
 ## Limits and follow-ups
 - Tested on one machine (localhost) only. LAN and Wi-Fi latency are not measured.
 - No real device was tested (the user has no hardware). The BrainFlow Synthetic board test is a follow-up.
-- `gap` and `lsl_t` are extension keys; `hypothesis` `t_start` / `t_end` stay in the producer's clock. A FEP should define the LSL binding fully (stream types, desc keys, float32 vs double64, gap event).
+- FEP-0002 defines the binding (M6-09). It stays Draft until an outside LSL implementation runs the `fep-0002` vectors.
 - The frames route decodes at the end of the utterance (M4-08 incremental decoding).
 
 ## Related

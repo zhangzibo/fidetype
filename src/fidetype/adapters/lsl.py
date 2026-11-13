@@ -28,8 +28,10 @@ Outlet (NTS file -> LSL)
     :func:`replay_to_lsl` publishes a stream file (JSON Lines or NPZ) as
     LSL streams, paced in real time. For demos and tests.
 
-NTS over LSL (spec 6.4, as implemented here)
---------------------------------------------
+NTS over LSL (FEP-0002, ``spec/feps/0002-nts-over-lsl.md``)
+-----------------------------------------------------------
+FEP-0002 is the normative binding. This module is its reference
+implementation. In short:
 - **Frames stream**: type ``"NTS"``, V numeric channels (one per vocab
   token, in vocab order), one sample per frame, ``nominal_srate`` =
   1 / ``frame_period`` (0 if irregular). Channel labels = vocab tokens,
@@ -44,7 +46,14 @@ NTS over LSL (spec 6.4, as implemented here)
   time. It adds ``lsl_t`` to marker events.
 - Spec 6.4 names a ``float32`` frames stream. :func:`replay_to_lsl` can
   also send ``double64``: then the received rows are bit-equal to the
-  file rows (float32 rounds them by about 1e-7).
+  file rows (float32 rounds them by about 1e-7). An NTS-native frames
+  stream must use one of these two formats.
+- ``desc/fidetype/binding`` names the binding version (``nts-lsl/0.1``).
+  An unknown version is refused. ``desc/fidetype/event_clock`` says
+  which clock the time fields inside the marker JSON use: ``lsl`` (the
+  sender's LSL clock; the inlet adds the same clock offset as for the
+  sample timestamps) or ``source`` (the producer's own clock; unchanged;
+  the default).
 
 Foreign streams (not made by Fidetype) work too:
 
@@ -125,6 +134,17 @@ LSL_STATUS = "lsl_status"
 GAP = "gap"
 #: A clamped timestamp is set this far after the previous one (seconds).
 CLAMP_STEP_S = 1e-6
+#: Version of the NTS-over-LSL binding (FEP-0002) that this module writes and reads.
+BINDING_VERSION = "nts-lsl/0.1"
+KNOWN_BINDINGS = (BINDING_VERSION,)
+#: Channel formats of an NTS-native frames stream (FEP-0002 section 3).
+NTS_FRAME_FORMATS = ("float32", "double64")
+#: Values of ``desc/fidetype/event_clock``.
+EVENT_CLOCKS = ("source", "lsl")
+#: Time fields inside a marker JSON event that follow ``event_clock`` (FEP-0002 section 6).
+EVENT_TIME_KEYS = ("t", "t_start", "t_end", "t_signal_start", "t_signal_end", "t_decoded", "t_emitted")
+#: Relative tolerance of nominal_srate vs 1 / frame_period.
+SRATE_RTOL = 1e-6
 
 NUMERIC_FORMATS = ("float32", "double64", "int8", "int16", "int32", "int64")
 ValuesKind = Literal["auto", "log_probs", "probs", "logits"]
@@ -251,6 +271,92 @@ class LSLStreamInfo:
                    nominal_srate=srate, channel_format=txt("channel_format", "float32"),
                    source_id=txt("source_id"), uid=txt("uid"), hostname=txt("hostname"), created_at=created,
                    channel_labels=labels, channel_units=units, channel_types=types, fidetype=fid)
+
+
+def info_to_xml(info: LSLStreamInfo) -> str:
+    """The stream info as LSL-style XML (the fields :meth:`LSLStreamInfo.from_xml` reads)."""
+    root = ET.Element("info")
+    for tag, val in (("name", info.name), ("type", info.type), ("channel_count", str(info.channel_count)),
+                     ("channel_format", info.channel_format), ("source_id", info.source_id),
+                     ("nominal_srate", repr(float(info.nominal_srate))), ("created_at", repr(float(info.created_at))),
+                     ("uid", info.uid), ("hostname", info.hostname)):
+        ET.SubElement(root, tag).text = val
+    desc = ET.SubElement(root, "desc")
+    if info.channel_labels or info.channel_units or info.channel_types:
+        chs = ET.SubElement(desc, "channels")
+        n = max(len(info.channel_labels), len(info.channel_units), len(info.channel_types))
+        for i in range(n):
+            ch = ET.SubElement(chs, "channel")
+            for tag, vals in (("label", info.channel_labels), ("unit", info.channel_units), ("type", info.channel_types)):
+                if i < len(vals):
+                    ET.SubElement(ch, tag).text = vals[i]
+    if info.fidetype:
+        f = ET.SubElement(desc, DESC_ROOT)
+        for k, v in info.fidetype.items():
+            ET.SubElement(f, k).text = v
+    return ET.tostring(root, encoding="unicode")
+
+
+def check_binding(info: LSLStreamInfo) -> None:
+    """Raise ``ValueError`` if the ``desc/fidetype`` keys break FEP-0002 (version, event clock)."""
+    b = info.fidetype.get("binding")
+    if b is not None and b.strip() not in KNOWN_BINDINGS:
+        raise ValueError(f"stream {info.name!r}: binding {b!r} is not supported (known: {list(KNOWN_BINDINGS)}; "
+                         "FEP-0002 section 9)")
+    ec = info.fidetype.get("event_clock")
+    if ec is not None and ec.strip() not in EVENT_CLOCKS:
+        raise ValueError(f"stream {info.name!r}: event_clock {ec!r} is not one of {list(EVENT_CLOCKS)}")
+
+
+def check_native_frames(info: LSLStreamInfo, header: dict[str, Any]) -> None:
+    """Raise ``ValueError`` if an NTS-native frames stream breaks FEP-0002 section 3."""
+    if info.channel_format not in NTS_FRAME_FORMATS:
+        raise ValueError(f"stream {info.name!r}: an NTS frames stream must be float32 or double64, "
+                         f"not {info.channel_format!r} (FEP-0002 section 3)")
+    vocab = list(header.get("vocab") or [])
+    labels = list(info.channel_labels)
+    # XML may lose white space (the space token " " reads as ""), so compare trimmed labels; an empty label
+    # matches any token.
+    if any(labels) and (len(labels) != len(vocab)
+                        or any(lb.strip() and lb.strip() != tok.strip() for lb, tok in zip(labels, vocab))):
+        raise ValueError(f"stream {info.name!r}: channel labels differ from the vocab order (FEP-0002 section 3)")
+    fp = header.get("frame_period")
+    if isinstance(fp, (int, float)) and not isinstance(fp, bool) and fp > 0 and info.nominal_srate > 0:
+        if not math.isclose(1.0 / info.nominal_srate, float(fp), rel_tol=SRATE_RTOL):
+            raise ValueError(f"stream {info.name!r}: nominal_srate {info.nominal_srate} is not 1 / frame_period "
+                             f"({fp}) (FEP-0002 section 3)")
+
+
+class ScriptedInlet:
+    """An :class:`InletLike` that plays a fixed script (no network, no pylsl).
+
+    For tests and the FEP-0002 conformance vectors. ``script`` items are
+    ``(samples, timestamps)`` for one chunk, or ``"lost"`` (the stream is
+    lost at that point). An exhausted script returns empty chunks.
+    """
+
+    def __init__(self, info: LSLStreamInfo, script: Sequence[Any] = (), time_correction: float = 0.0) -> None:
+        self._info = info
+        self.script = list(script)
+        self.tc = float(time_correction)
+        self.closed = False
+
+    def info(self) -> LSLStreamInfo:
+        return self._info
+
+    def pull_chunk(self, timeout: float, max_samples: int) -> tuple[list[list[Any]], list[float]]:
+        if not self.script:
+            return [], []
+        it = self.script.pop(0)
+        if isinstance(it, str) and it == "lost":
+            raise LSLStreamLost("scripted loss")
+        return it
+
+    def time_correction(self, timeout: float) -> float:
+        return self.tc
+
+    def close(self) -> None:
+        self.closed = True
 
 
 # ---------------------------------------------------------------------------
@@ -436,6 +542,7 @@ def build_header(info: LSLStreamInfo, mapping: LSLMapping, signal_decoder: Signa
     key ``lsl`` (v0.1 consumers ignore unknown keys).
     """
     values = mapping.values
+    check_binding(info)
     if signal_decoder is not None:
         h = {k: v for k, v in dict(signal_decoder.header).items() if k != "type"}
         meta = dict(h.get("meta") or {})
@@ -471,6 +578,8 @@ def build_header(info: LSLStreamInfo, mapping: LSLMapping, signal_decoder: Signa
                              f"{len(h.get('vocab', []))} tokens")
         if not info.is_string and info.channel_format not in NUMERIC_FORMATS:
             raise ValueError(f"channel format {info.channel_format!r} cannot carry frames")
+        if native is not None and not info.is_string:
+            check_native_frames(info, h)
     if values not in ("log_probs", "probs", "logits"):
         raise ValueError(f"unknown values kind {values!r}")
     if mapping.source and "source" not in h:
@@ -478,6 +587,8 @@ def build_header(info: LSLStreamInfo, mapping: LSLMapping, signal_decoder: Signa
     h.setdefault("spec_version", SPEC_VERSION)
     h["clock_domain"] = "lsl"
     lsl = {"stream": info.summary(), "clock": mapping.clock, "values": values,
+           "binding": (info.fidetype.get("binding") or BINDING_VERSION).strip(),
+           "event_clock": (info.fidetype.get("event_clock") or "source").strip(),
            "adapter": {"name": ADAPTER_NAME, "version": ADAPTER_VERSION}}
     lsl.update(lsl_extra or {})
     h["lsl"] = lsl
@@ -599,6 +710,8 @@ class _Reader:
         self.inlet = inlet
         self.info = inlet.info()
         self.host = self.info.hostname or self.info.source_id or self.info.name
+        check_binding(self.info)
+        self.event_clock = (self.info.fidetype.get("event_clock") or "source").strip()
         self.last_t = -math.inf  # last accepted (corrected) sample time
         self.seen_t = -math.inf  # watermark: newest time seen
         self.period: float | None = None
@@ -644,7 +757,7 @@ class _Reader:
             for s, ts in zip(samples, stamps):
                 t = float(ts) + off
                 self._note_latency(now, t)
-                ev = src.marker_event(s[0] if isinstance(s, (list, tuple)) else s, t)
+                ev = src.marker_event(s[0] if isinstance(s, (list, tuple)) else s, t, off, self.event_clock)
                 if ev is None:
                     continue
                 if ev.get("type") == "frame":
@@ -785,6 +898,7 @@ class LSLEventSource:
             extra = {"time_correction_s": off if self.mapping.clock == "receiver" else None}
             if len(self.readers) > 1:
                 extra["events_stream"] = self.readers[1].info.summary()
+                extra["event_clock"] = self.readers[1].event_clock  # the clock of the marker JSON times
             h, values = build_header(r.info, self.mapping, self.signal_decoder, extra)
             self._header, self.values = h, values
             for rd in self.readers:
@@ -801,8 +915,14 @@ class LSLEventSource:
 
     # --- markers ------------------------------------------------------------
 
-    def marker_event(self, s: Any, t: float) -> dict[str, Any] | None:
-        """One marker sample -> one NTS event (or None: ignored)."""
+    def marker_event(self, s: Any, t: float, offset: float = 0.0, event_clock: str = "source") -> dict[str, Any] | None:
+        """One marker sample -> one NTS event (or None: ignored).
+
+        ``t`` is the corrected LSL time of the sample. With ``event_clock``
+        ``"lsl"`` the time fields inside the JSON (:data:`EVENT_TIME_KEYS`)
+        are in the sender's LSL clock: ``offset`` (the clock correction of
+        this stream) is added to them (FEP-0002 section 6).
+        """
         self.stats.markers += 1
         m = self.mapping
         if not isinstance(s, str):
@@ -815,6 +935,11 @@ class LSLEventSource:
                 ev = None
             if isinstance(ev, dict) and isinstance(ev.get("type"), str):
                 ev["lsl_t"] = t
+                if event_clock == "lsl" and offset:
+                    for k in EVENT_TIME_KEYS:
+                        v = ev.get(k)
+                        if isinstance(v, (int, float)) and not isinstance(v, bool):
+                            ev[k] = float(v) + offset
                 if ev["type"] == "header":
                     ev.setdefault("spec_version", SPEC_VERSION)
                     ev["clock_domain"] = "lsl"
@@ -991,6 +1116,10 @@ class LSLTrustRunner:
         """Release and handle the items that the merge still holds (at shutdown)."""
         return self._handle(self.source.drain())
 
+    def flush(self) -> list[Any]:
+        """Close the open utterance now and emit its final decision (as the file replay does at the end)."""
+        return [self._emit(d, None) for d in self.layer.end_of_utterance(self.session_id)]
+
     def _handle(self, evs: list[dict[str, Any]]) -> list[Any]:
         from fidetype.trust.streaming import StreamEventError
 
@@ -1094,8 +1223,16 @@ class LSLTrustRunner:
 # ---------------------------------------------------------------------------
 
 
+def decisions_desc(config_id: str | None = None) -> dict[str, str]:
+    """The ``desc/fidetype`` keys of a decisions stream (FEP-0002 section 8)."""
+    d = {"role": "trust_decisions", "event_type": "trust_decision", "spec": "FEP-0001", "binding": BINDING_VERSION}
+    if config_id:
+        d["config_id"] = config_id
+    return d
+
+
 class DecisionOutlet:
-    """An LSL marker outlet that carries ``trust_decision`` events as JSON strings."""
+    """An LSL marker outlet that carries ``trust_decision`` events as JSON strings (FEP-0002 section 8)."""
 
     def __init__(self, name: str = DECISIONS_STREAM_NAME, source_id: str | None = None,
                  config_id: str | None = None) -> None:
@@ -1104,15 +1241,23 @@ class DecisionOutlet:
         sid = source_id or f"{name}.{config_id or 'default'}"
         info = pl.StreamInfo(name, MARKERS_TYPE, 1, pl.IRREGULAR_RATE, "string", sid)
         f = info.desc().append_child(DESC_ROOT)
-        f.append_child_value("role", "trust_decisions")
-        f.append_child_value("event_type", "trust_decision")
-        f.append_child_value("spec", "FEP-0001")
-        if config_id:
-            f.append_child_value("config_id", config_id)
+        for k, v in decisions_desc(config_id).items():
+            f.append_child_value(k, v)
         self.outlet = pl.StreamOutlet(info)
 
     def push(self, event: dict[str, Any]) -> None:
         self.outlet.push_sample([json.dumps(event, ensure_ascii=False, allow_nan=False)], self._pl.local_clock())
+
+
+def _to_lsl_clock(e: dict[str, Any], base: float, t_file0: float, speed: float) -> dict[str, Any]:
+    """Map the time fields of a marker event from the file clock to the sender's LSL clock (event_clock lsl)."""
+    out = dict(e)
+    for k in EVENT_TIME_KEYS:
+        v = out.get(k)
+        if isinstance(v, (int, float)) and not isinstance(v, bool):
+            dt = float(v) - t_file0
+            out[k] = base + (dt / speed if speed > 0 else dt)
+    return out
 
 
 def _stable_id(*parts: str) -> str:
@@ -1191,6 +1336,7 @@ def replay_to_lsl(
         f.append_child_value("nts_header", header_json)
         f.append_child_value("values", "log_probs")
         f.append_child_value("role", "nts_frames")
+        f.append_child_value("binding", BINDING_VERSION)
         if eid:
             f.append_child_value("events_source_id", eid)
         frames_out = pl.StreamOutlet(info, chunk_size=0, max_buffered=360)
@@ -1200,6 +1346,8 @@ def replay_to_lsl(
         f = info.desc().append_child(DESC_ROOT)
         f.append_child_value("nts_header", header_json)
         f.append_child_value("role", "nts_events")
+        f.append_child_value("binding", BINDING_VERSION)
+        f.append_child_value("event_clock", "lsl")
         if fid:
             f.append_child_value("frames_source_id", fid)
         events_out = pl.StreamOutlet(info, chunk_size=0)
@@ -1242,6 +1390,7 @@ def replay_to_lsl(
             last_ts = ts
         else:
             assert events_out is not None
+            e = _to_lsl_clock(e, base, t_file0, speed)
             events_out.push_sample([json.dumps(e, ensure_ascii=False, allow_nan=False)], ts, True)
             rs.events += 1
     time.sleep(max(0.0, linger_s))

@@ -1,0 +1,471 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "0.1",
+ "profile": "fep-0001",
+ "fep": "FEP-0001",
+ "generator": "python -m fidetype.conformance vectors --profile fep-0001",
+ "how_to_use": "FEP-0001 profile. For each vector, load the file with your consumer. Input streams (line 1 = header) must follow v0.1 and FEP-0001 sections 1, 2 and 4. Decision logs (only trust_decision lines) must follow section 3. A conforming consumer accepts exactly the vectors with expect = accept. For a decision log, 'acted' lists the texts a bridge may act on: only final COMMIT decisions (section 3 rule 1).",
+ "vectors": [
+  {
+   "id": "F01",
+   "file": "f01-segments.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 1",
+   "description": "Two utterances of frames, each closed by segment_end (t, unit)",
+   "expected": {
+    "kind": "input",
+    "n_frames": 4,
+    "segments": 2,
+    "segment_ends": 2
+   }
+  },
+  {
+   "id": "F02",
+   "file": "f02-segment-minimal.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 1",
+   "description": "segment_end with no t and no unit; end closes the last segment",
+   "expected": {
+    "kind": "input",
+    "segments": 2,
+    "segment_ends": 1
+   }
+  },
+  {
+   "id": "F03",
+   "file": "f03-empty-segment.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 1 r4",
+   "description": "A segment_end right after the header: an empty segment, no input",
+   "expected": {
+    "kind": "input",
+    "segments": 1,
+    "segment_ends": 2
+   }
+  },
+  {
+   "id": "F04",
+   "file": "f04-segment-bad-unit.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 1 table",
+   "description": "segment_end unit \"sentence\" is not in the enum",
+   "failing_check": "FEP1-SEGMENT"
+  },
+  {
+   "id": "F05",
+   "file": "f05-segment-t-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 1 table",
+   "description": "segment_end t is a string",
+   "failing_check": "FEP1-SEGMENT"
+  },
+  {
+   "id": "F06",
+   "file": "f06-segment-before-frame.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 1 r5",
+   "description": "segment_end t is before the last frame of its segment",
+   "failing_check": "FEP1-SEGMENT"
+  },
+  {
+   "id": "F07",
+   "file": "f07-evidence-valid.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 2",
+   "description": "The FEP example: partial and final hypotheses with evidence fields",
+   "expected": {
+    "kind": "input",
+    "hypotheses": 2,
+    "evidence_items": 2,
+    "segments": 1
+   }
+  },
+  {
+   "id": "F08",
+   "file": "f08-evidence-code-points.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 2 r1",
+   "description": "char_confidences counts Unicode code points: 'a😀' has 2 (UTF-16 would give 3)",
+   "expected": {
+    "kind": "input",
+    "evidence_items": 1
+   }
+  },
+  {
+   "id": "F09",
+   "file": "f09-evidence-length.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 2 r1",
+   "description": "char_confidences has 3 values for a 2-character text",
+   "failing_check": "FEP1-EVIDENCE"
+  },
+  {
+   "id": "F10",
+   "file": "f10-evidence-range.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 2 table",
+   "description": "A char_confidences value is 1.2",
+   "failing_check": "FEP1-EVIDENCE"
+  },
+  {
+   "id": "F11",
+   "file": "f11-evidence-bool.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 2 table",
+   "description": "A char_confidences value is a boolean",
+   "failing_check": "FEP1-EVIDENCE"
+  },
+  {
+   "id": "F12",
+   "file": "f12-logp-positive.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 2 r4",
+   "description": "logp_acoustic is +0.5 (a log-probability is <= 0)",
+   "failing_check": "FEP1-EVIDENCE"
+  },
+  {
+   "id": "F13",
+   "file": "f13-logp-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 2 table",
+   "description": "logp_lm is a string",
+   "failing_check": "FEP1-EVIDENCE"
+  },
+  {
+   "id": "F14",
+   "file": "f14-score-null.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 2 r3",
+   "description": "An n-best item for a trust layer has score null",
+   "failing_check": "FEP1-SCORE"
+  },
+  {
+   "id": "F15",
+   "file": "f15-declaration-header.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 4",
+   "description": "decode_declaration in the header, all fields",
+   "expected": {
+    "kind": "input",
+    "declarations": 1,
+    "hypotheses": 1
+   }
+  },
+  {
+   "id": "F16",
+   "file": "f16-declaration-override.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 4 r2",
+   "description": "A hypothesis declaration (decoder only) replaces the header declaration for that event",
+   "expected": {
+    "kind": "input",
+    "declarations": 2,
+    "hypotheses": 2
+   }
+  },
+  {
+   "id": "F17",
+   "file": "f17-declaration-temperature-zero.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 4 table",
+   "description": "frame_temperature is 0",
+   "failing_check": "FEP1-DECL"
+  },
+  {
+   "id": "F18",
+   "file": "f18-declaration-no-decoder.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 4 table",
+   "description": "decode_declaration without decoder",
+   "failing_check": "FEP1-DECL"
+  },
+  {
+   "id": "F19",
+   "file": "f19-declaration-not-object.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 4 table",
+   "description": "decode_declaration is a string",
+   "failing_check": "FEP1-DECL"
+  },
+  {
+   "id": "F20",
+   "file": "f20-declaration-params-list.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 4 table",
+   "description": "decode_declaration params is a list",
+   "failing_check": "FEP1-DECL"
+  },
+  {
+   "id": "F21",
+   "file": "f21-decision-in-input.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r4",
+   "description": "A trust_decision event inside a decoder input stream",
+   "failing_check": "FEP1-TD-INPUT"
+  },
+  {
+   "id": "F22",
+   "file": "f22-log-preview-then-commit.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r1",
+   "description": "Provisional OFFER, then final COMMIT: act on the final COMMIT only",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 2,
+    "final": 1,
+    "acted": [
+     "ab"
+    ]
+   }
+  },
+  {
+   "id": "F23",
+   "file": "f23-log-provisional-commit.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r1",
+   "description": "A provisional COMMIT, then a final ABSTAIN: a consumer MUST NOT act (acted is empty)",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 2,
+    "final": 1,
+    "acted": []
+   }
+  },
+  {
+   "id": "F24",
+   "file": "f24-log-privacy.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table",
+   "description": "Final OFFER and final COMMIT without shown (privacy log), p_top1 null on the OFFER",
+   "expected": {
+    "kind": "decisions",
+    "final": 2,
+    "acted": [
+     null
+    ]
+   }
+  },
+  {
+   "id": "F25",
+   "file": "f25-log-two-sessions.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r5",
+   "description": "Two interleaved sessions, each with its own seq and utterance counts, plus extension keys",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 4,
+    "final": 2,
+    "acted": [
+     "cd",
+     "ab"
+    ]
+   }
+  },
+  {
+   "id": "F26",
+   "file": "f26-log-ask-then-retry.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r6",
+   "description": "Final ASK on utterance 0, then a final COMMIT on utterance 1 of the same session",
+   "expected": {
+    "kind": "decisions",
+    "final": 2,
+    "acted": [
+     "ab"
+    ]
+   }
+  },
+  {
+   "id": "F27",
+   "file": "f27-td-no-is-final.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table",
+   "description": "trust_decision without is_final",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F28",
+   "file": "f28-td-is-final-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table",
+   "description": "is_final is the string \"false\"",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F29",
+   "file": "f29-td-bad-action.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table",
+   "description": "action \"MAYBE\" is not in the enum",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F30",
+   "file": "f30-td-p-top1-range.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r2",
+   "description": "p_top1 1.3 with calibrated_prob",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F31",
+   "file": "f31-td-no-semantics.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table",
+   "description": "trust_decision without score_semantics",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F32",
+   "file": "f32-td-bad-semantics.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table",
+   "description": "score_semantics \"probability\" is not in the 3.5 enum",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F33",
+   "file": "f33-td-guard-risk.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table",
+   "description": "guard_risk 1.5",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F34",
+   "file": "f34-td-set-size.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table",
+   "description": "set_size 1.5",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F35",
+   "file": "f35-td-commit-empty-shown.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r8",
+   "description": "A final COMMIT with an empty shown list",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F36",
+   "file": "f36-td-two-finals.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r6",
+   "description": "Two final decisions for the same utterance",
+   "failing_check": "FEP1-TD-FINAL"
+  },
+  {
+   "id": "F37",
+   "file": "f37-td-after-final.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r7",
+   "description": "A provisional decision after the final one of its utterance",
+   "failing_check": "FEP1-TD-FINAL"
+  },
+  {
+   "id": "F38",
+   "file": "f38-td-seq-back.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r5",
+   "description": "seq does not increase within a session",
+   "failing_check": "FEP1-TD-FINAL"
+  },
+  {
+   "id": "F39",
+   "file": "f39-log-mixed.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r4 / 6.2.1",
+   "description": "A file without a header that mixes trust_decision and frame lines",
+   "failing_check": "FEP1-KIND"
+  },
+  {
+   "id": "F40",
+   "file": "f40-v01-core-broken.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 Compatibility",
+   "description": "Valid FEP-0001 parts, but a frame breaks v0.1 (row does not sum to 1)",
+   "failing_check": "FEP1-V01-CORE"
+  }
+ ]
+}

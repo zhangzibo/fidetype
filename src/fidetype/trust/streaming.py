@@ -94,6 +94,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import logging
 import math
 import time
 from collections import OrderedDict
@@ -106,12 +107,16 @@ import numpy as np
 
 from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES, NeuralTextStream
 from fidetype.trust.conformal import PredictionSet
+from fidetype.trust.declaration import DECLARATION_KEY, compare_declaration, validate_declaration
 from fidetype.trust.frozen import FrozenTrustConfig
 from fidetype.trust.guard import GuardScore
 from fidetype.trust.policy import Action, Decision, DecisionPolicy, PolicyInputs, WordSlotInfo
 from fidetype.trust.types import NBest, from_lm_hypotheses
 
+log = logging.getLogger(__name__)
+
 Route = Literal["auto", "frames", "hypothesis"]
+DeclarationCheck = Literal["off", "warn", "abstain"]
 DecodeFn = Callable[[NeuralTextStream], NBest]
 
 #: Event kinds the layer reads. Others are ignored (spec 6.2 rule 5).
@@ -177,7 +182,7 @@ class StreamDecision:
         }
         if include_text:
             ev["shown"] = list(self.decision.shown_candidates)
-        for k in ("input", "t_signal_end", "latency_s", "ledger_decision_id"):
+        for k in ("input", "t_signal_end", "latency_s", "ledger_decision_id", "declaration"):
             if k in self.provenance:
                 ev[k] = self.provenance[k]
         return ev
@@ -217,10 +222,21 @@ class StreamingConfig:
     online_floor: bool = True
     #: Hash the raw stream of each final frame-route decision (SHA-256).
     fingerprint_streams: bool = True
+    #: Hypothesis route: compare the producer's ``decode_declaration`` (FEP-0001 section 4)
+    #: with the frozen configuration. ``"warn"`` (default): record the result in the
+    #: provenance and log a mismatch; the decision does not change. ``"abstain"``: a
+    #: mismatch gives ABSTAIN. ``"off"``: no check.
+    declaration_check: DeclarationCheck = "warn"
+    #: Treat a missing declaration as a mismatch (only with ``declaration_check`` on).
+    require_declaration: bool = False
+    #: Optional ``decoder``, ``decoder_version`` and ``params`` that the declaration must match.
+    expected_decoder: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
         if self.route not in ("auto", "frames", "hypothesis"):
             raise ValueError(f"unknown route {self.route!r}")
+        if self.declaration_check not in ("off", "warn", "abstain"):
+            raise ValueError(f"unknown declaration_check {self.declaration_check!r}")
         if self.max_frames < 1 or self.max_sessions < 1 or self.max_attempts < 1:
             raise ValueError("max_frames, max_sessions and max_attempts must be >= 1")
         if self.partial_every_frames is not None and self.partial_every_frames < 1:
@@ -255,6 +271,8 @@ class _Session:
     tickets: "OrderedDict[int, Any]" = field(default_factory=OrderedDict)
     ledger_context: str | None = None
     ledger_ids: dict[int, str] = field(default_factory=dict)
+    #: Declaration mismatches already logged (one log line per session and mismatch).
+    decl_warned: set = field(default_factory=set)
 
     @property
     def has_input(self) -> bool:
@@ -558,6 +576,10 @@ class StreamingTrustLayer:
         b = ev["blank_id"]
         if b is not None and (isinstance(b, bool) or not isinstance(b, int) or not 0 <= b < len(vocab)):
             raise StreamEventError(f"blank_id must be null or an integer in 0..{len(vocab) - 1}, not {b!r}")
+        if DECLARATION_KEY in ev:
+            errs = validate_declaration(ev[DECLARATION_KEY])
+            if errs:
+                raise StreamEventError("; ".join(errs) + " (FEP-0001 section 4)")
         s.reset_stream()
         s.header = {k: v for k, v in ev.items() if k != "type"}
         s.V = len(vocab)
@@ -603,6 +625,10 @@ class StreamingTrustLayer:
         if not isinstance(hid, str) or not isinstance(ev.get("is_final"), bool):
             raise StreamEventError("hypothesis needs a string id and a boolean is_final")
         nb = nbest_from_hypothesis(ev)
+        if DECLARATION_KEY in ev:
+            errs = validate_declaration(ev[DECLARATION_KEY])
+            if errs:
+                raise StreamEventError("; ".join(errs) + " (FEP-0001 section 4)")
         if self.route != "hypothesis":
             s.ignored_events += 1
             return []
@@ -714,7 +740,10 @@ class StreamingTrustLayer:
         thr = getattr(getattr(policy, "config", None), "commit_p", None)
         q = s.quality
         msq = self.streaming.min_signal_quality
-        if msq is not None and q is not None and q < msq:
+        decl = self._declaration(s) if route == "hypothesis" else None
+        if decl is not None and decl["status"] == "mismatch" and self.streaming.declaration_check == "abstain":
+            d = Decision(Action.ABSTAIN, (), "decode declaration mismatch: " + "; ".join(decl["mismatches"]))
+        elif msq is not None and q is not None and q < msq:
             d = Decision(Action.ABSTAIN, (), f"signal quality {q:.2f} < {msq:.2f}")
         elif s.online_policy is not None and final:
             d, ticket = s.online_policy.decide(inputs, final_attempt=final_attempt)
@@ -724,11 +753,12 @@ class StreamingTrustLayer:
             d = s.controller.apply(policy).decide(inputs, final_attempt=final_attempt)
         else:
             d = policy.decide(inputs, final_attempt=final_attempt)
-        return self._emit(s, d, inputs, g, final, final_attempt, route, ref, t0, ticket, stream, thr)
+        return self._emit(s, d, inputs, g, final, final_attempt, route, ref, t0, ticket, stream, thr, decl)
 
     def _emit(self, s: _Session, d: Decision, inputs: PolicyInputs, g: GuardScore | None, final: bool,
               final_attempt: bool, route: str, ref: dict[str, Any], t0: float, ticket: Any,
-              stream: NeuralTextStream | None = None, threshold: float | None = None) -> StreamDecision:
+              stream: NeuralTextStream | None = None, threshold: float | None = None,
+              declaration: dict[str, Any] | None = None) -> StreamDecision:
         h = s.header or {}
         lat = self.clock() - t0
         prov: dict[str, Any] = {
@@ -744,6 +774,8 @@ class StreamingTrustLayer:
             "commit_threshold": _json_num(threshold) if threshold is not None else None,
             "latency_s": lat,
         }
+        if declaration is not None:
+            prov["declaration"] = declaration
         tr = ref.get("t_range")
         if tr:
             prov["t_signal_end"] = tr[1]
@@ -762,6 +794,37 @@ class StreamingTrustLayer:
                     s.online_policy.feedback(old, None)
             s.attempt = s.attempt + 1 if d.action == Action.ASK else 0
         return sd
+
+    def _declaration(self, s: _Session) -> dict[str, Any] | None:
+        """The decode-declaration check of the current hypothesis (FEP-0001 section 4)."""
+        mode = self.streaming.declaration_check
+        if mode == "off":
+            return None
+        ev = s.hyp or {}
+        if DECLARATION_KEY in ev:
+            decl, where = ev[DECLARATION_KEY], "hypothesis"
+        elif DECLARATION_KEY in (s.header or {}):
+            decl, where = (s.header or {})[DECLARATION_KEY], "header"
+        else:
+            if not self.streaming.require_declaration:
+                return {"status": "absent", "mode": mode}
+            mism = ["no decode_declaration (required by this layer)"]
+            self._warn_declaration(s, mism)
+            return {"status": "mismatch", "mode": mode, "mismatches": mism}
+        mism = compare_declaration(decl, self.config_id, self.config.frame_temperature, self.streaming.expected_decoder)
+        rec: dict[str, Any] = {"status": "mismatch" if mism else "match", "mode": mode, "where": where,
+                               "decoder": decl.get("decoder")}
+        if mism:
+            rec["mismatches"] = mism
+            self._warn_declaration(s, mism)
+        return rec
+
+    def _warn_declaration(self, s: _Session, mism: list[str]) -> None:
+        key = tuple(mism)
+        if key not in s.decl_warned:  # once per session and mismatch
+            s.decl_warned.add(key)
+            log.warning("session %s: decode declaration does not match trust config %s: %s",
+                        s.id, self.config_id, "; ".join(mism))
 
     # --- provenance ledger ----------------------------------------------------
 

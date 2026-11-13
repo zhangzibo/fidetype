@@ -1,0 +1,289 @@
+{
+ "schema": "fidetype.conformance.lsl-scenario/1",
+ "kind": "inlet",
+ "fep": "FEP-0002",
+ "description": "loss and reconnect",
+ "route": "frames",
+ "inlets": {
+  "primary": {
+   "info_xml": "<info><name>acme.nts</name><type>NTS</type><channel_count>28</channel_count><channel_format>float32</channel_format><source_id>acme-1</source_id><nominal_srate>8.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1</uid><hostname /><desc><channels><channel><label>&lt;blank&gt;</label><unit>log_prob</unit></channel><channel><label>a</label><unit>log_prob</unit></channel><channel><label>b</label><unit>log_prob</unit></channel><channel><label>c</label><unit>log_prob</unit></channel><channel><label>d</label><unit>log_prob</unit></channel><channel><label>e</label><unit>log_prob</unit></channel><channel><label>f</label><unit>log_prob</unit></channel><channel><label>g</label><unit>log_prob</unit></channel><channel><label>h</label><unit>log_prob</unit></channel><channel><label>i</label><unit>log_prob</unit></channel><channel><label>j</label><unit>log_prob</unit></channel><channel><label>k</label><unit>log_prob</unit></channel><channel><label>l</label><unit>log_prob</unit></channel><channel><label>m</label><unit>log_prob</unit></channel><channel><label>n</label><unit>log_prob</unit></channel><channel><label>o</label><unit>log_prob</unit></channel><channel><label>p</label><unit>log_prob</unit></channel><channel><label>q</label><unit>log_prob</unit></channel><channel><label>r</label><unit>log_prob</unit></channel><channel><label>s</label><unit>log_prob</unit></channel><channel><label>t</label><unit>log_prob</unit></channel><channel><label>u</label><unit>log_prob</unit></channel><channel><label>v</label><unit>log_prob</unit></channel><channel><label>w</label><unit>log_prob</unit></channel><channel><label>x</label><unit>log_prob</unit></channel><channel><label>y</label><unit>log_prob</unit></channel><channel><label>z</label><unit>log_prob</unit></channel><channel><label> </label><unit>log_prob</unit></channel></channels><fidetype><nts_header>{\"spec_version\": \"0.1\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"conformance-vector\", \"frame_period\": 0.125, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"other\", \"decoder.name\": \"conformance-vector\", \"decoder.version\": \"1\", \"decoder.causal\": true, \"data.derived\": true, \"language\": \"en\"}}</nts_header><values>log_probs</values><role>nts_frames</role><binding>nts-lsl/0.1</binding><events_source_id>acme-1.events</events_source_id></fidetype></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [
+      [
+       -2.7492763996124268,
+       -11.942444801330566,
+       -5.994916915893555,
+       -7.966653823852539,
+       -7.736413478851318,
+       -7.2623090744018555,
+       -10.871087074279785,
+       -7.294979572296143,
+       -8.561540603637695,
+       -0.18511565029621124,
+       -6.379541397094727,
+       -7.536376476287842,
+       -7.3936896324157715,
+       -8.167207717895508,
+       -8.941415786743164,
+       -7.6127166748046875,
+       -5.867223739624023,
+       -7.308221817016602,
+       -4.915597438812256,
+       -7.230719089508057,
+       -6.782595634460449,
+       -3.7394728660583496,
+       -5.740903854370117,
+       -7.841572284698486,
+       -7.1967926025390625,
+       -5.750064373016357,
+       -2.9609386920928955,
+       -7.370355129241943
+      ],
+      [
+       -4.855251312255859,
+       -2.36350679397583,
+       -6.141053676605225,
+       -4.951574325561523,
+       -2.6030561923980713,
+       -3.2074339389801025,
+       -4.185100555419922,
+       -3.0279252529144287,
+       -10.024458885192871,
+       -2.3255202770233154,
+       -6.287423610687256,
+       -7.705373764038086,
+       -3.8152425289154053,
+       -2.9670443534851074,
+       -5.257668972015381,
+       -6.5209455490112305,
+       -4.315884113311768,
+       -4.473628520965576,
+       -1.5569376945495605,
+       -2.8733179569244385,
+       -3.9805026054382324,
+       -2.1448676586151123,
+       -4.77918004989624,
+       -6.219933032989502,
+       -3.2000174522399902,
+       -3.203057289123535,
+       -4.797791957855225,
+       -5.933751106262207
+      ],
+      [
+       -4.355483055114746,
+       -9.801579475402832,
+       -3.4335412979125977,
+       -3.831054210662842,
+       -8.09150505065918,
+       -4.691083908081055,
+       -6.741990089416504,
+       -3.2993485927581787,
+       -8.882124900817871,
+       -6.64277982711792,
+       -3.3946309089660645,
+       -2.500988721847534,
+       -9.129801750183105,
+       -5.80987024307251,
+       -4.157750606536865,
+       -6.032223224639893,
+       -1.6325103044509888,
+       -7.196244239807129,
+       -4.104726791381836,
+       -6.910601615905762,
+       -2.0018649101257324,
+       -4.857093334197998,
+       -5.558291912078857,
+       -8.250160217285156,
+       -1.4501396417617798,
+       -3.3082334995269775,
+       -3.3066630363464355,
+       -2.5380282402038574
+      ]
+     ],
+     "timestamps": [
+      100.0,
+      100.125,
+      100.25
+     ]
+    },
+    "lost"
+   ]
+  },
+  "primary_after_reconnect": {
+   "info_xml": "<info><name>acme.nts</name><type>NTS</type><channel_count>28</channel_count><channel_format>float32</channel_format><source_id>acme-1</source_id><nominal_srate>8.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1</uid><hostname /><desc><channels><channel><label>&lt;blank&gt;</label><unit>log_prob</unit></channel><channel><label>a</label><unit>log_prob</unit></channel><channel><label>b</label><unit>log_prob</unit></channel><channel><label>c</label><unit>log_prob</unit></channel><channel><label>d</label><unit>log_prob</unit></channel><channel><label>e</label><unit>log_prob</unit></channel><channel><label>f</label><unit>log_prob</unit></channel><channel><label>g</label><unit>log_prob</unit></channel><channel><label>h</label><unit>log_prob</unit></channel><channel><label>i</label><unit>log_prob</unit></channel><channel><label>j</label><unit>log_prob</unit></channel><channel><label>k</label><unit>log_prob</unit></channel><channel><label>l</label><unit>log_prob</unit></channel><channel><label>m</label><unit>log_prob</unit></channel><channel><label>n</label><unit>log_prob</unit></channel><channel><label>o</label><unit>log_prob</unit></channel><channel><label>p</label><unit>log_prob</unit></channel><channel><label>q</label><unit>log_prob</unit></channel><channel><label>r</label><unit>log_prob</unit></channel><channel><label>s</label><unit>log_prob</unit></channel><channel><label>t</label><unit>log_prob</unit></channel><channel><label>u</label><unit>log_prob</unit></channel><channel><label>v</label><unit>log_prob</unit></channel><channel><label>w</label><unit>log_prob</unit></channel><channel><label>x</label><unit>log_prob</unit></channel><channel><label>y</label><unit>log_prob</unit></channel><channel><label>z</label><unit>log_prob</unit></channel><channel><label> </label><unit>log_prob</unit></channel></channels><fidetype><nts_header>{\"spec_version\": \"0.1\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"conformance-vector\", \"frame_period\": 0.125, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"other\", \"decoder.name\": \"conformance-vector\", \"decoder.version\": \"1\", \"decoder.causal\": true, \"data.derived\": true, \"language\": \"en\"}}</nts_header><values>log_probs</values><role>nts_frames</role><binding>nts-lsl/0.1</binding><events_source_id>acme-1.events</events_source_id></fidetype></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [
+      [
+       -6.5554094314575195,
+       -5.601261615753174,
+       -1.9243792295455933,
+       -3.9335317611694336,
+       -8.534622192382812,
+       -5.262233734130859,
+       -6.498754501342773,
+       -4.954564094543457,
+       -8.468202590942383,
+       -4.768283367156982,
+       -4.781065464019775,
+       -2.1005752086639404,
+       -4.618536949157715,
+       -4.230733871459961,
+       -8.23806095123291,
+       -0.746368944644928,
+       -9.083118438720703,
+       -3.0482234954833984,
+       -5.911635398864746,
+       -7.013120174407959,
+       -6.56439733505249,
+       -6.595856666564941,
+       -4.491448879241943,
+       -5.471944808959961,
+       -2.286684989929199,
+       -8.911035537719727,
+       -5.257988929748535,
+       -7.035938739776611
+      ],
+      [
+       -3.1864397525787354,
+       -8.974303245544434,
+       -5.425571918487549,
+       -4.317837715148926,
+       -7.70672082901001,
+       -2.767752170562744,
+       -4.380756378173828,
+       -2.7244699001312256,
+       -2.8198137283325195,
+       -6.697892665863037,
+       -6.333775043487549,
+       -5.144848346710205,
+       -3.2422640323638916,
+       -3.0362489223480225,
+       -6.157553195953369,
+       -5.952577590942383,
+       -6.333829402923584,
+       -5.906660079956055,
+       -5.2140302658081055,
+       -5.0018134117126465,
+       -0.6219545006752014,
+       -5.750990867614746,
+       -5.315632343292236,
+       -3.821027994155884,
+       -6.644331455230713,
+       -5.475437641143799,
+       -4.711546421051025,
+       -3.1898915767669678
+      ],
+      [
+       -8.326993942260742,
+       -2.9520254135131836,
+       -6.399878978729248,
+       -5.356131553649902,
+       -4.000787734985352,
+       -4.373378276824951,
+       -3.576500654220581,
+       -5.348568916320801,
+       -5.734190940856934,
+       -5.062007427215576,
+       -7.686395168304443,
+       -3.266589641571045,
+       -7.245736598968506,
+       -8.215452194213867,
+       -1.5821467638015747,
+       -5.967854022979736,
+       -8.053214073181152,
+       -1.9904248714447021,
+       -6.354389667510986,
+       -3.570812702178955,
+       -7.353941917419434,
+       -6.192524433135986,
+       -9.072023391723633,
+       -9.512843132019043,
+       -7.647833347320557,
+       -5.8510422706604,
+       -4.098992824554443,
+       -0.8425233364105225
+      ],
+      [
+       -6.463221549987793,
+       -2.3814148902893066,
+       -5.608177185058594,
+       -4.704554080963135,
+       -7.361878871917725,
+       -7.357466697692871,
+       -5.956416606903076,
+       -6.785716533660889,
+       -4.406604290008545,
+       -5.8045244216918945,
+       -1.8981012105941772,
+       -4.093455791473389,
+       -4.069018840789795,
+       -2.1246249675750732,
+       -3.3632707595825195,
+       -4.474161148071289,
+       -4.580942153930664,
+       -4.641392707824707,
+       -2.246051549911499,
+       -2.8333241939544678,
+       -3.6676595211029053,
+       -2.8018367290496826,
+       -5.488562107086182,
+       -3.3774497509002686,
+       -7.224162578582764,
+       -1.7049542665481567,
+       -4.2193989753723145,
+       -4.03270959854126
+      ]
+     ],
+     "timestamps": [
+      102.0,
+      102.125,
+      102.25,
+      102.375
+     ]
+    }
+   ]
+  },
+  "events": {
+   "info_xml": "<info><name>acme.nts.events</name><type>Markers</type><channel_count>1</channel_count><channel_format>string</channel_format><source_id>acme-1.events</source_id><nominal_srate>0.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1.events</uid><hostname /><desc><fidetype><nts_header>{\"spec_version\": \"0.1\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"conformance-vector\", \"frame_period\": 0.125, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"other\", \"decoder.name\": \"conformance-vector\", \"decoder.version\": \"1\", \"decoder.causal\": true, \"data.derived\": true, \"language\": \"en\"}}</nts_header><role>nts_events</role><binding>nts-lsl/0.1</binding><frames_source_id>acme-1</frames_source_id><event_clock>lsl</event_clock></fidetype></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [],
+     "timestamps": []
+    },
+    {
+     "samples": [],
+     "timestamps": []
+    },
+    {
+     "samples": [],
+     "timestamps": []
+    },
+    {
+     "samples": [
+      [
+       "{\"type\": \"segment_end\", \"t\": 102.385}"
+      ]
+     ],
+     "timestamps": [
+      102.385
+     ]
+    },
+    {
+     "samples": [
+      [
+       "{\"type\": \"end\"}"
+      ]
+     ],
+     "timestamps": [
+      102.395
+     ]
+    }
+   ]
+  }
+ }
+}

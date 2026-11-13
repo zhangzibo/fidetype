@@ -15,6 +15,12 @@ Sub-commands:
     Writes the golden vectors and ``manifest.json``.
 ``list [--markdown]``
     Lists every check with its level, keyword and spec clause.
+
+Opt-in FEP profiles (``fep-0001``, ``fep-0002``; see
+:mod:`fidetype.conformance.profiles`): add ``--profile NAME`` to any
+sub-command. ``--profile NAME`` alone runs the reference consumer of the
+profile over its golden vectors (``spec/conformance/<NAME>/``). Without
+``--profile`` nothing changes.
 """
 
 from __future__ import annotations
@@ -28,6 +34,7 @@ from typing import Any, Sequence
 
 from fidetype.conformance import check_adapter, check_file
 from fidetype.conformance.checks import LEVELS, check_table
+from fidetype.conformance.profiles import PROFILE_NAMES, get_profile, profile_report, profile_summary
 from fidetype.conformance.report import build_report, summary_text
 
 STREAM_SUFFIXES = (".npz", ".jsonl", ".ndjson")
@@ -60,7 +67,30 @@ def _write_json(obj: Any, out: str) -> None:
         Path(out).write_text(text + "\n", encoding="utf-8")
 
 
+def _profile_targets(prof, specs: Sequence[str]) -> list:
+    reports = []
+    for t in specs:
+        p = Path(t)
+        if p.is_dir():
+            files = sorted(f for f in p.iterdir() if f.suffix.lower() in prof.stream_suffixes)
+            if not files:
+                raise SystemExit(f"no {'/'.join(prof.stream_suffixes)} files in {p}")
+            reports += [prof.check_file(f) for f in files]
+        elif p.exists():
+            reports.append(prof.check_file(p))
+        else:
+            raise SystemExit(f"no such file: {t}")
+    return reports
+
+
 def cmd_check(a: argparse.Namespace) -> int:
+    if a.profile:
+        prof = get_profile(a.profile)
+        report = profile_report(prof, _profile_targets(prof, a.targets))
+        if a.json:
+            _write_json(report, a.json)
+        print(profile_summary(report, verbose=a.verbose), file=sys.stderr if a.json == "-" else sys.stdout)
+        return 0 if report["ok"] else 1
     truth = None
     if a.truth:
         truth = [ln.strip() for ln in Path(a.truth).read_text(encoding="utf-8").splitlines() if ln.strip()]
@@ -83,23 +113,30 @@ def cmd_consumer(a: argparse.Namespace) -> int:
     from fidetype.conformance.io import load_stream
     from fidetype.conformance.vectors import command_consumer, run_consumer
 
+    prof = get_profile(a.profile) if a.profile else None
+    vectors = a.vectors or (prof.vectors_dir() if prof else None)
     if a.cmd:
         consume, name = command_consumer(a.cmd), a.cmd
     elif a.impl:
         consume, name = _load_impl(a.impl), a.impl
+    elif prof is not None:
+        consume, name = prof.consume, f"{prof.module.__name__}:consume (reference)"
     else:
         consume, name = load_stream, "fidetype.conformance.io:load_stream (reference)"
-    outcomes = run_consumer(consume, a.vectors)
+    outcomes = run_consumer(consume, vectors)
     n_ok = sum(o.ok for o in outcomes)
     rep = {"schema": "fidetype.conformance.consumer-report/1", "consumer": name, "passed": n_ok, "total": len(outcomes),
            "ok": n_ok == len(outcomes), "vectors": [o.to_dict() for o in outcomes]}
+    if prof is not None:
+        rep["profile"] = prof.name
     if a.json:
         _write_json(rep, a.json)
     out = sys.stderr if a.json == "-" else sys.stdout
     for o in outcomes:
         if not o.ok:
             print(f"  FAIL {o.vid}: expected {o.expect}, got {o.actual}. {o.detail}", file=out)
-    print(f"[NeuralTextStream v0.1 consumer conformance: {'PASS' if rep['ok'] else 'FAIL'}] "
+    what = f"{prof.fep} profile {prof.name}" if prof is not None else "NeuralTextStream v0.1"
+    print(f"[{what} consumer conformance: {'PASS' if rep['ok'] else 'FAIL'}] "
           f"{n_ok}/{len(outcomes)} golden vectors", file=out)
     return 0 if rep["ok"] else 1
 
@@ -107,12 +144,23 @@ def cmd_consumer(a: argparse.Namespace) -> int:
 def cmd_vectors(a: argparse.Namespace) -> int:
     from fidetype.conformance.vectors import write_vectors
 
-    m = write_vectors(a.out)
+    m = get_profile(a.profile).write_vectors(a.out) if a.profile else write_vectors(a.out)
     print(f"wrote {len(m['vectors'])} vectors and manifest.json to {a.out}")
     return 0
 
 
 def cmd_list(a: argparse.Namespace) -> int:
+    if a.profile:
+        prof = get_profile(a.profile)
+        if a.markdown:
+            print("| Id | Keyword | FEP clause | Check |")
+            print("|---|---|---|---|")
+        for c in prof.checks:
+            if a.markdown:
+                print(f"| `{c['id']}` | {c['keyword']} | {prof.fep} {c['clause']} | {c['title']} |")
+            else:
+                print(f"{c['id']:<16} {c['keyword']:<5} {prof.fep + ' ' + c['clause']:<26} {c['title']}")
+        return 0
     rows = check_table()
     if a.markdown:
         print("| Id | Level | Keyword | Spec clause | Check |")
@@ -129,7 +177,9 @@ def cmd_list(a: argparse.Namespace) -> int:
 def main(argv: Sequence[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="python -m fidetype.conformance",
                                 description="NeuralTextStream v0.1 conformance suite")
-    sub = p.add_subparsers(dest="cmd_name", required=True)
+    p.add_argument("--profile", dest="top_profile", choices=PROFILE_NAMES,
+                   help="opt-in FEP profile; alone, runs the profile's reference consumer over its golden vectors")
+    sub = p.add_subparsers(dest="cmd_name")
     c = sub.add_parser("check", help="check stream files or adapters (producer conformance)")
     c.add_argument("targets", nargs="+", help="stream file, directory, adapter:<name> or adapter:all")
     c.add_argument("--level", choices=LEVELS, default="core", help="level that every target must reach (default core)")
@@ -150,7 +200,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     ls = sub.add_parser("list", help="list all checks")
     ls.add_argument("--markdown", action="store_true")
     ls.set_defaults(func=cmd_list)
+    for sp in (c, k, v, ls):
+        sp.add_argument("--profile", choices=PROFILE_NAMES, help="opt-in FEP profile (fep-0001, fep-0002)")
     a = p.parse_args(argv)
+    if a.cmd_name is None:
+        if not a.top_profile:
+            p.error("give a sub-command, or --profile NAME")
+        a = p.parse_args([*(argv or []), "consumer"]) if argv is not None else p.parse_args([*sys.argv[1:], "consumer"])
+    a.profile = getattr(a, "profile", None) or a.top_profile
     return a.func(a)
 
 

@@ -111,15 +111,58 @@ Latency: hypothesis route p50 0.44 ms, p95 0.63 ms. Frames route with a fresh de
 
 The benchmark v0.1 NTS files round log-probs to 6 decimals. With them, p_top1 moves by at most 3.4e-8. No action changed, but exact `==` equality then fails on most trials. Exact replay needs full-precision values.
 
-> **Our take:** the frozen config file is enough to rebuild the paper's split-A row in a streaming consumer, bit for bit. It is valid only with the decode_fn it was fitted with. On the hypothesis route the producer must apply the frozen frame temperature, and the layer cannot check this. A future spec field could declare it.
+> **Our take:** the frozen config file is enough to rebuild the paper's split-A row in a streaming consumer, bit for bit. It is valid only with the decode_fn it was fitted with. On the hypothesis route the producer must apply the frozen frame temperature. M4-07 added a declaration for this (next sections).
 
 ## Spec additions (proposal, not breaking v0.1)
-[FEP-0001](../../spec/feps/0001-streaming-trust-events.md) proposes three Development parts: a `segment_end` event (open question 5 of the spec), optional evidence fields on hypothesis items (`char_confidences`, `logp_acoustic`, `logp_lm`) so that the guard works on the hypothesis route, and a `trust_decision` output event with the rule "do not act on `is_final = false`". A v0.1 consumer ignores all three.
+[FEP-0001](../../spec/feps/0001-streaming-trust-events.md) (status Draft) proposes four Development parts. A v0.1 consumer ignores all four.
+
+| Part | What it does |
+|---|---|
+| `segment_end` event | Closes an utterance (open question 5 of the spec). `t` must not be before the last frame |
+| Evidence fields on hypothesis items | `char_confidences` (one value per Unicode code point), `logp_acoustic`, `logp_lm` (<= 0). The guard then works on the hypothesis route |
+| `trust_decision` output event | Rule 1: "do not act on `is_final = false`". Rules 5-8: `seq` increases per session; at most one final decision per utterance; no decision after it; a `COMMIT` with `shown` has a text |
+| `decode_declaration` (M4-07) | Header or hypothesis object: `decoder`, `decoder_version`, `frame_temperature` (default 1.0), `params`, `config_id` |
+
+## Decode declaration check (M4-07)
+The producer declares how it made the hypotheses. The layer compares the declaration with its frozen configuration.
+
+| Compared | Rule |
+|---|---|
+| `config_id` | If declared, it must equal the layer's config id |
+| `frame_temperature` | Must equal the frozen frame temperature (relative tolerance 1e-9). Absent means 1.0 |
+| `decoder`, `decoder_version`, `params` | Must match `StreamingConfig.expected_decoder`, if the layer sets it (`params`: every expected key) |
+
+`StreamingConfig` settings:
+
+| Setting | Default | Effect |
+|---|---|---|
+| `declaration_check` | `"warn"` | `warn`: record `status` (`match` / `mismatch` / `absent`) in the provenance and in `trust_decision.declaration`; log a mismatch once per session; the decision does not change. `abstain`: a mismatch gives ABSTAIN. `off`: no check |
+| `require_declaration` | `False` | A missing declaration counts as a mismatch |
+| `expected_decoder` | `None` | Decoder id, version and parameters that must match |
+
+- A declaration on a hypothesis replaces the header declaration for that event.
+- The frames route ignores the declaration: there the layer decodes itself.
+- A malformed declaration is a `StreamEventError`.
+- The default (`warn`) does not change any decision. All earlier tests still pass.
+
+> **Our take:** the declaration is a claim of the producer. It catches configuration mistakes (a wrong temperature, a config for another decoder). It does not stop a dishonest producer. For a deployment we suggest `declaration_check="abstain"` with `require_declaration=True`.
+
+## Conformance profile `fep-0001` (M4-07)
+An opt-in profile of the [conformance suite](conformance-suite.md) tests every FEP-0001 rule. It has 10 checks and 40 golden vectors (12 accept, 28 reject) in `spec/conformance/fep-0001/`.
+
+```bash
+fidetype conformance --profile fep-0001                        # reference consumer over the 40 vectors
+fidetype conformance check --profile fep-0001 decisions.jsonl  # check an input stream or a decision log
+```
+
+- Input streams (header first) must also pass the v0.1 core level.
+- For a decision log, the reference consumer returns `acted`: `shown[0]` of each final `COMMIT`. Vector F23 has a provisional `COMMIT` and then a final `ABSTAIN`. A conforming consumer acts on nothing.
+- A test runs the layer on synthetic streams (both routes, provisional decisions, ASK and retry) and checks its decision log with the profile: no failure.
 
 ## Limits and follow-ups
 - The frames route decodes the whole utterance at its end. A truly incremental decoder (prefix beam state carried across frames) is M4-01 (causal mode).
 - Real-data frozen configs exist for one participant and one split only (M4-06, B2T '25 split A). Each new user and session needs its own fit.
-- FEP-0001 needs conformance checks and golden vectors (follow-up M4-07).
+- FEP-0001 conformance is done (M4-07, profile `fep-0001`). The FEP stays Draft until review.
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.
 
 ## Related

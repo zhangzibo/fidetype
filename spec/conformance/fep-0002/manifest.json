@@ -1,0 +1,436 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "0.1",
+ "profile": "fep-0002",
+ "fep": "FEP-0002",
+ "generator": "python -m fidetype.conformance vectors --profile fep-0002",
+ "how_to_use": "FEP-0002 profile. Each vector is a JSON scenario (schema fidetype.conformance.lsl-scenario/1): LSL stream infos as XML, scripted chunks (samples + LSL timestamps, or \"lost\"), the clock correction and the consumer settings. Feed the scripts to your LSL consumer as if they came from liblsl inlets. In numeric samples null = -inf and \"NaN\" = NaN. A conforming consumer accepts exactly the vectors with expect = accept and, for those, gives the values in 'expected' (see FEP-0002 section 10 for their meaning).",
+ "vectors": [
+  {
+   "id": "L01",
+   "file": "l01-native-float32.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 3-6",
+   "description": "NTS-native float32 frames + events stream; receiver clock adds time_correction 0.25 s",
+   "expected": {
+    "clock_domain": "lsl",
+    "binding": "nts-lsl/0.1",
+    "vocab_size": 28,
+    "frames": 6,
+    "first_frame_t": 100.25,
+    "event_types": {
+     "end": 1,
+     "frame": 6,
+     "header": 1,
+     "segment_end": 1
+    },
+    "final_decisions": 1,
+    "marker_lsl_t": [
+     100.885,
+     100.895
+    ]
+   }
+  },
+  {
+   "id": "L02",
+   "file": "l02-native-double64-exact.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 3 r4",
+   "description": "double64 frames: the received rows are bit-equal to the sent rows (rows_sha256 over float64 little-endian)",
+   "expected": {
+    "frames": 6,
+    "rows_sha256": "ef4f5eb706bb0f7bcc4797e65b74a497bc123caf7c3666e8698f3b777b9c10a4",
+    "final_decisions": 1
+   }
+  },
+  {
+   "id": "L03",
+   "file": "l03-no-binding-key.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 9 r2",
+   "description": "No binding key: the consumer assumes nts-lsl/0.1",
+   "expected": {
+    "binding": "nts-lsl/0.1",
+    "final_decisions": 1
+   }
+  },
+  {
+   "id": "L04",
+   "file": "l04-minus-inf-cells.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 3 r5",
+   "description": "float32 frames with -inf cells (JSON null in the vector)",
+   "expected": {
+    "frames": 4,
+    "neg_inf_cells": 4
+   }
+  },
+  {
+   "id": "L05",
+   "file": "l05-sender-clock.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 6 r3",
+   "description": "Consumer setting clock = sender: raw LSL timestamps",
+   "expected": {
+    "first_frame_t": 100.0,
+    "clock_domain": "lsl"
+   }
+  },
+  {
+   "id": "L06",
+   "file": "l06-gap-mark.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 7",
+   "description": "A frame step of 0.75 s (> 2.5 periods of 0.125 s); on_gap = mark",
+   "expected": {
+    "gaps": 1,
+    "final_decisions": 1,
+    "event_types": {
+     "end": 1,
+     "frame": 6,
+     "gap": 1,
+     "header": 1,
+     "segment_end": 1
+    }
+   }
+  },
+  {
+   "id": "L07",
+   "file": "l07-gap-segment.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 7",
+   "description": "A frame step of 0.75 s (> 2.5 periods of 0.125 s); on_gap = segment",
+   "expected": {
+    "gaps": 1,
+    "final_decisions": 2
+   }
+  },
+  {
+   "id": "L08",
+   "file": "l08-gap-abort.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 7",
+   "description": "A frame step of 0.75 s (> 2.5 periods of 0.125 s); on_gap = abort",
+   "expected": {
+    "gaps": 1,
+    "final_decisions": 1,
+    "aborted_utterances": 1
+   }
+  },
+  {
+   "id": "L09",
+   "file": "l09-out-of-order.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 6 r4",
+   "description": "One timestamp 1 ms back (clamped) and one 50 ms back (dropped); tolerance 5 ms",
+   "expected": {
+    "frames": 5,
+    "clamped": 1,
+    "dropped_out_of_order": 1
+   }
+  },
+  {
+   "id": "L10",
+   "file": "l10-loss-reconnect.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 7 r3",
+   "description": "The frames stream is lost inside an utterance and comes back: no decision on the cut utterance",
+   "expected": {
+    "aborted_utterances": 1,
+    "reconnects": 1,
+    "final_decisions": 1,
+    "frames": 7,
+    "event_types": {
+     "end": 1,
+     "frame": 7,
+     "header": 2,
+     "segment_end": 1
+    }
+   }
+  },
+  {
+   "id": "L11",
+   "file": "l11-hypothesis-lsl-clock.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 6 r5",
+   "description": "Hypothesis-only producer (primary = Markers); event_clock lsl: t_start / t_end get the clock correction",
+   "expected": {
+    "hypothesis_times": [
+     [
+      100.25,
+      100.5
+     ],
+     [
+      100.25,
+      100.75
+     ]
+    ],
+    "decisions": 2,
+    "final_decisions": 1,
+    "event_clock": "lsl",
+    "marker_lsl_t": [
+     100.85,
+     100.95,
+     101.05
+    ]
+   }
+  },
+  {
+   "id": "L12",
+   "file": "l12-hypothesis-source-clock.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 6 r5",
+   "description": "Same, event_clock absent (source): the time fields inside the JSON stay as sent",
+   "expected": {
+    "hypothesis_times": [
+     [
+      5.0,
+      5.25
+     ],
+     [
+      5.0,
+      5.5
+     ]
+    ],
+    "final_decisions": 1,
+    "event_clock": "source"
+   }
+  },
+  {
+   "id": "L13",
+   "file": "l13-plain-markers.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 5 r3-r4",
+   "description": "Plain string markers: a boundary marker becomes segment_end; other plain strings and bad JSON are ignored",
+   "expected": {
+    "bad_markers": 1,
+    "ignored_markers": 1,
+    "final_decisions": 1,
+    "event_types": {
+     "end": 1,
+     "frame": 4,
+     "header": 1,
+     "segment_end": 1
+    }
+   }
+  },
+  {
+   "id": "L14",
+   "file": "l14-foreign-probs.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 3 r7 (informative)",
+   "description": "A foreign class-probability stream (no nts_header): vocab from labels, values = probs, vocab_type from the settings",
+   "expected": {
+    "vocab_size": 4,
+    "frames": 3,
+    "neg_inf_cells": 1,
+    "first_frame_t": 100.25,
+    "final_decisions": 0
+   }
+  },
+  {
+   "id": "L15",
+   "file": "l15-header-not-json.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 4 r1",
+   "description": "desc/fidetype/nts_header is not JSON",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L16",
+   "file": "l16-channel-count.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 3 r2",
+   "description": "27 channels for a 28-token vocab",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L17",
+   "file": "l17-int16-frames.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 3 r1",
+   "description": "An NTS-native frames stream in int16",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L18",
+   "file": "l18-labels-order.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 3 r3",
+   "description": "Channel labels are not in vocab order (two swapped)",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L19",
+   "file": "l19-unknown-binding.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 9 r3",
+   "description": "binding \"nts-lsl/9.0\" is not known",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L20",
+   "file": "l20-srate-mismatch.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 3 r6",
+   "description": "nominal_srate 10 Hz, frame_period 0.125 s",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L21",
+   "file": "l21-events-not-string.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 5 r1",
+   "description": "The events stream has channel format float32",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L22",
+   "file": "l22-nan-sample.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 3 r5",
+   "description": "A frame sample holds NaN",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L23",
+   "file": "l23-header-version.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 4 r2",
+   "description": "nts_header spec_version \"9.9\"",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L24",
+   "file": "l24-bad-values.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 4 r3",
+   "description": "desc/fidetype/values \"dB\" is not a known kind",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L25",
+   "file": "l25-bad-event-clock.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 6 r5",
+   "description": "event_clock \"gps\" is not lsl or source",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L26",
+   "file": "l26-decisions-valid.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 8",
+   "description": "fidetype.decisions stream: a provisional OFFER then a final COMMIT, with the lsl extension record",
+   "expected": {
+    "decisions": 2,
+    "final": 1,
+    "acted": [
+     "ab"
+    ]
+   }
+  },
+  {
+   "id": "L27",
+   "file": "l27-decisions-not-json.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 8 r2",
+   "description": "A decisions sample is not JSON",
+   "failing_check": "FEP2-DECISIONS"
+  },
+  {
+   "id": "L28",
+   "file": "l28-decisions-bad-event.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 8 r2",
+   "description": "A decisions sample has no is_final",
+   "failing_check": "FEP2-DECISIONS"
+  },
+  {
+   "id": "L29",
+   "file": "l29-decisions-float.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 8 r1",
+   "description": "The decisions stream has channel format float32",
+   "failing_check": "FEP2-DECISIONS"
+  },
+  {
+   "id": "L30",
+   "file": "l30-decisions-no-event-type.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 8 r1",
+   "description": "desc/fidetype/event_type is missing",
+   "failing_check": "FEP2-DECISIONS"
+  },
+  {
+   "id": "L31",
+   "file": "l31-decisions-two-finals.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 8 r2",
+   "description": "Two final decisions for one utterance",
+   "failing_check": "FEP2-DECISIONS"
+  }
+ ]
+}

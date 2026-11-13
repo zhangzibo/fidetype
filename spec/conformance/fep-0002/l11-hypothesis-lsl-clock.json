@@ -1,0 +1,45 @@
+{
+ "schema": "fidetype.conformance.lsl-scenario/1",
+ "kind": "inlet",
+ "fep": "FEP-0002",
+ "description": "hypothesis route, event_clock lsl",
+ "route": "hypothesis",
+ "inlets": {
+  "primary": {
+   "info_xml": "<info><name>acme.nts</name><type>Markers</type><channel_count>1</channel_count><channel_format>string</channel_format><source_id>acme-1</source_id><nominal_srate>0.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1</uid><hostname /><desc><fidetype><nts_header>{\"spec_version\": \"0.1\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"conformance-vector\", \"frame_period\": 0.125, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"other\", \"decoder.name\": \"conformance-vector\", \"decoder.version\": \"1\", \"decoder.causal\": true, \"data.derived\": true, \"language\": \"en\"}}</nts_header><role>nts_events</role><binding>nts-lsl/0.1</binding><frames_source_id>acme-1</frames_source_id><event_clock>lsl</event_clock></fidetype></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [
+      [
+       "{\"type\": \"hypothesis\", \"id\": \"h1\", \"is_final\": false, \"score_semantics\": \"none\", \"nbest\": [{\"text\": \"ab\", \"score\": -1.5}], \"t_start\": 100.0, \"t_end\": 100.25}"
+      ]
+     ],
+     "timestamps": [
+      100.6
+     ]
+    },
+    {
+     "samples": [
+      [
+       "{\"type\": \"hypothesis\", \"id\": \"h2\", \"revision_of\": \"h1\", \"is_final\": true, \"score_semantics\": \"none\", \"nbest\": [{\"text\": \"ab\", \"score\": -1.0, \"char_confidences\": [0.9, 0.8]}, {\"text\": \"a\", \"score\": -2.5}], \"t_start\": 100.0, \"t_end\": 100.5}"
+      ]
+     ],
+     "timestamps": [
+      100.7
+     ]
+    },
+    {
+     "samples": [
+      [
+       "{\"type\": \"end\"}"
+      ]
+     ],
+     "timestamps": [
+      100.8
+     ]
+    }
+   ]
+  }
+ }
+}

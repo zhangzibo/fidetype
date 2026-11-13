@@ -1,0 +1,13 @@
+{
+ "schema": "fidetype.conformance.lsl-scenario/1",
+ "kind": "decisions",
+ "fep": "FEP-0002",
+ "description": "no event_type",
+ "info_xml": "<info><name>fidetype.decisions</name><type>Markers</type><channel_count>1</channel_count><channel_format>string</channel_format><source_id>fidetype.decisions.tcfg-0123456789abcdef</source_id><nominal_srate>0.0</nominal_srate><created_at>0.0</created_at><uid>uid-fidetype.decisions.tcfg-0123456789abcdef</uid><hostname /><desc><fidetype><role>trust_decisions</role><spec>FEP-0001</spec><binding>nts-lsl/0.1</binding><config_id>tcfg-0123456789abcdef</config_id></fidetype></desc></info>",
+ "samples": [
+  "{\"type\": \"trust_decision\", \"session\": \"lsl\", \"seq\": 0, \"utterance\": 0, \"is_final\": true, \"action\": \"COMMIT\", \"shown\": [\"ab\"], \"p_top1\": 0.93, \"score_semantics\": \"calibrated_prob\", \"set_size\": 1, \"guard_risk\": 0.12, \"config_id\": \"tcfg-0123456789abcdef\", \"lsl\": {\"streams\": [{\"name\": \"acme.nts\", \"type\": \"NTS\", \"source_id\": \"acme-1\"}], \"clock\": \"receiver\", \"time_correction_s\": 0.25, \"updates\": 1, \"e2e_latency_s\": 0.0123}}"
+ ],
+ "timestamps": [
+  2000.0
+ ]
+}

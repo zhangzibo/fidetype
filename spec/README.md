@@ -23,6 +23,19 @@ python -m fidetype.conformance consumer --cmd "my-reader {path}"   # exit 0 = ac
 
 The golden vectors are in [`conformance/v0.1/`](conformance/v0.1/). Details: [wiki/concepts/conformance-suite.md](../wiki/concepts/conformance-suite.md).
 
+Opt-in profiles test draft FEPs on top of v0.1. They do not change the v0.1 levels or vectors:
+
+```bash
+fidetype conformance --profile fep-0001     # streaming trust events: vectors in conformance/fep-0001/
+fidetype conformance --profile fep-0002     # NTS over LSL: scenario vectors in conformance/fep-0002/
+```
+
+## Proposals (FEPs)
+| FEP | Title | Status | Conformance profile |
+|---|---|---|---|
+| [0001](feps/0001-streaming-trust-events.md) | Streaming trust events (`segment_end`, evidence fields, decode declaration, `trust_decision`) | Draft | `fep-0001` (40 vectors) |
+| [0002](feps/0002-nts-over-lsl.md) | NeuralTextStream over LSL (binding `nts-lsl/0.1`) | Draft | `fep-0002` (31 vectors) |
+
 ## Stability levels
 | Level | Meaning |
 |---|---|
@@ -43,6 +56,10 @@ spec/
   README.md                   this file
   neuraltextstream-v0.1.md    the NeuralTextStream spec
   conformance/v0.1/           golden test vectors (manifest.json + small synthetic .npz / .jsonl files)
+  conformance/fep-0001/       golden vectors of the opt-in FEP-0001 profile (.jsonl)
+  conformance/fep-0002/       golden vectors of the opt-in FEP-0002 profile (LSL scenarios, .json)
   feps/                       Fidetype Enhancement Proposals
     0000-template.md          the template for a new FEP
+    0001-streaming-trust-events.md
+    0002-nts-over-lsl.md
 ```

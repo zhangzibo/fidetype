@@ -1,0 +1,46 @@
+{
+ "schema": "fidetype.conformance.lsl-scenario/1",
+ "kind": "inlet",
+ "fep": "FEP-0002",
+ "description": "foreign probabilities",
+ "route": "hypothesis",
+ "consumer_settings": {
+  "values": "probs",
+  "vocab_type": "command"
+ },
+ "inlets": {
+  "primary": {
+   "info_xml": "<info><name>acme.probs</name><type>Probabilities</type><channel_count>4</channel_count><channel_format>float32</channel_format><source_id>acme-p</source_id><nominal_srate>4.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-p</uid><hostname /><desc><channels><channel><label>rest</label><unit>log_prob</unit></channel><channel><label>left</label><unit>log_prob</unit></channel><channel><label>right</label><unit>log_prob</unit></channel><channel><label>select</label><unit>log_prob</unit></channel></channels></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [
+      [
+       0.7,
+       0.1,
+       0.1,
+       0.1
+      ],
+      [
+       0.25,
+       0.25,
+       0.25,
+       0.25
+      ],
+      [
+       0.0,
+       0.5,
+       0.25,
+       0.25
+      ]
+     ],
+     "timestamps": [
+      100.0,
+      100.25,
+      100.5
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,1 @@
+{"type": "trust_decision", "session": "u1", "seq": 0, "utterance": 0, "is_final": true, "action": "COMMIT", "shown": ["ab"], "p_top1": 0.93, "set_size": 1, "guard_risk": 0.12, "config_id": "tcfg-0123456789abcdef"}

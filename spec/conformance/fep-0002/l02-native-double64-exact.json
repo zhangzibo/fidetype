@@ -1,0 +1,239 @@
+{
+ "schema": "fidetype.conformance.lsl-scenario/1",
+ "kind": "inlet",
+ "fep": "FEP-0002",
+ "description": "double64 frames, exact",
+ "route": "frames",
+ "inlets": {
+  "primary": {
+   "info_xml": "<info><name>acme.nts</name><type>NTS</type><channel_count>28</channel_count><channel_format>double64</channel_format><source_id>acme-1</source_id><nominal_srate>8.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1</uid><hostname /><desc><channels><channel><label>&lt;blank&gt;</label><unit>log_prob</unit></channel><channel><label>a</label><unit>log_prob</unit></channel><channel><label>b</label><unit>log_prob</unit></channel><channel><label>c</label><unit>log_prob</unit></channel><channel><label>d</label><unit>log_prob</unit></channel><channel><label>e</label><unit>log_prob</unit></channel><channel><label>f</label><unit>log_prob</unit></channel><channel><label>g</label><unit>log_prob</unit></channel><channel><label>h</label><unit>log_prob</unit></channel><channel><label>i</label><unit>log_prob</unit></channel><channel><label>j</label><unit>log_prob</unit></channel><channel><label>k</label><unit>log_prob</unit></channel><channel><label>l</label><unit>log_prob</unit></channel><channel><label>m</label><unit>log_prob</unit></channel><channel><label>n</label><unit>log_prob</unit></channel><channel><label>o</label><unit>log_prob</unit></channel><channel><label>p</label><unit>log_prob</unit></channel><channel><label>q</label><unit>log_prob</unit></channel><channel><label>r</label><unit>log_prob</unit></channel><channel><label>s</label><unit>log_prob</unit></channel><channel><label>t</label><unit>log_prob</unit></channel><channel><label>u</label><unit>log_prob</unit></channel><channel><label>v</label><unit>log_prob</unit></channel><channel><label>w</label><unit>log_prob</unit></channel><channel><label>x</label><unit>log_prob</unit></channel><channel><label>y</label><unit>log_prob</unit></channel><channel><label>z</label><unit>log_prob</unit></channel><channel><label> </label><unit>log_prob</unit></channel></channels><fidetype><nts_header>{\"spec_version\": \"0.1\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"conformance-vector\", \"frame_period\": 0.125, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"other\", \"decoder.name\": \"conformance-vector\", \"decoder.version\": \"1\", \"decoder.causal\": true, \"data.derived\": true, \"language\": \"en\"}}</nts_header><values>log_probs</values><role>nts_frames</role><binding>nts-lsl/0.1</binding><events_source_id>acme-1.events</events_source_id></fidetype></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [
+      [
+       -3.4003628037209293,
+       -2.4482949008481847,
+       -3.430657035483727,
+       -6.6978456510592235,
+       -2.280819454504266,
+       -3.1987820431224785,
+       -5.165437658571072,
+       -2.9292949794577954,
+       -3.36238639547835,
+       -3.5032661945394494,
+       -4.034686705218908,
+       -2.9981052146256078,
+       -5.564439361853836,
+       -4.417351083836607,
+       -5.055769813210458,
+       -2.8938387625812463,
+       -4.012086972887183,
+       -4.676444689780679,
+       -5.655348112564186,
+       -4.605915669088243,
+       -4.075246826813815,
+       -4.642736998449243,
+       -1.5034035590540868,
+       -2.078082557238913,
+       -9.513856145782439,
+       -7.8695576797858475,
+       -4.441075371960825,
+       -4.935912011003208
+      ],
+      [
+       -4.705194656962323,
+       -4.697836789914419,
+       -0.8968031418574491,
+       -7.356522177344107,
+       -5.887690666213542,
+       -1.046937436974885,
+       -3.839074659555852,
+       -3.8063539072070225,
+       -6.160493395334472,
+       -8.42863099367085,
+       -4.797551163514063,
+       -4.91445247631645,
+       -7.587184760448693,
+       -6.49893397552067,
+       -5.276568011414,
+       -7.0219838980811,
+       -5.32902058766398,
+       -4.941514597020637,
+       -5.061308177848574,
+       -6.145063968588175,
+       -3.9449845083879,
+       -3.350146743394889,
+       -4.490784042826418,
+       -6.76894110674016,
+       -3.669176084388664,
+       -6.13536068889365,
+       -3.374159415383575,
+       -7.2760554857144335
+      ],
+      [
+       -2.1455162060241646,
+       -4.014577521512687,
+       -6.471948392950558,
+       -4.602249556215423,
+       -3.866246054738639,
+       -3.4288679339528194,
+       -5.938826862163682,
+       -6.189196706612113,
+       -3.575281546587565,
+       -4.907949846041331,
+       -3.5034393888212763,
+       -2.455411567324968,
+       -7.272025344983623,
+       -3.465674379246492,
+       -1.525156677210262,
+       -4.569504301022674,
+       -5.596079778756867,
+       -2.469962957922541,
+       -3.467557579865444,
+       -2.182684470726606,
+       -4.664882032384286,
+       -6.938087159726149,
+       -4.194472141704228,
+       -4.866106918304191,
+       -2.4238029681865783,
+       -3.587184915527419,
+       -7.236149077151929,
+       -6.364776772488126
+      ]
+     ],
+     "timestamps": [
+      100.0,
+      100.125,
+      100.25
+     ]
+    },
+    {
+     "samples": [
+      [
+       -2.807143634109372,
+       -3.21519167244819,
+       -5.85520843910086,
+       -4.576819300418444,
+       -3.6835745997315104,
+       -3.6379130355893268,
+       -2.8222373150551827,
+       -4.061750452840759,
+       -4.764378385220879,
+       -5.092417836859575,
+       -2.4632361062173804,
+       -9.076430257440958,
+       -4.852032357466557,
+       -4.5087214993157625,
+       -7.425419629024258,
+       -3.9090944810077897,
+       -5.877283732170671,
+       -2.849832114652389,
+       -4.825905875352538,
+       -3.236415225704977,
+       -2.1370344969414363,
+       -3.808862541856938,
+       -6.326163994129574,
+       -7.60335897069316,
+       -1.0679534722511375,
+       -4.797306093658921,
+       -5.9518516025525265,
+       -4.286207531162233
+      ],
+      [
+       -5.754220446049855,
+       -3.6671132566591806,
+       -5.3035414202103555,
+       -5.343898617847717,
+       -6.800557227150485,
+       -4.4322615875895695,
+       -7.439131229794522,
+       -4.0396189055566225,
+       -2.3235227591042924,
+       -8.42076986128286,
+       -10.303856247787191,
+       -4.137640274775918,
+       -0.2756021541183037,
+       -7.373247482828344,
+       -7.872789302688533,
+       -4.193459917523609,
+       -7.052840965201172,
+       -6.383448752958029,
+       -6.067632718452113,
+       -4.3073936125009595,
+       -6.182002507870794,
+       -4.815632104924236,
+       -5.7244643028717075,
+       -7.060739992387763,
+       -6.011050300570998,
+       -7.2721971154203935,
+       -5.358367813345059,
+       -7.61913024021583
+      ],
+      [
+       -7.073735578186789,
+       -1.9740232089857919,
+       -4.994315280206986,
+       -4.995750890540389,
+       -3.8648739997610653,
+       -5.729660844694045,
+       -5.345017574552619,
+       -4.0376493689324855,
+       -4.3231151551075,
+       -7.206540293461162,
+       -3.2212616462569796,
+       -6.068816726174389,
+       -7.000104740224675,
+       -6.688896979594406,
+       -5.669037528306949,
+       -1.6333463303501683,
+       -7.239018649437864,
+       -4.567795054527621,
+       -9.163595555777459,
+       -4.891080705886696,
+       -3.0888140046442887,
+       -5.361273483719213,
+       -6.146656687362987,
+       -4.424924711479227,
+       -3.487643337295002,
+       -3.5606316975614893,
+       -0.9429991317367195,
+       -4.469611894923749
+      ]
+     ],
+     "timestamps": [
+      100.375,
+      100.5,
+      100.625
+     ]
+    }
+   ]
+  },
+  "events": {
+   "info_xml": "<info><name>acme.nts.events</name><type>Markers</type><channel_count>1</channel_count><channel_format>string</channel_format><source_id>acme-1.events</source_id><nominal_srate>0.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1.events</uid><hostname /><desc><fidetype><nts_header>{\"spec_version\": \"0.1\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"conformance-vector\", \"frame_period\": 0.125, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"other\", \"decoder.name\": \"conformance-vector\", \"decoder.version\": \"1\", \"decoder.causal\": true, \"data.derived\": true, \"language\": \"en\"}}</nts_header><role>nts_events</role><binding>nts-lsl/0.1</binding><frames_source_id>acme-1</frames_source_id><event_clock>lsl</event_clock></fidetype></desc></info>",
+   "time_correction": 0.25,
+   "chunks": [
+    {
+     "samples": [
+      [
+       "{\"type\": \"segment_end\", \"t\": 100.635}"
+      ]
+     ],
+     "timestamps": [
+      100.635
+     ]
+    },
+    {
+     "samples": [
+      [
+       "{\"type\": \"end\"}"
+      ]
+     ],
+     "timestamps": [
+      100.645
+     ]
+    }
+   ]
+  }
+ }
+}
