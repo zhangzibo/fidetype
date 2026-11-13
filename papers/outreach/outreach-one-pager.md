@@ -1,29 +1,34 @@
-# Fidetype: an open trust layer and stream format for neural text entry
+# Fidetype: when should a neural text-entry decoder commit?
 
-*One-page summary for outreach. Draft, 2026-11-11. The user is the sender and owns all outreach. Check every number against the linked result pages before sending.*
+*One-page summary for outreach. Draft, updated 2026-11-12 with the final Paper 1 numbers. The user is the sender and owns all outreach. Check every number against the linked result files before sending.*
 
 ## The problem
-Brain and muscle decoders now produce text: intracortical speech BCIs, MEG typing decoders, wrist EMG. Each one has its own output format. Few report how often the system commits a wrong sentence to the user, and none share a way to carry calibrated confidence, alternatives and provenance to the application.
+Brain and muscle decoders now produce text: intracortical speech BCIs, MEG typing decoders, wrist EMG. Many end in a language model. The language model writes fluent sentences, also from weak or no neural evidence. Few systems report how often they send (commit) a wrong sentence to the user. No common format carries calibrated confidence, alternatives and provenance to the application.
 
-## What Fidetype is
-- **NeuralTextStream (NTS) v0.1**: an open, modality-neutral format for decoder output. It carries per-frame token probabilities, n-best hypotheses, calibrated confidence and provenance. It works for characters, phonemes and keys. [Spec](../../spec/neuraltextstream-v0.1.md)
-- **A trust layer**: a decoder-agnostic policy that reads NTS and decides per sentence to *commit*, *offer* the n-best to the user, or *abstain*. It can use conformal risk control (CRC) to bound the wrong-commit rate.
-- **A conformance suite**: 60 checks, each tied to a spec clause, at three levels (core, trust-ready, provenance). `python -m fidetype.conformance check <stream>`.
-- **An open benchmark v0.1**: three tracks, 21 baseline entries, fixed splits, required null controls, and speed measured against a no-BCI baseline (gaze typing). It ships no data and no weights. [Benchmark](../../benchmark/README.md)
-- Apache-2.0 code: https://github.com/zhangzibo/fidetype
+## What Fidetype is (Apache-2.0, https://github.com/zhangzibo/fidetype)
+- **NeuralTextStream (NTS) v0.1**: an open, modality-neutral format for decoder output (per-frame token probabilities, n-best, calibrated confidence, provenance). [Spec](../../spec/neuraltextstream-v0.1.md)
+- **A trust layer**: per sentence it decides to *commit*, *offer* the n-best, or *abstain*. A Learn-then-Test (LTT) threshold bounds the wrong-commit rate with high probability. An evidence guard rejects streams with no signal.
+- **Tools**: a conformance suite (60 checks; opt-in profiles `fep-0001` for streaming trust events and `fep-0002` for NTS over LSL), a Python SDK, an offline demo (`fidetype demo`; [demo/index.html](../../demo/index.html)), and an open benchmark v0.1 with required null controls.
 
-## Results so far (three device types, public datasets only)
-| Device type (dataset, licence) | Result | Source |
+## Paper 1 results (offline, public data, safety first)
+Paper 1: *"When should a neural text-entry decoder commit? Risk-controlled commits from a stream-level trust layer."* Status: **preprint in preparation; arXiv submission ready, arXiv endorsement pending.** PDF: [fidetype-paper1.pdf](https://github.com/zhangzibo/fidetype/blob/main/papers/paper1/final/fidetype-paper1.pdf). Data: Brain-to-Text '25 (CC0), one intracortical speech participant, 14 days; two decoders (ours, and the published sentence gated by agreement with ours). Target α = 0.05.
+
+| Test | Result | Source |
 |---|---|---|
-| Intracortical speech (Brain-to-Text '25, CC0; 816 test trials) | On the decoder output published with the dataset (WER 0.043), the trust gate cut wrong commits from **0.194 to 0.044** of trials, at **−4.3 % eWPM** (19.61 → 18.77). It also rejected streams that belong to another sentence | [B2T '25 result](../../wiki/questions/b2t25-trust-result.md) |
-| Forearm sEMG (Toronto sEMG typing, CC BY 4.0; 551 test sentences, 19 people) | Wrong commits 0.54–0.96 → ≤ 0.004, and higher eWPM than always-commit in all three decoder conditions. Sentences are **composed** from isolated key presses | [EMG result](../../wiki/questions/emg-toronto-trust-result.md) |
-| MEG typing (SpanishBCBL, CC BY-NC 4.0, research only) | Our async decoder: test CER 0.506. The trust layer stops wrong commits, but **no gain over gaze typing** (3.23 vs 3.15 eWPM, parity) | [M1-09](../../wiki/questions/m1-09-async-full-result.md), [trust core](../../wiki/questions/trust-core-v0-results.md) |
+| Always commit (baseline) | Wrong text for 61 % (ours) and 19 % (published) of sentences | Paper 1, Sect. 6.4 |
+| Time order: calibrate on earlier days, test on later days | Pooled wrong-commit rate **0.010–0.027** in every design. 0–2 of 10–13 test days above α; **no day significantly above α** | Paper 1, Sect. 6.2, Tab. 1 |
+| No-signal controls (300 uniform streams, our decoder) | Plain threshold: **198 of 300 committed** (all wrong). With the evidence guard: **0 of 300** (also 0 of 300 frame-shuffled) | Paper 1, Sect. 6.6 |
+| Per-day scope | LTT bounds the mix of days, not each day. Day 34 (published gate): 0.102 | Paper 1, Sect. 6.3 |
+| Remedy, "certify, then commit" | First ≥ 45 sentences offer-only (labels from the user's picks), then max(global, per-session LTT), plus a risk monitor. Day 34: 0.103 → **0.034**; 0 of 14 days above α; eWPM −2.2 % | [A2 results](../../experiments/2026-11-13-a2-per-session-risk/results.md) |
+| Streaming layer = offline layer | Same decisions on **816/816** test trials (4 replays); each decision has a verified provenance-ledger entry | [M4-06](../../experiments/2026-11-13-m4-06-real-replay/results.md) |
+| Live LSL input (BrainFlow Synthetic board, no text information) | 0 commits of 26 decisions; dropout, stream loss and reconnect handled | [M6-08](../../experiments/2026-11-13-m6-08-brainflow-live/results.md) |
 
-## Caveats we state up front
-- **Always-offer baseline.** A trivial policy that always offers the n-best and never commits has zero wrong commits. On B2T '25 it reaches 11.37 and 18.11 eWPM; the trust layer is only **+1.6 % and +3.6 % faster**, at 59 and 44 wrong commits per 1,000 trials. On MEG the trust layer *is* always-offer. The value is a controlled, auditable trade-off, not a large speed gain. ([Paper 1 review response](../paper1/reviews/round-1-response.md))
-- The 0.044 is a share of all trials. Among committed sentences, about 9 % are still wrong (commit rate 0.471). On the benchmark's fixed day-split, CRC missed its 0.05 target (0.062) because of drift across the day. ([Benchmark](../../wiki/concepts/open-benchmark.md))
-- All results are offline replays of public data. No live user study. No medical claim.
-- Paper 1 is a draft, not peer-reviewed and not yet on arXiv.
+Forearm sEMG (Toronto, CC BY 4.0) and MEG typing (SpanishBCBL, CC BY-NC 4.0, research only) are format and safety checks: no sEMG test participant above α; on MEG the layer committed nothing (0 of 637) and equals always offering.
+
+## Limits we state up front
+- **One intracortical participant so far.** A confirmatory test on a second participant is in progress. It has no results yet.
+- The guarantee is for the mix of calibration days. A single session needs "certify, then commit". Current decoders commit few sentences under the guarantee (15 % and 39 %; 21 % and 8 % of those commits were wrong in random re-splits).
+- All results are offline replays of public data. No live user study. No medical claim. Not peer-reviewed.
 
 ## What we ask of partners
 Small, concrete steps: emit NTS from one decoder, run the conformance check on one stream, submit to the benchmark, or review the spec. We can write the adapter.

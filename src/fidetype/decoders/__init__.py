@@ -4,6 +4,8 @@
 - :mod:`fidetype.decoders.conv_ctc`: the ConvCTC model (conv + Conformer + CTC).
 - :mod:`fidetype.decoders.train`: training CLI (checkpoints, resume, early stop).
 - :mod:`fidetype.decoders.infer`: checkpoint to NeuralTextStreams, plus CER/WER.
+- :mod:`fidetype.decoders.restamp_meg`: re-write old cached `infer.py` stream headers
+  to the current adapter meta (no torch, log_probs unchanged).
 - :mod:`fidetype.decoders.synthetic`: synthetic cache for tests.
 - :mod:`fidetype.decoders.keystroke`: synchronous keystroke decoder (oracle key
   timing, per-subject logistic regression), CTC-form streams. numpy only,
