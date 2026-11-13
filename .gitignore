@@ -43,3 +43,6 @@ references/repos/
 
 # Per-trial participant texts (target + typed). They live in ~/bci-data/derived/ (see LICENSES/DATA.md).
 experiments/**/results/trials.json
+
+# M6-08 raw process logs (liblsl INFO lines list network interface ids)
+experiments/2026-11-13-m6-08-brainflow-live/out/*.log

@@ -102,6 +102,8 @@ fidetype validate FILE [--level trust-ready]       conformance check (= python -
 fidetype trust --config trust.json FILE            trust_decision JSON Lines (= python -m fidetype.trust.streaming replay)
 fidetype demo [--fast] [--html F] [--json F]       offline demo
 fidetype conformance | lsl | benchmark | ledger    the full tools; the python -m entry points still work
+fidetype lsl run|replay-to-lsl|list                LSL input -> trust_decision JSON Lines (needs the [lsl] extra)
+fidetype lsl brainflow-bridge --board synthetic    BrainFlow board -> LSL raw-signal stream (needs [lsl,brainflow])
 ```
 
 ## Repository layout

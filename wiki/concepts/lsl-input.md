@@ -19,6 +19,7 @@ Diagram: [13-lsl-input.drawio](../diagrams/13-lsl-input.drawio) (rendered in [di
 | LSL → trust decisions | `LSLTrustRunner(layer, source)` feeds the [streaming trust layer](streaming-trust-layer.md) | `python -m fidetype.adapters.lsl run --config trust.json --stream-name NAME [--decoder greedy] [--outlet]` |
 | NTS file → LSL | `replay_to_lsl(path, name)` (demos, tests) | `python -m fidetype.adapters.lsl replay-to-lsl FILE --name NAME [--speed 1] [--channel-format float32\|double64]` |
 | List streams | `list_streams()` | `python -m fidetype.adapters.lsl list` |
+| BrainFlow board → LSL (raw signal) | `BrainFlowBridge(board, descr, board_id)` in `fidetype.adapters.brainflow_bridge` | `fidetype lsl brainflow-bridge --board synthetic [--board-id N --serial-port PORT] [--trial-s 4]` |
 
 `run` writes one `trust_decision` event (FEP-0001) per line on stdout. Log lines go to stderr. With `--outlet` it also publishes each decision on an LSL marker stream `fidetype.decisions`, so other programs can subscribe.
 
@@ -72,7 +73,7 @@ fidetype conformance check --profile fep-0002 frames-info.xml   # producer check
 |---|---|---|
 | NTS stream from a Fidetype producer | the stream name | Header, vocab and events stream come from the desc (`--events auto`) |
 | Class probabilities from another decoder | `--vocab` (default: the channel labels), `--vocab-type`, `--blank`, `--values log_probs\|probs\|logits` | The adapter adds `adapter.name`, `adapter.version` and `data.derived` to `meta` |
-| Raw EEG / EMG samples | a `SignalDecoder` object (Python API) | It turns sample chunks into frames. Fidetype has no EEG decoder |
+| Raw EEG / EMG samples | a `SignalDecoder` object (Python API; `open_source` also takes a factory `info -> decoder`), or `--signal-decoder toy-flat\|toy-features` | It turns sample chunks into frames. Fidetype has no EEG text decoder. The `toy-*` decoders carry **no text information** (pipeline tests only; see [BrainFlow live test](#brainflow-live-test-m6-08)) |
 | Text decoder output on a marker stream | the stream name; no `--decoder` | JSON `hypothesis` events, or plain strings with `--plain-markers hypothesis` |
 | Task markers from another program (for example "trial_end") | `--events NAME --boundary-marker trial_end` | A matching string ends the utterance (`segment_end`) |
 
@@ -102,6 +103,8 @@ Each decision carries an `lsl` record in its provenance and in the output event:
 
 CI installs only the `dev` extra, so CI skips the 4 real-LSL tests. The local `.venv` has pylsl and runs them.
 
+`tests/test_brainflow_bridge.py` (M6-08), 14 tests: the bridge with a fake board and recording outlets (stream desc, stamp smoothing, dropout jump, trial markers, board markers), the toy decoders, the scripted raw-signal path into the trust layer (no COMMIT, one gap), the decoder factory and the CLI. One live test (Synthetic board → pylsl → trust layer) skips without brainflow and pylsl.
+
 ## Latency (loopback, localhost, synthetic)
 `experiments/2026-11-12-m6-lsl/bench_lsl_latency.py`; numbers in [results/latency.md](../../experiments/2026-11-12-m6-lsl/results/latency.md). 12 simulator utterances (4 378 frames of 40 ms) in one file, `segment_end` between utterances, 0.5 s pause between them. Frozen synthetic config of M4-03, CTC greedy decoder. Outlet and inlet on one Windows PC (localhost), pylsl 1.18.6, CPU only.
 
@@ -124,19 +127,57 @@ Notes:
 
 > **Our take:** on one machine, LSL adds about 3–7 ms per sample. The trust decision follows the closing event after the merge window plus about 7 ms. With one inlet (a marker stream only) there is no merge wait (run D). With two inlets, a smaller merge window lowers the wait but makes a late marker more likely. LAN and Wi-Fi need their own test (M6-10).
 
+## BrainFlow live test (M6-08)
+Task M6-08 (the P4 exit check) ran the full live path with the [BrainFlow](../entities/brainflow.md) Synthetic board (board id -1: 16 EEG channels, 250 Hz, fake data, no hardware). Script, numbers and logs: [results.md](../../experiments/2026-11-13-m6-08-brainflow-live/results.md).
+
+```
+pip install "fidetype[lsl,brainflow]"
+fidetype lsl brainflow-bridge --board synthetic --trial-s 4                         # shell 1
+fidetype lsl run --config src/fidetype/demo/trust-config-demo.json \
+  --stream-name fidetype.brainflow --signal-decoder toy-flat --decoder demo --max-attempts 1   # shell 2
+```
+
+The bridge (`fidetype.adapters.brainflow_bridge`, our own code) sends two LSL streams:
+
+| Stream | Type | Content | `desc/fidetype/role` |
+|---|---|---|---|
+| `fidetype.brainflow` | `EEG` (or `EMG`, `ExG` with `--kind`) | the board channels of that kind, float32, `nominal_srate` = board rate; channel `label` = electrode name, `unit` = `microvolts` | `signal` |
+| `fidetype.brainflow.markers` | `Markers` | plain `segment_end` every `--trial-s` seconds (a fixed trial clock); `brainflow_marker:<v>` for the BrainFlow marker channel | `signal_markers` |
+
+- **Stamps.** The Synthetic board sends samples in packets (about 16 ms apart). Raw stamps would look like gaps. The bridge maps the board time to the LSL clock and smooths it (1 / srate per sample, 1 % pull to the board time). If the board time jumps more than 0.25 s ahead (lost data), the stamp jumps too, so the consumer sees a real gap.
+- **Dropout test.** `--pause AT:FOR` discards the board data for FOR seconds (repeatable).
+- **Toy decoders** (`fidetype.decoders.toy_signal`): `flat` gives near-uniform frames that ignore the signal. `features` maps per-channel log variance through a fixed random matrix: the frames change with the signal but carry no text information. 25 frames/s over the 28-token character vocab. The header says `decoder.toy = true` and `decoder.text_information = none`.
+
+Results (two processes on one PC, 70 s per mode, dropout + hard kill + reconnect + clean stop):
+
+| | `toy-flat` | `toy-features` |
+|---|---|---|
+| Final decisions: COMMIT / OFFER / ABSTAIN | 0 / 0 / 13 | 0 / 0 / 13 |
+| Gaps found / losses / reconnects / aborted utterances | 1 / 4 / 2 / 2 | 1 / 4 / 2 / 2 |
+| Transport p50 / p95 | 11.5 / 21.1 ms | 11.5 / 21.2 ms |
+| e2e steady p50 / p95 (10 decisions) | 32.8 / 45.7 ms | 38.1 / 45.1 ms |
+| CPU of one core: consumer / bridge | 2.4 % / 2.3 % | 2.2 % / 2.4 % |
+
+- Every decision was ABSTAIN with `guard risk 1.00 >= 0.80`. The demo beam + LM still writes fluent text from such frames, so "always commit" would have typed 26 wrong texts.
+- A kill or a clean stop aborted the open utterance (no decision). The consumer reconnected by `source_id` and sent a new header.
+- The trial boundary inside the dropout came 0.25 s late (`trial_hold_s`). That decision had e2e ≈ 370 ms.
+- **Fix found by this test.** liblsl's `pull_chunk(timeout > 0)` waits until `max_samples` samples are there or the timeout ends. At a 50 ms poll on a 250 Hz stream this added about 25–30 ms. `PylslInlet.pull_chunk` now pulls with timeout 0 and sleeps 2 ms between empty pulls (transport p50 37 → 11.5 ms; steady e2e p50 57–61 → 33–38 ms). The [latency](#latency-loopback-localhost-synthetic) table above was measured before this change.
+
+> **Our take:** the P4 exit check passes. A real device SDK feeds the live path, and the guard stops an LM that hallucinates on a signal with no text in it. This does not show EEG text decoding. A real board (OpenBCI) needs hardware and is a follow-up.
+
 ## How to connect common tools
 We state only what their documentation says (checked 2026-11-12).
 
 | Tool | What its docs say | How to use it with Fidetype |
 |---|---|---|
 | **OpenBCI GUI** | The Networking widget can send data over LSL. The GUI docs name FFT data over LSL (from v4.1.5-beta.3); the networking section lists Time Series, FFT, EMG, Band Power, Accel/Aux and Pulse data ([docs](https://docs.openbci.com/Software/OpenBCISoftware/GUIWidgets/)). The LSL docs list OpenBCI as "supported via vendor-provided software" ([LSL devices](https://labstreaminglayer.readthedocs.io/info/supported_devices.html)) | These are raw or spectral signals, not decoder output. Use a `SignalDecoder` (Python API), or a decoder program that publishes an NTS stream |
-| **BrainFlow** | The board docs show a Synthetic board (no hardware needed) and a Streaming board fed by `add_streamer`. They do not mention LSL ([boards](https://brainflow.readthedocs.io/en/stable/SupportedBoards.html)) | Write a small script: read BrainFlow data, run a decoder, publish NTS frames with pylsl (or call `LSLEventSource` with a `SignalDecoder`). The P4 exit test with the Synthetic board is a follow-up |
+| **BrainFlow** | The board docs show a Synthetic board (no hardware needed) and a Streaming board fed by `add_streamer`. They do not mention LSL ([boards](https://brainflow.readthedocs.io/en/stable/SupportedBoards.html)) | Use `fidetype lsl brainflow-bridge` (M6-08). It streams a BrainFlow board to LSL as a raw-signal stream. A `SignalDecoder` then makes frames. Tested with the Synthetic board only |
 | **LabRecorder** | "LabRecorder saves data to Extensible Data Format (xdf)" ([LSL getting started](https://labstreaminglayer.readthedocs.io/info/getting_started.html)) | It can record the NTS streams and `fidetype.decisions` next to the raw signal. Not tested by us |
 | **Muse, Emotiv, g.tec** | Listed in the LSL device list (third-party or vendor software) ([LSL devices](https://labstreaminglayer.readthedocs.io/info/supported_devices.html)) | Raw signals: same path as OpenBCI. Not tested (no hardware) |
 
 ## Limits and follow-ups
 - Tested on one machine (localhost) only. LAN and Wi-Fi latency are not measured.
-- No real device was tested (the user has no hardware). The BrainFlow Synthetic board test is a follow-up.
+- No real device was tested (the user has no hardware). The BrainFlow Synthetic board test is done (M6-08). A real board (OpenBCI) needs hardware.
 - FEP-0002 defines the binding (M6-09). It stays Draft until an outside LSL implementation runs the `fep-0002` vectors.
 - The frames route decodes at the end of the utterance (M4-08 incremental decoding).
 

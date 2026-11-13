@@ -35,6 +35,8 @@ dev = ["pytest"]
 data = ["mne>=1.8", "scipy>=1.13"]
 # Lab Streaming Layer adapter (fidetype.adapters.lsl). pylsl is MIT; its Windows wheel includes liblsl.
 lsl = ["pylsl>=1.16"]
+# BrainFlow -> LSL bridge (fidetype.adapters.brainflow_bridge; also needs [lsl]). brainflow is MIT.
+brainflow = ["brainflow>=5.10"]
 
 [project.scripts]
 fidetype = "fidetype.cli:main"

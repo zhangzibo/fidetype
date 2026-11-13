@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T22:20:00-08:00",
+  "updated": "2026-11-12T23:20:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8).",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -483,7 +483,7 @@
      "orchestrator_only": false, "notes": "experiments/2026-11-13-m4-06-real-replay. Paper 1 v4 recipe fitted on B2T split A (fit-A 411, clean cal 401), frozen: ours tcfg-f5ca0020b3b8fce2 (commit_p 0.3), published gate tcfg-ea22af7ec91eea3f (0.76); configs committed (numbers only). 816 full-precision NTS test streams through StreamingTrustLayer, frames + hypothesis routes: 816/816 equal to batch everywhere (also with fresh decodes); metrics = Paper 1 Tab. 3 split A exactly (0.0245/0.100/11.48; 0.0294/0.403/18.65); shuffled + uniform controls 0/300 both decoders and routes; provenance 816/816, ledgers verify. Latency hypothesis p50 0.44 ms / p95 0.63; frames fresh decode p50 173 / p95 992 ms. 6-decimal benchmark files: p_top1 moves <= 3.4e-8, no action changes."},
     {"id": "M4-07", "milestone": "M4", "title": "FEP-0001: conformance checks + golden vectors (segment_end, hypothesis evidence fields, trust_decision)", "status": "done",
      "started_at": "2026-11-12T22:25:00-08:00", "finished_at": "2026-11-12T22:55:00-08:00", "approx_times": true,
-     "agent_runs": [{"label": "M4-07 + M6-09: FEP-0001 profile + decode declaration, FEP-0002 binding + profile", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "agent_runs": [{"label": "M4-07 + M6-09: FEP-0001 profile + decode declaration, FEP-0002 binding + profile", "duration_s": 1484.3, "tokens": 300713, "tool_uses": 77}],
      "orchestrator_only": false, "notes": "Done together with M6-09 (one agent run, listed here). FEP-0001 (Draft) + part 4 decode_declaration (decoder, version, frame_temperature, params, config_id) and testable rules; StreamingTrustLayer declaration check (StreamingConfig.declaration_check warn (default, no decision change) / abstain / off; require_declaration; expected_decoder); opt-in profile fep-0001: 10 checks, 40 vectors (12 accept / 28 reject) in spec/conformance/fep-0001; CLI fidetype conformance --profile fep-0001. tests/test_fep_profiles.py; pytest 480 passed / 4 skipped."},
     {"id": "M4-08", "milestone": "M4", "title": "Incremental decoder state on the frames route (prefix beam carried across frames)", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,
@@ -565,10 +565,10 @@
      "started_at": "2026-11-11T18:50:00-08:00", "finished_at": "2026-11-11T20:05:00-08:00", "approx_times": true,
      "agent_runs": [{"label": "Toronto sEMG adapter, EMG decoder, trust run", "duration_s": 4094.6, "tokens": 312192, "tool_uses": 136}], "orchestrator_only": false, "notes": "Toronto sEMG typing (CC BY 4.0, MD5 verified). Own adapter src/fidetype/adapters/toronto_semg.py (RHD reader, keylog alignment, key stream + CTC form), no spec change. CNN key acc xsession 0.168 / xsubject 0.209 / calib 0.299 (permuted 0.022), GPU 48 min. Trust on 551 composed sentences: wrong-commit 0.54-0.96 -> <=0.004; eWPM calib 7.81 -> 8.02 (gaze 4.27). CRC/LTT feasible n=142. experiments/2026-11-11-emg-toronto."},
 
-    {"id": "M6-08", "milestone": "M6", "title": "BrainFlow Synthetic board -> LSL -> trust layer live test (P4 exit criterion)", "status": "todo",
-     "started_at": null, "finished_at": null, "approx_times": false,
-     "agent_runs": [],
-     "orchestrator_only": false, "notes": "Follow-up of M6-01. BrainFlow (MIT) Synthetic board (no hardware), a toy SignalDecoder or a decoder script that publishes NTS, through python -m fidetype.adapters.lsl run."},
+    {"id": "M6-08", "milestone": "M6", "title": "BrainFlow Synthetic board -> LSL -> trust layer live test (P4 exit criterion)", "status": "done",
+     "started_at": "2026-11-12T22:45:00-08:00", "finished_at": "2026-11-12T23:20:00-08:00", "approx_times": true,
+     "agent_runs": [{"label": "M6-08: BrainFlow bridge, toy signal decoder, live e2e run", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "orchestrator_only": false, "notes": "experiments/2026-11-13-m6-08-brainflow-live. Optional extra [brainflow] (brainflow 5.24.0, MIT, verified LICENSE.txt). fidetype.adapters.brainflow_bridge + CLI 'fidetype lsl brainflow-bridge --board synthetic [--board-id N --serial-port ...] [--trial-s 4] [--pause AT:FOR]': EEG stream (16 ch float32 250 Hz, labels, unit microvolts, desc/fidetype role=signal, binding, events_source_id) + Markers stream (segment_end trial clock, role=signal_markers); smoothed board stamps (no false gaps), jump on lost data. Toy decoders fidetype.decoders.toy_signal (flat / features; no text information; header decoder.toy) and 'fidetype lsl run --signal-decoder toy-flat|toy-features'; open_source takes a decoder factory. Live run, two processes, demo config + demo decoder, 70 s per mode with 3 s dropout, hard kill, reconnect, clean stop: 13/13 ABSTAIN both modes (0 COMMIT; guard risk 1.00), 1 gap, 2 reconnects, 2 aborted utterances, exit 0. Transport p50 11.5 ms; e2e steady p50 33-38 ms / p95 45-46 ms; CPU consumer 2.2-2.4 % and bridge 2.3-2.4 % of one core. Finding + fix: liblsl pull_chunk(timeout>0) waits for max_samples -> PylslInlet pulls with timeout 0 + 2 ms sleep (transport p50 37 -> 11.5 ms). FEP-0002 role table: informative signal / signal_markers. tests/test_brainflow_bridge.py 14 (1 live, skips without brainflow/pylsl); pytest 494 passed / 4 skipped."},
 
     {"id": "M6-09", "milestone": "M6", "title": "FEP-0002: NTS-over-LSL binding (stream types, desc keys, float32 vs double64, gap / lsl_t, hypothesis times) + conformance vectors", "status": "done",
      "started_at": "2026-11-12T22:25:00-08:00", "finished_at": "2026-11-12T22:55:00-08:00", "approx_times": true,
@@ -584,6 +584,16 @@
      "started_at": null, "finished_at": null, "approx_times": false,
      "agent_runs": [],
      "orchestrator_only": false, "notes": "Follow-up of M6-01."},
+
+    {"id": "M6-12", "milestone": "M6", "title": "Real EEG board test through the BrainFlow bridge (OpenBCI Cyton/Ganglion or similar)", "status": "externally_blocked",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Follow-up of M6-08. Needs hardware (the user has none) or a partner/volunteer with a board. Check serial/Bluetooth stamps, dropouts, channel names/units, latency; same toy decoders (no text claim)."},
+
+    {"id": "M6-13", "milestone": "M6", "title": "Long soak test of the BrainFlow -> LSL -> trust live path (1 h+, memory, clock drift, repeated reconnects)", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Follow-up of M6-08 (runs were 70 s per mode). Synthetic board, CPU only."},
 
     {"id": "M7-01", "milestone": "M7", "title": "Build the SDK and the offline demo", "status": "done",
      "started_at": "2026-11-12T21:30:00-08:00", "finished_at": "2026-11-12T22:20:00-08:00", "approx_times": true,

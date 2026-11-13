@@ -62,7 +62,7 @@ All keys are child elements of `<desc><fidetype>`; each value is text.
 | `nts_header` | frames, events | Yes (NTS-native) | The NTS header (6.2 line 1) as one JSON object; `type` MAY be absent |
 | `values` | frames | No | `log_probs` (default), `probs` or `logits` |
 | `binding` | all | SHOULD | Binding version, `nts-lsl/0.1` (section 9) |
-| `role` | all | SHOULD | `nts_frames`, `nts_events` or `trust_decisions` |
+| `role` | all | SHOULD | `nts_frames`, `nts_events` or `trust_decisions`. *(Informative)* a raw-signal producer MAY use `signal` (a raw EEG/EMG stream, section 3 rule 7) and `signal_markers` (its plain task markers) |
 | `events_source_id` / `frames_source_id` | frames / events | SHOULD | `source_id` of the partner stream |
 | `event_clock` | events | SHOULD | `lsl` or `source` (section 6, rule 5). Absent means `source` |
 | `event_type`, `spec`, `config_id` | decisions | see section 8 | |

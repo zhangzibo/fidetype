@@ -1,0 +1,36 @@
+{
+  "decisions": 13,
+  "final_decisions": 13,
+  "events": 1308,
+  "rejected_events": 0,
+  "aborted_utterances": 2,
+  "idle_flushes": 0,
+  "ended": false,
+  "wall_s": 73.09300000000076,
+  "source": {
+    "samples": 12946,
+    "frames": 1293,
+    "markers": 13,
+    "ignored_markers": 0,
+    "bad_markers": 0,
+    "clamped": 0,
+    "dropped_out_of_order": 0,
+    "gaps": 1,
+    "lost": 4,
+    "reconnects": 2,
+    "late_releases": 0,
+    "transport_latency_ms": {
+      "n": 12946,
+      "p50": 11.45011074913782,
+      "p95": 21.185730589422747,
+      "max": 655.1652138514328
+    }
+  },
+  "e2e_latency_ms": {
+    "n": 13,
+    "p50": 37.53101969778072,
+    "p95": 182.72550969995743,
+    "max": 382.252719704411
+  },
+  "stop_reason": "duration"
+}

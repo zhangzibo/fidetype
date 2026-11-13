@@ -61,7 +61,10 @@ Foreign streams (not made by Fidetype) work too:
   channel labels be the vocab) and ``values`` = ``log_probs``,
   ``probs`` or ``logits``.
 - A raw signal stream (EEG, EMG): pass a :class:`SignalDecoder`. It
-  turns sample chunks into frames. Fidetype ships no EEG decoder.
+  turns sample chunks into frames. Fidetype ships no EEG text decoder;
+  :mod:`fidetype.decoders.toy_signal` has toy decoders (no text
+  information) for pipeline tests, and :mod:`fidetype.adapters.brainflow_bridge`
+  streams a BrainFlow board (for example the Synthetic board) to LSL.
 - A marker stream: JSON NTS events, or plain strings. ``boundary_markers``
   become ``segment_end``. With ``plain_markers="hypothesis"`` other
   strings become final 1-best text hypotheses (``score_semantics`` none).
@@ -407,12 +410,27 @@ class PylslInlet:
     def info(self) -> LSLStreamInfo:
         return self._info
 
+    #: Sleep between immediate pulls while waiting for data (seconds).
+    WAIT_STEP_S = 0.002
+
     def pull_chunk(self, timeout: float, max_samples: int) -> tuple[list[list[Any]], list[float]]:
+        """Return the samples that are there now; wait up to ``timeout`` only if there are none.
+
+        liblsl's own ``pull_chunk(timeout > 0)`` waits until ``max_samples``
+        samples are there or the timeout ends. On a 250 Hz stream that
+        adds up to ``timeout`` of latency (M6-08 measured +30 ms median at
+        a 50 ms poll). So this pulls with timeout 0 and sleeps
+        :attr:`WAIT_STEP_S` between empty pulls.
+        """
+        deadline = time.monotonic() + max(0.0, timeout)
         try:
-            s, ts = self._inlet.pull_chunk(timeout=timeout, max_samples=max_samples)
+            while True:
+                s, ts = self._inlet.pull_chunk(timeout=0.0, max_samples=max_samples)
+                if ts or time.monotonic() >= deadline:
+                    return s, ts
+                time.sleep(self.WAIT_STEP_S)
         except self._pl.util.LostError as e:
             raise LSLStreamLost(str(e)) from e
-        return s, ts
 
     def time_correction(self, timeout: float) -> float:
         try:
@@ -1411,7 +1429,7 @@ def open_source(
     source_id: str | None = None,
     events: Literal["auto", "none"] | str = "auto",
     mapping: LSLMapping | None = None,
-    signal_decoder: SignalDecoder | None = None,
+    signal_decoder: SignalDecoder | Callable[[LSLStreamInfo], SignalDecoder] | None = None,
     timeout: float = 10.0,
     log: Callable[[str], None] | None = None,
 ) -> LSLEventSource:
@@ -1419,6 +1437,8 @@ def open_source(
 
     ``events``: ``"auto"`` (the ``events_source_id`` from the primary's
     desc, if any), ``"none"``, or the name of a marker stream.
+    ``signal_decoder``: a :class:`SignalDecoder`, or a factory that gets
+    the primary's :class:`LSLStreamInfo` (rate, channel count) and returns one.
     """
     pl = require_pylsl()
     log = log or (lambda m: None)
@@ -1428,6 +1448,8 @@ def open_source(
     pi = primary.info()
     log(f"connected: {pi.name} ({pi.type}, {pi.channel_count} ch, {pi.channel_format}, {pi.nominal_srate} Hz)")
     psid = pi.source_id
+    if signal_decoder is not None and not hasattr(signal_decoder, "process"):
+        signal_decoder = signal_decoder(pi)  # type: ignore[operator,call-arg]
 
     def reopen_primary() -> InletLike:
         q = {"source_id": psid} if psid else {"name": pi.name, "type": pi.type or None}
@@ -1475,7 +1497,7 @@ def _jsonl_sink(fh: TextIO) -> Callable[[dict[str, Any]], None]:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """``python -m fidetype.adapters.lsl {run,replay-to-lsl,list}``"""
+    """``python -m fidetype.adapters.lsl {run,replay-to-lsl,list,brainflow-bridge}``"""
     import argparse
 
     ap = argparse.ArgumentParser(prog="python -m fidetype.adapters.lsl",
@@ -1491,6 +1513,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     r.add_argument("--decoder", choices=("none", "greedy", "demo"), default="none",
                    help="frame decoder: none (hypothesis route), greedy (CTC greedy, frames route) or demo "
                         "(the beam + LM decoder of fidetype.demo)")
+    r.add_argument("--signal-decoder", choices=("none", "toy-flat", "toy-features"), default="none",
+                   help="decoder for a raw signal stream (EEG, EMG): toy-flat / toy-features are TOY decoders "
+                        "that carry no text information (fidetype.decoders.toy_signal); for pipeline tests only")
+    r.add_argument("--signal-decoder-seed", type=int, default=0)
     r.add_argument("--values", choices=("auto", "log_probs", "probs", "logits"), default="auto")
     r.add_argument("--vocab", help="comma-separated vocab of a foreign stream (default: channel labels)")
     r.add_argument("--vocab-type", choices=VOCAB_TYPES)
@@ -1527,12 +1553,24 @@ def main(argv: Sequence[str] | None = None) -> int:
     ls = sub.add_parser("list", help="list the visible LSL streams")
     ls.add_argument("--wait", type=float, default=2.0)
 
+    from fidetype.adapters import brainflow_bridge
+
+    brainflow_bridge.add_cli(sub)
+
     a = ap.parse_args(argv)
     try:
         if a.cmd == "list":
             for inf in list_streams(a.wait):
                 print(json.dumps(inf.summary()))
             return 0
+        if a.cmd == "brainflow-bridge":
+            from fidetype.adapters import brainflow_bridge
+
+            try:
+                return brainflow_bridge.run_cli(a, lambda m: sys.stderr.write(f"[fidetype.brainflow] {m}\n"))
+            except brainflow_bridge.BrainFlowUnavailableError as e:
+                _stderr(str(e))
+                return 2
         if a.cmd == "replay-to-lsl":
             for i in range(max(1, a.loop)):
                 rs = replay_to_lsl(a.file, a.name, a.source_id, a.speed, a.channel_format, a.wait_consumers,
@@ -1565,8 +1603,17 @@ def _run_cli(a: Any) -> int:
     dec = frame_decoder(a.decoder)
     cfg = FrozenTrustConfig.load(a.config)
     layer = StreamingTrustLayer(cfg, decode_fn=dec, streaming=StreamingConfig(max_attempts=a.max_attempts))
-    src = open_source(a.stream_name, a.stream_type, a.source_id, a.events, mapping, timeout=a.resolve_timeout,
-                      log=_stderr)
+    sig = None
+    if a.signal_decoder != "none":
+        from fidetype.decoders.toy_signal import toy_signal_decoder
+
+        mode, seed = a.signal_decoder.removeprefix("toy-"), a.signal_decoder_seed
+
+        def sig(info: LSLStreamInfo) -> SignalDecoder:
+            _stderr(f"signal decoder: TOY ({mode}); it carries no text information")
+            return toy_signal_decoder(mode, info.nominal_srate, info.channel_count, seed=seed)
+    src = open_source(a.stream_name, a.stream_type, a.source_id, a.events, mapping, signal_decoder=sig,
+                      timeout=a.resolve_timeout, log=_stderr)
     outlet = DecisionOutlet(a.outlet_name, config_id=cfg.config_id) if a.outlet else None
     runner = LSLTrustRunner(layer, src, session_id=a.session, sink=_jsonl_sink(sys.stdout), outlet=outlet,
                             include_text=not a.no_text, log=_stderr)

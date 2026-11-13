@@ -7,6 +7,7 @@
     fidetype demo                                        # offline demo (synthetic streams)
     fidetype conformance ...                             # full conformance suite (check, consumer, vectors, ...)
     fidetype lsl run|replay-to-lsl|list ...              # Lab Streaming Layer input (needs the [lsl] extra)
+    fidetype lsl brainflow-bridge --board synthetic      # BrainFlow board -> LSL (needs [lsl,brainflow])
     fidetype benchmark tracks|prepare|score|...          # open benchmark v0.1
     fidetype ledger verify|report ...                    # provenance ledger tools
     fidetype version

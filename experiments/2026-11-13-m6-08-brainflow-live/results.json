@@ -1,0 +1,339 @@
+{
+  "task": "M6-08",
+  "date": "2026-11-12 23:06",
+  "config": "src\\fidetype\\demo\\trust-config-demo.json",
+  "board": "BrainFlow Synthetic (id -1)",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.16",
+  "pylsl": "1.18.6",
+  "brainflow": "5.24.0",
+  "cpu_count": 16,
+  "runs": [
+    {
+      "mode": "flat",
+      "timeline_s": {
+        "bridge1": 2.0,
+        "pause_at": 20.0,
+        "pause_for": 3.0,
+        "kill": 40.0,
+        "bridge2": 44.0,
+        "bridge2_dur": 20.0,
+        "consumer_dur": 70.0
+      },
+      "events": [
+        {
+          "t": 2.01,
+          "event": "bridge1 start"
+        },
+        {
+          "t": 40.0,
+          "event": "bridge1 killed"
+        },
+        {
+          "t": 44.01,
+          "event": "bridge2 start"
+        },
+        {
+          "t": 64.33,
+          "event": "bridge2 stopped (rc 0)"
+        },
+        {
+          "t": 80.94,
+          "event": "consumer stopped (rc 0)"
+        }
+      ],
+      "consumer_exit_code": 0,
+      "wall_s": 80.94,
+      "final_decisions": 13,
+      "actions": {
+        "ABSTAIN": 13
+      },
+      "commits": 0,
+      "reasons": {
+        "guard risk # >= #": 13
+      },
+      "decisions_with_gap": 1,
+      "frames_per_decision": [
+        85,
+        100,
+        100,
+        100,
+        100,
+        25,
+        100,
+        100,
+        100,
+        66,
+        100,
+        100,
+        100
+      ],
+      "guard_risk": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "p_top1": [
+        0.323,
+        0.622,
+        0.737,
+        0.322,
+        0.644,
+        0.145,
+        0.366,
+        0.186,
+        0.206,
+        0.285,
+        0.306,
+        0.186,
+        0.244
+      ],
+      "trust_layer_latency_ms": {
+        "p50": 21.9,
+        "max": 24.6
+      },
+      "e2e_latency_ms": {
+        "n": 13,
+        "p50": 32.7,
+        "p95": 174.2,
+        "max": 365.8
+      },
+      "e2e_latency_steady_ms": {
+        "n": 10,
+        "p50": 32.8,
+        "p95": 45.7,
+        "max": 46.6
+      },
+      "e2e_latency_all_ms": [
+        26.5,
+        36.6,
+        31.8,
+        29.3,
+        365.8,
+        29.9,
+        44.7,
+        32.7,
+        27.8,
+        25.3,
+        33.0,
+        46.6,
+        38.6
+      ],
+      "source": {
+        "samples": 13218,
+        "frames": 1320,
+        "markers": 13,
+        "ignored_markers": 0,
+        "bad_markers": 0,
+        "clamped": 0,
+        "dropped_out_of_order": 0,
+        "gaps": 1,
+        "lost": 4,
+        "reconnects": 2,
+        "late_releases": 0,
+        "transport_latency_ms": {
+          "n": 13218,
+          "p50": 11.45612622713088,
+          "p95": 21.07554372596496,
+          "max": 665.4448956542183
+        }
+      },
+      "aborted_utterances": 2,
+      "stop_reason": "duration",
+      "consumer_log": [
+        "[fidetype.lsl] connected: m608.flat (EEG, 16 ch, float32, 250.0 Hz)",
+        "[fidetype.lsl] signal decoder: TOY (flat); it carries no text information",
+        "[fidetype.lsl] connected events stream: m608.flat.markers",
+        "[fidetype.lsl] lsl lost: m608.flat the stream has been lost.",
+        "[fidetype.lsl] abort utterance: lost",
+        "[fidetype.lsl] lsl lost: m608.flat.markers the stream has been lost.",
+        "[fidetype.lsl] lsl reconnected: m608.flat.markers",
+        "[fidetype.lsl] lsl reconnected: m608.flat",
+        "[fidetype.lsl] lsl lost: m608.flat the stream has been lost.",
+        "[fidetype.lsl] abort utterance: lost",
+        "[fidetype.lsl] lsl lost: m608.flat.markers the stream has been lost.",
+        "[fidetype.lsl] stop (duration): 13 final decisions, 1335 events, 0 rejected, 2 aborted"
+      ],
+      "cpu": {
+        "consumer_s": 1.671875,
+        "bridge1_s": 0.875,
+        "bridge2_s": 0.484375,
+        "consumer_pct_of_one_core": 2.39,
+        "bridge_pct_of_one_core": 2.34
+      }
+    },
+    {
+      "mode": "features",
+      "timeline_s": {
+        "bridge1": 2.0,
+        "pause_at": 20.0,
+        "pause_for": 3.0,
+        "kill": 40.0,
+        "bridge2": 44.0,
+        "bridge2_dur": 20.0,
+        "consumer_dur": 70.0
+      },
+      "events": [
+        {
+          "t": 2.01,
+          "event": "bridge1 start"
+        },
+        {
+          "t": 40.0,
+          "event": "bridge1 killed"
+        },
+        {
+          "t": 44.0,
+          "event": "bridge2 start"
+        },
+        {
+          "t": 64.31,
+          "event": "bridge2 stopped (rc 0)"
+        },
+        {
+          "t": 75.92,
+          "event": "consumer stopped (rc 0)"
+        }
+      ],
+      "consumer_exit_code": 0,
+      "wall_s": 75.92,
+      "final_decisions": 13,
+      "actions": {
+        "ABSTAIN": 13
+      },
+      "commits": 0,
+      "reasons": {
+        "guard risk # >= #": 13
+      },
+      "decisions_with_gap": 1,
+      "frames_per_decision": [
+        86,
+        100,
+        100,
+        100,
+        99,
+        26,
+        100,
+        100,
+        100,
+        38,
+        100,
+        100,
+        100
+      ],
+      "guard_risk": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "p_top1": [
+        0.586,
+        0.212,
+        0.189,
+        0.22,
+        0.369,
+        0.187,
+        0.308,
+        0.469,
+        0.594,
+        0.247,
+        0.215,
+        0.345,
+        0.328
+      ],
+      "trust_layer_latency_ms": {
+        "p50": 25.7,
+        "max": 33.3
+      },
+      "e2e_latency_ms": {
+        "n": 13,
+        "p50": 37.5,
+        "p95": 182.7,
+        "max": 382.3
+      },
+      "e2e_latency_steady_ms": {
+        "n": 10,
+        "p50": 38.1,
+        "p95": 45.1,
+        "max": 49.7
+      },
+      "e2e_latency_all_ms": [
+        37.5,
+        36.1,
+        38.7,
+        38.7,
+        382.3,
+        13.9,
+        49.7,
+        31.0,
+        24.5,
+        12.8,
+        39.5,
+        39.0,
+        31.5
+      ],
+      "source": {
+        "samples": 12946,
+        "frames": 1293,
+        "markers": 13,
+        "ignored_markers": 0,
+        "bad_markers": 0,
+        "clamped": 0,
+        "dropped_out_of_order": 0,
+        "gaps": 1,
+        "lost": 4,
+        "reconnects": 2,
+        "late_releases": 0,
+        "transport_latency_ms": {
+          "n": 12946,
+          "p50": 11.45011074913782,
+          "p95": 21.185730589422747,
+          "max": 655.1652138514328
+        }
+      },
+      "aborted_utterances": 2,
+      "stop_reason": "duration",
+      "consumer_log": [
+        "[fidetype.lsl] connected: m608.features (EEG, 16 ch, float32, 250.0 Hz)",
+        "[fidetype.lsl] signal decoder: TOY (features); it carries no text information",
+        "[fidetype.lsl] connected events stream: m608.features.markers",
+        "[fidetype.lsl] lsl lost: m608.features the stream has been lost.",
+        "[fidetype.lsl] abort utterance: lost",
+        "[fidetype.lsl] lsl lost: m608.features.markers the stream has been lost.",
+        "[fidetype.lsl] lsl reconnected: m608.features.markers",
+        "[fidetype.lsl] lsl reconnected: m608.features",
+        "[fidetype.lsl] lsl lost: m608.features the stream has been lost.",
+        "[fidetype.lsl] abort utterance: lost",
+        "[fidetype.lsl] lsl lost: m608.features.markers the stream has been lost.",
+        "[fidetype.lsl] stop (duration): 13 final decisions, 1308 events, 0 rejected, 2 aborted"
+      ],
+      "cpu": {
+        "consumer_s": 1.53125,
+        "bridge1_s": 0.8125,
+        "bridge2_s": 0.5625,
+        "consumer_pct_of_one_core": 2.19,
+        "bridge_pct_of_one_core": 2.37
+      }
+    }
+  ]
+}

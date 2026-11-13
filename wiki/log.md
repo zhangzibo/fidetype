@@ -422,3 +422,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Opt-in conformance profiles `fep-0001` (10 checks, 40 vectors: 12 accept / 28 reject) and `fep-0002` (6 checks, 31 scripted LSL scenarios: 15 accept / 16 reject; no pylsl) in `src/fidetype/conformance/profiles/`, `spec/conformance/fep-000{1,2}/`; CLI `fidetype conformance --profile NAME`. v0.1 vectors unchanged (52/52).
 - Tests: `tests/test_fep_profiles.py` (24); pytest 480 passed / 4 skipped.
 - Pages: [streaming trust layer](concepts/streaming-trust-layer.md) (declaration check, profile), [LSL input](concepts/lsl-input.md) (FEP-0002 rules, profile), [conformance suite](concepts/conformance-suite.md) (profiles section), index; `spec/README.md` FEP table.
+
+## [2026-11-12] setup | M6-08 BrainFlow Synthetic board -> LSL -> trust layer live test
+- New optional extra `[brainflow]` (brainflow 5.24.0, MIT). New `fidetype.adapters.brainflow_bridge` and CLI `fidetype lsl brainflow-bridge --board synthetic`: an `EEG` stream (labels, unit `microvolts`, `role = signal`) and a `Markers` stream (`segment_end` trial clock, `role = signal_markers`). The bridge smooths the bursty BrainFlow stamps and keeps real gaps.
+- New toy decoders `fidetype.decoders.toy_signal` (`flat`, `features`). They carry no text information. `fidetype lsl run --signal-decoder toy-flat|toy-features`.
+- Live run (`experiments/2026-11-13-m6-08-brainflow-live/`): two processes, demo config + demo decoder, 3-s dropout, hard kill, reconnect, clean stop. 26/26 ABSTAIN, 0 COMMIT. Transport p50 11.5 ms; steady e2e p50 33–38 ms; CPU about 2.3 % of one core per process.
+- Finding and fix: liblsl `pull_chunk(timeout > 0)` waits for a full buffer. `PylslInlet.pull_chunk` now pulls with timeout 0 (transport p50 37 → 11.5 ms).
+- FEP-0002 role table: informative `signal` / `signal_markers`. Tests: `tests/test_brainflow_bridge.py` (14); pytest 494 passed / 4 skipped.
+- Pages: [LSL input](concepts/lsl-input.md) (new section "BrainFlow live test"), [BrainFlow](entities/brainflow.md), index; README CLI table. Tracker: M6-08 done; follow-ups M6-12 (real board, externally blocked), M6-13 (soak test).
