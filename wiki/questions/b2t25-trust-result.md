@@ -52,3 +52,5 @@ updated: 2026-11-10
 Related: [Brain-to-Text '25](../entities/brain-to-text-25.md) · [Provenance ledger](../concepts/provenance-ledger.md) (M2-09 audit demo on this replay) · [Trust core v0 results](trust-core-v0-results.md) · [Public datasets](public-datasets.md) · [CTC](../concepts/ctc.md)
 
 > **Update 2026-11-11:** the third device type (forearm sEMG) gave the same pattern: see [EMG Toronto trust result](emg-toronto-trust-result.md).
+
+> **Update 2026-11-13:** pre-registered confirmatory test of the Paper 1 frozen configuration on a second participant (T12, our own decoder): safe but uninformative (0/400 commits; decoder right sentence first 3/400). See [Confirmatory test on T12](confirmatory-t12.md).

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T01:05:00-08:00",
+  "updated": "2026-11-13T02:30:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8).",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -491,7 +491,7 @@
      "orchestrator_only": false, "notes": "Done together with M6-09 (one agent run, listed here). FEP-0001 (Draft) + part 4 decode_declaration (decoder, version, frame_temperature, params, config_id) and testable rules; StreamingTrustLayer declaration check (StreamingConfig.declaration_check warn (default, no decision change) / abstain / off; require_declaration; expected_decoder); opt-in profile fep-0001: 10 checks, 40 vectors (12 accept / 28 reject) in spec/conformance/fep-0001; CLI fidetype conformance --profile fep-0001. tests/test_fep_profiles.py; pytest 480 passed / 4 skipped."},
     {"id": "M4-08", "milestone": "M4", "title": "Incremental decoder state on the frames route (prefix beam carried across frames)", "status": "done",
      "started_at": "2026-11-12T23:55:00-08:00", "finished_at": "2026-11-13T01:05:00-08:00", "approx_times": true,
-     "agent_runs": [{"label": "M4-08 incremental decoding (IncrementalPrefixBeam, trust.incremental, layer opt-in, B2T + synthetic experiment, wiki)", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "agent_runs": [{"label": "M4-08 incremental decoding (IncrementalPrefixBeam, trust.incremental, layer opt-in, B2T + synthetic experiment, wiki)", "duration_s": 4591.3, "tokens": 314506, "tool_uses": 115}],
      "orchestrator_only": false, "notes": "fidetype.lm.IncrementalPrefixBeam (CTC prefix beam state across chunks; ctc_prefix_beam_search = one chunk, so chunked == batch by construction), ctc_forced_align_many (one Viterbi pass, same spans), alignment memo + prewarm(max_new); fidetype.trust.incremental: IncrementalDecoder protocol (push_frames / partial / finalize), IncrementalGreedy, IncrementalReferenceDecoder, CTCBeamSpec/IncrementalCTCBeam (post, prewarm_every, on_prewarm), BufferedDecoder, SegmentTracker, stability_metrics; opt-in StreamingTrustLayer(incremental=...), StreamingConfig.incremental_chunk_frames; CLI replay --incremental. Experiment experiments/2026-11-13-m4-08-incremental (CPU 46 min): exact equality B2T 816/816 (ours: 4 incremental variants; published gate) and synthetic 200/200 (greedy, segment beam, CTC beam + LM). B2T end p50/p95/max 175/1010/3242 ms (batch, M4-06 path) -> 122/1005/3099 (search only) -> 33/71/595 (full word prewarm; push max 2.2 s, ~4.5x CPU). Tail = PhonemeWordDecoder nearest() fallback. Preview stability B2T words: change rate 0.29, 4.4 rewrites/utt, last preview = final 65 %. tests/test_trust_incremental.py 18; pytest 535 passed / 4 skipped. Diagram 14."},
 
     {"id": "M5-01", "milestone": "M5", "title": "Publish the harness, the metrics and fixed splits", "status": "done",
@@ -917,6 +917,16 @@
     {"id": "P13-05", "milestone": "P13", "title": "Outside datasets or tracks contributed to the hub", "status": "externally_blocked",
      "started_at": null, "finished_at": null, "approx_times": false,
      "agent_runs": [],
-     "orchestrator_only": false, "notes": "Depends on outside groups. Not counted as late."}
+     "orchestrator_only": false, "notes": "Depends on outside groups. Not counted as late."},
+
+    {"id": "M3-27", "milestone": "M3", "title": "Confirmatory test of the Paper 1 frozen configuration on a second intracortical participant (T12)", "status": "done",
+     "started_at": "2026-11-12T22:00:00-08:00", "finished_at": "2026-11-13T01:50:00-08:00", "approx_times": true,
+     "agent_runs": [{"label": "T12 data, pre-registration, GRU-CTC decoder (GPU), single trust run, report (agent died from an API error before its report; numbers approximate, from the harness)", "duration_s": 13191.3, "tokens": 278695, "tool_uses": 139, "approx": true}],
+     "orchestrator_only": false, "notes": "Pre-registration experiments/2026-11-13-confirmatory-t12/PROTOCOL.md (commit a7cf624) before decoding. Data: Willett 2023 / B2T '24 competitionData, CC0, Zenodo copy of Dryad (Dryad needs a login token); MD5 OK. 24 sessions; trust pool = last block per session: fit-A 1-8 (240), calibration 9-14 (240), test 15-24 (400). Own causal GRU-CTC (run 1 lr 2e-3 collapsed; run 2 lr 5e-4, 150 epochs): val PER 0.471, test PER 0.542, WER 0.751, right sentence first 3/400. Frozen config tcfg-fe35888dac333cff: 0/400 wrong commits, 0/400 commits, 0/10 sessions above alpha, controls 0/400 (frame-shuffled, uniform, intent mismatch), guard AUROC 0.966. Outcome by the pre-registered rule: UNINFORMATIVE (safe; LTT bound not tested; decoder too weak). Follow-up: stronger T12 decoder + pre-registration v2 (M3-28). Outcome: uninformative (0 commits; decoder too weak)."},
+
+    {"id": "M3-28", "milestone": "M3", "title": "T12 confirmatory v2 (better decoder, new pre-registration)", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Follow-up of M3-27 (uninformative). Needs a T12 decoder with a right top-1 sentence for a fair share of trials (T15: 39 %): per-block normalisation with a causal running estimate, larger GRU, better licence-clean word LM. The M3-27 test sessions were decoded once, so v2 needs a new pre-registration that says so (or other data: Dryad sentences, competitionHoldOut)."}
   ]
 }

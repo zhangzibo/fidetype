@@ -1,0 +1,44 @@
+{
+ "decoder_validation": {
+  "n": 880,
+  "cer": 0.4910642643518856,
+  "wer": 0.672753834915997,
+  "sentence_exact": 0.014772727272727272,
+  "truth_in_nbest": 0.03068181818181818,
+  "greedy_per_symbols": 0.4708062222605248,
+  "seconds": 77.3
+ },
+ "checkpoint": {
+  "checkpoint": "C:\\Users\\zhang\\bci-data\\runs\\t12-gru-r2\\best.pt",
+  "checkpoint_sha256": "f41117e7e72421304e8568651bdd1220d068a2fe8d37e8478eb1afd9ba661cca",
+  "epoch": 150,
+  "val_per_greedy": 0.47008731736837556,
+  "n_streams": 1760,
+  "config": {
+   "n_in": 512,
+   "input_layer": "per-session affine 512->512 (identity init) + softsign",
+   "smooth_sd_bins": 2.0,
+   "smooth": "causal half-Gaussian (past bins only, so latency 0)",
+   "patch": 14,
+   "stride": 4,
+   "gru_layers": 5,
+   "hidden": 512,
+   "dropout": 0.4,
+   "lr": 0.0005,
+   "warmup_steps": 1000,
+   "weight_decay": 1e-05,
+   "batch": 32,
+   "white_noise_sd": 0.8,
+   "offset_sd": 0.2,
+   "max_epochs": 150,
+   "patience": 20,
+   "seed": 0,
+   "checkpoint_minutes": 5
+  }
+ },
+ "word_route": {
+  "lm_weight": 1.0,
+  "edit_penalty": 12.0,
+  "word_bonus": 3.0
+ }
+}

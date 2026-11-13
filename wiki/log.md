@@ -442,3 +442,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Experiment `experiments/2026-11-13-m4-08-incremental/`: final decisions equal the batch path exactly (B2T 816/816 for ours in 4 variants and the published gate; synthetic 200/200 for greedy, segment beam, CTC beam + LM). B2T end-of-utterance p50/p95/max 175/1010/3242 ms (batch) -> 122/1005/3099 (search only) -> 33/71/595 (full word prewarm; push max 2.2 s, about 4.5x CPU). Preview stability (B2T words): change rate 0.29, 4.4 rewrites per utterance, last preview = final 65 %.
 - Tests: `tests/test_trust_incremental.py` (18).
 - Pages: [streaming trust layer](concepts/streaming-trust-layer.md) (new section); diagram 14.
+
+## [2026-11-13] query | M3-27 confirmatory test on T12
+- Pre-registration `experiments/2026-11-13-confirmatory-t12/PROTOCOL.md` (commit a7cf624), pushed before any decoding.
+- Data: Willett et al. 2023 / B2T '24 `competitionData` (CC0), from the Zenodo copy of the Dryad record (Dryad file downloads need a login token); MD5 checked; row in `references/README.md`.
+- Own causal GRU-CTC decoder (2 runs; run 1 collapsed at lr 2e-3, run 2 lr 5e-4): validation PER 0.471; test PER 0.542, WER 0.751, right sentence first 3/400.
+- Frozen configuration on 400 test trials (10 later sessions): 0 wrong commits, 0 commits; controls 0/400; guard AUROC 0.966. Outcome by the pre-registered rule: **uninformative** (safe; the LTT bound not tested).
+- New page [Confirmatory test on T12](questions/confirmatory-t12.md); update note on [B2T '25 trust result](questions/b2t25-trust-result.md); index.

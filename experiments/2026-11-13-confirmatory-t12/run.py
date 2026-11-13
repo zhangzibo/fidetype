@@ -184,8 +184,13 @@ def joint_ltt(s, c, f, beta: float, alpha=ALPHA, delta=DELTA) -> float:
 
 
 def rec_summary(records) -> dict:
-    m = summarize(records)
     n = len(records)
+    if n == 0:  # only in the dry run with --limit (a session with no items)
+        nan = math.nan
+        return {"n": 0, "n_commit": 0, "n_wrong_commit": 0, "wrong_commit": nan, "wrong_commit_cp95": [None, None],
+                "commit_rate": nan, "error_among_commits": nan, "eac_cp95": [None, None], "silent_error_rate": nan,
+                "ewpm": nan, "abstain_rate": nan, "rate_offer": nan}
+    m = summarize(records)
     ncom = sum(r.committed_text is not None for r in records)
     nwr = sum(bool(r.wrong_commit) for r in records)
     return {"n": n, "n_commit": ncom, "n_wrong_commit": nwr, "wrong_commit": nwr / n if n else math.nan,
@@ -197,6 +202,8 @@ def rec_summary(records) -> dict:
 
 def gaze_ewpm(truths, cpm) -> float:
     t = sum(len(s) for s in truths) * 60.0 / cpm
+    if t == 0:
+        return math.nan
     return 60.0 * sum(len(s.split()) for s in truths) / t
 
 
@@ -246,8 +253,11 @@ def stage_trust(part: str = "pool", out_name: str = "trust.json", limit: int | N
     fitA, _ = D.items(part, fit_s)
     cal, _ = D.items(part, cal_s)
     test, test_sess = D.items(part, test_s)
-    if limit:
-        fitA, cal, test, test_sess = fitA[:limit], cal[:limit], test[:limit], test_sess[:limit]
+    if limit:  # dry run only: an even sample over all sessions
+        st = lambda n: max(1, n // limit)  # noqa: E731
+        fitA, cal = fitA[::st(len(fitA))], cal[::st(len(cal))]
+        k = st(len(test))
+        test, test_sess = test[::k], test_sess[::k]
     test_sess = np.array(test_sess)
     cpm = D.prep["speech_rate_decoder_train"]["chars_per_min"]
     user = UserConfig.aac_gaze(chars_per_min=cpm)
@@ -450,7 +460,7 @@ def stage_tables() -> None:
           f"Fit report: frame T {f(R['fit_report'].get('temperature_frame'))}, sentence T {f(R['fit_report'].get('temperature_sentence'))}, conformal q {f(R['fit_report'].get('conformal_q'))}, policy fit feasible {R['fit_report'].get('policy_fit_feasible')}.",
           f"Trust core identical to tag `{CFG['frozen_tag']}`: {all(R['trust_core_identical_to_tag'].values())}."]
     (OUT / "tables.md").write_text("\n".join(L) + "\n", encoding="utf-8")
-    print("\n".join(L))
+    print("tables written:", OUT / "tables.md")
 
 
 def main() -> None:

@@ -1,0 +1,1016 @@
+{
+ "preregistration_commit": "a7cf6244ee78bda5b7a1783968e0d82507b14a9a",
+ "trust_core_identical_to_tag": {
+  "src/fidetype/trust/policy.py": true,
+  "src/fidetype/trust/guard.py": true,
+  "src/fidetype/trust/risk_control.py": true,
+  "src/fidetype/trust/calibration.py": true,
+  "src/fidetype/trust/conformal.py": true,
+  "src/fidetype/eval/harness.py": true,
+  "src/fidetype/interact/simulated_user.py": true,
+  "src/fidetype/eval/ewpm.py": true
+ },
+ "n": {
+  "fit_a": 60,
+  "calibration": 60,
+  "test": 67
+ },
+ "sessions": {
+  "fit_a": [
+   "t12.2022.04.28",
+   "t12.2022.05.05",
+   "t12.2022.05.17",
+   "t12.2022.05.19",
+   "t12.2022.05.24",
+   "t12.2022.05.26",
+   "t12.2022.06.02",
+   "t12.2022.06.07"
+  ],
+  "calibration": [
+   "t12.2022.06.14",
+   "t12.2022.06.16",
+   "t12.2022.06.21",
+   "t12.2022.06.23",
+   "t12.2022.06.28",
+   "t12.2022.07.05"
+  ],
+  "test": [
+   "t12.2022.07.14",
+   "t12.2022.07.21",
+   "t12.2022.07.27",
+   "t12.2022.07.29",
+   "t12.2022.08.02",
+   "t12.2022.08.11",
+   "t12.2022.08.13",
+   "t12.2022.08.18",
+   "t12.2022.08.23",
+   "t12.2022.08.25"
+  ]
+ },
+ "chars_per_min": 303.98331077672157,
+ "fit_report": {
+  "temperature_frame": 1.8449983276741606,
+  "temperature_sentence": 19.999915690182068,
+  "temperature_char": 1.0,
+  "conformal_q": "inf",
+  "word_conformal_q": "inf",
+  "calib_miss_rate": 0.9,
+  "policy_config": {
+   "commit_p": 0.3,
+   "commit_max_risk": 0.1,
+   "commit_max_set": null,
+   "offer_max_k": 1,
+   "abstain_risk": 1.01,
+   "final_fallback": "offer",
+   "offer_words": false,
+   "word_conf_threshold": 0.9,
+   "offer_words_k": 3,
+   "offer_words_min_conf": 0.0,
+   "offer_words_max_slots": null
+  },
+  "policy_fit_feasible": true,
+  "val_ewpm": 4.251419091004028,
+  "val_wrong_commit_rate": 0.0,
+  "risk_control_method": "ltt-binomial",
+  "risk_control_threshold": 0.0,
+  "risk_control_feasible": true,
+  "risk_control_n": 60,
+  "risk_control_bound": 0.04606979898695208,
+  "risk_control_commit_p": 0.3,
+  "risk_control_alpha": 0.05,
+  "risk_control_delta": 0.1
+ },
+ "plug_in_policy": {
+  "commit_p": 0.3,
+  "commit_max_risk": 0.1,
+  "commit_max_set": null,
+  "offer_max_k": 1,
+  "abstain_risk": 1.01,
+  "final_fallback": "offer",
+  "offer_words": false,
+  "word_conf_threshold": 0.9,
+  "offer_words_k": 3,
+  "offer_words_min_conf": 0.0,
+  "offer_words_max_slots": null
+ },
+ "ltt": {
+  "threshold": 0.0,
+  "feasible": true,
+  "n": 60,
+  "bound": 0.04606979898695208,
+  "commit_p_final": 0.3
+ },
+ "trust_config_id": "tcfg-0bdbeb343d1a5337",
+ "lambdas": {
+  "LTT max (primary)": 0.3,
+  "plug-in": 0.3,
+  "no commits": "inf",
+  "joint LTT b0.10": "inf",
+  "joint LTT b0.20": "inf"
+ },
+ "test_harness_metrics": {
+  "n_test": 67,
+  "cer": 0.5376513954713007,
+  "wer": 0.7108753315649867,
+  "greedy_cer": 0.5138888888888888,
+  "top1_sentence_acc": 0.0,
+  "ece_sentence_before": 0.654564750047568,
+  "ece_sentence_after": 0.12707437468561955,
+  "ece_char_before": 0.14047223760866367,
+  "ece_char_after": 0.05149405278662501,
+  "coverage": 0.04477611940298507,
+  "coverage_in_nbest": 1.0,
+  "coverage_with_other": 0.04477611940298507,
+  "mean_set_size": 10.0,
+  "empty_rate": 0.0,
+  "miss_rate": 0.9552238805970149,
+  "word_coverage": 0.41543026706231456,
+  "word_mean_set_size": 2.462908011869436,
+  "guard_auroc": "nan",
+  "guard_auroc_low_evidence": "nan",
+  "guard_auroc_inconsistency": "nan",
+  "p_top1_auroc": "nan",
+  "n_sentences": 67.0,
+  "ewpm": 4.4912826150091645,
+  "ewpm_partial": 4.4912826150091645,
+  "communicated_rate": 1.0,
+  "wrong_commit_rate": 0.0,
+  "silent_error_rate": 0.0,
+  "abstain_rate": 0.0,
+  "committed_cer": "nan",
+  "commit_share": 0.0,
+  "mean_time_s": 75.17049565535268,
+  "mean_attempts": 1.0,
+  "rate_commit": 0.0,
+  "rate_offer": 1.0,
+  "rate_ask": 0.0,
+  "rate_abstain": 0.0,
+  "rate_offer_words": 0.0,
+  "system_word_accuracy": 0.3050397877984085,
+  "keystrokes_saved": 0.09004739336492895,
+  "share_words_system": 0.0,
+  "share_words_selected": 0.3156498673740053,
+  "share_words_typed": 0.6843501326259946,
+  "fit_temperature_frame": 1.8449983276741606,
+  "fit_temperature_sentence": 19.999915690182068,
+  "fit_temperature_char": 1.0,
+  "fit_conformal_q": "inf",
+  "fit_word_conformal_q": "inf",
+  "fit_calib_miss_rate": 0.9,
+  "fit_policy_config": {
+   "commit_p": 0.3,
+   "commit_max_risk": 0.1,
+   "commit_max_set": null,
+   "offer_max_k": 1,
+   "abstain_risk": 1.01,
+   "final_fallback": "offer",
+   "offer_words": false,
+   "word_conf_threshold": 0.9,
+   "offer_words_k": 3,
+   "offer_words_min_conf": 0.0,
+   "offer_words_max_slots": null
+  },
+  "fit_policy_fit_feasible": true,
+  "fit_val_ewpm": 4.251419091004028,
+  "fit_val_wrong_commit_rate": 0.0,
+  "fit_risk_control_method": "ltt-binomial",
+  "fit_risk_control_threshold": 0.0,
+  "fit_risk_control_feasible": true,
+  "fit_risk_control_n": 60,
+  "fit_risk_control_bound": 0.04606979898695208,
+  "fit_risk_control_commit_p": 0.3,
+  "fit_risk_control_alpha": 0.05,
+  "fit_risk_control_delta": 0.1
+ },
+ "primary": {
+  "n": 67,
+  "n_commit": 0,
+  "n_wrong_commit": 0,
+  "wrong_commit": 0.0,
+  "wrong_commit_cp95": [
+   0.0,
+   0.053569654127096765
+  ],
+  "commit_rate": 0.0,
+  "error_among_commits": "nan",
+  "eac_cp95": [
+   null,
+   null
+  ],
+  "silent_error_rate": 0.0,
+  "ewpm": 4.4912826150091645,
+  "abstain_rate": 0.0,
+  "rate_offer": 1.0
+ },
+ "rules": {
+  "LTT max (primary)": {
+   "n": 67,
+   "n_commit": 0,
+   "n_wrong_commit": 0,
+   "wrong_commit": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.053569654127096765
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": "nan",
+   "eac_cp95": [
+    null,
+    null
+   ],
+   "silent_error_rate": 0.0,
+   "ewpm": 4.4912826150091645,
+   "abstain_rate": 0.0,
+   "rate_offer": 1.0
+  },
+  "plug-in": {
+   "n": 67,
+   "n_commit": 0,
+   "n_wrong_commit": 0,
+   "wrong_commit": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.053569654127096765
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": "nan",
+   "eac_cp95": [
+    null,
+    null
+   ],
+   "silent_error_rate": 0.0,
+   "ewpm": 4.4912826150091645,
+   "abstain_rate": 0.0,
+   "rate_offer": 1.0
+  },
+  "no commits": {
+   "n": 67,
+   "n_commit": 0,
+   "n_wrong_commit": 0,
+   "wrong_commit": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.053569654127096765
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": "nan",
+   "eac_cp95": [
+    null,
+    null
+   ],
+   "silent_error_rate": 0.0,
+   "ewpm": 4.4912826150091645,
+   "abstain_rate": 0.0,
+   "rate_offer": 1.0
+  },
+  "always commit top-1": {
+   "n": 67,
+   "n_commit": 67,
+   "n_wrong_commit": 67,
+   "wrong_commit": 1.0,
+   "wrong_commit_cp95": [
+    0.9464303458729032,
+    1.0
+   ],
+   "commit_rate": 1.0,
+   "error_among_commits": 1.0,
+   "eac_cp95": [
+    0.9464303458729032,
+    1.0
+   ],
+   "silent_error_rate": 0.16417910447761194,
+   "ewpm": 3.9712144577624686,
+   "abstain_rate": 0.0,
+   "rate_offer": 0.0
+  },
+  "joint LTT b0.10": {
+   "n": 67,
+   "n_commit": 0,
+   "n_wrong_commit": 0,
+   "wrong_commit": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.053569654127096765
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": "nan",
+   "eac_cp95": [
+    null,
+    null
+   ],
+   "silent_error_rate": 0.0,
+   "ewpm": 4.4912826150091645,
+   "abstain_rate": 0.0,
+   "rate_offer": 1.0
+  },
+  "joint LTT b0.20": {
+   "n": 67,
+   "n_commit": 0,
+   "n_wrong_commit": 0,
+   "wrong_commit": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.053569654127096765
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": "nan",
+   "eac_cp95": [
+    null,
+    null
+   ],
+   "silent_error_rate": 0.0,
+   "ewpm": 4.4912826150091645,
+   "abstain_rate": 0.0,
+   "rate_offer": 1.0
+  }
+ },
+ "bootstrap_sessions": {
+  "LTT max (primary)": {
+   "wrong_commit": [
+    0.0,
+    0.0
+   ],
+   "commit_rate": [
+    0.0,
+    0.0
+   ],
+   "ewpm": [
+    4.135690876421889,
+    4.917557396001846
+   ],
+   "eac": null
+  },
+  "plug-in": {
+   "wrong_commit": [
+    0.0,
+    0.0
+   ],
+   "commit_rate": [
+    0.0,
+    0.0
+   ],
+   "ewpm": [
+    4.135690876421889,
+    4.917557396001846
+   ],
+   "eac": null
+  },
+  "no commits": {
+   "wrong_commit": [
+    0.0,
+    0.0
+   ],
+   "commit_rate": [
+    0.0,
+    0.0
+   ],
+   "ewpm": [
+    4.135690876421889,
+    4.917557396001846
+   ],
+   "eac": null
+  },
+  "always commit top-1": {
+   "wrong_commit": [
+    1.0,
+    1.0
+   ],
+   "commit_rate": [
+    1.0,
+    1.0
+   ],
+   "ewpm": [
+    3.5768550902227303,
+    4.354696693631805
+   ],
+   "eac": [
+    1.0,
+    1.0
+   ]
+  },
+  "joint LTT b0.10": {
+   "wrong_commit": [
+    0.0,
+    0.0
+   ],
+   "commit_rate": [
+    0.0,
+    0.0
+   ],
+   "ewpm": [
+    4.135690876421889,
+    4.917557396001846
+   ],
+   "eac": null
+  },
+  "joint LTT b0.20": {
+   "wrong_commit": [
+    0.0,
+    0.0
+   ],
+   "commit_rate": [
+    0.0,
+    0.0
+   ],
+   "ewpm": [
+    4.135690876421889,
+    4.917557396001846
+   ],
+   "eac": null
+  }
+ },
+ "gain_vs_no_commits": {
+  "point": 0.0,
+  "ci": [
+   0.0,
+   0.0
+  ],
+  "sign_test": {
+   "pos": 0,
+   "neg": 0,
+   "p": 1.0
+  }
+ },
+ "gaze_ewpm": 3.970510795155345,
+ "gain_vs_gaze": {
+  "point": 0.5207718198538194,
+  "ci": [
+   0.14739587343558147,
+   0.9638914156895271
+  ]
+ },
+ "per_session": {
+  "t12.2022.07.14": {
+   "LTT max (primary)": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.7131396882276198,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.7131396882276198,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.07.21": {
+   "LTT max (primary)": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 5.449425500745964,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 5.449425500745964,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.07.27": {
+   "LTT max (primary)": {
+    "n": 6,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.45925812643990044
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.964554632936536,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 6,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.45925812643990044
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.964554632936536,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.07.29": {
+   "LTT max (primary)": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 5.069211582010942,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 5.069211582010942,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.08.02": {
+   "LTT max (primary)": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 4.800200386144201,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 4.800200386144201,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.08.11": {
+   "LTT max (primary)": {
+    "n": 6,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.45925812643990044
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 4.079973814255479,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 6,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.45925812643990044
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 4.079973814255479,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.08.13": {
+   "LTT max (primary)": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 4.829990152967921,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 4.829990152967921,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.08.18": {
+   "LTT max (primary)": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.728751805644946,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.728751805644946,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.08.23": {
+   "LTT max (primary)": {
+    "n": 6,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.45925812643990044
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 4.818051942054176,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 6,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.45925812643990044
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 4.818051942054176,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  },
+  "t12.2022.08.25": {
+   "LTT max (primary)": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 5.492281220860887,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   },
+   "plug-in": {
+    "n": 7,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.40961639722500337
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 5.492281220860887,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0
+   }
+  }
+ },
+ "sessions_above_alpha": 0,
+ "sessions_cp_lower_above_alpha": 0,
+ "controls": {
+  "frame_shuffled": {
+   "LTT max (primary)": {
+    "n": 67,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.053569654127096765
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.525328561338372,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0,
+    "commit_cp95_one_sided_upper": 0.043727554781889444
+   },
+   "plug-in": {
+    "n": 67,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.053569654127096765
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.525328561338372,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0,
+    "commit_cp95_one_sided_upper": 0.043727554781889444
+   }
+  },
+  "uniform": {
+   "LTT max (primary)": {
+    "n": 67,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.053569654127096765
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.628475423010177,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0,
+    "commit_cp95_one_sided_upper": 0.043727554781889444
+   },
+   "plug-in": {
+    "n": 67,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.053569654127096765
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.628475423010177,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0,
+    "commit_cp95_one_sided_upper": 0.043727554781889444
+   }
+  },
+  "intent_mismatch": {
+   "LTT max (primary)": {
+    "n": 67,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.053569654127096765
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.5360749631163957,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0,
+    "commit_cp95_one_sided_upper": 0.043727554781889444
+   },
+   "plug-in": {
+    "n": 67,
+    "n_commit": 0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.053569654127096765
+    ],
+    "commit_rate": 0.0,
+    "error_among_commits": "nan",
+    "eac_cp95": [
+     null,
+     null
+    ],
+    "silent_error_rate": 0.0,
+    "ewpm": 3.5360749631163957,
+    "abstain_rate": 0.0,
+    "rate_offer": 1.0,
+    "commit_cp95_one_sided_upper": 0.043727554781889444
+   }
+  }
+ },
+ "criteria": {
+  "C1_pooled_wrong_commit_le_alpha": true,
+  "C2_no_session_cp_lower_above_alpha": true,
+  "C3_controls_commit_le_0.01": true,
+  "commits_any": false
+ },
+ "outcome": "uninformative",
+ "decoder_test_quality": {
+  "cer": 0.5376513954713007,
+  "wer": 0.7108753315649867,
+  "greedy_cer": 0.5138888888888888,
+  "top1_sentence_acc": 0.0,
+  "guard_auroc": "nan"
+ },
+ "ledger_entries": 69,
+ "seconds": 37.3
+}
