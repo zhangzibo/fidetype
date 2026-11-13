@@ -1,0 +1,37 @@
+{
+  "char_temperature": 1.0,
+  "conformal_alpha": 0.1,
+  "conformal_mode": "conditional",
+  "conformal_q": "inf",
+  "conformal_score": "lac",
+  "frame_temperature": 2.0241414552536607,
+  "guard": {
+    "cluster_max_word_edits": 0,
+    "combine": "max",
+    "consistency_k": 5,
+    "low_conf_threshold": 0.5,
+    "w_consistency": 1.0,
+    "w_evidence": 1.0
+  },
+  "name": "m4-bench-synthetic",
+  "policy": {
+    "abstain_risk": 1.01,
+    "commit_max_risk": 0.4,
+    "commit_max_set": null,
+    "commit_p": 0.5,
+    "final_fallback": "offer",
+    "offer_max_k": 3,
+    "offer_words": false,
+    "offer_words_k": 3,
+    "offer_words_max_slots": null,
+    "offer_words_min_conf": 0.0,
+    "word_conf_threshold": 0.9
+  },
+  "policy_class": "trust",
+  "recipe": {},
+  "risk_control": {},
+  "schema": "fidetype.trust-config/0.1",
+  "sentence_temperature": 19.999915690182068,
+  "use_guard": true,
+  "word_max_alternatives": 5
+}

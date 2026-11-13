@@ -57,3 +57,5 @@ Offline CRC fails when the session drifts. `fidetype.trust.online_risk` (M2-16) 
 - [B2T '25 trust result](../questions/b2t25-trust-result.md) (the 0.059 that motivated M2-13)
 - [Trust core v0 results](../questions/trust-core-v0-results.md)
 - [Error metrics](error-metrics.md)
+
+> **Streaming (M4-03):** the [streaming trust layer](streaming-trust-layer.md) runs this part live, per session, from a frozen configuration.

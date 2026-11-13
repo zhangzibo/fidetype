@@ -1,0 +1,79 @@
+{
+  "description": "M4-03: latency, memory and batch equivalence of the streaming trust layer.",
+  "n_streams": 100,
+  "frames_per_stream": {
+    "mean": 452.61,
+    "max": 555
+  },
+  "frame_period_s": null,
+  "vocab_size": 28,
+  "machine": {
+    "python": "3.12.16",
+    "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+    "system": "Windows"
+  },
+  "config_id": "tcfg-d3a8a4b94122b35e",
+  "frames_route_beam": {
+    "push_frame": {
+      "n": 45261,
+      "p50_ms": 0.008000002708286047,
+      "p95_ms": 0.013500000932253897,
+      "p99_ms": 0.015799996617715806,
+      "max_ms": 0.17420000222045928,
+      "mean_ms": 0.008682187757769966
+    },
+    "final_decision": {
+      "n": 100,
+      "p50_ms": 8.052299999690149,
+      "p95_ms": 11.098800000036134,
+      "p99_ms": 13.95278200012399,
+      "max_ms": 14.327199998660944,
+      "mean_ms": 8.237166999897454
+    },
+    "peak_buffered_bytes_per_session": 124320,
+    "equal_to_batch": "100/100",
+    "actions": {
+      "OFFER": 100
+    }
+  },
+  "frames_route_greedy": {
+    "push_frame": {
+      "n": 45261,
+      "p50_ms": 0.008000002708286047,
+      "p95_ms": 0.013100005162414163,
+      "p99_ms": 0.01410000550094992,
+      "max_ms": 0.19939999765483662,
+      "mean_ms": 0.008501716699300617
+    },
+    "final_decision": {
+      "n": 100,
+      "p50_ms": 0.7191500008048024,
+      "p95_ms": 1.0838749996764816,
+      "p99_ms": 1.3846969997393939,
+      "max_ms": 2.1565999995800667,
+      "mean_ms": 0.7591750000574393
+    },
+    "peak_buffered_bytes_per_session": 124320,
+    "equal_to_batch": "100/100",
+    "actions": {
+      "COMMIT": 100
+    }
+  },
+  "hypothesis_route": {
+    "push_hypothesis": {
+      "n": 400,
+      "p50_ms": 0.19024999710381962,
+      "p95_ms": 0.31455999851459604,
+      "p99_ms": 0.45841200451832254,
+      "max_ms": 0.5223999978625216,
+      "mean_ms": 0.20368774987218785
+    },
+    "equal_to_batch": "100/100"
+  },
+  "interleaved_64_sessions_greedy": {
+    "events": 28879,
+    "wall_s": 1.0233004999972763,
+    "events_per_s": 28221.42664845455,
+    "tracemalloc_peak_bytes": 8681225
+  }
+}

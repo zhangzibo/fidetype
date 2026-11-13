@@ -47,10 +47,30 @@ from fidetype.trust.risk_control import (
     crc_threshold,
     ltt_threshold,
 )
+from fidetype.trust.frozen import PAPER1_V4_RECIPE, FrozenTrustConfig, paper1_v4_harness_config
+from fidetype.trust.streaming import (
+    StreamDecision,
+    StreamEventError,
+    StreamingConfig,
+    StreamingTrustLayer,
+    iter_events,
+    nbest_from_hypothesis,
+    replay,
+)
 from fidetype.trust.types import Candidate, NBest, from_lm_hypotheses
 
 __all__ = [
     "OFFER_WORDS_GRID",
+    "PAPER1_V4_RECIPE",
+    "FrozenTrustConfig",
+    "StreamDecision",
+    "StreamEventError",
+    "StreamingConfig",
+    "StreamingTrustLayer",
+    "iter_events",
+    "nbest_from_hypothesis",
+    "paper1_v4_harness_config",
+    "replay",
     "Action",
     "AdaptiveConformal",
     "AlwaysCommitPolicy",

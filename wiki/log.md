@@ -385,3 +385,12 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - M7-02: new page [partner targets](questions/partner-targets.md): 15 targets with public organisational channels only, offer, priority 1-3 and timing. No target is "now" (roadmap rule: demo + benchmark before outreach).
 - New `papers/outreach/`: `outreach-one-pager.md` (B2T '25 published decoder wrong-commit 0.194 -> 0.044 at -4.3 % eWPM; always-offer caveat +1.6 % / +3.6 %; EMG composed-sentence caveat; MEG parity with gaze) and `templates.md` (4 messages, 141-163 words). The user is the sender; agents sent nothing.
 - Tracker: M5-12 done; M7-02 in progress; M7-05 "User sends outreach" externally blocked; agent runs added to M5-01 and M3-13.
+
+## [2026-11-12] setup | M4-03 streaming trust layer
+- New `src/fidetype/trust/streaming.py`: `StreamingTrustLayer` consumes NeuralTextStream events per session (frames route with a pluggable `decode_fn`, or hypothesis route), emits provisional and final decisions with provenance, bounded memory, attempt counting, online re-calibration hook (frozen commit_p = floor), optional provenance ledger, `replay()` and a CLI.
+- New `src/fidetype/trust/frozen.py`: `FrozenTrustConfig` (fitted trust state as canonical JSON with a content id); `paper1_v4_harness_config()` for the Paper 1 recipe (guard + LTT max).
+- `tests/test_trust_streaming.py` (29 tests): final decisions equal the batch path exactly on synthetic streams and the golden vectors. pytest 417 passed / 4 skipped.
+- Latency benchmark `experiments/2026-11-12-m4-streaming/` (synthetic, CPU): push(frame) p50 0.008 ms, final decision 0.72 ms (greedy) / 8.1 ms (beam), push(hypothesis) 0.19 ms; 100/100 equal to batch.
+- Spec proposal `spec/feps/0001-streaming-trust-events.md` (segment_end, hypothesis evidence fields, trust_decision); no v0.1 change.
+- Pages: new [streaming trust layer](concepts/streaming-trust-layer.md), diagram 12; links from provenance-ledger and conformal-risk-control; index; tracker (M4-03 done; follow-ups M4-06..M4-08).
+

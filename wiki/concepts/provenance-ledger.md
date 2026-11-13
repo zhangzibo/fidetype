@@ -78,3 +78,5 @@ The M6-06 trust pipeline replayed the B2T '25 test half (816 trials) with a ledg
 - [Brain-to-Text '25 trust result](../questions/b2t25-trust-result.md): the replay of the demo.
 - [Standard roadmap](../questions/roadmap-standard.md), [architecture](../questions/architecture.md), [project plan](../questions/project-plan.md).
 - Experiment: [M2-09 provenance demo](../../experiments/2026-11-11-m2-09-provenance/results.md).
+
+> **Streaming (M4-03):** the [streaming trust layer](streaming-trust-layer.md) runs this part live, per session, from a frozen configuration.
