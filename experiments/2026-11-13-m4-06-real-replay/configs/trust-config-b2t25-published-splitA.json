@@ -1,0 +1,64 @@
+{
+  "char_temperature": 1.0,
+  "conformal_alpha": 0.1,
+  "conformal_mode": "conditional",
+  "conformal_q": 0.4303127570553543,
+  "conformal_score": "lac",
+  "frame_temperature": 3.815074655927598,
+  "guard": {
+    "cluster_max_word_edits": 0,
+    "combine": "max",
+    "consistency_k": 5,
+    "low_conf_threshold": 0.5,
+    "w_consistency": 1.0,
+    "w_evidence": 1.0
+  },
+  "name": "b2t25-t15-published-splitA-v4",
+  "policy": {
+    "abstain_risk": 1.01,
+    "commit_max_risk": 0.5,
+    "commit_max_set": null,
+    "commit_p": 0.76,
+    "final_fallback": "offer",
+    "offer_max_k": 1,
+    "offer_words": false,
+    "offer_words_k": 3,
+    "offer_words_max_slots": null,
+    "offer_words_min_conf": 0.0,
+    "word_conf_threshold": 0.9
+  },
+  "policy_class": "trust",
+  "recipe": {
+    "calibration": "clean calibration half, same user and session (exchangeable)",
+    "commit_threshold": "max(grid commit_p, LTT lambda_hat)",
+    "decoder": "Decoders.published_plus_fn (published sentence on top of our 10-best, margin 2.0; looks up the published sentence by meta fidetype.trial_index)",
+    "experiment": "experiments/2026-11-13-m4-06-real-replay",
+    "fitted_on": "Brain-to-Text '25 T15 copy task, fixed split A: fit-A = alternate fit-half trials per day (411), clean calibration = the other fit-half trials (401)",
+    "git_tag": "paper1-v4-frozen-config",
+    "guard": "on (GuardConfig defaults, combine=max)",
+    "name": "paper1-v4-frozen-config",
+    "policy_fit": "grid search, max eWPM s.t. plug-in wrong-commit <= 0.05",
+    "risk_control": {
+      "alpha": 0.05,
+      "combine": "max",
+      "delta": 0.1,
+      "grid": "1.00 to 0.00, step 0.01",
+      "method": "ltt",
+      "pvalue": "auto (binomial for 0/1 losses)"
+    }
+  },
+  "risk_control": {
+    "alpha": 0.05,
+    "bound": 0.06006909997165592,
+    "combine": "max",
+    "delta": 0.1,
+    "feasible": true,
+    "method": "ltt-binomial",
+    "n": 401,
+    "threshold": 0.76
+  },
+  "schema": "fidetype.trust-config/0.1",
+  "sentence_temperature": 1.6171063766465985,
+  "use_guard": true,
+  "word_max_alternatives": 5
+}

@@ -1,0 +1,42 @@
+{
+ "ours/frames": {
+  "max_buffered_bytes_per_session": 184336,
+  "max_buffered_frames": 562,
+  "traced_peak_bytes_100_trials": 1089696,
+  "traced_retained_bytes_100_trials": 14456,
+  "sessions": 14,
+  "first_file_events": [
+   196
+  ]
+ },
+ "ours/hypothesis": {
+  "max_buffered_bytes_per_session": 0,
+  "max_buffered_frames": 0,
+  "traced_peak_bytes_100_trials": 67710,
+  "traced_retained_bytes_100_trials": 43128,
+  "sessions": 14,
+  "first_file_events": [
+   1
+  ]
+ },
+ "published/frames": {
+  "max_buffered_bytes_per_session": 184336,
+  "max_buffered_frames": 562,
+  "traced_peak_bytes_100_trials": 1083648,
+  "traced_retained_bytes_100_trials": 5632,
+  "sessions": 14,
+  "first_file_events": [
+   196
+  ]
+ },
+ "published/hypothesis": {
+  "max_buffered_bytes_per_session": 0,
+  "max_buffered_frames": 0,
+  "traced_peak_bytes_100_trials": 38100,
+  "traced_retained_bytes_100_trials": 11720,
+  "sessions": 14,
+  "first_file_events": [
+   1
+  ]
+ }
+}

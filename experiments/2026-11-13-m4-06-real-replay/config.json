@@ -1,0 +1,20 @@
+{
+ "description": "M4-06: fit the Paper 1 frozen recipe (git tag paper1-v4-frozen-config: guard on, policy grid on fit-A, LTT max rule alpha 0.05 delta 0.1 on the clean calibration half) on the B2T '25 split A calibration data, freeze it with FrozenTrustConfig, and replay the 816 test streams (and the 300-trial control streams) through StreamingTrustLayer. CPU only.",
+ "dataset": "Brain-to-Text '25 copy task (Card et al. 2024, T15, CC0), 1,628 trials with the 125k vocabulary",
+ "split": "fixed split A: fit = first half of each post-implant day (812), test = second half (816); fit-A = alternate fit trials of each day (idx 0::2, 411), clean calibration = the others (1::2, 401)",
+ "recipe": "fidetype.trust.frozen.paper1_v4_harness_config(seed=0, user_config=UserConfig.aac_gaze(159.3 cpm)); pipe.fit(fitA, fitA) with the grid fit (risk_control off for this step, as in the paper), then pipe.calibrate_commit(clean_cal) = LTT, combine max",
+ "decoders": {
+  "ours": "experiments/2026-11-10-b2t25-trust Decoders.words_fn (CMUdict + word unigram + char 6-gram, tuned lm_weight 1.0 / edit_penalty 12 / word_bonus 3)",
+  "published": "Decoders.published_plus_fn (published sentence on top of our 10-best, margin 2.0; looks up the published sentence by meta fidetype.trial_index)"
+ },
+ "decode_cache": "copy of C:/Users/zhang/bci-data/cache/paper1-r4/decode-b2t-words-main.pkl in C:/Users/zhang/bci-data/derived/m4-06-real-replay/cache (keyed by float32 log-probs + trial index)",
+ "streams": "full-precision NTS JSON Lines written by run.py (float32 values as shortest float repr, so JSON -> float64 -> float32 is exact): header + frames + final hypothesis (the decoder n-best after the frozen frame temperature) + end; C:/Users/zhang/bci-data/derived/m4-06-real-replay/streams",
+ "rounded_streams": "C:/Users/zhang/bci-data/benchmark/submissions/b2t25-published-commit/streams",
+ "rounded_streams_note": "benchmark v0.1 NTS files, log-probs rounded to 6 decimals, phoneme vocab",
+ "streaming": {"max_attempts": 1, "sessions": "one session per post-implant day; a new header per trial", "ledger": "ProvenanceLedger(text_mode=hash)"},
+ "controls": "the 300-trial audit draw of experiments/2026-11-12-paper1-r4-analyses/v4-derived/guard_controls.py (rng seed 0): real, other_trial, frame_shuffled, uniform (jitter 0.05)",
+ "paper_reference": "experiments/2026-11-12-paper1-r4-analyses/v4-derived/results/guard_controls.json (split A, guard on, LTT max) = Paper 1 Tab. 3 'guaranteed rule, A' rows",
+ "seed": 0,
+ "latency_timing": "time.perf_counter; per final decision = push(last event) -> decision (frames route includes the decode); frames route measured cached (trust core + cache lookup) and uncached (fresh decode, ours)",
+ "derived_outputs": "C:/Users/zhang/bci-data/derived/m4-06-real-replay (per-trial decisions, ledgers, streams; not in the repo)"
+}

@@ -1,0 +1,165 @@
+{
+ "recipe": {
+  "name": "paper1-v4-frozen-config",
+  "git_tag": "paper1-v4-frozen-config",
+  "guard": "on (GuardConfig defaults, combine=max)",
+  "policy_fit": "grid search, max eWPM s.t. plug-in wrong-commit <= 0.05",
+  "commit_threshold": "max(grid commit_p, LTT lambda_hat)",
+  "risk_control": {
+   "method": "ltt",
+   "alpha": 0.05,
+   "delta": 0.1,
+   "pvalue": "auto (binomial for 0/1 losses)",
+   "grid": "1.00 to 0.00, step 0.01",
+   "combine": "max"
+  },
+  "calibration": "clean calibration half, same user and session (exchangeable)"
+ },
+ "n_fitA": 411,
+ "n_cal": 401,
+ "n_test": 816,
+ "conditions": {
+  "ours": {
+   "config_id": "tcfg-f5ca0020b3b8fce2",
+   "commit_p": 0.3,
+   "policy": {
+    "commit_p": 0.3,
+    "commit_max_risk": 0.1,
+    "commit_max_set": null,
+    "offer_max_k": 2,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "frame_T": 3.815074655927598,
+   "sentence_T": 4.443990657087517,
+   "conformal_q": 0.910823574841132,
+   "risk_control": {
+    "method": "ltt-binomial",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "threshold": 0.0,
+    "feasible": true,
+    "n": 401,
+    "bound": 2.851206112509622e-07,
+    "combine": "max"
+   },
+   "fit_report": {
+    "temperature_frame": 3.815074655927598,
+    "temperature_sentence": 4.443990657087517,
+    "temperature_char": 1.0,
+    "conformal_q": 0.910823574841132,
+    "word_conformal_q": 0.90796126951515,
+    "calib_miss_rate": 0.4223300970873786,
+    "policy_config": {
+     "commit_p": 0.3,
+     "commit_max_risk": 0.1,
+     "commit_max_set": null,
+     "offer_max_k": 2,
+     "abstain_risk": 1.01,
+     "final_fallback": "offer",
+     "offer_words": false,
+     "word_conf_threshold": 0.9,
+     "offer_words_k": 3,
+     "offer_words_min_conf": 0.0,
+     "offer_words_max_slots": null
+    },
+    "policy_fit_feasible": true,
+    "val_ewpm": 10.72613199224068,
+    "val_wrong_commit_rate": 0.012165450121654502,
+    "risk_control_method": "ltt-binomial",
+    "risk_control_threshold": 0.0,
+    "risk_control_feasible": true,
+    "risk_control_n": 401,
+    "risk_control_bound": 2.851206112509622e-07,
+    "risk_control_commit_p": 0.3,
+    "risk_control_alpha": 0.05,
+    "risk_control_delta": 0.1
+   },
+   "batch_test": {
+    "ewpm": 11.477549766206314,
+    "wrong_commit": 0.024509803921568627,
+    "commit_rate": 0.10049019607843138,
+    "error_among_commits": 0.24390243902439024,
+    "silent_error": 0.0012254901960784314
+   },
+   "batch_n_commit": 82,
+   "seconds": 17.40541410446167
+  },
+  "published": {
+   "config_id": "tcfg-ea22af7ec91eea3f",
+   "commit_p": 0.76,
+   "policy": {
+    "commit_p": 0.76,
+    "commit_max_risk": 0.5,
+    "commit_max_set": null,
+    "offer_max_k": 1,
+    "abstain_risk": 1.01,
+    "final_fallback": "offer",
+    "offer_words": false,
+    "word_conf_threshold": 0.9,
+    "offer_words_k": 3,
+    "offer_words_min_conf": 0.0,
+    "offer_words_max_slots": null
+   },
+   "frame_T": 3.815074655927598,
+   "sentence_T": 1.6171063766465985,
+   "conformal_q": 0.4303127570553543,
+   "risk_control": {
+    "method": "ltt-binomial",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "threshold": 0.76,
+    "feasible": true,
+    "n": 401,
+    "bound": 0.06006909997165592,
+    "combine": "max"
+   },
+   "fit_report": {
+    "temperature_frame": 3.815074655927598,
+    "temperature_sentence": 1.6171063766465985,
+    "temperature_char": 1.0,
+    "conformal_q": 0.4303127570553543,
+    "word_conformal_q": 0.2892568536148007,
+    "calib_miss_rate": 0.1553398058252427,
+    "policy_config": {
+     "commit_p": 0.7,
+     "commit_max_risk": 0.5,
+     "commit_max_set": null,
+     "offer_max_k": 1,
+     "abstain_risk": 1.01,
+     "final_fallback": "offer",
+     "offer_words": false,
+     "word_conf_threshold": 0.9,
+     "offer_words_k": 3,
+     "offer_words_min_conf": 0.0,
+     "offer_words_max_slots": null
+    },
+    "policy_fit_feasible": true,
+    "val_ewpm": 18.274078937162496,
+    "val_wrong_commit_rate": 0.0413625304136253,
+    "risk_control_method": "ltt-binomial",
+    "risk_control_threshold": 0.76,
+    "risk_control_feasible": true,
+    "risk_control_n": 401,
+    "risk_control_bound": 0.06006909997165592,
+    "risk_control_commit_p": 0.76,
+    "risk_control_alpha": 0.05,
+    "risk_control_delta": 0.1
+   },
+   "batch_test": {
+    "ewpm": 18.651365449587917,
+    "wrong_commit": 0.029411764705882353,
+    "commit_rate": 0.40318627450980393,
+    "error_among_commits": 0.0729483282674772,
+    "silent_error": 0.0012254901960784314
+   },
+   "batch_n_commit": 329,
+   "seconds": 19.90905261039734
+  }
+ }
+}

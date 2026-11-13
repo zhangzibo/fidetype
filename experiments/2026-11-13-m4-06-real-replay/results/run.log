@@ -1,0 +1,43 @@
+22:09:24 stage fit start
+22:09:42 fit ours: tcfg-f5ca0020b3b8fce2 commit_p 0.3 (LTT 0.0); batch test wrong-commit 0.0245 commit 0.100 eWPM 11.48
+22:10:01 fit published: tcfg-ea22af7ec91eea3f commit_p 0.76 (LTT 0.76); batch test wrong-commit 0.0294 commit 0.403 eWPM 18.65
+22:10:01 stage fit done (37s)
+22:10:15 stage streams start
+22:10:40 streams ours: hypothesis files 816, n-best round trip equal 816/816
+22:11:00 streams published: hypothesis files 816, n-best round trip equal 816/816
+22:11:00 stage streams done (45s)
+22:11:00 stage replay start
+22:11:09 replay ours/frames: equal 816/816; wrong-commit 0.0245 (20) commit 0.100 (82) eWPM 11.48; decision p50/p95 0.973/1.643 ms; ledger True (9s)
+22:11:13 replay ours/hypothesis: equal 816/816; wrong-commit 0.0245 (20) commit 0.100 (82) eWPM 11.48; decision p50/p95 0.437/0.628 ms; ledger True (4s)
+22:11:22 replay published/frames: equal 816/816; wrong-commit 0.0294 (24) commit 0.403 (329) eWPM 18.65; decision p50/p95 0.702/1.068 ms; ledger True (8s)
+22:11:26 replay published/hypothesis: equal 816/816; wrong-commit 0.0294 (24) commit 0.403 (329) eWPM 18.65; decision p50/p95 0.441/0.611 ms; ledger True (4s)
+22:11:26 stage replay done (26s)
+22:11:39 stage uncached start
+22:15:52 replay ours/frames-uncached: equal 816/816; wrong-commit 0.0245 (20) commit 0.100 (82) eWPM 11.48; decision p50/p95 173.091/992.402 ms; ledger None (232s)
+22:15:52 stage uncached done (253s)
+22:15:52 stage rounded start
+22:15:52 stage rounded done (0s)
+22:15:52 stage controls start
+22:16:00 controls ours/real: paper 29, batch 29, stream frames 29 (equal 300), hypothesis 29 (equal 300)
+22:16:06 controls ours/other_trial: paper 29, batch 29, stream frames 29 (equal 300), hypothesis 29 (equal 300)
+22:16:13 controls ours/frame_shuffled: paper 0, batch 0, stream frames 0 (equal 300), hypothesis 0 (equal 300)
+22:16:19 controls ours/uniform: paper 0, batch 0, stream frames 0 (equal 300), hypothesis 0 (equal 300)
+22:16:44 controls published/real: paper 115, batch 115, stream frames 115 (equal 300), hypothesis 115 (equal 300)
+22:16:50 controls published/other_trial: paper 0, batch 0, stream frames 0 (equal 300), hypothesis 0 (equal 300)
+22:16:56 controls published/frame_shuffled: paper 0, batch 0, stream frames 0 (equal 300), hypothesis 0 (equal 300)
+22:17:02 controls published/uniform: paper 0, batch 0, stream frames 0 (equal 300), hypothesis 0 (equal 300)
+22:17:02 stage controls done (70s)
+22:17:02 stage memory start
+22:17:08 memory ours/frames: max buffer 180.0 KiB (562 frames); traced peak 1064.2 KiB, retained 14.1 KiB over 100 trials
+22:17:09 memory ours/hypothesis: max buffer 0.0 KiB (0 frames); traced peak 66.1 KiB, retained 42.1 KiB over 100 trials
+22:17:14 memory published/frames: max buffer 180.0 KiB (562 frames); traced peak 1058.2 KiB, retained 5.5 KiB over 100 trials
+22:17:15 memory published/hypothesis: max buffer 0.0 KiB (0 frames); traced peak 37.2 KiB, retained 11.4 KiB over 100 trials
+22:17:15 stage memory done (13s)
+22:17:15 stage tables start
+22:17:15 stage tables done (0s)
+22:17:31 stage rounded start
+22:20:48 replay ours/frames-rounded6: equal 1/816; wrong-commit 0.0245 (20) commit 0.100 (82) eWPM 11.48; decision p50/p95 133.093/734.155 ms; ledger None (181s)
+22:21:09 replay published/frames-rounded6: equal 5/816; wrong-commit 0.0294 (24) commit 0.403 (329) eWPM 18.65; decision p50/p95 0.626/1.025 ms; ledger None (3s)
+22:21:10 stage rounded done (220s)
+22:21:10 stage tables start
+22:21:10 stage tables done (0s)

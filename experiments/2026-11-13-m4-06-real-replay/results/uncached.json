@@ -1,0 +1,44 @@
+{
+ "which": "ours",
+ "route": "frames",
+ "tag": "-uncached",
+ "config_id": "tcfg-f5ca0020b3b8fce2",
+ "wall_s": 232.19329237937927,
+ "equivalence": {
+  "n": 816,
+  "n_equal": 816,
+  "mismatches": [],
+  "max_abs_dp_top1": 0.0,
+  "max_abs_dguard": 0.0
+ },
+ "metrics": {
+  "ewpm": 11.477549766206314,
+  "wrong_commit": 0.024509803921568627,
+  "commit_rate": 0.10049019607843138,
+  "error_among_commits": 0.24390243902439024,
+  "silent_error": 0.0012254901960784314,
+  "n_commit": 82,
+  "n_wrong_commit": 20
+ },
+ "timing": {
+  "decision_ms": {
+   "p50": 173.09055000077933,
+   "p95": 992.40170000121,
+   "max": 3229.184299998451,
+   "n": 816
+  },
+  "push_frame_ms": {
+   "p50": 0.014199998986441642,
+   "p95": 0.01599999814061448,
+   "max": 0.21099999867146835,
+   "n": 161503
+  },
+  "push_final_push_ms": {
+   "p50": 173.12095000306726,
+   "p95": 992.4798249994637,
+   "max": 3229.24200000125,
+   "n": 816
+  }
+ },
+ "provenance": null
+}

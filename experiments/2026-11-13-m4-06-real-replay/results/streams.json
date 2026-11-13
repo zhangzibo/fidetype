@@ -1,0 +1,11 @@
+{
+ "frames": 816,
+ "hypothesis": {
+  "ours": 816,
+  "published": 816
+ },
+ "nbest_roundtrip_equal": {
+  "ours": 816,
+  "published": 816
+ }
+}

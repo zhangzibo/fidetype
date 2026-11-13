@@ -2,7 +2,7 @@
 title: Streaming trust layer
 type: concept
 tags: [trust, streaming, real-time, provenance, risk-control, neuraltextstream, m4]
-sources: []
+sources: [brain-to-text-25-copytask]
 updated: 2026-11-12
 ---
 
@@ -93,12 +93,32 @@ On the same input, the final decision equals the batch decision (`TrustPipeline.
 
 > **Our take:** the trust layer adds well under 1 ms on the hypothesis route. On the frames route the decoder dominates the latency. The trust layer is not the bottleneck for real-time text entry. All synthetic decisions were OFFER (the synthetic gate is strict); the tests cover the other actions.
 
+## Real data: a frozen Paper 1 config on Brain-to-Text '25 (M4-06)
+Experiment: [2026-11-13-m4-06-real-replay](../../experiments/2026-11-13-m4-06-real-replay/results.md) ([tables](../../experiments/2026-11-13-m4-06-real-replay/results/tables.md)). Data: [Brain-to-Text '25 copy task](../sources/brain-to-text-25-copytask.md), T15, fixed split A.
+
+We fitted the Paper 1 frozen recipe (`paper1_v4_harness_config`: guard, LTT α 0.05, δ 0.1, max rule) on fit-A (411 trials) and the clean calibration half (401). We froze it and replayed the 816 test trials as NTS files through the layer, on both routes.
+
+| item | our decoder | published gate |
+|---|---|---|
+| frozen config (committed, numbers only) | `tcfg-f5ca0020b3b8fce2`, commit_p 0.3 | `tcfg-ea22af7ec91eea3f`, commit_p 0.76 |
+| streaming = batch (action, shown, p_top1, guard, set; `==`) | 816/816 frames, 816/816 hypothesis | 816/816 frames, 816/816 hypothesis |
+| test wrong-commit / commit / eWPM (streaming) | 0.0245 (20) / 0.100 (82) / 11.48 | 0.0294 (24) / 0.403 (329) / 18.65 |
+| Paper 1 Tab. 3, guaranteed rule A | same | same |
+| frame-shuffled / uniform controls committed | 0/300 / 0/300 | 0/300 / 0/300 |
+| provenance | 816/816 config id + stream hash; ledger verifies | same |
+
+Latency: hypothesis route p50 0.44 ms, p95 0.63 ms. Frames route with a fresh decode: p50 173 ms, p95 992 ms. The decoder takes this time; the layer adds under 1 ms. Frame buffer: at most 180 KiB per session.
+
+The benchmark v0.1 NTS files round log-probs to 6 decimals. With them, p_top1 moves by at most 3.4e-8. No action changed, but exact `==` equality then fails on most trials. Exact replay needs full-precision values.
+
+> **Our take:** the frozen config file is enough to rebuild the paper's split-A row in a streaming consumer, bit for bit. It is valid only with the decode_fn it was fitted with. On the hypothesis route the producer must apply the frozen frame temperature, and the layer cannot check this. A future spec field could declare it.
+
 ## Spec additions (proposal, not breaking v0.1)
 [FEP-0001](../../spec/feps/0001-streaming-trust-events.md) proposes three Development parts: a `segment_end` event (open question 5 of the spec), optional evidence fields on hypothesis items (`char_confidences`, `logp_acoustic`, `logp_lm`) so that the guard works on the hypothesis route, and a `trust_decision` output event with the rule "do not act on `is_final = false`". A v0.1 consumer ignores all three.
 
 ## Limits and follow-ups
 - The frames route decodes the whole utterance at its end. A truly incremental decoder (prefix beam state carried across frames) is M4-01 (causal mode).
-- No frozen configuration fitted on real data is committed yet. Fit the Paper 1 recipe per user and session, then freeze it (follow-up M4-06).
+- Real-data frozen configs exist for one participant and one split only (M4-06, B2T '25 split A). Each new user and session needs its own fit.
 - FEP-0001 needs conformance checks and golden vectors (follow-up M4-07).
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.
 

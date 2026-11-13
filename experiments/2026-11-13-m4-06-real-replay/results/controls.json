@@ -1,0 +1,137 @@
+{
+ "n": 300,
+ "conditions": {
+  "ours": {
+   "real": {
+    "batch_n_commit": 29,
+    "frames": {
+     "n_commit": 29,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.129460694055819
+    },
+    "hypothesis": {
+     "n_commit": 29,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.129460694055819
+    },
+    "paper_n_commit": 29
+   },
+   "other_trial": {
+    "batch_n_commit": 29,
+    "frames": {
+     "n_commit": 29,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.129460694055819
+    },
+    "hypothesis": {
+     "n_commit": 29,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.129460694055819
+    },
+    "paper_n_commit": 29
+   },
+   "frame_shuffled": {
+    "batch_n_commit": 0,
+    "frames": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "hypothesis": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "paper_n_commit": 0
+   },
+   "uniform": {
+    "batch_n_commit": 0,
+    "frames": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "hypothesis": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "paper_n_commit": 0
+   }
+  },
+  "published": {
+   "real": {
+    "batch_n_commit": 115,
+    "frames": {
+     "n_commit": 115,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.4318878715272549
+    },
+    "hypothesis": {
+     "n_commit": 115,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.4318878715272549
+    },
+    "paper_n_commit": 115
+   },
+   "other_trial": {
+    "batch_n_commit": 0,
+    "frames": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "hypothesis": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "paper_n_commit": 0
+   },
+   "frame_shuffled": {
+    "batch_n_commit": 0,
+    "frames": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "hypothesis": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "paper_n_commit": 0
+   },
+   "uniform": {
+    "batch_n_commit": 0,
+    "frames": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "hypothesis": {
+     "n_commit": 0,
+     "n": 300,
+     "equal_to_batch": 300,
+     "commit_cp95_one_sided_upper": 0.009936081944457708
+    },
+    "paper_n_commit": 0
+   }
+  }
+ }
+}

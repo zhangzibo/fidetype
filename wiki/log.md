@@ -408,3 +408,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Checked: `uv build` (needs `UV_LINK_MODE=copy` on OneDrive), clean venv wheel install runs `fidetype demo`, `fidetype validate` and the README quickstart; demo config refit reproduces `tcfg-a34f63a757f55371`; static page has no network references; headless Edge render OK.
 - Finding: a frozen config is valid only with its own `decode_fn` (demo config + greedy decoder committed "ello world").
 - Pages: new [Python SDK and offline demo](concepts/python-sdk.md); links from streaming-trust-layer and lsl-input; index. Tracker: M7-01 done; M3-26 arXiv endorsement (externally blocked); follow-ups M7-06..M7-09; agent runs of M6-01 and M3-25 filled.
+
+## [2026-11-12] query | M4-06 real-data frozen trust config through the streaming layer
+- Fitted the Paper 1 frozen recipe (guard + LTT max) on B2T '25 split A and froze it: `tcfg-f5ca0020b3b8fce2` (ours, commit_p 0.3), `tcfg-ea22af7ec91eea3f` (published gate, 0.76). Config JSON (numbers only) in `experiments/2026-11-13-m4-06-real-replay/configs/`.
+- Replayed 816 full-precision NTS test streams through `StreamingTrustLayer` (frames + hypothesis routes): 816/816 decisions equal to batch; test metrics equal Paper 1 Tab. 3 split A; shuffled / uniform controls 0/300; provenance and ledgers verify. Latency: hypothesis p95 0.63 ms; frames route with a fresh decode p95 992 ms (decoder).
+- Finding: 6-decimal benchmark files break exact equality (p_top1 within 3.4e-8, no action changed).
+- Pages: new section in [streaming trust layer](concepts/streaming-trust-layer.md); index line updated. Tracker: M4-06 done; M7-01 second agent run filled.
