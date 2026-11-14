@@ -1,0 +1,3 @@
+{"id": "M4-01", "status": "in_progress", "started_at": "2026-11-13T19:50:00-08:00", "approx_times": true,
+ "notes": "In progress: own causal lookahead GRU-CTC (fidetype.decoders.lookahead_gru) on B2T '25 T15 neural data; shared variable-lookahead model + dedicated L=0 / L=500 ms checks. experiments/2026-11-13-m4-01-02-lookahead.",
+ "agent_runs": [{"label": "M4-01 + M4-02 lookahead decoder, accuracy/trust/latency sweep", "duration_s": null, "tokens": null, "tool_uses": null}]}

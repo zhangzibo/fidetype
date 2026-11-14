@@ -467,7 +467,7 @@ def stage_latency(n_trials: int = 200, force: bool = False) -> dict:
             for gi, key in enumerate(keys):
                 s = key.split("|")[0]
                 lp_ref = np.load(DER / f"logprobs-{run}.npz")[f"{key}|L{la}"] if gi < 20 else None
-                st_meta = make_stream(np.zeros((1, 41), np.float32), key, la, run, gi, meta["model_config"])
+                st_meta = make_stream(np.full((1, 41), -math.log(41), np.float32), key, la, run, gi, meta["model_config"])
                 head = events_of(st_meta)[0]
                 gc.collect()
                 gc.disable()
@@ -532,7 +532,7 @@ def stage_latency(n_trials: int = 200, force: bool = False) -> dict:
                 f"frame push p95 {r['trust_push_per_frame_ms']['p95']:.2f}; end total p50/p95/max {r['end_total_ms']['p50']:.1f}/"
                 f"{r['end_total_ms']['p95']:.1f}/{r['end_total_ms']['max']:.1f} ms; same action {same}/{len(decs)}; "
                 f"numpy-torch {stream_lat_check:.2e}")
-        res["measurement_env"] = iso.record
+    res["measurement_env"] = iso.record  # isolated() fills .record on exit, not inside the block
     gc.unfreeze()
     T.dump(res, OUT / "latency.json")
     return res
@@ -594,6 +594,76 @@ def stage_tables() -> None:
     (OUT / "tables.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
 
+def stage_figure(path: Path | None = None) -> None:
+    """Two small multiples (no dual axis): accuracy against L, and phoneme availability delay against L."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    acc = json.loads((OUT / "accuracy.json").read_text(encoding="utf-8"))["conditions"]
+    emi = json.loads((OUT / "emission.json").read_text(encoding="utf-8"))["comparisons"]
+    path = path or (T.REPO / "wiki/questions/lookahead-latency-accuracy.svg")
+    blue, orange, ink, ink2, grid = "#2a78d6", "#eb6834", "#0b0b0b", "#52514e", "#e4e3df"
+    plt.rcParams.update({"font.size": 10, "axes.edgecolor": ink2, "axes.labelcolor": ink2, "xtick.color": ink2,
+                         "ytick.color": ink2, "svg.fonttype": "none"})
+    fig, axs = plt.subplots(1, 2, figsize=(9.2, 3.6))
+    sh = sorted([r for r in acc.values() if r["which"] == "shared"], key=lambda r: r["lookahead_ms"])
+    de = [r for r in acc.values() if r["which"] != "shared"]
+    for ax in axs:
+        ax.grid(True, color=grid, linewidth=0.8)
+        ax.set_axisbelow(True)
+        for sp in ("top", "right"):
+            ax.spines[sp].set_visible(False)
+    ax = axs[0]
+    x = [r["lookahead_ms"] for r in sh]
+    ax.plot(x, [r["greedy"]["per"] for r in sh], color=blue, linewidth=2, marker="o", markersize=6, label="shared model: greedy PER")
+    ax.plot(x, [r["words_T1"]["wer"] for r in sh], color=blue, linewidth=2, linestyle="--", marker="s", markersize=6,
+            label="shared model: WER (word route)")
+    if de:
+        ax.scatter([r["lookahead_ms"] for r in de], [r["greedy"]["per"] for r in de], color=orange, marker="D", s=40, zorder=3,
+                   edgecolor="white", linewidth=1, label="dedicated models: greedy PER")
+        ax.scatter([r["lookahead_ms"] for r in de], [r["words_T1"]["wer"] for r in de], color=orange, marker="^", s=44, zorder=3,
+                   edgecolor="white", linewidth=1, label="dedicated models: WER")
+    ax.set_xlabel("lookahead L (ms)")
+    ax.set_ylabel("error rate (T15 val_eval)")
+    ax.set_title("Accuracy against lookahead", color=ink, fontsize=11, loc="left")
+    ax.set_ylim(bottom=0)
+    ax.legend(frameon=False, fontsize=8, loc="best")
+    ax = axs[1]
+    # reference: the dedicated L = 0 model (a causal model trained without lookahead); fall back to shared/L0
+    ref = "dedicated_0/L0" if any(k.endswith("vs dedicated_0/L0") for k in emi) else "shared/L0"
+    pts, dpts = [], []
+    for k, v in emi.items():
+        if not k.endswith(f"vs {ref}"):
+            continue
+        which, la = k.split(" ")[0].split("/L")
+        p = (int(la) * 20, v["available_delta_s"]["median"] * 1e3)
+        (pts if which == "shared" else dpts).append(p)
+    if ref == "shared/L0":
+        pts.append((0, 0.0))
+    else:
+        dpts.append((0, 0.0))
+    pts.sort()
+    dpts.sort()
+    xs = sorted({p[0] for p in pts + dpts})
+    ax.plot(xs, xs, color=ink2, linewidth=1, linestyle=":", label="nominal: ready L ms later (y = x)")
+    ax.plot([p[0] for p in pts], [p[1] for p in pts], color=blue, linewidth=2, marker="o", markersize=6,
+            label="shared model")
+    if dpts:
+        ax.scatter([p[0] for p in dpts], [p[1] for p in dpts], color=orange, marker="D", s=40, zorder=3,
+                   edgecolor="white", linewidth=1, label="dedicated models")
+    ax.axhline(0, color=ink2, linewidth=0.8)
+    ax.set_xlabel("lookahead L (ms)")
+    ax.set_ylabel(f"ready time vs {ref.replace('_0/L0', ' L=0').replace('/L0', ' L=0')} (ms)")
+    ax.text(0.99, 0.02, "median over matched phonemes; < 0 = earlier", transform=ax.transAxes, ha="right", va="bottom",
+            fontsize=8, color=ink2)
+    ax.set_title("Latency against lookahead", color=ink, fontsize=11, loc="left")
+    ax.legend(frameon=False, fontsize=8, loc="upper left")
+    fig.tight_layout()
+    fig.savefig(path, format="svg", facecolor="#fcfcfb")
+    log(f"figure -> {path}")
+
+
 def main(argv: list[str]) -> None:
     stages = argv or ["accuracy", "emission", "tables"]
     for st in stages:
@@ -611,6 +681,8 @@ def main(argv: list[str]) -> None:
             stage_latency(force=True)
         elif st == "tables":
             stage_tables()
+        elif st == "figure":
+            stage_figure()
         else:
             raise SystemExit(f"unknown stage {st}")
         log(f"stage {st} done ({time.time() - t0:.0f}s)")

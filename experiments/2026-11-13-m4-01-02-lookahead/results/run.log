@@ -1,0 +1,59 @@
+2026-11-14 10:49:02 stage accuracy start
+2026-11-14 10:51:10 accuracy shared/L0: PER 0.6565; WER(frozen T) 0.9307 exact 0.000; WER(T1) 0.8907; commit 0.000 (0) wrong 0.0000 (0) eWPM 3.47; stream==batch 701/701 (124s)
+2026-11-14 10:53:45 accuracy shared/L2: PER 0.4449; WER(frozen T) 0.7189 exact 0.001; WER(T1) 0.6791; commit 0.000 (0) wrong 0.0000 (0) eWPM 4.13; stream==batch 701/701 (155s)
+2026-11-14 10:56:23 accuracy shared/L5: PER 0.4097; WER(frozen T) 0.6824 exact 0.006; WER(T1) 0.6310; commit 0.000 (0) wrong 0.0000 (0) eWPM 4.27; stream==batch 701/701 (158s)
+2026-11-14 10:59:01 accuracy shared/L10: PER 0.3858; WER(frozen T) 0.6477 exact 0.006; WER(T1) 0.5979; commit 0.000 (0) wrong 0.0000 (0) eWPM 4.44; stream==batch 701/701 (159s)
+2026-11-14 11:01:41 accuracy shared/L15: PER 0.3768; WER(frozen T) 0.6376 exact 0.009; WER(T1) 0.5803; commit 0.000 (0) wrong 0.0000 (0) eWPM 4.48; stream==batch 701/701 (159s)
+2026-11-14 11:04:20 accuracy shared/L25: PER 0.3687; WER(frozen T) 0.6383 exact 0.006; WER(T1) 0.5728; commit 0.000 (0) wrong 0.0000 (0) eWPM 4.48; stream==batch 701/701 (159s)
+2026-11-14 11:06:16 accuracy dedicated_0/L0: PER 0.6954; WER(frozen T) 0.9996 exact 0.000; WER(T1) 0.9307; commit 0.000 (0) wrong 0.0000 (0) eWPM 3.38; stream==batch 701/701 (116s)
+2026-11-14 11:09:06 accuracy dedicated_25/L25: PER 0.3487; WER(frozen T) 0.5345 exact 0.037; WER(T1) 0.5405; commit 0.000 (0) wrong 0.0000 (0) eWPM 5.15; stream==batch 701/701 (169s)
+2026-11-14 11:09:06 stage accuracy done (1204s)
+2026-11-14 11:09:06 stage emission start
+2026-11-14 11:09:09 emission shared/L2 vs shared/L0: stamp delta median 0 ms, available delta median 40 ms (n 5944)
+2026-11-14 11:09:09 emission shared/L5 vs shared/L0: stamp delta median 0 ms, available delta median 100 ms (n 5982)
+2026-11-14 11:09:09 emission shared/L10 vs shared/L0: stamp delta median 0 ms, available delta median 200 ms (n 6030)
+2026-11-14 11:09:09 emission shared/L15 vs shared/L0: stamp delta median 0 ms, available delta median 300 ms (n 6078)
+2026-11-14 11:09:09 emission shared/L25 vs shared/L0: stamp delta median 0 ms, available delta median 500 ms (n 6094)
+2026-11-14 11:09:09 emission dedicated_0/L0 vs shared/L0: stamp delta median 240 ms, available delta median 240 ms (n 4732)
+2026-11-14 11:09:09 emission dedicated_25/L25 vs shared/L0: stamp delta median -480 ms, available delta median 20 ms (n 5802)
+2026-11-14 11:09:09 emission shared/L0 vs dedicated_0/L0: stamp delta median -240 ms, available delta median -240 ms (n 4732)
+2026-11-14 11:09:09 emission shared/L2 vs dedicated_0/L0: stamp delta median -240 ms, available delta median -200 ms (n 5107)
+2026-11-14 11:09:09 emission shared/L5 vs dedicated_0/L0: stamp delta median -240 ms, available delta median -140 ms (n 5176)
+2026-11-14 11:09:09 emission shared/L10 vs dedicated_0/L0: stamp delta median -240 ms, available delta median -40 ms (n 5219)
+2026-11-14 11:09:09 emission shared/L15 vs dedicated_0/L0: stamp delta median -240 ms, available delta median 60 ms (n 5249)
+2026-11-14 11:09:09 emission shared/L25 vs dedicated_0/L0: stamp delta median -240 ms, available delta median 260 ms (n 5274)
+2026-11-14 11:09:09 emission dedicated_25/L25 vs dedicated_0/L0: stamp delta median -680 ms, available delta median -180 ms (n 5120)
+2026-11-14 11:09:09 stage emission done (3s)
+2026-11-14 11:09:30 stage latency-force start
+2026-11-14 11:09:58 stage latency-force start
+2026-11-14 11:12:19 latency L0: bin push p50/p95 0.05/2.31 ms; frame push p95 0.37; end total p50/p95/max 85.6/164.9/299.7 ms; same action 200/200; numpy-torch 1.55e-04
+2026-11-14 11:14:36 latency L2: bin push p50/p95 0.09/2.06 ms; frame push p95 0.36; end total p50/p95/max 106.0/189.2/263.7 ms; same action 200/200; numpy-torch 1.62e-04
+2026-11-14 11:16:55 latency L5: bin push p50/p95 0.08/2.10 ms; frame push p95 0.36; end total p50/p95/max 105.4/189.9/267.9 ms; same action 200/200; numpy-torch 1.47e-04
+2026-11-14 11:19:15 latency L10: bin push p50/p95 0.09/2.13 ms; frame push p95 0.36; end total p50/p95/max 108.5/172.7/304.0 ms; same action 200/200; numpy-torch 1.35e-04
+2026-11-14 11:21:33 latency L15: bin push p50/p95 0.09/2.09 ms; frame push p95 0.36; end total p50/p95/max 102.6/197.0/257.0 ms; same action 200/200; numpy-torch 1.33e-04
+2026-11-14 11:23:48 latency L25: bin push p50/p95 0.07/2.00 ms; frame push p95 0.36; end total p50/p95/max 103.6/199.7/284.7 ms; same action 200/200; numpy-torch 1.23e-04
+2026-11-14 11:23:49 stage latency-force done (831s)
+2026-11-14 11:23:56 stage tables start
+2026-11-14 11:23:56 stage tables done (0s)
+2026-11-14 11:23:56 stage figure start
+2026-11-14 11:23:57 figure -> C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\wiki\questions\lookahead-latency-accuracy.svg
+2026-11-14 11:23:57 stage figure done (1s)
+2026-11-14 11:24:12 stage latency-force start
+2026-11-14 11:26:18 latency L0: bin push p50/p95 0.04/2.01 ms; frame push p95 0.33; end total p50/p95/max 79.8/148.3/280.6 ms; same action 200/200; numpy-torch 1.55e-04
+2026-11-14 11:28:29 latency L2: bin push p50/p95 0.09/1.96 ms; frame push p95 0.34; end total p50/p95/max 99.6/188.9/262.6 ms; same action 200/200; numpy-torch 1.62e-04
+2026-11-14 11:30:45 latency L5: bin push p50/p95 0.08/2.06 ms; frame push p95 0.36; end total p50/p95/max 107.5/201.0/281.0 ms; same action 200/200; numpy-torch 1.47e-04
+2026-11-14 11:33:02 latency L10: bin push p50/p95 0.09/2.10 ms; frame push p95 0.36; end total p50/p95/max 103.1/180.3/274.4 ms; same action 200/200; numpy-torch 1.35e-04
+2026-11-14 11:35:20 latency L15: bin push p50/p95 0.09/2.11 ms; frame push p95 0.36; end total p50/p95/max 99.4/193.3/256.3 ms; same action 200/200; numpy-torch 1.33e-04
+2026-11-14 11:37:31 latency L25: bin push p50/p95 0.07/1.99 ms; frame push p95 0.34; end total p50/p95/max 99.5/173.0/272.1 ms; same action 200/200; numpy-torch 1.23e-04
+2026-11-14 11:37:32 stage latency-force done (800s)
+2026-11-14 11:37:41 stage tables start
+2026-11-14 11:37:41 stage tables done (0s)
+2026-11-14 11:37:41 stage figure start
+2026-11-14 11:37:41 figure -> C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\wiki\questions\lookahead-latency-accuracy.svg
+2026-11-14 11:37:41 stage figure done (0s)
+2026-11-14 11:38:20 stage figure start
+2026-11-14 11:38:21 figure -> C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\wiki\questions\lookahead-latency-accuracy.svg
+2026-11-14 11:38:21 stage figure done (0s)
+2026-11-14 11:38:32 stage figure start
+2026-11-14 11:38:32 figure -> C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\wiki\questions\lookahead-latency-accuracy.svg
+2026-11-14 11:38:32 stage figure done (0s)

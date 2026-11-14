@@ -132,7 +132,7 @@ experiments/    configs + results per experiment
 |---|---|---|
 | **Phase 0: setup** | Test PyTorch/ROCm on the GPU. Download SpanishBCBL MEG. Build the noisy-decoder simulator. | 1, 6 |
 | **Paper 1: "Calibrated, abstaining brain-to-text"** | Calibration + conformal sets + hallucination audit + effective WPM on SpanishBCBL. The simulator lets this work start before a real decoder exists. | 1, 3, 4, 5 |
-| **Paper 2: causal typing decoder** | The latency vs accuracy curve. | 2, 5 |
+| **Paper 2: causal typing decoder** | The latency vs accuracy curve. First curve (intracortical, 2026-11-14): [lookahead vs accuracy and latency](lookahead-latency-accuracy.md). | 2, 5 |
 | **Then** | Open benchmark release. Real-device adapters (EMG/EEG through LSL). Product pilots. | 1, 4, 5 |
 | **Deferred side tracks** | EMG → brain transfer. Virtual OPM-MEG. | — |
 

@@ -49,5 +49,5 @@ The paper abstract (Dryad page) says: "On the first day of use (25 days after su
 ## Feeds
 - Entity: [Brain-to-Text '25](../entities/brain-to-text-25.md), [Dryad intracortical datasets](../entities/dryad-intracortical-datasets.md).
 - Concepts: [CTC](../concepts/ctc.md), [Error metrics](../concepts/error-metrics.md).
-- Results: [B2T '25 trust result](../questions/b2t25-trust-result.md), [Trust core v0 results](../questions/trust-core-v0-results.md#8-cross-device-intracortical-speech-2026-11-10).
+- Results: [B2T '25 trust result](../questions/b2t25-trust-result.md), [Lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md) (own causal decoder on the T15 neural data, M4-01/02), [Trust core v0 results](../questions/trust-core-v0-results.md#8-cross-device-intracortical-speech-2026-11-10).
 - Code: `src/fidetype/adapters/b2t25.py` (adapter), `src/fidetype/lm/phoneme_words.py` (phoneme → words).

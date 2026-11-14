@@ -28,4 +28,6 @@ v2 is asynchronous but **not causal**. The Conformer and the LLM both see the wh
 
 > **Our result (2026-11-11):** our async ConvCTC reaches test CER 0.506 greedy on SpanishBCBL (19 participants), with the same segment bounds as v2 and no key times at inference. Its training uses key times as aux-loss labels ([M1-09](../questions/m1-09-async-full-result.md)).
 
-Related: [CTC](ctc.md) · [NeuroLLM](neuro-llm.md) · [M1-09 result](../questions/m1-09-async-full-result.md)
+> **Our result (2026-11-14):** a causal GRU-CTC decoder with a lookahead L of 0 to 500 ms on intracortical T15 data: accuracy improves most in the first 40 ms; a model trained with L = 500 ms emits phonemes earlier than one trained with L = 0 ([lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md)).
+
+Related: [CTC](ctc.md) · [NeuroLLM](neuro-llm.md) · [M1-09 result](../questions/m1-09-async-full-result.md) · [Lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md)

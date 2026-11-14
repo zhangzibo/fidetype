@@ -1,0 +1,350 @@
+{
+ "n_trials": 200,
+ "run": "m4-01-la-shared",
+ "conditions": {
+  "L0": {
+   "lookahead_bins": 0,
+   "algorithmic_lookahead_ms": 0,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.04400001489557326,
+    "p95": 2.0143200003076327,
+    "max": 4.512699990300462,
+    "mean": 0.4833987680596155,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.23549998877570033,
+    "p95": 0.3347000034409575,
+    "max": 0.551999983144924,
+    "mean": 0.2421531651456601,
+    "n": 45750
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.0015999830793589354,
+    "p95": 0.0026999914553016424,
+    "max": 0.005299982149153948,
+    "mean": 0.001745001063682139,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 79.84390000638086,
+    "p95": 148.3338749982067,
+    "max": 280.5876999918837,
+    "mean": 85.59380399921793,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 79.84545000363141,
+    "p95": 148.33615001552968,
+    "max": 280.58900000178255,
+    "mean": 85.59554900028161,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 0.0,
+    "max": 0
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.0001552104949951172,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L2": {
+   "lookahead_bins": 2,
+   "algorithmic_lookahead_ms": 40,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.09119999594986439,
+    "p95": 1.955699996324256,
+    "max": 4.466499987756833,
+    "mean": 0.4993922241329364,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.23979999241419137,
+    "p95": 0.34389999927952886,
+    "max": 0.6049999792594463,
+    "mean": 0.2478678812914648,
+    "n": 45662
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.002600019797682762,
+    "p95": 0.131360009254422,
+    "max": 0.1931999868247658,
+    "mean": 0.047961000236682594,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 99.53259999747388,
+    "p95": 188.7931400109664,
+    "max": 262.6338999834843,
+    "mean": 108.7703314992541,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 99.58665000158362,
+    "p95": 188.88461501628623,
+    "max": 262.6352999941446,
+    "mean": 108.81829249949078,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 0.0,
+    "max": 1
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.00016164779663085938,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L5": {
+   "lookahead_bins": 5,
+   "algorithmic_lookahead_ms": 100,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.08100000559352338,
+    "p95": 2.062320010736583,
+    "max": 5.35160000436008,
+    "mean": 0.5207590992569047,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.2531000063754618,
+    "p95": 0.36108498898101954,
+    "max": 0.6630000134464353,
+    "mean": 0.259558770709132,
+    "n": 45504
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.08689999231137335,
+    "p95": 0.20164499001111824,
+    "max": 0.27520000003278255,
+    "mean": 0.10373550045187585,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 107.43235000700224,
+    "p95": 200.96478999912503,
+    "max": 280.9537000139244,
+    "mean": 111.41412050041254,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 107.52615000819787,
+    "p95": 201.04368997999697,
+    "max": 281.013100000564,
+    "mean": 111.51785600086441,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 1.0,
+    "max": 2
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.00014734268188476562,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L10": {
+   "lookahead_bins": 10,
+   "algorithmic_lookahead_ms": 200,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.09359998512081802,
+    "p95": 2.1003200090490264,
+    "max": 7.646699988981709,
+    "mean": 0.52807588568213,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.2528000040911138,
+    "p95": 0.3603000062867068,
+    "max": 0.8690999820828438,
+    "mean": 0.25953032566135453,
+    "n": 45262
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.17485000716987997,
+    "p95": 0.3109950048383322,
+    "max": 0.4844999930355698,
+    "mean": 0.18509950008592568,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 102.82465000636876,
+    "p95": 180.18477997393344,
+    "max": 274.2255000048317,
+    "mean": 108.99045500045759,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 103.05470001185313,
+    "p95": 180.3295499878004,
+    "max": 274.39519998733886,
+    "mean": 109.17555450054351,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 2.0,
+    "max": 3
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.0001354217529296875,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L15": {
+   "lookahead_bins": 15,
+   "algorithmic_lookahead_ms": 300,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.08949998300522566,
+    "p95": 2.1111000096425414,
+    "max": 9.180799999739975,
+    "mean": 0.5301999605994727,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.25309997727163136,
+    "p95": 0.3575000155251473,
+    "max": 0.8172999951057136,
+    "mean": 0.2581041132747947,
+    "n": 45001
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.2610000083222985,
+    "p95": 0.37641001108568156,
+    "max": 0.47660002019256353,
+    "mean": 0.267106001265347,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 99.22200000437442,
+    "p95": 193.06606999598424,
+    "max": 255.96939999377355,
+    "mean": 110.95885949849617,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 99.4038999924669,
+    "p95": 193.2937400008084,
+    "max": 256.3034000049811,
+    "mean": 111.22596549976151,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 4.0,
+    "max": 4
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.00013256072998046875,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L25": {
+   "lookahead_bins": 25,
+   "algorithmic_lookahead_ms": 500,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.06839999696239829,
+    "p95": 1.9902999920304865,
+    "max": 4.20480000320822,
+    "mean": 0.5090570103852015,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.2423000114504248,
+    "p95": 0.3423999878577888,
+    "max": 0.598699989495799,
+    "mean": 0.2479097723186107,
+    "n": 44504
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.37295000220183283,
+    "p95": 0.5130250036017969,
+    "max": 0.660700025036931,
+    "mean": 0.37726649999967776,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 99.14014999230858,
+    "p95": 172.65344000043115,
+    "max": 271.7277999909129,
+    "mean": 105.8152889990015,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 99.5338999928208,
+    "p95": 172.9558950086357,
+    "max": 272.1151000005193,
+    "mean": 106.19255549900117,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 6.0,
+    "max": 7
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.00012302398681640625,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  }
+ },
+ "bin_s": 0.02,
+ "frame_period_s": 0.08,
+ "measurement_env": {
+  "schema": "fidetype.isolation/0.1",
+  "class": "timing",
+  "cpus": [
+   8,
+   10,
+   12,
+   14
+  ],
+  "affinity_set": true,
+  "priority": "above_normal",
+  "priority_set": true,
+  "timing_lock_held": true,
+  "plan": {
+   "timing": [
+    8,
+    10,
+    12,
+    14
+   ],
+   "background": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "idle_smt_siblings": [
+    9,
+    11,
+    13,
+    15
+   ],
+   "smt": true
+  },
+  "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+  "logical_cpus": 16,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_s": 794.31,
+  "own_cpu_s": 1873.375,
+  "class_cpu_load_pct": 64.73,
+  "foreign_load_pct": 5.77,
+  "idle_sibling_load_pct": 25.23,
+  "machine_load_pct": 39.46,
+  "background_cpu_load_pct": 33.95,
+  "clean": false,
+  "clean_reasons": [
+   "other load on the class CPUs 5.77% >= 5.0%",
+   "SMT siblings of timing cores busy 25.23%"
+  ]
+ }
+}

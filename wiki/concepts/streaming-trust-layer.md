@@ -288,7 +288,7 @@ layer = StreamingTrustLayer(cfg, streaming=V5Options().streaming_config(route="h
 - Pre-declared criteria: S1 (not less safe), S2 (0 empty commits), S4 (no collapse on 240-trial fits) pass; S3 (controls ≤ 1 %) fails on 1 of 65 control sets (simulator, 2/100 frame-shuffled; v4 4/100). So v5 is the recommended **opt-in** recipe; v4 stays the library default until a stricter fit-time control limit passes a pre-declared re-test.
 
 ## Limits and follow-ups
-- Incremental decoding is done (M4-08). The fast exact lexicon fallback and the per-push prewarm budget are done (M4-09). The decoder caches are bounded (LRU, M4-10). M4-01 (neural decoder lookahead) and M4-02 (lookahead sweep) are still open.
+- Incremental decoding is done (M4-08). The fast exact lexicon fallback and the per-push prewarm budget are done (M4-09). The decoder caches are bounded (LRU, M4-10). M4-01 (causal neural decoder with lookahead) and M4-02 (lookahead sweep) are done (2026-11-14): see [lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md). Compute stays under 3 ms per 80 ms frame at every L; L delays only the partial output, not the final decision.
 - Real-data frozen configs exist for one participant and one split only (M4-06, B2T '25 split A). Each new user and session needs its own fit.
 - FEP-0001 conformance is done (M4-07, profile `fep-0001`). The FEP stays Draft until review.
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.
