@@ -1,0 +1,13 @@
+{
+  "id": "P12-06",
+  "agent_runs": [
+    {
+      "label": "P12-06 intent/control dataset survey (inside the M4-11 + P12-06 agent run)",
+      "duration_s": 1899.7,
+      "tokens": 180920,
+      "tool_uses": 69,
+      "note": "One agent run covered M4-11 and P12-06. The run is recorded here only, so it is not counted twice. The M4-11 placeholder stays null on purpose."
+    }
+  ],
+  "_tracker_updated": "2026-11-13T21:05:00-08:00"
+}

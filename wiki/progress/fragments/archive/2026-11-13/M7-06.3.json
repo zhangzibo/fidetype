@@ -1,0 +1,12 @@
+{
+  "id": "M7-06",
+  "agent_runs": [
+    {
+      "label": "M7-06 TypeScript SDK (writer/reader, validation, decisions, conformance runner, cross-check)",
+      "duration_s": 2337.2,
+      "tokens": 455388,
+      "tool_uses": 140
+    }
+  ],
+  "_tracker_updated": "2026-11-13T21:05:00-08:00"
+}

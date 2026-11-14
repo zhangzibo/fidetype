@@ -40,7 +40,7 @@ jobs:
         working-directory: sdk/typescript
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6  # v6 runs on node24; v4 used the deprecated node20 runtime
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci --no-audit --no-fund
@@ -56,7 +56,7 @@ jobs:
           python-version: "3.12"
           enable-cache: true
       - run: uv sync --extra dev
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6  # v6 runs on node24; v4 used the deprecated node20 runtime
         with:
           node-version: "24"
       - working-directory: sdk/typescript

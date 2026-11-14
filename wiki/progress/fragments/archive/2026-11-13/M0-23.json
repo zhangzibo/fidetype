@@ -1,0 +1,20 @@
+{
+  "id": "M0-23",
+  "milestone": "M0",
+  "title": "CI green again (tests workflow)",
+  "status": "done",
+  "started_at": "2026-11-13T20:50:00-08:00",
+  "finished_at": "2026-11-13T21:05:00-08:00",
+  "approx_times": true,
+  "orchestrator_only": false,
+  "notes": "First red run: M4-09 (run 43504121800, commit that added test_budgeted_prewarm_equals_batch). Every later red run (M4-10, M6-13 x2, M3-28 test, M2-18, PUB, M0-22, PUB-01, P12-01/02, M4-01) failed on the same single test: tests/test_fast_lexicon.py::test_budgeted_prewarm_equals_batch[1e-05], assert seen. One green run in between (M3-28 pre-registration, 43537611850) shows it was flaky, not a constant break. Root cause: a timing-dependent test assert (10 us prewarm budget; slow CI runners never ran a prewarm step). The cause was fixed by M4-11 (eadab96, injectable clock, deterministic fake-clock tests); its run 43558817797 is green on all 4 jobs. No other failures: no data-path, optional-dependency, isolation-helper or TypeScript failures in any run. Extra fix: actions/setup-node v4 -> v6 (v4 ran on the deprecated node20 runtime; warning on every TypeScript job).",
+  "agent_runs": [
+    {
+      "label": "M0-23 CI diagnosis and fix",
+      "duration_s": null,
+      "tokens": null,
+      "tool_uses": null
+    }
+  ],
+  "_tracker_updated": "2026-11-13T21:05:00-08:00"
+}
