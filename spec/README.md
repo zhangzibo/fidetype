@@ -23,6 +23,8 @@ python -m fidetype.conformance consumer --cmd "my-reader {path}"   # exit 0 = ac
 
 The golden vectors are in [`conformance/v0.1/`](conformance/v0.1/). Details: [wiki/concepts/conformance-suite.md](../wiki/concepts/conformance-suite.md).
 
+The TypeScript SDK ([`sdk/typescript/`](../sdk/typescript/README.md)) runs the same vectors for every profile and gives the same verdict as the Python reference (`npm run cross-check`). The JSON schemas in [`schemas/`](schemas/) are structural; its TypeScript types are generated from them.
+
 Opt-in profiles test draft FEPs on top of v0.1. They do not change the v0.1 levels or vectors:
 
 ```bash
@@ -61,6 +63,8 @@ spec/
   conformance/fep-0001/       golden vectors of the opt-in FEP-0001 profile (.jsonl)
   conformance/fep-0002/       golden vectors of the opt-in FEP-0002 profile (LSL scenarios, .json)
   conformance/fep-0003/       golden vectors of the opt-in FEP-0003 profile (.jsonl)
+  schemas/nts-v0.1/           JSON schemas (draft 2020-12, structural) of the v0.1 JSON Lines events
+  schemas/fep-0001/           JSON schemas of the FEP-0001 objects (segment_end, n-best item, decode_declaration, trust_decision)
   schemas/fep-0003/           JSON schemas (draft 2020-12) of the FEP-0003 objects
   feps/                       Fidetype Enhancement Proposals
     0000-template.md          the template for a new FEP

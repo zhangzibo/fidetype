@@ -1,0 +1,12 @@
+{
+ "id": "PUB-01",
+ "agent_runs": [
+  {
+   "label": "Paper 1 v6 pre-submission revision (text, builds, SUBMIT, wiki)",
+   "duration_s": 596.3,
+   "tokens": 162245,
+   "tool_uses": 97
+  }
+ ],
+ "_tracker_updated": "2026-11-13T21:05:00-08:00"
+}

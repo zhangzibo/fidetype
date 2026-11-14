@@ -122,4 +122,5 @@ Code: `src/fidetype/conformance/profiles/` (`fep0001.py`, `fep0002.py`). Tests: 
 - Adapters: [Brain-to-Text '25](../entities/brain-to-text-25.md), [Toronto sEMG typing dataset](../entities/toronto-semg-typing-dataset.md).
 
 ## Used by
+- [TypeScript SDK](typescript-sdk.md): runs the same golden vectors (all profiles) and gives the same verdict as the Python reference on every vector (`npm run cross-check`).
 - [Open benchmark v0.1](open-benchmark.md): every submitted stream must reach the `trust-ready` level (the entry gate).

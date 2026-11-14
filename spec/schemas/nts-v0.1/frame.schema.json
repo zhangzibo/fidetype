@@ -1,0 +1,68 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v0.1/frame.schema.json",
+ "title": "NeuralTextStream v0.1 frame event (dense or sparse)",
+ "description": "Structural schema (spec 3.1, 3.3, 6.2 rules 2-4). null in log_probs means -inf. Normalisation, V = len(vocab), unique top_ids in 0..V-1 and strictly increasing t are checked by the v0.1 conformance suite.",
+ "type": "object",
+ "required": [
+  "type",
+  "t"
+ ],
+ "properties": {
+  "type": {
+   "const": "frame"
+  },
+  "t": {
+   "type": "number"
+  },
+  "log_probs": {
+   "type": "array",
+   "items": {
+    "type": [
+     "number",
+     "null"
+    ]
+   }
+  },
+  "top_ids": {
+   "type": "array",
+   "items": {
+    "type": "integer",
+    "minimum": 0
+   }
+  },
+  "top_log_probs": {
+   "type": "array",
+   "items": {
+    "type": [
+     "number",
+     "null"
+    ]
+   }
+  },
+  "rest_log_prob": {
+   "type": [
+    "number",
+    "null"
+   ]
+  }
+ },
+ "oneOf": [
+  {
+   "required": [
+    "log_probs"
+   ]
+  },
+  {
+   "required": [
+    "top_ids",
+    "top_log_probs"
+   ],
+   "not": {
+    "required": [
+     "log_probs"
+    ]
+   }
+  }
+ ]
+}

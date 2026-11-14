@@ -1,0 +1,64 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v0.1/hypothesis.schema.json",
+ "title": "NeuralTextStream v0.1 hypothesis event (Development, spec 3.6)",
+ "description": "Structural schema. Unique ids are checked by the v0.1 conformance suite. The FEP-0001 evidence fields of an n-best item are in fep-0001/nbest-item.schema.json.",
+ "type": "object",
+ "required": [
+  "type",
+  "id",
+  "nbest",
+  "score_semantics",
+  "is_final"
+ ],
+ "properties": {
+  "type": {
+   "const": "hypothesis"
+  },
+  "id": {
+   "type": "string"
+  },
+  "is_final": {
+   "type": "boolean"
+  },
+  "revision_of": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "score_semantics": {
+   "enum": [
+    "calibrated_prob",
+    "uncalibrated_prob",
+    "power",
+    "strength",
+    "none"
+   ]
+  },
+  "t_start": {
+   "type": "number"
+  },
+  "t_end": {
+   "type": "number"
+  },
+  "nbest": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "text",
+     "score"
+    ],
+    "properties": {
+     "text": {
+      "type": "string"
+     },
+     "score": {
+      "type": "number"
+     }
+    }
+   }
+  }
+ }
+}

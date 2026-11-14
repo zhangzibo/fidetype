@@ -27,3 +27,41 @@ jobs:
       - run: uv sync --extra dev
 
       - run: uv run pytest -q
+
+  # TypeScript SDK (sdk/typescript, M7-06): build, schema drift check, browser-safety check,
+  # unit tests and the golden vectors, on the oldest and the newest supported Node.
+  typescript:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ["18", "24"]
+    defaults:
+      run:
+        working-directory: sdk/typescript
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci --no-audit --no-fund
+      - run: npm run ci
+
+  # The TypeScript and the Python reference consumers must give the same verdict on every golden vector.
+  typescript-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: uv sync --extra dev
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - working-directory: sdk/typescript
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" npm run cross-check
+          FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" node scripts/fuzz-parity.mjs --n 10

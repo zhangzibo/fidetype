@@ -1,0 +1,35 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0001/nbest-item.schema.json",
+ "title": "FEP-0001 n-best item of a hypothesis event (with evidence fields)",
+ "description": "Structural schema (FEP-0001 section 2). One char_confidences value per Unicode code point of text (rule 1), finite numbers and the 1e-9 tolerance of rule 4 are checked by the fep-0001 conformance profile.",
+ "type": "object",
+ "required": [
+  "text",
+  "score"
+ ],
+ "properties": {
+  "text": {
+   "type": "string"
+  },
+  "score": {
+   "type": "number"
+  },
+  "char_confidences": {
+   "type": "array",
+   "items": {
+    "type": "number",
+    "minimum": 0,
+    "maximum": 1
+   }
+  },
+  "logp_acoustic": {
+   "type": "number",
+   "maximum": 0
+  },
+  "logp_lm": {
+   "type": "number",
+   "maximum": 0
+  }
+ }
+}

@@ -1,0 +1,127 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v0.1/decision.schema.json",
+ "title": "NeuralTextStream v0.1 decision event (Development, spec 3.5)",
+ "description": "Structural schema. The score rules of 3.5 (a probability score in [0, 1], score_range for power and strength, no score for none) are written as conditions; the timing order of 3.8 is checked by the v0.1 conformance suite.",
+ "type": "object",
+ "required": [
+  "type",
+  "t",
+  "label",
+  "score_semantics"
+ ],
+ "properties": {
+  "type": {
+   "const": "decision"
+  },
+  "t": {
+   "type": "number"
+  },
+  "label": {
+   "type": "string"
+  },
+  "score": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "score_semantics": {
+   "enum": [
+    "calibrated_prob",
+    "uncalibrated_prob",
+    "power",
+    "strength",
+    "none"
+   ]
+  },
+  "score_range": {
+   "type": "array",
+   "minItems": 2,
+   "maxItems": 2,
+   "items": {
+    "type": "number"
+   }
+  },
+  "t_signal_start": {
+   "type": "number"
+  },
+  "t_signal_end": {
+   "type": "number"
+  },
+  "t_decoded": {
+   "type": "number"
+  },
+  "t_emitted": {
+   "type": "number"
+  }
+ },
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "score_semantics": {
+      "enum": [
+       "calibrated_prob",
+       "uncalibrated_prob"
+      ]
+     }
+    },
+    "required": [
+     "score_semantics"
+    ]
+   },
+   "then": {
+    "properties": {
+     "score": {
+      "type": [
+       "number",
+       "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+     }
+    }
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "score_semantics": {
+      "enum": [
+       "power",
+       "strength"
+      ]
+     }
+    },
+    "required": [
+     "score_semantics"
+    ]
+   },
+   "then": {
+    "required": [
+     "score_range"
+    ]
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "score_semantics": {
+      "const": "none"
+     }
+    },
+    "required": [
+     "score_semantics"
+    ]
+   },
+   "then": {
+    "properties": {
+     "score": {
+      "type": "null"
+     }
+    }
+   }
+  }
+ ]
+}

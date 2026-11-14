@@ -1,0 +1,25 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0001/segment-end.schema.json",
+ "title": "FEP-0001 segment_end event",
+ "description": "Structural schema (FEP-0001 section 1). t not before the last frame of the segment (rule 5) is checked by the fep-0001 conformance profile.",
+ "type": "object",
+ "required": [
+  "type"
+ ],
+ "properties": {
+  "type": {
+   "const": "segment_end"
+  },
+  "t": {
+   "type": "number"
+  },
+  "unit": {
+   "enum": [
+    "utterance",
+    "word",
+    "trial"
+   ]
+  }
+ }
+}

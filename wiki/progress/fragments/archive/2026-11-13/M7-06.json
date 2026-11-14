@@ -1,0 +1,17 @@
+{
+ "id": "M7-06",
+ "status": "done",
+ "started_at": "2026-11-13T20:14:00-08:00",
+ "finished_at": "2026-11-13T21:05:00-08:00",
+ "approx_times": true,
+ "notes": "sdk/typescript/ (@fidetype/sdk, private, not on npm; layout: top-level sdk/ keeps the Python packaging unchanged and holds the P2 SDKs). Node >= 18 + browser ESM, zero runtime deps (own JSON parser with Python int/float rule, ZIP/DEFLATE/NPY, JSON Schema subset, SHA-256); dev deps typescript 5.9.3 (Apache-2.0), @types/node 18.19.130 (MIT). NtsWriter, readers (text + live streams), reference consumer loadStream (JSONL + NPZ), 60 v0.1 checks, StreamValidator, DecisionTracker (FEP-0001 rules 1, 3, 5-8, rule 9 warning; intent profile), conformance runner + CLI fidetype-ts. New schemas spec/schemas/nts-v0.1/ (7) + fep-0001/ (4); generated TS types, drift check (npm run check:schemas). Parity: same verdict as Python on all 167 vectors (v0.1 52, fep-0001 40, fep-0002 31, fep-0003 44; npm run cross-check) and ~8,000 fuzz mutants (npm run fuzz; 6 differences found and fixed); Python suite via --cmd 52/52 and fep-0002 31/31; headless Edge 167/167. FEP-0002 decision counts = structural model of the trust layer (no decoding/policy). Tests: node:test 26. CI jobs typescript (Node 18, 24) + typescript-parity. Open: npm publishing (user decision), demo not wired (file:// cannot load ESM), fuzz covers JSON only. Wiki concepts/typescript-sdk.md.",
+ "agent_runs": [
+  {
+   "label": "M7-06 TypeScript SDK (writer/reader, validation, decisions, conformance runner, cross-check)",
+   "duration_s": null,
+   "tokens": null,
+   "tool_uses": null
+  }
+ ],
+ "_tracker_updated": "2026-11-13T21:05:00-08:00"
+}

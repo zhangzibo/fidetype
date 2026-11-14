@@ -1,0 +1,81 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v0.1/header.schema.json",
+ "title": "NeuralTextStream v0.1 header event (JSON Lines line 1)",
+ "description": "Structural schema (spec 3.1, 3.2, 3.4, 3.8, 6.2 rule 1). Rules that need more than one field (blank_id < len(vocab), unique tokens, meta key types of 4.2, leakage and privacy heuristics) are checked by the v0.1 conformance suite. Unknown keys are allowed (6.2 rule 5).",
+ "type": "object",
+ "required": [
+  "type",
+  "spec_version",
+  "vocab",
+  "vocab_type",
+  "blank_id"
+ ],
+ "properties": {
+  "type": {
+   "const": "header"
+  },
+  "spec_version": {
+   "const": "0.1"
+  },
+  "vocab": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "vocab_type": {
+   "enum": [
+    "char",
+    "key",
+    "word",
+    "phoneme",
+    "command",
+    "other"
+   ]
+  },
+  "blank_id": {
+   "type": [
+    "integer",
+    "null"
+   ],
+   "minimum": 0
+  },
+  "source": {
+   "type": "string",
+   "minLength": 1
+  },
+  "meta": {
+   "type": "object"
+  },
+  "frame_period": {
+   "type": [
+    "number",
+    "null"
+   ],
+   "exclusiveMinimum": 0
+  },
+  "latency": {
+   "type": [
+    "number",
+    "null"
+   ],
+   "minimum": 0
+  },
+  "vocab_id": {
+   "type": "string"
+  },
+  "vocab_version": {
+   "type": "string"
+  },
+  "clock_domain": {
+   "enum": [
+    "lsl",
+    "unix",
+    "monotonic",
+    "trial",
+    "other"
+   ]
+  }
+ }
+}

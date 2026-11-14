@@ -92,7 +92,7 @@ See [LSL input](lsl-input.md).
 - Tests: `tests/test_sdk.py` (13 tests). Full suite 456 passed / 4 skipped.
 
 ## Follow-ups
-TypeScript and Rust SDKs (M7-06, M7-07), a hosted demo page (M7-08, needs a user decision on GitHub Pages), PyPI release (M7-09). See [tracker](../progress/index.html).
+TypeScript SDK: done, see [TypeScript SDK](typescript-sdk.md) (M7-06). Rust SDK (M7-07), a hosted demo page (M7-08, needs a user decision on GitHub Pages), PyPI release (M7-09). See [tracker](../progress/index.html).
 
 ## Related
-[streaming trust layer](streaming-trust-layer.md) · [LSL input](lsl-input.md) · [open benchmark](open-benchmark.md) · [roadmap](../questions/roadmap-standard.md)
+[TypeScript SDK](typescript-sdk.md) · [streaming trust layer](streaming-trust-layer.md) · [LSL input](lsl-input.md) · [open benchmark](open-benchmark.md) · [roadmap](../questions/roadmap-standard.md)

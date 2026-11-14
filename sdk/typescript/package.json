@@ -1,0 +1,47 @@
+{
+  "name": "@fidetype/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript SDK for NeuralTextStream (NTS): writer, reader, validation, trust_decision helpers and the conformance runner (Node and browser).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
+    }
+  },
+  "bin": {
+    "fidetype-ts": "./bin/fidetype-ts.mjs"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md"
+  ],
+  "scripts": {
+    "gen:schemas": "node scripts/gen-schemas.mjs",
+    "check:schemas": "node scripts/gen-schemas.mjs --check",
+    "build": "node scripts/gen-schemas.mjs --check && tsc -p tsconfig.json && tsc -p tsconfig.node.json",
+    "test": "node --test test/core.test.mjs test/vectors.test.mjs",
+    "conformance": "node bin/fidetype-ts.mjs conformance",
+    "cross-check": "node scripts/cross-check.mjs",
+    "check:browser": "node scripts/check-browser-safe.mjs",
+    "ci": "npm run build && npm run check:browser && npm test && npm run conformance",
+    "fuzz": "node scripts/fuzz-parity.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "18.19.130",
+    "typescript": "5.9.3"
+  }
+}

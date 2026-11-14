@@ -1,0 +1,50 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v0.1/signal-quality.schema.json",
+ "title": "NeuralTextStream v0.1 signal_quality event (Development, spec 3.9)",
+ "type": "object",
+ "required": [
+  "type",
+  "t",
+  "value",
+  "unit"
+ ],
+ "properties": {
+  "type": {
+   "const": "signal_quality"
+  },
+  "t": {
+   "type": "number"
+  },
+  "value": {
+   "type": "number"
+  },
+  "unit": {
+   "enum": [
+    "index",
+    "snr_db",
+    "impedance_ohm",
+    "other"
+   ]
+  }
+ },
+ "if": {
+  "properties": {
+   "unit": {
+    "const": "index"
+   }
+  },
+  "required": [
+   "unit"
+  ]
+ },
+ "then": {
+  "properties": {
+   "value": {
+    "type": "number",
+    "minimum": 0,
+    "maximum": 1
+   }
+  }
+ }
+}

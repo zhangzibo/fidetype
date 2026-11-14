@@ -1,0 +1,14 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v0.1/end.schema.json",
+ "title": "NeuralTextStream v0.1 end marker (spec 6.2)",
+ "type": "object",
+ "required": [
+  "type"
+ ],
+ "properties": {
+  "type": {
+   "const": "end"
+  }
+ }
+}

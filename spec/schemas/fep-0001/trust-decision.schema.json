@@ -1,0 +1,117 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0001/trust-decision.schema.json",
+ "title": "FEP-0001 trust_decision event (text profile, trust layer output)",
+ "description": "Structural schema (FEP-0001 section 3 table, rule 8). Order rules (seq increases, one final decision per utterance, none after it) are checked by the fep-0001 conformance profile. Rule 9 (no final COMMIT with an empty text) is a SHOULD; the SDKs report it as a warning. Intent decisions (profile intent) use fep-0003/intent-trust-decision.schema.json.",
+ "type": "object",
+ "required": [
+  "type",
+  "is_final",
+  "action",
+  "p_top1",
+  "score_semantics"
+ ],
+ "properties": {
+  "type": {
+   "const": "trust_decision"
+  },
+  "profile": {
+   "const": "text"
+  },
+  "is_final": {
+   "type": "boolean"
+  },
+  "action": {
+   "enum": [
+    "COMMIT",
+    "OFFER",
+    "ASK",
+    "ABSTAIN",
+    "OFFER_WORDS"
+   ]
+  },
+  "shown": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "p_top1": {
+   "type": [
+    "number",
+    "null"
+   ],
+   "minimum": 0,
+   "maximum": 1
+  },
+  "score_semantics": {
+   "enum": [
+    "calibrated_prob",
+    "uncalibrated_prob",
+    "power",
+    "strength",
+    "none"
+   ]
+  },
+  "set_size": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "guard_risk": {
+   "type": [
+    "number",
+    "null"
+   ],
+   "minimum": 0,
+   "maximum": 1
+  },
+  "session": {
+   "type": "string"
+  },
+  "seq": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "utterance": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "config_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "input": {
+   "type": "object"
+  },
+  "latency_s": {
+   "type": "number",
+   "minimum": 0
+  },
+  "declaration": {
+   "type": "object"
+  },
+  "reason": {
+   "type": "string"
+  }
+ },
+ "if": {
+  "properties": {
+   "action": {
+    "const": "COMMIT"
+   }
+  },
+  "required": [
+   "action",
+   "shown"
+  ]
+ },
+ "then": {
+  "properties": {
+   "shown": {
+    "minItems": 1
+   }
+  }
+ }
+}
