@@ -3,7 +3,7 @@ title: BrainFlow
 type: entity
 tags: [sdk, eeg, biosignals, open-source, tooling]
 sources: [neural-input-landscape-2026]
-updated: 2026-11-12
+updated: 2026-11-13
 ---
 
 # BrainFlow
@@ -31,7 +31,7 @@ The BrainFlow board docs (checked 2026-11-12) show a Synthetic board and a Strea
 | Install | `pip install "fidetype[lsl,brainflow]"` |
 | Tested version | brainflow 5.24.0 (PyPI wheel, Windows 11). Licence MIT (`LICENSE.txt` in the wheel) |
 | Synthetic board | board id -1, name `Synthetic`: 16 EEG channels (Fz, C3, Cz, C4, Pz, PO7, Oz, PO8, F5, F7, F3, F1, F2, F4, F6, F8), 250 Hz, a timestamp channel and a marker channel |
-| Stamps | Unix time per sample, in packets about 16 ms apart (measured). The bridge smooths them before LSL |
+| Stamps | Unix time per sample, in packets about 16 ms apart (measured). The bridge smooths them before LSL. Since M6-13 it measures the wall-to-LSL offset at each read, so a wall-clock step (Windows time sync: -1,361 ms seen in the soak test) does not shift the stamps (`clock_steps` in the stats) |
 
 Commands:
 ```
@@ -45,5 +45,7 @@ fidetype lsl run --config trust.json --stream-name fidetype.brainflow --signal-d
 The bridge sends an `EEG` stream (`desc/fidetype/role = signal`, unit `microvolts`) and a `Markers` stream (`segment_end` every `--trial-s` seconds). Details and the live results: [LSL input, BrainFlow live test](../concepts/lsl-input.md#brainflow-live-test-m6-08) and [results.md](../../experiments/2026-11-13-m6-08-brainflow-live/results.md).
 
 > **Our take:** the M6-08 run showed the full path BrainFlow → LSL → trust layer, with 26 of 26 ABSTAIN on toy input that carries no text information. Fidetype has no EEG text decoder. A real-board test needs hardware (externally blocked).
+
+The M6-13 soak test ran the bridge for 6.78 h + 2.5 h with restarts every 30 min: [LSL input, soak test](../concepts/lsl-input.md#soak-test-m6-13).
 
 Related: [Lab Streaming Layer](lab-streaming-layer.md), [LSL input](../concepts/lsl-input.md).

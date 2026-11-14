@@ -115,6 +115,72 @@ def test_pause_discards_and_makes_one_jump():
     assert 0.4 < np.diff(ts)[big][0] < 0.6
 
 
+class _SteadyBoard(B.FakeBoard):
+    """A board that makes samples at a steady rate (monotonic clock) and stamps them with the wall clock.
+
+    This is how the BrainFlow Synthetic board behaved in the M6-13 soak test when Windows set the wall
+    clock: the data kept flowing, and the board stamps moved with the wall clock.
+    """
+
+    def __init__(self, mono: Clock, wall: Clock, **kw) -> None:
+        super().__init__(clock=wall, **kw)
+        self.mono = mono
+
+    def start_stream(self) -> None:
+        super().start_stream()
+        self.m0 = self.mono()
+
+    def get_board_data(self) -> np.ndarray:
+        due = int((self.mono() - self.m0) * self.srate)
+        k = max(0, due - self.n)
+        d = np.zeros((self.descr["num_rows"], k))
+        for ch in self.descr["eeg_channels"]:
+            d[ch] = self.rng.standard_normal(k)
+        d[self.descr["timestamp_channel"]] = self.clock() - (k - 1 - np.arange(k)) / self.srate
+        self.n += k
+        return d
+
+
+@pytest.mark.parametrize("step_s", [-1.361, +1.4])
+def test_wall_clock_step_does_not_shift_stamps(step_s):
+    """M6-13: a wall-clock step (Windows time sync) must not move the LSL stamps or make a false gap."""
+    mono, wall = Clock(500.0), Clock(1_700_000_000.0)
+    board = _SteadyBoard(mono, wall, n_eeg=4)
+    sig = RecOutlet()
+    cfg = B.BridgeConfig(name="test.bf", trial_s=None)
+    br = B.BrainFlowBridge(board, board.descr, -1, cfg, outlets=lambda sd, sid, esid: (sig, RecOutlet()),
+                           lsl_clock=mono, wall_clock=wall)
+    br.start()
+    for i in range(500):  # 10 s, step at 5 s
+        mono.t += 0.02
+        wall.t += 0.02
+        if i == 250:
+            wall.t += step_s
+        br.step()
+    ts = np.concatenate([c[1] for c in sig.chunks])
+    step = np.diff(ts)
+    p = 1 / 250
+    assert br.stats.clock_steps == 1 and br.stats.jumps == 0
+    assert step.min() > 0 and step.max() < 2.5 * p  # monotonic, no false gap
+    lag = np.asarray(br.stats.push_lag_s[-100:])
+    assert np.abs(lag).max() < 0.05  # the stamps stay on the LSL clock (before the fix: about |step_s|)
+
+
+def test_slow_wall_clock_drift_is_followed():
+    mono, wall = Clock(500.0), Clock(1_700_000_000.0)
+    board = _SteadyBoard(mono, wall, n_eeg=4)
+    sig = RecOutlet()
+    br = B.BrainFlowBridge(board, board.descr, -1, B.BridgeConfig(name="t", trial_s=None),
+                           outlets=lambda sd, sid, esid: (sig, RecOutlet()), lsl_clock=mono, wall_clock=wall)
+    br.start()
+    for _ in range(3000):  # 60 s, the wall clock runs 500 ppm slow (slewing)
+        mono.t += 0.02
+        wall.t += 0.02 * (1 - 500e-6)
+        br.step()
+    assert br.stats.clock_steps == 0 and br.stats.jumps == 0
+    assert np.abs(np.asarray(br.stats.push_lag_s[-100:])).max() < 0.01
+
+
 def test_trial_markers_on_boundaries_and_during_dropout():
     br, board, wall, outs = _bridge(trial_s=1.0)
     t0 = wall.t

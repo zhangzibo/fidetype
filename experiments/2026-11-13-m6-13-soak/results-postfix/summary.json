@@ -1,0 +1,291 @@
+{
+  "windows_trust": 75,
+  "windows_consumer": 76,
+  "active_h": 2.500924444444447,
+  "bridge_cycles": 5,
+  "bridge_ends": 4,
+  "pause_at": null,
+  "final_decisions": 2242,
+  "criteria": {
+    "C1 no crash": {
+      "pass": true,
+      "value": {
+        "died": 0,
+        "external_stop": false,
+        "trust_rc": 0,
+        "consumer_rc": 0,
+        "exceptions": 0
+      }
+    },
+    "C2 RSS slope after warm-up <= 2 MB/h (trust, consumer)": {
+      "pass": true,
+      "value": {
+        "trust_rss_mb_per_h": -6.739819453633569,
+        "trust_private_mb_per_h": 0.795361318767141,
+        "consumer_rss_mb_per_h": -3.387036696256112,
+        "trust_handles_per_h": 0.5710994682591324
+      }
+    },
+    "C3 push p95 < 5 ms in every window": {
+      "pass": true,
+      "value": {
+        "windows": 75,
+        "worst_p95": 0.7468049821909517,
+        "whole_run": {
+          "n": 223974,
+          "p50": 0.48151375265818247,
+          "p95": 0.6835693927822929,
+          "p99": 0.8103929461614213,
+          "max": 9.109199978411198
+        }
+      }
+    },
+    "C4 end-of-utterance p95 < 50 ms in every window; e2e p95 < 100 ms (whole run)": {
+      "pass": true,
+      "value": {
+        "worst_eou_p95": 3.962619991216343,
+        "eou_whole": {
+          "n": 2242,
+          "p50": 2.5118864315095797,
+          "p95": 3.5659390271745455,
+          "p99": 3.8632829886662834,
+          "max": 4.9149999977089465
+        },
+        "e2e_whole": {
+          "n": 2242,
+          "p50": 34.17982174141798,
+          "p95": 56.47567275736946,
+          "p99": 78.0247464060086,
+          "max": 383.58412159141153
+        }
+      }
+    },
+    "C5 0 invalid events": {
+      "pass": true,
+      "value": {
+        "invalid_online": 0,
+        "conformance": {
+          "FEP1-PARSE": "pass",
+          "FEP1-KIND": "pass",
+          "FEP1-SEGMENT": "skip",
+          "FEP1-EVIDENCE": "skip",
+          "FEP1-SCORE": "skip",
+          "FEP1-DECL": "skip",
+          "FEP1-TD-INPUT": "skip",
+          "FEP1-TD-FORMAT": "pass",
+          "FEP1-TD-FINAL": "pass"
+        },
+        "fail_messages": {}
+      }
+    },
+    "C6 0 lost events": {
+      "pass": true,
+      "value": {
+        "emitted": 2242,
+        "received": 2242,
+        "events_in_log": 2242,
+        "seq_holes": 0,
+        "lost": 0,
+        "dup_or_reorder": 0,
+        "epochs": 0
+      }
+    },
+    "C7 0 COMMIT (= 0 wrong commits) on the toy decoders": {
+      "pass": true,
+      "value": {
+        "actions": {
+          "features": {
+            "COMMIT": 0,
+            "OFFER": 0,
+            "ABSTAIN": 1344
+          },
+          "flat": {
+            "COMMIT": 0,
+            "OFFER": 0,
+            "ABSTAIN": 898
+          }
+        }
+      }
+    },
+    "C8 LSL: gaps = dropouts, 0 out-of-order drops, reconnect after every restart": {
+      "pass": true,
+      "value": {
+        "gaps": 5,
+        "dropouts": 5,
+        "dropped_out_of_order": 0,
+        "clamped": 0,
+        "late_releases": 0,
+        "lost": 8,
+        "reconnects": 8,
+        "bridge_restarts": 4
+      }
+    },
+    "C9 clock: offset spread < 1 ms; transport p50 slope < 1 ms/h": {
+      "pass": true,
+      "value": {
+        "spread_ms": 0.055750017054378986,
+        "transport_p50_ms_per_h": 0.00019203134541602044,
+        "time_correction_ms_min_max": [
+          -0.02785000833682716,
+          0.009549999958835542
+        ]
+      }
+    },
+    "C10 bounded caches: LRU <= bound; shadow incremental == batch": {
+      "pass": true,
+      "value": {
+        "lru_within_bound": true,
+        "exact_checked": 112,
+        "exact_mismatch": 0
+      }
+    }
+  },
+  "all_pass": true,
+  "whole_run_ms": {
+    "push": {
+      "n": 223974,
+      "p50": 0.48151375265818247,
+      "p95": 0.6835693927822929,
+      "p99": 0.8103929461614213,
+      "max": 9.109199978411198
+    },
+    "eou": {
+      "n": 2242,
+      "p50": 2.5118864315095797,
+      "p95": 3.5659390271745455,
+      "p99": 3.8632829886662834,
+      "max": 4.9149999977089465
+    },
+    "e2e": {
+      "n": 2242,
+      "p50": 34.259625296083144,
+      "p95": 56.51632488900339,
+      "p99": 78.64156977348036,
+      "max": 383.58412159141153
+    },
+    "gc": {
+      "n": 2246,
+      "p50": 0.895723385795021,
+      "p95": 1.284386263589743,
+      "p99": 1.5848931924611138,
+      "max": 2.1093999966979027
+    },
+    "sh_push": {
+      "n": 223974,
+      "p50": 1.030489280027957,
+      "p95": 1.1052951411260221,
+      "p99": 1.197459598615467,
+      "max": 7.749900018097833
+    },
+    "sh_end": {
+      "n": 2242,
+      "p50": 12.843862635897429,
+      "p95": 26.67392689200101,
+      "p99": 41.43728614092731,
+      "max": 58.125700015807524
+    },
+    "step": {
+      "n": 436588,
+      "p50": 20.560964264191952,
+      "p95": 24.132854564824093,
+      "p99": 24.620924014946254,
+      "max": 6103.630099998554
+    }
+  },
+  "source_totals": {
+    "samples": 2242004,
+    "frames": 223974,
+    "markers": 2242,
+    "ignored_markers": 0,
+    "bad_markers": 0,
+    "clamped": 0,
+    "dropped_out_of_order": 0,
+    "gaps": 5,
+    "lost": 8,
+    "reconnects": 8,
+    "late_releases": 0
+  },
+  "consumer_final": {
+    "kind": "final",
+    "epoch": 0,
+    "window": 75,
+    "t_iso": "2026-11-13T23:19:31-0800",
+    "t_s": 9007.562999999995,
+    "window_s": 5.937999999994645,
+    "cpu_s": 24.546875,
+    "py_threads": 1,
+    "rss_mb": 26.78125,
+    "private_mb": 510.05078125,
+    "peak_rss_mb": 44.65234375,
+    "handles": 297,
+    "received_window": 1,
+    "transport_ms": {
+      "n": 1,
+      "p50": 4.441850003786385,
+      "p95": 4.441850003786385,
+      "max": 4.441850003786385
+    },
+    "counts": {
+      "received": 2242,
+      "invalid": 0,
+      "json_errors": 0,
+      "lost": 0,
+      "dup_or_reorder": 0,
+      "utt_back": 0,
+      "double_final": 0,
+      "epochs": 0,
+      "finals": 2242,
+      "actions": {
+        "COMMIT": 0,
+        "OFFER": 0,
+        "ABSTAIN": 2242
+      },
+      "commit_texts": 0
+    },
+    "last_seq": 2241,
+    "time_correction_s": {
+      "last": -9.300012607127428e-06,
+      "min": -2.8299997211433947e-05,
+      "max": -9.300012607127428e-06,
+      "n": 2
+    },
+    "whole_run_transport_ms": {
+      "n": 2242,
+      "p50": 10.619081562525375,
+      "p95": 19.557095110072943,
+      "p99": 20.560964264191952,
+      "max": 23.66065001115203
+    },
+    "examples": [],
+    "T": 9007.562999999995
+  },
+  "refcharlm_entries": {
+    "first": 14667,
+    "last": 18446
+  },
+  "rss_mb": {
+    "first": 66.03515625,
+    "after_warmup": 79.87890625,
+    "last": 60.49609375,
+    "max": 81.1640625
+  },
+  "idle_gc_ms": {
+    "n": 2246,
+    "p50": 0.895723385795021,
+    "p95": 1.284386263589743,
+    "p99": 1.5848931924611138,
+    "max": 2.1093999966979027
+  },
+  "supervisor_end": {
+    "event": "end",
+    "t_iso": "2026-11-13T23:19:31-0800",
+    "reason": "planned time",
+    "active_s": 9000.390000000014,
+    "trust_rc": 0,
+    "consumer_rc": 0,
+    "cpu_s": {
+      "trust": 548.140625,
+      "consumer": 24.625
+    }
+  }
+}

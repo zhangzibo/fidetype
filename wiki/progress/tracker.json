@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T22:55:00-08:00",
+  "updated": "2026-11-13T23:45:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8). 2026-11-13 (user decision): paper writing and publishing are decoupled from the research project. They form the PUB track, which has no deadline, never counts as late and is not part of the M1-M7 target. M3 and M4 are research milestones; the roadmap never waits on a paper.",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -629,10 +629,10 @@
      "agent_runs": [],
      "orchestrator_only": false, "notes": "Follow-up of M6-08. Needs hardware (the user has none) or a partner/volunteer with a board. Check serial/Bluetooth stamps, dropouts, channel names/units, latency; same toy decoders (no text claim)."},
 
-    {"id": "M6-13", "milestone": "M6", "title": "Long soak test of the BrainFlow -> LSL -> trust live path (1 h+, memory, clock drift, repeated reconnects)", "status": "in_progress",
-     "started_at": "2026-11-13T13:35:00-08:00", "finished_at": null, "approx_times": true,
+    {"id": "M6-13", "milestone": "M6", "title": "Long soak test of the BrainFlow -> LSL -> trust live path (1 h+, memory, clock drift, repeated reconnects)", "status": "done",
+     "started_at": "2026-11-13T13:35:00-08:00", "finished_at": "2026-11-13T23:45:00-08:00", "approx_times": true,
      "agent_runs": [{"label": "M6-13 soak test (harness, plan, 7 h run, results, wiki, records)", "duration_s": null, "tokens": null, "tool_uses": null}],
-     "orchestrator_only": false, "notes": "Follow-up of M6-08 (runs were 70 s per mode). Synthetic board, CPU only."},
+     "orchestrator_only": false, "notes": "Soak test of the live path (experiments/2026-11-13-m6-13-soak; plan.md committed before the run, 10 criteria). Chain: BrainFlow Synthetic bridge (restart every 30 min, kill/clean, one 3-s dropout per life) -> LSL -> toy signal decoder (features/flat alternate) -> StreamingTrustLayer (incremental demo decoder, M4-09 GC rule, shadow CTC beam + CharNgramLM LRU 20,000) -> trust_decision on LSL -> consumer validating every event. Main run 6.78 h (stopped from outside at 20:47, cause unknown), 6,067 decisions: 7/10 pass (0 COMMIT, 0 invalid, 0 lost, 14/14 gaps, 26 reconnects, push p95 worst window 1.76 ms, EOU p95 <= 10 ms, e2e p95 55 ms); FAIL C2 memory (+16.9 MB/h private) and C9 clock (3 windows at 1,373 ms transport), C1 (outside kill). Bug 1: guard used the shared 200,000-entry cached_edit_distance memo (about 30 pairs, 22 KB per decision; idle GC 0.8 -> 8 ms) -> own guard_edit_distance (4,096). Bug 2: Windows stepped the wall clock -1,361 ms; the bridge used one wall-to-LSL offset from start, so stamps stayed 1.36 s late (forward step: false gap) -> offset measured each read, step handled (stats.clock_steps). Post-fix run 2.5 h, 2,242 decisions: 10/10 pass (private +0.80 MB/h, push p95 worst 0.75 ms, transport p50 11.2 ms flat). Tests: test_guard_cache_bound.py (3), test_brainflow_bridge.py (+3). Follow-ups: full-length post-fix run; resolve on reconnect blocks the loop up to 6 s; RefCharLM memo has no bound (slow growth, about 1 MB)."},
 
     {"id": "M7-01", "milestone": "M7", "title": "Build the SDK and the offline demo", "status": "done",
      "started_at": "2026-11-12T21:30:00-08:00", "finished_at": "2026-11-12T22:20:00-08:00", "approx_times": true,

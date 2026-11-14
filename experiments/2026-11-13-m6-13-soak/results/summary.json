@@ -1,0 +1,159 @@
+{
+  "windows_trust": 203,
+  "windows_consumer": 203,
+  "active_h": 6.769366111111109,
+  "bridge_cycles": 14,
+  "bridge_ends": 14,
+  "pause_at": null,
+  "final_decisions": 6067,
+  "criteria": {
+    "C1 no crash": {
+      "pass": false,
+      "value": {
+        "died": 0,
+        "external_stop": true,
+        "trust_rc": null,
+        "consumer_rc": null,
+        "exceptions": 0
+      }
+    },
+    "C2 RSS slope after warm-up <= 2 MB/h (trust, consumer)": {
+      "pass": false,
+      "value": {
+        "trust_rss_mb_per_h": 7.9450590384088375,
+        "trust_private_mb_per_h": 16.86431543820742,
+        "consumer_rss_mb_per_h": -4.266897405610909,
+        "trust_handles_per_h": 0.05374956010395296
+      }
+    },
+    "C3 push p95 < 5 ms in every window": {
+      "pass": true,
+      "value": {
+        "windows": 203,
+        "worst_p95": 1.7550300020957361,
+        "whole_run": null
+      }
+    },
+    "C4 end-of-utterance p95 < 50 ms in every window; e2e p95 < 100 ms (whole run)": {
+      "pass": true,
+      "value": {
+        "worst_eou_p95": 9.973660005198322,
+        "eou_whole": null,
+        "e2e_whole": {
+          "n": 6080,
+          "p50": 31.085828071809374,
+          "p95": 55.33910220983671,
+          "p99": 337.2699886189366,
+          "max": 394.1699356219033
+        }
+      }
+    },
+    "C5 0 invalid events": {
+      "pass": true,
+      "value": {
+        "invalid_online": 0,
+        "conformance": {
+          "FEP1-PARSE": "pass",
+          "FEP1-KIND": "pass",
+          "FEP1-SEGMENT": "skip",
+          "FEP1-EVIDENCE": "skip",
+          "FEP1-SCORE": "skip",
+          "FEP1-DECL": "skip",
+          "FEP1-TD-INPUT": "skip",
+          "FEP1-TD-FORMAT": "pass",
+          "FEP1-TD-FINAL": "pass"
+        },
+        "fail_messages": {}
+      }
+    },
+    "C6 0 lost events": {
+      "pass": true,
+      "value": {
+        "emitted": 6067,
+        "received": 6065,
+        "events_in_log": 6080,
+        "seq_holes": 0,
+        "lost": 0,
+        "dup_or_reorder": 0,
+        "epochs": 0
+      }
+    },
+    "C7 0 COMMIT (= 0 wrong commits) on the toy decoders": {
+      "pass": true,
+      "value": {
+        "actions": {
+          "features": {
+            "COMMIT": 0,
+            "OFFER": 0,
+            "ABSTAIN": 3150
+          },
+          "flat": {
+            "COMMIT": 0,
+            "OFFER": 0,
+            "ABSTAIN": 2917
+          }
+        }
+      }
+    },
+    "C8 LSL: gaps = dropouts, 0 out-of-order drops, reconnect after every restart": {
+      "pass": true,
+      "value": {
+        "gaps": 14,
+        "dropouts": 14,
+        "dropped_out_of_order": 0,
+        "clamped": 0,
+        "late_releases": 1875,
+        "lost": 26,
+        "reconnects": 26,
+        "bridge_restarts": 13
+      }
+    },
+    "C9 clock: offset spread < 1 ms; transport p50 slope < 1 ms/h": {
+      "pass": false,
+      "value": {
+        "spread_ms": 0.07270000060088933,
+        "transport_p50_ms_per_h": -11.564022481982079,
+        "time_correction_ms_min_max": [
+          -0.026599998818710446,
+          0.012600008631125093
+        ]
+      }
+    },
+    "C10 bounded caches: LRU <= bound; shadow incremental == batch": {
+      "pass": true,
+      "value": {
+        "lru_within_bound": true,
+        "exact_checked": 303,
+        "exact_mismatch": 0
+      }
+    }
+  },
+  "all_pass": false,
+  "whole_run_ms": {},
+  "source_totals": {
+    "samples": 6066730,
+    "frames": 606061,
+    "markers": 6067,
+    "ignored_markers": 0,
+    "bad_markers": 0,
+    "clamped": 0,
+    "dropped_out_of_order": 0,
+    "gaps": 14,
+    "lost": 26,
+    "reconnects": 26,
+    "late_releases": 1875
+  },
+  "consumer_final": null,
+  "refcharlm_entries": {
+    "first": 14660,
+    "last": 20050
+  },
+  "rss_mb": {
+    "first": 65.421875,
+    "after_warmup": 85.140625,
+    "last": 130.9921875,
+    "max": 150.40234375
+  },
+  "idle_gc_ms": null,
+  "supervisor_end": null
+}

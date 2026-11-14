@@ -554,3 +554,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New module `sdk/rust/src/ws.rs`: `IngestCore` (handshake, header, `ws_seq` duplicates, reorder hold 16 events / 0.25 s, gaps, batches, acks, resume, take-over, close codes) and `SubscriberCore` (`/decisions` checks). Sans-IO, `no_std` + `alloc`, no new dependency. Profile `sdk/rust/src/profiles/fep0004.rs` with the runner that drops the cut utterance's frames up to the next boundary.
 - Reuses the FEP-0002 structural trust model. One more Python rule copied there: a boolean `frame_period` / `latency` passes as 1 / 0.
 - Parity: Python = TypeScript = Rust on 205/205 vectors (fep-0004 37/37) and 31,056/31,056 fuzz mutants (seeds 1-6, `--n 30`; fep-0004 6,660). The parity scripts keep the general skip path for unknown Rust profiles. Pages: [rust-sdk](concepts/rust-sdk.md), [websocket-input](concepts/websocket-input.md).
+
+## [2026-11-13] query | M6-13 soak test of the live path
+- Plan with 10 pass criteria committed before the run (`experiments/2026-11-13-m6-13-soak/plan.md`, commit 5b363a5). Harness: `soak.py` (supervisor, detached), `trust_proc.py`, `consumer_proc.py`, `analyze.py`, `offline_memory.py`; metrics every 2 min, fsynced.
+- Main run 6.78 h (stopped from outside at 20:47, cause unknown), 6,067 decisions: 0 COMMIT on toy input, 0 invalid, 0 lost, 14/14 gaps, 26/26 reconnects, push p95 worst window 1.76 ms. FAIL: memory (+16.9 MB/h), clock (3 windows at 1,373 ms transport), C1 (outside kill).
+- Bug 1 fixed: the guard used the shared 200,000-entry `cached_edit_distance`; now `guard_edit_distance` (4,096). Test `tests/test_guard_cache_bound.py` (3).
+- Bug 2 fixed: Windows stepped the wall clock by -1,361 ms; the BrainFlow bridge kept one wall-to-LSL offset, so stamps stayed 1.36 s late. The offset is now measured at each read (`clock_steps`). Tests in `tests/test_brainflow_bridge.py` (+3).
+- Post-fix run 2.5 h, 2,242 decisions: 10/10 criteria pass (private +0.80 MB/h, push p95 worst 0.75 ms).
+- Pages: [LSL input](concepts/lsl-input.md) (new section), [BrainFlow](entities/brainflow.md), [streaming trust layer](concepts/streaming-trust-layer.md) (guard memo), index.

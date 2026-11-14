@@ -190,6 +190,8 @@ The layer applies the frozen frame temperature to each chunk row by row, as the 
 
 > **Our take:** the bound costs nothing measurable and stops memory growth in a long session. It also keeps the idle `gc.collect()` short.
 
+**Guard memo (M6-13).** The live soak test found one more memo that M4-10 missed: the guard (`nbest_consistency`, `semantic_entropy`) used the shared 200,000-entry `cached_edit_distance`. Live, about 30 new word-tuple pairs per decision (hit rate about 8 %, about 0.75 KB each) made the trust process grow about 17 MB/h for about 7.5 h, and the idle GC grew from 0.8 to 8 ms. The guard now uses `guard_edit_distance` (`GUARD_EDIT_CACHE_SIZE = 4096`); offline evaluation keeps the large memo. The values do not change. After the fix: +0.8 MB/h, idle GC 0.6-0.9 ms ([M6-13 results](../../experiments/2026-11-13-m6-13-soak/results.md), [LSL soak test](lsl-input.md#soak-test-m6-13)).
+
 **Preview stability (B2T, word previews every 0.4 s).** The top-1 changes in 29 % of steps. The shown text is rewritten (not only extended) 4.4 times per utterance. In 35 % of utterances the final top-1 differs from the last preview.
 
 > **Our take:** incremental decoding removes the decoder's search from the wait after the user stops, with no change to any decision. The real-data tail sits in our word decoder, not in the layer; a faster exact lexicon search is the next fix (done in M4-09, below). The unstable previews confirm the rule: never act on `is_final = false`. Show previews as grey text that can change.

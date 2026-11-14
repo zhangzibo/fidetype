@@ -165,6 +165,27 @@ Results (two processes on one PC, 70 s per mode, dropout + hard kill + reconnect
 
 > **Our take:** the P4 exit check passes. A real device SDK feeds the live path, and the guard stops an LM that hallucinates on a signal with no text in it. This does not show EEG text decoding. A real board (OpenBCI) needs hardware and is a follow-up.
 
+## Soak test (M6-13)
+Task M6-13 ran the same live chain for hours, with the M4-08 to M4-10 settings: the incremental demo decoder, the M4-09 GC rule, and a shadow CTC beam + bounded `CharNgramLM` on the same frames. The bridge restarted every 30 min (hard kill and clean stop in turn), with one 3-s dropout per bridge life. A consumer read the `trust_decision` events from the LSL outlet and checked every event with the conformance validator. Plan (criteria fixed before the run): [plan.md](../../experiments/2026-11-13-m6-13-soak/plan.md). Results: [results.md](../../experiments/2026-11-13-m6-13-soak/results.md).
+
+| | main run | post-fix run |
+|---|---|---|
+| active time / final decisions | 6.78 h / 6,067 | 2.5 h / 2,242 |
+| COMMIT on toy input (no text information) | 0 | 0 |
+| invalid / lost events (consumer side) | 0 / 0 | 0 / 0 |
+| gaps = dropouts; reconnects = 2 x restarts | 14 = 14; 26 = 26 | 5 = 5; 8 = 8 |
+| push p95, worst 2-min window | 1.76 ms | 0.75 ms |
+| end-of-utterance p95, worst window; e2e p95 | 9.97 ms; 55 ms | 3.96 ms; 56 ms |
+| trust private bytes after warm-up | **+16.9 MB/h** (bug 1) | +0.80 MB/h |
+| transport p50 | 11 ms, but **1,373 ms** in 3 windows (bug 2) | 11.2-11.3 ms |
+| pass criteria | 7 of 10 (C1: outside kill at 6.78 h; C2; C9) | 10 of 10 |
+
+Two bugs found and fixed (with tests):
+1. **Guard memo.** The guard used the shared 200,000-entry `cached_edit_distance` memo. Live, it grew by about 30 entries (about 22 KB) per decision for about 7.5 h, and the idle GC grew from 0.8 to 8 ms. The guard now has its own 4,096-entry memo (`guard_edit_distance`). See [streaming trust layer](streaming-trust-layer.md) (guard memo, M6-13).
+2. **Wall-clock step in the bridge.** Windows set the clock back by 1,361 ms. The bridge used one wall-to-LSL offset taken at start, so all later stamps were 1.36 s late until the bridge restarted. A forward step would have made a false gap. The bridge now measures the offset at each read and handles a step (`clock_steps`). See [BrainFlow](../entities/brainflow.md#fidetype-bridge-m6-08).
+
+> **Our take:** the live path is stable for hours when both fixes are in: no memory growth, no lost or invalid events, no wrong commits, and push p95 under 1 ms. Two limits stay. The post-fix run lasted 2.5 h, not 6-8 h. No wall-clock step happened during it, so only unit tests check the bridge fix. A reconnect also blocks the consumer loop for up to 6 s while it resolves the new stream; LSL buffers the data, so nothing is lost.
+
 ## How to connect common tools
 We state only what their documentation says (checked 2026-11-12).
 
@@ -177,7 +198,8 @@ We state only what their documentation says (checked 2026-11-12).
 
 ## Limits and follow-ups
 - Tested on one machine (localhost) only. LAN and Wi-Fi latency are not measured.
-- No real device was tested (the user has no hardware). The BrainFlow Synthetic board test is done (M6-08). A real board (OpenBCI) needs hardware.
+- No real device was tested (the user has no hardware). The BrainFlow Synthetic board test is done (M6-08), and so is a 6.78 h + 2.5 h soak test (M6-13). A real board (OpenBCI) needs hardware.
+- A reconnect resolves the new stream inside `poll()` and blocks the loop for up to 6 s (M6-13). Moving the resolve to a thread is a possible follow-up.
 - FEP-0002 defines the binding (M6-09). It stays Draft until an outside LSL implementation runs the `fep-0002` vectors.
 - The frames route decodes at the end of the utterance (M4-08 incremental decoding).
 

@@ -30,11 +30,20 @@ Streams (FEP-0002, raw-signal stream):
 Timestamps. BrainFlow gives a Unix time per sample. The synthetic board
 sends samples in bursts (several samples about 10 us apart, then a
 16 ms step), so raw stamps would look like gaps. The bridge maps the
-board time to the LSL clock (one offset at start) and smooths it: the
-next stamp is the previous stamp + 1 / srate, pulled towards the board
-time by ``track`` of the error per sample. If the board time is more
-than ``jump_s`` ahead (lost data), the stamp jumps to the board time, so
-the consumer sees a real gap.
+board time to the LSL clock and smooths it: the next stamp is the
+previous stamp + 1 / srate, pulled towards the board time by ``track``
+of the error per sample. If the board time is more than ``jump_s`` ahead
+(lost data), the stamp jumps to the board time, so the consumer sees a
+real gap.
+
+The wall clock (Unix time) can be set while the bridge runs (Windows
+time sync steps it by about 1 s). So the offset LSL clock - wall clock is
+measured again at each read. If it changed by more than ``clock_step_s``,
+the bridge takes the new offset, counts a ``clock_steps``, and stamps that
+one read from the model (previous stamp + 1 / srate), because it can hold
+samples from both sides of the step. Before this rule (M6-13 soak test),
+a step of -1.36 s left every later stamp 1.36 s late until the bridge
+restarted; a forward step larger than ``jump_s`` would have made a false gap.
 
 Pauses (``pauses``: list of (at_s, for_s)) simulate a dropout: during a
 pause the bridge reads and discards the board data (as a radio link that
@@ -200,6 +209,8 @@ class BridgeConfig:
     poll_s: float = 0.02
     track: float = 0.01
     jump_s: float = 0.25
+    #: A change of the offset LSL clock - wall clock larger than this is a wall-clock step (M6-13).
+    clock_step_s: float = 0.05
     pauses: Sequence[tuple[float, float]] = ()
     channel_format: str = "float32"
 
@@ -212,6 +223,8 @@ class BridgeStats:
     board_markers: int = 0
     discarded: int = 0
     jumps: int = 0
+    #: Wall-clock steps found (the offset LSL clock - wall clock changed by > clock_step_s).
+    clock_steps: int = 0
     wall_s: float = 0.0
     t_first: float | None = None
     t_last: float | None = None
@@ -311,8 +324,22 @@ class BrainFlowBridge:
     def stamps(self, board_t: np.ndarray | None, n: int) -> np.ndarray:
         """LSL stamps of n new samples (module docstring: map, smooth, jump)."""
         now_lsl = self.lsl_clock()
+        off_now = now_lsl - self.wall_clock()
+        stepped = False
         if self._off is None:
-            self._off = now_lsl - self.wall_clock()
+            self._off = off_now
+        elif abs(off_now - self._off) > self.cfg.clock_step_s:
+            # The wall clock was set: take the new offset; this read may mix both sides of the step.
+            self.stats.clock_steps += 1
+            self.log(f"wall clock step of {self._off - off_now:+.3f} s; new LSL offset")
+            self._off = off_now
+            stepped = True
+        else:
+            self._off = off_now  # follow the slow drift of the wall clock against the LSL clock
+        if stepped and self._last is not None:
+            out = self._last + self.period * np.arange(1, n + 1)
+            self._last = float(out[-1])
+            return out
         if board_t is None or len(board_t) != n:  # no board stamps: the newest sample is "now"
             board_t = (now_lsl - self._off) - self.period * np.arange(n - 1, -1, -1)
         tb = np.asarray(board_t, dtype=np.float64) + self._off

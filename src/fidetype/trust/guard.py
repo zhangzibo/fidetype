@@ -63,7 +63,7 @@ from typing import Callable, Iterable, Sequence
 import numpy as np
 
 from fidetype.streams.spec import NeuralTextStream
-from fidetype.trust._align import cached_edit_distance
+from fidetype.trust._align import guard_edit_distance
 from fidetype.trust.calibration import log_softmax
 from fidetype.trust.types import Candidate, NBest
 
@@ -99,7 +99,7 @@ def word_similarity(a: str, b: str) -> float:
     n = max(len(wa), len(wb))
     if n == 0:
         return 1.0
-    return 1.0 - cached_edit_distance(wa, wb) / n
+    return 1.0 - guard_edit_distance(wa, wb) / n
 
 
 def nbest_consistency(texts: Sequence[str], posteriors: np.ndarray, k: int = 5) -> float:
@@ -121,7 +121,7 @@ def semantic_entropy(texts: Sequence[str], posteriors: np.ndarray, max_word_edit
     for t, p in zip(texts, posteriors):
         w = tuple(t.split())
         for i, r in enumerate(reps):
-            if cached_edit_distance(w, r) <= max_word_edits:
+            if guard_edit_distance(w, r) <= max_word_edits:
                 mass[i] += float(p)
                 break
         else:

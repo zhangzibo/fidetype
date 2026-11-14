@@ -60,9 +60,8 @@ def map_positions(ref: Sequence, hyp: Sequence) -> list:
     return out
 
 
-@lru_cache(maxsize=200_000)
-def cached_edit_distance(a: str | tuple, b: str | tuple) -> int:
-    """Levenshtein distance with a cache (strings or tuples of words)."""
+def edit_distance(a: str | tuple, b: str | tuple) -> int:
+    """Levenshtein distance (strings or tuples of words), no cache."""
     if len(a) < len(b):
         a, b = b, a
     prev = list(range(len(b) + 1))
@@ -72,3 +71,16 @@ def cached_edit_distance(a: str | tuple, b: str | tuple) -> int:
             cur[j] = min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (x != y))
         prev = cur
     return prev[-1]
+
+
+#: Offline evaluation memo (eWPM, simulated user): large, because the same pairs come back often there.
+cached_edit_distance = lru_cache(maxsize=200_000)(edit_distance)
+cached_edit_distance.__doc__ = "Levenshtein distance with a 200,000-entry LRU cache (offline evaluation)."
+
+#: Entry bound of the guard's memo (M6-13). The guard compares the word tuples of each new n-best list.
+#: Live, almost every pair is new (hit rate about 8 % in the soak test), and one entry holds about
+#: 0.75 KB. With the old shared 200,000-entry cache, a live session grew by about 20 MB per hour for
+#: about 7 hours (up to about 150 MB) before the bound held. A small bound costs no time.
+GUARD_EDIT_CACHE_SIZE = 4096
+guard_edit_distance = lru_cache(maxsize=GUARD_EDIT_CACHE_SIZE)(edit_distance)
+guard_edit_distance.__doc__ = "Levenshtein distance with a small LRU cache for the live guard (M6-13)."

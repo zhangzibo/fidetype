@@ -99,6 +99,27 @@ def analyze(results: Path, run_dir: Path) -> int:
         conf = {"checked": True, "events": len(events),
                 "results": {r.check_id: r.status for r in res},
                 "fail_messages": {r.check_id: r.message for r in res if r.status == "fail"}}
+        e2e_ev = [e["lsl"]["e2e_latency_s"] * 1e3 for e in events
+                  if e.get("is_final") and isinstance((e.get("lsl") or {}).get("e2e_latency_s"), (int, float))]
+        seqs = [e.get("seq") for e in events]
+        # seq contiguity per epoch (a trust restart starts again at 0)
+        holes, ep_max = 0, []
+        prev = None
+        for q in seqs:
+            if prev is not None and q == 0 and prev > 0:
+                ep_max.append(prev)
+            elif prev is not None and q != prev + 1:
+                holes += 1
+            prev = q
+        if prev is not None:
+            ep_max.append(prev)
+        conf["seq_holes"] = holes
+        conf["seq_max_per_epoch"] = ep_max
+        if e2e_ev:
+            a = np.asarray(e2e_ev)
+            conf["e2e_ms_from_events"] = {"n": int(a.size), "p50": float(np.percentile(a, 50)),
+                                          "p95": float(np.percentile(a, 95)), "p99": float(np.percentile(a, 99)),
+                                          "max": float(a.max())}
 
     push_p95 = [r["push_ms"]["p95"] for r in trw if r["push_ms"]["n"]]
     eou_p95 = [r["eou_ms"]["p95"] for r in trw if r["eou_ms"]["n"]]
@@ -114,17 +135,21 @@ def analyze(results: Path, run_dir: Path) -> int:
     exact_checked = sum(r["shadow"]["exact_checked"] for r in last_t_by_epoch.values())
     exact_mm = sum(r["shadow"]["exact_mismatch"] for r in last_t_by_epoch.values())
     whole = finals_t[-1].get("whole_run_ms", {}) if finals_t else {}
-    e2e_p95_whole = (whole.get("e2e") or {}).get("p95")
+    e2e_src = conf.get("e2e_ms_from_events") or whole.get("e2e") or {}
+    e2e_p95_whole = e2e_src.get("p95")
+    external_stop = end is None and not died
     commits = sum(d.get("COMMIT", 0) for d in actions.values())
     n_restarts = max(0, len(bridge_starts) - 1)
 
     crit = {
         "C1 no crash": {"pass": not died and end is not None and end.get("trust_rc") == 0 and end.get("consumer_rc") == 0
                         and exceptions == 0,
-                        "value": {"died": len(died), "trust_rc": end and end.get("trust_rc"),
+                        "value": {"died": len(died), "external_stop": external_stop,
+                                  "trust_rc": end and end.get("trust_rc"),
                                   "consumer_rc": end and end.get("consumer_rc"), "exceptions": exceptions}},
         "C2 RSS slope after warm-up <= 2 MB/h (trust, consumer)": {
-            "pass": rss_slope is not None and abs(rss_slope) <= 2.0 and crss_slope is not None and abs(crss_slope) <= 2.0,
+            # plan.md: "slope <= 2 MB/h" (growth); a falling RSS passes
+            "pass": rss_slope is not None and rss_slope <= 2.0 and crss_slope is not None and crss_slope <= 2.0,
             "value": {"trust_rss_mb_per_h": rss_slope, "trust_private_mb_per_h": priv_slope,
                       "consumer_rss_mb_per_h": crss_slope, "trust_handles_per_h": h_slope}},
         "C3 push p95 < 5 ms in every window": {"pass": bool(push_p95) and max(push_p95) < 5.0,
@@ -133,13 +158,16 @@ def analyze(results: Path, run_dir: Path) -> int:
         "C4 end-of-utterance p95 < 50 ms in every window; e2e p95 < 100 ms (whole run)": {
             "pass": bool(eou_p95) and max(eou_p95) < 50.0 and e2e_p95_whole is not None and e2e_p95_whole < 100.0,
             "value": {"worst_eou_p95": max(eou_p95, default=None), "eou_whole": whole.get("eou"),
-                      "e2e_whole": whole.get("e2e")}},
+                      "e2e_whole": e2e_src}},
         "C5 0 invalid events": {"pass": cc.get("invalid", 1) == 0 and conf.get("checked") and not conf.get("fail_messages"),
                                 "value": {"invalid_online": cc.get("invalid"), "conformance": conf.get("results"),
                                           "fail_messages": conf.get("fail_messages")}},
         "C6 0 lost events": {"pass": cc.get("lost", 1) == 0 and cc.get("dup_or_reorder", 1) == 0
-                             and cc.get("received") == emitted,
-                             "value": {"emitted": emitted, "received": cc.get("received"), "lost": cc.get("lost"),
+                             and (cc.get("received") == emitted if end is not None else
+                                  conf.get("seq_holes") == 0 and conf.get("events", 0) >= emitted),
+                             "value": {"emitted": emitted, "received": cc.get("received"),
+                                       "events_in_log": conf.get("events"), "seq_holes": conf.get("seq_holes"),
+                                       "lost": cc.get("lost"),
                                        "dup_or_reorder": cc.get("dup_or_reorder"), "epochs": cc.get("epochs")}},
         "C7 0 COMMIT (= 0 wrong commits) on the toy decoders": {"pass": commits == 0,
                                                                "value": {"actions": actions}},
