@@ -140,7 +140,7 @@ import logging
 import math
 import time
 from collections import OrderedDict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from os import PathLike
 from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator, Literal, Sequence
@@ -158,7 +158,7 @@ from fidetype.trust.types import NBest, from_lm_hypotheses
 log = logging.getLogger(__name__)
 
 Route = Literal["auto", "frames", "hypothesis"]
-DeclarationCheck = Literal["off", "warn", "abstain"]
+DeclarationCheck = Literal["off", "warn", "abstain", "offer-only"]
 DecodeFn = Callable[[NeuralTextStream], NBest]
 
 #: Event kinds the layer reads. Others are ignored (spec 6.2 rule 5).
@@ -272,7 +272,9 @@ class StreamingConfig:
     #: Hypothesis route: compare the producer's ``decode_declaration`` (FEP-0001 section 4)
     #: with the frozen configuration. ``"warn"`` (default): record the result in the
     #: provenance and log a mismatch; the decision does not change. ``"abstain"``: a
-    #: mismatch gives ABSTAIN. ``"off"``: no check.
+    #: mismatch gives ABSTAIN. ``"offer-only"`` (P5-07): a mismatch blocks COMMIT; the
+    #: policy runs with ``commit_p = +inf`` (OFFER / ASK / ABSTAIN by its normal rules).
+    #: ``"off"``: no check.
     declaration_check: DeclarationCheck = "warn"
     #: Treat a missing declaration as a mismatch (only with ``declaration_check`` on).
     require_declaration: bool = False
@@ -282,7 +284,7 @@ class StreamingConfig:
     def __post_init__(self) -> None:
         if self.route not in ("auto", "frames", "hypothesis"):
             raise ValueError(f"unknown route {self.route!r}")
-        if self.declaration_check not in ("off", "warn", "abstain"):
+        if self.declaration_check not in ("off", "warn", "abstain", "offer-only"):
             raise ValueError(f"unknown declaration_check {self.declaration_check!r}")
         if self.max_frames < 1 or self.max_sessions < 1 or self.max_attempts < 1:
             raise ValueError("max_frames, max_sessions and max_attempts must be >= 1")
@@ -870,6 +872,15 @@ class StreamingTrustLayer:
         decl = self._declaration(s) if route == "hypothesis" else None
         if decl is not None and decl["status"] == "mismatch" and self.streaming.declaration_check == "abstain":
             d = Decision(Action.ABSTAIN, (), "decode declaration mismatch: " + "; ".join(decl["mismatches"]))
+        elif decl is not None and decl["status"] == "mismatch" and self.streaming.declaration_check == "offer-only":
+            thr = math.inf
+            nc = self._no_commit_policy()
+            if nc is None:  # not a DecisionPolicy: nothing to offer
+                d = Decision(Action.ABSTAIN, (), "decode declaration mismatch (offer-only): " + "; ".join(decl["mismatches"]))
+            else:
+                d0 = nc.decide(inputs, final_attempt=final_attempt)
+                d = replace(d0, reason="decode declaration mismatch (offer-only): " + "; ".join(decl["mismatches"])
+                            + "; " + d0.reason)
         elif msq is not None and q is not None and q < msq:
             d = Decision(Action.ABSTAIN, (), f"signal quality {q:.2f} < {msq:.2f}")
         elif s.risk_monitor is not None and s.risk_monitor.alarmed:
@@ -937,6 +948,16 @@ class StreamingTrustLayer:
                     s.risk_pending.popitem(last=False)
             s.attempt = s.attempt + 1 if d.action == Action.ASK else 0
         return sd
+
+    def _no_commit_policy(self) -> DecisionPolicy | None:
+        """The frozen policy with ``commit_p = +inf`` (None if the policy is not a DecisionPolicy)."""
+        if self._offer_only is not None:
+            return self._offer_only
+        pol = self.components.policy
+        if not isinstance(pol, DecisionPolicy):
+            return None
+        self._offer_only = DecisionPolicy(replace(pol.config, commit_p=math.inf), use_guard=pol.use_guard)
+        return self._offer_only
 
     def _declaration(self, s: _Session) -> dict[str, Any] | None:
         """The decode-declaration check of the current hypothesis (FEP-0001 section 4)."""

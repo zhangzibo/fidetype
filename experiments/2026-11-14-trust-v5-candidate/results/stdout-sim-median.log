@@ -1,0 +1,20 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=1
+22:29:00 sim median/T=1.0: fit-A 200, cal 300, test 300
+22:31:49   sweep: T 1.0191, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (169s)
+session sim: decode declaration does not match trust config tcfg-b2b175e84d81f015: frame_temperature 1.0 != frozen 1.0191426654285403
+session sim: decode declaration does not match trust config tcfg-b2b175e84d81f015: frame_temperature 1.0 != frozen 1.0191426654285403
+session sim: decode declaration does not match trust config tcfg-b2b175e84d81f015: frame_temperature 1.0 != frozen 1.0191426654285403
+22:32:17   median/T=1.0 done (198s): v4 14/211 eWPM 24.79; v5 12/200 eWPM 24.73; controls v5: real 71,intent_mismatch 71,frame_shuffled 2,uniform 0,zero_standin 0; e2e lib=arm True, stream equal 300/300
+22:32:18 sim median/T=0.5: fit-A 200, cal 300, test 300
+22:35:26   sweep: T 2.0021, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (188s)
+session sim: decode declaration does not match trust config tcfg-8481a78e15f52ccb: frame_temperature 1.0 != frozen 2.0021267208528526
+session sim: decode declaration does not match trust config tcfg-8481a78e15f52ccb: frame_temperature 1.0 != frozen 2.0021267208528526
+session sim: decode declaration does not match trust config tcfg-8481a78e15f52ccb: frame_temperature 1.0 != frozen 2.0021267208528526
+22:35:54   median/T=0.5 done (217s): v4 14/224 eWPM 24.96; v5 6/181 eWPM 24.78; controls v5: real 57,intent_mismatch 57,frame_shuffled 1,uniform 0,zero_standin 0; e2e lib=arm True, stream equal 300/300
+22:35:55 sim median/T=2.0: fit-A 200, cal 300, test 300
+22:38:34   sweep: T 0.5024, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (159s)
+session sim: decode declaration does not match trust config tcfg-75409bcb7d14993b: frame_temperature 1.0 != frozen 0.5023733701843024
+session sim: decode declaration does not match trust config tcfg-75409bcb7d14993b: frame_temperature 1.0 != frozen 0.5023733701843024
+session sim: decode declaration does not match trust config tcfg-75409bcb7d14993b: frame_temperature 1.0 != frozen 0.5023733701843024
+22:38:56   median/T=2.0 done (182s): v4 5/209 eWPM 25.14; v5 4/92 eWPM 24.48; controls v5: real 38,intent_mismatch 38,frame_shuffled 0,uniform 0,zero_standin 0; e2e lib=arm True, stream equal 300/300
+22:38:56 done

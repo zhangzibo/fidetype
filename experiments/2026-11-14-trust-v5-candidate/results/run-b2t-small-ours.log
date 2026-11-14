@@ -1,0 +1,21 @@
+23:50:58   sweep: T 3.7587, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (203s)
+23:54:44   small ours draw 0 (429s): v4 32/137 eWPM 11.52; v5 32/137 eWPM 11.52; never 11.37
+23:58:51   sweep: T 3.8315, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (246s)
+00:03:02   small ours draw 1 (498s): v4 29/128 eWPM 11.19; v5 29/128 eWPM 11.19; never 11.13
+00:07:15   sweep: T 3.7541, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (253s)
+00:10:57   small ours draw 2 (474s): v4 21/86 eWPM 11.46; v5 21/86 eWPM 11.46; never 11.40
+00:14:37   sweep: T 3.9563, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (220s)
+00:17:47   small ours draw 3 (411s): v4 45/180 eWPM 11.52; v5 45/180 eWPM 11.52; never 11.34
+00:21:33   sweep: T 3.8470, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (226s)
+00:25:41   small ours draw 4 (473s): v4 47/183 eWPM 11.60; v5 47/183 eWPM 11.60; never 11.43
+00:30:00   sweep: T 3.8603, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (259s)
+00:33:44   small ours draw 5 (483s): v4 45/167 eWPM 11.53; v5 45/167 eWPM 11.53; never 11.41
+00:37:16   sweep: T 3.8144, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (211s)
+00:41:09   small ours draw 6 (445s): v4 37/157 eWPM 11.22; v5 37/157 eWPM 11.22; never 11.12
+00:44:37   sweep: T 3.8180, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (208s)
+00:48:02   small ours draw 7 (413s): v4 39/164 eWPM 11.44; v5 39/164 eWPM 11.44; never 11.31
+00:51:39   sweep: T 3.8110, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (216s)
+00:54:57   small ours draw 8 (415s): v4 30/144 eWPM 11.20; v5 29/142 eWPM 11.20; never 11.12
+00:58:07   sweep: T 3.8410, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (189s)
+01:00:57   small ours draw 9 (359s): v4 40/160 eWPM 11.55; v5 40/160 eWPM 11.55; never 11.41
+01:00:57 done

@@ -3,7 +3,7 @@ title: "Trust-core ablations: what each module of the frozen v4 configuration do
 type: question
 tags: [trust-core, ablation, calibration, guard, ltt, crc, commit-gate, session-risk, declaration, meg, simulator, b2t25, emg, paper1]
 sources: [brain-to-text-25-copytask, toronto-semg-typing, learn-then-test, conformal-risk-control]
-updated: 2026-11-13
+updated: 2026-11-14
 ---
 
 # Trust-core ablations (M3-02) and the MEG / simulator runs (M3-01)
@@ -46,9 +46,22 @@ Experiment: [M3-01 / M3-02 results](../../experiments/2026-11-14-m3-01-02-ablati
 3. Commit gate B and the session monitor change almost nothing on Paper 1 data. Their targets (empty commits on T12, a bad day) are rare here.
 
 ## Open items
-- Guard extension for shuffled-but-confident input (simulator finding).
-- `declaration_check="offer-only"` mode.
+- Guard extension for shuffled-but-confident input (simulator finding). P5-07: handled at the policy level by the control-aware grid fit (simulator frame-shuffled commits 40 → 3 of 600); a per-stream feature stays future work.
+- `declaration_check="offer-only"` mode: **done** in P5-07 (B2T mismatch: 0 commits at eWPM 11.34 vs 3.55 for "abstain").
 - Error-among-commits bound as a default secondary check (MEG without calibration).
+
+## Follow-up: the v5 candidate recipe (P5-07)
+The weak points found here and in M2-18 / P12 led to a v5 candidate recipe (`fidetype.trust.recipe_v5`, pre-declared [plan](../../experiments/2026-11-14-trust-v5-candidate/plan.md), [results](../../experiments/2026-11-14-trust-v5-candidate/results.md)). Four switchable changes on top of v4: (a) commit gate B on, (b) control-aware grid fit (a grid point must commit ≤ 1 % of uniform, frame-shuffled and zero stand-in copies of the grid-fit streams), (d) no-signal reference floor, (e) declaration check "offer-only"; (c) 0.8 instead of 1.0 in the grid was tested and dropped.
+
+| change | where it acts | real-data cost |
+|---|---|---|
+| (a) gate B | T12 dry run: uniform 335 → 0, zero stand-in 334 → 0, empty commits 655 → 0 | none measurable (eWPM change ≤ 0.001) |
+| (b) control-aware fit | simulator frame-shuffled commits 40 → 3 of 600 | none on real fixed splits (the controls do not bind once the gate is on) |
+| (c) 0.8 for 1.0 | — | can raise wrong commits (sEMG calib 2/21 → 13/74): dropped |
+| (d) no-signal floor | redundant with (a) on text data | none |
+| (e) offer-only | declaration mismatch: 0 commits, offers kept | — |
+
+> **Our take:** On Paper 1 data v5 = v4 (same commits on all four B2T splits). Its value is on the failures v4 has: no-signal input when the fit picks `commit_max_risk` 1.0 (T12), and confident shuffled input (simulator).
 
 ## Related pages
 - [Trust core v0 results](trust-core-v0-results.md): the first ablations (pre-v4, not clean).

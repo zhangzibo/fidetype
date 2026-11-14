@@ -1,9 +1,9 @@
 ---
 title: Streaming trust layer
 type: concept
-tags: [trust, streaming, real-time, provenance, risk-control, neuraltextstream, m4, commit-gate]
+tags: [trust, streaming, real-time, provenance, risk-control, neuraltextstream, m4, commit-gate, v5]
 sources: [brain-to-text-25-copytask]
-updated: 2026-11-13
+updated: 2026-11-14
 ---
 
 # Streaming trust layer
@@ -219,7 +219,7 @@ The producer declares how it made the hypotheses. The layer compares the declara
 
 | Setting | Default | Effect |
 |---|---|---|
-| `declaration_check` | `"warn"` | `warn`: record `status` (`match` / `mismatch` / `absent`) in the provenance and in `trust_decision.declaration`; log a mismatch once per session; the decision does not change. `abstain`: a mismatch gives ABSTAIN. `off`: no check |
+| `declaration_check` | `"warn"` | `warn`: record `status` (`match` / `mismatch` / `absent`) in the provenance and in `trust_decision.declaration`; log a mismatch once per session; the decision does not change. `abstain`: a mismatch gives ABSTAIN. `offer-only` (P5-07): a mismatch blocks COMMIT; the policy runs with `commit_p = +inf`, so OFFER / ASK stay. `off`: no check |
 | `require_declaration` | `False` | A missing declaration counts as a mismatch |
 | `expected_decoder` | `None` | Decoder id, version and parameters that must match |
 
@@ -263,12 +263,36 @@ Experiment: [2026-11-13-m2-18-empty-commits](../../experiments/2026-11-13-m2-18-
 
 > **Our take:** Gate B should be on by default in a future v5 configuration. The guard-limit value 1.0 should leave the grid, or the grid fit should also require near-zero commits on no-signal versions of the fit streams.
 
+## Trust v5 candidate recipe (P5-07)
+Experiment: [2026-11-14-trust-v5-candidate](../../experiments/2026-11-14-trust-v5-candidate/results.md) (plan committed before the runs). Code: `fidetype.trust.recipe_v5`. Analysis of the v4 weak points: [trust-core ablations](../questions/trust-core-ablations.md).
+
+v5 is a **new recipe record** (`TRUST_V5_CANDIDATE`). `PAPER1_V4_RECIPE` and all v4 config ids stay unchanged. A frozen v5 configuration has its own `config_id`.
+
+| switch (`V5Options`) | v5 candidate | what it does |
+|---|---|---|
+| (a) `commit_gate` | on | commit gate B: no empty COMMIT, no COMMIT at guard risk 1.0 |
+| (b) `control_aware_fit` | on | a grid point must commit ≤ 1 % of each control kind made from the grid-fit streams: uniform, frame-shuffled, zero stand-in (no labels) |
+| (c) `max_risk_grid` | `"keep"` | `"no-1.0"` replaces 1.0 by 0.8 in the `commit_max_risk` grid |
+| (d) `no_signal_reference` | on | after LTT, raise `commit_p` until ≤ 1 % of the uniform and zero-stand-in copies commit |
+| (e) `declaration_check` | `"offer-only"` | the streaming setting above |
+
+```python
+from fidetype.trust.recipe_v5 import V5Options, fit_trust_v5, freeze_v5
+pipe = fit_trust_v5(decode_fn, fit_items, cal_items, V5Options(), user_config=user)
+cfg = freeze_v5(pipe, "user-7-session-3")          # FrozenTrustConfig, recipe = TRUST_V5_CANDIDATE
+layer = StreamingTrustLayer(cfg, streaming=V5Options().streaming_config(route="hypothesis"))
+```
+
+- Final threshold: max(grid `commit_p`, LTT λ̂, floor). The LTT guarantee of v4 holds: (b) and (c) change only the fit-A grid fit, (d) only raises `commit_p` above λ̂, (a) only removes commits.
+- Results: on Paper 1 data v5 = v4 (same commits on all four B2T splits). T12 dry run: uniform commits 335 → 0, empty commits 655 → 0 (gate). Simulator: frame-shuffled commits 40 → 3 of 600 (control-aware fit) at −0.06 to −0.66 eWPM. (c) can raise wrong commits (sEMG) and was dropped; (d) is redundant with the gate on these data. Declaration mismatch with offer-only: 0 commits, B2T eWPM 11.34 (abstain 3.55).
+- Pre-declared criteria: S1 (not less safe), S2 (0 empty commits), S4 (no collapse on 240-trial fits) pass; S3 (controls ≤ 1 %) fails on 1 of 65 control sets (simulator, 2/100 frame-shuffled; v4 4/100). So v5 is the recommended **opt-in** recipe; v4 stays the library default until a stricter fit-time control limit passes a pre-declared re-test.
+
 ## Limits and follow-ups
 - Incremental decoding is done (M4-08). The fast exact lexicon fallback and the per-push prewarm budget are done (M4-09). The decoder caches are bounded (LRU, M4-10). M4-01 (neural decoder lookahead) and M4-02 (lookahead sweep) are still open.
 - Real-data frozen configs exist for one participant and one split only (M4-06, B2T '25 split A). Each new user and session needs its own fit.
 - FEP-0001 conformance is done (M4-07, profile `fep-0001`). The FEP stays Draft until review.
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.
-- The commit gate (M2-18) is opt-in. On the online path the controller still counts a gated COMMIT as a commit (conservative). A v5 recipe with the gate on by default is not yet defined.
+- The commit gate (M2-18) is opt-in. On the online path the controller still counts a gated COMMIT as a commit (conservative). The v5 candidate recipe (P5-07) turns it on; v5 is not yet the default (see its results page).
 
 ## Related
 [Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [LSL input](lsl-input.md) · [Per-session risk control](../questions/per-session-risk-control.md)

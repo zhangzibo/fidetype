@@ -1,0 +1,22 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=1
+23:50:57   sweep: T 3.7587, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (202s)
+23:54:46   small published draw 0 (431s): v4 25/329 eWPM 18.65; v5 23/312 eWPM 18.62; never 18.11
+23:59:02   sweep: T 3.8315, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (256s)
+00:03:08   small published draw 1 (502s): v4 25/339 eWPM 18.67; v5 25/339 eWPM 18.67; never 18.11
+00:07:19   sweep: T 3.7541, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (250s)
+00:11:00   small published draw 2 (472s): v4 24/339 eWPM 18.67; v5 24/339 eWPM 18.67; never 18.11
+00:14:40   sweep: T 3.9563, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (219s)
+00:17:50   small published draw 3 (409s): v4 27/348 eWPM 18.69; v5 27/348 eWPM 18.69; never 18.11
+00:21:37   sweep: T 3.8470, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (227s)
+00:25:49   small published draw 4 (479s): v4 23/334 eWPM 18.66; v5 23/334 eWPM 18.66; never 18.11
+00:30:02   sweep: T 3.8603, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (253s)
+00:33:51   small published draw 5 (482s): v4 24/333 eWPM 18.66; v5 24/333 eWPM 18.66; never 18.11
+00:37:21   sweep: T 3.8144, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (210s)
+00:41:13   small published draw 6 (442s): v4 24/329 eWPM 18.65; v5 24/329 eWPM 18.65; never 18.11
+00:44:41   sweep: T 3.8180, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (208s)
+00:48:07   small published draw 7 (414s): v4 24/336 eWPM 18.66; v5 24/336 eWPM 18.66; never 18.11
+00:51:43   sweep: T 3.8110, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (215s)
+00:55:03   small published draw 8 (416s): v4 27/346 eWPM 18.68; v5 26/344 eWPM 18.68; never 18.11
+00:58:11   sweep: T 3.8410, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (188s)
+01:00:59   small published draw 9 (357s): v4 23/324 eWPM 18.64; v5 23/324 eWPM 18.64; never 18.11
+01:00:59 done

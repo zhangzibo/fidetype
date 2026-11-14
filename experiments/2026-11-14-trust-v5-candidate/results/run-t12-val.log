@@ -1,0 +1,4 @@
+22:30:13 t12 val: fit-A 240, cal 240, test 400
+22:32:44   sweep: T 2.4781, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (151s)
+22:36:50   t12 val done (407s): v4 11/22 eWPM 7.09; v5 11/22 eWPM 7.09; controls v4/v5: frame_shuffled 6/3,uniform 335/0,intent_mismatch 22/22,zero_standin 334/0
+22:36:51 done

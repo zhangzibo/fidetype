@@ -1,0 +1,8 @@
+22:28:30 b2t-ours split A: fit-A 411, cal 401, test 816
+22:31:18   sweep: T 3.8151, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (168s)
+22:31:56   end to end (32s): lib commit_p 0.3 arm 0.3; commits lib 82 arm 82; stream equal 816/816; decl warn: 228 commits eWPM 11.55, abstain: 0 commits eWPM 3.55, offer-only: 0 commits eWPM 11.34
+22:31:56   split A done (206s): v4 20/82 eWPM 11.48; v5 20/82 eWPM 11.48 lam 0.3; controls v5: real 29,intent_mismatch 29,frame_shuffled 0,uniform 0,zero_standin 0
+22:31:56 b2t-ours split B: fit-A 411, cal 401, test 816
+22:35:08   sweep: T 3.8021, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (191s)
+22:38:30   split B done (394s): v4 42/157 eWPM 11.54; v5 42/157 eWPM 11.54 lam 0.43; controls v5: real 58,intent_mismatch 58,frame_shuffled 0,uniform 0,zero_standin 0
+22:38:30 done

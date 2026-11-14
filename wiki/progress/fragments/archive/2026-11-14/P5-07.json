@@ -1,0 +1,8 @@
+{
+ "id": "P5-07",
+ "status": "done",
+ "finished_at": "2026-11-14T01:15:00-08:00",
+ "approx_times": true,
+ "notes": "Trust v5 candidate recipe (fidetype.trust.recipe_v5: TRUST_V5_CANDIDATE, V5Options, V5Pipeline, fit_trust_v5, freeze_v5) + StreamingConfig declaration_check='offer-only'. PAPER1_V4_RECIPE and v4 config ids unchanged. Plan pre-declared (6283109). Switches: (a) gate B, (b) control-aware grid fit, (c) 0.8 for 1.0, (d) no-signal floor, (e) offer-only. Data: B2T T15 (4 fixed splits, 2x50 re-splits, 2x10 240-trial fit sets), sEMG (3 fixed, 3x50), T12 dry run + pool (exploratory, aggregate), MEG 5 runs, simulator 6. Result: v5 = v4 on Paper 1 splits; never worse on 250 re-splits (52 fewer wrong, gate); T12 uniform commits 335 -> 0, empty 655 -> 0; simulator frame-shuffled 40 -> 3 of 600; offer-only 0 commits at B2T eWPM 11.34 (abstain 3.55); (c) raises wrong commits (sEMG calib 2/21 -> 13/74), dropped; (d) redundant with (a). Criteria S1, S2, S4 pass; S3 fails on 1 of 65 control sets (sim 2/100). Recommendation: v5 opt-in now; default after a stricter fit-time limit re-test. Tests tests/test_trust_v5_recipe.py (13). experiments/2026-11-14-trust-v5-candidate.",
+ "_tracker_updated": "2026-11-14T01:15:00-08:00"
+}

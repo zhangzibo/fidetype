@@ -165,7 +165,7 @@ fidetype conformance vectors --profile fep-0001 --out DIR
 ## Reference implementation
 - `fidetype.trust.streaming`: reads `segment_end`, the evidence fields (`nbest_from_hypothesis`) and `decode_declaration`, and writes `trust_decision` (`StreamDecision.to_event`). Tests: `tests/test_trust_streaming.py`, `tests/test_fep_profiles.py`.
 - `fidetype.trust.declaration`: `validate_declaration`, `compare_declaration`.
-- `StreamingConfig.declaration_check`: `"warn"` (default: record the result in the provenance and in `trust_decision.declaration`, log a mismatch once per session, do not change the decision), `"abstain"` (a mismatch gives ABSTAIN), `"off"`. `require_declaration` (a missing declaration is a mismatch) and `expected_decoder` (`decoder`, `decoder_version`, `params` that must match). A malformed declaration is a `StreamEventError`.
+- `StreamingConfig.declaration_check`: `"warn"` (default: record the result in the provenance and in `trust_decision.declaration`, log a mismatch once per session, do not change the decision), `"abstain"` (a mismatch gives ABSTAIN), `"offer-only"` (P5-07: a mismatch blocks COMMIT; the policy runs with `commit_p = +inf`, so OFFER / ASK / ABSTAIN stay available; rule 5 is a SHOULD), `"off"`. `require_declaration` (a missing declaration is a mismatch) and `expected_decoder` (`decoder`, `decoder_version`, `params` that must match). A malformed declaration is a `StreamEventError`.
 - Not yet done: the change to the reference v0.1 consumer to read the new events as known types (it ignores them, which is correct for v0.1).
 
 ## Alternatives

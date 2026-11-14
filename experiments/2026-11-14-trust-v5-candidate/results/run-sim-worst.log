@@ -1,0 +1,10 @@
+22:29:01 sim worst/T=1.0: fit-A 200, cal 300, test 300
+22:31:52   sweep: T 1.0137, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (172s)
+22:32:20   worst/T=1.0 done (201s): v4 8/133 eWPM 23.69; v5 3/72 eWPM 23.38; controls v5: real 25,intent_mismatch 25,frame_shuffled 0,uniform 0,zero_standin 0; e2e lib=arm True, stream equal 300/300
+22:32:21 sim worst/T=0.5: fit-A 200, cal 300, test 300
+22:35:38   sweep: T 2.0087, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (196s)
+22:36:06   worst/T=0.5 done (226s): v4 4/121 eWPM 23.45; v5 11/80 eWPM 23.17; controls v5: real 23,intent_mismatch 23,frame_shuffled 0,uniform 0,zero_standin 0; e2e lib=arm True, stream equal 300/300
+22:36:07 sim worst/T=2.0: fit-A 200, cal 300, test 300
+22:38:44   sweep: T 0.5047, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (157s)
+22:39:07   worst/T=2.0 done (182s): v4 13/131 eWPM 23.49; v5 13/74 eWPM 23.19; controls v5: real 25,intent_mismatch 25,frame_shuffled 0,uniform 0,zero_standin 0; e2e lib=arm True, stream equal 300/300
+22:39:07 done

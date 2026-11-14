@@ -1,0 +1,828 @@
+{
+ "S1": {
+  "fixed": [
+   {
+    "set": "B2T ours A",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "B2T ours B",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "B2T published A",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "B2T published B",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "sEMG calib",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "sEMG xsession",
+    "d_wrong_commit": -0.0018148820326678765,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "sEMG xsubject",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "T12 val",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "T12 pool",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s1",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s2",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   },
+   {
+    "set": "MEG r5-medium",
+    "d_wrong_commit": 0.0,
+    "p_holm": 1.0,
+    "fail": false
+   }
+  ],
+  "splits": [
+   {
+    "cond": "b2t-ours",
+    "v4": 0.08,
+    "v5": 0.08,
+    "fail": false
+   },
+   {
+    "cond": "b2t-published",
+    "v4": 0.02,
+    "v5": 0.02,
+    "fail": false
+   },
+   {
+    "cond": "emg-calib",
+    "v4": 0.0,
+    "v5": 0.0,
+    "fail": false
+   },
+   {
+    "cond": "emg-xsession",
+    "v4": 0.0,
+    "v5": 0.0,
+    "fail": false
+   },
+   {
+    "cond": "emg-xsubject",
+    "v4": 0.0,
+    "v5": 0.0,
+    "fail": false
+   }
+  ],
+  "pass": true
+ },
+ "S2": {
+  "fixed": [
+   {
+    "set": "B2T ours A",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "B2T ours B",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "B2T published A",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "B2T published B",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sEMG calib",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sEMG xsession",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sEMG xsubject",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "T12 val",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "T12 pool",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "MEG r4b-full-medium",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "MEG r4b-full-medium-s1",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "MEG r4b-full-medium-s2",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "MEG r4b-full",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "MEG r5-medium",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sim median/1.0",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sim median/0.5",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sim median/2.0",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sim worst/1.0",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sim worst/0.5",
+    "n_empty_commit": 0
+   },
+   {
+    "set": "sim worst/2.0",
+    "n_empty_commit": 0
+   }
+  ],
+  "splits": {
+   "b2t-ours": 0,
+   "b2t-published": 0,
+   "emg-calib": 0,
+   "emg-xsession": 0,
+   "emg-xsubject": 0
+  },
+  "pass": true
+ },
+ "S3": {
+  "rows": [
+   {
+    "set": "B2T ours A",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T ours A",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T ours A",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T ours B",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T ours B",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T ours B",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T published A",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T published A",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T published A",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T published B",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T published B",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "B2T published B",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 300,
+    "fail": false
+   },
+   {
+    "set": "sEMG calib",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "sEMG calib",
+    "kind": "zero_input",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "sEMG calib",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "sEMG xsession",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "sEMG xsession",
+    "kind": "zero_input",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "sEMG xsession",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "sEMG xsubject",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "sEMG xsubject",
+    "kind": "zero_input",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "sEMG xsubject",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 200,
+    "fail": false
+   },
+   {
+    "set": "T12 val",
+    "kind": "frame_shuffled",
+    "n_commit": 3,
+    "n": 400,
+    "fail": false
+   },
+   {
+    "set": "T12 val",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 400,
+    "fail": false
+   },
+   {
+    "set": "T12 val",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 400,
+    "fail": false
+   },
+   {
+    "set": "T12 pool",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 400,
+    "fail": false
+   },
+   {
+    "set": "T12 pool",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 400,
+    "fail": false
+   },
+   {
+    "set": "T12 pool",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 400,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium",
+    "kind": "shuffled_meg",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium",
+    "kind": "zero_input",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s1",
+    "kind": "shuffled_meg",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s1",
+    "kind": "zero_input",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s1",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s1",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s2",
+    "kind": "shuffled_meg",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s2",
+    "kind": "zero_input",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s2",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full-medium-s2",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full",
+    "kind": "shuffled_meg",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full",
+    "kind": "zero_input",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r4b-full",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r5-medium",
+    "kind": "shuffled_meg",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r5-medium",
+    "kind": "zero_input",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r5-medium",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "MEG r5-medium",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 637,
+    "fail": false
+   },
+   {
+    "set": "sim median/1.0",
+    "kind": "frame_shuffled",
+    "n_commit": 2,
+    "n": 100,
+    "fail": true
+   },
+   {
+    "set": "sim median/1.0",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim median/1.0",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim median/0.5",
+    "kind": "frame_shuffled",
+    "n_commit": 1,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim median/0.5",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim median/0.5",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim median/2.0",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim median/2.0",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim median/2.0",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/1.0",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/1.0",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/1.0",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/0.5",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/0.5",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/0.5",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/2.0",
+    "kind": "frame_shuffled",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/2.0",
+    "kind": "uniform",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   },
+   {
+    "set": "sim worst/2.0",
+    "kind": "zero_standin",
+    "n_commit": 0,
+    "n": 100,
+    "fail": false
+   }
+  ],
+  "fails": [
+   {
+    "set": "sim median/1.0",
+    "kind": "frame_shuffled",
+    "n_commit": 2,
+    "n": 100,
+    "fail": true
+   }
+  ],
+  "pass": false
+ },
+ "S4": {
+  "t12": [
+   {
+    "set": "T12 val",
+    "v5": 7.090725609538825,
+    "never": 7.0790620575141086,
+    "fail": false
+   },
+   {
+    "set": "T12 pool",
+    "v5": 7.135128205854996,
+    "never": 7.134593701017182,
+    "fail": false
+   }
+  ],
+  "b2t240": {
+   "ours": {
+    "median_rel_change": 0.0,
+    "n_below_never": 0,
+    "n_draws": 10
+   },
+   "published": {
+    "median_rel_change": 0.0,
+    "n_below_never": 0,
+    "n_draws": 10
+   }
+  },
+  "pass": true
+ },
+ "S5": {
+  "fixed": [
+   {
+    "set": "B2T ours A",
+    "v4": 11.477549766206314,
+    "v5": 11.477549766206314,
+    "rel": 0.0
+   },
+   {
+    "set": "B2T ours B",
+    "v4": 11.536406457959504,
+    "v5": 11.536406457959504,
+    "rel": 0.0
+   },
+   {
+    "set": "B2T published A",
+    "v4": 18.651365449587917,
+    "v5": 18.651365449587917,
+    "rel": 0.0
+   },
+   {
+    "set": "B2T published B",
+    "v4": 18.681274547231588,
+    "v5": 18.681274547231588,
+    "rel": 0.0
+   },
+   {
+    "set": "sEMG calib",
+    "v4": 7.976984532053385,
+    "v5": 7.9759704470738395,
+    "rel": -0.00012712635651615755
+   },
+   {
+    "set": "sEMG xsession",
+    "v4": 4.67692102383024,
+    "v5": 4.675738662676105,
+    "rel": -0.0002528075945928086
+   },
+   {
+    "set": "sEMG xsubject",
+    "v4": 4.0800135493987755,
+    "v5": 4.0800135493987755,
+    "rel": 0.0
+   },
+   {
+    "set": "T12 val",
+    "v4": 7.090725609538825,
+    "v5": 7.090725609538825,
+    "rel": 0.0
+   },
+   {
+    "set": "T12 pool",
+    "v4": 7.135128205854996,
+    "v5": 7.135128205854996,
+    "rel": 0.0
+   },
+   {
+    "set": "MEG r4b-full-medium",
+    "v4": 3.202464037020431,
+    "v5": 3.202464037020431,
+    "rel": 0.0
+   },
+   {
+    "set": "MEG r4b-full-medium-s1",
+    "v4": 3.163924580856085,
+    "v5": 3.163924580856085,
+    "rel": 0.0
+   },
+   {
+    "set": "MEG r4b-full-medium-s2",
+    "v4": 2.950866510061802,
+    "v5": 2.950866510061802,
+    "rel": 0.0
+   },
+   {
+    "set": "MEG r4b-full",
+    "v4": 2.963425466921529,
+    "v5": 2.963425466921529,
+    "rel": 0.0
+   },
+   {
+    "set": "MEG r5-medium",
+    "v4": 3.1756650109323985,
+    "v5": 3.1756650109323985,
+    "rel": 0.0
+   }
+  ],
+  "splits": {
+   "b2t-ours": {
+    "v4": 11.065284536225313,
+    "v5": 11.064886041149489,
+    "rel": -3.601308891062594e-05
+   },
+   "b2t-published": {
+    "v4": 18.487554237334614,
+    "v5": 18.486888415299685,
+    "rel": -3.6014608875852146e-05
+   },
+   "emg-calib": {
+    "v4": 8.004806638658,
+    "v5": 8.000081264951541,
+    "rel": -0.0005903170332232434
+   },
+   "emg-xsession": {
+    "v4": 4.680271356030138,
+    "v5": 4.681827519434943,
+    "rel": 0.0003324942693333682
+   },
+   "emg-xsubject": {
+    "v4": 4.07338436586409,
+    "v5": 4.07338436586409,
+    "rel": 0.0
+   }
+  }
+ }
+}

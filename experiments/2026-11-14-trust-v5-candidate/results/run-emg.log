@@ -1,0 +1,10 @@
+22:28:24 emg-calib: fit-A 285, grid 142, cal 143, test 551
+22:28:48   sweep: T 1.2543, 2376 grid rows, controls {'uniform': 142, 'frame_shuffled': 142, 'zero_standin': 142} (24s)
+22:29:03   emg-calib done (40s): v4 2/21 eWPM 7.98; v5 2/20 eWPM 7.98; controls v5: real 7,intent_mismatch 7,frame_shuffled 0,zero_input 0,uniform 0
+22:29:03 emg-xsession: fit-A 285, grid 142, cal 143, test 551
+22:29:28   sweep: T 1.7776, 2376 grid rows, controls {'uniform': 142, 'frame_shuffled': 142, 'zero_standin': 142} (24s)
+22:29:31   emg-xsession done (28s): v4 2/10 eWPM 4.68; v5 1/3 eWPM 4.68; controls v5: real 2,intent_mismatch 2,frame_shuffled 0,zero_input 0,uniform 0
+22:29:31 emg-xsubject: fit-A 285, grid 142, cal 143, test 551
+22:29:54   sweep: T 2.1651, 2376 grid rows, controls {'uniform': 142, 'frame_shuffled': 142, 'zero_standin': 142} (23s)
+22:29:56   emg-xsubject done (25s): v4 0/0 eWPM 4.08; v5 0/0 eWPM 4.08; controls v5: real 0,intent_mismatch 0,frame_shuffled 0,zero_input 0,uniform 0
+22:29:56 done

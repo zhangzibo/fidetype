@@ -1,0 +1,10 @@
+22:39:25 meg m1-09-r4b-full-medium: fit-A 238, cal 199, test 637
+22:40:39   sweep: T 3.2145, 336 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (74s)
+22:40:48   m1-09-r4b-full-medium done (90s): v4 0/0 eWPM 3.20; v5 0/0 eWPM 3.20; controls v4/v5: shuffled_meg 0/0,zero_input 0/0,intent_mismatch 0/0,frame_shuffled 0/0,uniform 0/0
+22:40:57 meg m1-09-r4b-full-medium-s1: fit-A 238, cal 199, test 637
+22:42:05   sweep: T 3.0762, 336 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (66s)
+22:42:12   m1-09-r4b-full-medium-s1 done (83s): v4 0/0 eWPM 3.16; v5 0/0 eWPM 3.16; controls v4/v5: shuffled_meg 0/0,zero_input 0/0,intent_mismatch 0/0,frame_shuffled 0/0,uniform 0/0
+22:42:20 meg m1-09-r4b-full-medium-s2: fit-A 238, cal 199, test 637
+22:43:50   sweep: T 2.7369, 336 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (89s)
+22:43:59   m1-09-r4b-full-medium-s2 done (107s): v4 0/0 eWPM 2.95; v5 0/0 eWPM 2.95; controls v4/v5: shuffled_meg 0/0,zero_input 0/0,intent_mismatch 0/0,frame_shuffled 0/0,uniform 0/0
+22:44:00 done

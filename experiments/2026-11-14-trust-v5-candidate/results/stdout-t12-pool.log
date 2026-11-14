@@ -1,0 +1,5 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=1
+22:38:46 t12 pool: fit-A 240, cal 240, test 400
+22:41:03   sweep: T 2.4684, 2376 grid rows, controls {'uniform': 200, 'frame_shuffled': 200, 'zero_standin': 200} (137s)
+22:44:38   t12 pool done (360s): v4 0/1 eWPM 7.14; v5 0/1 eWPM 7.14; controls v4/v5: frame_shuffled 0/0,uniform 0/0,intent_mismatch 1/1,zero_standin 0/0
+22:44:39 done

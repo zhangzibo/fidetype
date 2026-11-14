@@ -1,0 +1,10 @@
+{
+ "id": "P5-07",
+ "milestone": "P5",
+ "title": "Trust v5 candidate recipe: commit gate B, control-aware grid fit, no-signal floor, declaration offer-only (pre-declared evaluation)",
+ "status": "in_progress",
+ "started_at": "2026-11-13T22:30:00-08:00",
+ "approx_times": true,
+ "notes": "In progress. experiments/2026-11-14-trust-v5-candidate (plan.md first).",
+ "agent_runs": [{"label": "P5-07 v5 candidate recipe design + evaluation", "duration_s": null, "tokens": null, "tool_uses": null}]
+}
