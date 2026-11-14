@@ -33,13 +33,13 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 |---|---|---|---|
 | v0.1 (NPZ + JSON Lines) | 52 | 52 | 52/52 |
 | fep-0001 | 40 | 40 | 40/40 |
-| fep-0002 (LSL scenarios) | 31 | 31 | 31/31 |
+| fep-0002 (LSL scenarios) | 32 | 32 | 32/32 |
 | fep-0003 | 44 | 44 | 44/44 |
 
 - `npm run cross-check` runs both reference consumers on every vector and compares verdict and "ok".
-- `npm run fuzz` mutates the JSON vectors (fixed seed). Two runs, about 4,000 mutants each: identical verdicts. The first fuzz runs found 6 differences (Python iterates strings and dicts; NumPy converts sample strings late). All are fixed.
-- The Python suite can also run the TS consumer: `python -m fidetype.conformance consumer --cmd "node sdk/typescript/bin/fidetype-ts.mjs consume {path}"` (52/52; fep-0002 31/31).
-- A headless Edge run of all 167 vectors (NPZ included) passed. So the core works in a browser.
+- `npm run fuzz` mutates the JSON vectors (fixed seed). Two runs, about 4,000 mutants each: identical verdicts. The first fuzz runs found 6 differences (Python iterates strings and dicts; NumPy converts sample strings late). All are fixed. M7-11: seeds 1-6 at `--n 30` (24,396 mutants) give identical verdicts in Python, TypeScript and [Rust](rust-sdk.md). CI runs seeds 1-3.
+- The Python suite can also run the TS consumer: `python -m fidetype.conformance consumer --cmd "node sdk/typescript/bin/fidetype-ts.mjs consume {path}"` (52/52; fep-0002 32/32).
+- A headless Edge run of all 167 vectors (before L32) (NPZ included) passed. So the core works in a browser.
 
 > **Our take:** Identical verdicts need the Python data model, not only the rules. Python keeps `1.0` (float) apart from `1` (int), and the profiles reject `1.0` where an integer is required. The SDK's own JSON parser records float literals for this reason. A plain `JSON.parse` port gives different verdicts on such input. A future spec version should state the rule (for example "an integer is written without a fraction or exponent"), so that every SDK can follow the text.
 
@@ -48,10 +48,19 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 ## Layout decision
 `sdk/typescript/` at the top level, not under `src/`: the repo root is the Python package, and the roadmap phase P2 adds more SDKs (the [Rust SDK](rust-sdk.md), M7-07, is in `sdk/rust/`). Each SDK reads `spec/` in place.
 
+## Fixed in M7-11 (2026-11-13)
+The three-way fuzz ([Rust SDK](rust-sdk.md)) found 4 mutants where TypeScript differed from Python. All are fixed:
+
+| Mutant | Cause | Fix |
+|---|---|---|
+| `l10` m22, seed 1 | String-stream samples were iterated before the empty-timestamps check | `pull` iterates them after the check, like `zip(samples, stamps)` |
+| `l14` m22, seed 2 | Frames route with `blank_id` null: Python raised IndexError | Python bug, fixed in Python. Spec 3.1 and FEP-0002 section 10 now say what null means. New vector L32 |
+| `l05` m12, seed 3 | A truthy non-object `consumer_settings` was read as `{}` | `pyDict` copies Python `dict(x or {})` |
+| `l13` m18, seed 5 | Gap length of an infinite timestamp: `Math.round` gave no error | `pyRoundInt` (half to even, error for inf / NaN) |
+
 ## Open items
 - npm publishing: a user decision (name, scope, versioning policy, trusted publishing; compare M7-09 for PyPI).
 - The offline demo (`demo/index.html`) is not wired to the SDK. It runs from `file://`, which cannot load ES modules; it would need a bundle.
 - Parity fuzz covers JSON vectors only, not NPZ.
-- The [Rust SDK](rust-sdk.md) fuzz run (seeds 1-3, `--n 30`) found 3 mutants where TypeScript differs from Python: string-format LSL samples iterated before the empty-timestamps check (`l10` m22, seed 1), the reference no-blank decode failure on the frames route (`l14` m22, seed 2), a truthy non-object `consumer_settings` (`l05` m12, seed 3).
 
 Related: [Python SDK](python-sdk.md), [Rust SDK](rust-sdk.md), [conformance suite](conformance-suite.md), [streaming trust layer](streaming-trust-layer.md), [LSL input](lsl-input.md), [intent events](intent-events.md).

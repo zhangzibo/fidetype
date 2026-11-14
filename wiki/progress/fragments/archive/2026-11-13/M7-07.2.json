@@ -1,0 +1,6 @@
+{
+  "id": "M7-07",
+  "agent_runs": [
+    {"label": "M7-07 Rust SDK", "duration_s": 2450.9, "tokens": 464776, "tool_uses": 126}
+  ]
+}

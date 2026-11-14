@@ -584,6 +584,15 @@ def build_vectors() -> list[Vector]:
                                                        ["rest", "left", "right", "select"]),
                                              _chunks(probs, _stamps(3, T0, 0.25)))}),
         {"vocab_size": 4, "frames": 3, "neg_inf_cells": 1, "first_frame_t": T0 + TC, "final_decisions": 0})
+    add("L32", "l32-frames-no-blank.json", "accept", "10; v0.1 3.1",
+        "Frames route on a stream with blank_id null (no blank class): the greedy decoder treats every frame as "
+        "a token frame and makes one final decision",
+        _scenario("inlet", "frames route, no blank", route="frames",
+                  consumer_settings={"values": "probs", "vocab_type": "command"}, inlets={
+                      "primary": _inlet_spec(_info_xml("acme.probs", "Probabilities", 4, 4.0, "float32", "acme-p",
+                                                       ["rest", "left", "right", "select"]),
+                                             _chunks(probs, _stamps(3, T0, 0.25)))}),
+        {"vocab_size": 4, "frames": 3, "neg_inf_cells": 1, "first_frame_t": T0 + TC, "final_decisions": 1})
     # --- reject: stream infos and samples
     add("L15", "l15-header-not-json.json", "reject", "4 r1", "desc/fidetype/nts_header is not JSON",
         _std("bad nts_header", frames_xml=_frames_xml(raw_header="{vocab: [")))

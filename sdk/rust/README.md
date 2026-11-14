@@ -125,16 +125,16 @@ python -m fidetype.conformance consumer --cmd "sdk/rust/target/release/fidetype-
 python -m fidetype.conformance consumer --profile fep-0002 --cmd "sdk/rust/target/release/fidetype-rs consume --profile fep-0002 {path}"
 ```
 
-All four profiles pass this way (167/167).
+All four profiles pass this way (168/168).
 
 ## Conformance and parity with Python
 
-| Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-4, `--n 30`) |
+| Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-6, `--n 30`, M7-11) |
 |---|---|---|---|---|
-| `v0.1` (NPZ + JSON Lines) | 52 | 52/52 pass | 52/52 | 2,341/2,341 |
-| `fep-0001` streaming trust events | 40 | 40/40 pass | 40/40 | 4,800/4,800 |
-| `fep-0002` NTS over LSL (scenarios) | 31 | 31/31 pass | 31/31 | 3,720/3,720 |
-| `fep-0003` intent events | 44 | 44/44 pass | 44/44 | 5,280/5,280 |
+| `v0.1` (NPZ + JSON Lines) | 52 | 52/52 pass | 52/52 | 3,516/3,516 |
+| `fep-0001` streaming trust events | 40 | 40/40 pass | 40/40 | 7,200/7,200 |
+| `fep-0002` NTS over LSL (scenarios) | 32 | 32/32 pass | 32/32 | 5,760/5,760 |
+| `fep-0003` intent events | 44 | 44/44 pass | 44/44 | 7,920/7,920 |
 
 The parity scripts are the TypeScript SDK scripts with the option `--rust BIN`. They compare Python, TypeScript and Rust on the same files:
 
@@ -158,7 +158,7 @@ Rules that matter for identical verdicts (in addition to those of the TypeScript
 | `str(x)` of a non-string marker sample is Python `repr` (`{'a': 1}` is not JSON) | `json::py_str`. |
 | ElementTree (expat) refuses a bare `&` in stream-info XML | the XML reader refuses it. |
 | `int(round(x))` for the gap length: half to even; an error for inf / NaN | `libm::rint` and an error. |
-| The reference greedy decoder raises IndexError on the frames route when `blank_id` is null (`np.delete(lp, None, axis=1)`) | The structural trust model rejects the same case (see "Open items"). |
+| `blank_id` null = no blank class (spec 3.1, FEP-0002 section 10, vector L32): the greedy decoder decodes it | The structural trust model accepts it. (M7-11 fixed the reference, which raised IndexError before.) |
 
 ### FEP-0002 note
 
@@ -182,8 +182,6 @@ That is the only dependency. The SDK has its own JSON parser (with Python semant
 ## Open items
 
 - **crates.io publishing is a user decision.** The crate has `publish = false`. Before a release: choose the crate name (`fidetype` may be taken), the versioning policy and trusted publishing (as M7-09 for PyPI).
-- **Reference quirk to decide:** the Python greedy decoder fails on the frames route when `blank_id` is null (non-CTC streams). The Rust SDK copies it for parity. If the reference is fixed, remove the check in `profiles/lsl.rs` (`StructuralLayer::end`).
-- The TypeScript SDK differs from Python on 3 fuzz mutants (seeds 1-3): string-stream samples iterated too early, the no-blank decode case above, and a truthy non-object `consumer_settings`. The Rust SDK has the Python verdict on all three.
 - No JSON Schema validator in Rust (the TypeScript SDK has one). The checks give the same verdicts without it.
 - The minimum supported Rust version is not tested (CI uses stable).
 - The parity fuzz mutates JSON vectors only, not NPZ files.

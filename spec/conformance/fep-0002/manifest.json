@@ -431,6 +431,22 @@
    "clause": "FEP-0002 8 r2",
    "description": "Two final decisions for one utterance",
    "failing_check": "FEP2-DECISIONS"
+  },
+  {
+   "id": "L32",
+   "file": "l32-frames-no-blank.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 10; v0.1 3.1",
+   "description": "Frames route on a stream with blank_id null (no blank class): the greedy decoder treats every frame as a token frame and makes one final decision",
+   "expected": {
+    "vocab_size": 4,
+    "frames": 3,
+    "neg_inf_cells": 1,
+    "first_frame_t": 100.25,
+    "final_decisions": 1
+   }
   }
  ]
 }

@@ -380,14 +380,14 @@ function toLogProbs(rows: number[][], values: string): number[][] {
 
 class StreamLost extends Error {}
 
-type Chunk = [unknown[], number[]] | "lost";
+type Chunk = [unknown, number[]] | "lost";
 
 class ScriptedInlet {
   script: Chunk[];
   constructor(readonly info: LSLStreamInfo, script: Chunk[], readonly tc: number) {
     this.script = [...script];
   }
-  pullChunk(): [unknown[], number[]] {
+  pullChunk(): [unknown, number[]] {
     if (!this.script.length) return [[], []];
     const it = this.script.shift() as Chunk;
     if (it === "lost") throw new StreamLost("scripted loss");
@@ -435,8 +435,8 @@ function makeInlet(spec: unknown): ScriptedInlet {
     }
     if (!isObj(ch)) throw new TypeError("a chunk must be an object or \"lost\"");
     if (!has(ch, "samples") || !has(ch, "timestamps")) throw new TypeError("a chunk needs samples and timestamps");
-    let samples = pyIter(ch.samples);
-    if (!isString(info)) samples = samples.map((row) => pyIter(row).map(numIn));
+    // A string stream keeps its samples as given: Python iterates them only when the chunk has timestamps.
+    const samples: unknown = isString(info) ? ch.samples : pyIter(ch.samples).map((row) => pyIter(row).map(numIn));
     const stamps = pyIter(ch.timestamps).map(pyFloatOf);
     script.push([samples, stamps]);
   }
@@ -506,8 +506,9 @@ class Reader {
 
   pull(): Item[] {
     const src = this.src;
-    const [samples, stamps] = this.inlet.pullChunk();
+    const [raw, stamps] = this.inlet.pullChunk();
     if (!stamps.length) return [];
+    const samples = pyIter(raw); // zip(samples, stamps): iterate only after the empty-timestamps check
     const off = src.clockSync.offset(this.host, this.inlet);
     src.clock();
     src.stats.samples += stamps.length;
@@ -594,7 +595,7 @@ class Reader {
     const src = this.src;
     src.stats.gaps++;
     const items = this.frames(arr, rows, times);
-    const missing = this.period ? Math.round((t1 - t0) / this.period) - 1 : null;
+    const missing = this.period ? pyRoundInt((t1 - t0) / this.period) - 1 : null;
     const info = { t_start: t0, t_end: t1, missing_frames: missing, stream: this.info.name };
     const tg = t1 - 1e-9;
     const mode = src.mapping.on_gap;
@@ -904,6 +905,33 @@ function deepCount(types: Map<string, number>, ev: Record<string, unknown>): voi
   if (t !== "lsl_status") types.set(t, (types.get(t) ?? 0) + 1);
 }
 
+/** Python `int(round(x))`: round half to even; an error for inf / NaN. */
+function pyRoundInt(x: number): number {
+  if (!Number.isFinite(x)) throw new RangeError("cannot convert float infinity or NaN to integer");
+  const f = Math.floor(x);
+  const d = x - f;
+  if (d > 0.5) return f + 1;
+  if (d < 0.5) return f;
+  return f % 2 === 0 ? f : f + 1;
+}
+
+/** Python `dict(x or {})` of a JSON value: a falsy value gives {}, an object is copied, a list of pairs is mapped. */
+function pyDict(x: unknown): Record<string, unknown> {
+  if (!pyTruthy(x)) return {};
+  if (isObj(x)) return { ...x };
+  if (Array.isArray(x)) {
+    const m: Record<string, unknown> = {};
+    for (const p of x) {
+      const kv = pyIter(p);
+      if (kv.length !== 2) throw new RangeError("dictionary update sequence element has the wrong length");
+      if (typeof kv[0] !== "string") throw new TypeError("keywords must be strings");
+      m[kv[0]] = kv[1];
+    }
+    return m;
+  }
+  throw new TypeError(`'${typeof x}' object is not iterable as a dict`);
+}
+
 /** Play an `inlet` scenario. Throws on rejection. Returns the FEP-0002 section 10 values. */
 export function runInletScenario(sc: Record<string, unknown>): Record<string, unknown> {
   const inl = sc.inlets as Record<string, unknown>;
@@ -916,8 +944,8 @@ export function runInletScenario(sc: Record<string, unknown>): Record<string, un
     if (pending.length && pending[0] !== null && pending[0] !== undefined) return makeInlet(pending.shift());
     throw new Error("no stream");
   };
-  const settings = (get(sc, "consumer_settings") ?? {}) as Record<string, unknown>;
-  const mapping = makeMapping(isObj(settings) ? settings : {}, { merge_window_s: 1e9, reconnect_timeout_s: 1.0 });
+  const settings = pyDict(get(sc, "consumer_settings"));
+  const mapping = makeMapping(settings, { merge_window_s: 1e9, reconnect_timeout_s: 1.0 });
   let ticks = 0;
   const clock = (): number => 1000.0 + ticks++ * 1e-3;
   const src = new EventSource(primary, events, mapping, pyTruthy(after) ? reopen : null, clock);

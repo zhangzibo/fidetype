@@ -157,7 +157,7 @@ fidetype conformance consumer --profile fep-0002 --impl my_mod:consume
 fidetype conformance check --profile fep-0002 frames-info.xml         # producer check of a stream info (pylsl: info.as_xml())
 ```
 
-A vector is a JSON scenario (schema `fidetype.conformance.lsl-scenario/1`): stream infos as liblsl XML (`info_xml`), scripted chunks (`samples` + `timestamps`, or `"lost"`), the `time_correction`, the consumer settings, and the route. In numeric samples JSON `null` is `-inf` and `"NaN"` is NaN. The scripts need no network: the reference consumer plays them through `fidetype.adapters.lsl.ScriptedInlet`. At the end of the scripts it closes the open utterance. Its trust layer uses a fixed loose synthetic configuration and the CTC greedy decoder on the frames route. Expected values:
+A vector is a JSON scenario (schema `fidetype.conformance.lsl-scenario/1`): stream infos as liblsl XML (`info_xml`), scripted chunks (`samples` + `timestamps`, or `"lost"`), the `time_correction`, the consumer settings, and the route. In numeric samples JSON `null` is `-inf` and `"NaN"` is NaN. The scripts need no network: the reference consumer plays them through `fidetype.adapters.lsl.ScriptedInlet`. At the end of the scripts it closes the open utterance. Its trust layer uses a fixed loose synthetic configuration and the CTC greedy decoder on the frames route. If the header has `blank_id` null (no blank class, v0.1 section 3.1), the greedy decoder treats every frame as a token frame and collapses each run of equal argmax frames into one token; the consumer MUST NOT reject the stream for this reason (vector L32). Expected values:
 
 | Key | Meaning |
 |---|---|
@@ -171,7 +171,7 @@ A vector is a JSON scenario (schema `fidetype.conformance.lsl-scenario/1`): stre
 
 | Section | Accept | Reject |
 |---|---|---|
-| 3 frames stream | L01, L02 (double64 bit-exact), L04 (-inf), L14 (foreign) | L16 (channels), L17 (int16), L18 (labels), L20 (rate), L22 (NaN) |
+| 3 frames stream | L01, L02 (double64 bit-exact), L04 (-inf), L14 (foreign), L32 (frames route, `blank_id` null) | L16 (channels), L17 (int16), L18 (labels), L20 (rate), L22 (NaN) |
 | 4 desc keys | L01 | L15 (not JSON), L23 (spec_version), L24 (values) |
 | 5 events stream | L13 (plain markers, bad JSON) | L21 (numeric format) |
 | 6 clock | L01 (receiver), L05 (sender), L09 (order), L11 / L12 (event_clock lsl / source) | L25 (event_clock) |

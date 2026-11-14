@@ -24,16 +24,17 @@ Task **M7-07**. The third reference SDK, after the [Python SDK](python-sdk.md) a
 
 ## Parity with Python
 
-| Profile | Vectors | Rust pass | Same verdict and "ok" as Python | Fuzz mutants, same verdict (seeds 1-4, `--n 30`) |
+| Profile | Vectors | Rust pass | Same verdict and "ok" as Python | Fuzz mutants, same verdict (seeds 1-6, `--n 30`; M7-11) |
 |---|---|---|---|---|
-| v0.1 (NPZ + JSON Lines) | 52 | 52 | 52/52 | 2,341/2,341 |
-| fep-0001 | 40 | 40 | 40/40 | 4,800/4,800 |
-| fep-0002 (LSL scenarios) | 31 | 31 | 31/31 | 3,720/3,720 |
-| fep-0003 | 44 | 44 | 44/44 | 5,280/5,280 |
+| v0.1 (NPZ + JSON Lines) | 52 | 52 | 52/52 | 3,516/3,516 |
+| fep-0001 | 40 | 40 | 40/40 | 7,200/7,200 |
+| fep-0002 (LSL scenarios) | 32 | 32 | 32/32 | 5,760/5,760 |
+| fep-0003 | 44 | 44 | 44/44 | 7,920/7,920 |
 
-- The TypeScript parity scripts got an option `--rust BIN`: `cross-check.mjs` and `fuzz-parity.mjs` now compare Python, TypeScript and Rust on the same files. CI job `rust-parity` runs both (cross-check + `--n 10`).
-- The Python suite also accepts the Rust CLI as an external consumer: `python -m fidetype.conformance consumer --cmd "fidetype-rs consume {path}"` gives 167/167 over the four profiles.
+- The TypeScript parity scripts got an option `--rust BIN`: `cross-check.mjs` and `fuzz-parity.mjs` now compare Python, TypeScript and Rust on the same files. CI job `rust-parity` runs both (cross-check + fuzz `--n 30` at seeds 1-3, since M7-11).
+- The Python suite also accepts the Rust CLI as an external consumer: `python -m fidetype.conformance consumer --cmd "fidetype-rs consume {path}"` gives 168/168 over the four profiles.
 - The golden vectors passed on the first run. The fuzz found 2 more Python behaviours to copy (string-format LSL samples are iterated only when a chunk with timestamps is pulled; the reference greedy decoder fails when `blank_id` is null). After the fix: 16,141 of 16,141 mutants give the Python verdict.
+- **M7-11 (2026-11-13):** the no-blank failure was a Python bug. `blank_id` null means "no blank class" (spec 3.1). The greedy decoder now treats every frame as a token frame and collapses each run of equal argmax frames into one token. The spec text says so, and the new FEP-0002 vector L32 tests it. The Rust check in `StructuralLayer::end` is gone. The same task fixed 4 TypeScript gaps. Python = TypeScript = Rust on 168/168 vectors and on 24,396/24,396 mutants (seeds 1-6, `--n 30`).
 
 ## Design
 
@@ -45,13 +46,12 @@ Task **M7-07**. The third reference SDK, after the [Python SDK](python-sdk.md) a
 | Checked on `thumbv7em-none-eabihf` | CI builds the core for a Cortex-M4F/M7 target with no OS. |
 | GNU host toolchain on the dev PC | The machine has no MSVC build tools; `stable-x86_64-pc-windows-gnu` brings its own linker. rustup was installed for the current user only. |
 
-> **Our take:** Three independent ports now give the same verdicts. That makes the conformance vectors a real cross-language contract, but it also shows where the contract lives in Python code and not in the spec text. Two examples from this port: the reference refuses a non-CTC stream (`blank_id` null) on the frames route only because its greedy decoder calls `np.delete(lp, None, axis=1)`; and FEP-0002 string samples are iterated late. A future spec revision should either state such rules or the reference should drop them. The first one looks like a reference bug.
+> **Our take:** Three independent ports now give the same verdicts. That makes the conformance vectors a real cross-language contract, but it also shows where the contract lives in Python code and not in the spec text. Two examples from this port: the reference refuses a non-CTC stream (`blank_id` null) on the frames route only because its greedy decoder calls `np.delete(lp, None, axis=1)`; and FEP-0002 string samples are iterated late. A future spec revision should either state such rules or the reference should drop them. The first one was a reference bug (fixed in M7-11).
 
-> **Our take:** The fuzz also found 3 mutants where the TypeScript SDK differs from Python (the two cases above, and a truthy non-object `consumer_settings`). They are open items for the TS SDK; the Rust SDK has the Python verdict on all three.
+> **Our take:** The fuzz also found 3 mutants where the TypeScript SDK differs from Python (the two cases above, and a truthy non-object `consumer_settings`). M7-11 fixed them and a fourth one (the gap length of an infinite timestamp, seed 5). The old CI fuzz (one seed, `--n 10`) found none of them. CI now runs `--n 30` at 3 seeds.
 
 ## Open items
 - crates.io publishing: a user decision (crate name, versioning policy, trusted publishing; compare M7-09).
-- The reference no-blank decode failure: fix in Python, or keep and document. The Rust copy is one check in `StructuralLayer::end`.
 - No JSON Schema validator in Rust (verdicts do not need it). Minimum Rust version not tested. Fuzz covers JSON vectors only, not NPZ.
 
 Related: [TypeScript SDK](typescript-sdk.md), [Python SDK](python-sdk.md), [conformance suite](conformance-suite.md), [streaming trust layer](streaming-trust-layer.md), [LSL input](lsl-input.md), [intent events](intent-events.md).

@@ -1631,15 +1631,8 @@ impl StructuralLayer {
         };
         if (self.route == Route::Frames && self.rows > 0) || (self.route == Route::Hypothesis && self.hyp) {
             if self.route == Route::Frames {
+                // blank_id null = no blank class (spec 3.1): the greedy decoder still decodes (vector L32).
                 check_stream_fields(h)?;
-                // The reference decodes the utterance with greedy_nbest; its find_segments calls
-                // np.delete(lp, blank_id, axis=1), which raises IndexError when blank_id is null.
-                if h.get("blank_id").is_null() {
-                    return Err(Error::new(
-                        ErrorKind::Value,
-                        "IndexError: the reference greedy decoder needs a blank_id (frames route, blank_id null)",
-                    ));
-                }
             }
             self.decisions += 1;
             self.finals += 1;

@@ -534,3 +534,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Parity: same verdict and "ok" as Python on all 167 vectors (52/40/31/44); Python verdict on 16,141 fuzz mutants (seeds 1-4, `--n 30`). The TS scripts `cross-check.mjs` / `fuzz-parity.mjs` got `--rust BIN` (three-way comparison). The Python suite also passes the Rust CLI as external consumer (167/167). The fuzz found 2 Python behaviours to copy (late iteration of string LSL samples; the reference greedy decoder fails when `blank_id` is null, a likely reference bug) and 3 TypeScript gaps (open items).
 - Tests: 9 unit, 15 integration (incl. all vectors), 3 doc tests. CI: jobs `rust` (tests, no_std Cortex-M build, CLI conformance) and `rust-parity` added to `.github/workflows/tests.yml`.
 - New page [Rust SDK](concepts/rust-sdk.md); links from [TypeScript SDK](concepts/typescript-sdk.md), [Python SDK](concepts/python-sdk.md), [conformance suite](concepts/conformance-suite.md). Check count corrected to 59 (was "60") in the TS pages: Python `REGISTRY` and the TS registry both have 59.
+
+## [2026-11-13] setup | M7-11: SDK parity fixes (blank_id null, TS fuzz mismatches)
+- `blank_id` null means "no blank class" (spec 3.1). The reference greedy decoder raised IndexError on the FEP-0002 frames route (a Python bug). Fixed in `trust/_ctc.py`: every frame is a token frame; runs of equal argmax collapse into one token.
+- Spec text: v0.1 section 3.1 (`blank_id` row, changelog) and FEP-0002 section 10 (MUST NOT reject). New golden vector fep-0002 L32.
+- Rust SDK: the copied rejection is gone. TypeScript SDK: 4 fuzz gaps fixed (string samples, `consumer_settings`, the no-blank case, gap length of an infinite timestamp).
+- Parity: Python = TypeScript = Rust on 168/168 vectors and 24,396/24,396 mutants (seeds 1-6, `--n 30`). CI fuzz raised to `--n 30` at seeds 1-3. Pages: [rust-sdk](concepts/rust-sdk.md), [typescript-sdk](concepts/typescript-sdk.md).

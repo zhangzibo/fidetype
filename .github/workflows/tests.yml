@@ -64,7 +64,8 @@ jobs:
           npm ci --no-audit --no-fund
           npm run build
           FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" npm run cross-check
-          FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" node scripts/fuzz-parity.mjs --n 10
+          # M7-11: --n 30 at 3 seeds (about 12,000 mutants); --n 10 at one seed missed 4 TypeScript gaps.
+          for s in 1 2 3; do FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" node scripts/fuzz-parity.mjs --n 30 --seed $s || exit 1; done
 
   # Rust SDK (sdk/rust, M7-07): unit + integration tests and the golden vectors, the no_std core
   # on a bare-metal target (Cortex-M4F/M7), and the CLI conformance run. Stable toolchain.
@@ -124,4 +125,4 @@ jobs:
           export FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python"
           export FIDETYPE_RUST_BIN="$GITHUB_WORKSPACE/sdk/rust/target/release/fidetype-rs"
           node scripts/cross-check.mjs
-          node scripts/fuzz-parity.mjs --n 10
+          for s in 1 2 3; do node scripts/fuzz-parity.mjs --n 30 --seed $s || exit 1; done

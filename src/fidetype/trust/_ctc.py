@@ -13,13 +13,21 @@ def find_segments(stream: NeuralTextStream) -> list[tuple[int, int, int]]:
     ``end`` is exclusive. ``centre`` is the frame with the highest
     non-blank probability in the run. The greedy CTC text is the argmax
     token of each centre, in order.
+
+    ``blank_id`` null means "no blank class" (spec 3.1): every frame is a
+    token frame, and each run of equal argmax frames is one token. This is
+    the same rule as ``fidetype.eval.metrics.ctc_greedy_ids``.
     """
     lp = stream.log_probs
     if lp.shape[0] == 0:
         return []
     am = np.argmax(lp, axis=1)
-    nb = am != stream.blank_id
-    nonblank = np.delete(lp, stream.blank_id, axis=1).max(axis=1)
+    if stream.blank_id is None:
+        nb = np.ones(am.shape[0], dtype=bool)
+        nonblank = lp.max(axis=1)
+    else:
+        nb = am != stream.blank_id
+        nonblank = np.delete(lp, stream.blank_id, axis=1).max(axis=1)
     segs = []
     t, T = 0, len(am)
     while t < T:

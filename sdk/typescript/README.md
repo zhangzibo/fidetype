@@ -127,12 +127,12 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 |---|---|---|---|
 | `v0.1` (NPZ + JSON Lines) | 52 | 52/52 pass | 52/52 |
 | `fep-0001` streaming trust events | 40 | 40/40 pass | 40/40 |
-| `fep-0002` NTS over LSL (scenarios) | 31 | 31/31 pass | 31/31 |
+| `fep-0002` NTS over LSL (scenarios) | 32 | 32/32 pass | 32/32 |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 |
 
 - `npm run cross-check` runs the Python reference consumer and the TypeScript consumer on every vector and compares the verdict (accept / reject) and the "ok" result (verdict and expected values). It needs a Python with the `fidetype` package (the repo `.venv`, or `FIDETYPE_PYTHON`).
-- `npm run fuzz -- --n 30` mutates the JSON and JSON Lines vectors (fixed seed) and compares the verdicts on the mutants. Two runs of about 4,000 mutants each gave identical verdicts.
-- Both scripts take `--rust BIN` (or `$FIDETYPE_RUST_BIN`): they then also run the Rust SDK CLI (`sdk/rust`, M7-07) on the same files and require its verdict to match. With seeds 1-3 (`--n 30`), 3 mutants show TypeScript gaps that Rust does not have (see `sdk/rust/README.md`, "Open items").
+- `npm run fuzz -- --n 30` mutates the JSON and JSON Lines vectors (fixed seed) and compares the verdicts on the mutants. Seeds 1-6 (about 4,070 mutants each, 24,396 in total) give identical verdicts (M7-11). CI runs seeds 1-3.
+- Both scripts take `--rust BIN` (or `$FIDETYPE_RUST_BIN`): they then also run the Rust SDK CLI (`sdk/rust`, M7-07) on the same files and require its verdict to match. M7-11 fixed the 4 TypeScript gaps that this three-way fuzz found (the last three FEP-0002 rows of the table below, and the `blank_id` null fix in Python).
 
 Rules that matter for identical verdicts:
 
@@ -143,6 +143,9 @@ Rules that matter for identical verdicts:
 | Lines split with `str.splitlines()` | `pyLines` splits on the same characters. |
 | `char_confidences` counts Unicode code points | Code points, not UTF-16 units. |
 | The NumPy stream stores `log_probs` as float32 and checks again | `loadStream` rounds to float32 and checks the rows again. |
+| FEP-0002: `zip(samples, stamps)` iterates string-stream samples only after the empty-timestamps check | `pull` iterates the raw samples after that check. |
+| FEP-0002: `dict(consumer_settings or {})` | `pyDict`: a falsy value gives `{}`, a list of pairs is mapped, other values are rejected. |
+| FEP-0002: `int(round(x))` for the gap length: half to even; an error for inf / NaN | `pyRoundInt`. |
 
 ### FEP-0002 note
 
