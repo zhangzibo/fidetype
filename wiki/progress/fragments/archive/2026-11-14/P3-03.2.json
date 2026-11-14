@@ -1,0 +1,5 @@
+{
+  "id": "P3-03",
+  "notes": "v0 (2026-11-14, with P3-01): exporters jsonl (decision log, TD-11 enforced), stdout, websocket /decisions (receiver's OutputHub). v0.1 (2026-11-14, with P3-01): standalone websocket exporter (no receiver): own WSServer serving /decisions only (/nts, /events 404), token_env, TLS, origins, linger_s for file replay demos; tested file -> trust -> standalone /decisions subscriber. Not yet: OS text input (Windows TSF first), Apple BCI HID bridge, AAC API, Arrow/Parquet, analytics, LSL decisions outlet, fan-out of one receiver to two pipelines.",
+  "_tracker_updated": "2026-11-14T15:30:00-08:00"
+}

@@ -1,8 +1,9 @@
 """Configuration of the collector (FEP-0006 section 6): load, check, explain errors.
 
 The file format is TOML (read with the standard-library ``tomllib``) or
-JSON. YAML is not supported in v0: PyYAML is not a dependency of the
-package, and the TOML form maps one to one to the YAML form of FEP-0006.
+JSON. YAML is not supported (FEP-0006 decision, v0.1): a YAML reader needs
+a new dependency (PyYAML), and TOML and JSON hold the same structure one to
+one. A ``.yaml`` / ``.yml`` file gives a clear :class:`ConfigError`.
 
 Every error is a :class:`ConfigError` whose message starts with the path
 of the bad value, for example ``pipelines.main.processors[1]: unknown
@@ -38,12 +39,18 @@ SCHEMA: dict[str, dict[str, tuple[set[str], set[str]]]] = {
     "exporters": {
         "jsonl": ({"path", "types", "append"}, {"path"}),
         "stdout": ({"types"}, set()),
-        "websocket": ({"receiver"}, {"receiver"}),
+        # ``receiver``: share the /decisions channel of a websocket receiver's server.
+        # No ``receiver``: start a standalone /decisions server (for file replay demos).
+        "websocket": ({"receiver", "listen", "token_env", "origins", "certfile", "keyfile", "linger_s"}, set()),
     },
 }
 TOP_KEYS = {"service", "receivers", "processors", "exporters", "pipelines"}
 SERVICE_KEYS = {"log", "metrics_file", "health", "duration_s", "max_streams"}
-HEALTH_KEYS = {"listen"}
+HEALTH_KEYS = {"listen", "token_env", "allow_unauthenticated"}
+#: Default address of the health and metrics endpoint: localhost only.
+DEFAULT_HEALTH_LISTEN = "127.0.0.1:13133"
+#: Keys of a websocket exporter that only a standalone /decisions server uses.
+WS_STANDALONE_KEYS = {"listen", "token_env", "origins", "certfile", "keyfile", "linger_s"}
 PIPELINE_KEYS = {"receivers", "processors", "exporters"}
 #: Keys that would put a secret into the file. Secrets come from environment variables.
 SECRET_KEYS = {"token", "key", "password", "secret"}
@@ -124,9 +131,22 @@ def read_file(path: str | PathLike[str]) -> dict[str, Any]:
             raise
         raise ConfigError(f"{p}: not valid JSON: {e}") from None
     if suffix in (".yaml", ".yml"):
-        raise ConfigError(f"{p}: YAML is not supported in collector v0 (PyYAML is not a dependency); "
+        raise ConfigError(f"{p}: YAML is not supported (it would need a new dependency, PyYAML); "
                           "write the same structure as TOML (.toml) or JSON (.json)")
     raise ConfigError(f"{p}: unknown configuration format {suffix!r}; use .toml or .json")
+
+
+def is_loopback(host: str) -> bool:
+    """True for ``localhost`` and loopback IP addresses (127.0.0.0/8, ::1)."""
+    import ipaddress
+
+    h = host.strip("[]").lower()
+    if h == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(h).is_loopback
+    except ValueError:
+        return False
 
 
 def load(path: str | PathLike[str]) -> CollectorConfig:
@@ -278,6 +298,25 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
         opts["types"] = types
     elif kind == "exporters" and typ == "websocket":
         _opt_type(where, opts, "receiver", (str,), "the name of a websocket receiver")
+        if "receiver" in opts:
+            extra = sorted(set(opts) & WS_STANDALONE_KEYS)
+            if extra:
+                raise ConfigError(f"{where}.{extra[0]}: only valid for a standalone /decisions server (no "
+                                  "'receiver'); with 'receiver' the settings of the receiver's server apply")
+        else:
+            if "listen" in opts:
+                _listen(f"{where}.listen", opts["listen"])
+            _opt_type(where, opts, "token_env", (str,), "the name of an environment variable")
+            _opt_type(where, opts, "certfile", (str,), "a file path")
+            _opt_type(where, opts, "keyfile", (str,), "a file path")
+            _opt_type(where, opts, "linger_s", num, "a number")
+            if "origins" in opts and not (isinstance(opts["origins"], list)
+                                          and all(isinstance(o, str) for o in opts["origins"])):
+                raise ConfigError(f"{where}.origins: must be a list of strings")
+            if "keyfile" in opts and "certfile" not in opts:
+                raise ConfigError(f"{where}.keyfile: needs certfile")
+            if opts.get("linger_s", 0) < 0:
+                raise ConfigError(f"{where}.linger_s: must be >= 0")
     return ComponentConfig(kind, name, typ, opts)
 
 
@@ -290,8 +329,16 @@ def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> Col
     _opt_type("service", service, "duration_s", (int, float), "a number")
     _opt_type("service", service, "max_streams", (int,), "an integer")
     if "health" in service:
-        h = _check_keys("service.health", service["health"], HEALTH_KEYS, {"listen"})
+        h = _check_keys("service.health", service["health"], HEALTH_KEYS)
+        h.setdefault("listen", DEFAULT_HEALTH_LISTEN)
         _listen("service.health.listen", h["listen"])
+        _opt_type("service.health", h, "token_env", (str,), "the name of an environment variable")
+        _opt_type("service.health", h, "allow_unauthenticated", (bool,), "true or false")
+        host = h["listen"].rpartition(":")[0]
+        if not is_loopback(host) and "token_env" not in h and h.get("allow_unauthenticated") is not True:
+            raise ConfigError("service.health.listen: binds beyond localhost without a token; set token_env "
+                              "(the environment variable that holds a bearer token), or set "
+                              "allow_unauthenticated = true to accept an open endpoint")
     comps: dict[str, dict[str, ComponentConfig]] = {}
     for kind in ("receivers", "processors", "exporters"):
         sec = d.get(kind, {})
@@ -331,11 +378,12 @@ def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> Col
             raise ConfigError(f"{where}.processors: at most one trust processor per pipeline")
         for i, n in enumerate(lists["exporters"]):
             ex = comps["exporters"][n]
-            if ex.type == "websocket":
+            if ex.type == "websocket" and "receiver" in ex.options:
                 r = ex.options["receiver"]
                 if r not in lists["receivers"] or comps["receivers"][r].type != "websocket":
                     raise ConfigError(f"exporters.{n}.receiver: {r!r} must be a websocket receiver of pipeline "
-                                      f"{pname!r} (v0 serves /decisions on the receiver's server)")
+                                      f"{pname!r} (it serves /decisions on the receiver's server); leave out "
+                                      "'receiver' for a standalone /decisions server")
         pipelines[pname] = PipelineConfig(pname, lists["receivers"], lists["processors"], lists["exporters"])
     for kind in ("receivers", "processors"):
         unused = sorted(set(comps[kind]) - set(used[kind]))

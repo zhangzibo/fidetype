@@ -23,7 +23,7 @@ from typing import Any, Callable
 from fidetype.collector import exporters as E
 from fidetype.collector import processors as P
 from fidetype.collector import receivers as R
-from fidetype.collector.config import CollectorConfig, ComponentConfig, ConfigError
+from fidetype.collector.config import DEFAULT_HEALTH_LISTEN, CollectorConfig, ComponentConfig, ConfigError, is_loopback
 
 
 def _stderr(msg: str) -> None:
@@ -67,20 +67,25 @@ class Pipeline:
         for rec in self.receivers:
             if rec.done:
                 continue
-            items = rec.poll(timeout / max(1, len(self.receivers)))
-            if multi:  # stream ids of two receivers must not meet in one trust session
-                items = [(f"{rec.name}/{sid}", {**ev, "stream": f"{rec.name}/{sid}"} if ev.get("type") == R.STATUS
-                          else ev) for sid, ev in items]
+            items = self._prefix(rec, rec.poll(timeout / max(1, len(self.receivers))))
             n += len(items)
             self._run(items)
         return n
 
+    def _prefix(self, rec: R.Receiver, items: list[R.Item]) -> list[R.Item]:
+        """FEP-0006 1.4: with several receivers, the stream id is ``<receiver>/<stream id>``.
+
+        So the stream ids of two receivers never meet in one trust session. The decisions of the
+        stream carry it as ``session``. With one receiver the stream id stays as it is.
+        """
+        if len(self.receivers) < 2:
+            return items
+        return [(f"{rec.name}/{sid}", {**ev, "stream": f"{rec.name}/{sid}"} if ev.get("type") == R.STATUS else ev)
+                for sid, ev in items]
+
     def finish(self) -> None:
         for rec in self.receivers:
-            items = rec.finish()
-            if len(self.receivers) > 1:
-                items = [(f"{rec.name}/{sid}", ev) for sid, ev in items]
-            self._run(items)
+            self._run(self._prefix(rec, rec.finish()))
         for i, proc in enumerate(self.processors):
             self._run(proc.finish(), i + 1)
 
@@ -174,6 +179,18 @@ class Collector:
             return E.JsonlExporter(c.name, self.log, self.config.path(o["path"]), o["types"], append=o.get("append", False))
         if c.type == "stdout":
             return E.StdoutExporter(c.name, self.log, o["types"])
+        if "receiver" not in o:  # a standalone /decisions server
+            from fidetype.adapters import ws as W
+
+            host, port = _host_port(o.get("listen", f"127.0.0.1:{W.DEFAULT_PORT}"))
+            ssl = None
+            if "certfile" in o:
+                ssl = W._ssl_context(str(self.config.path(o["certfile"])),
+                                     str(self.config.path(o["keyfile"])) if "keyfile" in o else None, server=True)
+            return E.StandaloneWebSocketExporter(
+                c.name, self.log, host=host, port=port,
+                token=_env_secret(f"exporters.{c.name}.token_env", o.get("token_env")),
+                origins=o.get("origins"), ssl=ssl, linger_s=float(o.get("linger_s", 0.0)))
         rec = self._receivers[o["receiver"]]
         assert isinstance(rec, R.WebSocketReceiver)
         return E.WebSocketExporter(c.name, self.log, rec.hub)
@@ -197,8 +214,13 @@ class Collector:
         for rec in self._receivers.values():
             rec.start()
         h = self.config.service.get("health")
-        if h:
-            self._start_health(*_host_port(h["listen"]))
+        if h is not None:
+            host, port = _host_port(h.get("listen", DEFAULT_HEALTH_LISTEN))
+            token = _env_secret("service.health.token_env", h.get("token_env"))
+            if not is_loopback(host) and token is None:
+                self.log("service.health: WARNING: /healthz and /metrics listen beyond localhost without a token "
+                         "(allow_unauthenticated = true)")
+            self._start_health(host, port, token)
         self.started_at = time.monotonic()
         self.state = "running"
         for line in self.config.describe().splitlines():
@@ -262,6 +284,10 @@ class Collector:
                     reason = "max_streams"
                     break
                 self.step(0.05)
+            linger = max((ex.linger_s for ex in self._exporters.values()), default=0.0)
+            if reason == "input done" and linger > 0:
+                self.log(f"input done; serving /decisions for {linger:g} s more (linger_s)")
+                self.stop_event.wait(linger)
         except KeyboardInterrupt:
             reason = "interrupted"
         finally:
@@ -296,11 +322,24 @@ class Collector:
                         out[k] = out.get(k, 0) + s[k]
         return out
 
-    def _start_health(self, host: str, port: int) -> None:
+    def _start_health(self, host: str, port: int, token: str | None = None) -> None:
+        """``GET /healthz`` and ``GET /metrics``. With ``token``: both need ``Authorization: Bearer <token>``."""
+        from fidetype.adapters import ws as W
+
         col = self
+        check = W.token_checker(token) if token else None
 
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self) -> None:  # noqa: N802
+                if check is not None and not check(W.bearer_token(self.headers.get("Authorization"))):
+                    data = b'{"error": "unauthorized"}\n'
+                    self.send_response(401)
+                    self.send_header("WWW-Authenticate", "Bearer")
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(data)))
+                    self.end_headers()
+                    self.wfile.write(data)
+                    return
                 if self.path == "/healthz":
                     body = {"status": "ok" if col.state == "running" else col.state}
                 elif self.path == "/metrics":

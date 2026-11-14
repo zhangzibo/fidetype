@@ -11,7 +11,7 @@ from fidetype.collector.config import ConfigError, load
 
 def main(argv: Sequence[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="fidetype collector",
-                                 description="Run the Fidetype collector v0 (FEP-0006): receivers -> processors -> "
+                                 description="Run the Fidetype collector v0.1 (FEP-0006): receivers -> processors -> "
                                              "exporters, from one TOML or JSON configuration file.")
     ap.add_argument("--config", required=True, help="collector configuration (.toml or .json)")
     ap.add_argument("--check", action="store_true", help="check the configuration, print the pipelines, and exit")

@@ -1,4 +1,4 @@
-# Fidetype collector v0 example (FEP-0006). Run from the repository root:
+# Fidetype collector v0.1 example (FEP-0006). Run from the repository root:
 #
 #   fidetype collector --config examples/collector/collector.toml
 #   fidetype collector --config examples/collector/collector.toml --check   # check only
@@ -7,16 +7,24 @@
 # trust-example.json is a TOY trust configuration (not calibrated on any data). It only shows the
 # wiring. Fit a real one with fidetype.calibrate(...) and FrozenTrustConfig.save(...).
 # The input is a synthetic conformance vector (no participant data).
+# Formats: TOML or JSON only. YAML is not supported (it would need a new dependency).
+# Every decision gets spec_version "1.0". The trust processor adds the commit gate
+# (min_chars = 1, no blank COMMIT, TD-9) when the trust configuration has none; the log says so.
 
 [service]
 log = "info"                                   # "info" (stderr) or "quiet"
 metrics_file = "out/metrics.json"              # written at stop
-# health.listen = "127.0.0.1:13133"           # GET /healthz and /metrics (JSON); localhost only
+# GET /healthz and /metrics (JSON). Default listen: 127.0.0.1:13133 (localhost only).
+# [service.health]
+# listen = "127.0.0.1:13133"
+# token_env = "FIDETYPE_HEALTH_TOKEN"          # optional bearer token (Authorization: Bearer <token>)
+# A listen address beyond localhost needs token_env, or allow_unauthenticated = true (then a warning).
 
 [receivers.replay]
 type = "file"
 paths = ["../../spec/conformance/fep-0001/f01-segments.jsonl"]
-eof = "close"                                  # "close" (like `fidetype trust`) or "cut"
+eof = "close"                                  # "close" (like `fidetype trust`; a file without an end
+                                               # event gives one warning and counts closed_without_end) or "cut"
 # follow = true                                # tail mode; idle_timeout_s = 10 cuts an open stream
 
 # A live WebSocket input (FEP-0004 /nts) and its /decisions channel. Needs the [ws] extra.
@@ -55,7 +63,17 @@ type = "stdout"
 # type = "websocket"
 # receiver = "live"                            # serves /decisions on the receiver's server
 
+# A standalone /decisions server for a file replay demo (no websocket receiver). Needs the [ws] extra.
+# Subscribe: fidetype ws subscribe ws://127.0.0.1:8766/decisions --from-seq 1
+# [exporters.demo_decisions]
+# type = "websocket"                           # no "receiver": the exporter starts its own server
+# listen = "127.0.0.1:8766"                    # /decisions only; /nts and /events give 404
+# linger_s = 60                                # keep serving 60 s after the input is done
+# token_env = "FIDETYPE_WS_TOKEN"              # optional; needed beyond localhost
+
 [pipelines.main]
 receivers = ["replay"]
 processors = ["check", "trust", "thin", "privacy"]
-exporters = ["log", "console"]
+exporters = ["log", "console"]               # add "demo_decisions" to serve /decisions
+# With two or more receivers in one pipeline, each stream id becomes "<receiver>/<stream id>"
+# (for example "replay/replay-0"); it is the session of its decisions.

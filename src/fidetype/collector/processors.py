@@ -23,6 +23,7 @@ import numpy as np
 
 from fidetype.adapters import ws as W
 from fidetype.collector.receivers import STATUS, Item, status
+from fidetype.trust.content import REASON_PREFIX as GATE_REASON
 
 SEGMENT_UNITS = ("utterance", "word", "trial")
 SCORE_SEMANTICS = ("calibrated_prob", "uncalibrated_prob", "power", "strength", "none")
@@ -280,6 +281,37 @@ class _CollectorTrustRunner(W.WSTrustRunner):
         return d
 
 
+#: The rules version that the collector stamps on every ``trust_decision`` (spec 6.1, VER-1, TD-F3).
+DECISION_SPEC_VERSION = "1.0"
+
+
+def blank_safe_config(cfg: Any, name: str = "trust", log: Callable[[str], None] | None = None) -> Any:
+    """Return a trust configuration that can never COMMIT a blank text (TD-9, a MUST NOT for 1.x decisions).
+
+    - A ``trust`` policy without a commit gate, or with a gate that allows an empty text
+      (``min_chars = 0`` and ``min_words = 0``), gets the commit gate with ``min_chars = 1``
+      (M2-18; the other gate fields stay). The copy has a new ``config_id``; the decisions carry it.
+    - An ``always_commit`` policy can COMMIT an empty text and has no gate: refused (ValueError).
+    """
+    from dataclasses import replace
+
+    from fidetype.trust.content import CommitGate
+
+    if cfg.policy_class != "trust":
+        raise ValueError(f"policy_class {cfg.policy_class!r} can commit a blank text; the collector stamps "
+                         f"spec_version {DECISION_SPEC_VERSION!r} on its decisions and TD-9 forbids that. "
+                         "Use a 'trust' policy")
+    gate = cfg.gate
+    if gate is not None and (gate.min_chars >= 1 or gate.min_words >= 1):
+        return cfg
+    new_gate = CommitGate(1, 0, None) if gate is None else replace(gate, min_chars=1)
+    out = replace(cfg, commit_gate=new_gate.to_dict())
+    if log is not None:
+        log(f"processors.{name}: commit gate min_chars = 1 added (no blank COMMIT, TD-9 for spec_version "
+            f"{DECISION_SPEC_VERSION}); config_id {cfg.config_id} -> {out.config_id}")
+    return out
+
+
 class TrustProcessor(Processor):
     """The streaming trust layer (:class:`fidetype.trust.streaming.StreamingTrustLayer`), one session per stream.
 
@@ -287,6 +319,10 @@ class TrustProcessor(Processor):
     output, they never go back into an input stream). Loss rules from the reference runner: a
     ``gap``, ``lost`` or ``replaced`` status drops the open utterance without a decision; after a gap
     the frames up to the next boundary are dropped too. At shutdown an open utterance is dropped.
+
+    Every decision gets ``spec_version: "1.0"``. The trust configuration then must never COMMIT a
+    blank text (TD-9 is a MUST NOT for 1.x): :func:`blank_safe_config` adds the commit gate when
+    the configuration has none.
     """
 
     type = "trust"
@@ -298,12 +334,13 @@ class TrustProcessor(Processor):
         from fidetype.trust.frozen import FrozenTrustConfig
         from fidetype.trust.streaming import StreamingConfig, StreamingTrustLayer, frame_decoder
 
-        self.cfg = FrozenTrustConfig.load(config_path)
+        self.cfg = blank_safe_config(FrozenTrustConfig.load(config_path), name, log)
         self.layer = StreamingTrustLayer(
             self.cfg, decode_fn=frame_decoder(decoder), ledger=ledger,
             streaming=StreamingConfig(max_attempts=max_attempts, route=route, min_signal_quality=min_signal_quality,
                                       declaration_check=declaration_check))
         self._out: list[Item] = []
+        self.counts.update(gated_commits=0)
         self.runner = _CollectorTrustRunner(self.layer, sink=self._sink, include_text=True,
                                             log=lambda m: log(f"processors.{name}: {m}"))
 
@@ -312,6 +349,9 @@ class TrustProcessor(Processor):
         return self.cfg.config_id
 
     def _sink(self, ev: dict[str, Any]) -> None:
+        ev = {"type": ev["type"], "spec_version": DECISION_SPEC_VERSION, **ev}  # spec 6.1, VER-1, TD-F3
+        if str(ev.get("reason", "")).startswith(GATE_REASON):
+            self.counts["gated_commits"] += 1
         self._out.append((str(ev.get("session", "")), ev))
 
     def _process(self, items: list[Item]) -> list[Item]:

@@ -630,3 +630,13 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Tests: pytest 786 passed / 10 skipped; TS `npm test` 32 pass; `cargo test` pass; `thumbv7em-none-eabihf` no_std build pass.
 - Docs: `spec/nts-1.0-rc2.md` 1.1, 9.3, 9.5, 11.7, C.2 (G-1 closed), `spec/CHANGELOG.md`, `spec/README.md`, FEP-0005 conformance note, SDK READMEs. Pages: [TypeScript SDK](concepts/typescript-sdk.md), [Rust SDK](concepts/rust-sdk.md), [conformance suite](concepts/conformance-suite.md), [NTS specification](concepts/nts-spec.md), [control events](concepts/control-events.md).
 - Review points (not changed): CTL-S7 is checked only after a `stop` decision; the 7.4.5 notes (`p_top1` null, `score_semantics` by radius) have no check.
+
+## [2026-11-14] setup | P3 collector v0.1: FEP-0006 design decisions applied
+- Configuration: TOML and JSON only. YAML is not supported (no new dependency); the error message says why.
+- File receiver: `eof = "close"` stays the default. A stream without `end` now gives one warning and the counter `closed_without_end` in `/metrics`.
+- Several receivers in one pipeline: the `<receiver>/<stream id>` prefix is documented (FEP-0006 1.4) and tested; the prefix now also applies to the status items at shutdown.
+- Health and metrics: `127.0.0.1:13133` by default; optional bearer token `token_env` (never in the file, a log or a metric); a bind beyond localhost without a token is a configuration error unless `allow_unauthenticated = true` (then a warning).
+- Trust processor: every decision carries `spec_version: "1.0"`. A trust configuration without a blank-safe commit gate gets `min_chars = 1` (TD-9; new `config_id`, logged; counter `gated_commits`); `always_commit` is refused. Decision logs (example, and a log with a gated blank COMMIT) pass fep-0001 in the Python, TypeScript and Rust consumers.
+- New standalone `websocket` exporter (no `receiver`): own `WSServer`, `/decisions` only, `token_env`, TLS, `linger_s` for file replay demos. Tested end to end: file → trust → standalone `/decisions` subscriber.
+- Fan-out of one receiver to two pipelines: future work. FEP-0006 (Draft) has a "Decisions" table; open: Python vs Rust for v1 (user), blank OFFER candidates, health token scope, add vs refuse the gate.
+- Tests: `tests/test_collector.py` 44 (was 29). Pages: [collector](concepts/collector.md); `examples/collector/collector.toml`.

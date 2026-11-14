@@ -72,7 +72,8 @@ class FileReceiver(Receiver):
       utterance is cut, so no final decision can come from a part of it.
     - End of file: after ``end`` the stream is ``closed``. Without ``end``: ``eof = "close"``
       (default; the same as ``fidetype trust``, spec GEN-8 allows a stream without ``end``) closes
-      the stream, ``eof = "cut"`` treats it as a loss (no final decision on the open utterance).
+      the stream, logs one warning for that stream and counts it (``closed_without_end``);
+      ``eof = "cut"`` treats it as a loss (no final decision on the open utterance).
     - ``follow = true`` (tail mode): at the end of the file the receiver waits for new lines. When no
       line comes for ``idle_timeout_s`` and the stream has no ``end``, the stream is **lost** (cut).
     - Back-pressure: at most ``batch`` lines per poll. The pipeline reads the next lines only after
@@ -101,7 +102,7 @@ class FileReceiver(Receiver):
         self.partial = ""
         self.ended = False
         self.last_data = 0.0
-        self.counts.update(lines=0, bad_lines=0, lines_after_end=0, cut_streams=0)
+        self.counts.update(lines=0, bad_lines=0, lines_after_end=0, cut_streams=0, closed_without_end=0)
 
     def start(self) -> None:
         for p in self.paths:
@@ -151,6 +152,12 @@ class FileReceiver(Receiver):
             self.counts["cut_streams"] += 1
             self.log(f"receivers.{self.name}: stream {self.sid} {why}; its open utterance gets no decision")
             out.append(status(self.sid, "lost", why))
+        elif not self.ended:
+            # eof = "close": GEN-8 allows a stream without end, but a truncated file looks the same.
+            self.counts["closed_without_end"] += 1
+            self.log(f"receivers.{self.name}: WARNING: stream {self.sid} ended without an end event; it is "
+                     "closed (eof = \"close\"), so its last utterance can get a final decision. If the file can "
+                     "be cut short, set eof = \"cut\"")
         out.append(status(self.sid, "closed"))
         self._next_file()
 

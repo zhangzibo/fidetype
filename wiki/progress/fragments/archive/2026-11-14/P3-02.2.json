@@ -1,0 +1,5 @@
+{
+  "id": "P3-02",
+  "notes": "v0 (2026-11-14, with P3-01): processors validate (conformance checks; invalid event -> gap), trust (StreamingTrustLayer + WSTrustRunner loss rules; optional provenance ledger), redact (drop or HMAC shown, SEC-7), thin (drop provisional decisions without news). v0.1 (2026-11-14, with P3-01): trust processor stamps spec_version \"1.0\" on every decision and adds the commit gate min_chars = 1 when the trust config has none (no blank final COMMIT, TD-9; new config_id logged; gated_commits counter; always_commit refused); logs pass fep-0001 in Python, TS and Rust consumers. Not yet: per-user calibration, LM rescoring, segmenter, rate limiter.",
+  "_tracker_updated": "2026-11-14T15:30:00-08:00"
+}
