@@ -3,7 +3,7 @@ title: Open-source growth playbook
 type: question
 tags: [planning, open-source, growth, governance, standards, open-core, foundation]
 sources: [case-study-sglang, case-study-langchain, case-study-opentelemetry]
-updated: 2026-11-08
+updated: 2026-11-13
 ---
 
 # Open-source growth playbook
@@ -42,7 +42,9 @@ Diagram 10 shows these stages from left to right.
 
 ### Stage 0: Credibility core (now → Paper 1)
 Borrows from: SGLang (paper + benchmarks), OpenTelemetry (spec + stability levels), LangChain (lesson: no churn).
-- [ ] Paper 1 with a reproducible benchmark harness ([project plan, M3](project-plan.md#m3-paper-1-calibrated-abstaining-brain-to-text-target-11-11--11-13)).
+- [ ] Paper 1 with a reproducible benchmark harness ([project plan, PUB](project-plan.md#pub-publications-no-deadline)).
+
+> **Note (2026-11-13):** Papers are now a separate track with no deadline (PUB). Review and publishing run on outside timelines. The open-source stages do not wait on Paper 1. If Paper 1 is not on arXiv yet, a launch can use the benchmark and the spec instead.
 - [x] NeuralTextStream spec v0.1 as a document, with stability levels. *(done 2026-11-08: [spec/neuraltextstream-v0.1.md](../../spec/neuraltextstream-v0.1.md), commit 677ba0e)*
 - [ ] A validator and conformance tests. *(Partly there: `fidetype.streams` already validates streams.)*
 - [ ] A small, stable core API with semver from day one.

@@ -43,6 +43,7 @@
   .b-done { color:var(--good); background:var(--good-bg); } .b-done::before { content:"✓"; }
   .b-late { color:var(--bad); background:var(--bad-bg); } .b-late::before { content:"!"; }
   .b-ontrack { color:var(--prog); background:var(--prog-bg); } .b-ontrack::before { content:"→"; }
+  .b-nodl { color:var(--todo); background:var(--todo-bg); border:1px dashed var(--todo); } .b-nodl::before { content:"∞"; }
   .tl-box { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px; overflow-x:auto; }
   .tl { display:block; max-width:none; }
   .tl .grid { stroke:var(--line); stroke-width:1; }
@@ -98,10 +99,10 @@
 <body>
 <div class="wrap">
   <h1>Project progress</h1>
-  <p class="sub">Actual effort and dates against the targets. Built 11-13 17:33 (2026-11-13). Tracker updated 2026-11-13 13:55.</p>
-  <p class="note">Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8).</p>
+  <p class="sub">Actual effort and dates against the targets. Built 11-13 19:49 (2026-11-13). Tracker updated 2026-11-13 18:10.</p>
+  <p class="note">Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8). 2026-11-13 (user decision): paper writing and publishing are decoupled from the research project. They form the PUB track, which has no deadline, never counts as late and is not part of the M1-M7 target. M3 and M4 are research milestones; the roadmap never waits on a paper.</p>
 
-  <div class="cards"><div class="card"><div class="k">Days since start</div><div class="v">6</div><div class="s">Start: 2026-11-07</div></div><div class="card"><div class="k">Days left to target</div><div class="v">2</div><div class="s">Target: 2026-11-15 (M1–M7)</div></div><div class="card"><div class="k">Tasks done</div><div class="v">127 / 198</div><div class="s">27 externally blocked (not counted)</div></div><div class="card"><div class="k">Agent time</div><div class="v">48:16:16</div><div class="s">Sum of subagent run durations</div></div><div class="card"><div class="k">Tokens</div><div class="v">18,745,321</div><div class="s">Sum of subagent tokens</div></div><div class="card"><div class="k">Agent runs</div><div class="v">115</div><div class="s">6,445 tool uses</div></div></div>
+  <div class="cards"><div class="card"><div class="k">Days since start</div><div class="v">6</div><div class="s">Start: 2026-11-07</div></div><div class="card"><div class="k">Days left to target</div><div class="v">2</div><div class="s">Target: 2026-11-15 (M1–M7)</div></div><div class="card"><div class="k">Tasks done</div><div class="v">127 / 198</div><div class="s">27 externally blocked (not counted)</div></div><div class="card"><div class="k">Agent time</div><div class="v">48:39:43</div><div class="s">Sum of subagent run durations</div></div><div class="card"><div class="k">Tokens</div><div class="v">19,072,775</div><div class="s">Sum of subagent tokens</div></div><div class="card"><div class="k">Agent runs</div><div class="v">115</div><div class="s">6,570 tool uses</div></div></div>
 
   <h2>Milestones</h2>
   <div class="mss">
@@ -157,32 +158,32 @@
       <div><span class="lbl">Done</span>17 / 18</div>
       <div><span class="lbl">Target</span>11-09 → 11-11</div>
       <div><span class="lbl">Actual</span>11-08 11:20 → <em>open</em></div>
-      <div><span class="lbl">Agent time</span>6:40:09</div>
-      <div><span class="lbl">Tokens</span>1,697,943</div>
+      <div><span class="lbl">Agent time</span>7:03:36</div>
+      <div><span class="lbl">Tokens</span>2,025,397</div>
     </div>
   </div>
 <div class="ms">
     <div class="ms-head">
-      <div class="ms-name"><b>M3</b> Paper 1: calibrated, abstaining brain-to-text</div>
+      <div class="ms-name"><b>M3</b> Trust-layer validation (research)</div>
       <span class="badge b-ontrack">On track</span>
     </div>
-    <div class="bar" role="progressbar" aria-valuenow="79" aria-valuemin="0" aria-valuemax="100" title="19 of 24 done"><span style="width:79%"></span></div>
+    <div class="bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" title="6 of 8 done"><span style="width:75%"></span></div>
     <div class="ms-grid">
-      <div><span class="lbl">Done</span>19 / 24 <span class="muted">+4 ext. blocked</span></div>
+      <div><span class="lbl">Done</span>6 / 8</div>
       <div><span class="lbl">Target</span>11-11 → 11-13</div>
-      <div><span class="lbl">Actual</span>11-11 20:25 → <em>open</em></div>
-      <div><span class="lbl">Agent time</span>15:47:37</div>
-      <div><span class="lbl">Tokens</span>6,193,872</div>
+      <div><span class="lbl">Actual</span>11-11 20:52 → <em>open</em></div>
+      <div><span class="lbl">Agent time</span>11:12:14</div>
+      <div><span class="lbl">Tokens</span>1,616,258</div>
     </div>
   </div>
 <div class="ms">
     <div class="ms-head">
-      <div class="ms-name"><b>M4</b> Paper 2: causal / streaming decoder</div>
+      <div class="ms-name"><b>M4</b> Causal / streaming decoder (research)</div>
       <span class="badge b-ontrack">On track</span>
     </div>
-    <div class="bar" role="progressbar" aria-valuenow="67" aria-valuemin="0" aria-valuemax="100" title="6 of 9 done"><span style="width:67%"></span></div>
+    <div class="bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" title="6 of 8 done"><span style="width:75%"></span></div>
     <div class="ms-grid">
-      <div><span class="lbl">Done</span>6 / 9 <span class="muted">+1 ext. blocked</span></div>
+      <div><span class="lbl">Done</span>6 / 8</div>
       <div><span class="lbl">Target</span>11-11 → 11-13</div>
       <div><span class="lbl">Actual</span>11-12 20:41 → <em>open</em></div>
       <div><span class="lbl">Agent time</span>6:42:52</div>
@@ -229,6 +230,20 @@
       <div><span class="lbl">Actual</span>11-11 23:30 → <em>open</em></div>
       <div><span class="lbl">Agent time</span>0:17:27</div>
       <div><span class="lbl">Tokens</span>309,004</div>
+    </div>
+  </div>
+<div class="ms">
+    <div class="ms-head">
+      <div class="ms-name"><b>PUB</b> Publications (no deadline)</div>
+      <span class="badge b-nodl">No deadline</span>
+    </div>
+    <div class="bar" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" title="13 of 18 done"><span style="width:72%"></span></div>
+    <div class="ms-grid">
+      <div><span class="lbl">Done</span>13 / 18 <span class="muted">+6 ext. blocked</span></div>
+      <div><span class="lbl">Target</span><span class="muted">No deadline</span></div>
+      <div><span class="lbl">Actual</span>11-11 20:25 → <em>open</em></div>
+      <div><span class="lbl">Agent time</span>4:35:23</div>
+      <div><span class="lbl">Tokens</span>4,577,614</div>
     </div>
   </div>
 <div class="ms">
@@ -376,9 +391,9 @@
       <div class="ms-name"><b>P11</b> Research track</div>
       <span class="badge b-ontrack">On track</span>
     </div>
-    <div class="bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" title="0 of 4 done"><span style="width:0%"></span></div>
+    <div class="bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" title="0 of 3 done"><span style="width:0%"></span></div>
     <div class="ms-grid">
-      <div><span class="lbl">Done</span>0 / 4 <span class="muted">+1 ext. blocked</span></div>
+      <div><span class="lbl">Done</span>0 / 3</div>
       <div><span class="lbl">Target</span>11-16 → 12-31</div>
       <div><span class="lbl">Actual</span><span class="muted">Not started</span></div>
       <div><span class="lbl">Agent time</span>0:00:00</div>
@@ -416,11 +431,11 @@
   </div>
 
   <h2>Timeline</h2>
-  <div class="tl-box"><svg class="tl" viewBox="0 0 800 716" width="800" height="716" role="img" aria-label="Timeline: target window and actual window per milestone"><line x1="150" y1="30" x2="150" y2="694" class="grid"/><text x="182" y="14" class="ax" text-anchor="middle">11-07</text><text x="182" y="27" class="ax2" text-anchor="middle">Sat</text><line x1="214" y1="30" x2="214" y2="694" class="grid"/><text x="246" y="14" class="ax" text-anchor="middle">11-08</text><text x="246" y="27" class="ax2" text-anchor="middle">Sun</text><line x1="278" y1="30" x2="278" y2="694" class="grid"/><text x="310" y="14" class="ax" text-anchor="middle">11-09</text><text x="310" y="27" class="ax2" text-anchor="middle">Mon</text><line x1="342" y1="30" x2="342" y2="694" class="grid"/><text x="374" y="14" class="ax" text-anchor="middle">11-10</text><text x="374" y="27" class="ax2" text-anchor="middle">Tue</text><line x1="406" y1="30" x2="406" y2="694" class="grid"/><text x="438" y="14" class="ax" text-anchor="middle">11-11</text><text x="438" y="27" class="ax2" text-anchor="middle">Wed</text><line x1="470" y1="30" x2="470" y2="694" class="grid"/><text x="502" y="14" class="ax" text-anchor="middle">11-12</text><text x="502" y="27" class="ax2" text-anchor="middle">Thu</text><line x1="534" y1="30" x2="534" y2="694" class="grid"/><text x="566" y="14" class="ax" text-anchor="middle">11-13</text><text x="566" y="27" class="ax2" text-anchor="middle">Fri</text><line x1="598" y1="30" x2="598" y2="694" class="grid"/><text x="630" y="14" class="ax" text-anchor="middle">11-14</text><text x="630" y="27" class="ax2" text-anchor="middle">Sat</text><line x1="662" y1="30" x2="662" y2="694" class="grid"/><text x="694" y="14" class="ax ax-t" text-anchor="middle">11-15</text><text x="694" y="27" class="ax2" text-anchor="middle">Sun</text><line x1="726" y1="30" x2="726" y2="694" class="grid"/><text x="758" y="14" class="ax" text-anchor="middle">11-16</text><text x="758" y="27" class="ax2" text-anchor="middle">Mon</text><line x1="790" y1="30" x2="790" y2="694" class="grid"/><line x1="726" y1="30" x2="726" y2="694" class="tgtline"/><rect x="0" y="34" width="800" height="30" class="zebra"/><text x="6" y="53" class="rl"><tspan font-weight="700">R</tspan> Research &amp; setup</text><rect x="151" y="39" width="62" height="20" rx="4" class="tbar"><title>R target: 2026-11-07 → 2026-11-07</title></rect><rect x="209.11111111100763" y="44" width="6" height="10" rx="3" class="abar"><title>R actual: 11-07 22:10 → 11-08 00:04</title></rect><text x="6" y="83" class="rl"><tspan font-weight="700">M0</tspan> Setup</text><rect x="215" y="69" width="126" height="20" rx="4" class="tbar"><title>M0 target: 2026-11-08 → 2026-11-09</title></rect><rect x="214.2222222222481" y="74" width="113.55555555550382" height="10" rx="3" class="abar"><title>M0 actual: 11-08 00:05 → 11-09 18:40</title></rect><rect x="0" y="94" width="800" height="30" class="zebra"/><text x="6" y="113" class="rl"><tspan font-weight="700">M1</tspan> Baseline decoder</text><rect x="279" y="99" width="190" height="20" rx="4" class="tbar"><title>M1 target: 2026-11-09 → 2026-11-11</title></rect><rect x="244.2222222222481" y="104" width="336.5777777777985" height="10" rx="3" class="abar abar-open"><title>M1 actual: 11-08 11:20 → open (now 11-13 17:33)</title></rect><text x="6" y="143" class="rl"><tspan font-weight="700">M2</tspan> Trust core v0</text><rect x="279" y="129" width="190" height="20" rx="4" class="tbar"><title>M2 target: 2026-11-09 → 2026-11-11</title></rect><rect x="244.2222222222481" y="134" width="336.88888888875954" height="10" rx="3" class="abar abar-open"><title>M2 actual: 11-08 11:20 → open (now 11-13 17:33)</title></rect><rect x="0" y="154" width="800" height="30" class="zebra"/><text x="6" y="173" class="rl"><tspan font-weight="700">M3</tspan> Paper 1: calibr…</text><rect x="407" y="159" width="190" height="20" rx="4" class="tbar"><title>M3 target: 2026-11-11 → 2026-11-13</title></rect><rect x="460.4444444444962" y="164" width="120.35555555555038" height="10" rx="3" class="abar abar-open"><title>M3 actual: 11-11 20:25 → open (now 11-13 17:33)</title></rect><text x="6" y="203" class="rl"><tspan font-weight="700">M4</tspan> Paper 2: causal…</text><rect x="407" y="189" width="190" height="20" rx="4" class="tbar"><title>M4 target: 2026-11-11 → 2026-11-13</title></rect><rect x="525.155555555597" y="194" width="55.64444444444962" height="10" rx="3" class="abar abar-open"><title>M4 actual: 11-12 20:41 → open (now 11-13 17:33)</title></rect><rect x="0" y="214" width="800" height="30" class="zebra"/><text x="6" y="233" class="rl"><tspan font-weight="700">M5</tspan> Open benchmark …</text><rect x="535" y="219" width="126" height="20" rx="4" class="tbar"><title>M5 target: 2026-11-13 → 2026-11-14</title></rect><rect x="250.66666666674428" y="224" width="284.2222222222481" height="10" rx="3" class="abar"><title>M5 actual: 11-08 13:45 → 11-13 00:20</title></rect><text x="6" y="263" class="rl"><tspan font-weight="700">M6</tspan> Device adapters</text><rect x="599" y="249" width="126" height="20" rx="4" class="tbar"><title>M6 target: 2026-11-14 → 2026-11-15</title></rect><rect x="394.6666666667443" y="254" width="186.1333333333023" height="10" rx="3" class="abar abar-open"><title>M6 actual: 11-10 19:45 → open (now 11-13 17:33)</title></rect><rect x="0" y="274" width="800" height="30" class="zebra"/><text x="6" y="293" class="rl"><tspan font-weight="700">M7</tspan> Product pilots</text><rect x="599" y="279" width="126" height="20" rx="4" class="tbar"><title>M7 target: 2026-11-14 → 2026-11-15</title></rect><rect x="468.6666666667443" y="284" width="112.13333333330229" height="10" rx="3" class="abar abar-open"><title>M7 actual: 11-11 23:30 → open (now 11-13 17:33)</title></rect><text x="6" y="323" class="rl"><tspan font-weight="700">P1</tspan> Spec to 1.0 (RC)</text><rect x="727" y="309" width="62" height="20" rx="4" class="tbar"><title>P1 target: 2026-11-16 → 2027-02-28</title></rect><rect x="0" y="334" width="800" height="30" class="zebra"/><text x="6" y="353" class="rl"><tspan font-weight="700">P2</tspan> Reference SDKs</text><rect x="791" y="339" width="2" height="20" rx="4" class="tbar"><title>P2 target: 2026-12-01 → 2027-05-31</title></rect><text x="6" y="383" class="rl"><tspan font-weight="700">P3</tspan> Collector (pipe…</text><rect x="791" y="369" width="2" height="20" rx="4" class="tbar"><title>P3 target: 2027-01-04 → 2027-06-30</title></rect><rect x="0" y="394" width="800" height="30" class="zebra"/><text x="6" y="413" class="rl"><tspan font-weight="700">P4</tspan> Device + toolki…</text><rect x="727" y="399" width="62" height="20" rx="4" class="tbar"><title>P4 target: 2026-11-16 → 2027-06-30</title></rect><text x="6" y="443" class="rl"><tspan font-weight="700">P5</tspan> Trust layer, pr…</text><rect x="791" y="429" width="2" height="20" rx="4" class="tbar"><title>P5 target: 2026-12-01 → 2027-09-30</title></rect><rect x="0" y="454" width="800" height="30" class="zebra"/><text x="6" y="473" class="rl"><tspan font-weight="700">P6</tspan> Public benchmar…</text><rect x="727" y="459" width="62" height="20" rx="4" class="tbar"><title>P6 target: 2026-11-16 → 2027-01-31</title></rect><text x="6" y="503" class="rl"><tspan font-weight="700">P7</tspan> Conformance + c…</text><rect x="791" y="489" width="2" height="20" rx="4" class="tbar"><title>P7 target: 2027-02-01 → 2027-07-31</title></rect><rect x="0" y="514" width="800" height="30" class="zebra"/><text x="6" y="533" class="rl"><tspan font-weight="700">P8</tspan> Docs, website, …</text><rect x="791" y="519" width="2" height="20" rx="4" class="tbar"><title>P8 target: 2026-12-15 → 2027-04-30</title></rect><text x="6" y="563" class="rl"><tspan font-weight="700">P9</tspan> Governance + co…</text><rect x="727" y="549" width="62" height="20" rx="4" class="tbar"><title>P9 target: 2026-11-16 → 2027-03-31</title></rect><rect x="0" y="574" width="800" height="30" class="zebra"/><text x="6" y="593" class="rl"><tspan font-weight="700">P10</tspan> Adoption</text><rect x="791" y="579" width="2" height="20" rx="4" class="tbar"><title>P10 target: 2027-01-15 → 2027-12-31</title></rect><text x="6" y="623" class="rl"><tspan font-weight="700">P11</tspan> Research track</text><rect x="727" y="609" width="62" height="20" rx="4" class="tbar"><title>P11 target: 2026-11-16 → 2027-12-31</title></rect><rect x="0" y="634" width="800" height="30" class="zebra"/><text x="6" y="653" class="rl"><tspan font-weight="700">P12</tspan> Beyond text: in…</text><rect x="791" y="639" width="2" height="20" rx="4" class="tbar"><title>P12 target: 2027-07-01 → 2027-12-31</title></rect><rect x="457.11111111100763" y="644" width="123.68888888903894" height="10" rx="3" class="abar abar-open"><title>P12 actual: 11-11 19:10 → open (now 11-13 17:33)</title></rect><text x="6" y="683" class="rl"><tspan font-weight="700">P13</tspan> Public benchmar…</text><rect x="791" y="669" width="2" height="20" rx="4" class="tbar"><title>P13 target: 2027-07-01 → 2027-12-31</title></rect><line x1="580.8000000000466" y1="30" x2="580.8000000000466" y2="698" class="today"/><text x="583.8000000000466" y="710" class="today-t">Today 11-13 17:33</text><text x="723" y="710" class="tgt-t" text-anchor="end">Target end</text></svg></div>
+  <div class="tl-box"><svg class="tl" viewBox="0 0 800 746" width="800" height="746" role="img" aria-label="Timeline: target window and actual window per milestone"><line x1="150" y1="30" x2="150" y2="724" class="grid"/><text x="182" y="14" class="ax" text-anchor="middle">11-07</text><text x="182" y="27" class="ax2" text-anchor="middle">Sat</text><line x1="214" y1="30" x2="214" y2="724" class="grid"/><text x="246" y="14" class="ax" text-anchor="middle">11-08</text><text x="246" y="27" class="ax2" text-anchor="middle">Sun</text><line x1="278" y1="30" x2="278" y2="724" class="grid"/><text x="310" y="14" class="ax" text-anchor="middle">11-09</text><text x="310" y="27" class="ax2" text-anchor="middle">Mon</text><line x1="342" y1="30" x2="342" y2="724" class="grid"/><text x="374" y="14" class="ax" text-anchor="middle">11-10</text><text x="374" y="27" class="ax2" text-anchor="middle">Tue</text><line x1="406" y1="30" x2="406" y2="724" class="grid"/><text x="438" y="14" class="ax" text-anchor="middle">11-11</text><text x="438" y="27" class="ax2" text-anchor="middle">Wed</text><line x1="470" y1="30" x2="470" y2="724" class="grid"/><text x="502" y="14" class="ax" text-anchor="middle">11-12</text><text x="502" y="27" class="ax2" text-anchor="middle">Thu</text><line x1="534" y1="30" x2="534" y2="724" class="grid"/><text x="566" y="14" class="ax" text-anchor="middle">11-13</text><text x="566" y="27" class="ax2" text-anchor="middle">Fri</text><line x1="598" y1="30" x2="598" y2="724" class="grid"/><text x="630" y="14" class="ax" text-anchor="middle">11-14</text><text x="630" y="27" class="ax2" text-anchor="middle">Sat</text><line x1="662" y1="30" x2="662" y2="724" class="grid"/><text x="694" y="14" class="ax ax-t" text-anchor="middle">11-15</text><text x="694" y="27" class="ax2" text-anchor="middle">Sun</text><line x1="726" y1="30" x2="726" y2="724" class="grid"/><text x="758" y="14" class="ax" text-anchor="middle">11-16</text><text x="758" y="27" class="ax2" text-anchor="middle">Mon</text><line x1="790" y1="30" x2="790" y2="724" class="grid"/><line x1="726" y1="30" x2="726" y2="724" class="tgtline"/><rect x="0" y="34" width="800" height="30" class="zebra"/><text x="6" y="53" class="rl"><tspan font-weight="700">R</tspan> Research &amp; setup</text><rect x="151" y="39" width="62" height="20" rx="4" class="tbar"><title>R target: 2026-11-07 → 2026-11-07</title></rect><rect x="209.11111111100763" y="44" width="6" height="10" rx="3" class="abar"><title>R actual: 11-07 22:10 → 11-08 00:04</title></rect><text x="6" y="83" class="rl"><tspan font-weight="700">M0</tspan> Setup</text><rect x="215" y="69" width="126" height="20" rx="4" class="tbar"><title>M0 target: 2026-11-08 → 2026-11-09</title></rect><rect x="214.2222222222481" y="74" width="113.55555555550382" height="10" rx="3" class="abar"><title>M0 actual: 11-08 00:05 → 11-09 18:40</title></rect><rect x="0" y="94" width="800" height="30" class="zebra"/><text x="6" y="113" class="rl"><tspan font-weight="700">M1</tspan> Baseline decoder</text><rect x="279" y="99" width="190" height="20" rx="4" class="tbar"><title>M1 target: 2026-11-09 → 2026-11-11</title></rect><rect x="244.2222222222481" y="104" width="342.62222222215496" height="10" rx="3" class="abar abar-open"><title>M1 actual: 11-08 11:20 → open (now 11-13 19:49)</title></rect><text x="6" y="143" class="rl"><tspan font-weight="700">M2</tspan> Trust core v0</text><rect x="279" y="129" width="190" height="20" rx="4" class="tbar"><title>M2 target: 2026-11-09 → 2026-11-11</title></rect><rect x="244.2222222222481" y="134" width="342.62222222215496" height="10" rx="3" class="abar abar-open"><title>M2 actual: 11-08 11:20 → open (now 11-13 19:49)</title></rect><rect x="0" y="154" width="800" height="30" class="zebra"/><text x="6" y="173" class="rl"><tspan font-weight="700">M3</tspan> Trust-layer val…</text><rect x="407" y="159" width="190" height="20" rx="4" class="tbar"><title>M3 target: 2026-11-11 → 2026-11-13</title></rect><rect x="461.6444444444496" y="164" width="125.19999999995343" height="10" rx="3" class="abar abar-open"><title>M3 actual: 11-11 20:52 → open (now 11-13 19:49)</title></rect><text x="6" y="203" class="rl"><tspan font-weight="700">M4</tspan> Causal / stream…</text><rect x="407" y="189" width="190" height="20" rx="4" class="tbar"><title>M4 target: 2026-11-11 → 2026-11-13</title></rect><rect x="525.155555555597" y="194" width="61.688888888806105" height="10" rx="3" class="abar abar-open"><title>M4 actual: 11-12 20:41 → open (now 11-13 19:49)</title></rect><rect x="0" y="214" width="800" height="30" class="zebra"/><text x="6" y="233" class="rl"><tspan font-weight="700">M5</tspan> Open benchmark …</text><rect x="535" y="219" width="126" height="20" rx="4" class="tbar"><title>M5 target: 2026-11-13 → 2026-11-14</title></rect><rect x="250.66666666674428" y="224" width="284.2222222222481" height="10" rx="3" class="abar"><title>M5 actual: 11-08 13:45 → 11-13 00:20</title></rect><text x="6" y="263" class="rl"><tspan font-weight="700">M6</tspan> Device adapters</text><rect x="599" y="249" width="126" height="20" rx="4" class="tbar"><title>M6 target: 2026-11-14 → 2026-11-15</title></rect><rect x="394.6666666667443" y="254" width="192.17777777765878" height="10" rx="3" class="abar abar-open"><title>M6 actual: 11-10 19:45 → open (now 11-13 19:49)</title></rect><rect x="0" y="274" width="800" height="30" class="zebra"/><text x="6" y="293" class="rl"><tspan font-weight="700">M7</tspan> Product pilots</text><rect x="599" y="279" width="126" height="20" rx="4" class="tbar"><title>M7 target: 2026-11-14 → 2026-11-15</title></rect><rect x="468.6666666667443" y="284" width="118.17777777765878" height="10" rx="3" class="abar abar-open"><title>M7 actual: 11-11 23:30 → open (now 11-13 19:49)</title></rect><text x="6" y="323" class="rl"><tspan font-weight="700">PUB</tspan> Publications (n…</text><text x="156" y="323" class="ax2">No deadline (outside timelines)</text><rect x="460.4444444444962" y="314" width="126.39999999990687" height="10" rx="3" class="abar abar-open"><title>PUB actual: 11-11 20:25 → open (now 11-13 19:49)</title></rect><rect x="0" y="334" width="800" height="30" class="zebra"/><text x="6" y="353" class="rl"><tspan font-weight="700">P1</tspan> Spec to 1.0 (RC)</text><rect x="727" y="339" width="62" height="20" rx="4" class="tbar"><title>P1 target: 2026-11-16 → 2027-02-28</title></rect><text x="6" y="383" class="rl"><tspan font-weight="700">P2</tspan> Reference SDKs</text><rect x="791" y="369" width="2" height="20" rx="4" class="tbar"><title>P2 target: 2026-12-01 → 2027-05-31</title></rect><rect x="0" y="394" width="800" height="30" class="zebra"/><text x="6" y="413" class="rl"><tspan font-weight="700">P3</tspan> Collector (pipe…</text><rect x="791" y="399" width="2" height="20" rx="4" class="tbar"><title>P3 target: 2027-01-04 → 2027-06-30</title></rect><text x="6" y="443" class="rl"><tspan font-weight="700">P4</tspan> Device + toolki…</text><rect x="727" y="429" width="62" height="20" rx="4" class="tbar"><title>P4 target: 2026-11-16 → 2027-06-30</title></rect><rect x="0" y="454" width="800" height="30" class="zebra"/><text x="6" y="473" class="rl"><tspan font-weight="700">P5</tspan> Trust layer, pr…</text><rect x="791" y="459" width="2" height="20" rx="4" class="tbar"><title>P5 target: 2026-12-01 → 2027-09-30</title></rect><text x="6" y="503" class="rl"><tspan font-weight="700">P6</tspan> Public benchmar…</text><rect x="727" y="489" width="62" height="20" rx="4" class="tbar"><title>P6 target: 2026-11-16 → 2027-01-31</title></rect><rect x="0" y="514" width="800" height="30" class="zebra"/><text x="6" y="533" class="rl"><tspan font-weight="700">P7</tspan> Conformance + c…</text><rect x="791" y="519" width="2" height="20" rx="4" class="tbar"><title>P7 target: 2027-02-01 → 2027-07-31</title></rect><text x="6" y="563" class="rl"><tspan font-weight="700">P8</tspan> Docs, website, …</text><rect x="791" y="549" width="2" height="20" rx="4" class="tbar"><title>P8 target: 2026-12-15 → 2027-04-30</title></rect><rect x="0" y="574" width="800" height="30" class="zebra"/><text x="6" y="593" class="rl"><tspan font-weight="700">P9</tspan> Governance + co…</text><rect x="727" y="579" width="62" height="20" rx="4" class="tbar"><title>P9 target: 2026-11-16 → 2027-03-31</title></rect><text x="6" y="623" class="rl"><tspan font-weight="700">P10</tspan> Adoption</text><rect x="791" y="609" width="2" height="20" rx="4" class="tbar"><title>P10 target: 2027-01-15 → 2027-12-31</title></rect><rect x="0" y="634" width="800" height="30" class="zebra"/><text x="6" y="653" class="rl"><tspan font-weight="700">P11</tspan> Research track</text><rect x="727" y="639" width="62" height="20" rx="4" class="tbar"><title>P11 target: 2026-11-16 → 2027-12-31</title></rect><text x="6" y="683" class="rl"><tspan font-weight="700">P12</tspan> Beyond text: in…</text><rect x="791" y="669" width="2" height="20" rx="4" class="tbar"><title>P12 target: 2027-07-01 → 2027-12-31</title></rect><rect x="457.11111111100763" y="674" width="129.73333333339542" height="10" rx="3" class="abar abar-open"><title>P12 actual: 11-11 19:10 → open (now 11-13 19:49)</title></rect><rect x="0" y="694" width="800" height="30" class="zebra"/><text x="6" y="713" class="rl"><tspan font-weight="700">P13</tspan> Public benchmar…</text><rect x="791" y="699" width="2" height="20" rx="4" class="tbar"><title>P13 target: 2027-07-01 → 2027-12-31</title></rect><line x1="586.844444444403" y1="30" x2="586.844444444403" y2="728" class="today"/><text x="589.844444444403" y="740" class="today-t">Today 11-13 19:49</text><text x="723" y="740" class="tgt-t" text-anchor="end">Target end</text></svg></div>
   <div class="legend"><span><i class="lg-t"></i>Target window</span><span><i class="lg-a"></i>Actual window (lighter = still open)</span><span><i class="lg-n"></i>Today</span><span><i class="lg-g"></i>Target end (2026-11-15)</span></div>
 
   <h2>Tasks</h2>
-  <p class="note">≈ = approximate time. Elapsed = wall-clock time from start to finish. Agent time = sum of subagent run durations. Externally blocked tasks depend on outside people. They do not count as late and are not in the "done" total.</p>
+  <p class="note">≈ = approximate time. Elapsed = wall-clock time from start to finish. Agent time = sum of subagent run durations. Externally blocked tasks depend on outside people. They do not count as late and are not in the "done" total. Milestones marked "No deadline" (for example PUB, publications) have no due date, never count as late and are not part of the 2026-11-15 target.</p>
   <table>
     <thead><tr><th>ID</th><th>Task</th><th>Status</th><th>Start</th><th>Finish</th><th>Elapsed</th><th>Agent time</th><th>Tokens</th><th>Tools</th><th>Notes</th></tr></thead>
     <tbody>
@@ -1336,12 +1351,12 @@
       <td data-l="Start" class="num"><span>11-13 17:10 <span class="approx" title="Approximate time">≈</span></span></td>
       <td data-l="Finish" class="num"><span>11-13 17:40 <span class="approx" title="Approximate time">≈</span></span></td>
       <td data-l="Elapsed" class="num"><span>30 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:00:00</span></td>
-      <td data-l="Tokens" class="num"><span>0</span></td>
-      <td data-l="Tools" class="num"><span>0</span></td>
-      <td data-l="Notes" class="notes"><span>Mechanism: empty top-1 gets guard risk 1.0 (not 0); grid value commit_max_risk 1.0 makes risk &lt;= limit always true (guard limit off); T12 word decoder returns '' on most uniform streams with p_top1 ~1. Trust pool: only the fitted 0.1 blocked 304 empty top-1 (at 1.0: 321 commits). Paper 1 T15: 6 refits reproduce Tab. 1, 0 empty commits; repeated splits chose 1.0 in 53/200 + 65/200 but 0 empty top-1 in 35,816 cached lists -&gt; no number changes (wording erratum candidate). Fix: fidetype.trust.content CommitGate/GatedPolicy, FrozenTrustConfig.commit_gate (empty = off, ids unchanged), streaming applies it. T12 dry run uniform commits 335 -&gt; gate A 15 -&gt; gate B 0, test unchanged. FEP-0001 rule 9 (SHOULD NOT). v5 suggestion noted, not applied. pytest 569 passed / 4 skipped. experiments/2026-11-13-m2-18-empty-commits/results.md Runs: M2-18 empty commits (trace, T12 dry-run/pool diagnosis, T15 refits, commit gate, FEP-0001 rule 9, wiki, records)</span></td>
+      <td data-l="Agent time" class="num"><span>0:23:27</span></td>
+      <td data-l="Tokens" class="num"><span>327,454</span></td>
+      <td data-l="Tools" class="num"><span>125</span></td>
+      <td data-l="Notes" class="notes"><span>Mechanism: empty top-1 gets guard risk 1.0 (not 0); grid value commit_max_risk 1.0 makes risk &lt;= limit always true (guard limit off); T12 word decoder returns '' on most uniform streams with p_top1 ~1. Trust pool: only the fitted 0.1 blocked 304 empty top-1 (at 1.0: 321 commits). Paper 1 T15: 6 refits reproduce Tab. 1, 0 empty commits; repeated splits chose 1.0 in 53/200 + 65/200 but 0 empty top-1 in 35,816 cached lists -&gt; no number changes (wording erratum candidate). Fix: fidetype.trust.content CommitGate/GatedPolicy, FrozenTrustConfig.commit_gate (empty = off, ids unchanged), streaming applies it. T12 dry run uniform commits 335 -&gt; gate A 15 -&gt; gate B 0, test unchanged. FEP-0001 rule 9 (SHOULD NOT). v5 suggestion noted, not applied. pytest 569 passed / 4 skipped. experiments/2026-11-13-m2-18-empty-commits/results.md Runs: M2-18 empty-commit check</span></td>
     </tr>
-<tr class="grp"><th colspan="10">M3 · Paper 1: calibrated, abstaining brain-to-text <span class="muted">(19/24 done, 4 ext. blocked)</span></th></tr><tr class="">
+<tr class="grp"><th colspan="10">M3 · Trust-layer validation (research) <span class="muted">(6/8 done)</span></th></tr><tr class="">
       <td data-l="ID"><span><code>M3-01</code></span></td>
       <td data-l="Task" class="title"><span>Run experiments on SpanishBCBL and on the simulator</span></td>
       <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
@@ -1364,83 +1379,6 @@
       <td data-l="Tools" class="num"><span>—</span></td>
       <td data-l="Notes" class="notes"><span></span></td>
     </tr><tr class="">
-      <td data-l="ID"><span><code>M3-03</code></span></td>
-      <td data-l="Task" class="title"><span>Position the paper against the closest work</span></td>
-      <td data-l="Status"><span><span class="chip s-prog">In progress</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 20:25</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>45 h 08 min (open)</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>Huang et al. 2025; conformal ASR; RAS metric. 2026-11-11: related-work map in papers/paper1/outline.md section 6. To do: source pages for Huang 2025, Kim 2025, Cai 2024, Ernez 2023, Damri 2026, RAS (check the formula).</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-04</code></span></td>
-      <td data-l="Task" class="title"><span>Write the paper</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 21:03 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-12 04:12 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>7 h 09 min</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>Outline done (M3-09). 2026-11-12: drafting and the review-revise loop are finished (drafts v0-v5, review rounds 1-5; work in M3-09..M3-22). Final: papers/paper1/draft-v5.pdf + draft-v5-supplement.pdf. Submission waits for author decisions (M3-23).</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-05</code></span></td>
-      <td data-l="Task" class="title"><span>Release the arXiv preprint and the code</span></td>
-      <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
-      <td data-l="Start" class="num"><span>—</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>—</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>The code release is in our control. The arXiv post may wait for M3-07.</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-06</code></span></td>
-      <td data-l="Task" class="title"><span>Choose a venue</span></td>
-      <td data-l="Status"><span><span class="chip s-prog">In progress</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 20:25</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>45 h 08 min (open)</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>NeurIPS / ICLR workshops, J. Neural Eng., IEEE TNSRE. 2026-11-11 shortlist (outline section 12): arXiv first, then J. Neural Eng. or IEEE TNSRE; workshop in parallel; NeurIPS D&amp;B after P13; CHI needs a user study. The user decides.</span></td>
-    </tr><tr class="is-ext">
-      <td data-l="ID"><span><code>M3-07</code></span></td>
-      <td data-l="Task" class="title"><span>Get arXiv endorsement (if arXiv requires it)</span></td>
-      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
-      <td data-l="Start" class="num"><span>—</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>—</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>Depends on an outside endorser. Not counted as late.</span></td>
-    </tr><tr class="is-ext">
-      <td data-l="ID"><span><code>M3-08</code></span></td>
-      <td data-l="Task" class="title"><span>Peer review of Paper 1</span></td>
-      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
-      <td data-l="Start" class="num"><span>—</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>—</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>Depends on venue reviewers. Not counted as late.</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-09</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 detailed outline + results inventory</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 20:25 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-11 20:50 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>25 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:07:23</span></td>
-      <td data-l="Tokens" class="num"><span>170,468</span></td>
-      <td data-l="Tools" class="num"><span>40</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/outline.md + wiki/questions/paper1-plan.md: titles, abstract, contributions, T1-T7 / F1-F7 plan, related-work map, limitations, licence statement, 27 inventory rows, 15 gaps (G1: trust harness on the async M1-09 streams), reproducibility plan, venues. Runs: outline + results inventory</span></td>
-    </tr><tr class="">
       <td data-l="ID"><span><code>M3-10</code></span></td>
       <td data-l="Task" class="title"><span>Paper 1 gap G1: trust harness, null audit, CRC/LTT, online on the async M1-09 MEG streams (+ sentence/participant CIs)</span></td>
       <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
@@ -1451,39 +1389,6 @@
       <td data-l="Tokens" class="num"><span>214,644</span></td>
       <td data-l="Tools" class="num"><span>70</span></td>
       <td data-l="Notes" class="notes"><span>experiments/2026-11-11-g1-async-meg-trust/ (CPU only). Async: always commit 2.58, trust 3.20, gaze 3.155 eWPM; wrong-commit 0.997 -&gt; 0; trust - gaze CI sentences [-0.04, +0.15], participants [-0.07, +0.22]. Null input: trust 0 % commits. CRC 0.0193 / LTT 0.0214. Online aci 0.0188, aci_window 0.0078. Outline R6, R7, R19 final; G1 done; G3 partly. Runs: G1 async MEG trust analysis</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-11</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 LaTeX draft v0 (figures, diagrams, PDF, author guide)</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 21:03 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-11 21:35 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>32 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:26:17</span></td>
-      <td data-l="Tokens" class="num"><span>383,018</span></td>
-      <td data-l="Tools" class="num"><span>169</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/latex/ (Tectonic 0.17.0, natbib + bibtex) -&gt; papers/paper1/draft-v0.pdf, 23 pages, 0 undefined refs. 3 TikZ diagrams + 8 matplotlib figures from committed JSON (papers/paper1/make_figures.py). MEG rows from G1 async with sentence-cluster CIs. Red todo markers for G2-G10, G12, G14, F5, appendix D-F and user decisions; 18 bib entries TODO-verify. Guide: how-to-read-this-draft.md; style-notes.md; README.md (toolchain and build). Runs: LaTeX draft v0</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-12</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 round-1 reviews (domain + methods)</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 21:36 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-11 21:46 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>10 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:19:07 <span class="muted">(2 runs)</span></span></td>
-      <td data-l="Tokens" class="num"><span>402,060</span></td>
-      <td data-l="Tools" class="num"><span>76</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/reviews/round-1-domain.md, round-1-methods.md. Both: major revision. Main points: always-offer baseline, error among commits, re-scope claims, drift baseline reuses calibration data, guarantee wording, user-model asymmetry, missing BCI literature, length. Runs: domain reviewer (BCI / neural engineering); methods reviewer (statistics, conformal, writing)</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-13</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 revision round 1 (writing, re-analysis of committed files, figures) -&gt; draft v1</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 21:47 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-11 22:40 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>53 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:38:38 <span class="muted">(2 runs)</span></span></td>
-      <td data-l="Tokens" class="num"><span>618,087</span></td>
-      <td data-l="Tools" class="num"><span>227</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/draft-v1.pdf (32 pages; main text 1-20), reviews/round-1-response.md, analysis_r1.py -&gt; data/r1-derived.json. New title, structured abstract, problem-setting section, always-offer rows (B2T), error among commits, LTT p90 + calibration-conditional risk, aci certificates and a-priori bounds, controls in two classes, MEG guard-AUROC panel, selective-risk panel, 33 verified references. 23 red TODO R1 markers wait for experiments/2026-11-12-paper1-r1-analyses (round 2). Runs: reference verification (18 TODO-verify resolved, 33 new entries); reviser (draft v1)</span></td>
     </tr><tr class="">
       <td data-l="ID"><span><code>M3-14</code></span></td>
       <td data-l="Task" class="title"><span>Paper 1 R1 new numbers: clean drift, baselines + selective risk, unified ablation, user model, leakage, small n_cal, fix checks, 2 MEG seeds (GPU)</span></td>
@@ -1496,28 +1401,6 @@
       <td data-l="Tools" class="num"><span>—</span></td>
       <td data-l="Notes" class="notes"><span>experiments/2026-11-12-paper1-r1-analyses/SUMMARY.md. CPU parts done 23:30: drift does not survive a clean CRC calibration (B2T ours 0.0245 / 0.0600, published 0.048 / 0.049, sEMG xsession 0.056, none significant vs exchangeable splits); trust - always-offer +0.18 / +0.66 eWPM on B2T, 0 elsewhere; error among commits 0.25 / 0.09 (trust), MEG CRC 0.95; guard hurts on B2T; sEMG xsubject with LM re-tuned after calibration 4.84 &gt; gaze 4.27; LM-assisted gaze 4.10 (MEG) / 6.19 (sEMG) beats trust on MEG and weak sEMG; leakage-cleaned LMs leave numbers unchanged. GPU part running: queue-2026-11-12-m1-09-seeds (seeds 1, 2 of r4a -&gt; r4b full-medium + infer + beam), ETA about 03:00 2026-11-12; mark done when the beam tables exist. GPU part done 01:49 (QUEUE DONE): seeds 0/1/2 test CER greedy 0.506/0.502/0.592, beam+LM 0.475/0.467/0.567; trust harness per seed in experiments/2026-11-12-paper1-r3-analyses/meg-seeds/.</span></td>
     </tr><tr class="">
-      <td data-l="ID"><span><code>M3-15</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 revision round 2 (new R1 numbers into the paper, safety-first reframe, length) -&gt; draft v2</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 23:24 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-11 23:58 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>34 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:34:02</span></td>
-      <td data-l="Tokens" class="num"><span>461,697</span></td>
-      <td data-l="Tools" class="num"><span>215</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/draft-v2.pdf (29 pages; main text 1-15). New title subtitle (risk-controlled commit decisions); safety is the primary claim, speed secondary and user-model dependent; drift claim removed (clean calibration: offline CRC 0.0245-0.0600, data-reuse artefact reported as a lesson); main table rebuilt from baselines.json (always offer, plain threshold, CRC clean, gaze + word completion); new user-model figure, clean-calibration table, ablation + leakage appendices, small-n CRC table; guard kept as pre-specified with plain threshold reported next to it. 5 main figures, 3 main tables. Open: \todo{seeds} (MEG GPU seeds), Card supplement check, author items. Change list: papers/paper1/reviews/round-2-changes.md. Runs: reviser (draft v2)</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-16</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 round-3 reviews (handling editor + statistics)</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-11 23:59 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-12 00:13 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>14 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:24:53 <span class="muted">(2 runs)</span></span></td>
-      <td data-l="Tokens" class="num"><span>513,379</span></td>
-      <td data-l="Tools" class="num"><span>128</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/reviews/round-3-editor.md, round-3-stats.md. Both: major revision. Main points: headline is the plug-in (no guarantee, 0.059 &gt; alpha); CRC not binding (0.059 -&gt; 0.0245 is the fit-A refit); abstract 'never significantly above' false (p = 0.012); repeated deployment splits; selective-risk controller (SGR); MEG sentence-level exchangeability; sEMG near-variant exclusion; Holm, zero-event bounds, one bootstrap seed; run time; seeds. Runs: handling editor (JNE); statistics / risk-control reviewer</span></td>
-    </tr><tr class="">
       <td data-l="ID"><span><code>M3-17</code></span></td>
       <td data-l="Task" class="title"><span>Paper 1 R3 new numbers: repeated deployment splits, selective-risk controller, deployable rule, B2T retune on fit-A, MEG sentence-grouped CRC, sEMG exclusion, unified CIs, run time, MEG seeds</span></td>
       <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
@@ -1529,28 +1412,6 @@
       <td data-l="Tools" class="num"><span>222</span></td>
       <td data-l="Notes" class="notes"><span>experiments/2026-11-12-paper1-r3-analyses/SUMMARY.md. CPU parts done 01:15: 50 repeated deployment splits: clean pure CRC mean 0.0456 (B2T ours) / 0.0489 (published) &lt;= alpha, but 34-42% of single splits &gt; alpha; LTT max-rule &gt; alpha in 8% / 2% of splits (&lt;= delta); reuse raises CRC on B2T ours by +0.009 (p 0.003), none on published / sEMG; 0.0588 -&gt; 0.0245 is the fit-A policy-grid choice (CRC adds 0); selective risk &lt;= 0.10 reachable only for the published gate (11% commits); sEMG near-variant exclusion: trust 6.97 / 4.08 / 3.69, gaze beats trust cross-subject; MEG sentence-level CRC infeasible (&lt; 19 sentences); B2T retune on fit-A: same decoder; Holm ours-A 0.072; unified CIs unified-ci/results/ci.json (seed 20261112, B 2000); trust layer 0.18-0.30 ms per decision.  MEG seeds done: CER 0.533 +- 0.051 (greedy), 0.503 +- 0.056 (beam+LM); 0 commits on every seed; seed 2 trust - gaze [-0.30, -0.05]. Runs: R3 analyses (CPU) + MEG seed collection</span></td>
     </tr><tr class="">
-      <td data-l="ID"><span><code>M3-18</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 revision round 3 -&gt; draft v3</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-12 01:52 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-12 02:18 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>27 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:27:27</span></td>
-      <td data-l="Tokens" class="num"><span>456,315</span></td>
-      <td data-l="Tools" class="num"><span>133</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/draft-v3.pdf (37 pages; main text 1-17 incl. ethics). New title: 'When should a neural text-entry decoder commit? Risk-controlled commits from a decoder-agnostic trust layer'. Primary row = LTT max-rule on clean calibration (50 repeated deployments: mean 0.030 / 0.031, &gt; alpha in 8% / 2%); plug-in labelled no guarantee; 0.059 -&gt; 0.0245 attributed to the fit-A policy grid; selective-risk section + table (beta 0.10 only for the published gate); data-reuse claim corrected (+0.009 ours only; Holm 0.072; power stated); sEMG exclusion rows; MEG no sentence-level guarantee + seeds; unified CIs, sign tests, CP bounds, run time; Algorithms 1-2; 12 verified AAC/BCI/risk references; frozen configuration tagged paper1-v3-frozen-config. Response: papers/paper1/round-3-response.md. Next: round-4 fresh reviews. Runs: reviser (draft v3)</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-19</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 round-4 reviews</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-12 02:19 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-12 02:30 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>11 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:18:29 <span class="muted">(2 runs)</span></span></td>
-      <td data-l="Tokens" class="num"><span>405,561</span></td>
-      <td data-l="Tools" class="num"><span>94</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/reviews/round-4-editor.md (major revision: forward-chaining test, published-gate bonus, no-guard rows, reuse p-value, comparator) and round-4-stats.md (major revision: random re-splits are not deployments, per-day risk (published day 34 = 0.102 under LTT max), joint rule has no selective guarantee, exceedance CIs, App. R population risk biased low, reuse family of 12). Runs: editor review (round 4); statistics review (round 4)</span></td>
-    </tr><tr class="">
       <td data-l="ID"><span><code>M3-20</code></span></td>
       <td data-l="Task" class="title"><span>Paper 1 round-4 analyses</span></td>
       <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
@@ -1561,72 +1422,6 @@
       <td data-l="Tokens" class="num"><span>418,122</span></td>
       <td data-l="Tools" class="num"><span>159</span></td>
       <td data-l="Notes" class="notes"><span>experiments/2026-11-12-paper1-r4-analyses/SUMMARY.md. Forward-chaining (14 B2T days, calibration before test): LTT max pooled 0.010-0.027, &gt; alpha on 0-2 of 10-13 days, never significant. Per-day: published day 34 = 0.102 under LTT max (fixed splits 8/50). App. R population exceedance biased low -&gt; 4.7% / 4.1% with replacement. Joint LTT beta 0.10: published 7% commits, others 0. Plain threshold: safe on real data but commits 203/300 uniform controls on our decoder (frozen config fails). Bonus 2.0 hand-set, low sensitivity; published alone never commits. Reuse: only B2T ours survives Holm + day jackknife. MEG CIs, 0.0037, 0.38% verified; ECE/AUROC CIs. 1,050 split tables cached outside the repo. Runs: R4 analyses (CPU)</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-21</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 revision round 4 -&gt; draft v4</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-12 03:28 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-12 03:54 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>27 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:31:19</span></td>
-      <td data-l="Tokens" class="num"><span>441,329</span></td>
-      <td data-l="Tools" class="num"><span>162</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/draft-v4.pdf + draft-v4-supplement.pdf; round-4-response.md. New title (stream-level). Time-ordered deployment test is contribution 2; 'repeated deployments' renamed random re-splits; per-day scope (published day 34 = 0.102); frozen config = guard + LTT max (v3 plain threshold committed 198/300 uniform controls; guard: 0/300, v4-derived/guard_controls.py) -&gt; new tag paper1-v4-frozen-config (v3 tag kept); joint LTT replaces max(SGR, CRC max); published gate = two-decoder agreement; abstract 249 words + NCT00912041; main text ~7,800 words, appendices -&gt; supplement (xr-hyper). Runs: reviser (draft v4)</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-22</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 round-5 final review and fix pass -&gt; v5</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-12 03:56</span></td>
-      <td data-l="Finish" class="num"><span>11-12 04:12</span></td>
-      <td data-l="Elapsed" class="num"><span>15 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:14:40</span></td>
-      <td data-l="Tokens" class="num"><span>313,561</span></td>
-      <td data-l="Tools" class="num"><span>93</span></td>
-      <td data-l="Notes" class="notes"><span>papers/paper1/reviews/round-5-final.md (minor revision; 32 numbers traced, 0 mismatches; 21 issues: 18 fixed, 2 no change, 1 cosmetic open; A1-A6 need new data or analysis). papers/paper1/draft-v5.pdf (22 pp) + draft-v5-supplement.pdf (17 pp), clean builds. Guard-on-real-data claim corrected; abstract 250 words; keywords; Sec. 7 tag sentence; references completed. No result changed; git tags untouched. Runs: final review + fix pass (draft v5)</span></td>
-    </tr><tr class="is-ext">
-      <td data-l="ID"><span><code>M3-23</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 submission (author decisions, venue)</span></td>
-      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
-      <td data-l="Start" class="num"><span>—</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>—</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>2026-11-12 evening: the author decided arXiv first; author, funding, competing interests, AI-assistance and ethics wording, licence (CC BY 4.0) and archive (GitHub URL + tag instead of a Zenodo DOI) are filled (M3-24). The arXiv submission is done by the user (papers/paper1/final/SUBMIT.md); arXiv may need an endorsement. Still open for a journal: IOP template switch, cover letter, suggested reviewers. Not counted as late.</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-24</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 final arXiv package</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-12 20:30 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-12 20:58 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>28 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:10:42</span></td>
-      <td data-l="Tokens" class="num"><span>167,681</span></td>
-      <td data-l="Tools" class="num"><span>77</span></td>
-      <td data-l="Notes" class="notes"><span>All TODO markers filled (Zibo Zhang, Independent researcher, no e-mail; no specific funding; no competing interests; AI-assistance statement; ethics statement for the three public data sets; CC BY 4.0; GitHub URL + tag paper1-v4-frozen-config). No draft or review-round wording in the PDFs. papers/paper1/final/: fidetype-paper1.pdf (22 pp), fidetype-paper1-supplement.pdf (17 pp), arxiv-source.zip (combined document main + supplement, main.bbl, pdflatex-compatible) and its build fidetype-paper1-arxiv.pdf (37 pp); clean rebuild from the zip: 0 undefined, 0 multiply defined, 0 overfull, no ??. SUBMIT.md lists the arXiv form values (cs.HC primary; q-bio.NC, stat.ML, eess.SP cross-lists; abstract 1,650 characters). No result changed. Runs: fill author decisions + build arXiv package</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M3-25</code></span></td>
-      <td data-l="Task" class="title"><span>Paper 1 pre-submission check</span></td>
-      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
-      <td data-l="Start" class="num"><span>11-12 20:52 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>11-12 21:15 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Elapsed" class="num"><span>23 min</span></td>
-      <td data-l="Agent time" class="num"><span>0:22:26</span></td>
-      <td data-l="Tokens" class="num"><span>244,458</span></td>
-      <td data-l="Tools" class="num"><span>109</span></td>
-      <td data-l="Notes" class="notes"><span>Last pre-submission check of the arXiv package. Read the combined PDF (37 pp) as moderator and reader; traced 16 key numbers (abstract, Tab. 1-4, Sec. 6.6, conclusion) to experiments/2026-11-12-paper1-r4-analyses/: 0 mismatches. Fixes (text only, no result changed): 'revision 1/3' -&gt; 'first/third revision of our analysis plan'; Tab. 3 'the v4 frozen configuration' -&gt; 'the frozen configuration of Section 7'; Sec. 4 'Algorithm 1 (Appendix A)' hard-coded (pdflatex with the new LaTeX kernel printed 'Section A'); Ovadia reference '? Evaluating' capital; sEMG ethics sentence now quotes the data descriptor (UHN Research Ethics Board 21-6137, written consent incl. public sharing); arxiv/main.tex: \pdfoutput=1 on line 1 (stripped for Tectonic by make-arxiv.sh) and unique hyperref anchors for algorithm lines. pdflatex check: portable TinyTeX (TeX Live 2026) in C:/Users/zhang/tools/TinyTeX; clean build of the zip: 37 pp, 0 undefined, 0 duplicate anchors, 0 overfull, no ??; make-arxiv.sh step 5 runs it and writes fidetype-paper1-arxiv.pdf. SUBMIT.md values checked (abstract 1,650 ASCII chars = PDF abstract; 37 pp = 23 + 14; 9 figures). arXiv AI policy: compliant (tool disclosed, not an author). Runs: pre-submission check + pdflatex build</span></td>
-    </tr><tr class="is-ext">
-      <td data-l="ID"><span><code>M3-26</code></span></td>
-      <td data-l="Task" class="title"><span>arXiv endorsement requests (wave 1 sent 2026-11-12, 3 researchers)</span></td>
-      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
-      <td data-l="Start" class="num"><span>11-12 21:40 <span class="approx" title="Approximate time">≈</span></span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>19 h 53 min (open)</span></td>
-      <td data-l="Agent time" class="num"><span><span class="muted">Orchestrator only</span></span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>The user sent the requests. Waiting for an endorsement from outside researchers. Names and addresses are not kept in the repo. Not counted as late.</span></td>
     </tr><tr class="">
       <td data-l="ID"><span><code>M3-27</code></span></td>
       <td data-l="Task" class="title"><span>Confirmatory test of the Paper 1 frozen configuration on a second intracortical participant (T12)</span></td>
@@ -1650,7 +1445,7 @@
       <td data-l="Tools" class="num"><span>202</span></td>
       <td data-l="Notes" class="notes"><span>Pre-registration experiments/2026-11-13-confirmatory-t12-v2/preregistration.md (commit f9741df) before any trust-pool decoding; informative condition &gt;= 21/400 test commits. Decoder v2 (causal rolling 20-trial z-score, GRU 5x1024, patch 32, lr 5e-4, batch 64, 120 epochs; checkpoint sha256 5317b060...): val PER 0.293, test PER 0.269, WER 0.387, right sentence first 31/400 (v1 3/400); Tatoeba word-trigram term beta 2.0 (val only). Frozen recipe (tcfg-9fb4c81c5931e00c): commit_max_risk 0.1, LTT lambda 0.00 -&gt; 1/400 commits (right), controls 0/400, guard AUROC 0.792. Outcome: UNINFORMATIVE (C1-C3 pass, &lt; 21 commits). Validation dry run (before prereg): recipe chose commit_max_risk 1.0, 22/400 commits (11 wrong), uniform control 335/400 commits (320 empty texts) -&gt; predicted C3 failure did not occur on the trust pool. Next: stronger licence-clean word LM or more trust trials; rule against empty/short commits in a later config. Runs: T12 v2 decoder + pre-registration (rolling normalisation, larger GRU, word-trigram term, pre-registration v2, single test run, results, wiki, records)</span></td>
     </tr>
-<tr class="grp"><th colspan="10">M4 · Paper 2: causal / streaming decoder <span class="muted">(6/9 done, 1 ext. blocked)</span></th></tr><tr class="">
+<tr class="grp"><th colspan="10">M4 · Causal / streaming decoder (research) <span class="muted">(6/8 done)</span></th></tr><tr class="">
       <td data-l="ID"><span><code>M4-01</code></span></td>
       <td data-l="Task" class="title"><span>Add a causal mode with configurable lookahead</span></td>
       <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
@@ -1683,28 +1478,6 @@
       <td data-l="Tokens" class="num"><span>263,188</span></td>
       <td data-l="Tools" class="num"><span>72</span></td>
       <td data-l="Notes" class="notes"><span>src/fidetype/trust/streaming.py (StreamingTrustLayer: push(event) -&gt; decisions, end_of_utterance / flush / close, frames and hypothesis routes, per-session state, bounded memory, attempts, online re-calibration hook with the frozen commit_p as floor, provenance + ledger, replay + CLI) and trust/frozen.py (FrozenTrustConfig JSON; paper1_v4_harness_config = guard + LTT max). tests/test_trust_streaming.py (29 tests): final decisions equal the batch path exactly on synthetic streams (JSONL + NPZ, 3 configs), segment_end, interleaved sessions, hypothesis route and all accept golden vectors. Latency (synthetic, CPU): push(frame) p50 0.008 ms; final decision greedy 0.72 ms / beam 8.1 ms p50; push(hypothesis) 0.19 ms; 100/100 equal to batch (experiments/2026-11-12-m4-streaming/). Spec proposal spec/feps/0001-streaming-trust-events.md. Wiki concepts/streaming-trust-layer.md + diagram 12. Runs: streaming trust layer (M4-03)</span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>M4-04</code></span></td>
-      <td data-l="Task" class="title"><span>Write and release the preprint</span></td>
-      <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
-      <td data-l="Start" class="num"><span>—</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>—</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span></span></td>
-    </tr><tr class="is-ext">
-      <td data-l="ID"><span><code>M4-05</code></span></td>
-      <td data-l="Task" class="title"><span>Peer review of Paper 2</span></td>
-      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
-      <td data-l="Start" class="num"><span>—</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>—</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>Depends on venue reviewers. Not counted as late.</span></td>
     </tr><tr class="">
       <td data-l="ID"><span><code>M4-06</code></span></td>
       <td data-l="Task" class="title"><span>Freeze a real-data trust config (Paper 1 recipe, B2T calibration half) and replay it through the streaming layer</span></td>
@@ -2043,7 +1816,7 @@
       <td data-l="Status"><span><span class="chip s-prog">In progress</span></span></td>
       <td data-l="Start" class="num"><span>11-13 13:35 <span class="approx" title="Approximate time">≈</span></span></td>
       <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>3 h 58 min (open)</span></td>
+      <td data-l="Elapsed" class="num"><span>6 h 15 min (open)</span></td>
       <td data-l="Agent time" class="num"><span>0:00:00</span></td>
       <td data-l="Tokens" class="num"><span>0</span></td>
       <td data-l="Tools" class="num"><span>0</span></td>
@@ -2066,7 +1839,7 @@
       <td data-l="Status"><span><span class="chip s-prog">In progress</span></span></td>
       <td data-l="Start" class="num"><span>11-11 23:30 <span class="approx" title="Approximate time">≈</span></span></td>
       <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>42 h 03 min (open)</span></td>
+      <td data-l="Elapsed" class="num"><span>44 h 20 min (open)</span></td>
       <td data-l="Agent time" class="num"><span>0:08:45</span></td>
       <td data-l="Tokens" class="num"><span>155,979</span></td>
       <td data-l="Tools" class="num"><span>63</span></td>
@@ -2159,6 +1932,271 @@
       <td data-l="Tokens" class="num"><span>—</span></td>
       <td data-l="Tools" class="num"><span>—</span></td>
       <td data-l="Notes" class="notes"><span>papers/outreach/outreach-one-pager.md rewritten safety-first from committed files: forward-chain LTT max pooled 0.010-0.027, 0-2 of 10-13 days &gt; alpha, none significant; guard 0/300 vs 198/300 no-signal commits (our decoder); day-34 scope + 'certify, then commit' remedy (A2); streaming equivalence 816/816 (M4-06); LSL live test (M6-08); SDK + offline demo; FEP-0001/0002 profiles; Paper 1 = preprint in preparation, arXiv endorsement pending, PDF linked on GitHub; one participant, second-participant test in progress (no results). templates.md: old B2T numbers (0.194 -&gt; 0.044, -4.3 % eWPM) replaced, PDF placeholder, FEP/LSL lines. No one-pager PDF existed; none built. Agent run recorded under M5-13 (same run).</span></td>
+    </tr>
+<tr class="grp"><th colspan="10">PUB · Publications (no deadline) <span class="muted">(13/18 done, 6 ext. blocked)</span></th></tr><tr class="">
+      <td data-l="ID"><span><code>M3-03</code></span></td>
+      <td data-l="Task" class="title"><span>Position the paper against the closest work</span></td>
+      <td data-l="Status"><span><span class="chip s-prog">In progress</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 20:25</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>47 h 25 min (open)</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>Huang et al. 2025; conformal ASR; RAS metric. 2026-11-11: related-work map in papers/paper1/outline.md section 6. To do: source pages for Huang 2025, Kim 2025, Cai 2024, Ernez 2023, Damri 2026, RAS (check the formula). 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-04</code></span></td>
+      <td data-l="Task" class="title"><span>Write the paper</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 21:03 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-12 04:12 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>7 h 09 min</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>Outline done (M3-09). 2026-11-12: drafting and the review-revise loop are finished (drafts v0-v5, review rounds 1-5; work in M3-09..M3-22). Final: papers/paper1/draft-v5.pdf + draft-v5-supplement.pdf. Submission waits for author decisions (M3-23). 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-05</code></span></td>
+      <td data-l="Task" class="title"><span>Release the arXiv preprint and the code</span></td>
+      <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
+      <td data-l="Start" class="num"><span>—</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>—</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>The code release is in our control. The arXiv post may wait for M3-07. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-06</code></span></td>
+      <td data-l="Task" class="title"><span>Choose a venue</span></td>
+      <td data-l="Status"><span><span class="chip s-prog">In progress</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 20:25</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>47 h 25 min (open)</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>NeurIPS / ICLR workshops, J. Neural Eng., IEEE TNSRE. 2026-11-11 shortlist (outline section 12): arXiv first, then J. Neural Eng. or IEEE TNSRE; workshop in parallel; NeurIPS D&amp;B after P13; CHI needs a user study. The user decides. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="is-ext">
+      <td data-l="ID"><span><code>M3-07</code></span></td>
+      <td data-l="Task" class="title"><span>Get arXiv endorsement (if arXiv requires it)</span></td>
+      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
+      <td data-l="Start" class="num"><span>—</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>—</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>Depends on an outside endorser. Not counted as late. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="is-ext">
+      <td data-l="ID"><span><code>M3-08</code></span></td>
+      <td data-l="Task" class="title"><span>Peer review of Paper 1</span></td>
+      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
+      <td data-l="Start" class="num"><span>—</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>—</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>Depends on venue reviewers. Not counted as late. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-09</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 detailed outline + results inventory</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 20:25 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-11 20:50 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>25 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:07:23</span></td>
+      <td data-l="Tokens" class="num"><span>170,468</span></td>
+      <td data-l="Tools" class="num"><span>40</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/outline.md + wiki/questions/paper1-plan.md: titles, abstract, contributions, T1-T7 / F1-F7 plan, related-work map, limitations, licence statement, 27 inventory rows, 15 gaps (G1: trust harness on the async M1-09 streams), reproducibility plan, venues. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: outline + results inventory</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-11</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 LaTeX draft v0 (figures, diagrams, PDF, author guide)</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 21:03 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-11 21:35 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>32 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:26:17</span></td>
+      <td data-l="Tokens" class="num"><span>383,018</span></td>
+      <td data-l="Tools" class="num"><span>169</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/latex/ (Tectonic 0.17.0, natbib + bibtex) -&gt; papers/paper1/draft-v0.pdf, 23 pages, 0 undefined refs. 3 TikZ diagrams + 8 matplotlib figures from committed JSON (papers/paper1/make_figures.py). MEG rows from G1 async with sentence-cluster CIs. Red todo markers for G2-G10, G12, G14, F5, appendix D-F and user decisions; 18 bib entries TODO-verify. Guide: how-to-read-this-draft.md; style-notes.md; README.md (toolchain and build). 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: LaTeX draft v0</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-12</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 round-1 reviews (domain + methods)</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 21:36 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-11 21:46 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>10 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:19:07 <span class="muted">(2 runs)</span></span></td>
+      <td data-l="Tokens" class="num"><span>402,060</span></td>
+      <td data-l="Tools" class="num"><span>76</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/reviews/round-1-domain.md, round-1-methods.md. Both: major revision. Main points: always-offer baseline, error among commits, re-scope claims, drift baseline reuses calibration data, guarantee wording, user-model asymmetry, missing BCI literature, length. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: domain reviewer (BCI / neural engineering); methods reviewer (statistics, conformal, writing)</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-13</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 revision round 1 (writing, re-analysis of committed files, figures) -&gt; draft v1</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 21:47 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-11 22:40 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>53 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:38:38 <span class="muted">(2 runs)</span></span></td>
+      <td data-l="Tokens" class="num"><span>618,087</span></td>
+      <td data-l="Tools" class="num"><span>227</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/draft-v1.pdf (32 pages; main text 1-20), reviews/round-1-response.md, analysis_r1.py -&gt; data/r1-derived.json. New title, structured abstract, problem-setting section, always-offer rows (B2T), error among commits, LTT p90 + calibration-conditional risk, aci certificates and a-priori bounds, controls in two classes, MEG guard-AUROC panel, selective-risk panel, 33 verified references. 23 red TODO R1 markers wait for experiments/2026-11-12-paper1-r1-analyses (round 2). 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: reference verification (18 TODO-verify resolved, 33 new entries); reviser (draft v1)</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-15</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 revision round 2 (new R1 numbers into the paper, safety-first reframe, length) -&gt; draft v2</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 23:24 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-11 23:58 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>34 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:34:02</span></td>
+      <td data-l="Tokens" class="num"><span>461,697</span></td>
+      <td data-l="Tools" class="num"><span>215</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/draft-v2.pdf (29 pages; main text 1-15). New title subtitle (risk-controlled commit decisions); safety is the primary claim, speed secondary and user-model dependent; drift claim removed (clean calibration: offline CRC 0.0245-0.0600, data-reuse artefact reported as a lesson); main table rebuilt from baselines.json (always offer, plain threshold, CRC clean, gaze + word completion); new user-model figure, clean-calibration table, ablation + leakage appendices, small-n CRC table; guard kept as pre-specified with plain threshold reported next to it. 5 main figures, 3 main tables. Open: \todo{seeds} (MEG GPU seeds), Card supplement check, author items. Change list: papers/paper1/reviews/round-2-changes.md. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: reviser (draft v2)</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-16</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 round-3 reviews (handling editor + statistics)</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-11 23:59 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-12 00:13 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>14 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:24:53 <span class="muted">(2 runs)</span></span></td>
+      <td data-l="Tokens" class="num"><span>513,379</span></td>
+      <td data-l="Tools" class="num"><span>128</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/reviews/round-3-editor.md, round-3-stats.md. Both: major revision. Main points: headline is the plug-in (no guarantee, 0.059 &gt; alpha); CRC not binding (0.059 -&gt; 0.0245 is the fit-A refit); abstract 'never significantly above' false (p = 0.012); repeated deployment splits; selective-risk controller (SGR); MEG sentence-level exchangeability; sEMG near-variant exclusion; Holm, zero-event bounds, one bootstrap seed; run time; seeds. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: handling editor (JNE); statistics / risk-control reviewer</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-18</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 revision round 3 -&gt; draft v3</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-12 01:52 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-12 02:18 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>27 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:27:27</span></td>
+      <td data-l="Tokens" class="num"><span>456,315</span></td>
+      <td data-l="Tools" class="num"><span>133</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/draft-v3.pdf (37 pages; main text 1-17 incl. ethics). New title: 'When should a neural text-entry decoder commit? Risk-controlled commits from a decoder-agnostic trust layer'. Primary row = LTT max-rule on clean calibration (50 repeated deployments: mean 0.030 / 0.031, &gt; alpha in 8% / 2%); plug-in labelled no guarantee; 0.059 -&gt; 0.0245 attributed to the fit-A policy grid; selective-risk section + table (beta 0.10 only for the published gate); data-reuse claim corrected (+0.009 ours only; Holm 0.072; power stated); sEMG exclusion rows; MEG no sentence-level guarantee + seeds; unified CIs, sign tests, CP bounds, run time; Algorithms 1-2; 12 verified AAC/BCI/risk references; frozen configuration tagged paper1-v3-frozen-config. Response: papers/paper1/round-3-response.md. Next: round-4 fresh reviews. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: reviser (draft v3)</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-19</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 round-4 reviews</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-12 02:19 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-12 02:30 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>11 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:18:29 <span class="muted">(2 runs)</span></span></td>
+      <td data-l="Tokens" class="num"><span>405,561</span></td>
+      <td data-l="Tools" class="num"><span>94</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/reviews/round-4-editor.md (major revision: forward-chaining test, published-gate bonus, no-guard rows, reuse p-value, comparator) and round-4-stats.md (major revision: random re-splits are not deployments, per-day risk (published day 34 = 0.102 under LTT max), joint rule has no selective guarantee, exceedance CIs, App. R population risk biased low, reuse family of 12). 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: editor review (round 4); statistics review (round 4)</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-21</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 revision round 4 -&gt; draft v4</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-12 03:28 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-12 03:54 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>27 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:31:19</span></td>
+      <td data-l="Tokens" class="num"><span>441,329</span></td>
+      <td data-l="Tools" class="num"><span>162</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/draft-v4.pdf + draft-v4-supplement.pdf; round-4-response.md. New title (stream-level). Time-ordered deployment test is contribution 2; 'repeated deployments' renamed random re-splits; per-day scope (published day 34 = 0.102); frozen config = guard + LTT max (v3 plain threshold committed 198/300 uniform controls; guard: 0/300, v4-derived/guard_controls.py) -&gt; new tag paper1-v4-frozen-config (v3 tag kept); joint LTT replaces max(SGR, CRC max); published gate = two-decoder agreement; abstract 249 words + NCT00912041; main text ~7,800 words, appendices -&gt; supplement (xr-hyper). 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: reviser (draft v4)</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-22</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 round-5 final review and fix pass -&gt; v5</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-12 03:56</span></td>
+      <td data-l="Finish" class="num"><span>11-12 04:12</span></td>
+      <td data-l="Elapsed" class="num"><span>15 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:14:40</span></td>
+      <td data-l="Tokens" class="num"><span>313,561</span></td>
+      <td data-l="Tools" class="num"><span>93</span></td>
+      <td data-l="Notes" class="notes"><span>papers/paper1/reviews/round-5-final.md (minor revision; 32 numbers traced, 0 mismatches; 21 issues: 18 fixed, 2 no change, 1 cosmetic open; A1-A6 need new data or analysis). papers/paper1/draft-v5.pdf (22 pp) + draft-v5-supplement.pdf (17 pp), clean builds. Guard-on-real-data claim corrected; abstract 250 words; keywords; Sec. 7 tag sentence; references completed. No result changed; git tags untouched. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: final review + fix pass (draft v5)</span></td>
+    </tr><tr class="is-ext">
+      <td data-l="ID"><span><code>M3-23</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 submission (author decisions, venue)</span></td>
+      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
+      <td data-l="Start" class="num"><span>—</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>—</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>2026-11-12 evening: the author decided arXiv first; author, funding, competing interests, AI-assistance and ethics wording, licence (CC BY 4.0) and archive (GitHub URL + tag instead of a Zenodo DOI) are filled (M3-24). The arXiv submission is done by the user (papers/paper1/final/SUBMIT.md); arXiv may need an endorsement. Still open for a journal: IOP template switch, cover letter, suggested reviewers. Not counted as late. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-24</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 final arXiv package</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-12 20:30 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-12 20:58 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>28 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:10:42</span></td>
+      <td data-l="Tokens" class="num"><span>167,681</span></td>
+      <td data-l="Tools" class="num"><span>77</span></td>
+      <td data-l="Notes" class="notes"><span>All TODO markers filled (Zibo Zhang, Independent researcher, no e-mail; no specific funding; no competing interests; AI-assistance statement; ethics statement for the three public data sets; CC BY 4.0; GitHub URL + tag paper1-v4-frozen-config). No draft or review-round wording in the PDFs. papers/paper1/final/: fidetype-paper1.pdf (22 pp), fidetype-paper1-supplement.pdf (17 pp), arxiv-source.zip (combined document main + supplement, main.bbl, pdflatex-compatible) and its build fidetype-paper1-arxiv.pdf (37 pp); clean rebuild from the zip: 0 undefined, 0 multiply defined, 0 overfull, no ??. SUBMIT.md lists the arXiv form values (cs.HC primary; q-bio.NC, stat.ML, eess.SP cross-lists; abstract 1,650 characters). No result changed. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: fill author decisions + build arXiv package</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M3-25</code></span></td>
+      <td data-l="Task" class="title"><span>Paper 1 pre-submission check</span></td>
+      <td data-l="Status"><span><span class="chip s-done">Done</span></span></td>
+      <td data-l="Start" class="num"><span>11-12 20:52 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>11-12 21:15 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Elapsed" class="num"><span>23 min</span></td>
+      <td data-l="Agent time" class="num"><span>0:22:26</span></td>
+      <td data-l="Tokens" class="num"><span>244,458</span></td>
+      <td data-l="Tools" class="num"><span>109</span></td>
+      <td data-l="Notes" class="notes"><span>Last pre-submission check of the arXiv package. Read the combined PDF (37 pp) as moderator and reader; traced 16 key numbers (abstract, Tab. 1-4, Sec. 6.6, conclusion) to experiments/2026-11-12-paper1-r4-analyses/: 0 mismatches. Fixes (text only, no result changed): 'revision 1/3' -&gt; 'first/third revision of our analysis plan'; Tab. 3 'the v4 frozen configuration' -&gt; 'the frozen configuration of Section 7'; Sec. 4 'Algorithm 1 (Appendix A)' hard-coded (pdflatex with the new LaTeX kernel printed 'Section A'); Ovadia reference '? Evaluating' capital; sEMG ethics sentence now quotes the data descriptor (UHN Research Ethics Board 21-6137, written consent incl. public sharing); arxiv/main.tex: \pdfoutput=1 on line 1 (stripped for Tectonic by make-arxiv.sh) and unique hyperref anchors for algorithm lines. pdflatex check: portable TinyTeX (TeX Live 2026) in C:/Users/zhang/tools/TinyTeX; clean build of the zip: 37 pp, 0 undefined, 0 duplicate anchors, 0 overfull, no ??; make-arxiv.sh step 5 runs it and writes fidetype-paper1-arxiv.pdf. SUBMIT.md values checked (abstract 1,650 ASCII chars = PDF abstract; 37 pp = 23 + 14; 9 figures). arXiv AI policy: compliant (tool disclosed, not an author). 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline). Runs: pre-submission check + pdflatex build</span></td>
+    </tr><tr class="is-ext">
+      <td data-l="ID"><span><code>M3-26</code></span></td>
+      <td data-l="Task" class="title"><span>arXiv endorsement requests (wave 1 sent 2026-11-12, 3 researchers)</span></td>
+      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
+      <td data-l="Start" class="num"><span>11-12 21:40 <span class="approx" title="Approximate time">≈</span></span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>22 h 10 min (open)</span></td>
+      <td data-l="Agent time" class="num"><span><span class="muted">Orchestrator only</span></span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>The user sent the requests. Waiting for an endorsement from outside researchers. Names and addresses are not kept in the repo. Not counted as late. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>M4-04</code></span></td>
+      <td data-l="Task" class="title"><span>Write and release the preprint</span></td>
+      <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
+      <td data-l="Start" class="num"><span>—</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>—</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="is-ext">
+      <td data-l="ID"><span><code>M4-05</code></span></td>
+      <td data-l="Task" class="title"><span>Peer review of Paper 2</span></td>
+      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
+      <td data-l="Start" class="num"><span>—</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>—</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>Depends on venue reviewers. Not counted as late. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="">
+      <td data-l="ID"><span><code>P11-04</code></span></td>
+      <td data-l="Task" class="title"><span>Spec / benchmark paper draft</span></td>
+      <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
+      <td data-l="Start" class="num"><span>—</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>—</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
+    </tr><tr class="is-ext">
+      <td data-l="ID"><span><code>P11-05</code></span></td>
+      <td data-l="Task" class="title"><span>Peer review of the papers</span></td>
+      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
+      <td data-l="Start" class="num"><span>—</span></td>
+      <td data-l="Finish" class="num"><span>—</span></td>
+      <td data-l="Elapsed" class="num"><span>—</span></td>
+      <td data-l="Agent time" class="num"><span>—</span></td>
+      <td data-l="Tokens" class="num"><span>—</span></td>
+      <td data-l="Tools" class="num"><span>—</span></td>
+      <td data-l="Notes" class="notes"><span>Depends on reviewers. Not counted as late. 2026-11-13: moved to PUB (user decision: papers are decoupled from the research roadmap; no deadline).</span></td>
     </tr>
 <tr class="grp"><th colspan="10">P1 · Spec to 1.0 (RC) <span class="muted">(0/6 done, 1 ext. blocked)</span></th></tr><tr class="">
       <td data-l="ID"><span><code>P1-01</code></span></td>
@@ -2720,7 +2758,7 @@
       <td data-l="Tools" class="num"><span>—</span></td>
       <td data-l="Notes" class="notes"><span>Depends on partners, ethics board, volunteers. Not counted as late.</span></td>
     </tr>
-<tr class="grp"><th colspan="10">P11 · Research track <span class="muted">(0/4 done, 1 ext. blocked)</span></th></tr><tr class="">
+<tr class="grp"><th colspan="10">P11 · Research track <span class="muted">(0/3 done)</span></th></tr><tr class="">
       <td data-l="ID"><span><code>P11-01</code></span></td>
       <td data-l="Task" class="title"><span>EMG decoders: causal ConvCTC on KT-sEMG + Toronto; emg2qwerty research baseline</span></td>
       <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
@@ -2753,28 +2791,6 @@
       <td data-l="Tokens" class="num"><span>—</span></td>
       <td data-l="Tools" class="num"><span>—</span></td>
       <td data-l="Notes" class="notes"><span></span></td>
-    </tr><tr class="">
-      <td data-l="ID"><span><code>P11-04</code></span></td>
-      <td data-l="Task" class="title"><span>Spec / benchmark paper draft</span></td>
-      <td data-l="Status"><span><span class="chip s-todo">To do</span></span></td>
-      <td data-l="Start" class="num"><span>—</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>—</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span></span></td>
-    </tr><tr class="is-ext">
-      <td data-l="ID"><span><code>P11-05</code></span></td>
-      <td data-l="Task" class="title"><span>Peer review of the papers</span></td>
-      <td data-l="Status"><span><span class="chip s-ext">Ext. blocked</span></span></td>
-      <td data-l="Start" class="num"><span>—</span></td>
-      <td data-l="Finish" class="num"><span>—</span></td>
-      <td data-l="Elapsed" class="num"><span>—</span></td>
-      <td data-l="Agent time" class="num"><span>—</span></td>
-      <td data-l="Tokens" class="num"><span>—</span></td>
-      <td data-l="Tools" class="num"><span>—</span></td>
-      <td data-l="Notes" class="notes"><span>Depends on reviewers. Not counted as late.</span></td>
     </tr>
 <tr class="grp"><th colspan="10">P12 · Beyond text: intent and control <span class="muted">(1/7 done, 1 ext. blocked)</span></th></tr><tr class="">
       <td data-l="ID"><span><code>P12-00</code></span></td>

@@ -107,6 +107,16 @@ Last update: 2026-11-13 17:40 (M2-18 empty commits DONE: the M3-28 guess was wro
 - **GPU env:** native Windows ROCm 7.2.1 + torch 2.9.1 at `C:\venvs\fidetype-rocm`. Use `C:\venvs\fidetype-rocm\Scripts\python.exe` for all torch work. The repo `.venv` is CPU-only: it is for tests and CI. Rebuild the GPU env with `tools/env/setup_rocm.ps1`. Details: `wiki/questions/compute-setup.md`.
 - **CI:** GitHub Actions (`.github/workflows/tests.yml`) runs pytest on CPU.
 
+## Publications (no deadline)
+**Decision (user, 2026-11-13):** paper writing and publishing are decoupled from the research project. Review and publishing run on outside timelines; the user expects them to take 50 to 60 times longer than planned. The papers are now the tracker milestone **PUB**. PUB has no due date, never shows as late and is not part of the M1-M7 2026-11-15 target. The research and engineering roadmap never waits on PUB. Policy: research results go to `experiments/` and the wiki first; papers draw on them later. M3 is renamed "Trust-layer validation (research)" and M4 "Causal / streaming decoder (research)". Details: `wiki/questions/project-plan.md#pub-publications-no-deadline`.
+
+PUB items (ids unchanged):
+- Paper 1 (draft v5 + arXiv package done; `papers/paper1/`): M3-03 positioning (in progress), M3-04 write (done), M3-05 arXiv preprint + code release (todo), M3-06 venue (in progress), M3-07 arXiv endorsement (ext. blocked), M3-08 peer review (ext. blocked), M3-09 outline, M3-11 draft v0, M3-12/16/19 reviews, M3-13/15/18/21 revisions, M3-22 v5, M3-24 arXiv package, M3-25 pre-submission check (all done), M3-23 submission (ext. blocked), M3-26 endorsement requests wave 1 (ext. blocked).
+- Paper 2: M4-04 write + release the preprint (todo), M4-05 peer review (ext. blocked).
+- Spec / benchmark paper: P11-04 draft (todo), P11-05 peer review (ext. blocked).
+
+Research that stays in M3: M3-01, M3-02 (todo), M3-10, M3-14, M3-17, M3-20 (Paper 1 analyses; done), M3-27, M3-28 (T12 confirmatory tests). M4 open: M4-01, M4-02.
+
 ## Next steps
 000000000000. **M4-10 bounded decoder caches: done (2026-11-13 13:55).** See `experiments/2026-11-13-m4-10-bounded-caches/results.md` and `wiki/concepts/streaming-trust-layer.md` (M4-10 paragraph). Reproduce: `.venv\Scripts\python.exe -I experiments/2026-11-13-m4-10-bounded-caches/run.py session none|default|2000`, then `compare`, `b2t`, `tables` (one process each; about 50 min in total). Possible follow-up: store only the `per_slot` best candidates per segment (about 50x smaller entries; care: experiments share one memo between word decoders with different weights). M4-01 / M4-02 stay open.
 00000000000. **M4-09 fast lexicon + bounded prewarm: done (2026-11-13 12:50).** See `experiments/2026-11-13-m4-09-fast-lexicon/results.md` and `wiki/concepts/streaming-trust-layer.md` (M4-09 paragraph). Reproduce: `.venv\Scripts\python.exe -I experiments/2026-11-13-m4-09-fast-lexicon/run.py b2t nearest tables` (CPU, about 1 h 15 min). Open: an LRU bound on the word-decoder caches for long sessions (the idle `gc.collect()` grows with them); M4-01 / M4-02 (neural decoder lookahead).

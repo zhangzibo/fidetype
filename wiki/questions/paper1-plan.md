@@ -3,12 +3,14 @@ title: Paper 1 plan (M3)
 type: question
 tags: [paper-1, m3, planning, ewpm, trust, conformal, provenance, cross-device]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain-to-text-25-copytask, toronto-semg-typing, conformal-risk-control, learn-then-test, adaptive-conformal-inference]
-updated: 2026-11-11
+updated: 2026-11-13
 ---
 
 # Paper 1 plan
 
 **Question:** What does Paper 1 claim, which results back it, and what is still missing before submission?
+
+**Track (2026-11-13):** Paper 1 is in the PUB track ([project plan](project-plan.md#pub-publications-no-deadline)). PUB has no deadline. The research roadmap does not wait on it. The tracker ids stay the same (M3-03 … M3-26, now with milestone PUB).
 
 **Draft v0 (2026-11-11):** the first full LaTeX draft is [papers/paper1/draft-v0.pdf](../../papers/paper1/draft-v0.pdf) (23 pages; source in `papers/paper1/latex/`, build notes in [papers/paper1/README.md](../../papers/paper1/README.md)). A guide for the author is [how-to-read-this-draft.md](../../papers/paper1/how-to-read-this-draft.md). It lists every red TODO in the draft and the decisions the user owns (venue, authors, arXiv endorsement, ethics wording). Style lessons from published papers: [style-notes.md](../../papers/paper1/style-notes.md). Data figures come from `papers/paper1/make_figures.py`, which reads only committed result files.
 
@@ -48,7 +50,7 @@ arXiv first (endorsement: externally blocked, the user owns it). Then *Journal o
 > **Our take:** The paper is a **safety** paper with one clear usefulness result (intracortical) and one partial one (session-calibrated sEMG). MEG shows safety and parity only. State this in the abstract. Do not let the MEG decoder CER become the headline.
 
 ## Related pages
-- [Project plan, M3](project-plan.md#m3-paper-1-calibrated-abstaining-brain-to-text-target-11-11--11-13)
+- [Project plan, PUB (publications, no deadline)](project-plan.md#pub-publications-no-deadline)
 - [Trust core v0 results](trust-core-v0-results.md)
 - [Reading list](reading-list.md)
 - [Error metrics](../concepts/error-metrics.md)

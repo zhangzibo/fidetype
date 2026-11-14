@@ -2,3 +2,5 @@
 - [Output style](feedback-output-style.md) — write ~80% ASD-STE100; prefer diagrams > HTML pages > explainer videos
 - [Orchestrator mode](feedback-orchestrator-mode.md) — main chat only plans/delegates; all writing, code, tool use via subagents
 - [Commit authority](feedback-commit-authority.md) — Claude decides commits/pushes itself; never third-party/data/secrets; ask only for risky git ops
+- [Papers decoupled](project-papers-decoupled.md) — paper writing/review/publishing is a separate no-deadline track (expect 50-60x longer); research never waits on it
+- [Agent load limit](feedback-agent-load-limit.md) — up to 4 subagents at once, 1 GPU job; isolate timing jobs with CPU pinning rather than serialising

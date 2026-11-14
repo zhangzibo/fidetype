@@ -3,7 +3,7 @@ title: Project plan — trustworthy neural text entry
 type: question
 tags: [planning, roadmap, milestones, risks, process, scope]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, neural-input-landscape-2026]
-updated: 2026-11-11
+updated: 2026-11-13
 ---
 
 # Project plan: trustworthy neural text entry
@@ -11,7 +11,7 @@ updated: 2026-11-11
 **Question asked:** What is the concrete plan, with milestones, tasks, risks and a working process?
 
 ## Summary
-We build a decoder-agnostic trust layer for neural text decoders. One developer leads the work, and AI agents do most of the coding under the developer's review. The plan goes from setup (M0) to a first paper (M3), a streaming decoder (M4), an open benchmark (M5), device adapters (M6) and product pilots (M7).
+We build a decoder-agnostic trust layer for neural text decoders. One developer leads the work, and AI agents do most of the coding under the developer's review. The plan goes from setup (M0) to trust-layer validation (M3), a causal / streaming decoder (M4), an open benchmark (M5), device adapters (M6) and product pilots (M7).
 
 - The design: [architecture](architecture.md).
 - The reasons for this direction: [direction decision](direction-decision.md).
@@ -23,12 +23,15 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 
 **After v0.1 (2026-11-10).** The user decided that Fidetype aims for full standardisation at OpenTelemetry scale, and that we build all of it. M0–M7 are **v0.1**. The phases after v0.1 (P1–P11: spec 1.0, SDKs, collector, adapters, trust layer, benchmark, conformance, docs, governance, adoption, research) are in the [long-term roadmap](roadmap-standard.md).
 
+**Publications decoupled (2026-11-13).** The user decided that paper writing and publishing are a separate track. Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are now the **PUB** track. PUB has no due date. It never counts as late. It is not part of the M1–M7 target. The research and engineering roadmap never waits on a paper. M3 and M4 are now research milestones. See [PUB](#pub-publications-no-deadline).
+
 **Targets (set by the user on 2026-11-08):** M0 is done by 2026-11-09. M1–M7 are done by 2026-11-15. Items that depend on outside people are not in these targets. See [Timeline policy](#timeline-policy-2026-11-08).
 
 ## Timeline policy (2026-11-08)
 - The user sets the targets. The earlier week and month estimates are replaced.
 - We track the actual effort and dates in the [progress dashboard](../progress/index.html). The source of truth is `wiki/progress/tracker.json`. Rebuild the page with `node tools/progress/build.js`.
-- Some items depend on outside people: ethics approval and volunteers (M6), partner agreements (M7), arXiv endorsement (M3) and peer review. We mark them `externally_blocked`. We track them, but they do not count as late.
+- Some items depend on outside people: ethics approval and volunteers (M6), partner agreements (M7), arXiv endorsement (PUB) and peer review (PUB). We mark them `externally_blocked`. We track them, but they do not count as late.
+- **Publications policy (2026-11-13).** Research results go to `experiments/` and the wiki first. Papers draw on them later. No research or engineering task waits for a draft, a review, a venue or a preprint. The PUB track has no due date ([PUB](#pub-publications-no-deadline)).
 - We review the plan against the actuals, not against guesses.
 
 ## Fixed facts
@@ -53,11 +56,12 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 | **M0** | Setup | 2026-11-08 → 11-09 | GPU path decided. SpanishBCBL MEG downloaded. Package skeleton, NeuralTextStream spec v0.1, noisy-decoder simulator with tests. Project name. README, CI. | Simulator tests pass in CI. One subject loads in MNE. The GPU path is chosen. |
 | **M1** | Baseline decoder | 11-09 → 11-11. Parallel with M2. | Our own conv + CTC decoder on SpanishBCBL MEG (offline mode). It emits NeuralTextStream. Character n-gram LM beam search. | Greedy CER approaches v2's async SpanishBCBL CER (≈0.59) or is better. |
 | **M2** | Trust core v0 | 11-09 → 11-11. Parallel with M1. | Calibration, n-best + LM fusion, conformal sets, hallucination guard, decision policy, simulated user, effective WPM, evaluation harness, provenance ledger v0. | The full pipeline runs end to end on the simulator AND on real decoder outputs. All metrics are reported. |
-| **M3** | Paper 1: "Calibrated, abstaining brain-to-text" | 11-11 → 11-13. Peer review and arXiv endorsement are externally blocked. | Experiments and ablations. arXiv preprint. Code release. | Preprint on arXiv. Code public. |
-| **M4** | Paper 2: causal / streaming decoder | 11-11 → 11-13. Parallel with M3. | Latency vs accuracy curve (lookahead 0–500 ms). Streaming trust core. | Curve and streaming trust core in a preprint. |
+| **M3** | Trust-layer validation (research) | 11-11 → 11-13 | Experiments, ablations, confirmatory tests on new participants. Results in `experiments/` and the wiki. | Results filed. (Renamed from "Paper 1" on 2026-11-13.) |
+| **M4** | Causal / streaming decoder (research) | 11-11 → 11-13. Parallel with M3. | Latency vs accuracy curve (lookahead 0–500 ms). Streaming trust core. | Curve and streaming trust core filed in `experiments/` and the wiki. (Renamed from "Paper 2" on 2026-11-13.) |
 | **M5** | Open benchmark v0.1 | 11-13 → 11-14 | Public harness, metrics, leaderboard. | v0.1 tagged and public. NC loaders only download. |
 | **M6** | Device adapters | 11-14 → 11-15 (code parts). Own data collection is externally blocked. | LSL input. EMG/EEG consumer devices. Our own consented data collection. | A live device stream goes through the trust core. |
 | **M7** | Product pilots | 11-14 → 11-15 (code parts). Pilot agreements are externally blocked. | SDK. Partner talks. Private repo for closed parts. | At least one pilot agreement. |
+| **PUB** | Publications | **No deadline.** Outside timelines (review, endorsement, publishing). Not part of the M1–M7 target. | Paper 1, Paper 2, a spec / benchmark paper: drafts, venue, preprints, submission, peer review. | Never late. |
 | — | Deferred side tracks | Not scheduled | EMG → brain transfer. Virtual OPM-MEG simulation. | — |
 
 > **Our take:** M2 can start before M1 ends. The simulator emits NeuralTextStream, so the trust core does not wait for a real decoder.
@@ -138,7 +142,9 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 
 **Done when:** the full pipeline runs end to end on the simulator AND on real decoder outputs, with all metrics reported.
 
-## M3: Paper 1, "Calibrated, abstaining brain-to-text" (target 11-11 → 11-13)
+## M3: Trust-layer validation (research) (target 11-11 → 11-13)
+
+Renamed from "Paper 1" on 2026-11-13. M3 holds the experiments. The paper tasks moved to [PUB](#pub-publications-no-deadline).
 
 **Revised claim (2026-11-08).** Source: [M2 simulator results](../../experiments/2026-11-08-m2-trust-sim/results.md).
 - The simulator shows that the trust policy cuts wrong commits from 0.29–0.47 to 0.02–0.09.
@@ -154,23 +160,38 @@ We build a decoder-agnostic trust layer for neural text decoders. One developer 
 - [ ] Run experiments on SpanishBCBL and on the simulator.
 - [ ] Run ablations: each trust-core module on and off.
 - [ ] The test set is small (24 test sentences in SpanishBCBL). Use cross-validation or multiple seeds for Paper 1.
+- [x] Confirmatory tests of the frozen configuration on a second intracortical participant (T12; M3-27, M3-28).
+
+## M4: Causal / streaming decoder (research) (target 11-11 → 11-13)
+Renamed from "Paper 2" on 2026-11-13. The preprint and peer review moved to [PUB](#pub-publications-no-deadline).
+- [ ] Add a causal mode to the decoder with a configurable lookahead.
+- [ ] Measure the latency vs accuracy curve for lookahead 0 to 500 ms.
+- [x] Make the trust core work in streaming mode.
+
+## PUB: Publications (no deadline)
+Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned.
+
+**Policy.**
+- PUB has no due date. It never counts as late. It is not part of the M1–M7 target.
+- The research and engineering roadmap never waits on PUB.
+- Research results go to `experiments/` and the wiki first. Papers draw on them later.
+- A paper never sets the order of research work. If a paper needs a new number, that number is a normal research task in M3, M4 or P11.
+
+**Paper 1** ([plan](paper1-plan.md); draft v5 and arXiv package done):
 - [ ] Check the RAS formula (arXiv 2604.24278) before we cite the comparison.
-- [ ] Position the paper against the closest work ([reading list](reading-list.md)):
-  - Huang et al. 2025, co-control BCIs.
-  - Conformal ASR: Ernez et al. 2023; Damri & Laufer-Goldshtein 2026.
-  - The RAS metric (arXiv 2604.24278).
-- [ ] Write the paper.
+- [ ] Position the paper against the closest work ([reading list](reading-list.md)): Huang et al. 2025 (co-control BCIs); conformal ASR (Ernez et al. 2023; Damri & Laufer-Goldshtein 2026); the RAS metric (arXiv 2604.24278).
+- [x] Write the paper.
 - [ ] Release the arXiv preprint and the code.
 - [ ] Get arXiv endorsement, if arXiv requires it. *(externally blocked)*
+- [ ] Submit. *(externally blocked: author decisions, venue)*
 - [ ] Peer review at the chosen venue. *(externally blocked)*
 - [ ] Choose a venue. Candidates: NeurIPS / ICLR workshops, *Journal of Neural Engineering*, *IEEE TNSRE*.
 
-## M4: Paper 2, causal / streaming decoder (target 11-11 → 11-13)
-- [ ] Add a causal mode to the decoder with a configurable lookahead.
-- [ ] Measure the latency vs accuracy curve for lookahead 0 to 500 ms.
-- [ ] Make the trust core work in streaming mode.
-- [ ] Write and release the preprint.
+**Paper 2** (causal decoding):
+- [ ] Write and release the preprint. It uses the M4 results when they exist.
 - [ ] Peer review. *(externally blocked)*
+
+**Spec / benchmark paper:** draft and peer review (tracker P11-04, P11-05, now in PUB).
 
 > **Our take:** We know of no public causal MEG/EEG text decoder ([sync vs async](../concepts/synchronous-vs-asynchronous-decoding.md)). This curve fills that gap.
 
@@ -227,7 +248,7 @@ We do not schedule these. We review them when M3 is done.
 ## Year-1 success metrics
 | Metric | Target |
 |---|---|
-| Paper 1 | On arXiv |
+| Paper 1 | On arXiv (PUB track: no deadline, not a gate for other work) |
 | Open benchmark | v0.1 released |
 | External use | At least 1 external user or citation |
 | Demo | Works on at least one real-device stream |

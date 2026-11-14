@@ -70,6 +70,9 @@ const totalTools = sum(allRuns, r => r.tool_uses);
 const daysSince = dayNum(TODAY) - dayNum(START_DATE);
 const daysLeft = dayNum(FINAL_TARGET) - dayNum(TODAY);
 
+// A milestone with "no_deadline": true (or no target_end) has no due date. It is never late and has no target bar.
+const noDeadline = m => m.no_deadline === true || !m.target_end;
+
 const msInfo = data.milestones.map(m => {
   const mt = tasks.filter(t => t.milestone === m.id);
   const mc = mt.filter(t => !ext(t));
@@ -80,6 +83,7 @@ const msInfo = data.milestones.map(m => {
   const open = mt.some(t => t.started_at && !t.finished_at);
   let badge;
   if (allDone || (mc.length === 0 && m.status === 'done')) badge = 'done';
+  else if (noDeadline(m)) badge = 'nodeadline';
   else if (dayNum(TODAY) > dayNum(m.target_end)) badge = 'late';
   else badge = 'ontrack';
   return {
@@ -93,7 +97,7 @@ const msInfo = data.milestones.map(m => {
   };
 });
 
-const BADGE = { done: ['Done', 'b-done'], late: ['Late', 'b-late'], ontrack: ['On track', 'b-ontrack'] };
+const BADGE = { done: ['Done', 'b-done'], late: ['Late', 'b-late'], ontrack: ['On track', 'b-ontrack'], nodeadline: ['No deadline', 'b-nodl'] };
 const STATUS = {
   done: ['Done', 's-done'], in_progress: ['In progress', 's-prog'], todo: ['To do', 's-todo'],
   blocked: ['Blocked', 's-blocked'], externally_blocked: ['Ext. blocked', 's-ext'],
@@ -125,7 +129,7 @@ const msRows = msInfo.map(i => {
     <div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" title="${i.done} of ${i.total} done"><span style="width:${pct}%"></span></div>
     <div class="ms-grid">
       <div><span class="lbl">Done</span>${i.done} / ${i.total}${i.ext ? ` <span class="muted">+${i.ext} ext. blocked</span>` : ''}</div>
-      <div><span class="lbl">Target</span>${shortDate(i.m.target_start)} → ${shortDate(i.m.target_end)}</div>
+      <div><span class="lbl">Target</span>${noDeadline(i.m) ? '<span class="muted">No deadline</span>' : `${shortDate(i.m.target_start)} → ${shortDate(i.m.target_end)}`}</div>
       <div><span class="lbl">Actual</span>${actual}</div>
       <div><span class="lbl">Agent time</span>${fmtHMS(i.agentS)}</div>
       <div><span class="lbl">Tokens</span>${fmtNum(i.tokens)}</div>
@@ -156,8 +160,12 @@ msInfo.forEach((i, k) => {
   const y = TOP + k * ROW_H;
   if (k % 2 === 0) svg += `<rect x="0" y="${y}" width="${W}" height="${ROW_H}" class="zebra"/>`;
   svg += `<text x="6" y="${y + ROW_H / 2 + 4}" class="rl"><tspan font-weight="700">${esc(i.m.id)}</tspan> ${esc(i.m.name.length > 16 ? i.m.name.slice(0, 15) + '…' : i.m.name)}</text>`;
-  const tx0 = xOf(dayNum(i.m.target_start)), tx1 = xOf(dayNum(i.m.target_end) + 1);
-  svg += `<rect x="${tx0 + 1}" y="${y + 5}" width="${Math.max(tx1 - tx0 - 2, 2)}" height="${ROW_H - 10}" rx="4" class="tbar"><title>${esc(i.m.id)} target: ${i.m.target_start} → ${i.m.target_end}</title></rect>`;
+  if (!noDeadline(i.m)) {
+    const tx0 = xOf(dayNum(i.m.target_start)), tx1 = xOf(dayNum(i.m.target_end) + 1);
+    svg += `<rect x="${tx0 + 1}" y="${y + 5}" width="${Math.max(tx1 - tx0 - 2, 2)}" height="${ROW_H - 10}" rx="4" class="tbar"><title>${esc(i.m.id)} target: ${i.m.target_start} → ${i.m.target_end}</title></rect>`;
+  } else {
+    svg += `<text x="${LABEL_W + 6}" y="${y + ROW_H / 2 + 4}" class="ax2">No deadline (outside timelines)</text>`;
+  }
   if (i.firstStart) {
     const a0 = wallNum(i.firstStart);
     const endWall = i.lastFinish || NOW_WALL;
@@ -249,6 +257,7 @@ const html = `<!doctype html>
   .b-done { color:var(--good); background:var(--good-bg); } .b-done::before { content:"✓"; }
   .b-late { color:var(--bad); background:var(--bad-bg); } .b-late::before { content:"!"; }
   .b-ontrack { color:var(--prog); background:var(--prog-bg); } .b-ontrack::before { content:"→"; }
+  .b-nodl { color:var(--todo); background:var(--todo-bg); border:1px dashed var(--todo); } .b-nodl::before { content:"∞"; }
   .tl-box { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px; overflow-x:auto; }
   .tl { display:block; max-width:none; }
   .tl .grid { stroke:var(--line); stroke-width:1; }
@@ -319,7 +328,7 @@ ${msRows}
   <div class="legend"><span><i class="lg-t"></i>Target window</span><span><i class="lg-a"></i>Actual window (lighter = still open)</span><span><i class="lg-n"></i>Today</span><span><i class="lg-g"></i>Target end (${esc(FINAL_TARGET)})</span></div>
 
   <h2>Tasks</h2>
-  <p class="note">≈ = approximate time. Elapsed = wall-clock time from start to finish. Agent time = sum of subagent run durations. Externally blocked tasks depend on outside people. They do not count as late and are not in the "done" total.</p>
+  <p class="note">≈ = approximate time. Elapsed = wall-clock time from start to finish. Agent time = sum of subagent run durations. Externally blocked tasks depend on outside people. They do not count as late and are not in the "done" total. Milestones marked "No deadline" (for example PUB, publications) have no due date, never count as late and are not part of the ${esc(FINAL_TARGET)} target.</p>
   <table>
     <thead><tr><th>ID</th><th>Task</th><th>Status</th><th>Start</th><th>Finish</th><th>Elapsed</th><th>Agent time</th><th>Tokens</th><th>Tools</th><th>Notes</th></tr></thead>
     <tbody>

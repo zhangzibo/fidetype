@@ -3,7 +3,7 @@ title: Overview — non-invasive brain-to-text, where things stand
 type: overview
 tags: [synthesis]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-11
+updated: 2026-11-13
 ---
 
 # Overview
@@ -51,6 +51,7 @@ On 2026-11-08 the user widened the scope to an OpenTelemetry-level project. Fide
 - The decision and the evidence: [direction-decision](questions/direction-decision.md).
 - The six-layer design and the roadmap: [architecture](questions/architecture.md).
 - Project plan: milestones M0–M7, tasks, risks and the working process: [project-plan](questions/project-plan.md).
+- **Publications decoupled (2026-11-13).** Paper writing and publishing are a separate track (PUB) with no deadline. Review and publishing run on outside timelines. The research and engineering roadmap never waits on a paper. Research results go to `experiments/` and the wiki first; papers draw on them later. M3 is now "Trust-layer validation (research)" and M4 "Causal / streaming decoder (research)": [project plan, PUB](questions/project-plan.md#pub-publications-no-deadline).
 - Open-source path: NeuralTextStream as a vendor-neutral spec, credibility from Paper 1 and benchmarks, a company later. Success means decoders that emit NeuralTextStream, not stars: [open-source playbook](questions/open-source-playbook.md).
 - **Long-term roadmap (2026-11-10).** The user decided on full standardisation at OpenTelemetry scale, built by us. M0–M7 are only v0.1. Eleven phases follow (P1–P11): spec 1.0, SDKs in six languages, a collector, adapters, a product-grade trust layer, a benchmark, conformance, docs and demo, governance, adoption and research. The gap to OpenTelemetry scale is mostly SDKs, adapters and integrations, not the core: [roadmap-standard](questions/roadmap-standard.md).
 

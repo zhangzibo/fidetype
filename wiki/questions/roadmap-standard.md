@@ -3,7 +3,7 @@ title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
 tags: [planning, roadmap, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-11
+updated: 2026-11-13
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -20,7 +20,7 @@ updated: 2026-11-11
 - v0.1 (M0–M7) gives one spec draft, one Python package, one trust core, a first benchmark and first adapters.
 - After v0.1, the roadmap has **13 phases (P1–P13)**. Most of them run in parallel.
 - **P12 (beyond text: intent and control)** and **P13 (public benchmark hub)** were added on 2026-11-11 at the end of the order. They do not change priorities. Text entry stays first ([decision](direction-decision.md#scope-note-2026-11-11-intent-beyond-text-and-a-benchmark-hub)).
-- The critical path is: **benchmark (P6) + spec 1.0 RC (P1) → Python + C SDKs (P2) → replay adapters (P4) → collector (P3) → "three devices, one stream" demo (P8) → paper and launch (P10)**.
+- The critical path is: **benchmark (P6) + spec 1.0 RC (P1) → Python + C SDKs (P2) → replay adapters (P4) → collector (P3) → "three devices, one stream" demo (P8) → launch (P10)**. Papers are not on the critical path (see [publications](#publications-no-deadline)).
 - The gap to an OpenTelemetry-scale project is **not the core**. It is the **SDKs, adapters and integrations** (see [scale reference](#scale-reference)).
 - **Dataset replay** lets us test devices we do not own. Real hardware, outreach, partners, ethics, user studies, peer review and arXiv endorsement depend on outside people. They are **`externally_blocked`** or user-owned.
 
@@ -36,7 +36,7 @@ updated: 2026-11-11
 | Validator; conformance cases C1–C20 | Validator exists. 2026-11-11 (M5-10): [conformance suite](../concepts/conformance-suite.md) v0 (`fidetype.conformance`, 60 checks, levels core / trust-ready / provenance, 52 golden vectors in `spec/conformance/v0.1/`) | P7 |
 | Adapters (M6) | B2T '25 replay in progress; LSL/BrainFlow not yet | P4 |
 | OSS files, FEP template, GOVERNANCE.md | Done (commit 677ba0e) | P9 |
-| Paper 1, Paper 2 (M3, M4) | Not written | P10, P11 |
+| Paper 1, Paper 2 | Paper 1 draft v5 + arXiv package done (2026-11-12); Paper 2 not written | PUB (no deadline) |
 
 ## Scale reference
 | Project | Size | How we know |
@@ -78,8 +78,8 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 | **P7** | Conformance + certification | Test kit and the "Fidetype-compatible" mark | 15–25 / 10 h | P1, P2 | 2027-02-01 → 2027-07-31 |
 | **P8** | Docs, website, demo | Quickstarts and a three-device demo | 15–25 / 10 h | P2, P3, P4 | 2026-12-15 → 2027-04-30 |
 | **P9** | Governance + community | Licences, process, a later neutral home | 5–10 / 20 h | — | 2026-11-16 → 2027-03-31 (code parts) |
-| **P10** | Adoption | Users outside the project | 5–10 / 60+ h | P6, P8, Paper 1 | 2027-01-15 → 2027-12-31 (mostly ext. blocked) |
-| **P11** | Research track | Better decoders, papers | ongoing | GPU, datasets | 2026-11-16 → 2027-12-31 |
+| **P10** | Adoption | Users outside the project | 5–10 / 60+ h | P6, P8 (Paper 1 helps; not a gate) | 2027-01-15 → 2027-12-31 (mostly ext. blocked) |
+| **P11** | Research track | Better decoders (papers: PUB) | ongoing | GPU, datasets | 2026-11-16 → 2027-12-31 |
 | **P12** | Beyond text: intent and control | Output profiles for discrete intent, continuous control and speech; trust policies for actuation | 20–35 / 8 h | P1 1.0 RC, P2, P3, P5 | 2027-07-01 → 2027-12-31 |
 | **P13** | Public benchmark hub | Extend the P6 leaderboard into a reproducible hub; later all intent | 10–20 / 6 h | P6, P4 replay, P12 (intent tracks) | 2027-07-01 → 2027-12-31 |
 
@@ -354,13 +354,20 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **EMG decoders:** a causal ConvCTC on KT-sEMG and Toronto (clean); emg2qwerty for research.
 - **Cross-subject pretraining** (MEG and EMG), then per-user fine-tuning.
 - **LLM priors** with hallucination guards: an LM that helps but cannot commit text without neural evidence.
-- **Papers:** Paper 1 (calibrated, abstaining brain-to-text across modalities), Paper 2 (causal decoding: latency vs accuracy), a spec / benchmark paper.
+- **Results for papers:** P11 files results in `experiments/` and the wiki. Paper 1, Paper 2 and a spec / benchmark paper draw on them later in the PUB track.
 
 ### Exit criteria
 - On at least one modality, the trust policy beats the no-BCI baseline in eWPM.
-- Papers on arXiv; peer review: **externally blocked**.
+- Results filed in `experiments/` and the wiki. (Papers on arXiv and peer review are PUB items. They are not P11 exit criteria.)
 
 **Effort:** ongoing; GPU-bound (one heavy job at a time on this PC). **Depends on:** GPU, datasets.
+
+## Publications (no deadline)
+Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
+- PUB has no due date. It never counts as late. It is not part of the M1–M7 target or of any phase window.
+- No phase waits on PUB. Papers are not exit criteria of any phase.
+- Research results go to `experiments/` and the wiki first. Papers draw on them later.
+- Tracker: milestone `PUB` (Paper 1 tasks M3-03 … M3-26, Paper 2 M4-04 and M4-05, spec / benchmark paper P11-04 and P11-05; ids unchanged).
 
 ## P12. Beyond text: intent and control (added 2026-11-11)
 **Goal:** the standard and the trust layer cover all neural input, not only text. Text entry stays first. This phase comes after the text work and does not change its priority.

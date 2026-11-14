@@ -3,7 +3,7 @@ title: Trust core v0 results (simulator, char LM, first real MEG, per-word OFFER
 type: question
 tags: [trust-core, calibration, conformal, hallucination, ewpm, language-model, paper-1, offer-words, user-model]
 sources: [brain2qwerty-v2, brain-to-text-25-copytask]
-updated: 2026-11-10
+updated: 2026-11-13
 ---
 
 # Trust core v0 results (simulator + char LM)
@@ -104,7 +104,7 @@ Source: [LM beam results](../../experiments/2026-11-08-lm-beam/results.md). LM: 
 | Re-calibrate per session | Real decoders drift between sessions. `session_recalibration` exists for this |
 
 ## 4. What this means for Paper 1
-- **Revised claim:** "far fewer wrong and hallucinated commits for a small speed cost", not "higher eWPM". See [project plan, M3](project-plan.md#m3-paper-1-calibrated-abstaining-brain-to-text-target-11-11--11-13).
+- **Revised claim:** "far fewer wrong and hallucinated commits for a small speed cost", not "higher eWPM". See [project plan, M3](project-plan.md#m3-trust-layer-validation-research-calibrated-abstaining-brain-to-text-target-11-11--11-13).
 - eWPM depends on the user time model. We need time costs from the literature or from real data (Cai et al. 2024, see the [reading list](reading-list.md)) before we report eWPM numbers.
 - Fix n-best recall first. Re-tune the beam (`prune_topk`, insertion bonus). Without the truth in the list, no policy can commit. **Done** on the simulator: see [section 5](#5-beam-re-tune-2026-11-08).
 - The SpanishBCBL test split has only 24 unique sentences ([M1-A results](../../experiments/2026-11-08-m1a-data/results.md)). Use cross-validation or multiple seeds.
