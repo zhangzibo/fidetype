@@ -3,7 +3,7 @@ title: TypeScript SDK
 type: concept
 tags: [sdk, typescript, browser, neuraltextstream, conformance, trust, schemas, m7]
 sources: []
-updated: 2026-11-13
+updated: 2026-11-14
 ---
 
 # TypeScript SDK
@@ -33,11 +33,12 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 | Profile | Vectors | TypeScript pass | Same verdict as Python |
 |---|---|---|---|
 | v0.1 (NPZ + JSON Lines) | 52 | 52 | 52/52 |
-| fep-0001 | 40 | 40 | 40/40 |
+| fep-0001 | 47 | 47 | 47/47 |
 | fep-0002 (LSL scenarios) | 32 | 32 | 32/32 |
 | fep-0003 | 44 | 44 | 44/44 |
-| fep-0004 (WebSocket scenarios) | 37 | 37 | 37/37 (Rust: profile not ported yet; the parity scripts skip it) |
+| fep-0004 (WebSocket scenarios) | 38 | 38 | 38/38 (Rust ported in M7-12) |
 
+- **NTS 1.0 RC1 (2026-11-14):** `tdFormatErrors` / `td_format_errors` read the new optional `trust_decision.spec_version` (`"0.1"` or `"1.<minor>"`; absent = `"0.1"`). For 1.x decisions, a final COMMIT with a blank `shown[0]` is an error (rule TD-9, a MUST NOT); for 0.1 decisions it stays the warning of rule 9. The WebSocket `IngestCore` refuses a header whose `meta` is not an object (close 1007; vector W38; the parity fuzz found it at seed 5). Python = TypeScript = Rust on 213/213 vectors (fep-0001 47, fep-0004 38) and on the fuzz mutants of seeds 1-6 at `--n 30` (about 5,400 per seed). See [NTS specification](nts-spec.md).
 - `npm run cross-check` runs both reference consumers on every vector and compares verdict and "ok".
 - `npm run fuzz` mutates the JSON vectors (fixed seed). Two runs, about 4,000 mutants each: identical verdicts. The first fuzz runs found 6 differences (Python iterates strings and dicts; NumPy converts sample strings late). All are fixed. M7-11: seeds 1-6 at `--n 30` (24,396 mutants) give identical verdicts in Python, TypeScript and [Rust](rust-sdk.md). CI runs seeds 1-3.
 - The Python suite can also run the TS consumer: `python -m fidetype.conformance consumer --cmd "node sdk/typescript/bin/fidetype-ts.mjs consume {path}"` (52/52; fep-0002 32/32).

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from os import PathLike
 from pathlib import Path
 from typing import Any, Callable
@@ -40,6 +41,8 @@ ACTIONS = ("COMMIT", "OFFER", "ASK", "ABSTAIN", "OFFER_WORDS")
 SEGMENT_UNITS = ("utterance", "word", "trial")
 #: log-probabilities may exceed 0 by this much (float rounding).
 LOGP_TOL = 1e-9
+#: ``trust_decision.spec_version`` (NTS 1.0 RC1, section 11.2): "0.1" or "1.<minor>". Absent means "0.1".
+TD_SPEC_VERSION = re.compile(r"0\.1|1\.(?:0|[1-9][0-9]*)")
 
 #: (id, keyword, FEP clause, title)
 CHECKS = [
@@ -51,7 +54,7 @@ CHECKS = [
     ("FEP1-SCORE", "MUST", "2 r3", "Every n-best item has a finite numeric score"),
     ("FEP1-DECL", "MUST", "4 table", "decode_declaration (header or hypothesis) has the defined form"),
     ("FEP1-TD-INPUT", "MUST", "3 r4", "No trust_decision event in an input stream"),
-    ("FEP1-TD-FORMAT", "MUST", "3 table, r2, r8", "trust_decision fields have the defined types and ranges"),
+    ("FEP1-TD-FORMAT", "MUST", "3 table, r2, r8, r9 (1.x)", "trust_decision fields have the defined types and ranges; no empty final COMMIT text in a 1.x decision"),
     ("FEP1-TD-FINAL", "MUST", "3 r5-r7", "Per session: seq increases; at most one final decision per utterance; none after it"),
 ]
 _META = {c[0]: c for c in CHECKS}
@@ -217,7 +220,32 @@ def td_format_errors(e: dict[str, Any]) -> list[str]:
         errs.append("input must be an object")
     if "latency_s" in e and not (_num(e["latency_s"]) and e["latency_s"] >= 0):
         errs.append("latency_s must be a number >= 0")
+    errs += _td_version_errors(e)
     return [f"line {n}: {x}" for x in errs]
+
+
+def td_spec_version(e: dict[str, Any]) -> str | None:
+    """The version of the rules a decision follows: its ``spec_version`` ("0.1" if absent), None if unsupported."""
+    if "spec_version" not in e:
+        return "0.1"
+    v = e["spec_version"]
+    return v if isinstance(v, str) and TD_SPEC_VERSION.fullmatch(v) else None
+
+
+def _td_version_errors(e: dict[str, Any]) -> list[str]:
+    """``spec_version`` and the 1.x form of rule 9 (NTS 1.0 RC1: an empty final COMMIT text is a MUST NOT).
+
+    A decision without ``spec_version`` (or with "0.1") follows the 0.1 rules: rule 9 stays a SHOULD.
+    """
+    ver = td_spec_version(e)
+    if ver is None:
+        return [f"spec_version {e['spec_version']!r} is not a supported version (\"0.1\" or \"1.<minor>\")"]
+    if ver == "0.1" or not (e.get("is_final") is True and e.get("action") == "COMMIT"):
+        return []
+    sh = e.get("shown")
+    if isinstance(sh, list) and sh and isinstance(sh[0], str) and not sh[0].strip():
+        return ["a final COMMIT with an empty or white-space committed text (rule 9; a MUST NOT for spec_version 1.x)"]
+    return []
 
 
 def td_final_errors(events: list[dict[str, Any]]) -> list[str]:
@@ -516,9 +544,36 @@ def build_vectors() -> list[Vector]:
     add("F40", "f40-v01-core-broken.jsonl", "reject", "Compatibility",
         "Valid FEP-0001 parts, but a frame breaks v0.1 (row does not sum to 1)", failing="FEP1-V01-CORE",
         writer=_input({**f2a[0], "log_probs": [0.0] * V}, {"type": "segment_end"}))
+    # --- NTS 1.0 RC1: trust_decision.spec_version and rule 9 as a MUST NOT (0.1 behaviour kept for "0.1" / absent)
+    v10 = {"spec_version": "1.0"}
+    add("F41", "f41-td-v10-log.jsonl", "accept", "3 r9 (1.0)",
+        "spec_version 1.0 log: provisional OFFER, final COMMIT with text, final ABSTAIN with no text, privacy COMMIT",
+        {"kind": "decisions", "decisions": 4, "final": 3, "acted": ["ab", None]},
+        writer=_w_lines([_td(seq=0, is_final=False, action="OFFER", **v10), _td(seq=1, **v10),
+                         _td(seq=2, utterance=1, action="ABSTAIN", shown=[], p_top1=0.2, **v10),
+                         _td(seq=3, utterance=2, shown=_DROP, **v10)]))
+    add("F42", "f42-td-v01-empty-commit.jsonl", "accept", "3 r9 (0.1)",
+        "Empty final COMMIT text in decisions without spec_version and with spec_version 0.1: a SHOULD NOT (0.1 rules)",
+        {"kind": "decisions", "decisions": 2, "final": 2, "acted": ["", " "]},
+        writer=_w_lines([_td(seq=0, shown=[""], reason="legacy configuration"),
+                         _td(seq=1, utterance=1, shown=[" "], spec_version="0.1")]))
+    add("F43", "f43-td-v10-empty-commit.jsonl", "reject", "3 r9 (1.0)",
+        "spec_version 1.0: a final COMMIT whose committed text is empty", failing="FEP1-TD-FORMAT",
+        writer=_w_lines([_td(shown=[""], reason="no text", **v10)]))
+    add("F44", "f44-td-v10-space-commit.jsonl", "reject", "3 r9 (1.0)",
+        "spec_version 1.0: a final COMMIT whose committed text is only white space (tab, no-break space)",
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(shown=["\t\u00a0 ", "ab"], **v10)]))
+    add("F45", "f45-td-future-minor.jsonl", "accept", "11.2 (1.0)",
+        "spec_version 1.7 (a future minor version of major 1): read with the 1.0 rules",
+        {"kind": "decisions", "decisions": 1, "final": 1, "acted": ["ab"]},
+        writer=_w_lines([_td(spec_version="1.7")]))
+    add("F46", "f46-td-unknown-major.jsonl", "reject", "11.2 (1.0)", 'spec_version "2.0" (unknown major version)',
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(spec_version="2.0")]))
+    add("F47", "f47-td-version-number.jsonl", "reject", "11.2 (1.0)", "spec_version is the number 1.0, not a string",
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(spec_version=1.0)]))
     vs.sort(key=lambda v: v.vid)
     return vs
 
 
 __all__ = ["ACTIONS", "CHECKS", "acted_texts", "build_vectors", "check_events", "check_file", "consume",
-           "read_events", "stream_kind", "summarize", "td_final_errors", "td_format_errors"]
+           "read_events", "stream_kind", "summarize", "td_final_errors", "td_format_errors", "td_spec_version"]

@@ -541,6 +541,16 @@
    "clause": "FEP-0004 7 r6",
    "description": "Two final decisions for one utterance (FEP-0001 rules 6-7)",
    "failing_check": "FEP4-DECISIONS"
+  },
+  {
+   "id": "W38",
+   "file": "w38-header-meta-not-object.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r2; v0.1 5.1.7",
+   "description": "Header meta is a list, not a JSON object (close 1007, bad_header)",
+   "failing_check": "FEP4-HANDSHAKE"
   }
  ]
 }

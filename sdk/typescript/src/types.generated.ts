@@ -50,11 +50,13 @@ export interface Fep0001SegmentEnd {
 
 /** FEP-0001 trust_decision event (text profile, trust layer output)
  *
- * Structural schema (FEP-0001 section 3 table, rule 8). Order rules (seq increases, one final decision per utterance, none after it) are checked by the fep-0001 conformance profile. Rule 9 (no final COMMIT with an empty text) is a SHOULD; the SDKs report it as a warning. Intent decisions (profile intent) use fep-0003/intent-trust-decision.schema.json.
+ * Structural schema (FEP-0001 section 3 table, rule 8). Order rules (seq increases, one final decision per utterance, none after it) are checked by the fep-0001 conformance profile. Rule 9 (no final COMMIT with an empty text) is a SHOULD for 0.1 decisions (the SDKs report a warning) and a MUST NOT for decisions with spec_version 1.x (NTS 1.0 RC1; checked by the fep-0001 profile). Intent decisions (profile intent) use fep-0003/intent-trust-decision.schema.json.
  *
  * Source: spec/schemas/fep-0001/trust-decision.schema.json */
 export interface Fep0001TrustDecision {
   type: "trust_decision";
+  /** NTS 1.0 RC1 section 11.2: the version of the rules this decision follows. Absent means "0.1". A 1.x decision MUST NOT be a final COMMIT with an empty or white-space shown[0] (FEP-0001 rule 9, checked by the profile). */
+  spec_version?: string;
   profile?: "text";
   is_final: boolean;
   action: "COMMIT" | "OFFER" | "ASK" | "ABSTAIN" | "OFFER_WORDS";
@@ -140,6 +142,8 @@ export interface Fep0003IntentFeedback {
  * Source: spec/schemas/fep-0003/intent-trust-decision.schema.json */
 export interface Fep0003IntentTrustDecision {
   type: "trust_decision";
+  /** NTS 1.0 RC1 section 11.2: the version of the rules this decision follows. Absent means "0.1". */
+  spec_version?: string;
   profile: "intent";
   session?: string;
   seq?: number;
@@ -232,6 +236,8 @@ export interface Fep0005ControlEvent {
  * Source: spec/schemas/fep-0005/control-trust-decision.schema.json */
 export interface Fep0005ControlTrustDecision {
   type: "trust_decision";
+  /** NTS 1.0 RC1 section 11.2: the version of the rules this decision follows. Absent means "0.1". */
+  spec_version?: string;
   profile: "control";
   session?: string;
   seq?: number;

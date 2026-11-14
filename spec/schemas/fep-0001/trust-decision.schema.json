@@ -2,7 +2,7 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0001/trust-decision.schema.json",
  "title": "FEP-0001 trust_decision event (text profile, trust layer output)",
- "description": "Structural schema (FEP-0001 section 3 table, rule 8). Order rules (seq increases, one final decision per utterance, none after it) are checked by the fep-0001 conformance profile. Rule 9 (no final COMMIT with an empty text) is a SHOULD; the SDKs report it as a warning. Intent decisions (profile intent) use fep-0003/intent-trust-decision.schema.json.",
+ "description": "Structural schema (FEP-0001 section 3 table, rule 8). Order rules (seq increases, one final decision per utterance, none after it) are checked by the fep-0001 conformance profile. Rule 9 (no final COMMIT with an empty text) is a SHOULD for 0.1 decisions (the SDKs report a warning) and a MUST NOT for decisions with spec_version 1.x (NTS 1.0 RC1; checked by the fep-0001 profile). Intent decisions (profile intent) use fep-0003/intent-trust-decision.schema.json.",
  "type": "object",
  "required": [
   "type",
@@ -14,6 +14,11 @@
  "properties": {
   "type": {
    "const": "trust_decision"
+  },
+  "spec_version": {
+   "type": "string",
+   "pattern": "^(0\\.1|1\\.(0|[1-9][0-9]*))$",
+   "description": "NTS 1.0 RC1 section 11.2: the version of the rules this decision follows. Absent means \"0.1\". A 1.x decision MUST NOT be a final COMMIT with an empty or white-space shown[0] (FEP-0001 rule 9, checked by the profile)."
   },
   "profile": {
    "const": "text"

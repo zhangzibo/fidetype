@@ -425,6 +425,8 @@ class IngestCore:
                                 f"spec_version {hdr.get('spec_version')!r} is not {SPEC_VERSION!r}", now)
         if "ws_seq" in hdr:
             return self._refuse(conn, CLOSE_INVALID, "bad_header", "the header has no ws_seq (section 6 rule 1)", now)
+        if "meta" in hdr and not isinstance(hdr["meta"], dict):
+            return self._refuse(conn, CLOSE_INVALID, "bad_header", "header meta must be a JSON object (spec 5.1.7)", now)
         core = {k: v for k, v in hdr.items() if k != "ws"}
         eff = Effects()
         old = self.streams.get(sid)

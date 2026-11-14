@@ -16,6 +16,10 @@ import { CheckMeta, Ev, TargetReport, isInt, makeRes, readEvents, rejectOnFailur
 export const FEP = "FEP-0001";
 export const SUFFIXES = [".jsonl", ".ndjson"];
 const LOGP_TOL = 1e-9;
+/** `trust_decision.spec_version` (NTS 1.0 RC1, section 11.2): "0.1" or "1.<minor>". Absent means "0.1". */
+const TD_SPEC_VERSION = /^(?:0\.1|1\.(?:0|[1-9][0-9]*))$/;
+/** Python `not s.strip()`: empty or white space only (same set as `str.isspace`). */
+const pyBlank = (s: string): boolean => /^[\t\n\v\f\r \x1c-\x1f\x85\xa0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]*$/.test(s);
 
 export const CHECKS: CheckMeta[] = [
   ["FEP1-PARSE", "MUST", "6.2 (v0.1)", "Every line is a JSON object with a string type (no NaN tokens)"],
@@ -26,7 +30,7 @@ export const CHECKS: CheckMeta[] = [
   ["FEP1-SCORE", "MUST", "2 r3", "Every n-best item has a finite numeric score"],
   ["FEP1-DECL", "MUST", "4 table", "decode_declaration (header or hypothesis) has the defined form"],
   ["FEP1-TD-INPUT", "MUST", "3 r4", "No trust_decision event in an input stream"],
-  ["FEP1-TD-FORMAT", "MUST", "3 table, r2, r8", "trust_decision fields have the defined types and ranges"],
+  ["FEP1-TD-FORMAT", "MUST", "3 table, r2, r8, r9 (1.x)", "trust_decision fields have the defined types and ranges; no empty final COMMIT text in a 1.x decision"],
   ["FEP1-TD-FINAL", "MUST", "3 r5-r7", "Per session: seq increases; at most one final decision per utterance; none after it"],
 ];
 const META = Object.fromEntries(CHECKS.map((c) => [c[0], c]));
@@ -153,7 +157,30 @@ export function tdFormatErrors(e: Record<string, unknown>): string[] {
   if (has(e, "config_id") && e.config_id !== null && typeof e.config_id !== "string") errs.push("config_id must be a string");
   if (has(e, "input") && !isObj(e.input)) errs.push("input must be an object");
   if (has(e, "latency_s") && !(isFinNum(e.latency_s) && e.latency_s >= 0)) errs.push("latency_s must be a number >= 0");
+  errs.push(...tdVersionErrors(e));
   return errs.map((x) => `line ${n}: ${x}`);
+}
+
+/** The version of the rules a decision follows: its `spec_version` ("0.1" if absent), null if unsupported. */
+export function tdSpecVersion(e: Record<string, unknown>): string | null {
+  if (!has(e, "spec_version")) return "0.1";
+  const v = e.spec_version;
+  return typeof v === "string" && TD_SPEC_VERSION.test(v) ? v : null;
+}
+
+/**
+ * `spec_version` and the 1.x form of rule 9 (NTS 1.0 RC1: an empty final COMMIT text is a MUST NOT).
+ * A decision without `spec_version` (or with "0.1") follows the 0.1 rules: rule 9 stays a SHOULD.
+ */
+function tdVersionErrors(e: Record<string, unknown>): string[] {
+  const ver = tdSpecVersion(e);
+  if (ver === null) return [`spec_version ${repr(e.spec_version)} is not a supported version ("0.1" or "1.<minor>")`];
+  if (ver === "0.1" || !(get(e, "is_final") === true && get(e, "action") === "COMMIT")) return [];
+  const sh = get(e, "shown");
+  if (Array.isArray(sh) && sh.length && typeof sh[0] === "string" && pyBlank(sh[0])) {
+    return ["a final COMMIT with an empty or white-space committed text (rule 9; a MUST NOT for spec_version 1.x)"];
+  }
+  return [];
 }
 
 /** is_final semantics per session (FEP-0001 section 3 rules 5-7). */

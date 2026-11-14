@@ -384,6 +384,9 @@ impl IngestCore {
         if hdr.has("ws_seq") {
             return self.refuse(cid, 1007, "bad_header", "the header has no ws_seq (section 6 rule 1)", now);
         }
+        if matches!(hdr.get_opt("meta"), Some(m) if !m.is_obj()) {
+            return self.refuse(cid, 1007, "bad_header", "header meta must be a JSON object (spec 5.1.7)", now);
+        }
         let mut core = hdr;
         core.remove("ws");
         let mut eff = Effects::default();

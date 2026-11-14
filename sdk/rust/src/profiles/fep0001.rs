@@ -13,7 +13,7 @@ use alloc::format;
 use crate::checks::{blocks, run_checks, CheckResult, Level, Status};
 use crate::constants::{DECLARATION_KEY, SCORE_SEMANTICS, SEGMENT_UNITS, TRUST_ACTIONS};
 use crate::error::Error;
-use crate::json::{cp_len, num_text, repr, str_in, str_list, Map, Value};
+use crate::json::{cp_len, is_blank, num_text, repr, str_in, str_list, Map, Value};
 use crate::raw::read_jsonl_raw;
 
 use super::common::{etype, line_of, make_res, read_events, reject_on_failure, stream_kind, tuple_key, CheckMeta, StreamKind, TargetReport};
@@ -30,7 +30,7 @@ pub const CHECKS: &[CheckMeta] = &[
     ("FEP1-SCORE", "MUST", "2 r3", "Every n-best item has a finite numeric score"),
     ("FEP1-DECL", "MUST", "4 table", "decode_declaration (header or hypothesis) has the defined form"),
     ("FEP1-TD-INPUT", "MUST", "3 r4", "No trust_decision event in an input stream"),
-    ("FEP1-TD-FORMAT", "MUST", "3 table, r2, r8", "trust_decision fields have the defined types and ranges"),
+    ("FEP1-TD-FORMAT", "MUST", "3 table, r2, r8, r9 (1.x)", "trust_decision fields have the defined types and ranges; no empty final COMMIT text in a 1.x decision"),
     ("FEP1-TD-FINAL", "MUST", "3 r5-r7", "Per session: seq increases; at most one final decision per utterance; none after it"),
 ];
 
@@ -267,7 +267,57 @@ pub fn td_format_errors(e: &Map) -> Vec<String> {
             errs.push("latency_s must be a number >= 0".into());
         }
     }
+    errs.extend(td_version_errors(e));
     errs.into_iter().map(|x| format!("line {}: {}", n, x)).collect()
+}
+
+/// `trust_decision.spec_version` (NTS 1.0 RC1, section 11.2): "0.1" or "1.<minor>"
+/// (minor: "0" or digits without a leading zero).
+fn td_version_ok(v: &str) -> bool {
+    if v == "0.1" {
+        return true;
+    }
+    match v.strip_prefix("1.") {
+        Some(m) => !m.is_empty() && m.bytes().all(|b| b.is_ascii_digit()) && (m == "0" || !m.starts_with('0')),
+        None => false,
+    }
+}
+
+/// The version of the rules a decision follows: its `spec_version` ("0.1" if
+/// absent), `None` if unsupported.
+pub fn td_spec_version(e: &Map) -> Option<String> {
+    match e.get_opt("spec_version") {
+        None => Some("0.1".to_string()),
+        Some(Value::Str(v)) if td_version_ok(v) => Some(v.clone()),
+        Some(_) => None,
+    }
+}
+
+/// `spec_version` and the 1.x form of rule 9 (NTS 1.0 RC1: an empty final
+/// COMMIT text is a MUST NOT). A decision without `spec_version` (or with
+/// "0.1") follows the 0.1 rules: rule 9 stays a SHOULD.
+fn td_version_errors(e: &Map) -> Vec<String> {
+    let ver = match td_spec_version(e) {
+        Some(v) => v,
+        None => {
+            return alloc::vec![format!(
+                "spec_version {} is not a supported version (\"0.1\" or \"1.<minor>\")",
+                repr(e.get("spec_version"))
+            )]
+        }
+    };
+    let final_commit = matches!(e.get("is_final"), Value::Bool(true)) && e.get("action").as_str() == Some("COMMIT");
+    if ver == "0.1" || !final_commit {
+        return Vec::new();
+    }
+    if let Value::Arr(a) = e.get("shown") {
+        if let Some(Value::Str(t)) = a.first() {
+            if is_blank(t) {
+                return alloc::vec!["a final COMMIT with an empty or white-space committed text (rule 9; a MUST NOT for spec_version 1.x)".to_string()];
+            }
+        }
+    }
+    Vec::new()
 }
 
 /// The session id of a decision: `session`, `""` if absent, `None` if not a string.

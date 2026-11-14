@@ -8,6 +8,7 @@
               "score_semantics", "v_max", "ttl_s", "engagement"],
  "properties": {
   "type": {"const": "trust_decision"},
+  "spec_version": {"type": "string", "pattern": "^(0\\.1|1\\.(0|[1-9][0-9]*))$", "description": "NTS 1.0 RC1 section 11.2: the version of the rules this decision follows. Absent means \"0.1\"."},
   "profile": {"const": "control"},
   "session": {"type": "string"},
   "seq": {"type": "integer", "minimum": 0},

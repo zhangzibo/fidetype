@@ -3,7 +3,7 @@ title: Rust SDK
 type: concept
 tags: [sdk, rust, embedded, no-std, neuraltextstream, conformance, trust, m7]
 sources: []
-updated: 2026-11-13
+updated: 2026-11-14
 ---
 
 # Rust SDK
@@ -28,16 +28,18 @@ Task **M7-07** (fep-0004 port: M7-12). The third reference SDK, after the [Pytho
 | Profile | Vectors | Rust pass | Same verdict and "ok" as Python | Fuzz mutants, same verdict (seeds 1-6, `--n 30`; M7-11, fep-0004 M7-12) |
 |---|---|---|---|---|
 | v0.1 (NPZ + JSON Lines) | 52 | 52 | 52/52 | 3,516/3,516 |
-| fep-0001 | 40 | 40 | 40/40 | 7,200/7,200 |
+| fep-0001 | 47 (40 before RC1) | 47 | 47/47 | 7,200/7,200 (before RC1) |
 | fep-0002 (LSL scenarios) | 32 | 32 | 32/32 | 5,760/5,760 |
 | fep-0003 | 44 | 44 | 44/44 | 7,920/7,920 |
-| fep-0004 (WebSocket scenarios; M7-12) | 37 | 37 | 37/37 | 6,660/6,660 |
+| fep-0004 (WebSocket scenarios; M7-12) | 38 (37 before RC1) | 38 | 38/38 | 6,660/6,660 (before RC1) |
 
 - The TypeScript parity scripts got an option `--rust BIN`: `cross-check.mjs` and `fuzz-parity.mjs` now compare Python, TypeScript and Rust on the same files. CI job `rust-parity` runs both (cross-check + fuzz `--n 30` at seeds 1-3, since M7-11).
 - The Python suite also accepts the Rust CLI as an external consumer: `python -m fidetype.conformance consumer --cmd "fidetype-rs consume {path}"` gives 205/205 over the five profiles (168/168 before M7-12).
 - The golden vectors passed on the first run. The fuzz found 2 more Python behaviours to copy (string-format LSL samples are iterated only when a chunk with timestamps is pulled; the reference greedy decoder fails when `blank_id` is null). After the fix: 16,141 of 16,141 mutants give the Python verdict.
 - **M7-11 (2026-11-13):** the no-blank failure was a Python bug. `blank_id` null means "no blank class" (spec 3.1). The greedy decoder now treats every frame as a token frame and collapses each run of equal argmax frames into one token. The spec text says so, and the new FEP-0002 vector L32 tests it. The Rust check in `StructuralLayer::end` is gone. The same task fixed 4 TypeScript gaps. Python = TypeScript = Rust on 168/168 vectors and on 24,396/24,396 mutants (seeds 1-6, `--n 30`).
 - **M7-12 (2026-11-13):** port of the `fep-0004` profile ([WebSocket](websocket-input.md) scenarios). New module `ws` (`IngestCore`, `SubscriberCore`), still `no_std` + `alloc`, no new dependency, no networking. The 37 vectors passed on the first run. One more Python rule copied: a boolean `frame_period` or `latency` passes as 1 or 0 (also in the FEP-0002 structural model). Python = TypeScript = Rust on 205/205 vectors and on 31,056/31,056 mutants (seeds 1-6, `--n 30`; fep-0004 6,660). The parity scripts keep their general "skip a profile the Rust CLI does not know" path; no profile uses it now.
+
+- **NTS 1.0 RC1 (2026-11-14):** `tdFormatErrors` / `td_format_errors` read the new optional `trust_decision.spec_version` (`"0.1"` or `"1.<minor>"`; absent = `"0.1"`). For 1.x decisions, a final COMMIT with a blank `shown[0]` is an error (rule TD-9, a MUST NOT); for 0.1 decisions it stays the warning of rule 9. The WebSocket `IngestCore` refuses a header whose `meta` is not an object (close 1007; vector W38; the parity fuzz found it at seed 5). Python = TypeScript = Rust on 213/213 vectors (fep-0001 47, fep-0004 38) and on the fuzz mutants of seeds 1-6 at `--n 30` (about 5,400 per seed). See [NTS specification](nts-spec.md).
 
 ## Design
 

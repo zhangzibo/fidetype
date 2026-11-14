@@ -1,0 +1,1 @@
+{"id": "M0-24", "agent_runs": [{"label": "M0-24 parallel runner (pmap, 3 scripts, equality checks, tests, docs, records)", "duration_s": 4981.8, "tokens": 279868, "tool_uses": 132}]}

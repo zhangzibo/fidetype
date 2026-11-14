@@ -519,6 +519,11 @@ def build_vectors() -> list[Vector]:
     add("W37", "w37-decisions-two-finals.json", "reject", "7 r6", "Two final decisions for one utterance (FEP-0001 rules 6-7)",
         _scenario("subscribe", "two finals", messages=[WELCOME, _td(1, 0, 0), _td(2, 1, 0, action="OFFER")]),
         failing="FEP4-DECISIONS")
+    # --- NTS 1.0 RC1 (WS-S1, HDR-8): the header meta must be a JSON object (found by the parity fuzz, seed 5)
+    add("W38", "w38-header-meta-not-object.json", "reject", "5 r2; v0.1 5.1.7",
+        "Header meta is a list, not a JSON object (close 1007, bad_header)",
+        _ingest("meta not object", [_open(), {"at": 0.0, "conn": 1, "msg": _hdr(meta=["sub-01"])}] + _msgs(ev)),
+        failing="FEP4-HANDSHAKE")
     vs.sort(key=lambda v: v.vid)
     return vs
 

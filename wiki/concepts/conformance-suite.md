@@ -3,7 +3,7 @@ title: NeuralTextStream conformance suite
 type: concept
 tags: [spec, neuraltextstream, conformance, testing, standard, adapters, provenance]
 sources: [brain-to-text-25-copytask, toronto-semg-typing]
-updated: 2026-11-12
+updated: 2026-11-14
 ---
 
 # NeuralTextStream conformance suite
@@ -95,11 +95,13 @@ The suite found 10 points where the spec text is unclear. They are listed as inf
 ## Opt-in FEP profiles (M4-07, M6-09)
 A profile tests one draft FEP on top of v0.1. It does not change the v0.1 levels or the 52 v0.1 vectors.
 
+**NTS 1.0 RC1 (2026-11-14).** The RC gives every normative rule an id and maps it to these checks and vectors ([Appendix C](../../spec/nts-1.0-rc1.md#appendix-c-conformance-traceability); summary: [NTS specification](nts-spec.md)). The levels core / trust-ready / provenance become the RC's producer levels (section 9.2).
+
 | Profile | FEP | Checks | Vectors | Wiki |
 |---|---|---|---|---|
-| `fep-0001` | [Streaming trust events](../../spec/feps/0001-streaming-trust-events.md) | 10 (`FEP1-*`) | 40 JSON Lines (12 accept, 28 reject) | [Streaming trust layer](streaming-trust-layer.md#conformance-profile-fep-0001-m4-07) |
+| `fep-0001` | [Streaming trust events](../../spec/feps/0001-streaming-trust-events.md) | 10 (`FEP1-*`) | 47 JSON Lines (15 accept, 32 reject; F41-F47: NTS 1.0 RC1 rule TD-9 and `trust_decision.spec_version`) | [Streaming trust layer](streaming-trust-layer.md#conformance-profile-fep-0001-m4-07) |
 | `fep-0002` | [NTS over LSL](../../spec/feps/0002-nts-over-lsl.md) | 6 (`FEP2-*`) | 31 JSON scenarios (15 accept, 16 reject) | [LSL input](lsl-input.md#conformance-profile-fep-0002) |
-| `fep-0004` | [NTS over WebSocket](../../spec/feps/0004-nts-over-websocket.md) | 7 (`FEP4-*`) | 37 JSON scenarios (20 accept, 17 reject) | [WebSocket input](websocket-input.md#conformance) |
+| `fep-0004` | [NTS over WebSocket](../../spec/feps/0004-nts-over-websocket.md) | 7 (`FEP4-*`) | 38 JSON scenarios (20 accept, 18 reject; W38: header `meta` must be an object) | [WebSocket input](websocket-input.md#conformance) |
 | `fep-0005` | [Control events](../../spec/feps/0005-control-events.md) | 10 (`FEP5-*`) | 42 JSON Lines (9 accept, 33 reject); Python only (TS / Rust skip it) | [Control events](control-events.md) |
 
 ```bash

@@ -466,6 +466,99 @@
    "clause": "FEP-0001 Compatibility",
    "description": "Valid FEP-0001 parts, but a frame breaks v0.1 (row does not sum to 1)",
    "failing_check": "FEP1-V01-CORE"
+  },
+  {
+   "id": "F41",
+   "file": "f41-td-v10-log.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r9 (1.0)",
+   "description": "spec_version 1.0 log: provisional OFFER, final COMMIT with text, final ABSTAIN with no text, privacy COMMIT",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 4,
+    "final": 3,
+    "acted": [
+     "ab",
+     null
+    ]
+   }
+  },
+  {
+   "id": "F42",
+   "file": "f42-td-v01-empty-commit.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r9 (0.1)",
+   "description": "Empty final COMMIT text in decisions without spec_version and with spec_version 0.1: a SHOULD NOT (0.1 rules)",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 2,
+    "final": 2,
+    "acted": [
+     "",
+     " "
+    ]
+   }
+  },
+  {
+   "id": "F43",
+   "file": "f43-td-v10-empty-commit.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r9 (1.0)",
+   "description": "spec_version 1.0: a final COMMIT whose committed text is empty",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F44",
+   "file": "f44-td-v10-space-commit.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 r9 (1.0)",
+   "description": "spec_version 1.0: a final COMMIT whose committed text is only white space (tab, no-break space)",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F45",
+   "file": "f45-td-future-minor.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 11.2 (1.0)",
+   "description": "spec_version 1.7 (a future minor version of major 1): read with the 1.0 rules",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 1,
+    "final": 1,
+    "acted": [
+     "ab"
+    ]
+   }
+  },
+  {
+   "id": "F46",
+   "file": "f46-td-unknown-major.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 11.2 (1.0)",
+   "description": "spec_version \"2.0\" (unknown major version)",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F47",
+   "file": "f47-td-version-number.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 11.2 (1.0)",
+   "description": "spec_version is the number 1.0, not a string",
+   "failing_check": "FEP1-TD-FORMAT"
   }
  ]
 }

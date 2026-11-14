@@ -62,7 +62,7 @@ test("schemas: every event of every accepted JSON Lines vector is valid", () => 
 
 test("schemas: structural reject vectors break their schema", async () => {
   // Vectors whose only fault is structural: the schema must reject them too.
-  const cases = { "fep-0001": ["F04", "F05", "F11", "F13", "F17", "F18", "F19", "F20", "F27", "F28", "F29", "F30", "F31", "F32", "F33", "F35"],
+  const cases = { "fep-0001": ["F04", "F05", "F11", "F13", "F17", "F18", "F19", "F20", "F27", "F28", "F29", "F30", "F31", "F32", "F33", "F35", "F46", "F47"],
     "v0.1": ["V36", "V37", "V47", "V52"] };
   for (const [p, ids] of Object.entries(cases)) {
     const m = JSON.parse(readFileSync(join(conf, p, "manifest.json"), "utf8"));

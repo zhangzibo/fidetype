@@ -239,6 +239,7 @@ export class IngestCore {
       return this.refuse(conn, 1007, "bad_header", "spec_version is not '0.1'", now);
     }
     if (has(hdr, "ws_seq")) return this.refuse(conn, 1007, "bad_header", "the header has no ws_seq (section 6 rule 1)", now);
+    if (has(hdr, "meta") && !isObj(hdr.meta)) return this.refuse(conn, 1007, "bad_header", "header meta must be a JSON object (spec 5.1.7)", now);
     const id = sid as string;
     const core = copyWithout(hdr, ["ws"]);
     const eff = noEffects();

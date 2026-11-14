@@ -1,0 +1,2 @@
+{"id": "P1-05", "status": "in_progress", "started_at": "2026-11-14T00:45:00-08:00", "approx_times": true,
+ "notes": "2026-11-14: NTS 1.0 RC1 section 8 defines files (JSON Lines; NPZ read only for new data), LSL (nts-lsl/0.1, FEP-0002) and WebSocket (nts-ws/0.1, FEP-0004) normatively, with rule ids and traceability. WebSocket header now refuses a non-object meta in all three SDKs (vector W38; found by the parity fuzz). Left: in-process API and gRPC (not written), LAN tests (M6-10)."}

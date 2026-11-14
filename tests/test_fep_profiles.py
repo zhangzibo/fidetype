@@ -316,7 +316,7 @@ def test_scripted_inlet_loss():
 
 def test_cli_profiles(tmp_path, capsys):
     assert cli(["--profile", "fep-0001"]) == 0
-    assert "40/40 golden vectors" in capsys.readouterr().out
+    assert "47/47 golden vectors" in capsys.readouterr().out
     assert cli(["consumer", "--profile", "fep-0002"]) == 0
     assert "FEP-0002 profile fep-0002 consumer conformance: PASS" in capsys.readouterr().out
     vdir = get_profile("fep-0001").vectors_dir()

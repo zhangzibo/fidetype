@@ -3,7 +3,7 @@ title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
 tags: [planning, roadmap, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-13
+updated: 2026-11-14
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -85,6 +85,18 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 
 ## P1. Spec to 1.0
 **Goal:** NeuralTextStream 1.0. Every part has a stability level. A machine-readable schema is the source of truth. The prose spec and the docs are generated from it or checked against it.
+
+**Status (2026-11-14): 1.0 RC1 DRAFT for public comment** ([`spec/nts-1.0-rc1.md`](../../spec/nts-1.0-rc1.md); summary: [NTS specification](../concepts/nts-spec.md)). It folds v0.1 and FEP-0001 … FEP-0005 into one document, with rule ids, a traceability table (Appendix C, gaps G-1 … G-11), the open-question resolutions (Appendix A), migration (Appendix B), security and privacy, versioning and registries. One rule is stricter in the validators of all three SDKs: TD-9, no blank final text COMMIT for `spec_version` 1.x decisions (vectors F41-F47).
+
+| Task | State after RC1 | What is left |
+|---|---|---|
+| P1-01 data model | in progress | Provenance block, frame-level multi-head, lattices, embeddings: deferred to 1.1 (Appendix A); 1.0 headers not accepted by the validators yet (gap G-2) |
+| P1-02 protobuf + generated JSON Schema | todo | No `.proto` yet |
+| P1-03 versioning, SDK matrix, FEP lifecycle and index | done (RC1 section 11, spec/README) | Outside review |
+| P1-04 semconv YAML | todo | Section 12.5 lists the namespaces only |
+| P1-05 bindings | in progress | Files, LSL, WebSocket in RC1; in-process API and gRPC not written |
+| P1-06 generated docs + CI agreement check + tag RC | todo | RC1 is not tagged (draft) |
+| P1-07 1.0 Stable | externally blocked | Two outside decoder groups |
 
 ### Deliverables
 1. **Data model 1.0.** Streams (header + events), all event kinds (`frame`, `decision`, `hypothesis`, `pointer`, `signal_quality`), plus the open questions of [spec section 10](../../spec/neuraltextstream-v0.1.md#10-open-questions):
