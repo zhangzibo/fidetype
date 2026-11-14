@@ -1,0 +1,427 @@
+{
+ "sessions": [
+  {
+   "session": "t15.2023.08.11",
+   "n_train": 288,
+   "n_train_oov": 0,
+   "n_val_select": 0,
+   "n_val_select_oov": 0,
+   "n_val_eval": 0,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.08.13",
+   "n_train": 348,
+   "n_train_oov": 0,
+   "n_val_select": 18,
+   "n_val_select_oov": 0,
+   "n_val_eval": 17,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.08.18",
+   "n_train": 197,
+   "n_train_oov": 1,
+   "n_val_select": 25,
+   "n_val_select_oov": 0,
+   "n_val_eval": 24,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.08.20",
+   "n_train": 278,
+   "n_train_oov": 0,
+   "n_val_select": 24,
+   "n_val_select_oov": 0,
+   "n_val_eval": 24,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.08.25",
+   "n_train": 88,
+   "n_train_oov": 2,
+   "n_val_select": 13,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.08.27",
+   "n_train": 150,
+   "n_train_oov": 0,
+   "n_val_select": 13,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.09.01",
+   "n_train": 297,
+   "n_train_oov": 0,
+   "n_val_select": 25,
+   "n_val_select_oov": 0,
+   "n_val_eval": 24,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.09.03",
+   "n_train": 322,
+   "n_train_oov": 0,
+   "n_val_select": 17,
+   "n_val_select_oov": 0,
+   "n_val_eval": 17,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.09.24",
+   "n_train": 245,
+   "n_train_oov": 0,
+   "n_val_select": 18,
+   "n_val_select_oov": 0,
+   "n_val_eval": 17,
+   "n_val_eval_oov": 1
+  },
+  {
+   "session": "t15.2023.09.29",
+   "n_train": 153,
+   "n_train_oov": 0,
+   "n_val_select": 24,
+   "n_val_select_oov": 0,
+   "n_val_eval": 24,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.10.01",
+   "n_train": 218,
+   "n_train_oov": 0,
+   "n_val_select": 22,
+   "n_val_select_oov": 0,
+   "n_val_eval": 22,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.10.06",
+   "n_train": 174,
+   "n_train_oov": 1,
+   "n_val_select": 18,
+   "n_val_select_oov": 0,
+   "n_val_eval": 18,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.10.08",
+   "n_train": 284,
+   "n_train_oov": 1,
+   "n_val_select": 9,
+   "n_val_select_oov": 0,
+   "n_val_eval": 8,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.10.13",
+   "n_train": 155,
+   "n_train_oov": 0,
+   "n_val_select": 22,
+   "n_val_select_oov": 0,
+   "n_val_eval": 22,
+   "n_val_eval_oov": 2
+  },
+  {
+   "session": "t15.2023.10.15",
+   "n_train": 239,
+   "n_train_oov": 0,
+   "n_val_select": 22,
+   "n_val_select_oov": 0,
+   "n_val_eval": 22,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.10.20",
+   "n_train": 98,
+   "n_train_oov": 0,
+   "n_val_select": 5,
+   "n_val_select_oov": 0,
+   "n_val_eval": 4,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.10.22",
+   "n_train": 134,
+   "n_train_oov": 0,
+   "n_val_select": 17,
+   "n_val_select_oov": 0,
+   "n_val_eval": 16,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.11.03",
+   "n_train": 149,
+   "n_train_oov": 0,
+   "n_val_select": 25,
+   "n_val_select_oov": 0,
+   "n_val_eval": 25,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.11.04",
+   "n_train": 80,
+   "n_train_oov": 0,
+   "n_val_select": 8,
+   "n_val_select_oov": 0,
+   "n_val_eval": 7,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.11.17",
+   "n_train": 100,
+   "n_train_oov": 0,
+   "n_val_select": 13,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.11.19",
+   "n_train": 60,
+   "n_train_oov": 0,
+   "n_val_select": 10,
+   "n_val_select_oov": 0,
+   "n_val_eval": 10,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.11.26",
+   "n_train": 198,
+   "n_train_oov": 0,
+   "n_val_select": 22,
+   "n_val_select_oov": 0,
+   "n_val_eval": 22,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.12.03",
+   "n_train": 228,
+   "n_train_oov": 0,
+   "n_val_select": 17,
+   "n_val_select_oov": 0,
+   "n_val_eval": 17,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.12.08",
+   "n_train": 198,
+   "n_train_oov": 0,
+   "n_val_select": 25,
+   "n_val_select_oov": 0,
+   "n_val_eval": 25,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.12.10",
+   "n_train": 131,
+   "n_train_oov": 0,
+   "n_val_select": 13,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.12.17",
+   "n_train": 135,
+   "n_train_oov": 0,
+   "n_val_select": 15,
+   "n_val_select_oov": 0,
+   "n_val_eval": 15,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2023.12.29",
+   "n_train": 198,
+   "n_train_oov": 0,
+   "n_val_select": 25,
+   "n_val_select_oov": 0,
+   "n_val_eval": 25,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.02.25",
+   "n_train": 193,
+   "n_train_oov": 0,
+   "n_val_select": 12,
+   "n_val_select_oov": 0,
+   "n_val_eval": 11,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.03.03",
+   "n_train": 219,
+   "n_train_oov": 0,
+   "n_val_select": 0,
+   "n_val_select_oov": 0,
+   "n_val_eval": 0,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.03.08",
+   "n_train": 163,
+   "n_train_oov": 0,
+   "n_val_select": 12,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.03.15",
+   "n_train": 239,
+   "n_train_oov": 0,
+   "n_val_select": 24,
+   "n_val_select_oov": 0,
+   "n_val_eval": 24,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.03.17",
+   "n_train": 246,
+   "n_train_oov": 0,
+   "n_val_select": 24,
+   "n_val_select_oov": 0,
+   "n_val_eval": 24,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.04.25",
+   "n_train": 364,
+   "n_train_oov": 0,
+   "n_val_select": 0,
+   "n_val_select_oov": 0,
+   "n_val_eval": 0,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.04.28",
+   "n_train": 150,
+   "n_train_oov": 0,
+   "n_val_select": 0,
+   "n_val_select_oov": 0,
+   "n_val_eval": 0,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.05.10",
+   "n_train": 110,
+   "n_train_oov": 0,
+   "n_val_select": 13,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.06.14",
+   "n_train": 90,
+   "n_train_oov": 0,
+   "n_val_select": 13,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.07.19",
+   "n_train": 169,
+   "n_train_oov": 0,
+   "n_val_select": 24,
+   "n_val_select_oov": 0,
+   "n_val_eval": 24,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.07.21",
+   "n_train": 160,
+   "n_train_oov": 0,
+   "n_val_select": 23,
+   "n_val_select_oov": 0,
+   "n_val_eval": 23,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2024.07.28",
+   "n_train": 161,
+   "n_train_oov": 0,
+   "n_val_select": 24,
+   "n_val_select_oov": 0,
+   "n_val_eval": 24,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2025.01.10",
+   "n_train": 106,
+   "n_train_oov": 1,
+   "n_val_select": 12,
+   "n_val_select_oov": 0,
+   "n_val_eval": 11,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2025.01.12",
+   "n_train": 163,
+   "n_train_oov": 0,
+   "n_val_select": 24,
+   "n_val_select_oov": 0,
+   "n_val_eval": 23,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2025.03.14",
+   "n_train": 59,
+   "n_train_oov": 0,
+   "n_val_select": 12,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2025.03.16",
+   "n_train": 101,
+   "n_train_oov": 0,
+   "n_val_select": 12,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2025.03.30",
+   "n_train": 165,
+   "n_train_oov": 1,
+   "n_val_select": 15,
+   "n_val_select_oov": 0,
+   "n_val_eval": 15,
+   "n_val_eval_oov": 0
+  },
+  {
+   "session": "t15.2025.04.13",
+   "n_train": 69,
+   "n_train_oov": 0,
+   "n_val_select": 13,
+   "n_val_select_oov": 0,
+   "n_val_eval": 12,
+   "n_val_eval_oov": 0
+  }
+ ],
+ "n_sessions": 45,
+ "n_train": 8072,
+ "n_train_used": 8065,
+ "n_val_select": 722,
+ "n_val_select_used": 722,
+ "n_val_eval": 704,
+ "n_val_eval_used": 701,
+ "speech_rate_train": {
+  "chars_per_min": 103.3568694240212,
+  "seconds": 141105.2800000005,
+  "chars": 243070
+ },
+ "train_bins": {
+  "median": 836.0,
+  "p95": 1426.0,
+  "max": 2475
+ },
+ "seconds": 89.5
+}

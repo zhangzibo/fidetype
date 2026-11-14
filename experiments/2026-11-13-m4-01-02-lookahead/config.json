@@ -1,0 +1,62 @@
+{
+ "description": "M4-01 + M4-02: a causal GRU-CTC phoneme decoder with a configurable lookahead L (fidetype.decoders.lookahead_gru), trained on Brain-to-Text '25 T15 neural data; accuracy (PER, WER, sentence exact) and trust-layer outcomes (frozen Paper 1 v4 config of M4-06, 'ours') against L; algorithmic and compute latency against L, end to end through the streaming trust layer.",
+ "dataset": "Card et al. 2024 (NEJM), t15_copyTask_neuralData.zip, Dryad doi:10.5061/dryad.dncjsxm85 (CC0 1.0). Copy used: Hugging Face mirror yw784/brain-to-text-25-competition, same SHA-256 as Dryad lists (Dryad file downloads need a login token).",
+ "archive": "C:/Users/zhang/bci-data/brain-to-text-25/neural/t15_copyTask_neuralData.zip",
+ "archive_sha256": "fb828fa7ef937aca405d6912addc876f6747f75a8a1711f6d2052aacf34ec5b5",
+ "archive_size": 11051034483,
+ "extract_dir": "C:/Users/zhang/bci-data/brain-to-text-25/neural/extracted",
+ "derived_dir": "C:/Users/zhang/bci-data/derived/m4-01-02-lookahead",
+ "runs_root": "C:/Users/zhang/bci-data/runs",
+ "cmudict": "C:/Users/zhang/bci-data/lexicon/cmudict/cmudict.dict",
+ "normalisation": "none added: the dataset features are already z-scored on the 20 preceding trials (dataset README), a causal estimate at trial level",
+ "targets": "our CMUdict phonemisation of the normalised sentence label (fidetype.adapters.b2t25.normalize_words; SIL between words; trials with an out-of-vocabulary word are not used for training or evaluation)",
+ "splits": {
+  "train": "the dataset 'train' trials of all sessions",
+  "val_select": "dataset 'val' trials with an even index inside their session (checkpoint selection only)",
+  "val_eval": "dataset 'val' trials with an odd index inside their session (all reported numbers)",
+  "test": "dataset 'test' trials have no labels: not used"
+ },
+ "lookahead_ms": [0, 50, 100, 200, 300, 500],
+ "lookahead_rule": "bins = floor(ms / 20): 0, 2, 5, 10, 15, 25 bins = 0, 40, 100, 200, 300, 500 ms (never above the nominal value)",
+ "model": {
+  "n_in": 512,
+  "n_out": 41,
+  "hidden": 768,
+  "layers": 5,
+  "patch": 14,
+  "stride": 4,
+  "smooth_sd": 2.0,
+  "la_max": 25,
+  "la_proj": 64,
+  "dropout": 0.4
+ },
+ "train": {
+  "lr": 0.0005,
+  "warmup_steps": 500,
+  "weight_decay": 1e-05,
+  "batch": 64,
+  "max_batch_bins": 57600,
+  "white_noise_sd": 0.8,
+  "offset_sd": 0.2,
+  "max_epochs": 30,
+  "patience": 10,
+  "seed": 0,
+  "checkpoint_minutes": 4,
+  "torch_threads": 4,
+  "eval_lookahead_bins": [0, 25]
+ },
+ "runs": {
+  "shared": {"run": "m4-01-la-shared", "lookahead_bins": "sample", "note": "one model, L drawn uniformly from {0,2,5,10,15,25} bins per batch"},
+  "dedicated_0": {"run": "m4-01-la-fixed0", "lookahead_bins": 0},
+  "dedicated_25": {"run": "m4-01-la-fixed25", "lookahead_bins": 25}
+ },
+ "trust": {
+  "frozen_config": "experiments/2026-11-13-m4-06-real-replay/configs/trust-config-b2t25-ours-splitA.json",
+  "frozen_config_id": "tcfg-f5ca0020b3b8fce2",
+  "word_route": "experiments/2026-11-10-b2t25-trust Decoders.words_fn (phoneme CTC prefix beam 64 -> PhonemeWordDecoder: CMUdict, word unigram, char 6-gram; lm_weight 1.0, edit_penalty 12, word_bonus 3)",
+  "user": "UserConfig.aac_gaze(chars_per_min = T15 copy-task speech rate of experiments/2026-11-10-b2t25-trust prep.json)",
+  "seed": 0,
+  "note": "The config was fitted on the PUBLISHED decoder's logits (split A of t15_copyTask.pkl). We apply it unchanged to our decoder (frozen = no refit). Its frame temperature and thresholds are therefore not tuned to our logits."
+ },
+ "gaze_chars_per_min": 20.0
+}
