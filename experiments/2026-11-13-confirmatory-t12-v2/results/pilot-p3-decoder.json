@@ -1,0 +1,52 @@
+{
+ "decoder_validation": {
+  "n": 880,
+  "cer": 0.4172806185717412,
+  "wer": 0.5927684441197955,
+  "sentence_exact": 0.010227272727272727,
+  "truth_in_nbest": 0.025,
+  "greedy_per_symbols": 0.3914336191666308,
+  "seconds": 81.8
+ },
+ "checkpoint": {
+  "checkpoint": "C:\\Users\\zhang\\bci-data\\runs\\t12-v2-p3-big\\best.pt",
+  "checkpoint_sha256": "bfa0cdcd8910852f9d2c344974bd8d1b846c62fb78417eb76f297ddb4f08713c",
+  "epoch": 10,
+  "val_per_greedy": 0.39076683669058526,
+  "n_streams": 880,
+  "parts": [
+   "val"
+  ],
+  "config": {
+   "n_in": 512,
+   "input_layer": "per-session affine 512->512 (identity init) + softsign",
+   "smooth_sd_bins": 2.0,
+   "smooth": "causal half-Gaussian (past bins only, so latency 0)",
+   "patch": 32,
+   "stride": 4,
+   "gru_layers": 5,
+   "hidden": 1024,
+   "dropout": 0.4,
+   "lr": 0.0005,
+   "warmup_steps": 500,
+   "weight_decay": 1e-05,
+   "batch": 64,
+   "white_noise_sd": 0.8,
+   "offset_sd": 0.2,
+   "max_epochs": 150,
+   "patience": 20,
+   "seed": 0,
+   "checkpoint_minutes": 5,
+   "adam_eps": 1e-08,
+   "time_mask_n": 0,
+   "time_mask_max_bins": 0,
+   "layer_norm": false,
+   "stop_epoch": 10
+  }
+ },
+ "word_route": {
+  "lm_weight": 1.0,
+  "edit_penalty": 12.0,
+  "word_bonus": 3.0
+ }
+}
