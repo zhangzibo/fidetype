@@ -1,0 +1,61 @@
+# Fidetype collector v0 example (FEP-0006). Run from the repository root:
+#
+#   fidetype collector --config examples/collector/collector.toml
+#   fidetype collector --config examples/collector/collector.toml --check   # check only
+#
+# Relative paths resolve against the folder of this file.
+# trust-example.json is a TOY trust configuration (not calibrated on any data). It only shows the
+# wiring. Fit a real one with fidetype.calibrate(...) and FrozenTrustConfig.save(...).
+# The input is a synthetic conformance vector (no participant data).
+
+[service]
+log = "info"                                   # "info" (stderr) or "quiet"
+metrics_file = "out/metrics.json"              # written at stop
+# health.listen = "127.0.0.1:13133"           # GET /healthz and /metrics (JSON); localhost only
+
+[receivers.replay]
+type = "file"
+paths = ["../../spec/conformance/fep-0001/f01-segments.jsonl"]
+eof = "close"                                  # "close" (like `fidetype trust`) or "cut"
+# follow = true                                # tail mode; idle_timeout_s = 10 cuts an open stream
+
+# A live WebSocket input (FEP-0004 /nts) and its /decisions channel. Needs the [ws] extra.
+# [receivers.live]
+# type = "websocket"
+# listen = "127.0.0.1:8765"
+# token_env = "FIDETYPE_WS_TOKEN"              # the token comes from this environment variable
+
+[processors.check]
+type = "validate"                              # conformance checks; an invalid event cuts the utterance
+on_invalid = "cut"
+
+[processors.trust]
+type = "trust"
+config = "trust-example.json"
+decoder = "greedy"                             # none (hypothesis route), greedy or demo
+max_attempts = 2
+# ledger = { path = "out/ledger.jsonl", text_mode = "hash" }   # hash-chained provenance (PRV-1)
+
+[processors.thin]
+type = "thin"
+keep_provisional = "changes"                   # drop provisional decisions that repeat the last one
+
+[processors.privacy]
+type = "redact"                                # SEC-7: no decoded text in the log
+mode = "drop"                                  # or "hmac" with key_env = "FIDETYPE_REDACT_KEY"
+
+[exporters.log]
+type = "jsonl"
+path = "out/decisions.jsonl"                   # a decision log (spec 6.4)
+
+[exporters.console]
+type = "stdout"
+
+# [exporters.live_decisions]
+# type = "websocket"
+# receiver = "live"                            # serves /decisions on the receiver's server
+
+[pipelines.main]
+receivers = ["replay"]
+processors = ["check", "trust", "thin", "privacy"]
+exporters = ["log", "console"]

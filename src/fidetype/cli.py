@@ -13,14 +13,15 @@
     fidetype ws run|replay-to-ws|subscribe ...           # WebSocket input and output, FEP-0004 (needs the [ws] extra)
     fidetype benchmark tracks|prepare|score|...          # open benchmark v0.1
     fidetype ledger verify|report ...                    # provenance ledger tools
+    fidetype collector --config collector.toml           # collector v0: receivers -> processors -> exporters (FEP-0006)
     fidetype version
 
 Each subcommand runs the same code as its ``python -m`` module, which
 still works: ``python -m fidetype.conformance``,
 ``python -m fidetype.trust.streaming``, ``python -m fidetype.trust.intent``,
 ``python -m fidetype.adapters.lsl``, ``python -m fidetype.adapters.ws``,
-``python -m fidetype.benchmark``, ``python -m fidetype.trust.provenance``
-and ``python -m fidetype.demo``.
+``python -m fidetype.benchmark``, ``python -m fidetype.trust.provenance``,
+``python -m fidetype.collector`` and ``python -m fidetype.demo``.
 """
 
 from __future__ import annotations
@@ -83,6 +84,12 @@ def _ledger(argv: list[str]) -> int:
     return main(argv)
 
 
+def _collector(argv: list[str]) -> int:
+    from fidetype.collector.__main__ import main
+
+    return main(argv)
+
+
 def _demo(argv: list[str]) -> int:
     from fidetype.demo.__main__ import main
 
@@ -110,6 +117,8 @@ COMMANDS: dict[str, tuple[Callable[[list[str]], int], str, str]] = {
     "ws": (_ws, "WebSocket input and output, FEP-0004 (needs the [ws] extra)", "python -m fidetype.adapters.ws"),
     "benchmark": (_benchmark, "open benchmark v0.1 (tracks, prepare, score, leaderboard)", "python -m fidetype.benchmark"),
     "ledger": (_ledger, "provenance ledger tools (verify, report)", "python -m fidetype.trust.provenance"),
+    "collector": (_collector, "collector v0: receivers -> processors -> exporters from one config (FEP-0006)",
+                  "python -m fidetype.collector"),
     "version": (_version, "print the package and spec versions", ""),
 }
 

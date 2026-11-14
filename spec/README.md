@@ -50,6 +50,7 @@ All five FEPs are folded into [NTS 1.0 RC1](nts-1.0-rc1.md). Their open question
 | [0003](feps/0003-intent-events.md) | Output profiles (core, text, intent, control) and discrete intent events (risk classes, confirmation, undo, `intent_feedback`, intent `trust_decision`) | Draft (in 1.0 RC1) | `fep-0003` (44 vectors); JSON schemas in `schemas/fep-0003/` |
 | [0004](feps/0004-nts-over-websocket.md) | NeuralTextStream over WebSocket (binding `nts-ws/0.1`: framing, `ws_seq` order and gaps, resume, back-pressure, auth hook, decisions channel) | Draft (in 1.0 RC1) | `fep-0004` (38 vectors; W38 tests the RC1 header check) |
 | [0005](feps/0005-control-events.md) | Continuous-control events (control profile: `control_declaration` units / frame / rate / uncertainty, `control`, `control_enable`, control `trust_decision` with gain / hold / stop, safety rules) | Draft (in 1.0 RC1) | `fep-0005` (42 vectors; Python only) |
+| [0006](feps/0006-collector.md) | The collector (reference architecture, not a format change): receivers → processors → exporters, pipelines, TOML / JSON configuration, loss and privacy rules, health and metrics | Draft (not in 1.0; reference v0 `fidetype collector`) | - |
 
 ## Stability levels
 | Level | Meaning |
@@ -89,4 +90,5 @@ spec/
     0003-intent-events.md
     0004-nts-over-websocket.md
     0005-control-events.md
+    0006-collector.md
 ```

@@ -1,0 +1,339 @@
+"""The collector service (FEP-0006 sections 2 and 7): build the pipelines from a configuration and run them.
+
+One loop, one thread for the pipelines (the WebSocket server and the
+health endpoint have their own threads). Each step: every receiver of a
+pipeline gives its new items, the items go through the processors in
+order, then to every exporter of the pipeline. The loop reads new input
+only after the last items reached the exporters, so a slow processor or
+exporter slows the reading (back-pressure); nothing is dropped to keep up.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+import threading
+import time
+from dataclasses import dataclass
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from typing import Any, Callable
+
+from fidetype.collector import exporters as E
+from fidetype.collector import processors as P
+from fidetype.collector import receivers as R
+from fidetype.collector.config import CollectorConfig, ComponentConfig, ConfigError
+
+
+def _stderr(msg: str) -> None:
+    sys.stderr.write(f"[fidetype.collector] {msg}\n")
+    sys.stderr.flush()
+
+
+def _env_secret(where: str, name: str | None) -> str | None:
+    if not name:
+        return None
+    v = os.environ.get(name)
+    if not v:
+        raise ConfigError(f"{where}: environment variable {name!r} is empty or not set")
+    return v
+
+
+def _host_port(v: str) -> tuple[str, int]:
+    host, _, port = v.rpartition(":")
+    return host.strip("[]"), int(port)
+
+
+@dataclass
+class Pipeline:
+    name: str
+    receivers: list[R.Receiver]
+    processors: list[P.Processor]
+    exporters: list[E.Exporter]
+
+    def _run(self, items: list[R.Item], start: int = 0) -> None:
+        for proc in self.processors[start:]:
+            if not items:
+                return
+            items = proc.process(items)
+        if items:
+            for ex in self.exporters:
+                ex.export(items)
+
+    def step(self, timeout: float) -> int:
+        n = 0
+        multi = len(self.receivers) > 1
+        for rec in self.receivers:
+            if rec.done:
+                continue
+            items = rec.poll(timeout / max(1, len(self.receivers)))
+            if multi:  # stream ids of two receivers must not meet in one trust session
+                items = [(f"{rec.name}/{sid}", {**ev, "stream": f"{rec.name}/{sid}"} if ev.get("type") == R.STATUS
+                          else ev) for sid, ev in items]
+            n += len(items)
+            self._run(items)
+        return n
+
+    def finish(self) -> None:
+        for rec in self.receivers:
+            items = rec.finish()
+            if len(self.receivers) > 1:
+                items = [(f"{rec.name}/{sid}", ev) for sid, ev in items]
+            self._run(items)
+        for i, proc in enumerate(self.processors):
+            self._run(proc.finish(), i + 1)
+
+    @property
+    def done(self) -> bool:
+        return all(r.done for r in self.receivers)
+
+
+class Collector:
+    """Build and run the pipelines of a :class:`CollectorConfig`.
+
+    ::
+
+        col = Collector(config.load("collector.toml"))
+        col.run()                    # until every finite receiver is done, the duration, or Ctrl+C
+        print(col.metrics())
+    """
+
+    def __init__(self, config: CollectorConfig, log: Callable[[str], None] | None = None) -> None:
+        self.config = config
+        quiet = config.service.get("log") == "quiet"
+        self.log = (lambda m: None) if quiet else (log or _stderr)
+        self.stop_event = threading.Event()
+        self.started_at: float | None = None
+        self.state = "new"
+        self._receivers: dict[str, R.Receiver] = {}
+        self._exporters: dict[str, E.Exporter] = {}
+        self.pipelines: list[Pipeline] = []
+        self._health: ThreadingHTTPServer | None = None
+        self._lock = threading.Lock()
+        self._build()
+
+    # --- build ------------------------------------------------------------------------
+
+    def _receiver(self, c: ComponentConfig) -> R.Receiver:
+        o = c.options
+        if c.type == "file":
+            return R.FileReceiver(c.name, [self.config.path(p) for p in o["paths"]], self.log,
+                                  follow=o.get("follow", False), eof=o.get("eof", "close"), batch=o.get("batch", 256),
+                                  idle_timeout_s=float(o.get("idle_timeout_s", 10.0)),
+                                  poll_interval_s=float(o.get("poll_interval_s", 0.05)), stream_id=o.get("stream_id"))
+        from fidetype.adapters import ws as W
+
+        host, port = _host_port(o.get("listen", f"127.0.0.1:{W.DEFAULT_PORT}"))
+        ingest = W.IngestSettings(reorder_window=o.get("reorder_window", 16),
+                                  reorder_timeout_s=float(o.get("reorder_timeout_s", 0.25)),
+                                  resume_timeout_s=float(o.get("resume_timeout_s", 10.0)))
+        ssl = None
+        if "certfile" in o:
+            ssl = W._ssl_context(str(self.config.path(o["certfile"])),
+                                 str(self.config.path(o["keyfile"])) if "keyfile" in o else None, server=True)
+        return R.WebSocketReceiver(c.name, self.log, host=host, port=port,
+                                   token=_env_secret(f"receivers.{c.name}.token_env", o.get("token_env")),
+                                   origins=o.get("origins"), ssl=ssl, ingest=ingest, queue_max=o.get("queue_max", 8192))
+
+    def _processor(self, c: ComponentConfig) -> P.Processor:
+        o = c.options
+        if c.type == "validate":
+            return P.ValidateProcessor(c.name, self.log, on_invalid=o.get("on_invalid", "cut"),
+                                       level=o.get("level", "core"))
+        if c.type == "trust":
+            cfg_path = self.config.path(o["config"])
+            if not cfg_path.is_file():
+                raise ConfigError(f"processors.{c.name}.config: trust configuration not found: {cfg_path}")
+            ledger = None
+            if "ledger" in o:
+                from fidetype.trust.provenance import ProvenanceLedger
+
+                lo = o["ledger"]
+                key = _env_secret(f"processors.{c.name}.ledger.key_env", lo.get("key_env"))
+                ledger = ProvenanceLedger(self.config.path(lo["path"]), text_mode=lo.get("text_mode", "hash"),
+                                          id_mode=lo.get("id_mode", "hash"),
+                                          hash_key=key.encode("utf-8") if key else None, key_id=lo.get("key_id"))
+            try:
+                return P.TrustProcessor(c.name, self.log, cfg_path, decoder=o.get("decoder", "none"),
+                                        max_attempts=o.get("max_attempts", 2), route=o.get("route", "auto"),
+                                        min_signal_quality=o.get("min_signal_quality"),
+                                        declaration_check=o.get("declaration_check", "warn"), ledger=ledger)
+            except (ValueError, KeyError, OSError) as e:
+                raise ConfigError(f"processors.{c.name}: cannot build the trust layer: {e}") from None
+        if c.type == "redact":
+            key = _env_secret(f"processors.{c.name}.key_env", o.get("key_env"))
+            return P.RedactProcessor(c.name, self.log, mode=o.get("mode", "drop"),
+                                     key=key.encode("utf-8") if key else None, key_id=o.get("key_id"),
+                                     hypothesis_text=o.get("hypothesis_text", True))
+        return P.ThinProcessor(c.name, self.log, keep_provisional=o.get("keep_provisional", "changes"))
+
+    def _exporter(self, c: ComponentConfig) -> E.Exporter:
+        o = c.options
+        if c.type == "jsonl":
+            return E.JsonlExporter(c.name, self.log, self.config.path(o["path"]), o["types"], append=o.get("append", False))
+        if c.type == "stdout":
+            return E.StdoutExporter(c.name, self.log, o["types"])
+        rec = self._receivers[o["receiver"]]
+        assert isinstance(rec, R.WebSocketReceiver)
+        return E.WebSocketExporter(c.name, self.log, rec.hub)
+
+    def _build(self) -> None:
+        cfg = self.config
+        for name, c in cfg.receivers.items():
+            self._receivers[name] = self._receiver(c)
+        for name, c in cfg.exporters.items():
+            self._exporters[name] = self._exporter(c)
+        for p in cfg.pipelines.values():
+            self.pipelines.append(Pipeline(p.name, [self._receivers[n] for n in p.receivers],
+                                           [self._processor(cfg.processors[n]) for n in p.processors],
+                                           [self._exporters[n] for n in p.exporters]))
+
+    # --- lifecycle --------------------------------------------------------------------
+
+    def start(self) -> "Collector":
+        for ex in self._exporters.values():
+            ex.start()
+        for rec in self._receivers.values():
+            rec.start()
+        h = self.config.service.get("health")
+        if h:
+            self._start_health(*_host_port(h["listen"]))
+        self.started_at = time.monotonic()
+        self.state = "running"
+        for line in self.config.describe().splitlines():
+            self.log(line)
+        return self
+
+    def step(self, timeout: float = 0.05) -> int:
+        with self._lock:
+            return sum(p.step(timeout) for p in self.pipelines if not p.done)
+
+    @property
+    def done(self) -> bool:
+        return all(p.done for p in self.pipelines)
+
+    def ended_streams(self) -> int:
+        return sum(r.counts.get("ended_streams", 0) for r in self._receivers.values())
+
+    def stop(self) -> None:
+        if self.state == "stopped":
+            return
+        self.state = "stopping"
+        with self._lock:
+            for p in self.pipelines:
+                p.finish()
+        for rec in self._receivers.values():
+            rec.stop()
+        for ex in self._exporters.values():
+            ex.stop()
+        if self._health is not None:
+            self._health.shutdown()
+            self._health.server_close()
+            self._health = None
+        mf = self.config.service.get("metrics_file")
+        self.state = "stopped"
+        if mf:
+            p = self.config.path(mf)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(json.dumps(self.metrics(), indent=2) + "\n", encoding="utf-8")
+
+    def run(self, duration_s: float | None = None, max_streams: int | None = None) -> str:
+        """Run until every receiver is done, ``duration_s``, ``max_streams`` ended streams, :meth:`request_stop` or Ctrl+C."""
+        svc = self.config.service
+        duration_s = duration_s if duration_s is not None else svc.get("duration_s")
+        max_streams = max_streams if max_streams is not None else svc.get("max_streams")
+        if self.state == "new":
+            self.start()
+        t0 = time.monotonic()
+        reason = ""
+        try:
+            while True:
+                if self.stop_event.is_set():
+                    reason = "stopped"
+                    break
+                if self.done:
+                    reason = "input done"
+                    break
+                if duration_s is not None and time.monotonic() - t0 >= duration_s:
+                    reason = "duration"
+                    break
+                if max_streams is not None and self.ended_streams() >= max_streams:
+                    reason = "max_streams"
+                    break
+                self.step(0.05)
+        except KeyboardInterrupt:
+            reason = "interrupted"
+        finally:
+            self.stop()
+        self.log(f"stop ({reason}): " + json.dumps(self.summary()))
+        return reason
+
+    def request_stop(self) -> None:
+        self.stop_event.set()
+
+    # --- metrics and health -------------------------------------------------------------
+
+    def metrics(self) -> dict[str, Any]:
+        """Counters of every component. No host name, client address, token, key or decoded text."""
+        return {
+            "state": self.state,
+            "uptime_s": 0.0 if self.started_at is None else round(time.monotonic() - self.started_at, 3),
+            "pipelines": {p.name: {
+                "receivers": {r.name: r.stats() for r in p.receivers},
+                "processors": {x.name: x.stats() for x in p.processors},
+                "exporters": {x.name: x.stats() for x in p.exporters},
+            } for p in self.pipelines},
+        }
+
+    def summary(self) -> dict[str, Any]:
+        out: dict[str, Any] = {"ended_streams": self.ended_streams()}
+        for p in self.pipelines:
+            for x in p.processors:
+                if isinstance(x, P.TrustProcessor):
+                    s = x.stats()
+                    for k in ("final_decisions", "decisions", "aborted_utterances", "rejected_events"):
+                        out[k] = out.get(k, 0) + s[k]
+        return out
+
+    def _start_health(self, host: str, port: int) -> None:
+        col = self
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self) -> None:  # noqa: N802
+                if self.path == "/healthz":
+                    body = {"status": "ok" if col.state == "running" else col.state}
+                elif self.path == "/metrics":
+                    body = col.metrics()
+                else:
+                    self.send_error(404)
+                    return
+                data = (json.dumps(body) + "\n").encode("utf-8")
+                self.send_response(200 if body.get("status", "ok") == "ok" or self.path == "/metrics" else 503)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+
+            def log_message(self, *args: Any) -> None:  # no client addresses in any log
+                pass
+
+        self._health = ThreadingHTTPServer((host, port), Handler)
+        self._health.daemon_threads = True
+        threading.Thread(target=self._health.serve_forever, name="fidetype-collector-health", daemon=True).start()
+
+    @property
+    def health_port(self) -> int | None:
+        return None if self._health is None else int(self._health.server_address[1])
+
+    def receiver(self, name: str) -> R.Receiver:
+        return self._receivers[name]
+
+
+def run_file(path: str | Path, **kw: Any) -> Collector:
+    """Load a configuration file, run the collector to the end, return it (for its metrics)."""
+    from fidetype.collector.config import load
+
+    col = Collector(load(path))
+    col.run(**kw)
+    return col

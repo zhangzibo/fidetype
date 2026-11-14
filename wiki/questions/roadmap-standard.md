@@ -187,6 +187,8 @@ Reasons:
 ## P3. Collector (pipeline)
 **Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a YAML file.
 
+**Status (2026-11-14):** v0 started early. Draft [FEP-0006](../../spec/feps/0006-collector.md) and `src/fidetype/collector/` ([collector](../concepts/collector.md)): receivers `file` + `websocket`, processors `validate` + `trust` + `redact` + `thin`, exporters `jsonl` + `stdout` + `websocket`, TOML / JSON configuration (no YAML yet), health and metrics. Not yet: LSL, gRPC, OS input exporters, latency budget.
+
 ### Deliverables
 | Stage | Components |
 |---|---|

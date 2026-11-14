@@ -1,0 +1,2 @@
+{"id": "P3-03", "status": "in_progress", "started_at": "2026-11-14T10:50:00-08:00", "approx_times": true,
+ "notes": "v0 (2026-11-14, with P3-01): exporters jsonl (decision log, TD-11 enforced), stdout, websocket /decisions (receiver's OutputHub). Not yet: OS text input (Windows TSF first), Apple BCI HID bridge, AAC API, Arrow/Parquet, analytics, LSL decisions outlet."}

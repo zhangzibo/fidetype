@@ -18,6 +18,8 @@ The written contract of Fidetype. A decoder writes a NeuralTextStream (NTS); a t
 
 Changelog: [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md). Index of specs and FEPs: [`spec/README.md`](../../spec/README.md).
 
+Tools around the spec: the [collector](collector.md) (draft FEP-0006, P3) receives NTS from files and WebSocket, runs the trust layer and the privacy filter, and exports decision logs. It changes no field of NTS.
+
 ## 1.0 RC1 in one table
 Roadmap phase [P1](../questions/roadmap-standard.md#p1-spec-to-10), tasks P1-01 (data model), P1-03 (versioning), P1-05 (bindings, partly).
 

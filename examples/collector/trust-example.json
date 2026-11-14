@@ -1,0 +1,22 @@
+{
+  "char_temperature": 1.0,
+  "conformal_alpha": 0.1,
+  "conformal_mode": "conditional",
+  "conformal_q": "nan",
+  "conformal_score": "lac",
+  "frame_temperature": 1.0,
+  "guard": {},
+  "name": "collector-example-uncalibrated",
+  "policy": {
+    "abstain_risk": 1.01,
+    "commit_max_risk": 1.0,
+    "commit_p": 0.3
+  },
+  "policy_class": "trust",
+  "recipe": {},
+  "risk_control": {},
+  "schema": "fidetype.trust-config/0.1",
+  "sentence_temperature": 1.0,
+  "use_guard": true,
+  "word_max_alternatives": 5
+}

@@ -1,0 +1,3 @@
+{"id": "P3-01", "status": "in_progress", "started_at": "2026-11-14T10:50:00-08:00", "approx_times": true,
+ "notes": "v0 (2026-11-14): draft FEP-0006 (spec/feps/0006-collector.md) + src/fidetype/collector/: TOML/JSON config loader with path-named errors (no YAML: PyYAML not a dependency), pipeline runtime (one loop, back-pressure, metrics, /healthz + /metrics), receivers file (JSON Lines, tail mode) + websocket (wraps fidetype.adapters.ws). CLI fidetype collector --config. Tests tests/test_collector.py (29). Not yet: gRPC, LSL receiver.",
+ "agent_runs": [{"label": "P3 collector v0: FEP-0006, src/fidetype/collector, tests, wiki", "duration_s": null, "tokens": null, "tool_uses": null}]}
