@@ -46,7 +46,7 @@ All five FEPs are folded into [NTS 1.0 RC2](nts-1.0-rc2.md). Their open question
 
 | FEP | Title | Status | Conformance profile |
 |---|---|---|---|
-| [0001](feps/0001-streaming-trust-events.md) | Streaming trust events (`segment_end`, evidence fields, decode declaration, `trust_decision`) | Draft (in 1.0 RC2) | `fep-0001` (54 vectors; F41-F47 test rule TD-9 and `trust_decision.spec_version`; F48-F54 test 1.x input headers, GEN-5 and TD-F2 types) |
+| [0001](feps/0001-streaming-trust-events.md) | Streaming trust events (`segment_end`, evidence fields, decode declaration, `trust_decision`) | Draft (in 1.0 RC2) | `fep-0001` (56 vectors; F41-F47 test rule TD-9 and `trust_decision.spec_version`; F48-F54 test 1.x input headers, GEN-5 and TD-F2 types; F55-F56 test TD-12, blank candidates) |
 | [0002](feps/0002-nts-over-lsl.md) | NeuralTextStream over LSL (binding `nts-lsl/0.1`) | Draft (in 1.0 RC2) | `fep-0002` (35 vectors; L33-L35 test 1.x `nts_header` versions) |
 | [0003](feps/0003-intent-events.md) | Output profiles (core, text, intent, control) and discrete intent events (risk classes, confirmation, undo, `intent_feedback`, intent `trust_decision`) | Draft (in 1.0 RC2) | `fep-0003` (44 vectors); JSON schemas in `schemas/fep-0003/` |
 | [0004](feps/0004-nts-over-websocket.md) | NeuralTextStream over WebSocket (binding `nts-ws/0.1`: framing, `ws_seq` order and gaps, resume, back-pressure, auth hook, decisions channel) | Draft (in 1.0 RC2) | `fep-0004` (43 vectors; W38 tests the RC1 header check; W39-W43 test 1.x header versions and GEN-5) |

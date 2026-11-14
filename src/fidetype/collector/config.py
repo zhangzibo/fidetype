@@ -337,8 +337,8 @@ def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> Col
         host = h["listen"].rpartition(":")[0]
         if not is_loopback(host) and "token_env" not in h and h.get("allow_unauthenticated") is not True:
             raise ConfigError("service.health.listen: binds beyond localhost without a token; set token_env "
-                              "(the environment variable that holds a bearer token), or set "
-                              "allow_unauthenticated = true to accept an open endpoint")
+                              "(the environment variable that holds a bearer token for /metrics), or set "
+                              "allow_unauthenticated = true to accept an open /metrics (/healthz is always open)")
     comps: dict[str, dict[str, ComponentConfig]] = {}
     for kind in ("receivers", "processors", "exporters"):
         sec = d.get(kind, {})

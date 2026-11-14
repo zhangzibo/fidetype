@@ -510,11 +510,13 @@ def test_health_bearer_token(tmp_path, monkeypatch):
     th.start()
     try:
         base = f"http://127.0.0.1:{col.health_port}"
-        assert _get(base + "/healthz")[0] == 401
+        # /healthz is open (liveness probes) and shows only the status; the token protects /metrics only
+        assert _get(base + "/healthz") == (200, {"status": "ok"})
+        assert _get(base + "/healthz", token="wrong") == (200, {"status": "ok"})
+        assert _get(base + "/metrics")[0] == 401
         assert _get(base + "/metrics", token="wrong")[0] == 401
-        assert _get(base + "/healthz", token=token) == (200, {"status": "ok"})
         code, m = _get(base + "/metrics", token=token)
-        assert code == 200 and token not in json.dumps(m)
+        assert code == 200 and token not in json.dumps(m) and "pipelines" in m
     finally:
         col.request_stop()
         th.join(10)
@@ -564,10 +566,38 @@ def test_blank_final_commit_is_gated_for_spec_1_0(tmp_path):
     fin = [g for g in got if g["is_final"]]
     assert len(fin) == 1 and fin[0]["spec_version"] == "1.0" and fin[0]["action"] != "COMMIT"
     assert fin[0]["reason"].startswith("commit gate: empty text")
+    # TD-12: the gated OFFER listed only the blank text; the collector drops it, and with no candidate left
+    # the OFFER becomes an ABSTAIN with shown = [] (not an OFFER without shown, which would look like TD-10)
+    assert raw[-1]["shown"] and all(not t.strip() for t in raw[-1]["shown"])
+    assert all(t.strip() for g in got for t in g.get("shown", []))
+    assert fin[0]["action"] == "ABSTAIN" and fin[0]["shown"] == [] and "TD-12" in fin[0]["reason"]
     assert fin[0]["config_id"] == CFG_GATED.config_id != CFG.config_id
     assert any(f"config_id {CFG.config_id} -> {CFG_GATED.config_id}" in m for m in logs)
-    assert col.metrics()["pipelines"]["main"]["processors"]["trust"]["gated_commits"] == 1
-    assert fep0001.check_file(tmp_path / "out" / "decisions.jsonl").failures("core") == []
+    trust = col.metrics()["pipelines"]["main"]["processors"]["trust"]
+    assert trust["gated_commits"] == 1
+    assert trust["blank_candidates_dropped"] >= 1 and trust["blank_offers_abstained"] >= 1
+    rep = fep0001.check_file(tmp_path / "out" / "decisions.jsonl")
+    assert rep.failures("core") == [] and not any(r.outcome == "warn" for r in rep.results)  # no TD-12 warning
+
+
+def test_drop_blank_candidates_td12():
+    from fidetype.collector.processors import drop_blank_candidates
+
+    base = {"type": "trust_decision", "spec_version": "1.0", "is_final": True, "p_top1": 0.4,
+            "score_semantics": "calibrated_prob", "reason": "commit gate: empty text"}
+    ev, n, ab = drop_blank_candidates({**base, "action": "OFFER", "shown": ["", "ab", " 	"]})
+    assert (ev["action"], ev["shown"], n, ab) == ("OFFER", ["ab"], 2, False) and "TD-12" in ev["reason"]
+    ev, n, ab = drop_blank_candidates({**base, "action": "OFFER", "shown": [""]})
+    assert (ev["action"], ev["shown"], n, ab) == ("ABSTAIN", [], 1, True)
+    assert ev["reason"].startswith("commit gate: empty text; TD-12")
+    ev, n, ab = drop_blank_candidates({**base, "action": "OFFER_WORDS", "shown": [" "]})
+    assert (ev["action"], ab) == ("ABSTAIN", True)
+    ev, n, ab = drop_blank_candidates({**base, "action": "ASK", "shown": [""]})  # an ASK needs no candidate
+    assert (ev["action"], ev["shown"], n, ab) == ("ASK", [], 1, False)
+    for keep in ({**base, "action": "OFFER", "shown": ["ab"]}, {**base, "action": "ABSTAIN", "shown": [""]},
+                 {**base, "action": "OFFER", "profile": "intent", "shown": [""]}, {**base, "action": "OFFER"}):
+        out, n, ab = drop_blank_candidates(keep)
+        assert out is keep and n == 0 and not ab
 
 
 def test_trust_config_gate_rules(tmp_path):

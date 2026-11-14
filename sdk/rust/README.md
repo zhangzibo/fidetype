@@ -128,14 +128,14 @@ python -m fidetype.conformance consumer --cmd "sdk/rust/target/release/fidetype-
 python -m fidetype.conformance consumer --profile fep-0002 --cmd "sdk/rust/target/release/fidetype-rs consume --profile fep-0002 {path}"
 ```
 
-All six profiles pass this way (281/281 at NTS 1.0 RC2 with `fep-0005`). On Windows, give the binary as an absolute path.
+All six profiles pass this way (283/283 at NTS 1.0 RC2 with `fep-0005` and TD-12). On Windows, give the binary as an absolute path.
 
 ## Conformance and parity with Python
 
 | Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-6, `--n 30`, M7-12) |
 |---|---|---|---|---|
 | `v0.1` (NPZ + JSON Lines) | 61 | 61/61 pass | 61/61 | PASS |
-| `fep-0001` streaming trust events | 54 | 54/54 pass | 54/54 | PASS |
+| `fep-0001` streaming trust events | 56 | 56/56 pass | 56/56 | PASS |
 | `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 | PASS |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 | PASS |
 | `fep-0004` NTS over WebSocket (scenarios, M7-12) | 43 | 43/43 pass | 43/43 | PASS (7,740/7,740) |

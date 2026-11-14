@@ -67,7 +67,7 @@ export interface TargetReport {
 }
 
 export function failures(rep: TargetReport): CheckResult[] {
-  return rep.checks.filter((c) => c.status === "fail");
+  return rep.checks.filter((c) => c.status === "fail" && c.level !== "advisory"); // a failed advisory check is a warning only
 }
 
 /** Throw StreamRejected for the first failure of a report. */

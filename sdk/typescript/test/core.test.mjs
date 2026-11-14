@@ -165,6 +165,31 @@ test("DecisionTracker: FEP-0001 rule 9 warning on an empty final COMMIT", () => 
   assert.match(sdk.emptyCommitWarning(td({ shown: [""], reason: "gate off" })), /reason: gate off/);
 });
 
+test("DecisionTracker: TD-12 drops blank candidates; a warning for 1.x decisions only", () => {
+  const out = sdk.handleDecisions([
+    td({ seq: 0, action: "OFFER", shown: ["", "ab", " \u00a0"], spec_version: "1.0" }),
+    td({ seq: 1, utterance: 1, action: "ASK", shown: ["\t"], spec_version: "1.0" }),
+    td({ seq: 2, utterance: 2, action: "OFFER", shown: ["", "cd"] }), // 0.1 rules: no warning, still dropped
+    td({ seq: 3, utterance: 3, action: "OFFER_WORDS", shown: ["ef"], spec_version: "1.0" }),
+  ]);
+  assert.deepEqual(out.map((d) => d.offered), [["ab"], [], ["cd"], ["ef"]]);
+  assert.deepEqual(out.map((d) => d.warnings.length), [1, 1, 0, 0]);
+  assert.match(out[0].warnings[0], /TD-12/);
+  assert.match(out[0].warnings[0], /2 blank candidate/);
+  assert.ok(out.every((d) => !d.errors.length && !d.forward));
+  assert.equal(sdk.blankCandidateWarning(td({ action: "OFFER", shown: ["ab"], spec_version: "1.0" })), null);
+  assert.equal(sdk.blankCandidateWarning(td({ action: "OFFER", shown: [""], spec_version: "0.1" })), null);
+  // the fep-0001 consumer accepts with a warning (advisory check FEP1-TD-SHOWN), and its summary drops the blank texts
+  const log = [td({ action: "OFFER", shown: ["ab", ""], spec_version: "1.0" })].map((e) => JSON.stringify(e)).join("\n") + "\n";
+  const rep = sdk.fep0001.checkFile("x.jsonl", enc.encode(log));
+  const c = rep.checks.find((r) => r.id === "FEP1-TD-SHOWN");
+  assert.equal(c.status, "fail");
+  assert.equal(c.level, "advisory");
+  const sum = sdk.fep0001.consume("x.jsonl", enc.encode(log));
+  assert.deepEqual(sum.offered, [["ab"]]);
+  assert.equal(sum.advisories, 1);
+});
+
 test("DecisionTracker: order and format errors (rules 5-8)", () => {
   const out = sdk.handleDecisions([td({ seq: 0 }), td({ seq: 1, action: "OFFER" }), td({ seq: 1, utterance: 1 }), td({ seq: 5, utterance: 2, shown: [] }), td({ seq: 6, utterance: 3, set_size: 1.0 })]);
   assert.match(out[1].errors.join(), /after its final one/);

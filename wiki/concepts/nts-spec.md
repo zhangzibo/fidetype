@@ -30,7 +30,7 @@ Roadmap phase [P1](../questions/roadmap-standard.md#p1-spec-to-10), tasks P1-01 
 | 3 | Header (core fields, vocabulary identity, `meta` conventions) |
 | 4 | Events: JSON rules, `frame`, `segment_end`, `end`, `signal_quality`, `decision`, `hypothesis` (+ evidence, `decode_declaration`), `pointer` |
 | 5 | Timing and clocks |
-| 6 | Trust decisions (format, rules TD-1 … TD-11, provenance) |
+| 6 | Trust decisions (format, rules TD-1 … TD-12, provenance) |
 | 7 | Profiles: text, [intent](intent-events.md) (Development), [control](control-events.md) (Development) |
 | 8 | Bindings: JSON Lines, NPZ (read only for new data), [LSL](lsl-input.md) `nts-lsl/0.1`, [WebSocket](websocket-input.md) `nts-ws/0.1` |
 | 9 | Conformance classes, levels, suite profiles, claims, SDK parity |
@@ -51,8 +51,22 @@ Roadmap phase [P1](../questions/roadmap-standard.md#p1-spec-to-10), tasks P1-01 
 | Vectors | `fep-0001` F41-F47 (accept: 1.0 log, 0.1 empty commit, future minor 1.7; reject: empty, white space, `"2.0"`, number `1.0`) |
 | White space | The Python `str.isspace` set (listed in RC1 section 1.4), the same in all SDKs |
 
+## RC2: TD-12, no blank candidates (new rule)
+**TD-12:** a 1.x trust layer SHOULD NOT put blank text in `shown` of a text OFFER, ASK or OFFER_WORDS. A consumer or bridge MUST NOT offer a blank candidate: it drops it. Cause: the TD-9 commit gate turns a blank COMMIT into an OFFER whose only candidate can be the blank text (found in the [collector](collector.md)).
+
+| Item | Detail |
+|---|---|
+| Version gate | Producer part: 1.x decisions only (0.1 decisions give no finding). Consumer part: every version |
+| Validators | Advisory check `FEP1-TD-SHOWN` (a warning, never a reject) in Python, TypeScript and Rust. TypeScript and Rust profile `failures()` now skip advisory checks, as Python does. SDK `DecisionTracker` drops blank texts from `offered` and warns on 1.x decisions |
+| Consumer summary | New keys `offered` (final text OFFER / ASK / OFFER_WORDS candidates without blanks) and `advisories` |
+| Vectors | `fep-0001` F55 (accept with a warning, 1.0) and F56 (accept, 0.1: no warning). 56 vectors |
+| Parity | Python = TypeScript = Rust on 283 vectors (`v0.1` … `fep-0005`; F55 and F56 also match on `offered` and `advisories`) and on 44,916 fuzz mutants (seeds 1-6, `--n 30`) |
+| Producer with no candidate left | `ABSTAIN` with `shown = []`, not an OFFER without `shown` (that reads as a privacy log, TD-10) |
+
+> **Our take:** TD-12 is a SHOULD NOT and not a MUST NOT because a blank candidate is never acted on by itself (the user must select it), so it is a usability fault, not a safety fault. The consumer MUST NOT keeps the user safe from it in every version.
+
 ## RC2: 1.x headers accepted (gap G-2 closed)
-RC2 changes no rule text. It makes the code follow rules HDR-2, VER-3, VER-4 and VER-5 for headers.
+This part of RC2 changes no rule text. It makes the code follow rules HDR-2, VER-3, VER-4 and VER-5 for headers.
 
 | Value of header `spec_version` | Result |
 |---|---|

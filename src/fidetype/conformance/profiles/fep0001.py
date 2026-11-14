@@ -27,7 +27,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Callable
 
-from fidetype.conformance.checks import FAIL, PASS, SCORE_SEMANTICS, SKIP, CheckResult
+from fidetype.conformance.checks import ADVISORY, FAIL, PASS, SCORE_SEMANTICS, SKIP, CheckResult
 from fidetype.conformance.io import StreamRejected
 from fidetype.conformance.report import TargetReport
 from fidetype.conformance.vectors import Vector, _frames, _header, _w_lines
@@ -38,6 +38,8 @@ from fidetype.trust.declaration import DECLARATION_KEY, validate_declaration
 SUFFIXES = (".jsonl", ".ndjson")
 FEP = "FEP-0001"
 ACTIONS = ("COMMIT", "OFFER", "ASK", "ABSTAIN", "OFFER_WORDS")
+#: Actions whose ``shown`` lists candidates for the user (NTS 1.0 RC2, TD-12).
+OFFER_ACTIONS = ("OFFER", "ASK", "OFFER_WORDS")
 SEGMENT_UNITS = ("utterance", "word", "trial")
 #: log-probabilities may exceed 0 by this much (float rounding).
 LOGP_TOL = 1e-9
@@ -56,8 +58,11 @@ CHECKS = [
     ("FEP1-TD-INPUT", "MUST", "3 r4", "No trust_decision event in an input stream"),
     ("FEP1-TD-FORMAT", "MUST", "3 table, r2, r8, r9 (1.x)", "trust_decision fields have the defined types and ranges; no empty final COMMIT text in a 1.x decision"),
     ("FEP1-TD-FINAL", "MUST", "3 r5-r7", "Per session: seq increases; at most one final decision per utterance; none after it"),
+    ("FEP1-TD-SHOWN", "SHOULD NOT", "3 (1.x, NTS 1.0 RC2 TD-12)", "No blank candidate text in shown of a 1.x OFFER, ASK or OFFER_WORDS (advisory: a warning)"),
 ]
 _META = {c[0]: c for c in CHECKS}
+#: Checks whose failure is a warning only (they never reject a file).
+ADVISORY_CHECKS = ("FEP1-TD-SHOWN",)
 
 HOW_TO_USE = ("FEP-0001 profile. For each vector, load the file with your consumer. Input streams (line 1 = header) "
               "must follow v0.1 and FEP-0001 sections 1, 2 and 4. Decision logs (only trust_decision lines) must "
@@ -248,6 +253,45 @@ def _td_version_errors(e: dict[str, Any]) -> list[str]:
     return []
 
 
+def _text_offer(e: dict[str, Any]) -> bool:
+    """True for a text-profile OFFER, ASK or OFFER_WORDS (``shown`` lists candidates; TD-12)."""
+    return e.get("action") in OFFER_ACTIONS and e.get("profile") not in ("intent", "control")
+
+
+def blank_candidates(e: dict[str, Any]) -> int:
+    """The number of blank texts (empty or white space, spec 1.4) in ``shown`` of a text OFFER, ASK or OFFER_WORDS."""
+    sh = e.get("shown")
+    if not _text_offer(e) or not isinstance(sh, list):
+        return 0
+    return sum(1 for x in sh if isinstance(x, str) and not x.strip())
+
+
+def td_shown_advisories(e: dict[str, Any]) -> list[str]:
+    """TD-12 (NTS 1.0 RC2, a SHOULD NOT for 1.x decisions): blank candidates in ``shown``. A warning, not a reject.
+
+    A decision without ``spec_version`` (or with "0.1") follows the 0.1 rules: no finding.
+    """
+    ver = td_spec_version(e)
+    k = blank_candidates(e)
+    if ver is None or ver == "0.1" or not k:
+        return []
+    return [f"line {e.get('_line', '?')}: {e.get('action')} lists {k} blank candidate text(s) in shown "
+            "(TD-12; a SHOULD NOT for spec_version 1.x; a consumer drops them)"]
+
+
+def offered_texts(decisions: list[dict[str, Any]]) -> list[list[str] | None]:
+    """The candidates a consumer may show: ``shown`` of each final text OFFER, ASK, OFFER_WORDS, without blank texts.
+
+    TD-12: a consumer MUST NOT offer a blank candidate (decisions of every version). None if ``shown`` is omitted.
+    """
+    out: list[list[str] | None] = []
+    for e in decisions:
+        if e.get("type") == "trust_decision" and e.get("is_final") is True and _text_offer(e):
+            sh = e.get("shown")
+            out.append([x for x in sh if isinstance(x, str) and x.strip()] if isinstance(sh, list) else None)
+    return out
+
+
 def td_final_errors(events: list[dict[str, Any]]) -> list[str]:
     """is_final semantics per session (rules 5-7)."""
     errs = []
@@ -298,7 +342,7 @@ def _res(cid: str, errs: list[str] | None, msg_ok: str = "", skipped: str | None
         status, msg = FAIL, "; ".join(errs[:6]) + (f" (+{len(errs) - 6} more)" if len(errs) > 6 else "")
     else:
         status, msg = PASS, msg_ok
-    return CheckResult(cid, "core", kw, f"{FEP} {clause}", title, status, msg)
+    return CheckResult(cid, ADVISORY if cid in ADVISORY_CHECKS else "core", kw, f"{FEP} {clause}", title, status, msg)
 
 
 def check_events(events: list[dict[str, Any]], parse_errors: list[str] | None = None) -> list[CheckResult]:
@@ -317,6 +361,8 @@ def check_events(events: list[dict[str, Any]], parse_errors: list[str] | None = 
     fmt = [x for e in events for x in td_format_errors(e)] if dec else None
     out.append(_res("FEP1-TD-FORMAT", fmt, f"{len(events)} decision(s)", skipped=na_dec))
     out.append(_res("FEP1-TD-FINAL", td_final_errors(events) if dec else None, skipped=na_dec))
+    adv = [x for e in events for x in td_shown_advisories(e)] if dec else None
+    out.append(_res("FEP1-TD-SHOWN", adv, skipped=na_dec))
     return out
 
 
@@ -340,7 +386,8 @@ def summarize(events: list[dict[str, Any]]) -> dict[str, Any]:
     kind = stream_kind(events)
     if kind == "decisions":
         return {"kind": kind, "decisions": len(events), "final": sum(e.get("is_final") is True for e in events),
-                "acted": acted_texts(events)}
+                "acted": acted_texts(events), "offered": offered_texts(events),
+                "advisories": sum(1 for e in events if td_shown_advisories(e))}
     segs, has_input, ends = 0, False, 0
     for e in events:
         t = e["type"]
@@ -590,9 +637,25 @@ def build_vectors() -> list[Vector]:
         failing="FEP1-TD-FORMAT", writer=_w_lines([_td(input=["h1"])]))
     add("F54", "f54-td-latency-string.jsonl", "reject", "3 table (1.0 RC2, TD-F2)", 'latency_s is the string "0.2", not a number',
         failing="FEP1-TD-FORMAT", writer=_w_lines([_td(latency_s="0.2")]))
+    # --- NTS 1.0 RC2: TD-12 (no blank candidate in shown of an OFFER / ASK / OFFER_WORDS; a SHOULD NOT for 1.x)
+    add("F55", "f55-td-v10-blank-candidates.jsonl", "accept", "3 (1.0 RC2, TD-12)",
+        "spec_version 1.0: blank candidates in shown of a provisional OFFER, a final OFFER, an ASK and an OFFER_WORDS: "
+        "accepted with a warning (FEP1-TD-SHOWN); the consumer drops the blank texts",
+        {"kind": "decisions", "decisions": 4, "final": 3, "acted": [], "offered": [["ab"], [], ["cd"]], "advisories": 4},
+        writer=_w_lines([_td(seq=0, is_final=False, action="OFFER", shown=["", "ab"], **v10),
+                         _td(seq=1, action="OFFER", shown=["ab", ""], reason="commit gate: min_chars 1", **v10),
+                         _td(seq=2, utterance=1, action="ASK", shown=["\t\u00a0"], p_top1=0.2, **v10),
+                         _td(seq=3, utterance=2, action="OFFER_WORDS", shown=[" ", "cd"], **v10)]))
+    add("F56", "f56-td-v01-blank-candidates.jsonl", "accept", "3 (0.1, TD-12)",
+        "Blank candidates in an OFFER without spec_version and with spec_version 0.1: no finding (0.1 rules); "
+        "the consumer still drops the blank texts",
+        {"kind": "decisions", "decisions": 2, "final": 2, "acted": [], "offered": [["ab"], []], "advisories": 0},
+        writer=_w_lines([_td(seq=0, action="OFFER", shown=["", "ab"]),
+                         _td(seq=1, utterance=1, action="OFFER", shown=[" "], spec_version="0.1")]))
     vs.sort(key=lambda v: v.vid)
     return vs
 
 
-__all__ = ["ACTIONS", "CHECKS", "acted_texts", "build_vectors", "check_events", "check_file", "consume",
-           "read_events", "stream_kind", "summarize", "td_final_errors", "td_format_errors", "td_spec_version"]
+__all__ = ["ACTIONS", "ADVISORY_CHECKS", "CHECKS", "OFFER_ACTIONS", "acted_texts", "blank_candidates", "build_vectors",
+           "check_events", "check_file", "consume", "offered_texts", "read_events", "stream_kind", "summarize",
+           "td_final_errors", "td_format_errors", "td_shown_advisories", "td_spec_version"]

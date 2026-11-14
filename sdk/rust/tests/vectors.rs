@@ -22,7 +22,7 @@ fn v01_vectors() {
 
 #[test]
 fn fep0001_vectors() {
-    run("fep-0001", 54);
+    run("fep-0001", 56);
 }
 
 #[test]

@@ -32,10 +32,21 @@ pub const CHECKS: &[CheckMeta] = &[
     ("FEP1-TD-INPUT", "MUST", "3 r4", "No trust_decision event in an input stream"),
     ("FEP1-TD-FORMAT", "MUST", "3 table, r2, r8, r9 (1.x)", "trust_decision fields have the defined types and ranges; no empty final COMMIT text in a 1.x decision"),
     ("FEP1-TD-FINAL", "MUST", "3 r5-r7", "Per session: seq increases; at most one final decision per utterance; none after it"),
+    ("FEP1-TD-SHOWN", "SHOULD NOT", "3 (1.x, NTS 1.0 RC2 TD-12)", "No blank candidate text in shown of a 1.x OFFER, ASK or OFFER_WORDS (advisory: a warning)"),
 ];
 
+/// Checks whose failure is a warning only (they never reject a file).
+pub const ADVISORY_CHECKS: &[&str] = &["FEP1-TD-SHOWN"];
+
+/// Actions whose `shown` lists candidates for the user (NTS 1.0 RC2, TD-12).
+pub const OFFER_ACTIONS: &[&str] = &["OFFER", "ASK", "OFFER_WORDS"];
+
 fn res(cid: &str, errs: Option<Vec<String>>, msg_ok: &str, skipped: Option<&str>) -> CheckResult {
-    make_res(CHECKS, FEP, cid, errs, msg_ok, skipped)
+    let mut r = make_res(CHECKS, FEP, cid, errs, msg_ok, skipped);
+    if ADVISORY_CHECKS.contains(&cid) {
+        r.level = Level::Advisory;
+    }
+    r
 }
 
 /// The format errors of a `decode_declaration` (FEP-0001 section 4). Empty: valid.
@@ -323,6 +334,51 @@ pub(crate) fn session_of(e: &Map) -> Option<String> {
     }
 }
 
+/// True for a text-profile OFFER, ASK or OFFER_WORDS (`shown` lists candidates; TD-12).
+fn text_offer(e: &Map) -> bool {
+    let act = e.get("action").as_str().unwrap_or("");
+    let p = e.get("profile").as_str();
+    OFFER_ACTIONS.contains(&act) && p != Some("intent") && p != Some("control")
+}
+
+/// The number of blank texts (empty or white space, spec 1.4) in `shown` of a text OFFER, ASK or OFFER_WORDS.
+pub fn blank_candidates(e: &Map) -> usize {
+    match e.get("shown") {
+        Value::Arr(a) if text_offer(e) => a.iter().filter(|x| matches!(x, Value::Str(t) if is_blank(t))).count(),
+        _ => 0,
+    }
+}
+
+/// TD-12 (NTS 1.0 RC2, a SHOULD NOT for 1.x decisions): blank candidates in
+/// `shown`. A warning, not a reject. A decision without `spec_version` (or
+/// with "0.1") follows the 0.1 rules: no finding.
+pub fn td_shown_advisories(e: &Map) -> Vec<String> {
+    let k = blank_candidates(e);
+    match td_spec_version(e) {
+        Some(v) if v != "0.1" && k > 0 => alloc::vec![format!(
+            "line {}: {} lists {} blank candidate text(s) in shown (TD-12; a SHOULD NOT for spec_version 1.x; a consumer drops them)",
+            line_of(e),
+            e.get("action").as_str().unwrap_or(""),
+            k
+        )],
+        _ => Vec::new(),
+    }
+}
+
+/// The candidates a consumer may show: `shown` of each final text OFFER, ASK,
+/// OFFER_WORDS, without blank texts. TD-12: a consumer MUST NOT offer a blank
+/// candidate (decisions of every version). Null if `shown` is omitted.
+pub fn offered_texts(decisions: &[Map]) -> Vec<Value> {
+    decisions
+        .iter()
+        .filter(|e| etype(e) == "trust_decision" && matches!(e.get("is_final"), Value::Bool(true)) && text_offer(e))
+        .map(|e| match e.get("shown") {
+            Value::Arr(a) => Value::Arr(a.iter().filter(|x| matches!(x, Value::Str(t) if !is_blank(t))).cloned().collect()),
+            _ => Value::Null,
+        })
+        .collect()
+}
+
 /// is_final semantics per session (FEP-0001 section 3 rules 5-7).
 pub fn td_final_errors(events: &[Map]) -> Vec<String> {
     let mut errs = Vec::new();
@@ -406,6 +462,7 @@ pub fn check_events(events: &[Map], parse_errors: Vec<String>) -> Vec<CheckResul
     let msg = format!("{} decision(s)", events.len());
     out.push(res("FEP1-TD-FORMAT", dec.then(|| events.iter().flat_map(td_format_errors).collect()), &msg, na_dec));
     out.push(res("FEP1-TD-FINAL", dec.then(|| td_final_errors(events)), "", na_dec));
+    out.push(res("FEP1-TD-SHOWN", dec.then(|| events.iter().flat_map(td_shown_advisories).collect()), "", na_dec));
     out
 }
 
@@ -447,6 +504,8 @@ pub fn summarize(events: &[Map]) -> Map {
             ("decisions", Value::int(events.len() as f64)),
             ("final", Value::int(fin as f64)),
             ("acted", Value::Arr(acted_texts(events))),
+            ("offered", Value::Arr(offered_texts(events))),
+            ("advisories", Value::int(events.iter().filter(|e| !td_shown_advisories(e).is_empty()).count() as f64)),
         ]);
     }
     let mut segs = 0;

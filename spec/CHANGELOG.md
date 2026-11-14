@@ -36,6 +36,14 @@ All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1
 - **7.4.5 notes not checked (by design):** "`p_top1` is null" and "`score_semantics` is `calibrated_prob` when a calibrated radius was used, else `none`" have no rule id and no RFC 2119 key word. They describe the reference output. The checks stay as they are.
 - **Parity:** Python = TypeScript = Rust on all 281 vectors of `v0.1` … `fep-0005` (`cross-check.mjs --rust`) and on 44,556 fuzz mutants (seeds 1-6, `--n 30`; `fep-0005`: 7,920).
 
+### Added (rule text, P1-11, 2026-11-14): TD-12, no blank candidates
+- **TD-12 (6.3, new):** a 1.x trust layer SHOULD NOT put blank text (1.4) in `shown` of a text `OFFER`, `ASK` or `OFFER_WORDS`. A consumer or bridge MUST NOT offer a blank candidate to the user: it drops it. The producer part is version-gated like TD-9: decisions with `spec_version` `"0.1"` or without it give no finding. The consumer part applies to every version. Why: the TD-9 commit gate turns a blank final COMMIT into an OFFER whose only candidate can be the blank text (FEP-0006 question 2, found in the collector).
+- **Validators (Python, TypeScript, Rust, same behaviour):** new advisory check `FEP1-TD-SHOWN` in the `fep-0001` profile. A failure is a warning (`warn`); it never rejects a file. TypeScript and Rust profile `failures()` now skip advisory checks, as Python `failures("core")` does. The reference consumers add two keys to a decision-log summary: `offered` (for each final text OFFER, ASK, OFFER_WORDS: `shown` without blank texts, null if `shown` is absent) and `advisories` (the number of decisions with a TD-12 warning).
+- **SDK `DecisionTracker` (TypeScript, Rust):** `offered` drops blank texts (text profile, every version); a 1.x decision with blank candidates gets a TD-12 warning. New helpers `blankCandidateWarning` (TypeScript) and `blank_candidate_warning` (Rust).
+- **Vectors:** `fep-0001` F55 (accept with a warning: blank candidates in a provisional OFFER, a final OFFER, an ASK and an OFFER_WORDS of spec_version 1.0; `offered` `[["ab"], [], ["cd"]]`, `advisories` 4) and F56 (accept: the same in 0.1 decisions, `advisories` 0, the consumer still drops the blank texts). `fep-0001` has 56 vectors now, from 54. No existing vector changed its verdict.
+- **Collector (FEP-0006 3.2):** the trust processor removes blank candidates; an OFFER or OFFER_WORDS with no candidate left becomes `ABSTAIN` with `shown = []`. Metrics `blank_candidates_dropped` and `blank_offers_abstained`.
+- **Parity:** Python = TypeScript = Rust on all 283 vectors of `v0.1` … `fep-0005` (`cross-check.mjs --rust`; the expected `offered` and `advisories` values of F55 and F56 match in all three), and on 44,916 fuzz mutants (seeds 1-6, `--n 30`).
+
 ## [1.0 RC1, DRAFT] 2026-11-14
 **Status: draft for public comment. Not final.** Document: [nts-1.0-rc1.md](nts-1.0-rc1.md).
 

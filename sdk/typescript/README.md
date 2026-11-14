@@ -128,7 +128,7 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 | Profile | Vectors | TypeScript | Same verdict as Python |
 |---|---|---|---|
 | `v0.1` (NPZ + JSON Lines) | 61 | 61/61 pass | 61/61 |
-| `fep-0001` streaming trust events | 54 | 54/54 pass | 54/54 |
+| `fep-0001` streaming trust events | 56 | 56/56 pass | 56/56 |
 | `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 |
 | `fep-0004` NTS over WebSocket (scenarios) | 43 | 43/43 pass | 43/43 (Rust too, since M7-12) |

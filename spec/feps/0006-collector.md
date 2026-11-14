@@ -10,7 +10,7 @@
 | **Affects** | No field of NTS changes. Uses `nts-1.0-rc2.md` sections 4.3–4.4 (segments, `end`, GEN-8), 6 (trust decisions, 6.1 `spec_version`, TD-1 … TD-11, PRV-1 … PRV-3), 8.1 (JSON Lines), 8.2.6 (LSL loss), 8.3 (WebSocket), 10 (security and privacy), 11 (VER-1) |
 | **Created** | 2026-11-14 |
 | **Discussion** | Roadmap phase P3 "Collector (pipeline)" (`wiki/questions/roadmap-standard.md`); reference v0.1 in `src/fidetype/collector/`; `wiki/concepts/collector.md` |
-| **Updated** | 2026-11-14: v0.1 decisions (open questions 1, 3, 4, 5, 6, 7, 8 closed; see "Decisions") |
+| **Updated** | 2026-11-14: v0.1 decisions (open questions 1, 3, 4, 5, 6, 7, 8 closed; see "Decisions"). Later on 2026-11-14: questions 2-4 of the second list closed (blank OFFER candidates, open `/healthz`, the automatic gate) |
 
 ## Summary
 Today each Fidetype tool is its own program: `fidetype trust` reads files, `fidetype ws run` serves WebSocket, `fidetype lsl run` reads LSL. Each one wires one input to the trust layer and one output. This FEP defines **one service, the collector**, that does this wiring from a configuration file:
@@ -92,6 +92,11 @@ Receiver rules:
 3. Option `ledger`: a hash-chained provenance ledger (`fidetype.trust.provenance`, PRV-1 … PRV-3) with `text_mode` `hash` (default), `omit` or `store`.
 4. **Version stamp.** Every `trust_decision` that the processor emits carries `spec_version: "1.0"` (spec 6.1, VER-1, TD-F3). The key comes directly after `type`.
 5. **No blank COMMIT** (TD-9, a MUST NOT for 1.x decisions). The trust configuration MUST NOT be able to COMMIT a blank text. The reference adds the commit gate `min_chars = 1` (M2-18, `FrozenTrustConfig.with_commit_gate`) when the configuration has no gate, or a gate with `min_chars = 0` and `min_words = 0`. A gated decision becomes the no-commit decision (OFFER or ABSTAIN) with a `reason` that starts with `commit gate:`; the metrics count it (`gated_commits`). The gated copy has a new `config_id`; the decisions carry it, and the log shows the old and the new id. A policy that can commit blank text and has no gate (`always_commit`) is a configuration error.
+6. **No blank candidates** (TD-12, NTS 1.0 RC2). A gated blank COMMIT becomes the policy's no-commit decision. This can be an OFFER whose only candidate is the blank text. The processor MUST remove blank texts (empty or white space) from `shown` of every text OFFER, ASK and OFFER_WORDS that it emits (provisional and final). When no candidate is left:
+   - an OFFER or OFFER_WORDS becomes `ABSTAIN` with `shown = []`;
+   - an ASK stays an ASK with `shown = []` (it asks the user to try again; it needs no candidate).
+
+   `reason` gets `TD-12: blank candidates dropped` (and `; no candidate left: ABSTAIN`). The metrics count the dropped texts (`blank_candidates_dropped`) and the changed decisions (`blank_offers_abstained`). *Why ABSTAIN, and not an OFFER without `shown`:* TD-9 says that a decision that shows no text is an `ABSTAIN`. An OFFER without `shown` reads as a privacy log (TD-10), where a text exists but is hidden, so a consumer would think that candidates exist. TD-8 applies to COMMIT only. The change only removes offers, so a fitted risk bound on commits still holds. The provenance ledger (option `ledger`) keeps the trust layer's own decision; the `reason` of the emitted decision names the TD-12 step, so an auditor sees why the action differs.
 
 #### 3.3 `redact`
 1. It removes `shown` from each `trust_decision`. `mode = "hmac"` writes `shown_hmac` (HMAC-SHA256 hex of each text) instead, with a key from an environment variable; an auditor with the key can check a text, the log does not hold it.
@@ -174,17 +179,17 @@ exporters = ["log", "live_decisions"]
 
 ### 7. Health and metrics
 1. Optional table `service.health`. `listen` defaults to `127.0.0.1:13133` (localhost only). `GET /healthz` gives `{"status": "ok"}` (HTTP 200) while the collector runs, else its state (HTTP 503). `GET /metrics` gives the counters of every component as JSON.
-2. Optional bearer token: `token_env` names the environment variable that holds it. Then both paths need `Authorization: Bearer <token>`; else HTTP 401. The token follows the secret rules of the WebSocket receiver: never in the file, never in a log line or a metric.
-3. A `listen` address beyond `localhost` without `token_env` is a configuration error, unless the file sets `allow_unauthenticated = true`. Then the collector logs a warning at start.
+2. Optional bearer token: `token_env` names the environment variable that holds it. Then `/metrics` needs `Authorization: Bearer <token>`; else HTTP 401. `/healthz` stays open (no token), so a liveness probe without a header works. `/healthz` MUST show only the status (`{"status": ...}`): no counter, no component name, no address. The token follows the secret rules of the WebSocket receiver: never in the file, never in a log line or a metric.
+3. A `listen` address beyond `localhost` without `token_env` is a configuration error, unless the file sets `allow_unauthenticated = true`. Then the collector logs a warning at start (`/metrics` is open).
 4. `service.metrics_file` writes the same counters when the collector stops.
-5. Counters include: items, streams, ended, cut and lost streams, streams closed without `end`, unreadable lines, invalid headers / events / decisions, decisions, final decisions, gated commits, aborted utterances, frames skipped after a gap, redacted decisions, dropped provisional decisions, exported items, subscribers.
+5. Counters include: items, streams, ended, cut and lost streams, streams closed without `end`, unreadable lines, invalid headers / events / decisions, decisions, final decisions, gated commits, dropped blank candidates, OFFERs changed to ABSTAIN, aborted utterances, frames skipped after a gap, redacted decisions, dropped provisional decisions, exported items, subscribers.
 6. The health server MUST NOT log client addresses. Metrics MUST NOT contain a host name, a client address, a token, a key or decoded text.
 
 ### 8. Security and privacy
 1. Decoded text is personal data (SEC-7). The collector offers `redact` (drop or keyed hash). A deployment on a shared network SHOULD redact before every exporter that leaves the machine.
 2. No host name, client address or token in any decision, exported event, metric or log line written by the collector (LSL-C3, WS-T3, 10.5). The operator's startup log line MAY show the bind address that the operator configured.
 3. Off `localhost`, the WebSocket receiver SHOULD use TLS (`certfile`, `keyfile`; WS-T4). The reference logs a warning when it listens beyond `localhost` without TLS.
-4. The health endpoint listens on `localhost` by default. Off `localhost` it needs a bearer token (`token_env`) or an explicit `allow_unauthenticated = true` (section 7).
+4. The health endpoint listens on `localhost` by default. Off `localhost`, `/metrics` needs a bearer token (`token_env`) or an explicit `allow_unauthenticated = true` (section 7). `/healthz` is always open and shows only the status.
 5. Raw neural samples never enter the collector (SEC-1): it reads NTS only.
 
 ### 9. Command line
@@ -214,7 +219,7 @@ Input: `spec/conformance/fep-0001/f01-segments.jsonl` (two utterances, `segment_
 
 ## Compatibility
 - No change to NTS, to the bindings or to the conformance profiles. Existing tools (`fidetype trust`, `fidetype ws run`, `fidetype lsl run`) do not change.
-- A decision from the collector equals the decision of `fidetype trust` on the same file and the same (blank-safe) trust configuration (the reference tests check this), except for `spec_version`, and `redaction` / `shown_hmac` when `redact` runs. With a configuration that has no commit gate, the collector adds the gate (section 3.2), so a blank COMMIT of `fidetype trust` becomes an OFFER or ABSTAIN, and the `config_id` differs.
+- A decision from the collector equals the decision of `fidetype trust` on the same file and the same (blank-safe) trust configuration (the reference tests check this), except for `spec_version`, `redaction` / `shown_hmac` when `redact` runs, and the TD-12 step (section 3.2 rule 6) when `shown` has a blank candidate. With a configuration that has no commit gate, the collector adds the gate (section 3.2), so a blank COMMIT of `fidetype trust` becomes an OFFER or ABSTAIN, and the `config_id` differs.
 - The collector's decisions carry `spec_version: "1.0"`. They pass the FEP-0001 profile in the Python, TypeScript and Rust reference consumers (checked 2026-11-14 on the example log and on a log with a gated blank COMMIT).
 
 ## Reference implementation
@@ -224,7 +229,7 @@ Input: `spec/conformance/fep-0001/f01-segments.jsonl` (two utterances, `segment_
 - `processors.py`: `ValidateProcessor` (wraps `fidetype.conformance` checks and the reference frame reader), `TrustProcessor` (wraps `StreamingTrustLayer` and the loss rules of `WSTrustRunner`), `RedactProcessor`, `ThinProcessor`.
 - `exporters.py`: `JsonlExporter`, `StdoutExporter`, `WebSocketExporter` (the receiver's `OutputHub`), `StandaloneWebSocketExporter` (its own `WSServer`, `/decisions` only).
 - `service.py`: `Collector` (build, run loop, stop, metrics, health endpoint).
-- Tests: `tests/test_collector.py` (file → trust → jsonl equals the reference replay; redaction removes all text; an unreadable line, an invalid frame, a WebSocket gap, `eof = "cut"` and a stop in tail mode give no final decision on the cut utterance; configuration errors; command line; WebSocket in and `/decisions` out; v0.1: the `eof = "close"` warning and counter, the `<receiver>/<id>` prefix, health defaults and bearer token, `spec_version` and the FEP-0001 profile, the gated blank COMMIT, file → trust → standalone `/decisions`).
+- Tests: `tests/test_collector.py` (file → trust → jsonl equals the reference replay; redaction removes all text; an unreadable line, an invalid frame, a WebSocket gap, `eof = "cut"` and a stop in tail mode give no final decision on the cut utterance; configuration errors; command line; WebSocket in and `/decisions` out; v0.1: the `eof = "close"` warning and counter, the `<receiver>/<id>` prefix, health defaults and bearer token (open `/healthz`, protected `/metrics`), `spec_version` and the FEP-0001 profile, the gated blank COMMIT and the TD-12 step (`drop_blank_candidates`), file → trust → standalone `/decisions`).
 
 ## Alternatives
 - **Use the OpenTelemetry Collector itself** (Go) with an NTS receiver. Rejected for v0: the trust layer is Python; OTel pipelines carry traces, metrics and logs, not ordered per-utterance state with loss rules. An OTLP exporter for collector metrics stays possible (section 10).
@@ -249,8 +254,16 @@ The maintainers closed these open questions of the first draft:
 | 7 | Default for a file without `end` | Keep `close`; one warning per stream and the counter `closed_without_end`. Section 2 rule 3 |
 | 8 | Standalone `/decisions` server | Yes: a `websocket` exporter without `receiver`. Section 4 rule 4 |
 
+Second round (2026-11-14). The maintainers closed questions 2-4 of the list below:
+
+| # | Question | Decision |
+|---|---|---|
+| 2 | Blank OFFER candidates | New spec rule TD-12 (NTS 1.0 RC2, 6.3): a 1.x trust layer SHOULD NOT list a blank candidate; a consumer MUST NOT offer one. The collector removes blank candidates and turns an OFFER with none left into `ABSTAIN` with `shown = []`. Section 3.2 rule 6 |
+| 3 | Health token scope | `/healthz` stays open (liveness probes) and shows only the status. The token protects `/metrics` only. A bind beyond `localhost` without a token is still a configuration error, unless `allow_unauthenticated = true`. Section 7 |
+| 4 | Stamped version and the commit gate | No change: the collector keeps adding the gate (`min_chars = 1`) to a configuration without one, with a log line that shows the old and the new `config_id`. A refusal would break every existing ungated configuration and add no safety. The log line and the new `config_id` in each decision make the change visible. Section 3.2 rule 5 |
+
 ## Open questions
 1. **Language of v1.** Stay in Python, or write v1 in Rust as a long-running local service (roadmap P3)? This decides where the OS input-method exporters live. (The user decides.)
-2. **Blank OFFER.** A gated blank COMMIT becomes an OFFER whose candidate can be the empty text. TD-9 covers only COMMIT. Should a 1.x OFFER also skip blank candidates?
-3. **Health token scope.** The token protects `/healthz` too. Some orchestrators probe liveness without a header. Allow an open `/healthz` with a protected `/metrics`?
-4. **Stamped version and the commit gate.** The collector changes the trust configuration (and its `config_id`) when it adds the gate. Should it refuse a configuration without a gate instead, so the operator freezes the gated configuration?
+2. ~~**Blank OFFER.**~~ Closed (2026-11-14): TD-12; see "Decisions", second round.
+3. ~~**Health token scope.**~~ Closed (2026-11-14): open `/healthz`, protected `/metrics`; see "Decisions", second round.
+4. ~~**Stamped version and the commit gate.**~~ Closed (2026-11-14): keep the automatic gate; see "Decisions", second round.

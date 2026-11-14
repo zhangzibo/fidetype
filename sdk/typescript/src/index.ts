@@ -28,7 +28,7 @@ export { NtsWriter, toJsonl } from "./writer.js";
 export type { WriterOptions, NbestItem } from "./writer.js";
 export { parseNtsText, readLines, readNtsEvents, validateNtsStream } from "./reader.js";
 export type { ChunkSource } from "./reader.js";
-export { DecisionTracker, handleDecisions, isFinalCommit, committedText, emptyCommitWarning } from "./trust.js";
+export { DecisionTracker, handleDecisions, isFinalCommit, committedText, emptyCommitWarning, blankCandidateWarning } from "./trust.js";
 export type { HandledDecision, DecisionKind } from "./trust.js";
 export { validateSchema, validateEventSchema, schemaKeyFor, SCHEMAS } from "./schema.js";
 export type { Schema, SchemaError } from "./schema.js";

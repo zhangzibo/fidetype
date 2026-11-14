@@ -15,6 +15,7 @@ use alloc::format;
 
 use crate::json::{is_blank, num_text, parse_json, py_strip, Map, Value};
 use crate::profiles::common::tuple_key;
+use crate::profiles::fep0001::td_shown_advisories;
 use crate::profiles::fep0005::{td_control_format_errors, ControlSafety};
 
 /// What a consumer does with a decision.
@@ -66,13 +67,13 @@ pub struct HandledDecision {
     pub committed: Option<String>,
     /// Control decisions: the input `tick` (an integer), else `None`. A control `Commit` is a moving tick (the "acted" list, NTS 1.0 6.4).
     pub tick: Option<f64>,
-    /// Texts or intents offered to the user (OFFER, ASK, OFFER_WORDS).
+    /// Texts or intents offered to the user (OFFER, ASK, OFFER_WORDS). Blank texts are dropped (TD-12).
     pub offered: Vec<String>,
     /// True if a bridge to an output may forward it now (rules 1, 3 and 9). Control: a bridge may apply `velocity` (CTL-T6).
     pub forward: bool,
     /// Rule violations (MUST): format, order, one final per utterance or unit; control: CTL-T1 … T5, CTL-S1 … S7 (log part).
     pub errors: Vec<String>,
-    /// SHOULD-level findings, for example rule 9 (empty committed text).
+    /// SHOULD-level findings, for example rule 9 (empty committed text) and TD-12 (blank candidates in a 1.x decision).
     pub warnings: Vec<String>,
 }
 
@@ -106,6 +107,16 @@ pub fn empty_commit_warning(d: &Map) -> Option<String> {
         _ => " and gives no reason".to_string(),
     };
     Some(format!("FEP-0001 section 3 rule 9: final COMMIT with an empty committed text{}; a bridge SHOULD NOT forward it", why))
+}
+
+/// NTS 1.0 RC2 TD-12: a 1.x text OFFER, ASK or OFFER_WORDS with blank
+/// candidates in `shown` (a SHOULD NOT). Returns a warning text, or `None`.
+/// 0.1 decisions: `None`.
+pub fn blank_candidate_warning(d: &Map) -> Option<String> {
+    td_shown_advisories(d).into_iter().next().map(|x| match (x.starts_with("line "), x.find(": ")) {
+        (true, Some(i)) => x[i + 2..].to_string(),
+        _ => x,
+    })
 }
 
 /// Track a stream of trust_decision events (one session or many) and tell the
@@ -198,7 +209,13 @@ impl DecisionTracker {
         let control = profile == "control";
         let offered_raw = if profile == "intent" { ev.get("offered") } else { ev.get("shown") };
         let offered: Vec<String> = match offered_raw {
-            Value::Arr(a) if !control => a.iter().filter_map(|x| x.as_str().map(|s| s.to_string())).collect(),
+            // TD-12: a consumer MUST NOT offer a blank text candidate (decisions of every version).
+            Value::Arr(a) if !control => a
+                .iter()
+                .filter_map(|x| x.as_str())
+                .filter(|s| profile == "intent" || !is_blank(s))
+                .map(|s| s.to_string())
+                .collect(),
             _ => Vec::new(),
         };
         let tick = if control && ev.get("tick").is_int() { ev.get("tick").as_f64() } else { None };
@@ -215,6 +232,9 @@ impl DecisionTracker {
         let w = empty_commit_warning(ev);
         let forward = kind == DecisionKind::Commit && (control || (committed.is_some() && w.is_none()));
         if let Some(w) = w {
+            warnings.push(w);
+        }
+        if let Some(w) = blank_candidate_warning(ev) {
             warnings.push(w);
         }
         HandledDecision {

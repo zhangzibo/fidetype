@@ -8,9 +8,12 @@
  * Rule 3: a bridge to a lossy output forwards only final COMMIT decisions
  * (or a user selection after OFFER).
  * Rule 9 (SHOULD): no final COMMIT with an empty or white-space text.
+ * TD-12 (NTS 1.0 RC2): a consumer MUST NOT offer a blank candidate; a 1.x
+ * trust layer SHOULD NOT send one (a warning).
  */
 
 import { get, has, isObj, parseJson } from "./json.js";
+import { tdShownAdvisories } from "./profiles/fep0001.js";
 import { ControlSafety, tdControlFormatErrors } from "./profiles/fep0005.js";
 import { isInt } from "./profiles/common.js";
 
@@ -27,13 +30,13 @@ export interface HandledDecision {
   committed: string | null;
   /** Control decisions: the input `tick` (an integer), else null. A control "commit" is a moving tick (the "acted" list, NTS 1.0 6.4). */
   tick: number | null;
-  /** Texts or intents offered to the user (OFFER, ASK, OFFER_WORDS). */
+  /** Texts or intents offered to the user (OFFER, ASK, OFFER_WORDS). Blank texts are dropped (TD-12). */
   offered: string[];
   /** True if a bridge to an output may forward it now (rules 1, 3 and 9). Control: a bridge may apply `velocity` (CTL-T6). */
   forward: boolean;
   /** Rule violations (MUST): format, order, one final per utterance or unit; control: CTL-T1 … T5, CTL-S1 … S7 (log part). */
   errors: string[];
-  /** SHOULD-level findings, for example rule 9 (empty committed text). */
+  /** SHOULD-level findings, for example rule 9 (empty committed text) and TD-12 (blank candidates in a 1.x decision). */
   warnings: string[];
 }
 
@@ -62,6 +65,15 @@ export function emptyCommitWarning(d: Record<string, unknown>): string | null {
   if (!Array.isArray(sh) || !sh.length || typeof sh[0] !== "string" || !blankText(sh[0])) return null;
   const why = typeof get(d, "reason") === "string" && (d.reason as string).trim() ? ` (reason: ${d.reason})` : " and gives no reason";
   return `FEP-0001 section 3 rule 9: final COMMIT with an empty committed text${why}; a bridge SHOULD NOT forward it`;
+}
+
+/**
+ * NTS 1.0 RC2 TD-12: a 1.x text OFFER, ASK or OFFER_WORDS with blank candidates in `shown`
+ * (a SHOULD NOT). Returns a warning text, or null. 0.1 decisions: null.
+ */
+export function blankCandidateWarning(d: Record<string, unknown>): string | null {
+  const a = tdShownAdvisories(d);
+  return a.length ? a[0].replace(/^line [^:]+: /, "") : null;
 }
 
 const KIND: Record<string, DecisionKind> = { COMMIT: "commit", OFFER: "offer", ASK: "ask", ABSTAIN: "abstain", OFFER_WORDS: "offer_words" };
@@ -119,13 +131,16 @@ export class DecisionTracker {
     if (!errors.length && !final && !(typeof action === "string" && Object.prototype.hasOwnProperty.call(KIND, action))) kind = "invalid";
     const control = profile === "control";
     const offeredRaw = control ? null : profile === "intent" ? get(ev, "offered") : get(ev, "shown");
-    const offered = Array.isArray(offeredRaw) ? offeredRaw.filter((x): x is string => typeof x === "string") : [];
+    // TD-12: a consumer MUST NOT offer a blank text candidate (decisions of every version).
+    const offered = Array.isArray(offeredRaw) ? offeredRaw.filter((x): x is string => typeof x === "string" && (profile === "intent" || !blankText(x))) : [];
     let committed: string | null = null;
     if (kind === "commit" && !control) committed = profile === "intent" ? ((get(ev, "intent") as string | null) ?? null) : committedText(ev);
     const tick = control && isInt(ev, "tick") ? (ev.tick as number) : null;
     const warnings: string[] = [];
     const w = emptyCommitWarning(ev);
     if (w) warnings.push(w);
+    const bw = blankCandidateWarning(ev);
+    if (bw) warnings.push(bw);
     const forward = kind === "commit" && (control || (committed !== null && !w));
     return { event: ev, kind, profile, committed, tick, offered: kind === "commit" ? [] : offered, forward, errors, warnings };
   }

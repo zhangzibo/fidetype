@@ -81,7 +81,11 @@ def test_each_reject_vector_fails_its_named_check(name):
 def test_fep0001_covers_every_check():
     prof, m = _manifest("fep-0001")
     named = {v["failing_check"] for v in m["vectors"] if v["expect"] == "reject"}
-    assert named == {c[0] for c in P1.CHECKS} - {"FEP1-PARSE"}  # PARSE: v0.1 V41 covers NaN tokens
+    # PARSE: v0.1 V41 covers NaN tokens. TD-SHOWN is advisory (a warning): accept vectors F55 (warns) and F56 (does not).
+    assert named == {c[0] for c in P1.CHECKS} - {"FEP1-PARSE", *P1.ADVISORY_CHECKS}
+    warned = {v["id"] for v in m["vectors"]
+              if any(r.outcome == "warn" for r in prof.check_file(prof.vectors_dir() / v["file"]).results)}
+    assert warned == {"F55"}
 
 
 def test_fep0002_vectors_need_no_pylsl(monkeypatch):
@@ -314,9 +318,28 @@ def test_scripted_inlet_loss():
 # --- command line ---------------------------------------------------------------------------------
 
 
+def test_td12_blank_candidates_advisory(tmp_path):
+    """TD-12 (NTS 1.0 RC2): blank candidates in a 1.x OFFER / ASK / OFFER_WORDS are a warning, not a reject."""
+    from fidetype.conformance.profiles import fep0001 as F1
+
+    v10 = {"spec_version": "1.0"}
+    offer = F1._td(action="OFFER", shown=["", "ab", " " + chr(0x3000)], **v10)
+    assert F1.blank_candidates(offer) == 2 and F1.td_format_errors(offer) == []
+    assert "TD-12" in F1.td_shown_advisories(offer)[0]
+    assert F1.td_shown_advisories(F1._td(action="OFFER", shown=["", "ab"])) == []  # 0.1 rules: no finding
+    assert F1.td_shown_advisories(F1._td(action="ABSTAIN", shown=[""], **v10)) == []  # only OFFER, ASK, OFFER_WORDS
+    assert F1.td_shown_advisories(F1._td(action="OFFER", profile="intent", shown=[""], **v10)) == []  # text profile only
+    path = tmp_path / "d.jsonl"
+    path.write_text(json.dumps(offer) + "\n", encoding="utf-8")
+    rep = F1.check_file(path)
+    shown = next(r for r in rep.results if r.check_id == "FEP1-TD-SHOWN")
+    assert shown.outcome == "warn" and not rep.failures("core")
+    assert F1.consume(path)["offered"] == [["ab"]] and F1.consume(path)["advisories"] == 1
+
+
 def test_cli_profiles(tmp_path, capsys):
     assert cli(["--profile", "fep-0001"]) == 0
-    assert "54/54 golden vectors" in capsys.readouterr().out
+    assert "56/56 golden vectors" in capsys.readouterr().out
     assert cli(["consumer", "--profile", "fep-0002"]) == 0
     assert "FEP-0002 profile fep-0002 consumer conformance: PASS" in capsys.readouterr().out
     vdir = get_profile("fep-0001").vectors_dir()

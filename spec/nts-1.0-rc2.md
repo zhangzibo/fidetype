@@ -43,12 +43,13 @@
 - This is **Release Candidate 2** of NTS 1.0. It is a **DRAFT for public comment**.
 - It folds v0.1 and the draft FEPs 0001–0005 into one document. Where this document and a FEP differ, this document is the proposal for 1.0. The FEPs stay as the record of the design and its evaluation.
 - New in this RC (not in v0.1 or a FEP): the rule ids, the decision field `spec_version` (11.2), rule TD-9 as a MUST NOT for 1.x decisions (6.3), the WebSocket header check of HDR-8 (WS-S1), the JSON number rules (4.1), the resolutions of Appendix A, and the registries (12). Appendix B lists every change.
-- **Changes in RC2 (from RC1).** No rule text changed. RC2 closes four implementation gaps of Appendix C.2:
+- **Changes in RC2 (from RC1).** One new rule (TD-12, below); no other rule text changed. RC2 closes four implementation gaps of Appendix C.2:
   - **G-2:** the Python, TypeScript and Rust validators, the LSL `nts_header` check, the WebSocket header check and the JSON schema `nts-v0.1/header` now accept a header `spec_version` `"0.1"`, `"1.0"` or `"1.<minor>"` (HDR-2, VER-3, VER-4) and refuse every other value (VER-5). New vectors V53–V60, F48–F49, L33–L35, W39–W42.
   - **G-3:** golden vectors with an integer written as `0.0`, `1.0` or `2.0` (GEN-5): V61, F50, W43.
   - **G-4:** reject vectors for the types of `session`, `config_id`, `input` and `latency_s` (TD-F2): F51–F54.
   - The writers still write `"0.1"` headers by default. A producer that writes `"1.0"` is now accepted by all three SDKs.
   - **G-1:** the TypeScript and Rust SDKs run the control profile `fep-0005` (all CTL rules that the suite checks). Python = TypeScript = Rust on all 281 vectors of `v0.1` … `fep-0005`.
+  - **TD-12 (new rule text, SHOULD NOT and MUST NOT):** no blank candidate in `shown` of a 1.x text `OFFER`, `ASK` or `OFFER_WORDS`; a consumer drops a blank candidate (6.3). The validators report the producer part as an advisory warning (`FEP1-TD-SHOWN`). New vectors F55 and F56 (accept).
   - **CTL-S7 check:** the `fep-0005` log check now follows the rule text. An intent COMMIT is refused while the control is not engaged: before the first engage, and after a stop until a higher `engagement` (7.4.6). Before, the check refused it only after a stop. New vectors E20 (reject) and E21 (accept). The SDK `DecisionTracker` (TypeScript, Rust) now tracks control decisions.
 
 ### 1.2 Key words
@@ -449,6 +450,7 @@ Other keys are allowed (for example `attempt`, the LSL record `lsl`, the WebSock
 - **[TD-8]** A `COMMIT` that carries `shown` MUST have at least one text.
 - **[TD-9]** **(Stricter in 1.0.)** A 1.x trust layer **MUST NOT** emit a final text `COMMIT` whose committed text (`shown[0]`) is blank text (1.4). To show no text, it uses `ABSTAIN`. A bridge MUST NOT forward a blank committed text. For decisions that declare `spec_version` `"0.1"` or omit it, the 0.1 rule stays: SHOULD NOT, with a `reason` that says why (Appendix B). *Why:* in M2-18 the frozen Paper 1 v4 configuration committed 320 empty texts on 400 no-signal (uniform) T12 control streams. An empty COMMIT tells the user "the system understood you" when no text came from the neural evidence. The intent profile already forbids a null-intent COMMIT (INT-S1) and the control profile forbids motion on no-signal input (CTL-S2); TD-9 gives the text profile the same rule. A layer can meet it with a commit gate that turns such a COMMIT into the policy's non-commit decision; the gate only removes commits, so a fitted risk bound still holds (M2-18). *(Resolution of FEP-0001 question 6.)*
 - **[TD-10]** A decision log or decisions channel MAY omit `shown` (privacy). A bridge then acts on no text.
+- **[TD-12]** **(New in RC2.)** A 1.x trust layer SHOULD NOT put blank text (1.4) in `shown` of a text `OFFER`, `ASK` or `OFFER_WORDS` decision. A consumer or a bridge MUST NOT offer a blank candidate to the user: it drops it. If no candidate is left, the user sees no text, as for `ABSTAIN`. For decisions that declare `spec_version` `"0.1"` or omit it, the producer part does not apply; the consumer part applies to decisions of every version (a dropped blank candidate removes no text that the user can read). *Why:* the commit gate of TD-9 turns a blank final COMMIT into the policy's non-commit decision. That decision can be an `OFFER` whose only candidate is the blank text (FEP-0006 question 2). A blank button tells the user that the system has a candidate when it has none. A validator reports a 1.x violation as a warning (advisory check `FEP1-TD-SHOWN`), not as a reject. *Note:* a producer that removes the blank candidates and has no candidate left emits `ABSTAIN` with `shown = []`. It does not omit `shown`, because a decision without `shown` reads as a privacy log (TD-10).
 
 ### 6.4 Decision logs and the reference consumer
 - A decision log is a JSON Lines file of `trust_decision` lines only. **[TD-11]** A file that mixes `trust_decision` lines with input events and has no header is invalid.
@@ -837,7 +839,7 @@ The levels are cumulative and come from the conformance suite.
 | Suite profile | Covers | Vectors | Python | TypeScript | Rust |
 |---|---|---|---|---|---|
 | `v0.1` | Sections 3, 4.1–4.6, 4.8, 5, 8.1 (incl. 1.x header versions, V53–V61) | 61 | yes | yes | yes |
-| `fep-0001` | 4.3, 4.7, 6 (incl. TD-9 for 1.x, TD-F2 types, TD-F3) | 54 | yes | yes | yes |
+| `fep-0001` | 4.3, 4.7, 6 (incl. TD-9 for 1.x, TD-F2 types, TD-F3, TD-12 advisory) | 56 | yes | yes | yes |
 | `fep-0002` | 8.2 | 35 | yes | yes (structural) | yes (structural) |
 | `fep-0003` | 7.1, 7.3 | 44 | yes | yes | yes |
 | `fep-0004` | 8.3 (incl. W38: header `meta` must be an object) | 43 | yes | yes | yes |
@@ -855,7 +857,7 @@ fidetype-rs conformance                                    # Rust SDK
 A claim names the class, the level, the profiles and the bindings, and the RC: for example "Producer, NTS 1.0 RC2 (draft), level provenance, profiles text + intent, binding nts-lsl/0.1". **[CNF-1]** A claim MUST NOT omit "RC2 (draft)" (or the RC that it names) while this document is a draft.
 
 ### 9.5 Parity of the reference SDKs
-The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (61 + 54 + 35 + 44 + 43 + 44 = 281) (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`). Gap G-1 (control profile in Python only) is closed.
+The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (61 + 56 + 35 + 44 + 43 + 44 = 283) (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`). Gap G-1 (control profile in Python only) is closed.
 
 ---
 
@@ -1121,6 +1123,7 @@ The table of 8.3.7. Close codes 4000–4099 are reserved for this binding; 4000 
 | 1 | Header `spec_version` `"1.0"` | New version | 0.1 streams stay valid (VER-4) |
 | 2 | `trust_decision.spec_version` (VER-1, TD-F3) | New field (required for 1.0 producers) | Absent = 0.1 (VER-2) |
 | 3 | TD-9: blank final COMMIT text is a MUST NOT | Stricter, version-gated | 0.1 decisions keep SHOULD NOT |
+| 3a | TD-12 (RC2): no blank candidate in `shown` of an OFFER, ASK or OFFER_WORDS (SHOULD NOT); consumers drop blank candidates (MUST NOT offer) | New, version-gated for producers (warning only) | 0.1 decisions: no finding; consumers still drop the blank candidate |
 | 4 | INT-S7: no-signal reference MUST for irreversible configurations | Stricter (configuration rule) | None on streams |
 | 5 | Same-major minor versions accepted (VER-3) | Looser | A 0.1 reader still rejects `"0.2"` |
 | 6 | GEN-5 integers; GEN-6 empty lines; GEN-7 after `end` | Written down (SDK behaviour) | None |
@@ -1138,7 +1141,7 @@ The table of 8.3.7. Close codes 4000–4099 are reserved for this binding; 4000 
 
 ### B.3 Upgrading a producer
 1. Write `"spec_version": "1.0"` in the header.
-2. Trust layers: write `"spec_version": "1.0"` in every `trust_decision`. Never emit a final text COMMIT with a blank `shown[0]`: turn it into the non-commit decision (the M2-18 commit gate does this: `FrozenTrustConfig.with_commit_gate(min_chars=1)`).
+2. Trust layers: write `"spec_version": "1.0"` in every `trust_decision`. Never emit a final text COMMIT with a blank `shown[0]`: turn it into the non-commit decision (the M2-18 commit gate does this: `FrozenTrustConfig.with_commit_gate(min_chars=1)`). Then remove blank candidates from `shown` of OFFER, ASK and OFFER_WORDS (TD-12); an OFFER with no candidate left becomes `ABSTAIN` with `shown = []` (the collector does this, FEP-0006 3.2).
 3. Intent configurations that can arm irreversible intents: fit them with a no-signal reference.
 4. WebSocket producers: send `ws_seq` (8.3.4).
 5. Check with `fidetype conformance check --level provenance` and the profiles you claim.
@@ -1233,6 +1236,8 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | TD-9 (0.1) | SHOULD NOT | SDK `DecisionTracker` warning | F42 | T (accept) |
 | TD-10 | MAY | — | F24, F41 | T (accept) |
 | TD-11 | MUST | FEP1-KIND | F39 | T |
+| TD-12 (1.x producer) | SHOULD NOT | FEP1-TD-SHOWN (advisory), SDK `DecisionTracker` warning | F55 (warns), F56 (0.1: no warning) | T (accept with warning) |
+| TD-12 (consumer) | MUST NOT | consumer `offered` lists, SDK `DecisionTracker.offered` | F55, F56 | T (accept) |
 | PRV-1 … PRV-3 | SHOULD / MUST | — | — | G-10 |
 | PRF-1 | MAY | — | I02, D04, C02, E02 | T (accept) |
 | PRF-2 | MUST NOT | — | — | G-6 |

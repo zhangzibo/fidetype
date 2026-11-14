@@ -14,7 +14,7 @@ The collector is one service that takes NeuralTextStream (NTS) input from severa
  file  ----> receiver --\                                         /--> jsonl (decision log)
  ws /nts --> receiver ---+--> validate --> trust --> thin --> redact --+--> stdout
                                                                   \--> ws /decisions
-             GET /healthz, GET /metrics (JSON, 127.0.0.1 by default, optional bearer token)
+             GET /healthz (open, status only), GET /metrics (JSON; 127.0.0.1 by default, optional bearer token)
 ```
 
 ## Model
@@ -47,6 +47,7 @@ The idea comes from the OpenTelemetry Collector (receivers → processors → ex
 | Decision log holds decisions only | TD-11 | A `jsonl` exporter refuses a mixed `types` list |
 | Decisions name their rules version | 6.1, VER-1, TD-F3 | Every decision carries `spec_version: "1.0"` (directly after `type`) |
 | No blank final COMMIT for 1.x decisions | TD-9 | The trust processor adds the commit gate `min_chars = 1` if the configuration has none (new `config_id`, logged). A gated decision is OFFER or ABSTAIN with reason `commit gate: ...`, counted as `gated_commits`. `always_commit` is refused |
+| No blank candidate in an OFFER, ASK or OFFER_WORDS | TD-12 (RC2) | The trust processor removes blank texts from `shown` (`drop_blank_candidates`). An OFFER or OFFER_WORDS with no candidate left becomes `ABSTAIN` with `shown = []` (not an OFFER without `shown`, which reads as a privacy log, TD-10). An ASK stays an ASK. `reason` gets `TD-12: blank candidates dropped`. Counters `blank_candidates_dropped`, `blank_offers_abstained`. The provenance ledger keeps the trust layer's own decision |
 | Unique sessions across receivers | FEP-0006 1.4 | With two or more receivers in one pipeline, the stream id is `<receiver>/<stream id>` (for example `replay/replay-0`). It is the decision `session`. With one receiver the id does not change |
 
 Loss paths that give no final decision on the open utterance (all tested): an unreadable line, an invalid frame, a WebSocket `ws_seq` gap, `eof = "cut"`, a tail-mode idle time-out, a stop while an utterance is open.
@@ -60,7 +61,7 @@ TOML or JSON only. YAML is not supported: it would need a new dependency (PyYAML
 | Configuration format | TOML and JSON only; a `.yaml` file gives a clear error |
 | File without `end` | Default stays `eof = "close"`. One warning per stream; counter `closed_without_end` in `/metrics` |
 | Several receivers in one pipeline | Prefix `<receiver>/<stream id>` (documented in FEP-0006 1.4) |
-| Health and metrics | `127.0.0.1:13133` by default. Optional bearer token (`token_env`; never in the file or a log). A bind beyond localhost needs a token or `allow_unauthenticated = true` (then a warning) |
+| Health and metrics | `127.0.0.1:13133` by default. `/healthz` is always open and shows only `{"status": ...}` (liveness probes need no header). Optional bearer token (`token_env`; never in the file or a log) protects `/metrics` only. A bind beyond localhost needs a token or `allow_unauthenticated = true` (then a warning) |
 | `spec_version` | `"1.0"` on every decision; the commit gate makes TD-9 hold |
 | Fan-out of one receiver to two pipelines | Not now (future work) |
 | Standalone `/decisions` | A `websocket` exporter without `receiver` starts its own server: `/decisions` only (`/nts`, `/events` give 404), optional `token_env`, TLS, `linger_s` to stay open after a file replay |
@@ -74,7 +75,7 @@ Decision logs of the collector pass the FEP-0001 profile in the Python, TypeScri
 - Cut segments: the five loss paths above give no final decision on the cut utterance; the other utterances keep theirs.
 - WebSocket in and `/decisions` out: the same decisions as the reference, with `ws_seq` 1, 2, 3 on the channel.
 - 16 configuration errors give messages that name the value. Command line exit codes (0, 2).
-- v0.1: the `eof = "close"` warning (once per stream) and its counter; the `<receiver>/<id>` prefix with two receivers (a cut stream still reaches its own session); health default listen, refused open bind, warning with `allow_unauthenticated`, bearer token (401 without it, token never in metrics or logs); `spec_version` on every decision and the FEP-0001 profile check; a blank final COMMIT becomes a gated OFFER; gate rules and the `always_commit` refusal; file → trust → standalone `/decisions` with token, `from_seq = 1` replay after the input is done, and `/nts` refused.
+- v0.1: the `eof = "close"` warning (once per stream) and its counter; the `<receiver>/<id>` prefix with two receivers (a cut stream still reaches its own session); health default listen, refused open bind, warning with `allow_unauthenticated`, bearer token (`/metrics` 401 without it, `/healthz` open; token never in metrics or logs); `spec_version` on every decision and the FEP-0001 profile check; a blank final COMMIT is gated, and its blank-only OFFER becomes `ABSTAIN` with `shown = []` (TD-12; the log passes the FEP-0001 profile with no warning); `drop_blank_candidates` cases; gate rules and the `always_commit` refusal; file → trust → standalone `/decisions` with token, `from_seq = 1` replay after the input is done, and `/nts` refused.
 
 ## What v0 does not do
 - No LSL receiver or LSL decisions exporter yet (the [LSL adapter](lsl-input.md) exists; the wrapper is next).
@@ -88,7 +89,9 @@ Decision logs of the collector pass the FEP-0001 profile in the Python, TypeScri
 > **Our take:** v0.1 meets the first half of the P3 exit criterion ("one configuration: replay → trust → file and WebSocket exporters") on synthetic data. It does not yet meet the other half (an OS input exporter that types on Windows, a measured latency budget). The item model `(stream id, event)` plus status items is small and language-neutral, so a later Rust collector can keep the same configuration and the same tests.
 
 ## Open questions (FEP-0006)
-Python or Rust for v1 (the user decides); should a 1.x OFFER skip a blank candidate; an open `/healthz` with a protected `/metrics`; refuse an ungated trust configuration instead of adding the gate.
+Python or Rust for v1 (the user decides).
+
+Closed on 2026-11-14 (FEP-0006 "Decisions", second round): blank OFFER candidates → spec rule TD-12 and the collector step above; health token scope → open `/healthz`, protected `/metrics`; ungated configurations → the collector keeps adding the gate with a log line.
 
 > **Our take:** adding the gate inside the collector keeps old trust configurations usable, but the `config_id` in the decisions then differs from the file on disk. The log line shows both ids. Freezing the gated configuration (`with_commit_gate(min_chars=1)`) avoids the surprise.
 

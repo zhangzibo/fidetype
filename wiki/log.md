@@ -655,3 +655,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Names (read-only): PyPI `fidetype`, npm `@fidetype/sdk`, crates.io `fidetype` all free (404).
 - New: `docs/RELEASING.md` (semver per SDK, SDK-V1 … V6 rules against spec 11.7, checklist, trusted publishing steps), `docs/release-workflow.example.yml` (manual only, not in `.github/workflows/`), `CHANGELOG.md` (Python), `sdk/typescript/CHANGELOG.md`, `sdk/rust/CHANGELOG.md`, `LICENSE` copies in both SDK folders. CI jobs `packaging` and `rust-msrv`.
 - Pages: [Python SDK](concepts/python-sdk.md), [TypeScript SDK](concepts/typescript-sdk.md), [Rust SDK](concepts/rust-sdk.md), [roadmap](questions/roadmap-standard.md) P2 status.
+
+## [2026-11-14] setup | P1-11 + P3-05: TD-12 (no blank candidates); collector drops them; open /healthz
+- New RC2 rule **TD-12** (`spec/nts-1.0-rc2.md` 6.3, Appendix B row 3a, Appendix C rows, 1.1, 9.3, 9.5; `spec/CHANGELOG.md`): a 1.x trust layer SHOULD NOT put blank text in `shown` of a text OFFER, ASK or OFFER_WORDS; a consumer MUST NOT offer a blank candidate (it drops it). Producer part version-gated like TD-9; consumer part for every version.
+- Validators: advisory check `FEP1-TD-SHOWN` (a warning, never a reject) in Python, TypeScript and Rust; TS / Rust profile `failures()` skip advisory checks. Consumer summary adds `offered` and `advisories`. SDK `DecisionTracker` drops blank texts from `offered` and warns on 1.x decisions.
+- Vectors `fep-0001` F55 (accept with a warning) and F56 (0.1: accept, no warning); 56 now. Python = TS = Rust on 283/283 vectors and 44,916 fuzz mutants (seeds 1-6, `--n 30`).
+- Collector (FEP-0006 3.2 rule 6): the trust processor drops blank candidates; an OFFER / OFFER_WORDS with none left becomes `ABSTAIN` with `shown = []` (an OFFER without `shown` would read as a TD-10 privacy log). Counters `blank_candidates_dropped`, `blank_offers_abstained`.
+- Collector health (FEP-0006 7): `/healthz` is open and shows only the status; the bearer token protects `/metrics` only. The automatic commit gate stays. FEP-0006 open questions 2-4 closed ("Decisions", second round).
+- Pages: [collector](concepts/collector.md), [NTS specification](concepts/nts-spec.md), [conformance suite](concepts/conformance-suite.md), [TypeScript SDK](concepts/typescript-sdk.md), [Rust SDK](concepts/rust-sdk.md).

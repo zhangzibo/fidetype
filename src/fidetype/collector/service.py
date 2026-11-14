@@ -218,7 +218,7 @@ class Collector:
             host, port = _host_port(h.get("listen", DEFAULT_HEALTH_LISTEN))
             token = _env_secret("service.health.token_env", h.get("token_env"))
             if not is_loopback(host) and token is None:
-                self.log("service.health: WARNING: /healthz and /metrics listen beyond localhost without a token "
+                self.log("service.health: WARNING: /metrics listens beyond localhost without a token "
                          "(allow_unauthenticated = true)")
             self._start_health(host, port, token)
         self.started_at = time.monotonic()
@@ -323,7 +323,11 @@ class Collector:
         return out
 
     def _start_health(self, host: str, port: int, token: str | None = None) -> None:
-        """``GET /healthz`` and ``GET /metrics``. With ``token``: both need ``Authorization: Bearer <token>``."""
+        """``GET /healthz`` and ``GET /metrics``. With ``token``: ``/metrics`` needs ``Authorization: Bearer <token>``.
+
+        ``/healthz`` stays open (FEP-0006 section 7, decision on question 3), so a liveness probe works
+        without a header. It shows only ``{"status": ...}``: no counter, no name, no address.
+        """
         from fidetype.adapters import ws as W
 
         col = self
@@ -331,6 +335,12 @@ class Collector:
 
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self) -> None:  # noqa: N802
+                if self.path == "/healthz":  # open (liveness probes): status only
+                    self._send({"status": "ok" if col.state == "running" else col.state})
+                    return
+                if self.path != "/metrics":
+                    self.send_error(404)
+                    return
                 if check is not None and not check(W.bearer_token(self.headers.get("Authorization"))):
                     data = b'{"error": "unauthorized"}\n'
                     self.send_response(401)
@@ -340,15 +350,11 @@ class Collector:
                     self.end_headers()
                     self.wfile.write(data)
                     return
-                if self.path == "/healthz":
-                    body = {"status": "ok" if col.state == "running" else col.state}
-                elif self.path == "/metrics":
-                    body = col.metrics()
-                else:
-                    self.send_error(404)
-                    return
+                self._send(col.metrics(), 200)
+
+            def _send(self, body: dict[str, Any], code: int | None = None) -> None:
                 data = (json.dumps(body) + "\n").encode("utf-8")
-                self.send_response(200 if body.get("status", "ok") == "ok" or self.path == "/metrics" else 503)
+                self.send_response(code if code is not None else (200 if body.get("status") == "ok" else 503))
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(data)))
                 self.end_headers()

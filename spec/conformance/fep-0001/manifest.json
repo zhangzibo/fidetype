@@ -634,6 +634,53 @@
    "clause": "FEP-0001 3 table (1.0 RC2, TD-F2)",
    "description": "latency_s is the string \"0.2\", not a number",
    "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F55",
+   "file": "f55-td-v10-blank-candidates.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 (1.0 RC2, TD-12)",
+   "description": "spec_version 1.0: blank candidates in shown of a provisional OFFER, a final OFFER, an ASK and an OFFER_WORDS: accepted with a warning (FEP1-TD-SHOWN); the consumer drops the blank texts",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 4,
+    "final": 3,
+    "acted": [],
+    "offered": [
+     [
+      "ab"
+     ],
+     [],
+     [
+      "cd"
+     ]
+    ],
+    "advisories": 4
+   }
+  },
+  {
+   "id": "F56",
+   "file": "f56-td-v01-blank-candidates.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 3 (0.1, TD-12)",
+   "description": "Blank candidates in an OFFER without spec_version and with spec_version 0.1: no finding (0.1 rules); the consumer still drops the blank texts",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 2,
+    "final": 2,
+    "acted": [],
+    "offered": [
+     [
+      "ab"
+     ],
+     []
+    ],
+    "advisories": 0
+   }
   }
  ]
 }

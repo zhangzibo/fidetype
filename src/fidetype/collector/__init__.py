@@ -21,8 +21,11 @@ Exporters   ``jsonl`` (decision log), ``stdout``, ``websocket`` (FEP-0004 ``/dec
             websocket receiver's server or a standalone server)
 
 Every decision carries ``spec_version: "1.0"``; the trust processor adds
-the commit gate so no final COMMIT is blank (TD-9). The health endpoint
-listens on localhost by default, with an optional bearer token.
+the commit gate so no final COMMIT is blank (TD-9), and it removes blank
+candidates from OFFER / ASK / OFFER_WORDS (TD-12; an OFFER with none left
+becomes ABSTAIN). The health endpoint listens on localhost by default;
+``/healthz`` is open (status only), an optional bearer token protects
+``/metrics``.
 
 Not in v0.1 (FEP-0006 section 10): LSL receiver and exporter, gRPC, OS
 input-method exporters, fan-out of one receiver to two pipelines, hot

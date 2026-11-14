@@ -30,9 +30,18 @@ export const CHECKS: CheckMeta[] = [
   ["FEP1-TD-INPUT", "MUST", "3 r4", "No trust_decision event in an input stream"],
   ["FEP1-TD-FORMAT", "MUST", "3 table, r2, r8, r9 (1.x)", "trust_decision fields have the defined types and ranges; no empty final COMMIT text in a 1.x decision"],
   ["FEP1-TD-FINAL", "MUST", "3 r5-r7", "Per session: seq increases; at most one final decision per utterance; none after it"],
+  ["FEP1-TD-SHOWN", "SHOULD NOT", "3 (1.x, NTS 1.0 RC2 TD-12)", "No blank candidate text in shown of a 1.x OFFER, ASK or OFFER_WORDS (advisory: a warning)"],
 ];
 const META = Object.fromEntries(CHECKS.map((c) => [c[0], c]));
-const res = makeRes(META, FEP);
+/** Checks whose failure is a warning only (they never reject a file). */
+export const ADVISORY_CHECKS = ["FEP1-TD-SHOWN"];
+const coreRes = makeRes(META, FEP);
+const res: typeof coreRes = (cid, errs, msgOk = "", skipped = null) => {
+  const r = coreRes(cid, errs, msgOk, skipped);
+  return ADVISORY_CHECKS.includes(cid) ? { ...r, level: "advisory" } : r;
+};
+/** Actions whose `shown` lists candidates for the user (NTS 1.0 RC2, TD-12). */
+export const OFFER_ACTIONS = ["OFFER", "ASK", "OFFER_WORDS"];
 
 /** The format errors of a `decode_declaration` (FEP-0001 section 4). Empty: valid. */
 export function validateDeclaration(decl: unknown): string[] {
@@ -181,6 +190,46 @@ function tdVersionErrors(e: Record<string, unknown>): string[] {
   return [];
 }
 
+/** True for a text-profile OFFER, ASK or OFFER_WORDS (`shown` lists candidates; TD-12). */
+function textOffer(e: Record<string, unknown>): boolean {
+  const p = get(e, "profile");
+  return OFFER_ACTIONS.includes(get(e, "action") as string) && p !== "intent" && p !== "control";
+}
+
+/** The number of blank texts (empty or white space, spec 1.4) in `shown` of a text OFFER, ASK or OFFER_WORDS. */
+export function blankCandidates(e: Record<string, unknown>): number {
+  const sh = get(e, "shown");
+  if (!textOffer(e) || !Array.isArray(sh)) return 0;
+  return sh.filter((x) => typeof x === "string" && pyBlank(x)).length;
+}
+
+/**
+ * TD-12 (NTS 1.0 RC2, a SHOULD NOT for 1.x decisions): blank candidates in `shown`. A warning, not a reject.
+ * A decision without `spec_version` (or with "0.1") follows the 0.1 rules: no finding.
+ */
+export function tdShownAdvisories(e: Record<string, unknown>): string[] {
+  const ver = tdSpecVersion(e);
+  const k = blankCandidates(e);
+  if (ver === null || ver === "0.1" || !k) return [];
+  const n = has(e, "_line") ? e._line : "?";
+  return [`line ${n}: ${get(e, "action")} lists ${k} blank candidate text(s) in shown (TD-12; a SHOULD NOT for spec_version 1.x; a consumer drops them)`];
+}
+
+/**
+ * The candidates a consumer may show: `shown` of each final text OFFER, ASK, OFFER_WORDS, without blank texts.
+ * TD-12: a consumer MUST NOT offer a blank candidate (decisions of every version). null if `shown` is omitted.
+ */
+export function offeredTexts(decisions: Record<string, unknown>[]): (string[] | null)[] {
+  const out: (string[] | null)[] = [];
+  for (const e of decisions) {
+    if (get(e, "type") === "trust_decision" && get(e, "is_final") === true && textOffer(e)) {
+      const sh = get(e, "shown");
+      out.push(Array.isArray(sh) ? sh.filter((x): x is string => typeof x === "string" && !pyBlank(x)) : null);
+    }
+  }
+  return out;
+}
+
 /** is_final semantics per session (FEP-0001 section 3 rules 5-7). */
 export function tdFinalErrors(events: Record<string, unknown>[]): string[] {
   const errs: string[] = [];
@@ -241,6 +290,7 @@ export function checkEvents(events: Ev[], parseErrors: string[] = []) {
   out.push(res("FEP1-TD-INPUT", inp ? tdInputErrors(events) : null, "", naIn));
   out.push(res("FEP1-TD-FORMAT", dec ? events.flatMap((e) => tdFormatErrors(e)) : null, `${events.length} decision(s)`, naDec));
   out.push(res("FEP1-TD-FINAL", dec ? tdFinalErrors(events) : null, "", naDec));
+  out.push(res("FEP1-TD-SHOWN", dec ? events.flatMap((e) => tdShownAdvisories(e)) : null, "", naDec));
   return out;
 }
 
@@ -262,7 +312,8 @@ export function checkFile(name: string, bytes: Uint8Array): TargetReport {
 export function summarize(events: Ev[]): Record<string, unknown> {
   const kind = streamKind(events);
   if (kind === "decisions") {
-    return { kind, decisions: events.length, final: events.filter((e) => get(e, "is_final") === true).length, acted: actedTexts(events) };
+    return { kind, decisions: events.length, final: events.filter((e) => get(e, "is_final") === true).length, acted: actedTexts(events),
+      offered: offeredTexts(events), advisories: events.filter((e) => tdShownAdvisories(e).length > 0).length };
   }
   let segs = 0;
   let hasInput = false;

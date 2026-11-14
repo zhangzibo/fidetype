@@ -4,7 +4,7 @@ use fidetype::checks::{load_stream, Level};
 use fidetype::json::{parse_json, Map, Value};
 use fidetype::npz::{write_npz, NpyData};
 use fidetype::reader::{parse_nts_text, EventReader, LineSplitter};
-use fidetype::trust::{empty_commit_warning, handle_decisions, DecisionKind, DecisionTracker};
+use fidetype::trust::{blank_candidate_warning, empty_commit_warning, handle_decisions, DecisionKind, DecisionTracker};
 use fidetype::validate::{PushResult, StreamValidator};
 use fidetype::writer::{to_jsonl, NbestItem, NtsWriter, WriterOptions};
 use fidetype::{check_stream, ErrorKind};
@@ -207,6 +207,38 @@ fn decision_tracker_rules() {
     assert_eq!(i.kind, DecisionKind::Commit);
     assert_eq!(i.committed.as_deref(), Some("open"));
     assert!(i.forward);
+}
+
+#[test]
+fn decision_tracker_blank_candidates_td12() {
+    let evs = vec![
+        td(r#""seq":0,"utterance":0,"is_final":true,"action":"OFFER","shown":["","ab"," \u00a0"],"spec_version":"1.0""#),
+        td(r#""seq":1,"utterance":1,"is_final":true,"action":"ASK","shown":["\t"],"spec_version":"1.0""#),
+        td(r#""seq":2,"utterance":2,"is_final":true,"action":"OFFER","shown":["","cd"]"#), // 0.1 rules: no warning, still dropped
+        td(r#""seq":3,"utterance":3,"is_final":true,"action":"OFFER_WORDS","shown":["ef"],"spec_version":"1.0""#),
+    ];
+    let d = handle_decisions(&evs);
+    let offered: Vec<Vec<String>> = d.iter().map(|x| x.offered.clone()).collect();
+    assert_eq!(offered, vec![vec!["ab".to_string()], vec![], vec!["cd".to_string()], vec!["ef".to_string()]]);
+    assert_eq!(d.iter().map(|x| x.warnings.len()).collect::<Vec<_>>(), vec![1, 1, 0, 0]);
+    assert!(d[0].warnings[0].contains("TD-12") && d[0].warnings[0].contains("2 blank candidate"));
+    assert!(d.iter().all(|x| x.errors.is_empty() && !x.forward));
+    assert!(blank_candidate_warning(&evs[2]).is_none());
+    assert!(blank_candidate_warning(&evs[3]).is_none());
+    // the fep-0001 consumer accepts with a warning (advisory FEP1-TD-SHOWN) and drops the blank texts
+    let log = r#"{"type":"trust_decision","seq":0,"utterance":0,"is_final":true,"action":"OFFER","shown":["ab",""],"p_top1":0.9,"score_semantics":"calibrated_prob","spec_version":"1.0"}"#;
+    let rep = fidetype::profiles::fep0001::check_file("x.jsonl", log.as_bytes());
+    let c = rep.checks.iter().find(|c| c.id == "FEP1-TD-SHOWN").unwrap();
+    assert_eq!(c.level, Level::Advisory);
+    let v = fidetype::profiles::fep0001::consume("x.jsonl", log.as_bytes()).unwrap();
+    assert_eq!(v.get("advisories").as_f64(), Some(1.0));
+    match v.get("offered") {
+        Value::Arr(a) => match a.as_slice() {
+            [Value::Arr(b)] => assert!(b.len() == 1 && b[0].as_str() == Some("ab")),
+            _ => panic!("offered: one list expected"),
+        },
+        _ => panic!("offered: a list expected"),
+    }
 }
 
 #[test]

@@ -111,7 +111,8 @@ pub struct TargetReport {
 
 /// The failures of a report.
 pub fn failures(rep: &TargetReport) -> Vec<&CheckResult> {
-    rep.checks.iter().filter(|c| c.status == Status::Fail).collect()
+    // a failed advisory check is a warning only
+    rep.checks.iter().filter(|c| c.status == Status::Fail && c.level != Level::Advisory).collect()
 }
 
 /// A rejection for the first failure of a report.

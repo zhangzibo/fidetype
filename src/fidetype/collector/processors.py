@@ -312,6 +312,38 @@ def blank_safe_config(cfg: Any, name: str = "trust", log: Callable[[str], None] 
     return out
 
 
+#: Actions whose ``shown`` lists candidates for the user (TD-12).
+OFFER_ACTIONS = ("OFFER", "ASK", "OFFER_WORDS")
+#: Text added to ``reason`` when the collector drops blank candidates (TD-12).
+BLANK_REASON = "TD-12: blank candidates dropped"
+
+
+def drop_blank_candidates(ev: dict[str, Any]) -> tuple[dict[str, Any], int, bool]:
+    """Remove blank texts (spec 1.4) from ``shown`` of a text OFFER, ASK or OFFER_WORDS (TD-12, NTS 1.0 RC2).
+
+    Returns ``(event, dropped, abstained)``. The event is a new dict only when something changed.
+    When no candidate is left, an OFFER or OFFER_WORDS becomes ``ABSTAIN`` with ``shown = []``: TD-9
+    says that a decision that shows no text is an ABSTAIN, and an OFFER without ``shown`` would look
+    like a privacy log (TD-10), where the text exists but is hidden. An ASK stays an ASK (it asks the
+    user to try again; it needs no candidate). ``reason`` gets :data:`BLANK_REASON`.
+    """
+    sh = ev.get("shown")
+    if ev.get("action") not in OFFER_ACTIONS or ev.get("profile") in ("intent", "control") or not isinstance(sh, list):
+        return ev, 0, False
+    keep = [x for x in sh if not (isinstance(x, str) and not x.strip())]
+    dropped = len(sh) - len(keep)
+    if not dropped:
+        return ev, 0, False
+    out = dict(ev)
+    out["shown"] = keep
+    abstained = not keep and ev.get("action") in ("OFFER", "OFFER_WORDS")
+    if abstained:
+        out["action"] = "ABSTAIN"
+    why = BLANK_REASON + ("; no candidate left: ABSTAIN" if abstained else "")
+    out["reason"] = f"{ev['reason']}; {why}" if isinstance(ev.get("reason"), str) and ev["reason"] else why
+    return out, dropped, abstained
+
+
 class TrustProcessor(Processor):
     """The streaming trust layer (:class:`fidetype.trust.streaming.StreamingTrustLayer`), one session per stream.
 
@@ -322,7 +354,10 @@ class TrustProcessor(Processor):
 
     Every decision gets ``spec_version: "1.0"``. The trust configuration then must never COMMIT a
     blank text (TD-9 is a MUST NOT for 1.x): :func:`blank_safe_config` adds the commit gate when
-    the configuration has none.
+    the configuration has none. A gated COMMIT becomes an OFFER whose candidates can be blank:
+    :func:`drop_blank_candidates` removes them (TD-12) and turns an OFFER with no candidate left
+    into an ABSTAIN. The provenance ledger (option ``ledger``) keeps the trust layer's own decision;
+    ``reason`` of the emitted decision names the TD-12 step.
     """
 
     type = "trust"
@@ -340,7 +375,7 @@ class TrustProcessor(Processor):
             streaming=StreamingConfig(max_attempts=max_attempts, route=route, min_signal_quality=min_signal_quality,
                                       declaration_check=declaration_check))
         self._out: list[Item] = []
-        self.counts.update(gated_commits=0)
+        self.counts.update(gated_commits=0, blank_candidates_dropped=0, blank_offers_abstained=0)
         self.runner = _CollectorTrustRunner(self.layer, sink=self._sink, include_text=True,
                                             log=lambda m: log(f"processors.{name}: {m}"))
 
@@ -352,6 +387,9 @@ class TrustProcessor(Processor):
         ev = {"type": ev["type"], "spec_version": DECISION_SPEC_VERSION, **ev}  # spec 6.1, VER-1, TD-F3
         if str(ev.get("reason", "")).startswith(GATE_REASON):
             self.counts["gated_commits"] += 1
+        ev, dropped, abstained = drop_blank_candidates(ev)  # TD-12
+        self.counts["blank_candidates_dropped"] += dropped
+        self.counts["blank_offers_abstained"] += abstained
         self._out.append((str(ev.get("session", "")), ev))
 
     def _process(self, items: list[Item]) -> list[Item]:
