@@ -1,6 +1,6 @@
 /**
  * Fidetype TypeScript SDK: NeuralTextStream (NTS) v0.1 and the FEP-0001 /
- * FEP-0002 / FEP-0003 profiles. Browser safe: no Node API in this entry
+ * FEP-0002 / FEP-0003 / FEP-0004 profiles. Browser safe: no Node API in this entry
  * point (Node file helpers are in `@fidetype/sdk/node`).
  *
  * Produce a stream:  {@link NtsWriter}, {@link toJsonl}
@@ -8,6 +8,7 @@
  * Check a stream:    {@link checkStream}, {@link StreamValidator}, {@link validateEventSchema}
  * Act on decisions:  {@link DecisionTracker}, {@link isFinalCommit}, {@link emptyCommitWarning}
  * Conformance:       {@link runVectors}, {@link CONSUMERS}
+ * WebSocket:         {@link DecisionSubscriber}, {@link subscribeEvents}, {@link IngestCore} (FEP-0004)
  */
 
 export * from "./constants.js";
@@ -38,6 +39,13 @@ export type { ProfileReport, VectorOutcome, Consumer } from "./conformance.js";
 export * as fep0001 from "./profiles/fep0001.js";
 export * as fep0002 from "./profiles/fep0002.js";
 export * as fep0003 from "./profiles/fep0003.js";
+export * as fep0004 from "./profiles/fep0004.js";
+export {
+  IngestCore, SubscriberCore, SubscriberError, DecisionSubscriber, subscribeEvents, parseWsMessage, bearerToken, ingestSettings,
+  WS_BINDING_VERSION, WS_SUBPROTOCOL, WS_KNOWN_BINDINGS, WS_PATH_INGEST, WS_PATH_DECISIONS, WS_PATH_EVENTS, WS_REFUSAL_CODES,
+  DEFAULT_INGEST_SETTINGS,
+} from "./ws.js";
+export type { DecisionSubscriberOptions, WebSocketLike, WebSocketCtor, Effects as WsEffects, IngestStats, IngestSettings as WsIngestSettings, WsData } from "./ws.js";
 export { sha256Hex } from "./sha256.js";
 
 import { blocks as _blocks, levelReached as _levelReached, runChecks as _runChecks } from "./checks.js";

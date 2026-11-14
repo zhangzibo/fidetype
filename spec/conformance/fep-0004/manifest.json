@@ -1,0 +1,546 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "0.1",
+ "profile": "fep-0004",
+ "fep": "FEP-0004",
+ "generator": "python -m fidetype.conformance vectors --profile fep-0004",
+ "how_to_use": "FEP-0004 profile. Each vector is a JSON scenario (schema fidetype.conformance.ws-scenario/1). kind 'ingest': play the steps into your /nts server as if they came from WebSocket connections (open, msg, raw, binary, drop, close, tick; 'at' is the time in seconds). A refusal close code (1002, 1003, 1007, 1008, 1009, 4000) rejects the vector. kind 'subscribe': feed the messages to your /decisions client. A conforming implementation accepts exactly the vectors with expect = accept and, for those, gives the values in 'expected' (FEP-0004 section 11).",
+ "vectors": [
+  {
+   "id": "W01",
+   "file": "w01-one-message-per-event.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 3, 5, 6",
+   "description": "One stream, one message per event: two utterances, then end and a clean close",
+   "expected": {
+    "streams": 1,
+    "frames": 8,
+    "final_decisions": 2,
+    "aborted_utterances": 0,
+    "sessions": [
+     "acme-1"
+    ],
+    "event_types": {
+     "end": 1,
+     "frame": 8,
+     "header": 1,
+     "segment_end": 2
+    },
+    "welcomes": [
+     [
+      "acme-1",
+      0,
+      false
+     ]
+    ],
+    "acks": [
+     11
+    ],
+    "closes": []
+   }
+  },
+  {
+   "id": "W02",
+   "file": "w02-batches.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r4",
+   "description": "The same events in ws_batch messages (4 + 4 + 3 events): the same decisions as W01",
+   "expected": {
+    "streams": 1,
+    "frames": 8,
+    "final_decisions": 2,
+    "acks": [
+     11
+    ]
+   }
+  },
+  {
+   "id": "W03",
+   "file": "w03-hypothesis-route.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 5, 6",
+   "description": "A hypothesis-only producer (empty vocab): one provisional and one final decision",
+   "expected": {
+    "decisions": 2,
+    "final_decisions": 1,
+    "event_types": {
+     "end": 1,
+     "header": 1,
+     "hypothesis": 2
+    }
+   }
+  },
+  {
+   "id": "W04",
+   "file": "w04-unknown-control-and-event.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 4 r3",
+   "description": "An unknown ws_ control message is ignored; an unknown NTS event type passes to the layer (which ignores it)",
+   "expected": {
+    "ignored_controls": 1,
+    "final_decisions": 1,
+    "event_types": {
+     "end": 1,
+     "frame": 3,
+     "header": 1,
+     "vendor_note": 1
+    }
+   }
+  },
+  {
+   "id": "W05",
+   "file": "w05-no-ws-record.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r3, 10 r2",
+   "description": "A header without the ws record (a 6.3-sketch producer with ws_seq): binding nts-ws/0.1 assumed, a server stream id",
+   "expected": {
+    "welcomes": [
+     [
+      "anon-1",
+      0,
+      false
+     ]
+    ],
+    "sessions": [
+     "anon-1"
+    ],
+    "final_decisions": 1
+   }
+  },
+  {
+   "id": "W06",
+   "file": "w06-duplicates.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r2",
+   "description": "Every event is sent twice (a resend): the copies are dropped",
+   "expected": {
+    "duplicates": 11,
+    "frames": 8,
+    "final_decisions": 2,
+    "aborted_utterances": 0
+   }
+  },
+  {
+   "id": "W07",
+   "file": "w07-reorder-in-window.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r3",
+   "description": "ws_seq 4 arrives before 3 (inside the reorder window): released in order; same decisions as W01",
+   "expected": {
+    "reordered": 1,
+    "gaps": 0,
+    "frames": 8,
+    "final_decisions": 2
+   }
+  },
+  {
+   "id": "W08",
+   "file": "w08-gap-timeout.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r3, 8 r1",
+   "description": "ws_seq 3 never arrives: after the reorder time-out (0.25 s) it is a gap; the first utterance is dropped",
+   "expected": {
+    "gaps": 1,
+    "missing_events": 1,
+    "aborted_utterances": 1,
+    "skipped_after_gap": 1,
+    "final_decisions": 1,
+    "frames": 7
+   }
+  },
+  {
+   "id": "W09",
+   "file": "w09-gap-window-zero.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r3",
+   "description": "reorder_window 0: a missing ws_seq is a gap at once",
+   "expected": {
+    "gaps": 1,
+    "missing_events": 1,
+    "aborted_utterances": 1,
+    "skipped_after_gap": 1,
+    "final_decisions": 1
+   }
+  },
+  {
+   "id": "W10",
+   "file": "w10-resume-lossless.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 8 r2-r4",
+   "description": "The connection breaks inside the first utterance; the producer resumes (ack seq 3) and resends from 4: no abort, the same decisions as W01",
+   "expected": {
+    "resumes": 1,
+    "aborted_utterances": 0,
+    "final_decisions": 2,
+    "duplicates": 1,
+    "welcomes": [
+     [
+      "acme-1",
+      0,
+      false
+     ],
+     [
+      "acme-1",
+      3,
+      true
+     ]
+    ],
+    "frames": 8
+   }
+  },
+  {
+   "id": "W11",
+   "file": "w11-resume-timeout.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 8 r5",
+   "description": "The connection breaks and no resume comes within resume_timeout_s (2 s): the stream is lost, no decision on the cut utterance",
+   "expected": {
+    "lost_streams": 1,
+    "aborted_utterances": 1,
+    "final_decisions": 0
+   }
+  },
+  {
+   "id": "W12",
+   "file": "w12-resume-unknown.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 8 r6",
+   "description": "A resume header for a stream the server does not know: a new stream (resumed false, seq 0)",
+   "expected": {
+    "welcomes": [
+     [
+      "other-7",
+      0,
+      false
+     ]
+    ],
+    "resumes": 0,
+    "final_decisions": 1
+   }
+  },
+  {
+   "id": "W13",
+   "file": "w13-takeover.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 8 r7",
+   "description": "A second connection resumes the stream while the first is still open: the first is closed with 4001",
+   "expected": {
+    "takeovers": 1,
+    "closes": [
+     [
+      1,
+      4001
+     ]
+    ],
+    "final_decisions": 2,
+    "aborted_utterances": 0
+   }
+  },
+  {
+   "id": "W14",
+   "file": "w14-two-producers.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r4",
+   "description": "Two producers at the same time (two stream ids): one trust session each",
+   "expected": {
+    "streams": 2,
+    "sessions": [
+     "acme-1",
+     "acme-2"
+    ],
+    "final_decisions": 3
+   }
+  },
+  {
+   "id": "W15",
+   "file": "w15-token-message.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 9 r2",
+   "description": "Token required; the client sends ws_auth before the header (a browser cannot set headers)",
+   "expected": {
+    "final_decisions": 2
+   }
+  },
+  {
+   "id": "W16",
+   "file": "w16-token-header.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 9 r1",
+   "description": "Token required; the client sends Authorization: Bearer in the opening handshake",
+   "expected": {
+    "final_decisions": 2
+   }
+  },
+  {
+   "id": "W17",
+   "file": "w17-ack-every.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 7 r1",
+   "description": "ack_every 4: a ws_ack after every 4 released events and at end",
+   "expected": {
+    "acks": [
+     4,
+     8,
+     11
+    ]
+   }
+  },
+  {
+   "id": "W18",
+   "file": "w18-first-not-header.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r1",
+   "description": "The first message is a frame, not the header",
+   "failing_check": "FEP4-HANDSHAKE"
+  },
+  {
+   "id": "W19",
+   "file": "w19-no-subprotocol.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 4 r1",
+   "description": "The client offers no subprotocol",
+   "failing_check": "FEP4-HANDSHAKE"
+  },
+  {
+   "id": "W20",
+   "file": "w20-unknown-binding.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 10 r3",
+   "description": "ws.binding \"nts-ws/9.0\" is not known (close 4000)",
+   "failing_check": "FEP4-HANDSHAKE"
+  },
+  {
+   "id": "W21",
+   "file": "w21-header-version.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r2",
+   "description": "Header spec_version \"9.9\"",
+   "failing_check": "FEP4-HANDSHAKE"
+  },
+  {
+   "id": "W22",
+   "file": "w22-binary.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 3 r1",
+   "description": "A binary message (close 1003)",
+   "failing_check": "FEP4-FRAMING"
+  },
+  {
+   "id": "W23",
+   "file": "w23-not-json.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 3 r2",
+   "description": "A text message that is not JSON (close 1007)",
+   "failing_check": "FEP4-FRAMING"
+  },
+  {
+   "id": "W24",
+   "file": "w24-no-ws-seq.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r1",
+   "description": "An event without ws_seq",
+   "failing_check": "FEP4-FRAMING"
+  },
+  {
+   "id": "W25",
+   "file": "w25-float-ws-seq.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r1",
+   "description": "ws_seq 1.5 is not an integer",
+   "failing_check": "FEP4-FRAMING"
+  },
+  {
+   "id": "W26",
+   "file": "w26-batch-not-consecutive.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r4",
+   "description": "A batch with ws_seq 1, 2, 4",
+   "failing_check": "FEP4-FRAMING"
+  },
+  {
+   "id": "W27",
+   "file": "w27-batch-too-big.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r4",
+   "description": "A batch of 5 events with max_batch 4 (close 1009)",
+   "failing_check": "FEP4-FRAMING"
+  },
+  {
+   "id": "W28",
+   "file": "w28-resume-header-differs.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 8 r3",
+   "description": "The resume header has another vocab",
+   "failing_check": "FEP4-RESUME"
+  },
+  {
+   "id": "W29",
+   "file": "w29-bad-token.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 9 r3",
+   "description": "Token required; ws_auth has the wrong token (close 1008)",
+   "failing_check": "FEP4-AUTH"
+  },
+  {
+   "id": "W30",
+   "file": "w30-bad-frame.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r2",
+   "description": "A frame with 4 log-probabilities for a 5-token vocab (the layer refuses it)",
+   "failing_check": "FEP4-CONSUME"
+  },
+  {
+   "id": "W31",
+   "file": "w31-decisions.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 7",
+   "description": "Welcome, then a provisional OFFER and two final COMMITs with ws_seq 1-3",
+   "expected": {
+    "decisions": 3,
+    "final": 2,
+    "acted": [
+     "ab",
+     "ba"
+    ],
+    "gaps": [],
+    "duplicates": 0
+   }
+  },
+  {
+   "id": "W32",
+   "file": "w32-decisions-gap-resubscribe.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 7 r3-r4",
+   "description": "ws_seq 2 is missing: the subscriber resubscribes from 2; the replay repeats 3 (a duplicate)",
+   "expected": {
+    "decisions": 3,
+    "final": 2,
+    "acted": [
+     "ab",
+     "ba"
+    ],
+    "gaps": [
+     2
+    ],
+    "duplicates": 1
+   }
+  },
+  {
+   "id": "W33",
+   "file": "w33-decisions-missed.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 7 r5",
+   "description": "The resubscribe asks for history the server no longer has: the welcome reports missed 2",
+   "expected": {
+    "decisions": 1,
+    "missed": 2
+   }
+  },
+  {
+   "id": "W34",
+   "file": "w34-decisions-no-welcome.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 7 r2",
+   "description": "The first message is a decision, not ws_welcome",
+   "failing_check": "FEP4-DECISIONS"
+  },
+  {
+   "id": "W35",
+   "file": "w35-decisions-bad-binding.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 10 r3",
+   "description": "Welcome binding \"nts-ws/2.0\"",
+   "failing_check": "FEP4-DECISIONS"
+  },
+  {
+   "id": "W36",
+   "file": "w36-decisions-no-ws-seq.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 7 r3",
+   "description": "A decision without ws_seq",
+   "failing_check": "FEP4-DECISIONS"
+  },
+  {
+   "id": "W37",
+   "file": "w37-decisions-two-finals.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 7 r6",
+   "description": "Two final decisions for one utterance (FEP-0001 rules 6-7)",
+   "failing_check": "FEP4-DECISIONS"
+  }
+ ]
+}

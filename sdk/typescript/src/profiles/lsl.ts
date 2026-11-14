@@ -808,7 +808,7 @@ function pyStr(x: unknown): string {
 // --- the structural trust model + runner ------------------------------------------------------
 
 /** Counts what the reference StreamingTrustLayer does, without decoding. Throws StreamEventError as it does. */
-class StructuralLayer {
+export class StructuralLayer {
   header: Record<string, unknown> | null = null;
   V = 0;
   lastT = -Infinity;
@@ -890,9 +890,11 @@ class StructuralLayer {
 function checkStreamFields(h: Record<string, unknown>): void {
   const src = has(h, "source") ? h.source : "unknown";
   if (typeof src !== "string" || !src) throw new RangeError("source must be a non-empty string");
-  const fp = get(h, "frame_period");
+  // Python: np.isfinite(True) and True > 0 hold (bool is an int), so a boolean passes as 1 or 0.
+  const pyNum = (x: unknown): unknown => (typeof x === "boolean" ? Number(x) : x);
+  const fp = pyNum(get(h, "frame_period"));
   if (fp !== null && !(typeof fp === "number" && Number.isFinite(fp) && fp > 0)) throw new RangeError("frame_period must be a positive finite number");
-  const lat = get(h, "latency");
+  const lat = pyNum(get(h, "latency"));
   if (lat !== null && !(typeof lat === "number" && Number.isFinite(lat) && lat >= 0)) throw new RangeError("latency must be a finite number >= 0");
   const meta = get(h, "meta");
   if (meta !== null && meta !== false && meta !== 0 && meta !== "" && !isObj(meta) && !(Array.isArray(meta) && meta.length === 0)) {

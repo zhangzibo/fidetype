@@ -370,6 +370,8 @@ Rules:
 ### 6.3 WebSocket JSON (Development, sketch)
 Send the JSON Lines objects of 6.2 as WebSocket text messages, one object per message. The first message MUST be the header.
 
+The draft [FEP-0004](feps/0004-nts-over-websocket.md) makes this a full binding (`nts-ws/0.1`): subprotocol, `ws_seq` sequence numbers and gaps, batches, back-pressure, resume, an auth hook, and a decisions channel for browsers. When it is accepted, it replaces this sketch.
+
 ### 6.4 NTS over LSL (Development, sketch)
 [LSL](https://labstreaminglayer.org/) can carry an NTS stream as two LSL streams:
 

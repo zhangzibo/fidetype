@@ -33,7 +33,7 @@
     "gen:schemas": "node scripts/gen-schemas.mjs",
     "check:schemas": "node scripts/gen-schemas.mjs --check",
     "build": "node scripts/gen-schemas.mjs --check && tsc -p tsconfig.json && tsc -p tsconfig.node.json",
-    "test": "node --test test/core.test.mjs test/vectors.test.mjs",
+    "test": "node --test test/core.test.mjs test/vectors.test.mjs test/ws.test.mjs",
     "conformance": "node bin/fidetype-ts.mjs conformance",
     "cross-check": "node scripts/cross-check.mjs",
     "check:browser": "node scripts/check-browser-safe.mjs",

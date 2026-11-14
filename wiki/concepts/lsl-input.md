@@ -3,7 +3,7 @@ title: LSL input (Lab Streaming Layer adapter)
 type: concept
 tags: [lsl, streaming, real-time, adapter, trust, neuraltextstream, m6]
 sources: [neural-input-landscape-2026]
-updated: 2026-11-12
+updated: 2026-11-13
 ---
 
 # LSL input (Lab Streaming Layer adapter)
@@ -185,3 +185,5 @@ We state only what their documentation says (checked 2026-11-12).
 [Streaming trust layer](streaming-trust-layer.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [BrainFlow](../entities/brainflow.md) · [Conformance suite](conformance-suite.md) · [Standard roadmap](../questions/roadmap-standard.md)
 
 Live demo over LSL: see [Python SDK and offline demo](python-sdk.md) and `examples/lsl_bridge.py`.
+
+For browsers and remote clients, see [WebSocket input and output](websocket-input.md) (M6-11, FEP-0004): the same runner pattern over WebSocket; no merge window, so the final decision follows the closing event after about 1-2 ms on localhost (LSL: 17-61 ms, set by the merge window).

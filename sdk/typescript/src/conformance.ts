@@ -12,6 +12,7 @@ import { decodeUtf8, isObj, parseJson } from "./json.js";
 import * as fep0001 from "./profiles/fep0001.js";
 import * as fep0002 from "./profiles/fep0002.js";
 import * as fep0003 from "./profiles/fep0003.js";
+import * as fep0004 from "./profiles/fep0004.js";
 
 export type Consumer = (name: string, bytes: Uint8Array) => Record<string, unknown>;
 
@@ -21,6 +22,7 @@ export const CONSUMERS: Record<string, Consumer> = {
   "fep-0001": fep0001.consume,
   "fep-0002": fep0002.consume,
   "fep-0003": fep0003.consume,
+  "fep-0004": fep0004.consume,
 };
 
 export const PROFILE_TITLES: Record<string, string> = {
@@ -28,6 +30,7 @@ export const PROFILE_TITLES: Record<string, string> = {
   "fep-0001": "FEP-0001 streaming trust events",
   "fep-0002": "FEP-0002 NeuralTextStream over LSL",
   "fep-0003": "FEP-0003 output profiles and discrete intent events",
+  "fep-0004": "FEP-0004 NeuralTextStream over WebSocket",
 };
 
 export interface VectorOutcome {

@@ -1,0 +1,103 @@
+{
+ "schema": "fidetype.conformance.ws-scenario/1",
+ "kind": "ingest",
+ "fep": "FEP-0004",
+ "description": "no ws record",
+ "route": "frames",
+ "steps": [
+  {
+   "at": 0.0,
+   "conn": 1,
+   "open": {
+    "subprotocols": [
+     "nts-ws.0.1"
+    ]
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "header",
+    "spec_version": "0.1",
+    "vocab": [
+     "<blank>",
+     "a",
+     "b",
+     "c",
+     " "
+    ],
+    "vocab_type": "char",
+    "blank_id": 0,
+    "source": "conformance-vector",
+    "frame_period": 0.04,
+    "latency": 0.0,
+    "clock_domain": "trial",
+    "meta": {
+     "device.modality": "other",
+     "decoder.name": "conformance-vector",
+     "decoder.version": "1",
+     "decoder.causal": true,
+     "data.derived": true,
+     "language": "en"
+    }
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.0,
+    "log_probs": [
+     -4.7885,
+     -3.8343,
+     -0.1574,
+     -2.1666,
+     -6.7677
+    ],
+    "ws_seq": 1
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.04,
+    "log_probs": [
+     -1.4656,
+     -2.7021,
+     -1.1579,
+     -4.6715,
+     -0.9716
+    ],
+    "ws_seq": 2
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.08,
+    "log_probs": [
+     -2.9196,
+     -0.2391,
+     -2.7571,
+     -2.3693,
+     -6.3766
+    ],
+    "ws_seq": 3
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "end",
+    "ws_seq": 4
+   }
+  }
+ ]
+}

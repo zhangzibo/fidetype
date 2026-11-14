@@ -1,0 +1,148 @@
+<!doctype html>
+<!--
+  Fidetype: live trust decisions in a browser (M6-11, FEP-0004).
+
+  This page uses the TypeScript SDK (sdk/typescript) in the browser. It subscribes to the
+  /decisions path of a Fidetype WebSocket server and shows each trust_decision live.
+  It also reads the /events tap (hypothesis and segment_end events) to show the input.
+
+  Run (repo root; synthetic data only):
+    cd sdk/typescript && npm ci && npm run build && cd ../..
+    fidetype ws run --config experiments/2026-11-12-m4-streaming/results/trust-config-synthetic.json \
+        --decoder greedy --serve-example                     # serves this page at http://127.0.0.1:8765/
+    fidetype ws replay-to-ws stream.jsonl --speed 1          # in a second terminal (any NTS JSON Lines file)
+
+  The page connects to the server that served it. Use ?ws=ws://host:port to pick another one,
+  and ?token=... if the server needs a token (sent in a ws_auth message, never in the URL of the socket).
+  ?from=1 replays the decisions that the server still holds (from ws_seq 1), then shows new ones.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fidetype live decisions</title>
+<style>
+  :root {
+    --bg: #fafaf9; --fg: #1c1917; --muted: #57534e; --line: #e7e5e4; --card: #ffffff;
+    --commit: #15803d; --offer: #b45309; --abstain: #6b7280; --ask: #1d4ed8; --bad: #b91c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1917; --fg: #f5f5f4; --muted: #a8a29e; --line: #44403c; --card: #292524;
+      --commit: #4ade80; --offer: #fbbf24; --abstain: #9ca3af; --ask: #93c5fd; --bad: #f87171;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.3rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 16px; }
+  .status { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 0.9rem; color: var(--muted); margin-bottom: 16px; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--abstain); margin-right: 6px; }
+  .dot.on { background: var(--commit); }
+  .dot.err { background: var(--bad); }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; }
+  h2 { font-size: 0.95rem; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
+  #committed { font-size: 1.4rem; min-height: 2.2em; word-break: break-word; }
+  #committed:empty::before { content: "No committed text yet."; color: var(--muted); font-size: 1rem; }
+  #hyp { font-family: ui-monospace, Consolas, monospace; min-height: 1.5em; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; }
+  .wrap { overflow-x: auto; }
+  .act { font-weight: 600; }
+  .COMMIT { color: var(--commit); } .OFFER, .OFFER_WORDS { color: var(--offer); } .ABSTAIN { color: var(--abstain); } .ASK { color: var(--ask); }
+  tr.preview td { opacity: 0.6; }
+  .note { font-size: 0.85rem; color: var(--muted); margin: 8px 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Fidetype live decisions</h1>
+  <p class="sub">Trust decisions (FEP-0001) over WebSocket (FEP-0004). The page acts only on final COMMIT decisions.</p>
+  <div class="status" aria-live="polite">
+    <span><span id="dot" class="dot"></span><span id="state">connecting</span></span>
+    <span>server: <code id="server"></code></span>
+    <span>decisions: <span id="count">0</span></span>
+    <span>last ws_seq: <span id="seq">-</span></span>
+    <span>resubscribes: <span id="gaps">0</span></span>
+  </div>
+  <section>
+    <h2>Committed text (final COMMIT only)</h2>
+    <div id="committed"></div>
+  </section>
+  <section>
+    <h2>Input (latest hypothesis from /events)</h2>
+    <div id="hyp">-</div>
+  </section>
+  <section>
+    <h2>Decisions</h2>
+    <div class="wrap">
+      <table>
+        <thead><tr><th>ws_seq</th><th>stream</th><th>utt.</th><th>final</th><th>action</th><th>shown</th><th class="num">p_top1</th><th class="num">server ms</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="note">Grey rows are previews (is_final = false). A client never acts on them (FEP-0001 rule 1).</p>
+  </section>
+</main>
+<script type="module">
+  import { DecisionSubscriber, subscribeEvents, WS_PATH_DECISIONS, WS_PATH_EVENTS } from "/sdk/index.js";
+
+  const q = new URLSearchParams(location.search);
+  const base = q.get("ws") || `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}`;
+  const token = q.get("token") || undefined;
+  const from = Number.parseInt(q.get("from") || "", 10);
+  const $ = (id) => document.getElementById(id);
+  $("server").textContent = base;
+  let count = 0, gaps = 0;
+
+  const setState = (text, cls) => { $("state").textContent = text; $("dot").className = `dot ${cls}`; };
+  const cell = (tr, text, cls) => { const td = tr.insertCell(); td.textContent = text; if (cls) td.className = cls; return td; };
+
+  const sub = new DecisionSubscriber(base + WS_PATH_DECISIONS, {
+    token,
+    fromSeq: Number.isInteger(from) && from >= 1 ? from : undefined,
+    onDecision(d, wsSeq) {
+      const ev = d.event;
+      count += 1;
+      $("count").textContent = String(count);
+      $("seq").textContent = String(wsSeq);
+      const tr = $("rows").insertRow(0);
+      if (ev.is_final !== true) tr.className = "preview";
+      cell(tr, String(wsSeq), "num");
+      cell(tr, String(ev.session ?? ""));
+      cell(tr, String(ev.utterance ?? ""), "num");
+      cell(tr, ev.is_final ? "yes" : "no");
+      cell(tr, String(ev.action), `act ${ev.action}`);
+      cell(tr, Array.isArray(ev.shown) ? ev.shown.join(" | ") : "(no text)");
+      cell(tr, typeof ev.p_top1 === "number" ? ev.p_top1.toFixed(3) : "-", "num");
+      const lat = ev.ws && typeof ev.ws.server_latency_s === "number" ? (ev.ws.server_latency_s * 1e3).toFixed(1) : "-";
+      cell(tr, lat, "num");
+      while ($("rows").rows.length > 200) $("rows").deleteRow(-1);
+      if (d.forward && d.committed !== null) {
+        const out = $("committed");
+        out.textContent = (out.textContent ? out.textContent + " " : "") + d.committed;
+      }
+      for (const w of d.warnings) console.warn(w);
+    },
+    onStatus(s, detail) {
+      if (s === "welcome") setState("subscribed", "on");
+      else if (s === "closed") setState(`reconnecting (${detail})`, "");
+      else if (s === "error") setState(`error: ${detail}`, "err");
+      else if (s === "gap") { gaps += 1; $("gaps").textContent = String(gaps); }
+    },
+  });
+  sub.start();
+
+  subscribeEvents(base + WS_PATH_EVENTS, (ev) => {
+    if (ev.type === "hypothesis" && Array.isArray(ev.nbest) && ev.nbest.length) {
+      $("hyp").textContent = `${ev.stream_id}: ${ev.nbest[0].text}${ev.is_final ? "" : " ..."}`;
+    } else if (ev.type === "segment_end") {
+      $("hyp").textContent = `${ev.stream_id}: (end of utterance)`;
+    }
+  }, { types: ["hypothesis", "segment_end"], token });
+</script>
+</body>
+</html>

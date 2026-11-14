@@ -1,0 +1,37 @@
+{
+ "schema": "fidetype.conformance.ws-scenario/1",
+ "kind": "subscribe",
+ "fep": "FEP-0004",
+ "description": "no ws_seq",
+ "messages": [
+  {
+   "type": "ws_welcome",
+   "binding": "nts-ws/0.1",
+   "role": "decisions",
+   "spec": "FEP-0001",
+   "config_id": "tcfg-0123456789abcdef",
+   "seq": 0,
+   "first_available": 1
+  },
+  {
+   "type": "trust_decision",
+   "session": "acme-1",
+   "seq": 0,
+   "utterance": 0,
+   "is_final": false,
+   "action": "OFFER",
+   "shown": [
+    "ab"
+   ],
+   "p_top1": 0.6,
+   "score_semantics": "calibrated_prob",
+   "set_size": 1,
+   "guard_risk": 0.1,
+   "config_id": "tcfg-0123456789abcdef",
+   "ws": {
+    "stream_id": "acme-1",
+    "binding": "nts-ws/0.1"
+   }
+  }
+ ]
+}

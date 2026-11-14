@@ -50,7 +50,7 @@ const python = findPython();
 const rustArg = opt("--rust", process.env.FIDETYPE_RUST_BIN || null);
 const rustBin = rustArg && existsSync(resolve(rustArg)) ? resolve(rustArg) : rustArg; // a path, or a command on PATH
 
-/** The Rust SDK report of one profile folder (null without --rust). */
+/** The Rust SDK report of one profile folder (null without --rust, or if the Rust SDK has no such profile). */
 function runRust(p, dir) {
   if (!rustBin) return null;
   let text;
@@ -58,6 +58,10 @@ function runRust(p, dir) {
     text = execFileSync(rustBin, ["conformance", "--profile", p, "--vectors", dir, "--json", "-"],
       { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 256 << 20 });
   } catch (e) {
+    if (e.status === 2 && /unknown profile/.test(String(e.stderr))) {
+      console.log(`  rust: profile ${p} is not in the Rust SDK yet (skipped)`);
+      return null;
+    }
     text = e.stdout; // exit 1 when a vector fails; the JSON is still on stdout
   }
   return JSON.parse(text).reports[0];

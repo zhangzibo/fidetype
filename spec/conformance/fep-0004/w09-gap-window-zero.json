@@ -1,0 +1,190 @@
+{
+ "schema": "fidetype.conformance.ws-scenario/1",
+ "kind": "ingest",
+ "fep": "FEP-0004",
+ "description": "gap, window 0",
+ "route": "frames",
+ "steps": [
+  {
+   "at": 0.0,
+   "conn": 1,
+   "open": {
+    "subprotocols": [
+     "nts-ws.0.1"
+    ]
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "header",
+    "spec_version": "0.1",
+    "vocab": [
+     "<blank>",
+     "a",
+     "b",
+     "c",
+     " "
+    ],
+    "vocab_type": "char",
+    "blank_id": 0,
+    "source": "conformance-vector",
+    "frame_period": 0.04,
+    "latency": 0.0,
+    "clock_domain": "trial",
+    "meta": {
+     "device.modality": "other",
+     "decoder.name": "conformance-vector",
+     "decoder.version": "1",
+     "decoder.causal": true,
+     "data.derived": true,
+     "language": "en"
+    },
+    "ws": {
+     "binding": "nts-ws/0.1",
+     "stream_id": "acme-1"
+    }
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.0,
+    "log_probs": [
+     -2.0362,
+     -1.0842,
+     -2.0665,
+     -5.3337,
+     -0.9167
+    ],
+    "ws_seq": 1
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.04,
+    "log_probs": [
+     -1.3952,
+     -3.3619,
+     -1.1257,
+     -1.5588,
+     -1.6997
+    ],
+    "ws_seq": 2
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.12,
+    "log_probs": [
+     -0.5532,
+     -1.6714,
+     -2.3358,
+     -3.3147,
+     -2.2652
+    ],
+    "ws_seq": 4
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "segment_end",
+    "ws_seq": 5
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 1.0,
+    "log_probs": [
+     -3.2812,
+     -4.7048,
+     -4.4854,
+     -8.5422,
+     -0.0599
+    ],
+    "ws_seq": 6
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 1.04,
+    "log_probs": [
+     -0.5546,
+     -3.4938,
+     -1.2953,
+     -2.2805,
+     -3.9506
+    ],
+    "ws_seq": 7
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 1.08,
+    "log_probs": [
+     -0.4253,
+     -3.0015,
+     -3.0381,
+     -3.9647,
+     -1.4705
+    ],
+    "ws_seq": 8
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 1.12,
+    "log_probs": [
+     -1.9121,
+     -0.6231,
+     -2.9281,
+     -1.4601,
+     -3.4983
+    ],
+    "ws_seq": 9
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "segment_end",
+    "ws_seq": 10
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "end",
+    "ws_seq": 11
+   }
+  }
+ ],
+ "settings": {
+  "reorder_window": 0
+ }
+}

@@ -20,7 +20,8 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 | Check a file | `checkStream`: the 59 checks of the [conformance suite](conformance-suite.md), levels core / trust-ready / provenance / advisory |
 | Check a live stream | `StreamValidator`: the event checks of the [streaming trust layer](streaming-trust-layer.md) `push` (header first, increasing t, normalised rows, valid n-best) |
 | Act on decisions | `DecisionTracker`: per `trust_decision` the kind (commit, offer, ask, abstain, preview), the committed text or intent, `forward`, errors (FEP-0001 rules 5-8) and warnings (rule 9: empty final COMMIT) |
-| Conformance | `runVectors`: the golden vectors in `spec/conformance/` for `v0.1`, `fep-0001`, `fep-0002`, [`fep-0003`](intent-events.md) |
+| Conformance | `runVectors`: the golden vectors in `spec/conformance/` for `v0.1`, `fep-0001`, `fep-0002`, [`fep-0003`](intent-events.md), [`fep-0004`](websocket-input.md) |
+| WebSocket (M6-11) | `DecisionSubscriber` (browser `/decisions` client: resubscribe with `from_seq` on a gap), `subscribeEvents`, `IngestCore` / `SubscriberCore` (FEP-0004 cores, used by the `fep-0004` profile). Example page: `examples/ws-browser/` |
 
 ## Schemas are the source of truth
 - New structural JSON schemas (draft 2020-12): `spec/schemas/nts-v0.1/` (7 event kinds) and `spec/schemas/fep-0001/` (segment_end, n-best item, decode_declaration, trust_decision), next to `spec/schemas/fep-0003/`.
@@ -35,6 +36,7 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 | fep-0001 | 40 | 40 | 40/40 |
 | fep-0002 (LSL scenarios) | 32 | 32 | 32/32 |
 | fep-0003 | 44 | 44 | 44/44 |
+| fep-0004 (WebSocket scenarios) | 37 | 37 | 37/37 (Rust: profile not ported yet; the parity scripts skip it) |
 
 - `npm run cross-check` runs both reference consumers on every vector and compares verdict and "ok".
 - `npm run fuzz` mutates the JSON vectors (fixed seed). Two runs, about 4,000 mutants each: identical verdicts. The first fuzz runs found 6 differences (Python iterates strings and dicts; NumPy converts sample strings late). All are fixed. M7-11: seeds 1-6 at `--n 30` (24,396 mutants) give identical verdicts in Python, TypeScript and [Rust](rust-sdk.md). CI runs seeds 1-3.

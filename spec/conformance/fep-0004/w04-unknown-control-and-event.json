@@ -1,0 +1,124 @@
+{
+ "schema": "fidetype.conformance.ws-scenario/1",
+ "kind": "ingest",
+ "fep": "FEP-0004",
+ "description": "unknown types",
+ "route": "frames",
+ "steps": [
+  {
+   "at": 0.0,
+   "conn": 1,
+   "open": {
+    "subprotocols": [
+     "nts-ws.0.1"
+    ]
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "header",
+    "spec_version": "0.1",
+    "vocab": [
+     "<blank>",
+     "a",
+     "b",
+     "c",
+     " "
+    ],
+    "vocab_type": "char",
+    "blank_id": 0,
+    "source": "conformance-vector",
+    "frame_period": 0.04,
+    "latency": 0.0,
+    "clock_domain": "trial",
+    "meta": {
+     "device.modality": "other",
+     "decoder.name": "conformance-vector",
+     "decoder.version": "1",
+     "decoder.causal": true,
+     "data.derived": true,
+     "language": "en"
+    },
+    "ws": {
+     "binding": "nts-ws/0.1",
+     "stream_id": "acme-1"
+    }
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "ws_future",
+    "x": 1
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.0,
+    "log_probs": [
+     -0.05,
+     -9.2432,
+     -3.2957,
+     -5.2674,
+     -5.0372
+    ],
+    "ws_seq": 1
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.04,
+    "log_probs": [
+     -7.0791,
+     -10.6879,
+     -7.1118,
+     -8.3783,
+     -0.0019
+    ],
+    "ws_seq": 2
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.08,
+    "log_probs": [
+     -0.6532,
+     -1.81,
+     -1.6674,
+     -2.4409,
+     -3.2151
+    ],
+    "ws_seq": 3
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "vendor_note",
+    "text": "hi",
+    "ws_seq": 4
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "end",
+    "ws_seq": 5
+   }
+  }
+ ]
+}

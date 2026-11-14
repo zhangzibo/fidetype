@@ -1,0 +1,290 @@
+{
+ "config_id": "tcfg-d3a8a4b94122b35e",
+ "env": {
+  "isolation_class": "timing",
+  "cpus": "8,10,12,14",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.16",
+  "cpu": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+  "websockets": "17.4"
+ },
+ "runs": {
+  "A_frames_rt_single": {
+   "speed": 1.0,
+   "batch": 1,
+   "hyp_pacing_s": null,
+   "stop": "max_streams",
+   "events_sent": 1587,
+   "frames": 1583,
+   "wall_s": 64.70300000000861,
+   "equality": {
+    "n_ref": 4,
+    "n_got": 4,
+    "exact": "4/4",
+    "action_and_shown": "4/4",
+    "max_abs_dp_top1": 0.0
+   },
+   "actions": {
+    "COMMIT": 4
+   },
+   "subscriber_received": 4,
+   "subscriber_in_order": true,
+   "transport": {
+    "n": 1587,
+    "p50_ms": 0.24510000366717577,
+    "p95_ms": 0.38109999150037766,
+    "max_ms": 0.8037999796215445,
+    "mean_ms": 0.2552907370064917
+   },
+   "e2e_final": {
+    "n": 4,
+    "p50_ms": 1.851850000093691,
+    "p95_ms": 4.6618799955467685,
+    "max_ms": 5.086799996206537,
+    "mean_ms": 2.5249000027542934
+   },
+   "e2e_provisional": {
+    "n": 0
+   },
+   "server_final": {
+    "n": 4,
+    "p50_ms": 1.5712000167695805,
+    "p95_ms": 4.424900002777576,
+    "max_ms": 4.8467000015079975,
+    "mean_ms": 2.2618750081164762
+   },
+   "delivery_to_subscriber": {
+    "n": 4,
+    "p50_ms": 0.2851999888662249,
+    "p95_ms": 0.3983449962106533,
+    "max_ms": 0.41599999531172216,
+    "mean_ms": 0.29897499189246446
+   },
+   "ingest": {
+    "streams": 1,
+    "messages": 1588,
+    "events": 1587,
+    "duplicates": 0,
+    "reordered": 0,
+    "gaps": 0,
+    "missing_events": 0,
+    "resumes": 0,
+    "takeovers": 0,
+    "lost_streams": 0,
+    "ignored_controls": 0,
+    "refused": 0
+   },
+   "rejected": 0,
+   "aborted": 0
+  },
+  "B_frames_x4_single": {
+   "speed": 4.0,
+   "batch": 1,
+   "hyp_pacing_s": null,
+   "stop": "max_streams",
+   "events_sent": 4390,
+   "frames": 4378,
+   "wall_s": 45.09399999998277,
+   "equality": {
+    "n_ref": 12,
+    "n_got": 12,
+    "exact": "12/12",
+    "action_and_shown": "12/12",
+    "max_abs_dp_top1": 0.0
+   },
+   "actions": {
+    "COMMIT": 12
+   },
+   "subscriber_received": 12,
+   "subscriber_in_order": true,
+   "transport": {
+    "n": 4390,
+    "p50_ms": 0.23644999600946903,
+    "p95_ms": 0.33660000190138817,
+    "max_ms": 0.5471000040415674,
+    "mean_ms": 0.23725765391575399
+   },
+   "e2e_final": {
+    "n": 12,
+    "p50_ms": 1.2963999906787649,
+    "p95_ms": 1.6054400039138272,
+    "max_ms": 1.6929999983403832,
+    "mean_ms": 1.3484583299335402
+   },
+   "e2e_provisional": {
+    "n": 0
+   },
+   "server_final": {
+    "n": 12,
+    "p50_ms": 0.9732999897096306,
+    "p95_ms": 1.2238449984579345,
+    "max_ms": 1.3184999988880008,
+    "mean_ms": 1.009266668309768
+   },
+   "delivery_to_subscriber": {
+    "n": 12,
+    "p50_ms": 0.23615000827703625,
+    "p95_ms": 0.468550009827595,
+    "max_ms": 0.648400018690154,
+    "mean_ms": 0.2749500029797976
+   },
+   "ingest": {
+    "streams": 1,
+    "messages": 4391,
+    "events": 4390,
+    "duplicates": 0,
+    "reordered": 0,
+    "gaps": 0,
+    "missing_events": 0,
+    "resumes": 0,
+    "takeovers": 0,
+    "lost_streams": 0,
+    "ignored_controls": 0,
+    "refused": 0
+   },
+   "rejected": 0,
+   "aborted": 0
+  },
+  "C_frames_x4_batch8": {
+   "speed": 4.0,
+   "batch": 8,
+   "hyp_pacing_s": null,
+   "stop": "max_streams",
+   "events_sent": 4390,
+   "frames": 4378,
+   "wall_s": 45.062999999994645,
+   "equality": {
+    "n_ref": 12,
+    "n_got": 12,
+    "exact": "12/12",
+    "action_and_shown": "12/12",
+    "max_abs_dp_top1": 0.0
+   },
+   "actions": {
+    "COMMIT": 12
+   },
+   "subscriber_received": 12,
+   "subscriber_in_order": true,
+   "transport": {
+    "n": 4390,
+    "p50_ms": 0.2247500087833032,
+    "p95_ms": 0.3242550083086826,
+    "max_ms": 0.5939000111538917,
+    "mean_ms": 0.22900701628558778
+   },
+   "e2e_final": {
+    "n": 12,
+    "p50_ms": 1.4778000040678307,
+    "p95_ms": 1.6463149935589172,
+    "max_ms": 1.6709000046830624,
+    "mean_ms": 1.4113666669193965
+   },
+   "e2e_provisional": {
+    "n": 0
+   },
+   "server_final": {
+    "n": 12,
+    "p50_ms": 1.179200000478886,
+    "p95_ms": 1.3932449888670817,
+    "max_ms": 1.4405999972950667,
+    "mean_ms": 1.1680666575557552
+   },
+   "delivery_to_subscriber": {
+    "n": 12,
+    "p50_ms": 0.2536000101827085,
+    "p95_ms": 0.5974200117634605,
+    "max_ms": 0.9800000116229057,
+    "mean_ms": 0.30652500815146294
+   },
+   "ingest": {
+    "streams": 1,
+    "messages": 4379,
+    "events": 4390,
+    "duplicates": 0,
+    "reordered": 0,
+    "gaps": 0,
+    "missing_events": 0,
+    "resumes": 0,
+    "takeovers": 0,
+    "lost_streams": 0,
+    "ignored_controls": 0,
+    "refused": 0
+   },
+   "rejected": 0,
+   "aborted": 0
+  },
+  "D_hypothesis_50ms": {
+   "speed": 0.0,
+   "batch": 1,
+   "hyp_pacing_s": 0.05,
+   "stop": "max_streams",
+   "events_sent": 213,
+   "frames": 0,
+   "wall_s": 10.75,
+   "equality": {
+    "n_ref": 30,
+    "n_got": 30,
+    "exact": "30/30",
+    "action_and_shown": "30/30",
+    "max_abs_dp_top1": 0.0
+   },
+   "actions": {
+    "COMMIT": 30
+   },
+   "subscriber_received": 212,
+   "subscriber_in_order": true,
+   "transport": {
+    "n": 213,
+    "p50_ms": 0.3016000264324248,
+    "p95_ms": 0.3904800105374305,
+    "max_ms": 5.279199976939708,
+    "mean_ms": 0.31406385113568236
+   },
+   "e2e_final": {
+    "n": 30,
+    "p50_ms": 0.7526999979745597,
+    "p95_ms": 0.9690600083558819,
+    "max_ms": 5.499399994732812,
+    "mean_ms": 0.8820800023386255
+   },
+   "e2e_provisional": {
+    "n": 182,
+    "p50_ms": 0.6832500075688586,
+    "p95_ms": 0.8607950119767336,
+    "max_ms": 1.038500020513311,
+    "mean_ms": 0.6651500013534103
+   },
+   "server_final": {
+    "n": 30,
+    "p50_ms": 0.425049991463311,
+    "p95_ms": 0.6159950018627569,
+    "max_ms": 0.6685999978799373,
+    "mean_ms": 0.4359100004270052
+   },
+   "delivery_to_subscriber": {
+    "n": 212,
+    "p50_ms": 0.2701499906834215,
+    "p95_ms": 0.3878800169331952,
+    "max_ms": 0.48770001740194857,
+    "mean_ms": 0.28001367790461956
+   },
+   "ingest": {
+    "streams": 1,
+    "messages": 214,
+    "events": 213,
+    "duplicates": 0,
+    "reordered": 0,
+    "gaps": 0,
+    "missing_events": 0,
+    "resumes": 0,
+    "takeovers": 0,
+    "lost_streams": 0,
+    "ignored_controls": 0,
+    "refused": 0
+   },
+   "rejected": 0,
+   "aborted": 0
+  }
+ },
+ "lsl_reference": "experiments/2026-11-12-m6-lsl/results/latency.json"
+}

@@ -9,6 +9,7 @@
     fidetype conformance ...                             # full conformance suite (check, consumer, vectors, ...)
     fidetype lsl run|replay-to-lsl|list ...              # Lab Streaming Layer input (needs the [lsl] extra)
     fidetype lsl brainflow-bridge --board synthetic      # BrainFlow board -> LSL (needs [lsl,brainflow])
+    fidetype ws run|replay-to-ws|subscribe ...           # WebSocket input and output, FEP-0004 (needs the [ws] extra)
     fidetype benchmark tracks|prepare|score|...          # open benchmark v0.1
     fidetype ledger verify|report ...                    # provenance ledger tools
     fidetype version
@@ -16,7 +17,7 @@
 Each subcommand runs the same code as its ``python -m`` module, which
 still works: ``python -m fidetype.conformance``,
 ``python -m fidetype.trust.streaming``, ``python -m fidetype.trust.intent``,
-``python -m fidetype.adapters.lsl``,
+``python -m fidetype.adapters.lsl``, ``python -m fidetype.adapters.ws``,
 ``python -m fidetype.benchmark``, ``python -m fidetype.trust.provenance``
 and ``python -m fidetype.demo``.
 """
@@ -57,6 +58,12 @@ def _lsl(argv: list[str]) -> int:
     return main(argv)
 
 
+def _ws(argv: list[str]) -> int:
+    from fidetype.adapters.ws import main
+
+    return main(argv)
+
+
 def _benchmark(argv: list[str]) -> int:
     from fidetype.benchmark.__main__ import main
 
@@ -92,6 +99,7 @@ COMMANDS: dict[str, tuple[Callable[[list[str]], int], str, str]] = {
     "demo": (_demo, "offline demo: synthetic decoder streams through the trust layer", "python -m fidetype.demo"),
     "conformance": (_conformance, "the full conformance suite (check, consumer, vectors)", "python -m fidetype.conformance"),
     "lsl": (_lsl, "Lab Streaming Layer input and output (needs the [lsl] extra)", "python -m fidetype.adapters.lsl"),
+    "ws": (_ws, "WebSocket input and output, FEP-0004 (needs the [ws] extra)", "python -m fidetype.adapters.ws"),
     "benchmark": (_benchmark, "open benchmark v0.1 (tracks, prepare, score, leaderboard)", "python -m fidetype.benchmark"),
     "ledger": (_ledger, "provenance ledger tools (verify, report)", "python -m fidetype.trust.provenance"),
     "version": (_version, "print the package and spec versions", ""),

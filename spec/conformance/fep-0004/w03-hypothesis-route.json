@@ -1,0 +1,92 @@
+{
+ "schema": "fidetype.conformance.ws-scenario/1",
+ "kind": "ingest",
+ "fep": "FEP-0004",
+ "description": "hypothesis route",
+ "route": "hypothesis",
+ "steps": [
+  {
+   "at": 0.0,
+   "conn": 1,
+   "open": {
+    "subprotocols": [
+     "nts-ws.0.1"
+    ]
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "header",
+    "spec_version": "0.1",
+    "vocab": [],
+    "vocab_type": "char",
+    "blank_id": null,
+    "source": "conformance-vector",
+    "frame_period": 0.04,
+    "latency": 0.0,
+    "clock_domain": "trial",
+    "meta": {
+     "device.modality": "other",
+     "decoder.name": "conformance-vector",
+     "decoder.version": "1",
+     "decoder.causal": true,
+     "data.derived": true,
+     "language": "en"
+    },
+    "ws": {
+     "binding": "nts-ws/0.1",
+     "stream_id": "acme-1"
+    }
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "hypothesis",
+    "id": "h1",
+    "is_final": false,
+    "score_semantics": "none",
+    "nbest": [
+     {
+      "text": "ab",
+      "score": -1.5
+     }
+    ],
+    "ws_seq": 1
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "hypothesis",
+    "id": "h2",
+    "revision_of": "h1",
+    "is_final": true,
+    "score_semantics": "none",
+    "nbest": [
+     {
+      "text": "ab",
+      "score": -1.0
+     },
+     {
+      "text": "a",
+      "score": -2.5
+     }
+    ],
+    "ws_seq": 2
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "end",
+    "ws_seq": 3
+   }
+  }
+ ]
+}

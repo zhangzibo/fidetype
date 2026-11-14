@@ -148,9 +148,10 @@ for (const p of await node.listProfiles(vroot)) {
       rsText = execFileSync(rustBin, ["conformance", "--profile", p, "--vectors", dst, "--json", "-"],
         { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 256 << 20 });
     } catch (e) {
-      rsText = e.stdout;
+      rsText = e.status === 2 && /unknown profile/.test(String(e.stderr)) ? null : e.stdout;
     }
-    rs = new Map(JSON.parse(rsText).reports[0].vectors.map((v) => [v.id, v]));
+    if (rsText === null) console.log(`  rust: profile ${p} is not in the Rust SDK yet (skipped)`);
+    else rs = new Map(JSON.parse(rsText).reports[0].vectors.map((v) => [v.id, v]));
   }
   let d = 0;
   let dTs = 0;

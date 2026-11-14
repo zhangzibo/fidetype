@@ -1,0 +1,32 @@
+{
+ "config_id": "tcfg-f5ca0020b3b8fce2",
+ "trials": 816,
+ "sessions": 14,
+ "events_sent": 2448,
+ "concurrent_producers": 4,
+ "wall_s": 1.5150000000139698,
+ "ws_equal_in_process_exact": "816/816",
+ "ws_equal_batch_harness": "816/816",
+ "in_process_equal_batch_harness": "816/816",
+ "actions": {
+  "COMMIT": 82,
+  "OFFER": 734
+ },
+ "rejected": 0,
+ "aborted": 0,
+ "ingest": {
+  "streams": 14,
+  "messages": 2448,
+  "events": 2434,
+  "duplicates": 0,
+  "reordered": 0,
+  "gaps": 0,
+  "missing_events": 0,
+  "resumes": 0,
+  "takeovers": 0,
+  "lost_streams": 0,
+  "ignored_controls": 0,
+  "refused": 0
+ },
+ "note": "aggregate counts only; the trial files and texts stay outside the repo"
+}

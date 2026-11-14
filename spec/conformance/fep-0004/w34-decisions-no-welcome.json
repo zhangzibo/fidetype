@@ -1,0 +1,71 @@
+{
+ "schema": "fidetype.conformance.ws-scenario/1",
+ "kind": "subscribe",
+ "fep": "FEP-0004",
+ "description": "no welcome",
+ "messages": [
+  {
+   "type": "trust_decision",
+   "session": "acme-1",
+   "seq": 0,
+   "utterance": 0,
+   "is_final": false,
+   "action": "OFFER",
+   "shown": [
+    "ab"
+   ],
+   "p_top1": 0.6,
+   "score_semantics": "calibrated_prob",
+   "set_size": 1,
+   "guard_risk": 0.1,
+   "config_id": "tcfg-0123456789abcdef",
+   "ws_seq": 1,
+   "ws": {
+    "stream_id": "acme-1",
+    "binding": "nts-ws/0.1"
+   }
+  },
+  {
+   "type": "trust_decision",
+   "session": "acme-1",
+   "seq": 1,
+   "utterance": 0,
+   "is_final": true,
+   "action": "COMMIT",
+   "shown": [
+    "ab"
+   ],
+   "p_top1": 0.9,
+   "score_semantics": "calibrated_prob",
+   "set_size": 1,
+   "guard_risk": 0.1,
+   "config_id": "tcfg-0123456789abcdef",
+   "ws_seq": 2,
+   "ws": {
+    "stream_id": "acme-1",
+    "binding": "nts-ws/0.1"
+   }
+  },
+  {
+   "type": "trust_decision",
+   "session": "acme-1",
+   "seq": 2,
+   "utterance": 1,
+   "is_final": true,
+   "action": "COMMIT",
+   "shown": [
+    "ba"
+   ],
+   "p_top1": 0.9,
+   "score_semantics": "calibrated_prob",
+   "set_size": 1,
+   "guard_risk": 0.1,
+   "config_id": "tcfg-0123456789abcdef",
+   "ws_seq": 3,
+   "ws": {
+    "stream_id": "acme-1",
+    "binding": "nts-ws/0.1"
+   }
+  }
+ ]
+}

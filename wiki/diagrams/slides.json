@@ -91,6 +91,12 @@
       "title": "15. Intent events (FEP-0003, P12)",
       "caption": "An intent decision is calibrated, passes the gates and meets the threshold of its risk class. Safe and undoable intents are committed. An irreversible intent is only armed: a confirm unit or a second channel must confirm it. OFFER and ABSTAIN never act. A no-signal reference keeps a confident no-signal output from being committed.",
       "wiki": "../concepts/intent-events.md"
+    },
+    {
+      "file": "16-websocket-input.drawio",
+      "title": "16. WebSocket input and output (FEP-0004, M6-11)",
+      "caption": "A decoder sends NTS events with sequence numbers over WebSocket. The server drops duplicates, waits briefly for late events and lets a broken connection resume without loss. A gap or a lost stream drops the open utterance without a decision. Decisions go to browsers in order; a subscriber that misses one asks for it again.",
+      "wiki": "../concepts/websocket-input.md"
     }
   ]
 }

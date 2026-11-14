@@ -99,6 +99,7 @@ A profile tests one draft FEP on top of v0.1. It does not change the v0.1 levels
 |---|---|---|---|---|
 | `fep-0001` | [Streaming trust events](../../spec/feps/0001-streaming-trust-events.md) | 10 (`FEP1-*`) | 40 JSON Lines (12 accept, 28 reject) | [Streaming trust layer](streaming-trust-layer.md#conformance-profile-fep-0001-m4-07) |
 | `fep-0002` | [NTS over LSL](../../spec/feps/0002-nts-over-lsl.md) | 6 (`FEP2-*`) | 31 JSON scenarios (15 accept, 16 reject) | [LSL input](lsl-input.md#conformance-profile-fep-0002) |
+| `fep-0004` | [NTS over WebSocket](../../spec/feps/0004-nts-over-websocket.md) | 7 (`FEP4-*`) | 37 JSON scenarios (20 accept, 17 reject) | [WebSocket input](websocket-input.md#conformance) |
 
 ```bash
 fidetype conformance --profile fep-0001                       # reference consumer over the profile vectors

@@ -1,0 +1,12 @@
+{
+ "id": "M3-02",
+ "agent_runs": [
+  {
+   "label": "M3-01/02 ablations, MEG and simulator",
+   "duration_s": 3177.5,
+   "tokens": 320229,
+   "tool_uses": 125
+  }
+ ],
+ "_tracker_updated": "2026-11-13T22:36:00-08:00"
+}

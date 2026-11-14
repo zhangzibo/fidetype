@@ -1,0 +1,17 @@
+{
+ "id": "M6-11",
+ "status": "done",
+ "started_at": "2026-11-13T21:57:00-08:00",
+ "finished_at": "2026-11-13T22:36:00-08:00",
+ "approx_times": true,
+ "notes": "Follow-up of M6-01. fidetype.adapters.ws (LSL runner pattern): /nts input -> StreamingTrustLayer -> /decisions (resumable, ws_seq) + /events; CLI fidetype ws run|replay-to-ws|subscribe; optional extra [ws] = websockets==17.4 (BSD-3), dev includes it (CI runs the WS tests). Draft FEP-0004 (binding nts-ws/0.1): framing, ws_seq gaps, batches, back-pressure, resume, auth hook, TLS, clock. Profile fep-0004: 37 vectors, Python = TypeScript 37/37, fuzz 5,550 mutants (seeds 1-5) agree; Rust not ported (parity scripts skip it). B2T 816 test trials over WS = in-process 816/816 = batch harness 816/816. Localhost e2e final p50 1.30-1.85 ms vs LSL 56-61 ms. Safety fix: frames after a gap dropped to the next boundary. Browser example examples/ws-browser (TS DecisionSubscriber). Wiki concepts/websocket-input.md, diagram 16.",
+ "agent_runs": [
+  {
+   "label": "M6-11 WebSocket adapter (FEP-0004)",
+   "duration_s": null,
+   "tokens": null,
+   "tool_uses": null
+  }
+ ],
+ "_tracker_updated": "2026-11-13T22:36:00-08:00"
+}

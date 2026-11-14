@@ -129,6 +129,7 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 | `fep-0001` streaming trust events | 40 | 40/40 pass | 40/40 |
 | `fep-0002` NTS over LSL (scenarios) | 32 | 32/32 pass | 32/32 |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 |
+| `fep-0004` NTS over WebSocket (scenarios) | 37 | 37/37 pass | 37/37 (Rust: not ported yet; the scripts skip it) |
 
 - `npm run cross-check` runs the Python reference consumer and the TypeScript consumer on every vector and compares the verdict (accept / reject) and the "ok" result (verdict and expected values). It needs a Python with the `fidetype` package (the repo `.venv`, or `FIDETYPE_PYTHON`).
 - `npm run fuzz -- --n 30` mutates the JSON and JSON Lines vectors (fixed seed) and compares the verdicts on the mutants. Seeds 1-6 (about 4,070 mutants each, 24,396 in total) give identical verdicts (M7-11). CI runs seeds 1-3.
@@ -164,6 +165,7 @@ FEP-0002 vectors are LSL scenarios. The Python reference plays them through its 
 - `dist/index.js` and its imports use only standard web APIs (`TextDecoder`, `ReadableStream`, `Uint8Array`). The core is compiled without Node types, and `npm run check:browser` scans the build.
 - Load it as an ES module over HTTP (`<script type="module">`). Browsers do not load ES modules from `file://` pages. A headless Edge run of all 167 vectors (NPZ included) passed.
 - Node-only helpers (file reading, profile folders) are in `@fidetype/sdk/node` (`dist/node.js`).
+- **WebSocket (FEP-0004, M6-11).** `DecisionSubscriber` subscribes to the `/decisions` path of `fidetype ws run`. It checks the `ws_seq` order, resubscribes with `from_seq` on a gap or a lost connection, and tells you per decision what to do (`forward` = act on it; only final COMMIT). `subscribeEvents` reads the `/events` tap. It uses the global `WebSocket` (browsers, Node >= 22) or the constructor you pass. Example page: `examples/ws-browser/index.html` (`fidetype ws run --serve-example`).
 
 ## Dependencies and licences
 

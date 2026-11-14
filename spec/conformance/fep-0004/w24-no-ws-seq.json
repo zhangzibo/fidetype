@@ -1,0 +1,66 @@
+{
+ "schema": "fidetype.conformance.ws-scenario/1",
+ "kind": "ingest",
+ "fep": "FEP-0004",
+ "description": "no ws_seq",
+ "route": "frames",
+ "steps": [
+  {
+   "at": 0.0,
+   "conn": 1,
+   "open": {
+    "subprotocols": [
+     "nts-ws.0.1"
+    ]
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "header",
+    "spec_version": "0.1",
+    "vocab": [
+     "<blank>",
+     "a",
+     "b",
+     "c",
+     " "
+    ],
+    "vocab_type": "char",
+    "blank_id": 0,
+    "source": "conformance-vector",
+    "frame_period": 0.04,
+    "latency": 0.0,
+    "clock_domain": "trial",
+    "meta": {
+     "device.modality": "other",
+     "decoder.name": "conformance-vector",
+     "decoder.version": "1",
+     "decoder.causal": true,
+     "data.derived": true,
+     "language": "en"
+    },
+    "ws": {
+     "binding": "nts-ws/0.1",
+     "stream_id": "acme-1"
+    }
+   }
+  },
+  {
+   "at": 0.0,
+   "conn": 1,
+   "msg": {
+    "type": "frame",
+    "t": 0.0,
+    "log_probs": [
+     -2.0362,
+     -1.0842,
+     -2.0665,
+     -5.3337,
+     -0.9167
+    ]
+   }
+  }
+ ]
+}
