@@ -594,3 +594,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Stricter: TD-9 (no blank final text COMMIT) is a MUST NOT for decisions with the new field `trust_decision.spec_version` 1.x; 0.1 decisions keep SHOULD NOT. Validators in Python, TypeScript and Rust; schemas; vectors F41-F47 (`fep-0001` 47). INT-S7 (no-signal reference for irreversible configurations) is a MUST on paper (gap G-5).
 - Parity fuzz (seed 5) found a WebSocket header with a non-object `meta`: Python failed in the trust layer, the SDKs accepted. All three now refuse it (close 1007); vector W38 (`fep-0004` 38).
 - `spec/CHANGELOG.md` (new), `spec/README.md`, [NTS specification](concepts/nts-spec.md) (new), [conformance suite](concepts/conformance-suite.md), [roadmap P1](questions/roadmap-standard.md#p1-spec-to-10), SDK pages, index. Tracker: P1-03 done, P1-01 and P1-05 in progress; M6-14, M0-24, P5-07 agent runs filled.
+
+## [2026-11-14] query | P8-06: documentation site plan
+- New [docs site plan](questions/docs-site-plan.md): structure of the Python docs, ISO C / cppreference and the OpenTelemetry spec + docs site compared (structure only; no text, design or branding copied; Brain2Qwerty page not copied either).
+- Proposal: 10 top-level sections, page tree with a source map (exists / adapt / new), per-clause spec pages with rule-id anchors (`#TD-9`), status badges, one URL per spec version, rule-level diffs; tool Sphinx + MyST-Parser + own theme, TypeDoc and rustdoc linked in.
+- Phases A-E (20 tasks, S/M/L). User decisions: D1 GitHub Pages on, D2 domain, D3 design sign-off, D4 spec licence on the site, D5 public progress page. Nothing built.
+- Links: [roadmap P8](questions/roadmap-standard.md#p8-docs-website-demo), index. Tracker: P8-06 done.

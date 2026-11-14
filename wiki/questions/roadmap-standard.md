@@ -304,7 +304,7 @@ Reasons:
 **Goal:** a newcomer gets a valid stream in 10 minutes and sees the value in one demo.
 
 ### Deliverables
-- Website (GitHub Pages): spec (generated), SDK docs per language, the leaderboard, the FEP index.
+- Website (GitHub Pages): spec (generated), SDK docs per language, the leaderboard, the FEP index. Structure, spec presentation (per-clause pages, rule-id anchors, status badges, versions, diffs), tool choice (Sphinx + MyST) and phased tasks: [docs site plan](docs-site-plan.md) (P8-06, 2026-11-14).
 - Quickstarts: "emit NTS from your decoder in 10 lines" (Python, C, TS); "add calibrated confidence and abstention"; "replay a public dataset".
 - Examples folder: one per adapter.
 - **Flagship demo: three devices → the same stream → the same trust layer.** Replay of B2T '25 (implant), KT-sEMG (wrist EMG) and SpanishBCBL (MEG) into one collector; one trust config; one browser UI that shows the committed text, the n-best choices and the abstentions. A recorded video.
