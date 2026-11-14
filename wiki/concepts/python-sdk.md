@@ -3,7 +3,7 @@ title: Python SDK and offline demo
 type: concept
 tags: [sdk, api, cli, demo, neuraltextstream, trust, m7]
 sources: []
-updated: 2026-11-12
+updated: 2026-11-14
 ---
 
 # Python SDK and offline demo
@@ -91,8 +91,22 @@ See [LSL input](lsl-input.md).
 - A clean Python 3.12 venv with only the wheel ran `fidetype version`, `fidetype demo`, `fidetype validate` and the README quickstart (result: COMMIT of the correct text).
 - Tests: `tests/test_sdk.py` (13 tests). Full suite 456 passed / 4 skipped.
 
+### Ready for PyPI (P2-06, 2026-11-14; not published)
+| Item | State |
+|---|---|
+| Name `fidetype` on PyPI | Free (JSON API 404). Not reserved: publishing is a user decision. |
+| Version | One source: `__version__` in `src/fidetype/__init__.py` (hatch `[tool.hatch.version]`). |
+| Metadata | Licence expression `Apache-2.0` + `LICENSE` file, classifiers (`Typing :: Typed`), project URLs, `py.typed`. |
+| README on PyPI | `hatch-fancy-pypi-readme` makes relative links absolute GitHub links. `twine check --strict` passes. |
+| Entry points | `fidetype` and `fidetype-collector` (= `fidetype collector`). |
+| Wheel | About 400 files, 1.05 MB. It ships the golden vectors as `fidetype/_spec/conformance` (synthetic, about 1.5 MB unpacked), so `fidetype conformance --profile fep-0001` works without a checkout. No tests, data, `.pt` files or caches. |
+| sdist | Anchored include list. Before, unanchored patterns took `sdk/rust/target/**/examples/*.exe` (20 MB) and `node_modules` READMEs. Now about 1 MB. |
+| Clean venv | The wheel (plus `[ws]`) installs; `fidetype --help`, `fidetype conformance --profile fep-0001 … fep-0005` (all PASS) and `fidetype-collector --help` work. |
+
+Release process and the user's steps: [docs/RELEASING.md](../../docs/RELEASING.md). CI job `packaging` repeats these checks on every push.
+
 ## Follow-ups
-TypeScript SDK: done, see [TypeScript SDK](typescript-sdk.md) (M7-06). Rust SDK: done, see [Rust SDK](rust-sdk.md) (M7-07). Open: a hosted demo page (M7-08, needs a user decision on GitHub Pages), PyPI release (M7-09). See [tracker](../progress/index.html).
+TypeScript SDK: done, see [TypeScript SDK](typescript-sdk.md) (M7-06). Rust SDK: done, see [Rust SDK](rust-sdk.md) (M7-07). Open: a hosted demo page (M7-08, needs a user decision on GitHub Pages), PyPI release (M7-09: the package is ready; the user publishes, see [docs/RELEASING.md](../../docs/RELEASING.md)). See [tracker](../progress/index.html).
 
 ## Related
 [TypeScript SDK](typescript-sdk.md) · [Rust SDK](rust-sdk.md) · [streaming trust layer](streaming-trust-layer.md) · [LSL input](lsl-input.md) · [open benchmark](open-benchmark.md) · [roadmap](../questions/roadmap-standard.md)

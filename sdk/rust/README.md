@@ -26,7 +26,9 @@ cargo run --bin fidetype-rs -- conformance        # all profiles in spec/conform
 cargo build --no-default-features --lib           # the no_std core alone
 ```
 
-Not published to crates.io (see "Open items"). In another local project: `fidetype = { path = "../path/to/sdk/rust" }`, or with `default-features = false` for firmware.
+Not yet published to crates.io; the crate is ready ([docs/RELEASING.md](../../docs/RELEASING.md)). After the first release: `fidetype = "0.1"` in `Cargo.toml`, or `fidetype = { version = "0.1", default-features = false }` for firmware (`no_std` + `alloc`). Until then, in another local project: `fidetype = { path = "../path/to/sdk/rust" }`.
+
+Minimum supported Rust version (MSRV): **1.81** (`rust-version` in `Cargo.toml`; CI job `rust-msrv`). The published crate contains only `src/`, `README.md`, `CHANGELOG.md` and `LICENSE`. It does not contain the golden vectors: outside the repository, run `fidetype-rs conformance --vectors DIR` with `spec/conformance/` of a checkout. Changes: [CHANGELOG.md](CHANGELOG.md).
 
 ## Examples
 
@@ -191,7 +193,7 @@ That is the only dependency. The SDK has its own JSON parser (with Python semant
 
 ## Open items
 
-- **crates.io publishing is a user decision.** The crate has `publish = false`. Before a release: choose the crate name (`fidetype` may be taken), the versioning policy and trusted publishing (as M7-09 for PyPI).
+- **crates.io publishing is a user decision.** The crate is ready: `cargo package --list` and `cargo publish --dry-run --locked` pass in CI (job `packaging`). The name `fidetype` was free on 2026-11-14. Versioning, the release checklist and trusted publishing: [docs/RELEASING.md](../../docs/RELEASING.md).
 - No JSON Schema validator in Rust (the TypeScript SDK has one). The checks give the same verdicts without it.
-- The minimum supported Rust version is not tested (CI uses stable).
+- docs.rs builds with all features and `--cfg docsrs` (`[package.metadata.docs.rs]`).
 - The parity fuzz mutates JSON vectors only, not NPZ files.

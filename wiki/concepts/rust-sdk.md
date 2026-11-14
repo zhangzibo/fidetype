@@ -8,7 +8,7 @@ updated: 2026-11-14
 
 # Rust SDK
 
-Task **M7-07** (fep-0004 port: M7-12). The third reference SDK, after the [Python SDK](python-sdk.md) and the [TypeScript SDK](typescript-sdk.md). It lives in [`sdk/rust/`](../../sdk/rust/README.md) (crate `fidetype`, `publish = false`, not on crates.io). Its target is device firmware and embedded paths: the core is `no_std` + `alloc`, and a feature `std` (on by default) adds file I/O, the CLI `fidetype-rs` and an example program.
+Task **M7-07** (fep-0004 port: M7-12). The third reference SDK, after the [Python SDK](python-sdk.md) and the [TypeScript SDK](typescript-sdk.md). It lives in [`sdk/rust/`](../../sdk/rust/README.md) (crate `fidetype`, ready for crates.io but not published). Its target is device firmware and embedded paths: the core is `no_std` + `alloc`, and a feature `std` (on by default) adds file I/O, the CLI `fidetype-rs` and an example program.
 
 ## What it gives
 
@@ -65,7 +65,7 @@ RC2 (2026-11-14): seeds 1-6 at `--n 30` over all five profiles give 36,636 mutan
 > **Our take:** The fuzz also found 3 mutants where the TypeScript SDK differs from Python (the two cases above, and a truthy non-object `consumer_settings`). M7-11 fixed them and a fourth one (the gap length of an infinite timestamp, seed 5). The old CI fuzz (one seed, `--n 10`) found none of them. CI now runs `--n 30` at 3 seeds.
 
 ## Open items
-- crates.io publishing: a user decision (crate name, versioning policy, trusted publishing; compare M7-09).
-- No JSON Schema validator in Rust (verdicts do not need it). Minimum Rust version not tested. Fuzz covers JSON vectors only, not NPZ.
+- crates.io publishing: a user decision. The crate is ready (P2-06, 2026-11-14): the name `fidetype` was free (crates.io API 404); `cargo package --list` gives 31 files (`src/`, README, CHANGELOG, LICENSE; no tests, examples or vectors; 111.7 KiB compressed); `cargo publish --dry-run --locked` passes. `rust-version = "1.81"` (built with 1.81 locally; CI job `rust-msrv`). docs.rs: all features, `--cfg docsrs`. `SDK_VERSION` = `CARGO_PKG_VERSION`. Outside the repository, `fidetype-rs conformance` needs `--vectors DIR` (it now stops with an error instead of a silent empty run). Steps: [docs/RELEASING.md](../../docs/RELEASING.md).
+- No JSON Schema validator in Rust (verdicts do not need it). Fuzz covers JSON vectors only, not NPZ.
 
 Related: [TypeScript SDK](typescript-sdk.md), [Python SDK](python-sdk.md), [conformance suite](conformance-suite.md), [streaming trust layer](streaming-trust-layer.md), [LSL input](lsl-input.md), [intent events](intent-events.md), [control events](control-events.md).

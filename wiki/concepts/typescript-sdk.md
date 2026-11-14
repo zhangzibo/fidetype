@@ -8,7 +8,7 @@ updated: 2026-11-14
 
 # TypeScript SDK
 
-Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md). It lives in [`sdk/typescript/`](../../sdk/typescript/README.md) (package `@fidetype/sdk`, private, not on npm). It runs in Node (>= 18) and in the browser (ESM). The core has zero runtime dependencies and no Node API.
+Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md). It lives in [`sdk/typescript/`](../../sdk/typescript/README.md) (package `@fidetype/sdk`, ready for npm but not published). It runs in Node (>= 18) and in the browser (ESM). The core has zero runtime dependencies and no Node API.
 
 ## What it gives
 
@@ -67,7 +67,7 @@ The three-way fuzz ([Rust SDK](rust-sdk.md)) found 4 mutants where TypeScript di
 | `l13` m18, seed 5 | Gap length of an infinite timestamp: `Math.round` gave no error | `pyRoundInt` (half to even, error for inf / NaN) |
 
 ## Open items
-- npm publishing: a user decision (name, scope, versioning policy, trusted publishing; compare M7-09 for PyPI).
+- npm publishing: a user decision. The package is ready (P2-06, 2026-11-14): `@fidetype/sdk` was free (`npm view` 404; the scope needs an npm organization `fidetype`); `private` removed, `publishConfig` public + provenance; ESM-only exports map (`.`, `./node`, `./package.json`); `files` ships only `dist/**/*.{js,d.ts}`, `bin/`, README, CHANGELOG, LICENSE (52 files, 118 kB; no tests or vectors); `prepack` cleans, builds and runs `check:version` (`package.json` = `SDK_VERSION`). A clean install imports both entry points. Outside the repository, `fidetype-ts conformance` needs `--vectors DIR`. Steps: [docs/RELEASING.md](../../docs/RELEASING.md).
 - The offline demo (`demo/index.html`) is not wired to the SDK. It runs from `file://`, which cannot load ES modules; it would need a bundle.
 - Parity fuzz covers JSON vectors only, not NPZ.
 

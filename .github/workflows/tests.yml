@@ -126,3 +126,90 @@ jobs:
           export FIDETYPE_RUST_BIN="$GITHUB_WORKSPACE/sdk/rust/target/release/fidetype-rs"
           node scripts/cross-check.mjs
           for s in 1 2 3; do node scripts/fuzz-parity.mjs --n 30 --seed $s || exit 1; done
+
+  # P2 packaging guard (docs/RELEASING.md section 6): build every SDK package and run the registry
+  # dry-run checks on every push, so packaging cannot break silently. Nothing is published.
+  packaging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Python sdist + wheel, twine check
+        run: |
+          uvx --from build pyproject-build --installer uv --outdir "$RUNNER_TEMP/pydist" .
+          uvx twine check --strict "$RUNNER_TEMP"/pydist/*
+      - name: Python package contents (no data, tests, caches or models in the wheel; vectors present)
+        run: |
+          python3 - "$RUNNER_TEMP/pydist" <<'PY'
+          import glob, re, sys, tarfile, zipfile
+          d = sys.argv[1]
+          whl = zipfile.ZipFile(glob.glob(f"{d}/*.whl")[0]).namelist()
+          bad = [n for n in whl if re.search(r"(\.(pt|ckpt|npy|fif|edf|bdf|mat|h5|hdf5|pyc)$)|__pycache__|^tests/|/data/raw", n)]
+          assert not bad, f"forbidden files in the wheel: {bad[:10]}"
+          for need in ["fidetype/py.typed", "fidetype/_spec/conformance/fep-0001/manifest.json",
+                       "fidetype/_spec/conformance/v0.1/manifest.json"]:
+              assert need in whl, f"missing in the wheel: {need}"
+          sd = [m.name.split("/", 1)[1] for m in tarfile.open(glob.glob(f"{d}/*.tar.gz")[0]).getmembers() if "/" in m.name]
+          tops = {n.split("/")[0] for n in sd}
+          extra = tops - {"src", "tests", "examples", "spec", "README.md", "LICENSE", "CHANGELOG.md", "CITATION.cff",
+                          "pyproject.toml", "PKG-INFO", ".gitignore"}
+          assert not extra, f"unexpected top-level entries in the sdist: {sorted(extra)}"
+          print(f"wheel {len(whl)} files, sdist {len(sd)} files: OK")
+          PY
+      - name: Python wheel in a clean venv (outside the checkout)
+        run: |
+          uv venv "$RUNNER_TEMP/v"
+          uv pip install --python "$RUNNER_TEMP/v/bin/python" "$RUNNER_TEMP"/pydist/*.whl
+          cd "$RUNNER_TEMP"
+          v/bin/fidetype --help
+          v/bin/fidetype version
+          v/bin/fidetype conformance --profile fep-0001
+          v/bin/fidetype conformance consumer
+          v/bin/fidetype-collector --help
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: npm pack (prepack builds), tarball contents, install in a clean project
+        working-directory: sdk/typescript
+        run: |
+          npm ci --no-audit --no-fund
+          npm pack --dry-run
+          npm pack --pack-destination "$RUNNER_TEMP"
+          tgz=$(ls "$RUNNER_TEMP"/fidetype-sdk-*.tgz)
+          tar tzf "$tgz" | tee "$RUNNER_TEMP/npm-files.txt"
+          grep -qx 'package/dist/index.js' "$RUNNER_TEMP/npm-files.txt"
+          grep -qx 'package/dist/node.d.ts' "$RUNNER_TEMP/npm-files.txt"
+          grep -qx 'package/LICENSE' "$RUNNER_TEMP/npm-files.txt"
+          if grep -E '^package/(test|scripts|src|spec)/|\.tgz$' "$RUNNER_TEMP/npm-files.txt"; then echo "unexpected files in the npm tarball"; exit 1; fi
+          mkdir "$RUNNER_TEMP/tsapp" && cd "$RUNNER_TEMP/tsapp" && npm init -y >/dev/null
+          npm install --no-audit --no-fund "$tgz"
+          node --input-type=module -e "import * as s from '@fidetype/sdk'; import * as n from '@fidetype/sdk/node'; if (typeof s.NtsWriter !== 'function' || typeof n.runProfileDir !== 'function') process.exit(1); console.log('import OK', s.SDK_VERSION)"
+          npx fidetype-ts conformance --profile fep-0001 --vectors "$GITHUB_WORKSPACE/spec/conformance"
+      - name: Rust stable (minimal profile)
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+      - name: cargo package --list, cargo publish --dry-run
+        working-directory: sdk/rust
+        run: |
+          cargo package --list --locked | tee "$RUNNER_TEMP/crate-files.txt"
+          if grep -E '^(tests|examples|target)/' "$RUNNER_TEMP/crate-files.txt"; then echo "unexpected files in the crate"; exit 1; fi
+          cargo publish --dry-run --locked
+
+  # The Rust crate builds with its declared rust-version (Cargo.toml), std and no_std.
+  rust-msrv:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk/rust
+    steps:
+      - uses: actions/checkout@v7
+      - run: |
+          msrv=$(sed -n 's/^rust-version = "\(.*\)"/\1/p' Cargo.toml)
+          echo "MSRV $msrv"
+          rustup toolchain install "$msrv" --profile minimal
+          cargo +"$msrv" build --locked --lib --bins
+          cargo +"$msrv" build --locked --lib --no-default-features

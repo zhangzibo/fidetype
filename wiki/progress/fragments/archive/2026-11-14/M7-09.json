@@ -1,0 +1,5 @@
+{
+  "id": "M7-09",
+  "status": "externally_blocked",
+  "notes": "Follow-up of M7-01. Publishing is a user decision. 2026-11-14 (P2-06): code part done. Name fidetype free on PyPI (read-only check), versioning policy and trusted-publishing steps in docs/RELEASING.md, wheel + sdist pass twine check --strict, CI job packaging. Waits for the user: PyPI account, pending trusted publisher, GitHub environment release-pypi, then run the release workflow (P2-07)."
+}

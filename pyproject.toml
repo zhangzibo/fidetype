@@ -1,8 +1,9 @@
 [project]
 name = "fidetype"
-version = "0.0.1"
+# Version source of truth: __version__ in src/fidetype/__init__.py (see [tool.hatch.version]).
+# README: built from README.md with relative links made absolute (see [tool.hatch.metadata.hooks.fancy-pypi-readme]).
+dynamic = ["version", "readme"]
 description = "An open trust layer for neural text entry: calibrated, abstaining, hallucination-aware BCI text decoding."
-readme = "README.md"
 requires-python = ">=3.12"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
@@ -21,10 +22,14 @@ keywords = [
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Healthcare Industry",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.12",
+    "Typing :: Typed",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Medical Science Apps.",
 ]
@@ -43,20 +48,53 @@ ws = ["websockets==17.4"]
 
 [project.scripts]
 fidetype = "fidetype.cli:main"
+# Same as `fidetype collector` (FEP-0006).
+fidetype-collector = "fidetype.collector.__main__:main"
 
 [project.urls]
+Homepage = "https://github.com/zhangzibo/fidetype"
 Repository = "https://github.com/zhangzibo/fidetype"
+Issues = "https://github.com/zhangzibo/fidetype/issues"
+Specification = "https://github.com/zhangzibo/fidetype/tree/main/spec"
+Changelog = "https://github.com/zhangzibo/fidetype/blob/main/CHANGELOG.md"
+Releasing = "https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md"
 
 [build-system]
-requires = ["hatchling>=1.26"]
+# hatch-fancy-pypi-readme is MIT. It only rewrites README links for the PyPI page.
+requires = ["hatchling>=1.26", "hatch-fancy-pypi-readme>=24.1"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/fidetype/__init__.py"
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "README.md"
+
+# Relative links (wiki/, spec/, LICENSE, ...) do not work on PyPI. Point them at GitHub.
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\((?!https?://|#|mailto:)([^)]+)\)'
+replacement = '](https://github.com/zhangzibo/fidetype/blob/main/\1)'
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/fidetype"]
+# Never ship caches or local data in the wheel.
+exclude = ["__pycache__", "*.pyc", "*.pt", "*.ckpt", "*.npy", "*.fif", "*.edf", "*.mat", "*.h5"]
+
+# The golden conformance vectors (small synthetic fixtures, about 1.5 MB) go into the wheel, so that
+# `fidetype conformance --profile <name>` works without a checkout.
+[tool.hatch.build.targets.wheel.force-include]
+"spec/conformance" = "fidetype/_spec/conformance"
 
 # The sdist holds the package, its tests, examples and the spec; not the research files.
+# Leading "/" anchors each pattern at the repository root (unanchored "examples" also matched
+# sdk/rust/target/*/examples).
 [tool.hatch.build.targets.sdist]
-include = ["src/fidetype", "tests", "examples", "spec", "README.md", "LICENSE", "CITATION.cff"]
+include = ["/src/fidetype", "/tests", "/examples/*.py", "/examples/collector/*.toml", "/examples/collector/*.json",
+           "/examples/ws-browser", "/spec", "/README.md", "/LICENSE", "/CHANGELOG.md", "/CITATION.cff"]
+exclude = ["__pycache__", "*.pyc", "/examples/collector/out"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

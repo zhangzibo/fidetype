@@ -378,8 +378,12 @@ def write_vectors(out_dir: str | PathLike[str]) -> dict[str, Any]:
 
 
 def default_vectors_dir() -> Path:
-    """``spec/conformance/v0.1`` of the repository (if the package runs from a checkout)."""
-    return Path(__file__).resolve().parents[3] / "spec" / "conformance" / "v0.1"
+    """``spec/conformance/v0.1`` of the repository (checkout), else the copy in the installed wheel."""
+    repo = Path(__file__).resolve().parents[3] / "spec" / "conformance" / "v0.1"
+    if repo.is_dir():
+        return repo
+    # The wheel ships spec/conformance as fidetype/_spec/conformance (pyproject force-include).
+    return Path(__file__).resolve().parents[1] / "_spec" / "conformance" / "v0.1"
 
 
 # --- consumer conformance -------------------------------------------------------------------

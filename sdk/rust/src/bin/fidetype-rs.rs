@@ -50,6 +50,13 @@ fn conformance(mut args: Vec<String>) -> Result<u8, String> {
     let profile = take_opt(&mut args, "--profile").unwrap_or_else(|| "all".into());
     let vectors = take_opt(&mut args, "--vectors").map(PathBuf::from).unwrap_or_else(default_vectors);
     let json_out = take_opt(&mut args, "--json");
+    if !vectors.is_dir() {
+        // The published crate does not ship the golden vectors; they live in spec/conformance/ of the repository.
+        return Err(format!(
+            "no vectors at {}. Pass --vectors DIR (spec/conformance/ of https://github.com/zhangzibo/fidetype).",
+            vectors.display()
+        ));
+    }
     let profiles = if profile == "all" { io::list_profiles(&vectors) } else { vec![profile.clone()] };
     let mut reports = Vec::new();
     let mut all_ok = true;

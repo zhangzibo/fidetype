@@ -2,14 +2,27 @@
 name = "fidetype"
 version = "0.1.0"
 edition = "2021"
+# Oldest Rust that builds the crate (lib, bin, no_std core). CI checks it (job rust-msrv).
+rust-version = "1.81"
 license = "Apache-2.0"
+authors = ["zhangzibo"]
 description = "Rust SDK for NeuralTextStream (NTS): writer, readers (JSON Lines + NPZ), v0.1 checks, FEP-0001/0003/0005 trust_decision rules and the conformance runner. no_std + alloc core."
 repository = "https://github.com/zhangzibo/fidetype"
+documentation = "https://docs.rs/fidetype"
 readme = "README.md"
 keywords = ["bci", "neural-interface", "nts", "conformance", "no-std"]
-categories = ["no-std", "parser-implementations", "science"]
-# Publishing to crates.io is a user decision (see README "Open items").
-publish = false
+categories = ["no-std", "parser-implementations", "science::neuroscience"]
+# Only the sources and the docs go into the .crate file. Tests and examples read the golden
+# vectors in ../../spec/conformance, which are not part of the crate.
+include = ["/src/**/*.rs", "/Cargo.toml", "/Cargo.lock", "/README.md", "/CHANGELOG.md", "/LICENSE"]
+# Publishing to crates.io is a maintainer decision: see docs/RELEASING.md.
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(docsrs)"] }
 
 [features]
 default = ["std"]

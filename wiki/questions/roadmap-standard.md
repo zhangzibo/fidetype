@@ -163,6 +163,8 @@ Reasons:
 ## P2. Reference SDKs
 **Goal:** any decoder or app can emit and read NTS in its own language, with the same behaviour everywhere.
 
+**Status (2026-11-14):** three SDKs exist and give the same verdicts: Python `fidetype` ([Python SDK](../concepts/python-sdk.md)), TypeScript `@fidetype/sdk` ([TypeScript SDK](../concepts/typescript-sdk.md)) and Rust `fidetype` ([Rust SDK](../concepts/rust-sdk.md)). All three are **ready to publish, not published** (P2-06 code part): complete registry metadata, one version source each, changelogs, `twine check` / `npm pack` / `cargo publish --dry-run` clean, CI job `packaging` (and `rust-msrv`) on every push. All three names were free on 2026-11-14. The release process, semver policy and SDK-to-spec version rules are in [docs/RELEASING.md](../../docs/RELEASING.md); a proposed manual-only release workflow (trusted publishing) is `docs/release-workflow.example.yml`. Publishing waits for the user (P2-07: accounts, trusted publishers). Not started: C core, C#, Kotlin, WASM. The package names differ from the table below (`@fidetype/sdk`, crate `fidetype`).
+
 ### Deliverables
 | SDK | Role | Package | Priority |
 |---|---|---|---|

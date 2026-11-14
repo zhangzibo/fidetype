@@ -59,7 +59,7 @@ node tools/serve.js        # then open http://127.0.0.1:8000/wiki/diagrams/index
 - Actual progress: [wiki/progress/index.html](wiki/progress/index.html) (a generated dashboard; it also opens through `node tools/serve.js`).
 
 ## Quick start
-You need Python 3.12. Install from a clone (the package is not on PyPI yet):
+You need Python 3.12. Install from a clone (the package is not on PyPI yet; it is ready to publish, see [docs/RELEASING.md](docs/RELEASING.md)):
 
 ```sh
 pip install .                 # or: uv sync --extra dev   (adds pytest; then: uv run pytest -q)

@@ -1,0 +1,11 @@
+{
+  "id": "P2-06",
+  "status": "in_progress",
+  "started_at": "2026-11-14T12:00:00-08:00",
+  "approx_times": true,
+  "notes": "Code part only. Registry accounts and tokens are P2-07. 2026-11-14: Python, TypeScript and Rust packages are READY TO PUBLISH, NOT PUBLISHED. Python: dynamic version from __version__, PyPI README with absolute links (hatch-fancy-pypi-readme), classifiers, URLs, py.typed, script fidetype-collector; wheel ships golden vectors as fidetype/_spec/conformance (vector-dir lookups fall back to it); sdist include anchored (was taking 20 MB sdk/rust/target exes); twine check --strict PASS; clean venv: fidetype --help, conformance fep-0001..0005 PASS. TS @fidetype/sdk: private removed, publishConfig public + provenance, repo/homepage/bugs/keywords, files whitelist (52 files, 118 kB, no tests/vectors), prepack (clean, build, check:version), clean-install import OK. Rust: publish=false removed, rust-version 1.81 (built with 1.81), include whitelist (31 files), docs.rs metadata, SDK_VERSION = CARGO_PKG_VERSION, cargo publish --dry-run --locked PASS; both SDK CLIs refuse a missing vector dir. Names free on 2026-11-14: PyPI fidetype, npm @fidetype/sdk, crates.io fidetype. docs/RELEASING.md (semver, SDK-V1..V6 vs spec 11.7, checklist, trusted publishing steps), docs/release-workflow.example.yml (manual only), 3 CHANGELOGs, CI jobs packaging + rust-msrv. Open: vcpkg/Conan, NuGet, Maven (no SDKs yet).",
+  "agent_runs": [
+    {"label": "P2-06 SDK packaging readiness (Python, TS, Rust)", "duration_s": null, "tokens": null, "tool_uses": null}
+  ],
+  "_tracker_updated": "2026-11-14T12:25:00-08:00"
+}

@@ -263,7 +263,6 @@ wheels = [
 
 [[package]]
 name = "fidetype"
-version = "0.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
@@ -291,15 +290,15 @@ ws = [
 [package.metadata]
 requires-dist = [
     { name = "brainflow", marker = "extra == 'brainflow'", specifier = ">=5.10" },
-    { name = "fidetype", extras = ["ws"], marker = "extra == 'dev'" },
     { name = "mne", marker = "extra == 'data'", specifier = ">=1.8" },
     { name = "numpy" },
     { name = "pylsl", marker = "extra == 'lsl'", specifier = ">=1.16" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "scipy", marker = "extra == 'data'", specifier = ">=1.13" },
+    { name = "websockets", marker = "extra == 'dev'", specifier = "==17.4" },
     { name = "websockets", marker = "extra == 'ws'", specifier = "==17.4" },
 ]
-provides-extras = ["dev", "data", "lsl", "brainflow", "ws"]
+provides-extras = ["brainflow", "data", "dev", "lsl", "ws"]
 
 [[package]]
 name = "fonttools"

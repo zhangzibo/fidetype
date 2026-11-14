@@ -43,6 +43,11 @@ const defaultVectors = resolve(here, "..", "..", "..", "spec", "conformance");
 async function conformance() {
   const profile = opt("--profile", "all");
   const vectors = resolve(opt("--vectors", defaultVectors));
+  if (!existsSync(vectors)) {
+    // The npm package does not ship the golden vectors; they live in spec/conformance/ of the repository.
+    console.error(`fidetype-ts: no vectors at ${vectors}. Pass --vectors DIR (spec/conformance/ of https://github.com/zhangzibo/fidetype).`);
+    return 2;
+  }
   const jsonOut = opt("--json");
   const profiles = profile === "all" ? await node.listProfiles(vectors) : [profile];
   const reports = [];

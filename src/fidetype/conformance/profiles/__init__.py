@@ -89,8 +89,12 @@ class Profile:
         return self.module.SUFFIXES
 
     def vectors_dir(self) -> Path:
-        """``spec/conformance/<name>`` of the repository."""
-        return Path(__file__).resolve().parents[4] / "spec" / "conformance" / self.name
+        """``spec/conformance/<name>`` of the repository, else the copy in the installed wheel."""
+        repo = Path(__file__).resolve().parents[4] / "spec" / "conformance" / self.name
+        if repo.is_dir():
+            return repo
+        # The wheel ships spec/conformance as fidetype/_spec/conformance (pyproject force-include).
+        return Path(__file__).resolve().parents[2] / "_spec" / "conformance" / self.name
 
     def write_vectors(self, out_dir: str | PathLike[str]) -> dict[str, Any]:
         """Write the vectors and ``manifest.json`` to ``out_dir``. Returns the manifest."""

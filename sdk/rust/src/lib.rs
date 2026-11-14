@@ -15,8 +15,21 @@
 //!
 //! The verdicts equal the Python reference (`fidetype.conformance`) on every
 //! golden vector in `spec/conformance/` (see the README for the parity table).
+//!
+//! # Features
+//!
+//! | Feature | Default | What it adds |
+//! |---|---|---|
+//! | `std` | yes | File and stream I/O ([`io`]), the CLI `fidetype-rs` and the example. |
+//!
+//! Without `std` (`default-features = false`) the crate is `no_std` and needs only
+//! `alloc`. CI builds this core for `thumbv7em-none-eabihf` (Cortex-M4F / M7).
+//!
+//! The published crate does not contain the golden vectors. To run the
+//! conformance suite, pass `--vectors DIR` with `spec/conformance/` of the repository.
 
 #![no_std]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![forbid(unsafe_code)]
 // `!(a > b)` is deliberate: NaN must fail a check, as in the Python reference.
 #![allow(clippy::neg_cmp_op_on_partial_ord)]
@@ -51,7 +64,7 @@ pub use validate::{PushResult, StreamValidator};
 pub use writer::{NbestItem, NtsWriter, WriterOptions};
 
 /// Version of this SDK.
-pub const SDK_VERSION: &str = "0.1.0";
+pub const SDK_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// The result of [`check_stream`].
 #[derive(Debug, Clone)]

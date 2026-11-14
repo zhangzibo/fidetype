@@ -46,3 +46,7 @@ experiments/**/results/trials.json
 
 # M6-08 raw process logs (liblsl INFO lines list network interface ids)
 experiments/2026-11-13-m6-08-brainflow-live/out/*.log
+
+# Package build outputs (python -m build, npm pack)
+/dist/
+/build/

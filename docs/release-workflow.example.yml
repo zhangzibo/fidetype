@@ -1,0 +1,142 @@
+# PROPOSED release workflow for the Fidetype SDKs. It is an EXAMPLE: GitHub does not run files
+# outside .github/workflows/, so this file does nothing where it is.
+#
+# To use it (maintainer only), see docs/RELEASING.md:
+#   1. Do the one-time registry setup (section 3: trusted publishers, environments with a required reviewer).
+#   2. Copy this file to .github/workflows/release.yml in a reviewed pull request.
+#   3. Run it from the Actions tab. It has no push or tag trigger: it runs only by hand.
+#
+# Each publish job runs in a protected environment (release-pypi, release-npm, release-crates),
+# so GitHub waits for your approval before anything is uploaded.
+# Check the action versions before you copy the file; pin them to the versions used in tests.yml.
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      sdk:
+        description: "SDK to release"
+        required: true
+        type: choice
+        options: [python, typescript, rust]
+      tag:
+        description: "Existing tag to release (py-vX.Y.Z, ts-vX.Y.Z or rs-vX.Y.Z)"
+        required: true
+        type: string
+      target:
+        description: "python: testpypi | pypi. typescript / rust: dry-run | publish"
+        required: true
+        type: choice
+        options: [dry-run, testpypi, pypi, publish]
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------- Python
+  python-build:
+    if: inputs.sdk == 'python'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+      - name: Tag version = package version
+        run: |
+          v=$(python -c "import re;print(re.search(r'__version__ = \"([^\"]+)\"', open('src/fidetype/__init__.py').read())[1])")
+          test "py-v$v" = "${{ inputs.tag }}" || { echo "tag ${{ inputs.tag }} != py-v$v"; exit 1; }
+      - run: uvx --from build pyproject-build --installer uv --outdir dist .
+      - run: uvx twine check --strict dist/*
+      - uses: actions/upload-artifact@v5
+        with:
+          name: python-dist
+          path: dist/
+
+  python-publish:
+    needs: python-build
+    if: inputs.sdk == 'python' && (inputs.target == 'testpypi' || inputs.target == 'pypi')
+    runs-on: ubuntu-latest
+    environment: release-pypi
+    permissions:
+      id-token: write   # PyPI trusted publishing (OIDC) + attestations
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: python-dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: ${{ inputs.target == 'testpypi' && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
+          attestations: true
+
+  # ------------------------------------------------------------ TypeScript
+  typescript:
+    if: inputs.sdk == 'typescript'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target == 'publish' && 'release-npm' || '' }}
+    permissions:
+      contents: read
+      id-token: write   # npm provenance / trusted publishing
+    defaults:
+      run:
+        working-directory: sdk/typescript
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - name: Tag version = package version
+        run: |
+          v=$(node -p "require('./package.json').version")
+          test "ts-v$v" = "${{ inputs.tag }}" || { echo "tag ${{ inputs.tag }} != ts-v$v"; exit 1; }
+      - run: npm ci --no-audit --no-fund
+      - run: npm run ci
+      - run: npm pack --dry-run
+      - name: Publish
+        if: inputs.target == 'publish'
+        # With an npm trusted publisher, no token is needed. Without one, add the secret NPM_TOKEN
+        # to the release-npm environment.
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
+
+  # ------------------------------------------------------------------ Rust
+  rust:
+    if: inputs.sdk == 'rust'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target == 'publish' && 'release-crates' || '' }}
+    permissions:
+      contents: read
+      id-token: write   # crates.io trusted publishing
+    defaults:
+      run:
+        working-directory: sdk/rust
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+      - run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+      - name: Tag version = crate version
+        run: |
+          v=$(cargo metadata --no-deps --format-version 1 | python3 -c "import json,sys;print(json.load(sys.stdin)['packages'][0]['version'])")
+          test "rs-v$v" = "${{ inputs.tag }}" || { echo "tag ${{ inputs.tag }} != rs-v$v"; exit 1; }
+      - run: cargo test --locked
+      - run: cargo package --list --locked
+      - run: cargo publish --dry-run --locked
+      - name: crates.io token through OIDC
+        if: inputs.target == 'publish'
+        id: auth
+        uses: rust-lang/crates-io-auth-action@v1
+      - name: Publish
+        if: inputs.target == 'publish'
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+        run: cargo publish --locked

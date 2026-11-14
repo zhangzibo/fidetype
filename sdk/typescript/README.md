@@ -26,7 +26,9 @@ npm test          # unit tests + golden vectors
 npm run conformance
 ```
 
-Not published to npm (see "Open items"). In another local project: `npm install ../path/to/sdk/typescript`.
+Not yet published to npm; the package is ready ([docs/RELEASING.md](../../docs/RELEASING.md)). After the first release: `npm install @fidetype/sdk`. Until then, in another local project: `npm install ../path/to/sdk/typescript`.
+
+The package is **ESM only** (`import`, not `require`, on Node 18-20). Entry points: `@fidetype/sdk` (browser-safe core) and `@fidetype/sdk/node` (file helpers and the conformance runner). The npm tarball contains only `dist/` (`.js` + `.d.ts`), `bin/`, `README.md`, `CHANGELOG.md` and `LICENSE`. It does not contain the golden vectors: outside the repository, run `fidetype-ts conformance --vectors DIR` with `spec/conformance/` of a checkout. Changes: [CHANGELOG.md](CHANGELOG.md).
 
 ## Examples
 
@@ -186,7 +188,7 @@ The SDK has its own small JSON Schema validator, DEFLATE decoder, NPY reader and
 
 ## Open items
 
-- **npm publishing is a user decision.** The package is `private: true`. Before a release: choose the package name and scope, the versioning policy and trusted publishing (as M7-09 for PyPI).
+- **npm publishing is a user decision.** The package is ready: `npm pack` and a clean install pass in CI (job `packaging`). The name `@fidetype/sdk` was free on 2026-11-14; the scope needs an npm organization `fidetype`. Versioning, the release checklist and trusted publishing: [docs/RELEASING.md](../../docs/RELEASING.md).
 - Optional: an IIFE bundle for the offline demo (`demo/index.html` works from `file://`, which cannot load ES modules).
 - FEP-0002: a full TypeScript trust layer (decoding and policy) is not part of this SDK.
 - The parity fuzz mutates JSON vectors only, not NPZ files.
