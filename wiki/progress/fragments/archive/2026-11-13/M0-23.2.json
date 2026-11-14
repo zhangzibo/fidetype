@@ -1,0 +1,6 @@
+{
+  "id": "M0-23",
+  "agent_runs": [
+    {"label": "M0-23 CI diagnosis and fix", "duration_s": 265.9, "tokens": 67537, "tool_uses": 21}
+  ]
+}

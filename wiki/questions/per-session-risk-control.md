@@ -86,3 +86,6 @@ No test participant is above α under the global rule (all three conditions). Th
 - [M2-13 conformal result](m2-13-conformal-result.md), [M2-16 online re-calibration](m2-16-online-recal-result.md)
 - [Streaming trust layer](../concepts/streaming-trust-layer.md)
 - [Paper 1 plan](paper1-plan.md)
+
+## Related pages
+- [Trust-core ablations](trust-core-ablations.md): the monitor and commit gate B as ablation arms on Paper 1 data (M3-02).

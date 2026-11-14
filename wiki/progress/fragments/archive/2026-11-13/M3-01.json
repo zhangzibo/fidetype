@@ -1,0 +1,10 @@
+{
+  "id": "M3-01",
+  "status": "done",
+  "started_at": "2026-11-13T20:55:00-08:00",
+  "finished_at": "2026-11-13T21:55:00-08:00",
+  "approx_times": true,
+  "notes": "Trust layer end to end on SpanishBCBL MEG provenance streams (5 runs: r4b-full-medium = Paper 1 run, seeds s1/s2, r4b-full, r5-medium) and on the simulator (median/worst x confidence distortion 0.5/1/2). MEG: frozen v4 gives 0 commits in all 5 runs (decoder too weak: top-1 sentence correct 0-5/637, truth in n-best 0-12/637, every eligible calibration item wrong); one-sided bound 0.0047; eWPM 2.95-3.20 vs gaze 3.15; controls 0; streaming = batch 3,185/3,185. Without calibration: 20 of 21 commits wrong (0.031 < alpha, LTT accepts). Simulator: streaming = batch 1,800/1,800, v4 wrong-commit 0.013-0.047, always-commit 0.10-0.32; frame-shuffled simulator streams pass the guard (1-16/100). experiments/2026-11-14-m3-01-02-ablations, wiki questions/trust-core-ablations.md.",
+  "agent_runs": [{"label": "M3-01/02 ablations, MEG and simulator", "duration_s": null, "tokens": null, "tool_uses": null}],
+  "_tracker_updated": "2026-11-13T21:55:00-08:00"
+}

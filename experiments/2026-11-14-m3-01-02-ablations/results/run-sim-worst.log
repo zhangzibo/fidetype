@@ -1,0 +1,20 @@
+21:08:08 sim worst/T=1.0: fit-A 200, cal 300, test 300
+21:11:17 sim worst/T=1.0: fit-A 200, cal 300, test 300
+21:12:08   pipe c1g1: T 1.0137 grid commit_p 0.7 max_risk 1.0 (51s)
+21:12:09   pipe c1g0: T 1.0137 grid commit_p 0.7 max_risk 1.0 (2s)
+21:14:44   pipe c0g1: T 1.0000 grid commit_p 0.85 max_risk 1.0 (155s)
+21:14:46   pipe c0g0: T 1.0000 grid commit_p 0.85 max_risk 1.0 (2s)
+21:17:44   worst/T=1.0 done (388s): T fit 1.014; v4 wc 0.0267 commit 0.443 eWPM 23.69; stream commits 133 equal 300/300; decl-off wc 0.0300
+21:17:45 sim worst/T=0.5: fit-A 200, cal 300, test 300
+21:20:32   pipe c1g1: T 2.0087 grid commit_p 0.7 max_risk 1.0 (167s)
+21:20:33   pipe c1g0: T 2.0087 grid commit_p 0.7 max_risk 1.0 (2s)
+21:23:13   pipe c0g1: T 1.0000 grid commit_p 0.8 max_risk 0.5 (160s)
+21:23:15   pipe c0g0: T 1.0000 grid commit_p 0.8 max_risk 1.0 (2s)
+21:26:10   worst/T=0.5 done (506s): T fit 2.009; v4 wc 0.0133 commit 0.403 eWPM 23.45; stream commits 121 equal 300/300; decl-off wc 0.0200
+21:26:11 sim worst/T=2.0: fit-A 200, cal 300, test 300
+21:28:51   pipe c1g1: T 0.5047 grid commit_p 0.7 max_risk 1.0 (160s)
+21:28:53   pipe c1g0: T 0.5047 grid commit_p 0.7 max_risk 1.0 (2s)
+21:32:23   pipe c0g1: T 1.0000 grid commit_p 0.8 max_risk 1.0 (210s)
+21:32:24   pipe c0g0: T 1.0000 grid commit_p 0.8 max_risk 1.0 (2s)
+21:35:42   worst/T=2.0 done (572s): T fit 0.505; v4 wc 0.0433 commit 0.437 eWPM 23.49; stream commits 131 equal 300/300; decl-off wc 0.0000
+21:35:42 done

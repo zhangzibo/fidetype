@@ -76,3 +76,6 @@ One discrete grid value switches the frozen recipe between "commits nothing" and
 > **Our take (v5 suggestion, not applied):** (1) commit gate B on by default; or drop 1.0 from the `commit_max_risk` grid; (2) a control-aware grid fit: a grid point is feasible only if it commits at most 1 % of uniform and frame-shuffled versions of the fit-A streams (no labels needed); (3) report how often each grid value wins on bootstrap resamples of fit-A, and prefer the more conservative value on near-ties. Keep `PAPER1_V4_RECIPE` and its tag unchanged.
 
 Related: [B2T '25 trust result](b2t25-trust-result.md) · [Public datasets](public-datasets.md)
+
+## Related pages
+- [Trust-core ablations](trust-core-ablations.md): the monitor and commit gate B as ablation arms on Paper 1 data (M3-02).

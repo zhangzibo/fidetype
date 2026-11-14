@@ -1,0 +1,10 @@
+{
+  "id": "M3-02",
+  "status": "done",
+  "started_at": "2026-11-13T20:55:00-08:00",
+  "finished_at": "2026-11-13T21:55:00-08:00",
+  "approx_times": true,
+  "notes": "Ablations vs the frozen v4 configuration (plan pre-declared, commit f5bd2d5). 15 arms on B2T '25 T15 (fixed splits A/B + 200 re-splits, both decoders), Toronto sEMG (3 conditions + 50 re-splits), MEG, simulator; controls frame-shuffled / uniform / intent mismatch / zero input. v4 reproduces Paper 1 exactly. No module is enough alone: re-splits > alpha plug-in 0.305/0.265, CRC 0.185/0.175, LTT pure 0.145/0.115, v4 0.075/0.055; LTT pure raises sEMG wrong commits 0.004 -> 0.022/0.031; guard off: 198/300 uniform commits (ours); calibration off: B2T ours A 0.0245 -> 0.0527, MEG 20/21 wrong commits; conformal speed only; gate B and session monitor nearly inert on Paper 1 data; raw-decoding producer with declaration check off: wrong-commit 0.052-0.099 (all > alpha), check abstain: 0 commits but eWPM 3.55 < gaze. Suggestions (not applied): declaration_check offer-only mode, guard extension for shuffled-but-confident input.",
+  "agent_runs": [{"label": "M3-01/02 ablations, MEG and simulator", "duration_s": null, "tokens": null, "tool_uses": null}],
+  "_tracker_updated": "2026-11-13T21:55:00-08:00"
+}

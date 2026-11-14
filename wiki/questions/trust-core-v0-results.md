@@ -22,6 +22,8 @@ updated: 2026-11-13
 
 - **Update (2026-11-10, [cross-device](#8-cross-device-intracortical-speech-2026-11-10)):** on intracortical speech logits (Brain-to-Text '25, CC0), the test is not degenerate. Trust cuts wrong commits 0.610 → 0.059 (our decoder, eWPM 11.45 → 11.55) and 0.194 → 0.044 (published decoder, eWPM 19.61 → 18.77). All BCI policies beat gaze typing alone (4.08).
 
+- **Update (2026-11-13, [ablations](trust-core-ablations.md)):** clean ablations of the frozen v4 configuration (M3-02) on B2T, sEMG, MEG and the simulator replace the unclean ablations of section 1. No module is enough alone; on MEG v4 makes 0 commits in all five runs; frame-shuffled simulator streams pass the guard (1-16 %).
+
 Raw results:
 - [M2-10 trust core on real MEG](../../experiments/2026-11-08-m2-real-keystroke/results.md) (tables: [tables.md](../../experiments/2026-11-08-m2-real-keystroke/results/tables.md)).
 - [M2 trust core on the simulator](../../experiments/2026-11-08-m2-trust-sim/results.md) (full tables: [tables.md](../../experiments/2026-11-08-m2-trust-sim/results/tables.md)).
@@ -275,6 +277,7 @@ Full page: [B2T '25 trust result](b2t25-trust-result.md). Experiment: [2026-11-1
 > **Our take:** The MEG result showed safety only. This one shows usefulness too: the trust core passes correct commits and blocks most wrong ones, on a second device, with the spec unchanged.
 
 ## Related pages
+- [Trust-core ablations](trust-core-ablations.md): M3-01 / M3-02, frozen v4 baseline.
 - [OFFER_WORDS experiment](../../experiments/2026-11-08-m2-offer-words/results.md)
 - [M2-10 real-MEG experiment](../../experiments/2026-11-08-m2-real-keystroke/results.md)
 - [Beam re-tune experiment](../../experiments/2026-11-08-beam-retune/results.md)

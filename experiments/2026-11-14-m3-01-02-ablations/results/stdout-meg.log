@@ -1,0 +1,9 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=1
+21:05:00 meg m1-09-r4b-full-medium: val 437 (11 sentences), fit-A 238, cal 199, test 637
+21:05:02   pipe c1g1: T 3.2145 grid commit_p 0.5 max_risk 0.3 (2s)
+21:05:03   pipe c1g0: T 3.2145 grid commit_p 0.5 max_risk 1.0 (1s)
+21:05:05   pipe c0g1: T 1.0000 grid commit_p 0.5 max_risk 0.3 (2s)
+21:05:07   pipe c0g0: T 1.0000 grid commit_p 0.5 max_risk 1.0 (1s)
+21:05:15   stream: commits 0 (equal to batch 637/637), wrong 0, eWPM 3.20; gate B commits 0
+21:15:58   m1-09-r4b-full-medium done (659s): v4 wc 0.0000 commits 0 eWPM 3.20 (gaze 3.15); top-1 acc 0.003, CER 0.477; no-RC commits 0, always-commit wrong 635
+21:15:58 done

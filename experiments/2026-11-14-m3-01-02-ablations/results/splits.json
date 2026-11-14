@@ -1,0 +1,792 @@
+{
+ "env": {
+  "threads": "2",
+  "python": "3.12.16",
+  "time": "2026-11-13T21:02:05"
+ },
+ "b2t-ours": {
+  "R": 200,
+  "v4 (baseline)": {
+   "wrong_commit_mean": 0.03214547677261614,
+   "p05": 0.015831295843520783,
+   "p95": 0.05140586797066013,
+   "share_gt_alpha": 0.075,
+   "share_gt_alpha_cp95": [
+    0.04258280373709265,
+    0.1206842253996613
+   ],
+   "commit_rate_mean": 0.15152200488997555,
+   "ewpm_mean": 11.098274984195864,
+   "eac_pooled": 0.2121505506474646,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "no risk control": {
+   "wrong_commit_mean": 0.04174205378973105,
+   "p05": 0.01949877750611247,
+   "p95": 0.06968215158924206,
+   "share_gt_alpha": 0.305,
+   "share_gt_alpha_cp95": [
+    0.2420194370235912,
+    0.3738678045337703
+   ],
+   "commit_rate_mean": 0.17847799511002446,
+   "ewpm_mean": 11.108753320915907,
+   "eac_pooled": 0.23387787252988115,
+   "d_wrong_commit_mean": 0.009596577017114914,
+   "sign_test_p": 2.407412430484045e-35,
+   "n_up": 116,
+   "n_down": 0
+  },
+  "CRC instead of LTT": {
+   "wrong_commit_mean": 0.03772616136919315,
+   "p05": 0.018337408312958436,
+   "p95": 0.06234718826405868,
+   "share_gt_alpha": 0.185,
+   "share_gt_alpha_cp95": [
+    0.13372866017976165,
+    0.24586346244867838
+   ],
+   "commit_rate_mean": 0.1678484107579462,
+   "ewpm_mean": 11.105393667842707,
+   "eac_pooled": 0.2247632920611799,
+   "d_wrong_commit_mean": 0.005580684596577017,
+   "sign_test_p": 2.407412430484045e-35,
+   "n_up": 116,
+   "n_down": 0
+  },
+  "LTT without max": {
+   "wrong_commit_mean": 0.03590464547677261,
+   "p05": 0.018337408312958436,
+   "p95": 0.05623471882640587,
+   "share_gt_alpha": 0.145,
+   "share_gt_alpha_cp95": [
+    0.09930862255520755,
+    0.20156149617317973
+   ],
+   "commit_rate_mean": 0.1623166259168704,
+   "ewpm_mean": 11.103006910693166,
+   "eac_pooled": 0.22120128036151385,
+   "d_wrong_commit_mean": 0.003759168704156479,
+   "sign_test_p": 1.3552527156068805e-20,
+   "n_up": 67,
+   "n_down": 0
+  },
+  "guard off": {
+   "wrong_commit_mean": 0.02955378973105135,
+   "p05": 0.014669926650366748,
+   "p95": 0.04523227383863081,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.018275340355136237
+   ],
+   "commit_rate_mean": 0.14127750611246945,
+   "ewpm_mean": 11.087212277792997,
+   "eac_pooled": 0.2091896335395665,
+   "d_wrong_commit_mean": -0.002591687041564792,
+   "sign_test_p": 0.11303096428191356,
+   "n_up": 62,
+   "n_down": 82
+  },
+  "calibration alone": {
+   "wrong_commit_mean": 0.035030562347188265,
+   "p05": 0.017053789731051344,
+   "p95": 0.0587408312958435,
+   "share_gt_alpha": 0.095,
+   "share_gt_alpha_cp95": [
+    0.05816960972512025,
+    0.14437663997685252
+   ],
+   "commit_rate_mean": 0.15811735941320293,
+   "ewpm_mean": 11.095509226025461,
+   "eac_pooled": 0.2215478583578166,
+   "d_wrong_commit_mean": 0.002885085574572127,
+   "sign_test_p": 0.0006513359088043828,
+   "n_up": 111,
+   "n_down": 65
+  },
+  "+ session monitor": {
+   "wrong_commit_mean": 0.0317481662591687,
+   "p05": 0.015831295843520783,
+   "p95": 0.05140586797066013,
+   "share_gt_alpha": 0.07,
+   "share_gt_alpha_cp95": [
+    0.038795570429562824,
+    0.11465973353711054
+   ],
+   "commit_rate_mean": 0.1491442542787286,
+   "ewpm_mean": 11.096122580872565,
+   "eac_pooled": 0.2128688524590164,
+   "d_wrong_commit_mean": -0.0003973105134474328,
+   "sign_test_p": 5.820766091346741e-11,
+   "n_up": 0,
+   "n_down": 35,
+   "alarms_per_split_mean": 0.23
+  },
+  "always commit": {
+   "wrong_commit_mean": 0.6202567237163814,
+   "p05": 0.6026894865525673,
+   "p95": 0.6405867970660146,
+   "share_gt_alpha": 1.0,
+   "share_gt_alpha_cp95": [
+    0.9817246596448638,
+    1.0
+   ],
+   "commit_rate_mean": 1.0,
+   "ewpm_mean": 11.05561078219913,
+   "eac_pooled": 0.6202567237163814,
+   "d_wrong_commit_mean": 0.5881112469437653,
+   "sign_test_p": 1.2446030555722283e-60,
+   "n_up": 200,
+   "n_down": 0
+  },
+  "never commit": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.018275340355136237
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 10.98698117963747,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": -0.03214547677261614,
+   "sign_test_p": 1.2446030555722283e-60,
+   "n_up": 0,
+   "n_down": 200
+  }
+ },
+ "b2t-published": {
+  "R": 200,
+  "v4 (baseline)": {
+   "wrong_commit_mean": 0.030336185819070903,
+   "p05": 0.017114914425427872,
+   "p95": 0.05012224938875306,
+   "share_gt_alpha": 0.055,
+   "share_gt_alpha_cp95": [
+    0.02777225455200654,
+    0.09627764443391285
+   ],
+   "commit_rate_mean": 0.3938325183374083,
+   "ewpm_mean": 18.514884198136855,
+   "eac_pooled": 0.07702813862892086,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "no risk control": {
+   "wrong_commit_mean": 0.03953545232273838,
+   "p05": 0.019559902200488997,
+   "p95": 0.06356968215158924,
+   "share_gt_alpha": 0.265,
+   "share_gt_alpha_cp95": [
+    0.2052390913859231,
+    0.3318700922086181
+   ],
+   "commit_rate_mean": 0.4369865525672372,
+   "ewpm_mean": 18.571933351516726,
+   "eac_pooled": 0.09047292666209733,
+   "d_wrong_commit_mean": 0.009199266503667482,
+   "sign_test_p": 3.0814879110195774e-33,
+   "n_up": 109,
+   "n_down": 0
+  },
+  "CRC instead of LTT": {
+   "wrong_commit_mean": 0.03636919315403423,
+   "p05": 0.01949877750611247,
+   "p95": 0.05990220048899755,
+   "share_gt_alpha": 0.175,
+   "share_gt_alpha_cp95": [
+    0.12502441077371187,
+    0.23488397063020916
+   ],
+   "commit_rate_mean": 0.4236430317848411,
+   "ewpm_mean": 18.554352128168503,
+   "eac_pooled": 0.08584867547757835,
+   "d_wrong_commit_mean": 0.006033007334963325,
+   "sign_test_p": 3.0814879110195774e-33,
+   "n_up": 109,
+   "n_down": 0
+  },
+  "LTT without max": {
+   "wrong_commit_mean": 0.0337041564792176,
+   "p05": 0.017114914425427872,
+   "p95": 0.055195599022004826,
+   "share_gt_alpha": 0.115,
+   "share_gt_alpha_cp95": [
+    0.07431337369229704,
+    0.16754694448225396
+   ],
+   "commit_rate_mean": 0.4106051344743276,
+   "ewpm_mean": 18.538131785905442,
+   "eac_pooled": 0.08208410867138072,
+   "d_wrong_commit_mean": 0.003367970660146699,
+   "sign_test_p": 3.3881317890172014e-21,
+   "n_up": 69,
+   "n_down": 0
+  },
+  "guard off": {
+   "wrong_commit_mean": 0.023942542787286067,
+   "p05": 0.017053789731051344,
+   "p95": 0.03184596577017113,
+   "share_gt_alpha": 0.005,
+   "share_gt_alpha_cp95": [
+    0.00012658102786701836,
+    0.02754189845720562
+   ],
+   "commit_rate_mean": 0.36687652811735944,
+   "ewpm_mean": 18.47862647092602,
+   "eac_pooled": 0.06526049216107696,
+   "d_wrong_commit_mean": -0.006393643031784841,
+   "sign_test_p": 1.4043782690503998e-18,
+   "n_up": 17,
+   "n_down": 113
+  },
+  "calibration alone": {
+   "wrong_commit_mean": 0.025079462102689486,
+   "p05": 0.017114914425427872,
+   "p95": 0.04162591687041563,
+   "share_gt_alpha": 0.025,
+   "share_gt_alpha_cp95": [
+    0.008166166190842514,
+    0.05737435112684586
+   ],
+   "commit_rate_mean": 0.3729339853300733,
+   "ewpm_mean": 18.48736387940054,
+   "eac_pooled": 0.06724906575755589,
+   "d_wrong_commit_mean": -0.005256723716381417,
+   "sign_test_p": 1.6638844634724402e-12,
+   "n_up": 29,
+   "n_down": 111
+  },
+  "+ session monitor": {
+   "wrong_commit_mean": 0.029578239608801956,
+   "p05": 0.017114914425427872,
+   "p95": 0.04645476772616137,
+   "share_gt_alpha": 0.025,
+   "share_gt_alpha_cp95": [
+    0.008166166190842514,
+    0.05737435112684586
+   ],
+   "commit_rate_mean": 0.3881907090464548,
+   "ewpm_mean": 18.507251998332528,
+   "eac_pooled": 0.07619512502361907,
+   "d_wrong_commit_mean": -0.0007579462102689486,
+   "sign_test_p": 9.313225746154785e-10,
+   "n_up": 0,
+   "n_down": 31,
+   "alarms_per_split_mean": 0.375
+  },
+  "always commit": {
+   "wrong_commit_mean": 0.19902200488997557,
+   "p05": 0.18331295843520784,
+   "p95": 0.2139364303178484,
+   "share_gt_alpha": 1.0,
+   "share_gt_alpha_cp95": [
+    0.9817246596448638,
+    1.0
+   ],
+   "commit_rate_mean": 1.0,
+   "ewpm_mean": 19.385067114681487,
+   "eac_pooled": 0.19902200488997554,
+   "d_wrong_commit_mean": 0.16868581907090466,
+   "sign_test_p": 1.2446030555722283e-60,
+   "n_up": 200,
+   "n_down": 0
+  },
+  "never commit": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.018275340355136237
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 18.00125324262302,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": -0.030336185819070903,
+   "sign_test_p": 1.2446030555722283e-60,
+   "n_up": 0,
+   "n_down": 200
+  }
+ },
+ "emg-calib": {
+  "R": 50,
+  "v4 (baseline)": {
+   "wrong_commit_mean": 0.0105989110707804,
+   "p05": 0.003629764065335753,
+   "p95": 0.019147005444646092,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.09255898366606172,
+   "ewpm_mean": 8.004806638658,
+   "eac_pooled": 0.11450980392156863,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "no risk control": {
+   "wrong_commit_mean": 0.014627949183303086,
+   "p05": 0.003629764065335753,
+   "p95": 0.032849364791288554,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.11597096188747733,
+   "ewpm_mean": 8.011860463609608,
+   "eac_pooled": 0.12613458528951488,
+   "d_wrong_commit_mean": 0.004029038112522686,
+   "sign_test_p": 3.0517578125e-05,
+   "n_up": 16,
+   "n_down": 0
+  },
+  "CRC instead of LTT": {
+   "wrong_commit_mean": 0.012486388384754991,
+   "p05": 0.003629764065335753,
+   "p95": 0.023593466424682397,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.10450090744101635,
+   "ewpm_mean": 8.008132539020114,
+   "eac_pooled": 0.1194859326154915,
+   "d_wrong_commit_mean": 0.0018874773139745916,
+   "sign_test_p": 3.0517578125e-05,
+   "n_up": 16,
+   "n_down": 0
+  },
+  "LTT without max": {
+   "wrong_commit_mean": 0.017313974591651543,
+   "p05": 0.009074410163339383,
+   "p95": 0.033666061705989105,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.13662431941923775,
+   "ewpm_mean": 8.019976347087471,
+   "eac_pooled": 0.1267268862911796,
+   "d_wrong_commit_mean": 0.0067150635208711425,
+   "sign_test_p": 2.9802322387695312e-08,
+   "n_up": 26,
+   "n_down": 0
+  },
+  "guard off": {
+   "wrong_commit_mean": 0.0105989110707804,
+   "p05": 0.003629764065335753,
+   "p95": 0.019147005444646092,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.09277676950998184,
+   "ewpm_mean": 8.004859421618617,
+   "eac_pooled": 0.11424100156494522,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "calibration alone": {
+   "wrong_commit_mean": 0.014627949183303086,
+   "p05": 0.003629764065335753,
+   "p95": 0.032849364791288554,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.11618874773139748,
+   "ewpm_mean": 8.011913246570225,
+   "eac_pooled": 0.12589815682599187,
+   "d_wrong_commit_mean": 0.004029038112522686,
+   "sign_test_p": 3.0517578125e-05,
+   "n_up": 16,
+   "n_down": 0
+  },
+  "+ session monitor": {
+   "wrong_commit_mean": 0.0105989110707804,
+   "p05": 0.003629764065335753,
+   "p95": 0.019147005444646092,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.09255898366606172,
+   "ewpm_mean": 8.004806638658,
+   "eac_pooled": 0.11450980392156863,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0,
+   "alarms_per_split_mean": 0.0
+  },
+  "always commit": {
+   "wrong_commit_mean": 0.5450453720508167,
+   "p05": 0.5408348457350273,
+   "p95": 0.5480943738656987,
+   "share_gt_alpha": 1.0,
+   "share_gt_alpha_cp95": [
+    0.9288782635358024,
+    1.0
+   ],
+   "commit_rate_mean": 1.0,
+   "ewpm_mean": 7.794702225955554,
+   "eac_pooled": 0.5450453720508167,
+   "d_wrong_commit_mean": 0.5344464609800362,
+   "sign_test_p": 1.7763568394002505e-15,
+   "n_up": 50,
+   "n_down": 0
+  },
+  "never commit": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 7.971602719445382,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": -0.0105989110707804,
+   "sign_test_p": 3.552713678800501e-15,
+   "n_up": 0,
+   "n_down": 49
+  }
+ },
+ "emg-xsession": {
+  "R": 50,
+  "v4 (baseline)": {
+   "wrong_commit_mean": 0.00573502722323049,
+   "p05": 0.0,
+   "p95": 0.022776769509981847,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.015027223230490019,
+   "ewpm_mean": 4.680271356030138,
+   "eac_pooled": 0.38164251207729466,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "no risk control": {
+   "wrong_commit_mean": 0.008203266787658802,
+   "p05": 0.0,
+   "p95": 0.03303085299455533,
+   "share_gt_alpha": 0.04,
+   "share_gt_alpha_cp95": [
+    0.004881433426164382,
+    0.1371376256039674
+   ],
+   "commit_rate_mean": 0.018656987295825773,
+   "ewpm_mean": 4.679944249662785,
+   "eac_pooled": 0.4396887159533074,
+   "d_wrong_commit_mean": 0.002468239564428312,
+   "sign_test_p": 0.0625,
+   "n_up": 5,
+   "n_down": 0
+  },
+  "CRC instead of LTT": {
+   "wrong_commit_mean": 0.006787658802177858,
+   "p05": 0.0,
+   "p95": 0.02722323049001815,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.016406533575317607,
+   "ewpm_mean": 4.680072768605323,
+   "eac_pooled": 0.413716814159292,
+   "d_wrong_commit_mean": 0.0010526315789473684,
+   "sign_test_p": 0.0625,
+   "n_up": 5,
+   "n_down": 0
+  },
+  "LTT without max": {
+   "wrong_commit_mean": 0.016878402903811252,
+   "p05": 0.0,
+   "p95": 0.043557168784029036,
+   "share_gt_alpha": 0.02,
+   "share_gt_alpha_cp95": [
+    0.0005062279830408294,
+    0.1064695457114999
+   ],
+   "commit_rate_mean": 0.031724137931034485,
+   "ewpm_mean": 4.677189125978637,
+   "eac_pooled": 0.5320366132723112,
+   "d_wrong_commit_mean": 0.011143375680580762,
+   "sign_test_p": 2.9802322387695312e-08,
+   "n_up": 26,
+   "n_down": 0
+  },
+  "guard off": {
+   "wrong_commit_mean": 0.005771324863883848,
+   "p05": 0.0,
+   "p95": 0.022776769509981847,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.01517241379310345,
+   "ewpm_mean": 4.680271092134643,
+   "eac_pooled": 0.3803827751196172,
+   "d_wrong_commit_mean": 3.629764065335753e-05,
+   "sign_test_p": 1.0,
+   "n_up": 1,
+   "n_down": 0
+  },
+  "calibration alone": {
+   "wrong_commit_mean": 0.00823956442831216,
+   "p05": 0.0,
+   "p95": 0.03303085299455533,
+   "share_gt_alpha": 0.04,
+   "share_gt_alpha_cp95": [
+    0.004881433426164382,
+    0.1371376256039674
+   ],
+   "commit_rate_mean": 0.018802177858439205,
+   "ewpm_mean": 4.679943985767291,
+   "eac_pooled": 0.43822393822393824,
+   "d_wrong_commit_mean": 0.0025045372050816694,
+   "sign_test_p": 0.03125,
+   "n_up": 6,
+   "n_down": 0
+  },
+  "+ session monitor": {
+   "wrong_commit_mean": 0.00573502722323049,
+   "p05": 0.0,
+   "p95": 0.022776769509981847,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.015027223230490019,
+   "ewpm_mean": 4.680271356030138,
+   "eac_pooled": 0.38164251207729466,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0,
+   "alarms_per_split_mean": 0.0
+  },
+  "always commit": {
+   "wrong_commit_mean": 0.8815970961887478,
+   "p05": 0.8765880217785844,
+   "p95": 0.8856624319419237,
+   "share_gt_alpha": 1.0,
+   "share_gt_alpha_cp95": [
+    0.9288782635358024,
+    1.0
+   ],
+   "commit_rate_mean": 1.0,
+   "ewpm_mean": 4.10991579628559,
+   "eac_pooled": 0.8815970961887477,
+   "d_wrong_commit_mean": 0.8758620689655173,
+   "sign_test_p": 1.7763568394002505e-15,
+   "n_up": 50,
+   "n_down": 0
+  },
+  "never commit": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.680989676389218,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": -0.00573502722323049,
+   "sign_test_p": 7.450580596923828e-09,
+   "n_up": 0,
+   "n_down": 28
+  }
+ },
+ "emg-xsubject": {
+  "R": 50,
+  "v4 (baseline)": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.07338436586409,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "no risk control": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.07338436586409,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "CRC instead of LTT": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.07338436586409,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "LTT without max": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.07338436586409,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "guard off": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.07338436586409,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "calibration alone": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.07338436586409,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  },
+  "+ session monitor": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.07338436586409,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0,
+   "alarms_per_split_mean": 0.0
+  },
+  "always commit": {
+   "wrong_commit_mean": 0.9626134301270416,
+   "p05": 0.9582577132486388,
+   "p95": 0.969147005444646,
+   "share_gt_alpha": 1.0,
+   "share_gt_alpha_cp95": [
+    0.9288782635358024,
+    1.0
+   ],
+   "commit_rate_mean": 1.0,
+   "ewpm_mean": 3.529298470964422,
+   "eac_pooled": 0.9626134301270417,
+   "d_wrong_commit_mean": 0.9626134301270416,
+   "sign_test_p": 1.7763568394002505e-15,
+   "n_up": 50,
+   "n_down": 0
+  },
+  "never commit": {
+   "wrong_commit_mean": 0.0,
+   "p05": 0.0,
+   "p95": 0.0,
+   "share_gt_alpha": 0.0,
+   "share_gt_alpha_cp95": [
+    0.0,
+    0.07112173646419764
+   ],
+   "commit_rate_mean": 0.0,
+   "ewpm_mean": 4.07338436586409,
+   "eac_pooled": null,
+   "d_wrong_commit_mean": 0.0,
+   "sign_test_p": 1.0,
+   "n_up": 0,
+   "n_down": 0
+  }
+ }
+}

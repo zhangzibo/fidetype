@@ -1,0 +1,6 @@
+21:02:13 splits b2t-ours: R 200, v4 mean 0.0321 (7s)
+21:02:19 splits b2t-published: R 200, v4 mean 0.0303 (6s)
+21:02:20 splits emg-calib: R 50, v4 mean 0.0106 (1s)
+21:02:21 splits emg-xsession: R 50, v4 mean 0.0057 (1s)
+21:02:23 splits emg-xsubject: R 50, v4 mean 0.0000 (1s)
+21:02:23 done

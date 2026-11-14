@@ -1,0 +1,20 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=1
+21:02:58 emg-calib: fit-A 285, grid 142, cal 143, test 551
+21:03:05   pipe c1g1: T 1.2543 grid commit_p 0.7 max_risk 1.0 (7s)
+21:03:06   pipe c1g0: T 1.2543 grid commit_p 0.7 max_risk 1.0 (1s)
+21:03:15   pipe c0g1: T 1.0000 grid commit_p 0.85 max_risk 1.0 (8s)
+21:03:16   pipe c0g0: T 1.0000 grid commit_p 0.85 max_risk 1.0 (1s)
+21:03:51   emg-calib done (54s): v4 wc 0.0036 commit 0.038 eWPM 7.98; controls v4 real 8,intent_mismatch 8,frame_shuffled 0,zero_input 0,uniform 0
+21:03:51 emg-xsession: fit-A 285, grid 142, cal 143, test 551
+21:04:00   pipe c1g1: T 1.7776 grid commit_p 0.3 max_risk 1.0 (8s)
+21:04:01   pipe c1g0: T 1.7776 grid commit_p 0.3 max_risk 1.0 (1s)
+21:04:10   pipe c0g1: T 1.0000 grid commit_p 0.95 max_risk 1.0 (8s)
+21:04:11   pipe c0g0: T 1.0000 grid commit_p 0.95 max_risk 1.0 (1s)
+21:04:45   emg-xsession done (54s): v4 wc 0.0036 commit 0.018 eWPM 4.68; controls v4 real 5,intent_mismatch 5,frame_shuffled 0,zero_input 0,uniform 0
+21:04:45 emg-xsubject: fit-A 285, grid 142, cal 143, test 551
+21:04:53   pipe c1g1: T 2.1651 grid commit_p 0.3 max_risk 0.1 (8s)
+21:04:55   pipe c1g0: T 2.1651 grid commit_p 0.3 max_risk 1.0 (1s)
+21:05:03   pipe c0g1: T 1.0000 grid commit_p 0.3 max_risk 0.1 (8s)
+21:05:04   pipe c0g0: T 1.0000 grid commit_p 1.01 max_risk 1.0 (1s)
+21:05:33   emg-xsubject done (48s): v4 wc 0.0000 commit 0.000 eWPM 4.08; controls v4 real 0,intent_mismatch 0,frame_shuffled 0,zero_input 0,uniform 0
+21:05:33 done

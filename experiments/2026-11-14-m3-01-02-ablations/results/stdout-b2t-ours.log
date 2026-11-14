@@ -1,0 +1,49 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=1
+21:02:37 b2t-ours split A: fit-A 411, cal 401, test 816
+21:02:59   pipe c1g1: T 3.8151 grid commit_p 0.3 max_risk 0.1 (22s)
+21:03:02   pipe c1g0: T 3.8151 grid commit_p 0.6 max_risk 1.0 (3s)
+21:03:27   pipe c0g1: T 1.0000 grid commit_p 0.95 max_risk 0.1 (25s)
+21:03:30   pipe c0g0: T 1.0000 grid commit_p 1.01 max_risk 1.0 (3s)
+21:03:33   split A done (56s): v4 wc 0.0245 commit 0.100 eWPM 11.48; gate blocks 5
+21:03:33 b2t-ours split B: fit-A 411, cal 401, test 816
+21:03:58   pipe c1g1: T 3.8021 grid commit_p 0.4 max_risk 0.3 (25s)
+21:04:01   pipe c1g0: T 3.8021 grid commit_p 0.6 max_risk 1.0 (3s)
+21:04:27   pipe c0g1: T 1.0000 grid commit_p 0.8 max_risk 0.1 (26s)
+21:04:30   pipe c0g0: T 1.0000 grid commit_p 1.01 max_risk 1.0 (3s)
+21:04:32   split B done (59s): v4 wc 0.0515 commit 0.192 eWPM 11.54; gate blocks 5
+21:07:42   controls (190s): v4 (baseline): real 29,intent_mismatch 29,frame_shuffled 0,uniform 0,zero_standin 0; no risk control: real 29,intent_mismatch 29,frame_shuffled 0,uniform 0,zero_standin 0; CRC instead of LTT: real 29,intent_mismatch 29,frame_shuffled 0,uniform 0,zero_standin 0; LTT without max: real 30,intent_mismatch 30,frame_shuffled 0,uniform 0,zero_standin 0; guard off: real 43,intent_mismatch 43,frame_shuffled 3,uniform 198,zero_standin 0; calibration alone: real 43,intent_mismatch 43,frame_shuffled 3,uniform 198,zero_standin 0; calibration off: real 63,intent_mismatch 63,frame_shuffled 0,uniform 0,zero_standin 0; guard alone: real 74,intent_mismatch 74,frame_shuffled 0,uniform 0,zero_standin 0; LTT alone: real 0,intent_mismatch 0,frame_shuffled 0,uniform 0,zero_standin 0; nothing (bare grid): real 0,intent_mismatch 0,frame_shuffled 0,uniform 0,zero_standin 0; conformal off: real 29,intent_mismatch 29,frame_shuffled 0,uniform 0,zero_standin 0; + commit gate B: real 29,intent_mismatch 29,frame_shuffled 0,uniform 0,zero_standin 0; + session monitor: real 29,intent_mismatch 26,frame_shuffled 0,uniform 0,zero_standin 0; always commit: real 300,intent_mismatch 300,frame_shuffled 300,uniform 300,zero_standin 300; never commit: real 0,intent_mismatch 0,frame_shuffled 0,uniform 0,zero_standin 0; declaration off: raw-decoded hypotheses: real 79,intent_mismatch 79,frame_shuffled 0,uniform 0,zero_standin 0
+21:07:43   stream matched, check abstain: commits 82, wrong 20, equal-to-batch 816/816, mismatches 0
+21:07:44   stream matched, check off: commits 82, wrong 20, equal-to-batch 816/816, mismatches 0
+21:07:46   stream raw-decoded, check off: commits 228, wrong 65, equal-to-batch 816/816, mismatches 0
+session day-27: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-34: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-46: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-48: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-69: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-74: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-76: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-81: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-83: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-88: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-90: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-95: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-223: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-244: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+21:07:47   stream raw-decoded, check warn: commits 228, wrong 65, equal-to-batch 816/816, mismatches 816
+session day-27: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-34: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-46: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-48: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-69: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-74: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-76: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-81: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-83: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-88: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-90: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-95: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-223: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+session day-244: decode declaration does not match trust config tcfg-9cf3582ab4a9e637: frame_temperature 1.0 != frozen 3.815074655927598
+21:07:48   stream raw-decoded, check abstain: commits 0, wrong 0, equal-to-batch 588/816, mismatches 816
+21:07:48   declaration stream checks (6s)
+21:07:48 done

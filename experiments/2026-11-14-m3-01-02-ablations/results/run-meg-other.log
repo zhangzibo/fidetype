@@ -1,0 +1,15 @@
+21:16:16 meg m1-09-r4b-full: val 437 (11 sentences), fit-A 238, cal 199, test 637
+21:18:53   pipe c1g1: T 2.6529 grid commit_p 0.5 max_risk 0.3 (157s)
+21:18:55   pipe c1g0: T 2.6529 grid commit_p 0.5 max_risk 1.0 (1s)
+21:20:58   pipe c0g1: T 1.0000 grid commit_p 0.5 max_risk 0.3 (123s)
+21:20:59   pipe c0g0: T 1.0000 grid commit_p 0.5 max_risk 1.0 (1s)
+21:21:08   stream: commits 0 (equal to batch 637/637), wrong 0, eWPM 2.96; gate B commits 0
+21:30:01   m1-09-r4b-full done (831s): v4 wc 0.0000 commits 0 eWPM 2.96 (gaze 3.15); top-1 acc 0.000, CER 0.538; no-RC commits 0, always-commit wrong 637
+21:30:08 meg m1-09-r5-medium: val 437 (11 sentences), fit-A 238, cal 199, test 637
+21:32:51   pipe c1g1: T 2.9054 grid commit_p 0.5 max_risk 0.3 (163s)
+21:32:52   pipe c1g0: T 2.9054 grid commit_p 0.5 max_risk 1.0 (1s)
+21:35:00   pipe c0g1: T 1.0000 grid commit_p 0.7 max_risk 0.3 (128s)
+21:35:01   pipe c0g0: T 1.0000 grid commit_p 0.7 max_risk 1.0 (1s)
+21:35:09   stream: commits 0 (equal to batch 637/637), wrong 0, eWPM 3.18; gate B commits 0
+21:44:13   m1-09-r5-medium done (851s): v4 wc 0.0000 commits 0 eWPM 3.18 (gaze 3.15); top-1 acc 0.008, CER 0.487; no-RC commits 0, always-commit wrong 632
+21:44:13 done

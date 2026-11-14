@@ -1,0 +1,23 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=1
+21:11:16 sim median/T=1.0: fit-A 200, cal 300, test 300
+21:13:20   pipe c1g1: T 1.0191 grid commit_p 0.6 max_risk 1.0 (124s)
+21:13:22   pipe c1g0: T 1.0191 grid commit_p 0.6 max_risk 1.0 (2s)
+21:15:56   pipe c0g1: T 1.0000 grid commit_p 0.8 max_risk 1.0 (154s)
+21:15:58   pipe c0g0: T 1.0000 grid commit_p 0.8 max_risk 1.0 (2s)
+session sim: decode declaration does not match trust config tcfg-4eff1a38c5640dd0: frame_temperature 1.0 != frozen 1.0191426654285403
+21:18:52   median/T=1.0 done (457s): T fit 1.019; v4 wc 0.0467 commit 0.703 eWPM 24.79; stream commits 211 equal 300/300; decl-off wc 0.0500
+21:18:54 sim median/T=0.5: fit-A 200, cal 300, test 300
+21:21:38   pipe c1g1: T 2.0021 grid commit_p 0.6 max_risk 0.5 (164s)
+21:21:39   pipe c1g0: T 2.0021 grid commit_p 0.6 max_risk 1.0 (2s)
+21:24:11   pipe c0g1: T 1.0000 grid commit_p 0.6 max_risk 0.1 (152s)
+21:24:12   pipe c0g0: T 1.0000 grid commit_p 0.8 max_risk 1.0 (1s)
+session sim: decode declaration does not match trust config tcfg-9df58661da44c54f: frame_temperature 1.0 != frozen 2.0021267208528526
+21:27:10   median/T=0.5 done (498s): T fit 2.002; v4 wc 0.0467 commit 0.747 eWPM 24.96; stream commits 224 equal 300/300; decl-off wc 0.0167
+21:27:12 sim median/T=2.0: fit-A 200, cal 300, test 300
+21:29:49   pipe c1g1: T 0.5024 grid commit_p 0.8 max_risk 0.5 (157s)
+21:29:50   pipe c1g0: T 0.5024 grid commit_p 0.8 max_risk 1.0 (2s)
+21:33:04   pipe c0g1: T 1.0000 grid commit_p 0.7 max_risk 1.0 (194s)
+21:33:06   pipe c0g0: T 1.0000 grid commit_p 0.7 max_risk 1.0 (2s)
+session sim: decode declaration does not match trust config tcfg-2e0eab1a5afa3778: frame_temperature 1.0 != frozen 0.5023733701843024
+21:36:31   median/T=2.0 done (560s): T fit 0.502; v4 wc 0.0167 commit 0.697 eWPM 25.14; stream commits 209 equal 300/300; decl-off wc 0.0000
+21:36:31 done
