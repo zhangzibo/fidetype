@@ -94,6 +94,17 @@ Clock, order, gaps, loss
   decision on a cut input), and the source re-resolves the stream (by
   ``source_id`` if set) until ``reconnect_timeout_s``. After a
   reconnect it re-sends the header.
+- **Non-blocking reconnect** (M6-14). With ``reconnect_mode="thread"``
+  (default) a worker thread runs the resolve and the inlet open (and a
+  first ``time_correction()``). It hands a ready inlet to the loop.
+  While it works, ``poll()`` returns after at most its ``timeout`` (at
+  least ``reconnect_handoff_s``): the loop keeps the other inlets, its
+  timers and its stop checks. The soak test (M6-13) measured loop
+  stalls of up to 6.1 s with the old inline resolve.
+  ``reconnect_mode="inline"`` keeps the old blocking behaviour (the
+  FEP-0002 conformance profile uses it, because it is deterministic).
+  The rules do not change: the loss aborts the utterance; the
+  ``reconnected`` status and the new header come in the same order.
 - Two inlets are merged by time with a watermark: an item is released
   when every other inlet has passed its time, or after
   ``merge_window_s`` of waiting.
@@ -518,6 +529,10 @@ class LSLMapping:
     max_chunk: int = 1024
     reconnect_timeout_s: float = 30.0
     reconnect_interval_s: float = 0.5
+    #: "thread": resolve / open off the loop (M6-14). "inline": the old blocking resolve in ``poll()``.
+    reconnect_mode: Literal["thread", "inline"] = "thread"
+    #: Thread mode: ``poll()`` waits at least this long for a ready inlet (seconds).
+    reconnect_handoff_s: float = 0.005
 
     def __post_init__(self) -> None:
         if self.values not in ("auto", "log_probs", "probs", "logits"):
@@ -530,6 +545,10 @@ class LSLMapping:
             raise ValueError(f"unknown on_gap {self.on_gap!r}")
         if self.plain_markers not in ("ignore", "hypothesis"):
             raise ValueError(f"unknown plain_markers {self.plain_markers!r}")
+        if self.reconnect_mode not in ("thread", "inline"):
+            raise ValueError(f"unknown reconnect_mode {self.reconnect_mode!r}")
+        if self.reconnect_handoff_s < 0:
+            raise ValueError("reconnect_handoff_s must be >= 0")
         if self.vocab_type is not None and self.vocab_type not in VOCAB_TYPES:
             raise ValueError(f"vocab_type must be one of {VOCAB_TYPES}")
         if self.gap_factor <= 1 or self.merge_window_s < 0 or self.clamp_tolerance_s < 0:
@@ -713,6 +732,87 @@ class SourceStats:
         return d
 
 
+class _Reconnector:
+    """A worker thread that calls ``reopen()`` until it gets an inlet (M6-14).
+
+    The loop never waits for the resolve. It calls :meth:`take` (no
+    block, or a short wait) and gets ``None`` or a ready inlet. A
+    ``reopen()`` that raises is tried again after ``retry_s``. The
+    worker also asks the new inlet for one ``time_correction()``
+    (``prewarm_tc_s`` > 0): liblsl's first estimate can take a while,
+    and the loop asks for it at once (the new header). :meth:`cancel`
+    stops the worker; an inlet that comes after the cancel is closed.
+    """
+
+    def __init__(self, reopen: Callable[[], InletLike], retry_s: float, prewarm_tc_s: float,
+                 give_up_s: float, name: str) -> None:
+        self._reopen = reopen
+        self._retry_s = retry_s
+        self._prewarm_tc_s = prewarm_tc_s
+        self._give_up_s = give_up_s
+        self._lock = threading.Lock()
+        self._ready = threading.Event()
+        self._stop = threading.Event()
+        self._inlet: InletLike | None = None
+        self.attempts = 0
+        self.thread = threading.Thread(target=self._work, name=f"fidetype-lsl-reconnect-{name}", daemon=True)
+        self.thread.start()
+
+    def _work(self) -> None:
+        t_end = time.monotonic() + self._give_up_s
+        while not self._stop.is_set() and time.monotonic() < t_end:
+            self.attempts += 1
+            try:
+                inlet = self._reopen()
+            except Exception:  # noqa: BLE001 - not visible yet: try again
+                self._stop.wait(self._retry_s)
+                continue
+            if self._prewarm_tc_s > 0:
+                try:
+                    inlet.time_correction(self._prewarm_tc_s)
+                except LSLStreamLost:  # lost again at once: drop it and try again
+                    _close_quietly(inlet)
+                    self._stop.wait(self._retry_s)
+                    continue
+                except Exception:  # noqa: BLE001 - a time-out: the loop's ClockSync counts it
+                    pass
+            with self._lock:
+                if self._stop.is_set():
+                    _close_quietly(inlet)
+                    return
+                self._inlet = inlet
+                self._ready.set()
+            return
+
+    def take(self, wait_s: float = 0.0) -> InletLike | None:
+        """The ready inlet (once), or None. Wait up to ``wait_s`` for it."""
+        if wait_s > 0:
+            self._ready.wait(wait_s)
+        with self._lock:
+            inlet, self._inlet = self._inlet, None
+            if inlet is not None:
+                self._stop.set()
+            return inlet
+
+    def done(self) -> bool:
+        """True when the worker has ended (with or without an inlet)."""
+        return not self.thread.is_alive()
+
+    def cancel(self) -> None:
+        with self._lock:
+            self._stop.set()
+            inlet, self._inlet = self._inlet, None
+        if inlet is not None:
+            _close_quietly(inlet)
+
+
+def _close_quietly(inlet: InletLike) -> None:
+    try:
+        inlet.close()
+    except Exception:  # noqa: BLE001 - best effort
+        pass
+
+
 class _Reader:
     """One inlet: pulls chunks, fixes order, finds gaps, makes items."""
 
@@ -722,6 +822,7 @@ class _Reader:
         self.src = src
         self.reopen = reopen
         self.lost_since: float | None = None
+        self.reconnector: _Reconnector | None = None
         self._attach(inlet)
 
     def _attach(self, inlet: InletLike) -> None:
@@ -865,7 +966,9 @@ class LSLEventSource:
     ``events``: an optional marker stream (JSON NTS events or plain
     markers). ``reopen_*``: callables that open the stream again after a
     loss (they may raise; the source retries until
-    ``mapping.reconnect_timeout_s``).
+    ``mapping.reconnect_timeout_s``). With ``mapping.reconnect_mode``
+    ``"thread"`` they run on a worker thread, so they must not touch
+    the source.
     """
 
     def __init__(
@@ -982,12 +1085,16 @@ class LSLEventSource:
             out.append(dict(self.header()))
             self._pending_header = False
         now = self.clock()
-        for i, r in enumerate(self.readers):
+        # The wait goes to the first live inlet. If none is live, a thread-mode
+        # reconnect waits for its inlet instead (never longer than ``timeout``).
+        live = [r for r in self.readers if r.lost_since is None]
+        waiter = live[0] if live else None
+        for r in self.readers:
             if r.lost_since is not None:
-                out += self._try_reconnect(r, now)
+                out += self._try_reconnect(r, now, wait_s=0.0 if live else timeout)
                 continue
             try:
-                items = r.pull(timeout if i == 0 else 0.0)
+                items = r.pull(timeout if r is waiter else 0.0)
             except LSLStreamLost as e:
                 out += self._lost(r, str(e), now)
                 continue
@@ -1022,19 +1129,55 @@ class LSLEventSource:
     def _lost(self, r: _Reader, why: str, now: float) -> list[dict[str, Any]]:
         self.stats.lost += 1
         r.lost_since = now
+        if r.reopen is not None and self.mapping.reconnect_mode == "thread":
+            self._start_reconnector(r)
         held = self._release(math.inf, force=True)  # what arrived before the loss keeps its order
         return held + [{"type": LSL_STATUS, "status": "lost", "stream": r.info.name, "detail": why}]
 
-    def _try_reconnect(self, r: _Reader, now: float) -> list[dict[str, Any]]:
+    def _start_reconnector(self, r: _Reader) -> None:
+        m = self.mapping
+        assert r.reopen is not None
+        r.reconnector = _Reconnector(
+            r.reopen, retry_s=min(m.reconnect_interval_s, 0.05),
+            prewarm_tc_s=m.time_correction_timeout_s if m.clock == "receiver" else 0.0,
+            # The worker ends on its own a little after the loop gives up (the loop also cancels it).
+            give_up_s=m.reconnect_timeout_s + 5.0, name=r.role)
+
+    def _give_up(self, r: _Reader) -> None:
+        if r.reconnector is not None:
+            r.reconnector.cancel()
+            r.reconnector = None
+        raise LSLStreamLost(f"stream {r.info.name!r} lost and not reconnected"
+                            + ("" if r.reopen is None else f" within {self.mapping.reconnect_timeout_s} s"))
+
+    def _try_reconnect(self, r: _Reader, now: float, wait_s: float = 0.0) -> list[dict[str, Any]]:
         assert r.lost_since is not None
-        if r.reopen is None or now - r.lost_since > self.mapping.reconnect_timeout_s:
-            raise LSLStreamLost(f"stream {r.info.name!r} lost and not reconnected"
-                                + ("" if r.reopen is None else f" within {self.mapping.reconnect_timeout_s} s"))
-        try:
-            inlet = r.reopen()
-        except Exception:  # noqa: BLE001 - try again on the next poll
-            time.sleep(min(self.mapping.reconnect_interval_s, 0.05))
-            return []
+        m = self.mapping
+        if r.reopen is None:
+            self._give_up(r)
+        if m.reconnect_mode == "inline":
+            if now - r.lost_since > m.reconnect_timeout_s:
+                self._give_up(r)
+            try:
+                inlet = r.reopen()
+            except Exception:  # noqa: BLE001 - try again on the next poll
+                time.sleep(min(m.reconnect_interval_s, 0.05))
+                return []
+        else:
+            if r.reconnector is None:
+                self._start_reconnector(r)
+            assert r.reconnector is not None
+            got = r.reconnector.take(max(wait_s, m.reconnect_handoff_s))
+            if got is None and r.reconnector.done():
+                got = r.reconnector.take()  # it may have finished just after the first take
+            if got is None:
+                if now - r.lost_since > m.reconnect_timeout_s:
+                    self._give_up(r)
+                if r.reconnector.done():  # the worker ended without an inlet: start a new one
+                    self._start_reconnector(r)
+                return []
+            r.reconnector = None
+            inlet = got
         r._attach(inlet)
         r.lost_since = None
         self.stats.reconnects += 1
@@ -1048,6 +1191,9 @@ class LSLEventSource:
 
     def close(self) -> None:
         for r in self.readers:
+            if r.reconnector is not None:
+                r.reconnector.cancel()
+                r.reconnector = None
             r.inlet.close()
 
 

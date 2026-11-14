@@ -120,7 +120,8 @@ def run_inlet_scenario(sc: dict[str, Any]) -> dict[str, Any]:
     for k in ("boundary_markers",):
         if k in settings:
             settings[k] = tuple(settings[k])
-    mapping = LSLMapping(merge_window_s=1e9, reconnect_timeout_s=1.0, **settings)
+    # Inline reconnect: the reference consumer must be deterministic (M6-14 keeps the old path for it).
+    mapping = LSLMapping(merge_window_s=1e9, reconnect_timeout_s=1.0, reconnect_mode="inline", **settings)
     ticks = itertools.count()
     clock = lambda: 1000.0 + next(ticks) * 1e-3  # noqa: E731 - deterministic receiver clock
     src = LSLEventSource(primary, events, mapping, reopen_primary=reopen if after else None, clock=clock)

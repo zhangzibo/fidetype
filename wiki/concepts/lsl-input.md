@@ -3,7 +3,7 @@ title: LSL input (Lab Streaming Layer adapter)
 type: concept
 tags: [lsl, streaming, real-time, adapter, trust, neuraltextstream, m6]
 sources: [neural-input-landscape-2026]
-updated: 2026-11-13
+updated: 2026-11-14
 ---
 
 # LSL input (Lab Streaming Layer adapter)
@@ -85,15 +85,35 @@ fidetype conformance check --profile fep-0002 frames-info.xml   # producer check
 | Timestamp ≤ the last one (NTS needs strictly increasing times) | At most 5 ms back: move it 1 µs after the last one (clamp). More: drop it. Both are counted | `--out-of-order clamp\|drop\|error` |
 | Gap (step > 2.5 nominal periods) | `mark` (default): an extension `gap` event; the layer ignores it; the count goes into provenance. `segment`: end the utterance at the gap. `abort`: drop the utterance without a decision | `--on-gap` |
 | Two inlets (frames + events) | Merge by time. An item waits until the other inlet has passed its time, or for the merge window | `--merge-window 0.05` |
-| Stream lost (sender stopped, network) | The runner **drops the cut utterance without a decision** (`StreamingTrustLayer.abort_utterance`). The source re-resolves the stream (by `source_id`) for up to 30 s. After a reconnect it sends the header again | — |
+| Stream lost (sender stopped, network) | The runner **drops the cut utterance without a decision** (`StreamingTrustLayer.abort_utterance`). A worker thread re-resolves the stream (by `source_id`) for up to 30 s; the loop keeps running (M6-14, [below](#non-blocking-reconnect-m6-14)). After a reconnect the source sends the header again | `reconnect_mode` `thread` (default) or `inline` |
 | Producer sends no boundary | `--idle-flush S` ends the utterance after S idle seconds | off by default |
 
 Each decision carries an `lsl` record in its provenance and in the output event: the stream ids (name, type, source_id, uid; never the host name), the clock mode, the current offset, the number of offset updates, the reconnect count, the per-utterance counts (frames, gaps, clamped, dropped) and `e2e_latency_s`.
 
 > **Our take:** a decision on a cut input could commit a cut sentence. So a loss or an `abort` gap drops the utterance. The user then repeats it. This costs time, but it never commits text that the user did not finish.
 
+## Non-blocking reconnect (M6-14)
+Before M6-14, `poll()` resolved and opened the new stream itself. The loop was blind for up to 6.1 s per reconnect (M6-13 soak test). Now:
+
+- A loss starts a worker thread. It calls `reopen()` (resolve + inlet open) until it gets an inlet. Then it asks the new inlet for one `time_correction()`, because liblsl's first estimate takes about 0.65 s. It hands the ready inlet to the loop.
+- `poll()` never waits for the worker longer than its own `timeout` (at least `reconnect_handoff_s`, 5 ms). Other inlets, the idle flush and the stop signal keep working.
+- The rules do not change: the loss aborts the open utterance (no decision on a cut utterance), the `reconnected` status and the new header come in the same order, and `reconnect_timeout_s` still raises. `close()` stops the worker.
+- `reconnect_mode="inline"` keeps the old blocking path. The `fep-0002` conformance profile uses it, because its reference consumer must be deterministic.
+
+Measurement ([results](../../experiments/2026-11-14-m6-14-nonblocking-reconnect/results.md); one PC, poll timeout 20 ms, background CPU class; about 32 ms per idle step is the Windows timer floor):
+
+| Loop step during a reconnect | inline (before) | thread (after) |
+|---|---|---|
+| fake resolve of 0.5 / 2 / 6 s: max step | 504 / 2,005 / 6,003 ms | 33.5 / 46.1 / 66.4 ms |
+| real LSL, producer restart (6 runs): max step | 5,556-5,607 ms | 41.7-47.9 ms (5 runs), 141.8 ms (1 run) |
+| real LSL: p99 step | 5,451-5,509 ms | 35.9-40.5 ms |
+| real LSL: the reconnect step (new header) | 707-753 ms | 12.9-47.9 ms |
+| real LSL: reconnect after producer stop | 6.29-6.92 s | 6.35-7.46 s |
+
+> **Our take:** the loop now stays responsive during a reconnect. The reconnect itself is not faster: about 6.3 s for a 1.5 s and a 4 s outage alike. The first resolve finds the stale info of the old outlet, and the inlet open then waits for its 5 s `open_timeout`. A shorter `open_timeout` in `reopen` is the next step if fast reconnects matter.
+
 ## Tests
-`tests/test_adapter_lsl.py`, 26 tests.
+`tests/test_adapter_lsl.py`, 26 tests. `tests/test_lsl_reconnect.py` (M6-14), 11 tests: a slow fake resolve keeps every loop step < 50 ms; a producer restart mid-utterance gives the same decisions as the inline path; the other inlet and the stop signal are served while reconnecting; the timeout still raises; the demo `RefCharLM` memo is bounded; one real-LSL restart check (skips without pylsl).
 
 | Kind | What it checks |
 |---|---|
@@ -184,7 +204,7 @@ Two bugs found and fixed (with tests):
 1. **Guard memo.** The guard used the shared 200,000-entry `cached_edit_distance` memo. Live, it grew by about 30 entries (about 22 KB) per decision for about 7.5 h, and the idle GC grew from 0.8 to 8 ms. The guard now has its own 4,096-entry memo (`guard_edit_distance`). See [streaming trust layer](streaming-trust-layer.md) (guard memo, M6-13).
 2. **Wall-clock step in the bridge.** Windows set the clock back by 1,361 ms. The bridge used one wall-to-LSL offset taken at start, so all later stamps were 1.36 s late until the bridge restarted. A forward step would have made a false gap. The bridge now measures the offset at each read and handles a step (`clock_steps`). See [BrainFlow](../entities/brainflow.md#fidetype-bridge-m6-08).
 
-> **Our take:** the live path is stable for hours when both fixes are in: no memory growth, no lost or invalid events, no wrong commits, and push p95 under 1 ms. Two limits stay. The post-fix run lasted 2.5 h, not 6-8 h. No wall-clock step happened during it, so only unit tests check the bridge fix. A reconnect also blocks the consumer loop for up to 6 s while it resolves the new stream; LSL buffers the data, so nothing is lost.
+> **Our take:** the live path is stable for hours when both fixes are in: no memory growth, no lost or invalid events, no wrong commits, and push p95 under 1 ms. Two limits stay. The post-fix run lasted 2.5 h, not 6-8 h. No wall-clock step happened during it, so only unit tests check the bridge fix. A reconnect also blocked the consumer loop for up to 6 s while it resolved the new stream (LSL buffers the data, so nothing was lost); M6-14 moved the resolve to a thread ([above](#non-blocking-reconnect-m6-14)). The demo decoder's `RefCharLM` memo grew without a bound (about 20,000 entries in 6.5 h); M6-14 bounds it with the M4-10 `LRUCache` (32,768 entries).
 
 ## How to connect common tools
 We state only what their documentation says (checked 2026-11-12).
@@ -199,7 +219,7 @@ We state only what their documentation says (checked 2026-11-12).
 ## Limits and follow-ups
 - Tested on one machine (localhost) only. LAN and Wi-Fi latency are not measured.
 - No real device was tested (the user has no hardware). The BrainFlow Synthetic board test is done (M6-08), and so is a 6.78 h + 2.5 h soak test (M6-13). A real board (OpenBCI) needs hardware.
-- A reconnect resolves the new stream inside `poll()` and blocks the loop for up to 6 s (M6-13). Moving the resolve to a thread is a possible follow-up.
+- A reconnect no longer blocks the loop (M6-14), but it still takes about 6.3 s after a producer restart (stale stream info + 5 s `open_timeout`). A shorter open timeout in `reopen` is a follow-up.
 - FEP-0002 defines the binding (M6-09). It stays Draft until an outside LSL implementation runs the `fep-0002` vectors.
 - The frames route decodes at the end of the utterance (M4-08 incremental decoding).
 

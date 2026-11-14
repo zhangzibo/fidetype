@@ -1,7 +1,9 @@
 """Reference n-best generators for tests and experiments.
 
 The trust core must not depend on the LM agent's code (``fidetype.lm``).
-This module gives small, self-contained stand-ins:
+This module gives small, self-contained stand-ins. The one exception is
+the small LRU memo :class:`fidetype.lm.cache.LRUCache` (M4-10; no LM
+code), which bounds the :class:`RefCharLM` memo (M6-14):
 
 - :class:`RefCharLM`: a character n-gram LM with Witten-Bell smoothing.
 - :class:`ReferenceDecoder`: a segment beam search. It finds the CTC
@@ -46,12 +48,18 @@ class RefCharLM:
     the 26 letters, the space and the end symbol.
     """
 
-    def __init__(self, order: int = 5) -> None:
+    #: Default bound of the ``(context, char)`` memo. The M6-13 soak test saw
+    #: about 20,000 entries after 6.5 h live (no bound then; about 1 MB).
+    CACHE_SIZE = 32_768
+
+    def __init__(self, order: int = 5, cache_size: int | None = CACHE_SIZE) -> None:
+        from fidetype.lm.cache import LRUCache  # M4-10 memo; a bound changes the cost, never a value
+
         if order < 1:
             raise ValueError("order must be at least 1")
         self.order = order
         self._counts: list[dict[str, dict[str, int]]] = [defaultdict(lambda: defaultdict(int)) for _ in range(order)]
-        self._cache: dict[tuple[str, str], float] = {}
+        self._cache: LRUCache = LRUCache(cache_size)
 
     def fit(self, sentences: Iterable[str]) -> "RefCharLM":
         pad = _BOS * (self.order - 1)
