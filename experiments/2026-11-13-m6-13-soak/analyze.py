@@ -36,6 +36,28 @@ def _f(x: Any, nd: int = 2) -> str:
     return str(x)
 
 
+def machine_load(sv: list[dict[str, Any]], results: Path) -> dict[str, Any] | None:
+    """Machine noise (not a pass criterion): the per-minute load records of the supervisor heartbeats
+    (runs from 2026-11-14 on) and the isolation launcher record ``measurement_env.json`` if present."""
+    recs = [e["load"] for e in sv if e.get("event") == "heartbeat" and isinstance(e.get("load"), dict)]
+    out: dict[str, Any] = {"heartbeats": len(recs)}
+    if recs:
+        out["class"] = recs[-1].get("class")
+        out["affinity"] = recs[-1].get("affinity")
+        out["priority"] = recs[-1].get("priority")
+        for k in ("timing_pct", "foreign_timing_pct", "own_pct_of_timing", "idle_sibling_pct", "background_pct",
+                  "machine_pct"):
+            v = np.asarray([r[k] for r in recs if isinstance(r.get(k), (int, float))], dtype=float)
+            if v.size:
+                out[k] = {"n": int(v.size), "mean": float(v.mean()), "p50": float(np.percentile(v, 50)),
+                          "p95": float(np.percentile(v, 95)), "max": float(v.max()),
+                          "share_ge_5pct": float((v >= 5.0).mean())}
+    env = results / "measurement_env.json"
+    if env.exists():
+        out["measurement_env"] = json.loads(env.read_text(encoding="utf-8"))
+    return out if recs or env.exists() else None
+
+
 def analyze(results: Path, run_dir: Path) -> int:
     tr = _jsonl(results / "metrics-trust.jsonl")
     co = _jsonl(results / "metrics-consumer.jsonl")
@@ -195,6 +217,7 @@ def analyze(results: Path, run_dir: Path) -> int:
         "rss_mb": {"first": trw[0]["rss_mb"], "after_warmup": post[0]["rss_mb"] if post else None, "last": trw[-1]["rss_mb"],
                    "max": max(r["rss_mb"] for r in trw)},
         "idle_gc_ms": whole.get("gc"), "supervisor_end": end,
+        "machine_load": machine_load(sv, results),
     }
     (results / "summary.json").write_text(json.dumps(summary, indent=2, default=str) + "\n", encoding="utf-8")
 

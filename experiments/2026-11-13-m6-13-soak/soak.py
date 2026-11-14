@@ -122,12 +122,68 @@ def kill_pid(pid: int) -> None:
     subprocess.run(["taskkill", "/T", "/F", "/PID", str(pid)], capture_output=True)
 
 
+class MachineLoad:
+    """Per-heartbeat CPU load of the isolation classes (machine noise; not a pass criterion).
+
+    ``foreign_timing_pct`` = busy % of the timing CPUs minus the CPU time of the soak's own processes
+    (only the timing job may run there). Uses ``fidetype.utils.isolation`` (ctypes, no psutil).
+    """
+
+    def __init__(self) -> None:
+        from fidetype.utils import isolation as iso
+
+        self.iso = iso
+        self.plan = iso.plan_classes(iso.physical_cores())
+        self.cls = os.environ.get(iso.CLASS_ENV)
+        self.prev = iso.cpu_times()
+        self.prev_t = time.monotonic()
+        self.prev_own: float | None = None
+
+    def sample(self, own_cpu_s: float | None) -> dict[str, Any]:
+        iso, s1, t1 = self.iso, self.iso.cpu_times(), time.monotonic()
+        out: dict[str, Any] = {"class": self.cls, "affinity": iso.get_affinity(), "priority": iso.get_priority(),
+                               "timing_pct": iso.load_pct(self.prev, s1, self.plan.timing),
+                               "background_pct": iso.load_pct(self.prev, s1, self.plan.background),
+                               "idle_sibling_pct": iso.load_pct(self.prev, s1, self.plan.idle),
+                               "machine_pct": iso.load_pct(self.prev, s1, range(len(s1))) if s1 else None}
+        dt = t1 - self.prev_t
+        if own_cpu_s is not None and self.prev_own is not None and dt > 0:
+            own_pct = 100.0 * (own_cpu_s - self.prev_own) / (dt * max(1, len(self.plan.timing)))
+            out["own_pct_of_timing"] = round(own_pct, 2)
+            if out["timing_pct"] is not None and self.cls == "timing":
+                out["foreign_timing_pct"] = round(max(0.0, out["timing_pct"] - own_pct), 2)
+        self.prev, self.prev_t, self.prev_own = s1, t1, own_cpu_s
+        return out
+
+
 def supervise(a: argparse.Namespace) -> int:
+    """Run the soak. Always leave a ``DONE`` marker (its text says why the run ended), so later jobs can wait on it."""
+    done = RUN_DIR / "DONE"
+    reason = "error"
+    try:
+        rc = _supervise(a)
+        reason = "finished" if rc == 0 else f"refused (rc {rc})"
+        return rc
+    except BaseException as e:  # noqa: BLE001 - record the reason, then re-raise
+        reason = f"error: {type(e).__name__}: {e}"
+        st = load_state()
+        for k in ("trust_pid", "consumer_pid", "bridge_pid"):  # no children may run after DONE
+            if st.get(k):
+                kill_pid(int(st[k]))
+        raise
+    finally:
+        if not reason.startswith("refused"):  # a refused start did not touch the run
+            RUN_DIR.mkdir(parents=True, exist_ok=True)
+            done.write_text(f"{now_iso()} {reason}\n", encoding="utf-8")
+
+
+def _supervise(a: argparse.Namespace) -> int:
     from fidetype.utils.power import keep_awake
 
     RUN_DIR.mkdir(parents=True, exist_ok=True)
     RESULTS.mkdir(parents=True, exist_ok=True)
     stop_file, child_stop, done = RUN_DIR / "stop", RUN_DIR / "child.stop", RUN_DIR / "DONE"
+    load = MachineLoad()
     st = load_state()
     if a.resume and st:
         for k in ("trust_pid", "consumer_pid", "bridge_pid"):
@@ -175,6 +231,7 @@ def supervise(a: argparse.Namespace) -> int:
         time.sleep(3.0)
         last = time.monotonic()
         stopped = False
+        bridge_cpu_done = 0.0  # CPU s of the bridges that ended (for the own-CPU sum of the load record)
         while st["active_s"] < planned and not stopped:
             k = int(st["cycle"])
             hard = k % 2 == 0
@@ -216,9 +273,12 @@ def supervise(a: argparse.Namespace) -> int:
                             st["consumer_pid"] = consumer.pid
                 if now >= next_hb:
                     next_hb = now + 60.0
+                    cpu = {"trust": trust.cpu_seconds(), "consumer": consumer.cpu_seconds(),
+                           "bridge": bridge.cpu_seconds()}
+                    own = (None if None in cpu.values()
+                           else sum(cpu.values()) + bridge_cpu_done + time.process_time())
                     sup.write({"event": "heartbeat", "t_iso": now_iso(), "active_s": round(st["active_s"], 1),
-                               "cycle": k, "cpu_s": {"trust": trust.cpu_seconds(), "consumer": consumer.cpu_seconds(),
-                                                     "bridge": bridge.cpu_seconds()}})
+                               "cycle": k, "cpu_s": cpu, "load": load.sample(own)})
                     save_state(st)
                 if not bridge.alive():
                     rc = bridge.wait(1)
@@ -234,6 +294,7 @@ def supervise(a: argparse.Namespace) -> int:
                     break
                 if st["active_s"] >= planned:
                     break
+            bridge_cpu_done += bridge.cpu_seconds() or 0.0
             st["cycle"] = k + 1
             save_state(st)
             if st["active_s"] < planned and not stopped:
@@ -257,7 +318,6 @@ def supervise(a: argparse.Namespace) -> int:
         st["finished_iso"] = now_iso()
         st["trust_pid"] = st["consumer_pid"] = st["bridge_pid"] = None
         save_state(st)
-    done.write_text(now_iso())
     return 0
 
 
