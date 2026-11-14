@@ -105,6 +105,13 @@ Clock, order, gaps, loss
   FEP-0002 conformance profile uses it, because it is deterministic).
   The rules do not change: the loss aborts the utterance; the
   ``reconnected`` status and the new header come in the same order.
+- **Fast reconnect** (M6-16). ``open_source`` gives each stream a
+  ``reopen`` that asks a ``ContinuousResolver`` and prefers a new outlet
+  (another uid) over the stale info of the lost one
+  (``reconnect_resolver="continuous"``, default; ``"oneshot"`` is the old
+  ``resolve()`` per try, which on Windows can block about 5.5 s right
+  after a loss). ``open_timeout_s`` (default 1 s, was 5 s) limits the
+  inlet open after a resolve, at the start and on reconnect.
 - Two inlets are merged by time with a watermark: an item is released
   when every other inlet has passed its time, or after
   ``merge_window_s`` of waiting.
@@ -159,6 +166,8 @@ EVENT_CLOCKS = ("source", "lsl")
 EVENT_TIME_KEYS = ("t", "t_start", "t_end", "t_signal_start", "t_signal_end", "t_decoded", "t_emitted")
 #: Relative tolerance of nominal_srate vs 1 / frame_period.
 SRATE_RTOL = 1e-6
+#: Default time limit of an inlet open after a resolve (seconds; M6-16, was 5.0). See ``LSLMapping.open_timeout_s``.
+DEFAULT_OPEN_TIMEOUT_S = 1.0
 
 NUMERIC_FORMATS = ("float32", "double64", "int8", "int16", "int32", "int64")
 ValuesKind = Literal["auto", "log_probs", "probs", "logits"]
@@ -407,7 +416,8 @@ class SignalDecoder(Protocol):
 class PylslInlet:
     """:class:`InletLike` over a ``pylsl.StreamInlet`` (``recover=False``)."""
 
-    def __init__(self, stream_info: Any, open_timeout: float = 5.0, max_buflen: int = 360) -> None:
+    def __init__(self, stream_info: Any, open_timeout: float = DEFAULT_OPEN_TIMEOUT_S, max_buflen: int = 360) -> None:
+        """Open the inlet. Raise :class:`TimeoutError` if the stream does not answer within ``open_timeout``."""
         pl = require_pylsl()
         self._pl = pl
         self._inlet = pl.StreamInlet(stream_info, max_buflen=max_buflen, recover=False, processing_flags=0)
@@ -417,6 +427,8 @@ class PylslInlet:
             self._inlet.open_stream(open_timeout)
         except pl.util.LostError as e:
             raise LSLStreamLost(str(e)) from e
+        except pl.util.TimeoutError as e:  # a RuntimeError in pylsl; the built-in TimeoutError for callers
+            raise TimeoutError(f"LSL inlet open timed out after {open_timeout} s") from e
 
     def info(self) -> LSLStreamInfo:
         return self._info
@@ -533,6 +545,14 @@ class LSLMapping:
     reconnect_mode: Literal["thread", "inline"] = "thread"
     #: Thread mode: ``poll()`` waits at least this long for a ready inlet (seconds).
     reconnect_handoff_s: float = 0.005
+    #: Time limit of the inlet open (``info()`` and ``open_stream()``) after a resolve (seconds), at the
+    #: start and in ``reopen`` (M6-16). A healthy open takes milliseconds; a stale stream info (the old
+    #: outlet of a restarted producer) waits for the full limit. It was a fixed 5 s.
+    open_timeout_s: float = DEFAULT_OPEN_TIMEOUT_S
+    #: How ``reopen`` finds the stream again (M6-16). "continuous": a ``ContinuousResolver`` that
+    #: prefers a new outlet (another uid) over the stale info of the lost one. "oneshot": the old
+    #: ``resolve()`` per try (on Windows a try right after the loss can block about 5.5 s).
+    reconnect_resolver: Literal["continuous", "oneshot"] = "continuous"
 
     def __post_init__(self) -> None:
         if self.values not in ("auto", "log_probs", "probs", "logits"):
@@ -549,6 +569,10 @@ class LSLMapping:
             raise ValueError(f"unknown reconnect_mode {self.reconnect_mode!r}")
         if self.reconnect_handoff_s < 0:
             raise ValueError("reconnect_handoff_s must be >= 0")
+        if not self.open_timeout_s > 0:
+            raise ValueError("open_timeout_s must be > 0")
+        if self.reconnect_resolver not in ("continuous", "oneshot"):
+            raise ValueError(f"unknown reconnect_resolver {self.reconnect_resolver!r}")
         if self.vocab_type is not None and self.vocab_type not in VOCAB_TYPES:
             raise ValueError(f"vocab_type must be one of {VOCAB_TYPES}")
         if self.gap_factor <= 1 or self.merge_window_s < 0 or self.clamp_tolerance_s < 0:
@@ -1569,6 +1593,94 @@ def replay_to_lsl(
 # ---------------------------------------------------------------------------
 
 
+def _open_first(find: Callable[[float], Any], open_timeout: float, timeout: float,
+                 opener: Callable[..., InletLike] | None = None) -> InletLike:
+    """Resolve and open a stream at the start. Retry until ``timeout`` (seconds) when the open times out.
+
+    ``find(left)`` resolves with ``left`` seconds and returns a stream info (it raises
+    :class:`LSLResolveError` when it finds none). With a short ``open_timeout`` a stale stream info
+    (an outlet that just went away) costs one short wait, then a new resolve (M6-16).
+    """
+    opener = opener or (lambda info, ot: PylslInlet(info, open_timeout=ot))
+    t_end = time.monotonic() + timeout
+    while True:
+        left = max(0.05, t_end - time.monotonic())
+        info = find(left)
+        try:
+            return opener(info, open_timeout)
+        except (TimeoutError, LSLStreamLost) as e:
+            if time.monotonic() + 0.05 >= t_end:
+                raise LSLResolveError(f"an LSL stream was found but did not open within {open_timeout} s "
+                                      f"(open_timeout_s), last error: {e}") from e
+            time.sleep(0.05)
+
+
+class _Reopener:
+    """The ``reopen`` callable of a stream that :func:`open_source` opened (M6-16).
+
+    M6-14 measured about 6.3 s from a producer restart to the reconnect and blamed the 5 s
+    ``open_timeout``. M6-16 measured the parts: the open is not the cost. A one-shot ``resolve()``
+    that starts just after the loss blocks about 5.5 s (its own limit is 0.5 s) in about 2 of 3
+    restarts on Windows, and it can return the stale info of the old outlet. So the default
+    (``reconnect_resolver = "continuous"``) asks a ``pylsl.ContinuousResolver`` (it never blocks)
+    every 20 ms. It takes a stream with a new uid (a restarted producer) at once. It takes the old
+    uid only after :attr:`SAME_UID_AFTER_S` (the same outlet is still there, for example after a
+    network break), because a dead outlet drops out of the list after ``forget_after``. The
+    resolver lives from the first try after a loss until the reconnect. Each try lasts at most
+    ``mapping.reconnect_interval_s`` and raises :class:`LSLResolveError` when nothing fits; the
+    caller (the reconnect worker, or the inline ``poll()``) tries again.
+    """
+
+    #: ``forget_after`` of the continuous resolver (seconds).
+    FORGET_AFTER_S = 1.0
+    #: The old uid counts as alive again only this long after the first try (seconds).
+    SAME_UID_AFTER_S = 2.0
+    STEP_S = 0.02
+
+    def __init__(self, query: dict[str, Any], uid: str, mapping: LSLMapping) -> None:
+        self.query = {k: v for k, v in query.items() if v}
+        self.uid = uid
+        self.mapping = mapping
+        self._cr: Any = None
+        self._first_try: float | None = None
+        self.tries = 0
+
+    def __call__(self) -> InletLike:
+        m = self.mapping
+        self.tries += 1
+        info = (resolve(timeout=m.reconnect_interval_s, **self.query) if m.reconnect_resolver == "oneshot"
+                else self._find())
+        inlet = PylslInlet(info, open_timeout=m.open_timeout_s)
+        self.uid = inlet.info().uid or self.uid
+        self._cr, self._first_try = None, None  # the next loss starts a fresh resolver
+        return inlet
+
+    def _find(self) -> Any:
+        pl = require_pylsl()
+        pred = lsl_predicate(**self.query)
+        now = time.monotonic()
+        if self._cr is None:
+            self._cr = pl.ContinuousResolver(pred=pred, forget_after=self.FORGET_AFTER_S)
+        if self._first_try is None:
+            self._first_try = now
+        t_end = now + self.mapping.reconnect_interval_s
+        while True:
+            uniq: dict[str, Any] = {}
+            for inf in self._cr.results():
+                uniq.setdefault(inf.uid(), inf)
+            new = [inf for u, inf in uniq.items() if u != self.uid]
+            if len(new) > 1:
+                ids = sorted(f"{i.name()} / {i.source_id()}" for i in new)
+                raise LSLResolveError(f"{len(new)} LSL streams match [{pred}]: {ids}")
+            if new:
+                return new[0]
+            if self.uid in uniq and time.monotonic() - self._first_try >= self.SAME_UID_AFTER_S:
+                return uniq[self.uid]
+            if time.monotonic() >= t_end:
+                raise LSLResolveError(f"no new LSL stream matches [{pred}] yet")
+            time.sleep(self.STEP_S)
+
+
 def open_source(
     name: str | None = None,
     type: str | None = None,
@@ -1589,17 +1701,16 @@ def open_source(
     pl = require_pylsl()
     log = log or (lambda m: None)
     mapping = mapping or LSLMapping()
-    pinfo = resolve(name, type, source_id, timeout)
-    primary = PylslInlet(pinfo)
+    ot = mapping.open_timeout_s
+    primary = _open_first(lambda left: resolve(name, type, source_id, left), ot, timeout)
     pi = primary.info()
     log(f"connected: {pi.name} ({pi.type}, {pi.channel_count} ch, {pi.channel_format}, {pi.nominal_srate} Hz)")
     psid = pi.source_id
     if signal_decoder is not None and not hasattr(signal_decoder, "process"):
         signal_decoder = signal_decoder(pi)  # type: ignore[operator,call-arg]
 
-    def reopen_primary() -> InletLike:
-        q = {"source_id": psid} if psid else {"name": pi.name, "type": pi.type or None}
-        return PylslInlet(resolve(timeout=mapping.reconnect_interval_s, **q))
+    reopen_primary = _Reopener({"source_id": psid} if psid else {"name": pi.name, "type": pi.type or None},
+                               pi.uid, mapping)
 
     ev_inlet = None
     reopen_events = None
@@ -1612,11 +1723,9 @@ def open_source(
         ev_query = {"name": events}
     if ev_query is not None:
         try:
-            ev_inlet = PylslInlet(resolve(timeout=min(timeout, 5.0), **ev_query))
+            ev_inlet = _open_first(lambda left: resolve(timeout=left, **ev_query), ot, min(timeout, 5.0))
             log(f"connected events stream: {ev_inlet.info().name}")
-
-            def reopen_events() -> InletLike:  # noqa: F811
-                return PylslInlet(resolve(timeout=mapping.reconnect_interval_s, **ev_query))
+            reopen_events = _Reopener(ev_query, ev_inlet.info().uid, mapping)
         except LSLResolveError as e:
             if events != "auto":
                 raise
@@ -1676,6 +1785,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     r.add_argument("--merge-window", type=float, default=0.05, help="seconds to wait for the other inlet")
     r.add_argument("--idle-flush", type=float, default=None, help="end the utterance after this many idle seconds")
     r.add_argument("--resolve-timeout", type=float, default=10.0)
+    r.add_argument("--open-timeout", type=float, default=DEFAULT_OPEN_TIMEOUT_S,
+                   help="seconds to wait for a resolved stream to open (start and reconnect)")
     r.add_argument("--duration", type=float, default=None, help="stop after this many seconds")
     r.add_argument("--max-decisions", type=int, default=None, help="stop after this many final decisions")
     r.add_argument("--no-until-end", action="store_true", help="keep running after an end event")
@@ -1743,7 +1854,7 @@ def _run_cli(a: Any) -> int:
     mapping = LSLMapping(values=a.values, vocab=a.vocab.split(",") if a.vocab else None, vocab_type=a.vocab_type,
                          blank=blank, clock=a.clock, on_gap=a.on_gap, out_of_order=a.out_of_order,
                          boundary_markers=tuple(a.boundary_marker or ("segment_end",)),
-                         plain_markers=a.plain_markers, merge_window_s=a.merge_window)
+                         plain_markers=a.plain_markers, merge_window_s=a.merge_window, open_timeout_s=a.open_timeout)
     from fidetype.trust.streaming import frame_decoder
 
     dec = frame_decoder(a.decoder)

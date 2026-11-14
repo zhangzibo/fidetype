@@ -1,0 +1,25 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=4
+{"part": "A-healthy", "resolve": {"n": 30, "p50_ms": 1.1600500001804903, "p95_ms": 1.5710900057456456, "max_ms": 4.219900001771748}, "open": {"n": 30, "p50_ms": 11.566550005227327, "p95_ms": 11.723170006007422, "max_ms": 11.853699979837984}, "first_time_correction": {"n": 30, "p50_ms": 640.7755999971414, "p95_ms": 641.3735349968192, "max_ms": 641.4431000011973}}
+{"part": "B-stale", "open_timeout_s": 5.0, "wait_s": 2.058699900022475, "error": "LSLStreamLost"}
+{"part": "B-stale", "open_timeout_s": 2.0, "wait_s": 2.001339199981885, "error": "TimeoutError"}
+{"part": "B-stale", "open_timeout_s": 1.0, "wait_s": 1.0014591999934055, "error": "TimeoutError"}
+{"part": "B-stale", "open_timeout_s": 0.5, "wait_s": 0.501236100011738, "error": "TimeoutError"}
+{"part": "C-restart", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.012804500001948327, "reconnect_after_kill_s": 6.20601059999899, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.42259999527596, "attempts": null, "repeat": 0}
+{"part": "C-restart", "open_timeout_s": 2.0, "outage_s": 1.5, "startup_s": 0.012930900003993884, "reconnect_after_kill_s": 6.758341999986442, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.516799984965473, "attempts": null, "repeat": 0}
+{"part": "C-restart", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.01265279998187907, "reconnect_after_kill_s": 2.2568664999853354, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.122399979503825, "attempts": null, "repeat": 0}
+{"part": "C-restart", "open_timeout_s": 0.5, "outage_s": 1.5, "startup_s": 0.012664200010476634, "reconnect_after_kill_s": 6.20672790001845, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.38379999087192, "attempts": null, "repeat": 0}
+{"part": "C-restart", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.012762800004566088, "reconnect_after_kill_s": 6.207044400012819, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.476800000527874, "attempts": null, "repeat": 1}
+{"part": "C-restart", "open_timeout_s": 2.0, "outage_s": 1.5, "startup_s": 0.012893100007204339, "reconnect_after_kill_s": 6.209292899991851, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.486999990884215, "attempts": null, "repeat": 1}
+{"part": "C-restart", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.01285440000356175, "reconnect_after_kill_s": 6.2076526999881025, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.433800022350624, "attempts": null, "repeat": 1}
+{"part": "C-restart", "open_timeout_s": 0.5, "outage_s": 1.5, "startup_s": 0.01292990002548322, "reconnect_after_kill_s": 6.206625999999233, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.28179999999702, "attempts": null, "repeat": 1}
+{"part": "C-restart", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.014207399974111468, "reconnect_after_kill_s": 2.2569975999940652, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.17230001022108, "attempts": null, "repeat": 2}
+{"part": "C-restart", "open_timeout_s": 2.0, "outage_s": 1.5, "startup_s": 0.012748599983751774, "reconnect_after_kill_s": 6.757622800010722, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.484400000190362, "attempts": null, "repeat": 2}
+{"part": "C-restart", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.012651800003368407, "reconnect_after_kill_s": 6.206484900001669, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.491399995284155, "attempts": null, "repeat": 2}
+{"part": "C-restart", "open_timeout_s": 0.5, "outage_s": 1.5, "startup_s": 0.013019500009249896, "reconnect_after_kill_s": 2.256942700012587, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.353499992983416, "attempts": null, "repeat": 2}
+
+| open_timeout_s | reconnect after stop (s), 3 runs | max loop step (ms) | startup (s) |
+|---|---|---|---|
+| 5.0 | 6.21, 6.21, 2.26 | 21.4, 21.5, 21.2 | 0.01, 0.01, 0.01 |
+| 2.0 | 6.76, 6.21, 6.76 | 21.5, 21.5, 21.5 | 0.01, 0.01, 0.01 |
+| 1.0 | 2.26, 6.21, 6.21 | 21.1, 21.4, 21.5 | 0.01, 0.01, 0.01 |
+| 0.5 | 6.21, 6.21, 2.26 | 21.4, 21.3, 21.4 | 0.01, 0.01, 0.01 |

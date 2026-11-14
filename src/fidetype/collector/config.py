@@ -22,12 +22,18 @@ from os import PathLike
 from pathlib import Path
 from typing import Any
 
+#: Keys of an ``lsl`` receiver (FEP-0006 section 2; the settings of ``fidetype.adapters.lsl.LSLMapping``).
+LSL_RECEIVER_KEYS = {"stream_name", "stream_type", "source_id", "events", "stream_id", "stop_at_end", "on_gap",
+                     "gap_factor", "clock", "out_of_order", "values", "vocab", "vocab_type", "blank",
+                     "boundary_markers", "plain_markers", "merge_window_s", "resolve_timeout_s", "open_timeout_s",
+                     "reconnect_mode", "reconnect_timeout_s"}
 #: Component kinds -> allowed ``type`` values -> allowed keys (``type`` excluded) -> required keys.
 SCHEMA: dict[str, dict[str, tuple[set[str], set[str]]]] = {
     "receivers": {
         "file": ({"paths", "follow", "eof", "batch", "idle_timeout_s", "poll_interval_s", "stream_id"}, {"paths"}),
         "websocket": ({"listen", "token_env", "origins", "certfile", "keyfile", "reorder_window",
                        "reorder_timeout_s", "resume_timeout_s", "queue_max"}, set()),
+        "lsl": (LSL_RECEIVER_KEYS, set()),
     },
     "processors": {
         "validate": ({"on_invalid", "level"}, set()),
@@ -42,6 +48,7 @@ SCHEMA: dict[str, dict[str, tuple[set[str], set[str]]]] = {
         # ``receiver``: share the /decisions channel of a websocket receiver's server.
         # No ``receiver``: start a standalone /decisions server (for file replay demos).
         "websocket": ({"receiver", "listen", "token_env", "origins", "certfile", "keyfile", "linger_s"}, set()),
+        "lsl": ({"stream_name", "source_id", "config_id", "no_text"}, set()),
     },
 }
 TOP_KEYS = {"service", "receivers", "processors", "exporters", "pipelines"}
@@ -248,6 +255,33 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
             _opt_type(where, opts, k, num, "a number")
         if "keyfile" in opts and "certfile" not in opts:
             raise ConfigError(f"{where}.keyfile: needs certfile")
+    elif kind == "receivers" and typ == "lsl":
+        if not any(k in opts for k in ("stream_name", "stream_type", "source_id")):
+            raise ConfigError(f"{where}: give at least one of stream_name, stream_type, source_id")
+        for k in ("stream_name", "stream_type", "source_id", "events", "stream_id", "vocab_type"):
+            _opt_type(where, opts, k, (str,), "a string")
+            if k in opts and ("'" in opts[k] or not opts[k]):
+                raise ConfigError(f"{where}.{k}: must be a non-empty string without a single quote")
+        _opt_type(where, opts, "stop_at_end", (bool,), "true or false")
+        _opt_enum(where, opts, "on_gap", ("abort", "mark", "segment"))
+        _opt_enum(where, opts, "clock", ("receiver", "sender"))
+        _opt_enum(where, opts, "out_of_order", ("clamp", "drop", "error"))
+        _opt_enum(where, opts, "values", ("auto", "log_probs", "probs", "logits"))
+        _opt_enum(where, opts, "plain_markers", ("ignore", "hypothesis"))
+        _opt_enum(where, opts, "reconnect_mode", ("thread", "inline"))
+        _opt_type(where, opts, "blank", (int, str), "a token index or a token")
+        for k in ("vocab", "boundary_markers"):
+            if k in opts and not (isinstance(opts[k], list) and opts[k] and all(isinstance(x, str) for x in opts[k])):
+                raise ConfigError(f"{where}.{k}: must be a non-empty list of strings")
+        for k in ("gap_factor", "merge_window_s", "resolve_timeout_s", "open_timeout_s", "reconnect_timeout_s"):
+            _opt_type(where, opts, k, num, "a number")
+        for k in ("resolve_timeout_s", "open_timeout_s", "reconnect_timeout_s"):
+            if k in opts and not opts[k] > 0:
+                raise ConfigError(f"{where}.{k}: must be > 0")
+        if opts.get("gap_factor", 2.5) <= 1:
+            raise ConfigError(f"{where}.gap_factor: must be > 1")
+        if opts.get("merge_window_s", 0.0) < 0:
+            raise ConfigError(f"{where}.merge_window_s: must be >= 0")
     elif kind == "processors" and typ == "validate":
         _opt_enum(where, opts, "on_invalid", ("cut", "log"))
         _opt_enum(where, opts, "level", ("core",))
@@ -296,6 +330,12 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
                 raise ConfigError(f"{where}.types: '*' would mix decisions and input events in one file (TD-11); "
                                   "list the types, for example ['trust_decision'] or ['header', 'frame', ...]")
         opts["types"] = types
+    elif kind == "exporters" and typ == "lsl":
+        for k in ("stream_name", "source_id", "config_id"):
+            _opt_type(where, opts, k, (str,), "a string")
+            if k in opts and not opts[k]:
+                raise ConfigError(f"{where}.{k}: must not be empty")
+        _opt_type(where, opts, "no_text", (bool,), "true or false")
     elif kind == "exporters" and typ == "websocket":
         _opt_type(where, opts, "receiver", (str,), "the name of a websocket receiver")
         if "receiver" in opts:

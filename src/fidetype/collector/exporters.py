@@ -10,6 +10,9 @@
   closed (WS-D4); it never slows the pipeline. ``linger_s`` keeps a standalone server open after
   the input is done, so a late subscriber can still read the decisions (``from_seq = 1``).
 
+- ``lsl``: an LSL decisions outlet (spec 8.2.6, LSL-X1 ... LSL-X3). Option ``no_text`` removes the
+  decoded text (SEC-7): the one exporter option that changes an item (FEP-0006 4, rule 1).
+
 Status items (``ws_status``) are internal and never exported.
 """
 
@@ -17,6 +20,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from pathlib import Path
 from typing import Any, Callable, TextIO
 
@@ -176,3 +180,81 @@ class StandaloneWebSocketExporter(WebSocketExporter):
     def stats(self) -> dict[str, Any]:
         # No address, host name or token here (WS-T3).
         return {**super().stats(), "standalone": True}
+
+
+def without_text(ev: dict[str, Any]) -> dict[str, Any]:
+    """A copy of a ``trust_decision`` without ``shown`` and with ``redaction`` (the ``no_text`` option, SEC-7)."""
+    if "shown" not in ev:
+        return ev
+    out = {k: v for k, v in ev.items() if k != "shown"}
+    out.setdefault("redaction", {"mode": "drop"})
+    return out
+
+
+class LSLExporter(Exporter):
+    """Publish decisions on an LSL decisions outlet (spec 8.2.6, LSL-X1 ... LSL-X3).
+
+    It reuses :class:`fidetype.adapters.lsl.DecisionOutlet`: type ``Markers``, 1 string channel,
+    irregular rate, desc keys ``role = trust_decisions``, ``event_type = trust_decision``,
+    ``spec = FEP-0001``, ``binding = nts-lsl/0.1`` and ``config_id`` (from the option, else from the
+    trust processor of the pipeline). One sample is one ``trust_decision`` as JSON; the sample
+    timestamp is the emission time (LSL-X2). Subscribers MUST NOT act on ``is_final = false`` (LSL-X3).
+
+    LSL has no access control: every host on the network can read the outlet. ``no_text = true``
+    removes ``shown`` from each decision and adds ``redaction = {"mode": "drop"}`` (SEC-7, the same
+    as a ``redact`` processor with ``mode = "drop"``). Without it the exporter logs a warning at start.
+    The exporter writes no host name (LSL-C3); liblsl itself announces the host of the outlet.
+    """
+
+    type = "lsl"
+
+    def __init__(self, name: str, log: Callable[[str], None], stream_name: str | None = None,
+                 source_id: str | None = None, config_id: str | None = None, no_text: bool = False,
+                 outlet_factory: Callable[..., Any] | None = None) -> None:
+        super().__init__(name, log)
+        from fidetype.adapters import lsl as L
+
+        self.stream_name = stream_name or L.DECISIONS_STREAM_NAME
+        self.source_id = source_id
+        self.config_id = config_id
+        self.no_text = no_text
+        self._factory = outlet_factory or L.DecisionOutlet
+        self.outlet: Any = None
+        self.counts.update(text_removed=0)
+
+    def start(self) -> None:
+        self.outlet = self._factory(self.stream_name, source_id=self.source_id, config_id=self.config_id)
+        if not self.no_text:
+            self.log(f"exporters.{self.name}: WARNING: the LSL decisions outlet carries decoded text, and every "
+                     "host on the network can read it (SEC-7); set no_text = true or add a redact processor")
+
+    def export(self, items: list[Item]) -> None:
+        if self.outlet is None:
+            return
+        for _, ev in items:
+            if ev.get("type") != "trust_decision":
+                continue
+            if self.no_text and "shown" in ev:
+                ev = without_text(ev)
+                self.counts["text_removed"] += 1
+            self.outlet.push(ev)
+            self.counts["exported"] += 1
+
+    #: At stop, wait this long before the outlet goes away while a subscriber is connected (seconds).
+    #: liblsl sends asynchronously: without the wait, a subscriber can miss the last decisions.
+    FLUSH_S = 0.5
+
+    def stop(self) -> None:
+        if self.outlet is None:
+            return
+        lsl_outlet = getattr(self.outlet, "outlet", None)
+        try:
+            if self.counts["exported"] and lsl_outlet is not None and lsl_outlet.have_consumers():
+                time.sleep(self.FLUSH_S)
+        except Exception:  # noqa: BLE001 - best effort at shutdown
+            pass
+        self.outlet = None  # liblsl destroys the outlet with the object
+
+    def stats(self) -> dict[str, Any]:
+        # Counters only: no stream name, host name or address (LSL-C3).
+        return {**super().stats(), "no_text": self.no_text}

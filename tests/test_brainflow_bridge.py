@@ -309,7 +309,7 @@ def test_open_source_accepts_a_decoder_factory(monkeypatch):
 
     monkeypatch.setattr(L, "require_pylsl", lambda: FakePl)
     monkeypatch.setattr(L, "resolve", lambda *a, **k: info)
-    monkeypatch.setattr(L, "PylslInlet", lambda si: ScriptedInlet(si))
+    monkeypatch.setattr(L, "PylslInlet", lambda si, **k: ScriptedInlet(si))  # k: open_timeout (M6-16)
     src = L.open_source("x", events="none", signal_decoder=factory)
     assert calls == [250.0] and isinstance(src.signal_decoder, ToySignalDecoder)
 

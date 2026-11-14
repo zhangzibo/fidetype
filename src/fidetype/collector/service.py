@@ -26,6 +26,11 @@ from fidetype.collector import receivers as R
 from fidetype.collector.config import DEFAULT_HEALTH_LISTEN, CollectorConfig, ComponentConfig, ConfigError, is_loopback
 
 
+#: Default gap mode of an ``lsl`` receiver. Stricter than the LSL-G1 reference default (``mark``):
+#: in the collector a frame gap inside an utterance is a loss (FEP-0006 5.2), not a note.
+LSL_COLLECTOR_ON_GAP = "abort"
+
+
 def _stderr(msg: str) -> None:
     sys.stderr.write(f"[fidetype.collector] {msg}\n")
     sys.stderr.flush()
@@ -127,6 +132,8 @@ class Collector:
                                   follow=o.get("follow", False), eof=o.get("eof", "close"), batch=o.get("batch", 256),
                                   idle_timeout_s=float(o.get("idle_timeout_s", 10.0)),
                                   poll_interval_s=float(o.get("poll_interval_s", 0.05)), stream_id=o.get("stream_id"))
+        if c.type == "lsl":
+            return self._lsl_receiver(c)
         from fidetype.adapters import ws as W
 
         host, port = _host_port(o.get("listen", f"127.0.0.1:{W.DEFAULT_PORT}"))
@@ -140,6 +147,36 @@ class Collector:
         return R.WebSocketReceiver(c.name, self.log, host=host, port=port,
                                    token=_env_secret(f"receivers.{c.name}.token_env", o.get("token_env")),
                                    origins=o.get("origins"), ssl=ssl, ingest=ingest, queue_max=o.get("queue_max", 8192))
+
+    def _lsl_receiver(self, c: ComponentConfig) -> R.Receiver:
+        from fidetype.adapters import lsl as L
+
+        if not L.pylsl_available():
+            raise ConfigError(f"receivers.{c.name}: type 'lsl' needs pylsl: pip install \"fidetype[lsl]\"")
+        o = c.options
+        try:
+            mapping = L.LSLMapping(
+                values=o.get("values", "auto"), vocab=o.get("vocab"), vocab_type=o.get("vocab_type"),
+                blank=o.get("blank"), clock=o.get("clock", "receiver"), out_of_order=o.get("out_of_order", "clamp"),
+                gap_factor=float(o.get("gap_factor", 2.5)), on_gap=o.get("on_gap", LSL_COLLECTOR_ON_GAP),
+                boundary_markers=tuple(o.get("boundary_markers", ("segment_end",))),
+                plain_markers=o.get("plain_markers", "ignore"), merge_window_s=float(o.get("merge_window_s", 0.05)),
+                reconnect_mode=o.get("reconnect_mode", "thread"),
+                reconnect_timeout_s=float(o.get("reconnect_timeout_s", 30.0)),
+                open_timeout_s=float(o.get("open_timeout_s", L.DEFAULT_OPEN_TIMEOUT_S)))
+        except ValueError as e:
+            raise ConfigError(f"receivers.{c.name}: {e}") from None
+        log = self.log
+        name = c.name
+
+        def open_source() -> object:
+            return L.open_source(o.get("stream_name"), o.get("stream_type"), o.get("source_id"),
+                                 events=o.get("events", "auto"), mapping=mapping,
+                                 timeout=float(o.get("resolve_timeout_s", 10.0)),
+                                 log=lambda m: log(f"receivers.{name}: {m}"))
+
+        return R.LSLReceiver(c.name, self.log, open_source, stream_id=o.get("stream_id"),
+                             stop_at_end=o.get("stop_at_end", True))
 
     def _processor(self, c: ComponentConfig) -> P.Processor:
         o = c.options
@@ -179,6 +216,13 @@ class Collector:
             return E.JsonlExporter(c.name, self.log, self.config.path(o["path"]), o["types"], append=o.get("append", False))
         if c.type == "stdout":
             return E.StdoutExporter(c.name, self.log, o["types"])
+        if c.type == "lsl":
+            from fidetype.adapters import lsl as L
+
+            if not L.pylsl_available():
+                raise ConfigError(f"exporters.{c.name}: type 'lsl' needs pylsl: pip install \"fidetype[lsl]\"")
+            return E.LSLExporter(c.name, self.log, stream_name=o.get("stream_name"), source_id=o.get("source_id"),
+                                 config_id=o.get("config_id"), no_text=o.get("no_text", False))
         if "receiver" not in o:  # a standalone /decisions server
             from fidetype.adapters import ws as W
 
@@ -205,6 +249,14 @@ class Collector:
             self.pipelines.append(Pipeline(p.name, [self._receivers[n] for n in p.receivers],
                                            [self._processor(cfg.processors[n]) for n in p.processors],
                                            [self._exporters[n] for n in p.exporters]))
+        # An LSL decisions outlet names the trust configuration in its desc (LSL-X1): take it from the
+        # trust processor(s) of the pipeline(s) it serves, when the file does not set config_id.
+        for name, ex in self._exporters.items():
+            if isinstance(ex, E.LSLExporter) and ex.config_id is None:
+                ids = {x.config_id for pl in self.pipelines if ex in pl.exporters
+                       for x in pl.processors if isinstance(x, P.TrustProcessor)}
+                if len(ids) == 1:
+                    ex.config_id = ids.pop()
 
     # --- lifecycle --------------------------------------------------------------------
 

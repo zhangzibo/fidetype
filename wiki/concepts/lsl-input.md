@@ -112,6 +112,18 @@ Measurement ([results](../../experiments/2026-11-14-m6-14-nonblocking-reconnect/
 
 > **Our take:** the loop now stays responsive during a reconnect. The reconnect itself is not faster: about 6.3 s for a 1.5 s and a 4 s outage alike. The first resolve finds the stale info of the old outlet, and the inlet open then waits for its 5 s `open_timeout`. A shorter `open_timeout` in `reopen` is the next step if fast reconnects matter.
 
+> **Contradiction:** M6-14 said the 6.3 s come from the 5 s `open_timeout` on stale stream info. M6-16 ([results](../../experiments/2026-11-14-m6-16-lsl-open-timeout/results.md)) measured each step: a healthy inlet open takes about 12 ms, and a shorter `open_timeout` (2, 1 or 0.5 s) does not change the reconnect time. The real cause on this Windows PC: a one-shot `resolve(timeout = 0.5 s)` that starts just after the loss blocks about 5.5 s in about 2 of 3 restarts. Both claims stay here; the M6-16 trace is the more direct measurement.
+
+## Fast reconnect and `open_timeout_s` (M6-16)
+| | Before | After |
+|---|---|---|
+| Find the stream again (`reopen`) | one-shot `resolve()` per try | `ContinuousResolver`, asked every 20 ms; a new uid (restarted producer) wins over the stale info of the lost outlet; the old uid counts after 2 s (same outlet, network break). `reconnect_resolver = "oneshot"` keeps the old path |
+| Inlet open limit | 5 s, fixed | `open_timeout_s`, default 1 s (start and reconnect); `--open-timeout`; collector `open_timeout_s`. The start retries a timed-out open until the resolve `timeout` |
+| Reconnect after a 1.5 s outage | 6.2-6.8 s in 10 of 12 runs (2.3 s in 2) | **2.42 s in 6 of 6 runs** (outage + 0.27 s discovery + 0.64 s first clock estimate) |
+| Max loop step during the reconnect | 21.0-21.5 ms | 21.0-21.3 ms (M6-14 holds) |
+
+> **Our take:** 1 s is about 85 times a healthy localhost open and still short enough that a stale or hung outlet costs little. A LAN or Wi-Fi open may be slower; M6-10 (two machines) should check that 1 s is enough.
+
 ## Tests
 `tests/test_adapter_lsl.py`, 26 tests. `tests/test_lsl_reconnect.py` (M6-14), 11 tests: a slow fake resolve keeps every loop step < 50 ms; a producer restart mid-utterance gives the same decisions as the inline path; the other inlet and the stop signal are served while reconnecting; the timeout still raises; the demo `RefCharLM` memo is bounded; one real-LSL restart check (skips without pylsl).
 
@@ -219,7 +231,7 @@ We state only what their documentation says (checked 2026-11-12).
 ## Limits and follow-ups
 - Tested on one machine (localhost) only. LAN and Wi-Fi latency are not measured.
 - No real device was tested (the user has no hardware). The BrainFlow Synthetic board test is done (M6-08), and so is a 6.78 h + 2.5 h soak test (M6-13). A real board (OpenBCI) needs hardware.
-- A reconnect no longer blocks the loop (M6-14), but it still takes about 6.3 s after a producer restart (stale stream info + 5 s `open_timeout`). A shorter open timeout in `reopen` is a follow-up.
+- A reconnect no longer blocks the loop (M6-14). Since M6-16 it takes about 2.4 s after a 1.5 s producer outage (was about 6.2 s; the cause was a blocking one-shot resolve, not the `open_timeout`). The 0.64 s first clock estimate is the largest fixed part left.
 - FEP-0002 defines the binding (M6-09). It stays Draft until an outside LSL implementation runs the `fep-0002` vectors.
 - The frames route decodes at the end of the utterance (M4-08 incremental decoding).
 

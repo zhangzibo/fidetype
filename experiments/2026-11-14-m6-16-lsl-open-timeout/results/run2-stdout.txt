@@ -1,0 +1,25 @@
+[isolation] class=background cpus=[0, 1, 2, 3, 4, 5, 6, 7] threads=4
+{"part": "A-healthy", "resolve": {"n": 30, "p50_ms": 1.1918999953195453, "p95_ms": 1.4569200022378934, "max_ms": 3.7192000017967075}, "open": {"n": 30, "p50_ms": 11.512749988469295, "p95_ms": 11.652705002052244, "max_ms": 11.775999999372289}, "first_time_correction": {"n": 30, "p50_ms": 640.9160500043072, "p95_ms": 641.2832449859707, "max_ms": 641.3487000099849}}
+{"part": "B-stale", "open_timeout_s": 5.0, "wait_s": 2.0351317999884486, "error": "LSLStreamLost"}
+{"part": "B-stale", "open_timeout_s": 2.0, "wait_s": 2.00266699999338, "error": "TimeoutError"}
+{"part": "B-stale", "open_timeout_s": 1.0, "wait_s": 1.0030147000215948, "error": "TimeoutError"}
+{"part": "B-stale", "open_timeout_s": 0.5, "wait_s": 0.5020685000054073, "error": "TimeoutError"}
+{"part": "C-restart", "resolver": "oneshot", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.012279899994609877, "reconnect_after_kill_s": 2.3070520000183024, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 20.99569997517392, "attempts": 4, "repeat": 0}
+{"part": "C-restart", "resolver": "oneshot", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.01307519999681972, "reconnect_after_kill_s": 6.75878720000037, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.146200015209615, "attempts": 3, "repeat": 0}
+{"part": "C-restart", "resolver": "continuous", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.01280689999111928, "reconnect_after_kill_s": 2.4232899000053294, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.011100005125627, "attempts": 4, "repeat": 0}
+{"part": "C-restart", "resolver": "continuous", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.012631599995074794, "reconnect_after_kill_s": 2.4209885000018403, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.00189999327995, "attempts": 4, "repeat": 0}
+{"part": "C-restart", "resolver": "oneshot", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.012884399999165908, "reconnect_after_kill_s": 6.207070500007831, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 20.99879999877885, "attempts": 2, "repeat": 1}
+{"part": "C-restart", "resolver": "oneshot", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.012813400011509657, "reconnect_after_kill_s": 6.2063072999881115, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.072100003948435, "attempts": 2, "repeat": 1}
+{"part": "C-restart", "resolver": "continuous", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.012876000022515655, "reconnect_after_kill_s": 2.4242658000148367, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.00790000986308, "attempts": 4, "repeat": 1}
+{"part": "C-restart", "resolver": "continuous", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.012883900024462491, "reconnect_after_kill_s": 2.4208620999997947, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.103700011735782, "attempts": 4, "repeat": 1}
+{"part": "C-restart", "resolver": "oneshot", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.012592699989909306, "reconnect_after_kill_s": 6.207347299990943, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.223099989583716, "attempts": 2, "repeat": 2}
+{"part": "C-restart", "resolver": "oneshot", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.0127951999893412, "reconnect_after_kill_s": 6.206573099974776, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.132800000486895, "attempts": 2, "repeat": 2}
+{"part": "C-restart", "resolver": "continuous", "open_timeout_s": 5.0, "outage_s": 1.5, "startup_s": 0.012887599994428456, "reconnect_after_kill_s": 2.4206029000051785, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.035499987192452, "attempts": 4, "repeat": 2}
+{"part": "C-restart", "resolver": "continuous", "open_timeout_s": 1.0, "outage_s": 1.5, "startup_s": 0.013231199991423637, "reconnect_after_kill_s": 2.4215879999974277, "lost": 1, "reconnects": 1, "aborted": 1, "max_step_ms": 21.306500013452023, "attempts": 4, "repeat": 2}
+
+| resolver | open_timeout_s | reconnect after stop (s), 3 runs | max loop step (ms) | startup (s) |
+|---|---|---|---|---|
+| oneshot | 5.0 | 2.31, 6.21, 6.21 | 21.0, 21.0, 21.2 | 0.01, 0.01, 0.01 |
+| oneshot | 1.0 | 6.76, 6.21, 6.21 | 21.1, 21.1, 21.1 | 0.01, 0.01, 0.01 |
+| continuous | 5.0 | 2.42, 2.42, 2.42 | 21.0, 21.0, 21.0 | 0.01, 0.01, 0.01 |
+| continuous | 1.0 | 2.42, 2.42, 2.42 | 21.0, 21.1, 21.3 | 0.01, 0.01, 0.01 |

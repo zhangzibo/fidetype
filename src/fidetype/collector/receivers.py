@@ -267,3 +267,145 @@ class WebSocketReceiver(Receiver):
         # No address, host name or token here (LSL-C3, WS-T3).
         return {**super().stats(), "live_streams": len(self.server.core.live_streams()),
                 "ingest": self.server.core.stats.as_dict(), "decision_subscribers": len(self.hub.subs)}
+
+
+#: Events that end an utterance (a gap right after one cuts no utterance).
+BOUNDARY_TYPES = ("segment_end", "end", "header")
+
+
+class LSLReceiver(Receiver):
+    """LSL frames and events streams (spec 8.2, FEP-0002), via :class:`fidetype.adapters.lsl.LSLEventSource`.
+
+    The LSL source does the binding work: resolve by name / type / ``source_id``, the events inlet,
+    clock correction (LSL-C3), order (LSL-C4), merge (LSL-C6), gap modes (LSL-G1) and the
+    non-blocking reconnect (M6-14) with ``open_timeout_s`` (M6-16). This receiver maps its control
+    items to the collector's status items:
+
+    - LSL loss (``lsl_status lost``) -> ``lost``: the trust processor drops the open utterance
+      without a decision (LSL-G2). After a reconnect the source sends the header again; the
+      ``reconnected`` item itself is only counted.
+    - ``on_gap = "abort"`` (the collector default) -> ``gap`` at the place of the gap: the open
+      utterance is dropped, and the frames up to the next boundary too (FEP-0006 3.2). A gap right
+      after a boundary (``segment_end``, ``end``, a header; a producer pause between utterances)
+      cuts no utterance: it is counted (``gaps_between_utterances``), and no status is sent.
+    - ``on_gap = "mark"``: the ``gap`` extension event is counted (``gaps_marked`` inside an
+      utterance, else ``gaps_between_utterances``) and not passed on (a v0.1 consumer ignores it).
+      The utterance goes on. ``"segment"``: the source sends a
+      ``segment_end`` with ``reason = "gap"`` (a final decision on the frames before the gap).
+    - ``end`` -> the event, then ``closed``. With ``stop_at_end`` (default) the receiver is done.
+    - The source gives up after ``reconnect_timeout_s``: the receiver is done (the loss already
+      sent ``lost``). At shutdown an open stream is ``lost``.
+
+    The stream id is ``stream_id`` or ``<receiver>-0``: never the LSL stream name or a host name
+    (SEC-6, LSL-C3). Metrics hold counters only.
+    """
+
+    type = "lsl"
+
+    def __init__(self, name: str, log: Callable[[str], None], open_source: Callable[[], Any],
+                 stream_id: str | None = None, stop_at_end: bool = True) -> None:
+        super().__init__(name, log)
+        self._open_source = open_source
+        self.sid = stream_id or f"{name}-0"
+        self.stop_at_end = stop_at_end
+        self.src: Any = None
+        self.ended = False
+        self._frames_open = 0  # frames since the last boundary (0: no utterance is open)
+        self.counts.update(lost_streams=0, reconnects=0, gaps=0, gaps_marked=0, gaps_between_utterances=0,
+                           headers=0, frames=0)
+
+    def start(self) -> None:
+        from fidetype.adapters import lsl as L
+
+        try:
+            self.src = self._open_source()
+        except L.LSLResolveError as e:
+            raise ConnectionError(f"receivers.{self.name}: {e}") from None  # exit code 3 (an I/O error)
+        self.counts["streams"] += 1
+
+    def _map(self, evs: list[dict[str, Any]]) -> list[Item]:
+        from fidetype.adapters import lsl as L
+
+        out: list[Item] = []
+        sid = self.sid
+        for ev in evs:
+            typ = ev.get("type")
+            if typ == L.LSL_STATUS:
+                st = ev.get("status")
+                if st == "lost":
+                    self.counts["lost_streams"] += 1
+                    self._frames_open = 0
+                    self.log(f"receivers.{self.name}: stream {sid} lost; its open utterance gets no decision "
+                             "(LSL-G2); reconnecting")
+                    out.append(status(sid, "lost", "LSL stream lost"))
+                elif st == "reconnected":
+                    self.counts["reconnects"] += 1
+                    self.log(f"receivers.{self.name}: stream {sid} reconnected")
+                elif st == "gap_abort":
+                    if self._frames_open:
+                        self.counts["gaps"] += 1
+                        self._frames_open = 0
+                        out.append(status(sid, "gap", "LSL frame gap (on_gap = abort)"))
+                    else:
+                        self.counts["gaps_between_utterances"] += 1
+                continue
+            if typ == L.GAP:
+                self.counts["gaps_marked" if self._frames_open else "gaps_between_utterances"] += 1
+                continue
+            if typ == "frame":
+                self.counts["frames"] += 1
+                self._frames_open += 1
+            elif typ in BOUNDARY_TYPES:
+                self._frames_open = 0
+                if typ == "header":
+                    self.counts["headers"] += 1
+            out.append((sid, ev))
+            if typ == "end":
+                self.counts["ended_streams"] += 1
+                out.append(status(sid, "closed"))
+                if self.stop_at_end:
+                    self.ended = True
+                    self.done = True
+                    break
+        return out
+
+    def poll(self, timeout: float) -> list[Item]:
+        from fidetype.adapters import lsl as L
+
+        if self.done:
+            return []
+        try:
+            out = self._map(self.src.poll(timeout))
+        except L.LSLStreamLost:
+            self.log(f"receivers.{self.name}: stream {self.sid} was not reconnected within the reconnect time; "
+                     "the receiver stops")
+            self.done = self.ended = True  # the loss already sent ``lost``
+            out = []
+        self.counts["items"] += len(out)
+        return out
+
+    def finish(self) -> list[Item]:
+        """At shutdown: release what the merge holds; an open stream is ``lost`` (no final decision)."""
+        if self.src is None or self.ended:
+            return []
+        out = [] if self.done else self._map(self.src.drain())
+        if not self.ended:
+            out.append(status(self.sid, "lost", "was open when the collector stopped"))
+            self.ended = True
+        self.done = True
+        self.counts["items"] += len(out)
+        return out
+
+    def stop(self) -> None:
+        if self.src is not None:
+            self.src.close()
+
+    def stats(self) -> dict[str, Any]:
+        # Counters only: no stream name, host name or address (LSL-C3).
+        s = super().stats()
+        if self.src is not None:
+            st = self.src.stats.as_dict()
+            s["lsl"] = {k: st[k] for k in ("samples", "markers", "ignored_markers", "bad_markers", "clamped",
+                                           "dropped_out_of_order", "late_releases", "transport_latency_ms")
+                        if k in st}
+        return s

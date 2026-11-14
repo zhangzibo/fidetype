@@ -1,0 +1,52 @@
+# Fidetype collector example with LSL in and LSL out (FEP-0006, spec 8.2). Needs the [lsl] extra.
+#
+# 1. Publish a stream on LSL (a synthetic conformance vector; no participant data):
+#      python -m fidetype.adapters.lsl replay-to-lsl spec/conformance/fep-0001/f01-segments.jsonl --name demo.nts --speed 1
+# 2. Run the collector (repository root):
+#      fidetype collector --config examples/collector/collector-lsl.toml
+# 3. Read the decisions: any LSL Markers inlet on "fidetype.decisions" (one trust_decision JSON per sample).
+#
+# trust-example.json is a TOY trust configuration (not calibrated). It only shows the wiring.
+
+[service]
+log = "info"
+metrics_file = "out/metrics-lsl.json"
+
+[receivers.live]
+type = "lsl"
+stream_name = "demo.nts"                       # or stream_type / source_id (source_id is best: it is stable)
+events = "auto"                                # "auto": the events stream named in the desc; "none"; or a name
+# stream_id = "dev-1"                          # the session of the decisions (default "live-0"); never a host name
+on_gap = "abort"                               # collector default: a frame gap inside an utterance is a loss
+                                               # (no decision on it). "mark": count only. "segment": end the
+                                               # utterance at the gap. A gap right after segment_end cuts nothing.
+resolve_timeout_s = 10.0                       # wait this long for the stream at the start
+open_timeout_s = 1.0                           # inlet open after a resolve (start and reconnect; M6-16)
+reconnect_timeout_s = 30.0                     # after a loss, re-resolve by source_id this long (LSL-G2)
+# reconnect_mode = "thread"                    # the loop never waits for the reconnect (M6-14)
+# clock = "receiver"                           # LSL time + time_correction (LSL-C3)
+# stop_at_end = true                           # the receiver is done after the stream's end event
+
+[processors.check]
+type = "validate"
+
+[processors.trust]
+type = "trust"
+config = "trust-example.json"
+decoder = "greedy"
+
+[exporters.decisions]
+type = "lsl"                                   # Markers, 1 string channel, irregular rate (LSL-X1 ... LSL-X3)
+stream_name = "fidetype.decisions"
+no_text = true                                 # LSL has no access control: drop the decoded text (SEC-7).
+                                               # false: subscribers get "shown"; the collector logs a warning.
+# config_id = "..."                            # default: the config_id of the pipeline's trust processor
+
+[exporters.log]
+type = "jsonl"
+path = "out/decisions-lsl.jsonl"
+
+[pipelines.main]
+receivers = ["live"]
+processors = ["check", "trust"]
+exporters = ["decisions", "log"]

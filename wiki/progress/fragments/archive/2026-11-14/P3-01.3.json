@@ -1,0 +1,13 @@
+{
+ "id": "P3-01",
+ "notes": "v0 (2026-11-14): draft FEP-0006 (spec/feps/0006-collector.md) + src/fidetype/collector/: TOML/JSON config loader with path-named errors (no YAML: PyYAML not a dependency), pipeline runtime (one loop, back-pressure, metrics, /healthz + /metrics), receivers file (JSON Lines, tail mode) + websocket (wraps fidetype.adapters.ws). CLI fidetype collector --config. Tests tests/test_collector.py (29). v0.1 (2026-11-14): FEP-0006 decisions applied: TOML/JSON only (YAML not supported, documented); eof = close kept, one warning per stream + closed_without_end counter; <receiver>/<id> stream-id prefix documented; health endpoint 127.0.0.1:13133 by default, optional bearer token (token_env), non-localhost bind refused without token unless allow_unauthenticated = true (warning); fan-out listed as future work. Tests 44. Open: Python vs Rust for v1 (user). LSL receiver (2026-11-14 afternoon): receivers type lsl (LSLReceiver wraps fidetype.adapters.lsl open_source / LSLEventSource; FEP-0006 2 rule 6): loss -> lost (no final decision, LSL-G2), reconnect + new header; in-utterance frame gap -> gap (on_gap = abort, collector default), gap right after a boundary cuts nothing (gaps_between_utterances), mark only counts; end -> closed, stop_at_end; give-up -> done; config query / events / stream_id / gap mode / clock / foreign-stream keys / resolve_timeout_s / open_timeout_s / reconnect settings. Tests tests/test_collector_lsl.py (17, incl. real LSL loopback outlet -> collector -> decisions outlet -> inlet = file receiver decisions; skips without pylsl). Example examples/collector/collector-lsl.toml. Not yet: gRPC.",
+ "agent_runs": [
+  {
+   "label": "P3 collector LSL receiver + exporter, M6-16 fast reconnect / open_timeout",
+   "duration_s": null,
+   "tokens": null,
+   "tool_uses": null
+  }
+ ],
+ "_tracker_updated": "2026-11-14T12:50:00-08:00"
+}

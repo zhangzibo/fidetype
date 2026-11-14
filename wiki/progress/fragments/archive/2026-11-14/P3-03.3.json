@@ -1,0 +1,5 @@
+{
+ "id": "P3-03",
+ "notes": "v0 (2026-11-14, with P3-01): exporters jsonl (decision log, TD-11 enforced), stdout, websocket /decisions (receiver's OutputHub). v0.1 (2026-11-14, with P3-01): standalone websocket exporter (no receiver): own WSServer serving /decisions only (/nts, /events 404), token_env, TLS, origins, linger_s for file replay demos; tested file -> trust -> standalone /decisions subscriber. Not yet: OS text input (Windows TSF first), Apple BCI HID bridge, AAC API, Arrow/Parquet, analytics, fan-out of one receiver to two pipelines. LSL decisions exporter (2026-11-14 afternoon, with P3-01): exporters type lsl (LSLExporter wraps DecisionOutlet; LSL-X1 ... X3 desc keys; config_id from the pipeline's trust processor), decisions only, no_text = true removes shown (SEC-7; else a warning), no host names (LSL-C3), 0.5 s flush at stop while a subscriber is connected.",
+ "_tracker_updated": "2026-11-14T12:50:00-08:00"
+}

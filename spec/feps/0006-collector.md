@@ -10,7 +10,7 @@
 | **Affects** | No field of NTS changes. Uses `nts-1.0-rc2.md` sections 4.3–4.4 (segments, `end`, GEN-8), 6 (trust decisions, 6.1 `spec_version`, TD-1 … TD-11, PRV-1 … PRV-3), 8.1 (JSON Lines), 8.2.6 (LSL loss), 8.3 (WebSocket), 10 (security and privacy), 11 (VER-1) |
 | **Created** | 2026-11-14 |
 | **Discussion** | Roadmap phase P3 "Collector (pipeline)" (`wiki/questions/roadmap-standard.md`); reference v0.1 in `src/fidetype/collector/`; `wiki/concepts/collector.md` |
-| **Updated** | 2026-11-14: v0.1 decisions (open questions 1, 3, 4, 5, 6, 7, 8 closed; see "Decisions"). Later on 2026-11-14: questions 2-4 of the second list closed (blank OFFER candidates, open `/healthz`, the automatic gate) |
+| **Updated** | 2026-11-14: v0.1 decisions (open questions 1, 3, 4, 5, 6, 7, 8 closed; see "Decisions"). Later on 2026-11-14: questions 2-4 of the second list closed (blank OFFER candidates, open `/healthz`, the automatic gate). Later on 2026-11-14: the `lsl` receiver and the `lsl` decisions exporter (section 2 rule 6, section 4 rule 5) |
 
 ## Summary
 Today each Fidetype tool is its own program: `fidetype trust` reads files, `fidetype ws run` serves WebSocket, `fidetype lsl run` reads LSL. Each one wires one input to the trust layer and one output. This FEP defines **one service, the collector**, that does this wiring from a configuration file:
@@ -57,7 +57,7 @@ Rules:
 |---|---|---|---|
 | `file` | JSON Lines files (8.1.1), one stream per file, in order. Optional **tail mode** (`follow`) for a file that a decoder is still writing | `gap` (unreadable line), `lost` (tail mode: no new line for `idle_timeout_s`; `eof = "cut"`), `closed` | Yes |
 | `websocket` | The `/nts` path of `nts-ws/0.1` (8.3). The binding rules (subprotocol, auth, `ws_seq`, reorder window, resume, take-over) stay in the reference server | `gap` (WS-Q3), `lost` (WS-R2), `replaced`, `closed` | Yes |
-| `lsl` | LSL frames and events streams (8.2), via `fidetype.adapters.lsl` | `gap` (LSL-G1, mode `segment` or `abort`), `lost` (LSL-G2), `closed` | No (section 10) |
+| `lsl` | LSL frames and events streams (8.2, FEP-0002), via `fidetype.adapters.lsl` (resolve, clock correction, merge, gap modes, non-blocking reconnect) | `gap` (LSL-G1, mode `abort`, inside an utterance), `lost` (LSL-G2), `closed` (after `end`) | Yes |
 
 Receiver rules:
 1. A receiver MUST NOT drop an input event silently. An event that it cannot read becomes a `gap` status at its place.
@@ -65,6 +65,27 @@ Receiver rules:
 3. File, end of file without `end`: `eof = "close"` (default) closes the stream; the trust layer then closes its last utterance, as `fidetype trust` does (GEN-8 allows a stream without `end`). The receiver MUST log one warning per such stream and count it (`closed_without_end` in the metrics), because a truncated file looks the same. `eof = "cut"` treats the end of file as a loss. In tail mode, an open stream with no new line for `idle_timeout_s` is always a loss.
 4. The stream id MUST NOT come from a file name, a host name or a client address (SEC-6, LSL-C3). Reference: `stream_id` from the configuration, the WebSocket `ws.stream_id`, or `<receiver>-<index>`.
 5. At shutdown, a receiver reports every open stream as `lost` (no final decision on its open utterance).
+6. **LSL** (`lsl`). The receiver wraps the reference LSL source (`LSLEventSource`, `open_source`). It maps the source's control items:
+   - a lost inlet → `lost` (the open utterance gets no decision, LSL-G2). The source re-resolves the stream (by `source_id` when the stream has one) on a worker thread until `reconnect_timeout_s`; after a reconnect it sends the header again (a new header resets the stream state). After `reconnect_timeout_s` the receiver is done.
+   - a frame gap (LSL-G1, a step > `gap_factor` nominal periods) with `on_gap = "abort"` (**collector default**) → `gap` at its place: the open utterance and the frames up to the next boundary are dropped (section 3.2). A gap right after a boundary (`segment_end`, `end`, `header`: a producer pause between utterances) cuts no utterance; it is only counted (`gaps_between_utterances`). `on_gap = "mark"` counts the gap (`gaps_marked`) and drops the `gap` extension event (a v0.1 consumer ignores it); `"segment"` ends the utterance at the gap (a final decision on the frames before it). *Why `abort` and not the LSL-G1 reference default `mark`:* in the collector, missing frames inside an utterance are lost input (section 5 rule 2).
+   - `end` → the event, then `closed`. With `stop_at_end = true` (default) the receiver is then done; else it reads on (a new header starts a new stream, LSL-E5).
+   - The stream id is `stream_id` or `<receiver>-0`, never the LSL name or a host name. Metrics hold counters only.
+
+   Settings (all optional except one of the first three):
+
+   | Key | Default | Meaning |
+   |---|---|---|
+   | `stream_name`, `stream_type`, `source_id` | | The resolve query (at least one; `source_id` is stable across restarts) |
+   | `events` | `"auto"` | The events stream: `"auto"` (`events_source_id` of the frames desc), `"none"`, or a stream name |
+   | `stream_id` | `<receiver>-0` | The stream id (the `session` of the decisions) |
+   | `on_gap`, `gap_factor` | `"abort"`, 2.5 | LSL-G1 |
+   | `clock`, `out_of_order`, `merge_window_s` | `"receiver"`, `"clamp"`, 0.05 | LSL-C3, LSL-C4, LSL-C6 |
+   | `values`, `vocab`, `vocab_type`, `blank` | `"auto"`, labels, `"other"`, none | A foreign stream (8.2.2, informative) |
+   | `boundary_markers`, `plain_markers` | `["segment_end"]`, `"ignore"` | Plain markers (LSL-E3) |
+   | `resolve_timeout_s` | 10 | Wait this long for the stream at the start (an I/O error after it, exit code 3) |
+   | `open_timeout_s` | 1.0 | The inlet open after a resolve, at the start and on reconnect (M6-16; was 5 s) |
+   | `reconnect_mode`, `reconnect_timeout_s` | `"thread"`, 30 | M6-14 non-blocking reconnect; give up after this many seconds |
+   | `stop_at_end` | `true` | The receiver is done after `end` |
 
 ### 3. Processors
 | Type | Input | Output | Purpose | v0.1 |
@@ -115,14 +136,15 @@ Receiver rules:
 | `jsonl` | A JSON Lines file. Default `types = ["trust_decision"]`: a decision log (6.4) | Yes |
 | `stdout` | JSON Lines on standard output (logs go to standard error) | Yes |
 | `websocket` | The `/decisions` channel (8.3.6), with `ws_seq`, replay (WS-D2) and slow-subscriber close (WS-D4). With `receiver`: on that websocket receiver's server. Without `receiver`: a **standalone** server (`listen`, `token_env`, `origins`, `certfile`, `keyfile`, `linger_s`) that serves `/decisions` only | Yes |
-| `lsl` | An LSL decisions outlet (LSL-X1 … LSL-X3) | No |
+| `lsl` | An LSL decisions outlet (LSL-X1 … LSL-X3): `stream_name` (default `fidetype.decisions`), `source_id`, `config_id`, `no_text` | Yes |
 | OS input method, Apple BCI HID, AAC, Arrow / Parquet, OTLP metrics | | No (P3-03) |
 
 Exporter rules:
-1. An exporter MUST NOT change an item. Status items are never exported.
+1. An exporter MUST NOT change an item. Status items are never exported. One exception: `no_text = true` of the `lsl` exporter removes `shown` (rule 5).
 2. A JSON Lines file holds decisions **or** input events, never both (TD-11). The loader refuses a mixed `types` list.
 3. An exporter that acts (an OS input method, a HID bridge) MUST forward only final `COMMIT` decisions, or a user selection after `OFFER` (TD-1, TD-3), and MUST NOT forward a blank committed text (TD-9). No v0.1 exporter acts.
 4. A standalone `/decisions` server (a `websocket` exporter without `receiver`) refuses `/nts` and `/events` (HTTP 404): it accepts no input. It uses the same subscriber rules as the receiver's server (subprotocol, token, origins, `from_seq` replay from a ring of 4096 decisions, slow-subscriber close). `linger_s` (default 0) keeps it open for that many seconds after every receiver is done, so a demo subscriber can connect late and read from `from_seq = 1`. Beyond `localhost` the reference logs a warning without TLS and without a token.
+5. **LSL decisions outlet** (`lsl`). Type `Markers`, 1 string channel, irregular rate, desc keys `role = trust_decisions`, `event_type = trust_decision`, `spec = FEP-0001`, `binding = nts-lsl/0.1` and `config_id` (the option, else the `config_id` of the pipeline's trust processor) (LSL-X1). One sample is one `trust_decision` as JSON; its timestamp is the emission time (LSL-X2). Only `trust_decision` events go out. LSL has no access control: every host on the network can read the outlet. `no_text = true` removes `shown` and adds `redaction = {"mode": "drop"}` (SEC-7; the same as `redact` with `mode = "drop"`); without it the reference logs a warning at start. The exporter writes no host name (LSL-C3; liblsl itself announces the outlet's host in its stream info). At stop, it waits 0.5 s while a subscriber is connected, so the last decisions reach it.
 
 ### 5. Back-pressure and loss
 1. **No silent drop of input.** The collector MUST NOT drop an input event to keep up (WS-A3). The only input that is lost is input that the transport lost; it becomes a `gap` or `lost` status.
@@ -200,7 +222,6 @@ python -m fidetype.collector --config collector.toml
 Exit code 0: normal stop. 2: configuration error (the message names the bad value). 3: an I/O error (for example the port is in use).
 
 ### 10. Out of scope for v0.1 (future work)
-- LSL receiver and LSL decisions exporter (the adapter exists; the wrapper is the next step).
 - gRPC / OTLP receivers and exporters; Arrow / Parquet files; OTLP export of the latency metrics.
 - OS input-method exporters (Windows TSF, Android IME, macOS, IBus), the Apple BCI HID bridge, the AAC API (P3-03).
 - Per-user calibration, LM rescoring, a segmenter, a rate limiter as processors (P3-02, P5).
@@ -225,11 +246,11 @@ Input: `spec/conformance/fep-0001/f01-segments.jsonl` (two utterances, `segment_
 ## Reference implementation
 `src/fidetype/collector/` (Apache-2.0, our own code, standard library + numpy; `websockets` only for the WebSocket components, as in `fidetype[ws]`):
 - `config.py`: loader and checks (`ConfigError` names the bad value).
-- `receivers.py`: `FileReceiver`, `WebSocketReceiver` (wraps `fidetype.adapters.ws.WSServer`).
+- `receivers.py`: `FileReceiver`, `WebSocketReceiver` (wraps `fidetype.adapters.ws.WSServer`), `LSLReceiver` (wraps `fidetype.adapters.lsl.LSLEventSource`).
 - `processors.py`: `ValidateProcessor` (wraps `fidetype.conformance` checks and the reference frame reader), `TrustProcessor` (wraps `StreamingTrustLayer` and the loss rules of `WSTrustRunner`), `RedactProcessor`, `ThinProcessor`.
-- `exporters.py`: `JsonlExporter`, `StdoutExporter`, `WebSocketExporter` (the receiver's `OutputHub`), `StandaloneWebSocketExporter` (its own `WSServer`, `/decisions` only).
+- `exporters.py`: `JsonlExporter`, `StdoutExporter`, `WebSocketExporter` (the receiver's `OutputHub`), `StandaloneWebSocketExporter` (its own `WSServer`, `/decisions` only), `LSLExporter` (wraps `fidetype.adapters.lsl.DecisionOutlet`).
 - `service.py`: `Collector` (build, run loop, stop, metrics, health endpoint).
-- Tests: `tests/test_collector.py` (file → trust → jsonl equals the reference replay; redaction removes all text; an unreadable line, an invalid frame, a WebSocket gap, `eof = "cut"` and a stop in tail mode give no final decision on the cut utterance; configuration errors; command line; WebSocket in and `/decisions` out; v0.1: the `eof = "close"` warning and counter, the `<receiver>/<id>` prefix, health defaults and bearer token (open `/healthz`, protected `/metrics`), `spec_version` and the FEP-0001 profile, the gated blank COMMIT and the TD-12 step (`drop_blank_candidates`), file → trust → standalone `/decisions`).
+- Tests: `tests/test_collector.py` (file → trust → jsonl equals the reference replay; redaction removes all text; an unreadable line, an invalid frame, a WebSocket gap, `eof = "cut"` and a stop in tail mode give no final decision on the cut utterance; configuration errors; command line; WebSocket in and `/decisions` out; v0.1: the `eof = "close"` warning and counter, the `<receiver>/<id>` prefix, health defaults and bearer token (open `/healthz`, protected `/metrics`), `spec_version` and the FEP-0001 profile, the gated blank COMMIT and the TD-12 step (`drop_blank_candidates`), file → trust → standalone `/decisions`). `tests/test_collector_lsl.py`: scripted LSL inlets (a loss mid-utterance gives no final decision, the reconnect goes on; `abort` and `mark` gaps; a gap between utterances cuts nothing; shutdown and give-up; `stop_at_end = false`), the exporter (decisions only, `no_text`), configuration errors, `config_id` from the trust processor, and a real LSL loopback (outlet → collector → decisions outlet → inlet; same decisions as the file receiver; desc keys; no host name; skips without pylsl).
 
 ## Alternatives
 - **Use the OpenTelemetry Collector itself** (Go) with an NTS receiver. Rejected for v0: the trust layer is Python; OTel pipelines carry traces, metrics and logs, not ordered per-utterance state with loss rules. An OTLP exporter for collector metrics stays possible (section 10).
