@@ -22,8 +22,12 @@ Per-trial outputs (decisions with texts, ledgers, streams) go to
 ``C:/Users/zhang/bci-data/derived/m4-06-real-replay`` (never into the repo).
 The repo gets the two frozen configs (numbers only) and aggregate results.
 
-Run (repo root): .venv\\Scripts\\python.exe -I experiments/2026-11-13-m4-06-real-replay/run.py [stage ...]
+Run (repo root): .venv\\Scripts\\python.exe -I experiments/2026-11-13-m4-06-real-replay/run.py [stage ...] [--workers N] [--out DIR]
 Stages: fit streams replay uncached rounded controls memory tables (default: all).
+``--workers N`` (M0-24): the ``uncached`` replay runs one session (post-implant day) per task
+in a fidetype.utils.parallel.pmap pool. Decisions are the same as serial; the latency values
+are then measured under parallel load (use serial + the timing CPU class for latency).
+``--out DIR`` writes results and per-trial outputs to DIR (for checks; inputs stay in place).
 """
 
 from __future__ import annotations
@@ -48,6 +52,7 @@ from fidetype.trust.frozen import PAPER1_V4_RECIPE, FrozenTrustConfig, paper1_v4
 from fidetype.trust.policy import Action  # noqa: E402
 from fidetype.trust.provenance import ProvenanceLedger, stream_fingerprint, verify  # noqa: E402
 from fidetype.trust.streaming import StreamingConfig, StreamingTrustLayer, _sha, iter_events  # noqa: E402
+from fidetype.utils.parallel import pmap  # noqa: E402
 
 CONFIG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
 OUT = HERE / "results"
@@ -61,6 +66,8 @@ ROUNDED = Path(CONFIG["rounded_streams"])
 R4_REF = REPO / "experiments/2026-11-12-paper1-r4-analyses/v4-derived/results/guard_controls.json"
 C.Log.path = OUT / "run.log"
 WHICH = ("ours", "published")
+DER_OUT = DER  # per-trial outputs (``--out`` moves them)
+WORKERS: int | None = None  # ``--workers``: parallel uncached replay (None = serial)
 
 
 # ---------------------------------------------------------------------------
@@ -359,9 +366,60 @@ def test_files(X: Ctx, route: str, which: str) -> list[tuple[str, Path]]:
     return [(f"day{t.post_implant_day:03d}", d / f"trial-{t.index:04d}.jsonl") for t in X.test]
 
 
-def run_route(X: Ctx, which: str, route: str, decode_fn=None, files=None, tag: str = "", ledger_on: bool = True) -> dict:
+_W: dict = {}  # per-process state of pmap workers
+
+
+def init_replay_worker() -> None:
+    """pmap initializer: the decoders (loaded once per worker process)."""
+    _W["ctx"] = C.b2t_ctx()
+
+
+def replay_task(task: tuple) -> tuple[list, dict]:
+    """Replay the files of one session with a fresh layer (the session state stays in one process)."""
+    which, route, kind, files = task
+    ctx = _W["ctx"]
     fz = FrozenTrustConfig.load(cfg_path(which))
-    lp = DER / f"ledger-{which}-{route}{tag}.jsonl"
+    if kind != "uncached":
+        raise ValueError(f"parallel replay supports the uncached decode only, not {kind!r}")
+    raw = ctx.cached[0].fn  # the bound Decoders.words_fn, below the disk cache (as stage_uncached)
+    ctx.dec._wcache = {}
+
+    def fresh(stream):
+        ctx.dec._wcache = {}
+        return raw(stream)
+
+    layer = StreamingTrustLayer(fz, decode_fn=fresh if route == "frames" else None,
+                                streaming=StreamingConfig(route=route, max_attempts=1), ledger=None)
+    return replay_files(layer, [(sid, Path(fp)) for sid, fp in files])
+
+
+def replay_parallel(which: str, route: str, kind: str, files: list[tuple[str, Path]], workers: int | None) -> tuple[list, dict]:
+    """``replay_files`` with one pmap task per session; decisions and timings in file order."""
+    groups: dict = {}
+    for sid, fp in files:
+        groups.setdefault(sid, []).append((sid, str(fp)))
+    order = list(groups)
+    assert [f for sid in order for f in groups[sid]] == [(sid, str(fp)) for sid, fp in files], "sessions are not contiguous"
+    big_first = sorted(order, key=lambda sid: -len(groups[sid]))  # longest sessions start first
+    info: dict = {}
+    got = pmap(replay_task, [(which, route, kind, groups[sid]) for sid in big_first], workers=workers,
+               initializer=init_replay_worker, label=f"replay {which}/{route}", log=C.log, mem_per_worker_gb=1.6, info=info)
+    by_sid = dict(zip(big_first, got))
+    decs: list = []
+    tm: dict = {"frame": [], "hypothesis": [], "final_push": [], "other": []}
+    for sid in order:
+        d, t = by_sid[sid]
+        decs += d
+        for k in tm:
+            tm[k] += t[k]
+    tm["_parallel"] = info
+    return decs, tm
+
+
+def run_route(X: Ctx, which: str, route: str, decode_fn=None, files=None, tag: str = "", ledger_on: bool = True,
+              parallel_kind: str | None = None) -> dict:
+    fz = FrozenTrustConfig.load(cfg_path(which))
+    lp = DER_OUT / f"ledger-{which}-{route}{tag}.jsonl"
     if lp.exists():
         lp.unlink()
     ledger = ProvenanceLedger(lp, text_mode="hash") if ledger_on else None
@@ -369,7 +427,10 @@ def run_route(X: Ctx, which: str, route: str, decode_fn=None, files=None, tag: s
                                 streaming=StreamingConfig(route=route, max_attempts=1), ledger=ledger)
     files = files or test_files(X, route, which)
     t0 = time.time()
-    decs, tm = replay_files(layer, files)
+    if parallel_kind and WORKERS != 1 and WORKERS is not None and ledger is None:
+        decs, tm = replay_parallel(which, route, parallel_kind, files, WORKERS)
+    else:
+        decs, tm = replay_files(layer, files)
     wall = time.time() - t0
     batch = load(DER / f"batch-{which}.json")
     cmp_ = compare(decs, batch)
@@ -387,9 +448,11 @@ def run_route(X: Ctx, which: str, route: str, decode_fn=None, files=None, tag: s
     dump({"trials": [t.index for t in X.test],
           "decisions": [{**d.to_event(include_text=True), "guard_risk_exact": float(d.guard.risk) if d.guard else None,
                          "p_top1_exact": float(d.inputs.p_top1)} for d in decs]},
-         DER / f"stream-{which}-{route}{tag}.json")
+         DER_OUT / f"stream-{which}-{route}{tag}.json")
     r = {"which": which, "route": route, "tag": tag, "config_id": fz.config_id, "wall_s": wall, "equivalence": cmp_,
          "metrics": m, "timing": timing_summary(decs, tm), "provenance": prov}
+    if "_parallel" in tm:
+        r["parallel"] = {**tm["_parallel"], "note": "latency measured under parallel load; not a latency result"}
     C.log(f"replay {which}/{route}{tag}: equal {cmp_['n_equal']}/{cmp_['n']}; wrong-commit {m['wrong_commit']:.4f} "
           f"({m['n_wrong_commit']}) commit {m['commit_rate']:.3f} ({m['n_commit']}) eWPM {m['ewpm']:.2f}; decision p50/p95 "
           f"{r['timing']['decision_ms']['p50']:.3f}/{r['timing']['decision_ms']['p95']:.3f} ms; ledger "
@@ -416,7 +479,7 @@ def stage_uncached(X: Ctx) -> dict:
         X.ctx.dec._wcache = {}
         return raw(stream)
 
-    r = run_route(X, "ours", "frames", decode_fn=fresh, tag="-uncached", ledger_on=False)
+    r = run_route(X, "ours", "frames", decode_fn=fresh, tag="-uncached", ledger_on=False, parallel_kind="uncached")
     dump(r, OUT / "uncached.json")
     return r
 
@@ -678,6 +741,18 @@ def stage_tables() -> None:
 
 
 def main(argv: list[str]) -> None:
+    global WORKERS, OUT, DER_OUT
+    argv = list(argv)
+    if "--workers" in argv:
+        i = argv.index("--workers")
+        WORKERS = int(argv[i + 1])
+        del argv[i:i + 2]
+    if "--out" in argv:
+        i = argv.index("--out")
+        OUT = DER_OUT = Path(argv[i + 1])
+        OUT.mkdir(parents=True, exist_ok=True)
+        C.Log.path = OUT / "run.log"
+        del argv[i:i + 2]
     stages = argv or ["fit", "streams", "replay", "uncached", "rounded", "controls", "memory", "tables"]
     X = None
     for st in stages:

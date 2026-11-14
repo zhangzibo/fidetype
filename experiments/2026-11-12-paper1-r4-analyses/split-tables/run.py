@@ -21,6 +21,9 @@ shared with R3.
 Run (repo root):
   .venv\\Scripts\\python.exe -I experiments/2026-11-12-paper1-r4-analyses/split-tables/run.py --stage temps
   ... --stage b2t --worker 0 --nworkers 6     (one process per worker)
+  ... --stage b2t --workers 6 [--out DIR] [--jobs ours-g1,published-g1] [--r-from 50 --r-to 199]
+      (M0-24: one process, a fidetype.utils.parallel.pmap pool; same tables as the
+      manual sharding; --workers 1 = serial; finished tables are skipped, so a rerun resumes)
   ... --stage emg --cond calib
   ... --stage manifest
 """
@@ -40,6 +43,7 @@ sys.path.insert(0, str(HERE.parent))
 import common4 as Q  # noqa: E402
 
 K, C = Q.K, Q.C
+from fidetype.utils.parallel import add_workers_arg, in_worker, pmap  # noqa: E402
 OUT = HERE / "results"
 OUT.mkdir(exist_ok=True)
 CONFIG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
@@ -142,6 +146,59 @@ def stage_b2t(worker: int, nworkers: int) -> None:
     router.save()
 
 
+_ENV: dict = {}  # per-process state of the pmap path: context, router, items, splits, output folder
+
+
+def init_b2t_worker(out_dir: str, log_path: str) -> None:
+    """pmap initializer: load the B2T context and decode router once per process."""
+    C.Log.path = Path(log_path)
+    ctx, router, trials, items = Q.b2t_env(CONFIG["frame_T_snap_b2t"])
+    sp = json.loads((Q.CACHE4 / "splits-b2t-200.json").read_text(encoding="utf-8"))["splits"]
+    _ENV.update(ctx=ctx, router=router, items=items, sp=sp, out=Path(out_dir), g=None)
+
+
+def b2t_task(task: tuple[int, str]) -> tuple[str, float | None]:
+    """One item table (split r, job); the body of the stage_b2t loop. Returns (file name, seconds or None if it existed)."""
+    r, job = task
+    ctx, router, items, sp, out = _ENV["ctx"], _ENV["router"], _ENV["items"], _ENV["sp"], _ENV["out"]
+    s = sp[r]
+    which, guard, margin = next((w, g, m) for j, w, g, m in jobs_for(r) if j == job)
+    g = f"{s['T_used']:.2f}"
+    if _ENV["g"] != g:  # one decode cache in memory, as in stage_b2t
+        router.d = {k: v for k, v in router.d.items() if k == g}
+        _ENV["g"] = g
+    p = out / f"b2t-{job}-{r:03d}.json"
+    if p.exists():
+        return p.name, None
+    t0 = time.time()
+    A = [items[i] for i in s["A"]]
+    n0 = router.new_count()
+    res = Q.b2t_tables(ctx, which, A, {"reuse": A, "cal": [items[i] for i in s["cal"]],
+                                       "test": [items[i] for i in s["test"]]}, use_guard=guard, margin=margin)
+    res.update({"r": s["r"], "job": job, "which": which, "test_idx": s["test"], "cal_idx": s["cal"],
+                "new_decodes": router.new_count() - n0})
+    C.dump(res, p)
+    C.log(f"{job} split {s['r']}: T {res['T_used']:.2f} commit_p {res['cal']['lam_old']} "
+          f"new decodes {res['new_decodes']} ({time.time() - t0:.0f}s)")
+    if not in_worker():  # workers never write the shared decode cache files
+        router.save()
+    return p.name, time.time() - t0
+
+
+def stage_b2t_pmap(workers: int | None, exact: bool, out: Path, jobs: set[str] | None, r_from: int, r_to: int) -> None:
+    sp = json.loads((Q.CACHE4 / "splits-b2t-200.json").read_text(encoding="utf-8"))["splits"]
+    tasks = [(s["T_used"], s["r"], j) for s in sp if r_from <= s["r"] <= r_to
+             for j, _, _, _ in jobs_for(s["r"]) if jobs is None or j in jobs]
+    tasks.sort(key=lambda t: (t[0], t[1]))  # temperature groups stay together (one decode cache per worker)
+    out.mkdir(parents=True, exist_ok=True)
+    info: dict = {}
+    got = pmap(b2t_task, [(r, j) for _, r, j in tasks], workers=workers, exact=exact, initializer=init_b2t_worker,
+               initargs=(str(out), str(C.Log.path)), label="split tables", log=C.log, mem_per_worker_gb=1.6, info=info)
+    built = [t for _, t in got if t is not None]
+    C.log(f"pmap split tables: {len(got)} tasks, {len(built)} built, {len(got) - len(built)} existed; "
+          f"workers {info.get('workers')}, wall {info.get('wall_s')}s, table CPU sum {sum(built):.0f}s")
+
+
 def stage_emg(cname: str) -> None:
     """R3 emg_tables with the guard off (same generator, seed + 100, same draws)."""
     K.install_snap(CONFIG["frame_T_snap_emg"])
@@ -193,10 +250,21 @@ def main() -> None:
     ap.add_argument("--worker", type=int, default=0)
     ap.add_argument("--nworkers", type=int, default=1)
     ap.add_argument("--cond")
+    add_workers_arg(ap)
+    ap.add_argument("--out", default=None, help="pmap path: output folder (default: the R4 split cache)")
+    ap.add_argument("--jobs", default=None, help="pmap path: comma list of jobs, e.g. ours-g1,published-g1")
+    ap.add_argument("--r-from", type=int, default=0)
+    ap.add_argument("--r-to", type=int, default=10**9)
     a = ap.parse_args()
     C.Log.path = OUT / f"run-{a.stage}{'-' + a.cond if a.cond else ''}{f'-w{a.worker}' if a.stage == 'b2t' else ''}.log"
     {"temps": stage_temps, "manifest": stage_manifest}.get(a.stage, lambda: None)()
-    if a.stage == "b2t":
+    if a.stage == "b2t" and (a.workers is not None or a.out):
+        if a.out:
+            C.Log.path = Path(a.out) / "run-b2t-pmap.log"
+            Path(a.out).mkdir(parents=True, exist_ok=True)
+        stage_b2t_pmap(a.workers, a.exact_workers, Path(a.out) if a.out else TAB,
+                       set(a.jobs.split(",")) if a.jobs else None, a.r_from, a.r_to)
+    elif a.stage == "b2t":
         stage_b2t(a.worker, a.nworkers)
     elif a.stage == "emg":
         stage_emg(a.cond)

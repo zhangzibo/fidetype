@@ -423,13 +423,17 @@ def _pid_alive(pid: int) -> bool:
         return False
 
 
-def register_job(cls: str, label: str, pid: int | None = None) -> Path:
+def register_job(cls: str, label: str, pid: int | None = None, slots: int | None = None) -> Path:
+    """Add a job to the registry. ``slots`` = CPUs the job keeps busy (absent = 1; used by
+    ``fidetype.utils.parallel`` to size its worker pools)."""
     d = isolation_dir() / "jobs"
     d.mkdir(parents=True, exist_ok=True)
     pid = pid or os.getpid()
     p = d / f"{pid}.json"
-    p.write_text(json.dumps({"pid": pid, "class": cls, "label": label,
-                             "since": time.strftime("%Y-%m-%dT%H:%M:%S%z")}), encoding="utf-8")
+    rec = {"pid": pid, "class": cls, "label": label, "since": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
+    if slots is not None:
+        rec["slots"] = int(slots)
+    p.write_text(json.dumps(rec), encoding="utf-8")
     return p
 
 

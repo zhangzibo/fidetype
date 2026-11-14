@@ -18,8 +18,10 @@ Checks: the refitted test wrong-commit rates must equal Paper 1 Tab. 1
 
 Writes results/t15.json and results/t15.md (counts only; no text, no signals). Decodes
 are read from the Paper 1 caches; new decodes go to C:/Users/zhang/bci-data/cache/m2-18.
-Run (repo root, CPU, about 10 min):
-  .venv\\Scripts\\python.exe -I experiments/2026-11-13-m2-18-empty-commits/t15_eval.py
+Run (repo root, CPU, about 10 min serial):
+  .venv\\Scripts\\python.exe -I experiments/2026-11-13-m2-18-empty-commits/t15_eval.py [--workers N] [--out DIR]
+The six fits run in parallel with fidetype.utils.parallel.pmap (M0-24); --workers 1 = serial.
+The output is the same for every worker count (only the "seconds" fields, wall times, differ).
 """
 
 from __future__ import annotations
@@ -27,8 +29,9 @@ from __future__ import annotations
 import os
 
 for _v in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
-    os.environ[_v] = "2"
+    os.environ.setdefault(_v, "2")  # pmap workers inherit 1
 
+import argparse
 import json
 import pickle
 import sys
@@ -47,6 +50,7 @@ C = K.C
 from fidetype.streams.spec import NeuralTextStream  # noqa: E402
 from fidetype.trust.content import CommitGate, GatedPolicy  # noqa: E402
 from fidetype.trust.guard import shuffle_stream, uniform_stream  # noqa: E402
+from fidetype.utils.parallel import add_workers_arg, in_worker, pmap  # noqa: E402
 
 OUT = HERE / "results"
 OUT.mkdir(exist_ok=True)
@@ -85,17 +89,23 @@ def policies(pipe) -> dict:
     return out
 
 
-def main() -> None:
+FITS = [("ours", "alternate"), ("ours", "chrono"), ("published", "alternate"), ("published", "chrono"),
+        ("ours", "full-fit"), ("published", "full-fit")]
+_S: dict = {}  # per-process state: context, splits, test items, control streams
+
+
+def setup() -> dict:
+    """Context, splits, test items and control streams (same draw as R4 no-guard / v4-derived)."""
     from fidetype.eval.ewpm import summarize
-    from fidetype.eval.harness import Item
 
     C.summarize = summarize
-    t_all = time.time()
     ctx = C.b2t_ctx()
     dc = ctx.cached[0]
     if R4_MAIN.exists():  # the R4 / v4-derived control decodes
         dc.d.update(pickle.loads(R4_MAIN.read_bytes()))
     dc.path = CACHE / dc.path.name
+    if dc.path.exists():  # M0-24: also read this task's own new decodes (saved by an earlier serial run)
+        dc.d.update(pickle.loads(dc.path.read_bytes()))
     by_day: dict = {}
     for i, t in enumerate(ctx.fit):
         by_day.setdefault(t.post_implant_day, []).append(i)
@@ -127,61 +137,96 @@ def main() -> None:
     nulls = {"real": base, "other_trial": [base[j] for j in perm],
              "frame_shuffled": [shuffle_stream(s, rng) for s in base], "uniform": [uniform_stream(s, rng, 0.05) for s in base]}
     truths = [t.truth_words for t in atest]
+    return {"ctx": ctx, "splits": splits, "T": T, "atest": atest, "nulls": nulls, "truths": truths, "na": na}
 
-    def ctl_items(which: str) -> dict:
-        out = {}
-        for cond, ss in nulls.items():
-            its = []
-            for i, s in enumerate(ss):
-                if which == "published":  # the published sentence is looked up by the trial index of the target trial
-                    s = NeuralTextStream(s.log_probs, s.frame_times, s.vocab, s.blank_id, s.source,
-                                         {**s.meta, "fidetype.trial_index": atest[i].index}, vocab_type=s.vocab_type)
-                its.append(Item(s, truths[i]))
-            out[cond] = its
-        return out
 
-    res: dict = {"description": __doc__.strip().splitlines()[0], "rules": {k: v.to_dict() for k, v in RULES.items()},
-                 "n_test": len(T), "n_control": na, "fits": {}}
-    fits = [("ours", "alternate"), ("ours", "chrono"), ("published", "alternate"), ("published", "chrono"),
-            ("ours", "full-fit"), ("published", "full-fit")]
-    for which, sname in fits:
-        t0 = time.time()
-        fn = ctx.dec.words_fn if which == "ours" else ctx.dec.published_plus_fn
-        pipe = C.TrustPipeline(fn, C.HarnessConfig(seed=C.SEED, user_config=ctx.user, max_wrong_commit=C.ALPHA, use_guard=True), {})
-        if sname == "full-fit":  # Tab. 1 "full fit, plug-in" (fit(fit, fit), no risk control)
-            F = ctx.items(ctx.fit)
-            pipe.fit(F, F)
-            ltt = None
-        else:
-            ia, ib = splits[sname]
-            A = ctx.items([ctx.fit[i] for i in ia])
-            Bc = ctx.items([ctx.fit[i] for i in ib])
-            pipe.fit(A, A)
-            r = pipe.calibrate_commit(Bc, method="ltt", alpha=C.ALPHA, delta=C.DELTA, combine="max")
-            ltt = {"threshold": r.threshold, "feasible": r.feasible, "n": r.n}
-        pols = policies(pipe)
-        cache: dict = {}
-        test_rows = {k: count(pipe.run_items(T, p, cache)) for k, p in pols.items()}
-        ctl = {}
-        for cond, its in ctl_items(which).items():
-            cc: dict = {}
-            ctl[cond] = {k: count(pipe.run_items(its, p, cc)) for k, p in pols.items()}
+def init_worker() -> None:
+    """pmap initializer: build the shared read-only state once per process."""
+    _S.clear()
+    _S.update(setup())
+
+
+def ctl_items(which: str) -> dict:
+    from fidetype.eval.harness import Item
+
+    atest, truths = _S["atest"], _S["truths"]
+    out = {}
+    for cond, ss in _S["nulls"].items():
+        its = []
+        for i, s in enumerate(ss):
+            if which == "published":  # the published sentence is looked up by the trial index of the target trial
+                s = NeuralTextStream(s.log_probs, s.frame_times, s.vocab, s.blank_id, s.source,
+                                     {**s.meta, "fidetype.trial_index": atest[i].index}, vocab_type=s.vocab_type)
+            its.append(Item(s, truths[i]))
+        out[cond] = its
+    return out
+
+
+def run_fit(fit: tuple[str, str]) -> tuple[str, dict, str, dict]:
+    """One fit: refit, test rows, control rows. Returns (key, record, log line, sizes)."""
+    which, sname = fit
+    ctx, splits, T = _S["ctx"], _S["splits"], _S["T"]
+    t0 = time.time()
+    fn = ctx.dec.words_fn if which == "ours" else ctx.dec.published_plus_fn
+    pipe = C.TrustPipeline(fn, C.HarnessConfig(seed=C.SEED, user_config=ctx.user, max_wrong_commit=C.ALPHA, use_guard=True), {})
+    if sname == "full-fit":  # Tab. 1 "full fit, plug-in" (fit(fit, fit), no risk control)
+        F = ctx.items(ctx.fit)
+        pipe.fit(F, F)
+        ltt = None
+    else:
+        ia, ib = splits[sname]
+        A = ctx.items([ctx.fit[i] for i in ia])
+        Bc = ctx.items([ctx.fit[i] for i in ib])
+        pipe.fit(A, A)
+        r = pipe.calibrate_commit(Bc, method="ltt", alpha=C.ALPHA, delta=C.DELTA, combine="max")
+        ltt = {"threshold": r.threshold, "feasible": r.feasible, "n": r.n}
+    pols = policies(pipe)
+    cache: dict = {}
+    test_rows = {k: count(pipe.run_items(T, p, cache)) for k, p in pols.items()}
+    ctl = {}
+    for cond, its in ctl_items(which).items():
+        cc: dict = {}
+        ctl[cond] = {k: count(pipe.run_items(its, p, cc)) for k, p in pols.items()}
+    if not in_worker():  # workers do not write the shared decode cache files (no write race)
         C.save_caches(ctx)
-        key = f"b2t-{which}/{sname}"
-        exp = PAPER_TAB1.get((which, sname))
-        got = test_rows["v4"]["wrong_commit"]
-        res["fits"][key] = {"policy_config": C.clean(pipe.policy.config.__dict__), "frame_temperature": pipe.frame_scaler.temperature,
-                            "ltt": ltt, "paper_tab1_wrong_commit": exp,
-                            "reproduces_paper": None if exp is None else abs(round(got, 4) - exp) < 1e-9,
-                            "test": test_rows, "controls": ctl, "seconds": round(time.time() - t0, 1)}
-        log(key, "cmr", pipe.policy.config.commit_max_risk, "commit_p", pipe.policy.config.commit_p,
-            "test v4", json.dumps({k: test_rows["v4"][k] for k in ("n_commit", "n_wrong_commit", "n_commit_empty", "n_commit_1word")}),
-            f"wc {got:.4f} (paper {exp})",
-            "uniform v4", ctl["uniform"]["v4"]["n_commit"], f"({time.time() - t0:.0f}s)")
-        C.dump(res, OUT / "t15.json")
+    key = f"b2t-{which}/{sname}"
+    exp = PAPER_TAB1.get((which, sname))
+    got = test_rows["v4"]["wrong_commit"]
+    rec = {"policy_config": C.clean(pipe.policy.config.__dict__), "frame_temperature": pipe.frame_scaler.temperature,
+           "ltt": ltt, "paper_tab1_wrong_commit": exp,
+           "reproduces_paper": None if exp is None else abs(round(got, 4) - exp) < 1e-9,
+           "test": test_rows, "controls": ctl, "seconds": round(time.time() - t0, 1)}
+    line = " ".join(str(x) for x in (
+        key, "cmr", pipe.policy.config.commit_max_risk, "commit_p", pipe.policy.config.commit_p,
+        "test v4", json.dumps({k: test_rows["v4"][k] for k in ("n_commit", "n_wrong_commit", "n_commit_empty", "n_commit_1word")}),
+        f"wc {got:.4f} (paper {exp})", "uniform v4", ctl["uniform"]["v4"]["n_commit"], f"({time.time() - t0:.0f}s)"))
+    return key, rec, line, {"n_test": len(T), "n_control": _S["na"]}
+
+
+def main() -> None:
+    global OUT, LOGF
+    ap = argparse.ArgumentParser()
+    add_workers_arg(ap)
+    ap.add_argument("--out", default=None, help="output folder (default: results/)")
+    ap.add_argument("--checkpoint", default=None, help="folder for per-fit checkpoints (a rerun skips finished fits)")
+    a = ap.parse_args()
+    if a.out:
+        OUT = Path(a.out)
+        OUT.mkdir(parents=True, exist_ok=True)
+        LOGF = OUT / "t15.log"
+    t_all = time.time()
+    info: dict = {}
+    got = pmap(run_fit, FITS, workers=a.workers, exact=a.exact_workers, initializer=init_worker, label="t15 fits",
+               mem_per_worker_gb=1.6, checkpoint=a.checkpoint, log=log, info=info)
+    res: dict = {"description": __doc__.strip().splitlines()[0], "rules": {k: v.to_dict() for k, v in RULES.items()},
+                 "n_test": got[0][3]["n_test"], "n_control": got[0][3]["n_control"], "fits": {}}
+    for key, rec, line, _ in got:
+        res["fits"][key] = rec
+        log(line)
     res["seconds"] = round(time.time() - t_all, 1)
     C.dump(res, OUT / "t15.json")
     write_md(res)
+    log(f"t15 done: {res['seconds']}s, workers {info.get('workers')}")
 
 
 def write_md(res: dict) -> None:

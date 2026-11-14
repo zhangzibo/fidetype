@@ -1,9 +1,9 @@
 ---
 title: Compute setup (GPU training on Windows with ROCm)
 type: question
-tags: [compute, rocm, gpu, latency, cpu-isolation]
+tags: [compute, rocm, gpu, latency, cpu-isolation, parallel]
 sources: []
-updated: 2026-11-13
+updated: 2026-11-14
 ---
 
 # Compute setup: GPU training on Windows with ROCm
@@ -228,6 +228,53 @@ Limits:
 - The GPU is not covered. Only CPU time is isolated.
 - The CPU split assumes one processor group (at most 64 logical CPUs).
 - Linux: affinity works. Raising priority needs root, so the timing class runs at normal priority there.
+
+## Parallel CPU experiments with pmap (2026-11-14, M0-24)
+
+Most CPU experiments run one loop in one process: refits, repeated splits, replays of 816 trials. `fidetype.utils.parallel.pmap` runs such a loop in a pool of worker processes. The output does not change.
+
+```python
+from fidetype.utils.parallel import add_workers_arg, pmap
+
+_CTX = {}
+def init(path):                  # once per worker: load the large read-only data
+    _CTX["ctx"] = load_context(path)
+def one_split(r, seed):          # a module-level function (spawn imports it by name)
+    return evaluate(_CTX["ctx"], r, np.random.default_rng(seed))
+
+if __name__ == "__main__":       # required: each worker imports the script again
+    ap = argparse.ArgumentParser(); add_workers_arg(ap); a = ap.parse_args()
+    rows = pmap(one_split, range(200), seed=3, initializer=init, initargs=(path,),
+                workers=a.workers, exact=a.exact_workers, checkpoint=out / "ckpt", mem_per_worker_gb=1.6)
+```
+
+What pmap guarantees:
+
+| Property | How |
+|---|---|
+| Same output as a loop | Results come back in input order. Item `i` gets the seed `item_seed(seed, i)` (NumPy `SeedSequence([seed, i])`). The seed does not depend on the worker, the worker count or the chunk size. |
+| Background CPU class | Spawned workers (also on Linux), pinned to the background CPUs (0-7 here) at below-normal priority, 1 thread each (OMP, MKL, OpenBLAS, NumExpr, torch). It never takes the timing lock. |
+| Automatic worker count | Background CPUs minus the slots of other registered jobs (`isolation show`), at least 1. With `mem_per_worker_gb`, also at most free RAM / that value. `--workers N` and the env variable `FIDETYPE_WORKERS` are caps. `--exact-workers` uses `--workers` as given. While it runs, pmap registers itself with its worker count, so other pmap runs see it. |
+| Shared data | The `initializer` loads large read-only data once per worker, not once per task. For large NumPy tables, `save_shared` / `load_shared` write `.npy` files and memory-map them; the OS shares the pages. |
+| Resume | With `checkpoint=DIR`, each finished chunk is saved at once. A rerun with the same items loads them and runs only the rest. A checkpoint of other items is refused. After a failure in one task, the running tasks finish and are saved, then the error is raised. |
+| Serial fallback | `workers=1` (or one free slot) runs in the calling process, with the same initializer, seeds, order and checkpoints. Tests and CI use it. |
+
+Rules:
+- Use pmap for loops of independent items that each take more than a few seconds: refits per split or per fit, per-session replays, per-condition simulator runs. A loop that takes less than about 30 s in total gets no gain (spawn and initializer cost).
+- The task function must be pure: its output may depend only on the item, its seed and the read-only shared data. Memo caches are allowed (they do not change values).
+- **Do not use pmap for latency numbers.** Parallel workers share caches and memory bandwidth. Use it for decisions and metrics; measure latency serially in the timing class.
+- Each worker loads its own copy of the decoder context. The B2T '25 context is about 0.9-1.3 GB per worker, so set `mem_per_worker_gb` (1.6 is safe). With 31 GB RAM and other agents running, RAM is often the limit, not CPUs.
+- Workers do not share memo caches. If one item fills a decode cache that a later item reuses, a serial run is faster than its CPU sum suggests. Save new decodes to disk and load them in the initializer (M2-18 `t15_eval.py` does this now).
+
+Scripts that use it (`--workers N`, default auto):
+
+| Script | Unit of work | Equality check (2026-11-14) |
+|---|---|---|
+| `experiments/2026-11-13-m2-18-empty-commits/t15_eval.py` | one of the 6 Paper 1 T15 fits | `t15.json` equal to serial and to the committed file (wall-time keys ignored); `t15.md` byte-equal |
+| `experiments/2026-11-12-paper1-r4-analyses/split-tables/run.py --stage b2t --workers N [--out DIR --jobs ... --r-from --r-to]` | one repeated-split item table | full R = 200 rebuild (700 tables): 699 byte-equal to the R4 cache, 1 differs only in the `new_decodes` counter; M3-02 repeated-split rows equal to the committed `splits.json` |
+| `experiments/2026-11-13-m4-06-real-replay/run.py uncached --workers N [--out DIR]` | one session (post-implant day) of the 816-trial B2T replay | 816/816 decisions equal to serial (all fields except `latency_s`) |
+
+Measured speed-ups (2026-11-14, while 3-5 other jobs used the background class and only 4-7 GB RAM was free, so the auto sizing chose 2-4 workers): T15 6 fits 255 -> 120 s (2.1x, 2 workers); split tables 16-table subset 208 -> 71 s (2.9x, 4 workers), full 300 guard-on tables about 6,600 -> 1,958 s (about 3.4x, 4 workers); M4-06 uncached replay 158 -> 85 s (1.9x, 2 workers). On a free machine expect more (8 background CPUs = 4 cores with SMT); not measured. Full checks: [M0-24 results](../../experiments/2026-11-14-m0-24-parallel/results.md).
 
 ## Related pages
 - [Architecture](architecture.md): the decoders that we train on this GPU.
