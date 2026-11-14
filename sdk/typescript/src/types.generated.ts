@@ -167,6 +167,100 @@ export interface Fep0003IntentTrustDecision {
   [key: string]: unknown;
 }
 
+/** FEP-0005 control declaration (header key control_declaration)
+ *
+ * Structural schema. Rules that need several fields (units fit the quantity, axes length = dims, normalised position only in the screen frame, click_intent declared in the FEP-0003 intent_declaration and not null) are checked by the fep-0005 conformance profile.
+ *
+ * Source: spec/schemas/fep-0005/control-declaration.schema.json */
+export interface Fep0005ControlDeclaration {
+  dims: number;
+  quantity: "velocity" | "position";
+  units: "norm/s" | "px/s" | "mm/s" | "m/s" | "deg/s" | "norm" | "px" | "mm" | "m" | "deg";
+  frame: "screen" | "workspace";
+  rate_hz: number;
+  axes?: string[];
+  uncertainty?: "none" | "std";
+  max_speed?: number;
+  latency_s?: number;
+  window_s?: number;
+  click_intent?: string;
+  /** Unknown keys are allowed (a consumer ignores them). */
+  [key: string]: unknown;
+}
+
+/** FEP-0005 control_enable event (engage or safe-stop from a channel other than the decoder)
+ *
+ * enabled = true engages decoder control (starts the hand-off ramp); enabled = false is a latched stop.
+ *
+ * Source: spec/schemas/fep-0005/control-enable.schema.json */
+export interface Fep0005ControlEnable {
+  type: "control_enable";
+  enabled: boolean;
+  t?: number;
+  source?: "switch" | "caregiver" | "ui" | "voice" | "eye-tracker" | "watchdog" | "other";
+  reason?: string;
+  /** Unknown keys are allowed (a consumer ignores them). */
+  [key: string]: unknown;
+}
+
+/** FEP-0005 control event (decoder or human-channel output)
+ *
+ * Structural schema. Rules that need the declaration or the stream (values and std have dims entries, std present exactly when the declaration says uncertainty = std, tick and t strictly increase, timing fields in order, absent values ignored) are checked by the fep-0005 conformance profile.
+ *
+ * Source: spec/schemas/fep-0005/control-event.schema.json */
+export interface Fep0005ControlEvent {
+  type: "control";
+  id?: string;
+  t: number;
+  tick: number;
+  values: (number | null)[];
+  absent?: boolean[];
+  std?: number[];
+  source?: "decoder" | "human";
+  t_signal_start?: number;
+  t_signal_end?: number;
+  t_decoded?: number;
+  t_emitted?: number;
+  /** Unknown keys are allowed (a consumer ignores them). */
+  [key: string]: unknown;
+}
+
+/** FEP-0005 control trust_decision (one actuation command per decoder tick)
+ *
+ * Structural schema. Semantic rules (state fits action, zero velocity on hold/stop, speed <= v_max, no motion with a no-signal reason, re-engage after stop, a moving tick never reused, seq across profiles, no intent COMMIT while stopped) are checked by the fep-0005 conformance profile.
+ *
+ * Source: spec/schemas/fep-0005/control-trust-decision.schema.json */
+export interface Fep0005ControlTrustDecision {
+  type: "trust_decision";
+  profile: "control";
+  session?: string;
+  seq?: number;
+  tick: number;
+  t?: number;
+  is_final: true;
+  action: "COMMIT" | "ABSTAIN";
+  state: "act" | "attenuate" | "hold" | "stop";
+  velocity: number[];
+  raw?: number[];
+  gain: number;
+  units: string;
+  radius?: number;
+  level?: number;
+  authority?: number;
+  engagement: number;
+  v_max: number;
+  ttl_s: number;
+  reason?: string;
+  reasons?: string[];
+  p_top1: null;
+  score_semantics: "calibrated_prob" | "uncalibrated_prob" | "power" | "strength" | "none";
+  config_id?: string;
+  input?: Record<string, unknown>;
+  latency_s?: number;
+  /** Unknown keys are allowed (a consumer ignores them). */
+  [key: string]: unknown;
+}
+
 /** NeuralTextStream v0.1 decision event (Development, spec 3.5)
  *
  * Structural schema. The score rules of 3.5 (a probability score in [0, 1], score_range for power and strength, no score for none) are written as conditions; the timing order of 3.8 is checked by the v0.1 conformance suite.
@@ -295,6 +389,10 @@ export interface SchemaTypes {
   "fep-0003/intent-event": Fep0003IntentEvent;
   "fep-0003/intent-feedback": Fep0003IntentFeedback;
   "fep-0003/intent-trust-decision": Fep0003IntentTrustDecision;
+  "fep-0005/control-declaration": Fep0005ControlDeclaration;
+  "fep-0005/control-enable": Fep0005ControlEnable;
+  "fep-0005/control-event": Fep0005ControlEvent;
+  "fep-0005/control-trust-decision": Fep0005ControlTrustDecision;
   "nts-v0.1/decision": NtsDecision;
   "nts-v0.1/end": NtsEnd;
   "nts-v0.1/frame": NtsFrame;

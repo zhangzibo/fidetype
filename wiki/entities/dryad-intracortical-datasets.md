@@ -21,4 +21,6 @@ These are public intracortical brain-to-text datasets on Dryad. Dryad deposits a
 
 > **Our take:** These datasets are the key data asset for the trust layer. A decoder (for example the pretrained RNN) produces real decoded text with real errors. We can then evaluate calibration, conformal sets, the guard and the policy on it with no NC licence trap. Offline replay of these datasets is adapter priority 3 ([architecture](../questions/architecture.md#adapter-priority-2026-11-08)). The data is invasive, so it does not replace non-invasive data for Paper 1.
 
+Cursor (control) data on Dryad: [BrainGate recalibration dataset](braingate-recalibration-dataset.md) (CC0, P12-03).
+
 Related: [emg2qwerty](emg2qwerty.md), [SpanishBCBL dataset](spanishbcbl-dataset.md), [KT-sEMG](kt-semg-dataset.md).

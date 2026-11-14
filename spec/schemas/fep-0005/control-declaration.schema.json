@@ -1,0 +1,21 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0005/control-declaration.schema.json",
+ "title": "FEP-0005 control declaration (header key control_declaration)",
+ "description": "Structural schema. Rules that need several fields (units fit the quantity, axes length = dims, normalised position only in the screen frame, click_intent declared in the FEP-0003 intent_declaration and not null) are checked by the fep-0005 conformance profile.",
+ "type": "object",
+ "required": ["dims", "quantity", "units", "frame", "rate_hz"],
+ "properties": {
+  "dims": {"type": "integer", "minimum": 1, "maximum": 3},
+  "quantity": {"enum": ["velocity", "position"]},
+  "units": {"enum": ["norm/s", "px/s", "mm/s", "m/s", "deg/s", "norm", "px", "mm", "m", "deg"]},
+  "frame": {"enum": ["screen", "workspace"]},
+  "rate_hz": {"type": "number", "exclusiveMinimum": 0},
+  "axes": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "string", "minLength": 1}},
+  "uncertainty": {"enum": ["none", "std"]},
+  "max_speed": {"type": "number", "exclusiveMinimum": 0},
+  "latency_s": {"type": "number", "minimum": 0},
+  "window_s": {"type": "number", "minimum": 0},
+  "click_intent": {"type": "string"}
+ }
+}

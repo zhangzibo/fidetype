@@ -113,3 +113,7 @@ Strong fit but over 5 GB: [BrainGate multi-gesture drag-and-drop](https://datadr
 - FALCON H1/H2 pages give 3 subjects in metadata but one participant in the text.
 - NoMAD: the page names both a human (T11) and a monkey.
 - putEMG and CapgMyo host pages could not be read; their licences are unverified on the host.
+
+## Follow-up (2026-11-14, P12-03)
+- NLB MC_RTT was downloaded and used: [source page](../sources/nlb-mc-rtt.md), [results](../../experiments/2026-11-14-p12-03-control/results.md).
+- BrainGate long-term recalibration: licence re-checked (CC0 1.0, Dryad API); the file download needs a Dryad token, so it is not downloaded yet: [entity page](../entities/braingate-recalibration-dataset.md).

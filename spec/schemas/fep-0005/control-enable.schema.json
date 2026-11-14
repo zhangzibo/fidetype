@@ -1,0 +1,15 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0005/control-enable.schema.json",
+ "title": "FEP-0005 control_enable event (engage or safe-stop from a channel other than the decoder)",
+ "description": "enabled = true engages decoder control (starts the hand-off ramp); enabled = false is a latched stop.",
+ "type": "object",
+ "required": ["type", "enabled"],
+ "properties": {
+  "type": {"const": "control_enable"},
+  "enabled": {"type": "boolean"},
+  "t": {"type": "number"},
+  "source": {"enum": ["switch", "caregiver", "ui", "voice", "eye-tracker", "watchdog", "other"]},
+  "reason": {"type": "string"}
+ }
+}

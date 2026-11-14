@@ -1,0 +1,477 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "0.1",
+ "profile": "fep-0005",
+ "fep": "FEP-0005",
+ "generator": "python -m fidetype.conformance vectors --profile fep-0005",
+ "how_to_use": "FEP-0005 profile. For each vector, load the file with your consumer. Input streams (line 1 = header) must follow v0.1 and FEP-0005 sections 2-4 (and FEP-0003 for intent events). Decision logs (only trust_decision lines) must follow sections 5-6; text and intent decisions in the same log follow FEP-0001 / FEP-0003. A conforming consumer accepts exactly the vectors with expect = accept. For a decision log, 'moving_ticks' lists the ticks a bridge may move on (control COMMITs), 'acted_intents' the FEP-0003 intents and 'acted_texts' the FEP-0001 texts.",
+ "vectors": [
+  {
+   "id": "C01",
+   "file": "c01-velocity-stream.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 2, 3, 4",
+   "description": "2D velocity stream with std, an engage, signal quality, three ticks and a disengage",
+   "expected": {
+    "kind": "input",
+    "declarations": 1,
+    "controls": 3,
+    "enables": 2
+   }
+  },
+  {
+   "id": "C02",
+   "file": "c02-click-intent.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 2 r4, 5 r6",
+   "description": "Velocity stream plus a click as a FEP-0003 intent (click_intent declared in intent_declaration)",
+   "expected": {
+    "kind": "input",
+    "controls": 2,
+    "intents": 1
+   }
+  },
+  {
+   "id": "C03",
+   "file": "c03-human-absent-timing.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 3 r3, 3.8 v0.1",
+   "description": "A human assist event (no std), an absent axis, and v0.1 timing fields in order",
+   "expected": {
+    "kind": "input",
+    "controls": 3
+   }
+  },
+  {
+   "id": "C04",
+   "file": "c04-v01-pointer.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 3 r4",
+   "description": "v0.1 pointer events (relative, no score) on a control stream with uncertainty none",
+   "expected": {
+    "kind": "input",
+    "pointers": 2
+   }
+  },
+  {
+   "id": "C05",
+   "file": "c05-screen-position.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 2 table",
+   "description": "Normalised screen position (quantity position, units norm, frame screen, no uncertainty)",
+   "expected": {
+    "kind": "input",
+    "controls": 2
+   }
+  },
+  {
+   "id": "C06",
+   "file": "c06-decl-dims.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 2 table",
+   "description": "dims 4",
+   "failing_check": "FEP5-DECL"
+  },
+  {
+   "id": "C07",
+   "file": "c07-decl-units.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 2 r1",
+   "description": "Velocity with position units \"mm\"",
+   "failing_check": "FEP5-DECL"
+  },
+  {
+   "id": "C08",
+   "file": "c08-decl-frame.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 2 table",
+   "description": "frame \"world\" is not defined",
+   "failing_check": "FEP5-DECL"
+  },
+  {
+   "id": "C09",
+   "file": "c09-decl-rate.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 2 table",
+   "description": "rate_hz 0",
+   "failing_check": "FEP5-DECL"
+  },
+  {
+   "id": "C10",
+   "file": "c10-decl-click-undeclared.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 2 r4",
+   "description": "click_intent without an intent_declaration",
+   "failing_check": "FEP5-DECL"
+  },
+  {
+   "id": "C11",
+   "file": "c11-decl-click-null.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 2 r4",
+   "description": "click_intent names the null (rest) intent",
+   "failing_check": "FEP5-DECL"
+  },
+  {
+   "id": "C12",
+   "file": "c12-control-no-declaration.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3 r1",
+   "description": "A control event in a stream without a declaration",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C13",
+   "file": "c13-control-dims.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3 table",
+   "description": "values has 3 numbers on a 2-axis stream",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C14",
+   "file": "c14-control-tick-order.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3 r2",
+   "description": "tick goes from 5 to 5",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C15",
+   "file": "c15-control-t-order.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3 r2",
+   "description": "t goes back between two ticks",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C16",
+   "file": "c16-control-std-missing.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3 r3",
+   "description": "uncertainty std, but a decoder event has no std",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C17",
+   "file": "c17-control-std-negative.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3 table",
+   "description": "std -1",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C18",
+   "file": "c18-control-nan-value.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3 table",
+   "description": "A value is null without absent",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C19",
+   "file": "c19-control-timing.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3.8 v0.1",
+   "description": "t_decoded before t_signal_end",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C20",
+   "file": "c20-enable-form.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 4 table",
+   "description": "control_enable with enabled = \"yes\"",
+   "failing_check": "FEP5-ENABLE"
+  },
+  {
+   "id": "C21",
+   "file": "c21-pointer-dims.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 3 r4",
+   "description": "A pointer with 3 dims on a 2-axis stream",
+   "failing_check": "FEP5-CONTROL"
+  },
+  {
+   "id": "C22",
+   "file": "c22-intent-unknown.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r6",
+   "description": "A click intent event names an undeclared intent",
+   "failing_check": "FEP5-INTENT"
+  },
+  {
+   "id": "C23",
+   "file": "c23-v01-core-broken.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 Compatibility",
+   "description": "Valid FEP-0005 parts, but a frame breaks v0.1 (row does not sum to 1)",
+   "failing_check": "FEP5-V01-CORE"
+  },
+  {
+   "id": "E01",
+   "file": "e01-log-states.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 5, 6",
+   "description": "Control decisions: hold (not engaged), attenuate, act, hold (uncertain), stop",
+   "expected": {
+    "kind": "decisions",
+    "control_decisions": 5,
+    "moving_ticks": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "id": "E02",
+   "file": "e02-log-control-and-click.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r5, 6 r7",
+   "description": "Control and intent (click) decisions in one session share seq; the click is committed while engaged",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 3,
+    "control_decisions": 2,
+    "moving_ticks": [
+     0,
+     1
+    ],
+    "acted_intents": [
+     "intent.click"
+    ]
+   }
+  },
+  {
+   "id": "E03",
+   "file": "e03-log-reengage.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r5",
+   "description": "Stop (engagement 1), then motion again only with engagement 2 and a hand-off ramp (authority < 1)",
+   "expected": {
+    "kind": "decisions",
+    "moving_ticks": [
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "id": "E04",
+   "file": "e04-log-stale-hold.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r4",
+   "description": "A dead-man HOLD (stale_input) repeats the last tick with zero velocity",
+   "expected": {
+    "kind": "decisions",
+    "moving_ticks": [
+     7
+    ]
+   }
+  },
+  {
+   "id": "E05",
+   "file": "e05-hold-moves.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r1",
+   "description": "A hold decision with non-zero velocity",
+   "failing_check": "FEP5-SAFETY"
+  },
+  {
+   "id": "E06",
+   "file": "e06-over-vmax.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r3",
+   "description": "Speed 500 above v_max 400",
+   "failing_check": "FEP5-SAFETY"
+  },
+  {
+   "id": "E07",
+   "file": "e07-motion-after-stop.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r5",
+   "description": "Motion after a stop with the same engagement",
+   "failing_check": "FEP5-SAFETY"
+  },
+  {
+   "id": "E08",
+   "file": "e08-move-on-no-signal.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r2",
+   "description": "A COMMIT with reason no_signal",
+   "failing_check": "FEP5-SAFETY"
+  },
+  {
+   "id": "E09",
+   "file": "e09-provisional.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r2",
+   "description": "A control decision with is_final = false",
+   "failing_check": "FEP5-TD-FORMAT"
+  },
+  {
+   "id": "E10",
+   "file": "e10-state-action.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r3",
+   "description": "state hold with action COMMIT",
+   "failing_check": "FEP5-TD-FORMAT"
+  },
+  {
+   "id": "E11",
+   "file": "e11-no-vmax.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r4",
+   "description": "A control decision without v_max",
+   "failing_check": "FEP5-TD-FORMAT"
+  },
+  {
+   "id": "E12",
+   "file": "e12-no-ttl.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r4",
+   "description": "A control decision without ttl_s",
+   "failing_check": "FEP5-TD-FORMAT"
+  },
+  {
+   "id": "E13",
+   "file": "e13-gain-range.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 table",
+   "description": "gain 1.5",
+   "failing_check": "FEP5-TD-FORMAT"
+  },
+  {
+   "id": "E14",
+   "file": "e14-shown.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r1",
+   "description": "A control decision with shown (a text bridge could type it)",
+   "failing_check": "FEP5-TD-FORMAT"
+  },
+  {
+   "id": "E15",
+   "file": "e15-tick-moves-twice.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r5",
+   "description": "Two moving decisions for the same tick",
+   "failing_check": "FEP5-TD-ORDER"
+  },
+  {
+   "id": "E16",
+   "file": "e16-seq-across-profiles.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 5 r5",
+   "description": "A control and an intent decision reuse seq 0",
+   "failing_check": "FEP5-TD-ORDER"
+  },
+  {
+   "id": "E17",
+   "file": "e17-click-while-stopped.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r7",
+   "description": "An intent COMMIT after a control stop",
+   "failing_check": "FEP5-SAFETY"
+  },
+  {
+   "id": "E18",
+   "file": "e18-faster-than-raw.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r6",
+   "description": "At full authority the output (60, 0) is faster than the decoder output (40, 0)",
+   "failing_check": "FEP5-SAFETY"
+  },
+  {
+   "id": "E19",
+   "file": "e19-commit-zero.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r1",
+   "description": "A COMMIT with zero velocity (a hold must say hold)",
+   "failing_check": "FEP5-SAFETY"
+  }
+ ]
+}

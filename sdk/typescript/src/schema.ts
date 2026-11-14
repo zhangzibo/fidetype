@@ -130,9 +130,14 @@ export function schemaKeyFor(ev: Record<string, unknown>): SchemaKey | null {
     case "signal_quality": return "nts-v0.1/signal-quality";
     case "end": return "nts-v0.1/end";
     case "segment_end": return "fep-0001/segment-end";
-    case "trust_decision": return ev.profile === "intent" ? ("fep-0003/intent-trust-decision" as SchemaKey) : "fep-0001/trust-decision";
+    case "trust_decision":
+      if (ev.profile === "intent") return "fep-0003/intent-trust-decision" as SchemaKey;
+      if (ev.profile === "control") return "fep-0005/control-trust-decision" as SchemaKey;
+      return "fep-0001/trust-decision";
     case "intent": return "fep-0003/intent-event" as SchemaKey;
     case "intent_feedback": return "fep-0003/intent-feedback" as SchemaKey;
+    case "control": return "fep-0005/control-event" as SchemaKey;
+    case "control_enable": return "fep-0005/control-enable" as SchemaKey;
     default: return null;
   }
 }
@@ -145,7 +150,7 @@ function sub(key: string, value: unknown, path: string): SchemaError[] {
 /**
  * Structural check of one event against the spec schemas. It also checks
  * the nested objects that have their own schema: `decode_declaration`,
- * `intent_declaration` and the FEP-0001 n-best items. Event-internal
+ * `intent_declaration`, `control_declaration` and the FEP-0001 n-best items. Event-internal
  * `_line` keys are ignored.
  */
 export function validateEventSchema(ev: Record<string, unknown>): SchemaError[] {
@@ -156,6 +161,7 @@ export function validateEventSchema(ev: Record<string, unknown>): SchemaError[] 
     errs.push(...sub("fep-0001/decode-declaration", ev.decode_declaration, "/decode_declaration"));
   }
   if (ev.type === "header" && "intent_declaration" in ev) errs.push(...sub("fep-0003/intent-declaration", ev.intent_declaration, "/intent_declaration"));
+  if (ev.type === "header" && "control_declaration" in ev) errs.push(...sub("fep-0005/control-declaration", ev.control_declaration, "/control_declaration"));
   if (ev.type === "hypothesis" && Array.isArray(ev.nbest)) {
     ev.nbest.forEach((it, i) => errs.push(...sub("fep-0001/nbest-item", it, `/nbest/${i}`)));
   }

@@ -41,6 +41,7 @@ fidetype conformance --profile fep-0004     # NTS over WebSocket: scenario vecto
 | [0002](feps/0002-nts-over-lsl.md) | NeuralTextStream over LSL (binding `nts-lsl/0.1`) | Draft | `fep-0002` (31 vectors) |
 | [0003](feps/0003-intent-events.md) | Output profiles (core, text, intent, control) and discrete intent events (risk classes, confirmation, undo, `intent_feedback`, intent `trust_decision`) | Draft | `fep-0003` (44 vectors); JSON schemas in `schemas/fep-0003/` |
 | [0004](feps/0004-nts-over-websocket.md) | NeuralTextStream over WebSocket (binding `nts-ws/0.1`: framing, `ws_seq` order and gaps, resume, back-pressure, auth hook, decisions channel) | Draft | `fep-0004` (37 vectors) |
+| [0005](feps/0005-control-events.md) | Continuous-control events (control profile: `control_declaration` units / frame / rate / uncertainty, `control`, `control_enable`, control `trust_decision` with gain / hold / stop, safety rules) | Draft | `fep-0005` (42 vectors) |
 
 ## Stability levels
 | Level | Meaning |
@@ -66,13 +67,16 @@ spec/
   conformance/fep-0002/       golden vectors of the opt-in FEP-0002 profile (LSL scenarios, .json)
   conformance/fep-0003/       golden vectors of the opt-in FEP-0003 profile (.jsonl)
   conformance/fep-0004/       golden vectors of the opt-in FEP-0004 profile (WebSocket scenarios, .json)
+  conformance/fep-0005/       golden vectors of the opt-in FEP-0005 profile (.jsonl)
   schemas/nts-v0.1/           JSON schemas (draft 2020-12, structural) of the v0.1 JSON Lines events
   schemas/fep-0001/           JSON schemas of the FEP-0001 objects (segment_end, n-best item, decode_declaration, trust_decision)
   schemas/fep-0003/           JSON schemas (draft 2020-12) of the FEP-0003 objects
+  schemas/fep-0005/           JSON schemas (draft 2020-12) of the FEP-0005 objects
   feps/                       Fidetype Enhancement Proposals
     0000-template.md          the template for a new FEP
     0001-streaming-trust-events.md
     0002-nts-over-lsl.md
     0003-intent-events.md
     0004-nts-over-websocket.md
+    0005-control-events.md
 ```

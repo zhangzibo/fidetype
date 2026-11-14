@@ -97,6 +97,12 @@
       "title": "16. WebSocket input and output (FEP-0004, M6-11)",
       "caption": "A decoder sends NTS events with sequence numbers over WebSocket. The server drops duplicates, waits briefly for late events and lets a broken connection resume without loss. A gap or a lost stream drops the open utterance without a decision. Decisions go to browsers in order; a subscriber that misses one asks for it again.",
       "wiki": "../concepts/websocket-input.md"
+    },
+    {
+      "file": "17-control-events.drawio",
+      "title": "17. Control events (FEP-0005, P12-03)",
+      "caption": "A decoder sends one velocity with an uncertainty per tick. No-signal gates hold the cursor; conformal shrinkage, the hand-off ramp and the clamps can only slow it down. Motion needs an engage, and a stop is latched. Each command has a time-to-live, so a bridge stops by itself when commands stop.",
+      "wiki": "../concepts/control-events.md"
     }
   ]
 }

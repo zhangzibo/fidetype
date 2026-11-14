@@ -21,7 +21,7 @@ An **intent** is one discrete action that a person means: select, confirm, cance
 | Core | header, frames, time, `signal_quality`, `segment_end`, `end`, `meta`, provenance |
 | Text profile | `hypothesis`, text `trust_decision` (FEP-0001). Unchanged |
 | Intent profile | header `intent_declaration`, `intent`, `intent_feedback`, v0.1 `decision`, `trust_decision` with `profile = "intent"` |
-| Control profile | v0.1 `pointer`; actuation policy in a later FEP (P12-03) |
+| Control profile | `control_declaration`, `control`, `control_enable`, control `trust_decision`: see [control events](control-events.md) (FEP-0005, P12-03) |
 
 ## Risk classes
 | Class | Example | Default limit per decision unit | Extra rule |
@@ -57,6 +57,7 @@ Public sEMG data (Toronto sEMG typing, CC BY 4.0) recast as a 27-way key choice,
 ## Related
 - [Apple BCI HID](../entities/apple-bci-hid.md): target interface for intents and pointer (P12-05).
 - [Toronto sEMG typing](../sources/toronto-semg-typing.md): the public data of the evaluation.
+- [Control events](control-events.md): FEP-0005, the continuous control profile; a click goes through this intent profile.
 - [Intent and control datasets](../questions/intent-datasets-survey.md): P12-06 survey of public datasets for the intent and control profiles, with verified licences and top-3 picks.
 - [Conformance suite](conformance-suite.md): profile `fep-0003` (44 vectors).
 - [LSL input](lsl-input.md): intents travel on the events stream with no binding change.

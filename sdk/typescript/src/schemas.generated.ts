@@ -2,7 +2,7 @@
 // Regenerate: npm run gen:schemas (sdk/typescript). Check: npm run check:schemas.
 /* eslint-disable */
 
-/** The spec schemas (15), keyed by "<folder>/<name>". */
+/** The spec schemas (19), keyed by "<folder>/<name>". */
 export const SCHEMAS = {
  "fep-0001/decode-declaration": {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -576,6 +576,359 @@ export const SCHEMAS = {
    }
   ]
  },
+ "fep-0005/control-declaration": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0005/control-declaration.schema.json",
+  "title": "FEP-0005 control declaration (header key control_declaration)",
+  "description": "Structural schema. Rules that need several fields (units fit the quantity, axes length = dims, normalised position only in the screen frame, click_intent declared in the FEP-0003 intent_declaration and not null) are checked by the fep-0005 conformance profile.",
+  "type": "object",
+  "required": [
+   "dims",
+   "quantity",
+   "units",
+   "frame",
+   "rate_hz"
+  ],
+  "properties": {
+   "dims": {
+    "type": "integer",
+    "minimum": 1,
+    "maximum": 3
+   },
+   "quantity": {
+    "enum": [
+     "velocity",
+     "position"
+    ]
+   },
+   "units": {
+    "enum": [
+     "norm/s",
+     "px/s",
+     "mm/s",
+     "m/s",
+     "deg/s",
+     "norm",
+     "px",
+     "mm",
+     "m",
+     "deg"
+    ]
+   },
+   "frame": {
+    "enum": [
+     "screen",
+     "workspace"
+    ]
+   },
+   "rate_hz": {
+    "type": "number",
+    "exclusiveMinimum": 0
+   },
+   "axes": {
+    "type": "array",
+    "minItems": 1,
+    "maxItems": 3,
+    "items": {
+     "type": "string",
+     "minLength": 1
+    }
+   },
+   "uncertainty": {
+    "enum": [
+     "none",
+     "std"
+    ]
+   },
+   "max_speed": {
+    "type": "number",
+    "exclusiveMinimum": 0
+   },
+   "latency_s": {
+    "type": "number",
+    "minimum": 0
+   },
+   "window_s": {
+    "type": "number",
+    "minimum": 0
+   },
+   "click_intent": {
+    "type": "string"
+   }
+  }
+ },
+ "fep-0005/control-enable": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0005/control-enable.schema.json",
+  "title": "FEP-0005 control_enable event (engage or safe-stop from a channel other than the decoder)",
+  "description": "enabled = true engages decoder control (starts the hand-off ramp); enabled = false is a latched stop.",
+  "type": "object",
+  "required": [
+   "type",
+   "enabled"
+  ],
+  "properties": {
+   "type": {
+    "const": "control_enable"
+   },
+   "enabled": {
+    "type": "boolean"
+   },
+   "t": {
+    "type": "number"
+   },
+   "source": {
+    "enum": [
+     "switch",
+     "caregiver",
+     "ui",
+     "voice",
+     "eye-tracker",
+     "watchdog",
+     "other"
+    ]
+   },
+   "reason": {
+    "type": "string"
+   }
+  }
+ },
+ "fep-0005/control-event": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0005/control-event.schema.json",
+  "title": "FEP-0005 control event (decoder or human-channel output)",
+  "description": "Structural schema. Rules that need the declaration or the stream (values and std have dims entries, std present exactly when the declaration says uncertainty = std, tick and t strictly increase, timing fields in order, absent values ignored) are checked by the fep-0005 conformance profile.",
+  "type": "object",
+  "required": [
+   "type",
+   "t",
+   "tick",
+   "values"
+  ],
+  "properties": {
+   "type": {
+    "const": "control"
+   },
+   "id": {
+    "type": "string"
+   },
+   "t": {
+    "type": "number"
+   },
+   "tick": {
+    "type": "integer",
+    "minimum": 0
+   },
+   "values": {
+    "type": "array",
+    "minItems": 1,
+    "maxItems": 3,
+    "items": {
+     "type": [
+      "number",
+      "null"
+     ]
+    }
+   },
+   "absent": {
+    "type": "array",
+    "minItems": 1,
+    "maxItems": 3,
+    "items": {
+     "type": "boolean"
+    }
+   },
+   "std": {
+    "type": "array",
+    "minItems": 1,
+    "maxItems": 3,
+    "items": {
+     "type": "number",
+     "exclusiveMinimum": 0
+    }
+   },
+   "source": {
+    "enum": [
+     "decoder",
+     "human"
+    ]
+   },
+   "t_signal_start": {
+    "type": "number"
+   },
+   "t_signal_end": {
+    "type": "number"
+   },
+   "t_decoded": {
+    "type": "number"
+   },
+   "t_emitted": {
+    "type": "number"
+   }
+  }
+ },
+ "fep-0005/control-trust-decision": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0005/control-trust-decision.schema.json",
+  "title": "FEP-0005 control trust_decision (one actuation command per decoder tick)",
+  "description": "Structural schema. Semantic rules (state fits action, zero velocity on hold/stop, speed <= v_max, no motion with a no-signal reason, re-engage after stop, a moving tick never reused, seq across profiles, no intent COMMIT while stopped) are checked by the fep-0005 conformance profile.",
+  "type": "object",
+  "required": [
+   "type",
+   "profile",
+   "tick",
+   "is_final",
+   "action",
+   "state",
+   "velocity",
+   "gain",
+   "units",
+   "p_top1",
+   "score_semantics",
+   "v_max",
+   "ttl_s",
+   "engagement"
+  ],
+  "properties": {
+   "type": {
+    "const": "trust_decision"
+   },
+   "profile": {
+    "const": "control"
+   },
+   "session": {
+    "type": "string"
+   },
+   "seq": {
+    "type": "integer",
+    "minimum": 0
+   },
+   "tick": {
+    "type": "integer",
+    "minimum": 0
+   },
+   "t": {
+    "type": "number"
+   },
+   "is_final": {
+    "const": true
+   },
+   "action": {
+    "enum": [
+     "COMMIT",
+     "ABSTAIN"
+    ]
+   },
+   "state": {
+    "enum": [
+     "act",
+     "attenuate",
+     "hold",
+     "stop"
+    ]
+   },
+   "velocity": {
+    "type": "array",
+    "minItems": 1,
+    "maxItems": 3,
+    "items": {
+     "type": "number"
+    }
+   },
+   "raw": {
+    "type": "array",
+    "minItems": 1,
+    "maxItems": 3,
+    "items": {
+     "type": "number"
+    }
+   },
+   "gain": {
+    "type": "number",
+    "minimum": 0,
+    "maximum": 1
+   },
+   "units": {
+    "type": "string"
+   },
+   "radius": {
+    "type": "number",
+    "minimum": 0
+   },
+   "level": {
+    "type": "number",
+    "exclusiveMinimum": 0,
+    "exclusiveMaximum": 1
+   },
+   "authority": {
+    "type": "number",
+    "minimum": 0,
+    "maximum": 1
+   },
+   "engagement": {
+    "type": "integer",
+    "minimum": 0
+   },
+   "v_max": {
+    "type": "number",
+    "exclusiveMinimum": 0
+   },
+   "ttl_s": {
+    "type": "number",
+    "exclusiveMinimum": 0
+   },
+   "reason": {
+    "type": "string"
+   },
+   "reasons": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "p_top1": {
+    "type": "null"
+   },
+   "score_semantics": {
+    "enum": [
+     "calibrated_prob",
+     "uncalibrated_prob",
+     "power",
+     "strength",
+     "none"
+    ]
+   },
+   "config_id": {
+    "type": "string"
+   },
+   "input": {
+    "type": "object"
+   },
+   "latency_s": {
+    "type": "number",
+    "minimum": 0
+   }
+  },
+  "not": {
+   "anyOf": [
+    {
+     "required": [
+      "shown"
+     ]
+    },
+    {
+     "required": [
+      "utterance"
+     ]
+    },
+    {
+     "required": [
+      "unit"
+     ]
+    }
+   ]
+  }
+ },
  "nts-v0.1/decision": {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v0.1/decision.schema.json",
@@ -1029,4 +1382,4 @@ export const SCHEMAS = {
  }
 } as const;
 
-export type SchemaKey = "fep-0001/decode-declaration" | "fep-0001/nbest-item" | "fep-0001/segment-end" | "fep-0001/trust-decision" | "fep-0003/intent-declaration" | "fep-0003/intent-event" | "fep-0003/intent-feedback" | "fep-0003/intent-trust-decision" | "nts-v0.1/decision" | "nts-v0.1/end" | "nts-v0.1/frame" | "nts-v0.1/header" | "nts-v0.1/hypothesis" | "nts-v0.1/pointer" | "nts-v0.1/signal-quality";
+export type SchemaKey = "fep-0001/decode-declaration" | "fep-0001/nbest-item" | "fep-0001/segment-end" | "fep-0001/trust-decision" | "fep-0003/intent-declaration" | "fep-0003/intent-event" | "fep-0003/intent-feedback" | "fep-0003/intent-trust-decision" | "fep-0005/control-declaration" | "fep-0005/control-enable" | "fep-0005/control-event" | "fep-0005/control-trust-decision" | "nts-v0.1/decision" | "nts-v0.1/end" | "nts-v0.1/frame" | "nts-v0.1/header" | "nts-v0.1/hypothesis" | "nts-v0.1/pointer" | "nts-v0.1/signal-quality";

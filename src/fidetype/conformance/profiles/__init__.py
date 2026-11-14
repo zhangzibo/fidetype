@@ -18,6 +18,9 @@ Profile        FEP                                            Golden vectors
 ``fep-0004``   NeuralTextStream over WebSocket (handshake,    ``spec/conformance/fep-0004/``
                ws_seq order, batches, resume, auth hook,
                decisions channel)
+``fep-0005``   Continuous-control events (``control_declaration``, ``spec/conformance/fep-0005/``
+               ``control``, ``control_enable``, control
+               ``trust_decision``)
 =============  =============================================  ==============================
 
 Each profile has: ``build_vectors()`` (the golden vectors), a reference
@@ -50,6 +53,7 @@ _PROFILES = {
     "fep-0002": ("fidetype.conformance.profiles.fep0002", "FEP-0002", "NeuralTextStream over LSL"),
     "fep-0003": ("fidetype.conformance.profiles.fep0003", "FEP-0003", "Output profiles and discrete intent events"),
     "fep-0004": ("fidetype.conformance.profiles.fep0004", "FEP-0004", "NeuralTextStream over WebSocket"),
+    "fep-0005": ("fidetype.conformance.profiles.fep0005", "FEP-0005", "Continuous-control events"),
 }
 PROFILE_NAMES = tuple(_PROFILES)
 REPORT_SCHEMA = "fidetype.conformance.profile-report/1"

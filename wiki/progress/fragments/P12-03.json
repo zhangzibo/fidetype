@@ -1,4 +1,0 @@
-{"id": "P12-03", "status": "in_progress",
- "started_at": "2026-11-13T23:45:00-08:00", "finished_at": null, "approx_times": true,
- "notes": "Started: FEP-0005 control profile, reference decoder + control trust layer, MC_RTT / BrainGate evaluation.",
- "_tracker_updated": "2026-11-13T23:45:00-08:00"}

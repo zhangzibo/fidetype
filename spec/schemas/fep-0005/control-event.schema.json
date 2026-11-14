@@ -1,0 +1,22 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0005/control-event.schema.json",
+ "title": "FEP-0005 control event (decoder or human-channel output)",
+ "description": "Structural schema. Rules that need the declaration or the stream (values and std have dims entries, std present exactly when the declaration says uncertainty = std, tick and t strictly increase, timing fields in order, absent values ignored) are checked by the fep-0005 conformance profile.",
+ "type": "object",
+ "required": ["type", "t", "tick", "values"],
+ "properties": {
+  "type": {"const": "control"},
+  "id": {"type": "string"},
+  "t": {"type": "number"},
+  "tick": {"type": "integer", "minimum": 0},
+  "values": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": ["number", "null"]}},
+  "absent": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "boolean"}},
+  "std": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "number", "exclusiveMinimum": 0}},
+  "source": {"enum": ["decoder", "human"]},
+  "t_signal_start": {"type": "number"},
+  "t_signal_end": {"type": "number"},
+  "t_decoded": {"type": "number"},
+  "t_emitted": {"type": "number"}
+ }
+}

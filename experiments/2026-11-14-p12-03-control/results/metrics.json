@@ -1,0 +1,1038 @@
+{
+ "data": "NLB MC_RTT train file (DANDI 000129 v0.241017.1444, CC-BY-4.0)",
+ "bins": 32455,
+ "units": 130,
+ "bin_s": 0.02,
+ "history_bins": 10,
+ "splits": {
+  "main": {
+   "split": "main",
+   "n": {
+    "fit": 12982,
+    "scale": 3246,
+    "cal": 6490,
+    "test": 9737
+   },
+   "lambda": 10000.0,
+   "v_max": 351.8240704303029,
+   "a_max": 3350.0941535404168,
+   "min_quality": 0.1994095744680851,
+   "no_signal_output": [
+    4.700462236054786,
+    12.459869148317548
+   ],
+   "no_signal_speed": 13.317007337452834,
+   "raw": {
+    "r2": 0.47847693126076535,
+    "pearson": 0.7072173327029629
+   },
+   "coverage": {
+    "0.8": {
+     "normalised": 0.8102084831056794,
+     "plain": 0.8005545856013145,
+     "mean_radius_normalised": 65.86346903410991,
+     "radius_plain": 70.8385142130188,
+     "gate_only": {
+      "r2": 3.25519560290255e-05,
+      "motion_frac": 0.01540515559207148,
+      "overspeed_rate": 0.002054020745609531,
+      "mean_speed_out": 0.027695501827451705,
+      "mean_speed_raw": 45.77257651732108,
+      "mean_speed_true": 56.53764695560405,
+      "mean_cos_moving": 0.9480137578911682,
+      "mean_gain": 0.0005389922757464756
+     }
+    },
+    "0.9": {
+     "normalised": 0.9051042415528396,
+     "plain": 0.9081852726712539,
+     "mean_radius_normalised": 88.61266983911563,
+     "radius_plain": 120.85381635818658,
+     "gate_only": {
+      "r2": -2.635626726443796e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 45.77257651732108,
+      "mean_speed_true": 56.53764695560405,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    },
+    "0.95": {
+     "normalised": 0.9621033172435042,
+     "plain": 0.9514224093663346,
+     "mean_radius_normalised": 130.5705431643942,
+     "radius_plain": 170.3375974640035,
+     "gate_only": {
+      "r2": -2.635626726443796e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 45.77257651732108,
+      "mean_speed_true": 56.53764695560405,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    }
+   },
+   "config_id": "ccfg-d11be5cfd948f1d1",
+   "gated": {
+    "r2": -2.635626726443796e-05,
+    "pearson": 0.0,
+    "motion_frac": 0.0,
+    "overspeed_rate": 0.0,
+    "mean_speed_out": 0.0,
+    "mean_speed_raw": 45.77257651732108,
+    "mean_speed_true": 56.53764695560405,
+    "mean_cos_moving": null,
+    "mean_gain": 0.0,
+    "states": {
+     "hold": 9737
+    },
+    "reasons": {
+     "no_signal_reference": 9716,
+     "handoff": 50,
+     "uncertain": 21
+    }
+   },
+   "paths": {
+    "segments": 167,
+    "true": {
+     "path_efficiency": 0.850790819627862,
+     "endpoint_error_mm": 0.0,
+     "reached_frac": 0.9880239520958084,
+     "time_to_target_s_median": 0.64
+    },
+    "raw": {
+     "path_efficiency": 0.6557049540751083,
+     "endpoint_error_mm": 29.603359384642598,
+     "reached_frac": 0.10778443113772455,
+     "time_to_target_s_median": 0.67
+    },
+    "gated": {
+     "path_efficiency": 0.0,
+     "endpoint_error_mm": 54.32464170037435,
+     "reached_frac": 0.0,
+     "time_to_target_s_median": null
+    }
+   },
+   "controls": {
+    "shuffled": {
+     "r2_raw": -0.13266802336558758,
+     "r2_gated": -2.635626726443796e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 29.700103152397467,
+     "mean_speed_true": 56.53764695560405,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 9737
+     }
+    },
+    "zero": {
+     "r2_raw": -0.02117797114515918,
+     "r2_gated": -2.635626726443796e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 13.317007337452837,
+     "mean_speed_true": 56.53764695560405,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 9737
+     }
+    },
+    "zero_without_gates": {
+     "r2_gated": -2.635626726443796e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 13.317007337452837,
+     "mean_speed_true": 56.53764695560405,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 9737
+     }
+    },
+    "reversed": {
+     "r2_raw": -0.3170324792880167,
+     "r2_gated": -2.635626726443796e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 44.79082251317521,
+     "mean_speed_true": 56.53764695560405,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 9737
+     }
+    }
+   },
+   "latency_ms": {
+    "median": 0.09580000187270343,
+    "p99": 1.6589280019979618,
+    "max": 16.738200007239357
+   }
+  },
+  "rot0": {
+   "split": "rot0",
+   "n": {
+    "fit": 15578,
+    "scale": 3895,
+    "cal": 6491,
+    "test": 6491
+   },
+   "lambda": 10000.0,
+   "v_max": 380.16545594523427,
+   "a_max": 3413.8230480942043,
+   "min_quality": 0.1963775510204082,
+   "no_signal_output": [
+    -0.5213883784611675,
+    15.851993171154003
+   ],
+   "no_signal_speed": 15.860565353716353,
+   "raw": {
+    "r2": 0.4408034106737643,
+    "pearson": 0.666454348588127
+   },
+   "coverage": {
+    "0.8": {
+     "normalised": 0.7778462486519797,
+     "plain": 0.8031120012324757,
+     "mean_radius_normalised": 62.89196715809527,
+     "radius_plain": 70.74493715530309,
+     "gate_only": {
+      "r2": 0.00039120462421832203,
+      "motion_frac": 0.042828531813279926,
+      "overspeed_rate": 0.008935449083346172,
+      "mean_speed_out": 0.1310574774756509,
+      "mean_speed_raw": 48.73763894408426,
+      "mean_speed_true": 54.3763720351717,
+      "mean_cos_moving": 0.7998971838526313,
+      "mean_gain": 0.0020621459756453094
+     }
+    },
+    "0.9": {
+     "normalised": 0.8781389616391927,
+     "plain": 0.9107995686334925,
+     "mean_radius_normalised": 79.07183063294944,
+     "radius_plain": 111.59243307402112,
+     "gate_only": {
+      "r2": -4.800816731154178e-06,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 48.73763894408426,
+      "mean_speed_true": 54.3763720351717,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    },
+    "0.95": {
+     "normalised": 0.9315975966723156,
+     "plain": 0.9576336465875828,
+     "mean_radius_normalised": 106.39841974061535,
+     "radius_plain": 164.80219465821918,
+     "gate_only": {
+      "r2": -4.800816731154178e-06,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 48.73763894408426,
+      "mean_speed_true": 54.3763720351717,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    }
+   },
+   "config_id": "ccfg-36702f0b1801df15",
+   "gated": {
+    "r2": -4.800816731154178e-06,
+    "pearson": 0.0,
+    "motion_frac": 0.0,
+    "overspeed_rate": 0.0,
+    "mean_speed_out": 0.0,
+    "mean_speed_raw": 48.73763894408426,
+    "mean_speed_true": 54.3763720351717,
+    "mean_cos_moving": null,
+    "mean_gain": 0.0,
+    "states": {
+     "hold": 6491
+    },
+    "reasons": {
+     "no_signal": 1,
+     "handoff": 50,
+     "no_signal_reference": 6321,
+     "uncertain": 169
+    }
+   },
+   "paths": {
+    "segments": 105,
+    "true": {
+     "path_efficiency": 0.8046337492172425,
+     "endpoint_error_mm": 0.0,
+     "reached_frac": 0.9904761904761905,
+     "time_to_target_s_median": 0.6900000000000001
+    },
+    "raw": {
+     "path_efficiency": 0.6199477088511491,
+     "endpoint_error_mm": 24.62149136083646,
+     "reached_frac": 0.18095238095238095,
+     "time_to_target_s_median": 0.56
+    },
+    "gated": {
+     "path_efficiency": 0.0,
+     "endpoint_error_mm": 53.186193048387565,
+     "reached_frac": 0.0,
+     "time_to_target_s_median": null
+    }
+   },
+   "controls": {
+    "shuffled": {
+     "r2_raw": -0.17082601609998393,
+     "r2_gated": -4.800816731154178e-06,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 33.07002461611005,
+     "mean_speed_true": 54.3763720351717,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero": {
+     "r2_raw": -0.0327939868799334,
+     "r2_gated": -4.800816731154178e-06,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 15.860565353716336,
+     "mean_speed_true": 54.3763720351717,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero_without_gates": {
+     "r2_gated": -4.800816731154178e-06,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 15.860565353716336,
+     "mean_speed_true": 54.3763720351717,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "reversed": {
+     "r2_raw": -0.3229516178532381,
+     "r2_gated": -4.800816731154178e-06,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 47.58105773790011,
+     "mean_speed_true": 54.3763720351717,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    }
+   }
+  },
+  "rot1": {
+   "split": "rot1",
+   "n": {
+    "fit": 15578,
+    "scale": 3895,
+    "cal": 6491,
+    "test": 6491
+   },
+   "lambda": 10000.0,
+   "v_max": 371.2160128067134,
+   "a_max": 3479.7072541521125,
+   "min_quality": 0.17326732673267325,
+   "no_signal_output": [
+    -3.946186836555004,
+    15.096483261941245
+   ],
+   "no_signal_speed": 15.603723832055993,
+   "raw": {
+    "r2": 0.48026332366517,
+    "pearson": 0.6970501398541196
+   },
+   "coverage": {
+    "0.8": {
+     "normalised": 0.8239100292712987,
+     "plain": 0.8239100292712987,
+     "mean_radius_normalised": 65.81499591155863,
+     "radius_plain": 70.63589595131174,
+     "gate_only": {
+      "r2": 0.000145276900383573,
+      "motion_frac": 0.02911723925435218,
+      "overspeed_rate": 0.006778616545986751,
+      "mean_speed_out": 0.08517376137237749,
+      "mean_speed_raw": 48.391555704389134,
+      "mean_speed_true": 51.5600618504781,
+      "mean_cos_moving": 0.7991043800464547,
+      "mean_gain": 0.0014417830564627152
+     }
+    },
+    "0.9": {
+     "normalised": 0.9232783854567863,
+     "plain": 0.9020181790171006,
+     "mean_radius_normalised": 87.58766448201435,
+     "radius_plain": 104.53609596112759,
+     "gate_only": {
+      "r2": -1.8613258306321434e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 48.391555704389134,
+      "mean_speed_true": 51.5600618504781,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    },
+    "0.95": {
+     "normalised": 0.9662609767370205,
+     "plain": 0.9553227545832691,
+     "mean_radius_normalised": 125.51122844303178,
+     "radius_plain": 153.19573084606017,
+     "gate_only": {
+      "r2": -1.8613258306321434e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 48.391555704389134,
+      "mean_speed_true": 51.5600618504781,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    }
+   },
+   "config_id": "ccfg-5f5174b5aa551653",
+   "gated": {
+    "r2": -1.8613258306321434e-05,
+    "pearson": 0.0,
+    "motion_frac": 0.0,
+    "overspeed_rate": 0.0,
+    "mean_speed_out": 0.0,
+    "mean_speed_raw": 48.391555704389134,
+    "mean_speed_true": 51.5600618504781,
+    "mean_cos_moving": null,
+    "mean_gain": 0.0,
+    "states": {
+     "hold": 6491
+    },
+    "reasons": {
+     "no_signal_reference": 6431,
+     "handoff": 50,
+     "uncertain": 60
+    }
+   },
+   "paths": {
+    "segments": 106,
+    "true": {
+     "path_efficiency": 0.8439050457813608,
+     "endpoint_error_mm": 0.0,
+     "reached_frac": 0.9905660377358491,
+     "time_to_target_s_median": 0.62
+    },
+    "raw": {
+     "path_efficiency": 0.6249010130649021,
+     "endpoint_error_mm": 24.051830635677565,
+     "reached_frac": 0.16037735849056603,
+     "time_to_target_s_median": 0.54
+    },
+    "gated": {
+     "path_efficiency": 0.0,
+     "endpoint_error_mm": 48.60544973649411,
+     "reached_frac": 0.0,
+     "time_to_target_s_median": null
+    }
+   },
+   "controls": {
+    "shuffled": {
+     "r2_raw": -0.16628121702973964,
+     "r2_gated": -1.8613258306321434e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 32.72358662657424,
+     "mean_speed_true": 51.5600618504781,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero": {
+     "r2_raw": -0.028624201493012147,
+     "r2_gated": -1.8613258306321434e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 15.603723832055978,
+     "mean_speed_true": 51.5600618504781,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero_without_gates": {
+     "r2_gated": -1.8613258306321434e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 15.603723832055978,
+     "mean_speed_true": 51.5600618504781,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "reversed": {
+     "r2_raw": -0.3027350166417184,
+     "r2_gated": -1.8613258306321434e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 46.6348703621474,
+     "mean_speed_true": 51.5600618504781,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    }
+   }
+  },
+  "rot2": {
+   "split": "rot2",
+   "n": {
+    "fit": 15578,
+    "scale": 3895,
+    "cal": 6491,
+    "test": 6491
+   },
+   "lambda": 10000.0,
+   "v_max": 353.8595280205614,
+   "a_max": 3466.972211244971,
+   "min_quality": 0.20526315789473684,
+   "no_signal_output": [
+    2.4537109989682118,
+    10.617700629729512
+   ],
+   "no_signal_speed": 10.897534782188863,
+   "raw": {
+    "r2": 0.4701497181888312,
+    "pearson": 0.6962569710274088
+   },
+   "coverage": {
+    "0.8": {
+     "normalised": 0.7784624865197967,
+     "plain": 0.78693575720228,
+     "mean_radius_normalised": 63.89319277234272,
+     "radius_plain": 64.59301319039777,
+     "gate_only": {
+      "r2": 0.0008748917305851922,
+      "motion_frac": 0.07471884147280851,
+      "overspeed_rate": 0.017870898166692344,
+      "mean_speed_out": 0.29601798876553764,
+      "mean_speed_raw": 47.96295037585901,
+      "mean_speed_true": 56.38800271613877,
+      "mean_cos_moving": 0.7525367143510056,
+      "mean_gain": 0.0051171357819759225
+     }
+    },
+    "0.9": {
+     "normalised": 0.8765983669696503,
+     "plain": 0.883993221383454,
+     "mean_radius_normalised": 78.55444317317381,
+     "radius_plain": 104.24212704349522,
+     "gate_only": {
+      "r2": -4.0950281097629215e-05,
+      "motion_frac": 0.0007702973347712217,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0008667374553580928,
+      "mean_speed_raw": 47.96295037585901,
+      "mean_speed_true": 56.38800271613877,
+      "mean_cos_moving": -0.21573827593704153,
+      "mean_gain": 1.5916064018098814e-05
+     }
+    },
+    "0.95": {
+     "normalised": 0.9336003697427206,
+     "plain": 0.9300570020027731,
+     "mean_radius_normalised": 108.50706266607703,
+     "radius_plain": 146.71003487672846,
+     "gate_only": {
+      "r2": -4.0033442056164326e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 47.96295037585901,
+      "mean_speed_true": 56.38800271613877,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    }
+   },
+   "config_id": "ccfg-f581f3f5132e7af6",
+   "gated": {
+    "r2": -4.0950281097629215e-05,
+    "pearson": -0.0013888085816467863,
+    "motion_frac": 0.0007702973347712217,
+    "overspeed_rate": 0.0,
+    "mean_speed_out": 0.0008667374553580928,
+    "mean_speed_raw": 47.96295037585901,
+    "mean_speed_true": 56.38800271613877,
+    "mean_cos_moving": -0.21573827593704153,
+    "mean_gain": 1.5916064018098814e-05,
+    "states": {
+     "hold": 6486,
+     "attenuate": 5
+    },
+    "reasons": {
+     "no_signal_reference": 6317,
+     "handoff": 50,
+     "uncertain": 169,
+     "shrunk": 5
+    }
+   },
+   "paths": {
+    "segments": 111,
+    "true": {
+     "path_efficiency": 0.8548081851864364,
+     "endpoint_error_mm": 0.0,
+     "reached_frac": 1.0,
+     "time_to_target_s_median": 0.64
+    },
+    "raw": {
+     "path_efficiency": 0.6301617151620855,
+     "endpoint_error_mm": 30.589119193248507,
+     "reached_frac": 0.18018018018018017,
+     "time_to_target_s_median": 0.59
+    },
+    "gated": {
+     "path_efficiency": 0.017968488570057558,
+     "endpoint_error_mm": 57.539411339070774,
+     "reached_frac": 0.0,
+     "time_to_target_s_median": null
+    }
+   },
+   "controls": {
+    "shuffled": {
+     "r2_raw": -0.12779662703340589,
+     "r2_gated": -4.0033442056164326e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 32.00384875329298,
+     "mean_speed_true": 56.38800271613877,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero": {
+     "r2_raw": -0.012380638430890989,
+     "r2_gated": -4.0033442056164326e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 10.897534782188858,
+     "mean_speed_true": 56.38800271613877,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero_without_gates": {
+     "r2_gated": -4.0033442056164326e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 10.897534782188858,
+     "mean_speed_true": 56.38800271613877,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "reversed": {
+     "r2_raw": -0.31702446466186374,
+     "r2_gated": -3.9374228634869723e-05,
+     "motion_frac": 0.0003081189339084887,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0004934320104966909,
+     "mean_speed_raw": 46.462879941079976,
+     "mean_speed_true": 56.38800271613877,
+     "mean_cos_moving": null,
+     "mean_gain": 1.0524463785868176e-05,
+     "states": {
+      "hold": 6489,
+      "attenuate": 2
+     }
+    }
+   }
+  },
+  "rot3": {
+   "split": "rot3",
+   "n": {
+    "fit": 15578,
+    "scale": 3895,
+    "cal": 6491,
+    "test": 6491
+   },
+   "lambda": 10000.0,
+   "v_max": 356.9177551686058,
+   "a_max": 3467.8368707609698,
+   "min_quality": 0.2087912087912088,
+   "no_signal_output": [
+    1.2537022611907946,
+    12.062165037795765
+   ],
+   "no_signal_speed": 12.12714289347402,
+   "raw": {
+    "r2": 0.4777338500558156,
+    "pearson": 0.6981802996683396
+   },
+   "coverage": {
+    "0.8": {
+     "normalised": 0.8189801263287629,
+     "plain": 0.7924818980126329,
+     "mean_radius_normalised": 67.79124102673453,
+     "radius_plain": 70.4542996073132,
+     "gate_only": {
+      "r2": 0.0003950952278436448,
+      "motion_frac": 0.029887536589123402,
+      "overspeed_rate": 0.007086735479895239,
+      "mean_speed_out": 0.09115698933302809,
+      "mean_speed_raw": 48.25841512453631,
+      "mean_speed_true": 55.21823737190558,
+      "mean_cos_moving": 0.8784875767525177,
+      "mean_gain": 0.0015519479149489885
+     }
+    },
+    "0.9": {
+     "normalised": 0.9072562008935449,
+     "plain": 0.9124942227699893,
+     "mean_radius_normalised": 86.561083438109,
+     "radius_plain": 118.77735654595274,
+     "gate_only": {
+      "r2": -1.7438777547229556e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 48.25841512453631,
+      "mean_speed_true": 55.21823737190558,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    },
+    "0.95": {
+     "normalised": 0.9568633492528116,
+     "plain": 0.9610229548605762,
+     "mean_radius_normalised": 122.88325940439172,
+     "radius_plain": 168.1449318168148,
+     "gate_only": {
+      "r2": -1.7438777547229556e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 48.25841512453631,
+      "mean_speed_true": 55.21823737190558,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    }
+   },
+   "config_id": "ccfg-1bbebdcf2965cfbb",
+   "gated": {
+    "r2": -1.7438777547229556e-05,
+    "pearson": 0.0,
+    "motion_frac": 0.0,
+    "overspeed_rate": 0.0,
+    "mean_speed_out": 0.0,
+    "mean_speed_raw": 48.25841512453631,
+    "mean_speed_true": 55.21823737190558,
+    "mean_cos_moving": null,
+    "mean_gain": 0.0,
+    "states": {
+     "hold": 6491
+    },
+    "reasons": {
+     "no_signal_reference": 6447,
+     "handoff": 50,
+     "uncertain": 44
+    }
+   },
+   "paths": {
+    "segments": 113,
+    "true": {
+     "path_efficiency": 0.8398477955707174,
+     "endpoint_error_mm": 0.0,
+     "reached_frac": 0.9823008849557522,
+     "time_to_target_s_median": 0.64
+    },
+    "raw": {
+     "path_efficiency": 0.650902483321322,
+     "endpoint_error_mm": 28.06340182427245,
+     "reached_frac": 0.1504424778761062,
+     "time_to_target_s_median": 0.72
+    },
+    "gated": {
+     "path_efficiency": 0.0,
+     "endpoint_error_mm": 51.580824742470625,
+     "reached_frac": 0.0,
+     "time_to_target_s_median": null
+    }
+   },
+   "controls": {
+    "shuffled": {
+     "r2_raw": -0.142882979945125,
+     "r2_gated": -1.7438777547229556e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 32.49352693344616,
+     "mean_speed_true": 55.21823737190558,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero": {
+     "r2_raw": -0.014562248702321035,
+     "r2_gated": -1.7438777547229556e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 12.127142893474005,
+     "mean_speed_true": 55.21823737190558,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero_without_gates": {
+     "r2_gated": -1.7438777547229556e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 12.127142893474005,
+     "mean_speed_true": 55.21823737190558,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "reversed": {
+     "r2_raw": -0.3175090308091272,
+     "r2_gated": -1.7438777547229556e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 47.144814243988776,
+     "mean_speed_true": 55.21823737190558,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    }
+   }
+  },
+  "rot4": {
+   "split": "rot4",
+   "n": {
+    "fit": 15578,
+    "scale": 3895,
+    "cal": 6491,
+    "test": 6491
+   },
+   "lambda": 10000.0,
+   "v_max": 356.9177551686058,
+   "a_max": 3369.367637062338,
+   "min_quality": 0.18484375,
+   "no_signal_output": [
+    1.2763022550600835,
+    13.967457633305365
+   ],
+   "no_signal_speed": 14.025648654677322,
+   "raw": {
+    "r2": 0.5002852082456579,
+    "pearson": 0.7240369760759802
+   },
+   "coverage": {
+    "0.8": {
+     "normalised": 0.8097365583115083,
+     "plain": 0.802649822831613,
+     "mean_radius_normalised": 65.40053861779981,
+     "radius_plain": 71.37183976124213,
+     "gate_only": {
+      "r2": 0.00029670471288600897,
+      "motion_frac": 0.028346941919580957,
+      "overspeed_rate": 0.004775843475581574,
+      "mean_speed_out": 0.07664526436151348,
+      "mean_speed_raw": 47.549198497285914,
+      "mean_speed_true": 57.59904171294525,
+      "mean_cos_moving": 0.8631812951604966,
+      "mean_gain": 0.0013555505074167539
+     }
+    },
+    "0.9": {
+     "normalised": 0.9061777846248652,
+     "plain": 0.8941611462024341,
+     "mean_radius_normalised": 83.56919497025319,
+     "radius_plain": 110.77599021542574,
+     "gate_only": {
+      "r2": -3.049822925782486e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 47.549198497285914,
+      "mean_speed_true": 57.59904171294525,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    },
+    "0.95": {
+     "normalised": 0.9570174087197658,
+     "plain": 0.9389924510861193,
+     "mean_radius_normalised": 116.08494834365229,
+     "radius_plain": 152.2506558330733,
+     "gate_only": {
+      "r2": -3.049822925782486e-05,
+      "motion_frac": 0.0,
+      "overspeed_rate": 0.0,
+      "mean_speed_out": 0.0,
+      "mean_speed_raw": 47.549198497285914,
+      "mean_speed_true": 57.59904171294525,
+      "mean_cos_moving": null,
+      "mean_gain": 0.0
+     }
+    }
+   },
+   "config_id": "ccfg-720c2ce6092eaf6d",
+   "gated": {
+    "r2": -3.049822925782486e-05,
+    "pearson": 0.0,
+    "motion_frac": 0.0,
+    "overspeed_rate": 0.0,
+    "mean_speed_out": 0.0,
+    "mean_speed_raw": 47.549198497285914,
+    "mean_speed_true": 57.59904171294525,
+    "mean_cos_moving": null,
+    "mean_gain": 0.0,
+    "states": {
+     "hold": 6491
+    },
+    "reasons": {
+     "no_signal_reference": 6365,
+     "handoff": 50,
+     "uncertain": 126
+    }
+   },
+   "paths": {
+    "segments": 107,
+    "true": {
+     "path_efficiency": 0.858424381314432,
+     "endpoint_error_mm": 0.0,
+     "reached_frac": 1.0,
+     "time_to_target_s_median": 0.68
+    },
+    "raw": {
+     "path_efficiency": 0.6552535804520495,
+     "endpoint_error_mm": 29.082016136324985,
+     "reached_frac": 0.09345794392523364,
+     "time_to_target_s_median": 0.59
+    },
+    "gated": {
+     "path_efficiency": 0.0,
+     "endpoint_error_mm": 57.18006941348164,
+     "reached_frac": 0.0,
+     "time_to_target_s_median": null
+    }
+   },
+   "controls": {
+    "shuffled": {
+     "r2_raw": -0.09637310897248297,
+     "r2_gated": -3.049822925782486e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 31.122078884573465,
+     "mean_speed_true": 57.59904171294525,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero": {
+     "r2_raw": -0.026125835613561188,
+     "r2_gated": -3.049822925782486e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 14.025648654677315,
+     "mean_speed_true": 57.59904171294525,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "zero_without_gates": {
+     "r2_gated": -3.049822925782486e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 14.025648654677315,
+     "mean_speed_true": 57.59904171294525,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    },
+    "reversed": {
+     "r2_raw": -0.314299175431359,
+     "r2_gated": -3.049822925782486e-05,
+     "motion_frac": 0.0,
+     "overspeed_rate": 0.0,
+     "mean_speed_out": 0.0,
+     "mean_speed_raw": 46.36722145623596,
+     "mean_speed_true": 57.59904171294525,
+     "mean_cos_moving": null,
+     "mean_gain": 0.0,
+     "states": {
+      "hold": 6491
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,3 @@
+{"type": "header", "spec_version": "0.1", "vocab": ["control"], "vocab_type": "command", "blank_id": null, "source": "conformance-vector", "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial", "meta": {"device.modality": "other", "decoder.name": "conformance-vector", "decoder.version": "1", "decoder.causal": true, "data.derived": true, "language": "en"}, "control_declaration": {"dims": 2, "quantity": "velocity", "units": "mm/s", "frame": "workspace", "rate_hz": 50.0, "uncertainty": "std", "axes": ["x", "y"], "max_speed": 400.0, "latency_s": 0.1, "window_s": 0.2}}
+{"type": "control", "t": 0.02, "tick": 0, "values": [40.0, -12.5], "std": [15.0, 15.0], "t_signal_end": 0.04, "t_decoded": 0.03}
+{"type": "end"}
