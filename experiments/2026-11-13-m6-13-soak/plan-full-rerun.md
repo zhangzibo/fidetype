@@ -26,4 +26,4 @@ The M6-13 main run (6.78 h) failed C2 (memory) and C9 (clock), and C1 because of
 The M6-13 run used no CPU pinning and default thread counts. So latency numbers of the two runs are not fully comparable. The thresholds are wide (push p95 < 5 ms; the M6-13 worst window was 1.76 ms).
 
 ## Where
-Run folder (local): `C:\Users\zhang\bci-data\soak\m6-15\`. Results (committed): `results-full/`. Started detached by `C:\Users\zhang\bci-data\soak\m6-15\launch.ps1` (Win32_Process.Create, so it does not belong to an agent session).
+Run folder (local): `C:\Users\zhang\bci-data\soak\m6-15\`. Results (committed): `results-full/`. Started detached by `C:\Users\zhang\bci-data\soak\m6-15\launch.ps1`. Edit at 12:10, before any result (launch method only): the first two starts (Win32_Process.Create; then a scheduled task that was disabled after its start) died within seconds. The run that counts was started at 12:09 as the scheduled task `fidetype-m6-15-soak`.
