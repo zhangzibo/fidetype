@@ -1,6 +1,6 @@
 # Paper 1: Fidetype
 
-Status: **final version for arXiv (2026-11-12).** The final PDFs, the arXiv source package and the submission sheet are in [`final/`](final/) (see [`final/SUBMIT.md`](final/SUBMIT.md)). Draft v5 was the last draft before it. Read [`draft-v5.pdf`](draft-v5.pdf) and [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`reviews/round-5-final.md`](reviews/round-5-final.md). `draft-v0.pdf` ... `draft-v4.pdf` are the earlier drafts.
+Status: **final version for arXiv, v6 (2026-11-13; v5 2026-11-12), waiting for an arXiv endorsement.** v6 is a text-only revision (see "What changed in v6" in [`how-to-read-this-draft.md`](how-to-read-this-draft.md)). The final PDFs, the arXiv source package and the submission sheet are in [`final/`](final/) (see [`final/SUBMIT.md`](final/SUBMIT.md)). Draft v5 was the last draft before it. Read [`draft-v5.pdf`](draft-v5.pdf) and [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`reviews/round-5-final.md`](reviews/round-5-final.md). `draft-v0.pdf` ... `draft-v4.pdf` are the earlier drafts.
 
 | File | What it is |
 |---|---|

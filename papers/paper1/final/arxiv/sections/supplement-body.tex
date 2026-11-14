@@ -57,7 +57,7 @@
 \begin{figure}[H]
   \centering
   \begin{adjustbox}{max width=\linewidth}\input{\figdir tikz-decision.tex}\end{adjustbox}
-  \caption{\textbf{Trust decision for one item} (primary rule). A candidate is committed only if the guard (input-validity check) accepts it and its calibrated confidence reaches $\hat\lambda = \max(\lambda_{\mathrm{tuned}}, \hat\lambda_{\mathrm{LTT}})$. LTT bounds the risk over the mix of sessions that the calibration data come from. Otherwise the layer offers alternatives or abstains, and the user types with the fallback keyboard.}
+  \caption{\textbf{Trust decision for one item} (primary rule). A candidate is committed only if the guard (input-validity check) accepts it (guard risk at most the fitted $r_{\max}$; the grid value $r_{\max} = 1.0$ accepts every candidate, \cref{app:guardlimit}) and its calibrated confidence reaches $\hat\lambda = \max(\lambda_{\mathrm{tuned}}, \hat\lambda_{\mathrm{LTT}})$. LTT bounds the risk over the mix of sessions that the calibration data come from. Otherwise the layer offers alternatives or abstains, and the user types with the fallback keyboard.}
   \label{fig:decision}
 \end{figure}
 
@@ -580,6 +580,7 @@ With LTT and the max rule (primary): ``if the calibration sentences and later se
     \midrule
     SpanishBCBL \citep{levy2026brain2qwerty,spanishbcbl} & CC BY-NC 4.0 & MEG decoder training and evaluation & Research only; weights trained on it are not released for commercial use \\
     Brain-to-Text '25 copy-task logits \citep{card2024accurate,card2025data} & CC0 1.0 & intracortical trust evaluation & Companion code has no licence; we wrote our own loader \\
+    Brain-to-Text '24 competition data, participant T12 \citep{willett2023speech} & CC0 1.0 & confirmatory tests (\cref{app:t12}) & Our own decoder and loader \\
     Toronto sEMG typing \citep{achituve2025emg,achituve2024data} & CC BY 4.0 & sEMG decoder and trust evaluation & Baseline code (CC BY-SA 4.0) not used \\
     Tatoeba English / Spanish sentences & CC BY 2.0 FR (some CC0) & character LMs; composed sEMG sentences & Sentences from Tatoeba (\url{https://tatoeba.org}), by the Tatoeba contributors \\
     CMUdict (commit 7479086) & BSD-2-Clause style & phoneme-to-word lexicon & Copyright notice kept \\
@@ -588,3 +589,40 @@ With LTT and the max rule (primary): ``if the calibration sentences and later se
     \bottomrule
   \end{tabular}
 \end{table}
+
+\section{The fitted guard limit and empty commits}
+\label{app:guardlimit}
+
+The policy commits only if the guard risk is at most $r_{\max}$ (\cref{sec:trust}). The guard risk lies in $[0,1]$, and the grid for $r_{\max}$ includes 1.0 (\cref{app:settings}). At $r_{\max} = 1.0$ the guard test is always true, so the guard limit is off. An empty top candidate gets guard risk 1.0, so only a fitted $r_{\max} < 1$ blocks it.
+
+\emph{Effect on the reported numbers: none.} Every fixed-split and full-fit Brain-to-Text '25 fit chose $r_{\max} \le 0.5$, and refits of these six fits reproduced \cref{tab:main} with 0 empty commits. The control-stream results of \cref{sec:res-null} come from fits with $r_{\max} = 0.1$ and 0.5. In the random re-splits, the fit chose $r_{\max} = 1.0$ in 53 of 200 (ours) and 65 of 200 (published gate), so the guard limit was off in those re-splits. But none of the 35,816 cached n-best lists of these analyses (all frame temperatures that a re-split used) had an empty top candidate, so no re-split number contains an empty commit.
+
+\emph{Where it matters.} In a validation dry run on a second participant (\cref{app:t12}), the fit chose $r_{\max} = 1.0$, and the frozen configuration committed 335 of 400 uniform control streams, 320 of them empty texts. The repository has an opt-in commit gate that forbids empty commits and commits at guard risk 1.0; it only removes commits, so a risk bound for the ungated policy also holds for the gated one. In that dry run the gate removed all 335 uniform commits. It is not part of the frozen configuration, and its evaluation is future work. Details: \nolinkurl{experiments/2026-11-13-m2-18-empty-commits/} in the repository.
+
+\section{Confirmatory tests on a second participant}
+\label{app:t12}
+
+We ran two pre-registered confirmatory tests of the frozen configuration (\cref{sec:discussion}) on participant T12 of the Brain-to-Text '24 competition data \citep{willett2023speech} (CC0; 24 sessions). Each pre-registration was committed before the trust pool was decoded (repository commits \code{a7cf624} and \code{f9741df}). Fit-A, calibration and test parts were sessions 1--8, 9--14 and 15--24 (240, 240 and 400 trials). The decoder is our own causal GRU-CTC with a licence-clean word LM.
+
+\begin{table}[H]
+  \centering
+  \caption{\textbf{Confirmatory tests on T12} (frozen configuration, LTT max rule, $\alpha = 0.05$, $\delta = 0.1$; test sessions, $n = 400$). Informative: the pre-registered condition for a test of the commit rule. Controls: frame-shuffled and uniform streams, 400 each.}
+  \label{tab:t12}
+  \small
+  \begin{tabular}{@{}lcc@{}}
+    \toprule
+    & \textbf{Test 1} & \textbf{Test 2} \\
+    \midrule
+    Decoder test PER (greedy) & 0.542 & 0.269 \\
+    Right sentence first & 3/400 & 31/400 \\
+    Fitted $r_{\max}$ & 0.1 & 0.1 \\
+    Commits (wrong) & 0 (0) & 1 (0) \\
+    Wrong-commit rate [CP 95\%] & 0.000 \ci{0.000}{0.009} & 0.000 \ci{0.000}{0.009} \\
+    Control commits & 0/400, 0/400 & 0/400, 0/400 \\
+    Informative condition & $\ge 1$ commit & $\ge 21$ commits \\
+    Outcome & uninformative & uninformative \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Both tests met the pre-registered safety criteria, but both were uninformative (\cref{tab:t12}): the layer committed almost nothing. The causes are the decoder, which was much weaker than our Brain-to-Text '25 decoder (39\% right sentences first there), and the strict fitted guard limit ($r_{\max} = 0.1$). So these tests do not test the LTT bound on a second participant, and the bound still rests on one participant. Pre-registrations, results and deviations: \nolinkurl{experiments/2026-11-13-confirmatory-t12/} and \nolinkurl{experiments/2026-11-13-confirmatory-t12-v2/} in the repository.

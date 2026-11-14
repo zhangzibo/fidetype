@@ -489,3 +489,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Check `experiments/2026-11-13-cpu-isolation/results.md`: p95 0.645 ms (timing alone), 0.661 ms (timing + background load), 1.126 ms (no isolation, same load).
 - [Compute setup](questions/compute-setup.md): new section "CPU isolation for latency measurements" with usage and limits.
 - Tracker fragments: agents write `wiki/progress/fragments/<task-id>.json`; `node tools/progress/build.js` merges them (`tools/progress/fragments.js`, self-check `tools/progress/test-fragments.js`, rules in `tools/progress/README.md`).
+
+## [2026-11-13] setup | Paper 1 v6: pre-submission text revision (PUB-01)
+- No new experiment; no number changed; abstract, title, frozen configuration and tags unchanged. No `paper1-v6` tag: earlier text versions had no tags (the `paper1-vN-frozen-config` tags mark configurations).
+- Guard wording made precise (from M2-18): Sec. 4.1, Sec. 6.6 ("our guard is one such check"), Discussion ("The guard stopped this"), Limitation 3 and the Figure S1 caption now say the guard acted in the reported fits; the grid value `commit_max_risk` 1.0 switches its limit off (53/200 and 65/200 re-splits; 0 empty top-1 in 35,816 cached T15 n-best lists). Opt-in commit gate named as future work. New Supplementary Section S23.
+- Limitation 1 and new Section S24 (Table S21): two pre-registered T12 tests (commits `a7cf624`, `f9741df`) uninformative, 0/400 and 1/400 commits, no wrong commits, controls passed; the bound still rests on one participant. T12 row added to the licence table.
+- Builds (TinyTeX pdflatex): main 23 pages, supplement 18, arXiv document 38 (main part 23 + supplement 15); 0 undefined references, 0 overfull lines, clean rebuild from the zip. `fidetype-paper1-arxiv.pdf` was locked by a viewer, so the v6 build is `fidetype-paper1-arxiv-v6.pdf`.
+- Updated: `papers/paper1/final/SUBMIT.md` (version note, comments field), `papers/paper1/how-to-read-this-draft.md` ("What changed in v6"), `papers/paper1/README.md`, [Paper 1 plan](questions/paper1-plan.md), [confirmatory test on T12](questions/confirmatory-t12.md).

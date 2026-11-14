@@ -2,20 +2,23 @@
 
 Use this sheet to fill the arXiv form. Copy each value exactly.
 
+**Version: v6 (2026-11-13), pre-submission revision.** Text only; no number changed and the frozen configuration (tag `paper1-v4-frozen-config`) did not change. (1) Guard wording made precise: the guard blocked no-information commits in the reported fits, but the grid value `commit_max_risk` 1.0 switches the guard limit off (task M2-18; new Section S23). (2) The two uninformative T12 confirmatory tests are now in Limitation 1 and the new Section S24. The abstract and the title did not change. Status: waiting for an arXiv endorsement (tracker M3-07). Changelog: `../how-to-read-this-draft.md`, "What changed in v6".
+
 ## Files in this folder
 
 | File | What it is |
 |---|---|
 | `arxiv-source.zip` | **Upload this file.** LaTeX source of the combined document (main text + supplement), with `main.bbl`. |
-| `fidetype-paper1-arxiv.pdf` | Local build of the zip. arXiv must show the same document (37 pages). |
-| `fidetype-paper1.pdf` | Main paper only (22 pages). For journals and for sharing. |
-| `fidetype-paper1-supplement.pdf` | Supplement only (17 pages). For journals and for sharing. |
+| `fidetype-paper1-arxiv.pdf` | Local build of the zip. arXiv must show the same document (38 pages in v6). **v6 note:** this file was locked by a PDF viewer during the v6 build, so it still holds v5 (37 pages). The v6 build is `fidetype-paper1-arxiv-v6.pdf`. Close the viewer, then copy the v6 file over it (or rerun `make-arxiv.sh`). |
+| `fidetype-paper1-arxiv-v6.pdf` | The v6 pdflatex build of the zip (38 pages). |
+| `fidetype-paper1.pdf` | Main paper only (23 pages). For journals and for sharing. |
+| `fidetype-paper1-supplement.pdf` | Supplement only (Sections S1-S24, 18 pages). For journals and for sharing. |
 | `arxiv/` | The unzipped source. `make-arxiv.sh` writes it and the zip. |
 | `make-arxiv.sh` | Rebuilds the package and checks it: `bash papers/paper1/final/make-arxiv.sh` |
 
 The zip was unzipped into an empty folder and built again without the `.bib` file (as arXiv does). Result: 0 undefined references or citations, 0 multiply defined labels, 0 overfull lines, no `??` in the text.
 
-pdfLaTeX check (2026-11-12): the zip was also built from scratch with **pdflatex** (portable TinyTeX, TeX Live 2026; three passes, no BibTeX, reads `main.bbl`), which is what arXiv runs. Result: 37 pages, 0 undefined references or citations, 0 duplicate anchors, 0 overfull lines, no `??`. The text equals the Tectonic build except for ligatures and hyphenation. `main.tex` starts with `\pdfoutput=1` (arXiv recommends it). `fidetype-paper1-arxiv.pdf` is this pdflatex build.
+pdfLaTeX check (2026-11-12; repeated for v6 on 2026-11-13): the zip was also built from scratch with **pdflatex** (portable TinyTeX, TeX Live 2026; three passes, no BibTeX, reads `main.bbl`), which is what arXiv runs. Result: 37 pages (v6: 38 pages), 0 undefined references or citations, 0 duplicate anchors, 0 overfull lines, no `??`. The text equals the Tectonic build except for ligatures and hyphenation. `main.tex` starts with `\pdfoutput=1` (arXiv recommends it). `fidetype-paper1-arxiv.pdf` is this pdflatex build (for v6: `fidetype-paper1-arxiv-v6.pdf`, see the note above). Since v6, `fidetype-paper1.pdf` and `fidetype-paper1-supplement.pdf` are also pdflatex builds (TinyTeX: pdflatex, BibTeX, pdflatex x3 per file for the xr-hyper cross-references): 0 undefined references, 0 overfull lines.
 
 ## Form values
 
@@ -42,7 +45,7 @@ Objective. Neural text-entry decoders often end in a language model that writes 
 **Comments:**
 
 ```
-37 pages (main text, references and Appendix A: 23 pages; supplementary material: 14 pages), 9 figures. Code: https://github.com/zhangzibo/fidetype (tag paper1-v4-frozen-config)
+38 pages (main text, references and Appendix A: 23 pages; supplementary material: 15 pages), 9 figures. Code: https://github.com/zhangzibo/fidetype (tag paper1-v4-frozen-config)
 ```
 
 **Primary category:** `cs.HC` (Human-Computer Interaction).
@@ -69,11 +72,11 @@ Objective. Neural text-entry decoders often end in a language model that writes 
 4. Check the file list. It must show `main.tex`, `main.bbl` and the folders `sections/`, `generated/`, `figures/`. Do not delete `main.bbl`: arXiv does not run BibTeX for you.
 5. Click **Process**. arXiv compiles with pdfLaTeX. Wait for "Your files were processed successfully".
 6. Click **View** on the arXiv-built PDF. Compare it with `fidetype-paper1-arxiv.pdf`:
-   - 37 pages;
+   - 38 pages;
    - author "Zibo Zhang", "Independent researcher", no e-mail;
    - no `??` in the text and no red text;
    - the reference list is complete (it ends on page 22 or 23);
-   - "Supplementary material" starts on page 24, with Sections S1-S22.
+   - "Supplementary material" starts on page 24, with Sections S1-S24.
 7. On **Metadata**, paste the title, authors, abstract and comments from this sheet. Add the cross-lists.
 8. On **Preview**, check everything again. Click **Submit**.
 9. arXiv announces new papers on the next working day (cut-off 14:00 US Eastern time). You get an e-mail with the arXiv identifier.

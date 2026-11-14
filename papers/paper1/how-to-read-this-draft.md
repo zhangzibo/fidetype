@@ -8,9 +8,9 @@ The paper is final. All placeholders are filled. The files are in [`final/`](fin
 
 | File | What it is |
 |---|---|
-| [`final/fidetype-paper1.pdf`](final/fidetype-paper1.pdf) | Main paper (22 pages: main text, references, Appendix A) |
-| [`final/fidetype-paper1-supplement.pdf`](final/fidetype-paper1-supplement.pdf) | Supplement (Sections S1-S22, 17 pages) |
-| [`final/fidetype-paper1-arxiv.pdf`](final/fidetype-paper1-arxiv.pdf) | The arXiv document: main text + supplement in one PDF (37 pages) |
+| [`final/fidetype-paper1.pdf`](final/fidetype-paper1.pdf) | Main paper (v6: 23 pages: main text, references, Appendix A) |
+| [`final/fidetype-paper1-supplement.pdf`](final/fidetype-paper1-supplement.pdf) | Supplement (v6: Sections S1-S24, 18 pages) |
+| [`final/fidetype-paper1-arxiv.pdf`](final/fidetype-paper1-arxiv.pdf) | The arXiv document: main text + supplement in one PDF (v5: 37 pages; v6: 38 pages, see `final/fidetype-paper1-arxiv-v6.pdf` and the note in `final/SUBMIT.md`) |
 | [`final/arxiv-source.zip`](final/arxiv-source.zip) | The file to upload to arXiv (LaTeX source + `main.bbl`, works with pdfLaTeX) |
 | [`final/SUBMIT.md`](final/SUBMIT.md) | arXiv form values and upload steps |
 | [`final/make-arxiv.sh`](final/make-arxiv.sh) | Rebuilds and checks the arXiv package |
@@ -34,6 +34,14 @@ Still open for a journal (not for arXiv): the IOP JNE template switch, a cover l
 ## Earlier drafts
 
 The last draft before the final version was [`draft-v5.pdf`](draft-v5.pdf) (22 pages: main text, references, Appendix A) with a separate supplement [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) (Sections S1-S22, 17 pages). The earlier drafts ([v0](draft-v0.pdf) ... [v4](draft-v4.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
+
+## What changed in v6 (pre-submission revision, 2026-11-13)
+
+A small text revision before the arXiv submission (tracker PUB-01). No new experiment. No number changed. The abstract, the title, the frozen configuration and the git tags did not change. We did not add a tag for v6: the tags `paper1-vN-frozen-config` mark configurations, not text versions.
+
+- **Guard wording made precise (from M2-18).** The guard limit is a fitted grid value. The grid value `commit_max_risk` (r_max) 1.0 switches it off. The fit chose 1.0 in 53/200 (ours) and 65/200 (published) random re-splits, but 0 of 35,816 cached T15 n-best lists had an empty top-1, so no reported number changes. Changed: Sec. 4 (guard paragraph), Sec. 6.6 ("our guard is one such check"), Discussion ("The guard stopped this"), Limitation 3, Figure S1 caption. The opt-in commit gate is named as future work. New Section S23. Source: [M2-18 results](../../experiments/2026-11-13-m2-18-empty-commits/results.md).
+- **Second-participant tests in the Limitations.** Limitation 1 now reports the two pre-registered T12 tests (commits `a7cf624`, `f9741df`): 0/400 and 1/400 commits, below the informative conditions (at least 1 and at least 21 commits), no wrong commits, controls passed. Cause: decoder quality (test PER 0.54, then 0.27) and the strict fitted guard limit. The bound still rests on one participant. New Section S24 (Table S21) and a T12 row in the licence table (Table S20). Sources: [M3-27](../../experiments/2026-11-13-confirmatory-t12/results.md), [M3-28](../../experiments/2026-11-13-confirmatory-t12-v2/results.md).
+- **Build.** The main paper and the supplement are now built with pdflatex (TinyTeX), like the arXiv package. Main paper 23 pages (was 22), supplement 18 (was 17), arXiv document 38 (was 37). 0 undefined references, 0 overfull lines.
 
 ## What changed in v5 (final review, round 5)
 

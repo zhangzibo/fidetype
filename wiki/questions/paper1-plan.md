@@ -12,6 +12,8 @@ updated: 2026-11-13
 
 **Track (2026-11-13):** Paper 1 is in the PUB track ([project plan](project-plan.md#pub-publications-no-deadline)). PUB has no deadline. The research roadmap does not wait on it. The tracker ids stay the same (M3-03 … M3-26, now with milestone PUB).
 
+**Current version: v6 (2026-11-13, tracker PUB-01).** Text-only pre-submission revision of the final arXiv version; no number changed. (1) The guard wording is now precise: the guard blocked no-information commits in the reported fits, but the grid value `commit_max_risk` 1.0 switches its limit off (chosen in 53/200 and 65/200 re-splits; 0 empty top-1 in 35,816 cached T15 n-best lists), from [M2-18](../../experiments/2026-11-13-m2-18-empty-commits/results.md). (2) Limitation 1 and new Section S24 report the two uninformative T12 confirmatory tests (0/400 and 1/400 commits; see [confirmatory test on T12](confirmatory-t12.md)), so the bound still rests on one participant. Pages: main 23, supplement 18, arXiv document 38. Submission sheet: [SUBMIT.md](../../papers/paper1/final/SUBMIT.md); changelog: [how-to-read-this-draft.md](../../papers/paper1/how-to-read-this-draft.md). Status: waiting for an arXiv endorsement (externally blocked).
+
 **Draft v0 (2026-11-11):** the first full LaTeX draft is [papers/paper1/draft-v0.pdf](../../papers/paper1/draft-v0.pdf) (23 pages; source in `papers/paper1/latex/`, build notes in [papers/paper1/README.md](../../papers/paper1/README.md)). A guide for the author is [how-to-read-this-draft.md](../../papers/paper1/how-to-read-this-draft.md). It lists every red TODO in the draft and the decisions the user owns (venue, authors, arXiv endorsement, ethics wording). Style lessons from published papers: [style-notes.md](../../papers/paper1/style-notes.md). Data figures come from `papers/paper1/make_figures.py`, which reads only committed result files.
 
 The full outline is in [papers/paper1/outline.md](../../papers/paper1/outline.md). It holds the title options, the abstract draft, the section plan with each table and figure, the related-work map, the limitations, the licence statement, the results inventory and the reproducibility plan.
@@ -51,6 +53,7 @@ arXiv first (endorsement: externally blocked, the user owns it). Then *Journal o
 
 ## Related pages
 - [Project plan, PUB (publications, no deadline)](project-plan.md#pub-publications-no-deadline)
+- [Confirmatory test on T12](confirmatory-t12.md)
 - [Trust core v0 results](trust-core-v0-results.md)
 - [Reading list](reading-list.md)
 - [Error metrics](../concepts/error-metrics.md)
