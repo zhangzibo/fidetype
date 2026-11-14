@@ -1,0 +1,15 @@
+{
+  "id": "M0-22",
+  "milestone": "M0",
+  "title": "Parallel-agent tooling: CPU isolation for latency runs + tracker fragments",
+  "status": "done",
+  "started_at": "2026-11-13T19:20:00-08:00",
+  "finished_at": "2026-11-13T20:15:00-08:00",
+  "approx_times": true,
+  "orchestrator_only": false,
+  "notes": "src/fidetype/utils/isolation.py: CPU classes timing (CPUs 8,10,12,14; SMT siblings idle; above normal; one job by file lock in bci-data/runs/cpu-isolation) and background (CPUs 0-7, below normal); Windows job object so the whole process tree inherits; isolated() context manager with measurement_env record (affinity, priority, load on class CPUs, foreign load, CPU model, clean flag). Check experiments/2026-11-13-cpu-isolation: p50/p95 0.335/0.645 ms timing alone, 0.501/0.661 ms with background load, 0.659/1.126 ms (max 16 ms) no isolation. Soak processes unpinned (0xFFFF), not changed. Tracker fragments: wiki/progress/fragments/<task-id>.json merged by build.js (tools/progress/fragments.js, self-check test-fragments.js, README). How-to: compute-setup.md section CPU isolation; HANDOFF rules.",
+  "agent_runs": [
+    {"label": "CPU isolation helper + tracker fragments (code, micro-benchmark, tests, docs, records)", "duration_s": null, "tokens": null, "tool_uses": null}
+  ],
+  "_tracker_updated": "2026-11-13T20:15:00-08:00"
+}

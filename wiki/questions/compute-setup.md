@@ -1,9 +1,9 @@
 ---
 title: Compute setup (GPU training on Windows with ROCm)
 type: question
-tags: [compute, rocm, gpu]
+tags: [compute, rocm, gpu, latency, cpu-isolation]
 sources: []
-updated: 2026-11-08
+updated: 2026-11-13
 ---
 
 # Compute setup: GPU training on Windows with ROCm
@@ -187,7 +187,50 @@ C:\venvs\fidetype-rocm\Scripts\python.exe tools\env\gpu_smoke.py
 
 The `fidetype` package is an editable install. Code changes in `src/fidetype` take effect at once. If `pyproject.toml` gets new dependencies, install them into the GPU venv too (run the script again, or use `uv pip install --python C:\venvs\fidetype-rocm\Scripts\python.exe <package>`).
 
+## CPU isolation for latency measurements (2026-11-13, M0-22)
+
+Up to 4 agents can run at the same time. Their CPU load distorts latency numbers. `fidetype.utils.isolation` splits the CPUs into two classes. It uses Windows process affinity, a job object and priority classes (ctypes only, no psutil).
+
+| Class | CPUs on this PC (Ryzen 7 9800X3D) | Priority | Threads (OMP, MKL, OpenBLAS, NumExpr, torch hint) | How many at once |
+|---|---|---|---|---|
+| `timing` | 8, 10, 12, 14 (one per physical core 4-7); siblings 9, 11, 13, 15 stay idle | above normal | 4 | 1 (file lock) |
+| `background` | 0-7 (physical cores 0-3, both SMT threads) | below normal | 8 (set `--threads` lower if several share) | any |
+
+**Rule: latency experiments use the timing class. Other heavy CPU jobs (training, preprocessing, test suites) should use the background class.**
+
+Run a command. Children inherit the class, also through a venv `python.exe` (a job object holds the whole process tree):
+
+```
+.venv/Scripts/python -m fidetype.utils.isolation run --class timing --env-json run-env.json -- .venv/Scripts/python my_latency_test.py
+.venv/Scripts/python -m fidetype.utils.isolation run --class background --threads 4 -- C:/venvs/fidetype-rocm/Scripts/python.exe train.py
+.venv/Scripts/python -m fidetype.utils.isolation show
+```
+
+`show` prints the CPU split, the lock holder and the registered jobs. A second timing job fails at once with exit code 75 and names the holder. Add `--wait 600` (seconds; `-1` = forever) to wait instead. The lock is `C:\Users\zhang\bci-data\runs\cpu-isolation\timing.lock`. Windows frees it when the holder process ends, also after a crash.
+
+In-process (records the conditions into your results JSON):
+
+```python
+from fidetype.utils.isolation import isolated
+
+with isolated("timing", wait_s=600, label="M4-xx latency") as iso:
+    lat = run_my_benchmark()
+results["measurement_env"] = iso.record
+```
+
+The record holds the class, CPUs, priority, CPU model, wall time, own CPU time, the load on the class CPUs, the foreign load (load from other processes), the load on the idle SMT siblings and on the whole machine. `clean` is true only if the timing lock was held, affinity and priority were set, and the foreign load stayed below 5 %. `clean_reasons` lists what failed. Set the thread variables before you import numpy or torch: `isolated()` sets them in `os.environ`, and this only affects libraries loaded later (it calls `torch.set_num_threads` at once if torch is loaded).
+
+**Check (2026-11-13, `experiments/2026-11-13-cpu-isolation/results.md`):** a 0.33 ms single-thread workload had p50 / p95 0.335 / 0.645 ms alone in the timing class, 0.501 / 0.661 ms with an 8-process load in the background class, and 0.659 / 1.126 ms (max 16 ms) with the same load and no isolation. The timing class removes the long tail. The p50 still rises: the L3 cache and memory are shared, and unpinned processes still use the timing cores.
+
+Limits:
+- Isolation only works if the other heavy jobs also use the background class. Unpinned processes (desktop apps, the M6-13 soak, agents that do not use the tool) can still run on the timing cores. The record shows this as foreign load.
+- Shared L3 cache and memory bandwidth are not isolated (one CCD).
+- The GPU is not covered. Only CPU time is isolated.
+- The CPU split assumes one processor group (at most 64 logical CPUs).
+- Linux: affinity works. Raising priority needs root, so the timing class runs at normal priority there.
+
 ## Related pages
 - [Architecture](architecture.md): the decoders that we train on this GPU.
 - [Project plan](project-plan.md)
+- CPU isolation code: `src/fidetype/utils/isolation.py`. Check: `experiments/2026-11-13-cpu-isolation/results.md`.
 - [Decoder M1 results](decoder-m1-results.md)

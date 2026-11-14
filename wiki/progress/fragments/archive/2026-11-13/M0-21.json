@@ -1,0 +1,14 @@
+{
+  "id": "M0-21",
+  "milestone": "M0",
+  "title": "Tracker restructure: PUB track (publications, no deadline) decoupled from the research roadmap",
+  "status": "done",
+  "started_at": "2026-11-13T19:44:00-08:00",
+  "finished_at": "2026-11-13T19:50:00-08:00",
+  "approx_times": true,
+  "orchestrator_only": false,
+  "notes": "Commit 5f24ba9. New milestone PUB \"Publications (no deadline)\": never late, not part of the M1-M7 target. Paper tasks moved to PUB with ids and history kept. M3 and M4 renamed as research milestones. build.js shows no-deadline milestones. Run recorded by M0-22 through the first tracker fragment.",
+  "agent_runs": [
+    {"label": "Decouple papers into own track", "duration_s": 302.6, "tokens": 131271, "tool_uses": 32}
+  ]
+}

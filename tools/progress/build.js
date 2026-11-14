@@ -10,6 +10,12 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..');
 const DIR = path.join(ROOT, 'wiki', 'progress');
 const SRC = path.join(DIR, 'tracker.json');
+// Merge agent fragments (wiki/progress/fragments/*.json) into tracker.json first. See tools/progress/README.md.
+// Set PROGRESS_NO_MERGE=1 to skip the merge.
+if (!process.env.PROGRESS_NO_MERGE) {
+  const mr = require('./fragments').mergeFragments({ trackerPath: SRC, fragDir: path.join(DIR, 'fragments') });
+  if (mr.merged.length) console.log(`Merged ${mr.merged.length} fragment(s) into tracker.json: ${mr.merged.join(', ')}${mr.created.length ? ` (new tasks: ${mr.created.join(', ')})` : ''}. Archived in wiki/progress/fragments/archive/.`);
+}
 const data = JSON.parse(fs.readFileSync(SRC, 'utf8'));
 
 const START_DATE = data.start_date || '2026-11-07';

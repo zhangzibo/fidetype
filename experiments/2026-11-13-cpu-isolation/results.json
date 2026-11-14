@@ -1,0 +1,151 @@
+{
+  "task": "M0-22",
+  "started": "2026-11-13T19:54:54-0800",
+  "seconds_per_condition": 20.0,
+  "n_load_processes": 8,
+  "results": [
+    {
+      "condition": "A",
+      "n": 46707,
+      "p50_ms": 0.3349,
+      "p95_ms": 0.6448,
+      "p99_ms": 0.6693,
+      "max_ms": 1.363,
+      "mean_ms": 0.4275,
+      "measurement_env": {
+        "schema": "fidetype.isolation/0.1",
+        "class": "timing",
+        "cpus": [
+          8,
+          10,
+          12,
+          14
+        ],
+        "affinity_set": true,
+        "priority": "above_normal",
+        "priority_set": true,
+        "timing_lock_held": true,
+        "plan": {
+          "timing": [
+            8,
+            10,
+            12,
+            14
+          ],
+          "background": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "idle_smt_siblings": [
+            9,
+            11,
+            13,
+            15
+          ],
+          "smt": true
+        },
+        "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+        "logical_cpus": 16,
+        "platform": "Windows-11-10.0.26200-SP0",
+        "wall_s": 20.011,
+        "own_cpu_s": 19.969,
+        "class_cpu_load_pct": 40.88,
+        "foreign_load_pct": 15.93,
+        "idle_sibling_load_pct": 26.71,
+        "machine_load_pct": 36.58,
+        "background_cpu_load_pct": 39.36,
+        "clean": false,
+        "clean_reasons": [
+          "other load on the class CPUs 15.93% >= 5.0%",
+          "SMT siblings of timing cores busy 26.71%"
+        ]
+      }
+    },
+    {
+      "condition": "B",
+      "n": 40992,
+      "p50_ms": 0.5011,
+      "p95_ms": 0.6609,
+      "p99_ms": 0.7647,
+      "max_ms": 1.267,
+      "mean_ms": 0.4869,
+      "measurement_env": {
+        "schema": "fidetype.isolation/0.1",
+        "class": "timing",
+        "cpus": [
+          8,
+          10,
+          12,
+          14
+        ],
+        "affinity_set": true,
+        "priority": "above_normal",
+        "priority_set": true,
+        "timing_lock_held": true,
+        "plan": {
+          "timing": [
+            8,
+            10,
+            12,
+            14
+          ],
+          "background": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "idle_smt_siblings": [
+            9,
+            11,
+            13,
+            15
+          ],
+          "smt": true
+        },
+        "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+        "logical_cpus": 16,
+        "platform": "Windows-11-10.0.26200-SP0",
+        "wall_s": 20.001,
+        "own_cpu_s": 19.922,
+        "class_cpu_load_pct": 62.95,
+        "foreign_load_pct": 38.05,
+        "idle_sibling_load_pct": 55.84,
+        "machine_load_pct": 79.69,
+        "background_cpu_load_pct": 99.99,
+        "clean": false,
+        "clean_reasons": [
+          "other load on the class CPUs 38.05% >= 5.0%",
+          "SMT siblings of timing cores busy 55.84%"
+        ]
+      }
+    },
+    {
+      "condition": "C",
+      "n": 26552,
+      "p50_ms": 0.6594,
+      "p95_ms": 1.1262,
+      "p99_ms": 1.3489,
+      "max_ms": 16.154,
+      "mean_ms": 0.7509,
+      "measurement_env": {
+        "class": null,
+        "affinity": "all",
+        "priority": "normal",
+        "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+        "machine_load_pct": 89.62,
+        "wall_s": 20.00157580000814
+      }
+    }
+  ]
+}

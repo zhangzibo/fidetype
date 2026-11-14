@@ -20,6 +20,8 @@ Last update: 2026-11-13 17:40 (M2-18 empty commits DONE: the M3-28 guess was wro
 - Diagrams go in `wiki/diagrams/` (draw.io + `slides.json`, then `node tools/drawio/build.js`).
 - The **orchestrator decides commits** and pushes. Never commit third-party code, PDFs, data or secrets.
 - Record **every task** in `wiki/progress/tracker.json`. Then run `node tools/progress/build.js`.
+- **Tracker fragments (2026-11-13, M0-22):** when agents run in parallel, each agent writes its task update to `wiki/progress/fragments/<task-id>.json` (task fields + `agent_runs`) instead of editing `tracker.json`. `node tools/progress/build.js` merges the fragments into `tracker.json` and archives them. Rules: `tools/progress/README.md`. Self-check: `node tools/progress/test-fragments.js`.
+- **Latency experiments use the timing CPU class** (`python -m fidetype.utils.isolation run --class timing -- ...` or `with isolated("timing")`); other heavy CPU jobs use `--class background`. Save the `measurement_env` record with the results. How-to and limits: `wiki/questions/compute-setup.md`, section "CPU isolation".
 - Run **long jobs detached**, with checkpoints and a log file.
 - **Load limits (new, 2026-11-08, after the crash):** at most **2 subagents** at the same time. At most **1 heavy job**: GPU training OR preprocessing, never both. **Record and commit right after each result** (tracker, HANDOFF, wiki, commit, push), so a crash loses nothing.
 

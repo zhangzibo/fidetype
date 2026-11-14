@@ -483,3 +483,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - `tools/progress/build.js`: a milestone with `no_deadline` (or no `target_end`) gets a "No deadline" badge, is never late and has no target bar on the timeline.
 - Policy written into [project plan](questions/project-plan.md#pub-publications-no-deadline), [long-term roadmap](questions/roadmap-standard.md#publications-no-deadline), [overview](overview.md), [Paper 1 plan](questions/paper1-plan.md) and [open-source playbook](questions/open-source-playbook.md): results go to `experiments/` and the wiki first; papers draw on them later. No paper is an exit criterion of a phase. HANDOFF has a "Publications (no deadline)" section.
 - Not changed: diagrams 09-milestones and 11-roadmap-standard still show the papers inside M3/M4 and P11.
+
+## [2026-11-13] setup | CPU isolation for latency runs + tracker fragments (M0-22)
+- New `src/fidetype/utils/isolation.py`: CPU classes `timing` (4 reserved physical cores, SMT siblings idle, above normal, one job at a time by file lock under `bci-data/runs/cpu-isolation/`) and `background` (other cores, below normal). CLI `python -m fidetype.utils.isolation run|show`, context manager `isolated()` with a `measurement_env` record (affinity, priority, load, CPU model, `clean`). Tests `tests/test_isolation.py`.
+- Check `experiments/2026-11-13-cpu-isolation/results.md`: p95 0.645 ms (timing alone), 0.661 ms (timing + background load), 1.126 ms (no isolation, same load).
+- [Compute setup](questions/compute-setup.md): new section "CPU isolation for latency measurements" with usage and limits.
+- Tracker fragments: agents write `wiki/progress/fragments/<task-id>.json`; `node tools/progress/build.js` merges them (`tools/progress/fragments.js`, self-check `tools/progress/test-fragments.js`, rules in `tools/progress/README.md`).
