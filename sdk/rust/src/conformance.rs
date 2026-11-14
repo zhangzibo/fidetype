@@ -12,7 +12,7 @@ use alloc::format;
 use crate::checks::load_stream;
 use crate::error::Error;
 use crate::json::{decode_utf8, num_text, parse_json, py_eq, repr, Map, Value};
-use crate::profiles::{fep0001, fep0002, fep0003, fep0004};
+use crate::profiles::{fep0001, fep0002, fep0003, fep0004, fep0005};
 
 /// A reference consumer: (file name, bytes) -> summary, or a rejection.
 pub type Consumer = fn(&str, &[u8]) -> Result<Value, Error>;
@@ -22,7 +22,7 @@ fn v01(name: &str, bytes: &[u8]) -> Result<Value, Error> {
 }
 
 /// The profiles this SDK knows, in report order.
-pub const PROFILES: &[&str] = &["v0.1", "fep-0001", "fep-0002", "fep-0003", "fep-0004"];
+pub const PROFILES: &[&str] = &["v0.1", "fep-0001", "fep-0002", "fep-0003", "fep-0004", "fep-0005"];
 
 /// The reference consumer of a profile.
 pub fn consumer_for(profile: &str) -> Option<Consumer> {
@@ -32,6 +32,7 @@ pub fn consumer_for(profile: &str) -> Option<Consumer> {
         "fep-0002" => Some(fep0002::consume),
         "fep-0003" => Some(fep0003::consume),
         "fep-0004" => Some(fep0004::consume),
+        "fep-0005" => Some(fep0005::consume),
         _ => None,
     }
 }
@@ -44,6 +45,7 @@ pub fn profile_title(profile: &str) -> &str {
         "fep-0002" => "FEP-0002 NeuralTextStream over LSL",
         "fep-0003" => "FEP-0003 output profiles and discrete intent events",
         "fep-0004" => "FEP-0004 NeuralTextStream over WebSocket",
+        "fep-0005" => "FEP-0005 continuous-control events",
         p => p,
     }
 }

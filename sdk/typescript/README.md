@@ -130,6 +130,9 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 | `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 |
 | `fep-0004` NTS over WebSocket (scenarios) | 43 | 43/43 pass | 43/43 (Rust too, since M7-12) |
+| `fep-0005` control events (gap G-1) | 42 | 42/42 pass | 42/42 (Rust too) |
+
+NTS 1.0 RC2, gap G-1 (2026-11-14): profile `fep-0005` (`fep0005.checkFile`, `fep0005.consume`; module `src/profiles/fep0005.ts`) is a port of the Python control profile and of the validators of `fidetype.trust.control`. For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. Python = TypeScript = Rust on all 279 vectors; seeds 1-6 at `--n 30` give 44,196 mutants (fep-0005: 7,560), all with the Python verdict.
 
 NTS 1.0 RC2 (2026-11-14): the reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`isSupportedSpecVersion`, exported); the writer still writes `"0.1"`. Seeds 1-6 at `--n 30` (36,636 mutants) give the Python verdict in TypeScript and Rust.
 
@@ -156,11 +159,11 @@ FEP-0002 vectors are LSL scenarios. The Python reference plays them through its 
 
 ## Schemas are the single source of truth
 
-- The schemas are in `spec/schemas/` (draft 2020-12): `nts-v0.1/` (header, frame, decision, hypothesis, pointer, signal_quality, end), `fep-0001/` (segment_end, n-best item, decode_declaration, trust_decision) and `fep-0003/`.
+- The schemas are in `spec/schemas/` (draft 2020-12): `nts-v0.1/` (header, frame, decision, hypothesis, pointer, signal_quality, end), `fep-0001/` (segment_end, n-best item, decode_declaration, trust_decision), `fep-0003/` and `fep-0005/`.
 - `npm run gen:schemas` writes `src/schemas.generated.ts` (the schemas, embedded for the browser) and `src/types.generated.ts` (the types).
 - `npm run check:schemas` fails if the generated files differ from the schemas. `npm run build` runs it first, and CI runs it.
 - A test checks that every event of every accepted JSON Lines vector is valid under its schema, and that the structural reject vectors break their schema. So a schema cannot drift from the Python verdicts without a test failure.
-- The schemas are structural. Rules across fields or events (normalisation, order, one final decision per utterance, safety rules of FEP-0003) are in the validators, as in Python.
+- The schemas are structural. Rules across fields or events (normalisation, order, one final decision per utterance, safety rules of FEP-0003 and FEP-0005) are in the validators, as in Python.
 
 ## Browser use
 

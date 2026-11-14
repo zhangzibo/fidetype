@@ -43,11 +43,12 @@
 - This is **Release Candidate 2** of NTS 1.0. It is a **DRAFT for public comment**.
 - It folds v0.1 and the draft FEPs 0001–0005 into one document. Where this document and a FEP differ, this document is the proposal for 1.0. The FEPs stay as the record of the design and its evaluation.
 - New in this RC (not in v0.1 or a FEP): the rule ids, the decision field `spec_version` (11.2), rule TD-9 as a MUST NOT for 1.x decisions (6.3), the WebSocket header check of HDR-8 (WS-S1), the JSON number rules (4.1), the resolutions of Appendix A, and the registries (12). Appendix B lists every change.
-- **Changes in RC2 (from RC1).** No rule text changed. RC2 closes three implementation gaps of Appendix C.2:
+- **Changes in RC2 (from RC1).** No rule text changed. RC2 closes four implementation gaps of Appendix C.2:
   - **G-2:** the Python, TypeScript and Rust validators, the LSL `nts_header` check, the WebSocket header check and the JSON schema `nts-v0.1/header` now accept a header `spec_version` `"0.1"`, `"1.0"` or `"1.<minor>"` (HDR-2, VER-3, VER-4) and refuse every other value (VER-5). New vectors V53–V60, F48–F49, L33–L35, W39–W42.
   - **G-3:** golden vectors with an integer written as `0.0`, `1.0` or `2.0` (GEN-5): V61, F50, W43.
   - **G-4:** reject vectors for the types of `session`, `config_id`, `input` and `latency_s` (TD-F2): F51–F54.
   - The writers still write `"0.1"` headers by default. A producer that writes `"1.0"` is now accepted by all three SDKs.
+  - **G-1:** the TypeScript and Rust SDKs run the control profile `fep-0005` (all CTL rules that the suite checks). Python = TypeScript = Rust on all 279 vectors of `v0.1` … `fep-0005`.
 
 ### 1.2 Key words
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY and OPTIONAL are to be read as in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) and [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) when they are in capitals.
@@ -838,7 +839,7 @@ The levels are cumulative and come from the conformance suite.
 | `fep-0002` | 8.2 | 35 | yes | yes (structural) | yes (structural) |
 | `fep-0003` | 7.1, 7.3 | 44 | yes | yes | yes |
 | `fep-0004` | 8.3 (incl. W38: header `meta` must be an object) | 43 | yes | yes | yes |
-| `fep-0005` | 7.4 | 42 | yes | **no** | **no** |
+| `fep-0005` | 7.4 | 42 | yes | yes | yes |
 
 ```
 fidetype conformance --profile fep-0001                    # reference consumer over the vectors
@@ -852,7 +853,7 @@ fidetype-rs conformance                                    # Rust SDK
 A claim names the class, the level, the profiles and the bindings, and the RC: for example "Producer, NTS 1.0 RC2 (draft), level provenance, profiles text + intent, binding nts-lsl/0.1". **[CNF-1]** A claim MUST NOT omit "RC2 (draft)" (or the RC that it names) while this document is a draft.
 
 ### 9.5 Parity of the reference SDKs
-The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0004` (61 + 54 + 35 + 44 + 43 = 237) (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`). The control profile (`fep-0005`) is Python only (gap G-1).
+The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (61 + 54 + 35 + 44 + 43 + 42 = 279) (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`). Gap G-1 (control profile in Python only) is closed.
 
 ---
 
@@ -951,8 +952,8 @@ SDK versions are separate from spec versions.
 | SDK | Version | v0.1 streams | 1.x decision `spec_version` + TD-9 | 1.0 header `spec_version` | Profiles |
 |---|---|---|---|---|---|
 | Python `fidetype` | 0.0.1 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | v0.1, fep-0001 … fep-0005 |
-| TypeScript `@fidetype/sdk` | 0.1.0 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | v0.1, fep-0001 … fep-0004 |
-| Rust `fidetype` | 0.1.0 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | v0.1, fep-0001 … fep-0004 |
+| TypeScript `@fidetype/sdk` | 0.1.0 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | v0.1, fep-0001 … fep-0005 |
+| Rust `fidetype` | 0.1.0 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | v0.1, fep-0001 … fep-0005 |
 
 ---
 
@@ -1359,7 +1360,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 ### C.2 Gaps
 | Gap | Rules | What is missing | Proposed fix |
 |---|---|---|---|
-| **G-1** | 7.4 (all CTL rules) | The control profile `fep-0005` (42 vectors) runs in Python only. The TypeScript and Rust parity scripts skip it. | Port `fep-0005` to TS and Rust (follow-up of P12-03). |
+| ~~**G-1**~~ (closed) | 7.4 (all CTL rules) | Closed in this draft: the TypeScript and Rust SDKs run the control profile `fep-0005` (42 vectors) with the Python verdicts, and the parity scripts include it. | Done (TS `profiles/fep0005.ts`, Rust `profiles/fep0005.rs`). |
 | ~~G-2~~ | HDR-2, VER-1, VER-3, LSL-D2 | **Closed in RC2.** All three SDKs, the LSL and WebSocket header checks and the JSON schema accept `"0.1"` and `"1.<minor>"` and refuse other values. | Vectors V53–V60, F48, F49, L33–L35, W39–W42. |
 | ~~G-3~~ | GEN-5 | **Closed in RC2.** Golden vectors with an integer written with a fraction part. | V61 (`blank_id: 0.0`), F50 (`seq: 1.0`), W43 (`ws_seq: 2.0`). |
 | ~~G-4~~ | TD-F2 | **Closed in RC2.** Reject vectors for the types of `session`, `config_id`, `input`, `latency_s`. | F51–F54. All three SDKs already refused them. |
@@ -1371,7 +1372,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | **G-10** | PRV-1 … PRV-3, INT-S10, CTL-S8 | Audit SHOULD rules; no check. | A `provenance` level for decision logs. |
 | **G-11** | INT-S8, CTL-S2 (evaluation part) | Evaluation reporting rules. | A benchmark submission check (roadmap P6 / P13). |
 
-Summary: of the rule groups in C.1, the frame core, segments, evidence, decision format, intent and control formats, and both bindings have accept and reject vectors. The gaps are mostly behaviour that a stream validator cannot see, plus one implementation gap: **G-1** (control profile parity). RC2 closed G-2 (1.0 headers), G-3 and G-4.
+Summary: of the rule groups in C.1, the frame core, segments, evidence, decision format, intent and control formats, and both bindings have accept and reject vectors. The gaps are mostly behaviour that a stream validator cannot see. RC2 closed G-2 (1.0 headers), G-3 and G-4, and then G-1 (control profile parity in TypeScript and Rust). No implementation gap is open.
 
 ---
 

@@ -36,7 +36,7 @@ fidetype conformance --profile fep-0001     # streaming trust events: vectors in
 fidetype conformance --profile fep-0002     # NTS over LSL: scenario vectors in conformance/fep-0002/
 fidetype conformance --profile fep-0003     # output profiles + discrete intent events: vectors in conformance/fep-0003/
 fidetype conformance --profile fep-0004     # NTS over WebSocket: scenario vectors in conformance/fep-0004/
-fidetype conformance --profile fep-0005     # control profile: vectors in conformance/fep-0005/ (Python only)
+fidetype conformance --profile fep-0005     # control profile: vectors in conformance/fep-0005/ (Python, TypeScript, Rust)
 ```
 
 The 1.0 rule ids map to these checks and vectors in [Appendix C](nts-1.0-rc2.md#appendix-c-conformance-traceability). All three SDKs accept a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` and refuse other values (RC2, gap G-2; vectors V53-V60, F48-F49, L33-L35, W39-W42). One stricter rule is also in the validators of all three SDKs: a `trust_decision` with `"spec_version": "1.x"` MUST NOT be a final COMMIT with an empty committed text (rule TD-9; vectors F41-F47). Decisions without `spec_version`, or with `"0.1"`, keep the 0.1 rule (a SHOULD NOT).
@@ -50,7 +50,7 @@ All five FEPs are folded into [NTS 1.0 RC2](nts-1.0-rc2.md). Their open question
 | [0002](feps/0002-nts-over-lsl.md) | NeuralTextStream over LSL (binding `nts-lsl/0.1`) | Draft (in 1.0 RC2) | `fep-0002` (35 vectors; L33-L35 test 1.x `nts_header` versions) |
 | [0003](feps/0003-intent-events.md) | Output profiles (core, text, intent, control) and discrete intent events (risk classes, confirmation, undo, `intent_feedback`, intent `trust_decision`) | Draft (in 1.0 RC2) | `fep-0003` (44 vectors); JSON schemas in `schemas/fep-0003/` |
 | [0004](feps/0004-nts-over-websocket.md) | NeuralTextStream over WebSocket (binding `nts-ws/0.1`: framing, `ws_seq` order and gaps, resume, back-pressure, auth hook, decisions channel) | Draft (in 1.0 RC2) | `fep-0004` (43 vectors; W38 tests the RC1 header check; W39-W43 test 1.x header versions and GEN-5) |
-| [0005](feps/0005-control-events.md) | Continuous-control events (control profile: `control_declaration` units / frame / rate / uncertainty, `control`, `control_enable`, control `trust_decision` with gain / hold / stop, safety rules) | Draft (in 1.0 RC2) | `fep-0005` (42 vectors; Python only) |
+| [0005](feps/0005-control-events.md) | Continuous-control events (control profile: `control_declaration` units / frame / rate / uncertainty, `control`, `control_enable`, control `trust_decision` with gain / hold / stop, safety rules) | Draft (in 1.0 RC2) | `fep-0005` (42 vectors; Python, TypeScript, Rust) |
 | [0006](feps/0006-collector.md) | The collector (reference architecture, not a format change): receivers → processors → exporters, pipelines, TOML / JSON configuration, loss and privacy rules, health and metrics | Draft (not in 1.0; reference v0 `fidetype collector`) | - |
 
 ## Stability levels

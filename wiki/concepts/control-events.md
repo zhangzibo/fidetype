@@ -56,5 +56,5 @@ All six pre-declared criteria passed, but the declared configuration never moved
 - [Apple BCI HID](../entities/apple-bci-hid.md): Report 3 (pointer) is the main target; P12-05 maps control decisions to it.
 - [BrainGate recalibration dataset](../entities/braingate-recalibration-dataset.md): human closed-loop cursor data, the planned second evaluation.
 - [Intent and control datasets](../questions/intent-datasets-survey.md): the P12-06 survey that picked MC_RTT and BrainGate.
-- [Conformance suite](conformance-suite.md): profile `fep-0005` (42 vectors).
+- [Conformance suite](conformance-suite.md): profile `fep-0005` (42 vectors). It runs in Python, the [TypeScript SDK](typescript-sdk.md) and the [Rust SDK](rust-sdk.md) with identical verdicts (gap G-1 closed 2026-11-14).
 - [WebSocket input](websocket-input.md) and [LSL input](lsl-input.md): transports; a WebSocket gap is a no-signal condition.

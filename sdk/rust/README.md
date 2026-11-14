@@ -9,7 +9,7 @@ Rust SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. The cor
 | Reference consumer | `load_stream(name, bytes)`: accept or reject a `.jsonl` or `.npz` file with the core rules of the Python reference (`fidetype.conformance.io.load_stream`). |
 | Checks | `check_stream`: all v0.1 checks with levels `core`, `trust-ready`, `provenance`, `advisory` (the same 59 checks as `fidetype validate`). `StreamValidator`: event-by-event checks for live streams. |
 | Decisions | `DecisionTracker`, `trust::is_final_commit`, `trust::committed_text`, `trust::empty_commit_warning`: what a consumer may do with each `trust_decision` (COMMIT / OFFER / ASK / ABSTAIN, text and intent profiles). |
-| Profiles | `profiles::fep0001`, `fep0002` (LSL scenarios), `fep0003`, `fep0004` (WebSocket scenarios): the producer checks and the reference consumers of each FEP profile. |
+| Profiles | `profiles::fep0001`, `fep0002` (LSL scenarios), `fep0003`, `fep0004` (WebSocket scenarios), `fep0005` (control events): the producer checks and the reference consumers of each FEP profile. |
 | WebSocket core | `ws::IngestCore`, `ws::SubscriberCore`: the sans-IO logic of FEP-0004 (`nts-ws/0.1`). No networking: you give connection events and messages, and you apply the returned `Effects`. |
 | Conformance | `conformance::run_vectors`: run the golden vectors in `spec/conformance/` (the same files as the Python suite) for every profile. |
 
@@ -126,7 +126,7 @@ python -m fidetype.conformance consumer --cmd "sdk/rust/target/release/fidetype-
 python -m fidetype.conformance consumer --profile fep-0002 --cmd "sdk/rust/target/release/fidetype-rs consume --profile fep-0002 {path}"
 ```
 
-All five profiles pass this way (237/237 at NTS 1.0 RC2). On Windows, give the binary as an absolute path.
+All six profiles pass this way (279/279 at NTS 1.0 RC2 with `fep-0005`). On Windows, give the binary as an absolute path.
 
 ## Conformance and parity with Python
 
@@ -137,8 +137,9 @@ All five profiles pass this way (237/237 at NTS 1.0 RC2). On Windows, give the b
 | `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 | PASS |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 | PASS |
 | `fep-0004` NTS over WebSocket (scenarios, M7-12) | 43 | 43/43 pass | 43/43 | PASS (7,740/7,740) |
+| `fep-0005` control events (gap G-1) | 42 | 42/42 pass | 42/42 | PASS (7,560/7,560) |
 
-NTS 1.0 RC2 (2026-11-14): seeds 1-6 at `--n 30` give 36,636 mutants over the five profiles, all with the Python verdict. The reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`fidetype::constants::is_supported_spec_version`); the writer still writes `"0.1"`.
+NTS 1.0 RC2, gap G-1 (2026-11-14): module `profiles::fep0005` ports the Python control profile and the validators of `fidetype.trust.control` (still `no_std` + `alloc`, no new dependency). For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. Seeds 1-6 at `--n 30` give 44,196 mutants over the six profiles, all with the Python verdict. The reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`fidetype::constants::is_supported_spec_version`); the writer still writes `"0.1"`.
 
 The parity scripts are the TypeScript SDK scripts with the option `--rust BIN`. They compare Python, TypeScript and Rust on the same files:
 

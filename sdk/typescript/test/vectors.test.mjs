@@ -94,3 +94,19 @@ test("decision logs: acted texts equal the manifest (FEP-0001 rule 1)", async ()
     assert.ok(ds.every((d) => !d.errors.length), v.id);
   }
 });
+
+test("fep-0005: each reject vector fails its named check; decision logs give the moving ticks", () => {
+  const dir = join(conf, "fep-0005");
+  const m = JSON.parse(readFileSync(join(dir, "manifest.json"), "utf8"));
+  assert.equal(m.vectors.length, 42);
+  for (const v of m.vectors) {
+    const bytes = new Uint8Array(readFileSync(join(dir, v.file)));
+    const rep = sdk.fep0005.checkFile(v.file, bytes);
+    const fails = rep.checks.filter((c) => c.status === "fail").map((c) => c.id);
+    if (v.expect === "reject") assert.ok(fails.includes(v.failing_check), `${v.id}: ${fails} lacks ${v.failing_check}`);
+    else assert.deepEqual(fails, [], v.id);
+    if (v.expect === "accept" && v.expected?.moving_ticks) {
+      assert.deepEqual(sdk.fep0005.consume(v.file, bytes).moving_ticks, v.expected.moving_ticks, v.id);
+    }
+  }
+});

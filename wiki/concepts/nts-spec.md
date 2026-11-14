@@ -66,7 +66,7 @@ RC2 changes no rule text. It makes the code follow rules HDR-2, VER-3, VER-4 and
 | Checks | `NTS-VERSION`, `NeuralTextStream`, the streaming validators, LSL `FEP2-DESC`, WebSocket `FEP4-HANDSHAKE`; JSON schema `nts-v0.1/header` (pattern instead of `const "0.1"`) |
 | Writers | Still write `"0.1"` by default. Output does not change |
 | Vectors | V53-V61, F48-F54, L33-L35, W39-W43 (21 new). Also closes G-3 (integers written as `0.0` / `1.0` / `2.0`) and G-4 (TD-F2 types) |
-| Parity | Python = TypeScript = Rust on 237 vectors (`v0.1` … `fep-0004`) and on the fuzz mutants, seeds 1-6, `--n 30` |
+| Parity | Python = TypeScript = Rust on 237 vectors (`v0.1` … `fep-0004`) and on the fuzz mutants, seeds 1-6, `--n 30`. After G-1: 279 vectors (`v0.1` … `fep-0005`), 44,196 mutants |
 
 > **Our take:** JSON Schema counts `1.0` as an integer. So GEN-5 (no `1.0` where an integer is required) is stricter than the schemas can say. Only the validators check it. A third-party tool that checks only the schemas will accept `seq: 1.0`.
 
@@ -75,10 +75,9 @@ A second rule, INT-S7 (no-signal reference for configurations that can arm irrev
 The parity fuzz also found one binding bug while this work ran: a WebSocket header with a non-object `meta` made the Python trust layer fail, and the SDKs accepted it. All three now refuse it at the header (close 1007); vector W38.
 
 ## Main gaps (Appendix C.2)
-- **G-1:** the control profile has no TypeScript or Rust port.
-- G-2, G-3 and G-4 are closed in RC2.
+- G-1, G-2, G-3 and G-4 are closed in RC2. G-1 (2026-11-14): the TypeScript and Rust SDKs run the control profile `fep-0005` with the Python verdicts on all 42 vectors and on 7,560 fuzz mutants (seeds 1-6, `--n 30`).
 - Many rules are behaviour that a stream validator cannot see (G-6, G-7, G-9).
 
-> **Our take:** With RC2 a real "1.0" stream validates in all three SDKs. The next implementation gap is G-1 (control profile in TS / Rust). Then the protobuf schema (P1-02) and the YAML conventions (P1-04). 1.0 Stable needs outside reviewers (P1-07, externally blocked).
+> **Our take:** With RC2 a real "1.0" stream validates in all three SDKs. With G-1 closed, all six suite profiles run in all three SDKs; no implementation gap is open. Next: the protobuf schema (P1-02) and the YAML conventions (P1-04). 1.0 Stable needs outside reviewers (P1-07, externally blocked).
 
 Related: [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).

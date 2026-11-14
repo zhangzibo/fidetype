@@ -41,8 +41,13 @@ fn fep0004_vectors() {
 }
 
 #[test]
+fn fep0005_vectors() {
+    run("fep-0005", 42);
+}
+
+#[test]
 fn profiles_listed_in_order() {
-    assert_eq!(io::list_profiles(vectors()), ["v0.1", "fep-0001", "fep-0002", "fep-0003", "fep-0004"]);
+    assert_eq!(io::list_profiles(vectors()), ["v0.1", "fep-0001", "fep-0002", "fep-0003", "fep-0004", "fep-0005"]);
 }
 
 #[test]
@@ -61,4 +66,28 @@ fn accepted_vectors_pass_the_streaming_validator() {
         n += 1;
     }
     assert!(n >= 5);
+}
+
+#[test]
+fn fep0005_reject_vectors_fail_their_named_check() {
+    use fidetype::profiles::fep0005;
+    let dir = vectors().join("fep-0005");
+    let manifest = fidetype::parse_json(&std::fs::read_to_string(dir.join("manifest.json")).unwrap()).unwrap();
+    for v in manifest.get("vectors").as_arr().unwrap() {
+        let file = v.get("file").as_str().unwrap();
+        let bytes = std::fs::read(dir.join(file)).unwrap();
+        let rep = fep0005::check_file(file, &bytes);
+        let fails: Vec<&str> = rep.checks.iter().filter(|c| c.status == fidetype::checks::Status::Fail).map(|c| c.id.as_str()).collect();
+        if v.get("expect").as_str() == Some("reject") {
+            let want = v.get("failing_check").as_str().unwrap();
+            assert!(fails.contains(&want), "{}: {:?} lacks {}", file, fails, want);
+        } else {
+            assert!(fails.is_empty(), "{}: {:?}", file, fails);
+        }
+        if let Some(want) = v.get("expected").get("moving_ticks").as_arr() {
+            let got = fep0005::consume(file, &bytes).unwrap();
+            let got = got.get("moving_ticks").as_arr().unwrap().clone();
+            assert!(fidetype::json::py_eq(&fidetype::Value::Arr(got), &fidetype::Value::Arr(want.clone())), "{}", file);
+        }
+    }
 }

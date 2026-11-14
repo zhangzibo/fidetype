@@ -21,7 +21,12 @@ All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1
 - **Gaps G-3 and G-4 closed.** The three SDKs already refused these inputs (no check changed). JSON Schema counts `1.0` as an integer, so only the validators check GEN-5.
 
 ### Parity
-- Python = TypeScript = Rust on all 237 vectors of `v0.1` … `fep-0004` (`cross-check.mjs --rust`), and on the fuzz mutants (`fuzz-parity.mjs`, seeds 1-6, `--n 30`). `fep-0005` is still Python only (gap G-1).
+- Python = TypeScript = Rust on all 237 vectors of `v0.1` … `fep-0004` (`cross-check.mjs --rust`), and on the fuzz mutants (`fuzz-parity.mjs`, seeds 1-6, `--n 30`).
+
+### Changed (implementation, later on 2026-11-14; no rule text changed)
+- **Gap G-1 closed (section 7.4, all CTL rules that the suite checks):** the TypeScript SDK (`sdk/typescript/src/profiles/fep0005.ts`) and the Rust SDK (`sdk/rust/src/profiles/fep0005.rs`) run the control profile `fep-0005`. They port `fidetype.conformance.profiles.fep0005` and the validators of `fidetype.trust.control`. For a decision log, the reference consumers return `moving_ticks` (the "acted" list of control COMMITs, 6.4), `acted_intents` and `acted_texts`. Rust stays `no_std` + `alloc`; TypeScript has no runtime dependency.
+- The parity scripts (`cross-check.mjs`, `fuzz-parity.mjs`) and the CI parity jobs now include `fep-0005` (they take the profile list from the SDK consumers).
+- Python = TypeScript = Rust on all 279 vectors of `v0.1` … `fep-0005`, and on 44,196 fuzz mutants (seeds 1-6, `--n 30`; `fep-0005`: 7,560). The fuzz found no Python bug. No vector changed. Open review points (not changed): the profile checks CTL-S7 only after a `stop` decision (a log has no other engagement signal), and it does not check the 7.4.5 notes `p_top1` is null and `score_semantics` follows the radius.
 
 ## [1.0 RC1, DRAFT] 2026-11-14
 **Status: draft for public comment. Not final.** Document: [nts-1.0-rc1.md](nts-1.0-rc1.md).

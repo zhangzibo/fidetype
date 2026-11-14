@@ -20,7 +20,7 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 | Check a file | `checkStream`: the 59 checks of the [conformance suite](conformance-suite.md), levels core / trust-ready / provenance / advisory |
 | Check a live stream | `StreamValidator`: the event checks of the [streaming trust layer](streaming-trust-layer.md) `push` (header first, increasing t, normalised rows, valid n-best) |
 | Act on decisions | `DecisionTracker`: per `trust_decision` the kind (commit, offer, ask, abstain, preview), the committed text or intent, `forward`, errors (FEP-0001 rules 5-8) and warnings (rule 9: empty final COMMIT) |
-| Conformance | `runVectors`: the golden vectors in `spec/conformance/` for `v0.1`, `fep-0001`, `fep-0002`, [`fep-0003`](intent-events.md), [`fep-0004`](websocket-input.md) |
+| Conformance | `runVectors`: the golden vectors in `spec/conformance/` for `v0.1`, `fep-0001`, `fep-0002`, [`fep-0003`](intent-events.md), [`fep-0004`](websocket-input.md), [`fep-0005`](control-events.md) |
 | WebSocket (M6-11) | `DecisionSubscriber` (browser `/decisions` client: resubscribe with `from_seq` on a gap), `subscribeEvents`, `IngestCore` / `SubscriberCore` (FEP-0004 cores, used by the `fep-0004` profile). Example page: `examples/ws-browser/` |
 
 ## Schemas are the source of truth
@@ -37,9 +37,11 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 | fep-0002 (LSL scenarios) | 35 (32 before RC2) | 35 | 35/35 |
 | fep-0003 | 44 | 44 | 44/44 |
 | fep-0004 (WebSocket scenarios) | 43 (38 before RC2) | 43 | 43/43 (Rust ported in M7-12) |
+| fep-0005 ([control events](control-events.md); gap G-1) | 42 | 42 | 42/42 (Rust too) |
 
 - **NTS 1.0 RC1 (2026-11-14):** `tdFormatErrors` / `td_format_errors` read the new optional `trust_decision.spec_version` (`"0.1"` or `"1.<minor>"`; absent = `"0.1"`). For 1.x decisions, a final COMMIT with a blank `shown[0]` is an error (rule TD-9, a MUST NOT); for 0.1 decisions it stays the warning of rule 9. The WebSocket `IngestCore` refuses a header whose `meta` is not an object (close 1007; vector W38; the parity fuzz found it at seed 5). Python = TypeScript = Rust on 213/213 vectors (fep-0001 47, fep-0004 38) and on the fuzz mutants of seeds 1-6 at `--n 30` (about 5,400 per seed). See [NTS specification](nts-spec.md).
 - **NTS 1.0 RC2 (2026-11-14, gap G-2):** one function decides which header `spec_version` the SDK reads: `isSupportedSpecVersion`. It accepts `"0.1"`, `"1.0"` and `"1.<minor>"` and refuses every other value (`"2.0"`, `"1.0.0"`, `"01.0"`, `"1.01"`, numbers). `NTS-VERSION`, the streaming validator, the LSL `nts_header` check (`FEP2-DESC`), the WebSocket header check and the decision field (TD-F3) all use it. The writer still writes `"0.1"`. New vectors V53-V61, F48-F54, L33-L35, W39-W43 (21); they also close G-3 (`seq: 1.0`, `ws_seq: 2.0`, `blank_id: 0.0`) and G-4 (TD-F2 types). No other check changed: the SDK already refused the G-3 and G-4 inputs.
+- **Gap G-1 (2026-11-14):** profile `fep-0005` (`src/profiles/fep0005.ts`) ports the Python control profile and the validators of `fidetype.trust.control`. For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. To give the Python verdict, it copies two Python behaviours: a pointer `dims` of `true` equals 1 (Python `True == 1`), and a speed square that overflows (`float(v) ** 2` raises `OverflowError` in Python) is a rejection. The 42 vectors passed on the first run. Python = TypeScript = Rust on 279/279 vectors and on 44,196 mutants (seeds 1-6, `--n 30`; fep-0005 7,560). The parity scripts and CI include `fep-0005` without a change: they take the profile list from `CONSUMERS`.
 - `npm run cross-check` runs both reference consumers on every vector and compares verdict and "ok".
 - `npm run fuzz` mutates the JSON vectors (fixed seed). Two runs, about 4,000 mutants each: identical verdicts. The first fuzz runs found 6 differences (Python iterates strings and dicts; NumPy converts sample strings late). All are fixed. M7-11: seeds 1-6 at `--n 30` (24,396 mutants) give identical verdicts in Python, TypeScript and [Rust](rust-sdk.md). CI runs seeds 1-3. RC2: seeds 1-6 at `--n 30` again PASS in all three languages (36,636 mutants).
 - The Python suite can also run the TS consumer: `python -m fidetype.conformance consumer --cmd "node sdk/typescript/bin/fidetype-ts.mjs consume {path}"` (52/52 before RC2; fep-0002 32/32).
@@ -67,4 +69,4 @@ The three-way fuzz ([Rust SDK](rust-sdk.md)) found 4 mutants where TypeScript di
 - The offline demo (`demo/index.html`) is not wired to the SDK. It runs from `file://`, which cannot load ES modules; it would need a bundle.
 - Parity fuzz covers JSON vectors only, not NPZ.
 
-Related: [Python SDK](python-sdk.md), [Rust SDK](rust-sdk.md), [conformance suite](conformance-suite.md), [streaming trust layer](streaming-trust-layer.md), [LSL input](lsl-input.md), [intent events](intent-events.md).
+Related: [Python SDK](python-sdk.md), [Rust SDK](rust-sdk.md), [conformance suite](conformance-suite.md), [streaming trust layer](streaming-trust-layer.md), [LSL input](lsl-input.md), [intent events](intent-events.md), [control events](control-events.md).

@@ -40,6 +40,7 @@ export * as fep0001 from "./profiles/fep0001.js";
 export * as fep0002 from "./profiles/fep0002.js";
 export * as fep0003 from "./profiles/fep0003.js";
 export * as fep0004 from "./profiles/fep0004.js";
+export * as fep0005 from "./profiles/fep0005.js";
 export {
   IngestCore, SubscriberCore, SubscriberError, DecisionSubscriber, subscribeEvents, parseWsMessage, bearerToken, ingestSettings,
   WS_BINDING_VERSION, WS_SUBPROTOCOL, WS_KNOWN_BINDINGS, WS_PATH_INGEST, WS_PATH_DECISIONS, WS_PATH_EVENTS, WS_REFUSAL_CODES,

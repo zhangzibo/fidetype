@@ -166,7 +166,7 @@ Output:
 - Stability: all parts start at Development.
 
 ## Conformance
-Profile `fep-0005` (opt-in, `src/fidetype/conformance/profiles/fep0005.py`). Golden vectors: [`spec/conformance/fep-0005/`](../conformance/fep-0005/) (`manifest.json`; 42 JSON Lines files: 9 accept, 33 reject). JSON schemas (structural): [`spec/schemas/fep-0005/`](../schemas/fep-0005/). The TypeScript and Rust SDKs do not have this profile yet (follow-up); their parity scripts skip it.
+Profile `fep-0005` (opt-in, `src/fidetype/conformance/profiles/fep0005.py`). Golden vectors: [`spec/conformance/fep-0005/`](../conformance/fep-0005/) (`manifest.json`; 42 JSON Lines files: 9 accept, 33 reject). JSON schemas (structural): [`spec/schemas/fep-0005/`](../schemas/fep-0005/). The TypeScript SDK (`sdk/typescript/src/profiles/fep0005.ts`) and the Rust SDK (`sdk/rust/src/profiles/fep0005.rs`) have this profile too. They give the Python verdict on every vector and on the parity fuzz mutants (NTS 1.0 RC2, gap G-1 closed).
 
 ```
 fidetype conformance --profile fep-0005                        # reference consumer over the vectors
