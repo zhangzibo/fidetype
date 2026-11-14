@@ -9,7 +9,8 @@ Rust SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. The cor
 | Reference consumer | `load_stream(name, bytes)`: accept or reject a `.jsonl` or `.npz` file with the core rules of the Python reference (`fidetype.conformance.io.load_stream`). |
 | Checks | `check_stream`: all v0.1 checks with levels `core`, `trust-ready`, `provenance`, `advisory` (the same 59 checks as `fidetype validate`). `StreamValidator`: event-by-event checks for live streams. |
 | Decisions | `DecisionTracker`, `trust::is_final_commit`, `trust::committed_text`, `trust::empty_commit_warning`: what a consumer may do with each `trust_decision` (COMMIT / OFFER / ASK / ABSTAIN, text and intent profiles). |
-| Profiles | `profiles::fep0001`, `fep0002` (LSL scenarios), `fep0003`: the producer checks and the reference consumers of each FEP profile. |
+| Profiles | `profiles::fep0001`, `fep0002` (LSL scenarios), `fep0003`, `fep0004` (WebSocket scenarios): the producer checks and the reference consumers of each FEP profile. |
+| WebSocket core | `ws::IngestCore`, `ws::SubscriberCore`: the sans-IO logic of FEP-0004 (`nts-ws/0.1`). No networking: you give connection events and messages, and you apply the returned `Effects`. |
 | Conformance | `conformance::run_vectors`: run the golden vectors in `spec/conformance/` (the same files as the Python suite) for every profile. |
 
 ## Where it lives
@@ -125,16 +126,17 @@ python -m fidetype.conformance consumer --cmd "sdk/rust/target/release/fidetype-
 python -m fidetype.conformance consumer --profile fep-0002 --cmd "sdk/rust/target/release/fidetype-rs consume --profile fep-0002 {path}"
 ```
 
-All four profiles pass this way (168/168).
+All five profiles pass this way (205/205).
 
 ## Conformance and parity with Python
 
-| Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-6, `--n 30`, M7-11) |
+| Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-6, `--n 30`, M7-12) |
 |---|---|---|---|---|
 | `v0.1` (NPZ + JSON Lines) | 52 | 52/52 pass | 52/52 | 3,516/3,516 |
 | `fep-0001` streaming trust events | 40 | 40/40 pass | 40/40 | 7,200/7,200 |
 | `fep-0002` NTS over LSL (scenarios) | 32 | 32/32 pass | 32/32 | 5,760/5,760 |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 | 7,920/7,920 |
+| `fep-0004` NTS over WebSocket (scenarios, M7-12) | 37 | 37/37 pass | 37/37 | 6,660/6,660 |
 
 The parity scripts are the TypeScript SDK scripts with the option `--rust BIN`. They compare Python, TypeScript and Rust on the same files:
 
@@ -145,7 +147,7 @@ node scripts/cross-check.mjs --rust ../rust/target/release/fidetype-rs     # gol
 node scripts/fuzz-parity.mjs --n 30 --seed 1 --rust ../rust/target/release/fidetype-rs
 ```
 
-CI runs both in the job `rust-parity` (cross-check + `--n 10`).
+CI runs both in the job `rust-parity` (cross-check + fuzz `--n 30` at seeds 1-3).
 
 Rules that matter for identical verdicts (in addition to those of the TypeScript SDK):
 
@@ -159,10 +161,15 @@ Rules that matter for identical verdicts (in addition to those of the TypeScript
 | ElementTree (expat) refuses a bare `&` in stream-info XML | the XML reader refuses it. |
 | `int(round(x))` for the gap length: half to even; an error for inf / NaN | `libm::rint` and an error. |
 | `blank_id` null = no blank class (spec 3.1, FEP-0002 section 10, vector L32): the greedy decoder decodes it | The structural trust model accepts it. (M7-11 fixed the reference, which raised IndexError before.) |
+| A boolean `frame_period` or `latency` passes as 1 or 0 (bool is an int in Python) | The structural trust model reads it as a number (M7-12; the TypeScript SDK got the same fix in M6-11). |
 
 ### FEP-0002 note
 
 FEP-0002 vectors are LSL scenarios. The Python reference plays them through its LSL adapter and its trust layer. The SDK ports the LSL binding logic (stream infos, clock correction, order, gaps, reconnect, markers) and uses a **structural model** of the trust layer: the same event checks and the same decision counts (`decisions`, `final_decisions`, `aborted_utterances`). It does not decode and it does not apply a trust policy. So the SDK can check an FEP-0002 producer, but it is not a Rust trust layer.
+
+### FEP-0004 note
+
+FEP-0004 vectors are WebSocket scenarios (`ingest` and `subscribe`). `ws::IngestCore` is a port of the sans-IO server logic of `fidetype.adapters.ws`: handshake, header, `ws_seq` duplicates, the reorder hold (16 events or 0.25 s by default), gaps, batches, acks, resume and take-over, and the close codes. After a gap, the frames of the cut utterance are dropped up to the next `segment_end`, `end` or header. The decision counts use the same structural trust model as FEP-0002. There is no networking code: a caller connects the core to its own WebSocket library.
 
 ## Embedded use
 

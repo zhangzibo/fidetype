@@ -1549,13 +1549,13 @@ impl EventSource {
 // --- the structural trust model + runner ------------------------------------------------------
 
 #[derive(PartialEq, Eq, Clone, Copy)]
-enum Route {
+pub(crate) enum Route {
     Frames,
     Hypothesis,
 }
 
 /// Counts what the reference StreamingTrustLayer does, without decoding. Errors as it does.
-struct StructuralLayer {
+pub(crate) struct StructuralLayer {
     route: Route,
     header: Option<Map>,
     v: usize,
@@ -1564,16 +1564,31 @@ struct StructuralLayer {
     rows: usize,
     hyp: bool,
     has_session: bool,
-    decisions: usize,
-    finals: usize,
+    pub(crate) decisions: usize,
+    pub(crate) finals: usize,
 }
 
 impl StructuralLayer {
-    fn pending(&self) -> bool {
+    pub(crate) fn new(route: Route) -> Self {
+        StructuralLayer {
+            route,
+            header: None,
+            v: 0,
+            last_t: f64::NEG_INFINITY,
+            ended: false,
+            rows: 0,
+            hyp: false,
+            has_session: false,
+            decisions: 0,
+            finals: 0,
+        }
+    }
+
+    pub(crate) fn pending(&self) -> bool {
         self.has_session && (self.rows > 0 || self.hyp)
     }
 
-    fn push(&mut self, ev: &Map) -> Result<(), Error> {
+    pub(crate) fn push(&mut self, ev: &Map) -> Result<(), Error> {
         let typ = match ev.get("type") {
             Value::Str(s) => s.clone(),
             _ => return Err(Error::event("an event must be an object with a string \"type\"")),
@@ -1624,7 +1639,7 @@ impl StructuralLayer {
     }
 
     /// Close the utterance: one final decision if it had input.
-    fn end(&mut self) -> Result<(), Error> {
+    pub(crate) fn end(&mut self) -> Result<(), Error> {
         let h = match &self.header {
             Some(h) => h,
             None => return Ok(()),
@@ -1642,7 +1657,7 @@ impl StructuralLayer {
         Ok(())
     }
 
-    fn abort(&mut self) {
+    pub(crate) fn abort(&mut self) {
         self.rows = 0;
         self.hyp = false;
     }
@@ -1654,12 +1669,17 @@ fn check_stream_fields(h: &Map) -> Result<(), Error> {
     if !matches!(&src, Value::Str(s) if !s.is_empty()) {
         return Err(Error::value("source must be a non-empty string"));
     }
-    let fp = h.get("frame_period");
-    if !fp.is_null() && !matches!(fp, Value::Num(x, _) if x.is_finite() && *x > 0.0) {
+    // Python: np.isfinite(True) and True > 0 hold (bool is an int), so a boolean passes as 1 or 0.
+    let py_num = |v: &Value| match v {
+        Value::Bool(b) => Value::int(if *b { 1.0 } else { 0.0 }),
+        other => other.clone(),
+    };
+    let fp = py_num(h.get("frame_period"));
+    if !fp.is_null() && !matches!(fp, Value::Num(x, _) if x.is_finite() && x > 0.0) {
         return Err(Error::value("frame_period must be a positive finite number"));
     }
-    let lat = h.get("latency");
-    if !lat.is_null() && !matches!(lat, Value::Num(x, _) if x.is_finite() && *x >= 0.0) {
+    let lat = py_num(h.get("latency"));
+    if !lat.is_null() && !matches!(lat, Value::Num(x, _) if x.is_finite() && x >= 0.0) {
         return Err(Error::value("latency must be a finite number >= 0"));
     }
     let meta = h.get("meta");
@@ -1704,18 +1724,7 @@ pub fn run_inlet_scenario(sc: &Map) -> Result<Value, Error> {
         Some(Value::Str(r)) if r == "auto" || r == "hypothesis" => Route::Hypothesis, // auto without decode_fn = hypothesis
         Some(r) => return Err(Error::value(format!("unknown route {}", repr(r)))),
     };
-    let mut layer = StructuralLayer {
-        route,
-        header: None,
-        v: 0,
-        last_t: f64::NEG_INFINITY,
-        ended: false,
-        rows: 0,
-        hyp: false,
-        has_session: false,
-        decisions: 0,
-        finals: 0,
-    };
+    let mut layer = StructuralLayer::new(route);
     let mut seen: Vec<Map> = Vec::new();
     let mut aborted = 0usize;
     let mut ended = false;

@@ -1,0 +1,6 @@
+{
+ "id": "M6-11",
+ "agent_runs": [
+  {"label": "M6-11 WebSocket adapter (FEP-0004)", "duration_s": 3167.4, "tokens": 452715, "tool_uses": 155}
+ ]
+}

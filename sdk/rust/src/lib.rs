@@ -1,5 +1,5 @@
 //! Fidetype Rust SDK: NeuralTextStream (NTS) v0.1 and the FEP-0001 / FEP-0002 /
-//! FEP-0003 profiles.
+//! FEP-0003 / FEP-0004 profiles (FEP-0004: the sans-IO WebSocket logic in [`ws`]).
 //!
 //! The core is `no_std` + `alloc`: parse, check, write and decide need no
 //! operating system. The `std` feature (on by default) adds file helpers
@@ -38,6 +38,7 @@ pub mod sha256;
 pub mod trust;
 pub mod validate;
 pub mod writer;
+pub mod ws;
 
 #[cfg(feature = "std")]
 pub mod io;

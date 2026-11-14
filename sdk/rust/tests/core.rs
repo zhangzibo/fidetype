@@ -204,3 +204,36 @@ fn json_python_semantics() {
     assert!(parse_json("[NaN]").is_err());
     assert!(fidetype::json::py_eq(&parse_json("[1, true]").unwrap(), &parse_json("[1.0, 1]").unwrap()));
 }
+
+#[test]
+fn ws_ingest_core_order_gap_resume() {
+    use fidetype::ws::{IngestCore, IngestSettings, WsData, WS_SUBPROTOCOL};
+    let mut core = IngestCore::new(IngestSettings::default(), None);
+    let txt = |s: &str| WsData::Text(s.to_string());
+    assert!(core.open(1.0, &[WS_SUBPROTOCOL], None).closes.is_empty());
+    let hdr = r#"{"type":"header","spec_version":"0.1","source":"x","vocab":["_","a"],"blank_id":0,"ws":{"stream_id":"s1"}}"#;
+    let eff = core.message(1.0, txt(hdr), 0.0);
+    assert_eq!(eff.sends[0].1.get("type").as_str(), Some("ws_welcome"));
+    // ws_seq 2 arrives before 1: held, then released in order.
+    core.message(1.0, txt(r#"{"type":"frame","t":0.04,"log_probs":[0,-9],"ws_seq":2}"#), 0.01);
+    let eff = core.message(1.0, txt(r#"{"type":"frame","t":0.0,"log_probs":[0,-9],"ws_seq":1}"#), 0.02);
+    assert_eq!(eff.items.len(), 2);
+    assert_eq!(core.stats.reordered, 1);
+    // A duplicate is dropped; a hole times out after reorder_timeout_s (0.25 s) and becomes a gap.
+    core.message(1.0, txt(r#"{"type":"frame","t":0.0,"log_probs":[0,-9],"ws_seq":1}"#), 0.03);
+    assert_eq!(core.stats.duplicates, 1);
+    core.message(1.0, txt(r#"{"type":"frame","t":0.2,"log_probs":[0,-9],"ws_seq":5}"#), 0.04);
+    assert!(core.tick(0.2).items.is_empty());
+    let eff = core.tick(0.3);
+    assert_eq!(eff.items[0].1.get("status").as_str(), Some("gap"));
+    assert_eq!(core.stats.missing_events, 2.0);
+    // Break, resume on a new connection with the same header.
+    core.disconnect(1.0, 0.4);
+    core.open(2.0, &[WS_SUBPROTOCOL], None);
+    let resume = hdr.replace(r#""stream_id":"s1""#, r#""stream_id":"s1","resume":true"#);
+    let eff = core.message(2.0, txt(&resume), 0.5);
+    assert_eq!(eff.sends[0].1.get("resumed").as_bool(), Some(true));
+    assert_eq!(eff.sends[0].1.get("seq").as_f64(), Some(5.0));
+    // A binary message is refused with 1003.
+    assert_eq!(core.message(2.0, WsData::Binary, 0.6).closes[0].1, 1003);
+}

@@ -1,0 +1,15 @@
+{
+ "id": "M7-12",
+ "milestone": "M7",
+ "title": "Rust SDK: fep-0004 profile",
+ "status": "done",
+ "started_at": "2026-11-13T22:40:00-08:00",
+ "finished_at": "2026-11-13T22:55:00-08:00",
+ "approx_times": true,
+ "orchestrator_only": false,
+ "notes": "Follow-up of M6-11 and M7-07. New sdk/rust/src/ws.rs (IngestCore, SubscriberCore: sans-IO FEP-0004 logic; no_std + alloc; no new dependency) and profiles/fep0004.rs (ingest + subscribe scenarios, runner drops the cut utterance's frames up to the next boundary). Reuses the FEP-0002 structural trust model, which now reads a boolean frame_period / latency as 1 / 0 (Python rule). tests/vectors.rs: fep0004_vectors (37) + profile list; tests/core.rs: IngestCore reorder / gap / resume / binary test. Parity: Python = TypeScript = Rust on 205/205 vectors and 31,056/31,056 fuzz mutants (seeds 1-6, --n 30; fep-0004 6,660). Python suite with --cmd fidetype-rs consume --profile fep-0004: 37/37. General skip path for unknown Rust profiles kept in cross-check.mjs / fuzz-parity.mjs (unused now).",
+ "agent_runs": [
+  {"label": "M7-12 Rust SDK fep-0004 profile", "duration_s": null, "tokens": null, "tool_uses": null}
+ ],
+ "_tracker_updated": "2026-11-13T22:55:00-08:00"
+}

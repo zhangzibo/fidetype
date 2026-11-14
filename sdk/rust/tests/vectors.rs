@@ -36,8 +36,13 @@ fn fep0003_vectors() {
 }
 
 #[test]
+fn fep0004_vectors() {
+    run("fep-0004", 37);
+}
+
+#[test]
 fn profiles_listed_in_order() {
-    assert_eq!(io::list_profiles(vectors()), ["v0.1", "fep-0001", "fep-0002", "fep-0003"]);
+    assert_eq!(io::list_profiles(vectors()), ["v0.1", "fep-0001", "fep-0002", "fep-0003", "fep-0004"]);
 }
 
 #[test]
