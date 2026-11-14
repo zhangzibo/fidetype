@@ -1,0 +1,12 @@
+{
+  "id": "M7-07",
+  "status": "done",
+  "started_at": "2026-11-13T21:13:00-08:00",
+  "finished_at": "2026-11-13T21:55:00-08:00",
+  "approx_times": true,
+  "notes": "Follow-up of M7-01. sdk/rust/ (crate fidetype, publish = false, Apache-2.0): no_std + alloc core (checked on thumbv7em-none-eabihf), feature std for file I/O, CLI fidetype-rs and example validate_replay. NTS writer (JSONL) + NPZ writer, chunked readers, reference consumer (JSONL + NPZ, own ZIP/DEFLATE/NPY), 59 v0.1 checks, StreamValidator, DecisionTracker (FEP-0001 rules 1, 3, 5-8 + rule 9 warning), FEP-0001/0002/0003 profiles, conformance runner. One dependency: libm 0.2.15 (MIT). Parity: same verdict and ok as Python on all 167 vectors (52/40/31/44) and Python verdict on 16,141 fuzz mutants (seeds 1-4, --n 30); TS scripts cross-check.mjs / fuzz-parity.mjs got --rust BIN. Python suite passes the Rust CLI as external consumer (167/167). Found: reference greedy decoder fails on frames route when blank_id is null (likely reference bug, copied for parity); 3 TS-only fuzz gaps. Toolchain: rustup installed for the current user (stable-x86_64-pc-windows-gnu, rustc 1.100.0; no MSVC on the PC). CI jobs rust + rust-parity. Open: crates.io publishing = user decision.",
+  "agent_runs": [
+    {"label": "M7-07 Rust SDK", "duration_s": null, "tokens": null, "tool_uses": null}
+  ],
+  "_tracker_updated": "2026-11-13T21:55:00-08:00"
+}

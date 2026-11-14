@@ -65,3 +65,63 @@ jobs:
           npm run build
           FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" npm run cross-check
           FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" node scripts/fuzz-parity.mjs --n 10
+
+  # Rust SDK (sdk/rust, M7-07): unit + integration tests and the golden vectors, the no_std core
+  # on a bare-metal target (Cortex-M4F/M7), and the CLI conformance run. Stable toolchain.
+  rust:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk/rust
+    steps:
+      - uses: actions/checkout@v7
+      - name: Rust stable (minimal profile) + thumbv7em-none-eabihf
+        run: |
+          rustup toolchain install stable --profile minimal --target thumbv7em-none-eabihf
+          rustup default stable
+          rustc --version
+      - uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            sdk/rust/target
+          key: rust-${{ runner.os }}-${{ hashFiles('sdk/rust/Cargo.lock') }}
+      - run: cargo test --locked
+      - run: cargo build --locked --no-default-features --lib --target thumbv7em-none-eabihf
+      - run: cargo run --locked --release --bin fidetype-rs -- conformance
+
+  # Python, TypeScript and Rust must give the same verdict on every golden vector and on the fuzz mutants.
+  rust-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: uv sync --extra dev
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Rust stable (minimal profile)
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+      - uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            sdk/rust/target
+          key: rust-parity-${{ runner.os }}-${{ hashFiles('sdk/rust/Cargo.lock') }}
+      - working-directory: sdk/rust
+        run: cargo build --locked --release --bin fidetype-rs
+      - working-directory: sdk/typescript
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          export FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python"
+          export FIDETYPE_RUST_BIN="$GITHUB_WORKSPACE/sdk/rust/target/release/fidetype-rs"
+          node scripts/cross-check.mjs
+          node scripts/fuzz-parity.mjs --n 10

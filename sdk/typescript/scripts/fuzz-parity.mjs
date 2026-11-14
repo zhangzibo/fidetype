@@ -4,9 +4,11 @@
 // verdict (accept / reject) on every mutant. The golden vectors alone test
 // only the cases in the manifests; the mutants test the edges between them.
 //
-//   node scripts/fuzz-parity.mjs [--n 20] [--seed 1] [--python PATH] [--out DIR] [--keep]
+//   node scripts/fuzz-parity.mjs [--n 20] [--seed 1] [--python PATH] [--out DIR] [--keep] [--rust BIN]
 //
 // --n: mutants per vector file. Files go to a temporary folder (deleted unless --keep).
+// --rust BIN (or $FIDETYPE_RUST_BIN): the Rust SDK CLI (sdk/rust, M7-07) must
+// also give the Python verdict on every mutant.
 
 import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync, existsSync } from "node:fs";
@@ -21,6 +23,8 @@ const opt = (n, d = null) => (args.includes(n) ? args[args.indexOf(n) + 1] : d);
 const N = Number(opt("--n", "20"));
 let seed = Number(opt("--seed", "1")) >>> 0;
 const keep = args.includes("--keep");
+const rustArg = opt("--rust", process.env.FIDETYPE_RUST_BIN || null);
+const rustBin = rustArg && existsSync(resolve(rustArg)) ? resolve(rustArg) : rustArg; // a path, or a command on PATH
 
 const node = await import(new URL(`file://${join(here, "..", "dist", "node.js").replace(/\\/g, "/")}`).href);
 
@@ -137,19 +141,40 @@ for (const p of await node.listProfiles(vroot)) {
   }
   const py = new Map(JSON.parse(pyText).vectors.map((v) => [v.id, v]));
   const ts = await node.runProfileDir(p, dst);
+  let rs = null;
+  if (rustBin) {
+    let rsText;
+    try {
+      rsText = execFileSync(rustBin, ["conformance", "--profile", p, "--vectors", dst, "--json", "-"],
+        { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 256 << 20 });
+    } catch (e) {
+      rsText = e.stdout;
+    }
+    rs = new Map(JSON.parse(rsText).reports[0].vectors.map((v) => [v.id, v]));
+  }
   let d = 0;
+  let dTs = 0;
+  let dRs = 0;
   let acc = 0;
   for (const t of ts.vectors) {
     const q = py.get(t.id);
+    const r = rs ? rs.get(t.id) : null;
     if (t.actual === "accept") acc++;
-    if (!q || q.actual !== t.actual) {
+    const tsDiff = !q || q.actual !== t.actual;
+    const rsDiff = rs !== null && (!q || !r || q.actual !== r.actual);
+    if (tsDiff) dTs++;
+    if (rsDiff) dRs++;
+    if (tsDiff || rsDiff) {
       d++;
-      console.log(`  DIFF ${p} ${t.id}: python ${q ? q.actual : "missing"} (${q?.detail ?? ""}) | typescript ${t.actual} (${t.detail})`);
+      console.log(`  DIFF ${p} ${t.id}: python ${q ? q.actual : "missing"} (${q?.detail ?? ""}) | typescript ${t.actual} (${t.detail})` +
+        `${rs ? ` | rust ${r ? r.actual : "missing"} (${r?.detail ?? ""})` : ""}`);
     }
   }
   total += ts.vectors.length;
   diffs += d;
-  console.log(`[fuzz ${p}] ${ts.vectors.length - d}/${ts.vectors.length} identical verdicts on mutants (${acc} accepted)`);
+  const n = ts.vectors.length;
+  console.log(`[fuzz ${p}] ${n - d}/${n} identical verdicts on mutants (${acc} accepted)` +
+    `${rs ? `; typescript = python ${n - dTs}/${n}, rust = python ${n - dRs}/${n}` : ""}`);
 }
 if (!keep && !opt("--out")) rmSync(work, { recursive: true, force: true });
 console.log(diffs ? `fuzz parity: FAIL (${diffs} of ${total} differ)` : `fuzz parity: PASS (${total} mutants, identical verdicts)`);

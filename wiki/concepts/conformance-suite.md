@@ -123,4 +123,5 @@ Code: `src/fidetype/conformance/profiles/` (`fep0001.py`, `fep0002.py`). Tests: 
 
 ## Used by
 - [TypeScript SDK](typescript-sdk.md): runs the same golden vectors (all profiles) and gives the same verdict as the Python reference on every vector (`npm run cross-check`).
+- [Rust SDK](rust-sdk.md): the same vectors, the same verdict and "ok" on all 167 (`cross-check.mjs --rust BIN`), and the Python verdict on 16,141 fuzz mutants.
 - [Open benchmark v0.1](open-benchmark.md): every submitted stream must reach the `trust-ready` level (the entry gate).

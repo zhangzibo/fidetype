@@ -7,7 +7,7 @@ TypeScript SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. I
 | Writer | `NtsWriter`, `toJsonl`: write NTS JSON Lines (header, frames, hypotheses, `segment_end`, `end`). Each event is checked before it is written. |
 | Reader | `parseNtsText`, `readNtsEvents`, `validateNtsStream`: read a whole text or a live byte stream (`fetch` body, Node file stream). |
 | Reference consumer | `loadStream(name, bytes)`: accept or reject a `.jsonl` or `.npz` file with the core rules of the Python reference (`fidetype.conformance.io.load_stream`). |
-| Checks | `checkStream`: all v0.1 checks with levels `core`, `trust-ready`, `provenance`, `advisory` (the same 60 checks as `fidetype validate`). `StreamValidator`: event-by-event checks for live streams. |
+| Checks | `checkStream`: all v0.1 checks with levels `core`, `trust-ready`, `provenance`, `advisory` (the same 59 checks as `fidetype validate`). `StreamValidator`: event-by-event checks for live streams. |
 | Schemas | `validateEventSchema`: structural check against `spec/schemas/`. The TypeScript types (`NtsHeader`, `Fep0001TrustDecision`, ...) are generated from the same schemas. |
 | Decisions | `DecisionTracker`, `isFinalCommit`, `committedText`, `emptyCommitWarning`: what a consumer may do with each `trust_decision` (COMMIT / OFFER / ASK / ABSTAIN, text and intent profiles). |
 | Conformance | `runVectors`: run the golden vectors in `spec/conformance/` (the same files as the Python suite) for every profile. |
@@ -132,6 +132,7 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 
 - `npm run cross-check` runs the Python reference consumer and the TypeScript consumer on every vector and compares the verdict (accept / reject) and the "ok" result (verdict and expected values). It needs a Python with the `fidetype` package (the repo `.venv`, or `FIDETYPE_PYTHON`).
 - `npm run fuzz -- --n 30` mutates the JSON and JSON Lines vectors (fixed seed) and compares the verdicts on the mutants. Two runs of about 4,000 mutants each gave identical verdicts.
+- Both scripts take `--rust BIN` (or `$FIDETYPE_RUST_BIN`): they then also run the Rust SDK CLI (`sdk/rust`, M7-07) on the same files and require its verdict to match. With seeds 1-3 (`--n 30`), 3 mutants show TypeScript gaps that Rust does not have (see `sdk/rust/README.md`, "Open items").
 
 Rules that matter for identical verdicts:
 

@@ -1,0 +1,34 @@
+[package]
+name = "fidetype"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Rust SDK for NeuralTextStream (NTS): writer, readers (JSON Lines + NPZ), v0.1 checks, FEP-0001/0003 trust_decision rules and the conformance runner. no_std + alloc core."
+repository = "https://github.com/zhangzibo/fidetype"
+readme = "README.md"
+keywords = ["bci", "neural-interface", "nts", "conformance", "no-std"]
+categories = ["no-std", "parser-implementations", "science"]
+# Publishing to crates.io is a user decision (see README "Open items").
+publish = false
+
+[features]
+default = ["std"]
+# File and stream I/O, the CLI and the example. The core (parse, check, write, decide) needs only `alloc`.
+std = []
+
+[dependencies]
+# Portable math (exp, log) for the no_std core; the same results on every platform.
+libm = { version = "=0.2.15", default-features = false }
+
+[[bin]]
+name = "fidetype-rs"
+path = "src/bin/fidetype-rs.rs"
+required-features = ["std"]
+
+[[example]]
+name = "validate_replay"
+required-features = ["std"]
+
+[profile.release]
+lto = true
+codegen-units = 1
