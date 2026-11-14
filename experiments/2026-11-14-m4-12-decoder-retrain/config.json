@@ -1,0 +1,67 @@
+{
+ "description": "M4-12: retrain the M4-01 causal lookahead GRU-CTC decoder (fidetype.decoders.lookahead_gru, model unchanged) on B2T '25 T15 with a training recipe close to the published baseline, then rerun the M4-02 accuracy + emission stages. See plan.md.",
+ "dataset": "Card et al. 2024 (NEJM), t15_copyTask_neuralData.zip, Dryad doi:10.5061/dryad.dncjsxm85 (CC0 1.0). Same derived files as M4-01/02 (same prep, same splits).",
+ "archive": "C:/Users/zhang/bci-data/brain-to-text-25/neural/t15_copyTask_neuralData.zip",
+ "archive_sha256": "fb828fa7ef937aca405d6912addc876f6747f75a8a1711f6d2052aacf34ec5b5",
+ "archive_size": 11051034483,
+ "extract_dir": "C:/Users/zhang/bci-data/brain-to-text-25/neural/extracted",
+ "derived_dir": "C:/Users/zhang/bci-data/derived/m4-01-02-lookahead",
+ "runs_root": "C:/Users/zhang/bci-data/runs",
+ "cmudict": "C:/Users/zhang/bci-data/lexicon/cmudict/cmudict.dict",
+ "splits": {
+  "train": "the dataset 'train' trials of all sessions (8,065 used)",
+  "val_select": "dataset 'val' trials with an even index inside their session (checkpoint selection only)",
+  "val_eval": "dataset 'val' trials with an odd index inside their session (all reported numbers; 701 trials)"
+ },
+ "lookahead_ms": [0, 50, 100, 200, 300, 500],
+ "lookahead_rule": "bins = floor(ms / 20), as M4-01/02",
+ "model": {
+  "n_in": 512,
+  "n_out": 41,
+  "hidden": 768,
+  "layers": 5,
+  "patch": 14,
+  "stride": 4,
+  "smooth_sd": 2.0,
+  "la_max": 25,
+  "la_proj": 64,
+  "dropout": 0.4
+ },
+ "train": {
+  "total_steps": 10000,
+  "lr_max": 0.005,
+  "lr_min": 0.0001,
+  "warmup_steps": 1000,
+  "adam_eps": 0.1,
+  "weight_decay": 0.001,
+  "weight_decay_day": 0.0,
+  "grad_clip": 10.0,
+  "input_dropout": 0.2,
+  "batch": 96,
+  "max_batch_bins": 86400,
+  "white_noise_sd": 1.0,
+  "offset_sd": 0.2,
+  "random_cut_bins": 3,
+  "fast_gru": false,
+  "eval_every": 1000,
+  "log_every": 100,
+  "patience_evals": 1000,
+  "seed": 0,
+  "checkpoint_minutes": 4,
+  "torch_threads": 4,
+  "eval_lookahead_bins": [0, 10, 25]
+ },
+ "runs": {
+  "dedicated_0": {"run": "m4-12-fixed0", "lookahead_bins": 0},
+  "dedicated_25": {"run": "m4-12-fixed25", "lookahead_bins": 25},
+  "shared": {"run": "m4-12-shared", "lookahead_bins": "sample", "note": "L drawn uniformly from {0,2,5,10,15,25} bins per batch (as M4-01)"},
+  "dedicated_10": {"run": "m4-12-fixed10", "lookahead_bins": 10, "note": "optional, only if GPU time allows"}
+ },
+ "trust": {
+  "frozen_config": "experiments/2026-11-13-m4-06-real-replay/configs/trust-config-b2t25-ours-splitA.json",
+  "frozen_config_id": "tcfg-f5ca0020b3b8fce2",
+  "word_route": "as M4-01/02",
+  "seed": 0
+ },
+ "gaze_chars_per_min": 20.0
+}
