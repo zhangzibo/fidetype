@@ -57,7 +57,7 @@ CHECKS = [
     ("FEP5-INTENT", "MUST", "5 r6 (FEP-0003 2-4)", "Intent parts of the stream follow FEP-0003"),
     ("FEP5-TD-FORMAT", "MUST", "5 table, r1-r4", "Control trust_decision fields (profile, tick, state, velocity, gain, v_max, ttl_s, engagement; no shown)"),
     ("FEP5-TD-ORDER", "MUST", "5 r5", "Per session: seq increases over all profiles; control decisions are final; a moving tick is never reused"),
-    ("FEP5-SAFETY", "MUST", "6 r1-r7", "No motion on hold/stop or no-signal reasons; speed <= v_max; re-engage after stop; no intent COMMIT while stopped"),
+    ("FEP5-SAFETY", "MUST", "6 r1-r7", "No motion on hold/stop or no-signal reasons; speed <= v_max; re-engage after stop; no intent COMMIT while not engaged"),
 ]
 _META = {c[0]: c for c in CHECKS}
 
@@ -227,18 +227,42 @@ def td_order_errors(events: list[dict[str, Any]]) -> list[str]:
     return sorted(set(errs), key=errs.index)
 
 
+def engaged_after(e: dict[str, Any], stop_eng: int | None) -> tuple[bool, int | None]:
+    """CTL-S7: is the control engaged after the control decision ``e``? Returns (engaged, latched stop engagement).
+
+    A decision log has no ``control_enable`` events, so the control decisions tell the state. The control is
+    not engaged after a ``stop`` (latched with its ``engagement``, or -1 if that is not an integer), after a
+    decision with ``engagement`` 0 (no engage yet) or with the reason ``not_engaged`` or ``disengaged``, and
+    after a decision whose ``engagement`` is not higher than the one of the latched stop. Each other control
+    decision shows an engaged control and clears the latch.
+    """
+    eng = e.get("engagement")
+    reasons = e["reasons"] if isinstance(e.get("reasons"), list) else []
+    if e.get("state") == "stop":
+        return False, eng if _int(eng) else -1
+    if not _int(eng) or eng < 1 or "not_engaged" in reasons or "disengaged" in reasons:
+        return False, stop_eng
+    if stop_eng is not None and eng <= stop_eng:
+        return False, stop_eng
+    return True, None
+
+
 def safety_errors(events: list[dict[str, Any]]) -> list[str]:
     errs = f3.safety_errors([e for e in events if not _is_control(e)])
     stopped: dict[str, int | None] = {}
+    # CTL-S7: session -> engaged after its last control decision. Absent = no control decision yet (no check).
+    engaged: dict[str, bool] = {}
+    s7_stop: dict[str, int | None] = {}
     for e in events:
         if e.get("type") != "trust_decision":
             continue
         sid, n = e.get("session", ""), e.get("_line", "?")
         if not _is_control(e):
             if (f3._is_intent(e) and e.get("is_final") is True and e.get("action") == "COMMIT"
-                    and stopped.get(sid) is not None):
-                errs.append(f"line {n}: intent COMMIT while the control is stopped (rule 7)")
+                    and engaged.get(sid) is False):
+                errs.append(f"line {n}: intent COMMIT while the control is not engaged (rule 7)")
             continue
+        engaged[sid], s7_stop[sid] = engaged_after(e, s7_stop.get(sid))
         vel = e.get("velocity")
         if not (isinstance(vel, list) and all(_num(v) for v in vel)):
             continue
@@ -559,9 +583,19 @@ def build_vectors() -> list[Any]:
         writer=_w_lines([_cd(velocity=[60.0, 0.0], raw=[40.0, 0.0], gain=1.0, state="act")]))
     add("E19", "e19-commit-zero.jsonl", "reject", "6 r1", "A COMMIT with zero velocity (a hold must say hold)",
         failing="FEP5-SAFETY", writer=_w_lines([_cd(velocity=[0.0, 0.0], gain=0.0)]))
+    add("E20", "e20-click-before-engage.jsonl", "reject", "6 r7",
+        "An intent COMMIT before the first engage (the control decision before it is a not_engaged HOLD, engagement 0)",
+        failing="FEP5-SAFETY",
+        writer=_w_lines([_hold(0, 0, "not_engaged", engagement=0, radius=_DROP, level=_DROP, score_semantics="none"),
+                         f3._td(session="c1", seq=1, unit=0, intent="intent.click", vocab_id="intent.cursor-v1")]))
+    add("E21", "e21-click-after-reengage-hold.jsonl", "accept", "6 r5, 6 r7",
+        "Stop (engagement 1), re-engage (engagement 2) with an uncertain HOLD, then a click COMMIT: the control is engaged",
+        {"kind": "decisions", "decisions": 3, "control_decisions": 2, "moving_ticks": [], "acted_intents": ["intent.click"]},
+        writer=_w_lines([_stop(0, 0), _hold(1, 1, engagement=2),
+                         f3._td(session="c1", seq=2, unit=0, intent="intent.click", vocab_id="intent.cursor-v1")]))
     vs.sort(key=lambda v: v.vid)
     return vs
 
 
-__all__ = ["CHECKS", "build_vectors", "check_events", "check_file", "consume", "moving_ticks", "safety_errors",
+__all__ = ["CHECKS", "build_vectors", "check_events", "check_file", "consume", "engaged_after", "moving_ticks", "safety_errors",
            "summarize", "td_control_format_errors", "td_order_errors"]

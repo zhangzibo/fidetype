@@ -54,7 +54,7 @@ pub const CHECKS: &[CheckMeta] = &[
     ("FEP5-INTENT", "MUST", "5 r6 (FEP-0003 2-4)", "Intent parts of the stream follow FEP-0003"),
     ("FEP5-TD-FORMAT", "MUST", "5 table, r1-r4", "Control trust_decision fields (profile, tick, state, velocity, gain, v_max, ttl_s, engagement; no shown)"),
     ("FEP5-TD-ORDER", "MUST", "5 r5", "Per session: seq increases over all profiles; control decisions are final; a moving tick is never reused"),
-    ("FEP5-SAFETY", "MUST", "6 r1-r7", "No motion on hold/stop or no-signal reasons; speed <= v_max; re-engage after stop; no intent COMMIT while stopped"),
+    ("FEP5-SAFETY", "MUST", "6 r1-r7", "No motion on hold/stop or no-signal reasons; speed <= v_max; re-engage after stop; no intent COMMIT while not engaged"),
 ];
 
 fn res(cid: &str, errs: Option<Vec<String>>, msg_ok: &str, skipped: Option<&str>) -> CheckResult {
@@ -542,34 +542,81 @@ pub fn td_order_errors(events: &[Map]) -> Vec<String> {
     errs
 }
 
-/// Section 6: no motion on hold / stop or no-signal reasons, speed bound, re-engage after a stop, no intent COMMIT while stopped.
-pub fn safety_errors(events: &[Map]) -> Vec<String> {
-    let others: Vec<Map> = events.iter().filter(|e| !is_control(e)).cloned().collect();
-    let mut errs = f3::safety_errors(&others);
-    // session -> engagement of the latched stop (-1 if not an integer); absent = not stopped (Python None).
-    let mut stopped: BTreeMap<String, Value> = BTreeMap::new();
-    let empty_sid = Value::str("");
-    for e in events {
-        if etype(e) != "trust_decision" {
-            continue;
+/// CTL-S7: is the control engaged after the control decision `e`? Returns (engaged, latched stop
+/// engagement; `None` = no latched stop). A decision log has no `control_enable` events, so the control
+/// decisions tell the state. The control is not engaged after a `stop` (latched with its `engagement`,
+/// or -1 if that is not an integer), after a decision with `engagement` 0 (no engage yet) or with the
+/// reason `not_engaged` or `disengaged`, and after a decision whose `engagement` is not higher than the
+/// one of the latched stop. Each other control decision shows an engaged control and clears the latch.
+pub fn engaged_after(e: &Map, stop_eng: Option<f64>) -> (bool, Option<f64>) {
+    let eng = e.get("engagement");
+    let has_reason = |r: &str| matches!(e.get("reasons"), Value::Arr(a) if a.iter().any(|x| x.as_str() == Some(r)));
+    if e.get("state").as_str() == Some("stop") {
+        return (false, Some(if eng.is_int() { eng.as_f64().unwrap_or(-1.0) } else { -1.0 }));
+    }
+    let n = if eng.is_int() { eng.as_f64() } else { None };
+    let n = match n {
+        Some(x) if x >= 1.0 && !has_reason("not_engaged") && !has_reason("disengaged") => x,
+        _ => return (false, stop_eng),
+    };
+    if let Some(s) = stop_eng {
+        if n <= s {
+            return (false, stop_eng);
         }
+    }
+    (true, None)
+}
+
+/// The section 6 checks (CTL-S1 … S7) as a state machine over the decisions of a log, in order: no
+/// motion on hold / stop or no-signal reasons, speed bound, re-engage after a stop, no intent COMMIT
+/// while the control is not engaged. [`safety_errors`] and [`crate::trust::DecisionTracker`] use it. It
+/// does not run the FEP-0003 intent safety checks ([`safety_errors`] adds them).
+#[derive(Debug, Default, Clone)]
+pub struct ControlSafety {
+    /// session -> engagement of the latched stop (-1 if not an integer); absent = not stopped (Python None).
+    stopped: BTreeMap<String, Value>,
+    /// CTL-S7: session -> engaged after its last control decision. Absent = no control decision yet (no check).
+    engaged: BTreeMap<String, bool>,
+    s7_stop: BTreeMap<String, Option<f64>>,
+}
+
+impl ControlSafety {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// The errors of one event (a `trust_decision` of any profile; other events give no error).
+    pub fn push(&mut self, e: &Map) -> Vec<String> {
+        let mut errs = Vec::new();
+        if etype(e) != "trust_decision" {
+            return errs;
+        }
+        let empty_sid = Value::str("");
         let sid = tuple_key(&[e.get_opt("session").unwrap_or(&empty_sid)]);
         let n = line_of(e);
         if !is_control(e) {
-            if is_intent_td(e) && is_true(e.get("is_final")) && e.get("action").as_str() == Some("COMMIT") && stopped.contains_key(&sid) {
-                errs.push(format!("line {}: intent COMMIT while the control is stopped (rule 7)", n));
+            if is_intent_td(e)
+                && is_true(e.get("is_final"))
+                && e.get("action").as_str() == Some("COMMIT")
+                && self.engaged.get(&sid) == Some(&false)
+            {
+                errs.push(format!("line {}: intent COMMIT while the control is not engaged (rule 7)", n));
             }
-            continue;
+            return errs;
         }
+        let (eg, ls) = engaged_after(e, self.s7_stop.get(&sid).copied().flatten());
+        self.engaged.insert(sid.clone(), eg);
+        self.s7_stop.insert(sid.clone(), ls);
+        let stopped = &mut self.stopped;
         let vel = match fin_list(e.get("velocity")) {
             Some(v) => v,
-            None => continue,
+            None => return errs,
         };
         let sp = match norm(&vel) {
             Some(s) => s,
             None => {
                 errs.push(format!("line {}: velocity too large (Python OverflowError)", n));
-                continue;
+                return errs;
             }
         };
         let act = e.get("action").as_str();
@@ -612,7 +659,7 @@ pub fn safety_errors(events: &[Map]) -> Vec<String> {
                     Some(r) => r,
                     None => {
                         errs.push(format!("line {}: raw too large (Python OverflowError)", n));
-                        continue;
+                        return errs;
                     }
                 };
                 let full = match e.get_opt("authority") {
@@ -634,6 +681,17 @@ pub fn safety_errors(events: &[Map]) -> Vec<String> {
                 }
             }
         }
+        errs
+    }
+}
+
+/// Section 6: no motion on hold / stop or no-signal reasons, speed bound, re-engage after a stop, no intent COMMIT while not engaged.
+pub fn safety_errors(events: &[Map]) -> Vec<String> {
+    let others: Vec<Map> = events.iter().filter(|e| !is_control(e)).cloned().collect();
+    let mut errs = f3::safety_errors(&others);
+    let mut cs = ControlSafety::new();
+    for e in events {
+        errs.extend(cs.push(e));
     }
     errs
 }

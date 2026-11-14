@@ -9,7 +9,7 @@ TypeScript SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. I
 | Reference consumer | `loadStream(name, bytes)`: accept or reject a `.jsonl` or `.npz` file with the core rules of the Python reference (`fidetype.conformance.io.load_stream`). |
 | Checks | `checkStream`: all v0.1 checks with levels `core`, `trust-ready`, `provenance`, `advisory` (the same 59 checks as `fidetype validate`). `StreamValidator`: event-by-event checks for live streams. |
 | Schemas | `validateEventSchema`: structural check against `spec/schemas/`. The TypeScript types (`NtsHeader`, `Fep0001TrustDecision`, ...) are generated from the same schemas. |
-| Decisions | `DecisionTracker`, `isFinalCommit`, `committedText`, `emptyCommitWarning`: what a consumer may do with each `trust_decision` (COMMIT / OFFER / ASK / ABSTAIN, text and intent profiles). |
+| Decisions | `DecisionTracker`, `isFinalCommit`, `committedText`, `emptyCommitWarning`: what a consumer may do with each `trust_decision` (COMMIT / OFFER / ASK / ABSTAIN; text, intent and control profiles). |
 | Conformance | `runVectors`: run the golden vectors in `spec/conformance/` (the same files as the Python suite) for every profile. |
 
 ## Where it lives and why
@@ -133,6 +133,8 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 | `fep-0005` control events (gap G-1) | 42 | 42/42 pass | 42/42 (Rust too) |
 
 NTS 1.0 RC2, gap G-1 (2026-11-14): profile `fep-0005` (`fep0005.checkFile`, `fep0005.consume`; module `src/profiles/fep0005.ts`) is a port of the Python control profile and of the validators of `fidetype.trust.control`. For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. Python = TypeScript = Rust on all 279 vectors; seeds 1-6 at `--n 30` give 44,196 mutants (fep-0005: 7,560), all with the Python verdict.
+
+P1-10 (2026-11-14): `DecisionTracker` now tracks control decisions (`profile = "control"`). It checks CTL-T1 … T5 (format; `seq` over all profiles; ticks do not go back; one move per input tick; a HOLD may repeat a tick) and the log checks CTL-S1 … S7, with the same code as the profile `fep-0005` (`ControlSafety`). A control decision has kind commit (move) or abstain, `tick` set, `committed` null; `forward` is true on a valid control COMMIT, so the forwarded ticks are the "acted" list (6.4). An intent COMMIT while the last control decision of its session shows a control that is not engaged is invalid (CTL-S7). The tracker sees only past decisions. On every `fep-0005` decision-log vector the tracker finds an error exactly on the reject vectors and forwards exactly the expected moving ticks. CTL-S7 (P1-10, 2026-11-14): the profile `fep-0005` now refuses an intent COMMIT while the control is not engaged: before the first engage (the last control decision has `engagement` 0 or the reason `not_engaged` / `disengaged`) and after a stop until a higher `engagement`. Before, it refused it only after a stop. Python = TypeScript = Rust on 281/281 vectors (new E20 reject, E21 accept) and on 44,556 mutants (seeds 1-6, `--n 30`; fep-0005 7,920).
 
 NTS 1.0 RC2 (2026-11-14): the reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`isSupportedSpecVersion`, exported); the writer still writes `"0.1"`. Seeds 1-6 at `--n 30` (36,636 mutants) give the Python verdict in TypeScript and Rust.
 

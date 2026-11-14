@@ -311,3 +311,21 @@ def test_cli_replay_and_profile(tmp_path, capsys):
     assert [x["state"] for x in lines] == ["attenuate", "attenuate"] and lines[0]["profile"] == "control"
     assert fidetype_cli(["validate", "--profile", "fep-0005", str(s)]) == 0
     assert fidetype_cli(["conformance", "--profile", "fep-0005"]) == 0
+
+
+def test_ctl_s7_intent_commit_needs_an_engaged_control():
+    """CTL-S7 in the fep-0005 profile: before the first engage and after a stop (until a higher engagement)."""
+    from fidetype.conformance.profiles import fep0003 as f3
+
+    hold0 = fep0005._hold(0, 0, "not_engaged", engagement=0)
+    click = lambda seq, **kw: f3._td(**{"session": "c1", "seq": seq, "unit": 0, "intent": "intent.click", **kw})  # noqa: E731
+    assert any("not engaged (rule 7)" in x for x in fep0005.safety_errors([hold0, click(1)]))
+    assert any("not engaged" in x for x in fep0005.safety_errors([fep0005._cd(seq=0), fep0005._stop(1, 0), click(2)]))
+    assert fep0005.safety_errors([fep0005._cd(seq=0), click(1)]) == []
+    assert fep0005.safety_errors([fep0005._stop(0, 0), fep0005._hold(1, 1, engagement=2), click(2)]) == []
+    assert fep0005.safety_errors([click(0), hold0]) == []  # only past decisions count
+    assert fep0005.safety_errors([hold0, click(1, session="other")]) == []
+    assert fep0005.engaged_after(fep0005._stop(0, 0, engagement=3), None) == (False, 3)
+    assert fep0005.engaged_after(fep0005._hold(0, 0, engagement=3), 3) == (False, 3)
+    assert fep0005.engaged_after(fep0005._hold(0, 0, engagement=4), 3) == (True, None)
+    assert fep0005.engaged_after(fep0005._hold(0, 0, "disengaged", engagement=1), None) == (False, None)

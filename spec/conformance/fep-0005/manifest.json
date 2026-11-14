@@ -472,6 +472,34 @@
    "clause": "FEP-0005 6 r1",
    "description": "A COMMIT with zero velocity (a hold must say hold)",
    "failing_check": "FEP5-SAFETY"
+  },
+  {
+   "id": "E20",
+   "file": "e20-click-before-engage.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r7",
+   "description": "An intent COMMIT before the first engage (the control decision before it is a not_engaged HOLD, engagement 0)",
+   "failing_check": "FEP5-SAFETY"
+  },
+  {
+   "id": "E21",
+   "file": "e21-click-after-reengage-hold.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 6 r5, 6 r7",
+   "description": "Stop (engagement 1), re-engage (engagement 2) with an uncertain HOLD, then a click COMMIT: the control is engaged",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 3,
+    "control_decisions": 2,
+    "moving_ticks": [],
+    "acted_intents": [
+     "intent.click"
+    ]
+   }
   }
  ]
 }

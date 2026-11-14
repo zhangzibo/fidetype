@@ -48,7 +48,8 @@
   - **G-3:** golden vectors with an integer written as `0.0`, `1.0` or `2.0` (GEN-5): V61, F50, W43.
   - **G-4:** reject vectors for the types of `session`, `config_id`, `input` and `latency_s` (TD-F2): F51–F54.
   - The writers still write `"0.1"` headers by default. A producer that writes `"1.0"` is now accepted by all three SDKs.
-  - **G-1:** the TypeScript and Rust SDKs run the control profile `fep-0005` (all CTL rules that the suite checks). Python = TypeScript = Rust on all 279 vectors of `v0.1` … `fep-0005`.
+  - **G-1:** the TypeScript and Rust SDKs run the control profile `fep-0005` (all CTL rules that the suite checks). Python = TypeScript = Rust on all 281 vectors of `v0.1` … `fep-0005`.
+  - **CTL-S7 check:** the `fep-0005` log check now follows the rule text. An intent COMMIT is refused while the control is not engaged: before the first engage, and after a stop until a higher `engagement` (7.4.6). Before, the check refused it only after a stop. New vectors E20 (reject) and E21 (accept). The SDK `DecisionTracker` (TypeScript, Rust) now tracks control decisions.
 
 ### 1.2 Key words
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY and OPTIONAL are to be read as in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) and [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) when they are in capitals.
@@ -610,6 +611,7 @@ Required: `profile = "control"`, `tick`, `is_final = true`, `action` (`COMMIT` =
 - **[CTL-S5]** After a `stop`, a COMMIT needs a higher `engagement`. After an engage, the authority SHOULD ramp from 0 to 1 (reference: linear over 1 s).
 - **[CTL-S6]** With `uncertainty = std`, a layer SHOULD calibrate the radius by split conformal prediction on labelled ticks of the same user and session (reference gain: conformal shrinkage). At full authority, `‖velocity‖ ≤ ‖raw‖`. Without `std`, a layer MUST NOT move faster than a configured `unscored_gain × raw` (reference default 0). The `level` is a deployment choice.
 - **[CTL-S7]** A trust layer MUST NOT COMMIT an intent while the control is not engaged.
+- *Informative (how a log check sees CTL-S7).* A decision log has no `control_enable` events. The `fep-0005` check takes the state from the last control decision of the session before the intent COMMIT. The control is not engaged after a `stop` (latched until a decision with a higher `engagement`), after a decision with `engagement` 0, and after a decision with the reason `not_engaged` or `disengaged`. Before the first control decision of a session, the check has no state and does not check CTL-S7. Vectors: E17, E20 (reject), E02, E21 (accept).
 - **[CTL-S8]** Every control decision SHOULD carry `config_id`, `input` (`kind`, `tick`, SHA-256), `raw`, `reasons` and `latency_s`. A log MAY be thinned for storage only if it keeps every state change and every decision with a non-`ok` reason.
 - *Informative.* CTL-S2 … S5 and S7 only remove motion or actions. A coverage-based speed bound still holds with them. On MC_RTT (P12-03) the declared level 0.9 gave no motion (radius 88.6 mm/s > mean decoded speed 45.8 mm/s). This is why the control profile stays Development.
 
@@ -839,7 +841,7 @@ The levels are cumulative and come from the conformance suite.
 | `fep-0002` | 8.2 | 35 | yes | yes (structural) | yes (structural) |
 | `fep-0003` | 7.1, 7.3 | 44 | yes | yes | yes |
 | `fep-0004` | 8.3 (incl. W38: header `meta` must be an object) | 43 | yes | yes | yes |
-| `fep-0005` | 7.4 | 42 | yes | yes | yes |
+| `fep-0005` | 7.4 | 44 | yes | yes | yes |
 
 ```
 fidetype conformance --profile fep-0001                    # reference consumer over the vectors
@@ -853,7 +855,7 @@ fidetype-rs conformance                                    # Rust SDK
 A claim names the class, the level, the profiles and the bindings, and the RC: for example "Producer, NTS 1.0 RC2 (draft), level provenance, profiles text + intent, binding nts-lsl/0.1". **[CNF-1]** A claim MUST NOT omit "RC2 (draft)" (or the RC that it names) while this document is a draft.
 
 ### 9.5 Parity of the reference SDKs
-The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (61 + 54 + 35 + 44 + 43 + 42 = 279) (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`). Gap G-1 (control profile in Python only) is closed.
+The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (61 + 54 + 35 + 44 + 43 + 44 = 281) (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`). Gap G-1 (control profile in Python only) is closed.
 
 ---
 
@@ -1050,7 +1052,7 @@ The table of 8.3.7. Close codes 4000–4099 are reserved for this binding; 4000 
 | 8 | Clock domains across devices | **Partly resolved:** LSL clock correction (8.2.5) and the WebSocket source-clock rule (8.3.8). Mapping between two domains across hosts: **deferred to 1.1** | LAN and Wi-Fi tests (M6-10) are not done. M6-13 measured a Windows clock step of −1,361 ms, so a mapping rule needs field data. |
 | 9 | Machine-readable conventions | **Deferred to 1.1** (task P1-04) | Planned as YAML (`spec/semconv/`); not written yet. The JSON schemas in `spec/schemas/` are structural only. |
 | 10 | Extensions in NPZ | **Resolved: no** (FIL-6) | Roadmap decision "NPZ read only"; JSON Lines carries all events. |
-| 11 | Future output profiles | **Resolved:** one stream type with profiles (7) | FEP-0003 and FEP-0005; vectors I01–I23, D01–D21, C01–C23, E01–E19. |
+| 11 | Future output profiles | **Resolved:** one stream type with profiles (7) | FEP-0003 and FEP-0005; vectors I01–I23, D01–D21, C01–C23, E01–E21. |
 | 12-A1 | `decoder.causal` and `latency` | **Resolved** (MET-5) | Adopts the suite's choice. |
 | 12-A2 | Custom keys in a defined namespace | **Resolved** (MET-3): reserved; accepted with a warning | Adopts the suite's choice. |
 | 12-A3 | Encoded vocabularies | **Resolved** (HDR-14): meaning wins; use `vocab_id` | Adopts the suite's choice. |
@@ -1273,7 +1275,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | CTL-S4 | MUST / SHOULD | FEP5-SAFETY | E04 | P |
 | CTL-S5 | MUST | FEP5-SAFETY | E03 / E07 | T |
 | CTL-S6 | SHOULD / MUST NOT | FEP5-SAFETY | E18 | P |
-| CTL-S7 | MUST NOT | FEP5-SAFETY | E02 / E17 | T |
+| CTL-S7 | MUST NOT | FEP5-SAFETY | E02, E21 / E17, E20 | T |
 | CTL-S8 | SHOULD | — | — | G-10 |
 | FIL-1 | MUST | NTS-PARSE | V26 | T |
 | FIL-2 | MUST | NTS-NPZ-KEYS | V28 | T |
@@ -1360,7 +1362,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 ### C.2 Gaps
 | Gap | Rules | What is missing | Proposed fix |
 |---|---|---|---|
-| ~~**G-1**~~ (closed) | 7.4 (all CTL rules) | Closed in this draft: the TypeScript and Rust SDKs run the control profile `fep-0005` (42 vectors) with the Python verdicts, and the parity scripts include it. | Done (TS `profiles/fep0005.ts`, Rust `profiles/fep0005.rs`). |
+| ~~**G-1**~~ (closed) | 7.4 (all CTL rules) | Closed in this draft: the TypeScript and Rust SDKs run the control profile `fep-0005` (44 vectors) with the Python verdicts, and the parity scripts include it. | Done (TS `profiles/fep0005.ts`, Rust `profiles/fep0005.rs`). |
 | ~~G-2~~ | HDR-2, VER-1, VER-3, LSL-D2 | **Closed in RC2.** All three SDKs, the LSL and WebSocket header checks and the JSON schema accept `"0.1"` and `"1.<minor>"` and refuse other values. | Vectors V53–V60, F48, F49, L33–L35, W39–W42. |
 | ~~G-3~~ | GEN-5 | **Closed in RC2.** Golden vectors with an integer written with a fraction part. | V61 (`blank_id: 0.0`), F50 (`seq: 1.0`), W43 (`ws_seq: 2.0`). |
 | ~~G-4~~ | TD-F2 | **Closed in RC2.** Reject vectors for the types of `session`, `config_id`, `input`, `latency_s`. | F51–F54. All three SDKs already refused them. |

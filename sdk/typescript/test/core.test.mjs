@@ -185,6 +185,82 @@ test("DecisionTracker: intent decisions (FEP-0003)", () => {
   assert.equal(out[1].forward, true);
 });
 
+const cd = (o) => ({ type: "trust_decision", profile: "control", session: "c", seq: 0, tick: 0, is_final: true, action: "COMMIT", state: "attenuate", velocity: [30, -9], raw: [40, -12], gain: 0.75, units: "mm/s", reasons: ["shrunk"], p_top1: null, score_semantics: "none", engagement: 1, v_max: 400, ttl_s: 0.06, ...o });
+const hold = (o) => cd({ action: "ABSTAIN", state: "hold", velocity: [0, 0], gain: 0, reasons: ["uncertain"], ...o });
+const click = (o) => ({ type: "trust_decision", profile: "intent", session: "c", seq: 0, unit: 0, is_final: true, action: "COMMIT", intent: "intent.click", risk_class: "undoable", p_top1: 0.97, score_semantics: "calibrated_prob", ...o });
+
+test("DecisionTracker: control decisions (CTL-T1 … T5, acted list = moving ticks)", () => {
+  const out = sdk.handleDecisions([
+    hold({ seq: 0, tick: 0, reasons: ["not_engaged"], engagement: 0 }),
+    cd({ seq: 1, tick: 1 }),
+    hold({ seq: 2, tick: 1, reasons: ["stale_input"] }), // a HOLD may repeat the last tick
+    cd({ seq: 3, tick: 2, state: "act", gain: 1, velocity: [40, -12], reasons: ["ok"] }),
+    hold({ seq: 4, tick: 2, state: "stop", reasons: ["disengaged"] }),
+  ]);
+  assert.deepEqual(out.map((d) => d.errors), [[], [], [], [], []]);
+  assert.deepEqual(out.map((d) => d.kind), ["abstain", "commit", "abstain", "commit", "abstain"]);
+  assert.deepEqual(out.map((d) => d.profile), ["control", "control", "control", "control", "control"]);
+  assert.deepEqual(out.filter((d) => d.forward).map((d) => d.tick), [1, 2]);
+  assert.ok(out.every((d) => d.committed === null && d.offered.length === 0));
+});
+
+test("DecisionTracker: control order errors (seq over all profiles, ticks, one move per tick)", () => {
+  const t = new sdk.DecisionTracker();
+  assert.deepEqual(t.push(cd({ seq: 0, tick: 4 })).errors, []);
+  const twice = t.push(cd({ seq: 1, tick: 4 }));
+  assert.equal(twice.kind, "invalid");
+  assert.equal(twice.forward, false);
+  assert.match(twice.errors.join(), /second moving decision for tick 4/);
+  assert.match(t.push(hold({ seq: 2, tick: 3 })).errors.join(), /tick 3 goes back/);
+  assert.match(t.push(click({ seq: 2 })).errors.join(), /seq 2 does not increase/); // seq is shared with the intent profile
+  const p = sdk.handleDecisions([cd({ is_final: false })])[0];
+  assert.equal(p.kind, "invalid");
+  assert.match(p.errors.join(), /MUST be final/);
+});
+
+test("DecisionTracker: control safety (CTL-S1, S3, S5)", () => {
+  const out = sdk.handleDecisions([
+    hold({ seq: 0, tick: 0, velocity: [3, 0] }),
+    cd({ seq: 1, tick: 1, velocity: [400, 300], raw: [400, 300], gain: 1, state: "act" }),
+    hold({ seq: 2, tick: 1, state: "stop", reasons: ["disengaged"] }),
+    cd({ seq: 3, tick: 2 }),
+    cd({ seq: 4, tick: 3, engagement: 2 }),
+  ]);
+  assert.match(out[0].errors.join(), /non-zero velocity/);
+  assert.match(out[1].errors.join(), /above v_max/);
+  assert.match(out[3].errors.join(), /motion after a stop without a new engagement/);
+  assert.deepEqual(out[4].errors, []);
+  assert.equal(out[4].forward, true);
+});
+
+test("DecisionTracker: CTL-S7 no intent COMMIT while the control is not engaged", () => {
+  const before = sdk.handleDecisions([hold({ seq: 0, reasons: ["not_engaged"], engagement: 0 }), click({ seq: 1 })]);
+  assert.equal(before[1].kind, "invalid");
+  assert.equal(before[1].forward, false);
+  assert.match(before[1].errors.join(), /not engaged \(rule 7\)/);
+  const stopped = sdk.handleDecisions([cd({ seq: 0 }), hold({ seq: 1, state: "stop", reasons: ["disengaged"] }), click({ seq: 2 })]);
+  assert.match(stopped[2].errors.join(), /not engaged/);
+  const engaged = sdk.handleDecisions([cd({ seq: 0 }), click({ seq: 1 })]);
+  assert.deepEqual(engaged[1].errors, []);
+  assert.equal(engaged[1].committed, "intent.click");
+  const reengaged = sdk.handleDecisions([hold({ seq: 0, state: "stop", reasons: ["disengaged"] }), hold({ seq: 1, tick: 1, engagement: 2 }), click({ seq: 2 })]);
+  assert.deepEqual(reengaged[2].errors, []);
+  // Only past decisions count: no control decision yet in the session, no CTL-S7 check.
+  assert.deepEqual(sdk.handleDecisions([click({ seq: 0 }), hold({ seq: 1, reasons: ["not_engaged"], engagement: 0 })])[0].errors, []);
+  // Another session is not affected.
+  assert.deepEqual(sdk.handleDecisions([hold({ seq: 0, reasons: ["not_engaged"], engagement: 0 }), click({ seq: 1, session: "other" })])[1].errors, []);
+});
+
+test("fep0005.safetyErrors: CTL-S7 before the first engage and after a stop", () => {
+  const notEng = hold({ seq: 0, reasons: ["not_engaged"], engagement: 0 });
+  assert.match(sdk.fep0005.safetyErrors([notEng, click({ seq: 1 })]).join(), /not engaged \(rule 7\)/);
+  assert.deepEqual(sdk.fep0005.safetyErrors([cd({ seq: 0 }), click({ seq: 1 })]), []);
+  assert.deepEqual(sdk.fep0005.engagedAfter(hold({ state: "stop", engagement: 3 }), null), [false, 3]);
+  assert.deepEqual(sdk.fep0005.engagedAfter(hold({ engagement: 3 }), 3), [false, 3]);
+  assert.deepEqual(sdk.fep0005.engagedAfter(hold({ engagement: 4 }), 3), [true, null]);
+  assert.deepEqual(sdk.fep0005.engagedAfter(hold({ engagement: 1, reasons: ["disengaged"] }), null), [false, null]);
+});
+
 test("validateSchema: the supported keywords", () => {
   const s = { type: "object", required: ["a"], properties: { a: { type: "integer", minimum: 0 }, b: { enum: ["x", null] } }, if: { properties: { a: { const: 1 } } }, then: { required: ["b"] } };
   assert.equal(sdk.validateSchema({ a: 2 }, s).length, 0);

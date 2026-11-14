@@ -250,3 +250,125 @@ fn ws_ingest_core_order_gap_resume() {
     // A binary message is refused with 1003.
     assert_eq!(core.message(2.0, WsData::Binary, 0.6).closes[0].1, 1003);
 }
+
+fn obj(s: &str) -> Map {
+    match parse_json(s).unwrap() {
+        Value::Obj(m) => m,
+        _ => unreachable!(),
+    }
+}
+
+/// A control decision: a COMMIT (attenuate) on `tick` with `extra` fields replacing the defaults.
+fn cd(seq: u32, tick: u32, extra: &str) -> Map {
+    let mut m = obj(&format!(
+        r#"{{"type":"trust_decision","profile":"control","session":"c","seq":{},"tick":{},"is_final":true,"action":"COMMIT","state":"attenuate","velocity":[30,-9],"raw":[40,-12],"gain":0.75,"units":"mm/s","reasons":["shrunk"],"p_top1":null,"score_semantics":"none","engagement":1,"v_max":400,"ttl_s":0.06}}"#,
+        seq, tick
+    ));
+    if !extra.is_empty() {
+        for (k, v) in obj(&format!("{{{}}}", extra)).iter() {
+            m.insert(k, v.clone());
+        }
+    }
+    m
+}
+
+fn hold(seq: u32, tick: u32, extra: &str) -> Map {
+    let base = r#""action":"ABSTAIN","state":"hold","velocity":[0,0],"gain":0,"reasons":["uncertain"]"#;
+    let mut m = cd(seq, tick, base);
+    if !extra.is_empty() {
+        for (k, v) in obj(&format!("{{{}}}", extra)).iter() {
+            m.insert(k, v.clone());
+        }
+    }
+    m
+}
+
+fn click(seq: u32, session: &str) -> Map {
+    obj(&format!(
+        r#"{{"type":"trust_decision","profile":"intent","session":"{}","seq":{},"unit":0,"is_final":true,"action":"COMMIT","intent":"intent.click","risk_class":"undoable","p_top1":0.97,"score_semantics":"calibrated_prob"}}"#,
+        session, seq
+    ))
+}
+
+const STOP: &str = r#""state":"stop","reasons":["disengaged"]"#;
+const NOT_ENGAGED: &str = r#""reasons":["not_engaged"],"engagement":0"#;
+
+#[test]
+fn decision_tracker_control_decisions() {
+    let d = handle_decisions(&[
+        hold(0, 0, NOT_ENGAGED),
+        cd(1, 1, ""),
+        hold(2, 1, r#""reasons":["stale_input"]"#), // a HOLD may repeat the last tick
+        cd(3, 2, r#""state":"act","gain":1,"velocity":[40,-12],"reasons":["ok"]"#),
+        hold(4, 2, STOP),
+    ]);
+    assert!(d.iter().all(|x| x.errors.is_empty()), "{:?}", d.iter().map(|x| &x.errors).collect::<Vec<_>>());
+    let kinds: Vec<_> = d.iter().map(|x| x.kind).collect();
+    use DecisionKind::*;
+    assert_eq!(kinds, [Abstain, Commit, Abstain, Commit, Abstain]);
+    assert!(d.iter().all(|x| x.profile == "control" && x.committed.is_none() && x.offered.is_empty()));
+    let moving: Vec<f64> = d.iter().filter(|x| x.forward).map(|x| x.tick.unwrap()).collect();
+    assert_eq!(moving, [1.0, 2.0]);
+}
+
+#[test]
+fn decision_tracker_control_order() {
+    let mut t = DecisionTracker::new();
+    assert!(t.push(&cd(0, 4, "")).errors.is_empty());
+    let twice = t.push(&cd(1, 4, ""));
+    assert_eq!(twice.kind, DecisionKind::Invalid);
+    assert!(!twice.forward);
+    assert!(twice.errors.iter().any(|e| e.contains("second moving decision for tick 4")));
+    assert!(t.push(&hold(2, 3, "")).errors.iter().any(|e| e.contains("tick 3 goes back")));
+    // seq is shared with the intent profile
+    assert!(t.push(&click(2, "c")).errors.iter().any(|e| e.contains("seq 2 does not increase")));
+    let p = handle_decisions(&[cd(0, 0, r#""is_final":false"#)]);
+    assert_eq!(p[0].kind, DecisionKind::Invalid);
+    assert!(p[0].errors.iter().any(|e| e.contains("MUST be final")));
+}
+
+#[test]
+fn decision_tracker_control_safety() {
+    let d = handle_decisions(&[
+        hold(0, 0, r#""velocity":[3,0]"#),
+        cd(1, 1, r#""velocity":[400,300],"raw":[400,300],"gain":1,"state":"act""#),
+        hold(2, 1, STOP),
+        cd(3, 2, ""),
+        cd(4, 3, r#""engagement":2"#),
+    ]);
+    assert!(d[0].errors.iter().any(|e| e.contains("non-zero velocity")));
+    assert!(d[1].errors.iter().any(|e| e.contains("above v_max")));
+    assert!(d[3].errors.iter().any(|e| e.contains("motion after a stop without a new engagement")));
+    assert!(d[4].errors.is_empty());
+    assert!(d[4].forward);
+}
+
+#[test]
+fn decision_tracker_ctl_s7_intent_commit_needs_an_engaged_control() {
+    let before = handle_decisions(&[hold(0, 0, NOT_ENGAGED), click(1, "c")]);
+    assert_eq!(before[1].kind, DecisionKind::Invalid);
+    assert!(!before[1].forward);
+    assert!(before[1].errors.iter().any(|e| e.contains("not engaged (rule 7)")));
+    let stopped = handle_decisions(&[cd(0, 0, ""), hold(1, 0, STOP), click(2, "c")]);
+    assert!(stopped[2].errors.iter().any(|e| e.contains("not engaged")));
+    let engaged = handle_decisions(&[cd(0, 0, ""), click(1, "c")]);
+    assert!(engaged[1].errors.is_empty());
+    assert_eq!(engaged[1].committed.as_deref(), Some("intent.click"));
+    let reengaged = handle_decisions(&[hold(0, 0, STOP), hold(1, 1, r#""engagement":2"#), click(2, "c")]);
+    assert!(reengaged[2].errors.is_empty(), "{:?}", reengaged[2].errors);
+    // Only past decisions count: no control decision yet in the session, no CTL-S7 check.
+    assert!(handle_decisions(&[click(0, "c"), hold(1, 0, NOT_ENGAGED)])[0].errors.is_empty());
+    // Another session is not affected.
+    assert!(handle_decisions(&[hold(0, 0, NOT_ENGAGED), click(1, "other")])[1].errors.is_empty());
+}
+
+#[test]
+fn fep0005_safety_ctl_s7_and_engaged_after() {
+    use fidetype::profiles::fep0005::{engaged_after, safety_errors};
+    assert!(safety_errors(&[hold(0, 0, NOT_ENGAGED), click(1, "c")]).iter().any(|e| e.contains("not engaged (rule 7)")));
+    assert!(safety_errors(&[cd(0, 0, ""), click(1, "c")]).is_empty());
+    assert_eq!(engaged_after(&hold(0, 0, r#""state":"stop","engagement":3"#), None), (false, Some(3.0)));
+    assert_eq!(engaged_after(&hold(0, 0, r#""engagement":3"#), Some(3.0)), (false, Some(3.0)));
+    assert_eq!(engaged_after(&hold(0, 0, r#""engagement":4"#), Some(3.0)), (true, None));
+    assert_eq!(engaged_after(&hold(0, 0, r#""engagement":1,"reasons":["disengaged"]"#), None), (false, None));
+}

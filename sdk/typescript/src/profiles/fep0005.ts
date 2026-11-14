@@ -51,7 +51,7 @@ export const CHECKS: CheckMeta[] = [
   ["FEP5-INTENT", "MUST", "5 r6 (FEP-0003 2-4)", "Intent parts of the stream follow FEP-0003"],
   ["FEP5-TD-FORMAT", "MUST", "5 table, r1-r4", "Control trust_decision fields (profile, tick, state, velocity, gain, v_max, ttl_s, engagement; no shown)"],
   ["FEP5-TD-ORDER", "MUST", "5 r5", "Per session: seq increases over all profiles; control decisions are final; a moving tick is never reused"],
-  ["FEP5-SAFETY", "MUST", "6 r1-r7", "No motion on hold/stop or no-signal reasons; speed <= v_max; re-engage after stop; no intent COMMIT while stopped"],
+  ["FEP5-SAFETY", "MUST", "6 r1-r7", "No motion on hold/stop or no-signal reasons; speed <= v_max; re-engage after stop; no intent COMMIT while not engaged"],
 ];
 const META = Object.fromEntries(CHECKS.map((c) => [c[0], c]));
 const res = makeRes(META, FEP);
@@ -316,27 +316,58 @@ export function tdOrderErrors(events: Record<string, unknown>[]): string[] {
   return [...new Set(errs)];
 }
 
-/** Section 6: no motion on hold / stop or no-signal reasons, speed bound, re-engage after a stop, no intent COMMIT while stopped. */
-export function safetyErrors(events: Record<string, unknown>[]): string[] {
-  const errs = f3.safetyErrors(events.filter((e) => !isControl(e)));
+/**
+ * CTL-S7: is the control engaged after the control decision `e`? Returns [engaged, latched stop engagement]
+ * (null = no latched stop). A decision log has no `control_enable` events, so the control decisions tell the
+ * state. The control is not engaged after a `stop` (latched with its `engagement`, or -1 if that is not an
+ * integer), after a decision with `engagement` 0 (no engage yet) or with the reason `not_engaged` or
+ * `disengaged`, and after a decision whose `engagement` is not higher than the one of the latched stop.
+ * Each other control decision shows an engaged control and clears the latch.
+ */
+export function engagedAfter(e: Record<string, unknown>, stopEng: number | null): [boolean, number | null] {
+  const eng = get(e, "engagement");
+  const reasons = Array.isArray(get(e, "reasons")) ? (e.reasons as unknown[]) : [];
+  if (get(e, "state") === "stop") return [false, isInt(e, "engagement") ? (eng as number) : -1];
+  if (!isInt(e, "engagement") || (eng as number) < 1 || reasons.includes("not_engaged") || reasons.includes("disengaged")) return [false, stopEng];
+  if (stopEng !== null && (eng as number) <= stopEng) return [false, stopEng];
+  return [true, null];
+}
+
+/**
+ * The section 6 checks (CTL-S1 … S7) as a state machine over the decisions of a log, in order: no motion on
+ * hold / stop or no-signal reasons, speed bound, re-engage after a stop, no intent COMMIT while the control
+ * is not engaged. `safetyErrors` and `DecisionTracker` use it. It does not run the FEP-0003 intent safety
+ * checks (`safetyErrors` adds them).
+ */
+export class ControlSafety {
   // session -> engagement of the latched stop (-1 if not an integer); absent = not stopped (Python None).
-  const stopped = new Map<string, number>();
-  for (const e of events) {
-    if (get(e, "type") !== "trust_decision") continue;
+  private stopped = new Map<string, number>();
+  // CTL-S7: session -> engaged after its last control decision. Absent = no control decision yet (no check).
+  private engaged = new Map<string, boolean>();
+  private s7Stop = new Map<string, number | null>();
+
+  /** The errors of one event (a `trust_decision` of any profile; other events give no error). */
+  push(e: Record<string, unknown>): string[] {
+    const errs: string[] = [];
+    if (get(e, "type") !== "trust_decision") return errs;
     const sid = sessionKey(e);
     const n = lineOf(e);
     if (!isControl(e)) {
-      if (isIntentTd(e) && get(e, "is_final") === true && get(e, "action") === "COMMIT" && stopped.has(sid)) {
-        errs.push(`line ${n}: intent COMMIT while the control is stopped (rule 7)`);
+      if (isIntentTd(e) && get(e, "is_final") === true && get(e, "action") === "COMMIT" && this.engaged.get(sid) === false) {
+        errs.push(`line ${n}: intent COMMIT while the control is not engaged (rule 7)`);
       }
-      continue;
+      return errs;
     }
+    const [eg, ls] = engagedAfter(e, this.s7Stop.has(sid) ? (this.s7Stop.get(sid) as number | null) : null);
+    this.engaged.set(sid, eg);
+    this.s7Stop.set(sid, ls);
+    const stopped = this.stopped;
     const vel = get(e, "velocity");
-    if (!(Array.isArray(vel) && vel.every(isFinNum))) continue;
+    if (!(Array.isArray(vel) && vel.every(isFinNum))) return errs;
     const sp = norm(vel as number[]);
     if (sp === null) {
       errs.push(`line ${n}: velocity too large (Python OverflowError)`);
-      continue;
+      return errs;
     }
     const act = get(e, "action");
     const st = get(e, "state");
@@ -357,7 +388,7 @@ export function safetyErrors(events: Record<string, unknown>[]): string[] {
         const rs = norm(raw as number[]);
         if (rs === null) {
           errs.push(`line ${n}: raw too large (Python OverflowError)`);
-          continue;
+          return errs;
         }
         const auth = has(e, "authority") ? e.authority : 1.0;
         if (rs > 0 && numEq(auth, 1) && sp > rs * (1 + SPEED_TOL) + SPEED_TOL) {
@@ -367,7 +398,15 @@ export function safetyErrors(events: Record<string, unknown>[]): string[] {
     }
     if (st === "stop") stopped.set(sid, isInt(e, "engagement") ? (eng as number) : -1);
     else if (act === "COMMIT" && isInt(e, "engagement") && stopped.has(sid) && eng !== stopped.get(sid)) stopped.delete(sid);
+    return errs;
   }
+}
+
+/** Section 6: no motion on hold / stop or no-signal reasons, speed bound, re-engage after a stop, no intent COMMIT while not engaged. */
+export function safetyErrors(events: Record<string, unknown>[]): string[] {
+  const errs = f3.safetyErrors(events.filter((e) => !isControl(e)));
+  const cs = new ControlSafety();
+  for (const e of events) errs.push(...cs.push(e));
   return errs;
 }
 

@@ -42,7 +42,7 @@ fn fep0004_vectors() {
 
 #[test]
 fn fep0005_vectors() {
-    run("fep-0005", 42);
+    run("fep-0005", 44);
 }
 
 #[test]
@@ -90,4 +90,35 @@ fn fep0005_reject_vectors_fail_their_named_check() {
             assert!(fidetype::json::py_eq(&fidetype::Value::Arr(got), &fidetype::Value::Arr(want.clone())), "{}", file);
         }
     }
+}
+
+#[test]
+fn fep0005_decision_tracker_matches_the_decision_log_vectors() {
+    use fidetype::trust::{DecisionKind, DecisionTracker};
+    let dir = vectors().join("fep-0005");
+    let manifest = fidetype::parse_json(&std::fs::read_to_string(dir.join("manifest.json")).unwrap()).unwrap();
+    let mut n = 0;
+    for v in manifest.get("vectors").as_arr().unwrap() {
+        let file = v.get("file").as_str().unwrap();
+        if !file.starts_with('e') {
+            continue;
+        }
+        n += 1;
+        let text = std::fs::read_to_string(dir.join(file)).unwrap();
+        let mut t = DecisionTracker::new();
+        let out: Vec<_> = text.lines().filter(|l| !l.trim().is_empty()).map(|l| t.push_text(l)).collect();
+        let errs: Vec<&String> = out.iter().flat_map(|d| d.errors.iter()).collect();
+        if v.get("expect").as_str() == Some("accept") {
+            assert!(errs.is_empty(), "{}: {:?}", file, errs);
+            if let Some(want) = v.get("expected").get("moving_ticks").as_arr() {
+                let got: Vec<f64> = out.iter().filter(|d| d.profile == "control" && d.forward).map(|d| d.tick.unwrap()).collect();
+                let want: Vec<f64> = want.iter().map(|x| x.as_f64().unwrap()).collect();
+                assert_eq!(got, want, "{}", file);
+                assert!(out.iter().filter(|d| d.profile == "control" && d.forward).all(|d| d.kind == DecisionKind::Commit));
+            }
+        } else {
+            assert!(!errs.is_empty(), "{}: the tracker found no error", file);
+        }
+    }
+    assert!(n >= 21);
 }

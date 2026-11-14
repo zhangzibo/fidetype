@@ -8,7 +8,7 @@ Rust SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. The cor
 | Readers | `reader::parse_nts_text`, `reader::LineSplitter`, `reader::EventReader`: read a whole text, or byte chunks from a serial port, socket or file. UTF-8 is strict across chunk borders. |
 | Reference consumer | `load_stream(name, bytes)`: accept or reject a `.jsonl` or `.npz` file with the core rules of the Python reference (`fidetype.conformance.io.load_stream`). |
 | Checks | `check_stream`: all v0.1 checks with levels `core`, `trust-ready`, `provenance`, `advisory` (the same 59 checks as `fidetype validate`). `StreamValidator`: event-by-event checks for live streams. |
-| Decisions | `DecisionTracker`, `trust::is_final_commit`, `trust::committed_text`, `trust::empty_commit_warning`: what a consumer may do with each `trust_decision` (COMMIT / OFFER / ASK / ABSTAIN, text and intent profiles). |
+| Decisions | `DecisionTracker`, `trust::is_final_commit`, `trust::committed_text`, `trust::empty_commit_warning`: what a consumer may do with each `trust_decision` (COMMIT / OFFER / ASK / ABSTAIN; text, intent and control profiles). |
 | Profiles | `profiles::fep0001`, `fep0002` (LSL scenarios), `fep0003`, `fep0004` (WebSocket scenarios), `fep0005` (control events): the producer checks and the reference consumers of each FEP profile. |
 | WebSocket core | `ws::IngestCore`, `ws::SubscriberCore`: the sans-IO logic of FEP-0004 (`nts-ws/0.1`). No networking: you give connection events and messages, and you apply the returned `Effects`. |
 | Conformance | `conformance::run_vectors`: run the golden vectors in `spec/conformance/` (the same files as the Python suite) for every profile. |
@@ -126,7 +126,7 @@ python -m fidetype.conformance consumer --cmd "sdk/rust/target/release/fidetype-
 python -m fidetype.conformance consumer --profile fep-0002 --cmd "sdk/rust/target/release/fidetype-rs consume --profile fep-0002 {path}"
 ```
 
-All six profiles pass this way (279/279 at NTS 1.0 RC2 with `fep-0005`). On Windows, give the binary as an absolute path.
+All six profiles pass this way (281/281 at NTS 1.0 RC2 with `fep-0005`). On Windows, give the binary as an absolute path.
 
 ## Conformance and parity with Python
 

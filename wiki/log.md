@@ -640,3 +640,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New standalone `websocket` exporter (no `receiver`): own `WSServer`, `/decisions` only, `token_env`, TLS, `linger_s` for file replay demos. Tested end to end: file → trust → standalone `/decisions` subscriber.
 - Fan-out of one receiver to two pipelines: future work. FEP-0006 (Draft) has a "Decisions" table; open: Python vs Rust for v1 (user), blank OFFER candidates, health token scope, add vs refuse the gate.
 - Tests: `tests/test_collector.py` 44 (was 29). Pages: [collector](concepts/collector.md); `examples/collector/collector.toml`.
+
+## [2026-11-14] setup | P1-10: DecisionTracker tracks control decisions; CTL-S7 check follows the spec
+- `DecisionTracker` (TypeScript `sdk/typescript/src/trust.ts`, Rust `sdk/rust/src/trust.rs`) now tracks `profile = "control"` decisions. Before, it marked them invalid. It checks CTL-T1 … T5 (`seq` over all profiles, ticks do not go back, one move per input tick, a HOLD may repeat a tick) and the log checks CTL-S1 … S7, with the same state machine as the profile (`ControlSafety`). New field `tick`; `forward` on a valid control COMMIT, so the forwarded ticks are the "acted" list (6.4). The Python package has no `DecisionTracker`.
+- CTL-S7: the `fep-0005` check (Python, TypeScript, Rust) now refuses an intent COMMIT while the control is not engaged, also before the first engage (`engaged_after` / `engagedAfter`). Before, only after a `stop`. No existing vector changed. New vectors E20 (reject) and E21 (accept); `fep-0005` 44 vectors.
+- 7.4.5 notes (`p_top1` null, `score_semantics` by radius): no rule id and no MUST, so no check (informative).
+- Parity: Python = TS = Rust on 281/281 vectors; fuzz seeds 1-6 `--n 30` 44,556 mutants (fep-0005 7,920) identical. pytest, `npm test`, `cargo test --locked`, thumbv7em no_std build pass.
+- Docs: `spec/nts-1.0-rc2.md` 1.1, 7.4.6 (informative note), 9.3, 9.5, A, C.1, C.2; `spec/CHANGELOG.md`; SDK READMEs. Pages: [TypeScript SDK](concepts/typescript-sdk.md), [Rust SDK](concepts/rust-sdk.md), [control events](concepts/control-events.md).

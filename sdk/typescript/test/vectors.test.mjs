@@ -98,7 +98,7 @@ test("decision logs: acted texts equal the manifest (FEP-0001 rule 1)", async ()
 test("fep-0005: each reject vector fails its named check; decision logs give the moving ticks", () => {
   const dir = join(conf, "fep-0005");
   const m = JSON.parse(readFileSync(join(dir, "manifest.json"), "utf8"));
-  assert.equal(m.vectors.length, 42);
+  assert.equal(m.vectors.length, 44);
   for (const v of m.vectors) {
     const bytes = new Uint8Array(readFileSync(join(dir, v.file)));
     const rep = sdk.fep0005.checkFile(v.file, bytes);
@@ -107,6 +107,25 @@ test("fep-0005: each reject vector fails its named check; decision logs give the
     else assert.deepEqual(fails, [], v.id);
     if (v.expect === "accept" && v.expected?.moving_ticks) {
       assert.deepEqual(sdk.fep0005.consume(v.file, bytes).moving_ticks, v.expected.moving_ticks, v.id);
+    }
+  }
+});
+
+test("fep-0005: DecisionTracker accepts exactly the accept decision logs and acts on the moving ticks", () => {
+  const dir = join(conf, "fep-0005");
+  const m = JSON.parse(readFileSync(join(dir, "manifest.json"), "utf8"));
+  const logs = m.vectors.filter((v) => v.file.startsWith("e"));
+  assert.ok(logs.length >= 21);
+  for (const v of logs) {
+    const lines = readFileSync(join(dir, v.file), "utf8").split("\n").filter((l) => l.trim());
+    const out = sdk.handleDecisions(lines);
+    const errs = out.flatMap((d) => d.errors);
+    if (v.expect === "accept") {
+      assert.deepEqual(errs, [], v.id);
+      const ticks = out.filter((d) => d.profile === "control" && d.forward).map((d) => d.tick);
+      if (v.expected?.moving_ticks) assert.deepEqual(ticks, v.expected.moving_ticks, v.id);
+    } else {
+      assert.ok(errs.length > 0, `${v.id}: the tracker found no error`);
     }
   }
 });
