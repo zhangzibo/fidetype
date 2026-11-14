@@ -1,0 +1,83 @@
+{
+ "what": "trust-pool uniform controls under the frozen trust-pool config (diagnosis; no new test decision)",
+ "config_id": "tcfg-9fb4c81c5931e00c",
+ "policy": {
+  "abstain_risk": 1.01,
+  "commit_max_risk": 0.1,
+  "commit_max_set": null,
+  "commit_p": 0.3,
+  "final_fallback": "offer",
+  "offer_max_k": 1,
+  "offer_words": false,
+  "offer_words_k": 3,
+  "offer_words_max_slots": null,
+  "offer_words_min_conf": 0.0,
+  "word_conf_threshold": 0.9
+ },
+ "trace": {
+  "n": 400,
+  "n_top1_empty": 304,
+  "n_commit": 0,
+  "n_commit_empty": 0,
+  "n_commit_1word": 0,
+  "n_commit_le3chars": 0,
+  "actions": {
+   "OFFER": 400
+  },
+  "empty_top1": {
+   "n_cand_counts": {
+    "1": 242,
+    "10": 37,
+    "3": 1,
+    "6": 3,
+    "2": 7,
+    "7": 8,
+    "8": 1,
+    "9": 2,
+    "5": 3
+   },
+   "p_top1_min_median_max": [
+    0.35190895730572225,
+    1.0,
+    1.0
+   ],
+   "guard_risk_values": {
+    "1.0": 304
+   },
+   "consistency_min_median": [
+    0.4521740757045082,
+    1.0
+   ],
+   "set_size_counts": {
+    "1": 297,
+    "2": 5,
+    "4": 1,
+    "3": 1
+   }
+  },
+  "nonempty_commits": {
+   "guard_risk_min_median_max": [
+    null,
+    null,
+    null
+   ],
+   "n_words_counts": {}
+  },
+  "commits_kept_if_commit_max_risk_0.1": 0,
+  "commits_kept_if_commit_max_risk_0.2": 0,
+  "commits_kept_if_commit_max_risk_0.3": 0,
+  "commits_kept_if_commit_max_risk_0.5": 0,
+  "commits_kept_if_commit_max_risk_0.99": 0,
+  "commits_abstained_if_abstain_risk_0.6": 0,
+  "commits_abstained_if_abstain_risk_0.8": 0
+ },
+ "decision_reasons": {
+  "OFFER: final attempt: offer top-k": 99,
+  "OFFER: conformal set of # <= #": 301
+ },
+ "same_inputs_commit_max_risk_1.0": {
+  "n_commit": 321,
+  "n_commit_empty": 304
+ },
+ "seconds": 42.0
+}

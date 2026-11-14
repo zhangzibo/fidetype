@@ -1,0 +1,26 @@
+uniform[0]: {'top1': '', 'p_top1': 1.0, 'guard_risk': 1.0}
+commit_max_risk abstain_risk policy              input    commits empty n
+            1.0         1.01 v4 policy            real          60     7 60
+            1.0         1.01 v4 policy            uniform       60    55 60
+            1.0         1.01 + gate A (no empty)  real          53     0 60
+            1.0         1.01 + gate A (no empty)  uniform        5     0 60
+            1.0         1.01 + gate B (A, risk<1) real          53     0 60
+            1.0         1.01 + gate B (A, risk<1) uniform        0     0 60
+            0.5         1.01 v4 policy            real          53     0 60
+            0.5         1.01 v4 policy            uniform        0     0 60
+            0.5         1.01 + gate A (no empty)  real          53     0 60
+            0.5         1.01 + gate A (no empty)  uniform        0     0 60
+            0.5         1.01 + gate B (A, risk<1) real          53     0 60
+            0.5         1.01 + gate B (A, risk<1) uniform        0     0 60
+            0.1         1.01 v4 policy            real          31     0 60
+            0.1         1.01 v4 policy            uniform        0     0 60
+            0.1         1.01 + gate A (no empty)  real          31     0 60
+            0.1         1.01 + gate A (no empty)  uniform        0     0 60
+            0.1         1.01 + gate B (A, risk<1) real          31     0 60
+            0.1         1.01 + gate B (A, risk<1) uniform        0     0 60
+            1.0          0.8 v4 policy            real          53     0 60
+            1.0          0.8 v4 policy            uniform        0     0 60
+            1.0          0.8 + gate A (no empty)  real          53     0 60
+            1.0          0.8 + gate A (no empty)  uniform        0     0 60
+            1.0          0.8 + gate B (A, risk<1) real          53     0 60
+            1.0          0.8 + gate B (A, risk<1) uniform        0     0 60

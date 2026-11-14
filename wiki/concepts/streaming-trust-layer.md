@@ -1,7 +1,7 @@
 ---
 title: Streaming trust layer
 type: concept
-tags: [trust, streaming, real-time, provenance, risk-control, neuraltextstream, m4]
+tags: [trust, streaming, real-time, provenance, risk-control, neuraltextstream, m4, commit-gate]
 sources: [brain-to-text-25-copytask]
 updated: 2026-11-13
 ---
@@ -240,11 +240,33 @@ fidetype conformance check --profile fep-0001 decisions.jsonl  # check an input 
 - For a decision log, the reference consumer returns `acted`: `shown[0]` of each final `COMMIT`. Vector F23 has a provisional `COMMIT` and then a final `ABSTAIN`. A conforming consumer acts on nothing.
 - A test runs the layer on synthetic streams (both routes, provisional decisions, ASK and retry) and checks its decision log with the profile: no failure.
 
+## Commit gate (M2-18, opt-in)
+Experiment: [2026-11-13-m2-18-empty-commits](../../experiments/2026-11-13-m2-18-empty-commits/results.md).
+
+**Problem.** The guard gives an empty top-1 text risk 1.0 (the highest value, not 0). The policy commits if `guard_risk <= commit_max_risk`. The policy grid contains `commit_max_risk = 1.0`, and at 1.0 this test is always true: the guard limit is off. In the T12 v2 validation dry run the Paper 1 v4 recipe chose 1.0 and committed 335 of 400 uniform (no-signal) streams: 320 empty texts and 15 short texts, all with guard risk 1.0. On the T12 trust pool the same recipe chose 0.1, and only that limit (risk 1.0 > 0.1) stopped 304 empty top-1 texts. See [confirmatory test on T12](../questions/confirmatory-t12.md).
+
+**Gate.** `fidetype.trust.content.CommitGate(min_chars=1, min_words=0, max_guard_risk=None)`. A COMMIT that fails it becomes the decision of the same policy with `commit_p = +inf` (OFFER, ASK or ABSTAIN by the normal rules). Reason prefix `commit gate:`.
+
+| part | API |
+|---|---|
+| frozen configuration | `FrozenTrustConfig.commit_gate` (dict; empty = off, left out of the JSON and the `config_id`); `with_commit_gate(1, 0, 1.0)`; `build()` -> `GatedPolicy` |
+| batch | `GatedPolicy.wrap(policy, CommitGate(...))` |
+| streaming | `StreamingTrustLayer` applies the gate last, on every decision path |
+
+- Default off: every configuration made before M2-18 keeps its bytes, id and decisions (Paper 1 v4 behaviour).
+- The gate only removes commits. The fallback loss of an item is never above its commit loss, so a CRC / LTT bound stays valid without a new calibration.
+- Before / after on the T12 dry run (uniform control commits): v4 335, gate A (no empty text) 15, **gate B (no empty text, guard risk < 1) 0**; frame-shuffled 6 -> 3; test rows unchanged (22 commits, 11 wrong).
+- Paper 1 (T15): 0 empty commits in all six refitted fits; all fits chose `commit_max_risk` <= 0.5; 0 empty top-1 texts in 35,816 cached T15 n-best lists. No Paper 1 number changes; the gate changes nothing there.
+- Spec: FEP-0001 section 3 rule 9 (SHOULD NOT emit an empty final COMMIT).
+
+> **Our take:** Gate B should be on by default in a future v5 configuration. The guard-limit value 1.0 should leave the grid, or the grid fit should also require near-zero commits on no-signal versions of the fit streams.
+
 ## Limits and follow-ups
 - Incremental decoding is done (M4-08). The fast exact lexicon fallback and the per-push prewarm budget are done (M4-09). The decoder caches are bounded (LRU, M4-10). M4-01 (neural decoder lookahead) and M4-02 (lookahead sweep) are still open.
 - Real-data frozen configs exist for one participant and one split only (M4-06, B2T '25 split A). Each new user and session needs its own fit.
 - FEP-0001 conformance is done (M4-07, profile `fep-0001`). The FEP stays Draft until review.
 - Live input over LSL is done: [LSL input](lsl-input.md) (M6-01). It uses `abort_utterance()` when a stream is lost. A WebSocket input is still open.
+- The commit gate (M2-18) is opt-in. On the online path the controller still counts a gated COMMIT as a commit (conservative). A v5 recipe with the gate on by default is not yet defined.
 
 ## Related
 [Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [LSL input](lsl-input.md) · [Per-session risk control](../questions/per-session-risk-control.md)

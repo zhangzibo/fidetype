@@ -9,7 +9,7 @@
 | **Type** | Spec change (additive, Development) |
 | **Affects** | `neuraltextstream-v0.1.md` sections 3.6, 6.2 and open question 5 (section 10) |
 | **Created** | 2026-11-12 |
-| **Updated** | 2026-11-12 (M4-07: decode declaration, rules made testable, conformance profile `fep-0001`) |
+| **Updated** | 2026-11-13 (M2-18: rule 9, empty committed text); 2026-11-12 (M4-07: decode declaration, rules made testable, conformance profile `fep-0001`) |
 | **Discussion** | M4-03 (streaming trust layer), M4-06 (real-data replay), M4-07 (conformance); `src/fidetype/trust/streaming.py` |
 
 ## Summary
@@ -89,6 +89,7 @@ Rules:
 6. A trust layer MUST emit at most one final decision per (`session`, `utterance`).
 7. A trust layer MUST NOT emit any decision for an utterance after its final decision. (After a final `ASK`, the retry is a new utterance.)
 8. A `COMMIT` that carries `shown` MUST have at least one text in it.
+9. A trust layer SHOULD NOT emit a final `COMMIT` whose committed text (`shown[0]`) is empty or only white space. To show no text, it uses `ABSTAIN`. If a layer emits such a `COMMIT`, its `reason` SHOULD say why. A bridge to a lossy output (6.5) SHOULD NOT forward an empty committed text. *Why (M2-18):* in a dry run on participant T12 the Paper 1 v4 configuration committed 320 empty texts on 400 no-signal (uniform) control streams (`experiments/2026-11-13-m2-18-empty-commits/results.md`). An empty COMMIT tells the user "the system understood you" when no text came from the neural evidence. The reference layer can enforce this rule with the opt-in commit gate (`FrozenTrustConfig.commit_gate`, `fidetype.trust.content`). This rule is a SHOULD, not a MUST, because frozen configurations made before M2-18 (Paper 1 v4) can still emit an empty `COMMIT`; the conformance profile does not check it yet (open question 6).
 
 ### 4. `decode_declaration` (Development)
 A JSON object in the header (it applies to the whole stream) or on a `hypothesis` event (it applies to that event only).
@@ -184,3 +185,4 @@ fidetype conformance vectors --profile fep-0001 --out DIR
 3. Should `char_confidences` move to a per-hypothesis lattice when lattices arrive (question 3)?
 4. Should `decode_declaration` carry a hash of the decoder weights (as `decoder.weights_sha256`, 4.2), and should the layer require it?
 5. Should `abstain` become the default `declaration_check` mode when the FEP moves to Stable?
+6. Should rule 9 become a MUST (with a reject vector in the `fep-0001` profile) when the FEP moves to Stable? This needs a reference configuration that never commits an empty text (a v5 configuration with the commit gate on by default).

@@ -1,0 +1,6 @@
+17:25:59 b2t-ours/alternate cmr 0.1 commit_p 0.3 test v4 {"n_commit": 82, "n_wrong_commit": 20, "n_commit_empty": 0, "n_commit_1word": 0} wc 0.0245 (paper 0.0245) uniform v4 0 (26s)
+17:28:41 b2t-ours/chrono cmr 0.3 commit_p 0.43 test v4 {"n_commit": 157, "n_wrong_commit": 42, "n_commit_empty": 0, "n_commit_1word": 0} wc 0.0515 (paper 0.0515) uniform v4 0 (162s)
+17:29:04 b2t-published/alternate cmr 0.5 commit_p 0.76 test v4 {"n_commit": 329, "n_wrong_commit": 24, "n_commit_empty": 0, "n_commit_1word": 0} wc 0.0294 (paper 0.0294) uniform v4 0 (23s)
+17:29:22 b2t-published/chrono cmr 0.5 commit_p 0.75 test v4 {"n_commit": 339, "n_wrong_commit": 25, "n_commit_empty": 0, "n_commit_1word": 0} wc 0.0306 (paper 0.0306) uniform v4 0 (18s)
+17:29:57 b2t-ours/full-fit cmr 0.5 commit_p 0.5 test v4 {"n_commit": 189, "n_wrong_commit": 48, "n_commit_empty": 0, "n_commit_1word": 0} wc 0.0588 (paper None) uniform v4 0 (35s)
+17:30:30 b2t-published/full-fit cmr 0.5 commit_p 0.7 test v4 {"n_commit": 386, "n_wrong_commit": 36, "n_commit_empty": 0, "n_commit_1word": 0} wc 0.0441 (paper None) uniform v4 0 (33s)

@@ -488,6 +488,8 @@ class StreamingTrustLayer:
         self.config_id = config.config_id
         self._sessions: dict[str, _Session] = {}
         self._needs_slots = bool(config.policy.get("offer_words", False))
+        #: M2-18 commit gate (None = off). Applied last, on every decision path.
+        self._commit_gate = config.gate if isinstance(self.components.policy, DecisionPolicy) else None
 
     @classmethod
     def from_file(cls, path: str | PathLike[str], **kw: Any) -> "StreamingTrustLayer":
@@ -847,6 +849,10 @@ class StreamingTrustLayer:
             d = s.controller.apply(policy).decide(inputs, final_attempt=final_attempt)
         else:
             d = policy.decide(inputs, final_attempt=final_attempt)
+        if self._commit_gate is not None:
+            from fidetype.trust.content import gate_decision
+
+            d = gate_decision(d, inputs, self._commit_gate, policy, final_attempt)
         return self._emit(s, d, inputs, g, final, final_attempt, route, ref, t0, ticket, stream, thr, decl)
 
     def _emit(self, s: _Session, d: Decision, inputs: PolicyInputs, g: GuardScore | None, final: bool,

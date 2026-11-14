@@ -469,3 +469,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Frozen configuration: 1/400 test commits (right), 0/400 controls, guard AUROC 0.792 -> outcome **uninformative** again; C1-C3 pass.
 - Validation dry run before the pre-registration: the same recipe chose `commit_max_risk` 1.0 there and committed 335/400 uniform-control streams (320 empty texts). The predicted C3 failure did not occur on the trust pool (recipe chose 0.1).
 - Page [confirmatory test on T12](questions/confirmatory-t12.md) updated (v2 section); index line updated.
+
+## [2026-11-13] query | M2-18 empty commits on no-signal input: mechanism, Paper 1 impact, commit gate
+- Mechanism: the guard gives an empty top-1 risk 1.0 (not 0, as M3-28 guessed). The grid value `commit_max_risk` 1.0 makes `risk <= commit_max_risk` always true, so the guard limit is off; the T12 word decoder returns only "" on most uniform streams, p_top1 ~1. Trust pool: only the fitted limit 0.1 blocked 304 empty top-1 texts (same inputs at 1.0: 321 commits).
+- Synthetic reproducer `experiments/2026-11-13-m2-18-empty-commits/repro.py`; tests `tests/test_trust_commit_gate.py` (12).
+- Paper 1 (T15): 6 refits reproduce Tab. 1 exactly; 0 empty / one-word commits on test and controls; all Paper 1 fits chose `commit_max_risk` <= 0.5; repeated splits chose 1.0 in 53/200 (ours) and 65/200 (published) but 0 empty top-1 in 35,816 cached T15 n-best lists. No number changes; wording erratum candidate only.
+- Opt-in fix: `fidetype.trust.content.CommitGate` / `GatedPolicy`, `FrozenTrustConfig.commit_gate` (empty = off, ids unchanged), applied by `StreamingTrustLayer`. T12 dry run uniform commits 335 -> gate A 15 -> gate B 0, frame-shuffled 6 -> 3, test unchanged. FEP-0001 rule 9 (SHOULD NOT emit an empty final COMMIT) + open question 6.
+- Stability finding and v5 suggestion (gate B default, drop 1.0 from the grid or a control-aware grid fit, bootstrap selection report) noted; not applied. Pages [streaming trust layer](concepts/streaming-trust-layer.md) and [confirmatory test on T12](questions/confirmatory-t12.md) updated; index updated.

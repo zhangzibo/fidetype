@@ -1,0 +1,19 @@
+2026-11-13 17:18:33 dryrun refit tcfg-845934f0792ad9fc policy {"commit_p": 0.3, "commit_max_risk": 1.0, "commit_max_set": null, "offer_max_k": 1, "abstain_risk": 1.01, "final_fallback": "offer", "offer_words": false, "word_conf_threshold": 0.9, "offer_words_k": 3, "offer_words_min_conf": 0.0, "offer_words_max_slots": null} ltt 0.3
+2026-11-13 17:20:45 trace test {"n_top1_empty": 0, "n_commit": 22, "n_commit_empty": 0}
+2026-11-13 17:20:45 trace frame_shuffled {"n_top1_empty": 1, "n_commit": 6, "n_commit_empty": 1}
+2026-11-13 17:20:45 trace uniform {"n_top1_empty": 320, "n_commit": 335, "n_commit_empty": 320}
+2026-11-13 17:20:45 trace intent_mismatch {"n_top1_empty": 0, "n_commit": 22, "n_commit_empty": 0}
+2026-11-13 17:20:46 rules test {"v4 (no rule)": [22, 11, 0], "min_chars=1 (no empty commit)": [22, 11, 0], "min_words=2": [22, 11, 0]}
+2026-11-13 17:20:46 rules frame_shuffled {"v4 (no rule)": [6, 6, 1], "min_chars=1 (no empty commit)": [5, 5, 0], "min_words=2": [5, 5, 0]}
+2026-11-13 17:20:46 rules uniform {"v4 (no rule)": [335, 335, 320], "min_chars=1 (no empty commit)": [15, 15, 0], "min_words=2": [3, 3, 0]}
+2026-11-13 17:20:46 rules intent_mismatch {"v4 (no rule)": [22, 22, 0], "min_chars=1 (no empty commit)": [22, 22, 0], "min_words=2": [22, 22, 0]}
+2026-11-13 17:24:24 pool uniform {"trace": {"n_top1_empty": 304, "n_commit": 0}, "reasons": {"OFFER: final attempt: offer top-k": 99, "OFFER: conformal set of # <= #": 301}, "loose": [321, 304]}
+2026-11-13 17:26:23 dryrun refit tcfg-845934f0792ad9fc policy {"commit_p": 0.3, "commit_max_risk": 1.0, "commit_max_set": null, "offer_max_k": 1, "abstain_risk": 1.01, "final_fallback": "offer", "offer_words": false, "word_conf_threshold": 0.9, "offer_words_k": 3, "offer_words_min_conf": 0.0, "offer_words_max_slots": null} ltt 0.3
+2026-11-13 17:29:05 trace test {"n_top1_empty": 0, "n_commit": 22, "n_commit_empty": 0}
+2026-11-13 17:29:05 trace frame_shuffled {"n_top1_empty": 1, "n_commit": 6, "n_commit_empty": 1}
+2026-11-13 17:29:05 trace uniform {"n_top1_empty": 320, "n_commit": 335, "n_commit_empty": 320}
+2026-11-13 17:29:05 trace intent_mismatch {"n_top1_empty": 0, "n_commit": 22, "n_commit_empty": 0}
+2026-11-13 17:29:06 rules test {"v4 (no rule)": [22, 11, 0], "gate A: no empty text": [22, 11, 0], "gate B: no empty text, guard risk < 1": [22, 11, 0], "gate C: >= 2 words": [22, 11, 0]}
+2026-11-13 17:29:06 rules frame_shuffled {"v4 (no rule)": [6, 6, 1], "gate A: no empty text": [5, 5, 0], "gate B: no empty text, guard risk < 1": [3, 3, 0], "gate C: >= 2 words": [5, 5, 0]}
+2026-11-13 17:29:06 rules uniform {"v4 (no rule)": [335, 335, 320], "gate A: no empty text": [15, 15, 0], "gate B: no empty text, guard risk < 1": [0, 0, 0], "gate C: >= 2 words": [3, 3, 0]}
+2026-11-13 17:29:06 rules intent_mismatch {"v4 (no rule)": [22, 22, 0], "gate A: no empty text": [22, 22, 0], "gate B: no empty text, guard risk < 1": [22, 22, 0], "gate C: >= 2 words": [22, 22, 0]}

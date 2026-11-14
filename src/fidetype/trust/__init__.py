@@ -55,6 +55,7 @@ from fidetype.trust.session_risk import (
     min_ltt_items,
     mondrian_ltt,
 )
+from fidetype.trust.content import CommitGate, GatedPolicy, gate_decision
 from fidetype.trust.frozen import PAPER1_V4_RECIPE, FrozenTrustConfig, paper1_v4_harness_config
 from fidetype.trust.streaming import (
     StreamDecision,
@@ -69,6 +70,9 @@ from fidetype.trust.types import Candidate, NBest, from_lm_hypotheses
 
 __all__ = [
     "OFFER_WORDS_GRID",
+    "CommitGate",
+    "GatedPolicy",
+    "gate_decision",
     "PAPER1_V4_RECIPE",
     "FrozenTrustConfig",
     "StreamDecision",
