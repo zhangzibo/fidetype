@@ -1,6 +1,6 @@
 {
  "description": "M3-28 confirmatory test v2 of the Paper 1 frozen configuration (paper1-v4-frozen-config) on participant T12 (Willett et al. 2023, B2T '24 competitionData, CC0). Stronger own decoder; pre-registration: preregistration.md (commit: see preregistration_commit).",
- "preregistration_commit": "TBD",
+ "preregistration_commit": "f9741df205a7e2ae1cf68f2764ebf395c12e025e",
  "frozen_tag": "paper1-v4-frozen-config",
  "raw_dir": "C:/Users/zhang/bci-data/raw/b2t24",
  "archive": "C:/Users/zhang/bci-data/raw/b2t24/competitionData.tar.gz",

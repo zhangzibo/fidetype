@@ -462,3 +462,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Decisions equal the unbounded caches: synthetic 2,000-utterance session 2000/2000 (3 bound settings); B2T 816/816 vs M4-06 (unbounded, default, 256).
 - Session RSS 640 -> 1,387 MB unbounded (candidate memo about 17 KB per entry) vs 641 -> 707 MB with default bounds; idle GC p50 208 -> 43 ms; push p95 2.32 ms (B2T 3.19 ms).
 - Experiment `experiments/2026-11-13-m4-10-bounded-caches/`; tests `tests/test_bounded_caches.py`; page [streaming trust layer](concepts/streaming-trust-layer.md) updated.
+
+## [2026-11-13] query | M3-28 confirmatory test v2 on T12 (stronger decoder)
+- Pre-registration `experiments/2026-11-13-confirmatory-t12-v2/preregistration.md`, commit `f9741df`, pushed before any trust-pool decoding; states the v1 exposure and an informative condition (>= 21 of 400 test commits).
+- Own decoder v2 (causal rolling 20-trial normalisation, GRU 5 x 1024, patch 32; Tatoeba word-trigram term beta 2.0): validation PER 0.293, test PER 0.269, WER 0.387, right sentence first 31/400 (v1: 3/400).
+- Frozen configuration: 1/400 test commits (right), 0/400 controls, guard AUROC 0.792 -> outcome **uninformative** again; C1-C3 pass.
+- Validation dry run before the pre-registration: the same recipe chose `commit_max_risk` 1.0 there and committed 335/400 uniform-control streams (320 empty texts). The predicted C3 failure did not occur on the trust pool (recipe chose 0.1).
+- Page [confirmatory test on T12](questions/confirmatory-t12.md) updated (v2 section); index line updated.
