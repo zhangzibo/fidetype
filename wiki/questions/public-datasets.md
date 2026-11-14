@@ -87,6 +87,8 @@ Model-scale context (secondary sources): LaBraM used about 2,500 h from about 20
 
 Close runners-up: MEG-MASC (CC0 MEG, pretraining), Chisco (CC0 imagined speech, sentence labels), ZuCo (CC BY reading EEG with eye tracking; a multimodal stream test), LibriBrain (largest single-subject MEG, NC).
 
+> Intent and cursor-control datasets (P12-06, 2026-11-13) are in [intent and control datasets](intent-datasets-survey.md). That survey re-read the emg2qwerty licence: the `LICENSE` file is CC BY-NC-SA 4.0, the README says CC BY-NC 4.0.
+
 ## Licence warnings
 1. **All Meta EMG data is NC.** emg2qwerty and generic-neuromotor-interface are CC BY-NC 4.0. emg2pose is CC BY-NC-SA 4.0 (share-alike too). LibriBrain and SpanishBCBL are CC BY-NC 4.0. Research only ([licence rule](project-plan.md#licence-rule)).
 2. **BNCI P300 sets are CC BY-NC-ND 4.0.** "No derivatives" forbids sharing converted files. Use them only by download-and-convert on the user's machine.

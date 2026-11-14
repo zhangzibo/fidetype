@@ -57,5 +57,6 @@ Public sEMG data (Toronto sEMG typing, CC BY 4.0) recast as a 27-way key choice,
 ## Related
 - [Apple BCI HID](../entities/apple-bci-hid.md): target interface for intents and pointer (P12-05).
 - [Toronto sEMG typing](../sources/toronto-semg-typing.md): the public data of the evaluation.
+- [Intent and control datasets](../questions/intent-datasets-survey.md): P12-06 survey of public datasets for the intent and control profiles, with verified licences and top-3 picks.
 - [Conformance suite](conformance-suite.md): profile `fep-0003` (44 vectors).
 - [LSL input](lsl-input.md): intents travel on the events stream with no binding change.

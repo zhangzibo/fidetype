@@ -503,3 +503,8 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Evaluation [experiment](../experiments/2026-11-13-p12-intent-events/results.md): Toronto sEMG (CC BY 4.0) recast as 27-way key choice + simulator. Clean wrong rates <= alpha in every setting; zero-input output acts on 37 % of presses without a no-signal reference, 0 with it (the M2-18 failure in intent form).
 - New page [intent events](concepts/intent-events.md), diagram 15, roadmap P12 progress note, index rows.
 
+## [2026-11-13] query | P12-06: public datasets for intent and control
+- New [intent and control datasets](questions/intent-datasets-survey.md): about 45 datasets (implant, ECoG, EEG, EMG) with modality, task, participants, size, exact licence (read on the host page or API, no downloads) and fit scores for the FEP-0003 intent and control profiles.
+- Control (P12-03) top 3: BrainGate long-term recalibration (CC0, 1.69 GB), NLB MC_RTT (CC BY, 51 MB), BNCI 002-2025 EEG 2D trajectory (CC BY). Intent top 3: PhysioNet EEGMMIDB (ODC-By, 3.4 GB, has rest), BrainGate preparatory encoding (CC0, 1.54 GB), BNCI 001-2025 (CC BY). Both profiles, over 5 GB: BrainGate drag-and-drop (CC0, 8.2 GB).
+- Licence findings: BCI Competition III/IV (bbci.de), Ninapro, Tsinghua SSVEP, OpenBMI, CSL-HDEMG have no licence; Meta wrist-EMG sets are NC; emg2qwerty README (CC BY-NC 4.0) and LICENSE file (CC BY-NC-SA 4.0) disagree (contradiction note added).
+- `references/README.md`: new link-only table; [intent events](concepts/intent-events.md) links the survey.

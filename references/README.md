@@ -57,3 +57,32 @@ Pickle safety (`t15_copyTask.pkl`): an opcode scan (`pickletools.genops`, no loa
 | MEG-MASC | https://osf.io/ag3kj/ | CC0 (part 1) |
 | Chisco | https://openneuro.org/datasets/ds005170 | CC0 |
 | ZuCo 2.0 | https://osf.io/2urht/ | CC BY 4.0 |
+
+### Survey 2026-11-13: intent and control datasets (links only, no files; see [wiki/questions/intent-datasets-survey.md](../wiki/questions/intent-datasets-survey.md))
+| Dataset | Link | Licence |
+|---|---|---|
+| BrainGate multi-gesture drag-and-drop | https://datadryad.org/dataset/doi:10.5061/dryad.98sf7m0v1 | CC0 1.0 (Dryad API) |
+| BrainGate long-term unsupervised recalibration | https://datadryad.org/dataset/doi:10.5061/dryad.1jwstqk6g | CC0 1.0 (Dryad API) |
+| BrainGate preparatory encoding | https://datadryad.org/dataset/doi:10.5061/dryad.brv15dvr9 | CC0 1.0 (Dryad API) |
+| BrainGate MINDFUL | https://datadryad.org/dataset/doi:10.5061/dryad.n2z34tn5s | CC0 1.0 (Dryad API) |
+| NoMAD latent alignment | https://datadryad.org/dataset/doi:10.5061/dryad.q83bk3jtp | CC0 1.0 (Dryad API) |
+| NLB MC_Maze / MC_RTT / Area2_Bump / MC_Maze_Large | https://dandiarchive.org/dandiset/000128 , /000129 , /000127 , /000138 | CC-BY-4.0 (DANDI) |
+| FALCON M1-A / H2 / M2 / H1 | https://dandiarchive.org/dandiset/000941 , /000950 , /000953 , /000954 | CC-BY-4.0 (DANDI; 000953 draft) |
+| O'Doherty NHP reaching | https://zenodo.org/records/583331 | CC BY 4.0 (Zenodo) |
+| Miller ECoG library | https://purl.stanford.edu/zk881ps0522 | CC BY-SA 4.0 |
+| BCI Competition IV (sets 1, 2a, 2b, 4) | https://www.bbci.de/competition/iv/ | no licence (terms checkbox, cite) |
+| BCI Competition III (set II P300) | https://www.bbci.de/competition/iii/ | no licence (terms checkbox, cite) |
+| BNCI Horizon 2020 database | https://bnci-horizon-2020.eu/database/data-sets | per set: 2014-15 CC BY-NC-ND / CC BY-ND 4.0; 2017+ CC BY 4.0 |
+| PhysioNet EEGMMIDB | https://physionet.org/content/eegmmidb/1.0.0/ | ODC-By 1.0 |
+| Stieger 2021 SMR cursor EEG | https://figshare.com/articles/dataset/Human_EEG_Dataset_for_Brain-Computer_Interface_and_Meditation/13123148 | CC BY 4.0 (figshare API) |
+| OpenBMI / Lee2019 | https://gigadb.org/dataset/100542 | no data licence on GigaDB API |
+| Tsinghua SSVEP benchmark + BETA | https://bci.med.tsinghua.edu.cn/download.html | no licence |
+| GRABMyo | https://physionet.org/content/grabmyo/1.1.0/ | CC BY 4.0 |
+| Hyser HD-sEMG | https://physionet.org/content/hd-semg/2.0.0/ | ODC-By 1.0 |
+| Meta generic neuromotor interface | https://github.com/facebookresearch/generic-neuromotor-interface | CC BY-NC 4.0 (data + code) |
+| emg2qwerty (re-checked) | https://github.com/facebookresearch/emg2qwerty | README CC-BY-NC-4.0; LICENSE file CC BY-NC-SA 4.0 |
+| emg2pose | https://github.com/facebookresearch/emg2pose | CC BY-NC-SA 4.0 |
+| Ninapro DB1-DB10 | https://ninapro.hevs.ch/ | no licence (cite) |
+| Côté-Allard Myo armband | https://github.com/UlysseCoteAllard/MyoArmbandDataset | GPL-3.0 (repo) |
+| CSL-HDEMG | https://www.uni-bremen.de/en/csl/research/motion-recognition | no licence (cite) |
+| putEMG (paper) | https://pmc.ncbi.nlm.nih.gov/articles/PMC6720505/ | CC BY-NC 4.0 (paper; host page not read) |
