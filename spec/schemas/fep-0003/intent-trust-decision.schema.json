@@ -1,0 +1,39 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0003/intent-trust-decision.schema.json",
+ "title": "FEP-0003 trust_decision with profile intent (trust layer output)",
+ "description": "Structural schema. Order and safety rules (seq, one final per unit, confirmation_of, undo_of, threshold, null role) are checked by the fep-0003 conformance profile.",
+ "type": "object",
+ "required": ["type", "profile", "unit", "is_final", "action", "p_top1", "score_semantics"],
+ "not": {"anyOf": [{"required": ["shown"]}, {"required": ["utterance"]}]},
+ "properties": {
+  "type": {"const": "trust_decision"},
+  "profile": {"const": "intent"},
+  "session": {"type": "string"},
+  "seq": {"type": "integer", "minimum": 0},
+  "unit": {"type": "integer", "minimum": 0},
+  "is_final": {"type": "boolean"},
+  "action": {"enum": ["COMMIT", "OFFER", "ABSTAIN"]},
+  "reason": {"type": "string"},
+  "p_top1": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+  "score_semantics": {"enum": ["calibrated_prob", "uncalibrated_prob", "power", "strength", "none"]},
+  "risk_class": {"enum": ["safe", "undoable", "irreversible", null]},
+  "threshold": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+  "intent": {"type": "string"},
+  "role": {"enum": ["action", "null", "confirm", "cancel", "undo", null]},
+  "offered": {"type": "array", "items": {"type": "string"}},
+  "confirm_required": {"type": "boolean"},
+  "confirmation_of": {"type": "integer", "minimum": 0},
+  "confirmed_via": {"enum": ["intent", "feedback"]},
+  "undo_of": {"type": "integer", "minimum": 0},
+  "pending_cleared": {"type": "string"},
+  "config_id": {"type": ["string", "null"]},
+  "vocab_id": {"type": "string"},
+  "input": {"type": "object"},
+  "latency_s": {"type": "number", "minimum": 0}
+ },
+ "allOf": [
+  {"if": {"properties": {"action": {"const": "COMMIT"}}}, "then": {"required": ["intent", "risk_class"]}},
+  {"if": {"properties": {"action": {"const": "OFFER"}}}, "then": {"required": ["offered"]}}
+ ]
+}

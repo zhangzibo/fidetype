@@ -113,6 +113,17 @@ Bounds
   provenance (``over_budget``). The decision itself does not change, so
   replay stays deterministic.
 
+Intent events (opt-in, FEP-0003)
+--------------------------------
+Pass an :class:`~fidetype.trust.intent.IntentTrustLayer` as ``intent``.
+The layer then also reads ``intent``, ``intent_feedback`` and v0.1
+``decision`` events of the same stream (header ``intent_declaration``)
+and returns their :class:`~fidetype.trust.intent.IntentDecision` objects
+in the same list as the text decisions. Both share the session's ``seq``
+counter (FEP-0003 section 7). An intent event does not end the current
+text utterance. Frames stay on the text route. Default (None): intent
+events are ignored, as before.
+
 Equivalence with the batch path
 -------------------------------
 On the same input, the final decision equals the batch decision
@@ -154,6 +165,9 @@ DecodeFn = Callable[[NeuralTextStream], NBest]
 SEGMENT_END = "segment_end"
 #: Output event kind (proposed in FEP-0001).
 TRUST_DECISION = "trust_decision"
+#: Events that go to the opt-in intent layer only (FEP-0003), and events that both layers read.
+_INTENT_EVENTS = ("intent", "intent_feedback", "decision")
+_INTENT_SHARED = ("header", "signal_quality", "end")
 
 
 class StreamEventError(ValueError):
@@ -462,8 +476,13 @@ class StreamingTrustLayer:
         clock: Callable[[], float] = time.perf_counter,
         session_risk: Any = None,
         incremental: Callable[[dict[str, Any]], Any] | None = None,
+        intent: Any = None,
     ) -> None:
         self.config = config
+        #: FEP-0003 intent layer (opt-in). Frames belong to the text route.
+        self.intent = intent
+        if intent is not None:
+            intent.read_frames = False
         self.components = config.build()
         self.session_risk_template = session_risk
         self._offer_only = None
@@ -598,10 +617,25 @@ class StreamingTrustLayer:
         elif typ == "end":
             out += self._end(s, None, t0)
             s.ended = True
-        else:
+        elif self.intent is None or typ not in _INTENT_EVENTS:
             s.ignored_events += 1  # decision, pointer, unknown types (6.2 rule 5)
+        if self.intent is not None and (typ in _INTENT_EVENTS or typ in _INTENT_SHARED):
+            out += self._push_intent(s, ev, session_id)
         s.n_events += 1
         return out
+
+    def _push_intent(self, s: _Session, ev: dict[str, Any], session_id: str) -> list[Any]:
+        """Forward one event to the FEP-0003 intent layer with the shared seq counter."""
+        from fidetype.trust.intent import IntentEventError
+
+        def alloc() -> int:
+            s.seq += 1
+            return s.seq - 1
+
+        try:
+            return list(self.intent.push(ev, session_id, seq_alloc=alloc))
+        except IntentEventError as e:
+            raise StreamEventError(str(e)) from None
 
     def end_of_utterance(self, session_id: str = "default", final_attempt: bool | None = None) -> list[StreamDecision]:
         """Close the current utterance and return its final decision (if it had input)."""

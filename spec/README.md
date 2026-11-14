@@ -28,6 +28,7 @@ Opt-in profiles test draft FEPs on top of v0.1. They do not change the v0.1 leve
 ```bash
 fidetype conformance --profile fep-0001     # streaming trust events: vectors in conformance/fep-0001/
 fidetype conformance --profile fep-0002     # NTS over LSL: scenario vectors in conformance/fep-0002/
+fidetype conformance --profile fep-0003     # output profiles + discrete intent events: vectors in conformance/fep-0003/
 ```
 
 ## Proposals (FEPs)
@@ -35,6 +36,7 @@ fidetype conformance --profile fep-0002     # NTS over LSL: scenario vectors in 
 |---|---|---|---|
 | [0001](feps/0001-streaming-trust-events.md) | Streaming trust events (`segment_end`, evidence fields, decode declaration, `trust_decision`) | Draft | `fep-0001` (40 vectors) |
 | [0002](feps/0002-nts-over-lsl.md) | NeuralTextStream over LSL (binding `nts-lsl/0.1`) | Draft | `fep-0002` (31 vectors) |
+| [0003](feps/0003-intent-events.md) | Output profiles (core, text, intent, control) and discrete intent events (risk classes, confirmation, undo, `intent_feedback`, intent `trust_decision`) | Draft | `fep-0003` (44 vectors); JSON schemas in `schemas/fep-0003/` |
 
 ## Stability levels
 | Level | Meaning |
@@ -58,8 +60,11 @@ spec/
   conformance/v0.1/           golden test vectors (manifest.json + small synthetic .npz / .jsonl files)
   conformance/fep-0001/       golden vectors of the opt-in FEP-0001 profile (.jsonl)
   conformance/fep-0002/       golden vectors of the opt-in FEP-0002 profile (LSL scenarios, .json)
+  conformance/fep-0003/       golden vectors of the opt-in FEP-0003 profile (.jsonl)
+  schemas/fep-0003/           JSON schemas (draft 2020-12) of the FEP-0003 objects
   feps/                       Fidetype Enhancement Proposals
     0000-template.md          the template for a new FEP
     0001-streaming-trust-events.md
     0002-nts-over-lsl.md
+    0003-intent-events.md
 ```

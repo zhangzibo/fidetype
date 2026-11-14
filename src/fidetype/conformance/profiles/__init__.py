@@ -12,6 +12,9 @@ Profile        FEP                                            Golden vectors
                ``trust_decision``)
 ``fep-0002``   NeuralTextStream over LSL (stream infos,       ``spec/conformance/fep-0002/``
                desc keys, markers, clock, decisions outlet)
+``fep-0003``   Output profiles and discrete intent events     ``spec/conformance/fep-0003/``
+               (``intent_declaration``, ``intent``,
+               ``intent_feedback``, intent ``trust_decision``)
 =============  =============================================  ==============================
 
 Each profile has: ``build_vectors()`` (the golden vectors), a reference
@@ -42,6 +45,7 @@ from fidetype.conformance.vectors import MANIFEST_SCHEMA, Vector
 _PROFILES = {
     "fep-0001": ("fidetype.conformance.profiles.fep0001", "FEP-0001", "Streaming trust events"),
     "fep-0002": ("fidetype.conformance.profiles.fep0002", "FEP-0002", "NeuralTextStream over LSL"),
+    "fep-0003": ("fidetype.conformance.profiles.fep0003", "FEP-0003", "Output profiles and discrete intent events"),
 }
 PROFILE_NAMES = tuple(_PROFILES)
 REPORT_SCHEMA = "fidetype.conformance.profile-report/1"

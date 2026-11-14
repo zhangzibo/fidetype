@@ -1,0 +1,17 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0003/intent-feedback.schema.json",
+ "title": "FEP-0003 intent_feedback event (from the user interface or another channel)",
+ "type": "object",
+ "required": ["type", "ref_unit", "outcome"],
+ "properties": {
+  "type": {"const": "intent_feedback"},
+  "ref_unit": {"type": "integer", "minimum": 0},
+  "outcome": {"enum": ["confirmed", "cancelled", "selected", "undone", "correct", "wrong"]},
+  "intent": {"type": ["string", "null"]},
+  "t": {"type": "number"},
+  "source": {"type": "string"}
+ },
+ "if": {"properties": {"outcome": {"const": "selected"}}},
+ "then": {"required": ["intent"]}
+}

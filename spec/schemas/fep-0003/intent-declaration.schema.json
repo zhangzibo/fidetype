@@ -1,0 +1,26 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/fep-0003/intent-declaration.schema.json",
+ "title": "FEP-0003 intent_declaration (header field)",
+ "description": "Structural schema. Rules that need the whole object (unique ids, at most one confirm/cancel/undo role, confirm intent irreversible when an irreversible intent exists, at least one non-null intent) are checked by the fep-0003 conformance profile.",
+ "type": "object",
+ "required": ["intents"],
+ "properties": {
+  "vocab_id": {"type": "string", "minLength": 1},
+  "vocab_version": {"type": "string", "minLength": 1},
+  "intents": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": ["id", "risk"],
+    "properties": {
+     "id": {"type": "string", "minLength": 1},
+     "risk": {"enum": ["safe", "undoable", "irreversible"]},
+     "role": {"enum": ["action", "null", "confirm", "cancel", "undo"], "default": "action"},
+     "label": {"type": "string"}
+    }
+   }
+  }
+ }
+}

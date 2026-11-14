@@ -16,7 +16,7 @@ Sub-commands:
 ``list [--markdown]``
     Lists every check with its level, keyword and spec clause.
 
-Opt-in FEP profiles (``fep-0001``, ``fep-0002``; see
+Opt-in FEP profiles (``fep-0001``, ``fep-0002``, ``fep-0003``; see
 :mod:`fidetype.conformance.profiles`): add ``--profile NAME`` to any
 sub-command. ``--profile NAME`` alone runs the reference consumer of the
 profile over its golden vectors (``spec/conformance/<NAME>/``). Without
@@ -201,7 +201,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     ls.add_argument("--markdown", action="store_true")
     ls.set_defaults(func=cmd_list)
     for sp in (c, k, v, ls):
-        sp.add_argument("--profile", choices=PROFILE_NAMES, help="opt-in FEP profile (fep-0001, fep-0002)")
+        sp.add_argument("--profile", choices=PROFILE_NAMES, help="opt-in FEP profile (fep-0001, fep-0002, fep-0003)")
     a = p.parse_args(argv)
     if a.cmd_name is None:
         if not a.top_profile:

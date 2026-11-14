@@ -4,6 +4,7 @@
 
     fidetype validate stream.jsonl --level trust-ready   # conformance check of stream files
     fidetype trust --config trust.json stream.jsonl      # streaming trust layer -> trust_decision JSON Lines
+    fidetype intent replay --config icfg.json s.jsonl    # FEP-0003 intent trust layer -> trust_decision JSON Lines
     fidetype demo                                        # offline demo (synthetic streams)
     fidetype conformance ...                             # full conformance suite (check, consumer, vectors, ...)
     fidetype lsl run|replay-to-lsl|list ...              # Lab Streaming Layer input (needs the [lsl] extra)
@@ -14,7 +15,8 @@
 
 Each subcommand runs the same code as its ``python -m`` module, which
 still works: ``python -m fidetype.conformance``,
-``python -m fidetype.trust.streaming``, ``python -m fidetype.adapters.lsl``,
+``python -m fidetype.trust.streaming``, ``python -m fidetype.trust.intent``,
+``python -m fidetype.adapters.lsl``,
 ``python -m fidetype.benchmark``, ``python -m fidetype.trust.provenance``
 and ``python -m fidetype.demo``.
 """
@@ -41,6 +43,12 @@ def _trust(argv: list[str]) -> int:
     from fidetype.trust.streaming import main
 
     return main(["replay", *argv])
+
+
+def _intent(argv: list[str]) -> int:
+    from fidetype.trust.intent import main
+
+    return main(argv)
 
 
 def _lsl(argv: list[str]) -> int:
@@ -80,6 +88,7 @@ COMMANDS: dict[str, tuple[Callable[[list[str]], int], str, str]] = {
     "validate": (_validate, "check stream files for NeuralTextStream conformance", "python -m fidetype.conformance check"),
     "trust": (_trust, "run the streaming trust layer on stream files; print decisions", "python -m fidetype.trust.streaming replay"),
     "replay": (_trust, "same as 'trust'", "python -m fidetype.trust.streaming replay"),
+    "intent": (_intent, "FEP-0003 intent trust layer (discrete intent and control events)", "python -m fidetype.trust.intent"),
     "demo": (_demo, "offline demo: synthetic decoder streams through the trust layer", "python -m fidetype.demo"),
     "conformance": (_conformance, "the full conformance suite (check, consumer, vectors)", "python -m fidetype.conformance"),
     "lsl": (_lsl, "Lab Streaming Layer input and output (needs the [lsl] extra)", "python -m fidetype.adapters.lsl"),

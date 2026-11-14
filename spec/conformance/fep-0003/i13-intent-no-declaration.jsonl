@@ -1,0 +1,3 @@
+{"type": "header", "spec_version": "0.1", "vocab": ["<blank>", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "], "vocab_type": "char", "blank_id": 0, "source": "conformance-vector", "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial", "meta": {"device.modality": "other", "decoder.name": "conformance-vector", "decoder.version": "1", "decoder.causal": true, "data.derived": true, "language": "en"}}
+{"type": "intent", "id": "u1", "t": 1.0, "is_final": true, "score_semantics": "uncalibrated_prob", "candidates": [{"intent": "intent.select", "score": 0.81}, {"intent": "intent.next", "score": 0.12}]}
+{"type": "end"}

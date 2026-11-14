@@ -1,0 +1,2 @@
+{"type": "header", "spec_version": "0.1", "vocab": ["intent.rest", "intent.select", "intent.next", "intent.stop", "intent.undo", "intent.cancel", "intent.confirm", "intent.call-caregiver"], "vocab_type": "command", "blank_id": null, "source": "conformance-vector", "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial", "meta": {"device.modality": "other", "decoder.name": "conformance-vector", "decoder.version": "1", "decoder.causal": true, "data.derived": true, "language": "en"}, "intent_declaration": ["intent.select"]}
+{"type": "end"}

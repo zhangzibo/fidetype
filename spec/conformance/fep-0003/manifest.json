@@ -1,0 +1,508 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "0.1",
+ "profile": "fep-0003",
+ "fep": "FEP-0003",
+ "generator": "python -m fidetype.conformance vectors --profile fep-0003",
+ "how_to_use": "FEP-0003 profile. For each vector, load the file with your consumer. Input streams (line 1 = header) must follow v0.1 and FEP-0003 sections 2-4. Decision logs (only trust_decision lines) must follow sections 5-7; text decisions in the same log follow FEP-0001. A conforming consumer accepts exactly the vectors with expect = accept. For a decision log, 'acted_intents' lists the intents a bridge may actuate (final intent COMMITs only) and 'acted_texts' the FEP-0001 texts.",
+ "vectors": [
+  {
+   "id": "D01",
+   "file": "d01-log-commit-offer-abstain.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 5",
+   "description": "Intent COMMIT (undoable), OFFER (two intents), ABSTAIN (null top intent)",
+   "expected": {
+    "kind": "decisions",
+    "intent_decisions": 3,
+    "final": 3,
+    "acted_intents": [
+     "intent.select"
+    ]
+   }
+  },
+  {
+   "id": "D02",
+   "file": "d02-log-confirm.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r4",
+   "description": "Irreversible intent armed (OFFER, confirm_required), then executed by a confirm unit (confirmation_of)",
+   "expected": {
+    "kind": "decisions",
+    "acted_intents": [
+     "intent.call-caregiver"
+    ]
+   }
+  },
+  {
+   "id": "D03",
+   "file": "d03-log-feedback-confirm.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r4",
+   "description": "Irreversible intent armed, then confirmed by a switch (confirmed_via feedback, p_top1 null)",
+   "expected": {
+    "kind": "decisions",
+    "acted_intents": [
+     "intent.call-caregiver"
+    ]
+   }
+  },
+  {
+   "id": "D04",
+   "file": "d04-log-mixed-profiles.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 7 r2",
+   "description": "Text (FEP-0001) and intent decisions in one session share seq; each keeps its own utterance / unit",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 4,
+    "intent_decisions": 2,
+    "acted_intents": [
+     "intent.stop"
+    ],
+    "acted_texts": [
+     "ab"
+    ]
+   }
+  },
+  {
+   "id": "D05",
+   "file": "d05-log-undo.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r5",
+   "description": "An undoable COMMIT, then an undo COMMIT that names it (undo_of)",
+   "expected": {
+    "kind": "decisions",
+    "acted_intents": [
+     "intent.select",
+     "intent.undo"
+    ]
+   }
+  },
+  {
+   "id": "D06",
+   "file": "d06-log-provisional-commit.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 5 r4",
+   "description": "A provisional intent COMMIT, then a final ABSTAIN: a bridge MUST NOT act",
+   "expected": {
+    "kind": "decisions",
+    "final": 1,
+    "acted_intents": []
+   }
+  },
+  {
+   "id": "D07",
+   "file": "d07-td-commit-no-intent.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 5 r3",
+   "description": "An intent COMMIT without intent",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
+   "id": "D08",
+   "file": "d08-td-shown.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 5 r2",
+   "description": "An intent decision with shown (a text consumer could type it)",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
+   "id": "D09",
+   "file": "d09-td-utterance.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 5 r1",
+   "description": "An intent decision with utterance in place of unit",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
+   "id": "D10",
+   "file": "d10-td-ask.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 5 table",
+   "description": "Intent action ASK (intents use COMMIT, OFFER, ABSTAIN)",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
+   "id": "D11",
+   "file": "d11-td-bad-risk.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 5 table",
+   "description": "risk_class \"low\"",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
+   "id": "D12",
+   "file": "d12-td-bad-profile.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 5 table",
+   "description": "profile \"pointer\" is not defined",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
+   "id": "D13",
+   "file": "d13-td-two-finals.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 5 r4",
+   "description": "Two final decisions for the same intent unit",
+   "failing_check": "FEP3-TD-FINAL"
+  },
+  {
+   "id": "D14",
+   "file": "d14-td-seq-across-profiles.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 7 r2",
+   "description": "A text and an intent decision of one session reuse the same seq",
+   "failing_check": "FEP3-TD-FINAL"
+  },
+  {
+   "id": "D15",
+   "file": "d15-safety-null.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r1",
+   "description": "A final COMMIT of a null (rest) intent",
+   "failing_check": "FEP3-SAFETY"
+  },
+  {
+   "id": "D16",
+   "file": "d16-safety-below-threshold.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r3",
+   "description": "A COMMIT with p_top1 0.6 below its threshold 0.9",
+   "failing_check": "FEP3-SAFETY"
+  },
+  {
+   "id": "D17",
+   "file": "d17-safety-irreversible-direct.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r4",
+   "description": "An irreversible intent committed directly (no confirmation_of)",
+   "failing_check": "FEP3-SAFETY"
+  },
+  {
+   "id": "D18",
+   "file": "d18-safety-confirm-wrong-offer.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r4",
+   "description": "confirmation_of names an OFFER of another intent",
+   "failing_check": "FEP3-SAFETY"
+  },
+  {
+   "id": "D19",
+   "file": "d19-safety-confirm-twice.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r4",
+   "description": "One armed OFFER confirmed twice",
+   "failing_check": "FEP3-SAFETY"
+  },
+  {
+   "id": "D20",
+   "file": "d20-safety-undo-irreversible.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r5",
+   "description": "undo_of names an irreversible COMMIT",
+   "failing_check": "FEP3-SAFETY"
+  },
+  {
+   "id": "D21",
+   "file": "d21-safety-no-score-commit.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 6 r2",
+   "description": "A COMMIT on an input whose score_semantics is none",
+   "failing_check": "FEP3-SAFETY"
+  },
+  {
+   "id": "I01",
+   "file": "i01-intents.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 2, 3",
+   "description": "Command stream with a declaration; a provisional intent, its final revision, and a top-k intent",
+   "expected": {
+    "kind": "input",
+    "declarations": 1,
+    "intents": 3,
+    "final_intents": 2
+   }
+  },
+  {
+   "id": "I02",
+   "file": "i02-text-and-intent.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 7 r1",
+   "description": "A character (text) stream that also carries intent events: frames, segment_end and intents interleave",
+   "expected": {
+    "kind": "input",
+    "intents": 2,
+    "n_frames": 2
+   }
+  },
+  {
+   "id": "I03",
+   "file": "i03-feedback.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 4",
+   "description": "intent_feedback events: confirmed, selected (with intent), undone, cancelled",
+   "expected": {
+    "kind": "input",
+    "feedback": 4
+   }
+  },
+  {
+   "id": "I04",
+   "file": "i04-no-score.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r3",
+   "description": "score_semantics none: candidates without scores (rank only; a layer may OFFER, never COMMIT)",
+   "expected": {
+    "kind": "input",
+    "intents": 1
+   }
+  },
+  {
+   "id": "I05",
+   "file": "i05-command-frames.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 2 r5",
+   "description": "Command-vocabulary frames (vocab equals the declared intents) closed by segment_end",
+   "expected": {
+    "kind": "input",
+    "n_frames": 2
+   }
+  },
+  {
+   "id": "I06",
+   "file": "i06-v01-decision.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 1",
+   "description": "A v0.1 decision event (3.5) on a command stream: maps to a one-candidate intent",
+   "expected": {
+    "kind": "input",
+    "intents": 0
+   }
+  },
+  {
+   "id": "I07",
+   "file": "i07-decl-not-object.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 2 table",
+   "description": "intent_declaration is a list",
+   "failing_check": "FEP3-DECL"
+  },
+  {
+   "id": "I08",
+   "file": "i08-decl-duplicate.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 2 r1",
+   "description": "Two intents with the same id",
+   "failing_check": "FEP3-DECL"
+  },
+  {
+   "id": "I09",
+   "file": "i09-decl-bad-risk.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 2 r2",
+   "description": "risk \"dangerous\" is not a risk class",
+   "failing_check": "FEP3-DECL"
+  },
+  {
+   "id": "I10",
+   "file": "i10-decl-two-confirm.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 2 r3",
+   "description": "Two intents with role confirm",
+   "failing_check": "FEP3-DECL"
+  },
+  {
+   "id": "I11",
+   "file": "i11-decl-weak-confirm.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 2 r4",
+   "description": "The confirm intent is undoable although the vocabulary has an irreversible intent",
+   "failing_check": "FEP3-DECL"
+  },
+  {
+   "id": "I12",
+   "file": "i12-command-vocab-mismatch.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 2 r5",
+   "description": "Command stream whose vocab has a token that is not declared",
+   "failing_check": "FEP3-VOCAB"
+  },
+  {
+   "id": "I13",
+   "file": "i13-intent-no-declaration.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r1",
+   "description": "An intent event in a stream without a declaration",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I14",
+   "file": "i14-intent-unknown.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r2",
+   "description": "A candidate intent that is not declared",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I15",
+   "file": "i15-intent-duplicate-candidate.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r2",
+   "description": "The same intent twice in candidates",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I16",
+   "file": "i16-intent-score-range.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r3",
+   "description": "A probability score of 1.2",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I17",
+   "file": "i17-intent-sum.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r3",
+   "description": "Probability scores that sum to 1.3",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I18",
+   "file": "i18-intent-unranked.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r4",
+   "description": "Candidates not ranked best first",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I19",
+   "file": "i19-intent-none-with-score.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r3",
+   "description": "score_semantics none but a candidate has a score",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I20",
+   "file": "i20-intent-no-is-final.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 table",
+   "description": "intent event without is_final",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I21",
+   "file": "i21-intent-duplicate-id.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 3 r5",
+   "description": "Two intent events with the same id",
+   "failing_check": "FEP3-INTENT"
+  },
+  {
+   "id": "I22",
+   "file": "i22-feedback-bad-outcome.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 4 table",
+   "description": "feedback outcome \"maybe\"",
+   "failing_check": "FEP3-FEEDBACK"
+  },
+  {
+   "id": "I23",
+   "file": "i23-v01-core-broken.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 Compatibility",
+   "description": "Valid FEP-0003 parts, but a frame breaks v0.1 (row does not sum to 1)",
+   "failing_check": "FEP3-V01-CORE"
+  }
+ ]
+}

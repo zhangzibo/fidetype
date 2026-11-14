@@ -1,0 +1,11 @@
+20:08:03 synthetic simulator
+20:08:08 toronto sEMG key-choice recast
+20:08:08 calib: 14929 presses, 19 groups, top-1 acc 0.299
+20:10:05 calib: done
+20:10:05 xsession: 14929 presses, 19 groups, top-1 acc 0.168
+20:11:12 xsession: done
+20:11:13 xsubject: 29824 presses, 38 groups, top-1 acc 0.211
+20:13:27 xsubject: done
+20:13:27 permuted-decoder: 14929 presses, 19 groups, top-1 acc 0.022
+20:13:49 permuted-decoder: done
+20:13:49 done in 347 s

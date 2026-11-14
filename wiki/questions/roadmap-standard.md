@@ -386,6 +386,8 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - Name: "NeuralTextStream" stays the name of the text profile. The name of the core (a sibling name or an umbrella name) is an open decision for the FEP.
 - **Target interface:** [Apple BCI HID](../entities/apple-bci-hid.md) (BCIs as standard input devices: buttons, pointer). The P3 HID exporter grows into an intent and pointer bridge.
 
+**Progress (2026-11-13):** deliverables 1 and 2 are drafted as [FEP-0003](../../spec/feps/0003-intent-events.md) with a reference intent trust layer, conformance profile `fep-0003` and a public-data evaluation. See [intent events](../concepts/intent-events.md).
+
 ### Deliverables
 1. FEP: core + output profiles; mapping of the v0.1 `pointer` and `decision` events into the profiles.
 2. Discrete-intent profile: command vocabularies (`intent.*` conventions, to define), a risk level per command class, COMMIT / OFFER / ABSTAIN for intents.
