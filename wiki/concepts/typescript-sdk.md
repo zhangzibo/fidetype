@@ -32,16 +32,17 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 
 | Profile | Vectors | TypeScript pass | Same verdict as Python |
 |---|---|---|---|
-| v0.1 (NPZ + JSON Lines) | 52 | 52 | 52/52 |
-| fep-0001 | 47 | 47 | 47/47 |
-| fep-0002 (LSL scenarios) | 32 | 32 | 32/32 |
+| v0.1 (NPZ + JSON Lines) | 61 (52 before RC2) | 61 | 61/61 |
+| fep-0001 | 54 (47 before RC2) | 54 | 54/54 |
+| fep-0002 (LSL scenarios) | 35 (32 before RC2) | 35 | 35/35 |
 | fep-0003 | 44 | 44 | 44/44 |
-| fep-0004 (WebSocket scenarios) | 38 | 38 | 38/38 (Rust ported in M7-12) |
+| fep-0004 (WebSocket scenarios) | 43 (38 before RC2) | 43 | 43/43 (Rust ported in M7-12) |
 
 - **NTS 1.0 RC1 (2026-11-14):** `tdFormatErrors` / `td_format_errors` read the new optional `trust_decision.spec_version` (`"0.1"` or `"1.<minor>"`; absent = `"0.1"`). For 1.x decisions, a final COMMIT with a blank `shown[0]` is an error (rule TD-9, a MUST NOT); for 0.1 decisions it stays the warning of rule 9. The WebSocket `IngestCore` refuses a header whose `meta` is not an object (close 1007; vector W38; the parity fuzz found it at seed 5). Python = TypeScript = Rust on 213/213 vectors (fep-0001 47, fep-0004 38) and on the fuzz mutants of seeds 1-6 at `--n 30` (about 5,400 per seed). See [NTS specification](nts-spec.md).
+- **NTS 1.0 RC2 (2026-11-14, gap G-2):** one function decides which header `spec_version` the SDK reads: `isSupportedSpecVersion`. It accepts `"0.1"`, `"1.0"` and `"1.<minor>"` and refuses every other value (`"2.0"`, `"1.0.0"`, `"01.0"`, `"1.01"`, numbers). `NTS-VERSION`, the streaming validator, the LSL `nts_header` check (`FEP2-DESC`), the WebSocket header check and the decision field (TD-F3) all use it. The writer still writes `"0.1"`. New vectors V53-V61, F48-F54, L33-L35, W39-W43 (21); they also close G-3 (`seq: 1.0`, `ws_seq: 2.0`, `blank_id: 0.0`) and G-4 (TD-F2 types). No other check changed: the SDK already refused the G-3 and G-4 inputs.
 - `npm run cross-check` runs both reference consumers on every vector and compares verdict and "ok".
-- `npm run fuzz` mutates the JSON vectors (fixed seed). Two runs, about 4,000 mutants each: identical verdicts. The first fuzz runs found 6 differences (Python iterates strings and dicts; NumPy converts sample strings late). All are fixed. M7-11: seeds 1-6 at `--n 30` (24,396 mutants) give identical verdicts in Python, TypeScript and [Rust](rust-sdk.md). CI runs seeds 1-3.
-- The Python suite can also run the TS consumer: `python -m fidetype.conformance consumer --cmd "node sdk/typescript/bin/fidetype-ts.mjs consume {path}"` (52/52; fep-0002 32/32).
+- `npm run fuzz` mutates the JSON vectors (fixed seed). Two runs, about 4,000 mutants each: identical verdicts. The first fuzz runs found 6 differences (Python iterates strings and dicts; NumPy converts sample strings late). All are fixed. M7-11: seeds 1-6 at `--n 30` (24,396 mutants) give identical verdicts in Python, TypeScript and [Rust](rust-sdk.md). CI runs seeds 1-3. RC2: seeds 1-6 at `--n 30` again PASS in all three languages (36,636 mutants).
+- The Python suite can also run the TS consumer: `python -m fidetype.conformance consumer --cmd "node sdk/typescript/bin/fidetype-ts.mjs consume {path}"` (52/52 before RC2; fep-0002 32/32).
 - A headless Edge run of all 167 vectors (before L32) (NPZ included) passed. So the core works in a browser.
 
 > **Our take:** Identical verdicts need the Python data model, not only the rules. Python keeps `1.0` (float) apart from `1` (int), and the profiles reject `1.0` where an integer is required. The SDK's own JSON parser records float literals for this reason. A plain `JSON.parse` port gives different verdicts on such input. A future spec version should state the rule (for example "an integer is written without a fraction or exponent"), so that every SDK can follow the text.

@@ -154,6 +154,19 @@ fn rejections_carry_the_clause() {
     assert!(load_stream("x.txt", b"").is_err());
 }
 
+#[test]
+fn spec_versions_of_1x_are_accepted() {
+    use fidetype::constants::is_supported_spec_version;
+    for v in ["0.1", "1.0", "1.3", "1.10"] {
+        assert!(is_supported_spec_version(v), "{}", v);
+    }
+    for v in ["2.0", "1.0.0", "01.0", "1.01", "0.2", "1.", "1", ""] {
+        assert!(!is_supported_spec_version(v), "{}", v);
+    }
+    let ok = sample_stream().replacen("\"spec_version\":\"0.1\"", "\"spec_version\":\"1.0\"", 1);
+    assert!(load_stream("x.jsonl", ok.as_bytes()).is_ok());
+}
+
 fn td(extra: &str) -> Map {
     let base = r#"{"type":"trust_decision","session":"s","p_top1":0.9,"score_semantics":"calibrated_prob""#;
     match parse_json(&format!("{},{}}}", base, extra)).unwrap() {

@@ -327,6 +327,31 @@ def build_vectors() -> list[Vector]:
                          {"type": "end"}]))
     add("V52", "v52-bad-clock-domain.jsonl", "reject", "3.8", 'clock_domain "gps" is not in the enum', None,
         failing_check="NTS-CLOCK", writer=_w_lines([_header(clock_domain="gps"), *_frames(1, V)]))
+    # --- NTS 1.0 RC2 (gap G-2): header spec_version "0.1" or "1.<minor>" (rules HDR-2, VER-3, VER-5)
+    add("V53", "v53-version-1-0.jsonl", "accept", "1.0 RC2 11.2 (VER-3)", 'Header spec_version "1.0"', None,
+        {"n_frames": 2}, writer=_w_lines([_header(spec_version="1.0"), *_frames(2, V), {"type": "end"}]))
+    add("V54", "v54-version-1-3.jsonl", "accept", "1.0 RC2 11.2 (VER-3)",
+        'Header spec_version "1.3" (a future minor version of major 1: read with the 1.0 rules)', None,
+        {"n_frames": 2}, writer=_w_lines([_header(spec_version="1.3"), *_frames(2, V), {"type": "end"}]))
+    add("V55", "v55-version-2-0.jsonl", "reject", "1.0 RC2 11.2 (VER-5)", 'Header spec_version "2.0" (unknown major version)',
+        None, failing_check="NTS-VERSION", writer=_w_lines([_header(spec_version="2.0"), *_frames(1, V)]))
+    add("V56", "v56-version-1-0-0.jsonl", "reject", "1.0 RC2 11.2 (VER-5)",
+        'Header spec_version "1.0.0" (a patch level never appears in streams)', None,
+        failing_check="NTS-VERSION", writer=_w_lines([_header(spec_version="1.0.0"), *_frames(1, V)]))
+    add("V57", "v57-version-1-01.jsonl", "reject", "1.0 RC2 11.2 (VER-3, VER-5)",
+        'Header spec_version "1.01" (a minor version with a leading zero)', None,
+        failing_check="NTS-VERSION", writer=_w_lines([_header(spec_version="1.01"), *_frames(1, V)]))
+    add("V58", "v58-version-01-0.jsonl", "reject", "1.0 RC2 11.2 (VER-5)",
+        'Header spec_version "01.0" (a major version with a leading zero)', None,
+        failing_check="NTS-VERSION", writer=_w_lines([_header(spec_version="01.0"), *_frames(1, V)]))
+    add("V59", "v59-version-number.jsonl", "reject", "1.0 RC2 11.2 (VER-5)",
+        "Header spec_version is the number 1.0, not a string", None,
+        failing_check="NTS-VERSION", writer=_w_lines([_header(spec_version=1.0), *_frames(1, V)]))
+    add("V60", "v60-version-1-0.npz", "accept", "1.0 RC2 11.2 (VER-3) / 8.1.2", 'NPZ with version "1.0"', None,
+        {"n_frames": 6}, writer=_w_npz(version=np.array("1.0")))
+    # --- NTS 1.0 RC2 (gap G-3): an integer field written with a fraction part (rule GEN-5)
+    add("V61", "v61-blank-id-float.jsonl", "reject", "1.0 RC2 4.1 (GEN-5)", "Header blank_id is 0.0 (an integer written as 0.0)",
+        None, failing_check="NTS-BLANK", writer=_w_lines([_header(blank_id=0.0), *_frames(1, V)]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

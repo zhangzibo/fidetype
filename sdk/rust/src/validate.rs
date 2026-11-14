@@ -9,7 +9,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use alloc::format;
 
-use crate::constants::{DECLARATION_KEY, NORM_TOL, SPEC_VERSION, VOCAB_TYPES};
+use crate::constants::{is_supported_spec_version, DECLARATION_KEY, NORM_TOL, VOCAB_TYPES};
 use crate::error::Error;
 use crate::json::{cp_len, num_text, parse_json, repr, str_in, Map, Value};
 use crate::profiles::fep0001::validate_declaration;
@@ -119,8 +119,8 @@ pub fn check_nbest(event: &Map) -> Result<(), Error> {
 
 /// Check a header event as the streaming layer reads it. Returns the vocabulary size.
 pub fn check_header(ev: &Map) -> Result<usize, Error> {
-    if ev.get("spec_version").as_str() != Some(SPEC_VERSION) {
-        return Err(Error::event(format!("spec_version must be '{}', not {}", SPEC_VERSION, repr(ev.get("spec_version")))));
+    if !ev.get("spec_version").as_str().map_or(false, is_supported_spec_version) {
+        return Err(Error::event(format!("spec_version must be '0.1' or '1.<minor>', not {}", repr(ev.get("spec_version")))));
     }
     let vocab = match ev.get("vocab") {
         Value::Arr(a) if a.iter().all(|t| t.is_str()) => a,

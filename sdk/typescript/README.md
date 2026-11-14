@@ -125,11 +125,13 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 
 | Profile | Vectors | TypeScript | Same verdict as Python |
 |---|---|---|---|
-| `v0.1` (NPZ + JSON Lines) | 52 | 52/52 pass | 52/52 |
-| `fep-0001` streaming trust events | 40 | 40/40 pass | 40/40 |
-| `fep-0002` NTS over LSL (scenarios) | 32 | 32/32 pass | 32/32 |
+| `v0.1` (NPZ + JSON Lines) | 61 | 61/61 pass | 61/61 |
+| `fep-0001` streaming trust events | 54 | 54/54 pass | 54/54 |
+| `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 |
-| `fep-0004` NTS over WebSocket (scenarios) | 37 | 37/37 pass | 37/37 (Rust: not ported yet; the scripts skip it) |
+| `fep-0004` NTS over WebSocket (scenarios) | 43 | 43/43 pass | 43/43 (Rust too, since M7-12) |
+
+NTS 1.0 RC2 (2026-11-14): the reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`isSupportedSpecVersion`, exported); the writer still writes `"0.1"`. Seeds 1-6 at `--n 30` (36,636 mutants) give the Python verdict in TypeScript and Rust.
 
 - `npm run cross-check` runs the Python reference consumer and the TypeScript consumer on every vector and compares the verdict (accept / reject) and the "ok" result (verdict and expected values). It needs a Python with the `fidetype` package (the repo `.venv`, or `FIDETYPE_PYTHON`).
 - `npm run fuzz -- --n 30` mutates the JSON and JSON Lines vectors (fixed seed) and compares the verdicts on the mutants. Seeds 1-6 (about 4,070 mutants each, 24,396 in total) give identical verdicts (M7-11). CI runs seeds 1-3.

@@ -2,6 +2,27 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC2, DRAFT] 2026-11-14
+**Status: draft for public comment. Not final.** Document: [nts-1.0-rc2.md](nts-1.0-rc2.md). RC1 stays unchanged as the record.
+
+### Changed (implementation; no rule text changed)
+- **Gap G-2 closed (HDR-2, VER-1, VER-3, VER-5, LSL-D2):** a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (minor: `0` or digits without a leading zero) is accepted. Every other value is refused, for example `"2.0"`, `"1.0.0"`, `"01.0"`, `"1.01"` or the number `1.0`. This applies to:
+  - Python: `NTS-VERSION`, `NeuralTextStream`, the streaming trust layer header check, the LSL `nts_header` check (`FEP2-DESC`) and the WebSocket header check (`FEP4-HANDSHAKE`). One shared function: `fidetype.streams.spec.is_supported_spec_version`.
+  - TypeScript: the same checks, through `isSupportedSpecVersion` (exported).
+  - Rust: the same checks, through `fidetype::constants::is_supported_spec_version`.
+  - JSON schema `nts-v0.1/header`: `spec_version` is a string with the pattern `^(0\.1|1\.(0|[1-9][0-9]*))$` (was `const "0.1"`). The TypeScript generated types follow.
+- 0.1 behaviour is unchanged: `"0.1"` streams give the same verdicts, and `"0.2"` is still refused (V17). The writers still write `"0.1"` by default.
+
+### Added (vectors)
+- `v0.1` V53-V61 (61 vectors now, from 52): accept `"1.0"`, `"1.3"` and an NPZ `version` `"1.0"`; reject `"2.0"`, `"1.0.0"`, `"1.01"`, `"01.0"`, the number `1.0`; reject `blank_id: 0.0` (G-3).
+- `fep-0001` F48-F54 (54 now, from 47): accept an input stream with a `"1.0"` header; reject a `"2.0"` header; reject `seq: 1.0` (G-3); reject the wrong types of `session`, `config_id`, `input`, `latency_s` (G-4).
+- `fep-0002` L33-L35 (35 now, from 32): `nts_header` `"1.0"` accepted, `"2.0"` and `"1.01"` refused.
+- `fep-0004` W39-W43 (43 now, from 38): header `"1.0"` and `"1.3"` accepted, `"2.0"` and `"1.0.0"` refused; `ws_seq: 2.0` refused (G-3).
+- **Gaps G-3 and G-4 closed.** The three SDKs already refused these inputs (no check changed). JSON Schema counts `1.0` as an integer, so only the validators check GEN-5.
+
+### Parity
+- Python = TypeScript = Rust on all 237 vectors of `v0.1` … `fep-0004` (`cross-check.mjs --rust`), and on the fuzz mutants (`fuzz-parity.mjs`, seeds 1-6, `--n 30`). `fep-0005` is still Python only (gap G-1).
+
 ## [1.0 RC1, DRAFT] 2026-11-14
 **Status: draft for public comment. Not final.** Document: [nts-1.0-rc1.md](nts-1.0-rc1.md).
 

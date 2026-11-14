@@ -274,13 +274,7 @@ pub fn td_format_errors(e: &Map) -> Vec<String> {
 /// `trust_decision.spec_version` (NTS 1.0 RC1, section 11.2): "0.1" or "1.<minor>"
 /// (minor: "0" or digits without a leading zero).
 fn td_version_ok(v: &str) -> bool {
-    if v == "0.1" {
-        return true;
-    }
-    match v.strip_prefix("1.") {
-        Some(m) => !m.is_empty() && m.bytes().all(|b| b.is_ascii_digit()) && (m == "0" || !m.starts_with('0')),
-        None => false,
-    }
+    crate::constants::is_supported_spec_version(v)
 }
 
 /// The version of the rules a decision follows: its `spec_version` ("0.1" if

@@ -2,7 +2,8 @@
 
 The base suite (``fidetype.conformance``) tests NeuralTextStream v0.1. A
 **profile** tests one FEP on top of it. A profile is opt-in: the base
-suite, its levels and its 52 golden vectors do not change.
+suite and its levels do not change. (The base suite has 61 golden vectors: 52 for v0.1, plus V53-V61 for
+NTS 1.0 RC2 header versions and integers.)
 
 =============  =============================================  ==============================
 Profile        FEP                                            Golden vectors

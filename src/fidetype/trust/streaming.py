@@ -147,7 +147,7 @@ from typing import Any, Callable, Iterable, Iterator, Literal, Sequence
 
 import numpy as np
 
-from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES, NeuralTextStream
+from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES, NeuralTextStream, is_supported_spec_version
 from fidetype.trust.conformal import PredictionSet
 from fidetype.trust.declaration import DECLARATION_KEY, compare_declaration, validate_declaration
 from fidetype.trust.frozen import FrozenTrustConfig
@@ -665,8 +665,8 @@ class StreamingTrustLayer:
         return n
 
     def _read_header(self, s: _Session, ev: dict[str, Any]) -> None:
-        if ev.get("spec_version") != SPEC_VERSION:
-            raise StreamEventError(f"spec_version must be {SPEC_VERSION!r}, not {ev.get('spec_version')!r}")
+        if not is_supported_spec_version(ev.get("spec_version")):
+            raise StreamEventError(f"spec_version must be '0.1' or '1.<minor>', not {ev.get('spec_version')!r}")
         vocab = ev.get("vocab")
         if not isinstance(vocab, list) or not all(isinstance(t, str) for t in vocab) or len(set(vocab)) != len(vocab):
             raise StreamEventError("vocab must be a list of unique strings")

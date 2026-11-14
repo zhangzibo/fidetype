@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import json
 import math
-import re
 from os import PathLike
 from pathlib import Path
 from typing import Any, Callable
@@ -32,6 +31,7 @@ from fidetype.conformance.checks import FAIL, PASS, SCORE_SEMANTICS, SKIP, Check
 from fidetype.conformance.io import StreamRejected
 from fidetype.conformance.report import TargetReport
 from fidetype.conformance.vectors import Vector, _frames, _header, _w_lines
+from fidetype.streams.spec import SUPPORTED_SPEC_VERSION
 from fidetype.streams.vocab import VOCAB
 from fidetype.trust.declaration import DECLARATION_KEY, validate_declaration
 
@@ -42,7 +42,7 @@ SEGMENT_UNITS = ("utterance", "word", "trial")
 #: log-probabilities may exceed 0 by this much (float rounding).
 LOGP_TOL = 1e-9
 #: ``trust_decision.spec_version`` (NTS 1.0 RC1, section 11.2): "0.1" or "1.<minor>". Absent means "0.1".
-TD_SPEC_VERSION = re.compile(r"0\.1|1\.(?:0|[1-9][0-9]*)")
+TD_SPEC_VERSION = SUPPORTED_SPEC_VERSION
 
 #: (id, keyword, FEP clause, title)
 CHECKS = [
@@ -571,6 +571,25 @@ def build_vectors() -> list[Vector]:
         failing="FEP1-TD-FORMAT", writer=_w_lines([_td(spec_version="2.0")]))
     add("F47", "f47-td-version-number.jsonl", "reject", "11.2 (1.0)", "spec_version is the number 1.0, not a string",
         failing="FEP1-TD-FORMAT", writer=_w_lines([_td(spec_version=1.0)]))
+    # --- NTS 1.0 RC2: 1.x input headers (gap G-2), integers (G-3), trust_decision field types (G-4)
+    add("F48", "f48-input-v10-header.jsonl", "accept", "11.2 (1.0 RC2, VER-3)",
+        'Input stream with header spec_version "1.0": frames, segment_end and a decode declaration',
+        {"kind": "input", "n_frames": 2, "segments": 1, "segment_ends": 1},
+        writer=_input(*f2a, {"type": "segment_end", "t": 0.1, "unit": "utterance"},
+                      header=_header(spec_version="1.0", **{DECLARATION_KEY: DECL})))
+    add("F49", "f49-input-v20-header.jsonl", "reject", "11.2 (1.0 RC2, VER-5)",
+        'Input stream with header spec_version "2.0" (unknown major version)', failing="FEP1-V01-CORE",
+        writer=_input(*f2a, {"type": "segment_end"}, header=_header(spec_version="2.0")))
+    add("F50", "f50-td-seq-float.jsonl", "reject", "3 table (1.0 RC2, GEN-5)", "seq is 1.0 (an integer written with a fraction part)",
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(seq=1.0)]))
+    add("F51", "f51-td-session-number.jsonl", "reject", "3 table (1.0 RC2, TD-F2)", "session is the number 7, not a string",
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(session=7)]))
+    add("F52", "f52-td-config-id-number.jsonl", "reject", "3 table (1.0 RC2, TD-F2)", "config_id is the number 12, not a string or null",
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(config_id=12)]))
+    add("F53", "f53-td-input-list.jsonl", "reject", "3 table (1.0 RC2, TD-F2)", "input is a list, not an object",
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(input=["h1"])]))
+    add("F54", "f54-td-latency-string.jsonl", "reject", "3 table (1.0 RC2, TD-F2)", 'latency_s is the string "0.2", not a number',
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(latency_s="0.2")]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

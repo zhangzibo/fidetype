@@ -35,7 +35,6 @@ pub const WS_REFUSAL_CODES: &[u32] = &[1002, 1003, 1007, 1008, 1009, 4000];
 pub const WS_TAKEN_OVER: u32 = 4001;
 const MAX_MESSAGE_BYTES: usize = 1 << 20;
 const MAX_STREAM_ID: usize = 128;
-const SPEC: &str = "0.1";
 
 /// Python `json.loads(text, parse_constant=reject)` + "a JSON object with a string type".
 pub fn parse_ws_message(text: &str) -> Result<Map, Error> {
@@ -378,8 +377,8 @@ impl IngestCore {
             Some(Value::Bool(b)) => *b,
             Some(_) => return self.refuse(cid, 1007, "bad_header", "ws.resume must be a boolean", now),
         };
-        if hdr.get("spec_version").as_str() != Some(SPEC) {
-            return self.refuse(cid, 1007, "bad_header", "spec_version is not '0.1'", now);
+        if !hdr.get("spec_version").as_str().map_or(false, crate::constants::is_supported_spec_version) {
+            return self.refuse(cid, 1007, "bad_header", "spec_version is not '0.1' or '1.<minor>'", now);
         }
         if hdr.has("ws_seq") {
             return self.refuse(cid, 1007, "bad_header", "the header has no ws_seq (section 6 rule 1)", now);

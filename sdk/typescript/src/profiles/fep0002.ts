@@ -10,6 +10,7 @@
  */
 
 import { StreamRejected } from "../checks.js";
+import { isSupportedSpecVersion } from "../constants.js";
 import { decodeUtf8, get, isObj, parseJson } from "../json.js";
 import { CheckMeta, TargetReport, makeRes } from "./common.js";
 import { actedTexts, tdFinalErrors, tdFormatErrors } from "./fep0001.js";
@@ -25,7 +26,7 @@ export const SCENARIO_SCHEMA = "fidetype.conformance.lsl-scenario/1";
 export const CHECKS: CheckMeta[] = [
   ["FEP2-BINDING", "MUST", "9", "desc/fidetype/binding is a known version; event_clock is lsl or source"],
   ["FEP2-FRAMES", "MUST", "3", "Frames stream: type NTS, float32 or double64, V channels, labels in vocab order, srate = 1 / frame_period"],
-  ["FEP2-DESC", "MUST", "4", "desc/fidetype/nts_header is a JSON object with spec_version 0.1; values is a known kind"],
+  ["FEP2-DESC", "MUST", "4", "desc/fidetype/nts_header is a JSON object with spec_version 0.1 or 1.<minor>; values is a known kind"],
   ["FEP2-MARKERS", "MUST", "5", "Events stream: type Markers, 1 string channel, irregular rate"],
   ["FEP2-DECISIONS", "MUST", "8", "Decisions stream: Markers, 1 string channel, role and event_type keys; samples are valid trust_decision events"],
   ["FEP2-CONSUME", "MUST", "3-7", "The reference consumer accepts the scenario"],
@@ -102,7 +103,7 @@ export function checkInfo(info: LSLStreamInfo) {
       dErr.push((e as Error).message);
     }
     if (header === null && !dErr.length) dErr.push("no desc/fidetype/nts_header");
-    else if (header !== null && get(header, "spec_version") !== "0.1") dErr.push(`nts_header spec_version ${JSON.stringify(get(header, "spec_version"))} is not '0.1'`);
+    else if (header !== null && !isSupportedSpecVersion(get(header, "spec_version"))) dErr.push(`nts_header spec_version ${JSON.stringify(get(header, "spec_version"))} is not '0.1' or '1.<minor>'`);
     const values = info.fidetype.values ?? "log_probs";
     if (!["log_probs", "probs", "logits"].includes(values)) dErr.push(`values '${values}' is not log_probs, probs or logits`);
     out.push(res("FEP2-DESC", dErr));

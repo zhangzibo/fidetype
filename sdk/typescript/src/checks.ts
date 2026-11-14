@@ -8,7 +8,7 @@
  */
 
 import {
-  CLOCK_DOMAINS, MODALITIES, NORM_TOL, SCORE_SEMANTICS, SPEC_VERSION, SQ_UNITS, VOCAB, VOCAB_TYPES,
+  CLOCK_DOMAINS, MODALITIES, NORM_TOL, SCORE_SEMANTICS, SQ_UNITS, VOCAB, VOCAB_TYPES, isSupportedSpecVersion,
 } from "./constants.js";
 import { get, has, isIntAt, isNum, isObj } from "./json.js";
 import { NdArray, RawStream, UNPARSEABLE_META, readRaw } from "./raw.js";
@@ -166,10 +166,10 @@ check("NTS-JSONL-END", "advisory", "SHOULD", "6.2", "No lines after the end mark
 
 // --- frame core structure (3.1, 5.1) -------------------------------------------------------
 
-check("NTS-VERSION", "core", "MUST", "5.1.4", 'spec_version is a version the consumer supports ("0.1")', (raw) => {
+check("NTS-VERSION", "core", "MUST", "5.1.4", 'spec_version is a version the consumer supports ("0.1" or "1.<minor>")', (raw) => {
   if (!has(raw.header, "spec_version")) return skip("no spec_version (reported by the serialisation check)");
   const v = raw.header.spec_version;
-  return v === SPEC_VERSION ? ok() : bad(`spec_version ${repr(v)} is not supported (this suite supports '${SPEC_VERSION}')`);
+  return isSupportedSpecVersion(v) ? ok() : bad(`spec_version ${repr(v)} is not supported (this suite supports '0.1' and '1.<minor>')`);
 });
 check("NTS-LP-2D", "core", "MUST", "5.1.1", "log_probs has exactly 2 dimensions [T, V]", (raw) => {
   const r = issues(raw, "NTS-LP-2D");

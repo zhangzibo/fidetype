@@ -6,7 +6,7 @@
  * all core checks.
  */
 
-import { DECLARATION_KEY, NORM_TOL, SPEC_VERSION, VOCAB_TYPES } from "./constants.js";
+import { DECLARATION_KEY, NORM_TOL, VOCAB_TYPES, isSupportedSpecVersion } from "./constants.js";
 import { cpLen, get, has, isIntAt, isObj, parseJson } from "./json.js";
 import { validateDeclaration } from "./profiles/fep0001.js";
 
@@ -97,7 +97,7 @@ export function checkNbest(event: Record<string, unknown>): void {
 
 /** Check a header event as the streaming layer reads it. Returns the vocabulary size. */
 export function checkHeader(ev: Record<string, unknown>): number {
-  if (get(ev, "spec_version") !== SPEC_VERSION) throw new StreamEventError(`spec_version must be '${SPEC_VERSION}', not ${JSON.stringify(get(ev, "spec_version"))}`);
+  if (!isSupportedSpecVersion(get(ev, "spec_version"))) throw new StreamEventError(`spec_version must be '0.1' or '1.<minor>', not ${JSON.stringify(get(ev, "spec_version"))}`);
   const vocab = get(ev, "vocab");
   if (!Array.isArray(vocab) || !vocab.every((t) => typeof t === "string") || new Set(vocab).size !== vocab.length) {
     throw new StreamEventError("vocab must be a list of unique strings");

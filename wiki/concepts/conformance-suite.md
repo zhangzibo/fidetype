@@ -12,7 +12,7 @@ updated: 2026-11-14
 The **conformance suite** tests whether an implementation follows the [NeuralTextStream v0.1 spec](../../spec/neuraltextstream-v0.1.md). It has two parts:
 
 - **Producer checks.** Is a stream that an adapter or a decoder emits valid? The suite runs every check on the stream and reports the highest **level** that the stream reaches.
-- **Consumer checks.** Does a reader accept the valid streams and reject the invalid ones? The suite has **52 golden test vectors** with expected outcomes.
+- **Consumer checks.** Does a reader accept the valid streams and reject the invalid ones? The suite has **61 golden test vectors** with expected outcomes (52 for v0.1, plus V53-V61 for NTS 1.0 RC2 header versions and GEN-5).
 
 Every check cites the spec clause that it tests. It is our own code (Apache-2.0): `src/fidetype/conformance/`. The golden vectors are committed in [`spec/conformance/v0.1/`](../../spec/conformance/v0.1/) (`manifest.json` plus small synthetic `.npz` and `.jsonl` files). This is task M5-10. It is the first step of roadmap phase P7 ([roadmap](../questions/roadmap-standard.md)).
 
@@ -59,19 +59,20 @@ Output:
 A consumer in another language can also use the vectors without Python: read `spec/conformance/v0.1/manifest.json`, load each file, and compare with `expect` and `expected`.
 
 ## Golden vectors
-52 vectors: 32 NPZ and 20 JSON Lines. They cover all 20 cases C1–C20 of spec 7.1 and these edge cases:
+61 vectors: 33 NPZ and 28 JSON Lines. They cover all 20 cases C1–C20 of spec 7.1 and these edge cases:
 
 | Group | Examples |
 |---|---|
 | Size | empty stream (T = 0, NPZ and JSON Lines), single frame |
 | Values | NaN, +inf, a row of only `-inf`, raw logits (unnormalised), a row that sums to 2, JSON `NaN` token |
 | Forward compatibility | unknown NPZ key, unknown header / frame / `meta` keys, unknown event type (all accepted and ignored); future minor version `"0.2"` (rejected, see A6) |
+| Spec versions (NTS 1.0 RC2, gap G-2) | header `"1.0"`, `"1.3"` and NPZ `"1.0"` accepted (VER-3); `"2.0"`, `"1.0.0"`, `"1.01"`, `"01.0"`, the number `1.0` rejected (VER-5) |
 | `vocab_type` variants | `char` with CTC blank, `command` without blank, `key` (W3C codes), `phoneme` CTC (ARPAbet + SIL) |
 | `meta` rules | valid provenance keys, bad `decoder.weights_sha256`, `decoder.lookahead_s` ≠ `latency`, unknown `device.modality`, NaN in `meta_json`, a `target_text` key (leakage) |
-| Serialisation | pickled object array, missing `meta_json`, header not first, header without `vocab_type`, short frame, boolean `blank_id`, lines after `end`, sparse frames (valid and unnormalised) |
+| Serialisation | pickled object array, missing `meta_json`, header not first, header without `vocab_type`, short frame, boolean `blank_id`, `blank_id` 0.0 (GEN-5), lines after `end`, sparse frames (valid and unnormalised) |
 | Events | valid decision / hypothesis / pointer / signal_quality; C17, C18, C20; bad `clock_domain` |
 
-The reference consumer (`fidetype.conformance.io.load_stream`) passes 52 / 52. The frame-core validator `NeuralTextStream.from_npz` agrees on all NPZ vectors except 4 `meta`-rule vectors (V30–V33). That is by design: spec 7 says the validator covers the frame core only.
+The reference consumer (`fidetype.conformance.io.load_stream`) passes 61 / 61. The frame-core validator `NeuralTextStream.from_npz` agrees on all NPZ vectors except 4 `meta`-rule vectors (V30–V33). That is by design: spec 7 says the validator covers the frame core only.
 
 ## Results on our adapters
 Synthetic inputs (fixed seed, no data from people). The table shows the level **before** and **after** the M5-10 fixes.
@@ -93,15 +94,15 @@ Synthetic inputs (fixed seed, no data from people). The table shows the level **
 The suite found 10 points where the spec text is unclear. They are listed as informative open questions in [spec section 10, item 12](../../spec/neuraltextstream-v0.1.md#10-open-questions) (A1–A10). The most important: what `decoder.causal = true` means without `latency` (A1); whether custom keys may live in a defined namespace such as `decoder.*` (A2); encoded vocabularies (A3); whether a v0.1 consumer must reject a future minor version (A6); whether NPZ dtypes are normative (A7).
 
 ## Opt-in FEP profiles (M4-07, M6-09)
-A profile tests one draft FEP on top of v0.1. It does not change the v0.1 levels or the 52 v0.1 vectors.
+A profile tests one draft FEP on top of v0.1. It does not change the v0.1 levels or the v0.1 vectors.
 
-**NTS 1.0 RC1 (2026-11-14).** The RC gives every normative rule an id and maps it to these checks and vectors ([Appendix C](../../spec/nts-1.0-rc1.md#appendix-c-conformance-traceability); summary: [NTS specification](nts-spec.md)). The levels core / trust-ready / provenance become the RC's producer levels (section 9.2).
+**NTS 1.0 RC1 / RC2 (2026-11-14).** The RC gives every normative rule an id and maps it to these checks and vectors ([Appendix C](../../spec/nts-1.0-rc2.md#appendix-c-conformance-traceability); summary: [NTS specification](nts-spec.md)). The levels core / trust-ready / provenance become the RC's producer levels (section 9.2). RC2 closed gaps G-2 (1.x headers accepted by `NTS-VERSION`, `FEP2-DESC`, `FEP4-HANDSHAKE` in all three SDKs), G-3 (GEN-5 vectors) and G-4 (TD-F2 type vectors).
 
 | Profile | FEP | Checks | Vectors | Wiki |
 |---|---|---|---|---|
-| `fep-0001` | [Streaming trust events](../../spec/feps/0001-streaming-trust-events.md) | 10 (`FEP1-*`) | 47 JSON Lines (15 accept, 32 reject; F41-F47: NTS 1.0 RC1 rule TD-9 and `trust_decision.spec_version`) | [Streaming trust layer](streaming-trust-layer.md#conformance-profile-fep-0001-m4-07) |
-| `fep-0002` | [NTS over LSL](../../spec/feps/0002-nts-over-lsl.md) | 6 (`FEP2-*`) | 31 JSON scenarios (15 accept, 16 reject) | [LSL input](lsl-input.md#conformance-profile-fep-0002) |
-| `fep-0004` | [NTS over WebSocket](../../spec/feps/0004-nts-over-websocket.md) | 7 (`FEP4-*`) | 38 JSON scenarios (20 accept, 18 reject; W38: header `meta` must be an object) | [WebSocket input](websocket-input.md#conformance) |
+| `fep-0001` | [Streaming trust events](../../spec/feps/0001-streaming-trust-events.md) | 10 (`FEP1-*`) | 54 JSON Lines (16 accept, 38 reject; F41-F47: NTS 1.0 RC1 rule TD-9 and `trust_decision.spec_version`; F48-F54: RC2 1.x input headers, `seq: 1.0`, wrong types of `session` / `config_id` / `input` / `latency_s`) | [Streaming trust layer](streaming-trust-layer.md#conformance-profile-fep-0001-m4-07) |
+| `fep-0002` | [NTS over LSL](../../spec/feps/0002-nts-over-lsl.md) | 6 (`FEP2-*`) | 35 JSON scenarios (17 accept, 18 reject; L33-L35: RC2 `nts_header` versions) | [LSL input](lsl-input.md#conformance-profile-fep-0002) |
+| `fep-0004` | [NTS over WebSocket](../../spec/feps/0004-nts-over-websocket.md) | 7 (`FEP4-*`) | 43 JSON scenarios (22 accept, 21 reject; W38: header `meta` must be an object; W39-W43: RC2 header versions, `ws_seq: 2.0`) | [WebSocket input](websocket-input.md#conformance) |
 | `fep-0005` | [Control events](../../spec/feps/0005-control-events.md) | 10 (`FEP5-*`) | 42 JSON Lines (9 accept, 33 reject); Python only (TS / Rust skip it) | [Control events](control-events.md) |
 
 ```bash

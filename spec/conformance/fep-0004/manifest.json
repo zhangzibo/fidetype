@@ -551,6 +551,69 @@
    "clause": "FEP-0004 5 r2; v0.1 5.1.7",
    "description": "Header meta is a list, not a JSON object (close 1007, bad_header)",
    "failing_check": "FEP4-HANDSHAKE"
+  },
+  {
+   "id": "W39",
+   "file": "w39-header-version-1-0.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r2; 1.0 RC2 11.2 (VER-3)",
+   "description": "Header spec_version \"1.0\": accepted; the same decisions as W01",
+   "expected": {
+    "streams": 1,
+    "frames": 8,
+    "final_decisions": 2,
+    "welcomes": [
+     [
+      "acme-1",
+      0,
+      false
+     ]
+    ]
+   }
+  },
+  {
+   "id": "W40",
+   "file": "w40-header-version-1-3.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r2; 1.0 RC2 11.2 (VER-3)",
+   "description": "Header spec_version \"1.3\" (a future minor version of major 1): accepted",
+   "expected": {
+    "final_decisions": 2
+   }
+  },
+  {
+   "id": "W41",
+   "file": "w41-header-version-2-0.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r2; 1.0 RC2 11.2 (VER-5)",
+   "description": "Header spec_version \"2.0\" (unknown major version; close 1007, bad_header)",
+   "failing_check": "FEP4-HANDSHAKE"
+  },
+  {
+   "id": "W42",
+   "file": "w42-header-version-1-0-0.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 5 r2; 1.0 RC2 11.2 (VER-5)",
+   "description": "Header spec_version \"1.0.0\" (close 1007, bad_header)",
+   "failing_check": "FEP4-HANDSHAKE"
+  },
+  {
+   "id": "W43",
+   "file": "w43-integer-ws-seq.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r1; 1.0 RC2 4.1 (GEN-5)",
+   "description": "ws_seq 2.0 (an integer written with a fraction part) is not an integer",
+   "failing_check": "FEP4-FRAMING"
   }
  ]
 }

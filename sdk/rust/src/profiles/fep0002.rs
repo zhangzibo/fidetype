@@ -28,7 +28,7 @@ pub const SCENARIO_SCHEMA: &str = "fidetype.conformance.lsl-scenario/1";
 pub const CHECKS: &[CheckMeta] = &[
     ("FEP2-BINDING", "MUST", "9", "desc/fidetype/binding is a known version; event_clock is lsl or source"),
     ("FEP2-FRAMES", "MUST", "3", "Frames stream: type NTS, float32 or double64, V channels, labels in vocab order, srate = 1 / frame_period"),
-    ("FEP2-DESC", "MUST", "4", "desc/fidetype/nts_header is a JSON object with spec_version 0.1; values is a known kind"),
+    ("FEP2-DESC", "MUST", "4", "desc/fidetype/nts_header is a JSON object with spec_version 0.1 or 1.<minor>; values is a known kind"),
     ("FEP2-MARKERS", "MUST", "5", "Events stream: type Markers, 1 string channel, irregular rate"),
     ("FEP2-DECISIONS", "MUST", "8", "Decisions stream: Markers, 1 string channel, role and event_type keys; samples are valid trust_decision events"),
     ("FEP2-CONSUME", "MUST", "3-7", "The reference consumer accepts the scenario"),
@@ -135,8 +135,8 @@ pub fn check_info(info: &LslStreamInfo) -> Vec<CheckResult> {
         }
         match &header {
             None if d_err.is_empty() => d_err.push("no desc/fidetype/nts_header".to_string()),
-            Some(h) if h.get("spec_version").as_str() != Some("0.1") => {
-                d_err.push(format!("nts_header spec_version {} is not '0.1'", repr(h.get("spec_version"))))
+            Some(h) if !h.get("spec_version").as_str().map_or(false, crate::constants::is_supported_spec_version) => {
+                d_err.push(format!("nts_header spec_version {} is not '0.1' or '1.<minor>'", repr(h.get("spec_version"))))
             }
             _ => {}
         }

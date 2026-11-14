@@ -284,3 +284,17 @@ def test_cli_consumer_external_command(tmp_path):
 def test_build_vectors_ids_unique():
     ids = [v.vid for v in build_vectors()]
     assert len(ids) == len(set(ids))
+
+
+def test_spec_versions_1x_accepted():
+    """NTS 1.0 RC2 (gap G-2): "0.1" and "1.<minor>" are read; other values are refused (VER-3, VER-5)."""
+    from fidetype.streams.spec import is_supported_spec_version
+
+    for v in ("0.1", "1.0", "1.3", "1.10"):
+        assert is_supported_spec_version(v), v
+    for v in ("2.0", "1.0.0", "01.0", "1.01", "0.2", "1.", "1", "", 1.0, None):
+        assert not is_supported_spec_version(v), v
+    s = NeuralTextStream(np.log(np.full((2, 2), 0.5)), np.array([0.0, 0.04]), ["a", "b"], blank_id=None, version="1.0")
+    assert s.spec_version == "1.0"
+    with pytest.raises(ValueError, match="1.<minor>"):
+        NeuralTextStream(np.log(np.full((2, 2), 0.5)), np.array([0.0, 0.04]), ["a", "b"], blank_id=None, version="2.0")

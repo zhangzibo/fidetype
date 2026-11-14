@@ -585,6 +585,102 @@
    "clause": "3.8",
    "description": "clock_domain \"gps\" is not in the enum",
    "failing_check": "NTS-CLOCK"
+  },
+  {
+   "id": "V53",
+   "file": "v53-version-1-0.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC2 11.2 (VER-3)",
+   "description": "Header spec_version \"1.0\"",
+   "expected": {
+    "n_frames": 2
+   }
+  },
+  {
+   "id": "V54",
+   "file": "v54-version-1-3.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC2 11.2 (VER-3)",
+   "description": "Header spec_version \"1.3\" (a future minor version of major 1: read with the 1.0 rules)",
+   "expected": {
+    "n_frames": 2
+   }
+  },
+  {
+   "id": "V55",
+   "file": "v55-version-2-0.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 11.2 (VER-5)",
+   "description": "Header spec_version \"2.0\" (unknown major version)",
+   "failing_check": "NTS-VERSION"
+  },
+  {
+   "id": "V56",
+   "file": "v56-version-1-0-0.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 11.2 (VER-5)",
+   "description": "Header spec_version \"1.0.0\" (a patch level never appears in streams)",
+   "failing_check": "NTS-VERSION"
+  },
+  {
+   "id": "V57",
+   "file": "v57-version-1-01.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 11.2 (VER-3, VER-5)",
+   "description": "Header spec_version \"1.01\" (a minor version with a leading zero)",
+   "failing_check": "NTS-VERSION"
+  },
+  {
+   "id": "V58",
+   "file": "v58-version-01-0.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 11.2 (VER-5)",
+   "description": "Header spec_version \"01.0\" (a major version with a leading zero)",
+   "failing_check": "NTS-VERSION"
+  },
+  {
+   "id": "V59",
+   "file": "v59-version-number.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 11.2 (VER-5)",
+   "description": "Header spec_version is the number 1.0, not a string",
+   "failing_check": "NTS-VERSION"
+  },
+  {
+   "id": "V60",
+   "file": "v60-version-1-0.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC2 11.2 (VER-3) / 8.1.2",
+   "description": "NPZ with version \"1.0\"",
+   "expected": {
+    "n_frames": 6
+   }
+  },
+  {
+   "id": "V61",
+   "file": "v61-blank-id-float.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 4.1 (GEN-5)",
+   "description": "Header blank_id is 0.0 (an integer written as 0.0)",
+   "failing_check": "NTS-BLANK"
   }
  ]
 }

@@ -8,7 +8,7 @@
  */
 
 import { blocks, runChecks } from "../checks.js";
-import { DECLARATION_KEY, SCORE_SEMANTICS, SEGMENT_UNITS, TRUST_ACTIONS } from "../constants.js";
+import { DECLARATION_KEY, SCORE_SEMANTICS, SEGMENT_UNITS, TRUST_ACTIONS, isSupportedSpecVersion } from "../constants.js";
 import { cpLen, get, has, isFinNum, isObj } from "../json.js";
 import { readJsonlRaw } from "../raw.js";
 import { CheckMeta, Ev, TargetReport, isInt, makeRes, readEvents, rejectOnFailure, repr, streamKind } from "./common.js";
@@ -16,8 +16,6 @@ import { CheckMeta, Ev, TargetReport, isInt, makeRes, readEvents, rejectOnFailur
 export const FEP = "FEP-0001";
 export const SUFFIXES = [".jsonl", ".ndjson"];
 const LOGP_TOL = 1e-9;
-/** `trust_decision.spec_version` (NTS 1.0 RC1, section 11.2): "0.1" or "1.<minor>". Absent means "0.1". */
-const TD_SPEC_VERSION = /^(?:0\.1|1\.(?:0|[1-9][0-9]*))$/;
 /** Python `not s.strip()`: empty or white space only (same set as `str.isspace`). */
 const pyBlank = (s: string): boolean => /^[\t\n\v\f\r \x1c-\x1f\x85\xa0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]*$/.test(s);
 
@@ -165,7 +163,7 @@ export function tdFormatErrors(e: Record<string, unknown>): string[] {
 export function tdSpecVersion(e: Record<string, unknown>): string | null {
   if (!has(e, "spec_version")) return "0.1";
   const v = e.spec_version;
-  return typeof v === "string" && TD_SPEC_VERSION.test(v) ? v : null;
+  return isSupportedSpecVersion(v) ? (v as string) : null;
 }
 
 /**

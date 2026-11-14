@@ -447,6 +447,39 @@
     "first_frame_t": 100.25,
     "final_decisions": 1
    }
+  },
+  {
+   "id": "L33",
+   "file": "l33-header-version-1-0.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 4 r2; 1.0 RC2 11.2 (VER-3)",
+   "description": "nts_header spec_version \"1.0\": accepted, one final decision",
+   "expected": {
+    "frames": 6,
+    "final_decisions": 1
+   }
+  },
+  {
+   "id": "L34",
+   "file": "l34-header-version-2-0.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 4 r2; 1.0 RC2 11.2 (VER-5)",
+   "description": "nts_header spec_version \"2.0\" (unknown major version)",
+   "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L35",
+   "file": "l35-header-version-1-01.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0002 4 r2; 1.0 RC2 11.2 (VER-5)",
+   "description": "nts_header spec_version \"1.01\" (a minor version with a leading zero)",
+   "failing_check": "FEP2-CONSUME"
   }
  ]
 }

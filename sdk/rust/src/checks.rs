@@ -11,7 +11,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use alloc::format;
 
-use crate::constants::{CLOCK_DOMAINS, MODALITIES, NORM_TOL, SCORE_SEMANTICS, SPEC_VERSION, SQ_UNITS, VOCAB, VOCAB_TYPES};
+use crate::constants::{is_supported_spec_version, CLOCK_DOMAINS, MODALITIES, NORM_TOL, SCORE_SEMANTICS, SQ_UNITS, VOCAB, VOCAB_TYPES};
 use crate::error::Error;
 use crate::json::{num_text, py_eq, py_in, py_space, py_split, py_strip, repr, str_in, str_list, Map, Value};
 use crate::raw::{read_raw, Format, NdArray, RawStream};
@@ -404,8 +404,8 @@ fn c_jsonl_end(raw: &RawStream) -> Out {
 fn c_version(raw: &RawStream) -> Out {
     match raw.header.get_opt("spec_version") {
         None => skip("no spec_version (reported by the serialisation check)"),
-        Some(Value::Str(s)) if s == SPEC_VERSION => ok(""),
-        Some(v) => bad(format!("spec_version {} is not supported (this suite supports '{}')", repr(v), SPEC_VERSION)),
+        Some(Value::Str(s)) if is_supported_spec_version(s) => ok(""),
+        Some(v) => bad(format!("spec_version {} is not supported (this suite supports '0.1' and '1.<minor>')", repr(v))),
     }
 }
 fn c_lp_2d(raw: &RawStream) -> Out {
@@ -1273,7 +1273,7 @@ static REGISTRY: &[CheckDef] = &[
     chk!("NTS-JSONL-HEADER", Core, "MUST", "6.2.1", "Line 1 is the header with type, spec_version, vocab, vocab_type, blank_id", c_jsonl_header, Jsonl),
     chk!("NTS-JSONL-FRAME", Core, "MUST", "6.2.2 / 6.2.3", "Each frame has t and log_probs (numbers or null) or the sparse keys", c_jsonl_frame, Jsonl),
     chk!("NTS-JSONL-END", Advisory, "SHOULD", "6.2", "No lines after the end marker", c_jsonl_end, Jsonl),
-    chk!("NTS-VERSION", Core, "MUST", "5.1.4", "spec_version is a version the consumer supports (\"0.1\")", c_version),
+    chk!("NTS-VERSION", Core, "MUST", "5.1.4", "spec_version is a version the consumer supports (\"0.1\" or \"1.<minor>\")", c_version),
     chk!("NTS-LP-2D", Core, "MUST", "5.1.1", "log_probs has exactly 2 dimensions [T, V]", c_lp_2d),
     chk!("NTS-V-MATCH", Core, "MUST", "5.1.2", "V equals the length of vocab", c_v_match),
     chk!("NTS-FT-SHAPE", Core, "MUST", "5.1.3", "frame_times has shape [T]", c_ft_shape),

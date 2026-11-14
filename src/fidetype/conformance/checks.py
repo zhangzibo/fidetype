@@ -37,7 +37,7 @@ from typing import Any, Callable, Iterable
 import numpy as np
 
 from fidetype.conformance.io import RawStream, _MissingMeta
-from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES
+from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES, is_supported_spec_version
 from fidetype.streams.vocab import VOCAB as CHAR_B2Q_28
 
 LEVELS = ("core", "trust-ready", "provenance")
@@ -312,12 +312,12 @@ def c_jsonl_end(raw: RawStream) -> tuple[str, str]:
 # --- frame core structure (3.1, 5.1) -----------------------------------------------------------
 
 
-@check("NTS-VERSION", "core", "MUST", "5.1.4", 'spec_version is a version the consumer supports ("0.1")')
+@check("NTS-VERSION", "core", "MUST", "5.1.4", 'spec_version is a version the consumer supports ("0.1" or "1.<minor>")')
 def c_version(raw: RawStream) -> tuple[str, str]:
     if "spec_version" not in raw.header:
         return skip("no spec_version (reported by the serialisation check)")
     v = raw.header["spec_version"]
-    return ok() if v == SPEC_VERSION else bad(f"spec_version {v!r} is not supported (this suite supports {SPEC_VERSION!r})")
+    return ok() if is_supported_spec_version(v) else bad(f"spec_version {v!r} is not supported (this suite supports '0.1' and '1.<minor>')")
 
 
 @check("NTS-LP-2D", "core", "MUST", "5.1.1", "log_probs has exactly 2 dimensions [T, V]")

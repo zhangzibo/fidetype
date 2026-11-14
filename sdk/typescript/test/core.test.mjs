@@ -87,6 +87,14 @@ test("loadStream rejects with the failing clause", () => {
   assert.throws(() => sdk.loadStream("x.jsonl", enc.encode(bad)), (e) => e instanceof sdk.StreamRejected && e.checkId === "NTS-VERSION");
 });
 
+test("spec_version: 0.1 and 1.<minor> are accepted, other values refused (NTS 1.0 RC2, VER-3 / VER-5)", () => {
+  for (const v of ["0.1", "1.0", "1.3", "1.10"]) assert.ok(sdk.isSupportedSpecVersion(v), v);
+  for (const v of ["2.0", "1.0.0", "01.0", "1.01", "0.2", "1.", "1", "", 1.0, null]) assert.ok(!sdk.isSupportedSpecVersion(v), String(v));
+  const v = new sdk.StreamValidator();
+  assert.equal(v.push({ type: "header", spec_version: "1.0", vocab: ["a", "b"], vocab_type: "char", blank_id: null }).kind, "header");
+  assert.throws(() => new sdk.StreamValidator().push({ type: "header", spec_version: "2.0", vocab: ["a"], vocab_type: "char", blank_id: null }), /spec_version/);
+});
+
 test("StreamValidator checks events one at a time", () => {
   const v = new sdk.StreamValidator();
   assert.throws(() => v.push({ type: "frame", t: 0, log_probs: [0] }), /before the header/);

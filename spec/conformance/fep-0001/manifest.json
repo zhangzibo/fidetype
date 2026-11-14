@@ -559,6 +559,81 @@
    "clause": "FEP-0001 11.2 (1.0)",
    "description": "spec_version is the number 1.0, not a string",
    "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F48",
+   "file": "f48-input-v10-header.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 11.2 (1.0 RC2, VER-3)",
+   "description": "Input stream with header spec_version \"1.0\": frames, segment_end and a decode declaration",
+   "expected": {
+    "kind": "input",
+    "n_frames": 2,
+    "segments": 1,
+    "segment_ends": 1
+   }
+  },
+  {
+   "id": "F49",
+   "file": "f49-input-v20-header.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 11.2 (1.0 RC2, VER-5)",
+   "description": "Input stream with header spec_version \"2.0\" (unknown major version)",
+   "failing_check": "FEP1-V01-CORE"
+  },
+  {
+   "id": "F50",
+   "file": "f50-td-seq-float.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table (1.0 RC2, GEN-5)",
+   "description": "seq is 1.0 (an integer written with a fraction part)",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F51",
+   "file": "f51-td-session-number.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table (1.0 RC2, TD-F2)",
+   "description": "session is the number 7, not a string",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F52",
+   "file": "f52-td-config-id-number.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table (1.0 RC2, TD-F2)",
+   "description": "config_id is the number 12, not a string or null",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F53",
+   "file": "f53-td-input-list.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table (1.0 RC2, TD-F2)",
+   "description": "input is a list, not an object",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F54",
+   "file": "f54-td-latency-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 3 table (1.0 RC2, TD-F2)",
+   "description": "latency_s is the string \"0.2\", not a number",
+   "failing_check": "FEP1-TD-FORMAT"
   }
  ]
 }

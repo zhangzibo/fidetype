@@ -37,6 +37,7 @@ from fidetype.conformance.checks import FAIL, PASS, SKIP, CheckResult
 from fidetype.conformance.io import StreamRejected
 from fidetype.conformance.report import TargetReport
 from fidetype.conformance.vectors import BASE_META, Vector, _lp, _lsm
+from fidetype.streams.spec import is_supported_spec_version
 from fidetype.streams.vocab import VOCAB
 
 SUFFIXES = (".json", ".xml")
@@ -47,7 +48,7 @@ SCENARIO_SCHEMA = "fidetype.conformance.lsl-scenario/1"
 CHECKS = [
     ("FEP2-BINDING", "MUST", "9", "desc/fidetype/binding is a known version; event_clock is lsl or source"),
     ("FEP2-FRAMES", "MUST", "3", "Frames stream: type NTS, float32 or double64, V channels, labels in vocab order, srate = 1 / frame_period"),
-    ("FEP2-DESC", "MUST", "4", "desc/fidetype/nts_header is a JSON object with spec_version 0.1; values is a known kind"),
+    ("FEP2-DESC", "MUST", "4", "desc/fidetype/nts_header is a JSON object with spec_version 0.1 or 1.<minor>; values is a known kind"),
     ("FEP2-MARKERS", "MUST", "5", "Events stream: type Markers, 1 string channel, irregular rate"),
     ("FEP2-DECISIONS", "MUST", "8", "Decisions stream: Markers, 1 string channel, role and event_type keys; samples are valid trust_decision events"),
     ("FEP2-CONSUME", "MUST", "3-7", "The reference consumer accepts the scenario"),
@@ -287,8 +288,8 @@ def check_info(info: Any) -> list[CheckResult]:
             d_err.append(str(e))
         if header is None and not d_err:
             d_err.append("no desc/fidetype/nts_header")
-        elif header is not None and header.get("spec_version") != "0.1":
-            d_err.append(f"nts_header spec_version {header.get('spec_version')!r} is not '0.1'")
+        elif header is not None and not is_supported_spec_version(header.get("spec_version")):
+            d_err.append(f"nts_header spec_version {header.get('spec_version')!r} is not '0.1' or '1.<minor>'")
         if info.fidetype.get("values", "log_probs") not in ("log_probs", "probs", "logits"):
             d_err.append(f"values {info.fidetype.get('values')!r} is not log_probs, probs or logits")
         out.append(_res("FEP2-DESC", d_err))
@@ -637,6 +638,17 @@ def build_vectors() -> list[Vector]:
         _decisions("no event_type", [_td()], _dec_xml(desc={"event_type": None})), failing="FEP2-DECISIONS")
     add("L31", "l31-decisions-two-finals.json", "reject", "8 r2", "Two final decisions for one utterance",
         _decisions("two finals", [_td(seq=0), _td(seq=1, action="OFFER")]), failing="FEP2-DECISIONS")
+    # --- NTS 1.0 RC2 (gap G-2): nts_header spec_version "0.1" or "1.<minor>" (LSL-D2, VER-3, VER-5)
+    add("L33", "l33-header-version-1-0.json", "accept", "4 r2; 1.0 RC2 11.2 (VER-3)",
+        'nts_header spec_version "1.0": accepted, one final decision',
+        _std("spec version 1.0", frames_xml=_frames_xml(header=_hdr(spec_version="1.0"))),
+        {"frames": 6, "final_decisions": 1})
+    add("L34", "l34-header-version-2-0.json", "reject", "4 r2; 1.0 RC2 11.2 (VER-5)",
+        'nts_header spec_version "2.0" (unknown major version)',
+        _std("spec version 2.0", frames_xml=_frames_xml(header=_hdr(spec_version="2.0"))))
+    add("L35", "l35-header-version-1-01.json", "reject", "4 r2; 1.0 RC2 11.2 (VER-5)",
+        'nts_header spec_version "1.01" (a minor version with a leading zero)',
+        _std("spec version 1.01", frames_xml=_frames_xml(header=_hdr(spec_version="1.01"))))
     vs.sort(key=lambda v: v.vid)
     return vs
 

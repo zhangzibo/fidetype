@@ -61,7 +61,7 @@ from typing import Any, Callable, Iterable, Literal, Sequence, TextIO
 
 import numpy as np
 
-from fidetype.streams.spec import SPEC_VERSION
+from fidetype.streams.spec import SPEC_VERSION, is_supported_spec_version
 
 ADAPTER_NAME = "fidetype.adapters.ws"
 ADAPTER_VERSION = "0.1"
@@ -420,9 +420,9 @@ class IngestCore:
         resume = ws.get("resume", False)
         if not isinstance(resume, bool):
             return self._refuse(conn, CLOSE_INVALID, "bad_header", "ws.resume must be a boolean", now)
-        if hdr.get("spec_version") != SPEC_VERSION:
+        if not is_supported_spec_version(hdr.get("spec_version")):
             return self._refuse(conn, CLOSE_INVALID, "bad_header",
-                                f"spec_version {hdr.get('spec_version')!r} is not {SPEC_VERSION!r}", now)
+                                f"spec_version {hdr.get('spec_version')!r} is not '0.1' or '1.<minor>'", now)
         if "ws_seq" in hdr:
             return self._refuse(conn, CLOSE_INVALID, "bad_header", "the header has no ws_seq (section 6 rule 1)", now)
         if "meta" in hdr and not isinstance(hdr["meta"], dict):

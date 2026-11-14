@@ -319,7 +319,8 @@ export interface NtsFrame {
  * Source: spec/schemas/nts-v0.1/header.schema.json */
 export interface NtsHeader {
   type: "header";
-  spec_version: "0.1";
+  /** NTS 1.0 RC2 section 11.2 (VER-3, VER-4, VER-5): "0.1" for v0.1 streams, "1.0" or "1.<minor>" (minor: 0 or digits without a leading zero) for 1.x streams. */
+  spec_version: string;
   vocab: string[];
   vocab_type: "char" | "key" | "word" | "phoneme" | "command" | "other";
   blank_id: number | null;

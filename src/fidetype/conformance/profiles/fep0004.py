@@ -524,6 +524,27 @@ def build_vectors() -> list[Vector]:
         "Header meta is a list, not a JSON object (close 1007, bad_header)",
         _ingest("meta not object", [_open(), {"at": 0.0, "conn": 1, "msg": _hdr(meta=["sub-01"])}] + _msgs(ev)),
         failing="FEP4-HANDSHAKE")
+    # --- NTS 1.0 RC2: 1.x headers (gap G-2) and integers (gap G-3)
+    add("W39", "w39-header-version-1-0.json", "accept", "5 r2; 1.0 RC2 11.2 (VER-3)",
+        'Header spec_version "1.0": accepted; the same decisions as W01',
+        _ingest("spec version 1.0", [_open(), {"at": 0.0, "conn": 1, "msg": _hdr(spec_version="1.0")}] + _msgs(ev)
+                + [{"at": 0.5, "conn": 1, "close": True}]),
+        {"streams": 1, "frames": 8, "final_decisions": 2, "welcomes": [["acme-1", 0, False]]})
+    add("W40", "w40-header-version-1-3.json", "accept", "5 r2; 1.0 RC2 11.2 (VER-3)",
+        'Header spec_version "1.3" (a future minor version of major 1): accepted',
+        _ingest("spec version 1.3", [_open(), {"at": 0.0, "conn": 1, "msg": _hdr(spec_version="1.3")}] + _msgs(ev)),
+        {"final_decisions": 2})
+    add("W41", "w41-header-version-2-0.json", "reject", "5 r2; 1.0 RC2 11.2 (VER-5)",
+        'Header spec_version "2.0" (unknown major version; close 1007, bad_header)',
+        _ingest("spec version 2.0", [_open(), {"at": 0.0, "conn": 1, "msg": _hdr(spec_version="2.0")}] + _msgs(ev)),
+        failing="FEP4-HANDSHAKE")
+    add("W42", "w42-header-version-1-0-0.json", "reject", "5 r2; 1.0 RC2 11.2 (VER-5)",
+        'Header spec_version "1.0.0" (close 1007, bad_header)',
+        _ingest("spec version 1.0.0", [_open(), {"at": 0.0, "conn": 1, "msg": _hdr(spec_version="1.0.0")}] + _msgs(ev)),
+        failing="FEP4-HANDSHAKE")
+    add("W43", "w43-integer-ws-seq.json", "reject", "6 r1; 1.0 RC2 4.1 (GEN-5)",
+        "ws_seq 2.0 (an integer written with a fraction part) is not an integer",
+        _ingest("ws_seq 2.0", base + _msgs([ev[0], {**ev[1], "ws_seq": 2.0}])), failing="FEP4-FRAMING")
     vs.sort(key=lambda v: v.vid)
     return vs
 

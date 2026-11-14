@@ -16,6 +16,7 @@
 
 import { cpLen, has, isFloatLiteral, isIntAt, isObj, markFloat, parseJson } from "./json.js";
 import { pyEqual } from "./conformance.js";
+import { isSupportedSpecVersion } from "./constants.js";
 import { tdFinalErrors, tdFormatErrors, actedTexts } from "./profiles/fep0001.js";
 import { DecisionTracker } from "./trust.js";
 import type { HandledDecision } from "./trust.js";
@@ -29,7 +30,6 @@ export const WS_PATH_EVENTS = "/events";
 export const WS_REFUSAL_CODES = [1002, 1003, 1007, 1008, 1009, 4000];
 const MAX_MESSAGE_BYTES = 1 << 20;
 const MAX_STREAM_ID = 128;
-const SPEC = "0.1";
 
 type Obj = Record<string, unknown>;
 
@@ -235,8 +235,8 @@ export class IngestCore {
     }
     const resume = has(ws, "resume") ? ws.resume : false;
     if (typeof resume !== "boolean") return this.refuse(conn, 1007, "bad_header", "ws.resume must be a boolean", now);
-    if ((has(hdr, "spec_version") ? hdr.spec_version : null) !== SPEC) {
-      return this.refuse(conn, 1007, "bad_header", "spec_version is not '0.1'", now);
+    if (!isSupportedSpecVersion(has(hdr, "spec_version") ? hdr.spec_version : null)) {
+      return this.refuse(conn, 1007, "bad_header", "spec_version is not '0.1' or '1.<minor>'", now);
     }
     if (has(hdr, "ws_seq")) return this.refuse(conn, 1007, "bad_header", "the header has no ws_seq (section 6 rule 1)", now);
     if (has(hdr, "meta") && !isObj(hdr.meta)) return this.refuse(conn, 1007, "bad_header", "header meta must be a JSON object (spec 5.1.7)", now);

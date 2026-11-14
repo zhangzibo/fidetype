@@ -1,6 +1,20 @@
 //! Constants of NeuralTextStream v0.1 and the FEPs (copied from the spec and the Python reference).
 
+/// The version that the writer emits by default. Readers accept more (see [`is_supported_spec_version`]).
 pub const SPEC_VERSION: &str = "0.1";
+
+/// True if `v` is a `spec_version` that this crate reads (NTS 1.0 RC2, rules
+/// VER-3, VER-4, VER-5): "0.1", "1.0" and "1.<minor>" (minor: "0" or digits
+/// without a leading zero).
+pub fn is_supported_spec_version(v: &str) -> bool {
+    if v == "0.1" {
+        return true;
+    }
+    match v.strip_prefix("1.") {
+        Some(m) => !m.is_empty() && m.bytes().all(|b| b.is_ascii_digit()) && (m == "0" || !m.starts_with('0')),
+        None => false,
+    }
+}
 /// Tolerance of the row normalisation rule (spec 5.2.1).
 pub const NORM_TOL: f64 = 1e-3;
 pub const VOCAB_TYPES: &[&str] = &["char", "key", "word", "phoneme", "command", "other"];

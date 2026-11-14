@@ -52,14 +52,24 @@ smooth them for display. The trust layer calibrates them.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from os import PathLike
 from typing import Any
 
 import numpy as np
 
+#: The version that this package writes by default. Readers accept more (see ``is_supported_spec_version``).
 SPEC_VERSION = "0.1"
 NORM_TOL = 1e-3
+#: The ``spec_version`` strings that a consumer accepts (NTS 1.0 RC2, rules VER-3, VER-4, VER-5):
+#: "0.1", "1.0" and "1.<minor>" (minor: "0" or digits without a leading zero).
+SUPPORTED_SPEC_VERSION = re.compile(r"0\.1|1\.(?:0|[1-9][0-9]*)")
+
+
+def is_supported_spec_version(v: Any) -> bool:
+    """True if ``v`` is a string ``spec_version`` that this package reads ("0.1" or "1.<minor>")."""
+    return isinstance(v, str) and SUPPORTED_SPEC_VERSION.fullmatch(v) is not None
 
 
 def _logsumexp_rows(x: np.ndarray) -> np.ndarray:
@@ -142,8 +152,8 @@ class NeuralTextStream:
 
         Raises ``ValueError`` with a clear message at the first problem.
         """
-        if self.version != SPEC_VERSION:
-            raise ValueError(f"version must be {SPEC_VERSION!r}, not {self.version!r}")
+        if not is_supported_spec_version(self.version):
+            raise ValueError(f"version must be '0.1' or '1.<minor>', not {self.version!r}")
         lp, ft = self.log_probs, self.frame_times
         if lp.ndim != 2:
             raise ValueError(f"log_probs must be 2-D (T, V), got shape {lp.shape}")

@@ -126,17 +126,19 @@ python -m fidetype.conformance consumer --cmd "sdk/rust/target/release/fidetype-
 python -m fidetype.conformance consumer --profile fep-0002 --cmd "sdk/rust/target/release/fidetype-rs consume --profile fep-0002 {path}"
 ```
 
-All five profiles pass this way (205/205).
+All five profiles pass this way (237/237 at NTS 1.0 RC2). On Windows, give the binary as an absolute path.
 
 ## Conformance and parity with Python
 
 | Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-6, `--n 30`, M7-12) |
 |---|---|---|---|---|
-| `v0.1` (NPZ + JSON Lines) | 52 | 52/52 pass | 52/52 | 3,516/3,516 |
-| `fep-0001` streaming trust events | 40 | 40/40 pass | 40/40 | 7,200/7,200 |
-| `fep-0002` NTS over LSL (scenarios) | 32 | 32/32 pass | 32/32 | 5,760/5,760 |
-| `fep-0003` intent events | 44 | 44/44 pass | 44/44 | 7,920/7,920 |
-| `fep-0004` NTS over WebSocket (scenarios, M7-12) | 37 | 37/37 pass | 37/37 | 6,660/6,660 |
+| `v0.1` (NPZ + JSON Lines) | 61 | 61/61 pass | 61/61 | PASS |
+| `fep-0001` streaming trust events | 54 | 54/54 pass | 54/54 | PASS |
+| `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 | PASS |
+| `fep-0003` intent events | 44 | 44/44 pass | 44/44 | PASS |
+| `fep-0004` NTS over WebSocket (scenarios, M7-12) | 43 | 43/43 pass | 43/43 | PASS (7,740/7,740) |
+
+NTS 1.0 RC2 (2026-11-14): seeds 1-6 at `--n 30` give 36,636 mutants over the five profiles, all with the Python verdict. The reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`fidetype::constants::is_supported_spec_version`); the writer still writes `"0.1"`.
 
 The parity scripts are the TypeScript SDK scripts with the option `--rust BIN`. They compare Python, TypeScript and Rust on the same files:
 
