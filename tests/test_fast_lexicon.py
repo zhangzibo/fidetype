@@ -154,9 +154,7 @@ def _same(a, b):
         assert np.array_equal(np.asarray(x.char_confidences), np.asarray(y.char_confidences), equal_nan=True)
 
 
-@pytest.mark.parametrize("budget", [1e-5, 5e-4, 0.05])
-def test_budgeted_prewarm_equals_batch(streams, budget):
-    lm, sts = streams
+def _warm_recorder():
     seen = []
 
     def warm(texts):
@@ -164,16 +162,104 @@ def test_budgeted_prewarm_equals_batch(streams, budget):
             seen.append(t)
             yield
 
+    return seen, warm
+
+
+def _run_budgeted(lm, sts, budget, warm, clock=None):
+    kw = {} if clock is None else {"clock": clock}
     spec = CTCBeamSpec(dict(RETUNED, beam=24), lm=lm, prewarm_every=3, prewarm_max_new=64, prewarm_budget_s=budget,
-                       on_prewarm=warm)
+                       on_prewarm=warm, **kw)
+    n_done = n_dropped = 0
     for st in sts:
         ref = spec.decode_fn(st)
         dec = spec.factory({"vocab": list(st.vocab), "blank_id": st.blank_id})
         for t in range(st.n_frames):
             dec.push_frames(st.log_probs[t:t + 1])
         _same(dec.finalize(st), ref)
-        assert dec.n_prewarm + dec.n_prewarm_dropped > 0
-    assert seen  # the on_prewarm steps ran
+        n_done += dec.n_prewarm
+        n_dropped += dec.n_prewarm_dropped
+    return n_done, n_dropped
+
+
+@pytest.mark.parametrize("budget", [1e-5, 5e-4, 0.05])
+def test_budgeted_prewarm_equals_batch(streams, budget):
+    """Real clock. How much prewarm work runs depends on the machine load
+    (with 1e-5 s, on_prewarm steps run only in rare fast pushes), so this
+    test asserts only results. The fake-clock test below checks coverage
+    (M4-11: an ``assert seen`` here was flaky under load)."""
+    lm, sts = streams
+    _, warm = _warm_recorder()
+    n_done, n_dropped = _run_budgeted(lm, sts, budget, warm)
+    assert n_done + n_dropped > 0  # prewarms started (frame count, not time)
+
+
+class _FakeClock:
+    """Deterministic adversarial time source: each call advances the time by
+    a step from ``steps`` (seeded choice), so a budget runs out at arbitrary
+    points: inside a beam alignment loop, between steps, or at once."""
+
+    def __init__(self, seed, steps):
+        self.rng, self.steps, self.t, self.calls = random.Random(seed), steps, 0.0, 0
+
+    def __call__(self):
+        self.calls += 1
+        self.t += self.rng.choice(self.steps)
+        return self.t
+
+
+@pytest.mark.parametrize("schedule", ["random", "bursty", "expired", "frozen"])
+@pytest.mark.parametrize("seed", range(4))
+def test_budgeted_prewarm_fake_clock(streams, schedule, seed):
+    """M4-11: decisions never depend on the budget. With a fake clock the
+    budget runs out at adversarial points; every result still equals the
+    batch decode. The coverage asserts are deterministic."""
+    lm, sts = streams
+    budget = 1e-5
+    steps = {
+        "random": [0.0, 1e-6, 4e-6, 9e-6, 2e-5],  # out of budget after a few calls, at random points
+        "bursty": [0.0] * 6 + [1.0],  # mostly frozen, then one large jump
+        "expired": [1.0],  # every check after the start is past the deadline
+        "frozen": [0.0],  # the deadline never comes: all work runs
+    }[schedule]
+    clock = _FakeClock(seed, steps)
+    seen, warm = _warm_recorder()
+    n_done, n_dropped = _run_budgeted(lm, sts, budget, warm, clock)
+    assert clock.calls > 0  # the decoder used the injected clock
+    if schedule == "expired":
+        assert n_done == 0 and not seen  # no step ever runs
+    elif schedule == "frozen":
+        assert seen and n_done > 0 and n_dropped == 0  # every prewarm ends in its push
+    else:
+        assert seen and n_dropped > 0  # some prewarms complete their on_prewarm steps, some are cut
+
+
+def test_beam_prewarm_fake_clock_cuts_mid_loop(streams):
+    """The beam memo is a cache: a deadline cut at any alignment gives the same final result."""
+    lm, sts = streams
+    st = sts[2]
+    kw = dict(RETUNED, beam=16)
+    ref = ctc_prefix_beam_search(st, lm, **kw)
+    kw.pop("blank_id", None)
+    n_cut = 0
+    for cut in range(0, 12):
+        dec = IncrementalPrefixBeam(list(st.vocab), st.blank_id, lm, **kw)
+        n = [0]
+
+        def clock():  # call k returns k: the deadline passes after `cut` checks
+            n[0] += 1
+            return float(n[0])
+
+        for t0 in range(0, st.n_frames, 25):
+            dec.push(st.log_probs[t0:t0 + 25])
+            n[0] = 0
+            got_new = dec.prewarm(deadline=float(cut) + 0.5, clock=clock)
+            assert got_new <= cut
+            n_cut += n[0] > cut
+        got = dec.finalize()
+        assert [(h.text, h.score) for h in got] == [(h.text, h.score) for h in ref]
+        for x, y in zip(got, ref):
+            assert np.array_equal(np.asarray(x.char_confidences), np.asarray(y.char_confidences), equal_nan=True)
+    assert n_cut > 0  # the deadline did cut some prewarm loops
 
 
 def test_budget_bounds_the_work_per_push(streams):

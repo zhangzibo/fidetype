@@ -80,7 +80,7 @@ import math
 from time import perf_counter as _perf_counter
 from dataclasses import dataclass, field
 from types import MappingProxyType
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import numpy as np
 
@@ -512,19 +512,24 @@ class IncrementalPrefixBeam:
         texts = [t for _, t in sc]
         return texts[: self.n_best], texts[:_MARGINAL_TEXTS]
 
-    def prewarm(self, max_new: int | None = None, deadline: float | None = None) -> int:
+    def prewarm(
+        self, max_new: int | None = None, deadline: float | None = None, clock: Callable[[], float] | None = None
+    ) -> int:
         """Speculative end-of-utterance work: align the current candidate texts now.
 
         Fills the memo of the n-best marginal alignments for the texts that
         would be final if the utterance ended now (best texts first, at
         most ``max_new`` new alignments per call, and no new alignment
-        after ``deadline``, a :func:`time.perf_counter` value). Entries for
+        after ``deadline``, a value of ``clock``; default
+        :func:`time.perf_counter`). The deadline only decides how much of
+        the memo is filled now, never a value in it. Entries for
         texts that left the candidates are dropped (bounded memory). The
         result of :meth:`finalize` does not change; only its cost does.
         Returns the number of new alignments.
         """
         if self._final is not None:
             return 0
+        now = _perf_counter if clock is None else clock
         top, m_texts = self.end_candidates()
         old: dict[tuple[str, str], tuple[int, ...]] = self._pairs
         new: dict[tuple[str, str], tuple[int, ...]] = {}
@@ -538,7 +543,7 @@ class IncrementalPrefixBeam:
                 if got is None:
                     if max_new is not None and n_new >= max_new:
                         continue
-                    if deadline is not None and _perf_counter() >= deadline:
+                    if deadline is not None and now() >= deadline:
                         continue
                     got = _matched(a, b)
                     n_new += 1

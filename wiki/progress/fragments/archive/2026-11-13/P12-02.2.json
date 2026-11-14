@@ -1,0 +1,3 @@
+{"id": "P12-02",
+ "agent_runs": [{"label": "P12-01 + P12-02 FEP-0003 intent events, intent trust layer, sEMG/synthetic evaluation", "duration_s": 1782.5, "tokens": 335882, "tool_uses": 97}],
+ "_tracker_updated": "2026-11-13T21:00:00-08:00"}

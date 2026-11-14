@@ -267,7 +267,11 @@ class CTCBeamSpec:
     the start of the call): the work runs in steps, continues in the next
     pushes, and a new prewarm replaces an unfinished one. A push can exceed
     the budget by at most one step. The alignments run first, then the
-    ``on_prewarm`` steps. Prewarming never changes a result.
+    ``on_prewarm`` steps. Prewarming never changes a result: the budget
+    decides only how much cache work runs, never a decode decision.
+    ``clock``: the time source of the budget (default
+    :func:`time.perf_counter`). Tests pass a fake clock to make the budget
+    run out at chosen points (M4-11).
     For hard push bounds in a live process, also call ``gc.collect()`` and
     ``gc.freeze()`` once after loading the models: with a large heap
     (lexicon, LMs) one full cyclic-GC pass can take 0.3 s inside a push
@@ -288,6 +292,7 @@ class CTCBeamSpec:
     prewarm_max_new: int | None = None
     preview_n: int = 10
     prewarm_budget_s: float | None = None
+    clock: Callable[[], float] = field(default=time.perf_counter, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if self.prewarm_every is not None and self.prewarm_every < 1:
@@ -327,7 +332,7 @@ class IncrementalCTCBeam:
         self.n_prewarm_dropped = 0  # budgeted prewarms replaced or cut by the end of the utterance
 
     def push_frames(self, chunk: np.ndarray) -> None:
-        t0 = time.perf_counter()
+        t0 = self.spec.clock()
         self.beam.push(_as_chunk(chunk))
         pe = self.spec.prewarm_every
         if pe is not None:
@@ -360,8 +365,8 @@ class IncrementalCTCBeam:
     def _align_steps(self) -> Iterator[None]:
         # The alignments stop at the deadline and continue in the next step.
         while True:
-            self.beam.prewarm(self.spec.prewarm_max_new, deadline=self._deadline)
-            if self._deadline is None or time.perf_counter() < self._deadline:
+            self.beam.prewarm(self.spec.prewarm_max_new, deadline=self._deadline, clock=self.spec.clock)
+            if self._deadline is None or self.spec.clock() < self._deadline:
                 return
             yield
 
@@ -374,10 +379,11 @@ class IncrementalCTCBeam:
                 yield
 
     def _run_pending(self, deadline: float) -> None:
-        t0 = time.perf_counter()
+        clock = self.spec.clock
+        t0 = clock()
         self._deadline = deadline
         try:
-            while self._pending is not None and time.perf_counter() < deadline:
+            while self._pending is not None and clock() < deadline:
                 try:
                     next(self._pending)
                 except StopIteration:
@@ -385,7 +391,7 @@ class IncrementalCTCBeam:
                     self.n_prewarm += 1
         finally:
             self._deadline = None
-            self.prewarm_s += time.perf_counter() - t0
+            self.prewarm_s += clock() - t0
 
     def partial(self) -> NBest:
         hyps = self.beam.partial(self.spec.preview_n)
