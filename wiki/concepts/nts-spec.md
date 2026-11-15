@@ -94,4 +94,9 @@ The parity fuzz also found one binding bug while this work ran: a WebSocket head
 
 > **Our take:** With RC2 a real "1.0" stream validates in all three SDKs. With G-1 closed, all six suite profiles run in all three SDKs; no implementation gap is open. Next: the protobuf schema (P1-02) and the YAML conventions (P1-04). 1.0 Stable needs outside reviewers (P1-07, externally blocked).
 
-Related: [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).
+## Timing evidence: lookahead
+Rule MET-4 says that `decoder.lookahead_s` and `latency` MUST be equal. Rule MET-5 says that a causal decoder uses no signal after `frame_times[t] + latency` for frame t. M4-01/02 tested this with our own causal GRU-CTC decoder at lookahead L 0-500 ms ([lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md)). The declared `latency` (= `decoder.lookahead_s`) is an upper bound on signal use. It is not the delay that the user sees. A dedicated L 500 ms model gave its phonemes 180 ms earlier than a dedicated L 0 model.
+
+> **Our take:** an optional, informative field for the measured emission delay is a possible NTS 1.1 item (from the same page). It is not a spec change now.
+
+Related: [lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md), [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).

@@ -53,7 +53,7 @@
     {
       "file": "09-milestones.drawio",
       "title": "9. Milestones (1-week target)",
-      "caption": "The user set the targets on 2026-11-08. M0 ends on 11-09. M1 and M2 run in parallel, then M3 and M4, then M5, then the code parts of M6 and M7. All end by 11-15. The dashed lane holds items that depend on outside people. They have no dates.",
+      "caption": "The user set the targets on 2026-11-08. M0 ends on 11-09. M1 and M2 run in parallel, then M3 and M4, then M5, then the code parts of M6 and M7. All end by 11-15. The dashed lane holds items that depend on outside people. They have no dates. Paper writing is on the separate PUB track and has no deadline.",
       "wiki": "../questions/project-plan.md"
     },
     {
@@ -65,7 +65,7 @@
     {
       "file": "11-roadmap-standard.drawio",
       "title": "11. Long-term roadmap: from v0.1 to a full standard",
-      "caption": "After v0.1, thirteen phases run in four lanes. We build the spec, SDKs, collector, adapters, trust layer, benchmark and demo. Yellow phases P12 (intent beyond text) and P13 (benchmark hub) come last and do not change priorities. Grey dashed items depend on outside people. Replay comes before hardware, and the demo and benchmark come before outreach.",
+      "caption": "After v0.1, thirteen phases run in four lanes. We build the spec, SDKs, collector, adapters, trust layer, benchmark and demo. Yellow phases P12 (intent beyond text) and P13 (benchmark hub) come last and do not change priorities. Grey dashed items depend on outside people. Replay comes before hardware, and the demo and benchmark come before outreach. The v0.1 box also lists the early starts of 2026-11-14.",
       "wiki": "../questions/roadmap-standard.md"
     },
     {

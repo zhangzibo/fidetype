@@ -110,7 +110,7 @@ Measurement ([results](../../experiments/2026-11-14-m6-14-nonblocking-reconnect/
 | real LSL: the reconnect step (new header) | 707-753 ms | 12.9-47.9 ms |
 | real LSL: reconnect after producer stop | 6.29-6.92 s | 6.35-7.46 s |
 
-> **Our take:** the loop now stays responsive during a reconnect. The reconnect itself is not faster: about 6.3 s for a 1.5 s and a 4 s outage alike. The first resolve finds the stale info of the old outlet, and the inlet open then waits for its 5 s `open_timeout`. A shorter `open_timeout` in `reopen` is the next step if fast reconnects matter.
+> **Our take (M6-14; its cause is superseded, see the contradiction note below):** the loop now stays responsive during a reconnect. The reconnect itself is not faster: about 6.3 s for a 1.5 s and a 4 s outage alike. The first resolve finds the stale info of the old outlet, and the inlet open then waits for its 5 s `open_timeout`. A shorter `open_timeout` in `reopen` is the next step if fast reconnects matter.
 
 > **Contradiction:** M6-14 said the 6.3 s come from the 5 s `open_timeout` on stale stream info. M6-16 ([results](../../experiments/2026-11-14-m6-16-lsl-open-timeout/results.md)) measured each step: a healthy inlet open takes about 12 ms, and a shorter `open_timeout` (2, 1 or 0.5 s) does not change the reconnect time. The real cause on this Windows PC: a one-shot `resolve(timeout = 0.5 s)` that starts just after the loss blocks about 5.5 s in about 2 of 3 restarts. Both claims stay here; the M6-16 trace is the more direct measurement.
 

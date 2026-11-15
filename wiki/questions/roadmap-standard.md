@@ -88,6 +88,8 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 
 **Status (2026-11-14): 1.0 RC1 DRAFT for public comment** ([`spec/nts-1.0-rc1.md`](../../spec/nts-1.0-rc1.md); summary: [NTS specification](../concepts/nts-spec.md)). It folds v0.1 and FEP-0001 … FEP-0005 into one document, with rule ids, a traceability table (Appendix C, gaps G-1 … G-11), the open-question resolutions (Appendix A), migration (Appendix B), security and privacy, versioning and registries. One rule is stricter in the validators of all three SDKs: TD-9, no blank final text COMMIT for `spec_version` 1.x decisions (vectors F41-F47).
 
+**Update (2026-11-14): 1.0 RC2** ([`spec/nts-1.0-rc2.md`](../../spec/nts-1.0-rc2.md)) supersedes RC1 as the current draft. It adds TD-12 (no blank candidates) and closes gaps G-1 … G-4. Details: [NTS specification](../concepts/nts-spec.md).
+
 | Task | State after RC1 | What is left |
 |---|---|---|
 | P1-01 data model | in progress | Provenance block, frame-level multi-head, lattices, embeddings: deferred to 1.1 (Appendix A); 1.0 headers not accepted by the validators yet (gap G-2) |

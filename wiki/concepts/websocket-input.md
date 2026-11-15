@@ -94,4 +94,4 @@ The `dev` extra includes `[ws]`, so CI installs `websockets` and runs the integr
 - The browser example needs `npm run build` in `sdk/typescript` first (the SDK `dist/` is not committed).
 
 ## Related
-[LSL input](lsl-input.md) · [streaming trust layer](streaming-trust-layer.md) · [TypeScript SDK](typescript-sdk.md) · [conformance suite](conformance-suite.md) · [streaming trust events (FEP-0001)](streaming-trust-events.md)
+[LSL input](lsl-input.md) · [streaming trust layer](streaming-trust-layer.md) · [TypeScript SDK](typescript-sdk.md) · [conformance suite](conformance-suite.md) · [streaming trust events (FEP-0001)](../../spec/feps/0001-streaming-trust-events.md)

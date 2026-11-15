@@ -63,5 +63,6 @@ Offline CRC fails when the session drifts. `fidetype.trust.online_risk` (M2-16) 
 - [Trust core v0 results](../questions/trust-core-v0-results.md)
 - [Error metrics](error-metrics.md)
 - [Per-session risk control](../questions/per-session-risk-control.md)
+- [Conformal prediction under covariate shift](../sources/conformal-covariate-shift.md): likelihood-ratio weights. They do not apply directly to the B2T '25 drift, because P(wrong | score) changes too. We use order-based weights ([beyond exchangeability](../sources/conformal-beyond-exchangeability.md)).
 
 > **Streaming (M4-03):** the [streaming trust layer](streaming-trust-layer.md) runs this part live, per session, from a frozen configuration.

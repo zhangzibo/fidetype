@@ -17,7 +17,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | `06-architecture-layers` | The six layers of the trust layer. Open vs later-private parts |
 | `07-data-flow` | Source → decoder → NeuralTextStream → trust core → action → evaluation |
 | `08-roadmap-v2` | Phase 0 → Paper 1 → Paper 2 → benchmark → devices → pilots. Deferred side tracks |
-| `09-milestones` | Day-scale timeline of M0–M7 against the 1-week target (11-08 → 11-15). Externally blocked lane |
+| `09-milestones` | Day-scale timeline of M0–M7 against the 1-week target (11-08 → 11-15). M3 and M4 are research milestones; papers are on the PUB track (no deadline). Externally blocked lane |
 | `10-open-source-path` | Open-source stages 0–5 (credibility → launch → community → standard → foundation → company). What each borrows from SGLang, LangChain, OTel, BIDS. Exit criteria |
 | `11-roadmap-standard` | Long-term roadmap after v0.1: phases P1–P13 in lanes (P12 intent, P13 benchmark hub added 2026-11-11 in yellow) (spec + SDKs, runtime, ecosystem, research, outside people) over Q4 2026 → H2 2027. Critical path and gates |
 | `12-streaming-trust-layer` | M4-03: events → per-session state → frozen trust core → provisional / final decisions, feedback, ledger |
