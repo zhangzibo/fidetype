@@ -725,3 +725,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - No crash, 0 exceptions, 6,253 decisions, 0 COMMIT, 0 invalid or lost events, push p95 <= 1.11 ms in every window, e2e p95 46 ms, RSS slope -1.44 MB/h.
 - Harness: `DONE` marker at every exit (with the reason), machine-load record per heartbeat, `launch_detached.py` (CREATE_NO_WINDOW). Earlier starts died when their visible console window was closed.
 - Updated `concepts/lsl-input.md` (soak table + our take), `index.md`.
+
+## [2026-11-15] query | M4-12: causal lookahead decoder retrained (published-like recipe)
+- Diagnosis (pre-declared plan `experiments/2026-11-14-m4-12-decoder-retrain/plan.md`, before the runs): M4-01/02 had about 3 % of the published B2T '25 trial passes at a 10x lower LR; the L 0 model under-fitted (train CTC 2.43 vs 0.81 at L 500 ms).
+- New recipe: 10,000 steps x batch 96, LR 5e-3 cosine, AdamW eps 0.1, Xavier / orthogonal init, input dropout 0.2, noise 1.0 + random cut. Model, splits and evaluation code unchanged.
+- val_eval (701 trials): dedicated L 0 greedy PER 0.2574 (was 0.6954), WER (T = 1) 0.3998 (was 0.9307). Shared L 0 → 500 ms: 0.2634 → 0.2617 (flat; was 0.6565 → 0.3687). Dedicated L 500 ms 0.2988 (was 0.3487). Published: 0.101 (validation partition), 0.0954 (online).
+- Emission: dedicated L 500 ms phonemes ready +100 ms vs dedicated L 0 (M4-02: −180 ms). The M4-02 lookahead gain and "ready earlier" result were artefacts of under-training.
+- Updated `questions/lookahead-latency-accuracy.md` (new M4-12 section, old numbers kept and marked superseded, contradiction note), `index.md`. Dedicated 200 ms and 300 ms models queued after a hold for another agent's latency rerun.

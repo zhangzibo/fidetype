@@ -3,14 +3,16 @@ title: Lookahead vs accuracy and latency (causal decoder, M4-01 / M4-02)
 type: question
 tags: [decoder, causal, lookahead, latency, streaming, ctc, intracortical, neuraltextstream, trust-core]
 sources: [brain-to-text-25-copytask]
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 
 # How much accuracy does a causal decoder lose per millisecond of lookahead?
 
 **Question:** A streaming decoder may wait L ms of future signal before it emits a frame. How do accuracy, trust outcomes and latency change with L from 0 to 500 ms? What should the NTS fields `latency` and `decoder.causal` say?
 
-**Answer (2026-11-14, M4-01 / M4-02, one participant, an under-trained decoder):**
+**Answer (2026-11-15, M4-12, retrained decoder; supersedes the accuracy numbers below):** With a better trained causal GRU (val_eval greedy PER 0.2574 at L = 0, was 0.6954), lookahead gives **no measurable accuracy gain**: shared model PER 0.2634 at L = 0 and 0.2608 to 0.2623 for L = 40 to 500 ms. The dedicated L = 500 ms model is worse (0.2988). Its phonemes are now ready 100 ms **later** than those of the L = 0 model (median), not 180 ms earlier. The M4-02 gain was an artefact of under-training. Details: [M4-12 section](#m4-12-retrained-decoder-2026-11-15-supersedes-the-m4-0102-accuracy-numbers).
+
+**Old answer (2026-11-14, M4-01 / M4-02, one participant, an under-trained decoder; superseded by M4-12 for accuracy and emission timing; the compute-latency results still stand):**
 - Accuracy improves fast and then flattens. Shared model greedy PER: 0.6565 at L = 0, 0.4449 at 40 ms, 0.3687 at 500 ms. Most of the gain comes in the first 40 ms.
 - The real delay is **not** always L. In the shared model, phonemes are ready exactly L later. But a model **trained** with L = 500 ms emits phonemes earlier. Its phonemes are ready 180 ms **before** those of the model trained with L = 0 (median).
 - Compute does not depend on L: about 2 ms per 80 ms frame for the decoder, 0.4 ms for the trust layer. The final decision after the end of the utterance does not wait for L.
@@ -22,7 +24,35 @@ Experiment: [results.md](../../experiments/2026-11-13-m4-01-02-lookahead/results
 
 *Left: error rates on T15 val_eval (701 trials) against L. Right: median phoneme ready time (first greedy frame + L) relative to the dedicated L = 0 model. The dotted line is the nominal delay (ready L ms later).*
 
-## Setup
+## M4-12: retrained decoder (2026-11-15, supersedes the M4-01/02 accuracy numbers)
+Experiment: [M4-12 results](../../experiments/2026-11-14-m4-12-decoder-retrain/results.md), pre-declared [plan](../../experiments/2026-11-14-m4-12-decoder-retrain/plan.md). Same model class, data, splits and evaluation code as M4-01/02. Only the training recipe changed, toward the published B2T '25 baseline ([source](../sources/brain-to-text-25-copytask.md); its code has no licence, so we read facts only): 10,000 steps x batch 96 (M4-01: 4,560 steps, about 53 per batch), LR 5e-3 (was 5e-4), Adam eps 0.1, Xavier / orthogonal init, input dropout 0.2, stronger noise and random cut.
+
+**Diagnosis of M4-01/02:** about 3 % of the published training (in trial passes) at a 10x lower LR. The L = 0 model under-fitted (train CTC loss 2.43 vs 0.81 for L = 500 ms with the same GRU). So the linear lookahead branch did work that the badly trained GRU could not do.
+
+| model | L (ms) | greedy PER M4-01/02 | **greedy PER M4-12** | WER (T = 1) M4-01/02 | **WER (T = 1) M4-12** |
+|---|---|---|---|---|---|
+| shared | 0 | 0.6565 | **0.2634** | 0.8907 | **0.4049** |
+| shared | 40 | 0.4449 | **0.2614** | 0.6791 | **0.4034** |
+| shared | 100 | 0.4097 | **0.2623** | 0.6310 | **0.4032** |
+| shared | 200 | 0.3858 | **0.2612** | 0.5979 | **0.4006** |
+| shared | 300 | 0.3768 | **0.2608** | 0.5803 | **0.4030** |
+| shared | 500 | 0.3687 | **0.2617** | 0.5728 | **0.4013** |
+| dedicated_0 | 0 | 0.6954 | **0.2574** | 0.9307 | **0.3998** |
+| dedicated_25 | 500 | 0.3487 | **0.2988** | 0.5405 | **0.4565** |
+
+- Gap to the published decoder: 0.2574 vs 0.101 (baseline README, validation partition) and 0.0954 (online copy-task output). About 2.5x; it was about 7x.
+- Emission (dedicated L = 500 ms vs dedicated L = 0): stamps −400 ms, ready time **+100 ms** (median; IQR [−460, 180]). Shared model: ready exactly +L, as before.
+- Frozen trust config: still 0 commits; eWPM 5.77 to 5.94, now above gaze alone (4.02) at every L.
+
+![M4-12: accuracy and phoneme ready time against lookahead L](lookahead-latency-accuracy-m4-12.svg)
+
+*M4-12 models. Left: error rates on T15 val_eval (701 trials) against L. Right: median phoneme ready time relative to the dedicated L = 0 model.*
+
+> **Our take:** On T15, our causal decoder does not gain accuracy from lookahead once the GRU is trained well. This does not prove that future context is useless: the published decoder smooths with a centred kernel (about 80 ms of future input) and is 2.5x better. But a shared model with 500 ms of lookahead is not better than L = 0, so most of that gap is training (12.5 % of the published trial passes) and recipe details, not causality. Our linear lookahead branch may also be a weak design; a delayed output or a GRU that reads the future bins could behave differently.
+
+> **Contradiction:** M4-02 said "most of the gain comes in the first 40 ms" and "a dedicated L = 500 ms model makes phonemes ready 180 ms earlier". M4-12 does not support either claim. Both came from an under-trained L = 0 model. We keep the old numbers below for the record.
+
+## Setup (M4-01 / M4-02)
 | item | value |
 |---|---|
 | decoder | `fidetype.decoders.lookahead_gru`: our own causal GRU-CTC (5 layers, 768 units, 14-bin patches, stride 4 = 80 ms frames) plus a masked lookahead branch over bins `t_k + 1 .. t_k + L` |
@@ -33,7 +63,7 @@ Experiment: [results.md](../../experiments/2026-11-13-m4-01-02-lookahead/results
 | trust | frozen Paper 1 v4 config `tcfg-f5ca0020b3b8fce2` from [M4-06](../concepts/streaming-trust-layer.md), not refitted, through `StreamingTrustLayer` |
 | latency | NumPy streaming decoder fed one 20 ms bin at a time → NTS frames → `StreamingTrustLayer` with the incremental CTC beam and word decoder; 200 trials; timing CPU class |
 
-## Results
+## Results (M4-01 / M4-02, superseded for accuracy and emission)
 
 ### Accuracy and trust outcomes
 | model | L (ms) | greedy PER | WER (T = 1) | sentence exact | commits | eWPM (gaze 4.02) |
@@ -74,7 +104,9 @@ The p95 per bin is the bins that complete a frame (1 in 4). The end-of-utterance
 
 > **Our take:** The dedicated-model result is the more useful finding. A CTC model with L = 0 learns to emit late. A model with lookahead moves its emissions forward. So "L = 500 ms" can feel faster than "L = 0". Compare decoders by measured ready time, not by declared lookahead.
 
-## What this means
+## What this means (M4-01/02; the accuracy advice is superseded by M4-12)
+
+*M4-12 shows no accuracy gain from lookahead with a better trained decoder. The advice to train one model per L does not hold there (dedicated L = 500 ms was worse). The compute and NTS-field points below still stand.*
 
 ### For the streaming decoder
 - Train one model per L, or at least fine-tune per L. The shared model is simple, but it is worse at 500 ms (PER 0.3687 vs 0.3487) and it does not move its emissions forward.
