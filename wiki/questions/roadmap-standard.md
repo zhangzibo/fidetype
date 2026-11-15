@@ -56,7 +56,7 @@ updated: 2026-11-14
 | Part | Rough lines |
 |---|---|
 | Spec, schemas, semantic-convention registry, generated docs | 10–20k (mostly generated) |
-| SDKs: Python, C core, Rust, TypeScript, C#/Kotlin bindings | 30–60k |
+| SDKs: Python, TypeScript, Rust, then C core, C#/Kotlin bindings | 30–60k |
 | Collector (receivers, processors, exporters) | 15–30k |
 | Adapters (devices, toolkits, dataset replay) | 15–30k |
 | Trust layer (product grade) | 10–20k |
@@ -168,15 +168,15 @@ Reasons:
 
 **Status (2026-11-14):** three SDKs exist and give the same verdicts: Python `fidetype` ([Python SDK](../concepts/python-sdk.md)), TypeScript `@fidetype/sdk` ([TypeScript SDK](../concepts/typescript-sdk.md)) and Rust `fidetype` ([Rust SDK](../concepts/rust-sdk.md)). All three are **ready to publish, not published** (P2-06 code part): complete registry metadata, one version source each, changelogs, `twine check` / `npm pack` / `cargo publish --dry-run` clean, CI job `packaging` (and `rust-msrv`) on every push. All three names were free on 2026-11-14. The release process, semver policy and SDK-to-spec version rules are in [docs/RELEASING.md](../../docs/RELEASING.md); a proposed manual-only release workflow (trusted publishing) is `docs/release-workflow.example.yml`. Publishing waits for the user (P2-07: accounts, trusted publishers). Not started: C core, C#, Kotlin, WASM. The package names differ from the table below (`@fidetype/sdk`, crate `fidetype`).
 
-> **Note (2026-11-14):** Actual order so far: Python, TypeScript, Rust; C not started. Plan change pending user decision. The plan below (C core at priority 2) and the gate "Spec 1.0 RC + Python/C 1.0" in diagram `11-roadmap-standard` ([diagrams](../diagrams/index.html)) stay unchanged until then.
+> **Decision (2026-11-14):** The NTS 1.0 SDKs are **Python, TypeScript and Rust**. The C core (`libnts`) moves to after 1.0. It is still planned, for embedded devices and FFI use. Reason: the three SDKs exist, pass the same 283 conformance vectors and are ready to publish. C is not started. Earlier plan (replaced): C core at priority 2 and the gate "Spec 1.0 RC + Python/C 1.0". Diagram `11-roadmap-standard` ([diagrams](../diagrams/index.html)) now shows the gate "Spec 1.0 RC + Python/TS/Rust 1.0".
 
 ### Deliverables
 | SDK | Role | Package | Priority |
 |---|---|---|---|
 | **Python** (`fidetype`) | First-class. Research, decoders, trust layer, benchmark | PyPI | 1 |
-| **C core** (`libnts`, C11) + C++ header wrapper | Devices, firmware, toolkit plugins (BCI2000, OpenViBE), a shared core for other bindings | vcpkg, Conan; nanopb for MCUs | 2 |
-| **Rust** (`nts`) | Safe native core; collector components; WASM for the browser | crates.io | 3 |
-| **TypeScript/JS** (`@fidetype/nts`) | Web apps, AAC web apps, WebSocket client, browser demo | npm | 3 |
+| **TypeScript/JS** (`@fidetype/nts`) | Web apps, AAC web apps, WebSocket client, browser demo | npm | 1 |
+| **Rust** (`nts`) | Safe native core; collector components; WASM for the browser | crates.io | 1 |
+| **C core** (`libnts`, C11) + C++ header wrapper | Devices, firmware, toolkit plugins (BCI2000, OpenViBE), FFI core for other bindings. After 1.0 (decision 2026-11-14) | vcpkg, Conan; nanopb for MCUs | 2 |
 | **C#** | Windows input (Text Services Framework), Unity | NuGet | 4 |
 | **Kotlin** | Android input (IME), BLE devices | Maven Central | 4 |
 
@@ -187,7 +187,7 @@ Reasons:
 ### Exit criteria
 - Each SDK passes 100 % of the conformance kit in CI on Linux, Windows and macOS.
 - Each SDK is published to its registry with a 0.x version and a compatibility-matrix entry.
-- Python and C reach **1.0** with spec 1.0 RC.
+- Python, TypeScript and Rust reach **1.0** with spec 1.0 RC (decision 2026-11-14; before: Python and C). The C core follows after 1.0.
 
 **Effort:** 40–70 agent-days (about 6–12 per language). User: registry accounts and publish tokens (**user-owned**). **Depends on:** P1 schema (generated code).
 
@@ -212,7 +212,7 @@ Reasons:
 - At least one OS input exporter types committed text into a text field on Windows.
 - Components have unit tests and a pipeline integration test in CI.
 
-**Effort:** 30–50 agent-days; about 8 h user testing on the PC. **Depends on:** P2 (Python and C or Rust), P5 trust API.
+**Effort:** 30–50 agent-days; about 8 h user testing on the PC. **Depends on:** P2 (Python and Rust), P5 trust API.
 
 ## P4. Device and toolkit adapters
 **Goal:** NTS comes out of the tools that people already use. Dataset replay stands in for devices we do not own.
@@ -449,8 +449,8 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | Window | First (critical path) | In parallel |
 |---|---|---|
 | 2026-11-16 → 12-31 | P6 leaderboard; P1 proto + semconv registry; P4 replay adapters (B2T '25, KT-sEMG, Willett) | P9 licence + DCO; P11 decoders; P5 conformal risk control |
-| 2027-01 → 02 | P2 Python 1.0-rc + C core; P1 1.0 RC | P3 collector skeleton; P8 quickstarts; P10 step 2 (Paper 1) |
-| 2027-03 → 06 | P3 collector + OS exporter; P8 three-device demo; P7 conformance kit | P2 Rust, TS, C#, Kotlin; P4 LSL, BrainFlow, MNE, toolkits; P10 steps 3–4 (user) |
+| 2027-01 → 02 | P2 Python, TS, Rust 1.0-rc; P1 1.0 RC | P3 collector skeleton; P8 quickstarts; P10 step 2 (Paper 1) |
+| 2027-03 → 06 | P3 collector + OS exporter; P8 three-device demo; P7 conformance kit | P2 C core (after 1.0), C#, Kotlin; P4 LSL, BrainFlow, MNE, toolkits; P10 steps 3–4 (user) |
 | 2027-07 → 12 | P5 product grade; P7 certification list | P10 steps 5–6; P11 papers; 1.0 Stable when outside reviewers exist; P12 intent profiles and P13 benchmark hub (added 2026-11-11, after the text work) |
 
 Rules:
@@ -468,7 +468,7 @@ Rules:
 | **Hardware access** | Real-device adapters stay untested | Dataset replay; BrainFlow synthetic board; loans or purchases (user-owned) |
 | **Regulation** (neural-data laws; medical-device rules if we claim patient use) | Legal exposure; blocked pilots | Privacy by default; no medical claims; legal review before pilots (**user-owned**) |
 | **Review bandwidth** (agents write 10× more code than one person can read) | Hidden bugs | Machine-checkable exit criteria; conformance kit; CI on every SDK; fresh-agent reviews |
-| **Scope creep** | Nothing reaches 1.0 | Critical path above; SDKs 4–6 only after Python and C pass the kit |
+| **Scope creep** | Nothing reaches 1.0 | Critical path above; SDKs 4–6 only after Python, TypeScript and Rust pass the kit |
 | **Benchmark disputes** | Credibility loss | Exact configs; required controls; invite reruns ([playbook risks](open-source-playbook.md#risks)) |
 
 ## What the user owns

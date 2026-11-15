@@ -1,0 +1,15 @@
+{
+  "id": "R-22",
+  "milestone": "R",
+  "title": "SDK order decision: NTS 1.0 SDKs = Python, TypeScript, Rust; C core after 1.0 (roadmap P2, diagram 11)",
+  "status": "done",
+  "started_at": "2026-11-14T17:05:00-08:00",
+  "finished_at": "2026-11-14T17:20:00-08:00",
+  "approx_times": true,
+  "orchestrator_only": false,
+  "notes": "User let the orchestrator decide. Decision 2026-11-14: NTS 1.0 SDKs are Python, TypeScript and Rust (exist, 283 identical conformance vectors, ready to publish). C core (libnts) moves to after 1.0, still planned for embedded and FFI. roadmap-standard.md P2: dated decision replaces 'Plan change pending user decision'; priority table, exit criteria, sequencing, scope-creep rule, P3 dependency and effort row updated. Diagram 11: P2 box and gate 'Spec 1.0 RC + Python/TS/Rust 1.0'; slides.json caption; render checked with headless Edge. Tracker P2 milestone note and P2-02 note updated.",
+  "agent_runs": [
+    {"label": "R-22 SDK order + P4-01 downloads agent", "duration_s": null, "tokens": null, "tool_uses": null}
+  ],
+  "_tracker_updated": "2026-11-14T17:20:00-08:00"
+}

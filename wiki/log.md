@@ -697,3 +697,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Roadmap P2: dated note "Actual order so far: Python, TypeScript, Rust; C not started. Plan change pending user decision." The plan text and diagram 11 ("C core", gate "Spec 1.0 RC + Python/C 1.0") are not changed.
 - New concept pages: [FEP process](concepts/fep-process.md), [`trust_decision` event](concepts/trust-decision.md), [Learn then Test](concepts/learn-then-test.md) (from [LTT source](sources/learn-then-test.md)), [adaptive conformal inference](concepts/adaptive-conformal-inference.md) (from [ACI source](sources/adaptive-conformal-inference.md)). Inbound links from nts-spec, conformance-suite, collector, streaming-trust-layer, conformal-risk-control and the two source pages. All four are in the index. Numbers are copied from existing wiki pages and the spec; none are new.
 - Tracker: R-20 and P4-07 agent stats filled (fragments); new task R-21.
+
+## [2026-11-14] setup | SDK order decision: Python, TypeScript, Rust for NTS 1.0; C core after 1.0
+- The user let the orchestrator decide the SDK order. Decision: the NTS 1.0 SDKs are Python, TypeScript and Rust. The C core (`libnts`) moves to after 1.0. It is still planned, for embedded devices and FFI use.
+- Reason: the three SDKs exist, pass the same 283 conformance vectors and are ready to publish. C is not started.
+- [Roadmap P2](questions/roadmap-standard.md#p2-reference-sdks): the dated decision replaces the note "Plan change pending user decision". Priority table, exit criteria ("Python, TypeScript and Rust reach 1.0 with spec 1.0 RC"), sequencing table, scope-creep rule, P3 dependency and effort row updated.
+- Diagram 11 ([diagrams](diagrams/index.html)): P2 box shows the 1.0 set and "after 1.0: C core, C#, Kotlin"; gate is now "Spec 1.0 RC + Python/TS/Rust 1.0". Caption in `slides.json` updated. Render checked with headless Edge.
+- Tracker: P2 milestone note and P2-02 note updated; new task R-22; R-21 agent stats filled.
