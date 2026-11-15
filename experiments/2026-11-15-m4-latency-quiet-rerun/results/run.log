@@ -1,0 +1,31 @@
+2026-11-15 05:41:43 M4-02R start (keep-awake on); M4_OUT=C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-15-m4-latency-quiet-rerun\results
+2026-11-15 05:44:00 latency L0: bin push p50/p95 0.04/2.23 ms; frame push p95 0.29; end total p50/p95/max 86.0/162.4/273.3 ms; same action 200/200; numpy-torch 1.55e-04
+2026-11-15 05:46:14 latency L2: bin push p50/p95 0.08/2.08 ms; frame push p95 0.28; end total p50/p95/max 101.6/171.3/249.5 ms; same action 200/200; numpy-torch 1.62e-04
+2026-11-15 05:48:29 latency L5: bin push p50/p95 0.06/2.08 ms; frame push p95 0.28; end total p50/p95/max 99.1/158.6/259.2 ms; same action 200/200; numpy-torch 1.47e-04
+2026-11-15 05:50:43 latency L10: bin push p50/p95 0.07/2.08 ms; frame push p95 0.28; end total p50/p95/max 99.2/163.4/248.8 ms; same action 200/200; numpy-torch 1.35e-04
+2026-11-15 05:52:57 latency L15: bin push p50/p95 0.07/2.09 ms; frame push p95 0.28; end total p50/p95/max 96.7/170.2/234.6 ms; same action 200/200; numpy-torch 1.33e-04
+2026-11-15 05:55:12 latency L25: bin push p50/p95 0.06/2.08 ms; frame push p95 0.28; end total p50/p95/max 96.9/171.4/291.2 ms; same action 200/200; numpy-torch 1.23e-04
+2026-11-15 05:55:12 primary latency done; streaming actions {'L0': {'OFFER': 200}, 'L2': {'OFFER': 200}, 'L5': {'OFFER': 200}, 'L10': {'OFFER': 200}, 'L15': {'OFFER': 200}, 'L25': {'OFFER': 200}}
+2026-11-15 05:57:29 secondary latency m4-12-fixed0 L0: bin push p50/p95 0.04/2.11 ms; frame push p95 0.26; end total p50/p95/max 100.2/181.7/351.2 ms; commits 0/200; foreign 1.7 %
+2026-11-15 05:59:51 secondary latency m4-12-fixed25 L25: bin push p50/p95 0.06/2.10 ms; frame push p95 0.26; end total p50/p95/max 98.8/172.7/257.8 ms; commits 0/200; foreign 1.56 %
+2026-11-15 06:02:08 secondary latency m4-12-shared L0: bin push p50/p95 0.04/2.09 ms; frame push p95 0.29; end total p50/p95/max 98.9/169.4/208.9 ms; commits 0/200; foreign 1.68 %
+2026-11-15 06:04:13 secondary latency m4-12-shared L2: bin push p50/p95 0.08/1.70 ms; frame push p95 0.32; end total p50/p95/max 100.6/167.7/310.5 ms; commits 0/200; foreign 2.03 %
+2026-11-15 06:06:18 secondary latency m4-12-shared L5: bin push p50/p95 0.07/1.70 ms; frame push p95 0.32; end total p50/p95/max 97.7/171.1/221.6 ms; commits 0/200; foreign 1.7 %
+2026-11-15 06:08:24 secondary latency m4-12-shared L10: bin push p50/p95 0.08/1.71 ms; frame push p95 0.32; end total p50/p95/max 99.8/172.1/283.3 ms; commits 0/200; foreign 1.9 %
+2026-11-15 06:10:29 secondary latency m4-12-shared L15: bin push p50/p95 0.08/1.71 ms; frame push p95 0.31; end total p50/p95/max 99.6/175.1/227.8 ms; commits 0/200; foreign 1.76 %
+2026-11-15 06:12:34 secondary latency m4-12-shared L25: bin push p50/p95 0.06/1.70 ms; frame push p95 0.32; end total p50/p95/max 101.4/173.8/283.2 ms; commits 0/200; foreign 1.87 %
+2026-11-15 06:12:37 emission shared/L2 vs shared/L0: stamp delta median 0 ms, available delta median 40 ms (n 5944)
+2026-11-15 06:12:37 emission shared/L5 vs shared/L0: stamp delta median 0 ms, available delta median 100 ms (n 5982)
+2026-11-15 06:12:37 emission shared/L10 vs shared/L0: stamp delta median 0 ms, available delta median 200 ms (n 6030)
+2026-11-15 06:12:37 emission shared/L15 vs shared/L0: stamp delta median 0 ms, available delta median 300 ms (n 6078)
+2026-11-15 06:12:37 emission shared/L25 vs shared/L0: stamp delta median 0 ms, available delta median 500 ms (n 6094)
+2026-11-15 06:12:37 emission dedicated_0/L0 vs shared/L0: stamp delta median 240 ms, available delta median 240 ms (n 4732)
+2026-11-15 06:12:37 emission dedicated_25/L25 vs shared/L0: stamp delta median -480 ms, available delta median 20 ms (n 5802)
+2026-11-15 06:12:37 emission shared/L0 vs dedicated_0/L0: stamp delta median -240 ms, available delta median -240 ms (n 4732)
+2026-11-15 06:12:37 emission shared/L2 vs dedicated_0/L0: stamp delta median -240 ms, available delta median -200 ms (n 5107)
+2026-11-15 06:12:37 emission shared/L5 vs dedicated_0/L0: stamp delta median -240 ms, available delta median -140 ms (n 5176)
+2026-11-15 06:12:37 emission shared/L10 vs dedicated_0/L0: stamp delta median -240 ms, available delta median -40 ms (n 5219)
+2026-11-15 06:12:37 emission shared/L15 vs dedicated_0/L0: stamp delta median -240 ms, available delta median 60 ms (n 5249)
+2026-11-15 06:12:37 emission shared/L25 vs dedicated_0/L0: stamp delta median -240 ms, available delta median 260 ms (n 5274)
+2026-11-15 06:12:37 emission dedicated_25/L25 vs dedicated_0/L0: stamp delta median -680 ms, available delta median -180 ms (n 5120)
+2026-11-15 06:12:38 M4-02R done (1855s) status {'complete': True, 'skipped': []}

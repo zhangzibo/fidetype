@@ -1,0 +1,114 @@
+{
+ "started": "2026-11-15T05:41:43-0800",
+ "inputs": {
+  "params-m4-01-la-shared.npz": {
+   "sha256": "17d50fd2cad1329a70677c98b9f33edecdd0f5b801557df3450b7e4b11b319e1",
+   "mtime": "2026-11-13T22:31:33"
+  },
+  "logprobs-m4-01-la-shared.npz": {
+   "sha256": "b7bfb7063983696f7864971a620470643e3f9b3e3f93cc7d759d70f0db053233",
+   "mtime": "2026-11-13T22:31:32"
+  },
+  "logprobs-m4-01-la-fixed0.npz": {
+   "sha256": "283934e505f831502cfb6a5cf9bb8e6f402492275d1d5ba024330ddd11e2e189",
+   "mtime": "2026-11-14T00:21:48"
+  },
+  "logprobs-m4-01-la-fixed25.npz": {
+   "sha256": "2cab669ad252278081262375f7653ecc040fc472d97b81b9a4167fe7a75a1038",
+   "mtime": "2026-11-14T02:06:03"
+  },
+  "params-m4-12-fixed0.npz": {
+   "sha256": "eaed9f550f2bf4223efe5f06d8d99718bf0be0416cec8be9cfd9430dcbd06bac",
+   "mtime": "2026-11-14T16:11:02"
+  },
+  "params-m4-12-fixed25.npz": {
+   "sha256": "4741185f2ee284dbc296ecf0fe3676c4d621c81ac7fdc7178b9ed27bac83859b",
+   "mtime": "2026-11-15T01:25:05"
+  },
+  "logprobs-m4-12-fixed0.npz": {
+   "sha256": "bd17351653ba88e19515123b26df491a3754d38aaf8af2a76ad14c9114555564",
+   "mtime": "2026-11-14T16:11:01"
+  },
+  "logprobs-m4-12-fixed25.npz": {
+   "sha256": "e8152df37cb965f66596fdadabc8ba25660019679795c71267a917def1ec1984",
+   "mtime": "2026-11-15T01:25:05"
+  },
+  "trust-shared-L0.json": {
+   "sha256": "6df1d210fa5c269d531f41566e7b9665e546dfb5a8c2e138199374b5fd51899a",
+   "mtime": "2026-11-15T05:26:35"
+  },
+  "trust-shared-L2.json": {
+   "sha256": "991b3bf46383c9cdfa2ec70ea7f847a9101744d0baf272cb6f415df20b2d21ec",
+   "mtime": "2026-11-15T05:29:18"
+  },
+  "trust-shared-L5.json": {
+   "sha256": "60aa3de5a0488d82146eb715da4ce97f4e6ac511bd0901d87414d582cf8e2902",
+   "mtime": "2026-11-15T05:32:01"
+  },
+  "trust-shared-L10.json": {
+   "sha256": "e66b44d34db11eef4baa52cd8acb077e81398c9ea1fdb1f7686855e09261df75",
+   "mtime": "2026-11-15T05:34:44"
+  },
+  "trust-shared-L15.json": {
+   "sha256": "2d6d8cc18bf77f6973e0627aa5e4c5d47166e99bcc13674cbb0485b2cc04b23c",
+   "mtime": "2026-11-15T05:37:27"
+  },
+  "trust-shared-L25.json": {
+   "sha256": "1dec913ee7ade19e62fdc7980a67e063784e6d9ae73bfa6f95eac901fc669272",
+   "mtime": "2026-11-15T05:40:09"
+  }
+ },
+ "primary_streaming_actions": {
+  "L0": {
+   "OFFER": 200
+  },
+  "L2": {
+   "OFFER": 200
+  },
+  "L5": {
+   "OFFER": 200
+  },
+  "L10": {
+   "OFFER": 200
+  },
+  "L15": {
+   "OFFER": 200
+  },
+  "L25": {
+   "OFFER": 200
+  }
+ },
+ "primary_note": "latency.json same_action_as_accuracy_stage compares with DER/trust-shared-L*.json, which held M4-12 decisions at run time: not valid. Use primary_streaming_actions (counted in this run).",
+ "accuracy_stage_commits_trust_shared_files_m4_12": {
+  "L0": {
+   "n": 701,
+   "commits": 0
+  },
+  "L2": {
+   "n": 701,
+   "commits": 0
+  },
+  "L5": {
+   "n": 701,
+   "commits": 0
+  },
+  "L10": {
+   "n": 701,
+   "commits": 0
+  },
+  "L15": {
+   "n": 701,
+   "commits": 0
+  },
+  "L25": {
+   "n": 701,
+   "commits": 0
+  }
+ },
+ "finished": "2026-11-15T06:12:38-0800",
+ "wall_s": 1855.2,
+ "status": {
+  "complete": true,
+  "skipped": []
+ }
+}

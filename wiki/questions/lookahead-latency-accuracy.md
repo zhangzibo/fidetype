@@ -12,6 +12,8 @@ updated: 2026-11-15
 
 **Answer (2026-11-15, M4-12, retrained decoder; supersedes the accuracy numbers below):** With a better trained causal GRU (val_eval greedy PER 0.2574 at L = 0, was 0.6954), lookahead gives **no measurable accuracy gain**: shared model PER 0.2634 at L = 0 and 0.2608 to 0.2623 for L = 40 to 500 ms. The dedicated L = 500 ms model is worse (0.2988). Its phonemes are now ready 100 ms **later** than those of the L = 0 model (median), not 180 ms earlier. The M4-02 gain was an artefact of under-training. Details: [M4-12 section](#m4-12-retrained-decoder-2026-11-15-supersedes-the-m4-0102-accuracy-numbers).
 
+**Compute latency (2026-11-15, M4-02R, clean rerun on a quiet machine):** confirmed flat in L. Foreign load on the timing cores 1.77 % (limit 5 %; M4-02 had 5.77 %). Decoder p95 2.08 to 2.23 ms per 20 ms bin, trust p95 0.28 to 0.29 ms per frame, end of utterance p50 86.0 to 101.6 ms. The M4-12 models give the same picture. 0 commits. Details: [quiet-machine rerun](#quiet-machine-latency-rerun-2026-11-15-m4-02r).
+
 **Old answer (2026-11-14, M4-01 / M4-02, one participant, an under-trained decoder; superseded by M4-12 for accuracy and emission timing; the compute-latency results still stand):**
 - Accuracy improves fast and then flattens. Shared model greedy PER: 0.6565 at L = 0, 0.4449 at 40 ms, 0.3687 at 500 ms. Most of the gain comes in the first 40 ms.
 - The real delay is **not** always L. In the shared model, phonemes are ready exactly L later. But a model **trained** with L = 500 ms emits phonemes earlier. Its phonemes are ready 180 ms **before** those of the model trained with L = 0 (median).
@@ -51,6 +53,23 @@ Experiment: [M4-12 results](../../experiments/2026-11-14-m4-12-decoder-retrain/r
 > **Our take:** On T15, our causal decoder does not gain accuracy from lookahead once the GRU is trained well. This does not prove that future context is useless: the published decoder smooths with a centred kernel (about 80 ms of future input) and is 2.5x better. But a shared model with 500 ms of lookahead is not better than L = 0, so most of that gap is training (12.5 % of the published trial passes) and recipe details, not causality. Our linear lookahead branch may also be a weak design; a delayed output or a GRU that reads the future bins could behave differently.
 
 > **Contradiction:** M4-02 said "most of the gain comes in the first 40 ms" and "a dedicated L = 500 ms model makes phonemes ready 180 ms earlier". M4-12 does not support either claim. Both came from an under-trained L = 0 model. We keep the old numbers below for the record.
+
+## Quiet-machine latency rerun (2026-11-15, M4-02R)
+Experiment: [results](../../experiments/2026-11-15-m4-latency-quiet-rerun/results.md), [plan addendum](../../experiments/2026-11-15-m4-latency-quiet-rerun/plan.md). It used the same protocol, the same 200 trials and the original M4-01/02 code and checkpoints, in the timing CPU class (cores 8, 10, 12, 14, timing lock). The run was 2026-11-15 05:41 to 06:12, when no other job ran.
+
+| | M4-02 (2026-11-14) | M4-02R (2026-11-15) |
+|---|---|---|
+| foreign load on the timing cores | 5.77 % (**not clean**) | **1.77 % (clean)** |
+| SMT siblings busy | 25.23 % | 11.27 % |
+| decoder push per bin p95 (ms), L 0 to 500 | 1.96 to 2.11 | 2.08 to 2.23 |
+| trust push per frame p95 (ms) | 0.33 to 0.36 | 0.28 to 0.29 |
+| end of utterance p50 / p95 (ms) | 79.8 to 107.5 / 148.3 to 201.0 | 86.0 to 101.6 / 158.6 to 171.4 |
+| commits (frozen config) | 0 | 0 (200/200 OFFER at every L) |
+| emission: dedicated L 500 vs L 0 ready time | −180 ms | −180 ms (same logits, file identical) |
+
+- Compute does not grow with L. The quiet machine lowered the trust cost by about 20 % and narrowed the end-of-utterance p95. The decoder per-bin p95 stayed at about 2.1 ms, so the GRU step sets it, not the foreign load.
+- M4-12 checkpoints (secondary condition: dedicated L 0, dedicated L 500 ms, shared at every L) gave the same picture. Decoder p95 1.70 to 2.11 ms, trust p95 0.26 to 0.32 ms, end p50 97.7 to 101.4 ms, 0 commits, and foreign load 1.56 % to 2.03 %. Their emission result was also reproduced: L 500 ms ready **+100 ms** vs L 0 (n 13,190).
+- The M4-12 phase-1 stage overwrote the M4-01/02 shared-model trust decision files just before the run. So the stage's "same action" check was not valid. The rerun counted the streaming actions directly instead.
 
 ## Setup (M4-01 / M4-02)
 | item | value |
@@ -98,7 +117,7 @@ Experiment: [M4-12 results](../../experiments/2026-11-14-m4-12-decoder-retrain/r
 | 300 | 0.09 / 2.11 | 0.25 / 0.36 | 99.4 / 193.3 / 256.3 |
 | 500 | 0.07 / 1.99 | 0.24 / 0.34 | 99.5 / 173.0 / 272.1 |
 
-The p95 per bin is the bins that complete a frame (1 in 4). The end-of-utterance cost is the word decoder's final pass; the decoder flush costs 0.4 ms or less. NumPy vs torch logits differ by at most 1.62e-04; actions match the accuracy stage on 200/200 trials at every L. The measurement environment was **not clean** (foreign load on the timing cores 5.77 %, SMT siblings busy 25.23 %; other agents ran tests). A first run gave the same picture.
+The p95 per bin is the bins that complete a frame (1 in 4). The end-of-utterance cost is the word decoder's final pass; the decoder flush costs 0.4 ms or less. NumPy vs torch logits differ by at most 1.62e-04; actions match the accuracy stage on 200/200 trials at every L. The measurement environment was **not clean** (foreign load on the timing cores 5.77 %, SMT siblings busy 25.23 %; other agents ran tests). A first run gave the same picture. The clean rerun (M4-02R, 1.77 %) confirms these numbers: see [quiet-machine rerun](#quiet-machine-latency-rerun-2026-11-15-m4-02r).
 
 > **Our take:** For a live display, a small lookahead (40 to 100 ms) buys most of the accuracy here. But the gain at L = 0 → 40 ms is so large that it may be a sign of our weak training, not a property of the data. Retest with a decoder near the published PER before we use the curve in Paper 2.
 
@@ -123,7 +142,7 @@ The p95 per bin is the bins that complete a frame (1 in 4). The end-of-utterance
 - Dedicated models only at L = 0 and 500 ms.
 - The trust config was not fitted to this decoder: no commit-side result.
 - Emission timing uses the greedy path and exact matches only; the L = 0 models match fewer phonemes. The last emitted phoneme is about 3.1 to 3.7 s (median) before the trial end; we did not check why.
-- Compute numbers: one machine, environment not clean.
+- Compute numbers: one machine. The M4-02 environment was not clean; the M4-02R rerun (2026-11-15) was clean (foreign load 1.77 %).
 - Deviations from the plan are listed in [results.md](../../experiments/2026-11-13-m4-01-02-lookahead/results.md#deviations-from-the-plan) (forced latency stage after the finished soak test, two bug fixes in the latency stage, figure reference).
 
 ## Related

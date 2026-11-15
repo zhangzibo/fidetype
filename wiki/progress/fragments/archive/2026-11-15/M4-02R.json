@@ -1,0 +1,14 @@
+{
+  "id": "M4-02R",
+  "milestone": "M4",
+  "title": "Re-run the M4-01/02 latency measurement on a quiet machine (timing class, foreign load < 5 %)",
+  "status": "done",
+  "started_at": "2026-11-14T23:50:00-08:00",
+  "finished_at": "2026-11-15T06:30:00-08:00",
+  "approx_times": true,
+  "notes": "Done. Waited for the M6-15 soak DONE (03:36, +10 min margin) and the M4-12 PHASE1 marker (05:40); the M4-12 queue held its work until latency-rerun.DONE (written 06:12:38). Run 05:41-06:12 (1,855 s), timing class (cores 8, 10, 12, 14, lock held), keep-awake in-process. Foreign load 1.77 % (clean; M4-02 had 5.77 %), SMT siblings 11.27 %. Original M4-01/02 checkpoints, same 200 trials, original run.py stages unchanged: decoder p95 2.08-2.23 ms per 20 ms bin, trust p95 0.28-0.29 ms per frame (was 0.33-0.36), end of utterance p50 86.0-101.6 ms; flat in L; 200/200 OFFER = 0 commits. Emission file identical to M4-02 (dedicated L 500 ms ready -180 ms vs L 0; stamps only, not load-dependent). Secondary (M4-12 dedicated L 0 / L 500 ms, shared at every L): same compute (decoder p95 1.70-2.11, trust p95 0.26-0.32, end p50 97.7-101.4 ms), 0 commits, foreign 1.56-2.03 %; L 500 ms ready +100 ms vs L 0. Finding: the M4-12 accuracy stage overwrote the M4-01/02 trust-shared-L*.json in the shared derived folder (same names) before the run, so the stage's same-action check was invalid; actions were counted directly. Results: experiments/2026-11-15-m4-latency-quiet-rerun/results.md.",
+  "agent_runs": [
+    {"label": "M4-02R quiet-machine latency rerun (wait, run, results, wiki)", "duration_s": null, "tokens": null, "tool_uses": null}
+  ],
+  "_tracker_updated": "2026-11-15T06:30:00-08:00"
+}

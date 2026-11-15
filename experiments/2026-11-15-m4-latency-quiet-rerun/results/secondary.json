@@ -1,0 +1,800 @@
+{
+ "available": {
+  "m4-12-fixed0": true,
+  "m4-12-fixed25": true,
+  "m4-12-shared": true
+ },
+ "latency": {
+  "m4-12-fixed0/L0": {
+   "run": "m4-12-fixed0",
+   "lookahead_bins": 0,
+   "algorithmic_lookahead_ms": 0,
+   "n": 200,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.040000013541430235,
+    "p95": 2.114799979608506,
+    "max": 4.481300013139844,
+    "mean": 0.5311259264127325,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.16430002870038152,
+    "p95": 0.26110000908374786,
+    "max": 0.6898999563418329,
+    "mean": 0.1804190185964311,
+    "n": 45750
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.001400010660290718,
+    "p95": 0.0023050146410241706,
+    "max": 0.003700028173625469,
+    "mean": 0.0015390009502880275,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 100.16845000791363,
+    "p95": 181.68635501642711,
+    "max": 351.17890004767105,
+    "mean": 103.82034750015009,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 100.16994999023154,
+    "p95": 181.68767502356786,
+    "max": 351.1803000001237,
+    "mean": 103.82188650110038,
+    "n": 200
+   },
+   "numpy_vs_torch_max_abs_logprob": 3.814697265625e-05,
+   "actions": {
+    "OFFER": 200
+   },
+   "commits": 0,
+   "measurement_env": {
+    "schema": "fidetype.isolation/0.1",
+    "class": "timing",
+    "cpus": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "affinity_set": true,
+    "priority": "above_normal",
+    "priority_set": true,
+    "timing_lock_held": true,
+    "plan": {
+     "timing": [
+      8,
+      10,
+      12,
+      14
+     ],
+     "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "smt": true
+    },
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cpus": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_s": 131.322,
+    "own_cpu_s": 345.984,
+    "class_cpu_load_pct": 67.57,
+    "foreign_load_pct": 1.7,
+    "idle_sibling_load_pct": 10.3,
+    "machine_load_pct": 29.19,
+    "background_cpu_load_pct": 19.45,
+    "clean": true,
+    "clean_reasons": []
+   }
+  },
+  "m4-12-fixed25/L25": {
+   "run": "m4-12-fixed25",
+   "lookahead_bins": 25,
+   "algorithmic_lookahead_ms": 500,
+   "n": 200,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.05800003418698907,
+    "p95": 2.099099976476282,
+    "max": 4.7215999802574515,
+    "mean": 0.548143701348022,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.17640000442042947,
+    "p95": 0.2628000220283866,
+    "max": 0.5079999682493508,
+    "mean": 0.18795171673353978,
+    "n": 44504
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.332249968778342,
+    "p95": 0.4456600145203993,
+    "max": 0.6082999752834439,
+    "mean": 0.33834549743914977,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 98.42080000089481,
+    "p95": 172.3508249997394,
+    "max": 257.49839999480173,
+    "mean": 105.0550835012109,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 98.76915000495501,
+    "p95": 172.7108849736396,
+    "max": 257.78330001048744,
+    "mean": 105.39342899865005,
+    "n": 200
+   },
+   "numpy_vs_torch_max_abs_logprob": 5.340576171875e-05,
+   "actions": {
+    "OFFER": 200
+   },
+   "commits": 0,
+   "measurement_env": {
+    "schema": "fidetype.isolation/0.1",
+    "class": "timing",
+    "cpus": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "affinity_set": true,
+    "priority": "above_normal",
+    "priority_set": true,
+    "timing_lock_held": true,
+    "plan": {
+     "timing": [
+      8,
+      10,
+      12,
+      14
+     ],
+     "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "smt": true
+    },
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cpus": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_s": 134.566,
+    "own_cpu_s": 357.094,
+    "class_cpu_load_pct": 67.9,
+    "foreign_load_pct": 1.56,
+    "idle_sibling_load_pct": 10.33,
+    "machine_load_pct": 29.0,
+    "background_cpu_load_pct": 18.88,
+    "clean": true,
+    "clean_reasons": []
+   }
+  },
+  "m4-12-shared/L0": {
+   "run": "m4-12-shared",
+   "lookahead_bins": 0,
+   "algorithmic_lookahead_ms": 0,
+   "n": 200,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.04150002496317029,
+    "p95": 2.090299967676401,
+    "max": 3.946000011637807,
+    "mean": 0.5214491330302309,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.19029999384656549,
+    "p95": 0.2906000008806586,
+    "max": 0.7154999766498804,
+    "mean": 0.2025276371061578,
+    "n": 45750
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.001600012183189392,
+    "p95": 0.0027150206733494945,
+    "max": 0.005399982910603285,
+    "mean": 0.001706499606370926,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 98.88219999265857,
+    "p95": 169.43250497279217,
+    "max": 208.9261999935843,
+    "mean": 105.06646100082435,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 98.88400000636466,
+    "p95": 169.43543499510264,
+    "max": 208.92790000652894,
+    "mean": 105.06816750043072,
+    "n": 200
+   },
+   "numpy_vs_torch_max_abs_logprob": 3.62396240234375e-05,
+   "actions": {
+    "OFFER": 200
+   },
+   "commits": 0,
+   "measurement_env": {
+    "schema": "fidetype.isolation/0.1",
+    "class": "timing",
+    "cpus": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "affinity_set": true,
+    "priority": "above_normal",
+    "priority_set": true,
+    "timing_lock_held": true,
+    "plan": {
+     "timing": [
+      8,
+      10,
+      12,
+      14
+     ],
+     "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "smt": true
+    },
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cpus": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_s": 130.809,
+    "own_cpu_s": 341.781,
+    "class_cpu_load_pct": 67.0,
+    "foreign_load_pct": 1.68,
+    "idle_sibling_load_pct": 10.51,
+    "machine_load_pct": 28.8,
+    "background_cpu_load_pct": 18.85,
+    "clean": true,
+    "clean_reasons": []
+   }
+  },
+  "m4-12-shared/L2": {
+   "run": "m4-12-shared",
+   "lookahead_bins": 2,
+   "algorithmic_lookahead_ms": 40,
+   "n": 200,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.0838999985717237,
+    "p95": 1.7014999757520854,
+    "max": 4.255999985616654,
+    "mean": 0.4465010047116505,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.21379999816417694,
+    "p95": 0.3161000175168738,
+    "max": 0.6884000031277537,
+    "mean": 0.23092039569774747,
+    "n": 45662
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.0022999884095042944,
+    "p95": 0.12300500529818237,
+    "max": 0.3106999793089926,
+    "mean": 0.04987749853171408,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 100.5697000073269,
+    "p95": 167.64990499941626,
+    "max": 310.54720003157854,
+    "mean": 104.14933850115631,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 100.62225002911873,
+    "p95": 167.65161001239898,
+    "max": 310.5485000414774,
+    "mean": 104.19921599968802,
+    "n": 200
+   },
+   "numpy_vs_torch_max_abs_logprob": 4.00543212890625e-05,
+   "actions": {
+    "OFFER": 200
+   },
+   "commits": 0,
+   "measurement_env": {
+    "schema": "fidetype.isolation/0.1",
+    "class": "timing",
+    "cpus": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "affinity_set": true,
+    "priority": "above_normal",
+    "priority_set": true,
+    "timing_lock_held": true,
+    "plan": {
+     "timing": [
+      8,
+      10,
+      12,
+      14
+     ],
+     "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "smt": true
+    },
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cpus": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_s": 118.165,
+    "own_cpu_s": 284.25,
+    "class_cpu_load_pct": 62.17,
+    "foreign_load_pct": 2.03,
+    "idle_sibling_load_pct": 10.7,
+    "machine_load_pct": 27.77,
+    "background_cpu_load_pct": 19.11,
+    "clean": true,
+    "clean_reasons": []
+   }
+  },
+  "m4-12-shared/L5": {
+   "run": "m4-12-shared",
+   "lookahead_bins": 5,
+   "algorithmic_lookahead_ms": 100,
+   "n": 200,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.06630003917962313,
+    "p95": 1.7042200430296344,
+    "max": 3.6449000472202897,
+    "mean": 0.44861737882097513,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.21889997879043221,
+    "p95": 0.3179999766871333,
+    "max": 0.6792000494897366,
+    "mean": 0.23506477889834504,
+    "n": 45504
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.06185000529512763,
+    "p95": 0.18931004160549492,
+    "max": 0.23519998649135232,
+    "mean": 0.08657799800857902,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 97.61155000887811,
+    "p95": 171.00212500663469,
+    "max": 221.52890003053471,
+    "mean": 103.64283300179522,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 97.71360002923757,
+    "p95": 171.0752499813679,
+    "max": 221.5855000540614,
+    "mean": 103.7294109998038,
+    "n": 200
+   },
+   "numpy_vs_torch_max_abs_logprob": 4.57763671875e-05,
+   "actions": {
+    "OFFER": 200
+   },
+   "commits": 0,
+   "measurement_env": {
+    "schema": "fidetype.isolation/0.1",
+    "class": "timing",
+    "cpus": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "affinity_set": true,
+    "priority": "above_normal",
+    "priority_set": true,
+    "timing_lock_held": true,
+    "plan": {
+     "timing": [
+      8,
+      10,
+      12,
+      14
+     ],
+     "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "smt": true
+    },
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cpus": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_s": 118.603,
+    "own_cpu_s": 282.547,
+    "class_cpu_load_pct": 61.26,
+    "foreign_load_pct": 1.7,
+    "idle_sibling_load_pct": 10.25,
+    "machine_load_pct": 27.15,
+    "background_cpu_load_pct": 18.54,
+    "clean": true,
+    "clean_reasons": []
+   }
+  },
+  "m4-12-shared/L10": {
+   "run": "m4-12-shared",
+   "lookahead_bins": 10,
+   "algorithmic_lookahead_ms": 200,
+   "n": 200,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.08040003012865782,
+    "p95": 1.711399992927909,
+    "max": 5.5195000022649765,
+    "mean": 0.4491787007835715,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.21650001872330904,
+    "p95": 0.31599996145814657,
+    "max": 0.6333000492304564,
+    "mean": 0.23286236126190374,
+    "n": 45262
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.15005000750534236,
+    "p95": 0.25690997717902064,
+    "max": 0.3700000233948231,
+    "mean": 0.16353749844711274,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 99.64964998653159,
+    "p95": 171.9380600203294,
+    "max": 283.1817999831401,
+    "mean": 106.34531950199744,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 99.76420001476072,
+    "p95": 172.05352503224276,
+    "max": 283.32499996759,
+    "mean": 106.50885700044455,
+    "n": 200
+   },
+   "numpy_vs_torch_max_abs_logprob": 4.1961669921875e-05,
+   "actions": {
+    "OFFER": 200
+   },
+   "commits": 0,
+   "measurement_env": {
+    "schema": "fidetype.isolation/0.1",
+    "class": "timing",
+    "cpus": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "affinity_set": true,
+    "priority": "above_normal",
+    "priority_set": true,
+    "timing_lock_held": true,
+    "plan": {
+     "timing": [
+      8,
+      10,
+      12,
+      14
+     ],
+     "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "smt": true
+    },
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cpus": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_s": 119.096,
+    "own_cpu_s": 282.828,
+    "class_cpu_load_pct": 61.27,
+    "foreign_load_pct": 1.9,
+    "idle_sibling_load_pct": 10.83,
+    "machine_load_pct": 27.88,
+    "background_cpu_load_pct": 19.7,
+    "clean": true,
+    "clean_reasons": []
+   }
+  },
+  "m4-12-shared/L15": {
+   "run": "m4-12-shared",
+   "lookahead_bins": 15,
+   "algorithmic_lookahead_ms": 300,
+   "n": 200,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.076299998909235,
+    "p95": 1.7144999583251774,
+    "max": 4.440999997314066,
+    "mean": 0.44884926860604535,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.21460000425577164,
+    "p95": 0.3136000013910234,
+    "max": 0.6534000276587903,
+    "mean": 0.23144298786160974,
+    "n": 45001
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.2457000082358718,
+    "p95": 0.3160450200084597,
+    "max": 0.4512000014074147,
+    "mean": 0.24400299676926807,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 99.32219999609515,
+    "p95": 174.89576002990353,
+    "max": 227.50670003006235,
+    "mean": 105.46098250255454,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 99.56510001211427,
+    "p95": 175.09247003472402,
+    "max": 227.76450001401827,
+    "mean": 105.70498549932381,
+    "n": 200
+   },
+   "numpy_vs_torch_max_abs_logprob": 4.00543212890625e-05,
+   "actions": {
+    "OFFER": 200
+   },
+   "commits": 0,
+   "measurement_env": {
+    "schema": "fidetype.isolation/0.1",
+    "class": "timing",
+    "cpus": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "affinity_set": true,
+    "priority": "above_normal",
+    "priority_set": true,
+    "timing_lock_held": true,
+    "plan": {
+     "timing": [
+      8,
+      10,
+      12,
+      14
+     ],
+     "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "smt": true
+    },
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cpus": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_s": 118.694,
+    "own_cpu_s": 283.031,
+    "class_cpu_load_pct": 61.37,
+    "foreign_load_pct": 1.76,
+    "idle_sibling_load_pct": 10.86,
+    "machine_load_pct": 27.52,
+    "background_cpu_load_pct": 18.93,
+    "clean": true,
+    "clean_reasons": []
+   }
+  },
+  "m4-12-shared/L25": {
+   "run": "m4-12-shared",
+   "lookahead_bins": 25,
+   "algorithmic_lookahead_ms": 500,
+   "n": 200,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.0610999995842576,
+    "p95": 1.6992999590002,
+    "max": 4.4569000019691885,
+    "mean": 0.44896551255517353,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.22089999401941895,
+    "p95": 0.32049999572336674,
+    "max": 0.7321999873965979,
+    "mean": 0.2371666951186257,
+    "n": 44504
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.32809999538585544,
+    "p95": 0.48229000531136984,
+    "max": 0.6570999976247549,
+    "mean": 0.34744050120934844,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 101.10744999838062,
+    "p95": 173.5269149939995,
+    "max": 282.91309997439384,
+    "mean": 106.72958299634047,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 101.42744999029674,
+    "p95": 173.82069000450426,
+    "max": 283.20159995928407,
+    "mean": 107.07702349754982,
+    "n": 200
+   },
+   "numpy_vs_torch_max_abs_logprob": 4.00543212890625e-05,
+   "actions": {
+    "OFFER": 200
+   },
+   "commits": 0,
+   "measurement_env": {
+    "schema": "fidetype.isolation/0.1",
+    "class": "timing",
+    "cpus": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "affinity_set": true,
+    "priority": "above_normal",
+    "priority_set": true,
+    "timing_lock_held": true,
+    "plan": {
+     "timing": [
+      8,
+      10,
+      12,
+      14
+     ],
+     "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "smt": true
+    },
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cpus": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_s": 119.142,
+    "own_cpu_s": 284.062,
+    "class_cpu_load_pct": 61.48,
+    "foreign_load_pct": 1.87,
+    "idle_sibling_load_pct": 10.72,
+    "machine_load_pct": 27.62,
+    "background_cpu_load_pct": 19.14,
+    "clean": true,
+    "clean_reasons": []
+   }
+  }
+ },
+ "emission": {
+  "comparison": "m4-12-fixed25/L25 vs m4-12-fixed0/L0",
+  "emission_stamp_delta_s": {
+   "median": -0.40000000000000213,
+   "p25": -0.96,
+   "p75": -0.31999999999999984,
+   "n": 13190
+  },
+  "available_delta_s": {
+   "median": 0.09999999999999787,
+   "p25": -0.45999999999999996,
+   "p75": 0.18000000000000016,
+   "n": 13190
+  }
+ }
+}

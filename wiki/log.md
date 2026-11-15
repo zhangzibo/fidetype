@@ -732,3 +732,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - val_eval (701 trials): dedicated L 0 greedy PER 0.2574 (was 0.6954), WER (T = 1) 0.3998 (was 0.9307). Shared L 0 → 500 ms: 0.2634 → 0.2617 (flat; was 0.6565 → 0.3687). Dedicated L 500 ms 0.2988 (was 0.3487). Published: 0.101 (validation partition), 0.0954 (online).
 - Emission: dedicated L 500 ms phonemes ready +100 ms vs dedicated L 0 (M4-02: −180 ms). The M4-02 lookahead gain and "ready earlier" result were artefacts of under-training.
 - Updated `questions/lookahead-latency-accuracy.md` (new M4-12 section, old numbers kept and marked superseded, contradiction note), `index.md`. Dedicated 200 ms and 300 ms models queued after a hold for another agent's latency rerun.
+
+## [2026-11-15] query | M4-02R: M4-01/02 latency rerun on a quiet machine
+- New experiment `experiments/2026-11-15-m4-latency-quiet-rerun/` (plan addendum written before the run; results.md). Run 05:41 to 06:12, after the M6-15 soak and the M4-12 phase 1; the M4-12 queue was held during the run.
+- Timing class, foreign load 1.77 % (clean; M4-02 had 5.77 %). Original checkpoints, same 200 trials: decoder p95 2.08 to 2.23 ms per bin, trust p95 0.28 to 0.29 ms per frame, end of utterance p50 86.0 to 101.6 ms; flat in L; 0 commits. Emission file identical to M4-02 (−180 ms is a property of the M4-01 models).
+- Secondary: M4-12 dedicated L 0 / L 500 ms and shared at every L: same compute picture, 0 commits; L 500 ms ready +100 ms vs L 0.
+- Found: the M4-12 accuracy stage writes `trust-<which>-L<bins>.json` with the same names as M4-01/02 in the shared derived folder, so the M4-01/02 trust decision files were overwritten. The rerun counted the streaming actions directly.
+- Updated: [lookahead latency vs accuracy](questions/lookahead-latency-accuracy.md) (new dated section), index.

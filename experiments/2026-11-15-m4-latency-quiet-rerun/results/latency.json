@@ -1,0 +1,347 @@
+{
+ "n_trials": 200,
+ "run": "m4-01-la-shared",
+ "conditions": {
+  "L0": {
+   "lookahead_bins": 0,
+   "algorithmic_lookahead_ms": 0,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.04260000423528254,
+    "p95": 2.2255000076256692,
+    "max": 4.371899995021522,
+    "mean": 0.5518293907007279,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.19970000721514225,
+    "p95": 0.2902999985963106,
+    "max": 0.7054999878164381,
+    "mean": 0.19967433231974355,
+    "n": 45750
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.0016999838408082724,
+    "p95": 0.0028999929782003164,
+    "max": 0.0037999998312443495,
+    "mean": 0.0017670007946435362,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 85.96609998494387,
+    "p95": 162.40076497779225,
+    "max": 273.3264999988023,
+    "mean": 89.34510499966564,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 85.9684000024572,
+    "p95": 162.40256499004312,
+    "max": 273.32800001022406,
+    "mean": 89.34687200046028,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 0.0,
+    "max": 0
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.0001552104949951172,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L2": {
+   "lookahead_bins": 2,
+   "algorithmic_lookahead_ms": 40,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.07750000804662704,
+    "p95": 2.0770200062543136,
+    "max": 4.167000006418675,
+    "mean": 0.538002732023438,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.172999978531152,
+    "p95": 0.2750999992713332,
+    "max": 0.6417999975383282,
+    "mean": 0.18872172269702236,
+    "n": 45662
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.0023500033421441913,
+    "p95": 0.0792199934949167,
+    "max": 0.10619999375194311,
+    "mean": 0.030970500811235976,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 101.59244999522343,
+    "p95": 171.21382498880843,
+    "max": 249.47969999630004,
+    "mean": 107.10554600009345,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 101.5944499959005,
+    "p95": 171.27144999103615,
+    "max": 249.48110000696033,
+    "mean": 107.13651650090469,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 0.0,
+    "max": 1
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.00016164779663085938,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L5": {
+   "lookahead_bins": 5,
+   "algorithmic_lookahead_ms": 100,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.06409999332390726,
+    "p95": 2.084200008539483,
+    "max": 3.9169000228866935,
+    "mean": 0.5417099818270668,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.18579998868517578,
+    "p95": 0.2823999966494739,
+    "max": 0.6086000066716224,
+    "mean": 0.19406676775001672,
+    "n": 45504
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.0569500116398558,
+    "p95": 0.12743000843329355,
+    "max": 0.27630000840872526,
+    "mean": 0.07106599965482019,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 99.02275001513772,
+    "p95": 158.51143999025203,
+    "max": 259.11479999194853,
+    "mean": 102.90953550109407,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 99.10945000592619,
+    "p95": 158.56652500369796,
+    "max": 259.1764999961015,
+    "mean": 102.98060150074889,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 1.0,
+    "max": 2
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.00014734268188476562,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L10": {
+   "lookahead_bins": 10,
+   "algorithmic_lookahead_ms": 200,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.07460001506842673,
+    "p95": 2.079300000332296,
+    "max": 4.107899992959574,
+    "mean": 0.5397974605165067,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.17440001829527318,
+    "p95": 0.2778000198304653,
+    "max": 0.48749998677521944,
+    "mean": 0.1907243913016242,
+    "n": 45262
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.12200001219753176,
+    "p95": 0.18589501705719153,
+    "max": 0.31030000536702573,
+    "mean": 0.1316025003325194,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 99.12095000618137,
+    "p95": 163.24158501374762,
+    "max": 248.72950001736172,
+    "mean": 103.76058249967173,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 99.24159999354742,
+    "p95": 163.39775499945966,
+    "max": 248.82580002304167,
+    "mean": 103.89218500000425,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 2.0,
+    "max": 3
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.0001354217529296875,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L15": {
+   "lookahead_bins": 15,
+   "algorithmic_lookahead_ms": 300,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.07250002818182111,
+    "p95": 2.0922000403515995,
+    "max": 4.175300011411309,
+    "mean": 0.5412187224986392,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.17790001584216952,
+    "p95": 0.2793999738059938,
+    "max": 0.48940000124275684,
+    "mean": 0.19170780873381998,
+    "n": 45001
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.19744999008253217,
+    "p95": 0.2504049858544021,
+    "max": 0.38889999268576503,
+    "mean": 0.19990500033600256,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 96.4304500084836,
+    "p95": 169.9978650169214,
+    "max": 234.40239997580647,
+    "mean": 102.7112065012625,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 96.70064997044392,
+    "p95": 170.2387000143062,
+    "max": 234.62699999799952,
+    "mean": 102.9111115015985,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 4.0,
+    "max": 4
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.00013256072998046875,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  },
+  "L25": {
+   "lookahead_bins": 25,
+   "algorithmic_lookahead_ms": 500,
+   "stride_wait_ms_max": 60,
+   "decoder_push_per_bin_ms": {
+    "p50": 0.05949998740106821,
+    "p95": 2.081999962683767,
+    "max": 4.286099981982261,
+    "mean": 0.5423811415741926,
+    "n": 185317
+   },
+   "trust_push_per_frame_ms": {
+    "p50": 0.18345002899877727,
+    "p95": 0.2805000316584483,
+    "max": 0.4909000126644969,
+    "mean": 0.1942464834321143,
+    "n": 44504
+   },
+   "end_decoder_flush_ms": {
+    "p50": 0.32550000469200313,
+    "p95": 0.4134200047701597,
+    "max": 0.5590000073425472,
+    "mean": 0.32530949771171436,
+    "n": 200
+   },
+   "end_trust_ms": {
+    "p50": 96.63260003435425,
+    "p95": 171.1499800352612,
+    "max": 290.6778000178747,
+    "mean": 104.32550550089218,
+    "n": 200
+   },
+   "end_total_ms": {
+    "p50": 96.9127000134904,
+    "p95": 171.43282501783682,
+    "max": 291.23680002521724,
+    "mean": 104.65081499860389,
+    "n": 200
+   },
+   "frames_flushed_at_end": {
+    "median": 6.0,
+    "max": 7
+   },
+   "numpy_vs_torch_max_abs_logprob": 0.00012302398681640625,
+   "same_action_as_accuracy_stage": 200,
+   "n": 200,
+   "accuracy_stage_commit_rate_all": 0.0
+  }
+ },
+ "bin_s": 0.02,
+ "frame_period_s": 0.08,
+ "measurement_env": {
+  "schema": "fidetype.isolation/0.1",
+  "class": "timing",
+  "cpus": [
+   8,
+   10,
+   12,
+   14
+  ],
+  "affinity_set": true,
+  "priority": "above_normal",
+  "priority_set": true,
+  "timing_lock_held": true,
+  "plan": {
+   "timing": [
+    8,
+    10,
+    12,
+    14
+   ],
+   "background": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "idle_smt_siblings": [
+    9,
+    11,
+    13,
+    15
+   ],
+   "smt": true
+  },
+  "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+  "logical_cpus": 16,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_s": 803.454,
+  "own_cpu_s": 2115.172,
+  "class_cpu_load_pct": 67.58,
+  "foreign_load_pct": 1.77,
+  "idle_sibling_load_pct": 11.27,
+  "machine_load_pct": 29.45,
+  "background_cpu_load_pct": 19.47,
+  "clean": true,
+  "clean_reasons": []
+ }
+}
