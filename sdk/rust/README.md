@@ -1,5 +1,7 @@
 # Fidetype Rust SDK (`fidetype` crate)
 
+> Part of [Fidetype](../../README.md). Status: NTS 1.0 is a draft RC ([RC2](../../spec/nts-1.0-rc2.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](../../docs/sdks.md).
+
 Rust SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. The core is **`no_std` + `alloc`**: it parses, checks, writes and decides without an operating system. So it can run in device firmware, for example on a Cortex-M microcontroller. The `std` feature (on by default) adds file helpers, the CLI `fidetype-rs` and the example program.
 
 | Part | What it does |
@@ -134,12 +136,12 @@ All six profiles pass this way (283/283 at NTS 1.0 RC2 with `fep-0005` and TD-12
 
 | Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-6, `--n 30`, M7-12) |
 |---|---|---|---|---|
-| `v0.1` (NPZ + JSON Lines) | 61 | 61/61 pass | 61/61 | PASS |
+| `v0.1` (NPZ + JSON Lines) | 65 | 65/65 pass | 65/65 | PASS |
 | `fep-0001` streaming trust events | 56 | 56/56 pass | 56/56 | PASS |
 | `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 | PASS |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 | PASS |
 | `fep-0004` NTS over WebSocket (scenarios, M7-12) | 43 | 43/43 pass | 43/43 | PASS (7,740/7,740) |
-| `fep-0005` control events (gap G-1) | 42 | 42/42 pass | 42/42 | PASS (7,560/7,560) |
+| `fep-0005` control events (gap G-1) | 44 | 44/44 pass | 44/44 | PASS (7,560/7,560) |
 
 NTS 1.0 RC2, gap G-1 (2026-11-14): module `profiles::fep0005` ports the Python control profile and the validators of `fidetype.trust.control` (still `no_std` + `alloc`, no new dependency). For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. Seeds 1-6 at `--n 30` give 44,196 mutants over the six profiles, all with the Python verdict. The reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`fidetype::constants::is_supported_spec_version`); the writer still writes `"0.1"`.
 

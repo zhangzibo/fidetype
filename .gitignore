@@ -50,3 +50,23 @@ experiments/2026-11-13-m6-08-brainflow-live/out/*.log
 # Package build outputs (python -m build, npm pack)
 /dist/
 /build/
+
+# Tool caches and build output (R-23 hygiene; tools/hygiene/check.js enforces these in CI)
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+node_modules/
+*.tgz
+sdk/rust/target/
+*.pkl
+*.pickle
+*.safetensors
+*.onnx
+*.pem
+desktop.ini
+
+# Job sentinels and merge locks (long-running experiment jobs write DONE when they finish)
+experiments/**/DONE
+wiki/progress/fragments/.merge.lock

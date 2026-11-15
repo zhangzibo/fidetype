@@ -42,7 +42,8 @@ The script creates a separate venv at a short path (default `C:\venvs\fidetype-r
 For a large change, open an issue or a Discussion first. Then the maintainers can agree with the direction before you write the code.
 
 ## 3. Tests and CI
-- GitHub Actions runs `uv run pytest -q` on every push to `main` and on every PR ([workflow](.github/workflows/tests.yml)).
+- GitHub Actions runs on every push to `main` and on every PR ([workflow](.github/workflows/tests.yml)): the Python tests (`uv run pytest -q`), the TypeScript and Rust SDK tests, the Python = TypeScript = Rust parity checks, the proto schema checks, the packaging dry runs and the repository hygiene check.
+- Run `node tools/hygiene/check.js` and `node tools/hygiene/links.js` before you push. They fail on caches, data files, secrets, private e-mail addresses, files over 5 MB and broken relative links.
 - **All tests must pass in CI.** A maintainer does not merge a PR with a red CI.
 - CI has no GPU and no datasets. Tests that need them must skip cleanly when they are not available.
 - Tests must be fast. Use small synthetic data or the noisy-decoder simulator.
@@ -73,7 +74,7 @@ Every trust decision must be inspectable.
 A PR that adds a decision without an explanation of its inputs will not be merged.
 
 ## 7. Adapters: add a decoder or a device
-An adapter connects a decoder or a device to Fidetype. The contract is the [NeuralTextStream spec](spec/neuraltextstream-v0.1.md).
+An adapter connects a decoder or a device to Fidetype. The contract is the [NeuralTextStream spec](spec/neuraltextstream-v0.1.md) (current release; the 1.0 draft is [RC2](spec/nts-1.0-rc2.md)). The user guide is [docs/getting-started.md](docs/getting-started.md).
 
 **Decoder adapter.**
 1. Make your decoder output `log_softmax` scores, shape [T, V].

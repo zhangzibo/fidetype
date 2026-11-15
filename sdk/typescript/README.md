@@ -1,5 +1,7 @@
 # Fidetype TypeScript SDK (`@fidetype/sdk`)
 
+> Part of [Fidetype](../../README.md). Status: NTS 1.0 is a draft RC ([RC2](../../spec/nts-1.0-rc2.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](../../docs/sdks.md).
+
 TypeScript SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. It works in Node (>= 18) and in the browser (ESM). The core has **zero runtime dependencies** and no Node API.
 
 | Part | What it does |
@@ -127,12 +129,12 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 
 | Profile | Vectors | TypeScript | Same verdict as Python |
 |---|---|---|---|
-| `v0.1` (NPZ + JSON Lines) | 61 | 61/61 pass | 61/61 |
+| `v0.1` (NPZ + JSON Lines) | 65 | 65/65 pass | 65/65 |
 | `fep-0001` streaming trust events | 56 | 56/56 pass | 56/56 |
 | `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 |
 | `fep-0004` NTS over WebSocket (scenarios) | 43 | 43/43 pass | 43/43 (Rust too, since M7-12) |
-| `fep-0005` control events (gap G-1) | 42 | 42/42 pass | 42/42 (Rust too) |
+| `fep-0005` control events (gap G-1) | 44 | 44/44 pass | 44/44 (Rust too) |
 
 NTS 1.0 RC2, gap G-1 (2026-11-14): profile `fep-0005` (`fep0005.checkFile`, `fep0005.consume`; module `src/profiles/fep0005.ts`) is a port of the Python control profile and of the validators of `fidetype.trust.control`. For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. Python = TypeScript = Rust on all 279 vectors; seeds 1-6 at `--n 30` give 44,196 mutants (fep-0005: 7,560), all with the Python verdict.
 

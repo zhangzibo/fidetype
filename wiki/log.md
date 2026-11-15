@@ -759,3 +759,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Parity: 164 compared vectors (91 accept, 73 schema rejects) match, 0 mismatches (built-in validator and `jsonschema` 4.26.0); 90 reject vectors not compared (other grounds); 33 NPZ out of scope.
 - Open spec questions Q-1 … Q-8 recorded in `spec/CHANGELOG.md`; RC2 Appendix C.3 added (informative, additive). Hand-written schemas and SDK behaviour unchanged.
 - New page `concepts/nts-proto-schema.md`; updated `concepts/nts-spec.md`, `questions/roadmap-standard.md` (P1-02 done), `index.md`.
+
+## [2026-11-15] lint | R-23: repository hygiene + README and docs for outside readers
+- Audit of the tracked tree (1,836 files, 45 MB): no caches, build output, data or model files, secrets, private e-mail addresses, third-party PDFs or per-trial typed text. Nothing removed. 9 judgement calls listed in new page `questions/repo-hygiene.md` (example decoded texts in 9 result files, commit e-mail, home paths, agent-memory mirror, archived fragments, paper drafts, logs, large JSON, HANDOFF size).
+- New `tools/hygiene/check.js` (forbidden files, secrets, e-mails, size) and `tools/hygiene/links.js` (relative links and anchors); CI job `hygiene`. `.gitignore`: tool caches, node_modules, Rust target, model formats, job sentinels.
+- README.md rewritten for newcomers (what NTS is, OpenTelemetry analogy table, status, architecture, quickstarts per SDK, docs links, related projects, layout, contributing, licence and data rules).
+- New docs index `docs/README.md` + `getting-started.md`, `concepts.md`, `sdks.md`, `collector.md`, `conformance.md`. SDK READMEs: status note and current vector counts (v0.1 65, fep-0005 44). CONTRIBUTING: CI and hygiene check.

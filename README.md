@@ -2,162 +2,130 @@
 
 ![tests](https://github.com/zhangzibo/fidetype/actions/workflows/tests.yml/badge.svg)
 
-**An open trust layer for neural text entry: calibrated, abstaining, hallucination-aware BCI text decoding.**
+**NeuralTextStream (NTS)** is an open, vendor-neutral format for the output of neural input decoders: text, intents and control signals decoded from brain or muscle signals (EMG, EEG, MEG, implants). **Fidetype** is the project around it: the spec, SDKs, a Collector, a conformance suite and a **trust layer** that decides when decoded text is safe to use.
 
-**Name:** *fides* (Latin: trust) + type.
+*Name:* *fides* (Latin: trust) + type.
 
-> Status: research software, v0.0.1 (pre-alpha). The NeuralTextStream spec v0.1, the trust core, the streaming trust layer, the conformance suite, the open benchmark, LSL input and a Python SDK with an offline demo exist. The API can still change.
+> **Status:** NTS 1.0 is a **draft release candidate** ([RC2](spec/nts-1.0-rc2.md), open for comment). The Python, TypeScript and Rust SDKs pass the full conformance suite in CI, but **no package is published yet** (version 0.0.1). Fidetype is research software. **It is not a medical device.** APIs can change.
 
-## What it does
-Brain-computer interfaces (BCIs) and other neural input devices (MEG, EEG, wrist EMG, implants) can now decode text. But they make errors. Their AI language models can also write fluent sentences that are wrong. Fidetype sits between any decoder and the user. Its goal is to make the decoded text reliable. When it is complete, Fidetype will:
+## Why NTS exists
 
-- calibrate the confidence of the decoder;
-- give n-best choices;
-- abstain, or ask the user, when it is not sure;
-- flag text that the language model invented (hallucinated text);
-- work in real time.
+Text decoders for neural signals now work in research labs. Each lab and each device vendor uses its own output format, so every consumer (an app, a UI, a benchmark, a safety check) must be rewritten for every decoder. Decoders also make errors, and their language models can write fluent text that the person did not intend.
 
-Every decoder sends its output in one standard format, the **NeuralTextStream**. So Fidetype does not depend on one device or one decoder.
+NTS takes the role for neural input that [OpenTelemetry](https://opentelemetry.io/) takes for software telemetry:
 
-## Why
-Non-invasive text decoders now work in the lab:
-- Meta's Brain2Qwerty v1 reaches **29% character error rate (CER) with MEG** ([source notes](wiki/sources/brain2qwerty-v1.md)).
-- Brain2Qwerty v2 adds a large language model (LLM). It reaches a mean **word error rate (WER) of 39%** ([source notes](wiki/sources/brain2qwerty-v2.md)).
+| OpenTelemetry has | NTS / Fidetype has |
+|---|---|
+| A data model and semantic conventions | The NTS data model: frames of probabilities over a declared vocabulary, hypotheses, segments, `meta` conventions ([spec](spec/nts-1.0-rc2.md)) |
+| A wire protocol (OTLP) | Bindings: JSON Lines, NPZ, Lab Streaming Layer (LSL), WebSocket |
+| SDKs in many languages | Python (reference), TypeScript, Rust (`no_std` core) |
+| The Collector (receivers → processors → exporters) | The Fidetype Collector ([FEP-0006](spec/feps/0006-collector.md)) |
+| A spec compliance matrix | A conformance suite with golden vectors; all three SDKs must give the same verdict |
+| OTEPs (enhancement proposals) | FEPs (Fidetype Enhancement Proposals) |
 
-These error rates are still high. Decoders are often over-confident, so their scores do not show when they are wrong. An LLM can turn a noisy signal into a fluent sentence that the person did not intend. For a patient, a fluent wrong sentence can be worse than no sentence. Fidetype addresses this problem.
+NTS adds one thing that telemetry does not need: a **trust layer**. For each utterance it decides COMMIT, OFFER (show choices), ASK or ABSTAIN, with a calibrated, auditable reason. Every decision is a `trust_decision` event in the same format.
 
 ## Architecture
-Fidetype has six layers, from data in (bottom) to shared infrastructure (top):
 
-1. **Sources / adapters**: dataset replay, a noisy-decoder simulator, and (planned) live devices through Lab Streaming Layer (LSL).
-2. **Decoders** (planned): our own conv + CTC decoder with a causal (streaming) mode. Any decoder that emits NeuralTextStream can plug in.
-3. **Trust core** (planned): calibration, streaming language-model fusion, conformal sets, a hallucination guard, and a decision policy (commit, offer choices, ask, or abstain).
-4. **Interaction** (planned): a UI with confidence and an n-best picker, and a simulated user for offline evaluation.
-5. **Evaluation harness**: CER, WER, calibration error (ECE) today; (planned) conformal coverage, latency, hallucination rate and **effective words per minute**.
-6. **Infrastructure** (planned): a dataset registry with licence tags and a provenance ledger.
-
-Details: [wiki/questions/architecture.md](wiki/questions/architecture.md).
-
-Diagrams: [wiki/diagrams/index.html](wiki/diagrams/index.html). Open the diagram page through a local server:
-
-```sh
-node tools/serve.js        # then open http://127.0.0.1:8000/wiki/diagrams/index.html
+```
+ decoder / device            SDK                    Collector                         consumer
+ (EMG, EEG, MEG,   ──▶  write NTS events   ──▶  receivers ──▶ processors ──▶ exporters  ──▶  app, UI,
+  implant, replay)      (Python / TS / Rust)    file, WS,     validate, trust,  JSON Lines,   benchmark,
+                                                LSL           thin, redact      stdout, WS,   decision log
+                                                                                LSL
+                                     trust layer: COMMIT / OFFER / ASK / ABSTAIN  (trust_decision events)
 ```
 
-## Status and roadmap
-| Milestone | Content | Status |
+| Part | What it does | Where |
 |---|---|---|
-| M0 | Setup: package, NeuralTextStream spec v0.1, noisy-decoder simulator, metrics (CER, WER, ECE), 41 tests | In progress |
-| M1 | Baseline decoder on public MEG data (SpanishBCBL) | Planned |
-| M2 | Trust core v0 | Planned |
-| M3 | Paper 1: "Calibrated, abstaining brain-to-text", with the new metric effective words per minute | Planned |
-| M4 | Paper 2: causal / streaming decoder | Planned |
-| M5 | Open benchmark v0.1: harness, fixed splits, leaderboard, licence audit | Done (2026-11-11) |
-| M6–M7 | Device adapters (LSL input done), SDK + offline demo (done 2026-11-12), pilots | In progress |
+| Spec | Defines the events, the bindings, the conformance levels and the trust decision rules | [`spec/`](spec/README.md) |
+| SDKs | Write, read and check NTS streams; track trust decisions | [Python](src/fidetype/), [TypeScript](sdk/typescript/README.md), [Rust](sdk/rust/README.md) |
+| Collector | One service that wires inputs, processing and outputs from one TOML or JSON file | `fidetype collector` ([guide](docs/collector.md)) |
+| Trust layer | Calibration, conformal sets, a hallucination guard and a decision policy | `fidetype.trust` ([concept](docs/concepts.md#trust-layer)) |
+| Conformance | Golden vectors and checks for producers and consumers, per profile | [`spec/conformance/`](spec/conformance/) ([guide](docs/conformance.md)) |
+| Benchmark | Scores neural text entry from NTS files on public datasets | [`benchmark/`](benchmark/README.md) |
 
-- Full plan: [wiki/questions/project-plan.md](wiki/questions/project-plan.md).
-- Actual progress: [wiki/progress/index.html](wiki/progress/index.html) (a generated dashboard; it also opens through `node tools/serve.js`).
+More: [docs/concepts.md](docs/concepts.md) and the [diagram page](wiki/diagrams/index.html) (open it through `node tools/serve.js`).
 
 ## Quick start
-You need Python 3.12. Install from a clone (the package is not on PyPI yet; it is ready to publish, see [docs/RELEASING.md](docs/RELEASING.md)):
+
+The packages are not on PyPI, npm or crates.io yet. Use a clone:
 
 ```sh
-pip install .                 # or: uv sync --extra dev   (adds pytest; then: uv run pytest -q)
-fidetype demo                 # offline demo: the trust layer on synthetic decoder streams (about 30 s)
-fidetype demo --fast --html demo.html   # no waiting; also write the static demo page
+git clone https://github.com/zhangzibo/fidetype.git
+cd fidetype
 ```
 
-The demo needs no data and no network. It shows the trust layer commit, offer and abstain phrase by phrase. It also shows the key safety result: on a flat (no-signal) stream the decoder's language model still writes fluent text, "always commit" types it, and the trust layer abstains. A prebuilt page is in [demo/index.html](demo/index.html) (open it in a browser; no server).
-
-### Emit a stream from your decoder, run the trust layer
-Your CTC decoder gives one row of log-probabilities per frame over `fidetype.VOCAB` (blank first). Write the rows as a NeuralTextStream, check it, and feed it to the streaming trust layer:
+**Python** (3.12 or later; the reference SDK, the trust layer and the Collector):
 
 ```sh
-fidetype demo --write-streams demo-streams    # gives demo-streams/trust-config-demo.json (a frozen config)
+pip install .                     # or: uv sync --extra dev   (adds pytest: uv run pytest -q)
+fidetype demo --fast              # offline demo: the trust layer on synthetic decoder streams
+fidetype conformance --profile fep-0001
+fidetype collector --config examples/collector/collector.toml --check
 ```
 
-```python
-import fidetype
-from fidetype.demo import build_decoder, make_stream   # stand-ins for your decoder
+**TypeScript** (Node 18 or later; zero runtime dependencies):
 
-log_probs = make_stream("the boy found a red box", "strong", seed=0).log_probs   # (T, V) from your decoder
-meta = fidetype.stream_meta(modality="eeg", decoder_name="my-ctc", decoder_version="1.0")
-with fidetype.open_stream("utt.jsonl", "w", source="my-ctc", meta=meta, frame_period=0.04) as w:
-    for i, row in enumerate(log_probs):
-        w.frame(0.04 * i, row)                 # or w.frame(t, logits=raw_scores)
-print(fidetype.validate("utt.jsonl").level)    # "trust-ready"
-
-config = fidetype.FrozenTrustConfig.load("demo-streams/trust-config-demo.json")
-layer = fidetype.TrustLayer(config, decode_fn=build_decoder())   # the decoder the config was fitted with
-for event in fidetype.open_stream("utt.jsonl"):
-    for d in layer.push(event):
-        print("final" if d.final else "preview", d.action.value, d.shown)
+```sh
+cd sdk/typescript && npm ci && npm run build && npm test && npm run conformance
 ```
 
-A frozen configuration is valid only with the `decode_fn` it was fitted with (the demo config: the demo beam search + LM). With another decoder its guarantee does not hold. For real use, fit your own configuration on labelled calibration data of the same user: `fidetype.calibrate(streams, texts, decode_fn).save("trust.json")`. More: [examples/](examples/) (CTC log-probs, hypothesis-only stream, streaming trust, LSL bridge) and the SDK page [wiki/concepts/python-sdk.md](wiki/concepts/python-sdk.md).
+**Rust** (1.81 or later; `no_std` + `alloc` core):
 
-### Command line
+```sh
+cd sdk/rust && cargo test && cargo run --bin fidetype-rs -- conformance
 ```
-fidetype validate FILE [--level trust-ready]       conformance check (= python -m fidetype.conformance check)
-fidetype trust --config trust.json FILE            trust_decision JSON Lines (= python -m fidetype.trust.streaming replay)
-fidetype demo [--fast] [--html F] [--json F]       offline demo
-fidetype conformance | lsl | benchmark | ledger    the full tools; the python -m entry points still work
-fidetype lsl run|replay-to-lsl|list                LSL input -> trust_decision JSON Lines (needs the [lsl] extra)
-fidetype lsl brainflow-bridge --board synthetic    BrainFlow board -> LSL raw-signal stream (needs [lsl,brainflow])
-```
+
+Next steps: [Getting started](docs/getting-started.md) (emit a stream from your decoder, run the trust layer) and the [SDK guides](docs/sdks.md).
+
+## Documentation
+
+| Read | For |
+|---|---|
+| [docs/](docs/README.md) | The documentation index: getting started, concepts, SDK guides, Collector, conformance, releasing |
+| [spec/nts-1.0-rc2.md](spec/nts-1.0-rc2.md) | The normative NTS 1.0 RC2 draft (rules with stable ids, for example `TD-9`) |
+| [spec/README.md](spec/README.md) | All spec versions, FEPs, stability levels, conformance profiles |
+| [wiki/](wiki/index.md) | The research knowledge base: sources, concepts, results |
+| [Roadmap](wiki/questions/roadmap-standard.md) | Phases P1–P13 from v0.1 to a full standard; live progress on the [dashboard](wiki/progress/index.html) |
+
+## How NTS relates to other projects
+
+| Project | What it is | Relation to NTS |
+|---|---|---|
+| [OpenTelemetry](https://opentelemetry.io/) | Vendor-neutral telemetry: data model, protocol, SDKs, Collector | The structural model for NTS. No OpenTelemetry code or text is used |
+| [Lab Streaming Layer](https://labstreaminglayer.readthedocs.io/) (LSL) | Transport for time series and markers, with clock sync | A transport. NTS defines what goes over it ([FEP-0002](spec/feps/0002-nts-over-lsl.md)) |
+| [BCI2000](https://www.bci2000.org/) | A general BCI research platform: acquisition, signal processing, applications | A full system. NTS is only the decoder output contract, so a platform like this can emit it |
+| [BIDS](https://bids.neuroimaging.io/) | A storage standard for neuroimaging datasets | Covers recorded data at rest. NTS covers live and replayed decoder output |
 
 ## Repository layout
+
 ```
-src/fidetype/
-  __init__.py public SDK API (lazy imports); api.py, writer.py, cli.py (the `fidetype` command)
-  streams/    NeuralTextStream spec, vocabulary, noisy-decoder simulator, test corpus
-  trust/      trust core, frozen config, streaming trust layer, provenance ledger
-  conformance/ benchmark/ adapters/   conformance suite, open benchmark, adapters (LSL, datasets)
-  demo/       offline demo (synthetic streams, frozen demo config, static page)
-  eval/       metrics: CER, WER, CTC greedy decode, ECE
-demo/         prebuilt static demo page + decision log (`fidetype demo --html`)
-tests/        pytest tests
-examples/     small runnable scripts
-wiki/         research knowledge base (see "Research notes")
-  diagrams/   draw.io diagrams + generated index.html
-  progress/   tracker.json + generated progress dashboard
-references/   catalogue of raw sources (third-party files are not committed)
-tools/        local server, draw.io viewer build, progress dashboard build
-notebooks/    experiments
-data/         local datasets (git-ignored, never committed)
+spec/         NTS spec (v0.1, 1.0 RC1/RC2), FEPs, proto3 files, JSON schemas, conformance vectors
+src/fidetype/ Python reference SDK: streams, trust layer, conformance, collector, adapters, benchmark, demo
+sdk/          TypeScript SDK (sdk/typescript) and Rust SDK (sdk/rust)
+tests/        Python tests (pytest)
+examples/     runnable examples: Python scripts, Collector configs, WebSocket browser page
+docs/         user documentation (start at docs/README.md)
+benchmark/    open benchmark v0.1: results and leaderboard
+demo/         prebuilt static demo page (open in a browser)
+experiments/  research experiments: plan.md, results.md and aggregate results per run
+papers/       our own papers (paper 1: final draft, waiting for an arXiv endorsement)
+wiki/         LLM-maintained research knowledge base, diagrams, progress dashboard
+references/   catalogue of third-party sources (the files themselves are not committed)
+tools/        build scripts: diagrams, progress dashboard, proto schema, hygiene check
 ```
 
-## Open benchmark v0.1
-Score neural text entry from NeuralTextStream files, with fixed splits, required controls and eWPM next to a no-BCI reference. Three tracks: SpanishBCBL MEG (research only), Brain-to-Text '25 (CC0), Toronto sEMG (CC BY). No data and no weights are shipped.
+## Contributing
 
-```bash
-python -m fidetype.benchmark tracks
-python -m fidetype.benchmark prepare b2t25-t15-copytask --data t15_copyTask.pkl --out truth.jsonl
-python -m fidetype.benchmark score my-submission --truth truth.jsonl --out result.json
-python -m fidetype.benchmark leaderboard
-```
+- Read [CONTRIBUTING.md](CONTRIBUTING.md): setup, tests, writing style, DCO sign-off.
+- Spec changes go through a **FEP**: copy [`spec/feps/0000-template.md`](spec/feps/0000-template.md) and open a pull request. The process is in [GOVERNANCE.md](GOVERNANCE.md#4-spec-changes-feps).
+- Comment on the RC with an issue or a Discussion (label `spec-1.0-rc`; name the rule id).
+- Follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities as [SECURITY.md](SECURITY.md) says.
 
-Leaderboard: [benchmark/site/leaderboard.md](benchmark/site/leaderboard.md) (also `benchmark/site/index.html`). How to submit: [benchmark/README.md](benchmark/README.md). Concept: [wiki/concepts/open-benchmark.md](wiki/concepts/open-benchmark.md).
+## Licence and data rules
 
-## Data and licences
-- All code in this repository is **Apache-2.0**.
-- Some research datasets (SpanishBCBL; emg2qwerty, not used yet) are **CC BY-NC**. We use them for research and benchmarks only. We do not redistribute them. All datasets are download-only: you fetch them from the original source. Details and the M5-03 audit: [LICENSES/DATA.md](LICENSES/DATA.md).
-- **Provenance rule:** product model weights come only from CC0 data or from our own consented data. A provenance ledger (planned) records which data trained which weights.
-- Meta's Brain2Qwerty code is CC BY-NC. Fidetype contains no Meta code. Our decoder will be our own implementation.
-
-## Research notes
-The [wiki/](wiki/) folder is an LLM-maintained knowledge base. It follows Andrej Karpathy's [LLM-wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). The human selects the sources and asks the questions. An LLM agent writes and maintains the pages. Start at [wiki/overview.md](wiki/overview.md) or [wiki/index.md](wiki/index.md).
-
-## Project goals and governance
-- **Goal:** become the vendor-neutral standard for the confidence of neural input. Any decoder, on any device, emits one open format. Any consumer can read and check it.
-- **Spec:** the NeuralTextStream format is a written spec in [spec/](spec/) (v0.1, Development). Changes go through FEPs (Fidetype Enhancement Proposals).
-- **Governance:** founder-led today, with a written path to neutral governance and a foundation home: [GOVERNANCE.md](GOVERNANCE.md).
-- **Contribute:** [CONTRIBUTING.md](CONTRIBUTING.md). All participants follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
-
-**Cite:** if you use Fidetype, cite it with the metadata in [CITATION.cff](CITATION.cff) (GitHub shows a "Cite this repository" button).
-
-## Acknowledgements
-Fidetype is inspired by Meta FAIR's [Brain2Qwerty](https://facebookresearch.github.io/brain2qwerty/) research. Fidetype is an independent project. It is **not affiliated with or endorsed by Meta**.
-
-## Licence
-[Apache License 2.0](LICENSE).
+- The repository is licensed **Apache-2.0** ([LICENSE](LICENSE)). Committed results that quote CC BY-NC data keep the terms of that data ([LICENSES/DATA.md](LICENSES/DATA.md)).
+- The repository contains **no raw recordings, no participant data and no trained weights**. Datasets are download-only from their original sources. Some are CC BY-NC (research only). Details: [LICENSES/DATA.md](LICENSES/DATA.md).
+- Fidetype contains no code from Meta's Brain2Qwerty (CC BY-NC 4.0). The project started from that research, but it is independent and **not affiliated with or endorsed by Meta**.
+- Cite Fidetype with [CITATION.cff](CITATION.cff).

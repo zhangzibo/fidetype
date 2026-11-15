@@ -233,3 +233,16 @@ jobs:
           rustup toolchain install "$msrv" --profile minimal
           cargo +"$msrv" build --locked --lib --bins
           cargo +"$msrv" build --locked --lib --no-default-features
+
+  # R-23 repository hygiene: no caches, build output, data or model files, secrets, private e-mail
+  # addresses or files over 5 MB in the tracked tree; no broken relative links in README.md and docs/.
+  # Rules and the cleanup checklist: wiki/questions/repo-hygiene.md.
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - run: node tools/hygiene/check.js --ci
+      - run: node tools/hygiene/links.js --ci
