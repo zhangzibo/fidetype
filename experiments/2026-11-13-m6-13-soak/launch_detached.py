@@ -1,9 +1,11 @@
 """Start the soak supervisor fully detached from the calling shell (M6-15).
 
 The process tree is: this launcher (exits at once) -> ``python -m fidetype.utils.isolation run --class timing``
--> ``soak.py supervise``. The isolation launcher starts with DETACHED_PROCESS (no console, so no console
-close or Ctrl-C event can reach it), in a new process group, and breaks away from the caller's job object
-when Windows allows it. Output goes to ``<run dir>/supervisor.out``.
+-> ``soak.py supervise``. The isolation launcher starts with CREATE_NO_WINDOW: it gets a hidden console, and
+its console children (the venv python, the supervisor) share it, so no window opens on the desktop.
+(DETACHED_PROCESS or pythonw.exe is wrong here: a console child of a process without a console opens a
+new visible Windows Terminal window, and closing that window kills the run with 0xC000013A.) It also
+starts in a new process group and breaks away from the caller's job object when Windows allows it. Output goes to ``<run dir>/supervisor.out``.
 
     python experiments/2026-11-13-m6-13-soak/launch_detached.py --run-dir C:/Users/zhang/bci-data/soak/m6-15 \
         --results-dir experiments/2026-11-13-m6-13-soak/results-full [--resume] [-- extra supervise args]
@@ -20,7 +22,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-DETACHED_PROCESS = 0x00000008
+CREATE_NO_WINDOW = 0x08000000
 CREATE_NEW_PROCESS_GROUP = 0x00000200
 CREATE_BREAKAWAY_FROM_JOB = 0x01000000
 
@@ -44,7 +46,7 @@ def main() -> int:
            sys.executable, str(HERE / "soak.py"), "supervise", "--planned-s", str(a.planned_s),
            *(["--resume"] if a.resume else []), *[x for x in extra if x != "--"]]
     out = open(run / "supervisor.out", "ab")
-    flags = DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
+    flags = CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
     kw = dict(cwd=ROOT, env=env, stdin=subprocess.DEVNULL, stdout=out, stderr=subprocess.STDOUT, close_fds=True)
     try:
         p = subprocess.Popen(cmd, creationflags=flags | (CREATE_BREAKAWAY_FROM_JOB if os.name == "nt" else 0), **kw)
