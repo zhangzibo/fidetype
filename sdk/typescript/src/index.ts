@@ -24,7 +24,7 @@ export {
 export type { CheckResult, ConsumedStream, Level, Status } from "./checks.js";
 export { StreamValidator, StreamEventError, parseEvent, frameRow, checkHeader, checkNbest } from "./validate.js";
 export type { PushResult } from "./validate.js";
-export { NtsWriter, toJsonl } from "./writer.js";
+export { HEADER_KEYS, NtsWriter, toJsonl } from "./writer.js";
 export type { WriterOptions, NbestItem } from "./writer.js";
 export { parseNtsText, readLines, readNtsEvents, validateNtsStream } from "./reader.js";
 export type { ChunkSource } from "./reader.js";

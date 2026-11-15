@@ -14,6 +14,10 @@ adapters cannot carry them. This module writes them as a
   (``unit = "utterance"``);
 - one ``end`` event.
 
+The events go through :class:`fidetype.StreamWriter` (``vocab = []``), so
+the writer checks them; with an empty vocab it refuses every frame
+(HDR-12).
+
 Inputs (:func:`read_nbest`):
 
 - **CSV** with a header row. Default columns ``id`` and ``text``; an
@@ -38,6 +42,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import io
 import json
 import math
 import sys
@@ -47,8 +52,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
 from fidetype import __version__ as _FIDETYPE_VERSION
-from fidetype.streams.spec import SPEC_VERSION
-from fidetype.writer import MODALITIES, SCORE_SEMANTICS, stream_meta
+from fidetype.writer import MODALITIES, SCORE_SEMANTICS, StreamWriter, stream_meta
 
 __all__ = [
     "ADAPTER_NAME",
@@ -243,6 +247,65 @@ def _stream_id(decoder: TextDecoderInfo, utterances: Sequence[Utterance]) -> str
     return h.hexdigest()[:32]
 
 
+def _render(
+    utterances: Sequence[Utterance],
+    decoder: TextDecoderInfo,
+    *,
+    score_semantics: str = "none",
+    decode_declaration: Mapping[str, Any] | None = None,
+    source: str | None = None,
+    stream_id: str | None = "auto",
+    latency: float | None = None,
+) -> str:
+    """Write one hypothesis-only stream with :class:`StreamWriter` into a string (JSON Lines)."""
+    if score_semantics not in SCORE_SEMANTICS:
+        raise ValueError(f"score_semantics must be one of {SCORE_SEMANTICS}")
+    if score_semantics in ("power", "strength"):
+        raise ValueError("hypothesis scores with 'power' or 'strength' need a score_range; not supported here")
+    if not decoder.causal and latency is not None:
+        raise ValueError("an offline (non-causal) decoder omits latency (spec MET-5)")
+    sid = _stream_id(decoder, utterances) if stream_id == "auto" else stream_id
+    meta = stream_meta(
+        modality=decoder.modality, decoder_name=decoder.name, decoder_version=decoder.version,
+        causal=decoder.causal, lookahead_s=latency, language=decoder.language, lm_name=decoder.lm_name,
+        weights_sha256=decoder.weights_sha256, stream_id=sid, adapter_name=ADAPTER_NAME,
+        adapter_version=_FIDETYPE_VERSION, extra=dict(decoder.extra),
+    )
+    extra: dict[str, Any] = {}
+    if decode_declaration is not None:
+        dd = dict(decode_declaration)
+        if not isinstance(dd.get("decoder"), str) or not dd["decoder"]:
+            raise ValueError("decode_declaration needs a non-empty 'decoder' (DCL-1)")
+        if "frame_temperature" in dd and not (_finite(dd["frame_temperature"], "frame_temperature") > 0):
+            raise ValueError("frame_temperature must be > 0")
+        if "params" in dd and not isinstance(dd["params"], Mapping):
+            raise ValueError("decode_declaration params must be an object")
+        extra["decode_declaration"] = dd
+    # Check every utterance before the first line is written.
+    used: set[str] = set()
+    ids: list[str] = []
+    for n, u in enumerate(utterances, 1):
+        hid = u.id if u.id is not None else f"h{n}"
+        if hid in used:
+            raise ValueError(f"hypothesis id {hid!r} is used twice (HYP-1)")
+        used.add(hid)
+        ids.append(hid)
+        if score_semantics in ("calibrated_prob", "uncalibrated_prob"):
+            for it in u.nbest:
+                if not 0.0 <= it["score"] <= 1.0:
+                    raise ValueError(f"utterance {hid!r}: score {it['score']} is not a probability (DEC-2)")
+    buf = io.StringIO()
+    w = StreamWriter(buf, vocab=[], vocab_type="char", blank_id=None, source=source or decoder.name,
+                     latency=None if latency is None else _finite(latency, "latency"), meta=meta,
+                     extra_header=extra, flush=False)
+    for hid, u in zip(ids, utterances):
+        w.hypothesis(u.nbest, is_final=bool(u.is_final), id=hid, score_semantics=score_semantics,
+                     t_start=u.t_start, t_end=u.t_end)
+        w.segment_end(u.t_end, unit="utterance")
+    w.close()
+    return buf.getvalue()
+
+
 def stream_events(
     utterances: Sequence[Utterance],
     decoder: TextDecoderInfo,
@@ -258,60 +321,12 @@ def stream_events(
     Each utterance gives one ``hypothesis`` and one ``segment_end``. An
     utterance without an id gets ``h<n>``. Ids must be unique (HYP-1).
     ``decode_declaration`` (spec 4.7.3) goes into the header; it must name
-    a ``decoder`` and must not hold user text (DCL-7).
+    a ``decoder`` and must not hold user text (DCL-7). The events are the
+    lines that :class:`StreamWriter` writes.
     """
-    if score_semantics not in SCORE_SEMANTICS:
-        raise ValueError(f"score_semantics must be one of {SCORE_SEMANTICS}")
-    if score_semantics in ("power", "strength"):
-        raise ValueError("hypothesis scores with 'power' or 'strength' need a score_range; not supported here")
-    if not decoder.causal and latency is not None:
-        raise ValueError("an offline (non-causal) decoder omits latency (spec MET-5)")
-    sid = _stream_id(decoder, utterances) if stream_id == "auto" else stream_id
-    meta = stream_meta(
-        modality=decoder.modality, decoder_name=decoder.name, decoder_version=decoder.version,
-        causal=decoder.causal, lookahead_s=latency, language=decoder.language, lm_name=decoder.lm_name,
-        weights_sha256=decoder.weights_sha256, stream_id=sid, adapter_name=ADAPTER_NAME,
-        adapter_version=_FIDETYPE_VERSION, extra=dict(decoder.extra),
-    )
-    head: dict[str, Any] = {"type": "header", "spec_version": SPEC_VERSION, "vocab": [], "vocab_type": "char",
-                            "blank_id": None, "source": source or decoder.name}
-    if latency is not None:
-        head["latency"] = _finite(latency, "latency")
-    if decode_declaration is not None:
-        dd = dict(decode_declaration)
-        if not isinstance(dd.get("decoder"), str) or not dd["decoder"]:
-            raise ValueError("decode_declaration needs a non-empty 'decoder' (DCL-1)")
-        if "frame_temperature" in dd and not (_finite(dd["frame_temperature"], "frame_temperature") > 0):
-            raise ValueError("frame_temperature must be > 0")
-        if "params" in dd and not isinstance(dd["params"], Mapping):
-            raise ValueError("decode_declaration params must be an object")
-        head["decode_declaration"] = dd
-    head["meta"] = meta
-    events: list[dict[str, Any]] = [head]
-    used: set[str] = set()
-    for n, u in enumerate(utterances, 1):
-        hid = u.id if u.id is not None else f"h{n}"
-        if hid in used:
-            raise ValueError(f"hypothesis id {hid!r} is used twice (HYP-1)")
-        used.add(hid)
-        nbest = u.nbest
-        if score_semantics in ("calibrated_prob", "uncalibrated_prob"):
-            for it in nbest:
-                if not 0.0 <= it["score"] <= 1.0:
-                    raise ValueError(f"utterance {hid!r}: score {it['score']} is not a probability (DEC-2)")
-        ev: dict[str, Any] = {"type": "hypothesis", "id": hid, "is_final": bool(u.is_final),
-                              "score_semantics": score_semantics, "nbest": nbest}
-        if u.t_start is not None:
-            ev["t_start"] = u.t_start
-        if u.t_end is not None:
-            ev["t_end"] = u.t_end
-        events.append(ev)
-        seg: dict[str, Any] = {"type": "segment_end", "unit": "utterance"}
-        if u.t_end is not None:
-            seg["t"] = u.t_end
-        events.append(seg)
-    events.append({"type": "end"})
-    return events
+    text = _render(utterances, decoder, score_semantics=score_semantics, decode_declaration=decode_declaration,
+                   source=source, stream_id=stream_id, latency=latency)
+    return [json.loads(line) for line in text.splitlines()]
 
 
 def write_events(events: Sequence[Mapping[str, Any]], path: str | PathLike[str]) -> Path:
@@ -328,8 +343,10 @@ def write_stream(
     path: str | PathLike[str],
     **kwargs: Any,
 ) -> Path:
-    """:func:`stream_events` then :func:`write_events`."""
-    return write_events(stream_events(utterances, decoder, **kwargs), path)
+    """Write the stream with :class:`StreamWriter` (all checks run before the file is written)."""
+    p = Path(path)
+    p.write_text(_render(utterances, decoder, **kwargs), encoding="utf-8", newline="\n")
+    return p
 
 
 def check_stream_file(path: str | PathLike[str], level: str = "core") -> list[str]:

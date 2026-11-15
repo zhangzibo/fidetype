@@ -5,9 +5,12 @@ This file lists the changes of the Rust SDK (crate `fidetype`). The format follo
 ## [Unreleased]
 
 ### Added
+- `NtsWriter` accepts `vocab: Some(vec![])` (a hypothesis-only or control-only stream, spec HDR-12). `blank_id` must then be `None` (HDR-6). With an empty vocab the writer refuses every frame: `frame_log_probs`, `frame_probs`, `frame_logits` and `event` with `type = "frame"` return a `Usage` error (HDR-12). Same behaviour and messages as the Python and TypeScript writers.
+- Tests: the empty-vocab writer stream (same events and key order as Python and TypeScript) and its refusals. Vectors V62-V65 run in the v0.1 suite (65 vectors).
 - Packaging for crates.io (P2): `homepage`, `documentation`, `rust-version`, `include` whitelist, docs.rs settings (all features, `docsrs` cfg), `LICENSE` in the crate.
 
 ### Changed
+- `extra_header` must not hold a key that the writer sets itself (`writer::HEADER_KEYS`). Before, it could overwrite them and so skip the checks.
 - `SDK_VERSION` comes from `CARGO_PKG_VERSION`, so `Cargo.toml` is the one source of the version.
 - `publish = false` is removed. Publishing is still a maintainer decision (see docs/RELEASING.md).
 

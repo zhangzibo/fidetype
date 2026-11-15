@@ -87,6 +87,43 @@ def test_hypothesis_route_with_writer():
     assert len(finals) == 1 and finals[0].action in tuple(fidetype.Action)
 
 
+# The same hypothesis-only stream in the Python, TypeScript and Rust writer tests (Python bytes; same events and key order, HDR-12).
+EMPTY_VOCAB_LINES = [
+    '{"type": "header", "spec_version": "0.1", "vocab": [], "vocab_type": "char", "blank_id": null, "source": "t", "clock_domain": "trial", "meta": {}}',
+    '{"type": "hypothesis", "id": "u1", "is_final": true, "score_semantics": "none", "nbest": [{"text": "hello", "score": -1.5}], "t_start": 0.5, "t_end": 1.25}',
+    '{"type": "segment_end", "t": 1.25, "unit": "utterance"}',
+    '{"type": "end"}',
+]
+
+
+def test_writer_empty_vocab_hypothesis_only(tmp_path):
+    buf = io.StringIO()
+    w = fidetype.StreamWriter(buf, vocab=[], blank_id=None, source="t", extra_header={"clock_domain": "trial"})
+    w.hypothesis([("hello", -1.5)], is_final=True, id="u1", t_start=0.5, t_end=1.25)
+    w.segment_end(1.25, unit="utterance")
+    for bad in (lambda: w.frame(0.0, []), lambda: w.frame(0.0, probs=[]), lambda: w.frame(0.0, logits=[]),
+                lambda: w.event({"type": "frame", "t": 0.0, "log_probs": []}),
+                lambda: w.event({"type": "frame", "t": 0.0, "top_ids": [], "top_log_probs": [], "rest_log_prob": 0.0})):
+        with pytest.raises(ValueError, match="HDR-12"):
+            bad()
+    with pytest.raises(ValueError, match="unit"):
+        w.segment_end(unit="sentence")
+    w.end()
+    assert buf.getvalue().splitlines() == EMPTY_VOCAB_LINES
+    p = tmp_path / "h.jsonl"
+    p.write_text(buf.getvalue(), encoding="utf-8", newline="\n")
+    assert fidetype.validate(p).passes("core")
+
+
+def test_writer_empty_vocab_refusals():
+    with pytest.raises(ValueError, match="blank_id must be null"):
+        fidetype.StreamWriter(io.StringIO(), vocab=[], source="t")  # default blank_id 0
+    with pytest.raises(ValueError, match="unique"):
+        fidetype.StreamWriter(io.StringIO(), vocab=["a", "a"], blank_id=None, source="t")
+    with pytest.raises(ValueError, match="extra_header must not set 'vocab'"):
+        fidetype.StreamWriter(io.StringIO(), vocab=[], blank_id=None, source="t", extra_header={"vocab": ["a"]})
+
+
 def test_frozen_config_roundtrip(tmp_path):
     cfg = demo.load_config()
     cfg.save(tmp_path / "c.json")

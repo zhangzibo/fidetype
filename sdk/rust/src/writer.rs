@@ -28,7 +28,9 @@ use crate::json::{cp_len, dump_json, Map, Value};
 #[derive(Debug, Clone)]
 pub struct WriterOptions {
     pub source: String,
-    /// Default: the 28-token `char.b2q-28` vocabulary.
+    /// Default: the 28-token `char.b2q-28` vocabulary. `Some(vec![])` = a
+    /// hypothesis-only (or control-only) stream (HDR-12): `blank_id` must be
+    /// `None` and frames are refused.
     pub vocab: Option<Vec<String>>,
     /// Default: `char`.
     pub vocab_type: String,
@@ -37,9 +39,15 @@ pub struct WriterOptions {
     pub frame_period: Option<f64>,
     pub latency: Option<f64>,
     pub meta: Map,
-    /// Extra header keys (for example `clock_domain`, `decode_declaration`).
+    /// Extra header keys (for example `clock_domain`, `decode_declaration`),
+    /// written before `meta`. Must not hold a key of [`HEADER_KEYS`].
     pub extra_header: Map,
 }
+
+/// Header keys that the writer sets itself; `extra_header` must not hold them.
+pub const HEADER_KEYS: [&str; 9] = ["type", "spec_version", "vocab", "vocab_type", "blank_id", "source", "frame_period", "latency", "meta"];
+
+const EMPTY_VOCAB_FRAME: &str = "a stream with an empty vocab must not have frames (HDR-12)";
 
 impl WriterOptions {
     pub fn new(source: &str) -> Self {
@@ -106,11 +114,14 @@ impl<S: FnMut(&str)> NtsWriter<S> {
     pub fn new(sink: S, opts: WriterOptions) -> Result<Self, Error> {
         let vocab: Vec<String> = opts.vocab.clone().unwrap_or_else(|| VOCAB.iter().map(|s| s.to_string()).collect());
         let uniq: BTreeSet<&String> = vocab.iter().collect();
-        if vocab.is_empty() || uniq.len() != vocab.len() {
-            return Err(usage("vocab must be a non-empty list of unique strings"));
+        if uniq.len() != vocab.len() {
+            return Err(usage("vocab must be a list of unique strings"));
         }
         if !VOCAB_TYPES.contains(&opts.vocab_type.as_str()) {
             return Err(usage(format!("vocab_type must be one of {}", VOCAB_TYPES.join(", "))));
+        }
+        if vocab.is_empty() && opts.blank_id.is_some() {
+            return Err(usage("blank_id must be null when vocab is empty (HDR-6, HDR-12)"));
         }
         if let Some(b) = opts.blank_id {
             if b >= vocab.len() {
@@ -119,6 +130,9 @@ impl<S: FnMut(&str)> NtsWriter<S> {
         }
         if opts.source.is_empty() {
             return Err(usage("source must not be empty"));
+        }
+        if let Some(k) = HEADER_KEYS.iter().find(|k| opts.extra_header.has(k)) {
+            return Err(usage(format!("extra_header must not set '{}' (the writer sets it)", k)));
         }
         let mut head = Map::new();
         head.insert("type", Value::str("header"));
@@ -158,17 +172,25 @@ impl<S: FnMut(&str)> NtsWriter<S> {
     }
 
     /// Write any other event (an object with a string `type`) as it is.
+    /// With an empty vocab, a `frame` event is refused (HDR-12).
     pub fn event(&mut self, ev: &Map) -> Result<(), Error> {
         if !ev.get("type").is_str() {
             return Err(usage("an event needs a string type"));
+        }
+        if self.vocab.is_empty() && ev.get("type").as_str() == Some("frame") {
+            return Err(usage(EMPTY_VOCAB_FRAME));
         }
         self.write(&Value::Obj(ev.clone()))
     }
 
     /// Write one frame of natural-log probabilities at time `t` (seconds).
     /// `-inf` is allowed. The row must sum to 1 within the spec tolerance;
-    /// times must increase strictly.
+    /// times must increase strictly. With an empty vocab every frame is
+    /// refused (HDR-12).
     pub fn frame_log_probs(&mut self, t: f64, row: &[f64]) -> Result<(), Error> {
+        if self.vocab.is_empty() {
+            return Err(usage(EMPTY_VOCAB_FRAME));
+        }
         if row.len() != self.vocab.len() {
             return Err(usage(format!("a frame needs {} values, got {}", self.vocab.len(), row.len())));
         }
@@ -198,6 +220,9 @@ impl<S: FnMut(&str)> NtsWriter<S> {
 
     /// Write one frame of probabilities in [0, 1].
     pub fn frame_probs(&mut self, t: f64, probs: &[f64]) -> Result<(), Error> {
+        if self.vocab.is_empty() {
+            return Err(usage(EMPTY_VOCAB_FRAME));
+        }
         if probs.iter().any(|&v| !(v >= 0.0) || v > 1.0 + NORM_TOL) {
             return Err(usage("probs must be in [0, 1]"));
         }
@@ -207,6 +232,9 @@ impl<S: FnMut(&str)> NtsWriter<S> {
 
     /// Write one frame of raw scores (log-softmax is applied).
     pub fn frame_logits(&mut self, t: f64, logits: &[f64]) -> Result<(), Error> {
+        if self.vocab.is_empty() {
+            return Err(usage(EMPTY_VOCAB_FRAME));
+        }
         let m = logits.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
         let lse = m + libm::log(logits.iter().map(|&v| libm::exp(v - m)).sum::<f64>());
         let row: Vec<f64> = logits.iter().map(|&v| v - lse).collect();
@@ -286,7 +314,8 @@ impl<S: FnMut(&str)> NtsWriter<S> {
         self.write(&Value::Obj(ev))
     }
 
-    /// Mark the end of an utterance (`segment_end`, FEP-0001 section 1).
+    /// Mark the end of a segment (`segment_end`, spec 4.3). `unit` absent =
+    /// `utterance` (SEG-5).
     pub fn segment_end(&mut self, t: Option<f64>, unit: Option<&str>) -> Result<(), Error> {
         let mut ev = Map::from_pairs([("type", Value::str("segment_end"))]);
         if let Some(t) = t {

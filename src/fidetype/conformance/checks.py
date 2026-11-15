@@ -450,6 +450,9 @@ def c_norm(raw: RawStream) -> tuple[str, str]:
         return skip("no 2-D log_probs")
     if lp.shape[0] == 0:
         return ok("no frames")
+    if lp.shape[1] == 0:
+        # V = 0 (HDR-12 allows it only without frames): an empty row has log-sum-exp -inf.
+        return bad(f"{lp.shape[0]} row(s) not normalised; frame 0 gives log-sum-exp -inf (vocab is empty)")
     if np.isnan(lp).any() or np.isposinf(lp).any():
         return skip("non-finite values (reported by NTS-LP-FINITE)")
     m = lp.max(axis=1, keepdims=True)

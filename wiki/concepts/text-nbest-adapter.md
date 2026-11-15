@@ -54,7 +54,7 @@ python -m fidetype.adapters.text_nbest submission.csv --modality intracortical \
 ## Limits and open points
 - The hypothesis-only stream is not registered as an `adapter:` conformance target. The suite targets hold `NeuralTextStream` objects (the frame core), not event lists. The unit tests and `check_stream_file` check the written files instead.
 - No provisional (`is_final = false`) revision chains from files yet. The Python API can set `is_final`.
-- `StreamWriter` in the SDK refuses `vocab = []`, so this module writes its own JSON Lines. HDR-12 allows V = 0; the SDK writer could follow (follow-up).
+- Done (P4-08, 2026-11-14): the SDK writers (Python `StreamWriter`, TypeScript and Rust `NtsWriter`) accept `vocab = []` (HDR-12) and refuse every frame of such a stream. This module now writes through `StreamWriter`. Vectors V62-V65 test the empty vocabulary.
 
 ## Related
 - [CTC-logits adapter](ctc-logits-adapter.md), [roadmap P4](../questions/roadmap-standard.md#p4-device-and-toolkit-adapters), [NTS specification](nts-spec.md), [conformance suite](conformance-suite.md).

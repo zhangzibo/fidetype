@@ -43,6 +43,10 @@ __all__ = ["StreamWriter", "make_stream", "stream_meta", "write_stream"]
 
 SCORE_SEMANTICS = ("calibrated_prob", "uncalibrated_prob", "power", "strength", "none")
 MODALITIES = ("meg", "eeg", "emg", "ecog", "intracortical", "fnirs", "other")
+SEGMENT_UNITS = ("utterance", "word", "trial")
+#: Header keys that the writer sets itself; ``extra_header`` must not hold them.
+HEADER_KEYS = ("type", "spec_version", "vocab", "vocab_type", "blank_id", "source", "frame_period", "latency", "meta")
+_EMPTY_VOCAB_FRAME = "a stream with an empty vocab must not have frames (HDR-12)"
 
 
 def stream_meta(
@@ -169,6 +173,12 @@ class StreamWriter:
 
     ``target`` is a path or an open text file (for example ``sys.stdout``
     or a socket file).
+
+    ``vocab = []`` makes a hypothesis-only (or control-only) stream (spec
+    HDR-12). Then ``blank_id`` must be ``None`` (HDR-6), and the writer
+    refuses every frame. ``extra_header`` adds header keys (for example
+    ``clock_domain`` or ``decode_declaration``) before ``meta``; it must not
+    hold a key that the writer sets itself.
     """
 
     def __init__(
@@ -182,17 +192,24 @@ class StreamWriter:
         frame_period: float | None = None,
         latency: float | None = None,
         meta: Mapping[str, Any] | None = None,
+        extra_header: Mapping[str, Any] | None = None,
         flush: bool = True,
     ) -> None:
         vocab = list(vocab)
-        if not vocab or not all(isinstance(v, str) for v in vocab) or len(set(vocab)) != len(vocab):
-            raise ValueError("vocab must be a non-empty list of unique strings")
+        if not all(isinstance(v, str) for v in vocab) or len(set(vocab)) != len(vocab):
+            raise ValueError("vocab must be a list of unique strings")
         if vocab_type not in VOCAB_TYPES:
             raise ValueError(f"vocab_type must be one of {VOCAB_TYPES}")
+        if not vocab and blank_id is not None:
+            raise ValueError("blank_id must be null when vocab is empty (HDR-6, HDR-12)")
         if blank_id is not None and not 0 <= int(blank_id) < len(vocab):
             raise ValueError("blank_id is out of range")
         if not source:
             raise ValueError("source must not be empty")
+        extra = dict(extra_header or {})
+        clash = [k for k in HEADER_KEYS if k in extra]
+        if clash:
+            raise ValueError(f"extra_header must not set {clash[0]!r} (the writer sets it)")
         self.vocab = vocab
         self.V = len(vocab)
         self._flush = flush
@@ -215,6 +232,7 @@ class StreamWriter:
             head["frame_period"] = _num(frame_period, "frame_period")
         if latency is not None:
             head["latency"] = _num(latency, "latency")
+        head.update(extra)
         head["meta"] = dict(meta or {})
         self._write(head)
 
@@ -228,9 +246,14 @@ class StreamWriter:
             self._f.flush()
 
     def event(self, ev: Mapping[str, Any]) -> None:
-        """Write any other event (a dict with ``type``) as it is."""
+        """Write any other event (a dict with ``type``) as it is.
+
+        With an empty vocab, a ``frame`` event is refused (HDR-12).
+        """
         if not isinstance(ev.get("type"), str):
             raise ValueError("an event needs a string type")
+        if ev["type"] == "frame" and self.V == 0:
+            raise ValueError(_EMPTY_VOCAB_FRAME)
         self._write(dict(ev))
 
     # --- events ---------------------------------------------------------------
@@ -241,8 +264,11 @@ class StreamWriter:
         Give exactly one of ``log_probs`` (natural log, may contain
         ``-inf``), ``probs`` (in [0, 1]) or ``logits`` (any real numbers;
         ``log_softmax`` is applied). The row must sum to 1 within the spec
-        tolerance. Times must increase strictly.
+        tolerance. Times must increase strictly. With an empty vocab every
+        frame is refused (HDR-12).
         """
+        if self.V == 0:
+            raise ValueError(_EMPTY_VOCAB_FRAME)
         given = [x is not None for x in (log_probs, probs, logits)]
         if sum(given) != 1:
             raise ValueError("give exactly one of log_probs, probs or logits")
@@ -348,11 +374,19 @@ class StreamWriter:
             raise ValueError("an index value must be in [0, 1]")
         self._write({"type": "signal_quality", "t": _num(t, "t"), "value": v, "unit": unit})
 
-    def segment_end(self, t: float | None = None) -> None:
-        """Mark the end of an utterance (``segment_end``, proposed in FEP-0001)."""
+    def segment_end(self, t: float | None = None, unit: str | None = None) -> None:
+        """Mark the end of a segment (``segment_end``, spec 4.3).
+
+        ``unit`` is ``utterance``, ``word`` or ``trial`` (SEG-5); absent means
+        ``utterance``.
+        """
         ev: dict[str, Any] = {"type": "segment_end"}
         if t is not None:
             ev["t"] = _num(t, "t")
+        if unit is not None:
+            if unit not in SEGMENT_UNITS:
+                raise ValueError(f"unit must be one of {SEGMENT_UNITS}")
+            ev["unit"] = unit
         self._write(ev)
 
     def end(self) -> None:

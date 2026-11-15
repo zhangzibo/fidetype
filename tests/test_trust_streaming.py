@@ -290,6 +290,16 @@ def test_golden_vectors_equal_batch(setup, tmp_path):
         path = VECTORS / v["file"]
         cs = load_stream(path)
         layer = StreamingTrustLayer(cfg, decode_fn=greedy_nbest, streaming=StreamingConfig(max_attempts=1))
+        if cs.stream.vocab_size == 0:
+            # Hypothesis-only stream (HDR-12, V62): no frames, so no batch reference. Each segment's
+            # final decision equals the policy on its hypothesis.
+            hyps = [e for e in cs.events if e.get("type") == "hypothesis"]
+            finals = [d for d in replay(path, hyp_layer, session_id=v["file"]) if d.final]
+            assert len(finals) == len(hyps), v["file"]
+            for d, h in zip(finals, hyps):
+                an = plain.analyze(nbest_from_hypothesis(h))
+                assert d.decision == plain.policy.decide(an.inputs, final_attempt=True)
+            continue
         try:
             ref = _batch(bp, cs.stream)
         except Exception as e:  # noqa: BLE001 - the decoder may not support this vocab

@@ -681,6 +681,51 @@
    "clause": "1.0 RC2 4.1 (GEN-5)",
    "description": "Header blank_id is 0.0 (an integer written as 0.0)",
    "failing_check": "NTS-BLANK"
+  },
+  {
+   "id": "V62",
+   "file": "v62-empty-vocab-hypotheses.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC2 3.1 (HDR-12) / 4.7",
+   "description": "Hypothesis-only stream: vocab = [], blank_id null, hypotheses and segment ends, no frames",
+   "expected": {
+    "n_frames": 0,
+    "vocab_size": 0,
+    "blank_id": null,
+    "events": 2
+   }
+  },
+  {
+   "id": "V63",
+   "file": "v63-empty-vocab-dense-frame.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 3.1 (HDR-12) / 4.2 (FRM-3)",
+   "description": "vocab = [] with a dense frame (log_probs = []): V = 0 needs a stream without frames",
+   "failing_check": "NTS-NORM"
+  },
+  {
+   "id": "V64",
+   "file": "v64-empty-vocab-sparse-frame.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 3.1 (HDR-12) / 4.2 (FRM-5)",
+   "description": "vocab = [] with a sparse frame (k = 0, rest_log_prob 0): V = 0 needs a stream without frames",
+   "failing_check": "NTS-NORM"
+  },
+  {
+   "id": "V65",
+   "file": "v65-empty-vocab-blank-0.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC2 3.1 (HDR-6, HDR-12)",
+   "description": "vocab = [] with blank_id 0 (no index is in 0 ... V-1)",
+   "failing_check": "NTS-BLANK"
   }
  ]
 }

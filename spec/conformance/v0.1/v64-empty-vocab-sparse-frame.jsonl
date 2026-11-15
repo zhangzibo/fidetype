@@ -1,0 +1,4 @@
+{"type": "header", "spec_version": "1.0", "vocab": [], "vocab_type": "char", "blank_id": null, "source": "conformance-vector", "clock_domain": "trial", "meta": {"device.modality": "other", "decoder.name": "conformance-vector", "decoder.version": "1", "decoder.causal": true, "data.derived": true, "language": "en"}}
+{"type": "hypothesis", "id": "u1", "is_final": true, "score_semantics": "none", "nbest": [{"text": "hello world", "score": 0.0}, {"text": "hello word", "score": 0.0}]}
+{"type": "frame", "t": 0.0, "top_ids": [], "top_log_probs": [], "rest_log_prob": 0.0}
+{"type": "end"}

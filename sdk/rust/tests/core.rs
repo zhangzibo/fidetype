@@ -74,6 +74,56 @@ fn writer_refuses_bad_input() {
     assert!(NtsWriter::new(|_: &str| {}, bad).is_err());
 }
 
+/// The same hypothesis-only stream in the Python, TypeScript and Rust writer tests (Python bytes; same events and key order, HDR-12).
+const EMPTY_VOCAB_LINES: [&str; 4] = [
+    "{\"type\": \"header\", \"spec_version\": \"0.1\", \"vocab\": [], \"vocab_type\": \"char\", \"blank_id\": null, \"source\": \"t\", \"clock_domain\": \"trial\", \"meta\": {}}",
+    "{\"type\": \"hypothesis\", \"id\": \"u1\", \"is_final\": true, \"score_semantics\": \"none\", \"nbest\": [{\"text\": \"hello\", \"score\": -1.5}], \"t_start\": 0.5, \"t_end\": 1.25}",
+    "{\"type\": \"segment_end\", \"t\": 1.25, \"unit\": \"utterance\"}",
+    "{\"type\": \"end\"}",
+];
+
+fn empty_vocab_opts() -> WriterOptions {
+    let mut o = WriterOptions::new("t");
+    o.vocab = Some(vec![]);
+    o.blank_id = None;
+    o.extra_header = Map::from_pairs([("clock_domain", Value::str("trial"))]);
+    o
+}
+
+#[test]
+fn writer_empty_vocab_hypothesis_only() {
+    let mut lines: Vec<String> = Vec::new();
+    let mut w = NtsWriter::new(|l: &str| lines.push(l.to_string()), empty_vocab_opts()).unwrap();
+    w.hypothesis(&[NbestItem::new("hello", -1.5)], true, Some("u1"), "none", Some((0.5, 1.25))).unwrap();
+    w.segment_end(Some(1.25), Some("utterance")).unwrap();
+    for e in [w.frame_log_probs(0.0, &[]), w.frame_probs(0.0, &[]), w.frame_logits(0.0, &[])] {
+        assert!(e.unwrap_err().message.contains("HDR-12"));
+    }
+    let dense = Map::from_pairs([("type", Value::str("frame")), ("t", Value::float(0.0)), ("log_probs", Value::Arr(vec![]))]);
+    assert!(w.event(&dense).unwrap_err().message.contains("HDR-12"));
+    assert!(w.segment_end(None, Some("sentence")).is_err());
+    w.end().unwrap();
+    drop(w);
+    // Same events, values and key order as Python (compare after a parse / dump round trip).
+    let norm = |l: &str| fidetype::json::dump_json(&parse_json(l).unwrap()).unwrap();
+    let want: Vec<String> = EMPTY_VOCAB_LINES.iter().map(|l| norm(l)).collect();
+    let got: Vec<String> = lines.iter().map(|l| norm(l)).collect();
+    assert_eq!(got, want);
+    let text = lines.join("\n") + "\n";
+    let rep = check_stream("x.jsonl", text.as_bytes(), Level::Core).unwrap();
+    assert!(rep.ok, "{:?}", rep.failures);
+}
+
+#[test]
+fn writer_empty_vocab_refusals() {
+    let mut o = empty_vocab_opts();
+    o.blank_id = Some(0);
+    assert!(NtsWriter::new(|_: &str| {}, o).err().unwrap().message.contains("blank_id must be null"));
+    let mut o = empty_vocab_opts();
+    o.extra_header = Map::from_pairs([("vocab", Value::Arr(vec![Value::str("a")]))]);
+    assert!(NtsWriter::new(|_: &str| {}, o).err().unwrap().message.contains("extra_header must not set 'vocab'"));
+}
+
 #[test]
 fn writer_floats_stay_floats() {
     let text = sample_stream();

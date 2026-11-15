@@ -12,20 +12,25 @@
  * ```
  */
 
-import { NORM_TOL, SCORE_SEMANTICS, SPEC_VERSION, VOCAB, VOCAB_TYPES } from "./constants.js";
+import { NORM_TOL, SCORE_SEMANTICS, SEGMENT_UNITS, SPEC_VERSION, VOCAB, VOCAB_TYPES } from "./constants.js";
 import { cpLen, dumpJson } from "./json.js";
 
 export interface WriterOptions {
   source: string;
+  /** `[]` = a hypothesis-only (or control-only) stream (HDR-12): `blank_id` must be null and frames are refused. */
   vocab?: readonly string[];
   vocab_type?: string;
   blank_id?: number | null;
   frame_period?: number;
   latency?: number;
   meta?: Record<string, unknown>;
-  /** Extra header keys (for example `clock_domain`, `decode_declaration`). */
+  /** Extra header keys (for example `clock_domain`, `decode_declaration`), written before `meta`. Must not hold a key of HEADER_KEYS. */
   extraHeader?: Record<string, unknown>;
 }
+
+/** Header keys that the writer sets itself; `extraHeader` must not hold them. */
+export const HEADER_KEYS = ["type", "spec_version", "vocab", "vocab_type", "blank_id", "source", "frame_period", "latency", "meta"] as const;
+const EMPTY_VOCAB_FRAME = "a stream with an empty vocab must not have frames (HDR-12)";
 
 export interface NbestItem {
   text: string;
@@ -56,14 +61,18 @@ export class NtsWriter {
 
   constructor(private readonly sink: (line: string) => void, opts: WriterOptions) {
     const vocab = [...(opts.vocab ?? VOCAB)];
-    if (!vocab.length || !vocab.every((v) => typeof v === "string") || new Set(vocab).size !== vocab.length) {
-      throw new RangeError("vocab must be a non-empty list of unique strings");
+    if (!vocab.every((v) => typeof v === "string") || new Set(vocab).size !== vocab.length) {
+      throw new RangeError("vocab must be a list of unique strings");
     }
     const vt = opts.vocab_type ?? "char";
     if (!(VOCAB_TYPES as readonly string[]).includes(vt)) throw new RangeError(`vocab_type must be one of ${VOCAB_TYPES.join(", ")}`);
     const blank = opts.blank_id === undefined ? 0 : opts.blank_id;
+    if (!vocab.length && blank !== null) throw new RangeError("blank_id must be null when vocab is empty (HDR-6, HDR-12)");
     if (blank !== null && !(Number.isInteger(blank) && blank >= 0 && blank < vocab.length)) throw new RangeError("blank_id is out of range");
     if (!opts.source) throw new RangeError("source must not be empty");
+    const extra = opts.extraHeader ?? {};
+    const clash = HEADER_KEYS.find((k) => Object.prototype.hasOwnProperty.call(extra, k));
+    if (clash !== undefined) throw new RangeError(`extraHeader must not set '${clash}' (the writer sets it)`);
     this.vocab = vocab;
     this.V = vocab.length;
     const head: Record<string, unknown> = { type: "header", spec_version: SPEC_VERSION, vocab, vocab_type: vt, blank_id: blank, source: opts.source };
@@ -75,7 +84,7 @@ export class NtsWriter {
       head.latency = num(opts.latency, "latency");
       if ((head.latency as number) < 0) throw new RangeError("latency must be >= 0");
     }
-    Object.assign(head, opts.extraHeader ?? {});
+    Object.assign(head, extra);
     head.meta = { ...(opts.meta ?? {}) };
     this.write(head);
   }
@@ -85,9 +94,10 @@ export class NtsWriter {
     this.sink(dumpJson(ev));
   }
 
-  /** Write any other event (an object with a string `type`) as it is. */
+  /** Write any other event (an object with a string `type`) as it is. With an empty vocab, a `frame` event is refused (HDR-12). */
   event(ev: Record<string, unknown>): void {
     if (typeof ev.type !== "string") throw new RangeError("an event needs a string type");
+    if (ev.type === "frame" && this.V === 0) throw new RangeError(EMPTY_VOCAB_FRAME);
     this.write({ ...ev });
   }
 
@@ -95,9 +105,10 @@ export class NtsWriter {
    * Write one frame at time `t` (seconds). Give exactly one of `logProbs`
    * (natural log, -Infinity allowed), `probs` ([0, 1]) or `logits` (log-softmax
    * is applied). The row must sum to 1 within the spec tolerance; times must
-   * increase strictly.
+   * increase strictly. With an empty vocab every frame is refused (HDR-12).
    */
   frame(t: number, values: { logProbs?: ArrayLike<number>; probs?: ArrayLike<number>; logits?: ArrayLike<number> }): void {
+    if (this.V === 0) throw new RangeError(EMPTY_VOCAB_FRAME);
     const given = [values.logProbs, values.probs, values.logits].filter((x) => x !== undefined).length;
     if (given !== 1) throw new RangeError("give exactly one of logProbs, probs or logits");
     let row: number[];
@@ -168,11 +179,14 @@ export class NtsWriter {
     this.write({ type: "signal_quality", t: num(t, "t"), value, unit });
   }
 
-  /** Mark the end of an utterance (`segment_end`, FEP-0001 section 1). */
+  /** Mark the end of a segment (`segment_end`, spec 4.3). `unit` absent = `utterance` (SEG-5). */
   segmentEnd(t?: number, unit?: "utterance" | "word" | "trial"): void {
     const ev: Record<string, unknown> = { type: "segment_end" };
     if (t !== undefined) ev.t = num(t, "t");
-    if (unit !== undefined) ev.unit = unit;
+    if (unit !== undefined) {
+      if (!(SEGMENT_UNITS as readonly string[]).includes(unit)) throw new RangeError(`unit must be one of ${SEGMENT_UNITS.join(", ")}`);
+      ev.unit = unit;
+    }
     this.write(ev);
   }
 

@@ -1,0 +1,14 @@
+{
+  "id": "P4-08",
+  "milestone": "P4",
+  "title": "SDK writers accept vocab = [] (HDR-12); text n-best adapter writes through StreamWriter",
+  "status": "done",
+  "started_at": "2026-11-14T16:45:00-08:00",
+  "finished_at": "2026-11-14T17:35:00-08:00",
+  "approx_times": true,
+  "notes": "HDR-12: V MAY be 0 only if the stream has no frames. Python StreamWriter, TS and Rust NtsWriter accept vocab = [] with blank_id null (HDR-6), refuse every frame (frame*, event type frame) with the same message; extra_header (Python new) must not hold writer-set keys; Python segment_end(unit). text_nbest uses StreamWriter (equivalent output; segment_end key order t, unit). NTS-NORM (Python) reports an empty-vocab frame instead of raising. Vectors V62-V65 (v0.1 = 65). Parity: Python = TS = Rust on 287 vectors; fuzz seeds 1-3 --n 30 PASS. Open: nts-1.0-rc2 9.3 count table and C.1 HDR-12 row not updated (spec text unchanged).",
+  "agent_runs": [
+    {"label": "P4-08 empty-vocab writers + vectors", "duration_s": null, "tokens": null, "tool_uses": null}
+  ],
+  "_tracker_updated": "2026-11-14T17:35:00-08:00"
+}

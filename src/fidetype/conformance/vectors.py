@@ -352,6 +352,30 @@ def build_vectors() -> list[Vector]:
     # --- NTS 1.0 RC2 (gap G-3): an integer field written with a fraction part (rule GEN-5)
     add("V61", "v61-blank-id-float.jsonl", "reject", "1.0 RC2 4.1 (GEN-5)", "Header blank_id is 0.0 (an integer written as 0.0)",
         None, failing_check="NTS-BLANK", writer=_w_lines([_header(blank_id=0.0), *_frames(1, V)]))
+    # --- NTS 1.0 RC2 (HDR-12): V = 0 only if the stream has no frames (hypothesis-only producer)
+    h0 = _header(vocab=[], blank_id=None, spec_version="1.0", frame_period=_DROP, latency=_DROP)
+    hyp0 = [{"type": "hypothesis", "id": "u1", "is_final": True, "score_semantics": "none",
+             "nbest": [{"text": "hello world", "score": 0.0}, {"text": "hello word", "score": 0.0}]},
+            {"type": "segment_end", "unit": "utterance"},
+            {"type": "hypothesis", "id": "u2", "is_final": True, "score_semantics": "none",
+             "nbest": [{"text": "yes", "score": 0.0}]},
+            {"type": "segment_end", "unit": "utterance"}]
+    add("V62", "v62-empty-vocab-hypotheses.jsonl", "accept", "1.0 RC2 3.1 (HDR-12) / 4.7",
+        "Hypothesis-only stream: vocab = [], blank_id null, hypotheses and segment ends, no frames", None,
+        {"n_frames": 0, "vocab_size": 0, "blank_id": None, "events": 2},
+        writer=_w_lines([h0, *hyp0, {"type": "end"}]))
+    add("V63", "v63-empty-vocab-dense-frame.jsonl", "reject", "1.0 RC2 3.1 (HDR-12) / 4.2 (FRM-3)",
+        "vocab = [] with a dense frame (log_probs = []): V = 0 needs a stream without frames", None,
+        failing_check="NTS-NORM",
+        writer=_w_lines([h0, hyp0[0], {"type": "frame", "t": 0.0, "log_probs": []}, {"type": "end"}]))
+    add("V64", "v64-empty-vocab-sparse-frame.jsonl", "reject", "1.0 RC2 3.1 (HDR-12) / 4.2 (FRM-5)",
+        "vocab = [] with a sparse frame (k = 0, rest_log_prob 0): V = 0 needs a stream without frames", None,
+        failing_check="NTS-NORM",
+        writer=_w_lines([h0, hyp0[0], {"type": "frame", "t": 0.0, "top_ids": [], "top_log_probs": [],
+                                       "rest_log_prob": 0.0}, {"type": "end"}]))
+    add("V65", "v65-empty-vocab-blank-0.jsonl", "reject", "1.0 RC2 3.1 (HDR-6, HDR-12)",
+        "vocab = [] with blank_id 0 (no index is in 0 ... V-1)", None, failing_check="NTS-BLANK",
+        writer=_w_lines([dict(h0, blank_id=0), *hyp0, {"type": "end"}]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

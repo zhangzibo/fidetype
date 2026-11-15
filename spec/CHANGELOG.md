@@ -44,6 +44,12 @@ All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1
 - **Collector (FEP-0006 3.2):** the trust processor removes blank candidates; an OFFER or OFFER_WORDS with no candidate left becomes `ABSTAIN` with `shown = []`. Metrics `blank_candidates_dropped` and `blank_offers_abstained`.
 - **Parity:** Python = TypeScript = Rust on all 283 vectors of `v0.1` … `fep-0005` (`cross-check.mjs --rust`; the expected `offered` and `advisories` values of F55 and F56 match in all three), and on 44,916 fuzz mutants (seeds 1-6, `--n 30`).
 
+### Added (vectors, P4-08, 2026-11-14; no rule text changed): HDR-12, empty vocabulary
+- **Vectors:** `v0.1` V62 (accept: `vocab = []`, `blank_id` null, two hypotheses and two `segment_end`, no frames), V63 (reject, `NTS-NORM`: `vocab = []` with a dense frame `log_probs = []`), V64 (reject, `NTS-NORM`: `vocab = []` with a sparse frame, k = 0 and `rest_log_prob` 0), V65 (reject, `NTS-BLANK`: `vocab = []` with `blank_id` 0, HDR-6). `v0.1` has 65 vectors now, from 61. No existing vector changed its verdict. No validator gives a separate HDR-12 finding: an empty-vocab frame fails FRM-3 (`NTS-NORM`; a row with no values has log-sum-exp -inf).
+- **Writers (Python `StreamWriter`, TypeScript and Rust `NtsWriter`, same behaviour):** they accept `vocab = []` with `blank_id` null and refuse every frame of such a stream (HDR-12). The text n-best adapter now writes through `StreamWriter`.
+- **Parity:** Python = TypeScript = Rust on all 287 vectors of `v0.1` … `fep-0005` (`cross-check.mjs --rust`), and on the fuzz mutants (seeds 1-3, `--n 30`).
+- **Not changed (open point):** the vector-count table (9.3, `v0.1` = 61) and the traceability row of HDR-12 (C.1, vector W03 only) in `nts-1.0-rc2.md` are not updated; they can list V62-V65 in the next draft.
+
 ## [1.0 RC1, DRAFT] 2026-11-14
 **Status: draft for public comment. Not final.** Document: [nts-1.0-rc1.md](nts-1.0-rc1.md).
 

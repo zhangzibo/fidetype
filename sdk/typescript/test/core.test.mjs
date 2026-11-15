@@ -82,6 +82,39 @@ test("NtsWriter refuses bad input", () => {
   assert.throws(() => w.segmentEnd(), /ended/);
 });
 
+// The same hypothesis-only stream in the Python, TypeScript and Rust writer tests (Python bytes; same events and key order, HDR-12).
+const EMPTY_VOCAB_LINES = [
+  "{\"type\": \"header\", \"spec_version\": \"0.1\", \"vocab\": [], \"vocab_type\": \"char\", \"blank_id\": null, \"source\": \"t\", \"clock_domain\": \"trial\", \"meta\": {}}",
+  "{\"type\": \"hypothesis\", \"id\": \"u1\", \"is_final\": true, \"score_semantics\": \"none\", \"nbest\": [{\"text\": \"hello\", \"score\": -1.5}], \"t_start\": 0.5, \"t_end\": 1.25}",
+  "{\"type\": \"segment_end\", \"t\": 1.25, \"unit\": \"utterance\"}",
+  "{\"type\": \"end\"}",
+];
+
+test("NtsWriter: empty vocab gives a hypothesis-only stream and refuses frames (HDR-12)", () => {
+  const lines = [];
+  const w = new sdk.NtsWriter((l) => lines.push(l), { source: "t", vocab: [], blank_id: null, extraHeader: { clock_domain: "trial" } });
+  w.hypothesis([["hello", -1.5]], { isFinal: true, id: "u1", tStart: 0.5, tEnd: 1.25 });
+  w.segmentEnd(1.25, "utterance");
+  assert.throws(() => w.frame(0, { logProbs: [] }), /HDR-12/);
+  assert.throws(() => w.frame(0, { probs: [] }), /HDR-12/);
+  assert.throws(() => w.frame(0, { logits: [] }), /HDR-12/);
+  assert.throws(() => w.event({ type: "frame", t: 0, log_probs: [] }), /HDR-12/);
+  assert.throws(() => w.event({ type: "frame", t: 0, top_ids: [], top_log_probs: [], rest_log_prob: 0 }), /HDR-12/);
+  assert.throws(() => w.segmentEnd(undefined, "sentence"), /unit/);
+  w.end();
+  // Same events, values and key order as Python (TypeScript writes compact JSON).
+  const norm = (l) => JSON.stringify(JSON.parse(l));
+  assert.deepEqual(lines.map(norm), EMPTY_VOCAB_LINES.map(norm));
+  const chk = sdk.checkStream("x.jsonl", enc.encode(lines.join("\n") + "\n"));
+  assert.equal(chk.ok, true, JSON.stringify(chk.failures));
+});
+
+test("NtsWriter: empty vocab refusals", () => {
+  assert.throws(() => new sdk.NtsWriter(() => {}, { source: "t", vocab: [] }), /blank_id must be null/);
+  assert.throws(() => new sdk.NtsWriter(() => {}, { source: "t", vocab: ["a", "a"], blank_id: null }), /unique/);
+  assert.throws(() => new sdk.NtsWriter(() => {}, { source: "t", vocab: [], blank_id: null, extraHeader: { vocab: ["a"] } }), /extraHeader must not set 'vocab'/);
+});
+
 test("loadStream rejects with the failing clause", () => {
   const bad = '{"type":"header","spec_version":"0.2","vocab":["a","b"],"vocab_type":"char","blank_id":null}\n';
   assert.throws(() => sdk.loadStream("x.jsonl", enc.encode(bad)), (e) => e instanceof sdk.StreamRejected && e.checkId === "NTS-VERSION");
