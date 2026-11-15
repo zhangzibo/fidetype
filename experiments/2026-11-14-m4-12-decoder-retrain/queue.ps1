@@ -23,7 +23,7 @@ $ok = $true
 function Decode($w, $run) {
   $d = @('-m','fidetype.utils.isolation','run','--class','background','--threads','4','--',$Py,'-u',"$Exp\decode.py",'--which',$w,'--gpu')
   L "decode start $w"
-  $q = Start-Process -FilePath $VPy -ArgumentList $d -NoNewWindow -PassThru -Wait -RedirectStandardOutput "$Root\$run\decode-stdout.log" -RedirectStandardError "$Root\$run\decode-stderr.log"
+  $q = Start-Process -FilePath $VPy -ArgumentList $d -WindowStyle Hidden -PassThru -Wait -RedirectStandardOutput "$Root\$run\decode-stdout.log" -RedirectStandardError "$Root\$run\decode-stderr.log"
   L "decode exit $w code $($q.ExitCode)"
 }
 foreach ($w in $runs.Keys) {
@@ -41,7 +41,7 @@ foreach ($w in $runs.Keys) {
   $a = @('-m','fidetype.utils.isolation','run','--class','background','--threads','4','--',$Py,'-u',"$Exp\train.py",'--which',$w)
   if (Test-Path "$Root\$run\latest.pt") { $a += '--resume' }
   L "train start $w args: $($a -join ' ')"
-  $p = Start-Process -FilePath $VPy -ArgumentList $a -NoNewWindow -PassThru -Wait -RedirectStandardOutput "$Root\$run\stdout.log" -RedirectStandardError "$Root\$run\stderr.log"
+  $p = Start-Process -FilePath $VPy -ArgumentList $a -WindowStyle Hidden -PassThru -Wait -RedirectStandardOutput "$Root\$run\stdout.log" -RedirectStandardError "$Root\$run\stderr.log"
   L "train exit $w code $($p.ExitCode)"
   if ($p.ExitCode -ne 0) { L "nonzero exit: queue ends (check stderr.log)"; $ok = $false; break }
   $st = (Get-Content $sf | ConvertFrom-Json).status
