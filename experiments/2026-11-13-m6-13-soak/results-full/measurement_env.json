@@ -1,0 +1,63 @@
+{
+  "schema": "fidetype.isolation/0.1",
+  "class": "timing",
+  "cpus": [
+    8,
+    10,
+    12,
+    14
+  ],
+  "affinity_set": true,
+  "priority": "above_normal",
+  "priority_set": true,
+  "timing_lock_held": true,
+  "plan": {
+    "timing": [
+      8,
+      10,
+      12,
+      14
+    ],
+    "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+    ],
+    "smt": true
+  },
+  "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+  "logical_cpus": 16,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_s": 39534.42,
+  "own_cpu_s": 1898.609,
+  "class_cpu_load_pct": 9.85,
+  "foreign_load_pct": 8.65,
+  "idle_sibling_load_pct": 8.97,
+  "machine_load_pct": 22.95,
+  "background_cpu_load_pct": 36.49,
+  "clean": false,
+  "clean_reasons": [
+    "other load on the class CPUs 8.65% >= 5.0%"
+  ],
+  "job_object": true,
+  "note": "own_cpu_s = CPU time of all processes of the job (Windows job object).",
+  "command": [
+    "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\.venv\\Scripts\\python.exe",
+    "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\experiments\\2026-11-13-m6-13-soak\\soak.py",
+    "supervise",
+    "--planned-s",
+    "25200.0"
+  ],
+  "exit_code": 0
+}

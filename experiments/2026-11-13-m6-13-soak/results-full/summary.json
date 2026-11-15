@@ -1,0 +1,414 @@
+{
+  "windows_trust": 210,
+  "windows_consumer": 210,
+  "active_h": 10.98056,
+  "bridge_cycles": 15,
+  "bridge_ends": 14,
+  "pause_at": null,
+  "final_decisions": 6253,
+  "criteria": {
+    "C1 no crash": {
+      "pass": true,
+      "value": {
+        "died": 0,
+        "external_stop": false,
+        "trust_rc": 0,
+        "consumer_rc": 0,
+        "exceptions": 0
+      }
+    },
+    "C2 RSS slope after warm-up <= 2 MB/h (trust, consumer)": {
+      "pass": true,
+      "value": {
+        "trust_rss_mb_per_h": -1.435239332336635,
+        "trust_private_mb_per_h": 3.0921416097902266,
+        "consumer_rss_mb_per_h": -1.4368479792829745,
+        "trust_handles_per_h": -0.10435887981938582
+      }
+    },
+    "C3 push p95 < 5 ms in every window": {
+      "pass": true,
+      "value": {
+        "windows": 210,
+        "worst_p95": 1.1083300007157957,
+        "whole_run": {
+          "n": 625758,
+          "p50": 0.47196853200182276,
+          "p95": 0.7258879135601106,
+          "p99": 0.8351012436296182,
+          "max": 530.6149999960326
+        }
+      }
+    },
+    "C4 end-of-utterance p95 < 50 ms in every window; e2e p95 < 100 ms (whole run)": {
+      "pass": true,
+      "value": {
+        "worst_eou_p95": 6.498129990359294,
+        "eou_whole": {
+          "n": 6253,
+          "p50": 1.9753869206661938,
+          "p95": 3.1307772830405707,
+          "p99": 3.5659390271745455,
+          "max": 49.902700004167855
+        },
+        "e2e_whole": {
+          "n": 6253,
+          "p50": 29.060377535643056,
+          "p95": 46.30141272791659,
+          "p99": 60.28442759066817,
+          "max": 14381049.518709129
+        }
+      }
+    },
+    "C5 0 invalid events": {
+      "pass": true,
+      "value": {
+        "invalid_online": 0,
+        "conformance": {
+          "FEP1-PARSE": "pass",
+          "FEP1-KIND": "pass",
+          "FEP1-SEGMENT": "skip",
+          "FEP1-EVIDENCE": "skip",
+          "FEP1-SCORE": "skip",
+          "FEP1-DECL": "skip",
+          "FEP1-TD-INPUT": "skip",
+          "FEP1-TD-FORMAT": "pass",
+          "FEP1-TD-FINAL": "pass",
+          "FEP1-TD-SHOWN": "pass"
+        },
+        "fail_messages": {}
+      }
+    },
+    "C6 0 lost events": {
+      "pass": true,
+      "value": {
+        "emitted": 6253,
+        "received": 6253,
+        "events_in_log": 6253,
+        "seq_holes": 0,
+        "lost": 0,
+        "dup_or_reorder": 0,
+        "epochs": 0
+      }
+    },
+    "C7 0 COMMIT (= 0 wrong commits) on the toy decoders": {
+      "pass": true,
+      "value": {
+        "actions": {
+          "features": {
+            "COMMIT": 0,
+            "OFFER": 0,
+            "ABSTAIN": 3110
+          },
+          "flat": {
+            "COMMIT": 0,
+            "OFFER": 0,
+            "ABSTAIN": 3143
+          }
+        }
+      }
+    },
+    "C8 LSL: gaps = dropouts, 0 out-of-order drops, reconnect after every restart": {
+      "pass": false,
+      "value": {
+        "gaps": 16,
+        "dropouts": 14,
+        "dropped_out_of_order": 0,
+        "clamped": 0,
+        "late_releases": 1024,
+        "lost": 28,
+        "reconnects": 28,
+        "bridge_restarts": 14
+      }
+    },
+    "C9 clock: offset spread < 1 ms; transport p50 slope < 1 ms/h": {
+      "pass": true,
+      "value": {
+        "spread_ms": 0.06010002107359469,
+        "transport_p50_ms_per_h": -0.002412984961099008,
+        "time_correction_ms_min_max": [
+          -0.022700012777931988,
+          0.015150013496167958
+        ]
+      }
+    },
+    "C10 bounded caches: LRU <= bound; shadow incremental == batch": {
+      "pass": true,
+      "value": {
+        "lru_within_bound": true,
+        "exact_checked": 312,
+        "exact_mismatch": 0
+      }
+    }
+  },
+  "all_pass": false,
+  "whole_run_ms": {
+    "push": {
+      "n": 625758,
+      "p50": 0.47196853200182276,
+      "p95": 0.7258879135601106,
+      "p99": 0.8351012436296182,
+      "max": 530.6149999960326
+    },
+    "eou": {
+      "n": 6253,
+      "p50": 1.9753869206661938,
+      "p95": 3.1307772830405707,
+      "p99": 3.5659390271745455,
+      "max": 49.902700004167855
+    },
+    "e2e": {
+      "n": 6253,
+      "p50": 29.18887732593878,
+      "p95": 46.72671147487525,
+      "p99": 60.61898993497572,
+      "max": 14381049.518709129
+    },
+    "gc": {
+      "n": 6267,
+      "p50": 0.7405684692262434,
+      "p95": 0.9900387061121851,
+      "p99": 1.1620301363862608,
+      "max": 40.47850001370534
+    },
+    "sh_push": {
+      "n": 625758,
+      "p50": 1.0202242734613558,
+      "p95": 1.072592566024593,
+      "p99": 1.1389947941973528,
+      "max": 328.42569999047555
+    },
+    "sh_end": {
+      "n": 6253,
+      "p50": 8.60562879298337,
+      "p95": 17.17048682725084,
+      "p99": 26.145160025945405,
+      "max": 44.69300000346266
+    },
+    "step": {
+      "n": 1221169,
+      "p50": 20.356150456539496,
+      "p95": 23.89246010815201,
+      "p99": 24.620924014946254,
+      "max": 4337.244700000156
+    }
+  },
+  "source_totals": {
+    "samples": 6267403,
+    "frames": 625758,
+    "markers": 9743,
+    "ignored_markers": 0,
+    "bad_markers": 0,
+    "clamped": 0,
+    "dropped_out_of_order": 0,
+    "gaps": 16,
+    "lost": 28,
+    "reconnects": 28,
+    "late_releases": 1024
+  },
+  "consumer_final": {
+    "kind": "final",
+    "epoch": 0,
+    "window": 209,
+    "t_iso": "2026-11-15T03:36:39-0800",
+    "t_s": 39533.78200000001,
+    "window_s": 101.51600000000326,
+    "cpu_s": 61.28125,
+    "py_threads": 1,
+    "rss_mb": 14.890625,
+    "private_mb": 30.3828125,
+    "peak_rss_mb": 43.58984375,
+    "handles": 280,
+    "received_window": 25,
+    "transport_ms": {
+      "n": 25,
+      "p50": 14.864450000459328,
+      "p95": 19.23456999938935,
+      "max": 20.0528500135988
+    },
+    "counts": {
+      "received": 6253,
+      "invalid": 0,
+      "json_errors": 0,
+      "lost": 0,
+      "dup_or_reorder": 0,
+      "utt_back": 0,
+      "double_final": 0,
+      "epochs": 0,
+      "finals": 6253,
+      "actions": {
+        "COMMIT": 0,
+        "OFFER": 0,
+        "ABSTAIN": 6253
+      },
+      "commit_texts": 0
+    },
+    "last_seq": 6252,
+    "time_correction_s": {
+      "last": 1.2100004823878407e-05,
+      "min": -1.5900004655122757e-05,
+      "max": 1.2100004823878407e-05,
+      "n": 21
+    },
+    "whole_run_transport_ms": {
+      "n": 6253,
+      "p50": 10.408575681597517,
+      "p95": 19.557095110072943,
+      "p99": 20.356150456539496,
+      "max": 37.465449975570664
+    },
+    "examples": [],
+    "T": 39533.78200000001
+  },
+  "refcharlm_entries": {
+    "first": 14412,
+    "last": 19502
+  },
+  "rss_mb": {
+    "first": 66.46484375,
+    "after_warmup": 79.5625,
+    "last": 58.0,
+    "max": 84.84765625
+  },
+  "idle_gc_ms": {
+    "n": 6267,
+    "p50": 0.7405684692262434,
+    "p95": 0.9900387061121851,
+    "p99": 1.1620301363862608,
+    "max": 40.47850001370534
+  },
+  "supervisor_end": {
+    "event": "end",
+    "t_iso": "2026-11-15T03:36:39-0800",
+    "reason": "planned time",
+    "active_s": 25201.544999999984,
+    "trust_rc": 0,
+    "consumer_rc": 0,
+    "cpu_s": {
+      "trust": 1390.625,
+      "consumer": 61.34375
+    }
+  },
+  "machine_load": {
+    "heartbeats": 418,
+    "class": "timing",
+    "affinity": [
+      8,
+      10,
+      12,
+      14
+    ],
+    "priority": "above_normal",
+    "timing_pct": {
+      "n": 418,
+      "mean": 9.89165071770335,
+      "p50": 7.789999999999999,
+      "p95": 20.085999999999995,
+      "max": 36.41,
+      "share_ge_5pct": 0.854066985645933
+    },
+    "foreign_timing_pct": {
+      "n": 417,
+      "mean": 8.005827338129496,
+      "p50": 5.94,
+      "p95": 18.169999999999998,
+      "max": 34.75,
+      "share_ge_5pct": 0.5563549160671463
+    },
+    "own_pct_of_timing": {
+      "n": 417,
+      "mean": 1.878177458033573,
+      "p50": 1.89,
+      "p95": 2.09,
+      "max": 2.23,
+      "share_ge_5pct": 0.0
+    },
+    "idle_sibling_pct": {
+      "n": 418,
+      "mean": 8.99901913875598,
+      "p50": 6.62,
+      "p95": 20.5775,
+      "max": 34.09,
+      "share_ge_5pct": 0.6244019138755981
+    },
+    "background_pct": {
+      "n": 418,
+      "mean": 36.53736842105263,
+      "p50": 35.46,
+      "p95": 47.92999999999999,
+      "max": 65.61,
+      "share_ge_5pct": 1.0
+    },
+    "machine_pct": {
+      "n": 418,
+      "mean": 22.99157894736842,
+      "p50": 21.535,
+      "p95": 32.4805,
+      "max": 50.14,
+      "share_ge_5pct": 1.0
+    },
+    "measurement_env": {
+      "schema": "fidetype.isolation/0.1",
+      "class": "timing",
+      "cpus": [
+        8,
+        10,
+        12,
+        14
+      ],
+      "affinity_set": true,
+      "priority": "above_normal",
+      "priority_set": true,
+      "timing_lock_held": true,
+      "plan": {
+        "timing": [
+          8,
+          10,
+          12,
+          14
+        ],
+        "background": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "idle_smt_siblings": [
+          9,
+          11,
+          13,
+          15
+        ],
+        "smt": true
+      },
+      "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+      "logical_cpus": 16,
+      "platform": "Windows-11-10.0.26200-SP0",
+      "wall_s": 39534.42,
+      "own_cpu_s": 1898.609,
+      "class_cpu_load_pct": 9.85,
+      "foreign_load_pct": 8.65,
+      "idle_sibling_load_pct": 8.97,
+      "machine_load_pct": 22.95,
+      "background_cpu_load_pct": 36.49,
+      "clean": false,
+      "clean_reasons": [
+        "other load on the class CPUs 8.65% >= 5.0%"
+      ],
+      "job_object": true,
+      "note": "own_cpu_s = CPU time of all processes of the job (Windows job object).",
+      "command": [
+        "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\.venv\\Scripts\\python.exe",
+        "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\experiments\\2026-11-13-m6-13-soak\\soak.py",
+        "supervise",
+        "--planned-s",
+        "25200.0"
+      ],
+      "exit_code": 0
+    }
+  }
+}

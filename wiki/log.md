@@ -718,3 +718,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Real data (local, not committed): Willett 288 / 288 trial streams trust-ready, CTC form 288 / 288 (only `PV-WEIGHTS` fails: no weights file). KT-sEMG sample of 7 / 29 runs, session-calibrated LDA: 55 / 55 streams `provenance`; key accuracy 0.4975 vs majority 0.1823. Cross-run LDA 0.1325 (majority 0.1891).
 - Conformance targets `adapter:willett` (trust-ready) and `adapter:kt-semg` (provenance). Tests: `tests/test_adapter_willett_handwriting.py`, `tests/test_adapter_kt_semg.py` (synthetic only); `tests/test_conformance.py` target set updated.
 - Pages: two entity pages, [conformance suite](concepts/conformance-suite.md) adapter table, [roadmap P4](questions/roadmap-standard.md#p4-device-and-toolkit-adapters) status, index. Open in P4-01: emg2qwerty (waits for the user).
+
+## [2026-11-15] query | M6-15: full-length (7 h) soak test on the fixed code
+- Same harness and C1-C10 as M6-13; timing CPU class; plan `experiments/2026-11-13-m6-13-soak/plan-full-rerun.md` (before the run); results in `results.md` (section "Full-length run") and `results-full/`.
+- 7.00 h active (25,202 s) in 10.98 h wall time: the PC slept 4.0 h (Sleep from the Start menu). 9 of 10 criteria pass; C8 fails (16 gaps for 14 dropouts; the 2 extra gaps come from the sleep). Without the sleep window, 10 of 10.
+- No crash, 0 exceptions, 6,253 decisions, 0 COMMIT, 0 invalid or lost events, push p95 <= 1.11 ms in every window, e2e p95 46 ms, RSS slope -1.44 MB/h.
+- Harness: `DONE` marker at every exit (with the reason), machine-load record per heartbeat, `launch_detached.py` (CREATE_NO_WINDOW). Earlier starts died when their visible console window was closed.
+- Updated `concepts/lsl-input.md` (soak table + our take), `index.md`.

@@ -2,7 +2,7 @@
 title: "M6-13: soak test of the live path: results"
 type: experiment
 task: M6-13
-updated: 2026-11-13
+updated: 2026-11-15
 ---
 
 # M6-13: soak test of the live path (results)
@@ -17,8 +17,56 @@ Chain: BrainFlow Synthetic board → bridge → LSL → toy signal decoder (`fea
 |---|---|---|---|---|
 | main | plan commit 5b363a5 | **6.78 h** of 7 h planned (stopped from outside at 20:47) | 6,067 | 7 of 10 criteria pass. **C2 memory FAIL** (bug 1), **C9 clock FAIL** (bug 2), **C1 FAIL**: an outside kill, no crash |
 | post-fix | bug 1 fixed in the trust process; bug 2 fixed in the bridges from cycle 1 on | 2.50 h (9,000 s, as planned) | 2,242 | **10 of 10 criteria pass** |
+| full (M6-15) | 7c6a577 (both fixes, M6-14 thread reconnect, bounded `RefCharLM`, M6-16 fast reconnect); timing CPU class | **7.00 h** (25,202 s, as planned) in 10.98 h wall time (the PC slept 4.0 h) | 6,253 | **9 of 10 pass. C8 FAIL: 16 gaps for 14 dropouts. Both extra gaps come from the 4-h PC sleep.** Without the sleep window: 10 of 10 |
 
-The post-fix run is shorter than the plan asked for (2.5 h, not 6-8 h). It checks the fixes. It does not replace a full-length run.
+The post-fix run is shorter than the plan asked for (2.5 h, not 6-8 h). It checks the fixes. It does not replace a full-length run. The full run (M6-15, below) is that full-length run.
+
+## Full-length run (M6-15, 2026-11-14 16:37 to 2026-11-15 03:36)
+
+Plan: [plan-full-rerun.md](plan-full-rerun.md) (commit 89a9d43, before the run): the same harness and the same C1-C10 as [plan.md](plan.md). New: the whole process tree in the **timing** CPU class (CPUs 8, 10, 12, 14, above-normal priority, `--threads 1`), a machine-load record in each supervisor heartbeat, and a `DONE` marker at every exit. Numbers: `results-full/` (`summary.json`, `tables.md`, `metrics-*.jsonl`, `supervisor.jsonl`, `measurement_env.json`).
+
+Four starts before this one died within seconds to 3 min with 0xC000013A (console close). Most likely cause: each start opened a visible console window, and the window was closed. The run that counts started with `launch_detached.py` (CREATE_NO_WINDOW, no window). Logs of the failed starts stay local (`C:\Users\zhang\bci-data\soak\m6-15\failed-start-*`). None of their numbers are used.
+
+**Outside event: the PC slept from 17:57:02 to 21:57:00** (System log: event 187, `StartMenuExperienceHost.exe` called `SetSuspendState`, so Sleep was selected in the Start menu; event 42 sleep, event 107 resume, wake source USB). All processes paused and went on. The supervisor does not count a gap > 60 s as active time, so the run still has 7.00 h of active time. Cycle 2 of the bridge lived 15,539 s (with the sleep) and was then killed as planned.
+
+### Criteria (strict, as `analyze.py` computes them)
+
+| id | result | numbers |
+|---|---|---|
+| C1 | PASS | 0 deaths or restarts; trust and consumer exit code 0 / 0; 0 exceptions |
+| C2 | PASS | RSS slope after warm-up: trust -1.44 MB/h, consumer -1.44 MB/h (trust private bytes +3.09 MB/h, see below) |
+| C3 | PASS | worst window push p95 1.11 ms (210 windows); whole run p50 / p95 / p99 0.47 / 0.73 / 0.84 ms; max 530.6 ms (resume window) |
+| C4 | PASS | worst window EOU p95 6.50 ms (resume window); whole-run e2e p50 / p95 / p99 29.1 / 46.3 / 60.3 ms (6,253 decisions); e2e max 14,381,050 ms (one decision on data from before the sleep) |
+| C5 | PASS | 0 invalid online; FEP-0001 profile of the 6,253 received events: PARSE, KIND, TD-FORMAT, TD-FINAL, TD-SHOWN pass |
+| C6 | PASS | emitted 6,253 = received 6,253; 0 seq holes; 0 duplicates or reorders |
+| C7 | PASS | 0 COMMIT / 6,253 (features 3,110 ABSTAIN, flat 3,143 ABSTAIN) |
+| C8 | **FAIL** | gaps 16, dropouts 14; 0 out-of-order drops; reconnects 28 = 2 x 14 restarts. Late releases 1,024 (all in the resume window) |
+| C9 | PASS | `time_correction` spread 0.060 ms; transport p50 slope -0.0024 ms/h (range of the offset -0.023 to +0.015 ms) |
+| C10 | PASS | shadow LRU <= bound in every window; incremental = batch on 312 / 312 checked utterances |
+
+### Secondary view without the sleep (our analysis, not the pre-declared check)
+
+| item | value |
+|---|---|
+| C8 | each of the 14 dropouts made exactly 1 gap, in the window of its bridge's 600-s mark. The resume window (21:58:57) has +2 gaps, +2 reconnects (the planned kill of cycle 2) and all 1,024 late releases. Without the 2 sleep gaps: 14 = 14, **pass** |
+| C3 / C4 without the sleep window and the resume window | worst push p95 0.81 ms, push max 25.2 ms; worst EOU p95 3.83 ms; worst e2e p95 61.8 ms, e2e max 404 ms |
+| memory on the active-time axis | trust RSS -1.90 MB/h; private bytes 46.8 MB at start, 61.1 MB at 30 min, 61.1 MB just before the sleep, **94.3 MB after the resume**, then flat: 92.0-96.3 MB for 5.5 h (slope after the resume -0.12 MB/h; before the sleep after warm-up 0.00 MB/h). So the +3.09 MB/h of the strict fit is one step of about 33 MB at the resume, not a steady leak |
+| transport p50 slope (active axis, no sleep windows) | -0.007 ms/h |
+
+> **Our take:** with the fixes, the live path ran 7 h of active time with no crash, no memory growth, no lost or invalid event and no wrong commit. Push p95 stayed under 1.2 ms in every window. The one failed criterion (C8) comes from the 4-h sleep, which the plan did not foresee: a sleep stops the data stream, and the source correctly reports a gap. The private-bytes step of about 33 MB at the resume is probably liblsl buffering the data after the sleep (1,024 late releases in the same window). We did not check this. A sleep is a real-world event, so a future soak plan could add a sleep / resume step on purpose, with its own expected gap count.
+
+### Machine noise (from the heartbeat load records)
+
+| item | mean | p50 | p95 | max |
+|---|---|---|---|---|
+| load on the timing CPUs (8, 10, 12, 14), % | 9.9 | 7.8 | 20.1 | 36.4 |
+| foreign load on the timing CPUs (= total minus the soak's own CPU), % | 8.0 | 5.9 | 18.2 | 34.8 |
+| the soak's own share of the timing CPUs, % | 1.9 | 1.9 | 2.1 | 2.2 |
+| idle SMT siblings (9, 11, 13, 15), % | 9.0 | 6.6 | 20.6 | 34.1 |
+| background CPUs (0-7), % | 36.5 | 35.5 | 47.9 | 65.6 |
+| whole machine, % | 23.0 | 21.5 | 32.5 | 50.1 |
+
+Foreign load on the timing CPUs was >= 5 % in 56 % of the 417 one-minute records. The launcher record (`measurement_env.json`) says `clean: false` (foreign load 8.65 % >= 5 %, over 39,534 s of wall time). Other agents ran pytest and a GPU decoder retrain (background class) during the run. Processes that are not pinned also run on the timing CPUs, so the timing class protects the soak only partly. Even so, push p95 stayed far under the 5 ms threshold.
 
 ## Criteria
 
