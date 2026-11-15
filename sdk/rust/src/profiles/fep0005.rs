@@ -15,9 +15,9 @@ use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 
 use crate::checks::CheckResult;
-use crate::constants::INTENT_DECLARATION_KEY;
+use crate::constants::{INTENT_DECLARATION_KEY, TRUST_ACTIONS};
 use crate::error::Error;
-use crate::json::{num_text, py_eq, repr, str_in, str_list, Map, Value};
+use crate::json::{enum_ok, is_unknown, newer_minor, num_text, py_eq, repr, str_in, str_list, Map, Value};
 
 use super::common::{etype, line_of, make_res, read_events, reject_on_failure, stream_kind, tuple_key, CheckMeta, StreamKind, TargetReport};
 use super::fep0001::{td_format_errors, v01_core_failures};
@@ -116,7 +116,9 @@ pub struct ControlDeclaration {
 }
 
 /// The FEP-0005 section 2 errors of a `control_declaration` (empty = valid). `intent_ids`: `None` = no intent declaration.
-pub fn validate_control_declaration(d: &Value, intent_ids: Option<&[String]>, null_intents: &[String]) -> Vec<String> {
+/// `lenient`: the header declares a newer 1.x minor version (NTS 1.0 RC3, VER-8). An unknown `quantity`,
+/// `units`, `frame` or `uncertainty` string is then not an error; a consumer gives no motion on such a stream.
+pub fn validate_control_declaration(d: &Value, intent_ids: Option<&[String]>, null_intents: &[String], lenient: bool) -> Vec<String> {
     let d = match d {
         Value::Obj(m) => m,
         _ => return alloc::vec!["control_declaration must be an object".to_string()],
@@ -131,14 +133,19 @@ pub fn validate_control_declaration(d: &Value, intent_ids: Option<&[String]>, nu
     let q = d.get("quantity");
     let units = d.get("units");
     if !str_in(q, QUANTITIES) {
-        e.push(format!("quantity {} is not one of {}", repr(q), repr(&str_list(QUANTITIES))));
+        if !(lenient && q.is_str()) {
+            e.push(format!("quantity {} is not one of {}", repr(q), repr(&str_list(QUANTITIES))));
+        } else if !units.is_str() {
+            e.push("units must be a string".to_string());
+        }
     } else {
         let us = units_for(q.as_str().unwrap_or(""));
-        if !str_in(units, us) {
+        let known_unit = str_in(units, units_for("velocity")) || str_in(units, units_for("position"));
+        if !str_in(units, us) && !(lenient && units.is_str() && !known_unit) {
             e.push(format!("units {} do not fit quantity {} (one of {})", repr(units), repr(q), repr(&str_list(us))));
         }
     }
-    if !str_in(d.get("frame"), FRAMES) {
+    if !enum_ok(d.get("frame"), FRAMES, lenient) {
         e.push(format!("frame {} is not one of {}", repr(d.get("frame")), repr(&str_list(FRAMES))));
     }
     if !fin(d.get("rate_hz")).map_or(false, |r| r > 0.0) {
@@ -159,7 +166,7 @@ pub fn validate_control_declaration(d: &Value, intent_ids: Option<&[String]>, nu
     }
     let unc_default = Value::str("none");
     let unc = d.get_opt("uncertainty").unwrap_or(&unc_default);
-    if !str_in(unc, UNCERTAINTY) {
+    if !enum_ok(unc, UNCERTAINTY, lenient) {
         e.push(format!("uncertainty {} is not one of {}", repr(d.get("uncertainty")), repr(&str_list(UNCERTAINTY))));
     }
     for k in ["max_speed", "latency_s", "window_s"] {
@@ -190,7 +197,9 @@ pub fn validate_control_declaration(d: &Value, intent_ids: Option<&[String]>, nu
 }
 
 /// The FEP-0005 section 3 errors of one `control` event, without the order rules.
-pub fn validate_control_event(ev: &Map, decl: Option<&ControlDeclaration>) -> Vec<String> {
+/// `lenient`: newer minor version (VER-8): an unknown `source` string is allowed (the event moves nothing); with an
+/// unknown declared `uncertainty` the `std` rules (CTL-3) do not apply (`std` keeps its type rule).
+pub fn validate_control_event(ev: &Map, decl: Option<&ControlDeclaration>, lenient: bool) -> Vec<String> {
     let decl = match decl {
         Some(d) => d,
         None => return alloc::vec!["control event without a control_declaration in the header (rule 1)".to_string()],
@@ -231,9 +240,10 @@ pub fn validate_control_event(ev: &Map, decl: Option<&ControlDeclaration>) -> Ve
     }
     let src_default = Value::str("decoder");
     let src = ev.get_opt("source").unwrap_or(&src_default);
-    if !str_in(src, SOURCES) {
+    if !enum_ok(src, SOURCES, lenient) {
         e.push(format!("source {} is not one of {}", repr(src), repr(&str_list(SOURCES))));
     }
+    let unknown_unc = !UNCERTAINTY.contains(&decl.uncertainty.as_str());
     if let Some(sd) = ev.get_opt("std") {
         let ok = match sd {
             Value::Arr(a) => a.len() == decl.dims && a.iter().all(|x| fin(x).map_or(false, |v| v > 0.0)),
@@ -241,10 +251,10 @@ pub fn validate_control_event(ev: &Map, decl: Option<&ControlDeclaration>) -> Ve
         };
         if !ok {
             e.push("std must be a list of dims numbers > 0".to_string());
-        } else if decl.uncertainty != "std" {
+        } else if decl.uncertainty != "std" && !unknown_unc {
             e.push("std given but the declaration has uncertainty = none (rule 3)".to_string());
         }
-    } else if decl.uncertainty == "std" && src.as_str() == Some("decoder") {
+    } else if decl.uncertainty == "std" && src.as_str() == Some("decoder") && !unknown_unc {
         e.push("the declaration has uncertainty = std: a decoder control event MUST carry std (rule 3)".to_string());
     }
     let ts: Vec<&Value> = TIMING_FIELDS.iter().filter_map(|k| ev.get_opt(k)).collect();
@@ -265,8 +275,9 @@ pub fn validate_control_event(ev: &Map, decl: Option<&ControlDeclaration>) -> Ve
     e
 }
 
-/// The FEP-0005 section 4 errors of one `control_enable` event.
-pub fn validate_enable_event(ev: &Map) -> Vec<String> {
+/// The FEP-0005 section 4 errors of one `control_enable` event. `lenient`: newer minor version (VER-8): an
+/// unknown `source` string is allowed (a stop is still a stop; an engage from it is not an engage).
+pub fn validate_enable_event(ev: &Map, lenient: bool) -> Vec<String> {
     let mut e = Vec::new();
     if !matches!(ev.get("enabled"), Value::Bool(_)) {
         e.push("enabled must be a boolean".to_string());
@@ -277,7 +288,7 @@ pub fn validate_enable_event(ev: &Map) -> Vec<String> {
         }
     }
     if let Some(s) = ev.get_opt("source") {
-        if !str_in(s, ENABLE_SOURCES) {
+        if !enum_ok(s, ENABLE_SOURCES, lenient) {
             e.push(format!("source {} is not one of {}", repr(s), repr(&str_list(ENABLE_SOURCES))));
         }
     }
@@ -294,7 +305,7 @@ pub fn validate_enable_event(ev: &Map) -> Vec<String> {
 /// (declared intent ids, null-role intent ids) of a header's valid FEP-0003 declaration.
 fn intent_ids(h: &Map) -> (Option<Vec<String>>, Vec<String>) {
     let d = h.get(INTENT_DECLARATION_KEY);
-    if d.is_obj() && f3::validate_intent_declaration(d).is_empty() {
+    if d.is_obj() && f3::validate_intent_declaration(d, newer_minor(h.get("spec_version"))).is_empty() {
         let its = d.get("intents").as_arr().cloned().unwrap_or_default();
         let ids = its.iter().filter_map(|it| it.get("id").as_str().map(|s| s.to_string())).collect();
         let nulls = its
@@ -313,7 +324,7 @@ pub fn decl_errors(events: &[Map]) -> Vec<String> {
         if etype(h) == "header" {
             if let Some(d) = h.get_opt(CONTROL_DECLARATION_KEY) {
                 let (ids, nulls) = intent_ids(h);
-                for x in validate_control_declaration(d, ids.as_deref(), &nulls) {
+                for x in validate_control_declaration(d, ids.as_deref(), &nulls, newer_minor(h.get("spec_version"))) {
                     out.push(format!("line {}: {}", line_of(h), x));
                 }
             }
@@ -328,17 +339,19 @@ pub fn control_errors(events: &[Map]) -> Vec<String> {
     let mut has = false;
     let mut last_tick: Option<f64> = None;
     let mut last_t: Option<f64> = None;
+    let mut newer = false;
     for e in events {
         let n = line_of(e);
         match etype(e) {
             "header" => {
                 has = e.has(CONTROL_DECLARATION_KEY);
+                newer = newer_minor(e.get("spec_version"));
                 decl = None;
                 last_tick = None;
                 last_t = None;
                 if let Some(d) = e.get_opt(CONTROL_DECLARATION_KEY) {
                     let (ids, nulls) = intent_ids(e);
-                    if validate_control_declaration(d, ids.as_deref(), &nulls).is_empty() {
+                    if validate_control_declaration(d, ids.as_deref(), &nulls, newer).is_empty() {
                         decl = Some(ControlDeclaration {
                             dims: d.get("dims").as_f64().unwrap_or(0.0) as usize,
                             uncertainty: d.get("uncertainty").as_str().unwrap_or("none").to_string(),
@@ -355,7 +368,7 @@ pub fn control_errors(events: &[Map]) -> Vec<String> {
                     Some(d) => d,
                     None => continue, // FEP5-DECL reports it
                 };
-                let errs = validate_control_event(e, Some(dc));
+                let errs = validate_control_event(e, Some(dc), newer);
                 let bad = !errs.is_empty();
                 out.extend(errs.into_iter().map(|x| format!("line {}: {}", n, x)));
                 let decoder = match e.get_opt("source") {
@@ -391,9 +404,14 @@ pub fn control_errors(events: &[Map]) -> Vec<String> {
 
 pub fn enable_errors(events: &[Map]) -> Vec<String> {
     let mut out = Vec::new();
-    for e in events.iter().filter(|e| etype(e) == CONTROL_ENABLE) {
-        for x in validate_enable_event(e) {
-            out.push(format!("line {}: {}", line_of(e), x));
+    let mut newer = false;
+    for e in events {
+        if etype(e) == "header" {
+            newer = newer_minor(e.get("spec_version"));
+        } else if etype(e) == CONTROL_ENABLE {
+            for x in validate_enable_event(e, newer) {
+                out.push(format!("line {}: {}", line_of(e), x));
+            }
         }
     }
     out
@@ -430,12 +448,13 @@ pub fn td_control_format_errors(e: &Map) -> Vec<String> {
     }
     let act = e.get("action");
     let st = e.get("state");
-    if !str_in(act, CONTROL_ACTIONS) {
+    let newer = newer_minor(e.get("spec_version")); // VER-8: unknown action / state of a newer minor version
+    if !str_in(act, CONTROL_ACTIONS) && !(newer && is_unknown(act, TRUST_ACTIONS)) {
         x.push(format!("control action {} is not one of {}", repr(act), repr(&str_list(CONTROL_ACTIONS))));
     }
-    if !str_in(st, STATES) {
+    if !enum_ok(st, STATES, newer) {
         x.push(format!("state {} is not one of {}", repr(st), repr(&str_list(STATES))));
-    } else if str_in(act, CONTROL_ACTIONS) && str_in(st, MOVING) != (act.as_str() == Some("COMMIT")) {
+    } else if str_in(st, STATES) && str_in(act, CONTROL_ACTIONS) && str_in(st, MOVING) != (act.as_str() == Some("COMMIT")) {
         x.push(format!("state {} does not fit action {} (act/attenuate = COMMIT, hold/stop = ABSTAIN) (rule 3)", repr(st), repr(act)));
     }
     let vel = e.get("velocity");
@@ -551,6 +570,10 @@ pub fn td_order_errors(events: &[Map]) -> Vec<String> {
 pub fn engaged_after(e: &Map, stop_eng: Option<f64>) -> (bool, Option<f64>) {
     let eng = e.get("engagement");
     let has_reason = |r: &str| matches!(e.get("reasons"), Value::Arr(a) if a.iter().any(|x| x.as_str() == Some(r)));
+    // VER-8: an unknown state or action is a no-motion decision; the control is not engaged; the latch is kept.
+    if is_unknown(e.get("state"), STATES) || is_unknown(e.get("action"), TRUST_ACTIONS) {
+        return (false, stop_eng);
+    }
     if e.get("state").as_str() == Some("stop") {
         return (false, Some(if eng.is_int() { eng.as_f64().unwrap_or(-1.0) } else { -1.0 }));
     }
@@ -700,7 +723,13 @@ pub fn safety_errors(events: &[Map]) -> Vec<String> {
 pub fn moving_ticks(decisions: &[Map]) -> Vec<Value> {
     decisions
         .iter()
-        .filter(|e| is_control(e) && is_true(e.get("is_final")) && e.get("action").as_str() == Some("COMMIT") && e.get("tick").is_int())
+        .filter(|e| {
+            is_control(e)
+                && is_true(e.get("is_final"))
+                && e.get("action").as_str() == Some("COMMIT")
+                && str_in(e.get("state"), MOVING)
+                && e.get("tick").is_int()
+        })
         .map(|e| e.get("tick").clone())
         .collect()
 }

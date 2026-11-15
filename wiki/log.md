@@ -766,6 +766,15 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - README.md rewritten for newcomers (what NTS is, OpenTelemetry analogy table, status, architecture, quickstarts per SDK, docs links, related projects, layout, contributing, licence and data rules).
 - New docs index `docs/README.md` + `getting-started.md`, `concepts.md`, `sdks.md`, `collector.md`, `conformance.md`. SDK READMEs: status note and current vector counts (v0.1 65, fep-0005 44). CONTRIBUTING: CI and hygiene check.
 
+## [2026-11-15] setup | P1-01: NTS 1.0 RC3 draft resolves the protobuf open questions Q-1 … Q-8
+- New `spec/nts-1.0-rc3.md` (section 1.6 "Changes from RC2"); RC2 kept as the record. New `spec/feps/0007-unknown-enum-values.md` (Draft).
+- Q-7: unknown enum values are version-gated (VER-6 … VER-10): an error in `"0.1"` / `"1.0"` data, accepted with a safe fallback in newer-minor data; the fallback never acts (registry 12.3 column). Binding enums stay closed.
+- Q-1 GEN-9 (null only where typed), Q-2 SEG-6 / LSL-G3 (written down), Q-3 CTL-T9 (open reason codes), Q-4 TD-F2 / TD-13 (`declaration` object, key tables), Q-5 GEN-10 (integers at most 2^53 − 1), Q-6 PRF-5 (profile fields), Q-8 INT-T7 / CTL-T8.
+- SDK changes in Python, TypeScript and Rust (VER-8 leniency, VER-10 consumers, `DecisionTracker` kind `unknown`, GEN-10, `declaration` check). 17 new vectors (304 in all); no RC2 verdict changed.
+- Parity: Python = TypeScript = Rust on 304 vectors and 24,347 fuzz mutants (seeds 1–3). Proto: `json_profile` option, open enums + `*.known`, integer bounds; generated schema 178/178 one-line verdicts; protoc 0 differences.
+- Fixed the informative parts: 9.3 / 9.5 counts, C.1 HDR-12 row (V62 … V65), new rows and gap G-12.
+- Updated `concepts/nts-spec.md`, `index.md`.
+
 ## [2026-11-15] lint | R-24: repository hygiene decisions H-1 … H-9 applied
 - The orchestrator decided the nine R-23 judgement calls. `questions/repo-hygiene.md` section 3 marks each one decided or done.
 - H-1: `LICENSES/DATA.md` names the 9 result files with example decoded texts. They stay. New rule (DATA.md, CONTRIBUTING.md, checklist): new experiments commit no per-trial decoded or stimulus text; aggregates only.

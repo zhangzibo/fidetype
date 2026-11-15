@@ -37,7 +37,7 @@ from typing import Any, Callable, Iterable
 import numpy as np
 
 from fidetype.conformance.io import RawStream, _MissingMeta
-from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES, is_supported_spec_version
+from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES, enum_ok, is_newer_minor, is_supported_spec_version
 from fidetype.streams.vocab import VOCAB as CHAR_B2Q_28
 
 LEVELS = ("core", "trust-ready", "provenance")
@@ -128,6 +128,11 @@ def _is_num(x: Any) -> bool:
 def _vocab(raw: RawStream) -> list | None:
     v = raw.get("vocab")
     return v if isinstance(v, list) else None
+
+
+def _newer(raw: RawStream) -> bool:
+    """VER-8: the header declares a newer 1.x minor version, so unknown enumeration values are allowed."""
+    return is_newer_minor(raw.header.get("spec_version"))
 
 
 def _meta(raw: RawStream) -> dict | None:
@@ -357,6 +362,8 @@ def c_vocab_type(raw: RawStream) -> tuple[str, str]:
     vt = raw.header.get("vocab_type")
     if vt is None and "vocab_type" not in raw.header:
         return skip("no vocab_type (reported by the serialisation check)")
+    if vt not in VOCAB_TYPES and enum_ok(vt, VOCAB_TYPES, _newer(raw)):
+        return ok(f"vocab_type {vt!r} is unknown in this version; read as 'other' (VER-8)")
     return ok() if vt in VOCAB_TYPES else bad(f"vocab_type {vt!r} is not one of {list(VOCAB_TYPES)}")
 
 
@@ -534,9 +541,12 @@ def c_meta_types(raw: RawStream) -> tuple[str, str]:
     if m is None:
         return skip("meta is not an object")
     errs = []
+    newer = _newer(raw)
     for k, fn in DEFINED_KEYS.items():
         if k in m:
             want = fn(m[k])
+            if want and k == "device.modality" and enum_ok(m[k], MODALITIES, newer):
+                want = None  # VER-8: an unknown modality of a newer minor version reads as "other"
             if want:
                 errs.append(f"{k} = {m[k]!r} must be {want}")
     return bad("; ".join(errs)) if errs else ok(f"{sum(k in m for k in DEFINED_KEYS)} defined key(s) checked")
@@ -704,13 +714,15 @@ def _events(raw: RawStream, typ: str) -> list[dict]:
     return [e for e in raw.events if e.get("type") == typ]
 
 
-def _score_errors(e: dict, need_semantics: bool) -> list[str]:
+def _score_errors(e: dict, need_semantics: bool, newer: bool = False) -> list[str]:
     errs = []
     sem = e.get("score_semantics")
     if sem is None:
         if need_semantics:
             errs.append("no score_semantics")
         return errs
+    if sem not in SCORE_SEMANTICS and enum_ok(sem, SCORE_SEMANTICS, newer):
+        return []  # VER-8: unknown semantics of a newer minor version: the score is not a probability (DEC-1)
     if sem not in SCORE_SEMANTICS:
         return [f"score_semantics {sem!r} is not one of {list(SCORE_SEMANTICS)}"]
     sc = e.get("score")
@@ -737,7 +749,7 @@ def c_evt_decision(raw: RawStream) -> tuple[str, str]:
             errs.append(f"line {n}: no string label")
         if not _is_num(e.get("t")):
             errs.append(f"line {n}: no numeric t")
-        errs += [f"line {n}: {x}" for x in _score_errors(e, need_semantics=True)]
+        errs += [f"line {n}: {x}" for x in _score_errors(e, need_semantics=True, newer=_newer(raw))]
     return bad("; ".join(errs)) if errs else ok(f"{len(evs)} decision event(s)")
 
 
@@ -770,7 +782,7 @@ def c_evt_hyp(raw: RawStream) -> tuple[str, str]:
             errs.append(f"line {n}: nbest must be a list of {{text, score}}")
         if not isinstance(e.get("is_final"), bool):
             errs.append(f"line {n}: is_final must be a boolean")
-        errs += [f"line {n}: {x}" for x in _score_errors({**e, "score": None}, need_semantics=True)]
+        errs += [f"line {n}: {x}" for x in _score_errors({**e, "score": None}, need_semantics=True, newer=_newer(raw))]
     return bad("; ".join(errs)) if errs else ok(f"{len(evs)} hypothesis event(s)")
 
 
@@ -787,7 +799,7 @@ def c_evt_pointer(raw: RawStream) -> tuple[str, str]:
         if not (_is_int(d) and 1 <= d <= 3):
             errs.append(f"line {n}: dims must be 1-3")
             continue
-        if e.get("mode") not in ("relative", "absolute"):
+        if not enum_ok(e.get("mode"), ("relative", "absolute"), _newer(raw)):
             errs.append(f"line {n}: mode must be relative or absolute")
         vals = e.get("values")
         if not (isinstance(vals, list) and len(vals) == d and all(_is_num(x) for x in vals)):
@@ -809,7 +821,7 @@ def c_evt_sq(raw: RawStream) -> tuple[str, str]:
         n = e["_line"]
         if not _is_num(e.get("t")) or not _is_num(e.get("value")):
             errs.append(f"line {n}: needs numeric t and value")
-        if e.get("unit") not in SQ_UNITS:
+        if not enum_ok(e.get("unit"), SQ_UNITS, _newer(raw)):
             errs.append(f"line {n}: unit must be one of {list(SQ_UNITS)}")
         elif e["unit"] == "index" and _is_num(e.get("value")) and not 0 <= e["value"] <= 1:
             errs.append(f"line {n}: index value must be in [0, 1]")
@@ -840,6 +852,8 @@ def c_clock(raw: RawStream) -> tuple[str, str]:
     if "clock_domain" not in raw.header:
         return ok("absent (default trial)")
     cd = raw.header["clock_domain"]
+    if cd not in CLOCK_DOMAINS and enum_ok(cd, CLOCK_DOMAINS, _newer(raw)):
+        return ok(f"clock_domain {cd!r} is unknown in this version; read as 'other' (VER-8)")
     return ok() if cd in CLOCK_DOMAINS else bad(f"clock_domain {cd!r} is not one of {list(CLOCK_DOMAINS)}")
 
 

@@ -1,7 +1,7 @@
-// NeuralTextStream (NTS) 1.0 RC2 data model: the core (sections 3 and 4).
+// NeuralTextStream (NTS) 1.0 RC3 data model: the core (sections 3 and 4).
 //
 // Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
-// Rule ids (for example HDR-6) refer to spec/nts-1.0-rc2.md.
+// Rule ids (for example HDR-6) refer to spec/nts-1.0-rc3.md.
 //
 // Field numbers in every event message:
 //   1-15     the most frequent spec fields (one-byte tag)
@@ -69,10 +69,10 @@ message Header {
   // HDR-13. GEN-5 (no 0.0) is lexical: JSON Schema cannot see it.
   optional uint32 blank_id = 4 [(json_required) = true, (json_nullable) = true];
   // Nominal time between frames, seconds; finite and > 0. HDR-9, TIM-3.
-  // JSON null reads as absent (open question Q-1 in spec/CHANGELOG.md).
+  // JSON null = absent (GEN-9: the field table types it "or null").
   optional double frame_period = 5 [(json_nullable) = true, (exclusive_minimum) = 0];
   // Algorithmic lookahead of the decoder, seconds; finite and >= 0. HDR-10,
-  // MET-4, MET-5. JSON null reads as absent (open question Q-1).
+  // MET-4, MET-5. JSON null = absent (GEN-9: typed "or null").
   optional double latency = 6 [(json_nullable) = true, (minimum) = 0];
   // Short producer name; default "unknown". HDR-7.
   optional string source = 7 [(min_length) = 1];
@@ -82,8 +82,8 @@ message Header {
   // HDR-11. Default "trial".
   optional ClockDomain clock_domain = 9;
   // Registered vocabulary (3.3, 12.4). HDR-15.
-  optional string vocab_id = 10;
-  optional string vocab_version = 11;
+  optional string vocab_id = 10 [(json_nullable) = true];
+  optional string vocab_version = 11 [(json_nullable) = true];
   // Text profile declaration (4.7.3).
   DecodeDeclaration decode_declaration = 12;
   // Intent profile declaration (7.3.2).
@@ -139,8 +139,13 @@ message SegmentEnd {
   option (json_type) = "segment_end";
   // Signal time of the boundary; a finite number. SEG-4.
   optional double t = 1;
-  // Default "utterance". SEG-5.
+  // Default "utterance". SEG-5. An unknown value of a newer minor version is
+  // still a boundary (VER-8, registry 12.3).
   optional SegmentUnit unit = 2;
+  // Why the segment ended: a short code, no personal content (SEG-6). "gap" =
+  // an LSL transport gap (LSL-G1 mode "segment"); the gap keys of table 8.2.6
+  // (t_start, t_end, missing_frames, stream) then travel in ext.
+  optional string reason = 3;
 
   Timing timing = 900 [(json_inline) = true];
   Binding binding = 1000 [(json_inline) = true];
@@ -210,8 +215,8 @@ message Decision {
 
 // A gap in an LSL frames stream (extension event of the LSL binding, LSL-G1,
 // mode "mark"). JSON type "gap". A consumer that does not know it ignores
-// it (GEN-4). RC2 gives no field table; the fields below come from the
-// reference adapter (open question Q-2).
+// it (GEN-4). Field table: RC3 section 8.2.6 (LSL-G3); written down from the
+// reference adapters.
 message Gap {
   option (json_type) = "gap";
 

@@ -37,7 +37,7 @@ from fidetype.conformance.checks import FAIL, PASS, SKIP, CheckResult
 from fidetype.conformance.io import StreamRejected
 from fidetype.conformance.report import TargetReport
 from fidetype.conformance.vectors import BASE_META, Vector, _lp, _lsm
-from fidetype.streams.spec import is_supported_spec_version
+from fidetype.streams.spec import is_supported_spec_version, json_int
 from fidetype.streams.vocab import VOCAB
 
 SUFFIXES = (".json", ".xml")
@@ -218,7 +218,7 @@ def run_decisions_scenario(sc: dict[str, Any]) -> dict[str, Any]:
     events = []
     for n, s in enumerate(sc.get("samples", []), 1):
         try:
-            ev = json.loads(s, parse_constant=lambda c: (_ for _ in ()).throw(ValueError(c)))
+            ev = json.loads(s, parse_constant=lambda c: (_ for _ in ()).throw(ValueError(c)), parse_int=json_int)
         except ValueError as e:
             errs.append(f"sample {n}: not JSON: {e}")
             continue
@@ -236,7 +236,7 @@ def run_decisions_scenario(sc: dict[str, Any]) -> dict[str, Any]:
 
 
 def load_scenario(path: str | PathLike[str]) -> dict[str, Any]:
-    sc = json.loads(Path(path).read_text(encoding="utf-8"))
+    sc = json.loads(Path(path).read_text(encoding="utf-8"), parse_int=json_int)
     if not isinstance(sc, dict) or sc.get("schema") != SCENARIO_SCHEMA or sc.get("kind") not in ("inlet", "decisions"):
         raise StreamRejected(f"not a {SCENARIO_SCHEMA} scenario", FEP)
     return sc

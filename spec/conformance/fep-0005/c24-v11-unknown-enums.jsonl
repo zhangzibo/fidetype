@@ -1,0 +1,6 @@
+{"type": "header", "spec_version": "1.1", "vocab": ["control"], "vocab_type": "command", "blank_id": null, "source": "conformance-vector", "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial", "meta": {"device.modality": "other", "decoder.name": "conformance-vector", "decoder.version": "1", "decoder.causal": true, "data.derived": true, "language": "en"}, "control_declaration": {"dims": 2, "quantity": "acceleration", "units": "mm/s2", "frame": "joint", "rate_hz": 50.0, "uncertainty": "covariance", "axes": ["x", "y"], "max_speed": 400.0, "latency_s": 0.1, "window_s": 0.2}}
+{"type": "control_enable", "t": 0.0, "enabled": true, "source": "bci-switch"}
+{"type": "control", "t": 0.02, "tick": 0, "values": [40.0, -12.5], "std": [15.0, 15.0]}
+{"type": "control", "t": 0.04, "tick": 1, "values": [40.0, -12.5]}
+{"type": "control", "t": 0.06, "tick": 2, "values": [40.0, -12.5], "source": "assist"}
+{"type": "end"}

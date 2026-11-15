@@ -30,13 +30,14 @@ from typing import Any, Callable
 from fidetype.conformance.checks import FAIL, PASS, SKIP, CheckResult
 from fidetype.conformance.io import StreamRejected
 from fidetype.conformance.profiles import fep0003 as f3
-from fidetype.conformance.profiles.fep0001 import read_events, stream_kind
+from fidetype.conformance.profiles.fep0001 import ACTIONS, read_events, stream_kind
 from fidetype.conformance.report import TargetReport
 from fidetype.conformance.vectors import _frames, _header, _w_lines
 from fidetype.trust.control import (CONTROL, CONTROL_ENABLE, DECLARATION_KEY, PROFILE, STATES, ControlDeclaration,
                                     validate_control_declaration, validate_control_event, validate_enable_event)
 from fidetype.trust.intent import DECLARATION_KEY as INTENT_DECL
 from fidetype.trust.intent import validate_intent_declaration
+from fidetype.streams.spec import enum_ok, is_newer_minor, is_unknown
 
 SUFFIXES = (".jsonl", ".ndjson")
 FEP = "FEP-0005"
@@ -86,7 +87,7 @@ def _is_control(e: dict[str, Any]) -> bool:
 
 def _intent_ids(h: dict[str, Any]) -> tuple[list[str] | None, list[str]]:
     d = h.get(INTENT_DECL)
-    if isinstance(d, dict) and not validate_intent_declaration(d):
+    if isinstance(d, dict) and not validate_intent_declaration(d, lenient=is_newer_minor(h.get("spec_version"))):
         return [it["id"] for it in d["intents"]], [it["id"] for it in d["intents"] if it.get("role") == "null"]
     return None, []
 
@@ -96,7 +97,8 @@ def decl_errors(events: list[dict[str, Any]]) -> list[str]:
     for h in events:
         if h["type"] == "header" and DECLARATION_KEY in h:
             ids, nulls = _intent_ids(h)
-            out += [f"line {h['_line']}: {x}" for x in validate_control_declaration(h[DECLARATION_KEY], ids, nulls)]
+            out += [f"line {h['_line']}: {x}" for x in validate_control_declaration(
+                h[DECLARATION_KEY], ids, nulls, lenient=is_newer_minor(h.get("spec_version")))]
     return out
 
 
@@ -106,22 +108,24 @@ def control_errors(events: list[dict[str, Any]]) -> list[str]:
     has = False
     last_tick: int | None = None
     last_t: float | None = None
+    newer = False
     for e in events:
         n = e.get("_line")
         if e["type"] == "header":
             has = DECLARATION_KEY in e
+            newer = is_newer_minor(e.get("spec_version"))
             decl, last_tick, last_t = None, None, None
             if has:
                 ids, nulls = _intent_ids(e)
-                if not validate_control_declaration(e[DECLARATION_KEY], ids, nulls):
-                    decl = ControlDeclaration.from_declaration(e[DECLARATION_KEY])
+                if not validate_control_declaration(e[DECLARATION_KEY], ids, nulls, lenient=newer):
+                    decl = ControlDeclaration.from_declaration(e[DECLARATION_KEY], lenient=newer)
         elif e["type"] == CONTROL:
             if not has:
                 out.append(f"line {n}: control event without a control_declaration in the header (rule 1)")
                 continue
             if decl is None:
                 continue  # FEP5-DECL reports it
-            errs = validate_control_event(e, decl)
+            errs = validate_control_event(e, decl, lenient=newer)
             out += [f"line {n}: {x}" for x in errs]
             if errs or e.get("source", "decoder") != "decoder":
                 continue
@@ -137,7 +141,14 @@ def control_errors(events: list[dict[str, Any]]) -> list[str]:
 
 
 def enable_errors(events: list[dict[str, Any]]) -> list[str]:
-    return [f"line {e['_line']}: {x}" for e in events if e["type"] == CONTROL_ENABLE for x in validate_enable_event(e)]
+    out: list[str] = []
+    newer = False
+    for e in events:
+        if e["type"] == "header":
+            newer = is_newer_minor(e.get("spec_version"))
+        elif e["type"] == CONTROL_ENABLE:
+            out += [f"line {e['_line']}: {x}" for x in validate_enable_event(e, lenient=newer)]
+    return out
 
 
 def intent_compat_errors(events: list[dict[str, Any]]) -> list[str]:
@@ -164,11 +175,12 @@ def td_control_format_errors(e: dict[str, Any]) -> list[str]:
     if e.get("is_final") is not True:
         x.append("a control decision MUST be final (is_final = true) (rule 2)")
     act, st = e.get("action"), e.get("state")
-    if act not in CONTROL_ACTIONS:
+    newer = is_newer_minor(e.get("spec_version"))  # VER-8: unknown action / state of a newer minor version
+    if act not in CONTROL_ACTIONS and not (newer and is_unknown(act, ACTIONS)):
         x.append(f"control action {act!r} is not one of {list(CONTROL_ACTIONS)}")
-    if st not in STATES:
+    if not enum_ok(st, STATES, newer):
         x.append(f"state {st!r} is not one of {list(STATES)}")
-    elif act in CONTROL_ACTIONS and (st in MOVING) != (act == "COMMIT"):
+    elif st in STATES and act in CONTROL_ACTIONS and (st in MOVING) != (act == "COMMIT"):
         x.append(f"state {st!r} does not fit action {act!r} (act/attenuate = COMMIT, hold/stop = ABSTAIN) (rule 3)")
     vel = e.get("velocity")
     if not (isinstance(vel, list) and 1 <= len(vel) <= 3 and all(_num(v) for v in vel)):
@@ -238,6 +250,8 @@ def engaged_after(e: dict[str, Any], stop_eng: int | None) -> tuple[bool, int | 
     """
     eng = e.get("engagement")
     reasons = e["reasons"] if isinstance(e.get("reasons"), list) else []
+    if is_unknown(e.get("state"), STATES) or is_unknown(e.get("action"), ACTIONS):
+        return False, stop_eng  # VER-8: an unknown state or action is a no-motion decision; not engaged, latch kept
     if e.get("state") == "stop":
         return False, eng if _int(eng) else -1
     if not _int(eng) or eng < 1 or "not_engaged" in reasons or "disengaged" in reasons:
@@ -295,8 +309,9 @@ def safety_errors(events: list[dict[str, Any]]) -> list[str]:
 
 
 def moving_ticks(decisions: list[dict[str, Any]]) -> list[int]:
+    """The ticks a bridge may move on: final control COMMITs with a known moving state (VER-8: unknown = no motion)."""
     return [e["tick"] for e in decisions if _is_control(e) and e.get("is_final") is True and e.get("action") == "COMMIT"
-            and _int(e.get("tick"))]
+            and e.get("state") in MOVING and _int(e.get("tick"))]
 
 
 # --- checks, report, reference consumer -----------------------------------------------------
@@ -593,6 +608,30 @@ def build_vectors() -> list[Any]:
         {"kind": "decisions", "decisions": 3, "control_decisions": 2, "moving_ticks": [], "acted_intents": ["intent.click"]},
         writer=_w_lines([_stop(0, 0), _hold(1, 1, engagement=2),
                          f3._td(session="c1", seq=2, unit=0, intent="intent.click", vocab_id="intent.cursor-v1")]))
+    # --- NTS 1.0 RC3: unknown enumeration values (VER-6 ... VER-10)
+    c11 = {**CDECL, "quantity": "acceleration", "units": "mm/s2", "frame": "joint", "uncertainty": "covariance"}
+    add("C24", "c24-v11-unknown-enums.jsonl", "accept", "1.0 RC3 11.2.1 (VER-8)",
+        'Header spec_version "1.1": quantity "acceleration", units "mm/s2", frame "joint", uncertainty "covariance", '
+        'an engage from source "bci-switch" and a control event from source "assist": accepted (no motion)',
+        {"kind": "input", "declarations": 1, "controls": 3, "enables": 1},
+        writer=_input(_en(True, 0.0, source="bci-switch"), _ctl(0), _ctl(1, std=_DROP),
+                      _ctl(2, source="assist", std=_DROP), header=_ch(c11, spec_version="1.1")))
+    v11 = {"spec_version": "1.1"}
+    add("E22", "e22-log-v11-unknown-state.jsonl", "accept", "1.0 RC3 11.2.1 (VER-8, VER-10)",
+        'spec_version "1.1": a control COMMIT with the unknown state "boost" is accepted and does not move; '
+        "a later attenuate COMMIT moves",
+        {"kind": "decisions", "decisions": 3, "control_decisions": 3, "moving_ticks": [2]},
+        writer=_w_lines([_hold(0, 0, "not_engaged", engagement=0, radius=_DROP, level=_DROP, score_semantics="none", **v11),
+                         _cd(seq=1, tick=1, state="boost", **v11), _cd(seq=2, tick=2, **v11)]))
+    add("E23", "e23-td-v10-unknown-state.jsonl", "reject", "1.0 RC3 11.2.1 (VER-7) / 7.4.5 (CTL-T3)",
+        'spec_version "1.0": a control decision with the unknown state "boost"', failing="FEP5-TD-FORMAT",
+        writer=_w_lines([_cd(state="boost", spec_version="1.0")]))
+    add("E24", "e24-click-after-unknown-state.jsonl", "reject", "1.0 RC3 11.2.1 (VER-10) / 7.4.6 (CTL-S7)",
+        'spec_version "1.1": an engaged attenuate COMMIT, then a control decision with the unknown state "boost", '
+        "then an intent COMMIT: after an unknown state the control counts as not engaged",
+        failing="FEP5-SAFETY",
+        writer=_w_lines([_cd(seq=0, tick=0, **v11), _cd(seq=1, tick=1, state="boost", **v11),
+                         f3._td(session="c1", seq=2, unit=0, intent="intent.click", vocab_id="intent.cursor-v1", **v11)]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

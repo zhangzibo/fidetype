@@ -176,6 +176,10 @@ fn issues(raw: &RawStream, id: &str) -> Option<Out> {
 fn hget<'a>(raw: &'a RawStream, k: &str) -> &'a Value {
     raw.header.get(k)
 }
+/// VER-8: the header declares a newer 1.x minor version, so unknown enumeration values are allowed.
+fn newer_of(raw: &RawStream) -> bool {
+    crate::json::newer_minor(raw.header.get("spec_version"))
+}
 
 /// (dotted key path, value) for every leaf of a JSON value.
 fn walk<'a>(obj: &'a Value, prefix: &str, out: &mut Vec<(String, &'a Value)>) {
@@ -455,6 +459,8 @@ fn c_vocab_type(raw: &RawStream) -> Out {
     }
     if str_in(vt, VOCAB_TYPES) {
         ok("")
+    } else if crate::json::enum_ok(vt, VOCAB_TYPES, newer_of(raw)) {
+        ok(&format!("vocab_type {} is unknown in this version; read as 'other' (VER-8)", repr(vt)))
     } else {
         bad(format!("vocab_type {} is not one of {}", repr(vt), repr(&str_list(VOCAB_TYPES))))
     }
@@ -673,9 +679,13 @@ fn c_meta_types(raw: &RawStream) -> Out {
         None => return skip("meta is not an object"),
     };
     let mut errs = Vec::new();
+    let newer = newer_of(raw);
     for (k, f) in DEFINED_KEYS {
         if let Some(v) = m.get_opt(k) {
             if let Some(want) = f(v) {
+                if *k == "device.modality" && crate::json::enum_ok(v, MODALITIES, newer) {
+                    continue; // VER-8: an unknown modality of a newer minor version reads as "other"
+                }
                 errs.push(format!("{} = {} must be {}", k, repr(v), want));
             }
         }
@@ -925,7 +935,7 @@ fn line_of(e: &Map) -> String {
     }
 }
 
-fn score_errors(e: &Map, need_semantics: bool, ignore_score: bool) -> Vec<String> {
+fn score_errors(e: &Map, need_semantics: bool, ignore_score: bool, newer: bool) -> Vec<String> {
     let mut errs = Vec::new();
     let sem = e.get("score_semantics");
     if sem.is_null() {
@@ -933,6 +943,9 @@ fn score_errors(e: &Map, need_semantics: bool, ignore_score: bool) -> Vec<String
             errs.push("no score_semantics".to_string());
         }
         return errs;
+    }
+    if !str_in(sem, SCORE_SEMANTICS) && crate::json::enum_ok(sem, SCORE_SEMANTICS, newer) {
+        return errs; // VER-8: unknown semantics of a newer minor version: the score is not a probability (DEC-1)
     }
     if !str_in(sem, SCORE_SEMANTICS) {
         return vec![format!("score_semantics {} is not one of {}", repr(sem), repr(&str_list(SCORE_SEMANTICS)))];
@@ -971,7 +984,7 @@ fn c_evt_decision(raw: &RawStream) -> Out {
         if !e.get("t").is_num() {
             errs.push(format!("line {}: no numeric t", n));
         }
-        for x in score_errors(e, true, false) {
+        for x in score_errors(e, true, false, newer_of(raw)) {
             errs.push(format!("line {}: {}", n, x));
         }
     }
@@ -1023,7 +1036,7 @@ fn c_evt_hypothesis(raw: &RawStream) -> Out {
         if !matches!(e.get("is_final"), Value::Bool(_)) {
             errs.push(format!("line {}: is_final must be a boolean", n));
         }
-        for x in score_errors(e, true, true) {
+        for x in score_errors(e, true, true, newer_of(raw)) {
             errs.push(format!("line {}: {}", n, x));
         }
     }
@@ -1048,7 +1061,7 @@ fn c_evt_pointer(raw: &RawStream) -> Out {
         }
         let dn = dv as usize;
         let mode = e.get("mode");
-        if !str_in(mode, &["relative", "absolute"]) {
+        if !crate::json::enum_ok(mode, &["relative", "absolute"], newer_of(raw)) {
             errs.push(format!("line {}: mode must be relative or absolute", n));
         }
         match e.get("values") {
@@ -1087,7 +1100,7 @@ fn c_evt_signal_quality(raw: &RawStream) -> Out {
             errs.push(format!("line {}: needs numeric t and value", n));
         }
         let unit = e.get("unit");
-        if !str_in(unit, SQ_UNITS) {
+        if !crate::json::enum_ok(unit, SQ_UNITS, newer_of(raw)) {
             errs.push(format!("line {}: unit must be one of {}", n, repr(&str_list(SQ_UNITS))));
         } else if unit.as_str() == Some("index") {
             if let Value::Num(x, _) = e.get("value") {
@@ -1125,6 +1138,9 @@ fn c_clock(raw: &RawStream) -> Out {
     match raw.header.get_opt("clock_domain") {
         None => ok("absent (default trial)"),
         Some(cd) if str_in(cd, CLOCK_DOMAINS) => ok(""),
+        Some(cd) if crate::json::enum_ok(cd, CLOCK_DOMAINS, newer_of(raw)) => {
+            ok(&format!("clock_domain {} is unknown in this version; read as 'other' (VER-8)", repr(cd)))
+        }
         Some(cd) => bad(format!("clock_domain {} is not one of {}", repr(cd), repr(&str_list(CLOCK_DOMAINS)))),
     }
 }

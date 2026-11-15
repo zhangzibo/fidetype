@@ -15,6 +15,18 @@ pub fn is_supported_spec_version(v: &str) -> bool {
         None => false,
     }
 }
+/// True if `v` is a `spec_version` of a newer minor version of major 1
+/// ("1.1", "1.2", ...), above the 1.0 that this crate implements. NTS 1.0 RC3,
+/// VER-8: in data whose governing version is a newer minor version, an unknown
+/// enumeration value is not an error (the consumer applies the safe fallback).
+pub fn is_newer_minor(v: &str) -> bool {
+    match v.strip_prefix("1.") {
+        Some(m) => !m.is_empty() && m.bytes().all(|b| b.is_ascii_digit()) && !m.starts_with('0'),
+        None => false,
+    }
+}
+/// Largest JSON integer that every SDK reads exactly: 2^53 - 1 (NTS 1.0 RC3, GEN-10).
+pub const MAX_JSON_INT: f64 = 9_007_199_254_740_991.0;
 /// Tolerance of the row normalisation rule (spec 5.2.1).
 pub const NORM_TOL: f64 = 1e-3;
 pub const VOCAB_TYPES: &[&str] = &["char", "key", "word", "phoneme", "command", "other"];

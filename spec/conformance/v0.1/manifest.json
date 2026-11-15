@@ -726,6 +726,40 @@
    "clause": "1.0 RC2 3.1 (HDR-6, HDR-12)",
    "description": "vocab = [] with blank_id 0 (no index is in 0 ... V-1)",
    "failing_check": "NTS-BLANK"
+  },
+  {
+   "id": "V66",
+   "file": "v66-unknown-enums-v1-1.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC3 11.2.1 (VER-8)",
+   "description": "Header spec_version \"1.1\" with unknown enumeration values (vocab_type, clock_domain, device.modality, signal_quality unit, decision score_semantics, pointer mode): accepted, kept as unknown",
+   "expected": {
+    "n_frames": 2,
+    "vocab_type": "syllable",
+    "events": 3
+   }
+  },
+  {
+   "id": "V67",
+   "file": "v67-unknown-clock-v1-0.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC3 11.2.1 (VER-7) / 5.3 (HDR-11)",
+   "description": "Header spec_version \"1.0\" with clock_domain \"gps\": 1.0 data must use the values of 1.0",
+   "failing_check": "NTS-CLOCK"
+  },
+  {
+   "id": "V68",
+   "file": "v68-vocab-type-number-v1-1.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC3 11.2.1 (VER-8) / 3.1 (HDR-5)",
+   "description": "Header spec_version \"1.1\" with vocab_type 5: an unknown value must still be a string",
+   "failing_check": "NTS-VOCAB-TYPE"
   }
  ]
 }

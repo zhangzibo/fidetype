@@ -1,7 +1,7 @@
-// NeuralTextStream (NTS) 1.0 RC2 data model: the text profile (4.7, 7.2).
+// NeuralTextStream (NTS) 1.0 RC3 data model: the text profile (4.7, 7.2).
 //
 // Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
-// Rule ids (for example EVD-1) refer to spec/nts-1.0-rc2.md.
+// Rule ids (for example EVD-1) refer to spec/nts-1.0-rc3.md.
 // Field number ranges: see core.proto.
 
 syntax = "proto3";

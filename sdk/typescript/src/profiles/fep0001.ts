@@ -8,7 +8,7 @@
  */
 
 import { blocks, runChecks } from "../checks.js";
-import { DECLARATION_KEY, SCORE_SEMANTICS, SEGMENT_UNITS, TRUST_ACTIONS, isSupportedSpecVersion } from "../constants.js";
+import { DECLARATION_KEY, SCORE_SEMANTICS, SEGMENT_UNITS, TRUST_ACTIONS, enumOk, isNewerMinor, isSupportedSpecVersion } from "../constants.js";
 import { cpLen, get, has, isFinNum, isObj } from "../json.js";
 import { readJsonlRaw } from "../raw.js";
 import { CheckMeta, Ev, TargetReport, isInt, makeRes, readEvents, rejectOnFailure, repr, streamKind } from "./common.js";
@@ -63,8 +63,12 @@ export function validateDeclaration(decl: unknown): string[] {
 export function segmentErrors(events: Ev[]): string[] {
   const errs: string[] = [];
   let lastFrameT = -Infinity;
+  let newer = false;
   for (const e of events) {
-    if (e.type === "header") lastFrameT = -Infinity;
+    if (e.type === "header") {
+      lastFrameT = -Infinity;
+      newer = isNewerMinor(get(e, "spec_version"));
+    }
     else if (e.type === "frame" && isFinNum(get(e, "t"))) lastFrameT = e.t as number;
     else if (e.type === "segment_end") {
       const n = e._line;
@@ -72,7 +76,7 @@ export function segmentErrors(events: Ev[]): string[] {
         if (!isFinNum(e.t)) errs.push(`line ${n}: segment_end t must be a finite number`);
         else if (e.t < lastFrameT) errs.push(`line ${n}: segment_end t ${e.t} is before the last frame t ${lastFrameT} (rule 5)`);
       }
-      if (has(e, "unit") && !(SEGMENT_UNITS as readonly unknown[]).includes(e.unit)) {
+      if (has(e, "unit") && !enumOk(e.unit, SEGMENT_UNITS, newer)) {
         errs.push(`line ${n}: segment_end unit ${repr(e.unit)} is not one of ${repr(SEGMENT_UNITS)}`);
       }
     }
@@ -138,16 +142,17 @@ export function tdInputErrors(events: Ev[]): string[] {
 export function tdFormatErrors(e: Record<string, unknown>): string[] {
   const n = has(e, "_line") ? e._line : "?";
   const errs: string[] = [];
+  const newer = isNewerMinor(get(e, "spec_version")); // VER-8: unknown enum values of a newer minor version are allowed
   if (typeof get(e, "is_final") !== "boolean") errs.push("is_final must be a boolean");
   const action = get(e, "action");
-  if (!(TRUST_ACTIONS as readonly unknown[]).includes(action)) errs.push(`action ${repr(action)} is not one of ${repr(TRUST_ACTIONS)}`);
+  if (!enumOk(action, TRUST_ACTIONS, newer)) errs.push(`action ${repr(action)} is not one of ${repr(TRUST_ACTIONS)}`);
   if (!has(e, "p_top1")) errs.push("p_top1 is required (number or null)");
   else if (e.p_top1 !== null && !(isFinNum(e.p_top1) && e.p_top1 >= 0 && e.p_top1 <= 1)) {
     errs.push(`p_top1 ${repr(e.p_top1)} must be a number in [0, 1] or null`);
   }
   const sem = get(e, "score_semantics");
   if (sem === null) errs.push("score_semantics is required");
-  else if (!(SCORE_SEMANTICS as readonly unknown[]).includes(sem)) errs.push(`score_semantics ${repr(sem)} is not one of ${repr(SCORE_SEMANTICS)}`);
+  else if (!enumOk(sem, SCORE_SEMANTICS, newer)) errs.push(`score_semantics ${repr(sem)} is not one of ${repr(SCORE_SEMANTICS)}`);
   if (has(e, "shown")) {
     const sh = e.shown;
     if (!Array.isArray(sh) || !sh.every((x) => typeof x === "string")) errs.push("shown must be a list of strings");
@@ -163,6 +168,7 @@ export function tdFormatErrors(e: Record<string, unknown>): string[] {
   }
   if (has(e, "config_id") && e.config_id !== null && typeof e.config_id !== "string") errs.push("config_id must be a string");
   if (has(e, "input") && !isObj(e.input)) errs.push("input must be an object");
+  if (has(e, "declaration") && !isObj(e.declaration)) errs.push("declaration must be an object (TD-F2)");
   if (has(e, "latency_s") && !(isFinNum(e.latency_s) && e.latency_s >= 0)) errs.push("latency_s must be a number >= 0");
   errs.push(...tdVersionErrors(e));
   return errs.map((x) => `line ${n}: ${x}`);
@@ -190,10 +196,14 @@ function tdVersionErrors(e: Record<string, unknown>): string[] {
   return [];
 }
 
+/** True for a text-profile decision: `profile` absent or "text" (PRF-4: other or unknown profiles are never text). */
+export function isTextDecision(e: Record<string, unknown>): boolean {
+  return !has(e, "profile") || e.profile === "text";
+}
+
 /** True for a text-profile OFFER, ASK or OFFER_WORDS (`shown` lists candidates; TD-12). */
 function textOffer(e: Record<string, unknown>): boolean {
-  const p = get(e, "profile");
-  return OFFER_ACTIONS.includes(get(e, "action") as string) && p !== "intent" && p !== "control";
+  return OFFER_ACTIONS.includes(get(e, "action") as string) && isTextDecision(e);
 }
 
 /** The number of blank texts (empty or white space, spec 1.4) in `shown` of a text OFFER, ASK or OFFER_WORDS. */
@@ -267,7 +277,7 @@ export function tdFinalErrors(events: Record<string, unknown>[]): string[] {
 export function actedTexts(decisions: Record<string, unknown>[]): (string | null)[] {
   const out: (string | null)[] = [];
   for (const e of decisions) {
-    if (get(e, "type") === "trust_decision" && get(e, "is_final") === true && get(e, "action") === "COMMIT") {
+    if (get(e, "type") === "trust_decision" && get(e, "is_final") === true && get(e, "action") === "COMMIT" && isTextDecision(e)) {
       const sh = get(e, "shown");
       out.push(Array.isArray(sh) && sh.length ? (sh[0] as string) : null);
     }

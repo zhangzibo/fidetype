@@ -17,12 +17,12 @@ fn run(profile: &str, expected_total: usize) {
 
 #[test]
 fn v01_vectors() {
-    run("v0.1", 65);
+    run("v0.1", 68);
 }
 
 #[test]
 fn fep0001_vectors() {
-    run("fep-0001", 56);
+    run("fep-0001", 62);
 }
 
 #[test]
@@ -32,17 +32,17 @@ fn fep0002_vectors() {
 
 #[test]
 fn fep0003_vectors() {
-    run("fep-0003", 44);
+    run("fep-0003", 47);
 }
 
 #[test]
 fn fep0004_vectors() {
-    run("fep-0004", 43);
+    run("fep-0004", 44);
 }
 
 #[test]
 fn fep0005_vectors() {
-    run("fep-0005", 44);
+    run("fep-0005", 48);
 }
 
 #[test]
@@ -59,6 +59,12 @@ fn accepted_vectors_pass_the_streaming_validator() {
     for v in manifest.get("vectors").as_arr().unwrap() {
         let file = v.get("file").as_str().unwrap();
         if !file.ends_with(".jsonl") || v.get("expect").as_str() != Some("accept") {
+            continue;
+        }
+        // NTS 1.0 RC3, VER-8 / VER-10: V66 is 1.1 data with an unknown vocab_type. The streaming header check is
+        // the one of the trust layer, which refuses it (a trust layer that cannot apply a fallback stops).
+        if v.get("id").as_str() == Some("V66") {
+            assert!(io::validate_file_streaming(dir.join(file), |_, _| {}).is_err(), "V66: the trust-layer header check refuses it");
             continue;
         }
         let r = io::validate_file_streaming(dir.join(file), |_, _| {});

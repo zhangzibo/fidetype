@@ -19,7 +19,8 @@ import math
 import re
 from typing import Any
 
-ANNOTATIONS = {"$schema", "$id", "$comment", "title", "description", "$defs", "default", "x-nts-rules", "x-proto"}
+ANNOTATIONS = {"$schema", "$id", "$comment", "title", "description", "$defs", "default", "x-nts-rules", "x-proto",
+               "x-nts-enum"}
 KEYWORDS = {
     "$ref", "type", "enum", "const", "required", "properties", "items", "prefixItems", "minItems", "maxItems",
     "uniqueItems", "contains", "minContains", "maxContains", "minimum", "maximum", "exclusiveMinimum",

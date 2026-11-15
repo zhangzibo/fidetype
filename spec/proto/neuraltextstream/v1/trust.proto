@@ -1,7 +1,7 @@
-// NeuralTextStream (NTS) 1.0 RC2 data model: trust decisions (6, 7.3.5, 7.4.5).
+// NeuralTextStream (NTS) 1.0 RC3 data model: trust decisions (6, 7.3.5, 7.4.5).
 //
 // Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
-// Rule ids (for example TD-F2) refer to spec/nts-1.0-rc2.md.
+// Rule ids (for example TD-F2) refer to spec/nts-1.0-rc3.md.
 // Field number ranges: see core.proto. In TrustDecision: 1-39 all profiles,
 // 40-59 intent profile, 60-79 control profile.
 
@@ -56,21 +56,24 @@ enum ControlState {
 // TD-11, INT-T4, CTL-T5 (need other lines); the trust rules TD-9, TD-12,
 // INT-S1 ... INT-S10, CTL-S1 ... CTL-S8 (semantic rules of a trust layer);
 // raw has one value per axis of velocity (two arrays).
-// Fields of one profile are typed on every decision (EXT-1: a field has one
-// type). The SDKs check them only inside their profile (open question Q-6).
-// Two rules below have no rule id in RC2 but are SDK format checks: an arm
-// only on an OFFER, and level with radius (open question Q-8).
+// Fields of one profile (option json_profile) have their type only on
+// decisions of that profile; on other decisions they are custom keys (PRF-5).
+// Enumeration values: any string in the base schema; the known values are
+// required unless spec_version is a newer minor version (VER-7, VER-8:
+// TrustDecision.known). The action and state rules below name the known
+// values that a profile does not allow, so a newer minor version may add
+// values. INT-T7: an arm only on an OFFER. CTL-T8: level with radius.
 message TrustDecision {
   option (json_type) = "trust_decision";
   option (json_rule) = '{"$comment": "TD-8: a COMMIT with shown has at least one text", "if": {"required": ["action", "shown"], "properties": {"action": {"const": "COMMIT"}}}, "then": {"properties": {"shown": {"minItems": 1}}}}';
-  option (json_rule) = '{"$comment": "INT-T1, INT-T2, INT-T3: intent decisions", "if": {"required": ["profile"], "properties": {"profile": {"const": "intent"}}}, "then": {"required": ["unit"], "not": {"anyOf": [{"required": ["shown"]}, {"required": ["utterance"]}]}, "properties": {"action": {"enum": ["COMMIT", "OFFER", "ABSTAIN"]}}}}';
+  option (json_rule) = '{"$comment": "INT-T1, INT-T2, INT-T3: intent decisions", "if": {"required": ["profile"], "properties": {"profile": {"const": "intent"}}}, "then": {"required": ["unit"], "not": {"anyOf": [{"required": ["shown"]}, {"required": ["utterance"]}]}, "properties": {"action": {"not": {"enum": ["ASK", "OFFER_WORDS"]}}}}}';
   option (json_rule) = '{"$comment": "INT-T3: an intent COMMIT has intent and risk_class", "if": {"required": ["profile", "action"], "properties": {"profile": {"const": "intent"}, "action": {"const": "COMMIT"}}}, "then": {"required": ["intent", "risk_class"], "properties": {"risk_class": {"type": "string"}}}}';
   option (json_rule) = '{"$comment": "INT-T3: an intent OFFER has a non-empty offered list", "if": {"required": ["profile", "action"], "properties": {"profile": {"const": "intent"}, "action": {"const": "OFFER"}}}, "then": {"required": ["offered"], "properties": {"offered": {"minItems": 1}}}}';
-  option (json_rule) = '{"$comment": "7.3.1: confirm_required (an arm) only on an intent OFFER", "if": {"required": ["profile", "confirm_required"], "properties": {"profile": {"const": "intent"}, "confirm_required": {"const": true}}}, "then": {"properties": {"action": {"const": "OFFER"}}}}';
-  option (json_rule) = '{"$comment": "CTL-T1, CTL-T2, CTL-T4: control decisions", "if": {"required": ["profile"], "properties": {"profile": {"const": "control"}}}, "then": {"required": ["tick", "state", "velocity", "gain", "units", "v_max", "ttl_s", "engagement"], "not": {"anyOf": [{"required": ["shown"]}, {"required": ["utterance"]}, {"required": ["unit"]}]}, "properties": {"is_final": {"const": true}, "action": {"enum": ["COMMIT", "ABSTAIN"]}}}}';
-  option (json_rule) = '{"$comment": "CTL-T3: act and attenuate go with COMMIT", "if": {"required": ["profile", "action"], "properties": {"profile": {"const": "control"}, "action": {"const": "COMMIT"}}}, "then": {"properties": {"state": {"enum": ["act", "attenuate"]}}}}';
-  option (json_rule) = '{"$comment": "CTL-T3: hold and stop go with ABSTAIN", "if": {"required": ["profile", "action"], "properties": {"profile": {"const": "control"}, "action": {"const": "ABSTAIN"}}}, "then": {"properties": {"state": {"enum": ["hold", "stop"]}}}}';
-  option (json_rule) = '{"$comment": "7.4.5 (SDK check FEP5-TD-FORMAT): a control decision with radius has level", "if": {"required": ["profile", "radius"], "properties": {"profile": {"const": "control"}}}, "then": {"required": ["level"]}}';
+  option (json_rule) = '{"$comment": "INT-T7: confirm_required (an arm) only on an intent OFFER", "if": {"required": ["profile", "confirm_required"], "properties": {"profile": {"const": "intent"}, "confirm_required": {"const": true}}}, "then": {"properties": {"action": {"const": "OFFER"}}}}';
+  option (json_rule) = '{"$comment": "CTL-T1, CTL-T2, CTL-T4: control decisions", "if": {"required": ["profile"], "properties": {"profile": {"const": "control"}}}, "then": {"required": ["tick", "state", "velocity", "gain", "units", "v_max", "ttl_s", "engagement"], "not": {"anyOf": [{"required": ["shown"]}, {"required": ["utterance"]}, {"required": ["unit"]}]}, "properties": {"is_final": {"const": true}, "action": {"not": {"enum": ["OFFER", "ASK", "OFFER_WORDS"]}}}}}';
+  option (json_rule) = '{"$comment": "CTL-T3: act and attenuate go with COMMIT", "if": {"required": ["profile", "action"], "properties": {"profile": {"const": "control"}, "action": {"const": "COMMIT"}}}, "then": {"properties": {"state": {"not": {"enum": ["hold", "stop"]}}}}}';
+  option (json_rule) = '{"$comment": "CTL-T3: hold and stop go with ABSTAIN", "if": {"required": ["profile", "action"], "properties": {"profile": {"const": "control"}, "action": {"const": "ABSTAIN"}}}, "then": {"properties": {"state": {"not": {"enum": ["act", "attenuate"]}}}}}';
+  option (json_rule) = '{"$comment": "CTL-T8: a control decision with radius has level", "if": {"required": ["profile", "radius"], "properties": {"profile": {"const": "control"}}}, "then": {"required": ["level"]}}';
 
   // --- all profiles (6.1) ---
 
@@ -103,12 +106,14 @@ message TrustDecision {
   optional uint64 utterance = 12;
   // Content id of the trust configuration; string or null. TD-F2.
   optional string config_id = 13 [(json_nullable) = true];
-  // Reference to the input. A JSON object. TD-F2, INT-S10, CTL-S8.
+  // Reference to the input. A JSON object (TD-F2); recommended keys: table
+  // 6.1.1 (informative). INT-S10, CTL-S8.
   google.protobuf.Struct input = 14;
   // Computation time of the decision, seconds; >= 0. TD-F2.
   optional double latency_s = 15 [(minimum) = 0];
-  // Result of the declaration check (DCL-5, DCL-6). A JSON object; 6.1
-  // names its keys but not their types (open question Q-4).
+  // Result of the declaration check (DCL-5, DCL-6). A JSON object (TD-F2);
+  // recommended keys and types: table 6.1.2 (informative; consumers MUST NOT
+  // rely on them for safety).
   google.protobuf.Struct declaration = 16;
   // Short reason code or text, no personal content. SEC-5.
   optional string reason = 17;
@@ -118,59 +123,59 @@ message TrustDecision {
   // --- intent profile (7.3.5) ---
 
   // Decision unit; integer >= 0. INT-T1, INT-T4.
-  optional uint64 unit = 40;
+  optional uint64 unit = 40 [(json_profile) = "intent"];
   // The committed intent (COMMIT). INT-T3.
-  optional string intent = 41;
+  optional string intent = 41 [(json_profile) = "intent"];
   // The offered intents (OFFER). INT-T3.
-  repeated string offered = 42;
+  repeated string offered = 42 [(json_profile) = "intent"];
   // Risk class of a COMMIT; null on other actions. INT-T3, INT-S3.
-  optional RiskClass risk_class = 43 [(json_nullable) = true];
+  optional RiskClass risk_class = 43 [(json_nullable) = true, (json_profile) = "intent"];
   // Commit threshold of the class; number in [0, 1] or null. INT-S3.
-  optional double threshold = 44 [(json_nullable) = true, (minimum) = 0, (maximum) = 1];
+  optional double threshold = 44 [(json_nullable) = true, (minimum) = 0, (maximum) = 1, (json_profile) = "intent"];
   // Role of the intent; JSON null if none. INT-S1.
-  optional IntentRole role = 45 [(json_nullable) = true];
+  optional IntentRole role = 45 [(json_nullable) = true, (json_profile) = "intent"];
   // true: an arm of an irreversible intent (7.3.1). INT-S4.
-  optional bool confirm_required = 46;
+  optional bool confirm_required = 46 [(json_profile) = "intent"];
   // The unit of the armed OFFER that this COMMIT executes. INT-S4.
-  optional uint64 confirmation_of = 47;
+  optional uint64 confirmation_of = 47 [(json_profile) = "intent"];
   // INT-S4.
-  optional ConfirmedVia confirmed_via = 48;
+  optional ConfirmedVia confirmed_via = 48 [(json_profile) = "intent"];
   // The unit of the COMMIT that this undo reverses. INT-S5.
-  optional uint64 undo_of = 49;
+  optional uint64 undo_of = 49 [(json_profile) = "intent"];
   // Why an armed intent was dropped.
-  optional string pending_cleared = 50;
+  optional string pending_cleared = 50 [(json_profile) = "intent"];
   // Intent vocabulary id. INT-S10.
-  optional string vocab_id = 51;
+  optional string vocab_id = 51 [(json_profile) = "intent"];
 
   // --- control profile (7.4.5) ---
 
   // The input tick; integer >= 0. CTL-T1, CTL-T5.
-  optional uint64 tick = 60;
+  optional uint64 tick = 60 [(json_profile) = "control"];
   // CTL-T3.
-  optional ControlState state = 61;
+  optional ControlState state = 61 [(json_profile) = "control"];
   // Commanded velocity, 1-3 finite numbers. CTL-T4, CTL-T6, CTL-S1, CTL-S3.
-  repeated double velocity = 62 [(min_items) = 1, (max_items) = 3];
+  repeated double velocity = 62 [(min_items) = 1, (max_items) = 3, (json_profile) = "control"];
   // Decoder output before the gate, one value per axis. CTL-S6, CTL-S8.
-  repeated double raw = 63;
+  repeated double raw = 63 [(json_profile) = "control"];
   // In [0, 1]. CTL-T4, CTL-S1.
-  optional double gain = 64 [(minimum) = 0, (maximum) = 1];
+  optional double gain = 64 [(minimum) = 0, (maximum) = 1, (json_profile) = "control"];
   // Units of velocity. CTL-T4.
-  optional string units = 65;
+  optional string units = 65 [(json_profile) = "control"];
   // Speed limit; > 0. CTL-T4, CTL-S3.
-  optional double v_max = 66 [(exclusive_minimum) = 0];
+  optional double v_max = 66 [(exclusive_minimum) = 0, (json_profile) = "control"];
   // Time to live of the command, seconds; > 0. CTL-T4, CTL-T6, CTL-S4.
-  optional double ttl_s = 67 [(exclusive_minimum) = 0];
+  optional double ttl_s = 67 [(exclusive_minimum) = 0, (json_profile) = "control"];
   // Engagement counter; integer >= 0. CTL-T4, CTL-S5, CTL-S7.
-  optional uint64 engagement = 68;
+  optional uint64 engagement = 68 [(json_profile) = "control"];
   // Conformal radius; >= 0. CTL-S6.
-  optional double radius = 69 [(minimum) = 0];
+  optional double radius = 69 [(minimum) = 0, (json_profile) = "control"];
   // Conformal level; in (0, 1). CTL-S6.
-  optional double level = 70 [(exclusive_minimum) = 0, (exclusive_maximum) = 1];
+  optional double level = 70 [(exclusive_minimum) = 0, (exclusive_maximum) = 1, (json_profile) = "control"];
   // Decoder share of the commanded velocity; in [0, 1]. CTL-S5.
-  optional double authority = 71 [(minimum) = 0, (maximum) = 1];
-  // Reason codes (7.4.5 list). The SDKs accept any string (open question
-  // Q-3). CTL-S2, CTL-S8.
-  repeated string reasons = 72;
+  optional double authority = 71 [(minimum) = 0, (maximum) = 1, (json_profile) = "control"];
+  // Reason codes: an open list (registry 12.3). Any string is valid; an
+  // unknown code is never read as "ok" (CTL-T9). CTL-S2, CTL-S8.
+  repeated string reasons = 72 [(json_profile) = "control"];
 
   Binding binding = 1000 [(json_inline) = true];
   google.protobuf.Struct ext = 2047 [(json_inline) = true];

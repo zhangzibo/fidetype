@@ -376,6 +376,23 @@ def build_vectors() -> list[Vector]:
     add("V65", "v65-empty-vocab-blank-0.jsonl", "reject", "1.0 RC2 3.1 (HDR-6, HDR-12)",
         "vocab = [] with blank_id 0 (no index is in 0 ... V-1)", None, failing_check="NTS-BLANK",
         writer=_w_lines([dict(h0, blank_id=0), *hyp0, {"type": "end"}]))
+    # --- NTS 1.0 RC3 (VER-6 ... VER-10): unknown enumeration values
+    h11 = _header(spec_version="1.1", vocab_type="syllable", clock_domain="gps",
+                  meta={**BASE_META, "device.modality": "ultrasound"})
+    unk = [{"type": "signal_quality", "t": 0.0, "value": 512.0, "unit": "lux"},
+           {"type": "decision", "t": 0.04, "label": "a", "score": 3.5, "score_semantics": "logit_margin"},
+           {"type": "pointer", "t": 0.04, "dims": 2, "mode": "polar", "values": [0.3, 1.2]}]
+    add("V66", "v66-unknown-enums-v1-1.jsonl", "accept", "1.0 RC3 11.2.1 (VER-8)",
+        'Header spec_version "1.1" with unknown enumeration values (vocab_type, clock_domain, device.modality, '
+        "signal_quality unit, decision score_semantics, pointer mode): accepted, kept as unknown", None,
+        {"n_frames": 2, "vocab_type": "syllable", "events": 3},
+        writer=_w_lines([h11, *_frames(2, V), *unk, {"type": "end"}]))
+    add("V67", "v67-unknown-clock-v1-0.jsonl", "reject", "1.0 RC3 11.2.1 (VER-7) / 5.3 (HDR-11)",
+        'Header spec_version "1.0" with clock_domain "gps": 1.0 data must use the values of 1.0', None,
+        failing_check="NTS-CLOCK", writer=_w_lines([_header(spec_version="1.0", clock_domain="gps"), *_frames(2, V)]))
+    add("V68", "v68-vocab-type-number-v1-1.jsonl", "reject", "1.0 RC3 11.2.1 (VER-8) / 3.1 (HDR-5)",
+        'Header spec_version "1.1" with vocab_type 5: an unknown value must still be a string', None,
+        failing_check="NTS-VOCAB-TYPE", writer=_w_lines([_header(spec_version="1.1", vocab_type=5), *_frames(2, V)]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

@@ -1,5 +1,5 @@
 ---
-title: NeuralTextStream specification (versions, 1.0 RC2)
+title: NeuralTextStream specification (versions, 1.0 RC3)
 type: concept
 tags: [spec, neuraltextstream, standard, versioning, conformance, protobuf, p1]
 sources: []
@@ -13,15 +13,53 @@ The written contract of Fidetype. A decoder writes a NeuralTextStream (NTS); a t
 | Version | File | Status |
 |---|---|---|
 | 0.1 | [`spec/neuraltextstream-v0.1.md`](../../spec/neuraltextstream-v0.1.md) | Current release (Development) |
-| FEP-0001 … FEP-0005 | [`spec/feps/`](../../spec/feps/) | Draft proposals on top of 0.1 (how FEPs work: [FEP process](fep-process.md)) |
-| **1.0 RC2** | [`spec/nts-1.0-rc2.md`](../../spec/nts-1.0-rc2.md) | **DRAFT for public comment** (2026-11-14). Not final. Current RC |
+| FEP-0001 … FEP-0005, FEP-0007 | [`spec/feps/`](../../spec/feps/) | Draft proposals (how FEPs work: [FEP process](fep-process.md)). FEP-0007 (unknown enumeration values) is new in RC3 |
+| **1.0 RC3** | [`spec/nts-1.0-rc3.md`](../../spec/nts-1.0-rc3.md) | **DRAFT for public comment** (2026-11-15). Not final. Current RC. Changes: section 1.6 |
+| 1.0 RC2 | [`spec/nts-1.0-rc2.md`](../../spec/nts-1.0-rc2.md) | Superseded by RC3; kept as the record |
 | 1.0 RC1 | [`spec/nts-1.0-rc1.md`](../../spec/nts-1.0-rc1.md) | Superseded by RC2 (same rule text); kept as the record |
 
 Changelog: [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md). Index of specs and FEPs: [`spec/README.md`](../../spec/README.md).
 
 Tools around the spec: the [collector](collector.md) (draft FEP-0006, P3) receives NTS from files and WebSocket, runs the trust layer and the privacy filter, and exports decision logs. It changes no field of NTS.
 
-## 1.0 RC2 in one table
+## RC3: the protobuf open questions answered (2026-11-15)
+RC3 answers Q-1 … Q-8 of the [protobuf schema](nts-proto-schema.md) work. Rule: write down what the three SDKs already do, if that is safe. Else pick one rule and change all three SDKs. Before the choice, probe vectors went through all three SDKs: they agreed on every probe.
+
+| Question | Answer | Rules | SDK change |
+|---|---|---|---|
+| Q-7 New enum values in a minor version | Version-gated. In `"0.1"` or `"1.0"` data an unknown value is an error, as before. In `"1.1"`+ data it is accepted, kept as "unknown", and gets a **safe fallback** that never acts (registry 12.3 column). Binding enums stay closed | VER-6 … VER-10, [FEP-0007](../../spec/feps/0007-unknown-enum-values.md) | Yes, all three |
+| Q-1 JSON null | Only where the type says "or null" (four header fields and three intent fields now say so) | GEN-9 | No |
+| Q-2 LSL keys outside EXT-3 | Written down: `segment_end.reason`, a `gap` field table, an EXT-3 exception | SEG-6, LSL-G3 | No |
+| Q-3 Control reason codes | Open list; never read an unknown code as `ok` | CTL-T9 | No |
+| Q-4 `declaration` / `input` keys | `declaration` MUST be an object; recommended key tables; audit data only | TD-F2, TD-13 | Yes (refuse a non-object `declaration`) |
+| Q-5 Integer range | At most 2^53 − 1 | GEN-10 | Yes (JavaScript lost precision above it) |
+| Q-6 Field of another profile | A custom key | PRF-5 | No (generated schema follows) |
+| Q-8 Two SDK checks | Rule ids added | INT-T7, CTL-T8 | No |
+
+Safe fallbacks of the action-relevant enums (VER-10):
+
+| Unknown value | Fallback |
+|---|---|
+| `trust_decision.action` or `profile` | As ABSTAIN: no commit, no actuation, zero velocity, no candidate shown |
+| intent `risk` / `risk_class` / `role` / `confirmed_via` | treated as `irreversible` / not actuated / as `null` / not actuated |
+| control `state` | zero velocity; not engaged for CTL-S7 |
+| control `quantity`, `frame`, `units`, `uncertainty` | no motion on the stream |
+| `control_enable.source` | a stop is still a stop; an engage is not an engage |
+| `intent_feedback.outcome` | never confirms; drops an armed intent |
+| `score_semantics` | not a probability (INT-S2 as for `none`) |
+
+| Item | Detail |
+|---|---|
+| New vectors | V66 … V68, F57 … F62, I24, D22, D23, W44, C24, E22 … E24 (17; 304 in all). No RC2 vector changed its verdict |
+| Consumers | Text "acted" lists only from `profile` absent or `"text"`; `DecisionTracker` kind `unknown` (never forwarded) |
+| Reference trust layers | Stay strict: they refuse a header with an unknown `vocab_type`, intent risk / role or control declaration value (VER-10 allows a stop) |
+| Generated schema | Enum fields open; `Header.known` / `TrustDecision.known` apply unless `spec_version` is a newer minor version; profile fields typed per profile; integer bounds. 178 / 178 one-line vectors match |
+| Parity | Python = TypeScript = Rust on 304 vectors and on 24,347 fuzz mutants (seeds 1–3, `--n 30`) |
+| Informative fixes | 9.3 / 9.5 vector counts; C.1 row of HDR-12 (V62 … V65); new gap G-12 (optional-field types no validator checks) |
+
+> **Our take:** the version gate is the key idea. A registry gets a new value only through a minor version, so an unknown value in `"1.0"` data is a producer bug, and in `"1.1"` data it is valid. This keeps the validators strict where they can be, and gives 1.x forward compatibility without one unsafe action. The open point: the reference trust layers refuse instead of applying the fallbacks (FEP-0007 open question).
+
+## 1.0 RC2 in one table (RC3 has the same sections)
 Roadmap phase [P1](../questions/roadmap-standard.md#p1-spec-to-10), tasks P1-01 (data model), P1-03 (versioning), P1-05 (bindings, partly), P1-08 (RC2: gaps G-2, G-3, G-4).
 
 | Section | Content |
@@ -102,7 +140,7 @@ Since 2026-11-15 the RC2 data model also exists as proto3 files ([`spec/proto/ne
 | Coverage | Header with the three declarations, all 13 event types of registry 12.1 plus the LSL `gap` event, timing fields, binding keys |
 | Parity | 164 vectors depend on one line (91 accept, 73 reject): 164 match, 0 mismatches. 90 reject vectors fail on rules a one-line schema cannot see; 33 NPZ vectors are out of scope |
 | CI | Job `proto`: schema up to date, protoc compiles the files, parity (two validators) |
-| Open questions | Q-1 … Q-8 in [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md) (for example Q-7: new enum values in a minor version) |
+| Open questions | Q-1 … Q-8 in [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md): all resolved in RC3 (section above) |
 
 Details: [NTS protobuf schema](nts-proto-schema.md).
 
@@ -111,4 +149,4 @@ Rule MET-4 says that `decoder.lookahead_s` and `latency` MUST be equal. Rule MET
 
 > **Our take:** an optional, informative field for the measured emission delay is a possible NTS 1.1 item (from the same page). It is not a spec change now.
 
-Related: [NTS protobuf schema](nts-proto-schema.md), [FEP process](fep-process.md), [`trust_decision` event](trust-decision.md), [lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md), [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).
+Related: [NTS protobuf schema](nts-proto-schema.md), [FEP process](fep-process.md), [FEP-0007](../../spec/feps/0007-unknown-enum-values.md), [`trust_decision` event](trust-decision.md), [lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md), [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).

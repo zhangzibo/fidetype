@@ -35,10 +35,13 @@ export function isFloatLiteral(container: object, key: string | number): boolean
   return floatLiterals.get(container)?.has(key) ?? false;
 }
 
-/** Python `isinstance(x, int) and not isinstance(x, bool)` for `container[key]`. */
+/**
+ * Python `isinstance(x, int) and not isinstance(x, bool)` for `container[key]`, with the NTS 1.0 RC3 range
+ * rule GEN-10: an integer above 2^53 - 1 in magnitude is not an integer (it is not exact in JavaScript).
+ */
 export function isIntAt(container: object, key: string | number): boolean {
   const v = (container as Record<string | number, unknown>)[key];
-  return typeof v === "number" && Number.isInteger(v) && !isFloatLiteral(container, key);
+  return typeof v === "number" && Number.isSafeInteger(v) && !isFloatLiteral(container, key);
 }
 
 export class JsonParseError extends SyntaxError {

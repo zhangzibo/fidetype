@@ -40,6 +40,7 @@ from fidetype.conformance.checks import FAIL, PASS, SKIP, CheckResult
 from fidetype.conformance.io import StreamRejected
 from fidetype.conformance.report import TargetReport
 from fidetype.conformance.vectors import BASE_META, Vector, _lp
+from fidetype.streams.spec import json_int
 
 SUFFIXES = (".json",)
 FEP = "FEP-0004"
@@ -236,7 +237,7 @@ def run_subscribe_scenario(sc: dict[str, Any]) -> dict[str, Any]:
 
 
 def load_scenario(path: str | PathLike[str]) -> dict[str, Any]:
-    sc = json.loads(Path(path).read_text(encoding="utf-8"))
+    sc = json.loads(Path(path).read_text(encoding="utf-8"), parse_int=json_int)
     if not isinstance(sc, dict) or sc.get("schema") != SCENARIO_SCHEMA or sc.get("kind") not in KINDS:
         raise StreamRejected(f"not a {SCENARIO_SCHEMA} scenario", FEP)
     return sc
@@ -545,6 +546,10 @@ def build_vectors() -> list[Vector]:
     add("W43", "w43-integer-ws-seq.json", "reject", "6 r1; 1.0 RC2 4.1 (GEN-5)",
         "ws_seq 2.0 (an integer written with a fraction part) is not an integer",
         _ingest("ws_seq 2.0", base + _msgs([ev[0], {**ev[1], "ws_seq": 2.0}])), failing="FEP4-FRAMING")
+    # --- NTS 1.0 RC3: integer range (GEN-10)
+    add("W44", "w44-ws-seq-above-2-53.json", "reject", "6 r1; 1.0 RC3 4.1 (GEN-10)",
+        "ws_seq 9007199254740993 (above 2^53 - 1) is not a portable integer",
+        _ingest("ws_seq above 2^53 - 1", base + _msgs([ev[0], {**ev[1], "ws_seq": 2**53 + 1}])), failing="FEP4-FRAMING")
     vs.sort(key=lambda v: v.vid)
     return vs
 

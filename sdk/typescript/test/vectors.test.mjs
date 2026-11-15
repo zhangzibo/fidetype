@@ -43,7 +43,11 @@ function eventsOfAccepted(profile) {
   const m = JSON.parse(readFileSync(join(dir, "manifest.json"), "utf8"));
   const out = [];
   for (const v of m.vectors.filter((x) => x.expect === "accept" && x.file.endsWith(".jsonl"))) {
-    for (const ev of sdk.parseNtsText(readFileSync(join(dir, v.file)))) out.push([v.id, ev]);
+    const evs = sdk.parseNtsText(readFileSync(join(dir, v.file)));
+    // NTS 1.0 RC3, VER-8: data of a newer minor version may hold unknown enumeration values. The hand-written
+    // schemas are 1.0 structural schemas, so such vectors are out of their scope (the generated nts-v1 schema covers them).
+    if (evs.some((e) => sdk.isNewerMinor(e.spec_version))) continue;
+    for (const ev of evs) out.push([v.id, ev]);
   }
   return out;
 }
@@ -98,7 +102,7 @@ test("decision logs: acted texts equal the manifest (FEP-0001 rule 1)", async ()
 test("fep-0005: each reject vector fails its named check; decision logs give the moving ticks", () => {
   const dir = join(conf, "fep-0005");
   const m = JSON.parse(readFileSync(join(dir, "manifest.json"), "utf8"));
-  assert.equal(m.vectors.length, 44);
+  assert.equal(m.vectors.length, 48);
   for (const v of m.vectors) {
     const bytes = new Uint8Array(readFileSync(join(dir, v.file)));
     const rep = sdk.fep0005.checkFile(v.file, bytes);

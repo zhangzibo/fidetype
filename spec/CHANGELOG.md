@@ -2,6 +2,49 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC3, DRAFT] 2026-11-15
+**Status: draft for public comment. Not final.** Document: [nts-1.0-rc3.md](nts-1.0-rc3.md) (section 1.6 "Changes from RC2"). RC2 and RC1 stay unchanged as the record. New FEP: [FEP-0007](feps/0007-unknown-enum-values.md) (Draft).
+
+RC3 answers the open questions Q-1 … Q-8 of the P1-02 protobuf work (listed under RC2 below). Rule used: write down what the three SDKs already do if that is safe; else choose one rule and change all three SDKs.
+
+### Resolved questions
+| # | Resolution | Rules | SDK change | Vectors |
+|---|---|---|---|---|
+| Q-1 | `null` only where the type says "or null"; `frame_period`, `latency`, `vocab_id`, `vocab_version`, intent `threshold`, `role`, feedback `intent`, control `absent` now say "or null" (the SDKs already read null as "no value" there) | GEN-9 | none | none (SDK probes, no change) |
+| Q-2 | Written down: `segment_end.reason` (core, open list, `gap` registered); `gap` field table; gap keys as an EXT-3 exception; event type `lsl_status` registered | SEG-6, LSL-G3, EXT-3 | none | L06 … L08 (existing) |
+| Q-3 | Control `reasons` is an open list; never read an unknown code as `ok` | CTL-T9 | none | none (existing) |
+| Q-4 | `declaration` MUST be an object; recommended key tables for `input` (6.1.1) and `declaration` (6.1.2); audit data, never a basis for an action | TD-F2, TD-13 | Python, TypeScript, Rust refuse a non-object `declaration` | F62 (reject) |
+| Q-5 | Integers in −(2^53 − 1) … 2^53 − 1 | GEN-10 | Python (`json_int` parse hook), TypeScript (`Number.isSafeInteger`), Rust (`Value::is_int` bound) | F60 (reject), F61 (accept), W44 (reject) |
+| Q-6 | Profile fields have their type only on decisions of their profile; elsewhere custom keys | PRF-5, EXT-1 | none (generated schema follows) | none (existing) |
+| Q-7 | Version-gated unknown enumeration values with a safe fallback per enumeration (registry 12.3 column); binding enumerations stay closed | VER-6 … VER-10 (11.2.1), FEP-0007 | all three SDKs (below) | V66, F57, F58, I24, D22, C24, E22 (accept); V67, V68, F59, D23, E23, E24 (reject) |
+| Q-8 | Rule ids for the two SDK checks | INT-T7, CTL-T8 | none | none (existing) |
+
+### Changed (implementation)
+- **VER-8 in the validators (Python, TypeScript, Rust, same behaviour).** When the governing version (decision `spec_version`, else the header `spec_version`) is a newer minor version (`"1.1"` …), these checks accept any string: `vocab_type`, `clock_domain`, `device.modality`, `signal_quality.unit`, `decision`/`hypothesis`/`intent` `score_semantics`, `pointer.mode`, `segment_end.unit`, decision `action`, `score_semantics`, `profile`, intent `risk`, `role` (declaration), `risk_class`, `role`, `confirmed_via` (decision), `intent_feedback.outcome`, control `quantity`, `units`, `frame`, `uncertainty`, `control.source`, `control_enable.source`, control decision `action`, `state`. Comparison rules skip unknown values (CTL-T3, CTL-D1, INT-D4, the score rules, the ranking rule, the `std` rule of CTL-3). Helpers: Python `fidetype.streams.spec.is_newer_minor`, `enum_ok`, `is_unknown`; TypeScript `isNewerMinor`, `enumOk`, `isUnknown`; Rust `constants::is_newer_minor`, `json::{enum_ok, is_unknown, newer_minor}`.
+- **VER-10 in the consumers.** `acted` / `acted_texts`: only text-profile decisions (`profile` absent or `"text"`; PRF-4). `acted_intents`: no intent COMMIT with an unknown `risk_class`, `role` or `confirmed_via`. `moving_ticks`: only COMMITs with a known moving state. CTL-S7 log check: after a control decision with an unknown state or action, the control is not engaged (vector E24). SDK `DecisionTracker` (TypeScript, Rust): new kind `unknown` (an unknown action or profile; never forwarded); `forward = false` for an intent COMMIT with an unknown value and for a control COMMIT with an unknown state.
+- **The reference trust layers stay strict** (they refuse a header with an unknown `vocab_type`, intent risk/role or control declaration value; VER-10 allows it). The SDK stream readers share the text layer's header check.
+- **API (Python, TypeScript):** the validators of `fidetype.trust.intent` / `.control` and their TypeScript ports take an optional `lenient` argument. **Rust (breaking, crate 0.x):** `validate_intent_declaration`, `validate_intent_event`, `validate_feedback_event`, `validate_control_declaration`, `validate_control_event` and `validate_enable_event` take a `lenient: bool` argument.
+
+### Added (vectors)
+- `v0.1` V66 (accept), V67, V68 (reject): 68 vectors now, from 65.
+- `fep-0001` F57, F58, F61 (accept), F59, F60, F62 (reject): 62 now, from 56.
+- `fep-0003` I24, D22 (accept), D23 (reject): 47 now, from 44.
+- `fep-0004` W44 (reject): 44 now, from 43.
+- `fep-0005` C24, E22 (accept), E23, E24 (reject): 48 now, from 44.
+- No RC2 vector changed its verdict.
+
+### Changed (proto and generated JSON Schema)
+- New field option `json_profile` (50105) on the intent fields (40–51) and control fields (60–72) of `TrustDecision`: the generated schema types them only on decisions of that profile (PRF-5).
+- Enumeration fields accept any string in the base schema; new definitions `Header.known`, `TrustDecision.known` (and the nested `*.known`) require the known values unless `spec_version` is a newer minor version. The action and state rules (INT-T1, CTL-T1, CTL-T3), CTL-D1 units and INT-D4 now name the known values that they forbid, so a newer minor version can add values.
+- Integers carry `maximum` 2^53 − 1 (GEN-10). `Header.vocab_id` and `vocab_version` are nullable (GEN-9). `SegmentEnd.reason` (field 3, SEG-6). Rule ids INT-T7, CTL-T8, CTL-T9 in the comments.
+- Parity (`tools/proto/parity.py`): of 304 vectors, 178 are compared (99 accept, 79 reject): **178 match, 0 mismatches**, with the built-in validator and with `jsonschema` 4.26.0. F04 and I22 moved to class cross-line (an unknown event value is an error only under a 1.0 header). `check_protoc.py`: 0 differences.
+
+### Fixed (informative parts)
+- The vector counts of 2.3, 9.3 and 9.5, and the C.1 row of HDR-12 (now V62 … V65, W03; status T). C.1 rows for every new rule; new gap G-12 (optional-field types that no validator checks); C.3 counts.
+
+### Parity
+- Python = TypeScript = Rust on all 304 vectors of `v0.1` … `fep-0005` (`cross-check.mjs --rust`), and on 24,347 fuzz mutants (seeds 1–3, `--n 30`; 0 differences).
+
 ## [1.0 RC2, DRAFT] 2026-11-14
 **Status: draft for public comment. Not final.** Document: [nts-1.0-rc2.md](nts-1.0-rc2.md). RC1 stays unchanged as the record.
 
@@ -48,7 +91,7 @@ All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1
 - **Vectors:** `v0.1` V62 (accept: `vocab = []`, `blank_id` null, two hypotheses and two `segment_end`, no frames), V63 (reject, `NTS-NORM`: `vocab = []` with a dense frame `log_probs = []`), V64 (reject, `NTS-NORM`: `vocab = []` with a sparse frame, k = 0 and `rest_log_prob` 0), V65 (reject, `NTS-BLANK`: `vocab = []` with `blank_id` 0, HDR-6). `v0.1` has 65 vectors now, from 61. No existing vector changed its verdict. No validator gives a separate HDR-12 finding: an empty-vocab frame fails FRM-3 (`NTS-NORM`; a row with no values has log-sum-exp -inf).
 - **Writers (Python `StreamWriter`, TypeScript and Rust `NtsWriter`, same behaviour):** they accept `vocab = []` with `blank_id` null and refuse every frame of such a stream (HDR-12). The text n-best adapter now writes through `StreamWriter`.
 - **Parity:** Python = TypeScript = Rust on all 287 vectors of `v0.1` … `fep-0005` (`cross-check.mjs --rust`), and on the fuzz mutants (seeds 1-3, `--n 30`).
-- **Not changed (open point):** the vector-count table (9.3, `v0.1` = 61) and the traceability row of HDR-12 (C.1, vector W03 only) in `nts-1.0-rc2.md` are not updated; they can list V62-V65 in the next draft.
+- **Not changed (open point):** the vector-count table (9.3, `v0.1` = 61) and the traceability row of HDR-12 (C.1, vector W03 only) in `nts-1.0-rc2.md` are not updated; they can list V62-V65 in the next draft. *(Fixed in RC3.)*
 
 ### Added (P1-02, 2026-11-15; no rule text changed): protobuf schema and generated JSON Schema
 - **Proto3 source of truth:** [`proto/neuraltextstream/v1/*.proto`](proto/neuraltextstream/v1/) (package `neuraltextstream.v1`) covers the full RC2 data model: the header with the three declarations, `frame` (dense and sparse), `segment_end`, `end`, `signal_quality`, `decision`, `hypothesis` (n-best, evidence fields, spans, `decode_declaration`), `pointer`, `intent`, `intent_feedback`, `control`, `control_enable`, `trust_decision` (text, intent and control profiles), the LSL `gap` extension event, the timing fields and the binding keys. Field comments cite the rule ids. Rules for the package and versioning, field numbers, the NTS JSON mapping and unknown or extension data: [`proto/README.md`](proto/README.md) (informative).
@@ -56,15 +99,15 @@ All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1
 - **Parity:** of the 287 vectors, 164 are compared (91 accept, 73 reject on a rule that the schema expresses): **164 match, 0 mismatches**, with the built-in validator and with `jsonschema` 4.26.0. 90 reject vectors fail on a rule that a one-line schema cannot see (cross-line 28, trust 17, cross-field 10, arithmetic 7, binding 21, lexical GEN-5 3, parse 4); the schema accepts all 90. 33 NPZ vectors are out of scope. List and classes: `tools/proto/parity.py`, [`proto/README.md`](proto/README.md) section 8.
 - **Not changed:** the hand-written schemas (`schemas/nts-v0.1/`, `schemas/fep-000N/`), the TypeScript generated types, the SDK validators and every vector.
 
-### Open questions (P1-02, found while writing the proto; the normative text is not changed)
-- **Q-1. JSON null in optional fields.** GEN-3 defines `null` only for log-probabilities. The field tables give `frame_period` and `latency` the type "number", but the three SDKs (and `schemas/nts-v0.1/header`) read `null` as "absent". The binary form has no null. The proto marks these two fields nullable (null = no value). Should 1.0 say "null = absent" for every optional field, or forbid null outside GEN-3 and the fields typed "or null"?
-- **Q-2. LSL keys outside EXT-3.** LSL-G1 (mode `segment`) adds `reason = "gap"` to `segment_end`, a key without the `lsl` prefix (EXT-3). The `gap` event (12.1) has no field table; the proto takes its fields from the reference adapter (`t_start`, `t_end`, `missing_frames`, `stream`). Should 1.0 rename the key (for example `lsl_reason`) and give `gap` a field table?
-- **Q-3. Control `reasons`: closed list or open?** 7.4.5 and registry 12.3 (policy Spec) list 13 reason codes. The SDK validators accept any string. The proto keeps `repeated string`. Is an unknown code an error, a warning or allowed?
-- **Q-4. Keys of `declaration` and `input`.** 6.1 names the keys of `trust_decision.declaration` (`status`, `mode`, `where`, `decoder`, `mismatches`) and the content of `input` (frame range + SHA-256, or hypothesis id + SHA-256), but gives no key names or types for `input` and no types for `declaration`. The proto keeps both as free JSON objects. Should 1.0 give them field tables?
-- **Q-5. Integer range.** RC2 says "integer" with no upper bound. The proto must choose a width (uint64 for `seq`, `utterance`, `unit`, `tick`, `engagement`, `ws_seq`, `ref_unit`; uint32 for `blank_id`, `set_size`, `dims`). JSON numbers above 2^53 − 1 lose precision in JavaScript. Should 1.0 cap integers at 2^53 − 1?
-- **Q-6. A field of another profile on a decision.** A text decision with `"tick": "x"`: is `tick` a custom key (any type, GEN-4) or the control field with a wrong type (EXT-1: one type per field)? The SDKs check profile fields only inside their profile; the generated schema types them on every decision.
-- **Q-7. New enum values in a minor version.** 11.1 lets a minor version add registry entries (for example a `vocab_type` or an `action` value). VER-3 says a 1.0 consumer reads a newer minor version with the 1.0 rules and ignores what it does not know, but HDR-5, TD-F1, SEG-5 and others make a 1.0 consumer refuse an unknown value. Should a 1.0 consumer refuse, ignore the event, or map the value to "other"? (proto3 enums are open: the binary form keeps an unknown number.)
-- **Q-8. Two SDK format checks without rule text.** The validators refuse a control decision with `radius` but without `level` (7.4.5 lists both as optional) and an intent decision with `confirm_required = true` on an action other than OFFER (7.3.1 defines an arm, but no rule id forbids the other case). The generated schema follows the SDKs. Should 1.0 add rule ids, or should the SDKs drop the checks?
+### Open questions (P1-02, found while writing the proto; the normative text is not changed) — **all resolved in RC3** (see above)
+- **Q-1.** *(Resolved in RC3: GEN-9.)* **JSON null in optional fields.** GEN-3 defines `null` only for log-probabilities. The field tables give `frame_period` and `latency` the type "number", but the three SDKs (and `schemas/nts-v0.1/header`) read `null` as "absent". The binary form has no null. The proto marks these two fields nullable (null = no value). Should 1.0 say "null = absent" for every optional field, or forbid null outside GEN-3 and the fields typed "or null"?
+- **Q-2.** *(Resolved in RC3: SEG-6, LSL-G3.)* **LSL keys outside EXT-3.** LSL-G1 (mode `segment`) adds `reason = "gap"` to `segment_end`, a key without the `lsl` prefix (EXT-3). The `gap` event (12.1) has no field table; the proto takes its fields from the reference adapter (`t_start`, `t_end`, `missing_frames`, `stream`). Should 1.0 rename the key (for example `lsl_reason`) and give `gap` a field table?
+- **Q-3.** *(Resolved in RC3: CTL-T9.)* **Control `reasons`: closed list or open?** 7.4.5 and registry 12.3 (policy Spec) list 13 reason codes. The SDK validators accept any string. The proto keeps `repeated string`. Is an unknown code an error, a warning or allowed?
+- **Q-4.** *(Resolved in RC3: TD-F2, TD-13.)* **Keys of `declaration` and `input`.** 6.1 names the keys of `trust_decision.declaration` (`status`, `mode`, `where`, `decoder`, `mismatches`) and the content of `input` (frame range + SHA-256, or hypothesis id + SHA-256), but gives no key names or types for `input` and no types for `declaration`. The proto keeps both as free JSON objects. Should 1.0 give them field tables?
+- **Q-5.** *(Resolved in RC3: GEN-10.)* **Integer range.** RC2 says "integer" with no upper bound. The proto must choose a width (uint64 for `seq`, `utterance`, `unit`, `tick`, `engagement`, `ws_seq`, `ref_unit`; uint32 for `blank_id`, `set_size`, `dims`). JSON numbers above 2^53 − 1 lose precision in JavaScript. Should 1.0 cap integers at 2^53 − 1?
+- **Q-6.** *(Resolved in RC3: PRF-5.)* **A field of another profile on a decision.** A text decision with `"tick": "x"`: is `tick` a custom key (any type, GEN-4) or the control field with a wrong type (EXT-1: one type per field)? The SDKs check profile fields only inside their profile; the generated schema types them on every decision.
+- **Q-7.** *(Resolved in RC3: VER-6 … VER-10, FEP-0007.)* **New enum values in a minor version.** 11.1 lets a minor version add registry entries (for example a `vocab_type` or an `action` value). VER-3 says a 1.0 consumer reads a newer minor version with the 1.0 rules and ignores what it does not know, but HDR-5, TD-F1, SEG-5 and others make a 1.0 consumer refuse an unknown value. Should a 1.0 consumer refuse, ignore the event, or map the value to "other"? (proto3 enums are open: the binary form keeps an unknown number.)
+- **Q-8.** *(Resolved in RC3: INT-T7, CTL-T8.)* **Two SDK format checks without rule text.** The validators refuse a control decision with `radius` but without `level` (7.4.5 lists both as optional) and an intent decision with `confirm_required = true` on an action other than OFFER (7.3.1 defines an arm, but no rule id forbids the other case). The generated schema follows the SDKs. Should 1.0 add rule ids, or should the SDKs drop the checks?
 
 ## [1.0 RC1, DRAFT] 2026-11-14
 **Status: draft for public comment. Not final.** Document: [nts-1.0-rc1.md](nts-1.0-rc1.md).

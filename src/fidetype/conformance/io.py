@@ -30,7 +30,7 @@ from typing import Any
 
 import numpy as np
 
-from fidetype.streams.spec import NPZ_NO_BLANK, NeuralTextStream
+from fidetype.streams.spec import NPZ_NO_BLANK, NeuralTextStream, json_int
 
 #: NPZ keys that spec 6.1 marks "Required: Yes".
 NPZ_REQUIRED = ("version", "log_probs", "frame_times", "vocab", "blank_id", "source", "meta_json")
@@ -176,7 +176,7 @@ def read_npz(path: str | PathLike[str]) -> RawStream:
     if "meta_json" in arrays:
         txt = _scalar(arrays["meta_json"])
         try:
-            h["meta"] = json.loads(str(txt), parse_constant=_reject_constant)
+            h["meta"] = json.loads(str(txt), parse_constant=_reject_constant, parse_int=json_int)
         except ValueError as e:
             raw.issues.append(Issue("NTS-META-JSON", "4.1", f"meta_json is not valid JSON: {e}"))
             h["meta"] = _MISSING_META
@@ -240,7 +240,7 @@ def read_jsonl(path: str | PathLike[str]) -> RawStream:
         if not line.strip():
             continue  # blank lines: see the spec ambiguity list (A4)
         try:
-            objs.append((n, json.loads(line, parse_constant=_reject_constant)))
+            objs.append((n, json.loads(line, parse_constant=_reject_constant, parse_int=json_int)))
         except ValueError as e:
             raw.parsed = False
             raw.issues.append(Issue("NTS-PARSE", "6.2", f"line {n} is not a JSON value: {e}"))

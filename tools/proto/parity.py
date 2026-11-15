@@ -60,7 +60,7 @@ REJECT_CLASS: dict[str, tuple[str, str]] = {
     "V63": ("arithmetic", "FRM-3 empty row (HDR-12)"), "V64": ("arithmetic", "FRM-3 empty sparse row (HDR-12)"),
     "V65": ("cross-field", "HDR-6 blank_id < len(vocab)"),
     # fep-0001
-    "F04": ("schema", "SEG-5"), "F05": ("schema", "SEG-4 type"), "F06": ("cross-line", "SEG-4 order"),
+    "F04": ("cross-line", "SEG-5: an unknown value is an error only under a header of a known version (VER-7)"), "F05": ("schema", "SEG-4 type"), "F06": ("cross-line", "SEG-4 order"),
     "F09": ("cross-field", "EVD-1 count = code points"), "F10": ("schema", "EVD-1 range"),
     "F11": ("schema", "EVD-1 type"), "F12": ("schema", "EVD-4"), "F13": ("schema", "EVD-4 type"),
     "F14": ("schema", "EVD-3 / HYP-1"), "F17": ("schema", "DCL-1"), "F18": ("schema", "DCL-1"),
@@ -90,7 +90,7 @@ REJECT_CLASS: dict[str, tuple[str, str]] = {
     "I12": ("cross-field", "INT-D5 vocab = ids"), "I13": ("cross-line", "INT-E1"), "I14": ("cross-line", "INT-E2"),
     "I15": ("cross-field", "INT-E2 not twice"), "I16": ("schema", "INT-E3 range"), "I17": ("arithmetic", "INT-E3 sum"),
     "I18": ("cross-field", "INT-E4 ranking"), "I19": ("schema", "INT-E3 none"), "I20": ("schema", "INT-E7"),
-    "I21": ("cross-line", "INT-E5"), "I22": ("schema", "INT-F1"), "I23": ("arithmetic", "FRM-3"),
+    "I21": ("cross-line", "INT-E5"), "I22": ("cross-line", "INT-F1: an unknown value is an error only under a header of a known version (VER-7)"), "I23": ("arithmetic", "FRM-3"),
     # fep-0004 (WebSocket)
     "W18": ("cross-line", "WS-S1 header first"), "W19": ("binding", "WS-H2"), "W20": ("binding", "WS-V1"),
     "W21": ("schema", "WS-S1 / HDR-2"), "W22": ("binding", "WS-F1"), "W23": ("parse", "WS-F2"),
@@ -114,6 +114,12 @@ REJECT_CLASS: dict[str, tuple[str, str]] = {
     "E12": ("schema", "CTL-T4"), "E13": ("schema", "CTL-T4 gain"), "E14": ("schema", "CTL-T1"),
     "E15": ("cross-line", "CTL-T5"), "E16": ("cross-line", "CTL-T5"), "E17": ("trust", "CTL-S7"),
     "E18": ("trust", "CTL-S6"), "E19": ("trust", "CTL-S1"), "E20": ("trust", "CTL-S7"),
+    # NTS 1.0 RC3: unknown enumeration values (VER-6 ... VER-10), integer range (GEN-10), declaration (TD-F2)
+    "V67": ("schema", "VER-7 / HDR-11 under a 1.0 header"), "V68": ("schema", "HDR-5 type (VER-8: an unknown value is a string)"),
+    "F59": ("schema", "VER-7 / TD-F1 under spec_version 1.0"), "F60": ("schema", "GEN-10 seq above 2^53 - 1"),
+    "F62": ("schema", "TD-F2 declaration is an object"), "D23": ("schema", "VER-7 / INT-T3 risk_class under 1.0"),
+    "E23": ("schema", "VER-7 / CTL-T3 state under 1.0"), "E24": ("trust", "CTL-S7 after an unknown state (VER-10)"),
+    "W44": ("schema", "GEN-10 ws_seq above 2^53 - 1"),
 }
 
 

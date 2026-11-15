@@ -15,8 +15,9 @@ use alloc::format;
 
 use crate::json::{is_blank, num_text, parse_json, py_strip, Map, Value};
 use crate::profiles::common::tuple_key;
-use crate::profiles::fep0001::td_shown_advisories;
-use crate::profiles::fep0005::{td_control_format_errors, ControlSafety};
+use crate::profiles::fep0001::{is_text_decision, td_shown_advisories};
+use crate::profiles::fep0003::unknown_intent_values;
+use crate::profiles::fep0005::{td_control_format_errors, ControlSafety, STATES};
 
 /// What a consumer does with a decision.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -29,6 +30,9 @@ pub enum DecisionKind {
     /// `is_final = false`: show only, never act.
     Preview,
     Invalid,
+    /// A valid decision of a newer minor version with an unknown `action` or `profile` (NTS 1.0 RC3, VER-8):
+    /// never acted on.
+    Unknown,
 }
 
 impl DecisionKind {
@@ -41,6 +45,7 @@ impl DecisionKind {
             DecisionKind::OfferWords => "offer_words",
             DecisionKind::Preview => "preview",
             DecisionKind::Invalid => "invalid",
+            DecisionKind::Unknown => "unknown",
         }
     }
     fn of_action(a: &str) -> Option<DecisionKind> {
@@ -86,7 +91,7 @@ pub fn is_final_commit(d: &Map) -> bool {
 
 /// The committed text of a final text COMMIT (`shown[0]`), or `None`.
 pub fn committed_text(d: &Map) -> Option<String> {
-    if !is_final_commit(d) || matches!(d.get("profile").as_str(), Some("intent") | Some("control")) {
+    if !is_final_commit(d) || !is_text_decision(d) {
         return None;
     }
     match d.get("shown") {
@@ -197,8 +202,13 @@ impl DecisionTracker {
         let profile = ev.get("profile").as_str().unwrap_or("text").to_string();
         let action = ev.get("action").as_str().and_then(DecisionKind::of_action);
         let fin = matches!(ev.get("is_final"), Value::Bool(true));
+        let known_profile = matches!(profile.as_str(), "text" | "intent" | "control");
+        let unknown_action = ev.get("action").is_str() && action.is_none();
         let kind = if !errors.is_empty() {
             DecisionKind::Invalid
+        } else if !known_profile || unknown_action {
+            // VER-8: a valid decision with an unknown action or profile (newer minor version) is never acted on.
+            DecisionKind::Unknown
         } else if fin {
             action.unwrap_or(DecisionKind::Invalid)
         } else if action.is_some() {
@@ -230,7 +240,9 @@ impl DecisionTracker {
         };
         let mut warnings = Vec::new();
         let w = empty_commit_warning(ev);
-        let forward = kind == DecisionKind::Commit && (control || (committed.is_some() && w.is_none()));
+        // VER-8: no actuation on an unknown intent risk class / role / confirmation path, no motion on an unknown state.
+        let unknown_value = (profile == "intent" && unknown_intent_values(ev)) || (control && !crate::json::str_in(ev.get("state"), STATES));
+        let forward = kind == DecisionKind::Commit && !unknown_value && (control || (committed.is_some() && w.is_none()));
         if let Some(w) = w {
             warnings.push(w);
         }

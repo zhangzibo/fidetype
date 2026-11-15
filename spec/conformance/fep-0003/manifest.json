@@ -254,6 +254,35 @@
    "failing_check": "FEP3-SAFETY"
   },
   {
+   "id": "D22",
+   "file": "d22-log-v11-unknown-enums.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 1.0 RC3 11.2.1 (VER-8, VER-10)",
+   "description": "spec_version \"1.1\": a COMMIT with risk_class \"critical\", a final decision with the unknown action \"CONFIRM\" and a COMMIT of the unknown profile \"gesture\" are accepted and not actuated; a normal COMMIT is actuated",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 4,
+    "intent_decisions": 3,
+    "final": 4,
+    "acted_intents": [
+     "intent.select"
+    ],
+    "acted_texts": []
+   }
+  },
+  {
+   "id": "D23",
+   "file": "d23-td-v10-unknown-risk.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 1.0 RC3 11.2.1 (VER-7) / 7.3.5 (INT-T3)",
+   "description": "spec_version \"1.0\": a COMMIT with risk_class \"critical\" (1.0 data must use the values of 1.0)",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
    "id": "I01",
    "file": "i01-intents.jsonl",
    "format": "jsonl",
@@ -503,6 +532,22 @@
    "clause": "FEP-0003 Compatibility",
    "description": "Valid FEP-0003 parts, but a frame breaks v0.1 (row does not sum to 1)",
    "failing_check": "FEP3-V01-CORE"
+  },
+  {
+   "id": "I24",
+   "file": "i24-v11-unknown-enums.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 1.0 RC3 11.2.1 (VER-8)",
+   "description": "Header spec_version \"1.1\": an intent with risk \"critical\" and role \"menu\", an intent event with score_semantics \"rank\" (scores not ranked), and feedback with outcome \"timeout\": accepted",
+   "expected": {
+    "kind": "input",
+    "declarations": 1,
+    "intents": 1,
+    "final_intents": 1,
+    "feedback": 1
+   }
   }
  ]
 }

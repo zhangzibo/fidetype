@@ -13,7 +13,7 @@ use alloc::format;
 use crate::checks::{blocks, run_checks, CheckResult, Level, Status};
 use crate::constants::{DECLARATION_KEY, SCORE_SEMANTICS, SEGMENT_UNITS, TRUST_ACTIONS};
 use crate::error::Error;
-use crate::json::{cp_len, is_blank, num_text, repr, str_in, str_list, Map, Value};
+use crate::json::{cp_len, enum_ok, is_blank, newer_minor, num_text, repr, str_list, Map, Value};
 use crate::raw::read_jsonl_raw;
 
 use super::common::{etype, line_of, make_res, read_events, reject_on_failure, stream_kind, tuple_key, CheckMeta, StreamKind, TargetReport};
@@ -82,9 +82,13 @@ pub fn validate_declaration(decl: &Value) -> Vec<String> {
 pub fn segment_errors(events: &[Map]) -> Vec<String> {
     let mut errs = Vec::new();
     let mut last_frame_t = f64::NEG_INFINITY;
+    let mut newer = false;
     for e in events {
         match etype(e) {
-            "header" => last_frame_t = f64::NEG_INFINITY,
+            "header" => {
+                last_frame_t = f64::NEG_INFINITY;
+                newer = newer_minor(e.get("spec_version"));
+            }
             "frame" => {
                 if let Value::Num(t, _) = e.get("t") {
                     if t.is_finite() {
@@ -110,7 +114,7 @@ pub fn segment_errors(events: &[Map]) -> Vec<String> {
                     }
                 }
                 if let Some(u) = e.get_opt("unit") {
-                    if !str_in(u, SEGMENT_UNITS) {
+                    if !enum_ok(u, SEGMENT_UNITS, newer) {
                         errs.push(format!("line {}: segment_end unit {} is not one of {}", n, repr(u), repr(&str_list(SEGMENT_UNITS))));
                     }
                 }
@@ -213,11 +217,12 @@ fn unit_interval(x: &Value) -> bool {
 pub fn td_format_errors(e: &Map) -> Vec<String> {
     let n = line_of(e);
     let mut errs: Vec<String> = Vec::new();
+    let newer = newer_minor(e.get("spec_version")); // VER-8: unknown enum values of a newer minor version are allowed
     if !matches!(e.get("is_final"), Value::Bool(_)) {
         errs.push("is_final must be a boolean".into());
     }
     let action = e.get("action");
-    if !str_in(action, TRUST_ACTIONS) {
+    if !enum_ok(action, TRUST_ACTIONS, newer) {
         errs.push(format!("action {} is not one of {}", repr(action), repr(&str_list(TRUST_ACTIONS))));
     }
     match e.get_opt("p_top1") {
@@ -228,7 +233,7 @@ pub fn td_format_errors(e: &Map) -> Vec<String> {
     let sem = e.get("score_semantics");
     if sem.is_null() {
         errs.push("score_semantics is required".into());
-    } else if !str_in(sem, SCORE_SEMANTICS) {
+    } else if !enum_ok(sem, SCORE_SEMANTICS, newer) {
         errs.push(format!("score_semantics {} is not one of {}", repr(sem), repr(&str_list(SCORE_SEMANTICS))));
     }
     if let Some(sh) = e.get_opt("shown") {
@@ -271,6 +276,11 @@ pub fn td_format_errors(e: &Map) -> Vec<String> {
     if let Some(i) = e.get_opt("input") {
         if !i.is_obj() {
             errs.push("input must be an object".into());
+        }
+    }
+    if let Some(d) = e.get_opt("declaration") {
+        if !d.is_obj() {
+            errs.push("declaration must be an object (TD-F2)".into());
         }
     }
     if let Some(l) = e.get_opt("latency_s") {
@@ -335,10 +345,17 @@ pub(crate) fn session_of(e: &Map) -> Option<String> {
 }
 
 /// True for a text-profile OFFER, ASK or OFFER_WORDS (`shown` lists candidates; TD-12).
+/// True for a text-profile decision: `profile` absent or "text" (PRF-4: other or unknown profiles are never text).
+pub fn is_text_decision(e: &Map) -> bool {
+    match e.get_opt("profile") {
+        None => true,
+        Some(p) => p.as_str() == Some("text"),
+    }
+}
+
 fn text_offer(e: &Map) -> bool {
     let act = e.get("action").as_str().unwrap_or("");
-    let p = e.get("profile").as_str();
-    OFFER_ACTIONS.contains(&act) && p != Some("intent") && p != Some("control")
+    OFFER_ACTIONS.contains(&act) && is_text_decision(e)
 }
 
 /// The number of blank texts (empty or white space, spec 1.4) in `shown` of a text OFFER, ASK or OFFER_WORDS.
@@ -433,7 +450,12 @@ pub fn td_final_errors(events: &[Map]) -> Vec<String> {
 pub fn acted_texts(decisions: &[Map]) -> Vec<Value> {
     decisions
         .iter()
-        .filter(|e| etype(e) == "trust_decision" && matches!(e.get("is_final"), Value::Bool(true)) && e.get("action").as_str() == Some("COMMIT"))
+        .filter(|e| {
+            etype(e) == "trust_decision"
+                && matches!(e.get("is_final"), Value::Bool(true))
+                && e.get("action").as_str() == Some("COMMIT")
+                && is_text_decision(e)
+        })
         .map(|e| match e.get("shown") {
             Value::Arr(a) if !a.is_empty() => a[0].clone(),
             _ => Value::Null,

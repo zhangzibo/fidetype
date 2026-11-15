@@ -8,7 +8,7 @@
  */
 
 import {
-  CLOCK_DOMAINS, MODALITIES, NORM_TOL, SCORE_SEMANTICS, SQ_UNITS, VOCAB, VOCAB_TYPES, isSupportedSpecVersion,
+  CLOCK_DOMAINS, MODALITIES, NORM_TOL, SCORE_SEMANTICS, SQ_UNITS, VOCAB, VOCAB_TYPES, enumOk, isNewerMinor, isSupportedSpecVersion,
 } from "./constants.js";
 import { get, has, isIntAt, isNum, isObj } from "./json.js";
 import { NdArray, RawStream, UNPARSEABLE_META, readRaw } from "./raw.js";
@@ -76,6 +76,8 @@ const metaOf = (raw: RawStream): Record<string, unknown> | null => {
 const metaValue = (raw: RawStream): unknown => (has(raw.header, "meta") ? raw.header.meta : {});
 const lp2d = (raw: RawStream): NdArray | null => (raw.logProbs && raw.logProbs.shape.length === 2 ? raw.logProbs : null);
 const isIntV = (o: Record<string, unknown>, k: string): boolean => isIntAt(o, k);
+/** VER-8: the header declares a newer 1.x minor version, so unknown enumeration values are allowed. */
+const newerOf = (raw: RawStream): boolean => isNewerMinor(has(raw.header, "spec_version") ? raw.header.spec_version : null);
 const issues = (raw: RawStream, id: string): [Status, string] | null => {
   const msgs = raw.issues.filter((i) => i.checkId === id).map((i) => i.message);
   return msgs.length ? bad(msgs.join("; ")) : null;
@@ -196,6 +198,9 @@ check("NTS-FT-SHAPE", "core", "MUST", "5.1.3", "frame_times has shape [T]", (raw
 check("NTS-VOCAB-TYPE", "core", "MUST", "5.1.5", "vocab_type is one of char, key, word, phoneme, command, other", (raw) => {
   const vt = hget(raw, "vocab_type");
   if (vt === null && !has(raw.header, "vocab_type")) return skip("no vocab_type (reported by the serialisation check)");
+  if (!(VOCAB_TYPES as readonly unknown[]).includes(vt) && enumOk(vt, VOCAB_TYPES, newerOf(raw))) {
+    return ok(`vocab_type ${repr(vt)} is unknown in this version; read as 'other' (VER-8)`);
+  }
   return (VOCAB_TYPES as readonly unknown[]).includes(vt) ? ok() : bad(`vocab_type ${repr(vt)} is not one of ${repr(VOCAB_TYPES)}`);
 });
 check("NTS-VOCAB-STR", "core", "MUST", "3.1", "vocab is a list of strings", (raw) => {
@@ -334,9 +339,11 @@ check("NTS-META-TYPES", "core", "MUST", "4.1 / 4.2", "Defined meta keys have the
   const m = metaOf(raw);
   if (!m) return skip("meta is not an object");
   const errs: string[] = [];
+  const newer = newerOf(raw);
   for (const [k, fn] of Object.entries(DEFINED_KEYS)) {
     if (has(m, k)) {
-      const want = fn(m, k);
+      let want = fn(m, k);
+      if (want && k === "device.modality" && enumOk(m[k], MODALITIES, newer)) want = null; // VER-8: read as "other"
       if (want) errs.push(`${k} = ${repr(m[k])} must be ${want}`);
     }
   }
@@ -471,13 +478,15 @@ check("NTS-FP-CONSIST", "advisory", "SHOULD", "3.2", "frame_period agrees with t
 
 const eventsOf = (raw: RawStream, typ: string): Record<string, unknown>[] => raw.events.filter((e) => e.type === typ);
 
-function scoreErrors(e: Record<string, unknown>, needSemantics: boolean, ignoreScore = false): string[] {
+function scoreErrors(e: Record<string, unknown>, needSemantics: boolean, ignoreScore = false, newer = false): string[] {
   const errs: string[] = [];
   const sem = get(e, "score_semantics");
   if (sem === null) {
     if (needSemantics) errs.push("no score_semantics");
     return errs;
   }
+  // VER-8: unknown semantics of a newer minor version: the score is not a probability (DEC-1).
+  if (!(SCORE_SEMANTICS as readonly unknown[]).includes(sem) && enumOk(sem, SCORE_SEMANTICS, newer)) return [];
   if (!(SCORE_SEMANTICS as readonly unknown[]).includes(sem)) return [`score_semantics ${repr(sem)} is not one of ${repr(SCORE_SEMANTICS)}`];
   const sc = ignoreScore ? null : get(e, "score");
   if ((sem === "calibrated_prob" || sem === "uncalibrated_prob") && sc !== null && !(isNum(sc) && sc >= 0 && sc <= 1)) {
@@ -499,7 +508,7 @@ check("NTS-EVT-DECISION", "core", "MUST", "3.5", "decision events: label, t, sco
     const n = e._line;
     if (typeof get(e, "label") !== "string") errs.push(`line ${n}: no string label`);
     if (!isNum(get(e, "t"))) errs.push(`line ${n}: no numeric t`);
-    errs.push(...scoreErrors(e, true).map((x) => `line ${n}: ${x}`));
+    errs.push(...scoreErrors(e, true, false, newerOf(raw)).map((x) => `line ${n}: ${x}`));
   }
   return errs.length ? bad(errs.join("; ")) : ok(`${evs.length} decision event(s)`);
 }, { formats: ["jsonl"] });
@@ -526,7 +535,7 @@ check("NTS-EVT-HYPOTHESIS", "core", "MUST", "3.6", "hypothesis events: id, nbest
       errs.push(`line ${n}: nbest must be a list of {text, score}`);
     }
     if (typeof get(e, "is_final") !== "boolean") errs.push(`line ${n}: is_final must be a boolean`);
-    errs.push(...scoreErrors(e, true, true).map((x) => `line ${n}: ${x}`));
+    errs.push(...scoreErrors(e, true, true, newerOf(raw)).map((x) => `line ${n}: ${x}`));
   }
   return errs.length ? bad(errs.join("; ")) : ok(`${evs.length} hypothesis event(s)`);
 }, { formats: ["jsonl"] });
@@ -543,7 +552,7 @@ check("NTS-EVT-POINTER", "core", "MUST", "3.7", "pointer events: t, dims 1-3, mo
       continue;
     }
     const mode = get(e, "mode");
-    if (mode !== "relative" && mode !== "absolute") errs.push(`line ${n}: mode must be relative or absolute`);
+    if (!enumOk(mode, ["relative", "absolute"], newerOf(raw))) errs.push(`line ${n}: mode must be relative or absolute`);
     const vals = get(e, "values");
     if (!(Array.isArray(vals) && vals.length === d && vals.every(isNum))) errs.push(`line ${n}: values must be ${d} numbers`);
     else if (mode === "absolute") {
@@ -579,7 +588,7 @@ check("NTS-EVT-SIGNAL-QUALITY", "core", "MUST", "3.9", "signal_quality events: t
     const n = e._line;
     if (!isNum(get(e, "t")) || !isNum(get(e, "value"))) errs.push(`line ${n}: needs numeric t and value`);
     const unit = get(e, "unit");
-    if (!(SQ_UNITS as readonly unknown[]).includes(unit)) errs.push(`line ${n}: unit must be one of ${repr(SQ_UNITS)}`);
+    if (!enumOk(unit, SQ_UNITS, newerOf(raw))) errs.push(`line ${n}: unit must be one of ${repr(SQ_UNITS)}`);
     else if (unit === "index" && isNum(get(e, "value")) && !((e.value as number) >= 0 && (e.value as number) <= 1)) {
       errs.push(`line ${n}: index value must be in [0, 1]`);
     }
@@ -606,6 +615,9 @@ check("NTS-EVT-TIMING", "core", "MUST", "3.8", "t_signal_start <= t_signal_end <
 check("NTS-CLOCK", "core", "MUST", "3.8", "clock_domain, if present, is lsl, unix, monotonic, trial or other", (raw) => {
   if (!has(raw.header, "clock_domain")) return ok("absent (default trial)");
   const cd = raw.header.clock_domain;
+  if (!(CLOCK_DOMAINS as readonly unknown[]).includes(cd) && enumOk(cd, CLOCK_DOMAINS, newerOf(raw))) {
+    return ok(`clock_domain ${repr(cd)} is unknown in this version; read as 'other' (VER-8)`);
+  }
   return (CLOCK_DOMAINS as readonly unknown[]).includes(cd) ? ok() : bad(`clock_domain ${repr(cd)} is not one of ${repr(CLOCK_DOMAINS)}`);
 });
 

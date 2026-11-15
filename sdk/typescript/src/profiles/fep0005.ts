@@ -11,7 +11,7 @@
  * `acted_intents` and `acted_texts`.
  */
 
-import { INTENT_DECLARATION_KEY } from "../constants.js";
+import { INTENT_DECLARATION_KEY, TRUST_ACTIONS, enumOk, isNewerMinor, isUnknown } from "../constants.js";
 import { get, has, isFinNum, isObj } from "../json.js";
 import { CheckMeta, Ev, TargetReport, isInt, makeRes, readEvents, rejectOnFailure, repr, streamKind } from "./common.js";
 import { tdFormatErrors, v01CoreFailures } from "./fep0001.js";
@@ -30,6 +30,8 @@ export const UNITS: Record<string, readonly string[]> = {
   position: ["norm", "px", "mm", "m", "deg"],
 };
 export const FRAMES = ["screen", "workspace"] as const;
+/** Every known unit (of any quantity). */
+const ALL_UNITS = [...UNITS.velocity, ...UNITS.position];
 export const UNCERTAINTY = ["none", "std"] as const;
 export const SOURCES = ["decoder", "human"] as const;
 export const STATES = ["act", "attenuate", "hold", "stop"] as const;
@@ -85,16 +87,25 @@ export interface ControlDeclaration {
 }
 
 /** The FEP-0005 section 2 errors of a `control_declaration` (empty = valid). `intentIds`: null = no intent declaration. */
-export function validateControlDeclaration(d: unknown, intentIds: string[] | null = null, nullIntents: string[] = []): string[] {
+/**
+ * `lenient`: the header declares a newer 1.x minor version (NTS 1.0 RC3, VER-8). An unknown `quantity`, `units`,
+ * `frame` or `uncertainty` string is then not an error; a consumer gives no motion on such a stream.
+ */
+export function validateControlDeclaration(d: unknown, intentIds: string[] | null = null, nullIntents: string[] = [], lenient = false): string[] {
   if (!isObj(d)) return ["control_declaration must be an object"];
   const e: string[] = [];
   const dims = get(d, "dims");
   const dimsInt = isInt(d, "dims");
   if (!(dimsInt && (dims as number) >= 1 && (dims as number) <= 3)) e.push("dims must be an integer 1-3");
   const q = get(d, "quantity");
-  if (!inList(q, QUANTITIES)) e.push(`quantity ${repr(q)} is not one of ${repr(QUANTITIES)}`);
-  else if (!inList(get(d, "units"), UNITS[q as string])) e.push(`units ${repr(get(d, "units"))} do not fit quantity ${repr(q)} (one of ${repr(UNITS[q as string])})`);
-  if (!inList(get(d, "frame"), FRAMES)) e.push(`frame ${repr(get(d, "frame"))} is not one of ${repr(FRAMES)}`);
+  const u = get(d, "units");
+  if (!inList(q, QUANTITIES)) {
+    if (!(lenient && typeof q === "string")) e.push(`quantity ${repr(q)} is not one of ${repr(QUANTITIES)}`);
+    else if (typeof u !== "string") e.push("units must be a string");
+  } else if (!inList(u, UNITS[q as string]) && !(lenient && typeof u === "string" && !ALL_UNITS.includes(u))) {
+    e.push(`units ${repr(u)} do not fit quantity ${repr(q)} (one of ${repr(UNITS[q as string])})`);
+  }
+  if (!enumOk(get(d, "frame"), FRAMES, lenient)) e.push(`frame ${repr(get(d, "frame"))} is not one of ${repr(FRAMES)}`);
   const rate = get(d, "rate_hz");
   if (!(isFinNum(rate) && rate > 0)) e.push("rate_hz must be a number > 0");
   if (has(d, "axes")) {
@@ -104,7 +115,7 @@ export function validateControlDeclaration(d: unknown, intentIds: string[] | nul
     if (!ok) e.push("axes must be a list of dims unique non-empty strings");
   }
   const unc = has(d, "uncertainty") ? d.uncertainty : "none";
-  if (!inList(unc, UNCERTAINTY)) e.push(`uncertainty ${repr(get(d, "uncertainty"))} is not one of ${repr(UNCERTAINTY)}`);
+  if (!enumOk(unc, UNCERTAINTY, lenient)) e.push(`uncertainty ${repr(get(d, "uncertainty"))} is not one of ${repr(UNCERTAINTY)}`);
   for (const k of ["max_speed", "latency_s", "window_s"]) {
     if (has(d, k)) {
       const v = d[k];
@@ -125,7 +136,11 @@ export function validateControlDeclaration(d: unknown, intentIds: string[] | nul
 }
 
 /** The FEP-0005 section 3 errors of one `control` event, without the order rules. */
-export function validateControlEvent(ev: Record<string, unknown>, decl: ControlDeclaration | null): string[] {
+/**
+ * `lenient`: newer minor version (VER-8): an unknown `source` string is allowed (the event moves nothing); with an
+ * unknown declared `uncertainty` the `std` rules (CTL-3) do not apply (`std` keeps its type rule).
+ */
+export function validateControlEvent(ev: Record<string, unknown>, decl: ControlDeclaration | null, lenient = false): string[] {
   if (decl === null) return ["control event without a control_declaration in the header (rule 1)"];
   const e: string[] = [];
   if (!isFinNum(get(ev, "t"))) e.push("t must be a finite number");
@@ -147,12 +162,13 @@ export function validateControlEvent(ev: Record<string, unknown>, decl: ControlD
     });
   }
   const src = has(ev, "source") ? ev.source : "decoder";
-  if (!inList(src, SOURCES)) e.push(`source ${repr(src)} is not one of ${repr(SOURCES)}`);
+  if (!enumOk(src, SOURCES, lenient)) e.push(`source ${repr(src)} is not one of ${repr(SOURCES)}`);
+  const unknownUnc = !inList(decl.uncertainty, UNCERTAINTY);
   if (has(ev, "std")) {
     const sd = ev.std;
     if (!(Array.isArray(sd) && sd.length === decl.dims && sd.every((x) => isFinNum(x) && x > 0))) e.push("std must be a list of dims numbers > 0");
-    else if (decl.uncertainty !== "std") e.push("std given but the declaration has uncertainty = none (rule 3)");
-  } else if (decl.uncertainty === "std" && src === "decoder") {
+    else if (decl.uncertainty !== "std" && !unknownUnc) e.push("std given but the declaration has uncertainty = none (rule 3)");
+  } else if (decl.uncertainty === "std" && src === "decoder" && !unknownUnc) {
     e.push("the declaration has uncertainty = std: a decoder control event MUST carry std (rule 3)");
   }
   const ts = TIMING_FIELDS.filter((k) => has(ev, k)).map((k) => ev[k]);
@@ -165,11 +181,12 @@ export function validateControlEvent(ev: Record<string, unknown>, decl: ControlD
 }
 
 /** The FEP-0005 section 4 errors of one `control_enable` event. */
-export function validateEnableEvent(ev: Record<string, unknown>): string[] {
+/** `lenient`: newer minor version (VER-8): an unknown `source` string is allowed (a stop is still a stop; an engage from it is not an engage). */
+export function validateEnableEvent(ev: Record<string, unknown>, lenient = false): string[] {
   const e: string[] = [];
   if (typeof get(ev, "enabled") !== "boolean") e.push("enabled must be a boolean");
   if (has(ev, "t") && !isFinNum(ev.t)) e.push("t must be a finite number");
-  if (has(ev, "source") && !inList(ev.source, ENABLE_SOURCES)) e.push(`source ${repr(ev.source)} is not one of ${repr(ENABLE_SOURCES)}`);
+  if (has(ev, "source") && !enumOk(ev.source, ENABLE_SOURCES, lenient)) e.push(`source ${repr(ev.source)} is not one of ${repr(ENABLE_SOURCES)}`);
   if (has(ev, "reason") && typeof ev.reason !== "string") e.push("reason must be a string");
   return e;
 }
@@ -179,7 +196,7 @@ export function validateEnableEvent(ev: Record<string, unknown>): string[] {
 /** (declared intent ids, null-role intent ids) of a header's valid FEP-0003 declaration; [null, []] otherwise. */
 function intentIds(h: Record<string, unknown>): [string[] | null, string[]] {
   const d = get(h, INTENT_DECLARATION_KEY);
-  if (isObj(d) && !f3.validateIntentDeclaration(d).length) {
+  if (isObj(d) && !f3.validateIntentDeclaration(d, isNewerMinor(get(h, "spec_version"))).length) {
     const its = d.intents as Record<string, unknown>[];
     return [its.map((it) => it.id as string), its.filter((it) => get(it, "role") === "null").map((it) => it.id as string)];
   }
@@ -191,7 +208,7 @@ export function declErrors(events: Ev[]): string[] {
   for (const h of events) {
     if (h.type === "header" && has(h, CONTROL_DECLARATION_KEY)) {
       const [ids, nulls] = intentIds(h);
-      out.push(...validateControlDeclaration(h[CONTROL_DECLARATION_KEY], ids, nulls).map((x) => `line ${h._line}: ${x}`));
+      out.push(...validateControlDeclaration(h[CONTROL_DECLARATION_KEY], ids, nulls, isNewerMinor(get(h, "spec_version"))).map((x) => `line ${h._line}: ${x}`));
     }
   }
   return out;
@@ -203,15 +220,17 @@ export function controlErrors(events: Ev[]): string[] {
   let hasDecl = false;
   let lastTick: number | null = null;
   let lastT: number | null = null;
+  let newer = false;
   for (const e of events) {
     const n = lineOf(e);
     if (e.type === "header") {
       hasDecl = has(e, CONTROL_DECLARATION_KEY);
+      newer = isNewerMinor(get(e, "spec_version"));
       [decl, lastTick, lastT] = [null, null, null];
       if (hasDecl) {
         const [ids, nulls] = intentIds(e);
         const d = e[CONTROL_DECLARATION_KEY];
-        if (!validateControlDeclaration(d, ids, nulls).length) {
+        if (!validateControlDeclaration(d, ids, nulls, newer).length) {
           const dd = d as Record<string, unknown>;
           decl = { dims: dd.dims as number, uncertainty: has(dd, "uncertainty") ? (dd.uncertainty as string) : "none" };
         }
@@ -222,7 +241,7 @@ export function controlErrors(events: Ev[]): string[] {
         continue;
       }
       if (decl === null) continue; // FEP5-DECL reports it
-      const errs = validateControlEvent(e, decl);
+      const errs = validateControlEvent(e, decl, newer);
       out.push(...errs.map((x) => `line ${n}: ${x}`));
       if (errs.length || (has(e, "source") ? e.source : "decoder") !== "decoder") continue;
       const tick = e.tick as number;
@@ -238,7 +257,13 @@ export function controlErrors(events: Ev[]): string[] {
 }
 
 export function enableErrors(events: Ev[]): string[] {
-  return events.filter((e) => e.type === CONTROL_ENABLE).flatMap((e) => validateEnableEvent(e).map((x) => `line ${e._line}: ${x}`));
+  const out: string[] = [];
+  let newer = false;
+  for (const e of events) {
+    if (e.type === "header") newer = isNewerMinor(get(e, "spec_version"));
+    else if (e.type === CONTROL_ENABLE) out.push(...validateEnableEvent(e, newer).map((x) => `line ${e._line}: ${x}`));
+  }
+  return out;
 }
 
 export function intentCompatErrors(events: Ev[]): string[] {
@@ -258,9 +283,10 @@ export function tdControlFormatErrors(e: Record<string, unknown>): string[] {
   if (get(e, "is_final") !== true) x.push("a control decision MUST be final (is_final = true) (rule 2)");
   const act = get(e, "action");
   const st = get(e, "state");
-  if (!inList(act, CONTROL_ACTIONS)) x.push(`control action ${repr(act)} is not one of ${repr(CONTROL_ACTIONS)}`);
-  if (!inList(st, STATES)) x.push(`state ${repr(st)} is not one of ${repr(STATES)}`);
-  else if (inList(act, CONTROL_ACTIONS) && MOVING.includes(st as string) !== (act === "COMMIT")) {
+  const newer = isNewerMinor(get(e, "spec_version")); // VER-8: unknown action / state of a newer minor version
+  if (!inList(act, CONTROL_ACTIONS) && !(newer && isUnknown(act, TRUST_ACTIONS))) x.push(`control action ${repr(act)} is not one of ${repr(CONTROL_ACTIONS)}`);
+  if (!enumOk(st, STATES, newer)) x.push(`state ${repr(st)} is not one of ${repr(STATES)}`);
+  else if (inList(st, STATES) && inList(act, CONTROL_ACTIONS) && MOVING.includes(st as string) !== (act === "COMMIT")) {
     x.push(`state ${repr(st)} does not fit action ${repr(act)} (act/attenuate = COMMIT, hold/stop = ABSTAIN) (rule 3)`);
   }
   const vel = get(e, "velocity");
@@ -327,6 +353,8 @@ export function tdOrderErrors(events: Record<string, unknown>[]): string[] {
 export function engagedAfter(e: Record<string, unknown>, stopEng: number | null): [boolean, number | null] {
   const eng = get(e, "engagement");
   const reasons = Array.isArray(get(e, "reasons")) ? (e.reasons as unknown[]) : [];
+  // VER-8: an unknown state or action is a no-motion decision; the control is not engaged; the latch is kept.
+  if (isUnknown(get(e, "state"), STATES) || isUnknown(get(e, "action"), TRUST_ACTIONS)) return [false, stopEng];
   if (get(e, "state") === "stop") return [false, isInt(e, "engagement") ? (eng as number) : -1];
   if (!isInt(e, "engagement") || (eng as number) < 1 || reasons.includes("not_engaged") || reasons.includes("disengaged")) return [false, stopEng];
   if (stopEng !== null && (eng as number) <= stopEng) return [false, stopEng];
@@ -413,7 +441,7 @@ export function safetyErrors(events: Record<string, unknown>[]): string[] {
 /** The "acted" list of control decisions (NTS 1.0 6.4): the tick of each final control COMMIT. */
 export function movingTicks(decisions: Record<string, unknown>[]): number[] {
   return decisions
-    .filter((e) => isControl(e) && get(e, "is_final") === true && get(e, "action") === "COMMIT" && isInt(e, "tick"))
+    .filter((e) => isControl(e) && get(e, "is_final") === true && get(e, "action") === "COMMIT" && inList(get(e, "state"), MOVING) && isInt(e, "tick"))
     .map((e) => e.tick as number);
 }
 

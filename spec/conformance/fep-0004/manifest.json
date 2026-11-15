@@ -614,6 +614,16 @@
    "clause": "FEP-0004 6 r1; 1.0 RC2 4.1 (GEN-5)",
    "description": "ws_seq 2.0 (an integer written with a fraction part) is not an integer",
    "failing_check": "FEP4-FRAMING"
+  },
+  {
+   "id": "W44",
+   "file": "w44-ws-seq-above-2-53.json",
+   "format": "json",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0004 6 r1; 1.0 RC3 4.1 (GEN-10)",
+   "description": "ws_seq 9007199254740993 (above 2^53 - 1) is not a portable integer",
+   "failing_check": "FEP4-FRAMING"
   }
  ]
 }

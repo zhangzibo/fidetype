@@ -13,11 +13,13 @@
  */
 
 import { get, has, isObj, parseJson } from "./json.js";
-import { tdShownAdvisories } from "./profiles/fep0001.js";
-import { ControlSafety, tdControlFormatErrors } from "./profiles/fep0005.js";
+import { isTextDecision, tdShownAdvisories } from "./profiles/fep0001.js";
+import { unknownIntentValues } from "./profiles/fep0003.js";
+import { ControlSafety, STATES, tdControlFormatErrors } from "./profiles/fep0005.js";
 import { isInt } from "./profiles/common.js";
 
-export type DecisionKind = "commit" | "offer" | "ask" | "abstain" | "offer_words" | "preview" | "invalid";
+/** "unknown": a valid decision of a newer minor version with an unknown `action` or `profile` (VER-8): never acted on. */
+export type DecisionKind = "commit" | "offer" | "ask" | "abstain" | "offer_words" | "preview" | "invalid" | "unknown";
 
 export interface HandledDecision {
   /** The event as received. */
@@ -50,7 +52,7 @@ export function isFinalCommit(d: Record<string, unknown>): boolean {
 
 /** The committed text of a final text COMMIT (`shown[0]`), or null. */
 export function committedText(d: Record<string, unknown>): string | null {
-  if (!isFinalCommit(d) || get(d, "profile") === "intent" || get(d, "profile") === "control") return null;
+  if (!isFinalCommit(d) || !isTextDecision(d)) return null;
   const sh = get(d, "shown");
   return Array.isArray(sh) && sh.length && typeof sh[0] === "string" ? sh[0] : null;
 }
@@ -60,7 +62,7 @@ export function committedText(d: Record<string, unknown>): string | null {
  * or only white space. Returns a warning text, or null.
  */
 export function emptyCommitWarning(d: Record<string, unknown>): string | null {
-  if (!isFinalCommit(d) || get(d, "profile") === "intent" || get(d, "profile") === "control") return null;
+  if (!isFinalCommit(d) || !isTextDecision(d)) return null;
   const sh = get(d, "shown");
   if (!Array.isArray(sh) || !sh.length || typeof sh[0] !== "string" || !blankText(sh[0])) return null;
   const why = typeof get(d, "reason") === "string" && (d.reason as string).trim() ? ` (reason: ${d.reason})` : " and gives no reason";
@@ -127,8 +129,12 @@ export class DecisionTracker {
     const profile = typeof get(ev, "profile") === "string" ? (ev.profile as string) : "text";
     const action = get(ev, "action");
     const final = get(ev, "is_final") === true;
-    let kind: DecisionKind = errors.length ? "invalid" : final ? (Object.prototype.hasOwnProperty.call(KIND, action as string) ? KIND[action as string] : "invalid") : "preview";
-    if (!errors.length && !final && !(typeof action === "string" && Object.prototype.hasOwnProperty.call(KIND, action))) kind = "invalid";
+    const knownAction = typeof action === "string" && Object.prototype.hasOwnProperty.call(KIND, action);
+    const knownProfile = profile === "text" || profile === "intent" || profile === "control";
+    let kind: DecisionKind = errors.length ? "invalid" : final ? (knownAction ? KIND[action as string] : "invalid") : "preview";
+    if (!errors.length && !final && !knownAction) kind = "invalid";
+    // VER-8: a valid decision with an unknown action or profile (newer minor version) is never acted on.
+    if (!errors.length && (!knownProfile || (typeof action === "string" && !knownAction))) kind = "unknown";
     const control = profile === "control";
     const offeredRaw = control ? null : profile === "intent" ? get(ev, "offered") : get(ev, "shown");
     // TD-12: a consumer MUST NOT offer a blank text candidate (decisions of every version).
@@ -141,7 +147,9 @@ export class DecisionTracker {
     if (w) warnings.push(w);
     const bw = blankCandidateWarning(ev);
     if (bw) warnings.push(bw);
-    const forward = kind === "commit" && (control || (committed !== null && !w));
+    // VER-8: no actuation on an unknown intent risk class / role / confirmation path, no motion on an unknown control state.
+    const unknownValue = (profile === "intent" && unknownIntentValues(ev)) || (control && !(STATES as readonly unknown[]).includes(get(ev, "state")));
+    const forward = kind === "commit" && !unknownValue && (control || (committed !== null && !w));
     return { event: ev, kind, profile, committed, tick, offered: kind === "commit" ? [] : offered, forward, errors, warnings };
   }
 

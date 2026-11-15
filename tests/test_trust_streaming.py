@@ -20,6 +20,7 @@ from fidetype.conformance.io import load_stream, write_jsonl
 from fidetype.eval.harness import HarnessConfig, Item, TrustPipeline
 from fidetype.streams.corpus import sentences
 from fidetype.streams.simulator import NoisyDecoderSimulator, SimConfig
+from fidetype.streams.spec import VOCAB_TYPES
 from fidetype.trust.frozen import PAPER1_V4_RECIPE, FrozenTrustConfig, paper1_v4_harness_config
 from fidetype.trust.online_risk import OnlineCommitRiskControl
 from fidetype.trust.policy import Action
@@ -290,6 +291,12 @@ def test_golden_vectors_equal_batch(setup, tmp_path):
         path = VECTORS / v["file"]
         cs = load_stream(path)
         layer = StreamingTrustLayer(cfg, decode_fn=greedy_nbest, streaming=StreamingConfig(max_attempts=1))
+        if cs.stream.vocab_type not in VOCAB_TYPES:
+            # NTS 1.0 RC3, VER-8 / VER-10 (V66): a 1.1 header with an unknown vocab_type. The consumer accepts it;
+            # the text trust layer cannot spell text from unknown tokens, so it stops (refuses the header).
+            with pytest.raises(StreamEventError):
+                replay(path, layer)
+            continue
         if cs.stream.vocab_size == 0:
             # Hypothesis-only stream (HDR-12, V62): no frames, so no batch reference. Each segment's
             # final decision equals the policy on its hypothesis.

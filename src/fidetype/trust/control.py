@@ -62,6 +62,8 @@ UNITS = {
 #: screen: x right, y down, origin top-left (OS / HID convention).
 #: workspace: x right, y up, z towards the user (right-handed), origin declared by the producer.
 FRAMES = ("screen", "workspace")
+#: Every known unit (of any quantity).
+ALL_UNITS = frozenset(u for us in UNITS.values() for u in us)
 UNCERTAINTY = ("none", "std")
 SOURCES = ("decoder", "human")
 STATES = ("act", "attenuate", "hold", "stop")
@@ -98,10 +100,12 @@ def _sha(obj: Any) -> str:
 
 
 def validate_control_declaration(d: Any, intent_ids: Sequence[str] | None = None,
-                                 null_intents: Sequence[str] = ()) -> list[str]:
+                                 null_intents: Sequence[str] = (), lenient: bool = False) -> list[str]:
     """Errors of a ``control_declaration`` (FEP-0005 section 2). Empty list = valid.
 
     ``intent_ids``: the intents of the header's FEP-0003 declaration (None = no declaration).
+    ``lenient``: the header declares a newer 1.x minor version (NTS 1.0 RC3, VER-8). An unknown ``quantity``,
+    ``units``, ``frame`` or ``uncertainty`` string is then not an error; a consumer gives no motion on such a stream.
     """
     if not isinstance(d, dict):
         return ["control_declaration must be an object"]
@@ -110,11 +114,15 @@ def validate_control_declaration(d: Any, intent_ids: Sequence[str] | None = None
     if not (_int(dims) and 1 <= dims <= 3):
         e.append("dims must be an integer 1-3")
     q = d.get("quantity")
+    u = d.get("units")
     if q not in QUANTITIES:
-        e.append(f"quantity {q!r} is not one of {list(QUANTITIES)}")
-    elif d.get("units") not in UNITS[q]:
-        e.append(f"units {d.get('units')!r} do not fit quantity {q!r} (one of {list(UNITS[q])})")
-    if d.get("frame") not in FRAMES:
+        if not (lenient and isinstance(q, str)):
+            e.append(f"quantity {q!r} is not one of {list(QUANTITIES)}")
+        elif not isinstance(u, str):
+            e.append("units must be a string")
+    elif u not in UNITS[q] and not (lenient and isinstance(u, str) and u not in ALL_UNITS):
+        e.append(f"units {u!r} do not fit quantity {q!r} (one of {list(UNITS[q])})")
+    if not (d.get("frame") in FRAMES or (lenient and isinstance(d.get("frame"), str))):
         e.append(f"frame {d.get('frame')!r} is not one of {list(FRAMES)}")
     if not (_num(d.get("rate_hz")) and d["rate_hz"] > 0):
         e.append("rate_hz must be a number > 0")
@@ -123,7 +131,7 @@ def validate_control_declaration(d: Any, intent_ids: Sequence[str] | None = None
         if not (isinstance(ax, list) and all(isinstance(a, str) and a for a in ax) and len(set(ax)) == len(ax)
                 and (not _int(dims) or len(ax) == dims)):
             e.append("axes must be a list of dims unique non-empty strings")
-    if d.get("uncertainty", "none") not in UNCERTAINTY:
+    if not (d.get("uncertainty", "none") in UNCERTAINTY or (lenient and isinstance(d.get("uncertainty"), str))):
         e.append(f"uncertainty {d.get('uncertainty')!r} is not one of {list(UNCERTAINTY)}")
     for k in ("max_speed", "latency_s", "window_s"):
         if k in d and not (_num(d[k]) and d[k] >= 0 and (k != "max_speed" or d[k] > 0)):
@@ -158,8 +166,9 @@ class ControlDeclaration:
     click_intent: str | None = None
 
     @classmethod
-    def from_declaration(cls, d: dict[str, Any]) -> "ControlDeclaration":
-        errs = validate_control_declaration(d, intent_ids=[d["click_intent"]] if isinstance(d.get("click_intent"), str) else None)
+    def from_declaration(cls, d: dict[str, Any], lenient: bool = False) -> "ControlDeclaration":
+        ids = [d["click_intent"]] if isinstance(d.get("click_intent"), str) else None
+        errs = validate_control_declaration(d, intent_ids=ids, lenient=lenient)
         if errs:
             raise ControlEventError("; ".join(errs) + " (FEP-0005 section 2)")
         dims = int(d["dims"])
@@ -176,8 +185,12 @@ class ControlDeclaration:
         return out
 
 
-def validate_control_event(ev: dict[str, Any], decl: ControlDeclaration | None) -> list[str]:
-    """Errors of one ``control`` event (FEP-0005 section 3), without the order rules."""
+def validate_control_event(ev: dict[str, Any], decl: ControlDeclaration | None, lenient: bool = False) -> list[str]:
+    """Errors of one ``control`` event (FEP-0005 section 3), without the order rules.
+
+    ``lenient``: newer minor version (VER-8): an unknown ``source`` string is allowed (the event moves nothing), and
+    with an unknown declared ``uncertainty`` the ``std`` rules (CTL-3) do not apply (``std`` keeps its type rule).
+    """
     e: list[str] = []
     if decl is None:
         return ["control event without a control_declaration in the header (rule 1)"]
@@ -200,15 +213,16 @@ def validate_control_event(ev: dict[str, Any], decl: ControlDeclaration | None) 
             if not _num(v):
                 e.append(f"values[{j}] must be a finite number (or absent)")
     src = ev.get("source", "decoder")
-    if src not in SOURCES:
+    if not (src in SOURCES or (lenient and isinstance(src, str))):
         e.append(f"source {src!r} is not one of {list(SOURCES)}")
+    unknown_unc = decl.uncertainty not in UNCERTAINTY
     if "std" in ev:
         sd = ev["std"]
         if not (isinstance(sd, list) and len(sd) == decl.dims and all(_num(x) and x > 0 for x in sd)):
             e.append("std must be a list of dims numbers > 0")
-        elif decl.uncertainty != "std":
+        elif decl.uncertainty != "std" and not unknown_unc:
             e.append("std given but the declaration has uncertainty = none (rule 3)")
-    elif decl.uncertainty == "std" and src == "decoder":
+    elif decl.uncertainty == "std" and src == "decoder" and not unknown_unc:
         e.append("the declaration has uncertainty = std: a decoder control event MUST carry std (rule 3)")
     ts = [ev[k] for k in TIMING_FIELDS if k in ev]
     if any(not _num(x) for x in ts):
@@ -220,13 +234,18 @@ def validate_control_event(ev: dict[str, Any], decl: ControlDeclaration | None) 
     return e
 
 
-def validate_enable_event(ev: dict[str, Any]) -> list[str]:
+def validate_enable_event(ev: dict[str, Any], lenient: bool = False) -> list[str]:
+    """Errors of one ``control_enable`` event (FEP-0005 section 4).
+
+    ``lenient``: newer minor version (VER-8): an unknown ``source`` string is allowed. ``enabled = false`` from it is
+    still a stop; ``enabled = true`` from it is not an engage (registry 12.3).
+    """
     e = []
     if not isinstance(ev.get("enabled"), bool):
         e.append("enabled must be a boolean")
     if "t" in ev and not _num(ev["t"]):
         e.append("t must be a finite number")
-    if "source" in ev and ev["source"] not in ENABLE_SOURCES:
+    if "source" in ev and not (ev["source"] in ENABLE_SOURCES or (lenient and isinstance(ev["source"], str))):
         e.append(f"source {ev['source']!r} is not one of {list(ENABLE_SOURCES)}")
     if "reason" in ev and not isinstance(ev["reason"], str):
         e.append("reason must be a string")

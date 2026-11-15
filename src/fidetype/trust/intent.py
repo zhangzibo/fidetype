@@ -142,8 +142,13 @@ def stricter(a: str, b: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def validate_intent_declaration(d: Any) -> list[str]:
-    """The FEP-0003 section 2 errors of an ``intent_declaration`` object (empty list = valid)."""
+def validate_intent_declaration(d: Any, lenient: bool = False) -> list[str]:
+    """The FEP-0003 section 2 errors of an ``intent_declaration`` object (empty list = valid).
+
+    ``lenient``: the header declares a newer 1.x minor version (NTS 1.0 RC3, VER-8). An unknown ``risk`` or ``role``
+    string is then not an error. A consumer reads an unknown risk as ``irreversible`` and an unknown role as ``null``
+    (registry 12.3); the declaration rules do not compare unknown values (INT-D4) and count an unknown role as not null.
+    """
     if not isinstance(d, dict):
         return ["intent_declaration must be a JSON object"]
     errs: list[str] = []
@@ -167,10 +172,12 @@ def validate_intent_declaration(d: Any) -> list[str]:
             errs.append(f"{w} id {iid!r} is not unique")
         else:
             seen.add(iid)
-        if it.get("risk") not in RISK_CLASSES:
+        if not (it.get("risk") in RISK_CLASSES or (lenient and isinstance(it.get("risk"), str))):
             errs.append(f"{w} risk {it.get('risk')!r} is not one of {list(RISK_CLASSES)}")
         role = it.get("role", "action")
-        if role not in ROLES:
+        if role not in ROLES and lenient and isinstance(role, str):
+            roles["<unknown>"] = roles.get("<unknown>", 0) + 1
+        elif role not in ROLES:
             errs.append(f"{w} role {role!r} is not one of {list(ROLES)}")
         else:
             roles[role] = roles.get(role, 0) + 1
@@ -182,10 +189,11 @@ def validate_intent_declaration(d: Any) -> list[str]:
     good = [it for it in items if isinstance(it, dict)]
     if any(it.get("risk") == "irreversible" for it in good):
         for it in good:
-            if it.get("role") == "confirm" and it.get("risk") != "irreversible":
+            if it.get("role") == "confirm" and it.get("risk") in RISK_CLASSES and it.get("risk") != "irreversible":
                 errs.append(f"the confirm intent {it.get('id')!r} executes irreversible intents, so its risk must be "
                             f"'irreversible' (FEP-0003 section 2 rule 4)")
-    if roles.get("action", 0) + roles.get("confirm", 0) + roles.get("cancel", 0) + roles.get("undo", 0) == 0:
+    known_roles = roles.get("action", 0) + roles.get("confirm", 0) + roles.get("cancel", 0) + roles.get("undo", 0)
+    if known_roles + roles.get("<unknown>", 0) == 0:
         errs.append("intent_declaration needs at least one intent that is not null")
     return errs
 
@@ -692,8 +700,13 @@ def evaluate_policy(config: IntentTrustConfig, probs: np.ndarray, labels: np.nda
 # ---------------------------------------------------------------------------
 
 
-def validate_intent_event(ev: dict[str, Any], vocab: IntentVocabulary | None) -> list[str]:
-    """The FEP-0003 section 3 errors of one ``intent`` event (empty = valid)."""
+def validate_intent_event(ev: dict[str, Any], vocab: Any, lenient: bool = False) -> list[str]:
+    """The FEP-0003 section 3 errors of one ``intent`` event (empty = valid).
+
+    ``vocab``: an object with the declared ``ids`` (an :class:`IntentVocabulary`), or None. ``lenient``: newer
+    minor version (VER-8): an unknown ``score_semantics`` string is allowed; a score is then not a probability, any
+    finite number or null, and the ranking rule does not apply.
+    """
     errs: list[str] = []
     if vocab is None:
         errs.append("an intent event needs an intent_declaration in the header")
@@ -704,7 +717,8 @@ def validate_intent_event(ev: dict[str, Any], vocab: IntentVocabulary | None) ->
     if not isinstance(ev.get("is_final"), bool):
         errs.append("is_final must be a boolean")
     sem = ev.get("score_semantics")
-    if sem not in SCORE_SEMANTICS:
+    unknown_sem = lenient and isinstance(sem, str) and sem not in SCORE_SEMANTICS
+    if sem not in SCORE_SEMANTICS and not unknown_sem:
         errs.append(f"score_semantics {sem!r} is not one of {list(SCORE_SEMANTICS)}")
     for k in ("t_start", "t_end"):
         if k in ev and not _num(ev[k]):
@@ -728,7 +742,10 @@ def validate_intent_event(ev: dict[str, Any], vocab: IntentVocabulary | None) ->
         if vocab is not None and iid not in vocab.ids:
             errs.append(f"{w} intent {iid!r} is not in the declaration")
         sc = c.get("score")
-        if sem == "none":
+        if unknown_sem:
+            if sc is not None and not _num(sc):
+                errs.append(f"{w} score must be a finite number or null")
+        elif sem == "none":
             if sc is not None:
                 errs.append(f"{w} score must be null or absent with score_semantics none")
         elif sem in PROB_SEMANTICS:
@@ -748,12 +765,16 @@ def validate_intent_event(ev: dict[str, Any], vocab: IntentVocabulary | None) ->
     return errs
 
 
-def validate_feedback_event(ev: dict[str, Any], vocab: IntentVocabulary | None = None) -> list[str]:
-    """The FEP-0003 section 4 errors of one ``intent_feedback`` event."""
+def validate_feedback_event(ev: dict[str, Any], vocab: Any = None, lenient: bool = False) -> list[str]:
+    """The FEP-0003 section 4 errors of one ``intent_feedback`` event.
+
+    ``lenient``: newer minor version (VER-8): an unknown ``outcome`` string is allowed. It never confirms, selects or
+    labels; it drops an armed intent as ``cancelled`` does (registry 12.3).
+    """
     errs: list[str] = []
     if not (_int(ev.get("ref_unit")) and ev["ref_unit"] >= 0):
         errs.append("ref_unit must be an integer >= 0")
-    if ev.get("outcome") not in FEEDBACK_OUTCOMES:
+    if not (ev.get("outcome") in FEEDBACK_OUTCOMES or (lenient and isinstance(ev.get("outcome"), str))):
         errs.append(f"outcome {ev.get('outcome')!r} is not one of {list(FEEDBACK_OUTCOMES)}")
     if ev.get("outcome") == "selected" and not isinstance(ev.get("intent"), str):
         errs.append("outcome selected needs the selected intent")

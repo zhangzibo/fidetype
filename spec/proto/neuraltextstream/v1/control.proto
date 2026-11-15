@@ -1,8 +1,8 @@
-// NeuralTextStream (NTS) 1.0 RC2 data model: the control profile (4.8, 7.4).
+// NeuralTextStream (NTS) 1.0 RC3 data model: the control profile (4.8, 7.4).
 //
 // Status: DRAFT (roadmap P1-02). The control profile is Development (2.3).
 // Licence: Apache-2.0.
-// Rule ids (for example CTL-D1) refer to spec/nts-1.0-rc2.md.
+// Rule ids (for example CTL-D1) refer to spec/nts-1.0-rc3.md.
 // Field number ranges: see core.proto.
 
 syntax = "proto3";
@@ -57,8 +57,11 @@ enum Uncertainty {
 // with a role other than null: needs a lookup; see the Header rule for the
 // part that the schema checks).
 message ControlDeclaration {
-  option (json_rule) = '{"$comment": "CTL-D1: velocity units", "if": {"required": ["quantity"], "properties": {"quantity": {"const": "velocity"}}}, "then": {"properties": {"units": {"enum": ["norm/s", "px/s", "mm/s", "m/s", "deg/s"]}}}}';
-  option (json_rule) = '{"$comment": "CTL-D1: position units", "if": {"required": ["quantity"], "properties": {"quantity": {"const": "position"}}}, "then": {"properties": {"units": {"enum": ["norm", "px", "mm", "m", "deg"]}}}}';
+  // CTL-D1 (units fit quantity) is written as "not a unit of the other
+  // quantity": the known values themselves are checked by Header.known
+  // (VER-7), so a newer minor version may add a unit (VER-8).
+  option (json_rule) = '{"$comment": "CTL-D1: velocity units (not a position unit)", "if": {"required": ["quantity"], "properties": {"quantity": {"const": "velocity"}}}, "then": {"properties": {"units": {"not": {"enum": ["norm", "px", "mm", "m", "deg"]}}}}}';
+  option (json_rule) = '{"$comment": "CTL-D1: position units (not a velocity unit)", "if": {"required": ["quantity"], "properties": {"quantity": {"const": "position"}}}, "then": {"properties": {"units": {"not": {"enum": ["norm/s", "px/s", "mm/s", "m/s", "deg/s"]}}}}}';
   option (json_rule) = '{"$comment": "CTL-D1: norm position only in the screen frame", "if": {"required": ["quantity", "units"], "properties": {"quantity": {"const": "position"}, "units": {"const": "norm"}}}, "then": {"properties": {"frame": {"const": "screen"}}}}';
   option (json_rule) = '{"$comment": "CTL-D2: axes has dims names (dims 1)", "if": {"required": ["dims"], "properties": {"dims": {"const": 1}}}, "then": {"properties": {"axes": {"minItems": 1, "maxItems": 1}}}}';
   option (json_rule) = '{"$comment": "CTL-D2: axes has dims names (dims 2)", "if": {"required": ["dims"], "properties": {"dims": {"const": 2}}}, "then": {"properties": {"axes": {"minItems": 2, "maxItems": 2}}}}';

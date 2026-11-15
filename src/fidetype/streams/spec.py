@@ -72,6 +72,42 @@ def is_supported_spec_version(v: Any) -> bool:
     return isinstance(v, str) and SUPPORTED_SPEC_VERSION.fullmatch(v) is not None
 
 
+#: A 1.x minor version above 1.0, the version that this package implements (NTS 1.0 RC3, VER-8).
+NEWER_MINOR_VERSION = re.compile(r"1\.[1-9][0-9]*")
+
+
+def is_newer_minor(v: Any) -> bool:
+    """True if ``v`` is a ``spec_version`` of a newer minor version of major 1 ("1.1", "1.2", ...).
+
+    NTS 1.0 RC3, VER-8: in data whose governing version is a newer minor version, an unknown enumeration value
+    is not an error. The consumer keeps it as unknown and applies the safe fallback of registry 12.3.
+    """
+    return isinstance(v, str) and NEWER_MINOR_VERSION.fullmatch(v) is not None
+
+
+def enum_ok(value: Any, known: Any, newer: bool) -> bool:
+    """VER-7 / VER-8: ``value`` is a known value, or (``newer`` data only) any other string."""
+    return value in known or (newer and isinstance(value, str))
+
+
+def is_unknown(value: Any, known: Any) -> bool:
+    """A string that is not a known value (an unknown enumeration value, VER-8)."""
+    return isinstance(value, str) and value not in known
+
+
+#: Largest JSON integer that every SDK reads exactly: 2^53 - 1 (NTS 1.0 RC3, GEN-10).
+MAX_JSON_INT = 2**53 - 1
+
+
+def json_int(s: str) -> Any:
+    """``json.loads`` ``parse_int`` hook (GEN-10): an integer literal above 2^53 - 1 in magnitude is not an integer.
+
+    It is returned as a float, so every "integer" check refuses it, as in the TypeScript and Rust SDKs.
+    """
+    v = int(s)
+    return v if -MAX_JSON_INT <= v <= MAX_JSON_INT else float(s)
+
+
 def _logsumexp_rows(x: np.ndarray) -> np.ndarray:
     """Return the log-sum-exp of each row. Rows of only -inf give -inf."""
     x64 = x.astype(np.float64)
@@ -164,7 +200,7 @@ class NeuralTextStream:
             raise ValueError("vocab tokens must be unique")
         if not all(isinstance(t, str) for t in self.vocab):
             raise ValueError("vocab tokens must be strings")
-        if self.vocab_type not in VOCAB_TYPES:
+        if not enum_ok(self.vocab_type, VOCAB_TYPES, is_newer_minor(self.version)):  # VER-8: newer minor = any string
             raise ValueError(f"vocab_type must be one of {VOCAB_TYPES}, not {self.vocab_type!r}")
         if self.blank_id is not None and not 0 <= self.blank_id < V:
             raise ValueError(f"blank_id {self.blank_id} is out of range 0..{V - 1}")
@@ -235,7 +271,7 @@ class NeuralTextStream:
                 vocab=[str(t) for t in z["vocab"]],
                 blank_id=None if blank_id == NPZ_NO_BLANK else blank_id,
                 source=str(z["source"]),
-                meta=json.loads(str(z["meta_json"]), parse_constant=_reject_json_constant),
+                meta=json.loads(str(z["meta_json"]), parse_constant=_reject_json_constant, parse_int=json_int),
                 version=str(z["version"]),
                 vocab_type=str(z["vocab_type"]) if "vocab_type" in z.files else "char",
                 frame_period=float(z["frame_period"]) if "frame_period" in z.files else None,

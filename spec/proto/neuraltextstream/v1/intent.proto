@@ -1,8 +1,8 @@
-// NeuralTextStream (NTS) 1.0 RC2 data model: the intent profile (7.3).
+// NeuralTextStream (NTS) 1.0 RC3 data model: the intent profile (7.3).
 //
 // Status: DRAFT (roadmap P1-02). The intent profile is Development (2.3).
 // Licence: Apache-2.0.
-// Rule ids (for example INT-D3) refer to spec/nts-1.0-rc2.md.
+// Rule ids (for example INT-D3) refer to spec/nts-1.0-rc3.md.
 // Field number ranges: see core.proto.
 
 syntax = "proto3";
@@ -58,7 +58,7 @@ message IntentDeclaration {
   option (json_rule) = '{"$comment": "INT-D3: at most one confirm intent", "properties": {"intents": {"contains": {"required": ["role"], "properties": {"role": {"const": "confirm"}}}, "minContains": 0, "maxContains": 1}}}';
   option (json_rule) = '{"$comment": "INT-D3: at most one cancel intent", "properties": {"intents": {"contains": {"required": ["role"], "properties": {"role": {"const": "cancel"}}}, "minContains": 0, "maxContains": 1}}}';
   option (json_rule) = '{"$comment": "INT-D3: at most one undo intent", "properties": {"intents": {"contains": {"required": ["role"], "properties": {"role": {"const": "undo"}}}, "minContains": 0, "maxContains": 1}}}';
-  option (json_rule) = '{"$comment": "INT-D4: with an irreversible intent, the confirm intent is irreversible", "if": {"required": ["intents"], "properties": {"intents": {"contains": {"required": ["risk"], "properties": {"risk": {"const": "irreversible"}}}}}}, "then": {"properties": {"intents": {"items": {"if": {"required": ["role"], "properties": {"role": {"const": "confirm"}}}, "then": {"properties": {"risk": {"const": "irreversible"}}}}}}}}';
+  option (json_rule) = '{"$comment": "INT-D4: with an irreversible intent, the confirm intent is irreversible", "if": {"required": ["intents"], "properties": {"intents": {"contains": {"required": ["risk"], "properties": {"risk": {"const": "irreversible"}}}}}}, "then": {"properties": {"intents": {"items": {"if": {"required": ["role"], "properties": {"role": {"const": "confirm"}}}, "then": {"properties": {"risk": {"not": {"enum": ["safe", "undoable"]}}}}}}}}}';
 
   // intent.* namespace (12.4).
   optional string vocab_id = 1 [(min_length) = 1];

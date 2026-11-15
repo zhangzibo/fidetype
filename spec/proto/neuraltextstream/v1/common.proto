@@ -1,7 +1,7 @@
-// NeuralTextStream (NTS) 1.0 RC2 data model: shared enums and field groups.
+// NeuralTextStream (NTS) 1.0 RC3 data model: shared enums and field groups.
 //
 // Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
-// Rule ids (for example TIM-4) refer to spec/nts-1.0-rc2.md.
+// Rule ids (for example TIM-4) refer to spec/nts-1.0-rc3.md.
 
 syntax = "proto3";
 

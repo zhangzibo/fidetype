@@ -155,9 +155,11 @@ impl Value {
     pub fn is_fin_num(&self) -> bool {
         matches!(self, Value::Num(x, _) if x.is_finite())
     }
-    /// Python `isinstance(x, int) and not isinstance(x, bool)`.
+    /// Python `isinstance(x, int) and not isinstance(x, bool)`, with the NTS 1.0 RC3
+    /// range rule GEN-10: an integer above 2^53 - 1 in magnitude is not an integer.
     pub fn is_int(&self) -> bool {
-        matches!(self, Value::Num(x, fl) if !*fl && x.is_finite() && libm::trunc(*x) == *x)
+        matches!(self, Value::Num(x, fl) if !*fl && x.is_finite() && libm::trunc(*x) == *x
+            && libm::fabs(*x) <= crate::constants::MAX_JSON_INT)
     }
     pub fn is_str(&self) -> bool {
         matches!(self, Value::Str(_))
@@ -257,6 +259,21 @@ pub fn py_in(x: &Value, seq: &[Value]) -> bool {
 /// True if `v` is a string in `set`.
 pub fn str_in(v: &Value, set: &[&str]) -> bool {
     matches!(v, Value::Str(s) if set.contains(&s.as_str()))
+}
+
+/// VER-7 / VER-8 (NTS 1.0 RC3): `v` is a known value, or (`newer` data only) any other string.
+pub fn enum_ok(v: &Value, set: &[&str], newer: bool) -> bool {
+    str_in(v, set) || (newer && v.is_str())
+}
+
+/// A string that is not in `set` (an unknown enumeration value, VER-8).
+pub fn is_unknown(v: &Value, set: &[&str]) -> bool {
+    v.is_str() && !str_in(v, set)
+}
+
+/// True if `v` is a string `spec_version` of a newer 1.x minor version (VER-8).
+pub fn newer_minor(v: &Value) -> bool {
+    matches!(v, Value::Str(s) if crate::constants::is_newer_minor(s))
 }
 
 // --- parser --------------------------------------------------------------------------

@@ -10,8 +10,12 @@ Output:          spec/schemas/nts-v1.schema.json (JSON Schema draft 2020-12).
 Standard library only. The mapping rules are in spec/proto/README.md:
 - one JSON object per line; "type" selects the event message (Event oneof);
 - JSON keys are the proto field names (snake_case), never lowerCamelCase;
-- enums are JSON strings (option json_value);
-- integers are JSON numbers; uint* fields are >= 0;
+- enums are JSON strings (option json_value). An enum field accepts any string; the known values are
+  required only in data of a version that this schema implements (VER-7, VER-8: a "<Message>.known"
+  definition, applied by the header and trust_decision through their spec_version);
+- integers are JSON numbers in [-(2^53 - 1), 2^53 - 1] (GEN-10); uint* fields are >= 0;
+- fields with json_profile (trust_decision fields of one profile) are typed only on decisions of that
+  profile (PRF-5); on other decisions they are custom keys;
 - fields with json_inline (Timing, Binding, ext) are keys of the parent object;
 - unknown keys and unknown event types are allowed (GEN-4).
 """
@@ -43,7 +47,12 @@ INLINE_NUMBERS = {"Timing": 900, "Binding": 1000, "google.protobuf.Struct": 2047
 ARRAY_OPTS = {"min_items": "minItems", "max_items": "maxItems", "unique_items": "uniqueItems"}
 VALUE_OPTS = {"minimum": "minimum", "maximum": "maximum", "exclusive_minimum": "exclusiveMinimum",
               "exclusive_maximum": "exclusiveMaximum", "pattern": "pattern", "min_length": "minLength"}
-KNOWN_FIELD_OPTS = set(ARRAY_OPTS) | set(VALUE_OPTS) | {"json_required", "json_nullable", "null_binary", "json_inline"}
+KNOWN_FIELD_OPTS = set(ARRAY_OPTS) | set(VALUE_OPTS) | {"json_required", "json_nullable", "null_binary", "json_inline",
+                                                        "json_profile"}
+#: Largest portable JSON integer (GEN-10).
+MAX_JSON_INT = 2**53 - 1
+#: A spec_version of a newer 1.x minor version (VER-8): unknown enumeration values are allowed.
+NEWER_MINOR = "^1\\.[1-9][0-9]*$"
 
 
 class MappingError(Exception):
@@ -137,7 +146,8 @@ def lint(ps: ProtoSet) -> None:
                 raise MappingError(f"{m.name}: each json_rule is a JSON object with a $comment that names its rule")
 
 
-def scalar_schema(f: Field, ps: ProtoSet) -> dict[str, Any]:
+def scalar_schema(f: Field, ps: ProtoSet, strict: bool = False) -> dict[str, Any]:
+    """The schema of one value of field ``f``. Enum values: any string (open), or the known values (``strict``)."""
     t = f.type
     if t == "string":
         s: dict[str, Any] = {"type": "string"}
@@ -146,9 +156,9 @@ def scalar_schema(f: Field, ps: ProtoSet) -> dict[str, Any]:
     elif t in NUM_TYPES:
         s = {"type": "number"}
     elif t in INT_TYPES:
-        s = {"type": "integer"}
+        s = {"type": "integer", "minimum": -MAX_JSON_INT, "maximum": MAX_JSON_INT}
     elif t in UINT_TYPES:
-        s = {"type": "integer", "minimum": 0}
+        s = {"type": "integer", "minimum": 0, "maximum": MAX_JSON_INT}
     elif t == "google.protobuf.Struct":
         s = {"type": "object"}
     elif t == "google.protobuf.Value":
@@ -156,7 +166,7 @@ def scalar_schema(f: Field, ps: ProtoSet) -> dict[str, Any]:
     elif t == "google.protobuf.ListValue":
         s = {"type": "array"}
     elif t in ps.enums:
-        s = {"$ref": f"#/$defs/{t}"}
+        s = {"$ref": f"#/$defs/{t}"} if strict else {"type": "string", "x-nts-enum": f"#/$defs/{t}"}
     elif t in ps.messages:
         s = {"$ref": f"#/$defs/{t}"}
     else:
@@ -172,8 +182,8 @@ def scalar_schema(f: Field, ps: ProtoSet) -> dict[str, Any]:
     return s
 
 
-def field_schema(f: Field, ps: ProtoSet) -> dict[str, Any]:
-    item = scalar_schema(f, ps)
+def field_schema(f: Field, ps: ProtoSet, strict: bool = False) -> dict[str, Any]:
+    item = scalar_schema(f, ps, strict)
     if f.label == "repeated":
         s: dict[str, Any] = {"type": "array", "items": item}
         for opt, kw in ARRAY_OPTS.items():
@@ -192,25 +202,79 @@ def field_schema(f: Field, ps: ProtoSet) -> dict[str, Any]:
     return s
 
 
-def collect(m: Message, ps: ProtoSet, props: dict[str, Any], required: list[str]) -> None:
+def collect(m: Message, ps: ProtoSet, props: dict[str, Any], required: list[str],
+            by_profile: dict[str, dict[str, Any]] | None = None) -> None:
     for f in m.fields:
         if f.options.get("json_inline"):
             if f.type in ps.messages:
-                collect(ps.messages[f.type], ps, props, required)
+                collect(ps.messages[f.type], ps, props, required, by_profile)
             continue  # an inline Struct (ext): any other key, allowed by default
+        prof = f.options.get("json_profile")
+        if prof and by_profile is not None:
+            by_profile.setdefault(prof, {})[f.name] = field_schema(f, ps)
+            continue
         props[f.name] = field_schema(f, ps)
         if f.options.get("json_required"):
             required.append(f.name)
 
 
+def _profile_rule(prof: str, props: dict[str, Any], what: str) -> dict[str, Any]:
+    return {"$comment": f"PRF-5: the {prof}-profile fields {what} only on decisions with profile {prof}",
+            "if": {"required": ["profile"], "properties": {"profile": {"const": prof}}},
+            "then": {"properties": props}}
+
+
+def has_enum(m: Message, ps: ProtoSet, seen: frozenset[str] = frozenset()) -> bool:
+    """True if message ``m`` (or a message field of it, at any depth) has an enum field."""
+    for f in m.fields:
+        if f.type in ps.enums:
+            return True
+        if f.type in ps.messages and f.type not in seen and has_enum(ps.messages[f.type], ps, seen | {m.name}):
+            return True
+    return False
+
+
+def known_schema(m: Message, ps: ProtoSet) -> dict[str, Any]:
+    """``<Message>.known``: every enum value (at any depth) is a known value of this schema version (VER-7)."""
+    props: dict[str, Any] = {}
+    by_profile: dict[str, dict[str, Any]] = {}
+
+    def add(f: Field) -> None:
+        if f.type in ps.enums:
+            s = field_schema(f, ps, strict=True)
+            s.pop("description", None)
+            s.pop("x-nts-rules", None)
+        elif f.type in ps.messages and has_enum(ps.messages[f.type], ps):
+            ref = {"$ref": f"#/$defs/{f.type}.known"}
+            s = {"type": "array", "items": ref} if f.label == "repeated" else ref
+        else:
+            return
+        prof = f.options.get("json_profile")
+        (by_profile.setdefault(prof, {}) if prof else props)[f.name] = s
+
+    for f in m.fields:
+        if f.options.get("json_inline") and f.type in ps.messages:
+            for g in ps.messages[f.type].fields:
+                add(g)
+        elif not f.options.get("json_inline"):
+            add(f)
+    s: dict[str, Any] = {"description": f"VER-7: the enumeration values of {m.name} are known values "
+                                        "(data of a version that this schema implements).",
+                         "type": "object", "properties": props}
+    if by_profile:
+        s["allOf"] = [_profile_rule(p, v, "have known values") for p, v in sorted(by_profile.items())]
+    return s
+
+
 def message_schema(m: Message, ps: ProtoSet) -> dict[str, Any]:
     props: dict[str, Any] = {}
     required: list[str] = []
+    by_profile: dict[str, dict[str, Any]] = {}
     jt = m.options.get("json_type")
     if jt:
         props["type"] = {"const": jt}
         required.append("type")
-    collect(m, ps, props, required)
+    collect(m, ps, props, required, by_profile)
     s: dict[str, Any] = {}
     if m.comment:
         s["description"] = m.comment
@@ -219,6 +283,12 @@ def message_schema(m: Message, ps: ProtoSet) -> dict[str, Any]:
         s["required"] = required
     s["properties"] = props
     rules = [json.loads(r) for r in m.options.get("json_rule", [])]
+    rules += [_profile_rule(p, v, "have these types") for p, v in sorted(by_profile.items())]
+    if "spec_version" in props and has_enum(m, ps):
+        rules.append({"$comment": "VER-7, VER-8: without a newer minor spec_version (absent = 0.1), the enumeration "
+                                  "values are known values; a newer minor version may use other strings",
+                      "if": {"required": ["spec_version"], "properties": {"spec_version": {"pattern": NEWER_MINOR}}},
+                      "else": {"$ref": f"#/$defs/{m.name}.known"}})
     if rules:
         s["allOf"] = rules
     r = rules_in(m.comment + " " + " ".join(x.get("$comment", "") for x in rules))
@@ -252,12 +322,14 @@ def build(ps: ProtoSet) -> dict[str, Any]:
         if name in ("Event", "UnknownEvent", "Timing", "Binding"):
             continue  # Event = this root schema; Timing and Binding are inline only
         defs[name] = message_schema(ps.messages[name], ps)
+        if has_enum(ps.messages[name], ps):
+            defs[f"{name}.known"] = known_schema(ps.messages[name], ps)
     for name in sorted(ps.enums):
         defs[name] = enum_schema(name, ps)
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": SCHEMA_ID,
-        "title": "NeuralTextStream 1.0 RC2 (draft): one JSON Lines event",
+        "title": "NeuralTextStream 1.0 RC3 (draft): one JSON Lines event",
         "description": (
             "GENERATED FILE. Do not edit. Source: spec/proto/neuraltextstream/v1/*.proto. Generator: "
             "tools/proto/gen_jsonschema.py (check: --check). Validates ONE line of a JSON Lines stream or decision "

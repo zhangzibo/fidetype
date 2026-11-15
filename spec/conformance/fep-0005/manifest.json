@@ -255,6 +255,21 @@
    "failing_check": "FEP5-V01-CORE"
   },
   {
+   "id": "C24",
+   "file": "c24-v11-unknown-enums.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 1.0 RC3 11.2.1 (VER-8)",
+   "description": "Header spec_version \"1.1\": quantity \"acceleration\", units \"mm/s2\", frame \"joint\", uncertainty \"covariance\", an engage from source \"bci-switch\" and a control event from source \"assist\": accepted (no motion)",
+   "expected": {
+    "kind": "input",
+    "declarations": 1,
+    "controls": 3,
+    "enables": 1
+   }
+  },
+  {
    "id": "E01",
    "file": "e01-log-states.jsonl",
    "format": "jsonl",
@@ -500,6 +515,43 @@
      "intent.click"
     ]
    }
+  },
+  {
+   "id": "E22",
+   "file": "e22-log-v11-unknown-state.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 1.0 RC3 11.2.1 (VER-8, VER-10)",
+   "description": "spec_version \"1.1\": a control COMMIT with the unknown state \"boost\" is accepted and does not move; a later attenuate COMMIT moves",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 3,
+    "control_decisions": 3,
+    "moving_ticks": [
+     2
+    ]
+   }
+  },
+  {
+   "id": "E23",
+   "file": "e23-td-v10-unknown-state.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 1.0 RC3 11.2.1 (VER-7) / 7.4.5 (CTL-T3)",
+   "description": "spec_version \"1.0\": a control decision with the unknown state \"boost\"",
+   "failing_check": "FEP5-TD-FORMAT"
+  },
+  {
+   "id": "E24",
+   "file": "e24-click-after-unknown-state.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0005 1.0 RC3 11.2.1 (VER-10) / 7.4.6 (CTL-S7)",
+   "description": "spec_version \"1.1\": an engaged attenuate COMMIT, then a control decision with the unknown state \"boost\", then an intent COMMIT: after an unknown state the control counts as not engaged",
+   "failing_check": "FEP5-SAFETY"
   }
  ]
 }

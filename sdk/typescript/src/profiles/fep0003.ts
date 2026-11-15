@@ -4,15 +4,21 @@
  * validators of `fidetype.trust.intent`).
  */
 
-import { FEEDBACK_OUTCOMES, INTENT_ACTIONS, INTENT_DECLARATION_KEY, INTENT_ROLES, RISK_CLASSES, SCORE_SEMANTICS } from "../constants.js";
+import {
+  FEEDBACK_OUTCOMES, INTENT_ACTIONS, INTENT_DECLARATION_KEY, INTENT_ROLES, RISK_CLASSES, SCORE_SEMANTICS, TRUST_ACTIONS,
+  enumOk, isNewerMinor, isUnknown,
+} from "../constants.js";
 import { get, has, isFinNum, isObj } from "../json.js";
 import { CheckMeta, Ev, TargetReport, isInt, makeRes, readEvents, rejectOnFailure, repr, streamKind } from "./common.js";
-import { tdFormatErrors, v01CoreFailures } from "./fep0001.js";
+import { isTextDecision, tdFormatErrors, v01CoreFailures } from "./fep0001.js";
 
 export const FEP = "FEP-0003";
 export const SUFFIXES = [".jsonl", ".ndjson"];
 const PROFILE = "intent";
 const PROFILES = ["text", "intent"];
+/** Every profile name of registry 12.2 (a value outside it is unknown, VER-8). */
+const KNOWN_PROFILES = ["text", "intent", "control"];
+const CONFIRM_PATHS = ["intent", "feedback"];
 const PROB_SEMANTICS = ["calibrated_prob", "uncalibrated_prob"];
 const UNIQUE_ROLES = ["confirm", "cancel", "undo"];
 const SUM_TOL = 1e-6;
@@ -35,7 +41,11 @@ const res = makeRes(META, FEP);
 const isIntent = (e: Record<string, unknown>): boolean => get(e, "type") === "trust_decision" && get(e, "profile") === PROFILE;
 
 /** The FEP-0003 section 2 errors of an `intent_declaration` (empty = valid). */
-export function validateIntentDeclaration(d: unknown): string[] {
+/**
+ * `lenient`: the header declares a newer 1.x minor version (NTS 1.0 RC3, VER-8). An unknown `risk` or `role` string is
+ * then not an error; INT-D4 does not compare unknown values; an unknown role counts as not null (INT-D1).
+ */
+export function validateIntentDeclaration(d: unknown, lenient = false): string[] {
   if (!isObj(d)) return ["intent_declaration must be a JSON object"];
   const errs: string[] = [];
   for (const k of ["vocab_id", "vocab_version"]) {
@@ -55,9 +65,10 @@ export function validateIntentDeclaration(d: unknown): string[] {
     if (!(typeof iid === "string" && iid.trim())) errs.push(`${w} id must be a non-empty string`);
     else if (seen.has(iid)) errs.push(`${w} id '${iid}' is not unique`);
     else seen.add(iid);
-    if (!(RISK_CLASSES as readonly unknown[]).includes(get(it, "risk"))) errs.push(`${w} risk ${repr(get(it, "risk"))} is not one of ${repr(RISK_CLASSES)}`);
+    if (!enumOk(get(it, "risk"), RISK_CLASSES, lenient)) errs.push(`${w} risk ${repr(get(it, "risk"))} is not one of ${repr(RISK_CLASSES)}`);
     const role = has(it, "role") ? it.role : "action";
-    if (!(INTENT_ROLES as readonly unknown[]).includes(role)) errs.push(`${w} role ${repr(role)} is not one of ${repr(INTENT_ROLES)}`);
+    if (!(INTENT_ROLES as readonly unknown[]).includes(role) && lenient && typeof role === "string") roles.set("<unknown>", (roles.get("<unknown>") ?? 0) + 1);
+    else if (!(INTENT_ROLES as readonly unknown[]).includes(role)) errs.push(`${w} role ${repr(role)} is not one of ${repr(INTENT_ROLES)}`);
     else roles.set(role as string, (roles.get(role as string) ?? 0) + 1);
     if (has(it, "label") && typeof it.label !== "string") errs.push(`${w} label must be a string`);
   });
@@ -65,12 +76,12 @@ export function validateIntentDeclaration(d: unknown): string[] {
   const good = its.filter(isObj) as Record<string, unknown>[];
   if (good.some((it) => get(it, "risk") === "irreversible")) {
     for (const it of good) {
-      if (get(it, "role") === "confirm" && get(it, "risk") !== "irreversible") {
+      if (get(it, "role") === "confirm" && (RISK_CLASSES as readonly unknown[]).includes(get(it, "risk")) && get(it, "risk") !== "irreversible") {
         errs.push(`the confirm intent ${repr(get(it, "id"))} executes irreversible intents, so its risk must be 'irreversible' (FEP-0003 section 2 rule 4)`);
       }
     }
   }
-  const nonNull = ["action", "confirm", "cancel", "undo"].reduce((s, r) => s + (roles.get(r) ?? 0), 0);
+  const nonNull = ["action", "confirm", "cancel", "undo", "<unknown>"].reduce((s, r) => s + (roles.get(r) ?? 0), 0);
   if (nonNull === 0) errs.push("intent_declaration needs at least one intent that is not null");
   return errs;
 }
@@ -79,7 +90,7 @@ export function validateIntentDeclaration(d: unknown): string[] {
 const declIds = (d: unknown): string[] => ((d as Record<string, unknown>).intents as Record<string, unknown>[]).map((it) => it.id as string);
 
 /** The FEP-0003 section 3 errors of one `intent` event (empty = valid). */
-export function validateIntentEvent(ev: Record<string, unknown>, vocab: string[] | null): string[] {
+export function validateIntentEvent(ev: Record<string, unknown>, vocab: string[] | null, lenient = false): string[] {
   const errs: string[] = [];
   if (vocab === null) errs.push("an intent event needs an intent_declaration in the header");
   const id = get(ev, "id");
@@ -87,7 +98,9 @@ export function validateIntentEvent(ev: Record<string, unknown>, vocab: string[]
   if (!isFinNum(get(ev, "t"))) errs.push("t must be a finite number");
   if (typeof get(ev, "is_final") !== "boolean") errs.push("is_final must be a boolean");
   const sem = get(ev, "score_semantics");
-  if (!(SCORE_SEMANTICS as readonly unknown[]).includes(sem)) errs.push(`score_semantics ${repr(sem)} is not one of ${repr(SCORE_SEMANTICS)}`);
+  // VER-8: an unknown semantics of a newer minor version: a score is not a probability (any finite number or null).
+  const unknownSem = lenient && typeof sem === "string" && !(SCORE_SEMANTICS as readonly unknown[]).includes(sem);
+  if (!(SCORE_SEMANTICS as readonly unknown[]).includes(sem) && !unknownSem) errs.push(`score_semantics ${repr(sem)} is not one of ${repr(SCORE_SEMANTICS)}`);
   for (const k of ["t_start", "t_end"]) if (has(ev, k) && !isFinNum(ev[k])) errs.push(`${k} must be a finite number`);
   if (has(ev, "revision_of") && ev.revision_of !== null && typeof ev.revision_of !== "string") errs.push("revision_of must be a string or null");
   const cands = get(ev, "candidates");
@@ -105,7 +118,9 @@ export function validateIntentEvent(ev: Record<string, unknown>, vocab: string[]
     seen.add(iid);
     if (vocab !== null && !vocab.includes(iid)) errs.push(`${w} intent '${iid}' is not in the declaration`);
     const sc = get(c, "score");
-    if (sem === "none") {
+    if (unknownSem) {
+      if (sc !== null && !isFinNum(sc)) errs.push(`${w} score must be a finite number or null`);
+    } else if (sem === "none") {
       if (sc !== null) errs.push(`${w} score must be null or absent with score_semantics none`);
     } else if (PROB_SEMANTICS.includes(sem as string)) {
       if (!(isFinNum(sc) && sc >= 0 && sc <= 1)) errs.push(`${w} score must be a number in [0, 1]`);
@@ -125,11 +140,11 @@ export function validateIntentEvent(ev: Record<string, unknown>, vocab: string[]
 }
 
 /** The FEP-0003 section 4 errors of one `intent_feedback` event. */
-export function validateFeedbackEvent(ev: Record<string, unknown>, vocab: string[] | null = null): string[] {
+export function validateFeedbackEvent(ev: Record<string, unknown>, vocab: string[] | null = null, lenient = false): string[] {
   const errs: string[] = [];
   if (!(isInt(ev, "ref_unit") && (ev.ref_unit as number) >= 0)) errs.push("ref_unit must be an integer >= 0");
   const outcome = get(ev, "outcome");
-  if (!(FEEDBACK_OUTCOMES as readonly unknown[]).includes(outcome)) errs.push(`outcome ${repr(outcome)} is not one of ${repr(FEEDBACK_OUTCOMES)}`);
+  if (!enumOk(outcome, FEEDBACK_OUTCOMES, lenient)) errs.push(`outcome ${repr(outcome)} is not one of ${repr(FEEDBACK_OUTCOMES)}`);
   if (outcome === "selected" && typeof get(ev, "intent") !== "string") errs.push("outcome selected needs the selected intent");
   if (has(ev, "intent") && ev.intent !== null) {
     if (typeof ev.intent !== "string") errs.push("intent must be a string");
@@ -149,7 +164,7 @@ function* declarations(events: Ev[]): Generator<[Ev, string[] | null, string[]]>
       yield [e, null, []];
       continue;
     }
-    const errs = validateIntentDeclaration(e[INTENT_DECLARATION_KEY]);
+    const errs = validateIntentDeclaration(e[INTENT_DECLARATION_KEY], isNewerMinor(get(e, "spec_version")));
     yield [e, errs.length ? null : declIds(e[INTENT_DECLARATION_KEY]), errs];
   }
 }
@@ -177,12 +192,14 @@ export function intentErrors(events: Ev[]): string[] {
   const out: string[] = [];
   let vocab: string[] | null = null;
   let hasDecl = false;
+  let newer = false;
   let ids = new Set<string>();
   for (const e of events) {
     if (e.type === "header") {
       hasDecl = has(e, INTENT_DECLARATION_KEY);
+      newer = isNewerMinor(get(e, "spec_version"));
       vocab = null;
-      if (hasDecl && !validateIntentDeclaration(e[INTENT_DECLARATION_KEY]).length) vocab = declIds(e[INTENT_DECLARATION_KEY]);
+      if (hasDecl && !validateIntentDeclaration(e[INTENT_DECLARATION_KEY], newer).length) vocab = declIds(e[INTENT_DECLARATION_KEY]);
       ids = new Set();
     } else if (e.type === "intent") {
       const n = e._line;
@@ -191,7 +208,7 @@ export function intentErrors(events: Ev[]): string[] {
         continue;
       }
       if (vocab === null) continue; // FEP3-DECL reports it
-      out.push(...validateIntentEvent(e, vocab).map((x) => `line ${n}: ${x}`));
+      out.push(...validateIntentEvent(e, vocab, newer).map((x) => `line ${n}: ${x}`));
       const id = get(e, "id");
       if (typeof id === "string") {
         if (ids.has(id)) out.push(`line ${n}: intent id '${id}' is not unique in the stream`);
@@ -205,12 +222,14 @@ export function intentErrors(events: Ev[]): string[] {
 export function feedbackErrors(events: Ev[]): string[] {
   const out: string[] = [];
   let vocab: string[] | null = null;
+  let newer = false;
   for (const e of events) {
     if (e.type === "header") {
       const d = get(e, INTENT_DECLARATION_KEY);
-      vocab = d !== null && !validateIntentDeclaration(d).length ? declIds(d) : null;
+      newer = isNewerMinor(get(e, "spec_version"));
+      vocab = d !== null && !validateIntentDeclaration(d, newer).length ? declIds(d) : null;
     } else if (e.type === "intent_feedback") {
-      out.push(...validateFeedbackEvent(e, vocab).map((x) => `line ${e._line}: ${x}`));
+      out.push(...validateFeedbackEvent(e, vocab, newer).map((x) => `line ${e._line}: ${x}`));
     }
   }
   return out;
@@ -222,7 +241,9 @@ export function feedbackErrors(events: Ev[]): string[] {
 export function tdIntentFormatErrors(e: Record<string, unknown>): string[] {
   const errs = tdFormatErrors(e);
   const n = has(e, "_line") ? e._line : "?";
+  const newer = isNewerMinor(get(e, "spec_version")); // VER-8
   const prof = has(e, "profile") ? e.profile : "text";
+  if (newer && isUnknown(prof, KNOWN_PROFILES)) return errs; // unknown profile of a newer minor version: never acted on (PRF-4)
   if (!PROFILES.includes(prof as string)) return [...errs, `line ${n}: profile ${repr(prof)} is not one of ${repr(PROFILES)}`];
   if (prof !== PROFILE) return errs;
   const x: string[] = [];
@@ -230,24 +251,24 @@ export function tdIntentFormatErrors(e: Record<string, unknown>): string[] {
   if (has(e, "shown")) x.push("an intent decision MUST NOT carry shown (rule 2)");
   if (has(e, "utterance")) x.push("an intent decision uses unit, not utterance (rule 1)");
   if (!(isInt(e, "unit") && (e.unit as number) >= 0)) x.push("unit must be an integer >= 0");
-  if (!(INTENT_ACTIONS as readonly unknown[]).includes(action)) x.push(`intent action ${repr(action)} is not one of ${repr(INTENT_ACTIONS)}`);
+  if (!(INTENT_ACTIONS as readonly unknown[]).includes(action) && !(newer && isUnknown(action, TRUST_ACTIONS))) x.push(`intent action ${repr(action)} is not one of ${repr(INTENT_ACTIONS)}`);
   if (action === "COMMIT" && typeof get(e, "intent") !== "string") x.push("a COMMIT needs the committed intent (rule 3)");
   if (has(e, "intent") && typeof e.intent !== "string") x.push("intent must be a string");
   if (has(e, "offered") && !(Array.isArray(e.offered) && e.offered.every((i) => typeof i === "string"))) x.push("offered must be a list of strings");
   const off = get(e, "offered");
   if (action === "OFFER" && !(Array.isArray(off) && off.length)) x.push("an OFFER needs a non-empty offered list (rule 3)");
-  if (has(e, "risk_class") && e.risk_class !== null && !(RISK_CLASSES as readonly unknown[]).includes(e.risk_class)) {
+  if (has(e, "risk_class") && e.risk_class !== null && !enumOk(e.risk_class, RISK_CLASSES, newer)) {
     x.push(`risk_class ${repr(e.risk_class)} is not one of ${repr(RISK_CLASSES)}`);
   }
-  if (action === "COMMIT" && !(RISK_CLASSES as readonly unknown[]).includes(get(e, "risk_class"))) x.push("a COMMIT needs risk_class (rule 3)");
-  if (has(e, "role") && e.role !== null && !(INTENT_ROLES as readonly unknown[]).includes(e.role)) x.push(`role ${repr(e.role)} is not one of ${repr(INTENT_ROLES)}`);
+  if (action === "COMMIT" && !enumOk(get(e, "risk_class"), RISK_CLASSES, newer)) x.push("a COMMIT needs risk_class (rule 3)");
+  if (has(e, "role") && e.role !== null && !enumOk(e.role, INTENT_ROLES, newer)) x.push(`role ${repr(e.role)} is not one of ${repr(INTENT_ROLES)}`);
   if (has(e, "threshold") && e.threshold !== null && !(isFinNum(e.threshold) && e.threshold >= 0 && e.threshold <= 1)) {
     x.push("threshold must be a number in [0, 1] or null");
   }
   if (has(e, "confirm_required") && typeof e.confirm_required !== "boolean") x.push("confirm_required must be a boolean");
   if (get(e, "confirm_required") === true && action !== "OFFER") x.push("confirm_required is only allowed on an OFFER");
   for (const k of ["confirmation_of", "undo_of"]) if (has(e, k) && !(isInt(e, k) && (e[k] as number) >= 0)) x.push(`${k} must be an integer >= 0`);
-  if (has(e, "confirmed_via") && e.confirmed_via !== "intent" && e.confirmed_via !== "feedback") x.push("confirmed_via must be 'intent' or 'feedback'");
+  if (has(e, "confirmed_via") && !enumOk(e.confirmed_via, CONFIRM_PATHS, newer)) x.push("confirmed_via must be 'intent' or 'feedback'");
   return [...errs, ...x.map((m) => `line ${n}: ${m}`)];
 }
 
@@ -330,14 +351,23 @@ export function safetyErrors(events: Record<string, unknown>[]): string[] {
   return errs;
 }
 
-/** (acted intents, acted texts): final intent COMMITs and final text COMMITs. */
+/** VER-8 / registry 12.3: an intent decision with an unknown `risk_class`, `role` or `confirmed_via` (never actuated). */
+export function unknownIntentValues(e: Record<string, unknown>): boolean {
+  return isUnknown(get(e, "risk_class"), RISK_CLASSES) || isUnknown(get(e, "role"), INTENT_ROLES) || isUnknown(get(e, "confirmed_via"), CONFIRM_PATHS);
+}
+
+/**
+ * (acted intents, acted texts): final COMMITs of the intent and text profiles. Not acted: other or unknown profiles
+ * (PRF-4) and intent COMMITs with an unknown risk class, role or confirmation path (VER-8).
+ */
 export function acted(decisions: Record<string, unknown>[]): [(string | null)[], (string | null)[]] {
   const ai: (string | null)[] = [];
   const at: (string | null)[] = [];
   for (const e of decisions) {
     if (get(e, "type") !== "trust_decision" || get(e, "is_final") !== true || get(e, "action") !== "COMMIT") continue;
-    if (isIntent(e)) ai.push(get(e, "intent") as string | null);
-    else {
+    if (isIntent(e)) {
+      if (!unknownIntentValues(e)) ai.push(get(e, "intent") as string | null);
+    } else if (isTextDecision(e)) {
       const sh = get(e, "shown");
       at.push(Array.isArray(sh) && sh.length ? (sh[0] as string) : null);
     }

@@ -76,9 +76,10 @@ export function rejectOnFailure(rep: TargetReport): void {
   if (f.length) throw new StreamRejected(`[${f[0].id}, ${f[0].clause}] ${f[0].message}`, f[0].clause, f[0].id);
 }
 
+/** An integer (GEN-5: no fraction part or exponent; GEN-10: at most 2^53 - 1 in magnitude). */
 export const isInt = (o: Record<string, unknown>, k: string): boolean => {
   const v = o[k];
-  return typeof v === "number" && Number.isInteger(v) && !floatMarked(o, k);
+  return typeof v === "number" && Number.isSafeInteger(v) && !floatMarked(o, k);
 };
 import { isFloatLiteral as floatMarked } from "../json.js";
 

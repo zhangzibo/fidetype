@@ -8,6 +8,25 @@ export const SUPPORTED_SPEC_VERSION = /^(?:0\.1|1\.(?:0|[1-9][0-9]*))$/;
 export function isSupportedSpecVersion(v: unknown): boolean {
   return typeof v === "string" && SUPPORTED_SPEC_VERSION.test(v);
 }
+/** A 1.x minor version above 1.0, the version this SDK implements (NTS 1.0 RC3, VER-8). */
+export const NEWER_MINOR_VERSION = /^1\.[1-9][0-9]*$/;
+/**
+ * True if `v` is a `spec_version` of a newer minor version of major 1 ("1.1", "1.2", ...). NTS 1.0 RC3, VER-8:
+ * in data whose governing version is a newer minor version, an unknown enumeration value is not an error.
+ */
+export function isNewerMinor(v: unknown): boolean {
+  return typeof v === "string" && NEWER_MINOR_VERSION.test(v);
+}
+/** VER-7 / VER-8: `value` is a known value, or (`newer` data only) any other string. */
+export function enumOk(value: unknown, known: readonly string[], newer: boolean): boolean {
+  return (typeof value === "string" && known.includes(value)) || (newer && typeof value === "string");
+}
+/** A string that is not a known value (an unknown enumeration value, VER-8). */
+export function isUnknown(value: unknown, known: readonly string[]): boolean {
+  return typeof value === "string" && !known.includes(value);
+}
+/** Largest JSON integer that every SDK reads exactly: 2^53 - 1 (NTS 1.0 RC3, GEN-10). */
+export const MAX_JSON_INT = Number.MAX_SAFE_INTEGER;
 /** Tolerance of the row normalisation rule (spec 5.2.1). */
 export const NORM_TOL = 1e-3;
 export const VOCAB_TYPES = ["char", "key", "word", "phoneme", "command", "other"] as const;

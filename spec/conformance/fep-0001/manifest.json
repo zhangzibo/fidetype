@@ -681,6 +681,88 @@
     ],
     "advisories": 0
    }
+  },
+  {
+   "id": "F57",
+   "file": "f57-input-v11-unknown-enums.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 1.0 RC3 11.2.1 (VER-8)",
+   "description": "Input stream with header spec_version \"1.1\": segment_end unit \"sentence\" and hypothesis score_semantics \"rank\" (unknown values of a newer minor version): accepted",
+   "expected": {
+    "kind": "input",
+    "n_frames": 2,
+    "segments": 1,
+    "segment_ends": 1,
+    "hypotheses": 1
+   }
+  },
+  {
+   "id": "F58",
+   "file": "f58-td-v11-unknown-enums.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 1.0 RC3 11.2.1 (VER-8, VER-10)",
+   "description": "spec_version \"1.1\": a final decision with the unknown action \"CONFIRM\" and score_semantics \"conformal_p\", and a final COMMIT of the unknown profile \"gesture\": accepted, never acted on; then a text COMMIT",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 3,
+    "final": 3,
+    "acted": [
+     "cd"
+    ],
+    "offered": [],
+    "advisories": 0
+   }
+  },
+  {
+   "id": "F59",
+   "file": "f59-td-v10-unknown-action.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 1.0 RC3 11.2.1 (VER-7) / 6.2 (TD-F1)",
+   "description": "spec_version \"1.0\": the unknown action \"CONFIRM\" (1.0 data must use the values of 1.0)",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F60",
+   "file": "f60-td-seq-2-53.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 1.0 RC3 4.1 (GEN-10)",
+   "description": "seq is 9007199254740992 (2^53): above the largest portable JSON integer 2^53 - 1",
+   "failing_check": "FEP1-TD-FORMAT"
+  },
+  {
+   "id": "F61",
+   "file": "f61-td-seq-max.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0001 1.0 RC3 4.1 (GEN-10)",
+   "description": "seq and utterance are 9007199254740991 (2^53 - 1, the largest portable JSON integer)",
+   "expected": {
+    "kind": "decisions",
+    "decisions": 1,
+    "final": 1,
+    "acted": [
+     "ab"
+    ]
+   }
+  },
+  {
+   "id": "F62",
+   "file": "f62-td-declaration-list.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0001 1.0 RC3 6.2 (TD-F2)",
+   "description": "declaration is a list, not an object",
+   "failing_check": "FEP1-TD-FORMAT"
   }
  ]
 }

@@ -28,9 +28,10 @@ from typing import Any, Callable
 
 from fidetype.conformance.checks import FAIL, PASS, SKIP, CheckResult
 from fidetype.conformance.io import StreamRejected
-from fidetype.conformance.profiles.fep0001 import read_events, stream_kind, td_format_errors
+from fidetype.conformance.profiles.fep0001 import ACTIONS, is_text_decision, read_events, stream_kind, td_format_errors
 from fidetype.conformance.report import TargetReport
 from fidetype.conformance.vectors import Vector, _frames, _header, _w_lines
+from fidetype.streams.spec import enum_ok, is_newer_minor, is_unknown
 from fidetype.streams.vocab import VOCAB
 from fidetype.trust.intent import (
     DECLARATION_KEY,
@@ -47,6 +48,9 @@ SUFFIXES = (".jsonl", ".ndjson")
 FEP = "FEP-0003"
 INTENT_ACTIONS = ("COMMIT", "OFFER", "ABSTAIN")
 PROFILES = ("text", "intent")
+#: Every profile name of registry 12.2 (a value outside it is unknown, VER-8).
+KNOWN_PROFILES = ("text", "intent", "control")
+CONFIRM_PATHS = ("intent", "feedback")
 
 #: (id, keyword, FEP clause, title)
 CHECKS = [
@@ -85,15 +89,25 @@ def _is_intent(e: dict[str, Any]) -> bool:
 # --- input rules ---------------------------------------------------------------------------
 
 
+class _Ids:
+    """The declared intent ids of a valid declaration (all that the stream checks need)."""
+
+    def __init__(self, d: dict[str, Any]) -> None:
+        self.ids = tuple(it["id"] for it in d["intents"])
+
+
 def _declarations(events: list[dict[str, Any]]):
-    """Yield (header event, IntentVocabulary or None, errors) per header."""
+    """Yield (header event, declared ids or None, errors) per header.
+
+    A header of a newer 1.x minor version allows unknown ``risk`` / ``role`` strings (VER-8).
+    """
     for e in events:
         if e["type"] == "header":
             if DECLARATION_KEY not in e:
                 yield e, None, []
                 continue
-            errs = validate_intent_declaration(e[DECLARATION_KEY])
-            yield e, (None if errs else IntentVocabulary.from_declaration(e[DECLARATION_KEY])), errs
+            errs = validate_intent_declaration(e[DECLARATION_KEY], lenient=is_newer_minor(e.get("spec_version")))
+            yield e, (None if errs else _Ids(e[DECLARATION_KEY])), errs
 
 
 def decl_errors(events: list[dict[str, Any]]) -> list[str]:
@@ -114,15 +128,17 @@ def vocab_errors(events: list[dict[str, Any]]) -> list[str]:
 
 def intent_errors(events: list[dict[str, Any]]) -> list[str]:
     out: list[str] = []
-    vocab: IntentVocabulary | None = None
+    vocab: _Ids | None = None
     has_decl = False
+    newer = False
     ids: set[str] = set()
     for e in events:
         if e["type"] == "header":
             has_decl = DECLARATION_KEY in e
+            newer = is_newer_minor(e.get("spec_version"))
             vocab = None
-            if has_decl and not validate_intent_declaration(e[DECLARATION_KEY]):
-                vocab = IntentVocabulary.from_declaration(e[DECLARATION_KEY])
+            if has_decl and not validate_intent_declaration(e[DECLARATION_KEY], lenient=newer):
+                vocab = _Ids(e[DECLARATION_KEY])
             ids = set()
         elif e["type"] == "intent":
             n = e["_line"]
@@ -131,7 +147,7 @@ def intent_errors(events: list[dict[str, Any]]) -> list[str]:
                 continue
             if vocab is None:
                 continue  # FEP3-DECL reports it
-            out += [f"line {n}: {x}" for x in validate_intent_event(e, vocab)]
+            out += [f"line {n}: {x}" for x in validate_intent_event(e, vocab, lenient=newer)]
             if isinstance(e.get("id"), str):
                 if e["id"] in ids:
                     out.append(f"line {n}: intent id {e['id']!r} is not unique in the stream")
@@ -141,13 +157,15 @@ def intent_errors(events: list[dict[str, Any]]) -> list[str]:
 
 def feedback_errors(events: list[dict[str, Any]]) -> list[str]:
     out: list[str] = []
-    vocab: IntentVocabulary | None = None
+    vocab: _Ids | None = None
+    newer = False
     for e in events:
         if e["type"] == "header":
             d = e.get(DECLARATION_KEY)
-            vocab = IntentVocabulary.from_declaration(d) if d is not None and not validate_intent_declaration(d) else None
+            newer = is_newer_minor(e.get("spec_version"))
+            vocab = _Ids(d) if d is not None and not validate_intent_declaration(d, lenient=newer) else None
         elif e["type"] == "intent_feedback":
-            out += [f"line {e['_line']}: {x}" for x in validate_feedback_event(e, vocab)]
+            out += [f"line {e['_line']}: {x}" for x in validate_feedback_event(e, vocab, lenient=newer)]
     return out
 
 
@@ -158,7 +176,10 @@ def td_intent_format_errors(e: dict[str, Any]) -> list[str]:
     """Format errors of one ``trust_decision`` (FEP-0001 table for all; section 5 for intent decisions)."""
     errs = list(td_format_errors(e))
     n = e.get("_line", "?")
+    newer = is_newer_minor(e.get("spec_version"))  # VER-8
     prof = e.get("profile", "text")
+    if newer and is_unknown(prof, KNOWN_PROFILES):
+        return errs  # an unknown profile of a newer minor version: no profile rules; never acted on (PRF-4)
     if prof not in PROFILES:
         return errs + [f"line {n}: profile {prof!r} is not one of {list(PROFILES)}"]
     if prof != PROFILE:
@@ -170,7 +191,7 @@ def td_intent_format_errors(e: dict[str, Any]) -> list[str]:
         x.append("an intent decision uses unit, not utterance (rule 1)")
     if not (_int(e.get("unit")) and e["unit"] >= 0):
         x.append("unit must be an integer >= 0")
-    if e.get("action") not in INTENT_ACTIONS:
+    if e.get("action") not in INTENT_ACTIONS and not (newer and is_unknown(e.get("action"), ACTIONS)):
         x.append(f"intent action {e.get('action')!r} is not one of {list(INTENT_ACTIONS)}")
     if e.get("action") == "COMMIT" and not isinstance(e.get("intent"), str):
         x.append("a COMMIT needs the committed intent (rule 3)")
@@ -180,11 +201,11 @@ def td_intent_format_errors(e: dict[str, Any]) -> list[str]:
         x.append("offered must be a list of strings")
     if e.get("action") == "OFFER" and not (isinstance(e.get("offered"), list) and e["offered"]):
         x.append("an OFFER needs a non-empty offered list (rule 3)")
-    if "risk_class" in e and e["risk_class"] is not None and e["risk_class"] not in RISK_CLASSES:
+    if "risk_class" in e and e["risk_class"] is not None and not enum_ok(e["risk_class"], RISK_CLASSES, newer):
         x.append(f"risk_class {e['risk_class']!r} is not one of {list(RISK_CLASSES)}")
-    if e.get("action") == "COMMIT" and e.get("risk_class") not in RISK_CLASSES:
+    if e.get("action") == "COMMIT" and not enum_ok(e.get("risk_class"), RISK_CLASSES, newer):
         x.append("a COMMIT needs risk_class (rule 3)")
-    if "role" in e and e["role"] is not None and e["role"] not in ROLES:
+    if "role" in e and e["role"] is not None and not enum_ok(e["role"], ROLES, newer):
         x.append(f"role {e['role']!r} is not one of {list(ROLES)}")
     if "threshold" in e and e["threshold"] is not None and not (_num(e["threshold"]) and 0.0 <= e["threshold"] <= 1.0):
         x.append("threshold must be a number in [0, 1] or null")
@@ -195,7 +216,7 @@ def td_intent_format_errors(e: dict[str, Any]) -> list[str]:
     for k in ("confirmation_of", "undo_of"):
         if k in e and not (_int(e[k]) and e[k] >= 0):
             x.append(f"{k} must be an integer >= 0")
-    if "confirmed_via" in e and e["confirmed_via"] not in ("intent", "feedback"):
+    if "confirmed_via" in e and not enum_ok(e["confirmed_via"], CONFIRM_PATHS, newer):
         x.append("confirmed_via must be 'intent' or 'feedback'")
     return errs + [f"line {n}: {m}" for m in x]
 
@@ -277,14 +298,29 @@ def safety_errors(events: list[dict[str, Any]]) -> list[str]:
     return errs
 
 
+def unknown_intent_values(e: dict[str, Any]) -> bool:
+    """VER-8 / registry 12.3: an intent decision with an unknown ``risk_class``, ``role`` or ``confirmed_via``.
+
+    A bridge MUST NOT actuate such a COMMIT (the safe fallback).
+    """
+    return (is_unknown(e.get("risk_class"), RISK_CLASSES) or is_unknown(e.get("role"), ROLES)
+            or is_unknown(e.get("confirmed_via"), CONFIRM_PATHS))
+
+
 def acted(decisions: list[dict[str, Any]]) -> tuple[list[str | None], list[str | None]]:
+    """(intents a bridge may actuate, texts a bridge may type): final COMMITs of the intent and text profiles.
+
+    Not acted: decisions of other or unknown profiles (PRF-4), and intent COMMITs with an unknown risk class, role or
+    confirmation path (VER-8).
+    """
     ai, at = [], []
     for e in decisions:
         if e.get("type") != "trust_decision" or e.get("is_final") is not True or e.get("action") != "COMMIT":
             continue
         if _is_intent(e):
-            ai.append(e.get("intent"))
-        else:
+            if not unknown_intent_values(e):
+                ai.append(e.get("intent"))
+        elif is_text_decision(e):
             sh = e.get("shown")
             at.append(sh[0] if isinstance(sh, list) and sh else None)
     return ai, at
@@ -600,6 +636,31 @@ def build_vectors() -> list[Vector]:
     add("D21", "d21-safety-no-score-commit.jsonl", "reject", "6 r2",
         "A COMMIT on an input whose score_semantics is none",
         failing="FEP3-SAFETY", writer=_w_lines([_td(input={"kind": "intent", "intent_id": "u1", "score_semantics": "none"})]))
+    # --- NTS 1.0 RC3: unknown enumeration values (VER-6 ... VER-10)
+    d11 = _decl()
+    d11["intents"].append({"id": "intent.menu", "risk": "critical", "role": "menu"})
+    h11 = _ih(spec_version="1.1", vocab=CMD_VOCAB + ["intent.menu"], **{DECLARATION_KEY: d11})
+    add("I24", "i24-v11-unknown-enums.jsonl", "accept", "1.0 RC3 11.2.1 (VER-8)",
+        'Header spec_version "1.1": an intent with risk "critical" and role "menu", an intent event with '
+        'score_semantics "rank" (scores not ranked), and feedback with outcome "timeout": accepted',
+        {"kind": "input", "declarations": 1, "intents": 1, "final_intents": 1, "feedback": 1},
+        writer=_input(_intent("u1", score_semantics="rank",
+                              cands=[{"intent": "intent.select", "score": 3.0}, {"intent": "intent.menu", "score": 5.0}]),
+                      {"type": "intent_feedback", "ref_unit": 0, "outcome": "timeout", "source": "switch"},
+                      header=h11))
+    v11 = {"spec_version": "1.1"}
+    add("D22", "d22-log-v11-unknown-enums.jsonl", "accept", "1.0 RC3 11.2.1 (VER-8, VER-10)",
+        'spec_version "1.1": a COMMIT with risk_class "critical", a final decision with the unknown action "CONFIRM" '
+        'and a COMMIT of the unknown profile "gesture" are accepted and not actuated; a normal COMMIT is actuated',
+        {"kind": "decisions", "decisions": 4, "intent_decisions": 3, "final": 4, "acted_intents": ["intent.select"],
+         "acted_texts": []},
+        writer=_w_lines([_td(seq=0, unit=0, risk_class="critical", intent="intent.menu", **v11),
+                         _td(seq=1, unit=1, action="CONFIRM", **v11),
+                         _td(seq=2, profile="gesture", unit=_DROP, **v11),
+                         _td(seq=3, unit=2, **v11)]))
+    add("D23", "d23-td-v10-unknown-risk.jsonl", "reject", "1.0 RC3 11.2.1 (VER-7) / 7.3.5 (INT-T3)",
+        'spec_version "1.0": a COMMIT with risk_class "critical" (1.0 data must use the values of 1.0)',
+        failing="FEP3-TD-FORMAT", writer=_w_lines([_td(risk_class="critical", spec_version="1.0")]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

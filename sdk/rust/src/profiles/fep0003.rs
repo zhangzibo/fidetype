@@ -8,16 +8,19 @@ use alloc::vec::Vec;
 use alloc::format;
 
 use crate::checks::CheckResult;
-use crate::constants::{FEEDBACK_OUTCOMES, INTENT_ACTIONS, INTENT_DECLARATION_KEY, INTENT_ROLES, RISK_CLASSES, SCORE_SEMANTICS};
+use crate::constants::{FEEDBACK_OUTCOMES, INTENT_ACTIONS, INTENT_DECLARATION_KEY, INTENT_ROLES, RISK_CLASSES, SCORE_SEMANTICS, TRUST_ACTIONS};
 use crate::error::Error;
-use crate::json::{num_text, py_eq, py_strip, repr, str_in, str_list, Map, Value};
+use crate::json::{enum_ok, is_unknown, newer_minor, num_text, py_eq, py_strip, repr, str_in, str_list, Map, Value};
 
 use super::common::{etype, line_of, make_res, read_events, reject_on_failure, stream_kind, tuple_key, CheckMeta, StreamKind, TargetReport};
-use super::fep0001::{session_of, td_format_errors, v01_core_failures};
+use super::fep0001::{is_text_decision, session_of, td_format_errors, v01_core_failures};
 
 pub const FEP: &str = "FEP-0003";
 const PROFILE: &str = "intent";
 const PROFILES: &[&str] = &["text", "intent"];
+/// Every profile name of registry 12.2 (a value outside it is unknown, VER-8).
+const KNOWN_PROFILES: &[&str] = &["text", "intent", "control"];
+const CONFIRM_PATHS: &[&str] = &["intent", "feedback"];
 const PROB_SEMANTICS: &[&str] = &["calibrated_prob", "uncalibrated_prob"];
 const UNIQUE_ROLES: &[&str] = &["confirm", "cancel", "undo"];
 const SUM_TOL: f64 = 1e-6;
@@ -47,7 +50,11 @@ fn is_true(v: &Value) -> bool {
 }
 
 /// The FEP-0003 section 2 errors of an `intent_declaration` (empty = valid).
-pub fn validate_intent_declaration(d: &Value) -> Vec<String> {
+///
+/// `lenient`: the header declares a newer 1.x minor version (NTS 1.0 RC3, VER-8). An unknown `risk` or
+/// `role` string is then not an error; INT-D4 does not compare unknown values; an unknown role counts as
+/// not null (INT-D1).
+pub fn validate_intent_declaration(d: &Value, lenient: bool) -> Vec<String> {
     let d = match d {
         Value::Obj(m) => m,
         _ => return alloc::vec!["intent_declaration must be a JSON object".to_string()],
@@ -88,12 +95,13 @@ pub fn validate_intent_declaration(d: &Value) -> Vec<String> {
             }
             _ => errs.push(format!("{} id must be a non-empty string", w)),
         }
-        if !str_in(it.get("risk"), RISK_CLASSES) {
+        if !enum_ok(it.get("risk"), RISK_CLASSES, lenient) {
             errs.push(format!("{} risk {} is not one of {}", w, repr(it.get("risk")), repr(&str_list(RISK_CLASSES))));
         }
         let role = it.get_opt("role").cloned().unwrap_or(Value::str("action"));
         match &role {
             Value::Str(r) if INTENT_ROLES.contains(&r.as_str()) => *roles.entry(r.clone()).or_insert(0) += 1,
+            Value::Str(_) if lenient => *roles.entry("<unknown>".to_string()).or_insert(0) += 1,
             _ => errs.push(format!("{} role {} is not one of {}", w, repr(&role), repr(&str_list(INTENT_ROLES)))),
         }
         if let Some(l) = it.get_opt("label") {
@@ -111,7 +119,7 @@ pub fn validate_intent_declaration(d: &Value) -> Vec<String> {
     let good: Vec<&Map> = its.iter().filter_map(|i| i.as_obj()).collect();
     if good.iter().any(|it| it.get("risk").as_str() == Some("irreversible")) {
         for it in &good {
-            if it.get("role").as_str() == Some("confirm") && it.get("risk").as_str() != Some("irreversible") {
+            if it.get("role").as_str() == Some("confirm") && str_in(it.get("risk"), RISK_CLASSES) && it.get("risk").as_str() != Some("irreversible") {
                 errs.push(format!(
                     "the confirm intent {} executes irreversible intents, so its risk must be 'irreversible' (FEP-0003 section 2 rule 4)",
                     repr(it.get("id"))
@@ -119,7 +127,7 @@ pub fn validate_intent_declaration(d: &Value) -> Vec<String> {
             }
         }
     }
-    let non_null: usize = ["action", "confirm", "cancel", "undo"].iter().map(|r| roles.get(*r).copied().unwrap_or(0)).sum();
+    let non_null: usize = ["action", "confirm", "cancel", "undo", "<unknown>"].iter().map(|r| roles.get(*r).copied().unwrap_or(0)).sum();
     if non_null == 0 {
         errs.push("intent_declaration needs at least one intent that is not null".to_string());
     }
@@ -132,7 +140,9 @@ fn decl_ids(d: &Value) -> Vec<String> {
 }
 
 /// The FEP-0003 section 3 errors of one `intent` event (empty = valid).
-pub fn validate_intent_event(ev: &Map, vocab: Option<&[String]>) -> Vec<String> {
+/// `lenient`: newer minor version (VER-8): an unknown `score_semantics` string is allowed; a score is then not a
+/// probability (any finite number or null) and the ranking rule does not apply.
+pub fn validate_intent_event(ev: &Map, vocab: Option<&[String]>, lenient: bool) -> Vec<String> {
     let mut errs = Vec::new();
     if vocab.is_none() {
         errs.push("an intent event needs an intent_declaration in the header".to_string());
@@ -147,7 +157,8 @@ pub fn validate_intent_event(ev: &Map, vocab: Option<&[String]>) -> Vec<String> 
         errs.push("is_final must be a boolean".to_string());
     }
     let sem = ev.get("score_semantics");
-    if !str_in(sem, SCORE_SEMANTICS) {
+    let unknown_sem = lenient && is_unknown(sem, SCORE_SEMANTICS);
+    if !str_in(sem, SCORE_SEMANTICS) && !unknown_sem {
         errs.push(format!("score_semantics {} is not one of {}", repr(sem), repr(&str_list(SCORE_SEMANTICS))));
     }
     for k in ["t_start", "t_end"] {
@@ -191,7 +202,11 @@ pub fn validate_intent_event(ev: &Map, vocab: Option<&[String]>) -> Vec<String> 
             }
         }
         let sc = c.get("score");
-        if sem_s == "none" {
+        if unknown_sem {
+            if !sc.is_null() && !sc.is_fin_num() {
+                errs.push(format!("{} score must be a finite number or null", w));
+            }
+        } else if sem_s == "none" {
             if !sc.is_null() {
                 errs.push(format!("{} score must be null or absent with score_semantics none", w));
             }
@@ -219,14 +234,15 @@ pub fn validate_intent_event(ev: &Map, vocab: Option<&[String]>) -> Vec<String> 
 }
 
 /// The FEP-0003 section 4 errors of one `intent_feedback` event.
-pub fn validate_feedback_event(ev: &Map, vocab: Option<&[String]>) -> Vec<String> {
+/// `lenient`: newer minor version (VER-8): an unknown `outcome` string is allowed (it never confirms or selects).
+pub fn validate_feedback_event(ev: &Map, vocab: Option<&[String]>, lenient: bool) -> Vec<String> {
     let mut errs = Vec::new();
     let ru = ev.get("ref_unit");
     if !(ru.is_int() && ru.as_f64().unwrap_or(-1.0) >= 0.0) {
         errs.push("ref_unit must be an integer >= 0".to_string());
     }
     let outcome = ev.get("outcome");
-    if !str_in(outcome, FEEDBACK_OUTCOMES) {
+    if !enum_ok(outcome, FEEDBACK_OUTCOMES, lenient) {
         errs.push(format!("outcome {} is not one of {}", repr(outcome), repr(&str_list(FEEDBACK_OUTCOMES))));
     }
     if outcome.as_str() == Some("selected") && !ev.get("intent").is_str() {
@@ -270,7 +286,7 @@ fn declarations(events: &[Map]) -> Vec<(&Map, Option<Vec<String>>, Vec<String>)>
         match e.get_opt(INTENT_DECLARATION_KEY) {
             None => out.push((e, None, Vec::new())),
             Some(d) => {
-                let errs = validate_intent_declaration(d);
+                let errs = validate_intent_declaration(d, newer_minor(e.get("spec_version")));
                 let ids = if errs.is_empty() { Some(decl_ids(d)) } else { None };
                 out.push((e, ids, errs));
             }
@@ -311,14 +327,16 @@ pub fn intent_errors(events: &[Map]) -> Vec<String> {
     let mut out = Vec::new();
     let mut vocab: Option<Vec<String>> = None;
     let mut has_decl = false;
+    let mut newer = false;
     let mut ids: BTreeSet<String> = BTreeSet::new();
     for e in events {
         match etype(e) {
             "header" => {
                 has_decl = e.has(INTENT_DECLARATION_KEY);
+                newer = newer_minor(e.get("spec_version"));
                 vocab = None;
                 if let Some(d) = e.get_opt(INTENT_DECLARATION_KEY) {
-                    if validate_intent_declaration(d).is_empty() {
+                    if validate_intent_declaration(d, newer).is_empty() {
                         vocab = Some(decl_ids(d));
                     }
                 }
@@ -334,7 +352,7 @@ pub fn intent_errors(events: &[Map]) -> Vec<String> {
                     Some(v) => v,
                     None => continue, // FEP3-DECL reports it
                 };
-                for x in validate_intent_event(e, Some(v)) {
+                for x in validate_intent_event(e, Some(v), newer) {
                     out.push(format!("line {}: {}", n, x));
                 }
                 if let Value::Str(id) = e.get("id") {
@@ -353,14 +371,16 @@ pub fn intent_errors(events: &[Map]) -> Vec<String> {
 pub fn feedback_errors(events: &[Map]) -> Vec<String> {
     let mut out = Vec::new();
     let mut vocab: Option<Vec<String>> = None;
+    let mut newer = false;
     for e in events {
         match etype(e) {
             "header" => {
                 let d = e.get(INTENT_DECLARATION_KEY);
-                vocab = if !d.is_null() && validate_intent_declaration(d).is_empty() { Some(decl_ids(d)) } else { None };
+                newer = newer_minor(e.get("spec_version"));
+                vocab = if !d.is_null() && validate_intent_declaration(d, newer).is_empty() { Some(decl_ids(d)) } else { None };
             }
             "intent_feedback" => {
-                for x in validate_feedback_event(e, vocab.as_deref()) {
+                for x in validate_feedback_event(e, vocab.as_deref(), newer) {
                     out.push(format!("line {}: {}", line_of(e), x));
                 }
             }
@@ -376,7 +396,11 @@ pub fn feedback_errors(events: &[Map]) -> Vec<String> {
 pub fn td_intent_format_errors(e: &Map) -> Vec<String> {
     let mut errs = td_format_errors(e);
     let n = line_of(e);
+    let newer = newer_minor(e.get("spec_version")); // VER-8
     let prof = e.get_opt("profile").cloned().unwrap_or(Value::str("text"));
+    if newer && is_unknown(&prof, KNOWN_PROFILES) {
+        return errs; // an unknown profile of a newer minor version: no profile rules; never acted on (PRF-4)
+    }
     if !str_in(&prof, PROFILES) {
         errs.push(format!("line {}: profile {} is not one of {}", n, repr(&prof), repr(&str_list(PROFILES))));
         return errs;
@@ -397,7 +421,7 @@ pub fn td_intent_format_errors(e: &Map) -> Vec<String> {
     if !(unit.is_int() && unit.as_f64().unwrap_or(-1.0) >= 0.0) {
         x.push("unit must be an integer >= 0".into());
     }
-    if !str_in(action, INTENT_ACTIONS) {
+    if !str_in(action, INTENT_ACTIONS) && !(newer && is_unknown(action, TRUST_ACTIONS)) {
         x.push(format!("intent action {} is not one of {}", repr(action), repr(&str_list(INTENT_ACTIONS))));
     }
     if act == Some("COMMIT") && !e.get("intent").is_str() {
@@ -417,15 +441,15 @@ pub fn td_intent_format_errors(e: &Map) -> Vec<String> {
         x.push("an OFFER needs a non-empty offered list (rule 3)".into());
     }
     if let Some(r) = e.get_opt("risk_class") {
-        if !r.is_null() && !str_in(r, RISK_CLASSES) {
+        if !r.is_null() && !enum_ok(r, RISK_CLASSES, newer) {
             x.push(format!("risk_class {} is not one of {}", repr(r), repr(&str_list(RISK_CLASSES))));
         }
     }
-    if act == Some("COMMIT") && !str_in(e.get("risk_class"), RISK_CLASSES) {
+    if act == Some("COMMIT") && !enum_ok(e.get("risk_class"), RISK_CLASSES, newer) {
         x.push("a COMMIT needs risk_class (rule 3)".into());
     }
     if let Some(r) = e.get_opt("role") {
-        if !r.is_null() && !str_in(r, INTENT_ROLES) {
+        if !r.is_null() && !enum_ok(r, INTENT_ROLES, newer) {
             x.push(format!("role {} is not one of {}", repr(r), repr(&str_list(INTENT_ROLES))));
         }
     }
@@ -450,7 +474,7 @@ pub fn td_intent_format_errors(e: &Map) -> Vec<String> {
         }
     }
     if let Some(c) = e.get_opt("confirmed_via") {
-        if !str_in(c, &["intent", "feedback"]) {
+        if !enum_ok(c, CONFIRM_PATHS, newer) {
             x.push("confirmed_via must be 'intent' or 'feedback'".into());
         }
     }
@@ -583,6 +607,14 @@ pub fn safety_errors(events: &[Map]) -> Vec<String> {
 }
 
 /// (acted intents, acted texts): final intent COMMITs and final text COMMITs.
+/// VER-8 / registry 12.3: an intent decision with an unknown `risk_class`, `role` or `confirmed_via`
+/// (a bridge never actuates it).
+pub fn unknown_intent_values(e: &Map) -> bool {
+    is_unknown(e.get("risk_class"), RISK_CLASSES) || is_unknown(e.get("role"), INTENT_ROLES) || is_unknown(e.get("confirmed_via"), CONFIRM_PATHS)
+}
+
+/// (acted intents, acted texts): final COMMITs of the intent and text profiles. Not acted: other or unknown
+/// profiles (PRF-4) and intent COMMITs with an unknown risk class, role or confirmation path (VER-8).
 pub fn acted(decisions: &[Map]) -> (Vec<Value>, Vec<Value>) {
     let mut ai = Vec::new();
     let mut at = Vec::new();
@@ -591,8 +623,10 @@ pub fn acted(decisions: &[Map]) -> (Vec<Value>, Vec<Value>) {
             continue;
         }
         if is_intent(e) {
-            ai.push(e.get("intent").clone());
-        } else {
+            if !unknown_intent_values(e) {
+                ai.push(e.get("intent").clone());
+            }
+        } else if is_text_decision(e) {
             at.push(match e.get("shown") {
                 Value::Arr(a) if !a.is_empty() => a[0].clone(),
                 _ => Value::Null,

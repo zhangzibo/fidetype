@@ -1,7 +1,7 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v1.schema.json",
- "title": "NeuralTextStream 1.0 RC2 (draft): one JSON Lines event",
+ "title": "NeuralTextStream 1.0 RC3 (draft): one JSON Lines event",
  "description": "GENERATED FILE. Do not edit. Source: spec/proto/neuraltextstream/v1/*.proto. Generator: tools/proto/gen_jsonschema.py (check: --check). Validates ONE line of a JSON Lines stream or decision log (or one LSL marker sample, or one WebSocket NTS message). The value of \"type\" selects the event definition; an unknown type is allowed (GEN-4). Unknown keys are allowed (GEN-4). The rules that need more than one line, the header, arithmetic or the trust rules stay in the SDK validators: see spec/proto/README.md, section 'What the schema cannot express'.",
  "type": "object",
  "required": [
@@ -251,6 +251,7 @@
      "description": "Integer >= 0; increases strictly per stream. CTL-2.",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "CTL-2"
      ]
@@ -298,7 +299,8 @@
     },
     "source": {
      "description": "Default \"decoder\".",
-     "$ref": "#/$defs/ControlSource"
+     "type": "string",
+     "x-nts-enum": "#/$defs/ControlSource"
     },
     "id": {
      "type": "string"
@@ -351,6 +353,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -390,6 +393,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -398,6 +402,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -411,6 +416,15 @@
     "TIM-4"
    ],
    "x-proto": "neuraltextstream.v1.Control (control.proto)"
+  },
+  "Control.known": {
+   "description": "VER-7: the enumeration values of Control are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "source": {
+     "$ref": "#/$defs/ControlSource"
+    }
+   }
   },
   "ControlDeclaration": {
    "description": "The control declaration of a stream (7.4.2), in the header key control_declaration. CTL-D1 ... CTL-D4. Not expressed in the schema: CTL-D3 (click_intent is a declared intent with a role other than null: needs a lookup; see the Header rule for the part that the schema checks).",
@@ -434,21 +448,24 @@
     },
     "quantity": {
      "description": "CTL-D1.",
-     "$ref": "#/$defs/ControlQuantity",
+     "type": "string",
+     "x-nts-enum": "#/$defs/ControlQuantity",
      "x-nts-rules": [
       "CTL-D1"
      ]
     },
     "units": {
      "description": "CTL-D1.",
-     "$ref": "#/$defs/ControlUnits",
+     "type": "string",
+     "x-nts-enum": "#/$defs/ControlUnits",
      "x-nts-rules": [
       "CTL-D1"
      ]
     },
     "frame": {
      "description": "CTL-D1.",
-     "$ref": "#/$defs/ControlFrame",
+     "type": "string",
+     "x-nts-enum": "#/$defs/ControlFrame",
      "x-nts-rules": [
       "CTL-D1"
      ]
@@ -477,7 +494,8 @@
     },
     "uncertainty": {
      "description": "Default \"none\". CTL-3.",
-     "$ref": "#/$defs/Uncertainty",
+     "type": "string",
+     "x-nts-enum": "#/$defs/Uncertainty",
      "x-nts-rules": [
       "CTL-3"
      ]
@@ -505,7 +523,7 @@
    },
    "allOf": [
     {
-     "$comment": "CTL-D1: velocity units",
+     "$comment": "CTL-D1: velocity units (not a position unit)",
      "if": {
       "required": [
        "quantity"
@@ -519,19 +537,21 @@
      "then": {
       "properties": {
        "units": {
-        "enum": [
-         "norm/s",
-         "px/s",
-         "mm/s",
-         "m/s",
-         "deg/s"
-        ]
+        "not": {
+         "enum": [
+          "norm",
+          "px",
+          "mm",
+          "m",
+          "deg"
+         ]
+        }
        }
       }
      }
     },
     {
-     "$comment": "CTL-D1: position units",
+     "$comment": "CTL-D1: position units (not a velocity unit)",
      "if": {
       "required": [
        "quantity"
@@ -545,13 +565,15 @@
      "then": {
       "properties": {
        "units": {
-        "enum": [
-         "norm",
-         "px",
-         "mm",
-         "m",
-         "deg"
-        ]
+        "not": {
+         "enum": [
+          "norm/s",
+          "px/s",
+          "mm/s",
+          "m/s",
+          "deg/s"
+         ]
+        }
        }
       }
      }
@@ -652,6 +674,24 @@
    ],
    "x-proto": "neuraltextstream.v1.ControlDeclaration (control.proto)"
   },
+  "ControlDeclaration.known": {
+   "description": "VER-7: the enumeration values of ControlDeclaration are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "quantity": {
+     "$ref": "#/$defs/ControlQuantity"
+    },
+    "units": {
+     "$ref": "#/$defs/ControlUnits"
+    },
+    "frame": {
+     "$ref": "#/$defs/ControlFrame"
+    },
+    "uncertainty": {
+     "$ref": "#/$defs/Uncertainty"
+    }
+   }
+  },
   "ControlEnable": {
    "description": "Engage (true) or latched stop (false) from a channel other than the decoder (7.4.4). JSON type \"control_enable\". CTL-E1 ... CTL-E3. CTL-E2 (not from the decoder) and CTL-E3 (no personal text) are not in a schema.",
    "type": "object",
@@ -675,7 +715,8 @@
     },
     "source": {
      "description": "A channel, never a person. CTL-E3.",
-     "$ref": "#/$defs/EnableSource",
+     "type": "string",
+     "x-nts-enum": "#/$defs/EnableSource",
      "x-nts-rules": [
       "CTL-E3"
      ]
@@ -736,6 +777,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -775,6 +817,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -783,6 +826,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -794,6 +838,15 @@
     "CTL-E2"
    ],
    "x-proto": "neuraltextstream.v1.ControlEnable (control.proto)"
+  },
+  "ControlEnable.known": {
+   "description": "VER-7: the enumeration values of ControlEnable are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "source": {
+     "$ref": "#/$defs/EnableSource"
+    }
+   }
   },
   "Decision": {
    "description": "One discrete decoder output with a score and its semantics (4.6). JSON type \"decision\". DEC-1 ... DEC-5. The intent profile maps it to a one-candidate intent (PRF-3).",
@@ -828,7 +881,8 @@
     },
     "score_semantics": {
      "description": "DEC-1 ... DEC-5.",
-     "$ref": "#/$defs/ScoreSemantics",
+     "type": "string",
+     "x-nts-enum": "#/$defs/ScoreSemantics",
      "x-nts-rules": [
       "DEC-1",
       "DEC-5"
@@ -894,6 +948,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -933,6 +988,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -941,6 +997,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1022,6 +1079,15 @@
     "DEC-4"
    ],
    "x-proto": "neuraltextstream.v1.Decision (core.proto)"
+  },
+  "Decision.known": {
+   "description": "VER-7: the enumeration values of Decision are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "score_semantics": {
+     "$ref": "#/$defs/ScoreSemantics"
+    }
+   }
   },
   "DecodeDeclaration": {
    "description": "The decode parameters of a hypothesis producer (4.7.3). In the header or in a hypothesis. DCL-1 ... DCL-7. DCL-2 ... DCL-6 are producer and trust layer behaviour; DCL-7 (no user text in params) is content: not in a schema.",
@@ -1110,6 +1176,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -1149,6 +1216,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1157,6 +1225,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1209,7 +1278,8 @@
      "type": "array",
      "items": {
       "type": "integer",
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 9007199254740991
      },
      "uniqueItems": true,
      "x-nts-rules": [
@@ -1290,6 +1360,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -1329,6 +1400,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1337,6 +1409,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1370,7 +1443,7 @@
    "x-proto": "neuraltextstream.v1.Frame (core.proto)"
   },
   "Gap": {
-   "description": "A gap in an LSL frames stream (extension event of the LSL binding, LSL-G1, mode \"mark\"). JSON type \"gap\". A consumer that does not know it ignores it (GEN-4). RC2 gives no field table; the fields below come from the reference adapter (open question Q-2).",
+   "description": "A gap in an LSL frames stream (extension event of the LSL binding, LSL-G1, mode \"mark\"). JSON type \"gap\". A consumer that does not know it ignores it (GEN-4). Field table: RC3 section 8.2.6 (LSL-G3); written down from the reference adapters.",
    "type": "object",
    "required": [
     "type"
@@ -1393,7 +1466,8 @@
       "integer",
       "null"
      ],
-     "minimum": 0
+     "minimum": 0,
+     "maximum": 9007199254740991
     },
     "stream": {
      "description": "Name of the LSL stream. Never a host name (LSL-C3).",
@@ -1421,6 +1495,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -1460,6 +1535,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1468,6 +1544,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1475,7 +1552,8 @@
    },
    "x-nts-rules": [
     "LSL-G1",
-    "GEN-4"
+    "GEN-4",
+    "LSL-G3"
    ],
    "x-proto": "neuraltextstream.v1.Gap (core.proto)"
   },
@@ -1520,7 +1598,8 @@
     },
     "vocab_type": {
      "description": "HDR-5, HDR-14.",
-     "$ref": "#/$defs/VocabType",
+     "type": "string",
+     "x-nts-enum": "#/$defs/VocabType",
      "x-nts-rules": [
       "HDR-5",
       "HDR-14"
@@ -1533,6 +1612,7 @@
       "null"
      ],
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "HDR-6",
       "HDR-13",
@@ -1540,7 +1620,7 @@
      ]
     },
     "frame_period": {
-     "description": "Nominal time between frames, seconds; finite and > 0. HDR-9, TIM-3. JSON null reads as absent (open question Q-1 in spec/CHANGELOG.md).",
+     "description": "Nominal time between frames, seconds; finite and > 0. HDR-9, TIM-3. JSON null = absent (GEN-9: the field table types it \"or null\").",
      "type": [
       "number",
       "null"
@@ -1548,11 +1628,12 @@
      "exclusiveMinimum": 0,
      "x-nts-rules": [
       "HDR-9",
-      "TIM-3"
+      "TIM-3",
+      "GEN-9"
      ]
     },
     "latency": {
-     "description": "Algorithmic lookahead of the decoder, seconds; finite and >= 0. HDR-10, MET-4, MET-5. JSON null reads as absent (open question Q-1).",
+     "description": "Algorithmic lookahead of the decoder, seconds; finite and >= 0. HDR-10, MET-4, MET-5. JSON null = absent (GEN-9: typed \"or null\").",
      "type": [
       "number",
       "null"
@@ -1561,7 +1642,8 @@
      "x-nts-rules": [
       "HDR-10",
       "MET-4",
-      "MET-5"
+      "MET-5",
+      "GEN-9"
      ]
     },
     "source": {
@@ -1585,20 +1667,27 @@
     },
     "clock_domain": {
      "description": "HDR-11. Default \"trial\".",
-     "$ref": "#/$defs/ClockDomain",
+     "type": "string",
+     "x-nts-enum": "#/$defs/ClockDomain",
      "x-nts-rules": [
       "HDR-11"
      ]
     },
     "vocab_id": {
      "description": "Registered vocabulary (3.3, 12.4). HDR-15.",
-     "type": "string",
+     "type": [
+      "string",
+      "null"
+     ],
      "x-nts-rules": [
       "HDR-15"
      ]
     },
     "vocab_version": {
-     "type": "string"
+     "type": [
+      "string",
+      "null"
+     ]
     },
     "decode_declaration": {
      "description": "Text profile declaration (4.7.3).",
@@ -1631,6 +1720,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -1670,6 +1760,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1678,6 +1769,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1704,6 +1796,22 @@
        "intent_declaration"
       ]
      }
+    },
+    {
+     "$comment": "VER-7, VER-8: without a newer minor spec_version (absent = 0.1), the enumeration values are known values; a newer minor version may use other strings",
+     "if": {
+      "required": [
+       "spec_version"
+      ],
+      "properties": {
+       "spec_version": {
+        "pattern": "^1\\.[1-9][0-9]*$"
+       }
+      }
+     },
+     "else": {
+      "$ref": "#/$defs/Header.known"
+     }
     }
    ],
    "x-nts-rules": [
@@ -1716,9 +1824,29 @@
     "MET-1",
     "MET-6",
     "INT-D5",
-    "CTL-D3"
+    "CTL-D3",
+    "VER-7",
+    "VER-8"
    ],
    "x-proto": "neuraltextstream.v1.Header (core.proto)"
+  },
+  "Header.known": {
+   "description": "VER-7: the enumeration values of Header are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "vocab_type": {
+     "$ref": "#/$defs/VocabType"
+    },
+    "clock_domain": {
+     "$ref": "#/$defs/ClockDomain"
+    },
+    "intent_declaration": {
+     "$ref": "#/$defs/IntentDeclaration.known"
+    },
+    "control_declaration": {
+     "$ref": "#/$defs/ControlDeclaration.known"
+    }
+   }
   },
   "Hypothesis": {
    "description": "A text n-best list (4.7). JSON type \"hypothesis\". HYP-1 ... HYP-4. Not expressed: id unique in the stream (a stream rule).",
@@ -1753,7 +1881,8 @@
     },
     "score_semantics": {
      "description": "As in 4.6; \"none\" for raw log-scores. HYP-1.",
-     "$ref": "#/$defs/ScoreSemantics",
+     "type": "string",
+     "x-nts-enum": "#/$defs/ScoreSemantics",
      "x-nts-rules": [
       "HYP-1"
      ]
@@ -1838,6 +1967,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -1877,6 +2007,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1885,6 +2016,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -1895,6 +2027,15 @@
     "HYP-4"
    ],
    "x-proto": "neuraltextstream.v1.Hypothesis (text.proto)"
+  },
+  "Hypothesis.known": {
+   "description": "VER-7: the enumeration values of Hypothesis are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "score_semantics": {
+     "$ref": "#/$defs/ScoreSemantics"
+    }
+   }
   },
   "Intent": {
    "description": "A discrete intent output (7.3.3). JSON type \"intent\". INT-E1 ... INT-E7. Not expressed: INT-E1 (needs a header with a declaration), INT-E2 (declared, not twice), INT-E3 sum <= 1 (arithmetic), INT-E4 ranking (order of items), INT-E5 (unique id in the stream), INT-E6.",
@@ -1948,7 +2089,8 @@
     },
     "score_semantics": {
      "description": "INT-E3, INT-E7.",
-     "$ref": "#/$defs/ScoreSemantics",
+     "type": "string",
+     "x-nts-enum": "#/$defs/ScoreSemantics",
      "x-nts-rules": [
       "INT-E3",
       "INT-E7"
@@ -2014,6 +2156,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -2053,6 +2196,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -2061,6 +2205,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -2170,6 +2315,15 @@
     "INT-E6"
    ],
    "x-proto": "neuraltextstream.v1.Intent (intent.proto)"
+  },
+  "Intent.known": {
+   "description": "VER-7: the enumeration values of Intent are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "score_semantics": {
+     "$ref": "#/$defs/ScoreSemantics"
+    }
+   }
   },
   "IntentCandidate": {
    "description": "One candidate of an intent event (7.3.3).",
@@ -2338,7 +2492,12 @@
          "then": {
           "properties": {
            "risk": {
-            "const": "irreversible"
+            "not": {
+             "enum": [
+              "safe",
+              "undoable"
+             ]
+            }
            }
           }
          }
@@ -2357,6 +2516,18 @@
    ],
    "x-proto": "neuraltextstream.v1.IntentDeclaration (intent.proto)"
   },
+  "IntentDeclaration.known": {
+   "description": "VER-7: the enumeration values of IntentDeclaration are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "intents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/IntentSpec.known"
+     }
+    }
+   }
+  },
   "IntentFeedback": {
    "description": "Feedback from another channel about a decision unit (7.3.4). JSON type \"intent_feedback\". INT-F1, INT-F2 (no free text: content, not in a schema).",
    "type": "object",
@@ -2373,13 +2544,15 @@
      "description": "The decision unit. INT-F1.",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "INT-F1"
      ]
     },
     "outcome": {
      "description": "INT-F1.",
-     "$ref": "#/$defs/FeedbackOutcome",
+     "type": "string",
+     "x-nts-enum": "#/$defs/FeedbackOutcome",
      "x-nts-rules": [
       "INT-F1"
      ]
@@ -2449,6 +2622,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -2488,6 +2662,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -2496,6 +2671,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -2532,6 +2708,15 @@
    ],
    "x-proto": "neuraltextstream.v1.IntentFeedback (intent.proto)"
   },
+  "IntentFeedback.known": {
+   "description": "VER-7: the enumeration values of IntentFeedback are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "outcome": {
+     "$ref": "#/$defs/FeedbackOutcome"
+    }
+   }
+  },
   "IntentSpec": {
    "description": "One declared intent (7.3.2).",
    "type": "object",
@@ -2550,14 +2735,16 @@
     },
     "risk": {
      "description": "INT-D2.",
-     "$ref": "#/$defs/RiskClass",
+     "type": "string",
+     "x-nts-enum": "#/$defs/RiskClass",
      "x-nts-rules": [
       "INT-D2"
      ]
     },
     "role": {
      "description": "Default \"action\". INT-D1, INT-D3.",
-     "$ref": "#/$defs/IntentRole",
+     "type": "string",
+     "x-nts-enum": "#/$defs/IntentRole",
      "x-nts-rules": [
       "INT-D1",
       "INT-D3"
@@ -2568,6 +2755,18 @@
     }
    },
    "x-proto": "neuraltextstream.v1.IntentSpec (intent.proto)"
+  },
+  "IntentSpec.known": {
+   "description": "VER-7: the enumeration values of IntentSpec are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "risk": {
+     "$ref": "#/$defs/RiskClass"
+    },
+    "role": {
+     "$ref": "#/$defs/IntentRole"
+    }
+   }
   },
   "NBestItem": {
    "description": "One item of a hypothesis n-best list, with the evidence fields (4.7.2). Not expressed in the schema: EVD-1 count (len(char_confidences) = code points of text: two fields), EVD-2 (LM-free values: content).",
@@ -2667,7 +2866,8 @@
     },
     "mode": {
      "description": "PTR-1.",
-     "$ref": "#/$defs/PointerMode",
+     "type": "string",
+     "x-nts-enum": "#/$defs/PointerMode",
      "x-nts-rules": [
       "PTR-1"
      ]
@@ -2699,7 +2899,8 @@
      ]
     },
     "score_semantics": {
-     "$ref": "#/$defs/ScoreSemantics"
+     "type": "string",
+     "x-nts-enum": "#/$defs/ScoreSemantics"
     },
     "t_signal_start": {
      "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
@@ -2749,6 +2950,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -2788,6 +2990,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -2796,6 +2999,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -2872,6 +3076,18 @@
    ],
    "x-proto": "neuraltextstream.v1.Pointer (control.proto)"
   },
+  "Pointer.known": {
+   "description": "VER-7: the enumeration values of Pointer are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "mode": {
+     "$ref": "#/$defs/PointerMode"
+    },
+    "score_semantics": {
+     "$ref": "#/$defs/ScoreSemantics"
+    }
+   }
+  },
   "SegmentEnd": {
    "description": "The end of a segment (4.3). JSON type \"segment_end\". SEG-1 ... SEG-5. Not expressed: SEG-4 (t not before the last frame: a stream rule).",
    "type": "object",
@@ -2890,10 +3106,20 @@
      ]
     },
     "unit": {
-     "description": "Default \"utterance\". SEG-5.",
-     "$ref": "#/$defs/SegmentUnit",
+     "description": "Default \"utterance\". SEG-5. An unknown value of a newer minor version is still a boundary (VER-8, registry 12.3).",
+     "type": "string",
+     "x-nts-enum": "#/$defs/SegmentUnit",
      "x-nts-rules": [
-      "SEG-5"
+      "SEG-5",
+      "VER-8"
+     ]
+    },
+    "reason": {
+     "description": "Why the segment ended: a short code, no personal content (SEG-6). \"gap\" = an LSL transport gap (LSL-G1 mode \"segment\"); the gap keys of table 8.2.6 (t_start, t_end, missing_frames, stream) then travel in ext.",
+     "type": "string",
+     "x-nts-rules": [
+      "SEG-6",
+      "LSL-G1"
      ]
     },
     "t_signal_start": {
@@ -2944,6 +3170,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -2983,6 +3210,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -2991,6 +3219,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -3002,6 +3231,15 @@
     "SEG-4"
    ],
    "x-proto": "neuraltextstream.v1.SegmentEnd (core.proto)"
+  },
+  "SegmentEnd.known": {
+   "description": "VER-7: the enumeration values of SegmentEnd are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "unit": {
+     "$ref": "#/$defs/SegmentUnit"
+    }
+   }
   },
   "SignalQuality": {
    "description": "Quality of the input signal, separate from confidence (4.5). JSON type \"signal_quality\". SQ-1, SQ-2 (consumer behaviour: not in a schema).",
@@ -3032,7 +3270,8 @@
     },
     "unit": {
      "description": "SQ-1.",
-     "$ref": "#/$defs/SignalQualityUnit",
+     "type": "string",
+     "x-nts-enum": "#/$defs/SignalQualityUnit",
      "x-nts-rules": [
       "SQ-1"
      ]
@@ -3092,6 +3331,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -3131,6 +3371,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -3139,6 +3380,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -3173,6 +3415,15 @@
    ],
    "x-proto": "neuraltextstream.v1.SignalQuality (core.proto)"
   },
+  "SignalQuality.known": {
+   "description": "VER-7: the enumeration values of SignalQuality are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "unit": {
+     "$ref": "#/$defs/SignalQualityUnit"
+    }
+   }
+  },
   "Span": {
    "description": "One span of an n-best item (4.7). The SDK validators do not check spans.",
    "type": "object",
@@ -3180,12 +3431,14 @@
     "char_start": {
      "description": "First code point of the span in text.",
      "type": "integer",
-     "minimum": 0
+     "minimum": 0,
+     "maximum": 9007199254740991
     },
     "char_end": {
      "description": "End of the span (exclusive), in code points.",
      "type": "integer",
-     "minimum": 0
+     "minimum": 0,
+     "maximum": 9007199254740991
     },
     "t_start": {
      "type": "number"
@@ -3200,7 +3453,7 @@
    "x-proto": "neuraltextstream.v1.Span (text.proto)"
   },
   "TrustDecision": {
-   "description": "Trust layer output (section 6). JSON type \"trust_decision\". One message for all three profiles; profile selects the rules. Not expressed in the schema (SDK checks): the order rules TD-4 ... TD-7, TD-11, INT-T4, CTL-T5 (need other lines); the trust rules TD-9, TD-12, INT-S1 ... INT-S10, CTL-S1 ... CTL-S8 (semantic rules of a trust layer); raw has one value per axis of velocity (two arrays). Fields of one profile are typed on every decision (EXT-1: a field has one type). The SDKs check them only inside their profile (open question Q-6). Two rules below have no rule id in RC2 but are SDK format checks: an arm only on an OFFER, and level with radius (open question Q-8).",
+   "description": "Trust layer output (section 6). JSON type \"trust_decision\". One message for all three profiles; profile selects the rules. Not expressed in the schema (SDK checks): the order rules TD-4 ... TD-7, TD-11, INT-T4, CTL-T5 (need other lines); the trust rules TD-9, TD-12, INT-S1 ... INT-S10, CTL-S1 ... CTL-S8 (semantic rules of a trust layer); raw has one value per axis of velocity (two arrays). Fields of one profile (option json_profile) have their type only on decisions of that profile; on other decisions they are custom keys (PRF-5). Enumeration values: any string in the base schema; the known values are required unless spec_version is a newer minor version (VER-7, VER-8: TrustDecision.known). The action and state rules below name the known values that a profile does not allow, so a newer minor version may add values. INT-T7: an arm only on an OFFER. CTL-T8: level with radius.",
    "type": "object",
    "required": [
     "type",
@@ -3227,7 +3480,8 @@
     },
     "profile": {
      "description": "Default \"text\". PRF-1, PRF-4.",
-     "$ref": "#/$defs/Profile",
+     "type": "string",
+     "x-nts-enum": "#/$defs/Profile",
      "x-nts-rules": [
       "PRF-1",
       "PRF-4"
@@ -3243,7 +3497,8 @@
     },
     "action": {
      "description": "TD-F1.",
-     "$ref": "#/$defs/Action",
+     "type": "string",
+     "x-nts-enum": "#/$defs/Action",
      "x-nts-rules": [
       "TD-F1"
      ]
@@ -3277,7 +3532,8 @@
     },
     "score_semantics": {
      "description": "TD-F1, TD-2.",
-     "$ref": "#/$defs/ScoreSemantics",
+     "type": "string",
+     "x-nts-enum": "#/$defs/ScoreSemantics",
      "x-nts-rules": [
       "TD-F1",
       "TD-2"
@@ -3287,6 +3543,7 @@
      "description": "Conformal set size; integer >= 0. TD-F2.",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "TD-F2"
      ]
@@ -3315,6 +3572,7 @@
      "description": "Integer >= 0; increases strictly within a session. TD-F2, TD-5.",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "TD-F2",
       "TD-5"
@@ -3324,6 +3582,7 @@
      "description": "Integer >= 0; does not decrease. TD-F2, TD-5, TD-6.",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "TD-F2",
       "TD-5",
@@ -3341,7 +3600,7 @@
      ]
     },
     "input": {
-     "description": "Reference to the input. A JSON object. TD-F2, INT-S10, CTL-S8.",
+     "description": "Reference to the input. A JSON object (TD-F2); recommended keys: table 6.1.1 (informative). INT-S10, CTL-S8.",
      "type": "object",
      "x-nts-rules": [
       "TD-F2",
@@ -3358,11 +3617,12 @@
      ]
     },
     "declaration": {
-     "description": "Result of the declaration check (DCL-5, DCL-6). A JSON object; 6.1 names its keys but not their types (open question Q-4).",
+     "description": "Result of the declaration check (DCL-5, DCL-6). A JSON object (TD-F2); recommended keys and types: table 6.1.2 (informative; consumers MUST NOT rely on them for safety).",
      "type": "object",
      "x-nts-rules": [
       "DCL-5",
-      "DCL-6"
+      "DCL-6",
+      "TD-F2"
      ]
     },
     "reason": {
@@ -3375,239 +3635,6 @@
     "t": {
      "description": "Time of a control decision, seconds.",
      "type": "number"
-    },
-    "unit": {
-     "description": "Decision unit; integer >= 0. INT-T1, INT-T4.",
-     "type": "integer",
-     "minimum": 0,
-     "x-nts-rules": [
-      "INT-T1",
-      "INT-T4"
-     ]
-    },
-    "intent": {
-     "description": "The committed intent (COMMIT). INT-T3.",
-     "type": "string",
-     "x-nts-rules": [
-      "INT-T3"
-     ]
-    },
-    "offered": {
-     "description": "The offered intents (OFFER). INT-T3.",
-     "type": "array",
-     "items": {
-      "type": "string"
-     },
-     "x-nts-rules": [
-      "INT-T3"
-     ]
-    },
-    "risk_class": {
-     "description": "Risk class of a COMMIT; null on other actions. INT-T3, INT-S3.",
-     "anyOf": [
-      {
-       "$ref": "#/$defs/RiskClass"
-      },
-      {
-       "type": "null"
-      }
-     ],
-     "x-nts-rules": [
-      "INT-T3",
-      "INT-S3"
-     ]
-    },
-    "threshold": {
-     "description": "Commit threshold of the class; number in [0, 1] or null. INT-S3.",
-     "type": [
-      "number",
-      "null"
-     ],
-     "minimum": 0,
-     "maximum": 1,
-     "x-nts-rules": [
-      "INT-S3"
-     ]
-    },
-    "role": {
-     "description": "Role of the intent; JSON null if none. INT-S1.",
-     "anyOf": [
-      {
-       "$ref": "#/$defs/IntentRole"
-      },
-      {
-       "type": "null"
-      }
-     ],
-     "x-nts-rules": [
-      "INT-S1"
-     ]
-    },
-    "confirm_required": {
-     "description": "true: an arm of an irreversible intent (7.3.1). INT-S4.",
-     "type": "boolean",
-     "x-nts-rules": [
-      "INT-S4"
-     ]
-    },
-    "confirmation_of": {
-     "description": "The unit of the armed OFFER that this COMMIT executes. INT-S4.",
-     "type": "integer",
-     "minimum": 0,
-     "x-nts-rules": [
-      "INT-S4"
-     ]
-    },
-    "confirmed_via": {
-     "description": "INT-S4.",
-     "$ref": "#/$defs/ConfirmedVia",
-     "x-nts-rules": [
-      "INT-S4"
-     ]
-    },
-    "undo_of": {
-     "description": "The unit of the COMMIT that this undo reverses. INT-S5.",
-     "type": "integer",
-     "minimum": 0,
-     "x-nts-rules": [
-      "INT-S5"
-     ]
-    },
-    "pending_cleared": {
-     "description": "Why an armed intent was dropped.",
-     "type": "string"
-    },
-    "vocab_id": {
-     "description": "Intent vocabulary id. INT-S10.",
-     "type": "string",
-     "x-nts-rules": [
-      "INT-S10"
-     ]
-    },
-    "tick": {
-     "description": "The input tick; integer >= 0. CTL-T1, CTL-T5.",
-     "type": "integer",
-     "minimum": 0,
-     "x-nts-rules": [
-      "CTL-T1",
-      "CTL-T5"
-     ]
-    },
-    "state": {
-     "description": "CTL-T3.",
-     "$ref": "#/$defs/ControlState",
-     "x-nts-rules": [
-      "CTL-T3"
-     ]
-    },
-    "velocity": {
-     "description": "Commanded velocity, 1-3 finite numbers. CTL-T4, CTL-T6, CTL-S1, CTL-S3.",
-     "type": "array",
-     "items": {
-      "type": "number"
-     },
-     "minItems": 1,
-     "maxItems": 3,
-     "x-nts-rules": [
-      "CTL-T4",
-      "CTL-T6",
-      "CTL-S1",
-      "CTL-S3"
-     ]
-    },
-    "raw": {
-     "description": "Decoder output before the gate, one value per axis. CTL-S6, CTL-S8.",
-     "type": "array",
-     "items": {
-      "type": "number"
-     },
-     "x-nts-rules": [
-      "CTL-S6",
-      "CTL-S8"
-     ]
-    },
-    "gain": {
-     "description": "In [0, 1]. CTL-T4, CTL-S1.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1,
-     "x-nts-rules": [
-      "CTL-T4",
-      "CTL-S1"
-     ]
-    },
-    "units": {
-     "description": "Units of velocity. CTL-T4.",
-     "type": "string",
-     "x-nts-rules": [
-      "CTL-T4"
-     ]
-    },
-    "v_max": {
-     "description": "Speed limit; > 0. CTL-T4, CTL-S3.",
-     "type": "number",
-     "exclusiveMinimum": 0,
-     "x-nts-rules": [
-      "CTL-T4",
-      "CTL-S3"
-     ]
-    },
-    "ttl_s": {
-     "description": "Time to live of the command, seconds; > 0. CTL-T4, CTL-T6, CTL-S4.",
-     "type": "number",
-     "exclusiveMinimum": 0,
-     "x-nts-rules": [
-      "CTL-T4",
-      "CTL-T6",
-      "CTL-S4"
-     ]
-    },
-    "engagement": {
-     "description": "Engagement counter; integer >= 0. CTL-T4, CTL-S5, CTL-S7.",
-     "type": "integer",
-     "minimum": 0,
-     "x-nts-rules": [
-      "CTL-T4",
-      "CTL-S5",
-      "CTL-S7"
-     ]
-    },
-    "radius": {
-     "description": "Conformal radius; >= 0. CTL-S6.",
-     "type": "number",
-     "minimum": 0,
-     "x-nts-rules": [
-      "CTL-S6"
-     ]
-    },
-    "level": {
-     "description": "Conformal level; in (0, 1). CTL-S6.",
-     "type": "number",
-     "exclusiveMinimum": 0,
-     "exclusiveMaximum": 1,
-     "x-nts-rules": [
-      "CTL-S6"
-     ]
-    },
-    "authority": {
-     "description": "Decoder share of the commanded velocity; in [0, 1]. CTL-S5.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1,
-     "x-nts-rules": [
-      "CTL-S5"
-     ]
-    },
-    "reasons": {
-     "description": "Reason codes (7.4.5 list). The SDKs accept any string (open question Q-3). CTL-S2, CTL-S8.",
-     "type": "array",
-     "items": {
-      "type": "string"
-     },
-     "x-nts-rules": [
-      "CTL-S2",
-      "CTL-S8"
-     ]
     },
     "lsl": {
      "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
@@ -3628,6 +3655,7 @@
      "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
      "type": "integer",
      "minimum": 1,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "WS-Q1",
       "WS-D1"
@@ -3667,6 +3695,7 @@
      "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -3675,6 +3704,7 @@
      "description": "Number of frames dropped before this frame (LSL-C4).",
      "type": "integer",
      "minimum": 0,
+     "maximum": 9007199254740991,
      "x-nts-rules": [
       "LSL-C4"
      ]
@@ -3734,11 +3764,12 @@
       },
       "properties": {
        "action": {
-        "enum": [
-         "COMMIT",
-         "OFFER",
-         "ABSTAIN"
-        ]
+        "not": {
+         "enum": [
+          "ASK",
+          "OFFER_WORDS"
+         ]
+        }
        }
       }
      }
@@ -3799,7 +3830,7 @@
      }
     },
     {
-     "$comment": "7.3.1: confirm_required (an arm) only on an intent OFFER",
+     "$comment": "INT-T7: confirm_required (an arm) only on an intent OFFER",
      "if": {
       "required": [
        "profile",
@@ -3869,10 +3900,13 @@
         "const": true
        },
        "action": {
-        "enum": [
-         "COMMIT",
-         "ABSTAIN"
-        ]
+        "not": {
+         "enum": [
+          "OFFER",
+          "ASK",
+          "OFFER_WORDS"
+         ]
+        }
        }
       }
      }
@@ -3896,10 +3930,12 @@
      "then": {
       "properties": {
        "state": {
-        "enum": [
-         "act",
-         "attenuate"
-        ]
+        "not": {
+         "enum": [
+          "hold",
+          "stop"
+         ]
+        }
        }
       }
      }
@@ -3923,16 +3959,18 @@
      "then": {
       "properties": {
        "state": {
-        "enum": [
-         "hold",
-         "stop"
-        ]
+        "not": {
+         "enum": [
+          "act",
+          "attenuate"
+         ]
+        }
        }
       }
      }
     },
     {
-     "$comment": "7.4.5 (SDK check FEP5-TD-FORMAT): a control decision with radius has level",
+     "$comment": "CTL-T8: a control decision with radius has level",
      "if": {
       "required": [
        "profile",
@@ -3949,6 +3987,291 @@
        "level"
       ]
      }
+    },
+    {
+     "$comment": "PRF-5: the control-profile fields have these types only on decisions with profile control",
+     "if": {
+      "required": [
+       "profile"
+      ],
+      "properties": {
+       "profile": {
+        "const": "control"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "tick": {
+        "description": "The input tick; integer >= 0. CTL-T1, CTL-T5.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991,
+        "x-nts-rules": [
+         "CTL-T1",
+         "CTL-T5"
+        ]
+       },
+       "state": {
+        "description": "CTL-T3.",
+        "type": "string",
+        "x-nts-enum": "#/$defs/ControlState",
+        "x-nts-rules": [
+         "CTL-T3"
+        ]
+       },
+       "velocity": {
+        "description": "Commanded velocity, 1-3 finite numbers. CTL-T4, CTL-T6, CTL-S1, CTL-S3.",
+        "type": "array",
+        "items": {
+         "type": "number"
+        },
+        "minItems": 1,
+        "maxItems": 3,
+        "x-nts-rules": [
+         "CTL-T4",
+         "CTL-T6",
+         "CTL-S1",
+         "CTL-S3"
+        ]
+       },
+       "raw": {
+        "description": "Decoder output before the gate, one value per axis. CTL-S6, CTL-S8.",
+        "type": "array",
+        "items": {
+         "type": "number"
+        },
+        "x-nts-rules": [
+         "CTL-S6",
+         "CTL-S8"
+        ]
+       },
+       "gain": {
+        "description": "In [0, 1]. CTL-T4, CTL-S1.",
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "x-nts-rules": [
+         "CTL-T4",
+         "CTL-S1"
+        ]
+       },
+       "units": {
+        "description": "Units of velocity. CTL-T4.",
+        "type": "string",
+        "x-nts-rules": [
+         "CTL-T4"
+        ]
+       },
+       "v_max": {
+        "description": "Speed limit; > 0. CTL-T4, CTL-S3.",
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "x-nts-rules": [
+         "CTL-T4",
+         "CTL-S3"
+        ]
+       },
+       "ttl_s": {
+        "description": "Time to live of the command, seconds; > 0. CTL-T4, CTL-T6, CTL-S4.",
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "x-nts-rules": [
+         "CTL-T4",
+         "CTL-T6",
+         "CTL-S4"
+        ]
+       },
+       "engagement": {
+        "description": "Engagement counter; integer >= 0. CTL-T4, CTL-S5, CTL-S7.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991,
+        "x-nts-rules": [
+         "CTL-T4",
+         "CTL-S5",
+         "CTL-S7"
+        ]
+       },
+       "radius": {
+        "description": "Conformal radius; >= 0. CTL-S6.",
+        "type": "number",
+        "minimum": 0,
+        "x-nts-rules": [
+         "CTL-S6"
+        ]
+       },
+       "level": {
+        "description": "Conformal level; in (0, 1). CTL-S6.",
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "exclusiveMaximum": 1,
+        "x-nts-rules": [
+         "CTL-S6"
+        ]
+       },
+       "authority": {
+        "description": "Decoder share of the commanded velocity; in [0, 1]. CTL-S5.",
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "x-nts-rules": [
+         "CTL-S5"
+        ]
+       },
+       "reasons": {
+        "description": "Reason codes: an open list (registry 12.3). Any string is valid; an unknown code is never read as \"ok\" (CTL-T9). CTL-S2, CTL-S8.",
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "x-nts-rules": [
+         "CTL-T9",
+         "CTL-S2",
+         "CTL-S8"
+        ]
+       }
+      }
+     }
+    },
+    {
+     "$comment": "PRF-5: the intent-profile fields have these types only on decisions with profile intent",
+     "if": {
+      "required": [
+       "profile"
+      ],
+      "properties": {
+       "profile": {
+        "const": "intent"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "unit": {
+        "description": "Decision unit; integer >= 0. INT-T1, INT-T4.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991,
+        "x-nts-rules": [
+         "INT-T1",
+         "INT-T4"
+        ]
+       },
+       "intent": {
+        "description": "The committed intent (COMMIT). INT-T3.",
+        "type": "string",
+        "x-nts-rules": [
+         "INT-T3"
+        ]
+       },
+       "offered": {
+        "description": "The offered intents (OFFER). INT-T3.",
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "x-nts-rules": [
+         "INT-T3"
+        ]
+       },
+       "risk_class": {
+        "description": "Risk class of a COMMIT; null on other actions. INT-T3, INT-S3.",
+        "type": [
+         "string",
+         "null"
+        ],
+        "x-nts-enum": "#/$defs/RiskClass",
+        "x-nts-rules": [
+         "INT-T3",
+         "INT-S3"
+        ]
+       },
+       "threshold": {
+        "description": "Commit threshold of the class; number in [0, 1] or null. INT-S3.",
+        "type": [
+         "number",
+         "null"
+        ],
+        "minimum": 0,
+        "maximum": 1,
+        "x-nts-rules": [
+         "INT-S3"
+        ]
+       },
+       "role": {
+        "description": "Role of the intent; JSON null if none. INT-S1.",
+        "type": [
+         "string",
+         "null"
+        ],
+        "x-nts-enum": "#/$defs/IntentRole",
+        "x-nts-rules": [
+         "INT-S1"
+        ]
+       },
+       "confirm_required": {
+        "description": "true: an arm of an irreversible intent (7.3.1). INT-S4.",
+        "type": "boolean",
+        "x-nts-rules": [
+         "INT-S4"
+        ]
+       },
+       "confirmation_of": {
+        "description": "The unit of the armed OFFER that this COMMIT executes. INT-S4.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991,
+        "x-nts-rules": [
+         "INT-S4"
+        ]
+       },
+       "confirmed_via": {
+        "description": "INT-S4.",
+        "type": "string",
+        "x-nts-enum": "#/$defs/ConfirmedVia",
+        "x-nts-rules": [
+         "INT-S4"
+        ]
+       },
+       "undo_of": {
+        "description": "The unit of the COMMIT that this undo reverses. INT-S5.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991,
+        "x-nts-rules": [
+         "INT-S5"
+        ]
+       },
+       "pending_cleared": {
+        "description": "Why an armed intent was dropped.",
+        "type": "string"
+       },
+       "vocab_id": {
+        "description": "Intent vocabulary id. INT-S10.",
+        "type": "string",
+        "x-nts-rules": [
+         "INT-S10"
+        ]
+       }
+      }
+     }
+    },
+    {
+     "$comment": "VER-7, VER-8: without a newer minor spec_version (absent = 0.1), the enumeration values are known values; a newer minor version may use other strings",
+     "if": {
+      "required": [
+       "spec_version"
+      ],
+      "properties": {
+       "spec_version": {
+        "pattern": "^1\\.[1-9][0-9]*$"
+       }
+      }
+     },
+     "else": {
+      "$ref": "#/$defs/TrustDecision.known"
+     }
     }
    ],
    "x-nts-rules": [
@@ -3963,7 +4286,11 @@
     "INT-S10",
     "CTL-S1",
     "CTL-S8",
-    "EXT-1",
+    "PRF-5",
+    "VER-7",
+    "VER-8",
+    "INT-T7",
+    "CTL-T8",
     "TD-8",
     "INT-T1",
     "INT-T2",
@@ -3974,6 +4301,83 @@
     "CTL-T3"
    ],
    "x-proto": "neuraltextstream.v1.TrustDecision (trust.proto)"
+  },
+  "TrustDecision.known": {
+   "description": "VER-7: the enumeration values of TrustDecision are known values (data of a version that this schema implements).",
+   "type": "object",
+   "properties": {
+    "profile": {
+     "$ref": "#/$defs/Profile"
+    },
+    "action": {
+     "$ref": "#/$defs/Action"
+    },
+    "score_semantics": {
+     "$ref": "#/$defs/ScoreSemantics"
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "PRF-5: the control-profile fields have known values only on decisions with profile control",
+     "if": {
+      "required": [
+       "profile"
+      ],
+      "properties": {
+       "profile": {
+        "const": "control"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "state": {
+        "$ref": "#/$defs/ControlState"
+       }
+      }
+     }
+    },
+    {
+     "$comment": "PRF-5: the intent-profile fields have known values only on decisions with profile intent",
+     "if": {
+      "required": [
+       "profile"
+      ],
+      "properties": {
+       "profile": {
+        "const": "intent"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "risk_class": {
+        "anyOf": [
+         {
+          "$ref": "#/$defs/RiskClass"
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "role": {
+        "anyOf": [
+         {
+          "$ref": "#/$defs/IntentRole"
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "confirmed_via": {
+        "$ref": "#/$defs/ConfirmedVia"
+       }
+      }
+     }
+    }
+   ]
   },
   "Action": {
    "description": "Decision action (6.1, registry 12.3). TD-F1. The intent profile uses COMMIT, OFFER, ABSTAIN (INT-T3); the control profile COMMIT, ABSTAIN.",

@@ -1,4 +1,4 @@
-// NeuralTextStream (NTS) 1.0 RC2 data model: custom options.
+// NeuralTextStream (NTS) 1.0 RC3 data model: custom options.
 //
 // Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
 //
@@ -29,6 +29,10 @@ extend google.protobuf.FieldOptions {
   // The fields of this message (or the entries of this Struct) are written
   // as keys of the parent JSON object, not as one nested object.
   bool json_inline = 50104;
+  // The field belongs to one output profile of a trust_decision ("intent" or
+  // "control"). It has its type and meaning only on decisions of that profile;
+  // on other decisions it is a custom key (NTS 1.0 RC3, PRF-5).
+  string json_profile = 50105;
 
   // Value constraints. For a repeated field they apply to each item.
   double minimum = 50110;

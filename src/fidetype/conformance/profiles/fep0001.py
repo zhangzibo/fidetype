@@ -31,7 +31,7 @@ from fidetype.conformance.checks import ADVISORY, FAIL, PASS, SCORE_SEMANTICS, S
 from fidetype.conformance.io import StreamRejected
 from fidetype.conformance.report import TargetReport
 from fidetype.conformance.vectors import Vector, _frames, _header, _w_lines
-from fidetype.streams.spec import SUPPORTED_SPEC_VERSION
+from fidetype.streams.spec import SUPPORTED_SPEC_VERSION, enum_ok, is_newer_minor, json_int
 from fidetype.streams.vocab import VOCAB
 from fidetype.trust.declaration import DECLARATION_KEY, validate_declaration
 
@@ -94,7 +94,7 @@ def read_events(path: str | PathLike[str]) -> tuple[list[dict[str, Any]], list[s
         if not line.strip():
             continue
         try:
-            obj = json.loads(line, parse_constant=_reject_constant)
+            obj = json.loads(line, parse_constant=_reject_constant, parse_int=json_int)
         except ValueError as e:
             errs.append(f"line {n}: not JSON: {e}")
             continue
@@ -122,9 +122,11 @@ def stream_kind(events: list[dict[str, Any]]) -> str:
 def segment_errors(events: list[dict[str, Any]]) -> list[str]:
     errs = []
     last_frame_t = -math.inf
+    newer = False
     for e in events:
         if e["type"] == "header":
             last_frame_t = -math.inf
+            newer = is_newer_minor(e.get("spec_version"))
         elif e["type"] == "frame" and _num(e.get("t")):
             last_frame_t = float(e["t"])
         elif e["type"] == "segment_end":
@@ -134,7 +136,7 @@ def segment_errors(events: list[dict[str, Any]]) -> list[str]:
                     errs.append(f"line {n}: segment_end t must be a finite number")
                 elif e["t"] < last_frame_t:
                     errs.append(f"line {n}: segment_end t {e['t']} is before the last frame t {last_frame_t} (rule 5)")
-            if "unit" in e and e["unit"] not in SEGMENT_UNITS:
+            if "unit" in e and not enum_ok(e["unit"], SEGMENT_UNITS, newer):
                 errs.append(f"line {n}: segment_end unit {e['unit']!r} is not one of {list(SEGMENT_UNITS)}")
     return errs
 
@@ -191,9 +193,10 @@ def td_format_errors(e: dict[str, Any]) -> list[str]:
     """The format errors of one ``trust_decision`` event."""
     n = e.get("_line", "?")
     errs = []
+    newer = is_newer_minor(e.get("spec_version"))  # VER-8: unknown enum values of a newer minor version are allowed
     if not isinstance(e.get("is_final"), bool):
         errs.append("is_final must be a boolean")
-    if e.get("action") not in ACTIONS:
+    if not enum_ok(e.get("action"), ACTIONS, newer):
         errs.append(f"action {e.get('action')!r} is not one of {list(ACTIONS)}")
     if "p_top1" not in e:
         errs.append("p_top1 is required (number or null)")
@@ -202,7 +205,7 @@ def td_format_errors(e: dict[str, Any]) -> list[str]:
     sem = e.get("score_semantics")
     if sem is None:
         errs.append("score_semantics is required")
-    elif sem not in SCORE_SEMANTICS:
+    elif not enum_ok(sem, SCORE_SEMANTICS, newer):
         errs.append(f"score_semantics {sem!r} is not one of {list(SCORE_SEMANTICS)}")
     if "shown" in e:
         sh = e["shown"]
@@ -223,6 +226,8 @@ def td_format_errors(e: dict[str, Any]) -> list[str]:
         errs.append("config_id must be a string")
     if "input" in e and not isinstance(e["input"], dict):
         errs.append("input must be an object")
+    if "declaration" in e and not isinstance(e["declaration"], dict):
+        errs.append("declaration must be an object (TD-F2)")
     if "latency_s" in e and not (_num(e["latency_s"]) and e["latency_s"] >= 0):
         errs.append("latency_s must be a number >= 0")
     errs += _td_version_errors(e)
@@ -253,9 +258,14 @@ def _td_version_errors(e: dict[str, Any]) -> list[str]:
     return []
 
 
+def is_text_decision(e: dict[str, Any]) -> bool:
+    """True for a text-profile decision: ``profile`` absent or "text" (PRF-4: other profiles are never text)."""
+    return e.get("profile", "text") == "text"
+
+
 def _text_offer(e: dict[str, Any]) -> bool:
     """True for a text-profile OFFER, ASK or OFFER_WORDS (``shown`` lists candidates; TD-12)."""
-    return e.get("action") in OFFER_ACTIONS and e.get("profile") not in ("intent", "control")
+    return e.get("action") in OFFER_ACTIONS and is_text_decision(e)
 
 
 def blank_candidates(e: dict[str, Any]) -> int:
@@ -322,10 +332,14 @@ def td_final_errors(events: list[dict[str, Any]]) -> list[str]:
 
 
 def acted_texts(decisions: list[dict[str, Any]]) -> list[str | None]:
-    """The texts a bridge may act on: ``shown[0]`` of each final COMMIT (None if text is omitted)."""
+    """The texts a bridge may act on: ``shown[0]`` of each final text COMMIT (None if text is omitted).
+
+    A decision of another profile (or of an unknown profile, VER-8 / PRF-4) is never a text to act on.
+    """
     out: list[str | None] = []
     for e in decisions:
-        if e.get("type") == "trust_decision" and e.get("is_final") is True and e.get("action") == "COMMIT":
+        if (e.get("type") == "trust_decision" and e.get("is_final") is True and e.get("action") == "COMMIT"
+                and is_text_decision(e)):
             sh = e.get("shown")
             out.append(sh[0] if isinstance(sh, list) and sh else None)
     return out
@@ -652,10 +666,39 @@ def build_vectors() -> list[Vector]:
         {"kind": "decisions", "decisions": 2, "final": 2, "acted": [], "offered": [["ab"], []], "advisories": 0},
         writer=_w_lines([_td(seq=0, action="OFFER", shown=["", "ab"]),
                          _td(seq=1, utterance=1, action="OFFER", shown=[" "], spec_version="0.1")]))
+    # --- NTS 1.0 RC3: unknown enumeration values (VER-6 ... VER-10), integer range (GEN-10), declaration (TD-F2)
+    v11 = {"spec_version": "1.1"}
+    add("F57", "f57-input-v11-unknown-enums.jsonl", "accept", "1.0 RC3 11.2.1 (VER-8)",
+        'Input stream with header spec_version "1.1": segment_end unit "sentence" and hypothesis score_semantics '
+        '"rank" (unknown values of a newer minor version): accepted',
+        {"kind": "input", "n_frames": 2, "segments": 1, "segment_ends": 1, "hypotheses": 1},
+        writer=_input(*f2a, _hyp(score_semantics="rank"), {"type": "segment_end", "t": 0.1, "unit": "sentence"},
+                      header=_header(spec_version="1.1")))
+    add("F58", "f58-td-v11-unknown-enums.jsonl", "accept", "1.0 RC3 11.2.1 (VER-8, VER-10)",
+        'spec_version "1.1": a final decision with the unknown action "CONFIRM" and score_semantics "conformal_p", '
+        'and a final COMMIT of the unknown profile "gesture": accepted, never acted on; then a text COMMIT',
+        {"kind": "decisions", "decisions": 3, "final": 3, "acted": ["cd"], "offered": [], "advisories": 0},
+        writer=_w_lines([_td(seq=0, action="CONFIRM", score_semantics="conformal_p", **v11),
+                         _td(seq=1, utterance=1, profile="gesture", shown=["ef"], **v11),
+                         _td(seq=2, utterance=2, shown=["cd"], **v11)]))
+    add("F59", "f59-td-v10-unknown-action.jsonl", "reject", "1.0 RC3 11.2.1 (VER-7) / 6.2 (TD-F1)",
+        'spec_version "1.0": the unknown action "CONFIRM" (1.0 data must use the values of 1.0)',
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(action="CONFIRM", **v10)]))
+    add("F60", "f60-td-seq-2-53.jsonl", "reject", "1.0 RC3 4.1 (GEN-10)",
+        "seq is 9007199254740992 (2^53): above the largest portable JSON integer 2^53 - 1",
+        failing="FEP1-TD-FORMAT", writer=_w_lines([_td(seq=2**53, **v10)]))
+    add("F61", "f61-td-seq-max.jsonl", "accept", "1.0 RC3 4.1 (GEN-10)",
+        "seq and utterance are 9007199254740991 (2^53 - 1, the largest portable JSON integer)",
+        {"kind": "decisions", "decisions": 1, "final": 1, "acted": ["ab"]},
+        writer=_w_lines([_td(seq=2**53 - 1, utterance=2**53 - 1, **v10)]))
+    add("F62", "f62-td-declaration-list.jsonl", "reject", "1.0 RC3 6.2 (TD-F2)",
+        "declaration is a list, not an object", failing="FEP1-TD-FORMAT",
+        writer=_w_lines([_td(declaration=[{"status": "match"}], **v10)]))
     vs.sort(key=lambda v: v.vid)
     return vs
 
 
 __all__ = ["ACTIONS", "ADVISORY_CHECKS", "CHECKS", "OFFER_ACTIONS", "acted_texts", "blank_candidates", "build_vectors",
+           "is_text_decision",
            "check_events", "check_file", "consume", "offered_texts", "read_events", "stream_kind", "summarize",
            "td_final_errors", "td_format_errors", "td_shown_advisories", "td_spec_version"]
