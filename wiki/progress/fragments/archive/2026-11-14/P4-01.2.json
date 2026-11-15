@@ -1,0 +1,5 @@
+{
+  "id": "P4-01",
+  "notes": "B2T '25 started in M6-06. Done: B2T '25, Toronto sEMG, SpanishBCBL replay adapters; generic decoder-output adapters in P4-07 (CTC logits, text n-best). Downloads 2026-11-14 (R-22 agent): Willett handwriting done (Dryad deposit via Zenodo 4695519, CC0, 1.41 GB, SHA-256 match, extracted 6.10 GB) and KT-sEMG done (Dataverse v1.1, CC BY 4.0, 88/88 MD5 match, 20.98 GB), both under C:/Users/zhang/bci-data/raw/. emg2qwerty NOT downloaded: 308.4 GB archive needs user approval (licence README CC BY-NC 4.0 vs LICENSE file CC BY-NC-SA 4.0). Open: Willett and KT-sEMG replay adapters; emg2qwerty after user decision.",
+  "_tracker_updated": "2026-11-14T17:40:00-08:00"
+}

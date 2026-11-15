@@ -3,7 +3,7 @@ title: KT-sEMG dataset (Nokia, keyboard typing sEMG)
 type: entity
 tags: [dataset, emg, typing, cc-by, licence-clean]
 sources: []
-updated: 2026-11-10
+updated: 2026-11-14
 ---
 
 # KT-sEMG (Keyboard Typing via Surface Electromyography)
@@ -17,6 +17,15 @@ updated: 2026-11-10
 - **Participants**: one "nonprofessional typist" doing natural typing (paper).
 - **Volume**: "over 148,000 labeled gestures" (keystrokes). The paper used 1,960 valid 15-second blocks. Hours: not stated (unverified).
 - **Paper result**: CTC-trained conv + LSTM, "almost 91% character-level accuracy", processing time under 100 ms.
+
+## Local copy (P4-01, 2026-11-14)
+- **Source**: Harvard Dataverse `doi:10.7910/DVN/AV6XIR`, version 1.1 (released 2021-09-28). Public: no login, no guestbook, no restricted files (Dataverse API, 2026-11-14). Terms: CC BY 4.0, copyright 2021 Nokia.
+- **Files**: 88 (README.txt, and per run `runNN.csv`, `runNN_keys.txt`, `runNN_ts.txt`). Total **20,982,743,251 bytes** as original files. Dataverse ingested `run2.csv` and `run3.csv` as tables, so the API shows 20,996,304,401 bytes; we download those two with `?format=original`.
+- **Checksums**: Dataverse gives an MD5 for each file. The list (id, name, size, MD5) is in `C:\Users\zhang\bci-data\raw\kt-semg.manifest.tsv`.
+- **Local path**: `C:\Users\zhang\bci-data\raw\kt-semg\` (outside the repo, never committed).
+- **Download / resume**: `bash C:/Users/zhang/bci-data/scripts/kt-semg-download.sh` (skips complete files, resumes partial files with `curl -C -`). Log: `C:\Users\zhang\bci-data\raw\kt-semg.download.log`.
+- **Check**: `bash C:/Users/zhang/bci-data/scripts/verify-p4-01.sh`.
+- **Status**: **done** (2026-11-14 17:35). 88 of 88 files match the Dataverse size and MD5; total 20,982,743,251 bytes. Plain CSV and text, no archive to extract. The first pass got the ingested `.tab` form of `run2.csv` and `run3.csv` (a CRLF bug in the manifest); both were downloaded again as originals and now match.
 
 ## Fit for Fidetype
 | Use | Fit | Why |

@@ -91,7 +91,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [BCBL](entities/bcbl.md) | Basque lab that recorded and owns the data |
 | [SpanishBCBL dataset](entities/spanishbcbl-dataset.md) | v1 data. Public (HF, not gated), CC BY-NC 4.0, ~268 GB MEG. The only public typing-MEG set we know of. Inspection findings for M1 |
 | [EnglishBCBL dataset](entities/englishbcbl-dataset.md) | v2 data. 90 h MEG. Embargoed |
-| [emg2qwerty](entities/emg2qwerty.md) | *Partial.* Meta's wrist-EMG typing dataset. 108 users, 346 h, 308.4 GB. CC-BY-NC-4.0, HDF5 at 2 kHz. Sibling Meta EMG sets are also NC. CC BY alternatives listed |
+| [emg2qwerty](entities/emg2qwerty.md) | *Partial.* Meta's wrist-EMG typing dataset. 108 users, 346 h, 308.4 GB (not downloaded: needs user approval). NC licence (README BY-NC, LICENSE file BY-NC-SA), HDF5 at 2 kHz. Sibling Meta EMG sets are also NC. CC BY alternatives listed |
 | [BIDS](entities/bids.md) | Brain Imaging Data Structure. Community data standard. Model for NeuralTextStream governance. Bridge, not rival |
 | [Lab Streaming Layer](entities/lab-streaming-layer.md) | De facto real-time lab streaming tool (SCCN/UCSD). Raw signals, not decoder output |
 | [IEEE P2731](entities/ieee-p2731.md) | Draft IEEE BCI terminology standard. Authorised 2018, unpublished. No stream format. Related venues: ISO/IEC SC 43, TS 27571 |
@@ -101,8 +101,8 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [BrainFlow](entities/brainflow.md) | MIT library. Uniform raw-data API across many boards. Adapter priority 1 with LSL. M6-08: our BrainFlow → LSL bridge, tested with the Synthetic board; M6-13: bridge handles wall-clock steps (`clock_steps`) |
 | [Dryad intracortical datasets](entities/dryad-intracortical-datasets.md) | CC0. Willett 2021 handwriting, Brain-to-Text '24/'25, inner speech. Sizes. Code repos unlicensed |
 | [Brain-to-Text '25](entities/brain-to-text-25.md) | CC0 intracortical speech (T15), 11.59 GB. RNN logits + cue sentences in a 58 MB file: downloaded 2026-11-10, adapter `fidetype.adapters.b2t25` |
-| [Willett 2021 handwriting](entities/willett-handwriting-2021.md) | CC0 intracortical handwriting (T5), 1.41 GB, 1,000 sentences. FALCON H2 copy on DANDI (CC BY 4.0) |
-| [KT-sEMG (Nokia)](entities/kt-semg-dataset.md) | CC BY 4.0 forearm sEMG typing, 32 ch at 2000 Hz, ms keystrokes, one typist, 21.0 GB |
+| [Willett 2021 handwriting](entities/willett-handwriting-2021.md) | CC0 intracortical handwriting (T5), 1.41 GB, 1,000 sentences. Local copy (2026-11-14, from the Dryad deposit on Zenodo). FALCON H2 copy on DANDI (CC BY 4.0) |
+| [KT-sEMG (Nokia)](entities/kt-semg-dataset.md) | CC BY 4.0 forearm sEMG typing, 32 ch at 2000 Hz, ms keystrokes, one typist, 21.0 GB. Local copy (2026-11-14) |
 | [Toronto sEMG typing](entities/toronto-semg-typing-dataset.md) | CC BY 4.0 sEMG typing, 19 people × 2 sessions, 16 ch at 2 kHz, 2.77 GB. Isolated key presses, no text. Downloaded 2026-11-11, adapter `fidetype.adapters.toronto_semg` |
 | [BrainGate recalibration dataset](entities/braingate-recalibration-dataset.md) | Wilson et al. 2025, Dryad CC0 1.0, T5 closed-loop 2D cursor 2016-2020, 1.69 GB. Not downloaded: the Dryad file API needs a token (2026-11-14) |
 

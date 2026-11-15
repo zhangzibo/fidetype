@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T17:35:00-08:00",
+  "updated": "2026-11-14T17:40:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8). 2026-11-13 (user decision): paper writing and publishing are decoupled from the research project. They form the PUB track, which has no deadline, never counts as late and is not part of the M1-M7 target. M3 and M4 are research milestones; the roadmap never waits on a paper.",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -113,8 +113,8 @@
      "started_at": "2026-11-14T17:05:00-08:00", "finished_at": "2026-11-14T17:20:00-08:00", "approx_times": true,
      "agent_runs": [{"label": "R-21 lint follow-ups", "duration_s": 331.401, "tokens": 130817, "tool_uses": 46}],
      "orchestrator_only": false, "notes": "Follow-ups from lint R-20 (ddfda12). overview.md: NTS 1.0 RC2, lookahead result, collector, P4-07 adapters, LTT/ACI, M4-12 interim (dedicated L0 greedy PER 0.2574 on T15 val 701 vs 0.6954 before and 0.0954 published; 0 commits, 0 wrong commits). roadmap-standard.md: src/ 38,500 Python lines in 105 files at bcabf04 (+12,808 test lines), 11.5k (2026-11-10) kept as history; dated note 'Actual order so far: Python, TypeScript, Rust; C not started. Plan change pending user decision.' (diagram 11 unchanged). New concept pages: fep-process, trust-decision, learn-then-test, adaptive-conformal-inference (each linked from 2+ pages, in index). Tracker: R-20 and P4-07 agent stats filled. Agent stats for this run: filled by the orchestrator later."},
-    {"id": "R-22", "milestone": "R", "title": "SDK order decision: NTS 1.0 SDKs = Python, TypeScript, Rust; C core after 1.0 (roadmap P2, diagram 11)", "status": "done",
-     "started_at": "2026-11-14T17:05:00-08:00", "finished_at": "2026-11-14T17:20:00-08:00", "approx_times": true,
+    {"id": "R-22", "milestone": "R", "title": "SDK order decision (NTS 1.0 SDKs = Python, TypeScript, Rust; C core after 1.0) + P4-01 dataset downloads (Willett, KT-sEMG; emg2qwerty waits for user)", "status": "done",
+     "started_at": "2026-11-14T17:05:00-08:00", "finished_at": "2026-11-14T17:40:00-08:00", "approx_times": true,
      "agent_runs": [{"label": "R-22 SDK order + P4-01 downloads agent", "duration_s": null, "tokens": null, "tool_uses": null}],
      "orchestrator_only": false, "notes": "User let the orchestrator decide. Decision 2026-11-14: NTS 1.0 SDKs are Python, TypeScript and Rust (exist, 283 identical conformance vectors, ready to publish). C core (libnts) moves to after 1.0, still planned for embedded and FFI. roadmap-standard.md P2: dated decision replaces 'Plan change pending user decision'; priority table, exit criteria, sequencing, scope-creep rule, P3 dependency and effort row updated. Diagram 11: P2 box and gate 'Spec 1.0 RC + Python/TS/Rust 1.0'; slides.json caption; render checked with headless Edge. Tracker P2 milestone note and P2-02 note updated."},
 
@@ -806,7 +806,7 @@
     {"id": "P4-01", "milestone": "P4", "title": "Replay adapters: Brain-to-Text '25, Willett handwriting, KT-sEMG, Toronto sEMG (clean); SpanishBCBL, emg2qwerty (research)", "status": "in_progress",
      "started_at": null, "finished_at": null, "approx_times": false,
      "agent_runs": [],
-     "orchestrator_only": false, "notes": "B2T '25 started in M6-06. Done: B2T '25, Toronto sEMG, SpanishBCBL replay adapters; generic decoder-output adapters in P4-07 (CTC logits, text n-best). Open: Willett handwriting, KT-sEMG, emg2qwerty (need downloads)."},
+     "orchestrator_only": false, "notes": "B2T '25 started in M6-06. Done: B2T '25, Toronto sEMG, SpanishBCBL replay adapters; generic decoder-output adapters in P4-07 (CTC logits, text n-best). Downloads 2026-11-14 (R-22 agent): Willett handwriting done (Dryad deposit via Zenodo 4695519, CC0, 1.41 GB, SHA-256 match, extracted 6.10 GB) and KT-sEMG done (Dataverse v1.1, CC BY 4.0, 88/88 MD5 match, 20.98 GB), both under C:/Users/zhang/bci-data/raw/. emg2qwerty NOT downloaded: 308.4 GB archive needs user approval (licence README CC BY-NC 4.0 vs LICENSE file CC BY-NC-SA 4.0). Open: Willett and KT-sEMG replay adapters; emg2qwerty after user decision."},
     {"id": "P4-02", "milestone": "P4", "title": "LSL in/out + BrainFlow/OpenBCI adapters (synthetic-board test)", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,
      "agent_runs": [],
