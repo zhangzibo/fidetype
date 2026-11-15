@@ -745,3 +745,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Emission vs dedicated L 0: ready +120 ms (200 ms), +220 ms (300 ms), +100 ms (500 ms).
 - Incident: the copied M4-12 `run.py` had overwritten the 8 M4-01/02 per-trial trust files in the shared derived folder (aggregates survive in git); fixed with an own derived folder (`experiments/2026-11-14-m4-12-decoder-retrain/results.md`).
 - Updated `questions/lookahead-latency-accuracy.md` (rows + figure), `index.md`.
+
+## [2026-11-15] query | M2-19: trust config re-tuned for the M4-12 T15 decoder
+- Plan committed before the runs (`experiments/2026-11-15-m2-19-trust-retune/plan.md`, `0415f4c`); configs frozen and committed before the test run (`0727ae1`).
+- Old config `tcfg-f5ca0020b3b8fce2` came from M4-06 (online logits of the published decoder, split A, LTT α 0.05, δ 0.1). Same recipe refitted on `val_select` (fit-A 371, clean cal 351); `val_eval` (701) held out.
+- Dedicated L 0: commit_p 0.4 (LTT λ̂ 0.33), 9/701 commits, 6 wrong (0.0086, CP95 [0.0031, 0.0185]): guarantee holds on this draw. eWPM 6.03 (old 5.94, always-commit 5.60, gaze 4.02). Stream = batch 701/701. Shared L 0 and CRC: same picture.
+- Uniform control: 186/300 commits (162 empty), because the grid set the guard limit to 1.0. Post hoc M2-18 commit gate: 0/300, 7 commits / 4 wrong on `val_eval`.
+- Updated `concepts/streaming-trust-layer.md` (new section), `concepts/learn-then-test.md`, `index.md`.

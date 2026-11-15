@@ -1,0 +1,21 @@
+{
+ "n": 300,
+ "conditions": {
+  "real": {
+   "n_commit": 4,
+   "commit_cp95_upper": 0.03378489626191785,
+   "n_wrong_commit": 4
+  },
+  "frame_shuffled": {
+   "n_commit": 0,
+   "commit_cp95_upper": 0.012220974694293552,
+   "n_wrong_commit": 0
+  },
+  "uniform": {
+   "n_commit": 186,
+   "commit_cp95_upper": 0.6751647936958731,
+   "n_wrong_commit": 186
+  }
+ },
+ "config_id": "tcfg-e7e8c472f6d9ab33"
+}

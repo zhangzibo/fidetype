@@ -3,7 +3,7 @@ title: Learn then Test (LTT)
 type: concept
 tags: [conformal, risk-control, multiple-testing, calibration, trust, guarantee]
 sources: [learn-then-test, conformal-risk-control]
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 
 # Learn then Test (LTT)
@@ -37,6 +37,7 @@ It works for any model, without refitting. Unlike CRC, it does not need a monoto
 - B2T '25 (M2-13): with LTT the mean wrong-commit is 0.035 and the 95th percentile 0.056–0.061. With CRC the 95th percentile is 0.071–0.076. The eWPM cost of LTT is −0.4 % at 408 calibration trials ([M2-13 result](../questions/m2-13-conformal-result.md)).
 - Per session: LTT needs n ≥ 45 labelled items of that session (α = 0.05, δ = 0.1, 0 errors) ([per-session risk control](../questions/per-session-risk-control.md)).
 - The [open benchmark](open-benchmark.md) has a CRC / LTT guarantee column.
+- Our T15 GRU decoder (M2-19, 2026-11-15): LTT on 351 calibration trials gave λ̂ 0.33; the grid commit_p 0.4 was stricter. Held-out wrong-commit 0.0086 (CP95 upper 0.0185) at a commit rate of only 0.013, with 6 of 9 commits wrong ([streaming trust layer](streaming-trust-layer.md#re-tuned-config-for-our-retrained-t15-decoder-m2-19-2026-11-15)).
 
 ## Limits
 - The grid must be fixed before the data ([LTT](../sources/learn-then-test.md)).

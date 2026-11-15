@@ -3,3 +3,24 @@
 2026-11-15 14:12:34 fit dedicated_0/crc: tcfg-aa410b001a0f1db5 grid commit_p 0.4 lambda_hat 0.30618316152484526 (feasible True, bound 0.048295454545454544) -> commit_p 0.4; frame T 1.2385; cal commit 7/351 wrong 4
 2026-11-15 14:14:06 fit shared/ltt: tcfg-af10f34fd5cc03a5 grid commit_p 0.4 lambda_hat 0.33 (feasible True, bound 0.06214480347376596) -> commit_p 0.4; frame T 1.1945; cal commit 7/351 wrong 3
 2026-11-15 14:14:06 stage fit done
+2026-11-15 14:14:22 stage eval start (fidetype 0.0.1)
+2026-11-15 14:15:46 eval dedicated_0/ltt: commit 9/701 wrong 6 (0.0086, CP95 [0.0031, 0.0185]) eWPM 6.03; actions {'COMMIT': 9, 'OFFER': 692, 'ASK': 0, 'ABSTAIN': 0, 'OFFER_WORDS': 0}; stream==batch 701/701
+2026-11-15 14:15:50 eval dedicated_0/crc: commit 9/701 wrong 6 (0.0086, CP95 [0.0031, 0.0185]) eWPM 6.03; actions {'COMMIT': 9, 'OFFER': 692, 'ASK': 0, 'ABSTAIN': 0, 'OFFER_WORDS': 0}; stream==batch 701/701
+2026-11-15 14:17:20 baselines dedicated_0: always-commit eWPM 5.60 wrong 640/701; gaze 4.02; old frozen commit 0 eWPM 5.94
+2026-11-15 14:18:39 eval shared/ltt: commit 9/701 wrong 7 (0.0100, CP95 [0.0040, 0.0205]) eWPM 5.94; actions {'COMMIT': 9, 'OFFER': 692, 'ASK': 0, 'ABSTAIN': 0, 'OFFER_WORDS': 0}; stream==batch 701/701
+2026-11-15 14:20:08 baselines shared: always-commit eWPM 5.52 wrong 640/701; gaze 4.02; old frozen commit 0 eWPM 5.88
+2026-11-15 14:20:08 stage eval done
+2026-11-15 14:20:08 stage controls start (fidetype 0.0.1)
+2026-11-15 14:20:14 controls real: commits 4/300
+2026-11-15 14:21:14 controls frame_shuffled: commits 0/300
+2026-11-15 14:22:18 controls uniform: commits 186/300
+2026-11-15 14:22:18 stage controls done
+2026-11-15 14:22:18 stage tables start (fidetype 0.0.1)
+2026-11-15 14:22:18 stage tables done
+2026-11-15 14:23:21 posthoc gate controls real/base: commits 4/300
+2026-11-15 14:23:21 posthoc gate controls real/gated: commits 2/300
+2026-11-15 14:23:22 posthoc gate controls frame_shuffled/base: commits 0/300
+2026-11-15 14:23:22 posthoc gate controls frame_shuffled/gated: commits 0/300
+2026-11-15 14:23:23 posthoc gate controls uniform/base: commits 186/300
+2026-11-15 14:23:23 posthoc gate controls uniform/gated: commits 0/300
+2026-11-15 14:23:23 posthoc gate val_eval: commit 7 wrong 4 eWPM 6.03 stream==batch 701

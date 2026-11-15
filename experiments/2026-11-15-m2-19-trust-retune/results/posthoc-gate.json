@@ -1,0 +1,83 @@
+{
+ "base_config_id": "tcfg-e7e8c472f6d9ab33",
+ "gated_config_id": "tcfg-4e6143e37d1642f3",
+ "commit_gate": {
+  "min_chars": 1,
+  "min_words": 0,
+  "max_guard_risk": 1.0
+ },
+ "val_eval": {
+  "config_id": "tcfg-4e6143e37d1642f3",
+  "n": 701,
+  "n_commit": 7,
+  "commit_rate": 0.009985734664764621,
+  "commit_rate_cp95": [
+   0.004023943286311289,
+   0.02046563808495684
+  ],
+  "n_wrong_commit": 4,
+  "wrong_commit": 0.005706134094151213,
+  "wrong_commit_cp95": [
+   0.0015568527057122398,
+   0.014545037160906623
+  ],
+  "error_among_commits": 0.5714285714285714,
+  "error_among_commits_cp95": [
+   0.18405156764008307,
+   0.9010117215574921
+  ],
+  "guarantee_point_holds": true,
+  "guarantee_cp_upper_holds": true,
+  "n_commit_empty": 0,
+  "ewpm": 6.033017634549617,
+  "silent_error": 0.0,
+  "rate_offer": 0.9900142653352354,
+  "abstain_rate": 0.0,
+  "stream_equals_batch": 701,
+  "actions": {
+   "COMMIT": 7,
+   "OFFER": 694,
+   "ASK": 0,
+   "ABSTAIN": 0,
+   "OFFER_WORDS": 0
+  }
+ },
+ "controls": {
+  "real/base": {
+   "n": 300,
+   "n_commit": 4,
+   "n_commit_empty": 0,
+   "commit_cp95_upper": 0.03378489626191785
+  },
+  "real/gated": {
+   "n": 300,
+   "n_commit": 2,
+   "n_commit_empty": 0,
+   "commit_cp95_upper": 0.02387349757217365
+  },
+  "frame_shuffled/base": {
+   "n": 300,
+   "n_commit": 0,
+   "n_commit_empty": 0,
+   "commit_cp95_upper": 0.012220974694293552
+  },
+  "frame_shuffled/gated": {
+   "n": 300,
+   "n_commit": 0,
+   "n_commit_empty": 0,
+   "commit_cp95_upper": 0.012220974694293552
+  },
+  "uniform/base": {
+   "n": 300,
+   "n_commit": 186,
+   "n_commit_empty": 162,
+   "commit_cp95_upper": 0.6751647936958731
+  },
+  "uniform/gated": {
+   "n": 300,
+   "n_commit": 0,
+   "n_commit_empty": 0,
+   "commit_cp95_upper": 0.012220974694293552
+  }
+ }
+}

@@ -3,7 +3,7 @@ title: Streaming trust layer
 type: concept
 tags: [trust, streaming, real-time, provenance, risk-control, neuraltextstream, m4, commit-gate, v5]
 sources: [brain-to-text-25-copytask]
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 
 # Streaming trust layer
@@ -115,6 +115,23 @@ Latency: hypothesis route p50 0.44 ms, p95 0.63 ms. Frames route with a fresh de
 The benchmark v0.1 NTS files round log-probs to 6 decimals. With them, p_top1 moves by at most 3.4e-8. No action changed, but exact `==` equality then fails on most trials. Exact replay needs full-precision values.
 
 > **Our take:** the frozen config file is enough to rebuild the paper's split-A row in a streaming consumer, bit for bit. It is valid only with the decode_fn it was fitted with. On the hypothesis route the producer must apply the frozen frame temperature. M4-07 added a declaration for this (next sections).
+
+## Re-tuned config for our retrained T15 decoder (M2-19, 2026-11-15)
+Experiment: [2026-11-15-m2-19-trust-retune](../../experiments/2026-11-15-m2-19-trust-retune/results.md) ([plan](../../experiments/2026-11-15-m2-19-trust-retune/plan.md), committed before the runs). Data: T15 neural data (CC0), our M4-12 causal GRU-CTC (dedicated L 0, PER 0.2574) ([lookahead page](../questions/lookahead-latency-accuracy.md)).
+
+The M4-06 config `tcfg-f5ca0020b3b8fce2` was fitted on the online logits of the published decoder. On our decoder it gave 0 commits. We re-ran the same recipe (v4: guard, grid, [LTT](learn-then-test.md) α 0.05, δ 0.1, max rule) on `val_select` (fit-A 371, clean cal 351). We tested on the 701 held-out `val_eval` trials.
+
+| config (dedicated L 0) | commits | wrong-commit [CP95] | error among commits | eWPM | uniform control |
+|---|---|---|---|---|---|
+| old frozen `tcfg-f5ca0020b3b8fce2` | 0/701 | 0 | — | 5.94 | not run |
+| re-tuned `tcfg-e7e8c472f6d9ab33` (commit_p 0.4, guard limit 1.0) | 9/701 | 6 (0.0086) [0.0031, 0.0185] | 6/9 | 6.03 | **186/300 commit** |
+| re-tuned + M2-18 commit gate (post hoc) `tcfg-4e6143e37d1642f3` | 7/701 | 4 (0.0057) [0.0016, 0.0145] | 4/7 | 6.03 | 0/300 |
+
+- Always commit: eWPM 5.60, wrong-commit 0.913. Gaze alone: 4.02. Stream = batch 701/701 in all rows.
+- The guarantee holds on this draw (0.0086 < 0.05; CP95 upper also < 0.05). CRC (α 0.05) gave the same final config. The shared model gave the same picture (9 commits, 7 wrong).
+- The grid set `commit_max_risk` 1.0 again, so the guard did not limit COMMIT. Uniform streams then commit empty text (the [M2-18](#commit-gate-m2-18-opt-in) mechanism).
+
+> **Our take:** formal success, small practical value. The commit rate is 1.3 % and most commits are wrong. The per-trial wrong-commit risk stays low because the policy commits so little. At this decoder accuracy (sentence exact about 0.09) a precision-type risk is the better user claim. Every re-tune must run the null controls and keep the commit gate on.
 
 ## Incremental decoding (M4-08, opt-in)
 Experiment: [2026-11-13-m4-08-incremental](../../experiments/2026-11-13-m4-08-incremental/results.md) ([tables](../../experiments/2026-11-13-m4-08-incremental/results/tables.md)). Diagram: [14](../diagrams/index.html#s14).
