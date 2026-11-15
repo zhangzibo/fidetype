@@ -1,7 +1,0 @@
-{
-  "id": "R-20",
-  "agent_runs": [
-    {"label": "R-20 wiki lint pass 1", "duration_s": 350.61, "tokens": 137339, "tool_uses": 57}
-  ],
-  "_tracker_updated": "2026-11-14T17:15:00-08:00"
-}

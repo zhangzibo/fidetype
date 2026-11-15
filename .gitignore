@@ -70,3 +70,9 @@ desktop.ini
 # Job sentinels and merge locks (long-running experiment jobs write DONE when they finish)
 experiments/**/DONE
 wiki/progress/fragments/.merge.lock
+
+# R-24 hygiene decisions (2026-11-15; see wiki/questions/repo-hygiene.md)
+# H-4: local mirror of Claude's memory notes (tools/session/snapshot.js writes it; local only)
+/agent-memory/
+# H-5: archived tracker fragments (tracker.json holds the merged result; build.js does not read them)
+wiki/progress/fragments/archive/

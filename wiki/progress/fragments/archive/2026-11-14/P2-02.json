@@ -1,1 +1,0 @@
-{"id":"P2-02","notes":"After NTS 1.0 (decision 2026-11-14, R-22). The 1.0 SDK set is Python, TypeScript, Rust. The C core stays planned for embedded devices and FFI bindings."}

@@ -1,1 +1,0 @@
-{"id": "M4-12", "agent_runs": [{"label": "M4-12 decoder retrain (diagnosis, plan, 5 GPU runs, decode, accuracy + emission, incident fix, wiki, records)", "duration_s": 51145.195, "tokens": 306275, "tool_uses": 82}], "_tracker_updated": "2026-11-15T14:15:00-08:00"}

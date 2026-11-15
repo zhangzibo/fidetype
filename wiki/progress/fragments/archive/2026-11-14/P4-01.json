@@ -1,5 +1,0 @@
-{
- "id": "P4-01",
- "status": "in_progress",
- "notes": "B2T '25 started in M6-06. Done: B2T '25, Toronto sEMG, SpanishBCBL replay adapters; generic decoder-output adapters in P4-07 (CTC logits, text n-best). Open: Willett handwriting, KT-sEMG, emg2qwerty (need downloads)."
-}

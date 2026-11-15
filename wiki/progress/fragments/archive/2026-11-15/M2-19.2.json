@@ -1,2 +1,0 @@
-{"id": "M2-19", "agent_runs": [{"label": "M2-19 trust config re-tune (plan, fit, frozen configs, val_eval, controls, post hoc gate, wiki, records)", "duration_s": 1281.085, "tokens": 176105, "tool_uses": 61}],
- "_tracker_updated": "2026-11-15T15:05:00-08:00"}

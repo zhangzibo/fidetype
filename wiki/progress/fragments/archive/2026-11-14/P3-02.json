@@ -1,2 +1,0 @@
-{"id": "P3-02", "status": "in_progress", "started_at": "2026-11-14T10:50:00-08:00", "approx_times": true,
- "notes": "v0 (2026-11-14, with P3-01): processors validate (conformance checks; invalid event -> gap), trust (StreamingTrustLayer + WSTrustRunner loss rules; optional provenance ledger), redact (drop or HMAC shown, SEC-7), thin (drop provisional decisions without news). Not yet: per-user calibration, LM rescoring, segmenter, rate limiter."}

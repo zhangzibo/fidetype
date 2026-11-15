@@ -1,13 +1,13 @@
 # Paper 1: Fidetype
 
-Status: **final version for arXiv, v6 (2026-11-13; v5 2026-11-12), waiting for an arXiv endorsement.** v6 is a text-only revision (see "What changed in v6" in [`how-to-read-this-draft.md`](how-to-read-this-draft.md)). The final PDFs, the arXiv source package and the submission sheet are in [`final/`](final/) (see [`final/SUBMIT.md`](final/SUBMIT.md)). Draft v5 was the last draft before it. Read [`draft-v5.pdf`](draft-v5.pdf) and [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`reviews/round-5-final.md`](reviews/round-5-final.md). `draft-v0.pdf` ... `draft-v4.pdf` are the earlier drafts.
+Status: **final version for arXiv, v6 (2026-11-13; v5 2026-11-12), waiting for an arXiv endorsement.** v6 is a text-only revision (see "What changed in v6" in [`how-to-read-this-draft.md`](how-to-read-this-draft.md)). The final PDFs, the arXiv source package and the submission sheet are in [`final/`](final/) (see [`final/SUBMIT.md`](final/SUBMIT.md)). Read [`final/fidetype-paper1.pdf`](final/fidetype-paper1.pdf) and [`final/fidetype-paper1-supplement.pdf`](final/fidetype-paper1-supplement.pdf) first, then [`how-to-read-this-draft.md`](how-to-read-this-draft.md) and [`reviews/round-5-final.md`](reviews/round-5-final.md). The superseded draft PDFs v0-v5 (`draft-v0.pdf` ... `draft-v5-supplement.pdf`) were removed from the tree on 2026-11-15 (task R-24). Git history keeps them: for example `git show 59661ca:papers/paper1/draft-v5.pdf > draft-v5.pdf`.
 
 | File | What it is |
 |---|---|
 | `outline.md` | The plan: claims, tables T1–T7, figures F1–F7, results inventory R1–R27, gaps G1–G15 |
 | `style-notes.md` | What we learned from 5–6 published papers about structure, numbers and figures |
 | `how-to-read-this-draft.md` | Guide for the author: what each section is for, where the TODOs are, what to decide |
-| `draft-v0.pdf` ... `draft-v3.pdf` | The compiled drafts (our own work, committed) |
+| `draft-v0.pdf` ... `draft-v5*.pdf` | Superseded drafts. Removed from the tree on 2026-11-15 (R-24); still in git history (commit `59661ca` and earlier) |
 | `reviews/` | Round-1 reviews, the point-by-point response, and the round-2 change list |
 | `analysis_r1.py` | Re-analysis of committed result files for v1 → `data/r1-derived.json` |
 | `latex/main.tex`, `latex/supplement.tex`, `latex/sections/*.tex`, `latex/refs.bib` | LaTeX source: main paper and supplement. One file per section |
@@ -51,7 +51,7 @@ bash papers/paper1/final/make-arxiv.sh
 
 PowerShell: `& C:\Users\zhang\tools\tectonic\tectonic.exe -X compile main.tex --outdir build --keep-logs`.
 
-`latex/build/` is git-ignored. Only `draft-v0.pdf` (and later versions) is committed.
+`latex/build/` is git-ignored. Only the final PDFs in `final/` are committed. Do not commit new draft PDFs: git history and the LaTeX source are enough.
 
 ## Rules
 

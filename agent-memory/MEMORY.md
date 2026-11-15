@@ -1,7 +1,0 @@
-- [Fidetype project goal](project-bci-research-goal.md) — Fidetype: OpenTelemetry-level vendor-neutral standard + trust layer for neural input (EMG/EEG/MEG/implants), from Brain2Qwerty; success = decoders emitting NeuralTextStream; multi-year; code targets M1-M7 by 2026-11-15 (= v0.1 only); 2026-11-10: build full OTel-scale ecosystem ourselves, user owns outreach; refs layout + licence notes
-- [Output style](feedback-output-style.md) — write ~80% ASD-STE100; prefer diagrams > HTML pages > explainer videos
-- [Orchestrator mode](feedback-orchestrator-mode.md) — main chat only plans/delegates; all writing, code, tool use via subagents
-- [Commit authority](feedback-commit-authority.md) — Claude decides commits/pushes itself; never third-party/data/secrets; ask only for risky git ops
-- [Papers decoupled](project-papers-decoupled.md) — paper writing/review/publishing is a separate no-deadline track (expect 50-60x longer); research never waits on it
-- [Agent load limit](feedback-agent-load-limit.md) — up to 4 subagents at once, 1 GPU job; isolate timing jobs with CPU pinning rather than serialising
-- [Spec docs style](project-spec-docs-style.md) — model NTS spec docs on Python docs / C standard / OTel spec structure; RC1 page is only a start (roadmap P8-05)

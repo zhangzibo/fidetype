@@ -765,3 +765,12 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New `tools/hygiene/check.js` (forbidden files, secrets, e-mails, size) and `tools/hygiene/links.js` (relative links and anchors); CI job `hygiene`. `.gitignore`: tool caches, node_modules, Rust target, model formats, job sentinels.
 - README.md rewritten for newcomers (what NTS is, OpenTelemetry analogy table, status, architecture, quickstarts per SDK, docs links, related projects, layout, contributing, licence and data rules).
 - New docs index `docs/README.md` + `getting-started.md`, `concepts.md`, `sdks.md`, `collector.md`, `conformance.md`. SDK READMEs: status note and current vector counts (v0.1 65, fep-0005 44). CONTRIBUTING: CI and hygiene check.
+
+## [2026-11-15] lint | R-24: repository hygiene decisions H-1 … H-9 applied
+- The orchestrator decided the nine R-23 judgement calls. `questions/repo-hygiene.md` section 3 marks each one decided or done.
+- H-1: `LICENSES/DATA.md` names the 9 result files with example decoded texts. They stay. New rule (DATA.md, CONTRIBUTING.md, checklist): new experiments commit no per-trial decoded or stimulus text; aggregates only.
+- H-2: commits now use the GitHub noreply address (repository-local git config). Past commits unchanged.
+- H-4, H-5: `agent-memory/` and `wiki/progress/fragments/archive/` are untracked and git-ignored; local copies stay. CLAUDE.md marks the mirror "local only, not committed".
+- H-6: the 8 superseded Paper 1 draft PDFs (2.5 MB) are removed from the tree; `final/` stays; git history keeps the drafts. H-7: the empty `run.err.log` is removed.
+- H-3, H-8, H-9: checklist rules 9–12. HANDOFF.md entries before 2026-11-13 moved to `docs/archive/handoff-2026-11-08-to-2026-11-12.md` (HANDOFF 120 kB → 58 kB).
+- SDK READMEs: "59 of the 60 checks" (`NTS-LEAK-TRUTH` is Python only).

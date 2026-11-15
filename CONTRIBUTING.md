@@ -61,6 +61,7 @@ For a large change, open an issue or a Discussion first. Then the maintainers ca
 ## 5. Data and licences
 - **Never commit datasets.** This includes raw recordings, preprocessed caches, participant data, model weights trained on third-party data, and third-party PDFs. The `data/` folder is git-ignored.
 - **Research-only data.** Some datasets that we use (for example, SpanishBCBL and emg2qwerty) are **CC BY-NC**. Use them only for research and benchmarks. Dataset loaders must download from the original source. They must not redistribute data.
+- **Experiment results: aggregates only.** New experiments must not commit per-trial decoded text or stimulus (target) text. Write per-trial outputs outside the repository (for example `~/bci-data/derived/<experiment>/`, or the folder that `FIDETYPE_DERIVED` names). Commit only `plan.md`, `results.md` and aggregate numbers. See [LICENSES/DATA.md](LICENSES/DATA.md).
 - **Provenance.** Weights for any product use come only from CC0 data or from consented data that we own. Record which data trained which weights.
 - **Code.** All code is Apache-2.0. Do not copy code with an incompatible licence. For example, Meta's Brain2Qwerty code is CC BY-NC, so Fidetype contains none of it.
 

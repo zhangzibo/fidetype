@@ -33,7 +33,7 @@ Still open for a journal (not for arXiv): the IOP JNE template switch, a cover l
 
 ## Earlier drafts
 
-The last draft before the final version was [`draft-v5.pdf`](draft-v5.pdf) (22 pages: main text, references, Appendix A) with a separate supplement [`draft-v5-supplement.pdf`](draft-v5-supplement.pdf) (Sections S1-S22, 17 pages). The earlier drafts ([v0](draft-v0.pdf) ... [v4](draft-v4.pdf)) stay for comparison. The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
+The last draft before the final version was `draft-v5.pdf` (22 pages: main text, references, Appendix A) with a separate supplement `draft-v5-supplement.pdf` (Sections S1-S22, 17 pages). The draft PDFs v0-v5 were removed from the tree on 2026-11-15 (R-24); get them from git history, for example `git show 59661ca:papers/paper1/draft-v5.pdf > draft-v5.pdf`. The final PDFs are in [`final/`](final/). The paper is in normal academic English. This guide is in simple English. Sections 1-7 below were written for v1; section and figure numbers there refer to v1.
 
 ## What changed in v6 (pre-submission revision, 2026-11-13)
 

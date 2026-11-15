@@ -48,5 +48,22 @@ Some committed experiment results contain short texts from SpanishBCBL. A check 
 
 - `experiments/2026-11-08-m2-real-keystroke/results/trials.json`: per-trial target **and typed** texts plus key labels of 20 test blocks. This is per-participant behavioural data. **Removed from the tip of the tree on 2026-11-11** (task M5-12). The file now lives outside the repository, at `~/bci-data/derived/2026-11-08-m2-real-keystroke/trials.json`. `run.py` reads and writes it there; the environment variable `FIDETYPE_DERIVED` overrides the root. A `.gitignore` rule (`experiments/**/results/trials.json`) blocks it from coming back. **History note:** we did not rewrite git history. Older commits (first added in `074c3b0`, 2026-11-08) still contain the file.
 - Example sentences in `results.md` files and in `examples` fields of `experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json` (a few target sentences each).
+- **Example decoded texts (R-23 audit, decision R-24 on 2026-11-15).** Nine committed result files hold example pairs of a stimulus (target) sentence and the decoder's top-1 text. They are model outputs on public datasets, not typed text. They stay in the tree. Each file keeps the licence of its source dataset:
+
+  | File | Pairs | Source data |
+  |---|---|---|
+  | `experiments/2026-11-08-m1c2-beam-lm/results/results.json` | 30 | SpanishBCBL MEG (CC BY-NC 4.0) |
+  | `experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full/results.json` | 30 | SpanishBCBL MEG (CC BY-NC 4.0) |
+  | `experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/results.json` | 30 | SpanishBCBL MEG (CC BY-NC 4.0) |
+  | `experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r5-medium/results.json` | 30 | SpanishBCBL MEG (CC BY-NC 4.0) |
+  | `experiments/2026-11-12-paper1-r1-analyses/gpu-seeds/results/beam-m1-09-r4b-full-medium-s1/results.json` | 30 | SpanishBCBL MEG (CC BY-NC 4.0) |
+  | `experiments/2026-11-12-paper1-r1-analyses/gpu-seeds/results/beam-m1-09-r4b-full-medium-s2/results.json` | 30 | SpanishBCBL MEG (CC BY-NC 4.0) |
+  | `experiments/2026-11-08-m2-real-keystroke/results/lm.json` | 180 (15 configurations x the same 12 sentences) | SpanishBCBL MEG (CC BY-NC 4.0) |
+  | `experiments/2026-11-08-m2-real-keystroke/results/run1-uncalibrated-b/lm.json` | 96 | SpanishBCBL MEG (CC BY-NC 4.0) |
+  | `experiments/2026-11-11-emg-toronto/results/trust.json` | 36 | Toronto sEMG (CC BY 4.0) |
+
+## Rule for new experiments (R-24, 2026-11-15)
+
+New experiments must **not** commit per-trial decoded text or stimulus text. Write per-trial outputs to `~/bci-data/derived/<experiment>/` (or the root that `FIDETYPE_DERIVED` names). Commit only `plan.md`, `results.md` and **aggregate numbers** (rates, counts, intervals). The nine files above are the last exceptions. The same rule is in [CONTRIBUTING.md](../CONTRIBUTING.md) and in the [repository hygiene checklist](../wiki/questions/repo-hygiene.md).
 
 The benchmark split files (`src/fidetype/benchmark/splits/v0.1/`) hold only trial ids, cluster labels and SHA-256 hashes of the truth texts. No text.

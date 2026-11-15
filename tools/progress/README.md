@@ -12,7 +12,7 @@ Several agents may run at the same time. If each one edits `tracker.json` by tex
 wiki/progress/fragments/<task-id>.json
 ```
 
-`node tools/progress/build.js` merges all fragments into `tracker.json`, then moves them to `wiki/progress/fragments/archive/<date>/`. After the merge, `tracker.json` is the source of truth again. Commit `tracker.json`, `index.html` and the archived fragment.
+`node tools/progress/build.js` merges all fragments into `tracker.json`, then moves them to `wiki/progress/fragments/archive/<date>/`. After the merge, `tracker.json` is the source of truth again. Commit `tracker.json` and `index.html`. The archive folder is local only: it is git-ignored since R-24 (2026-11-15), because `tracker.json` already holds the merged result and the build never reads the archive.
 
 ### Fragment format
 
