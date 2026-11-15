@@ -1,0 +1,10 @@
+{
+  "id": "M4-12",
+  "milestone": "M4",
+  "title": "Retrain the causal lookahead decoder near the published T15 recipe; rerun the lookahead sweep",
+  "status": "in_progress",
+  "started_at": "2026-11-14T11:40:00-08:00",
+  "approx_times": true,
+  "notes": "Pre-declared plan experiments/2026-11-14-m4-12-decoder-retrain/plan.md (commit c34b087, 2 addenda). Diagnosis of M4-01/02: about 3 % of the published B2T '25 trial passes (4,560 steps) at a 10x lower LR (5e-4 vs 5e-3), Adam eps 1e-8 vs 0.1; L 0 model under-fitted (train CTC 2.43 vs 0.81 at L 500 ms). New recipe: 10,000 steps x batch 96, LR 5e-3 cosine to 1e-4, AdamW eps 0.1, wd 1e-3, Xavier/orthogonal init, input dropout 0.2, noise 1.0 + offset 0.2 + random cut 0-3; model class and eval code unchanged. val_eval 701 trials: dedicated L 0 greedy PER 0.2574 (was 0.6954), WER T=1 0.3998 (was 0.9307); shared L 0..500 ms 0.2634 / 0.2614 / 0.2623 / 0.2612 / 0.2608 / 0.2617 (flat; was 0.6565 -> 0.3687); dedicated L 500 ms 0.2988 (was 0.3487). Published 0.101 (val partition, README) / 0.0954 (online): about 2.5x. Emission: dedicated L 500 ms ready +100 ms vs L 0 (M4-02: -180 ms). Conclusion: the M4-02 lookahead gain was an under-training artefact. GPU about 11.9 h (fixed0 3.85, fixed25 about 4.1 active, shared 3.93). Events: PC slept 17:57-21:57 (resumed, no loss); paused 22:44-23:49 for a game; queue now hidden (launch_queue.py, CREATE_NO_WINDOW). Open: dedicated 200 ms and 300 ms runs (after a hold for the quiet-machine latency rerun until latency-rerun.DONE or 08:30). Results: experiments/2026-11-14-m4-12-decoder-retrain/results.md; wiki questions/lookahead-latency-accuracy.md.",
+  "_tracker_updated": "2026-11-15T05:50:00-08:00"
+}
