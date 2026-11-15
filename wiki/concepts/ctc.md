@@ -3,7 +3,7 @@ title: Connectionist Temporal Classification (CTC)
 type: concept
 tags: [loss, sequence, asynchronous]
 sources: [brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-08
+updated: 2026-11-14
 ---
 
 # CTC (Connectionist Temporal Classification)
@@ -24,3 +24,6 @@ CTC (Graves et al. 2006) is a loss function for learning to map a long input seq
 > **Our take:** With small data, CTC needs a frame-level hint. In overt typing, the key times give that hint at no cost. For attempted or imagined typing, no key times exist.
 
 Related: [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [NeuroLLM](neuro-llm.md)
+
+## In Fidetype
+- The [CTC-logits adapter](ctc-logits-adapter.md) turns the frame output of any CTC decoder into a NeuralTextStream.

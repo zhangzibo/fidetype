@@ -12,4 +12,11 @@ and emits streams that follow ``spec/neuraltextstream-v0.1.md``.
 - :mod:`fidetype.adapters.lsl`: Lab Streaming Layer, live. LSL inlets ->
   NTS events -> the streaming trust layer; NTS files -> LSL outlets.
   Needs the optional ``pylsl`` (extra ``[lsl]``) only for the network.
+- :mod:`fidetype.adapters.ctc_logits`: generic. The ``(T, V)`` CTC
+  scores of any decoder (logits, probabilities or log-probabilities;
+  batches with lengths; JSON / ``vocab.json`` / ``tokens.txt``
+  vocabularies) -> a validated frame stream. CLI for ``.npy`` / ``.npz``.
+- :mod:`fidetype.adapters.text_nbest`: generic. The text output of any
+  decoder (CSV ``id,text`` or JSON Lines n-best lists) -> a
+  hypothesis-only stream (``vocab = []``, spec HDR-12, 4.7).
 """

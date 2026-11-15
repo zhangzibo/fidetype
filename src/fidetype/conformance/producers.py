@@ -18,6 +18,11 @@ Targets (``python -m fidetype.conformance check adapter:<name>``):
     :func:`fidetype.adapters.toronto_semg.keypress_stream` (``key``
     vocabulary) and :func:`~fidetype.adapters.toronto_semg.to_ctc_char_stream`
     (``char`` CTC form), offline and with a window latency.
+``ctc-logits``
+    :mod:`fidetype.adapters.ctc_logits` (generic CTC scores): a padded
+    ``(T, B, V)`` logits batch with lengths, a probability matrix with
+    a Hugging Face style ``{token: id}`` vocabulary, a bounded-lookahead
+    stream with a frame temperature, and an offline (non-causal) stream.
 """
 
 from __future__ import annotations
@@ -121,8 +126,39 @@ def produce_toronto(seed: int = 2) -> list[ProducedStream]:
     return out
 
 
+def produce_ctc_logits(seed: int = 3) -> list[ProducedStream]:
+    from fidetype.adapters import ctc_logits as C
+
+    rng = np.random.default_rng(seed)
+    letters = list("abcdefghijklmnopqrstuvwxyz")
+    out = []
+    vocab = C.vocab_from_list(["<blank>", " ", *letters], 0)
+    dec = C.DecoderInfo(modality="eeg", name="synthetic-ctc", version="1", weights_sha256=_fake_weights_sha("ctc"))
+    batch = rng.standard_normal((40, 2, len(vocab))) * 2.0
+    for i, s in enumerate(C.from_batch(batch, vocab, dec, lengths=[40, 25], layout="TBV", frame_period=0.04,
+                                       latency=0.0)):
+        out.append(ProducedStream(f"ctc-logits/batch-item{i}", s, ["hello world"]))
+    hf = C.vocab_from_json_map({"<pad>": 0, "|": 1, **{c: i + 2 for i, c in enumerate(letters)}})
+    probs = np.exp(_lsm(rng.standard_normal((30, len(hf))) * 2.0))
+    dec_hf = C.DecoderInfo(modality="emg", name="synthetic-hf-ctc", version="2", weights_sha256=_fake_weights_sha("hf"))
+    out.append(ProducedStream("ctc-logits/hf-probs", C.from_array(probs, hf, dec_hf, frame_period=0.02, latency=0.0,
+                                                                   input_kind="probs"), ["hello world"]))
+    dec_la = C.DecoderInfo(modality="meg", name="synthetic-lookahead", version="3",
+                           weights_sha256=_fake_weights_sha("lookahead"), calibration_id="temp-fit-synthetic")
+    out.append(ProducedStream("ctc-logits/lookahead-temperature",
+                              C.from_array(rng.standard_normal((20, len(vocab))), vocab, dec_la, frame_period=0.05,
+                                           latency=0.5, temperature=1.5), ["hello world"]))
+    dec_off = C.DecoderInfo(modality="meg", name="synthetic-bidir", version="4", causal=False,
+                            weights_sha256=_fake_weights_sha("bidir"))
+    out.append(ProducedStream("ctc-logits/offline",
+                              C.from_array(rng.standard_normal((20, len(vocab))), vocab, dec_off, frame_period=0.05),
+                              ["hello world"]))
+    return out
+
+
 TARGETS: dict[str, Callable[[], list[ProducedStream]]] = {
     "spanishbcbl": produce_spanishbcbl,
     "b2t25": produce_b2t25,
     "toronto": produce_toronto,
+    "ctc-logits": produce_ctc_logits,
 }
