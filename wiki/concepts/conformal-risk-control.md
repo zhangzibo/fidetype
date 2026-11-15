@@ -58,6 +58,8 @@ Offline CRC fails when the session drifts. `fidetype.trust.online_risk` (M2-16) 
 - An offer-only warm-up of 45 sentences, then max(global, LTT on the warm-up), cut day 34 to 0.034 (0 of 14 days above α, eWPM −2.2 %). An anytime-valid e-process monitor adds a drift alarm with false alarms ≤ γ. Details: [per-session risk control](../questions/per-session-risk-control.md).
 
 ## Related
+- [Learn then Test](learn-then-test.md): the LTT method on its own page.
+- [Adaptive conformal inference](adaptive-conformal-inference.md): the ACI update behind `aci_window`.
 - [Provenance ledger](provenance-ledger.md): each decision records the CRC / LTT method, α, δ, threshold and n of its calibration.
 - [B2T '25 trust result](../questions/b2t25-trust-result.md) (the 0.059 that motivated M2-13)
 - [Trust core v0 results](../questions/trust-core-v0-results.md)

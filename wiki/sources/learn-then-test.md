@@ -31,6 +31,7 @@ LTT turns risk control into **multiple hypothesis testing**. For each λ on a gr
 - Needs exchangeable (i.i.d.) calibration data, as CRC does.
 
 ## Feeds
+- [Learn then Test (concept)](../concepts/learn-then-test.md)
 - [Conformal risk control (concept)](../concepts/conformal-risk-control.md)
 - [M2-13 conformal result](../questions/m2-13-conformal-result.md)
 - [Conformal Risk Control](conformal-risk-control.md)

@@ -1,0 +1,15 @@
+{
+  "id": "R-21",
+  "milestone": "R",
+  "title": "Lint follow-ups: overview (RC2, lookahead, collector, P4 adapters, M4-12 interim), src line count, 4 concept pages, C-order note",
+  "status": "done",
+  "started_at": "2026-11-14T17:05:00-08:00",
+  "finished_at": "2026-11-14T17:20:00-08:00",
+  "approx_times": true,
+  "orchestrator_only": false,
+  "notes": "Follow-ups from lint R-20 (ddfda12). overview.md: NTS 1.0 RC2, lookahead result, collector, P4-07 adapters, LTT/ACI, M4-12 interim (dedicated L0 greedy PER 0.2574 on T15 val 701 vs 0.6954 before and 0.0954 published; 0 commits, 0 wrong commits). roadmap-standard.md: src/ 38,500 Python lines in 105 files at bcabf04 (+12,808 test lines), 11.5k (2026-11-10) kept as history; dated note 'Actual order so far: Python, TypeScript, Rust; C not started. Plan change pending user decision.' (diagram 11 unchanged). New concept pages: fep-process, trust-decision, learn-then-test, adaptive-conformal-inference (each linked from 2+ pages, in index). Tracker: R-20 and P4-07 agent stats filled. Agent stats for this run: filled by the orchestrator later.",
+  "agent_runs": [
+    {"label": "R-21 lint follow-ups", "duration_s": null, "tokens": null, "tool_uses": null}
+  ],
+  "_tracker_updated": "2026-11-14T17:20:00-08:00"
+}

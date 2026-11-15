@@ -2,8 +2,8 @@
 title: Overview — non-invasive brain-to-text, where things stand
 type: overview
 tags: [synthesis]
-sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-13
+sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, brain-to-text-25-copytask]
+updated: 2026-11-14
 ---
 
 # Overview
@@ -33,10 +33,13 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 - **The trust layer is safe on real MEG, but not yet useful.** It stops all wrong and hallucinated commits. But at key accuracy 0.39, no BCI policy beats gaze typing alone (2.96 vs 3.14 eWPM; with the r2 decoder 3.06 vs 3.14; with the full-cache decoder 3.23 vs 3.15, CI [3.08, 3.40], so parity) ([trust core v0 results](questions/trust-core-v0-results.md#7-per-word-offer-and-partial-correction-2026-11-08)).
 - **Each trust decision can carry an auditable provenance record (2026-11-11).** A hash-chained JSON Lines ledger records the stream hash, frame range, decoder, LM, calibration and policy version of every decision, and links user corrections to it. No raw signal is stored. On the B2T '25 replay it traced all 48 (plug-in) and 39 (CRC) wrong commits, at about 0.1 ms per decision ([provenance ledger](concepts/provenance-ledger.md)).
 
-> **Our take:** Usefulness needs a stronger decoder, and every speed claim needs a no-BCI baseline.
+- **A causal decoder loses accuracy mostly in the first 40 ms of lookahead (2026-11-14).** Our own causal GRU-CTC on the [Brain-to-Text '25](sources/brain-to-text-25-copytask.md) T15 data (CC0), val 701 trials: shared model greedy PER 0.6565 at lookahead L = 0, 0.4449 at 40 ms, 0.3687 at 500 ms. A model trained with L = 500 ms gives its phonemes 180 ms *earlier* (median) than a model trained with L = 0. So the declared `latency` is an upper bound on signal use, not the delay the user sees. Compute does not depend on L. The decoder was under-trained (published T15 decoder: PER 0.0954) ([lookahead vs accuracy and latency](questions/lookahead-latency-accuracy.md)).
+- **Interim, in progress: the retrained L = 0 decoder is much closer to the published one (M4-12, 2026-11-14).** The dedicated L = 0 model now reaches greedy PER **0.2574** on T15 val (701 trials). Before it was 0.6954; the published decoder gives 0.0954. Through the frozen trust configuration it makes 0 commits and 0 wrong commits (all 701 trials are OFFER; eWPM 5.94 vs gaze 4.02). Source: `experiments/2026-11-14-m4-12-decoder-retrain/results/accuracy.json`. The other lookahead conditions are not retrained yet.
+
+> **Our take:** Usefulness needs a stronger decoder, and every speed claim needs a no-BCI baseline. M4-12 shows that the gap to the published decoder was mostly training, not the causal design. The frozen trust configuration still commits nothing, so the next question is whether it can commit safely on a decoder at this level.
 
 ## The big open problems
-1. **Real-time causal decoding**: v2 still waits for the end of the sentence.
+1. **Real-time causal decoding**: v2 still waits for the end of the sentence. Our own causal decoder runs on implant data (see above), but not yet on non-invasive data.
 2. **Patients with no movement**: going from overt typing to attempted or imagined typing, without labels.
 3. **Cross-subject generalisation**: the encoder is the bottleneck.
 4. **Hardware**: moving from cryogenic MEG to room-temperature [OPM-MEG](concepts/opm-meg.md).
@@ -53,6 +56,12 @@ On 2026-11-08 the user widened the scope to an OpenTelemetry-level project. Fide
 - Project plan: milestones M0–M7, tasks, risks and the working process: [project-plan](questions/project-plan.md).
 - **Publications decoupled (2026-11-13).** Paper writing and publishing are a separate track (PUB) with no deadline. Review and publishing run on outside timelines. The research and engineering roadmap never waits on a paper. Research results go to `experiments/` and the wiki first; papers draw on them later. M3 is now "Trust-layer validation (research)" and M4 "Causal / streaming decoder (research)": [project plan, PUB](questions/project-plan.md#pub-publications-no-deadline).
 - Open-source path: NeuralTextStream as a vendor-neutral spec, credibility from Paper 1 and benchmarks, a company later. Success means decoders that emit NeuralTextStream, not stars: [open-source playbook](questions/open-source-playbook.md).
+- **State of the standard (2026-11-14).** The spec, the runtime and the first generic adapters exist:
+  - **NTS 1.0 RC2** ([spec](../spec/nts-1.0-rc2.md), DRAFT for public comment) folds v0.1 and FEP-0001 … FEP-0005 into one document with rule ids. New in RC2: rule TD-12 (no blank candidates) and 1.x headers accepted in all three SDKs. 1.0 Stable needs outside review (externally blocked) ([NTS specification](concepts/nts-spec.md), [FEP process](concepts/fep-process.md), [`trust_decision` event](concepts/trust-decision.md)).
+  - **SDKs:** Python, TypeScript and Rust give the same verdicts on all golden vectors. All three are ready to publish, not published. The C core is not started ([roadmap P2](questions/roadmap-standard.md#p2-reference-sdks)).
+  - **Collector** (P3, draft FEP-0006): one service with receivers (file, WebSocket, LSL), processors (validate, trust, redact, thin) and exporters ([collector](concepts/collector.md)).
+  - **Generic decoder-output adapters** (P4-07, commit bcabf04): the [CTC-logits adapter](concepts/ctc-logits-adapter.md) turns (T, V) CTC scores of any decoder into NTS; the [text n-best adapter](concepts/text-nbest-adapter.md) turns text-only decoder output into a hypothesis-only stream. Our lookahead GRU outputs pass trust-ready (1,402/1,402), and the CTC adapter equals the B2T '25 adapter on 1,718 published trials.
+  - **Trust guarantees:** a start-of-session guarantee from [CRC](concepts/conformal-risk-control.md) or [Learn then Test](concepts/learn-then-test.md), and in-session re-calibration with [adaptive conformal inference](concepts/adaptive-conformal-inference.md).
 - **Long-term roadmap (2026-11-10).** The user decided on full standardisation at OpenTelemetry scale, built by us. M0–M7 are only v0.1. Eleven phases follow (P1–P11): spec 1.0, SDKs in six languages, a collector, adapters, a product-grade trust layer, a benchmark, conformance, docs and demo, governance, adoption and research. The gap to OpenTelemetry scale is mostly SDKs, adapters and integrations, not the core: [roadmap-standard](questions/roadmap-standard.md).
 
 ## Where this project might fit

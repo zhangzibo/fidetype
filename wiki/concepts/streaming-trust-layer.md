@@ -295,6 +295,6 @@ layer = StreamingTrustLayer(cfg, streaming=V5Options().streaming_config(route="h
 - The commit gate (M2-18) is opt-in. On the online path the controller still counts a gated COMMIT as a commit (conservative). The v5 candidate recipe (P5-07) turns it on; v5 is not yet the default (see its results page).
 
 ## Related
-[Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [LSL input](lsl-input.md) · [Per-session risk control](../questions/per-session-risk-control.md)
+[Provenance ledger](provenance-ledger.md) · [Conformal risk control](conformal-risk-control.md) · [Learn then Test](learn-then-test.md) · [Adaptive conformal inference](adaptive-conformal-inference.md) · [`trust_decision` event](trust-decision.md) · [Conformance suite](conformance-suite.md) · [Synchronous vs asynchronous decoding](synchronous-vs-asynchronous-decoding.md) · [Architecture](../questions/architecture.md) · [Standard roadmap](../questions/roadmap-standard.md) · [Lab Streaming Layer](../entities/lab-streaming-layer.md) · [LSL input](lsl-input.md) · [Per-session risk control](../questions/per-session-risk-control.md)
 
 SDK and demo: the [Python SDK and offline demo](python-sdk.md) page shows the public API (`fidetype.TrustLayer`) and `fidetype demo`.

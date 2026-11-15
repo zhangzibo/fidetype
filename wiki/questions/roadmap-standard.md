@@ -30,7 +30,7 @@ updated: 2026-11-14
 | v0.1 item (M0–M7) | State on 2026-11-10 | Carried into |
 |---|---|---|
 | NeuralTextStream spec v0.1 (Development) | Published. Frame core implemented; other event kinds are sketches | P1 |
-| `fidetype` Python package (about 11.5k lines) | Decoders, LM, trust core, eval harness, first adapter (B2T '25) | P2, P3, P5 |
+| `fidetype` Python package (about 11.5k lines on 2026-11-10; 38,500 lines on 2026-11-14) | Decoders, LM, trust core, eval harness, first adapter (B2T '25) | P2, P3, P5 |
 | Trust core v0 | Runs on the simulator, real MEG and B2T '25 | P5 |
 | Benchmark v0.1 (M5) | Harness exists; leaderboard not yet | P6 |
 | Validator; conformance cases C1–C20 | Validator exists. 2026-11-11 (M5-10): [conformance suite](../concepts/conformance-suite.md) v0 (`fidetype.conformance`, 60 checks, levels core / trust-ready / provenance, 52 golden vectors in `spec/conformance/v0.1/`) | P7 |
@@ -41,12 +41,13 @@ updated: 2026-11-14
 ## Scale reference
 | Project | Size | How we know |
 |---|---|---|
-| **Fidetype `src/` today** | about **11.5k** Python lines (11,532 on disk; 10,795 committed) + 3.4k test lines | Counted 2026-11-10 |
+| **Fidetype `src/` today** | **38,500** Python lines in 105 files (committed at bcabf04) + 12,808 lines in `tests/` | Counted 2026-11-14 |
+| Fidetype `src/` (history) | about **11.5k** Python lines (11,532 on disk; 10,795 committed) + 3.4k test lines | Counted 2026-11-10 |
 | Brain2Qwerty (Meta, `references/repos/brain2qwerty`) | about **5.6k** Python lines (5,555) | Counted 2026-11-10 |
 | LangChain | **hundreds of thousands** of lines (rough, not measured) | Rough figure |
 | OpenTelemetry (spec + collector + SDKs) | **millions** of lines across **about 10 or more** languages (rough, not measured) | Rough figure |
 
-- Our core is already twice the size of Brain2Qwerty. The core is not the gap.
+- Our core is already twice the size of Brain2Qwerty (2026-11-10; about 7 times on 2026-11-14). The core is not the gap.
 - OpenTelemetry is large because of **one SDK per language**, a **collector with hundreds of components**, and **instrumentation for many libraries** ([OTel case study](../sources/case-study-opentelemetry.md)).
 - Fidetype at spec 1.0 needs the same kind of breadth, but in a field of thousands of researchers, not millions of developers ([playbook, realistic expectations](open-source-playbook.md#realistic-expectations)).
 
@@ -166,6 +167,8 @@ Reasons:
 **Goal:** any decoder or app can emit and read NTS in its own language, with the same behaviour everywhere.
 
 **Status (2026-11-14):** three SDKs exist and give the same verdicts: Python `fidetype` ([Python SDK](../concepts/python-sdk.md)), TypeScript `@fidetype/sdk` ([TypeScript SDK](../concepts/typescript-sdk.md)) and Rust `fidetype` ([Rust SDK](../concepts/rust-sdk.md)). All three are **ready to publish, not published** (P2-06 code part): complete registry metadata, one version source each, changelogs, `twine check` / `npm pack` / `cargo publish --dry-run` clean, CI job `packaging` (and `rust-msrv`) on every push. All three names were free on 2026-11-14. The release process, semver policy and SDK-to-spec version rules are in [docs/RELEASING.md](../../docs/RELEASING.md); a proposed manual-only release workflow (trusted publishing) is `docs/release-workflow.example.yml`. Publishing waits for the user (P2-07: accounts, trusted publishers). Not started: C core, C#, Kotlin, WASM. The package names differ from the table below (`@fidetype/sdk`, crate `fidetype`).
+
+> **Note (2026-11-14):** Actual order so far: Python, TypeScript, Rust; C not started. Plan change pending user decision. The plan below (C core at priority 2) and the gate "Spec 1.0 RC + Python/C 1.0" in diagram `11-roadmap-standard` ([diagrams](../diagrams/index.html)) stay unchanged until then.
 
 ### Deliverables
 | SDK | Role | Package | Priority |

@@ -33,6 +33,7 @@ ACI keeps a conformal method valid when the data distribution changes over time 
 In Fidetype it is the `aci_window` method: the window CRC runs at level α_t, and α_t follows the ACI update with the realised wrong-commit loss. The older `AdaptiveConformal` class (M2-03) uses ACI for conformal sets.
 
 ## Feeds
+- [Adaptive conformal inference (concept)](../concepts/adaptive-conformal-inference.md)
 - [Conformal risk control (concept)](../concepts/conformal-risk-control.md), section "Online re-calibration under drift"
 - [M2-16 online re-calibration result](../questions/m2-16-online-recal-result.md)
 - Code: `src/fidetype/trust/online_risk.py` (our own implementation; no code read or copied)

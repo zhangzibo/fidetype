@@ -8,12 +8,12 @@ updated: 2026-11-14
 
 # NeuralTextStream specification
 
-The written contract of Fidetype. A decoder writes a NeuralTextStream (NTS); a trust layer reads it and writes `trust_decision` events; a bridge acts only on final decisions.
+The written contract of Fidetype. A decoder writes a NeuralTextStream (NTS); a trust layer reads it and writes [`trust_decision`](trust-decision.md) events; a bridge acts only on final decisions.
 
 | Version | File | Status |
 |---|---|---|
 | 0.1 | [`spec/neuraltextstream-v0.1.md`](../../spec/neuraltextstream-v0.1.md) | Current release (Development) |
-| FEP-0001 … FEP-0005 | [`spec/feps/`](../../spec/feps/) | Draft proposals on top of 0.1 |
+| FEP-0001 … FEP-0005 | [`spec/feps/`](../../spec/feps/) | Draft proposals on top of 0.1 (how FEPs work: [FEP process](fep-process.md)) |
 | **1.0 RC2** | [`spec/nts-1.0-rc2.md`](../../spec/nts-1.0-rc2.md) | **DRAFT for public comment** (2026-11-14). Not final. Current RC |
 | 1.0 RC1 | [`spec/nts-1.0-rc1.md`](../../spec/nts-1.0-rc1.md) | Superseded by RC2 (same rule text); kept as the record |
 
@@ -99,4 +99,4 @@ Rule MET-4 says that `decoder.lookahead_s` and `latency` MUST be equal. Rule MET
 
 > **Our take:** an optional, informative field for the measured emission delay is a possible NTS 1.1 item (from the same page). It is not a spec change now.
 
-Related: [lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md), [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).
+Related: [FEP process](fep-process.md), [`trust_decision` event](trust-decision.md), [lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md), [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).

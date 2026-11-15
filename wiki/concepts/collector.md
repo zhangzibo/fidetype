@@ -114,4 +114,4 @@ Closed on 2026-11-14 (FEP-0006 "Decisions", second round): blank OFFER candidate
 > **Our take:** adding the gate inside the collector keeps old trust configurations usable, but the `config_id` in the decisions then differs from the file on disk. The log line shows both ids. Freezing the gated configuration (`with_commit_gate(min_chars=1)`) avoids the surprise.
 
 ## Related
-[NTS specification](nts-spec.md) · [WebSocket input](websocket-input.md) · [LSL input](lsl-input.md) · [streaming trust layer](streaming-trust-layer.md) · [provenance ledger](provenance-ledger.md) · [conformance suite](conformance-suite.md) · [roadmap P3](../questions/roadmap-standard.md#p3-collector-pipeline)
+[NTS specification](nts-spec.md) · [`trust_decision` event](trust-decision.md) · [FEP process](fep-process.md) · [WebSocket input](websocket-input.md) · [LSL input](lsl-input.md) · [streaming trust layer](streaming-trust-layer.md) · [provenance ledger](provenance-ledger.md) · [conformance suite](conformance-suite.md) · [roadmap P3](../questions/roadmap-standard.md#p3-collector-pipeline)

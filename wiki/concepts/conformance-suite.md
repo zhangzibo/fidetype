@@ -121,6 +121,8 @@ Code: `src/fidetype/conformance/profiles/` (`fep0001.py`, `fep0002.py`). Tests: 
 
 ## Related
 - Spec: [NeuralTextStream v0.1](../../spec/neuraltextstream-v0.1.md), sections 7 and 10.
+- [FEP process](fep-process.md): each FEP gets an opt-in profile here before it is Implemented (rule FEP-1).
+- [`trust_decision` event](trust-decision.md): the decision rules that profile `fep-0001` tests.
 - [Provenance ledger](provenance-ledger.md): the consumer side of the provenance keys.
 - [Long-term standard roadmap](../questions/roadmap-standard.md): phase P7 (conformance and certification).
 - [Architecture](../questions/architecture.md): where NeuralTextStream sits.

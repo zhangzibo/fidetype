@@ -1,0 +1,7 @@
+{
+  "id": "P4-07",
+  "agent_runs": [
+    {"label": "P4-07 generic CTC-logits + text n-best adapters", "duration_s": 786.255, "tokens": 182235, "tool_uses": 54}
+  ],
+  "_tracker_updated": "2026-11-14T17:15:00-08:00"
+}
