@@ -1,9 +1,9 @@
 ---
 title: NeuralTextStream specification (versions, 1.0 RC2)
 type: concept
-tags: [spec, neuraltextstream, standard, versioning, conformance, p1]
+tags: [spec, neuraltextstream, standard, versioning, conformance, protobuf, p1]
 sources: []
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 
 # NeuralTextStream specification
@@ -94,9 +94,21 @@ The parity fuzz also found one binding bug while this work ran: a WebSocket head
 
 > **Our take:** With RC2 a real "1.0" stream validates in all three SDKs. With G-1 closed, all six suite profiles run in all three SDKs; no implementation gap is open. Next: the protobuf schema (P1-02) and the YAML conventions (P1-04). 1.0 Stable needs outside reviewers (P1-07, externally blocked).
 
+## Protobuf schema and generated JSON Schema (P1-02)
+Since 2026-11-15 the RC2 data model also exists as proto3 files ([`spec/proto/neuraltextstream/v1/`](../../spec/proto/neuraltextstream/v1/), package `neuraltextstream.v1`). A JSON Schema of one JSON Lines event is generated from them ([`spec/schemas/nts-v1.schema.json`](../../spec/schemas/nts-v1.schema.json)). No rule text changed. RC2 Appendix C has a new informative subsection C.3.
+
+| Item | Detail |
+|---|---|
+| Coverage | Header with the three declarations, all 13 event types of registry 12.1 plus the LSL `gap` event, timing fields, binding keys |
+| Parity | 164 vectors depend on one line (91 accept, 73 reject): 164 match, 0 mismatches. 90 reject vectors fail on rules a one-line schema cannot see; 33 NPZ vectors are out of scope |
+| CI | Job `proto`: schema up to date, protoc compiles the files, parity (two validators) |
+| Open questions | Q-1 … Q-8 in [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md) (for example Q-7: new enum values in a minor version) |
+
+Details: [NTS protobuf schema](nts-proto-schema.md).
+
 ## Timing evidence: lookahead
 Rule MET-4 says that `decoder.lookahead_s` and `latency` MUST be equal. Rule MET-5 says that a causal decoder uses no signal after `frame_times[t] + latency` for frame t. M4-01/02 tested this with our own causal GRU-CTC decoder at lookahead L 0-500 ms ([lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md)). The declared `latency` (= `decoder.lookahead_s`) is an upper bound on signal use. It is not the delay that the user sees. A dedicated L 500 ms model gave its phonemes 180 ms earlier than a dedicated L 0 model.
 
 > **Our take:** an optional, informative field for the measured emission delay is a possible NTS 1.1 item (from the same page). It is not a spec change now.
 
-Related: [FEP process](fep-process.md), [`trust_decision` event](trust-decision.md), [lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md), [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).
+Related: [NTS protobuf schema](nts-proto-schema.md), [FEP process](fep-process.md), [`trust_decision` event](trust-decision.md), [lookahead vs accuracy and latency](../questions/lookahead-latency-accuracy.md), [conformance suite](conformance-suite.md), [TypeScript SDK](typescript-sdk.md), [Rust SDK](rust-sdk.md), [roadmap P1](../questions/roadmap-standard.md#p1-spec-to-10).

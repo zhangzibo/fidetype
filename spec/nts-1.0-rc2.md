@@ -1381,6 +1381,9 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 
 Summary: of the rule groups in C.1, the frame core, segments, evidence, decision format, intent and control formats, and both bindings have accept and reject vectors. The gaps are mostly behaviour that a stream validator cannot see. RC2 closed G-2 (1.0 headers), G-3 and G-4, and then G-1 (control profile parity in TypeScript and Rust). No implementation gap is open.
 
+### C.3 Generated JSON Schema (informative; added by roadmap task P1-02, 2026-11-15)
+This subsection adds no rule and changes no row of C.1. The proto3 files [`proto/neuraltextstream/v1/`](proto/neuraltextstream/v1/) describe the data model of this document; the JSON Schema [`schemas/nts-v1.schema.json`](schemas/nts-v1.schema.json) is generated from them and checks one JSON object (one line) at a time. On the 287 vectors it gives the SDK verdict on all 164 vectors whose verdict depends on one line (91 accept, 73 reject): 0 mismatches. Rules that it checks: HDR-1 (required keys), HDR-2 … HDR-11, GEN-2, GEN-3, FRM-1/FRM-2 (form), FRM-4, SEG-4 (type), SEG-5, SQ-1, DEC-2 … DEC-4, HYP-1, EVD-1 (values), EVD-3, EVD-4, DCL-1, PTR-1, TD-F1 … TD-F3, TD-8, PRF-4, INT-D1 … INT-D4 (except unique ids), INT-E3 (per score), INT-E7, INT-F1, INT-T1 … INT-T3, CTL-D1, CTL-D2, CTL-D3 (presence of the intent declaration), CTL-4 (types), CTL-E1, CTL-T1 … CTL-T4, VER-3, VER-5. All other rules stay with the checks of C.1 (they need other lines, the header, arithmetic, the trust rules, the spelling of a number (GEN-5) or the transport). Mapping rules, the list by class and the vectors: [`proto/README.md`](proto/README.md).
+
 ---
 
 ## Appendix D. Relation to other standards

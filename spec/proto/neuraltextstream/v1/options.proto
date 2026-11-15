@@ -1,0 +1,63 @@
+// NeuralTextStream (NTS) 1.0 RC2 data model: custom options.
+//
+// Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
+//
+// The options below carry the JSON Lines rules of the spec (section 4.1 and
+// the field tables) into the proto files. The generator
+// tools/proto/gen_jsonschema.py reads them and writes the JSON Schema
+// spec/schemas/nts-v1.schema.json. They have no effect on the binary form.
+// See spec/proto/README.md for the full mapping rules.
+//
+// Option numbers 50100-50399 are in the range 50000-99999 that protobuf
+// keeps for options inside one organisation.
+
+syntax = "proto3";
+
+package neuraltextstream.v1;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  // The JSON key MUST be present (the "Required" column of a field table).
+  bool json_required = 50101;
+  // JSON null is a valid value. For a repeated field, null is valid for
+  // each item. The binary form of null is given by null_binary.
+  bool json_nullable = 50102;
+  // Binary form of JSON null: "unset" (default: the field has no value),
+  // "neg_inf" (log-probability, GEN-3) or "nan" (absent control axis).
+  string null_binary = 50103;
+  // The fields of this message (or the entries of this Struct) are written
+  // as keys of the parent JSON object, not as one nested object.
+  bool json_inline = 50104;
+
+  // Value constraints. For a repeated field they apply to each item.
+  double minimum = 50110;
+  double maximum = 50111;
+  double exclusive_minimum = 50112;
+  double exclusive_maximum = 50113;
+  // ECMA-262 regular expression (JSON Schema "pattern"; unanchored).
+  string pattern = 50114;
+  // Minimum length of a string, in Unicode code points.
+  uint32 min_length = 50115;
+
+  // Array constraints (repeated fields only).
+  uint32 min_items = 50120;
+  uint32 max_items = 50121;
+  bool unique_items = 50122;
+}
+
+extend google.protobuf.EnumValueOptions {
+  // The JSON string of this enum value. A value without json_value (the
+  // *_UNSPECIFIED value 0) has no JSON form and is never valid.
+  string json_value = 50201;
+}
+
+extend google.protobuf.MessageOptions {
+  // The JSON "type" value of an event message.
+  string json_type = 50301;
+  // A rule on one JSON object that links two or more fields (for example
+  // "with score_semantics none, score is null"). The value is a JSON Schema
+  // (draft 2020-12) fragment. The generator adds it to the allOf list of
+  // the message. Each fragment names its rule id in "$comment".
+  repeated string json_rule = 50302;
+}

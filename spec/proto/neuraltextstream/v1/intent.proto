@@ -1,0 +1,141 @@
+// NeuralTextStream (NTS) 1.0 RC2 data model: the intent profile (7.3).
+//
+// Status: DRAFT (roadmap P1-02). The intent profile is Development (2.3).
+// Licence: Apache-2.0.
+// Rule ids (for example INT-D3) refer to spec/nts-1.0-rc2.md.
+// Field number ranges: see core.proto.
+
+syntax = "proto3";
+
+package neuraltextstream.v1;
+
+import "google/protobuf/struct.proto";
+import "neuraltextstream/v1/options.proto";
+import "neuraltextstream/v1/common.proto";
+
+// Producer's risk class of an intent (7.3.2, registry 12.3). INT-D2, INT-S9.
+enum RiskClass {
+  RISK_CLASS_UNSPECIFIED = 0;
+  // A wrong action costs little.
+  RISK_CLASS_SAFE = 1 [(json_value) = "safe"];
+  // A wrong action can be reversed by undo.
+  RISK_CLASS_UNDOABLE = 2 [(json_value) = "undoable"];
+  // A wrong action cannot be reversed. INT-S4.
+  RISK_CLASS_IRREVERSIBLE = 3 [(json_value) = "irreversible"];
+}
+
+// Role of an intent (7.3.2, registry 12.3). INT-D1, INT-D3.
+enum IntentRole {
+  INTENT_ROLE_UNSPECIFIED = 0;
+  INTENT_ROLE_ACTION = 1 [(json_value) = "action"];
+  // The rest intent. Note: the JSON string "null", not JSON null.
+  INTENT_ROLE_NULL = 2 [(json_value) = "null"];
+  INTENT_ROLE_CONFIRM = 3 [(json_value) = "confirm"];
+  INTENT_ROLE_CANCEL = 4 [(json_value) = "cancel"];
+  INTENT_ROLE_UNDO = 5 [(json_value) = "undo"];
+}
+
+// One declared intent (7.3.2).
+message IntentSpec {
+  // Unique (INT-D1: needs a lookup over the list; SDK check FEP3-DECL). Not
+  // blank. Convention intent.<verb>[.<object>].
+  string id = 1 [(json_required) = true, (pattern) = "[^\\u0009-\\u000D\\u001C-\\u0020\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]"];
+  // INT-D2.
+  RiskClass risk = 2 [(json_required) = true];
+  // Default "action". INT-D1, INT-D3.
+  optional IntentRole role = 3;
+  optional string label = 4;
+
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// The intent vocabulary of a stream (7.3.2), in the header key
+// intent_declaration. INT-D1 ... INT-D6.
+// Not expressed in the schema: unique ids (INT-D1), INT-D5 (vocab equals the
+// ids: needs the header vocab), INT-D6 (SHOULD, decoder training).
+message IntentDeclaration {
+  option (json_rule) = '{"$comment": "INT-D1: at least one intent has a role other than null (an absent role is action)", "properties": {"intents": {"contains": {"not": {"required": ["role"], "properties": {"role": {"const": "null"}}}}}}}';
+  option (json_rule) = '{"$comment": "INT-D3: at most one confirm intent", "properties": {"intents": {"contains": {"required": ["role"], "properties": {"role": {"const": "confirm"}}}, "minContains": 0, "maxContains": 1}}}';
+  option (json_rule) = '{"$comment": "INT-D3: at most one cancel intent", "properties": {"intents": {"contains": {"required": ["role"], "properties": {"role": {"const": "cancel"}}}, "minContains": 0, "maxContains": 1}}}';
+  option (json_rule) = '{"$comment": "INT-D3: at most one undo intent", "properties": {"intents": {"contains": {"required": ["role"], "properties": {"role": {"const": "undo"}}}, "minContains": 0, "maxContains": 1}}}';
+  option (json_rule) = '{"$comment": "INT-D4: with an irreversible intent, the confirm intent is irreversible", "if": {"required": ["intents"], "properties": {"intents": {"contains": {"required": ["risk"], "properties": {"risk": {"const": "irreversible"}}}}}}, "then": {"properties": {"intents": {"items": {"if": {"required": ["role"], "properties": {"role": {"const": "confirm"}}}, "then": {"properties": {"risk": {"const": "irreversible"}}}}}}}}';
+
+  // intent.* namespace (12.4).
+  optional string vocab_id = 1 [(min_length) = 1];
+  optional string vocab_version = 2 [(min_length) = 1];
+  // At least one intent.
+  repeated IntentSpec intents = 3 [(json_required) = true, (min_items) = 1];
+
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// One candidate of an intent event (7.3.3).
+message IntentCandidate {
+  // A declared id (INT-E2: needs the header; SDK check FEP3-INTENT).
+  string intent = 1 [(json_required) = true];
+  // Number, or null / absent with score_semantics none. INT-E3.
+  optional double score = 2 [(json_nullable) = true];
+
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// A discrete intent output (7.3.3). JSON type "intent". INT-E1 ... INT-E7.
+// Not expressed: INT-E1 (needs a header with a declaration), INT-E2
+// (declared, not twice), INT-E3 sum <= 1 (arithmetic), INT-E4 ranking
+// (order of items), INT-E5 (unique id in the stream), INT-E6.
+message Intent {
+  option (json_type) = "intent";
+  option (json_rule) = '{"$comment": "INT-E3: with none, no candidate has a score", "if": {"required": ["score_semantics"], "properties": {"score_semantics": {"const": "none"}}}, "then": {"properties": {"candidates": {"items": {"properties": {"score": {"type": "null"}}}}}}}';
+  option (json_rule) = '{"$comment": "INT-E3: with a probability semantics, every score is in [0, 1]", "if": {"required": ["score_semantics"], "properties": {"score_semantics": {"enum": ["calibrated_prob", "uncalibrated_prob"]}}}, "then": {"properties": {"candidates": {"items": {"required": ["score"], "properties": {"score": {"type": "number", "minimum": 0, "maximum": 1}}}}}}}';
+  option (json_rule) = '{"$comment": "INT-E3: with power or strength, every score is a finite number", "if": {"required": ["score_semantics"], "properties": {"score_semantics": {"enum": ["power", "strength"]}}}, "then": {"properties": {"candidates": {"items": {"required": ["score"], "properties": {"score": {"type": "number"}}}}}}}';
+
+  // Unique in the stream. INT-E5, INT-E7.
+  string id = 1 [(json_required) = true, (min_length) = 1];
+  // INT-E7.
+  double t = 2 [(json_required) = true];
+  optional double t_start = 3;
+  optional double t_end = 4;
+  // INT-E7.
+  bool is_final = 5 [(json_required) = true];
+  optional string revision_of = 6 [(json_nullable) = true];
+  // INT-E3, INT-E7.
+  ScoreSemantics score_semantics = 7 [(json_required) = true];
+  // At least one. INT-E2 ... INT-E4.
+  repeated IntentCandidate candidates = 8 [(json_required) = true, (min_items) = 1];
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// intent_feedback.outcome values (7.3.4, registry 12.3).
+enum FeedbackOutcome {
+  FEEDBACK_OUTCOME_UNSPECIFIED = 0;
+  FEEDBACK_OUTCOME_CONFIRMED = 1 [(json_value) = "confirmed"];
+  FEEDBACK_OUTCOME_CANCELLED = 2 [(json_value) = "cancelled"];
+  FEEDBACK_OUTCOME_SELECTED = 3 [(json_value) = "selected"];
+  FEEDBACK_OUTCOME_UNDONE = 4 [(json_value) = "undone"];
+  FEEDBACK_OUTCOME_CORRECT = 5 [(json_value) = "correct"];
+  FEEDBACK_OUTCOME_WRONG = 6 [(json_value) = "wrong"];
+}
+
+// Feedback from another channel about a decision unit (7.3.4). JSON type
+// "intent_feedback". INT-F1, INT-F2 (no free text: content, not in a schema).
+message IntentFeedback {
+  option (json_type) = "intent_feedback";
+  option (json_rule) = '{"$comment": "INT-F1: outcome selected needs the selected intent", "if": {"required": ["outcome"], "properties": {"outcome": {"const": "selected"}}}, "then": {"required": ["intent"], "properties": {"intent": {"type": "string"}}}}';
+
+  // The decision unit. INT-F1.
+  uint64 ref_unit = 1 [(json_required) = true];
+  // INT-F1.
+  FeedbackOutcome outcome = 2 [(json_required) = true];
+  // Required for outcome "selected". A declared id.
+  optional string intent = 3 [(json_nullable) = true];
+  optional double t = 4;
+  // A channel (switch, touch, caregiver, eye-tracker), never a person. INT-F2.
+  optional string source = 5;
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}

@@ -94,7 +94,7 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 | Task | State after RC1 | What is left |
 |---|---|---|
 | P1-01 data model | in progress | Provenance block, frame-level multi-head, lattices, embeddings: deferred to 1.1 (Appendix A); 1.0 headers not accepted by the validators yet (gap G-2) |
-| P1-02 protobuf + generated JSON Schema | todo | No `.proto` yet |
+| P1-02 protobuf + generated JSON Schema | done (2026-11-15) | [`spec/proto/`](../../spec/proto/README.md) + generated `spec/schemas/nts-v1.schema.json`, CI drift and parity checks ([NTS protobuf schema](../concepts/nts-proto-schema.md)); open spec questions Q-1 … Q-8 for the next RC |
 | P1-03 versioning, SDK matrix, FEP lifecycle and index | done (RC1 section 11, spec/README) | Outside review |
 | P1-04 semconv YAML | todo | Section 12.5 lists the namespaces only |
 | P1-05 bindings | in progress | Files, LSL, WebSocket in RC1; in-process API and gRPC not written |

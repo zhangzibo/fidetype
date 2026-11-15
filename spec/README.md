@@ -29,6 +29,8 @@ The golden vectors are in [`conformance/v0.1/`](conformance/v0.1/). Details: [wi
 
 The TypeScript SDK ([`sdk/typescript/`](../sdk/typescript/README.md)) runs the same vectors for every profile and gives the same verdict as the Python reference (`npm run cross-check`). The JSON schemas in [`schemas/`](schemas/) are structural; its TypeScript types are generated from them.
 
+**Protobuf source of truth (P1-02, draft):** [`proto/neuraltextstream/v1/*.proto`](proto/) describe the full 1.0 RC2 data model (proto3, package `neuraltextstream.v1`). [`schemas/nts-v1.schema.json`](schemas/nts-v1.schema.json) is generated from them (`python tools/proto/gen_jsonschema.py`) and gives the SDK verdict on every vector that fails or passes on one line (164 of 164). Mapping rules, the rules a schema cannot express and the open questions: [proto/README.md](proto/README.md).
+
 Opt-in profiles test draft FEPs on top of v0.1. They do not change the v0.1 levels or vectors:
 
 ```bash
@@ -81,6 +83,8 @@ spec/
   conformance/fep-0003/       golden vectors of the opt-in FEP-0003 profile (.jsonl)
   conformance/fep-0004/       golden vectors of the opt-in FEP-0004 profile (WebSocket scenarios, .json)
   conformance/fep-0005/       golden vectors of the opt-in FEP-0005 profile (.jsonl)
+  proto/neuraltextstream/v1/  proto3 files of the 1.0 data model (source of truth, P1-02); proto/README.md = mapping rules
+  schemas/nts-v1.schema.json  JSON Schema of one 1.0 JSON Lines event, GENERATED from proto/ (do not edit)
   schemas/nts-v0.1/           JSON schemas (draft 2020-12, structural) of the v0.1 JSON Lines events
   schemas/fep-0001/           JSON schemas of the FEP-0001 objects (segment_end, n-best item, decode_declaration, trust_decision)
   schemas/fep-0003/           JSON schemas (draft 2020-12) of the FEP-0003 objects

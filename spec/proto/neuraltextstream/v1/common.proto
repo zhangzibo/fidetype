@@ -1,0 +1,69 @@
+// NeuralTextStream (NTS) 1.0 RC2 data model: shared enums and field groups.
+//
+// Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
+// Rule ids (for example TIM-4) refer to spec/nts-1.0-rc2.md.
+
+syntax = "proto3";
+
+package neuraltextstream.v1;
+
+import "google/protobuf/struct.proto";
+import "neuraltextstream/v1/options.proto";
+
+// What a score means (section 4.6, registry 12.3). Rules: DEC-1 ... DEC-5.
+enum ScoreSemantics {
+  SCORE_SEMANTICS_UNSPECIFIED = 0;
+  // Probability in [0, 1], calibrated on held-out data.
+  SCORE_SEMANTICS_CALIBRATED_PROB = 1 [(json_value) = "calibrated_prob"];
+  // Probability in [0, 1], not calibrated.
+  SCORE_SEMANTICS_UNCALIBRATED_PROB = 2 [(json_value) = "uncalibrated_prob"];
+  // Non-negative magnitude, not a probability.
+  SCORE_SEMANTICS_POWER = 3 [(json_value) = "power"];
+  // Ordinal strength on a fixed scale.
+  SCORE_SEMANTICS_STRENGTH = 4 [(json_value) = "strength"];
+  // No score.
+  SCORE_SEMANTICS_NONE = 5 [(json_value) = "none"];
+}
+
+// The four optional timing fields of section 5.2. Any event MAY carry them.
+// In JSON they are keys of the event object (json_inline).
+// Rule TIM-4 (t_signal_start <= t_signal_end <= t_decoded <= t_emitted)
+// compares fields. JSON Schema cannot compare two fields, so the SDK
+// validators check it (check NTS-EVT-TIMING).
+message Timing {
+  // Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.
+  optional double t_signal_start = 1;
+  // End of that window, seconds. TIM-4.
+  optional double t_signal_end = 2;
+  // When the decoder finished, seconds. TIM-4.
+  optional double t_decoded = 3;
+  // When the producer sent the event, seconds. TIM-4.
+  optional double t_emitted = 4;
+}
+
+// Binding keys (EXT-3: a binding adds keys only with the prefix lsl or ws).
+// In JSON they are keys of the event object (json_inline). Transport stamps
+// are not event times (TIM-5).
+message Binding {
+  // LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).
+  google.protobuf.Struct lsl = 1;
+  // WebSocket record: header (WS-S2) or decision (WS-K4). The server removes
+  // the header record before the header reaches the trust layer.
+  google.protobuf.Struct ws = 2;
+  // WebSocket sequence number of an input event (WS-Q1) or of a decision on
+  // the decisions channel (WS-D1): an integer >= 1. The binding, not this
+  // schema, says when the key is required.
+  optional uint64 ws_seq = 3 [(minimum) = 1];
+  // Transport stamp of the sender, seconds (WS-K3, TIM-5).
+  optional double ws_t_sent = 4;
+  // Transport stamp of the receiver, seconds (WS-K3, TIM-5).
+  optional double ws_t_recv = 5;
+  // LSL timestamp of a marker event after the clock correction (LSL-C5).
+  optional double lsl_t = 6;
+  // The producer's own t of a JSON frame on the LSL events stream (LSL-C2).
+  optional double t_source = 7;
+  // Number of frame timestamps moved forward before this frame (LSL-C4).
+  optional uint32 lsl_clamped = 8;
+  // Number of frames dropped before this frame (LSL-C4).
+  optional uint32 lsl_dropped_before = 9;
+}

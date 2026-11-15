@@ -1,0 +1,192 @@
+// NeuralTextStream (NTS) 1.0 RC2 data model: the control profile (4.8, 7.4).
+//
+// Status: DRAFT (roadmap P1-02). The control profile is Development (2.3).
+// Licence: Apache-2.0.
+// Rule ids (for example CTL-D1) refer to spec/nts-1.0-rc2.md.
+// Field number ranges: see core.proto.
+
+syntax = "proto3";
+
+package neuraltextstream.v1;
+
+import "google/protobuf/struct.proto";
+import "neuraltextstream/v1/options.proto";
+import "neuraltextstream/v1/common.proto";
+
+// Control quantity (7.4.2, registry 12.3). CTL-D1.
+enum ControlQuantity {
+  CONTROL_QUANTITY_UNSPECIFIED = 0;
+  CONTROL_QUANTITY_VELOCITY = 1 [(json_value) = "velocity"];
+  CONTROL_QUANTITY_POSITION = 2 [(json_value) = "position"];
+}
+
+// Control units (7.4.2, registry 12.3). CTL-D1: the units fit the quantity.
+enum ControlUnits {
+  CONTROL_UNITS_UNSPECIFIED = 0;
+  CONTROL_UNITS_NORM_PER_S = 1 [(json_value) = "norm/s"];
+  CONTROL_UNITS_PX_PER_S = 2 [(json_value) = "px/s"];
+  CONTROL_UNITS_MM_PER_S = 3 [(json_value) = "mm/s"];
+  CONTROL_UNITS_M_PER_S = 4 [(json_value) = "m/s"];
+  CONTROL_UNITS_DEG_PER_S = 5 [(json_value) = "deg/s"];
+  CONTROL_UNITS_NORM = 6 [(json_value) = "norm"];
+  CONTROL_UNITS_PX = 7 [(json_value) = "px"];
+  CONTROL_UNITS_MM = 8 [(json_value) = "mm"];
+  CONTROL_UNITS_M = 9 [(json_value) = "m"];
+  CONTROL_UNITS_DEG = 10 [(json_value) = "deg"];
+}
+
+// Coordinate frame (7.4.2, registry 12.3). CTL-D1.
+enum ControlFrame {
+  CONTROL_FRAME_UNSPECIFIED = 0;
+  // x right, y down, origin top-left.
+  CONTROL_FRAME_SCREEN = 1 [(json_value) = "screen"];
+  // x right, y up, z towards the user; the producer documents the origin.
+  CONTROL_FRAME_WORKSPACE = 2 [(json_value) = "workspace"];
+}
+
+// Uncertainty kind of control events (7.4.2). CTL-3.
+enum Uncertainty {
+  UNCERTAINTY_UNSPECIFIED = 0;
+  UNCERTAINTY_NONE = 1 [(json_value) = "none"];
+  UNCERTAINTY_STD = 2 [(json_value) = "std"];
+}
+
+// The control declaration of a stream (7.4.2), in the header key
+// control_declaration. CTL-D1 ... CTL-D4.
+// Not expressed in the schema: CTL-D3 (click_intent is a declared intent
+// with a role other than null: needs a lookup; see the Header rule for the
+// part that the schema checks).
+message ControlDeclaration {
+  option (json_rule) = '{"$comment": "CTL-D1: velocity units", "if": {"required": ["quantity"], "properties": {"quantity": {"const": "velocity"}}}, "then": {"properties": {"units": {"enum": ["norm/s", "px/s", "mm/s", "m/s", "deg/s"]}}}}';
+  option (json_rule) = '{"$comment": "CTL-D1: position units", "if": {"required": ["quantity"], "properties": {"quantity": {"const": "position"}}}, "then": {"properties": {"units": {"enum": ["norm", "px", "mm", "m", "deg"]}}}}';
+  option (json_rule) = '{"$comment": "CTL-D1: norm position only in the screen frame", "if": {"required": ["quantity", "units"], "properties": {"quantity": {"const": "position"}, "units": {"const": "norm"}}}, "then": {"properties": {"frame": {"const": "screen"}}}}';
+  option (json_rule) = '{"$comment": "CTL-D2: axes has dims names (dims 1)", "if": {"required": ["dims"], "properties": {"dims": {"const": 1}}}, "then": {"properties": {"axes": {"minItems": 1, "maxItems": 1}}}}';
+  option (json_rule) = '{"$comment": "CTL-D2: axes has dims names (dims 2)", "if": {"required": ["dims"], "properties": {"dims": {"const": 2}}}, "then": {"properties": {"axes": {"minItems": 2, "maxItems": 2}}}}';
+  option (json_rule) = '{"$comment": "CTL-D2: axes has dims names (dims 3)", "if": {"required": ["dims"], "properties": {"dims": {"const": 3}}}, "then": {"properties": {"axes": {"minItems": 3, "maxItems": 3}}}}';
+
+  // Integer 1-3. CTL-D1.
+  uint32 dims = 1 [(json_required) = true, (minimum) = 1, (maximum) = 3];
+  // CTL-D1.
+  ControlQuantity quantity = 2 [(json_required) = true];
+  // CTL-D1.
+  ControlUnits units = 3 [(json_required) = true];
+  // CTL-D1.
+  ControlFrame frame = 4 [(json_required) = true];
+  // Update rate, Hz; > 0. CTL-D1.
+  double rate_hz = 5 [(json_required) = true, (exclusive_minimum) = 0];
+  // dims unique non-empty names; default x, y, z. CTL-D2.
+  repeated string axes = 6 [(min_length) = 1, (unique_items) = true, (min_items) = 1, (max_items) = 3];
+  // Default "none". CTL-3.
+  optional Uncertainty uncertainty = 7;
+  // Producer hint; > 0.
+  optional double max_speed = 8 [(exclusive_minimum) = 0];
+  optional double latency_s = 9 [(minimum) = 0];
+  optional double window_s = 10 [(minimum) = 0];
+  // The intent id that means "click". CTL-D3.
+  optional string click_intent = 11;
+
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// Source of a control event (7.4.3).
+enum ControlSource {
+  CONTROL_SOURCE_UNSPECIFIED = 0;
+  CONTROL_SOURCE_DECODER = 1 [(json_value) = "decoder"];
+  CONTROL_SOURCE_HUMAN = 2 [(json_value) = "human"];
+}
+
+// One control update, a tick (7.4.3). JSON type "control". CTL-1 ... CTL-4.
+// Not expressed: CTL-1 (needs a header with a declaration), CTL-2 (tick and
+// t increase: a stream rule), CTL-3 (std present exactly when the header
+// says std), CTL-4 lengths = dims and "null only with absent" (needs the
+// header and two arrays), TIM-4.
+message Control {
+  option (json_type) = "control";
+
+  // CTL-2, CTL-4.
+  double t = 1 [(json_required) = true];
+  // Integer >= 0; increases strictly per stream. CTL-2.
+  uint64 tick = 2 [(json_required) = true];
+  // dims numbers; an absent axis MAY be null (binary: NaN). CTL-4.
+  repeated double values = 3 [(json_required) = true, (json_nullable) = true, (null_binary) = "nan", (min_items) = 1, (max_items) = 3];
+  // true: no value for that axis. CTL-4.
+  repeated bool absent = 4 [(min_items) = 1, (max_items) = 3];
+  // dims numbers > 0. CTL-3, CTL-4.
+  repeated double std = 5 [(exclusive_minimum) = 0, (min_items) = 1, (max_items) = 3];
+  // Default "decoder".
+  optional ControlSource source = 6;
+  optional string id = 7;
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// Channel of a control_enable event (7.4.4, registry 12.3).
+enum EnableSource {
+  ENABLE_SOURCE_UNSPECIFIED = 0;
+  ENABLE_SOURCE_SWITCH = 1 [(json_value) = "switch"];
+  ENABLE_SOURCE_CAREGIVER = 2 [(json_value) = "caregiver"];
+  ENABLE_SOURCE_UI = 3 [(json_value) = "ui"];
+  ENABLE_SOURCE_VOICE = 4 [(json_value) = "voice"];
+  ENABLE_SOURCE_EYE_TRACKER = 5 [(json_value) = "eye-tracker"];
+  ENABLE_SOURCE_WATCHDOG = 6 [(json_value) = "watchdog"];
+  ENABLE_SOURCE_OTHER = 7 [(json_value) = "other"];
+}
+
+// Engage (true) or latched stop (false) from a channel other than the
+// decoder (7.4.4). JSON type "control_enable". CTL-E1 ... CTL-E3.
+// CTL-E2 (not from the decoder) and CTL-E3 (no personal text) are not in a
+// schema.
+message ControlEnable {
+  option (json_type) = "control_enable";
+
+  // CTL-E1.
+  bool enabled = 1 [(json_required) = true];
+  optional double t = 2;
+  // A channel, never a person. CTL-E3.
+  optional EnableSource source = 3;
+  // No personal text. CTL-E3, SEC-5.
+  optional string reason = 4;
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// pointer.mode values (4.8).
+enum PointerMode {
+  POINTER_MODE_UNSPECIFIED = 0;
+  // Change since the last event.
+  POINTER_MODE_RELATIVE = 1 [(json_value) = "relative"];
+  // Position normalised to [0, 1].
+  POINTER_MODE_ABSOLUTE = 2 [(json_value) = "absolute"];
+}
+
+// Continuous 1-D to 3-D movement, v0.1 form (4.8). JSON type "pointer".
+// PTR-1, CTL-12. Not expressed: absolute values in [0, 1] unless absent
+// (two arrays), CTL-12 (dims = declared dims: needs the header).
+message Pointer {
+  option (json_type) = "pointer";
+  option (json_rule) = '{"$comment": "PTR-1: values has dims numbers (dims 1)", "if": {"required": ["dims"], "properties": {"dims": {"const": 1}}}, "then": {"properties": {"values": {"minItems": 1, "maxItems": 1}}}}';
+  option (json_rule) = '{"$comment": "PTR-1: values has dims numbers (dims 2)", "if": {"required": ["dims"], "properties": {"dims": {"const": 2}}}, "then": {"properties": {"values": {"minItems": 2, "maxItems": 2}}}}';
+  option (json_rule) = '{"$comment": "PTR-1: values has dims numbers (dims 3)", "if": {"required": ["dims"], "properties": {"dims": {"const": 3}}}, "then": {"properties": {"values": {"minItems": 3, "maxItems": 3}}}}';
+
+  // PTR-1.
+  double t = 1 [(json_required) = true];
+  // Integer 1-3. PTR-1.
+  uint32 dims = 2 [(json_required) = true, (minimum) = 1, (maximum) = 3];
+  // PTR-1.
+  PointerMode mode = 3 [(json_required) = true];
+  // dims numbers. PTR-1.
+  repeated double values = 4 [(json_required) = true, (min_items) = 1, (max_items) = 3];
+  // dims booleans; true: the value MUST be ignored.
+  repeated bool absent = 5;
+  // As in 4.6.
+  optional double score = 6 [(json_nullable) = true];
+  optional ScoreSemantics score_semantics = 7;
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}

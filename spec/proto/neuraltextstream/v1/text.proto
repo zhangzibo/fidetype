@@ -1,0 +1,90 @@
+// NeuralTextStream (NTS) 1.0 RC2 data model: the text profile (4.7, 7.2).
+//
+// Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
+// Rule ids (for example EVD-1) refer to spec/nts-1.0-rc2.md.
+// Field number ranges: see core.proto.
+
+syntax = "proto3";
+
+package neuraltextstream.v1;
+
+import "google/protobuf/struct.proto";
+import "neuraltextstream/v1/options.proto";
+import "neuraltextstream/v1/common.proto";
+
+// The decode parameters of a hypothesis producer (4.7.3). In the header or
+// in a hypothesis. DCL-1 ... DCL-7. DCL-2 ... DCL-6 are producer and trust
+// layer behaviour; DCL-7 (no user text in params) is content: not in a schema.
+message DecodeDeclaration {
+  // Id of the decoder that made the n-best list. DCL-1.
+  string decoder = 1 [(json_required) = true, (min_length) = 1];
+  // DCL-1.
+  optional string decoder_version = 2 [(min_length) = 1];
+  // Temperature T applied before decoding; > 0; absent = 1.0. DCL-1, DCL-4.
+  optional double frame_temperature = 3 [(exclusive_minimum) = 0];
+  // Other decode parameters (beam, LM weight). A JSON object. DCL-1, DCL-7.
+  google.protobuf.Struct params = 4;
+  // Id of the frozen trust configuration. DCL-1, DCL-5.
+  optional string config_id = 5 [(min_length) = 1];
+
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// One span of an n-best item (4.7). The SDK validators do not check spans.
+message Span {
+  // First code point of the span in text.
+  optional uint32 char_start = 1;
+  // End of the span (exclusive), in code points.
+  optional uint32 char_end = 2;
+  optional double t_start = 3;
+  optional double t_end = 4;
+  optional double score = 5;
+
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// One item of a hypothesis n-best list, with the evidence fields (4.7.2).
+// Not expressed in the schema: EVD-1 count (len(char_confidences) =
+// code points of text: two fields), EVD-2 (LM-free values: content).
+message NBestItem {
+  // Decoded text. HYP-1, HYP-4.
+  string text = 1 [(json_required) = true];
+  // A finite number. HYP-1, EVD-3.
+  double score = 2 [(json_required) = true];
+  repeated Span spans = 3;
+  // Per code point of text: the posterior under the neural evidence only;
+  // each in [0, 1]. EVD-1, EVD-2.
+  repeated double char_confidences = 4 [(minimum) = 0, (maximum) = 1];
+  // Log-probability of text under the neural evidence only; <= 0. EVD-4.
+  optional double logp_acoustic = 5 [(maximum) = 0];
+  // Log-probability of text under the LM only; <= 0. EVD-4.
+  optional double logp_lm = 6 [(maximum) = 0];
+
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// A text n-best list (4.7). JSON type "hypothesis". HYP-1 ... HYP-4.
+// Not expressed: id unique in the stream (a stream rule).
+message Hypothesis {
+  option (json_type) = "hypothesis";
+
+  // Unique in the stream. HYP-1.
+  string id = 1 [(json_required) = true];
+  // Best first. HYP-1.
+  repeated NBestItem nbest = 2 [(json_required) = true];
+  // As in 4.6; "none" for raw log-scores. HYP-1.
+  ScoreSemantics score_semantics = 3 [(json_required) = true];
+  // false while the decoder can still change the text. HYP-1, HYP-2.
+  bool is_final = 4 [(json_required) = true];
+  // Id of the hypothesis that this one replaces. HYP-3.
+  optional string revision_of = 5 [(json_nullable) = true];
+  // Signal time covered, seconds.
+  optional double t_start = 6;
+  optional double t_end = 7;
+  // Replaces the header declaration for this event (no merge). DCL-3.
+  DecodeDeclaration decode_declaration = 8;
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}

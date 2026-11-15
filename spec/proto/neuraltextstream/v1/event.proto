@@ -1,0 +1,53 @@
+// NeuralTextStream (NTS) 1.0 RC2 data model: the event envelope.
+//
+// Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
+//
+// One Event is one JSON Lines line, one LSL marker sample or one WebSocket
+// message (GEN-2). The oneof case selects the JSON "type". In JSON, the
+// fields of the selected message are keys of the line, next to "type"
+// (see spec/proto/README.md, "JSON mapping").
+//
+// Oneof numbers:
+//   1-99      core and profile events of the spec (registry 12.1, policy Spec)
+//   1000-1099 binding extension events (for example the LSL "gap" event)
+//   2047      UnknownEvent: any other type (namespaced custom types, types of
+//             a later minor version). A consumer keeps and ignores it (GEN-4).
+
+syntax = "proto3";
+
+package neuraltextstream.v1;
+
+import "google/protobuf/struct.proto";
+import "neuraltextstream/v1/core.proto";
+import "neuraltextstream/v1/text.proto";
+import "neuraltextstream/v1/intent.proto";
+import "neuraltextstream/v1/control.proto";
+import "neuraltextstream/v1/trust.proto";
+
+message Event {
+  oneof body {
+    Header header = 1;
+    Frame frame = 2;
+    SegmentEnd segment_end = 3;
+    End end = 4;
+    SignalQuality signal_quality = 5;
+    Decision decision = 6;
+    Hypothesis hypothesis = 7;
+    Pointer pointer = 8;
+    Intent intent = 9;
+    IntentFeedback intent_feedback = 10;
+    Control control = 11;
+    ControlEnable control_enable = 12;
+    TrustDecision trust_decision = 13;
+    Gap gap = 1000;
+    UnknownEvent unknown = 2047;
+  }
+}
+
+// An event whose type this version does not define. GEN-4, EXT-2, EXT-5.
+message UnknownEvent {
+  // The JSON "type" value (a string). GEN-2.
+  string type = 1;
+  // Every other key of the JSON object.
+  google.protobuf.Struct body = 2;
+}

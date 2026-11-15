@@ -1,0 +1,229 @@
+// NeuralTextStream (NTS) 1.0 RC2 data model: the core (sections 3 and 4).
+//
+// Status: DRAFT (roadmap P1-02). Licence: Apache-2.0.
+// Rule ids (for example HDR-6) refer to spec/nts-1.0-rc2.md.
+//
+// Field numbers in every event message:
+//   1-15     the most frequent spec fields (one-byte tag)
+//   16-899   other spec fields, assigned only by a spec version (FEP)
+//   900      Timing   (inline: t_signal_start, t_signal_end, t_decoded, t_emitted)
+//   1000     Binding  (inline: lsl, ws, ws_seq, ...)
+//   2047     ext      (inline: every JSON key that has no field here)
+// A number is never used again. A removed field goes into "reserved".
+
+syntax = "proto3";
+
+package neuraltextstream.v1;
+
+import "google/protobuf/struct.proto";
+import "neuraltextstream/v1/options.proto";
+import "neuraltextstream/v1/common.proto";
+import "neuraltextstream/v1/text.proto";
+import "neuraltextstream/v1/intent.proto";
+import "neuraltextstream/v1/control.proto";
+
+// The kind of token in vocab (table 3.2, registry 12.3). Rules: HDR-5, HDR-14.
+enum VocabType {
+  VOCAB_TYPE_UNSPECIFIED = 0;
+  VOCAB_TYPE_CHAR = 1 [(json_value) = "char"];
+  VOCAB_TYPE_KEY = 2 [(json_value) = "key"];
+  VOCAB_TYPE_WORD = 3 [(json_value) = "word"];
+  VOCAB_TYPE_PHONEME = 4 [(json_value) = "phoneme"];
+  VOCAB_TYPE_COMMAND = 5 [(json_value) = "command"];
+  VOCAB_TYPE_OTHER = 6 [(json_value) = "other"];
+}
+
+// The clock of all times in a stream (5.3, registry 12.3). Rule: HDR-11.
+enum ClockDomain {
+  CLOCK_DOMAIN_UNSPECIFIED = 0;
+  CLOCK_DOMAIN_LSL = 1 [(json_value) = "lsl"];
+  CLOCK_DOMAIN_UNIX = 2 [(json_value) = "unix"];
+  CLOCK_DOMAIN_MONOTONIC = 3 [(json_value) = "monotonic"];
+  CLOCK_DOMAIN_TRIAL = 4 [(json_value) = "trial"];
+  CLOCK_DOMAIN_OTHER = 5 [(json_value) = "other"];
+}
+
+// The stream header (section 3). JSON type "header". Line 1 of a JSON Lines
+// stream (HDR-1). A later header starts a new stream (4.4, GEN-7).
+// Not expressed in the schema: HDR-1 (first line: a stream rule), HDR-4 is
+// expressed as uniqueItems, HDR-6 (blank_id < V), HDR-12 (V = 0 only without
+// frames), HDR-15 (registry match), MET-1 ... MET-6 (meta conventions:
+// roadmap P1-04, semconv YAML), INT-D5, CTL-D3 (click_intent declared).
+message Header {
+  option (json_type) = "header";
+  // CTL-D3, first part: a click_intent needs an intent_declaration in the
+  // same header. (That the id is declared, with a role other than null,
+  // needs a lookup: SDK check FEP5-DECL.)
+  option (json_rule) = '{"$comment": "CTL-D3: click_intent needs an intent_declaration", "if": {"required": ["control_declaration"], "properties": {"control_declaration": {"type": "object", "required": ["click_intent"]}}}, "then": {"required": ["intent_declaration"]}}';
+
+  // Version of the rules of the stream: "0.1", "1.0" or "1.<minor>" (minor:
+  // 0 or digits without a leading zero). HDR-1, HDR-2, VER-3, VER-4, VER-5.
+  string spec_version = 1 [(json_required) = true, (pattern) = "^(0\\.1|1\\.(0|[1-9][0-9]*))$"];
+  // vocab[i] is the token of column i. The order is significant. HDR-3,
+  // HDR-4 (unique tokens), HDR-12 (V MAY be 0 only without frames).
+  repeated string vocab = 2 [(json_required) = true, (unique_items) = true];
+  // HDR-5, HDR-14.
+  VocabType vocab_type = 3 [(json_required) = true];
+  // Index of the CTC blank in vocab; JSON null = no blank class. HDR-6 (an
+  // integer in 0 ... V-1: the upper bound needs V, SDK check NTS-BLANK),
+  // HDR-13. GEN-5 (no 0.0) is lexical: JSON Schema cannot see it.
+  optional uint32 blank_id = 4 [(json_required) = true, (json_nullable) = true];
+  // Nominal time between frames, seconds; finite and > 0. HDR-9, TIM-3.
+  // JSON null reads as absent (open question Q-1 in spec/CHANGELOG.md).
+  optional double frame_period = 5 [(json_nullable) = true, (exclusive_minimum) = 0];
+  // Algorithmic lookahead of the decoder, seconds; finite and >= 0. HDR-10,
+  // MET-4, MET-5. JSON null reads as absent (open question Q-1).
+  optional double latency = 6 [(json_nullable) = true, (minimum) = 0];
+  // Short producer name; default "unknown". HDR-7.
+  optional string source = 7 [(min_length) = 1];
+  // Semantic conventions (3.4) and custom keys. HDR-8 (a JSON object), MET-1
+  // ... MET-6, SEC-3 ... SEC-6. The key conventions are not in this schema.
+  google.protobuf.Struct meta = 8;
+  // HDR-11. Default "trial".
+  optional ClockDomain clock_domain = 9;
+  // Registered vocabulary (3.3, 12.4). HDR-15.
+  optional string vocab_id = 10;
+  optional string vocab_version = 11;
+  // Text profile declaration (4.7.3).
+  DecodeDeclaration decode_declaration = 12;
+  // Intent profile declaration (7.3.2).
+  IntentDeclaration intent_declaration = 13;
+  // Control profile declaration (7.4.2).
+  ControlDeclaration control_declaration = 14;
+
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// One frame: a distribution over vocab at one time (4.2). JSON type "frame".
+// Dense form: log_probs. Sparse form: top_ids, top_log_probs, rest_log_prob.
+// Not expressed in the schema: FRM-1 (V values: needs the header), FRM-3
+// (log-sum-exp = 0: arithmetic), len(top_ids) = len(top_log_probs), top_ids
+// < V, TIM-2 (t increases: a stream rule).
+// Binary form: no log_probs and no top_ids is a dense frame with V = 0,
+// which HDR-12 forbids.
+message Frame {
+  option (json_type) = "frame";
+  // FRM-1, FRM-2: a frame has log_probs, or the sparse keys top_ids and
+  // top_log_probs. With log_probs present, the frame is dense.
+  option (json_rule) = '{"$comment": "FRM-1, FRM-2: dense or sparse form", "anyOf": [{"required": ["log_probs"]}, {"required": ["top_ids", "top_log_probs"]}]}';
+
+  // Frame time, seconds. TIM-1, TIM-2, TIM-3.
+  double t = 1 [(json_required) = true];
+  // Natural-log probabilities of the V tokens; null = -inf. GEN-3, FRM-1,
+  // FRM-3, FRM-4 (no NaN, no +inf).
+  repeated double log_probs = 2 [(json_nullable) = true, (null_binary) = "neg_inf"];
+  // Sparse form: k token indices, unique. FRM-2, FRM-5.
+  repeated uint32 top_ids = 3 [(unique_items) = true];
+  // Sparse form: the k log-probabilities; null = -inf. GEN-3, FRM-4.
+  repeated double top_log_probs = 4 [(json_nullable) = true, (null_binary) = "neg_inf"];
+  // Sparse form: log of the rest mass; null or absent = -inf. GEN-3, FRM-5.
+  optional double rest_log_prob = 5 [(json_nullable) = true, (null_binary) = "neg_inf"];
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// segment_end.unit values (4.3, registry 12.3). Rule: SEG-5.
+enum SegmentUnit {
+  SEGMENT_UNIT_UNSPECIFIED = 0;
+  SEGMENT_UNIT_UTTERANCE = 1 [(json_value) = "utterance"];
+  SEGMENT_UNIT_WORD = 2 [(json_value) = "word"];
+  SEGMENT_UNIT_TRIAL = 3 [(json_value) = "trial"];
+}
+
+// The end of a segment (4.3). JSON type "segment_end". SEG-1 ... SEG-5.
+// Not expressed: SEG-4 (t not before the last frame: a stream rule).
+message SegmentEnd {
+  option (json_type) = "segment_end";
+  // Signal time of the boundary; a finite number. SEG-4.
+  optional double t = 1;
+  // Default "utterance". SEG-5.
+  optional SegmentUnit unit = 2;
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// The end of the stream (4.4). JSON type "end". GEN-7, GEN-8.
+message End {
+  option (json_type) = "end";
+
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// signal_quality.unit values (4.5, registry 12.3).
+enum SignalQualityUnit {
+  SIGNAL_QUALITY_UNIT_UNSPECIFIED = 0;
+  SIGNAL_QUALITY_UNIT_INDEX = 1 [(json_value) = "index"];
+  SIGNAL_QUALITY_UNIT_SNR_DB = 2 [(json_value) = "snr_db"];
+  SIGNAL_QUALITY_UNIT_IMPEDANCE_OHM = 3 [(json_value) = "impedance_ohm"];
+  SIGNAL_QUALITY_UNIT_OTHER = 4 [(json_value) = "other"];
+}
+
+// Quality of the input signal, separate from confidence (4.5). JSON type
+// "signal_quality". SQ-1, SQ-2 (consumer behaviour: not in a schema).
+message SignalQuality {
+  option (json_type) = "signal_quality";
+  option (json_rule) = '{"$comment": "SQ-1: an index value is in [0, 1]", "if": {"required": ["unit"], "properties": {"unit": {"const": "index"}}}, "then": {"properties": {"value": {"minimum": 0, "maximum": 1}}}}';
+
+  // SQ-1.
+  double t = 1 [(json_required) = true];
+  // For unit "index": in [0, 1], 1 is best. SQ-1.
+  double value = 2 [(json_required) = true];
+  // SQ-1.
+  SignalQualityUnit unit = 3 [(json_required) = true];
+  // Per-channel values in the same unit.
+  repeated double channels = 4;
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// One discrete decoder output with a score and its semantics (4.6). JSON
+// type "decision". DEC-1 ... DEC-5. The intent profile maps it to a
+// one-candidate intent (PRF-3).
+message Decision {
+  option (json_type) = "decision";
+  option (json_rule) = '{"$comment": "DEC-2: a probability score is in [0, 1]", "if": {"required": ["score_semantics"], "properties": {"score_semantics": {"enum": ["calibrated_prob", "uncalibrated_prob"]}}}, "then": {"properties": {"score": {"minimum": 0, "maximum": 1}}}}';
+  option (json_rule) = '{"$comment": "DEC-3: power and strength need score_range", "if": {"required": ["score_semantics"], "properties": {"score_semantics": {"enum": ["power", "strength"]}}}, "then": {"required": ["score_range"]}}';
+  option (json_rule) = '{"$comment": "DEC-4: with none, score is null or absent", "if": {"required": ["score_semantics"], "properties": {"score_semantics": {"const": "none"}}}, "then": {"properties": {"score": {"type": "null"}}}}';
+
+  // The selected token. SHOULD be in vocab (advisory NTS-EVT-LABEL).
+  string label = 1 [(json_required) = true];
+  double t = 2 [(json_required) = true];
+  // The vendor's score. DEC-2, DEC-4.
+  optional double score = 3 [(json_nullable) = true];
+  // DEC-1 ... DEC-5.
+  ScoreSemantics score_semantics = 4 [(json_required) = true];
+  // [min, max] of the score scale. DEC-3.
+  repeated double score_range = 5 [(min_items) = 2, (max_items) = 2];
+
+  Timing timing = 900 [(json_inline) = true];
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}
+
+// A gap in an LSL frames stream (extension event of the LSL binding, LSL-G1,
+// mode "mark"). JSON type "gap". A consumer that does not know it ignores
+// it (GEN-4). RC2 gives no field table; the fields below come from the
+// reference adapter (open question Q-2).
+message Gap {
+  option (json_type) = "gap";
+
+  // Time of the last frame before the gap, seconds.
+  optional double t_start = 1;
+  // Time of the first frame after the gap, seconds.
+  optional double t_end = 2;
+  // Number of missing frames; null if the stream has no nominal rate.
+  optional uint32 missing_frames = 3 [(json_nullable) = true];
+  // Name of the LSL stream. Never a host name (LSL-C3).
+  optional string stream = 4;
+
+  Binding binding = 1000 [(json_inline) = true];
+  google.protobuf.Struct ext = 2047 [(json_inline) = true];
+}

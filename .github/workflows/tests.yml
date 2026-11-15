@@ -28,6 +28,26 @@ jobs:
 
       - run: uv run pytest -q
 
+  # P1-02: the proto files (spec/proto) are the source of truth. protoc must accept them, the
+  # generated JSON Schema must be up to date, and the schema must give the SDK verdict on every
+  # vector that fails or passes on schema grounds (with our validator and with the jsonschema library).
+  proto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Generated JSON Schema is up to date
+        run: uv run --no-project python tools/proto/gen_jsonschema.py --check
+      - name: protoc compiles the proto files and agrees with the generator's parser
+        run: uvx --from grpcio-tools==1.85.1 python tools/proto/check_protoc.py
+      - name: Schema parity with the SDK verdicts (built-in validator)
+        run: uv run --no-project python tools/proto/parity.py
+      - name: Schema parity with the SDK verdicts (jsonschema library)
+        run: uv run --no-project --with jsonschema==4.26.0 python tools/proto/parity.py --engine jsonschema
+
   # TypeScript SDK (sdk/typescript, M7-06): build, schema drift check, browser-safety check,
   # unit tests and the golden vectors, on the oldest and the newest supported Node.
   typescript:

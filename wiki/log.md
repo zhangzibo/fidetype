@@ -752,3 +752,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Dedicated L 0: commit_p 0.4 (LTT λ̂ 0.33), 9/701 commits, 6 wrong (0.0086, CP95 [0.0031, 0.0185]): guarantee holds on this draw. eWPM 6.03 (old 5.94, always-commit 5.60, gaze 4.02). Stream = batch 701/701. Shared L 0 and CRC: same picture.
 - Uniform control: 186/300 commits (162 empty), because the grid set the guard limit to 1.0. Post hoc M2-18 commit gate: 0/300, 7 commits / 4 wrong on `val_eval`.
 - Updated `concepts/streaming-trust-layer.md` (new section), `concepts/learn-then-test.md`, `index.md`.
+
+## [2026-11-15] setup | P1-02: protobuf schema (proto3) as source of truth + generated JSON Schema
+- New `spec/proto/neuraltextstream/v1/*.proto` (8 files, package `neuraltextstream.v1`): header, all event types, trust decisions of three profiles, LSL `gap`; field comments cite rule ids. Mapping rules in `spec/proto/README.md` (informative).
+- New generator `tools/proto/gen_jsonschema.py` (stdlib) -> `spec/schemas/nts-v1.schema.json`; `check_protoc.py` (protoc via grpcio-tools = parser); `parity.py`; CI job `proto`; `tests/test_proto_schema.py`.
+- Parity: 164 compared vectors (91 accept, 73 schema rejects) match, 0 mismatches (built-in validator and `jsonschema` 4.26.0); 90 reject vectors not compared (other grounds); 33 NPZ out of scope.
+- Open spec questions Q-1 … Q-8 recorded in `spec/CHANGELOG.md`; RC2 Appendix C.3 added (informative, additive). Hand-written schemas and SDK behaviour unchanged.
+- New page `concepts/nts-proto-schema.md`; updated `concepts/nts-spec.md`, `questions/roadmap-standard.md` (P1-02 done), `index.md`.

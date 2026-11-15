@@ -1,0 +1,4171 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/zhangzibo/fidetype/spec/schemas/nts-v1.schema.json",
+ "title": "NeuralTextStream 1.0 RC2 (draft): one JSON Lines event",
+ "description": "GENERATED FILE. Do not edit. Source: spec/proto/neuraltextstream/v1/*.proto. Generator: tools/proto/gen_jsonschema.py (check: --check). Validates ONE line of a JSON Lines stream or decision log (or one LSL marker sample, or one WebSocket NTS message). The value of \"type\" selects the event definition; an unknown type is allowed (GEN-4). Unknown keys are allowed (GEN-4). The rules that need more than one line, the header, arithmetic or the trust rules stay in the SDK validators: see spec/proto/README.md, section 'What the schema cannot express'.",
+ "type": "object",
+ "required": [
+  "type"
+ ],
+ "properties": {
+  "type": {
+   "type": "string",
+   "description": "Event type (GEN-2, registry 12.1)."
+  }
+ },
+ "allOf": [
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "header"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/Header"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "frame"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/Frame"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "segment_end"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/SegmentEnd"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "end"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/End"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "signal_quality"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/SignalQuality"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "decision"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/Decision"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "hypothesis"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/Hypothesis"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "pointer"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/Pointer"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "intent"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/Intent"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "intent_feedback"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/IntentFeedback"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "control"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/Control"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "control_enable"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/ControlEnable"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "trust_decision"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/TrustDecision"
+   }
+  },
+  {
+   "if": {
+    "required": [
+     "type"
+    ],
+    "properties": {
+     "type": {
+      "const": "gap"
+     }
+    }
+   },
+   "then": {
+    "$ref": "#/$defs/Gap"
+   }
+  }
+ ],
+ "$defs": {
+  "Control": {
+   "description": "One control update, a tick (7.4.3). JSON type \"control\". CTL-1 ... CTL-4. Not expressed: CTL-1 (needs a header with a declaration), CTL-2 (tick and t increase: a stream rule), CTL-3 (std present exactly when the header says std), CTL-4 lengths = dims and \"null only with absent\" (needs the header and two arrays), TIM-4.",
+   "type": "object",
+   "required": [
+    "type",
+    "t",
+    "tick",
+    "values"
+   ],
+   "properties": {
+    "type": {
+     "const": "control"
+    },
+    "t": {
+     "description": "CTL-2, CTL-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "CTL-2",
+      "CTL-4"
+     ]
+    },
+    "tick": {
+     "description": "Integer >= 0; increases strictly per stream. CTL-2.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "CTL-2"
+     ]
+    },
+    "values": {
+     "description": "dims numbers; an absent axis MAY be null (binary: NaN). CTL-4. Binary form of JSON null: NaN.",
+     "type": "array",
+     "items": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "minItems": 1,
+     "maxItems": 3,
+     "x-nts-rules": [
+      "CTL-4"
+     ]
+    },
+    "absent": {
+     "description": "true: no value for that axis. CTL-4.",
+     "type": "array",
+     "items": {
+      "type": "boolean"
+     },
+     "minItems": 1,
+     "maxItems": 3,
+     "x-nts-rules": [
+      "CTL-4"
+     ]
+    },
+    "std": {
+     "description": "dims numbers > 0. CTL-3, CTL-4.",
+     "type": "array",
+     "items": {
+      "type": "number",
+      "exclusiveMinimum": 0
+     },
+     "minItems": 1,
+     "maxItems": 3,
+     "x-nts-rules": [
+      "CTL-3",
+      "CTL-4"
+     ]
+    },
+    "source": {
+     "description": "Default \"decoder\".",
+     "$ref": "#/$defs/ControlSource"
+    },
+    "id": {
+     "type": "string"
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "x-nts-rules": [
+    "CTL-1",
+    "CTL-4",
+    "CTL-2",
+    "CTL-3",
+    "TIM-4"
+   ],
+   "x-proto": "neuraltextstream.v1.Control (control.proto)"
+  },
+  "ControlDeclaration": {
+   "description": "The control declaration of a stream (7.4.2), in the header key control_declaration. CTL-D1 ... CTL-D4. Not expressed in the schema: CTL-D3 (click_intent is a declared intent with a role other than null: needs a lookup; see the Header rule for the part that the schema checks).",
+   "type": "object",
+   "required": [
+    "dims",
+    "quantity",
+    "units",
+    "frame",
+    "rate_hz"
+   ],
+   "properties": {
+    "dims": {
+     "description": "Integer 1-3. CTL-D1.",
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 3,
+     "x-nts-rules": [
+      "CTL-D1"
+     ]
+    },
+    "quantity": {
+     "description": "CTL-D1.",
+     "$ref": "#/$defs/ControlQuantity",
+     "x-nts-rules": [
+      "CTL-D1"
+     ]
+    },
+    "units": {
+     "description": "CTL-D1.",
+     "$ref": "#/$defs/ControlUnits",
+     "x-nts-rules": [
+      "CTL-D1"
+     ]
+    },
+    "frame": {
+     "description": "CTL-D1.",
+     "$ref": "#/$defs/ControlFrame",
+     "x-nts-rules": [
+      "CTL-D1"
+     ]
+    },
+    "rate_hz": {
+     "description": "Update rate, Hz; > 0. CTL-D1.",
+     "type": "number",
+     "exclusiveMinimum": 0,
+     "x-nts-rules": [
+      "CTL-D1"
+     ]
+    },
+    "axes": {
+     "description": "dims unique non-empty names; default x, y, z. CTL-D2.",
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1,
+     "maxItems": 3,
+     "uniqueItems": true,
+     "x-nts-rules": [
+      "CTL-D2"
+     ]
+    },
+    "uncertainty": {
+     "description": "Default \"none\". CTL-3.",
+     "$ref": "#/$defs/Uncertainty",
+     "x-nts-rules": [
+      "CTL-3"
+     ]
+    },
+    "max_speed": {
+     "description": "Producer hint; > 0.",
+     "type": "number",
+     "exclusiveMinimum": 0
+    },
+    "latency_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "window_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "click_intent": {
+     "description": "The intent id that means \"click\". CTL-D3.",
+     "type": "string",
+     "x-nts-rules": [
+      "CTL-D3"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "CTL-D1: velocity units",
+     "if": {
+      "required": [
+       "quantity"
+      ],
+      "properties": {
+       "quantity": {
+        "const": "velocity"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "units": {
+        "enum": [
+         "norm/s",
+         "px/s",
+         "mm/s",
+         "m/s",
+         "deg/s"
+        ]
+       }
+      }
+     }
+    },
+    {
+     "$comment": "CTL-D1: position units",
+     "if": {
+      "required": [
+       "quantity"
+      ],
+      "properties": {
+       "quantity": {
+        "const": "position"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "units": {
+        "enum": [
+         "norm",
+         "px",
+         "mm",
+         "m",
+         "deg"
+        ]
+       }
+      }
+     }
+    },
+    {
+     "$comment": "CTL-D1: norm position only in the screen frame",
+     "if": {
+      "required": [
+       "quantity",
+       "units"
+      ],
+      "properties": {
+       "quantity": {
+        "const": "position"
+       },
+       "units": {
+        "const": "norm"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "frame": {
+        "const": "screen"
+       }
+      }
+     }
+    },
+    {
+     "$comment": "CTL-D2: axes has dims names (dims 1)",
+     "if": {
+      "required": [
+       "dims"
+      ],
+      "properties": {
+       "dims": {
+        "const": 1
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "axes": {
+        "minItems": 1,
+        "maxItems": 1
+       }
+      }
+     }
+    },
+    {
+     "$comment": "CTL-D2: axes has dims names (dims 2)",
+     "if": {
+      "required": [
+       "dims"
+      ],
+      "properties": {
+       "dims": {
+        "const": 2
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "axes": {
+        "minItems": 2,
+        "maxItems": 2
+       }
+      }
+     }
+    },
+    {
+     "$comment": "CTL-D2: axes has dims names (dims 3)",
+     "if": {
+      "required": [
+       "dims"
+      ],
+      "properties": {
+       "dims": {
+        "const": 3
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "axes": {
+        "minItems": 3,
+        "maxItems": 3
+       }
+      }
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "CTL-D1",
+    "CTL-D4",
+    "CTL-D3",
+    "CTL-D2"
+   ],
+   "x-proto": "neuraltextstream.v1.ControlDeclaration (control.proto)"
+  },
+  "ControlEnable": {
+   "description": "Engage (true) or latched stop (false) from a channel other than the decoder (7.4.4). JSON type \"control_enable\". CTL-E1 ... CTL-E3. CTL-E2 (not from the decoder) and CTL-E3 (no personal text) are not in a schema.",
+   "type": "object",
+   "required": [
+    "type",
+    "enabled"
+   ],
+   "properties": {
+    "type": {
+     "const": "control_enable"
+    },
+    "enabled": {
+     "description": "CTL-E1.",
+     "type": "boolean",
+     "x-nts-rules": [
+      "CTL-E1"
+     ]
+    },
+    "t": {
+     "type": "number"
+    },
+    "source": {
+     "description": "A channel, never a person. CTL-E3.",
+     "$ref": "#/$defs/EnableSource",
+     "x-nts-rules": [
+      "CTL-E3"
+     ]
+    },
+    "reason": {
+     "description": "No personal text. CTL-E3, SEC-5.",
+     "type": "string",
+     "x-nts-rules": [
+      "CTL-E3",
+      "SEC-5"
+     ]
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "x-nts-rules": [
+    "CTL-E1",
+    "CTL-E3",
+    "CTL-E2"
+   ],
+   "x-proto": "neuraltextstream.v1.ControlEnable (control.proto)"
+  },
+  "Decision": {
+   "description": "One discrete decoder output with a score and its semantics (4.6). JSON type \"decision\". DEC-1 ... DEC-5. The intent profile maps it to a one-candidate intent (PRF-3).",
+   "type": "object",
+   "required": [
+    "type",
+    "label",
+    "t",
+    "score_semantics"
+   ],
+   "properties": {
+    "type": {
+     "const": "decision"
+    },
+    "label": {
+     "description": "The selected token. SHOULD be in vocab (advisory NTS-EVT-LABEL).",
+     "type": "string"
+    },
+    "t": {
+     "type": "number"
+    },
+    "score": {
+     "description": "The vendor's score. DEC-2, DEC-4.",
+     "type": [
+      "number",
+      "null"
+     ],
+     "x-nts-rules": [
+      "DEC-2",
+      "DEC-4"
+     ]
+    },
+    "score_semantics": {
+     "description": "DEC-1 ... DEC-5.",
+     "$ref": "#/$defs/ScoreSemantics",
+     "x-nts-rules": [
+      "DEC-1",
+      "DEC-5"
+     ]
+    },
+    "score_range": {
+     "description": "[min, max] of the score scale. DEC-3.",
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 2,
+     "maxItems": 2,
+     "x-nts-rules": [
+      "DEC-3"
+     ]
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "DEC-2: a probability score is in [0, 1]",
+     "if": {
+      "required": [
+       "score_semantics"
+      ],
+      "properties": {
+       "score_semantics": {
+        "enum": [
+         "calibrated_prob",
+         "uncalibrated_prob"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "score": {
+        "minimum": 0,
+        "maximum": 1
+       }
+      }
+     }
+    },
+    {
+     "$comment": "DEC-3: power and strength need score_range",
+     "if": {
+      "required": [
+       "score_semantics"
+      ],
+      "properties": {
+       "score_semantics": {
+        "enum": [
+         "power",
+         "strength"
+        ]
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "score_range"
+      ]
+     }
+    },
+    {
+     "$comment": "DEC-4: with none, score is null or absent",
+     "if": {
+      "required": [
+       "score_semantics"
+      ],
+      "properties": {
+       "score_semantics": {
+        "const": "none"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "score": {
+        "type": "null"
+       }
+      }
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "DEC-1",
+    "DEC-5",
+    "PRF-3",
+    "DEC-2",
+    "DEC-3",
+    "DEC-4"
+   ],
+   "x-proto": "neuraltextstream.v1.Decision (core.proto)"
+  },
+  "DecodeDeclaration": {
+   "description": "The decode parameters of a hypothesis producer (4.7.3). In the header or in a hypothesis. DCL-1 ... DCL-7. DCL-2 ... DCL-6 are producer and trust layer behaviour; DCL-7 (no user text in params) is content: not in a schema.",
+   "type": "object",
+   "required": [
+    "decoder"
+   ],
+   "properties": {
+    "decoder": {
+     "description": "Id of the decoder that made the n-best list. DCL-1.",
+     "type": "string",
+     "minLength": 1,
+     "x-nts-rules": [
+      "DCL-1"
+     ]
+    },
+    "decoder_version": {
+     "description": "DCL-1.",
+     "type": "string",
+     "minLength": 1,
+     "x-nts-rules": [
+      "DCL-1"
+     ]
+    },
+    "frame_temperature": {
+     "description": "Temperature T applied before decoding; > 0; absent = 1.0. DCL-1, DCL-4.",
+     "type": "number",
+     "exclusiveMinimum": 0,
+     "x-nts-rules": [
+      "DCL-1",
+      "DCL-4"
+     ]
+    },
+    "params": {
+     "description": "Other decode parameters (beam, LM weight). A JSON object. DCL-1, DCL-7.",
+     "type": "object",
+     "x-nts-rules": [
+      "DCL-1",
+      "DCL-7"
+     ]
+    },
+    "config_id": {
+     "description": "Id of the frozen trust configuration. DCL-1, DCL-5.",
+     "type": "string",
+     "minLength": 1,
+     "x-nts-rules": [
+      "DCL-1",
+      "DCL-5"
+     ]
+    }
+   },
+   "x-nts-rules": [
+    "DCL-1",
+    "DCL-7",
+    "DCL-2",
+    "DCL-6"
+   ],
+   "x-proto": "neuraltextstream.v1.DecodeDeclaration (text.proto)"
+  },
+  "End": {
+   "description": "The end of the stream (4.4). JSON type \"end\". GEN-7, GEN-8.",
+   "type": "object",
+   "required": [
+    "type"
+   ],
+   "properties": {
+    "type": {
+     "const": "end"
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "x-nts-rules": [
+    "GEN-7",
+    "GEN-8"
+   ],
+   "x-proto": "neuraltextstream.v1.End (core.proto)"
+  },
+  "Frame": {
+   "description": "One frame: a distribution over vocab at one time (4.2). JSON type \"frame\". Dense form: log_probs. Sparse form: top_ids, top_log_probs, rest_log_prob. Not expressed in the schema: FRM-1 (V values: needs the header), FRM-3 (log-sum-exp = 0: arithmetic), len(top_ids) = len(top_log_probs), top_ids < V, TIM-2 (t increases: a stream rule). Binary form: no log_probs and no top_ids is a dense frame with V = 0, which HDR-12 forbids.",
+   "type": "object",
+   "required": [
+    "type",
+    "t"
+   ],
+   "properties": {
+    "type": {
+     "const": "frame"
+    },
+    "t": {
+     "description": "Frame time, seconds. TIM-1, TIM-2, TIM-3.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-2",
+      "TIM-3"
+     ]
+    },
+    "log_probs": {
+     "description": "Natural-log probabilities of the V tokens; null = -inf. GEN-3, FRM-1, FRM-3, FRM-4 (no NaN, no +inf). Binary form of JSON null: -inf.",
+     "type": "array",
+     "items": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "x-nts-rules": [
+      "GEN-3",
+      "FRM-1",
+      "FRM-3",
+      "FRM-4"
+     ]
+    },
+    "top_ids": {
+     "description": "Sparse form: k token indices, unique. FRM-2, FRM-5.",
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "uniqueItems": true,
+     "x-nts-rules": [
+      "FRM-2",
+      "FRM-5"
+     ]
+    },
+    "top_log_probs": {
+     "description": "Sparse form: the k log-probabilities; null = -inf. GEN-3, FRM-4. Binary form of JSON null: -inf.",
+     "type": "array",
+     "items": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "x-nts-rules": [
+      "GEN-3",
+      "FRM-4"
+     ]
+    },
+    "rest_log_prob": {
+     "description": "Sparse form: log of the rest mass; null or absent = -inf. GEN-3, FRM-5. Binary form of JSON null: -inf.",
+     "type": [
+      "number",
+      "null"
+     ],
+     "x-nts-rules": [
+      "GEN-3",
+      "FRM-5"
+     ]
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "FRM-1, FRM-2: dense or sparse form",
+     "anyOf": [
+      {
+       "required": [
+        "log_probs"
+       ]
+      },
+      {
+       "required": [
+        "top_ids",
+        "top_log_probs"
+       ]
+      }
+     ]
+    }
+   ],
+   "x-nts-rules": [
+    "FRM-1",
+    "FRM-3",
+    "TIM-2",
+    "HDR-12",
+    "FRM-2"
+   ],
+   "x-proto": "neuraltextstream.v1.Frame (core.proto)"
+  },
+  "Gap": {
+   "description": "A gap in an LSL frames stream (extension event of the LSL binding, LSL-G1, mode \"mark\"). JSON type \"gap\". A consumer that does not know it ignores it (GEN-4). RC2 gives no field table; the fields below come from the reference adapter (open question Q-2).",
+   "type": "object",
+   "required": [
+    "type"
+   ],
+   "properties": {
+    "type": {
+     "const": "gap"
+    },
+    "t_start": {
+     "description": "Time of the last frame before the gap, seconds.",
+     "type": "number"
+    },
+    "t_end": {
+     "description": "Time of the first frame after the gap, seconds.",
+     "type": "number"
+    },
+    "missing_frames": {
+     "description": "Number of missing frames; null if the stream has no nominal rate.",
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "stream": {
+     "description": "Name of the LSL stream. Never a host name (LSL-C3).",
+     "type": "string",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "x-nts-rules": [
+    "LSL-G1",
+    "GEN-4"
+   ],
+   "x-proto": "neuraltextstream.v1.Gap (core.proto)"
+  },
+  "Header": {
+   "description": "The stream header (section 3). JSON type \"header\". Line 1 of a JSON Lines stream (HDR-1). A later header starts a new stream (4.4, GEN-7). Not expressed in the schema: HDR-1 (first line: a stream rule), HDR-4 is expressed as uniqueItems, HDR-6 (blank_id < V), HDR-12 (V = 0 only without frames), HDR-15 (registry match), MET-1 ... MET-6 (meta conventions: roadmap P1-04, semconv YAML), INT-D5, CTL-D3 (click_intent declared).",
+   "type": "object",
+   "required": [
+    "type",
+    "spec_version",
+    "vocab",
+    "vocab_type",
+    "blank_id"
+   ],
+   "properties": {
+    "type": {
+     "const": "header"
+    },
+    "spec_version": {
+     "description": "Version of the rules of the stream: \"0.1\", \"1.0\" or \"1.<minor>\" (minor: 0 or digits without a leading zero). HDR-1, HDR-2, VER-3, VER-4, VER-5.",
+     "type": "string",
+     "pattern": "^(0\\.1|1\\.(0|[1-9][0-9]*))$",
+     "x-nts-rules": [
+      "HDR-1",
+      "HDR-2",
+      "VER-3",
+      "VER-4",
+      "VER-5"
+     ]
+    },
+    "vocab": {
+     "description": "vocab[i] is the token of column i. The order is significant. HDR-3, HDR-4 (unique tokens), HDR-12 (V MAY be 0 only without frames).",
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "uniqueItems": true,
+     "x-nts-rules": [
+      "HDR-3",
+      "HDR-4",
+      "HDR-12"
+     ]
+    },
+    "vocab_type": {
+     "description": "HDR-5, HDR-14.",
+     "$ref": "#/$defs/VocabType",
+     "x-nts-rules": [
+      "HDR-5",
+      "HDR-14"
+     ]
+    },
+    "blank_id": {
+     "description": "Index of the CTC blank in vocab; JSON null = no blank class. HDR-6 (an integer in 0 ... V-1: the upper bound needs V, SDK check NTS-BLANK), HDR-13. GEN-5 (no 0.0) is lexical: JSON Schema cannot see it.",
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0,
+     "x-nts-rules": [
+      "HDR-6",
+      "HDR-13",
+      "GEN-5"
+     ]
+    },
+    "frame_period": {
+     "description": "Nominal time between frames, seconds; finite and > 0. HDR-9, TIM-3. JSON null reads as absent (open question Q-1 in spec/CHANGELOG.md).",
+     "type": [
+      "number",
+      "null"
+     ],
+     "exclusiveMinimum": 0,
+     "x-nts-rules": [
+      "HDR-9",
+      "TIM-3"
+     ]
+    },
+    "latency": {
+     "description": "Algorithmic lookahead of the decoder, seconds; finite and >= 0. HDR-10, MET-4, MET-5. JSON null reads as absent (open question Q-1).",
+     "type": [
+      "number",
+      "null"
+     ],
+     "minimum": 0,
+     "x-nts-rules": [
+      "HDR-10",
+      "MET-4",
+      "MET-5"
+     ]
+    },
+    "source": {
+     "description": "Short producer name; default \"unknown\". HDR-7.",
+     "type": "string",
+     "minLength": 1,
+     "x-nts-rules": [
+      "HDR-7"
+     ]
+    },
+    "meta": {
+     "description": "Semantic conventions (3.4) and custom keys. HDR-8 (a JSON object), MET-1 ... MET-6, SEC-3 ... SEC-6. The key conventions are not in this schema.",
+     "type": "object",
+     "x-nts-rules": [
+      "HDR-8",
+      "MET-1",
+      "MET-6",
+      "SEC-3",
+      "SEC-6"
+     ]
+    },
+    "clock_domain": {
+     "description": "HDR-11. Default \"trial\".",
+     "$ref": "#/$defs/ClockDomain",
+     "x-nts-rules": [
+      "HDR-11"
+     ]
+    },
+    "vocab_id": {
+     "description": "Registered vocabulary (3.3, 12.4). HDR-15.",
+     "type": "string",
+     "x-nts-rules": [
+      "HDR-15"
+     ]
+    },
+    "vocab_version": {
+     "type": "string"
+    },
+    "decode_declaration": {
+     "description": "Text profile declaration (4.7.3).",
+     "$ref": "#/$defs/DecodeDeclaration"
+    },
+    "intent_declaration": {
+     "description": "Intent profile declaration (7.3.2).",
+     "$ref": "#/$defs/IntentDeclaration"
+    },
+    "control_declaration": {
+     "description": "Control profile declaration (7.4.2).",
+     "$ref": "#/$defs/ControlDeclaration"
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "CTL-D3: click_intent needs an intent_declaration",
+     "if": {
+      "required": [
+       "control_declaration"
+      ],
+      "properties": {
+       "control_declaration": {
+        "type": "object",
+        "required": [
+         "click_intent"
+        ]
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "intent_declaration"
+      ]
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "HDR-1",
+    "GEN-7",
+    "HDR-4",
+    "HDR-6",
+    "HDR-12",
+    "HDR-15",
+    "MET-1",
+    "MET-6",
+    "INT-D5",
+    "CTL-D3"
+   ],
+   "x-proto": "neuraltextstream.v1.Header (core.proto)"
+  },
+  "Hypothesis": {
+   "description": "A text n-best list (4.7). JSON type \"hypothesis\". HYP-1 ... HYP-4. Not expressed: id unique in the stream (a stream rule).",
+   "type": "object",
+   "required": [
+    "type",
+    "id",
+    "nbest",
+    "score_semantics",
+    "is_final"
+   ],
+   "properties": {
+    "type": {
+     "const": "hypothesis"
+    },
+    "id": {
+     "description": "Unique in the stream. HYP-1.",
+     "type": "string",
+     "x-nts-rules": [
+      "HYP-1"
+     ]
+    },
+    "nbest": {
+     "description": "Best first. HYP-1.",
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/NBestItem"
+     },
+     "x-nts-rules": [
+      "HYP-1"
+     ]
+    },
+    "score_semantics": {
+     "description": "As in 4.6; \"none\" for raw log-scores. HYP-1.",
+     "$ref": "#/$defs/ScoreSemantics",
+     "x-nts-rules": [
+      "HYP-1"
+     ]
+    },
+    "is_final": {
+     "description": "false while the decoder can still change the text. HYP-1, HYP-2.",
+     "type": "boolean",
+     "x-nts-rules": [
+      "HYP-1",
+      "HYP-2"
+     ]
+    },
+    "revision_of": {
+     "description": "Id of the hypothesis that this one replaces. HYP-3.",
+     "type": [
+      "string",
+      "null"
+     ],
+     "x-nts-rules": [
+      "HYP-3"
+     ]
+    },
+    "t_start": {
+     "description": "Signal time covered, seconds.",
+     "type": "number"
+    },
+    "t_end": {
+     "type": "number"
+    },
+    "decode_declaration": {
+     "description": "Replaces the header declaration for this event (no merge). DCL-3.",
+     "$ref": "#/$defs/DecodeDeclaration",
+     "x-nts-rules": [
+      "DCL-3"
+     ]
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "x-nts-rules": [
+    "HYP-1",
+    "HYP-4"
+   ],
+   "x-proto": "neuraltextstream.v1.Hypothesis (text.proto)"
+  },
+  "Intent": {
+   "description": "A discrete intent output (7.3.3). JSON type \"intent\". INT-E1 ... INT-E7. Not expressed: INT-E1 (needs a header with a declaration), INT-E2 (declared, not twice), INT-E3 sum <= 1 (arithmetic), INT-E4 ranking (order of items), INT-E5 (unique id in the stream), INT-E6.",
+   "type": "object",
+   "required": [
+    "type",
+    "id",
+    "t",
+    "is_final",
+    "score_semantics",
+    "candidates"
+   ],
+   "properties": {
+    "type": {
+     "const": "intent"
+    },
+    "id": {
+     "description": "Unique in the stream. INT-E5, INT-E7.",
+     "type": "string",
+     "minLength": 1,
+     "x-nts-rules": [
+      "INT-E5",
+      "INT-E7"
+     ]
+    },
+    "t": {
+     "description": "INT-E7.",
+     "type": "number",
+     "x-nts-rules": [
+      "INT-E7"
+     ]
+    },
+    "t_start": {
+     "type": "number"
+    },
+    "t_end": {
+     "type": "number"
+    },
+    "is_final": {
+     "description": "INT-E7.",
+     "type": "boolean",
+     "x-nts-rules": [
+      "INT-E7"
+     ]
+    },
+    "revision_of": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "score_semantics": {
+     "description": "INT-E3, INT-E7.",
+     "$ref": "#/$defs/ScoreSemantics",
+     "x-nts-rules": [
+      "INT-E3",
+      "INT-E7"
+     ]
+    },
+    "candidates": {
+     "description": "At least one. INT-E2 ... INT-E4.",
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/IntentCandidate"
+     },
+     "minItems": 1,
+     "x-nts-rules": [
+      "INT-E2",
+      "INT-E4"
+     ]
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "INT-E3: with none, no candidate has a score",
+     "if": {
+      "required": [
+       "score_semantics"
+      ],
+      "properties": {
+       "score_semantics": {
+        "const": "none"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "candidates": {
+        "items": {
+         "properties": {
+          "score": {
+           "type": "null"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "$comment": "INT-E3: with a probability semantics, every score is in [0, 1]",
+     "if": {
+      "required": [
+       "score_semantics"
+      ],
+      "properties": {
+       "score_semantics": {
+        "enum": [
+         "calibrated_prob",
+         "uncalibrated_prob"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "candidates": {
+        "items": {
+         "required": [
+          "score"
+         ],
+         "properties": {
+          "score": {
+           "type": "number",
+           "minimum": 0,
+           "maximum": 1
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "$comment": "INT-E3: with power or strength, every score is a finite number",
+     "if": {
+      "required": [
+       "score_semantics"
+      ],
+      "properties": {
+       "score_semantics": {
+        "enum": [
+         "power",
+         "strength"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "candidates": {
+        "items": {
+         "required": [
+          "score"
+         ],
+         "properties": {
+          "score": {
+           "type": "number"
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "INT-E1",
+    "INT-E7",
+    "INT-E2",
+    "INT-E3",
+    "INT-E4",
+    "INT-E5",
+    "INT-E6"
+   ],
+   "x-proto": "neuraltextstream.v1.Intent (intent.proto)"
+  },
+  "IntentCandidate": {
+   "description": "One candidate of an intent event (7.3.3).",
+   "type": "object",
+   "required": [
+    "intent"
+   ],
+   "properties": {
+    "intent": {
+     "description": "A declared id (INT-E2: needs the header; SDK check FEP3-INTENT).",
+     "type": "string",
+     "x-nts-rules": [
+      "INT-E2"
+     ]
+    },
+    "score": {
+     "description": "Number, or null / absent with score_semantics none. INT-E3.",
+     "type": [
+      "number",
+      "null"
+     ],
+     "x-nts-rules": [
+      "INT-E3"
+     ]
+    }
+   },
+   "x-proto": "neuraltextstream.v1.IntentCandidate (intent.proto)"
+  },
+  "IntentDeclaration": {
+   "description": "The intent vocabulary of a stream (7.3.2), in the header key intent_declaration. INT-D1 ... INT-D6. Not expressed in the schema: unique ids (INT-D1), INT-D5 (vocab equals the ids: needs the header vocab), INT-D6 (SHOULD, decoder training).",
+   "type": "object",
+   "required": [
+    "intents"
+   ],
+   "properties": {
+    "vocab_id": {
+     "description": "intent.* namespace (12.4).",
+     "type": "string",
+     "minLength": 1
+    },
+    "vocab_version": {
+     "type": "string",
+     "minLength": 1
+    },
+    "intents": {
+     "description": "At least one intent.",
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/IntentSpec"
+     },
+     "minItems": 1
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "INT-D1: at least one intent has a role other than null (an absent role is action)",
+     "properties": {
+      "intents": {
+       "contains": {
+        "not": {
+         "required": [
+          "role"
+         ],
+         "properties": {
+          "role": {
+           "const": "null"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "$comment": "INT-D3: at most one confirm intent",
+     "properties": {
+      "intents": {
+       "contains": {
+        "required": [
+         "role"
+        ],
+        "properties": {
+         "role": {
+          "const": "confirm"
+         }
+        }
+       },
+       "minContains": 0,
+       "maxContains": 1
+      }
+     }
+    },
+    {
+     "$comment": "INT-D3: at most one cancel intent",
+     "properties": {
+      "intents": {
+       "contains": {
+        "required": [
+         "role"
+        ],
+        "properties": {
+         "role": {
+          "const": "cancel"
+         }
+        }
+       },
+       "minContains": 0,
+       "maxContains": 1
+      }
+     }
+    },
+    {
+     "$comment": "INT-D3: at most one undo intent",
+     "properties": {
+      "intents": {
+       "contains": {
+        "required": [
+         "role"
+        ],
+        "properties": {
+         "role": {
+          "const": "undo"
+         }
+        }
+       },
+       "minContains": 0,
+       "maxContains": 1
+      }
+     }
+    },
+    {
+     "$comment": "INT-D4: with an irreversible intent, the confirm intent is irreversible",
+     "if": {
+      "required": [
+       "intents"
+      ],
+      "properties": {
+       "intents": {
+        "contains": {
+         "required": [
+          "risk"
+         ],
+         "properties": {
+          "risk": {
+           "const": "irreversible"
+          }
+         }
+        }
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "intents": {
+        "items": {
+         "if": {
+          "required": [
+           "role"
+          ],
+          "properties": {
+           "role": {
+            "const": "confirm"
+           }
+          }
+         },
+         "then": {
+          "properties": {
+           "risk": {
+            "const": "irreversible"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "INT-D1",
+    "INT-D6",
+    "INT-D5",
+    "INT-D3",
+    "INT-D4"
+   ],
+   "x-proto": "neuraltextstream.v1.IntentDeclaration (intent.proto)"
+  },
+  "IntentFeedback": {
+   "description": "Feedback from another channel about a decision unit (7.3.4). JSON type \"intent_feedback\". INT-F1, INT-F2 (no free text: content, not in a schema).",
+   "type": "object",
+   "required": [
+    "type",
+    "ref_unit",
+    "outcome"
+   ],
+   "properties": {
+    "type": {
+     "const": "intent_feedback"
+    },
+    "ref_unit": {
+     "description": "The decision unit. INT-F1.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "INT-F1"
+     ]
+    },
+    "outcome": {
+     "description": "INT-F1.",
+     "$ref": "#/$defs/FeedbackOutcome",
+     "x-nts-rules": [
+      "INT-F1"
+     ]
+    },
+    "intent": {
+     "description": "Required for outcome \"selected\". A declared id.",
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "t": {
+     "type": "number"
+    },
+    "source": {
+     "description": "A channel (switch, touch, caregiver, eye-tracker), never a person. INT-F2.",
+     "type": "string",
+     "x-nts-rules": [
+      "INT-F2"
+     ]
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "INT-F1: outcome selected needs the selected intent",
+     "if": {
+      "required": [
+       "outcome"
+      ],
+      "properties": {
+       "outcome": {
+        "const": "selected"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "intent"
+      ],
+      "properties": {
+       "intent": {
+        "type": "string"
+       }
+      }
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "INT-F1",
+    "INT-F2"
+   ],
+   "x-proto": "neuraltextstream.v1.IntentFeedback (intent.proto)"
+  },
+  "IntentSpec": {
+   "description": "One declared intent (7.3.2).",
+   "type": "object",
+   "required": [
+    "id",
+    "risk"
+   ],
+   "properties": {
+    "id": {
+     "description": "Unique (INT-D1: needs a lookup over the list; SDK check FEP3-DECL). Not blank. Convention intent.<verb>[.<object>].",
+     "type": "string",
+     "pattern": "[^\\u0009-\\u000D\\u001C-\\u0020\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]",
+     "x-nts-rules": [
+      "INT-D1"
+     ]
+    },
+    "risk": {
+     "description": "INT-D2.",
+     "$ref": "#/$defs/RiskClass",
+     "x-nts-rules": [
+      "INT-D2"
+     ]
+    },
+    "role": {
+     "description": "Default \"action\". INT-D1, INT-D3.",
+     "$ref": "#/$defs/IntentRole",
+     "x-nts-rules": [
+      "INT-D1",
+      "INT-D3"
+     ]
+    },
+    "label": {
+     "type": "string"
+    }
+   },
+   "x-proto": "neuraltextstream.v1.IntentSpec (intent.proto)"
+  },
+  "NBestItem": {
+   "description": "One item of a hypothesis n-best list, with the evidence fields (4.7.2). Not expressed in the schema: EVD-1 count (len(char_confidences) = code points of text: two fields), EVD-2 (LM-free values: content).",
+   "type": "object",
+   "required": [
+    "text",
+    "score"
+   ],
+   "properties": {
+    "text": {
+     "description": "Decoded text. HYP-1, HYP-4.",
+     "type": "string",
+     "x-nts-rules": [
+      "HYP-1",
+      "HYP-4"
+     ]
+    },
+    "score": {
+     "description": "A finite number. HYP-1, EVD-3.",
+     "type": "number",
+     "x-nts-rules": [
+      "HYP-1",
+      "EVD-3"
+     ]
+    },
+    "spans": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Span"
+     }
+    },
+    "char_confidences": {
+     "description": "Per code point of text: the posterior under the neural evidence only; each in [0, 1]. EVD-1, EVD-2.",
+     "type": "array",
+     "items": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+     },
+     "x-nts-rules": [
+      "EVD-1",
+      "EVD-2"
+     ]
+    },
+    "logp_acoustic": {
+     "description": "Log-probability of text under the neural evidence only; <= 0. EVD-4.",
+     "type": "number",
+     "maximum": 0,
+     "x-nts-rules": [
+      "EVD-4"
+     ]
+    },
+    "logp_lm": {
+     "description": "Log-probability of text under the LM only; <= 0. EVD-4.",
+     "type": "number",
+     "maximum": 0,
+     "x-nts-rules": [
+      "EVD-4"
+     ]
+    }
+   },
+   "x-nts-rules": [
+    "EVD-1",
+    "EVD-2"
+   ],
+   "x-proto": "neuraltextstream.v1.NBestItem (text.proto)"
+  },
+  "Pointer": {
+   "description": "Continuous 1-D to 3-D movement, v0.1 form (4.8). JSON type \"pointer\". PTR-1, CTL-12. Not expressed: absolute values in [0, 1] unless absent (two arrays), CTL-12 (dims = declared dims: needs the header).",
+   "type": "object",
+   "required": [
+    "type",
+    "t",
+    "dims",
+    "mode",
+    "values"
+   ],
+   "properties": {
+    "type": {
+     "const": "pointer"
+    },
+    "t": {
+     "description": "PTR-1.",
+     "type": "number",
+     "x-nts-rules": [
+      "PTR-1"
+     ]
+    },
+    "dims": {
+     "description": "Integer 1-3. PTR-1.",
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 3,
+     "x-nts-rules": [
+      "PTR-1"
+     ]
+    },
+    "mode": {
+     "description": "PTR-1.",
+     "$ref": "#/$defs/PointerMode",
+     "x-nts-rules": [
+      "PTR-1"
+     ]
+    },
+    "values": {
+     "description": "dims numbers. PTR-1.",
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 1,
+     "maxItems": 3,
+     "x-nts-rules": [
+      "PTR-1"
+     ]
+    },
+    "absent": {
+     "description": "dims booleans; true: the value MUST be ignored.",
+     "type": "array",
+     "items": {
+      "type": "boolean"
+     }
+    },
+    "score": {
+     "description": "As in 4.6.",
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "score_semantics": {
+     "$ref": "#/$defs/ScoreSemantics"
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "PTR-1: values has dims numbers (dims 1)",
+     "if": {
+      "required": [
+       "dims"
+      ],
+      "properties": {
+       "dims": {
+        "const": 1
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "values": {
+        "minItems": 1,
+        "maxItems": 1
+       }
+      }
+     }
+    },
+    {
+     "$comment": "PTR-1: values has dims numbers (dims 2)",
+     "if": {
+      "required": [
+       "dims"
+      ],
+      "properties": {
+       "dims": {
+        "const": 2
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "values": {
+        "minItems": 2,
+        "maxItems": 2
+       }
+      }
+     }
+    },
+    {
+     "$comment": "PTR-1: values has dims numbers (dims 3)",
+     "if": {
+      "required": [
+       "dims"
+      ],
+      "properties": {
+       "dims": {
+        "const": 3
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "values": {
+        "minItems": 3,
+        "maxItems": 3
+       }
+      }
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "PTR-1",
+    "CTL-12"
+   ],
+   "x-proto": "neuraltextstream.v1.Pointer (control.proto)"
+  },
+  "SegmentEnd": {
+   "description": "The end of a segment (4.3). JSON type \"segment_end\". SEG-1 ... SEG-5. Not expressed: SEG-4 (t not before the last frame: a stream rule).",
+   "type": "object",
+   "required": [
+    "type"
+   ],
+   "properties": {
+    "type": {
+     "const": "segment_end"
+    },
+    "t": {
+     "description": "Signal time of the boundary; a finite number. SEG-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "SEG-4"
+     ]
+    },
+    "unit": {
+     "description": "Default \"utterance\". SEG-5.",
+     "$ref": "#/$defs/SegmentUnit",
+     "x-nts-rules": [
+      "SEG-5"
+     ]
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "x-nts-rules": [
+    "SEG-1",
+    "SEG-5",
+    "SEG-4"
+   ],
+   "x-proto": "neuraltextstream.v1.SegmentEnd (core.proto)"
+  },
+  "SignalQuality": {
+   "description": "Quality of the input signal, separate from confidence (4.5). JSON type \"signal_quality\". SQ-1, SQ-2 (consumer behaviour: not in a schema).",
+   "type": "object",
+   "required": [
+    "type",
+    "t",
+    "value",
+    "unit"
+   ],
+   "properties": {
+    "type": {
+     "const": "signal_quality"
+    },
+    "t": {
+     "description": "SQ-1.",
+     "type": "number",
+     "x-nts-rules": [
+      "SQ-1"
+     ]
+    },
+    "value": {
+     "description": "For unit \"index\": in [0, 1], 1 is best. SQ-1.",
+     "type": "number",
+     "x-nts-rules": [
+      "SQ-1"
+     ]
+    },
+    "unit": {
+     "description": "SQ-1.",
+     "$ref": "#/$defs/SignalQualityUnit",
+     "x-nts-rules": [
+      "SQ-1"
+     ]
+    },
+    "channels": {
+     "description": "Per-channel values in the same unit.",
+     "type": "array",
+     "items": {
+      "type": "number"
+     }
+    },
+    "t_signal_start": {
+     "description": "Start of the signal window that the decoder used, seconds. TIM-1, TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-1",
+      "TIM-4"
+     ]
+    },
+    "t_signal_end": {
+     "description": "End of that window, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_decoded": {
+     "description": "When the decoder finished, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "t_emitted": {
+     "description": "When the producer sent the event, seconds. TIM-4.",
+     "type": "number",
+     "x-nts-rules": [
+      "TIM-4"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "SQ-1: an index value is in [0, 1]",
+     "if": {
+      "required": [
+       "unit"
+      ],
+      "properties": {
+       "unit": {
+        "const": "index"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "value": {
+        "minimum": 0,
+        "maximum": 1
+       }
+      }
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "SQ-1",
+    "SQ-2"
+   ],
+   "x-proto": "neuraltextstream.v1.SignalQuality (core.proto)"
+  },
+  "Span": {
+   "description": "One span of an n-best item (4.7). The SDK validators do not check spans.",
+   "type": "object",
+   "properties": {
+    "char_start": {
+     "description": "First code point of the span in text.",
+     "type": "integer",
+     "minimum": 0
+    },
+    "char_end": {
+     "description": "End of the span (exclusive), in code points.",
+     "type": "integer",
+     "minimum": 0
+    },
+    "t_start": {
+     "type": "number"
+    },
+    "t_end": {
+     "type": "number"
+    },
+    "score": {
+     "type": "number"
+    }
+   },
+   "x-proto": "neuraltextstream.v1.Span (text.proto)"
+  },
+  "TrustDecision": {
+   "description": "Trust layer output (section 6). JSON type \"trust_decision\". One message for all three profiles; profile selects the rules. Not expressed in the schema (SDK checks): the order rules TD-4 ... TD-7, TD-11, INT-T4, CTL-T5 (need other lines); the trust rules TD-9, TD-12, INT-S1 ... INT-S10, CTL-S1 ... CTL-S8 (semantic rules of a trust layer); raw has one value per axis of velocity (two arrays). Fields of one profile are typed on every decision (EXT-1: a field has one type). The SDKs check them only inside their profile (open question Q-6). Two rules below have no rule id in RC2 but are SDK format checks: an arm only on an OFFER, and level with radius (open question Q-8).",
+   "type": "object",
+   "required": [
+    "type",
+    "is_final",
+    "action",
+    "p_top1",
+    "score_semantics"
+   ],
+   "properties": {
+    "type": {
+     "const": "trust_decision"
+    },
+    "spec_version": {
+     "description": "The version of the rules of this decision: \"0.1\" or \"1.<minor>\"; absent = \"0.1\". Required for 1.0 producers (VER-1, not a schema rule: a 0.1 producer omits it). TD-F3, VER-2, VER-3, VER-5.",
+     "type": "string",
+     "pattern": "^(0\\.1|1\\.(0|[1-9][0-9]*))$",
+     "x-nts-rules": [
+      "VER-1",
+      "TD-F3",
+      "VER-2",
+      "VER-3",
+      "VER-5"
+     ]
+    },
+    "profile": {
+     "description": "Default \"text\". PRF-1, PRF-4.",
+     "$ref": "#/$defs/Profile",
+     "x-nts-rules": [
+      "PRF-1",
+      "PRF-4"
+     ]
+    },
+    "is_final": {
+     "description": "false: a provisional preview. TD-F1, TD-1.",
+     "type": "boolean",
+     "x-nts-rules": [
+      "TD-F1",
+      "TD-1"
+     ]
+    },
+    "action": {
+     "description": "TD-F1.",
+     "$ref": "#/$defs/Action",
+     "x-nts-rules": [
+      "TD-F1"
+     ]
+    },
+    "shown": {
+     "description": "Text profile: texts shown to the user; for COMMIT, shown[0] is the committed text. TD-F2, TD-8, TD-9, TD-10, TD-12, SEC-7.",
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "x-nts-rules": [
+      "TD-F2",
+      "TD-8",
+      "TD-9",
+      "TD-10",
+      "TD-12",
+      "SEC-7"
+     ]
+    },
+    "p_top1": {
+     "description": "Confidence of the top candidate: a number in [0, 1] or null. TD-F1.",
+     "type": [
+      "number",
+      "null"
+     ],
+     "minimum": 0,
+     "maximum": 1,
+     "x-nts-rules": [
+      "TD-F1"
+     ]
+    },
+    "score_semantics": {
+     "description": "TD-F1, TD-2.",
+     "$ref": "#/$defs/ScoreSemantics",
+     "x-nts-rules": [
+      "TD-F1",
+      "TD-2"
+     ]
+    },
+    "set_size": {
+     "description": "Conformal set size; integer >= 0. TD-F2.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "TD-F2"
+     ]
+    },
+    "guard_risk": {
+     "description": "Number in [0, 1] or null. TD-F2.",
+     "type": [
+      "number",
+      "null"
+     ],
+     "minimum": 0,
+     "maximum": 1,
+     "x-nts-rules": [
+      "TD-F2"
+     ]
+    },
+    "session": {
+     "description": "TD-F2, TD-5.",
+     "type": "string",
+     "x-nts-rules": [
+      "TD-F2",
+      "TD-5"
+     ]
+    },
+    "seq": {
+     "description": "Integer >= 0; increases strictly within a session. TD-F2, TD-5.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "TD-F2",
+      "TD-5"
+     ]
+    },
+    "utterance": {
+     "description": "Integer >= 0; does not decrease. TD-F2, TD-5, TD-6.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "TD-F2",
+      "TD-5",
+      "TD-6"
+     ]
+    },
+    "config_id": {
+     "description": "Content id of the trust configuration; string or null. TD-F2.",
+     "type": [
+      "string",
+      "null"
+     ],
+     "x-nts-rules": [
+      "TD-F2"
+     ]
+    },
+    "input": {
+     "description": "Reference to the input. A JSON object. TD-F2, INT-S10, CTL-S8.",
+     "type": "object",
+     "x-nts-rules": [
+      "TD-F2",
+      "INT-S10",
+      "CTL-S8"
+     ]
+    },
+    "latency_s": {
+     "description": "Computation time of the decision, seconds; >= 0. TD-F2.",
+     "type": "number",
+     "minimum": 0,
+     "x-nts-rules": [
+      "TD-F2"
+     ]
+    },
+    "declaration": {
+     "description": "Result of the declaration check (DCL-5, DCL-6). A JSON object; 6.1 names its keys but not their types (open question Q-4).",
+     "type": "object",
+     "x-nts-rules": [
+      "DCL-5",
+      "DCL-6"
+     ]
+    },
+    "reason": {
+     "description": "Short reason code or text, no personal content. SEC-5.",
+     "type": "string",
+     "x-nts-rules": [
+      "SEC-5"
+     ]
+    },
+    "t": {
+     "description": "Time of a control decision, seconds.",
+     "type": "number"
+    },
+    "unit": {
+     "description": "Decision unit; integer >= 0. INT-T1, INT-T4.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "INT-T1",
+      "INT-T4"
+     ]
+    },
+    "intent": {
+     "description": "The committed intent (COMMIT). INT-T3.",
+     "type": "string",
+     "x-nts-rules": [
+      "INT-T3"
+     ]
+    },
+    "offered": {
+     "description": "The offered intents (OFFER). INT-T3.",
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "x-nts-rules": [
+      "INT-T3"
+     ]
+    },
+    "risk_class": {
+     "description": "Risk class of a COMMIT; null on other actions. INT-T3, INT-S3.",
+     "anyOf": [
+      {
+       "$ref": "#/$defs/RiskClass"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "x-nts-rules": [
+      "INT-T3",
+      "INT-S3"
+     ]
+    },
+    "threshold": {
+     "description": "Commit threshold of the class; number in [0, 1] or null. INT-S3.",
+     "type": [
+      "number",
+      "null"
+     ],
+     "minimum": 0,
+     "maximum": 1,
+     "x-nts-rules": [
+      "INT-S3"
+     ]
+    },
+    "role": {
+     "description": "Role of the intent; JSON null if none. INT-S1.",
+     "anyOf": [
+      {
+       "$ref": "#/$defs/IntentRole"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "x-nts-rules": [
+      "INT-S1"
+     ]
+    },
+    "confirm_required": {
+     "description": "true: an arm of an irreversible intent (7.3.1). INT-S4.",
+     "type": "boolean",
+     "x-nts-rules": [
+      "INT-S4"
+     ]
+    },
+    "confirmation_of": {
+     "description": "The unit of the armed OFFER that this COMMIT executes. INT-S4.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "INT-S4"
+     ]
+    },
+    "confirmed_via": {
+     "description": "INT-S4.",
+     "$ref": "#/$defs/ConfirmedVia",
+     "x-nts-rules": [
+      "INT-S4"
+     ]
+    },
+    "undo_of": {
+     "description": "The unit of the COMMIT that this undo reverses. INT-S5.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "INT-S5"
+     ]
+    },
+    "pending_cleared": {
+     "description": "Why an armed intent was dropped.",
+     "type": "string"
+    },
+    "vocab_id": {
+     "description": "Intent vocabulary id. INT-S10.",
+     "type": "string",
+     "x-nts-rules": [
+      "INT-S10"
+     ]
+    },
+    "tick": {
+     "description": "The input tick; integer >= 0. CTL-T1, CTL-T5.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "CTL-T1",
+      "CTL-T5"
+     ]
+    },
+    "state": {
+     "description": "CTL-T3.",
+     "$ref": "#/$defs/ControlState",
+     "x-nts-rules": [
+      "CTL-T3"
+     ]
+    },
+    "velocity": {
+     "description": "Commanded velocity, 1-3 finite numbers. CTL-T4, CTL-T6, CTL-S1, CTL-S3.",
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 1,
+     "maxItems": 3,
+     "x-nts-rules": [
+      "CTL-T4",
+      "CTL-T6",
+      "CTL-S1",
+      "CTL-S3"
+     ]
+    },
+    "raw": {
+     "description": "Decoder output before the gate, one value per axis. CTL-S6, CTL-S8.",
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "x-nts-rules": [
+      "CTL-S6",
+      "CTL-S8"
+     ]
+    },
+    "gain": {
+     "description": "In [0, 1]. CTL-T4, CTL-S1.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1,
+     "x-nts-rules": [
+      "CTL-T4",
+      "CTL-S1"
+     ]
+    },
+    "units": {
+     "description": "Units of velocity. CTL-T4.",
+     "type": "string",
+     "x-nts-rules": [
+      "CTL-T4"
+     ]
+    },
+    "v_max": {
+     "description": "Speed limit; > 0. CTL-T4, CTL-S3.",
+     "type": "number",
+     "exclusiveMinimum": 0,
+     "x-nts-rules": [
+      "CTL-T4",
+      "CTL-S3"
+     ]
+    },
+    "ttl_s": {
+     "description": "Time to live of the command, seconds; > 0. CTL-T4, CTL-T6, CTL-S4.",
+     "type": "number",
+     "exclusiveMinimum": 0,
+     "x-nts-rules": [
+      "CTL-T4",
+      "CTL-T6",
+      "CTL-S4"
+     ]
+    },
+    "engagement": {
+     "description": "Engagement counter; integer >= 0. CTL-T4, CTL-S5, CTL-S7.",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "CTL-T4",
+      "CTL-S5",
+      "CTL-S7"
+     ]
+    },
+    "radius": {
+     "description": "Conformal radius; >= 0. CTL-S6.",
+     "type": "number",
+     "minimum": 0,
+     "x-nts-rules": [
+      "CTL-S6"
+     ]
+    },
+    "level": {
+     "description": "Conformal level; in (0, 1). CTL-S6.",
+     "type": "number",
+     "exclusiveMinimum": 0,
+     "exclusiveMaximum": 1,
+     "x-nts-rules": [
+      "CTL-S6"
+     ]
+    },
+    "authority": {
+     "description": "Decoder share of the commanded velocity; in [0, 1]. CTL-S5.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1,
+     "x-nts-rules": [
+      "CTL-S5"
+     ]
+    },
+    "reasons": {
+     "description": "Reason codes (7.4.5 list). The SDKs accept any string (open question Q-3). CTL-S2, CTL-S8.",
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "x-nts-rules": [
+      "CTL-S2",
+      "CTL-S8"
+     ]
+    },
+    "lsl": {
+     "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
+     "type": "object",
+     "x-nts-rules": [
+      "LSL-C3"
+     ]
+    },
+    "ws": {
+     "description": "WebSocket record: header (WS-S2) or decision (WS-K4). The server removes the header record before the header reaches the trust layer.",
+     "type": "object",
+     "x-nts-rules": [
+      "WS-S2",
+      "WS-K4"
+     ]
+    },
+    "ws_seq": {
+     "description": "WebSocket sequence number of an input event (WS-Q1) or of a decision on the decisions channel (WS-D1): an integer >= 1. The binding, not this schema, says when the key is required.",
+     "type": "integer",
+     "minimum": 1,
+     "x-nts-rules": [
+      "WS-Q1",
+      "WS-D1"
+     ]
+    },
+    "ws_t_sent": {
+     "description": "Transport stamp of the sender, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "ws_t_recv": {
+     "description": "Transport stamp of the receiver, seconds (WS-K3, TIM-5).",
+     "type": "number",
+     "x-nts-rules": [
+      "WS-K3",
+      "TIM-5"
+     ]
+    },
+    "lsl_t": {
+     "description": "LSL timestamp of a marker event after the clock correction (LSL-C5).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C5"
+     ]
+    },
+    "t_source": {
+     "description": "The producer's own t of a JSON frame on the LSL events stream (LSL-C2).",
+     "type": "number",
+     "x-nts-rules": [
+      "LSL-C2"
+     ]
+    },
+    "lsl_clamped": {
+     "description": "Number of frame timestamps moved forward before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    },
+    "lsl_dropped_before": {
+     "description": "Number of frames dropped before this frame (LSL-C4).",
+     "type": "integer",
+     "minimum": 0,
+     "x-nts-rules": [
+      "LSL-C4"
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "$comment": "TD-8: a COMMIT with shown has at least one text",
+     "if": {
+      "required": [
+       "action",
+       "shown"
+      ],
+      "properties": {
+       "action": {
+        "const": "COMMIT"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "shown": {
+        "minItems": 1
+       }
+      }
+     }
+    },
+    {
+     "$comment": "INT-T1, INT-T2, INT-T3: intent decisions",
+     "if": {
+      "required": [
+       "profile"
+      ],
+      "properties": {
+       "profile": {
+        "const": "intent"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "unit"
+      ],
+      "not": {
+       "anyOf": [
+        {
+         "required": [
+          "shown"
+         ]
+        },
+        {
+         "required": [
+          "utterance"
+         ]
+        }
+       ]
+      },
+      "properties": {
+       "action": {
+        "enum": [
+         "COMMIT",
+         "OFFER",
+         "ABSTAIN"
+        ]
+       }
+      }
+     }
+    },
+    {
+     "$comment": "INT-T3: an intent COMMIT has intent and risk_class",
+     "if": {
+      "required": [
+       "profile",
+       "action"
+      ],
+      "properties": {
+       "profile": {
+        "const": "intent"
+       },
+       "action": {
+        "const": "COMMIT"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "intent",
+       "risk_class"
+      ],
+      "properties": {
+       "risk_class": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    {
+     "$comment": "INT-T3: an intent OFFER has a non-empty offered list",
+     "if": {
+      "required": [
+       "profile",
+       "action"
+      ],
+      "properties": {
+       "profile": {
+        "const": "intent"
+       },
+       "action": {
+        "const": "OFFER"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "offered"
+      ],
+      "properties": {
+       "offered": {
+        "minItems": 1
+       }
+      }
+     }
+    },
+    {
+     "$comment": "7.3.1: confirm_required (an arm) only on an intent OFFER",
+     "if": {
+      "required": [
+       "profile",
+       "confirm_required"
+      ],
+      "properties": {
+       "profile": {
+        "const": "intent"
+       },
+       "confirm_required": {
+        "const": true
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "action": {
+        "const": "OFFER"
+       }
+      }
+     }
+    },
+    {
+     "$comment": "CTL-T1, CTL-T2, CTL-T4: control decisions",
+     "if": {
+      "required": [
+       "profile"
+      ],
+      "properties": {
+       "profile": {
+        "const": "control"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "tick",
+       "state",
+       "velocity",
+       "gain",
+       "units",
+       "v_max",
+       "ttl_s",
+       "engagement"
+      ],
+      "not": {
+       "anyOf": [
+        {
+         "required": [
+          "shown"
+         ]
+        },
+        {
+         "required": [
+          "utterance"
+         ]
+        },
+        {
+         "required": [
+          "unit"
+         ]
+        }
+       ]
+      },
+      "properties": {
+       "is_final": {
+        "const": true
+       },
+       "action": {
+        "enum": [
+         "COMMIT",
+         "ABSTAIN"
+        ]
+       }
+      }
+     }
+    },
+    {
+     "$comment": "CTL-T3: act and attenuate go with COMMIT",
+     "if": {
+      "required": [
+       "profile",
+       "action"
+      ],
+      "properties": {
+       "profile": {
+        "const": "control"
+       },
+       "action": {
+        "const": "COMMIT"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "state": {
+        "enum": [
+         "act",
+         "attenuate"
+        ]
+       }
+      }
+     }
+    },
+    {
+     "$comment": "CTL-T3: hold and stop go with ABSTAIN",
+     "if": {
+      "required": [
+       "profile",
+       "action"
+      ],
+      "properties": {
+       "profile": {
+        "const": "control"
+       },
+       "action": {
+        "const": "ABSTAIN"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "state": {
+        "enum": [
+         "hold",
+         "stop"
+        ]
+       }
+      }
+     }
+    },
+    {
+     "$comment": "7.4.5 (SDK check FEP5-TD-FORMAT): a control decision with radius has level",
+     "if": {
+      "required": [
+       "profile",
+       "radius"
+      ],
+      "properties": {
+       "profile": {
+        "const": "control"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "level"
+      ]
+     }
+    }
+   ],
+   "x-nts-rules": [
+    "TD-4",
+    "TD-7",
+    "TD-11",
+    "INT-T4",
+    "CTL-T5",
+    "TD-9",
+    "TD-12",
+    "INT-S1",
+    "INT-S10",
+    "CTL-S1",
+    "CTL-S8",
+    "EXT-1",
+    "TD-8",
+    "INT-T1",
+    "INT-T2",
+    "INT-T3",
+    "CTL-T1",
+    "CTL-T2",
+    "CTL-T4",
+    "CTL-T3"
+   ],
+   "x-proto": "neuraltextstream.v1.TrustDecision (trust.proto)"
+  },
+  "Action": {
+   "description": "Decision action (6.1, registry 12.3). TD-F1. The intent profile uses COMMIT, OFFER, ABSTAIN (INT-T3); the control profile COMMIT, ABSTAIN.",
+   "enum": [
+    "COMMIT",
+    "OFFER",
+    "ASK",
+    "ABSTAIN",
+    "OFFER_WORDS"
+   ],
+   "x-proto": "neuraltextstream.v1.Action (trust.proto)"
+  },
+  "ClockDomain": {
+   "description": "The clock of all times in a stream (5.3, registry 12.3). Rule: HDR-11.",
+   "enum": [
+    "lsl",
+    "unix",
+    "monotonic",
+    "trial",
+    "other"
+   ],
+   "x-proto": "neuraltextstream.v1.ClockDomain (core.proto)"
+  },
+  "ConfirmedVia": {
+   "description": "How an irreversible intent COMMIT was confirmed (7.3.5). INT-S4.",
+   "enum": [
+    "intent",
+    "feedback"
+   ],
+   "x-proto": "neuraltextstream.v1.ConfirmedVia (trust.proto)"
+  },
+  "ControlFrame": {
+   "description": "Coordinate frame (7.4.2, registry 12.3). CTL-D1.",
+   "enum": [
+    "screen",
+    "workspace"
+   ],
+   "x-proto": "neuraltextstream.v1.ControlFrame (control.proto)"
+  },
+  "ControlQuantity": {
+   "description": "Control quantity (7.4.2, registry 12.3). CTL-D1.",
+   "enum": [
+    "velocity",
+    "position"
+   ],
+   "x-proto": "neuraltextstream.v1.ControlQuantity (control.proto)"
+  },
+  "ControlSource": {
+   "description": "Source of a control event (7.4.3).",
+   "enum": [
+    "decoder",
+    "human"
+   ],
+   "x-proto": "neuraltextstream.v1.ControlSource (control.proto)"
+  },
+  "ControlState": {
+   "description": "State of a control decision (7.4.5, registry 12.3). CTL-T3.",
+   "enum": [
+    "act",
+    "attenuate",
+    "hold",
+    "stop"
+   ],
+   "x-proto": "neuraltextstream.v1.ControlState (trust.proto)"
+  },
+  "ControlUnits": {
+   "description": "Control units (7.4.2, registry 12.3). CTL-D1: the units fit the quantity.",
+   "enum": [
+    "norm/s",
+    "px/s",
+    "mm/s",
+    "m/s",
+    "deg/s",
+    "norm",
+    "px",
+    "mm",
+    "m",
+    "deg"
+   ],
+   "x-proto": "neuraltextstream.v1.ControlUnits (control.proto)"
+  },
+  "EnableSource": {
+   "description": "Channel of a control_enable event (7.4.4, registry 12.3).",
+   "enum": [
+    "switch",
+    "caregiver",
+    "ui",
+    "voice",
+    "eye-tracker",
+    "watchdog",
+    "other"
+   ],
+   "x-proto": "neuraltextstream.v1.EnableSource (control.proto)"
+  },
+  "FeedbackOutcome": {
+   "description": "intent_feedback.outcome values (7.3.4, registry 12.3).",
+   "enum": [
+    "confirmed",
+    "cancelled",
+    "selected",
+    "undone",
+    "correct",
+    "wrong"
+   ],
+   "x-proto": "neuraltextstream.v1.FeedbackOutcome (intent.proto)"
+  },
+  "IntentRole": {
+   "description": "Role of an intent (7.3.2, registry 12.3). INT-D1, INT-D3.",
+   "enum": [
+    "action",
+    "null",
+    "confirm",
+    "cancel",
+    "undo"
+   ],
+   "x-proto": "neuraltextstream.v1.IntentRole (intent.proto)"
+  },
+  "PointerMode": {
+   "description": "pointer.mode values (4.8).",
+   "enum": [
+    "relative",
+    "absolute"
+   ],
+   "x-proto": "neuraltextstream.v1.PointerMode (control.proto)"
+  },
+  "Profile": {
+   "description": "Output profile of a decision (7.1, registry 12.2). PRF-1, PRF-4.",
+   "enum": [
+    "text",
+    "intent",
+    "control"
+   ],
+   "x-proto": "neuraltextstream.v1.Profile (trust.proto)"
+  },
+  "RiskClass": {
+   "description": "Producer's risk class of an intent (7.3.2, registry 12.3). INT-D2, INT-S9.",
+   "enum": [
+    "safe",
+    "undoable",
+    "irreversible"
+   ],
+   "x-proto": "neuraltextstream.v1.RiskClass (intent.proto)"
+  },
+  "ScoreSemantics": {
+   "description": "What a score means (section 4.6, registry 12.3). Rules: DEC-1 ... DEC-5.",
+   "enum": [
+    "calibrated_prob",
+    "uncalibrated_prob",
+    "power",
+    "strength",
+    "none"
+   ],
+   "x-proto": "neuraltextstream.v1.ScoreSemantics (common.proto)"
+  },
+  "SegmentUnit": {
+   "description": "segment_end.unit values (4.3, registry 12.3). Rule: SEG-5.",
+   "enum": [
+    "utterance",
+    "word",
+    "trial"
+   ],
+   "x-proto": "neuraltextstream.v1.SegmentUnit (core.proto)"
+  },
+  "SignalQualityUnit": {
+   "description": "signal_quality.unit values (4.5, registry 12.3).",
+   "enum": [
+    "index",
+    "snr_db",
+    "impedance_ohm",
+    "other"
+   ],
+   "x-proto": "neuraltextstream.v1.SignalQualityUnit (core.proto)"
+  },
+  "Uncertainty": {
+   "description": "Uncertainty kind of control events (7.4.2). CTL-3.",
+   "enum": [
+    "none",
+    "std"
+   ],
+   "x-proto": "neuraltextstream.v1.Uncertainty (control.proto)"
+  },
+  "VocabType": {
+   "description": "The kind of token in vocab (table 3.2, registry 12.3). Rules: HDR-5, HDR-14.",
+   "enum": [
+    "char",
+    "key",
+    "word",
+    "phoneme",
+    "command",
+    "other"
+   ],
+   "x-proto": "neuraltextstream.v1.VocabType (core.proto)"
+  }
+ }
+}
