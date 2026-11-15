@@ -559,7 +559,7 @@ def stage_tables() -> None:
          "## Accuracy and trust outcomes against L", "",
          "| model | L (ms) | greedy PER | WER (frozen T) | sentence exact (frozen T) | WER (T=1) | exact (T=1) | truth in n-best | commit rate (n) | wrong-commit (n) [CP95] | EAC | eWPM | always-commit eWPM | gaze eWPM | stream = batch |",
          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
-    order = sorted(acc["conditions"].values(), key=lambda r: ({"shared": 0, "dedicated_0": 1, "dedicated_10": 2, "dedicated_25": 3}[r["which"]], r["lookahead_bins"]))
+    order = sorted(acc["conditions"].values(), key=lambda r: ({"shared": 0, "dedicated_0": 1, "dedicated_10": 2, "dedicated_15": 3, "dedicated_25": 4}[r["which"]], r["lookahead_bins"]))
     for r in order:
         t = r["trust"]
         ci = t["wrong_commit_cp95"]

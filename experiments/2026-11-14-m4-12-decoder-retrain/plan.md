@@ -76,3 +76,11 @@ Estimated GPU time: about 4.3 h per run (10,000 x 1.5 s + validation), about 13 
 
 ## Files
 `config.json` (all settings), `train.py` (new trainer), `t15.py` (copy, new config), `decode.py` and `run.py` (copies of M4-01/02, paths only), `queue.ps1` (GPU queue). Checkpoints, logits and logs stay in `C:\Users\zhang\bci-data` (never in the repo).
+
+## Addendum 2026-11-14 23:58 (written before these runs start)
+- Request: keep the GPU busy overnight and fill the middle of the curve with dedicated models at 200 ms and 300 ms.
+- 200 ms = 10 bins is the run `dedicated_10` (`m4-12-fixed10`), already in this plan as optional. It is now **required**.
+- 300 ms = 15 bins is a **new** run `dedicated_15` (`m4-12-fixed15`). Same recipe, budget, checkpoint rule and stopping rule as the other runs (config.json, `train` block unchanged).
+- Queue order: `dedicated_25` (resumed at step 6328 after a pause on user request) → `shared` → `dedicated_10` → `dedicated_15`. The first CPU pass (accuracy, emission, tables, figure) runs while `dedicated_15` trains. A second pass adds `dedicated_15`. Then `C:\Users\zhang\bci-data\runs\m4-12-queue.DONE`.
+- Status before this addendum: `dedicated_0` done (val_eval greedy PER 0.2574). No other run had been decoded on val_eval.
+- Launch: `launch_queue.py` (CREATE_NO_WINDOW, new process group, job breakaway). The queue holds a keep-awake request while it runs.

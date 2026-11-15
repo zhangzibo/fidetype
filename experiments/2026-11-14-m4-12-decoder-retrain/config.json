@@ -55,7 +55,8 @@
   "dedicated_0": {"run": "m4-12-fixed0", "lookahead_bins": 0},
   "dedicated_25": {"run": "m4-12-fixed25", "lookahead_bins": 25},
   "shared": {"run": "m4-12-shared", "lookahead_bins": "sample", "note": "L drawn uniformly from {0,2,5,10,15,25} bins per batch (as M4-01)"},
-  "dedicated_10": {"run": "m4-12-fixed10", "lookahead_bins": 10, "note": "optional, only if GPU time allows"}
+  "dedicated_10": {"run": "m4-12-fixed10", "lookahead_bins": 10, "note": "200 ms; optional in the plan, required by the 2026-11-14 addendum"},
+  "dedicated_15": {"run": "m4-12-fixed15", "lookahead_bins": 15, "note": "300 ms; added by the 2026-11-14 addendum (plan.md)"}
  },
  "trust": {
   "frozen_config": "experiments/2026-11-13-m4-06-real-replay/configs/trust-config-b2t25-ours-splitA.json",
