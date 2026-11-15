@@ -59,7 +59,11 @@ B = T.B
 CFG = T.CONFIG
 OUT = Path(os.environ.get("M4_OUT", str(T.RESULTS)))  # M4_OUT: smoke tests write elsewhere
 OUT.mkdir(exist_ok=True)
-DER = T.DERIVED
+DER = T.DERIVED  # shared M4-01/02 inputs (features, texts) and per-run logprobs (run names carry m4-12)
+# M4-12 own outputs (trust decisions, word-decode cache). Incident 2026-11-15: before this fix the trust files went to DER
+# with the M4-01/02 names and overwrote the M4-01/02 files.
+OWN = Path(CFG["own_derived_dir"])
+OWN.mkdir(parents=True, exist_ok=True)
 LOGF = OUT / "run.log"
 RUN_NAMES = {k: v["run"] for k, v in CFG["runs"].items()}
 
@@ -98,7 +102,7 @@ class Ctx:
         assert self.fz.config_id == CFG["trust"]["frozen_config_id"], self.fz.config_id
         self.texts = T.texts()
         self.sessions = T.sessions()
-        self.cache_path = DER / "word-decode-cache.pkl"
+        self.cache_path = OWN / "word-decode-cache.pkl"
         self.cache: dict = pickle.loads(self.cache_path.read_bytes()) if self.cache_path.exists() else {}
         self.new = 0
         self.raw = self.dec.words_fn
@@ -301,7 +305,7 @@ def stage_accuracy(only: set | None = None) -> dict:
         ctx.save()
         T.dump(res, path)
         # per-trial (outside the repo)
-        T.dump({"refs": refs, "decisions": [d.to_event(include_text=True) for d in decs]}, DER / f"trust-{which}-L{la}.json")
+        T.dump({"refs": refs, "decisions": [d.to_event(include_text=True) for d in decs]}, OWN / f"trust-{which}-L{la}.json")
         tr = r["trust"]
         log(f"accuracy {name}: PER {r['greedy']['per']:.4f}; WER(frozen T) {r['words_frozenT']['wer']:.4f} exact "
             f"{r['words_frozenT']['sentence_exact']:.3f}; WER(T1) {r['words_T1']['wer']:.4f}; commit {tr['commit_rate']:.3f} "
@@ -514,7 +518,7 @@ def stage_latency(n_trials: int = 200, force: bool = False) -> dict:
                 if lp_ref is not None:
                     stream_lat_check = max(stream_lat_check, float(np.abs(np.stack(rows_all) - lp_ref).max()))
             # decisions vs the accuracy stage (torch logits, batch decode)
-            acc = json.loads((DER / f"trust-shared-L{la}.json").read_text(encoding="utf-8"))
+            acc = json.loads((OWN / f"trust-shared-L{la}.json").read_text(encoding="utf-8"))
             amap = dict(zip(acc["refs"], acc["decisions"]))
             same = sum(d.action.value == amap[key]["action"] for d, key in zip(decs, keys))
             ms = lambda v: {"p50": float(np.percentile(v, 50) * 1e3), "p95": float(np.percentile(v, 95) * 1e3),  # noqa: E731

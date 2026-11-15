@@ -82,5 +82,10 @@ Data and model as M4-01/02: Brain-to-Text '25, T15 (CC0), `fidetype.decoders.loo
 - `dedicated_25`: the PC slept 17:57-21:57 (Sleep from the Start menu, see the M6-15 log) and the queue was paused 22:44-23:49 on user request (GPU needed). Training resumed from `latest.pt` both times (step 4,391 and 6,328). `train_sec` in its status includes the sleep (8.03 h); active time is about 4.1 h.
 - The queue was restarted three times to change how it starts (no visible windows), to add `dedicated_15` (addendum 1) and to add a hold for another agent's quiet-machine latency run (addendum 2). Recipe and budgets did not change.
 
+## Incident: overwritten M4-01/02 trust files (2026-11-15)
+- The copied `run.py` wrote its per-trial trust decisions to the shared derived folder `C:\Users\zhang\bci-data\derived\m4-01-02-lookahead\` with the M4-01/02 file names (`trust-<model>-L<bins>.json`). The model keys (`shared`, `dedicated_0`, `dedicated_25`) are the same in both experiments.
+- So the M4-12 accuracy stage overwrote all 8 M4-01/02 trust files: `trust-dedicated_0-L0.json` at 2026-11-14 16:15, `trust-dedicated_25-L25.json` and the six `trust-shared-L*.json` between 2026-11-15 05:23 and 05:40. The latency re-run agent found it. The M4-01/02 per-trial originals are lost. Their aggregate numbers survive in the committed M4-01/02 `results/accuracy.json` and `results.md`. The M4-01/02 logprobs, params and decode files were not touched (their names carry the run name).
+- Fix (06:18, before the next accuracy stage): `run.py` now writes trust files and its word-decode cache to `C:\Users\zhang\bci-data\derived\m4-12-decoder-retrain\` (`own_derived_dir` in config.json). We moved the 8 M4-12 trust files there and copied the cache. Shared inputs (features, texts, logprobs) are still read from the M4-01/02 folder.
+
 ## GPU time
 About 11.9 h for fixed0 + fixed25 + shared, plus about 0.5 h for benchmarks and smoke tests. dedicated_10 and dedicated_15: pending.
