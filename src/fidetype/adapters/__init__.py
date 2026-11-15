@@ -9,6 +9,14 @@ and emits streams that follow ``spec/neuraltextstream-v0.1.md``.
   (Achituve et al. 2025, forearm sEMG, 19 participants, CC BY 4.0). Own
   Intan RHD reader, keylog alignment, key-press streams
   (``vocab_type="key"``) and their CTC character form.
+- :mod:`fidetype.adapters.willett_handwriting`: Willett et al. 2021
+  handwriting BCI (intracortical, CC0). The real-time RNN character
+  output of the closed-loop sentences (one frame per emitted character)
+  and its CTC form. Reads ``sentences.mat`` with scipy (``[data]``).
+- :mod:`fidetype.adapters.kt_semg`: KT-sEMG (Nokia, forearm sEMG during
+  natural typing, CC BY 4.0). CSV and key-log readers, UTC-offset
+  inference, key-press streams (32 W3C key codes) and a small LDA
+  reference decoder.
 - :mod:`fidetype.adapters.lsl`: Lab Streaming Layer, live. LSL inlets ->
   NTS events -> the streaming trust layer; NTS files -> LSL outlets.
   Needs the optional ``pylsl`` (extra ``[lsl]``) only for the network.

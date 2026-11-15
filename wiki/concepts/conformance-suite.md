@@ -82,6 +82,8 @@ Synthetic inputs (fixed seed, no data from people). The table shows the level **
 | SpanishBCBL MEG ConvCTC (`fidetype.adapters.spanishbcbl_meg`, used by `fidetype.decoders.infer`) | `char` CTC, offline and causal | core | **provenance** | — |
 | Brain-to-Text '25 (`fidetype.adapters.b2t25`) | `phoneme` CTC; one-character symbol form | trust-ready | **trust-ready** | `PV-WEIGHTS`: the published online decoder has no weights file to hash. Advisory: the symbol form keeps `vocab_type = "phoneme"` with letter tokens (A3). |
 | Toronto sEMG (`fidetype.adapters.toronto_semg`) | `key` stream; `char` CTC form; offline and with a window latency | trust-ready (core with a latency) | **provenance** (when the caller gives the weights hash and a stream id) | — |
+| Willett handwriting (`fidetype.adapters.willett_handwriting`, P4-01, 2026-11-14) | `char` stream (one frame per emitted character, no blank); 32-token `char` CTC form | — | **trust-ready** | `PV-WEIGHTS`: the real-time RNN weights are not in the deposit. |
+| KT-sEMG (`fidetype.adapters.kt_semg`, P4-01, 2026-11-14) | `key` stream (32 W3C key codes); causal window and offline | — | **provenance** | — |
 
 ## Bugs found and fixed
 1. **MEG producer had no semantic conventions.** `fidetype.decoders.infer` wrote only flat keys (`subject`, `split`, `frame_period_s`, ...): no `device.modality`, no `decoder.causal`, no `data.derived`, no `language`, and the frame period only in `meta`. New adapter module `fidetype.adapters.spanishbcbl_meg` writes the 4.2 keys, the `frame_period` field, `latency` = lookahead × layers × frame period in causal mode, the dataset keys under `spanishbcbl.`, a weights hash of the checkpoint and an opaque `stream.id`.
@@ -126,7 +128,7 @@ Code: `src/fidetype/conformance/profiles/` (`fep0001.py`, `fep0002.py`). Tests: 
 - [Provenance ledger](provenance-ledger.md): the consumer side of the provenance keys.
 - [Long-term standard roadmap](../questions/roadmap-standard.md): phase P7 (conformance and certification).
 - [Architecture](../questions/architecture.md): where NeuralTextStream sits.
-- Adapters: [Brain-to-Text '25](../entities/brain-to-text-25.md), [Toronto sEMG typing dataset](../entities/toronto-semg-typing-dataset.md).
+- Adapters: [Brain-to-Text '25](../entities/brain-to-text-25.md), [Toronto sEMG typing dataset](../entities/toronto-semg-typing-dataset.md), [Willett 2021 handwriting](../entities/willett-handwriting-2021.md), [KT-sEMG](../entities/kt-semg-dataset.md).
 
 ## Used by
 - [TypeScript SDK](typescript-sdk.md): runs the same golden vectors (all profiles) and gives the same verdict as the Python reference on every vector (`npm run cross-check`).

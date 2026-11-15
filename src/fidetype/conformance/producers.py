@@ -23,6 +23,14 @@ Targets (``python -m fidetype.conformance check adapter:<name>``):
     ``(T, B, V)`` logits batch with lengths, a probability matrix with
     a Hugging Face style ``{token: id}`` vocabulary, a bounded-lookahead
     stream with a frame temperature, and an offline (non-causal) stream.
+``willett``
+    :func:`fidetype.adapters.willett_handwriting.trial_stream` on a
+    synthetic closed-loop session (31-character real-time RNN output,
+    one frame per emitted character) and its CTC form. The real-time
+    RNN weights are not published, so only PV-WEIGHTS fails.
+``kt-semg``
+    :func:`fidetype.adapters.kt_semg.keypress_stream` (32-key ``key``
+    vocabulary) with a causal window latency and offline.
 """
 
 from __future__ import annotations
@@ -156,9 +164,83 @@ def produce_ctc_logits(seed: int = 3) -> list[ProducedStream]:
     return out
 
 
+def synthetic_willett_session(seed: int = 4, n_trials: int = 3):
+    """A small synthetic ``sentences.mat``-like session (no data from people)."""
+    from fidetype.adapters import willett_handwriting as W
+
+    rng = np.random.default_rng(seed)
+    texts = ["hello world", "the cat sat~", "how are you?"]
+    conds = ["OL Copy", "CL Corpus", "CL Pandarinath"]
+    step, gap = W.RNN_STEP_BINS, 50
+    N = 200 + n_trials * 1000
+    cp = np.zeros((N, len(W.VOCAB)), np.float32)
+    nc = np.zeros(N, np.float32)
+    go, end, dct, dec_txt = [], [], [], []
+    for i in range(n_trials):
+        g = 100 + i * 1000
+        go.append(g)
+        txt = texts[i % len(texts)].replace(" ", ">")
+        cl = conds[i % len(conds)].startswith("CL")
+        if cl:
+            cp[g - 1:g + 899] = np.exp(_lsm(rng.standard_normal((900, len(W.VOCAB))))).astype(np.float32)
+        t = g + 20
+        for ch in txt:
+            col = W.CHAR_MAP_ASCII.index(ch)
+            if cl:
+                row = np.exp(_lsm(rng.standard_normal((1, len(W.VOCAB))) * 0.5))[0]
+                row[col] += 3.0
+                cp[t:t + step] = (row / row.sum()).astype(np.float32)
+                dct.append((t, col + 1))
+            t += gap
+        end.append(t)
+        dec_txt.append(txt if cl else "")
+    return W.session_from_dict({
+        "sentenceCondition": [conds[i % len(conds)] for i in range(n_trials)],
+        "excludedSentences": np.zeros(n_trials, np.int32),
+        "goCueOnsetTimeBin": np.array(go), "sentenceEndTimeBin": np.array(end),
+        "sentenceBlockNums": np.ones(n_trials, np.int32),
+        "intendedText": [texts[i % len(texts)].replace(" ", ">") for i in range(n_trials)],
+        "rnn_charProbTimeSeries": cp, "rnn_newCharTimeSeries": nc,
+        "rnn_decodedCharTimes": np.array(dct, np.int32).reshape(-1, 2), "rnn_decodedText": dec_txt,
+        "rnn_charMapASCII": W.CHAR_MAP_ASCII,
+    })
+
+
+def produce_willett(seed: int = 4) -> list[ProducedStream]:
+    from fidetype.adapters import willett_handwriting as W
+
+    sess = synthetic_willett_session(seed)
+    out = []
+    for i in sess.closed_loop_trials():
+        s = W.trial_stream(sess, i, session_index=0)
+        truth = [sess.intended_text[i], sess.decoded_text[i]]
+        out.append(ProducedStream(f"willett/trial{i}", s, truth))
+        out.append(ProducedStream(f"willett/trial{i}-ctc", W.to_ctc_stream(s), truth))
+    return out
+
+
+def produce_kt_semg(seed: int = 5) -> list[ProducedStream]:
+    from fidetype.adapters import kt_semg as K
+
+    rng = np.random.default_rng(seed)
+    text = "hello, world."
+    codes = [K.key_class(c) for c in text]
+    logits = rng.standard_normal((len(text), len(K.KEY_VOCAB))) * 2.0
+    logits[np.arange(len(text)), codes] += 4.0
+    times = 1.0 + np.cumsum(rng.uniform(0.12, 0.4, len(text)))
+    out = []
+    for mode, lat in (("window", K.WINDOW_POST_S), ("offline", None)):
+        meta = K.stream_meta(run_index=0, segment_index=0, weights_sha256=_fake_weights_sha(f"kt-{mode}"),
+                             stream_id=K.opaque_stream_id("synthetic", mode))
+        out.append(ProducedStream(f"kt-semg/key-{mode}", K.keypress_stream(logits, times, meta, latency=lat), [text]))
+    return out
+
+
 TARGETS: dict[str, Callable[[], list[ProducedStream]]] = {
     "spanishbcbl": produce_spanishbcbl,
     "b2t25": produce_b2t25,
     "toronto": produce_toronto,
     "ctc-logits": produce_ctc_logits,
+    "willett": produce_willett,
+    "kt-semg": produce_kt_semg,
 }

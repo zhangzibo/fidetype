@@ -1,0 +1,8 @@
+{
+  "id": "P4-01",
+  "notes": "B2T '25 started in M6-06. Done: B2T '25, Toronto sEMG, SpanishBCBL replay adapters; generic decoder-output adapters in P4-07 (CTC logits, text n-best). Downloads 2026-11-14 (R-22): Willett handwriting (CC0) and KT-sEMG (CC BY 4.0) under C:/Users/zhang/bci-data/raw/. 2026-11-14 18:40: Willett adapter (fidetype.adapters.willett_handwriting: real-time RNN emitted characters, sentences.mat via scipy only, no pickles; 288/288 real trial streams trust-ready, CTC form 288/288, only PV-WEIGHTS fails) and KT-sEMG adapter (fidetype.adapters.kt_semg: CSV + key log, UTC-offset inference, LDA reference decoder; 7-run sample 55/55 streams provenance, session-calibrated key acc 0.4975 vs majority 0.1823; cross-run 0.1325). Conformance targets adapter:willett, adapter:kt-semg. Open: emg2qwerty (308.4 GB, waits for user).",
+  "agent_runs": [
+    {"label": "P4-01 Willett + KT-sEMG replay adapters", "duration_s": null, "tokens": null, "tool_uses": null}
+  ],
+  "_tracker_updated": "2026-11-14T18:40:00-08:00"
+}

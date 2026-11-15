@@ -206,11 +206,13 @@ def test_nan_meta_refused_by_reference_writer(tmp_path):
 
 def test_adapters_reach_trust_ready():
     reps = check_adapter("all")
-    assert {r.target.split(":")[1] for r in reps} == {"spanishbcbl", "b2t25", "toronto", "ctc-logits"}
+    assert {r.target.split(":")[1] for r in reps} == {"spanishbcbl", "b2t25", "toronto", "ctc-logits", "willett",
+                                                           "kt-semg"}
     for r in reps:
         assert "trust-ready" in r.levels, (r.target, [x.to_dict() for x in r.results if x.outcome == "fail"])
-        if ":b2t25:" in r.target:
-            # The published B2T '25 decoder weights have no hash: only PV-WEIGHTS fails.
+        if ":b2t25:" in r.target or ":willett:" in r.target:
+            # The published B2T '25 decoder weights and the Willett real-time RNN weights have no hash:
+            # only PV-WEIGHTS fails.
             fails = [x.check_id for x in r.results if x.status == "fail" and x.level != "advisory"]
             assert fails == ["PV-WEIGHTS"]
         else:

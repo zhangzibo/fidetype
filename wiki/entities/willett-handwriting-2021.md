@@ -31,6 +31,47 @@ updated: 2026-11-14
 - **Check**: `bash C:/Users/zhang/bci-data/scripts/verify-p4-01.sh` (size, MD5 and SHA-256).
 - **Status**: **done** (2026-11-14 17:21). Size, MD5 and SHA-256 match both sources. The archive has 20,282 entries (20,203 files, 79 folders), no links, no absolute or `..` paths. Extracted: 6,098,309,610 bytes in `handwritingBCIData/` (`Datasets/` with 12 T5 sessions, `RNNTrainingSteps/`, `BigramLM/`, `readme.pdf`). The archive also holds `.sh` scripts and two `.p` pickles: data only, never run or unpickle them without a safety scan.
 
+## Replay adapter (P4-01, 2026-11-14)
+Module: `fidetype.adapters.willett_handwriting` (our own code, Apache-2.0). Tests: `tests/test_adapter_willett_handwriting.py` (synthetic data only). Conformance target: `adapter:willett`.
+
+**What it reads.** Only `Datasets/<session>/sentences.mat`, with `scipy.io.loadmat` (MATLAB 5 format, plain arrays). It reads the decoder variables and the trial table, not the neural cube. It never runs the `.sh` scripts and never opens the `.p` pickles. All the data that the adapter needs is in `.mat` files.
+
+**What the stream holds.** The output of the real-time RNN decoder in the closed-loop trials (conditions `CL Corpus`, `CL Pandarinath`, `CL Free Write`). The open-loop trials have no decoder output, so they have no stream.
+
+| Item | Value |
+|---|---|
+| Unit | One stream per closed-loop sentence trial |
+| Frames | One frame per character that the system put on the screen (`rnn_decodedCharTimes`) |
+| Probabilities | The `rnn_charProbTimeSeries` row that carries the character (31 characters, softmax) |
+| Vocabulary | 31 tokens: `a`–`z`, space, `,`, `'`, `.`, `?` (`>` → space, `~` → period). `vocab_type = char`, no blank |
+| CTC form | `to_ctc_stream`: blank + 31 tokens, one blank frame between two characters. CTC greedy = the emitted text |
+| Time | Seconds from the go cue. 10 ms bins; the RNN output changes every 100 ms |
+| Causality | `decoder.causal = true`, `latency = 0`. The RNN ran in real time on past data only |
+| Provenance | `adapter.name` / `adapter.version`, opaque `stream.id`, `fidetype.replay` = dataset slug, DOI, licence, session ordinal, trial index, condition, excluded flag |
+| Not in the stream | Text, prompts, participant or session names, dates |
+
+**Checks on the data** (readme.pdf and our own checks):
+- The argmax of the probability row equals the emitted character for 100 % of the emitted characters (9 sessions).
+- The RNN output row changes every 10 bins (100 ms).
+- Every emitted character is inside its trial (go cue to sentence end).
+
+**Real-data validation** (local, nothing committed; conformance suite v0.1 checks):
+
+| Count | Value |
+|---|---|
+| Sessions with real-time output | 9 of 10 (the pilot day has none) |
+| Closed-loop trial streams (excluded trials included) | 288 |
+| Frames | 13,104 |
+| `char` streams trust-ready | 288 / 288 |
+| CTC-form streams trust-ready | 288 / 288 |
+| Failed check | only `PV-WEIGHTS` (no weights file to hash) |
+| Greedy text = stored online text | 281 / 288 |
+| CTC round trip exact (to 1e-4) | 288 / 288 |
+
+> **Our take:** The 7 trials where the greedy text differs from `rnn_decodedText` are a data question, not a stream error. The stored text may include characters outside the go-to-end window. We did not check this further.
+
+Open: (1) The offline RNN outputs in `RNNTrainingSteps/Step5_RNNInference/*_inferenceOutputs.mat` (all sentences, 32 columns) could give a second stream type. Their timing and column meaning are not in the readme, so we left them out. (2) A dense 100 ms stream (all RNN outputs, with the new-character signal) needs a spec rule for a "new token" signal; today the stream holds only emitted characters.
+
 ## Fit for Fidetype
 | Use | Fit | Why |
 |---|---|---|
