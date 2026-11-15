@@ -1,0 +1,69 @@
+{
+ "description": "M4-13: long training run of the M4-12 causal GRU-CTC decoder (fidetype.decoders.lookahead_gru, model unchanged, L 0 only) on B2T '25 T15. M4-12 recipe plus a longer step budget and 4-days-per-batch sampling. See plan.md.",
+ "dataset": "Card et al. 2024 (NEJM), t15_copyTask_neuralData.zip, Dryad doi:10.5061/dryad.dncjsxm85 (CC0 1.0). Same derived inputs as M4-01/02 and M4-12 (same prep, same splits), read only.",
+ "derived_dir": "C:/Users/zhang/bci-data/derived/m4-01-02-lookahead",
+ "derived_dir_note": "READ ONLY: features, texts, sessions. This task never writes there.",
+ "own_derived_dir": "C:/Users/zhang/bci-data/derived/m4-13",
+ "runs_root": "C:/Users/zhang/bci-data/runs",
+ "cmudict": "C:/Users/zhang/bci-data/lexicon/cmudict/cmudict.dict",
+ "splits": {
+  "train": "the dataset 'train' trials of all sessions (8,065 used before the length filter)",
+  "val_select": "dataset 'val' trials with an even index inside their session (checkpoint selection and progress only)",
+  "val_eval": "dataset 'val' trials with an odd index inside their session (reported numbers; 701 trials; decoded once at the end)"
+ },
+ "lookahead_ms": [0],
+ "lookahead_rule": "bins = floor(ms / 20), as M4-01/02",
+ "model": {
+  "n_in": 512,
+  "n_out": 41,
+  "hidden": 768,
+  "layers": 5,
+  "patch": 14,
+  "stride": 4,
+  "smooth_sd": 2.0,
+  "la_max": 25,
+  "la_proj": 64,
+  "dropout": 0.4
+ },
+ "train": {
+  "total_steps": 115000,
+  "total_steps_note": "sized by the smoke test (bucket sampler, batch 64: 1.33-1.42 s per step) to about 45 h (plan.md)",
+  "sampler": "bucket",
+  "sampler_note": "bucket = M4-12 batches (all days mixed, length buckets, max_batch_bins cap). days / days_band (4 days per batch) were smoke-tested: 5.4-6.0 s per step, not feasible (plan.md)",
+  "days_per_batch": 4,
+  "lr_max": 0.005,
+  "lr_min": 0.0001,
+  "warmup_steps": 1000,
+  "adam_eps": 0.1,
+  "weight_decay": 0.001,
+  "weight_decay_day": 0.0,
+  "grad_clip": 10.0,
+  "input_dropout": 0.2,
+  "batch": 64,
+  "max_batch_bins": 86400,
+  "micro_bins": 86400,
+  "white_noise_sd": 1.0,
+  "offset_sd": 0.2,
+  "random_cut_bins": 3,
+  "fast_gru": false,
+  "eval_fraction": 0.05,
+  "report_fractions": [0.25, 0.5, 0.75, 1.0],
+  "log_every": 100,
+  "seed": 0,
+  "checkpoint_minutes": 4,
+  "torch_threads": 4,
+  "eval_lookahead_bins": [0]
+ },
+ "runs": {
+  "dedicated_0": {"run": "m4-13-long0", "lookahead_bins": 0}
+ },
+ "trust": {
+  "m2_19_config": "experiments/2026-11-15-m2-19-trust-retune/configs/trust-config-t15-m4-12-dedicated_0-ltt.json",
+  "m2_19_config_id": "tcfg-e7e8c472f6d9ab33",
+  "commit_gate": {"min_chars": 1, "min_words": 0, "max_guard_risk": 1.0},
+  "gated_config_id_expected": "tcfg-4e6143e37d1642f3",
+  "seed": 0,
+  "controls_n": 300
+ },
+ "gaze_chars_per_min": 20.0
+}
