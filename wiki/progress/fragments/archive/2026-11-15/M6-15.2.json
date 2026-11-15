@@ -1,0 +1,1 @@
+{"id": "M6-15", "agent_runs": [{"label": "M6-15 full soak rerun (harness DONE + load record, launches, 7 h run, analysis, wiki, records)", "duration_s": 57453.031, "tokens": 255063, "tool_uses": 172}], "_tracker_updated": "2026-11-15T06:20:00-08:00"}
