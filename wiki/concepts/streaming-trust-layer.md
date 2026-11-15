@@ -133,6 +133,13 @@ The M4-06 config `tcfg-f5ca0020b3b8fce2` was fitted on the online logits of the 
 
 > **Our take:** formal success, small practical value. The commit rate is 1.3 % and most commits are wrong. The per-trial wrong-commit risk stays low because the policy commits so little. At this decoder accuracy (sentence exact about 0.09) a precision-type risk is the better user claim. Every re-tune must run the null controls and keep the commit gate on.
 
+### Decision 2026-11-15: rule for every trust-config re-tune
+**Rule.** Every trust-config re-tune must enable the [commit gate](#commit-gate-m2-18-opt-in) (M2-18). Before anyone uses the re-tuned config, it must pass two null controls: uniform input and frame-shuffled input. "Pass" means no COMMIT on the control streams beyond what the guarantee allows (M2-19 used a 300-trial draw; target 0/300).
+
+**Reason.** In M2-19, a plain v4 re-tune on a new decoder set the guard limit `commit_max_risk` to 1.0. That turned the guard off for COMMIT. On uniform (no-signal) input the re-tuned config then committed 186/300 streams, 162 of them with empty text. The commit gate removed all of them (0/300) and kept the LTT guarantee, because a gate only removes commits ([M2-19 results](../../experiments/2026-11-15-m2-19-trust-retune/results.md)).
+
+**Scope.** This applies to the v4 recipe, the v5 candidate and any later recipe, for every decoder and every dataset. Report the gate settings and both control results next to the `config_id`.
+
 ## Incremental decoding (M4-08, opt-in)
 Experiment: [2026-11-13-m4-08-incremental](../../experiments/2026-11-13-m4-08-incremental/results.md) ([tables](../../experiments/2026-11-13-m4-08-incremental/results/tables.md)). Diagram: [14](../diagrams/index.html#s14).
 
