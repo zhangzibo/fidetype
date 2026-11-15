@@ -6,7 +6,7 @@ allows it, CREATE_BREAKAWAY_FROM_JOB. queue.ps1 starts its children with -NoNewW
 that hidden console. (DETACHED_PROCESS, pythonw.exe or Start-Process -WindowStyle Hidden can open a
 visible Windows Terminal window; closing it kills the run with 0xC000013A.)
 
-Run (repo root): .venv\\Scripts\\python.exe experiments\\2026-11-14-m4-12-decoder-retrain\\launch_queue.py [--after-pid N]
+Run (repo root): .venv\Scripts\python.exe experiments\2026-11-15-m4-13-long-train\launch.py [--after-pid N]
 --after-pid N: the new powershell first waits until process N (a running queue) exits, then removes
 m4-13-queue.stop and runs queue.ps1 (hand-over to a changed queue script without stopping the current job).
 """
