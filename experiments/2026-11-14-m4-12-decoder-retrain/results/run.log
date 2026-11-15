@@ -32,3 +32,40 @@
 2026-11-15 05:40:12 stage figure start
 2026-11-15 05:40:13 figure -> C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\wiki\questions\lookahead-latency-accuracy-m4-12.svg
 2026-11-15 05:40:13 stage figure done (1s)
+2026-11-15 13:53:15 stage accuracy start
+2026-11-15 13:53:19 accuracy dedicated_0/L0: done before, skip
+2026-11-15 13:53:19 accuracy dedicated_25/L25: done before, skip
+2026-11-15 13:53:19 accuracy shared/L0: done before, skip
+2026-11-15 13:53:19 accuracy shared/L2: done before, skip
+2026-11-15 13:53:19 accuracy shared/L5: done before, skip
+2026-11-15 13:53:19 accuracy shared/L10: done before, skip
+2026-11-15 13:53:19 accuracy shared/L15: done before, skip
+2026-11-15 13:53:19 accuracy shared/L25: done before, skip
+2026-11-15 13:55:58 accuracy dedicated_10/L10: PER 0.2594; WER(frozen T) 0.4036 exact 0.081; WER(T1) 0.3923; commit 0.000 (0) wrong 0.0000 (0) eWPM 6.02; stream==batch 701/701 (159s)
+2026-11-15 13:58:32 accuracy dedicated_15/L15: PER 0.2599; WER(frozen T) 0.4109 exact 0.077; WER(T1) 0.3998; commit 0.000 (0) wrong 0.0000 (0) eWPM 5.97; stream==batch 701/701 (154s)
+2026-11-15 13:58:32 stage accuracy done (318s)
+2026-11-15 13:58:32 stage emission start
+2026-11-15 13:58:36 emission dedicated_0/L0 vs shared/L0: stamp delta median 0 ms, available delta median 0 ms (n 14415)
+2026-11-15 13:58:36 emission dedicated_25/L25 vs shared/L0: stamp delta median -400 ms, available delta median 100 ms (n 13151)
+2026-11-15 13:58:36 emission shared/L2 vs shared/L0: stamp delta median 0 ms, available delta median 40 ms (n 14872)
+2026-11-15 13:58:36 emission shared/L5 vs shared/L0: stamp delta median 0 ms, available delta median 100 ms (n 14789)
+2026-11-15 13:58:36 emission shared/L10 vs shared/L0: stamp delta median 0 ms, available delta median 200 ms (n 14704)
+2026-11-15 13:58:36 emission shared/L15 vs shared/L0: stamp delta median 0 ms, available delta median 300 ms (n 14684)
+2026-11-15 13:58:36 emission shared/L25 vs shared/L0: stamp delta median 0 ms, available delta median 500 ms (n 14646)
+2026-11-15 13:58:36 emission dedicated_10/L10 vs shared/L0: stamp delta median 0 ms, available delta median 200 ms (n 14260)
+2026-11-15 13:58:36 emission dedicated_15/L15 vs shared/L0: stamp delta median -80 ms, available delta median 220 ms (n 14175)
+2026-11-15 13:58:36 emission dedicated_25/L25 vs dedicated_0/L0: stamp delta median -400 ms, available delta median 100 ms (n 13190)
+2026-11-15 13:58:36 emission shared/L0 vs dedicated_0/L0: stamp delta median 0 ms, available delta median 0 ms (n 14415)
+2026-11-15 13:58:36 emission shared/L2 vs dedicated_0/L0: stamp delta median 0 ms, available delta median 40 ms (n 14446)
+2026-11-15 13:58:36 emission shared/L5 vs dedicated_0/L0: stamp delta median 0 ms, available delta median 100 ms (n 14411)
+2026-11-15 13:58:36 emission shared/L10 vs dedicated_0/L0: stamp delta median 0 ms, available delta median 200 ms (n 14396)
+2026-11-15 13:58:36 emission shared/L15 vs dedicated_0/L0: stamp delta median 0 ms, available delta median 300 ms (n 14397)
+2026-11-15 13:58:36 emission shared/L25 vs dedicated_0/L0: stamp delta median 0 ms, available delta median 500 ms (n 14379)
+2026-11-15 13:58:36 emission dedicated_10/L10 vs dedicated_0/L0: stamp delta median -80 ms, available delta median 120 ms (n 14317)
+2026-11-15 13:58:36 emission dedicated_15/L15 vs dedicated_0/L0: stamp delta median -80 ms, available delta median 220 ms (n 14309)
+2026-11-15 13:58:36 stage emission done (3s)
+2026-11-15 13:58:36 stage tables start
+2026-11-15 13:58:36 stage tables done (0s)
+2026-11-15 13:58:36 stage figure start
+2026-11-15 13:58:36 figure -> C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\wiki\questions\lookahead-latency-accuracy-m4-12.svg
+2026-11-15 13:58:36 stage figure done (1s)

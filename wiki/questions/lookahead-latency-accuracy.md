@@ -10,7 +10,7 @@ updated: 2026-11-15
 
 **Question:** A streaming decoder may wait L ms of future signal before it emits a frame. How do accuracy, trust outcomes and latency change with L from 0 to 500 ms? What should the NTS fields `latency` and `decoder.causal` say?
 
-**Answer (2026-11-15, M4-12, retrained decoder; supersedes the accuracy numbers below):** With a better trained causal GRU (val_eval greedy PER 0.2574 at L = 0, was 0.6954), lookahead gives **no measurable accuracy gain**: shared model PER 0.2634 at L = 0 and 0.2608 to 0.2623 for L = 40 to 500 ms. The dedicated L = 500 ms model is worse (0.2988). Its phonemes are now ready 100 ms **later** than those of the L = 0 model (median), not 180 ms earlier. The M4-02 gain was an artefact of under-training. Details: [M4-12 section](#m4-12-retrained-decoder-2026-11-15-supersedes-the-m4-0102-accuracy-numbers).
+**Answer (2026-11-15, M4-12, retrained decoder; supersedes the accuracy numbers below):** With a better trained causal GRU (val_eval greedy PER 0.2574 at L = 0, was 0.6954), lookahead gives **no measurable accuracy gain**: shared model PER 0.2634 at L = 0 and 0.2608 to 0.2623 for L = 40 to 500 ms. Dedicated models at 200 and 300 ms equal L = 0 (0.2594, 0.2599); the dedicated L = 500 ms model is worse (0.2988). Its phonemes are now ready 100 ms **later** than those of the L = 0 model (median), not 180 ms earlier. The M4-02 gain was an artefact of under-training. Details: [M4-12 section](#m4-12-retrained-decoder-2026-11-15-supersedes-the-m4-0102-accuracy-numbers).
 
 **Compute latency (2026-11-15, M4-02R, clean rerun on a quiet machine):** confirmed flat in L. Foreign load on the timing cores 1.77 % (limit 5 %; M4-02 had 5.77 %). Decoder p95 2.08 to 2.23 ms per 20 ms bin, trust p95 0.28 to 0.29 ms per frame, end of utterance p50 86.0 to 101.6 ms. The M4-12 models give the same picture. 0 commits. Details: [quiet-machine rerun](#quiet-machine-latency-rerun-2026-11-15-m4-02r).
 
@@ -40,11 +40,14 @@ Experiment: [M4-12 results](../../experiments/2026-11-14-m4-12-decoder-retrain/r
 | shared | 300 | 0.3768 | **0.2608** | 0.5803 | **0.4030** |
 | shared | 500 | 0.3687 | **0.2617** | 0.5728 | **0.4013** |
 | dedicated_0 | 0 | 0.6954 | **0.2574** | 0.9307 | **0.3998** |
+| dedicated_10 | 200 | — | **0.2594** | — | **0.3923** |
+| dedicated_15 | 300 | — | **0.2599** | — | **0.3998** |
 | dedicated_25 | 500 | 0.3487 | **0.2988** | 0.5405 | **0.4565** |
 
+- Dedicated 200 and 300 ms models equal L = 0 (0.2594, 0.2599 vs 0.2574). Only the dedicated 500 ms model is worse (it also trains worse: final train CTC loss 1.0076 vs about 0.85).
 - Gap to the published decoder: 0.2574 vs 0.101 (baseline README, validation partition) and 0.0954 (online copy-task output). About 2.5x; it was about 7x.
-- Emission (dedicated L = 500 ms vs dedicated L = 0): stamps −400 ms, ready time **+100 ms** (median; IQR [−460, 180]). Shared model: ready exactly +L, as before.
-- Frozen trust config: still 0 commits; eWPM 5.77 to 5.94, now above gaze alone (4.02) at every L.
+- Emission vs dedicated L = 0 (median): dedicated 200 ms ready +120 ms, 300 ms +220 ms, 500 ms **+100 ms** (stamps −400 ms; IQR [−460, 180]). Shared model: ready exactly +L, as before.
+- Frozen trust config: still 0 commits; eWPM 5.77 to 6.02, now above gaze alone (4.02) at every L.
 
 ![M4-12: accuracy and phoneme ready time against lookahead L](lookahead-latency-accuracy-m4-12.svg)
 

@@ -739,3 +739,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Secondary: M4-12 dedicated L 0 / L 500 ms and shared at every L: same compute picture, 0 commits; L 500 ms ready +100 ms vs L 0.
 - Found: the M4-12 accuracy stage writes `trust-<which>-L<bins>.json` with the same names as M4-01/02 in the shared derived folder, so the M4-01/02 trust decision files were overwritten. The rerun counted the streaming actions directly.
 - Updated: [lookahead latency vs accuracy](questions/lookahead-latency-accuracy.md) (new dated section), index.
+
+## [2026-11-15] query | M4-12: dedicated 200 ms and 300 ms models (plan addendum 1); queue done
+- val_eval greedy PER: dedicated 200 ms 0.2594 (WER T = 1 0.3923), 300 ms 0.2599 (0.3998); equal to dedicated L 0 (0.2574). Only dedicated 500 ms is worse (0.2988).
+- Emission vs dedicated L 0: ready +120 ms (200 ms), +220 ms (300 ms), +100 ms (500 ms).
+- Incident: the copied M4-12 `run.py` had overwritten the 8 M4-01/02 per-trial trust files in the shared derived folder (aggregates survive in git); fixed with an own derived folder (`experiments/2026-11-14-m4-12-decoder-retrain/results.md`).
+- Updated `questions/lookahead-latency-accuracy.md` (rows + figure), `index.md`.

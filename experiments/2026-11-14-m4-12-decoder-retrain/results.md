@@ -27,6 +27,8 @@ Data and model as M4-01/02: Brain-to-Text '25, T15 (CC0), `fidetype.decoders.loo
 | `m4-12-fixed0` | 0 | 0.2561 (10,000) | 0.8499 | 3.85 |
 | `m4-12-fixed25` | 500 ms | 0.3024 (10,000) | 1.0076 | 4.1 (active; wall time includes a 4 h PC sleep and a 1 h pause) |
 | `m4-12-shared` | {0 … 500 ms} | mean of L 0 / 200 / 500 ms: 0.2577 (10,000) | 0.8531 | 3.93 |
+| `m4-12-fixed10` | 200 ms | 0.2590 (10,000) | 0.8512 | 3.83 |
+| `m4-12-fixed15` | 300 ms | 0.2587 (10,000) | 0.8496 | 3.82 |
 
 - val_select PER fell slowly at the end in all runs (fixed0: 0.2595 → 0.2578 → 0.2561 at steps 8,000 / 9,000 / 10,000). The best step is again the last, but the gains per 1,000 steps are now about 0.002 (in M4-01 they were still about 0.01 per epoch).
 - Step time 1.36 to 1.47 s (RX 7800 XT, ROCm, native GRU without MIOpen).
@@ -41,28 +43,33 @@ Data and model as M4-01/02: Brain-to-Text '25, T15 (CC0), `fidetype.decoders.loo
 | shared | 300 | 0.3768 | **0.2608** | 0.5803 | **0.4030** | 0.083 |
 | shared | 500 | 0.3687 | **0.2617** | 0.5728 | **0.4013** | 0.087 |
 | dedicated_0 | 0 | 0.6954 | **0.2574** | 0.9307 | **0.3998** | 0.090 |
+| dedicated_10 | 200 | — | **0.2594** | — | **0.3923** | 0.101 |
+| dedicated_15 | 300 | — | **0.2599** | — | **0.3998** | 0.090 |
 | dedicated_25 | 500 | 0.3487 | **0.2988** | 0.5405 | **0.4565** | 0.068 |
 
-*dedicated_10 (200 ms) and dedicated_15 (300 ms): queued after the hold for the latency rerun (plan addendum 2); rows are added when they finish.*
+*dedicated_10 (200 ms) and dedicated_15 (300 ms) were added by plan addendum 1 (no M4-01/02 counterpart).*
 
 - **Gap to the published decoder.** Best L 0 model (dedicated_0): PER 0.2574. Published baseline on the validation partition: 0.101 (README). Published online copy-task output: 0.0954. So we are at about 2.5x the published PER (2.7x the online number). The old models were about 7x. We did **not** get close by the pre-declared rule (within 0.05 of 0.101).
 - **The lookahead curve is now flat.** Shared model: PER 0.2634 at L 0 and 0.2608 to 0.2623 for L 40 to 500 ms. The whole range is 0.0026, smaller than the gap between two runs with the same L (shared L 0 0.2634 vs dedicated L 0 0.2574). WER (T = 1) 0.4049 → 0.4013.
-- **The dedicated L 500 ms model is now worse than L 0** (PER 0.2988 vs 0.2574; train loss 1.0076 vs 0.8499). In M4-01/02 it was the best model.
+- **Dedicated models at 200 and 300 ms equal L 0** (PER 0.2594 and 0.2599 vs 0.2574; WER (T = 1) 0.3923 and 0.3998 vs 0.3998). **The dedicated L 500 ms model is worse** (PER 0.2988; train loss 1.0076 vs about 0.85 for all other runs). In M4-01/02 it was the best model. So a long fixed lookahead (25 bins x 64 projected features into the branch) slows training with this recipe; up to 300 ms it is neutral.
 - So the large M4-02 gain from lookahead (0.6565 → 0.3687) was an artefact of the under-trained GRU. With a better trained GRU, our lookahead branch adds nothing measurable.
 
 ### Trust outcomes (frozen config `tcfg-f5ca0020b3b8fce2`, not refitted)
 - 0 commits in all conditions (701/701 OFFER, wrong-commit 0, CP95 [0.000, 0.005]). Stream = batch 701/701 everywhere.
-- eWPM 5.77 to 5.94 (old 3.38 to 5.15); gaze alone 4.02. Now every condition is faster than gaze alone, also at L 0. Always-commit eWPM 5.31 to 5.54.
+- eWPM 5.77 to 6.02 (old 3.38 to 5.15); gaze alone 4.02. Now every condition is faster than gaze alone, also at L 0. Always-commit eWPM 5.31 to 5.62.
 
 ### Emission timing (greedy CTC path, matched phonemes, median [IQR])
 | comparison | emission stamp Δ (ms) | ready time Δ (ms) | n phonemes |
 |---|---|---|---|
 | shared L 40 / 100 / 200 / 300 / 500 vs shared L 0 | 0 | +40 / +100 / +200 / +300 / +500 | 14,646 to 14,872 |
 | dedicated_0 vs shared L 0 | 0 [0, 80] | 0 [0, 80] | 14,415 |
+| dedicated_10 (L 200) vs dedicated_0 | −80 [−80, 0] | +120 [120, 200] | 14,317 |
+| dedicated_15 (L 300) vs dedicated_0 | −80 [−80, 0] | +220 [220, 300] | 14,309 |
 | dedicated_25 (L 500) vs dedicated_0 | −400 [−960, −320] | **+100** [−460, 180] | 13,190 |
 
 - The dedicated L 500 ms model still emits phonemes earlier (−400 ms median) than the L 0 model. But now its phonemes are ready **100 ms later**, not 180 ms earlier as in M4-02. The M4-02 "ready earlier" result came from the weak L 0 model, which emitted late (+240 ms vs the shared model then; 0 ms now).
 - The declared `latency` (L) stays an upper bound on signal use. The measured ready delay of the dedicated L 500 ms model is 100 ms (median), so it is not a good estimate of the user delay either.
+- Dedicated 200 / 300 ms models emit one frame (80 ms) earlier than L 0 and are ready 120 / 220 ms later: they convert part of their lookahead into earlier emission, but less than in M4-02.
 - The last emitted phoneme is 2.32 to 2.72 s (median) before the trial end (M4-02: 3.12 to 3.68 s).
 
 ## What this means
@@ -88,4 +95,4 @@ Data and model as M4-01/02: Brain-to-Text '25, T15 (CC0), `fidetype.decoders.loo
 - Fix (06:18, before the next accuracy stage): `run.py` now writes trust files and its word-decode cache to `C:\Users\zhang\bci-data\derived\m4-12-decoder-retrain\` (`own_derived_dir` in config.json). We moved the 8 M4-12 trust files there and copied the cache. Shared inputs (features, texts, logprobs) are still read from the M4-01/02 folder.
 
 ## GPU time
-About 11.9 h for fixed0 + fixed25 + shared, plus about 0.5 h for benchmarks and smoke tests. dedicated_10 and dedicated_15: pending.
+About 19.6 h of training (fixed0 3.85, fixed25 about 4.1 active, shared 3.93, fixed10 3.83, fixed15 3.82), plus about 0.5 h for benchmarks and smoke tests, plus about 2 min of GPU decoding per model. The queue ended 2026-11-15 13:58 (`m4-12-queue.DONE`, ok=True).

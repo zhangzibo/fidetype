@@ -455,6 +455,120 @@
    },
    "gaze_ewpm": 4.015288155973546,
    "seconds": 161.8
+  },
+  "dedicated_10/L10": {
+   "which": "dedicated_10",
+   "run": "m4-12-fixed10",
+   "lookahead_bins": 10,
+   "lookahead_ms": 200,
+   "n": 701,
+   "checkpoint_sha256": "f98400b19872d522990d7fc57cf29629ee87fb2e037f912b4b8b85480c7f1cc7",
+   "epoch": 98,
+   "greedy": {
+    "per": 0.25944852011130787,
+    "n_symbols": 19765
+   },
+   "words_frozenT": {
+    "cer": 0.2764751352744138,
+    "wer": 0.4036363636363636,
+    "sentence_exact": 0.08131241084165478,
+    "n_exact": 57,
+    "truth_in_nbest": 0.1398002853067047
+   },
+   "words_T1": {
+    "cer": 0.2732972601563171,
+    "wer": 0.3922994652406417,
+    "sentence_exact": 0.10128388017118402,
+    "n_exact": 71,
+    "truth_in_nbest": 0.15406562054208273
+   },
+   "trust": {
+    "n_commit": 0,
+    "commit_rate": 0.0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.00524848850655095
+    ],
+    "error_among_commits": null,
+    "n_commit_empty": 0,
+    "ewpm": 6.0188560372552695,
+    "silent_error": 0.0,
+    "rate_offer": 1.0,
+    "abstain_rate": 0.0,
+    "stream_equals_batch": 701,
+    "actions": {
+     "COMMIT": 0,
+     "OFFER": 701,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "always_commit": {
+    "wrong_commit": 0.9186875891583453,
+    "ewpm": 5.624653603525809
+   },
+   "gaze_ewpm": 4.015288155973546,
+   "seconds": 158.9
+  },
+  "dedicated_15/L15": {
+   "which": "dedicated_15",
+   "run": "m4-12-fixed15",
+   "lookahead_bins": 15,
+   "lookahead_ms": 300,
+   "n": 701,
+   "checkpoint_sha256": "01b4cde5a535dfd41faea7d86472f8054c1195a693ec01f13119f81f5ef2631c",
+   "epoch": 98,
+   "greedy": {
+    "per": 0.25990387047811786,
+    "n_symbols": 19765
+   },
+   "words_frozenT": {
+    "cer": 0.28201494460190674,
+    "wer": 0.4109090909090909,
+    "sentence_exact": 0.07703281027104136,
+    "n_exact": 54,
+    "truth_in_nbest": 0.12981455064194009
+   },
+   "words_T1": {
+    "cer": 0.28167139053508544,
+    "wer": 0.3997860962566845,
+    "sentence_exact": 0.0898716119828816,
+    "n_exact": 63,
+    "truth_in_nbest": 0.15121255349500715
+   },
+   "trust": {
+    "n_commit": 0,
+    "commit_rate": 0.0,
+    "n_wrong_commit": 0,
+    "wrong_commit": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.00524848850655095
+    ],
+    "error_among_commits": null,
+    "n_commit_empty": 0,
+    "ewpm": 5.9665087088686635,
+    "silent_error": 0.0,
+    "rate_offer": 1.0,
+    "abstain_rate": 0.0,
+    "stream_equals_batch": 701,
+    "actions": {
+     "COMMIT": 0,
+     "OFFER": 701,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   },
+   "always_commit": {
+    "wrong_commit": 0.9229671897289586,
+    "ewpm": 5.536988195925788
+   },
+   "gaze_ewpm": 4.015288155973546,
+   "seconds": 154.0
   }
  },
  "frozen_config_id": "tcfg-f5ca0020b3b8fce2",
