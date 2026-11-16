@@ -1,0 +1,84 @@
+{
+ "tuning_session": 7,
+ "n_items": 400,
+ "base_val_per": 0.44503487213550313,
+ "base_epoch": 9,
+ "frozen_per_phase_c": 0.4733247422680412,
+ "grid": [
+  {
+   "steps": 20,
+   "lr": 0.001,
+   "l2": 0.001,
+   "per_phase_c": 0.4478092783505155,
+   "seconds": 13.7
+  },
+  {
+   "steps": 20,
+   "lr": 0.001,
+   "l2": 0.01,
+   "per_phase_c": 0.44987113402061857,
+   "seconds": 12.5
+  },
+  {
+   "steps": 20,
+   "lr": 0.003,
+   "l2": 0.001,
+   "per_phase_c": 0.4778350515463918,
+   "seconds": 12.3
+  },
+  {
+   "steps": 20,
+   "lr": 0.003,
+   "l2": 0.01,
+   "per_phase_c": 0.459020618556701,
+   "seconds": 12.7
+  },
+  {
+   "steps": 50,
+   "lr": 0.001,
+   "l2": 0.001,
+   "per_phase_c": 0.45077319587628867,
+   "seconds": 33.8
+  },
+  {
+   "steps": 50,
+   "lr": 0.001,
+   "l2": 0.01,
+   "per_phase_c": 0.44858247422680414,
+   "seconds": 33.9
+  },
+  {
+   "steps": 50,
+   "lr": 0.003,
+   "l2": 0.001,
+   "per_phase_c": 0.46855670103092784,
+   "seconds": 34.2
+  },
+  {
+   "steps": 50,
+   "lr": 0.003,
+   "l2": 0.01,
+   "per_phase_c": 0.45347938144329897,
+   "seconds": 34.7
+  }
+ ],
+ "chosen": {
+  "lr": 0.001,
+  "l2": 0.001,
+  "steps": 20,
+  "per_phase_c": 0.4478092783505155
+ },
+ "nightly": {
+  "epochs": 3,
+  "batch": 16
+ },
+ "sentence_temperature": 50.0,
+ "brier": 0.024452318080268313,
+ "top1_exact_phase_c": 0.013157894736842105,
+ "offer_hit_phase_c": 0.019736842105263157,
+ "lambda_1": 0.15147465769378585,
+ "crc_feasible": true,
+ "word_decode_s_per_item": 0.143,
+ "base_checkpoint_sha256": "20ce60b0505ad63abfbfd8f90df289f194f55cacea36cbba8da473cecedb9ec6",
+ "seconds": 258.0
+}
