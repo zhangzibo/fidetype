@@ -627,6 +627,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - **Deliverable:** an update loop in `fidetype` (name to decide): each update gets a new `config_id`; `aci` runs across updates; an e-process monitor per session; a champion / challenger gate (`block_test` / `block_ltt` on recent feedback that the challenger did not train on); the commit gate and the uniform / shuffled null controls run again on every update; the ledger records each update. Hooks in `TrustGuard` / `OnlineTrustPolicy`.
 - **Depends on:** P15-01, P14-03, P5-02.
 - **Done when:** unit tests show that a worse challenger is refused, a challenger that fails the null controls is refused, and the `config_id` changes on every accepted update. Tests run in CI.
+- **Result (2026-11-16, in progress):** `GuardedUpdateLoop` safe by construction (evidence gate default, null refusal on every update, champion / challenger, chained `config_id`); the three Done-when tests exist. [Gated re-run](../../experiments/2026-11-16-f1-e2-selfimprove-pilot/results-gated.md): S5 now passes (null commits 2/640 frozen, 0/640 feedback-p0.9; original 281 / 319), S1-S4 pass, but 89-100 % of commits are still wrong (bound near vacuous) and the sign test has no power on top-1 exact loss. Open: hooks in `TrustGuard` / `OnlineTrustPolicy` and a ledger record per update.
 
 #### P15-03 E2 full runs on T12 and T15
 - **Goal:** the F1 evidence on real multi-session data.
