@@ -1,0 +1,419 @@
+{
+ "fidetype_version": "0.0.1",
+ "t15": {
+  "split": {
+   "calibration": "val_select (even-index val trials)",
+   "held_out": "val_eval (odd-index val trials)"
+  },
+  "n_calibration": 722,
+  "n_held_out": 701,
+  "chars_per_min": 159.2741387635318,
+  "alpha": {
+   "0.05": {
+    "status": "ok",
+    "config_id": "tcfg-09baa8a632ade86e",
+    "sheet": {
+     "config_id": "tcfg-09baa8a632ade86e",
+     "input_kind": "logits",
+     "decoder": "custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder",
+     "alpha": 0.05,
+     "delta": 0.1,
+     "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+     "n_items": 722,
+     "n_fit": 180,
+     "n_policy": 271,
+     "n_ltt": 271,
+     "n_ltt_min": 45,
+     "lambda_hat": 0.22,
+     "feasible": true,
+     "commit_threshold": 0.3,
+     "commit_gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "ltt_commits": 2,
+     "ltt_wrong_commits": 1,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 1,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "null_max_commit_rate": 0.05,
+     "seed": 0,
+     "created_utc": "2026-11-16T05:10:23+00:00",
+     "assumptions": [
+      "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+      "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+      "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+      "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+     ],
+     "not_guaranteed": [
+      "Any single utterance: the bound is on the rate over many utterances.",
+      "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+      "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+      "The error rate among commits (precision): with few commits it can be high.",
+      "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+      "Correctness of the text that the guard withholds or offers.",
+      "Any medical or legal claim. Fidetype is research software, not a medical device."
+     ],
+     "warnings": []
+    },
+    "frame_temperature": 1.288851364135909,
+    "sentence_temperature": 11.957097170584994,
+    "n": 701,
+    "actions": {
+     "commit": 2,
+     "offer": 699,
+     "withhold": 0
+    },
+    "raw_actions": {
+     "OFFER": 699,
+     "COMMIT": 2
+    },
+    "n_commit": 2,
+    "n_wrong_commit": 2,
+    "wrong_commit_rate": 0.0028530670470756064,
+    "wrong_commit_cp95": [
+     0.00034570660403646683,
+     0.01026792330850958
+    ],
+    "error_among_commits": 1.0,
+    "error_among_commits_cp95": [
+     0.15811388300841903,
+     1.0
+    ],
+    "empty_commits": 0,
+    "top1_exact_held_out": null,
+    "ewpm": {
+     "ewpm": 6.016247658730813,
+     "ewpm_partial": 6.016247658730813
+    },
+    "seconds": 326.1,
+    "pass": true,
+    "vacuous": false,
+    "cp95_upper_le_alpha": true
+   },
+   "0.1": {
+    "status": "ok",
+    "config_id": "tcfg-6626f8bf11e7ad19",
+    "sheet": {
+     "config_id": "tcfg-6626f8bf11e7ad19",
+     "input_kind": "logits",
+     "decoder": "custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder",
+     "alpha": 0.1,
+     "delta": 0.1,
+     "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+     "n_items": 722,
+     "n_fit": 180,
+     "n_policy": 271,
+     "n_ltt": 271,
+     "n_ltt_min": 22,
+     "lambda_hat": 0.21,
+     "feasible": true,
+     "commit_threshold": 0.3,
+     "commit_gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "ltt_commits": 2,
+     "ltt_wrong_commits": 1,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 30,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 1,
+       "allowed": 30,
+       "passed": true
+      }
+     ],
+     "null_max_commit_rate": 0.1,
+     "seed": 0,
+     "created_utc": "2026-11-16T05:12:17+00:00",
+     "assumptions": [
+      "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+      "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+      "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+      "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+     ],
+     "not_guaranteed": [
+      "Any single utterance: the bound is on the rate over many utterances.",
+      "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+      "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+      "The error rate among commits (precision): with few commits it can be high.",
+      "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+      "Correctness of the text that the guard withholds or offers.",
+      "Any medical or legal claim. Fidetype is research software, not a medical device."
+     ],
+     "warnings": []
+    },
+    "frame_temperature": 1.288851364135909,
+    "sentence_temperature": 11.957097170584994,
+    "n": 701,
+    "actions": {
+     "commit": 2,
+     "offer": 699,
+     "withhold": 0
+    },
+    "raw_actions": {
+     "OFFER": 699,
+     "COMMIT": 2
+    },
+    "n_commit": 2,
+    "n_wrong_commit": 2,
+    "wrong_commit_rate": 0.0028530670470756064,
+    "wrong_commit_cp95": [
+     0.00034570660403646683,
+     0.01026792330850958
+    ],
+    "error_among_commits": 1.0,
+    "error_among_commits_cp95": [
+     0.15811388300841903,
+     1.0
+    ],
+    "empty_commits": 0,
+    "top1_exact_held_out": null,
+    "ewpm": {
+     "ewpm": 6.016247658730813,
+     "ewpm_partial": 6.016247658730813
+    },
+    "seconds": 19.2,
+    "pass": true,
+    "vacuous": false,
+    "cp95_upper_le_alpha": true
+   }
+  },
+  "seconds": 350.0
+ },
+ "t12": {
+  "split": {
+   "calibration": "trust pool, 14 fit_a + calibration sessions",
+   "held_out": "trust pool, 10 test sessions"
+  },
+  "n_calibration": 480,
+  "n_held_out": 400,
+  "chars_per_min": 303.98331077672157,
+  "alpha": {
+   "0.05": {
+    "status": "ok",
+    "config_id": "tcfg-ca5af419ca3738f1",
+    "sheet": {
+     "config_id": "tcfg-ca5af419ca3738f1",
+     "input_kind": "logits",
+     "decoder": "custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder",
+     "alpha": 0.05,
+     "delta": 0.1,
+     "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+     "n_items": 480,
+     "n_fit": 120,
+     "n_policy": 180,
+     "n_ltt": 180,
+     "n_ltt_min": 45,
+     "lambda_hat": 0.29,
+     "feasible": true,
+     "commit_threshold": 0.3,
+     "commit_gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "ltt_commits": 10,
+     "ltt_wrong_commits": 4,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "null_max_commit_rate": 0.05,
+     "seed": 0,
+     "created_utc": "2026-11-16T05:14:46+00:00",
+     "assumptions": [
+      "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+      "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+      "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+      "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+     ],
+     "not_guaranteed": [
+      "Any single utterance: the bound is on the rate over many utterances.",
+      "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+      "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+      "The error rate among commits (precision): with few commits it can be high.",
+      "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+      "Correctness of the text that the guard withholds or offers.",
+      "Any medical or legal claim. Fidetype is research software, not a medical device."
+     ],
+     "warnings": []
+    },
+    "frame_temperature": 2.528091520707864,
+    "sentence_temperature": 19.999915690182068,
+    "n": 400,
+    "actions": {
+     "commit": 25,
+     "offer": 375,
+     "withhold": 0
+    },
+    "raw_actions": {
+     "OFFER": 375,
+     "COMMIT": 25
+    },
+    "n_commit": 25,
+    "n_wrong_commit": 15,
+    "wrong_commit_rate": 0.0375,
+    "wrong_commit_cp95": [
+     0.021137674784348935,
+     0.06109697662390072
+    ],
+    "error_among_commits": 0.6,
+    "error_among_commits_cp95": [
+     0.3866534962568399,
+     0.788745193534858
+    ],
+    "empty_commits": 0,
+    "top1_exact_held_out": null,
+    "ewpm": {
+     "ewpm": 7.125625978458122,
+     "ewpm_partial": 7.125625978458122
+    },
+    "seconds": 177.0,
+    "pass": true,
+    "vacuous": false,
+    "cp95_upper_le_alpha": false
+   },
+   "0.1": {
+    "status": "ok",
+    "config_id": "tcfg-059087ff4c4c633a",
+    "sheet": {
+     "config_id": "tcfg-059087ff4c4c633a",
+     "input_kind": "logits",
+     "decoder": "custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder",
+     "alpha": 0.1,
+     "delta": 0.1,
+     "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+     "n_items": 480,
+     "n_fit": 120,
+     "n_policy": 180,
+     "n_ltt": 180,
+     "n_ltt_min": 22,
+     "lambda_hat": 0.25,
+     "feasible": true,
+     "commit_threshold": 0.3,
+     "commit_gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "ltt_commits": 10,
+     "ltt_wrong_commits": 4,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 30,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 30,
+       "passed": true
+      }
+     ],
+     "null_max_commit_rate": 0.1,
+     "seed": 0,
+     "created_utc": "2026-11-16T05:15:38+00:00",
+     "assumptions": [
+      "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+      "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+      "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+      "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+     ],
+     "not_guaranteed": [
+      "Any single utterance: the bound is on the rate over many utterances.",
+      "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+      "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+      "The error rate among commits (precision): with few commits it can be high.",
+      "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+      "Correctness of the text that the guard withholds or offers.",
+      "Any medical or legal claim. Fidetype is research software, not a medical device."
+     ],
+     "warnings": []
+    },
+    "frame_temperature": 2.528091520707864,
+    "sentence_temperature": 19.999915690182068,
+    "n": 400,
+    "actions": {
+     "commit": 25,
+     "offer": 375,
+     "withhold": 0
+    },
+    "raw_actions": {
+     "OFFER": 375,
+     "COMMIT": 25
+    },
+    "n_commit": 25,
+    "n_wrong_commit": 15,
+    "wrong_commit_rate": 0.0375,
+    "wrong_commit_cp95": [
+     0.021137674784348935,
+     0.06109697662390072
+    ],
+    "error_among_commits": 0.6,
+    "error_among_commits_cp95": [
+     0.3866534962568399,
+     0.788745193534858
+    ],
+    "empty_commits": 0,
+    "top1_exact_held_out": null,
+    "ewpm": {
+     "ewpm": 7.125625978458122,
+     "ewpm_partial": 7.125625978458122
+    },
+    "seconds": 9.8,
+    "pass": true,
+    "vacuous": false,
+    "cp95_upper_le_alpha": true
+   }
+  },
+  "seconds": 195.7
+ }
+}

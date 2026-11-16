@@ -1,0 +1,134 @@
+2026-11-15 21:06:33 stage t15 start
+2026-11-15 21:06:38 t15: calibration 722, held out 701, cpm 159.3
+2026-11-15 21:10:23 t15 alpha 0.05: calibrated tcfg-09baa8a632ade86e in 225s
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-09baa8a632ade86e
+input                logits (custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    722 = 180 fit + 271 policy grid + 271 LTT
+LTT items needed     >= 45 to certify any COMMIT
+lambda_hat           0.22 (feasible: True)
+commit threshold     p_top1 >= 0.3
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 2 commits, 1 wrong
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           1/300 commits (allowed 15): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+Details: docs/trust-guarantee.md
+2026-11-15 21:12:04 t15 alpha 0.05: held out commits 2/701, wrong 2 (0.0029, CP95 [0.0003, 0.0103]); actions {'commit': 2, 'offer': 699, 'withhold': 0}; eWPM {'ewpm': 6.016247658730813, 'ewpm_partial': 6.016247658730813}; pass True vacuous False
+2026-11-15 21:12:17 t15 alpha 0.1: calibrated tcfg-6626f8bf11e7ad19 in 14s
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-6626f8bf11e7ad19
+input                logits (custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder)
+guarantee            P( wrong-commit rate <= 0.1 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    722 = 180 fit + 271 policy grid + 271 LTT
+LTT items needed     >= 22 to certify any COMMIT
+lambda_hat           0.21 (feasible: True)
+commit threshold     p_top1 >= 0.3
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 2 commits, 1 wrong
+null controls        pass if commits <= floor(0.1 x n)
+  uniform            0/300 commits (allowed 30): PASS
+  shuffled           1/300 commits (allowed 30): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+Details: docs/trust-guarantee.md
+2026-11-15 21:12:23 t15 alpha 0.1: held out commits 2/701, wrong 2 (0.0029, CP95 [0.0003, 0.0103]); actions {'commit': 2, 'offer': 699, 'withhold': 0}; eWPM {'ewpm': 6.016247658730813, 'ewpm_partial': 6.016247658730813}; pass True vacuous False
+2026-11-15 21:12:23 stage t15 done
+2026-11-15 21:12:23 stage t12 start
+2026-11-15 21:12:32 t12: calibration 480, held out 400, cpm 304.0
+2026-11-15 21:14:46 t12 alpha 0.05: calibrated tcfg-ca5af419ca3738f1 in 133s
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-ca5af419ca3738f1
+input                logits (custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    480 = 120 fit + 180 policy grid + 180 LTT
+LTT items needed     >= 45 to certify any COMMIT
+lambda_hat           0.29 (feasible: True)
+commit threshold     p_top1 >= 0.3
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 10 commits, 4 wrong
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           0/300 commits (allowed 15): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+Details: docs/trust-guarantee.md
+2026-11-15 21:15:29 t12 alpha 0.05: held out commits 25/400, wrong 15 (0.0375, CP95 [0.0211, 0.0611]); actions {'commit': 25, 'offer': 375, 'withhold': 0}; eWPM {'ewpm': 7.125625978458122, 'ewpm_partial': 7.125625978458122}; pass True vacuous False
+2026-11-15 21:15:38 t12 alpha 0.1: calibrated tcfg-059087ff4c4c633a in 8s
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-059087ff4c4c633a
+input                logits (custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder)
+guarantee            P( wrong-commit rate <= 0.1 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    480 = 120 fit + 180 policy grid + 180 LTT
+LTT items needed     >= 22 to certify any COMMIT
+lambda_hat           0.25 (feasible: True)
+commit threshold     p_top1 >= 0.3
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 10 commits, 4 wrong
+null controls        pass if commits <= floor(0.1 x n)
+  uniform            0/300 commits (allowed 30): PASS
+  shuffled           0/300 commits (allowed 30): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+Details: docs/trust-guarantee.md
+2026-11-15 21:15:39 t12 alpha 0.1: held out commits 25/400, wrong 15 (0.0375, CP95 [0.0211, 0.0611]); actions {'commit': 25, 'offer': 375, 'withhold': 0}; eWPM {'ewpm': 7.125625978458122, 'ewpm_partial': 7.125625978458122}; pass True vacuous False
+2026-11-15 21:15:40 stage t12 done

@@ -1,0 +1,197 @@
+{
+  "config": {
+    "char_temperature": 1.0,
+    "commit_gate": {
+      "max_guard_risk": 1.0,
+      "min_chars": 1,
+      "min_words": 0
+    },
+    "conformal_alpha": 0.1,
+    "conformal_mode": "conditional",
+    "conformal_q": 0.8944582090829669,
+    "conformal_score": "lac",
+    "frame_temperature": 2.528091520707864,
+    "guard": {
+      "cluster_max_word_edits": 0,
+      "combine": "max",
+      "consistency_k": 5,
+      "low_conf_threshold": 0.5,
+      "w_consistency": 1.0,
+      "w_evidence": 1.0
+    },
+    "name": "p14-03-t12",
+    "policy": {
+      "abstain_risk": 1.01,
+      "commit_max_risk": 1.0,
+      "commit_max_set": null,
+      "commit_p": 0.3,
+      "final_fallback": "offer",
+      "offer_max_k": 1,
+      "offer_words": false,
+      "offer_words_k": 3,
+      "offer_words_max_slots": null,
+      "offer_words_min_conf": 0.0,
+      "word_conf_threshold": 0.9
+    },
+    "policy_class": "trust",
+    "recipe": {
+      "calibration": "clean calibration half, same user and session (exchangeable)",
+      "commit_gate": "always on (re-tune rule 2026-11-15)",
+      "commit_threshold": "max(grid commit_p, LTT lambda_hat)",
+      "decoder": "custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder",
+      "fitted_by": "fidetype.trust.calibrate (P14-03 drop-in)",
+      "frame_temperature": "fitted on stream_texts",
+      "git_tag": "paper1-v4-frozen-config",
+      "guard": "on (GuardConfig defaults, combine=max)",
+      "input_kind": "logits",
+      "name": "paper1-v4-frozen-config",
+      "null_controls": "uniform + shuffled, automatic",
+      "policy_fit": "grid search, max eWPM s.t. plug-in wrong-commit <= 0.05",
+      "risk_control": {
+        "alpha": 0.05,
+        "combine": "max",
+        "delta": 0.1,
+        "grid": "1.00 to 0.00, step 0.01",
+        "method": "ltt",
+        "pvalue": "auto (binomial for 0/1 losses)"
+      },
+      "split": {
+        "fit": 120,
+        "ltt": 180,
+        "policy_grid": 180,
+        "seed": 0
+      }
+    },
+    "risk_control": {
+      "alpha": 0.05,
+      "bound": 0.0507493420991982,
+      "combine": "max",
+      "delta": 0.1,
+      "feasible": true,
+      "method": "ltt-binomial",
+      "n": 180,
+      "threshold": 0.29
+    },
+    "schema": "fidetype.trust-config/0.1",
+    "sentence_temperature": 19.999915690182068,
+    "use_guard": true,
+    "word_max_alternatives": 5
+  },
+  "decode_fn": "custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder",
+  "input": {
+    "blank_id": 0,
+    "decoder": {
+      "modality": "intracortical",
+      "name": "p14-03-t12",
+      "version": "0"
+    },
+    "frame_period": 0.08,
+    "input_scale": "log_probs",
+    "kind": "logits",
+    "vocab": [
+      "<blank>",
+      " ",
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M"
+    ],
+    "vocab_type": "char"
+  },
+  "schema": "fidetype.trust-guard/0.1",
+  "sheet": {
+    "alpha": 0.05,
+    "assumptions": [
+      "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+      "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+      "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+      "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+    ],
+    "commit_gate": {
+      "max_guard_risk": 1.0,
+      "min_chars": 1,
+      "min_words": 0
+    },
+    "commit_threshold": 0.3,
+    "config_id": "tcfg-ca5af419ca3738f1",
+    "controls": [
+      {
+        "allowed": 15,
+        "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+        "n": 300,
+        "n_commit": 0,
+        "name": "uniform",
+        "passed": true
+      },
+      {
+        "allowed": 15,
+        "description": "calibration frames in a random time order",
+        "n": 300,
+        "n_commit": 0,
+        "name": "shuffled",
+        "passed": true
+      }
+    ],
+    "created_utc": "2026-11-16T05:14:46+00:00",
+    "decoder": "custom:__main__.make_decode_fn.<locals>.phoneme_words_decoder",
+    "delta": 0.1,
+    "feasible": true,
+    "input_kind": "logits",
+    "lambda_hat": 0.29,
+    "ltt_commits": 10,
+    "ltt_wrong_commits": 4,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_fit": 120,
+    "n_items": 480,
+    "n_ltt": 180,
+    "n_ltt_min": 45,
+    "n_policy": 180,
+    "not_guaranteed": [
+      "Any single utterance: the bound is on the rate over many utterances.",
+      "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+      "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+      "The error rate among commits (precision): with few commits it can be high.",
+      "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+      "Correctness of the text that the guard withholds or offers.",
+      "Any medical or legal claim. Fidetype is research software, not a medical device."
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "warnings": []
+  }
+}

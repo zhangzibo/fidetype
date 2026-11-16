@@ -185,13 +185,17 @@ class GuaranteeSheet:
     assumptions: tuple[str, ...] = ()
     not_guaranteed: tuple[str, ...] = ()
     warnings: tuple[str, ...] = ()
+    #: Median guard risk of the final guard on the LTT items (1.0 = the commit gate blocks almost every commit).
+    ltt_median_guard_risk: float = math.nan
+    #: LTT items (in-sample) whose COMMIT the commit gate blocked because of guard risk 1.0.
+    ltt_gate_blocked: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         d = {k: getattr(self, k) for k in self.__dataclass_fields__}
         d["controls"] = [c.to_dict() for c in self.controls]
         for k in ("assumptions", "not_guaranteed", "warnings"):
             d[k] = list(d[k])
-        for k in ("lambda_hat", "commit_threshold"):
+        for k in ("lambda_hat", "commit_threshold", "ltt_median_guard_risk"):
             d[k] = _json_float(d[k])
         return d
 
@@ -201,8 +205,9 @@ class GuaranteeSheet:
         kw["controls"] = tuple(ControlResult(**{k: v for k, v in c.items() if k != "passed"}) for c in kw["controls"])
         for k in ("assumptions", "not_guaranteed", "warnings"):
             kw[k] = tuple(kw.get(k, ()))
-        for k in ("lambda_hat", "commit_threshold"):
-            kw[k] = _float_or_inf(kw[k])
+        for k in ("lambda_hat", "commit_threshold", "ltt_median_guard_risk"):
+            if k in kw:
+                kw[k] = _float_or_inf(kw[k])
         return cls(**kw)
 
     def __str__(self) -> str:
@@ -217,11 +222,13 @@ class GuaranteeSheet:
             f"                     wrong-commit rate = wrong COMMITs / all utterances",
             f"method               {self.method}",
             f"calibration items    {self.n_items} = {self.n_fit} fit + {self.n_policy} policy grid + {self.n_ltt} LTT",
-            f"LTT items needed     >= {self.n_ltt_min} to certify any COMMIT",
+            f"LTT items needed     >= {self.n_ltt_min} LTT items (utterances, not commits) to certify any COMMIT",
             f"lambda_hat           {_fmt(self.lambda_hat)} (feasible: {self.feasible})",
             f"commit threshold     p_top1 >= {thr}",
             f"commit gate          {json.dumps(self.commit_gate, sort_keys=True)}",
-            f"LTT items (in-sample) {self.ltt_commits} commits, {self.ltt_wrong_commits} wrong",
+            f"LTT items (in-sample) {self.ltt_commits} commits, {self.ltt_wrong_commits} wrong "
+            f"(of {self.n_ltt}; {self.ltt_gate_blocked} blocked by the commit gate; "
+            f"median guard risk {_fmt(self.ltt_median_guard_risk)})",
             f"null controls        pass if commits <= floor({self.null_max_commit_rate:g} x n)",
         ]
         for c in self.controls:
@@ -252,7 +259,8 @@ class TrustResult:
     p_top1: float
     #: Hallucination-guard risk of the top-1 text, in [0, 1].
     guard_risk: float
-    #: Why the policy chose this action.
+    #: Why the guard chose this action, in plain words. Read this field, not ``p_top1`` alone.
+    #: (The policy's own reason is in ``event``.)
     reason: str
     #: The trust-layer action: ``COMMIT``, ``OFFER``, ``OFFER_WORDS``, ``ASK`` or ``ABSTAIN``.
     raw_action: str
@@ -554,7 +562,9 @@ class TrustGuard:
         ev = sd.to_event(include_text=True)
         return TrustResult(
             action=act, text=shown[0] if act == "commit" and shown else None, choices=shown,
-            p_top1=float(sd.inputs.p_top1), guard_risk=float(sd.inputs.guard_risk), reason=d.reason,
+            p_top1=float(sd.inputs.p_top1), guard_risk=float(sd.inputs.guard_risk),
+            reason=_user_reason(d.reason, float(sd.inputs.p_top1), float(sd.inputs.guard_risk),
+                                float(self.config.policy.get("commit_p", math.inf))),
             raw_action=d.action.value, config_id=self.config_id, seq=self._seq, event=ev,
         )
 
@@ -641,6 +651,42 @@ class TrustGuard:
                 f"alpha={self.alpha:g}, delta={self.delta:g})")
 
 
+_GATE_RISK_REASON = "commit blocked: low acoustic evidence"
+
+
+def _user_reason(raw: str, p_top1: float, guard_risk: float, commit_p: float) -> str:
+    """The policy reason in plain words for :attr:`TrustResult.reason`.
+
+    A gated commit ("commit gate: guard risk 1.00 >= 1.00; final attempt:
+    low confidence") reads as a contradiction next to ``p_top1 = 1.00``.
+    This text says which check stopped the commit.
+    """
+    from fidetype.trust.content import REASON_PREFIX
+
+    thr = f"{commit_p:.2f}" if math.isfinite(commit_p) else "none (never commits)"
+    rest = raw
+    lead = ""
+    if raw.startswith(REASON_PREFIX):
+        why, _, rest = raw[len(REASON_PREFIX):].partition("; ")
+        if why.startswith("guard risk"):
+            lead = (f"commit blocked: low acoustic evidence (guard risk {guard_risk:.2f}; the commit gate needs < "
+                    f"{why.rsplit('>=', 1)[-1].strip()}) although p_top1 {p_top1:.2f}")
+        else:
+            lead = f"commit blocked by the commit gate ({why})"
+    if rest == "final attempt: low confidence":
+        tail = "withhold" if lead else (f"withhold: p_top1 {p_top1:.2f} < commit threshold {thr} and no small "
+                                        "choice set")
+    elif rest == "final attempt: offer top-k":
+        tail = "offer the top choices" if lead else f"offer: p_top1 {p_top1:.2f} < commit threshold {thr}"
+    elif rest == "no candidate":
+        tail = "withhold: the decoder gave no text"
+    elif rest.startswith("guard risk"):
+        tail = f"withhold: low acoustic evidence ({rest})"
+    else:
+        tail = rest
+    return f"{lead}; {tail}" if lead else tail
+
+
 def _input_sha(events: Sequence[Mapping[str, Any]]) -> str:
     h = hashlib.sha256()
     for e in events:
@@ -716,6 +762,8 @@ def calibrate(
     decode_fn: UserDecodeFn | None = None,
     lexicon: Iterable[str] | None = None,
     null_inputs: Sequence[Any] | None = None,
+    stream_texts: Sequence[str | Sequence[str]] | None = None,
+    guard_settings: Mapping[str, Any] | None = None,
     null_trials: int = 300,
     null_max_commit_rate: float | None = None,
     decoder_name: str = "my-decoder",
@@ -759,6 +807,24 @@ def calibrate(
         then keeps only texts whose words are all in the list (beam 64).
         A decoder with no language model and no lexicon usually fails the
         shuffled control, because shuffled frames keep their confidence.
+    stream_texts
+        Logits only, optional: the true text of each utterance in the
+        token space of the decoder (a string with one character per
+        token, or a list of tokens), for example the phoneme string when
+        the decoder outputs phonemes and ``texts`` are words. It is used
+        only to fit the frame temperature. Without it, the frame
+        temperature is fitted on ``texts`` with the built-in decoder, and
+        it stays 1.0 (not fitted) with your own ``decode_fn``, because
+        ``texts`` can then be in another space than the tokens (the
+        guarantee sheet says so).
+    guard_settings
+        Optional: changes to the hallucination-guard settings
+        (:class:`~fidetype.trust.guard.GuardConfig` fields, for example
+        ``{"low_conf_threshold": 0.3}``). Default: unchanged. The commit
+        gate blocks a commit at guard risk 1.0, so a guard that is too
+        strict for your decoder never commits (see the sheet warnings).
+        The settings are part of the configuration and of its
+        ``config_id``; the guarantee still holds.
     null_inputs
         Optional: your decoder's output on null input (for example on
         time-shuffled or no-signal recordings), in the same input kind.
@@ -819,6 +885,12 @@ def calibrate(
             "cannot make this control itself. The rule: every calibration passes a uniform and a shuffled control.")
     if kind == "nbest" and (decode_fn is not None or lexicon is not None):
         raise ValueError("decode_fn and lexicon are for logits input only")
+    if stream_texts is not None:
+        if kind != "logits":
+            raise ValueError("stream_texts is for logits input only")
+        stream_texts = [t if isinstance(t, str) else [str(x) for x in t] for t in stream_texts]
+        if len(stream_texts) != len(inputs):
+            raise ValueError(f"stream_texts ({len(stream_texts)}) and inputs ({len(inputs)}) must have the same length")
     if decode_fn is not None and lexicon is not None:
         raise ValueError("lexicon is for the built-in decoder; put the lexicon into your own decode_fn")
     lex = tuple(sorted({w for entry in lexicon for w in str(entry).split()})) if lexicon is not None else None
@@ -856,7 +928,11 @@ def calibrate(
 
     rng = np.random.default_rng(seed)
     order = rng.permutation(len(inputs))
-    items = [Item(streams[i], texts[i]) for i in order]
+    st_texts = stream_texts if stream_texts is not None else [None] * len(inputs)
+    items = [Item(streams[i], texts[i], stream_text=st_texts[i]) for i in order]
+    # The frame temperature needs the truth in the token space. With your own decode_fn the texts
+    # can be in another space (words vs phonemes), so it is fitted only with stream_texts.
+    frame_fit = kind == "logits" and (stream_texts is not None or decode_fn is None)
     n_fit, n_pol, n_ltt = _split(len(items))
 
     # --- fit (Paper 1 v4 recipe, LTT) ------------------------------------
@@ -864,6 +940,16 @@ def calibrate(
                                   risk_control_fraction=n_ltt / (n_pol + n_ltt))
     if kind == "nbest":
         hc = replace(hc, conformal_fraction=0.5)
+    if not frame_fit:
+        hc = replace(hc, fit_frame_temperature=False)
+    if guard_settings:
+        from dataclasses import fields as _fields
+
+        known = {f.name for f in _fields(hc.guard_config)}
+        bad = sorted(set(guard_settings) - known)
+        if bad:
+            raise ValueError(f"unknown guard_settings keys {bad}; known: {sorted(known)}")
+        hc = replace(hc, guard_config=replace(hc.guard_config, **dict(guard_settings)))
     pipe = TrustPipeline(decode, hc, {})
     pipe.fit(items[:n_fit], items[n_fit:])
     recipe = dict(PAPER1_V4_RECIPE)
@@ -872,6 +958,8 @@ def calibrate(
                    "decoder": _decoder_name(decode_fn, lex) if kind == "logits" else "user n-best",
                    "split": {"fit": n_fit, "policy_grid": n_pol, "ltt": n_ltt, "seed": seed},
                    "commit_gate": "always on (re-tune rule 2026-11-15)",
+                   "frame_temperature": ("fitted on stream_texts" if stream_texts is not None else
+                                         "fitted on texts" if frame_fit else "not fitted (1.0)"),
                    "null_controls": "uniform + shuffled, automatic"})
     frozen = FrozenTrustConfig.from_pipeline(pipe, name, recipe).with_commit_gate(**COMMIT_GATE)
 
@@ -881,8 +969,12 @@ def calibrate(
     ltt_inputs = [inputs[i] for i in order[n_fit + n_pol:]]
     ltt_texts = [texts[i] for i in order[n_fit + n_pol:]]
     n_com = n_wrong = 0
+    risks: list[float] = []
+    n_blocked = 0
     for x, t in zip(ltt_inputs, ltt_texts):
         r = guard._decide_quiet(x)
+        risks.append(r.guard_risk)
+        n_blocked += r.reason.startswith(_GATE_RISK_REASON)
         if r.action == "commit":
             n_com += 1
             n_wrong += int(r.text != t)
@@ -896,8 +988,24 @@ def calibrate(
     if n_ltt < n_min:
         warnings.append(f"only {n_ltt} LTT items (< {n_min}): no threshold can be certified, so the guard never "
                         "commits. Give more labelled utterances.")
-    if not math.isfinite(float(frozen.policy.get("commit_p", math.inf))):
+    if kind == "logits" and not frame_fit:
+        warnings.append("frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the "
+                        "truth in the decoder's token space) to fit it. The guarantee does not depend on it.")
+    med_risk = float(np.median(risks)) if risks else math.nan
+    can_commit = math.isfinite(float(frozen.policy.get("commit_p", math.inf)))
+    if not can_commit:
         warnings.append("the guard never commits (no certified threshold). It still offers and withholds.")
+    if n_blocked and n_blocked >= n_com:
+        warnings.append(
+            f"the commit gate blocked {n_blocked} in-sample commits for guard risk 1.00 and let {n_com} through "
+            f"(median guard risk {med_risk:.2f}): the guard will commit rarely. Usual cause: low per-character confidence (frame temperature "
+            f"{frozen.frame_temperature:.2f}; characters below low_conf_threshold "
+            f"{hc.guard_config.low_conf_threshold:g} count as no evidence). Check the decoder's confidence on clean "
+            "data, give char_confidences (n-best), or pass guard_settings={'low_conf_threshold': ...}.")
+    if can_commit and n_com < n_min:
+        warnings.append(
+            f"only {n_com} of {n_ltt} LTT items commit in-sample (fewer than {n_min}): expect few or no commits on "
+            "new data. The bound still holds.")
     sheet = GuaranteeSheet(
         config_id=frozen.config_id, input_kind=kind,
         decoder=_decoder_name(decode_fn, lex) if kind == "logits" else "your n-best lists",
@@ -910,6 +1018,7 @@ def calibrate(
         ltt_commits=n_com, ltt_wrong_commits=n_wrong, controls=tuple(controls), null_max_commit_rate=rate,
         seed=int(seed), created_utc=_dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
         assumptions=_ASSUMPTIONS, not_guaranteed=_NOT_GUARANTEED, warnings=tuple(warnings),
+        ltt_median_guard_risk=med_risk, ltt_gate_blocked=int(n_blocked),
     )
     failed = [c for c in controls if not c.passed]
     if failed:

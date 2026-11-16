@@ -85,14 +85,14 @@ Every calibration runs two null controls. This follows the project rule of 2026-
 | `input` | Input kind and decoder (`builtin:...`, `builtin:...+lexicon(N words)` or `custom:<function>`) | The decoder that you use live |
 | `guarantee` | P(wrong-commit rate ≤ α) ≥ 1 − δ | The α and δ that you claim |
 | `calibration items` | n = fit + policy grid + LTT | — |
-| `LTT items needed` | Smallest LTT part that can certify any commit with 0 errors: n ≥ log δ / log(1 − α) (45 for α 0.05, δ 0.1) | `n_ltt` at or above this number |
+| `LTT items needed` | Smallest LTT part (labelled utterances, not commits) that can certify any commit with 0 errors: n ≥ log δ / log(1 − α) (45 for α 0.05, δ 0.1) | `n_ltt` at or above this number |
 | `lambda_hat` / `feasible` | The LTT threshold. `feasible: False` means no threshold passed: the guard never commits | `feasible: True` |
 | `commit threshold` | The final `p_top1` threshold (max of grid and λ̂), or `never commits` | A number |
 | `commit gate` | The gate settings | `min_chars 1`, `max_guard_risk 1.0` |
-| `LTT items (in-sample)` | Commits and wrong commits of the final guard on the LTT part. In-sample: a sanity check, **not** a test | Wrong commits / `n_ltt` near or below α |
+| `LTT items (in-sample)` | Commits and wrong commits of the final guard on the LTT part, the commits that the commit gate blocked (guard risk 1.00), and the median guard risk. In-sample: a sanity check, **not** a test | Wrong commits / `n_ltt` near or below α; more commits than gate blocks (else the guard will rarely commit) |
 | `null controls` | Commits / n per control and the allowed number | All `PASS` (else there is no sheet) |
 | `assumptions`, `not guaranteed` | Sections 3 and 4 of this page | — |
-| `warnings` | For example "only 30 LTT items", "never commits" | No warnings |
+| `warnings` | For example "only 30 LTT items", "never commits", "the commit gate blocked N in-sample commits", "only N of M LTT items commit in-sample", "frame temperature not fitted" | No warnings, or warnings that you understand |
 
 **Check it yourself.** Keep a labelled test set that the calibration never saw. Count wrong commits / all test utterances. One test set cannot prove a 1 − δ statement, but a rate far above α means that an assumption is false.
 
@@ -124,7 +124,18 @@ How to audit: (1) all records carry the header's `config_id`; (2) count `user_ac
 
 **Privacy.** With `audit_text=True` (the default), `shown` holds decoded text: personal data. Store the log like other user data, or use `audit_text=False`. The log holds no signal. `guard.save()` writes no signal and no text.
 
-## 8. Related
+## 8. Validated on
+
+Held-out check of the drop-in API, used as an outside user would use it (public API only, recorded decoder output, our word decoder as `decode_fn`, `stream_texts` = phoneme strings), alpha 0.05, delta 0.1, all other defaults ([experiment](../experiments/2026-11-16-p14-03-replay-validation/results.md)):
+
+| Set (licence) | Split | Null controls | Held-out commits | Wrong-commit rate [CP95] |
+|---|---|---|---|---|
+| T15, Brain-to-Text '25 (CC0) | by trial: 722 calibration, 701 held out | uniform 0/300, shuffled 1/300: PASS | 2 / 701 (2 wrong) | 0.0029 [0.0003, 0.0103] |
+| T12, Brain-to-Text '24 (CC0) | by session: 14 sessions (480) calibration, 10 later sessions (400) held out | uniform 0/300, shuffled 0/300: PASS | 25 / 400 (15 wrong) | 0.0375 [0.0211, 0.0611] |
+
+Both rates are below alpha. On T12 (later sessions, so with drift) the CP95 upper bound is above alpha: one draw does not prove the bound, and most commits are wrong (the bound is not on precision, section 4). Both sets are intracortical speech with our own decoders; other modalities are not yet validated.
+
+## 9. Related
 
 - [10-minute quickstart](trust-quickstart.md)
 - [Concepts: the trust layer](concepts.md)

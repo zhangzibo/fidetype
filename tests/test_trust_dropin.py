@@ -229,6 +229,106 @@ def test_custom_decode_fn_and_load_requires_it(tmp_path: Path):
     assert ft.load(path, decode_fn=phrase_decoder).config_id == g.config_id
 
 
+def _shift(text: str, k: int) -> str:
+    """A letter cipher: the "token space" of a decoder whose tokens are not the letters of the texts."""
+    a = string.ascii_lowercase
+    return "".join(a[(a.index(c) + k) % 26] if c in a else c for c in text)
+
+
+def test_stream_texts_fit_the_frame_temperature_in_the_token_space():
+    # The decoder emits tokens in another space than the texts (like phonemes vs words). The frame
+    # temperature must not be fitted against the word texts (P14-03 replay validation, 2026-11-16).
+    from fidetype.adapters.ctc_logits import vocab_from_list
+    from fidetype.streams.spec import NeuralTextStream
+    from fidetype.trust.calibration import fit_frame_temperature
+
+    rng = np.random.default_rng(8)
+    ts = [str(rng.choice(PHRASES)) for _ in range(160)]
+    tok = [_shift(t, 1) for t in ts]
+    xs = [fake_logits(t, rng) for t in tok]
+
+    def decoder(log_probs: np.ndarray) -> list[tuple[str, float]]:
+        from fidetype.lm.beam import ctc_prefix_beam_search
+
+        hyps = ctc_prefix_beam_search(log_probs, beam=32, n_best=32, prune_topk=None, blank_id=0)
+        out = [(_shift(h.text, -1), h.score) for h in hyps]
+        return [(t, s) for t, s in out if t and all(w in LEXICON for w in t.split())][:8]
+
+    plain = ft.calibrate(xs, ts, vocab=VOCAB, blank="_", decode_fn=decoder, null_trials=30)
+    assert plain.config.frame_temperature == 1.0
+    assert any("frame temperature not fitted" in w for w in plain.sheet.warnings)
+    assert plain.config.recipe["frame_temperature"] == "not fitted (1.0)"
+
+    g = ft.calibrate(xs, ts, vocab=VOCAB, blank="_", decode_fn=decoder, stream_texts=tok, null_trials=30)
+    assert not any("frame temperature not fitted" in w for w in g.sheet.warnings)
+    assert g.config.recipe["frame_temperature"] == "fitted on stream_texts"
+    # Same value as a direct fit on the token-space truth; the old behaviour (word texts) is far off.
+    cv = vocab_from_list(VOCAB, "_")
+    from fidetype.adapters.ctc_logits import to_log_probs
+
+    sts = [NeuralTextStream(log_probs=to_log_probs(x, "auto").astype(np.float32), frame_times=np.arange(len(x)) * 0.02,
+                            vocab=list(cv.tokens), blank_id=0) for x in xs]
+    order = np.random.default_rng(0).permutation(len(xs))
+    n_fit = D._split(len(xs))[0]
+    fit_idx = order[:n_fit][: n_fit - int(round(n_fit * 0.5))]  # temperature items of the fit part
+    right = fit_frame_temperature([sts[i] for i in fit_idx], [tok[i] for i in fit_idx]).temperature
+    wrong = fit_frame_temperature([sts[i] for i in fit_idx], [ts[i] for i in fit_idx]).temperature
+    assert g.config.frame_temperature == pytest.approx(right, rel=1e-6)
+    assert abs(wrong - right) > 0.5
+    # A list of tokens works the same as a string of one-character tokens.
+    g2 = ft.calibrate(xs, ts, vocab=VOCAB, blank="_", decode_fn=decoder, stream_texts=[list(t) for t in tok],
+                      null_trials=30)
+    assert g2.config.frame_temperature == pytest.approx(g.config.frame_temperature)
+    with pytest.raises(ValueError, match="same length"):
+        ft.calibrate(xs, ts, vocab=VOCAB, blank="_", decode_fn=decoder, stream_texts=tok[:-1])
+
+
+def test_sheet_flags_a_guard_that_the_commit_gate_blocks():
+    # Quickstart timing run (2026-11-16): noisy data gave guard risk 1.00 everywhere, so the commit gate
+    # blocked every commit while all sheet checks looked fine. The sheet must say so.
+    rng = np.random.default_rng(3)
+    ts = [str(rng.choice(PHRASES)) for _ in range(200)]
+    xs = [fake_logits(t, rng) for t in ts]
+    g = ft.calibrate(xs, ts, vocab=VOCAB, blank="_", lexicon=LEXICON, null_trials=40,
+                     guard_settings={"low_conf_threshold": 1.0})  # every character counts as "no evidence"
+    assert g.config.guard["low_conf_threshold"] == 1.0
+    assert g.sheet.ltt_median_guard_risk == pytest.approx(1.0)
+    assert g.sheet.ltt_gate_blocked > 0 and g.sheet.ltt_commits == 0
+    assert any("commit gate blocked" in w for w in g.sheet.warnings)
+    assert "blocked by the commit gate" in str(g.sheet)
+    r = g.decide(xs[0])
+    assert r.action != "commit"
+    if r.p_top1 >= g.sheet.commit_threshold:
+        assert r.reason.startswith("commit blocked: low acoustic evidence (guard risk 1.00")
+    # the sheet round-trips with the new field; an old sheet without it still loads
+    d = g.sheet.to_dict()
+    assert D.GuaranteeSheet.from_dict(d).ltt_median_guard_risk == pytest.approx(1.0)
+    d.pop("ltt_median_guard_risk")
+    assert np.isnan(D.GuaranteeSheet.from_dict(d).ltt_median_guard_risk)
+    with pytest.raises(ValueError, match="unknown guard_settings"):
+        ft.calibrate(xs, ts, vocab=VOCAB, blank="_", lexicon=LEXICON, guard_settings={"no_such_field": 1})
+
+
+def test_healthy_guard_has_no_gate_warning(logits_guard):
+    sh = logits_guard.sheet
+    assert sh.ltt_commits > sh.ltt_gate_blocked
+    assert not any("commit gate blocked" in w for w in sh.warnings)
+    assert "utterances, not commits" in str(logits_guard.sheet)
+
+
+def test_user_reason_texts():
+    f = D._user_reason
+    gated = f("commit gate: guard risk 1.00 >= 1.00; final attempt: low confidence", 1.0, 1.0, 0.3)
+    assert gated == ("commit blocked: low acoustic evidence (guard risk 1.00; the commit gate needs < 1.00) "
+                     "although p_top1 1.00; withhold")
+    assert f("final attempt: low confidence", 0.12, 0.4, 0.3) == (
+        "withhold: p_top1 0.12 < commit threshold 0.30 and no small choice set")
+    assert f("commit gate: empty text; final attempt: offer top-k", 0.9, 0.2, 0.3).startswith(
+        "commit blocked by the commit gate (empty text); offer")
+    assert f("p_top1 0.95 >= 0.30", 0.95, 0.1, 0.3) == "p_top1 0.95 >= 0.30"
+    assert f("no candidate", 0.0, 1.0, 0.3) == "withhold: the decoder gave no text"
+
+
 # --- input checks --------------------------------------------------------------------------
 
 

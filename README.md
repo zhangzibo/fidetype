@@ -58,6 +58,8 @@ git clone https://github.com/zhangzibo/fidetype.git
 cd fidetype
 ```
 
+**Windows:** some committed result files have long paths. If `git clone` fails with `Filename too long`, clone with `git -c core.longpaths=true clone https://github.com/zhangzibo/fidetype.git`, or clone into a short folder (for example `C:\src`).
+
 **Python** (3.12 or later; the reference SDK, the trust layer and the Collector):
 
 ```sh

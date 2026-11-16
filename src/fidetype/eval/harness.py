@@ -119,6 +119,9 @@ class HarnessConfig:
     conformal_mode: Literal["conditional", "marginal"] = "conditional"
     conformal_fraction: float = 0.5
     use_calibration: bool = True
+    #: Fit the frame temperature (needs ``Item.stream_text`` in the token space of the stream).
+    #: False keeps it at 1.0; the sentence-level calibration still runs.
+    fit_frame_temperature: bool = True
     use_guard: bool = True
     policy: Literal["trust", "always_commit"] = "trust"
     policy_config: PolicyConfig | None = None
@@ -241,9 +244,10 @@ class TrustPipeline:
         temp_items, conf_items = calib_items[: len(calib_items) - n_conf], calib_items[len(calib_items) - n_conf :]
         if cfg.use_calibration and temp_items:
             # 1. Frame level, before LM fusion. 2. Sentence level, on the n-best scores.
-            self.frame_scaler = fit_frame_temperature(
-                [it.stream(0) for it in temp_items], [it.stream_text for it in temp_items]
-            )
+            if cfg.fit_frame_temperature:
+                self.frame_scaler = fit_frame_temperature(
+                    [it.stream(0) for it in temp_items], [it.stream_text for it in temp_items]
+                )
             nbs = [self.decode(it, 0) for it in temp_items]
             self.calibrator = NBestCalibrator.fit(nbs, [it.text for it in temp_items], fit_char=False)
         conf_items = conf_items or temp_items

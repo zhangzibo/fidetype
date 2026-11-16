@@ -13,6 +13,8 @@ pip install .                 # or: uv sync --extra dev   (adds pytest; then: uv
 fidetype version              # prints the package version and the spec version
 ```
 
+**Windows:** some committed result files have long paths. If `git clone` fails with `Filename too long`, clone with `git -c core.longpaths=true clone https://github.com/zhangzibo/fidetype.git`, or clone into a short folder (for example `C:\src`). No Python 3.12? Install it with `uv python install 3.12` (uv) or from python.org.
+
 Optional extras:
 
 | Extra | Adds | Install |

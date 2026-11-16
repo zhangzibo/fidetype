@@ -12,7 +12,7 @@ You do not change your decoder. You do not need to learn the NeuralTextStream (N
 
 ## What you need
 
-- Python 3.12 or later.
+- Python 3.12 or later. No Python 3.12? Install it with `uv python install 3.12` (uv) or from python.org.
 - Your decoder output for **labelled** utterances: what the decoder gave, and what the user meant. Use 400 or more. With fewer than about 120, the guard cannot certify any commit and only offers or withholds.
 - One of two output kinds:
 
@@ -21,7 +21,7 @@ You do not change your decoder. You do not need to learn the NeuralTextStream (N
 | A `(T, V)` matrix of CTC scores per utterance (logits, log-probabilities or probabilities; numpy or torch) | `logits` | `vocab` (the token of each column), `blank`, and a word list `lexicon` or your own `decode_fn` |
 | A ranked list of texts with log scores per utterance (n-best) | `nbest` | `null_inputs`: your decoder's n-best output on null input (no signal, or a time-shuffled recording), about 100 lists |
 
-## Step 1 (2 min): install
+## Step 1 (3-4 min): install
 
 The package is not on PyPI yet. Install it from GitHub:
 
@@ -30,6 +30,10 @@ pip install "git+https://github.com/zhangzibo/fidetype.git"
 ```
 
 Or from a clone: `git clone https://github.com/zhangzibo/fidetype.git`, then `cd fidetype` and `pip install .`.
+
+The install (numpy, scipy and the other dependencies) takes about 3 to 4 minutes on a laptop.
+
+**Windows:** some committed result files have long paths. If `git clone` fails with `Filename too long`, clone with `git -c core.longpaths=true clone https://github.com/zhangzibo/fidetype.git`, or clone into a short folder (for example `C:\src`).
 
 ## Step 2 (2 min): run the example
 
@@ -72,6 +76,8 @@ print(guard.sheet)
 ```
 
 - `decode_fn` is your own text decoder: `f(log_probs) -> [(text, log_score), ...]`, best first. It gets the `(T, V)` natural-log probabilities after the frame temperature of the calibration.
+- If your decoder's tokens are not the characters of your texts (for example phonemes or word pieces, with word texts), also pass `stream_texts=`: the truth of each utterance in the token space (a string with one character per token, or a list of tokens). It is used only to fit the frame temperature. Without it, a guard with your own `decode_fn` keeps the frame temperature at 1.0, and the sheet says so.
+- The logits route with the built-in decoder and a `lexicon` mostly gives `commit` or `withhold`, and almost never `offer`. Offers come mainly from n-best input (or from your own `decode_fn` with real n-best scores).
 - A Hugging Face style `vocab.json` or a `tokens.txt` file also works as `vocab` (give the path). Use `word_delimiter="|"` if your vocabulary marks word boundaries with `|`.
 
 **n-best:**
@@ -105,15 +111,18 @@ guard = ft.load("guard.json")       # add decode_fn=... if you calibrated with y
 
 `TrustResult` fields: `action`, `text`, `choices`, `p_top1` (calibrated probability that the top text is right), `guard_risk`, `reason`, `raw_action` (`COMMIT`, `OFFER`, `ABSTAIN`, ...), `config_id`, `seq`, `event` (the NTS `trust_decision` event).
 
+`p_top1` is often exactly 0.00 or 1.00: the fitted sentence temperature can be small (for example 0.05), which makes the n-best posteriors sharp. A high `p_top1` alone does not mean a commit. Read `reason`: it says which check decided, for example `commit blocked: low acoustic evidence (guard risk 1.00; ...) although p_top1 1.00; withhold`.
+
 `guard.nts_events(x)` gives the NTS events that the guard reads for one input. Write them as JSON Lines to get a valid NTS file of your decoder output (check it with `fidetype.validate(path)`).
 
 ## Step 5 (1 min): read the sheet
 
-Check three lines of `print(guard.sheet)`:
+Check four lines of `print(guard.sheet)`:
 
 1. `guarantee`: the bound that you asked for.
 2. `null controls`: both `PASS`. If a control fails, `calibrate` raises `NullControlError` and gives no guard.
 3. `commit threshold`: a number means the guard can commit. `never commits` means it cannot certify any commit with your data; it still offers and withholds.
+4. `LTT items (in-sample)`: how many calibration items the final guard commits, and how many the commit gate blocked. If it commits on almost none (or the gate blocks more than it lets through), the guard will rarely commit on new data, even with a threshold. Read the `warnings` at the end of the sheet. (`LTT items needed >= 45` counts labelled utterances in the LTT part, not commits.)
 
 What each line means, and what is not guaranteed: [guarantee sheet](trust-guarantee.md).
 
@@ -126,13 +135,14 @@ What each line means, and what is not guaranteed: [guarantee sheet](trust-guaran
 | `NullControlError` on very short utterances (one or two letters) | A shuffle of a two-letter word can give a real word ("no" -> "on") | Calibrate on utterances of the real length; or accept a small `null_max_commit_rate` and say so |
 | `ValueError: n-best input needs null_inputs=` | Fidetype does not run your decoder, so it cannot make a shuffled control for text | Run your decoder on time-shuffled or no-signal recordings; pass the n-best lists |
 | Sheet says `never commits` | Too few LTT items, or the decoder is wrong too often for `alpha` | More labelled data; a larger `alpha` (state it); a better decoder |
+| Every result is `withhold` with reason `commit blocked: low acoustic evidence (guard risk 1.00 ...)`; the sheet warns `the commit gate blocked ...` | The hallucination guard sees low per-character confidence on most utterances: characters with a posterior below `low_conf_threshold` (0.5) count as no evidence. Noisy calibration data can also raise the fitted frame temperature (for example 3.1), which flattens the posteriors. The commit gate never commits at guard risk 1.00 | Calibrate on data like your real use (not only the hardest cases); check the decoder's confidence on clean utterances; for n-best input give `char_confidences`; or relax the guard with `guard_settings={"low_conf_threshold": 0.3}` (part of the config; the bound still holds) |
 | Few commits, many withholds | The guarantee is on the rate over all utterances, so a weak decoder commits rarely | Expected. The guard trades commits for safety |
 
 ## Reference
 
 | Function or class | Signature (short) |
 |---|---|
-| `fidetype.trust.calibrate` | `calibrate(inputs, texts, *, alpha=0.05, delta=0.1, input_kind="auto", vocab=None, blank=0, word_delimiter=None, input_scale="auto", frame_period=0.02, decode_fn=None, lexicon=None, null_inputs=None, null_trials=300, null_max_commit_rate=None, decoder_name="my-decoder", decoder_version="0", modality="other", name="", seed=0, audit_text=True) -> TrustGuard` |
+| `fidetype.trust.calibrate` | `calibrate(inputs, texts, *, alpha=0.05, delta=0.1, input_kind="auto", vocab=None, blank=0, word_delimiter=None, input_scale="auto", frame_period=0.02, decode_fn=None, lexicon=None, null_inputs=None, stream_texts=None, guard_settings=None, null_trials=300, null_max_commit_rate=None, decoder_name="my-decoder", decoder_version="0", modality="other", name="", seed=0, audit_text=True) -> TrustGuard` |
 | `fidetype.trust.wrap` | `wrap(calibration_set, *, alpha=0.05, **kwargs) -> TrustGuard` (pairs of output and text) |
 | `fidetype.trust.load` | `load(path, decode_fn=None, *, audit_text=True) -> TrustGuard` |
 | `TrustGuard` | `.decide(x, *, utterance_id=None) -> TrustResult`, `__call__`, `.decide_many(xs)`, `.sheet`, `.audit_log`, `.write_audit(path)`, `.save(path)`, `.nts_events(x)`, `.config_id`, `.input_kind` |
