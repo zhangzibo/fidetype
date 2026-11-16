@@ -75,8 +75,29 @@ def set_paths(name: str, smoke: bool = False) -> Path:
     return OWN
 
 
+def private_mb() -> int:
+    """Private bytes of this process in MB (Windows; -1 elsewhere). For the RAM budget check in the log."""
+    if os.name != "nt":
+        return -1
+    import ctypes
+    import ctypes.wintypes as W
+
+    class PMC(ctypes.Structure):
+        _fields_ = [("cb", W.DWORD), ("PageFaultCount", W.DWORD)] + [(f, ctypes.c_size_t) for f in (
+            "PeakWorkingSetSize", "WorkingSetSize", "QPPPU", "QPPU", "QPNPPU", "QNPPU", "PagefileUsage",
+            "PeakPagefileUsage")]
+
+    k32, ps = ctypes.WinDLL("kernel32"), ctypes.WinDLL("psapi")
+    k32.GetCurrentProcess.restype = W.HANDLE
+    ps.GetProcessMemoryInfo.argtypes = [W.HANDLE, ctypes.POINTER(PMC), W.DWORD]
+    m = PMC()
+    m.cb = ctypes.sizeof(m)
+    ps.GetProcessMemoryInfo(k32.GetCurrentProcess(), ctypes.byref(m), m.cb)
+    return int(m.PagefileUsage / 2**20)
+
+
 def log(*a) -> None:
-    line = time.strftime("%Y-%m-%d %H:%M:%S ") + " ".join(str(x) for x in a)
+    line = time.strftime("%Y-%m-%d %H:%M:%S ") + f"[{private_mb()} MB] " + " ".join(str(x) for x in a)
     print(line, flush=True)
     with open(LOGF, "a", encoding="utf-8") as f:
         f.write(line + "\n")
@@ -205,6 +226,10 @@ def data_t12():
     dec.wdec.sentence_lm = lambda t: char(t) + beta * wm.score_sentence(t)
     dec.wdec.clear_caches()
     dec._wcache.clear()
+    # RAM budget (< 4 GB with the word trigram and the LLM): smaller LRU memos. A memo changes the speed of a call,
+    # never its result (fidetype.lm.cache).
+    dec.wdec.set_cache_sizes(1_000, 10_000)
+    dec.lm._cache.resize(50_000)
     return cal, held, dec
 
 
