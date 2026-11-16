@@ -12,7 +12,7 @@ updated: 2026-11-15
 
 **Answer in one line:** we build **a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth.**
 
-**Roadmap:** phase [P15 Frontier](roadmap-standard.md#p15-frontier-added-2026-11-15-leads) leads from 2026-11-15. P1–P14 stay as they are. **Diagram:** `11-roadmap-standard` on [the diagram page](../diagrams/index.html#s11).
+**Roadmap:** phase [P15 Frontier](roadmap-standard.md#p15-frontier-added-2026-11-15-leads) leads from 2026-11-15. P1–P14 stay as they are. **Later: [P16 write side](roadmap-standard.md#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later)** (emotion and memory, exploration; after the P15 core work). **Diagram:** `11-roadmap-standard` on [the diagram page](../diagrams/index.html#s11).
 
 ## The moonshot
 A person puts on **any sensor**: an implant, a wristband or a cap. Within **minutes**, they communicate at **conversation speed**. The system **gets better every day** from normal use. It **provably never says what they did not mean**.

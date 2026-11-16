@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T22:55:00-08:00",
+  "updated": "2026-11-15T23:30:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8). 2026-11-13 (user decision): paper writing and publishing are decoupled from the research project. They form the PUB track, which has no deadline, never counts as late and is not part of the M1-M7 target. M3 and M4 are research milestones; the roadmap never waits on a paper.",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -28,7 +28,8 @@
     {"id": "P12", "name": "Beyond text: intent and control", "target_start": "2027-07-01", "target_end": "2027-12-31", "status": "todo", "notes": "Added 2026-11-11 (user decision) at the end of the order; priorities unchanged, text entry first. Output profiles (text, discrete intent, continuous control) on an output-agnostic core; no breaking change to the text profile. Target interface: Apple BCI HID."},
     {"id": "P13", "name": "Public benchmark hub", "target_start": "2027-07-01", "target_end": "2027-12-31", "status": "todo", "notes": "Added 2026-11-11 (user decision); extends P6, does not duplicate it. Reproducible leaderboard with CRC/LTT guarantee reporting and required controls; later intent tracks after P12."},
     {"id": "P14", "name": "Value first: useful toolkit", "target_start": "2026-11-16", "target_end": "2027-03-31", "status": "todo", "notes": "Added 2026-11-15 (user decision): adoption needs real user value and credibility, not only a format (LangChain lesson). Pretrained decoders with one-line load (NTS out), drop-in trust wrapper + 10-minute quickstart, one-command live path (LSL, BrainFlow, OpenBCI), safe-WPM column in the P6 leaderboard, recorded EMG demo, result write-ups (no paper deadlines), example AAC integration. Audiences: wiki/questions/who-uses-fidetype.md. No existing item moved, renumbered or re-prioritised."},
-    {"id": "P15", "name": "Frontier (leads)", "target_start": "2026-11-16", "target_end": "2027-06-30", "status": "todo", "notes": "Added 2026-11-15 (user decision: new north star, 'find a new frontier that does not exist in BCI yet'). A BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. F1 (lead) safe self-improving BCI (E2), F2 faithful LLM decoding + hallucination benchmark (E3), F3 cross-body language model (E1). Leads from 2026-11-15. P1-P14 not moved, renumbered or removed. Page: wiki/questions/north-star.md; roadmap: wiki/questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads"}
+    {"id": "P15", "name": "Frontier (leads)", "target_start": "2026-11-16", "target_end": "2027-06-30", "status": "todo", "notes": "Added 2026-11-15 (user decision: new north star, 'find a new frontier that does not exist in BCI yet'). A BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. F1 (lead) safe self-improving BCI (E2), F2 faithful LLM decoding + hallucination benchmark (E3), F3 cross-body language model (E1). Leads from 2026-11-15. P1-P14 not moved, renumbered or removed. Page: wiki/questions/north-star.md; roadmap: wiki/questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads"},
+    {"id": "P16", "name": "Write side: emotion and memory (exploration)", "target_start": "2027-07-01", "target_end": "2027-12-31", "status": "todo", "notes": "Added 2026-11-15 (user idea, later phase): explore whether a BCI can stimulate or replicate emotion or memory. Starts after the P15 core work. Literature, read-side affect decoding on public data, ethics, offline design study only; any real stimulation is externally blocked (clinical partners, ethics approval, hardware; user owns these). No existing item moved, renumbered or changed. Roadmap: wiki/questions/roadmap-standard.md#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later"}
   ],
   "tasks": [
     {"id": "R-01", "milestone": "R", "title": "Read Brain2Qwerty paper + project page", "status": "done",
@@ -1122,7 +1123,7 @@
      "orchestrator_only": false, "notes": "Commit f19aa95."},
     {"id": "P15-00", "milestone": "P15", "title": "North star page + P15 Frontier scope (roadmap phase, diagram 11, overview, direction decision, README, tracker)", "status": "done",
      "started_at": "2026-11-15T22:05:00-08:00", "finished_at": "2026-11-15T22:40:00-08:00", "approx_times": true,
-     "agent_runs": [],
+     "agent_runs": [{"label": "P15-00 north-star agent", "duration_s": 714.717, "tokens": 173168, "tool_uses": 51}],
      "orchestrator_only": false, "notes": "Commit: see log. Page wiki/questions/north-star.md. Based on two 2026-11-15 studies (prior art, abstract level; feasibility on our data and GPU). Roadmap: wiki/questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads"},
     {"id": "P15-01", "milestone": "P15", "title": "F1 E2 CPU pilot: T12 replay simulator + simulated user (accept/reject/retype, silent errors), feedback-only day-input adaptation vs frozen/oracle/self-training", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,
@@ -1162,7 +1163,7 @@
      "orchestrator_only": false, "notes": "Clean and research tracks apart; cross-person vs cross-modality confound stated next to each result. Roadmap: wiki/questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads"},
     {"id": "P15-10", "milestone": "P15", "title": "Focused literature check of every F1/F2/F3 novelty claim before any public claim", "status": "done",
      "started_at": "2026-11-15T22:15:00-08:00", "finished_at": "2026-11-15T22:55:00-08:00", "approx_times": true,
-     "agent_runs": [{"label": "P15-10 literature check agent", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "agent_runs": [{"label": "P15-10 literature check agent", "duration_s": 1159.154, "tokens": 211742, "tool_uses": 91}],
      "orchestrator_only": false, "notes": "wiki/questions/novelty-check-2026-11.md. C1 (F1): holds with narrower wording (no BCI work found; but ACI already allows refit models and continual calibration 2604.23987 refits thresholds after each update, so the bound mechanism is not new). C2 (F2): holds with narrower wording (no run-time grounding check with a bound for brain-decoded text; but conformal gating for MI-BCI, JNE 2026, already does run-time conformal abstention for closed-set commands). C3 (F3): part 1 holds (no implant + EMG + MEG/EEG text model); part 2 false as written (CORTEG 2605.10337: EEG -> ECoG/sEEG transfer, no text). NeuGPT full text is MEG-only (contradiction noted). Safe public wordings in north-star 'Why this is new'. New source pages: continual-calibration, conformal-gating-mi-bci, corteg-eeg-to-ecog. Semantic Scholar refused (429), OpenReview partial (challenge page), Google Scholar not used; arXiv API, Europe PMC, OpenAlex forward citations, web search used. Roadmap: wiki/questions/roadmap-standard.md#p15-10-focused-literature-check"},
     {"id": "P15-11", "milestone": "P15", "title": "Demo shows F1/F2: decoder improves across replayed sessions while the guarantee line stays; LLM text held back when unsupported", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,
@@ -1171,6 +1172,26 @@
     {"id": "P15-12", "milestone": "P15", "title": "Frontier result write-ups (E2, E3, E1 and follow-ups; negative results included)", "status": "todo",
      "started_at": null, "finished_at": null, "approx_times": false,
      "agent_runs": [],
-     "orchestrator_only": false, "notes": "Not papers; PUB keeps no deadline. Linked from north-star.md and overview.md. Roadmap: wiki/questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads"}
+     "orchestrator_only": false, "notes": "Not papers; PUB keeps no deadline. Linked from north-star.md and overview.md. Roadmap: wiki/questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads"},
+    {"id": "P16-01", "milestone": "P16", "title": "Write-side literature review: closed-loop DBS for mood (Scangos 2021), hippocampal memory prostheses (Berger/Hampson), Kahana closed-loop stimulation, DARPA RAM, affective BCI: works / does not / unknown", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Starts after the P15 core work. Deliverable: wiki question page. Roadmap: wiki/questions/roadmap-standard.md#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later"},
+    {"id": "P16-02", "milestone": "P16", "title": "Read-side affect decoding on public datasets (DEAP, SEED, DREAMER candidates; licence check first; aggregate results only) with calibrated abstention from the trust layer", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "First step toward any closed loop. No participant data committed. Roadmap: wiki/questions/roadmap-standard.md#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later"},
+    {"id": "P16-03", "milestone": "P16", "title": "Ethics and safety page for write-side BCI (consent, identity and agency, mood manipulation, dual use)", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "Wiki page. Gate for P16-04 and P16-05. Roadmap: wiki/questions/roadmap-standard.md#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later"},
+    {"id": "P16-04", "milestone": "P16", "title": "Design study: closed-loop detect state -> stimulate -> verify, and how Fidetype guarantees apply to stimulation decisions (offline / simulation only)", "status": "todo",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "No stimulation, no hardware. Depends on P16-01, P16-02, P16-03. Roadmap: wiki/questions/roadmap-standard.md#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later"},
+    {"id": "P16-05", "milestone": "P16", "title": "Any real stimulation work (needs clinical partners, ethics approval, hardware)", "status": "externally_blocked",
+     "started_at": null, "finished_at": null, "approx_times": false,
+     "agent_runs": [],
+     "orchestrator_only": false, "notes": "The user owns ethics approval and partners. Not started before P16-03 and P16-04. Roadmap: wiki/questions/roadmap-standard.md#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later"}
   ]
 }

@@ -1,7 +1,7 @@
 ---
 title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
-tags: [planning, roadmap, north-star, frontier, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit]
+tags: [planning, roadmap, north-star, frontier, write-side, affect, memory, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
 updated: 2026-11-15
 ---
@@ -9,6 +9,8 @@ updated: 2026-11-15
 # Long-term roadmap: Fidetype as a full neural input standard
 
 > **North star changed (2026-11-15).** The project now aims at a new frontier: a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth ([north star](north-star.md)). **[P15 Frontier](#p15-frontier-added-2026-11-15-leads) leads.** P1–P14 below stay as they are: no item moved, renumbered or removed. The standard work (spec, SDKs, collector) is now internal plumbing with a lower priority.
+>
+> **Later: [P16 write side](#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later)** (user idea, 2026-11-15): explore emotion and memory stimulation. It starts after the P15 core work. Real stimulation is externally blocked.
 
 **Question asked (2026-11-10):** The user decided that Fidetype aims for **full standardisation at OpenTelemetry scale**, and that we build all of it ourselves. Claude subagents write the code and the docs. The user does the outward-facing actions. The current milestones M1–M7 (due 2026-11-15) are only **v0.1**. What comes after v0.1?
 
@@ -91,6 +93,7 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 | **P13** | Public benchmark hub | Extend the P6 leaderboard into a reproducible hub; later all intent | 10–20 / 6 h | P6, P4 replay, P12 (intent tracks) | 2027-07-01 → 2027-12-31 |
 | **P14** | Value first: useful toolkit (added 2026-11-15) | Pretrained decoders, drop-in trust wrapper, live lab inputs, safe-WPM metric, demo, write-ups, AAC example | 25–40 / 6 h | M4-12, P4, P5, P6, P11-01 | 2026-11-16 → 2027-03-31 (user and hardware items ext. blocked) |
 | **P15** | **Frontier (added 2026-11-15, leads)** | F1 safe self-improving BCI, F2 faithful LLM decoding + hallucination benchmark, F3 cross-body language model; first experiments E2, E3, E1 | 30–60 / 8 h | Trust layer (P5, P14-03), M4-12 / M4-13, T12 v2, P11-01, GPU queue | 2026-11-16 → 2027-06-30 (first round) |
+| **P16** | Write side: emotion and memory (exploration; added 2026-11-15, later) | Literature, read-side affect decoding on public data, ethics, offline closed-loop design; real stimulation only with partners | 10–20 / 6 h | P15 core work, trust layer (P5, P14-03) | 2027-07-01 → 2027-12-31 (P16-05 ext. blocked) |
 
 ## P1. Spec to 1.0
 **Goal:** NeuralTextStream 1.0. Every part has a stability level. A machine-readable schema is the source of truth. The prose spec and the docs are generated from it or checked against it.
@@ -694,6 +697,72 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 
 **Effort:** 30–60 agent-days (our estimate); about 30–60 GPU-h in total; user: about 8 h (review of claims, LLM licence choice). **Depends on:** trust layer (P5, P14-03), decoders (M4-12 / M4-13, T12 v2, P11-01), the GPU queue. **Window:** 2026-11-16 → 2027-06-30 for the first round. Later rounds (joint model on one GPU, live user studies) come after it; user studies need ethics approval and volunteers (**externally blocked**).
 
+## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
+**Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
+
+**User idea (2026-11-15, their words):** "after this is all done, i want to explore if we can stimulate emotion or replicate emotion through bci, or do some research on it, somewhere on the road map, like replicating memory or emotion ... this is my vague idea".
+
+**Position:** P16 is a **later** phase. It starts after the P15 core work (E2, E3, E1 and their write-ups). No existing item moves, changes its ID or changes its priority. The scope is exploration: no item promises a result.
+
+**Rules:**
+- No stimulation of any person in this project without clinical partners, ethics approval and approved hardware (P16-05, **externally blocked**). The user owns ethics and partners.
+- The user has no MEG or EEG hardware. P16-01 … P16-04 use public papers, public datasets and simulation only.
+- Datasets: licence check first. Commit aggregate results only. Never commit raw recordings or participant data.
+- P16-03 (ethics and safety) comes before the design study P16-04 is final, and before any outreach about P16-05.
+- No medical claims. The pages describe research, not treatment.
+
+### Deliverables
+| ID | Item | Depends on | Status |
+|---|---|---|---|
+| **P16-01** | Literature review of write-side BCI for mood and memory | P15 core work | todo |
+| **P16-02** | Read-side affect decoding on public datasets, with calibrated abstention | P16-01 (scope), trust layer (P14-03) | todo |
+| **P16-03** | Ethics and safety page for write-side BCI | P16-01 | todo |
+| **P16-04** | Design study: closed loop "detect state → stimulate → verify" (offline / simulation only) | P16-01, P16-02, P16-03 | todo |
+| **P16-05** | Any real stimulation work | P16-03, P16-04, partners, ethics approval, hardware | **externally blocked** |
+
+#### P16-01 Literature review: write-side BCI for mood and memory
+- **Serves:** the project (decision input); research labs.
+- **Goal:** know what works, what does not work and what is unknown before we plan anything.
+- **Deliverable:** a wiki question page. Topics: closed-loop deep brain stimulation (DBS) for mood (for example Scangos et al. 2021, *Nature Medicine*); hippocampal memory prostheses (Berger, Hampson); closed-loop stimulation for memory (Kahana); the DARPA RAM programme; affective BCI (emotion decoding and neurofeedback). For each line of work: the method, the evidence level (number of participants, controls, replication), and a verdict "works / does not work / unknown". Sources get source pages as usual.
+- **Depends on:** the P15 core work (time order only).
+- **Done when:** the page exists with citations for each verdict, the links check passes, and the page names the open questions that P16-02 … P16-04 address.
+
+#### P16-02 Read-side affect decoding on public datasets
+- **Serves:** research labs; the project (first step toward any closed loop).
+- **Goal:** measure how well we can **detect** an affective state from public EEG data. A closed loop cannot stimulate well if it cannot detect the state first.
+- **Deliverable:** an experiment with `plan.md` (frozen before runs) and `results.md`. Candidate datasets: DEAP, SEED, DREAMER and others. This wiki has **not verified** their licences and access terms: the licence check comes first, before any download. Aggregate results only. The decoder uses the trust layer: it gives a label only when it is confident, and abstains otherwise, with a stated error bound (the same calibrated abstention as the text decoders, [P14-03](#p14-03-trust-layer-as-a-drop-in-wrapper)).
+- **Depends on:** P16-01 (scope), trust layer (P5, P14-03).
+- **Done when:** the licence check is in `references/README.md`; accuracy, abstention rate and the wrong-label rate with intervals are reported on at least one public dataset, with a cross-subject split and null controls; the limits (labels are self-reports, lab stimuli) are stated.
+
+#### P16-03 Ethics and safety page for write-side BCI
+- **Serves:** the project; any future partner.
+- **Goal:** write down the risks before any design is final.
+- **Deliverable:** a wiki page on consent (and consent that changes over time), identity and agency (a changed mood can change the person who consents), mood manipulation and coercion, dual use (for example interrogation or advertising), data protection for neural data, and the legal status of stimulation devices. It states the conditions under which P16-05 may start.
+- **Depends on:** P16-01.
+- **Done when:** the page exists, cites its sources, and P16-04 links to it.
+
+#### P16-04 Design study: closed loop "detect state → stimulate → verify"
+- **Serves:** research labs; the project (decision input for P16-05).
+- **Goal:** describe what a closed-loop system needs, and how Fidetype guarantees could apply to stimulation decisions.
+- **Deliverable:** a wiki page and a draw.io diagram. Parts: state detection (P16-02), the stimulation decision, the verification of the effect, and the safety limits. Analysis: how the trust layer maps to "stimulate / do not stimulate" (a commit gate with a bound on wrong stimulation decisions, abstention as the default, null controls, a ledger of each decision). Offline and simulation only: no device, no person.
+- **Depends on:** P16-01, P16-02, P16-03.
+- **Done when:** the page and the diagram exist; the page states which guarantees carry over, which do not, and what evidence a real study would need.
+
+#### P16-05 Real stimulation work
+- **Goal:** test a write-side idea in a real study, if P16-01 … P16-04 show that it is worth it and safe.
+- **Deliverable:** none in this project alone. It needs clinical partners, ethics approval and approved hardware.
+- **Depends on:** P16-03, P16-04; partners, ethics approval, hardware (the user owns these).
+- **Done when:** a partner study exists with ethics approval. **`externally_blocked`**; it never counts as late.
+
+### Exit criteria
+- The literature review gives a verdict for each line of work (P16-01).
+- One public affect dataset has a result with calibrated abstention (P16-02).
+- The ethics and safety page exists (P16-03).
+- The design study states what carries over from Fidetype to stimulation decisions (P16-04).
+- P16-05 stays externally blocked until partners and ethics approval exist.
+
+**Effort:** 10–20 agent-days (our estimate); user: about 6 h (review of the ethics page; decisions on partners). **Depends on:** the P15 core work; trust layer (P5, P14-03). **Window:** 2027-07-01 → 2027-12-31 for P16-01 … P16-04. P16-05 has no date.
+
 ## Sequencing
 | Window | First (critical path) | In parallel |
 |---|---|---|
@@ -741,6 +810,6 @@ These steps need the user or outside people. They are tracked as `externally_blo
 - [LangChain case study](../sources/case-study-langchain.md) (the reason for P14: useful first)
 - [Spec v0.1](../../spec/neuraltextstream-v0.1.md)
 - [North star](north-star.md) (the reason for P15: frontier first)
-- [Progress dashboard](../progress/index.html) (milestones P1–P15)
+- [Progress dashboard](../progress/index.html) (milestones P1–P16)
 - [Apple BCI HID](../entities/apple-bci-hid.md)
 - [Diagrams](../diagrams/index.html) (diagram 11: long-term roadmap)

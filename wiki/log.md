@@ -872,3 +872,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - C3 (F3): part 1 holds (no implant + EMG + MEG/EEG text model); part 2 false as written: CORTEG (2026) transfers scalp EEG to ECoG / sEEG (no text). Contradiction noted: NeuGPT experiments are MEG-only.
 - New source pages: [continual calibration](sources/continual-calibration.md), [conformal gating for MI-BCI](sources/conformal-gating-mi-bci.md), [CORTEG](sources/corteg-eeg-to-ecog.md); rows in `references/README.md`. [ACI source](sources/adaptive-conformal-inference.md): "Model refits" section from the full text.
 - [North star](questions/north-star.md#why-this-is-new): verdict table and safe wordings; pillars and experiments unchanged. Roadmap P15-10 result line; tracker P15-10 done (fragment).
+
+## [2026-11-15] setup | Roadmap P16 write side: emotion and memory (exploration, later)
+- User idea (2026-11-15): explore whether a BCI can stimulate or replicate emotion or memory. Filed as a later phase after the P15 core work.
+- [Roadmap](questions/roadmap-standard.md#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later): top-note pointer, P16 row in the phase table, new section with rules, P16-01 … P16-05 (goal, deliverable, dependencies, done criteria, audience) and exit criteria. No existing item moved, renumbered or changed.
+- [North star](questions/north-star.md): one-line pointer "Later: P16 write side".
+- Diagram 11: new pink row "Write side" with P16 in H2 2027; title, legend and caption updated; render checked with headless Edge.
+- Tracker: milestone P16 (2027-07-01 → 2027-12-31); tasks P16-01 … P16-04 todo, P16-05 externally_blocked (fragments). Agent-run stats filled for P15-00 and P15-10.
