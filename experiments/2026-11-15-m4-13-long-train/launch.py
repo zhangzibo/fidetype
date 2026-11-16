@@ -1,4 +1,4 @@
-"""Start queue.ps1 fully detached with no visible window (M4-13). Our own code; same approach as
+r"""Start queue.ps1 fully detached with no visible window (M4-13). Our own code; same approach as
 experiments/2026-11-13-m6-13-soak/launch_detached.py.
 
 powershell starts with CREATE_NO_WINDOW (a hidden console), CREATE_NEW_PROCESS_GROUP and, when Windows
