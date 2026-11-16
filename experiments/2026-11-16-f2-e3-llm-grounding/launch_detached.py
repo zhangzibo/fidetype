@@ -2,8 +2,8 @@
 
 Process tree: this launcher (exits at once) -> ``python -m fidetype.utils.isolation run --class background
 --threads 4`` -> ``run.py <set> arms``. CREATE_NO_WINDOW gives a hidden console that the children share, so no
-window opens. Output: C:/Users/zhang/bci-data/derived/f2-e3-llm-grounding/run-<set>.out; progress also in
-results/run.log.
+window opens. Output: C:/Users/zhang/bci-data/derived/f2-e3-llm-grounding/run-t15.out (T15) or
+.../f2-e3-llm-grounding/t12/run-t12.out (T12); progress also in results/run.log (T15) or results/run-t12.log (T12).
 
     .venv\\Scripts\\python.exe experiments/2026-11-16-f2-e3-llm-grounding/launch_detached.py t15
 
@@ -36,7 +36,9 @@ def main() -> int:
     for s in sets:
         cmd = [py, "-m", "fidetype.utils.isolation", "run", "--class", "background", "--threads", "4", "--",
                py, "-I", str(HERE / "run.py"), s, "arms"]
-        out = open(OWN / f"run-{s}.out", "ab")
+        own = OWN if s == "t15" else OWN / s  # t12: only the subfolder t12/
+        own.mkdir(parents=True, exist_ok=True)
+        out = open(own / f"run-{s}.out", "ab")
         env = dict(os.environ, PYTHONUNBUFFERED="1")
         flags = CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
         kw = dict(cwd=ROOT, env=env, stdin=subprocess.DEVNULL, stdout=out, stderr=subprocess.STDOUT, close_fds=True)
@@ -45,7 +47,7 @@ def main() -> int:
         except OSError:
             p = subprocess.Popen(cmd, creationflags=flags, **kw)
         line = f"{time.strftime('%Y-%m-%dT%H:%M:%S')} launched pid {p.pid} cmd={cmd}\n"
-        with open(OWN / "launcher.log", "a", encoding="utf-8") as fh:
+        with open(own / "launcher.log", "a", encoding="utf-8") as fh:
             fh.write(line)
         print(line, end="")
         if len(sets) > 1:

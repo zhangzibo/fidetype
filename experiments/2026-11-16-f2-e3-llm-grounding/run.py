@@ -54,13 +54,25 @@ from fidetype.trust.grounding import GroundingCheck, fit_tau, lexicon_label_fn  
 
 CFG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
 DER = Path("C:/Users/zhang/bci-data/derived")
-OWN = DER / "f2-e3-llm-grounding"  # the only place this task writes per-trial files and caches
-assert OWN.name == "f2-e3-llm-grounding"
-OWN.mkdir(parents=True, exist_ok=True)
+OWN_ROOT = DER / "f2-e3-llm-grounding"  # the only place this task writes per-trial files and caches
+assert OWN_ROOT.name == "f2-e3-llm-grounding"
+OWN = OWN_ROOT  # set per data set by set_paths (t15: the root, as run; t12: the subfolder t12/)
 OUT = HERE / "results"
 OUT.mkdir(exist_ok=True)
 LOGF = OUT / "run.log"
 SEED = CFG["seed"]
+
+
+def set_paths(name: str, smoke: bool = False) -> Path:
+    """Per-set output folder. t15 keeps the root folder (the T15 run used it); t12 writes only to t12/ and logs to
+    results/run-t12.log. Smoke tests write to a smoke/ subfolder, so no cache or guard file mixes with a real run."""
+    global OWN, LOGF
+    OWN = OWN_ROOT if name == "t15" else OWN_ROOT / name
+    LOGF = OUT / ("run.log" if name == "t15" else f"run-{name}.log")
+    if smoke:
+        OWN = OWN / "smoke"
+    OWN.mkdir(parents=True, exist_ok=True)
+    return OWN
 
 
 def log(*a) -> None:
@@ -548,6 +560,7 @@ def main() -> None:
     stages = args[1:] or ["prep", "arms"]
     only = os.environ.get("F2E3_ARMS")
     limit = int(os.environ.get("F2E3_LIMIT", "0"))  # smoke tests only (val_select subset); 0 = all
+    set_paths(name, smoke=bool(limit))
     path = OUT / (f"results-{name}.json" if not limit else f"smoke-{name}.json")
     allr = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     allr["fidetype_version"] = FT_VERSION

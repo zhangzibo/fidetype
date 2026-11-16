@@ -41,6 +41,7 @@ def main() -> None:
     spec = importlib.util.spec_from_file_location("f2e3run", HERE / "run.py")
     R = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(R)
+    R.set_paths(name)
     res = json.loads((R.OUT / f"results-{name}.json").read_text(encoding="utf-8"))
     ht = held_texts(R, name)
     tops = {a: json.loads((R.OWN / f"trials-{name}-{a}.json").read_text(encoding="utf-8"))["tops"]

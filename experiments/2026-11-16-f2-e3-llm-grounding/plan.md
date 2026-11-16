@@ -72,3 +72,23 @@ Primary arm: **B1** (LLM rescoring + grounding). Comparison: A0 (current).
 ## Outputs
 - Repo: `run.py`, `config.json`, `launch_detached.py`, `results/results-t15.json` (aggregates), `results/run.log`, `results.md`.
 - Per-trial outputs, caches (base n-best, LLM scores and rewrites in sqlite), guard files: `C:\Users\zhang\bci-data\derived\f2-e3-llm-grounding\` only.
+
+## T12 addendum (written 2026-11-16, after the T15 run and before any T12 run)
+The T15 results are in [results.md](results.md). This addendum fixes the second set before the T12 run. It changes nothing for T15. The code is the same `run.py` (`run.py t12`); the only code changes are the per-set output folder and the T12 loader check below.
+
+| item | value |
+|---|---|
+| data | T12 (Brain-to-Text '24 `competitionData`, Willett et al. 2023, CC0). M3-28 v2 GRU-CTC recorded phoneme log-probs (checkpoint SHA-256 `5317b060...`, checked at load), `derived/2026-11-13-confirmatory-t12-v2/logprobs.npz`, read only |
+| fitting split | trust pool of the 14 `fit_a` + `calibration` sessions (480 trials). Same set as the P14-03 T12 calibration set |
+| held-out split | trust pool of the 10 `test` sessions (400 trials). Same set as the P14-03 T12 held-out set. Split by session, in time order (the M3-28 pre-registration rule) |
+| base decoder | the P14-03 / M3-28 v2 T12 word route: B2T '25 word route (`lm_weight` 1.0, `edit_penalty` 12, `word_bonus` 3) + Tatoeba word trigram, beta 2.0 |
+| LLM, arms, prompts, grids | unchanged (config.json): same model file and SHA-256, same 8 arms, same `lambda` grid, same rewrite margin, same grounding coverage 0.95 |
+| fitted values | frame T (A0 calibration), `tau`, `lambda`, fluent threshold: fitted on the 480 fitting trials only. The 400 held-out trials are used for nothing else |
+| controls | built-in `calibrate` controls (from the fitting split); own uniform 300 + shuffled 300 seeded draws from the held-out set; swapped signal on all 400 held-out trials |
+| outputs | per-trial files, caches (own LLM cache, base n-best), guards: `C:\Users\zhang\bci-data\derived\f2-e3-llm-grounding\t12\` only. Repo: `results/results-t12.json`, `results/run-t12.log`, `results/summary-t12.json` |
+
+Success criteria: S1-S4 as above, for B1 against A0 on T12. S3 swapped-signal limit: the same count, unsupported swapped commits <= 2 (here out of 400). The T12 verdict is reported per set. F2/E3 needs a pass on both sets; T15 already fails S4, so F2/E3 does not pass whatever T12 shows. The T12 run is a replication of the effects (grounding on swapped signals, WER gain of rescoring, commits and null controls) on a second participant and dataset.
+
+Known limits for T12: the held-out sessions were decoded twice before (M3-28 and P14-03, aggregates only). The decoder family is the same as for T15. The LLM never saw T12 text by our choice, but we cannot rule out that the B2T '24 sentences (from public corpora) are in its training data.
+
+T12 loader check (before the run, fitting split only; no held-out trial touched): `data_t12()` loads 480 + 400 trials (checkpoint SHA-256 checked), and the first 5 fitting trials went through the base decode, LLM rescoring and the grounding check. A smoke run of `run.py` (`F2E3_LIMIT=40`, arms A0 and B1, 20 null draws; fitting trials 0-39 as smoke fit, 40-79 as smoke held-out) ran end to end without error. Smoke outputs and log are in `.../t12/smoke/` and are not used.
