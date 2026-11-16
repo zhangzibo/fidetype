@@ -1,14 +1,14 @@
 ---
 title: emg2qwerty (wrist-EMG typing dataset)
 type: entity
-tags: [dataset, emg, typing, public, nc-licence, not-yet-ingested]
+tags: [dataset, emg, typing, public, nc-licence, downloaded, paper-not-ingested]
 sources: [brain2qwerty-v1, brain2qwerty-v2, neural-input-landscape-2026]
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 
 # emg2qwerty
 
-> **Partial page.** Facts below were checked on the repo page and the download server on 2026-11-10 ([public datasets survey](../questions/public-datasets.md)). The paper itself is not ingested yet.
+> **Partial page.** Facts below were checked on the repo page and the download server on 2026-11-10 ([public datasets survey](../questions/public-datasets.md)). The data is downloaded (2026-11-15). The paper itself is not ingested yet.
 
 - **Citation**: Sivakumar et al., *emg2qwerty: A large dataset with baselines for touch typing using surface electromyography*, NeurIPS 2024 (arXiv 2410.20081).
 - **Code and data**: https://github.com/facebookresearch/emg2qwerty (archived, read-only). Data: `https://fb-ctrl-oss.s3.amazonaws.com/emg2qwerty/emg2qwerty-data-2021-08.tar.gz`.
@@ -28,7 +28,7 @@ All Meta EMG datasets are NC. All are HDF5 at 2 kHz.
 
 | Dataset | Content | Size | Licence |
 |---|---|---|---|
-| emg2qwerty | typing, 108 users, 346 h | 308.4 GB | CC-BY-NC-4.0 |
+| emg2qwerty | typing, 108 users, 346 h | 308.4 GB archive, 339.4 GB extracted | CC-BY-NC-4.0 (README) / CC-BY-NC-SA-4.0 (LICENSE file) |
 | generic-neuromotor-interface | discrete gestures, handwriting (98.8 / 31.5 / 10.4 h train/val/test), wrist; 100 users per task | not checked | CC-BY-NC-4.0 |
 | emg2pose | hand pose, 193 users, 370 h | 462.8 GB (431 GiB) | CC-BY-NC-SA-4.0 |
 
@@ -38,13 +38,20 @@ All Meta EMG datasets are NC. All are HDF5 at 2 kHz.
 
 > **Our take:** emg2qwerty stays the research benchmark for the EMG adapter. It cannot train product weights. For licence-clean EMG work use KT-sEMG and the Toronto set. For licence-clean trust-layer evaluation on real decoded text, use [Brain-to-Text '25](brain-to-text-25.md).
 
-## Download status (P4-01, 2026-11-14)
-- **Not downloaded. Waiting for a user decision.** The only official download is one archive of **308,382,645,571 bytes (308.4 GB)** (HTTP `Content-Length`, `Last-Modified` 2021-08-24). This is above the 100 GB limit that needs user approval.
-- No per-user download: the S3 bucket listing is denied, and the README names only the full archive.
-- No published checksum. The S3 `ETag` (`c7c136d77c79de4311972ee18cb819f1-9191`) is a multipart tag, not an MD5 of the file. We can check only the size, and that `tar -tzf` reads the archive to the end.
-- Free disk space on C: was 777 GB on 2026-11-14. The archive plus its extracted copy needs about 620 GB, unless we extract and then delete the archive.
-- Planned path: `C:\Users\zhang\bci-data\raw\emg2qwerty\`. Planned command (resumable): `curl -L -C - --retry 10 -o emg2qwerty-data-2021-08.tar.gz https://fb-ctrl-oss.s3.amazonaws.com/emg2qwerty/emg2qwerty-data-2021-08.tar.gz` (see `HANDOFF.md`).
+## Download status (P4-01, 2026-11-15)
+- **Downloaded and extracted on 2026-11-15.** The user approved the 308.4 GB download.
+- Download: 14:05 to 17:07 (one `curl -C -` attempt, about 28 MB/s). The archive size is **308,382,645,571 bytes**. This equals the HTTP `Content-Length`.
+- No checksum is published. We computed our own SHA-256 of the archive: `7b2d827d0068b838e0a15ffe9d5ddddbdc315f55ba1b667636c84e6b510d7581`. It identifies our copy only. It does not prove that the server copy is correct.
+- Local path: `C:\Users\zhang\bci-data\raw\emg2qwerty\extracted\emg2qwerty-data-2021-08\` (outside the repo).
+- Content: **1,136 files, 339,359,730,313 bytes (339.4 GB)**. These are 1,135 HDF5 session files and one `metadata.csv`. All files are in one folder.
+- Check: the names and sizes of all 1,136 files on disk equal the `tar -tvzf` listing. Then we deleted the archive to save 308 GB.
+- Manifest (SHA-256 + full listing): `C:\Users\zhang\bci-data\raw\emg2qwerty.manifest.txt`.
+- `metadata.csv` aggregates (read with `awk`, no code from the archive): 1,135 sessions, **108 users**, **346.4 h**, **5,262,671 keystrokes**. These agree with the repo (108 users, 1,135 sessions, 346 hours) and with the secondary figure of about 5.26 million keystrokes.
+- Columns of `metadata.csv`: `user`, `session`, `condition`, `duration_mins`, `num_keystrokes`, `num_prompts`, `quality_check_tags`.
+- Treat the files as untrusted data. Open HDF5 only with `h5py` in `python -I`. Never unpickle. Run no code from the archive.
 
-**Next step:** the user decides on the 308 GB download. Ingest the paper and repo (read only; the code is NC, do not copy it).
+> **Our take:** the extracted copy uses 339 GB of disk. A new download is 3 h. Keep the extracted copy until the EMG adapter work is done.
+
+**Next step:** ingest the paper and repo (read only; the code is NC, do not copy it). Then write the emg2qwerty replay adapter (P4-01).
 
 Related: [Meta Neural Band](meta-neural-band.md) · [Synchronous vs asynchronous decoding](../concepts/synchronous-vs-asynchronous-decoding.md) · [CTC](../concepts/ctc.md) · [Public datasets survey](../questions/public-datasets.md)

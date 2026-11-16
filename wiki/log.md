@@ -783,3 +783,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - H-6: the 8 superseded Paper 1 draft PDFs (2.5 MB) are removed from the tree; `final/` stays; git history keeps the drafts. H-7: the empty `run.err.log` is removed.
 - H-3, H-8, H-9: checklist rules 9–12. HANDOFF.md entries before 2026-11-13 moved to `docs/archive/handoff-2026-11-08-to-2026-11-12.md` (HANDOFF 120 kB → 58 kB).
 - SDK READMEs: "59 of the 60 checks" (`NTS-LEAK-TRUTH` is Python only).
+
+## [2026-11-15] setup | P4-01: emg2qwerty downloaded, checked and extracted
+- The user approved the 308.4 GB download. Download 14:05 to 17:07 (one resumable `curl -C -` attempt), into `C:\Users\zhang\bci-data\raw\emg2qwerty\` (outside the repo).
+- Archive size 308,382,645,571 bytes = HTTP `Content-Length`. No checksum is published. Our SHA-256: `7b2d827d0068b838e0a15ffe9d5ddddbdc315f55ba1b667636c84e6b510d7581`.
+- Extracted: 1,136 files (1,135 HDF5 + `metadata.csv`), 339,359,730,313 bytes. The names and sizes of all files equal the `tar -tvzf` listing. Then the archive was deleted.
+- `metadata.csv` aggregates: 108 users, 1,135 sessions, 346.4 h, 5,262,671 keystrokes.
+- Updated `entities/emg2qwerty.md` (download status), `references/README.md` (row), `HANDOFF.md`. Manifest with SHA-256 and listing: `C:\Users\zhang\bci-data\raw\emg2qwerty.manifest.txt`.
