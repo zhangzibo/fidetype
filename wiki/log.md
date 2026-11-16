@@ -879,3 +879,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - [North star](questions/north-star.md): one-line pointer "Later: P16 write side".
 - Diagram 11: new pink row "Write side" with P16 in H2 2027; title, legend and caption updated; render checked with headless Edge.
 - Tracker: milestone P16 (2027-07-01 → 2027-12-31); tasks P16-01 … P16-04 todo, P16-05 externally_blocked (fragments). Agent-run stats filled for P15-00 and P15-10.
+
+## [2026-11-16] query | P15-01: F1/E2 CPU pilot, self-improving T12 replay with a guarded update loop (P15-01 done)
+- Plan pre-registered before runs ([plan](../experiments/2026-11-16-f1-e2-selfimprove-pilot/plan.md), `b0090d3`); tuning on S7 frozen (`43c9c93`); [results](../experiments/2026-11-16-f1-e2-selfimprove-pilot/results.md). Own small CPU conv-CTC decoder on S0-S6 (val PER 0.445), per-day input layer, 16 replay days S8-S23 (6,720 items), 8 arms, alpha 0.05, delta 0.1.
+- S4 pass: feedback-p0.9 phase-C PER 0.470 vs frozen 0.686 (diff -0.2153, day-bootstrap CI95 [-0.2492, -0.1767]); oracle 0.459; p_notice 0.5 / 0.9 / 1.0 nearly equal (labels come mostly from 80 % retypes).
+- S1-S3 pass in all 7 guarded arms (true wrong-commit 0.0048-0.0115; at most 1/16 days over alpha; ACI certificate holds); S6 pass (shuffled labels +0.187 PER, S1 holds). D1: self-training collapses (PER about 0.97 from day 6). D2: naive fixed threshold 323 commits / 302 wrong, rate 0.0449 [CP95 upper 0.0502], 4/16 days over alpha.
+- S5 FAILS in all 8 arms: uniform null streams commit (276-317/320; shuffled 0-6/320). Cause: the loop has only the non-empty-text gate, not the M2-18 evidence gate `CommitGate(max_guard_risk=...)`. Vacuity caveat: 88-100 % of commits wrong; the bound is over all items. T_s = 50 at the grid edge.
+- GPU follow-up (P15-02 / P15-03): evidence gate + per-update null refusal in `GuardedUpdateLoop`, stronger base decoder, wider T_s grid, 2-3 user seeds with realistic retype rate, T15, semi-bandit risk control (P15-04), silent-error margin.

@@ -116,6 +116,8 @@ The success criteria below are **proposed**. Each experiment freezes them in its
 
 **Follow-ups:** online risk control with **bandit feedback** (we see the truth only for what we showed); a formal statement of what the guarantee covers; T15 (45 sessions over 20 months) as the second dataset.
 
+**CPU pilot result (2026-11-16, [P15-01](../../experiments/2026-11-16-f1-e2-selfimprove-pilot/results.md)):** feedback-only adaptation lowers PER from 0.686 (frozen) to 0.470 over 16 T12 days; the wrong-commit bound holds through every daily update (also under bad updates); self-training collapses; but uniform null inputs commit in every arm (no evidence gate yet) and 88-100 % of commits are wrong, so this is a working harness, not F1 evidence.
+
 ### F2: faithful language-model decoding (E3)
 **Goal:** an LLM improves the decoded text, and a run-time check makes sure that it adds nothing that the neural evidence does not support, with a risk-controlled bound on hallucinated commits.
 

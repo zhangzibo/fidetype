@@ -620,6 +620,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - **Deliverable:** `experiments/2026-11-16-f1-e2-selfimprove-pilot/` with `plan.md` (frozen before runs), simulator code (replay in time order; accept / reject / retype; q_notice for silent errors; p_sloppy), a frozen trunk with a linear day-input layer, a small subset of T12 sessions, and `results.md`.
 - **Depends on:** T12 v2 decoder, `fidetype.trust.online_risk` (`aci`), `SessionRiskMonitor`.
 - **Done when:** frozen, feedback-only, oracle and self-training arms run on the subset; each session reports PER, commit rate, wrong-commit rate with CP intervals, silent-error rate and labels used; results are compared with the pre-registered criteria.
+- **Result (2026-11-16, done):** [results](../../experiments/2026-11-16-f1-e2-selfimprove-pilot/results.md). 8 arms, 16 T12 days, own CPU decoder. S4 pass (feedback-p0.9 PER 0.470 vs frozen 0.686, CI95 of the difference [-0.249, -0.177]); S1-S3 and S6 pass in every guarded arm; S5 FAILS in every arm (uniform null streams commit: no M2-18 evidence gate in the loop); self-training collapses. Bound near vacuous (88-100 % of commits wrong). Main fix for P15-02 / P15-03: evidence gate + per-update null refusal.
 
 #### P15-02 Decoder-update loop and re-calibration hooks
 - **Goal:** the trust layer knows when the decoder changes, and a new decoder goes live only after a check.
