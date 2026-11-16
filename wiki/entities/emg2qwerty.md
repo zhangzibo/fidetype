@@ -111,4 +111,7 @@ Full dataset summary from `metadata.csv` (command `summary`): 1,135 sessions, 10
 
 **Next step:** ingest the paper and repo (read only; the code is NC, do not copy it). A continuous CTC decoder on emg2qwerty (output through the [CTC-logits adapter](../concepts/ctc-logits-adapter.md)) is a possible later task.
 
+## Continuous decoder (P11-01, prepared 2026-11-15)
+Our own causal CTC decoder on emg2qwerty is prepared; GPU training waits for M4-13. Plan, splits, budget and pre-registered criteria: [P11-01 plan](../../experiments/2026-11-16-p11-01-emg-decoder/plan.md). Published comparison (paper Table 3, no LM, test CER, mean over 8 users): generic 55.38 %, personalised (fine-tuned) 11.28 %. Our primary criterion: personalised test CER <= 20.0 %. Feature cache (12 log bands at 100 frames/s, local only): `C:\Users\zhang\bci-data\derived\p11-01-emg-decoder\`.
+
 Related: [Meta Neural Band](meta-neural-band.md) · [Synchronous vs asynchronous decoding](../concepts/synchronous-vs-asynchronous-decoding.md) · [CTC](../concepts/ctc.md) · [Public datasets survey](../questions/public-datasets.md)
