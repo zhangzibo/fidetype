@@ -140,6 +140,8 @@ The M4-06 config `tcfg-f5ca0020b3b8fce2` was fitted on the online logits of the 
 
 **Scope.** This applies to the v4 recipe, the v5 candidate and any later recipe, for every decoder and every dataset. Report the gate settings and both control results next to the `config_id`.
 
+**Enforced in code (P14-03, 2026-11-15).** The drop-in wrapper `fidetype.trust.calibrate` applies this rule on every calibration: the gate is always on, both controls run, and a failing config raises `NullControlError` (no config is returned). The guarantee sheet lists the gate and both control counts next to the `config_id` ([quickstart](../../docs/trust-quickstart.md), [guarantee sheet](../../docs/trust-guarantee.md)). Finding: with an LM-free decoder (no lexicon), the frame-shuffled control usually fails, because shuffled frames keep their confidence; the wrapper then asks for a lexicon or a `decode_fn` with a language model.
+
 ## Incremental decoding (M4-08, opt-in)
 Experiment: [2026-11-13-m4-08-incremental](../../experiments/2026-11-13-m4-08-incremental/results.md) ([tables](../../experiments/2026-11-13-m4-08-incremental/results/tables.md)). Diagram: [14](../diagrams/index.html#s14).
 
