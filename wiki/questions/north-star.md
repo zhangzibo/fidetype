@@ -140,6 +140,8 @@ The success criteria below are **proposed**. Each experiment freezes them in its
 
 **Blockers:** no local LLM stack (no `transformers`, no llama.cpp); a 1–10 GB model download; LLM licences differ (prefer Apache-2.0 or MIT).
 
+**Result (2026-11-16, T15 only, [P15-05](../../experiments/2026-11-16-f2-e3-llm-grounding/results.md)):** LLM rescoring lowers WER 0.3985 -> 0.3831 under the bound (wrong-commit 0.0029, null 0/300); the grounding check stops all swapped-signal commits (ungrounded 9-28 of 701) but does not block fluent text on the true signal; fluent-wrong commits 2 vs 0, so E3 does not pass its pre-registered criteria yet (next: P15-06).
+
 **Follow-ups:** a **public hallucination benchmark** with null / scrambled / swapped-signal tracks as standard tracks (it joins the P6 leaderboard and the P13 hub; it does not replace them).
 
 ### F3: cross-body language model (E1)

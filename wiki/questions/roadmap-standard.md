@@ -645,6 +645,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - **Goal:** better text from an LLM, with nothing added that the neural evidence does not support.
 - **Deliverable:** a local LLM route (llama.cpp or similar; Apache-2.0 or MIT model; 1.7–8B); arms n-gram / LLM rescoring / LLM rewrite limited to the n-best lattice; grounding by CTC forced-alignment log-prob (threshold τ) plus the guard signals; null, frame-shuffled and swapped-signal controls; T15 published logits as the reference decoder. `plan.md` first, then `results.md`.
 - **Depends on:** local LLM install (a 1–10 GB download), M4-12 logits, T12 v2.
+- **Result (2026-11-16, in progress: T15 done, T12 open):** [results](../../experiments/2026-11-16-f2-e3-llm-grounding/results.md). Qwen2.5-1.5B (CPU), 8 arms, 701 held-out T15 trials. LLM rescoring + grounding (B1): WER 0.3831 vs 0.3985 (CI95 of the difference [-0.0209, -0.0096]), wrong-commit 0.0029, null 0/300, swapped 0/701. S1-S3 pass, S4 fails (fluent-wrong commits 2 vs 0): F2/E3 does not pass. Grounding takes swapped-signal commits to 0 in all arms but never changes the top-1 on true signals; the 95 % coverage τ is too loose (P15-06).
 - **Done when:** WER, sentence accuracy, wrong-commit rate, fluent-wrong rate and null / swapped commits are reported for all arms on T15 and T12, and compared with the pre-registered criteria.
 
 #### P15-06 Risk-controlled hallucination bound
