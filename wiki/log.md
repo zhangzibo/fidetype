@@ -906,3 +906,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Guarantee: P(fluent-wrong commit rate <= 0.01 and wrong-commit rate <= 0.05) >= 0.9 (exchangeable data). Held out (701): bound held in all 10 guards; fluent-wrong commits B 2 -> 0, C 5 -> 1, D 3 -> 1; swapped-signal commits 0 in every arm, also in the ungrounded ones (tau_commit = 0 alone).
 - B1 primary: H1-H4 pass, but 0 commits (P15-05: 10, 8 right): safe but costly. Secondary rule `most_right`: B1 8 commits (7 right, 1 fluent-wrong). T12 not run: P15-06 in progress. Roadmap P15-06 result line; tracker fragment.
 
+
+## [2026-11-16] query | P15-05: F2/E3 T12 replication (P15-05 done)
+- T12 run under the pre-registered T12 addendum (`419fe9e`), same code, model and arms; 480 fitting / 400 held-out trials (by session). [Results, T12 section](../experiments/2026-11-16-f2-e3-llm-grounding/results.md#t12-replication-2026-11-16); aggregates `results/results-t12.json`, `results/summary-t12.json`, log `results/run-t12.log`.
+- Fitted: frame T 2.5281, `tau` 0.4742 nats / frame (95 % coverage; about 6x T15), LLM weight 0.5.
+- B1 (rescoring + grounding): WER 0.3851 vs A0 0.3885 (diff -0.0034, CI95 [-0.0086, +0.0021]); 15 commits / 8 wrong (0.0200, CP95 upper 0.0390); null 0/300 + 0/300; swapped 0/400; fluent-wrong 4 vs 4. S1 fails, S2-S4 pass: "safe but no gain". C1: S1 and S4 fail.
+- Replicated from T15: grounding takes swapped-signal commits 25 / 15 / 23 / 25 (A0-D0) to 0 in every grounded arm; it never changes the top-1 on true signals. Not replicated: the rescoring WER gain. Rewrites add fluent-wrong commits on both sets.
+- P15-05 done (both sets vs the criteria); F2/E3 does not pass (T15 S4, T12 S1). Follow-up P15-06 needs a T12 loader. Roadmap P15-05 and north-star F2 result lines; tracker P15-05 done (fragment).

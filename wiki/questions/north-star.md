@@ -140,7 +140,7 @@ The success criteria below are **proposed**. Each experiment freezes them in its
 
 **Blockers:** no local LLM stack (no `transformers`, no llama.cpp); a 1–10 GB model download; LLM licences differ (prefer Apache-2.0 or MIT).
 
-**Result (2026-11-16, T15 only, [P15-05](../../experiments/2026-11-16-f2-e3-llm-grounding/results.md)):** LLM rescoring lowers WER 0.3985 -> 0.3831 under the bound (wrong-commit 0.0029, null 0/300); the grounding check stops all swapped-signal commits (ungrounded 9-28 of 701) but does not block fluent text on the true signal; fluent-wrong commits 2 vs 0, so E3 does not pass its pre-registered criteria yet (next: P15-06).
+**Result (2026-11-16, T15 + T12, [P15-05](../../experiments/2026-11-16-f2-e3-llm-grounding/results.md)):** on T15, LLM rescoring lowers WER 0.3985 -> 0.3831 under the bound (wrong-commit 0.0029, null 0/300), but fluent-wrong commits are 2 vs 0 (S4 fails). The T12 replication gives no significant WER gain (0.3885 -> 0.3851, CI95 [-0.0086, +0.0021]) with the bound, controls and fluent-wrong count held (4 vs 4). On both sets the grounding check stops all swapped-signal commits (ungrounded up to 28 of 701 and 25 of 400) but does not block fluent text on the true signal. E3 does not pass its pre-registered criteria (next: P15-06).
 
 **Follow-ups:** a **public hallucination benchmark** with null / scrambled / swapped-signal tracks as standard tracks (it joins the P6 leaderboard and the P13 hub; it does not replace them).
 

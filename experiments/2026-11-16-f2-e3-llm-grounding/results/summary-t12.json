@@ -1,0 +1,420 @@
+{
+ "set": "t12",
+ "prep": {
+  "fluent_logp_per_word": -8.916451934532247,
+  "n_cal": 480
+ },
+ "ground_prep": {
+  "frame_temperature": 2.528091520707864,
+  "tau": 0.47419631304442217,
+  "true_deficit_quantiles": {
+   "0.5": 0.09749612434624119,
+   "0.9": 0.3217840865543904,
+   "0.95": 0.4261309613559757,
+   "0.99": 0.7186277108693595
+  },
+  "true_deficit_pass_rate_at_tau": 0.9520833333333333,
+  "true_without_labels": 4,
+  "llm_weight_grid_wer": {
+   "0.1": 0.4581864786927267,
+   "0.25": 0.45786606856776674,
+   "0.5": 0.456264017942967,
+   "1.0": 0.456264017942967,
+   "2.0": 0.45946811919256647
+  },
+  "llm_weight": 0.5,
+  "base_val_select_wer": 0.45914770906760655,
+  "seconds": 502.7
+ },
+ "arms": {
+  "A0_ngram": {
+   "status": "ok",
+   "wer": 0.3884922301553969,
+   "sentence_acc": 0.0775,
+   "commits": 25,
+   "wrong": 15,
+   "wrong_rate": 0.0375,
+   "wrong_cp95": [
+    0.021137674784348935,
+    0.06109697662390072
+   ],
+   "offers": 375,
+   "withholds": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_words": 0,
+   "shown_words": 2382,
+   "fluent_wrong_commits": 4,
+   "sheet_controls": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "uniform": 0,
+   "shuffled": 0,
+   "swapped_commits": 25,
+   "swapped_unsupported": 25,
+   "swapped_leak": 10,
+   "top1_changed_vs_base": 0,
+   "stats": {},
+   "frame_temperature": 2.528091520707864
+  },
+  "A1_ngram_G": {
+   "status": "ok",
+   "wer": 0.3884922301553969,
+   "sentence_acc": 0.0775,
+   "commits": 25,
+   "wrong": 15,
+   "wrong_rate": 0.0375,
+   "wrong_cp95": [
+    0.021137674784348935,
+    0.06109697662390072
+   ],
+   "offers": 375,
+   "withholds": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_words": 0,
+   "shown_words": 2382,
+   "fluent_wrong_commits": 4,
+   "sheet_controls": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "uniform": 0,
+   "shuffled": 0,
+   "swapped_commits": 0,
+   "swapped_unsupported": 0,
+   "swapped_leak": 0,
+   "top1_changed_vs_base": 0,
+   "stats": {},
+   "frame_temperature": 2.528091520707864,
+   "wer_diff_vs_A0": {
+    "diff": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "B0_rescore": {
+   "status": "ok",
+   "wer": 0.3851322973540529,
+   "sentence_acc": 0.0875,
+   "commits": 15,
+   "wrong": 8,
+   "wrong_rate": 0.02,
+   "wrong_cp95": [
+    0.008673170369118311,
+    0.03902627671162005
+   ],
+   "offers": 385,
+   "withholds": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_words": 0,
+   "shown_words": 2383,
+   "fluent_wrong_commits": 4,
+   "sheet_controls": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "uniform": 0,
+   "shuffled": 0,
+   "swapped_commits": 15,
+   "swapped_unsupported": 15,
+   "swapped_leak": 7,
+   "top1_changed_vs_base": 93,
+   "stats": {},
+   "frame_temperature": 2.528091520707864,
+   "wer_diff_vs_A0": {
+    "diff": -0.0033599328013439733,
+    "ci95": [
+     -0.008576329331046312,
+     0.002078181210866345
+    ]
+   }
+  },
+  "B1_rescore_G": {
+   "status": "ok",
+   "wer": 0.3851322973540529,
+   "sentence_acc": 0.0875,
+   "commits": 15,
+   "wrong": 8,
+   "wrong_rate": 0.02,
+   "wrong_cp95": [
+    0.008673170369118311,
+    0.03902627671162005
+   ],
+   "offers": 385,
+   "withholds": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_words": 0,
+   "shown_words": 2383,
+   "fluent_wrong_commits": 4,
+   "sheet_controls": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "uniform": 0,
+   "shuffled": 0,
+   "swapped_commits": 0,
+   "swapped_unsupported": 0,
+   "swapped_leak": 0,
+   "top1_changed_vs_base": 93,
+   "stats": {},
+   "frame_temperature": 2.528091520707864,
+   "wer_diff_vs_A0": {
+    "diff": -0.0033599328013439733,
+    "ci95": [
+     -0.008576329331046312,
+     0.002078181210866345
+    ]
+   }
+  },
+  "C0_rewrite": {
+   "status": "ok",
+   "wer": 0.3897522049559009,
+   "sentence_acc": 0.0975,
+   "commits": 23,
+   "wrong": 10,
+   "wrong_rate": 0.025,
+   "wrong_cp95": [
+    0.012052120113185941,
+    0.045494279298780006
+   ],
+   "offers": 377,
+   "withholds": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_words": 0,
+   "shown_words": 2381,
+   "fluent_wrong_commits": 6,
+   "sheet_controls": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "uniform": 0,
+   "shuffled": 0,
+   "swapped_commits": 23,
+   "swapped_unsupported": 23,
+   "swapped_leak": 13,
+   "top1_changed_vs_base": 266,
+   "stats": {
+    "lattice_rejects": 55
+   },
+   "frame_temperature": 2.528091520707864,
+   "wer_diff_vs_A0": {
+    "diff": 0.00125997480050399,
+    "ci95": [
+     -0.007819194067200446,
+     0.010527923678850887
+    ]
+   }
+  },
+  "C1_rewrite_G": {
+   "status": "ok",
+   "wer": 0.3897522049559009,
+   "sentence_acc": 0.0975,
+   "commits": 23,
+   "wrong": 10,
+   "wrong_rate": 0.025,
+   "wrong_cp95": [
+    0.012052120113185941,
+    0.045494279298780006
+   ],
+   "offers": 377,
+   "withholds": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_words": 0,
+   "shown_words": 2376,
+   "fluent_wrong_commits": 6,
+   "sheet_controls": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "uniform": 0,
+   "shuffled": 0,
+   "swapped_commits": 0,
+   "swapped_unsupported": 0,
+   "swapped_leak": 0,
+   "top1_changed_vs_base": 266,
+   "stats": {
+    "lattice_rejects": 55
+   },
+   "frame_temperature": 2.528091520707864,
+   "wer_diff_vs_A0": {
+    "diff": 0.00125997480050399,
+    "ci95": [
+     -0.007819194067200446,
+     0.010527923678850887
+    ]
+   }
+  },
+  "D0_free": {
+   "status": "ok",
+   "wer": 0.3884922301553969,
+   "sentence_acc": 0.0875,
+   "commits": 25,
+   "wrong": 13,
+   "wrong_rate": 0.0325,
+   "wrong_cp95": [
+    0.017416146084212138,
+    0.05493481675069276
+   ],
+   "offers": 375,
+   "withholds": 0,
+   "hallucination_rate": 0.01053518752633797,
+   "unsupported_words": 25,
+   "shown_words": 2373,
+   "fluent_wrong_commits": 7,
+   "sheet_controls": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "uniform": 0,
+   "shuffled": 0,
+   "swapped_commits": 25,
+   "swapped_unsupported": 25,
+   "swapped_leak": 12,
+   "top1_changed_vs_base": 279,
+   "stats": {},
+   "frame_temperature": 2.528091520707864,
+   "wer_diff_vs_A0": {
+    "diff": 0.0,
+    "ci95": [
+     -0.01020037510309686,
+     0.01067633749570396
+    ]
+   }
+  },
+  "D1_free_G": {
+   "status": "ok",
+   "wer": 0.3884922301553969,
+   "sentence_acc": 0.0875,
+   "commits": 25,
+   "wrong": 13,
+   "wrong_rate": 0.0325,
+   "wrong_cp95": [
+    0.017416146084212138,
+    0.05493481675069276
+   ],
+   "offers": 375,
+   "withholds": 0,
+   "hallucination_rate": 0.010109519797809604,
+   "unsupported_words": 24,
+   "shown_words": 2374,
+   "fluent_wrong_commits": 7,
+   "sheet_controls": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "uniform": 0,
+   "shuffled": 0,
+   "swapped_commits": 0,
+   "swapped_unsupported": 0,
+   "swapped_leak": 0,
+   "top1_changed_vs_base": 279,
+   "stats": {},
+   "frame_temperature": 2.528091520707864,
+   "wer_diff_vs_A0": {
+    "diff": 0.0,
+    "ci95": [
+     -0.01020037510309686,
+     0.01067633749570396
+    ]
+   }
+  }
+ },
+ "checks": {
+  "B1_rescore_G": {
+   "S1_accuracy": false,
+   "S2_bound": true,
+   "S3_controls": true,
+   "S4_hallucination": true,
+   "all": false
+  },
+  "C1_rewrite_G": {
+   "S1_accuracy": false,
+   "S2_bound": true,
+   "S3_controls": true,
+   "S4_hallucination": false,
+   "all": false
+  }
+ }
+}
