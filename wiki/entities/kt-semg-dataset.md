@@ -48,7 +48,7 @@ Module: `fidetype.adapters.kt_semg` (our own code, Apache-2.0). Tests: `tests/te
 | Provenance | `decoder.weights_sha256`, opaque `stream.id`, adapter name and version, `fidetype.replay` = slug, DOI, licence, Nokia attribution, run ordinal, segment index |
 | Not in the stream | Typed text, run numbers, dates |
 
-**Reference decoder.** `LdaKeyDecoder`: shrinkage LDA on log-RMS features (32 channels × 2 sub-windows of [-150 ms, +50 ms]), features z-scored per run without labels. numpy only, no GPU. It is a baseline for replay tests, not a result.
+**Reference decoder.** `LdaKeyDecoder`: shrinkage LDA on log-RMS features (32 channels × 2 sub-windows of [-150 ms, +50 ms]), features z-scored per run without labels. numpy only, no GPU. It is a baseline for replay tests, not a result. The [emg2qwerty adapter](emg2qwerty.md#replay-adapter-p4-01-2026-11-15) reuses this vocabulary and this decoder.
 
 **Real-data validation** (local, nothing committed). Sample of 7 of 29 runs. Per run, the LDA is fit on the first half of the key presses; streams are made for the second half (session-calibrated).
 

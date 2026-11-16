@@ -17,6 +17,11 @@ and emits streams that follow ``spec/neuraltextstream-v0.1.md``.
   natural typing, CC BY 4.0). CSV and key-log readers, UTC-offset
   inference, key-press streams (32 W3C key codes) and a small LDA
   reference decoder.
+- :mod:`fidetype.adapters.emg2qwerty`: emg2qwerty (Meta, wrist sEMG
+  during touch typing, 108 users, CC BY-NC-SA 4.0, research use only).
+  Read-only HDF5 reader (``[emg2qwerty]`` extra, h5py), keylogger and
+  prompt parsing, one key-press stream per text prompt (the KT-sEMG
+  32-key vocabulary) and a session-calibrated LDA baseline.
 - :mod:`fidetype.adapters.lsl`: Lab Streaming Layer, live. LSL inlets ->
   NTS events -> the streaming trust layer; NTS files -> LSL outlets.
   Needs the optional ``pylsl`` (extra ``[lsl]``) only for the network.

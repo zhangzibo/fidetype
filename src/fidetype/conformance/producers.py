@@ -31,6 +31,10 @@ Targets (``python -m fidetype.conformance check adapter:<name>``):
 ``kt-semg``
     :func:`fidetype.adapters.kt_semg.keypress_stream` (32-key ``key``
     vocabulary) with a causal window latency and offline.
+``emg2qwerty``
+    :func:`fidetype.adapters.emg2qwerty.prompt_stream` (the same 32-key
+    vocabulary, one stream per text prompt) with a causal window latency
+    and offline. Needs no h5py: the synthetic scores skip the file reader.
 """
 
 from __future__ import annotations
@@ -236,6 +240,25 @@ def produce_kt_semg(seed: int = 5) -> list[ProducedStream]:
     return out
 
 
+def produce_emg2qwerty(seed: int = 6) -> list[ProducedStream]:
+    from fidetype.adapters import emg2qwerty as Q
+
+    rng = np.random.default_rng(seed)
+    keys = ["t", "h", "e", "Key.space", "c", "a", "t", "Key.backspace", "t", "Key.enter"]
+    text = "the cat"
+    codes = [Q.key_class(k) for k in keys]
+    logits = rng.standard_normal((len(keys), len(Q.KEY_VOCAB))) * 2.0
+    logits[np.arange(len(keys)), codes] += 4.0
+    times = 2.0 + np.cumsum(rng.uniform(0.1, 0.35, len(keys)))
+    out = []
+    for mode, lat in (("window", Q.WINDOW_POST_S), ("offline", None)):
+        meta = Q.stream_meta(session_index=0, prompt_index=0, weights_sha256=_fake_weights_sha(f"e2q-{mode}"),
+                             stream_id=Q.opaque_stream_id("synthetic", mode))
+        out.append(ProducedStream(f"emg2qwerty/prompt-{mode}", Q.prompt_stream(logits, times, meta, latency=lat),
+                                  [text]))
+    return out
+
+
 TARGETS: dict[str, Callable[[], list[ProducedStream]]] = {
     "spanishbcbl": produce_spanishbcbl,
     "b2t25": produce_b2t25,
@@ -243,4 +266,5 @@ TARGETS: dict[str, Callable[[], list[ProducedStream]]] = {
     "ctc-logits": produce_ctc_logits,
     "willett": produce_willett,
     "kt-semg": produce_kt_semg,
+    "emg2qwerty": produce_emg2qwerty,
 }

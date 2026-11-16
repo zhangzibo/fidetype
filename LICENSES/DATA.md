@@ -18,7 +18,7 @@ The Fidetype code is Apache-2.0 ([`LICENSE`](../LICENSE)). This note says what t
 | Toronto sEMG typing (Achituve et al. 2025) | CC BY 4.0 (attribution) | Yes | Benchmark track `toronto-semg-composed` | `src/fidetype/adapters/toronto_semg.py` |
 | Tatoeba (en, es) | CC BY 2.0 FR (attribution) | Yes | Char and word LMs; held-out sentences of the EMG track | `src/fidetype/lm/corpora.md` |
 | CMUdict | BSD-2-Clause style | Yes | Pronunciation lexicon (B2T word decoder) | `src/fidetype/lm/phoneme_words.py` |
-| emg2qwerty (Meta) | CC BY-NC 4.0 | **No** | Not used yet. No loader exists. A future loader must be download-only and research-only | none |
+| emg2qwerty (Meta) | CC BY-NC-SA 4.0 (repo `LICENSE` file; the README says CC BY-NC 4.0; we follow the stricter one) | **No** | Research only: replay streams and a session-calibrated LDA baseline (P4-01). Download-only; derived streams, weights and results stay outside the repository and keep the share-alike terms. Only aggregate numbers are committed | `src/fidetype/adapters/emg2qwerty.py` (read-only h5py, extra `[emg2qwerty]`; streams carry `fidetype.replay.licence` and `research_only`) |
 | LibriBrain | CC BY-NC 4.0 | **No** | Not used | none |
 
 Attribution: "Sentences from Tatoeba (https://tatoeba.org), by the Tatoeba contributors, CC BY 2.0 FR." Toronto sEMG: Achituve, Beutel, Eby, Fetaya, Koivisto, Zariffa, Sci Data 12:440 (2025), doi:10.5683/SP3/KV65VI, CC BY 4.0.
@@ -41,6 +41,7 @@ No weights are in the repository or in any release. The benchmark asks every ent
 | ConvCTC-M async (MEG) | SpanishBCBL (CC BY-NC 4.0) | Not released. Research only, even if released later |
 | Phoneme -> word decoder (B2T) | nothing (decoding only) | No trained weights |
 | Key-press CNN (EMG) | Toronto sEMG (CC BY 4.0) | Not released |
+| LDA key baseline (EMG) | emg2qwerty, per session (CC BY-NC-SA 4.0) | Not released. Research only; local files in `~/bci-data/derived/p4-01-emg2qwerty/` |
 
 ## Committed results that quote non-commercial data (judgement call)
 

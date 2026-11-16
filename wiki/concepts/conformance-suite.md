@@ -128,7 +128,7 @@ Code: `src/fidetype/conformance/profiles/` (`fep0001.py`, `fep0002.py`). Tests: 
 - [Provenance ledger](provenance-ledger.md): the consumer side of the provenance keys.
 - [Long-term standard roadmap](../questions/roadmap-standard.md): phase P7 (conformance and certification).
 - [Architecture](../questions/architecture.md): where NeuralTextStream sits.
-- Adapters: [Brain-to-Text '25](../entities/brain-to-text-25.md), [Toronto sEMG typing dataset](../entities/toronto-semg-typing-dataset.md), [Willett 2021 handwriting](../entities/willett-handwriting-2021.md), [KT-sEMG](../entities/kt-semg-dataset.md).
+- Adapters: [Brain-to-Text '25](../entities/brain-to-text-25.md), [Toronto sEMG typing dataset](../entities/toronto-semg-typing-dataset.md), [Willett 2021 handwriting](../entities/willett-handwriting-2021.md), [KT-sEMG](../entities/kt-semg-dataset.md), [emg2qwerty](../entities/emg2qwerty.md).
 
 ## Used by
 - [TypeScript SDK](typescript-sdk.md): runs the same golden vectors (all profiles) and gives the same verdict as the Python reference on every vector (`npm run cross-check`).

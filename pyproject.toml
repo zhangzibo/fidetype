@@ -36,8 +36,9 @@ classifiers = [
 dependencies = ["numpy"]
 
 [project.optional-dependencies]
-# dev includes [ws], so CI runs the WebSocket tests (they skip cleanly when websockets is missing).
-dev = ["pytest", "fidetype[ws]"]
+# dev includes [ws] and [emg2qwerty], so CI runs the WebSocket and HDF5 tests (they skip cleanly when the
+# package is missing).
+dev = ["pytest", "fidetype[ws,emg2qwerty]"]
 data = ["mne>=1.8", "scipy>=1.13"]
 # Lab Streaming Layer adapter (fidetype.adapters.lsl). pylsl is MIT; its Windows wheel includes liblsl.
 lsl = ["pylsl>=1.16"]
@@ -45,6 +46,8 @@ lsl = ["pylsl>=1.16"]
 brainflow = ["brainflow>=5.10"]
 # WebSocket adapter (fidetype.adapters.ws, FEP-0004). websockets is BSD-3-Clause; pinned (sync API).
 ws = ["websockets==17.4"]
+# emg2qwerty replay adapter (fidetype.adapters.emg2qwerty): reads the HDF5 sessions. h5py is BSD-3-Clause.
+emg2qwerty = ["h5py>=3.10"]
 
 [project.scripts]
 fidetype = "fidetype.cli:main"

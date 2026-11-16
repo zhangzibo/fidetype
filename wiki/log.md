@@ -790,3 +790,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Extracted: 1,136 files (1,135 HDF5 + `metadata.csv`), 339,359,730,313 bytes. The names and sizes of all files equal the `tar -tvzf` listing. Then the archive was deleted.
 - `metadata.csv` aggregates: 108 users, 1,135 sessions, 346.4 h, 5,262,671 keystrokes.
 - Updated `entities/emg2qwerty.md` (download status), `references/README.md` (row), `HANDOFF.md`. Manifest with SHA-256 and listing: `C:\Users\zhang\bci-data\raw\emg2qwerty.manifest.txt`.
+
+## [2026-11-15] setup | P4-01: emg2qwerty replay adapter (P4-01 done)
+- New `src/fidetype/adapters/emg2qwerty.py` (our own code; no Meta code read or copied). Read-only h5py reader (new optional extra `[emg2qwerty]`, h5py BSD-3-Clause; also in `[dev]`), checked JSON parsing of the keylogger and prompt logs, block-wise EMG reading, one key-press stream per text prompt (KT-sEMG 32-key vocabulary), opaque `stream.id`, `fidetype.replay` with licence `CC-BY-NC-SA-4.0` and `research_only`. CLI `summary` and `baseline`.
+- HDF5 layout checked on all 1,135 files: compound `timeseries` (`emg_right`, `time`, `emg_left`), keys and samples on one unix clock. 5,258,056 key presses in the files vs 5,262,671 in `metadata.csv`.
+- Baseline (session-calibrated LDA, 8 users × 2 sessions, aggregate only): key accuracy 0.5353 (majority 0.0961); same user, other session 0.5108; 1,392 / 1,392 streams at level `provenance`. Outputs only in `~/bci-data/derived/p4-01-emg2qwerty/`.
+- Tests `tests/test_adapter_emg2qwerty.py` (synthetic HDF5). Conformance target `adapter:emg2qwerty`.
+- Updated `entities/emg2qwerty.md` (file facts, stream, baseline), `entities/kt-semg-dataset.md`, `concepts/conformance-suite.md`, `questions/roadmap-standard.md` (P4-01 done), `index.md`, `LICENSES/DATA.md`. Paper ingest stays open (separate task).

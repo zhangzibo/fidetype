@@ -92,7 +92,7 @@ To see all diagrams, open [diagrams/index.html](diagrams/index.html) in a browse
 | [BCBL](entities/bcbl.md) | Basque lab that recorded and owns the data |
 | [SpanishBCBL dataset](entities/spanishbcbl-dataset.md) | v1 data. Public (HF, not gated), CC BY-NC 4.0, ~268 GB MEG. The only public typing-MEG set we know of. Inspection findings for M1 |
 | [EnglishBCBL dataset](entities/englishbcbl-dataset.md) | v2 data. 90 h MEG. Embargoed |
-| [emg2qwerty](entities/emg2qwerty.md) | *Partial.* Meta's wrist-EMG typing dataset. 108 users, 346 h, 308.4 GB (not downloaded: needs user approval). NC licence (README BY-NC, LICENSE file BY-NC-SA), HDF5 at 2 kHz. Sibling Meta EMG sets are also NC. CC BY alternatives listed |
+| [emg2qwerty](entities/emg2qwerty.md) | *Partial.* Meta's wrist-EMG typing dataset. 108 users, 346 h, 308.4 GB (downloaded 2026-11-15). Replay adapter `fidetype.adapters.emg2qwerty` (HDF5 layout, one stream per prompt, LDA baseline 0.5353 session-calibrated on 8 users). NC licence (README BY-NC, LICENSE file BY-NC-SA), HDF5 at 2 kHz. Sibling Meta EMG sets are also NC. CC BY alternatives listed |
 | [BIDS](entities/bids.md) | Brain Imaging Data Structure. Community data standard. Model for NeuralTextStream governance. Bridge, not rival |
 | [Lab Streaming Layer](entities/lab-streaming-layer.md) | De facto real-time lab streaming tool (SCCN/UCSD). Raw signals, not decoder output |
 | [IEEE P2731](entities/ieee-p2731.md) | Draft IEEE BCI terminology standard. Authorised 2018, unpublished. No stream format. Related venues: ISO/IEC SC 43, TS 27571 |
