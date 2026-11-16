@@ -671,6 +671,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - **Deliverable:** a wiki page with the exact claim wordings, the searches (Google Scholar, Semantic Scholar, citing papers of NDT3, BrainOmni, CORP, Tang & Huth 2023) and the result per claim; full-text reads of the closest papers.
 - **Depends on:** nothing.
 - **Done when:** each F1 / F2 / F3 claim is marked "holds", "narrow it" or "drop it", with sources. The README and any post use only claims marked "holds".
+- **Result (2026-11-15, done):** [novelty check 2026-11](novelty-check-2026-11.md). F1: narrow it. F2: narrow it. F3: part 1 holds; "transfer to a new modality" drop it as written (CORTEG), keep only "for text". Safe wordings are in the [north star](north-star.md#verdicts-of-the-literature-check-p15-10-2026-11-15).
 
 #### P15-11 Demo shows F1 / F2 progress
 - **Goal:** a person sees in 30 seconds that the decoder improves and the guarantee holds.

@@ -3,7 +3,7 @@ title: Conformal risk control (CRC) and Learn then Test (LTT)
 type: concept
 tags: [conformal, risk-control, trust, calibration, wrong-commit, guarantee]
 sources: [conformal-risk-control, learn-then-test, brain-to-text-25-copytask, adaptive-conformal-inference, conformal-pid-control, rolling-risk-control, conformal-beyond-exchangeability, non-exchangeable-crc]
-updated: 2026-11-13
+updated: 2026-11-15
 ---
 
 # Conformal risk control and Learn then Test
@@ -66,5 +66,6 @@ Offline CRC fails when the session drifts. `fidetype.trust.online_risk` (M2-16) 
 - [Error metrics](error-metrics.md)
 - [Per-session risk control](../questions/per-session-risk-control.md)
 - [Conformal prediction under covariate shift](../sources/conformal-covariate-shift.md): likelihood-ratio weights. They do not apply directly to the B2T '25 drift, because P(wrong | score) changes too. We use order-based weights ([beyond exchangeability](../sources/conformal-beyond-exchangeability.md)).
+- Other conformal BCI work: [conformal gating for MI-BCI](../sources/conformal-gating-mi-bci.md) (run-time conformal command gate, fixed decoder, closed-set EEG commands). Prior-art position: [novelty check 2026-11](../questions/novelty-check-2026-11.md).
 
 > **Streaming (M4-03):** the [streaming trust layer](streaming-trust-layer.md) runs this part live, per session, from a frozen configuration.

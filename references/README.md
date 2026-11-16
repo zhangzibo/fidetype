@@ -25,6 +25,9 @@ PDFs and cloned repos are git-ignored because this repo is public and they carry
 | conformal-beyond-exchangeability | paper | Barber, Candès, Ramdas, Tibshirani, arXiv:2202.13415 (v5, 2023-03-17): https://arxiv.org/abs/2202.13415 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
 | non-exchangeable-crc | paper | Farinhas, Zerva, Ulmer, Martins, arXiv:2310.01262 (v2, 2024-01-26; ICLR 2024): https://arxiv.org/abs/2310.01262 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
 | rolling-risk-control | paper | Feldman, Ringel, Bates, Romano, arXiv:2205.09095 (v7, 2023-01-27): https://arxiv.org/abs/2205.09095 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| continual-calibration | paper | Shihab, Akter, Sharma, arXiv:2604.23987 (v1, 2026-04-27): https://arxiv.org/abs/2604.23987 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract + HTML full text read 2026-11-15) |
+| corteg-eeg-to-ecog | paper | Yang, Sun, Van Dyck, Calvo Merino, Van Hulle, arXiv:2605.10337 (v2, 2026-10-14): https://arxiv.org/abs/2605.10337 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract + HTML full text read 2026-11-15) |
+| conformal-gating-mi-bci | paper | Xing, Nagarajan, J. Neural Eng. (2026): https://doi.org/10.1088/1741-2552/aead26 | journal copyright (not open access) | not downloaded (PubMed / Europe PMC abstract read 2026-11-15) |
 | conformal-covariate-shift | paper | Tibshirani, Barber, Candès, Ramdas, arXiv:1904.06019 (v3, 2020-07-06): https://arxiv.org/abs/1904.06019 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
 
 ## Datasets (not stored here)

@@ -2,7 +2,7 @@
 title: North star — a BCI that teaches itself and never puts words in your mouth
 type: question
 tags: [planning, north-star, frontier, self-improving, online-learning, conformal, risk-control, hallucination, llm, cross-modality, emg, implant, roadmap]
-sources: [adaptive-conformal-inference, conformal-risk-control, brain-to-text-25-copytask, brain2qwerty-v2]
+sources: [adaptive-conformal-inference, conformal-risk-control, brain-to-text-25-copytask, brain2qwerty-v2, continual-calibration, conformal-gating-mi-bci, corteg-eeg-to-ecog]
 updated: 2026-11-15
 ---
 
@@ -29,7 +29,7 @@ Today no system does any one of these three things well. Each part below is a re
 ## Why this is new
 Two studies on 2026-11-15 (local scratch notes, not committed) checked the prior art and our feasibility. The prior-art study read abstracts, proceedings pages and some secondary summaries (about 30 searches per direction). **It did not read full papers.** A "not found" result means "not found in these searches", not "does not exist".
 
-> **Rule:** before any public novelty claim (README, post, paper), run a focused literature check with the exact claim wording (task [P15-10](roadmap-standard.md#p15-frontier-added-2026-11-15-leads)). Check the papers that cite NDT3, BrainOmni, CORP and Tang & Huth 2023.
+> **Rule:** in public (README, post, paper) use only the safe wordings in [Verdicts of the literature check](#verdicts-of-the-literature-check-p15-10-2026-11-15) below. The check is [P15-10](novelty-check-2026-11.md) (done 2026-11-15).
 
 ### What the sources say (abstract level)
 **F1, learning from feedback with a guarantee:**
@@ -50,7 +50,8 @@ Two studies on 2026-11-15 (local scratch notes, not committed) checked the prior
 **F3, one language model across body signals:**
 - [NDT3](https://www.biorxiv.org/content/10.1101/2025.02.02.634313) (NeurIPS 2025): intracortical motor, many subjects. Its authors doubt that scale alone fixes sensor variability.
 - [BIT](https://arxiv.org/abs/2511.21740) (2025–2026): cross-species intracortical speech with an audio LLM. Implant only.
-- [BrainOmni](https://arxiv.org/abs/2505.18185) (NeurIPS 2025): EEG + MEG. [iBrain](https://arxiv.org/abs/2609.06960) (2026): iEEG + spikes. [NeuGPT](https://arxiv.org/abs/2410.20916) (2024): six brain modalities to text, low quality, no cross-modality transfer result.
+- [BrainOmni](https://arxiv.org/abs/2505.18185) (NeurIPS 2025): EEG + MEG. [iBrain](https://arxiv.org/abs/2609.06960) (2026): iEEG + spikes. [NeuGPT](https://arxiv.org/abs/2410.20916) (2024): framed as six brain modalities to text, low quality, no cross-modality transfer result.
+  > **Contradiction:** the NeuGPT full text uses only MEG (MEG-MASC) for brain-to-text ([novelty check](novelty-check-2026-11.md#c3-f3-cross-body-model)). The abstract-level line above is kept for the record.
 - Meta's [generic neuromotor interface](https://doi.org/10.1038/s41586-025-09255-w) (Nature 2025) and [emg2qwerty](../entities/emg2qwerty.md): wrist EMG only. [Inoue et al.](https://arxiv.org/abs/2506.13835) (Interspeech 2025): EEG + EMG, word classes, no implant (secondary summary only).
 
 ### The gaps found
@@ -59,6 +60,17 @@ Two studies on 2026-11-15 (local scratch notes, not committed) checked the prior
 | **F1** | Decoder self-improvement from feedback exists. Online risk control exists. **No BCI work found joins them**: a decoder that learns from user feedback while a stated error bound stays valid through each update | **High** |
 | **F2** | Faithfulness is tested only offline. **No run-time grounding check** of LLM text against the neural evidence, and **no hallucination-rate guarantee**, was found for brain-decoded text. No standard hallucination benchmark | **Medium-high** (high for the guarantee; low for "semantic decoding with LLMs") |
 | **F3** | No model found joins implant + EMG + MEG/EEG for text. **No transfer to a new modality** for text is reported | **High on paper, medium in practice** (fast trend, compute, NC data, a null result is likely for MEG/EEG) |
+
+### Verdicts of the literature check (P15-10, 2026-11-15)
+The focused check is in [novelty check 2026-11](novelty-check-2026-11.md). It read the full text of the closest papers. It changed two of the three gap statements above.
+
+| Pillar | Verdict | Closest works | Safe public wording |
+|---|---|---|---|
+| **F1** | Holds with narrower wording | CORP, Card 2024 (learn from use, no bound); [ACI](../sources/adaptive-conformal-inference.md) and [continual calibration](../sources/continual-calibration.md) (bound through model updates, not BCI) | "To our knowledge (literature check of 2026-11-15), no published BCI study updates its decoder from user feedback and reports a stated error bound — for example a long-run limit on the wrong-commit rate — that stays valid across those updates. We use known online conformal methods (Gibbs & Candès 2021) for the bound; what is new is applying them, with an update gate, to a self-improving BCI." |
+| **F2** | Holds with narrower wording | BIT-LLM, SemKey (offline faithfulness tests); Probabilistic Co-Control 2026 (calibration, no bound); [conformal gating](../sources/conformal-gating-mi-bci.md) (run-time conformal abstention for closed-set EEG commands) | "To our knowledge (literature check of 2026-11-15), no published brain-to-text system checks language-model output against the neural evidence at run time with a stated, distribution-free bound on the rate of unsupported (hallucinated) words that it commits. Earlier work tests faithfulness offline (noise or shuffled inputs) or bounds errors for closed-set BCI commands." |
+| **F3** | Part 1 holds; part 2 ("transfer to a new modality") **false as written** | [CORTEG](../sources/corteg-eeg-to-ecog.md) (EEG → ECoG / sEEG transfer, no text); NOBEL, BrainOmni (non-invasive unions, no held-out modality) | "To our knowledge (literature check of 2026-11-15), no published model is trained jointly on implanted, EMG and MEG/EEG recordings for text output, and no published study reports text decoding from a recording modality that the model did not see in training. Cross-modality transfer exists for other tasks (for example scalp EEG to ECoG, CORTEG 2026)." |
+
+Never say in public: "first conformal BCI", "first guarantee for an adaptive model", "first hallucination control for BCIs", "first cross-modality transfer".
 
 > **Our take:** F1 is the strongest lead. It is new as a composition, it needs no new hardware, it fits our CC0 data, and it builds directly on code that we already have (online re-calibration in [M2-16](m2-16-online-recal-result.md), [per-session risk control](per-session-risk-control.md), the [provenance ledger](../concepts/provenance-ledger.md)). The claim must be "first BCI application with a decoder-update gate", not "a new conformal theorem", unless we prove one. F2 extends the same guarantee engine to LLM output. F3 is the largest idea and the riskiest. We start it small, on one GPU, with strong controls.
 
