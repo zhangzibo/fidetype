@@ -3,180 +3,215 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fidetype live demo</title>
+<title>Fidetype replay demo</title>
 <!-- Fidetype live demo page (P14-06). Our own design, Apache-2.0. No external resources: it works offline. -->
 <style>
+/* Spacing scale: 4 / 8 / 16 / 24 / 32 / 48 px. Type sizes: 13 / 15 / 20 px (page title 26 px). */
 :root {
-  --bg: #f5f6f3; --surface: #ffffff; --surface-2: #f0f2ef; --ink: #1a1e22; --muted: #5b646d; --line: #dde1e3;
-  --accent: #0e7268; --accent-ink: #ffffff;
-  --commit: #17643a; --commit-bg: #e5f4ea; --offer: #8a5800; --offer-bg: #fff4d9; --offer-line: #d9a640;
-  --withhold: #5f6873; --withhold-bg: #eceff1; --wrong: #b42318; --wrong-bg: #fde8e6; --ok: #17643a;
-  --research: #9a3412; --research-bg: #ffedd5; --replay: #1d4ed8; --replay-bg: #e3ecff;
-  --shadow: 0 1px 2px rgba(20, 24, 28, .06), 0 4px 16px rgba(20, 24, 28, .05);
+  --bg: #f6f6f4; --surface: #ffffff; --ink: #1c1f23; --muted: #5d636b; --faint: #8a9098; --line: #e1e3e5;
+  --accent: #2f5fb3;
+  --typed: #1d6b3f; --suggested: #8a5a00; --held: #5f6670; --wrong: #b3261e;
   --mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Consolas, monospace;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1113; --surface: #161a1e; --surface-2: #1c2126; --ink: #e6e9eb; --muted: #9aa3ab; --line: #2a3137;
-    --accent: #36c2b2; --accent-ink: #062521;
-    --commit: #5ad78c; --commit-bg: rgba(90, 215, 140, .12); --offer: #f3c14d; --offer-bg: rgba(243, 193, 77, .10);
-    --offer-line: #b68a25; --withhold: #a0a8b0; --withhold-bg: rgba(160, 168, 176, .12); --wrong: #ff8a80;
-    --wrong-bg: rgba(255, 138, 128, .12); --ok: #5ad78c; --research: #fdba74; --research-bg: rgba(253, 186, 116, .12);
-    --replay: #93b4ff; --replay-bg: rgba(147, 180, 255, .12); --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    --bg: #121416; --surface: #1a1d20; --ink: #e7e9eb; --muted: #a2a8af; --faint: #7d848c; --line: #2c3136;
+    --accent: #8db1f0;
+    --typed: #6fcf97; --suggested: #e8b84a; --held: #a7aeb6; --wrong: #ff8f86;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e1113; --surface: #161a1e; --surface-2: #1c2126; --ink: #e6e9eb; --muted: #9aa3ab; --line: #2a3137;
-  --accent: #36c2b2; --accent-ink: #062521;
-  --commit: #5ad78c; --commit-bg: rgba(90, 215, 140, .12); --offer: #f3c14d; --offer-bg: rgba(243, 193, 77, .10);
-  --offer-line: #b68a25; --withhold: #a0a8b0; --withhold-bg: rgba(160, 168, 176, .12); --wrong: #ff8a80;
-  --wrong-bg: rgba(255, 138, 128, .12); --ok: #5ad78c; --research: #fdba74; --research-bg: rgba(253, 186, 116, .12);
-  --replay: #93b4ff; --replay-bg: rgba(147, 180, 255, .12); --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+  --bg: #121416; --surface: #1a1d20; --ink: #e7e9eb; --muted: #a2a8af; --faint: #7d848c; --line: #2c3136;
+  --accent: #8db1f0;
+  --typed: #6fcf97; --suggested: #e8b84a; --held: #a7aeb6; --wrong: #ff8f86;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
-.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
-header.top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
-.topbar { display: flex; align-items: center; gap: 12px; min-height: 56px; flex-wrap: wrap; padding: 6px 0; }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; font-size: 17px; letter-spacing: -.01em; }
-.brand small { font-weight: 500; color: var(--muted); font-size: 14px; }
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 13px;
-  font-weight: 600; white-space: nowrap; }
-.badge.replay { color: var(--replay); background: var(--replay-bg); }
-.badge.synthetic { color: var(--offer); background: var(--offer-bg); }
-.badge .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.spacer { flex: 1; }
-.conn { font-size: 13px; color: var(--muted); }
-.conn.ok::before { content: "●"; color: var(--ok); margin-right: 5px; }
-.conn.bad::before { content: "●"; color: var(--wrong); margin-right: 5px; }
-button.theme { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px;
-  padding: 5px 10px; font: inherit; font-size: 13px; cursor: pointer; }
-.intro { padding: 18px 0 6px; display: grid; gap: 10px; }
-.intro p { margin: 0; max-width: 860px; color: var(--muted); }
-.intro strong { color: var(--ink); }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 14px; }
-.legend > span { display: inline-flex; gap: 8px; align-items: center; }
-.lane { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
-  margin: 16px 0; overflow: hidden; }
-.lane-head { padding: 14px 18px 12px; border-bottom: 1px solid var(--line); display: grid; gap: 6px; }
-.lane-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
-.lane-title h2 { margin: 0; font-size: 18px; letter-spacing: -.01em; }
-.lane-title .sub { color: var(--muted); font-size: 14px; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { font-size: 12.5px; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--muted);
-  border: 1px solid var(--line); }
-.chip a { color: inherit; }
-.chip.licence { color: var(--ink); }
-.chip.research { color: var(--research); background: var(--research-bg); border-color: transparent; font-weight: 600; }
-.chip.replaychip { color: var(--replay); background: var(--replay-bg); border-color: transparent; font-weight: 600; }
-.chip.synthchip { color: var(--offer); background: var(--offer-bg); border-color: transparent; font-weight: 600; }
-.lane-body { display: grid; grid-template-columns: minmax(0, 1fr) 330px; }
-.doc-col { padding: 16px 18px; border-right: 1px solid var(--line); display: grid; gap: 14px; align-content: start; min-width: 0; }
-.doc { min-height: 168px; max-height: 300px; overflow-y: auto; font-size: 19px; line-height: 2.05; padding: 4px 2px;
-  overflow-wrap: anywhere; }
-.doc .empty { color: var(--muted); font-size: 15px; }
-.seg { border-radius: 6px; padding: 2px 6px; margin-right: 6px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.seg.commit { color: var(--ink); font-weight: 560; background: var(--commit-bg); box-shadow: inset 0 -2px 0 var(--commit); }
-.seg.commit.wrong { background: var(--wrong-bg); box-shadow: inset 0 -2px 0 var(--wrong); }
-.seg.offer { color: var(--offer); background: var(--offer-bg); outline: 1.5px dashed var(--offer-line); outline-offset: -1.5px;
-  font-style: italic; }
-.seg.withhold { white-space: nowrap; color: var(--withhold); font-size: 13px; font-family: var(--mono); background: repeating-linear-gradient(
-  135deg, var(--withhold-bg), var(--withhold-bg) 6px, transparent 6px, transparent 11px); border: 1px solid var(--line);
-  vertical-align: 2px; }
-.seg .tag { font-style: normal; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-  margin-right: 6px; opacity: .85; }
-.seg .mark { font-size: 11px; font-weight: 700; margin-left: 6px; font-style: normal; vertical-align: 1px; }
-.seg .mark.bad { color: var(--wrong); }
-.seg .mark.good { color: var(--ok); }
-.seg.fresh { animation: pop .5s ease-out; }
-@keyframes pop { from { transform: translateY(4px); opacity: 0; } to { transform: none; opacity: 1; } }
-.now { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
-.now-top { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
-.now-top b { color: var(--ink); font-weight: 600; }
-.bar { height: 4px; background: var(--line); border-radius: 4px; overflow: hidden; }
-.bar > i { display: block; height: 100%; width: 0; background: var(--accent); }
-.preview { font-family: var(--mono); font-size: 14.5px; color: var(--muted); min-height: 1.6em; overflow-wrap: anywhere; }
-.preview::after { content: "▍"; color: var(--accent); animation: blink 1s steps(1) infinite; margin-left: 1px; }
-.preview.done::after { content: ""; }
-@keyframes blink { 50% { opacity: 0; } }
-.intended { font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
-.intended b { color: var(--ink); font-weight: 560; }
-.stats-col { padding: 16px; display: grid; gap: 12px; align-content: start; }
-.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.tile { border-radius: 10px; padding: 8px 10px; border: 1px solid var(--line); }
-.tile .k { font-size: 12px; color: var(--muted); }
-.tile .v { font-size: 24px; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2; }
-.tile.c .v { color: var(--commit); } .tile.o .v { color: var(--offer); } .tile.w .v { color: var(--withhold); }
-.kv { font-size: 13.5px; display: grid; gap: 4px; }
-.kv .row { display: flex; justify-content: space-between; gap: 10px; }
-.kv .row span:first-child { color: var(--muted); }
-.kv .row span:last-child { font-variant-numeric: tabular-nums; text-align: right; }
-.honest { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; display: grid; gap: 6px; }
-.honest h3 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
-.honest .big { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; }
-.honest .warn { color: var(--wrong); }
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word; }
+a { color: var(--accent); }
+h1, h2, h3, p { margin: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 640px) { .wrap { padding: 0 32px; } }
+.num { font-variant-numeric: tabular-nums; }
+.small { font-size: 13px; }
 .muted { color: var(--muted); }
-.feed-wrap { border-top: 1px solid var(--line); overflow-x: auto; }
-table.feed { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-.feed th, .feed td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
-.feed th { font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
-  background: var(--surface-2); }
-.feed td.text { white-space: normal; min-width: 220px; overflow-wrap: anywhere; }
-.feed td.num, .feed th.num { font-variant-numeric: tabular-nums; text-align: right; }
-.act { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 1px 7px; border-radius: 5px; letter-spacing: .03em; }
-.act.commit { color: var(--commit); background: var(--commit-bg); }
-.act.offer { color: var(--offer); background: var(--offer-bg); }
-.act.withhold { color: var(--withhold); background: var(--withhold-bg); }
-.res-good { color: var(--ok); font-weight: 600; } .res-bad { color: var(--wrong); font-weight: 600; } .res-n { color: var(--muted); }
-details.notes { padding: 10px 18px 14px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
-details.notes summary { cursor: pointer; color: var(--ink); font-weight: 600; }
-details.notes ul { margin: 6px 0 0; padding-left: 18px; }
-.alert { margin: 12px 0; padding: 10px 14px; border-radius: 10px; background: var(--wrong-bg); color: var(--wrong); font-size: 14px; }
-.unavail { margin: 12px 0; padding: 10px 14px; border-radius: 10px; border: 1px dashed var(--line); color: var(--muted); font-size: 14px; }
-footer { color: var(--muted); font-size: 13px; padding: 10px 0 36px; display: grid; gap: 4px; }
-@media (max-width: 860px) {
-  .lane-body { grid-template-columns: minmax(0, 1fr); }
-  .doc-col { border-right: 0; border-bottom: 1px solid var(--line); }
-  .doc { font-size: 17px; }
+
+/* top line */
+.topline { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.wordmark { font-weight: 650; letter-spacing: -.01em; }
+.wordmark span { font-weight: 400; color: var(--muted); }
+.topline .grow { flex: 1; }
+.conn { font-size: 13px; color: var(--muted); }
+.conn.bad { color: var(--wrong); }
+button.theme { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 6px;
+  padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+
+/* story */
+.story { padding: 32px 0 24px; display: grid; gap: 16px; }
+.story h1 { font-size: 26px; line-height: 1.25; letter-spacing: -.015em; font-weight: 650; }
+.story .lead { display: grid; gap: 4px; max-width: 72ch; color: var(--muted); }
+.story .lead strong { color: var(--ink); font-weight: 600; }
+.legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 8px 0 0; padding: 16px 0 0;
+  border-top: 1px solid var(--line); }
+.legend div { display: grid; gap: 0; align-content: start; }
+.legend dt { font-weight: 600; }
+.legend dt small { font-weight: 400; color: var(--faint); font-size: 13px; margin-left: 4px; }
+.legend dd { margin: 0; color: var(--muted); font-size: 13px; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: 0; }
+.sw.typed { background: var(--typed); } .sw.suggested { background: var(--suggested); }
+.sw.held { background: var(--held); } .sw.wrong { background: var(--wrong); }
+@media (max-width: 639px) { .legend { grid-template-columns: minmax(0, 1fr); gap: 8px; } .story h1 { font-size: 22px; } }
+
+/* track */
+.track { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; margin: 0 0 32px; min-width: 0; }
+.track-head { padding: 24px 24px 16px; display: grid; gap: 4px; border-bottom: 1px solid var(--line); }
+.track-head h2 { font-size: 20px; line-height: 1.3; font-weight: 650; letter-spacing: -.01em; }
+.track-head .about { color: var(--muted); max-width: 80ch; }
+.track-head .facts { font-size: 13px; color: var(--faint); }
+.track-head .facts a { color: inherit; }
+.track-body { display: grid; grid-template-columns: minmax(0, 1fr) 280px; grid-template-areas: "main score" "hist score";
+  gap: 24px 32px; padding: 24px; }
+.main-col { grid-area: main; } .score { grid-area: score; } .history { grid-area: hist; }
+.main-col { display: grid; gap: 24px; align-content: start; min-width: 0; }
+.eyebrow { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.eyebrow b { color: var(--ink); font-weight: 600; }
+
+/* current sentence */
+.focus { border-left: 3px solid var(--line); padding: 0 0 0 16px; display: grid; gap: 16px; min-width: 0; }
+.focus.typed { border-left-color: var(--typed); } .focus.suggested { border-left-color: var(--suggested); }
+.focus.held { border-left-color: var(--held); } .focus.wrong { border-left-color: var(--wrong); }
+.frow { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: baseline; }
+.frow > .lbl { font-size: 13px; color: var(--muted); }
+.frow > .val { min-width: 0; overflow-wrap: anywhere; }
+.guess { font-size: 20px; line-height: 1.4; font-weight: 500; }
+.guess.none { color: var(--faint); font-style: italic; font-weight: 400; font-size: 15px; }
+.decision { font-weight: 600; }
+.decision.typed { color: var(--typed); } .decision.suggested { color: var(--suggested); }
+.decision.held { color: var(--held); }
+.decision .eng { font-weight: 400; color: var(--faint); font-size: 13px; margin-left: 8px; }
+.explain { color: var(--muted); font-size: 13px; }
+.result { display: block; font-size: 13px; font-weight: 600; margin-top: 4px; }
+.ok { color: var(--typed); } .bad { color: var(--wrong); } .neutral { color: var(--muted); font-weight: 400; }
+.waiting { color: var(--faint); }
+
+/* now decoding */
+.nowrow { display: grid; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line); min-width: 0; }
+.bar { height: 2px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); }
+.raw { font-family: var(--mono); font-size: 13px; color: var(--muted); min-height: 3.2em; overflow-wrap: anywhere; }
+.raw:empty::before { content: "\2026"; color: var(--faint); }
+
+/* score */
+.score { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.score h3 { font-size: 13px; font-weight: 600; color: var(--muted); }
+table.tally { width: 100%; border-collapse: collapse; }
+.tally td { padding: 4px 0; border-bottom: 1px solid var(--line); }
+.tally tr:last-child td { border-bottom: 0; }
+.tally td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.guarantee { display: grid; gap: 4px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.guarantee .big { font-size: 20px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.3; }
+.guarantee .verdict { color: var(--ink); font-weight: 600; }
+.guarantee .verdict.bad { color: var(--wrong); }
+
+/* history */
+.history { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; min-width: 0; align-content: start; }
+.history h3 { font-size: 13px; font-weight: 600; color: var(--muted); }
+.hlist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.hlist:not(.open) li:nth-child(n+6) { display: none; }
+.hlist.open { max-height: 480px; overflow-y: auto; border-bottom: 1px solid var(--line); }
+button.more-btn { justify-self: start; border: 0; background: none; color: var(--accent); font: inherit; font-size: 13px;
+  padding: 4px 0; cursor: pointer; }
+button.more-btn:hover { text-decoration: underline; }
+.hlist li { display: grid; grid-template-columns: 48px 104px minmax(0, 1fr) 128px; gap: 16px; padding: 8px 0;
+  border-bottom: 1px solid var(--line); align-items: baseline; }
+.hlist li:last-child { border-bottom: 0; }
+.hlist .n { color: var(--faint); font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; }
+.hlist .d { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.hlist .d.typed { color: var(--typed); } .hlist .d.suggested { color: var(--suggested); } .hlist .d.held { color: var(--held); }
+.hlist .t { min-width: 0; overflow-wrap: anywhere; }
+.hlist .t .i { display: block; font-size: 13px; color: var(--faint); }
+.hlist .t .none { color: var(--faint); font-style: italic; }
+.hlist .r { font-size: 13px; text-align: right; }
+.hlist .empty { display: block; color: var(--faint); font-size: 13px; padding: 8px 0; }
+
+/* details */
+details.more { border-top: 1px solid var(--line); }
+details.more > summary { cursor: pointer; padding: 16px 24px; font-size: 13px; color: var(--muted); font-weight: 600; }
+details.more > summary:hover { color: var(--ink); }
+.more-body { padding: 0 24px 24px; display: grid; gap: 24px; min-width: 0; }
+.more-body h4 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+table.kv, table.eng { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.eng { width: auto; min-width: min(100%, 480px); }
+table.kv { table-layout: fixed; }
+.more-body > div { min-width: 0; }
+.kv th, .kv td, .eng th, .eng td { padding: 4px 16px 4px 0; border-bottom: 1px solid var(--line); text-align: left;
+  vertical-align: baseline; }
+.kv th { width: 200px; font-weight: 400; color: var(--muted); }
+.kv td { overflow-wrap: anywhere; }
+.eng th { font-weight: 400; color: var(--muted); white-space: nowrap; }
+.eng td.x, .eng th.x { padding-left: 24px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.eng td.mono { font-family: var(--mono); }
+.tablewrap { overflow-x: auto; }
+.more-body ul { margin: 0; padding-left: 16px; font-size: 13px; color: var(--muted); }
+
+.alert { margin: 0 0 16px; padding: 8px 16px; border-left: 3px solid var(--wrong); color: var(--wrong); font-size: 13px;
+  background: var(--surface); }
+.unavail { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+footer { color: var(--faint); font-size: 13px; padding: 0 0 48px; display: grid; gap: 4px; }
+
+@media (max-width: 879px) {
+  .track-body { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "score" "hist"; gap: 24px; }
+  .score { border-top: 1px solid var(--line); padding-top: 16px; }
 }
-@media (prefers-reduced-motion: reduce) { .seg.fresh { animation: none; } .preview::after { animation: none; } }
+@media (max-width: 639px) {
+  .track-head, .track-body { padding-left: 16px; padding-right: 16px; }
+  details.more > summary { padding: 16px; }
+  .more-body { padding: 0 16px 16px; }
+  .frow { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .hlist li { grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: "n d r" ". t t"; gap: 0 8px; }
+  .hlist .n { grid-area: n; } .hlist .d { grid-area: d; } .hlist .r { grid-area: r; } .hlist .t { grid-area: t; }
+  .kv th { width: 40%; }
+  .eng th, .eng td { padding-right: 8px; } .eng td.x, .eng th.x { padding-left: 8px; } .eng th { white-space: normal; }
+}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap topbar">
-  <div class="brand">
-    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--accent)"/><path d="M6 15.5c1.4 0 1.6-5 3-5s1.6 7 3 7 1.6-9 3-9" fill="none" stroke="var(--accent-ink)" stroke-width="1.8" stroke-linecap="round"/><rect x="18.2" y="7" width="2" height="12" rx="1" fill="var(--accent-ink)"/></svg>
-    Fidetype <small>live demo</small>
+<div class="wrap">
+  <div class="topline">
+    <div class="wordmark">Fidetype <span>replay demo</span></div>
+    <div class="grow"></div>
+    <span id="conn" class="conn">Connecting</span>
+    <button class="theme" id="themeBtn" type="button" aria-label="Switch between light and dark theme">Dark / light</button>
   </div>
-  <span id="modeBadge" class="badge replay"><span class="dot"></span><span id="modeText">Replay of recorded data</span></span>
-  <span class="spacer"></span>
-  <span id="conn" class="conn">connecting</span>
-  <button class="theme" id="themeBtn" type="button" aria-label="Switch light or dark theme">Theme</button>
-</div></header>
-<main class="wrap">
-  <section class="intro">
-    <p id="introText"><strong>Not live decoding.</strong> This page replays decoder output that was recorded earlier, at the speed it was recorded. For each sentence the Fidetype trust layer decides: <strong>commit</strong> (the text is typed), <strong>offer</strong> (the text is only a suggestion for the user to accept), or <strong>withhold</strong> (nothing is typed). The intended text is shown only to score the decisions.</p>
-    <div class="legend" aria-label="Legend">
-      <span><span class="seg commit">committed text</span></span>
-      <span><span class="seg commit wrong">wrong commit<span class="mark bad">✗</span></span></span>
-      <span><span class="seg offer"><span class="tag">offer</span>suggested text</span></span>
-      <span><span class="seg withhold">withheld · score</span></span>
+
+  <section class="story" aria-labelledby="pageTitle">
+    <h1 id="pageTitle">A decoder guesses the text. Fidetype decides what gets typed.</h1>
+    <div class="lead">
+      <p id="lead1">We replay signals recorded from two people: one tries to speak with a brain implant, one types while wristbands read the muscle signals (EMG).</p>
+      <p>For each sentence, Fidetype types the guess, suggests it for the user to accept, or holds it back. Its promise: it almost never types wrong text without asking.</p>
+      <p id="lead3">Today the decoders are weak, so most guesses are only suggested. <strong id="modeText">Replay of recorded data, not live decoding.</strong></p>
     </div>
+    <dl class="legend" aria-label="The three decisions">
+      <div><dt><span class="sw typed"></span>Typed<small>commit</small></dt><dd>The text goes in directly.</dd></div>
+      <div><dt><span class="sw suggested"></span>Suggested<small>offer</small></dt><dd>Shown as a suggestion. The user accepts or rejects it.</dd></div>
+      <div><dt><span class="sw held"></span>Held back<small>withhold</small></dt><dd>Nothing is typed.</dd></div>
+    </dl>
   </section>
+
   <div id="alerts"></div>
-  <div id="lanes"></div>
   <div id="unavailable"></div>
+  <main id="lanes"></main>
+
   <footer>
     <div>Fidetype is research software (Apache-2.0). It is not a medical device. The page and its data stay on this computer (server on 127.0.0.1).</div>
-    <div id="footVersion"></div>
+    <div id="footVersion" class="num"></div>
   </footer>
-</main>
+</div>
 <script>
 "use strict";
 (function () {
@@ -198,7 +233,22 @@ footer { color: var(--muted); font-size: 13px; padding: 10px 0 36px; display: gr
   var state = null;
   var lastSeq = 0;
   var liveFrom = Infinity;  // messages with ws_seq <= this were history at connect time
-  var MAX_SEGS = 40, MAX_ROWS = 8;
+  var MAX_ROWS = 60, MAX_ENG = 10;
+
+  // Plain words first, the engineering term second.
+  var PLAIN = { commit: "Typed", offer: "Suggested", withhold: "Held back" };
+  var CLS = { commit: "typed", offer: "suggested", withhold: "held" };
+  var EXPLAIN = { commit: "The text was typed.", offer: "Shown as a suggestion. The user accepts or rejects it.",
+    withhold: "Nothing was typed." };
+  // outcome -> [css class, short result, longer result]
+  var RESULT = {
+    "commit-correct": ["ok", "Correct", "Correct: the typed text matches the intended sentence."],
+    "commit-wrong": ["bad", "Wrong", "Wrong: the typed text does not match the intended sentence."],
+    "offer-hit": ["ok", "Matches", "The suggestion matches the intended sentence."],
+    "offer-miss": ["neutral", "Does not match", "The suggestion does not match. Nothing wrong was typed."],
+    "withhold": ["neutral", "Nothing typed", "Nothing was typed."],
+    "unknown": ["neutral", "Not scored", "No intended text is known, so this is not scored."]
+  };
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
@@ -206,122 +256,180 @@ footer { color: var(--muted); font-size: 13px; padding: 10px 0 36px; display: gr
     if (text !== undefined && text !== null) e.textContent = text;
     return e;
   }
-  function pct(x, nd) { return x === null || x === undefined ? "–" : (100 * x).toFixed(nd === undefined ? 2 : nd) + " %"; }
-  function fmt(x, nd) { return x === null || x === undefined ? "–" : Number(x).toFixed(nd); }
+  function has(x) { return x !== null && x !== undefined; }
+  function pct(x, nd) { return has(x) ? (100 * x).toFixed(nd === undefined ? 2 : nd) + " %" : "–"; }
+  function fmt(x, nd) { return has(x) ? Number(x).toFixed(nd) : "–"; }
   function cat(a) { return a === "COMMIT" ? "commit" : (a === "OFFER" || a === "OFFER_WORDS") ? "offer" : "withhold"; }
-  function catLabel(c) { return c === "commit" ? "COMMIT" : c === "offer" ? "OFFER" : "WITHHOLD"; }
+  function engName(a) { return String(a || "").toLowerCase().replace("_", " "); }
+  function frow(parent, label) {
+    var r = el("div", "frow"); r.appendChild(el("div", "lbl", label));
+    var v = el("div", "val"); r.appendChild(v); parent.appendChild(r); return v;
+  }
 
   function buildLane(t) {
-    var L = { id: t.id, info: t, segs: 0, rows: 0 };
-    var art = el("article", "lane");
+    var L = { id: t.id, info: t, rows: 0, eng: 0, current: null };
+    var art = el("section", "track");
     art.id = "lane-" + t.id;
-    var head = el("div", "lane-head");
-    var title = el("div", "lane-title");
-    title.appendChild(el("h2", null, t.title));
-    if (t.subtitle) title.appendChild(el("span", "sub", t.subtitle));
-    head.appendChild(title);
-    var chips = el("div", "chips");
-    chips.appendChild(el("span", t.replay ? "chip replaychip" : "chip synthchip",
-      t.replay ? "Replay of recorded data" : "Synthetic data, not a recording"));
-    var ds = t.dataset || {};
-    if (ds.research_only) chips.appendChild(el("span", "chip research", "Research use only"));
-    var dchip = el("span", "chip");
-    if (ds.url) { var a = el("a", null, ds.name); a.href = ds.url; a.target = "_blank"; a.rel = "noopener"; dchip.appendChild(a); }
-    else dchip.textContent = ds.name || "";
-    chips.appendChild(dchip);
-    chips.appendChild(el("span", "chip licence", "Licence: " + (ds.licence || "?")));
-    if (ds.modality) chips.appendChild(el("span", "chip", ds.modality));
-    L.speedChip = el("span", "chip", "");
-    chips.appendChild(L.speedChip);
-    head.appendChild(chips);
+    art.setAttribute("aria-label", t.title);
+
+    var head = el("header", "track-head");
+    head.appendChild(el("h2", null, t.title));
+    if (t.subtitle) head.appendChild(el("p", "about", t.subtitle));
+    L.facts = el("p", "facts");
+    head.appendChild(L.facts);
     art.appendChild(head);
+    L.err = el("div", "alert"); L.err.hidden = true; L.err.setAttribute("role", "alert");
+    art.appendChild(L.err);
 
-    var body = el("div", "lane-body");
-    var dc = el("div", "doc-col");
-    L.doc = el("div", "doc");
-    L.doc.setAttribute("aria-live", "polite");
-    L.doc.appendChild(el("span", "empty", "Waiting for the first decision…"));
-    dc.appendChild(L.doc);
-    var now = el("div", "now");
-    var nt = el("div", "now-top");
+    var body = el("div", "track-body");
+    var main = el("div", "main-col");
+
+    // the latest decided sentence, shown large
+    var cur = el("div");
+    cur.style.display = "grid"; cur.style.gap = "8px";
+    L.curHead = el("div", "eyebrow");
+    L.curTitle = el("span", null, "Latest sentence");
+    L.curHead.appendChild(L.curTitle);
+    cur.appendChild(L.curHead);
+    L.focus = el("div", "focus");
+    L.focus.setAttribute("aria-live", "polite");
+    L.vGuess = frow(L.focus, "Decoder’s guess");
+    L.vGuess.appendChild(el("span", "waiting", "Waiting for the first sentence…"));
+    L.vDecision = frow(L.focus, "Fidetype");
+    L.vIntended = frow(L.focus, "Intended");
+    cur.appendChild(L.focus);
+    main.appendChild(cur);
+
+    // the sentence in progress, secondary
+    var now = el("div", "nowrow");
+    L.nowHead = el("div", "eyebrow");
     L.nowLabel = el("span", null, "Waiting for data");
-    L.nowRight = el("span", null, "");
-    nt.appendChild(L.nowLabel); nt.appendChild(L.nowRight);
-    now.appendChild(nt);
+    L.nowRight = el("span", "num", "");
+    L.nowHead.appendChild(L.nowLabel); L.nowHead.appendChild(L.nowRight);
+    now.appendChild(L.nowHead);
     var bar = el("div", "bar"); L.bar = el("i"); bar.appendChild(L.bar); now.appendChild(bar);
-    L.preview = el("div", "preview", "");
-    now.appendChild(L.preview);
-    L.intended = el("div", "intended", "");
-    now.appendChild(L.intended);
-    dc.appendChild(now);
-    body.appendChild(dc);
+    L.raw = el("div", "raw", "");
+    now.appendChild(L.raw);
+    main.appendChild(now);
+    body.appendChild(main);
 
-    var sc = el("aside", "stats-col");
-    var tiles = el("div", "tiles");
-    function tile(cls, k) { var d = el("div", "tile " + cls); d.appendChild(el("div", "k", k)); var v = el("div", "v", "0"); d.appendChild(v); tiles.appendChild(d); return v; }
-    L.tC = tile("c", "committed"); L.tO = tile("o", "offered"); L.tW = tile("w", "withheld");
-    sc.appendChild(tiles);
-    var kv = el("div", "kv");
-    function row(k) { var r = el("div", "row"); r.appendChild(el("span", null, k)); var v = el("span", null, "–"); r.appendChild(v); kv.appendChild(r); return v; }
-    L.kWrong = row("Wrong commits, this replay");
-    L.kLat = row("Last decision time");
-    L.kLatMed = row("Median decision time");
-    sc.appendChild(kv);
-    L.honest = el("div", "honest");
-    L.honest.appendChild(el("h3", null, "Whole replay set"));
-    L.honestBody = el("div", "muted", "Computing the numbers over all utterances…");
-    L.honest.appendChild(L.honestBody);
-    sc.appendChild(L.honest);
+    // running score
+    var sc = el("aside", "score");
+    sc.appendChild(el("h3", null, "This replay so far"));
+    var tb = el("table", "tally"); var tbody = el("tbody"); tb.appendChild(tbody);
+    function trow(sw, label) {
+      var tr = el("tr"); var a = el("td"); a.appendChild(el("span", "sw " + sw)); a.appendChild(document.createTextNode(label));
+      tr.appendChild(a); var v = el("td", null, "0"); tr.appendChild(v); tbody.appendChild(tr); return v;
+    }
+    L.sOk = trow("typed", "Typed correctly");
+    L.sBad = trow("wrong", "Typed wrong");
+    L.sSug = trow("suggested", "Suggested");
+    L.sHeld = trow("held", "Held back");
+    sc.appendChild(tb);
+    L.guar = el("div", "guarantee");
+    sc.appendChild(L.guar);
     body.appendChild(sc);
+    // history
+    var hist = el("div", "history");
+    hist.appendChild(el("h3", null, "Earlier sentences, newest first"));
+    L.hlist = el("ol", "hlist");
+    L.hlist.appendChild(el("li", "empty-row")).appendChild(el("span", "empty", "No sentences yet."));
+    L.hlist.firstChild.style.display = "block";
+    hist.appendChild(L.hlist);
+    L.moreBtn = el("button", "more-btn", ""); L.moreBtn.type = "button"; L.moreBtn.hidden = true;
+    L.moreBtn.addEventListener("click", function () { L.hlist.classList.toggle("open"); L.hlist.scrollTop = 0; updateMore(L); });
+    hist.appendChild(L.moreBtn);
+    body.appendChild(hist);
     art.appendChild(body);
 
-    var fw = el("div", "feed-wrap");
-    var tbl = el("table", "feed");
-    var thead = el("thead"); var hr = el("tr");
-    [["#", "num"], ["Decision"], ["Text shown"], ["p(top-1)", "num"], ["Guard risk", "num"], ["Time", "num"], ["Against intended"]].forEach(function (h) { hr.appendChild(el("th", h[1] || null, h[0])); });
-    thead.appendChild(hr); tbl.appendChild(thead);
-    L.tbody = el("tbody"); tbl.appendChild(L.tbody);
-    fw.appendChild(tbl);
-    art.appendChild(fw);
-
-    var det = el("details", "notes");
-    det.appendChild(el("summary", null, "Decoder, trust configuration and notes"));
-    var ul = el("ul");
-    if (t.decoder) ul.appendChild(el("li", null, "Decoder: " + t.decoder));
-    if (t.trust) ul.appendChild(el("li", null, "Trust layer: " + t.trust));
-    (t.notes || []).forEach(function (n) { ul.appendChild(el("li", null, n)); });
-    det.appendChild(ul);
+    // engineering details
+    var det = el("details", "more");
+    det.appendChild(el("summary", null, "Details for engineers"));
+    var mb = el("div", "more-body");
+    var s1 = el("div"); s1.appendChild(el("h4", null, "Data, decoder and trust configuration"));
+    var kv = el("table", "kv"); L.kv = el("tbody"); kv.appendChild(L.kv);
+    var w1 = el("div", "tablewrap"); w1.appendChild(kv); s1.appendChild(w1); mb.appendChild(s1);
+    var s2 = el("div"); s2.appendChild(el("h4", null, "Last decisions (trust_decision events)"));
+    var et = el("table", "eng"); var eh = el("thead"); var ehr = el("tr");
+    [["#", "x"], ["Action"], ["p(top-1)", "x"], ["Guard risk", "x"], ["Latency", "x"]].forEach(function (h) {
+      ehr.appendChild(el("th", h[1] || null, h[0])); });
+    eh.appendChild(ehr); et.appendChild(eh); L.eng = el("tbody"); et.appendChild(L.eng);
+    var w2 = el("div", "tablewrap"); w2.appendChild(et); s2.appendChild(w2); mb.appendChild(s2);
+    if (t.notes && t.notes.length) {
+      var s3 = el("div"); s3.appendChild(el("h4", null, "Notes"));
+      var ul = el("ul"); t.notes.forEach(function (n) { ul.appendChild(el("li", null, n)); });
+      s3.appendChild(ul); mb.appendChild(s3);
+    }
+    det.appendChild(mb);
     art.appendChild(det);
-    L.err = el("div", "alert"); L.err.hidden = true; art.insertBefore(L.err, body);
+
     document.getElementById("lanes").appendChild(art);
     lanes[t.id] = L;
+    renderFacts(L);
+    renderKv(L);
     return L;
   }
 
-  function renderSummary(L, s) {
-    var b = L.honestBody;
-    b.className = ""; b.textContent = "";
-    if (!s) { b.className = "muted"; b.textContent = "Computing the numbers over all utterances…"; return; }
-    if (s.error) { b.className = "warn"; b.textContent = "Could not compute: " + s.error; return; }
-    if (s.wrong_commit_rate === null || s.wrong_commit_rate === undefined || (s.unknown && s.unknown === s.n - s.withhold)) {
-      b.appendChild(el("div", "muted", s.note || "No ground truth: the wrong-commit rate is unknown."));
-    } else {
-      b.appendChild(el("div", "muted", "Wrong-commit rate (wrong commits / all " + s.n + ")"));
-      var big = el("div", "big", pct(s.wrong_commit_rate) + "  (" + s.wrong_commit + " of " + s.n + ")");
-      b.appendChild(big);
-      var ci = s.wrong_commit_cp95 || [];
-      if (ci[0] !== null && ci[0] !== undefined) b.appendChild(el("div", "muted", "95 % interval " + pct(ci[0]) + " to " + pct(ci[1]) + (s.alpha ? " · target alpha " + pct(s.alpha, 0) : "")));
-      var commits = el("div", null, "Commits: " + s.commit + " of " + s.n + " (" + pct(s.n ? s.commit / s.n : null, 1) + ").");
-      b.appendChild(commits);
-      if (s.commit) {
-        var w = el("div", s.error_among_commits > 0.2 ? "warn" : null, "Wrong among commits: " + s.wrong_commit + " of " + s.commit + " (" + pct(s.error_among_commits, 0) + ").");
-        b.appendChild(w);
-      }
-      b.appendChild(el("div", null, "Offers that contain the intended text: " + s.offer_hit + " of " + s.offer + "."));
-      if (s.always_commit_wrong !== undefined) b.appendChild(el("div", null, "Without the trust layer (type every top-1 text): " + s.always_commit_wrong + " of " + s.n + " wrong (" + pct(s.always_commit_wrong_rate, 1) + ")."));
+  function renderFacts(L) {
+    var t = L.info, ds = t.dataset || {};
+    var f = L.facts; f.textContent = "";
+    var parts = [t.replay ? "Replay of recorded data" : "Synthetic data, not a recording"];
+    if (ds.research_only) parts.push("Research use only");
+    parts.push("Licence " + (ds.licence || "unknown"));
+    f.appendChild(document.createTextNode(parts.join(" · ") + " · "));
+    if (ds.url) { var a = el("a", null, ds.name); a.href = ds.url; a.target = "_blank"; a.rel = "noopener"; f.appendChild(a); }
+    else f.appendChild(document.createTextNode(ds.name || ""));
+  }
+
+  function renderKv(L) {
+    var t = L.info, ds = t.dataset || {}, s = t.summary || {};
+    var rows = [
+      ["Dataset", ds.name || "–"], ["Licence", (ds.licence || "–") + (ds.research_only ? " (research use only)" : "")],
+      ["Signal", ds.modality || "–"], ["Decoder", t.decoder || "–"], ["Trust configuration", t.trust || "–"],
+      ["Config id", s.config_ids && s.config_ids.length ? s.config_ids.join(", ") : "–"],
+      ["Replay speed", state ? (state.speed === 1 ? "real time" : state.speed + "× real time") : "–"],
+      ["Sentences in the set", has(t.n) ? String(t.n) : "–"],
+      ["Median decision time", has(s.latency_ms_median) ? fmt(s.latency_ms_median, 0) + " ms" : "–"]
+    ];
+    if (has(s.commit) && s.n) {
+      rows.push(["Commits, whole set", s.commit + " of " + s.n + " (" + pct(s.commit / s.n, 1) + ")"]);
+      if (s.commit) rows.push(["Wrong among commits", s.wrong_commit + " of " + s.commit + " (" + pct(s.error_among_commits, 0) + ")"]);
+      rows.push(["Offers with the intended text", s.offer_hit + " of " + s.offer]);
     }
-    if (s.scope) b.appendChild(el("div", "muted", "Scope: " + s.scope + (s.config_ids && s.config_ids.length ? " · config " + s.config_ids.join(", ") : "")));
-    if (s.latency_ms_median !== null && s.latency_ms_median !== undefined) L.kLatMed.textContent = fmt(s.latency_ms_median, 0) + " ms";
+    if (s.scope) rows.push(["Scope of the numbers", s.scope]);
+    L.kv.textContent = "";
+    rows.forEach(function (r) {
+      var tr = el("tr"); var th = el("th", null, r[0]); th.scope = "row"; tr.appendChild(th);
+      tr.appendChild(el("td", null, r[1])); L.kv.appendChild(tr);
+    });
+  }
+
+  function renderGuarantee(L, s) {
+    var g = L.guar; g.textContent = "";
+    var n = has(s && s.n) ? s.n : L.info.n;
+    g.appendChild(el("h3", null, "Guarantee" + (n ? ", all " + n + " sentences" : "")));
+    if (!s) { g.appendChild(el("div", null, "Computing the numbers over the whole set…")); return; }
+    if (s.error) { g.appendChild(el("div", "bad", "Could not compute: " + s.error)); return; }
+    if (!has(s.wrong_commit_rate) || (s.unknown && s.unknown === s.n - s.withhold)) {
+      g.appendChild(el("div", null, s.note || "No intended text is known, so the wrong-text rate is unknown."));
+      return;
+    }
+    var big = el("div");
+    big.appendChild(el("span", "big", pct(s.wrong_commit_rate)));
+    g.appendChild(big);
+    g.appendChild(el("div", null, "of sentences typed wrong (" + s.wrong_commit + " of " + s.n + ")"));
+    var ci = s.wrong_commit_cp95 || [];
+    if (has(ci[0])) g.appendChild(el("div", "num", "95 % interval: " + pct(ci[0]) + " to " + pct(ci[1])));
+    if (has(s.alpha)) {
+      g.appendChild(el("div", null, "Target: at most " + pct(s.alpha, 0)));
+      var v;
+      if (has(ci[1]) && ci[1] <= s.alpha) v = el("div", "verdict", "Met: the whole interval is below the target.");
+      else if (s.wrong_commit_rate <= s.alpha) v = el("div", "verdict", "Rate below the target; the interval reaches above it.");
+      else v = el("div", "verdict bad", "Not met: the rate is above the target.");
+      g.appendChild(v);
+    }
+    if (has(s.always_commit_wrong)) g.appendChild(el("div", null, "Typing every guess instead: " + s.always_commit_wrong +
+      " of " + s.n + " wrong (" + pct(s.always_commit_wrong_rate, 1) + ")."));
   }
 
   function applyState(st) {
@@ -331,77 +439,94 @@ footer { color: var(--muted); font-size: 13px; padding: 10px 0 36px; display: gr
       anyTrack = true; if (t.replay) anyReplay = true;
       var L = lanes[t.id] || buildLane(t);
       L.info = t;
-      L.speedChip.textContent = (st.speed === 1 ? "real time" : st.speed + "× real time") + (t.n ? " · " + t.n + " utterances" : "");
-      renderSummary(L, t.summary);
+      renderFacts(L); renderKv(L); renderGuarantee(L, t.summary);
       if (t.error) { L.err.hidden = false; L.err.textContent = "Replay stopped: " + t.error; }
     });
-    var mb = document.getElementById("modeBadge"), mt = document.getElementById("modeText");
+    var mt = document.getElementById("modeText");
     if (anyTrack && !anyReplay) {
-      mb.className = "badge synthetic"; mt.textContent = "Synthetic data, not a recording";
-      var it = document.getElementById("introText"); it.textContent = "";
-      it.appendChild(el("strong", null, "Synthetic data, not a recording of a person. "));
-      it.appendChild(document.createTextNode("A simulated decoder writes text at different signal levels, some with no signal at all. For each sentence the Fidetype trust layer decides: commit (the text is typed), offer (the text is only a suggestion for the user to accept), or withhold (nothing is typed). The intended text is shown only to score the decisions."));
-    }
-    else { mb.className = "badge replay"; mt.textContent = "Replay of recorded data, not live decoding"; }
+      document.getElementById("lead1").textContent = "A simulated decoder writes text at different signal levels. Some sentences have no signal at all.";
+      document.getElementById("lead3").textContent = "";
+      document.getElementById("lead3").appendChild(el("strong", null, "Synthetic data, not a recording of a person."));
+    } else if (mt) { mt.textContent = "Replay of recorded data, not live decoding."; }
     var un = document.getElementById("unavailable"); un.textContent = "";
-    (st.unavailable || []).forEach(function (u) { un.appendChild(el("div", "unavail", u.title + ": not shown (" + u.status + "). " + u.message)); });
-    document.getElementById("footVersion").textContent = "fidetype " + st.fidetype_version + " · state " + (st.schema || "");
+    (st.unavailable || []).forEach(function (u) { un.appendChild(el("p", "unavail", u.title + ": not shown (" + u.status + "). " + u.message)); });
+    document.getElementById("footVersion").textContent = "fidetype " + st.fidetype_version + " · " + (st.schema || "");
   }
 
-  function addSegment(L, m) {
-    var d = m.decision, c = cat(d.action);
-    if (L.segs === 0) L.doc.textContent = "";
-    var shown = (d.shown && d.shown.length) ? d.shown[0] : "";
-    var s;
-    if (c === "commit") {
-      s = el("span", "seg commit" + (m.outcome === "commit-wrong" ? " wrong" : ""), shown || "(empty)");
-      if (m.outcome === "commit-wrong") s.appendChild(el("span", "mark bad", "✗ wrong"));
-      else if (m.outcome === "commit-correct") s.appendChild(el("span", "mark good", "✓"));
-    } else if (c === "offer") {
-      s = el("span", "seg offer");
-      s.appendChild(el("span", "tag", "offer"));
-      s.appendChild(document.createTextNode(shown || "(empty)"));
-      if (m.outcome === "offer-hit") s.appendChild(el("span", "mark good", "✓ intended"));
-    } else {
-      s = el("span", "seg withhold", "withheld · p " + fmt(d.p_top1, 2) + (d.guard_risk !== null && d.guard_risk !== undefined ? " · risk " + fmt(d.guard_risk, 2) : ""));
-    }
-    s.title = (d.reason || "") + (m.truth !== null && m.truth !== undefined ? "\nIntended: " + m.truth : "");
-    if (m.ws_seq > liveFrom) s.classList.add("fresh");
-    L.doc.appendChild(s);
-    L.doc.appendChild(document.createTextNode(" "));
-    L.segs++;
-    while (L.doc.childNodes.length > 2 * MAX_SEGS) { L.doc.removeChild(L.doc.firstChild); }
-    L.doc.scrollTop = L.doc.scrollHeight;
+  function guessText(d) { return (d.shown && d.shown.length && d.shown[0]) ? d.shown[0] : ""; }
+
+  function showCurrent(L, m) {
+    var d = m.decision, c = cat(d.action), shown = guessText(d), res = RESULT[m.outcome] || ["neutral", m.outcome, m.outcome];
+    var wrong = m.outcome === "commit-wrong";
+    L.focus.className = "focus " + (wrong ? "wrong" : CLS[c]);
+    L.curTitle.textContent = "";
+    L.curTitle.appendChild(el("b", null, "Latest sentence"));
+    L.curTitle.appendChild(document.createTextNode(" · " + (m.u + 1) + " of " + m.n_total));
+    L.vGuess.textContent = "";
+    if (c === "withhold" || !shown) L.vGuess.appendChild(el("span", "guess none", c === "withhold" ? "Not shown to the user" : "(empty)"));
+    else L.vGuess.appendChild(el("span", "guess", shown));
+    L.vDecision.textContent = "";
+    var dd = el("div", "decision " + CLS[c], PLAIN[c]);
+    dd.appendChild(el("span", "eng", engName(d.action)));
+    L.vDecision.appendChild(dd);
+    L.vDecision.appendChild(el("div", "explain", EXPLAIN[c]));
+    L.vIntended.textContent = "";
+    if (has(m.truth)) L.vIntended.appendChild(el("span", null, m.truth));
+    else L.vIntended.appendChild(el("span", "waiting", m.outcome === "unknown" ? "Not known" : "No text (the person meant nothing)"));
+    L.vIntended.appendChild(el("span", "result " + res[0], res[2]));
   }
 
   function addRow(L, m) {
-    var d = m.decision, c = cat(d.action);
+    var d = m.decision, c = cat(d.action), shown = guessText(d), res = RESULT[m.outcome] || ["neutral", m.outcome];
+    if (L.rows === 0) L.hlist.textContent = "";
+    var li = el("li");
+    li.appendChild(el("span", "n", String(m.u + 1)));
+    li.appendChild(el("span", "d " + CLS[c], PLAIN[c]));
+    var t = el("span", "t");
+    if (c === "withhold" || !shown) t.appendChild(el("span", "none", "No text shown"));
+    else t.appendChild(document.createTextNode(shown));
+    if (has(m.truth)) t.appendChild(el("span", "i", "Intended: " + m.truth));
+    li.appendChild(t);
+    li.appendChild(el("span", "r " + res[0], res[1]));
+    L.hlist.insertBefore(li, L.hlist.firstChild);
+    L.rows++;
+    while (L.hlist.childNodes.length > MAX_ROWS) L.hlist.removeChild(L.hlist.lastChild);
+    updateMore(L);
+
     var tr = el("tr");
-    tr.appendChild(el("td", "num", String(m.u + 1)));
-    var td = el("td"); td.appendChild(el("span", "act " + c, catLabel(c))); tr.appendChild(td);
-    tr.appendChild(el("td", "text", c === "withhold" ? "—" : ((d.shown && d.shown[0]) || "(empty)")));
-    tr.appendChild(el("td", "num", fmt(d.p_top1, 3)));
-    tr.appendChild(el("td", "num", fmt(d.guard_risk, 2)));
-    tr.appendChild(el("td", "num", m.latency_ms === null || m.latency_ms === undefined ? "–" : fmt(m.latency_ms, 0) + " ms"));
-    var r = { "commit-correct": ["res-good", "correct"], "commit-wrong": ["res-bad", "WRONG commit"],
-      "offer-hit": ["res-good", "offer has it"], "offer-miss": ["res-n", "offer misses"],
-      "withhold": ["res-n", "nothing typed"], "unknown": ["res-n", "no truth"] }[m.outcome] || ["res-n", m.outcome];
-    tr.appendChild(el("td", r[0], r[1]));
-    tr.title = (d.reason || "") + (m.truth ? "\nIntended: " + m.truth : "");
-    L.tbody.insertBefore(tr, L.tbody.firstChild);
-    while (L.tbody.childNodes.length > MAX_ROWS) L.tbody.removeChild(L.tbody.lastChild);
+    tr.appendChild(el("td", "x", String(m.u + 1)));
+    tr.appendChild(el("td", "mono", d.action || "–"));
+    tr.appendChild(el("td", "x", fmt(d.p_top1, 3)));
+    tr.appendChild(el("td", "x", fmt(d.guard_risk, 2)));
+    tr.appendChild(el("td", "x", has(m.latency_ms) ? fmt(m.latency_ms, 0) + " ms" : "–"));
+    tr.title = (d.reason || "") + (d.config_id ? "\nconfig " + d.config_id : "");
+    L.eng.insertBefore(tr, L.eng.firstChild);
+    while (L.eng.childNodes.length > MAX_ENG) L.eng.removeChild(L.eng.lastChild);
+  }
+
+  function updateMore(L) {
+    var k = L.hlist.childNodes.length;
+    L.moreBtn.hidden = k <= 5;
+    L.moreBtn.textContent = L.hlist.classList.contains("open") ? "Show only the newest 5" :
+      (k < MAX_ROWS ? "Show all " + k : "Show the last " + k);
   }
 
   function setCounts(L, c) {
     if (!c) return;
-    L.tC.textContent = c.commit; L.tO.textContent = c.offer; L.tW.textContent = c.withhold;
-    L.kWrong.textContent = c.wrong_commit + " of " + c.n + (c.n ? " (" + pct(c.wrong_commit_rate, 1) + ")" : "");
+    var ok = has(c.commit_correct) ? c.commit_correct : Math.max(0, c.commit - c.wrong_commit);
+    L.sOk.textContent = ok; L.sBad.textContent = c.wrong_commit; L.sSug.textContent = c.offer; L.sHeld.textContent = c.withhold;
   }
 
   function startProgress(L, m, live) {
     var dur = Math.max(0.05, Number(m.duration) || 0.05) / ((state && state.speed) || 1);
     L.bar.style.transition = "none"; L.bar.style.width = "0";
     if (live) { void L.bar.offsetWidth; L.bar.style.transition = "width " + dur + "s linear"; L.bar.style.width = "100%"; }
+  }
+
+  function rawTail(L, text) {
+    var w = L.raw.clientWidth || 600;
+    var max = Math.max(40, Math.floor(w / 8) * 2);   // about two lines of 13 px monospace
+    return text.length > max ? "…" + text.slice(-(max - 1)) : text;
   }
 
   function onMessage(m) {
@@ -413,28 +538,22 @@ footer { color: var(--muted); font-size: 13px; padding: 10px 0 36px; display: gr
     var live = m.ws_seq > liveFrom;
     if (m.type === "demo_utterance") {
       L.nowLabel.textContent = "";
-      L.nowLabel.appendChild(el("b", null, "Decoding"));
-      L.nowLabel.appendChild(document.createTextNode(" · utterance " + (m.u + 1) + " of " + m.n_total + (m.label ? " · " + m.label : "")));
+      L.nowLabel.appendChild(el("b", null, "Now decoding"));
+      L.nowLabel.appendChild(document.createTextNode(" · sentence " + (m.u + 1) + " of " + m.n_total +
+        (m.label ? " · " + m.label : "")));
       L.nowRight.textContent = fmt(m.duration, 1) + " s of signal";
-      L.preview.textContent = ""; L.preview.classList.remove("done");
-      L.intended.textContent = "";
-      if (m.truth !== null && m.truth !== undefined) { L.intended.appendChild(document.createTextNode("Intended (for scoring only): ")); L.intended.appendChild(el("b", null, m.truth)); }
-      else if (m.label) { L.intended.textContent = "Intended: no text (null input)"; }
+      L.raw.textContent = "";
+      L.raw.title = "";
       startProgress(L, m, live);
     } else if (m.type === "demo_preview") {
-      var t = m.text || "";
-      L.preview.textContent = t.length > 140 ? "…" + t.slice(-140) : t;
-      L.preview.title = m.mode === "phonemes" ? "Greedy phoneme output of the recorded decoder (not an action)" : "Decoder output so far (not an action)";
+      L.raw.textContent = rawTail(L, m.text || "");
+      L.raw.title = m.mode === "phonemes" ? "Raw decoder output so far: phonemes (not an action)" :
+        m.mode === "keys" ? "Raw decoder output so far: keys (not an action)" : "Raw decoder output so far (not an action)";
     } else if (m.type === "demo_decision") {
-      addSegment(L, m); addRow(L, m); setCounts(L, m.counts);
-      L.preview.classList.add("done");
-      L.kLat.textContent = m.latency_ms === null || m.latency_ms === undefined ? "–" : fmt(m.latency_ms, 0) + " ms";
-      L.kLat.title = "Trust-layer time after the end of the signal (" + (m.latency_source || "") + ")";
-      L.nowLabel.textContent = "";
-      L.nowLabel.appendChild(el("b", null, catLabel(cat(m.decision.action))));
-      L.nowLabel.appendChild(document.createTextNode(" · utterance " + (m.u + 1) + " · " + (m.decision.reason || "")));
+      showCurrent(L, m); addRow(L, m); setCounts(L, m.counts);
+      L.nowLabel.textContent = "Decided sentence " + (m.u + 1) + ". Next sentence soon.";
     } else if (m.type === "demo_summary") {
-      renderSummary(L, m.summary);
+      L.info.summary = m.summary; renderGuarantee(L, m.summary); renderKv(L);
     } else if (m.type === "demo_error") {
       L.err.hidden = false; L.err.textContent = "Replay stopped: " + m.error;
     }
@@ -444,13 +563,13 @@ footer { color: var(--muted); font-size: 13px; padding: 10px 0 36px; display: gr
   function connect() {
     var ws;
     try { ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/events", ["nts-ws.0.1"]); }
-    catch (e) { conn.className = "conn bad"; conn.textContent = "no connection"; return setTimeout(connect, 2000); }
+    catch (e) { conn.className = "conn bad"; conn.textContent = "No connection"; return setTimeout(connect, 2000); }
     ws.onopen = function () {
-      conn.className = "conn ok"; conn.textContent = "connected";
+      conn.className = "conn"; conn.textContent = "Connected";
       ws.send(JSON.stringify({ type: "ws_subscribe", binding: "nts-ws/0.1", from_seq: lastSeq + 1 }));
     };
     ws.onmessage = function (ev) { try { onMessage(JSON.parse(ev.data)); } catch (e) { console.error(e); } };
-    ws.onclose = function () { conn.className = "conn bad"; conn.textContent = "disconnected, retrying"; setTimeout(connect, 1500); };
+    ws.onclose = function () { conn.className = "conn bad"; conn.textContent = "Disconnected, retrying"; setTimeout(connect, 1500); };
   }
 
   function loadState(first) {

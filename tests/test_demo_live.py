@@ -268,6 +268,7 @@ def test_server_serves_page_state_and_events(nts_dir: Path, log_dir: Path) -> No
         assert msgs[0]["type"] == "ws_welcome"
         dec = [m for m in msgs if m.get("type") == "demo_decision"][0]
         assert dec["counts"]["n"] >= 1 and dec["track"] in ("syn-nts", "log")
+        assert "commit_correct" in dec["counts"]
         assert any(m.get("type") == "demo_utterance" for m in msgs)
         d2 = _collect(wsurl, "/decisions", "trust_decision")
         assert d2[-1]["type"] == "trust_decision" and "/" in d2[-1]["session"]
@@ -322,3 +323,40 @@ def test_demo_command_dispatches_live(capsys: pytest.CaptureFixture) -> None:
 
     assert demo_main(["live", "--check"]) == 0
     assert "synthetic" in capsys.readouterr().out
+
+
+# --- page and entry points (P14-06 redesign) -----------------------------------------------------------
+
+
+def test_counts_separate_correct_and_wrong_commits() -> None:
+    from fidetype.demo.live.server import _Counts
+
+    c = _Counts()
+    for action, out in [("COMMIT", "commit-correct"), ("COMMIT", "commit-wrong"), ("COMMIT", "unknown"),
+                        ("OFFER", "offer-hit"), ("ABSTAIN", "withhold")]:
+        c.add(action, out)
+    d = c.as_dict()
+    assert (d["commit"], d["commit_correct"], d["wrong_commit"]) == (3, 1, 1)
+    assert (d["offer"], d["offer_hit"], d["withhold"], d["n"]) == (1, 1, 1, 5)
+
+
+def test_page_uses_plain_words_and_no_external_resources() -> None:
+    from fidetype.demo.live.server import web_dir
+
+    html = (web_dir() / "index.html").read_text(encoding="utf-8")
+    for words in ("Typed", "Suggested", "Held back", "Typed correctly", "Typed wrong", "Details for engineers",
+                  "Replay of recorded data, not live decoding", "Research use only", "Synthetic data, not a recording"):
+        assert words in html, words
+    assert "<link" not in html and "<script src" not in html and "@import" not in html
+    assert 'name="viewport"' in html and 'data-theme="dark"' in html
+
+
+def test_python_dash_m_fidetype_runs_the_cli() -> None:
+    import subprocess
+    import sys
+
+    r = subprocess.run([sys.executable, "-m", "fidetype", "version"], capture_output=True, text=True, timeout=60)
+    assert r.returncode == 0 and r.stdout.startswith("fidetype ")
+    r = subprocess.run([sys.executable, "-m", "fidetype", "demo", "live", "--check"], capture_output=True, text=True,
+                       timeout=60)
+    assert r.returncode == 0 and "synthetic" in r.stdout

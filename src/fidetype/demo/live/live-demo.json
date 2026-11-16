@@ -7,7 +7,7 @@
       "id": "t15",
       "kind": "trust-log",
       "title": "Implant: attempted speech to text",
-      "subtitle": "Intracortical recording, participant T15. Each sentence plays at the speed it was spoken.",
+      "subtitle": "A person with an implant in the speech area of the brain (participant T15) tries to say each sentence. Each sentence plays at the speed it was spoken.",
       "dataset": {
         "name": "Brain-to-Text '25, T15 copy-task neural data (Card et al. 2024)",
         "licence": "CC0-1.0",
@@ -32,7 +32,7 @@
       "id": "emg2qwerty",
       "kind": "nts-streams",
       "title": "Wrist EMG: touch typing to text",
-      "subtitle": "Two sEMG wristbands while typing. One frame per key press (key timing from the keylogger).",
+      "subtitle": "A person types on a keyboard while two wristbands record the muscle signals (surface EMG). The decoder guesses each key press.",
       "dataset": {
         "name": "emg2qwerty (Sivakumar et al. 2024)",
         "licence": "CC-BY-NC-SA-4.0",

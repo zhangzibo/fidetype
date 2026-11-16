@@ -54,6 +54,7 @@ def web_dir() -> Path:
 class _Counts:
     def __init__(self) -> None:
         self.n = self.commit = self.offer = self.withhold = self.wrong_commit = self.offer_hit = 0
+        self.commit_correct = 0
         self.passes = 0
 
     def add(self, action: str, outcome: str) -> None:
@@ -61,10 +62,12 @@ class _Counts:
         c = category(action)
         setattr(self, c, getattr(self, c) + 1)
         self.wrong_commit += outcome == "commit-wrong"
+        self.commit_correct += outcome == "commit-correct"
         self.offer_hit += outcome == "offer-hit"
 
     def as_dict(self) -> dict[str, Any]:
-        d = {k: getattr(self, k) for k in ("n", "commit", "offer", "withhold", "wrong_commit", "offer_hit", "passes")}
+        d = {k: getattr(self, k) for k in ("n", "commit", "offer", "withhold", "wrong_commit", "commit_correct",
+                                       "offer_hit", "passes")}
         d["wrong_commit_rate"] = round(self.wrong_commit / self.n, 4) if self.n else None
         return d
 

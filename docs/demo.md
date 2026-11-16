@@ -2,13 +2,15 @@
 
 `fidetype demo live` starts a small local server and opens a page in your browser. The page replays decoder output that was **recorded earlier**, at the speed it was recorded. For each utterance the trust layer decides:
 
-| Decision | What the user gets | Mark on the page |
+| On the page | Decision (engineering term) | What the user gets |
 |---|---|---|
-| COMMIT | the text is typed | solid text, green underline (red with "wrong" if it does not match the intended text) |
-| OFFER | the text is only a suggestion; the user accepts or rejects it | dashed box, italic |
-| WITHHOLD (ABSTAIN, ASK) | nothing is typed | grey hatched box with the score |
+| **Typed** (green) | COMMIT | the text is typed |
+| **Suggested** (amber) | OFFER | the text is only a suggestion; the user accepts or rejects it |
+| **Held back** (grey) | WITHHOLD (ABSTAIN, ASK) | nothing is typed |
 
-This is **not** live decoding. Every lane says "Replay of recorded data" (or "Synthetic data, not a recording").
+A wrong commit (typed text that does not match the intended sentence) is marked red.
+
+This is **not** live decoding. The page says "Replay of recorded data, not live decoding" (or "Synthetic data, not a recording").
 
 ![The live demo page on the synthetic track (no recording)](img/demo-live-synthetic.png)
 
@@ -23,15 +25,26 @@ fidetype demo live --tracks synthetic     # needs no data
 fidetype demo live --check                # which tracks have their data
 ```
 
+The `fidetype` command is on the PATH only when its virtual environment is active. Without activation, call it from the environment, or use `python -m fidetype` with the environment's Python:
+
+```sh
+.venv\Scripts\fidetype.exe demo live          # Windows, from the repository root
+.venv/bin/fidetype demo live                  # Linux, macOS
+.venv\Scripts\python.exe -m fidetype demo live  # the same, through Python
+```
+
 Options: `--speed 2` (twice real time), `--start K` (begin at utterance K), `--no-browser`, `--port N`, `--no-loop`, `--duration S`, `--config FILE`. Press Ctrl+C to stop. The server binds to 127.0.0.1 only. Nothing leaves your computer.
 
 ## What the page shows
-- **Live text:** the decisions of the lane, in order, with the marks above.
-- **Now decoding:** a progress bar for the signal time, the raw decoder output so far (grey; phonemes for the implant track, keys for the EMG track), and the intended text (used only to score the decisions).
-- **Counts:** committed, offered and withheld so far, and the wrong commits so far.
-- **Whole replay set:** the wrong-commit rate over all utterances of the track (wrong commits / all utterances) with a 95 % Clopper-Pearson interval, the commit rate, the share of wrong commits among commits, how many offers contain the intended text, and the "always commit" baseline (type every top-1 text). These numbers do not depend on how far the replay is.
-- **Latency:** the trust-layer time after the end of the signal for the last decision, and the median.
-- **Dataset and licence** of each lane, and "Research use only" where the licence is non-commercial.
+The top of the page says in three lines what you are watching, with a legend of the three decisions. Then each track has the same parts:
+
+- **Latest sentence:** the decoder's guess (large), the decision (Typed / Suggested / Held back, with the engineering term), and the intended sentence with the result (correct, wrong, matches, does not match). The intended text is used only to score the decisions.
+- **Now decoding:** a progress bar for the signal time and the raw decoder output so far (phonemes for the implant track, keys for the EMG track). It is never an action.
+- **This replay so far:** typed correctly, typed wrong, suggested and held back.
+- **Guarantee:** the wrong-commit rate over all utterances of the track (wrong commits / all utterances) with a 95 % Clopper-Pearson interval, compared with the target alpha, and the "type every guess" baseline. These numbers do not depend on how far the replay is.
+- **Earlier sentences:** the newest 5 decisions; "Show all" opens the last 60 in a scroll list.
+- **Details for engineers** (closed by default): dataset, licence, signal, decoder, trust configuration and config id, replay speed, median decision time, commits and wrong commits among commits over the whole set, and a table of the last decisions (action, p(top-1), guard risk, latency).
+- The dataset link and licence of each track, and "Research use only" where the licence is non-commercial.
 
 ## Tracks (default configuration)
 
