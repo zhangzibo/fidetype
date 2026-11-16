@@ -96,7 +96,7 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 | P1-01 data model | in progress | Provenance block, frame-level multi-head, lattices, embeddings: deferred to 1.1 (Appendix A); 1.0 headers not accepted by the validators yet (gap G-2) |
 | P1-02 protobuf + generated JSON Schema | done (2026-11-15) | [`spec/proto/`](../../spec/proto/README.md) + generated `spec/schemas/nts-v1.schema.json`, CI drift and parity checks ([NTS protobuf schema](../concepts/nts-proto-schema.md)); open spec questions Q-1 … Q-8 for the next RC |
 | P1-03 versioning, SDK matrix, FEP lifecycle and index | done (RC1 section 11, spec/README) | Outside review |
-| P1-04 semconv YAML | todo | Section 12.5 lists the namespaces only |
+| P1-04 semconv YAML | in progress (registry v0 done 2026-11-15) | [`spec/semconv/`](../../spec/semconv/registry.md): the 24 `meta` keys of RC3 3.4 + 19 recommended `trust_decision` keys, generated page, CI check `semconv` (spec tables, proto, schema, 3 SDK validators, vectors). Open: modality keys need a FEP (SC-1); 8 open questions in the registry |
 | P1-05 bindings | in progress | Files, LSL, WebSocket in RC1; in-process API and gRPC not written |
 | P1-06 generated docs + CI agreement check + tag RC | todo | RC1 is not tagged (draft) |
 | P1-07 1.0 Stable | externally blocked | Two outside decoder groups |
