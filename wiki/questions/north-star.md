@@ -1,0 +1,180 @@
+---
+title: North star — a BCI that teaches itself and never puts words in your mouth
+type: question
+tags: [planning, north-star, frontier, self-improving, online-learning, conformal, risk-control, hallucination, llm, cross-modality, emg, implant, roadmap]
+sources: [adaptive-conformal-inference, conformal-risk-control, brain-to-text-25-copytask, brain2qwerty-v2]
+updated: 2026-11-15
+---
+
+# North star (2026-11-15)
+
+**Question asked (user, 2026-11-15):** "Stop attaching this project to an existing project. Find a new frontier that does not exist in BCI yet. Think big, outside the boundaries of what is possible, and go that route." The user also said that "OpenTelemetry" meant *a big project that many people use*, not *the same subject as OpenTelemetry*.
+
+**Answer in one line:** we build **a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth.**
+
+**Roadmap:** phase [P15 Frontier](roadmap-standard.md#p15-frontier-added-2026-11-15-leads) leads from 2026-11-15. P1–P14 stay as they are. **Diagram:** `11-roadmap-standard` on [the diagram page](../diagrams/index.html#s11).
+
+## The moonshot
+A person puts on **any sensor**: an implant, a wristband or a cap. Within **minutes**, they communicate at **conversation speed**. The system **gets better every day** from normal use. It **provably never says what they did not mean**.
+
+Today no system does any one of these three things well. Each part below is a research step toward it.
+
+| Part of the moonshot | What it needs | Pillar |
+|---|---|---|
+| "provably never says what they did not mean" | A stated error bound that stays valid while the system changes | F1, F2 |
+| "gets better every day" | The decoder learns from the user's accept / reject / correction actions | F1 |
+| "conversation speed" | A language model that fills gaps, but only with text that the signal supports | F2 |
+| "any sensor, within minutes" | One shared output space across body signals, so a new sensor or a new user needs little data | F3 |
+
+## Why this is new
+Two studies on 2026-11-15 (local scratch notes, not committed) checked the prior art and our feasibility. The prior-art study read abstracts, proceedings pages and some secondary summaries (about 30 searches per direction). **It did not read full papers.** A "not found" result means "not found in these searches", not "does not exist".
+
+> **Rule:** before any public novelty claim (README, post, paper), run a focused literature check with the exact claim wording (task [P15-10](roadmap-standard.md#p15-frontier-added-2026-11-15-leads)). Check the papers that cite NDT3, BrainOmni, CORP and Tang & Huth 2023.
+
+### What the sources say (abstract level)
+**F1, learning from feedback with a guarantee:**
+- [CORP](https://arxiv.org/abs/2311.03611) (NeurIPS 2023) uses language-model-corrected outputs as pseudo-labels to update an intracortical handwriting decoder for 403 days (one participant). It states no error bound.
+- [DietCORP](https://arxiv.org/abs/2507.02800) (NeurIPS 2025) does the same for speech and updates only one layer. It states no error bound.
+- [ALIGN](https://arxiv.org/abs/2603.18299) (2026) warns that pseudo-label adaptation can compound its own errors when the first error rate is high.
+- Online conformal methods ([adaptive conformal inference](../sources/adaptive-conformal-inference.md), rolling risk control, [conformal risk control](../concepts/conformal-risk-control.md)) keep a long-run bound for any sequence. They treat the model as given. Newer work gives coverage with bandit (shown-only) feedback, for example [OCP-Unlock+](https://arxiv.org/abs/2604.17984) (ICLR 2026). It is not applied to BCI.
+- A 2026 preprint on [continual calibration](https://www.alphaxiv.org/abs/2604.23987) reports that coverage can fail before accuracy during repeated LLM fine-tuning (secondary summary only).
+- Conformal methods in BCI so far are static: offline split conformal or selective prediction, for example [geometry-aware conformal motor decoding](https://proceedings.mlr.press/v329/bonini26a.html) (COPA 2026).
+
+**F2, faithful language-model decoding:**
+- [Jo et al. 2024](https://arxiv.org/abs/2405.06459) show that EEG-to-text models score the same or better on pure noise.
+- BIT-LLM (ICML 2026, secondary summary only) tests whether an fMRI-to-text model uses the signal by removing or scrambling it. This is an offline evaluation, not a run-time check.
+- [Brain-to-Text '24 lessons](https://arxiv.org/abs/2412.17227): the top pipelines rescore with LLMs. The competitions score accuracy only.
+- Brain2Qwerty v2 adds an LLM on MEG and gets better WER but worse CER ([NeuroLLM](../concepts/neuro-llm.md), [v2](../sources/brain2qwerty-v2.md)).
+- Conformal factuality and abstention exist for text LLMs, for example [conformal abstention](https://arxiv.org/abs/2405.01563). None was found for brain-decoded text.
+
+**F3, one language model across body signals:**
+- [NDT3](https://www.biorxiv.org/content/10.1101/2025.02.02.634313) (NeurIPS 2025): intracortical motor, many subjects. Its authors doubt that scale alone fixes sensor variability.
+- [BIT](https://arxiv.org/abs/2511.21740) (2025–2026): cross-species intracortical speech with an audio LLM. Implant only.
+- [BrainOmni](https://arxiv.org/abs/2505.18185) (NeurIPS 2025): EEG + MEG. [iBrain](https://arxiv.org/abs/2609.06960) (2026): iEEG + spikes. [NeuGPT](https://arxiv.org/abs/2410.20916) (2024): six brain modalities to text, low quality, no cross-modality transfer result.
+- Meta's [generic neuromotor interface](https://doi.org/10.1038/s41586-025-09255-w) (Nature 2025) and [emg2qwerty](../entities/emg2qwerty.md): wrist EMG only. [Inoue et al.](https://arxiv.org/abs/2506.13835) (Interspeech 2025): EEG + EMG, word classes, no implant (secondary summary only).
+
+### The gaps found
+| Pillar | Gap in the prior art found | Novelty (study rating) |
+|---|---|---|
+| **F1** | Decoder self-improvement from feedback exists. Online risk control exists. **No BCI work found joins them**: a decoder that learns from user feedback while a stated error bound stays valid through each update | **High** |
+| **F2** | Faithfulness is tested only offline. **No run-time grounding check** of LLM text against the neural evidence, and **no hallucination-rate guarantee**, was found for brain-decoded text. No standard hallucination benchmark | **Medium-high** (high for the guarantee; low for "semantic decoding with LLMs") |
+| **F3** | No model found joins implant + EMG + MEG/EEG for text. **No transfer to a new modality** for text is reported | **High on paper, medium in practice** (fast trend, compute, NC data, a null result is likely for MEG/EEG) |
+
+> **Our take:** F1 is the strongest lead. It is new as a composition, it needs no new hardware, it fits our CC0 data, and it builds directly on code that we already have (online re-calibration in [M2-16](m2-16-online-recal-result.md), [per-session risk control](per-session-risk-control.md), the [provenance ledger](../concepts/provenance-ledger.md)). The claim must be "first BCI application with a decoder-update gate", not "a new conformal theorem", unless we prove one. F2 extends the same guarantee engine to LLM output. F3 is the largest idea and the riskiest. We start it small, on one GPU, with strong controls.
+
+## The three pillars and their first experiments
+The feasibility study numbers the experiments by direction, not by rank: **E2 is the F1 experiment, E3 is the F2 experiment, E1 is the F3 experiment.** We keep these names so the notes and the experiment folders match.
+
+| Pillar | Rank | First experiment | Cost (est.) | Can start |
+|---|---|---|---|---|
+| F1 Safe self-improving BCI | 1 (lead) | E2 | 3–8 GPU-h; CPU pilot now | CPU pilot now (planned folder `experiments/2026-11-16-f1-e2-selfimprove-pilot/`) |
+| F2 Faithful LLM decoding | 2 | E3 | 0 GPU-h (CPU, 1.7–4B model) to 1–3 GPU-h | Now, on CPU, after a local LLM install |
+| F3 Cross-body language model | 3 | E1 | 20–45 GPU-h + a few CPU-h | Caches on CPU now; GPU after about 2026-11-19 |
+
+The GPU is busy until about 2026-11-18 / 19 (M4-13, then P11-01). Rule: one GPU job at a time.
+
+The success criteria below are **proposed**. Each experiment freezes them in its own `plan.md` and commits it **before** the runs, as P14-03 did.
+
+### F1: safe self-improving BCI (E2)
+**Goal:** the decoder learns from accept / reject / correction feedback, and the stated wrong-commit bound stays valid through every update.
+
+**Method (replay in time order, T12, 24 sessions over 4 months, CC0):**
+1. Train the base decoder on the first K sessions (K = 4–8).
+2. For each later trial: decoder → n-best → trust policy → COMMIT / OFFER / WITHHOLD.
+3. A simulated user knows the intended text. OFFER: accept if the truth is in the list, else reject (and retype with probability p_retype). Wrong COMMIT: the user corrects it with probability q_notice, else it is a **silent error**. Noise: accept a near miss with probability p_sloppy.
+4. Learn from feedback between sessions: accepted and retyped items become labels; rejects are a negative signal only. Update a day-specific input layer first, then the last layers.
+5. Keep the guarantee: each update gets a new `config_id`; online risk control (`aci`) runs across updates; a per-session e-process monitor raises an alarm; a new decoder goes live only if it passes a block test on recent feedback that it did not train on (champion / challenger); the commit gate and the uniform / shuffled null controls run again after each update.
+
+**Arms:** frozen decoder; feedback-only adaptation; oracle recalibration (all labels); self-training on commits only (negative control: shows confirmation bias); calibration block only.
+
+**Controls:** frozen arm; oracle arm (upper bound); self-training arm; null inputs after each update; 2 seeds; 3 simulated-user settings.
+
+**Metrics per session:** PER / WER, commit rate, wrong-commit rate with Clopper-Pearson intervals, silent-error rate, eWPM, labels used.
+
+**Proposed success criteria:**
+- The feedback-only arm has a lower PER than the frozen arm on the later sessions, by more than the seed spread.
+- The long-run wrong-commit rate of every deployed configuration stays at or below α plus the stated finite-sample slack of `aci`.
+- No deployed update fails the null controls.
+- The self-training arm is reported, even if it looks good.
+- Silent errors and the share of items with known truth are reported separately.
+
+**Cost:** 3–8 GPU-h; the CPU pilot (frozen trunk, linear input layer, small subset) runs now.
+
+**Blockers:** no decoder-update loop code yet; no "re-calibrate after update" hook in `TrustGuard` / `OnlineTrustPolicy`; `t15_personalUse.pkl` (real user ratings, to set the simulated accept rate) is not local.
+
+**Follow-ups:** online risk control with **bandit feedback** (we see the truth only for what we showed); a formal statement of what the guarantee covers; T15 (45 sessions over 20 months) as the second dataset.
+
+### F2: faithful language-model decoding (E3)
+**Goal:** an LLM improves the decoded text, and a run-time check makes sure that it adds nothing that the neural evidence does not support, with a risk-controlled bound on hallucinated commits.
+
+**Method (T15 published logits + our M4-12 logits; T12 v2):**
+1. Arms: n-gram LM (current); + LLM rescoring of the n-best; + LLM rewrite limited to the n-best lattice.
+2. Grounding checks: (a) the CTC forced-alignment log-prob of the final text under the neural emissions must not fall below the top-1's by more than τ; (b) the existing guard signals (`lm_acoustic_gap`, `low_evidence_frac`); (c) the trust gate commits only when calibrated.
+3. Bound: calibrate τ and the commit threshold with CRC / LTT on a "fluent but wrong" loss.
+
+**Controls:** uniform and frame-shuffled null inputs; **swapped-signal** input (the neural data of another sentence); text-only LLM baseline; the published T15 logits as a strong reference decoder.
+
+**Metrics:** WER, sentence accuracy, wrong-commit rate, **fluent-wrong rate** (committed sentences that are wrong but have a high LM score), commits on null and swapped inputs.
+
+**Proposed success criteria:**
+- The LLM arm improves WER or sentence accuracy over the n-gram arm at the same α.
+- Its held-out wrong-commit rate stays at or below α at the stated confidence.
+- Null and swapped-signal commits stay at the P14-03 control level (about 0 per 300).
+- Its fluent-wrong rate is not higher than the n-gram arm's.
+
+**Cost:** CPU only with a 1.7–4B model (hours of CPU), or under 1 GPU-h per arm with an 8B model.
+
+**Blockers:** no local LLM stack (no `transformers`, no llama.cpp); a 1–10 GB model download; LLM licences differ (prefer Apache-2.0 or MIT).
+
+**Follow-ups:** a **public hallucination benchmark** with null / scrambled / swapped-signal tracks as standard tracks (it joins the P6 leaderboard and the P13 hub; it does not replace them).
+
+### F3: cross-body language model (E1)
+**Goal:** one shared output space (characters, plus phonemes for speech implants) across implant and EMG first, later MEG/EEG. A new modality or a new user then needs only minutes of data.
+
+**Method (Willett handwriting, CC0, native character target):**
+1. Data fractions: 10 / 25 / 50 / 100 % of the training sentences. Held out: the last block of each session.
+2. Arms (same architecture, a new input stem each time): random init; trunk pretrained on **text only**; trunk pretrained on **emg2qwerty** keys (research only); trunk pretrained on **KT-sEMG** (CC BY, the licence-clean version); optional: trunk pretrained on T15 with a character head.
+3. Readout: greedy CER and CER with the same character LM; 2 seeds.
+
+**Controls:** the text-only pretraining arm and the same-LM rule. Without them a gain can come from English character statistics, not from the signal.
+
+**Proposed success criterion (from the study):** an EMG-pretrained arm beats the text-only arm by more than the seed spread at 25 % data or less.
+
+**Cost:** about 20–45 GPU-h (1–2 GPU days) + a few CPU-h for caches; under 20 GB of new cache.
+
+**Blockers:** the GPU queue; the emg2qwerty arm needs the P11-01 weights; three implant datasets are three different people with three tasks.
+
+**Licence tracks:** a **clean track** (CC0 + CC BY: T15, T12, Willett, KT-sEMG, Toronto, about 98 h) and a **research-only track** (adds emg2qwerty, CC BY-NC-SA, and SpanishBCBL, CC BY-NC). Each checkpoint carries its data licences. Clean-track weights can ship; research-track weights never ship.
+
+**Follow-ups:** the reverse direction (implant → EMG, E1b); a public **"new modality / new user with minutes of data"** benchmark; a joint model on one GPU before any larger scale; MEG only later (Spanish, low sentence diversity, weak decoder, NC).
+
+## Honest risks
+| Risk | Effect | What we do |
+|---|---|---|
+| **Weak base decoders** (our T15 PER 0.257 vs published 0.101; T12 7.75 % right sentences) | A gain may come from fixing the decoder, not from the new method | Use the published T15 logits as a strong reference; report frozen and oracle arms |
+| **Silent errors** (a wrong commit that the user does not correct) | Outside every guarantee that uses feedback | Report them separately; simulate several q_notice values; never claim they are covered |
+| **Guarantee scope** | Only long-run (`aci`) and alarm (e-process) bounds hold across updates. A per-session finite-sample bound needs a fresh labelled block after each update | State the scope on every result; no "per-session" claim without a fresh block |
+| **Selected labels** (the decoder trains on what the trust layer chose to show) | Biased updates; runaway errors (ALIGN's warning) | Champion / challenger gate on held-back feedback; self-training arm as a negative control |
+| **Licences** (emg2qwerty NC-SA, SpanishBCBL NC) | Research weights cannot ship | Separate clean and research tracks; licence tags on every checkpoint |
+| **Compute** (one RX 7800 XT, busy until about 2026-11-19) | Foundation-scale pretraining is out of reach | One-GPU scale first; CPU work while the GPU trains |
+| **Mixed person and modality effects** (T5, T12, T15 are different people and tasks) | "Cross-modality" gains may be "cross-person" gains | Name the confound; add within-person controls where data allows |
+| **Fast-moving field** (bandit conformal, continual calibration, BIT-LLM in 2026) | Others may publish first | Cite them; claim the composition and the BCI evidence; literature check before any public claim |
+| **Null results** (especially F3 on MEG/EEG) | Months with no positive result | Pre-registered criteria; publish negative results as write-ups |
+
+## How existing work maps in
+| Existing work | Role under the north star |
+|---|---|
+| Trust layer (CRC, LTT, online `aci`, e-process monitor, commit gate, null controls, drop-in wrapper [P14-03](roadmap-standard.md#p14-03-trust-layer-as-a-drop-in-wrapper)) | The **guarantee engine** for F1 and F2 |
+| [Provenance ledger](../concepts/provenance-ledger.md) | Links each correction to its decision: the feedback log for F1 |
+| Decoders (T15 M4-12 / M4-13, T12 v2, P11-01 EMG, MEG ConvCTC), [adapters](../concepts/ctc-logits-adapter.md), dataset replay | The **base** for F3 and the test decoders for F1 / F2 |
+| NTS spec, SDKs, collector, conformance (P1–P3, P7) | Internal plumbing and the way results flow to other tools. Kept, lower priority |
+| Live demo (P14-06) | Shows F1 / F2 progress: a decoder that improves across sessions while the guarantee line stays |
+| Benchmark (P6, P13) | Gets the F2 hallucination tracks and the F3 "new modality, minutes of data" track |
+
+## Related pages
+- [Roadmap: P15 Frontier](roadmap-standard.md#p15-frontier-added-2026-11-15-leads)
+- [Direction decision](direction-decision.md#north-star-decision-2026-11-15-frontier-route)
+- [Overview](../overview.md)
+- [Who uses Fidetype](who-uses-fidetype.md)
+- [M2-16 online re-calibration](m2-16-online-recal-result.md), [per-session risk control](per-session-risk-control.md)
+- [Public datasets](public-datasets.md), [Willett handwriting](../entities/willett-handwriting-2021.md), [Brain-to-Text '25](../entities/brain-to-text-25.md), [KT-sEMG](../entities/kt-semg-dataset.md), [emg2qwerty](../entities/emg2qwerty.md)

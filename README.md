@@ -2,11 +2,27 @@
 
 ![tests](https://github.com/zhangzibo/fidetype/actions/workflows/tests.yml/badge.svg)
 
+**Fidetype** is an open research project toward a brain-computer interface (BCI) that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth ([where we are going](#where-we-are-going)). Its foundation, available today:
+
 **NeuralTextStream (NTS)** is an open, vendor-neutral format for the output of neural input decoders: text, intents and control signals decoded from brain or muscle signals (EMG, EEG, MEG, implants). **Fidetype** is the project around it: the spec, SDKs, a Collector, a conformance suite and a **trust layer** that decides when decoded text is safe to use.
 
 *Name:* *fides* (Latin: trust) + type.
 
 > **Status:** NTS 1.0 is a **draft release candidate** ([RC4](spec/nts-1.0-rc4.md), open for comment). The Python, TypeScript and Rust SDKs pass the full conformance suite in CI, but **no package is published yet** (version 0.0.1). Fidetype is research software. **It is not a medical device.** APIs can change.
+
+## Where we are going
+
+**North star (2026-11-15):** a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. The long-term goal: a person puts on any sensor (implant, wristband or cap) and communicates at conversation speed within minutes; the system improves every day; it never says what the person did not mean.
+
+Three research pillars lead the work ([north star](wiki/questions/north-star.md), roadmap phase [P15](wiki/questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads)):
+
+| Pillar | Question |
+|---|---|
+| **F1** Safe self-improving BCI | Can a decoder learn from the user's accept / reject / correction actions while its stated error bound stays valid through every update? |
+| **F2** Faithful language-model decoding | Can a language model improve decoded text while a run-time check, with a stated bound, stops text that the neural signal does not support? |
+| **F3** Cross-body language model | Can one shared output space let a new sensor or a new user start with minutes of data? |
+
+**These are open research questions. We have no results for them yet.** The first experiments start in November 2026 on public data. The trust layer, the decoders and NTS below are the foundation that they build on.
 
 ## Why NTS exists
 

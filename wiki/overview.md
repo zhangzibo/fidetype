@@ -1,14 +1,27 @@
 ---
 title: Overview — non-invasive brain-to-text, where things stand
 type: overview
-tags: [synthesis]
+tags: [synthesis, north-star, frontier]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, brain-to-text-25-copytask]
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 
 # Overview
 
 *Synthesis based on 3 sources: [v1](sources/brain2qwerty-v1.md), [v2](sources/brain2qwerty-v2.md) and the [code](sources/brain2qwerty-code.md). It will be revised as more sources are ingested.*
+
+## North star (2026-11-15)
+The project now aims at a frontier that we did not find in BCI work: **a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth** ([north star](questions/north-star.md)). The moonshot: anyone puts on any sensor (implant, wristband, cap) and communicates at conversation speed within minutes; it improves every day; it provably never says what they did not mean.
+
+| Pillar | Content | Novelty (prior-art study, abstract level) |
+|---|---|---|
+| **F1** (lead) | Safe self-improving BCI: the decoder learns from accept / reject / correction feedback while a stated error bound stays valid through every update | High |
+| **F2** | Faithful LLM decoding: a run-time grounding check against the neural evidence, a risk-controlled hallucination bound, a public hallucination benchmark | Medium-high |
+| **F3** | Cross-body language model: one output space across implant and EMG (later MEG/EEG); a new modality or a new user with minutes of data | High on paper, medium in practice |
+
+We have **no results** for these pillars yet. The first experiments (E2 for F1, E3 for F2, E1 for F3) are in roadmap phase [P15](questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads). The novelty ratings come from abstract-level searches; a focused literature check comes before any public claim.
+
+> **Our take:** the findings below (trust layer, guarantees, decoders, datasets) are the foundation of the north star. The trust layer becomes the guarantee engine for F1 and F2. The decoders and the datasets are the base for F3. The NTS spec and SDKs stay as internal plumbing.
 
 ## The state of the art (non-invasive, typing)
 Meta's Brain2Qwerty decodes what healthy people type from [MEG](concepts/meg.md):
@@ -39,6 +52,8 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 > **Our take:** Usefulness needs a stronger decoder, and every speed claim needs a no-BCI baseline. M4-12 shows that the gap to the published decoder was mostly training, not the causal design. The frozen trust configuration still commits nothing, so the next question is whether it can commit safely on a decoder at this level.
 
 ## The big open problems
+The north-star pillars add three open problems: keeping an error bound valid while the decoder learns from its own outputs (F1); checking LLM text against the neural evidence at run time (F2); moving to a new sensor or a new person with minutes of data (F3).
+
 1. **Real-time causal decoding**: v2 still waits for the end of the sentence. Our own causal decoder runs on implant data (see above), but not yet on non-invasive data.
 2. **Patients with no movement**: going from overt typing to attempted or imagined typing, without labels.
 3. **Cross-subject generalisation**: the encoder is the bottleneck.
@@ -48,6 +63,8 @@ For comparison, invasive implants reach **<2% WER** for typing (Jude et al. 2026
 > **Our take (2026-11-10):** Wrist sEMG typing is the natural **second testbed modality** after MEG: the most typing data ([emg2qwerty](entities/emg2qwerty.md), 346 h, NC), two CC BY sets, and a consumer device. Brain-to-Text '25 is the licence-clean testbed for the trust layer on real decoder output.
 
 ## Project direction
+**2026-11-15: new north star.** The user asked for a new frontier instead of a copy of an existing project. P15 Frontier now leads; the paragraphs below are the earlier history and stay for the record ([north star](questions/north-star.md), [decision](questions/direction-decision.md#north-star-decision-2026-11-15-frontier-route)).
+
 On 2026-11-07 we chose **trustworthy neural text entry**. On 2026-11-08 the user named the project **Fidetype** (package `fidetype`). We build a layer that makes text from any neural decoder reliable: it calibrates confidence, abstains or asks when it is not sure, offers n-best choices, guards against LLM hallucination, and works in real time.
 
 On 2026-11-08 the user widened the scope to an OpenTelemetry-level project. Fidetype now aims to be **the vendor-neutral standard and trust layer for neural input**: text or intent decoded from wrist EMG, EEG, MEG/OPM-MEG or implants. NeuralTextStream becomes a modality-agnostic and vocabulary-agnostic spec ([spec v0.1](../spec/neuraltextstream-v0.1.md)), and adapters for every modality are first-class. Research MEG stays the credibility base and the hardest test case for Paper 1. Success is the number of decoders and devices that emit NeuralTextStream. The user accepts a multi-year horizon and the need for outside partners ([scope decision](questions/direction-decision.md#scope-decision-2026-11-08-neural-input-opentelemetry-level)).

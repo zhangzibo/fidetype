@@ -1,12 +1,14 @@
 ---
 title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
-tags: [planning, roadmap, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit]
+tags: [planning, roadmap, north-star, frontier, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
 updated: 2026-11-15
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
+
+> **North star changed (2026-11-15).** The project now aims at a new frontier: a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth ([north star](north-star.md)). **[P15 Frontier](#p15-frontier-added-2026-11-15-leads) leads.** P1–P14 below stay as they are: no item moved, renumbered or removed. The standard work (spec, SDKs, collector) is now internal plumbing with a lower priority.
 
 **Question asked (2026-11-10):** The user decided that Fidetype aims for **full standardisation at OpenTelemetry scale**, and that we build all of it ourselves. Claude subagents write the code and the docs. The user does the outward-facing actions. The current milestones M1–M7 (due 2026-11-15) are only **v0.1**. What comes after v0.1?
 
@@ -23,6 +25,7 @@ updated: 2026-11-15
 - After v0.1, the roadmap has **13 phases (P1–P13)**. Most of them run in parallel.
 - **P12 (beyond text: intent and control)** and **P13 (public benchmark hub)** were added on 2026-11-11 at the end of the order. They do not change priorities. Text entry stays first ([decision](direction-decision.md#scope-note-2026-11-11-intent-beyond-text-and-a-benchmark-hub)).
 - **P14 (value first)** was added on 2026-11-15. It makes `fidetype` useful on its own (pretrained decoders, a trust wrapper, a demo), so that people have a reason to install it. It references existing items and changes none of them.
+- **P15 (frontier)** was added on 2026-11-15 and **leads**: safe self-improving decoding (F1), faithful LLM decoding (F2) and a cross-body language model (F3) ([north star](north-star.md)). It changes no existing item.
 - The critical path is: **benchmark (P6) + spec 1.0 RC (P1) → Python + C SDKs (P2) → replay adapters (P4) → collector (P3) → "three devices, one stream" demo (P8) → launch (P10)**. Papers are not on the critical path (see [publications](#publications-no-deadline)).
 - The gap to an OpenTelemetry-scale project is **not the core**. It is the **SDKs, adapters and integrations** (see [scale reference](#scale-reference)).
 - **Dataset replay** lets us test devices we do not own. Real hardware, outreach, partners, ethics, user studies, peer review and arXiv endorsement depend on outside people. They are **`externally_blocked`** or user-owned.
@@ -87,6 +90,7 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 | **P12** | Beyond text: intent and control | Output profiles for discrete intent, continuous control and speech; trust policies for actuation | 20–35 / 8 h | P1 1.0 RC, P2, P3, P5 | 2027-07-01 → 2027-12-31 |
 | **P13** | Public benchmark hub | Extend the P6 leaderboard into a reproducible hub; later all intent | 10–20 / 6 h | P6, P4 replay, P12 (intent tracks) | 2027-07-01 → 2027-12-31 |
 | **P14** | Value first: useful toolkit (added 2026-11-15) | Pretrained decoders, drop-in trust wrapper, live lab inputs, safe-WPM metric, demo, write-ups, AAC example | 25–40 / 6 h | M4-12, P4, P5, P6, P11-01 | 2026-11-16 → 2027-03-31 (user and hardware items ext. blocked) |
+| **P15** | **Frontier (added 2026-11-15, leads)** | F1 safe self-improving BCI, F2 faithful LLM decoding + hallucination benchmark, F3 cross-body language model; first experiments E2, E3, E1 | 30–60 / 8 h | Trust layer (P5, P14-03), M4-12 / M4-13, T12 v2, P11-01, GPU queue | 2026-11-16 → 2027-06-30 (first round) |
 
 ## P1. Spec to 1.0
 **Goal:** NeuralTextStream 1.0. Every part has a stability level. A machine-readable schema is the source of truth. The prose spec and the docs are generated from it or checked against it.
@@ -565,6 +569,130 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 
 **Effort:** 25–40 agent-days (our estimate); user: about 6 h (weight hosting decision, accounts, hardware decision). **Depends on:** M4-12, P4-01, P4-02, P4-07, P5-02, P6-02, P6-03, P11-01. **Window:** 2026-11-16 → 2027-03-31, before most of P10, as the rule "demo + benchmark before outreach" needs. Items that need the user or hardware have no date.
 
+## P15. Frontier (added 2026-11-15, leads)
+**Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
+
+**User decision (2026-11-15):** "stop attaching this project to an existing project, find a new frontier that does not exist in BCI yet ... and go that route." P15 leads from now on. No existing item moves, changes its ID or is removed. Existing items become the base: the trust layer is the guarantee engine for F1 and F2; the decoders, adapters and datasets are the base for F3; the NTS spec, SDKs and collector are internal plumbing with a lower priority; the demo shows F1 / F2 progress ([mapping](north-star.md#how-existing-work-maps-in)).
+
+**Pillars** (ranked by the prior-art and feasibility studies, [why new](north-star.md#why-this-is-new)):
+
+| Pillar | Content | Novelty (study) | First experiment |
+|---|---|---|---|
+| **F1** (lead) | Safe self-improving BCI: the decoder learns from accept / reject / correction feedback, and a stated error bound stays valid through every update | High | E2 |
+| **F2** | Faithful LLM decoding: run-time grounding check of LLM text against the neural evidence, risk-controlled hallucination bound, public hallucination benchmark | Medium-high | E3 |
+| **F3** | Cross-body language model: shared character / phoneme output space across implant and EMG (later MEG/EEG), "new modality / new user with minutes of data" | High on paper, medium in practice | E1 |
+
+**Rules:**
+- Each experiment commits a `plan.md` with frozen success criteria **before** its runs (P14-03 pattern).
+- No public novelty claim before P15-10 (focused literature check).
+- One GPU job at a time. CPU work runs while the GPU trains.
+- Clean track (CC0 + CC BY) and research-only track (emg2qwerty, SpanishBCBL) stay separate. Each checkpoint carries its data licences.
+- Silent errors are always reported and never claimed as covered by a guarantee.
+- Write-ups are not papers. Papers stay in PUB with no deadline.
+
+### Deliverables
+| ID | Item | Pillar | Depends on |
+|---|---|---|---|
+| **P15-00** | North star page + P15 scope (this phase, diagram, tracker) | all | — |
+| **P15-01** | E2 CPU pilot: T12 replay simulator with a simulated user, feedback-only adaptation vs frozen | F1 | T12 v2 decoder, `fidetype.trust.online_risk` |
+| **P15-02** | Decoder-update loop + re-calibration hooks in the trust layer (champion / challenger gate) | F1 | P15-01, P14-03, P5-02 |
+| **P15-03** | E2 full runs on GPU: T12 (24 sessions), then T15 (45 sessions) | F1 | P15-02, GPU after M4-13 / P11-01 |
+| **P15-04** | Online risk control with bandit (shown-only) feedback + a formal statement of what the guarantee covers | F1 | P15-02 |
+| **P15-05** | E3: local LLM rescoring / constrained rewrite with a grounding check on T15 and T12 | F2 | local LLM install, M4-12, T12 v2 |
+| **P15-06** | Risk-controlled hallucination bound at run time (CRC / LTT on a fluent-wrong loss) | F2 | P15-05 |
+| **P15-07** | Public hallucination benchmark: null / scrambled / swapped-signal tracks | F2 | P15-05, P6-02 |
+| **P15-08** | E1: Willett character CER at 10–100 % data with text-only, EMG and implant pretrained trunks | F3 | GPU, P11-01 weights (research arm) |
+| **P15-09** | "New modality / new user with minutes of data" benchmark + reverse transfer (implant → EMG, E1b) | F3 | P15-08 |
+| **P15-10** | Focused literature check before any public novelty claim | all | — |
+| **P15-11** | Demo shows F1 / F2: a decoder that improves across sessions while the guarantee line stays | F1, F2 | P15-03 or P15-01, P15-06, P14-06 |
+| **P15-12** | Frontier result write-ups (one per experiment, negative results included) | all | P15-01, P15-03, P15-05, P15-08 |
+
+#### P15-00 North star and P15 scope
+- **Goal:** write down the new direction and plan the first round.
+- **Deliverable:** [north star](north-star.md); this section; P15 in diagram 11 and in the tracker; overview, direction decision and README updated.
+- **Done when:** the pages exist, the links check passes, and the tracker shows P15.
+
+#### P15-01 E2 CPU pilot: self-improving replay on T12
+- **Goal:** show on CPU that the replay simulator, the simulated user and feedback-only adaptation work end to end, while the GPU is busy.
+- **Deliverable:** `experiments/2026-11-16-f1-e2-selfimprove-pilot/` with `plan.md` (frozen before runs), simulator code (replay in time order; accept / reject / retype; q_notice for silent errors; p_sloppy), a frozen trunk with a linear day-input layer, a small subset of T12 sessions, and `results.md`.
+- **Depends on:** T12 v2 decoder, `fidetype.trust.online_risk` (`aci`), `SessionRiskMonitor`.
+- **Done when:** frozen, feedback-only, oracle and self-training arms run on the subset; each session reports PER, commit rate, wrong-commit rate with CP intervals, silent-error rate and labels used; results are compared with the pre-registered criteria.
+
+#### P15-02 Decoder-update loop and re-calibration hooks
+- **Goal:** the trust layer knows when the decoder changes, and a new decoder goes live only after a check.
+- **Deliverable:** an update loop in `fidetype` (name to decide): each update gets a new `config_id`; `aci` runs across updates; an e-process monitor per session; a champion / challenger gate (`block_test` / `block_ltt` on recent feedback that the challenger did not train on); the commit gate and the uniform / shuffled null controls run again on every update; the ledger records each update. Hooks in `TrustGuard` / `OnlineTrustPolicy`.
+- **Depends on:** P15-01, P14-03, P5-02.
+- **Done when:** unit tests show that a worse challenger is refused, a challenger that fails the null controls is refused, and the `config_id` changes on every accepted update. Tests run in CI.
+
+#### P15-03 E2 full runs on T12 and T15
+- **Goal:** the F1 evidence on real multi-session data.
+- **Deliverable:** T12 with 16–20 adapted sessions × 5 arms × 3 simulated-user settings × 2 seeds; then T15 (45 sessions over 20 months). Simulated accept rates calibrated with `t15_personalUse.pkl` (CC0) when it is local. Results page.
+- **Depends on:** P15-02; the GPU after M4-13 and P11-01 (about 2026-11-19).
+- **Done when:** the pre-registered criteria of the plan are evaluated on both datasets, including the self-training negative control and the silent-error rates. Cost about 3–8 GPU-h for T12.
+
+#### P15-04 Bandit-feedback online risk control and guarantee statement
+- **Goal:** a bound that uses only the feedback that the user actually gives (the truth is seen only for what was shown or corrected).
+- **Deliverable:** an online risk-control method for shown-only feedback, based on the published bandit-feedback conformal work (cited, not copied); a written statement of what the guarantee covers and what it does not (silent errors, per-session vs long-run); evaluation on the P15-03 replays.
+- **Depends on:** P15-02.
+- **Done when:** the method runs on the T12 replay, its long-run wrong-commit rate is reported with intervals next to `aci`, and the scope statement is in the wiki. A proof is optional; if we claim a new theorem, a fresh-agent review checks it.
+
+#### P15-05 E3: LLM rescoring with a grounding check
+- **Goal:** better text from an LLM, with nothing added that the neural evidence does not support.
+- **Deliverable:** a local LLM route (llama.cpp or similar; Apache-2.0 or MIT model; 1.7–8B); arms n-gram / LLM rescoring / LLM rewrite limited to the n-best lattice; grounding by CTC forced-alignment log-prob (threshold τ) plus the guard signals; null, frame-shuffled and swapped-signal controls; T15 published logits as the reference decoder. `plan.md` first, then `results.md`.
+- **Depends on:** local LLM install (a 1–10 GB download), M4-12 logits, T12 v2.
+- **Done when:** WER, sentence accuracy, wrong-commit rate, fluent-wrong rate and null / swapped commits are reported for all arms on T15 and T12, and compared with the pre-registered criteria.
+
+#### P15-06 Risk-controlled hallucination bound
+- **Goal:** a stated bound on the rate of committed text that the signal does not support.
+- **Deliverable:** CRC / LTT calibration of τ and the commit threshold on a fluent-wrong loss; a guarantee-sheet entry (α, δ, method, items, assumptions), joined to the P14-03 drop-in wrapper.
+- **Depends on:** P15-05.
+- **Done when:** on held-out data of two public sets, the fluent-wrong commit rate is at or below α at the stated confidence, and the controls pass.
+
+#### P15-07 Public hallucination benchmark
+- **Goal:** a standard way to measure whether a brain-to-text decoder invents text.
+- **Deliverable:** tracks for null, scrambled and swapped-signal inputs; the fluent-wrong metric; a scorer; baselines from P15-05 / P15-06. It is a set of tracks in the P6 leaderboard and the P13 hub, not a new leaderboard.
+- **Depends on:** P15-05, P6-02.
+- **Done when:** the scorer runs in CI on our baselines for at least two datasets, and the track definitions are documented.
+
+#### P15-08 E1: cross-body pretraining on Willett handwriting
+- **Goal:** test whether a trunk pretrained on another body signal helps a low-data target more than text-only pretraining.
+- **Deliverable:** Willett character CER at 10 / 25 / 50 / 100 % data; arms random / text-only / emg2qwerty (research track) / KT-sEMG (clean track) / optional T15 character head; same character LM; 2 seeds; licence tag on each checkpoint. `plan.md` first.
+- **Depends on:** GPU (after P11-01), P11-01 weights for the emg2qwerty arm, CPU caches at a common frame rate.
+- **Done when:** all arms run and the rule "an EMG-pretrained arm beats text-only by more than the seed spread at ≤ 25 % data" is evaluated. A null result is a valid outcome. Cost about 20–45 GPU-h.
+
+#### P15-09 New-modality benchmark and reverse transfer
+- **Goal:** a public test of "new sensor or new user with minutes of data".
+- **Deliverable:** benchmark tracks with fixed data budgets (for example 2, 5, 10 minutes) for a new user and a new modality; the reverse direction E1b (pretrain on Willett + T15, fine-tune on KT-sEMG or one emg2qwerty user); clean and research tracks kept apart.
+- **Depends on:** P15-08.
+- **Done when:** the tracks and baselines exist, and the confound "cross-person vs cross-modality" is stated next to each result.
+
+#### P15-10 Focused literature check
+- **Goal:** make sure that each novelty claim is true before we state it in public.
+- **Deliverable:** a wiki page with the exact claim wordings, the searches (Google Scholar, Semantic Scholar, citing papers of NDT3, BrainOmni, CORP, Tang & Huth 2023) and the result per claim; full-text reads of the closest papers.
+- **Depends on:** nothing.
+- **Done when:** each F1 / F2 / F3 claim is marked "holds", "narrow it" or "drop it", with sources. The README and any post use only claims marked "holds".
+
+#### P15-11 Demo shows F1 / F2 progress
+- **Goal:** a person sees in 30 seconds that the decoder improves and the guarantee holds.
+- **Deliverable:** a view in the P14-06 demo: replayed sessions in time order, error rate going down, the wrong-commit line staying under α, update events (accepted / refused), and LLM suggestions held back when the signal does not support them. The page states that the input is a replay with a simulated user.
+- **Depends on:** P15-01 (pilot data) or P15-03, P15-06, P14-06.
+- **Done when:** it runs from one command; a headless Edge screenshot shows the view; no overflow at phone width.
+
+#### P15-12 Frontier result write-ups
+- **Goal:** credibility: each experiment has a public result that anyone can rerun.
+- **Deliverable:** result pages in `experiments/` and the wiki for E2, E3, E1 and their follow-ups, with the plan, the exact config, the controls, a one-command rerun and the limits. Negative results are written up too.
+- **Depends on:** P15-01, P15-03, P15-05, P15-08.
+- **Done when:** each finished experiment has a result page linked from the [north star](north-star.md) and the [overview](../overview.md). Papers in PUB may cite them later; no paper deadline.
+
+### Exit criteria (first round)
+- E2 (F1) has a pilot and full results on T12 and T15, with the update gate in code (P15-01 … P15-04).
+- E3 (F2) has results with a stated hallucination bound and a benchmark track (P15-05 … P15-07).
+- E1 (F3) has a result, positive or null, with the text-only control (P15-08), and the new-modality benchmark exists (P15-09).
+- Every public novelty claim passed P15-10.
+- The demo shows F1 / F2 (P15-11). Each experiment has a write-up (P15-12).
+
+**Effort:** 30–60 agent-days (our estimate); about 30–60 GPU-h in total; user: about 8 h (review of claims, LLM licence choice). **Depends on:** trust layer (P5, P14-03), decoders (M4-12 / M4-13, T12 v2, P11-01), the GPU queue. **Window:** 2026-11-16 → 2027-06-30 for the first round. Later rounds (joint model on one GPU, live user studies) come after it; user studies need ethics approval and volunteers (**externally blocked**).
+
 ## Sequencing
 | Window | First (critical path) | In parallel |
 |---|---|---|
@@ -611,6 +739,7 @@ These steps need the user or outside people. They are tracked as `externally_blo
 - [OpenTelemetry case study](../sources/case-study-opentelemetry.md)
 - [LangChain case study](../sources/case-study-langchain.md) (the reason for P14: useful first)
 - [Spec v0.1](../../spec/neuraltextstream-v0.1.md)
-- [Progress dashboard](../progress/index.html) (milestones P1–P14)
+- [North star](north-star.md) (the reason for P15: frontier first)
+- [Progress dashboard](../progress/index.html) (milestones P1–P15)
 - [Apple BCI HID](../entities/apple-bci-hid.md)
 - [Diagrams](../diagrams/index.html) (diagram 11: long-term roadmap)

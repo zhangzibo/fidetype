@@ -1,9 +1,9 @@
 ---
 title: Direction decision — trustworthy neural text entry
 type: question
-tags: [planning, decision, directions, licence, market, scope, standard, intent, benchmark]
+tags: [planning, decision, north-star, frontier, directions, licence, market, scope, standard, intent, benchmark]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, case-study-opentelemetry, neural-input-landscape-2026]
-updated: 2026-11-11
+updated: 2026-11-15
 ---
 
 # Direction decision (2026-11-07)
@@ -112,6 +112,28 @@ The positioning is: **NTS = "EMMA for neural input, OpenTelemetry-style".**
 Both phases come at the end of the order. P1–P11 keep their order and dates.
 
 > **Our take:** This makes the 2026-11-08 definition of "neural input" ("text or intent") explicit in the plan. It changes no near-term work. Spec v0.1 already has `vocab_type = "command"` and a `pointer` event, so the later profiles can grow without a break.
+
+## North star decision (2026-11-15): frontier route
+**Decision (user, 2026-11-15):** the user explained that "OpenTelemetry level" meant *a big project that many people use*, not *the same subject as OpenTelemetry*. Then: "stop attaching this project to an existing project, find a new frontier that does not exist in BCI yet, think big and think outside of the boundaries of what is possible ... and go that route." Earlier the same day: do not move or remove existing roadmap items.
+
+**New north star:** a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth ([north star](north-star.md)).
+
+| Pillar | Content | Rank |
+|---|---|---|
+| F1 | Safe self-improving BCI: the decoder learns from accept / reject / correction feedback while a stated error bound stays valid through every update | 1 (lead) |
+| F2 | Faithful LLM decoding: run-time grounding check against the neural evidence, risk-controlled hallucination bound, public hallucination benchmark | 2 |
+| F3 | Cross-body language model: shared character / phoneme output space across implant and EMG (later MEG/EEG), new modality or new user with minutes of data | 3 |
+
+**Evidence:** a prior-art study (abstract level, about 30 searches per direction) found no BCI work that joins decoder self-improvement with a guarantee kept through updates (F1), no run-time grounding check or hallucination-rate guarantee for brain-decoded text (F2), and no model that joins implant + EMG + MEG/EEG for text (F3). A feasibility study found that the first experiment of each pillar fits our data and our one GPU. Details, links and limits: [north star, why this is new](north-star.md#why-this-is-new). A focused literature check comes before any public novelty claim (roadmap P15-10).
+
+**What changes:**
+- Roadmap phase [P15 Frontier](roadmap-standard.md#p15-frontier-added-2026-11-15-leads) leads. P1–P14 keep their IDs and content.
+- The trust layer becomes the guarantee engine for F1 and F2. Decoders, adapters and datasets are the base for F3. The NTS spec, SDKs and collector stay as internal plumbing and as the way results flow, with a lower priority. The demo shows F1 / F2 progress.
+- Success is no longer "the number of decoders that emit NTS". It is evidence for the three pillars, and then people who use the tool because it does something no other BCI tool does.
+
+**Relation to earlier options:** the 2026-11-07 table below rejected "brain foundation models" (crowded field) and deferred "EMG → brain transfer". F3 is narrower than a foundation model: a shared output space with a "minutes of data" benchmark at one-GPU scale. It partly revives the deferred EMG transfer idea, with a text-only control and separate licence tracks. The table stays as it was written.
+
+> **Our take:** the trust work of M2–M5 and P14 is not lost. It is the part of the north star that nobody else has: a guarantee. The new direction adds the two things that make a guarantee matter: a system that changes every day (F1) and a language model that can invent text (F2).
 
 ## Rejected or deferred options
 | Option | Status | Reason |
