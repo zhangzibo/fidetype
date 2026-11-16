@@ -23,6 +23,8 @@ NTS takes the role for neural input that [OpenTelemetry](https://opentelemetry.i
 | A spec compliance matrix | A conformance suite with golden vectors; all three SDKs must give the same verdict |
 | OTEPs (enhancement proposals) | FEPs (Fidetype Enhancement Proposals) |
 
+Who has a reason to use it, and what is built for each audience today: [who uses Fidetype](wiki/questions/who-uses-fidetype.md).
+
 NTS adds one thing that telemetry does not need: a **trust layer**. For each utterance it decides COMMIT, OFFER (show choices), ASK or ABSTAIN, with a calibrated, auditable reason. Every decision is a `trust_decision` event in the same format.
 
 ## Architecture

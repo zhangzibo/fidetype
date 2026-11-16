@@ -1,9 +1,9 @@
 ---
 title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
-tags: [planning, roadmap, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub]
+tags: [planning, roadmap, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -14,12 +14,15 @@ updated: 2026-11-14
 
 **Update (2026-11-11):** the user added two scope items at the end: [P12](#p12-beyond-text-intent-and-control-added-2026-11-11) (intent beyond text) and [P13](#p13-public-benchmark-hub-added-2026-11-11) (public benchmark hub). Priorities and the order of P1–P11 do not change.
 
+**Update (2026-11-15):** the user added [P14](#p14-value-first-a-useful-toolkit-added-2026-11-15) (value first: pretrained decoders, a drop-in trust wrapper, live lab inputs, a safe-WPM metric, a visible demo, result write-ups, an example AAC integration). No existing item moves, changes its ID or changes its priority.
+
 **Context:** [project plan](project-plan.md) (M0–M7 = v0.1), [open-source playbook](open-source-playbook.md) (stages 0–5), [architecture](architecture.md), [direction decision](direction-decision.md#scope-decision-2026-11-08-neural-input-opentelemetry-level), [spec v0.1](../../spec/neuraltextstream-v0.1.md), [public datasets](public-datasets.md), [progress dashboard](../progress/index.html) (milestones P1–P11).
 
 ## Summary
 - v0.1 (M0–M7) gives one spec draft, one Python package, one trust core, a first benchmark and first adapters.
 - After v0.1, the roadmap has **13 phases (P1–P13)**. Most of them run in parallel.
 - **P12 (beyond text: intent and control)** and **P13 (public benchmark hub)** were added on 2026-11-11 at the end of the order. They do not change priorities. Text entry stays first ([decision](direction-decision.md#scope-note-2026-11-11-intent-beyond-text-and-a-benchmark-hub)).
+- **P14 (value first)** was added on 2026-11-15. It makes `fidetype` useful on its own (pretrained decoders, a trust wrapper, a demo), so that people have a reason to install it. It references existing items and changes none of them.
 - The critical path is: **benchmark (P6) + spec 1.0 RC (P1) → Python + C SDKs (P2) → replay adapters (P4) → collector (P3) → "three devices, one stream" demo (P8) → launch (P10)**. Papers are not on the critical path (see [publications](#publications-no-deadline)).
 - The gap to an OpenTelemetry-scale project is **not the core**. It is the **SDKs, adapters and integrations** (see [scale reference](#scale-reference)).
 - **Dataset replay** lets us test devices we do not own. Real hardware, outreach, partners, ethics, user studies, peer review and arXiv endorsement depend on outside people. They are **`externally_blocked`** or user-owned.
@@ -83,6 +86,7 @@ Effort is rough. **1 agent-day** = about 8 h of subagent work. "User" = hours of
 | **P11** | Research track | Better decoders (papers: PUB) | ongoing | GPU, datasets | 2026-11-16 → 2027-12-31 |
 | **P12** | Beyond text: intent and control | Output profiles for discrete intent, continuous control and speech; trust policies for actuation | 20–35 / 8 h | P1 1.0 RC, P2, P3, P5 | 2027-07-01 → 2027-12-31 |
 | **P13** | Public benchmark hub | Extend the P6 leaderboard into a reproducible hub; later all intent | 10–20 / 6 h | P6, P4 replay, P12 (intent tracks) | 2027-07-01 → 2027-12-31 |
+| **P14** | Value first: useful toolkit (added 2026-11-15) | Pretrained decoders, drop-in trust wrapper, live lab inputs, safe-WPM metric, demo, write-ups, AAC example | 25–40 / 6 h | M4-12, P4, P5, P6, P11-01 | 2026-11-16 → 2027-03-31 (user and hardware items ext. blocked) |
 
 ## P1. Spec to 1.0
 **Goal:** NeuralTextStream 1.0. Every part has a stability level. A machine-readable schema is the source of truth. The prose spec and the docs are generated from it or checked against it.
@@ -206,6 +210,7 @@ Reasons:
 - Language: Rust or Python for v1 (decide by FEP; Rust fits a long-running local service).
 - A `contrib` folder for third-party components, as in OTel.
 - Hard rule: an exporter to an OS input method sends **only committed** decisions. It logs the full NTS next to each output.
+- **Value-first link (2026-11-15):** [P14-09](#p14-09-example-aac-integration) uses the WebSocket exporter for an example AAC app integration. P3 scope does not change.
 
 ### Exit criteria
 - One YAML config runs: B2T '25 replay → trust processor → file exporter and WebSocket exporter. End-to-end latency is measured and below 50 ms added (our target).
@@ -234,6 +239,7 @@ Reasons:
 
 - **Status (2026-11-15):** two generic decoder-output adapters exist: [CTC-logits adapter](../concepts/ctc-logits-adapter.md) (frames from any CTC decoder) and [text n-best adapter](../concepts/text-nbest-adapter.md) (text-only decoders → hypothesis stream). Dataset replay adapters so far: B2T '25, Toronto sEMG, SpanishBCBL, [Willett handwriting](../entities/willett-handwriting-2021.md#replay-adapter-p4-01-2026-11-14) and [KT-sEMG](../entities/kt-semg-dataset.md#replay-adapter-p4-01-2026-11-14) (both 2026-11-14). [emg2qwerty](../entities/emg2qwerty.md#replay-adapter-p4-01-2026-11-15) followed on 2026-11-15 (research only). All six replay adapters of deliverable 1 exist; P4-01 is done.
 - Each adapter has a replay test that runs in CI with no hardware.
+- **Value-first link (2026-11-15):** [P14-04](#p14-04-live-decode-from-lab-tools) builds a one-command live path on the LSL and BrainFlow / OpenBCI adapters of deliverables 2–3 (task P4-02). P4 scope does not change.
 - Licence rule: before any code, an agent records the licence or terms in the adapter README. Copyleft toolkits get **process-separated** adapters only. We copy no third-party code.
 
 ### Exit criteria
@@ -273,6 +279,8 @@ Reasons:
 
 **Effort:** 30–50 agent-days. **Depends on:** v0.1 trust core, P3 processors, P11 (better decoders make usefulness testable).
 
+**Value-first link (2026-11-15):** [P14-03](#p14-03-trust-layer-as-a-drop-in-wrapper) packages the deliverable-2 guarantees as a drop-in wrapper for any decoder. P5 scope does not change.
+
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
 
@@ -292,6 +300,8 @@ Reasons:
 **Effort:** 15–25 agent-days. **Depends on:** M5 harness, P4 replay adapters.
 
 **Status (2026-11-11):** v0.1 is done as M5-01..03: [open benchmark](../concepts/open-benchmark.md) (3 tracks, NTS submissions, fixed splits, static leaderboard with our baselines).
+
+**Value-first link (2026-11-15):** [P14-05](#p14-05-headline-metric-safe-words-per-minute) adds a "safe WPM at α" column to this leaderboard. It is not a second leaderboard.
 
 **Later extension:** [P13](#p13-public-benchmark-hub-added-2026-11-11) grows this leaderboard into a hub. P6 scope and dates do not change.
 
@@ -324,6 +334,8 @@ Reasons:
 - The demo runs from one command on a clean machine.
 
 **Effort:** 15–25 agent-days; user: video voice-over or review (about 10 h). **Depends on:** P2, P3, P4.
+
+**Value-first link (2026-11-15):** [P14-06](#p14-06-visible-demo-recorded-emg-to-text) is a smaller single-modality demo (recorded EMG → text). The three-device demo (P8-03) can reuse it. [P14-03](#p14-03-trust-layer-as-a-drop-in-wrapper) adds one quickstart to P8-02.
 
 ## P9. Governance + community
 **Goal:** the rules that let other people trust and join the project.
@@ -389,6 +401,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - PUB has no due date. It never counts as late. It is not part of the M1–M7 target or of any phase window.
 - No phase waits on PUB. Papers are not exit criteria of any phase.
 - Research results go to `experiments/` and the wiki first. Papers draw on them later.
+- Value-first link (2026-11-15): [P14-08](#p14-08-results-write-ups) writes public result pages that papers may cite. It adds no paper deadline.
 - Tracker: milestone `PUB` (Paper 1 tasks M3-03 … M3-26, Paper 2 M4-04 and M4-05, spec / benchmark paper P11-04 and P11-05; ids unchanged).
 
 ## P12. Beyond text: intent and control (added 2026-11-11)
@@ -445,6 +458,112 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 
 **Effort:** 10–20 agent-days; about 6 h user review. **Depends on:** P6, P4 replay adapters; P12 for intent tracks.
 
+## P14. Value first: a useful toolkit (added 2026-11-15)
+**Goal:** people install `fidetype` because it is useful today, not only because it is a format. The format spreads as a side effect, as with LangChain ([LangChain case study](../sources/case-study-langchain.md)). P14 adds user value and credibility. It does not change the scope, order or priority of P1–P13.
+
+**User decision (2026-11-15):** adoption needs real user value and credibility. The user added this phase. No existing item moves, changes its ID or changes its priority. Where an existing item already covers a part, P14 references it and adds only the missing part.
+
+**Audiences:** each item names the audiences that it serves. The five audiences, their pain today and what is built: [who uses Fidetype](who-uses-fidetype.md).
+
+### Deliverables
+| ID | Item | Builds on (existing items) | Serves |
+|---|---|---|---|
+| **P14-01** | Pretrained decoders + one-line load and decode, output in NTS | M4-12, P4-01, P11-01, P2-06, P5-03 | small teams, research labs |
+| **P14-02** | Weight release decision and hosting (user-owned) | P14-01, P2-07, M7-09 | small teams, research labs |
+| **P14-03** | Trust layer as a drop-in wrapper for any decoder + 10-minute quickstart | P4-07, P5-02, P5-07, M2-19, P8-02 | BCI companies, research labs, small teams |
+| **P14-04** | Live decode from lab tools: LSL, BrainFlow, OpenBCI boards | P4-02, P14-01, P14-03; real boards: P4-06 | research labs, small teams |
+| **P14-05** | Headline metric: safe words per minute at a guaranteed wrong-commit rate | P6-02, P6-03, P13-02 | research labs, BCI companies |
+| **P14-06** | Visible demo: recorded EMG → text typed on screen, trust decisions shown | P14-01, P14-03, P8-05; later P8-03 | all audiences (first look); small teams |
+| **P14-07** | Live demo with a real wristband (hardware: user decision) | P14-06, P4-05, P4-06 | BCI companies, small teams |
+| **P14-08** | Results write-ups (credibility), linked to the paper track | P14-01, P14-05, PUB (P11-04, M4-04) | research labs, BCI companies, clinical trials |
+| **P14-09** | Example AAC integration: NTS into an open-source AAC or text-entry app | P3 WebSocket exporter, P14-03, P14-06; pilot: P10-05 | AAC app makers |
+
+#### P14-01 Pretrained decoders, one-line load and decode
+- **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** `pip install fidetype` gives decoders for the public datasets that we use. One line loads a model. One line decodes a recording into NTS.
+- **Deliverable:** a `fidetype.pretrained` module (name to decide). Example shape: `m = fidetype.pretrained.load("t15-speech"); stream = m.decode(path)`. Models:
+
+  | Model | Data | Data licence | Weights status |
+  |---|---|---|---|
+  | Implant speech (T15) | Brain-to-Text '25 | CC0 1.0 | Clean. Can ship after P14-02 |
+  | Implant handwriting | Willett handwriting 2021 | CC0 1.0 | Clean. Needs a trained decoder first |
+  | Wrist EMG typing (clean) | Toronto sEMG or KT-sEMG | CC BY 4.0 (attribution) | Clean, with attribution in the model card |
+  | Wrist EMG typing (emg2qwerty) | emg2qwerty | CC BY-NC-SA 4.0 | **Research only.** Never in the wheel. Separate opt-in download. The user must accept the licence. The weights keep the share-alike terms |
+
+  Licence sources: [`LICENSES/DATA.md`](../../LICENSES/DATA.md), [Willett handwriting](../entities/willett-handwriting-2021.md), [KT-sEMG](../entities/kt-semg-dataset.md), [emg2qwerty](../entities/emg2qwerty.md).
+- **Rules:** weights are not in the git repository and not in the wheel. The package downloads them on first use and checks a SHA-256. Each model card states the data, the licence, the metrics and the limits. Each output stream carries `decoder.weights_sha256` and the licence flag of the [provenance ledger](../concepts/provenance-ledger.md) (P5-03). DATA.md rule 1 ("no trained weights") changes only after P14-02.
+- **Depends on:** M4-12 (T15 decoder), P4-01 (replay adapters), P11-01 (EMG decoders), P2-06 (packaging), P5-03 (licence flags).
+- **Done when:** on a clean machine, `pip install fidetype` and two lines decode one test file of each clean dataset into NTS that passes the conformance level `provenance`. A fresh subagent with no context does this from the README alone. The metrics in each model card match a rerun. No weights are in the repository.
+
+#### P14-02 Weight release decision and hosting
+- **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** a recorded user decision on where the weights live (for example, GitHub release assets or a model hub) and on the change to DATA.md rule 1.
+- **Deliverable:** the decision in the wiki. Agents prepare the model cards and the upload script. The user creates the accounts and does the upload.
+- **Depends on:** P14-01, P2-07 (registry accounts), M7-09 (PyPI release).
+- **Done when:** clean weights download from the chosen host with matching SHA-256. **`externally_blocked`** (user decision and accounts).
+
+#### P14-03 Trust layer as a drop-in wrapper
+- **Serves:** BCI companies, research labs, small teams ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** any team adds the trust layer to its own decoder with no change to the decoder. Bring your own logits or n-best lists. Get COMMIT / OFFER / WITHHOLD with a stated wrong-commit guarantee.
+- **Deliverable:** one wrapper API (example shape: `guard = fidetype.trust.wrap(calibration_set, alpha=0.05)`; `decision = guard(logits_or_nbest)`); a calibration helper that fits on the user's own held-out data; a printed guarantee sheet (α, δ, method, number of calibration items, assumptions); a quickstart page "add trust to your decoder in 10 minutes". The wrapper reuses the [CTC-logits adapter](../concepts/ctc-logits-adapter.md) and the [text n-best adapter](../concepts/text-nbest-adapter.md). It adds no new trust maths.
+- **Depends on:** P4-07 (generic adapters), P5-02 (guarantees), P5-07 (trust v5 recipe), M2-19 (re-tuned LTT config), P8-02 (quickstarts; this quickstart is one of them).
+- **Done when:** a fresh subagent goes from the quickstart to a calibrated wrapper on its own logits in 10 minutes or less (timed). It works for logits and for n-best input. On two public replay sets, the held-out wrong-commit rate is at or below α at the stated confidence. Unit tests and the quickstart code run in CI.
+
+#### P14-04 Live decode from lab tools
+- **Serves:** research labs, small teams ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** a lab that already uses LSL, BrainFlow or an OpenBCI board gets live NTS from one command.
+- **Deliverable:** a CLI and API path (example shape: `fidetype live --source lsl|brainflow --board <id> --model <name> --trust <config>`). It joins the P4-02 adapters (LSL exists: `src/fidetype/adapters/lsl.py`; the BrainFlow → LSL bridge exists: `src/fidetype/adapters/brainflow_bridge.py`), a P14-01 model and the P14-03 wrapper. OpenBCI boards (Cyton, Ganglion) go through their BrainFlow board ids. P14-04 adds only the end-user path. The adapters stay in P4-02.
+- **Note:** our pretrained models do not transfer to a new device or a new person without calibration. So the live test checks the plumbing (synthetic board, LSL replay of a public recording). Replay checks the decoding quality.
+- **Depends on:** P4-02, P14-01, P14-03. Real boards: P4-06.
+- **Done when:** in CI, the BrainFlow synthetic board and an LSL replay of a public recording each give valid NTS end to end, with trust decisions, from one command. The test on a real OpenBCI board is part of P4-06 (**externally blocked**, hardware).
+
+#### P14-05 Headline metric: safe words per minute
+- **Serves:** research labs, BCI companies ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** one number that says what a user gets: words per minute of committed text, at a wrong-commit rate that the trust layer guarantees (working name "safe WPM at α").
+- **Deliverable:** a metric definition on [error metrics](../concepts/error-metrics.md): committed correct words per minute; the entry states α, δ and the method; the measured wrong-commit rate on test is shown next to it; the no-BCI eWPM baseline stays. The scorer computes it. The leaderboard shows it as a column. **No new leaderboard:** this is a column in the P6 leaderboard and in the P13 guarantee reporting.
+- **Depends on:** P6-02 (scorer), P6-03 (leaderboard site), P13-02 (guarantee reporting).
+- **Done when:** the scorer gives safe WPM for our baselines on at least 3 tracks. Entries whose measured wrong-commit rate is above their stated α are marked. The required shuffled and null controls are shown next to it.
+
+#### P14-06 Visible demo: recorded EMG to text
+- **Serves:** all audiences (first look); small teams ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** one short demo that shows the value in 30 seconds: wrist EMG goes in, text appears on screen, and each trust decision is visible.
+- **Deliverable:** a browser page and one command. A recorded EMG session (clean data: Toronto sEMG or KT-sEMG; emg2qwerty only with a "research only" label) plays at real time → P14-01 model → P14-03 wrapper → text. Committed text, offered choices and withheld segments have different marks. A screenshot and an optional screen recording. The three-device demo (P8-03) can reuse it. It does not replace P8-03.
+- **Depends on:** P14-01, P14-03, P8-05 (original UI work). Later P8-03.
+- **Done when:** the demo runs from one command on a clean machine. A headless Edge screenshot shows text and trust marks. The page states the dataset, its licence and that the input is a recording.
+
+#### P14-07 Live demo with a real wristband
+- **Serves:** BCI companies, small teams ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** the P14-06 demo with a live EMG wristband.
+- **Deliverable:** the device choice (user), the P4-05 EMG band adapter, a per-user calibration session, a recorded live run.
+- **Depends on:** P14-06, P4-05, P4-06.
+- **Done when:** a live run types text with trust marks on screen. **`externally_blocked`** (the hardware purchase is the user's decision).
+
+#### P14-08 Results write-ups
+- **Serves:** research labs, BCI companies, clinical trials ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** credibility. Each value-first claim has a public result that anyone can rerun.
+- **Deliverable:** short result pages in `experiments/` and the wiki: the models of P14-01 (metrics per dataset, controls, limits) and the safe-WPM numbers of P14-05. Each page has the exact config, the controls and a one-command rerun. The papers in the PUB track (Paper 1, Paper 2 M4-04, spec / benchmark paper P11-04) may cite them later.
+- **Rule:** write-ups are not papers. They have no peer review. PUB keeps **no deadline**. P14 adds no deadline to any paper item.
+- **Depends on:** P14-01, P14-05. Links to PUB (P11-04, M4-04).
+- **Done when:** each P14-01 model and the P14-05 metric has a result page, linked from its model card or leaderboard column. The [overview](../overview.md) cites them.
+
+#### P14-09 Example AAC integration
+- **Serves:** AAC app makers ([who uses Fidetype](who-uses-fidetype.md)).
+- **Goal:** show that one standard input (NTS) lets any BCI drive an AAC app, as USB HID lets any keyboard drive any computer.
+- **Deliverable:** an example integration of NTS into one open-source AAC or text-entry app. The app receives only COMMIT decisions (and, as an option, OFFER choices as a word list) from the collector WebSocket exporter. Candidates to check: Cboard (web AAC), Optikey (Windows eye-gaze keyboard), Dasher (text entry). This wiki has **not verified** their licences. Copyleft apps get a process-separated bridge only (WebSocket), as the P4 licence rule says. We copy no third-party code. The licence check comes first, before any code.
+- **Depends on:** P3 WebSocket exporter (exists in collector v0, [collector](../concepts/collector.md)), P14-03 (trust wrapper), P14-06 (recorded EMG source). A pilot with a real AAC developer stays P10-05 (**externally blocked**).
+- **Done when:** recorded EMG (or B2T '25 replay) → trust layer → the AAC app shows committed text, from one command, with a screenshot. The bridge has a replay test in CI. A short guide "connect your AAC app to NTS" exists. An upstream contribution to the app needs its maintainers: **externally blocked**.
+
+### Exit criteria
+- `pip install fidetype` plus two lines decode public data into NTS (P14-01). Clean weights are published (P14-02, externally blocked).
+- The trust wrapper quickstart passes the fresh-agent 10-minute test (P14-03).
+- One command gives live NTS from LSL and from the BrainFlow synthetic board (P14-04).
+- The leaderboard shows safe WPM on 3 or more tracks (P14-05).
+- The recorded EMG demo runs from one command (P14-06). The live wristband demo is externally blocked (P14-07).
+- Every P14-01 model and the P14-05 metric has a result page (P14-08).
+- One open-source AAC or text-entry app shows committed NTS text through the example bridge (P14-09).
+
+**Effort:** 25–40 agent-days (our estimate); user: about 6 h (weight hosting decision, accounts, hardware decision). **Depends on:** M4-12, P4-01, P4-02, P4-07, P5-02, P6-02, P6-03, P11-01. **Window:** 2026-11-16 → 2027-03-31, before most of P10, as the rule "demo + benchmark before outreach" needs. Items that need the user or hardware have no date.
+
 ## Sequencing
 | Window | First (critical path) | In parallel |
 |---|---|---|
@@ -489,7 +608,8 @@ These steps need the user or outside people. They are tracked as `externally_blo
 - [Public datasets](public-datasets.md)
 - [Neural input landscape 2026](../sources/neural-input-landscape-2026.md)
 - [OpenTelemetry case study](../sources/case-study-opentelemetry.md)
+- [LangChain case study](../sources/case-study-langchain.md) (the reason for P14: useful first)
 - [Spec v0.1](../../spec/neuraltextstream-v0.1.md)
-- [Progress dashboard](../progress/index.html) (milestones P1–P13)
+- [Progress dashboard](../progress/index.html) (milestones P1–P14)
 - [Apple BCI HID](../entities/apple-bci-hid.md)
 - [Diagrams](../diagrams/index.html) (diagram 11: long-term roadmap)
