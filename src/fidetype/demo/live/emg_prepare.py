@@ -125,16 +125,10 @@ def split_files(files: list[str]) -> tuple[list[str], list[str]]:
 
 
 def _cp(k: int, n: int) -> list[float | None]:
-    """Clopper-Pearson 95 % interval."""
-    if n == 0:
-        return [None, None]
-    try:
-        from scipy.stats import beta
-    except ImportError:  # pragma: no cover
-        return [None, None]
-    lo = 0.0 if k == 0 else float(beta.ppf(0.025, k, n - k + 1))
-    hi = 1.0 if k == n else float(beta.ppf(0.975, k + 1, n - k))
-    return [round(lo, 4), round(hi, 4)]
+    """Clopper-Pearson 95 % interval (no scipy needed)."""
+    from fidetype.demo.live.tracks import clopper_pearson
+
+    return clopper_pearson(k, n)
 
 
 def key_frame_temperature(streams: Any, key_truths: Any) -> Any:
