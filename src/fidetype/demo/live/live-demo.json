@@ -1,0 +1,105 @@
+{
+  "schema": "fidetype.live-demo-config/0.1",
+  "description": "Default tracks of `fidetype demo live` (P14-06). Data paths use ${DATA} = $FIDETYPE_DATA (default ~/bci-data). Tracks whose data are missing are skipped with a message.",
+  "default_tracks": ["t15", "emg2qwerty"],
+  "tracks": [
+    {
+      "id": "t15",
+      "kind": "trust-log",
+      "title": "Implant: attempted speech to text",
+      "subtitle": "Intracortical recording, participant T15. Each sentence plays at the speed it was spoken.",
+      "dataset": {
+        "name": "Brain-to-Text '25, T15 copy-task neural data (Card et al. 2024)",
+        "licence": "CC0-1.0",
+        "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+        "research_only": false,
+        "modality": "intracortical (implant)"
+      },
+      "decoder_label": "Our causal GRU-CTC phoneme decoder (M4-12, lookahead 0) + our word decoder with an n-gram LM",
+      "trust_label": "Trust config tcfg-e7e8c472f6d9ab33 (M2-19: LTT, alpha 0.05, delta 0.1), held-out val_eval trials",
+      "notes": [
+        "Decisions are the recorded M2-19 run (experiments/2026-11-15-m2-19-trust-retune), replayed with their recorded timing and latency.",
+        "The grey preview is the greedy phoneme output of the recorded decoder log-probabilities.",
+        "M2-19 found that this config needs the M2-18 commit gate before any real use (it fails the uniform-noise control without it)."
+      ],
+      "decisions": "${DATA}/derived/m2-19-trust-retune/m2-19-decisions-dedicated_0-ltt.json",
+      "truth": {"format": "b2t25-texts", "path": "${DATA}/derived/m4-01-02-lookahead/texts.json"},
+      "alpha": 0.05,
+      "preview": {"format": "ctc-logprobs-npz", "path": "${DATA}/derived/m2-19-trust-retune/logprobs-m2-19-m4-12-fixed0.npz", "suffix": "|L0", "vocab": "b2t25"},
+      "gap_s": 1.5
+    },
+    {
+      "id": "emg2qwerty",
+      "kind": "nts-streams",
+      "title": "Wrist EMG: touch typing to text",
+      "subtitle": "Two sEMG wristbands while typing. One frame per key press (key timing from the keylogger).",
+      "dataset": {
+        "name": "emg2qwerty (Sivakumar et al. 2024)",
+        "licence": "CC-BY-NC-SA-4.0",
+        "url": "https://arxiv.org/abs/2410.20081",
+        "research_only": true,
+        "modality": "surface EMG (wrist)"
+      },
+      "decoder_label": "P4-01 LDA key classifier (session-calibrated baseline, key accuracy 0.54), beam search without LM",
+      "trust_label": "Trust config fitted by `--prepare emg2qwerty` on the first half of the prompts of each session (alpha 0.05)",
+      "notes": [
+        "Research use only: data, streams and this config are CC BY-NC-SA 4.0.",
+        "This is a weak baseline decoder. The trust layer should offer or withhold almost everything it types.",
+        "The P11-01 EMG decoder plugs in here by configuration (kind nts-streams, decoder greedy)."
+      ],
+      "streams_dir": "${DATA}/derived/p4-01-emg2qwerty/baseline-8x2",
+      "files": {"path": "${DATA}/derived/p14-06-demo/emg2qwerty/split.json", "key": "replay"},
+      "trust_config": "${DATA}/derived/p14-06-demo/emg2qwerty/trust-config-emg2qwerty-lda.json",
+      "decoder": "keys",
+      "truth": {"format": "json-map", "path": "${DATA}/derived/p14-06-demo/emg2qwerty/truth.json", "field": "text"},
+      "prepare": {
+        "kind": "emg2qwerty",
+        "raw": "${DATA}/raw/emg2qwerty/extracted/emg2qwerty-data-2021-08",
+        "out": "${DATA}/derived/p14-06-demo/emg2qwerty",
+        "makes": ["files", "trust_config", "truth"]
+      },
+      "preview_every_frames": 1,
+      "gap_s": 1.5
+    },
+    {
+      "id": "p11-01-emg",
+      "kind": "nts-streams",
+      "enabled": false,
+      "title": "Wrist EMG: continuous decoder (P11-01)",
+      "subtitle": "Template: set enabled to true when P11-01 writes NTS files (fidetype.adapters.ctc_logits).",
+      "dataset": {
+        "name": "emg2qwerty (Sivakumar et al. 2024)",
+        "licence": "CC-BY-NC-SA-4.0",
+        "url": "https://arxiv.org/abs/2410.20081",
+        "research_only": true,
+        "modality": "surface EMG (wrist)"
+      },
+      "decoder_label": "P11-01 CTC decoder (character streams)",
+      "trust_label": "Frozen trust config of P11-01",
+      "streams_dir": "${DATA}/derived/p11-01-emg-decoder/nts",
+      "files": "*.jsonl",
+      "trust_config": "${DATA}/derived/p11-01-emg-decoder/trust-config.json",
+      "decoder": "greedy",
+      "truth": {"format": "json-map", "path": "${DATA}/derived/p11-01-emg-decoder/truth.json", "field": "text"},
+      "preview_every_frames": 5
+    },
+    {
+      "id": "synthetic",
+      "kind": "synthetic",
+      "title": "Synthetic decoder (no recording)",
+      "subtitle": "Simulated decoder output at six signal levels, two of them with no signal at all. Needs no data.",
+      "dataset": {
+        "name": "Synthetic phrases and simulated decoder streams (fidetype.demo, M7-01)",
+        "licence": "Apache-2.0",
+        "research_only": false,
+        "modality": "simulated"
+      },
+      "decoder_label": "Small beam search with a character 5-gram LM (fidetype.trust.testing.ReferenceDecoder)",
+      "trust_label": "Packaged demo config (Paper 1 recipe, LTT alpha 0.05)",
+      "notes": ["Synthetic data: this is not a recording of a person."],
+      "partial_every_frames": 10,
+      "summary_per_condition": 20,
+      "gap_s": 1.2
+    }
+  ]
+}

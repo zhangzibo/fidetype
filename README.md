@@ -63,6 +63,7 @@ cd fidetype
 ```sh
 pip install .                     # or: uv sync --extra dev   (adds pytest: uv run pytest -q)
 fidetype demo --fast              # offline demo: the trust layer on synthetic decoder streams
+fidetype demo live                # browser demo: replay of recorded decoder output with trust decisions (docs/demo.md)
 fidetype conformance --profile fep-0001
 fidetype collector --config examples/collector/collector.toml --check
 ```

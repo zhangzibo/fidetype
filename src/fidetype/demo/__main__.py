@@ -7,6 +7,7 @@
     fidetype demo --html demo.html     # also write the static page (open it in a browser)
     fidetype demo --json log.json      # also write the decision log
     fidetype demo --write-streams DIR  # write the session streams as .jsonl (for replay or LSL)
+    fidetype demo live                 # browser replay demo of recorded data (P14-06; see fidetype.demo.live)
 """
 
 from __future__ import annotations
@@ -128,6 +129,12 @@ def print_totals(totals: dict[str, Any], out: _Out) -> None:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    if args[:1] == ["live"]:
+        from fidetype.demo.live.__main__ import main as live_main
+
+        return live_main(args[1:])
+    argv = args
     ap = argparse.ArgumentParser(prog="fidetype demo", description="Offline demo of the Fidetype trust layer "
                                  "(synthetic decoder streams; nothing leaves your computer).")
     ap.add_argument("--speed", type=float, default=4.0, help="replay speed (1 = real time; default 4)")
