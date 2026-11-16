@@ -1,5 +1,11 @@
 """The trust core: calibration, conformal sets, hallucination guard and
-decision policy, risk control and the provenance ledger. It reads only :mod:`fidetype.trust.types`."""
+decision policy, risk control and the provenance ledger. It reads only :mod:`fidetype.trust.types`.
+
+Drop-in wrapper for any decoder (P14-03, :mod:`fidetype.trust.dropin`)::
+
+    guard = fidetype.trust.calibrate(cal_logits, cal_texts, vocab=VOCAB, lexicon=WORDS, alpha=0.05)
+    result = guard.decide(new_logits)        # result.action: "commit" | "offer" | "withhold"
+"""
 
 from fidetype.trust.calibration import (
     NBestCalibrator,
@@ -147,9 +153,27 @@ _PROVENANCE = {
 }
 
 
+#: Drop-in wrapper names (P14-03), imported on first use: ``fidetype.trust.calibrate(...)``.
+_DROPIN = (
+    "calibrate",
+    "wrap",
+    "load",
+    "TrustGuard",
+    "TrustResult",
+    "GuaranteeSheet",
+    "ControlResult",
+    "NullControlError",
+)
+__all__ += list(_DROPIN)
+
+
 def __getattr__(name: str):
     if name in _PROVENANCE:
         from fidetype.trust import provenance
 
         return getattr(provenance, _PROVENANCE[name])
+    if name in _DROPIN:
+        from fidetype.trust import dropin
+
+        return getattr(dropin, name)
     raise AttributeError(f"module 'fidetype.trust' has no attribute {name!r}")
