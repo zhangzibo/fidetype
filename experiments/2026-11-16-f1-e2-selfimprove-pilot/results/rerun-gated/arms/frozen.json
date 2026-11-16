@@ -1,0 +1,2802 @@
+{
+ "arm": "frozen",
+ "settings": {
+  "p_notice": 0.9,
+  "labels": null,
+  "naive": false
+ },
+ "n_days": 16,
+ "totals": {
+  "n": 6720,
+  "n_phase_c": 5184,
+  "ph_ed": 116395.0,
+  "ph_n": 170299,
+  "ph_ed_c": 88926.0,
+  "ph_n_c": 129703,
+  "w_ed": 37154,
+  "w_n": 40986,
+  "top1_right": 2,
+  "offer_hit": 4,
+  "commits": 48,
+  "wrong_commits": 48.0,
+  "observed_wrong": 47.0,
+  "silent": 1,
+  "commits_c": 48,
+  "wrong_commits_c": 48.0,
+  "labels": 0,
+  "wrong_labels": 0
+ },
+ "null": {
+  "uniform": 0,
+  "shuffled": 2,
+  "n_uniform": 320,
+  "n_shuffled": 320
+ },
+ "per_all": 0.6834743598024651,
+ "per_phase_c": 0.6856125147452257,
+ "wer_all": 0.9065046601278486,
+ "true_wrong_commit_rate": 0.007142857142857143,
+ "true_wrong_commit_cp95": [
+  0.005271138987258541,
+  0.009459360618428324
+ ],
+ "observed_wrong_commit_rate": 0.006994047619047619,
+ "error_among_commits": 1.0,
+ "aci": {
+  "method": "aci",
+  "alpha": 0.05,
+  "n_observed": 5184,
+  "n_missing": 0,
+  "pending": 0,
+  "mean_loss": 0.009066358024691358,
+  "certificate": 0.049704958882354225,
+  "threshold": 0.07499999999999986,
+  "lam_1": 0.15147465769378585,
+  "alpha_t": 0.05,
+  "upper_clip_hits": 0,
+  "guarantee": "long-run average, any sequence (realised-loss feedback)"
+ },
+ "observed_mean_loss_c": 0.009066358024691358,
+ "n_alarms": 0,
+ "n_feasible_days": 16,
+ "ewpm": 3.4856229350041956,
+ "ewpm_partial": 3.4911620272657724,
+ "days": [
+  {
+   "n": 360,
+   "n_phase_c": 264,
+   "ph_ed": 5015.0,
+   "ph_n": 10355,
+   "ph_ed_c": 3660.0,
+   "ph_n_c": 7712,
+   "w_ed": 1742,
+   "w_n": 2418,
+   "top1_right": 1,
+   "offer_hit": 3,
+   "commits": 0,
+   "wrong_commits": 0,
+   "observed_wrong": 0,
+   "silent": 0,
+   "commits_c": 0,
+   "wrong_commits_c": 0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 8,
+   "lambda_session": 0.25,
+   "lambda_active": 0.25,
+   "feasible": true,
+   "active_version": "8-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 0,
+     "session": 8,
+     "version": "8-u1",
+     "champion_before": "8-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": null,
+     "config_id": "gul-3c5c3c6bfbc22894",
+     "active_version": "8-u1",
+     "lambda_session": 0.25,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '8-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '8-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '8-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '8-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.8043175460914124,
+   "alarm": false,
+   "gate_refusals_c": 37,
+   "seconds": 58.9,
+   "label_sources": {
+    "retype": 279,
+    "reject": 78,
+    "accept": 3
+   }
+  },
+  {
+   "n": 360,
+   "n_phase_c": 264,
+   "ph_ed": 5600.0,
+   "ph_n": 10124,
+   "ph_ed_c": 4134.0,
+   "ph_n_c": 7462,
+   "w_ed": 1897,
+   "w_n": 2398,
+   "top1_right": 1,
+   "offer_hit": 1,
+   "commits": 7,
+   "wrong_commits": 7.0,
+   "observed_wrong": 7.0,
+   "silent": 0,
+   "commits_c": 7,
+   "wrong_commits_c": 7.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 9,
+   "lambda_session": 0.16,
+   "lambda_active": 0.16,
+   "feasible": true,
+   "active_version": "9-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 1,
+     "session": 9,
+     "version": "9-u1",
+     "champion_before": "9-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-3c5c3c6bfbc22894",
+     "config_id": "gul-8af2f5bbe26d5983",
+     "active_version": "9-u1",
+     "lambda_session": 0.16,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '9-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '9-u1'",
+       "n": 20,
+       "n_commit": 1,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '9-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '9-u1'",
+     "n": 20,
+     "n_commit": 1,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 1,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 1
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.8883005190438724,
+   "alarm": false,
+   "gate_refusals_c": 49,
+   "seconds": 52.5,
+   "label_sources": {
+    "retype": 290,
+    "reject": 62,
+    "accept": 1,
+    "correction": 7
+   }
+  },
+  {
+   "n": 320,
+   "n_phase_c": 224,
+   "ph_ed": 4785.0,
+   "ph_n": 8100,
+   "ph_ed_c": 3338.0,
+   "ph_n_c": 5653,
+   "w_ed": 1635,
+   "w_n": 1951,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 4,
+   "wrong_commits": 4.0,
+   "observed_wrong": 4.0,
+   "silent": 0,
+   "commits_c": 4,
+   "wrong_commits_c": 4.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 10,
+   "lambda_session": 0.15,
+   "lambda_active": 0.15,
+   "feasible": true,
+   "active_version": "10-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 2,
+     "session": 10,
+     "version": "10-u1",
+     "champion_before": "10-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-8af2f5bbe26d5983",
+     "config_id": "gul-390ac402e382926c",
+     "active_version": "10-u1",
+     "lambda_session": 0.15,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '10-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '10-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '10-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '10-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.8750856488305786,
+   "alarm": false,
+   "gate_refusals_c": 74,
+   "seconds": 42.4,
+   "label_sources": {
+    "retype": 256,
+    "reject": 60,
+    "correction": 4
+   }
+  },
+  {
+   "n": 520,
+   "n_phase_c": 424,
+   "ph_ed": 8294.0,
+   "ph_n": 13402,
+   "ph_ed_c": 6807.0,
+   "ph_n_c": 10961,
+   "w_ed": 2713,
+   "w_n": 3161,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 4,
+   "wrong_commits": 4.0,
+   "observed_wrong": 4.0,
+   "silent": 0,
+   "commits_c": 4,
+   "wrong_commits_c": 4.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 11,
+   "lambda_session": 0.17,
+   "lambda_active": 0.17,
+   "feasible": true,
+   "active_version": "11-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 3,
+     "session": 11,
+     "version": "11-u1",
+     "champion_before": "11-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-390ac402e382926c",
+     "config_id": "gul-18fc10da077e86a3",
+     "active_version": "11-u1",
+     "lambda_session": 0.17,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '11-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '11-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '11-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '11-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.8834043906390524,
+   "alarm": false,
+   "gate_refusals_c": 136,
+   "seconds": 65.7,
+   "label_sources": {
+    "retype": 408,
+    "reject": 108,
+    "correction": 4
+   }
+  },
+  {
+   "n": 440,
+   "n_phase_c": 344,
+   "ph_ed": 7770.0,
+   "ph_n": 11450,
+   "ph_ed_c": 6160.0,
+   "ph_n_c": 8950,
+   "w_ed": 2411,
+   "w_n": 2688,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 1,
+   "wrong_commits": 1.0,
+   "observed_wrong": 1.0,
+   "silent": 0,
+   "commits_c": 1,
+   "wrong_commits_c": 1.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 12,
+   "lambda_session": 0.16,
+   "lambda_active": 0.16,
+   "feasible": true,
+   "active_version": "12-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 4,
+     "session": 12,
+     "version": "12-u1",
+     "champion_before": "12-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-18fc10da077e86a3",
+     "config_id": "gul-553a7347bd6a7e53",
+     "active_version": "12-u1",
+     "lambda_session": 0.16,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '12-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '12-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '12-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '12-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9095853158257711,
+   "alarm": false,
+   "gate_refusals_c": 158,
+   "seconds": 52.6,
+   "label_sources": {
+    "retype": 358,
+    "reject": 81,
+    "correction": 1
+   }
+  },
+  {
+   "n": 400,
+   "n_phase_c": 304,
+   "ph_ed": 6733.0,
+   "ph_n": 9644,
+   "ph_ed_c": 4983.0,
+   "ph_n_c": 7134,
+   "w_ed": 2169,
+   "w_n": 2337,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 1,
+   "wrong_commits": 1.0,
+   "observed_wrong": 1.0,
+   "silent": 0,
+   "commits_c": 1,
+   "wrong_commits_c": 1.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 13,
+   "lambda_session": 0.18,
+   "lambda_active": 0.18,
+   "feasible": true,
+   "active_version": "13-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 5,
+     "session": 13,
+     "version": "13-u1",
+     "champion_before": "13-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-553a7347bd6a7e53",
+     "config_id": "gul-eedf6dced26a9934",
+     "active_version": "13-u1",
+     "lambda_session": 0.18,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '13-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '13-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '13-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '13-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9127598850110393,
+   "alarm": false,
+   "gate_refusals_c": 188,
+   "seconds": 49.1,
+   "label_sources": {
+    "retype": 331,
+    "reject": 68,
+    "correction": 1
+   }
+  },
+  {
+   "n": 440,
+   "n_phase_c": 344,
+   "ph_ed": 7695.0,
+   "ph_n": 11049,
+   "ph_ed_c": 5918.0,
+   "ph_n_c": 8441,
+   "w_ed": 2493,
+   "w_n": 2676,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 4,
+   "wrong_commits": 4.0,
+   "observed_wrong": 4.0,
+   "silent": 0,
+   "commits_c": 4,
+   "wrong_commits_c": 4.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 14,
+   "lambda_session": 0.16,
+   "lambda_active": 0.16,
+   "feasible": true,
+   "active_version": "14-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 6,
+     "session": 14,
+     "version": "14-u1",
+     "champion_before": "14-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-eedf6dced26a9934",
+     "config_id": "gul-9e5dc302b64bf07f",
+     "active_version": "14-u1",
+     "lambda_session": 0.16,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '14-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '14-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '14-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '14-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9357425897427699,
+   "alarm": false,
+   "gate_refusals_c": 191,
+   "seconds": 53.5,
+   "label_sources": {
+    "retype": 355,
+    "reject": 81,
+    "correction": 4
+   }
+  },
+  {
+   "n": 440,
+   "n_phase_c": 344,
+   "ph_ed": 7984.0,
+   "ph_n": 11059,
+   "ph_ed_c": 6171.0,
+   "ph_n_c": 8556,
+   "w_ed": 2542,
+   "w_n": 2690,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 2,
+   "wrong_commits": 2.0,
+   "observed_wrong": 2.0,
+   "silent": 0,
+   "commits_c": 2,
+   "wrong_commits_c": 2.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 15,
+   "lambda_session": 0.16,
+   "lambda_active": 0.16,
+   "feasible": true,
+   "active_version": "15-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 7,
+     "session": 15,
+     "version": "15-u1",
+     "champion_before": "15-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-9e5dc302b64bf07f",
+     "config_id": "gul-dea6f3185fb8004c",
+     "active_version": "15-u1",
+     "lambda_session": 0.16,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '15-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '15-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '15-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '15-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9437611028204058,
+   "alarm": false,
+   "gate_refusals_c": 189,
+   "seconds": 50.3,
+   "label_sources": {
+    "retype": 337,
+    "reject": 101,
+    "correction": 2
+   }
+  },
+  {
+   "n": 440,
+   "n_phase_c": 344,
+   "ph_ed": 7756.0,
+   "ph_n": 10643,
+   "ph_ed_c": 6001.0,
+   "ph_n_c": 8270,
+   "w_ed": 2457,
+   "w_n": 2622,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 4,
+   "wrong_commits": 4.0,
+   "observed_wrong": 4.0,
+   "silent": 0,
+   "commits_c": 4,
+   "wrong_commits_c": 4.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 16,
+   "lambda_session": 0.15,
+   "lambda_active": 0.15,
+   "feasible": true,
+   "active_version": "16-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 8,
+     "session": 16,
+     "version": "16-u1",
+     "champion_before": "16-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-dea6f3185fb8004c",
+     "config_id": "gul-e53f6567417ed1dd",
+     "active_version": "16-u1",
+     "lambda_session": 0.15,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '16-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '16-u1'",
+       "n": 20,
+       "n_commit": 1,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '16-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '16-u1'",
+     "n": 20,
+     "n_commit": 1,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 1,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 1
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9365585882475282,
+   "alarm": false,
+   "gate_refusals_c": 181,
+   "seconds": 51.1,
+   "label_sources": {
+    "retype": 356,
+    "reject": 80,
+    "correction": 4
+   }
+  },
+  {
+   "n": 240,
+   "n_phase_c": 144,
+   "ph_ed": 4333.0,
+   "ph_n": 6135,
+   "ph_ed_c": 2562.0,
+   "ph_n_c": 3594,
+   "w_ed": 1366,
+   "w_n": 1467,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 0,
+   "wrong_commits": 0,
+   "observed_wrong": 0,
+   "silent": 0,
+   "commits_c": 0,
+   "wrong_commits_c": 0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 17,
+   "lambda_session": 0.19,
+   "lambda_active": 0.19,
+   "feasible": true,
+   "active_version": "17-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 9,
+     "session": 17,
+     "version": "17-u1",
+     "champion_before": "17-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-e53f6567417ed1dd",
+     "config_id": "gul-fef595981da4b8ce",
+     "active_version": "17-u1",
+     "lambda_session": 0.19,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '17-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '17-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '17-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '17-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.8861769688282516,
+   "alarm": false,
+   "gate_refusals_c": 67,
+   "seconds": 29.3,
+   "label_sources": {
+    "retype": 199,
+    "reject": 41
+   }
+  },
+  {
+   "n": 440,
+   "n_phase_c": 344,
+   "ph_ed": 7940.0,
+   "ph_n": 11136,
+   "ph_ed_c": 5978.0,
+   "ph_n_c": 8398,
+   "w_ed": 2505,
+   "w_n": 2693,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 1,
+   "wrong_commits": 1.0,
+   "observed_wrong": 1.0,
+   "silent": 0,
+   "commits_c": 1,
+   "wrong_commits_c": 1.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 18,
+   "lambda_session": 0.19,
+   "lambda_active": 0.19,
+   "feasible": true,
+   "active_version": "18-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 10,
+     "session": 18,
+     "version": "18-u1",
+     "champion_before": "18-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-fef595981da4b8ce",
+     "config_id": "gul-4a9110c28519aab8",
+     "active_version": "18-u1",
+     "lambda_session": 0.19,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '18-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '18-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '18-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '18-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9330988769266657,
+   "alarm": false,
+   "gate_refusals_c": 185,
+   "seconds": 50.4,
+   "label_sources": {
+    "reject": 93,
+    "retype": 346,
+    "correction": 1
+   }
+  },
+  {
+   "n": 360,
+   "n_phase_c": 264,
+   "ph_ed": 6570.0,
+   "ph_n": 9111,
+   "ph_ed_c": 4605.0,
+   "ph_n_c": 6351,
+   "w_ed": 2073,
+   "w_n": 2217,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 3,
+   "wrong_commits": 3.0,
+   "observed_wrong": 3.0,
+   "silent": 0,
+   "commits_c": 3,
+   "wrong_commits_c": 3.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 19,
+   "lambda_session": 0.15,
+   "lambda_active": 0.15,
+   "feasible": true,
+   "active_version": "19-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 11,
+     "session": 19,
+     "version": "19-u1",
+     "champion_before": "19-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-4a9110c28519aab8",
+     "config_id": "gul-79217e537500a5ab",
+     "active_version": "19-u1",
+     "lambda_session": 0.15,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '19-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '19-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '19-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '19-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9444787173199893,
+   "alarm": false,
+   "gate_refusals_c": 129,
+   "seconds": 41.9,
+   "label_sources": {
+    "retype": 285,
+    "reject": 72,
+    "correction": 3
+   }
+  },
+  {
+   "n": 360,
+   "n_phase_c": 264,
+   "ph_ed": 6538.0,
+   "ph_n": 8877,
+   "ph_ed_c": 4741.0,
+   "ph_n_c": 6426,
+   "w_ed": 2058,
+   "w_n": 2163,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 0,
+   "wrong_commits": 0,
+   "observed_wrong": 0,
+   "silent": 0,
+   "commits_c": 0,
+   "wrong_commits_c": 0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 20,
+   "lambda_session": 0.18,
+   "lambda_active": 0.18,
+   "feasible": true,
+   "active_version": "20-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 12,
+     "session": 20,
+     "version": "20-u1",
+     "champion_before": "20-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-79217e537500a5ab",
+     "config_id": "gul-5fa845ba3a9eccdf",
+     "active_version": "20-u1",
+     "lambda_session": 0.18,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '20-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '20-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '20-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '20-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9213058172915721,
+   "alarm": false,
+   "gate_refusals_c": 156,
+   "seconds": 41.8,
+   "label_sources": {
+    "retype": 281,
+    "reject": 79
+   }
+  },
+  {
+   "n": 480,
+   "n_phase_c": 384,
+   "ph_ed": 8738.0,
+   "ph_n": 11808,
+   "ph_ed_c": 6921.0,
+   "ph_n_c": 9299,
+   "w_ed": 2749,
+   "w_n": 2886,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 2,
+   "wrong_commits": 2.0,
+   "observed_wrong": 2.0,
+   "silent": 0,
+   "commits_c": 2,
+   "wrong_commits_c": 2.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 21,
+   "lambda_session": 0.16,
+   "lambda_active": 0.16,
+   "feasible": true,
+   "active_version": "21-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 13,
+     "session": 21,
+     "version": "21-u1",
+     "champion_before": "21-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-5fa845ba3a9eccdf",
+     "config_id": "gul-8edfd3316cf81cdc",
+     "active_version": "21-u1",
+     "lambda_session": 0.16,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '21-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '21-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '21-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '21-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9235198187322043,
+   "alarm": false,
+   "gate_refusals_c": 224,
+   "seconds": 55.2,
+   "label_sources": {
+    "retype": 385,
+    "reject": 93,
+    "correction": 2
+   }
+  },
+  {
+   "n": 560,
+   "n_phase_c": 464,
+   "ph_ed": 10233.0,
+   "ph_n": 13550,
+   "ph_ed_c": 8436.0,
+   "ph_n_c": 11181,
+   "w_ed": 3149,
+   "w_n": 3281,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 4,
+   "wrong_commits": 4.0,
+   "observed_wrong": 4.0,
+   "silent": 0,
+   "commits_c": 4,
+   "wrong_commits_c": 4.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 22,
+   "lambda_session": 0.15,
+   "lambda_active": 0.15,
+   "feasible": true,
+   "active_version": "22-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 14,
+     "session": 22,
+     "version": "22-u1",
+     "champion_before": "22-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-8edfd3316cf81cdc",
+     "config_id": "gul-3fbd0d9de32229a9",
+     "active_version": "22-u1",
+     "lambda_session": 0.15,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '22-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '22-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '22-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '22-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9329857882199213,
+   "alarm": false,
+   "gate_refusals_c": 310,
+   "seconds": 54.9,
+   "label_sources": {
+    "retype": 450,
+    "reject": 106,
+    "correction": 4
+   }
+  },
+  {
+   "n": 560,
+   "n_phase_c": 464,
+   "ph_ed": 10411.0,
+   "ph_n": 13856,
+   "ph_ed_c": 8511.0,
+   "ph_n_c": 11315,
+   "w_ed": 3195,
+   "w_n": 3338,
+   "top1_right": 0,
+   "offer_hit": 0,
+   "commits": 11,
+   "wrong_commits": 11.0,
+   "observed_wrong": 10.0,
+   "silent": 1,
+   "commits_c": 11,
+   "wrong_commits_c": 11.0,
+   "labels": 0,
+   "wrong_labels": 0,
+   "session": 23,
+   "lambda_session": 0.14,
+   "lambda_active": 0.14,
+   "feasible": true,
+   "active_version": "23-u1",
+   "accepted_challenger": true,
+   "updates": [
+    {
+     "index": 15,
+     "session": 23,
+     "version": "23-u1",
+     "champion_before": "23-u0",
+     "accepted": true,
+     "reasons": [],
+     "parent_config_id": "gul-3fbd0d9de32229a9",
+     "config_id": "gul-afee9e569f766a13",
+     "active_version": "23-u1",
+     "lambda_session": 0.14,
+     "feasible": true,
+     "n_check": 48,
+     "n_block_commits": 0,
+     "block_wrong_among_commits": null,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version '23-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version '23-u1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "gate": {
+      "min_chars": 1,
+      "min_words": 0,
+      "max_guard_risk": 1.0
+     },
+     "unsafe": false
+    }
+   ],
+   "n_block_commits": 0,
+   "block_wrong_among_commits": null,
+   "null_controls": {
+    "uniform": {
+     "name": "uniform",
+     "description": "uniform (no-signal) input through version '23-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    },
+    "shuffled": {
+     "name": "shuffled",
+     "description": "frame-shuffled real input through version '23-u1'",
+     "n": 20,
+     "n_commit": 0,
+     "allowed": 1,
+     "passed": true
+    }
+   },
+   "null": {
+    "uniform": 0,
+    "shuffled": 0,
+    "n_uniform": 20,
+    "n_shuffled": 20
+   },
+   "null_raw": {
+    "uniform": 0,
+    "shuffled": 0
+   },
+   "uniform_guard_risk_min": 1.0,
+   "check_guard_risk_mean": 0.9388166273885453,
+   "alarm": false,
+   "gate_refusals_c": 315,
+   "seconds": 59.5,
+   "label_sources": {
+    "retype": 422,
+    "reject": 127,
+    "silent": 1,
+    "correction": 10
+   }
+  }
+ ],
+ "gated_rerun": {
+  "commit_gate": {
+   "min_chars": 1,
+   "min_words": 0,
+   "max_guard_risk": 1.0
+  },
+  "unsafe": false,
+  "report": {
+   "alpha": 0.05,
+   "delta": 0.1,
+   "gamma": 0.1,
+   "n_check": 48,
+   "aci": {
+    "method": "aci",
+    "alpha": 0.05,
+    "n_observed": 5184,
+    "n_missing": 0,
+    "pending": 0,
+    "mean_loss": 0.009066358024691358,
+    "certificate": 0.049704958882354225,
+    "threshold": 0.07499999999999986,
+    "lam_1": 0.15147465769378585,
+    "alpha_t": 0.05,
+    "upper_clip_hits": 0,
+    "guarantee": "long-run average, any sequence (realised-loss feedback)"
+   },
+   "n_alarms": 0,
+   "n_versions": 16,
+   "n_recalibrations": 16,
+   "n_feasible": 16,
+   "commit_gate": {
+    "min_chars": 1,
+    "min_words": 0,
+    "max_guard_risk": 1.0
+   },
+   "evidence_gate": true,
+   "unsafe": false,
+   "null_max_commit_rate": 0.05,
+   "max_wrong_among_commits": null,
+   "n_updates": 16,
+   "n_accepted": 16,
+   "n_rejected": 0,
+   "config_id": "gul-afee9e569f766a13",
+   "silent_errors": "not covered (observed losses only)"
+  },
+  "updates": [
+   {
+    "index": 0,
+    "session": 8,
+    "version": "8-u1",
+    "champion_before": "8-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": null,
+    "config_id": "gul-3c5c3c6bfbc22894",
+    "active_version": "8-u1",
+    "lambda_session": 0.25,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '8-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '8-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 1,
+    "session": 9,
+    "version": "9-u1",
+    "champion_before": "9-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-3c5c3c6bfbc22894",
+    "config_id": "gul-8af2f5bbe26d5983",
+    "active_version": "9-u1",
+    "lambda_session": 0.16,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '9-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '9-u1'",
+      "n": 20,
+      "n_commit": 1,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 2,
+    "session": 10,
+    "version": "10-u1",
+    "champion_before": "10-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-8af2f5bbe26d5983",
+    "config_id": "gul-390ac402e382926c",
+    "active_version": "10-u1",
+    "lambda_session": 0.15,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '10-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '10-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 3,
+    "session": 11,
+    "version": "11-u1",
+    "champion_before": "11-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-390ac402e382926c",
+    "config_id": "gul-18fc10da077e86a3",
+    "active_version": "11-u1",
+    "lambda_session": 0.17,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '11-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '11-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 4,
+    "session": 12,
+    "version": "12-u1",
+    "champion_before": "12-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-18fc10da077e86a3",
+    "config_id": "gul-553a7347bd6a7e53",
+    "active_version": "12-u1",
+    "lambda_session": 0.16,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '12-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '12-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 5,
+    "session": 13,
+    "version": "13-u1",
+    "champion_before": "13-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-553a7347bd6a7e53",
+    "config_id": "gul-eedf6dced26a9934",
+    "active_version": "13-u1",
+    "lambda_session": 0.18,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '13-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '13-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 6,
+    "session": 14,
+    "version": "14-u1",
+    "champion_before": "14-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-eedf6dced26a9934",
+    "config_id": "gul-9e5dc302b64bf07f",
+    "active_version": "14-u1",
+    "lambda_session": 0.16,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '14-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '14-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 7,
+    "session": 15,
+    "version": "15-u1",
+    "champion_before": "15-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-9e5dc302b64bf07f",
+    "config_id": "gul-dea6f3185fb8004c",
+    "active_version": "15-u1",
+    "lambda_session": 0.16,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '15-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '15-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 8,
+    "session": 16,
+    "version": "16-u1",
+    "champion_before": "16-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-dea6f3185fb8004c",
+    "config_id": "gul-e53f6567417ed1dd",
+    "active_version": "16-u1",
+    "lambda_session": 0.15,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '16-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '16-u1'",
+      "n": 20,
+      "n_commit": 1,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 9,
+    "session": 17,
+    "version": "17-u1",
+    "champion_before": "17-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-e53f6567417ed1dd",
+    "config_id": "gul-fef595981da4b8ce",
+    "active_version": "17-u1",
+    "lambda_session": 0.19,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '17-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '17-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 10,
+    "session": 18,
+    "version": "18-u1",
+    "champion_before": "18-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-fef595981da4b8ce",
+    "config_id": "gul-4a9110c28519aab8",
+    "active_version": "18-u1",
+    "lambda_session": 0.19,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '18-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '18-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 11,
+    "session": 19,
+    "version": "19-u1",
+    "champion_before": "19-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-4a9110c28519aab8",
+    "config_id": "gul-79217e537500a5ab",
+    "active_version": "19-u1",
+    "lambda_session": 0.15,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '19-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '19-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 12,
+    "session": 20,
+    "version": "20-u1",
+    "champion_before": "20-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-79217e537500a5ab",
+    "config_id": "gul-5fa845ba3a9eccdf",
+    "active_version": "20-u1",
+    "lambda_session": 0.18,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '20-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '20-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 13,
+    "session": 21,
+    "version": "21-u1",
+    "champion_before": "21-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-5fa845ba3a9eccdf",
+    "config_id": "gul-8edfd3316cf81cdc",
+    "active_version": "21-u1",
+    "lambda_session": 0.16,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '21-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '21-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 14,
+    "session": 22,
+    "version": "22-u1",
+    "champion_before": "22-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-8edfd3316cf81cdc",
+    "config_id": "gul-3fbd0d9de32229a9",
+    "active_version": "22-u1",
+    "lambda_session": 0.15,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '22-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '22-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   },
+   {
+    "index": 15,
+    "session": 23,
+    "version": "23-u1",
+    "champion_before": "23-u0",
+    "accepted": true,
+    "reasons": [],
+    "parent_config_id": "gul-3fbd0d9de32229a9",
+    "config_id": "gul-afee9e569f766a13",
+    "active_version": "23-u1",
+    "lambda_session": 0.14,
+    "feasible": true,
+    "n_check": 48,
+    "n_block_commits": 0,
+    "block_wrong_among_commits": null,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "uniform (no-signal) input through version '23-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "frame-shuffled real input through version '23-u1'",
+      "n": 20,
+      "n_commit": 0,
+      "allowed": 1,
+      "passed": true
+     }
+    ],
+    "challenger_test": {
+     "n": 48,
+     "challenger_wrong": 48,
+     "champion_wrong": 48,
+     "worse_only": 0,
+     "better_only": 0,
+     "p_value": 1.0,
+     "level": 0.05,
+     "refused": false
+    },
+    "gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "unsafe": false
+   }
+  ]
+ }
+}
