@@ -154,7 +154,8 @@ def run_arm(arm: str, trunk, ck, route) -> None:
     else:
         S = {"arm": arm, "W": ck["dayW"][k_last].clone(), "b": ck["dayb"][k_last].clone(), "days": [],
              "loop": GuardedUpdateLoop(alpha=L["alpha"], delta=L["delta"], gamma=L["gamma"], eta=L["eta"],
-                                       n_check=L["n_check"], lam_init=TUNE["lambda_1"]),
+                                       n_check=L["n_check"], lam_init=TUNE["lambda_1"],
+                                       commit_gate=None, unsafe=True),  # P15-01 behaviour (pre-P15-02 loop)
              "ewpm_records": [], "obs_c": []}
     loop: GuardedUpdateLoop = S["loop"]
     for si in C.CONFIG["replay_sessions"]:

@@ -20,7 +20,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-OWN = Path("C:/Users/zhang/bci-data/derived/f1-e2-pilot")
+OWN = Path(os.environ.get("F1E2_LAUNCH_OWN", "C:/Users/zhang/bci-data/derived/f1-e2-pilot"))  # P15-02: -gated
 TORCH_PY = "C:/venvs/fidetype-rocm/Scripts/python.exe"
 CREATE_NO_WINDOW = 0x08000000
 CREATE_NEW_PROCESS_GROUP = 0x00000200

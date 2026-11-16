@@ -6,12 +6,13 @@ Runs on the repo .venv (no torch needed):  .venv/Scripts/python.exe -I experimen
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-RES = HERE / "results"
+RES = Path(os.environ.get("F1E2_RES", str(HERE / "results")))  # override: the P15-02 gated re-run
 CFG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
 ALPHA, DELTA = CFG["loop"]["alpha"], CFG["loop"]["delta"]
 GUARDED = ("frozen", "feedback-p0.5", "feedback-p0.9", "feedback-p1.0", "oracle", "selftrain", "shuffled-labels")
