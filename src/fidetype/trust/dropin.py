@@ -189,6 +189,9 @@ class GuaranteeSheet:
     ltt_median_guard_risk: float = math.nan
     #: LTT items (in-sample) whose COMMIT the commit gate blocked because of guard risk 1.0.
     ltt_gate_blocked: int = 0
+    #: The hallucination (fluent-wrong) bound of P15-06, or None (not requested). See
+    #: :mod:`fidetype.trust.halluc_bound`.
+    halluc: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         d = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -197,6 +200,8 @@ class GuaranteeSheet:
             d[k] = list(d[k])
         for k in ("lambda_hat", "commit_threshold", "ltt_median_guard_risk"):
             d[k] = _json_float(d[k])
+        if d.get("halluc") is None:
+            d.pop("halluc", None)  # pre-P15-06 sheets keep their bytes
         return d
 
     @classmethod
@@ -234,6 +239,21 @@ class GuaranteeSheet:
         for c in self.controls:
             lines.append(f"  {c.name:<18} {c.n_commit}/{c.n} commits (allowed {c.allowed}): "
                          f"{'PASS' if c.passed else 'FAIL'}")
+        if self.halluc:
+            h = self.halluc
+            sel = h.get("selected") or {}
+            lines += [
+                f"hallucination bound  P( fluent-wrong rate <= {h['alpha_h']:g} and wrong-commit rate <= "
+                f"{self.alpha:g} ) >= {1 - h['delta_h']:g}",
+                f"                     fluent-wrong rate = COMMITs that are wrong and {h['fluent_rule']} / all "
+                "utterances",
+                f"  method             {h['method']}",
+                f"  selected           commit_p {sel.get('commit_p')}, tau_commit {sel.get('tau_commit')}, "
+                f"tau_word {sel.get('tau_word')} (feasible: {h['feasible']})",
+                f"  chain              {h['n_tested']} of {h['chain_length']} grid points tested, "
+                f"{h['n_certified']} certified ({h['n_order']} ordering + {h['n_test']} test items)",
+                f"  grounding          {h.get('grounding') or 'none'}",
+            ]
         lines.append("assumptions")
         lines += [f"  - {a}" for a in self.assumptions]
         lines.append("not guaranteed")
@@ -503,7 +523,8 @@ class TrustGuard:
     """
 
     def __init__(self, config: FrozenTrustConfig, codec: _Codec, sheet: GuaranteeSheet | None = None,
-                 decode_fn: UserDecodeFn | None = None, audit_text: bool = True) -> None:
+                 decode_fn: UserDecodeFn | None = None, audit_text: bool = True, *,
+                 halluc_gate: Any = None, grounding: Any = None) -> None:
         from fidetype.trust.streaming import StreamingConfig, StreamingTrustLayer
 
         if not config.commit_gate:
@@ -516,11 +537,28 @@ class TrustGuard:
         self.audit_log: list[dict[str, Any]] = []
         self._seq = 0
         frames = codec.kind == "logits"
-        self._layer = StreamingTrustLayer(
-            config, decode_fn=_decode_fn_for(decode_fn, codec.lexicon) if frames else None,
-            streaming=StreamingConfig(route="frames" if frames else "hypothesis", max_attempts=1,
-                                      provisional=False),
-        )
+        #: P15-06 commit grounding gate (:class:`~fidetype.trust.halluc_bound.HallucGate`) and its statistics
+        #: (:class:`~fidetype.trust.halluc_bound.CommitGrounding`). None: off (P14-03 behaviour).
+        self.halluc_gate = None if halluc_gate is None or halluc_gate.is_off else halluc_gate
+        self.grounding = grounding
+        if self.halluc_gate is not None and (grounding is None or not frames):
+            raise ValueError("a commit grounding gate needs grounding= and logits input")
+        self._last_lp: np.ndarray | None = None
+        #: Per-item statistics of the P15-06 calibration (set by :func:`calibrate`; not saved).
+        self.halluc_items: dict[str, Any] | None = None
+        decode = _decode_fn_for(decode_fn, codec.lexicon) if frames else None
+
+        def capture(stream: NeuralTextStream) -> NBest:
+            # the frame-calibrated log-probabilities that the decoder sees (the grounding gate reads them)
+            self._last_lp = np.asarray(stream.log_probs, dtype=np.float64)
+            return decode(stream)
+
+        sc = StreamingConfig(route="frames" if frames else "hypothesis", max_attempts=1, provisional=False)
+        self._layer = StreamingTrustLayer(config, decode_fn=capture if frames else None, streaming=sc)
+        self._nocommit_layer = None
+        if self.halluc_gate is not None:
+            self._nocommit_layer = StreamingTrustLayer(config.with_policy(commit_p=math.inf), decode_fn=capture,
+                                                       streaming=sc)
 
     # --- properties -----------------------------------------------------
 
@@ -544,34 +582,54 @@ class TrustGuard:
 
     # --- decisions ------------------------------------------------------
 
-    def _final(self, events: Sequence[Mapping[str, Any]]) -> Any:
-        self._layer.new_item("default")
+    def _run_layer(self, layer: Any, events: Sequence[Mapping[str, Any]]) -> Any:
+        layer.new_item("default")
         out = []
         for ev in events:
-            out += self._layer.push(dict(ev), "default")
-        out += self._layer.end_of_utterance("default", final_attempt=True)
+            out += layer.push(dict(ev), "default")
+        out += layer.end_of_utterance("default", final_attempt=True)
         fin = [d for d in out if d.final]
         if len(fin) != 1:
             raise RuntimeError(f"expected one final decision, got {len(fin)}")
         return fin[0]
 
-    def _result(self, sd: Any) -> TrustResult:
+    def _final(self, events: Sequence[Mapping[str, Any]]) -> Any:
+        return self._final_gated(events)[0]
+
+    def _final_gated(self, events: Sequence[Mapping[str, Any]]) -> tuple[Any, str | None]:
+        """The final decision, with the P15-06 grounding gate applied to a COMMIT (reason or None)."""
+        sd = self._run_layer(self._layer, events)
+        if self.halluc_gate is None or sd.decision.action != Action.COMMIT:
+            return sd, None
+        text = sd.decision.shown_candidates[0] if sd.decision.shown_candidates else ""
+        lp = self._last_lp
+        st = self.grounding.stats(lp, text) if lp is not None else None
+        why = "no frames" if st is None else self.halluc_gate.violation(st)
+        if why is None:
+            return sd, None
+        return self._run_layer(self._nocommit_layer, events), why
+
+    def _result(self, sd: Any, halluc_why: str | None = None) -> TrustResult:
         d = sd.decision
         act = _ACTION_MAP[d.action]
         shown = tuple(d.shown_candidates)
         ev = sd.to_event(include_text=True)
+        reason = _user_reason(d.reason, float(sd.inputs.p_top1), float(sd.inputs.guard_risk),
+                              float(self.config.policy.get("commit_p", math.inf)))
+        if halluc_why is not None:
+            ev["config_id"] = self.config_id
+            ev["reason"] = f"{_HALLUC_REASON} ({halluc_why}); {d.reason}"
+            reason = f"{_HALLUC_REASON} ({halluc_why}); {reason}"
         return TrustResult(
             action=act, text=shown[0] if act == "commit" and shown else None, choices=shown,
-            p_top1=float(sd.inputs.p_top1), guard_risk=float(sd.inputs.guard_risk),
-            reason=_user_reason(d.reason, float(sd.inputs.p_top1), float(sd.inputs.guard_risk),
-                                float(self.config.policy.get("commit_p", math.inf))),
+            p_top1=float(sd.inputs.p_top1), guard_risk=float(sd.inputs.guard_risk), reason=reason,
             raw_action=d.action.value, config_id=self.config_id, seq=self._seq, event=ev,
         )
 
     def _decide_quiet(self, x: Any, input_scale: str | None = None) -> TrustResult:
         """A decision that is not logged (used by calibration and the null controls)."""
         events, _ = self._codec.events(x, input_scale)
-        return self._result(self._final(events))
+        return self._result(*self._final_gated(events))
 
     def decide(self, x: Any, *, utterance_id: str | None = None) -> TrustResult:
         """Decide what to do with one decoded utterance.
@@ -583,8 +641,7 @@ class TrustGuard:
         ``result.action == "commit"``.
         """
         events, st = self._codec.events(x)
-        sd = self._final(events)
-        r = self._result(sd)
+        r = self._result(*self._final_gated(events))
         rec: dict[str, Any] = dict(r.event)
         rec["seq"] = r.seq
         if not self.audit_text:
@@ -634,10 +691,14 @@ class TrustGuard:
     # --- files ----------------------------------------------------------
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema": GUARD_SCHEMA, "config": self.config.to_dict(), "input": self._codec.to_dict(),
-                "decode_fn": _decoder_name(self._user_decode, self._codec.lexicon)
-                if self.input_kind == "logits" else None,
-                "sheet": self.sheet.to_dict() if self.sheet is not None else None}
+        d = {"schema": GUARD_SCHEMA, "config": self.config.to_dict(), "input": self._codec.to_dict(),
+             "decode_fn": _decoder_name(self._user_decode, self._codec.lexicon)
+             if self.input_kind == "logits" else None,
+             "sheet": self.sheet.to_dict() if self.sheet is not None else None}
+        if self.halluc_gate is not None:
+            d["halluc_gate"] = self.halluc_gate.to_dict()
+            d["grounding"] = getattr(self.grounding, "name", "?")
+        return d
 
     def save(self, path: str | PathLike[str]) -> Path:
         """Save the guard (configuration, input settings, sheet) as JSON. It holds no signal and no text."""
@@ -652,6 +713,7 @@ class TrustGuard:
 
 
 _GATE_RISK_REASON = "commit blocked: low acoustic evidence"
+_HALLUC_REASON = "commit blocked: text not grounded in the signal"
 
 
 def _user_reason(raw: str, p_top1: float, guard_risk: float, commit_p: float) -> str:
@@ -697,12 +759,14 @@ def _input_sha(events: Sequence[Mapping[str, Any]]) -> str:
 
 
 def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
-         audit_text: bool = True) -> TrustGuard:
+         audit_text: bool = True, grounding: Any = None) -> TrustGuard:
     """Load a guard saved with :meth:`TrustGuard.save`.
 
     If the guard was calibrated with your own ``decode_fn``, pass the
     same function again: a function cannot be stored in a file, and a
-    different decoder voids the guarantee.
+    different decoder voids the guarantee. The same holds for
+    ``grounding`` (P15-06): a guard with a commit grounding gate needs the
+    same :class:`~fidetype.trust.halluc_bound.CommitGrounding` again.
     """
     d = json.loads(Path(path).read_text(encoding="utf-8"))
     if d.get("schema") != GUARD_SCHEMA:
@@ -713,7 +777,27 @@ def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
         raise ValueError(f"this guard was calibrated with your own decoder ({saved}); pass decode_fn= "
                          "(the same function), or the guarantee does not apply")
     sheet = GuaranteeSheet.from_dict(d["sheet"]) if d.get("sheet") else None
-    return TrustGuard(FrozenTrustConfig.from_dict(d["config"]), codec, sheet, decode_fn, audit_text)
+    gate = None
+    if d.get("halluc_gate"):
+        from fidetype.trust.halluc_bound import HallucGate
+
+        gate = HallucGate.from_dict(d["halluc_gate"])
+        if grounding is None:
+            raise ValueError(f"this guard has a commit grounding gate ({d.get('grounding')}); pass grounding= "
+                             "(the same CommitGrounding), or the hallucination bound does not apply")
+        grounding = _as_commit_grounding(grounding)
+    return TrustGuard(FrozenTrustConfig.from_dict(d["config"]), codec, sheet, decode_fn, audit_text,
+                      halluc_gate=gate, grounding=grounding)
+
+
+def _as_commit_grounding(g: Any) -> Any:
+    from fidetype.trust.halluc_bound import CommitGrounding
+
+    if g is None or isinstance(g, CommitGrounding):
+        return g
+    if hasattr(g, "label_fn"):
+        return CommitGrounding.from_grounding_check(g)
+    raise TypeError("grounding must be a CommitGrounding or a GroundingCheck")
 
 
 # ---------------------------------------------------------------------------
@@ -772,6 +856,13 @@ def calibrate(
     name: str = "",
     seed: int = 0,
     audit_text: bool = True,
+    grounding: Any = None,
+    llm: Any = None,
+    halluc_alpha: float = 0.01,
+    halluc_delta: float | None = None,
+    fluent_threshold: float | None = None,
+    halluc_grid: Mapping[str, Sequence[float]] | None = None,
+    halluc_select: str = "fewest_halluc",
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -848,6 +939,30 @@ def calibrate(
     audit_text
         Keep the shown text in the audit log (default True). False keeps
         only actions, scores and hashes.
+    grounding, llm, halluc_alpha, halluc_delta, fluent_threshold, halluc_grid, halluc_select
+        Optional hallucination bound (P15-06, :mod:`fidetype.trust.halluc_bound`).
+        Off by default: with ``grounding=None`` and ``llm=None`` nothing
+        changes. ``grounding`` (logits only): a
+        :class:`~fidetype.trust.halluc_bound.CommitGrounding` (or a
+        :class:`~fidetype.trust.grounding.GroundingCheck`); it adds a
+        commit gate on the evidence of the committed text (sentence and
+        word deficits). ``llm``: a sentence scorer (``score(texts) ->
+        log-probs``, see :mod:`fidetype.lm.llm`) that defines the
+        fluent-wrong loss; without it every wrong commit counts. Then
+        ``commit_p`` and the gate thresholds are chosen together by Learn
+        then Test on the policy-grid items (ordering) and the LTT items
+        (test), so that with probability at least ``1 - halluc_delta``
+        (default ``delta``) the fluent-wrong commit rate is at most
+        ``halluc_alpha`` and the wrong-commit rate at most ``alpha``. The
+        chosen ``commit_p`` is never below the P14-03 one, so the P14-03
+        bound and the null controls still hold. ``fluent_threshold``: LLM
+        log-probability per word at or above which a text is fluent
+        (default: the median of the true texts of the fit items).
+        ``halluc_grid``: optional ``{"commit_p": [...], "tau_commit": [...],
+        "tau_word": [...]}``. ``halluc_select``: how to pick one of the
+        certified configurations (``"fewest_halluc"`` or ``"most_right"``,
+        see :func:`~fidetype.trust.halluc_bound.joint_ltt`); both keep the
+        guarantee.
 
     Raises
     ------
@@ -893,6 +1008,21 @@ def calibrate(
             raise ValueError(f"stream_texts ({len(stream_texts)}) and inputs ({len(inputs)}) must have the same length")
     if decode_fn is not None and lexicon is not None:
         raise ValueError("lexicon is for the built-in decoder; put the lexicon into your own decode_fn")
+    halluc_on = grounding is not None or llm is not None
+    if grounding is not None and kind != "logits":
+        raise ValueError("grounding is for logits input only (it needs the frames)")
+    if halluc_on:
+        h_delta = float(delta if halluc_delta is None else halluc_delta)
+        if not (0.0 < halluc_alpha < 1.0 and 0.0 < h_delta < 1.0):
+            raise ValueError("halluc_alpha and halluc_delta must be in (0, 1)")
+        if halluc_grid is not None:
+            bad = sorted(set(halluc_grid) - {"commit_p", "tau_commit", "tau_word"})
+            if bad:
+                raise ValueError(f"unknown halluc_grid keys {bad}")
+        from fidetype.trust.halluc_bound import SELECT_RULES
+
+        if halluc_select not in SELECT_RULES:
+            raise ValueError(f"halluc_select must be one of {SELECT_RULES}")
     lex = tuple(sorted({w for entry in lexicon for w in str(entry).split()})) if lexicon is not None else None
     if lex is not None and not lex:
         raise ValueError("lexicon is empty")
@@ -980,6 +1110,9 @@ def calibrate(
             n_wrong += int(r.text != t)
 
     # --- null controls --------------------------------------------------
+    import copy
+
+    rng_controls = copy.deepcopy(rng)  # the same control inputs again for a P15-06 guard
     controls = _run_controls(guard, inputs, kind, rng, null_trials, rate, null_inputs)
 
     rc = frozen.risk_control
@@ -1034,7 +1167,121 @@ def calibrate(
             "scores (logits) or real n-best scores; the decoder's confidence drops on noise. "
             "No configuration was produced.", controls)
     guard.sheet = sheet
+    if halluc_on:
+        guard = _halluc_bound(guard, sheet, inputs, texts, order, n_fit, n_pol, kind, decode_fn, audit_text,
+                              _as_commit_grounding(grounding), llm, float(halluc_alpha), h_delta,
+                              fluent_threshold, halluc_grid, rng_controls, null_trials, rate, null_inputs,
+                              halluc_select)
     return guard
+
+
+def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any], texts: Sequence[str],
+                  order: np.ndarray, n_fit: int, n_pol: int, kind: str, decode_fn: UserDecodeFn | None,
+                  audit_text: bool, grounding: Any, llm: Any, alpha_h: float, delta_h: float,
+                  fluent_threshold: float | None, halluc_grid: Mapping[str, Sequence[float]] | None,
+                  rng_controls: np.random.Generator, null_trials: int, rate: float,
+                  null_inputs: Sequence[Any] | None, select: str = "fewest_halluc") -> TrustGuard:
+    """The P15-06 step of :func:`calibrate`: joint LTT of (commit_p, tau_commit, tau_word); a new guard."""
+    from fidetype.trust import halluc_bound as H
+
+    frozen = guard.config
+    codec = guard._codec
+    user_fn = decode_fn if kind == "logits" else None
+    if llm is not None:
+        thr = (float(fluent_threshold) if fluent_threshold is not None else
+               H.fluent_threshold_from_texts([texts[i] for i in order[:n_fit]], llm))
+        fluent_rule = f"fluent (LLM log-prob per word >= {thr:.4g})"
+    else:
+        thr = math.nan
+        fluent_rule = "any text (no LLM: every wrong commit counts)"
+    g0 = TrustGuard(frozen.with_policy(commit_p=0.0), codec, None, user_fn, audit_text)
+    g_inf = TrustGuard(frozen.with_policy(commit_p=math.inf), codec, None, user_fn, audit_text)
+
+    def item(i: int) -> H.ItemStats:
+        x, t = inputs[i], texts[i]
+        r0 = g0._decide_quiet(x)
+        top = r0.choices[0] if r0.choices else ""
+        if r0.action != "commit":
+            return H.ItemStats(False, r0.p_top1, top != t, False, r0.raw_action == "OFFER_WORDS" and top != t)
+        lp = g0._last_lp
+        st = grounding.stats(lp, r0.text) if (grounding is not None and lp is not None) else H.GroundingStats(0.0, ())
+        wrong = r0.text != t
+        fluent = H.is_fluent(r0.text, llm, thr) if wrong else False
+        fb = g_inf._decide_quiet(x)
+        fb_top = fb.choices[0] if fb.choices else ""
+        return H.ItemStats(True, r0.p_top1, wrong, fluent, fb.raw_action == "OFFER_WORDS" and fb_top != t, st)
+
+    o_items = [item(int(i)) for i in order[n_fit:n_fit + n_pol]]
+    t_items = [item(int(i)) for i in order[n_fit + n_pol:]]
+    hg = dict(halluc_grid or {})
+    if grounding is None:
+        hg["tau_commit"], hg["tau_word"] = [math.inf], [math.inf]
+    configs = H.grid(hg.get("commit_p", H.DEFAULT_COMMIT_P_GRID), hg.get("tau_commit", H.DEFAULT_TAU_COMMIT_GRID),
+                     hg.get("tau_word", H.DEFAULT_TAU_WORD_GRID))
+    c0 = float(frozen.policy.get("commit_p", math.inf))
+    res = H.joint_ltt(o_items, t_items, configs, alpha=float(guard.alpha), alpha_h=alpha_h, delta=delta_h,
+                      min_commit_p=c0, select=select)
+    sel = res.selected if res.selected is not None else H.Config(math.inf, H.HallucGate())
+    info = {
+        "loss": "fluent_wrong" if llm is not None else "wrong",
+        "fluent_rule": fluent_rule,
+        "fluent_threshold": _json_float(thr),
+        "alpha_h": alpha_h,
+        "delta_h": delta_h,
+        "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), "
+                  "exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; "
+                  f"select commit_p >= {_fmt(c0)} (P14-03 value), rule {select!r}",
+        "grid": {"commit_p": len(set(c.commit_p for c in configs)),
+                 "tau_commit": len(set(c.gate.tau_commit for c in configs)),
+                 "tau_word": len(set(c.gate.tau_word for c in configs))},
+        "grounding": getattr(grounding, "name", None) if grounding is not None else None,
+        "base_commit_p": _json_float(c0),
+        "base_config_id": frozen.config_id,
+        **{k: v for k, v in res.to_dict().items() if k not in ("alpha", "alpha_h", "delta")},
+        "selected": {k: v for k, v in sel.to_dict().items()},
+    }
+    recipe = dict(frozen.recipe)
+    info["select"] = select
+    recipe["halluc_bound"] = {k: info[k] for k in ("loss", "fluent_threshold", "alpha_h", "delta_h", "method",
+                                                   "grounding", "selected", "select")}
+    final = replace(frozen.with_policy(commit_p=sel.commit_p), recipe=recipe)
+    gate = None if sel.gate.is_off or grounding is None else sel.gate
+    new = TrustGuard(final, codec, None, user_fn, audit_text, halluc_gate=gate,
+                     grounding=grounding if gate is not None else None)
+    # in-sample LTT check and null controls of the final guard (same control inputs as before)
+    ltt_idx = order[n_fit + n_pol:]
+    n_com = n_wrong = n_blocked = 0
+    risks = []
+    for i in ltt_idx:
+        r = new._decide_quiet(inputs[int(i)])
+        risks.append(r.guard_risk)
+        n_blocked += r.reason.startswith(_GATE_RISK_REASON)
+        if r.action == "commit":
+            n_com += 1
+            n_wrong += int(r.text != texts[int(i)])
+    controls = _run_controls(new, inputs, kind, rng_controls, null_trials, rate, null_inputs)
+    info["controls_final"] = [c.to_dict() for c in controls]
+    warnings = list(sheet.warnings)
+    if res.selected is None:
+        warnings.append("hallucination bound: no configuration certified, so the guard never commits.")
+    new.sheet = replace(sheet, config_id=final.config_id, commit_threshold=float(sel.commit_p),
+                        ltt_commits=n_com, ltt_wrong_commits=n_wrong, ltt_gate_blocked=int(n_blocked),
+                        ltt_median_guard_risk=float(np.median(risks)) if risks else math.nan,
+                        controls=tuple(controls), warnings=tuple(warnings), halluc=info,
+                        assumptions=sheet.assumptions + _HALLUC_ASSUMPTIONS,
+                        not_guaranteed=sheet.not_guaranteed + _HALLUC_NOT_GUARANTEED)
+    new.halluc_items = {"order": o_items, "test": t_items}  # per-item statistics (not saved)
+    return new
+
+
+_HALLUC_ASSUMPTIONS = (
+    "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after "
+    "calibration (they define the loss and the gate).",
+)
+_HALLUC_NOT_GUARANTEED = (
+    "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. "
+    "The gate is not a proof that each committed word was said.",
+)
 
 
 def _run_controls(guard: TrustGuard, inputs: Sequence[Any], kind: str, rng: np.random.Generator, n_trials: int,

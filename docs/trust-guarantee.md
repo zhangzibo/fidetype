@@ -135,7 +135,31 @@ Held-out check of the drop-in API, used as an outside user would use it (public 
 
 Both rates are below alpha. On T12 (later sessions, so with drift) the CP95 upper bound is above alpha: one draw does not prove the bound, and most commits are wrong (the bound is not on precision, section 4). Both sets are intracortical speech with our own decoders; other modalities are not yet validated.
 
-## 9. Related
+## 9. Optional: a bound on fluent-wrong commits (P15-06)
+
+If a language model (LLM) helps your decoder, the guard can also bound the rate of **fluent-wrong** commits: committed text that is wrong but reads well. It is off by default; without these arguments nothing changes.
+
+```python
+from fidetype.trust.halluc_bound import CommitGrounding
+from fidetype.trust.grounding import lexicon_label_fn
+
+grounding = CommitGrounding(lexicon_label_fn(prons, symbol_ids), word_sep_id=symbol_ids[" "])
+guard = ft.calibrate(cal_logits, cal_texts, vocab=VOCAB, decode_fn=my_decoder,
+                     grounding=grounding, llm=my_llm_scorer, halluc_alpha=0.01)
+```
+
+| Item | Meaning |
+|---|---|
+| Fluent-wrong commit | A commit whose text is not the true text **and** whose LLM log-probability per word is at or above `fluent_threshold` (default: the median of the true texts of the fit part). Without `llm=`, every wrong commit counts |
+| Guarantee | With probability at least 1 − `halluc_delta` (default δ): fluent-wrong rate ≤ `halluc_alpha` **and** wrong-commit rate ≤ α (rates over all utterances) |
+| Grounding gate | A commit passes only if its text is supported by the frames: sentence deficit ≤ `tau_commit` (CTC score against `anchor_fn`, or the best path) and largest word deficit ≤ `tau_word` (forced alignment). A blocked commit becomes an offer or a withhold. Offers do not change |
+| How | Learn then Test over the joint grid (`commit_p`, `tau_commit`, `tau_word`): test order from the policy part, fixed-sequence test on the LTT part, p-value = max of the two exact binomial p-values. The chosen `commit_p` is never below the plain one, so section 1 and the null controls still hold |
+| Sheet | A "hallucination bound" block: α_h, δ_h, the loss, the selected point, how many grid points were tested and certified |
+| Cost | The bound can remove most commits. To certify α_h = 0.01 with zero errors, the LTT part needs about 230 utterances or more (the guard otherwise never commits) |
+
+Not guaranteed: wrong commits that the LLM finds non-fluent (they count only in section 1); that each committed word was said. `ft.load` needs the same `grounding=` again. Validated on T15 (one set): the bound held in all arms, but with the strict selection rule the LLM-rescoring guard did not commit at all ([experiment](../experiments/2026-11-16-p15-06-halluc-bound/results.md)).
+
+## 10. Related
 
 - [10-minute quickstart](trust-quickstart.md)
 - [Concepts: the trust layer](concepts.md)

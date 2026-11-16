@@ -1,0 +1,141 @@
+{
+ "arm": "B1_rescore_G",
+ "seconds": 79.9,
+ "n": 542,
+ "can_commit_at_p0": 134,
+ "halluc": {
+  "loss": "fluent_wrong",
+  "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+  "fluent_threshold": -7.88165954200173,
+  "alpha_h": 0.01,
+  "delta_h": 0.1,
+  "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.4 (P14-03 value), fewest fluent-wrong, then most right commits",
+  "grid": {
+   "commit_p": 102,
+   "tau_commit": 7,
+   "tau_word": 6
+  },
+  "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+  "base_commit_p": 0.4,
+  "selected": {
+   "commit_p": 0.65,
+   "tau_commit": 0.0,
+   "tau_word": 0.25
+  },
+  "n_certified": 2625,
+  "chain_length": 4284,
+  "n_tested": 2626,
+  "n_order": 271,
+  "n_test": 271,
+  "order_counts": {
+   "n": 271,
+   "commits": 1,
+   "right": 1,
+   "wc_loss": 0,
+   "h_loss": 0
+  },
+  "test_counts": {
+   "n": 271,
+   "commits": 0,
+   "right": 0,
+   "wc_loss": 0,
+   "h_loss": 0
+  },
+  "test_pvalues": [
+   9.18537800051728e-07,
+   0.06563533949318161
+  ],
+  "feasible": true,
+  "controls_final": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   }
+  ]
+ },
+ "base_commit_p": 0.4,
+ "right": {
+  "n": 33,
+  "p": [
+   0.19060459168154897,
+   0.24541724613257282,
+   0.2866689826365427,
+   0.3805237209072018,
+   0.46862879679483066
+  ],
+  "sd": [
+   -0.014305475744660671,
+   0.0,
+   0.0,
+   0.0,
+   0.00823726715376973
+  ],
+  "wd": [
+   0.0,
+   0.019263535737991333,
+   0.15467403616224012,
+   0.2692236304283142,
+   0.42905157506465885
+  ]
+ },
+ "wrong_fluent": {
+  "n": 33,
+  "p": [
+   0.16701542354788976,
+   0.19900870765214765,
+   0.23521506982515705,
+   0.3093348450963655,
+   0.41751248239059885
+  ],
+  "sd": [
+   -0.020089464090607585,
+   -0.009841985942402182,
+   0.0,
+   0.0,
+   0.03446553476332499
+  ],
+  "wd": [
+   0.078905246257782,
+   0.159867063164711,
+   0.5014179646968842,
+   0.8815727879603704,
+   2.6025365814566603
+  ]
+ },
+ "wrong_not_fluent": {
+  "n": 68,
+  "p": [
+   0.14375350451217572,
+   0.16833853631768084,
+   0.18676643857868655,
+   0.22387592538270507,
+   0.32645017411974836
+  ],
+  "sd": [
+   -0.013142036022328659,
+   0.0,
+   0.0,
+   0.00891106702813416,
+   0.05925638619241663
+  ],
+  "wd": [
+   0.08935105502605438,
+   0.22464265748858456,
+   0.5175859987735748,
+   1.2600923062612612,
+   2.6623105421538154
+  ]
+ }
+}

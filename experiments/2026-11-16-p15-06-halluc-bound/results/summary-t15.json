@@ -1,0 +1,889 @@
+{
+ "set": "t15",
+ "alpha_h": 0.01,
+ "delta_h": 0.1,
+ "arms": {
+  "A0_ngram": {
+   "p15_05_arm": "A0_ngram",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": 0.31,
+    "tau_commit": 0.0,
+    "tau_word": 0.5
+   },
+   "feasible": true,
+   "n_certified": 3150,
+   "n_tested": 3151,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 3,
+    "right": 2,
+    "wc_loss": 1,
+    "h_loss": 0
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 1,
+    "right": 1,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 2,
+    "wrong": 2,
+    "right": 0,
+    "fluent_wrong": 0,
+    "swapped_not_truth": 2
+   },
+   "p15_06": {
+    "commits": 2,
+    "wrong": 2,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00524848850655095
+    ],
+    "wrong_rate": 0.0028530670470756064,
+    "wrong_cp95": [
+     0.00034570660403646683,
+     0.01026792330850958
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.39850267379679144,
+    "sentence_acc": 0.08416547788873038,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 60.5
+  },
+  "A1_ngram_G": {
+   "p15_05_arm": "A1_ngram_G",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": 0.31,
+    "tau_commit": 0.0,
+    "tau_word": 0.5
+   },
+   "feasible": true,
+   "n_certified": 3150,
+   "n_tested": 3151,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 3,
+    "right": 2,
+    "wc_loss": 1,
+    "h_loss": 0
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 1,
+    "right": 1,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 2,
+    "wrong": 2,
+    "right": 0,
+    "fluent_wrong": 0,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 2,
+    "wrong": 2,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00524848850655095
+    ],
+    "wrong_rate": 0.0028530670470756064,
+    "wrong_cp95": [
+     0.00034570660403646683,
+     0.01026792330850958
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.39850267379679144,
+    "sentence_acc": 0.08416547788873038,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 179.6
+  },
+  "B0_rescore": {
+   "p15_05_arm": "B0_rescore",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": 0.65,
+    "tau_commit": 0.0,
+    "tau_word": 0.25
+   },
+   "feasible": true,
+   "n_certified": 2625,
+   "n_tested": 2626,
+   "chain_length": 4284,
+   "base_commit_p": 0.4,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 1,
+    "right": 1,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 0,
+    "right": 0,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 9,
+    "wrong": 2,
+    "right": 7,
+    "fluent_wrong": 2,
+    "swapped_not_truth": 9
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00524848850655095
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00524848850655095
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3831016042780749,
+    "sentence_acc": 0.10984308131241084,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 52.5
+  },
+  "B1_rescore_G": {
+   "p15_05_arm": "B1_rescore_G",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": 0.65,
+    "tau_commit": 0.0,
+    "tau_word": 0.25
+   },
+   "feasible": true,
+   "n_certified": 2625,
+   "n_tested": 2626,
+   "chain_length": 4284,
+   "base_commit_p": 0.4,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 1,
+    "right": 1,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 0,
+    "right": 0,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 10,
+    "wrong": 2,
+    "right": 8,
+    "fluent_wrong": 2,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00524848850655095
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00524848850655095
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3831016042780749,
+    "sentence_acc": 0.10984308131241084,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 52.1
+  },
+  "C0_rewrite": {
+   "p15_05_arm": "C0_rewrite",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": 0.42,
+    "tau_commit": 0.0,
+    "tau_word": 0.5
+   },
+   "feasible": true,
+   "n_certified": 2961,
+   "n_tested": 2962,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 1,
+    "right": 1,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 3,
+    "right": 3,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 28,
+    "wrong": 9,
+    "right": 19,
+    "fluent_wrong": 5,
+    "swapped_not_truth": 28
+   },
+   "p15_06": {
+    "commits": 4,
+    "wrong": 1,
+    "right": 3,
+    "fluent_wrong": 1,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0014265335235378032,
+    "fluent_wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "wrong_rate": 0.0014265335235378032,
+    "wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.38737967914438504,
+    "sentence_acc": 0.10271041369472182,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 4,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 55.9
+  },
+  "C1_rewrite_G": {
+   "p15_05_arm": "C1_rewrite_G",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": 0.42,
+    "tau_commit": 0.0,
+    "tau_word": 0.5
+   },
+   "feasible": true,
+   "n_certified": 2849,
+   "n_tested": 2850,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 2,
+    "right": 2,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 3,
+    "right": 3,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 29,
+    "wrong": 9,
+    "right": 20,
+    "fluent_wrong": 5,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 4,
+    "wrong": 1,
+    "right": 3,
+    "fluent_wrong": 1,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0014265335235378032,
+    "fluent_wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "wrong_rate": 0.0014265335235378032,
+    "wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.38737967914438504,
+    "sentence_acc": 0.10271041369472182,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 4,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 54.9
+  },
+  "D0_free": {
+   "p15_05_arm": "D0_free",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": 0.36,
+    "tau_commit": 0.0,
+    "tau_word": 0.5
+   },
+   "feasible": true,
+   "n_certified": 2843,
+   "n_tested": 2844,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 7,
+    "right": 5,
+    "wc_loss": 2,
+    "h_loss": 0
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 2,
+    "right": 2,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 23,
+    "wrong": 6,
+    "right": 17,
+    "fluent_wrong": 3,
+    "swapped_not_truth": 23
+   },
+   "p15_06": {
+    "commits": 6,
+    "wrong": 1,
+    "right": 5,
+    "fluent_wrong": 1,
+    "blocked": 2,
+    "fluent_wrong_rate": 0.0014265335235378032,
+    "fluent_wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "wrong_rate": 0.0014265335235378032,
+    "wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.38224598930481285,
+    "sentence_acc": 0.11126961483594865,
+    "hallucination_rate": 0.012097645279758047,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 49,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 67.1
+  },
+  "D1_free_G": {
+   "p15_05_arm": "D1_free_G",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": 0.37,
+    "tau_commit": 0.0,
+    "tau_word": 0.5
+   },
+   "feasible": true,
+   "n_certified": 2824,
+   "n_tested": 2825,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 7,
+    "right": 5,
+    "wc_loss": 2,
+    "h_loss": 0
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 2,
+    "right": 2,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 26,
+    "wrong": 6,
+    "right": 20,
+    "fluent_wrong": 3,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 6,
+    "wrong": 1,
+    "right": 5,
+    "fluent_wrong": 1,
+    "blocked": 2,
+    "fluent_wrong_rate": 0.0014265335235378032,
+    "fluent_wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "wrong_rate": 0.0014265335235378032,
+    "wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.38224598930481285,
+    "sentence_acc": 0.11126961483594865,
+    "hallucination_rate": 0.007956989247311828,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 49,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 63.7
+  },
+  "B1_rescore_G@most_right": {
+   "p15_05_arm": "B1_rescore_G",
+   "select": "most_right",
+   "selected": {
+    "commit_p": 0.4,
+    "tau_commit": 0.0,
+    "tau_word": 0.5
+   },
+   "feasible": true,
+   "n_certified": 2625,
+   "n_tested": 2626,
+   "chain_length": 4284,
+   "base_commit_p": 0.4,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 5,
+    "right": 3,
+    "wc_loss": 2,
+    "h_loss": 2
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 3,
+    "right": 3,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 10,
+    "wrong": 2,
+    "right": 8,
+    "fluent_wrong": 2,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 8,
+    "wrong": 1,
+    "right": 7,
+    "fluent_wrong": 1,
+    "blocked": 2,
+    "fluent_wrong_rate": 0.0014265335235378032,
+    "fluent_wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "wrong_rate": 0.0014265335235378032,
+    "wrong_cp95": [
+     3.611604963185878e-05,
+     0.007922267165732985
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3831016042780749,
+    "sentence_acc": 0.10984308131241084,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 49,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 53.1
+  },
+  "C1_rewrite_G@most_right": {
+   "p15_05_arm": "C1_rewrite_G",
+   "select": "most_right",
+   "selected": {
+    "commit_p": 0.36,
+    "tau_commit": 0.005,
+    "tau_word": 0.5
+   },
+   "feasible": true,
+   "n_certified": 2849,
+   "n_tested": 2850,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {
+    "n": 271,
+    "commits": 5,
+    "right": 3,
+    "wc_loss": 2,
+    "h_loss": 2
+   },
+   "in_sample_test": {
+    "n": 271,
+    "commits": 6,
+    "right": 6,
+    "wc_loss": 0,
+    "h_loss": 0
+   },
+   "p15_05": {
+    "commits": 29,
+    "wrong": 9,
+    "right": 20,
+    "fluent_wrong": 5,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 13,
+    "wrong": 2,
+    "right": 11,
+    "fluent_wrong": 2,
+    "blocked": 1,
+    "fluent_wrong_rate": 0.0028530670470756064,
+    "fluent_wrong_cp95": [
+     0.00034570660403646683,
+     0.01026792330850958
+    ],
+    "wrong_rate": 0.0028530670470756064,
+    "wrong_cp95": [
+     0.00034570660403646683,
+     0.01026792330850958
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.38737967914438504,
+    "sentence_acc": 0.10271041369472182,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 701,
+   "n": 701,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 49,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 53.4
+  }
+ },
+ "checks_B1": {
+  "H1_bound": true,
+  "H2_fluent_wrong_le_A0": true,
+  "H3_controls": true,
+  "H4_wer_kept": true,
+  "utility_right_commits": {
+   "p15_06": 0,
+   "p15_05": 8,
+   "kept_half": false
+  },
+  "P15_06_pass": true
+ }
+}

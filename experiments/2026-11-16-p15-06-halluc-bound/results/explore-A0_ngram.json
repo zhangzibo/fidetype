@@ -1,0 +1,141 @@
+{
+ "arm": "A0_ngram",
+ "seconds": 36.8,
+ "n": 542,
+ "can_commit_at_p0": 517,
+ "halluc": {
+  "loss": "fluent_wrong",
+  "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+  "fluent_threshold": -7.88165954200173,
+  "alpha_h": 0.01,
+  "delta_h": 0.1,
+  "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.3 (P14-03 value), fewest fluent-wrong, then most right commits",
+  "grid": {
+   "commit_p": 102,
+   "tau_commit": 7,
+   "tau_word": 6
+  },
+  "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+  "base_commit_p": 0.3,
+  "selected": {
+   "commit_p": 0.31,
+   "tau_commit": 0.0,
+   "tau_word": 0.5
+  },
+  "n_certified": 3150,
+  "chain_length": 4284,
+  "n_tested": 3151,
+  "n_order": 271,
+  "n_test": 271,
+  "order_counts": {
+   "n": 271,
+   "commits": 3,
+   "right": 2,
+   "wc_loss": 1,
+   "h_loss": 0
+  },
+  "test_counts": {
+   "n": 271,
+   "commits": 1,
+   "right": 1,
+   "wc_loss": 0,
+   "h_loss": 0
+  },
+  "test_pvalues": [
+   9.18537800051728e-07,
+   0.06563533949318161
+  ],
+  "feasible": true,
+  "controls_final": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   }
+  ]
+ },
+ "base_commit_p": 0.3,
+ "right": {
+  "n": 55,
+  "p": [
+   0.14902878678199336,
+   0.18178691722688342,
+   0.21447371030739057,
+   0.23677166182960913,
+   0.30287449024772967
+  ],
+  "sd": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "wd": [
+   0.0,
+   0.0288747833834754,
+   0.14698242478900486,
+   0.2688823863863945,
+   0.5481285192072389
+  ]
+ },
+ "wrong_fluent": {
+  "n": 34,
+  "p": [
+   0.12466260903035889,
+   0.14205964666767407,
+   0.1614818930918488,
+   0.19675377862089577,
+   0.2482096332246059
+  ],
+  "sd": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "wd": [
+   0.06006425559520724,
+   0.21868845309529983,
+   0.7047798186540604,
+   1.140747471526265,
+   2.243604297935962
+  ]
+ },
+ "wrong_not_fluent": {
+  "n": 428,
+  "p": [
+   0.11516839409737152,
+   0.13184597503614418,
+   0.14804792524765883,
+   0.17122929091410116,
+   0.21512561865583382
+  ],
+  "sd": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "wd": [
+   0.037072974592447266,
+   0.3115415684878826,
+   0.7786668859422207,
+   1.4867602871730923,
+   3.00986110990246
+  ]
+ }
+}
