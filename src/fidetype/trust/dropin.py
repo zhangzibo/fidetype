@@ -297,7 +297,7 @@ def _norm_text(t: str) -> str:
 def _is_matrix(x: Any) -> bool:
     if hasattr(x, "shape") and hasattr(x, "ndim"):
         return int(x.ndim) == 2
-    if isinstance(x, (list, tuple)) and x and isinstance(x[0], (list, tuple, np.ndarray)) and x[0] \
+    if isinstance(x, (list, tuple)) and x and isinstance(x[0], (list, tuple, np.ndarray)) and len(x[0]) > 0 \
             and isinstance(x[0][0], (int, float, np.floating, np.integer)) and not isinstance(x[0][0], bool):
         return True
     return False

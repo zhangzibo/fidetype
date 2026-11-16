@@ -248,6 +248,7 @@ def test_input_checks():
         ft.calibrate(xs, ts, null_inputs=xs, modality="telepathy")
     assert D._detect_kind(np.zeros((3, 4))) == "logits"
     assert D._detect_kind([[0.0, 1.0], [1.0, 0.0]]) == "logits"
+    assert D._detect_kind([np.zeros(4), np.ones(4)]) == "logits"  # a list of frame rows
     assert D._detect_kind(["a", "b"]) == "nbest"
     assert D._detect_kind([("a", -1.0)]) == "nbest"
     assert D._detect_kind([{"text": "a", "score": 0.0}]) == "nbest"
