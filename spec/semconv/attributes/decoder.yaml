@@ -1,0 +1,81 @@
+# NTS semantic conventions: namespace decoder (spec 3.4). See ../manifest.yaml.
+container: header.meta
+namespace: decoder
+brief: The decoder (model) that made the frames or events.
+attributes:
+  - key: decoder.name
+    type: string
+    validator: non_empty_string
+    brief: The name of the decoder or model.
+    requirement:
+      - {scope: provenance, level: required, checks: [PV-DECODER]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, PRV-1]
+    checks: [NTS-META-TYPES]
+  - key: decoder.version
+    type: string
+    validator: non_empty_string
+    brief: The version of the decoder or model.
+    requirement:
+      - {scope: provenance, level: required, checks: [PV-DECODER]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, PRV-1]
+    checks: [NTS-META-TYPES]
+  - key: decoder.causal
+    type: boolean
+    validator: boolean
+    brief: >-
+      true if frame t uses no signal after frame_times[t] + latency (an absent latency
+      reads as 0). A full-sequence (offline) decoder sets false and omits latency.
+    requirement:
+      - {scope: trust-ready, level: required, checks: [TR-CAUSAL, TR-OFFLINE-LATENCY]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, MET-5]
+    checks: [NTS-META-TYPES]
+    related_fields: [neuraltextstream.v1.Header.latency]
+  - key: decoder.lookahead_s
+    type: double
+    unit: s
+    validator: finite_number_min_0
+    brief: >-
+      The algorithmic lookahead of the decoder (number >= 0). It equals the header field
+      latency when both are present.
+    stability: development
+    target_stability: stable
+    rules: [MET-1, MET-4, TIM-1]
+    checks: [NTS-META-TYPES, NTS-META-LOOKAHEAD]
+    related_fields: [neuraltextstream.v1.Header.latency]
+  - key: decoder.calibration_id
+    type: string
+    validator: non_empty_string
+    brief: The identifier of the calibration that was applied.
+    requirement:
+      - {scope: provenance, level: conditionally_required, condition: "calibration.applied is true", checks: [PV-CALIB-ID]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1]
+    checks: [NTS-META-TYPES]
+  - key: decoder.calibration_method
+    type: string
+    validator: non_empty_string
+    examples: [temperature, platt, isotonic, none]
+    brief: The calibration method.
+    requirement:
+      - {scope: trust-ready, level: conditionally_required, condition: "calibration.applied is true; the value is then not none", checks: [TR-CALIB]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, MET-6]
+    checks: [NTS-META-TYPES]
+  - key: decoder.weights_sha256
+    type: string
+    validator: sha256_hex
+    brief: The SHA-256 of the weights file, 64 lowercase hex characters.
+    requirement:
+      - {scope: provenance, level: required, checks: [PV-WEIGHTS]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, PRV-1]
+    checks: [NTS-META-TYPES]

@@ -48,6 +48,22 @@ jobs:
       - name: Schema parity with the SDK verdicts (jsonschema library)
         run: uv run --no-project --with jsonschema==4.26.0 python tools/proto/parity.py --engine jsonschema
 
+  # P1-04: the semantic-convention registry (spec/semconv/*.yaml) must agree with the spec tables,
+  # the proto files, the generated JSON Schema, the three SDK validators and the conformance vectors,
+  # and the generated page spec/semconv/registry.md must be up to date.
+  semconv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Registry agrees with spec, proto, schema, SDKs, vectors; registry.md up to date
+        run: uv run --no-project --with pyyaml==6.0.3 python tools/semconv/semconv.py --check
+      - name: Tests of the generator and the check
+        run: uv run --no-project --with pyyaml==6.0.3 --with pytest python -m pytest -q -p no:cacheprovider tests/test_semconv.py
+
   # TypeScript SDK (sdk/typescript, M7-06): build, schema drift check, browser-safety check,
   # unit tests and the golden vectors, on the oldest and the newest supported Node.
   typescript:

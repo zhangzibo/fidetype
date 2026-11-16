@@ -1,0 +1,119 @@
+# NTS conventions: recommended keys of trust_decision.input (spec 6.1.1). See ../manifest.yaml.
+# Audit data: a consumer MUST NOT base an action on them (TD-13).
+container: trust_decision.input
+brief: Reference to the input of a trust decision.
+attributes:
+  - key: kind
+    type: string
+    validator: none
+    examples: [frames, hypothesis, intent, decision, feedback, control, control_enable, timer]
+    brief: The input route.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "always"}
+    stability: development
+    rules: [TD-13]
+  - key: frame_range
+    type: "int[2]"
+    validator: none
+    brief: The frame indices [start, end) of the segment.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is frames"}
+    stability: development
+    rules: [TD-13]
+  - key: t_range
+    type: "double[2]"
+    unit: s
+    validator: none
+    brief: The signal times of the first and the last frame.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is frames"}
+    stability: development
+    rules: [TD-13, TIM-1]
+  - key: hypothesis_id
+    type: string
+    validator: none
+    brief: The hypothesis that the decision used.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is hypothesis"}
+    stability: development
+    rules: [TD-13]
+  - key: revision_of
+    type: string
+    validator: none
+    brief: The revision_of value of the hypothesis that the decision used.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is hypothesis"}
+    stability: development
+    rules: [TD-13]
+  - key: intent_id
+    type: string
+    validator: none
+    brief: The id of the intent event.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is intent"}
+    stability: development
+    rules: [TD-13]
+  - key: label
+    type: string
+    validator: none
+    brief: The label of the decision event.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is decision"}
+    stability: development
+    rules: [TD-13]
+  - key: tick
+    type: int
+    validator: none
+    brief: The input tick.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is control"}
+    stability: development
+    rules: [TD-13]
+  - key: ref_unit
+    type: int
+    validator: none
+    brief: The ref_unit of the intent_feedback that caused the decision.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is feedback"}
+    stability: development
+    rules: [TD-13]
+  - key: outcome
+    type: string
+    validator: none
+    brief: The outcome of the intent_feedback that caused the decision.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is feedback"}
+    stability: development
+    rules: [TD-13]
+  - key: source
+    type: string
+    validator: none
+    brief: The source of the intent_feedback that caused the decision.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "kind is feedback"}
+    stability: development
+    rules: [TD-13]
+  - key: score_semantics
+    type: string
+    validator: none
+    brief: The semantics of the input scores.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "intent routes"}
+    stability: development
+    rules: [TD-13, INT-S2]
+  - key: sha256
+    type: string
+    validator: none
+    brief: The SHA-256 of the input event (canonical JSON), 64 lowercase hex characters.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "event routes"}
+    stability: development
+    rules: [TD-13]
+  - key: hypothesis_sha256
+    type: string
+    validator: none
+    brief: The SHA-256 of the input hypothesis (canonical JSON), 64 lowercase hex characters.
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "event routes"}
+    stability: development
+    rules: [TD-13]

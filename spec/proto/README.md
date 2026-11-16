@@ -130,7 +130,7 @@ The hand-written schemas in [`../schemas/nts-v0.1/`](../schemas/nts-v0.1/) and `
 - The binary framing of a file or a socket (length-delimited `Event` messages), a gRPC service and protobuf frames over WebSocket: bindings, roadmap P1-05.
 - The WebSocket control messages (`ws_welcome`, `ws_ack`, `ws_batch`, …) and LSL stream infos: binding records, not NTS events (WS-M1). The parity runner skips them, except the events inside a `ws_batch`.
 - The NPZ form (8.1.2): read only, frame core only (FIL-6).
-- The `meta` conventions of 3.4 as machine-readable rules: roadmap P1-04 (`spec/semconv/*.yaml`).
+- The `meta` conventions of 3.4 as machine-readable rules: roadmap P1-04, now in [`../semconv/`](../semconv/registry.md) (the check compares the registry containers with the proto `Struct` fields `Header.meta`, `TrustDecision.input` and `TrustDecision.declaration`).
 
 ## 12. Open spec questions found by the proto
 They are recorded in [CHANGELOG.md](../CHANGELOG.md) (RC2 section, "Open questions (P1-02)"). **All eight are resolved in RC3** (section 1.6 of [nts-1.0-rc3.md](../nts-1.0-rc3.md)): Q-1 GEN-9, Q-2 SEG-6 / LSL-G3, Q-3 CTL-T9, Q-4 TD-F2 / TD-13, Q-5 GEN-10, Q-6 PRF-5, Q-7 VER-6 … VER-10, Q-8 INT-T7 / CTL-T8.

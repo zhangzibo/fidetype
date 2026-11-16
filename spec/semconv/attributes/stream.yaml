@@ -1,0 +1,15 @@
+# NTS semantic conventions: namespace stream (spec 3.4). See ../manifest.yaml.
+container: header.meta
+namespace: stream
+brief: The stream itself.
+attributes:
+  - key: stream.id
+    type: string
+    validator: non_empty_string
+    brief: An opaque unique id of the stream. It MUST NOT contain personal data.
+    requirement:
+      - {scope: provenance, level: required, checks: [PV-STREAM-ID]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, SEC-6, PRV-1]
+    checks: [NTS-META-TYPES]

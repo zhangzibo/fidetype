@@ -1,0 +1,50 @@
+# NTS conventions: recommended keys of trust_decision.declaration (spec 6.1.2). See ../manifest.yaml.
+# Audit data: a consumer MUST NOT base an action on them (TD-13).
+container: trust_decision.declaration
+brief: Result of the declaration check (DCL-5).
+attributes:
+  - key: status
+    type: enum
+    values: [match, mismatch, absent]
+    unknown_value: mismatch
+    validator: none
+    brief: The result of the check. A consumer reads an unknown value as mismatch.
+    requirement:
+      - {scope: trust-layer, level: recommended}
+    stability: development
+    rules: [TD-13, DCL-5, VER-8]
+    spec_registry_row: "`declaration.status` (6.1.2)"
+  - key: mode
+    type: string
+    validator: none
+    examples: ["off", warn, abstain, offer-only]
+    brief: The check mode of the trust layer (the examples are the modes of the reference layer).
+    requirement:
+      - {scope: trust-layer, level: recommended}
+    stability: development
+    rules: [TD-13]
+  - key: where
+    type: enum
+    values: [header, hypothesis]
+    validator: none
+    brief: Where the checked declaration was.
+    requirement:
+      - {scope: trust-layer, level: recommended}
+    stability: development
+    rules: [TD-13, DCL-3]
+  - key: decoder
+    type: string
+    validator: none
+    brief: The declared decoder id.
+    requirement:
+      - {scope: trust-layer, level: recommended}
+    stability: development
+    rules: [TD-13]
+  - key: mismatches
+    type: "string[]"
+    validator: none
+    brief: One short text per mismatch. No user text.
+    requirement:
+      - {scope: trust-layer, level: recommended}
+    stability: development
+    rules: [TD-13, DCL-7]

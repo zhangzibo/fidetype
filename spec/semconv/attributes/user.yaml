@@ -1,0 +1,13 @@
+# NTS semantic conventions: namespace user (spec 3.4). See ../manifest.yaml.
+container: header.meta
+namespace: user
+brief: Adaptation of the decoder to the user.
+attributes:
+  - key: user.personalized
+    type: boolean
+    validator: boolean
+    brief: true if the decoder was adapted to this user.
+    stability: development
+    target_stability: stable
+    rules: [MET-1]
+    checks: [NTS-META-TYPES]

@@ -14,6 +14,7 @@ The sections follow the plan for the future documentation site ([docs site plan]
 | SDKs (per language) | [TypeScript](../sdk/typescript/README.md), [Rust](../sdk/rust/README.md) | Full guides of the other two SDKs |
 | Collector | [collector.md](collector.md) | Run the Collector: receivers, processors, exporters, configuration |
 | Conformance | [conformance.md](conformance.md) | Check a producer or a consumer; profiles and golden vectors |
+| Semantic conventions | [semconv.md](semconv.md) | The registry of standard key names (`meta`, `trust_decision` objects): types, units, requirement levels, stability |
 | Benchmark | [../benchmark/README.md](../benchmark/README.md) | Score neural text entry on public datasets; submit a result |
 | Specification | [../spec/README.md](../spec/README.md) | All spec versions; the current draft is [NTS 1.0 RC2](../spec/nts-1.0-rc2.md) |
 | Proposals (FEPs) | [../spec/README.md#proposals-feps](../spec/README.md#proposals-feps) | Enhancement proposals and how to write one |

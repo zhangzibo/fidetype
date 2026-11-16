@@ -1,0 +1,13 @@
+# NTS semantic conventions: namespace consent (spec 3.4). See ../manifest.yaml.
+container: header.meta
+namespace: consent
+brief: Consent records kept outside the stream.
+attributes:
+  - key: consent.ref
+    type: string
+    validator: non_empty_string
+    brief: An opaque reference to a consent record kept elsewhere. No consent text, no personal data.
+    stability: development
+    target_stability: stable
+    rules: [MET-1, SEC-6]
+    checks: [NTS-META-TYPES]

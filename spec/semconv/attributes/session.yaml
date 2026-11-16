@@ -1,0 +1,13 @@
+# NTS semantic conventions: namespace session (spec 3.4). See ../manifest.yaml.
+container: header.meta
+namespace: session
+brief: The recording session.
+attributes:
+  - key: session.id
+    type: string
+    validator: non_empty_string
+    brief: A pseudonymous session id (10.3). The mapping to real people MUST NOT be in the stream.
+    stability: development
+    target_stability: stable
+    rules: [MET-1, SEC-4]
+    checks: [NTS-META-TYPES, PV-PSEUDONYM]

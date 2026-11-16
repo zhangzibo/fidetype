@@ -32,6 +32,8 @@ The TypeScript SDK ([`sdk/typescript/`](../sdk/typescript/README.md)) runs the s
 
 **Protobuf source of truth (P1-02, draft):** [`proto/neuraltextstream/v1/*.proto`](proto/) describe the full 1.0 RC2 data model (proto3, package `neuraltextstream.v1`). [`schemas/nts-v1.schema.json`](schemas/nts-v1.schema.json) is generated from them (`python tools/proto/gen_jsonschema.py`) and gives the SDK verdict on every vector that fails or passes on one line (178 of 178). Mapping rules, the rules a schema cannot express and the open questions: [proto/README.md](proto/README.md).
 
+**Semantic-convention registry (P1-04, draft):** [`semconv/`](semconv/) holds the key conventions of RC3 as YAML: the 24 `meta` keys of section 3.4 and the recommended `trust_decision` `input` (6.1.1) and `declaration` (6.1.2) keys, each with type, unit, requirement level per conformance level, stability and rule ids. The reference page [semconv/registry.md](semconv/registry.md) is generated (`python tools/semconv/semconv.py`). CI job `semconv` checks that the YAML agrees with the spec tables, the proto files, the generated JSON Schema, the three SDK validators and the conformance vectors. The modality namespaces (`emg.*`, `eeg.*`, ...) have no keys yet. How to use it: [docs/semconv.md](../docs/semconv.md).
+
 Opt-in profiles test draft FEPs on top of v0.1. They do not change the v0.1 levels or vectors:
 
 ```bash

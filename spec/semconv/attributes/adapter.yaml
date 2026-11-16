@@ -1,0 +1,25 @@
+# NTS semantic conventions: namespace adapter (spec 3.4). See ../manifest.yaml.
+container: header.meta
+namespace: adapter
+brief: The adapter that converted device or dataset output into NTS.
+attributes:
+  - key: adapter.name
+    type: string
+    validator: non_empty_string
+    brief: The name of the adapter. adapter.name and adapter.version SHOULD be both present or both absent.
+    requirement:
+      - {scope: provenance, level: conditionally_required, condition: "adapter.version is present", checks: [PV-ADAPTER]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, PRV-1]
+    checks: [NTS-META-TYPES]
+  - key: adapter.version
+    type: string
+    validator: non_empty_string
+    brief: The version of the adapter. adapter.name and adapter.version SHOULD be both present or both absent.
+    requirement:
+      - {scope: provenance, level: conditionally_required, condition: "adapter.name is present", checks: [PV-ADAPTER]}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, PRV-1]
+    checks: [NTS-META-TYPES]

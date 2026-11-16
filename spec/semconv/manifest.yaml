@@ -1,0 +1,164 @@
+# NTS semantic-convention registry: manifest (roadmap task P1-04).
+#
+# This file and the files in attributes/ are the machine-readable form of the
+# key conventions of NTS 1.0 RC3 (spec/nts-1.0-rc3.md): the `meta` keys of
+# section 3.4, the trust_decision `input` keys of 6.1.1 and the trust_decision
+# `declaration` keys of 6.1.2. They add no new semantics. Where the spec is
+# silent, the gap is an open question at the end of this file.
+#
+# Generated reference page: spec/semconv/registry.md (do not edit it by hand).
+#   python tools/semconv/semconv.py           # write registry.md
+#   python tools/semconv/semconv.py --check   # agreement checks; exit 1 on an error
+# (Both need PyYAML: uv run --no-project --with pyyaml==6.0.3 python tools/semconv/semconv.py)
+
+file_format: nts-semconv/0.1
+spec:
+  document: spec/nts-1.0-rc3.md
+  version: "1.0 RC3 (draft)"
+
+# Words used in the attribute files. The generator refuses other values.
+vocabulary:
+  types:
+    string: JSON string
+    boolean: JSON true or false
+    int: JSON integer (GEN-5, GEN-10)
+    double: "JSON number (no NaN, no infinity: MET-2)"
+    enum: JSON string from a closed list (12.3)
+    "int[2]": JSON array of two integers
+    "double[2]": JSON array of two numbers
+    "string[]": JSON array of strings
+  # What the reference validators (Python, TypeScript, Rust) check for a key.
+  validators:
+    none: The validators check nothing for this key (only that its container is an object)
+    non_empty_string: A string that is not ""
+    boolean: true or false
+    integer_min_1: An integer >= 1
+    finite_number_min_0: A finite number >= 0
+    sha256_hex: 64 lowercase hex characters
+    bcp47_tag: A BCP 47 language tag (pattern check only)
+    enum: One of the listed values (an unknown value of a newer minor version is allowed by VER-8)
+  requirement_levels:
+    required: The key MUST be present to reach the scope (level or class)
+    conditionally_required: The key MUST be present when the condition is true
+    recommended: The key SHOULD be present (no check blocks without it)
+    optional: The key MAY be present
+  # A scope is a producer conformance level (9.2) or a conformance class (9.1).
+  scopes:
+    core: Producer level core (9.2)
+    trust-ready: Producer level trust-ready (9.2)
+    provenance: Producer level provenance (9.2)
+    trust-layer: Conformance class trust layer (9.1)
+  stability:
+    development: Can change or go away in any release (1.5)
+    stable: No breaking change within one major version (1.5)
+    deprecated: Still works; a replacement exists (1.5)
+
+# Each container is a JSON object field that holds convention keys.
+containers:
+  - id: header.meta
+    brief: Semantic conventions and custom keys of the stream header.
+    proto: neuraltextstream.v1.Header.meta
+    json_schema: "#/$defs/Header/properties/meta"
+    spec_section: "3.4"
+    spec_table: "3.4"
+    rules: [HDR-8, MET-1, MET-2, MET-3, SEC-3, SEC-5]
+    custom_keys: >-
+      Allowed. A custom key uses a namespace that is not reserved (MET-3, EXT-2).
+  - id: trust_decision.input
+    brief: Reference to the input of a trust decision (audit data).
+    proto: neuraltextstream.v1.TrustDecision.input
+    json_schema: "#/$defs/TrustDecision/properties/input"
+    spec_section: "6.1.1"
+    spec_table: "6.1.1"
+    rules: [TD-F2, TD-13]
+    custom_keys: >-
+      Allowed. A consumer ignores keys that it does not know and never acts on these keys (TD-13).
+  - id: trust_decision.declaration
+    brief: Result of the declaration check of a trust decision (audit data).
+    proto: neuraltextstream.v1.TrustDecision.declaration
+    json_schema: "#/$defs/TrustDecision/properties/declaration"
+    spec_section: "6.1.2"
+    spec_table: "6.1.2"
+    rules: [TD-F2, TD-13, DCL-5]
+    custom_keys: >-
+      Allowed. A consumer ignores keys that it does not know and never acts on these keys (TD-13).
+
+# Namespaces of header.meta (spec 12.5). Policy "Spec": only a spec version
+# (through a FEP) adds or changes a key. Outside these namespaces: first come.
+namespaces:
+  - {name: device, status: reserved, file: attributes/device.yaml}
+  - {name: decoder, status: reserved, file: attributes/decoder.yaml}
+  - {name: adapter, status: reserved, file: attributes/adapter.yaml}
+  - {name: stream, status: reserved, file: attributes/stream.yaml}
+  - {name: lm, status: reserved, file: attributes/lm.yaml}
+  - {name: user, status: reserved, file: attributes/user.yaml}
+  - {name: session, status: reserved, file: attributes/session.yaml}
+  - {name: subject, status: reserved, file: attributes/subject.yaml}
+  - {name: calibration, status: reserved, file: attributes/calibration.yaml}
+  - {name: data, status: reserved, file: attributes/data.yaml}
+  - {name: consent, status: reserved, file: attributes/consent.yaml}
+  - {name: language, status: reserved, flat: true, file: attributes/language.yaml}
+  # Planned modality namespaces (12.5: "not defined yet"). No keys until a FEP defines them.
+  - {name: emg, status: planned}
+  - {name: eeg, status: planned}
+  - {name: meg, status: planned}
+  - {name: fnirs, status: planned}
+  - {name: implant, status: planned}
+
+# Attribute files of the other containers.
+container_files:
+  - {container: trust_decision.input, file: attributes/trust-decision-input.yaml}
+  - {container: trust_decision.declaration, file: attributes/trust-decision-declaration.yaml}
+
+# Gaps that this registry found. The registry does not resolve them: each one
+# needs a spec change (a FEP or the next RC).
+open_questions:
+  - id: SC-1
+    title: Modality keys are not defined
+    text: >-
+      Spec 12.5 plans the namespaces emg, eeg, meg, fnirs and implant but defines no key.
+      The roadmap (P1-04) lists candidate keys, for example emg.placement, eeg.montage,
+      meg.system, fnirs.wavelengths_nm and implant.array_type. Each needs a type, a unit and
+      a meaning in a FEP before it goes into this registry. Real producers (P4 adapters:
+      emg2qwerty, KT-sEMG, Willett, B2T '25, Brain2Qwerty) should supply the evidence.
+  - id: SC-2
+    title: Planned namespaces are not reserved in the validators
+    text: >-
+      The validators warn about custom keys in a reserved namespace (MET-3) only for the
+      namespaces that have keys. A key such as emg.gain gets no warning. Spec 12.5 does not
+      say whether the planned namespaces are reserved now.
+  - id: SC-3
+    title: Empty strings
+    text: >-
+      Spec 3.4 gives the type "string" for keys such as device.vendor and decoder.name.
+      All three validators refuse "" (validator non_empty_string). The spec should say
+      whether "" is valid.
+  - id: SC-4
+    title: Open or closed value lists for string keys
+    text: >-
+      device.regulatory_status, decoder.calibration_method, input.kind and declaration.mode
+      list values in the spec, but their type is "string". The spec does not say whether
+      other values are valid. This registry records the listed values as examples.
+  - id: SC-5
+    title: Target stability of the trust_decision input and declaration keys
+    text: >-
+      Spec 2.3 proposes the meta conventions of 3.4 as Stable. It gives no level for the
+      recommended keys of 6.1.1 and 6.1.2. This registry records "no target" for them.
+  - id: SC-6
+    title: Units of dimensionless and count keys
+    text: >-
+      The spec gives units only through names and TIM-1 (all times in seconds). It has no
+      unit notation for counts (device.channel_count) or indices (input.frame_range). This
+      registry gives a unit only where the spec states one.
+  - id: SC-7
+    title: Machine-readable conventions are not yet in the spec text
+    text: >-
+      Appendix A.1 item 9 still says "Deferred to 1.1 (task P1-04) ... not written yet".
+      The next RC should point to spec/semconv/ and say which form (prose table or YAML)
+      is normative when they differ. Today the check makes them agree.
+  - id: SC-8
+    title: Generated SDK constants
+    text: >-
+      The roadmap plans semconv constants generated for each SDK. Today each SDK has a
+      hand-written key table; the check compares them with this registry. Generating the
+      tables is a later step.
