@@ -1,6 +1,6 @@
 # Fidetype Rust SDK (`fidetype` crate)
 
-> Part of [Fidetype](../../README.md). Status: NTS 1.0 is a draft RC ([RC2](../../spec/nts-1.0-rc2.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](../../docs/sdks.md).
+> Part of [Fidetype](../../README.md). Status: NTS 1.0 is a draft RC ([RC4](../../spec/nts-1.0-rc4.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](../../docs/sdks.md).
 
 Rust SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. The core is **`no_std` + `alloc`**: it parses, checks, writes and decides without an operating system. So it can run in device firmware, for example on a Cortex-M microcontroller. The `std` feature (on by default) adds file helpers, the CLI `fidetype-rs` and the example program.
 

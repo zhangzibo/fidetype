@@ -269,6 +269,7 @@ export function tdIntentFormatErrors(e: Record<string, unknown>): string[] {
   if (get(e, "confirm_required") === true && action !== "OFFER") x.push("confirm_required is only allowed on an OFFER");
   for (const k of ["confirmation_of", "undo_of"]) if (has(e, k) && !(isInt(e, k) && (e[k] as number) >= 0)) x.push(`${k} must be an integer >= 0`);
   if (has(e, "confirmed_via") && !enumOk(e.confirmed_via, CONFIRM_PATHS, newer)) x.push("confirmed_via must be 'intent' or 'feedback'");
+  for (const k of ["vocab_id", "pending_cleared"]) if (has(e, k) && typeof e[k] !== "string") x.push(`${k} must be a string (INT-T8)`);
   return [...errs, ...x.map((m) => `line ${n}: ${m}`)];
 }
 

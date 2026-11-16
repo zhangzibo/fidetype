@@ -17,12 +17,12 @@ fn run(profile: &str, expected_total: usize) {
 
 #[test]
 fn v01_vectors() {
-    run("v0.1", 68);
+    run("v0.1", 82);
 }
 
 #[test]
 fn fep0001_vectors() {
-    run("fep-0001", 62);
+    run("fep-0001", 66);
 }
 
 #[test]
@@ -32,7 +32,7 @@ fn fep0002_vectors() {
 
 #[test]
 fn fep0003_vectors() {
-    run("fep-0003", 47);
+    run("fep-0003", 51);
 }
 
 #[test]
@@ -42,7 +42,7 @@ fn fep0004_vectors() {
 
 #[test]
 fn fep0005_vectors() {
-    run("fep-0005", 48);
+    run("fep-0005", 52);
 }
 
 #[test]

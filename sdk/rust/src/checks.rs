@@ -11,7 +11,10 @@ use alloc::vec;
 use alloc::vec::Vec;
 use alloc::format;
 
-use crate::constants::{is_supported_spec_version, CLOCK_DOMAINS, MODALITIES, NORM_TOL, SCORE_SEMANTICS, SQ_UNITS, VOCAB, VOCAB_TYPES};
+use crate::constants::{
+    is_supported_spec_version, CLOCK_DOMAINS, MODALITIES, NORM_TOL, PLANNED_NAMESPACES, SCORE_SEMANTICS, SQ_UNITS, TIMING_KEYS, VOCAB,
+    VOCAB_TYPES,
+};
 use crate::error::Error;
 use crate::json::{num_text, py_eq, py_in, py_space, py_split, py_strip, repr, str_in, str_list, Map, Value};
 use crate::raw::{read_raw, Format, NdArray, RawStream};
@@ -346,6 +349,10 @@ fn defined(k: &str) -> bool {
 }
 fn defined_namespace(ns: &str) -> bool {
     DEFINED_KEYS.iter().any(|(d, _)| d.contains('.') && d.split('.').next() == Some(ns))
+}
+/// A namespace in which a custom key gets the MET-3 warning: a defined one or a planned one (RC4, SC-2).
+fn reserved_namespace(ns: &str) -> bool {
+    defined_namespace(ns) || PLANNED_NAMESPACES.contains(&ns)
 }
 const LEAK_KEY_NAMES: &[&str] = &[
     "target_text", "typed_text", "truth", "ground_truth", "groundtruth", "label", "labels", "transcript", "transcription",
@@ -717,7 +724,7 @@ fn c_namespace(raw: &RawStream) -> Out {
     };
     let flat: Vec<&str> = m.keys().filter(|k| !k.contains('.') && !defined(k)).collect();
     let custom: Vec<&str> =
-        m.keys().filter(|k| k.contains('.') && !defined(k) && defined_namespace(k.split('.').next().unwrap_or(""))).collect();
+        m.keys().filter(|k| k.contains('.') && !defined(k) && reserved_namespace(k.split('.').next().unwrap_or(""))).collect();
     let mut msgs = Vec::new();
     if !flat.is_empty() {
         msgs.push(format!("not namespaced: {}", repr(&str_list(&flat))));
@@ -789,6 +796,12 @@ fn c_free_text(raw: &RawStream) -> Out {
 }
 fn c_vocab_id(raw: &RawStream) -> Out {
     let vid = hget(raw, "vocab_id");
+    // HDR-16 (NTS 1.0 RC4): vocab_id and vocab_version are strings or null (GEN-9).
+    let wrong: Vec<&str> =
+        ["vocab_id", "vocab_version"].into_iter().filter(|k| !hget(raw, k).is_null() && !hget(raw, k).is_str()).collect();
+    if !wrong.is_empty() {
+        return bad(format!("{} must be a string or null (HDR-16)", wrong.join(" and ")));
+    }
     if vid.is_null() {
         return skip("no header vocab_id");
     }
@@ -935,12 +948,62 @@ fn line_of(e: &Map) -> String {
     }
 }
 
+fn is_pair(v: &Value) -> bool {
+    matches!(v, Value::Arr(a) if a.len() == 2 && a.iter().all(|x| x.is_num()))
+}
+
+/// HYP-5 (NTS 1.0 RC4): `spans` is a list of objects; each listed key has its type.
+fn span_errors(spans: &Value) -> Vec<String> {
+    let a = match spans {
+        Value::Arr(a) => a,
+        _ => return vec!["spans must be a list".to_string()],
+    };
+    let mut errs = Vec::new();
+    for (j, sp) in a.iter().enumerate() {
+        let m = match sp {
+            Value::Obj(m) => m,
+            _ => {
+                errs.push(format!("spans[{}] must be an object", j));
+                continue;
+            }
+        };
+        for k in ["char_start", "char_end"] {
+            if let Some(v) = m.get_opt(k) {
+                if !(v.is_int() && v.as_f64().unwrap_or(-1.0) >= 0.0) {
+                    errs.push(format!("spans[{}].{} must be an integer >= 0", j, k));
+                }
+            }
+        }
+        for k in ["t_start", "t_end", "score"] {
+            if let Some(v) = m.get_opt(k) {
+                if !v.is_num() {
+                    errs.push(format!("spans[{}].{} must be a number", j, k));
+                }
+            }
+        }
+    }
+    errs
+}
+
 fn score_errors(e: &Map, need_semantics: bool, ignore_score: bool, newer: bool) -> Vec<String> {
     let mut errs = Vec::new();
+    // DEC-6 (NTS 1.0 RC4): the types of score and score_range hold for every semantics.
+    if let Some(sc) = e.get_opt("score") {
+        if !ignore_score && !sc.is_null() && !sc.is_num() {
+            errs.push(format!("score {} must be a number or null (DEC-6)", repr(sc)));
+        }
+    }
+    if let Some(rng) = e.get_opt("score_range") {
+        if !is_pair(rng) {
+            errs.push("score_range must be a list of two numbers [min, max] (DEC-6)".to_string());
+        }
+    }
     let sem = e.get("score_semantics");
     if sem.is_null() {
         if need_semantics {
             errs.push("no score_semantics".to_string());
+        } else if e.has("score_semantics") {
+            errs.push("score_semantics must not be null (GEN-9)".to_string());
         }
         return errs;
     }
@@ -1036,6 +1099,26 @@ fn c_evt_hypothesis(raw: &RawStream) -> Out {
         if !matches!(e.get("is_final"), Value::Bool(_)) {
             errs.push(format!("line {}: is_final must be a boolean", n));
         }
+        // HYP-5 (NTS 1.0 RC4): the optional fields have their types.
+        for k in ["t_start", "t_end"] {
+            if e.has(k) && !e.get(k).is_num() {
+                errs.push(format!("line {}: {} must be a number (HYP-5)", n, k));
+            }
+        }
+        if e.has("revision_of") && !e.get("revision_of").is_null() && !e.get("revision_of").is_str() {
+            errs.push(format!("line {}: revision_of must be a string or null (HYP-5)", n));
+        }
+        if let Value::Arr(nb) = e.get("nbest") {
+            for (k, it) in nb.iter().enumerate() {
+                if let Value::Obj(im) = it {
+                    if let Some(sp) = im.get_opt("spans") {
+                        for x in span_errors(sp) {
+                            errs.push(format!("line {} nbest[{}]: {} (HYP-5)", n, k, x));
+                        }
+                    }
+                }
+            }
+        }
         for x in score_errors(e, true, true, newer_of(raw)) {
             errs.push(format!("line {}: {}", n, x));
         }
@@ -1063,6 +1146,15 @@ fn c_evt_pointer(raw: &RawStream) -> Out {
         let mode = e.get("mode");
         if !crate::json::enum_ok(mode, &["relative", "absolute"], newer_of(raw)) {
             errs.push(format!("line {}: mode must be relative or absolute", n));
+        }
+        // PTR-1 (types made explicit in NTS 1.0 RC4): absent, score and score_semantics as 4.6.
+        if let Some(ab) = e.get_opt("absent") {
+            if !matches!(ab, Value::Arr(a) if a.len() == dn && a.iter().all(|x| matches!(x, Value::Bool(_)))) {
+                errs.push(format!("line {}: absent must be a list of {} booleans (PTR-1)", n, dn));
+            }
+        }
+        for x in score_errors(e, false, false, newer_of(raw)) {
+            errs.push(format!("line {}: {}", n, x));
         }
         match e.get("values") {
             Value::Arr(vals) if vals.len() == dn && vals.iter().all(|x| x.is_num()) => {
@@ -1109,12 +1201,18 @@ fn c_evt_signal_quality(raw: &RawStream) -> Out {
                 }
             }
         }
+        if let Some(ch) = e.get_opt("channels") {
+            if !matches!(ch, Value::Arr(a) if a.iter().all(|x| x.is_num())) {
+                errs.push(format!("line {}: channels must be a list of numbers (SQ-1)", n));
+            }
+        }
     }
     if errs.is_empty() { ok_s(format!("{} signal_quality event(s)", evs.len())) } else { bad(errs.join("; ")) }
 }
 fn c_evt_timing(raw: &RawStream) -> Out {
-    let keys = ["t_signal_start", "t_signal_end", "t_decoded", "t_emitted"];
-    let evs: Vec<&Map> = raw.events.iter().filter(|e| keys.iter().any(|k| e.has(k))).collect();
+    let keys = TIMING_KEYS;
+    // NTS 1.0 RC4 (G-12): every event of registry 12.1 that can carry the fields, frames included.
+    let evs: Vec<&Map> = raw.timed.iter().collect();
     if evs.is_empty() {
         return skip("no extended timing");
     }
@@ -1313,7 +1411,7 @@ static REGISTRY: &[CheckDef] = &[
     chk!("NTS-LEAK-KEYS", Core, "MUST", "5.3.1", "meta has no key that names ground truth or target labels", c_leak_keys, heuristic),
     chk!("NTS-PRIVACY", Core, "MUST", "5.4.1 / 4.2", "meta has no personal identifiers (e-mail, name, birth date keys)", c_privacy, heuristic),
     chk!("NTS-FREE-TEXT", Advisory, "SHOULD NOT", "5.4.3", "meta has no free-text note fields", c_free_text, heuristic),
-    chk!("NTS-VOCAB-ID", Core, "MUST", "3.4", "If a header vocab_id names a known registry entry, vocab matches it", c_vocab_id),
+    chk!("NTS-VOCAB-ID", Core, "MUST", "3.4", "vocab_id and vocab_version are strings or null; a known vocab_id matches vocab", c_vocab_id),
     chk!("NTS-VT-CHAR", TrustReady, "PROFILE", "3.1", "char vocabulary: each non-blank token is one character", c_vt_char),
     chk!("NTS-VT-KEY", Advisory, "SHOULD", "3.1 / 10.7", "key vocabulary: tokens are W3C KeyboardEvent.code names", c_vt_key),
     chk!("NTS-VT-PHONEME", Advisory, "SHOULD", "3.1 / 3.4", "phoneme vocabulary: tokens are ARPAbet (plus silence markers) or IPA", c_vt_phoneme),

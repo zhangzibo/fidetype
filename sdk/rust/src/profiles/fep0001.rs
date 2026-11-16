@@ -25,7 +25,7 @@ pub const CHECKS: &[CheckMeta] = &[
     ("FEP1-PARSE", "MUST", "6.2 (v0.1)", "Every line is a JSON object with a string type (no NaN tokens)"),
     ("FEP1-KIND", "MUST", "3 r4 / 6.2.1", "The file is an input stream (header first) or a decision log (only trust_decision)"),
     ("FEP1-V01-CORE", "MUST", "Compatibility", "An input stream passes the v0.1 core level"),
-    ("FEP1-SEGMENT", "MUST", "1 table, r5", "segment_end: t a finite number not before the last frame; unit in the enum"),
+    ("FEP1-SEGMENT", "MUST", "1 table, r5", "segment_end: t a finite number not before the last frame; unit in the enum; reason a string"),
     ("FEP1-EVIDENCE", "MUST", "2 table, r1, r4", "char_confidences: one number in [0, 1] per code point; logp_* finite and <= 0"),
     ("FEP1-SCORE", "MUST", "2 r3", "Every n-best item has a finite numeric score"),
     ("FEP1-DECL", "MUST", "4 table", "decode_declaration (header or hypothesis) has the defined form"),
@@ -116,6 +116,11 @@ pub fn segment_errors(events: &[Map]) -> Vec<String> {
                 if let Some(u) = e.get_opt("unit") {
                     if !enum_ok(u, SEGMENT_UNITS, newer) {
                         errs.push(format!("line {}: segment_end unit {} is not one of {}", n, repr(u), repr(&str_list(SEGMENT_UNITS))));
+                    }
+                }
+                if let Some(r) = e.get_opt("reason") {
+                    if !r.is_str() {
+                        errs.push(format!("line {}: segment_end reason must be a string (SEG-6)", n));
                     }
                 }
             }
@@ -286,6 +291,11 @@ pub fn td_format_errors(e: &Map) -> Vec<String> {
     if let Some(l) = e.get_opt("latency_s") {
         if !matches!(l, Value::Num(x, _) if x.is_finite() && *x >= 0.0) {
             errs.push("latency_s must be a number >= 0".into());
+        }
+    }
+    if let Some(r) = e.get_opt("reason") {
+        if !r.is_str() {
+            errs.push("reason must be a string (TD-F2)".into());
         }
     }
     errs.extend(td_version_errors(e));

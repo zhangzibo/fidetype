@@ -2,6 +2,39 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC4, DRAFT] 2026-11-15
+**Status: draft for public comment. Not final.** Document: [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6 "Changes from RC3"). RC3, RC2 and RC1 stay unchanged as the record. New FEP: [FEP-0008](feps/0008-optional-field-types-and-semconv.md) (Draft).
+
+RC4 answers the semantic-convention questions SC-2 … SC-8 of the P1-04 registry and closes gap G-12. Rule used: the simplest rule that keeps valid data valid. No RC3 vector changed its verdict.
+
+### Resolved questions
+| # | Resolution | Rules | SDK change | Vectors |
+|---|---|---|---|---|
+| SC-1 | Modality keys: **deferred** to a FEP with evidence from real producers | 12.5, A.8 | none | none |
+| SC-2 | Planned namespaces `emg`, `eeg`, `meg`, `fnirs`, `implant` are reserved; a custom key in them gets the MET-3 warning | MET-3, 12.5 | Python, TypeScript, Rust: `PLANNED_NAMESPACES` in the namespace warning | V69 (accept, warning) |
+| SC-3 | String keys of 3.4 are "non-empty string" (the validators already refused `""`) | MET-7 | none | none |
+| SC-4 | Open lists: `device.regulatory_status`, `decoder.calibration_method`, `input.kind`, `declaration.mode`; closed: `device.modality`, `declaration.status`, `declaration.where` | MET-8 | none | none |
+| SC-5 | `input` and `declaration` keys: Development in 1.0 | 2.3 | none | none |
+| SC-6 | Only physical quantities have a unit (seconds); counts, indices, flags, ids and texts have none | MET-9 | none | none |
+| SC-7 | The YAML registry is normative; spec tables are informative copies checked in CI; A.1 item 9 resolved | MET-10 | none (tooling) | CI `semconv` |
+| SC-8 | No spec change; the CI check compares the SDK key tables, modality lists and planned namespaces with the registry | MET-10 | `semconv.py` checks `PLANNED_NAMESPACES` | — |
+| G-12 | Optional fields have their table type (GEN-11): `segment_end.reason`; `hypothesis.t_start`, `t_end`, `revision_of`, `nbest[].spans`; `signal_quality.channels`; `pointer.absent`, `score`, `score_semantics`; `decision.score`, `score_range` (every semantics); header `vocab_id`, `vocab_version`; `trust_decision.reason`; intent `vocab_id`, `pending_cleared`; control `level`; latency fields on every event | GEN-11, HDR-16, SEG-6, SQ-1, DEC-6, HYP-5, PTR-1, TIM-4, TD-F2, INT-T8, CTL-T8 | Python, TypeScript, Rust (same checks) | V69 (accept), V70-V82 (reject), F63 (accept), F64-F66, D24 (accept), D25, D26, I25, C25, E25 (accept), E26, E27 |
+
+### Changed
+- **Validators (Python, TypeScript, Rust, same behaviour).** New type checks of G-12. The latency-field check (TIM-4) now covers every event of registry 12.1 in a JSON Lines stream, frames included (new `RawStream.timed` / `timed`). `NTS-VOCAB-ID` checks the type of `vocab_id` and `vocab_version` (title changed). A known `score_semantics` is not needed for the type rules of DEC-6 (an unknown semantics of a newer minor version keeps them). A `null` pointer `score_semantics` is refused (GEN-9).
+- **Proto:** `TrustDecision.t` has `json_profile = "control"` (PRF-5; 7.4.5 now lists `t`). Generated JSON Schema regenerated.
+- **Semantic-convention registry:** spec document `nts-1.0-rc4.md`; `resolved_questions` (SC-2 … SC-8); attribute field `registered_values` (open lists) instead of `examples`; `target_stability: development` for the `input` and `declaration` keys; the check reads the spec type "non-empty string" and compares `PLANNED_NAMESPACES` of the SDKs.
+
+### Added (vectors)
+- `v0.1` V69 (accept), V70-V82 (reject): 82 vectors now, from 68.
+- `fep-0001` F63 (accept), F64-F66 (reject): 66 now, from 62.
+- `fep-0003` D24 (accept), D25, D26, I25 (reject): 51 now, from 47.
+- `fep-0005` E25 (accept), E26, E27, C25 (reject): 52 now, from 48.
+- 330 vectors in all. Python = TypeScript = Rust on all 330 and on 26,687 fuzz mutants (seeds 1-3, `--n 30`). Generated JSON Schema: 201 of 201 one-line verdicts (built-in validator and `jsonschema` 4.26.0).
+
+### Not changed
+- Every RC3 vector verdict; binding versions; the enumeration registries and fallbacks.
+
 ## [1.0 RC3, DRAFT] 2026-11-15
 **Status: draft for public comment. Not final.** Document: [nts-1.0-rc3.md](nts-1.0-rc3.md) (section 1.6 "Changes from RC2"). RC2 and RC1 stay unchanged as the record. New FEP: [FEP-0007](feps/0007-unknown-enum-values.md) (Draft).
 

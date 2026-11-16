@@ -3,7 +3,7 @@
  * see every problem (port of `fidetype.conformance.io`).
  */
 
-import { EVENT_TYPES, HEADER_KNOWN, JSONL_HEADER_REQUIRED, NPZ_KNOWN, NPZ_NO_BLANK, NPZ_REQUIRED } from "./constants.js";
+import { EVENT_TYPES, HEADER_KNOWN, TIMED_TYPES, TIMING_KEYS, JSONL_HEADER_REQUIRED, NPZ_KNOWN, NPZ_NO_BLANK, NPZ_REQUIRED } from "./constants.js";
 import { decodeUtf8, has, isBlank, isIntAt, isObj, markFloat, parseJson, pyLines } from "./json.js";
 import { NpyArray, NpyPickleError, readNpz } from "./npz.js";
 
@@ -40,6 +40,8 @@ export interface RawStream {
   /** Non-frame JSON Lines events in file order, each with `_line`. */
   events: Record<string, unknown>[];
   sparseFrames: SparseFrameInfo[];
+  /** The latency fields (5.2) of every event of TIMED_TYPES, with `_line` (JSON Lines only). */
+  timed: Record<string, unknown>[];
   npzKeys: string[];
   npzDtypes: Record<string, string>;
   unknownKeys: string[];
@@ -53,7 +55,7 @@ export interface RawStream {
 
 function emptyRaw(format: "npz" | "jsonl"): RawStream {
   return {
-    format, header: {}, logProbs: null, frameTimes: null, issues: [], events: [], sparseFrames: [], npzKeys: [],
+    format, header: {}, logProbs: null, frameTimes: null, issues: [], events: [], sparseFrames: [], timed: [], npzKeys: [],
     npzDtypes: {}, unknownKeys: [], ignoredEvents: 0, hasEnd: false, linesAfterEnd: 0, parsed: true,
     vocabTypeDefaulted: false, metaDefaulted: false,
   };
@@ -137,6 +139,12 @@ export function readJsonlRaw(bytes: Uint8Array): RawStream {
     if (typ === "header") {
       raw.issues.push({ checkId: "NTS-JSONL-HEADER", clause: "6.2.1", message: `line ${n}: a second header` });
       continue;
+    }
+    if ((TIMED_TYPES as readonly string[]).includes(typ) && TIMING_KEYS.some((k) => has(obj, k))) {
+      const rec: Record<string, unknown> = {};
+      for (const k of TIMING_KEYS) if (has(obj, k)) rec[k] = obj[k];
+      rec._line = n;
+      raw.timed.push(rec);
     }
     if (!(EVENT_TYPES as readonly string[]).includes(typ)) {
       raw.ignoredEvents++; // 6.2 rule 5

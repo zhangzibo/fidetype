@@ -36,7 +36,7 @@ from typing import Any, Callable, Iterable
 
 import numpy as np
 
-from fidetype.conformance.io import RawStream, _MissingMeta
+from fidetype.conformance.io import TIMING_KEYS, RawStream, _MissingMeta
 from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES, enum_ok, is_newer_minor, is_supported_spec_version
 from fidetype.streams.vocab import VOCAB as CHAR_B2Q_28
 
@@ -160,6 +160,8 @@ def _walk(obj: Any, prefix: str = "") -> Iterable[tuple[str, Any]]:
 # --- defined meta keys (spec 4.2) ----------------------------------------------------------
 
 MODALITIES = ("emg", "eeg", "meg", "opm-meg", "ecog", "intracortical", "fnirs", "other")
+#: Planned modality namespaces (NTS 1.0 12.5). Reserved from RC4 (SC-2): MET-3 applies, no keys defined yet.
+PLANNED_NAMESPACES = ("emg", "eeg", "meg", "fnirs", "implant")
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _BCP47_RE = re.compile(r"^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$")
 
@@ -219,6 +221,8 @@ DEFINED_KEYS: dict[str, Callable[[Any], str | None]] = {
     "consent.ref": _t_str,
 }
 DEFINED_NAMESPACES = tuple(sorted({k.split(".")[0] for k in DEFINED_KEYS if "." in k}))
+#: Namespaces in which a custom key gets the MET-3 warning: the defined ones plus the planned ones (RC4, SC-2).
+RESERVED_NAMESPACES = tuple(sorted(set(DEFINED_NAMESPACES) | set(PLANNED_NAMESPACES)))
 
 #: Known registered vocabularies (spec 3.4). Only one entry is defined in v0.1.
 KNOWN_VOCAB_IDS: dict[str, tuple[str, ...]] = {"char.b2q-28": tuple(CHAR_B2Q_28)}
@@ -570,7 +574,7 @@ def c_namespace(raw: RawStream) -> tuple[str, str]:
     if m is None:
         return skip("meta is not an object")
     flat = [k for k in m if "." not in k and k not in DEFINED_KEYS]
-    custom_in_defined = [k for k in m if "." in k and k not in DEFINED_KEYS and k.split(".")[0] in DEFINED_NAMESPACES]
+    custom_in_defined = [k for k in m if "." in k and k not in DEFINED_KEYS and k.split(".")[0] in RESERVED_NAMESPACES]
     msgs = []
     if flat:
         msgs.append(f"not namespaced: {flat}")
@@ -622,9 +626,13 @@ def c_free_text(raw: RawStream) -> tuple[str, str]:
 # --- vocabulary identity and kinds (3.1, 3.4) ----------------------------------------------------
 
 
-@check("NTS-VOCAB-ID", "core", "MUST", "3.4", "If a header vocab_id names a known registry entry, vocab matches it")
+@check("NTS-VOCAB-ID", "core", "MUST", "3.4", "vocab_id and vocab_version are strings or null; a known vocab_id matches vocab")
 def c_vocab_id(raw: RawStream) -> tuple[str, str]:
     vid = raw.header.get("vocab_id")
+    # HDR-16 (NTS 1.0 RC4): vocab_id and vocab_version are strings or null (GEN-9).
+    wrong = [k for k in ("vocab_id", "vocab_version") if raw.header.get(k) is not None and not isinstance(raw.header[k], str)]
+    if wrong:
+        return bad(f"{' and '.join(wrong)} must be a string or null (HDR-16)")
     if vid is None:
         return skip("no header vocab_id")
     if vid not in KNOWN_VOCAB_IDS:
@@ -710,19 +718,48 @@ def c_fp_consist(raw: RawStream) -> tuple[str, str]:
 # --- events (3.5-3.9, Development) ------------------------------------------------------------
 
 
+def _is_pair(v: Any) -> bool:
+    return isinstance(v, list) and len(v) == 2 and all(_is_num(x) for x in v)
+
+
+def _span_errors(spans: Any) -> list[str]:
+    """HYP-5 (NTS 1.0 RC4): ``spans`` is a list of objects; each listed key has its type."""
+    if not isinstance(spans, list):
+        return ["spans must be a list"]
+    errs = []
+    for j, sp in enumerate(spans):
+        if not isinstance(sp, dict):
+            errs.append(f"spans[{j}] must be an object")
+            continue
+        for k in ("char_start", "char_end"):
+            if k in sp and not (_is_int(sp[k]) and sp[k] >= 0):
+                errs.append(f"spans[{j}].{k} must be an integer >= 0")
+        for k in ("t_start", "t_end", "score"):
+            if k in sp and not _is_num(sp[k]):
+                errs.append(f"spans[{j}].{k} must be a number")
+    return errs
+
+
 def _events(raw: RawStream, typ: str) -> list[dict]:
     return [e for e in raw.events if e.get("type") == typ]
 
 
 def _score_errors(e: dict, need_semantics: bool, newer: bool = False) -> list[str]:
     errs = []
+    # DEC-6 (NTS 1.0 RC4): the types of score and score_range hold for every semantics.
+    if "score" in e and e["score"] is not None and not _is_num(e["score"]):
+        errs.append(f"score {e['score']!r} must be a number or null (DEC-6)")
+    if "score_range" in e and not _is_pair(e["score_range"]):
+        errs.append("score_range must be a list of two numbers [min, max] (DEC-6)")
     sem = e.get("score_semantics")
     if sem is None:
         if need_semantics:
             errs.append("no score_semantics")
+        elif "score_semantics" in e:
+            errs.append("score_semantics must not be null (GEN-9)")
         return errs
     if sem not in SCORE_SEMANTICS and enum_ok(sem, SCORE_SEMANTICS, newer):
-        return []  # VER-8: unknown semantics of a newer minor version: the score is not a probability (DEC-1)
+        return errs  # VER-8: unknown semantics of a newer minor version: the score is not a probability (DEC-1)
     if sem not in SCORE_SEMANTICS:
         return [f"score_semantics {sem!r} is not one of {list(SCORE_SEMANTICS)}"]
     sc = e.get("score")
@@ -782,7 +819,18 @@ def c_evt_hyp(raw: RawStream) -> tuple[str, str]:
             errs.append(f"line {n}: nbest must be a list of {{text, score}}")
         if not isinstance(e.get("is_final"), bool):
             errs.append(f"line {n}: is_final must be a boolean")
-        errs += [f"line {n}: {x}" for x in _score_errors({**e, "score": None}, need_semantics=True, newer=_newer(raw))]
+        # HYP-5 (NTS 1.0 RC4): the optional fields have their types.
+        for k in ("t_start", "t_end"):
+            if k in e and not _is_num(e[k]):
+                errs.append(f"line {n}: {k} must be a number (HYP-5)")
+        if "revision_of" in e and e["revision_of"] is not None and not isinstance(e["revision_of"], str):
+            errs.append(f"line {n}: revision_of must be a string or null (HYP-5)")
+        if isinstance(nb, list):
+            for k, it in enumerate(nb):
+                if isinstance(it, dict) and "spans" in it:
+                    errs += [f"line {n} nbest[{k}]: {x} (HYP-5)" for x in _span_errors(it["spans"])]
+        hyp = {x: v for x, v in e.items() if x != "score"}  # a hypothesis has no top-level score
+        errs += [f"line {n}: {x}" for x in _score_errors(hyp, need_semantics=True, newer=_newer(raw))]
     return bad("; ".join(errs)) if errs else ok(f"{len(evs)} hypothesis event(s)")
 
 
@@ -801,6 +849,11 @@ def c_evt_pointer(raw: RawStream) -> tuple[str, str]:
             continue
         if not enum_ok(e.get("mode"), ("relative", "absolute"), _newer(raw)):
             errs.append(f"line {n}: mode must be relative or absolute")
+        # PTR-1 (types made explicit in NTS 1.0 RC4): absent, score and score_semantics as 4.6.
+        if "absent" in e and not (isinstance(e["absent"], list) and len(e["absent"]) == d
+                                  and all(isinstance(a, bool) for a in e["absent"])):
+            errs.append(f"line {n}: absent must be a list of {d} booleans (PTR-1)")
+        errs += [f"line {n}: {x}" for x in _score_errors(e, need_semantics=False, newer=_newer(raw))]
         vals = e.get("values")
         if not (isinstance(vals, list) and len(vals) == d and all(_is_num(x) for x in vals)):
             errs.append(f"line {n}: values must be {d} numbers")
@@ -825,14 +878,17 @@ def c_evt_sq(raw: RawStream) -> tuple[str, str]:
             errs.append(f"line {n}: unit must be one of {list(SQ_UNITS)}")
         elif e["unit"] == "index" and _is_num(e.get("value")) and not 0 <= e["value"] <= 1:
             errs.append(f"line {n}: index value must be in [0, 1]")
+        if "channels" in e and not (isinstance(e["channels"], list) and all(_is_num(x) for x in e["channels"])):
+            errs.append(f"line {n}: channels must be a list of numbers (SQ-1)")
     return bad("; ".join(errs)) if errs else ok(f"{len(evs)} signal_quality event(s)")
 
 
 @check("NTS-EVT-TIMING", "core", "MUST", "3.8", "t_signal_start <= t_signal_end <= t_decoded <= t_emitted when present",
        formats=("jsonl",))
 def c_evt_timing(raw: RawStream) -> tuple[str, str]:
-    keys = ("t_signal_start", "t_signal_end", "t_decoded", "t_emitted")
-    evs = [e for e in raw.events if any(k in e for k in keys)]
+    keys = TIMING_KEYS
+    # NTS 1.0 RC4 (G-12): every event of registry 12.1 that can carry the fields, frames included.
+    evs = raw.timed
     if not evs:
         return skip("no extended timing")
     errs = []

@@ -143,7 +143,7 @@ def test_spec_unknown_rule(reg):
 
 def test_spec_text_change_is_found(reg):
     spec = reg.spec_path.read_text(encoding="utf-8")
-    spec = spec.replace("| `consent.ref` | string |", "| `consent.ref` | boolean |")
+    spec = spec.replace("| `consent.ref` | non-empty string |", "| `consent.ref` | boolean |")
     assert has(sc.check_spec(reg, spec), "consent.ref", "type")
 
 
@@ -210,6 +210,17 @@ def test_sdk_validator_mismatch_found(reg):
     a, b = src["typescript"]
     src["typescript"] = (a.replace('"device.invasive": tBool', '"device.invasive": tStr'), b)
     assert has(sc.check_sdks(reg, src), "typescript", "device.invasive")
+
+
+def test_sdk_planned_namespaces_found(reg):
+    src = _sources()
+    a, b = src["typescript"]
+    src["typescript"] = (a, b.replace('"fnirs", "implant"]', '"fnirs"]'))
+    assert has(sc.check_sdks(reg, src), "typescript", "PLANNED_NAMESPACES")
+
+
+def test_spec_non_empty_string_type():
+    assert sc.parse_spec_types("non-empty string", 2) == [("string", "non_empty_string", None)] * 2
 
 
 def test_sdk_modalities_found(reg):

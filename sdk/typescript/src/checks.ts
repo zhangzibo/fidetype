@@ -8,7 +8,8 @@
  */
 
 import {
-  CLOCK_DOMAINS, MODALITIES, NORM_TOL, SCORE_SEMANTICS, SQ_UNITS, VOCAB, VOCAB_TYPES, enumOk, isNewerMinor, isSupportedSpecVersion,
+  CLOCK_DOMAINS, MODALITIES, NORM_TOL, PLANNED_NAMESPACES, SCORE_SEMANTICS, SQ_UNITS, TIMING_KEYS, VOCAB, VOCAB_TYPES, enumOk,
+  isNewerMinor, isSupportedSpecVersion,
 } from "./constants.js";
 import { get, has, isIntAt, isNum, isObj } from "./json.js";
 import { NdArray, RawStream, UNPARSEABLE_META, readRaw } from "./raw.js";
@@ -125,6 +126,8 @@ export const DEFINED_KEYS: Record<string, TypeFn> = {
   language: tLang, "calibration.applied": tBool, "data.derived": tBool, "consent.ref": tStr,
 };
 const DEFINED_NAMESPACES = [...new Set(Object.keys(DEFINED_KEYS).filter((k) => k.includes(".")).map((k) => k.split(".")[0]))].sort();
+/** Namespaces in which a custom key gets the MET-3 warning: the defined ones plus the planned ones (RC4, SC-2). */
+const RESERVED_NAMESPACES = [...new Set([...DEFINED_NAMESPACES, ...PLANNED_NAMESPACES])].sort();
 const KNOWN_VOCAB_IDS: Record<string, readonly string[]> = { "char.b2q-28": VOCAB };
 const LEAK_KEY_NAMES = new Set(["target_text", "typed_text", "truth", "ground_truth", "groundtruth", "label", "labels", "transcript",
   "transcription", "cue_sentence", "cue_text", "sentence", "reference_text", "target", "answer", "true_text", "gold"]);
@@ -361,7 +364,7 @@ check("NTS-NAMESPACE", "advisory", "SHOULD", "4.1", "meta keys are namespaced; c
   const m = metaOf(raw);
   if (!m) return skip("meta is not an object");
   const flat = Object.keys(m).filter((k) => !k.includes(".") && !has(DEFINED_KEYS, k));
-  const custom = Object.keys(m).filter((k) => k.includes(".") && !has(DEFINED_KEYS, k) && DEFINED_NAMESPACES.includes(k.split(".")[0]));
+  const custom = Object.keys(m).filter((k) => k.includes(".") && !has(DEFINED_KEYS, k) && RESERVED_NAMESPACES.includes(k.split(".")[0]));
   const msgs: string[] = [];
   if (flat.length) msgs.push(`not namespaced: ${repr(flat)}`);
   if (custom.length) msgs.push(`custom keys inside a defined namespace: ${repr(custom)} (see ambiguity A2)`);
@@ -400,8 +403,11 @@ check("NTS-FREE-TEXT", "advisory", "SHOULD NOT", "5.4.3", "meta has no free-text
 
 // --- vocabulary identity and kinds (3.1, 3.4) -------------------------------------------------
 
-check("NTS-VOCAB-ID", "core", "MUST", "3.4", "If a header vocab_id names a known registry entry, vocab matches it", (raw) => {
+check("NTS-VOCAB-ID", "core", "MUST", "3.4", "vocab_id and vocab_version are strings or null; a known vocab_id matches vocab", (raw) => {
   const vid = hget(raw, "vocab_id");
+  // HDR-16 (NTS 1.0 RC4): vocab_id and vocab_version are strings or null (GEN-9).
+  const wrong = ["vocab_id", "vocab_version"].filter((k) => hget(raw, k) !== null && typeof hget(raw, k) !== "string");
+  if (wrong.length) return bad(`${wrong.join(" and ")} must be a string or null (HDR-16)`);
   if (vid === null) return skip("no header vocab_id");
   if (Array.isArray(vid) || isObj(vid)) return bad("check raised TypeError: unhashable vocab_id"); // as Python's dict lookup
   if (typeof vid !== "string" || !has(KNOWN_VOCAB_IDS, vid)) return skip(`vocab_id ${repr(vid)} is not in the suite's registry copy`);
@@ -478,15 +484,38 @@ check("NTS-FP-CONSIST", "advisory", "SHOULD", "3.2", "frame_period agrees with t
 
 const eventsOf = (raw: RawStream, typ: string): Record<string, unknown>[] => raw.events.filter((e) => e.type === typ);
 
+const isPair = (v: unknown): boolean => Array.isArray(v) && v.length === 2 && v.every(isNum);
+
+/** HYP-5 (NTS 1.0 RC4): `spans` is a list of objects; each listed key has its type. */
+function spanErrors(spans: unknown): string[] {
+  if (!Array.isArray(spans)) return ["spans must be a list"];
+  const errs: string[] = [];
+  spans.forEach((sp, j) => {
+    if (!isObj(sp)) {
+      errs.push(`spans[${j}] must be an object`);
+      return;
+    }
+    for (const k of ["char_start", "char_end"]) {
+      if (has(sp, k) && !(isIntAt(sp, k) && (sp[k] as number) >= 0)) errs.push(`spans[${j}].${k} must be an integer >= 0`);
+    }
+    for (const k of ["t_start", "t_end", "score"]) if (has(sp, k) && !isNum(sp[k])) errs.push(`spans[${j}].${k} must be a number`);
+  });
+  return errs;
+}
+
 function scoreErrors(e: Record<string, unknown>, needSemantics: boolean, ignoreScore = false, newer = false): string[] {
   const errs: string[] = [];
+  // DEC-6 (NTS 1.0 RC4): the types of score and score_range hold for every semantics.
+  if (!ignoreScore && has(e, "score") && e.score !== null && !isNum(e.score)) errs.push(`score ${repr(e.score)} must be a number or null (DEC-6)`);
+  if (has(e, "score_range") && !isPair(e.score_range)) errs.push("score_range must be a list of two numbers [min, max] (DEC-6)");
   const sem = get(e, "score_semantics");
   if (sem === null) {
     if (needSemantics) errs.push("no score_semantics");
+    else if (has(e, "score_semantics")) errs.push("score_semantics must not be null (GEN-9)");
     return errs;
   }
   // VER-8: unknown semantics of a newer minor version: the score is not a probability (DEC-1).
-  if (!(SCORE_SEMANTICS as readonly unknown[]).includes(sem) && enumOk(sem, SCORE_SEMANTICS, newer)) return [];
+  if (!(SCORE_SEMANTICS as readonly unknown[]).includes(sem) && enumOk(sem, SCORE_SEMANTICS, newer)) return errs;
   if (!(SCORE_SEMANTICS as readonly unknown[]).includes(sem)) return [`score_semantics ${repr(sem)} is not one of ${repr(SCORE_SEMANTICS)}`];
   const sc = ignoreScore ? null : get(e, "score");
   if ((sem === "calibrated_prob" || sem === "uncalibrated_prob") && sc !== null && !(isNum(sc) && sc >= 0 && sc <= 1)) {
@@ -535,6 +564,16 @@ check("NTS-EVT-HYPOTHESIS", "core", "MUST", "3.6", "hypothesis events: id, nbest
       errs.push(`line ${n}: nbest must be a list of {text, score}`);
     }
     if (typeof get(e, "is_final") !== "boolean") errs.push(`line ${n}: is_final must be a boolean`);
+    // HYP-5 (NTS 1.0 RC4): the optional fields have their types.
+    for (const k of ["t_start", "t_end"]) if (has(e, k) && !isNum(e[k])) errs.push(`line ${n}: ${k} must be a number (HYP-5)`);
+    if (has(e, "revision_of") && e.revision_of !== null && typeof e.revision_of !== "string") {
+      errs.push(`line ${n}: revision_of must be a string or null (HYP-5)`);
+    }
+    if (Array.isArray(nb)) {
+      nb.forEach((it, k) => {
+        if (isObj(it) && has(it, "spans")) errs.push(...spanErrors(it.spans).map((x) => `line ${n} nbest[${k}]: ${x} (HYP-5)`));
+      });
+    }
     errs.push(...scoreErrors(e, true, true, newerOf(raw)).map((x) => `line ${n}: ${x}`));
   }
   return errs.length ? bad(errs.join("; ")) : ok(`${evs.length} hypothesis event(s)`);
@@ -553,6 +592,11 @@ check("NTS-EVT-POINTER", "core", "MUST", "3.7", "pointer events: t, dims 1-3, mo
     }
     const mode = get(e, "mode");
     if (!enumOk(mode, ["relative", "absolute"], newerOf(raw))) errs.push(`line ${n}: mode must be relative or absolute`);
+    // PTR-1 (types made explicit in NTS 1.0 RC4): absent, score and score_semantics as 4.6.
+    if (has(e, "absent") && !(Array.isArray(e.absent) && e.absent.length === d && e.absent.every((a) => typeof a === "boolean"))) {
+      errs.push(`line ${n}: absent must be a list of ${d} booleans (PTR-1)`);
+    }
+    errs.push(...scoreErrors(e, false, false, newerOf(raw)).map((x) => `line ${n}: ${x}`));
     const vals = get(e, "values");
     if (!(Array.isArray(vals) && vals.length === d && vals.every(isNum))) errs.push(`line ${n}: values must be ${d} numbers`);
     else if (mode === "absolute") {
@@ -592,12 +636,14 @@ check("NTS-EVT-SIGNAL-QUALITY", "core", "MUST", "3.9", "signal_quality events: t
     else if (unit === "index" && isNum(get(e, "value")) && !((e.value as number) >= 0 && (e.value as number) <= 1)) {
       errs.push(`line ${n}: index value must be in [0, 1]`);
     }
+    if (has(e, "channels") && !(Array.isArray(e.channels) && e.channels.every(isNum))) errs.push(`line ${n}: channels must be a list of numbers (SQ-1)`);
   }
   return errs.length ? bad(errs.join("; ")) : ok(`${evs.length} signal_quality event(s)`);
 }, { formats: ["jsonl"] });
 check("NTS-EVT-TIMING", "core", "MUST", "3.8", "t_signal_start <= t_signal_end <= t_decoded <= t_emitted when present", (raw) => {
-  const keys = ["t_signal_start", "t_signal_end", "t_decoded", "t_emitted"];
-  const evs = raw.events.filter((e) => keys.some((k) => has(e, k)));
+  const keys: readonly string[] = TIMING_KEYS;
+  // NTS 1.0 RC4 (G-12): every event of registry 12.1 that can carry the fields, frames included.
+  const evs = raw.timed;
   if (!evs.length) return skip("no extended timing");
   const errs: string[] = [];
   for (const e of evs) {

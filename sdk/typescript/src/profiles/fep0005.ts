@@ -308,7 +308,7 @@ export function tdControlFormatErrors(e: Record<string, unknown>): string[] {
     if (!(isFinNum(e.radius) && e.radius >= 0)) x.push("radius must be a number >= 0");
     const lv = get(e, "level");
     if (!(isFinNum(lv) && lv > 0 && lv < 1)) x.push("a decision with radius needs level in (0, 1)");
-  }
+  } else if (has(e, "level") && !(isFinNum(e.level) && e.level > 0 && e.level < 1)) x.push("level must be a number in (0, 1) (CTL-T8)");
   if (has(e, "reasons") && !(Array.isArray(e.reasons) && e.reasons.every((r) => typeof r === "string"))) x.push("reasons must be a list of strings");
   if (has(e, "t") && !isFinNum(e.t)) x.push("t must be a finite number");
   return [...errs, ...x.map((m) => `line ${n}: ${m}`)];

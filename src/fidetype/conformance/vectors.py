@@ -393,6 +393,66 @@ def build_vectors() -> list[Vector]:
     add("V68", "v68-vocab-type-number-v1-1.jsonl", "reject", "1.0 RC3 11.2.1 (VER-8) / 3.1 (HDR-5)",
         'Header spec_version "1.1" with vocab_type 5: an unknown value must still be a string', None,
         failing_check="NTS-VOCAB-TYPE", writer=_w_lines([_header(spec_version="1.1", vocab_type=5), *_frames(2, V)]))
+    # --- NTS 1.0 RC4 (gap G-12, FEP-0008): optional fields have their types (GEN-11)
+    timed = [dict(f, t_signal_start=round(f["t"] - 0.2, 6), t_signal_end=f["t"], t_decoded=round(f["t"] + 0.01, 6),
+                  t_emitted=round(f["t"] + 0.02, 6)) for f in _frames(2, V)]
+    opt = [{"type": "signal_quality", "t": 0.04, "value": 0.92, "unit": "index", "channels": [0.9, 0.95, 0.91]},
+           {"type": "decision", "t": 0.08, "label": "a", "score": 0.71, "score_semantics": "calibrated_prob",
+            "score_range": [0.0, 1.0]},
+           {"type": "hypothesis", "id": "h1", "is_final": True, "score_semantics": "none", "revision_of": None,
+            "t_start": 0.0, "t_end": 0.08,
+            "nbest": [{"text": "ab", "score": -1.2, "spans": [{"char_start": 0, "char_end": 1, "t_start": 0.0, "t_end": 0.04,
+                                                              "score": -0.5}, {"char_start": 1, "char_end": 2}]}]},
+           {"type": "pointer", "t": 0.08, "dims": 2, "mode": "absolute", "values": [0.5, 0.25], "absent": [False, False],
+            "score": 0.8, "score_semantics": "uncalibrated_prob"}]
+    hopt = _header(spec_version="1.0", vocab_id="char.b2q-28", vocab_version="1", meta={**BASE_META, "emg.gain_db": 20.0})
+    add("V69", "v69-optional-field-types.jsonl", "accept", "1.0 RC4 4.1 (GEN-11) / 3.4 (MET-3)",
+        "Optional fields with their types: header vocab_id and vocab_version, latency fields on frames, signal_quality "
+        "channels, decision score_range with a probability, hypothesis t_start, t_end, revision_of null and spans, pointer "
+        "absent, score and score_semantics; a custom meta key in the planned namespace emg (a warning only, MET-3)",
+        None, {"n_frames": 2, "events": 4}, writer=_w_lines([hopt, *timed, *opt, {"type": "end"}]))
+
+    def _ev(i: int, **kw: Any) -> list[dict[str, Any]]:
+        e = {k: v for k, v in dict(opt[i], **kw).items() if v is not _DROP}
+        return [_header(spec_version="1.0"), *_frames(2, V), e, {"type": "end"}]
+
+    sp_bad = [{"text": "ab", "score": -1.2, "spans": [{"char_start": -1, "char_end": 1}]}]
+    for vid, fname, clause, desc, chk, lines in (
+            ("V70", "v70-hyp-t-start-string.jsonl", "4.7 (HYP-5)", 'hypothesis t_start is the string "0.0"',
+             "NTS-EVT-HYPOTHESIS", _ev(2, t_start="0.0")),
+            ("V71", "v71-hyp-span-negative.jsonl", "4.7 (HYP-5)", "hypothesis n-best span with char_start -1",
+             "NTS-EVT-HYPOTHESIS", _ev(2, nbest=sp_bad)),
+            ("V72", "v72-hyp-revision-of-number.jsonl", "4.7 (HYP-5)", "hypothesis revision_of is the number 3",
+             "NTS-EVT-HYPOTHESIS", _ev(2, revision_of=3)),
+            ("V73", "v73-sq-channels-strings.jsonl", "4.5 (SQ-1)", 'signal_quality channels is ["good", "bad"]',
+             "NTS-EVT-SIGNAL-QUALITY", _ev(0, channels=["good", "bad"])),
+            ("V74", "v74-pointer-bad-semantics.jsonl", "4.8 (PTR-1) / 4.6",
+             'pointer score_semantics "probability" (not a 1.0 value)', "NTS-EVT-POINTER",
+             _ev(3, score_semantics="probability")),
+            ("V75", "v75-pointer-absent-length.jsonl", "4.8 (PTR-1)", "pointer with dims 2 and absent [true] (one value)",
+             "NTS-EVT-POINTER", _ev(3, absent=[True])),
+            ("V76", "v76-decision-range-string.jsonl", "4.6 (DEC-6)",
+             'decision with calibrated_prob and score_range "0-1" (not two numbers)', "NTS-EVT-DECISION",
+             _ev(1, score_range="0-1")),
+            ("V77", "v77-decision-score-string.jsonl", "4.6 (DEC-6)",
+             'decision with power, score_range [0, 10] and score "high"', "NTS-EVT-DECISION",
+             _ev(1, score="high", score_semantics="power", score_range=[0, 10])),
+            ("V79", "v79-frame-t-emitted-string.jsonl", "5.2 (TIM-4)", 'a frame with t_emitted "late"',
+             "NTS-EVT-TIMING", [_header(spec_version="1.0"), timed[0], dict(timed[1], t_emitted="late"), {"type": "end"}]),
+            ("V80", "v80-frame-timing-order.jsonl", "5.2 (TIM-4)", "a frame with t_decoded after t_emitted",
+             "NTS-EVT-TIMING", [_header(spec_version="1.0"), timed[0], dict(timed[1], t_decoded=1.0), {"type": "end"}])):
+        add(vid, fname, "reject", "1.0 RC4 " + clause, desc, None, failing_check=chk, writer=_w_lines(lines))
+    add("V81", "v81-decision-score-string-v1-1.jsonl", "reject", "1.0 RC4 4.6 (DEC-6) / 11.2.1 (VER-8)",
+        'Header spec_version "1.1": a decision with the unknown score_semantics "logit_margin" and score "high" '
+        "(an unknown semantics keeps the type rules)", None, failing_check="NTS-EVT-DECISION",
+        writer=_w_lines([_header(spec_version="1.1"), *_frames(2, V),
+                         {"type": "decision", "t": 0.04, "label": "a", "score": "high", "score_semantics": "logit_margin"},
+                         {"type": "end"}]))
+    add("V82", "v82-pointer-semantics-null.jsonl", "reject", "1.0 RC4 4.8 (PTR-1) / 4.1 (GEN-9)",
+        "pointer score_semantics is null (the field type has no null)", None, failing_check="NTS-EVT-POINTER",
+        writer=_w_lines(_ev(3, score=_DROP, score_semantics=None)))
+    add("V78", "v78-header-vocab-id-number.jsonl", "reject", "1.0 RC4 3.1 (HDR-16)", "header vocab_id is the number 28",
+        None, failing_check="NTS-VOCAB-ID", writer=_w_lines([_header(spec_version="1.0", vocab_id=28), *_frames(2, V)]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

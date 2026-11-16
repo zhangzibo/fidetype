@@ -42,7 +42,7 @@ def test_parity_with_sdk_verdicts() -> None:
     bad = [f"{r['id']}: expect {r['expect']}, schema {r['schema']} ({r['errors'][:1]})"
            for r in res["rows"] if r["result"] == "MISMATCH"]
     assert not bad, "\n".join(bad)
-    assert s["vectors"] == 304
+    assert s["vectors"] == 330
     assert s["stale_classes"] == []
     # A reject vector that the schema rejects is a schema vector: its class must say so.
     assert s["not_compared_but_schema_rejects"] == []

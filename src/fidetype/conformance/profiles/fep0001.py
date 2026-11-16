@@ -51,7 +51,7 @@ CHECKS = [
     ("FEP1-PARSE", "MUST", "6.2 (v0.1)", "Every line is a JSON object with a string type (no NaN tokens)"),
     ("FEP1-KIND", "MUST", "3 r4 / 6.2.1", "The file is an input stream (header first) or a decision log (only trust_decision)"),
     ("FEP1-V01-CORE", "MUST", "Compatibility", "An input stream passes the v0.1 core level"),
-    ("FEP1-SEGMENT", "MUST", "1 table, r5", "segment_end: t a finite number not before the last frame; unit in the enum"),
+    ("FEP1-SEGMENT", "MUST", "1 table, r5", "segment_end: t a finite number not before the last frame; unit in the enum; reason a string"),
     ("FEP1-EVIDENCE", "MUST", "2 table, r1, r4", "char_confidences: one number in [0, 1] per code point; logp_* finite and <= 0"),
     ("FEP1-SCORE", "MUST", "2 r3", "Every n-best item has a finite numeric score"),
     ("FEP1-DECL", "MUST", "4 table", "decode_declaration (header or hypothesis) has the defined form"),
@@ -138,6 +138,8 @@ def segment_errors(events: list[dict[str, Any]]) -> list[str]:
                     errs.append(f"line {n}: segment_end t {e['t']} is before the last frame t {last_frame_t} (rule 5)")
             if "unit" in e and not enum_ok(e["unit"], SEGMENT_UNITS, newer):
                 errs.append(f"line {n}: segment_end unit {e['unit']!r} is not one of {list(SEGMENT_UNITS)}")
+            if "reason" in e and not isinstance(e["reason"], str):
+                errs.append(f"line {n}: segment_end reason must be a string (SEG-6)")
     return errs
 
 
@@ -230,6 +232,8 @@ def td_format_errors(e: dict[str, Any]) -> list[str]:
         errs.append("declaration must be an object (TD-F2)")
     if "latency_s" in e and not (_num(e["latency_s"]) and e["latency_s"] >= 0):
         errs.append("latency_s must be a number >= 0")
+    if "reason" in e and not isinstance(e["reason"], str):
+        errs.append("reason must be a string (TD-F2)")
     errs += _td_version_errors(e)
     return [f"line {n}: {x}" for x in errs]
 
@@ -694,6 +698,22 @@ def build_vectors() -> list[Vector]:
     add("F62", "f62-td-declaration-list.jsonl", "reject", "1.0 RC3 6.2 (TD-F2)",
         "declaration is a list, not an object", failing="FEP1-TD-FORMAT",
         writer=_w_lines([_td(declaration=[{"status": "match"}], **v10)]))
+    # --- NTS 1.0 RC4 (gap G-12, FEP-0008): optional fields have their types (GEN-11)
+    h10 = _header(spec_version="1.0")
+    seg_t = {"type": "segment_end", "t": 0.1, "unit": "utterance", "reason": "acme.silence", "t_signal_end": 0.1,
+             "t_emitted": 0.12}
+    add("F63", "f63-segment-reason-timing.jsonl", "accept", "1.0 RC4 4.3 (SEG-6) / 5.2 (TIM-4)",
+        'segment_end with a custom reason code "acme.silence" and latency fields (numbers)',
+        {"kind": "input", "n_frames": 2, "segments": 1, "segment_ends": 1}, writer=_input(*f2a, seg_t, header=h10))
+    add("F64", "f64-segment-reason-number.jsonl", "reject", "1.0 RC4 4.3 (SEG-6)",
+        "segment_end reason is the number 7, not a string", failing="FEP1-SEGMENT",
+        writer=_input(*f2a, dict(seg_t, reason=7), header=h10))
+    add("F65", "f65-segment-t-emitted-string.jsonl", "reject", "1.0 RC4 5.2 (TIM-4)",
+        'segment_end t_emitted is the string "0.12" (latency fields are numbers on every event)',
+        failing="FEP1-V01-CORE", writer=_input(*f2a, dict(seg_t, t_emitted="0.12"), header=h10))
+    add("F66", "f66-td-reason-number.jsonl", "reject", "1.0 RC4 6.2 (TD-F2)",
+        "trust_decision reason is the number 0, not a string", failing="FEP1-TD-FORMAT",
+        writer=_w_lines([_td(reason=0, **v10)]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

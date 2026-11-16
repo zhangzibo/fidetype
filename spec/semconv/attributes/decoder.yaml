@@ -61,7 +61,7 @@ attributes:
   - key: decoder.calibration_method
     type: string
     validator: non_empty_string
-    examples: [temperature, platt, isotonic, none]
+    registered_values: [temperature, platt, isotonic, none]
     brief: The calibration method.
     requirement:
       - {scope: trust-ready, level: conditionally_required, condition: "calibration.applied is true; the value is then not none", checks: [TR-CALIB]}

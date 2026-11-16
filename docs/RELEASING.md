@@ -28,7 +28,7 @@ Each SDK has its own [semver](https://semver.org/) version. One SDK can release 
 ### 1.2 SDK versions and spec versions
 SDK versions are separate from spec versions (spec section 11.7). The rules:
 
-- **SDK-V1.** Each SDK release lists, in its changelog entry, the spec versions it reads and writes and the profiles it claims. The matrix in spec section 11.7 ([spec/nts-1.0-rc2.md](../spec/nts-1.0-rc2.md#117-sdk-and-spec-compatibility-matrix)) is updated in the same pull request.
+- **SDK-V1.** Each SDK release lists, in its changelog entry, the spec versions it reads and writes and the profiles it claims. The matrix in spec section 11.7 ([spec/nts-1.0-rc4.md](../spec/nts-1.0-rc4.md#117-sdk-and-spec-compatibility-matrix)) is updated in the same pull request.
 - **SDK-V2.** Support for a new spec **minor** version (for example 1.1) is an SDK **minor** release. Readers already accept `"1.<minor>"` (VER-3), so old SDKs keep working on new streams.
 - **SDK-V3.** Support for a new spec **major** version (for example 2.0) is an SDK **major** release (or a minor release while the SDK is 0.x).
 - **SDK-V4.** A change of the **default written** `spec_version` (today `"0.1"`; later `"1.0"`) is a breaking change: it is a minor release in 0.x and a major release from 1.0.

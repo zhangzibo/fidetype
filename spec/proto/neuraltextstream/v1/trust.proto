@@ -117,8 +117,8 @@ message TrustDecision {
   google.protobuf.Struct declaration = 16;
   // Short reason code or text, no personal content. SEC-5.
   optional string reason = 17;
-  // Time of a control decision, seconds.
-  optional double t = 18;
+  // Time of a control decision, seconds (7.4.5). On other profiles a custom key (PRF-5; NTS 1.0 RC4).
+  optional double t = 18 [(json_profile) = "control"];
 
   // --- intent profile (7.3.5) ---
 

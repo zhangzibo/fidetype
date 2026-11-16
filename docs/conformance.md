@@ -1,6 +1,6 @@
 # Conformance
 
-The conformance suite tells you if a producer writes valid NeuralTextStream (NTS) and if a consumer reads it correctly. Each check cites its spec rule. The rules are in [NTS 1.0 RC2, section 9](../spec/nts-1.0-rc2.md#9-conformance) (draft).
+The conformance suite tells you if a producer writes valid NeuralTextStream (NTS) and if a consumer reads it correctly. Each check cites its spec rule. The rules are in [NTS 1.0 RC4, section 9](../spec/nts-1.0-rc4.md#9-conformance) (draft).
 
 ## Check a producer (your stream files)
 
@@ -58,6 +58,6 @@ Both CLIs also have a `consume` command that follows the consumer contract above
 
 ## Make a conformance claim
 
-A claim names the class (producer, consumer, trust layer, bridge, binding), the level, the profiles, the bindings and the spec version. While NTS 1.0 is a draft, a claim must say so, for example: "Producer, NTS 1.0 RC2 (draft), level provenance, profiles text + intent, binding nts-lsl/0.1" ([spec 9.4](../spec/nts-1.0-rc2.md#94-conformance-claims)).
+A claim names the class (producer, consumer, trust layer, bridge, binding), the level, the profiles, the bindings and the spec version. While NTS 1.0 is a draft, a claim must say so, for example: "Producer, NTS 1.0 RC4 (draft), level provenance, profiles text + intent, binding nts-lsl/0.1" ([spec 9.4](../spec/nts-1.0-rc4.md#94-conformance-claims)).
 
 More detail: [wiki/concepts/conformance-suite.md](../wiki/concepts/conformance-suite.md).

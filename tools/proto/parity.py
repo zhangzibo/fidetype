@@ -120,6 +120,19 @@ REJECT_CLASS: dict[str, tuple[str, str]] = {
     "F62": ("schema", "TD-F2 declaration is an object"), "D23": ("schema", "VER-7 / INT-T3 risk_class under 1.0"),
     "E23": ("schema", "VER-7 / CTL-T3 state under 1.0"), "E24": ("trust", "CTL-S7 after an unknown state (VER-10)"),
     "W44": ("schema", "GEN-10 ws_seq above 2^53 - 1"),
+    # NTS 1.0 RC4 (gap G-12, FEP-0008): optional fields have their types (GEN-11)
+    "V70": ("schema", "HYP-5 t_start type"), "V71": ("schema", "HYP-5 span char_start >= 0"),
+    "V72": ("schema", "HYP-5 revision_of type"), "V73": ("schema", "SQ-1 channels type"),
+    "V74": ("cross-line", "VER-7 / PTR-1 score_semantics under a 1.0 header"),
+    "V75": ("cross-field", "PTR-1 absent length = dims"), "V76": ("schema", "DEC-6 score_range type"),
+    "V77": ("schema", "DEC-6 score type"), "V78": ("schema", "HDR-16 vocab_id type"),
+    "V79": ("schema", "TIM-4 t_emitted type on a frame"), "V81": ("schema", "DEC-6 score type (unknown semantics, 1.1)"),
+    "V82": ("schema", "GEN-9 pointer score_semantics null"), "V80": ("cross-field", "TIM-4 order on a frame"),
+    "F64": ("schema", "SEG-6 reason type"), "F65": ("schema", "TIM-4 t_emitted type on segment_end"),
+    "F66": ("schema", "TD-F2 reason type"), "D25": ("schema", "INT-T8 vocab_id type"),
+    "D26": ("schema", "INT-T8 pending_cleared type"), "I25": ("schema", "TIM-4 t_decoded type on an intent event"),
+    "C25": ("schema", "TIM-4 t_emitted type on control_enable"), "E26": ("schema", "CTL-T8 level type"),
+    "E27": ("schema", "TD-F2 reason type"),
 }
 
 

@@ -339,7 +339,7 @@ def test_td12_blank_candidates_advisory(tmp_path):
 
 def test_cli_profiles(tmp_path, capsys):
     assert cli(["--profile", "fep-0001"]) == 0
-    assert "62/62 golden vectors" in capsys.readouterr().out
+    assert "66/66 golden vectors" in capsys.readouterr().out
     assert cli(["consumer", "--profile", "fep-0002"]) == 0
     assert "FEP-0002 profile fep-0002 consumer conformance: PASS" in capsys.readouterr().out
     vdir = get_profile("fep-0001").vectors_dir()
@@ -353,6 +353,6 @@ def test_cli_profiles(tmp_path, capsys):
     assert cli(["list", "--profile", "fep-0001", "--markdown"]) == 0
     assert "`FEP1-TD-FINAL`" in capsys.readouterr().out
     assert cli(["consumer"]) == 0  # v0.1 unchanged
-    assert "68/68" in capsys.readouterr().out
+    assert "82/82" in capsys.readouterr().out
     with pytest.raises(SystemExit):
         cli([])

@@ -497,6 +497,10 @@ pub fn td_control_format_errors(e: &Map) -> Vec<String> {
         if !fin(e.get("level")).map_or(false, |v| v > 0.0 && v < 1.0) {
             x.push("a decision with radius needs level in (0, 1)".into());
         }
+    } else if let Some(lv) = e.get_opt("level") {
+        if !fin(lv).map_or(false, |v| v > 0.0 && v < 1.0) {
+            x.push("level must be a number in (0, 1) (CTL-T8)".into());
+        }
     }
     if let Some(r) = e.get_opt("reasons") {
         if !matches!(r, Value::Arr(a) if a.iter().all(|s| s.is_str())) {

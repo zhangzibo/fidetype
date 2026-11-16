@@ -218,6 +218,9 @@ def td_intent_format_errors(e: dict[str, Any]) -> list[str]:
             x.append(f"{k} must be an integer >= 0")
     if "confirmed_via" in e and not enum_ok(e["confirmed_via"], CONFIRM_PATHS, newer):
         x.append("confirmed_via must be 'intent' or 'feedback'")
+    for k in ("vocab_id", "pending_cleared"):  # INT-T8 (NTS 1.0 RC4)
+        if k in e and not isinstance(e[k], str):
+            x.append(f"{k} must be a string (INT-T8)")
     return errs + [f"line {n}: {m}" for m in x]
 
 
@@ -661,6 +664,22 @@ def build_vectors() -> list[Vector]:
     add("D23", "d23-td-v10-unknown-risk.jsonl", "reject", "1.0 RC3 11.2.1 (VER-7) / 7.3.5 (INT-T3)",
         'spec_version "1.0": a COMMIT with risk_class "critical" (1.0 data must use the values of 1.0)',
         failing="FEP3-TD-FORMAT", writer=_w_lines([_td(risk_class="critical", spec_version="1.0")]))
+    # --- NTS 1.0 RC4 (gap G-12, FEP-0008): optional fields have their types (GEN-11, INT-T8, TIM-4)
+    v10 = {"spec_version": "1.0"}
+    add("D24", "d24-log-pending-cleared.jsonl", "accept", "1.0 RC4 7.3.5 (INT-T8)",
+        "An irreversible intent armed, then dropped by the next unit: the ABSTAIN names it in pending_cleared (a string)",
+        {"kind": "decisions", "intent_decisions": 2, "final": 2, "acted_intents": []},
+        writer=_w_lines([_armed(**v10), _td(seq=1, unit=1, action="ABSTAIN", intent=_DROP, p_top1=0.3, risk_class="safe",
+                                            pending_cleared="intent.call-caregiver", reason="armed intent dropped", **v10)]))
+    add("D25", "d25-td-vocab-id-number.jsonl", "reject", "1.0 RC4 7.3.5 (INT-T8)",
+        "An intent COMMIT with vocab_id 1, not a string", failing="FEP3-TD-FORMAT",
+        writer=_w_lines([_td(vocab_id=1, **v10)]))
+    add("D26", "d26-td-pending-cleared-list.jsonl", "reject", "1.0 RC4 7.3.5 (INT-T8)",
+        'An intent ABSTAIN with pending_cleared ["intent.call-caregiver"] (a list, not a string)', failing="FEP3-TD-FORMAT",
+        writer=_w_lines([_td(action="ABSTAIN", intent=_DROP, p_top1=0.3, pending_cleared=["intent.call-caregiver"], **v10)]))
+    add("I25", "i25-intent-t-decoded-string.jsonl", "reject", "1.0 RC4 5.2 (TIM-4)",
+        'An intent event with t_decoded "1.02" (latency fields are numbers on every event)', failing="FEP3-V01-CORE",
+        writer=_input(_intent(t_decoded="1.02")))
     vs.sort(key=lambda v: v.vid)
     return vs
 

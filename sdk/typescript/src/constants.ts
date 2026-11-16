@@ -34,8 +34,15 @@ export const SCORE_SEMANTICS = ["calibrated_prob", "uncalibrated_prob", "power",
 export const CLOCK_DOMAINS = ["lsl", "unix", "monotonic", "trial", "other"] as const;
 export const SQ_UNITS = ["index", "snr_db", "impedance_ohm", "other"] as const;
 export const MODALITIES = ["emg", "eeg", "meg", "opm-meg", "ecog", "intracortical", "fnirs", "other"] as const;
+/** Planned modality namespaces (NTS 1.0 12.5). Reserved from RC4 (SC-2): MET-3 applies, no keys defined yet. */
+export const PLANNED_NAMESPACES = ["emg", "eeg", "meg", "fnirs", "implant"] as const;
 /** JSON Lines event kinds of spec 3.0, plus `end`. */
 export const EVENT_TYPES = ["frame", "decision", "hypothesis", "pointer", "signal_quality", "end"] as const;
+/** The latency fields of NTS 1.0 section 5.2 (TIM-4). */
+export const TIMING_KEYS = ["t_signal_start", "t_signal_end", "t_decoded", "t_emitted"] as const;
+/** Event types (NTS 1.0 registry 12.1) on which the latency fields are checked (TIM-4, NTS 1.0 RC4 / G-12). */
+export const TIMED_TYPES = ["frame", "segment_end", "signal_quality", "decision", "hypothesis", "pointer", "intent",
+  "intent_feedback", "control", "control_enable"] as const;
 /** NPZ keys that spec 6.1 marks "Required: Yes". */
 export const NPZ_REQUIRED = ["version", "log_probs", "frame_times", "vocab", "blank_id", "source", "meta_json"] as const;
 export const NPZ_KNOWN = [...NPZ_REQUIRED, "vocab_type", "frame_period", "latency"] as const;

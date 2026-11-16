@@ -760,6 +760,149 @@
    "clause": "1.0 RC3 11.2.1 (VER-8) / 3.1 (HDR-5)",
    "description": "Header spec_version \"1.1\" with vocab_type 5: an unknown value must still be a string",
    "failing_check": "NTS-VOCAB-TYPE"
+  },
+  {
+   "id": "V69",
+   "file": "v69-optional-field-types.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.1 (GEN-11) / 3.4 (MET-3)",
+   "description": "Optional fields with their types: header vocab_id and vocab_version, latency fields on frames, signal_quality channels, decision score_range with a probability, hypothesis t_start, t_end, revision_of null and spans, pointer absent, score and score_semantics; a custom meta key in the planned namespace emg (a warning only, MET-3)",
+   "expected": {
+    "n_frames": 2,
+    "events": 4
+   }
+  },
+  {
+   "id": "V70",
+   "file": "v70-hyp-t-start-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.7 (HYP-5)",
+   "description": "hypothesis t_start is the string \"0.0\"",
+   "failing_check": "NTS-EVT-HYPOTHESIS"
+  },
+  {
+   "id": "V71",
+   "file": "v71-hyp-span-negative.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.7 (HYP-5)",
+   "description": "hypothesis n-best span with char_start -1",
+   "failing_check": "NTS-EVT-HYPOTHESIS"
+  },
+  {
+   "id": "V72",
+   "file": "v72-hyp-revision-of-number.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.7 (HYP-5)",
+   "description": "hypothesis revision_of is the number 3",
+   "failing_check": "NTS-EVT-HYPOTHESIS"
+  },
+  {
+   "id": "V73",
+   "file": "v73-sq-channels-strings.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.5 (SQ-1)",
+   "description": "signal_quality channels is [\"good\", \"bad\"]",
+   "failing_check": "NTS-EVT-SIGNAL-QUALITY"
+  },
+  {
+   "id": "V74",
+   "file": "v74-pointer-bad-semantics.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.8 (PTR-1) / 4.6",
+   "description": "pointer score_semantics \"probability\" (not a 1.0 value)",
+   "failing_check": "NTS-EVT-POINTER"
+  },
+  {
+   "id": "V75",
+   "file": "v75-pointer-absent-length.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.8 (PTR-1)",
+   "description": "pointer with dims 2 and absent [true] (one value)",
+   "failing_check": "NTS-EVT-POINTER"
+  },
+  {
+   "id": "V76",
+   "file": "v76-decision-range-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.6 (DEC-6)",
+   "description": "decision with calibrated_prob and score_range \"0-1\" (not two numbers)",
+   "failing_check": "NTS-EVT-DECISION"
+  },
+  {
+   "id": "V77",
+   "file": "v77-decision-score-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.6 (DEC-6)",
+   "description": "decision with power, score_range [0, 10] and score \"high\"",
+   "failing_check": "NTS-EVT-DECISION"
+  },
+  {
+   "id": "V78",
+   "file": "v78-header-vocab-id-number.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.1 (HDR-16)",
+   "description": "header vocab_id is the number 28",
+   "failing_check": "NTS-VOCAB-ID"
+  },
+  {
+   "id": "V79",
+   "file": "v79-frame-t-emitted-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 5.2 (TIM-4)",
+   "description": "a frame with t_emitted \"late\"",
+   "failing_check": "NTS-EVT-TIMING"
+  },
+  {
+   "id": "V80",
+   "file": "v80-frame-timing-order.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 5.2 (TIM-4)",
+   "description": "a frame with t_decoded after t_emitted",
+   "failing_check": "NTS-EVT-TIMING"
+  },
+  {
+   "id": "V81",
+   "file": "v81-decision-score-string-v1-1.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.6 (DEC-6) / 11.2.1 (VER-8)",
+   "description": "Header spec_version \"1.1\": a decision with the unknown score_semantics \"logit_margin\" and score \"high\" (an unknown semantics keeps the type rules)",
+   "failing_check": "NTS-EVT-DECISION"
+  },
+  {
+   "id": "V82",
+   "file": "v82-pointer-semantics-null.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.8 (PTR-1) / 4.1 (GEN-9)",
+   "description": "pointer score_semantics is null (the field type has no null)",
+   "failing_check": "NTS-EVT-POINTER"
   }
  ]
 }

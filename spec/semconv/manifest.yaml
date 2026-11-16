@@ -1,10 +1,12 @@
 # NTS semantic-convention registry: manifest (roadmap task P1-04).
 #
 # This file and the files in attributes/ are the machine-readable form of the
-# key conventions of NTS 1.0 RC3 (spec/nts-1.0-rc3.md): the `meta` keys of
+# key conventions of NTS 1.0 RC4 (spec/nts-1.0-rc4.md): the `meta` keys of
 # section 3.4, the trust_decision `input` keys of 6.1.1 and the trust_decision
-# `declaration` keys of 6.1.2. They add no new semantics. Where the spec is
-# silent, the gap is an open question at the end of this file.
+# `declaration` keys of 6.1.2. Since RC4 this registry is NORMATIVE for the key
+# names, types, value lists and validators; the key tables of the spec are
+# informative copies, and the check below keeps them equal (resolution SC-7).
+# The rules about the keys (MET-1 ... MET-7, TD-13) stay in the spec text.
 #
 # Generated reference page: spec/semconv/registry.md (do not edit it by hand).
 #   python tools/semconv/semconv.py           # write registry.md
@@ -13,8 +15,8 @@
 
 file_format: nts-semconv/0.1
 spec:
-  document: spec/nts-1.0-rc3.md
-  version: "1.0 RC3 (draft)"
+  document: spec/nts-1.0-rc4.md
+  version: "1.0 RC4 (draft)"
 
 # Words used in the attribute files. The generator refuses other values.
 vocabulary:
@@ -23,7 +25,7 @@ vocabulary:
     boolean: JSON true or false
     int: JSON integer (GEN-5, GEN-10)
     double: "JSON number (no NaN, no infinity: MET-2)"
-    enum: JSON string from a closed list (12.3)
+    enum: JSON string from a closed list (12.3). An open list is type string with registered_values (SC-4)
     "int[2]": JSON array of two integers
     "double[2]": JSON array of two numbers
     "string[]": JSON array of strings
@@ -110,8 +112,7 @@ container_files:
   - {container: trust_decision.input, file: attributes/trust-decision-input.yaml}
   - {container: trust_decision.declaration, file: attributes/trust-decision-declaration.yaml}
 
-# Gaps that this registry found. The registry does not resolve them: each one
-# needs a spec change (a FEP or the next RC).
+# Gaps that this registry found and that no spec version answers yet.
 open_questions:
   - id: SC-1
     title: Modality keys are not defined
@@ -119,46 +120,48 @@ open_questions:
       Spec 12.5 plans the namespaces emg, eeg, meg, fnirs and implant but defines no key.
       The roadmap (P1-04) lists candidate keys, for example emg.placement, eeg.montage,
       meg.system, fnirs.wavelengths_nm and implant.array_type. Each needs a type, a unit and
-      a meaning in a FEP before it goes into this registry. Real producers (P4 adapters:
-      emg2qwerty, KT-sEMG, Willett, B2T '25, Brain2Qwerty) should supply the evidence.
+      a meaning in a FEP before it goes into this registry. Deferred by RC4 to a FEP that has
+      evidence from real producers (P4 adapters: emg2qwerty, KT-sEMG, Willett, B2T '25,
+      Brain2Qwerty). Until then the namespaces are reserved (SC-2) and have no keys.
+
+# Gaps that a spec version answered (NTS 1.0 RC4, FEP-0008). Kept as the record.
+resolved_questions:
   - id: SC-2
     title: Planned namespaces are not reserved in the validators
-    text: >-
-      The validators warn about custom keys in a reserved namespace (MET-3) only for the
-      namespaces that have keys. A key such as emg.gain gets no warning. Spec 12.5 does not
-      say whether the planned namespaces are reserved now.
+    resolution: >-
+      Reserved now (12.5, MET-3). A custom key in emg, eeg, meg, fnirs or implant gets the
+      MET-3 warning in all three validators (advisory, never a reject). Vector V69.
   - id: SC-3
     title: Empty strings
-    text: >-
-      Spec 3.4 gives the type "string" for keys such as device.vendor and decoder.name.
-      All three validators refuse "" (validator non_empty_string). The spec should say
-      whether "" is valid.
+    resolution: >-
+      The spec follows the validators: the string keys of 3.4 are "non-empty string" (MET-7).
+      All three validators already refused "", so no valid stream changes. The keys of 6.1.1 and
+      6.1.2 stay "string" (audit data, not checked: TD-13).
   - id: SC-4
     title: Open or closed value lists for string keys
-    text: >-
-      device.regulatory_status, decoder.calibration_method, input.kind and declaration.mode
-      list values in the spec, but their type is "string". The spec does not say whether
-      other values are valid. This registry records the listed values as examples.
+    resolution: >-
+      Per key (3.4, 6.1.1, 6.1.2 and MET-8). Open lists (registered values; other values are valid):
+      device.regulatory_status, decoder.calibration_method, input.kind, declaration.mode.
+      Closed lists (type enum): device.modality, declaration.status, declaration.where.
   - id: SC-5
     title: Target stability of the trust_decision input and declaration keys
-    text: >-
-      Spec 2.3 proposes the meta conventions of 3.4 as Stable. It gives no level for the
-      recommended keys of 6.1.1 and 6.1.2. This registry records "no target" for them.
+    resolution: >-
+      Development in 1.0 (spec 2.3). They are recommended audit data; the reference layers write
+      different shapes per route, and no validator checks them (TD-13).
   - id: SC-6
     title: Units of dimensionless and count keys
-    text: >-
-      The spec gives units only through names and TIM-1 (all times in seconds). It has no
-      unit notation for counts (device.channel_count) or indices (input.frame_range). This
-      registry gives a unit only where the spec states one.
+    resolution: >-
+      A key has a unit only if it is a physical quantity; times are seconds (s, TIM-1). A count,
+      an index, a flag, an identifier or a text has no unit. No unit notation for counts (MET-9).
   - id: SC-7
     title: Machine-readable conventions are not yet in the spec text
-    text: >-
-      Appendix A.1 item 9 still says "Deferred to 1.1 (task P1-04) ... not written yet".
-      The next RC should point to spec/semconv/ and say which form (prose table or YAML)
-      is normative when they differ. Today the check makes them agree.
+    resolution: >-
+      This YAML registry is normative for the key names, types, value lists and validators. The
+      key tables of spec 3.4, 6.1.1 and 6.1.2 are informative copies; the semconv check (CI) keeps
+      them equal. If they differ, the registry wins (3.4). Appendix A.1 item 9 is resolved.
   - id: SC-8
     title: Generated SDK constants
-    text: >-
-      The roadmap plans semconv constants generated for each SDK. Today each SDK has a
-      hand-written key table; the check compares them with this registry. Generating the
-      tables is a later step.
+    resolution: >-
+      No spec change. The SDK key tables may be hand-written or generated; the semconv check (CI)
+      compares the keys, validators, modality list and planned namespaces of all three SDKs with
+      this registry. Generating the tables stays a tooling task.

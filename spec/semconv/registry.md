@@ -2,9 +2,9 @@
 
 # NTS semantic-convention registry
 
-This page lists the convention keys of NeuralTextStream 1.0 RC3 (draft) ([spec](../nts-1.0-rc3.md)). The source of truth is the YAML in this folder: [manifest.yaml](manifest.yaml) and [attributes/](attributes/). The check `python tools/semconv/semconv.py --check` makes the YAML, the spec tables, the proto files, the JSON Schema and the three SDK validators agree. How to use it: [docs/semconv.md](../../docs/semconv.md).
+This page lists the convention keys of NeuralTextStream 1.0 RC4 (draft) ([spec](../nts-1.0-rc4.md)). The source of truth is the YAML in this folder: [manifest.yaml](manifest.yaml) and [attributes/](attributes/). It is normative for the key names, types, value lists and validators; the key tables of the spec are informative copies (spec 3.4, resolution SC-7). The check `python tools/semconv/semconv.py --check` makes the YAML, the spec tables, the proto files, the JSON Schema and the three SDK validators agree. How to use it: [docs/semconv.md](../../docs/semconv.md).
 
-Counts: 43 keys (24 `meta` keys), 3 containers, 12 reserved and 5 planned namespaces, 8 open questions.
+Counts: 43 keys (24 `meta` keys), 3 containers, 12 reserved and 5 planned namespaces, 1 open question(s), 7 resolved question(s).
 
 ## How to read the tables
 
@@ -12,7 +12,7 @@ Counts: 43 keys (24 `meta` keys), 3 containers, 12 reserved and 5 planned namesp
 |---|---|
 | Key | The key name inside its container |
 | Type | The JSON type (see the list below). An enum lists its values |
-| Unit | The unit, if the spec gives one (`s` = seconds) |
+| Unit | The unit of a physical quantity (`s` = seconds, TIM-1). `-`: the key is a count, an index, a flag, an identifier or a text and has no unit (SC-6) |
 | Requirement | Per scope: a producer level of spec 9.2 or a conformance class of 9.1. Levels are cumulative. Without an entry, the key is optional |
 | Stability | The level now (all entries are Development until 1.0 is final, spec 12) and the level that spec 2.3 proposes for 1.0 |
 | Validator | What the Python, TypeScript and Rust validators check |
@@ -24,7 +24,7 @@ Counts: 43 keys (24 `meta` keys), 3 containers, 12 reserved and 5 planned namesp
 | `boolean` | type | JSON true or false |
 | `int` | type | JSON integer (GEN-5, GEN-10) |
 | `double` | type | JSON number (no NaN, no infinity: MET-2) |
-| `enum` | type | JSON string from a closed list (12.3) |
+| `enum` | type | JSON string from a closed list (12.3). An open list is type string with registered_values (SC-4) |
 | `int[2]` | type | JSON array of two integers |
 | `double[2]` | type | JSON array of two numbers |
 | `string[]` | type | JSON array of strings |
@@ -45,13 +45,13 @@ Counts: 43 keys (24 `meta` keys), 3 containers, 12 reserved and 5 planned namesp
 
 | Container | Proto field | JSON Schema | Spec | Rules | Custom keys |
 |---|---|---|---|---|---|
-| `header.meta` | `neuraltextstream.v1.Header.meta` | `#/$defs/Header/properties/meta` | [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta) | HDR-8, MET-1, MET-2, MET-3, SEC-3, SEC-5 | Allowed. A custom key uses a namespace that is not reserved (MET-3, EXT-2). |
-| `trust_decision.input` | `neuraltextstream.v1.TrustDecision.input` | `#/$defs/TrustDecision/properties/input` | [6.1.1](../nts-1.0-rc3.md#611-input-keys-recommended) | TD-F2, TD-13 | Allowed. A consumer ignores keys that it does not know and never acts on these keys (TD-13). |
-| `trust_decision.declaration` | `neuraltextstream.v1.TrustDecision.declaration` | `#/$defs/TrustDecision/properties/declaration` | [6.1.2](../nts-1.0-rc3.md#612-declaration-keys-recommended) | TD-F2, TD-13, DCL-5 | Allowed. A consumer ignores keys that it does not know and never acts on these keys (TD-13). |
+| `header.meta` | `neuraltextstream.v1.Header.meta` | `#/$defs/Header/properties/meta` | [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta) | HDR-8, MET-1, MET-2, MET-3, SEC-3, SEC-5 | Allowed. A custom key uses a namespace that is not reserved (MET-3, EXT-2). |
+| `trust_decision.input` | `neuraltextstream.v1.TrustDecision.input` | `#/$defs/TrustDecision/properties/input` | [6.1.1](../nts-1.0-rc4.md#611-input-keys-recommended) | TD-F2, TD-13 | Allowed. A consumer ignores keys that it does not know and never acts on these keys (TD-13). |
+| `trust_decision.declaration` | `neuraltextstream.v1.TrustDecision.declaration` | `#/$defs/TrustDecision/properties/declaration` | [6.1.2](../nts-1.0-rc4.md#612-declaration-keys-recommended) | TD-F2, TD-13, DCL-5 | Allowed. A consumer ignores keys that it does not know and never acts on these keys (TD-13). |
 
 ## Namespaces of `meta`
 
-Spec [12.5](../nts-1.0-rc3.md#125-semantic-convention-namespaces-policy-spec-for-the-listed-keys-first-come-outside). Policy: only a spec version (through a FEP) adds a key to a reserved namespace. Keys outside these namespaces are custom keys (MET-3).
+Spec [12.5](../nts-1.0-rc4.md#125-semantic-convention-namespaces-policy-spec-for-the-listed-keys-first-come-outside). Policy: only a spec version (through a FEP) adds a key to a reserved namespace. Keys outside these namespaces are custom keys (MET-3).
 
 | Namespace | Status | Keys |
 |---|---|---|
@@ -75,34 +75,34 @@ Spec [12.5](../nts-1.0-rc3.md#125-semantic-convention-namespaces-policy-spec-for
 
 ## `device`
 
-The recording device. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/device.yaml](attributes/device.yaml).
+The recording device. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/device.yaml](attributes/device.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Unknown value of a newer minor version: read as `other`. Used in 35 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
+| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 37 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
 | `device.vendor` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The maker of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.model` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The model of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.channel_count` | `int` | - | optional | development (proposed stable) | `integer_min_1` | The number of input channels that the decoder used (integer >= 1). | MET-1<br>checks: NTS-META-TYPES |
 | `device.invasive` | `boolean` | - | optional | development (proposed stable) | `boolean` | true for implanted electrodes. | MET-1<br>checks: NTS-META-TYPES |
-| `device.regulatory_status` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The regulatory status of the device. Information only, not a claim of approval. Examples: `research`, `investigational`, `cleared`, `consumer`, `unknown`. | MET-1<br>checks: NTS-META-TYPES |
+| `device.regulatory_status` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The regulatory status of the device. Information only, not a claim of approval. Open list (SC-4). Registered values: `research`, `investigational`, `cleared`, `consumer`, `unknown`. Other values are valid. | MET-1<br>checks: NTS-META-TYPES |
 
 ## `decoder`
 
-The decoder (model) that made the frames or events. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/decoder.yaml](attributes/decoder.yaml).
+The decoder (model) that made the frames or events. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/decoder.yaml](attributes/decoder.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 35 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 35 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 35 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
+| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 37 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 37 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 37 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
 | `decoder.lookahead_s` | `double` | s | optional | development (proposed stable) | `finite_number_min_0` | The algorithmic lookahead of the decoder (number >= 0). It equals the header field latency when both are present. | MET-1, MET-4, TIM-1<br>checks: NTS-META-LOOKAHEAD, NTS-META-TYPES |
 | `decoder.calibration_id` | `string` | - | provenance: conditionally required (calibration.applied is true) | development (proposed stable) | `non_empty_string` | The identifier of the calibration that was applied. | MET-1<br>checks: NTS-META-TYPES, PV-CALIB-ID |
-| `decoder.calibration_method` | `string` | - | trust-ready: conditionally required (calibration.applied is true; the value is then not none) | development (proposed stable) | `non_empty_string` | The calibration method. Examples: `temperature`, `platt`, `isotonic`, `none`. | MET-1, MET-6<br>checks: NTS-META-TYPES, TR-CALIB |
+| `decoder.calibration_method` | `string` | - | trust-ready: conditionally required (calibration.applied is true; the value is then not none) | development (proposed stable) | `non_empty_string` | The calibration method. Open list (SC-4). Registered values: `temperature`, `platt`, `isotonic`, `none`. Other values are valid. | MET-1, MET-6<br>checks: NTS-META-TYPES, TR-CALIB |
 | `decoder.weights_sha256` | `string` | - | provenance: required | development (proposed stable) | `sha256_hex` | The SHA-256 of the weights file, 64 lowercase hex characters. | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-WEIGHTS |
 
 ## `adapter`
 
-The adapter that converted device or dataset output into NTS. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/adapter.yaml](attributes/adapter.yaml).
+The adapter that converted device or dataset output into NTS. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/adapter.yaml](attributes/adapter.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
@@ -111,7 +111,7 @@ The adapter that converted device or dataset output into NTS. Container: header 
 
 ## `stream`
 
-The stream itself. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/stream.yaml](attributes/stream.yaml).
+The stream itself. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/stream.yaml](attributes/stream.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
@@ -119,7 +119,7 @@ The stream itself. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-sem
 
 ## `lm`
 
-The language model inside the decoder. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/lm.yaml](attributes/lm.yaml).
+The language model inside the decoder. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/lm.yaml](attributes/lm.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
@@ -127,7 +127,7 @@ The language model inside the decoder. Container: header `meta`. Spec [3.4](../n
 
 ## `user`
 
-Adaptation of the decoder to the user. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/user.yaml](attributes/user.yaml).
+Adaptation of the decoder to the user. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/user.yaml](attributes/user.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
@@ -135,7 +135,7 @@ Adaptation of the decoder to the user. Container: header `meta`. Spec [3.4](../n
 
 ## `session`
 
-The recording session. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/session.yaml](attributes/session.yaml).
+The recording session. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/session.yaml](attributes/session.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
@@ -143,7 +143,7 @@ The recording session. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34
 
 ## `subject`
 
-The person who was recorded (pseudonymous). Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/subject.yaml](attributes/subject.yaml).
+The person who was recorded (pseudonymous). Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/subject.yaml](attributes/subject.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
@@ -151,7 +151,7 @@ The person who was recorded (pseudonymous). Container: header `meta`. Spec [3.4]
 
 ## `calibration`
 
-Calibration steps after the decoder. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/calibration.yaml](attributes/calibration.yaml).
+Calibration steps after the decoder. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/calibration.yaml](attributes/calibration.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
@@ -159,15 +159,15 @@ Calibration steps after the decoder. Container: header `meta`. Spec [3.4](../nts
 
 ## `data`
 
-The kind of data in the stream. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/data.yaml](attributes/data.yaml).
+The kind of data in the stream. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/data.yaml](attributes/data.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 35 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
+| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 37 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
 
 ## `consent`
 
-Consent records kept outside the stream. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/consent.yaml](attributes/consent.yaml).
+Consent records kept outside the stream. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/consent.yaml](attributes/consent.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
@@ -175,54 +175,61 @@ Consent records kept outside the stream. Container: header `meta`. Spec [3.4](..
 
 ## `language`
 
-The language of the decoded text. Container: header `meta`. Spec [3.4](../nts-1.0-rc3.md#34-semantic-conventions-for-meta). Source: [attributes/language.yaml](attributes/language.yaml).
+The language of the decoded text. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/language.yaml](attributes/language.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 35 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
+| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 37 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
 
 ## `trust_decision.input`
 
-Reference to the input of a trust decision. Container: `trust_decision.input`. Spec [6.1.1](../nts-1.0-rc3.md#611-input-keys-recommended). Source: [attributes/trust-decision-input.yaml](attributes/trust-decision-input.yaml).
+Reference to the input of a trust decision. Container: `trust_decision.input`. Spec [6.1.1](../nts-1.0-rc4.md#611-input-keys-recommended). Source: [attributes/trust-decision-input.yaml](attributes/trust-decision-input.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `kind` | `string` | - | trust-layer: recommended | development | `none` | The input route. Examples: `frames`, `hypothesis`, `intent`, `decision`, `feedback`, `control`, `control_enable`, `timer`. | TD-13 |
-| `frame_range` | `int[2]` | - | trust-layer: recommended (kind is frames) | development | `none` | The frame indices [start, end) of the segment. | TD-13 |
-| `t_range` | `double[2]` | s | trust-layer: recommended (kind is frames) | development | `none` | The signal times of the first and the last frame. | TD-13, TIM-1 |
-| `hypothesis_id` | `string` | - | trust-layer: recommended (kind is hypothesis) | development | `none` | The hypothesis that the decision used. | TD-13 |
-| `revision_of` | `string` | - | trust-layer: recommended (kind is hypothesis) | development | `none` | The revision_of value of the hypothesis that the decision used. | TD-13 |
-| `intent_id` | `string` | - | trust-layer: recommended (kind is intent) | development | `none` | The id of the intent event. | TD-13 |
-| `label` | `string` | - | trust-layer: recommended (kind is decision) | development | `none` | The label of the decision event. | TD-13 |
-| `tick` | `int` | - | trust-layer: recommended (kind is control) | development | `none` | The input tick. | TD-13 |
-| `ref_unit` | `int` | - | trust-layer: recommended (kind is feedback) | development | `none` | The ref_unit of the intent_feedback that caused the decision. | TD-13 |
-| `outcome` | `string` | - | trust-layer: recommended (kind is feedback) | development | `none` | The outcome of the intent_feedback that caused the decision. | TD-13 |
-| `source` | `string` | - | trust-layer: recommended (kind is feedback) | development | `none` | The source of the intent_feedback that caused the decision. | TD-13 |
-| `score_semantics` | `string` | - | trust-layer: recommended (intent routes) | development | `none` | The semantics of the input scores. | TD-13, INT-S2 |
-| `sha256` | `string` | - | trust-layer: recommended (event routes) | development | `none` | The SHA-256 of the input event (canonical JSON), 64 lowercase hex characters. | TD-13 |
-| `hypothesis_sha256` | `string` | - | trust-layer: recommended (event routes) | development | `none` | The SHA-256 of the input hypothesis (canonical JSON), 64 lowercase hex characters. | TD-13 |
+| `kind` | `string` | - | trust-layer: recommended | development (proposed development) | `none` | The input route. Open list (SC-4). Registered values: `frames`, `hypothesis`, `intent`, `decision`, `feedback`, `control`, `control_enable`, `timer`. Other values are valid. | TD-13 |
+| `frame_range` | `int[2]` | - | trust-layer: recommended (kind is frames) | development (proposed development) | `none` | The frame indices [start, end) of the segment. | TD-13 |
+| `t_range` | `double[2]` | s | trust-layer: recommended (kind is frames) | development (proposed development) | `none` | The signal times of the first and the last frame. | TD-13, TIM-1 |
+| `hypothesis_id` | `string` | - | trust-layer: recommended (kind is hypothesis) | development (proposed development) | `none` | The hypothesis that the decision used. | TD-13 |
+| `revision_of` | `string` | - | trust-layer: recommended (kind is hypothesis) | development (proposed development) | `none` | The revision_of value of the hypothesis that the decision used. | TD-13 |
+| `intent_id` | `string` | - | trust-layer: recommended (kind is intent) | development (proposed development) | `none` | The id of the intent event. | TD-13 |
+| `label` | `string` | - | trust-layer: recommended (kind is decision) | development (proposed development) | `none` | The label of the decision event. | TD-13 |
+| `tick` | `int` | - | trust-layer: recommended (kind is control) | development (proposed development) | `none` | The input tick. | TD-13 |
+| `ref_unit` | `int` | - | trust-layer: recommended (kind is feedback) | development (proposed development) | `none` | The ref_unit of the intent_feedback that caused the decision. | TD-13 |
+| `outcome` | `string` | - | trust-layer: recommended (kind is feedback) | development (proposed development) | `none` | The outcome of the intent_feedback that caused the decision. | TD-13 |
+| `source` | `string` | - | trust-layer: recommended (kind is feedback) | development (proposed development) | `none` | The source of the intent_feedback that caused the decision. | TD-13 |
+| `score_semantics` | `string` | - | trust-layer: recommended (intent routes) | development (proposed development) | `none` | The semantics of the input scores. | TD-13, INT-S2 |
+| `sha256` | `string` | - | trust-layer: recommended (event routes) | development (proposed development) | `none` | The SHA-256 of the input event (canonical JSON), 64 lowercase hex characters. | TD-13 |
+| `hypothesis_sha256` | `string` | - | trust-layer: recommended (event routes) | development (proposed development) | `none` | The SHA-256 of the input hypothesis (canonical JSON), 64 lowercase hex characters. | TD-13 |
 
 ## `trust_decision.declaration`
 
-Result of the declaration check (DCL-5). Container: `trust_decision.declaration`. Spec [6.1.2](../nts-1.0-rc3.md#612-declaration-keys-recommended). Source: [attributes/trust-decision-declaration.yaml](attributes/trust-decision-declaration.yaml).
+Result of the declaration check (DCL-5). Container: `trust_decision.declaration`. Spec [6.1.2](../nts-1.0-rc4.md#612-declaration-keys-recommended). Source: [attributes/trust-decision-declaration.yaml](attributes/trust-decision-declaration.yaml).
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `status` | enum: `match`, `mismatch`, `absent` | - | trust-layer: recommended | development | `none` | The result of the check. A consumer reads an unknown value as mismatch. Unknown value of a newer minor version: read as `mismatch`. | TD-13, DCL-5, VER-8 |
-| `mode` | `string` | - | trust-layer: recommended | development | `none` | The check mode of the trust layer (the examples are the modes of the reference layer). Examples: `off`, `warn`, `abstain`, `offer-only`. | TD-13 |
-| `where` | enum: `header`, `hypothesis` | - | trust-layer: recommended | development | `none` | Where the checked declaration was. | TD-13, DCL-3 |
-| `decoder` | `string` | - | trust-layer: recommended | development | `none` | The declared decoder id. | TD-13 |
-| `mismatches` | `string[]` | - | trust-layer: recommended | development | `none` | One short text per mismatch. No user text. | TD-13, DCL-7 |
+| `status` | enum: `match`, `mismatch`, `absent` | - | trust-layer: recommended | development (proposed development) | `none` | The result of the check. A consumer reads an unknown value as mismatch. Closed list (SC-4). Unknown value of a newer minor version: read as `mismatch`. | TD-13, DCL-5, VER-8 |
+| `mode` | `string` | - | trust-layer: recommended | development (proposed development) | `none` | The check mode of the trust layer (the registered values are the modes of the reference layer). Open list (SC-4). Registered values: `off`, `warn`, `abstain`, `offer-only`. Other values are valid. | TD-13 |
+| `where` | enum: `header`, `hypothesis` | - | trust-layer: recommended | development (proposed development) | `none` | Where the checked declaration was. Closed list (SC-4). | TD-13, DCL-3 |
+| `decoder` | `string` | - | trust-layer: recommended | development (proposed development) | `none` | The declared decoder id. | TD-13 |
+| `mismatches` | `string[]` | - | trust-layer: recommended | development (proposed development) | `none` | One short text per mismatch. No user text. | TD-13, DCL-7 |
 
 ## Open questions
 
 The registry adds no semantics. These gaps need a spec change (a FEP or the next RC).
 
-- **SC-1 Modality keys are not defined.** Spec 12.5 plans the namespaces emg, eeg, meg, fnirs and implant but defines no key. The roadmap (P1-04) lists candidate keys, for example emg.placement, eeg.montage, meg.system, fnirs.wavelengths_nm and implant.array_type. Each needs a type, a unit and a meaning in a FEP before it goes into this registry. Real producers (P4 adapters: emg2qwerty, KT-sEMG, Willett, B2T '25, Brain2Qwerty) should supply the evidence.
-- **SC-2 Planned namespaces are not reserved in the validators.** The validators warn about custom keys in a reserved namespace (MET-3) only for the namespaces that have keys. A key such as emg.gain gets no warning. Spec 12.5 does not say whether the planned namespaces are reserved now.
-- **SC-3 Empty strings.** Spec 3.4 gives the type "string" for keys such as device.vendor and decoder.name. All three validators refuse "" (validator non_empty_string). The spec should say whether "" is valid.
-- **SC-4 Open or closed value lists for string keys.** device.regulatory_status, decoder.calibration_method, input.kind and declaration.mode list values in the spec, but their type is "string". The spec does not say whether other values are valid. This registry records the listed values as examples.
-- **SC-5 Target stability of the trust_decision input and declaration keys.** Spec 2.3 proposes the meta conventions of 3.4 as Stable. It gives no level for the recommended keys of 6.1.1 and 6.1.2. This registry records "no target" for them.
-- **SC-6 Units of dimensionless and count keys.** The spec gives units only through names and TIM-1 (all times in seconds). It has no unit notation for counts (device.channel_count) or indices (input.frame_range). This registry gives a unit only where the spec states one.
-- **SC-7 Machine-readable conventions are not yet in the spec text.** Appendix A.1 item 9 still says "Deferred to 1.1 (task P1-04) ... not written yet". The next RC should point to spec/semconv/ and say which form (prose table or YAML) is normative when they differ. Today the check makes them agree.
-- **SC-8 Generated SDK constants.** The roadmap plans semconv constants generated for each SDK. Today each SDK has a hand-written key table; the check compares them with this registry. Generating the tables is a later step.
+- **SC-1 Modality keys are not defined.** Spec 12.5 plans the namespaces emg, eeg, meg, fnirs and implant but defines no key. The roadmap (P1-04) lists candidate keys, for example emg.placement, eeg.montage, meg.system, fnirs.wavelengths_nm and implant.array_type. Each needs a type, a unit and a meaning in a FEP before it goes into this registry. Deferred by RC4 to a FEP that has evidence from real producers (P4 adapters: emg2qwerty, KT-sEMG, Willett, B2T '25, Brain2Qwerty). Until then the namespaces are reserved (SC-2) and have no keys.
+
+## Resolved questions
+
+Answered by the spec version of this registry (1.0 RC4 (draft)).
+
+| Id | Question | Resolution |
+|---|---|---|
+| SC-2 | Planned namespaces are not reserved in the validators | Reserved now (12.5, MET-3). A custom key in emg, eeg, meg, fnirs or implant gets the MET-3 warning in all three validators (advisory, never a reject). Vector V69. |
+| SC-3 | Empty strings | The spec follows the validators: the string keys of 3.4 are "non-empty string" (MET-7). All three validators already refused "", so no valid stream changes. The keys of 6.1.1 and 6.1.2 stay "string" (audit data, not checked: TD-13). |
+| SC-4 | Open or closed value lists for string keys | Per key (3.4, 6.1.1, 6.1.2 and MET-8). Open lists (registered values; other values are valid): device.regulatory_status, decoder.calibration_method, input.kind, declaration.mode. Closed lists (type enum): device.modality, declaration.status, declaration.where. |
+| SC-5 | Target stability of the trust_decision input and declaration keys | Development in 1.0 (spec 2.3). They are recommended audit data; the reference layers write different shapes per route, and no validator checks them (TD-13). |
+| SC-6 | Units of dimensionless and count keys | A key has a unit only if it is a physical quantity; times are seconds (s, TIM-1). A count, an index, a flag, an identifier or a text has no unit. No unit notation for counts (MET-9). |
+| SC-7 | Machine-readable conventions are not yet in the spec text | This YAML registry is normative for the key names, types, value lists and validators. The key tables of spec 3.4, 6.1.1 and 6.1.2 are informative copies; the semconv check (CI) keeps them equal. If they differ, the registry wins (3.4). Appendix A.1 item 9 is resolved. |
+| SC-8 | Generated SDK constants | No spec change. The SDK key tables may be hand-written or generated; the semconv check (CI) compares the keys, validators, modality list and planned namespaces of all three SDKs with this registry. Generating the tables stays a tooling task. |

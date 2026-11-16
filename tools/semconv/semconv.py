@@ -23,8 +23,8 @@ these sources agree:
                each related field exists.
 4. schema      each container resolves in the generated JSON Schema and is an object.
 5. sdks        the hand-written meta key tables of the Python, TypeScript and Rust
-               validators have the same keys and validators as the registry, and
-               the same modality list.
+               validators have the same keys and validators as the registry, the
+               same modality list and the same planned namespaces (RC4, SC-2, SC-8).
 6. checks      every conformance check id exists in the Python suite, and a
                requirement check belongs to the level of its scope.
 7. vectors     the meta values of the accept vectors (JSON Lines) pass the
@@ -64,7 +64,7 @@ PY_CHECKS = ROOT / "src" / "fidetype" / "conformance" / "checks.py"
 
 ATTR_FIELDS_REQUIRED = ("key", "type", "validator", "brief", "stability")
 ATTR_FIELDS_ALLOWED = set(ATTR_FIELDS_REQUIRED) | {
-    "values", "unknown_value", "examples", "unit", "default", "requirement", "target_stability", "rules",
+    "values", "unknown_value", "examples", "registered_values", "unit", "default", "requirement", "target_stability", "rules",
     "checks", "related_fields", "spec_registry_row",
 }
 REQ_FIELDS_ALLOWED = {"scope", "level", "condition", "checks"}
@@ -179,6 +179,8 @@ def check_structure(reg: Registry) -> list[str]:
             for f in ("values", "unknown_value"):
                 if f in a:
                     errs.append(f"structure: {where}: {f} is only for type enum")
+        if "registered_values" in a and (a.get("type") != "string" or not isinstance(a["registered_values"], list)):
+            errs.append(f"structure: {where}: registered_values (an open list, SC-4) is a list and only for type string")
         if a.get("validator") == "enum" and a.get("type") != "enum":
             errs.append(f"structure: {where}: validator enum needs type enum")
         key = str(a.get("key", ""))
@@ -262,6 +264,7 @@ def _split_top(text: str) -> list[str]:
 # Spec type text -> (registry type, validator that the text implies or None).
 SPEC_TYPES = {
     "string": ("string", None),
+    "non-empty string": ("string", "non_empty_string"),
     "boolean": ("boolean", None),
     "enum": ("enum", None),
     "integer": ("int", None),
@@ -470,6 +473,19 @@ def sdk_table(lang: str, checks_src: str, consts_src: str) -> tuple[dict[str, st
     return table, modalities
 
 
+PLANNED_PATTERNS = {
+    "python": r"^PLANNED_NAMESPACES\s*=\s*\((.*?)\)",
+    "typescript": r"export const PLANNED_NAMESPACES\s*=\s*\[(.*?)\]",
+    "rust": r"pub const PLANNED_NAMESPACES[^=]*=\s*&\[(.*?)\]",
+}
+
+
+def sdk_planned_namespaces(lang: str, consts_src: str) -> list[str]:
+    """The planned namespaces of one SDK (RC4, SC-2), read from its constants source."""
+    m = re.search(PLANNED_PATTERNS[lang], consts_src, re.S | re.M)
+    return re.findall(r'"([^"]+)"', m.group(1)) if m else []
+
+
 def check_sdks(reg: Registry, sources: dict[str, tuple[str, str]] | None = None) -> list[str]:
     errs: list[str] = []
     if sources is None:
@@ -490,6 +506,11 @@ def check_sdks(reg: Registry, sources: dict[str, tuple[str, str]] | None = None)
                 errs.append(f"sdks: {lang}: {k}: validator {table[k]}, registry says {mine[k]['validator']}")
             if mine[k]["validator"] == "enum" and mods != list(mine[k].get("values") or []):
                 errs.append(f"sdks: {lang}: {k}: MODALITIES {mods} differ from the registry {mine[k].get('values')}")
+        planned = [n["name"] for n in reg.manifest.get("namespaces", []) if n.get("status") == "planned"]
+        theirs = sdk_planned_namespaces(lang, consts_src)
+        if theirs != planned:
+            errs.append(f"sdks: {lang}: PLANNED_NAMESPACES {theirs} differ from the registry {planned} "
+                        "(SC-2: a custom key in a planned namespace gets the MET-3 warning)")
     return errs
 
 
@@ -651,7 +672,9 @@ def render(reg: Registry, usage: dict[str, int] | None = None) -> str:
     w("")
     w(f"This page lists the convention keys of NeuralTextStream {man['spec']['version']} "
       f"([spec]({spec_rel})). The source of truth is the YAML in this folder: "
-      "[manifest.yaml](manifest.yaml) and [attributes/](attributes/). "
+      "[manifest.yaml](manifest.yaml) and [attributes/](attributes/). It is normative for the key names, "
+      "types, value lists and validators; the key tables of the spec are informative copies (spec 3.4, "
+      "resolution SC-7). "
       "The check `python tools/semconv/semconv.py --check` makes the YAML, the spec tables, the proto "
       "files, the JSON Schema and the three SDK validators agree. How to use it: "
       "[docs/semconv.md](../../docs/semconv.md).")
@@ -661,7 +684,8 @@ def render(reg: Registry, usage: dict[str, int] | None = None) -> str:
     w(f"Counts: {n_keys} keys ({n_meta} `meta` keys), {len(man['containers'])} containers, "
       f"{sum(1 for n in man['namespaces'] if n['status'] == 'reserved')} reserved and "
       f"{sum(1 for n in man['namespaces'] if n['status'] == 'planned')} planned namespaces, "
-      f"{len(man.get('open_questions', []))} open questions.")
+      f"{len(man.get('open_questions', []))} open question(s), "
+      f"{len(man.get('resolved_questions', []))} resolved question(s).")
     w("")
     w("## How to read the tables")
     w("")
@@ -669,7 +693,7 @@ def render(reg: Registry, usage: dict[str, int] | None = None) -> str:
     w("|---|---|")
     w("| Key | The key name inside its container |")
     w("| Type | The JSON type (see the list below). An enum lists its values |")
-    w("| Unit | The unit, if the spec gives one (`s` = seconds) |")
+    w("| Unit | The unit of a physical quantity (`s` = seconds, TIM-1). `-`: the key is a count, an index, a flag, an identifier or a text and has no unit (SC-6) |")
     w("| Requirement | Per scope: a producer level of spec 9.2 or a conformance class of 9.1. Levels are cumulative. Without an entry, the key is optional |")
     w("| Stability | The level now (all entries are Development until 1.0 is final, spec 12) and the level that spec 2.3 proposes for 1.0 |")
     w("| Validator | What the Python, TypeScript and Rust validators check |")
@@ -719,6 +743,11 @@ def render(reg: Registry, usage: dict[str, int] | None = None) -> str:
             desc = _md(a["brief"])
             if a.get("examples"):
                 desc += " Examples: " + ", ".join(f"`{e}`" for e in a["examples"]) + "."
+            if a.get("registered_values"):
+                desc += (" Open list (SC-4). Registered values: " + ", ".join(f"`{e}`" for e in a["registered_values"])
+                         + ". Other values are valid.")
+            elif a.get("type") == "enum":
+                desc += " Closed list (SC-4)."
             if a.get("unknown_value"):
                 desc += f" Unknown value of a newer minor version: read as `{a['unknown_value']}`."
             if "default" in a:
@@ -739,6 +768,16 @@ def render(reg: Registry, usage: dict[str, int] | None = None) -> str:
     for q in man.get("open_questions", []):
         w(f"- **{q['id']} {_md(q['title'])}.** {_md(q['text'])}")
     w("")
+    if man.get("resolved_questions"):
+        w("## Resolved questions")
+        w("")
+        w(f"Answered by the spec version of this registry ({_md(man['spec']['version'])}).")
+        w("")
+        w("| Id | Question | Resolution |")
+        w("|---|---|---|")
+        for q in man["resolved_questions"]:
+            w(f"| {q['id']} | {_md(q['title'])} | {_md(q['resolution'])} |")
+        w("")
     return "\n".join(out)
 
 

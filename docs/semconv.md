@@ -2,13 +2,13 @@
 
 NTS streams carry metadata as named keys, for example `device.modality` in the header `meta`. The **semantic-convention registry** lists every key that the spec defines. Each entry gives the name, the type, the unit, the requirement level, the stability and the spec rules.
 
-The registry is a draft for NTS 1.0 RC3. It adds no new rules. The spec stays normative.
+The registry belongs to NTS 1.0 RC4 (draft). Since RC4 it is normative for the key names, types, value lists and validators (MET-10). The spec tables are informative copies, and the rules about the keys stay in the spec text.
 
 ## Where it is
 
 | File | What it is |
 |---|---|
-| [`spec/semconv/manifest.yaml`](../spec/semconv/manifest.yaml) | Containers, namespaces, the words of the registry, open questions |
+| [`spec/semconv/manifest.yaml`](../spec/semconv/manifest.yaml) | Containers, namespaces, the words of the registry, open and resolved questions |
 | [`spec/semconv/attributes/*.yaml`](../spec/semconv/attributes/) | One file per namespace (`device`, `decoder`, ...) and one per `trust_decision` object |
 | [`spec/semconv/registry.md`](../spec/semconv/registry.md) | The reference page. **Generated**: do not edit it by hand |
 | [`tools/semconv/semconv.py`](../tools/semconv/semconv.py) | The generator and the agreement check |
@@ -17,11 +17,11 @@ The registry is a draft for NTS 1.0 RC3. It adds no new rules. The spec stays no
 
 | Container | Keys | Spec |
 |---|---|---|
-| Header `meta` | 24 keys in 12 reserved namespaces | [3.4](../spec/nts-1.0-rc3.md#34-semantic-conventions-for-meta), [12.5](../spec/nts-1.0-rc3.md#125-semantic-convention-namespaces-policy-spec-for-the-listed-keys-first-come-outside) |
-| `trust_decision.input` | 14 recommended keys (audit data) | [6.1.1](../spec/nts-1.0-rc3.md#611-input-keys-recommended) |
-| `trust_decision.declaration` | 5 recommended keys (audit data) | [6.1.2](../spec/nts-1.0-rc3.md#612-declaration-keys-recommended) |
+| Header `meta` | 24 keys in 12 reserved namespaces | [3.4](../spec/nts-1.0-rc4.md#34-semantic-conventions-for-meta), [12.5](../spec/nts-1.0-rc4.md#125-semantic-convention-namespaces-policy-spec-for-the-listed-keys-first-come-outside) |
+| `trust_decision.input` | 14 recommended keys (audit data) | [6.1.1](../spec/nts-1.0-rc4.md#611-input-keys-recommended) |
+| `trust_decision.declaration` | 5 recommended keys (audit data) | [6.1.2](../spec/nts-1.0-rc4.md#612-declaration-keys-recommended) |
 
-The modality namespaces `emg.*`, `eeg.*`, `meg.*`, `fnirs.*` and `implant.*` are **planned**. They have no keys yet. A key gets into the registry only after a FEP defines it.
+The modality namespaces `emg.*`, `eeg.*`, `meg.*`, `fnirs.*` and `implant.*` are **planned** and, since RC4, reserved (MET-3: a custom key in them gets a warning). They have no keys yet. A key gets into the registry only after a FEP defines it (SC-1).
 
 ## Use it as a producer
 
@@ -63,4 +63,4 @@ The CI job `semconv` runs the check and the tests.
 
 ## Open questions
 
-The registry found gaps that need a spec change. Examples: no modality keys (SC-1); the spec says "string" but the validators refuse `""` (SC-3); open or closed value lists for some string keys (SC-4). The full list is at the end of [registry.md](../spec/semconv/registry.md#open-questions).
+The registry found gaps that needed a spec change. NTS 1.0 RC4 answered SC-2 … SC-8 (for example: the registry is normative, MET-10; string keys are non-empty, MET-7; open and closed value lists, MET-8). One question stays open: modality keys (SC-1), deferred to a FEP with evidence from real producers. The list is at the end of [registry.md](../spec/semconv/registry.md#open-questions).

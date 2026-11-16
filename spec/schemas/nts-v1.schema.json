@@ -3632,10 +3632,6 @@
       "SEC-5"
      ]
     },
-    "t": {
-     "description": "Time of a control decision, seconds.",
-     "type": "number"
-    },
     "lsl": {
      "description": "LSL record of a header or a decision (8.2.7). Never a host name (LSL-C3).",
      "type": "object",
@@ -4002,6 +3998,13 @@
      },
      "then": {
       "properties": {
+       "t": {
+        "description": "Time of a control decision, seconds (7.4.5). On other profiles a custom key (PRF-5; NTS 1.0 RC4).",
+        "type": "number",
+        "x-nts-rules": [
+         "PRF-5"
+        ]
+       },
        "tick": {
         "description": "The input tick; integer >= 0. CTL-T1, CTL-T5.",
         "type": "integer",

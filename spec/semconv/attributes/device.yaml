@@ -51,7 +51,7 @@ attributes:
   - key: device.regulatory_status
     type: string
     validator: non_empty_string
-    examples: [research, investigational, cleared, consumer, unknown]
+    registered_values: [research, investigational, cleared, consumer, unknown]
     brief: The regulatory status of the device. Information only, not a claim of approval.
     stability: development
     target_stability: stable

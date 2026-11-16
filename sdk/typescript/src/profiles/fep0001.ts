@@ -23,7 +23,7 @@ export const CHECKS: CheckMeta[] = [
   ["FEP1-PARSE", "MUST", "6.2 (v0.1)", "Every line is a JSON object with a string type (no NaN tokens)"],
   ["FEP1-KIND", "MUST", "3 r4 / 6.2.1", "The file is an input stream (header first) or a decision log (only trust_decision)"],
   ["FEP1-V01-CORE", "MUST", "Compatibility", "An input stream passes the v0.1 core level"],
-  ["FEP1-SEGMENT", "MUST", "1 table, r5", "segment_end: t a finite number not before the last frame; unit in the enum"],
+  ["FEP1-SEGMENT", "MUST", "1 table, r5", "segment_end: t a finite number not before the last frame; unit in the enum; reason a string"],
   ["FEP1-EVIDENCE", "MUST", "2 table, r1, r4", "char_confidences: one number in [0, 1] per code point; logp_* finite and <= 0"],
   ["FEP1-SCORE", "MUST", "2 r3", "Every n-best item has a finite numeric score"],
   ["FEP1-DECL", "MUST", "4 table", "decode_declaration (header or hypothesis) has the defined form"],
@@ -79,6 +79,7 @@ export function segmentErrors(events: Ev[]): string[] {
       if (has(e, "unit") && !enumOk(e.unit, SEGMENT_UNITS, newer)) {
         errs.push(`line ${n}: segment_end unit ${repr(e.unit)} is not one of ${repr(SEGMENT_UNITS)}`);
       }
+      if (has(e, "reason") && typeof e.reason !== "string") errs.push(`line ${n}: segment_end reason must be a string (SEG-6)`);
     }
   }
   return errs;
@@ -170,6 +171,7 @@ export function tdFormatErrors(e: Record<string, unknown>): string[] {
   if (has(e, "input") && !isObj(e.input)) errs.push("input must be an object");
   if (has(e, "declaration") && !isObj(e.declaration)) errs.push("declaration must be an object (TD-F2)");
   if (has(e, "latency_s") && !(isFinNum(e.latency_s) && e.latency_s >= 0)) errs.push("latency_s must be a number >= 0");
+  if (has(e, "reason") && typeof e.reason !== "string") errs.push("reason must be a string (TD-F2)");
   errs.push(...tdVersionErrors(e));
   return errs.map((x) => `line ${n}: ${x}`);
 }

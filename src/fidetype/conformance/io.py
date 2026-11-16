@@ -45,6 +45,11 @@ HEADER_KNOWN = (
 )
 #: Event kinds of spec 3.0 (JSON Lines ``type`` values), plus ``end``.
 EVENT_TYPES = ("frame", "decision", "hypothesis", "pointer", "signal_quality", "end")
+#: The latency fields of NTS 1.0 section 5.2 (TIM-4).
+TIMING_KEYS = ("t_signal_start", "t_signal_end", "t_decoded", "t_emitted")
+#: Event types (NTS 1.0 registry 12.1) on which the latency fields are checked (TIM-4, NTS 1.0 RC4 / G-12).
+TIMED_TYPES = ("frame", "segment_end", "signal_quality", "decision", "hypothesis", "pointer", "intent",
+               "intent_feedback", "control", "control_enable")
 
 _MISSING = object()
 
@@ -84,6 +89,8 @@ class RawStream:
     issues: list[Issue] = field(default_factory=list)
     events: list[dict[str, Any]] = field(default_factory=list)
     sparse_frames: list[dict[str, Any]] = field(default_factory=list)
+    #: The latency fields (5.2) of every event of TIMED_TYPES, with ``_line`` (JSON Lines only).
+    timed: list[dict[str, Any]] = field(default_factory=list)
     npz_keys: list[str] = field(default_factory=list)
     npz_dtypes: dict[str, str] = field(default_factory=dict)
     unknown_keys: list[str] = field(default_factory=list)
@@ -283,6 +290,8 @@ def read_jsonl(path: str | PathLike[str]) -> RawStream:
         if typ == "header":
             raw.issues.append(Issue("NTS-JSONL-HEADER", "6.2.1", f"line {n}: a second header"))
             continue
+        if typ in TIMED_TYPES and any(k in obj for k in TIMING_KEYS):
+            raw.timed.append({**{k: obj[k] for k in TIMING_KEYS if k in obj}, "_line": n})
         if typ not in EVENT_TYPES:
             raw.ignored_events += 1  # 6.2 rule 5
             continue

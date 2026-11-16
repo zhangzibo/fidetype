@@ -283,6 +283,41 @@
    "failing_check": "FEP3-TD-FORMAT"
   },
   {
+   "id": "D24",
+   "file": "d24-log-pending-cleared.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0003 1.0 RC4 7.3.5 (INT-T8)",
+   "description": "An irreversible intent armed, then dropped by the next unit: the ABSTAIN names it in pending_cleared (a string)",
+   "expected": {
+    "kind": "decisions",
+    "intent_decisions": 2,
+    "final": 2,
+    "acted_intents": []
+   }
+  },
+  {
+   "id": "D25",
+   "file": "d25-td-vocab-id-number.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 1.0 RC4 7.3.5 (INT-T8)",
+   "description": "An intent COMMIT with vocab_id 1, not a string",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
+   "id": "D26",
+   "file": "d26-td-pending-cleared-list.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 1.0 RC4 7.3.5 (INT-T8)",
+   "description": "An intent ABSTAIN with pending_cleared [\"intent.call-caregiver\"] (a list, not a string)",
+   "failing_check": "FEP3-TD-FORMAT"
+  },
+  {
    "id": "I01",
    "file": "i01-intents.jsonl",
    "format": "jsonl",
@@ -548,6 +583,16 @@
     "final_intents": 1,
     "feedback": 1
    }
+  },
+  {
+   "id": "I25",
+   "file": "i25-intent-t-decoded-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "FEP-0003 1.0 RC4 5.2 (TIM-4)",
+   "description": "An intent event with t_decoded \"1.02\" (latency fields are numbers on every event)",
+   "failing_check": "FEP3-V01-CORE"
   }
  ]
 }

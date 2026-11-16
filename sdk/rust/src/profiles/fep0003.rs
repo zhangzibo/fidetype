@@ -478,6 +478,12 @@ pub fn td_intent_format_errors(e: &Map) -> Vec<String> {
             x.push("confirmed_via must be 'intent' or 'feedback'".into());
         }
     }
+    for k in ["vocab_id", "pending_cleared"] {
+        // INT-T8 (NTS 1.0 RC4)
+        if e.has(k) && !e.get(k).is_str() {
+            x.push(format!("{} must be a string (INT-T8)", k));
+        }
+    }
     errs.extend(x.into_iter().map(|m| format!("line {}: {}", n, m)));
     errs
 }

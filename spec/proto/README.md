@@ -2,14 +2,14 @@
 
 | | |
 |---|---|
-| **Status** | Informative DRAFT (roadmap task P1-02; updated for RC3). It does not change any rule of [NTS 1.0 RC3](../nts-1.0-rc3.md). If this file and the RC3 text differ, the RC3 text wins. |
+| **Status** | Informative DRAFT (roadmap task P1-02; updated for RC3 and RC4). It does not change any rule of [NTS 1.0 RC4](../nts-1.0-rc4.md). If this file and the RC4 text differ, the RC4 text wins. |
 | **Source of truth** | [`neuraltextstream/v1/*.proto`](neuraltextstream/v1/) (proto3, package `neuraltextstream.v1`) |
 | **Generated** | [`../schemas/nts-v1.schema.json`](../schemas/nts-v1.schema.json) (JSON Schema draft 2020-12) by [`tools/proto/gen_jsonschema.py`](../../tools/proto/gen_jsonschema.py). Do not edit it. |
-| **Checks (CI job `proto`)** | schema up to date; protoc accepts the files and agrees with the generator; parity with the SDK verdicts on the 304 conformance vectors |
+| **Checks (CI job `proto`)** | schema up to date; protoc accepts the files and agrees with the generator; parity with the SDK verdicts on the 330 conformance vectors |
 | **Licence** | Apache-2.0 |
 | **Model** | The structure of OpenTelemetry's `opentelemetry-proto` (one package per signal and major version, an envelope message, a JSON mapping next to the binary form). No text is copied. |
 
-The roadmap decision "wire formats" ([roadmap P1](../../wiki/questions/roadmap-standard.md#decision-wire-formats)) makes protobuf the canonical schema and keeps JSON Lines, defined by the proto JSON mapping plus a JSON Schema. This folder does that for the full RC3 data model.
+The roadmap decision "wire formats" ([roadmap P1](../../wiki/questions/roadmap-standard.md#decision-wire-formats)) makes protobuf the canonical schema and keeps JSON Lines, defined by the proto JSON mapping plus a JSON Schema. This folder does that for the full RC4 data model.
 
 ## 1. Files
 
@@ -88,16 +88,16 @@ uvx --from grpcio-tools==1.85.1 python tools/proto/check_protoc.py   # protoc co
 - The parity test also runs in pytest (`tests/test_proto_schema.py`).
 
 ## 7. Parity with the SDK verdicts
-The three SDKs agree on all 304 vectors. `tools/proto/parity.py` takes every JSON object that a vector holds in a JSON form (JSON Lines lines up to `end`, LSL `nts_header` and marker samples, WebSocket NTS messages and `ws_batch` items) and validates it. A vector is "reject" under the schema if one object fails.
+The three SDKs agree on all 330 vectors. `tools/proto/parity.py` takes every JSON object that a vector holds in a JSON form (JSON Lines lines up to `end`, LSL `nts_header` and marker samples, WebSocket NTS messages and `ws_batch` items) and validates it. A vector is "reject" under the schema if one object fails.
 
 | Class of vector | Vectors | Rule |
 |---|---|---|
-| accept | 99 | The schema MUST accept them: **99 of 99 accepted** |
-| reject, class `schema` | 79 | The schema MUST reject them: **79 of 79 rejected**, each for the intended rule |
-| reject, other class | 93 | Not compared (the reason is not on one line); the schema accepts all 93 |
+| accept | 103 | The schema MUST accept them: **103 of 103 accepted** |
+| reject, class `schema` | 98 | The schema MUST reject them: **98 of 98 rejected**, each for the intended rule |
+| reject, other class | 96 | Not compared (the reason is not on one line); the schema accepts all 96 |
 | NPZ (not a JSON form) | 33 | Out of scope |
 
-**Result: 178 compared, 178 match, 0 mismatches** (built-in validator and `jsonschema` 4.26.0 give the same verdicts on all 304 vectors). RC3 moved F04 (SEG-5) and I22 (INT-F1) to class cross-line: an unknown value on an event that is not the header is an error only under a header of a known version (VER-7). The class of every reject vector is in `REJECT_CLASS` in `parity.py`.
+**Result: 201 compared, 201 match, 0 mismatches** (built-in validator and `jsonschema` 4.26.0 give the same verdicts on all 330 vectors). RC4 added 18 schema-class reject vectors for the optional field types of GEN-11 (V70 … V73, V76 … V79, V81, V82, F64 … F66, D25, D26, I25, C25, E26, E27) and three of other classes (V74 cross-line, V75 and V80 cross-field). RC3 moved F04 (SEG-5) and I22 (INT-F1) to class cross-line: an unknown value on an event that is not the header is an error only under a header of a known version (VER-7). The class of every reject vector is in `REJECT_CLASS` in `parity.py`.
 
 ## 8. What the schema cannot express
 These rules stay in the SDK validators. "Vectors" are the reject vectors of that class.
@@ -116,11 +116,10 @@ These rules stay in the SDK validators. "Vectors" are the reject vectors of that
 The schema **does** express (with the vectors that test it): HDR-1 required keys, HDR-2/VER-3/VER-5 (`spec_version` pattern), HDR-3, HDR-4, HDR-5, HDR-6 (type), HDR-7 … HDR-11, FRM-1/FRM-2 (dense or sparse form), FRM-4 (JSON has no NaN or +inf), GEN-2 (an object with a string `type`), GEN-3, SEG-4 (type), SEG-5, SQ-1, DEC-2 … DEC-4, HYP-1, EVD-1 (values), EVD-3, EVD-4, DCL-1, PTR-1 (types, `values` length = `dims`), TD-F1 … TD-F3, TD-8, PRF-4, INT-D1 (non-null role), INT-D2 … INT-D4, INT-E3 (per-score rules), INT-E7, INT-F1, INT-T1 … INT-T3, CTL-D1, CTL-D2, CTL-D3 (an `intent_declaration` is present), CTL-4 (types, `std` > 0), CTL-E1, CTL-T1 … CTL-T4, CTL-T8, INT-T7, WS-Q1 (`ws_seq` is an integer ≥ 1 when present), GEN-10 (F60, W44), TD-F2 `declaration` (F62), VER-7 for the header and decisions (V67, F59, D23, E23), PRF-5.
 
 ## 9. Where the schema is stricter than the SDK validators
-No vector is affected. Each item is a place where the RC3 text gives a type that the SDK validators do not check yet (gap G-12 of Appendix C).
+No vector is affected.
 - (Fixed in RC3: profile fields are now typed per profile, PRF-5. `"tick": "x"` on a text decision is a custom key in the schema too.)
-- `segment_end.reason` (SEG-6), `trust_decision.reason`, intent `vocab_id`: typed by the schema only.
-- `control.absent: null` is valid (GEN-9; the SDKs read it as absent), but a repeated proto field has no null form, so the schema refuses it. No vector has it.
-- `hypothesis.t_start` / `t_end`, `nbest[].spans`, `signal_quality.channels`, `pointer.score_semantics`, `decision.score_range` for every semantics: typed by the schema only.
+- (Fixed in RC4, gap G-12 closed by GEN-11: the SDK validators now check every optional field type that the schema checks: `segment_end.reason`, `trust_decision.reason`, intent `vocab_id` and `pending_cleared`, `hypothesis.t_start` / `t_end` / `revision_of`, `nbest[].spans`, `signal_quality.channels`, `pointer.absent` / `score` / `score_semantics`, `decision.score` and `score_range` for every semantics, header `vocab_id` / `vocab_version`, control `level`, and the latency fields of every event. The control decision `t` is now typed on control decisions only, `json_profile = "control"`.)
+- Gap G-13 (RC4 Appendix C.2): `control.absent: null` is valid (GEN-9; the SDKs read it as absent), but a repeated proto field has no null form, so the schema refuses it. A dense frame that also carries sparse keys of a wrong type: the SDKs use the dense form and ignore the sparse keys; the schema types them. No vector has either.
 - `logp_acoustic` / `logp_lm`: the schema uses `maximum 0` (EVD-4 text); the validators allow 1e-9 of tolerance.
 
 ## 10. Relation to the hand-written schemas
@@ -133,4 +132,4 @@ The hand-written schemas in [`../schemas/nts-v0.1/`](../schemas/nts-v0.1/) and `
 - The `meta` conventions of 3.4 as machine-readable rules: roadmap P1-04, now in [`../semconv/`](../semconv/registry.md) (the check compares the registry containers with the proto `Struct` fields `Header.meta`, `TrustDecision.input` and `TrustDecision.declaration`).
 
 ## 12. Open spec questions found by the proto
-They are recorded in [CHANGELOG.md](../CHANGELOG.md) (RC2 section, "Open questions (P1-02)"). **All eight are resolved in RC3** (section 1.6 of [nts-1.0-rc3.md](../nts-1.0-rc3.md)): Q-1 GEN-9, Q-2 SEG-6 / LSL-G3, Q-3 CTL-T9, Q-4 TD-F2 / TD-13, Q-5 GEN-10, Q-6 PRF-5, Q-7 VER-6 … VER-10, Q-8 INT-T7 / CTL-T8.
+They are recorded in [CHANGELOG.md](../CHANGELOG.md) (RC2 section, "Open questions (P1-02)"). **All eight are resolved in RC3** (section 1.6 of [nts-1.0-rc3.md](../nts-1.0-rc3.md)): Q-1 GEN-9, Q-2 SEG-6 / LSL-G3, Q-3 CTL-T9, Q-4 TD-F2 / TD-13, Q-5 GEN-10, Q-6 PRF-5, Q-7 VER-6 … VER-10, Q-8 INT-T7 / CTL-T8. RC4 closed the follow-up gap G-12 (section 9 above; [nts-1.0-rc4.md](../nts-1.0-rc4.md) section 1.6).

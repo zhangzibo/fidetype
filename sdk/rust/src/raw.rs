@@ -6,7 +6,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use alloc::format;
 
-use crate::constants::{EVENT_TYPES, HEADER_KNOWN, JSONL_HEADER_REQUIRED, NPZ_KNOWN, NPZ_NO_BLANK, NPZ_REQUIRED};
+use crate::constants::{EVENT_TYPES, HEADER_KNOWN, TIMED_TYPES, TIMING_KEYS, JSONL_HEADER_REQUIRED, NPZ_KNOWN, NPZ_NO_BLANK, NPZ_REQUIRED};
 use crate::error::Error;
 use crate::json::{decode_utf8, is_blank, num_text, parse_json, py_lines, repr, str_list, Map, Value};
 use crate::npz::{read_npz, Cell, NpyArray, NpyError, NpyKind};
@@ -56,6 +56,8 @@ pub struct RawStream {
     /// Non-frame JSON Lines events in file order, each with `_line`.
     pub events: Vec<Map>,
     pub sparse_frames: Vec<SparseFrameInfo>,
+    /// The latency fields (5.2) of every event of `TIMED_TYPES`, with `_line` (JSON Lines only).
+    pub timed: Vec<Map>,
     pub npz_keys: Vec<String>,
     pub npz_dtypes: Vec<(String, String)>,
     pub unknown_keys: Vec<String>,
@@ -78,6 +80,7 @@ impl RawStream {
             issues: Vec::new(),
             events: Vec::new(),
             sparse_frames: Vec::new(),
+            timed: Vec::new(),
             npz_keys: Vec::new(),
             npz_dtypes: Vec::new(),
             unknown_keys: Vec::new(),
@@ -180,6 +183,16 @@ pub fn read_jsonl_raw(bytes: &[u8]) -> RawStream {
         if typ == "header" {
             raw.issue("NTS-JSONL-HEADER", "6.2.1", format!("line {}: a second header", n));
             continue;
+        }
+        if TIMED_TYPES.contains(&typ.as_str()) && TIMING_KEYS.iter().any(|k| obj.has(k)) {
+            let mut rec = Map::new();
+            for k in TIMING_KEYS {
+                if let Some(v) = obj.get_opt(k) {
+                    rec.insert(*k, v.clone());
+                }
+            }
+            rec.insert("_line", Value::int(n as f64));
+            raw.timed.push(rec);
         }
         if !EVENT_TYPES.contains(&typ.as_str()) {
             raw.ignored_events += 1; // 6.2 rule 5

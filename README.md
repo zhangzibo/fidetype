@@ -6,7 +6,7 @@
 
 *Name:* *fides* (Latin: trust) + type.
 
-> **Status:** NTS 1.0 is a **draft release candidate** ([RC2](spec/nts-1.0-rc2.md), open for comment). The Python, TypeScript and Rust SDKs pass the full conformance suite in CI, but **no package is published yet** (version 0.0.1). Fidetype is research software. **It is not a medical device.** APIs can change.
+> **Status:** NTS 1.0 is a **draft release candidate** ([RC4](spec/nts-1.0-rc4.md), open for comment). The Python, TypeScript and Rust SDKs pass the full conformance suite in CI, but **no package is published yet** (version 0.0.1). Fidetype is research software. **It is not a medical device.** APIs can change.
 
 ## Why NTS exists
 
@@ -16,7 +16,7 @@ NTS takes the role for neural input that [OpenTelemetry](https://opentelemetry.i
 
 | OpenTelemetry has | NTS / Fidetype has |
 |---|---|
-| A data model and semantic conventions | The NTS data model: frames of probabilities over a declared vocabulary, hypotheses, segments, `meta` conventions ([spec](spec/nts-1.0-rc2.md)) |
+| A data model and semantic conventions | The NTS data model: frames of probabilities over a declared vocabulary, hypotheses, segments, `meta` conventions ([spec](spec/nts-1.0-rc4.md)) |
 | A wire protocol (OTLP) | Bindings: JSON Lines, NPZ, Lab Streaming Layer (LSL), WebSocket |
 | SDKs in many languages | Python (reference), TypeScript, Rust (`no_std` core) |
 | The Collector (receivers → processors → exporters) | The Fidetype Collector ([FEP-0006](spec/feps/0006-collector.md)) |
@@ -86,7 +86,7 @@ Next steps: [Getting started](docs/getting-started.md) (emit a stream from your 
 | Read | For |
 |---|---|
 | [docs/](docs/README.md) | The documentation index: getting started, concepts, SDK guides, Collector, conformance, releasing |
-| [spec/nts-1.0-rc2.md](spec/nts-1.0-rc2.md) | The normative NTS 1.0 RC2 draft (rules with stable ids, for example `TD-9`) |
+| [spec/nts-1.0-rc4.md](spec/nts-1.0-rc4.md) | The normative NTS 1.0 RC4 draft (rules with stable ids, for example `TD-9`) |
 | [spec/README.md](spec/README.md) | All spec versions, FEPs, stability levels, conformance profiles |
 | [wiki/](wiki/index.md) | The research knowledge base: sources, concepts, results |
 | [Roadmap](wiki/questions/roadmap-standard.md) | Phases P1–P13 from v0.1 to a full standard; live progress on the [dashboard](wiki/progress/index.html) |
@@ -103,7 +103,7 @@ Next steps: [Getting started](docs/getting-started.md) (emit a stream from your 
 ## Repository layout
 
 ```
-spec/         NTS spec (v0.1, 1.0 RC1/RC2), FEPs, proto3 files, JSON schemas, conformance vectors
+spec/         NTS spec (v0.1, 1.0 RC1-RC4), FEPs, proto3 files, JSON schemas, conformance vectors
 src/fidetype/ Python reference SDK: streams, trust layer, conformance, collector, adapters, benchmark, demo
 sdk/          TypeScript SDK (sdk/typescript) and Rust SDK (sdk/rust)
 tests/        Python tests (pytest)

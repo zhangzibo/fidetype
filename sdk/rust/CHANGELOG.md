@@ -5,6 +5,9 @@ This file lists the changes of the Rust SDK (crate `fidetype`). The format follo
 ## [Unreleased]
 
 ### Added
+- **NTS 1.0 RC4, optional field types (GEN-11, gap G-12, FEP-0008).** The validators refuse a wrongly typed optional field: `segment_end.reason`; `hypothesis.t_start`, `t_end`, `revision_of`, `nbest[].spans`; `signal_quality.channels`; `pointer.absent`, `score`, `score_semantics` (null refused); `decision.score` and `score_range` for every semantics (DEC-6); header `vocab_id`, `vocab_version` (`NTS-VOCAB-ID`, new title); `trust_decision.reason`; intent `vocab_id`, `pending_cleared` (INT-T8); control `level` without `radius` (CTL-T8). The latency fields (TIM-4) are checked on every event of registry 12.1, frames included (`constants::TIMING_KEYS`, `TIMED_TYPES`; new public field `RawStream::timed`). Same behaviour as Python and TypeScript (vectors V69-V82, F63-F66, D24-D26, I25, C25, E25-E27).
+- `constants::PLANNED_NAMESPACES`: a custom `meta` key in `emg`, `eeg`, `meg`, `fnirs` or `implant` gets the `NTS-NAMESPACE` warning (MET-3, RC4 SC-2).
+- Tests: vector counts 82 / 66 / 35 / 51 / 44 / 52 (330).
 - **NTS 1.0 RC3, unknown enumeration values (VER-6 … VER-10, FEP-0007).** New helpers `constants::is_newer_minor`, `json::enum_ok`, `json::is_unknown`, `json::newer_minor`. In data whose governing version is a newer minor version (`"1.1"` …), every validator accepts an unknown enumeration string; 0.1 and 1.0 data still refuse it. Comparison rules skip unknown values. Same behaviour as Python and TypeScript (vectors V66-V68, F57-F59, I24, D22, D23, C24, E22-E24).
 - `DecisionKind::Unknown` (name `"unknown"`): a valid decision with an unknown `action` or `profile`; never forwarded. `forward` is false for an intent COMMIT with an unknown `risk_class`, `role` or `confirmed_via`, and for a control COMMIT with an unknown `state` (VER-10).
 - `profiles::fep0001::is_text_decision`, `profiles::fep0003::unknown_intent_values`.

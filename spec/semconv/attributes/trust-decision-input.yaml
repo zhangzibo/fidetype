@@ -6,11 +6,12 @@ attributes:
   - key: kind
     type: string
     validator: none
-    examples: [frames, hypothesis, intent, decision, feedback, control, control_enable, timer]
+    registered_values: [frames, hypothesis, intent, decision, feedback, control, control_enable, timer]
     brief: The input route.
     requirement:
       - {scope: trust-layer, level: recommended, condition: "always"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: frame_range
     type: "int[2]"
@@ -19,6 +20,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is frames"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: t_range
     type: "double[2]"
@@ -28,6 +30,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is frames"}
     stability: development
+    target_stability: development
     rules: [TD-13, TIM-1]
   - key: hypothesis_id
     type: string
@@ -36,6 +39,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is hypothesis"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: revision_of
     type: string
@@ -44,6 +48,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is hypothesis"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: intent_id
     type: string
@@ -52,6 +57,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is intent"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: label
     type: string
@@ -60,6 +66,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is decision"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: tick
     type: int
@@ -68,6 +75,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is control"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: ref_unit
     type: int
@@ -76,6 +84,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is feedback"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: outcome
     type: string
@@ -84,6 +93,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is feedback"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: source
     type: string
@@ -92,6 +102,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "kind is feedback"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: score_semantics
     type: string
@@ -100,6 +111,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "intent routes"}
     stability: development
+    target_stability: development
     rules: [TD-13, INT-S2]
   - key: sha256
     type: string
@@ -108,6 +120,7 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "event routes"}
     stability: development
+    target_stability: development
     rules: [TD-13]
   - key: hypothesis_sha256
     type: string
@@ -116,4 +129,5 @@ attributes:
     requirement:
       - {scope: trust-layer, level: recommended, condition: "event routes"}
     stability: development
+    target_stability: development
     rules: [TD-13]

@@ -1,6 +1,6 @@
 # Concepts
 
-This page explains the main ideas of NeuralTextStream (NTS) and Fidetype. It is informative. The rules are in the spec, [NTS 1.0 RC2](../spec/nts-1.0-rc2.md) (draft). Each section below links to the spec section that defines it.
+This page explains the main ideas of NeuralTextStream (NTS) and Fidetype. It is informative. The rules are in the spec, [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) (draft). Each section below links to the spec section that defines it.
 
 ## The problem NTS solves
 
@@ -10,7 +10,7 @@ NTS borrows its structure from [OpenTelemetry](https://opentelemetry.io/): a dat
 
 ## Data model
 
-A stream has one **header** and a sequence of typed **events** ([spec section 2.2](../spec/nts-1.0-rc2.md#22-stream-model)).
+A stream has one **header** and a sequence of typed **events** ([spec section 2.2](../spec/nts-1.0-rc4.md#22-stream-model)).
 
 | Event | Content | Profile |
 |---|---|---|
@@ -27,13 +27,13 @@ A stream has one **header** and a sequence of typed **events** ([spec section 2.
 
 **Vocabulary.** The header declares the vocabulary and its type: characters, keys, words, phonemes or commands. A frame gives one probability per vocabulary entry. NTS does not depend on one modality or one vocabulary.
 
-**Semantic conventions.** `meta` keys such as `device.modality`, `decoder.name`, `decoder.causal` and `data.derived` describe the source in a standard way ([spec 3.4](../spec/nts-1.0-rc2.md#34-semantic-conventions-for-meta)).
+**Semantic conventions.** `meta` keys such as `device.modality`, `decoder.name`, `decoder.causal` and `data.derived` describe the source in a standard way ([spec 3.4](../spec/nts-1.0-rc4.md#34-semantic-conventions-for-meta)).
 
-**No raw signal.** A stream carries decoder output only, never the raw recording ([spec 10.2](../spec/nts-1.0-rc2.md#102-no-raw-signal-in-the-stream)). Decoded text is personal data ([spec 10.3](../spec/nts-1.0-rc2.md#103-personal-data)).
+**No raw signal.** A stream carries decoder output only, never the raw recording ([spec 10.2](../spec/nts-1.0-rc4.md#102-no-raw-signal-in-the-stream)). Decoded text is personal data ([spec 10.3](../spec/nts-1.0-rc4.md#103-personal-data)).
 
 ## Output profiles
 
-A profile adds event kinds to the core. It never changes a core field ([spec 7](../spec/nts-1.0-rc2.md#7-output-profiles)).
+A profile adds event kinds to the core. It never changes a core field ([spec 7](../spec/nts-1.0-rc4.md#7-output-profiles)).
 
 | Profile | Use | Proposal |
 |---|---|---|
@@ -46,8 +46,8 @@ A profile adds event kinds to the core. It never changes a core field ([spec 7](
 
 | Binding | Form | Defined in |
 |---|---|---|
-| JSON Lines (`.jsonl`) | One JSON event per line; the default file form | [spec 8.1](../spec/nts-1.0-rc2.md#81-files) |
-| NPZ (`.npz`) | NumPy archive of a whole stream; compact for dense frames | [spec 8.1](../spec/nts-1.0-rc2.md#81-files) |
+| JSON Lines (`.jsonl`) | One JSON event per line; the default file form | [spec 8.1](../spec/nts-1.0-rc4.md#81-files) |
+| NPZ (`.npz`) | NumPy archive of a whole stream; compact for dense frames | [spec 8.1](../spec/nts-1.0-rc4.md#81-files) |
 | LSL `nts-lsl/0.1` | Lab Streaming Layer streams, with clock correction and gap rules | [FEP-0002](../spec/feps/0002-nts-over-lsl.md) |
 | WebSocket `nts-ws/0.1` | Framing, order, resume, back-pressure and a decisions channel | [FEP-0004](../spec/feps/0004-nts-over-websocket.md) |
 
@@ -55,7 +55,7 @@ The proto3 files in [`spec/proto/`](../spec/proto/README.md) describe the full 1
 
 ## Trust layer
 
-Decoders make errors. Their language models can also write fluent text that the person did not intend. The trust layer sits between the decoder and the user. For each utterance, it emits one final `trust_decision` ([spec 6](../spec/nts-1.0-rc2.md#6-trust-decisions)):
+Decoders make errors. Their language models can also write fluent text that the person did not intend. The trust layer sits between the decoder and the user. For each utterance, it emits one final `trust_decision` ([spec 6](../spec/nts-1.0-rc4.md#6-trust-decisions)):
 
 | Action | Meaning |
 |---|---|
@@ -80,7 +80,7 @@ Rules that every consumer must follow: act only on a final decision (`is_final =
 
 ## Conformance
 
-The conformance suite checks producers and consumers against golden vectors ([spec 9](../spec/nts-1.0-rc2.md#9-conformance)).
+The conformance suite checks producers and consumers against golden vectors ([spec 9](../spec/nts-1.0-rc4.md#9-conformance)).
 
 | Level (producer) | Adds |
 |---|---|
@@ -96,7 +96,7 @@ The Collector is one service that reads NTS from several sources, runs processor
 
 ## How the spec changes
 
-A change to the spec needs a FEP (Fidetype Enhancement Proposal). FEPs have a lifecycle: Draft, Under review, Accepted, Implemented, Final (or Rejected / Withdrawn) ([spec 11.6](../spec/nts-1.0-rc2.md#116-change-process-and-fep-lifecycle)). The process is in [GOVERNANCE.md](../GOVERNANCE.md#4-spec-changes-feps).
+A change to the spec needs a FEP (Fidetype Enhancement Proposal). FEPs have a lifecycle: Draft, Under review, Accepted, Implemented, Final (or Rejected / Withdrawn) ([spec 11.6](../spec/nts-1.0-rc4.md#116-change-process-and-fep-lifecycle)). The process is in [GOVERNANCE.md](../GOVERNANCE.md#4-spec-changes-feps).
 
 ## Related projects
 
@@ -118,4 +118,4 @@ A change to the spec needs a FEP (Fidetype Enhancement Proposal). FEPs have a li
 | eWPM | Effective words per minute: the rate of correct text, with the time for corrections included. The benchmark compares it with a no-BCI baseline |
 | FEP | Fidetype Enhancement Proposal |
 
-The full term list is in [spec 1.4](../spec/nts-1.0-rc2.md#14-terms).
+The full term list is in [spec 1.4](../spec/nts-1.0-rc4.md#14-terms).

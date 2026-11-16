@@ -205,6 +205,8 @@ def td_control_format_errors(e: dict[str, Any]) -> list[str]:
             x.append("radius must be a number >= 0")
         if not (_num(e.get("level")) and 0.0 < e["level"] < 1.0):
             x.append("a decision with radius needs level in (0, 1)")
+    elif "level" in e and not (_num(e["level"]) and 0.0 < e["level"] < 1.0):
+        x.append("level must be a number in (0, 1) (CTL-T8)")
     if "reasons" in e and not (isinstance(e["reasons"], list) and all(isinstance(r, str) for r in e["reasons"])):
         x.append("reasons must be a list of strings")
     if "t" in e and not _num(e["t"]):
@@ -632,6 +634,23 @@ def build_vectors() -> list[Any]:
         failing="FEP5-SAFETY",
         writer=_w_lines([_cd(seq=0, tick=0, **v11), _cd(seq=1, tick=1, state="boost", **v11),
                          f3._td(session="c1", seq=2, unit=0, intent="intent.click", vocab_id="intent.cursor-v1", **v11)]))
+    # --- NTS 1.0 RC4 (gap G-12, FEP-0008): optional fields have their types (GEN-11, CTL-T8, TD-F2, TIM-4)
+    v10 = {"spec_version": "1.0"}
+    add("E25", "e25-log-level-without-radius.jsonl", "accept", "1.0 RC4 7.4.5 (CTL-T8)",
+        "A control hold with level 0.9 and no radius (level without radius is allowed), then an attenuate COMMIT",
+        {"kind": "decisions", "control_decisions": 2, "moving_ticks": [1]},
+        writer=_w_lines([_hold(0, 0, "not_engaged", engagement=0, radius=_DROP, score_semantics="none", **v10),
+                         _cd(seq=1, tick=1, **v10)]))
+    add("E26", "e26-td-level-string.jsonl", "reject", "1.0 RC4 7.4.5 (CTL-T8)",
+        'A control hold with level "high" and no radius (level is a number in (0, 1))', failing="FEP5-TD-FORMAT",
+        writer=_w_lines([_hold(0, 0, "not_engaged", engagement=0, radius=_DROP, level="high", score_semantics="none",
+                               **v10)]))
+    add("E27", "e27-td-reason-number.jsonl", "reject", "1.0 RC4 6.2 (TD-F2)",
+        "A control decision with reason 5, not a string", failing="FEP5-TD-FORMAT",
+        writer=_w_lines([_cd(reason=5, **v10)]))
+    add("C25", "c25-enable-t-emitted-string.jsonl", "reject", "1.0 RC4 5.2 (TIM-4)",
+        'A control_enable event with t_emitted "0.01" (latency fields are numbers on every event)',
+        failing="FEP5-V01-CORE", writer=_input(_en(t_emitted="0.01"), _ctl(0)))
     vs.sort(key=lambda v: v.vid)
     return vs
 

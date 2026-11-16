@@ -1,6 +1,6 @@
 # Fidetype TypeScript SDK (`@fidetype/sdk`)
 
-> Part of [Fidetype](../../README.md). Status: NTS 1.0 is a draft RC ([RC2](../../spec/nts-1.0-rc2.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](../../docs/sdks.md).
+> Part of [Fidetype](../../README.md). Status: NTS 1.0 is a draft RC ([RC4](../../spec/nts-1.0-rc4.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](../../docs/sdks.md).
 
 TypeScript SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. It works in Node (>= 18) and in the browser (ESM). The core has **zero runtime dependencies** and no Node API.
 

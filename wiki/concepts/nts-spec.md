@@ -1,5 +1,5 @@
 ---
-title: NeuralTextStream specification (versions, 1.0 RC3)
+title: NeuralTextStream specification (versions, 1.0 RC4)
 type: concept
 tags: [spec, neuraltextstream, standard, versioning, conformance, protobuf, p1]
 sources: []
@@ -13,14 +13,39 @@ The written contract of Fidetype. A decoder writes a NeuralTextStream (NTS); a t
 | Version | File | Status |
 |---|---|---|
 | 0.1 | [`spec/neuraltextstream-v0.1.md`](../../spec/neuraltextstream-v0.1.md) | Current release (Development) |
-| FEP-0001 … FEP-0005, FEP-0007 | [`spec/feps/`](../../spec/feps/) | Draft proposals (how FEPs work: [FEP process](fep-process.md)). FEP-0007 (unknown enumeration values) is new in RC3 |
-| **1.0 RC3** | [`spec/nts-1.0-rc3.md`](../../spec/nts-1.0-rc3.md) | **DRAFT for public comment** (2026-11-15). Not final. Current RC. Changes: section 1.6 |
+| FEP-0001 … FEP-0005, FEP-0007, FEP-0008 | [`spec/feps/`](../../spec/feps/) | Draft proposals (how FEPs work: [FEP process](fep-process.md)). FEP-0007 (unknown enumeration values) is new in RC3; FEP-0008 (optional field types, semantic-convention registry) is new in RC4 |
+| **1.0 RC4** | [`spec/nts-1.0-rc4.md`](../../spec/nts-1.0-rc4.md) | **DRAFT for public comment** (2026-11-15). Not final. Current RC. Changes: section 1.6 |
+| 1.0 RC3 | [`spec/nts-1.0-rc3.md`](../../spec/nts-1.0-rc3.md) | Superseded by RC4; kept as the record |
 | 1.0 RC2 | [`spec/nts-1.0-rc2.md`](../../spec/nts-1.0-rc2.md) | Superseded by RC3; kept as the record |
 | 1.0 RC1 | [`spec/nts-1.0-rc1.md`](../../spec/nts-1.0-rc1.md) | Superseded by RC2 (same rule text); kept as the record |
 
 Changelog: [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md). Index of specs and FEPs: [`spec/README.md`](../../spec/README.md).
 
 Tools around the spec: the [collector](collector.md) (draft FEP-0006, P3) receives NTS from files and WebSocket, runs the trust layer and the privacy filter, and exports decision logs. It changes no field of NTS.
+
+## RC4: semantic conventions and optional field types (2026-11-15)
+RC4 answers the open questions SC-2 … SC-8 of the [semantic-convention registry](../../spec/semconv/registry.md) (roadmap P1-04) and closes gap G-12. Rule: the simplest rule that keeps valid data valid. No RC3 vector changed its verdict. Normative changes: [FEP-0008](../../spec/feps/0008-optional-field-types-and-semconv.md).
+
+| Item | Answer | Rules |
+|---|---|---|
+| SC-1 modality keys | Deferred to a FEP with evidence from real producers (P4 adapters) | 12.5, A.8 |
+| SC-2 planned namespaces | Reserved now; a custom key in `emg.*` … `implant.*` gets the MET-3 warning (all three SDKs) | MET-3 |
+| SC-3 empty strings | `""` is not valid for the string keys of 3.4 ("non-empty string"); the validators already refused it | MET-7 |
+| SC-4 value lists | Open: regulatory status, calibration method, `input.kind`, `declaration.mode`. Closed: `device.modality`, `declaration.status`, `declaration.where` | MET-8 |
+| SC-5 stability of `input` / `declaration` keys | Development in 1.0 | 2.3 |
+| SC-6 units | Only physical quantities have a unit (seconds); counts and indices have none | MET-9 |
+| SC-7 YAML or prose | The YAML registry is normative; the spec tables are informative copies, kept equal by CI; A.1 item 9 resolved | MET-10 |
+| SC-8 SDK constants | No spec change; the CI check also compares the SDK planned namespaces | MET-10 |
+| G-12 optional field types | The table type applies (GEN-11). All three validators now check about 20 optional fields that only the JSON Schema checked, and the latency fields on every event | GEN-11, HDR-16, DEC-6, HYP-5, INT-T8, SEG-6, SQ-1, PTR-1, TIM-4, TD-F2, CTL-T8 |
+
+| Item | Detail |
+|---|---|
+| How G-12 was found | A mutation probe: each field of each accept vector set to a wrong type; a gap = the generated schema refuses and every Python profile consumer accepts. 48 gap signatures before, 10 after (all accounted for: binding records, schema-only `trust_decision.t` now control-only, and new gap G-13) |
+| New vectors | V69 … V82, F63 … F66, D24 … D26, I25, C25, E25 … E27 (26; 330 in all) |
+| Parity | Python = TypeScript = Rust on 330 vectors and 26,687 fuzz mutants (seeds 1–3, `--n 30`); schema 201 / 201 one-line verdicts |
+| New gap G-13 | Schema stricter than the spec in two places: sparse keys on a dense frame, control `absent: null` |
+
+> **Our take:** making the YAML registry normative is the step that lets later keys (SC-1) and generated SDK constants live in one place, as in OpenTelemetry semantic conventions. The prose tables stay for readers; CI makes a difference impossible to merge. The G-12 fix was cheap only because the generated JSON Schema already had the types: the schema found the gaps, and the probe proved that no accept vector depended on them.
 
 ## RC3: the protobuf open questions answered (2026-11-15)
 RC3 answers Q-1 … Q-8 of the [protobuf schema](nts-proto-schema.md) work. Rule: write down what the three SDKs already do, if that is safe. Else pick one rule and change all three SDKs. Before the choice, probe vectors went through all three SDKs: they agreed on every probe.

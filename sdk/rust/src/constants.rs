@@ -34,8 +34,17 @@ pub const SCORE_SEMANTICS: &[&str] = &["calibrated_prob", "uncalibrated_prob", "
 pub const CLOCK_DOMAINS: &[&str] = &["lsl", "unix", "monotonic", "trial", "other"];
 pub const SQ_UNITS: &[&str] = &["index", "snr_db", "impedance_ohm", "other"];
 pub const MODALITIES: &[&str] = &["emg", "eeg", "meg", "opm-meg", "ecog", "intracortical", "fnirs", "other"];
+/// Planned modality namespaces (NTS 1.0 12.5). Reserved from RC4 (SC-2): MET-3 applies, no keys defined yet.
+pub const PLANNED_NAMESPACES: &[&str] = &["emg", "eeg", "meg", "fnirs", "implant"];
 /// JSON Lines event kinds of spec 3.0, plus `end`.
 pub const EVENT_TYPES: &[&str] = &["frame", "decision", "hypothesis", "pointer", "signal_quality", "end"];
+/// The latency fields of NTS 1.0 section 5.2 (TIM-4).
+pub const TIMING_KEYS: &[&str] = &["t_signal_start", "t_signal_end", "t_decoded", "t_emitted"];
+/// Event types (NTS 1.0 registry 12.1) on which the latency fields are checked (TIM-4, NTS 1.0 RC4 / G-12).
+pub const TIMED_TYPES: &[&str] = &[
+    "frame", "segment_end", "signal_quality", "decision", "hypothesis", "pointer", "intent", "intent_feedback", "control",
+    "control_enable",
+];
 /// NPZ keys that spec 6.1 marks "Required: Yes".
 pub const NPZ_REQUIRED: &[&str] = &["version", "log_probs", "frame_times", "vocab", "blank_id", "source", "meta_json"];
 pub const NPZ_KNOWN: &[&str] =
