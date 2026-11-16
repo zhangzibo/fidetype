@@ -61,6 +61,7 @@ from fidetype.trust.session_risk import (
     min_ltt_items,
     mondrian_ltt,
 )
+from fidetype.trust.adaptive import FeedbackOutcome, FeedbackUser, GuardedDecision, GuardedUpdateLoop
 from fidetype.trust.content import CommitGate, GatedPolicy, gate_decision
 from fidetype.trust.frozen import PAPER1_V4_RECIPE, FrozenTrustConfig, paper1_v4_harness_config
 from fidetype.trust.streaming import (
@@ -75,6 +76,10 @@ from fidetype.trust.streaming import (
 from fidetype.trust.types import Candidate, NBest, from_lm_hypotheses
 
 __all__ = [
+    "FeedbackOutcome",
+    "FeedbackUser",
+    "GuardedDecision",
+    "GuardedUpdateLoop",
     "OFFER_WORDS_GRID",
     "CommitGate",
     "GatedPolicy",
