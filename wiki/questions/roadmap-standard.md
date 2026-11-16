@@ -652,6 +652,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - **Goal:** a stated bound on the rate of committed text that the signal does not support.
 - **Deliverable:** CRC / LTT calibration of τ and the commit threshold on a fluent-wrong loss; a guarantee-sheet entry (α, δ, method, items, assumptions), joined to the P14-03 drop-in wrapper.
 - **Depends on:** P15-05.
+- **Result (2026-11-16, in progress: T15 done, T12 open):** [results](../../experiments/2026-11-16-p15-06-halluc-bound/results.md). New `fidetype.trust.halluc_bound` + `calibrate(grounding=, llm=)`: joint LTT of (commit_p, τ_commit, τ_word) on a fluent-wrong loss, word-level forced-alignment check, sheet entry. Guarantee P(fluent-wrong ≤ 0.01 and wrong-commit ≤ 0.05) ≥ 0.9. On 701 held-out T15 trials the bound held in all 10 guards (fluent-wrong 0-0.0029); fluent-wrong commits B 2→0, C 5→1, D 3→1; swapped-signal commits 0 in every arm (also ungrounded: τ_commit = 0 alone stops them). H1-H4 pass for B1, but B1 never commits (utility 0 of 8 right commits): safe but costly. The `most_right` rule keeps 8 B1 commits (1 fluent-wrong).
 - **Done when:** on held-out data of two public sets, the fluent-wrong commit rate is at or below α at the stated confidence, and the controls pass.
 
 #### P15-07 Public hallucination benchmark
