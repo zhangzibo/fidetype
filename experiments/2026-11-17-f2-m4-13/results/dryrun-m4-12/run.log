@@ -1,0 +1,23 @@
+2026-11-16 19:07:19 [118 MB] t15: start stages ['prep', 'arms'] limit 0
+2026-11-16 19:07:24 [567 MB] t15 prep done: {'fluent_logp_per_word': -2.671666666666667, 'n_cal': 160}
+2026-11-16 19:07:24 [567 MB] t15 A0_ngram: start {'rescore': False, 'rewrite': None, 'ground': False}
+2026-11-16 19:08:28 [795 MB] t15 A0_ngram: done {"status": "ok", "wer": 0.42326732673267325, "sentence_acc": 0.1, "n_commit": 2, "n_wrong_commit": 0, "hallucination_rate": 0.0, "fluent_wrong_commits": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0, "commits_2plus_words": 0, "max_allowed_plan": 1}, "shuffled": {"n": 20, "commits": 0, "commits_2plus_words": 0, "max_allowed_plan": 1}, "swapped": {"n": 60, "commits": 2, "commits_not_truth_of_signal": 2, "commits_equal_truth_of_language_trial": 2}}, "seconds": 64.6}
+2026-11-16 19:08:28 [799 MB] t15 ground prep: 0/160
+2026-11-16 19:08:47 [801 MB] t15 ground prep: tau 0.0904, true texts without labels 0
+2026-11-16 19:08:47 [801 MB] t15 ground prep: lambda 0.1: val_select WER 0.3888
+2026-11-16 19:08:47 [801 MB] t15 ground prep: lambda 0.25: val_select WER 0.3898
+2026-11-16 19:08:47 [801 MB] t15 ground prep: lambda 0.5: val_select WER 0.3908
+2026-11-16 19:08:47 [801 MB] t15 ground prep: lambda 1.0: val_select WER 0.3879
+2026-11-16 19:08:47 [801 MB] t15 ground prep: lambda 2.0: val_select WER 0.3956
+2026-11-16 19:08:47 [801 MB] t15 ground prep done: {'frame_temperature': 1.3268279055414276, 'tau': 0.09035838489947205, 'true_deficit_quantiles': {'0.5': 0.004570722293102001, '0.9': 0.060901701762569455, '0.95': 0.08582191198727905, '0.99': 0.14865735535694255}, 'true_deficit_pass_rate_at_tau': 0.95625, 'true_without_labels': 0, 'llm_weight_grid_wer': {'0.1': 0.3888354186717998, '0.25': 0.3897978825794033, '0.5': 0.39076034648700675, '1.0': 0.38787295476419636, '2.0': 0.39557266602502406}, 'llm_weight': 1.0, 'base_val_select_wer': 0.3897978825794033, 'seconds': 18.6}
+2026-11-16 19:08:47 [794 MB] t15 B1_rescore_G: start {'rescore': True, 'rewrite': None, 'ground': True}
+2026-11-16 19:09:03 [799 MB] t15 B1_rescore_G: done {"status": "ok", "wer": 0.42326732673267325, "sentence_acc": 0.1, "n_commit": 2, "n_wrong_commit": 0, "hallucination_rate": 0.0, "fluent_wrong_commits": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0, "commits_2plus_words": 0, "max_allowed_plan": 1}, "shuffled": {"n": 20, "commits": 0, "commits_2plus_words": 0, "max_allowed_plan": 1}, "swapped": {"n": 60, "commits": 0, "commits_not_truth_of_signal": 0, "commits_equal_truth_of_language_trial": 0}}, "seconds": 16.4}
+2026-11-16 19:09:03 [799 MB] t15: all done
+2026-11-16 19:32:28 [119 MB] t15: start stages ['prep', 'arms'] limit 0
+2026-11-16 19:32:32 [573 MB] t15 A0_ngram: done before, skip
+2026-11-16 19:32:32 [573 MB] t15 B1_rescore_G: done before, skip
+2026-11-16 19:32:32 [573 MB] t15: all done
+2026-11-16 19:34:05 [118 MB] t15: start stages ['prep', 'arms'] limit 0
+2026-11-16 19:34:10 [573 MB] t15 A0_ngram: done before, skip
+2026-11-16 19:34:10 [573 MB] t15 B1_rescore_G: done before, skip
+2026-11-16 19:34:10 [573 MB] t15: all done

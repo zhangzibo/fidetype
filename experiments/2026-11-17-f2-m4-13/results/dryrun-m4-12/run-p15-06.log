@@ -1,0 +1,29 @@
+2026-11-16 19:30:15 start t15 ['A0_ngram', 'B1_rescore_G', 'B1_rescore_G@most_right', 'A0_ngram@single', 'B1_rescore_G@single'] (fidetype 0.0.1); source m4-12, dry True, stub True
+2026-11-16 19:30:19 t15 data: 160 calibration, 60 held-out trials
+2026-11-16 19:30:19 A0_ngram: start
+2026-11-16 19:30:26 A0_ngram: done {"status": "ok", "wer": 0.42326732673267325, "n_commit": 0, "n_wrong_commit": 0, "fluent_wrong_commits": 0, "halluc_gate_blocked": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0}, "shuffled": {"n": 20, "commits": 0}, "swapped": {"n": 60, "commits": 0, "commits_not_truth_of_signal": 0, "commits_equal_truth_of_language_trial": 0}}, "seconds": 7.5}
+2026-11-16 19:30:26 B1_rescore_G: start
+2026-11-16 19:30:44 B1_rescore_G: done {"status": "ok", "wer": 0.42326732673267325, "n_commit": 0, "n_wrong_commit": 0, "fluent_wrong_commits": 0, "halluc_gate_blocked": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0}, "shuffled": {"n": 20, "commits": 0}, "swapped": {"n": 60, "commits": 0, "commits_not_truth_of_signal": 0, "commits_equal_truth_of_language_trial": 0}}, "seconds": 17.6}
+2026-11-16 19:30:44 B1_rescore_G@most_right: start
+2026-11-16 19:30:51 B1_rescore_G@most_right: done {"status": "ok", "wer": 0.42326732673267325, "n_commit": 0, "n_wrong_commit": 0, "fluent_wrong_commits": 0, "halluc_gate_blocked": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0}, "shuffled": {"n": 20, "commits": 0}, "swapped": {"n": 60, "commits": 0, "commits_not_truth_of_signal": 0, "commits_equal_truth_of_language_trial": 0}}, "seconds": 6.8}
+2026-11-16 19:30:51 A0_ngram@single: start
+2026-11-16 19:30:58 A0_ngram@single: done {"status": "ok", "wer": 0.42326732673267325, "n_commit": 0, "n_wrong_commit": 0, "fluent_wrong_commits": 0, "halluc_gate_blocked": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0}, "shuffled": {"n": 20, "commits": 0}, "swapped": {"n": 60, "commits": 0, "commits_not_truth_of_signal": 0, "commits_equal_truth_of_language_trial": 0}}, "seconds": 6.8}
+2026-11-16 19:30:58 B1_rescore_G@single: start
+2026-11-16 19:31:04 B1_rescore_G@single: done {"status": "ok", "wer": 0.42326732673267325, "n_commit": 0, "n_wrong_commit": 0, "fluent_wrong_commits": 0, "halluc_gate_blocked": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0}, "shuffled": {"n": 20, "commits": 0}, "swapped": {"n": 60, "commits": 0, "commits_not_truth_of_signal": 0, "commits_equal_truth_of_language_trial": 0}}, "seconds": 6.6}
+2026-11-16 19:31:04 all done; decoder loaded None, LLM loaded False
+2026-11-16 19:32:32 start t15 ['A0_ngram', 'B1_rescore_G', 'B1_rescore_G@most_right', 'A0_ngram@single', 'B1_rescore_G@single'] (fidetype 0.0.1); source m4-12, dry True, stub True
+2026-11-16 19:32:37 t15 data: 160 calibration, 60 held-out trials
+2026-11-16 19:32:37 A0_ngram: done before, skip
+2026-11-16 19:32:37 B1_rescore_G: done before, skip
+2026-11-16 19:32:37 B1_rescore_G@most_right: done before, skip
+2026-11-16 19:32:37 A0_ngram@single: done before, skip
+2026-11-16 19:32:37 B1_rescore_G@single: done before, skip
+2026-11-16 19:32:37 all done; decoder loaded None, LLM loaded False
+2026-11-16 19:34:10 start t15 ['A0_ngram', 'B1_rescore_G', 'B1_rescore_G@most_right', 'A0_ngram@single', 'B1_rescore_G@single'] (fidetype 0.0.1); source m4-12, dry True, stub True
+2026-11-16 19:34:15 t15 data: 160 calibration, 60 held-out trials
+2026-11-16 19:34:15 A0_ngram: done before, skip
+2026-11-16 19:34:15 B1_rescore_G: done before, skip
+2026-11-16 19:34:15 B1_rescore_G@most_right: done before, skip
+2026-11-16 19:34:15 A0_ngram@single: done before, skip
+2026-11-16 19:34:15 B1_rescore_G@single: done before, skip
+2026-11-16 19:34:15 all done; decoder loaded None, LLM loaded False

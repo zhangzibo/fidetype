@@ -1,0 +1,17 @@
+2026-11-16 19:00:19 stage t15 start (source m4-12, dry True)
+2026-11-16 19:00:27 stage t15 start (source m4-12, dry True)
+2026-11-16 19:00:31 t15: calibration 160, held out 60
+2026-11-16 19:03:33 t15: base tcfg-d1219cab111fd08f commit_p 0.3 in 187s
+2026-11-16 19:03:55 t15 target 0.5: tcfg-49f6da9971ca10cd commit_p inf feasible False (test {}, 0 certified) in 12s
+2026-11-16 19:03:56 t15 target 0.5: held out 0/60 commits, 0 wrong, precision None CP95 None; controls pass True
+2026-11-16 19:04:07 t15 target 0.8: tcfg-2e3b3a85a74d6c0a commit_p inf feasible False (test {}, 0 certified) in 11s
+2026-11-16 19:04:08 t15 target 0.8: held out 0/60 commits, 0 wrong, precision None CP95 None; controls pass True
+2026-11-16 19:04:19 t15 target 0.9: tcfg-551429f66792b285 commit_p inf feasible False (test {}, 0 certified) in 11s
+2026-11-16 19:04:20 t15 target 0.9: held out 0/60 commits, 0 wrong, precision None CP95 None; controls pass True
+2026-11-16 19:04:31 t15 target 0.95: tcfg-f4e535091e08cd45 commit_p inf feasible False (test {}, 0 certified) in 11s
+2026-11-16 19:04:32 t15 target 0.95: held out 0/60 commits, 0 wrong, precision None CP95 None; controls pass True
+2026-11-16 19:04:32 t15: resampling {"0.5": {"draws": 40, "feasible": 0, "violations": 0, "violation_rate": null, "limit": null, "pass": null, "mean_population_precision": null, "mean_commit_rate": null}, "0.8": {"draws": 40, "feasible": 0, "violations": 0, "violation_rate": null, "limit": null, "pass": null, "mean_population_precision": null, "mean_commit_rate": null}, "0.9": {"draws": 40, "feasible": 0, "violations": 0, "violation_rate": null, "limit": null, "pass": null, "mean_population_precision": null, "mean_commit_rate": null}, "0.95": {"draws": 40, "feasible": 0, "violations": 0, "violation_rate": null, "limit": null, "pass": null, "mean_population_precision": null, "mean_commit_rate": null}}
+2026-11-16 19:04:32 t15: resampling (no min_commit_p) {"0.5": {"draws": 40, "feasible": 0, "violations": 0, "violation_rate": null, "limit": null, "pass": null, "mean_population_precision": null, "mean_commit_rate": null}, "0.8": {"draws": 40, "feasible": 0, "violations": 0, "violation_rate": null, "limit": null, "pass": null, "mean_population_precision": null, "mean_commit_rate": null}, "0.9": {"draws": 40, "feasible": 0, "violations": 0, "violation_rate": null, "limit": null, "pass": null, "mean_population_precision": null, "mean_commit_rate": null}, "0.95": {"draws": 40, "feasible": 0, "violations": 0, "violation_rate": null, "limit": null, "pass": null, "mean_population_precision": null, "mean_commit_rate": null}}
+2026-11-16 19:04:32 stage t15 done
+2026-11-16 19:32:27 t15 done before, skip
+2026-11-16 19:34:05 t15 done before, skip

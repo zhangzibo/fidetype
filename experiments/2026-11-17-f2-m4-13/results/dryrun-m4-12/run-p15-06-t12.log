@@ -1,0 +1,22 @@
+2026-11-16 19:31:20 [123 MB] start t12 ['A0_ngram@single', 'B1_rescore_G@single'] (fidetype 0.0.1); source m4-12, dry True, stub True
+2026-11-16 19:31:24 [544 MB] t12 data: 160 calibration, 60 held-out trials
+2026-11-16 19:31:24 [581 MB] A0_ngram@single: start
+2026-11-16 19:31:28 [665 MB] A0_ngram@single: done {"status": "ok", "wer": 1.0, "n_commit": 0, "n_wrong_commit": 0, "fluent_wrong_commits": 0, "halluc_gate_blocked": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0}, "shuffled": {"n": 20, "commits": 0}, "swapped": {"n": 60, "commits": 0, "commits_not_truth_of_signal": 0, "commits_equal_truth_of_language_trial": 0}}, "seconds": 4.2}
+2026-11-16 19:31:28 [665 MB] B1_rescore_G@single: start
+2026-11-16 19:31:32 [668 MB] B1_rescore_G@single: done {"status": "ok", "wer": 1.0, "n_commit": 0, "n_wrong_commit": 0, "fluent_wrong_commits": 0, "halluc_gate_blocked": 0, "controls_held_out": {"uniform": {"n": 20, "commits": 0}, "shuffled": {"n": 20, "commits": 0}, "swapped": {"n": 60, "commits": 0, "commits_not_truth_of_signal": 0, "commits_equal_truth_of_language_trial": 0}}, "seconds": 3.5}
+2026-11-16 19:31:32 [668 MB] all done; decoder loaded False, LLM loaded False
+2026-11-16 19:31:48 [123 MB] start t12 ['A0_ngram@single', 'B1_rescore_G@single'] (fidetype 0.0.1); source m4-12, dry True, stub True
+2026-11-16 19:31:53 [543 MB] t12 data: 160 calibration, 60 held-out trials
+2026-11-16 19:31:53 [581 MB] A0_ngram@single: done before, skip
+2026-11-16 19:31:53 [581 MB] B1_rescore_G@single: done before, skip
+2026-11-16 19:31:53 [581 MB] all done; decoder loaded False, LLM loaded False
+2026-11-16 19:32:37 [123 MB] start t12 ['A0_ngram@single', 'B1_rescore_G@single'] (fidetype 0.0.1); source m4-12, dry True, stub True
+2026-11-16 19:32:42 [543 MB] t12 data: 160 calibration, 60 held-out trials
+2026-11-16 19:32:42 [582 MB] A0_ngram@single: done before, skip
+2026-11-16 19:32:42 [582 MB] B1_rescore_G@single: done before, skip
+2026-11-16 19:32:42 [582 MB] all done; decoder loaded False, LLM loaded False
+2026-11-16 19:34:15 [123 MB] start t12 ['A0_ngram@single', 'B1_rescore_G@single'] (fidetype 0.0.1); source m4-12, dry True, stub True
+2026-11-16 19:34:19 [543 MB] t12 data: 160 calibration, 60 held-out trials
+2026-11-16 19:34:20 [582 MB] A0_ngram@single: done before, skip
+2026-11-16 19:34:20 [582 MB] B1_rescore_G@single: done before, skip
+2026-11-16 19:34:20 [582 MB] all done; decoder loaded False, LLM loaded False
