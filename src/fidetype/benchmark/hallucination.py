@@ -182,6 +182,20 @@ def trial_hash(dataset: str, trial_id: str) -> str:
     return hashlib.sha256(f"{dataset}|{trial_id}".encode("utf-8")).hexdigest()[:16]
 
 
+def ids_from_rule(split: Mapping) -> list[tuple[str, int]]:
+    """Held-out trial ids of a split file that states ``id_sessions`` (P15-20), in held-out order.
+
+    Returns ``(trial_id, hdf5_val_index)`` pairs. For ``b2t25-t15-val-eval`` the id is
+    ``<session>|val|<i>`` with ``i`` = position inside the session's ``val_eval`` list (odd keys of
+    ``data_val.hdf5`` in sorted order), so the HDF5 ``val`` index is ``2i + 1``. Excluded trials keep their ``i``.
+    """
+    out = []
+    for s in split["id_sessions"]:
+        skip = set(s.get("excluded", []))
+        out += [(f"{s['session']}|val|{i}", 2 * i + 1) for i in range(s["n_val_eval"]) if i not in skip]
+    return out
+
+
 def split_definition(dataset: str, trial_ids: Sequence[str], texts: Sequence[str], controls: ControlSet, *,
                      licence: str, rule: str, n_null: int | None = None) -> dict:
     """The public split file of one held-out set: hashes, control indices and the recipe; no text, no signal.

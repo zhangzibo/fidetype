@@ -236,3 +236,34 @@ def test_baseline_cards_reproduce(path):
     assert oc["tracks"]["real"]["n"] == split["n_real"]
     assert oc["tracks"]["null"]["n"] == len(split["null_idx"]) == split["n_null"]
     assert oc["tracks"]["swapped"]["n"] == len(split["swap_perm"])
+
+
+# --- P15-20: the T15 split states its trial-index rule exactly; the ids rebuild from the rule ---------------
+
+
+T15_SPLIT = SPLITS / "b2t25-t15-val-eval.json"
+T15_HDF5 = Path("C:/Users/zhang/bci-data/brain-to-text-25/neural/extracted/hdf5_data_final")
+
+
+def test_t15_split_ids_rebuild_from_rule():
+    split = json.loads(T15_SPLIT.read_text(encoding="utf-8"))
+    assert "val_eval list" in split["rule"] and "2i + 1" in split["id_rule"]
+    pairs = HB.ids_from_rule(split)
+    assert len(pairs) == split["n_real"] == len(split["trials"]) == 701
+    assert [HB.trial_hash(split["dataset"], i) for i, _ in pairs] == [t["h"] for t in split["trials"]]
+    assert all(j % 2 == 1 for _, j in pairs)  # every held-out trial is an odd (val_eval) key of data_val.hdf5
+    assert [s["session"] for s in split["id_sessions"]] == sorted(s["session"] for s in split["id_sessions"])
+    # the wrong reading (i = HDF5 val index) does not rebuild the split
+    wrong = {HB.trial_hash(split["dataset"], f"{i.rsplit('|', 1)[0]}|{j}") for i, j in pairs}
+    assert len(wrong & {t["h"] for t in split["trials"]}) < 701
+
+
+@pytest.mark.skipif(not T15_HDF5.exists(), reason="local B2T '25 HDF5 data not present (CC0, download separately)")
+def test_t15_split_rule_matches_local_hdf5():
+    h5py = pytest.importorskip("h5py")
+    split = json.loads(T15_SPLIT.read_text(encoding="utf-8"))
+    for s in split["id_sessions"]:
+        with h5py.File(T15_HDF5 / s["session"] / "data_val.hdf5", "r") as f:
+            n = len(f.keys())
+        assert n // 2 == s["n_val_eval"], s["session"]  # odd sorted keys = val_eval
+        assert all(2 * i + 1 < n for i in s["excluded"])

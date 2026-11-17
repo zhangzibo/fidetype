@@ -3,7 +3,220 @@
 "protocol": "fidetype.halluc/0.1",
 "dataset": "b2t25-t15-val-eval",
 "licence": "CC0 1.0",
-"rule": "Brain-to-Text '25 (T15), M4-12 fixed0 phoneme log-probs; val split, odd-index trials per session (val_eval, 701), session order of m4-01-02-lookahead/sessions.json. Trial id = <session>|val|<i>.",
+"rule": "Brain-to-Text '25 (T15), M4-12 fixed0 phoneme log-probs on the val_eval part of the HDF5 val file (701 trials). Trial id = <session>|val|<i>, where i is the position of the trial inside the session's val_eval list, NOT its index in the HDF5 file data_val.hdf5. See id_rule.",
+"id_rule": "For each session folder (order of id_sessions = sorted session names), list the trial groups of data_val.hdf5 in sorted key order, index j = 0, 1, 2, ... Even j = val_select (calibration, never in this split). Odd j = val_eval. i = (j - 1) / 2, so the HDF5 val index is j = 2i + 1. Trials listed in 'excluded' (out-of-lexicon words) keep their i (no renumbering) and are not in the split. Held-out order = id_sessions order, then i ascending. Rebuild: fidetype.benchmark.hallucination.ids_from_rule(split).",
+"id_sessions": [
+{
+"session": "t15.2023.08.13",
+"n_val_eval": 17,
+"excluded": []
+},
+{
+"session": "t15.2023.08.18",
+"n_val_eval": 24,
+"excluded": []
+},
+{
+"session": "t15.2023.08.20",
+"n_val_eval": 24,
+"excluded": []
+},
+{
+"session": "t15.2023.08.25",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2023.08.27",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2023.09.01",
+"n_val_eval": 24,
+"excluded": []
+},
+{
+"session": "t15.2023.09.03",
+"n_val_eval": 17,
+"excluded": []
+},
+{
+"session": "t15.2023.09.24",
+"n_val_eval": 17,
+"excluded": [
+1
+]
+},
+{
+"session": "t15.2023.09.29",
+"n_val_eval": 24,
+"excluded": []
+},
+{
+"session": "t15.2023.10.01",
+"n_val_eval": 22,
+"excluded": []
+},
+{
+"session": "t15.2023.10.06",
+"n_val_eval": 18,
+"excluded": []
+},
+{
+"session": "t15.2023.10.08",
+"n_val_eval": 8,
+"excluded": []
+},
+{
+"session": "t15.2023.10.13",
+"n_val_eval": 22,
+"excluded": [
+16,
+19
+]
+},
+{
+"session": "t15.2023.10.15",
+"n_val_eval": 22,
+"excluded": []
+},
+{
+"session": "t15.2023.10.20",
+"n_val_eval": 4,
+"excluded": []
+},
+{
+"session": "t15.2023.10.22",
+"n_val_eval": 16,
+"excluded": []
+},
+{
+"session": "t15.2023.11.03",
+"n_val_eval": 25,
+"excluded": []
+},
+{
+"session": "t15.2023.11.04",
+"n_val_eval": 7,
+"excluded": []
+},
+{
+"session": "t15.2023.11.17",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2023.11.19",
+"n_val_eval": 10,
+"excluded": []
+},
+{
+"session": "t15.2023.11.26",
+"n_val_eval": 22,
+"excluded": []
+},
+{
+"session": "t15.2023.12.03",
+"n_val_eval": 17,
+"excluded": []
+},
+{
+"session": "t15.2023.12.08",
+"n_val_eval": 25,
+"excluded": []
+},
+{
+"session": "t15.2023.12.10",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2023.12.17",
+"n_val_eval": 15,
+"excluded": []
+},
+{
+"session": "t15.2023.12.29",
+"n_val_eval": 25,
+"excluded": []
+},
+{
+"session": "t15.2024.02.25",
+"n_val_eval": 11,
+"excluded": []
+},
+{
+"session": "t15.2024.03.08",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2024.03.15",
+"n_val_eval": 24,
+"excluded": []
+},
+{
+"session": "t15.2024.03.17",
+"n_val_eval": 24,
+"excluded": []
+},
+{
+"session": "t15.2024.05.10",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2024.06.14",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2024.07.19",
+"n_val_eval": 24,
+"excluded": []
+},
+{
+"session": "t15.2024.07.21",
+"n_val_eval": 23,
+"excluded": []
+},
+{
+"session": "t15.2024.07.28",
+"n_val_eval": 24,
+"excluded": []
+},
+{
+"session": "t15.2025.01.10",
+"n_val_eval": 11,
+"excluded": []
+},
+{
+"session": "t15.2025.01.12",
+"n_val_eval": 23,
+"excluded": []
+},
+{
+"session": "t15.2025.03.14",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2025.03.16",
+"n_val_eval": 12,
+"excluded": []
+},
+{
+"session": "t15.2025.03.30",
+"n_val_eval": 15,
+"excluded": []
+},
+{
+"session": "t15.2025.04.13",
+"n_val_eval": 12,
+"excluded": []
+}
+],
 "seed": 0,
 "noise": 0.05,
 "n_null": 300,

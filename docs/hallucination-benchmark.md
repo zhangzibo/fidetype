@@ -115,6 +115,16 @@ python -m fidetype.benchmark.hallucination rescore outcomes.json --check card.js
 | Score card `*.card.json` (`fidetype.halluc.scorecard/0.1`) | The metrics of section 2, the pass flags, the fluency mode | Yes |
 | Records, control inputs, truth | Texts and signals | **No.** Keep them local |
 
+**Trial ids of the T15 split (`b2t25-t15-val-eval`).** The id is `<session>|val|<i>`. `i` is the position of the trial inside the session's `val_eval` list. It is **not** the index in the HDF5 file `data_val.hdf5`. The rule (fields `id_rule` and `id_sessions` of the split file):
+
+1. For each session, list the trial groups of `data_val.hdf5` in sorted key order. Index them j = 0, 1, 2, ...
+2. Even j = `val_select` (calibration). These trials are never in the split.
+3. Odd j = `val_eval`. Then i = (j - 1) / 2, so the HDF5 index is **j = 2i + 1**.
+4. The 3 trials in `excluded` (out-of-lexicon words) keep their `i`. They are not in the split. There is no renumbering.
+5. Held-out order: the `id_sessions` order (sorted session names), then `i` ascending.
+
+`fidetype.benchmark.hallucination.ids_from_rule(split)` rebuilds the 701 ids from the split file, and `tests/test_halluc_bench.py` checks them against the hashes. If you read `i` as the HDF5 `val` index, 358 of the 701 ids point to `val_select` (calibration) trials, and the hashes do not match ([T15 split audit](../wiki/questions/t15-split-audit.md), issue C). The T12 split (`b2t24-t12-test`) uses its own id space (`<session>|pool|<i>`, the T12 v2 trust pool).
+
 `controls_sha256` checks the control inputs byte for byte. The last bit of a float can differ between numpy builds. The indices and permutations cannot, so `verify_split` reports a different digest only as a warning.
 
 The benchmark ships the protocol, the split definitions and the scorer. It ships no participant data. Both baseline sets are CC0 1.0: Brain-to-Text '24 (T12, Willett et al. 2023) and Brain-to-Text '25 (T15, Card et al. 2024). See [`references/README.md`](../references/README.md).
