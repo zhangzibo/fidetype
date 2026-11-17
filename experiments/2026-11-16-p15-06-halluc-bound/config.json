@@ -2,6 +2,7 @@
  "description": "P15-06 (F2): risk-controlled fluent-wrong bound (joint LTT of commit_p, tau_commit, tau_word) on the P15-05 T15 arms, from the cached P15-05 artefacts. CPU only.",
  "p15_05_config": "experiments/2026-11-16-f2-e3-llm-grounding/config.json",
  "p15_05_results": "experiments/2026-11-16-f2-e3-llm-grounding/results/results-t15.json",
+ "p15_05_results_t12": "experiments/2026-11-16-f2-e3-llm-grounding/results/results-t12.json",
  "halluc": {
   "alpha_h": 0.01,
   "delta_h": 0.1,

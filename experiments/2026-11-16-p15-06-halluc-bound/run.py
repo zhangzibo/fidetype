@@ -12,6 +12,13 @@ entries (if any) go into an own pickle. Per-trial outputs: C:/Users/zhang/bci-da
     .venv\\Scripts\\python.exe -m fidetype.utils.isolation run --class background --threads 4 --
         .venv\\Scripts\\python.exe -I experiments/2026-11-16-p15-06-halluc-bound/run.py explore B1_rescore_G
     ... run.py arms            (all arms; finished arms are skipped)
+    ... run.py t12 arms        (T12: the P15-05 T12 caches in f2-e3-llm-grounding/t12/, read only; outputs in
+                                p15-06-halluc-bound/t12/, results/results-t12.json, log results/run-t12.log)
+
+A first argument ``t15`` or ``t12`` selects the data set (default ``t15``, as run before). T12 uses the P15-05
+T12 data (T12 v2 confirmatory logits; fit_a + calibration sessions -> calibration, test sessions -> held out),
+the P15-05 T12 fluent threshold, tau and LLM weight. RAM: the T12 word decoder (char LM + word trigram, about
+3.5 GB) loads only on a base n-best cache miss; the label function needs only the CMUdict lexicon.
 """
 
 from __future__ import annotations
@@ -51,18 +58,55 @@ CFG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
 P5 = json.loads((REPO / CFG["p15_05_config"]).read_text(encoding="utf-8"))  # the P15-05 config (read only)
 P5RES = json.loads((REPO / CFG["p15_05_results"]).read_text(encoding="utf-8"))
 DER = Path("C:/Users/zhang/bci-data/derived")
-SRC = DER / "f2-e3-llm-grounding"  # P15-05 caches: READ ONLY
-OWN = DER / "p15-06-halluc-bound"  # the only place this task writes per-trial files and caches
-assert OWN.name == "p15-06-halluc-bound" and SRC != OWN
-OWN.mkdir(parents=True, exist_ok=True)
+SRC_ROOT = DER / "f2-e3-llm-grounding"  # P15-05 caches: READ ONLY
+OWN_ROOT = DER / "p15-06-halluc-bound"  # the only place this task writes per-trial files and caches
+assert OWN_ROOT.name == "p15-06-halluc-bound" and SRC_ROOT != OWN_ROOT
+SRC, OWN = SRC_ROOT, OWN_ROOT  # per data set (set_data): t15 = the roots (as run), t12 = the t12/ subfolders
+SET = "t15"
 OUT = HERE / "results"
 OUT.mkdir(exist_ok=True)
 LOGF = OUT / "run.log"
 SEED = P5["seed"]
 
 
+def set_data(name: str) -> None:
+    """Select the data set. t15 keeps the paths of the T15 run; t12 reads SRC_ROOT/t12 and writes OWN_ROOT/t12."""
+    global SET, SRC, OWN, LOGF, P5RES
+    assert name in ("t15", "t12")
+    SET = name
+    SRC = SRC_ROOT if name == "t15" else SRC_ROOT / name
+    OWN = OWN_ROOT if name == "t15" else OWN_ROOT / name
+    assert OWN_ROOT in (OWN, *OWN.parents) and SRC_ROOT not in (OWN, *OWN.parents)
+    OWN.mkdir(parents=True, exist_ok=True)
+    LOGF = OUT / ("run.log" if name == "t15" else f"run-{name}.log")
+    P5RES = json.loads((REPO / CFG["p15_05_results" if name == "t15" else f"p15_05_results_{name}"])
+                       .read_text(encoding="utf-8"))
+
+
+def private_mb() -> int:
+    """Private bytes of this process in MB (Windows; -1 elsewhere), for the RAM budget check in the log."""
+    if os.name != "nt":
+        return -1
+    import ctypes
+    import ctypes.wintypes as W
+
+    class PMC(ctypes.Structure):
+        _fields_ = [("cb", W.DWORD), ("PageFaultCount", W.DWORD)] + [(f, ctypes.c_size_t) for f in (
+            "PeakWorkingSetSize", "WorkingSetSize", "QPPPU", "QPPU", "QPNPPU", "QNPPU", "PagefileUsage",
+            "PeakPagefileUsage")]
+
+    k32, ps = ctypes.WinDLL("kernel32"), ctypes.WinDLL("psapi")
+    k32.GetCurrentProcess.restype = W.HANDLE
+    ps.GetProcessMemoryInfo.argtypes = [W.HANDLE, ctypes.POINTER(PMC), W.DWORD]
+    m = PMC()
+    m.cb = ctypes.sizeof(m)
+    ps.GetProcessMemoryInfo(k32.GetCurrentProcess(), ctypes.byref(m), m.cb)
+    return int(m.PagefileUsage / 2**20)
+
+
 def log(*a) -> None:
-    line = time.strftime("%Y-%m-%d %H:%M:%S ") + " ".join(str(x) for x in a)
+    mb = f"[{private_mb()} MB] " if SET != "t15" else ""
+    line = time.strftime("%Y-%m-%d %H:%M:%S ") + mb + " ".join(str(x) for x in a)
     print(line, flush=True)
     with open(LOGF, "a", encoding="utf-8") as f:
         f.write(line + "\n")
@@ -186,6 +230,80 @@ def data_t15():
     return cal, held, dec
 
 
+class LazyT12Decoder:
+    """The P15-05 T12 word decoder, built only on the first base n-best cache miss (RAM: about 3.5 GB).
+
+    ``lex`` (CMUdict lexicon; the grounding label function needs only ``lex.prons``) loads at once. The full
+    decoder is the one of P15-05 ``data_t12`` (char LM + word trigram, tuned word decoder, smaller LRU memos)."""
+
+    def __init__(self, bt, exp: Path, cfg: dict) -> None:
+        self.bt, self.exp, self.cfg = bt, exp, cfg
+        self.lex = bt.build_lexicon()
+        self._dec = None
+        self.loaded = False
+
+    def _get(self):
+        if self._dec is None:
+            log("T12 base n-best cache miss: loading the T12 word decoder (char LM + word trigram)")
+            dec = self.bt.Decoders([], self.cfg["word_decoder_tuned"])
+            sys.path.insert(0, str(self.exp))
+            import wordlm  # noqa: E402
+
+            beta = self.cfg["word_lm"]["beta"]
+            cache = Path(self.cfg["word_lm"]["cache"])
+            assert cache.exists(), "word LM cache missing (would be rebuilt)"
+            wm = wordlm.load_or_build(self.bt.CONFIG["tatoeba_eng"], cache, B.normalize_words)
+            char = dec.lm.score_sentence
+            dec.wdec.sentence_lm = lambda t: char(t) + beta * wm.score_sentence(t)
+            dec.wdec.clear_caches()
+            dec._wcache.clear()
+            dec.wdec.set_cache_sizes(500, 5_000)  # a memo changes the speed of a call, never its result
+            dec.lm._cache.resize(20_000)
+            self._dec, self.loaded = dec, True
+        return self._dec
+
+    @property
+    def _wcache(self):
+        return self._get()._wcache
+
+    @_wcache.setter
+    def _wcache(self, v) -> None:
+        self._get()._wcache = v
+
+    def words_fn(self, stream):
+        return self._get().words_fn(stream)
+
+
+def data_t12():
+    """As P15-05 run.data_t12 (same sessions, order and texts); the decoder is lazy (LazyT12Decoder)."""
+    exp = REPO / "experiments/2026-11-13-confirmatory-t12-v2"
+    cfg = json.loads((exp / "config.json").read_text(encoding="utf-8"))
+    d_in = Path(cfg["derived_dir"])
+    prep = json.loads((exp / "results/prep.json").read_text(encoding="utf-8"))
+    texts = json.loads((d_in / "texts.json").read_text(encoding="utf-8"))
+    meta = json.loads((d_in / "logprobs-meta.json").read_text(encoding="utf-8"))
+    assert meta["checkpoint_sha256"] == cfg["decoder_checkpoint_sha256"]
+    z = np.load(d_in / "logprobs.npz")
+    npz: dict = {}
+
+    def part(roles):
+        xs, ts, ph = [], [], []
+        for r in prep["sessions"]:
+            if r["role"] not in roles:
+                continue
+            s = r["session"]
+            for i, w in enumerate(texts[s]["pool"]):
+                xs.append(z[f"{s}|pool|{i}"].astype(np.float32))
+                ts.append(" ".join(w.split()))
+                ph.append(ph_symbols(npz, d_in, s, "pool", i))
+        return xs, ts, ph
+
+    cal, held = part(("fit_a", "calibration")), part(("test",))
+    npz.clear()
+    bt = load_module("b2t25run", REPO / "experiments/2026-11-10-b2t25-trust/run.py")
+    return cal, held, LazyT12Decoder(bt, exp, cfg)
+
+
 # ---------------------------------------------------------------------------
 # the P15-05 pipeline, from the caches
 # ---------------------------------------------------------------------------
@@ -196,7 +314,7 @@ class Pipeline:
         self.dec = dec
         self.scorer = scorer
         self.rewriter = rewriter
-        self.base: dict = pickle.loads((SRC / "base-nbest-t15.pkl").read_bytes())
+        self.base: dict = pickle.loads((SRC / f"base-nbest-{SET}.pkl").read_bytes())
         self.extra_path = OWN / "base-nbest-extra.pkl"
         self.extra: dict = pickle.loads(self.extra_path.read_bytes()) if self.extra_path.exists() else {}
         self.base_miss = 0
@@ -342,8 +460,8 @@ def calibrate_arm(pipe: Pipeline, arm_name: str, arm: dict, cal, explore: bool =
     t0 = time.time()
     guard = ft.calibrate(cx, ct, alpha=P5["alpha"], delta=P5["delta"], vocab=list(B.SYMBOL_VOCAB), blank=0,
                          input_scale="log_probs", frame_period=0.08, decode_fn=fn, stream_texts=cph,
-                         decoder_name=f"f2-e3-t15-{arm_name}", modality="intracortical",
-                         name=f"f2-e3-t15-{arm_name}", seed=SEED, null_trials=P5["null_trials"],
+                         decoder_name=f"f2-e3-{SET}-{arm_name}", modality="intracortical",
+                         name=f"f2-e3-{SET}-{arm_name}", seed=SEED, null_trials=P5["null_trials"],
                          grounding=make_grounding(pipe), llm=pipe.scorer, halluc_alpha=g["alpha_h"],
                          halluc_delta=g["delta_h"], fluent_threshold=P5RES["prep"]["fluent_logp_per_word"],
                          halluc_select=select or g["select"],
@@ -376,7 +494,7 @@ def explore(pipe: Pipeline, arm_name: str, cal) -> None:
             v = v[np.isfinite(v)]
             if v.size:
                 rec[lab][k] = [float(np.quantile(v, q)) for q in (0.05, 0.25, 0.5, 0.75, 0.95)]
-    (OUT / f"explore-{arm_name}.json").write_text(json.dumps(rec, indent=1, default=str), encoding="utf-8")
+    (OUT / (f"explore-{arm_name}.json" if SET == "t15" else f"explore-{SET}-{arm_name}.json")).write_text(json.dumps(rec, indent=1, default=str), encoding="utf-8")
     log(f"explore {arm_name}: {json.dumps(rec, default=str)}")
 
 
@@ -400,7 +518,7 @@ def run_arm(pipe: Pipeline, name: str, cal, held) -> dict:
     items = guard.halluc_items
     (OWN / f"cal-items-{fname}.json").write_text(json.dumps({k: item_table(v) for k, v in items.items()}),
                                                      encoding="utf-8")
-    p5_guard = json.loads((SRC / f"guard-t15-{arm_name}.json").read_text(encoding="utf-8"))
+    p5_guard = json.loads((SRC / f"guard-{SET}-{arm_name}.json").read_text(encoding="utf-8"))
     row["p15_05_config_id"] = p5_guard["sheet"]["config_id"]
     row["p15_05_commit_p"] = p5_guard["sheet"]["commit_threshold"]
     row["base_config_matches_p15_05"] = guard.sheet.halluc["base_config_id"] == row["p15_05_config_id"]
@@ -493,6 +611,7 @@ def run_arm(pipe: Pipeline, name: str, cal, held) -> dict:
 
 def main() -> None:
     args = sys.argv[1:]
+    set_data(args.pop(0) if args and args[0] in ("t15", "t12") else "t15")
     stage = args[0] if args else "arms"
     only = args[1:]
     db = OWN / "llm-cache.sqlite"
@@ -502,14 +621,15 @@ def main() -> None:
     sc = CachedScorer(llm, DiskDict(db, "scores"))
     rw = CachedRewriter(llm, DiskDict(db, "rewrites"))
     log(f"start {stage} {only} (fidetype {FT_VERSION}); cached LLM scores {len(sc.store)}, rewrites {len(rw.store)}")
-    cal, held, dec = data_t15()
+    cal, held, dec = {"t15": data_t15, "t12": data_t12}[SET]()
+    log(f"{SET} data: {len(cal[0])} calibration, {len(held[0])} held-out trials")
     pipe = Pipeline(dec, sc, rw)
     if stage == "explore":
         for a in only or ["B1_rescore_G"]:
             explore(pipe, a, cal)
-        log(f"explore done; base misses {pipe.base_miss}, new LLM scores {sc.store.new}, LLM loaded {llm.loaded}")
+        log(f"explore done; T12 decoder loaded {getattr(dec, 'loaded', None)}; base misses {pipe.base_miss}, new LLM scores {sc.store.new}, LLM loaded {llm.loaded}")
         return
-    path = OUT / "results-t15.json"
+    path = OUT / f"results-{SET}.json"
     allr = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     allr.update(fidetype_version=FT_VERSION, config=CFG)
     allr.setdefault("arms", {})
@@ -524,7 +644,7 @@ def main() -> None:
         keys = ("status", "wer", "n_commit", "n_wrong_commit", "fluent_wrong_commits", "halluc_gate_blocked",
                 "controls_held_out", "cache", "seconds")
         log(f"{a}: done {json.dumps({k: row.get(k) for k in keys}, default=str)}")
-    log("all done")
+    log(f"all done; T12 decoder loaded {getattr(dec, 'loaded', None)}, LLM loaded {llm.loaded}")
 
 
 if __name__ == "__main__":

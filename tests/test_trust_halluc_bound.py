@@ -174,6 +174,12 @@ def test_joint_ltt_infeasible_when_too_few_items():
     res = H.joint_ltt(pop[:30], pop[30:], H.grid([0.5], (math.inf,), (math.inf,)), alpha=0.05, alpha_h=0.001,
                       delta=0.1)
     assert res.selected is None and res.certified == []
+    # an infeasible result serialises to strict JSON (no NaN p-values; a guard sheet uses allow_nan=False)
+    import json
+
+    d = res.to_dict()
+    assert d["test_pvalues"] == [None, None] and not d["feasible"]
+    json.dumps(d, allow_nan=False)
 
 
 class MockLLM:

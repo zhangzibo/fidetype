@@ -378,7 +378,8 @@ class JointLTTResult:
                 "chain_length": self.chain_length, "n_tested": self.n_tested, "alpha": self.alpha,
                 "alpha_h": self.alpha_h, "delta": self.delta, "n_order": self.n_order, "n_test": self.n_test,
                 "order_counts": dict(self.order_counts), "test_counts": dict(self.test_counts),
-                "test_pvalues": [float(x) for x in self.test_pvalues], "feasible": self.feasible}
+                "test_pvalues": [None if math.isnan(x) else float(x) for x in self.test_pvalues],  # JSON: no NaN
+                "feasible": self.feasible}
 
 
 def grid(commit_p: Iterable[float] = DEFAULT_COMMIT_P_GRID, tau_commit: Iterable[float] = DEFAULT_TAU_COMMIT_GRID,

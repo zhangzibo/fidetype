@@ -1,0 +1,769 @@
+{
+ "set": "t12",
+ "alpha_h": 0.01,
+ "delta_h": 0.1,
+ "arms": {
+  "A0_ngram": {
+   "p15_05_arm": "A0_ngram",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 25,
+    "wrong": 15,
+    "right": 10,
+    "fluent_wrong": 4,
+    "swapped_not_truth": 25
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3884922301553969,
+    "sentence_acc": 0.0775,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 24.3
+  },
+  "A1_ngram_G": {
+   "p15_05_arm": "A1_ngram_G",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.3,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 25,
+    "wrong": 15,
+    "right": 10,
+    "fluent_wrong": 4,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3884922301553969,
+    "sentence_acc": 0.0775,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 39.7
+  },
+  "B0_rescore": {
+   "p15_05_arm": "B0_rescore",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.31,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 15,
+    "wrong": 8,
+    "right": 7,
+    "fluent_wrong": 4,
+    "swapped_not_truth": 15
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3851322973540529,
+    "sentence_acc": 0.0875,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 19.7
+  },
+  "B1_rescore_G": {
+   "p15_05_arm": "B1_rescore_G",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.31,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 15,
+    "wrong": 8,
+    "right": 7,
+    "fluent_wrong": 4,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3851322973540529,
+    "sentence_acc": 0.0875,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 19.6
+  },
+  "C0_rewrite": {
+   "p15_05_arm": "C0_rewrite",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.34,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 23,
+    "wrong": 10,
+    "right": 13,
+    "fluent_wrong": 6,
+    "swapped_not_truth": 23
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3897522049559009,
+    "sentence_acc": 0.0975,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 27,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 23.7
+  },
+  "C1_rewrite_G": {
+   "p15_05_arm": "C1_rewrite_G",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.34,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 23,
+    "wrong": 10,
+    "right": 13,
+    "fluent_wrong": 6,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3897522049559009,
+    "sentence_acc": 0.0975,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 27,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 16.8
+  },
+  "D0_free": {
+   "p15_05_arm": "D0_free",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.33,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 25,
+    "wrong": 13,
+    "right": 12,
+    "fluent_wrong": 7,
+    "swapped_not_truth": 25
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3884922301553969,
+    "sentence_acc": 0.0875,
+    "hallucination_rate": 0.01053518752633797,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 65,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 21.6
+  },
+  "D1_free_G": {
+   "p15_05_arm": "D1_free_G",
+   "select": "fewest_halluc",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.33,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 25,
+    "wrong": 13,
+    "right": 12,
+    "fluent_wrong": 7,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3884922301553969,
+    "sentence_acc": 0.0875,
+    "hallucination_rate": 0.010109519797809604,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 65,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 16.8
+  },
+  "B1_rescore_G@most_right": {
+   "p15_05_arm": "B1_rescore_G",
+   "select": "most_right",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.31,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 15,
+    "wrong": 8,
+    "right": 7,
+    "fluent_wrong": 4,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3851322973540529,
+    "sentence_acc": 0.0875,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 65,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 15.2
+  },
+  "C1_rewrite_G@most_right": {
+   "p15_05_arm": "C1_rewrite_G",
+   "select": "most_right",
+   "selected": {
+    "commit_p": "inf",
+    "tau_commit": "inf",
+    "tau_word": "inf"
+   },
+   "feasible": false,
+   "n_certified": 0,
+   "n_tested": 1,
+   "chain_length": 4284,
+   "base_commit_p": 0.34,
+   "base_config_matches_p15_05": false,
+   "in_sample_order": {},
+   "in_sample_test": {},
+   "p15_05": {
+    "commits": 23,
+    "wrong": 10,
+    "right": 13,
+    "fluent_wrong": 6,
+    "swapped_not_truth": 0
+   },
+   "p15_06": {
+    "commits": 0,
+    "wrong": 0,
+    "right": 0,
+    "fluent_wrong": 0,
+    "blocked": 0,
+    "fluent_wrong_rate": 0.0,
+    "fluent_wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "wrong_rate": 0.0,
+    "wrong_cp95": [
+     0.0,
+     0.00917980458366526
+    ],
+    "uniform": 0,
+    "shuffled": 0,
+    "swapped": {
+     "n": 400,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    },
+    "wer": 0.3897522049559009,
+    "sentence_acc": 0.0975,
+    "hallucination_rate": 0.0,
+    "unsupported_committed_words": 0
+   },
+   "top1_equal_p15_05": 400,
+   "n": 400,
+   "controls_final": [
+    [
+     "uniform",
+     0,
+     15,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     15,
+     true
+    ]
+   ],
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 65,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 16.4
+  }
+ },
+ "checks_B1": {
+  "H1_bound": false,
+  "H2_fluent_wrong_le_A0": true,
+  "H3_controls": true,
+  "H4_wer_kept": true,
+  "utility_right_commits": {
+   "p15_06": 0,
+   "p15_05": 7,
+   "kept_half": false
+  },
+  "P15_06_pass": false
+ }
+}

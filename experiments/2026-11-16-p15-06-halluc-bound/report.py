@@ -1,13 +1,15 @@
 """P15-06 report: arm table against the matching P15-05 arm, and the pre-registered checks (plan.md).
 
-    .venv\\Scripts\\python.exe -I experiments/2026-11-16-p15-06-halluc-bound/report.py
-Reads results/results-t15.json, the P15-05 results, and the per-trial top-1 texts of both runs (derived folders,
-read only). Writes results/summary-t15.json (aggregates only) and prints markdown tables.
+    .venv\\Scripts\\python.exe -I experiments/2026-11-16-p15-06-halluc-bound/report.py [t15|t12]
+Reads results/results-<set>.json, the P15-05 results, and the per-trial top-1 texts of both runs (derived folders,
+read only; T12: the t12/ subfolders). Writes results/summary-<set>.json (aggregates only) and prints markdown
+tables. Default set: t15.
 """
 
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -21,9 +23,13 @@ def f(v, fmt=".4f"):
 
 
 def main() -> None:
+    st = sys.argv[1] if len(sys.argv) > 1 else "t15"
+    assert st in ("t15", "t12")
+    src, own = (SRC, OWN) if st == "t15" else (SRC / st, OWN / st)
     cfg = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
-    res = json.loads((HERE / "results/results-t15.json").read_text(encoding="utf-8"))
-    p5 = json.loads((REPO / cfg["p15_05_results"]).read_text(encoding="utf-8"))["arms"]
+    res = json.loads((HERE / f"results/results-{st}.json").read_text(encoding="utf-8"))
+    p5 = json.loads((REPO / cfg["p15_05_results" if st == "t15" else f"p15_05_results_{st}"])
+                    .read_text(encoding="utf-8"))["arms"]
     alpha_h = cfg["halluc"]["alpha_h"]
     rows = {}
     print("| arm | rule | selected (commit_p, tau_commit, tau_word) | P15-05 commits / wrong / fluent-wrong | "
@@ -41,8 +47,8 @@ def main() -> None:
         c = r["controls_held_out"]
         qc = q["controls_held_out"]["swapped"]
         fn = name.replace("@", "-")
-        tops = json.loads((OWN / f"trials-{fn}.json").read_text(encoding="utf-8"))["tops"]
-        tops5 = json.loads((SRC / f"trials-t15-{a}.json").read_text(encoding="utf-8"))["tops"]
+        tops = json.loads((own / f"trials-{fn}.json").read_text(encoding="utf-8"))["tops"]
+        tops5 = json.loads((src / f"trials-{st}-{a}.json").read_text(encoding="utf-8"))["tops"]
         same = sum(x == y for x, y in zip(tops, tops5))
         right5 = q["n_commit"] - q["n_wrong_commit"]
         right6 = r["n_commit"] - r["n_wrong_commit"]
@@ -70,7 +76,7 @@ def main() -> None:
               f"{r['n_commit']} / {r['n_wrong_commit']} / {r['fluent_wrong_commits']} | {r['halluc_gate_blocked']} | "
               f"{f(r['fluent_wrong_rate'])} [{f(r['fluent_wrong_cp95'][0])}, {f(r['fluent_wrong_cp95'][1])}] | "
               f"{f(r['wrong_commit_rate'])} [{f(r['wrong_commit_cp95'][0])}, {f(r['wrong_commit_cp95'][1])}] | "
-              f"{c['uniform']['commits']}/300 | {c['shuffled']['commits']}/300 | "
+              f"{c['uniform']['commits']}/{c['uniform']['n']} | {c['shuffled']['commits']}/{c['shuffled']['n']} | "
               f"{c['swapped']['commits_not_truth_of_signal']} / {c['swapped']['commits_equal_truth_of_language_trial']}"
               f" | {qc['commits_not_truth_of_signal']} | {f(r['wer'])} | {same}/{len(tops)} |")
     checks = {}
@@ -91,8 +97,8 @@ def main() -> None:
         checks["P15_06_pass"] = all(checks[k] for k in ("H1_bound", "H2_fluent_wrong_le_A0", "H3_controls",
                                                         "H4_wer_kept"))
         print("\nchecks (B1, primary):", json.dumps(checks))
-    out = {"set": "t15", "alpha_h": alpha_h, "delta_h": cfg["halluc"]["delta_h"], "arms": rows, "checks_B1": checks}
-    (HERE / "results/summary-t15.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    out = {"set": st, "alpha_h": alpha_h, "delta_h": cfg["halluc"]["delta_h"], "arms": rows, "checks_B1": checks}
+    (HERE / f"results/summary-{st}.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
 
 
 if __name__ == "__main__":

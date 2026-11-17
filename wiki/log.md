@@ -913,3 +913,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - B1 (rescoring + grounding): WER 0.3851 vs A0 0.3885 (diff -0.0034, CI95 [-0.0086, +0.0021]); 15 commits / 8 wrong (0.0200, CP95 upper 0.0390); null 0/300 + 0/300; swapped 0/400; fluent-wrong 4 vs 4. S1 fails, S2-S4 pass: "safe but no gain". C1: S1 and S4 fail.
 - Replicated from T15: grounding takes swapped-signal commits 25 / 15 / 23 / 25 (A0-D0) to 0 in every grounded arm; it never changes the top-1 on true signals. Not replicated: the rescoring WER gain. Rewrites add fluent-wrong commits on both sets.
 - P15-05 done (both sets vs the criteria); F2/E3 does not pass (T15 S4, T12 S1). Follow-up P15-06 needs a T12 loader. Roadmap P15-05 and north-star F2 result lines; tracker P15-05 done (fragment).
+
+## [2026-11-16] query | P15-06: fluent-wrong bound on T12 (P15-06 done; done-when not met on T12)
+- T12 loader in `experiments/2026-11-16-p15-06-halluc-bound/run.py` (`run.py t12 arms`; lazy T12 word decoder, never loaded: 0 base cache misses). Same rules as plan.md. [Results, T12 section](../experiments/2026-11-16-p15-06-halluc-bound/results.md#t12-2026-11-16); aggregates `results/results-t12.json`, `results/summary-t12.json`.
+- 400 held-out T12 trials: the joint LTT certifies no grid point in any arm (180 LTT test items; alpha_h 0.01 at delta_h 0.1 needs >= 230 with zero losses). All guards fall back to never commit: 0 commits, fluent-wrong 0, null 0/300 + 0/300, swapped 0/400. B1: H1 fails, H2-H4 pass; utility 0 of 7.
+- Fix: an infeasible joint LTT wrote NaN p-values that the sheet JSON refused; `JointLTTResult.to_dict` now writes null (test added).
+- Roadmap P15-06 result line; tracker P15-06 done (fragment).
