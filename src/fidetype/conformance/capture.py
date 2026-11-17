@@ -237,11 +237,14 @@ def capture_lsl(query: str | dict[str, str], seconds: float = 30.0, until_end: b
     return {**base, "kind": "inlet", "route": "frames", "inlets": inlets}
 
 
-def _lsl_received(sc: dict[str, Any]) -> list[dict[str, Any]]:
-    """The NTS events that the reference LSL consumer reads from an ``inlet`` capture."""
+def lsl_source(sc: dict[str, Any]) -> Any:
+    """An :class:`fidetype.adapters.lsl.LSLEventSource` that plays the inlets of an ``inlet`` capture (no network).
+
+    The receiver clock is deterministic. The collector consumer (P7-07) opens its LSL receiver on it.
+    """
     import itertools
 
-    from fidetype.adapters.lsl import LSL_STATUS, LSLEventSource, LSLMapping
+    from fidetype.adapters.lsl import LSLEventSource, LSLMapping
     from fidetype.conformance.profiles.fep0002 import _inlet
 
     inl = sc["inlets"]
@@ -252,7 +255,14 @@ def _lsl_received(sc: dict[str, Any]) -> list[dict[str, Any]]:
         settings["boundary_markers"] = tuple(settings["boundary_markers"])
     mapping = LSLMapping(merge_window_s=1e9, reconnect_timeout_s=1.0, reconnect_mode="inline", **settings)
     ticks = itertools.count()
-    src = LSLEventSource(primary, events, mapping, clock=lambda: 1000.0 + next(ticks) * 1e-3)
+    return LSLEventSource(primary, events, mapping, clock=lambda: 1000.0 + next(ticks) * 1e-3)
+
+
+def _lsl_received(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    """The NTS events that the reference LSL consumer reads from an ``inlet`` capture."""
+    from fidetype.adapters.lsl import LSL_STATUS
+
+    src = lsl_source(sc)
     seen: list[dict[str, Any]] = []
     idle = 0
     for _ in range(100000):
@@ -428,32 +438,50 @@ def capture_ws_decisions(url: str, seconds: float = 30.0, from_seq: int | None =
     return sc
 
 
-def _ws_received(sc: dict[str, Any]) -> list[dict[str, Any]]:
-    """The NTS events that the reference server core releases from an ``ingest`` capture (stream order)."""
-    from fidetype.adapters.ws import WS_STATUS, IngestCore, IngestSettings
+def ws_ingest_settings(sc: dict[str, Any]) -> Any:
+    """The :class:`fidetype.adapters.ws.IngestSettings` of an ``ingest`` capture (the token is left out)."""
+    from fidetype.adapters.ws import IngestSettings
 
-    core = IngestCore(IngestSettings(**{k: v for k, v in (sc.get("settings") or {}).items() if k != "token"}))
-    out: list[dict[str, Any]] = []
+    return IngestSettings(**{k: v for k, v in (sc.get("settings") or {}).items() if k != "token"})
 
-    def take(eff: Any) -> None:
-        out.extend(ev for _, ev in eff.items if ev.get("type") != WS_STATUS)
 
+def play_ws_steps(sc: dict[str, Any], core: Any, call: Any = None) -> float:
+    """Play the steps of an ``ingest`` capture into an ingest core (no network); return the last step time.
+
+    ``call(fn, *args)`` runs one core call (default: ``fn(*args)``); the collector consumer (P7-07) passes
+    the queueing call of its WebSocket receiver's server. :meth:`finish` of the core is the caller's job.
+    """
+    run = call or (lambda fn, *a: fn(*a))
     at = 0.0
     for st in sc["steps"]:
         at = float(st.get("at", at))
-        take(core.tick(at))
+        run(core.tick, at)
         cid = st["conn"]
         if "open" in st:
-            take(core.open(cid, st["open"].get("subprotocols", []), None, at))
+            run(core.open, cid, st["open"].get("subprotocols", []), None, at)
         elif "msg" in st:
-            take(core.message(cid, st["msg"], at))
+            run(core.message, cid, st["msg"], at)
         elif "raw" in st:
-            take(core.message(cid, st["raw"], at))
+            run(core.message, cid, st["raw"], at)
         elif "binary" in st:
-            take(core.message(cid, b"\x00", at))
+            run(core.message, cid, b"\x00", at)
         elif "close" in st or "drop" in st:
-            take(core.disconnect(cid, at))
-    take(core.finish(at))
+            run(core.disconnect, cid, at)
+    return at
+
+
+def _ws_received(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    """The NTS events that the reference server core releases from an ``ingest`` capture (stream order)."""
+    from fidetype.adapters.ws import WS_STATUS, IngestCore
+
+    core = IngestCore(ws_ingest_settings(sc))
+    out: list[dict[str, Any]] = []
+
+    def take(fn: Any, *a: Any) -> None:
+        out.extend(ev for _, ev in fn(*a).items if ev.get("type") != WS_STATUS)
+
+    at = play_ws_steps(sc, core, take)
+    take(core.finish, at)
     return out
 
 

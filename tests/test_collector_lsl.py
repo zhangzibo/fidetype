@@ -129,6 +129,37 @@ def test_loss_mid_utterance_gives_no_final_and_reconnect_goes_on(tmp_path):
     assert "hostA" not in json.dumps(st) and "hostA" not in json.dumps([ev for _, ev in cap.items])
 
 
+class StepClock:
+    """A fake source clock that moves ``step`` seconds per call (the merge window passes after a few polls)."""
+
+    def __init__(self, step: float) -> None:
+        self.t, self.step = 1000.0, step
+
+    def __call__(self) -> float:
+        self.t += self.step
+        return self.t
+
+
+def test_receive_stamp_counts_the_merge_window_wait(tmp_path):
+    """P3-07: events carry the pull time; ``receive`` and ``added`` include the inlet merge-window wait."""
+    from fidetype.collector.latency import LatencyRecorder
+
+    frames = ScriptedInlet(_frames_info(), [_chunk(10.0, 5)])
+    events = ScriptedInlet(_events_info(), [EMPTY, EMPTY, EMPTY, _marks((SEG, 10.17), (END, 10.18))])
+
+    def factory():
+        return LSLEventSource(frames, events, LSLMapping(reconnect_mode="inline", merge_window_s=0.05),
+                              clock=StepClock(0.01))
+
+    pl, rec, trust, cap, logs = _pipeline(tmp_path, factory)
+    pl.latency = LatencyRecorder()
+    _run(pl)
+    assert len(_finals(cap)) == 1
+    s = pl.latency.summary()["stages"]
+    # the segment_end waits in the merge until its time passes: the receive stage sees that wait
+    assert s["receive"]["n"] >= 1 and s["receive"]["max"] >= 1.0 and s["added"]["max"] >= s["receive"]["max"]
+
+
 @pytest.mark.parametrize("on_gap", ["abort", "mark"])
 def test_gap_inside_an_utterance(tmp_path, on_gap):
     rows = [ROW_A] * 6

@@ -62,6 +62,9 @@ from fidetype.collector.latency import BUDGET_MS
 PROFILES = ("implant-speech", "emg-key", "implant-logits")
 #: Profiles whose p95 added latency must stay below the budget (the CI gate).
 GATED_PROFILES = ("implant-speech", "emg-key")
+#: P3-07: the LSL inlet merge window of the bench (one frame period at 50 Hz). The receiver default is 0.05 s;
+#: since the LSL latency counts from the pull time, that default alone gives a p95 added latency of about 60 ms.
+LSL_MERGE_WINDOW_S = 0.02
 RECEIVERS = ("websocket", "file", "lsl")
 CHAR_VOCAB = ["_"] + list(string.ascii_lowercase) + [" "]
 PHRASES = ["yes please", "thank you", "i am thirsty", "call my wife", "turn on the light", "i need help",
@@ -240,13 +243,20 @@ def stream_events(profile: str, n_utterances: int, seed: int = 0) -> tuple[list[
 # --- configuration ------------------------------------------------------------------------------
 
 
-def config_toml(profile: str, receiver: str, input_path: str, lsl_name: str = "") -> str:
-    """The collector configuration of one bench run (TOML)."""
+def config_toml(profile: str, receiver: str, input_path: str, lsl_name: str = "",
+                merge_window_s: float | None = None, seg_toml: str | None = None) -> str:
+    """The collector configuration of one bench run (TOML). ``merge_window_s``: the LSL inlet merge window
+    (None = the receiver default, 0.05 s). ``seg_toml``: the keys of the segment processor (None = the
+    profile's rules)."""
     rec = {"websocket": 'type = "websocket"\nlisten = "127.0.0.1:0"\n',
            "file": f'type = "file"\npaths = ["{input_path}"]\nstream_id = "bench"\nbatch = 1\n',
            "lsl": f'type = "lsl"\nstream_name = "{lsl_name}"\nstream_id = "bench"\nresolve_timeout_s = 10.0\n'
                   'on_gap = "mark"\n'}[receiver]
+    if receiver == "lsl" and merge_window_s is not None:
+        rec += f"merge_window_s = {merge_window_s:g}\n"
     seg = f"blank_frames = {BLANK_CUT}\nmax_frames = 400\n" if profile != "emg-key" else "max_frames = 200\n"
+    if seg_toml is not None:
+        seg = seg_toml
     ws_out = ""
     exporters = '"nts", "log", "typing"'
     if receiver == "websocket":
@@ -332,8 +342,19 @@ def _ws_producer(port: int, evs: list[dict[str, Any]], errors: list[str]) -> Non
 
 
 def run(profile: str, receiver: str, out_dir: str | Path, *, n_utterances: int = 12, seed: int = 0,
-        profile_file: Path | None = None, timeout_s: float = 120.0) -> BenchResult:
-    """One integration run: write the inputs and the TOML file, run the collector, check the outputs."""
+        profile_file: Path | None = None, timeout_s: float = 120.0,
+        merge_window_s: float | None = LSL_MERGE_WINDOW_S, events: list[dict[str, Any]] | None = None,
+        texts: list[str] | None = None, seg_toml: str | None = None) -> BenchResult:
+    """One integration run: write the inputs and the TOML file, run the collector, check the outputs.
+
+    ``merge_window_s``: the LSL inlet merge window (LSL input only; default :data:`LSL_MERGE_WINDOW_S`;
+    None = the receiver default, 0.05 s).
+    Since P3-07 the LSL latency counts from the pull time, so the merge-window wait is part of ``added``.
+
+    ``events`` and ``texts`` (P3-08): replay this NTS stream (header first, ``end`` last; one source
+    ``segment_end`` per utterance) and these true texts instead of the profile's synthetic stream; the
+    guard then needs ``profile_file``. ``seg_toml``: the segment processor keys (see :func:`config_toml`).
+    """
     from fidetype.collector.config import load
     from fidetype.collector.service import Collector
 
@@ -346,11 +367,17 @@ def run(profile: str, receiver: str, out_dir: str | Path, *, n_utterances: int =
         prof.write_bytes(Path(profile_file).read_bytes())
     elif not prof.is_file():
         write_profile(profile, prof)
-    evs, texts = stream_events(profile, n_utterances, seed)
+    if events is None:
+        evs, texts = stream_events(profile, n_utterances, seed)
+    else:
+        if profile_file is None or texts is None:
+            raise ValueError("events need texts and profile_file")
+        evs, texts, n_utterances = list(events), list(texts), len(texts)
     inp = work / "input.nts.jsonl"
     inp.write_text("".join(json.dumps(e) + "\n" for e in evs), encoding="utf-8", newline="\n")
     lsl_name = f"fidetype-bench-{profile}-{time.monotonic_ns() % 10**9}"
-    (work / "collector.toml").write_text(config_toml(profile, receiver, inp.name, lsl_name), encoding="utf-8",
+    toml = config_toml(profile, receiver, inp.name, lsl_name, merge_window_s, seg_toml)
+    (work / "collector.toml").write_text(toml, encoding="utf-8",
                                          newline="\n")
     col = Collector(load(work / "collector.toml"))
     errors: list[str] = []
@@ -441,6 +468,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                     help="receiver (repeatable; default websocket and file)")
     ap.add_argument("--utterances", type=int, default=12, help="segments per run (default 12)")
     ap.add_argument("--json", help="write all reports to this JSON file")
+    ap.add_argument("--lsl-merge-window", type=float, default=LSL_MERGE_WINDOW_S, metavar="S",
+                    help=f"LSL inlet merge window in seconds (default {LSL_MERGE_WINDOW_S:g}; the receiver "
+                         "default is 0.05)")
     a = ap.parse_args(argv)
     reports = []
     ok = True
@@ -452,7 +482,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if not pylsl_available():
                     print(f"{prof} / lsl: skipped (pylsl is not installed)")
                     continue
-            r = run(prof, rec, a.out, n_utterances=a.utterances).report
+            r = run(prof, rec, a.out, n_utterances=a.utterances, merge_window_s=a.lsl_merge_window).report
             reports.append(r)
             print(format_report(r))
             ok = ok and r["conformance"]["producer_level"] == "trust-ready"

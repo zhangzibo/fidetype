@@ -1134,12 +1134,17 @@ class LSLEventSource:
         # reconnect waits for its inlet instead (never longer than ``timeout``).
         live = [r for r in self.readers if r.lost_since is None]
         waiter = live[0] if live else None
+        # P3-07: a held event is released when its merge window ends, not at the next sample after it.
+        wait = timeout
+        if self._heap and len(self.readers) > 1:
+            due = min(a for _, _, a, _ in self._heap) + self.mapping.merge_window_s
+            wait = min(timeout, max(0.0, due - now))
         for r in self.readers:
             if r.lost_since is not None:
                 out += self._try_reconnect(r, now, wait_s=0.0 if live else timeout)
                 continue
             try:
-                items = r.pull(timeout if r is waiter else 0.0)
+                items = r.pull(wait if r is waiter else 0.0)
             except LSLStreamLost as e:
                 out += self._lost(r, str(e), now)
                 continue

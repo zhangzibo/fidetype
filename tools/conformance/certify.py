@@ -10,7 +10,8 @@ levels that the reports reach. No network, no GPU, synthetic data only.
 
 Entries:
 
-* ``fidetype-collector``: consumer, claim ``text`` (P7-05): ``--cmd "fidetype-collector consume ..."``.
+* ``fidetype-collector``: consumer, profiles ``text``, ``intent``, ``control`` and both bindings (P7-05, P7-07):
+  ``--cmd "fidetype-collector consume ..."``.
 * ``fidetype-python``, ``fidetype-typescript``, ``fidetype-rust``: consumers. ``nts-conform kit`` with the
   reference (Python) or ``--cmd "... consume --profile {profile} --level {level} {path}"``.
 * ``adapter-<name>``: producers. The synthetic streams of ``fidetype.conformance.producers`` (the adapter code
@@ -103,18 +104,18 @@ def consumer_entries(python_only: bool) -> list[dict]:
                 "evidence": _write("fidetype-python.kit-report.json", rep),
                 "evidence_command": "nts-conform kit --json spec/conformance/certified/fidetype-python.kit-report.json",
                 "_rep": rep})
-    # P7-05: the collector's input path (file receiver + validate processor). Claim: text, no bindings
-    # (it has no reader for LSL / WebSocket captures and no intent / control checks; docs/collector.md).
+    # P7-05 / P7-07: the collector's input path (file, LSL or WebSocket receiver + validate processor, with the
+    # intent and control checks). All profiles and both bindings (docs/collector.md).
     cmd = f'"{sys.executable}" -m fidetype.collector consume -q --profile {{profile}} --level {{level}} {{path}}'
-    rep = NC.run_kit(validator=NC._cmd_validator(cmd), claim=["text"],
+    rep = NC.run_kit(validator=NC._cmd_validator(cmd), bindings=["nts-lsl/0.1", "nts-ws/0.1"],
                      name="fidetype-collector consume -q --profile {profile} --level {level} {path}")
-    out.append({**base, "profiles": ["text"], "id": "fidetype-collector",
-                "implementation": "fidetype-collector (collector input path: file receiver + validate processor, "
-                "FEP-0006)", "language": "Python", "version": v["python"],
+    out.append({**base, "id": "fidetype-collector",
+                "implementation": "fidetype-collector (collector input path: file, LSL and WebSocket receivers + "
+                "validate processor, FEP-0006)", "language": "Python", "version": v["python"],
                 "evidence": _write("fidetype-collector.kit-report.json", rep),
-                "evidence_command": 'nts-conform kit --claim text --cmd "fidetype-collector consume -q --profile '
-                                    '{profile} --level {level} {path}" --json '
-                                    'spec/conformance/certified/fidetype-collector.kit-report.json',
+                "evidence_command": 'nts-conform kit --binding nts-lsl/0.1 --binding nts-ws/0.1 --cmd '
+                                    '"fidetype-collector consume -q --profile {profile} --level {level} {path}" '
+                                    '--json spec/conformance/certified/fidetype-collector.kit-report.json',
                 "_rep": rep})
     if python_only:
         return out

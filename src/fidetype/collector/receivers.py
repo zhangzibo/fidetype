@@ -315,6 +315,8 @@ class WebSocketReceiver(Receiver):
                 "ingest": self.server.core.stats.as_dict(), "decision_subscribers": len(self.hub.subs)}
 
 
+#: P3-07: the private receive stamp of the LSL receiver (pull time from the inlet, ``time.perf_counter`` clock).
+RECV_STAMP = "_fidetype_t_recv"
 #: Events that end an utterance (a gap right after one cuts no utterance).
 BOUNDARY_TYPES = ("segment_end", "end", "header")
 
@@ -344,6 +346,11 @@ class LSLReceiver(Receiver):
 
     The stream id is ``stream_id`` or ``<receiver>-0``: never the LSL stream name or a host name
     (SEC-6, LSL-C3). Metrics hold counters only.
+
+    Receive stamp (P3-07): each event that the source releases carries ``_fidetype_t_recv``, the time
+    when the source pulled its sample from the inlet (``time.perf_counter`` clock, as ``ws_t_recv``).
+    The latency recorder counts from it, so the inlet merge-window wait is part of ``receive`` and
+    ``added``. The key is private: exporters never write it (``strip_binding_keys``).
     """
 
     type = "lsl"
@@ -367,7 +374,20 @@ class LSLReceiver(Receiver):
             self.src = self._open_source()
         except L.LSLResolveError as e:
             raise ConnectionError(f"receivers.{self.name}: {e}") from None  # exit code 3 (an I/O error)
+        if hasattr(self.src, "arrival_key"):
+            self.src.arrival_key = RECV_STAMP
         self.counts["streams"] += 1
+
+    def _restamp(self, evs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Pull times of the source clock -> the ``time.perf_counter`` clock of the latency recorder."""
+        clock = getattr(self.src, "clock", None)
+        if clock is None or not any(RECV_STAMP in ev for ev in evs):
+            return evs
+        off = time.perf_counter() - clock()
+        for ev in evs:
+            if RECV_STAMP in ev:
+                ev[RECV_STAMP] = ev[RECV_STAMP] + off
+        return evs
 
     def _map(self, evs: list[dict[str, Any]]) -> list[Item]:
         from fidetype.adapters import lsl as L
@@ -421,7 +441,7 @@ class LSLReceiver(Receiver):
         if self.done:
             return []
         try:
-            out = self._map(self.src.poll(timeout))
+            out = self._map(self._restamp(self.src.poll(timeout)))
         except L.LSLStreamLost:
             self.log(f"receivers.{self.name}: stream {self.sid} was not reconnected within the reconnect time; "
                      "the receiver stops")
@@ -434,7 +454,7 @@ class LSLReceiver(Receiver):
         """At shutdown: release what the merge holds; an open stream is ``lost`` (no final decision)."""
         if self.src is None or self.ended:
             return []
-        out = [] if self.done else self._map(self.src.drain())
+        out = [] if self.done else self._map(self._restamp(self.src.drain()))
         if not self.ended:
             out.append(status(self.sid, "lost", "was open when the collector stopped"))
             self.ended = True

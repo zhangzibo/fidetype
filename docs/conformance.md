@@ -139,7 +139,7 @@ Current entries (all from this repository; no outside entry yet):
 | `fidetype-python` (reference reader, validator, `nts-conform`) | consumer | NTS Trust-ready, text + intent + control, nts-lsl/0.1 + nts-ws/0.1 |
 | `fidetype-typescript` (`@fidetype/sdk`) | consumer | NTS Trust-ready, same scope |
 | `fidetype-rust` (crate `fidetype`) | consumer | NTS Trust-ready, same scope |
-| `fidetype-collector` (`fidetype-collector consume`: file receiver + `validate`, [collector](collector.md#the-collector-as-a-consumer-the-conformance-kit-p7-05)) | consumer | NTS Trust-ready, text only, no bindings |
+| `fidetype-collector` (`fidetype-collector consume`: file, LSL and WebSocket receivers + `validate`, [collector](collector.md#the-collector-as-a-consumer-the-conformance-kit-p7-05-p7-07)) | consumer | NTS Trust-ready, text + intent + control, `nts-lsl/0.1` + `nts-ws/0.1` |
 | `adapter-text-nbest` | producer | NTS Trust-ready, text |
 | `adapter-spanishbcbl`, `-toronto`, `-ctc-logits`, `-kt-semg`, `-emg2qwerty` | producer | NTS Core (frames only); stream level provenance |
 | `adapter-b2t25`, `adapter-willett` | producer | NTS Core (frames only); stream level trust-ready (no published weights hash) |

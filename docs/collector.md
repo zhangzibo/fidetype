@@ -90,15 +90,17 @@ All input is synthetic and our own. It contains no participant data.
 
 | Stage | From | To |
 |---|---|---|
-| `receive` | `ws_t_recv` of the trigger event (WebSocket server) | the receiver's poll returns |
+| `receive` | the receive stamp of the trigger event: `ws_t_recv` (WebSocket server) or `_fidetype_t_recv` (LSL receiver: the time the sample was pulled from the inlet, P3-07) | the receiver's poll returns |
 | `processor.<name>`, `exporter.<name>` | start of the call | end of the call |
 | `pipeline` | poll returns | the last exporter returns |
-| **`added`** (the budget number) | the trigger event is available (`ws_t_recv`; for file and LSL input: the poll return) | the last exporter returns |
+| **`added`** (the budget number) | the trigger event is available (its receive stamp; for file input: the poll return) | the last exporter returns |
 | `e2e` | `ws_t_sent` of the trigger event (producer on the same host) | the last exporter returns |
 
 The trigger event of a step is the last boundary (`segment_end`, `end`) of the batch. A boundary that the segmenter adds carries the stamps of the frame that caused it. One sample per step that wrote a decision. The clock is `time.perf_counter`.
 
 ### Results (2026-11-17, Windows 11 laptop, CPU, 12 segments per run)
+
+First run (P3-04). For LSL input these numbers start at the poll return, so they do not include the inlet merge-window wait (see "LSL receive stamps (P3-07)" below).
 
 `added` latency in milliseconds. Budget: **p95 < 50 ms**.
 
@@ -116,24 +118,65 @@ The trigger event of a step is the last boundary (`segment_end`, `end`) of the b
 
 - Almost all of the added time is the `guard` stage (the trust decision; for `emg-key` also the key beam search). `validate`, `segment` and the exporters take less than 0.3 ms per step at p95. The WebSocket `e2e` time (with the loopback transport) is 0.2 to 0.3 ms above `added`.
 - `implant-logits` does not meet the budget: the guard's built-in CTC beam search (n-best confidences over 64 texts) takes 60 to 110 ms per segment. This is decoding work, not collector overhead. It is an open gap (P3-06): decode during the frames, not at the boundary.
-- For LSL input `added` starts at the poll return: the time that the LSL inlet merge window (`merge_window_s`, default 50 ms) holds an event is not in the number. Receive stamps for LSL are an open gap (P3-07).
+- For LSL input `added` started at the poll return in this first run. P3-07 (next section) fixed this.
+
+### LSL receive stamps (P3-07)
+
+The LSL receiver now stamps each event with the time when the LSL source pulled its sample from the inlet (`_fidetype_t_recv`, `time.perf_counter` clock, never written out). `receive` and `added` count from this stamp. So the time that the inlet merge window (`merge_window_s`) holds an event is now part of the budget number.
+
+A frames stream and an events stream go through one merge. The merge holds an event until the other stream has passed its time, or until `merge_window_s` ends. Between markers the events stream is idle, so in practice every frame and every boundary waits for the merge window. Two changes:
+
+- `LSLEventSource.poll` now waits at most until the merge window of the oldest held event ends. Before, it waited for the next sample (one frame period, 20 ms at 50 Hz), so a held event left up to one frame late.
+- The bench sets `merge_window_s = 0.02` for LSL input (`--lsl-merge-window`, `LSL_MERGE_WINDOW_S`). The receiver default stays 0.05 s.
+
+`added` latency, LSL input, milliseconds (12 segments per run, same laptop; the B2T '25 replay of P3-08 ran at the same time):
+
+| Profile | Run | `merge_window_s` | p50 | p95 | p99 | Budget |
+|---|---|---|---|---|---|---|
+| implant-speech | P3-04 (poll return, no merge wait) | 0.05 | 0.81 | 1.11 | 1.19 | PASS |
+| implant-speech | stamps only | 0.05 | 61.1 | 61.3 | 61.3 | over |
+| implant-speech | stamps only | 0.02 | 40.4 | 41.1 | 41.2 | PASS |
+| implant-speech | stamps + poll wait bound | 0.05 | 58.0 | 60.4 | 60.6 | over |
+| implant-speech | **stamps + poll wait bound (bench default)** | **0.02** | **21.2** | **26.8** | **30.2** | **PASS** |
+| emg-key | P3-04 (poll return, no merge wait) | 0.05 | 1.59 | 2.23 | 2.55 | PASS |
+| emg-key | stamps only | 0.05 | 21.6 | 63.6 | 103.7 | over |
+| emg-key | stamps only | 0.02 | 21.6 | 36.3 | 50.3 | PASS |
+| emg-key | stamps + poll wait bound | 0.05 | 21.3 | 35.8 | 49.1 | PASS |
+| emg-key | **stamps + poll wait bound (bench default)** | **0.02** | **21.6** | **22.9** | **23.3** | **PASS** |
+| implant-logits | P3-04 | 0.05 | 66.8 | 107.3 | 117.4 | over (not gated) |
+| implant-logits | stamps + poll wait bound | 0.02 | 74.5 | 114.8 | 119.3 | over (not gated) |
+
+The same run for the other receivers (no change expected): implant-speech websocket 1.07 / 1.27 / 1.32, file 0.55 / 0.71 / 0.72; emg-key websocket 1.84 / 2.33 / 2.46, file 1.40 / 2.05 / 2.17; implant-logits websocket 59.0 / 97.3 / 100.4, file 64.2 / 96.2 / 100.1 (p50 / p95 / p99 ms).
+
+- With LSL input, the merge window is now most of the added latency: about `merge_window_s` plus 1 to 2 ms. The guard itself still takes about 1 to 2 ms.
+- With the receiver default (0.05 s) the implant-speech p95 is over the budget. Choose `merge_window_s` below the budget. A window shorter than the time skew between the two LSL streams can release events out of order (counted as `late_releases`). An idle events stream with a heartbeat would remove most of the wait: open gap P3-10.
 
 ### The CI gate and its tolerance
 
 - The test `test_pipeline_websocket_at_50_hz_within_budget` (both gated profiles, WebSocket input, 8 segments) and the file and LSL tests fail when the p95 `added` latency is not below **50 ms x `FIDETYPE_LATENCY_TOLERANCE`**.
-- The default tolerance is **1.0** (the budget itself). CI does not set it. Our local p95 is 1 to 3 ms, so a CI runner that is 10 times slower still passes. Set `FIDETYPE_LATENCY_TOLERANCE=2` only on a machine that is known to be slow, and say so in the report.
+- The default tolerance is **1.0** (the budget itself). CI does not set it. Our local p95 is 1 to 3 ms for WebSocket and file input, so a CI runner that is 10 times slower still passes. For LSL input the p95 is about 23 to 27 ms (merge window 0.02 s, see P3-07); this part is wall-clock waiting, not CPU work. Set `FIDETYPE_LATENCY_TOLERANCE=2` only on a machine that is known to be slow, and say so in the report.
 - The guard imports its parts when it starts, so the first decision has no import cost.
 - The CI job `collector` runs the pipeline tests with the `lsl` extra (so the LSL test runs), prints the bench report, and runs the kit against the collector consumer (next section).
 
-## The collector as a consumer: the conformance kit (P7-05)
+## The collector as a consumer: the conformance kit (P7-05, P7-07)
 
-`fidetype-collector consume [--profile P] [--level L] FILE` reads one file through the collector's own input path (the `file` receiver, then the `validate` processor at stream level `L`). Exit 0 = accept, 1 = reject, 2 = usage error. This is the kit contract of [`nts-conform kit`](conformance.md):
+`fidetype-collector consume [--profile P] [--level L] FILE` reads one file or capture through the collector's own input path and checks it with the `validate` processor at stream level `L`. Exit 0 = accept, 1 = reject, 2 = usage error. This is the kit contract of [`nts-conform kit`](conformance.md):
 
 ```sh
-nts-conform kit --claim text --require-level trust-ready \
+nts-conform kit --require-level trust-ready --binding nts-lsl/0.1 --binding nts-ws/0.1 \
   --cmd "fidetype-collector consume --profile {profile} --level {level} {path}"
 ```
 
-Result: consumer level **NTS Trust-ready** for the profile `text` (all `v0.1` and `fep-0001` entries give the expected verdict and stream level). The collector does not check the intent (`fep-0003`) and control (`fep-0005`) profiles, and it cannot read LSL or WebSocket captures (`fep-0002`, `fep-0004`): for these entries it says "not supported" and rejects, so 8 of the 36 kit entries do not match. The claim is therefore `--claim text` without bindings.
+| Kit file | Receiver | Checks |
+|---|---|---|
+| JSON Lines stream or decision log, NPZ (`v0.1`, `fep-0001`, `fep-0003`, `fep-0005`) | `file` | `validate`: header, frames, events, decisions; FEP-0003 and FEP-0005 rules (P7-07) |
+| LSL capture, kind `inlet` (`fep-0002`) | `lsl`, on an LSL source that plays the recorded inlets (no network) | the reference LSL consumer (binding rules), then `validate` |
+| WebSocket capture, kind `ingest` (`fep-0004`) | `websocket`; the server is not started, the recorded steps go into its ingest core | the reference WebSocket consumer (binding rules, refusals), then `validate` |
+| LSL `decisions` and WebSocket `subscribe` captures | the decisions that the reference subscriber reads | the reference consumer, then `validate` (decision rules) |
+
+- The intent (FEP-0003) and control (FEP-0005) rules in `validate` are the rule functions of `fidetype.conformance.profiles` (not a copy). They see the newest 512 profile events of a stream and the newest 512 decisions of a session (bounded memory).
+- Loss inside a capture (`gap`, `lost`) does not reject it: the binding defines it, and the collector handles it (no decision on a cut utterance). A file receiver loss (an unreadable line) still rejects a file.
+
+Result (P7-07, 2026-11-17): **36 / 36** kit entries give the expected verdict. Consumer level **NTS Trust-ready** for `text`, `intent` and `control`, with the bindings `nts-lsl/0.1` and `nts-ws/0.1`. `certified.json` lists `fidetype-collector` with these profiles and bindings. Before P7-07 (P7-05): 28 / 36, `text` only, no bindings (the 8 intent, control and capture entries said "not supported").
 
 Full rule list and design notes: [wiki/concepts/collector.md](../wiki/concepts/collector.md).

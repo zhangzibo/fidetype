@@ -6,9 +6,9 @@
  "spec": "NTS 1.0 RC4 (draft)",
  "kit": "./spec/conformance/kit",
  "kit_version": "0.2.0",
- "passed": 28,
+ "passed": 36,
  "total": 36,
- "ok": false,
+ "ok": true,
  "level": {
   "class": "consumer",
   "level": "trust-ready",
@@ -19,11 +19,13 @@
    "trust-ready": true
   },
   "profiles": [
-   "text"
+   "text",
+   "intent",
+   "control"
   ],
   "bindings": {
-   "nts-lsl/0.1": false,
-   "nts-ws/0.1": false
+   "nts-lsl/0.1": true,
+   "nts-ws/0.1": true
   },
   "bindings_missing": [],
   "why_not_higher": []
@@ -472,10 +474,11 @@
     "PRF-3"
    ],
    "stream_level": "provenance",
-   "actual": "reject",
-   "verdict_ok": false,
-   "ok": false,
-   "detail": "verdict reject, expected accept"
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
   },
   {
    "id": "K20",
@@ -506,10 +509,10 @@
     "INT-S1",
     "PRF-4"
    ],
-   "actual": "reject",
-   "verdict_ok": false,
-   "ok": false,
-   "detail": "verdict reject, expected accept"
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
   },
   {
    "id": "K22",
@@ -543,10 +546,11 @@
     "CTL-E1"
    ],
    "stream_level": "provenance",
-   "actual": "reject",
-   "verdict_ok": false,
-   "ok": false,
-   "detail": "verdict reject, expected accept"
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
   },
   {
    "id": "K24",
@@ -578,10 +582,10 @@
     "CTL-T5",
     "CTL-S1"
    ],
-   "actual": "reject",
-   "verdict_ok": false,
-   "ok": false,
-   "detail": "verdict reject, expected accept"
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
   },
   {
    "id": "K26",
@@ -600,10 +604,10 @@
     "LSL-C2",
     "LSL-V1"
    ],
-   "actual": "reject",
-   "verdict_ok": false,
-   "ok": false,
-   "detail": "verdict reject, expected accept"
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
   },
   {
    "id": "K27",
@@ -632,10 +636,10 @@
     "LSL-X2",
     "TD-6"
    ],
-   "actual": "reject",
-   "verdict_ok": false,
-   "ok": false,
-   "detail": "verdict reject, expected accept"
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
   },
   {
    "id": "K29",
@@ -652,10 +656,10 @@
     "WS-F1",
     "WS-V1"
    ],
-   "actual": "reject",
-   "verdict_ok": false,
-   "ok": false,
-   "detail": "verdict reject, expected accept"
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
   },
   {
    "id": "K30",
@@ -684,10 +688,10 @@
     "WS-D2",
     "TD-6"
    ],
-   "actual": "reject",
-   "verdict_ok": false,
-   "ok": false,
-   "detail": "verdict reject, expected accept"
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
   }
  ]
 }

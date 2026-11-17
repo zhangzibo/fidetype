@@ -13,6 +13,7 @@ lets the utterance go on as if nothing happened.
 
 from __future__ import annotations
 
+import collections
 import copy
 import hashlib
 import hmac
@@ -93,12 +94,58 @@ def decision_errors(ev: dict[str, Any]) -> list[str]:
     return [e.removeprefix("line ?: ") for e in td_format_errors(ev)]
 
 
+#: P7-07: input event types of the intent (FEP-0003) and control (FEP-0005) profiles.
+PROFILE_EVENT_TYPES = ("intent", "intent_feedback", "control", "control_enable", "pointer")
+#: P7-07: decisions and profile events that the profile checks look back on, per stream / session (bounded memory).
+PROFILE_WINDOW = 512
+
+
+def _at_line(errs: list[str], n: int) -> list[str]:
+    """The errors of the profile checks that name line ``n`` (the current event), without the line prefix."""
+    pre = f"line {n}: "
+    return [e[len(pre):] for e in errs if e.startswith(pre)]
+
+
+def profile_header_errors(ev: dict[str, Any]) -> list[str]:
+    """FEP3-DECL, FEP3-VOCAB and FEP5-DECL of one header (the conformance profile functions, P7-07)."""
+    from fidetype.conformance.profiles import fep0003 as f3
+    from fidetype.conformance.profiles import fep0005 as f5
+
+    h = [{**ev, "_line": 1}]
+    return _at_line(f3.decl_errors(h) + f3.vocab_errors(h) + f5.decl_errors(h), 1)
+
+
+def profile_event_errors(header: dict[str, Any], window: list[dict[str, Any]], ev: dict[str, Any], n: int) -> list[str]:
+    """FEP3-INTENT / -FEEDBACK and FEP5-CONTROL / -ENABLE of the event ``ev`` (line ``n``) after ``window``."""
+    from fidetype.conformance.profiles import fep0003 as f3
+    from fidetype.conformance.profiles import fep0005 as f5
+
+    evs = [{**header, "_line": 0}, *window, {**ev, "_line": n}]
+    return _at_line(f3.intent_errors(evs) + f3.feedback_errors(evs) + f5.control_errors(evs) + f5.enable_errors(evs), n)
+
+
+def profile_decision_errors(window: list[dict[str, Any]], ev: dict[str, Any], n: int) -> list[str]:
+    """An intent or control ``trust_decision`` (line ``n``): its profile format (FEP3-TD-FORMAT, FEP5-TD-FORMAT) and
+    the order and safety rules (FEP3-TD-FINAL, FEP3-SAFETY, FEP5-TD-ORDER, FEP5-SAFETY) after ``window``."""
+    from fidetype.conformance.profiles import fep0003 as f3
+    from fidetype.conformance.profiles import fep0005 as f5
+
+    cur = {**ev, "_line": n}
+    fmt = f3.td_intent_format_errors(cur) if ev.get("profile") == "intent" else f5.td_control_format_errors(cur)
+    evs = [*window, cur]
+    seq = f3.td_final_errors(evs) + f3.safety_errors(evs) + f5.td_order_errors(evs) + f5.safety_errors(evs)
+    return list(dict.fromkeys(_at_line(fmt, n) + _at_line(seq, n)))
+
+
 class _VState:
     def __init__(self) -> None:
         self.header_ok = False
         self.V = 0
         self.last_t = -math.inf
         self.ended = False
+        self.header: dict[str, Any] = {}
+        self.window: collections.deque[dict[str, Any]] = collections.deque(maxlen=PROFILE_WINDOW)
+        self.line = 1
 
 
 class ValidateProcessor(Processor):
@@ -109,6 +156,13 @@ class ValidateProcessor(Processor):
     SEG-5); ``hypothesis`` (HYP-1); ``signal_quality`` (SQ-1). Decisions: the FEP-0001 format
     checks and, per session, TD-5 (``seq`` increases), TD-6 / TD-7 (one final per utterance, nothing
     after it).
+
+    Intent (FEP-0003) and control (FEP-0005) profiles (P7-07): the header declarations (FEP3-DECL,
+    FEP3-VOCAB, FEP5-DECL), the ``intent``, ``intent_feedback``, ``control``, ``control_enable`` and
+    ``pointer`` events (FEP3-INTENT, FEP3-FEEDBACK, FEP5-CONTROL, FEP5-ENABLE) and the intent and
+    control decisions (format, order and safety rules). The processor calls the rule functions of the
+    conformance profiles (:mod:`fidetype.conformance.profiles`) on the newest ``PROFILE_WINDOW`` profile
+    events of the stream (or decisions of the session), so the rules are the same as in ``nts-conform``.
 
     ``on_invalid = "cut"`` (default): an invalid input event becomes a ``gap`` status; an invalid
     header drops the stream until the next valid header (status ``lost``); an invalid decision is
@@ -123,6 +177,7 @@ class ValidateProcessor(Processor):
         self.level = level
         self.streams: dict[str, _VState] = {}
         self.sessions: dict[str, dict[str, Any]] = {}
+        self._td_line = 0
         self.counts.update(invalid_headers=0, invalid_events=0, invalid_decisions=0, dropped_no_header=0)
         self._logged: set[tuple[str, str]] = set()
 
@@ -174,9 +229,16 @@ class ValidateProcessor(Processor):
         return []
 
     def _decision(self, sid: str, ev: dict[str, Any]) -> list[str]:
-        errs = decision_errors(ev)
         sess = ev.get("session", sid)
-        st = self.sessions.setdefault(str(sess), {"seq": -1, "final_utts": set()})
+        st = self.sessions.setdefault(str(sess), {"seq": -1, "final_utts": set(),
+                                                  "window": collections.deque(maxlen=PROFILE_WINDOW)})
+        self._td_line += 1
+        n = self._td_line
+        if ev.get("profile") in ("intent", "control"):
+            errs = profile_decision_errors(list(st["window"]), ev, n)
+        else:
+            errs = decision_errors(ev)
+        st["window"].append({**ev, "_line": n})
         seq, utt = ev.get("seq"), ev.get("utterance")
         if _int(seq):
             if seq <= st["seq"]:
@@ -212,7 +274,7 @@ class ValidateProcessor(Processor):
                 continue
             st = self.streams.setdefault(sid, _VState())
             if typ == "header":
-                errs = header_errors(ev, self.level)
+                errs = header_errors(ev, self.level) + profile_header_errors(ev)
                 if errs:
                     self.counts["invalid_headers"] += 1
                     self._note(sid, "header", errs)
@@ -224,6 +286,7 @@ class ValidateProcessor(Processor):
                         continue
                 ns = _VState()
                 ns.header_ok, ns.V = True, len(ev.get("vocab") or [])
+                ns.header = ev
                 self.streams[sid] = ns
                 out.append((sid, ev))
                 continue
@@ -231,6 +294,11 @@ class ValidateProcessor(Processor):
                 self.counts["dropped_no_header"] += 1
                 continue
             errs = self.event_errors(st, ev) if not st.ended else []
+            if typ in PROFILE_EVENT_TYPES and not st.ended:
+                st.line += 1
+                errs += profile_event_errors(st.header, list(st.window), ev, st.line)
+                if not errs:
+                    st.window.append({**ev, "_line": st.line})
             if errs:
                 self.counts["invalid_events"] += 1
                 self._note(sid, typ, errs)
@@ -525,7 +593,7 @@ class ThinProcessor(Processor):
 #: a processor that passes input events on to an exporter removes them (:func:`strip_binding_keys`).
 BINDING_KEY_PREFIXES = ("ws_", "_fidetype")
 #: Receive stamps that a segmenter copies onto a segment_end it adds (latency of the added boundary).
-STAMP_KEYS = ("ws_t_recv", "ws_t_sent")
+STAMP_KEYS = ("ws_t_recv", "ws_t_sent", "_fidetype_t_recv")
 
 
 def strip_binding_keys(ev: dict[str, Any]) -> dict[str, Any]:
@@ -563,7 +631,7 @@ class SegmenterProcessor(Processor):
     segment with a non-blank frame gets a boundary before ``end``. A ``gap``, ``lost`` or ``closed``
     status resets the state (the guard drops a cut segment). The added event is
     ``{"type": "segment_end", "t": ..., "unit": "utterance", "reason": "segmenter: ..."}``; it
-    carries the receive stamps (``ws_t_recv``, ``ws_t_sent``) of the frame that caused it, so the
+    carries the receive stamps (``ws_t_recv``, ``ws_t_sent``, ``_fidetype_t_recv``) of the frame that caused it, so the
     latency counts from that frame. Exporters never see these stamps (:func:`strip_binding_keys`).
     """
 

@@ -260,9 +260,55 @@ def test_consume_cli_exit_codes(capsys):
     assert consume_main([str(kit / "v0.1" / "k33-core-only.jsonl"), "--level", "trust-ready"]) == 1
     assert "reject" in capsys.readouterr().out
     assert consume_main([str(kit / "missing.jsonl")]) == 2
-    assert consume(kit / "fep-0003" / "k19-intent-stream.jsonl", "fep-0003")[0].startswith("profile fep-0003")
+    assert consume(kit / "fep-0003" / "k19-intent-stream.jsonl", "fep-0003") == []  # P7-07
+    assert consume(kit / "fep-0003" / "k19-intent-stream.jsonl", "fep-0009")[0].startswith("profile fep-0009")
+    assert consume(kit / "fep-0002" / "k26-lsl-capture.json", "v0.1")[0].startswith("wire form .json")
     with pytest.raises(ValueError):
         kit_validator(kit / "fep-0001" / "k17-commit-empty-shown.jsonl", "fep-0001")
+
+
+def test_consume_whole_kit_all_profiles_and_bindings():
+    """P7-07: the collector consumer gives the expected verdict on all kit entries (text, intent, control, LSL, WS)."""
+    from fidetype.conformance import nts_conform as NC
+
+    rep = NC.run_kit(validator=NC._impl_validator("fidetype.collector.consume:kit_validator"),
+                     bindings=["nts-lsl/0.1", "nts-ws/0.1"])
+    assert rep["ok"] and rep["passed"] == rep["total"] == 36, [e for e in rep["entries"] if not e["ok"]]
+    lv = rep["level"]
+    assert lv["level"] == "trust-ready" and lv["profiles"] == ["text", "intent", "control"]
+    assert lv["bindings"] == {"nts-lsl/0.1": True, "nts-ws/0.1": True} and lv["bindings_missing"] == []
+
+
+def test_validate_runs_intent_and_control_rules():
+    """P7-07: the validate processor uses the FEP-0003 / FEP-0005 rule functions on events and decisions."""
+    from fidetype.collector.processors import ValidateProcessor
+    from fidetype.conformance.kit import kit_dir
+    from fidetype.conformance.profiles.fep0001 import read_events
+
+    def run(rel: str):
+        evs, _ = read_events(kit_dir() / rel)
+        v = ValidateProcessor("v", _log)
+        out = v.process([("s", {k: x for k, x in e.items() if k != "_line"}) for e in evs])
+        return v.counts, out
+
+    c, _ = run("fep-0003/k19-intent-stream.jsonl")
+    assert c["invalid_events"] == c["invalid_headers"] == 0
+    c, out = run("fep-0003/k20-intent-undeclared.jsonl")  # intent event without a declaration (rule 1)
+    assert c["invalid_events"] == 1 and any(ev.get("status") == "gap" for _, ev in out)
+    c, _ = run("fep-0003/k22-intent-irreversible-direct.jsonl")  # irreversible COMMIT without confirmation
+    assert c["invalid_decisions"] == 1
+    c, _ = run("fep-0005/k24-control-dims.jsonl")
+    assert c["invalid_events"] >= 1
+    c, _ = run("fep-0005/k25-control-decision-log.jsonl")
+    assert c["invalid_decisions"] == 0
+
+
+def test_trigger_stamps_use_the_lsl_receive_stamp():
+    """P3-07: ``_fidetype_t_recv`` (LSL receiver) is a receive stamp, as ``ws_t_recv``."""
+    items = [("s", {"type": "frame", "t": 0.0, "_fidetype_t_recv": 5.0}),
+             ("s", {"type": "segment_end", "_fidetype_t_recv": 7.0})]
+    assert trigger_stamps(items) == (7.0, None)
+    assert strip_binding_keys(items[1][1]) == {"type": "segment_end"}
 
 
 # --- integration runs (P3-04) -----------------------------------------------------------------------
