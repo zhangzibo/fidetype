@@ -193,6 +193,11 @@ def capture_lsl(query: str | dict[str, str], seconds: float = 30.0, until_end: b
     if not is_dec and events == "auto" and primary.info.fidetype.get("events_source_id"):
         ev_rec = _LSLRecorder(pl, _resolve_one({"source_id": primary.info.fidetype["events_source_id"]},
                                                resolve_timeout), open_timeout)
+        if ev_rec.info.hostname and ev_rec.info.hostname == primary.info.hostname:
+            # LSL-C3: one clock offset per sender host. The capture drops the host name (SEC-6), so it stores the
+            # same offset on both inlets; two separate estimates differ by microseconds and would break the
+            # equal-time order of LSL-C8 (a marker stamped with its frame's time) on replay.
+            ev_rec.time_correction = primary.time_correction
         recs.append(ev_rec)
     log(f"recording {', '.join(r.info.name for r in recs)}")
     if ready is not None:
