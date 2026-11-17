@@ -335,6 +335,9 @@
    "FRM-3",
    "FRM-5"
   ],
+  "NTS-TD-INPUT": [
+   "TD-4"
+  ],
   "NTS-V-MATCH": [
    "FRM-1",
    "FRM-8"
@@ -1793,7 +1796,8 @@
   "TD-4": {
    "keyword": "MUST NOT",
    "checks": [
-    "FEP1-TD-INPUT"
+    "FEP1-TD-INPUT",
+    "NTS-TD-INPUT"
    ],
    "status": "T"
   },

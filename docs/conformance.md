@@ -147,10 +147,13 @@ Current entries (all from this repository; no outside entry yet):
 | `binding-ws` (`WSProducer` / `replay_to_ws`, the `/decisions` channel of `WSServer`) | producer | NTS Trust-ready, text, nts-ws/0.1 |
 | `fidetype-live-lsl` (`fidetype live --publish lsl`: `NTSOutlet` frames + events streams, `DecisionOutlet`; [live decode](live-decode.md#8a-publish-over-a-binding---publish-p14-16)) | producer | NTS Trust-ready, text, nts-lsl/0.1 |
 | `fidetype-live-ws` (`fidetype live --publish ws://.../nts` + `ws://.../decisions`: `WSProducer`, `/decisions` of `WSServer`) | producer | NTS Trust-ready, text, nts-ws/0.1 |
+| `fidetype-live-file` (`fidetype live --out S.jsonl`: the NTS input stream and the decision log `S.decisions.jsonl`; [live decode](live-decode.md#8-what-the-nts-file-holds)) | producer | NTS Trust-ready, text |
 
 The two `binding-*` entries (P7-06) come from captures of our own outlets. `python -m fidetype.conformance.binding_producers --out DIR` runs them in one process on loopback with synthetic input (WebSocket on 127.0.0.1; LSL with `ResolveScope = machine`), records them with `nts-conform capture` and writes each capture with its received stream. CI (job `live`) runs it and `nts-conform check DIR/lsl` / `DIR/ws --require-level trust-ready`.
 
 The two `fidetype-live-*` entries (P14-16) come from captures of the `fidetype live` command itself. `--target live-lsl --target live-ws` runs `fidetype live --source synthetic --publish ...` in a child process on loopback and records it the same way. CI (job `live`) checks them at `--require-level trust-ready`.
+
+The `fidetype-live-file` entry (P14-17) checks the two files of `fidetype live --out S.jsonl` together: the NTS input stream (no `trust_decision`, rule TD-4) and the decision log `S.decisions.jsonl` (`--decisions-out`). `tools/conformance/certify.py` runs `fidetype live --source synthetic --speed 0 --utterances 4 --out live.nts.jsonl` and `nts-conform check` on both files.
 
 ### Add your implementation (pull request)
 

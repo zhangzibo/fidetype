@@ -17,7 +17,10 @@
 
 Defaults: ``--model builtin:synthetic-keys --guard builtin:synthetic-keys``.
 Each decision prints one line (``--json``: one JSON object). ``--out``
-writes an NTS JSON Lines file (frames, final hypotheses, trust decisions).
+writes an NTS JSON Lines input stream (header, frames, final hypotheses,
+segment ends, end). The trust decisions go to a separate FEP-0001 decision
+log, ``--decisions-out`` (default with ``--out``: ``S.decisions.jsonl``
+next to ``S.jsonl``), never into the stream (TD-4; P14-17).
 ``--publish`` sends the same events over a binding in real time
 (:mod:`fidetype.live.publish`). Read docs/live-decode.md first.
 """
@@ -38,6 +41,19 @@ def _err(msg: str) -> None:
     sys.stderr.flush()
 
 
+def decisions_path(out: str | None, decisions_out: str | None) -> str | None:
+    """The decision log path: ``--decisions-out``, else derived from ``--out`` (P14-17); None = not written.
+
+    ``s.nts.jsonl`` -> ``s.nts.decisions.jsonl``; a name without ``.jsonl`` gets ``.decisions.jsonl`` added.
+    ``--decisions-out none`` turns the log off.
+    """
+    if decisions_out is not None:
+        return None if decisions_out.lower() == "none" else decisions_out
+    if not out:
+        return None
+    return (out[: -len(".jsonl")] if out.endswith(".jsonl") else out) + ".decisions.jsonl"
+
+
 def _run_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(
         prog="fidetype live",
@@ -47,7 +63,10 @@ def _run_parser() -> argparse.ArgumentParser:
     ap.add_argument("--model", default="builtin:synthetic-keys", help="*.model.json path or builtin:<name>")
     ap.add_argument("--guard", default=None, help="trust guard JSON (fidetype.trust save); default: the model's "
                     "builtin guard when --model is builtin")
-    ap.add_argument("--out", help="write NTS JSON Lines here (frames, hypotheses, trust decisions)")
+    ap.add_argument("--out", help="write the NTS JSON Lines input stream here (frames, hypotheses; no trust decisions)")
+    ap.add_argument("--decisions-out", metavar="FILE",
+                    help="write the trust decisions here as a FEP-0001 decision log (JSON Lines, no header). "
+                         "Default with --out: OUT without .jsonl + .decisions.jsonl; 'none' = do not write them")
     ap.add_argument("--json", action="store_true", help="print one JSON object per decision")
     ap.add_argument("--no-text", action="store_true", help="do not print decoded text")
     ap.add_argument("--summary", help="write the run summary (counts, latency) as JSON here")
@@ -174,10 +193,16 @@ def run_main(argv: Sequence[str]) -> int:
             src.close()
             _err(str(e))
             return 2
-        tee = EventTee(pubs, open(a.out, "w", encoding="utf-8", newline="\n") if a.out else None, log=_err)
+    else:
+        from fidetype.live.publish import EventTee
+
+        pubs = []
+    dec_out = decisions_path(a.out, a.decisions_out)
+    if pubs or a.out or dec_out:
+        tee = EventTee(pubs, open(a.out, "w", encoding="utf-8", newline="\n") if a.out else None, log=_err,
+                       decisions_file=open(dec_out, "w", encoding="utf-8", newline="\n") if dec_out else None)
     try:
-        writer = (make_writer(tee if tee is not None else a.out, model, info, guard, a.source, timing)
-                  if (a.out or tee is not None) else None)
+        writer = make_writer(tee, model, info, guard, a.source, timing) if tee is not None else None
     except Exception as e:  # noqa: BLE001 - e.g. a WebSocket server that does not answer
         src.close()
         if tee is not None:
@@ -225,8 +250,12 @@ def run_main(argv: Sequence[str]) -> int:
         _err(f"latency per decision: compute p50 {dm['p50']} ms, p95 {dm['p95']} ms; added p50 "
              f"{s['decision_added_ms']['p50']} ms, p95 {s['decision_added_ms']['p95']} ms")
     if a.out:
-        _err(f"NTS written: {a.out} (check: fidetype validate {a.out})")
-    if published is not None:
+        _err(f"NTS written: {a.out} (check: nts-conform check {a.out})")
+    if dec_out:
+        _err(f"decision log written: {dec_out} ({tee.decisions if tee is not None else 0} decisions; "
+             f"check: nts-conform check {dec_out})")
+        s["decisions_out"] = dec_out
+    if published is not None and a.publish:
         s["published"] = published
         _err(f"published: {json.dumps(published)}")
     if a.summary:

@@ -46,6 +46,8 @@ export interface RawStream {
   npzDtypes: Record<string, string>;
   unknownKeys: string[];
   ignoredEvents: number;
+  /** Line numbers of `trust_decision` events in a JSON Lines input stream (TD-4, P14-17). */
+  tdLines: number[];
   hasEnd: boolean;
   linesAfterEnd: number;
   parsed: boolean;
@@ -56,7 +58,7 @@ export interface RawStream {
 function emptyRaw(format: "npz" | "jsonl"): RawStream {
   return {
     format, header: {}, logProbs: null, frameTimes: null, issues: [], events: [], sparseFrames: [], timed: [], npzKeys: [],
-    npzDtypes: {}, unknownKeys: [], ignoredEvents: 0, hasEnd: false, linesAfterEnd: 0, parsed: true,
+    npzDtypes: {}, unknownKeys: [], ignoredEvents: 0, tdLines: [], hasEnd: false, linesAfterEnd: 0, parsed: true,
     vocabTypeDefaulted: false, metaDefaulted: false,
   };
 }
@@ -148,6 +150,7 @@ export function readJsonlRaw(bytes: Uint8Array): RawStream {
     }
     if (!(EVENT_TYPES as readonly string[]).includes(typ)) {
       raw.ignoredEvents++; // 6.2 rule 5
+      if (typ === "trust_decision") raw.tdLines.push(n); // trust layer output: not allowed in an input stream (TD-4)
       continue;
     }
     if (typ !== "frame") {

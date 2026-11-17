@@ -140,6 +140,14 @@ Also in RC4:
 - The golden vectors of v0.1 can now pin the advisory warnings: `expected.warnings` (V93 … V96, and the v0.1 kit entries) is compared by the runners of all three SDKs, so the warning itself has three-way parity, not only the verdict.
 - Vector counts: 345 (v0.1 96). Kit: 36 entries. Python = TypeScript = Rust on all 345, on the 36 kit entries and on 27,767 fuzz mutants (seeds 1–3, `--n 30`, 0 differences). Schema parity (C.3): 213 of 213 one-line verdicts. Informative parts updated: 2.3, 9.3, 9.5, C.1 (MET-11, CNF-2 … CNF-8), C.2, C.3.
 
+**Amendment 4 of 2026-11-17 (still RC4 DRAFT; roadmap P14-17, gap 42).** A check that was missing. No rule changes. No earlier vector changed its verdict.
+
+| Item | Answer | Rules | Vectors | SDK change |
+|---|---|---|---|---|
+| **TD-4 in the v0.1 suite** | The v0.1 suite read a `trust_decision` line in an input stream as an unknown event type and ignored it (6.2 rule 5). Only the `fep-0001` profile (`FEP1-TD-INPUT`) tested TD-4, so `fidetype validate`, `fidetype-ts validate` and `fidetype-rs validate` passed a file that `nts-conform check` failed. A new core check `NTS-TD-INPUT` tests TD-4 in the v0.1 suite. | TD-4 | V97 (reject) | Yes: the three v0.1 file validators and consumers reject the file |
+
+- A stream with a `trust_decision` line next to its input events is now refused by the v0.1 consumers. `fidetype live --out` wrote such files before P14-17; it now writes the decisions to a separate decision log (`--decisions-out`).
+
 ---
 
 ## 2. Scope and core data model
@@ -955,7 +963,7 @@ The levels are cumulative and come from the conformance suite. They are **stream
 ### 9.3 Profiles of the suite
 | Suite profile | Covers | Vectors | Python | TypeScript | Rust |
 |---|---|---|---|---|---|
-| `v0.1` | Sections 3, 4.1–4.6, 4.8, 5, 8.1 (incl. 1.x header versions V53–V61, HDR-12 V62–V65, unknown enumeration values V66–V68; RC4: optional field types V69–V82; amendments: modality keys V83–V87, dense and sparse keys V88–V92, MET-11 warning V93–V96) | 96 | yes | yes | yes |
+| `v0.1` | Sections 3, 4.1–4.6, 4.8, 5, 8.1 (incl. 1.x header versions V53–V61, HDR-12 V62–V65, unknown enumeration values V66–V68; RC4: optional field types V69–V82; amendments: modality keys V83–V87, dense and sparse keys V88–V92, MET-11 warning V93–V96; amendment 4: TD-4 V97) | 97 | yes | yes | yes |
 | `fep-0001` | 4.3, 4.7, 6 (incl. TD-9 for 1.x, TD-F2 types, TD-F3, TD-12 advisory; RC3: VER-8 F57–F59, GEN-10 F60–F61, `declaration` F62; RC4: F63–F66) | 66 | yes | yes | yes |
 | `fep-0002` | 8.2 | 35 | yes | yes (structural) | yes (structural) |
 | `fep-0003` | 7.1, 7.3 (RC3: VER-8 I24, D22, D23; RC4: I25, D24–D26) | 51 | yes | yes | yes |
@@ -1441,7 +1449,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | TD-1 | MUST NOT | consumer `acted` lists | F22, F23, D06, L26, W31 | T |
 | TD-2 | — | see DEC-5 | | |
 | TD-3 | SHOULD | — | — | G-7 |
-| TD-4 | MUST NOT | FEP1-TD-INPUT | F21 | T |
+| TD-4 | MUST NOT | FEP1-TD-INPUT, NTS-TD-INPUT (amendment 4) | F21, V97 | T |
 | TD-5 | MUST | FEP1-TD-FINAL, FEP3-TD-FINAL, FEP5-TD-ORDER | F25, F38, D14, E16 | T |
 | TD-6 | MUST | FEP1-TD-FINAL, FEP2-DECISIONS, FEP4-DECISIONS | F26, F36, L31, W37, D13 | T |
 | TD-7 | MUST NOT | FEP1-TD-FINAL | F37 | T |

@@ -685,6 +685,14 @@ check("NTS-CLOCK", "core", "MUST", "3.8", "clock_domain, if present, is lsl, uni
   return (CLOCK_DOMAINS as readonly unknown[]).includes(cd) ? ok() : bad(`clock_domain ${repr(cd)} is not one of ${repr(CLOCK_DOMAINS)}`);
 });
 
+/** TD-4 (P14-17): trust_decision events are trust layer output; they go to a decision log, not into a stream. */
+check("NTS-TD-INPUT", "core", "MUST", "1.0 RC4 6.1 (TD-4)", "No trust_decision event in an input stream", (raw) => {
+  const td = raw.tdLines;
+  if (!td.length) return ok();
+  const lines = td.slice(0, 6).join(", ") + (td.length > 6 ? ` (+${td.length - 6} more)` : "");
+  return bad(`${td.length} trust_decision event(s) in an input stream (line ${lines}); write them to a decision log`);
+}, { formats: ["jsonl"] });
+
 // --- trust-ready profile ------------------------------------------------------------------------
 
 const metaOrEmpty = (raw: RawStream): Record<string, unknown> => metaOf(raw) ?? {};

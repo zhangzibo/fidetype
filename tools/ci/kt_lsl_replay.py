@@ -18,8 +18,11 @@ Steps (one command)::
 3. For each timing (``markers`` = key-log onsets; ``detect`` = the envelope
    onset detector of P4-10): ``fidetype live replay-kt`` publishes run3 on
    a loopback LSL stream, and ``fidetype live --source lsl`` decodes it.
-4. ``fidetype validate`` must pass at level ``trust-ready``, the stream must
-   have trust decisions, and the header must carry the replay attribution.
+4. ``nts-conform check --require-level trust-ready`` must pass on the NTS
+   input stream (``--out``) and the decision log (``--decisions-out``)
+   together, the stream must have no trust decision (TD-4; P14-17), the
+   decision log must have them, and the header must carry the replay
+   attribution.
 
 Exit code 0 when every check passes. Our own code (Apache-2.0).
 """
@@ -103,13 +106,14 @@ def run(cmd: list[str], **kw: object) -> subprocess.CompletedProcess:
 def replay_and_decode(py: str, cache: Path, model_dir: Path, work: Path, timing: str, speed: float) -> dict:
     name = f"fidetype.ci.kt-semg.{timing}.{uuid.uuid4().hex[:8]}"
     out, summ = work / f"live-{timing}.nts.jsonl", work / f"live-{timing}.summary.json"
+    dlog = work / f"live-{timing}.decisions.jsonl"
     pub = subprocess.Popen([py, "-m", "fidetype", "live", "replay-kt", "--data", str(cache), "--run", "run3",
                             "--speed", str(speed), "--name", name, "--wait-consumers", "60"])
     try:
         cmd = [py, "-m", "fidetype", "live", "--source", "lsl", "--stream-name", name,
                "--model", str(model_dir / "kt-semg-lda.model.json"),
                "--guard", str(model_dir / "kt-semg-lda.guard.json"),
-               "--out", str(out), "--summary", str(summ), "--json", "--duration", "180",
+               "--out", str(out), "--decisions-out", str(dlog), "--summary", str(summ), "--json", "--duration", "180",
                "--max-reconnects", "0", "--timing", timing]
         if timing == "detect":
             cmd += ["--onset", "envelope"]
@@ -119,22 +123,21 @@ def replay_and_decode(py: str, cache: Path, model_dir: Path, work: Path, timing:
             pub.wait(timeout=60)
         except subprocess.TimeoutExpired:
             pub.kill()
-    run([py, "-m", "fidetype", "validate", str(out)])
-    from fidetype.conformance import check_file
-
-    rep = check_file(out)
-    bad = rep.failures("trust-ready")
-    if bad:
-        raise SystemExit(f"{timing}: NTS not trust-ready: {bad}")
+    # P14-17: the stream and the decision log are separate files; both together reach NTS Trust-ready.
+    run([py, "-m", "fidetype.conformance.nts_conform", "check", str(out), str(dlog), "--require-level", "trust-ready"])
+    run([py, "-m", "fidetype", "validate", str(out), "--level", "trust-ready"])
     evs = [json.loads(x) for x in out.read_text(encoding="utf-8").splitlines()]
     s = json.loads(summ.read_text(encoding="utf-8"))
-    n_dec = sum(1 for e in evs if e["type"] == "trust_decision")
+    if any(e["type"] == "trust_decision" for e in evs):
+        raise SystemExit(f"{timing}: trust_decision in the NTS input stream (TD-4)")
+    decs = [json.loads(x) for x in dlog.read_text(encoding="utf-8").splitlines()]
+    n_dec = sum(1 for e in decs if e["type"] == "trust_decision")
     head = evs[0]
     rep_attr = head.get("meta", {}).get("fidetype.replay", "")
     say(f"{timing}: {s['decisions']} decisions ({s['commits']} commit, {s['offers']} offer, {s['withholds']} "
         f"withhold), {s['frames']} windows, onsets {s.get('onsets', 0)}; header replay = {rep_attr!r}")
     if n_dec < 1 or n_dec != s["decisions"]:
-        raise SystemExit(f"{timing}: expected >= 1 trust_decision events (summary {s['decisions']}, file {n_dec})")
+        raise SystemExit(f"{timing}: expected >= 1 trust_decision events (summary {s['decisions']}, decision log {n_dec})")
     if "kt-semg run3" not in rep_attr or "CC BY 4.0" not in rep_attr:
         raise SystemExit(f"{timing}: the header does not carry the replay attribution")
     if head.get("meta", {}).get("fidetype.live", {}).get("timing") != timing:

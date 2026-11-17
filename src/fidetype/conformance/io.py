@@ -95,6 +95,8 @@ class RawStream:
     npz_dtypes: dict[str, str] = field(default_factory=dict)
     unknown_keys: list[str] = field(default_factory=list)
     ignored_events: int = 0
+    #: Line numbers of ``trust_decision`` events in a JSON Lines input stream (TD-4, P14-17).
+    td_lines: list[int] = field(default_factory=list)
     has_end: bool = False
     lines_after_end: int = 0
     parsed: bool = True
@@ -294,6 +296,8 @@ def read_jsonl(path: str | PathLike[str]) -> RawStream:
             raw.timed.append({**{k: obj[k] for k in TIMING_KEYS if k in obj}, "_line": n})
         if typ not in EVENT_TYPES:
             raw.ignored_events += 1  # 6.2 rule 5
+            if typ == "trust_decision":
+                raw.td_lines.append(n)  # trust layer output: not allowed in an input stream (TD-4)
             continue
         if typ != "frame":
             obj = dict(obj)

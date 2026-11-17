@@ -1068,6 +1068,16 @@
      "NTS-MODALITY-MATCH"
     ]
    }
+  },
+  {
+   "id": "V97",
+   "file": "v97-trust-decision-in-input.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 6.1 (TD-4)",
+   "description": "A trust_decision event inside an input stream (it belongs in a decision log)",
+   "failing_check": "NTS-TD-INPUT"
   }
  ]
 }

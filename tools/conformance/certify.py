@@ -23,6 +23,8 @@ Entries:
 * ``fidetype-live-lsl``, ``fidetype-live-ws``: ``fidetype live --publish`` (P14-16). The same module runs the CLI
   (``fidetype live --source synthetic``) in a child process with ``--publish lsl:NAME`` or ``--publish
   ws://127.0.0.1:PORT/nts --publish ws://127.0.0.1:PORT/decisions`` and records it with ``nts-conform capture``.
+* ``fidetype-live-file``: ``fidetype live --out S.jsonl`` (P14-17): the NTS input stream and the decision log
+  ``S.decisions.jsonl``, then ``nts-conform check`` on both files.
 
 Third-party implementations add their own entry by pull request (docs/conformance.md, "Self-certification");
 this tool never writes them.
@@ -250,6 +252,29 @@ def binding_entries() -> list[dict]:
     return out
 
 
+def live_file_entries() -> list[dict]:
+    """P14-17: the files of ``fidetype live --out S.jsonl`` (NTS input stream + decision log ``S.decisions.jsonl``)."""
+    import subprocess
+
+    from fidetype.conformance import nts_conform as NC
+
+    v = _versions()
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        out = tmp / "live.nts.jsonl"
+        subprocess.run([sys.executable, "-m", "fidetype", "live", "--source", "synthetic", "--speed", "0",
+                        "--utterances", "4", "--no-text", "--out", str(out)], check=True, capture_output=True)
+        rep = NC.build_report([NC.conform_file(f, "core") for f in (out, tmp / "live.nts.decisions.jsonl")], "core")
+        ev = _write("fidetype-live-file.report.json", rep, tmp)
+    return [{"class": "producer", "language": "Python", "version": v["python"], "maintainer": "Fidetype project",
+             "repository": URL, "licence": "Apache-2.0", "date": DATE, "id": "fidetype-live-file",
+             "implementation": "fidetype live --out S.jsonl (src/fidetype/live/__main__.py, runner.py): NTS input "
+             "stream file + FEP-0001 decision log S.decisions.jsonl (--decisions-out), live decode of the synthetic "
+             "typist", "bindings": [], "evidence": ev,
+             "evidence_command": "fidetype live --source synthetic --speed 0 --utterances 4 --out live.nts.jsonl, "
+             "then nts-conform check live.nts.jsonl live.nts.decisions.jsonl --json", "_rep": rep}]
+
+
 def main(argv: list[str] | None = None) -> int:
     from fidetype.conformance.binding_producers import loopback_lsl_config
     from fidetype.conformance.certified import CERTIFIED_SCHEMA, check_certified
@@ -261,7 +286,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--python-only", action="store_true", help="skip the TypeScript and Rust consumers")
     a = ap.parse_args(argv)
     loopback_lsl_config()
-    entries = consumer_entries(a.python_only) + producer_entries() + binding_entries()
+    entries = consumer_entries(a.python_only) + producer_entries() + binding_entries() + live_file_entries()
     rows = []
     for e in entries:
         rep = e.pop("_rep")

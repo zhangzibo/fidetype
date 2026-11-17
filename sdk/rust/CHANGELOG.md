@@ -19,6 +19,7 @@ This file lists the changes of the Rust SDK (crate `fidetype`). The format follo
 - Packaging for crates.io (P2): `homepage`, `documentation`, `rust-version`, `include` whitelist, docs.rs settings (all features, `docsrs` cfg), `LICENSE` in the crate.
 
 ### Changed
+- **New core check `NTS-TD-INPUT` (TD-4; NTS 1.0 RC4 amendment 4, roadmap P14-17).** `validate` and the file reader read a `trust_decision` line in a JSON Lines input stream as an unknown event type and ignored it. Now they reject the stream (a decision log is a separate file). `RawStream::td_lines` lists the lines. Vector V97; same check as the Python and TypeScript SDKs.
 - **Breaking (0.x):** `validate_intent_declaration`, `validate_intent_event`, `validate_feedback_event`, `validate_control_declaration`, `validate_control_event` and `validate_enable_event` take a `lenient: bool` argument (VER-8). Pass `false` for the RC2 behaviour.
 - **GEN-10 (RC3):** `Value::is_int` is false for a value above 2^53 - 1 in magnitude (`constants::MAX_JSON_INT`). Before, such values were accepted. Vectors F60, F61, W44.
 - **TD-F2 (RC3):** a `trust_decision` whose `declaration` is not an object is refused (vector F62).

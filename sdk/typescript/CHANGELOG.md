@@ -22,6 +22,7 @@ This file lists the changes of the TypeScript SDK (npm package `@fidetype/sdk`).
 - `fidetype-ts conformance` gives a clear error when the golden vectors are not present (the npm package does not ship them; pass `--vectors DIR`).
 
 ### Changed
+- **New core check `NTS-TD-INPUT` (TD-4; NTS 1.0 RC4 amendment 4, roadmap P14-17).** `validate` and `loadStream` read a `trust_decision` line in a JSON Lines input stream as an unknown event type and ignored it. Now they reject the stream (a decision log is a separate file). `RawStream.tdLines` lists the lines. Vector V97; same check as the Python and Rust SDKs.
 - **GEN-10 (RC3):** an integer above 2^53 - 1 in magnitude is not an integer (`isIntAt`, `isInt` use `Number.isSafeInteger`). Before, such values were accepted but lost precision. Vectors F60, F61, W44.
 - **TD-F2 (RC3):** a `trust_decision` whose `declaration` is not an object is refused (vector F62).
 - **PRF-4 (RC3):** the text "acted" lists (`actedTexts`, `fep0003.acted`) and `committedText` / `emptyCommitWarning` use only decisions with `profile` absent or `"text"`. A final COMMIT of an unknown profile is never acted on. `moving_ticks` lists only COMMITs with a known moving state; after a control decision with an unknown state the control counts as not engaged (CTL-S7, vector E24).

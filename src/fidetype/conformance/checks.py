@@ -950,6 +950,17 @@ def c_clock(raw: RawStream) -> tuple[str, str]:
     return ok() if cd in CLOCK_DOMAINS else bad(f"clock_domain {cd!r} is not one of {list(CLOCK_DOMAINS)}")
 
 
+@check("NTS-TD-INPUT", "core", "MUST", "1.0 RC4 6.1 (TD-4)", "No trust_decision event in an input stream",
+       formats=("jsonl",))
+def c_td_input(raw: RawStream) -> tuple[str, str]:
+    """TD-4 (P14-17): trust_decision events are trust layer output; they go to a decision log, not into a stream."""
+    if not raw.td_lines:
+        return ok()
+    lines = ", ".join(str(n) for n in raw.td_lines[:6]) + (f" (+{len(raw.td_lines) - 6} more)" if len(raw.td_lines) > 6 else "")
+    return bad(f"{len(raw.td_lines)} trust_decision event(s) in an input stream (line {lines}); "
+               "write them to a decision log")
+
+
 # --- trust-ready profile -------------------------------------------------------------------
 
 

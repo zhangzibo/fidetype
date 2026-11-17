@@ -4,7 +4,8 @@
 run writes to the target at the moment it is written. The NTS stream (header, ``frame``, final
 ``hypothesis``, ``segment_end``, ``lsl_status``, ``end``) goes on the stream channel; the
 ``trust_decision`` events go on the decisions channel only, never into the NTS stream (FEP-0001
-section 3 r4: no ``trust_decision`` in an input stream). ``--out`` still writes the file.
+section 3 r4: no ``trust_decision`` in an input stream). The files follow the same split (P14-17):
+``--out`` gets the NTS stream, ``--decisions-out`` the decision log (:class:`EventTee`).
 
 Targets. This module adds no new outlet code: it feeds the outlets of
 :mod:`fidetype.adapters.lsl` and :mod:`fidetype.adapters.ws`.
@@ -266,18 +267,23 @@ def make_publisher(spec: str, *, same_clock: bool = False, log: Callable[[str], 
 
 
 class EventTee(io.TextIOBase):
-    """A text target for :class:`~fidetype.writer.StreamWriter` that copies each event to the publishers.
+    """A text target for :class:`~fidetype.writer.StreamWriter` that splits the events and copies them to the publishers.
 
-    The writer writes one JSON line per event. The tee writes the line to ``file`` (if any) and gives
-    the parsed event to each publisher. A publisher that raises an error is stopped (one log line);
-    the others and the file go on.
+    The writer writes one JSON line per event. The tee writes each ``trust_decision`` line to
+    ``decisions_file`` (a FEP-0001 decision log: no header, decisions only) and every other line to
+    ``file`` (the NTS input stream), so that no ``trust_decision`` is in the stream file (TD-4,
+    P14-17). Either file can be None (that part is not written). The tee gives each parsed event to
+    each publisher. A publisher that raises an error is stopped (one log line); the others and the
+    files go on. ``decisions`` counts the decision lines.
     """
 
     def __init__(self, publishers: list[Any], file: IO[str] | None = None,
-                 log: Callable[[str], None] | None = None) -> None:
+                 log: Callable[[str], None] | None = None, decisions_file: IO[str] | None = None) -> None:
         super().__init__()
         self.publishers = list(publishers)
         self.file = file
+        self.decisions_file = decisions_file
+        self.decisions = 0
         self.log = log or (lambda m: None)
         self.failed: dict[str, str] = {}
         self._buf = ""
@@ -286,18 +292,25 @@ class EventTee(io.TextIOBase):
         return True
 
     def write(self, s: str) -> int:
-        if self.file is not None:
-            self.file.write(s)
         self._buf += s
         while "\n" in self._buf:
             line, self._buf = self._buf.split("\n", 1)
-            if line.strip():
-                self._send(json.loads(line))
+            if not line.strip():
+                continue
+            ev = json.loads(line)
+            if ev.get("type") == "trust_decision":
+                self.decisions += 1
+                if self.decisions_file is not None:
+                    self.decisions_file.write(line + "\n")
+            elif self.file is not None:
+                self.file.write(line + "\n")
+            self._send(ev)
         return len(s)
 
     def flush(self) -> None:
-        if self.file is not None:
-            self.file.flush()
+        for f in (self.file, self.decisions_file):
+            if f is not None:
+                f.flush()
 
     def _send(self, ev: dict[str, Any]) -> None:
         for p in list(self.publishers):
@@ -318,7 +331,7 @@ class EventTee(io.TextIOBase):
         return {p.target: p.wait(max(0.0, timeout - (time.monotonic() - t0))) for p in self.publishers}
 
     def finish(self, linger_s: float = 0.0) -> dict[str, Any]:
-        """Wait ``linger_s`` (consumers get the last events), close the publishers and the file; return counts."""
+        """Wait ``linger_s`` (consumers get the last events), close the publishers and the files; return counts."""
         if self.publishers and linger_s > 0:
             time.sleep(linger_s)
         out: dict[str, Any] = {}
@@ -330,6 +343,7 @@ class EventTee(io.TextIOBase):
                 self.failed[p.target] = f"{type(e).__name__}: {e}"
         for t, why in self.failed.items():
             out[t] = {"failed": why}
-        if self.file is not None and not self.file.closed:
-            self.file.close()
+        for f in (self.file, self.decisions_file):
+            if f is not None and not f.closed:
+                f.close()
         return out

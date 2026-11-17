@@ -392,6 +392,30 @@
    "stream_levels": [
     "provenance"
    ]
+  },
+  {
+   "id": "fidetype-live-file",
+   "implementation": "fidetype live --out S.jsonl (src/fidetype/live/__main__.py, runner.py): NTS input stream file + FEP-0001 decision log S.decisions.jsonl (--decisions-out), live decode of the synthetic typist",
+   "language": "Python",
+   "class": "producer",
+   "level": "trust-ready",
+   "level_title": "NTS Trust-ready",
+   "profiles": [
+    "text"
+   ],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/fidetype-live-file.report.json",
+   "evidence_command": "fidetype live --source synthetic --speed 0 --utterances 4 --out live.nts.jsonl, then nts-conform check live.nts.jsonl live.nts.decisions.jsonl --json",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ]
   }
  ]
 }

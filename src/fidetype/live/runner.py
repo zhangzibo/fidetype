@@ -19,8 +19,10 @@ and does four things:
    ``nbest``) decides: commit, offer or withhold.
 4. **Output.** One line per decision (text or JSON), and optionally an NTS
    JSON Lines file (header, ``frame``, final ``hypothesis``,
-   ``trust_decision``, ``segment_end``, ``end``) written with
-   :class:`fidetype.writer.StreamWriter`.
+   ``segment_end``, ``end``) written with
+   :class:`fidetype.writer.StreamWriter`, plus a separate decision log
+   of the ``trust_decision`` events (TD-4: never in the input stream;
+   P14-17; :func:`make_writer`).
 
 Stream loss and gaps (P4-11, spec LSL-G1 abort mode, LSL-G2, LSL-G3). A
 chunk with ``lost`` or ``gap`` set (:class:`~fidetype.live.sources.LSLSource`
@@ -441,9 +443,17 @@ class LiveDecoder:
 
 
 def make_writer(target: str | IO[str], model: KeyWindowModel, source_info: dict[str, Any], guard: Any,
-                source_kind: str, timing: str | None = None) -> Any:
-    """A :class:`~fidetype.writer.StreamWriter` with the header and ``meta`` of a live stream."""
+                source_kind: str, timing: str | None = None, decisions: str | None = None) -> Any:
+    """A :class:`~fidetype.writer.StreamWriter` with the header and ``meta`` of a live stream.
+
+    ``target`` a path: the file gets the NTS input stream only. The ``trust_decision`` events go to
+    the decision log ``decisions`` (a path; FEP-0001, no header), or are not written when it is None
+    (TD-4: no ``trust_decision`` in an input stream; P14-17). ``target`` a text stream (for example
+    an :class:`~fidetype.live.publish.EventTee`): it gets every line, decisions included, and does
+    the split itself.
+    """
     from fidetype import __version__
+    from fidetype.live.publish import EventTee
     from fidetype.writer import StreamWriter, stream_meta
 
     extra: dict[str, Any] = {
@@ -459,8 +469,23 @@ def make_writer(target: str | IO[str], model: KeyWindowModel, source_info: dict[
                        decoder_name=model.name, decoder_version=model.version, causal=True,
                        lookahead_s=model.post_s, weights_sha256=model.weights_sha256 or None, stream_id="auto",
                        adapter_name=ADAPTER_NAME, adapter_version=__version__, extra=extra)
-    return StreamWriter(target, vocab=list(KEY_VOCAB), source=f"fidetype.live/{source_kind}", vocab_type="key",
-                        blank_id=None, latency=model.post_s, meta=meta)
+    kw = dict(vocab=list(KEY_VOCAB), source=f"fidetype.live/{source_kind}", vocab_type="key", blank_id=None,
+              latency=model.post_s, meta=meta)
+    if hasattr(target, "write"):
+        return StreamWriter(target, **kw)
+    tee = EventTee([], open(target, "w", encoding="utf-8", newline="\n"),
+                   decisions_file=open(decisions, "w", encoding="utf-8", newline="\n") if decisions else None)
+
+    class _SplitWriter(StreamWriter):
+        """Closes the stream file and the decision log on close()."""
+
+        def close(self) -> None:
+            try:
+                super().close()
+            finally:
+                tee.finish()
+
+    return _SplitWriter(tee, **kw)
 
 
 def print_decision(d: LiveDecision, fh: IO[str] | None = None, as_json: bool = False,

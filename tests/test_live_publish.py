@@ -57,15 +57,21 @@ class _Rec:
 def test_event_tee_copies_and_isolates_failures(tmp_path):
     ok, bad, logs = _Rec("ok"), _Rec("bad", fail_on="frame"), []
     f = (tmp_path / "out.jsonl").open("w", encoding="utf-8", newline="\n")
-    tee = P.EventTee([ok, bad], f, log=logs.append)
+    d = (tmp_path / "out.decisions.jsonl").open("w", encoding="utf-8", newline="\n")
+    tee = P.EventTee([ok, bad], f, log=logs.append, decisions_file=d)
     tee.write(json.dumps({"type": "header"}) + "\n")
     tee.write(json.dumps({"type": "frame", "t": 0.0}) + "\n")
-    tee.write('{"type": "end"}\n')
-    assert [e["type"] for e in ok.events] == ["header", "frame", "end"]
+    tee.write('{"type": "trust_decision", "is_final": true}\n{"type": "en')  # a line in two writes
+    tee.write('d"}\n')
+    assert [e["type"] for e in ok.events] == ["header", "frame", "trust_decision", "end"]
     assert bad.closed and [e["type"] for e in bad.events] == ["header"] and len(logs) == 1
     out = tee.finish()
-    assert out["ok"] == {"sent": 3} and "OSError" in out["bad"]["failed"]
-    assert len((tmp_path / "out.jsonl").read_text(encoding="utf-8").splitlines()) == 3
+    assert out["ok"] == {"sent": 4} and "OSError" in out["bad"]["failed"]
+    # P14-17: the stream file has no trust_decision (TD-4); the decision log has only decisions
+    lines = (tmp_path / "out.jsonl").read_text(encoding="utf-8").splitlines()
+    assert [json.loads(x)["type"] for x in lines] == ["header", "frame", "end"]
+    dl = (tmp_path / "out.decisions.jsonl").read_text(encoding="utf-8").splitlines()
+    assert [json.loads(x)["type"] for x in dl] == ["trust_decision"] and tee.decisions == 1
 
 
 def test_bad_publish_target_exits_2(capsys):
@@ -91,7 +97,9 @@ def test_unreachable_server_does_not_stop_the_decode(tmp_path, capsys):
     assert rc == 0
     lines = [json.loads(x) for x in out.read_text(encoding="utf-8").splitlines()]
     assert lines[0]["type"] == "header" and lines[-1]["type"] == "end"
-    assert sum(e["type"] == "trust_decision" for e in lines) == 2
+    assert not any(e["type"] == "trust_decision" for e in lines)  # P14-17: decisions in the decision log
+    dlog = tmp_path / "s.nts.decisions.jsonl"
+    assert [json.loads(x)["type"] for x in dlog.read_text(encoding="utf-8").splitlines()] == ["trust_decision"] * 2
     pub = json.loads(summ.read_text(encoding="utf-8"))["published"]
     assert list(pub.values())[0]["failed"]
     assert "the decode goes on" in capsys.readouterr().err

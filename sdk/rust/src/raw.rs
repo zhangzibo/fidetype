@@ -62,6 +62,8 @@ pub struct RawStream {
     pub npz_dtypes: Vec<(String, String)>,
     pub unknown_keys: Vec<String>,
     pub ignored_events: usize,
+    /// Line numbers of `trust_decision` events in a JSON Lines input stream (TD-4, P14-17).
+    pub td_lines: Vec<usize>,
     pub has_end: bool,
     pub lines_after_end: usize,
     pub parsed: bool,
@@ -85,6 +87,7 @@ impl RawStream {
             npz_dtypes: Vec::new(),
             unknown_keys: Vec::new(),
             ignored_events: 0,
+            td_lines: Vec::new(),
             has_end: false,
             lines_after_end: 0,
             parsed: true,
@@ -196,6 +199,9 @@ pub fn read_jsonl_raw(bytes: &[u8]) -> RawStream {
         }
         if !EVENT_TYPES.contains(&typ.as_str()) {
             raw.ignored_events += 1; // 6.2 rule 5
+            if typ == "trust_decision" {
+                raw.td_lines.push(n); // trust layer output: not allowed in an input stream (TD-4)
+            }
             continue;
         }
         if typ != "frame" {

@@ -45,7 +45,7 @@ The synthetic source makes a 16-channel, 250 Hz signal in which each key press l
 - `p`: calibrated probability that the top text is right. `keys`: windows in the segment.
 - `decide` / `added`: latency (section 6).
 
-Useful options: `--speed 0` (no pacing), `--json` (one JSON object per decision), `--no-text` (no decoded text on screen), `--out s.nts.jsonl` (NTS file), `--summary s.json` (counts and latency), `--null` (signal without key bursts: the guard must never commit).
+Useful options: `--speed 0` (no pacing), `--json` (one JSON object per decision), `--no-text` (no decoded text on screen), `--out s.nts.jsonl` (NTS file; the trust decisions go to `s.nts.decisions.jsonl`, section 8), `--summary s.json` (counts and latency), `--null` (signal without key bursts: the guard must never commit).
 
 The synthetic signal is our own. It contains no participant data. The model decodes only this signal.
 
@@ -136,7 +136,7 @@ fidetype live --source lsl --stream-name fidetype.replay.kt-semg --timing detect
 
 ## 5b. CI: replay of a public recording (P14-11)
 
-The CI job `live-kt` downloads KT-sEMG `run3` (77 s, 53 MB; copyright 2021 Nokia, CC BY 4.0, doi:10.7910/DVN/AV6XIR) from Harvard Dataverse, checks the SHA-256 values in [`tools/ci/kt-semg-run3.sha256`](../tools/ci/kt-semg-run3.sha256), caches the files (`actions/cache`), trains an **in-sample plumbing model** on run3 (`train-kt --fit-run run3 --guard-run run3 --guard-chunk-keys 5`; its guard never commits), replays run3 over a pylsl loopback with `markers` and with `detect` timing, and checks that `fidetype validate` passes at `trust-ready` with trust decisions and the replay attribution in the header. Nothing from the recording is committed. Run it locally:
+The CI job `live-kt` downloads KT-sEMG `run3` (77 s, 53 MB; copyright 2021 Nokia, CC BY 4.0, doi:10.7910/DVN/AV6XIR) from Harvard Dataverse, checks the SHA-256 values in [`tools/ci/kt-semg-run3.sha256`](../tools/ci/kt-semg-run3.sha256), caches the files (`actions/cache`), trains an **in-sample plumbing model** on run3 (`train-kt --fit-run run3 --guard-run run3 --guard-chunk-keys 5`; its guard never commits), replays run3 over a pylsl loopback with `markers` and with `detect` timing, and checks three things: `nts-conform check --require-level trust-ready` passes on the NTS file and the decision log together (`--out` + `--decisions-out`, section 8), the NTS file has no trust decision and the decision log has them, and the header has the replay attribution. Nothing from the recording is committed. Run it locally:
 
 ```bash
 python tools/ci/kt_lsl_replay.py --cache ~/.cache/fidetype-ci/kt-semg --work /tmp/kt
@@ -175,11 +175,20 @@ stats = dec.run()
 
 ## 8. What the NTS file holds
 
-`--out` writes JSON Lines (spec 6.2) with [`StreamWriter`](../src/fidetype/writer.py): a `header` (vocab = 32 W3C `KeyboardEvent.code` names, `vocab_type` `key`, no blank, `latency` = `post_s`, `meta` with decoder, weights SHA-256, `stream.id`, `fidetype.live` {source, timing, model, trust config id}), one `frame` per window, `lsl_status` gap records (section 4), then per segment a final `hypothesis` (the n-best list), the `trust_decision` (FEP-0001) and `segment_end`, and `end`. Check it with `fidetype validate s.nts.jsonl --level trust-ready`. Note: the file holds the `trust_decision` events next to the input events; a strict FEP-0001 reader wants them in a separate decision log (open gap 42). `--publish` already splits them (section 8a).
+`--out` writes JSON Lines (spec 6.2) with [`StreamWriter`](../src/fidetype/writer.py): a `header` (vocab = 32 W3C `KeyboardEvent.code` names, `vocab_type` `key`, no blank, `latency` = `post_s`, `meta` with decoder, weights SHA-256, `stream.id`, `fidetype.live` {source, timing, model, trust config id}), one `frame` per window, `lsl_status` gap records (section 4), then per segment a final `hypothesis` (the n-best list) and `segment_end`, and `end`. The file is a pure NTS input stream: it has no `trust_decision` (spec TD-4).
+
+The trust decisions go to a separate **decision log** (FEP-0001; spec 6.1): JSON Lines, one `trust_decision` per line, no header. The option is `--decisions-out FILE`. With `--out S.jsonl` and no `--decisions-out`, the log is `S.decisions.jsonl` (for example `s.nts.jsonl` -> `s.nts.decisions.jsonl`). `--decisions-out none` turns the log off. `--decisions-out` without `--out` writes only the log. Each decision names its hypothesis (`hypothesis_id` = the `id` of the final `hypothesis` in the NTS file).
+
+```bash
+fidetype live --source synthetic --speed 0 --out s.nts.jsonl                     # writes s.nts.jsonl + s.nts.decisions.jsonl
+nts-conform check s.nts.jsonl s.nts.decisions.jsonl --require-level trust-ready  # producer level: NTS Trust-ready
+```
+
+> **Changed in P14-17 (2026-11-17).** Before, `--out` put the `trust_decision` events into the NTS file, next to the input events. `nts-conform check` failed that file (FEP1-TD-INPUT, TD-4), but `fidetype validate` passed it: the v0.1 suite read `trust_decision` as an unknown event type and ignored it. Now the v0.1 suite has the core check `NTS-TD-INPUT` (all three SDKs, vector V97), and both tools reject such a file. Old files: move the `trust_decision` lines to a separate file. `--publish` used the split before P14-17 (section 8a).
 
 ## 8a. Publish over a binding: `--publish` (P14-16)
 
-`--publish TARGET` sends the output of the run to other programs in real time. Repeat the option for more targets. `--out` still writes the file.
+`--publish TARGET` sends the output of the run to other programs in real time. Repeat the option for more targets. `--out` and `--decisions-out` still write the files (section 8).
 
 | Target | Binding | What goes out | Extra |
 |---|---|---|---|

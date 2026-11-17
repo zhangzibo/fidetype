@@ -100,8 +100,8 @@ def test_nbest_of_frames_renders_keys():
 
 def test_synthetic_end_to_end_valid_nts(tmp_path, model, guard):
     src = S.SyntheticSource(12, seed=7, speed=0)
-    out = tmp_path / "live.nts.jsonl"
-    w = make_writer(str(out), model, src.info, guard, "synthetic")
+    out, dlog = tmp_path / "live.nts.jsonl", tmp_path / "live.nts.decisions.jsonl"
+    w = make_writer(str(out), model, src.info, guard, "synthetic", decisions=str(dlog))
     got = []
     dec = LiveDecoder(model, guard, src, writer=w, on_decision=got.append)
     st = dec.run()
@@ -118,7 +118,9 @@ def test_synthetic_end_to_end_valid_nts(tmp_path, model, guard):
     evs = [json.loads(x) for x in out.read_text(encoding="utf-8").splitlines()]
     kinds = [e["type"] for e in evs]
     assert kinds[0] == "header" and kinds[-1] == "end"
-    assert kinds.count("trust_decision") == 12 and kinds.count("hypothesis") == 12
+    assert kinds.count("trust_decision") == 0 and kinds.count("hypothesis") == 12  # TD-4 (P14-17)
+    decisions = [json.loads(x) for x in dlog.read_text(encoding="utf-8").splitlines()]
+    assert len(decisions) == 12 and {d["type"] for d in decisions} == {"trust_decision"}
     assert evs[0]["vocab_type"] == "key" and evs[0]["meta"]["fidetype.live"]["source"] == "synthetic"
     s = st.as_dict()
     assert s["frame_ms"]["n"] == st.frames and s["decision_ms"]["n"] == 12
@@ -215,6 +217,50 @@ def test_cli_synthetic(tmp_path, capsys):
     s = json.loads(summ.read_text())
     assert s["decisions"] == 4 and s["source"] == "synthetic"
     assert not check_file(out).failures("trust-ready")
+    assert s["decisions_out"] == str(tmp_path / "s.nts.decisions.jsonl")
+
+
+def test_decisions_path():
+    from fidetype.live.__main__ import decisions_path
+
+    assert decisions_path("a/s.nts.jsonl", None) == "a/s.nts.decisions.jsonl"
+    assert decisions_path("s.ndjson", None) == "s.ndjson.decisions.jsonl"
+    assert decisions_path("s.jsonl", "d.jsonl") == "d.jsonl"
+    assert decisions_path(None, "d.jsonl") == "d.jsonl"
+    assert decisions_path("s.jsonl", "none") is None and decisions_path(None, None) is None
+
+
+def test_cli_out_is_input_stream_and_decision_log_is_separate(tmp_path, capsys):
+    """P14-17 (gap 42): --out has no trust_decision (TD-4); --decisions-out is a FEP-0001 decision log."""
+    from fidetype.conformance import nts_conform as NC
+
+    out, dlog = tmp_path / "s.nts.jsonl", tmp_path / "decisions.jsonl"
+    rc = live_main(["--source", "synthetic", "--utterances", "3", "--speed", "0", "--json", "--out", str(out),
+                    "--decisions-out", str(dlog)])
+    assert rc == 0
+    assert "decision log written" in capsys.readouterr().err
+    kinds = [json.loads(x)["type"] for x in out.read_text(encoding="utf-8").splitlines()]
+    assert "trust_decision" not in kinds and kinds[0] == "header" and kinds[-1] == "end"
+    decisions = [json.loads(x) for x in dlog.read_text(encoding="utf-8").splitlines()]
+    assert len(decisions) == 3 and {d["type"] for d in decisions} == {"trust_decision"}
+    targets = [NC.conform_file(out), NC.conform_file(dlog)]
+    assert [t.form for t in targets] == ["jsonl-stream", "jsonl-decision-log"]
+    rep = NC.build_report(targets, "core")
+    assert rep["ok"], [r for t in rep["targets"] for r in t.get("results", []) if r.get("outcome") == "fail"]
+    assert rep["producer"]["level"] == "trust-ready"
+    # the v0.1 validator (fidetype validate) agrees: the stream file reaches trust-ready
+    assert not check_file(out).failures("trust-ready")
+
+
+def test_cli_decisions_out_none_and_decisions_only(tmp_path):
+    out = tmp_path / "s.nts.jsonl"
+    assert live_main(["--source", "synthetic", "--utterances", "2", "--speed", "0", "--no-text", "--out", str(out),
+                      "--decisions-out", "none"]) == 0
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["s.nts.jsonl"]
+    dlog = tmp_path / "only.decisions.jsonl"
+    assert live_main(["--source", "synthetic", "--utterances", "2", "--speed", "0", "--no-text",
+                      "--decisions-out", str(dlog)]) == 0
+    assert [json.loads(x)["type"] for x in dlog.read_text(encoding="utf-8").splitlines()] == ["trust_decision"] * 2
 
 
 def test_cli_via_fidetype_entry(capsys):

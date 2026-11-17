@@ -2,6 +2,15 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC4, DRAFT] amendment 4 of 2026-11-17 (TD-4 check in the v0.1 suite)
+**Still RC4 DRAFT.** Changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 4 of 2026-11-17"; 9.3; Appendix C.1 row TD-4). Roadmap P14-17 (gap 42). No rule changed. No earlier vector changed its verdict.
+
+### Added
+- **Core check `NTS-TD-INPUT` in the v0.1 suite (TD-4).** The v0.1 suite read a `trust_decision` line in an input stream as an unknown event type and ignored it (6.2 rule 5). Only the `fep-0001` profile (`FEP1-TD-INPUT`) tested TD-4. So `fidetype validate`, `fidetype-ts validate` and `fidetype-rs validate` passed a file that `nts-conform check` failed. The three v0.1 validators now refuse it. Vector V97 (reject).
+
+### Counts
+- Vectors 346 (v0.1 97). Kit 36 (unchanged).
+
 ## [1.0 RC4, DRAFT] amendment 3 of 2026-11-17 (levels, self-certification, MET-11 check) and conformance kit 0.2.0
 **Still RC4 DRAFT.** Changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 3 of 2026-11-17"; sections 9.2, 9.6, 9.7; Appendix C.1). Roadmap P7-02 and P1-16 (gap 20). Additive: no earlier vector and no earlier kit entry changed its verdict.
 

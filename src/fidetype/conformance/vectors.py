@@ -518,6 +518,15 @@ def build_vectors() -> list[Vector]:
         writer=_w_lines([_header(spec_version="1.0", meta={**BASE_META, "device.modality": "other",
                                                             "emg.placement": "forearm", "implant.areas": ["M1"]}),
                          *_frames(2, V), {"type": "end"}]))
+    # --- P14-17 (gap 42): TD-4. A trust_decision is trust layer output; it MUST NOT be in an input stream. Before
+    # P14-17 the v0.1 suite ignored it as an unknown event type (6.2 rule 5); only the fep-0001 profile caught it.
+    add("V97", "v97-trust-decision-in-input.jsonl", "reject", "1.0 RC4 6.1 (TD-4)",
+        "A trust_decision event inside an input stream (it belongs in a decision log)", None,
+        failing_check="NTS-TD-INPUT",
+        writer=_w_lines([_header(spec_version="1.0"), *_frames(2, V),
+                         {"type": "trust_decision", "spec_version": "1.0", "session": "u1", "seq": 0, "utterance": 0,
+                          "is_final": True, "action": "COMMIT", "p_top1": 0.93, "score_semantics": "calibrated_prob",
+                          "shown": ["ab"]}, {"type": "end"}]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

@@ -1288,6 +1288,19 @@ fn c_clock(raw: &RawStream) -> Out {
     }
 }
 
+/// TD-4 (P14-17): trust_decision events are trust layer output; they go to a decision log, not into a stream.
+fn c_td_input(raw: &RawStream) -> Out {
+    let td = &raw.td_lines;
+    if td.is_empty() {
+        return ok("");
+    }
+    let mut lines = td.iter().take(6).map(|n| n.to_string()).collect::<Vec<_>>().join(", ");
+    if td.len() > 6 {
+        lines.push_str(&format!(" (+{} more)", td.len() - 6));
+    }
+    bad(format!("{} trust_decision event(s) in an input stream (line {}); write them to a decision log", td.len(), lines))
+}
+
 // --- trust-ready profile ------------------------------------------------------------------------
 
 fn c_tr_source(raw: &RawStream) -> Out {
@@ -1472,6 +1485,7 @@ static REGISTRY: &[CheckDef] = &[
     chk!("NTS-EVT-SIGNAL-QUALITY", Core, "MUST", "3.9", "signal_quality events: t, value, unit; index in [0, 1]", c_evt_signal_quality, Jsonl),
     chk!("NTS-EVT-TIMING", Core, "MUST", "3.8", "t_signal_start <= t_signal_end <= t_decoded <= t_emitted when present", c_evt_timing, Jsonl),
     chk!("NTS-CLOCK", Core, "MUST", "3.8", "clock_domain, if present, is lsl, unix, monotonic, trial or other", c_clock),
+    chk!("NTS-TD-INPUT", Core, "MUST", "1.0 RC4 6.1 (TD-4)", "No trust_decision event in an input stream", c_td_input, Jsonl),
     chk!("TR-SOURCE", TrustReady, "PROFILE", "3.2", "source names the producer (present and not \"unknown\")", c_tr_source),
     chk!("TR-MODALITY", TrustReady, "PROFILE", "4.2", "meta has device.modality", c_tr_modality),
     chk!("TR-CAUSAL", TrustReady, "SHOULD", "3.2 / 4.2", "meta has decoder.causal", c_tr_causal),
@@ -1682,6 +1696,6 @@ mod tests {
         assert!(!is_w3c_code("Keya") && !is_w3c_code("F123"));
         assert!(py_match(is_bcp47, "en-US\n") && !is_bcp47("e"));
         assert!(is_pseudo_id("S01") && !is_pseudo_id("John Smith"));
-        assert_eq!(check_table().len(), 60); // the same 60 checks as the Python REGISTRY (P1-16: NTS-MODALITY-MATCH)
+        assert_eq!(check_table().len(), 61); // the same 61 checks as the Python REGISTRY (P1-16: NTS-MODALITY-MATCH; P14-17: NTS-TD-INPUT)
     }
 }
