@@ -3,7 +3,7 @@ title: Trust personalisation (per-user profiles, drift detection, gated re-calib
 type: concept
 tags: [trust, personalisation, drift, conformal, e-process, online-learning, privacy]
 sources: [conformal-risk-control]
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # Trust personalisation (P5-01)
@@ -17,6 +17,10 @@ updated: 2026-11-16
 | `ConformalDriftTest` | Drift of the score distribution (`p_top1`, or the guard risk) | conformal p-values; Simple Jumper martingale |
 | `RiskDriftTest` | Observed wrong-commit loss above α | betting e-process |
 | `PersonalTrust` | Live controller: decide → feedback → alarm → tighten or propose → gated re-calibration | `TrustGuardUpdater.propose_calibration`, `GuardedUpdateLoop`, `swap_guard` |
+
+**Opt-in additions (2026-11-16):**
+- **Guard-risk test (P5-10).** `PersonalTrust(guard_risk_test=True)` runs a third conformal test on the guard risk. On T12 the guard risk drifts and `p_top1` does not; through `PersonalTrust` the test alarms at the same 4 items as the P5-01 research arm ([note](../../experiments/2026-11-16-p5-01-personal/results.md#p5-10-guard-risk-test-through-personaltrust-2026-11-16)). Off by default: it changes the false-alarm budget.
+- **Spread bets (P5-09).** `spread=True` adds bets on `|2p - 1|`, so a change of spread at the same centre raises an alarm (sd 1 -> 2: 200 / 200 runs; the P5-01 test: 4 / 200). Same false-alarm bound. Cost: small mean shifts are seen less often (-0.25 sd: 0.445 vs 0.61 of runs), gap P5-12 ([results](../../experiments/2026-11-16-p5-09-drift-spread/results.md)).
 
 ## The rule
 - **Tighten at once, loosen only through the gate.** A risk alarm sets the commit threshold to infinity (offer only). A higher threshold only removes commits, so it needs no evidence.

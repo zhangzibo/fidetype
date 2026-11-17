@@ -75,3 +75,7 @@ The [G3 audit review](../../wiki/questions/g3-audit-review.md) found issues H1, 
 
 - **Changed:** only `explored_median` (the user cost of exploration). It is lower because forbidden items are no longer offered. T12: B05 18 → 16 (q 1.0 and 0.9); B20 73 → 68 and 72.5 → 67; E_max 80 → 75; P_bandit 19 → 17.5. T15: B05 32 → 31 and 32 → 30.5; B20 129 → 124 and 128.5 → 123; E_max 139 → 133; P_bandit 35 → 33.
 - **Not changed:** every rate, commit count, certificate, CP95 interval, audit violation fraction (still 0.0) and bias value. The coin stream is the same (one coin per withheld item, also for forbidden items), and in this replay each item is fed back before the next decision, so the H1 accounting gives the same sums.
+
+## Note: replay through the drop-in API (P5-11, 2026-11-17)
+
+[P5-11](../2026-11-16-p5-11-online-replay/results.md) replayed the same items through `guard.online(...)`. Commits, wrong commits and rates are identical (`floor=False`). One number above does not carry over: the drop-in guard passes `offered=True` for items that the policy offers anyway, and on T12 / T15 every no-commit item is offered or has no commit score. So the drop-in bandit explores 0 items; the "user cost of exploration" above (median 16 on T12, 31 on T15 at ε 0.05) comes from driving the controller with `offered=False`. The numbers above stay as they were.

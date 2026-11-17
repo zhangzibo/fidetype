@@ -329,24 +329,31 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-09 Drift test that detects a spread change at the same centre
 - **Gap:** 11 of the [open-gap list](open-gaps.md). Follow-up of P5-01.
-- **Status:** `todo`.
+- **Status:** `done`. Commits `3def17e` (code + plan, before the run) and `9277177` (results), 2026-11-16: opt-in `ConformalDriftTest(spread=True)` adds bets `1 + eps (|2p - 1| - 1/2)`; false alarms 0.007 / 0.040 at 0.01 / 0.05; sd 1 -> 2 and sd 1 -> 0.5 detected in 200 / 200 (median 75 and 66 items); T12 permutation null pass. The small-mean-shift margin (S3, -0.25 sd) was missed: new gap P5-12. [Results](../../experiments/2026-11-16-p5-09-drift-spread/results.md).
 - **Depends on:** P5-01.
 - **Source:** Commit `9cb7a81` (P5-01 done; scale changes not detected).
 - **Done when:** `ConformalDriftTest` (`src/fidetype/trust/drift.py`) can also bet on |p − 1/2| (or an equal spread statistic), so a change of spread at the same centre raises an alarm. A plan with the alarm criteria and the false-alarm check is committed before any test run. Synthetic results show the false-alarm rate at or below the level and detection of a pure spread change.
 
 #### P5-10 PersonalTrust watches the guard risk
 - **Gap:** 12 of the [open-gap list](open-gaps.md). Follow-up of P5-01.
-- **Status:** `todo`.
+- **Status:** `done`. Commits `3def17e` (code + plan) and `9277177` (results), 2026-11-16: opt-in `PersonalTrust(guard_risk_test=True)` (conformal test on the guard risk; default unchanged, documented in CHANGELOG and docs); P5-01 replay reproduced exactly; guard-risk alarms through `PersonalTrust` at the A2g items 697, 1,794, 2,159, 6,647. [Note](../../experiments/2026-11-16-p5-01-personal/results.md#p5-10-guard-risk-test-through-personaltrust-2026-11-16).
 - **Depends on:** P5-01.
 - **Source:** Commit `9cb7a81` (P5-01: on T12 the guard risk drifts, `p_top1` does not; test not wired into `PersonalTrust`).
 - **Done when:** `PersonalTrust` can run the guard-risk drift test (`RiskDriftTest` on the guard risk), not only the `p_top1` test. The default behaviour stays the same and the guard-risk test is opt-in, or the change of default is documented in the changelog and the docs. A test and the T12 replay show the alarm path through `PersonalTrust`.
 
 #### P5-11 Replay the online guards on T12 / T15 through the drop-in API
 - **Gap:** 15 of the [open-gap list](open-gaps.md). Follow-up of P5-02.
-- **Status:** `todo`.
+- **Status:** `done`. Commits `3def17e` (plan) and `9277177` (results), 2026-11-16: `guard.online("aci" | "bandit", floor=False, lam_init=0.3)` gives the P15-04 numbers exactly (T12 35 / 20, q 0.9 37 / 22; T15 48 / 33, 55 / 39; bandit = aci in 20 / 20 seeds); item-level scores equal. Explained differences: the default offline floor (T12 19 / 11, T15 2 / 2), no exploration coins (the policy offers every no-commit item), window warm start (T12 27 / 17 vs 28 / 18). [Results](../../experiments/2026-11-16-p5-11-online-replay/results.md).
 - **Depends on:** P5-02, P15-04.
 - **Source:** Commit `3dc84bf` (P5-02 done; online guards not yet replayed via the drop-in API).
 - **Done when:** A replay on T12 and T15 through the drop-in surface (`guard.online(...)`, `src/fidetype/trust/online_guard.py`) reproduces the P15-04 long-run wrong-commit numbers (which used the controllers directly), or the result explains each difference.
+
+#### P5-12 Spread-aware drift test without the small-shift cost
+- **Gap:** 19 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-09). Follow-up of P5-09.
+- **Status:** `todo`.
+- **Depends on:** P5-09 (done).
+- **Source:** Commit `9277177` (P5-09 S3: with `spread=True` a -0.25 sd mean shift is detected in 0.445 of runs vs 0.61 without; margin 0.10 missed). On T12 the spread bets also lose 2 of 4 guard-risk alarms.
+- **Done when:** a spread-aware variant (for example prior weights that favour the mean bets, or a separate spread test with its own level) keeps the false-alarm level, detects sd 1 -> 2 in at least 95 % of runs, and loses at most 0.10 of detected share at -0.25 sd and at most 25 % median delay at -0.5 / -1.0 sd against the P5-01 test, in a plan committed before the run. Only then may the default of `spread` change (documented in the changelog).
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
