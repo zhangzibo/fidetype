@@ -132,7 +132,7 @@ fidetype live --source lsl --stream-name fidetype.replay.kt-semg --timing detect
 
 - The detector adds about 10 ms (envelope: none) to the window wait, because the key window already needs `post_s` = 50 ms after the onset.
 - A guard calibrated with `markers` timing is not calibrated for `detect` timing (other frames). Re-calibrate the guard with `detect` timing.
-- Results on the KT-sEMG test runs: [P4-10 results](../experiments/2026-11-17-p4-10-onset/results.md).
+- Results on the 6 KT-sEMG test runs at ±50 ms ([P4-10 results](../experiments/2026-11-17-p4-10-onset/results.md)): linear detector recall 0.829, precision 0.456, F1 0.588 (0.73 on the two runs with dense typing; many false alarms on runs with little typing); envelope F1 0.461. Matched onsets: median error about 20 ms.
 
 ## 5b. CI: replay of a public recording (P14-11)
 

@@ -129,7 +129,7 @@ def features(runs: list[str]) -> None:
             continue
         t0 = time.time()
         r = runs_by_id()[run]
-        lin = LinearOnsetDetector(FS, C, np.zeros(CONTEXT * C), 0.0, np.zeros(C), np.ones(C))
+        lin = LinearOnsetDetector(FS, C, np.zeros(CONTEXT * C), 0.0, np.zeros(C), np.ones(C), context=CONTEXT)
         env = EnvelopeDetector(FS, C)
         steps, st, es, et = [], [], [], []
         n = 0

@@ -1,0 +1,74 @@
+00:32:47 stage features dev
+00:33:12 features run1: 634 s, 63385 steps, 25 s
+00:33:16 features run2: 128 s, 12844 steps, 4 s
+00:33:19 features run3: 77 s, 7702 steps, 3 s
+00:33:31 features run4: 353 s, 35288 steps, 13 s
+00:33:55 features run8: 635 s, 63531 steps, 24 s
+00:34:21 features run10: 621 s, 62113 steps, 25 s
+00:35:23 features run21: 1551 s, 155105 steps, 63 s
+00:36:14 stage train 
+00:36:14 train run1: 2490 keys, 4978 positive steps, 19603 rows
+00:36:15 train run2: 271 keys, 540 positive steps, 3595 rows
+00:36:15 train run3: 226 keys, 450 positive steps, 2271 rows
+00:36:15 train run4: 1316 keys, 2626 positive steps, 10620 rows
+00:36:16 train run8: 3697 keys, 7385 positive steps, 21068 rows
+00:36:16 train run10: 3543 keys, 7081 positive steps, 20499 rows
+00:36:16 train: D-lin fitted on 77656 rows (23060 positive)
+00:36:17 stage tune 
+00:36:18 tune D-lin on run21: theta -1.2032 (F1 0.596 before lag), lag -9.4 ms, F1 after lag 0.606
+00:36:24 tune D-env on run21: theta 1.625 (F1 0.495 before lag), lag -5.7 ms, F1 after lag 0.500
+00:37:43 stage train 
+00:37:43 train run1: 2490 keys, 4978 positive steps, 19550 rows
+00:37:43 train run2: 271 keys, 540 positive steps, 3631 rows
+00:37:43 train run3: 226 keys, 450 positive steps, 2249 rows
+00:37:43 train run4: 1316 keys, 2626 positive steps, 10957 rows
+00:37:43 train run8: 3697 keys, 7385 positive steps, 21767 rows
+00:37:43 train run10: 3543 keys, 7081 positive steps, 21173 rows
+00:37:44 train: D-lin fitted on 79327 rows (23060 positive)
+00:37:44 stage tune 
+00:37:46 tune D-lin on run21: theta -1.3150 (F1 0.678 before lag), lag -8.6 ms, F1 after lag 0.683
+00:37:51 tune D-env on run21: theta 1.625 (F1 0.495 before lag), lag -5.7 ms, F1 after lag 0.500
+00:39:23 stage tune 
+00:39:25 tune D-lin on run21: theta -1.3150 (F1 0.678 before lag), lag -8.6 ms, F1 after lag 0.683
+00:39:31 tune D-env on run21: theta 1.438 (F1 0.621 before lag), lag -4.2 ms, F1 after lag 0.620
+00:41:03 stage calibrate_detect
+00:41:44 guard collect run14: 33 segments; lin 33 items, 6906 onsets, env 33 items, 6102 onsets
+00:42:25 guard collect run15: 40 segments; lin 37 items, 7497 onsets, env 37 items, 6611 onsets
+00:43:17 guard collect run16: 48 segments; lin 48 items, 8576 onsets, env 48 items, 7456 onsets
+00:43:55 guard collect run19: 19 segments; lin 48 items, 8576 onsets, env 48 items, 7456 onsets
+00:44:47 guard collect run22: 20 segments; lin 49 items, 8637 onsets, env 49 items, 7500 onsets
+00:45:07 stage calibrate_detect (fresh decoders per run)
+00:45:49 guard collect run14: 33 segments; lin 33 items, 6906 onsets, env 33 items, 6102 onsets
+00:46:33 guard collect run15: 40 segments; lin 73 items, 7480 onsets, env 73 items, 5718 onsets
+00:47:25 guard collect run16: 48 segments; lin 121 items, 8306 onsets, env 121 items, 6771 onsets
+00:48:06 guard collect run19: 19 segments; lin 140 items, 8025 onsets, env 140 items, 6110 onsets
+00:48:59 guard collect run22: 20 segments; lin 160 items, 10000 onsets, env 160 items, 7233 onsets
+00:49:47 guard collect run23: 13 segments; lin 173 items, 8993 onsets, env 173 items, 7015 onsets
+00:50:32 guard detect-lin: 173 items, top-1 exact 0.000, tcfg-d8c6c27ad9fda5ef
+00:51:04 guard detect-env: 173 items, top-1 exact 0.000, tcfg-976ab1efb4f329c9
+00:52:35 stage features test
+00:53:11 stage features test
+00:54:23 features run24: 1849 s, 184918 steps, 72 s
+00:55:45 features run25: 2173 s, 217251 steps, 82 s
+00:55:57 features run26: 341 s, 34091 steps, 12 s
+00:56:19 features run28: 641 s, 64064 steps, 22 s
+00:56:59 features run29: 1087 s, 108745 steps, 40 s
+00:57:40 features run27: 1124 s, 112363 steps, 41 s
+00:57:40 stage test 
+00:57:42 test run24: keys 11519; D-lin F1@50 0.726 (R 0.804, P 0.662); D-env F1@50 0.603
+00:57:43 test run25: keys 13335; D-lin F1@50 0.734 (R 0.827, P 0.659); D-env F1@50 0.616
+00:57:43 test run26: keys 107; D-lin F1@50 0.079 (R 0.944, P 0.041); D-env F1@50 0.043
+00:57:44 test run28: keys 808; D-lin F1@50 0.328 (R 0.938, P 0.199); D-env F1@50 0.219
+00:57:45 test run29: keys 2911; D-lin F1@50 0.559 (R 0.897, P 0.406); D-env F1@50 0.404
+00:57:46 test run27: keys 230; D-lin F1@50 0.044 (R 0.900, P 0.023); D-env F1@50 0.020
+00:57:59 stream equivalence on run26: {'run': 'run26', 'lin_same': True, 'env_same': True, 'lin_n': [2444, 2444], 'env_n': [2569, 2569]}
+00:57:59 pooled: D-lin F1@50 0.588, D-env F1@50 0.461; D-lin wins 6/6
+00:57:59 stage e2e 
+00:59:29 e2e run24: 44 segments; oracle acc 0.263 dec 44 commit 0, lin acc 0.216 dec 44 commit 0, env acc 0.122 dec 44 commit 0, lin_oracle_guard acc 0.216 dec 44 commit 0
+01:01:42 e2e run25: 42 segments; oracle acc 0.272 dec 86 commit 0, lin acc 0.228 dec 86 commit 0, env acc 0.134 dec 86 commit 0, lin_oracle_guard acc 0.228 dec 86 commit 0
+01:01:56 e2e run26: 3 segments; oracle acc 0.271 dec 89 commit 0, lin acc 0.227 dec 89 commit 0, env acc 0.133 dec 89 commit 0, lin_oracle_guard acc 0.227 dec 89 commit 0
+01:02:24 e2e run28: 22 segments; oracle acc 0.270 dec 111 commit 0, lin acc 0.226 dec 111 commit 0, env acc 0.133 dec 111 commit 0, lin_oracle_guard acc 0.226 dec 111 commit 0
+01:03:13 e2e run29: 46 segments; oracle acc 0.274 dec 157 commit 0, lin acc 0.229 dec 157 commit 0, env acc 0.135 dec 157 commit 0, lin_oracle_guard acc 0.229 dec 157 commit 0
+01:04:07 e2e run27: 15 segments; oracle acc 0.274 dec 172 commit 0, lin acc 0.229 dec 172 commit 0, env acc 0.134 dec 172 commit 0, lin_oracle_guard acc 0.229 dec 172 commit 0
+01:04:07 stage report 
+01:04:07 report: {"H1_lin_f1_50_ge_0.70": false, "H2_lin_beats_env_on_ge_5_of_6": true, "H3_effective_acc_ge_0.8x_oracle": true, "S_wrong_commit_le_alpha": true}
