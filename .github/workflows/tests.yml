@@ -52,6 +52,16 @@ jobs:
           uv run nts-conform check "$RUNNER_TEMP/p7-06/ws" --require-level trust-ready | tee "$RUNNER_TEMP/ws.txt"
           grep -q "bindings nts-lsl/0.1" "$RUNNER_TEMP/lsl.txt"
           grep -q "bindings nts-ws/0.1" "$RUNNER_TEMP/ws.txt"
+      # P14-16: `fidetype live --publish` (lsl:NAME; ws://.../nts + ws://.../decisions), recorded the same way.
+      - name: fidetype live publish captures (P14-16)
+        run: |
+          set -o pipefail
+          uv run pytest -q tests/test_live_publish.py -rs
+          uv run python -m fidetype.conformance.binding_producers --out "$RUNNER_TEMP/p14-16" --target live-lsl --target live-ws
+          uv run nts-conform check "$RUNNER_TEMP/p14-16/live-lsl" --require-level trust-ready | tee "$RUNNER_TEMP/live-lsl.txt"
+          uv run nts-conform check "$RUNNER_TEMP/p14-16/live-ws" --require-level trust-ready | tee "$RUNNER_TEMP/live-ws.txt"
+          grep -q "bindings nts-lsl/0.1" "$RUNNER_TEMP/live-lsl.txt"
+          grep -q "bindings nts-ws/0.1" "$RUNNER_TEMP/live-ws.txt"
 
   # P14-11: replay a public EMG recording over a pylsl loopback through `fidetype live` (markers and detect timing)
   # and validate the NTS output. Data: KT-sEMG run3, copyright 2021 Nokia, CC BY 4.0 (doi:10.7910/DVN/AV6XIR);

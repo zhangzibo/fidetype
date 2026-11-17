@@ -18,6 +18,12 @@ synthetic input, records what a consumer receives with
        :class:`~fidetype.adapters.ws.WSTrustRunner`) gets the same stream; a
        subscriber of ``/decisions`` records its decisions -> a ``subscribe`` capture.
 
+``live-lsl``, ``live-ws`` (roadmap P14-16)
+    ``fidetype live --source synthetic --publish ...`` runs in a child process (the CLI as a user runs
+    it) and publishes over the same outlets: ``--publish lsl:NAME`` -> an ``inlet`` capture and a
+    ``decisions`` capture; ``--publish ws://HOST:PORT/nts`` + ``--publish ws://HOST:PORT/decisions``
+    -> an ``ingest`` capture and a ``subscribe`` capture.
+
 Each capture also gets its received stream (``*.received.jsonl``): the NTS
 stream or the decision log that the reference consumer reads from it.
 ``nts-conform check DIR`` then gives the producer level and the binding.
@@ -210,23 +216,156 @@ def ws_captures(events: list[dict[str, Any]], timeout: float = 30.0) -> tuple[di
     return res["ingest"], dec
 
 
+# --- fidetype live --publish (P14-16) -------------------------------------------------------------
+
+#: The ``fidetype live`` run of the live targets: the synthetic typist (no data from people), no pacing.
+LIVE_ARGS = ("--source", "synthetic", "--utterances", "4", "--seed", "7", "--speed", "0", "--json")
+
+
+def _live_proc(args: list[str], timeout: float) -> Any:
+    """Start ``python -m fidetype.live`` (no window, stdout dropped, stderr kept) with ``args``."""
+    import subprocess
+    import sys
+
+    flags = getattr(subprocess, "CREATE_NO_WINDOW", 0) if sys.platform == "win32" else 0
+    cmd = [sys.executable, "-m", "fidetype.live", *LIVE_ARGS, "--publish-wait", f"{timeout:g}",
+           "--publish-linger", "2", *args]
+    return subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8",
+                            errors="replace", creationflags=flags, env=dict(os.environ))
+
+
+def _live_end(proc: Any, timeout: float) -> str:
+    try:
+        _, err = proc.communicate(timeout=timeout)
+    except BaseException:
+        proc.kill()
+        proc.communicate()
+        raise
+    if proc.returncode != 0:
+        raise RuntimeError(f"fidetype live exited with {proc.returncode}:\n{err[-2000:]}")
+    if "failed (" in err:
+        raise RuntimeError(f"a publish target of fidetype live failed:\n{err[-2000:]}")
+    return err
+
+
+def live_lsl_captures(timeout: float = 30.0) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Run ``fidetype live --publish lsl:NAME``; return the ``inlet`` capture and the ``decisions`` capture."""
+    from fidetype.conformance.capture import capture_lsl
+
+    name = f"fidetype.live.p14-16.{uuid.uuid4().hex[:8]}"
+    proc = _live_proc(["--publish", f"lsl:{name}"], timeout)
+    res: dict[str, Any] = {}
+    stop = threading.Event()
+    try:
+        th = _thread(lambda: capture_lsl({"name": name + ".decisions"}, seconds=3 * timeout, stop=stop,
+                                         resolve_timeout=timeout,
+                                         description="P14-16: fidetype live --publish lsl (DecisionOutlet: the "
+                                                     "NAME.decisions stream), recorded by nts-conform capture"),
+                     res, "decisions")
+        frames = capture_lsl({"name": name}, seconds=3 * timeout, resolve_timeout=timeout,
+                             description="P14-16: fidetype live --source synthetic --publish lsl (NTSOutlet: frames + "
+                                         "events streams), recorded by nts-conform capture")
+        _live_end(proc, timeout)
+    finally:
+        stop.set()
+        if proc.poll() is None:
+            proc.kill()
+            proc.communicate()
+    th.join(timeout)
+    _raise(res)
+    return frames, res["decisions"]
+
+
+def _free_port() -> int:
+    import socket
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return int(s.getsockname()[1])
+
+
+def live_ws_captures(timeout: float = 30.0) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Run ``fidetype live --publish ws://.../nts --publish ws://.../decisions``; return ``ingest`` + ``subscribe``."""
+    import socket
+    import time
+
+    from fidetype.conformance.capture import capture_ws_decisions, capture_ws_ingest
+
+    res: dict[str, Any] = {}
+    url_box: list[str] = []
+    up = threading.Event()
+
+    def ready(url: str) -> None:
+        url_box.append(url)
+        up.set()
+
+    th = _thread(lambda: capture_ws_ingest("127.0.0.1", 0, seconds=3 * timeout, ready=ready,
+                                           description="P14-16: fidetype live --source synthetic --publish "
+                                                       "ws://HOST:PORT/nts (WSProducer), recorded by nts-conform "
+                                                       "capture"), res, "ingest")
+    if not up.wait(timeout):
+        th.join(1)
+        _raise(res)
+        raise TimeoutError("the recording server did not start")
+    port = _free_port()
+    proc = _live_proc(["--publish", url_box[0], "--publish", f"ws://127.0.0.1:{port}/decisions"], timeout)
+    stop = threading.Event()
+    dth = None
+    try:
+        t0 = time.monotonic()
+        while True:  # wait until fidetype live serves /decisions
+            if proc.poll() is not None:
+                _live_end(proc, timeout)
+                raise RuntimeError("fidetype live ended before it served /decisions")
+            try:
+                socket.create_connection(("127.0.0.1", port), timeout=0.2).close()
+                break
+            except OSError:
+                if time.monotonic() - t0 > timeout:
+                    raise TimeoutError("fidetype live did not serve /decisions") from None
+                time.sleep(0.05)
+        dth = _thread(lambda: capture_ws_decisions(f"ws://127.0.0.1:{port}/decisions", seconds=3 * timeout, stop=stop,
+                                                   description="P14-16: fidetype live --publish "
+                                                               "ws://HOST:PORT/decisions (WSServer + OutputHub), "
+                                                               "recorded by nts-conform capture"), res, "decisions")
+        _live_end(proc, 3 * timeout)
+    finally:
+        stop.set()
+        if proc.poll() is None:
+            proc.kill()
+            proc.communicate()
+    if dth is not None:
+        dth.join(timeout)
+    th.join(timeout)
+    _raise(res)
+    return res["ingest"], res["decisions"]
+
+
 # --- evidence -------------------------------------------------------------------------------------
+
+#: ``fidetype live --publish`` targets (P14-16): the CLI in a child process, captured on loopback.
+LIVE_TARGETS = ("live-lsl", "live-ws")
 
 
 def write_evidence(target: str, out: str | Path, timeout: float = 30.0) -> list[Path]:
     """Run one binding target and write its captures and received streams to ``out``. Return the files."""
     from fidetype.conformance.capture import write_capture, write_received
 
-    if target not in BINDING_TARGETS:
-        raise ValueError(f"unknown binding target {target!r} (known: {list(BINDING_TARGETS)})")
+    if target not in BINDING_TARGETS + LIVE_TARGETS:
+        raise ValueError(f"unknown binding target {target!r} (known: {list(BINDING_TARGETS + LIVE_TARGETS)})")
     d = Path(out)
     d.mkdir(parents=True, exist_ok=True)
-    evs = source_events()
-    if target == "lsl":
-        a, b = lsl_captures(evs, timeout)
+    if target == "live-lsl":
+        a, b = live_lsl_captures(timeout)
+        names = ("live-lsl-frames", "live-lsl-decisions")
+    elif target == "live-ws":
+        a, b = live_ws_captures(timeout)
+        names = ("live-ws-ingest", "live-ws-decisions")
+    elif target == "lsl":
+        a, b = lsl_captures(source_events(), timeout)
         names = ("lsl-frames", "lsl-decisions")
     else:
-        a, b = ws_captures(evs, timeout)
+        a, b = ws_captures(source_events(), timeout)
         names = ("ws-ingest", "ws-decisions")
     files = []
     for sc, nm in zip((a, b), names):
@@ -240,7 +379,8 @@ def main(argv: list[str] | None = None) -> int:
 
     ap = argparse.ArgumentParser(description="Record the binding producer evidence of this repository (P7-06).")
     ap.add_argument("--out", required=True, help="folder for the captures (one sub-folder per target)")
-    ap.add_argument("--target", action="append", choices=BINDING_TARGETS, help="default: both")
+    ap.add_argument("--target", action="append", choices=BINDING_TARGETS + LIVE_TARGETS,
+                    help="default: lsl and ws; live-lsl / live-ws run fidetype live --publish (P14-16)")
     ap.add_argument("--timeout", type=float, default=30.0)
     a = ap.parse_args(argv)
     loopback_lsl_config()

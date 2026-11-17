@@ -175,12 +175,36 @@ stats = dec.run()
 
 ## 8. What the NTS file holds
 
-`--out` writes JSON Lines (spec 6.2) with [`StreamWriter`](../src/fidetype/writer.py): a `header` (vocab = 32 W3C `KeyboardEvent.code` names, `vocab_type` `key`, no blank, `latency` = `post_s`, `meta` with decoder, weights SHA-256, `stream.id`, `fidetype.live` {source, timing, model, trust config id}), one `frame` per window, `lsl_status` gap records (section 4), then per segment a final `hypothesis` (the n-best list), the `trust_decision` (FEP-0001) and `segment_end`, and `end`. Check it with `fidetype validate s.nts.jsonl --level trust-ready`.
+`--out` writes JSON Lines (spec 6.2) with [`StreamWriter`](../src/fidetype/writer.py): a `header` (vocab = 32 W3C `KeyboardEvent.code` names, `vocab_type` `key`, no blank, `latency` = `post_s`, `meta` with decoder, weights SHA-256, `stream.id`, `fidetype.live` {source, timing, model, trust config id}), one `frame` per window, `lsl_status` gap records (section 4), then per segment a final `hypothesis` (the n-best list), the `trust_decision` (FEP-0001) and `segment_end`, and `end`. Check it with `fidetype validate s.nts.jsonl --level trust-ready`. Note: the file holds the `trust_decision` events next to the input events; a strict FEP-0001 reader wants them in a separate decision log (open gap 42). `--publish` already splits them (section 8a).
+
+## 8a. Publish over a binding: `--publish` (P14-16)
+
+`--publish TARGET` sends the output of the run to other programs in real time. Repeat the option for more targets. `--out` still writes the file.
+
+| Target | Binding | What goes out | Extra |
+|---|---|---|---|
+| `lsl` or `lsl:NAME` | nts-lsl/0.1 (FEP-0002) | LSL streams `NAME` (type `NTS`: one channel per key, one sample per frame), `NAME.events` (type `Markers`: header in the stream description, hypotheses, `segment_end`, `lsl_status`, `end`) and `NAME.decisions` (`role = trust_decisions`). Default `NAME`: `fidetype.live`. | `[lsl]` |
+| `ws://HOST:PORT/nts` | nts-ws/0.1 (FEP-0004) | `fidetype live` connects to a WebSocket server and sends its NTS stream (`WSProducer`: resend on resume). | `[ws]` |
+| `ws://HOST:PORT/decisions` | nts-ws/0.1 (FEP-0004 section 7) | `fidetype live` serves its trust decisions on this address (`WSServer` + `OutputHub`; `ws_seq` numbers, resume with `from_seq`). Port 0 = a free port; the log gives the URL. | `[ws]` |
+
+```bash
+fidetype live --source synthetic --publish lsl                                   # LSL outlets
+fidetype live --source synthetic --publish ws://127.0.0.1:8765/nts     --publish ws://127.0.0.1:8766/decisions --publish-wait 10                    # WebSocket
+nts-conform capture --lsl fidetype.live --out live.capture.json                  # record it (other terminal)
+```
+
+- The `trust_decision` events go on the decisions channel only (`NAME.decisions`, `/decisions`). They are not in the NTS stream: FEP-0001 section 3 r4 allows no `trust_decision` in an input stream.
+- `--publish-wait S`: before the decode starts, wait up to S seconds for a consumer on each target (default 0). `--publish-linger S`: keep the outlets open S seconds after the end, so that consumers get the last events (default 1).
+- A target that fails (for example, the server stops) stops with one log line. The decode, the other targets and `--out` go on. `--summary` lists the events sent per target, or the failure.
+- Serve `/decisions` on `127.0.0.1` unless you need other machines. The channel has no token and no TLS here; for that, use the reference server (`python -m fidetype.adapters.ws run`, [FEP-0004](../spec/feps/)) with `--publish ws://HOST:PORT/nts`.
+- The outlets are the ones of the adapters: [`NTSOutlet`, `DecisionOutlet`](../src/fidetype/adapters/lsl.py), [`WSProducer`, `WSServer`](../src/fidetype/adapters/ws.py). Code: [`src/fidetype/live/publish.py`](../src/fidetype/live/publish.py). Tests: [`tests/test_live_publish.py`](../tests/test_live_publish.py).
+- Evidence: `python -m fidetype.conformance.binding_producers --out DIR --target live-lsl --target live-ws` runs the CLI in a child process on loopback and records it with `nts-conform capture`; `nts-conform check DIR/live-lsl` (or `DIR/live-ws`) gives NTS Trust-ready with the binding. The self-certification list has `fidetype-live-lsl` and `fidetype-live-ws` ([conformance](conformance.md)). CI job `live` runs it.
 
 ## 9. Limits
 
 - Onset detection (`--timing detect`): tested on one typist (KT-sEMG); see the P4-10 results for its recall and false alarms. Segment ends still come from markers or `--segment-s`.
 - BrainFlow boards have no reconnect in `fidetype live` (only `--source lsl`).
+- `--publish`: one NTS stream per run; a WebSocket target has no token or TLS option in `fidetype live` yet.
 - Real OpenBCI boards: untested (P4-06, hardware).
 - The CI replay of KT-sEMG run3 uses an in-sample model: it checks plumbing, not accuracy.
 - The trust guarantee holds only for the decoder, device, user and session type of the calibration data ([trust guarantee](trust-guarantee.md)).

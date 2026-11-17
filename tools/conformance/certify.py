@@ -20,6 +20,9 @@ Entries:
   LSL outlets (``replay_to_lsl``, ``DecisionOutlet``) and our WebSocket producer and ``/decisions`` channel in
   this process on loopback; ``nts-conform capture`` records them; then ``nts-conform check`` on the captures and
   their received streams. ``binding-lsl`` needs pylsl (``--extra lsl``), ``binding-ws`` needs websockets.
+* ``fidetype-live-lsl``, ``fidetype-live-ws``: ``fidetype live --publish`` (P14-16). The same module runs the CLI
+  (``fidetype live --source synthetic``) in a child process with ``--publish lsl:NAME`` or ``--publish
+  ws://127.0.0.1:PORT/nts --publish ws://127.0.0.1:PORT/decisions`` and records it with ``nts-conform capture``.
 
 Third-party implementations add their own entry by pull request (docs/conformance.md, "Self-certification");
 this tool never writes them.
@@ -194,6 +197,14 @@ BINDING_IMPL = {
     "ws": ("src/fidetype/adapters/ws.py", "WSProducer / replay_to_ws (/nts) and the /decisions channel of WSServer + "
            "WSTrustRunner"),
 }
+#: P14-16: ``fidetype live --publish`` (target of fidetype.conformance.binding_producers -> entry id, implementation).
+LIVE_IMPL = {
+    "live-lsl": ("fidetype-live-lsl", "fidetype live --publish lsl (src/fidetype/live/publish.py): NTSOutlet (frames + "
+                 "events streams) and DecisionOutlet (NAME.decisions stream), live decode of the synthetic typist"),
+    "live-ws": ("fidetype-live-ws", "fidetype live --publish ws://HOST:PORT/nts and ws://HOST:PORT/decisions "
+                "(src/fidetype/live/publish.py): WSProducer and the /decisions channel of WSServer + OutputHub, live "
+                "decode of the synthetic typist"),
+}
 
 
 def binding_entries() -> list[dict]:
@@ -222,6 +233,20 @@ def binding_entries() -> list[dict]:
                     "evidence": ev, "evidence_command": "python -m fidetype.conformance.binding_producers --out DIR "
                     f"--target {name} (nts-conform capture of our own outlets on loopback), then nts-conform check "
                     f"DIR/{name} --json", "_rep": rep})
+    for target, (eid, what) in LIVE_IMPL.items():
+        need = "lsl" if target == "live-lsl" else "ws"
+        if not have[need]:
+            print(f"certify: skip {eid} (install the {need} extra)", file=sys.stderr)
+            continue
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            files = write_evidence(target, tmp / target)
+            rep = NC.build_report([NC.conform_file(f, "core") for f in files], "core")
+            ev = _write(f"{eid}.report.json", rep, tmp)
+        out.append({**base, "id": eid, "implementation": what, "bindings": rep["producer"]["bindings"],
+                    "evidence": ev, "evidence_command": "python -m fidetype.conformance.binding_producers --out DIR "
+                    f"--target {target} (runs fidetype live --publish in a child process; nts-conform capture on "
+                    f"loopback), then nts-conform check DIR/{target} --json", "_rep": rep})
     return out
 
 

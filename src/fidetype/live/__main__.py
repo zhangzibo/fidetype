@@ -3,6 +3,9 @@
 ::
 
     fidetype live --source synthetic                                   # no hardware, no data, no extra
+    fidetype live --source synthetic --publish lsl                     # + LSL outlets ([lsl]; P14-16)
+    fidetype live --publish ws://127.0.0.1:8765/nts                    # + send NTS to a WebSocket server ([ws])
+    fidetype live --publish ws://127.0.0.1:8766/decisions              # + serve trust decisions ([ws])
     fidetype live --source brainflow --board-id -1 --out s.nts.jsonl   # BrainFlow Synthetic board ([brainflow])
     fidetype live --source brainflow --board-id 0 --serial-port COM3   # OpenBCI Cyton (untested: P4-06)
     fidetype live --source lsl --stream-name fidetype.replay.kt-semg \\
@@ -15,7 +18,8 @@
 Defaults: ``--model builtin:synthetic-keys --guard builtin:synthetic-keys``.
 Each decision prints one line (``--json``: one JSON object). ``--out``
 writes an NTS JSON Lines file (frames, final hypotheses, trust decisions).
-Read docs/live-decode.md first.
+``--publish`` sends the same events over a binding in real time
+(:mod:`fidetype.live.publish`). Read docs/live-decode.md first.
 """
 
 from __future__ import annotations
@@ -55,6 +59,16 @@ def _run_parser() -> argparse.ArgumentParser:
                     "(default: the model card's onset file, else envelope)")
     ap.add_argument("--hop", type=float, help="fixed timing: seconds between windows (default: the model's)")
     ap.add_argument("--segment-s", type=float, help="end a segment every S seconds (instead of segment_end markers)")
+    pg = ap.add_argument_group("publish over a binding (P14-16; docs/live-decode.md)")
+    pg.add_argument("--publish", action="append", default=[], metavar="TARGET",
+                    help="send the NTS events in real time: lsl or lsl:NAME (frames NAME, events NAME.events, "
+                         "decisions NAME.decisions; [lsl]), ws://HOST:PORT/nts (send to a server; [ws]) or "
+                         "ws://HOST:PORT/decisions (serve the trust decisions; port 0 = free port; [ws]). Repeat "
+                         "for more targets")
+    pg.add_argument("--publish-wait", type=float, default=0.0, metavar="S",
+                    help="before the decode, wait up to S seconds for a consumer on each target (default 0)")
+    pg.add_argument("--publish-linger", type=float, default=1.0, metavar="S",
+                    help="keep the outlets open S seconds after the end (default 1)")
     g = ap.add_argument_group("synthetic source")
     g.add_argument("--utterances", type=int, default=10, help="number of synthetic utterances (default 10)")
     g.add_argument("--seed", type=int, default=7)
@@ -150,7 +164,33 @@ def run_main(argv: Sequence[str]) -> int:
             _err(f"cannot load the onset detector {ospec!r}: {e}")
             return 2
         _err(f"onset detector: {detector.kind} {json.dumps(detector.params)}")
-    writer = make_writer(a.out, model, info, guard, a.source, timing) if a.out else None
+    tee = None
+    if a.publish:
+        from fidetype.live.publish import EventTee, make_publisher
+
+        try:
+            pubs = [make_publisher(t, same_clock=a.source == "lsl", log=_err) for t in a.publish]
+        except (ValueError, ImportError) as e:
+            src.close()
+            _err(str(e))
+            return 2
+        tee = EventTee(pubs, open(a.out, "w", encoding="utf-8", newline="\n") if a.out else None, log=_err)
+    try:
+        writer = (make_writer(tee if tee is not None else a.out, model, info, guard, a.source, timing)
+                  if (a.out or tee is not None) else None)
+    except Exception as e:  # noqa: BLE001 - e.g. a WebSocket server that does not answer
+        src.close()
+        if tee is not None:
+            tee.finish()
+        _err(f"cannot open the output: {e}")
+        return 3
+    if tee is not None:
+        for p in tee.publishers:
+            _err(f"publish: {p.describe()}")
+        if a.publish_wait > 0:
+            for t, ok in tee.wait(a.publish_wait).items():
+                if not ok:
+                    _err(f"publish: no consumer on {t} after {a.publish_wait:g} s; sending anyway")
     try:
         dec = LiveDecoder(model, guard, src, timing=timing, hop_s=a.hop, segment_s=a.segment_s, writer=writer,
                           detector=detector,
@@ -159,13 +199,18 @@ def run_main(argv: Sequence[str]) -> int:
         src.close()
         if writer is not None:
             writer.close()
+        if tee is not None:
+            tee.finish()
         _err(str(e))
         return 2
+    published = None
     try:
         st = dec.run(duration_s=a.duration, max_decisions=a.max_decisions)
     finally:
         if writer is not None:
             writer.close()
+        if tee is not None:
+            published = tee.finish(a.publish_linger)
     s = st.as_dict()
     if st.losses or st.gaps:
         _err(f"stream losses {st.losses}, gap records {st.gaps}, segments dropped at a gap {st.dropped_segments} "
@@ -181,6 +226,9 @@ def run_main(argv: Sequence[str]) -> int:
              f"{s['decision_added_ms']['p50']} ms, p95 {s['decision_added_ms']['p95']} ms")
     if a.out:
         _err(f"NTS written: {a.out} (check: fidetype validate {a.out})")
+    if published is not None:
+        s["published"] = published
+        _err(f"published: {json.dumps(published)}")
     if a.summary:
         s.update(source=a.source, model=model.name, config_id=guard.config_id, timing=timing)
         Path(a.summary).write_text(json.dumps(s, indent=2) + "\n", encoding="utf-8")

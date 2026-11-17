@@ -1046,6 +1046,9 @@ class LSLEventSource:
         self._pending_header = True
         self.n_marker = 0
         self.ended = False
+        #: P3-07: when set, each released event gets this key with its pull time (``clock``, local only).
+        #: The collector's LSL receiver uses it for the receive stamp (the merge-window wait counts as latency).
+        self.arrival_key: str | None = None
 
     # --- header -------------------------------------------------------------
 
@@ -1165,6 +1168,8 @@ class LSLEventSource:
             if t < self._last_released:
                 self.stats.late_releases += 1
             self._last_released = max(self._last_released, t)
+            if self.arrival_key is not None:
+                ev[self.arrival_key] = arrival
             out.append(ev)
         return out
 
@@ -1489,6 +1494,131 @@ class ReplaySummary:
     consumers: bool = False
 
 
+class NTSOutlet:
+    """The LSL outlets of one NeuralTextStream (FEP-0002): an ``NTS`` frames stream and a ``Markers`` events stream.
+
+    ``header``: the NTS header (with or without ``type``). The frames stream ``name`` has one
+    ``float32`` (or ``double64``) channel per vocab token. The events stream (``name + ".events"``,
+    or ``name`` when ``frames`` is False) carries every other event as a JSON string, with
+    ``event_clock = lsl``. :func:`replay_to_lsl` uses it for a file; ``fidetype live --publish lsl``
+    (P14-16) uses it for a live stream.
+
+    Clock: :meth:`start_clock` maps the stream time ``t_file0`` to the LSL time ``base`` (the first
+    frame starts the clock if nobody called it). :meth:`stamp` gives the LSL timestamp of the next
+    event: a frame gets ``base + (t - t_file0) / speed``; any other event gets the time of the
+    previous frame plus a small step, so the merge at the inlet keeps the stream order.
+    :meth:`push` sends the event.
+    """
+
+    def __init__(self, header: dict[str, Any], name: str = "fidetype.nts", source_id: str | None = None,
+                 channel_format: Literal["float32", "double64"] = "float32", frames: bool = True,
+                 events: bool = True) -> None:
+        pl = require_pylsl()
+        self._pl = pl
+        head = {k: v for k, v in header.items() if k != "type"}
+        self.header = head
+        self.vocab = list(head.get("vocab", []))
+        base_id = source_id or _stable_id(name, json.dumps(head, sort_keys=True))
+        fid, eid = (base_id if frames else None), (base_id + ".events" if (events or not frames) else None)
+        self.frames_source_id, self.events_source_id = fid, eid
+        header_json = json.dumps(head, ensure_ascii=False, allow_nan=False)
+        fp = head.get("frame_period")
+        self.outlets: list[Any] = []
+        self.frames_out: Any = None
+        self.events_out: Any = None
+        if fid is not None:
+            info = pl.StreamInfo(name, NTS_STREAM_TYPE, len(self.vocab), (1.0 / fp) if fp else pl.IRREGULAR_RATE,
+                                 channel_format, fid)
+            d = info.desc()
+            chs = d.append_child("channels")
+            for tok in self.vocab:
+                c = chs.append_child("channel")
+                c.append_child_value("label", tok)
+                c.append_child_value("unit", "log_prob")
+                c.append_child_value("type", "nts.log_prob")
+            f = d.append_child(DESC_ROOT)
+            f.append_child_value("nts_header", header_json)
+            f.append_child_value("values", "log_probs")
+            f.append_child_value("role", "nts_frames")
+            f.append_child_value("binding", BINDING_VERSION)
+            if eid:
+                f.append_child_value("events_source_id", eid)
+            self.frames_out = pl.StreamOutlet(info, chunk_size=0, max_buffered=360)
+            self.outlets.append(self.frames_out)
+        if eid is not None:
+            info = pl.StreamInfo(name + ".events" if fid else name, MARKERS_TYPE, 1, pl.IRREGULAR_RATE, "string", eid)
+            f = info.desc().append_child(DESC_ROOT)
+            f.append_child_value("nts_header", header_json)
+            f.append_child_value("role", "nts_events")
+            f.append_child_value("binding", BINDING_VERSION)
+            f.append_child_value("event_clock", "lsl")
+            if fid:
+                f.append_child_value("frames_source_id", fid)
+            self.events_out = pl.StreamOutlet(info, chunk_size=0)
+            self.outlets.append(self.events_out)
+        self.eps = 1e-4 if not fp else min(1e-4, float(fp) / 10)
+        self.base: float | None = None
+        self.t_file0 = 0.0
+        self.speed = 1.0
+        self._last_ts = 0.0
+        self._k = 0
+        self.frames = 0
+        self.events = 0
+
+    def wait_for_consumers(self, timeout: float) -> bool:
+        """Wait until each outlet has a consumer (at most ``timeout`` seconds in total). Return True if all have one."""
+        t0 = time.monotonic()
+        return all(o.wait_for_consumers(max(0.0, timeout - (time.monotonic() - t0))) for o in self.outlets)
+
+    def start_clock(self, t_file0: float, base: float | None = None, speed: float = 1.0) -> float:
+        """Map the stream time ``t_file0`` to the LSL time ``base`` (default: now). Return ``base``."""
+        self.base = self._pl.local_clock() if base is None else float(base)
+        self.t_file0, self.speed = float(t_file0), float(speed)
+        self._last_ts = self.base - 1.0  # events before the first frame go well before it
+        self._k = 0
+        return self.base
+
+    def stamp(self, e: dict[str, Any]) -> float:
+        """The LSL timestamp of the event ``e`` (class docstring)."""
+        if e.get("type") == "frame":
+            if self.base is None:
+                self.start_clock(float(e["t"]))
+            assert self.base is not None
+            dt = float(e["t"]) - self.t_file0
+            ts = self.base + (dt / self.speed if self.speed > 0 else dt)
+            self._k = 0
+            self._last_ts = ts
+            return ts
+        if self.base is None:  # an event before the first frame: its own time (if any) starts the clock
+            t = e.get("t")
+            self.start_clock(float(t) if isinstance(t, (int, float)) and not isinstance(t, bool) else 0.0)
+        self._k += 1
+        return self._last_ts + self.eps * self._k
+
+    def push(self, e: dict[str, Any], ts: float | None = None) -> None:
+        """Send one event (not the first header): a frame to the frames stream, other events to the events stream."""
+        if ts is None:
+            ts = self.stamp(e)
+        if e.get("type") == "frame":
+            if self.frames_out is None:
+                raise ValueError("this NTSOutlet has no frames stream")
+            row = [(-math.inf if v is None else float(v)) for v in e["log_probs"]]
+            self.frames_out.push_sample(row, ts, True)
+            self.frames += 1
+        else:
+            if self.events_out is None:
+                raise ValueError("this NTSOutlet has no events stream")
+            assert self.base is not None
+            ev = _to_lsl_clock(e, self.base, self.t_file0, self.speed)
+            self.events_out.push_sample([json.dumps(ev, ensure_ascii=False, allow_nan=False)], ts, True)
+            self.events += 1
+
+    def close(self) -> None:
+        """Destroy the outlets (the consumers see the streams go away)."""
+        self.frames_out = self.events_out = None
+        self.outlets.clear()
+
+
 def replay_to_lsl(
     source: str | PathLike[str] | Iterable[dict[str, Any]],
     name: str = "fidetype.nts",
@@ -1510,6 +1640,7 @@ def replay_to_lsl(
     step, so the merge at the inlet keeps the file order. ``speed`` 1.0 =
     real time, 2.0 = twice as fast, 0 = no pacing (timestamps still
     follow the file times). ``ready`` is set when the outlets exist.
+    The outlets are an :class:`NTSOutlet`.
     """
     pl = require_pylsl()
     log = log or (lambda m: None)
@@ -1517,92 +1648,35 @@ def replay_to_lsl(
     if not evs or evs[0].get("type") != "header":
         raise ValueError("the stream must start with a header event")
     head = {k: v for k, v in evs[0].items() if k != "type"}
-    V = len(head.get("vocab", []))
     has_frames = any(e.get("type") == "frame" for e in evs)
     others = [e for e in evs[1:] if e.get("type") != "frame"]
     for e in others:
         if e.get("type") == "header" and list(e.get("vocab", [])) != list(head.get("vocab", [])):
             raise ValueError("a later header changes the vocab; publish each stream separately")
-    base_id = source_id or _stable_id(name, json.dumps(head, sort_keys=True))
-    fid, eid = (base_id if has_frames else None), (base_id + ".events" if (others or not has_frames) else None)
-    header_json = json.dumps(head, ensure_ascii=False, allow_nan=False)
-    fp = head.get("frame_period")
-    outlets = []
-    frames_out = events_out = None
-    if fid is not None:
-        info = pl.StreamInfo(name, NTS_STREAM_TYPE, V, (1.0 / fp) if fp else pl.IRREGULAR_RATE, channel_format, fid)
-        d = info.desc()
-        chs = d.append_child("channels")
-        for tok in head["vocab"]:
-            c = chs.append_child("channel")
-            c.append_child_value("label", tok)
-            c.append_child_value("unit", "log_prob")
-            c.append_child_value("type", "nts.log_prob")
-        f = d.append_child(DESC_ROOT)
-        f.append_child_value("nts_header", header_json)
-        f.append_child_value("values", "log_probs")
-        f.append_child_value("role", "nts_frames")
-        f.append_child_value("binding", BINDING_VERSION)
-        if eid:
-            f.append_child_value("events_source_id", eid)
-        frames_out = pl.StreamOutlet(info, chunk_size=0, max_buffered=360)
-        outlets.append(frames_out)
-    if eid is not None:
-        info = pl.StreamInfo(name + ".events" if fid else name, MARKERS_TYPE, 1, pl.IRREGULAR_RATE, "string", eid)
-        f = info.desc().append_child(DESC_ROOT)
-        f.append_child_value("nts_header", header_json)
-        f.append_child_value("role", "nts_events")
-        f.append_child_value("binding", BINDING_VERSION)
-        f.append_child_value("event_clock", "lsl")
-        if fid:
-            f.append_child_value("frames_source_id", fid)
-        events_out = pl.StreamOutlet(info, chunk_size=0)
-        outlets.append(events_out)
+    out = NTSOutlet(head, name, source_id, channel_format, frames=has_frames, events=bool(others))
     if ready is not None:
         ready.set()
-    rs = ReplaySummary(frames_source_id=fid, events_source_id=eid)
-    t_wait = time.monotonic()
-    rs.consumers = all(o.wait_for_consumers(max(0.0, wait_consumers_s - (time.monotonic() - t_wait))) for o in outlets)
+    rs = ReplaySummary(frames_source_id=out.frames_source_id, events_source_id=out.events_source_id)
+    rs.consumers = out.wait_for_consumers(wait_consumers_s)
     if not rs.consumers:
         log(f"no consumer after {wait_consumers_s} s; sending anyway")
     time.sleep(0.05)  # let the inlets finish their connection set-up
     t_file0 = next((float(e["t"]) for e in evs if e.get("type") == "frame"), 0.0)
-    base = pl.local_clock() + lead_s
-    rs.t_first_lsl = base
-    eps = 1e-4 if not fp else min(1e-4, float(fp) / 10)
-    last_ts = base - 1.0  # events before the first frame go well before it
-    k = 0
+    rs.t_first_lsl = out.start_clock(t_file0, pl.local_clock() + lead_s, speed)
     w0 = time.monotonic()
     for e in evs[1:]:
         if stop is not None and stop.is_set():
             break
-        typ = e.get("type")
-        if typ == "frame":
-            dt = float(e["t"]) - t_file0
-            ts = base + (dt / speed if speed > 0 else dt)
-            k = 0
-        else:
-            k += 1
-            ts = last_ts + eps * k
+        ts = out.stamp(e)
         if speed > 0:
             wait = ts - pl.local_clock()
             if wait > 0:
                 time.sleep(wait)
-        if typ == "frame":
-            assert frames_out is not None
-            row = [(-math.inf if v is None else float(v)) for v in e["log_probs"]]
-            frames_out.push_sample(row, ts, True)
-            rs.frames += 1
-            last_ts = ts
-        else:
-            assert events_out is not None
-            e = _to_lsl_clock(e, base, t_file0, speed)
-            events_out.push_sample([json.dumps(e, ensure_ascii=False, allow_nan=False)], ts, True)
-            rs.events += 1
+        out.push(e, ts)
+    rs.frames, rs.events = out.frames, out.events
     time.sleep(max(0.0, linger_s))
     rs.wall_s = time.monotonic() - w0
-    del frames_out, events_out
-    outlets.clear()
+    out.close()
     return rs
 
 
