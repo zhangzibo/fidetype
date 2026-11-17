@@ -375,6 +375,19 @@ check("NTS-NAMESPACE", "advisory", "SHOULD", "4.1", "meta keys are namespaced; c
   if (custom.length) msgs.push(`custom keys inside a defined namespace: ${repr(custom)} (see ambiguity A2)`);
   return msgs.length ? bad(msgs.join("; ")) : ok();
 });
+/** MET-11 (RC4 amendment 1; check added by roadmap P1-16): the device.modality values that each modality namespace goes with. */
+export const MODALITY_NAMESPACES: Record<string, readonly string[]> = { emg: ["emg"], meg: ["meg", "opm-meg"], implant: ["intracortical", "ecog"] };
+check("NTS-MODALITY-MATCH", "advisory", "SHOULD NOT", "3.4 (MET-11)", "Modality keys (emg.*, meg.*, implant.*) go with device.modality", (raw) => {
+  const m = metaOf(raw);
+  if (!m) return skip("meta is not an object");
+  const keys = Object.keys(m).filter((k) => k.includes(".") && has(MODALITY_NAMESPACES, k.split(".")[0]));
+  if (!keys.length) return skip("no modality keys");
+  const mod = has(m, "device.modality") ? m["device.modality"] : null;
+  if (typeof mod !== "string" || !(MODALITIES as readonly string[]).includes(mod)) return skip("no device.modality of the 1.0 list (MET-11 not checkable)");
+  const other = keys.filter((k) => !MODALITY_NAMESPACES[k.split(".")[0]].includes(mod));
+  if (other.length) return bad(`modality keys of another modality than device.modality ${repr(mod)}: ${repr(other)} (MET-11)`);
+  return ok(`${keys.length} modality key(s) match device.modality ${repr(mod)}`);
+});
 check("NTS-LEAK-KEYS", "core", "MUST", "5.3.1", "meta has no key that names ground truth or target labels", (raw) => {
   const m = metaOf(raw);
   if (!m) return skip("meta is not an object");
@@ -807,6 +820,10 @@ export interface ConsumedStream {
   summary: {
     n_frames: number; vocab_size: number; vocab_type: string; blank_id: number | null; neg_inf_cells: number;
     ignored_events: number; unknown_keys: string[]; vocab_type_defaulted: boolean; events: number;
+    /** Sorted ids of the advisory checks that warn (P1-16 / P7-02). */
+    warnings: string[];
+    /** Highest stream level reached: "core", "trust-ready" or "provenance" (P7-02). */
+    level: (typeof LEVELS)[number] | null;
   };
 }
 
@@ -820,7 +837,8 @@ export function loadStream(name: string, bytes: Uint8Array): ConsumedStream {
 }
 
 export function consumeRaw(raw: RawStream): ConsumedStream {
-  for (const r of runChecks(raw)) {
+  const results = runChecks(raw);
+  for (const r of results) {
     if (r.status === "fail" && blocks(r.level, "core")) throw new StreamRejected(`[${r.id}, spec ${r.clause}] ${r.message}`, r.clause, r.id);
   }
   const h = raw.header;
@@ -856,6 +874,8 @@ export function consumeRaw(raw: RawStream): ConsumedStream {
       n_frames: T, vocab_size: vocab.length, vocab_type: vt, blank_id: blank, neg_inf_cells: neg,
       ignored_events: raw.ignoredEvents, unknown_keys: raw.unknownKeys, vocab_type_defaulted: raw.vocabTypeDefaulted,
       events: events.length,
+      warnings: [...new Set(results.filter((r) => r.status === "fail" && r.level === "advisory").map((r) => r.id))].sort(),
+      level: levelReached(results),
     },
   };
 }

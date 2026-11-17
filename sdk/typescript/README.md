@@ -9,7 +9,7 @@ TypeScript SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. I
 | Writer | `NtsWriter`, `toJsonl`: write NTS JSON Lines (header, frames, hypotheses, `segment_end`, `end`). Each event is checked before it is written. |
 | Reader | `parseNtsText`, `readNtsEvents`, `validateNtsStream`: read a whole text or a live byte stream (`fetch` body, Node file stream). |
 | Reference consumer | `loadStream(name, bytes)`: accept or reject a `.jsonl` or `.npz` file with the core rules of the Python reference (`fidetype.conformance.io.load_stream`). |
-| Checks | `checkStream`: all v0.1 checks with levels `core`, `trust-ready`, `provenance`, `advisory` (59 of the 60 checks that `fidetype conformance list` prints; the 60th, `NTS-LEAK-TRUTH`, runs only with a truth text (`--truth`) and is Python only). `StreamValidator`: event-by-event checks for live streams. |
+| Checks | `checkStream`: all v0.1 checks with levels `core`, `trust-ready`, `provenance`, `advisory` (60 of the 61 checks that `fidetype conformance list` prints; the 61st, `NTS-LEAK-TRUTH`, runs only with a truth text (`--truth`) and is Python only). `StreamValidator`: event-by-event checks for live streams. |
 | Schemas | `validateEventSchema`: structural check against `spec/schemas/`. The TypeScript types (`NtsHeader`, `Fep0001TrustDecision`, ...) are generated from the same schemas. |
 | Decisions | `DecisionTracker`, `isFinalCommit`, `committedText`, `emptyCommitWarning`: what a consumer may do with each `trust_decision` (COMMIT / OFFER / ASK / ABSTAIN; text, intent and control profiles). |
 | Conformance | `runVectors`: run the golden vectors in `spec/conformance/` (the same files as the Python suite) for every profile. |

@@ -17,7 +17,7 @@ Task **M7-07** (fep-0004 port: M7-12). The third reference SDK, after the [Pytho
 | Write a stream | `NtsWriter` (one checked event per line; the sink is a closure, for example a UART), `to_jsonl`; `npz::write_npz` (stored NPZ, as `numpy.savez`) |
 | Read a stream | `parse_nts_text`, `LineSplitter` and `EventReader` (byte chunks, strict UTF-8 across chunk borders) |
 | Accept or reject a file | `load_stream(name, bytes)`: port of the reference consumer (JSON Lines **and** NPZ; own ZIP / DEFLATE / NPY code) |
-| Check a file | `check_stream`: the 59 checks of the [conformance suite](conformance-suite.md), levels core / trust-ready / provenance / advisory |
+| Check a file | `check_stream`: the 60 checks of the [conformance suite](conformance-suite.md), levels core / trust-ready / provenance / advisory |
 | Check a live stream | `StreamValidator`: the event checks of the [streaming trust layer](streaming-trust-layer.md) `push` |
 | Act on decisions | `DecisionTracker`: kind, committed text or intent, `forward`, errors (FEP-0001 rules 5-8), warnings (rule 9: empty final COMMIT); TD-12: blank candidates in a 1.x OFFER / ASK / OFFER_WORDS); `offered` drops blank texts (TD-12) |
 | Conformance | `conformance::run_vectors` over `spec/conformance/` for `v0.1`, `fep-0001`, `fep-0002` ([LSL](lsl-input.md) scenarios), `fep-0003` ([intent events](intent-events.md)), `fep-0004` ([WebSocket](websocket-input.md) scenarios), `fep-0005` ([control events](control-events.md)) |

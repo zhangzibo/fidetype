@@ -2,6 +2,20 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC4, DRAFT] amendment 3 of 2026-11-17 (levels, self-certification, MET-11 check) and conformance kit 0.2.0
+**Still RC4 DRAFT.** Changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 3 of 2026-11-17"; sections 9.2, 9.6, 9.7; Appendix C.1). Roadmap P7-02 and P1-16 (gap 20). Additive: no earlier vector and no earlier kit entry changed its verdict.
+
+### Added
+- **Implementation levels (9.6; CNF-2, CNF-5, CNF-6, CNF-7):** NTS Core (the frame core), NTS Full (all event kinds of the named output profiles), NTS Trust-ready (Full + score semantics, provenance and timing). Cumulative. Producers qualify with `nts-conform check` on their files, consumers with `nts-conform kit`. Bindings `nts-lsl/0.1` and `nts-ws/0.1` are added to a claim by their kit entries. Generated copy: [`conformance/levels.json`](conformance/levels.json).
+- **Rule ids for the stream levels (9.2):** CNF-3 (trust-ready checks), CNF-4 (provenance checks).
+- **Self-certification (9.7, CNF-8):** [`conformance/certified.json`](conformance/certified.json) with evidence reports in `conformance/certified/`. First entries: the Python, TypeScript and Rust SDKs (consumers, NTS Trust-ready) and the producer adapters of this repository. No outside entry.
+- **MET-11 check:** advisory `NTS-MODALITY-MATCH` in the three validators (a modality key that does not fit `device.modality` is a warning, never a reject). Vectors V93, V94, V96 (accept with the warning), V95 (accept, no warning). C.1 row for MET-11 (the last rule id without a row) and rows for CNF-2 … CNF-8.
+- **Conformance kit 0.2.0:** K32 (MET-11 warning), K33 … K36 (valid streams at stream level core or trust-ready); `stream_level` on every input-stream entry; the v0.1 kit manifest and V93 … V96 pin `expected.warnings` and `expected.level`, which the three SDK runners compare.
+- **`rule-map.json`:** a `refine` table maps the messages of broad checks to the rule of the finding (for example `FEP2-CONSUME` -> `LSL-F2` for a wrong channel count).
+
+### Counts
+- Vectors 345 (v0.1 96). Kit 36. Python = TypeScript = Rust on all of them and on 27,767 fuzz mutants (seeds 1–3, `--n 30`). Schema parity (C.3): 213 of 213 one-line verdicts.
+
 ## Conformance kit 0.1.0 (2026-11-17, roadmap P7-01)
 No change to the spec text or to any vector verdict.
 

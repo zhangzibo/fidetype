@@ -17,7 +17,7 @@ Task **M7-06**. The second reference SDK, after the [Python SDK](python-sdk.md).
 | Write a stream | `NtsWriter` (one checked event per line), `toJsonl` |
 | Read a stream | `parseNtsText`, `readNtsEvents` (byte or text stream, chunk borders and UTF-8 handled), `validateNtsStream` |
 | Accept or reject a file | `loadStream(name, bytes)`: port of the reference consumer `load_stream` (JSON Lines **and** NPZ; own ZIP/DEFLATE/NPY reader) |
-| Check a file | `checkStream`: the 59 checks of the [conformance suite](conformance-suite.md), levels core / trust-ready / provenance / advisory |
+| Check a file | `checkStream`: the 60 checks of the [conformance suite](conformance-suite.md), levels core / trust-ready / provenance / advisory |
 | Check a live stream | `StreamValidator`: the event checks of the [streaming trust layer](streaming-trust-layer.md) `push` (header first, increasing t, normalised rows, valid n-best) |
 | Act on decisions | `DecisionTracker`: per `trust_decision` the kind (commit, offer, ask, abstain, preview), the committed text or intent, `forward`, errors (FEP-0001 rules 5-8) and warnings (rule 9: empty final COMMIT); TD-12: blank candidates in a 1.x OFFER / ASK / OFFER_WORDS); `offered` drops blank texts (TD-12) |
 | Conformance | `runVectors`: the golden vectors in `spec/conformance/` for `v0.1`, `fep-0001`, `fep-0002`, [`fep-0003`](intent-events.md), [`fep-0004`](websocket-input.md), [`fep-0005`](control-events.md) |

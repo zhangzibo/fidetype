@@ -300,7 +300,11 @@
   ],
   "NTS-META-TYPES": [
    "MET-1",
-   "MET-7"
+   "MET-7",
+   "MET-11"
+  ],
+  "NTS-MODALITY-MATCH": [
+   "MET-11"
   ],
   "NTS-NAMESPACE": [
    "MET-3"
@@ -354,24 +358,54 @@
   "NTS-VOCAB-UNIQUE": [
    "HDR-4"
   ],
+  "NTS-VT-CHAR": [
+   "CNF-3"
+  ],
+  "PV-ADAPTER": [
+   "CNF-4"
+  ],
   "PV-CALIB-ID": [
-   "DEC-5"
+   "DEC-5",
+   "CNF-4"
+  ],
+  "PV-DECODER": [
+   "CNF-4"
   ],
   "PV-PSEUDONYM": [
-   "SEC-4"
+   "SEC-4",
+   "CNF-4"
+  ],
+  "PV-STREAM-ID": [
+   "CNF-4"
+  ],
+  "PV-WEIGHTS": [
+   "CNF-4"
   ],
   "TR-CALIB": [
    "MET-6",
-   "DEC-5"
+   "DEC-5",
+   "CNF-3"
   ],
   "TR-CAUSAL": [
-   "MET-5"
+   "MET-5",
+   "CNF-3"
   ],
   "TR-DERIVED": [
-   "SEC-2"
+   "SEC-2",
+   "CNF-3"
+  ],
+  "TR-LANGUAGE": [
+   "CNF-3"
+  ],
+  "TR-MODALITY": [
+   "CNF-3"
   ],
   "TR-OFFLINE-LATENCY": [
-   "MET-5"
+   "MET-5",
+   "CNF-3"
+  ],
+  "TR-SOURCE": [
+   "CNF-3"
   ]
  },
  "rules": {
@@ -379,6 +413,57 @@
    "keyword": "MUST NOT",
    "checks": [],
    "status": "—"
+  },
+  "CNF-2": {
+   "keyword": "—",
+   "checks": [],
+   "status": "—"
+  },
+  "CNF-3": {
+   "keyword": "—",
+   "checks": [
+    "TR-SOURCE",
+    "TR-MODALITY",
+    "TR-CAUSAL",
+    "TR-OFFLINE-LATENCY",
+    "TR-DERIVED",
+    "TR-CALIB",
+    "TR-LANGUAGE",
+    "NTS-VT-CHAR"
+   ],
+   "status": "T (stream level)"
+  },
+  "CNF-4": {
+   "keyword": "—",
+   "checks": [
+    "PV-STREAM-ID",
+    "PV-DECODER",
+    "PV-WEIGHTS",
+    "PV-ADAPTER",
+    "PV-CALIB-ID",
+    "PV-PSEUDONYM"
+   ],
+   "status": "T (stream level)"
+  },
+  "CNF-5": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "P (the tool cannot see if the evidence is real output)"
+  },
+  "CNF-6": {
+   "keyword": "—",
+   "checks": [],
+   "status": "T"
+  },
+  "CNF-7": {
+   "keyword": "—",
+   "checks": [],
+   "status": "T"
+  },
+  "CNF-8": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T (tooling)"
   },
   "CTL-1": {
    "keyword": "MUST",
@@ -1444,6 +1529,14 @@
    "checks": [],
    "status": "T (tooling)"
   },
+  "MET-11": {
+   "keyword": "SHOULD NOT",
+   "checks": [
+    "NTS-META-TYPES",
+    "NTS-MODALITY-MATCH"
+   ],
+   "status": "T (types); P (advisory warning)"
+  },
   "MET-2": {
    "keyword": "MUST",
    "checks": [
@@ -2095,5 +2188,593 @@
    ],
    "status": "T"
   }
+ },
+ "refine": {
+  "FEP1-TD-FINAL": [
+   [
+    "does not increase",
+    [
+     "TD-5"
+    ]
+   ],
+   [
+    "second final decision",
+    [
+     "TD-6"
+    ]
+   ],
+   [
+    "a decision for .* after its final one",
+    [
+     "TD-7"
+    ]
+   ]
+  ],
+  "FEP1-TD-FORMAT": [
+   [
+    "spec_version",
+    [
+     "TD-F3",
+     "VER-5"
+    ]
+   ],
+   [
+    "\\(rule 8\\)",
+    [
+     "TD-8"
+    ]
+   ],
+   [
+    "\\(rule 9",
+    [
+     "TD-9"
+    ]
+   ],
+   [
+    "\\b(is_final|action|p_top1|score_semantics)\\b",
+    [
+     "TD-F1"
+    ]
+   ],
+   [
+    "\\b(shown|seq|session|utterance|config_id|input|latency_s|guard_risk|set_size|reason|declaration) must",
+    [
+     "TD-F2"
+    ]
+   ]
+  ],
+  "FEP2-CONSUME": [
+   [
+    "is not JSON|no desc/fidetype/nts_header|nts_header must be a JSON object",
+    [
+     "LSL-D1"
+    ]
+   ],
+   [
+    "channels but the vocab",
+    [
+     "LSL-F2"
+    ]
+   ],
+   [
+    "must be float32 or double64|type '[^']*' is not 'NTS'",
+    [
+     "LSL-F1"
+    ]
+   ],
+   [
+    "channel labels differ",
+    [
+     "LSL-F3"
+    ]
+   ],
+   [
+    "nominal_srate",
+    [
+     "LSL-F6"
+    ]
+   ],
+   [
+    "binding '[^']*' is not supported",
+    [
+     "LSL-V1",
+     "VER-9"
+    ]
+   ],
+   [
+    "events stream must have",
+    [
+     "LSL-E1"
+    ]
+   ],
+   [
+    "NaN or \\+inf",
+    [
+     "LSL-F5"
+    ]
+   ],
+   [
+    "spec_version",
+    [
+     "LSL-D2",
+     "VER-5"
+    ]
+   ],
+   [
+    "values kind|values '[^']*' is not",
+    [
+     "LSL-D3",
+     "VER-9"
+    ]
+   ],
+   [
+    "event_clock",
+    [
+     "LSL-C5"
+    ]
+   ]
+  ],
+  "FEP2-DECISIONS": [
+   [
+    "decisions stream has 1 channel|event_type must be",
+    [
+     "LSL-X1"
+    ]
+   ],
+   [
+    "second final decision|after its final one",
+    [
+     "TD-6",
+     "LSL-X2"
+    ]
+   ],
+   [
+    "not JSON|must be a|is not one of|is required",
+    [
+     "LSL-X2"
+    ]
+   ]
+  ],
+  "FEP2-DESC": [
+   [
+    "is not JSON|no desc/fidetype/nts_header|nts_header must be a JSON object",
+    [
+     "LSL-D1"
+    ]
+   ],
+   [
+    "channels but the vocab",
+    [
+     "LSL-F2"
+    ]
+   ],
+   [
+    "must be float32 or double64|type '[^']*' is not 'NTS'",
+    [
+     "LSL-F1"
+    ]
+   ],
+   [
+    "channel labels differ",
+    [
+     "LSL-F3"
+    ]
+   ],
+   [
+    "nominal_srate",
+    [
+     "LSL-F6"
+    ]
+   ],
+   [
+    "binding '[^']*' is not supported",
+    [
+     "LSL-V1",
+     "VER-9"
+    ]
+   ],
+   [
+    "events stream must have",
+    [
+     "LSL-E1"
+    ]
+   ],
+   [
+    "NaN or \\+inf",
+    [
+     "LSL-F5"
+    ]
+   ],
+   [
+    "spec_version",
+    [
+     "LSL-D2",
+     "VER-5"
+    ]
+   ],
+   [
+    "values kind|values '[^']*' is not",
+    [
+     "LSL-D3",
+     "VER-9"
+    ]
+   ],
+   [
+    "event_clock",
+    [
+     "LSL-C5"
+    ]
+   ]
+  ],
+  "FEP2-FRAMES": [
+   [
+    "is not JSON|no desc/fidetype/nts_header|nts_header must be a JSON object",
+    [
+     "LSL-D1"
+    ]
+   ],
+   [
+    "channels but the vocab",
+    [
+     "LSL-F2"
+    ]
+   ],
+   [
+    "must be float32 or double64|type '[^']*' is not 'NTS'",
+    [
+     "LSL-F1"
+    ]
+   ],
+   [
+    "channel labels differ",
+    [
+     "LSL-F3"
+    ]
+   ],
+   [
+    "nominal_srate",
+    [
+     "LSL-F6"
+    ]
+   ],
+   [
+    "binding '[^']*' is not supported",
+    [
+     "LSL-V1",
+     "VER-9"
+    ]
+   ],
+   [
+    "events stream must have",
+    [
+     "LSL-E1"
+    ]
+   ],
+   [
+    "NaN or \\+inf",
+    [
+     "LSL-F5"
+    ]
+   ],
+   [
+    "spec_version",
+    [
+     "LSL-D2",
+     "VER-5"
+    ]
+   ],
+   [
+    "values kind|values '[^']*' is not",
+    [
+     "LSL-D3",
+     "VER-9"
+    ]
+   ],
+   [
+    "event_clock",
+    [
+     "LSL-C5"
+    ]
+   ]
+  ],
+  "FEP3-DECL": [
+   [
+    "is not unique",
+    [
+     "INT-D1"
+    ]
+   ],
+   [
+    "risk '[^']*' is not one of",
+    [
+     "INT-D2"
+    ]
+   ],
+   [
+    "at most one intent may have role",
+    [
+     "INT-D3"
+    ]
+   ],
+   [
+    "confirm intent .* must be 'irreversible'",
+    [
+     "INT-D4"
+    ]
+   ]
+  ],
+  "FEP3-INTENT": [
+   [
+    "without an intent_declaration",
+    [
+     "INT-E1"
+    ]
+   ],
+   [
+    "is not in the declaration|appears twice",
+    [
+     "INT-E2"
+    ]
+   ],
+   [
+    "score must be|scores sum to",
+    [
+     "INT-E3"
+    ]
+   ],
+   [
+    "ranked best first",
+    [
+     "INT-E4"
+    ]
+   ],
+   [
+    "is not unique in the stream",
+    [
+     "INT-E5"
+    ]
+   ],
+   [
+    "\\b(is_final|id|t|candidates) must be",
+    [
+     "INT-E7"
+    ]
+   ]
+  ],
+  "FEP3-SAFETY": [
+   [
+    "\\(rule ([1-5])\\)",
+    [
+     "INT-S{1}"
+    ]
+   ]
+  ],
+  "FEP3-TD-FINAL": [
+   [
+    "second final decision",
+    [
+     "INT-T4"
+    ]
+   ],
+   [
+    "does not increase",
+    [
+     "TD-5",
+     "INT-T6"
+    ]
+   ]
+  ],
+  "FEP3-TD-FORMAT": [
+   [
+    "uses unit|unit must be",
+    [
+     "INT-T1"
+    ]
+   ],
+   [
+    "MUST NOT carry shown",
+    [
+     "INT-T2"
+    ]
+   ],
+   [
+    "COMMIT needs (the committed intent|risk_class)|risk_class '",
+    [
+     "INT-T3"
+    ]
+   ],
+   [
+    "profile '[^']*' is not one of",
+    [
+     "PRF-4"
+    ]
+   ],
+   [
+    "intent action '",
+    [
+     "TD-F1"
+    ]
+   ],
+   [
+    "confirm_required",
+    [
+     "INT-T7"
+    ]
+   ],
+   [
+    "\\b(vocab_id|pending_cleared) must",
+    [
+     "INT-T8"
+    ]
+   ]
+  ],
+  "FEP4-DECISIONS": [
+   [
+    "ws_welcome|unknown binding",
+    [
+     "WS-D1",
+     "WS-V1"
+    ]
+   ],
+   [
+    "ws_seq",
+    [
+     "WS-D3"
+    ]
+   ],
+   [
+    "second final decision",
+    [
+     "TD-6"
+    ]
+   ]
+  ],
+  "FEP4-FRAMING": [
+   [
+    "binary messages",
+    [
+     "WS-F1"
+    ]
+   ],
+   [
+    "bad_message",
+    [
+     "WS-F2",
+     "GEN-2"
+    ]
+   ],
+   [
+    "ws_seq .* must be an integer",
+    [
+     "WS-Q1"
+    ]
+   ],
+   [
+    "consecutive ws_seq|ws_batch of",
+    [
+     "WS-Q4"
+    ]
+   ]
+  ],
+  "FEP4-HANDSHAKE": [
+   [
+    "first message must be the NTS header",
+    [
+     "WS-S1"
+    ]
+   ],
+   [
+    "subprotocol",
+    [
+     "WS-H2"
+    ]
+   ],
+   [
+    "unknown binding",
+    [
+     "WS-V1",
+     "VER-9"
+    ]
+   ],
+   [
+    "spec_version",
+    [
+     "HDR-2",
+     "VER-5",
+     "WS-S1"
+    ]
+   ],
+   [
+    "meta must be a JSON object",
+    [
+     "HDR-8",
+     "WS-S1"
+    ]
+   ]
+  ],
+  "FEP5-CONTROL": [
+   [
+    "without a control_declaration",
+    [
+     "CTL-1"
+    ]
+   ],
+   [
+    "does not increase",
+    [
+     "CTL-2"
+    ]
+   ],
+   [
+    "MUST carry std",
+    [
+     "CTL-3"
+    ]
+   ],
+   [
+    "\\b(values|std|values\\[\\d+\\]) must be",
+    [
+     "CTL-4"
+    ]
+   ],
+   [
+    "timing fields",
+    [
+     "TIM-4"
+    ]
+   ],
+   [
+    "pointer dims",
+    [
+     "CTL-12"
+    ]
+   ]
+  ],
+  "FEP5-SAFETY": [
+   [
+    "\\(rule ([1-8])\\)",
+    [
+     "CTL-S{1}"
+    ]
+   ]
+  ],
+  "FEP5-TD-FORMAT": [
+   [
+    "\\(rule ([1-4])\\)",
+    [
+     "CTL-T{1}"
+    ]
+   ],
+   [
+    "state '[^']*' is not one of",
+    [
+     "CTL-T3"
+    ]
+   ],
+   [
+    "\\(TD-F2\\)",
+    [
+     "TD-F2"
+    ]
+   ],
+   [
+    "\\b(gain|velocity|raw|authority|engagement|units) must",
+    [
+     "CTL-T4"
+    ]
+   ],
+   [
+    "\\b(radius|level) must",
+    [
+     "CTL-T8"
+    ]
+   ],
+   [
+    "\\breasons\\b",
+    [
+     "CTL-T9"
+    ]
+   ]
+  ]
  }
 }

@@ -147,5 +147,22 @@ test("the conformance kit (P7-01) gives the expected verdict on every entry", as
     assert.deepEqual(bad, [], `kit ${p}: ${bad.join("; ")}`);
     total += r.total;
   }
-  assert.equal(total, 31);
+  assert.equal(total, 36); // P7-01: 31; P7-02 / P1-16 (kit 0.2.0): K32-K36
+});
+
+test("MET-11 modality match is an advisory warning; the summary gives warnings and the stream level (P1-16, P7-02)", async () => {
+  const kit = join(conf, "kit", "v0.1");
+  const k32 = sdk.loadStream("k32-modality-mismatch.jsonl", await node.readBytes(join(kit, "k32-modality-mismatch.jsonl")));
+  assert.deepEqual(k32.summary.warnings, ["NTS-MODALITY-MATCH"]);
+  assert.equal(k32.summary.level, "provenance");
+  const res = sdk.checkStream("k32-modality-mismatch.jsonl", await node.readBytes(join(kit, "k32-modality-mismatch.jsonl")));
+  const r = res.results.find((x) => x.id === "NTS-MODALITY-MATCH");
+  assert.equal(r.level, "advisory");
+  assert.equal(r.status, "fail");
+  assert.match(r.message, /emg\.placement.*MET-11/);
+  const levels = { "k33-core-only.jsonl": "core", "k34-trust-ready-no-provenance.jsonl": "trust-ready",
+    "k35-offline-with-latency.jsonl": "core", "k36-calibration-without-method.jsonl": "core" };
+  for (const [f, want] of Object.entries(levels)) {
+    assert.equal(sdk.loadStream(f, await node.readBytes(join(kit, f))).summary.level, want, f);
+  }
 });

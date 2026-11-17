@@ -1,0 +1,697 @@
+{
+ "schema": "fidetype.nts-conform.kit-report/1",
+ "tool": "nts-conform",
+ "tool_version": "0.2.0",
+ "validator": "fidetype-rs consume --profile {profile} --level {level} {path}",
+ "spec": "NTS 1.0 RC4 (draft)",
+ "kit": "./spec/conformance/kit",
+ "kit_version": "0.2.0",
+ "passed": 36,
+ "total": 36,
+ "ok": true,
+ "level": {
+  "class": "consumer",
+  "level": "trust-ready",
+  "title": "NTS Trust-ready",
+  "levels": {
+   "core": true,
+   "full": true,
+   "trust-ready": true
+  },
+  "profiles": [
+   "text",
+   "intent",
+   "control"
+  ],
+  "bindings": {
+   "nts-lsl/0.1": true,
+   "nts-ws/0.1": true
+  },
+  "bindings_missing": [],
+  "why_not_higher": []
+ },
+ "entries": [
+  {
+   "id": "K01",
+   "path": "v0.1/k01-text-stream.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "HDR-1",
+    "HDR-2",
+    "HDR-4",
+    "HDR-5",
+    "HDR-6",
+    "HDR-7",
+    "HDR-9",
+    "HDR-10",
+    "HDR-11",
+    "FRM-1",
+    "FRM-2",
+    "FRM-3",
+    "FRM-4",
+    "FRM-6",
+    "TIM-1",
+    "TIM-2",
+    "SQ-1",
+    "HYP-1",
+    "GEN-2",
+    "GEN-3",
+    "MET-1"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K02",
+   "path": "v0.1/k02-sparse-frames.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "FRM-2",
+    "FRM-3",
+    "FRM-5",
+    "GEN-3"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K03",
+   "path": "v0.1/k03-frames.npz",
+   "profile": "v0.1",
+   "wire_form": "npz",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "FIL-1",
+    "FIL-2",
+    "FRM-1",
+    "FRM-3",
+    "FRM-6",
+    "HDR-2"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K04",
+   "path": "v0.1/k04-npz-float64.npz",
+   "profile": "v0.1",
+   "wire_form": "npz",
+   "expect": "accept",
+   "verdict": "accept-with-warnings",
+   "rules": [
+    "FIL-5"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K05",
+   "path": "v0.1/k05-npz-pickled.npz",
+   "profile": "v0.1",
+   "wire_form": "npz",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "FIL-1"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K06",
+   "path": "v0.1/k06-header-not-first.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "HDR-1"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K07",
+   "path": "v0.1/k07-short-frame.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "FRM-1"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K08",
+   "path": "v0.1/k08-unnormalised-frame.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "FRM-3"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K09",
+   "path": "v0.1/k09-nan-token.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "GEN-2"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K10",
+   "path": "v0.1/k10-forward-compatible.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "GEN-4",
+    "MET-3",
+    "HDR-2",
+    "VER-3"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K11",
+   "path": "v0.1/k11-unknown-major.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "HDR-2",
+    "VER-5"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K12",
+   "path": "v0.1/k12-decision-pointer.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "DEC-2",
+    "DEC-3",
+    "DEC-4",
+    "PTR-1"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K13",
+   "path": "v0.1/k13-modality-keys.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "MET-1",
+    "MET-7"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K14",
+   "path": "v0.1/k14-bad-weights-hash.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "MET-1"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K32",
+   "path": "v0.1/k32-modality-mismatch.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept-with-warnings",
+   "rules": [
+    "MET-11"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K33",
+   "path": "v0.1/k33-core-only.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "HDR-7",
+    "CNF-3"
+   ],
+   "stream_level": "core",
+   "actual": "accept",
+   "level_actual": "core",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K34",
+   "path": "v0.1/k34-trust-ready-no-provenance.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "CNF-3",
+    "CNF-4"
+   ],
+   "stream_level": "trust-ready",
+   "actual": "accept",
+   "level_actual": "trust-ready",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K35",
+   "path": "v0.1/k35-offline-with-latency.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "MET-5",
+    "CNF-3"
+   ],
+   "stream_level": "core",
+   "actual": "accept",
+   "level_actual": "core",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K36",
+   "path": "v0.1/k36-calibration-without-method.jsonl",
+   "profile": "v0.1",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "MET-6",
+    "DEC-5",
+    "CNF-3"
+   ],
+   "stream_level": "core",
+   "actual": "accept",
+   "level_actual": "core",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K15",
+   "path": "fep-0001/k15-text-trust-input.jsonl",
+   "profile": "fep-0001",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "SEG-4",
+    "SEG-5",
+    "EVD-1",
+    "EVD-3",
+    "EVD-4",
+    "DCL-1",
+    "HYP-1"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K16",
+   "path": "fep-0001/k16-text-decision-log.jsonl",
+   "profile": "fep-0001",
+   "wire_form": "jsonl-decision-log",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "TD-F1",
+    "TD-F2",
+    "TD-5",
+    "TD-6",
+    "TD-8",
+    "VER-1"
+   ],
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K17",
+   "path": "fep-0001/k17-commit-empty-shown.jsonl",
+   "profile": "fep-0001",
+   "wire_form": "jsonl-decision-log",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "TD-8"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K18",
+   "path": "fep-0001/k18-two-finals.jsonl",
+   "profile": "fep-0001",
+   "wire_form": "jsonl-decision-log",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "TD-6"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K19",
+   "path": "fep-0003/k19-intent-stream.jsonl",
+   "profile": "fep-0003",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "INT-D1",
+    "INT-D2",
+    "INT-D3",
+    "INT-D4",
+    "INT-D5",
+    "INT-E1",
+    "INT-E2",
+    "INT-E3",
+    "INT-E4",
+    "PRF-3"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K20",
+   "path": "fep-0003/k20-intent-undeclared.jsonl",
+   "profile": "fep-0003",
+   "wire_form": "jsonl-stream",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "INT-E2"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K21",
+   "path": "fep-0003/k21-intent-decision-log.jsonl",
+   "profile": "fep-0003",
+   "wire_form": "jsonl-decision-log",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "INT-T1",
+    "INT-T2",
+    "INT-T3",
+    "INT-S1",
+    "PRF-4"
+   ],
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K22",
+   "path": "fep-0003/k22-intent-irreversible-direct.jsonl",
+   "profile": "fep-0003",
+   "wire_form": "jsonl-decision-log",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "INT-S4"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K23",
+   "path": "fep-0005/k23-control-stream.jsonl",
+   "profile": "fep-0005",
+   "wire_form": "jsonl-stream",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "CTL-D1",
+    "CTL-D2",
+    "CTL-1",
+    "CTL-2",
+    "CTL-3",
+    "CTL-4",
+    "CTL-E1"
+   ],
+   "stream_level": "provenance",
+   "actual": "accept",
+   "level_actual": "provenance",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K24",
+   "path": "fep-0005/k24-control-dims.jsonl",
+   "profile": "fep-0005",
+   "wire_form": "jsonl-stream",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "CTL-4"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K25",
+   "path": "fep-0005/k25-control-decision-log.jsonl",
+   "profile": "fep-0005",
+   "wire_form": "jsonl-decision-log",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "CTL-T1",
+    "CTL-T2",
+    "CTL-T3",
+    "CTL-T4",
+    "CTL-T5",
+    "CTL-S1"
+   ],
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K26",
+   "path": "fep-0002/k26-lsl-capture.json",
+   "profile": "fep-0002",
+   "wire_form": "lsl-capture",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "LSL-F1",
+    "LSL-F2",
+    "LSL-F3",
+    "LSL-D1",
+    "LSL-D2",
+    "LSL-E1",
+    "LSL-C2",
+    "LSL-V1"
+   ],
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K27",
+   "path": "fep-0002/k27-lsl-channel-count.json",
+   "profile": "fep-0002",
+   "wire_form": "lsl-capture",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "LSL-F2"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K28",
+   "path": "fep-0002/k28-lsl-decisions.json",
+   "profile": "fep-0002",
+   "wire_form": "lsl-decisions-capture",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "LSL-X1",
+    "LSL-X2",
+    "TD-6"
+   ],
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K29",
+   "path": "fep-0004/k29-ws-session.json",
+   "profile": "fep-0004",
+   "wire_form": "ws-capture",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "WS-H2",
+    "WS-S1",
+    "WS-Q1",
+    "WS-Q2",
+    "WS-F1",
+    "WS-V1"
+   ],
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K30",
+   "path": "fep-0004/k30-ws-first-not-header.json",
+   "profile": "fep-0004",
+   "wire_form": "ws-capture",
+   "expect": "reject",
+   "verdict": "reject",
+   "rules": [
+    "WS-S1"
+   ],
+   "actual": "reject",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "K31",
+   "path": "fep-0004/k31-ws-decisions.json",
+   "profile": "fep-0004",
+   "wire_form": "ws-decisions-capture",
+   "expect": "accept",
+   "verdict": "accept",
+   "rules": [
+    "WS-D1",
+    "WS-D2",
+    "TD-6"
+   ],
+   "actual": "accept",
+   "verdict_ok": true,
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

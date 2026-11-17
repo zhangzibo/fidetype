@@ -15,9 +15,32 @@ fn run(profile: &str, expected_total: usize) {
     assert_eq!(r.total, expected_total, "{}: vector count changed", profile);
 }
 
+/// P1-16 / P7-02: MET-11 modality match is an advisory warning; the summary gives warnings and the stream level.
+#[test]
+fn modality_match_warning_and_stream_levels() {
+    use fidetype::json::Value;
+    fn strs(v: &Value) -> Vec<&str> {
+        v.as_arr().map(|a| a.iter().filter_map(|x| x.as_str()).collect()).unwrap_or_default()
+    }
+    let kit = vectors().join("kit").join("v0.1");
+    let s = io::load_stream_file(kit.join("k32-modality-mismatch.jsonl")).unwrap().summary;
+    assert_eq!(strs(s.get("warnings")), vec!["NTS-MODALITY-MATCH"]);
+    assert_eq!(s.get("level").as_str(), Some("provenance"));
+    for (f, want) in [
+        ("k33-core-only.jsonl", "core"),
+        ("k34-trust-ready-no-provenance.jsonl", "trust-ready"),
+        ("k35-offline-with-latency.jsonl", "core"),
+        ("k36-calibration-without-method.jsonl", "core"),
+    ] {
+        let s = io::load_stream_file(kit.join(f)).unwrap().summary;
+        assert_eq!(s.get("level").as_str(), Some(want), "{}", f);
+        assert!(s.get("warnings").as_arr().is_some_and(|a| a.is_empty()), "{}", f);
+    }
+}
+
 #[test]
 fn v01_vectors() {
-    run("v0.1", 92);
+    run("v0.1", 96);
 }
 
 #[test]
@@ -133,7 +156,7 @@ fn fep0005_decision_tracker_matches_the_decision_log_vectors() {
 #[test]
 fn conformance_kit() {
     let kit = vectors().join("kit");
-    let counts = [("v0.1", 14), ("fep-0001", 4), ("fep-0002", 3), ("fep-0003", 4), ("fep-0004", 3), ("fep-0005", 3)];
+    let counts = [("v0.1", 19), ("fep-0001", 4), ("fep-0002", 3), ("fep-0003", 4), ("fep-0004", 3), ("fep-0005", 3)];
     assert_eq!(io::list_profiles(&kit), counts.iter().map(|c| c.0).collect::<Vec<_>>());
     for (profile, n) in counts {
         let r = io::run_profile_dir(profile, kit.join(profile)).unwrap();

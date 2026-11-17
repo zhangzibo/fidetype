@@ -8,7 +8,7 @@ an expected verdict (``accept``, ``accept-with-warnings`` or ``reject``),
 the rule ids that it exercises and the checks that must fail or warn.
 
 The kit does not replace the golden vectors (``spec/conformance/<profile>/``,
-341 files). The vectors test every edge of every rule. The kit is the short
+345 files). The vectors test every edge of every rule. The kit is the short
 list that a new implementer runs first: realistic files, one verdict each.
 
 Layout (``spec/conformance/kit/``)::
@@ -44,8 +44,12 @@ import numpy as np
 from fidetype.conformance.vectors import MANIFEST_SCHEMA
 
 KIT_SCHEMA = "fidetype.conformance.kit/1"
-KIT_VERSION = "0.1.0"
+KIT_VERSION = "0.2.0"  # 0.2.0 (P7-02, P1-16): K32-K36, stream_level, SDK-checked warnings and levels
 VERDICTS = ("accept", "accept-with-warnings", "reject")
+#: The stream levels of spec 9.2, low to high. "stream_level" of a kit entry is the highest one that it reaches.
+STREAM_LEVELS = ("core", "trust-ready", "provenance")
+#: Wire forms that have a stream level (spec 9.2 judges input streams, not decision logs or captures).
+LEVELLED_FORMS = ("jsonl-stream", "npz")
 WIRE_FORMS = {
     "jsonl-stream": "JSON Lines input stream (8.1.1): header, frames, events",
     "npz": "NPZ frame core (8.1.2)",
@@ -60,7 +64,9 @@ HOW_TO_USE = (
     "accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform "
     "check) reports no failed check for verdict accept, only the listed warning checks for "
     "accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 "
-    "rule ids that the file exercises (spec Appendix C).")
+    "rule ids that the file exercises (spec Appendix C). 'stream_level' (input streams only): the highest stream level "
+    "of spec 9.2 that the file reaches (core, trust-ready, provenance); a Trust-ready consumer reports it (spec 9.6). "
+    "'warning_checks' lists the advisory checks that warn; they never change the verdict.")
 
 # --- fixed content ----------------------------------------------------------------------------
 
@@ -160,6 +166,11 @@ class KitEntry:
     failing_checks: list[str] = field(default_factory=list)
     warning_checks: list[str] = field(default_factory=list)
     schema_class: str | None = None  # reject entries: why the one-line JSON Schema does (not) see it
+    stream_level: str | None = None  # accept entries of LEVELLED_FORMS: highest stream level (default provenance)
+
+    def __post_init__(self) -> None:
+        if self.verdict != "reject" and self.wire_form in LEVELLED_FORMS and self.stream_level is None:
+            self.stream_level = "provenance"
 
     @property
     def expect(self) -> str:
@@ -180,6 +191,12 @@ class KitEntry:
             d["warning_checks"] = self.warning_checks
         if self.schema_class:
             d["schema_class"] = self.schema_class
+        if self.stream_level:
+            d["stream_level"] = self.stream_level
+        if self.profile == "v0.1" and self.stream_level:
+            # The v0.1 consumers of the three SDKs return "warnings" and "level" in their summary (P7-02),
+            # so the SDK kit runs check them too (Python = TypeScript = Rust).
+            d["expected"] = {"warnings": sorted(self.warning_checks), "level": self.stream_level}
         return d
 
     def to_index(self) -> dict[str, Any]:
@@ -187,6 +204,7 @@ class KitEntry:
         d = {"id": d.pop("id"), "profile": self.profile, "path": self.path, **d}
         d.pop("file")
         d.pop("failing_check", None)
+        d.pop("expected", None)
         return d
 
 
@@ -269,6 +287,32 @@ def build_kit() -> list[KitEntry]:  # noqa: PLR0915 - one flat list is easier to
         "decoder.weights_sha256 is not 64 lowercase hex digits",
         _lines([_header(meta={**META, "decoder.weights_sha256": "ABC123"}), *_frames(rows), end]),
         failing_checks=["NTS-META-TYPES"], schema_class="semconv")
+    # K32 (P1-16, MET-11): an advisory finding. K33-K36 (P7-02): accepted streams that stop below provenance;
+    # a Trust-ready consumer must report their stream level (spec 9.6).
+    add("K32", "v0.1", "k32-modality-mismatch.jsonl", "jsonl-stream", "accept-with-warnings", ["MET-11"],
+        "EMG keys (emg.placement, emg.derivation) on a stream whose device.modality is eeg: the modality match of MET-11 "
+        "is a SHOULD NOT, so it is a warning only",
+        _lines([_header(meta={**META, "device.modality": "eeg", "emg.placement": "wrist", "emg.derivation": "bipolar"}),
+                *_frames(rows), end]), warning_checks=["NTS-MODALITY-MATCH"])
+    add("K33", "v0.1", "k33-core-only.jsonl", "jsonl-stream", "accept", ["HDR-7", "CNF-3"],
+        "A valid stream with no source and no meta: it reaches stream level core only (trust-ready needs source, "
+        "device.modality, decoder.causal, data.derived and language)",
+        _lines([{k: v for k, v in _header().items() if k not in ("source", "meta")}, *_frames(rows), end]),
+        stream_level="core")
+    no_pv = {k: v for k, v in META.items() if not k.startswith(("decoder.name", "decoder.version", "decoder.weights",
+                                                                 "adapter.", "stream."))}
+    add("K34", "v0.1", "k34-trust-ready-no-provenance.jsonl", "jsonl-stream", "accept", ["CNF-3", "CNF-4"],
+        "A stream with the trust-ready keys but without stream.id, decoder name and version and weights hash: it "
+        "reaches stream level trust-ready, not provenance",
+        _lines([_header(meta=no_pv), *_frames(rows), end]), stream_level="trust-ready")
+    add("K35", "v0.1", "k35-offline-with-latency.jsonl", "jsonl-stream", "accept", ["MET-5", "CNF-3"],
+        "Timing: an offline decoder (decoder.causal false) that still writes latency 0.2: MET-5 says it SHOULD omit "
+        "latency, so the stream stays at level core",
+        _lines([_header(latency=0.2, meta={**META, "decoder.causal": False}), *_frames(rows), end]), stream_level="core")
+    add("K36", "v0.1", "k36-calibration-without-method.jsonl", "jsonl-stream", "accept", ["MET-6", "DEC-5", "CNF-3"],
+        "Score semantics: calibration.applied is true but decoder.calibration_method is absent, so a trust layer "
+        "cannot tell how the probabilities were calibrated; the stream stays at level core",
+        _lines([_header(meta={**META, "calibration.applied": True}), *_frames(rows), end]), stream_level="core")
 
     # --- fep-0001: text trust events --------------------------------------------------------------
     decl = {"decoder": "kit-beam", "decoder_version": "1.0", "frame_temperature": 1.0,
@@ -450,4 +494,4 @@ def load_index(kit: str | PathLike[str] | None = None) -> dict[str, Any]:
     return json.loads((root / "kit.json").read_text(encoding="utf-8"))
 
 
-__all__ = ["KIT_SCHEMA", "VERDICTS", "WIRE_FORMS", "KitEntry", "build_kit", "kit_dir", "load_index", "write_kit"]
+__all__ = ["KIT_SCHEMA", "LEVELLED_FORMS", "STREAM_LEVELS", "VERDICTS", "WIRE_FORMS", "KitEntry", "build_kit", "kit_dir", "load_index", "write_kit"]

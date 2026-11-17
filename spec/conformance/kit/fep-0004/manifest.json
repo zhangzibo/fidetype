@@ -5,7 +5,7 @@
  "fep": "FEP-0004",
  "kit": "fidetype.conformance.kit/1",
  "generator": "nts-conform build --out spec/conformance/kit",
- "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C).",
+ "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C). 'stream_level' (input streams only): the highest stream level of spec 9.2 that the file reaches (core, trust-ready, provenance); a Trust-ready consumer reports it (spec 9.6). 'warning_checks' lists the advisory checks that warn; they never change the verdict.",
  "vectors": [
   {
    "id": "K29",

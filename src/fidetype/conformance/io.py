@@ -427,6 +427,10 @@ class ConsumedStream:
     ignored_events: int
     unknown_keys: list[str]
     vocab_type_defaulted: bool
+    #: Sorted ids of the advisory checks that warn (P1-16 / P7-02).
+    warnings: list[str] = field(default_factory=list)
+    #: Highest stream level reached: core, trust-ready or provenance (P7-02).
+    level: str | None = None
 
 
 def load_stream(path: str | PathLike[str]) -> ConsumedStream:
@@ -457,4 +461,9 @@ def load_stream(path: str | PathLike[str]) -> ConsumedStream:
         latency=h.get("latency"),
     )
     events = [{k: v for k, v in e.items() if k != "_line"} for e in raw.events]
-    return ConsumedStream(stream, events, raw.ignored_events, raw.unknown_keys, bool(h.get("_vocab_type_defaulted")))
+    from fidetype.conformance.report import levels_passed
+
+    warns = sorted({r.check_id for r in results if r.outcome == "warn"})
+    lv = levels_passed(results)
+    return ConsumedStream(stream, events, raw.ignored_events, raw.unknown_keys, bool(h.get("_vocab_type_defaulted")),
+                          warns, lv[-1] if lv else None)

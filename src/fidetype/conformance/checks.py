@@ -597,6 +597,29 @@ def c_namespace(raw: RawStream) -> tuple[str, str]:
     return bad("; ".join(msgs)) if msgs else ok()
 
 
+#: MET-11 (RC4 amendment 1; check added by roadmap P1-16): the device.modality values that each modality namespace goes with.
+MODALITY_NAMESPACES: dict[str, tuple[str, ...]] = {"emg": ("emg",), "meg": ("meg", "opm-meg"),
+                                                   "implant": ("intracortical", "ecog")}
+
+
+@check("NTS-MODALITY-MATCH", ADVISORY, "SHOULD NOT", "3.4 (MET-11)",
+       "Modality keys (emg.*, meg.*, implant.*) go with device.modality")
+def c_modality_match(raw: RawStream) -> tuple[str, str]:
+    m = _meta(raw)
+    if m is None:
+        return skip("meta is not an object")
+    keys = [k for k in m if "." in k and k.split(".")[0] in MODALITY_NAMESPACES]
+    if not keys:
+        return skip("no modality keys")
+    mod = m.get("device.modality")
+    if not isinstance(mod, str) or mod not in MODALITIES:
+        return skip("no device.modality of the 1.0 list (MET-11 not checkable)")
+    other = [k for k in keys if mod not in MODALITY_NAMESPACES[k.split(".")[0]]]
+    if other:
+        return bad(f"modality keys of another modality than device.modality {mod!r}: {other} (MET-11)")
+    return ok(f"{len(keys)} modality key(s) match device.modality {mod!r}")
+
+
 @check("NTS-LEAK-KEYS", "core", "MUST", "5.3.1", "meta has no key that names ground truth or target labels", heuristic=True)
 def c_leak_keys(raw: RawStream) -> tuple[str, str]:
     m = _meta(raw)

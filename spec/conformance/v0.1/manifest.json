@@ -1011,6 +1011,63 @@
    "clause": "1.0 RC4 4.2 (FRM-2, GEN-11)",
    "description": "a dense frame with top_ids [1, 1] (not unique)",
    "failing_check": "NTS-JSONL-FRAME"
+  },
+  {
+   "id": "V93",
+   "file": "v93-modality-mismatch-emg-on-eeg.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-11; amendment 3)",
+   "description": "EMG keys (emg.placement, emg.derivation) on a stream with device.modality eeg: accepted with the MET-11 warning",
+   "expected": {
+    "n_frames": 2,
+    "warnings": [
+     "NTS-MODALITY-MATCH"
+    ]
+   }
+  },
+  {
+   "id": "V94",
+   "file": "v94-modality-mismatch-implant-on-meg.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-11; amendment 3)",
+   "description": "implant.* keys on an NPZ stream with device.modality meg: accepted with the MET-11 warning",
+   "expected": {
+    "warnings": [
+     "NTS-MODALITY-MATCH"
+    ]
+   }
+  },
+  {
+   "id": "V95",
+   "file": "v95-modality-match-opm-meg.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-11; amendment 3)",
+   "description": "meg.sensor_types on a stream with device.modality opm-meg (meg.* goes with meg and opm-meg): no warning",
+   "expected": {
+    "n_frames": 2,
+    "warnings": []
+   }
+  },
+  {
+   "id": "V96",
+   "file": "v96-modality-keys-other.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-11; amendment 3)",
+   "description": "emg.placement and implant.areas on a stream with device.modality other: accepted with the MET-11 warning",
+   "expected": {
+    "n_frames": 2,
+    "warnings": [
+     "NTS-MODALITY-MATCH"
+    ]
+   }
   }
  ]
 }

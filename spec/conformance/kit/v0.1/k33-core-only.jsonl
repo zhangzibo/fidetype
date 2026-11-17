@@ -1,0 +1,8 @@
+{"type": "header", "spec_version": "1.0", "vocab": ["<blank>", "a", "b", "c", " "], "vocab_type": "char", "blank_id": 0, "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial"}
+{"type": "frame", "t": 0.0, "log_probs": [-0.2231, -2.3026, -3.2189, -3.5066, -3.5066]}
+{"type": "frame", "t": 0.04, "log_probs": [-2.3026, -0.2877, -2.9957, -2.9957, -2.9957]}
+{"type": "frame", "t": 0.08, "log_probs": [-0.1625, -2.9957, -3.2189, -3.5066, -3.5066]}
+{"type": "frame", "t": 0.12, "log_probs": [-2.9957, -2.9957, -0.2231, -2.9957, -2.9957]}
+{"type": "frame", "t": 0.16, "log_probs": [-0.3567, -2.3026, -2.3026, -2.9957, -2.9957]}
+{"type": "frame", "t": 0.2, "log_probs": [-2.8134, -3.2189, -3.2189, -2.8134, -0.2231]}
+{"type": "end"}

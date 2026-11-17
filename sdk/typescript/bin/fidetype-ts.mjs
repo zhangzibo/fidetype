@@ -3,7 +3,9 @@
 //
 //   fidetype-ts conformance [--profile NAME|all] [--vectors DIR] [--json OUT]
 //   fidetype-ts validate FILE [--level core|trust-ready|provenance] [--json]
-//   fidetype-ts consume [--profile NAME] FILE     exit 0 = accept (prints the summary as JSON), 1 = reject
+//   fidetype-ts consume [--profile NAME] [--level L] FILE   exit 0 = accept (prints the summary as JSON), 1 = reject
+//                                                 --level (v0.1 only): also reject a stream below stream level L
+//                                                 (core, trust-ready, provenance; spec 9.2 / 9.6, P7-02)
 //   fidetype-ts decisions FILE                    print what a consumer does with each trust_decision
 //
 // `consume` follows the external-consumer contract of the Python suite, so
@@ -85,12 +87,20 @@ async function validate() {
 
 async function consume() {
   const profile = opt("--profile", "v0.1");
+  const level = opt("--level", null);
   const file = argv[0];
   const consumer = sdk.CONSUMERS[profile];
-  if (!file || !consumer) throw new Error("usage: fidetype-ts consume [--profile NAME] FILE");
+  const levels = ["core", "trust-ready", "provenance"];
+  if (!file || !consumer || (level !== null && !levels.includes(level))) {
+    throw new Error("usage: fidetype-ts consume [--profile NAME] [--level core|trust-ready|provenance] FILE");
+  }
   try {
     const res = consumer(basename(file), await node.readBytes(file));
     process.stdout.write(JSON.stringify(res) + "\n");
+    if (level !== null && profile === "v0.1" && levels.indexOf(res.level) < levels.indexOf(level)) {
+      console.error(`stream level ${res.level ?? "none"} is below ${level}`);
+      return 1;
+    }
     return 0;
   } catch (e) {
     console.error(e instanceof Error ? `${e.name}: ${e.message}` : String(e));

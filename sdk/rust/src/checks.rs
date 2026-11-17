@@ -750,6 +750,35 @@ fn c_namespace(raw: &RawStream) -> Out {
     }
     if msgs.is_empty() { ok("") } else { bad(msgs.join("; ")) }
 }
+/// MET-11 (RC4 amendment 1; check added by roadmap P1-16): the device.modality values that each modality namespace goes with.
+pub const MODALITY_NAMESPACES: &[(&str, &[&str])] = &[("emg", &["emg"]), ("meg", &["meg", "opm-meg"]), ("implant", &["intracortical", "ecog"])];
+fn modality_namespace(ns: &str) -> Option<&'static [&'static str]> {
+    MODALITY_NAMESPACES.iter().find(|(n, _)| *n == ns).map(|(_, v)| *v)
+}
+fn c_modality_match(raw: &RawStream) -> Out {
+    let m = match meta_of(raw) {
+        Some(m) => m,
+        None => return skip("meta is not an object"),
+    };
+    let keys: Vec<&str> = m.keys().filter(|k| k.contains('.') && modality_namespace(k.split('.').next().unwrap_or("")).is_some()).collect();
+    if keys.is_empty() {
+        return skip("no modality keys");
+    }
+    let md = match m.get_opt("device.modality").and_then(|v| v.as_str()) {
+        Some(s) if MODALITIES.contains(&s) => s,
+        _ => return skip("no device.modality of the 1.0 list (MET-11 not checkable)"),
+    };
+    let other: Vec<&str> =
+        keys.iter().copied().filter(|k| !modality_namespace(k.split('.').next().unwrap_or("")).unwrap_or(&[]).contains(&md)).collect();
+    if !other.is_empty() {
+        return bad(format!(
+            "modality keys of another modality than device.modality {}: {} (MET-11)",
+            repr(&Value::str(md)),
+            repr(&str_list(&other))
+        ));
+    }
+    ok_s(format!("{} modality key(s) match device.modality {}", keys.len(), repr(&Value::str(md))))
+}
 fn c_leak_keys(raw: &RawStream) -> Out {
     let m = match meta_of(raw) {
         Some(m) => m,
@@ -1424,6 +1453,7 @@ static REGISTRY: &[CheckDef] = &[
     chk!("NTS-META-TYPES", Core, "MUST", "4.1 / 4.2", "Defined meta keys have the type and values of section 4.2", c_meta_types),
     chk!("NTS-META-LOOKAHEAD", Core, "MUST", "4.2", "decoder.lookahead_s equals latency when both are present", c_meta_lookahead),
     chk!("NTS-NAMESPACE", Advisory, "SHOULD", "4.1", "meta keys are namespaced; custom keys avoid the defined namespaces", c_namespace),
+    chk!("NTS-MODALITY-MATCH", Advisory, "SHOULD NOT", "3.4 (MET-11)", "Modality keys (emg.*, meg.*, implant.*) go with device.modality", c_modality_match),
     chk!("NTS-LEAK-KEYS", Core, "MUST", "5.3.1", "meta has no key that names ground truth or target labels", c_leak_keys, heuristic),
     chk!("NTS-PRIVACY", Core, "MUST", "5.4.1 / 4.2", "meta has no personal identifiers (e-mail, name, birth date keys)", c_privacy, heuristic),
     chk!("NTS-FREE-TEXT", Advisory, "SHOULD NOT", "5.4.3", "meta has no free-text note fields", c_free_text, heuristic),
@@ -1568,7 +1598,8 @@ pub fn load_stream(name: &str, bytes: &[u8]) -> Result<ConsumedStream, Error> {
 
 /// The reference consumer on a raw stream.
 pub fn consume_raw(raw: RawStream) -> Result<ConsumedStream, Error> {
-    for r in run_checks(&raw) {
+    let results = run_checks(&raw);
+    for r in &results {
         if r.status == Status::Fail && blocks(r.level, Level::Core) {
             return Err(Error::rejected(format!("[{}, spec {}] {}", r.id, r.clause, r.message), &r.clause, &r.id));
         }
@@ -1605,6 +1636,14 @@ pub fn consume_raw(raw: RawStream) -> Result<ConsumedStream, Error> {
     let vt = h.get_opt("vocab_type").cloned().unwrap_or(Value::str("char"));
     let blank = h.get_opt("blank_id").cloned().unwrap_or(Value::Null);
     let uk: Vec<&str> = raw.unknown_keys.iter().map(|s| s.as_str()).collect();
+    // Sorted ids of the advisory checks that warn (P1-16 / P7-02).
+    let warns: Vec<&str> = results
+        .iter()
+        .filter(|r| r.status == Status::Fail && r.level == Level::Advisory)
+        .map(|r| r.id.as_str())
+        .collect::<BTreeSet<&str>>()
+        .into_iter()
+        .collect();
     let summary = Map::from_pairs([
         ("n_frames", Value::int(t as f64)),
         ("vocab_size", Value::int(vocab_len as f64)),
@@ -1615,6 +1654,8 @@ pub fn consume_raw(raw: RawStream) -> Result<ConsumedStream, Error> {
         ("unknown_keys", str_list(&uk)),
         ("vocab_type_defaulted", Value::Bool(raw.vocab_type_defaulted)),
         ("events", Value::int(events.len() as f64)),
+        ("warnings", str_list(&warns)),
+        ("level", level_reached(&results).map_or(Value::Null, |l| Value::str(l.name()))),
     ]);
     Ok(ConsumedStream {
         header: h,
@@ -1641,6 +1682,6 @@ mod tests {
         assert!(!is_w3c_code("Keya") && !is_w3c_code("F123"));
         assert!(py_match(is_bcp47, "en-US\n") && !is_bcp47("e"));
         assert!(is_pseudo_id("S01") && !is_pseudo_id("John Smith"));
-        assert_eq!(check_table().len(), 59); // the same 59 checks as the Python REGISTRY
+        assert_eq!(check_table().len(), 60); // the same 60 checks as the Python REGISTRY (P1-16: NTS-MODALITY-MATCH)
     }
 }

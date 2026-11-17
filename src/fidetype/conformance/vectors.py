@@ -494,6 +494,30 @@ def build_vectors() -> list[Vector]:
              {"top_ids": [1, 1], "top_log_probs": [-1.0, -1.0]})):
         add(vid, fname, "reject", "1.0 RC4 4.2 (FRM-2, GEN-11)", desc, None, failing_check="NTS-JSONL-FRAME",
             writer=_w_lines([_header(spec_version="1.0"), both[0], both[1] | keys, {"type": "end"}]))
+    # --- NTS 1.0 RC4 amendment 3 (roadmap P1-16, gap 20): the advisory modality match of MET-11.
+    # Accept vectors: a mismatch is a warning (NTS-MODALITY-MATCH), never a reject. "expected" pins the warnings,
+    # so the three SDKs must report the same advisory checks.
+    mm = "1.0 RC4 3.4 (MET-11; amendment 3)"
+    add("V93", "v93-modality-mismatch-emg-on-eeg.jsonl", "accept", mm,
+        "EMG keys (emg.placement, emg.derivation) on a stream with device.modality eeg: accepted with the MET-11 warning",
+        None, {"n_frames": 2, "warnings": ["NTS-MODALITY-MATCH"]},
+        writer=_w_lines([_header(spec_version="1.0", meta={**mod_emg, "device.modality": "eeg"}), *_frames(2, V),
+                         {"type": "end"}]))
+    add("V94", "v94-modality-mismatch-implant-on-meg.npz", "accept", mm,
+        "implant.* keys on an NPZ stream with device.modality meg: accepted with the MET-11 warning", None,
+        {"warnings": ["NTS-MODALITY-MATCH"]},
+        writer=_w_npz(meta_json=np.array(json.dumps(mod_implant | {"device.modality": "meg", "device.invasive": False}))))
+    add("V95", "v95-modality-match-opm-meg.jsonl", "accept", mm,
+        "meg.sensor_types on a stream with device.modality opm-meg (meg.* goes with meg and opm-meg): no warning", None,
+        {"n_frames": 2, "warnings": []},
+        writer=_w_lines([_header(spec_version="1.0", meta={**mod_meg, "device.modality": "opm-meg"}), *_frames(2, V),
+                         {"type": "end"}]))
+    add("V96", "v96-modality-keys-other.jsonl", "accept", mm,
+        "emg.placement and implant.areas on a stream with device.modality other: accepted with the MET-11 warning", None,
+        {"n_frames": 2, "warnings": ["NTS-MODALITY-MATCH"]},
+        writer=_w_lines([_header(spec_version="1.0", meta={**BASE_META, "device.modality": "other",
+                                                            "emg.placement": "forearm", "implant.areas": ["M1"]}),
+                         *_frames(2, V), {"type": "end"}]))
     vs.sort(key=lambda v: v.vid)
     return vs
 
@@ -552,7 +576,7 @@ def _summary_of(obj: Any) -> dict[str, Any]:
         return {"n_frames": s.n_frames, "vocab_size": s.vocab_size, "vocab_type": s.vocab_type, "blank_id": s.blank_id,
                 "neg_inf_cells": int(np.isneginf(s.log_probs).sum()), "ignored_events": obj.ignored_events,
                 "unknown_keys": obj.unknown_keys, "vocab_type_defaulted": obj.vocab_type_defaulted,
-                "events": len(obj.events)}
+                "events": len(obj.events), "warnings": obj.warnings, "level": obj.level}
     if isinstance(obj, NeuralTextStream):
         return {"n_frames": obj.n_frames, "vocab_size": obj.vocab_size, "vocab_type": obj.vocab_type,
                 "blank_id": obj.blank_id, "neg_inf_cells": int(np.isneginf(obj.log_probs).sum())}

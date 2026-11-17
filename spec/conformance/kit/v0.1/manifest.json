@@ -5,7 +5,7 @@
  "fep": null,
  "kit": "fidetype.conformance.kit/1",
  "generator": "nts-conform build --out spec/conformance/kit",
- "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C).",
+ "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C). 'stream_level' (input streams only): the highest stream level of spec 9.2 that the file reaches (core, trust-ready, provenance); a Trust-ready consumer reports it (spec 9.6). 'warning_checks' lists the advisory checks that warn; they never change the verdict.",
  "vectors": [
   {
    "id": "K01",
@@ -37,7 +37,12 @@
     "GEN-3",
     "MET-1"
    ],
-   "description": "A complete text stream: 1.0 header with provenance meta, six dense frames (one cell -inf as null), signal_quality, a final hypothesis, end"
+   "description": "A complete text stream: 1.0 header with provenance meta, six dense frames (one cell -inf as null), signal_quality, a final hypothesis, end",
+   "stream_level": "provenance",
+   "expected": {
+    "warnings": [],
+    "level": "provenance"
+   }
   },
   {
    "id": "K02",
@@ -52,7 +57,12 @@
     "FRM-5",
     "GEN-3"
    ],
-   "description": "Sparse frames: the top two tokens and the rest mass per frame"
+   "description": "Sparse frames: the top two tokens and the rest mass per frame",
+   "stream_level": "provenance",
+   "expected": {
+    "warnings": [],
+    "level": "provenance"
+   }
   },
   {
    "id": "K03",
@@ -69,7 +79,12 @@
     "FRM-6",
     "HDR-2"
    ],
-   "description": "The same six frames as NPZ (allow_pickle=False, table dtypes)"
+   "description": "The same six frames as NPZ (allow_pickle=False, table dtypes)",
+   "stream_level": "provenance",
+   "expected": {
+    "warnings": [],
+    "level": "provenance"
+   }
   },
   {
    "id": "K04",
@@ -84,7 +99,14 @@
    "description": "NPZ with float64 log_probs: a reader accepts any real dtype; the writer SHOULD use float32 (warning)",
    "warning_checks": [
     "NTS-NPZ-DTYPE"
-   ]
+   ],
+   "stream_level": "provenance",
+   "expected": {
+    "warnings": [
+     "NTS-NPZ-DTYPE"
+    ],
+    "level": "provenance"
+   }
   },
   {
    "id": "K05",
@@ -184,7 +206,12 @@
     "HDR-2",
     "VER-3"
    ],
-   "description": "Header 1.3 (a newer minor version) with an unknown header key, a namespaced custom meta key, an unknown frame key and an unknown event type: a consumer ignores them"
+   "description": "Header 1.3 (a newer minor version) with an unknown header key, a namespaced custom meta key, an unknown frame key and an unknown event type: a consumer ignores them",
+   "stream_level": "provenance",
+   "expected": {
+    "warnings": [],
+    "level": "provenance"
+   }
   },
   {
    "id": "K11",
@@ -217,7 +244,12 @@
     "DEC-4",
     "PTR-1"
    ],
-   "description": "A command stream with decision events (calibrated_prob) and a pointer event (the v0.1 control forms)"
+   "description": "A command stream with decision events (calibrated_prob) and a pointer event (the v0.1 control forms)",
+   "stream_level": "provenance",
+   "expected": {
+    "warnings": [],
+    "level": "provenance"
+   }
   },
   {
    "id": "K13",
@@ -230,7 +262,12 @@
     "MET-1",
     "MET-7"
    ],
-   "description": "EMG modality keys from the semantic-convention registry (emg.placement, emg.derivation)"
+   "description": "EMG modality keys from the semantic-convention registry (emg.placement, emg.derivation)",
+   "stream_level": "provenance",
+   "expected": {
+    "warnings": [],
+    "level": "provenance"
+   }
   },
   {
    "id": "K14",
@@ -248,6 +285,101 @@
     "NTS-META-TYPES"
    ],
    "schema_class": "semconv"
+  },
+  {
+   "id": "K32",
+   "file": "k32-modality-mismatch.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept-with-warnings",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "MET-11"
+   ],
+   "description": "EMG keys (emg.placement, emg.derivation) on a stream whose device.modality is eeg: the modality match of MET-11 is a SHOULD NOT, so it is a warning only",
+   "warning_checks": [
+    "NTS-MODALITY-MATCH"
+   ],
+   "stream_level": "provenance",
+   "expected": {
+    "warnings": [
+     "NTS-MODALITY-MATCH"
+    ],
+    "level": "provenance"
+   }
+  },
+  {
+   "id": "K33",
+   "file": "k33-core-only.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "HDR-7",
+    "CNF-3"
+   ],
+   "description": "A valid stream with no source and no meta: it reaches stream level core only (trust-ready needs source, device.modality, decoder.causal, data.derived and language)",
+   "stream_level": "core",
+   "expected": {
+    "warnings": [],
+    "level": "core"
+   }
+  },
+  {
+   "id": "K34",
+   "file": "k34-trust-ready-no-provenance.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "CNF-3",
+    "CNF-4"
+   ],
+   "description": "A stream with the trust-ready keys but without stream.id, decoder name and version and weights hash: it reaches stream level trust-ready, not provenance",
+   "stream_level": "trust-ready",
+   "expected": {
+    "warnings": [],
+    "level": "trust-ready"
+   }
+  },
+  {
+   "id": "K35",
+   "file": "k35-offline-with-latency.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "MET-5",
+    "CNF-3"
+   ],
+   "description": "Timing: an offline decoder (decoder.causal false) that still writes latency 0.2: MET-5 says it SHOULD omit latency, so the stream stays at level core",
+   "stream_level": "core",
+   "expected": {
+    "warnings": [],
+    "level": "core"
+   }
+  },
+  {
+   "id": "K36",
+   "file": "k36-calibration-without-method.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "MET-6",
+    "DEC-5",
+    "CNF-3"
+   ],
+   "description": "Score semantics: calibration.applied is true but decoder.calibration_method is absent, so a trust layer cannot tell how the probabilities were calibrated; the stream stays at level core",
+   "stream_level": "core",
+   "expected": {
+    "warnings": [],
+    "level": "core"
+   }
   }
  ]
 }

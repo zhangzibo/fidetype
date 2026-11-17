@@ -24,9 +24,11 @@ The levels are cumulative. A stream reaches a level only if it also reaches all 
 | **core** | The stream is valid. A consumer MUST accept it. | All MUST rules: structure (5.1), values and normalisation (5.2), NPZ form (6.1), JSON Lines form (6.2), sparse frames (3.3), types of the defined `meta` keys (4.1, 4.2), `decoder.lookahead_s` = `latency` (4.2), Development events (3.5–3.9). Heuristic leakage (5.3) and privacy (5.4) checks. |
 | **trust-ready** | A trust layer can use the stream safely. | `source` names the producer (3.2); `device.modality` (4.2); `decoder.causal` (3.2, 4.2); an offline decoder omits `latency` (3.2); `data.derived = true` (5.4.4); `calibration.applied` agrees with the calibration keys (4.2); text vocabularies state `language` (4.2); a `char` vocabulary has one character per token (3.1). |
 | **provenance** | A decision can be traced to the models that made it. | `stream.id` (4.3.1); `decoder.name` and `decoder.version` (4.3.2); `decoder.weights_sha256` (4.2, 4.3.2); `adapter.name` and `adapter.version` together (4.2); `decoder.calibration_id` if calibrated (3.5.3); pseudonymous ids (5.4.2, heuristic). |
-| *advisory* | Good practice. A warning only. It never blocks a level. | NPZ dtypes (6.1), namespaced keys (4.1), free-text notes (5.4.3), W3C key codes (3.1), ARPAbet / IPA phonemes (3.1), one-hot rows (2.4.4), `frame_period` agrees with the frame steps (3.2), labels in `vocab` (3.5), lines after `end` (6.2). |
+| *advisory* | Good practice. A warning only. It never blocks a level. | NPZ dtypes (6.1), namespaced keys (4.1), free-text notes (5.4.3), W3C key codes (3.1), ARPAbet / IPA phonemes (3.1), one-hot rows (2.4.4), `frame_period` agrees with the frame steps (3.2), labels in `vocab` (3.5), lines after `end` (6.2), modality keys fit `device.modality` (RC4 3.4 MET-11; P1-16). |
 
-Each check has a keyword: `MUST` or `SHOULD` copies the spec text. `PROFILE` marks a requirement that the suite adds for a level; its clause names the spec text that motivates it. Run `python -m fidetype.conformance list --markdown` for the full list of 60 checks.
+Each check has a keyword: `MUST` or `SHOULD` copies the spec text. `PROFILE` marks a requirement that the suite adds for a level; its clause names the spec text that motivates it. Run `python -m fidetype.conformance list --markdown` for the full list of 61 checks.
+
+These are **stream levels** (one stream). RC4 amendment 3 gives them rule ids (CNF-3 trust-ready, CNF-4 provenance) and adds **implementation levels** for a program on top of them ([below](#implementation-levels-and-self-certification-p7-02)).
 
 > **Our take:** "trust-ready" and "provenance" are profiles, not new spec rules. The spec stays at v0.1 with no breaking change. If the profiles prove useful, a FEP can make them part of the spec.
 
@@ -126,13 +128,40 @@ Roadmap task P7-01 (2026-11-17) adds a short entry point on top of the suite. It
 | `nts-conform kit` | The reference run (consumer verdict and producer check both match), or an external validator (`--cmd`, `--impl`, `--verdicts`) checked against the kit. |
 | Rule map | `rule-map.json`: check id -> rule ids, generated from RC4 Appendix C.1. A check that tests several rules lists them all; a message that names one rule narrows the list. |
 
-Parity: Python = TypeScript = Rust on all 31 kit files (`cross-check.mjs --vectors spec/conformance/kit --rust`); the generated JSON Schema gives the SDK verdict on every kit file that it can judge (`tools/proto/parity.py`, new reject class `semconv`). Binary protobuf has no kit file, because it is not a wire form in RC4.
+Parity: Python = TypeScript = Rust on all 31 kit files (36 since kit 0.2.0, P7-02) (`cross-check.mjs --vectors spec/conformance/kit --rust`); the generated JSON Schema gives the SDK verdict on every kit file that it can judge (`tools/proto/parity.py`, new reject class `semconv`). Binary protobuf has no kit file, because it is not a wire form in RC4.
 
-The rule map found one traceability gap: MET-11 (RC4 amendment 1) has no C.1 row, and its modality match has no check. It is [open gap 20](../questions/open-gaps.md) (P1-16).
+The rule map found one traceability gap: MET-11 (RC4 amendment 1) had no C.1 row, and its modality match had no check. It was [gap 20](../questions/open-gaps.md) (P1-16); closed by P1-16 (below).
 
-> **Our take:** the kit is the first thing that an outside implementer runs; the golden vectors are the full regression set. Levels per class (P7-02) can reuse the per-rule report: a level is a set of rule ids that must have no finding.
+> **Our take:** the kit is the first thing that an outside implementer runs; the golden vectors are the full regression set.
 
 How to run it: [docs/conformance.md](../../docs/conformance.md).
+
+## Implementation levels and self-certification (P7-02)
+Roadmap task P7-02 (2026-11-17) writes the levels into the spec as RC4 amendment 3 ([spec 9.6, 9.7](../../spec/nts-1.0-rc4.md#96-implementation-levels-nts-core-nts-full-nts-trust-ready-amendment-3)). The levels are cumulative (CNF-2).
+
+| Level | Producer (its files, `nts-conform check`) | Consumer (the kit, `nts-conform kit`) |
+|---|---|---|
+| **NTS Core** (frame core) | every file passes at stream level core; at least one input stream | right verdict on the 19 `v0.1` kit entries |
+| **NTS Full** (all event kinds of the named profiles) | Core + per named profile a file that uses its events (hypothesis / segment_end, intent, control, or a decision log) | Core + right verdict on the entries of each named profile |
+| **NTS Trust-ready** (score semantics, provenance, timing, safety) | Full + every input stream at stream level provenance | Full + the right `stream_level` of every input-stream entry |
+
+- Bindings are added to a claim when the binding entries pass (`nts-lsl/0.1` K26–K28, `nts-ws/0.1` K29–K31).
+- Kit 0.2.0 adds K32 (MET-11 warning) and K33–K36: valid streams that stop at stream level core or trust-ready (no meta; no provenance keys; offline decoder with `latency`; calibration claim without method). A Trust-ready consumer must tell them apart.
+- **Finer rule mapping:** a pattern table maps the messages of broad checks to the rule of the finding. `FEP2-CONSUME` (17 rules) now reports `LSL-F2` for a wrong channel count. Of all broad findings on the 345 vectors and 36 kit files, one stays broad (I07: the intent declaration is not an object).
+- **Three-SDK parity of warnings and levels:** the v0.1 consumers of Python, TypeScript and Rust return `warnings` and `level` in their summary. Vectors and kit entries pin them (`expected`), so the three runners compare the advisory warning and the stream level, not only the verdict.
+- **Self-certification list:** [`spec/conformance/certified.json`](../../spec/conformance/certified.json), each entry with its `nts-conform` JSON report as evidence; `nts-conform certified --check` in CI. Pull-request process: [docs/conformance.md](../../docs/conformance.md#self-certification).
+
+| Entry | Class | Level |
+|---|---|---|
+| Python, TypeScript, Rust SDKs | consumer | NTS Trust-ready (text + intent + control, both bindings) |
+| text n-best adapter | producer | NTS Trust-ready (text) |
+| 7 frame adapters (MEG, B2T '25, Toronto, CTC logits, Willett, KT-sEMG, emg2qwerty) | producer | NTS Core; stream level provenance (B2T '25 and Willett: trust-ready, no published weights hash) |
+
+> **Our take:** a frames-only adapter is the main input of a text trust layer, but it is only NTS Core, because it writes no event of an output profile. We keep the rule simple and show the stream level next to the level. If outside users find this confusing, a later FEP can define a "frames-only Trust-ready" claim.
+
+> **Our take:** the list has no outside entry yet. The first one is roadmap exit criterion P7 (externally blocked).
+
+**P1-16 (gap 20, closed):** MET-11 has its C.1 row, and the three validators give the same advisory warning `NTS-MODALITY-MATCH` when a modality key does not fit `device.modality` (V93, V94, V96 warn; V95 `opm-meg` + `meg.*` does not). `KNOWN_UNTRACED` is empty: every rule id of RC4 has a C.1 row.
 
 ## Limits
 - Leakage (5.3) and privacy (5.4) checks are heuristics. They find clear signs (a `target_text` key, an e-mail address). They cannot prove that a stream is clean. With `--truth`, the suite also searches the header for the real truth texts.

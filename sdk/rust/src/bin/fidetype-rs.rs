@@ -3,7 +3,9 @@
 //! ```text
 //! fidetype-rs conformance [--profile NAME|all] [--vectors DIR] [--json OUT|-]
 //! fidetype-rs validate FILE [--level core|trust-ready|provenance] [--json]
-//! fidetype-rs consume [--profile NAME] FILE     exit 0 = accept (prints the summary as JSON), 1 = reject
+//! fidetype-rs consume [--profile NAME] [--level L] FILE   exit 0 = accept (prints the summary as JSON), 1 = reject
+//!                                               --level (v0.1 only): also reject a stream below stream level L
+//!                                               (core, trust-ready, provenance; spec 9.2 / 9.6, P7-02)
 //! fidetype-rs decisions FILE                    print what a consumer does with each trust_decision
 //! ```
 //!
@@ -14,7 +16,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use fidetype::checks::{Level, Status};
+use fidetype::checks::{Level, Status, LEVELS};
 use fidetype::conformance::consumer_for;
 use fidetype::io;
 use fidetype::json::{repr, Map, Value};
@@ -123,15 +125,28 @@ fn validate(mut args: Vec<String>) -> Result<u8, String> {
 }
 
 fn consume(mut args: Vec<String>) -> Result<u8, String> {
+    const USAGE: &str = "usage: fidetype-rs consume [--profile NAME] [--level core|trust-ready|provenance] FILE";
     let profile = take_opt(&mut args, "--profile").unwrap_or_else(|| "v0.1".into());
-    let consumer = consumer_for(&profile).ok_or("usage: fidetype-rs consume [--profile NAME] FILE")?;
-    let file = args.first().ok_or("usage: fidetype-rs consume [--profile NAME] FILE")?;
+    let level = match take_opt(&mut args, "--level") {
+        Some(s) => Some(Level::parse(&s).filter(|l| *l != Level::Advisory).ok_or(USAGE)?),
+        None => None,
+    };
+    let consumer = consumer_for(&profile).ok_or(USAGE)?;
+    let file = args.first().ok_or(USAGE)?;
     let p = Path::new(file);
     let name = p.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
     let bytes = io::read_bytes(p).map_err(|e| e.to_string())?;
     match consumer(&name, &bytes) {
         Ok(v) => {
             println!("{}", repr(&v));
+            if let (Some(want), "v0.1", Value::Obj(m)) = (level, profile.as_str(), &v) {
+                let got = m.get("level").as_str().and_then(Level::parse);
+                let pos = |l: Level| LEVELS.iter().position(|x| *x == l);
+                if got.map_or(true, |g| pos(g) < pos(want)) {
+                    eprintln!("stream level {} is below {}", got.map_or("none", |g| g.name()), want.name());
+                    return Ok(1);
+                }
+            }
             Ok(0)
         }
         Err(e) => {

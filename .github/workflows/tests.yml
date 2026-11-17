@@ -198,6 +198,11 @@ jobs:
           node scripts/cross-check.mjs
           node scripts/cross-check.mjs --vectors ../../spec/conformance/kit  # P7-01 conformance kit
           for s in 1 2 3; do node scripts/fuzz-parity.mjs --n 30 --seed $s || exit 1; done
+      # P7-02: the TypeScript and Rust consumers reach NTS Trust-ready on the kit (verdicts + stream levels via {level}).
+      - working-directory: sdk/typescript
+        run: |
+          "$GITHUB_WORKSPACE/.venv/bin/nts-conform" kit --require-level trust-ready --cmd "node bin/fidetype-ts.mjs consume --profile {profile} --level {level} {path}"
+          "$GITHUB_WORKSPACE/.venv/bin/nts-conform" kit --require-level trust-ready --cmd "$GITHUB_WORKSPACE/sdk/rust/target/release/fidetype-rs consume --profile {profile} --level {level} {path}"
 
   # P2 packaging guard (docs/RELEASING.md section 6): build every SDK package and run the registry
   # dry-run checks on every push, so packaging cannot break silently. Nothing is published.
@@ -223,7 +228,8 @@ jobs:
           assert not bad, f"forbidden files in the wheel: {bad[:10]}"
           for need in ["fidetype/py.typed", "fidetype/_spec/conformance/fep-0001/manifest.json",
                        "fidetype/_spec/conformance/v0.1/manifest.json", "fidetype/_spec/conformance/kit/kit.json",
-                       "fidetype/_spec/conformance/kit/rule-map.json"]:
+                       "fidetype/_spec/conformance/kit/rule-map.json", "fidetype/_spec/conformance/levels.json",
+                       "fidetype/_spec/conformance/certified.json"]:
               assert need in whl, f"missing in the wheel: {need}"
           sd = [m.name.split("/", 1)[1] for m in tarfile.open(glob.glob(f"{d}/*.tar.gz")[0]).getmembers() if "/" in m.name]
           tops = {n.split("/")[0] for n in sd}
@@ -241,7 +247,9 @@ jobs:
           v/bin/fidetype version
           v/bin/fidetype conformance --profile fep-0001
           v/bin/fidetype conformance consumer
-          v/bin/nts-conform kit
+          v/bin/nts-conform kit --require-level trust-ready
+          v/bin/nts-conform levels
+          v/bin/nts-conform certified --check
           v/bin/fidetype-collector --help
       - uses: actions/setup-node@v6
         with:

@@ -3,7 +3,7 @@ title: NeuralTextStream specification (versions, 1.0 RC4)
 type: concept
 tags: [spec, neuraltextstream, standard, versioning, conformance, protobuf, p1]
 sources: []
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # NeuralTextStream specification
@@ -22,6 +22,17 @@ The written contract of Fidetype. A decoder writes a NeuralTextStream (NTS); a t
 Changelog: [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md). Index of specs and FEPs: [`spec/README.md`](../../spec/README.md).
 
 Tools around the spec: the [collector](collector.md) (draft FEP-0006, P3) receives NTS from files and WebSocket, runs the trust layer and the privacy filter, and exports decision logs. It changes no field of NTS.
+
+## RC4 amendment 3: implementation levels, self-certification, MET-11 check (2026-11-17)
+Roadmap P7-02 and P1-16. Additive; no earlier vector or kit entry changed its verdict. Text: [RC4 section 1.6, 9.2, 9.6, 9.7](../../spec/nts-1.0-rc4.md#96-implementation-levels-nts-core-nts-full-nts-trust-ready-amendment-3).
+
+| Item | Detail |
+|---|---|
+| Implementation levels (CNF-2, CNF-5 … CNF-7) | NTS Core (frame core), NTS Full (all event kinds of the named profiles), NTS Trust-ready (Full + stream level provenance for producers; the right stream level of each kit stream for consumers). Cumulative. Bindings added by their kit entries. Details: [conformance suite](conformance-suite.md#implementation-levels-and-self-certification-p7-02) |
+| Stream levels get rule ids | CNF-3 (trust-ready checks), CNF-4 (provenance checks) |
+| Self-certification (CNF-8) | `spec/conformance/certified.json` + the `nts-conform` JSON report as evidence; first entries: our three SDKs (consumers, NTS Trust-ready) and our adapters (producers) |
+| MET-11 check | Advisory `NTS-MODALITY-MATCH` in Python, TypeScript and Rust; MET-11 gets its C.1 row (gap 20 closed) |
+| Vectors and parity | V93 … V96 (accept; three pin the warning); 345 in all; kit 36 entries (0.2.0). Python = TypeScript = Rust on all 345, on the 36 kit entries and on 27,767 fuzz mutants (seeds 1-3, `--n 30`); the summaries also agree on `warnings` and `level` where a vector pins them; schema 213 / 213 one-line verdicts |
 
 ## RC4 amendment: modality keys and G-13 part b (2026-11-16)
 Additive change to the RC4 draft ([FEP-0009](../../spec/feps/0009-modality-semantic-conventions.md), [RC4 section 1.6](../../spec/nts-1.0-rc4.md#16-changes-from-rc3)). No RC4 vector changed its verdict.

@@ -1,0 +1,272 @@
+{
+ "schema": "fidetype.conformance.certified/1",
+ "spec": "NTS 1.0 RC4 (draft)",
+ "section": "9.7 (amendment 3)",
+ "note": "Self-certification list. Each entry links the nts-conform JSON report (evidence) that reaches the claimed level with the named kit version. The project checks the evidence file (nts-conform certified --check), not the implementation. Not a trademark licence. Add an entry by pull request: docs/conformance.md, section Self-certification.",
+ "generator": "tools/conformance/certify.py (entries of this repository); pull requests (other entries)",
+ "entries": [
+  {
+   "id": "fidetype-python",
+   "implementation": "fidetype (Python reference: reader, validator, nts-conform)",
+   "language": "Python",
+   "class": "consumer",
+   "level": "trust-ready",
+   "level_title": "NTS Trust-ready",
+   "profiles": [
+    "text",
+    "intent",
+    "control"
+   ],
+   "bindings": [
+    "nts-lsl/0.1",
+    "nts-ws/0.1"
+   ],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/fidetype-python.kit-report.json",
+   "evidence_command": "nts-conform kit --json spec/conformance/certified/fidetype-python.kit-report.json",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17"
+  },
+  {
+   "id": "fidetype-typescript",
+   "implementation": "@fidetype/sdk (TypeScript SDK: reader, validator)",
+   "language": "TypeScript",
+   "class": "consumer",
+   "level": "trust-ready",
+   "level_title": "NTS Trust-ready",
+   "profiles": [
+    "text",
+    "intent",
+    "control"
+   ],
+   "bindings": [
+    "nts-lsl/0.1",
+    "nts-ws/0.1"
+   ],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.1.0",
+   "evidence": "certified/fidetype-typescript.kit-report.json",
+   "evidence_command": "nts-conform kit --cmd \"node sdk/typescript/bin/fidetype-ts.mjs consume --profile {profile} --level {level} {path}\" --json spec/conformance/certified/fidetype-typescript.kit-report.json",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17"
+  },
+  {
+   "id": "fidetype-rust",
+   "implementation": "fidetype (Rust SDK crate: reader, validator)",
+   "language": "Rust",
+   "class": "consumer",
+   "level": "trust-ready",
+   "level_title": "NTS Trust-ready",
+   "profiles": [
+    "text",
+    "intent",
+    "control"
+   ],
+   "bindings": [
+    "nts-lsl/0.1",
+    "nts-ws/0.1"
+   ],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.1.0",
+   "evidence": "certified/fidetype-rust.kit-report.json",
+   "evidence_command": "nts-conform kit --cmd \"sdk/rust/target/release/fidetype-rs consume --profile {profile} --level {level} {path}\" --json spec/conformance/certified/fidetype-rust.kit-report.json",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17"
+  },
+  {
+   "id": "adapter-spanishbcbl",
+   "implementation": "fidetype adapter spanishbcbl (src/fidetype/adapters/spanishbcbl_meg.py) on synthetic input, written with fidetype.writer",
+   "language": "Python",
+   "class": "producer",
+   "level": "core",
+   "level_title": "NTS Core",
+   "profiles": [],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/adapter-spanishbcbl.report.json",
+   "evidence_command": "python tools/conformance/certify.py (writes the synthetic streams of fidetype.conformance.producers 'spanishbcbl' as JSON Lines, then nts-conform check --json)",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ],
+   "note": "NTS Full: no file uses the events of the profile(s) text, intent, control (text: hypothesis or segment_end, or a text decision log; intent: intent_declaration or an intent decision log; control: control_declaration or a control decision log)"
+  },
+  {
+   "id": "adapter-b2t25",
+   "implementation": "fidetype adapter b2t25 (src/fidetype/adapters/b2t25.py) on synthetic input, written with fidetype.writer",
+   "language": "Python",
+   "class": "producer",
+   "level": "core",
+   "level_title": "NTS Core",
+   "profiles": [],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/adapter-b2t25.report.json",
+   "evidence_command": "python tools/conformance/certify.py (writes the synthetic streams of fidetype.conformance.producers 'b2t25' as JSON Lines, then nts-conform check --json)",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "trust-ready"
+   ],
+   "note": "NTS Full: no file uses the events of the profile(s) text, intent, control (text: hypothesis or segment_end, or a text decision log; intent: intent_declaration or an intent decision log; control: control_declaration or a control decision log)"
+  },
+  {
+   "id": "adapter-toronto",
+   "implementation": "fidetype adapter toronto (src/fidetype/adapters/toronto_semg.py) on synthetic input, written with fidetype.writer",
+   "language": "Python",
+   "class": "producer",
+   "level": "core",
+   "level_title": "NTS Core",
+   "profiles": [],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/adapter-toronto.report.json",
+   "evidence_command": "python tools/conformance/certify.py (writes the synthetic streams of fidetype.conformance.producers 'toronto' as JSON Lines, then nts-conform check --json)",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ],
+   "note": "NTS Full: no file uses the events of the profile(s) text, intent, control (text: hypothesis or segment_end, or a text decision log; intent: intent_declaration or an intent decision log; control: control_declaration or a control decision log)"
+  },
+  {
+   "id": "adapter-ctc-logits",
+   "implementation": "fidetype adapter ctc-logits (src/fidetype/adapters/ctc_logits.py) on synthetic input, written with fidetype.writer",
+   "language": "Python",
+   "class": "producer",
+   "level": "core",
+   "level_title": "NTS Core",
+   "profiles": [],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/adapter-ctc-logits.report.json",
+   "evidence_command": "python tools/conformance/certify.py (writes the synthetic streams of fidetype.conformance.producers 'ctc-logits' as JSON Lines, then nts-conform check --json)",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ],
+   "note": "NTS Full: no file uses the events of the profile(s) text, intent, control (text: hypothesis or segment_end, or a text decision log; intent: intent_declaration or an intent decision log; control: control_declaration or a control decision log)"
+  },
+  {
+   "id": "adapter-willett",
+   "implementation": "fidetype adapter willett (src/fidetype/adapters/willett_handwriting.py) on synthetic input, written with fidetype.writer",
+   "language": "Python",
+   "class": "producer",
+   "level": "core",
+   "level_title": "NTS Core",
+   "profiles": [],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/adapter-willett.report.json",
+   "evidence_command": "python tools/conformance/certify.py (writes the synthetic streams of fidetype.conformance.producers 'willett' as JSON Lines, then nts-conform check --json)",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "trust-ready"
+   ],
+   "note": "NTS Full: no file uses the events of the profile(s) text, intent, control (text: hypothesis or segment_end, or a text decision log; intent: intent_declaration or an intent decision log; control: control_declaration or a control decision log)"
+  },
+  {
+   "id": "adapter-kt-semg",
+   "implementation": "fidetype adapter kt-semg (src/fidetype/adapters/kt_semg.py) on synthetic input, written with fidetype.writer",
+   "language": "Python",
+   "class": "producer",
+   "level": "core",
+   "level_title": "NTS Core",
+   "profiles": [],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/adapter-kt-semg.report.json",
+   "evidence_command": "python tools/conformance/certify.py (writes the synthetic streams of fidetype.conformance.producers 'kt-semg' as JSON Lines, then nts-conform check --json)",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ],
+   "note": "NTS Full: no file uses the events of the profile(s) text, intent, control (text: hypothesis or segment_end, or a text decision log; intent: intent_declaration or an intent decision log; control: control_declaration or a control decision log)"
+  },
+  {
+   "id": "adapter-emg2qwerty",
+   "implementation": "fidetype adapter emg2qwerty (src/fidetype/adapters/emg2qwerty.py) on synthetic input, written with fidetype.writer",
+   "language": "Python",
+   "class": "producer",
+   "level": "core",
+   "level_title": "NTS Core",
+   "profiles": [],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/adapter-emg2qwerty.report.json",
+   "evidence_command": "python tools/conformance/certify.py (writes the synthetic streams of fidetype.conformance.producers 'emg2qwerty' as JSON Lines, then nts-conform check --json)",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ],
+   "note": "NTS Full: no file uses the events of the profile(s) text, intent, control (text: hypothesis or segment_end, or a text decision log; intent: intent_declaration or an intent decision log; control: control_declaration or a control decision log)"
+  },
+  {
+   "id": "adapter-text-nbest",
+   "implementation": "fidetype adapter text_nbest (src/fidetype/adapters/text_nbest.py): text n-best lists to hypothesis events",
+   "language": "Python",
+   "class": "producer",
+   "level": "trust-ready",
+   "level_title": "NTS Trust-ready",
+   "profiles": [
+    "text"
+   ],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/adapter-text-nbest.report.json",
+   "evidence_command": "python tools/conformance/certify.py (writes a hypothesis-only stream with fidetype.adapters.text_nbest.write_stream, then nts-conform check --json)",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ]
+  }
+ ]
+}

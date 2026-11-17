@@ -9,7 +9,7 @@
 | **Replaces** | [NeuralTextStream v0.1](neuraltextstream-v0.1.md) (it stays valid; see section 11 and Appendix B) |
 | **Folds in** | [FEP-0001](feps/0001-streaming-trust-events.md) (streaming trust events), [FEP-0002](feps/0002-nts-over-lsl.md) (LSL binding), [FEP-0003](feps/0003-intent-events.md) (output profiles: core, text, intent), [FEP-0004](feps/0004-nts-over-websocket.md) (WebSocket binding), [FEP-0005](feps/0005-control-events.md) (control profile), [FEP-0007](feps/0007-unknown-enum-values.md) (unknown enumeration values, RC3), [FEP-0008](feps/0008-optional-field-types-and-semconv.md) (optional field types and the semantic-convention registry, new in RC4) |
 | **Reference implementation** | Python package `fidetype` ([`src/fidetype/`](../src/fidetype/)); SDKs in TypeScript ([`sdk/typescript/`](../sdk/typescript/)) and Rust ([`sdk/rust/`](../sdk/rust/)) |
-| **Conformance** | [`conformance/`](conformance/) (profiles `v0.1`, `fep-0001` … `fep-0005`); traceability in Appendix C. Semantic conventions: [`semconv/`](semconv/registry.md) (normative registry, MET-10) |
+| **Conformance** | [`conformance/`](conformance/) (profiles `v0.1`, `fep-0001` … `fep-0005`); the kit [`conformance/kit/`](conformance/kit/) and `nts-conform`; implementation levels NTS Core, NTS Full, NTS Trust-ready (9.6) and the self-certification list [`conformance/certified.json`](conformance/certified.json) (9.7); traceability in Appendix C. Semantic conventions: [`semconv/`](semconv/registry.md) (normative registry, MET-10) |
 | **Licence** | Apache-2.0 |
 | **Comments** | Open an issue or a Discussion with the label `spec-1.0-rc`. Name the section and the rule id (for example `TD-9`). |
 
@@ -129,6 +129,17 @@ Also in RC4:
 - A stream with a dense frame and a wrong-typed sparse key is now refused (NTS-JSONL-FRAME). The schema refused it already (C.3). No reference producer writes sparse keys on a dense frame.
 - Vector counts: 341 (v0.1 92). Python = TypeScript = Rust on all 341 and on 27,497 fuzz mutants (seeds 1–3, `--n 30`, 0 differences). Schema parity (C.3): 210 of 210 one-line verdicts. Informative parts updated: 2.3, 9.5, C.1 (FRM-2), C.2 (G-13), C.3.
 
+**Amendment 3 of 2026-11-17 (still RC4 DRAFT; roadmap P7-02 and P1-16).** Additive only. No earlier vector and no earlier kit entry changed its verdict.
+
+| Item | Answer | Rules | Vectors / kit | SDK change |
+|---|---|---|---|---|
+| **Implementation levels** (P7-02) | Three cumulative levels for a program: **NTS Core** (the frame core), **NTS Full** (all event kinds of the named output profiles), **NTS Trust-ready** (Full + score semantics, provenance and timing: the stream levels trust-ready and provenance, and the safety rules). Producer and consumer qualify by the kit and `nts-conform` (9.6). The stream levels of 9.2 get rule ids. | CNF-2 … CNF-7, 9.2, 9.6 | Kit 0.2.0: K33 … K36 (accept; stream levels core and trust-ready), `stream_level` on every input-stream entry | Yes: the v0.1 consumers of the three SDKs return `warnings` and `level` in their summary; `consume --level` in the TypeScript and Rust CLIs |
+| **Self-certification** (P7-02) | A public, machine-readable list of implementations with a claimed level and the evidence (the `nts-conform` JSON report). A pull request adds an entry. | CNF-8, 9.7 | `conformance/certified.json` | No |
+| **MET-11 check** (P1-16, gap 20) | An **advisory** check `NTS-MODALITY-MATCH`: a key of `emg`, `meg` or `implant` on a stream whose `device.modality` is not a modality of that namespace gives a warning, never a reject. MET-11 gets its C.1 row. | MET-11 | V93, V94, V96 (accept with the warning), V95 (accept, no warning); kit K32 | Yes: all three validators, same warning |
+
+- The golden vectors of v0.1 can now pin the advisory warnings: `expected.warnings` (V93 … V96, and the v0.1 kit entries) is compared by the runners of all three SDKs, so the warning itself has three-way parity, not only the verdict.
+- Vector counts: 345 (v0.1 96). Kit: 36 entries. Python = TypeScript = Rust on all 345, on the 36 kit entries and on 27,767 fuzz mutants (seeds 1–3, `--n 30`, 0 differences). Schema parity (C.3): 213 of 213 one-line verdicts. Informative parts updated: 2.3, 9.3, 9.5, C.1 (MET-11, CNF-2 … CNF-8), C.2, C.3.
+
 ---
 
 ## 2. Scope and core data model
@@ -178,7 +189,7 @@ A stream has one **header** and a sequence of **events**. The header holds the f
 ### 2.3 Proposed stability in 1.0
 | Part | 1.0 level | Why |
 |---|---|---|
-| Header core fields, `frame` (dense and sparse), `segment_end`, `end`, `signal_quality`, timing fields, `meta` conventions of 3.4 | proposed Stable | In all three SDKs; 92 v0.1 + 66 fep-0001 vectors; real-data replays (M4-06, M6-01, M6-11, M6-13) |
+| Header core fields, `frame` (dense and sparse), `segment_end`, `end`, `signal_quality`, timing fields, `meta` conventions of 3.4 | proposed Stable | In all three SDKs; 96 v0.1 + 66 fep-0001 vectors; real-data replays (M4-06, M6-01, M6-11, M6-13) |
 | `decision`, `hypothesis` with evidence fields and `decode_declaration` | proposed Stable | Same; streaming trust layer and replays |
 | `trust_decision` (text profile), decision logs | proposed Stable | Same; LSL and WebSocket decisions channels |
 | JSON Lines form (8.1) | proposed Stable | All SDKs, all vectors |
@@ -287,7 +298,7 @@ Rules:
 | `implant.bin_s` | number ≥ 0 | Width of one feature bin, seconds |
 | `implant.areas` | list of non-empty strings | Brain areas of the arrays, free text (for example `precentral gyrus`, `6v`, `M1`) |
 
-- **[MET-11]** **(Added to RC4 on 2026-11-16, [FEP-0009](feps/0009-modality-semantic-conventions.md).)** **Modality keys.** A key of the namespaces `emg`, `meg` and `implant` describes the recording of `device.modality`: `emg.*` goes with `emg`; `meg.*` with `meg` or `opm-meg`; `implant.*` with `intracortical` or `ecog`. A producer SHOULD NOT write the keys of another modality. All modality keys are optional and Development. A list key (`meg.sensor_types`, `implant.features`, `implant.areas`) is a JSON array of non-empty strings (MET-7 for each item). *(SC-1. The keys come from the reference adapters, the producer evidence that RC4 asked for: emg2qwerty, KT-sEMG and Toronto sEMG (`emg`); SpanishBCBL MEG (`meg`); Willett handwriting and Brain-to-Text '25 (`implant`), checked against NLB MC_RTT. The validators check the types (NTS-META-TYPES); they do not check the modality match of MET-11.)*
+- **[MET-11]** **(Added to RC4 on 2026-11-16, [FEP-0009](feps/0009-modality-semantic-conventions.md).)** **Modality keys.** A key of the namespaces `emg`, `meg` and `implant` describes the recording of `device.modality`: `emg.*` goes with `emg`; `meg.*` with `meg` or `opm-meg`; `implant.*` with `intracortical` or `ecog`. A producer SHOULD NOT write the keys of another modality. All modality keys are optional and Development. A list key (`meg.sensor_types`, `implant.features`, `implant.areas`) is a JSON array of non-empty strings (MET-7 for each item). *(SC-1. The keys come from the reference adapters, the producer evidence that RC4 asked for: emg2qwerty, KT-sEMG and Toronto sEMG (`emg`); SpanishBCBL MEG (`meg`); Willett handwriting and Brain-to-Text '25 (`implant`), checked against NLB MC_RTT. The validators check the types (NTS-META-TYPES). Amendment 3 (2026-11-17): the modality match is the advisory check NTS-MODALITY-MATCH of all three validators; `meg.*` goes with `meg` and `opm-meg`, and every modality key gets the warning on `device.modality = other`. Without `device.modality` (or with a value of a newer minor version) the check does not apply.)*
 
 *Informative.* The table is a copy of the registry (MET-10); [registry.md](semconv/registry.md) adds the validator, the requirement level per conformance level and the stability of each key. Older reference producers used flat keys (`subject`, `session`). These are not conventions. A 1.0 producer uses `subject.id` and `session.id`.
 
@@ -929,7 +940,7 @@ In-process API, gRPC, Arrow/Parquet, shared memory and BLE are not defined in th
 | **Binding implementation** | The rules of 8.2 or 8.3 for its role |
 
 ### 9.2 Levels (producer streams)
-The levels are cumulative and come from the conformance suite.
+The levels are cumulative and come from the conformance suite. They are **stream levels**: they judge one stream. The implementation levels of 9.6 (NTS Core, NTS Full, NTS Trust-ready) judge a program and use these stream levels.
 
 | Level | Content |
 |---|---|
@@ -937,15 +948,20 @@ The levels are cumulative and come from the conformance suite.
 | **trust-ready** | core + the SHOULD rules that a trust layer needs: `source`, `device.modality`, `decoder.causal`, `data.derived`, calibration consistency, `language` for text vocabularies |
 | **provenance** | trust-ready + `stream.id`, `decoder.name`/`version`, `decoder.weights_sha256`, adapter pair, `decoder.calibration_id`, pseudonymous ids |
 
+- **[CNF-3]** **(Amendment 3.)** A stream reaches level **trust-ready** when it reaches core and every trust-ready check passes: `TR-SOURCE`, `TR-MODALITY`, `TR-CAUSAL`, `TR-OFFLINE-LATENCY`, `TR-DERIVED`, `TR-CALIB`, `TR-LANGUAGE`, `NTS-VT-CHAR`.
+- **[CNF-4]** **(Amendment 3.)** A stream reaches level **provenance** when it reaches trust-ready and every provenance check passes: `PV-STREAM-ID`, `PV-DECODER`, `PV-WEIGHTS`, `PV-ADAPTER`, `PV-CALIB-ID`, `PV-PSEUDONYM`.
+- An advisory check (for example `NTS-NAMESPACE`, `NTS-MODALITY-MATCH`) never blocks a level. `nts-conform check` prints the stream level of each file.
+
 ### 9.3 Profiles of the suite
 | Suite profile | Covers | Vectors | Python | TypeScript | Rust |
 |---|---|---|---|---|---|
-| `v0.1` | Sections 3, 4.1–4.6, 4.8, 5, 8.1 (incl. 1.x header versions V53–V61, HDR-12 V62–V65, unknown enumeration values V66–V68; RC4: optional field types V69–V82) | 82 | yes | yes | yes |
+| `v0.1` | Sections 3, 4.1–4.6, 4.8, 5, 8.1 (incl. 1.x header versions V53–V61, HDR-12 V62–V65, unknown enumeration values V66–V68; RC4: optional field types V69–V82; amendments: modality keys V83–V87, dense and sparse keys V88–V92, MET-11 warning V93–V96) | 96 | yes | yes | yes |
 | `fep-0001` | 4.3, 4.7, 6 (incl. TD-9 for 1.x, TD-F2 types, TD-F3, TD-12 advisory; RC3: VER-8 F57–F59, GEN-10 F60–F61, `declaration` F62; RC4: F63–F66) | 66 | yes | yes | yes |
 | `fep-0002` | 8.2 | 35 | yes | yes (structural) | yes (structural) |
 | `fep-0003` | 7.1, 7.3 (RC3: VER-8 I24, D22, D23; RC4: I25, D24–D26) | 51 | yes | yes | yes |
 | `fep-0004` | 8.3 (incl. W38: header `meta` must be an object; RC3: GEN-10 W44) | 44 | yes | yes | yes |
-| `fep-0005` | 7.4 (RC3: VER-8 C24, E22–E24; RC4: C25, E25–E27) | 52 | yes | yes | yes |
+| `fep-0005` | 7.4 (RC3: VER-8 C24, E22–E24; RC4: C25, E25–E27; amendment 1: C26) | 53 | yes | yes | yes |
+| kit (`conformance/kit/`) | Every wire form (8.1–8.3), one or more realistic files each; verdict, rule ids and `stream_level` per file (P7-01; kit 0.2.0 by amendment 3) | 36 | yes | yes | yes |
 
 ```
 fidetype conformance --profile fep-0001                    # reference consumer over the vectors
@@ -958,8 +974,31 @@ fidetype-rs conformance                                    # Rust SDK
 ### 9.4 Conformance claims
 A claim names the class, the level, the profiles and the bindings, and the RC: for example "Producer, NTS 1.0 RC4 (draft), level provenance, profiles text + intent, binding nts-lsl/0.1". **[CNF-1]** A claim MUST NOT omit "RC4 (draft)" (or the RC that it names) while this document is a draft.
 
+*Amendment 3.* A claim of an implementation level (9.6) names that level and the kit version, for example "Consumer, NTS 1.0 RC4 (draft), NTS Trust-ready, profiles text + intent + control, bindings nts-lsl/0.1 + nts-ws/0.1, kit 0.2.0". The stream level of 9.2 ("level provenance") stays the claim about one stream.
+
 ### 9.5 Parity of the reference SDKs
-The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (92 + 66 + 35 + 51 + 44 + 53 = 341 since amendment 2 of 2026-11-16; amendment 1: 336; RC4: 330) (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`; amendment 2 run: seeds 1–3, `--n 30`, 27,497 mutants, 0 differences; RC4 run: 26,687 mutants; RC3 run: 24,347 mutants). Gap G-1 (control profile in Python only) is closed.
+The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (96 + 66 + 35 + 51 + 44 + 53 = 345 since amendment 3 of 2026-11-17; amendment 2: 341; amendment 1: 336; RC4: 330), the same advisory warnings and stream level where a vector or kit entry pins them (`expected.warnings`, `expected.level`; amendment 3), and the same verdict on the 36 kit entries (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`; amendment 3 run: seeds 1–3, `--n 30`, 27,767 mutants, 0 differences; amendment 2 run: 27,497 mutants; RC4 run: 26,687 mutants; RC3 run: 24,347 mutants). Gap G-1 (control profile in Python only) is closed.
+
+### 9.6 Implementation levels: NTS Core, NTS Full, NTS Trust-ready (amendment 3)
+The stream levels of 9.2 judge one stream. The implementation levels judge a program: a producer (it writes streams or decision logs) or a consumer (a reader, a validator or a trust layer). The test material is the conformance kit ([`conformance/kit/`](conformance/kit/)) and the tool `nts-conform`. A generated, informative copy of this section is [`conformance/levels.json`](conformance/levels.json) (`nts-conform levels`).
+
+- **[CNF-2]** The implementation levels are **cumulative**: NTS Trust-ready includes NTS Full, and NTS Full includes NTS Core. A claim names the highest level that the implementation meets, the output profiles and bindings that it covers, and the kit version. An advisory check never blocks a level.
+- **[CNF-5]** **Producer.** A producer meets a level when its evidence (files that it wrote, checked with `nts-conform check`) gives the result of the table below. The evidence MUST be the producer's real output (or output of the same code on synthetic input), not files written by hand.
+- **[CNF-6]** **Consumer.** A consumer meets a level when it gives the expected verdict on every kit entry of the level (`nts-conform kit`). At NTS Trust-ready it also reports the `stream_level` of every input-stream entry in scope: it accepts the file at each stream level up to that one and refuses it at the next one.
+- **[CNF-7]** **Bindings.** A claim adds a binding only when the implementation also gives the expected verdict on the kit entries of that binding: `nts-lsl/0.1` = suite profile `fep-0002` (K26–K28), `nts-ws/0.1` = `fep-0004` (K29–K31). The rules LSL-* or WS-* then apply.
+
+| Level | Rule ids (Appendix C.1) | Kit entries | Producer evidence | Consumer |
+|---|---|---|---|---|
+| **NTS Core** | GEN, HDR, MET, FRM, SEG, SQ, DEC, PTR, TIM, VER, FIL, EXT, SEC, CNF (except CNF-3, CNF-4) | `v0.1`: K01–K14, K32–K36 | Every file passes `nts-conform check --level core`. At least one input stream (JSON Lines or NPZ). | The expected verdict on every Core entry. |
+| **NTS Full** | Core + for each named output profile: text HYP, EVD, DCL, TD, TD-F; intent PRF, INT-D, INT-E, INT-F, INT-T; control CTL, CTL-D, CTL-E, CTL-T. No profile named = all three. | Core + text `fep-0001` K15–K18, intent `fep-0003` K19–K22, control `fep-0005` K23–K25, for each named profile | Core, and for each named profile at least one file that uses its events: text = a stream with `hypothesis` or `segment_end`, or a text decision log; intent = a stream with `intent_declaration` (or `intent` events), or an intent decision log; control = a stream with `control_declaration` (or `control` events), or a control decision log. | Core + the expected verdict on every entry of each named profile. |
+| **NTS Trust-ready** | Full + INT-S, CTL-S, PRV, CNF-3, CNF-4. The SHOULD rules behind them (MET-5, MET-6, DEC-5, SEC-2, SEC-4) are required. | The Full entries and their `stream_level` | Full, and every input stream reaches stream level **provenance** (`nts-conform check --level provenance`); every decision log passes, safety rules included. | Full + the expected `stream_level` (core, trust-ready, provenance) of every input-stream entry in scope (`{level}` in `nts-conform kit --cmd`). |
+
+*Informative.* NTS Trust-ready is what a trust layer needs from its input: score semantics (calibration consistency, MET-6, DEC-5), provenance (stream id, decoder, weights hash, adapter, pseudonymous ids) and timing (`decoder.causal`, no `latency` on an offline decoder, MET-5). A producer that writes only frames meets NTS Core; the stream level of its files (9.2) then tells a trust layer what it gets. NPZ is read only for new data (2.3), so an NPZ-only producer stops at NTS Core. `nts-conform check` prints the producer level of all its files together, `nts-conform kit` the consumer level; `--claim text|intent|control` names the profiles, `--binding` a binding, `--require-level` sets the exit code.
+
+### 9.7 Self-certification (amendment 3)
+- **[CNF-8]** A **self-certification** claim of a level is a pull request that adds one entry to [`conformance/certified.json`](conformance/certified.json) (schema `fidetype.conformance.certified/1`) and its evidence: the JSON report of `nts-conform kit` (consumer, schema `fidetype.nts-conform.kit-report/1`) or `nts-conform check` (producer, `fidetype.nts-conform.report/1`) over the full kit of the version that the entry names. The report MUST reach the claimed level. `nts-conform certified --check` (CI) compares every entry with its evidence.
+
+*Informative.* The list holds the name, language, class, level, profiles, bindings, spec RC, kit version, implementation version, evidence path, the command that made the evidence, maintainer, repository, licence and date. It is self-certification: the project checks the evidence file, not the implementation. The first entries are the reference implementations of this repository (the Python, TypeScript and Rust SDKs and the producer adapters). A listing is not a licence to use a trademark (roadmap P7-03). The process: `docs/conformance.md`, section "Self-certification".
 
 ---
 
@@ -1356,6 +1395,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | MET-7 | MUST NOT | NTS-META-TYPES (`non_empty_string`) | (string keys of every accept vector) | P (no reject vector for `""`; all three validators refuse it) |
 | MET-8, MET-9 | MUST NOT / — | registry (`semconv.py --check`) | — | P (definitions; open lists are not checked) |
 | MET-10 | — | CI job `semconv` (`tools/semconv/semconv.py --check`) | (all accept vectors: meta values pass the registry validators) | T (tooling) |
+| MET-11 | SHOULD NOT | NTS-META-TYPES (types of the modality keys), advisory (NTS-MODALITY-MATCH; amendment 3) | V83, V84, V85, V95 / V86, V87 (types); V93, V94, V96, K32 (warning) | T (types); P (advisory warning) |
 | FRM-1 | MUST | NTS-V-MATCH | V46 | T |
 | FRM-2 | — | NTS-JSONL-FRAME | V42, V88 (accept); V89 … V92 (reject: sparse keys of a wrong type on a dense frame, amendment 2) | T |
 | FRM-3 | MUST | NTS-NORM, NTS-SPARSE | V08, V23, V24, V43, F40 | T |
@@ -1548,6 +1588,12 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | EXT-5 | MUST | see GEN-4, PRF-4 | | |
 | FEP-1 | MUST | process rule | — | — |
 | CNF-1 | MUST NOT | process rule | — | — |
+| CNF-2 | — | `nts-conform` levels (definition) | kit (all entries) | — |
+| CNF-3 | — | TR-SOURCE, TR-MODALITY, TR-CAUSAL, TR-OFFLINE-LATENCY, TR-DERIVED, TR-CALIB, TR-LANGUAGE, NTS-VT-CHAR | K01 / K33, K35, K36 | T (stream level) |
+| CNF-4 | — | PV-STREAM-ID, PV-DECODER, PV-WEIGHTS, PV-ADAPTER, PV-CALIB-ID, PV-PSEUDONYM | K01 / K34 | T (stream level) |
+| CNF-5 | MUST | `nts-conform check` (producer level) | — | P (the tool cannot see if the evidence is real output) |
+| CNF-6, CNF-7 | — | `nts-conform kit` (consumer level, bindings) | kit (all entries) | T |
+| CNF-8 | MUST | `nts-conform certified --check` | `conformance/certified.json` | T (tooling) |
 
 ### C.2 Gaps
 | Gap | Rules | What is missing | Proposed fix |
@@ -1566,10 +1612,10 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | ~~G-12~~ | GEN-9, SEG-6 (types of fields that no validator checks) | **Closed in RC4** (GEN-11). The three validators check the types of every optional field that the generated JSON Schema types and the spec tables list (1.6). | V69 … V82, F63 … F66, D24 … D26, I25, C25, E25 … E27. |
 | **G-13** (new in RC4; **closed**: part b by amendment 1, part a by amendment 2 of 2026-11-16) | FRM-2, GEN-9 | Two places where the generated JSON Schema is stricter than the validators, and the spec allows the validator verdict: (a) a dense frame (with `log_probs`) that also carries sparse keys of a wrong type; the consumer uses the dense form and ignores the sparse keys; (b) control `absent: null` (GEN-9 allows it; a repeated proto field had no null). **(b) closed:** new proto option `json_null_list` (a repeated field whose whole value MAY be null); the schema accepts `absent: null`; vector C26 (accept). **(a) closed by amendment 2: option A2 applies** (FRM-2; vectors V88 accept, V89 … V92 reject; the three validators check the types; the schema did not change). The options were: **A1** a frame MUST NOT carry both forms (simple and unambiguous; the validators then refuse data that they accept now, so a version gate or a 2.0 change); **A2** both forms MAY be present, the dense form wins, and the sparse keys MUST still have their types (the validators add type checks; the schema stays as it is; no valid stream with well-typed keys changes); **A3** both forms MAY be present and the sparse keys are ignored without a type check (the schema relaxes them on a dense frame with an `if`/`then` rule; nothing else changes). A2 was the recommendation: the GEN-11 rule (a field of a table has its type when present). | None (closed). |
 
-Summary: of the rule groups in C.1, the frame core, segments, evidence, decision format, intent and control formats, and both bindings have accept and reject vectors. The gaps are mostly behaviour that a stream validator cannot see. RC2 closed G-2 (1.0 headers), G-3 and G-4, and then G-1 (control profile parity in TypeScript and Rust). RC3 added G-12 (field types that no validator checks), and RC4 closed it (GEN-11); RC4 added G-13 (two places where the schema is stricter than the spec), and the two amendments of 2026-11-16 closed it (A2 for part a). The RC3 and RC4 behaviour changes have vectors in all three SDKs.
+Summary: of the rule groups in C.1, the frame core, segments, evidence, decision format, intent and control formats, and both bindings have accept and reject vectors. The gaps are mostly behaviour that a stream validator cannot see. RC2 closed G-2 (1.0 headers), G-3 and G-4, and then G-1 (control profile parity in TypeScript and Rust). RC3 added G-12 (field types that no validator checks), and RC4 closed it (GEN-11); RC4 added G-13 (two places where the schema is stricter than the spec), and the two amendments of 2026-11-16 closed it (A2 for part a). The RC3 and RC4 behaviour changes have vectors in all three SDKs. Amendment 3 (2026-11-17) adds rows for MET-11 (the last rule id without a row) and CNF-2 … CNF-8; no new gap.
 
 ### C.3 Generated JSON Schema (informative; added by roadmap task P1-02, 2026-11-15; updated in RC3 and RC4)
-This subsection adds no rule and changes no row of C.1. The proto3 files [`proto/neuraltextstream/v1/`](proto/neuraltextstream/v1/) describe the data model of this document; the JSON Schema [`schemas/nts-v1.schema.json`](schemas/nts-v1.schema.json) is generated from them and checks one JSON object (one line) at a time. On the 341 vectors it gives the SDK verdict on all 210 vectors whose verdict depends on one line (108 accept, 102 reject): 0 mismatches (amendment 1 of 2026-11-16: 205 of 336; RC4 before the amendments: 201 of 330; RC3: 178 of 304). RC3: an enumeration field accepts any string; the known values are required by `Header.known` and `TrustDecision.known` unless `spec_version` is a newer minor version (VER-7, VER-8). So an unknown value on another event (for example F04, I22) depends on the header line: these vectors moved to the class cross-line. Integers have the bounds of GEN-10. Profile fields are typed per profile (PRF-5); RC4: the control decision `t` too (7.4.5). Rules that it checks: HDR-1 (required keys), HDR-2 … HDR-11, GEN-2, GEN-3, FRM-1/FRM-2 (form), FRM-4, SEG-4 (type), SEG-5, SQ-1, DEC-2 … DEC-4, HYP-1, EVD-1 (values), EVD-3, EVD-4, DCL-1, PTR-1, TD-F1 … TD-F3, TD-8, PRF-4, INT-D1 … INT-D4 (except unique ids), INT-E3 (per score), INT-E7, INT-F1, INT-T1 … INT-T3, CTL-D1, CTL-D2, CTL-D3 (presence of the intent declaration), CTL-4 (types), CTL-E1, CTL-T1 … CTL-T4, CTL-T8, INT-T7, GEN-10, VER-3, VER-5, VER-7 (header and decisions), PRF-5, TD-F2 `declaration`; RC4: GEN-11 (HDR-16, DEC-6, HYP-5, SQ-1 `channels`, TIM-4 types, TD-F2 `reason`, INT-T8, CTL-T8 `level`). All other rules stay with the checks of C.1 (they need other lines, the header, arithmetic, the trust rules, the spelling of a number (GEN-5) or the transport). Mapping rules, the list by class and the vectors: [`proto/README.md`](proto/README.md).
+This subsection adds no rule and changes no row of C.1. The proto3 files [`proto/neuraltextstream/v1/`](proto/neuraltextstream/v1/) describe the data model of this document; the JSON Schema [`schemas/nts-v1.schema.json`](schemas/nts-v1.schema.json) is generated from them and checks one JSON object (one line) at a time. On the 345 vectors it gives the SDK verdict on all 213 vectors whose verdict depends on one line (111 accept, 102 reject): 0 mismatches (amendment 2: 210 of 341; amendment 1 of 2026-11-16: 205 of 336; RC4 before the amendments: 201 of 330; RC3: 178 of 304). RC3: an enumeration field accepts any string; the known values are required by `Header.known` and `TrustDecision.known` unless `spec_version` is a newer minor version (VER-7, VER-8). So an unknown value on another event (for example F04, I22) depends on the header line: these vectors moved to the class cross-line. Integers have the bounds of GEN-10. Profile fields are typed per profile (PRF-5); RC4: the control decision `t` too (7.4.5). Rules that it checks: HDR-1 (required keys), HDR-2 … HDR-11, GEN-2, GEN-3, FRM-1/FRM-2 (form), FRM-4, SEG-4 (type), SEG-5, SQ-1, DEC-2 … DEC-4, HYP-1, EVD-1 (values), EVD-3, EVD-4, DCL-1, PTR-1, TD-F1 … TD-F3, TD-8, PRF-4, INT-D1 … INT-D4 (except unique ids), INT-E3 (per score), INT-E7, INT-F1, INT-T1 … INT-T3, CTL-D1, CTL-D2, CTL-D3 (presence of the intent declaration), CTL-4 (types), CTL-E1, CTL-T1 … CTL-T4, CTL-T8, INT-T7, GEN-10, VER-3, VER-5, VER-7 (header and decisions), PRF-5, TD-F2 `declaration`; RC4: GEN-11 (HDR-16, DEC-6, HYP-5, SQ-1 `channels`, TIM-4 types, TD-F2 `reason`, INT-T8, CTL-T8 `level`). All other rules stay with the checks of C.1 (they need other lines, the header, arithmetic, the trust rules, the spelling of a number (GEN-5) or the transport). Mapping rules, the list by class and the vectors: [`proto/README.md`](proto/README.md).
 
 ---
 

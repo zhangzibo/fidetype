@@ -1,5 +1,7 @@
 """P7-01: the conformance kit (spec/conformance/kit/) and the nts-conform command line.
 
+P7-02 (levels, certified list) and P1-16 (MET-11 advisory check): see the tests at the end.
+
 All kit files are synthetic and small. No raw data, no network, no GPU.
 """
 
@@ -18,7 +20,7 @@ from fidetype.conformance.kit import VERDICTS, WIRE_FORMS, build_kit, kit_dir, l
 from fidetype.conformance.rules import load_rule_map, render_rule_map, rule_map_path, rules_for
 
 KIT = kit_dir()
-N_KIT = 31
+N_KIT = 36  # P7-01: 31; P7-02 / P1-16 (kit 0.2.0): K32-K36
 
 
 def test_kit_dir_is_the_repository_copy():
@@ -211,8 +213,8 @@ def test_profile_manifests_use_the_vector_format(prof):
         assert v["expect"] in ("accept", "reject") and (KIT / prof / v["file"]).is_file()
 
 
-# Rule ids that the spec defines but Appendix C.1 has no row for (open gap 20: MET-11 from RC4 amendment 1).
-KNOWN_UNTRACED = {"MET-11"}
+# Rule ids that the spec defines but Appendix C.1 has no row for. Empty since amendment 3 (P1-16 closed gap 20).
+KNOWN_UNTRACED: set[str] = set()
 
 
 def test_every_defined_rule_has_a_traceability_row():
@@ -224,3 +226,226 @@ def test_every_defined_rule_has_a_traceability_row():
     defined = set(re.findall(r"\*\*\[([A-Z]{2,4}-[A-Z]{0,2}\d+)\]\*\*", text[:text.index("## Appendix C")]))
     missing = defined - set(load_rule_map()["rules"])
     assert missing == KNOWN_UNTRACED, f"rule ids without an Appendix C.1 row: {sorted(missing)}"
+
+
+# --- P1-16: MET-11 modality match (advisory, three SDKs) -----------------------------------------------------
+
+
+def test_modality_match_is_a_warning_never_a_reject():
+    from fidetype.conformance import check_file
+
+    vdir = KIT.parent / "v0.1"
+    want = {"V93": True, "V94": True, "V95": False, "V96": True}
+    for vid, warns in want.items():
+        f = next(vdir.glob(f"{vid.lower()}-*"))
+        rep = check_file(f)
+        r = next(x for x in rep.results if x.check_id == "NTS-MODALITY-MATCH")
+        assert (r.outcome == "warn") is warns, (vid, r.outcome, r.message)
+        assert rep.passes("core"), vid
+    # The rule map traces the check to MET-11, and a finding names MET-11 only.
+    assert load_rule_map()["checks"]["NTS-MODALITY-MATCH"] == ["MET-11"]
+    tr = NC.conform_file(KIT / "v0.1" / "k32-modality-mismatch.jsonl")
+    w = [r for r in tr.warns if r.check == "NTS-MODALITY-MATCH"]
+    assert len(w) == 1 and w[0].rules == ["MET-11"] and "emg.placement" in w[0].message
+
+
+@pytest.mark.parametrize("meta, status", [
+    ({"device.modality": "emg", "emg.placement": "wrist"}, "pass"),
+    ({"device.modality": "opm-meg", "meg.sensor_types": ["magnetometer"]}, "pass"),
+    ({"device.modality": "ecog", "implant.areas": ["M1"]}, "pass"),
+    ({"device.modality": "intracortical", "emg.placement": "wrist"}, "fail"),
+    ({"device.modality": "other", "meg.sensor_types": ["magnetometer"]}, "fail"),
+    ({"emg.placement": "wrist"}, "skip"),  # no device.modality: MET-11 cannot be checked
+    ({"device.modality": "ultrasound", "emg.placement": "wrist"}, "skip"),  # a value of a newer minor version
+    ({"device.modality": "eeg", "acme.gain": 2}, "skip"),  # no modality keys
+])
+def test_modality_match_rules(tmp_path, meta, status):
+    from fidetype.conformance.checks import c_modality_match
+    from fidetype.conformance.io import read_raw
+
+    lines = (KIT / "v0.1" / "k01-text-stream.jsonl").read_text(encoding="utf-8").splitlines()
+    hdr = json.loads(lines[0])
+    hdr["meta"] = meta
+    f = tmp_path / "s.jsonl"
+    f.write_text("\n".join([json.dumps(hdr), *lines[1:]]) + "\n", encoding="utf-8")
+    assert c_modality_match(read_raw(f))[0] == status
+
+
+# --- P7-02: finer rule mapping -----------------------------------------------------------------------------
+
+
+def test_broad_checks_name_the_rule_of_the_finding():
+    tr = NC.conform_file(KIT / "fep-0002" / "k27-lsl-channel-count.json")
+    by = {r.check: r.rules for r in tr.fails}
+    assert by["FEP2-CONSUME"] == ["LSL-F2"]  # P7-01 listed all 17 rules of FEP2-CONSUME
+    assert by["FEP2-FRAMES"] == ["LSL-F2", "LSL-F3"]
+    assert rules_for("FEP1-TD-FORMAT", "line 1: a COMMIT with shown needs at least one text (rule 8)") == ["TD-8"]
+    assert rules_for("FEP5-SAFETY", "line 2: motion after a stop without a new engagement (rule 5)") == ["CTL-S5"]
+    assert rules_for("FEP3-SAFETY", "line 1: irreversible COMMIT without confirmation_of (rule 4)") == ["INT-S4"]
+    assert len(rules_for("FEP2-CONSUME", "no pattern matches this")) == 17  # unknown message: the full list
+
+
+def test_refine_table_is_valid_and_covers_the_vectors():
+    from fidetype.conformance.rules import REFINE
+
+    rm = load_rule_map()
+    assert rm["refine"] == {c: [[p, r] for p, r in pats] for c, pats in sorted(REFINE.items())}
+    for c, pats in REFINE.items():
+        assert c in rm["checks"], c
+        for _, rules in pats:
+            for r in rules:
+                assert "{1}" in r or r in rm["rules"], (c, r)
+    # Every broad finding of every golden vector and kit file is narrowed, except the one listed here.
+    known_broad = {("I07", "FEP3-DECL")}  # the declaration is not an object: all of INT-D1 ... INT-D4 apply
+    broad = set()
+    for m in KIT.parent.glob("*/manifest.json"):
+        for v in json.loads(m.read_text(encoding="utf-8"))["vectors"]:
+            for r in NC.conform_file(m.parent / v["file"], "provenance").results:
+                if r.outcome != "pass" and r.check in REFINE and len(r.rules) > 3 and r.rules == rm["checks"][r.check]:
+                    broad.add((v["id"], r.check))
+    assert broad == known_broad
+
+
+# --- P7-02: implementation levels --------------------------------------------------------------------------
+
+
+def test_levels_json_is_up_to_date_and_places_every_rule():
+    from fidetype.conformance.levels import level_rules, levels_path, render_levels
+
+    assert levels_path().read_text(encoding="utf-8").replace("\r\n", "\n") == render_levels(), \
+        "spec/conformance/levels.json is stale: run nts-conform levels --write"
+    r = level_rules()
+    assert r["unplaced"] == [] and r["process"] == ["FEP-1"]
+    assert "MET-11" in r["core"] and "CNF-3" not in r["core"] and {"CNF-3", "CNF-4"} <= set(r["trust-ready"]["adds"])
+    assert "INT-S4" in r["trust-ready"]["adds"] and "LSL-F2" in r["bindings"]["nts-lsl/0.1"]
+    assert "HYP-1" in r["full"]["text"] and "INT-E2" in r["full"]["intent"] and "CTL-4" in r["full"]["control"]
+
+
+def test_kit_stream_levels_match_the_checker():
+    from fidetype.conformance.io import load_stream
+
+    for e in load_index()["entries"]:
+        if not e.get("stream_level"):
+            assert e["verdict"] == "reject" or e["wire_form"] not in ("jsonl-stream", "npz"), e["id"]
+            continue
+        assert NC.conform_file(KIT / e["path"]).stream_level == e["stream_level"], e["id"]
+        if e["profile"] == "v0.1":
+            assert load_stream(KIT / e["path"]).level == e["stream_level"], e["id"]
+    levels = {e["id"]: e.get("stream_level") for e in load_index()["entries"]}
+    assert (levels["K33"], levels["K34"], levels["K35"], levels["K36"]) == ("core", "trust-ready", "core", "core")
+
+
+def test_reference_consumer_level_is_trust_ready():
+    rep = NC.run_kit()
+    lv = rep["level"]
+    assert lv["level"] == "trust-ready" and lv["levels"] == {"core": True, "full": True, "trust-ready": True}
+    assert lv["bindings"] == {"nts-lsl/0.1": True, "nts-ws/0.1": True}
+    assert rep["kit_version"] == "0.2.0" and rep["spec"] == "NTS 1.0 RC4 (draft)"
+
+
+def _verdict_only(path: Path, profile: str) -> None:
+    if NC.conform_file(path).fails:
+        raise ValueError("rejected")
+
+
+def _with_level(path: Path, profile: str, level: str = "core") -> None:
+    tr = NC.conform_file(path)
+    if tr.fails:
+        raise ValueError("rejected")
+    order = ("core", "trust-ready", "provenance")
+    if tr.form in ("jsonl-stream", "npz") and order.index(tr.stream_level) < order.index(level):
+        raise ValueError(f"below {level}")
+
+
+def test_consumer_level_with_and_without_stream_levels(tmp_path, monkeypatch):
+    mod = type(sys)("kit_level_mod")
+    mod.verdict_only, mod.with_level = _verdict_only, _with_level
+    monkeypatch.setitem(sys.modules, "kit_level_mod", mod)
+    r1 = NC.run_kit(validator=NC._impl_validator("kit_level_mod:verdict_only"))
+    assert r1["level"]["level"] == "full" and r1["ok"]
+    assert "does not report stream levels" in " ".join(r1["level"]["why_not_higher"])
+    r2 = NC.run_kit(validator=NC._impl_validator("kit_level_mod:with_level"))
+    assert r2["level"]["level"] == "trust-ready" and r2["ok"]
+    # Claim only the text profile: the intent and control entries do not count.
+    v = {e["id"]: e["expect"] for e in load_index()["entries"]}
+    v["K20"] = "accept"  # a wrong verdict on an intent entry
+    r3 = NC.run_kit(verdicts=v, claim=["text"])
+    assert r3["level"]["level"] == "full" and not r3["ok"]
+    assert NC.run_kit(verdicts=v)["level"]["level"] == "core"
+    v["K08"] = "accept"  # a wrong verdict on a Core entry
+    assert NC.run_kit(verdicts=v)["level"]["level"] is None
+    # A verdicts file with stream levels.
+    vl = {e["id"]: ({"verdict": e["expect"], "level": e["stream_level"]} if e.get("stream_level") else e["expect"])
+          for e in load_index()["entries"]}
+    f = tmp_path / "v.json"
+    f.write_text(json.dumps(vl), encoding="utf-8")
+    verdicts, levels = NC._verdicts_file(str(f))
+    assert NC.run_kit(verdicts=verdicts, levels=levels)["level"]["level"] == "trust-ready"
+    levels["K34"] = "provenance"
+    r5 = NC.run_kit(verdicts=verdicts, levels=levels)
+    assert r5["level"]["level"] == "full" and "K34" in " ".join(r5["level"]["why_not_higher"])
+
+
+def test_producer_levels():
+    def lv(*paths, claim=None):
+        return NC.build_report([NC.conform_file(KIT / p) for p in paths], "core", claim)["producer"]
+
+    assert lv("v0.1/k03-frames.npz")["level"] == "core"  # NPZ carries only the frame core
+    assert lv("v0.1/k01-text-stream.jsonl")["level"] == "trust-ready"  # hypothesis + stream level provenance
+    a = lv("v0.1/k01-text-stream.jsonl", "v0.1/k34-trust-ready-no-provenance.jsonl")
+    assert a["level"] == "full" and "k34" in " ".join(a["why_not_higher"])
+    b = lv("v0.1/k01-text-stream.jsonl", claim=["text", "intent"])
+    assert b["level"] == "core" and "intent" in " ".join(b["why_not_higher"])
+    c = lv("v0.1/k01-text-stream.jsonl", "fep-0003/k19-intent-stream.jsonl", "fep-0005/k25-control-decision-log.jsonl")
+    assert c["level"] == "trust-ready" and c["covered"] == ["text", "intent", "control"]
+    assert lv("fep-0001/k16-text-decision-log.jsonl")["level"] is None  # no input stream
+    assert lv("v0.1/k01-text-stream.jsonl", "v0.1/k08-unnormalised-frame.jsonl")["level"] is None
+    assert lv("v0.1/k01-text-stream.jsonl", "fep-0002/k26-lsl-capture.json")["bindings"] == ["nts-lsl/0.1"]
+
+
+def test_cli_levels_and_require_level(capsys):
+    assert NC.main(["levels"]) == 0
+    assert "NTS Trust-ready" in capsys.readouterr().out
+    assert NC.main(["levels", "--check"]) == 0
+    capsys.readouterr()
+    k01, k03 = str(KIT / "v0.1" / "k01-text-stream.jsonl"), str(KIT / "v0.1" / "k03-frames.npz")
+    assert NC.main(["check", k01, "--require-level", "trust-ready"]) == 0
+    assert "[producer level: NTS Trust-ready" in capsys.readouterr().out
+    assert NC.main(["check", k03, "--require-level", "full"]) == 1
+    assert NC.main(["check", k03, "--require-level", "core"]) == 0
+    assert "stream level provenance" in capsys.readouterr().out
+    assert NC.main(["kit", "--require-level", "trust-ready"]) == 0
+    assert "[consumer level: NTS Trust-ready" in capsys.readouterr().out
+
+
+# --- P7-02: self-certification list --------------------------------------------------------------------------
+
+
+def test_certified_list_matches_its_evidence(capsys):
+    from fidetype.conformance.certified import check_certified, load_certified
+
+    assert check_certified() == []
+    doc = load_certified()
+    ids = {e["id"]: e for e in doc["entries"]}
+    for sdk in ("fidetype-python", "fidetype-typescript", "fidetype-rust"):
+        assert ids[sdk]["class"] == "consumer" and ids[sdk]["level"] == "trust-ready", sdk
+    assert all(e["repository"] == "https://github.com/zhangzibo/fidetype" for e in doc["entries"])  # ours only
+    assert NC.main(["certified", "--check"]) == 0
+    capsys.readouterr()
+
+
+def test_certified_check_finds_a_wrong_claim(tmp_path):
+    import shutil
+
+    from fidetype.conformance.certified import certified_path, check_certified, load_certified
+
+    shutil.copytree(certified_path().parent / "certified", tmp_path / "certified")
+    doc = load_certified()
+    e = next(x for x in doc["entries"] if x["class"] == "producer" and x["level"] == "core")
+    e["level"], e["level_title"] = "trust-ready", "NTS Trust-ready"
+    doc["entries"][1]["kit_version"] = "9.9.9"
+    p = tmp_path / "certified.json"
+    p.write_text(json.dumps(doc), encoding="utf-8")
+    probs = check_certified(p)
+    assert any("does not reach NTS Trust-ready" in x for x in probs)
+    assert any("kit_version" in x for x in probs)

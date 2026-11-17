@@ -18,6 +18,15 @@ Sub-commands::
     nts-conform list [--kit DIR] [--markdown]     the kit entries
     nts-conform build --out DIR                   write the kit (maintainers)
     nts-conform rules [--write | --check]         the check -> rule map from spec Appendix C
+    nts-conform levels [--write | --check | --json]   the implementation levels (spec 9.6)
+    nts-conform certified [--check]               the self-certification list (spec 9.7)
+
+Levels (P7-02, spec 9.6). ``check`` reports the stream level of each target
+(9.2: core, trust-ready, provenance) and the producer level of all targets
+together (NTS Core, NTS Full, NTS Trust-ready). ``kit`` reports the consumer
+level. ``--claim text|intent|control`` names the output profiles of the claim;
+``--binding`` adds a binding; ``--require-level`` makes the exit code 1 when
+the level is lower.
 
 Exit codes: 0 = conforming (every target passes; every kit verdict matches);
 1 = not conforming; 2 = usage or input error (no such file, unknown form).
@@ -44,9 +53,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Sequence
 
-from fidetype.conformance.checks import ADVISORY, LEVELS, CheckResult
+from fidetype.conformance.checks import ADVISORY, LEVEL_ORDER, LEVELS, CheckResult
+from fidetype.conformance.levels import BINDINGS, PROFILES, consumer_level, coverage, producer_level
+from fidetype.conformance.levels import LEVELS as IMPL_LEVELS
 
-TOOL_VERSION = "0.1.0"
+TOOL_VERSION = "0.2.0"  # 0.2.0: levels (P7-02)
 REPORT_SCHEMA = "fidetype.nts-conform.report/1"
 KIT_REPORT_SCHEMA = "fidetype.nts-conform.kit-report/1"
 FORMS = ("jsonl-stream", "jsonl-decision-log", "npz", "lsl-capture", "lsl-decisions-capture", "lsl-stream-info",
@@ -147,6 +158,24 @@ class TargetResult:
     level: str
     results: list[RuleResult] = field(default_factory=list)
     skipped: int = 0
+    fail_levels: list[str] = field(default_factory=list)  # check levels of failed blocking checks (any --level)
+    covers: list[str] = field(default_factory=list)  # output profiles that the file uses (levels.coverage)
+
+    @property
+    def ok_core(self) -> bool:
+        return not any(LEVEL_ORDER[lv] <= LEVEL_ORDER["core"] for lv in self.fail_levels)
+
+    @property
+    def stream_level(self) -> str | None:
+        """Highest stream level of spec 9.2 that the target reaches (input streams only; None if not core)."""
+        if self.form not in ("jsonl-stream", "npz"):
+            return None
+        best = None
+        for lv in LEVELS:
+            if any(LEVEL_ORDER[f] <= LEVEL_ORDER[lv] for f in self.fail_levels):
+                break
+            best = lv
+        return best
 
     @property
     def fails(self) -> list[RuleResult]:
@@ -175,8 +204,13 @@ class TargetResult:
         counts = {k: sum(r.outcome == k for r in self.results) for k in ("pass", "fail", "warn")}
         counts["skip"] = self.skipped
         return {"target": self.target, "form": self.form, "profiles": self.profiles, "level": self.level,
-                "verdict": self.verdict, "ok": not self.fails, "counts": counts, "rules": self.rule_outcomes(),
+                "verdict": self.verdict, "ok": not self.fails, "stream_level": self.stream_level,
+                "covers": self.covers, "counts": counts, "rules": self.rule_outcomes(),
                 "results": [r.to_dict() for r in self.results]}
+
+    def level_input(self) -> dict[str, Any]:
+        return {"target": self.target, "form": self.form, "ok_core": self.ok_core, "stream_level": self.stream_level,
+                "covers": self.covers}
 
 
 def _outcome(c: CheckResult, level: str) -> str:
@@ -234,11 +268,15 @@ def conform_file(path: str | Path, level: str = "core", profiles: Sequence[str] 
     form, auto = detect(p)
     profs = list(profiles) if profiles else auto
     tr = TargetResult(str(path), form, profs, level)
+    if form in ("jsonl-stream", "jsonl-decision-log"):
+        tr.covers = sorted(coverage(form, _jsonl_objects(p)), key=list(PROFILES).index)
     seen: set[tuple[str, str]] = set()
     for prof in profs:
         for c in _run_profile(prof, p):
             if c.check_id.endswith("-V01-CORE") and "v0.1" in profs:
                 continue  # the base profile already reports these checks one by one
+            if c.status == "fail" and c.level != ADVISORY and c.outcome != "warn":
+                tr.fail_levels.append(c.level)
             out = _outcome(c, level)
             if out == "skip":
                 tr.skipped += 1
@@ -275,18 +313,21 @@ def _stdin_file(tmp: Path) -> Path:
     return f
 
 
-def build_report(results: list[TargetResult], level: str) -> dict[str, Any]:
+def build_report(results: list[TargetResult], level: str, claim: Sequence[str] | None = None) -> dict[str, Any]:
+    from fidetype.conformance.kit import KIT_VERSION
     from fidetype.conformance.rules import SPEC_LABEL
 
     return {"schema": REPORT_SCHEMA, "tool": "nts-conform", "tool_version": TOOL_VERSION, "spec": SPEC_LABEL,
-            "level": level, "ok": bool(results) and all(not t.fails for t in results),
+            "kit_version": KIT_VERSION, "level": level, "ok": bool(results) and all(not t.fails for t in results),
+            "producer": producer_level([t.level_input() for t in results], claim),
             "targets": [t.to_dict() for t in results]}
 
 
-def report_text(results: list[TargetResult], verbose: bool = False) -> str:
+def report_text(results: list[TargetResult], verbose: bool = False, producer: dict[str, Any] | None = None) -> str:
     lines = []
     for t in results:
-        lines.append(f"{t.target}  [{t.form}; profiles {', '.join(t.profiles)}; level {t.level}]")
+        sl = f"; stream level {t.stream_level or 'none'}" if t.form in ("jsonl-stream", "npz") else ""
+        lines.append(f"{t.target}  [{t.form}; profiles {', '.join(t.profiles)}; level {t.level}{sl}]")
         for r in t.results:
             if r.outcome == "pass" and not verbose:
                 continue
@@ -301,7 +342,20 @@ def report_text(results: list[TargetResult], verbose: bool = False) -> str:
                      f"{sum(v == 'warn' for v in n_rules.values())} by a warning")
     ok = bool(results) and all(not t.fails for t in results)
     lines.append(f"[nts-conform: {'PASS' if ok else 'FAIL'}] {sum(not t.fails for t in results)}/{len(results)} targets pass")
+    if producer is not None:
+        lines.append(_level_line(producer))
     return "\n".join(lines)
+
+
+def _level_line(lv: dict[str, Any]) -> str:
+    prof = f"; profiles {' + '.join(lv['profiles'])}" if lv.get("profiles") else ""
+    b = lv.get("bindings")
+    binds = [k for k, v in b.items() if v] if isinstance(b, dict) else list(b or [])
+    bind = f"; bindings {', '.join(binds)}" if binds else ""
+    text = f"[{lv['class']} level: {lv['title']}{prof}{bind}]"
+    if lv.get("why_not_higher"):
+        text += "\n  not higher: " + "; ".join(lv["why_not_higher"])
+    return text
 
 
 def _write_json(obj: Any, out: str) -> None:
@@ -333,63 +387,114 @@ def _reference_consume(path: Path, profile: str) -> None:
         get_profile(profile).consume(path)
 
 
-def _cmd_validator(cmd: str, timeout: float = 60.0) -> Callable[[Path, str], str]:
-    def run(path: Path, profile: str) -> str:
-        args = [a.replace("{path}", str(path)).replace("{profile}", profile) for a in shlex.split(cmd, posix=True)]
+Validator = Callable[..., str]
+
+
+def _cmd_validator(cmd: str, timeout: float = 60.0) -> Validator:
+    """``cmd`` with {path}, {profile} and (optional) {level}: exit 0 = accept (at that stream level)."""
+    def run(path: Path, profile: str, level: str | None = None) -> str:
+        args = [a.replace("{path}", str(path)).replace("{profile}", profile).replace("{level}", level or "core")
+                for a in shlex.split(cmd, posix=True)]
         p = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
         return "accept" if p.returncode == 0 else "reject"
 
+    run.supports_level = "{level}" in cmd  # type: ignore[attr-defined]
     return run
 
 
-def _impl_validator(spec: str) -> Callable[[Path, str], str]:
+def _impl_validator(spec: str) -> Validator:
     mod, _, fn = spec.partition(":")
     if not fn:
         raise InputError("--impl must be MODULE:FUNCTION")
     f = getattr(importlib.import_module(mod), fn)
-    two = len(inspect.signature(f).parameters) >= 2
+    params = inspect.signature(f).parameters
+    two = len(params) >= 2
+    has_level = "level" in params
 
-    def run(path: Path, profile: str) -> str:
+    def run(path: Path, profile: str, level: str | None = None) -> str:
         try:
-            f(path, profile) if two else f(path)
+            if has_level:
+                f(path, profile, level=level or "core")
+            else:
+                f(path, profile) if two else f(path)
             return "accept"
         except Exception:  # noqa: BLE001 - any exception is a rejection
             return "reject"
 
+    run.supports_level = has_level  # type: ignore[attr-defined]
     return run
 
 
-def _verdicts_file(path: str) -> dict[str, str]:
+def _verdicts_file(path: str) -> tuple[dict[str, str], dict[str, str]]:
+    """Verdicts and stream levels: {id: verdict} or {id: {"verdict": V, "level": L}} or {"entries": [...]}."""
     d = json.loads(Path(path).read_text(encoding="utf-8"))
     if isinstance(d, dict) and isinstance(d.get("entries"), list):
-        d = {e["id"]: e.get("actual", e.get("verdict")) for e in d["entries"]}
+        d = {e["id"]: {"verdict": e.get("actual", e.get("verdict")), "level": e.get("level_actual", e.get("level"))}
+             for e in d["entries"]}
     if not isinstance(d, dict):
         raise InputError("--verdicts must be a JSON object {id: verdict} or {\"entries\": [{id, verdict}]}")
-    return {k: ("reject" if str(v).startswith("reject") or v in ("fail", False) else "accept") for k, v in d.items()}
+    verdicts, levels = {}, {}
+    for k, v in d.items():
+        if isinstance(v, dict):
+            if v.get("level"):
+                levels[k] = str(v["level"])
+            v = v.get("verdict")
+        verdicts[k] = "reject" if str(v).startswith("reject") or v in ("fail", False) else "accept"
+    return verdicts, levels
+
+
+def _stream_level_of(validator: Validator, path: Path) -> str | None:
+    """The highest stream level at which ``validator`` accepts the file (v0.1 profile; None = not even core)."""
+    best = None
+    for lv in LEVELS:
+        if validator(path, "v0.1", lv) != "accept":
+            break
+        best = lv
+    return best
 
 
 def run_kit(kit: str | Path | None = None, profile: str | None = None,
-            validator: Callable[[Path, str], str] | None = None, verdicts: dict[str, str] | None = None,
-            name: str = "reference") -> dict[str, Any]:
-    """Check verdicts on every kit file. Without ``validator``/``verdicts``: the reference (consumer + producer)."""
-    from fidetype.conformance.kit import kit_dir
+            validator: Validator | None = None, verdicts: dict[str, str] | None = None,
+            name: str = "reference", levels: dict[str, str] | None = None,
+            claim: Sequence[str] | None = None, bindings: Sequence[str] = ()) -> dict[str, Any]:
+    """Check verdicts on every kit file. Without ``validator``/``verdicts``: the reference (consumer + producer).
+
+    The report also gives the consumer level (spec 9.6): ``level``. Stream levels come from the reference
+    producer check, from ``validator`` when it supports a level (``{level}`` in --cmd, a ``level`` parameter
+    in --impl), or from ``levels`` (a verdicts file with levels).
+    """
+    from fidetype.conformance.kit import KIT_VERSION, LEVELLED_FORMS, kit_dir, load_index
+    from fidetype.conformance.rules import SPEC_LABEL
 
     root = Path(kit) if kit is not None else kit_dir()
+    if verdicts is not None:
+        levels_known = bool(levels)
+    elif validator is not None:
+        levels_known = bool(getattr(validator, "supports_level", False))
+    else:
+        levels_known = True
     rows = []
     for e in _entries(root, profile):
         path = root / e["path"]
         row: dict[str, Any] = {"id": e["id"], "path": e["path"], "profile": e["profile"], "wire_form": e["wire_form"],
                                "expect": e["expect"], "verdict": e["verdict"], "rules": e["rules"]}
+        if e.get("stream_level"):
+            row["stream_level"] = e["stream_level"]
         problems: list[str] = []
+        levelled = e.get("stream_level") and e["wire_form"] in LEVELLED_FORMS
         if verdicts is not None:
             actual = verdicts.get(e["id"], "missing")
             row["actual"] = actual
             if actual != e["expect"]:
                 problems.append(f"verdict {actual}, expected {e['expect']}")
+            if levelled and levels_known:
+                row["level_actual"] = (levels or {}).get(e["id"])
         elif validator is not None:
             row["actual"] = actual = validator(path, e["profile"])
             if actual != e["expect"]:
                 problems.append(f"verdict {actual}, expected {e['expect']}")
+            if levelled and levels_known and actual == "accept":
+                row["level_actual"] = _stream_level_of(validator, path)
         else:
             try:
                 _reference_consume(path, e["profile"])
@@ -398,8 +503,11 @@ def run_kit(kit: str | Path | None = None, profile: str | None = None,
                 consumer, row["consumer_detail"] = "reject", f"{type(x).__name__}: {x}"[:300]
             tr = conform_file(path, "core")
             producer = "reject" if tr.fails else "accept"
+            advisory = sorted({r.check for r in tr.warns if r.level == ADVISORY})
             row.update(actual=consumer, producer=producer, producer_verdict=tr.verdict,
-                       failing_checks=sorted({r.check for r in tr.fails}), warning_checks=sorted({r.check for r in tr.warns}))
+                       failing_checks=sorted({r.check for r in tr.fails}), warning_checks=advisory)
+            if levelled:
+                row["level_actual"] = tr.stream_level
             if consumer != e["expect"]:
                 problems.append(f"consumer {consumer}, expected {e['expect']}")
             if producer != e["expect"]:
@@ -412,12 +520,20 @@ def run_kit(kit: str | Path | None = None, profile: str | None = None,
                 problems.append(f"warnings {want_w} expected, got {row['warning_checks']}")
             if e["verdict"] == "accept" and row["warning_checks"]:
                 problems.append(f"unexpected warnings {row['warning_checks']}")
+        row["verdict_ok"] = not problems
+        if levelled and "level_actual" in row and row["level_actual"] != e["stream_level"]:
+            problems.append(f"stream level {row['level_actual']}, expected {e['stream_level']}")
         row["ok"] = not problems
         row["detail"] = "; ".join(problems)
         rows.append(row)
     n = sum(r["ok"] for r in rows)
+    claim = list(claim) if claim else list(PROFILES)
+    lv = consumer_level(rows, claim, bindings, levels_known)
+    if profile is not None:
+        lv["note"] = "partial run (--profile): the level counts only the entries that ran"
     return {"schema": KIT_REPORT_SCHEMA, "tool": "nts-conform", "tool_version": TOOL_VERSION, "validator": name,
-            "kit": str(root), "passed": n, "total": len(rows), "ok": n == len(rows) and bool(rows), "entries": rows}
+            "spec": SPEC_LABEL, "kit": str(root), "kit_version": load_index(root).get("kit_version", KIT_VERSION),
+            "passed": n, "total": len(rows), "ok": n == len(rows) and bool(rows), "level": lv, "entries": rows}
 
 
 # --- command line ------------------------------------------------------------------------------
@@ -430,22 +546,24 @@ def cmd_check(a: argparse.Namespace) -> int:
         for t, p in zip(a.targets, paths):
             files += [p] if p is not None else _expand([t])
         results = [conform_file(f, a.level, a.profile) for f in files]
-        rep = build_report(results, a.level)
+        rep = build_report(results, a.level, a.claim)
     if a.json:
         _write_json(rep, a.json)
-    print(report_text(results, a.verbose), file=sys.stderr if a.json == "-" else sys.stdout)
-    return 0 if rep["ok"] else 1
+    print(report_text(results, a.verbose, rep["producer"]), file=sys.stderr if a.json == "-" else sys.stdout)
+    if not rep["ok"]:
+        return 1
+    return 1 if a.require_level and not rep["producer"]["levels"].get(a.require_level) else 0
 
 
 def cmd_kit(a: argparse.Namespace) -> int:
-    validator, verdicts, name = None, None, "reference (fidetype Python: consumer + producer check)"
+    validator, verdicts, levels, name = None, None, None, "reference (fidetype Python: consumer + producer check)"
     if a.cmd:
         validator, name = _cmd_validator(a.cmd), a.cmd
     elif a.impl:
         validator, name = _impl_validator(a.impl), a.impl
     elif a.verdicts:
-        verdicts, name = _verdicts_file(a.verdicts), f"verdicts file {a.verdicts}"
-    rep = run_kit(a.kit, a.profile, validator, verdicts, name)
+        (verdicts, levels), name = _verdicts_file(a.verdicts), f"verdicts file {a.verdicts}"
+    rep = run_kit(a.kit, a.profile, validator, verdicts, name, levels, a.claim, a.binding or ())
     if a.json:
         _write_json(rep, a.json)
     out = sys.stderr if a.json == "-" else sys.stdout
@@ -455,7 +573,56 @@ def cmd_kit(a: argparse.Namespace) -> int:
             print(f"  {tag} {r['id']} {r['path']:<44} expect {r['verdict']:<20} {r['detail']}".rstrip(), file=out)
     print(f"[nts-conform kit: {'PASS' if rep['ok'] else 'FAIL'}] {rep['passed']}/{rep['total']} kit files give the "
           f"expected verdict ({name})", file=out)
+    print(_level_line(rep["level"]), file=out)
+    if a.require_level:
+        return 0 if rep["level"]["levels"].get(a.require_level) else 1
     return 0 if rep["ok"] else 1
+
+
+def cmd_levels(a: argparse.Namespace) -> int:
+    from fidetype.conformance.levels import levels_path, render_levels
+
+    text = render_levels()
+    if a.write:
+        levels_path().write_text(text, encoding="utf-8", newline="\n")
+        print(f"wrote {levels_path()}")
+        return 0
+    if a.check:
+        cur = levels_path().read_text(encoding="utf-8").replace("\r\n", "\n") if levels_path().is_file() else ""
+        print("levels.json is up to date" if cur == text else "levels.json is stale: run nts-conform levels --write")
+        return 0 if cur == text else 1
+    if a.json:
+        sys.stdout.write(text)
+        return 0
+    doc = json.loads(text)
+    print(f"Implementation levels of {doc['spec']}, section {doc['section']} (kit {doc['kit_version']}); cumulative")
+    for key, lv in doc["levels"].items():
+        print(f"\n{lv['title']}")
+        print(f"  producer: {lv['producer']}")
+        print(f"  consumer: {lv['consumer']}")
+        if key == "core":
+            print(f"  kit: {', '.join(lv['kit'])}")
+        elif key == "full":
+            for prof, ids in lv["kit_by_profile"].items():
+                print(f"  kit ({prof}): {', '.join(ids)}")
+        else:
+            print(f"  adds rules: {', '.join(lv['adds'])}; required SHOULD rules: {', '.join(lv['promoted_should_rules'])}")
+    for b, d in doc["bindings"].items():
+        print(f"\nbinding {b}: kit {', '.join(d['kit'])}")
+    return 0
+
+
+def cmd_certified(a: argparse.Namespace) -> int:
+    from fidetype.conformance.certified import check_certified, load_certified
+
+    problems = check_certified()
+    doc = load_certified()
+    for e in doc["entries"]:
+        print(f"{e['id']:<28} {e['class']:<9} {e['level_title']:<16} {e['language']:<11} {e['implementation']}")
+    for pr in problems:
+        print(f"  PROBLEM: {pr}")
+    print(f"[nts-conform certified: {'PASS' if not problems else 'FAIL'}] {len(doc['entries'])} entries")
+    return 0 if not problems or not a.check else 1
 
 
 def cmd_list(a: argparse.Namespace) -> int:
@@ -511,6 +678,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     c.add_argument("--profile", action="append", choices=profiles, help="run only these suite profiles (repeatable)")
     c.add_argument("--json", help="write the JSON report here ('-' = stdout)")
     c.add_argument("--verbose", "-v", action="store_true", help="also list passed checks")
+    c.add_argument("--claim", action="append", choices=tuple(PROFILES),
+                   help="output profile that the claim names (repeatable; default: the profiles the files use)")
+    c.add_argument("--require-level", choices=IMPL_LEVELS, help="exit 1 if the producer level is lower (spec 9.6)")
     c.set_defaults(func=cmd_check)
     k = sub.add_parser("kit", help="run the kit: reference, or check your validator's verdicts")
     k.add_argument("--kit", help="kit directory (default spec/conformance/kit)")
@@ -521,6 +691,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     g.add_argument("--verdicts", help="JSON file with your verdicts: {id: accept|reject}")
     k.add_argument("--json", help="write the JSON report here ('-' = stdout)")
     k.add_argument("--verbose", "-v", action="store_true", help="list every entry")
+    k.add_argument("--claim", action="append", choices=tuple(PROFILES),
+                   help="output profile that the claim names (repeatable; default: all three)")
+    k.add_argument("--binding", action="append", choices=tuple(BINDINGS), help="binding that the claim adds")
+    k.add_argument("--require-level", choices=IMPL_LEVELS,
+                   help="exit 0 only if the consumer level is reached (entries outside the level scope do not count)")
     k.set_defaults(func=cmd_kit)
     ls = sub.add_parser("list", help="list the kit entries")
     ls.add_argument("--kit")
@@ -535,6 +710,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     gr.add_argument("--write", action="store_true")
     gr.add_argument("--check", action="store_true")
     r.set_defaults(func=cmd_rules)
+    lv = sub.add_parser("levels", help="the implementation levels NTS Core, NTS Full, NTS Trust-ready (spec 9.6)")
+    glv = lv.add_mutually_exclusive_group()
+    glv.add_argument("--write", action="store_true", help="write spec/conformance/levels.json")
+    glv.add_argument("--check", action="store_true", help="exit 1 if levels.json is stale")
+    glv.add_argument("--json", action="store_true", help="print levels.json")
+    lv.set_defaults(func=cmd_levels)
+    ce = sub.add_parser("certified", help="the self-certification list spec/conformance/certified.json (spec 9.7)")
+    ce.add_argument("--check", action="store_true", help="exit 1 if an entry does not match its evidence")
+    ce.set_defaults(func=cmd_certified)
     a = p.parse_args(argv)
     try:
         return a.func(a)

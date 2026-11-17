@@ -80,11 +80,11 @@ The recording device. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 42 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
+| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 45 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
 | `device.vendor` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The maker of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.model` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The model of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.channel_count` | `int` | - | optional | development (proposed stable) | `integer_min_1` | The number of input channels that the decoder used (integer >= 1). | MET-1<br>checks: NTS-META-TYPES |
-| `device.invasive` | `boolean` | - | optional | development (proposed stable) | `boolean` | true for implanted electrodes. Used in 3 accept vector(s). | MET-1<br>checks: NTS-META-TYPES |
+| `device.invasive` | `boolean` | - | optional | development (proposed stable) | `boolean` | true for implanted electrodes. Used in 5 accept vector(s). | MET-1<br>checks: NTS-META-TYPES |
 | `device.regulatory_status` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The regulatory status of the device. Information only, not a claim of approval. Open list (SC-4). Registered values: `research`, `investigational`, `cleared`, `consumer`, `unknown`. Other values are valid. | MET-1<br>checks: NTS-META-TYPES |
 
 ## `decoder`
@@ -93,9 +93,9 @@ The decoder (model) that made the frames or events. Container: header `meta`. Sp
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 42 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 42 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 42 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
+| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 45 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 45 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 45 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
 | `decoder.lookahead_s` | `double` | s | optional | development (proposed stable) | `finite_number_min_0` | The algorithmic lookahead of the decoder (number >= 0). It equals the header field latency when both are present. | MET-1, MET-4, TIM-1<br>checks: NTS-META-LOOKAHEAD, NTS-META-TYPES |
 | `decoder.calibration_id` | `string` | - | provenance: conditionally required (calibration.applied is true) | development (proposed stable) | `non_empty_string` | The identifier of the calibration that was applied. | MET-1<br>checks: NTS-META-TYPES, PV-CALIB-ID |
 | `decoder.calibration_method` | `string` | - | trust-ready: conditionally required (calibration.applied is true; the value is then not none) | development (proposed stable) | `non_empty_string` | The calibration method. Open list (SC-4). Registered values: `temperature`, `platt`, `isotonic`, `none`. Other values are valid. | MET-1, MET-6<br>checks: NTS-META-TYPES, TR-CALIB |
@@ -164,7 +164,7 @@ The kind of data in the stream. Container: header `meta`. Spec [3.4](../nts-1.0-
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 42 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
+| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 45 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
 
 ## `consent`
 
@@ -180,7 +180,7 @@ The language of the decoded text. Container: header `meta`. Spec [3.4](../nts-1.
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 42 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
+| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 45 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
 
 ## `emg`
 
@@ -188,8 +188,8 @@ The surface EMG recording (device.modality emg). Container: header `meta`. Spec 
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `emg.placement` | `string` | - | optional | development (proposed development) | `non_empty_string` | Where the surface EMG electrodes are on the body. Open list (SC-4). Registered values: `wrist`, `forearm`, `face`, `neck`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
-| `emg.derivation` | `string` | - | optional | development (proposed development) | `non_empty_string` | How each channel is derived from the electrodes. bipolar (also called differential): the difference of two electrodes; monopolar: one electrode against a common reference. Open list (SC-4). Registered values: `bipolar`, `monopolar`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
+| `emg.placement` | `string` | - | optional | development (proposed development) | `non_empty_string` | Where the surface EMG electrodes are on the body. Open list (SC-4). Registered values: `wrist`, `forearm`, `face`, `neck`. Other values are valid. Used in 3 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
+| `emg.derivation` | `string` | - | optional | development (proposed development) | `non_empty_string` | How each channel is derived from the electrodes. bipolar (also called differential): the difference of two electrodes; monopolar: one electrode against a common reference. Open list (SC-4). Registered values: `bipolar`, `monopolar`. Other values are valid. Used in 2 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
 
 ## `meg`
 
@@ -197,7 +197,7 @@ The MEG recording (device.modality meg or opm-meg). Container: header `meta`. Sp
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `meg.sensor_types` | `string[]` | - | optional | development (proposed development) | `non_empty_string_list` | The kinds of MEG sensors that the decoder used, one entry per kind. An OPM sensor is a magnetometer. Open list (SC-4). Registered values: `magnetometer`, `planar_gradiometer`, `axial_gradiometer`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
+| `meg.sensor_types` | `string[]` | - | optional | development (proposed development) | `non_empty_string_list` | The kinds of MEG sensors that the decoder used, one entry per kind. An OPM sensor is a magnetometer. Open list (SC-4). Registered values: `magnetometer`, `planar_gradiometer`, `axial_gradiometer`. Other values are valid. Used in 2 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
 
 ## `implant`
 
@@ -209,7 +209,7 @@ The implanted electrode recording (device.modality intracortical or ecog). Conta
 | `implant.array_count` | `int` | - | optional | development (proposed development) | `integer_min_1` | The number of implanted arrays that the decoder used (integer >= 1). Used in 1 accept vector(s). | MET-1, MET-9, MET-11<br>checks: NTS-META-TYPES |
 | `implant.features` | `string[]` | - | optional | development (proposed development) | `non_empty_string_list` | The neural features that the decoder used, one entry per kind. Open list (SC-4). Registered values: `threshold_crossings`, `spike_band_power`, `sorted_units`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
 | `implant.bin_s` | `double` | s | optional | development (proposed development) | `finite_number_min_0` | The width of one feature bin in seconds (for example 0.02 for 20 ms bins). Used in 1 accept vector(s). | MET-1, MET-9, MET-11<br>checks: NTS-META-TYPES |
-| `implant.areas` | `string[]` | - | optional | development (proposed development) | `non_empty_string_list` | The brain areas of the arrays, as free text (for example "precentral gyrus", "6v", "M1"). Used in 1 accept vector(s). | MET-1, MET-11<br>checks: NTS-META-TYPES |
+| `implant.areas` | `string[]` | - | optional | development (proposed development) | `non_empty_string_list` | The brain areas of the arrays, as free text (for example "precentral gyrus", "6v", "M1"). Used in 2 accept vector(s). | MET-1, MET-11<br>checks: NTS-META-TYPES |
 
 ## `trust_decision.input`
 

@@ -69,7 +69,7 @@ pub const SDK_VERSION: &str = env!("CARGO_PKG_VERSION");
 /// The result of [`check_stream`].
 #[derive(Debug, Clone)]
 pub struct StreamReport {
-    /// Every check result (the same 59 checks as `fidetype validate`).
+    /// Every check result (the same 60 checks as `fidetype validate`).
     pub results: alloc::vec::Vec<checks::CheckResult>,
     /// The failures that block the requested level.
     pub failures: alloc::vec::Vec<checks::CheckResult>,
