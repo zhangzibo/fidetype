@@ -194,8 +194,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Done when:** A FEP defines `eeg.*` and / or `fnirs.*` keys from the evidence of a real producer (a public dataset adapter or a device adapter that fills them). The registry, the three SDK validators, the vectors and the `semconv` CI check include them. Externally blocked until such a dataset or adapter exists.
 
 #### P1-16 MET-11: traceability row in Appendix C.1 and an advisory modality-match check
-- **Gap:** 20 of the [open-gap list](open-gaps.md). Follow-up of P1-04, P7-01.
-- **Status:** `todo`.
+- **Gap:** 20 of the [open-gap list](open-gaps.md) (closed 2026-11-17). Follow-up of P1-04, P7-01.
+- **Status:** `done` (2026-11-17, with P7-02, commit `ce7e085`). RC4 amendment 3: C.1 row for MET-11; advisory check `NTS-MODALITY-MATCH` in Python, TypeScript and Rust (same warning); vectors V93, V94, V96 (accept with the warning), V95 (accept, no warning), kit K32; the v0.1 summaries return `warnings`, so the three runners compare the warning itself; `KNOWN_UNTRACED` is empty; `rule-map.json` rebuilt.
 - **Depends on:** P1-04 (FEP-0009, RC4 amendment 1), P7-01 (`rule-map.json`, test `test_every_defined_rule_has_a_traceability_row`).
 - **Source:** P7-01 (2026-11-17): `nts-conform` maps checks to rule ids from RC4 Appendix C.1. Of the 267 rule ids that the RC4 text defines, only MET-11 (amendment 1) has no C.1 row. The spec text says that the validators check the types of the modality keys but not the modality match ("a producer SHOULD NOT write the keys of another modality").
 - **Done when:** The next spec draft (or an editorial amendment of RC4) adds a C.1 row for MET-11 (checks, vectors, status). The Python, TypeScript and Rust validators have an advisory check (a warning, never a level block) for a modality key that does not match `device.modality`, with accept-with-warning vectors in all three SDKs (parity passes). `KNOWN_UNTRACED` in `tests/test_nts_conform.py` is empty and `spec/conformance/kit/rule-map.json` is rebuilt (`nts-conform rules --write`).
@@ -417,10 +417,49 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 **Later extension:** [P13](#p13-public-benchmark-hub-added-2026-11-11) grows this leaderboard into a hub. P6 scope and dates do not change.
 
+**Status (2026-11-17): P6-02 done** (commit `5133e04`): submission format v0.2 + one-command scorer with required controls ([docs](../../docs/benchmark-submission.md)); baselines on b2t24-t12, willett-hw, kt-semg, emg2qwerty. **P6-08 done** (2026-11-17): v0.2 entries for b2t25-t15, toronto-semg and spanishbcbl-meg, so all seven v0.2 tracks have entries. Follow-up gaps 25-31 below and in P14.
+
+### Open-gap items (added 2026-11-17)
+Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing item moved.
+
+#### P6-05 KT-sEMG calibration large enough for a certified guard
+- **Gap:** 25 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P6-01, P6-02.
+- **Status:** `todo`.
+- **Depends on:** P6-01 (done), P6-02 (done); P11-01 (a stronger decoder makes commits possible).
+- **Source:** Commit `5133e04` (P6-02: KT-sEMG cal split has 89 bursts; the LTT half gets 34 items, 45 are needed at alpha 0.05, so no LTT guard can commit).
+- **Gap detail:** The KT-sEMG cal split (89 bursts, 3 runs) gives the LTT step only 34 items. At alpha 0.05 LTT needs at least 45 items even with zero losses, so every LTT guard on this track is vacuous by construction.
+- **Done when:** One of these is done and written in the track docs and the results: (a) the kt-semg baselines use CRC (no item minimum) or an LTT variant that tests on all non-fit items, with the arithmetic shown; or (b) a new track version moves more runs into `cal` (a new split rule, a new split digest, a version note, and v0.2 cards kept readable); or (c) the docs state with numbers why no certified guard is possible on this track. The kt-semg guard card then states which one applies.
+
+#### P6-06 Input-level controls for the T12 and Willett entries
+- **Gap:** 28 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P6-02.
+- **Status:** `todo`.
+- **Depends on:** P6-02 (done); for T12: the T12 v2 checkpoint + CPU decode; for Willett: a decoder of our own (P14-12 / P15-08).
+- **Source:** Commit `5133e04` (P6-02: T12 and Willett controls are decoder-output stand-ins: permuted frames / uniform log-probs, not neural input re-run through the decoder).
+- **Gap detail:** The shuffled and zeros controls of the b2t24-t12 and willett-hw entries change the decoder output (frames permuted, uniform rows). They do not pass shuffled or zero neural input through the network. The manifests say so, but an input-level control is the stronger test.
+- **Done when:** The b2t24-t12 entry has controls made by running the T12 v2 network on time-shuffled and on all-zero neural features of each test trial (CPU decode, no GPU), and the card shows both control results. The willett-hw entry gets input-level controls when it uses a decoder that we can rerun (P14-12 / P15-08); until then the manifest keeps the stand-in note.
+
+#### P6-07 Rule: can partial-coverage entries rank against full ones?
+- **Gap:** 30 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P6-02, P6-03.
+- **Status:** `todo`.
+- **Depends on:** P6-02 (done); P9 governance (who decides benchmark rules).
+- **Source:** Commit `5133e04` (P6-02: the scorer accepts a declared subset and the board marks it `[partial: n/N units]`, but no rule says how such entries rank).
+- **Gap detail:** The v0.2 scorer accepts a declared subset (`coverage.subset`) and the board marks the entry `[partial: n/N units]`. No rule says whether a partial entry can rank next to full ones. A subset can be easier than the full test set.
+- **Done when:** The benchmark rules (docs/benchmark-submission.md and the board) state one rule, for example: partial entries are listed in a separate block and never ranked; or they rank only with a paired comparison on the same units. The leaderboard code applies it, a test checks it, and the rule is recorded as a benchmark decision (P9 process when it exists).
+
+#### P6-08 v0.2-format entries for b2t25-t15, toronto-semg and spanishbcbl-meg
+- **Gap:** 31 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P6-02.
+- **Status:** `done`. Commit `b9fa645` (2026-11-17): 21 v0.2 entries rerun from the v0.1 decoders and policies (B2T ours + published x always-commit / plug-in / CRC / LTT; Toronto 3 regimes x always-commit / plug-in / CRC; MEG x 4, research only) plus a partial M4-12 + guard entry (103/816 units: only the decoder's held-out val_eval trials), all scored by `python -m fidetype.benchmark score`. CER, WER, wrong-commit, commit rate and safe WPM equal v0.1 on all 21; eWPM is 0.04-1.86 lower (one decision per unit, measured B2T speech time) ([results](../../experiments/2026-11-17-p6-02b-v02-entries/results.md)).
+- **Depends on:** P6-02 (done).
+- **Source:** Commit `5133e04` (P6-02 wrote v0.2 entries only for the four new tracks).
+- **Gap detail:** The three tracks that have v0.1 entries (b2t25-t15, toronto-semg, spanishbcbl-meg) had no v0.2-format submission or score card, so the v0.2 board showed 'No entries yet' for them.
+- **Done when:** Each of the three tracks has v0.2 submissions (units + both controls) built from the v0.1 decoders and policies, scored by `python -m fidetype.benchmark score`, with numbers that match v0.1 where the definitions agree and a written reason where they differ.
+
 ## P7. Conformance + certification
 **Goal:** anyone can prove that an implementation speaks NTS correctly.
 
-**Status (2026-11-17):** P7-01 `done`: conformance kit `spec/conformance/kit/` (31 example files over every RC4 wire form: JSON Lines streams and decision logs, NPZ, LSL and WebSocket captures; verdict + rule ids per file) and the `nts-conform` CLI (per-rule report with location, JSON report, exit codes; kit mode checks an external validator's verdicts). Python = TypeScript = Rust on all 31 files; schema parity 0 mismatches. [Docs](../../docs/conformance.md), [concept](../concepts/conformance-suite.md#conformance-kit-and-nts-conform-p7-01). Levels (P7-02) and the certification list stay open. New gap 20 = P1-16 (MET-11 traceability).
+**Status (2026-11-17):** P7-01 `done`: conformance kit `spec/conformance/kit/` (31 example files over every RC4 wire form: JSON Lines streams and decision logs, NPZ, LSL and WebSocket captures; verdict + rule ids per file) and the `nts-conform` CLI (per-rule report with location, JSON report, exit codes; kit mode checks an external validator's verdicts). Python = TypeScript = Rust on all 31 files; schema parity 0 mismatches. [Docs](../../docs/conformance.md), [concept](../concepts/conformance-suite.md#conformance-kit-and-nts-conform-p7-01). New gap 20 = P1-16 (MET-11 traceability).
+
+**Status (2026-11-17, later):** P7-02 `done` (commit `ce7e085`): RC4 amendment 3 defines the implementation levels **NTS Core**, **NTS Full** and **NTS Trust-ready** (spec 9.6; CNF-2 … CNF-7) and the self-certification list (9.7, CNF-8). `nts-conform check` reports the producer level, `nts-conform kit` the consumer level (`--claim`, `--binding`, `--require-level`, `{level}` in `--cmd`). Kit 0.2.0 (36 files: K32 MET-11 warning, K33–K36 stream levels). Finer rule mapping for broad checks. [`spec/conformance/certified.json`](../../spec/conformance/certified.json): Python, TypeScript and Rust SDKs = consumers at NTS Trust-ready; text n-best adapter = producer at NTS Trust-ready; 7 frame adapters = producers at NTS Core (stream level provenance or trust-ready). Pull-request process in [docs/conformance.md](../../docs/conformance.md#self-certification). P1-16 (gap 20) closed with it. New gaps 23 = P7-05 (collector against the kit) and 24 = P7-06 (binding producers in the list).
 
 ### Deliverables
 - **Conformance kit:** valid and invalid example files in each wire form (start from cases C1–C20 of [spec 7.1](../../spec/neuraltextstream-v0.1.md#71-conformance-cases)); a test runner CLI (`nts-conform`) for producers, consumers and collector components.
@@ -433,6 +472,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - The first self-certified implementation outside our repo: **externally blocked**.
 
 **Effort:** 15–25 agent-days. **Depends on:** P1, P2.
+
+#### P7-05 The collector passes the kit in CI
+- **Gap:** 23 of the [open-gap list](open-gaps.md). Follow-up of P7-01, P7-02.
+- **Status:** `todo`.
+- **Depends on:** P3 collector (draft FEP-0006), P7-02 (`nts-conform kit --cmd`, levels).
+- **Source:** P7-02 (2026-11-17): the P7 exit criterion says "every SDK and the collector pass the kit in CI". The three SDKs do (NTS Trust-ready, CI job `rust-parity`); the collector (`fidetype-collector`) is not run against the kit and has no entry in `spec/conformance/certified.json`.
+- **Done when:** the collector has a consumer entry point that follows the kit contract (exit 0 = accept; a `{level}` option for stream levels), CI runs `nts-conform kit --cmd "... {path}" --require-level <level>` on it, and `certified.json` lists the collector with its kit report as evidence.
+
+#### P7-06 Binding producers in the self-certification list
+- **Gap:** 24 of the [open-gap list](open-gaps.md). Follow-up of P7-02.
+- **Status:** `todo`.
+- **Depends on:** P7-02; the LSL outlet (`fidetype.adapters.lsl`), the WebSocket sender (`fidetype.adapters.ws`) and `fidetype live` (P14-04).
+- **Source:** P7-02 (2026-11-17): the producer entries of `certified.json` are file producers. Our code that emits NTS over LSL or WebSocket has no producer evidence, because `nts-conform check` judges recorded captures (scenario JSON) and no tool records a capture from a live outlet yet.
+- **Done when:** a tool records an LSL capture (`fidetype.conformance.lsl-scenario/1`) and a WebSocket capture (`ws-scenario/1`) from our own outlets (synthetic input, loopback, CI-safe), `nts-conform check` gives them a producer level with the binding, and `certified.json` lists the binding producers with that evidence.
 
 ## P8. Docs, website, demo
 **Goal:** a newcomer gets a valid stream in 10 minutes and sees the value in one demo.
@@ -592,6 +645,9 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | **P14-08** | Results write-ups (credibility), linked to the paper track | P14-01, P14-05, PUB (P11-04, M4-04) | research labs, BCI companies, clinical trials |
 | **P14-09** | Example AAC integration: NTS into an open-source AAC or text-entry app | P3 WebSocket exporter, P14-03, P14-06; pilot: P10-05 | AAC app makers |
 | **P14-10** | Safe WPM on the remaining tracks (b2t24-t12, willett-hw, kt-semg, emg2qwerty, P11-01) (open gap 8, [details](#p14-10-safe-wpm-on-the-remaining-tracks-b2t24-t12-willett-hw-kt-semg-emg2qwerty-p11-01)) | P14-05, P6-01 (done), P6-02, P11-01 | research labs, BCI companies |
+| **P14-12** | Willett-hw: word LM for exact-sentence commits and full test coverage (open gap 26, [details](#p14-12-willett-hw-word-lm-for-exact-sentence-commits-and-full-test-coverage)) | P6-02 (done); a word LM (for example the Tatoeba word LM of the T12 v2 recipe, or the published 50k-word n-gram); P15-08 (Willett decoder of our own, for full coverage) | research labs, BCI companies |
+| **P14-13** | Conformant EMG baselines without oracle key timing (kt-semg, emg2qwerty) (open gap 27, [details](#p14-13-conformant-emg-baselines-without-oracle-key-timing-kt-semg-emg2qwerty)) | P11-01 (continuous EMG decoder); P4-10 (live key-onset detector) | research labs, BCI companies |
+| **P14-14** | T12 safe WPM above the no-BCI reference (open gap 29, [details](#p14-14-t12-safe-wpm-above-the-no-bci-reference)) | M4-13 (stronger T15 recipe to port), P15-19 (usefulness on stronger decoders), P6-06 | research labs, BCI companies |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -688,6 +744,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Gap:** 8 of the [open-gap list](open-gaps.md). Follow-up of P14-05.
 - **Status:** `todo`.
 - **Partly closed:** P6-01, commit `1d4ff8c`: exact Toronto safe WPM (participant CI) and null-commit audits at the CRC / LTT thresholds for B2T ours, B2T published and MEG.
+- **Partly closed (2026-11-17):** P6-02, commit `5133e04`: scorer, baselines, safe WPM and null-commit audits for b2t24-t12 (0.48 certified), willett-hw (vacuous, partial 81/254), kt-semg (vacuous) and emg2qwerty (vacuous, research only). Only the P11-01 decoder is left (waits on the GPU). Follow-ups: P6-05, P6-06, P14-12, P14-13, P14-14.
 - **Depends on:** P14-05, P6-01 (done), P6-02, P11-01.
 - **Source:** Commit `7d74c0f` (P14-05 safe WPM baselines; missing tracks and controls); partly closed by `1d4ff8c` (P6-01).
 - **Done when:** The scorer, baselines and safe WPM exist for the tracks `b2t24-t12`, `willett-hw`, `kt-semg` and `emg2qwerty` (research only), and for the P11-01 decoder when it exists, each with its null-commit audit; or the result states why a track has no certified number. The scorer and baselines of these tracks come with P6-02. Part already closed by P6-01 (commit `1d4ff8c`): exact Toronto safe WPM with a participant CI, and null-commit audits for B2T ours, B2T published and MEG (the two B2T published entries still show "controls: no" because shuffled / zeros CER is not defined for a text-only decoder; P6-01 documents this).
@@ -698,6 +755,30 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-04 (done).
 - **Source:** the P14-04 "done when" asks for an LSL replay of a public recording in CI. The repository rule forbids committed recordings, so the CI job `live` replays the synthetic typist instead. The KT-sEMG replay (`fidetype live replay-kt`) runs only on a machine with the data.
 - **Done when:** a CI job downloads one small public recording with a clear licence (for example KT-sEMG `run3.csv`, 53 MB, CC BY 4.0, from Harvard Dataverse, SHA-256 checked, cached between runs), trains or loads a local model, replays the run over LSL and checks valid NTS with trust decisions from one command. Nothing from the recording is committed.
+
+#### P14-12 Willett-hw: word LM for exact-sentence commits and full test coverage
+- **Gap:** 26 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P14-10, P6-02.
+- **Status:** `todo`.
+- **Depends on:** P6-02 (done); a word LM (for example the Tatoeba word LM of the T12 v2 recipe, or the published 50k-word n-gram); P15-08 (Willett decoder of our own, for full coverage).
+- **Source:** Commit `5133e04` (P6-02: 3 of 81 raw RNN sentences exactly right; the built-in word-list beam keeps no candidate on 59 of 81 trials; published RNN output covers only 81 of 254 test trials).
+- **Gap detail:** The Willett entry uses the published real-time RNN output. Without a word LM only 3 of 81 sentences are exactly right, so the guard finds no certified threshold. The published output exists for only 81 of the 254 test trials (closed-loop trials), so the entry is partial.
+- **Done when:** A willett-hw entry decodes with a word LM and reports exact-sentence accuracy and the guard result (certified or vacuous, with numbers). Full coverage of the 254 test trials needs our own decoder on the neural data (P15-08 or later); until then the entry stays marked `[partial: 81/254]` and the results say so.
+
+#### P14-13 Conformant EMG baselines without oracle key timing (kt-semg, emg2qwerty)
+- **Gap:** 27 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P6-02, P14-10.
+- **Status:** `todo`.
+- **Depends on:** P11-01 (continuous EMG decoder); P4-10 (live key-onset detector).
+- **Source:** Commit `5133e04` (P6-02: the kt-semg and emg2qwerty LDA baselines take key times from the key log; the track task gives no key times at test).
+- **Gap detail:** The P6-02 EMG baselines cut key windows at the logged key times (oracle timing). The track task does not allow this. So they are reference entries only, not conformant entries.
+- **Done when:** kt-semg and emg2qwerty (research only) each have an entry whose decoder sees only the EMG at test (no key times): the P11-01 continuous decoder or a decoder with a causal onset detector (P4-10). The entry is scored with the v0.2 scorer with both controls, and the oracle-timing entries are marked `reference (oracle timing)` on the board.
+
+#### P14-14 T12 safe WPM above the no-BCI reference
+- **Gap:** 29 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P14-10.
+- **Status:** `todo`.
+- **Depends on:** M4-13 (stronger T15 recipe to port), P15-19 (usefulness on stronger decoders), P6-06.
+- **Source:** Commit `5133e04` (P6-02: only b2t24-t12 certifies commits; safe WPM 0.48 vs no-BCI 4.00; 17 commits, 9 wrong; decoder CER 0.30).
+- **Gap detail:** Only the T12 entry certifies commits, and its safe WPM (0.48) is far below the no-BCI reference (4.00). The guard keeps the wrong-commit rate at 0.010, but the decoder (CER 0.30) gives few right sentences. This is a decoder limit, the same root cause as P15-19.
+- **Done when:** A b2t24-t12 entry with a stronger decoder (the M4-13 recipe ported to T12, or a P11 / P15 decoder) reports safe WPM at alpha 0.05 with its certification status next to the no-BCI reference, with both controls passing. The item closes when the safe WPM is above the no-BCI reference, or when a result states with numbers which decoder accuracy that needs and why the current decoders do not reach it.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
