@@ -3,7 +3,7 @@ title: Provenance ledger
 type: concept
 tags: [provenance, audit, traceability, trust, privacy, hash-chain, regulatory]
 sources: [brain-to-text-25-copytask]
-updated: 2026-11-11
+updated: 2026-11-16
 ---
 
 # Provenance ledger
@@ -20,8 +20,8 @@ The ledger is task **M2-09** of the [project plan](../questions/project-plan.md)
 | Format | JSON Lines, UTF-8, one entry per line. Schema `fidetype.provenance/0.1` |
 | Entry | `schema`, `seq` (0, 1, 2, ...), `ts` (UTC), `kind`, `prev_hash`, `body`, `hash` |
 | Hash chain | `hash` = SHA-256 of the canonical JSON (sorted keys, no spaces, no NaN) of the entry without `hash`. The entry holds `prev_hash`, so each hash covers all history before it |
-| Entry kinds | `genesis` (entry 0: ledger id, text mode, hash algorithm), `context` (content-addressed: id = SHA-256 of the context, written once), `decision`, `correction`, `note` |
-| Verification | `verify(path, expected_head=None)`: schema, contiguous `seq`, `prev_hash` links, recomputed hashes, genesis first, context and decision references, `decision_hash` of each correction |
+| Entry kinds | `genesis` (entry 0: ledger id, text mode, hash algorithm), `context` (content-addressed: id = SHA-256 of the context, written once), `decision`, `correction`, `note`, `update` (P15-02: one decoder / trust-config update step, stage `proposed` / `accepted` / `rejected`; a decision links to its proposal by hash; `parent_config_id` -> `config_id` chain per `chain`; written by `GuardedUpdateLoop(ledger=)`) |
+| Verification | `verify(path, expected_head=None)`: schema, contiguous `seq`, `prev_hash` links, recomputed hashes, genesis first, context and decision references, `decision_hash` of each correction; for `update` entries: each decision has an earlier proposal (`proposal_hash`), no update is decided twice, an accepted update starts from the last accepted `config_id` of its chain and gives a new one, a rejected update keeps it |
 | Truncation | The chain alone cannot see a cut at the end. Store `ledger.anchor()` (head seq + hash) in a second place and pass it as `expected_head` |
 | Corrections | `record_correction(decision_id, text, source)` stores `decision_hash`, `changed`, character and word edit distance, `relation` (correction / confirmation / rejection). The latest correction wins |
 | Hooks | `TrustPipeline.attach_ledger(ledger, context, corrections="user" or "oracle" or "none")` writes one decision per attempt in `evaluate()`; the policy fit writes nothing. `run_harness(..., ledger=)`. `LedgeredPolicy(policy, ledger, context_id)` for a live loop |

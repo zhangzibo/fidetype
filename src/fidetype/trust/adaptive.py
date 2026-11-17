@@ -66,6 +66,20 @@ Rules the loop enforces (P15-02):
   offer-only.
 - Each :meth:`finish_update` writes an :class:`UpdateRecord`
   (:attr:`updates`, :meth:`audit_records`).
+- **Ledger (optional).** With ``ledger=`` (a
+  :class:`~fidetype.trust.provenance.ProvenanceLedger`), every proposal
+  (:meth:`new_version`, the first decision on an initial champion, a
+  rollback) and every decision (:meth:`finish_update`,
+  :meth:`reject_proposal`) is written as an append-only, hash-chained
+  ``update`` entry (chain ``ledger_chain``). Session ids and versions go
+  through the ledger's ``id_mode``; trained-on ids only as a count and a
+  hash.
+- **Hooks.** :meth:`add_listener` registers ``fn(record, loop)``. It runs
+  after each decision, before the ledger entry; a returned dict goes into
+  the entry (``details.hooks``). :mod:`fidetype.trust.update_hooks` uses
+  this to swap a :class:`~fidetype.trust.dropin.TrustGuard` configuration
+  or an :class:`~fidetype.trust.online_risk.OnlineTrustPolicy` policy only
+  on an accepted update.
 - COMMIT iff the active version was accepted in this session,
   ``score >= max(lambda_session, lambda_aci)``, the gate passes and the
   session monitor has not alarmed.
@@ -348,6 +362,10 @@ class GuardedUpdateLoop:
     challenger_level: float = 0.05
     #: Pre-P15-02 behaviour (no evidence gate needed, no null controls, no finish_update). Not for real use.
     unsafe: bool = False
+    #: Optional :class:`~fidetype.trust.provenance.ProvenanceLedger`: one ``update`` entry per proposal / decision.
+    ledger: Any = field(default=None, repr=False, compare=False)
+    #: Chain name of this loop in the ledger.
+    ledger_chain: str = "guarded-update-loop"
 
     # --- state ---
     aci: OnlineCommitRiskControl = field(init=False)
@@ -374,6 +392,10 @@ class GuardedUpdateLoop:
     n_block_commits: int = 0
     block_wrong_among_commits: float | None = None
     updates: list = field(default_factory=list)
+    listeners: list = field(default_factory=list, repr=False, compare=False)
+    #: update_id of the open (undecided) proposal in the ledger, and its origin.
+    open_update: str | None = field(default=None, repr=False)
+    _n_proposals: int = field(default=0, repr=False)
 
     def __post_init__(self) -> None:
         if self.n_check is None:
@@ -396,6 +418,77 @@ class GuardedUpdateLoop:
         self.aci = OnlineCommitRiskControl(alpha=self.alpha, method="aci", eta=self.eta, lam_init=self.lam_init,
                                            score_max=self.score_max)
         self.monitor = SessionRiskMonitor(alpha=self.alpha, gamma=self.gamma)
+        if self.ledger is not None and self.config_id is None:
+            # continue the chain of an existing ledger file
+            self.config_id = self.ledger.chain_head(self.ledger_chain)
+
+    # --- hooks and ledger --------------------------------------------------------
+
+    def add_listener(self, fn: Any) -> Any:
+        """Register ``fn(record: UpdateRecord, loop) -> dict | None``; it runs after each update decision.
+
+        A returned dict goes into the ledger entry (``details.hooks``). An exception in a listener is
+        written to the ledger (``details.hook_error``) and then raised again. Returns ``fn``.
+        """
+        self.listeners.append(fn)
+        return fn
+
+    def _lid(self, x: Any) -> Any:
+        return None if x is None else self.ledger.id_value(repr(x))
+
+    def _propose(self, origin: str) -> None:
+        """Write a ``proposed`` ledger entry for the current version (no-op without a ledger)."""
+        if self.ledger is None:
+            return
+        if self.open_update is not None and self.ledger.is_open_update(self.open_update):
+            # a superseded proposal: close it as rejected, so that every proposal has a decision
+            self.ledger.record_update("rejected", self.open_update, chain=self.ledger_chain,
+                                      parent_config_id=self.config_id, config_id=self.config_id,
+                                      details={"reasons": ["superseded by a new proposal before a decision"]})
+        uid = f"{self.ledger_chain}/{self._n_proposals}"
+        while self.ledger.has_update(uid):  # a continued ledger file: skip the ids already used
+            self._n_proposals += 1
+            uid = f"{self.ledger_chain}/{self._n_proposals}"
+        self._n_proposals += 1
+        tr = sorted(repr(t) for t in self.trained_on)
+        self.ledger.record_update("proposed", uid, chain=self.ledger_chain, parent_config_id=self.config_id,
+                                  config_id=None, details={
+                                      "origin": origin, "version": self._lid(self.version),
+                                      "session": self._lid(self.session), "champion": self._lid(self.champion),
+                                      "n_trained_on": len(tr),
+                                      "trained_on_sha256": hashlib.sha256(
+                                          json.dumps(tr).encode("utf-8")).hexdigest(),
+                                      "alpha": self.alpha, "delta": self.delta, "unsafe": self.unsafe})
+        self.open_update = uid
+
+    def _decide_hooks(self, rec: "UpdateRecord") -> None:
+        """Run the listeners, then write the decision to the ledger."""
+        hooks: dict[str, Any] = {}
+        error: BaseException | None = None
+        for i, fn in enumerate(self.listeners):
+            try:
+                out = fn(rec, self)
+            except Exception as e:  # noqa: BLE001 -- written to the ledger, then raised
+                error = e
+                break
+            if out:
+                name = getattr(fn, "hook_name", None) or getattr(getattr(fn, "__self__", None), "hook_name", None)
+                hooks[name or f"hook{i}"] = out
+        if self.ledger is not None:
+            if self.open_update is None or not self.ledger.is_open_update(self.open_update):
+                raise RuntimeError("internal: no open ledger proposal for this update")
+            d = rec.to_dict()
+            for k in ("session", "version", "champion_before", "active_version"):
+                d[k] = self._lid(getattr(rec, k))
+            d["hooks"] = hooks
+            if error is not None:
+                d["hook_error"] = f"{type(error).__name__}: {error}"
+            self.ledger.record_update("accepted" if rec.accepted else "rejected", self.open_update,
+                                      chain=self.ledger_chain, parent_config_id=rec.parent_config_id,
+                                      config_id=rec.config_id, details=d)
+            self.open_update = None
+        if error is not None:
+            raise error
 
     # --- gate ------------------------------------------------------------------
 
@@ -461,6 +554,7 @@ class GuardedUpdateLoop:
         self.trained_on = set(trained_on)
         self.n_versions += 1
         self._invalidate()
+        self._propose("new_version")
 
     def add_check_item(self, item_id: Hashable, score: float, commit_loss: float | None, *,
                        text: str | None = None, text_ok: bool = True, guard_risk: float | None = None,
@@ -596,6 +690,8 @@ class GuardedUpdateLoop:
             raise ValueError("recalibrate() before finish_update()")
         if self.controls_passed is None and not self.unsafe:
             raise ValueError("check_null_controls() before finish_update()")
+        if self.ledger is not None and (self.open_update is None or not self.ledger.is_open_update(self.open_update)):
+            self._propose("initial" if not self.updates else "rollback")
         reasons: list[str] = []
         if self.controls_passed is False:
             bad = ", ".join(f"{c.name} {c.n_commit}/{c.n} > {c.allowed}" for c in self.controls if not c.passed)
@@ -633,6 +729,29 @@ class GuardedUpdateLoop:
                            self.config_id, self.version, lam, feasible, n_chk, n_bc, wac, controls, test,
                            None if self.commit_gate is None else self.commit_gate.to_dict(), self.unsafe)
         self.updates.append(rec)
+        self._decide_hooks(rec)
+        return rec
+
+    def reject_proposal(self, reason: str) -> UpdateRecord:
+        """Reject the current version without the checks (for example: its calibration failed).
+
+        The champion comes back, but the session stays offer-only until a new check block. The
+        decision is recorded like any other (:attr:`updates`, listeners, ledger).
+        """
+        if not reason:
+            raise ValueError("give a reason")
+        if self.ledger is not None and (self.open_update is None or not self.ledger.is_open_update(self.open_update)):
+            self._propose("initial" if not self.updates else "rollback")
+        version, champ_before = self.version, self.champion
+        self._invalidate()
+        self.rejected = True
+        if champ_before is not None and version != champ_before:
+            self.version, self.trained_on = champ_before, set(self.champion_trained_on)
+        rec = UpdateRecord(len(self.updates), self.session, version, champ_before, False, (str(reason),),
+                           self.config_id, self.config_id, self.version, math.inf, False, 0, 0, None, (), None,
+                           None if self.commit_gate is None else self.commit_gate.to_dict(), self.unsafe)
+        self.updates.append(rec)
+        self._decide_hooks(rec)
         return rec
 
     def audit_records(self) -> list[dict[str, Any]]:

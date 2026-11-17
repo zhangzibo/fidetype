@@ -138,6 +138,34 @@ What each line means, and what is not guaranteed: [guarantee sheet](trust-guaran
 | Every result is `withhold` with reason `commit blocked: low acoustic evidence (guard risk 1.00 ...)`; the sheet warns `the commit gate blocked ...` | The hallucination guard sees low per-character confidence on most utterances: characters with a posterior below `low_conf_threshold` (0.5) count as no evidence. Noisy calibration data can also raise the fitted frame temperature (for example 3.1), which flattens the posteriors. The commit gate never commits at guard risk 1.00 | Calibrate on data like your real use (not only the hardest cases); check the decoder's confidence on clean utterances; for n-best input give `char_confidences`; or relax the guard with `guard_settings={"low_conf_threshold": 0.3}` (part of the config; the bound still holds) |
 | Few commits, many withholds | The guarantee is on the rate over all utterances, so a weak decoder commits rarely | Expected. The guard trades commits for safety |
 
+## Later: update the decoder safely (P15-02)
+
+A new decoder (or new calibration data) must not change what the user sees before it passes a check. `TrustGuardUpdater` runs the gated update loop (`GuardedUpdateLoop`) around your live guard:
+
+```python
+from fidetype.trust import ProvenanceLedger, TrustGuardUpdater
+from fidetype.trust.adaptive import GuardedUpdateLoop
+
+loop = GuardedUpdateLoop(alpha=guard.alpha, delta=guard.delta, ledger=ProvenanceLedger("updates.jsonl"))
+up = TrustGuardUpdater(guard, loop)
+out = up.propose_calibration(new_cal_logits, new_cal_texts,       # labelled data, new decoder
+                             check_logits_new, check_texts,       # >= 45 items that no decoder trained on
+                             champion_inputs=check_logits_old,    # the live decoder on the same items
+                             version="v2", vocab=VOCAB, blank="_", lexicon=WORDS)
+print(out.accepted, out.reasons, guard.config_id)
+```
+
+| Step | What happens |
+|---|---|
+| Check block | Block LTT on the check items: the session threshold. A check item that the candidate trained on raises an error (give `check_ids=` and `cal_ids=`) |
+| Null controls | Uniform and time-shuffled inputs (n-best input: your `null_inputs=`) go through the candidate and the commit gate. More than `floor(alpha x n)` commits: rejected |
+| Champion / challenger | Paired sign test on top-1 errors against the live decoder. Significantly worse: rejected |
+| Accepted | The candidate configuration goes into the **same** `guard` object. `commit_p` is raised to the session threshold if that is higher (this only removes commits). The audit log gets a `config_update` record |
+| Rejected | The guard does not change (same object, same `config_id`). A failed calibration (`NullControlError`) is a rejection too |
+| Ledger | Each proposal and each decision is an `update` entry (stage `proposed`, `accepted` or `rejected`) in the append-only, hash-chained ledger. Check it with `python -m fidetype.trust.provenance verify updates.jsonl` |
+
+For an `OnlineTrustPolicy`, `OnlinePolicyUpdater(online_policy, loop, {version: policy})` swaps the policy and sets `commit_floor` to the session threshold, only on an accepted update. The ACI controller keeps its state. Limits: the check block must be like the live data; the null controls are a refusal rule, not a bound; silent errors are not covered. Source: [`src/fidetype/trust/update_hooks.py`](../src/fidetype/trust/update_hooks.py).
+
 ## Reference
 
 | Function or class | Signature (short) |

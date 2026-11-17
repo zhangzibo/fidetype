@@ -1,0 +1,600 @@
+{
+  "task": "P15-02",
+  "what": "replay smoke test of TrustGuardUpdater + update ledger on T12 pilot records",
+  "source": "C:\\Users\\zhang\\bci-data\\derived\\f1-e2-pilot\\replay",
+  "days": [
+    "S08",
+    "S09",
+    "S10",
+    "S11",
+    "S12",
+    "S13",
+    "S14",
+    "S15",
+    "S16",
+    "S17",
+    "S18",
+    "S19",
+    "S20",
+    "S21",
+    "S22",
+    "S23"
+  ],
+  "init_days": [
+    "S08",
+    "S09",
+    "S10"
+  ],
+  "n_init_items": 837,
+  "initial_config_id": "tcfg-d95e543e80c17a80",
+  "final_config_id": "tcfg-d3eb7e34b401fffd",
+  "n_proposed": 15,
+  "n_accepted": 13,
+  "n_rejected": 2,
+  "ledger_verify_ok": true,
+  "ledger_errors": [],
+  "ledger_entries": 31,
+  "every_proposal_decided": true,
+  "guard_unchanged_on_reject": true,
+  "guard_changed_on_accept": true,
+  "phase_c_items": 4432,
+  "phase_c_commits": 0,
+  "phase_c_wrong_commits": 0,
+  "negative_control": {
+    "day": "S23",
+    "accepted": false,
+    "reasons": [
+      "calibration refused: NullControlError: calibration refused: the guard commits on null input (shuffled: 18/60 commits, allowed 3). A guard that commits without signal does not depend on your decoder's evidence. Other checks: the inputs are per-frame scores (logits) or real n-best scores; the decoder's confidence drops on noise. No configuration was produced."
+    ],
+    "guard_unchanged": true
+  },
+  "negative_control_loop": {
+    "day": "S23",
+    "accepted": false,
+    "reasons": [
+      "null controls failed (shuffled 27/60 > 3)"
+    ],
+    "guard_unchanged": true
+  },
+  "per_day": [
+    {
+      "day": "S11",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S11'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S11'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 424,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S12",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S12'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S12'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 344,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S13",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S13'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S13'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 304,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S14",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S14'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S14'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 344,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S15",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S15'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S15'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 344,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S16",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S16'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S16'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 344,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S17",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S17'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S17'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 47,
+        "champion_wrong": 47,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 144,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S18",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S18'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S18'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 344,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S19",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S19'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S19'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 264,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S20",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S20'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S20'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 264,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S21",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S21'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S21'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 384,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S22",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S22'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S22'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 48,
+        "champion_wrong": 48,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 464,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    },
+    {
+      "day": "S23",
+      "accepted": true,
+      "reasons": [],
+      "live_arm_after": "feedback-p0.9",
+      "config_changed": true,
+      "commit_p_before": 0.3,
+      "commit_p_after": 0.3,
+      "lambda_session": 0.0,
+      "controls": [
+        {
+          "name": "uniform",
+          "description": "uniform (no-signal) input through version 'feedback-S23'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        },
+        {
+          "name": "shuffled",
+          "description": "frame-shuffled real input through version 'feedback-S23'",
+          "n": 60,
+          "n_commit": 0,
+          "allowed": 3,
+          "passed": true
+        }
+      ],
+      "challenger_test": {
+        "n": 48,
+        "challenger_wrong": 47,
+        "champion_wrong": 47,
+        "worse_only": 0,
+        "better_only": 0,
+        "p_value": 1.0,
+        "level": 0.05,
+        "refused": false
+      },
+      "phase_c_items": 464,
+      "phase_c_commits": 0,
+      "phase_c_wrong_commits": 0
+    }
+  ],
+  "seconds": 110.4,
+  "stand_ins": [
+    "n-best scores from the top-1 posterior only",
+    "null input = near-flat random scores",
+    "truth unknown -> skipped in calibration, wrong in the check block"
+  ]
+}

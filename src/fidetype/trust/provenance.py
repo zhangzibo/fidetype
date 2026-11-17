@@ -39,6 +39,17 @@ Entry kinds (``kind``)
     the corrected decision (``decision_id`` and that entry's ``hash``).
 ``note``
     Free, structured operational data (for example a session start).
+``update``
+    One step of a decoder / trust-configuration update (P15-02,
+    :class:`~fidetype.trust.adaptive.GuardedUpdateLoop`). ``stage`` is
+    ``"proposed"``, ``"accepted"`` or ``"rejected"``. Each update has an
+    ``update_id`` and belongs to a ``chain`` (one loop or one guard). A
+    decision entry (accepted / rejected) names its proposal
+    (``update_id`` and the proposal entry's ``hash``). ``parent_config_id``
+    and ``config_id`` give the configuration chain: an accepted update
+    must start from the last accepted ``config_id`` of its chain and give
+    a new one; a rejected update leaves it unchanged. :func:`verify`
+    checks these rules. See :meth:`ProvenanceLedger.record_update`.
 
 Privacy by design
 -----------------
@@ -91,7 +102,9 @@ import numpy as np
 SCHEMA = "fidetype.provenance/0.1"
 SCHEMA_VERSION = "0.1"
 GENESIS_PREV = "0" * 64
-KINDS = ("genesis", "context", "decision", "correction", "note")
+KINDS = ("genesis", "context", "decision", "correction", "note", "update")
+#: Stages of an ``update`` entry (P15-02).
+UPDATE_STAGES = ("proposed", "accepted", "rejected")
 TEXT_MODES = ("store", "hash", "omit")
 #: A body must not hold a numeric list longer than this (no raw arrays).
 MAX_NUMERIC_LIST = 64
@@ -348,6 +361,10 @@ class ProvenanceLedger:
         #: decision of this session, so a correction can compute its
         #: edit distance in every text mode.
         self._shown_text: dict[str, str] = {}
+        #: update_id -> proposal entry, the decided ids, chain -> last accepted config_id (``update`` entries).
+        self._proposals: dict[str, dict] = {}
+        self._decided: set[str] = set()
+        self._chain_head: dict[str, str | None] = {}
         if self.path is not None and self.path.exists() and self.path.stat().st_size > 0:
             entries = read_entries(self.path)
             res = verify(entries)
@@ -416,6 +433,14 @@ class ProvenanceLedger:
             self._contexts.add(e["body"]["context_id"])
         elif e["kind"] == "decision":
             self._decisions[e["body"]["decision_id"]] = e
+        elif e["kind"] == "update":
+            b = e["body"]
+            if b.get("stage") == "proposed":
+                self._proposals[b["update_id"]] = e
+            else:
+                self._decided.add(b["update_id"])
+                if b.get("stage") == "accepted":
+                    self._chain_head[b.get("chain", "default")] = b.get("config_id")
 
     # --- privacy-aware values -----------------------------------------------
 
@@ -612,6 +637,60 @@ class ProvenanceLedger:
     def note(self, body: dict) -> dict:
         return self.append("note", body)
 
+    def chain_head(self, chain: str = "default") -> str | None:
+        """The last accepted ``config_id`` of an update chain (None: no accepted update yet)."""
+        return self._chain_head.get(chain)
+
+    def has_update(self, update_id: str) -> bool:
+        """True if ``update_id`` was proposed in this ledger (open or decided)."""
+        return update_id in self._proposals
+
+    def is_open_update(self, update_id: str) -> bool:
+        """True if ``update_id`` was proposed and is not decided yet."""
+        return update_id in self._proposals and update_id not in self._decided
+
+    def record_update(
+        self,
+        stage: str,
+        update_id: str,
+        *,
+        chain: str = "default",
+        parent_config_id: str | None = None,
+        config_id: str | None = None,
+        details: dict | None = None,
+    ) -> dict:
+        """Write one ``update`` entry (P15-02): a proposed, accepted or rejected update.
+
+        ``stage="proposed"`` opens ``update_id`` (unique). ``"accepted"`` / ``"rejected"`` close it and
+        link to the proposal by its hash. An accepted update needs ``parent_config_id`` equal to
+        :meth:`chain_head` and a new ``config_id``; a rejected one keeps ``config_id`` equal to
+        ``parent_config_id``. ``details`` holds the checks (null controls, champion / challenger test,
+        threshold, reasons); it must not hold raw data (:func:`check_no_raw`) or plain text.
+        """
+        if stage not in UPDATE_STAGES:
+            raise ValueError(f"stage must be one of {UPDATE_STAGES}")
+        body: dict = {"update_id": str(update_id), "chain": str(chain), "stage": stage,
+                      "parent_config_id": parent_config_id, "config_id": config_id}
+        if stage == "proposed":
+            if body["update_id"] in self._proposals:
+                raise ValueError(f"update {update_id!r} was already proposed")
+        else:
+            prop = self._proposals.get(body["update_id"])
+            if prop is None:
+                raise ValueError(f"update {update_id!r} has no proposal entry")
+            if body["update_id"] in self._decided:
+                raise ValueError(f"update {update_id!r} is already decided")
+            head = self._chain_head.get(body["chain"])
+            if parent_config_id != head:
+                raise ValueError(f"parent_config_id {parent_config_id!r} != chain head {head!r}")
+            if stage == "accepted" and (config_id is None or config_id == parent_config_id):
+                raise ValueError("an accepted update needs a new config_id")
+            if stage == "rejected" and config_id != parent_config_id:
+                raise ValueError("a rejected update must keep the config_id")
+            body["proposal_hash"] = prop["hash"]
+        body["details"] = dict(details or {})
+        return self.append("update", body)
+
 
 class LedgeredPolicy:
     """Wrap a policy so that each ``decide`` call writes a decision entry.
@@ -684,6 +763,9 @@ def verify(
         return VerifyResult(False, 0, ["empty ledger"])
     contexts: set[str] = set()
     decisions: dict[str, str] = {}
+    proposals: dict[str, str] = {}
+    decided: set[str] = set()
+    chain_head: dict[str, Any] = {}
     prev = GENESIS_PREV
     for i, e in enumerate(entries):
         tag = f"entry {i}"
@@ -728,6 +810,8 @@ def verify(
                 errors.append(f"{tag}: correction refers to an unknown or later decision {did!r}")
             elif b.get("decision_hash") != decisions[did]:
                 errors.append(f"{tag}: decision_hash does not match decision {did!r}")
+        elif e["kind"] == "update":
+            errors += _verify_update(tag, b, e["hash"], proposals, decided, chain_head)
         prev = e["hash"]
     last = entries[-1]
     if expected_head is not None:
@@ -735,6 +819,37 @@ def verify(
         if last.get("hash") != want:
             errors.append("head hash != expected head (entries cut or added at the end)")
     return VerifyResult(not errors, len(entries), errors, last.get("hash"), last.get("seq"))
+
+
+def _verify_update(tag: str, b: dict, h: str, proposals: dict[str, str], decided: set[str],
+                   chain_head: dict[str, Any]) -> list[str]:
+    """The rules of one ``update`` entry (P15-02). Updates the running state."""
+    errs: list[str] = []
+    uid, stage, chain = b.get("update_id"), b.get("stage"), b.get("chain", "default")
+    if stage not in UPDATE_STAGES:
+        return [f"{tag}: unknown update stage {stage!r}"]
+    if stage == "proposed":
+        if uid in proposals:
+            errs.append(f"{tag}: duplicate update proposal {uid!r}")
+        proposals[uid] = h
+        return errs
+    if uid not in proposals:
+        errs.append(f"{tag}: update decision refers to an unknown or later proposal {uid!r}")
+    elif b.get("proposal_hash") != proposals[uid]:
+        errs.append(f"{tag}: proposal_hash does not match proposal {uid!r}")
+    if uid in decided:
+        errs.append(f"{tag}: update {uid!r} decided twice")
+    decided.add(uid)
+    parent, cid = b.get("parent_config_id"), b.get("config_id")
+    if parent != chain_head.get(chain):
+        errs.append(f"{tag}: parent_config_id does not match the last accepted config_id of chain {chain!r}")
+    if stage == "accepted":
+        if cid is None or cid == parent:
+            errs.append(f"{tag}: an accepted update must give a new config_id")
+        chain_head[chain] = cid
+    elif cid != parent:
+        errs.append(f"{tag}: a rejected update must keep the config_id")
+    return errs
 
 
 # ---------------------------------------------------------------------------

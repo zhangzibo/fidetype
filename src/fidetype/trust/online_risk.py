@@ -455,21 +455,51 @@ class OnlineTrustPolicy:
         decision, tk = op.decide(x)
         ...
         op.feedback(tk, final_text)   # the user's final text, or None if unknown
+
+    Decoder updates (P15-02): :meth:`swap_policy` replaces the policy and
+    keeps the controller (the ACI threshold runs across updates).
+    ``commit_floor`` (default ``-inf``: no floor) is a lower bound on the
+    COMMIT score: it only removes commits.
+    :class:`fidetype.trust.update_hooks.OnlinePolicyUpdater` calls both, and
+    only on an update that :class:`~fidetype.trust.adaptive.GuardedUpdateLoop`
+    accepted.
     """
 
     def __init__(self, policy: Any, controller: OnlineCommitRiskControl) -> None:
+        self.controller = controller
+        #: COMMIT needs ``p_top1 >= commit_floor`` (P15-02: the session threshold of the update loop).
+        self.commit_floor = -math.inf
+        #: (config_id, policy) of each :meth:`swap_policy` call.
+        self.policy_history: list[tuple[str | None, Any]] = []
+        self._set_policy(policy)
+
+    def _set_policy(self, policy: Any) -> None:
         from fidetype.trust.policy import DecisionPolicy
 
-        self.policy = policy
-        self.controller = controller
-        self._lo = DecisionPolicy(replace(policy.config, commit_p=-math.inf), use_guard=policy.use_guard)
-        self._hi = DecisionPolicy(replace(policy.config, commit_p=math.inf), use_guard=policy.use_guard)
+        lo = DecisionPolicy(replace(policy.config, commit_p=-math.inf), use_guard=policy.use_guard)
+        hi = DecisionPolicy(replace(policy.config, commit_p=math.inf), use_guard=policy.use_guard)
+        self.policy, self._lo, self._hi = policy, lo, hi
+
+    def swap_policy(self, policy: Any, *, commit_floor: float | None = None, config_id: str | None = None) -> None:
+        """Replace the decision policy (for a new decoder version). The controller state stays.
+
+        ``commit_floor``: the new floor (None: keep the old one). Use it only after the update passed
+        its checks (:class:`~fidetype.trust.adaptive.GuardedUpdateLoop`).
+        """
+        if commit_floor is not None and math.isnan(commit_floor):
+            raise ValueError("commit_floor must not be nan")
+        self._set_policy(policy)
+        if commit_floor is not None:
+            self.commit_floor = float(commit_floor)
+        self.policy_history.append((config_id, policy))
 
     def decide(self, x: Any, final_attempt: bool = False) -> tuple[Any, Ticket]:
         from fidetype.trust.policy import Action
 
         d_lo = self._lo.decide(x, final_attempt=final_attempt)
         score = float(x.p_top1) if d_lo.action == Action.COMMIT else -math.inf
+        if score < self.commit_floor:
+            score = -math.inf
         d_hi = self._hi.decide(x, final_attempt=final_attempt)
         top1 = x.texts[0] if x.texts else None
         tk = self.controller.decide(score, top1, d_hi.action == Action.OFFER_WORDS)
