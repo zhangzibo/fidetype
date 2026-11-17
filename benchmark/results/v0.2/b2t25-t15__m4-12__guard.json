@@ -1,0 +1,230 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "b2t25-t15/m4-12/guard",
+ "track": "b2t25-t15",
+ "decoder": {
+  "name": "M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours)",
+  "version": "m4-12",
+  "url": "experiments/2026-11-14-m4-12-decoder-retrain",
+  "weights_licence": "not released",
+  "training_data": [
+   "B2T '25 HDF5 train partition (CC0); it holds about 368 of the 816 b2t25-t15 test trials, so only the val_eval trials are scored"
+  ],
+  "training_regime": "one participant; held-out trials of training sessions",
+  "checkpoint": "runs/m4-12-fixed0/best.pt"
+ },
+ "policy": {
+  "name": "drop-in guard (P14-03 recipe)",
+  "description": "fidetype.trust.calibrate, alpha 0.05, delta 0.1, decode_fn = the T15 phoneme-to-word decoder"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "b2t25-t15__m4-12__guard"
+ ],
+ "n_trials": 103,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "day"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.20363408521303258,
+   "ci": [
+    0.18496275059519046,
+    0.22426085669816076
+   ]
+  },
+  "wer": {
+   "value": 0.2998477929984779,
+   "ci": [
+    0.2745707728712917,
+    0.33192661137369417
+   ]
+  },
+  "ewpm": {
+   "value": 7.329787309339323,
+   "ci": [
+    6.6592625251017346,
+    8.008226924713545
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 4.116541353383459,
+   "ci": [
+    3.979890617568548,
+    4.262488915164055
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 3.2132459559558635,
+   "ci": [
+    2.671104504724583,
+    3.7530651480108492
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "commit_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "error_among_commits": {
+   "value": null,
+   "ci": [
+    null,
+    null
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 1.0087719298245614,
+   "cer_gap": 0.8051378446115288,
+   "cer_gap_ci": [
+    0.7629640738709366,
+    0.8468966057188991
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 0.9041353383458647,
+   "cer_gap": 0.7005012531328321,
+   "cer_gap_ci": [
+    0.6815266196279667,
+    0.7209315303156145
+   ]
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "max": 0.05
+  },
+  "passed": true,
+  "basis": {
+   "shuffled": "decoder output level: the frames of each val_eval log-prob matrix permuted in time (seeded by the unit hash); the network was not rerun",
+   "zeros": "decoder output level: uniform log-probs of the same length; the network was not run on zero input"
+  }
+ },
+ "guarantee": {
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 231,
+  "scope": "marginal over the scored val_eval trials; exchangeable val_select / val_eval",
+  "calibration_split": "decoder val_select partition minus every b2t25-t15 test trial",
+  "measured_wrong_commit": 0.0,
+  "measured_wrong_commit_ci": [
+   0.0,
+   0.0
+  ],
+  "met_on_test": true
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": 0.0,
+  "ci": null,
+  "status": "vacuous",
+  "unguarded_wpm": 0.0,
+  "wpm_no_penalty": 0.0,
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 231,
+  "calibration": "decoder val_select partition minus every b2t25-t15 test trial",
+  "confidence": "probability >= 0.9 over calibration draws",
+  "measured_wrong_commit": 0.0,
+  "measured_wrong_commit_cp95": [
+   0.0,
+   0.0352
+  ],
+  "n_trials": 103,
+  "n_commits": 0,
+  "n_wrong_commits": 0,
+  "n_correct_commits": 0,
+  "error_among_commits": null,
+  "committed_correct_words": 0,
+  "total_words": 657,
+  "minutes_neural": 20.73266666666667,
+  "minutes_correction": 0.0,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 4.116541353383458,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 159.27 chars/min",
+  "config": {
+   "chars_per_min": 159.2741387635318
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Intracortical attempted speech, T15 copy task (Brain-to-Text '25)",
+  "licence": "CC0 1.0",
+  "research_only": false,
+  "modality": "intracortical",
+  "ci_unit": "day",
+  "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+  "rate_source": "measured T15 speech rate, 125k trials (v0.1 track)",
+  "key_track": false
+ },
+ "coverage": {
+  "n_scored_units": 816,
+  "n_covered": 103,
+  "partial": true,
+  "subset": "103 of 816 test trials: only trials in the decoder's held-out val_eval partition (matched by day and sentence, one-to-one) are scored. The other test trials are in the decoder's train (about 368) or val_select (about 106) partitions, or have no match."
+ },
+ "regime": "other",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 103,
+  "n_parent_units": 816,
+  "n_parent_covered": 103
+ },
+ "status": "scored",
+ "certification": "vacuous"
+}

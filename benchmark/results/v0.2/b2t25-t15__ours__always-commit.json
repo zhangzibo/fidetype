@@ -1,0 +1,217 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "b2t25-t15/ours/always-commit",
+ "track": "b2t25-t15",
+ "decoder": {
+  "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+  "version": "m6-06",
+  "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+  "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+  "training_data": [
+   "none (decoding only)"
+  ],
+  "training_regime": "no training: decoding of the published RNN logits (CC0)"
+ },
+ "policy": {
+  "name": "always-commit",
+  "description": "commit the top-1 text on every trial"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "b2t25-t15__ours__always-commit"
+ ],
+ "n_trials": 816,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "day"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.09533282934786934,
+   "ci": [
+    0.08087298563077358,
+    0.11008355670089678
+   ]
+  },
+  "wer": {
+   "value": 0.1490731707317073,
+   "ci": [
+    0.13108197436996072,
+    0.16720723926008332
+   ]
+  },
+  "ewpm": {
+   "value": 11.345276639444181,
+   "ci": [
+    10.526958255609987,
+    12.251059731630443
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 4.078303425774878,
+   "ci": [
+    4.045918240781656,
+    4.118202261127574
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 7.266973213669304,
+   "ci": [
+    6.439991946147764,
+    8.183856988751455
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.6102941176470589,
+   "ci": [
+    0.5693501229317564,
+    0.6477551278060901
+   ]
+  },
+  "commit_rate": {
+   "value": 1.0,
+   "ci": [
+    1.0,
+    1.0
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.6102941176470589,
+   "ci": [
+    0.5693501229317564,
+    0.6477551278060901
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.056372549019607844,
+   "ci": [
+    0.046855692395558396,
+    0.06547698624904508
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 1.6140532367803286,
+   "cer_gap": 1.5187204074324594,
+   "cer_gap_ci": [
+    1.2588167967764023,
+    1.8443166574822973
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 0.9658218278757013,
+   "cer_gap": 0.8704889985278319,
+   "cer_gap_ci": [
+    0.8554682669468937,
+    0.8846646689574261
+   ]
+  },
+  "null_commit": {
+   "status": "fail",
+   "commit_rate_zeros": 1.0,
+   "max": 0.05
+  },
+  "passed": false,
+  "basis": {
+   "shuffled": "decoder input level for our word decoder (the published RNN logit frames of each test trial permuted in time, fidetype.trust.guard.shuffle_stream, seed 0); the RNN itself is not ours and was not rerun",
+   "zeros": "near-uniform logits of the same length (uniform_stream, 0.05 noise) stand in for zero neural input (the published RNN cannot be rerun on zero input)"
+  }
+ },
+ "guarantee": {
+  "method": "none"
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "unguarded_wpm": 5.037024115201789,
+  "wpm_no_penalty": 12.336431845535323,
+  "method": "none",
+  "alpha": null,
+  "delta": null,
+  "n_cal": null,
+  "calibration": null,
+  "confidence": null,
+  "measured_wrong_commit": 0.6102941176470589,
+  "measured_wrong_commit_cp95": [
+   0.5759,
+   0.6439
+  ],
+  "n_trials": 816,
+  "n_commits": 816,
+  "n_wrong_commits": 498,
+  "n_correct_commits": 318,
+  "error_among_commits": 0.6102941176470589,
+  "committed_correct_words": 1927,
+  "total_words": 5125,
+  "minutes_neural": 156.20400000000004,
+  "minutes_correction": 226.36315789473684,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 4.078303425774878,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "fail",
+   "passed": false,
+   "commit_rate_zeros": 1.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 159.27 chars/min",
+  "config": {
+   "chars_per_min": 159.2741387635318
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Intracortical attempted speech, T15 copy task (Brain-to-Text '25)",
+  "licence": "CC0 1.0",
+  "research_only": false,
+  "modality": "intracortical",
+  "ci_unit": "day",
+  "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+  "rate_source": "measured T15 speech rate, 125k trials (v0.1 track)",
+  "key_track": false
+ },
+ "coverage": {
+  "n_scored_units": 816,
+  "n_covered": 816,
+  "partial": false
+ },
+ "regime": "other",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 816,
+  "n_parent_units": 816,
+  "n_parent_covered": 816
+ },
+ "status": "scored: controls failed",
+ "certification": "not-certified"
+}

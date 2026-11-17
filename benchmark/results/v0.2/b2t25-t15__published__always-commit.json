@@ -1,0 +1,217 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "b2t25-t15/published/always-commit",
+ "track": "b2t25-t15",
+ "decoder": {
+  "name": "Card et al. 2024 online decoder (published sentence)",
+  "version": "t15-copytask-online",
+  "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+  "weights_licence": "not released (outputs in the CC0 dataset)",
+  "training_data": [
+   "T15 sessions (Card et al. 2024)"
+  ],
+  "training_regime": "online, per-user"
+ },
+ "policy": {
+  "name": "always-commit",
+  "description": "commit the top-1 text on every trial"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "b2t25-t15__published__always-commit"
+ ],
+ "n_trials": 816,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "day"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.03091552938367883,
+   "ci": [
+    0.021728445810389983,
+    0.04135187364658731
+   ]
+  },
+  "wer": {
+   "value": 0.04312195121951219,
+   "ci": [
+    0.029683575113159076,
+    0.06010706883377411
+   ]
+  },
+  "ewpm": {
+   "value": 19.59965089479602,
+   "ci": [
+    17.92109939798037,
+    21.26389302994112
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 4.078303425774878,
+   "ci": [
+    4.045918240781656,
+    4.118202261127574
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 15.521347469021144,
+   "ci": [
+    13.834099756435178,
+    17.18270239207244
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.19362745098039216,
+   "ci": [
+    0.1454981728902592,
+    0.25359040472966776
+   ]
+  },
+  "commit_rate": {
+   "value": 1.0,
+   "ci": [
+    1.0,
+    1.0
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.19362745098039216,
+   "ci": [
+    0.1454981728902592,
+    0.25359040472966776
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.022058823529411766,
+   "ci": [
+    0.011056511056511056,
+    0.032648683975486426
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "fail",
+   "cer_control": 0.03091552938367883,
+   "cer_gap": 0.0,
+   "cer_gap_ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "zeros": {
+   "status": "fail",
+   "cer_control": 0.03091552938367883,
+   "cer_gap": 0.0,
+   "cer_gap_ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "null_commit": {
+   "status": "fail",
+   "commit_rate_zeros": 1.0,
+   "max": 0.05
+  },
+  "passed": false,
+  "basis": {
+   "shuffled": "text-only decoder: the published sentence is fixed; only our gate score sees the frame-shuffled logits. The CER cannot rise, so this control cannot pass (it shows that the text does not depend on our input)",
+   "zeros": "text-only decoder: the published sentence on top of near-uniform logits (gate test only; the CER cannot rise)"
+  }
+ },
+ "guarantee": {
+  "method": "none"
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "unguarded_wpm": 18.331370047298563,
+  "wpm_no_penalty": 26.580625336098944,
+  "method": "none",
+  "alpha": null,
+  "delta": null,
+  "n_cal": null,
+  "calibration": null,
+  "confidence": null,
+  "measured_wrong_commit": 0.19362745098039216,
+  "measured_wrong_commit_cp95": [
+   0.167,
+   0.2224
+  ],
+  "n_trials": 816,
+  "n_commits": 816,
+  "n_wrong_commits": 158,
+  "n_correct_commits": 658,
+  "error_among_commits": 0.19362745098039216,
+  "committed_correct_words": 4152,
+  "total_words": 5125,
+  "minutes_neural": 156.20400000000004,
+  "minutes_correction": 70.29298245614036,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 4.078303425774878,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "fail",
+   "zeros": "fail",
+   "null_commit": "fail",
+   "passed": false,
+   "commit_rate_zeros": 1.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 159.27 chars/min",
+  "config": {
+   "chars_per_min": 159.2741387635318
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Intracortical attempted speech, T15 copy task (Brain-to-Text '25)",
+  "licence": "CC0 1.0",
+  "research_only": false,
+  "modality": "intracortical",
+  "ci_unit": "day",
+  "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+  "rate_source": "measured T15 speech rate, 125k trials (v0.1 track)",
+  "key_track": false
+ },
+ "coverage": {
+  "n_scored_units": 816,
+  "n_covered": 816,
+  "partial": false
+ },
+ "regime": "personalised",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 816,
+  "n_parent_units": 816,
+  "n_parent_covered": 816
+ },
+ "status": "scored: controls failed",
+ "certification": "not-certified"
+}

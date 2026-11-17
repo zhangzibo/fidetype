@@ -1,0 +1,155 @@
+{
+ "toronto": {
+  "conditions": {
+   "calib": {
+    "lm_weight": 1.0,
+    "trust": {
+     "threshold": 0.7,
+     "commits": 21,
+     "commit_rate": 0.038112522686025406,
+     "commit_rate_v01": 0.038112522686025406
+    },
+    "crc": {
+     "threshold": 0.7,
+     "commits": 21,
+     "commit_rate": 0.038112522686025406,
+     "commit_rate_v01": 0.038112522686025406
+    },
+    "seconds": 222.3
+   },
+   "xsession": {
+    "lm_weight": 1.0,
+    "trust": {
+     "threshold": 0.3,
+     "commits": 10,
+     "commit_rate": 0.018148820326678767,
+     "commit_rate_v01": 0.018148820326678767
+    },
+    "crc": {
+     "threshold": 0.3,
+     "commits": 10,
+     "commit_rate": 0.018148820326678767,
+     "commit_rate_v01": 0.018148820326678767
+    },
+    "seconds": 245.1
+   },
+   "xsubject": {
+    "lm_weight": 1.5,
+    "trust": {
+     "threshold": 0.3,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "commit_rate_v01": 0.0
+    },
+    "crc": {
+     "threshold": null,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "commit_rate_v01": 0.0
+    },
+    "seconds": 197.1
+   }
+  },
+  "seconds": 664.7
+ },
+ "b2t": {
+  "n_fit": 812,
+  "n_test": 816,
+  "ours": {
+   "temperature": 3.780895226360392,
+   "checks": {
+    "trust": {
+     "threshold": 0.5,
+     "commits": 189,
+     "scores_equal_v01_items": true,
+     "commits_v01": 189
+    },
+    "crc": {
+     "threshold": 0.48927426845213917,
+     "commits": 199,
+     "scores_equal_v01_items": true,
+     "commits_v01": 199
+    },
+    "ltt": {
+     "threshold": 0.54,
+     "commits": 159,
+     "scores_equal_v01_items": true,
+     "commits_v01": 159
+    }
+   },
+   "seconds": 753.6
+  },
+  "published": {
+   "temperature": 3.780895226360392,
+   "checks": {
+    "trust": {
+     "threshold": 0.7,
+     "commits": 386,
+     "scores_equal_v01_items": true,
+     "commits_v01": 386
+    },
+    "crc": {
+     "threshold": 0.6717050752793481,
+     "commits": 405,
+     "scores_equal_v01_items": true,
+     "commits_v01": 405
+    },
+    "ltt": {
+     "threshold": 0.72,
+     "commits": 364,
+     "scores_equal_v01_items": true,
+     "commits_v01": 364
+    }
+   },
+   "seconds": 44.4
+  },
+  "seconds": 803.5
+ },
+ "meg": {
+  "n_val": 437,
+  "n_test": 637,
+  "checks": {
+   "trust": {
+    "threshold": 0.5,
+    "commits": 0,
+    "scores_equal_v01_items": true,
+    "commits_v01": 0
+   },
+   "crc": {
+    "threshold": 0.10239239302166811,
+    "commits": 14,
+    "scores_equal_v01_items": true,
+    "commits_v01": 14
+   },
+   "ltt": {
+    "threshold": 0.0,
+    "commits": 15,
+    "scores_equal_v01_items": true,
+    "commits_v01": 15
+   }
+  },
+  "temperatures": {
+   "commit": 3.295918403993801,
+   "trust": 3.295918403993801
+  },
+  "seconds": 545.8
+ },
+ "t15-m4-12": {
+  "model": "m4-12",
+  "day_offset": 197,
+  "n_val_select": 722,
+  "n_cal_used": 616,
+  "n_val_eval": 701,
+  "n_scored": 103,
+  "config_id": "tcfg-065ec812c6cd643e",
+  "sheet": {
+   "n_items": 616,
+   "n_fit": 154,
+   "n_ltt": 231,
+   "feasible": true,
+   "commit_threshold": 0.3
+  },
+  "commits": 0,
+  "seconds": 346.9
+ }
+}

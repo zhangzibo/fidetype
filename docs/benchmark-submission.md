@@ -4,7 +4,7 @@ This page defines how you submit a result on a [v0.2 benchmark track](benchmark-
 
 - Code: [`src/fidetype/benchmark/scorecard.py`](../src/fidetype/benchmark/scorecard.py) (format, truth, scorer). The metrics come from [`scoring.py`](../src/fidetype/benchmark/scoring.py) and [`safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py).
 - Tests: [`tests/test_benchmark_scorer.py`](../tests/test_benchmark_scorer.py) (synthetic data only).
-- Baselines: [`experiments/2026-11-16-p6-02-scorer/results.md`](../experiments/2026-11-16-p6-02-scorer/results.md). Score cards: [`benchmark/results/v0.2/`](../benchmark/results/v0.2/). Board: [`benchmark/site/`](../benchmark/site/).
+- Baselines: [`experiments/2026-11-16-p6-02-scorer/results.md`](../experiments/2026-11-16-p6-02-scorer/results.md). v0.2 entries for b2t25-t15, toronto-semg and spanishbcbl-meg (v0.1 decoders rerun in this format): [`experiments/2026-11-17-p6-02b-v02-entries/results.md`](../experiments/2026-11-17-p6-02b-v02-entries/results.md). Score cards: [`benchmark/results/v0.2/`](../benchmark/results/v0.2/). Board: [`benchmark/site/`](../benchmark/site/).
 
 ## The three commands
 

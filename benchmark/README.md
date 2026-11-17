@@ -51,7 +51,7 @@ python -m fidetype.benchmark truth <track> --data <path> --out truth.jsonl      
 python -m fidetype.benchmark score <track> <submission> --truth truth.jsonl --out card.json
 ```
 
-The score card holds CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha with its certification status, wrong-commit rate, error among commits and commit rate, all with cluster-bootstrap CIs over the track CI unit, plus the control results. Exit code 0 only if the shuffled, zeros and null-commit (<= 5 %) controls pass. Baseline score cards: [`results/v0.2/`](results/v0.2/).
+The score card holds CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha with its certification status, wrong-commit rate, error among commits and commit rate, all with cluster-bootstrap CIs over the track CI unit, plus the control results. Exit code 0 only if the shuffled, zeros and null-commit (<= 5 %) controls pass. Baseline score cards: [`results/v0.2/`](results/v0.2/). All seven v0.2 tracks have entries: the four new tracks from P6-02, and b2t25-t15, toronto-semg and spanishbcbl-meg (the v0.1 decoders and policies rerun in the v0.2 format, same numbers where the definitions agree) from [P6-08](../experiments/2026-11-17-p6-02b-v02-entries/results.md).
 
 ## Hallucination tracks
 

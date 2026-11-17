@@ -58,7 +58,19 @@ No-BCI reference (gaze typing only, 20 chars/min): **4.27 eWPM**.
 
 Track `b2t25-t15`. Data: Brain-to-Text '25, participant T15 copy task (CC0 1.0). CI unit: day. User model: aac-gaze-v1 @ 159.27 chars/min.
 
-No entries yet.
+No-BCI reference (gaze typing only, 20 chars/min): **4.08 eWPM**.
+
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | always-commit | 0.031 | 19.60 [17.92, 21.26] | n/a (no certified bound) | 0.194 | 0.194 | 1.000 | no (shuf fail, zeros fail, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 17.06 [15.85, 18.34] | 13.42 [11.77, 15.17] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf fail, zeros fail, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate (plug-in fit) | 0.031 | 16.93 [15.75, 18.15] | n/a (no certified bound) | 0.044 | 0.093 | 0.473 | no (shuf fail, zeros fail, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 16.78 [15.64, 17.98] | 12.24 [11.05, 13.51] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf fail, zeros fail, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) |
+| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | always-commit | 0.095 | 11.35 [10.53, 12.25] | n/a (no certified bound) | 0.610 | 0.610 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) |
+| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate + CRC | 0.095 | 11.24 [10.55, 12.01] | 4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05) | 0.062 | 0.256 | 0.244 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=812; test 0.062 (NOT met) | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) |
+| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate (plug-in fit) | 0.095 | 11.23 [10.56, 12.00] | n/a (no certified bound) | 0.059 | 0.254 | 0.232 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) |
+| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate + LTT | 0.095 | 11.17 [10.50, 11.93] | 4.05 [3.25, 4.77] (LTT a=0.05 d=0.1) | 0.047 | 0.239 | 0.195 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met) | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) |
+| M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] | drop-in guard (P14-03 recipe) | 0.204 | 7.33 [6.66, 8.01] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=231; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) |
 
 ## Intracortical attempted speech, T12 (Brain-to-Text '24 competition data) (tracks v0.2)
 
@@ -86,7 +98,19 @@ No-BCI reference (gaze typing only, 20 chars/min): **3.88 eWPM**.
 
 Track `toronto-semg`. Data: Electromyographic typing gesture classification dataset (CC BY 4.0). CI unit: participant. User model: aac-gaze-v1 @ 75.76 chars/min.
 
-No entries yet.
+No-BCI reference (gaze typing only, 20 chars/min): **4.27 eWPM**.
+
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate + CRC | 0.123 | 7.87 [6.84, 8.92] | 0.55 [0.29, 0.86] (CRC a=0.05) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate (plug-in fit) | 0.123 | 7.87 [6.84, 8.92] | n/a (no certified bound) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | always-commit | 0.123 | 7.77 [6.51, 9.07] | n/a (no certified bound) | 0.541 | 0.541 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate + CRC | 0.398 | 4.63 [4.15, 5.20] | 0.25 [0.07, 0.47] (CRC a=0.05) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate (plug-in fit) | 0.398 | 4.63 [4.15, 5.20] | n/a (no certified bound) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | always-commit | 0.398 | 4.06 [3.51, 4.71] | n/a (no certified bound) | 0.882 | 0.882 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate + CRC | 0.479 | 4.03 [3.75, 4.35] | 0.00 (vacuous: no commits; CRC a=0.05) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate (plug-in fit) | 0.479 | 4.03 [3.75, 4.35] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | always-commit | 0.479 | 3.41 [3.07, 3.78] | n/a (no certified bound) | 0.962 | 0.962 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
 
 ## Forearm sEMG natural typing (KT-sEMG, Nokia Bell Labs) (tracks v0.2)
 
@@ -103,7 +127,14 @@ No-BCI reference (gaze typing only, 20 chars/min): **3.61 eWPM**.
 
 Track `spanishbcbl-meg`. Data: SpanishBCBL typing MEG (Brain2Qwerty v1/v2 data) (CC BY-NC 4.0, **research only**). CI unit: two_way:sentence,participant. User model: aac-gaze-v1 @ 152.00 chars/min.
 
-No entries yet.
+No-BCI reference (gaze typing only, 20 chars/min): **3.15 eWPM**.
+
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate (plug-in fit) | 0.522 | 3.11 [2.92, 3.35] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + LTT | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + CRC | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | always-commit | 0.522 | 2.51 [2.25, 2.84] | n/a (no certified bound) | 0.997 | 0.997 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) |
 
 ## Wrist sEMG touch typing (emg2qwerty, Meta) - RESEARCH ONLY (tracks v0.2)
 

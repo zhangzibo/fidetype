@@ -1,0 +1,112 @@
+{
+ "b2t25-t15__m4-12__guard": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "vacuous"
+ },
+ "b2t25-t15__ours__always-commit": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "b2t25-t15__ours__crc": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "above-alpha"
+ },
+ "b2t25-t15__ours__ltt": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "certified"
+ },
+ "b2t25-t15__ours__trust": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "not-certified"
+ },
+ "b2t25-t15__published__always-commit": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "b2t25-t15__published__crc": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "certified"
+ },
+ "b2t25-t15__published__ltt": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "certified"
+ },
+ "b2t25-t15__published__trust": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "spanishbcbl-meg__convctc-m-async__always-commit": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "spanishbcbl-meg__convctc-m-async__crc": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "certified"
+ },
+ "spanishbcbl-meg__convctc-m-async__ltt": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "certified"
+ },
+ "spanishbcbl-meg__convctc-m-async__trust": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "not-certified"
+ },
+ "toronto-semg__cnn-calib__always-commit": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "toronto-semg__cnn-calib__crc": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "certified"
+ },
+ "toronto-semg__cnn-calib__trust": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "not-certified"
+ },
+ "toronto-semg__cnn-xsession__always-commit": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "toronto-semg__cnn-xsession__crc": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "certified"
+ },
+ "toronto-semg__cnn-xsession__trust": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "not-certified"
+ },
+ "toronto-semg__cnn-xsubject__always-commit": {
+  "exit": 1,
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "toronto-semg__cnn-xsubject__crc": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "vacuous"
+ },
+ "toronto-semg__cnn-xsubject__trust": {
+  "exit": 0,
+  "status": "scored",
+  "certification": "not-certified"
+ }
+}

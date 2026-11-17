@@ -681,7 +681,296 @@
     "safe_wpm_s": "n/a (no certified bound)"
    }
   ],
-  "b2t25-t15": [],
+  "b2t25-t15": [
+   {
+    "entry_id": "b2t25-t15/published/always-commit",
+    "track": "b2t25-t15",
+    "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "policy": "always-commit",
+    "cer": 0.03091552938367883,
+    "wer": 0.04312195121951219,
+    "ewpm": 19.59965089479602,
+    "ewpm_ci": [
+     17.92109939798037,
+     21.26389302994112
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.19362745098039216,
+    "error_among_commits": 0.19362745098039216,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf fail, zeros fail, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (outputs in the CC0 dataset)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 816,
+    "ci_unit": "group",
+    "notes": [
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+    ],
+    "file": "b2t25-t15__published__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "b2t25-t15/published/crc",
+    "track": "b2t25-t15",
+    "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "policy": "trust gate + CRC",
+    "cer": 0.03091552938367883,
+    "wer": 0.04312195121951219,
+    "ewpm": 17.06245654702212,
+    "ewpm_ci": [
+     15.85226244211802,
+     18.337804955500758
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.049019607843137254,
+    "error_among_commits": 0.09876543209876543,
+    "commit_rate": 0.4963235294117647,
+    "controls_passed": false,
+    "controls": "no (shuf fail, zeros fail, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=812; test 0.049 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (outputs in the CC0 dataset)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 816,
+    "ci_unit": "group",
+    "notes": [
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+    ],
+    "file": "b2t25-t15__published__crc.json",
+    "safe_wpm": 13.422448647918946,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "13.42 [11.77, 15.17] (CRC a=0.05)"
+   },
+   {
+    "entry_id": "b2t25-t15/published/trust",
+    "track": "b2t25-t15",
+    "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.03091552938367883,
+    "wer": 0.04312195121951219,
+    "ewpm": 16.929380303760855,
+    "ewpm_ci": [
+     15.74799545272586,
+     18.14524705634715
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.04411764705882353,
+    "error_among_commits": 0.09326424870466321,
+    "commit_rate": 0.4730392156862745,
+    "controls_passed": false,
+    "controls": "no (shuf fail, zeros fail, null pass)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (outputs in the CC0 dataset)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 816,
+    "ci_unit": "group",
+    "notes": [
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+    ],
+    "file": "b2t25-t15__published__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "b2t25-t15/published/ltt",
+    "track": "b2t25-t15",
+    "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "policy": "trust gate + LTT",
+    "cer": 0.03091552938367883,
+    "wer": 0.04312195121951219,
+    "ewpm": 16.78149249277393,
+    "ewpm_ci": [
+     15.635414311950909,
+     17.97884979971011
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.04044117647058824,
+    "error_among_commits": 0.09065934065934066,
+    "commit_rate": 0.44607843137254904,
+    "controls_passed": false,
+    "controls": "no (shuf fail, zeros fail, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (outputs in the CC0 dataset)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 816,
+    "ci_unit": "group",
+    "notes": [
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+    ],
+    "file": "b2t25-t15__published__ltt.json",
+    "safe_wpm": 12.241472849274949,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "12.24 [11.05, 13.51] (LTT a=0.05 d=0.1)"
+   },
+   {
+    "entry_id": "b2t25-t15/ours/always-commit",
+    "track": "b2t25-t15",
+    "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",
+    "policy": "always-commit",
+    "cer": 0.09533282934786934,
+    "wer": 0.1490731707317073,
+    "ewpm": 11.345276639444181,
+    "ewpm_ci": [
+     10.526958255609987,
+     12.251059731630443
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.6102941176470589,
+    "error_among_commits": 0.6102941176470589,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 816,
+    "ci_unit": "group",
+    "notes": [
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+    ],
+    "file": "b2t25-t15__ours__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "b2t25-t15/ours/crc",
+    "track": "b2t25-t15",
+    "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",
+    "policy": "trust gate + CRC",
+    "cer": 0.09533282934786934,
+    "wer": 0.1490731707317073,
+    "ewpm": 11.238716639032663,
+    "ewpm_ci": [
+     10.551116175865168,
+     12.012069482970391
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.0625,
+    "error_among_commits": 0.2562814070351759,
+    "commit_rate": 0.24387254901960784,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=812; test 0.062 (NOT met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 816,
+    "ci_unit": "group",
+    "notes": [
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+    ],
+    "file": "b2t25-t15__ours__crc.json",
+    "safe_wpm": 4.900806083076966,
+    "safe_wpm_status": "above-alpha",
+    "safe_wpm_s": "4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05)"
+   },
+   {
+    "entry_id": "b2t25-t15/ours/trust",
+    "track": "b2t25-t15",
+    "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.09533282934786934,
+    "wer": 0.1490731707317073,
+    "ewpm": 11.233809455394123,
+    "ewpm_ci": [
+     10.557136155132193,
+     12.000203709034224
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.058823529411764705,
+    "error_among_commits": 0.25396825396825395,
+    "commit_rate": 0.23161764705882354,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 816,
+    "ci_unit": "group",
+    "notes": [
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+    ],
+    "file": "b2t25-t15__ours__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "b2t25-t15/ours/ltt",
+    "track": "b2t25-t15",
+    "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",
+    "policy": "trust gate + LTT",
+    "cer": 0.09533282934786934,
+    "wer": 0.1490731707317073,
+    "ewpm": 11.168567365404328,
+    "ewpm_ci": [
+     10.501234359406194,
+     11.930368194240536
+    ],
+    "gaze_ewpm": 4.078303425774878,
+    "wrong_commit_rate": 0.04656862745098039,
+    "error_among_commits": 0.2389937106918239,
+    "commit_rate": 0.1948529411764706,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 816,
+    "ci_unit": "group",
+    "notes": [
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+    ],
+    "file": "b2t25-t15__ours__ltt.json",
+    "safe_wpm": 4.047852720654133,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "4.05 [3.25, 4.77] (LTT a=0.05 d=0.1)"
+   },
+   {
+    "entry_id": "b2t25-t15/m4-12/guard",
+    "track": "b2t25-t15",
+    "decoder": "M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units]",
+    "policy": "drop-in guard (P14-03 recipe)",
+    "cer": 0.20363408521303258,
+    "wer": 0.2998477929984779,
+    "ewpm": 7.329787309339323,
+    "ewpm_ci": [
+     6.6592625251017346,
+     8.008226924713545
+    ],
+    "gaze_ewpm": 4.116541353383459,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=231; test 0.000 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 103,
+    "ci_unit": "group",
+    "notes": [
+     "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries."
+    ],
+    "file": "b2t25-t15__m4-12__guard.json",
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
+   }
+  ],
   "b2t24-t12": [
    {
     "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/drop-in guard (P14-03 recipe)",
@@ -814,7 +1103,296 @@
     "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
    }
   ],
-  "toronto-semg": [],
+  "toronto-semg": [
+   {
+    "entry_id": "toronto-semg/cnn-calib/crc",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "policy": "trust gate + CRC",
+    "cer": 0.12254930649031427,
+    "wer": 0.21358159912376778,
+    "ewpm": 7.869594592455035,
+    "ewpm_ci": [
+     6.837224245852262,
+     8.917801617707648
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.003629764065335753,
+    "error_among_commits": 0.09523809523809523,
+    "commit_rate": 0.038112522686025406,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=142; test 0.004 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "day 1 + half of day 2 (cross-fitted: the other half is predicted). Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-calib__crc.json",
+    "safe_wpm": 0.5473422892202501,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.55 [0.29, 0.86] (CRC a=0.05)"
+   },
+   {
+    "entry_id": "toronto-semg/cnn-calib/trust",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.12254930649031427,
+    "wer": 0.21358159912376778,
+    "ewpm": 7.869594592455035,
+    "ewpm_ci": [
+     6.837224245852262,
+     8.917801617707648
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.003629764065335753,
+    "error_among_commits": 0.09523809523809523,
+    "commit_rate": 0.038112522686025406,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "day 1 + half of day 2 (cross-fitted: the other half is predicted). Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-calib__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "toronto-semg/cnn-calib/always-commit",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "policy": "always-commit",
+    "cer": 0.12254930649031427,
+    "wer": 0.21358159912376778,
+    "ewpm": 7.774779521910749,
+    "ewpm_ci": [
+     6.511806903405808,
+     9.072399228759123
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.5408348457350273,
+    "error_among_commits": 0.5408348457350273,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "day 1 + half of day 2 (cross-fitted: the other half is predicted). Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-calib__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "toronto-semg/cnn-xsession/crc",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "policy": "trust gate + CRC",
+    "cer": 0.39772926786445834,
+    "wer": 0.5791347207009858,
+    "ewpm": 4.63363533729744,
+    "ewpm_ci": [
+     4.145012331692423,
+     5.198758257751329
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.003629764065335753,
+    "error_among_commits": 0.2,
+    "commit_rate": 0.018148820326678767,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=142; test 0.004 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-xsession__crc.json",
+    "safe_wpm": 0.251893488547894,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.25 [0.07, 0.47] (CRC a=0.05)"
+   },
+   {
+    "entry_id": "toronto-semg/cnn-xsession/trust",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.39772926786445834,
+    "wer": 0.5791347207009858,
+    "ewpm": 4.63363533729744,
+    "ewpm_ci": [
+     4.145012331692423,
+     5.198758257751329
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.003629764065335753,
+    "error_among_commits": 0.2,
+    "commit_rate": 0.018148820326678767,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-xsession__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "toronto-semg/cnn-xsession/always-commit",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "policy": "always-commit",
+    "cer": 0.39772926786445834,
+    "wer": 0.5791347207009858,
+    "ewpm": 4.063183893399767,
+    "ewpm_ci": [
+     3.5081263982721573,
+     4.713195311180593
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.8820326678765881,
+    "error_among_commits": 0.8820326678765881,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-xsession__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "toronto-semg/cnn-xsubject/crc",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "policy": "trust gate + CRC",
+    "cer": 0.4789606133317727,
+    "wer": 0.6809967141292442,
+    "ewpm": 4.034756948981316,
+    "ewpm_ci": [
+     3.754017924652641,
+     4.34609664375953
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=142; test 0.000 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "4-fold leave-participants-out; no data of the user. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-xsubject__crc.json",
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "safe_wpm_s": "0.00 (vacuous: no commits; CRC a=0.05)"
+   },
+   {
+    "entry_id": "toronto-semg/cnn-xsubject/trust",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.4789606133317727,
+    "wer": 0.6809967141292442,
+    "ewpm": 4.034756948981316,
+    "ewpm_ci": [
+     3.754017924652641,
+     4.34609664375953
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "4-fold leave-participants-out; no data of the user. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-xsubject__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "toronto-semg/cnn-xsubject/always-commit",
+    "track": "toronto-semg",
+    "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "policy": "always-commit",
+    "cer": 0.4789606133317727,
+    "wer": 0.6809967141292442,
+    "ewpm": 3.4052010456574533,
+    "ewpm_ci": [
+     3.068542899436885,
+     3.778997450836928
+    ],
+    "gaze_ewpm": 4.274594721133025,
+    "wrong_commit_rate": 0.9618874773139746,
+    "error_among_commits": 0.9618874773139746,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY 4.0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 551,
+    "ci_unit": "group",
+    "notes": [
+     "4-fold leave-participants-out; no data of the user. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+    ],
+    "file": "toronto-semg__cnn-xsubject__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   }
+  ],
   "kt-semg": [
    {
     "entry_id": "kt-semg/shrinkage-LDA key decoder (adapter reference, oracle key timing)/drop-in guard (built-in CTC beam, no LM)",
@@ -883,7 +1461,140 @@
     "safe_wpm_s": "n/a (no certified bound)"
    }
   ],
-  "spanishbcbl-meg": [],
+  "spanishbcbl-meg": [
+   {
+    "entry_id": "spanishbcbl-meg/convctc-m-async/trust",
+    "track": "spanishbcbl-meg",
+    "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY]",
+    "policy": "trust gate (plug-in fit)",
+    "cer": 0.5216521251901065,
+    "wer": 0.9023090586145648,
+    "ewpm": 3.11436890624909,
+    "ewpm_ci": [
+     2.9224344414842967,
+     3.3481254825340954
+    ],
+    "gaze_ewpm": 3.1545665572720725,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 637,
+    "ci_unit": "two_way:sentence,group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC 4.0 data). Same pipeline, fit (val) and thresholds as the v0.1 entry (experiments/2026-11-11-g1-async-meg-trust, tools/benchmark/import_baselines.py).",
+     "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
+    ],
+    "file": "spanishbcbl-meg__convctc-m-async__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "spanishbcbl-meg/convctc-m-async/ltt",
+    "track": "spanishbcbl-meg",
+    "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY]",
+    "policy": "trust gate + LTT",
+    "cer": 0.5216521251901065,
+    "wer": 0.9023090586145648,
+    "ewpm": 3.1131757179306496,
+    "ewpm_ci": [
+     2.9223813716550633,
+     3.347186187995235
+    ],
+    "gaze_ewpm": 3.1545665572720725,
+    "wrong_commit_rate": 0.02197802197802198,
+    "error_among_commits": 0.9333333333333333,
+    "commit_rate": 0.023547880690737835,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 637,
+    "ci_unit": "two_way:sentence,group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC 4.0 data). Same pipeline, fit (val) and thresholds as the v0.1 entry (experiments/2026-11-11-g1-async-meg-trust, tools/benchmark/import_baselines.py).",
+     "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
+    ],
+    "file": "spanishbcbl-meg__convctc-m-async__ltt.json",
+    "safe_wpm": 0.029166901195842945,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)"
+   },
+   {
+    "entry_id": "spanishbcbl-meg/convctc-m-async/crc",
+    "track": "spanishbcbl-meg",
+    "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY]",
+    "policy": "trust gate + CRC",
+    "cer": 0.5216521251901065,
+    "wer": 0.9023090586145648,
+    "ewpm": 3.1128806371568642,
+    "ewpm_ci": [
+     2.921713167820079,
+     3.3458291358224606
+    ],
+    "gaze_ewpm": 3.1545665572720725,
+    "wrong_commit_rate": 0.02040816326530612,
+    "error_among_commits": 0.9285714285714286,
+    "commit_rate": 0.02197802197802198,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "CRC a=0.05, n_cal=437; test 0.020 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 637,
+    "ci_unit": "two_way:sentence,group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC 4.0 data). Same pipeline, fit (val) and thresholds as the v0.1 entry (experiments/2026-11-11-g1-async-meg-trust, tools/benchmark/import_baselines.py).",
+     "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
+    ],
+    "file": "spanishbcbl-meg__convctc-m-async__crc.json",
+    "safe_wpm": 0.029275959301280435,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.03 [0.00, 0.17] (CRC a=0.05)"
+   },
+   {
+    "entry_id": "spanishbcbl-meg/convctc-m-async/always-commit",
+    "track": "spanishbcbl-meg",
+    "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY]",
+    "policy": "always-commit",
+    "cer": 0.5216521251901065,
+    "wer": 0.9023090586145648,
+    "ewpm": 2.513839218051613,
+    "ewpm_ci": [
+     2.2470111816248184,
+     2.841693500417798
+    ],
+    "gaze_ewpm": 3.1545665572720725,
+    "wrong_commit_rate": 0.9968602825745683,
+    "error_among_commits": 0.9968602825745683,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 637,
+    "ci_unit": "two_way:sentence,group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC 4.0 data). Same pipeline, fit (val) and thresholds as the v0.1 entry (experiments/2026-11-11-g1-async-meg-trust, tools/benchmark/import_baselines.py).",
+     "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
+    ],
+    "file": "spanishbcbl-meg__convctc-m-async__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   }
+  ],
   "emg2qwerty": [
    {
     "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/drop-in guard (built-in CTC beam, no LM)",

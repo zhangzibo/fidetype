@@ -1,0 +1,233 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "spanishbcbl-meg/convctc-m-async/ltt",
+ "track": "spanishbcbl-meg",
+ "decoder": {
+  "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+  "version": "m1-09-r4b-full-medium",
+  "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+  "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
+  "training_data": [
+   "SpanishBCBL train split (CC BY-NC 4.0)",
+   "Tatoeba es (CC BY 2.0 FR) for the char LM"
+  ],
+  "training_regime": "trained on the train sentences of all participants (split by sentence)"
+ },
+ "policy": {
+  "name": "trust gate + LTT",
+  "description": "commit threshold by Learn then Test, alpha 0.05, delta 0.1"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "spanishbcbl-meg__convctc-m-async__ltt"
+ ],
+ "n_trials": 637,
+ "ci": {
+  "unit": "two_way:sentence,group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "two_way:sentence,participant"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.5216521251901065,
+   "ci": [
+    0.4598070131626328,
+    0.5741024316093625
+   ]
+  },
+  "wer": {
+   "value": 0.9023090586145648,
+   "ci": [
+    0.8219049688389072,
+    0.9757283843299617
+   ]
+  },
+  "ewpm": {
+   "value": 3.1131757179306496,
+   "ci": [
+    2.9223813716550633,
+    3.347186187995235
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 3.1545665572720725,
+   "ci": [
+    3.0205303924442,
+    3.2896612157917957
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": -0.04139083934142285,
+   "ci": [
+    -0.20096473364881282,
+    0.18184344273338393
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.02197802197802198,
+   "ci": [
+    0.003099591691816086,
+    0.0512368862893137
+   ]
+  },
+  "commit_rate": {
+   "value": 0.023547880690737835,
+   "ci": [
+    0.003114902557415055,
+    0.05565335895525313
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.9333333333333333,
+   "ci": [
+    0.7423963133640553,
+    1.0
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 0.8362282878411911,
+   "cer_gap": 0.3145761626510846,
+   "cer_gap_ci": [
+    0.2576081763662082,
+    0.3805505573596265
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 1.1457216040982952,
+   "cer_gap": 0.6240694789081885,
+   "cer_gap_ci": [
+    0.5085810048015699,
+    0.7485640588934029
+   ]
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "max": 0.05
+  },
+  "passed": true,
+  "basis": {
+   "shuffled": "input level: the ConvCTC network rerun on time-shuffled MEG of each test trial (M1-09 `infer --control shuffled` outputs)",
+   "zeros": "input level: the ConvCTC network rerun on all-zero MEG (M1-09 `infer --control zeros`)"
+  }
+ },
+ "guarantee": {
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 437,
+  "scope": "marginal wrong-commit rate over test trials; assumes calibration and test trials are exchangeable",
+  "calibration_split": "val",
+  "measured_wrong_commit": 0.02197802197802198,
+  "measured_wrong_commit_ci": [
+   0.003099591691816086,
+   0.0512368862893137
+  ],
+  "met_on_test": true
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": 0.029166901195842945,
+  "ci": [
+   0.0,
+   0.17028181633735104
+  ],
+  "status": "certified",
+  "unguarded_wpm": 0.029166901195842945,
+  "wpm_no_penalty": 0.030417033538781713,
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 437,
+  "calibration": "val",
+  "confidence": "probability >= 0.9 over calibration draws",
+  "measured_wrong_commit": 0.02197802197802198,
+  "measured_wrong_commit_cp95": [
+   0.0121,
+   0.0366
+  ],
+  "n_trials": 637,
+  "n_commits": 15,
+  "n_wrong_commits": 14,
+  "n_correct_commits": 1,
+  "error_among_commits": 0.9333333333333333,
+  "committed_correct_words": 5,
+  "total_words": 3941,
+  "minutes_neural": 164.38157894736844,
+  "minutes_correction": 7.045614035087719,
+  "timing": "track rate model: len(truth) * 60 / 152.0 chars/min",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "two_way:sentence,group",
+  "no_bci_wpm": 3.1545665572720725,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 152.00 chars/min",
+  "config": {
+   "chars_per_min": 152.0
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "RESEARCH ONLY (CC BY-NC 4.0 data). Same pipeline, fit (val) and thresholds as the v0.1 entry (experiments/2026-11-11-g1-async-meg-trust, tools/benchmark/import_baselines.py).",
+  "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "MEG typing, asynchronous (SpanishBCBL) - RESEARCH ONLY",
+  "licence": "CC BY-NC 4.0",
+  "research_only": true,
+  "modality": "meg",
+  "ci_unit": "two_way:sentence,participant",
+  "split_digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+  "rate_source": "Brain2Qwerty v1 typing rate (v0.1 track)",
+  "key_track": false
+ },
+ "coverage": {
+  "n_scored_units": 637,
+  "n_covered": 637,
+  "partial": false
+ },
+ "regime": "other",
+ "latency": null,
+ "timing": "track rate model (152.00 per min)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 637,
+  "n_parent_units": 637,
+  "n_parent_covered": 637
+ },
+ "status": "scored",
+ "certification": "certified"
+}
