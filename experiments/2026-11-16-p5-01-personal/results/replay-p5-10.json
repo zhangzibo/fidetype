@@ -1,0 +1,206 @@
+{
+ "plan": "experiments/2026-11-16-p5-01-personal/plan-p5-10.md",
+ "n_items": 6720,
+ "reproduction": {
+  "A0-static": {
+   "identical": true,
+   "diff": {},
+   "commits": 0,
+   "wrong_commits": 0,
+   "labels_spent_check_blocks": 96,
+   "proposals": 2,
+   "accepted": 1,
+   "offer_only_items": 118,
+   "days_rate_above_alpha": 0,
+   "tightenings": 0,
+   "lambda_changes_outside_finish_update": 0,
+   "alarms": []
+  },
+  "A1-daily": {
+   "identical": true,
+   "diff": {},
+   "commits": 15,
+   "wrong_commits": 15,
+   "labels_spent_check_blocks": 768,
+   "proposals": 16,
+   "accepted": 9,
+   "offer_only_items": 932,
+   "days_rate_above_alpha": 0,
+   "tightenings": 0,
+   "lambda_changes_outside_finish_update": 0,
+   "alarms": []
+  },
+  "A2-drift": {
+   "identical": true,
+   "diff": {},
+   "commits": 0,
+   "wrong_commits": 0,
+   "labels_spent_check_blocks": 96,
+   "proposals": 2,
+   "accepted": 1,
+   "offer_only_items": 118,
+   "days_rate_above_alpha": 0,
+   "tightenings": 0,
+   "lambda_changes_outside_finish_update": 0,
+   "alarms": []
+  },
+  "A2g-drift-guard": {
+   "identical": true,
+   "diff": {},
+   "commits": 15,
+   "wrong_commits": 15,
+   "labels_spent_check_blocks": 384,
+   "proposals": 8,
+   "accepted": 5,
+   "offer_only_items": 118,
+   "days_rate_above_alpha": 0,
+   "tightenings": 0,
+   "lambda_changes_outside_finish_update": 0,
+   "alarms": [
+    [
+     "guard_risk",
+     697
+    ],
+    [
+     "guard_risk",
+     1794
+    ],
+    [
+     "guard_risk",
+     2159
+    ],
+    [
+     "guard_risk",
+     6647
+    ]
+   ]
+  }
+ },
+ "personal_arms": {
+  "A2p-personal-guard-risk": {
+   "arm": "A2p",
+   "guard_risk_test": true,
+   "spread": false,
+   "segments": 8,
+   "items_fed": 6602,
+   "alarms": [
+    {
+     "test": "guard_risk",
+     "item": 697,
+     "day": 9,
+     "segment": 1,
+     "n_in_test": 580
+    },
+    {
+     "test": "guard_risk",
+     "item": 1794,
+     "day": 12,
+     "segment": 3,
+     "n_in_test": 983
+    },
+    {
+     "test": "guard_risk",
+     "item": 2159,
+     "day": 13,
+     "segment": 4,
+     "n_in_test": 306
+    },
+    {
+     "test": "guard_risk",
+     "item": 6647,
+     "day": 23,
+     "segment": 6,
+     "n_in_test": 4377
+    }
+   ],
+   "history": [
+    {
+     "segment": 1,
+     "event": "drift_alarm",
+     "test": "guard_risk",
+     "action": "propose"
+    },
+    {
+     "segment": 3,
+     "event": "drift_alarm",
+     "test": "guard_risk",
+     "action": "propose"
+    },
+    {
+     "segment": 4,
+     "event": "drift_alarm",
+     "test": "guard_risk",
+     "action": "propose"
+    },
+    {
+     "segment": 6,
+     "event": "drift_alarm",
+     "test": "guard_risk",
+     "action": "propose"
+    }
+   ]
+  },
+  "A2d-personal-default": {
+   "arm": "A2d",
+   "guard_risk_test": false,
+   "spread": false,
+   "segments": 2,
+   "items_fed": 6602,
+   "alarms": [],
+   "history": []
+  },
+  "A2ps-personal-default-spread": {
+   "arm": "A2ps",
+   "guard_risk_test": false,
+   "spread": true,
+   "segments": 2,
+   "items_fed": 6602,
+   "alarms": [],
+   "history": []
+  },
+  "A2gs-personal-guard-risk-spread": {
+   "arm": "A2gs",
+   "guard_risk_test": true,
+   "spread": true,
+   "segments": 8,
+   "items_fed": 6602,
+   "alarms": [
+    {
+     "test": "guard_risk",
+     "item": 1799,
+     "day": 12,
+     "segment": 3,
+     "n_in_test": 988
+    },
+    {
+     "test": "guard_risk",
+     "item": 2157,
+     "day": 13,
+     "segment": 4,
+     "n_in_test": 304
+    }
+   ],
+   "history": [
+    {
+     "segment": 3,
+     "event": "drift_alarm",
+     "test": "guard_risk",
+     "action": "propose"
+    },
+    {
+     "segment": 4,
+     "event": "drift_alarm",
+     "test": "guard_risk",
+     "action": "propose"
+    }
+   ]
+  }
+ },
+ "criteria": {
+  "P10-1_reproduces_p5_01": true,
+  "P10-2_guard_risk_alarms_through_personaltrust": true,
+  "P10-2_history_records_each_alarm": true,
+  "P10-3_default_matches_a2": true
+ },
+ "seconds": 1.4
+}

@@ -71,8 +71,33 @@ What happened:
 The pilot stored no per-item null outputs. As pre-registered, each proposal used (a) uniform proxies at the measured uniform guard risk (1.0 on every day; the gate refuses all of them) and (b) shuffled proxies from the P15-02 per-day counts, valid only at thresholds at or above the P15-02 threshold of the day (below it: counted as a fail). This is conservative: it rejects some proposals that a real null decode might pass. It uses measured outcomes of the same decoder, not new decodes.
 
 ## Open issues
-1. **Scale change.** The score test bets on the mean of the conformal p-values. A wider or narrower score spread at the same centre gives uniform-looking mean p-values and is not detected. A fix: add betting functions on `|p - 1/2|` (for example `1 + eps * (|2p - 1| - 1/2)`); the guarantee stays the same. Not done here (not pre-registered).
-2. **`p_top1` is the wrong signal on T12.** The trust input that drifts is the guard risk, not the confidence. `PersonalTrust` watches only `p_top1` by default; the guard-risk test is in `drift.py` but not wired into `PersonalTrust` yet.
+1. **Scale change.** The score test bets on the mean of the conformal p-values. A wider or narrower score spread at the same centre gives uniform-looking mean p-values and is not detected. A fix: add betting functions on `|p - 1/2|` (for example `1 + eps * (|2p - 1| - 1/2)`); the guarantee stays the same. Not done here (not pre-registered). *Update 2026-11-16: done by P5-09 ([results](../2026-11-16-p5-09-drift-spread/results.md)), opt-in.*
+2. **`p_top1` is the wrong signal on T12.** The trust input that drifts is the guard risk, not the confidence. `PersonalTrust` watches only `p_top1` by default; the guard-risk test is in `drift.py` but not wired into `PersonalTrust` yet. *Update 2026-11-16: wired in by P5-10 (opt-in), see the note below.*
 3. **A weak decoder.** A non-vacuous usefulness test needs a decoder with right commits (P11 / M4-13 / P5-02 reruns).
 4. **Real null decodes in replays.** Store per-item null outputs in future pilots, so that replays can run the real shuffled control.
 5. Silent errors are not covered (the risk test sees only corrected commits).
+
+## P5-10: guard-risk test through PersonalTrust (2026-11-16)
+
+Dated addendum. The numbers above stay as they were. [Plan](plan-p5-10.md) (committed in `3def17e` before the run). Script: [replay_p5_10.py](replay_p5_10.py) (CPU, 1.4 s). Numbers: [results/replay-p5-10.json](results/replay-p5-10.json). Code: `PersonalTrust(guard_risk_test=True)` (opt-in; default unchanged; [docs](../../docs/trust-personalisation.md) section 4.1).
+
+| id | criterion | result |
+|---|---|---|
+| **P10-1** | the four P5-01 arms, run again with the unchanged code, give identical numbers and alarms | **pass**: A0, A1, A2, A2g identical to `results/replay.json` |
+| **P10-2** | the guard-risk alarms through `PersonalTrust` are the A2g alarms, each with a `drift_alarm` history entry | **pass**: items 697 (S9), 1,794 (S12), 2,159 (S13), 6,647 (S23); 4 entries, test `guard_risk`, action `propose` |
+| **P10-3** | default `PersonalTrust` alarms as A2 | **pass**: no alarm (as A2) |
+
+New arms (same 6,602 items that the P5-01 arms fed to their drift tests; a new controller per segment, with the reference block, seed and levels of the P5-01 arm):
+
+| arm | `PersonalTrust` settings | segments | alarms (test, item, day) |
+|---|---|---|---|
+| A2p | `guard_risk_test=True`, levels 0.0025 / 0.005 / 0.0025 | 8 (A2g) | guard risk: 697 S9, 1,794 S12, 2,159 S13, 6,647 S23 |
+| A2d | default (0.005 / 0.005) | 2 (A2) | none |
+| A2ps (report only) | default + `spread=True` | 2 (A2) | none |
+| A2gs (report only) | A2p + `spread=True` | 8 (A2g) | guard risk: 1,799 S12, 2,157 S13 |
+
+What this shows and does not show:
+- The alarm path through `PersonalTrust` (decide -> guard-risk test -> alarm -> history entry -> open proposal) gives the same alarms as the P5-01 research arm, item for item.
+- The guard is a stub that replays the recorded decisions: this replay has no decoder inputs, so `PersonalTrust` cannot re-calibrate here. Each segment starts where the P5-01 arm accepted an update. The re-calibration path of `PersonalTrust` is covered by the unit tests (P5-01) only.
+- With `spread=True` (P5-09) the guard-risk test loses two of four alarms on T12: here the drift is a shift of the centre, and the spread bets cost power on that.
+- The roadmap text names `RiskDriftTest` for the guard risk. The guard risk is a per-item score, not a loss with a limit alpha, so the code uses the conformal test, as A2g did.

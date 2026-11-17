@@ -1,0 +1,338 @@
+{
+ "plan": "experiments/2026-11-16-p5-11-online-replay/plan.md",
+ "alpha": 0.05,
+ "eta": 0.05,
+ "lam_init": 0.3,
+ "n_seeds": 20,
+ "fidetype_version": null,
+ "sets": {
+  "t12": {
+   "n_held_out": 400,
+   "base_config_id": "tcfg-bd955c64a9cd7966",
+   "commit_p": 0.3,
+   "base_matches_p5_02": true,
+   "item_check": {
+    "scores_equal": 400,
+    "wrong_equal": 400,
+    "n": 400,
+    "max_abs_score_diff": 0.0,
+    "finite_pattern_equal": true
+   },
+   "B05_seeds": {
+    "n_seeds": 20,
+    "same_commits_as_A": 20,
+    "rate_min": 0.05,
+    "rate_max": 0.05,
+    "commits_median": 35.0,
+    "explored_median": 0.0
+   },
+   "P_bandit_seeds": {
+    "commits_median": 7.0,
+    "error_among_commits_median": 0.8571428571428571
+   },
+   "arms": {
+    "A_aci_q1.0": {
+     "commits": 35,
+     "wrong": 20,
+     "rate": 0.05,
+     "cp95": [
+      0.0308,
+      0.0762
+     ],
+     "observed_rate": 0.05,
+     "certificate": 0.04999999999999995,
+     "explored": 0
+    },
+    "A_aci_q0.9": {
+     "commits": 37,
+     "wrong": 22,
+     "rate": 0.055,
+     "cp95": [
+      0.0348,
+      0.0821
+     ],
+     "observed_rate": 0.05,
+     "certificate": 0.04999999999999995,
+     "explored": 0
+    },
+    "A_aci_floor_q1.0": {
+     "commits": 19,
+     "wrong": 11,
+     "rate": 0.0275,
+     "cp95": [
+      0.0138,
+      0.0487
+     ],
+     "observed_rate": 0.0275,
+     "certificate": 0.052125000000000005,
+     "explored": 0
+    },
+    "B05_q1.0": {
+     "commits": 35,
+     "wrong": 20,
+     "rate": 0.05,
+     "cp95": [
+      0.0308,
+      0.0762
+     ],
+     "observed_rate": 0.05,
+     "certificate": 0.04999999999999995,
+     "explored": 0
+    },
+    "B05_floor_q1.0": {
+     "commits": 19,
+     "wrong": 11,
+     "rate": 0.0275,
+     "cp95": [
+      0.0138,
+      0.0487
+     ],
+     "observed_rate": 0.0275,
+     "certificate": 0.052125000000000005,
+     "explored": 0
+    },
+    "P_bandit_q1.0": {
+     "commits": 7,
+     "wrong": 6,
+     "rate": 0.015,
+     "cp95": [
+      0.0055,
+      0.0324
+     ],
+     "observed_rate": 0.8571428571428571,
+     "certificate": 0.8571428571428574,
+     "explored": 0
+    },
+    "C_window_full": {
+     "commits": 27,
+     "wrong": 17,
+     "rate": 0.0425,
+     "cp95": [
+      0.0249,
+      0.0672
+     ],
+     "observed_rate": 0.0425,
+     "certificate": NaN,
+     "explored": 0
+    }
+   },
+   "compare_p15_04": {
+    "A_aci_q1.0": {
+     "p15_04": [
+      35,
+      20
+     ],
+     "online_api": [
+      35,
+      20
+     ],
+     "equal": true
+    },
+    "A_aci_q0.9": {
+     "p15_04": [
+      37,
+      22
+     ],
+     "online_api": [
+      37,
+      22
+     ],
+     "equal": true
+    },
+    "C_window_full": {
+     "p15_04": [
+      28,
+      18
+     ],
+     "online_api": [
+      27,
+      17
+     ],
+     "equal": false
+    },
+    "B05_q1.0": {
+     "p15_04": [
+      35.0,
+      20
+     ],
+     "online_api": [
+      35,
+      20
+     ],
+     "equal": true,
+     "p15_04_explored_median": 16.0,
+     "online_api_explored_median": 0.0
+    },
+    "P_bandit_q1.0": {
+     "p15_04_commits_median": 7.0,
+     "online_api_commits_median": 7.0
+    }
+   },
+   "seconds": 329.3
+  },
+  "t15": {
+   "n_held_out": 701,
+   "base_config_id": "tcfg-7ecd016879246eb6",
+   "commit_p": 0.3,
+   "base_matches_p5_02": true,
+   "item_check": {
+    "scores_equal": 701,
+    "wrong_equal": 701,
+    "n": 701,
+    "max_abs_score_diff": 0.0,
+    "finite_pattern_equal": true
+   },
+   "B05_seeds": {
+    "n_seeds": 20,
+    "same_commits_as_A": 20,
+    "rate_min": 0.047075606276747506,
+    "rate_max": 0.047075606276747506,
+    "commits_median": 48.0,
+    "explored_median": 0.0
+   },
+   "P_bandit_seeds": {
+    "commits_median": 2.0,
+    "error_among_commits_median": 1.0
+   },
+   "arms": {
+    "A_aci_q1.0": {
+     "commits": 48,
+     "wrong": 33,
+     "rate": 0.047075606276747506,
+     "cp95": [
+      0.0326,
+      0.0655
+     ],
+     "observed_rate": 0.047075606276747506,
+     "certificate": 0.04707560627674745,
+     "explored": 0
+    },
+    "A_aci_q0.9": {
+     "commits": 55,
+     "wrong": 39,
+     "rate": 0.05563480741797432,
+     "cp95": [
+      0.0399,
+      0.0753
+     ],
+     "observed_rate": 0.0456490727532097,
+     "certificate": 0.045649072753209646,
+     "explored": 0
+    },
+    "A_aci_floor_q1.0": {
+     "commits": 2,
+     "wrong": 2,
+     "rate": 0.0028530670470756064,
+     "cp95": [
+      0.0003,
+      0.0103
+     ],
+     "observed_rate": 0.0028530670470756064,
+     "certificate": 0.05,
+     "explored": 0
+    },
+    "B05_q1.0": {
+     "commits": 48,
+     "wrong": 33,
+     "rate": 0.047075606276747506,
+     "cp95": [
+      0.0326,
+      0.0655
+     ],
+     "observed_rate": 0.047075606276747506,
+     "certificate": 0.04707560627674745,
+     "explored": 0
+    },
+    "B05_floor_q1.0": {
+     "commits": 2,
+     "wrong": 2,
+     "rate": 0.0028530670470756064,
+     "cp95": [
+      0.0003,
+      0.0103
+     ],
+     "observed_rate": 0.0028530670470756064,
+     "certificate": 0.05,
+     "explored": 0
+    },
+    "P_bandit_q1.0": {
+     "commits": 2,
+     "wrong": 2,
+     "rate": 0.0028530670470756064,
+     "cp95": [
+      0.0003,
+      0.0103
+     ],
+     "observed_rate": 1.0,
+     "certificate": 1.0000000000000004,
+     "explored": 0
+    },
+    "C_window_full": {
+     "commits": 42,
+     "wrong": 27,
+     "rate": 0.03851640513552068,
+     "cp95": [
+      0.0255,
+      0.0555
+     ],
+     "observed_rate": 0.03851640513552068,
+     "certificate": NaN,
+     "explored": 0
+    }
+   },
+   "compare_p15_04": {
+    "A_aci_q1.0": {
+     "p15_04": [
+      48,
+      33
+     ],
+     "online_api": [
+      48,
+      33
+     ],
+     "equal": true
+    },
+    "A_aci_q0.9": {
+     "p15_04": [
+      55,
+      39
+     ],
+     "online_api": [
+      55,
+      39
+     ],
+     "equal": true
+    },
+    "C_window_full": {
+     "p15_04": [
+      42,
+      27
+     ],
+     "online_api": [
+      42,
+      27
+     ],
+     "equal": true
+    },
+    "B05_q1.0": {
+     "p15_04": [
+      48.0,
+      33
+     ],
+     "online_api": [
+      48,
+      33
+     ],
+     "equal": true,
+     "p15_04_explored_median": 31.0,
+     "online_api_explored_median": 0.0
+    },
+    "P_bandit_q1.0": {
+     "p15_04_commits_median": 2.0,
+     "online_api_commits_median": 2.0
+    }
+   },
+   "seconds": 809.6
+  }
+ }
+}
