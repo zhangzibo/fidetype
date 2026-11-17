@@ -126,6 +126,26 @@ def test_synthetic_end_to_end_valid_nts(tmp_path, model, guard):
     assert s["frame_ms"]["n"] == st.frames and s["decision_ms"]["n"] == 12
 
 
+def test_segment_end_never_before_the_rounded_last_frame(model, guard):
+    """FEP-0001 SEG rule 5 after rounding (P14-17, CI live-kt): StreamWriter writes frame t with 9 decimals."""
+    import io
+
+    src = S.SyntheticSource(1, seed=7, speed=0)
+    buf = io.StringIO()
+    w = make_writer(buf, model, src.info, guard, "synthetic")
+    dec = LiveDecoder(model, guard, src, writer=w)
+    t = 202.31685470750003  # the CI case: rounds up to 202.316854708
+    lp = np.log(np.full(len(KEY_VOCAB), 1.0 / len(KEY_VOCAB)))
+    w.frame(t, lp)
+    dec._last_frame_t = round(t, 9)
+    dec._decide(t)  # empty segment
+    dec.seg_frames, dec.seg_times = [lp], [t]
+    dec._decide(t)  # segment with a decision
+    evs = [json.loads(x) for x in buf.getvalue().splitlines()]
+    ends = [e["t"] for e in evs if e["type"] == "segment_end"]
+    assert len(ends) == 2 and all(x >= round(t, 9) for x in ends)
+
+
 def test_synthetic_null_input_never_commits(model, guard):
     src = S.SyntheticSource(30, seed=11, speed=0, null=True)
     dec = LiveDecoder(model, guard, src)

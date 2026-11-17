@@ -209,6 +209,8 @@ class LiveDecoder:
         self.t_first: float | None = None
         #: P4-11: markers before this time are ignored (they belong to a cut segment).
         self._floor = -math.inf
+        #: t of the last frame as written (StreamWriter rounds t to 9 decimals); a segment_end is never before it
+        self._last_frame_t = -math.inf
         #: P4-11: True from a discontinuity to the next ``segment_end`` marker (that segment is dropped).
         self._skip = False
         self._lost_open = False
@@ -249,6 +251,7 @@ class LiveDecoder:
         self.last_frame_t = t
         if self.writer is not None:
             self.writer.frame(t, lp)
+            self._last_frame_t = round(float(t), 9)
         if self.seg_t0 is None:
             self.seg_t0 = t
         self.seg_frames.append(lp)
@@ -328,7 +331,7 @@ class LiveDecoder:
         if not self.seg_frames:
             self.stats.empty_segments += 1
             if self.writer is not None:
-                self.writer.segment_end(t_end)
+                self.writer.segment_end(max(t_end, self._last_frame_t))  # FEP-0001 SEG rule 5
             return
         lp = np.stack(self.seg_frames)
         times = np.asarray(self.seg_times)
@@ -349,7 +352,7 @@ class LiveDecoder:
             if "hypothesis_id" in ev:
                 ev["hypothesis_id"] = hid
             self.writer.event(ev)
-            self.writer.segment_end(max(t_end, float(times[-1])))
+            self.writer.segment_end(max(t_end, float(times[-1]), self._last_frame_t))  # SEG rule 5 after rounding
         d = LiveDecision(k, float(times[0]), float(t_end), len(times), r.action, r.text, tuple(r.choices),
                          float(r.p_top1), r.reason, dms, (self.clock() - self._poll_end) * 1e3, nb, dict(r.event),
                          float(t_end) - (self.t_first if self.t_first is not None else float(t_end)))
