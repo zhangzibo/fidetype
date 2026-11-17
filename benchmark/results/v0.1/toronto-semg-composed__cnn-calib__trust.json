@@ -115,5 +115,25 @@
  "notes": [
   "Composed sentences from isolated key presses: not natural typing."
  ],
- "status": "baseline"
+ "status": "baseline",
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "method": "none",
+  "note": "policy 'trust gate (plug-in fit)' has no certified bound",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0,
+   "basis": {
+    "shuffled": "aggregate null audit (n=200): wrong-commit real 0.575 vs frame-shuffled 1.000",
+    "zeros": "aggregate null audit: wrong-commit real 0.575 vs zeros input 1.000",
+    "null_commit": "null audit, zeros input"
+   }
+  }
+ }
 }

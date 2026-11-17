@@ -135,5 +135,19 @@
  "submitter": {
   "name": "Fidetype maintainers (reference submission)"
  },
- "status": "baseline"
+ "status": "baseline",
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "method": "none",
+  "note": "policy 'always-commit' has no certified bound",
+  "controls": {
+   "shuffled": "missing",
+   "zeros": "missing",
+   "null_commit": "missing",
+   "passed": false
+  }
+ }
 }

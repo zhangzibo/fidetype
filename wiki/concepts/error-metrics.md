@@ -3,7 +3,7 @@ title: Error metrics for brain-to-text (HER, CER, WER, SemER)
 type: concept
 tags: [evaluation, metrics]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-08
+updated: 2026-11-16
 ---
 
 # Error metrics
@@ -38,6 +38,18 @@ A CER alone does not show that a model decodes the brain signal. A strong text p
 
 ## Usefulness metrics: a no-BCI baseline
 Error rates do not show if a BCI saves the user time. We report effective WPM (eWPM) and the keystroke saving rate (KSR = 1 − fallback keystrokes / target characters, as in Cai et al. 2024). We compare them with a **no-BCI baseline**: the same user types with the fallback method alone (for example, a gaze keyboard). On real MEG (2026-11-08), every BCI policy was below gaze typing alone (trust 2.96 vs gaze 3.14 eWPM) ([trust core v0 results](../questions/trust-core-v0-results.md#7-per-word-offer-and-partial-correction-2026-11-08)).
+
+## Headline metric: safe WPM at alpha (P14-05, 2026-11-16)
+Safe WPM counts only the words that the system **commits** and gets exactly right, per minute of neural input time. Each wrong commit adds a correction time (2.0 s + 0.79 s per character of the sentence). Offered or withheld text counts 0 words. The value is reported only when the policy has a certified bound on the wrong-commit rate (LTT: rate <= alpha with probability >= 1 - delta; CRC: in expectation). The entry states alpha, delta, the method and the calibration size, and shows the measured test wrong-commit rate next to it. The no-BCI eWPM reference stays. Full definition: [docs/safe-wpm.md](../../docs/safe-wpm.md); baselines: [P14-05 results](../../experiments/2026-11-16-p14-05-safe-wpm/results.md).
+
+| Set (alpha 0.05) | Safe WPM | eWPM | No-BCI |
+|---|---|---|---|
+| B2T '25 T15, published decoder + LTT | 12.24 | 18.73 | 4.08 |
+| B2T '25 T15, our word decoder + LTT | 4.05 | 11.51 | 4.08 |
+| T12 v2 + P14-03 drop-in guard | 1.27 | 7.13 | 4.11 |
+| SpanishBCBL MEG + LTT | 0.03 | 3.20 | 3.15 |
+
+> **Our take:** eWPM and safe WPM answer different questions. eWPM asks "how fast does the user finish, with help from offers?". Safe WPM asks "how much does the system type by itself, safely?". Our decoders gain eWPM from offers, but their safe WPM is low.
 
 > **Our take:** Any work of ours should report all three (CER, WER, SemER). It should also add a **latency or streaming metric** once decoding becomes causal. It should always report the shuffled-input control next to CER.
 

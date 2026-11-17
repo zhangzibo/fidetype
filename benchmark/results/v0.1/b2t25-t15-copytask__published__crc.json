@@ -137,5 +137,57 @@
  "notes": [
   "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
  ],
- "status": "baseline"
+ "status": "baseline",
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": 13.422448647918946,
+  "ci": [
+   11.719815828001176,
+   15.079348977669818
+  ],
+  "status": "certified",
+  "unguarded_wpm": 13.422448647918946,
+  "wpm_no_penalty": 14.897185731479345,
+  "method": "crc",
+  "alpha": 0.05,
+  "delta": null,
+  "n_cal": 812,
+  "calibration": "cal",
+  "confidence": "in expectation (CRC has no delta)",
+  "measured_wrong_commit": 0.049019607843137254,
+  "measured_wrong_commit_cp95": [
+   0.0352,
+   0.0662
+  ],
+  "n_trials": 816,
+  "n_commits": 405,
+  "n_wrong_commits": 40,
+  "n_correct_commits": 365,
+  "error_among_commits": 0.09876543209876543,
+  "committed_correct_words": 2327,
+  "total_words": 5125,
+  "minutes_neural": 156.20400000000004,
+  "minutes_correction": 17.162280701754387,
+  "timing": "measured per-trial speech duration (t15_copyTask.pkl speech_duration_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "day",
+  "no_bci_wpm": 4.078303425774878,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "missing",
+   "zeros": "missing",
+   "null_commit": "missing",
+   "passed": false,
+   "basis": {
+    "shuffled": "text-only decoder: cannot rerun on shuffled input",
+    "zeros": "text-only decoder: cannot rerun on zero input",
+    "null_commit": "no null audit at this threshold"
+   }
+  }
+ }
 }

@@ -128,5 +128,55 @@
  "notes": [
   "Composed sentences from isolated key presses: not natural typing."
  ],
- "status": "baseline"
+ "status": "baseline",
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": 0.0,
+  "ci": null,
+  "status": "vacuous",
+  "unguarded_wpm": 0.0,
+  "wpm_no_penalty": 0.0,
+  "method": "crc",
+  "alpha": 0.05,
+  "delta": null,
+  "n_cal": 142,
+  "calibration": "cal (held-out half of the fit items)",
+  "confidence": "in expectation (CRC has no delta)",
+  "measured_wrong_commit": 0.0,
+  "measured_wrong_commit_cp95": [
+   0.0,
+   0.0067
+  ],
+  "n_trials": 551,
+  "n_commits": 0,
+  "n_wrong_commits": 0,
+  "n_correct_commits": 0,
+  "error_among_commits": null,
+  "committed_correct_words": 0.0,
+  "total_words": 3652,
+  "minutes_neural": 225.54840000000004,
+  "minutes_correction": 0.0,
+  "timing": "track rate model: len(truth) * 60 / 75.7576 chars/min (composed sentences, no natural typing time)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "no_bci_wpm": 4.274594721133025,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0,
+   "basis": {
+    "shuffled": "aggregate null audit (n=200): wrong-commit real 0.950 vs frame-shuffled 1.000",
+    "zeros": "aggregate null audit: wrong-commit real 0.950 vs zeros input 1.000",
+    "null_commit": "null audit, zeros input"
+   }
+  },
+  "basis": "aggregate approximation: committed-correct words = share_words_system x test words; wrong-commit penalty at the mean test sentence length; no per-trial data, so no CI"
+ }
 }

@@ -30,7 +30,10 @@
      "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
      "trust gate (plug-in fit): commit threshold on calibrated p_top1 0.5000 (fitted on the 437 val trials)."
     ],
-    "file": "spanishbcbl-meg-async__convctc-m-async__trust.json"
+    "file": "spanishbcbl-meg-async__convctc-m-async__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/ltt",
@@ -60,7 +63,10 @@
      "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
      "trust gate + LTT: commit threshold on calibrated p_top1 0.0000 (fitted on the 437 val trials)."
     ],
-    "file": "spanishbcbl-meg-async__convctc-m-async__ltt.json"
+    "file": "spanishbcbl-meg-async__convctc-m-async__ltt.json",
+    "safe_wpm": 0.029166901195842948,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)"
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/crc",
@@ -90,7 +96,10 @@
      "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
      "trust gate + CRC: commit threshold on calibrated p_top1 0.1024 (fitted on the 437 val trials)."
     ],
-    "file": "spanishbcbl-meg-async__convctc-m-async__crc.json"
+    "file": "spanishbcbl-meg-async__convctc-m-async__crc.json",
+    "safe_wpm": 0.029275959301280442,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.03 [0.00, 0.17] (CRC a=0.05)"
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/always-commit",
@@ -119,7 +128,10 @@
     "notes": [
      "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522."
     ],
-    "file": "spanishbcbl-meg-async__convctc-m-async__always-commit.json"
+    "file": "spanishbcbl-meg-async__convctc-m-async__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    }
   ],
   "b2t25-t15-copytask": [
@@ -151,7 +163,10 @@
      "Scored end to end from NTS files by `python -m fidetype.benchmark score`. Matches the committed M6-06 numbers: CER 0.0309, WER 0.0431, wrong-commit 0.194 (eWPM differs only by the user-model random draws: 19.61 committed).",
      "Text-only result: the published decoder cannot be rerun on shuffled or zero input, so the controls are missing."
     ],
-    "file": "b2t25-t15-copytask__published__always-commit.json"
+    "file": "b2t25-t15-copytask__published__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "b2t25-t15-copytask/published/crc",
@@ -180,7 +195,10 @@
     "notes": [
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
-    "file": "b2t25-t15-copytask__published__crc.json"
+    "file": "b2t25-t15-copytask__published__crc.json",
+    "safe_wpm": 13.422448647918946,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "13.42 [11.72, 15.08] (CRC a=0.05)"
    },
    {
     "entry_id": "b2t25-t15-copytask/published/trust",
@@ -209,7 +227,10 @@
     "notes": [
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
-    "file": "b2t25-t15-copytask__published__trust.json"
+    "file": "b2t25-t15-copytask__published__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "b2t25-t15-copytask/published/ltt",
@@ -238,7 +259,10 @@
     "notes": [
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
-    "file": "b2t25-t15-copytask__published__ltt.json"
+    "file": "b2t25-t15-copytask__published__ltt.json",
+    "safe_wpm": 12.241472849274949,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "12.24 [10.98, 13.45] (LTT a=0.05 d=0.1)"
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/crc",
@@ -267,7 +291,10 @@
     "notes": [
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
-    "file": "b2t25-t15-copytask__ours__crc.json"
+    "file": "b2t25-t15-copytask__ours__crc.json",
+    "safe_wpm": 4.900806083076966,
+    "safe_wpm_status": "above-alpha",
+    "safe_wpm_s": "4.90 [4.10, 5.62] ! ABOVE alpha (test 0.062; CRC a=0.05)"
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/trust",
@@ -296,7 +323,10 @@
     "notes": [
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
-    "file": "b2t25-t15-copytask__ours__trust.json"
+    "file": "b2t25-t15-copytask__ours__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/ltt",
@@ -325,7 +355,10 @@
     "notes": [
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
-    "file": "b2t25-t15-copytask__ours__ltt.json"
+    "file": "b2t25-t15-copytask__ours__ltt.json",
+    "safe_wpm": 4.047852720654133,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "4.05 [3.22, 4.77] (LTT a=0.05 d=0.1)"
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/always-commit",
@@ -352,7 +385,10 @@
     "n_trials": 816,
     "ci_unit": "day",
     "notes": [],
-    "file": "b2t25-t15-copytask__ours__always-commit.json"
+    "file": "b2t25-t15-copytask__ours__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    }
   ],
   "toronto-semg-composed": [
@@ -383,7 +419,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-calib__trust.json"
+    "file": "toronto-semg-composed__cnn-calib__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-calib/crc",
@@ -412,7 +451,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-calib__crc.json"
+    "file": "toronto-semg-composed__cnn-calib__crc.json",
+    "safe_wpm": 0.5785423261020857,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.58 (CRC a=0.05)"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-calib/commit",
@@ -441,7 +483,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-calib__commit.json"
+    "file": "toronto-semg-composed__cnn-calib__commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/crc",
@@ -470,7 +515,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-xsession__crc.json"
+    "file": "toronto-semg-composed__cnn-xsession__crc.json",
+    "safe_wpm": 0.2738139253307581,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.27 (CRC a=0.05)"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/trust",
@@ -499,7 +547,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-xsession__trust.json"
+    "file": "toronto-semg-composed__cnn-xsession__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/commit",
@@ -528,7 +579,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-xsession__commit.json"
+    "file": "toronto-semg-composed__cnn-xsession__commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/crc",
@@ -557,7 +611,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-xsubject__crc.json"
+    "file": "toronto-semg-composed__cnn-xsubject__crc.json",
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "safe_wpm_s": "0.00 (vacuous: no commits; CRC a=0.05)"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/trust",
@@ -586,7 +643,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-xsubject__trust.json"
+    "file": "toronto-semg-composed__cnn-xsubject__trust.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/commit",
@@ -615,7 +675,10 @@
     "notes": [
      "Composed sentences from isolated key presses: not natural typing."
     ],
-    "file": "toronto-semg-composed__cnn-xsubject__commit.json"
+    "file": "toronto-semg-composed__cnn-xsubject__commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
    }
   ]
  }

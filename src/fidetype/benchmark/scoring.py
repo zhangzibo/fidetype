@@ -29,6 +29,13 @@ Metrics (all on the scored split, pooled over trials)
     Commits / all trials.
 ``silent_error_rate``
     Trials that end with a wrong text that the user did not correct.
+``safe_wpm`` (block, P14-05)
+    Words per minute of committed, exactly correct text, with a time
+    penalty per wrong commit, reported only under a certified CRC / LTT
+    bound (:mod:`fidetype.benchmark.safe_wpm`, ``docs/safe-wpm.md``).
+    Neural time: per-trial ``neural_s`` of the truth file if every scored
+    trial has it, else the track rate model (``len(truth) * 60 /
+    chars_per_min``).
 
 Confidence intervals
 --------------------
@@ -82,6 +89,9 @@ class TrialScore:
     time_s: float
     words: int
     clusters: dict[str, str] = field(default_factory=dict)
+    #: Neural input time (s): measured duration if given, else the track rate model.
+    neural_s: float = math.nan
+    neural_measured: bool = False
 
 
 def _seed(trial_id: str) -> int:
@@ -89,8 +99,13 @@ def _seed(trial_id: str) -> int:
 
 
 def score_trials(track: Track | str, outputs: dict[str, TrialOutput], truth: dict[str, str],
-                 clusters: dict[str, dict[str, str]], ids: Sequence[str]) -> list[TrialScore]:
-    """Score every trial in ``ids`` (the scored split, in split order)."""
+                 clusters: dict[str, dict[str, str]], ids: Sequence[str],
+                 durations: dict[str, float] | None = None) -> list[TrialScore]:
+    """Score every trial in ``ids`` (the scored split, in split order).
+
+    ``durations``: optional measured neural time per trial id (seconds), used
+    by safe WPM. Trials without one use the track rate model.
+    """
     from fidetype.eval.ewpm import correct_words_strict, SentenceRecord
     from fidetype.eval.metrics import edit_distance
     from fidetype.interact.simulated_user import SimulatedUser
@@ -123,6 +138,8 @@ def score_trials(track: Track | str, outputs: dict[str, TrialOutput], truth: dic
             edits_w=edit_distance(ref.split(), top1.split()), n_w=len(ref.split()),
             committed=o.action == "commit", wrong_commit=bool(oc.wrong_commit), silent_error=bool(oc.silent_error),
             time_s=float(time_s), words=correct_words_strict(rec), clusters=dict(clusters.get(tid, {})),
+            neural_s=float(durations[tid]) if durations and tid in durations else float(user.typing_time(ref)),
+            neural_measured=bool(durations and tid in durations),
         ))
     return out
 
@@ -289,6 +306,19 @@ def guarantee_block(g: dict[str, Any], metrics: dict[str, dict[str, Any]], n_cal
     return out
 
 
+def safe_wpm_block(t: Track, real: Sequence[TrialScore], guarantee: dict[str, Any] | None,
+                   controls: dict[str, Any] | None, B: int = DEFAULT_B, seed: int = 0) -> dict[str, Any]:
+    """The P14-05 safe-WPM block of one entry (see :mod:`fidetype.benchmark.safe_wpm`)."""
+    from fidetype.benchmark.safe_wpm import from_trial_scores
+
+    if real and all(s.neural_measured for s in real):
+        timing = "measured per-trial durations (truth file neural_s)"
+    else:
+        timing = f"track rate model: len(truth) * 60 / {t.user_model.config.get('chars_per_min')} chars/min"
+    return from_trial_scores(real, guarantee=guarantee, timing=timing, ci_unit=t.ci_unit, controls=controls,
+                             gaze_chars_per_min=t.user_model.gaze_chars_per_min, B=B, seed=seed)
+
+
 # ---------------------------------------------------------------------------
 # One call: score a set of outputs
 # ---------------------------------------------------------------------------
@@ -306,6 +336,7 @@ def build_result(track: Track | str, real: Sequence[TrialScore], *, decoder: dic
     point = weighted_metrics(a)
     ci = bootstrap_ci(lambda w: weighted_metrics(a, w), t.ci_unit, clusters, B=B, seed=seed)
     metrics = metric_block(point, ci)
+    ctl = control_block(real, controls or {}, t.ci_unit, B=B, seed=seed)
     res = {
         "schema": RESULT_SCHEMA,
         "benchmark_version": BENCHMARK_VERSION,
@@ -318,8 +349,9 @@ def build_result(track: Track | str, real: Sequence[TrialScore], *, decoder: dic
         "n_trials": len(real),
         "ci": {"unit": t.ci_unit, "method": "percentile cluster bootstrap", "B": B, "seed": seed, "level": 0.95},
         "metrics": metrics,
-        "controls": control_block(real, controls or {}, t.ci_unit, B=B, seed=seed),
+        "controls": ctl,
         "guarantee": guarantee_block(guarantee or {"method": "none"}, metrics, n_cal_split),
+        "safe_wpm": safe_wpm_block(t, real, guarantee, ctl, B=B, seed=seed),
         "conformance": conformance or {"level": "unknown"},
         "user_model": {"name": t.user_model.name, "config": t.user_model.config,
                        "gaze_chars_per_min": t.user_model.gaze_chars_per_min},
@@ -346,4 +378,5 @@ def to_jsonable(o: Any) -> Any:
 
 
 __all__ = ["RESULT_SCHEMA", "NULL_COMMIT_MAX", "TrialScore", "score_trials", "arrays", "weighted_metrics",
-           "bootstrap_ci", "control_block", "guarantee_block", "build_result", "to_jsonable", "asdict"]
+           "bootstrap_ci", "control_block", "guarantee_block", "safe_wpm_block", "build_result", "to_jsonable",
+           "asdict"]

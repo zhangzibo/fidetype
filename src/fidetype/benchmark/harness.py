@@ -77,7 +77,11 @@ def score_submission(folder: str | PathLike[str], truth_path: str | PathLike[str
     conf = conformance_gate(files, truth) if gate else {"level": "not checked", "passed": None}
     texts = {i: truth[i]["text"] for i in ids}
     clusters = split.clusters(track.scored_split)
-    real = score_trials(track, {i: trial_output(p) for i, p in files.items()}, texts, clusters, ids)
+    # Optional measured neural time per trial (safe WPM, P14-05): used only if every scored trial has it.
+    durations = ({i: float(truth[i]["neural_s"]) for i in ids}
+                 if all(truth[i].get("neural_s") is not None for i in ids) else None)
+    real = score_trials(track, {i: trial_output(p) for i, p in files.items()}, texts, clusters, ids,
+                        durations=durations)
     controls = {}
     for kind in CONTROL_KINDS:
         cf = stream_files(folder / "controls" / kind)

@@ -15,6 +15,9 @@ Sub-commands:
     Check the manifest, the trial coverage and the conformance gate.
 ``score SUBMISSION --truth truth.jsonl [--out result.json] [--B 2000]``
     Score a submission folder and write the result JSON.
+``safe-wpm --trials trials.jsonl (--guard guard.json | --guarantee g.json | --method ltt --alpha A ...)``
+    Safe WPM at a certified wrong-commit rate (P14-05; ``docs/safe-wpm.md``)
+    from a per-trial JSON Lines file.
 ``leaderboard [--results DIR] [--out DIR]``
     Build the static leaderboard (``index.html``, ``leaderboard.json``,
     ``leaderboard.md``).
@@ -116,6 +119,45 @@ def cmd_leaderboard(a) -> int:
     return 0
 
 
+def cmd_safe_wpm(a) -> int:
+    import math
+
+    from fidetype.benchmark.safe_wpm import (CorrectionRule, controls_from_sheet, format_line, guarantee_from_sheet,
+                                             load_trials_jsonl, model_neural_s, safe_wpm)
+
+    cols = load_trials_jsonl(a.trials)
+    controls = None
+    if a.guard:
+        g = json.loads(Path(a.guard).read_text(encoding="utf-8"))
+        sheet = g.get("sheet", g)
+        guarantee = guarantee_from_sheet(sheet)
+        controls = controls_from_sheet(sheet)
+    elif a.guarantee:
+        guarantee = json.loads(Path(a.guarantee).read_text(encoding="utf-8")) if Path(a.guarantee).exists()             else json.loads(a.guarantee)
+    else:
+        guarantee = {"method": a.method, "alpha": a.alpha, "delta": a.delta, "n_cal": a.n_cal}
+    ns = cols["neural_s"]
+    missing = [i for i, x in enumerate(ns) if math.isnan(x)]
+    if missing and a.chars_per_min is None:
+        print(f"{len(missing)} trial(s) have no neural_s; give --chars-per-min for the rate model", file=sys.stderr)
+        return 2
+    if missing:
+        model = model_neural_s(cols["n_chars"], a.chars_per_min)
+        ns = [model[i] if math.isnan(x) else x for i, x in enumerate(ns)]
+        timing = (f"rate model {a.chars_per_min:g} chars/min" if len(missing) == len(ns) else
+                  f"measured for {len(ns) - len(missing)} trials, rate model {a.chars_per_min:g} chars/min for "
+                  f"{len(missing)}")
+    else:
+        timing = "measured per-trial durations (neural_s)"
+    clusters = [{"cluster": c} for c in cols["cluster"]] if all(cols["cluster"]) else None
+    res = safe_wpm(cols["committed"], cols["correct"], cols["n_words"], cols["n_chars"], ns, guarantee=guarantee,
+                   rule=CorrectionRule(name=a.correction), timing=timing, clusters=clusters,
+                   ci_unit="cluster" if clusters else None, controls=controls, B=a.B, seed=a.seed)
+    _dump(res, a.out)
+    print(format_line(res), file=sys.stderr)
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m fidetype.benchmark", description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -141,6 +183,23 @@ def main(argv=None) -> int:
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--no-gate", action="store_true", help="score even if the conformance gate fails")
     p.set_defaults(fn=cmd_score)
+    p = sub.add_parser("safe-wpm", help="safe WPM at a certified wrong-commit rate (P14-05; docs/safe-wpm.md)")
+    p.add_argument("--trials", required=True, help="per-trial JSON Lines: committed, correct, truth (or n_words + "
+                   "n_chars), neural_s, optional cluster")
+    g = p.add_mutually_exclusive_group()
+    g.add_argument("--guard", default=None, help="a saved drop-in TrustGuard JSON (guard.save): alpha, delta, n_cal "
+                   "and null controls from its sheet")
+    g.add_argument("--guarantee", default=None, help="guarantee JSON (file or inline): method, alpha, delta, n_cal")
+    p.add_argument("--method", default="none", choices=("none", "crc", "ltt"))
+    p.add_argument("--alpha", type=float, default=None)
+    p.add_argument("--delta", type=float, default=None)
+    p.add_argument("--n-cal", type=int, default=None)
+    p.add_argument("--chars-per-min", type=float, default=None, help="rate model for trials without neural_s")
+    p.add_argument("--correction", default="rewrite", choices=("rewrite", "none"))
+    p.add_argument("--out", default=None)
+    p.add_argument("--B", type=int, default=2000)
+    p.add_argument("--seed", type=int, default=0)
+    p.set_defaults(fn=cmd_safe_wpm)
     p = sub.add_parser("leaderboard")
     p.add_argument("--results", default="benchmark/results/v0.1")
     p.add_argument("--out", default="benchmark/site")

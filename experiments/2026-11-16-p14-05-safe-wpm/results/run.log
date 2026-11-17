@@ -1,0 +1,35 @@
+2026-11-16 22:23:41 stage t15-m4-12 start
+2026-11-16 22:23:42 T15 M4-12 (val_eval 701) + P14-03 drop-in guard: safe WPM 0.00 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 2/701 = 0.0029; commits 2; unguarded 0.00; no-BCI 4.02)
+2026-11-16 22:23:42 stage t15-m4-12 done in 1 s
+2026-11-16 22:23:42 stage t12 start
+2026-11-16 22:23:42 T12 v2 (10 test sessions, 400) + P14-03 drop-in guard: safe WPM 1.27 (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 15/400 = 0.0375; commits 25; unguarded 1.27; no-BCI 4.11)
+2026-11-16 22:23:42 stage t12 done in 0 s
+2026-11-16 22:23:48 stage tracks start
+2026-11-16 22:23:48 tracks: loading B2T speech durations
+2026-11-16 22:23:48 b2t25-t15-copytask__ours__trust: safe WPM n/a (not-certified; NONE; test wrong-commit 48/816 = 0.0588; commits 189; unguarded 4.66; no-BCI 4.08)
+2026-11-16 22:23:48 b2t25-t15-copytask__ours__crc: safe WPM 4.90 [4.10, 5.62] (above-alpha; CRC a=0.05 n_cal=812; test wrong-commit 51/816 = 0.0625; commits 199; unguarded 4.90; no-BCI 4.08)
+2026-11-16 22:23:48 b2t25-t15-copytask__ours__ltt: safe WPM 4.05 [3.22, 4.77] (certified; LTT a=0.05 d=0.1 n_cal=812; test wrong-commit 38/816 = 0.0466; commits 159; unguarded 4.05; no-BCI 4.08)
+2026-11-16 22:23:48 b2t25-t15-copytask__published__trust: safe WPM n/a (not-certified; NONE; test wrong-commit 36/816 = 0.0441; commits 386; unguarded 12.92; no-BCI 4.08)
+2026-11-16 22:23:48 b2t25-t15-copytask__published__crc: safe WPM 13.42 [11.72, 15.08] (certified; CRC a=0.05 n_cal=812; test wrong-commit 40/816 = 0.0490; commits 405; unguarded 13.42; no-BCI 4.08)
+2026-11-16 22:23:48 b2t25-t15-copytask__published__ltt: safe WPM 12.24 [10.98, 13.45] (certified; LTT a=0.05 d=0.1 n_cal=812; test wrong-commit 33/816 = 0.0404; commits 364; unguarded 12.24; no-BCI 4.08)
+2026-11-16 22:23:49 spanishbcbl-meg-async__convctc-m-async__trust: safe WPM n/a (not-certified; NONE; test wrong-commit 0/637 = 0.0000; commits 0; unguarded 0.00; no-BCI 3.15)
+2026-11-16 22:23:49 spanishbcbl-meg-async__convctc-m-async__crc: safe WPM 0.03 [0.00, 0.17] (certified; CRC a=0.05 n_cal=437; test wrong-commit 13/637 = 0.0204; commits 14; unguarded 0.03; no-BCI 3.15)
+2026-11-16 22:23:49 spanishbcbl-meg-async__convctc-m-async__ltt: safe WPM 0.03 [0.00, 0.17] (certified; LTT a=0.05 d=0.1 n_cal=437; test wrong-commit 14/637 = 0.0220; commits 15; unguarded 0.03; no-BCI 3.15)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-calib__crc: safe WPM 0.58 (certified; CRC a=0.05 n_cal=142; test wrong-commit 2/551 = 0.0036; commits 21; unguarded 0.58; no-BCI 4.27)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-xsession__crc: safe WPM 0.27 (certified; CRC a=0.05 n_cal=142; test wrong-commit 2/551 = 0.0036; commits 10; unguarded 0.27; no-BCI 4.27)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-xsubject__crc: safe WPM 0.00 (vacuous; CRC a=0.05 n_cal=142; test wrong-commit 0/551 = 0.0000; commits 0; unguarded 0.00; no-BCI 4.27)
+2026-11-16 22:23:49 b2t25-t15-copytask__ours__always-commit: not-certified (policy 'always-commit' has no certified bound)
+2026-11-16 22:23:49 b2t25-t15-copytask__published__always-commit: not-certified (policy 'always-commit' has no certified bound)
+2026-11-16 22:23:49 spanishbcbl-meg-async__convctc-m-async__always-commit: not-certified (policy 'always-commit' has no certified bound)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-calib__commit: not-certified (policy 'always-commit' has no certified bound)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-calib__trust: not-certified (policy 'trust gate (plug-in fit)' has no certified bound)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-xsession__commit: not-certified (policy 'always-commit' has no certified bound)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-xsession__trust: not-certified (policy 'trust gate (plug-in fit)' has no certified bound)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-xsubject__commit: not-certified (policy 'always-commit' has no certified bound)
+2026-11-16 22:23:49 toronto-semg-composed__cnn-xsubject__trust: not-certified (policy 'trust gate (plug-in fit)' has no certified bound)
+2026-11-16 22:23:49 leaderboard rebuilt: {'n_results': 21, 'tracks': {'spanishbcbl-meg-async': 4, 'b2t25-t15-copytask': 8, 'toronto-semg-composed': 9}, 'out': 'C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\benchmark\\site'}
+2026-11-16 22:23:49 stage tracks done in 1 s
+2026-11-16 22:24:11 stage t15-m4-12-recompute start
+2026-11-16 22:29:23 t15-m4-12: calibrated tcfg-fcd45cf2cc381ca7 in 302 s
+2026-11-16 22:31:24 T15 M4-12 (val_eval 701) + drop-in guard (P14-03 recipe, recomputed): safe WPM 0.00 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 2/701 = 0.0029; commits 2; unguarded 0.00; no-BCI 4.02)
+2026-11-16 22:31:24 stage t15-m4-12-recompute done in 433 s

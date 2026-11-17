@@ -129,5 +129,25 @@
  "notes": [
   "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522."
  ],
- "status": "baseline"
+ "status": "baseline",
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "method": "none",
+  "note": "policy 'always-commit' has no certified bound",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "fail",
+   "passed": false,
+   "commit_rate_zeros": 1.0,
+   "basis": {
+    "shuffled": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+    "zeros": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+    "null_commit": "null audit (zeros MEG input), n=637"
+   }
+  }
+ }
 }

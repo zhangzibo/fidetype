@@ -114,5 +114,25 @@
   "gaze_chars_per_min": 20.0
  },
  "notes": [],
- "status": "baseline"
+ "status": "baseline",
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "method": "none",
+  "note": "policy 'always-commit' has no certified bound",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "fail",
+   "passed": false,
+   "commit_rate_zeros": 1.0,
+   "basis": {
+    "shuffled": "aggregate null audit of the top-1 decoder (n=300): wrong-commit real 0.637 vs frame-shuffled 1.000",
+    "zeros": "aggregate null audit (uniform logits stand in for zeros input, n=300): wrong-commit real 0.637 vs uniform 1.000",
+    "null_commit": "null audit, uniform logits, n=300"
+   }
+  }
+ }
 }

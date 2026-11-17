@@ -1,0 +1,869 @@
+{
+ "fidetype_version": "0.0.1",
+ "definition": "safe-wpm/0.1 (docs/safe-wpm.md)",
+ "stages": {
+  "t15-m4-12": {
+   "seconds": 0.9,
+   "result": {
+    "definition": "safe-wpm/0.1",
+    "value": 0.0,
+    "ci": null,
+    "status": "certified",
+    "unguarded_wpm": 0.0,
+    "wpm_no_penalty": 0.0,
+    "method": "ltt",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_cal": 271,
+    "calibration": "722 items: 180 fit + 271 grid + 271 LTT (fidetype.trust.calibrate)",
+    "confidence": "probability >= 0.9 over calibration draws",
+    "measured_wrong_commit": 0.0028530670470756064,
+    "measured_wrong_commit_cp95": [
+     0.0003,
+     0.0103
+    ],
+    "n_trials": 701,
+    "n_commits": 2,
+    "n_wrong_commits": 2,
+    "n_correct_commits": 0,
+    "error_among_commits": 1.0,
+    "committed_correct_words": 0,
+    "total_words": 4675,
+    "minutes_neural": 218.28633333333335,
+    "minutes_correction": 0.737719298245614,
+    "timing": "measured trial duration: 20 ms neural bins per val_eval trial (B2T '25)",
+    "correction_rule": {
+     "name": "rewrite",
+     "overhead_s": 2.0,
+     "s_per_char": 0.7894736842105263,
+     "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+    },
+    "no_bci_wpm": 4.015288155973546,
+    "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+    "controls": {
+     "shuffled": "pass",
+     "zeros": "pass",
+     "null_commit": "pass",
+     "passed": true,
+     "commit_rate_zeros": 0.0,
+     "basis": {
+      "shuffled": "drop-in null control 'shuffled': 1/300 commits (allowed 15)",
+      "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+      "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+     }
+    },
+    "set": "T15 M4-12 (val_eval 701) + P14-03 drop-in guard",
+    "config_id": "tcfg-09baa8a632ade86e",
+    "ci_note": "no CI: one participant; a trial bootstrap would be too narrow (see docs/safe-wpm.md)"
+   }
+  },
+  "t12": {
+   "seconds": 0.2,
+   "result": {
+    "definition": "safe-wpm/0.1",
+    "value": 1.2679142316575693,
+    "ci": null,
+    "status": "certified",
+    "unguarded_wpm": 1.2679142316575693,
+    "wpm_no_penalty": 1.4779538549963052,
+    "method": "ltt",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_cal": 180,
+    "calibration": "480 items: 120 fit + 180 grid + 180 LTT (fidetype.trust.calibrate)",
+    "confidence": "probability >= 0.9 over calibration draws",
+    "measured_wrong_commit": 0.0375,
+    "measured_wrong_commit_cp95": [
+     0.0211,
+     0.0611
+    ],
+    "n_trials": 400,
+    "n_commits": 25,
+    "n_wrong_commits": 15,
+    "n_correct_commits": 10,
+    "error_among_commits": 0.6,
+    "committed_correct_words": 54,
+    "total_words": 2381,
+    "minutes_neural": 36.537,
+    "minutes_correction": 6.052631578947368,
+    "timing": "measured trial duration: 20 ms neural bins per trial (B2T '24)",
+    "correction_rule": {
+     "name": "rewrite",
+     "overhead_s": 2.0,
+     "s_per_char": 0.7894736842105263,
+     "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+    },
+    "no_bci_wpm": 4.114038876889849,
+    "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+    "controls": {
+     "shuffled": "pass",
+     "zeros": "pass",
+     "null_commit": "pass",
+     "passed": true,
+     "commit_rate_zeros": 0.0,
+     "basis": {
+      "shuffled": "drop-in null control 'shuffled': 0/300 commits (allowed 15)",
+      "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+      "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+     }
+    },
+    "set": "T12 v2 (10 test sessions, 400) + P14-03 drop-in guard",
+    "config_id": "tcfg-ca5af419ca3738f1",
+    "ci_note": "no CI: one participant; a trial bootstrap would be too narrow (see docs/safe-wpm.md)"
+   }
+  },
+  "tracks": {
+   "seconds": 0.8,
+   "result": {
+    "b2t25-t15-copytask__ours__trust": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": 0.058823529411764705,
+     "measured_wrong_commit_cp95": [
+      0.0437,
+      0.0772
+     ],
+     "n_trials": 816,
+     "n_commits": 189,
+     "n_wrong_commits": 48,
+     "unguarded_wpm": 4.663959257067176,
+     "wpm_no_penalty": 5.294358659189265,
+     "no_bci_wpm": 4.078303425774878,
+     "timing": "measured per-trial speech duration (t15_copyTask.pkl speech_duration_s)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "pass",
+      "passed": true,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "aggregate null audit of the top-1 decoder (n=300): wrong-commit real 0.637 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit (uniform logits stand in for zeros input, n=300): wrong-commit real 0.637 vs uniform 1.000",
+       "null_commit": "null audit, uniform logits, n=300"
+      }
+     },
+     "note": "plug-in threshold fit, no certified bound; unguarded_wpm is for reference only"
+    },
+    "b2t25-t15-copytask__ours__crc": {
+     "value": 4.900806083076966,
+     "ci": [
+      4.102797861431902,
+      5.623907886278561
+     ],
+     "status": "above-alpha",
+     "method": "crc",
+     "alpha": 0.05,
+     "delta": null,
+     "n_cal": 812,
+     "measured_wrong_commit": 0.0625,
+     "measured_wrong_commit_cp95": [
+      0.0469,
+      0.0814
+     ],
+     "n_trials": 816,
+     "n_commits": 199,
+     "n_wrong_commits": 51,
+     "unguarded_wpm": 4.900806083076966,
+     "wpm_no_penalty": 5.608051010217407,
+     "no_bci_wpm": 4.078303425774878,
+     "timing": "measured per-trial speech duration (t15_copyTask.pkl speech_duration_s)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "missing",
+      "passed": false,
+      "basis": {
+       "shuffled": "aggregate null audit of the top-1 decoder (n=300): wrong-commit real 0.637 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit (uniform logits stand in for zeros input, n=300): wrong-commit real 0.637 vs uniform 1.000",
+       "null_commit": "no null audit for this policy"
+      }
+     },
+     "note": null
+    },
+    "b2t25-t15-copytask__ours__ltt": {
+     "value": 4.047852720654133,
+     "ci": [
+      3.223853630365164,
+      4.76604921173314
+     ],
+     "status": "certified",
+     "method": "ltt",
+     "alpha": 0.05,
+     "delta": 0.1,
+     "n_cal": 812,
+     "measured_wrong_commit": 0.04656862745098039,
+     "measured_wrong_commit_cp95": [
+      0.0332,
+      0.0634
+     ],
+     "n_trials": 816,
+     "n_commits": 159,
+     "n_wrong_commits": 38,
+     "unguarded_wpm": 4.047852720654133,
+     "wpm_no_penalty": 4.4813193004020375,
+     "no_bci_wpm": 4.078303425774878,
+     "timing": "measured per-trial speech duration (t15_copyTask.pkl speech_duration_s)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "missing",
+      "passed": false,
+      "basis": {
+       "shuffled": "aggregate null audit of the top-1 decoder (n=300): wrong-commit real 0.637 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit (uniform logits stand in for zeros input, n=300): wrong-commit real 0.637 vs uniform 1.000",
+       "null_commit": "no null audit for this policy"
+      }
+     },
+     "note": null
+    },
+    "b2t25-t15-copytask__published__trust": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": 0.04411764705882353,
+     "measured_wrong_commit_cp95": [
+      0.0311,
+      0.0606
+     ],
+     "n_trials": 816,
+     "n_commits": 386,
+     "n_wrong_commits": 36,
+     "unguarded_wpm": 12.924313853937035,
+     "wpm_no_penalty": 14.1993802975596,
+     "no_bci_wpm": 4.078303425774878,
+     "timing": "measured per-trial speech duration (t15_copyTask.pkl speech_duration_s)",
+     "controls": {
+      "shuffled": "missing",
+      "zeros": "missing",
+      "null_commit": "pass",
+      "passed": false,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "text-only decoder: cannot rerun on shuffled input",
+       "zeros": "text-only decoder: cannot rerun on zero input",
+       "null_commit": "null audit, uniform logits, n=300 (tests the gate; the text is fixed)"
+      }
+     },
+     "note": "plug-in threshold fit, no certified bound; unguarded_wpm is for reference only"
+    },
+    "b2t25-t15-copytask__published__crc": {
+     "value": 13.422448647918946,
+     "ci": [
+      11.719815828001176,
+      15.079348977669818
+     ],
+     "status": "certified",
+     "method": "crc",
+     "alpha": 0.05,
+     "delta": null,
+     "n_cal": 812,
+     "measured_wrong_commit": 0.049019607843137254,
+     "measured_wrong_commit_cp95": [
+      0.0352,
+      0.0662
+     ],
+     "n_trials": 816,
+     "n_commits": 405,
+     "n_wrong_commits": 40,
+     "unguarded_wpm": 13.422448647918946,
+     "wpm_no_penalty": 14.897185731479345,
+     "no_bci_wpm": 4.078303425774878,
+     "timing": "measured per-trial speech duration (t15_copyTask.pkl speech_duration_s)",
+     "controls": {
+      "shuffled": "missing",
+      "zeros": "missing",
+      "null_commit": "missing",
+      "passed": false,
+      "basis": {
+       "shuffled": "text-only decoder: cannot rerun on shuffled input",
+       "zeros": "text-only decoder: cannot rerun on zero input",
+       "null_commit": "no null audit at this threshold"
+      }
+     },
+     "note": null
+    },
+    "b2t25-t15-copytask__published__ltt": {
+     "value": 12.241472849274949,
+     "ci": [
+      10.982679032928834,
+      13.445093092089067
+     ],
+     "status": "certified",
+     "method": "ltt",
+     "alpha": 0.05,
+     "delta": 0.1,
+     "n_cal": 812,
+     "measured_wrong_commit": 0.04044117647058824,
+     "measured_wrong_commit_cp95": [
+      0.028,
+      0.0563
+     ],
+     "n_trials": 816,
+     "n_commits": 364,
+     "n_wrong_commits": 33,
+     "unguarded_wpm": 12.241472849274949,
+     "wpm_no_penalty": 13.335125861053491,
+     "no_bci_wpm": 4.078303425774878,
+     "timing": "measured per-trial speech duration (t15_copyTask.pkl speech_duration_s)",
+     "controls": {
+      "shuffled": "missing",
+      "zeros": "missing",
+      "null_commit": "missing",
+      "passed": false,
+      "basis": {
+       "shuffled": "text-only decoder: cannot rerun on shuffled input",
+       "zeros": "text-only decoder: cannot rerun on zero input",
+       "null_commit": "no null audit at this threshold"
+      }
+     },
+     "note": null
+    },
+    "spanishbcbl-meg-async__convctc-m-async__trust": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.0058
+     ],
+     "n_trials": 637,
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "unguarded_wpm": 0.0,
+     "wpm_no_penalty": 0.0,
+     "no_bci_wpm": 3.1545665572720725,
+     "timing": "track rate model: len(truth) * 60 / 152 chars/min (no per-trial timing in the committed data)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "pass",
+      "passed": true,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+       "zeros": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+       "null_commit": "null audit (zeros MEG input), n=637"
+      }
+     },
+     "note": "plug-in threshold fit, no certified bound; unguarded_wpm is for reference only"
+    },
+    "spanishbcbl-meg-async__convctc-m-async__crc": {
+     "value": 0.029275959301280442,
+     "ci": [
+      0.0,
+      0.16632252625397145
+     ],
+     "status": "certified",
+     "method": "crc",
+     "alpha": 0.05,
+     "delta": null,
+     "n_cal": 437,
+     "measured_wrong_commit": 0.02040816326530612,
+     "measured_wrong_commit_cp95": [
+      0.0109,
+      0.0346
+     ],
+     "n_trials": 637,
+     "n_commits": 14,
+     "n_wrong_commits": 13,
+     "unguarded_wpm": 0.029275959301280442,
+     "wpm_no_penalty": 0.03041703353878172,
+     "no_bci_wpm": 3.1545665572720725,
+     "timing": "track rate model: len(truth) * 60 / 152 chars/min (no per-trial timing in the committed data)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "missing",
+      "passed": false,
+      "basis": {
+       "shuffled": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+       "zeros": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+       "null_commit": "no null audit at this threshold"
+      }
+     },
+     "note": null
+    },
+    "spanishbcbl-meg-async__convctc-m-async__ltt": {
+     "value": 0.029166901195842948,
+     "ci": [
+      0.0,
+      0.1652457018157291
+     ],
+     "status": "certified",
+     "method": "ltt",
+     "alpha": 0.05,
+     "delta": 0.1,
+     "n_cal": 437,
+     "measured_wrong_commit": 0.02197802197802198,
+     "measured_wrong_commit_cp95": [
+      0.0121,
+      0.0366
+     ],
+     "n_trials": 637,
+     "n_commits": 15,
+     "n_wrong_commits": 14,
+     "unguarded_wpm": 0.029166901195842948,
+     "wpm_no_penalty": 0.03041703353878172,
+     "no_bci_wpm": 3.1545665572720725,
+     "timing": "track rate model: len(truth) * 60 / 152 chars/min (no per-trial timing in the committed data)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "missing",
+      "passed": false,
+      "basis": {
+       "shuffled": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+       "zeros": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+       "null_commit": "no null audit at this threshold"
+      }
+     },
+     "note": null
+    },
+    "toronto-semg-composed__cnn-calib__crc": {
+     "value": 0.5785423261020857,
+     "ci": null,
+     "status": "certified",
+     "method": "crc",
+     "alpha": 0.05,
+     "delta": null,
+     "n_cal": 142,
+     "measured_wrong_commit": 0.003629764065335753,
+     "measured_wrong_commit_cp95": [
+      0.0004,
+      0.013
+     ],
+     "n_trials": 551,
+     "n_commits": 21,
+     "n_wrong_commits": 2,
+     "unguarded_wpm": 0.5785423261020857,
+     "wpm_no_penalty": 0.5808066029286839,
+     "no_bci_wpm": 4.274594721133025,
+     "timing": "track rate model: len(truth) * 60 / 75.7576 chars/min (composed sentences, no natural typing time)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "pass",
+      "passed": true,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.575 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.575 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": null
+    },
+    "toronto-semg-composed__cnn-xsession__crc": {
+     "value": 0.2738139253307581,
+     "ci": null,
+     "status": "certified",
+     "method": "crc",
+     "alpha": 0.05,
+     "delta": null,
+     "n_cal": 142,
+     "measured_wrong_commit": 0.003629764065335753,
+     "measured_wrong_commit_cp95": [
+      0.0004,
+      0.013
+     ],
+     "n_trials": 551,
+     "n_commits": 10,
+     "n_wrong_commits": 2,
+     "unguarded_wpm": 0.2738139253307581,
+     "wpm_no_penalty": 0.2748855677983084,
+     "no_bci_wpm": 4.274594721133025,
+     "timing": "track rate model: len(truth) * 60 / 75.7576 chars/min (composed sentences, no natural typing time)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "pass",
+      "passed": true,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.875 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.875 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": null
+    },
+    "toronto-semg-composed__cnn-xsubject__crc": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "method": "crc",
+     "alpha": 0.05,
+     "delta": null,
+     "n_cal": 142,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.0067
+     ],
+     "n_trials": 551,
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "unguarded_wpm": 0.0,
+     "wpm_no_penalty": 0.0,
+     "no_bci_wpm": 4.274594721133025,
+     "timing": "track rate model: len(truth) * 60 / 75.7576 chars/min (composed sentences, no natural typing time)",
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "pass",
+      "passed": true,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.950 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.950 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": null
+    },
+    "b2t25-t15-copytask__ours__always-commit": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "fail",
+      "passed": false,
+      "commit_rate_zeros": 1.0,
+      "basis": {
+       "shuffled": "aggregate null audit of the top-1 decoder (n=300): wrong-commit real 0.637 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit (uniform logits stand in for zeros input, n=300): wrong-commit real 0.637 vs uniform 1.000",
+       "null_commit": "null audit, uniform logits, n=300"
+      }
+     },
+     "note": "policy 'always-commit' has no certified bound"
+    },
+    "b2t25-t15-copytask__published__always-commit": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "missing",
+      "zeros": "missing",
+      "null_commit": "missing",
+      "passed": false
+     },
+     "note": "policy 'always-commit' has no certified bound"
+    },
+    "spanishbcbl-meg-async__convctc-m-async__always-commit": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "fail",
+      "passed": false,
+      "commit_rate_zeros": 1.0,
+      "basis": {
+       "shuffled": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+       "zeros": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+       "null_commit": "null audit (zeros MEG input), n=637"
+      }
+     },
+     "note": "policy 'always-commit' has no certified bound"
+    },
+    "toronto-semg-composed__cnn-calib__commit": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "fail",
+      "passed": false,
+      "commit_rate_zeros": 1.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.575 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.575 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": "policy 'always-commit' has no certified bound"
+    },
+    "toronto-semg-composed__cnn-calib__trust": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "pass",
+      "passed": true,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.575 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.575 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": "policy 'trust gate (plug-in fit)' has no certified bound"
+    },
+    "toronto-semg-composed__cnn-xsession__commit": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "fail",
+      "passed": false,
+      "commit_rate_zeros": 1.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.875 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.875 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": "policy 'always-commit' has no certified bound"
+    },
+    "toronto-semg-composed__cnn-xsession__trust": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "pass",
+      "passed": true,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.875 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.875 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": "policy 'trust gate (plug-in fit)' has no certified bound"
+    },
+    "toronto-semg-composed__cnn-xsubject__commit": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "fail",
+      "passed": false,
+      "commit_rate_zeros": 1.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.950 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.950 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": "policy 'always-commit' has no certified bound"
+    },
+    "toronto-semg-composed__cnn-xsubject__trust": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "method": "none",
+     "alpha": null,
+     "delta": null,
+     "n_cal": null,
+     "measured_wrong_commit": null,
+     "measured_wrong_commit_cp95": null,
+     "n_trials": null,
+     "n_commits": null,
+     "n_wrong_commits": null,
+     "unguarded_wpm": null,
+     "wpm_no_penalty": null,
+     "no_bci_wpm": null,
+     "timing": null,
+     "controls": {
+      "shuffled": "pass",
+      "zeros": "pass",
+      "null_commit": "pass",
+      "passed": true,
+      "commit_rate_zeros": 0.0,
+      "basis": {
+       "shuffled": "aggregate null audit (n=200): wrong-commit real 0.950 vs frame-shuffled 1.000",
+       "zeros": "aggregate null audit: wrong-commit real 0.950 vs zeros input 1.000",
+       "null_commit": "null audit, zeros input"
+      }
+     },
+     "note": "policy 'trust gate (plug-in fit)' has no certified bound"
+    }
+   }
+  },
+  "t15-m4-12-recompute": {
+   "seconds": 432.8,
+   "result": {
+    "definition": "safe-wpm/0.1",
+    "value": 0.0,
+    "ci": null,
+    "status": "certified",
+    "unguarded_wpm": 0.0,
+    "wpm_no_penalty": 0.0,
+    "method": "ltt",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_cal": 271,
+    "calibration": "722 items: 180 fit + 271 grid + 271 LTT (fidetype.trust.calibrate)",
+    "confidence": "probability >= 0.9 over calibration draws",
+    "measured_wrong_commit": 0.0028530670470756064,
+    "measured_wrong_commit_cp95": [
+     0.0003,
+     0.0103
+    ],
+    "n_trials": 701,
+    "n_commits": 2,
+    "n_wrong_commits": 2,
+    "n_correct_commits": 0,
+    "error_among_commits": 1.0,
+    "committed_correct_words": 0,
+    "total_words": 4675,
+    "minutes_neural": 218.28633333333335,
+    "minutes_correction": 0.737719298245614,
+    "timing": "measured trial duration: 20 ms neural bins per val_eval trial (B2T '25)",
+    "correction_rule": {
+     "name": "rewrite",
+     "overhead_s": 2.0,
+     "s_per_char": 0.7894736842105263,
+     "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+    },
+    "no_bci_wpm": 4.015288155973546,
+    "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+    "controls": {
+     "shuffled": "pass",
+     "zeros": "pass",
+     "null_commit": "pass",
+     "passed": true,
+     "commit_rate_zeros": 0.0,
+     "basis": {
+      "shuffled": "drop-in null control 'shuffled': 1/300 commits (allowed 15)",
+      "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+      "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+     }
+    },
+    "set": "T15 M4-12 (val_eval 701) + drop-in guard (P14-03 recipe, recomputed)",
+    "config_id": "tcfg-fcd45cf2cc381ca7",
+    "ci_note": "no CI: one participant; a trial bootstrap would be too narrow (see docs/safe-wpm.md)"
+   }
+  }
+ }
+}

@@ -3,7 +3,7 @@ title: Open benchmark v0.1
 type: concept
 tags: [benchmark, leaderboard, evaluation, ewpm, conformal, neuraltextstream, licences]
 sources: [brain-to-text-25-copytask, toronto-semg-typing]
-updated: 2026-11-11
+updated: 2026-11-16
 ---
 
 # Open benchmark v0.1
@@ -40,6 +40,7 @@ The **Fidetype open benchmark** scores neural text entry from [NeuralTextStream]
 - **Two error rates.** The marginal wrong-commit rate (wrong commits / all trials) is what CRC and LTT control. **Error among commits** (wrong / commits) says how much a user can trust one committed text. On MEG the CRC gate commits on 2% of trials, but 93% of those commits are wrong. The marginal rate alone hides this.
 - **Controls are required.** Shuffled and zeros input must give a higher CER (paired CI above 0), and zeros input must not commit (≤ 5%). The MEG history shows why: the first decoder used only a text prior ([decoder M1 results](../questions/decoder-m1-results.md)).
 - **Guarantee column.** Each entry states method, α, δ and n_cal, and the board shows the measured test rate next to it.
+- **Safe WPM @ α column (P14-05, 2026-11-16).** Committed, exactly right words per minute, with a time penalty per wrong commit, only under a certified CRC / LTT bound. Entries whose measured test rate is above α are marked `! ABOVE alpha` (B2T ours + CRC: 0.062). Best entry: published decoder + CRC, 13.42 safe WPM vs no-BCI 4.08 ([docs/safe-wpm.md](../../docs/safe-wpm.md), [results](../../experiments/2026-11-16-p14-05-safe-wpm/results.md)).
 
 ## Leaderboard v0.1 (our baselines)
 Selected rows; full table in [`leaderboard.md`](../../benchmark/site/leaderboard.md).
@@ -67,6 +68,14 @@ How the rows were scored:
 > **Contradiction (with M2-13):** M2-13 reported CRC test wrong-commit 0.0483 on B2T. That is a mean over 200 random cal/test splits (exchangeable). The fixed benchmark split (cal = earlier half of each day) gives 0.062 > α. Both are right: the guarantee holds for exchangeable data and fails under within-day drift. The board shows the fixed-split number.
 
 > **Our take:** conformance is an honest weak spot. Our committed MEG streams (M1-09) predate the M5-10 adapter and reach only `core`, so the MEG entries do not pass the trust-ready entry gate. Rerunning `infer.py` (now via the adapter) fixes this.
+
+## Hallucination tracks (P15-07)
+
+The protocol `fidetype.halluc/0.1` adds four tracks for the question "does the system invent text?": `real`, `null` (uniform log-probs), `scrambled` (frame-shuffled input) and `swapped` (signal of one trial, language side of another). Metrics: commit rate per track, wrong-commit rate, and the fluent-wrong rate (wrong commits that an LLM finds fluent; the deterministic fallback counts every wrong commit as fluent). Clopper-Pearson 95 % intervals. Code `fidetype.benchmark.hallucination`; docs [hallucination-benchmark.md](../../docs/hallucination-benchmark.md); baselines on T15 and T12 in [results](../../experiments/2026-11-16-p15-07-halluc-bench/results.md).
+
+Baselines (3 systems x 2 sets): null and scrambled give 0 commits everywhere. On the swapped track, systems without grounding commit exactly as often as on real input (ratio 1.0): they ignore the signal. The P14-03 guard fails the swapped track on T12 (25/400). The P15-06 guard passes all tracks but never commits.
+
+> **Our take:** the swapped track is the informative one. A fixed 0.05 pass rule lets a rarely-committing system without a signal check pass; the swapped-to-real commit ratio shows the problem directly.
 
 ## Relation to the roadmap
 - **P6** (benchmark + leaderboard): v0.1 delivers the metrics, the NTS submission format, licence-clean fixed splits, the static page and baselines on 3 tracks. Open for P6: replay adapters (P4), Willett handwriting and KT-sEMG tracks, latency and ECE columns, all baselines as stream submissions, first outside submission (externally blocked).

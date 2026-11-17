@@ -141,5 +141,56 @@
   "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
   "trust gate (plug-in fit): commit threshold on calibrated p_top1 0.5000 (fitted on the 437 val trials)."
  ],
- "status": "baseline"
+ "status": "baseline",
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "unguarded_wpm": 0.0,
+  "wpm_no_penalty": 0.0,
+  "method": "none",
+  "alpha": null,
+  "delta": null,
+  "n_cal": null,
+  "calibration": null,
+  "confidence": null,
+  "measured_wrong_commit": 0.0,
+  "measured_wrong_commit_cp95": [
+   0.0,
+   0.0058
+  ],
+  "n_trials": 637,
+  "n_commits": 0,
+  "n_wrong_commits": 0,
+  "n_correct_commits": 0,
+  "error_among_commits": null,
+  "committed_correct_words": 0,
+  "total_words": 3941,
+  "minutes_neural": 164.3815789473684,
+  "minutes_correction": 0.0,
+  "timing": "track rate model: len(truth) * 60 / 152 chars/min (no per-trial timing in the committed data)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "two_way:sentence,participant",
+  "no_bci_wpm": 3.1545665572720725,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0,
+   "basis": {
+    "shuffled": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+    "zeros": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
+    "null_commit": "null audit (zeros MEG input), n=637"
+   }
+  },
+  "note": "plug-in threshold fit, no certified bound; unguarded_wpm is for reference only"
+ }
 }

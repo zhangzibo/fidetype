@@ -18,6 +18,10 @@ This benchmark scores neural text entry from **NeuralTextStream (NTS) files**. T
 
 `python -m fidetype.benchmark info <track>` prints the source URL, version, checksum and download steps.
 
+## Hallucination tracks
+
+The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the fluent-wrong rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Baseline score cards (T15, T12): [`results/halluc-v0.1/`](results/halluc-v0.1/). Command: `python -m fidetype.benchmark.hallucination --help`.
+
 ## How to submit
 
 1. **Download the data** from the source in `info <track>`. Do not ask us for a copy: we do not redistribute it.
@@ -57,6 +61,7 @@ Reference submission: `tools/benchmark/make_b2t25_published.py` builds a full st
 |---|---|
 | CER | Character edit distance of the top-1 text / truth length, pooled over trials |
 | eWPM [95% CI] | Effective words per minute with the documented simulated user (`aac-gaze-v1`, word model); a sentence counts only if it ends exactly right |
+| Safe WPM @ alpha | Words per minute of committed, exactly right text; each wrong commit adds a correction time; shown only under a certified CRC / LTT bound; `! ABOVE alpha` if the measured test rate is above alpha ([docs/safe-wpm.md](../docs/safe-wpm.md), P14-05). Add `neural_s` (seconds) per trial to the truth file to use measured times |
 | Wrong-commit | Wrong commits / all trials (the marginal rate that CRC and LTT control) |
 | Error among commits | Wrong commits / commits |
 | Commit rate | Commits / all trials |
