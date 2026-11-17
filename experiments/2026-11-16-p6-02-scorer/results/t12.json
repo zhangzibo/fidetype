@@ -1,0 +1,38 @@
+{
+ "n_cal": 880,
+ "n_test": 880,
+ "config_id": "tcfg-da682400ae229448",
+ "sheet": {
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_items": 880,
+  "n_fit": 220,
+  "n_policy": 330,
+  "n_ltt": 330,
+  "feasible": true,
+  "commit_threshold": 0.5,
+  "controls": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   }
+  ],
+  "warnings": [
+   "only 8 of 330 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds."
+  ]
+ },
+ "submission": "C:\\Users\\zhang\\bci-data\\derived\\p6-02-scorer\\submissions\\b2t24-t12__t12v2__guard",
+ "seconds": 601.4
+}

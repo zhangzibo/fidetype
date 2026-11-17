@@ -1,0 +1,42 @@
+{
+ "n_users": 104,
+ "n_val_prompts": 15877,
+ "n_cal": 3000,
+ "n_test": 15867,
+ "missing_test_prompts": 0,
+ "test_key_accuracy": 0.5069366235369689,
+ "config_id": "tcfg-7f4b483e5d258b75",
+ "sheet": {
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_items": 3000,
+  "n_fit": 750,
+  "n_policy": 1125,
+  "n_ltt": 1125,
+  "feasible": true,
+  "commit_threshold": 0.3,
+  "controls": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   }
+  ],
+  "warnings": [
+   "only 0 of 1125 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds."
+  ]
+ },
+ "submission": "C:\\Users\\zhang\\bci-data\\derived\\p6-02-scorer\\submissions\\emg2qwerty__lda-oracle__guard",
+ "seconds": 1264.2
+}

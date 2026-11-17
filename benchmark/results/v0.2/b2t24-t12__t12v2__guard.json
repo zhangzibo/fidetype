@@ -1,0 +1,231 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/drop-in guard (P14-03 recipe)",
+ "track": "b2t24-t12",
+ "decoder": {
+  "name": "t12-v2 GRU + word LM (ours)",
+  "version": "5317b0600a5c",
+  "url": "experiments/2026-11-13-confirmatory-t12-v2",
+  "weights_licence": "not released",
+  "training_data": [
+   "b2t24-t12 train split (train blocks of the train partition)"
+  ],
+  "training_regime": "cross-session (one participant; test sessions are also train sessions)"
+ },
+ "policy": {
+  "name": "drop-in guard (P14-03 recipe)",
+  "description": "fidetype.trust.calibrate, alpha 0.05, delta 0.1, user decode_fn = the T12 v2 phoneme-to-word decoder with the Tatoeba word LM"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "b2t24-t12__t12v2__guard"
+ ],
+ "n_trials": 880,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "session"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.3042671614100185,
+   "ci": [
+    0.28094746496811424,
+    0.32869364301765847
+   ]
+  },
+  "wer": {
+   "value": 0.42929843693202474,
+   "ci": [
+    0.39740199715650637,
+    0.46521885391323176
+   ]
+  },
+  "ewpm": {
+   "value": 6.361786588540457,
+   "ci": [
+    5.891668995255304,
+    6.840810051242401
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 4.00305576776165,
+   "ci": [
+    3.9170157235923044,
+    4.079253493991782
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 2.358730820778807,
+   "ci": [
+    1.961161720881704,
+    2.773173282065564
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.010227272727272727,
+   "ci": [
+    0.005434782608695652,
+    0.015217391304347827
+   ]
+  },
+  "commit_rate": {
+   "value": 0.019318181818181818,
+   "ci": [
+    0.011363636363636364,
+    0.027777777777777776
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.5294117647058824,
+   "ci": [
+    0.3333333333333333,
+    0.7333333333333333
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.0011363636363636363,
+   "ci": [
+    0.0,
+    0.0034883720930232558
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 0.8839899596202118,
+   "cer_gap": 0.5797227982101931,
+   "cer_gap_ci": [
+    0.5488815876811944,
+    0.6113015190605636
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 0.9036341809451053,
+   "cer_gap": 0.5993670195350868,
+   "cer_gap_ci": [
+    0.576835629494063,
+    0.6202084970037157
+   ]
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "max": 0.05
+  },
+  "passed": true,
+  "basis": {
+   "shuffled": "decoder output level: the frames of each test log-prob matrix permuted in time (seeded by the unit hash); the neural input was not re-decoded",
+   "zeros": "decoder output level: uniform log-probs of the same length (no-signal stand-in); the GRU was not run on zero input"
+  }
+ },
+ "guarantee": {
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 330,
+  "scope": "marginal over test trials; exchangeable cal / test (cal = last train block per session)",
+  "calibration_split": "cal",
+  "measured_wrong_commit": 0.010227272727272727,
+  "measured_wrong_commit_ci": [
+   0.005434782608695652,
+   0.015217391304347827
+  ],
+  "met_on_test": true
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": 0.475882726405761,
+  "ci": [
+   0.19586646747797964,
+   0.7815007885421132
+  ],
+  "status": "certified",
+  "unguarded_wpm": 0.475882726405761,
+  "wpm_no_penalty": 0.4983501589434977,
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 330,
+  "calibration": "cal",
+  "confidence": "probability >= 0.9 over calibration draws",
+  "measured_wrong_commit": 0.010227272727272727,
+  "measured_wrong_commit_cp95": [
+   0.0047,
+   0.0193
+  ],
+  "n_trials": 880,
+  "n_commits": 17,
+  "n_wrong_commits": 9,
+  "n_correct_commits": 8,
+  "error_among_commits": 0.5294117647058824,
+  "committed_correct_words": 44,
+  "total_words": 5502,
+  "minutes_neural": 88.29133333333333,
+  "minutes_correction": 4.168421052631579,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 4.0030557677616505,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 303.98 chars/min",
+  "config": {
+   "chars_per_min": 303.98331077672157
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Intracortical attempted speech, T12 (Brain-to-Text '24 competition data)",
+  "licence": "CC0 1.0",
+  "research_only": false,
+  "modality": "intracortical",
+  "ci_unit": "session",
+  "split_digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14",
+  "rate_source": "measured T12 speech rate of the decoder-train trials (experiments/2026-11-13-confirmatory-t12-v2/results/prep.json)",
+  "key_track": false
+ },
+ "coverage": {
+  "n_scored_units": 880,
+  "n_covered": 880,
+  "partial": false
+ },
+ "regime": "cross-session",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 880,
+  "n_parent_units": 880,
+  "n_parent_covered": 880
+ },
+ "status": "scored",
+ "certification": "certified"
+}

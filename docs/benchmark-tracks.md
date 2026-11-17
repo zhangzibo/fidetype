@@ -4,7 +4,7 @@ This page defines the seven benchmark tracks of the Fidetype open benchmark (roa
 
 - Code: [`src/fidetype/benchmark/tracks.py`](../src/fidetype/benchmark/tracks.py)
 - Split files: [`src/fidetype/benchmark/splits/tracks-v0.2/`](../src/fidetype/benchmark/splits/tracks-v0.2/)
-- How to submit: [`benchmark/README.md`](../benchmark/README.md)
+- How to submit: [benchmark-submission.md](benchmark-submission.md) (format v0.2 + one-command scorer, P6-02), [`benchmark/README.md`](../benchmark/README.md)
 - Metrics: [safe WPM](safe-wpm.md), [hallucination benchmark](hallucination-benchmark.md), [error metrics](../wiki/concepts/error-metrics.md)
 - Data licences: [`LICENSES/DATA.md`](../LICENSES/DATA.md)
 
@@ -45,7 +45,7 @@ This page defines the seven benchmark tracks of the Fidetype open benchmark (roa
 | Item | Rule |
 |---|---|
 | Metrics | CER, WER (key error rate on key tracks), eWPM [95 % CI] next to the no-BCI reference, safe WPM at alpha 0.05, wrong-commit rate, error among commits, commit rate |
-| Required controls | Time-shuffled input and zero (null) input. Both must give a higher CER than real input. The null input must commit on at most 5 % of trials. Entries without them show "controls: no" |
+| Required controls | Time-shuffled input and zero (null) input. Both must give a higher CER than real input. The null input must commit on at most 5 % of trials. Entries without them show "controls: no". The scorer exits with code 1 until all three pass ([submission format](benchmark-submission.md)) |
 | Optional controls | Hallucination tracks (null, scrambled, swapped signal) on the intracortical speech tracks |
 | Timing | Measured per trial where the data has it (speech duration, neural bins, key times). Else the track rate model, and the entry says so |
 | Regime | Cross-session, session-calibrated, cross-subject or personalised |

@@ -1,0 +1,225 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/always commit top-1",
+ "track": "emg2qwerty",
+ "decoder": {
+  "name": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing)",
+  "version": "0",
+  "url": "src/fidetype/adapters/emg2qwerty.py",
+  "weights_licence": "not released (would be CC BY-NC-SA: research only)",
+  "training_data": [
+   "emg2qwerty: the last train session of each test user"
+  ],
+  "training_regime": "personalised (fit on one earlier session of the same user)"
+ },
+ "policy": {
+  "name": "always commit top-1"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "emg2qwerty__lda-oracle__always-commit"
+ ],
+ "n_trials": 15867,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "user"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.48951581283212786,
+   "ci": [
+    0.4653203546266135,
+    0.513602228199142
+   ]
+  },
+  "wer": {
+   "value": 1.031480439482335,
+   "ci": [
+    1.0141639924995367,
+    1.0486151086500495
+   ]
+  },
+  "ewpm": {
+   "value": 2.256169615169197,
+   "ci": [
+    2.228075144838443,
+    2.285498855765764
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 2.816944882415263,
+   "ci": [
+    2.7928546156501013,
+    2.8437528843309656
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": -0.5607752672460662,
+   "ci": [
+    -0.58086215308829,
+    -0.5400971123971915
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.9998109283418416,
+   "ci": [
+    0.9994958081171255,
+    1.0
+   ]
+  },
+  "commit_rate": {
+   "value": 1.0,
+   "ci": [
+    1.0,
+    1.0
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.9998109283418416,
+   "ci": [
+    0.9994958081171255,
+    1.0
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.16701329803995715,
+   "ci": [
+    0.16045793390673183,
+    0.17321900024602174
+   ]
+  },
+  "key_error_rate": {
+   "value": 0.48951581283212786,
+   "ci": [
+    0.4653203546266135,
+    0.513602228199142
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 0.8864967339890382,
+   "cer_gap": 0.39698092115691036,
+   "cer_gap_ci": [
+    0.3719506056296347,
+    0.4215850916403821
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 0.9242498185549466,
+   "cer_gap": 0.4347340057228187,
+   "cer_gap_ci": [
+    0.4095579827181098,
+    0.4591918921467068
+   ]
+  },
+  "null_commit": {
+   "status": "fail",
+   "commit_rate_zeros": 1.0,
+   "max": 0.05
+  },
+  "passed": false,
+  "basis": {
+   "shuffled": "input level: each key window replaced by a random key window of the same session",
+   "zeros": "input level: all-zero features (zero-EMG stand-in after the per-session standardisation)"
+  }
+ },
+ "guarantee": {
+  "method": "none"
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "unguarded_wpm": 0.001423786054722239,
+  "wpm_no_penalty": 0.007541373652393793,
+  "method": "none",
+  "alpha": null,
+  "delta": null,
+  "n_cal": null,
+  "calibration": null,
+  "confidence": null,
+  "measured_wrong_commit": 0.9998109283418416,
+  "measured_wrong_commit_cp95": [
+   0.9994,
+   1.0
+  ],
+  "n_trials": 15867,
+  "n_commits": 15867,
+  "n_wrong_commits": 15864,
+  "n_correct_commits": 3,
+  "error_among_commits": 0.9998109283418416,
+  "committed_correct_words": 12,
+  "total_words": 67534,
+  "minutes_neural": 1591.222044301033,
+  "minutes_correction": 6837.01052631579,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 2.816944882415263,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "fail",
+   "passed": false,
+   "commit_rate_zeros": 1.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 301.33 keys/min",
+  "config": {
+   "chars_per_min": 301.3306670286988
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Oracle key timing from the key log; not a track-conformant continuous decoder (P11-01 is). Reference only.",
+  "Key track: one character per key, so CER = key error rate.",
+  "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Wrist sEMG touch typing (emg2qwerty, Meta) - RESEARCH ONLY",
+  "licence": "CC BY-NC-SA 4.0",
+  "research_only": true,
+  "modality": "emg",
+  "ci_unit": "user",
+  "split_digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+  "rate_source": "measured: keys / (first to last key-down time) over the 15867 scored test prompts",
+  "key_track": true
+ },
+ "coverage": {
+  "n_scored_units": 15867,
+  "n_covered": 15867,
+  "partial": false
+ },
+ "regime": "personalised",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 15867,
+  "n_parent_units": 104,
+  "n_parent_covered": 104
+ },
+ "status": "scored: controls failed",
+ "certification": "not-certified"
+}

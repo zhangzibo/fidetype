@@ -1,0 +1,41 @@
+{
+ "n_train_keys": 98768,
+ "test_key_accuracy": 0.43292894280762567,
+ "n_cal": 89,
+ "n_test": 172,
+ "config_id": "tcfg-99a5a0c7b2e70379",
+ "sheet": {
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_items": 89,
+  "n_fit": 22,
+  "n_policy": 33,
+  "n_ltt": 34,
+  "feasible": false,
+  "commit_threshold": "inf",
+  "controls": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   }
+  ],
+  "warnings": [
+   "only 34 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.",
+   "the guard never commits (no certified threshold). It still offers and withholds."
+  ]
+ },
+ "submission": "C:\\Users\\zhang\\bci-data\\derived\\p6-02-scorer\\submissions\\kt-semg__lda-oracle__guard",
+ "seconds": 2144.3
+}

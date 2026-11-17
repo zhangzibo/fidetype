@@ -270,4 +270,28 @@ def normalize(text: str, normalizer: str) -> str:
         return normalize_words(text)
     if normalizer == "none":
         return " ".join(text.split())
+    if normalizer == "keycodes":
+        return keycodes_to_chars(text)
     raise ValueError(f"unknown normalizer {normalizer!r}")
+
+
+#: Key tracks (P6-02): one character per W3C ``KeyboardEvent.code``, so CER = key error rate.
+_KEY_CHARS: dict[str, str] = {
+    **{f"Key{c}": c.lower() for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"},
+    **{f"Digit{d}": str(d) for d in range(10)},
+    "Space": " ", "Period": ".", "Comma": ",", "Quote": "'", "Semicolon": ";", "Slash": "/",
+    "BracketLeft": "[", "BracketRight": "]", "Minus": "-", "Equal": "=", "Backquote": "`", "Backslash": "\\",
+    "Backspace": "⌫", "Enter": "⏎", "Tab": "⇥",
+}
+#: Any other code (or ``?`` for an unknown key) maps to this character.
+UNKNOWN_KEY_CHAR = "�"
+
+
+def keycodes_to_chars(text: str) -> str:
+    """``"KeyH KeyI Space"`` -> ``"hi "``: one character per whitespace-separated key code.
+
+    Spaces in the result are the ``Space`` key, not separators, so the
+    result is never whitespace-collapsed. Unknown codes give
+    :data:`UNKNOWN_KEY_CHAR`.
+    """
+    return "".join(_KEY_CHARS.get(tok, UNKNOWN_KEY_CHAR) for tok in text.split())

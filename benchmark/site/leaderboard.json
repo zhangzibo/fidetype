@@ -680,6 +680,279 @@
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)"
    }
+  ],
+  "b2t25-t15": [],
+  "b2t24-t12": [
+   {
+    "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/drop-in guard (P14-03 recipe)",
+    "track": "b2t24-t12",
+    "decoder": "t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions))",
+    "policy": "drop-in guard (P14-03 recipe)",
+    "cer": 0.3042671614100185,
+    "wer": 0.42929843693202474,
+    "ewpm": 6.361786588540457,
+    "ewpm_ci": [
+     5.891668995255304,
+     6.840810051242401
+    ],
+    "gaze_ewpm": 4.00305576776165,
+    "wrong_commit_rate": 0.010227272727272727,
+    "error_among_commits": 0.5294117647058824,
+    "commit_rate": 0.019318181818181818,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=330; test 0.010 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 880,
+    "ci_unit": "group",
+    "notes": [
+     "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials."
+    ],
+    "file": "b2t24-t12__t12v2__guard.json",
+    "safe_wpm": 0.475882726405761,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "0.48 [0.20, 0.78] (LTT a=0.05 d=0.1)"
+   },
+   {
+    "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/always commit top-1",
+    "track": "b2t24-t12",
+    "decoder": "t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions))",
+    "policy": "always commit top-1",
+    "cer": 0.3042671614100185,
+    "wer": 0.42929843693202474,
+    "ewpm": 5.955468693192656,
+    "ewpm_ci": [
+     5.391498405349017,
+     6.494875703177166
+    ],
+    "gaze_ewpm": 4.00305576776165,
+    "wrong_commit_rate": 0.9306818181818182,
+    "error_among_commits": 0.9306818181818182,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 880,
+    "ci_unit": "group",
+    "notes": [
+     "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials."
+    ],
+    "file": "b2t24-t12__t12v2__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   }
+  ],
+  "willett-hw": [
+   {
+    "entry_id": "willett-hw/Willett 2021 real-time RNN (published output) + CTC beam with word list/always commit the real-time RNN text (as typed on screen in the study)",
+    "track": "willett-hw",
+    "decoder": "Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units]",
+    "policy": "always commit the real-time RNN text (as typed on screen in the study)",
+    "cer": 0.08015267175572519,
+    "wer": 0.35081967213114756,
+    "ewpm": 4.709429841589539,
+    "ewpm_ci": [
+     4.064487540300105,
+     5.485270071628554
+    ],
+    "gaze_ewpm": 3.8804071246819336,
+    "wrong_commit_rate": 0.9629629629629629,
+    "error_among_commits": 0.9629629629629629,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (output in the CC0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 81,
+    "ci_unit": "group",
+    "notes": [
+     "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed)."
+    ],
+    "file": "willett-hw__rnn-published__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   },
+   {
+    "entry_id": "willett-hw/Willett 2021 real-time RNN (published output) + CTC beam with word list/drop-in guard (built-in CTC beam + word list)",
+    "track": "willett-hw",
+    "decoder": "Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units]",
+    "policy": "drop-in guard (built-in CTC beam + word list)",
+    "cer": 0.07729007633587787,
+    "wer": 0.3344262295081967,
+    "ewpm": 3.471506462369315,
+    "ewpm_ci": [
+     3.209950159461453,
+     3.7474544195660737
+    ],
+    "gaze_ewpm": 3.8804071246819336,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=73; test 0.000 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (output in the CC0 data)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 81,
+    "ci_unit": "group",
+    "notes": [
+     "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed)."
+    ],
+    "file": "willett-hw__rnn-published__guard.json",
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
+   }
+  ],
+  "toronto-semg": [],
+  "kt-semg": [
+   {
+    "entry_id": "kt-semg/shrinkage-LDA key decoder (adapter reference, oracle key timing)/drop-in guard (built-in CTC beam, no LM)",
+    "track": "kt-semg",
+    "decoder": "shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist))",
+    "policy": "drop-in guard (built-in CTC beam, no LM)",
+    "cer": 0.5533381838339743,
+    "wer": 1.1715930902111324,
+    "ewpm": 3.3747341294361437,
+    "ewpm_ci": [
+     3.079881219228266,
+     3.455918224453518
+    ],
+    "gaze_ewpm": 3.610158334199494,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=34; test 0.000 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 172,
+    "ci_unit": "group",
+    "notes": [
+     "Oracle key timing from the key log (the decoder is told when a key is pressed). Not a track-conformant key detector; reference only.",
+     "Key track: one character per key, so CER = key error rate."
+    ],
+    "file": "kt-semg__lda-oracle__guard.json",
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
+   },
+   {
+    "entry_id": "kt-semg/shrinkage-LDA key decoder (adapter reference, oracle key timing)/always commit top-1",
+    "track": "kt-semg",
+    "decoder": "shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist))",
+    "policy": "always commit top-1",
+    "cer": 0.5533381838339743,
+    "wer": 1.1715930902111324,
+    "ewpm": 0.5474475918874354,
+    "ewpm_ci": [
+     0.3849181463478873,
+     1.0278796922778377
+    ],
+    "gaze_ewpm": 3.610158334199494,
+    "wrong_commit_rate": 1.0,
+    "error_among_commits": 1.0,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 172,
+    "ci_unit": "group",
+    "notes": [
+     "Oracle key timing from the key log (the decoder is told when a key is pressed). Not a track-conformant key detector; reference only.",
+     "Key track: one character per key, so CER = key error rate."
+    ],
+    "file": "kt-semg__lda-oracle__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   }
+  ],
+  "spanishbcbl-meg": [],
+  "emg2qwerty": [
+   {
+    "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/drop-in guard (built-in CTC beam, no LM)",
+    "track": "emg2qwerty",
+    "decoder": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY]",
+    "policy": "drop-in guard (built-in CTC beam, no LM)",
+    "cer": 0.48951581283212786,
+    "wer": 1.031480439482335,
+    "ewpm": 2.5735319432303974,
+    "ewpm_ci": [
+     2.547788659108049,
+     2.6023578133878615
+    ],
+    "gaze_ewpm": 2.816944882415263,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=1125; test 0.000 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (would be CC BY-NC-SA: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 15867,
+    "ci_unit": "group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Oracle key timing from the key log; not a track-conformant continuous decoder (P11-01 is). Reference only.",
+     "Key track: one character per key, so CER = key error rate.",
+     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial."
+    ],
+    "file": "emg2qwerty__lda-oracle__guard.json",
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
+   },
+   {
+    "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/always commit top-1",
+    "track": "emg2qwerty",
+    "decoder": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY]",
+    "policy": "always commit top-1",
+    "cer": 0.48951581283212786,
+    "wer": 1.031480439482335,
+    "ewpm": 2.256169615169197,
+    "ewpm_ci": [
+     2.228075144838443,
+     2.285498855765764
+    ],
+    "gaze_ewpm": 2.816944882415263,
+    "wrong_commit_rate": 0.9998109283418416,
+    "error_among_commits": 0.9998109283418416,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (would be CC BY-NC-SA: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 15867,
+    "ci_unit": "group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Oracle key timing from the key log; not a track-conformant continuous decoder (P11-01 is). Reference only.",
+     "Key track: one character per key, so CER = key error rate.",
+     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial."
+    ],
+    "file": "emg2qwerty__lda-oracle__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)"
+   }
   ]
  }
 }

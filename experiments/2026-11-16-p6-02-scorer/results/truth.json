@@ -1,0 +1,40 @@
+{
+ "kt-semg": {
+  "track": "kt-semg",
+  "n_units": 172,
+  "n_neural_s": 172,
+  "seconds": 0.1,
+  "neural_s_total": 4434.119248151779,
+  "neural_s_median": 9.297270059585571,
+  "keys_total": 28863,
+  "keys_per_min_measured": 390.5578319125804
+ },
+ "willett-hw": {
+  "track": "willett-hw",
+  "n_units": 254,
+  "n_neural_s": 254,
+  "seconds": 1.0,
+  "neural_s_total": 6582.77,
+  "neural_s_median": 26.04,
+  "chars_per_min_measured": 67.64021832754295
+ },
+ "b2t24-t12": {
+  "track": "b2t24-t12",
+  "n_units": 880,
+  "n_neural_s": 880,
+  "seconds": 0.2,
+  "neural_s_total": 5297.4800000000005,
+  "neural_s_median": 5.7,
+  "chars_per_min_measured": 311.3442617999501
+ },
+ "emg2qwerty": {
+  "track": "emg2qwerty",
+  "n_units": 15867,
+  "n_neural_s": 15867,
+  "seconds": 16.8,
+  "neural_s_total": 95473.32265806198,
+  "neural_s_median": 5.399001598358154,
+  "keys_total": 479484,
+  "keys_per_min_measured": 301.3306670286988
+ }
+}

@@ -1,0 +1,216 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/always commit top-1",
+ "track": "b2t24-t12",
+ "decoder": {
+  "name": "t12-v2 GRU + word LM (ours)",
+  "version": "5317b0600a5c",
+  "url": "experiments/2026-11-13-confirmatory-t12-v2",
+  "weights_licence": "not released",
+  "training_data": [
+   "b2t24-t12 train split (train blocks of the train partition)"
+  ],
+  "training_regime": "cross-session (one participant; test sessions are also train sessions)"
+ },
+ "policy": {
+  "name": "always commit top-1"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "b2t24-t12__t12v2__always-commit"
+ ],
+ "n_trials": 880,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "session"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.3042671614100185,
+   "ci": [
+    0.28094746496811424,
+    0.32869364301765847
+   ]
+  },
+  "wer": {
+   "value": 0.42929843693202474,
+   "ci": [
+    0.39740199715650637,
+    0.46521885391323176
+   ]
+  },
+  "ewpm": {
+   "value": 5.955468693192656,
+   "ci": [
+    5.391498405349017,
+    6.494875703177166
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 4.00305576776165,
+   "ci": [
+    3.9170157235923044,
+    4.079253493991782
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 1.9524129254310063,
+   "ci": [
+    1.46616726201373,
+    2.42884216619211
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.9306818181818182,
+   "ci": [
+    0.9122222222222223,
+    0.95
+   ]
+  },
+  "commit_rate": {
+   "value": 1.0,
+   "ci": [
+    1.0,
+    1.0
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.9306818181818182,
+   "ci": [
+    0.9122222222222223,
+    0.95
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.11363636363636363,
+   "ci": [
+    0.0891304347826087,
+    0.14318779904306217
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 0.8839899596202118,
+   "cer_gap": 0.5797227982101931,
+   "cer_gap_ci": [
+    0.5488815876811944,
+    0.6113015190605636
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 0.9036341809451053,
+   "cer_gap": 0.5993670195350868,
+   "cer_gap_ci": [
+    0.576835629494063,
+    0.6202084970037157
+   ]
+  },
+  "null_commit": {
+   "status": "fail",
+   "commit_rate_zeros": 1.0,
+   "max": 0.05
+  },
+  "passed": false,
+  "basis": {
+   "shuffled": "decoder output level: the frames of each test log-prob matrix permuted in time (seeded by the unit hash); the neural input was not re-decoded",
+   "zeros": "decoder output level: uniform log-probs of the same length (no-signal stand-in); the GRU was not run on zero input"
+  }
+ },
+ "guarantee": {
+  "method": "none"
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "unguarded_wpm": 0.6911877596305341,
+  "wpm_no_penalty": 3.590386372388381,
+  "method": "none",
+  "alpha": null,
+  "delta": null,
+  "n_cal": null,
+  "calibration": null,
+  "confidence": null,
+  "measured_wrong_commit": 0.9306818181818182,
+  "measured_wrong_commit_cp95": [
+   0.9118,
+   0.9466
+  ],
+  "n_trials": 880,
+  "n_commits": 880,
+  "n_wrong_commits": 819,
+  "n_correct_commits": 61,
+  "error_among_commits": 0.9306818181818182,
+  "committed_correct_words": 317,
+  "total_words": 5502,
+  "minutes_neural": 88.29133333333333,
+  "minutes_correction": 370.33947368421053,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 4.0030557677616505,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "fail",
+   "passed": false,
+   "commit_rate_zeros": 1.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 303.98 chars/min",
+  "config": {
+   "chars_per_min": 303.98331077672157
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Intracortical attempted speech, T12 (Brain-to-Text '24 competition data)",
+  "licence": "CC0 1.0",
+  "research_only": false,
+  "modality": "intracortical",
+  "ci_unit": "session",
+  "split_digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14",
+  "rate_source": "measured T12 speech rate of the decoder-train trials (experiments/2026-11-13-confirmatory-t12-v2/results/prep.json)",
+  "key_track": false
+ },
+ "coverage": {
+  "n_scored_units": 880,
+  "n_covered": 880,
+  "partial": false
+ },
+ "regime": "cross-session",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 880,
+  "n_parent_units": 880,
+  "n_parent_covered": 880
+ },
+ "status": "scored: controls failed",
+ "certification": "not-certified"
+}

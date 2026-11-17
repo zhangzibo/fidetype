@@ -3,7 +3,7 @@
 This benchmark scores neural text entry from **NeuralTextStream (NTS) files**. The scorer does not need your decoder code. The benchmark ships **no data and no weights**. You download every dataset from its original source.
 
 - Leaderboard (generated): [`site/index.html`](site/index.html), [`site/leaderboard.md`](site/leaderboard.md)
-- Results (one JSON file per entry): [`results/v0.1/`](results/v0.1/)
+- Results (one JSON file per entry): [`results/v0.1/`](results/v0.1/), [`results/v0.2/`](results/v0.2/) (tracks v0.2)
 - Code: [`src/fidetype/benchmark/`](../src/fidetype/benchmark/)
 - Concept page: [`wiki/concepts/open-benchmark.md`](../wiki/concepts/open-benchmark.md)
 - Data licences: [`LICENSES/DATA.md`](../LICENSES/DATA.md)
@@ -39,7 +39,19 @@ python -m fidetype.benchmark verify <track> --data <path>      # = python -m fid
 python -m fidetype.benchmark.tracks select <track> --data <path> --split test --out units.jsonl   # local only
 ```
 
-Every entry on a v0.2 track reports CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha 0.05, and runs the shuffled and null-input controls. The v0.1 leaderboard below keeps its three tracks; the scorer for the new tracks is P6-02.
+Every entry on a v0.2 track reports CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha 0.05, and runs the shuffled and null-input controls.
+
+### Submit and score on a v0.2 track (P6-02)
+
+Format and rules: [docs/benchmark-submission.md](../docs/benchmark-submission.md). A submission is a folder with `submission.json` (schema `fidetype.benchmark.submission/0.2`), `units.jsonl` (one row per scored unit, keyed by the salted unit hash of the split file: action, n-best texts, optional latency) or NTS streams, and the two required control runs `controls/shuffled.jsonl` and `controls/zeros.jsonl`.
+
+```bash
+python -m fidetype.benchmark check <track> <submission>                                # format + split, no data
+python -m fidetype.benchmark truth <track> --data <path> --out truth.jsonl              # local, never commit
+python -m fidetype.benchmark score <track> <submission> --truth truth.jsonl --out card.json
+```
+
+The score card holds CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha with its certification status, wrong-commit rate, error among commits and commit rate, all with cluster-bootstrap CIs over the track CI unit, plus the control results. Exit code 0 only if the shuffled, zeros and null-commit (<= 5 %) controls pass. Baseline score cards: [`results/v0.2/`](results/v0.2/).
 
 ## Hallucination tracks
 

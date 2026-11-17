@@ -1,0 +1,34 @@
+{
+ "b2t24-t12__t12v2__always-commit": {
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "b2t24-t12__t12v2__guard": {
+  "status": "scored",
+  "certification": "certified"
+ },
+ "emg2qwerty__lda-oracle__always-commit": {
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "emg2qwerty__lda-oracle__guard": {
+  "status": "scored",
+  "certification": "vacuous"
+ },
+ "kt-semg__lda-oracle__always-commit": {
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "kt-semg__lda-oracle__guard": {
+  "status": "scored",
+  "certification": "vacuous"
+ },
+ "willett-hw__rnn-published__always-commit": {
+  "status": "scored: controls failed",
+  "certification": "not-certified"
+ },
+ "willett-hw__rnn-published__guard": {
+  "status": "scored",
+  "certification": "vacuous"
+ }
+}

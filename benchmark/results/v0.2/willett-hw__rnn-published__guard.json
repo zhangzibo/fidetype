@@ -1,0 +1,230 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "willett-hw/Willett 2021 real-time RNN (published output) + CTC beam with word list/drop-in guard (built-in CTC beam + word list)",
+ "track": "willett-hw",
+ "decoder": {
+  "name": "Willett 2021 real-time RNN (published output) + CTC beam with word list",
+  "version": "dataset",
+  "url": "https://doi.org/10.5061/dryad.wh70rxwmv",
+  "weights_licence": "not released (output in the CC0 data)",
+  "training_data": [
+   "Willett et al. 2021 own training (earlier sessions)"
+  ],
+  "training_regime": "as published (real-time decoder of the study)"
+ },
+ "policy": {
+  "name": "drop-in guard (built-in CTC beam + word list)",
+  "description": "fidetype.trust.calibrate, alpha 0.05, delta 0.1; word list = 50k Tatoeba tokens + calibration-text tokens"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "willett-hw__rnn-published__guard"
+ ],
+ "n_trials": 81,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "session"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.07729007633587787,
+   "ci": [
+    0.05388471177944862,
+    0.1016949152542373
+   ]
+  },
+  "wer": {
+   "value": 0.3344262295081967,
+   "ci": [
+    0.23529411764705882,
+    0.4435483870967742
+   ]
+  },
+  "ewpm": {
+   "value": 3.471506462369315,
+   "ci": [
+    3.209950159461453,
+    3.7474544195660737
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 3.8804071246819336,
+   "ci": [
+    3.8212634822804317,
+    4.004449388209121
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": -0.40890066231261857,
+   "ci": [
+    -0.7571636662051451,
+    -0.08713204659933949
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "commit_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "error_among_commits": {
+   "value": null,
+   "ci": [
+    null,
+    null
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 0.7986641221374046,
+   "cer_gap": 0.7213740458015268,
+   "cer_gap_ci": [
+    0.7052280311457174,
+    0.7368421052631579
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 0.946882951653944,
+   "cer_gap": 0.8695928753180662,
+   "cer_gap_ci": [
+    0.8531701890989989,
+    0.8828320802005013
+   ]
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "max": 0.05
+  },
+  "passed": true,
+  "basis": {
+   "shuffled": "decoder output level: the character rows of each trial permuted in time",
+   "zeros": "decoder output level: uniform character rows (no-signal stand-in)"
+  }
+ },
+ "guarantee": {
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 73,
+  "scope": "marginal over the 81 test trials with RNN output; exchangeable with the earlier-session closed-loop trials (a session shift breaks this)",
+  "calibration_split": "train+val (closed-loop trials of the earlier sessions)",
+  "measured_wrong_commit": 0.0,
+  "measured_wrong_commit_ci": [
+   0.0,
+   0.0
+  ],
+  "met_on_test": true
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": 0.0,
+  "ci": null,
+  "status": "vacuous",
+  "unguarded_wpm": 0.0,
+  "wpm_no_penalty": 0.0,
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 73,
+  "calibration": "train+val (closed-loop trials of the earlier sessions)",
+  "confidence": "probability >= 0.9 over calibration draws",
+  "measured_wrong_commit": 0.0,
+  "measured_wrong_commit_cp95": [
+   0.0,
+   0.0445
+  ],
+  "n_trials": 81,
+  "n_commits": 0,
+  "n_wrong_commits": 0,
+  "n_correct_commits": 0,
+  "error_among_commits": null,
+  "committed_correct_words": 0,
+  "total_words": 610,
+  "minutes_neural": 52.089333333333336,
+  "minutes_correction": 0.0,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 3.880407124681934,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "note": "the calibration found no certified threshold (policy never commits)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 67.64 chars/min",
+  "config": {
+   "chars_per_min": 67.64021832754295
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed)."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Intracortical handwriting, T5 sentences (Willett 2021)",
+  "licence": "CC0 1.0",
+  "research_only": false,
+  "modality": "intracortical",
+  "ci_unit": "session",
+  "split_digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450",
+  "rate_source": "measured: characters / (go cue to sentence end) over the 254 test trials",
+  "key_track": false
+ },
+ "coverage": {
+  "n_scored_units": 254,
+  "n_covered": 81,
+  "partial": true,
+  "subset": "the published RNN output exists only for the 81 closed-loop test trials; the other 173 test trials are open-loop (no decoder output)"
+ },
+ "regime": "other",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 81,
+  "n_parent_units": 254,
+  "n_parent_covered": 81
+ },
+ "status": "scored",
+ "certification": "vacuous"
+}

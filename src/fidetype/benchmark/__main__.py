@@ -12,9 +12,19 @@ Sub-commands:
     against the committed split file, and write it (local file; never
     commit it). Without ``--out`` it only verifies.
 ``check SUBMISSION [--truth truth.jsonl]``
-    Check the manifest, the trial coverage and the conformance gate.
+    Check the manifest, the trial coverage and the conformance gate (v0.1 tracks).
+``check TRACK SUBMISSION``
+    v0.2 tracks (P6-02): validate a submission against the split file
+    (unit hashes, coverage, row format, controls present). No truth needed.
+``truth TRACK --data PATH [--cache ... --sentences ...] --out truth.jsonl``
+    v0.2 tracks: rebuild the local truth of the scored units from your
+    download, checked against the split fingerprints. Never commit it.
 ``score SUBMISSION --truth truth.jsonl [--out result.json] [--B 2000]``
-    Score a submission folder and write the result JSON.
+    Score a submission folder and write the result JSON (v0.1 tracks).
+``score TRACK SUBMISSION (--data PATH | --truth truth.jsonl) [--out card.json]``
+    v0.2 tracks (P6-02): validate, check the required controls and print
+    the full score card (``docs/benchmark-submission.md``). Exit code 0
+    only if all required controls pass.
 ``safe-wpm --trials trials.jsonl (--guard guard.json | --guarantee g.json | --method ltt --alpha A ...)``
     Safe WPM at a certified wrong-commit rate (P14-05; ``docs/safe-wpm.md``)
     from a per-trial JSON Lines file.
@@ -80,7 +90,51 @@ def cmd_prepare(a) -> int:
     return 0
 
 
+def _v02(args: list[str]) -> tuple[str, str] | None:
+    from fidetype.benchmark.tracks import TRACKS as V02
+
+    if len(args) == 2 and args[0] in V02:
+        return args[0], args[1]
+    if len(args) != 1:
+        raise SystemExit("give SUBMISSION (v0.1) or TRACK SUBMISSION (v0.2 tracks: "
+                         f"{', '.join(sorted(V02))})")
+    return None
+
+
+def _v02_truth(a, track: str) -> dict:
+    from fidetype.benchmark import scorecard as SC
+
+    if a.truth:
+        return SC.read_truth(a.truth, track)
+    if not a.data:
+        raise SystemExit("give --data <your dataset copy> or --truth <truth.jsonl from `truth`>")
+    rows = SC.build_truth(track, a.data, cache=a.cache, sentences=a.sentences)
+    return {r["unit"]: r for r in rows}
+
+
+def cmd_truth(a) -> int:
+    from fidetype.benchmark import scorecard as SC
+
+    rows = SC.build_truth(a.track, a.data, cache=a.cache, sentences=a.sentences)
+    n = SC.write_truth(a.out, a.track, rows)
+    print(f"{a.track}: {n} scored units -> {a.out} (local file with truth text: never commit it)", file=sys.stderr)
+    return 0
+
+
 def cmd_check(a) -> int:
+    v = _v02(a.submission)
+    if v is not None:
+        from fidetype.benchmark import scorecard as SC
+        from fidetype.benchmark.submission import SubmissionError
+
+        try:
+            rep = SC.check_submission(*v)
+        except SubmissionError as e:
+            _dump({"track": v[0], "ok": False, "error": str(e)}, None)
+            return 2
+        _dump(rep, None)
+        return 0
+    a.submission = a.submission[0]
     from fidetype.benchmark.harness import conformance_gate
     from fidetype.benchmark.prepare import read_truth
     from fidetype.benchmark.splits import load_split
@@ -100,6 +154,22 @@ def cmd_check(a) -> int:
 
 
 def cmd_score(a) -> int:
+    v = _v02(a.submission)
+    if v is not None:
+        from fidetype.benchmark import scorecard as SC
+        from fidetype.benchmark.submission import SubmissionError
+
+        try:
+            res = SC.score(v[0], v[1], _v02_truth(a, v[0]), B=a.B, seed=a.seed, gate=a.gate)
+        except SubmissionError as e:
+            print(f"REJECTED: {e}", file=sys.stderr)
+            return 2
+        _dump(res, a.out)
+        print(SC.score_card_text(res), file=sys.stderr)
+        return 0 if res["status"] == "scored" else 1
+    a.submission = a.submission[0]
+    if not a.truth:
+        raise SystemExit("--truth is required for v0.1 tracks")
     from fidetype.benchmark.harness import score_submission
 
     res = score_submission(a.submission, a.truth, B=a.B, seed=a.seed, gate=not a.no_gate)
@@ -171,17 +241,28 @@ def main(argv=None) -> int:
     p.add_argument("--sentences", default=None, help="Tatoeba held-out list (Toronto only)")
     p.add_argument("--out", default=None)
     p.set_defaults(fn=cmd_prepare)
-    p = sub.add_parser("check")
-    p.add_argument("submission")
+    p = sub.add_parser("check", help="v0.1: SUBMISSION [--truth]; v0.2 tracks: TRACK SUBMISSION")
+    p.add_argument("submission", nargs="+", metavar="[TRACK] SUBMISSION")
     p.add_argument("--truth", default=None)
     p.set_defaults(fn=cmd_check)
-    p = sub.add_parser("score")
-    p.add_argument("submission")
-    p.add_argument("--truth", required=True)
+    p = sub.add_parser("truth", help="v0.2 tracks: rebuild the local truth file (never commit it)")
+    p.add_argument("track")
+    p.add_argument("--data", required=True)
+    p.add_argument("--cache", default=None, help="toronto-semg: window cache folder")
+    p.add_argument("--sentences", default=None, help="toronto-semg: eng_tatoeba_heldout.txt")
+    p.add_argument("--out", required=True)
+    p.set_defaults(fn=cmd_truth)
+    p = sub.add_parser("score", help="v0.1: SUBMISSION --truth; v0.2 tracks: TRACK SUBMISSION (--data | --truth)")
+    p.add_argument("submission", nargs="+", metavar="[TRACK] SUBMISSION")
+    p.add_argument("--truth", default=None)
+    p.add_argument("--data", default=None, help="v0.2: your dataset copy (truth is rebuilt and checked)")
+    p.add_argument("--cache", default=None, help="v0.2 toronto-semg: window cache folder")
+    p.add_argument("--sentences", default=None, help="v0.2 toronto-semg: eng_tatoeba_heldout.txt")
     p.add_argument("--out", default=None)
     p.add_argument("--B", type=int, default=2000)
     p.add_argument("--seed", type=int, default=0)
-    p.add_argument("--no-gate", action="store_true", help="score even if the conformance gate fails")
+    p.add_argument("--no-gate", action="store_true", help="v0.1: score even if the conformance gate fails")
+    p.add_argument("--gate", action="store_true", help="v0.2 stream submissions: reject below trust-ready")
     p.set_defaults(fn=cmd_score)
     p = sub.add_parser("safe-wpm", help="safe WPM at a certified wrong-commit rate (P14-05; docs/safe-wpm.md)")
     p.add_argument("--trials", required=True, help="per-trial JSON Lines: committed, correct, truth (or n_words + "
@@ -206,7 +287,7 @@ def main(argv=None) -> int:
     p.add_argument("rest", nargs=argparse.REMAINDER)
     p.set_defaults(fn=lambda a: __import__("fidetype.benchmark.tracks", fromlist=["main"]).main(["verify", *a.rest]))
     p = sub.add_parser("leaderboard")
-    p.add_argument("--results", default="benchmark/results/v0.1")
+    p.add_argument("--results", nargs="+", default=["benchmark/results/v0.1", "benchmark/results/v0.2"])
     p.add_argument("--out", default="benchmark/site")
     p.set_defaults(fn=cmd_leaderboard)
     a = ap.parse_args(argv)
