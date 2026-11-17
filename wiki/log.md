@@ -1083,3 +1083,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New gap 46 = P14-20: the streaming validators (`StreamingTrustLayer.push`, TypeScript / Rust `StreamValidator`) still ignore a `trust_decision` in a live input stream.
 - Tracker: P14-16 run stats filled (1501 s, 224,996 tokens, 106 tool uses).
 - Pages: [roadmap](questions/roadmap-standard.md) (P14-17, P14-20), [open gaps](questions/open-gaps.md), [live decode docs](../docs/live-decode.md#8-what-the-nts-file-holds), [conformance docs](../docs/conformance.md), tracker.
+
+## [2026-11-17] setup | P7-07, P3-07, P3-08 done: collector consumer on the whole kit, LSL receive stamps, B2T '25 replay through the collector (gaps 41, 38, 39 closed); new gap 43 (P3-10)
+- Code commit `2984990`; P3-08 results with the records commit.
+- P7-07: `validate` runs the FEP-0003 / FEP-0005 rule functions of `fidetype.conformance.profiles` (bounded windows). `fidetype-collector consume` replays LSL captures into the `lsl` receiver and WebSocket captures into the `websocket` receiver's ingest core, and runs the reference binding consumer. Kit 36/36; consumer level NTS Trust-ready for text, intent, control with both bindings; `certified.json` entry and CI step updated.
+- P3-07: LSL receive stamp `_fidetype_t_recv` (pull time). The merge window is most of the LSL latency: p95 61.3 ms at 0.05 s (was 1.1 ms without the wait). `LSLEventSource.poll` waits at most until the merge deadline; bench window 0.02 s: p95 26.8 / 22.9 ms. Old and new numbers in [collector docs](../docs/collector.md#lsl-receive-stamps-p3-07). New gap 43 = P3-10.
+- P3-08: 120 T15 `val_eval` trials at real time over WebSocket; n-best guard calibrated on `val_select` (null controls pass); p95 added 2.43 ms (budget 50 ms), producer level NTS Trust-ready, 120 OFFER, 0 COMMIT ([results](../experiments/2026-11-17-p3-08-b2t25-collector-replay/results.md)).
+- Tracker: P7-06 run stats filled (1787 s, 258,657 tokens, 96 tool uses).
+- Pages: [roadmap](questions/roadmap-standard.md) (P3-07, P3-08, P7-07, P3-10), [open gaps](questions/open-gaps.md), [collector concept](concepts/collector.md).

@@ -1,0 +1,60 @@
+2026-11-17 02:24:55 prep m4-12: calibration val_select 722, replay val_eval 701
+2026-11-17 02:25:15 val_select: 100/722 decoded (15 s)
+2026-11-17 02:25:30 val_select: 200/722 decoded (30 s)
+2026-11-17 02:25:47 val_select: 300/722 decoded (46 s)
+2026-11-17 02:26:01 val_select: 400/722 decoded (61 s)
+2026-11-17 02:26:17 val_select: 500/722 decoded (77 s)
+2026-11-17 02:26:31 val_select: 600/722 decoded (91 s)
+2026-11-17 02:26:47 val_select: 700/722 decoded (107 s)
+2026-11-17 02:26:50 val_select: 722 n-best lists (722 new, 110 s)
+2026-11-17 02:27:03 val_eval: 100/701 decoded (13 s)
+2026-11-17 02:27:18 val_eval: 200/701 decoded (28 s)
+2026-11-17 02:27:35 val_eval: 300/701 decoded (45 s)
+2026-11-17 02:27:50 val_eval: 400/701 decoded (60 s)
+2026-11-17 02:28:06 val_eval: 500/701 decoded (76 s)
+2026-11-17 02:28:22 val_eval: 600/701 decoded (92 s)
+2026-11-17 02:28:36 val_eval: 700/701 decoded (106 s)
+2026-11-17 02:28:36 val_eval: 701 n-best lists (701 new, 106 s)
+2026-11-17 02:28:59 null: 100/200 decoded (23 s)
+2026-11-17 02:29:24 null: 200/200 decoded (48 s)
+2026-11-17 02:29:24 null: 200 n-best lists (200 new, 48 s)
+2026-11-17 02:29:38 prep m4-12: guard tcfg-c5fd95a99143f814 in 13 s
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-c5fd95a99143f814
+input                nbest (your n-best lists)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    722 = 180 fit + 271 policy grid + 271 LTT
+LTT items needed     >= 45 LTT items (utterances, not commits) to certify any COMMIT
+lambda_hat           0.17 (feasible: True)
+commit threshold     p_top1 >= 0.3
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 0 commits, 0 wrong (of 271; 0 blocked by the commit gate; median guard risk 0.141435)
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           0/200 commits (allowed 10): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+warnings
+  ! only 0 of 271 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds.
+Details: docs/trust-guarantee.md
+2026-11-17 02:29:52 replay m4-12: 3 val_eval trials, 676 frames, 55.6 s of stream at real time over websocket
+2026-11-17 02:30:47 replay m4-12: p95 added None ms (budget 50.0 ms); producer level None; actions {}; wrote results/m4-12-summary-3.json
+2026-11-17 02:31:06 replay m4-12: 3 val_eval trials, 676 frames, 55.6 s of stream at real time over websocket
+2026-11-17 02:32:01 replay m4-12: p95 added 3.063 ms (budget 50.0 ms); producer level trust-ready; actions {'OFFER': 3}; wrote results/m4-12-summary-3.json
+2026-11-17 02:32:09 replay m4-12: 120 val_eval trials, 26394 frames, 2171.5 s of stream at real time over websocket
+2026-11-17 03:11:48 replay m4-12: 120 val_eval trials, 26394 frames, 2171.5 s of stream at real time over websocket
+2026-11-17 03:48:01 replay m4-12: p95 added 2.427 ms (budget 50.0 ms); producer level trust-ready; actions {'OFFER': 120}; wrote results/m4-12-summary.json

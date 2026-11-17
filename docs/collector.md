@@ -148,6 +148,7 @@ A frames stream and an events stream go through one merge. The merge holds an ev
 
 The same run for the other receivers (no change expected): implant-speech websocket 1.07 / 1.27 / 1.32, file 0.55 / 0.71 / 0.72; emg-key websocket 1.84 / 2.33 / 2.46, file 1.40 / 2.05 / 2.17; implant-logits websocket 59.0 / 97.3 / 100.4, file 64.2 / 96.2 / 100.1 (p50 / p95 / p99 ms).
 
+- B2T '25 replay (P3-08): real T15 data at real time over WebSocket, 120 trials: p95 `added` 2.43 ms, producer level NTS Trust-ready ([results](../experiments/2026-11-17-p3-08-b2t25-collector-replay/results.md)).
 - With LSL input, the merge window is now most of the added latency: about `merge_window_s` plus 1 to 2 ms. The guard itself still takes about 1 to 2 ms.
 - With the receiver default (0.05 s) the implant-speech p95 is over the budget. Choose `merge_window_s` below the budget. A window shorter than the time skew between the two LSL streams can release events out of order (counted as `late_releases`). An idle events stream with a heartbeat would remove most of the wait: open gap P3-10.
 

@@ -252,7 +252,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 **Effort:** 30–50 agent-days; about 8 h user testing on the PC. **Depends on:** P2 (Python and Rust), P5 trust API.
 
-**Status (2026-11-17):** P3-04 `done` (commit `2298e3e`): a pipeline integration test and the latency budget. One TOML file runs receiver (WebSocket, file, LSL) → `validate` → `segment` (new) → `guard` (new: drop-in guard, per-user profile, online ACI) → `jsonl` NTS stream + decision log + `os_text` stub (new) + WebSocket `/decisions`. Outputs reach producer level NTS Trust-ready; p95 added latency 1.1–2.3 ms at 50 Hz for the gated profiles (budget 50 ms); CI job `collector` fails above the budget. The logits guard with its built-in CTC beam search in the collector takes 104–108 ms at p95 (gap 37 = P3-06). [Docs](../../docs/collector.md#integration-test-and-latency-budget-p3-04). P3-01, P3-02, P3-03 stay `in_progress` (inventory in the tracker notes). P3 exit criteria still open: YAML (gap 40 = P3-09), a B2T '25 replay through the collector (gap 39 = P3-08), an OS input exporter that types on Windows (P3-03).
+**Status (2026-11-17):** P3-04 `done` (commit `2298e3e`): a pipeline integration test and the latency budget. One TOML file runs receiver (WebSocket, file, LSL) → `validate` → `segment` (new) → `guard` (new: drop-in guard, per-user profile, online ACI) → `jsonl` NTS stream + decision log + `os_text` stub (new) + WebSocket `/decisions`. Outputs reach producer level NTS Trust-ready; p95 added latency 1.1–2.3 ms at 50 Hz for the gated profiles (budget 50 ms); CI job `collector` fails above the budget. The logits guard with its built-in CTC beam search in the collector takes 104–108 ms at p95 (gap 37 = P3-06). [Docs](../../docs/collector.md#integration-test-and-latency-budget-p3-04). P3-01, P3-02, P3-03 stay `in_progress` (inventory in the tracker notes). P3 exit criteria still open: YAML (gap 40 = P3-09), an OS input exporter that types on Windows (P3-03). The B2T '25 replay through the collector is done (P3-08, 2026-11-17: p95 added 2.43 ms). P3-07 (LSL receive stamps) and P7-07 (collector consumer, all kit profiles) are done; new gap 43 = P3-10.
 
 #### P3-06 Logits guard inside the latency budget (incremental decoding)
 - **Gap:** 37 of the [open-gap list](open-gaps.md). Follow-up of P3-04, P14-03.
@@ -263,14 +263,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P3-07 Receive stamps for LSL input (merge-window wait in the latency)
 - **Gap:** 38 of the [open-gap list](open-gaps.md). Follow-up of P3-04, P3-01.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, commit `2984990`). The LSL source marks each released event with its pull time (`LSLEventSource.arrival_key`); the collector's LSL receiver sets it to `_fidetype_t_recv` (`time.perf_counter` clock, never exported), and the latency recorder counts `receive` and `added` from it. Result: the merge-window wait was the largest part of the LSL latency (implant-speech p95 61.3 ms at the default `merge_window_s` 0.05, not 1.1 ms). Two fixes: `LSLEventSource.poll` waits at most until the oldest held event's merge window ends; the bench uses `merge_window_s = 0.02`. New LSL p95 added: implant-speech 26.8 ms, emg-key 22.9 ms (PASS). [Docs](../../docs/collector.md#lsl-receive-stamps-p3-07). New gap 43 = P3-10.
 - **Depends on:** P3-04 (done); `fidetype.adapters.lsl` (LSLEventSource).
 - **Source:** P3-04 (2026-11-17): for LSL input the `added` latency starts at the receiver's poll return. The inlet merge window (`merge_window_s`, default 50 ms) can hold an event before that; this wait is not measured. WebSocket input has `ws_t_recv`, LSL input has no equal stamp.
 - **Done when:** the LSL receiver stamps each event at pull time (local clock, not sent on), the latency recorder uses it for `receive` and `added`, and the LSL bench numbers include the merge wait.
 
 #### P3-08 B2T '25 replay through the collector with the latency budget
 - **Gap:** 39 of the [open-gap list](open-gaps.md). Follow-up of P3-04.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, commit `2984990` (code; results committed with this record)). 120 T15 `val_eval` trials (M4-12 fixed0 log-probs + the P14-03 word LM n-best) at real time over WebSocket into one collector: `validate` -> `segment` -> `guard` (n-best guard calibrated on `val_select`, null controls passed, per-user profile, online ACI) -> NTS file + decision log + `os_text` stub + WebSocket `/decisions`. p95 added **2.43 ms** (budget 50 ms); producer level NTS Trust-ready; 120 decisions, all OFFER (the weak M4-12 decoder: no commit, see P15-19). Re-runnable with `--decoder m4-13`. [Results](../../experiments/2026-11-17-p3-08-b2t25-collector-replay/results.md).
 - **Depends on:** P3-04 (done); B2T '25 data on the local machine (not in CI); a B2T guard or trust configuration (P6-02 entries).
 - **Source:** P3-04 (2026-11-17): the P3 exit criterion names a B2T '25 replay; P3-04 uses synthetic input only (CI has no data).
 - **Done when:** a local run replays B2T '25 at real time into the collector (WebSocket or LSL), with a trust step and the file and WebSocket exporters; the outputs pass `nts-conform` (producer level reported) and the p95 added latency is reported against the 50 ms budget in an experiment page.
@@ -281,6 +281,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** a user decision.
 - **Source:** P3-04 (2026-11-17): the P3 exit criterion says "one YAML config"; FEP-0006 section 6 decided "TOML and JSON only, YAML not planned" (no new dependency, PyYAML). The integration test uses TOML.
 - **Done when:** the user chooses: (a) change the exit criterion to "one TOML or JSON config", or (b) add YAML as an optional extra (`fidetype[yaml]`, PyYAML) and amend FEP-0006; then the roadmap and FEP-0006 say the same.
+
+#### P3-10 LSL merge window inside the latency budget (idle events stream)
+- **Gap:** 43 of the [open-gap list](open-gaps.md). Follow-up of P3-07.
+- **Status:** `todo`.
+- **Depends on:** P3-07 (done); FEP-0002 (LSL binding, LSL-C6 merge).
+- **Source:** P3-07 (2026-11-17): with receive stamps, the inlet merge window is most of the LSL added latency. A frames stream and an idle events stream go through one merge, so each frame and each boundary waits about `merge_window_s`. At the receiver default (0.05 s) implant-speech has p95 added 60.4 ms (over the 50 ms budget); the bench uses 0.02 s (p95 26.8 ms).
+- **Done when:** the LSL receiver meets the 50 ms budget at its default settings with a two-stream producer (for example: an events-stream heartbeat in the binding that lets the merge release frames at once, or a default `merge_window_s` below the budget with a measured `late_releases` rate), and FEP-0002 and the docs say the same.
 
 ## P4. Device and toolkit adapters
 **Goal:** NTS comes out of the tools that people already use. Dataset replay stands in for devices we do not own.
@@ -535,7 +542,7 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 
 #### P7-07 Collector consumer: intent and control profiles, LSL and WebSocket captures
 - **Gap:** 41 of the [open-gap list](open-gaps.md). Follow-up of P7-05.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, commit `2984990`). `fidetype-collector consume` reads all suite profiles: `validate` runs the FEP-0003 / FEP-0005 rule functions of `fidetype.conformance.profiles` on headers, profile events and intent / control decisions (bounded windows of 512); LSL `inlet` captures replay into the `lsl` receiver (`capture.lsl_source`), WebSocket `ingest` captures into the `websocket` receiver's ingest core (`capture.play_ws_steps`, server not started), decision captures through `capture.received`; each capture also goes through the reference consumer of its binding profile. Kit: **36 / 36**, consumer level NTS Trust-ready for text, intent and control with `nts-lsl/0.1` and `nts-ws/0.1`; `certified.json` entry updated; CI job `collector` checks all entries and both bindings. [Docs](../../docs/collector.md#the-collector-as-a-consumer-the-conformance-kit-p7-05-p7-07).
 - **Depends on:** P7-05 (done); the collector `validate` processor; the LSL and WebSocket receivers.
 - **Source:** P7-05 (2026-11-17): the collector consumer reaches NTS Trust-ready for the profile `text` only. The `validate` processor has no intent (FEP-0003) or control (FEP-0005) checks, and the collector cannot read recorded LSL or WebSocket captures, so K19, K21, K23, K25, K26, K28, K29 and K31 give "not supported".
 - **Done when:** the collector consumer gives the expected verdict on all 36 kit entries (intent and control checks in `validate`; a capture replay into the LSL and WebSocket receivers), and `certified.json` lists it with the profiles `text`, `intent`, `control` and both bindings.
