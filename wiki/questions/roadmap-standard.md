@@ -252,6 +252,36 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 **Effort:** 30–50 agent-days; about 8 h user testing on the PC. **Depends on:** P2 (Python and Rust), P5 trust API.
 
+**Status (2026-11-17):** P3-04 `done` (commit `2298e3e`): a pipeline integration test and the latency budget. One TOML file runs receiver (WebSocket, file, LSL) → `validate` → `segment` (new) → `guard` (new: drop-in guard, per-user profile, online ACI) → `jsonl` NTS stream + decision log + `os_text` stub (new) + WebSocket `/decisions`. Outputs reach producer level NTS Trust-ready; p95 added latency 1.1–2.3 ms at 50 Hz for the gated profiles (budget 50 ms); CI job `collector` fails above the budget. The logits guard with its built-in CTC beam search in the collector takes 104–108 ms at p95 (gap 37 = P3-06). [Docs](../../docs/collector.md#integration-test-and-latency-budget-p3-04). P3-01, P3-02, P3-03 stay `in_progress` (inventory in the tracker notes). P3 exit criteria still open: YAML (gap 40 = P3-09), a B2T '25 replay through the collector (gap 39 = P3-08), an OS input exporter that types on Windows (P3-03).
+
+#### P3-06 Logits guard inside the latency budget (incremental decoding)
+- **Gap:** 37 of the [open-gap list](open-gaps.md). Follow-up of P3-04, P14-03.
+- **Status:** `todo`.
+- **Depends on:** P3-04 (done); the incremental CTC beam of `fidetype.lm.beam` (precomputes the n-best pairs during frames).
+- **Source:** P3-04 (2026-11-17): profile `implant-logits` (the drop-in guard with input kind `logits` decodes with its built-in CTC prefix beam search, beam 64, lexicon, n-best marginal confidences, at each segment end): p95 added latency 104.1 ms (WebSocket), 108.0 ms (file), 107.3 ms (LSL); the search is about 95 % of it (`_nbest_marginal` / `align_pairs`).
+- **Done when:** a logits guard in the collector decides within the 50 ms budget at p95 on the `implant-logits` bench profile (for example: decode incrementally while frames arrive, with the same decisions as the offline search on the same input, checked by a test), and the profile joins the CI gate.
+
+#### P3-07 Receive stamps for LSL input (merge-window wait in the latency)
+- **Gap:** 38 of the [open-gap list](open-gaps.md). Follow-up of P3-04, P3-01.
+- **Status:** `todo`.
+- **Depends on:** P3-04 (done); `fidetype.adapters.lsl` (LSLEventSource).
+- **Source:** P3-04 (2026-11-17): for LSL input the `added` latency starts at the receiver's poll return. The inlet merge window (`merge_window_s`, default 50 ms) can hold an event before that; this wait is not measured. WebSocket input has `ws_t_recv`, LSL input has no equal stamp.
+- **Done when:** the LSL receiver stamps each event at pull time (local clock, not sent on), the latency recorder uses it for `receive` and `added`, and the LSL bench numbers include the merge wait.
+
+#### P3-08 B2T '25 replay through the collector with the latency budget
+- **Gap:** 39 of the [open-gap list](open-gaps.md). Follow-up of P3-04.
+- **Status:** `todo`.
+- **Depends on:** P3-04 (done); B2T '25 data on the local machine (not in CI); a B2T guard or trust configuration (P6-02 entries).
+- **Source:** P3-04 (2026-11-17): the P3 exit criterion names a B2T '25 replay; P3-04 uses synthetic input only (CI has no data).
+- **Done when:** a local run replays B2T '25 at real time into the collector (WebSocket or LSL), with a trust step and the file and WebSocket exporters; the outputs pass `nts-conform` (producer level reported) and the p95 added latency is reported against the 50 ms budget in an experiment page.
+
+#### P3-09 YAML configuration: roadmap or FEP-0006 (user decision)
+- **Gap:** 40 of the [open-gap list](open-gaps.md). Follow-up of P3-01.
+- **Status:** `todo`.
+- **Depends on:** a user decision.
+- **Source:** P3-04 (2026-11-17): the P3 exit criterion says "one YAML config"; FEP-0006 section 6 decided "TOML and JSON only, YAML not planned" (no new dependency, PyYAML). The integration test uses TOML.
+- **Done when:** the user chooses: (a) change the exit criterion to "one TOML or JSON config", or (b) add YAML as an optional extra (`fidetype[yaml]`, PyYAML) and amend FEP-0006; then the roadmap and FEP-0006 say the same.
+
 ## P4. Device and toolkit adapters
 **Goal:** NTS comes out of the tools that people already use. Dataset replay stands in for devices we do not own.
 
@@ -491,7 +521,7 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 
 #### P7-05 The collector passes the kit in CI
 - **Gap:** 23 of the [open-gap list](open-gaps.md). Follow-up of P7-01, P7-02.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, commit `2298e3e`, with P3-04). `fidetype-collector consume [--profile P] [--level L] FILE` reads the file through the collector's own input path (the `file` receiver, now also NPZ, then the `validate` processor at stream level L); exit 0 = accept. `nts-conform kit --claim text --require-level trust-ready --cmd "fidetype-collector consume -q --profile {profile} --level {level} {path}"`: consumer level **NTS Trust-ready** (text); 28 of 36 entries match; the 8 others (intent, control, LSL and WebSocket captures) are "not supported" (new gap 41 = P7-07). CI job `collector` runs it; `certified.json` lists `fidetype-collector` with its kit report. [Docs](../../docs/collector.md#the-collector-as-a-consumer-the-conformance-kit-p7-05).
 - **Depends on:** P3 collector (draft FEP-0006), P7-02 (`nts-conform kit --cmd`, levels).
 - **Source:** P7-02 (2026-11-17): the P7 exit criterion says "every SDK and the collector pass the kit in CI". The three SDKs do (NTS Trust-ready, CI job `rust-parity`); the collector (`fidetype-collector`) is not run against the kit and has no entry in `spec/conformance/certified.json`.
 - **Done when:** the collector has a consumer entry point that follows the kit contract (exit 0 = accept; a `{level}` option for stream levels), CI runs `nts-conform kit --cmd "... {path}" --require-level <level>` on it, and `certified.json` lists the collector with its kit report as evidence.
@@ -502,6 +532,13 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 - **Depends on:** P7-02; the LSL outlet (`fidetype.adapters.lsl`), the WebSocket sender (`fidetype.adapters.ws`) and `fidetype live` (P14-04).
 - **Source:** P7-02 (2026-11-17): the producer entries of `certified.json` are file producers. Our code that emits NTS over LSL or WebSocket has no producer evidence, because `nts-conform check` judges recorded captures (scenario JSON) and no tool records a capture from a live outlet yet.
 - **Done when:** a tool records an LSL capture (`fidetype.conformance.lsl-scenario/1`) and a WebSocket capture (`ws-scenario/1`) from our own outlets (synthetic input, loopback, CI-safe), `nts-conform check` gives them a producer level with the binding, and `certified.json` lists the binding producers with that evidence.
+
+#### P7-07 Collector consumer: intent and control profiles, LSL and WebSocket captures
+- **Gap:** 41 of the [open-gap list](open-gaps.md). Follow-up of P7-05.
+- **Status:** `todo`.
+- **Depends on:** P7-05 (done); the collector `validate` processor; the LSL and WebSocket receivers.
+- **Source:** P7-05 (2026-11-17): the collector consumer reaches NTS Trust-ready for the profile `text` only. The `validate` processor has no intent (FEP-0003) or control (FEP-0005) checks, and the collector cannot read recorded LSL or WebSocket captures, so K19, K21, K23, K25, K26, K28, K29 and K31 give "not supported".
+- **Done when:** the collector consumer gives the expected verdict on all 36 kit entries (intent and control checks in `validate`; a capture replay into the LSL and WebSocket receivers), and `certified.json` lists it with the profiles `text`, `intent`, `control` and both bindings.
 
 ## P8. Docs, website, demo
 **Goal:** a newcomer gets a valid stream in 10 minutes and sees the value in one demo.
@@ -1006,7 +1043,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-20 Hallucination split halluc-v0.1 (T15): exact trial-index rule
 - **Gap:** 34 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the T15 split audit). Follow-up of P15-07.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17). The split file states the rule exactly (`rule`, new fields `id_rule` and `id_sessions`: i = position inside the session's `val_eval` list, HDF5 `val` index = 2i + 1, 3 excluded trials keep their i). `fidetype.benchmark.hallucination.ids_from_rule` rebuilds the 701 ids; `tests/test_halluc_bench.py` checks them against the hashes (and against the local HDF5 file when present). `verify_split` with ids from the rule: no problem. Docs: [hallucination benchmark](../../docs/hallucination-benchmark.md#4-files-and-licences).
 - **Depends on:** P15-07 (done).
 - **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)), issue C.
 - **Gap detail:** `src/fidetype/benchmark/splits/halluc-v0.1/b2t25-t15-val-eval.json` says "odd-index trials per session (val_eval) ... Trial id = <session>|val|<i>". The 701 ids use `i` = the index inside `val_eval` (checked: 701/701). If someone reads `i` as the index inside the HDF5 `val` file, 358 of the 701 ids point to `val_select` (calibration) trials. The text hashes catch such a rebuild, but the rule text should not allow it.
