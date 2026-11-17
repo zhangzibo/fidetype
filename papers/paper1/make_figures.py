@@ -132,7 +132,7 @@ R3X = "experiments/2026-11-12-paper1-r3-analyses"
 # v3: one bootstrap for every CI (seed 20261112, B = 2000; R3 unified-ci). Point values equal the R1 files.
 BASE = load(f"{R3X}/unified-ci/results/ci.json")["table2_baselines"]
 UM: dict = load(f"{R3X}/unified-ci/results/rerun/user-model/results/"
-                "user-model-emg-calib+emg-xsession+emg-xsubject+b2t-ours+b2t-published+meg-async.json")["conditions"]
+                "user-model-all6.json")["conditions"]
 DEPLOY = load(f"{R3X}/deployable-rule/results/deployable.json")["rows"]
 UM_VARIANTS = [("main", "main user model"), ("fallback 10 cpm", "fallback 10 cpm"), ("fallback 40 cpm", "fallback 40 cpm"),
                ("selection x0.5", "selection ×0.5"), ("selection x2", "selection ×2"), ("p_miss 0", "miss prob. 0"),

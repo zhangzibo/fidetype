@@ -143,6 +143,6 @@ Day-stratified reference (B2T): b2t-ours/split A: observed 0.0245, mean 0.0181 (
 
 ## Re-runs with the unified bootstrap
 
-- ablation: results/rerun/ablation/results/ (ablation-emg-calib+emg-xsession+emg-xsubject+meg-async+b2t-ours+b2t-published.json)
-- user-model: results/rerun/user-model/results/ (user-model-emg-calib+emg-xsession+emg-xsubject+b2t-ours+b2t-published+meg-async.json)
+- ablation: results/rerun/ablation/results/ (ablation-all6.json)
+- user-model: results/rerun/user-model/results/ (user-model-all6.json)
 - leakage: results/rerun/leakage/results/ (leakage.json)

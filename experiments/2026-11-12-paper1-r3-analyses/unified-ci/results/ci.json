@@ -7024,7 +7024,7 @@
  },
  "reruns": {
   "ablation": {
-   "ablation-emg-calib+emg-xsession+emg-xsubject+meg-async+b2t-ours+b2t-published.json": {
+   "ablation-all6.json": {
     "conditions": {
      "emg-calib": {
       "n_test": 551,
@@ -13461,7 +13461,7 @@
    }
   },
   "user-model": {
-   "user-model-emg-calib+emg-xsession+emg-xsubject+b2t-ours+b2t-published+meg-async.json": {
+   "user-model-all6.json": {
     "conditions": {
      "emg-calib": {
       "n_test": 551,

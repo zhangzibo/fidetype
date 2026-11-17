@@ -134,7 +134,7 @@ def rank_list(r) -> list:
 
 
 def user_models() -> dict:
-    u = json.loads((UCI / "rerun/user-model/results/user-model-emg-calib+emg-xsession+emg-xsubject+b2t-ours+b2t-published+meg-async.json")
+    u = json.loads((UCI / "rerun/user-model/results/user-model-all6.json")
                    .read_text(encoding="utf-8"))["conditions"]
     out = {}
     for cond, c in u.items():

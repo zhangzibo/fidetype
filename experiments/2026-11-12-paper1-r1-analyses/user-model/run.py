@@ -41,6 +41,7 @@ Run (repo root): .venv\\Scripts\\python.exe -I experiments/2026-11-12-paper1-r1-
 from __future__ import annotations
 
 import argparse
+import hashlib
 import bz2
 import json
 import math
@@ -214,7 +215,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--conds", default="emg-calib,emg-xsession,emg-xsubject,b2t-ours,b2t-published,meg-async")
     a = ap.parse_args()
-    out_p = OUT / f"user-model-{a.conds.replace(',', '+')}.json"
+    # Short file names: Windows clones break on long paths (all 6 default conditions -> "all6").
+    conds = a.conds.split(",")
+    tag = "all6" if sorted(conds) == sorted(ap.get_default("conds").split(",")) else "+".join(conds)
+    if len(tag) > 40:
+        tag = f"n{len(conds)}-{hashlib.sha1(a.conds.encode()).hexdigest()[:8]}"
+    out_p = OUT / f"user-model-{tag}.json"
     res: dict = {"conditions": {}}
     b2t = None
     comps: dict = {}
