@@ -417,7 +417,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 **Later extension:** [P13](#p13-public-benchmark-hub-added-2026-11-11) grows this leaderboard into a hub. P6 scope and dates do not change.
 
-**Status (2026-11-17): P6-02 done** (commit `5133e04`): submission format v0.2 + one-command scorer with required controls ([docs](../../docs/benchmark-submission.md)); baselines on b2t24-t12, willett-hw, kt-semg, emg2qwerty. **P6-08 done** (2026-11-17): v0.2 entries for b2t25-t15, toronto-semg and spanishbcbl-meg, so all seven v0.2 tracks have entries. Follow-up gaps 25-31 below and in P14.
+**Status (2026-11-17): P6-02 done** (commit `5133e04`): submission format v0.2 + one-command scorer with required controls ([docs](../../docs/benchmark-submission.md)); baselines on b2t24-t12, willett-hw, kt-semg, emg2qwerty. **P6-08 done** (2026-11-17): v0.2 entries for b2t25-t15, toronto-semg and spanishbcbl-meg, so all seven v0.2 tracks have entries. Follow-up gaps 25-31 below and in P14. **T15 split audit (2026-11-17):** no committed result scores an M4-x decoder on its own training trials; follow-up gaps 32 (P6-09), 33 (P6-10), 34 (P15-20), 35 (P14-15) ([audit](t15-split-audit.md)).
 
 ### Open-gap items (added 2026-11-17)
 Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing item moved.
@@ -453,6 +453,22 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 - **Source:** Commit `5133e04` (P6-02 wrote v0.2 entries only for the four new tracks).
 - **Gap detail:** The three tracks that have v0.1 entries (b2t25-t15, toronto-semg, spanishbcbl-meg) had no v0.2-format submission or score card, so the v0.2 board showed 'No entries yet' for them.
 - **Done when:** Each of the three tracks has v0.2 submissions (units + both controls) built from the v0.1 decoders and policies, scored by `python -m fidetype.benchmark score`, with numbers that match v0.1 where the definitions agree and a written reason where they differ.
+
+#### P6-09 Full-coverage M4-x entry on b2t25-t15 without train / test overlap
+- **Gap:** 32 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the T15 split audit). Follow-up of P6-08.
+- **Status:** `todo`.
+- **Depends on:** P6-08 (done); the GPU queue (one retrain of the M4-13 recipe); P6-10 (the overlap check) helps.
+- **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)). Commit `b9fa645` first saw it.
+- **Gap detail:** The B2T '25 HDF5 `train` partition holds 366 (strict match; up to 368) of the 816 `b2t25-t15` test trials. Our M4-x decoders train on it. So no M4-x decoder can have a full-coverage entry: the P6-08 entry covers only the 103 test trials in `val_eval`.
+- **Done when:** (a) An M4-x decoder is retrained on HDF5 `train` minus every trial that matches a `b2t25-t15` test trial (strict or possible match of the audit), and its full 816-unit entry is scored with `python -m fidetype.benchmark score`, with the removed-trial count in the manifest. Or (b) a new track variant built on the HDF5 `val_eval` partition is defined (split file, digest, version note), and the M4-x entries move there. The [audit](t15-split-audit.md) script then shows 0 decoder-train trials among the scored units.
+
+#### P6-10 Train / test overlap check for benchmark entries
+- **Gap:** 33 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the T15 split audit). Follow-up of P6-02, P6-08.
+- **Status:** `todo`.
+- **Depends on:** P6-02 (done); P6-01 (done).
+- **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)).
+- **Gap detail:** The pkl track units and the HDF5 neural trials are the same trials in two forms. Anyone who trains on the public HDF5 `train` partition (the normal B2T '25 recipe) trains on about 45 % of the `b2t25-t15` test set. No tool checks this. The P6-08 agent found the overlap by chance.
+- **Done when:** (1) The v0.2 submission manifest has a required `training_data` field (dataset + partitions, or "none"). (2) The repo has a hash-only map from B2T '25 HDF5 trials (session, block, trial) to `b2t25-t15` units, built by the audit match (no text). (3) `python -m fidetype.benchmark score` warns, and the board marks the entry, when the declared training data overlap the scored units. (4) docs/benchmark-tracks.md says which HDF5 trials an outside team must leave out. (5) A test checks the warning.
 
 ## P7. Conformance + certification
 **Goal:** anyone can prove that an implementation speaks NTS correctly.
@@ -648,6 +664,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | **P14-12** | Willett-hw: word LM for exact-sentence commits and full test coverage (open gap 26, [details](#p14-12-willett-hw-word-lm-for-exact-sentence-commits-and-full-test-coverage)) | P6-02 (done); a word LM (for example the Tatoeba word LM of the T12 v2 recipe, or the published 50k-word n-gram); P15-08 (Willett decoder of our own, for full coverage) | research labs, BCI companies |
 | **P14-13** | Conformant EMG baselines without oracle key timing (kt-semg, emg2qwerty) (open gap 27, [details](#p14-13-conformant-emg-baselines-without-oracle-key-timing-kt-semg-emg2qwerty)) | P11-01 (continuous EMG decoder); P4-10 (live key-onset detector) | research labs, BCI companies |
 | **P14-14** | T12 safe WPM above the no-BCI reference (open gap 29, [details](#p14-14-t12-safe-wpm-above-the-no-bci-reference)) | M4-13 (stronger T15 recipe to port), P15-19 (usefulness on stronger decoders), P6-06 | research labs, BCI companies |
+| **P14-15** | Word-decoder settings tuned without evaluation trials (T15) (open gap 35, [details](#p14-15-word-decoder-settings-tuned-without-evaluation-trials-t15)) | — | research labs, reviewers |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -780,6 +797,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Gap detail:** Only the T12 entry certifies commits, and its safe WPM (0.48) is far below the no-BCI reference (4.00). The guard keeps the wrong-commit rate at 0.010, but the decoder (CER 0.30) gives few right sentences. This is a decoder limit, the same root cause as P15-19.
 - **Done when:** A b2t24-t12 entry with a stronger decoder (the M4-13 recipe ported to T12, or a P11 / P15 decoder) reports safe WPM at alpha 0.05 with its certification status next to the no-BCI reference, with both controls passing. The item closes when the safe WPM is above the no-BCI reference, or when a result states with numbers which decoder accuracy that needs and why the current decoders do not reach it.
 
+#### P14-15 Word-decoder settings tuned without evaluation trials (T15)
+- **Gap:** 35 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the T15 split audit). Follow-up of P14-03.
+- **Status:** `todo`.
+- **Depends on:** — (CPU only).
+- **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)), issue D.
+- **Gap detail:** The 3 settings of our phoneme-beam word decoder (`lm_weight`, `edit_penalty`, `word_bonus`; grid of 12) were tuned once on 400 fixed `b2t25-t15` `cal` trials (experiments/2026-11-10-b2t25-trust, `tune.json`). The Paper 1 re-splits put 179-224 of these trials into each test set of 818. 16 of the 400 are M4 `val_eval` trials, and every M4-x word-level result on `val_eval` uses these settings (P14-03 `decode_fn`). The bias is optimistic and probably small.
+- **Done when:** The tune is rerun (a) inside fit-A of at least 10 Paper 1 re-splits (R3 / R4 split files), and (b) on the 400 trials minus the HDF5 `val_eval` and `val_select` trials. If the chosen settings never change, the item closes with "no effect" in the audit page. If they change, the affected tables are rerun, and the Paper 1 drafts and M4-x results pages get a note.
+
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
 
@@ -824,6 +849,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-17** | G3 audit: independent proof review and its fixes (open gap 6, [details](#p15-17-g3-audit-independent-proof-review-and-its-fixes)) | F1 | P15-04 |
 | **P15-18** | Pilots store per-item null-control outputs (open gap 13, [details](#p15-18-pilots-store-per-item-null-control-outputs)) | all | — |
 | **P15-19** | Show usefulness on stronger decoders (P5-01, P15-02, P5-02, P15-06) (open gap 14, [details](#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06)) | all | M4-13 rerun queue, P11-01 |
+| **P15-20** | Hallucination split halluc-v0.1 (T15): exact trial-index rule (open gap 34, [details](#p15-20-hallucination-split-halluc-v01-t15-exact-trial-index-rule)) | F2 | P15-07 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -970,6 +996,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** M4-13 rerun queue, P11-01.
 - **Source:** Commits `9cb7a81`, `4355946`, `3dc84bf`, `958040a` (open points: weak decoder).
 - **Done when:** P5-01 (personal trust), P15-02 (update loop), P5-02 (precision and online guards) and P15-06 (hallucination bound) are rerun on the M4-13 decoder and on the P11 decoders. Each rerun reports a useful operating point (commits that are mostly right, with the bound kept) or a stated null result. The current decoders are too weak (top-1 almost never right), so the safety results exist but the usefulness does not.
+
+#### P15-20 Hallucination split halluc-v0.1 (T15): exact trial-index rule
+- **Gap:** 34 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the T15 split audit). Follow-up of P15-07.
+- **Status:** `todo`.
+- **Depends on:** P15-07 (done).
+- **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)), issue C.
+- **Gap detail:** `src/fidetype/benchmark/splits/halluc-v0.1/b2t25-t15-val-eval.json` says "odd-index trials per session (val_eval) ... Trial id = <session>|val|<i>". The 701 ids use `i` = the index inside `val_eval` (checked: 701/701). If someone reads `i` as the index inside the HDF5 `val` file, 358 of the 701 ids point to `val_select` (calibration) trials. The text hashes catch such a rebuild, but the rule text should not allow it.
+- **Done when:** The rule text and docs/hallucination-benchmark.md state the index exactly (for example "i = position inside the session's val_eval list; the HDF5 val index is 2i + 1"), or protocol 0.2 uses ids that name the HDF5 file index. The split verify command still passes; a test rebuilds the ids from the rule.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).

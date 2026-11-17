@@ -1,0 +1,119 @@
+{
+ "hdf5_trials": {
+  "train": 8072,
+  "val_select": 722,
+  "val_eval": 704,
+  "test": 1450
+ },
+ "hdf5_block_trial_in_two_parts": 0,
+ "derived_npz_parts": {
+  "n": {
+   "train": 8072,
+   "val_select": 722,
+   "val_eval": 704
+  },
+  "known_used": {
+   "train": 8065,
+   "val_select": 722,
+   "val_eval": 701
+  }
+ },
+ "decoder_outputs": {
+  "m4-12-fixed0 val_eval (M4-12, P14-03, P14-05, P15-05/06/07, P5-02, P15-04, P5-11, demo)": {
+   "keys_by_part": {
+    "val_eval": 701
+   },
+   "keys_on_a_train_trial": 0,
+   "non_val_select_keys_on_a_val_select_trial": 0
+  },
+  "m4-01-la-fixed0 val_eval (M4-01/02)": {
+   "keys_by_part": {
+    "val_eval": 701
+   },
+   "keys_on_a_train_trial": 0,
+   "non_val_select_keys_on_a_val_select_trial": 0
+  },
+  "m2-19 m4-12-fixed0 val_select+val_eval (M2-19 fit; calibration set of the M4-12 guards)": {
+   "keys_by_part": {
+    "val_select": 722,
+    "val_eval": 701
+   },
+   "keys_on_a_train_trial": 0,
+   "non_val_select_keys_on_a_val_select_trial": 0
+  },
+  "m4-13 val_eval (M4-13 queue)": "file not present yet",
+  "m4-13 val_select (trust-reruns CPU decode)": "file not present yet"
+ },
+ "track_split_equals_v01_file": true,
+ "track_v02_hashes_match_ours": true,
+ "track_x_m4_strict": {
+  "cal|hdf5_test": 15,
+  "cal|train": 687,
+  "cal|unmatched": 51,
+  "cal|val_eval": 31,
+  "cal|val_select": 28,
+  "not-125k|train": 75,
+  "not-125k|unmatched": 15,
+  "test|hdf5_test": 109,
+  "test|train": 366,
+  "test|unmatched": 141,
+  "test|val_eval": 98,
+  "test|val_select": 102
+ },
+ "unmatched_with_same_day_same_sentence_in_part": {
+  "cal|train": 6,
+  "cal|val_eval": 2,
+  "cal|val_select": 6,
+  "not-125k|train": 15,
+  "test|train": 2,
+  "test|val_eval": 5,
+  "test|val_select": 4
+ },
+ "p6_08_partial_scored_units": {
+  "n": 103,
+  "track_split|m4_part": {
+   "test|unmatched": 5,
+   "test|val_eval": 98
+  }
+ },
+ "p6_08_guard_calibration": {
+  "val_select_removed": 106,
+  "val_select_kept": 616,
+  "strict_matched_test_trials_left_in_calibration": 0
+ },
+ "word_decoder_tune_400": {
+  "val_eval": 16,
+  "val_select": 16,
+  "unmatched": 23,
+  "hdf5_test": 2,
+  "train": 343
+ },
+ "track_cal_812_frozen_splitA": {
+  "val_select": 28,
+  "val_eval": 31,
+  "unmatched": 51,
+  "hdf5_test": 15,
+  "train": 687
+ },
+ "halluc_t15_split": {
+  "n": 701,
+  "equal_to_val_eval_ids": 701,
+  "note": "val_select ids use the same pattern, so only the val_eval match is meaningful"
+ },
+ "paper1_resplits_tune_in_test": {
+  "r3_50": {
+   "splits": 50,
+   "test_size": 818,
+   "tune_in_test_min": 182,
+   "tune_in_test_median": 199.0,
+   "tune_in_test_max": 218
+  },
+  "r4_200": {
+   "splits": 200,
+   "test_size": 818,
+   "tune_in_test_min": 179,
+   "tune_in_test_median": 201.5,
+   "tune_in_test_max": 224
+  }
+ }
+}

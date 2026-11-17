@@ -1,0 +1,54 @@
+{
+ "day_offset": 197,
+ "frame_relation": {
+  "-16": 1008,
+  "-15": 213,
+  "-2": 32,
+  "-14": 15,
+  "80": 3,
+  "60": 3,
+  "95": 3,
+  "74": 3
+ },
+ "match_quality": {
+  "text-only": 149,
+  "text+frames": 1238,
+  "ambiguous-frames(hdf5_test)": 146,
+  "ambiguous-text-only": 5,
+  "no-match": 56,
+  "frames-only(hdf5_test)": 124,
+  "reused_hdf5_trial": 4
+ },
+ "split_x_part": {
+  "cal|hdf5_test": 15,
+  "cal|train": 687,
+  "cal|unmatched": 51,
+  "cal|val_eval": 31,
+  "cal|val_select": 28,
+  "not-125k|train": 75,
+  "not-125k|unmatched": 15,
+  "test|hdf5_test": 109,
+  "test|train": 366,
+  "test|unmatched": 141,
+  "test|val_eval": 98,
+  "test|val_select": 102
+ },
+ "text_overlap": {
+  "not-125k|sentence_in_m4_train_any_day": 90,
+  "cal|sentence_in_m4_train_any_day": 693,
+  "test|sentence_in_m4_train_any_day": 428
+ },
+ "hdf5_internal": {
+  "val_eval_n": 704,
+  "val_eval_sentence_in_train": 81,
+  "val_select_n": 722,
+  "val_select_sentence_in_train": 81,
+  "val_eval_sentence_in_val_select": 6
+ },
+ "hdf5_counts": {
+  "train": 8072,
+  "val_select": 722,
+  "val_eval": 704,
+  "hdf5_test": 1450
+ }
+}

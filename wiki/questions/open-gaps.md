@@ -39,6 +39,10 @@ updated: 2026-11-17
 | 28 | [P6-06](roadmap-standard.md#p6-06-input-level-controls-for-the-t12-and-willett-entries) | Input-level controls for the T12 and Willett entries | `todo` | P6-02 | P6-02 (done); for T12: the T12 v2 checkpoint + CPU decode; for Willett: a decoder of our own (P14-12 / P15-08) | Commit `5133e04` (P6-02: T12 and Willett controls are decoder-output stand-ins: permuted frames / uniform log-probs, not neural input re-run through the decoder). |
 | 29 | [P14-14](roadmap-standard.md#p14-14-t12-safe-wpm-above-the-no-bci-reference) | T12 safe WPM above the no-BCI reference | `todo` | P14-10 | M4-13 (stronger T15 recipe to port), P15-19 (usefulness on stronger decoders), P6-06 | Commit `5133e04` (P6-02: only b2t24-t12 certifies commits; safe WPM 0.48 vs no-BCI 4.00; 17 commits, 9 wrong; decoder CER 0.30). |
 | 30 | [P6-07](roadmap-standard.md#p6-07-rule-can-partial-coverage-entries-rank-against-full-ones) | Rule: can partial-coverage entries rank against full ones? | `todo` | P6-02, P6-03 | P6-02 (done); P9 governance (who decides benchmark rules) | Commit `5133e04` (P6-02: the scorer accepts a declared subset and the board marks it `[partial: n/N units]`, but no rule says how such entries rank). |
+| 32 | [P6-09](roadmap-standard.md#p6-09-full-coverage-m4-x-entry-on-b2t25-t15-without-train--test-overlap) | Full-coverage M4-x entry on b2t25-t15 without train / test overlap | `todo` | P6-08 | P6-08 (done); GPU queue (retrain of the M4-13 recipe); P6-10 | T15 split audit, 2026-11-17 ([page](t15-split-audit.md)): the HDF5 `train` partition holds 366 (up to 368) of the 816 track test trials, so the M4-12 entry covers only 103 units. |
+| 33 | [P6-10](roadmap-standard.md#p6-10-train--test-overlap-check-for-benchmark-entries) | Train / test overlap check for benchmark entries | `todo` | P6-02, P6-08 | P6-02 (done), P6-01 (done) | T15 split audit, 2026-11-17 ([page](t15-split-audit.md)): no tool checks a submission's training data against the scored units; the overlap was found by chance. |
+| 34 | [P15-20](roadmap-standard.md#p15-20-hallucination-split-halluc-v01-t15-exact-trial-index-rule) | Hallucination split halluc-v0.1 (T15): exact trial-index rule | `todo` | P15-07 | P15-07 (done) | T15 split audit, 2026-11-17 ([page](t15-split-audit.md)): the rule "`<session>\|val\|<i>`" uses the `val_eval` index; read as the HDF5 `val` index, 358 of 701 ids point to `val_select` trials. |
+| 35 | [P14-15](roadmap-standard.md#p14-15-word-decoder-settings-tuned-without-evaluation-trials-t15) | Word-decoder settings tuned without evaluation trials (T15) | `todo` | P14-03 | — (CPU only) | T15 split audit, 2026-11-17 ([page](t15-split-audit.md)): the 3 word-decoder settings were tuned on 400 track `cal` trials; Paper 1 re-splits put 179-224 of them into each test set of 818; 16 are M4 `val_eval` trials. |
 
 ## Closed gaps
 | Gap | Item | How it closed |
@@ -62,6 +66,7 @@ updated: 2026-11-17
 ## Notes
 - Gap 8 (P14-10): partly closed by P6-01 (commit `1d4ff8c`) and P6-02 (commit `5133e04`). Only the P11-01 decoder is left; it waits on the GPU.
 - Gaps 25-30 (P6-05, P14-12, P14-13, P6-06, P14-14, P6-07) come from the P6-02 report. Gap 31 (P6-08) was registered and closed on 2026-11-17.
+- Gaps 32-35 (P6-09, P6-10, P15-20, P14-15) come from the [T15 split audit](t15-split-audit.md). The audit found no committed result that scores an M4-x decoder on its own training trials. The pre-registered M4-13 reruns are not affected.
 - Gaps 1, 2, 3 and 14 (P15-13, P15-14, P5-08, P15-19) wait for the M4-13 rerun queue ([plan](../../experiments/2026-11-17-trust-reruns-m4-13/plan.md)). Their pre-registrations exist; read their results first.
 - Gap 7 (P1-15) is `externally_blocked`: it needs an EEG or fNIRS producer that fills the keys.
 - Gap 6 (P15-17): closed (review `4cd9cb5`, fixes `98daec3`, `2e4e38d`). An outside human review would be a separate, externally blocked step.
@@ -70,6 +75,7 @@ updated: 2026-11-17
 
 ## Related pages
 - [Long-term roadmap](roadmap-standard.md)
+- [T15 split audit](t15-split-audit.md)
 - [North star](north-star.md)
 - [F1 guarantee scope](f1-guarantee-scope.md)
 - [G3 audit review](g3-audit-review.md)
