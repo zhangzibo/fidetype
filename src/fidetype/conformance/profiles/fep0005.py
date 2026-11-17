@@ -651,6 +651,11 @@ def build_vectors() -> list[Any]:
     add("C25", "c25-enable-t-emitted-string.jsonl", "reject", "1.0 RC4 5.2 (TIM-4)",
         'A control_enable event with t_emitted "0.01" (latency fields are numbers on every event)',
         failing="FEP5-V01-CORE", writer=_input(_en(t_emitted="0.01"), _ctl(0)))
+    # --- NTS 1.0 RC4 amendment (gap G-13 part b): control absent null = absent (GEN-9); the schema now agrees
+    add("C26", "c26-control-absent-null.jsonl", "accept", "1.0 RC4 7.4.3 (CTL-4) / 4.1 (GEN-9)",
+        "A control event with absent null (no value: the same as an absent key)",
+        {"kind": "input", "controls": 2},
+        writer=_input(_en(), _ctl(0, absent=None), _ctl(1)))
     vs.sort(key=lambda v: v.vid)
     return vs
 

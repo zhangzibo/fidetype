@@ -102,7 +102,7 @@ test("decision logs: acted texts equal the manifest (FEP-0001 rule 1)", async ()
 test("fep-0005: each reject vector fails its named check; decision logs give the moving ticks", () => {
   const dir = join(conf, "fep-0005");
   const m = JSON.parse(readFileSync(join(dir, "manifest.json"), "utf8"));
-  assert.equal(m.vectors.length, 52);
+  assert.equal(m.vectors.length, 53);
   for (const v of m.vectors) {
     const bytes = new Uint8Array(readFileSync(join(dir, v.file)));
     const rep = sdk.fep0005.checkFile(v.file, bytes);

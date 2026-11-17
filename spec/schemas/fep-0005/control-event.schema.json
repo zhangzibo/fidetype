@@ -11,7 +11,7 @@
   "t": {"type": "number"},
   "tick": {"type": "integer", "minimum": 0},
   "values": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": ["number", "null"]}},
-  "absent": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "boolean"}},
+  "absent": {"type": ["array", "null"], "minItems": 1, "maxItems": 3, "items": {"type": "boolean"}, "description": "null = absent (GEN-9)"},
   "std": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "number", "exclusiveMinimum": 0}},
   "source": {"enum": ["decoder", "human"]},
   "t_signal_start": {"type": "number"},

@@ -17,11 +17,19 @@ The registry belongs to NTS 1.0 RC4 (draft). Since RC4 it is normative for the k
 
 | Container | Keys | Spec |
 |---|---|---|
-| Header `meta` | 24 keys in 12 reserved namespaces | [3.4](../spec/nts-1.0-rc4.md#34-semantic-conventions-for-meta), [12.5](../spec/nts-1.0-rc4.md#125-semantic-convention-namespaces-policy-spec-for-the-listed-keys-first-come-outside) |
+| Header `meta` | 32 keys in 15 reserved namespaces (24 keys of RC4 3.4 + 8 modality keys of FEP-0009) | [3.4](../spec/nts-1.0-rc4.md#34-semantic-conventions-for-meta), [12.5](../spec/nts-1.0-rc4.md#125-semantic-convention-namespaces-policy-spec-for-the-listed-keys-first-come-outside) |
 | `trust_decision.input` | 14 recommended keys (audit data) | [6.1.1](../spec/nts-1.0-rc4.md#611-input-keys-recommended) |
 | `trust_decision.declaration` | 5 recommended keys (audit data) | [6.1.2](../spec/nts-1.0-rc4.md#612-declaration-keys-recommended) |
 
-The modality namespaces `emg.*`, `eeg.*`, `meg.*`, `fnirs.*` and `implant.*` are **planned** and, since RC4, reserved (MET-3: a custom key in them gets a warning). They have no keys yet. A key gets into the registry only after a FEP defines it (SC-1).
+Modality keys ([FEP-0009](../spec/feps/0009-modality-semantic-conventions.md), RC4 amendment of 2026-11-16, rule MET-11):
+
+| Namespace | Keys | Producer evidence |
+|---|---|---|
+| `emg.*` | `emg.placement`, `emg.derivation` | emg2qwerty, KT-sEMG, Toronto sEMG adapters |
+| `meg.*` | `meg.sensor_types` | SpanishBCBL MEG adapter |
+| `implant.*` | `implant.array_type`, `implant.array_count`, `implant.features`, `implant.bin_s`, `implant.areas` | Willett handwriting and Brain-to-Text '25 adapters; NLB MC_RTT |
+
+A modality key goes with its `device.modality` (MET-11). `eeg.*` and `fnirs.*` are **planned** and reserved (MET-3: a custom key in them gets a warning). They have no keys yet: a key gets into the registry only after a FEP defines it from a real producer (SC-9).
 
 ## Use it as a producer
 
@@ -63,4 +71,4 @@ The CI job `semconv` runs the check and the tests.
 
 ## Open questions
 
-The registry found gaps that needed a spec change. NTS 1.0 RC4 answered SC-2 … SC-8 (for example: the registry is normative, MET-10; string keys are non-empty, MET-7; open and closed value lists, MET-8). One question stays open: modality keys (SC-1), deferred to a FEP with evidence from real producers. The list is at the end of [registry.md](../spec/semconv/registry.md#open-questions).
+The registry found gaps that needed a spec change. NTS 1.0 RC4 answered SC-2 … SC-8 (for example: the registry is normative, MET-10; string keys are non-empty, MET-7; open and closed value lists, MET-8). FEP-0009 (RC4 amendment) added modality keys for `emg`, `meg` and `implant` (SC-1). One question stays open: keys for `eeg` and `fnirs` (SC-9), which need a real producer. The list is at the end of [registry.md](../spec/semconv/registry.md#open-questions).

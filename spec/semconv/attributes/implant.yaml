@@ -1,0 +1,53 @@
+# NTS semantic conventions: namespace implant (spec 3.4, FEP-0009). See ../manifest.yaml.
+# Producer evidence: adapters willett_handwriting (two 96-channel Utah arrays, threshold crossings,
+# 10 ms bins) and b2t25 (Brain-to-Text '25, T15: 256 electrodes, threshold crossings + spike band
+# power, 20 ms bins); NLB MC_RTT (one Utah array in M1, sorted units; P12-03 converter).
+container: header.meta
+namespace: implant
+brief: The implanted electrode recording (device.modality intracortical or ecog).
+attributes:
+  - key: implant.array_type
+    type: string
+    validator: non_empty_string
+    registered_values: [utah]
+    brief: The type of the implanted electrode arrays. utah = Utah (silicon microelectrode) array.
+    stability: development
+    target_stability: development
+    rules: [MET-1, MET-8, MET-11]
+    checks: [NTS-META-TYPES]
+  - key: implant.array_count
+    type: int
+    validator: integer_min_1
+    brief: The number of implanted arrays that the decoder used (integer >= 1).
+    stability: development
+    target_stability: development
+    rules: [MET-1, MET-9, MET-11]
+    checks: [NTS-META-TYPES]
+  - key: implant.features
+    type: "string[]"
+    validator: non_empty_string_list
+    registered_values: [threshold_crossings, spike_band_power, sorted_units]
+    brief: >-
+      The neural features that the decoder used, one entry per kind.
+    stability: development
+    target_stability: development
+    rules: [MET-1, MET-8, MET-11]
+    checks: [NTS-META-TYPES]
+  - key: implant.bin_s
+    type: double
+    validator: finite_number_min_0
+    unit: s
+    brief: The width of one feature bin in seconds (for example 0.02 for 20 ms bins).
+    stability: development
+    target_stability: development
+    rules: [MET-1, MET-9, MET-11]
+    checks: [NTS-META-TYPES]
+  - key: implant.areas
+    type: "string[]"
+    validator: non_empty_string_list
+    brief: >-
+      The brain areas of the arrays, as free text (for example "precentral gyrus", "6v", "M1").
+    stability: development
+    target_stability: development
+    rules: [MET-1, MET-11]
+    checks: [NTS-META-TYPES]

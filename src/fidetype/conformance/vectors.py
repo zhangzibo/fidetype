@@ -453,6 +453,30 @@ def build_vectors() -> list[Vector]:
         writer=_w_lines(_ev(3, score=_DROP, score_semantics=None)))
     add("V78", "v78-header-vocab-id-number.jsonl", "reject", "1.0 RC4 3.1 (HDR-16)", "header vocab_id is the number 28",
         None, failing_check="NTS-VOCAB-ID", writer=_w_lines([_header(spec_version="1.0", vocab_id=28), *_frames(2, V)]))
+    # --- NTS 1.0 RC4 amendment (FEP-0009): modality keys emg.*, meg.*, implant.* (MET-11)
+    mod_implant = {**BASE_META, "device.modality": "intracortical", "device.invasive": True,
+                   "implant.array_type": "utah", "implant.array_count": 2,
+                   "implant.features": ["threshold_crossings", "spike_band_power"], "implant.bin_s": 0.02,
+                   "implant.areas": ["precentral gyrus"]}
+    mod_emg = {**BASE_META, "device.modality": "emg", "device.invasive": False, "emg.placement": "wrist",
+               "emg.derivation": "bipolar"}
+    mod_meg = {**BASE_META, "device.modality": "meg", "device.invasive": False,
+               "meg.sensor_types": ["magnetometer", "planar_gradiometer"]}
+    for vid, fname, desc, meta in (
+            ("V83", "v83-modality-keys-implant.jsonl", "Implant modality keys with their types: implant.array_type, "
+             "array_count, features, bin_s and areas", mod_implant),
+            ("V84", "v84-modality-keys-emg.jsonl", "EMG modality keys with their types: emg.placement and emg.derivation",
+             mod_emg),
+            ("V85", "v85-modality-keys-meg.jsonl", "MEG modality key with its type: meg.sensor_types", mod_meg)):
+        add(vid, fname, "accept", "1.0 RC4 3.4 (MET-1, MET-11; FEP-0009)", desc, None, {"n_frames": 2},
+            writer=_w_lines([_header(spec_version="1.0", meta=meta), *_frames(2, V), {"type": "end"}]))
+    add("V86", "v86-implant-bin-s-string.npz", "reject", "1.0 RC4 3.4 (MET-1; FEP-0009)",
+        'implant.bin_s is the string "0.02" (type number >= 0)', None, failing_check="NTS-META-TYPES",
+        writer=_w_npz(meta_json=np.array(json.dumps(mod_implant | {"implant.bin_s": "0.02"}))))
+    add("V87", "v87-meg-sensor-types-empty-item.npz", "reject", "1.0 RC4 3.4 (MET-1, MET-7; FEP-0009)",
+        'meg.sensor_types has an empty string item (type list of non-empty strings)', None,
+        failing_check="NTS-META-TYPES",
+        writer=_w_npz(meta_json=np.array(json.dumps(mod_meg | {"meg.sensor_types": ["magnetometer", ""]}))))
     vs.sort(key=lambda v: v.vid)
     return vs
 

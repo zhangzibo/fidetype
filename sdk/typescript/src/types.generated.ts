@@ -218,7 +218,8 @@ export interface Fep0005ControlEvent {
   t: number;
   tick: number;
   values: (number | null)[];
-  absent?: boolean[];
+  /** null = absent (GEN-9) */
+  absent?: boolean[] | null;
   std?: number[];
   source?: "decoder" | "human";
   t_signal_start?: number;

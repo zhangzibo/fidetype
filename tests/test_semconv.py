@@ -65,12 +65,76 @@ def test_render_lists_every_key_and_open_question(base):
 
 
 def test_registry_covers_spec_tables(base):
-    assert len(base.in_container("header.meta")) == 24
+    assert len(base.in_container("header.meta")) == 32  # 24 keys of RC4 3.4 + 8 modality keys (FEP-0009)
     assert len(base.in_container("trust_decision.input")) == 14
     assert len(base.in_container("trust_decision.declaration")) == 5
     planned = {n["name"] for n in base.manifest["namespaces"] if n["status"] == "planned"}
-    assert planned == {"emg", "eeg", "meg", "fnirs", "implant"}
+    assert planned == {"eeg", "fnirs"}
     assert not [a for a in base.attributes if a["_namespace"] in planned]  # no invented modality keys
+
+
+# --- modality keys (FEP-0009, RC4 amendment) -----------------------------------------------
+
+MODALITY_KEYS = {
+    "emg.placement": "non_empty_string", "emg.derivation": "non_empty_string",
+    "meg.sensor_types": "non_empty_string_list",
+    "implant.array_type": "non_empty_string", "implant.array_count": "integer_min_1",
+    "implant.features": "non_empty_string_list", "implant.bin_s": "finite_number_min_0",
+    "implant.areas": "non_empty_string_list",
+}
+
+
+def test_modality_keys_present_with_validators(base):
+    got = {a["key"]: a["validator"] for a in base.in_container("header.meta") if a["_namespace"] in ("emg", "meg", "implant")}
+    assert got == MODALITY_KEYS
+    for k in MODALITY_KEYS:
+        a = attr(base, k)
+        assert a["stability"] == "development" and "MET-11" in a["rules"]
+        assert not a.get("requirement")  # all optional
+    assert attr(base, "implant.bin_s")["unit"] == "s"
+    reserved = {n["name"] for n in base.manifest["namespaces"] if n["status"] == "reserved"}
+    assert {"emg", "meg", "implant"} <= reserved
+
+
+def test_modality_keys_used_in_accept_vectors(base):
+    _, usage = sc.run_checks(base)
+    for k in MODALITY_KEYS:
+        assert usage.get(k, 0) >= 1, k
+
+
+@pytest.mark.parametrize("value,ok", [
+    (["magnetometer"], True), ([], True), (["a", "b"], True),
+    ("magnetometer", False), (["magnetometer", ""], False), ([1], False), (None, False),
+])
+def test_value_ok_string_list(base, value, ok):
+    assert sc.value_ok(attr(base, "meg.sensor_types"), value) is ok
+
+
+def test_spec_list_of_non_empty_strings_type():
+    assert sc.parse_spec_types("list of non-empty strings", 1) == [("string[]", "non_empty_string_list", None)]
+
+
+def test_structure_string_list_validator_needs_list_type(reg):
+    attr(reg, "implant.areas")["type"] = "string"
+    assert has(sc.check_structure(reg), "implant.areas", "non_empty_string_list needs type string[]")
+
+
+def test_structure_registered_values_on_string_list_allowed(base):
+    assert attr(base, "implant.features")["registered_values"]
+    assert not [e for e in sc.check_structure(base) if "registered_values" in e]
+
+
+def test_spec_missing_modality_row_found(reg):
+    spec = reg.spec_path.read_text(encoding="utf-8")
+    row = next(line for line in spec.splitlines() if line.startswith("| `implant.bin_s`"))
+    assert has(sc.check_spec(reg, spec.replace(row + chr(10), "")), "implant.bin_s", "not in spec")
+
+
+def test_sdk_string_list_validator_mismatch_found(reg):
+    src = _sources()
+    a, b = src["rust"]
+    src["rust"] = (a.replace('("implant.areas", t_str_list)', '("implant.areas", t_str)'), b)
+    assert has(sc.check_sdks(reg, src), "rust", "implant.areas")
 
 
 # --- 1. structure --------------------------------------------------------------------------
@@ -194,7 +258,7 @@ def _sources():
 def test_sdk_tables_read_all_keys():
     for lang, (a, b) in _sources().items():
         table, mods = sc.sdk_table(lang, a, b)
-        assert len(table) == 24, lang
+        assert len(table) == 32, lang  # 24 + 8 modality keys (FEP-0009)
         assert "other" in mods, lang
 
 
@@ -215,7 +279,7 @@ def test_sdk_validator_mismatch_found(reg):
 def test_sdk_planned_namespaces_found(reg):
     src = _sources()
     a, b = src["typescript"]
-    src["typescript"] = (a, b.replace('"fnirs", "implant"]', '"fnirs"]'))
+    src["typescript"] = (a, b.replace('["eeg", "fnirs"]', '["eeg"]'))
     assert has(sc.check_sdks(reg, src), "typescript", "PLANNED_NAMESPACES")
 
 

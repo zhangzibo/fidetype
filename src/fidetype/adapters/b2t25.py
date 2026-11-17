@@ -349,6 +349,9 @@ def stream_meta(trial: CopyTaskTrial) -> dict[str, Any]:
         "device.channel_count": 256,
         "device.invasive": True,
         "device.regulatory_status": "investigational",
+        "implant.features": ["threshold_crossings", "spike_band_power"],  # modality keys: RC4 MET-11 (FEP-0009)
+        "implant.bin_s": BIN_S,
+        "implant.areas": ["precentral gyrus"],
         "decoder.name": "card2024-online-rnn",
         "decoder.version": "t15-copytask-online",
         "decoder.causal": True,

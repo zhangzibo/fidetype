@@ -179,8 +179,12 @@ def check_structure(reg: Registry) -> list[str]:
             for f in ("values", "unknown_value"):
                 if f in a:
                     errs.append(f"structure: {where}: {f} is only for type enum")
-        if "registered_values" in a and (a.get("type") != "string" or not isinstance(a["registered_values"], list)):
-            errs.append(f"structure: {where}: registered_values (an open list, SC-4) is a list and only for type string")
+        if "registered_values" in a and (a.get("type") not in ("string", "string[]")
+                                          or not isinstance(a["registered_values"], list)):
+            errs.append(f"structure: {where}: registered_values (an open list, SC-4) is a list and only for type string "
+                        "or string[]")
+        if a.get("validator") == "non_empty_string_list" and a.get("type") != "string[]":
+            errs.append(f"structure: {where}: validator non_empty_string_list needs type string[]")
         if a.get("validator") == "enum" and a.get("type") != "enum":
             errs.append(f"structure: {where}: validator enum needs type enum")
         key = str(a.get("key", ""))
@@ -273,6 +277,7 @@ SPEC_TYPES = {
     "[integer, integer]": ("int[2]", None),
     "[number, number]": ("double[2]", None),
     "list of strings": ("string[]", None),
+    "list of non-empty strings": ("string[]", "non_empty_string_list"),
 }
 
 
@@ -438,7 +443,7 @@ def check_schema(reg: Registry, schema: dict[str, Any] | None = None) -> list[st
 
 VALIDATOR_OF_FN = {
     "str": "non_empty_string", "bool": "boolean", "enum": "enum", "modality": "enum", "intge1": "integer_min_1",
-    "nonneg": "finite_number_min_0", "sha": "sha256_hex", "lang": "bcp47_tag",
+    "nonneg": "finite_number_min_0", "sha": "sha256_hex", "lang": "bcp47_tag", "strlist": "non_empty_string_list",
 }
 
 
@@ -563,6 +568,8 @@ def value_ok(attr: dict[str, Any], v: Any, newer_minor: bool = False) -> bool:
         return True
     if kind == "non_empty_string":
         return isinstance(v, str) and v != ""
+    if kind == "non_empty_string_list":
+        return isinstance(v, list) and all(isinstance(x, str) and x != "" for x in v)
     if kind == "boolean":
         return isinstance(v, bool)
     if kind == "integer_min_1":
@@ -724,7 +731,7 @@ def render(reg: Registry, usage: dict[str, int] | None = None) -> str:
     for ns in man["namespaces"]:
         keys = [a["key"] for a in reg.in_container("header.meta") if a["_namespace"] == ns["name"]]
         name = f"`{ns['name']}`" if ns.get("flat") else f"`{ns['name']}.*`"
-        status = ns["status"] + (" (no keys defined yet, open question SC-1)" if ns["status"] == "planned" else "")
+        status = ns["status"] + (" (no keys defined yet, open question SC-9)" if ns["status"] == "planned" else "")
         w(f"| {name} | {status} | {', '.join(f'`{k}`' for k in keys) or '-'} |")
     w("")
     for g in reg.groups:

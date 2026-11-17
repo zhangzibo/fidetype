@@ -925,3 +925,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - `GuardedUpdateLoop(ledger=)`, `add_listener`, `reject_proposal`; provenance ledger entry kind `update` (stage proposed / accepted / rejected, `proposal_hash`, `parent_config_id` -> `config_id` chain; `verify` checks the rules). `OnlineTrustPolicy.swap_policy` / `commit_floor` (default -inf: unchanged behaviour). `dropin.py` not changed.
 - Replay smoke on the T12 pilot records ([results](../experiments/2026-11-16-p15-02-hooks/results.md)): 15 proposals, 13 accepted, 2 negative controls rejected with the guard unchanged, ledger verifies; 0 phase-C commits (weak decoder; the challenger gate is not exercised on real data). 18 new tests.
 - Docs: [quickstart section](../docs/trust-quickstart.md#later-update-the-decoder-safely-p15-02); [provenance ledger](concepts/provenance-ledger.md) page. Roadmap P15-02 result line; tracker P15-02 done (fragment).
+
+## [2026-11-16] setup | P1-04 modality keys (FEP-0009, RC4 amendment), gap G-13 part b, tracker run stats
+- Semconv registry: 8 modality keys from producer evidence (`emg.placement`, `emg.derivation`, `meg.sensor_types`, `implant.array_type`, `implant.array_count`, `implant.features`, `implant.bin_s`, `implant.areas`); new rule MET-11; validator `non_empty_string_list`; 51 keys. `eeg` / `fnirs` stay planned (new open question SC-9). [FEP-0009](../spec/feps/0009-modality-semantic-conventions.md), [registry](../spec/semconv/registry.md).
+- Python, TypeScript and Rust validators check the new keys; six adapters write them. Vectors V83 … V87; parity 336 / 336.
+- G-13 part b closed (proto option `json_null_list`, schema accepts control `absent: null`, vector C26). Part a left open with options A1 … A3 in RC4 C.2.
+- [NTS spec](concepts/nts-spec.md) page, roadmap P1-04 row; tracker P1-04 done; null run stats filled for P15-02, P15-05, P15-06 (fragments).

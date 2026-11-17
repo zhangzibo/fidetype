@@ -903,6 +903,62 @@
    "clause": "1.0 RC4 4.8 (PTR-1) / 4.1 (GEN-9)",
    "description": "pointer score_semantics is null (the field type has no null)",
    "failing_check": "NTS-EVT-POINTER"
+  },
+  {
+   "id": "V83",
+   "file": "v83-modality-keys-implant.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-1, MET-11; FEP-0009)",
+   "description": "Implant modality keys with their types: implant.array_type, array_count, features, bin_s and areas",
+   "expected": {
+    "n_frames": 2
+   }
+  },
+  {
+   "id": "V84",
+   "file": "v84-modality-keys-emg.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-1, MET-11; FEP-0009)",
+   "description": "EMG modality keys with their types: emg.placement and emg.derivation",
+   "expected": {
+    "n_frames": 2
+   }
+  },
+  {
+   "id": "V85",
+   "file": "v85-modality-keys-meg.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-1, MET-11; FEP-0009)",
+   "description": "MEG modality key with its type: meg.sensor_types",
+   "expected": {
+    "n_frames": 2
+   }
+  },
+  {
+   "id": "V86",
+   "file": "v86-implant-bin-s-string.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-1; FEP-0009)",
+   "description": "implant.bin_s is the string \"0.02\" (type number >= 0)",
+   "failing_check": "NTS-META-TYPES"
+  },
+  {
+   "id": "V87",
+   "file": "v87-meg-sensor-types-empty-item.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-1, MET-7; FEP-0009)",
+   "description": "meg.sensor_types has an empty string item (type list of non-empty strings)",
+   "failing_check": "NTS-META-TYPES"
   }
  ]
 }

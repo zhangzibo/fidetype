@@ -31,7 +31,7 @@ PROTO_DIR = PROTO_ROOT / "neuraltextstream" / "v1"
 
 SCALARS = {1: "double", 2: "float", 3: "int64", 4: "uint64", 5: "int32", 6: "fixed64", 7: "fixed32", 8: "bool",
            9: "string", 12: "bytes", 13: "uint32", 15: "sfixed32", 16: "sfixed64", 17: "sint32", 18: "sint64"}
-FIELD_OPTS = ("json_required", "json_nullable", "null_binary", "json_inline", "minimum", "maximum",
+FIELD_OPTS = ("json_required", "json_nullable", "null_binary", "json_inline", "json_null_list", "minimum", "maximum",
               "exclusive_minimum", "exclusive_maximum", "pattern", "min_length", "min_items", "max_items", "unique_items")
 
 

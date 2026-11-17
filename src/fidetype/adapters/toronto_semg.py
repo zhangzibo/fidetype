@@ -414,6 +414,8 @@ def stream_meta(
         "device.channel_count": N_CHANNELS,
         "device.invasive": False,
         "device.regulatory_status": "research",
+        "emg.placement": "forearm",  # modality keys: NTS 1.0 RC4 MET-11 (FEP-0009)
+        "emg.derivation": "bipolar",
         "decoder.name": decoder_name,
         "decoder.version": decoder_version,
         "decoder.causal": False,

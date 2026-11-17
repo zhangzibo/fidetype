@@ -3,7 +3,7 @@
 # This file and the files in attributes/ are the machine-readable form of the
 # key conventions of NTS 1.0 RC4 (spec/nts-1.0-rc4.md): the `meta` keys of
 # section 3.4, the trust_decision `input` keys of 6.1.1 and the trust_decision
-# `declaration` keys of 6.1.2. Since RC4 this registry is NORMATIVE for the key
+# `declaration` keys of 6.1.2, and the modality keys of FEP-0009 (emg, meg, implant). Since RC4 this registry is NORMATIVE for the key
 # names, types, value lists and validators; the key tables of the spec are
 # informative copies, and the check below keeps them equal (resolution SC-7).
 # The rules about the keys (MET-1 ... MET-7, TD-13) stay in the spec text.
@@ -36,6 +36,7 @@ vocabulary:
     boolean: true or false
     integer_min_1: An integer >= 1
     finite_number_min_0: A finite number >= 0
+    non_empty_string_list: A JSON array of strings, none of them "" (FEP-0009)
     sha256_hex: 64 lowercase hex characters
     bcp47_tag: A BCP 47 language tag (pattern check only)
     enum: One of the listed values (an unknown value of a newer minor version is allowed by VER-8)
@@ -100,12 +101,13 @@ namespaces:
   - {name: data, status: reserved, file: attributes/data.yaml}
   - {name: consent, status: reserved, file: attributes/consent.yaml}
   - {name: language, status: reserved, flat: true, file: attributes/language.yaml}
-  # Planned modality namespaces (12.5: "not defined yet"). No keys until a FEP defines them.
-  - {name: emg, status: planned}
+  # Modality namespaces with keys (FEP-0009, from producer evidence: the P4 adapters).
+  - {name: emg, status: reserved, file: attributes/emg.yaml}
+  - {name: meg, status: reserved, file: attributes/meg.yaml}
+  - {name: implant, status: reserved, file: attributes/implant.yaml}
+  # Planned modality namespaces (12.5: "not defined yet"). No keys until a FEP defines them (SC-9).
   - {name: eeg, status: planned}
-  - {name: meg, status: planned}
   - {name: fnirs, status: planned}
-  - {name: implant, status: planned}
 
 # Attribute files of the other containers.
 container_files:
@@ -114,18 +116,27 @@ container_files:
 
 # Gaps that this registry found and that no spec version answers yet.
 open_questions:
+  - id: SC-9
+    title: EEG and fNIRS keys are not defined
+    text: >-
+      FEP-0009 defines keys only for the modalities that have a reference producer (emg, meg,
+      implant). The namespaces eeg and fnirs stay planned and reserved (SC-2), with no keys.
+      Candidates: eeg.montage, eeg.reference, fnirs.wavelengths_nm. Each needs a FEP with
+      evidence from a real producer (an EEG or fNIRS adapter, for example through the BrainFlow
+      bridge).
+
+# Gaps that a spec version answered (NTS 1.0 RC4: FEP-0008; RC4 amendment: FEP-0009). Kept as the record.
+resolved_questions:
   - id: SC-1
     title: Modality keys are not defined
-    text: >-
-      Spec 12.5 plans the namespaces emg, eeg, meg, fnirs and implant but defines no key.
-      The roadmap (P1-04) lists candidate keys, for example emg.placement, eeg.montage,
-      meg.system, fnirs.wavelengths_nm and implant.array_type. Each needs a type, a unit and
-      a meaning in a FEP before it goes into this registry. Deferred by RC4 to a FEP that has
-      evidence from real producers (P4 adapters: emg2qwerty, KT-sEMG, Willett, B2T '25,
-      Brain2Qwerty). Until then the namespaces are reserved (SC-2) and have no keys.
-
-# Gaps that a spec version answered (NTS 1.0 RC4, FEP-0008). Kept as the record.
-resolved_questions:
+    resolution: >-
+      Partly resolved by FEP-0009 (RC4 amendment, 2026-11-16): 8 keys from the P4 adapters.
+      emg.placement and emg.derivation (emg2qwerty, KT-sEMG, Toronto sEMG); meg.sensor_types
+      (SpanishBCBL MEG); implant.array_type, implant.array_count, implant.features, implant.bin_s
+      and implant.areas (Willett handwriting, Brain-to-Text '25, NLB MC_RTT). All optional and
+      Development (target Development). MET-11: a modality key describes the recording of
+      device.modality. New validator non_empty_string_list in all three SDKs. Vectors V83
+      (accept), V84, V85 (reject). eeg and fnirs: open question SC-9.
   - id: SC-2
     title: Planned namespaces are not reserved in the validators
     resolution: >-

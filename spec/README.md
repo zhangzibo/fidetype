@@ -5,7 +5,7 @@ This folder holds the written specifications of Fidetype. A spec is the normativ
 | Spec | Version | Status | What it defines |
 |---|---|---|---|
 | [NeuralTextStream](neuraltextstream-v0.1.md) | 0.1 | Development (current release) | The output of any neural input decoder: a probability distribution over a declared vocabulary at each time frame (the core), plus Development event kinds for decisions, text hypotheses, pointer movement and signal quality |
-| [NeuralTextStream 1.0 RC4](nts-1.0-rc4.md) | 1.0 RC4 | **DRAFT for public comment** (not final; current RC) | The same document as RC3, plus: optional fields have their table type and all three validators check it (GEN-11, gap G-12 closed); the YAML semantic-convention registry is normative (MET-10); planned modality namespaces reserved; non-empty string keys; open and closed value lists; units (SC-2 … SC-8, FEP-0008). Changes: section 1.6 |
+| [NeuralTextStream 1.0 RC4](nts-1.0-rc4.md) | 1.0 RC4 | **DRAFT for public comment** (not final; current RC) | The same document as RC3, plus: optional fields have their table type and all three validators check it (GEN-11, gap G-12 closed); the YAML semantic-convention registry is normative (MET-10); planned modality namespaces reserved; non-empty string keys; open and closed value lists; units (SC-2 … SC-8, FEP-0008). Amendment of 2026-11-16: modality keys for `emg`, `meg`, `implant` (MET-11, FEP-0009) and gap G-13 part b (schema accepts control `absent: null`). Changes: section 1.6 |
 | [NeuralTextStream 1.0 RC3](nts-1.0-rc3.md) | 1.0 RC3 | Superseded by RC4 (kept unchanged as the record) | The same document as RC2, plus the answers to the protobuf open questions Q-1 … Q-8: unknown enumeration values with a safe fallback (FEP-0007), the JSON null and integer-range rules, profile-scoped fields, open reason codes, gap fields, rule ids for two SDK checks. Changes: section 1.6 |
 | [NeuralTextStream 1.0 RC2](nts-1.0-rc2.md) | 1.0 RC2 | Superseded by RC3 (kept unchanged as the record) | One document: v0.1 + FEP-0001 … FEP-0005 (core data model, header, events, timing, trust decisions, text / intent / control profiles, JSON Lines / NPZ / LSL / WebSocket bindings, conformance levels, security and privacy, versioning, registries). Appendices: open-question resolutions, migration from 0.1, conformance traceability with gaps |
 | [NeuralTextStream 1.0 RC1](nts-1.0-rc1.md) | 1.0 RC1 | Superseded by RC2 (kept unchanged as the record) | The first release candidate. RC2 changes no rule text; it closes gaps G-2, G-3 and G-4 |
@@ -48,7 +48,7 @@ fidetype conformance --profile fep-0005     # control profile: vectors in confor
 The 1.0 rule ids map to these checks and vectors in [Appendix C](nts-1.0-rc4.md#appendix-c-conformance-traceability). RC4: all three SDKs check the type of every optional field of the spec tables (GEN-11; vectors V69-V82, F63-F66, D24-D26, I25, C25, E25-E27) and warn about a custom key in a planned modality namespace (MET-3). RC3: in data of a newer minor version (`"1.1"` …) all three SDKs accept unknown enumeration values and never act on them (VER-8, VER-10; vectors V66-V68, F57-F59, I24, D22, D23, C24, E22-E24); integers above 2^53 - 1 are refused (GEN-10; F60, F61, W44). All three SDKs accept a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` and refuse other values (RC2, gap G-2; vectors V53-V60, F48-F49, L33-L35, W39-W42). One stricter rule is also in the validators of all three SDKs: a `trust_decision` with `"spec_version": "1.x"` MUST NOT be a final COMMIT with an empty committed text (rule TD-9; vectors F41-F47). Decisions without `spec_version`, or with `"0.1"`, keep the 0.1 rule (a SHOULD NOT).
 
 ## Proposals (FEPs)
-FEPs 0001-0005, 0007 and 0008 are folded into [NTS 1.0 RC4](nts-1.0-rc4.md). Their open questions are answered or deferred in [Appendix A](nts-1.0-rc4.md#appendix-a-open-questions-resolutions-and-deferrals). The FEP lifecycle (Draft, Under review, Accepted, Implemented, Final, Rejected / Withdrawn) is in [section 11.6](nts-1.0-rc4.md#116-change-process-and-fep-lifecycle).
+FEPs 0001-0005 and 0007-0009 are folded into [NTS 1.0 RC4](nts-1.0-rc4.md). Their open questions are answered or deferred in [Appendix A](nts-1.0-rc4.md#appendix-a-open-questions-resolutions-and-deferrals). The FEP lifecycle (Draft, Under review, Accepted, Implemented, Final, Rejected / Withdrawn) is in [section 11.6](nts-1.0-rc4.md#116-change-process-and-fep-lifecycle).
 
 | FEP | Title | Status | Conformance profile |
 |---|---|---|---|
@@ -59,6 +59,7 @@ FEPs 0001-0005, 0007 and 0008 are folded into [NTS 1.0 RC4](nts-1.0-rc4.md). The
 | [0005](feps/0005-control-events.md) | Continuous-control events (control profile: `control_declaration` units / frame / rate / uncertainty, `control`, `control_enable`, control `trust_decision` with gain / hold / stop, safety rules) | Draft (in 1.0 RC4) | `fep-0005` (52 vectors; C24, E22-E24 test VER-8 and VER-10; C25, E25-E27 test GEN-11; Python, TypeScript, Rust) |
 | [0007](feps/0007-unknown-enum-values.md) | Unknown enumeration values: version-gated acceptance with a safe fallback per enumeration (forward compatibility of registries) | Draft (in 1.0 RC3, section 11.2.1) | vectors in `v0.1`, `fep-0001`, `fep-0003`, `fep-0005` |
 | [0008](feps/0008-optional-field-types-and-semconv.md) | Optional field types (GEN-11, gap G-12) and the semantic-convention registry (normative YAML, planned namespaces reserved, non-empty strings, open and closed lists, units; SC-2 … SC-8) | Draft (in 1.0 RC4, sections 1.6, 3.4, A.8) | vectors in `v0.1`, `fep-0001`, `fep-0003`, `fep-0005` |
+| [0009](feps/0009-modality-semantic-conventions.md) | Modality keys for `emg`, `meg`, `implant` from producer evidence (MET-11; SC-1 partly; SC-9 open for `eeg`, `fnirs`) | Draft (in the 1.0 RC4 amendment of 2026-11-16, sections 1.6, 3.4, 12.5, A.8) | V83 … V87 in `v0.1` |
 | [0006](feps/0006-collector.md) | The collector (reference architecture, not a format change): receivers → processors → exporters, pipelines, TOML / JSON configuration, loss and privacy rules, health and metrics | Draft (not in 1.0; reference v0 `fidetype collector`) | - |
 
 ## Stability levels
@@ -107,4 +108,5 @@ spec/
     0006-collector.md
     0007-unknown-enum-values.md
     0008-optional-field-types-and-semconv.md
+    0009-modality-semantic-conventions.md
 ```

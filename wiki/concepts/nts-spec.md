@@ -3,7 +3,7 @@ title: NeuralTextStream specification (versions, 1.0 RC4)
 type: concept
 tags: [spec, neuraltextstream, standard, versioning, conformance, protobuf, p1]
 sources: []
-updated: 2026-11-15
+updated: 2026-11-16
 ---
 
 # NeuralTextStream specification
@@ -22,6 +22,19 @@ The written contract of Fidetype. A decoder writes a NeuralTextStream (NTS); a t
 Changelog: [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md). Index of specs and FEPs: [`spec/README.md`](../../spec/README.md).
 
 Tools around the spec: the [collector](collector.md) (draft FEP-0006, P3) receives NTS from files and WebSocket, runs the trust layer and the privacy filter, and exports decision logs. It changes no field of NTS.
+
+## RC4 amendment: modality keys and G-13 part b (2026-11-16)
+Additive change to the RC4 draft ([FEP-0009](../../spec/feps/0009-modality-semantic-conventions.md), [RC4 section 1.6](../../spec/nts-1.0-rc4.md#16-changes-from-rc3)). No RC4 vector changed its verdict.
+
+| Item | Detail |
+|---|---|
+| New keys (SC-1, partly) | `emg.placement`, `emg.derivation`; `meg.sensor_types`; `implant.array_type`, `implant.array_count`, `implant.features`, `implant.bin_s`, `implant.areas`. All optional, Development |
+| Evidence | Only facts that a reference adapter writes: emg2qwerty, KT-sEMG, Toronto sEMG, SpanishBCBL MEG, Willett handwriting, Brain-to-Text '25; checked against NLB MC_RTT |
+| New rule MET-11 | A modality key goes with its `device.modality`. Not checked by the validators |
+| Still open | `eeg.*`, `fnirs.*`: no reference producer yet (SC-9) |
+| G-13 part b closed | New proto option `json_null_list`; the generated schema accepts control `absent: null` (GEN-9). Vector C26 |
+| G-13 part a open | A dense frame with wrong-typed sparse keys. Options A1 (forbid both forms), A2 (both allowed, sparse keys still typed; recommended), A3 (sparse keys ignored, schema relaxed). Decision for 1.0 Stable |
+| Vectors and parity | V83 … V87, C26 (336 in all); Python = TypeScript = Rust on all 336; schema 205 / 205 one-line verdicts |
 
 ## RC4: semantic conventions and optional field types (2026-11-15)
 RC4 answers the open questions SC-2 … SC-8 of the [semantic-convention registry](../../spec/semconv/registry.md) (roadmap P1-04) and closes gap G-12. Rule: the simplest rule that keeps valid data valid. No RC3 vector changed its verdict. Normative changes: [FEP-0008](../../spec/feps/0008-optional-field-types-and-semconv.md).

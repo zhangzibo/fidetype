@@ -741,12 +741,16 @@ export const SCHEMAS = {
     }
    },
    "absent": {
-    "type": "array",
+    "type": [
+     "array",
+     "null"
+    ],
     "minItems": 1,
     "maxItems": 3,
     "items": {
      "type": "boolean"
-    }
+    },
+    "description": "null = absent (GEN-9)"
    },
    "std": {
     "type": "array",

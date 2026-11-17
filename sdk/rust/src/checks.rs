@@ -313,6 +313,13 @@ fn t_nonneg(v: &Value) -> Option<String> {
 fn t_sha(v: &Value) -> Option<String> {
     if matches!(v, Value::Str(s) if is_sha256(s)) { None } else { Some("64 lowercase hex characters (SHA-256)".into()) }
 }
+fn t_str_list(v: &Value) -> Option<String> {
+    if matches!(v, Value::Arr(xs) if xs.iter().all(|x| matches!(x, Value::Str(s) if !s.is_empty()))) {
+        None
+    } else {
+        Some("a list of non-empty strings".into())
+    }
+}
 fn t_lang(v: &Value) -> Option<String> {
     if matches!(v, Value::Str(s) if py_match(is_bcp47, s)) { None } else { Some("a BCP 47 language tag".into()) }
 }
@@ -343,6 +350,15 @@ pub const DEFINED_KEYS: &[(&str, TypeFn)] = &[
     ("calibration.applied", t_bool),
     ("data.derived", t_bool),
     ("consent.ref", t_str),
+    // Modality keys (FEP-0009, RC4 amendment).
+    ("emg.placement", t_str),
+    ("emg.derivation", t_str),
+    ("meg.sensor_types", t_str_list),
+    ("implant.array_type", t_str),
+    ("implant.array_count", t_int_ge1),
+    ("implant.features", t_str_list),
+    ("implant.bin_s", t_nonneg),
+    ("implant.areas", t_str_list),
 ];
 fn defined(k: &str) -> bool {
     DEFINED_KEYS.iter().any(|(d, _)| *d == k)

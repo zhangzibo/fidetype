@@ -272,14 +272,18 @@
      ]
     },
     "absent": {
-     "description": "true: no value for that axis. CTL-4.",
-     "type": "array",
+     "description": "true: no value for that axis; null = absent (GEN-9). CTL-4.",
+     "type": [
+      "array",
+      "null"
+     ],
      "items": {
       "type": "boolean"
      },
      "minItems": 1,
      "maxItems": 3,
      "x-nts-rules": [
+      "GEN-9",
       "CTL-4"
      ]
     },

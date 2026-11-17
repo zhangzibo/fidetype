@@ -4,7 +4,7 @@
 
 This page lists the convention keys of NeuralTextStream 1.0 RC4 (draft) ([spec](../nts-1.0-rc4.md)). The source of truth is the YAML in this folder: [manifest.yaml](manifest.yaml) and [attributes/](attributes/). It is normative for the key names, types, value lists and validators; the key tables of the spec are informative copies (spec 3.4, resolution SC-7). The check `python tools/semconv/semconv.py --check` makes the YAML, the spec tables, the proto files, the JSON Schema and the three SDK validators agree. How to use it: [docs/semconv.md](../../docs/semconv.md).
 
-Counts: 43 keys (24 `meta` keys), 3 containers, 12 reserved and 5 planned namespaces, 1 open question(s), 7 resolved question(s).
+Counts: 51 keys (32 `meta` keys), 3 containers, 15 reserved and 2 planned namespaces, 1 open question(s), 8 resolved question(s).
 
 ## How to read the tables
 
@@ -33,6 +33,7 @@ Counts: 43 keys (24 `meta` keys), 3 containers, 12 reserved and 5 planned namesp
 | `boolean` | validator | true or false |
 | `integer_min_1` | validator | An integer >= 1 |
 | `finite_number_min_0` | validator | A finite number >= 0 |
+| `non_empty_string_list` | validator | A JSON array of strings, none of them "" (FEP-0009) |
 | `sha256_hex` | validator | 64 lowercase hex characters |
 | `bcp47_tag` | validator | A BCP 47 language tag (pattern check only) |
 | `enum` | validator | One of the listed values (an unknown value of a newer minor version is allowed by VER-8) |
@@ -67,11 +68,11 @@ Spec [12.5](../nts-1.0-rc4.md#125-semantic-convention-namespaces-policy-spec-for
 | `data.*` | reserved | `data.derived` |
 | `consent.*` | reserved | `consent.ref` |
 | `language` | reserved | `language` |
-| `emg.*` | planned (no keys defined yet, open question SC-1) | - |
-| `eeg.*` | planned (no keys defined yet, open question SC-1) | - |
-| `meg.*` | planned (no keys defined yet, open question SC-1) | - |
-| `fnirs.*` | planned (no keys defined yet, open question SC-1) | - |
-| `implant.*` | planned (no keys defined yet, open question SC-1) | - |
+| `emg.*` | reserved | `emg.placement`, `emg.derivation` |
+| `meg.*` | reserved | `meg.sensor_types` |
+| `implant.*` | reserved | `implant.array_type`, `implant.array_count`, `implant.features`, `implant.bin_s`, `implant.areas` |
+| `eeg.*` | planned (no keys defined yet, open question SC-9) | - |
+| `fnirs.*` | planned (no keys defined yet, open question SC-9) | - |
 
 ## `device`
 
@@ -79,11 +80,11 @@ The recording device. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 37 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
+| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 41 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
 | `device.vendor` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The maker of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.model` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The model of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.channel_count` | `int` | - | optional | development (proposed stable) | `integer_min_1` | The number of input channels that the decoder used (integer >= 1). | MET-1<br>checks: NTS-META-TYPES |
-| `device.invasive` | `boolean` | - | optional | development (proposed stable) | `boolean` | true for implanted electrodes. | MET-1<br>checks: NTS-META-TYPES |
+| `device.invasive` | `boolean` | - | optional | development (proposed stable) | `boolean` | true for implanted electrodes. Used in 3 accept vector(s). | MET-1<br>checks: NTS-META-TYPES |
 | `device.regulatory_status` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The regulatory status of the device. Information only, not a claim of approval. Open list (SC-4). Registered values: `research`, `investigational`, `cleared`, `consumer`, `unknown`. Other values are valid. | MET-1<br>checks: NTS-META-TYPES |
 
 ## `decoder`
@@ -92,9 +93,9 @@ The decoder (model) that made the frames or events. Container: header `meta`. Sp
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 37 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 37 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 37 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
+| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 41 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 41 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 41 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
 | `decoder.lookahead_s` | `double` | s | optional | development (proposed stable) | `finite_number_min_0` | The algorithmic lookahead of the decoder (number >= 0). It equals the header field latency when both are present. | MET-1, MET-4, TIM-1<br>checks: NTS-META-LOOKAHEAD, NTS-META-TYPES |
 | `decoder.calibration_id` | `string` | - | provenance: conditionally required (calibration.applied is true) | development (proposed stable) | `non_empty_string` | The identifier of the calibration that was applied. | MET-1<br>checks: NTS-META-TYPES, PV-CALIB-ID |
 | `decoder.calibration_method` | `string` | - | trust-ready: conditionally required (calibration.applied is true; the value is then not none) | development (proposed stable) | `non_empty_string` | The calibration method. Open list (SC-4). Registered values: `temperature`, `platt`, `isotonic`, `none`. Other values are valid. | MET-1, MET-6<br>checks: NTS-META-TYPES, TR-CALIB |
@@ -163,7 +164,7 @@ The kind of data in the stream. Container: header `meta`. Spec [3.4](../nts-1.0-
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 37 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
+| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 41 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
 
 ## `consent`
 
@@ -179,7 +180,36 @@ The language of the decoded text. Container: header `meta`. Spec [3.4](../nts-1.
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 37 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
+| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 41 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
+
+## `emg`
+
+The surface EMG recording (device.modality emg). Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/emg.yaml](attributes/emg.yaml).
+
+| Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
+|---|---|---|---|---|---|---|---|
+| `emg.placement` | `string` | - | optional | development (proposed development) | `non_empty_string` | Where the surface EMG electrodes are on the body. Open list (SC-4). Registered values: `wrist`, `forearm`, `face`, `neck`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
+| `emg.derivation` | `string` | - | optional | development (proposed development) | `non_empty_string` | How each channel is derived from the electrodes. bipolar (also called differential): the difference of two electrodes; monopolar: one electrode against a common reference. Open list (SC-4). Registered values: `bipolar`, `monopolar`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
+
+## `meg`
+
+The MEG recording (device.modality meg or opm-meg). Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/meg.yaml](attributes/meg.yaml).
+
+| Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
+|---|---|---|---|---|---|---|---|
+| `meg.sensor_types` | `string[]` | - | optional | development (proposed development) | `non_empty_string_list` | The kinds of MEG sensors that the decoder used, one entry per kind. An OPM sensor is a magnetometer. Open list (SC-4). Registered values: `magnetometer`, `planar_gradiometer`, `axial_gradiometer`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
+
+## `implant`
+
+The implanted electrode recording (device.modality intracortical or ecog). Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-semantic-conventions-for-meta). Source: [attributes/implant.yaml](attributes/implant.yaml).
+
+| Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
+|---|---|---|---|---|---|---|---|
+| `implant.array_type` | `string` | - | optional | development (proposed development) | `non_empty_string` | The type of the implanted electrode arrays. utah = Utah (silicon microelectrode) array. Open list (SC-4). Registered values: `utah`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
+| `implant.array_count` | `int` | - | optional | development (proposed development) | `integer_min_1` | The number of implanted arrays that the decoder used (integer >= 1). Used in 1 accept vector(s). | MET-1, MET-9, MET-11<br>checks: NTS-META-TYPES |
+| `implant.features` | `string[]` | - | optional | development (proposed development) | `non_empty_string_list` | The neural features that the decoder used, one entry per kind. Open list (SC-4). Registered values: `threshold_crossings`, `spike_band_power`, `sorted_units`. Other values are valid. Used in 1 accept vector(s). | MET-1, MET-8, MET-11<br>checks: NTS-META-TYPES |
+| `implant.bin_s` | `double` | s | optional | development (proposed development) | `finite_number_min_0` | The width of one feature bin in seconds (for example 0.02 for 20 ms bins). Used in 1 accept vector(s). | MET-1, MET-9, MET-11<br>checks: NTS-META-TYPES |
+| `implant.areas` | `string[]` | - | optional | development (proposed development) | `non_empty_string_list` | The brain areas of the arrays, as free text (for example "precentral gyrus", "6v", "M1"). Used in 1 accept vector(s). | MET-1, MET-11<br>checks: NTS-META-TYPES |
 
 ## `trust_decision.input`
 
@@ -218,7 +248,7 @@ Result of the declaration check (DCL-5). Container: `trust_decision.declaration`
 
 The registry adds no semantics. These gaps need a spec change (a FEP or the next RC).
 
-- **SC-1 Modality keys are not defined.** Spec 12.5 plans the namespaces emg, eeg, meg, fnirs and implant but defines no key. The roadmap (P1-04) lists candidate keys, for example emg.placement, eeg.montage, meg.system, fnirs.wavelengths_nm and implant.array_type. Each needs a type, a unit and a meaning in a FEP before it goes into this registry. Deferred by RC4 to a FEP that has evidence from real producers (P4 adapters: emg2qwerty, KT-sEMG, Willett, B2T '25, Brain2Qwerty). Until then the namespaces are reserved (SC-2) and have no keys.
+- **SC-9 EEG and fNIRS keys are not defined.** FEP-0009 defines keys only for the modalities that have a reference producer (emg, meg, implant). The namespaces eeg and fnirs stay planned and reserved (SC-2), with no keys. Candidates: eeg.montage, eeg.reference, fnirs.wavelengths_nm. Each needs a FEP with evidence from a real producer (an EEG or fNIRS adapter, for example through the BrainFlow bridge).
 
 ## Resolved questions
 
@@ -226,6 +256,7 @@ Answered by the spec version of this registry (1.0 RC4 (draft)).
 
 | Id | Question | Resolution |
 |---|---|---|
+| SC-1 | Modality keys are not defined | Partly resolved by FEP-0009 (RC4 amendment, 2026-11-16): 8 keys from the P4 adapters. emg.placement and emg.derivation (emg2qwerty, KT-sEMG, Toronto sEMG); meg.sensor_types (SpanishBCBL MEG); implant.array_type, implant.array_count, implant.features, implant.bin_s and implant.areas (Willett handwriting, Brain-to-Text '25, NLB MC_RTT). All optional and Development (target Development). MET-11: a modality key describes the recording of device.modality. New validator non_empty_string_list in all three SDKs. Vectors V83 (accept), V84, V85 (reject). eeg and fnirs: open question SC-9. |
 | SC-2 | Planned namespaces are not reserved in the validators | Reserved now (12.5, MET-3). A custom key in emg, eeg, meg, fnirs or implant gets the MET-3 warning in all three validators (advisory, never a reject). Vector V69. |
 | SC-3 | Empty strings | The spec follows the validators: the string keys of 3.4 are "non-empty string" (MET-7). All three validators already refused "", so no valid stream changes. The keys of 6.1.1 and 6.1.2 stay "string" (audit data, not checked: TD-13). |
 | SC-4 | Open or closed value lists for string keys | Per key (3.4, 6.1.1, 6.1.2 and MET-8). Open lists (registered values; other values are valid): device.regulatory_status, decoder.calibration_method, input.kind, declaration.mode. Closed lists (type enum): device.modality, declaration.status, declaration.where. |

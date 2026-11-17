@@ -1,0 +1,17 @@
+# NTS semantic conventions: namespace meg (spec 3.4, FEP-0009). See ../manifest.yaml.
+# Producer evidence: adapter spanishbcbl_meg (MEGIN 306 channels: 102 magnetometers + 204 planar gradiometers).
+container: header.meta
+namespace: meg
+brief: The MEG recording (device.modality meg or opm-meg).
+attributes:
+  - key: meg.sensor_types
+    type: "string[]"
+    validator: non_empty_string_list
+    registered_values: [magnetometer, planar_gradiometer, axial_gradiometer]
+    brief: >-
+      The kinds of MEG sensors that the decoder used, one entry per kind. An OPM sensor is a
+      magnetometer.
+    stability: development
+    target_stability: development
+    rules: [MET-1, MET-8, MET-11]
+    checks: [NTS-META-TYPES]

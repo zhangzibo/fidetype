@@ -280,6 +280,19 @@
    "failing_check": "FEP5-V01-CORE"
   },
   {
+   "id": "C26",
+   "file": "c26-control-absent-null.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0005 1.0 RC4 7.4.3 (CTL-4) / 4.1 (GEN-9)",
+   "description": "A control event with absent null (no value: the same as an absent key)",
+   "expected": {
+    "kind": "input",
+    "controls": 2
+   }
+  },
+  {
    "id": "E01",
    "file": "e01-log-states.jsonl",
    "format": "jsonl",

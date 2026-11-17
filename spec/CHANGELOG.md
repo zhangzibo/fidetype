@@ -2,6 +2,20 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC4, DRAFT] amendment 2026-11-16
+**Still RC4 DRAFT.** Additive changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment of 2026-11-16"). New FEP: [FEP-0009](feps/0009-modality-semantic-conventions.md) (Draft). No RC4 vector changed its verdict.
+
+### Added
+- **Modality keys (SC-1, partly; MET-11).** `emg.placement`, `emg.derivation`, `meg.sensor_types`, `implant.array_type`, `implant.array_count`, `implant.features`, `implant.bin_s`, `implant.areas`: optional, Development. From the reference adapters (emg2qwerty, KT-sEMG, Toronto sEMG, SpanishBCBL MEG, Willett handwriting, Brain-to-Text '25), checked against NLB MC_RTT. `emg`, `meg`, `implant` are now namespaces with keys; `eeg`, `fnirs` stay planned (new open question SC-9).
+- **Registry:** files `attributes/emg.yaml`, `meg.yaml`, `implant.yaml`; validator `non_empty_string_list`; `registered_values` allowed on `string[]` keys. 51 keys (32 `meta`).
+- **Validators (Python, TypeScript, Rust):** the 8 keys in `DEFINED_KEYS` (type check NTS-META-TYPES); `PLANNED_NAMESPACES` = `eeg`, `fnirs`.
+- **Adapters:** the six adapters above write the keys that they know.
+- **Proto / schema (gap G-13 part b closed):** field option `json_null_list`; `Control.absent` uses it, so the generated schema accepts `absent: null` (GEN-9). The hand-written `schemas/fep-0005/control-event.schema.json` agrees.
+- **Vectors:** `v0.1` V83, V84, V85 (accept), V86, V87 (reject): 87 now. `fep-0005` C26 (accept): 53 now. 336 in all. Python = TypeScript = Rust on all 336 and on 27,047 fuzz mutants (seeds 1-3, `--n 30`). Schema parity: 205 of 205 one-line verdicts.
+
+### Open
+- G-13 part (a) (a dense frame with sparse keys of a wrong type): options A1 … A3 in C.2; needs a decision for 1.0 Stable.
+
 ## [1.0 RC4, DRAFT] 2026-11-15
 **Status: draft for public comment. Not final.** Document: [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6 "Changes from RC3"). RC3, RC2 and RC1 stay unchanged as the record. New FEP: [FEP-0008](feps/0008-optional-field-types-and-semconv.md) (Draft).
 

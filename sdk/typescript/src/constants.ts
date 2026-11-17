@@ -35,7 +35,7 @@ export const CLOCK_DOMAINS = ["lsl", "unix", "monotonic", "trial", "other"] as c
 export const SQ_UNITS = ["index", "snr_db", "impedance_ohm", "other"] as const;
 export const MODALITIES = ["emg", "eeg", "meg", "opm-meg", "ecog", "intracortical", "fnirs", "other"] as const;
 /** Planned modality namespaces (NTS 1.0 12.5). Reserved from RC4 (SC-2): MET-3 applies, no keys defined yet. */
-export const PLANNED_NAMESPACES = ["emg", "eeg", "meg", "fnirs", "implant"] as const;
+export const PLANNED_NAMESPACES = ["eeg", "fnirs"] as const;
 /** JSON Lines event kinds of spec 3.0, plus `end`. */
 export const EVENT_TYPES = ["frame", "decision", "hypothesis", "pointer", "signal_quality", "end"] as const;
 /** The latency fields of NTS 1.0 section 5.2 (TIM-4). */

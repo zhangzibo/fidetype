@@ -89,6 +89,7 @@ def stream_meta(
         "device.channel_count": N_MEG_CHANNELS,
         "device.invasive": False,
         "device.regulatory_status": "research",
+        "meg.sensor_types": ["magnetometer", "planar_gradiometer"],  # 102 + 204 (MET-11, FEP-0009)
         "decoder.name": f"fidetype-{model}",
         "decoder.version": f"{run_name}/{checkpoint}",
         "decoder.causal": lookahead_frames is not None,

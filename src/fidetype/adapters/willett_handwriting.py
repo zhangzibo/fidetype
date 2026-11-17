@@ -303,6 +303,11 @@ def stream_meta(
         "device.channel_count": N_CHANNELS,
         "device.invasive": True,
         "device.regulatory_status": "investigational",
+        "implant.array_type": "utah",  # modality keys: NTS 1.0 RC4 MET-11 (FEP-0009)
+        "implant.array_count": 2,
+        "implant.features": ["threshold_crossings"],
+        "implant.bin_s": 0.01,
+        "implant.areas": ["precentral gyrus (hand knob)"],
         "decoder.name": "willett2021-realtime-rnn",
         "decoder.version": "dryad-v5",
         "decoder.causal": True,

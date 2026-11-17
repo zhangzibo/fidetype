@@ -161,7 +161,8 @@ def _walk(obj: Any, prefix: str = "") -> Iterable[tuple[str, Any]]:
 
 MODALITIES = ("emg", "eeg", "meg", "opm-meg", "ecog", "intracortical", "fnirs", "other")
 #: Planned modality namespaces (NTS 1.0 12.5). Reserved from RC4 (SC-2): MET-3 applies, no keys defined yet.
-PLANNED_NAMESPACES = ("emg", "eeg", "meg", "fnirs", "implant")
+#: emg, meg and implant have keys since FEP-0009 (in DEFINED_KEYS); they stay reserved as defined namespaces.
+PLANNED_NAMESPACES = ("eeg", "fnirs")
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _BCP47_RE = re.compile(r"^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$")
 
@@ -188,6 +189,10 @@ def _t_nonneg(v: Any) -> str | None:
 
 def _t_sha(v: Any) -> str | None:
     return None if isinstance(v, str) and _SHA256_RE.match(v) else "64 lowercase hex characters (SHA-256)"
+
+
+def _t_str_list(v: Any) -> str | None:
+    return None if isinstance(v, list) and all(isinstance(x, str) and x != "" for x in v) else "a list of non-empty strings"
 
 
 def _t_lang(v: Any) -> str | None:
@@ -219,6 +224,15 @@ DEFINED_KEYS: dict[str, Callable[[Any], str | None]] = {
     "calibration.applied": _t_bool,
     "data.derived": _t_bool,
     "consent.ref": _t_str,
+    # Modality keys (FEP-0009, RC4 amendment).
+    "emg.placement": _t_str,
+    "emg.derivation": _t_str,
+    "meg.sensor_types": _t_str_list,
+    "implant.array_type": _t_str,
+    "implant.array_count": _t_int_ge1,
+    "implant.features": _t_str_list,
+    "implant.bin_s": _t_nonneg,
+    "implant.areas": _t_str_list,
 }
 DEFINED_NAMESPACES = tuple(sorted({k.split(".")[0] for k in DEFINED_KEYS if "." in k}))
 #: Namespaces in which a custom key gets the MET-3 warning: the defined ones plus the planned ones (RC4, SC-2).

@@ -35,7 +35,8 @@ pub const CLOCK_DOMAINS: &[&str] = &["lsl", "unix", "monotonic", "trial", "other
 pub const SQ_UNITS: &[&str] = &["index", "snr_db", "impedance_ohm", "other"];
 pub const MODALITIES: &[&str] = &["emg", "eeg", "meg", "opm-meg", "ecog", "intracortical", "fnirs", "other"];
 /// Planned modality namespaces (NTS 1.0 12.5). Reserved from RC4 (SC-2): MET-3 applies, no keys defined yet.
-pub const PLANNED_NAMESPACES: &[&str] = &["emg", "eeg", "meg", "fnirs", "implant"];
+/// emg, meg and implant have keys since FEP-0009 (in `DEFINED_KEYS`); they stay reserved as defined namespaces.
+pub const PLANNED_NAMESPACES: &[&str] = &["eeg", "fnirs"];
 /// JSON Lines event kinds of spec 3.0, plus `end`.
 pub const EVENT_TYPES: &[&str] = &["frame", "decision", "hypothesis", "pointer", "signal_quality", "end"];
 /// The latency fields of NTS 1.0 section 5.2 (TIM-4).

@@ -1,0 +1,26 @@
+# NTS semantic conventions: namespace emg (spec 3.4, FEP-0009). See ../manifest.yaml.
+# Producer evidence: adapters emg2qwerty (wrist bands), kt_semg (forearm sleeves), toronto_semg (forearm, bipolar).
+container: header.meta
+namespace: emg
+brief: The surface EMG recording (device.modality emg).
+attributes:
+  - key: emg.placement
+    type: string
+    validator: non_empty_string
+    registered_values: [wrist, forearm, face, neck]
+    brief: Where the surface EMG electrodes are on the body.
+    stability: development
+    target_stability: development
+    rules: [MET-1, MET-8, MET-11]
+    checks: [NTS-META-TYPES]
+  - key: emg.derivation
+    type: string
+    validator: non_empty_string
+    registered_values: [bipolar, monopolar]
+    brief: >-
+      How each channel is derived from the electrodes. bipolar (also called differential):
+      the difference of two electrodes; monopolar: one electrode against a common reference.
+    stability: development
+    target_stability: development
+    rules: [MET-1, MET-8, MET-11]
+    checks: [NTS-META-TYPES]

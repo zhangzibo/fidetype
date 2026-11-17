@@ -77,5 +77,5 @@ Accepted, with a warning (MET-3, vector V69): a header `meta` with the custom ke
 No new field. `reason` codes and `pending_cleared` stay short codes or ids, not user text (SEC-5).
 
 ## Open questions
-- SC-1: which modality keys, with which types and units (needs the P4 adapters).
-- G-13: may a frame carry both the dense and the sparse form (FRM-2)? Should the JSON Schema allow `absent: null` on control events (GEN-9)?
+- SC-1: which modality keys, with which types and units (needs the P4 adapters). *Partly answered by [FEP-0009](0009-modality-semantic-conventions.md) (2026-11-16): keys for `emg`, `meg`, `implant`; `eeg` and `fnirs` open as SC-9.*
+- G-13: may a frame carry both the dense and the sparse form (FRM-2)? Should the JSON Schema allow `absent: null` on control events (GEN-9)? *2026-11-16: the second part is closed (proto option `json_null_list`, vector C26). The first part needs a design decision; the options A1 … A3 are in [RC4 C.2](../nts-1.0-rc4.md#c2-gaps).*

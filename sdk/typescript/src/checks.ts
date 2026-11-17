@@ -113,6 +113,8 @@ const tEnum = (vals: readonly string[]): TypeFn => (m, k) => (vals.includes(m[k]
 const tIntGe1: TypeFn = (m, k) => (isIntV(m, k) && (m[k] as number) >= 1 ? null : "an integer >= 1");
 const tNonneg: TypeFn = (m, k) => (isNum(m[k]) && Number.isFinite(m[k]) && (m[k] as number) >= 0 ? null : "a finite number >= 0");
 const tSha: TypeFn = (m, k) => (typeof m[k] === "string" && SHA256_RE.test(m[k] as string) ? null : "64 lowercase hex characters (SHA-256)");
+const tStrList: TypeFn = (m, k) =>
+  Array.isArray(m[k]) && (m[k] as unknown[]).every((x) => typeof x === "string" && x !== "") ? null : "a list of non-empty strings";
 const tLang: TypeFn = (m, k) => (typeof m[k] === "string" && pyMatch(BCP47_RE, m[k] as string) ? null : "a BCP 47 language tag");
 /** Python `re.match` with a `$` anchor also accepts one trailing newline. */
 const pyMatch = (re: RegExp, s: string): boolean => re.test(s) || (s.endsWith("\n") && re.test(s.slice(0, -1)));
@@ -124,6 +126,9 @@ export const DEFINED_KEYS: Record<string, TypeFn> = {
   "decoder.calibration_method": tStr, "decoder.weights_sha256": tSha, "adapter.name": tStr, "adapter.version": tStr,
   "stream.id": tStr, "lm.name": tStr, "user.personalized": tBool, "session.id": tStr, "subject.id": tStr,
   language: tLang, "calibration.applied": tBool, "data.derived": tBool, "consent.ref": tStr,
+  // Modality keys (FEP-0009, RC4 amendment).
+  "emg.placement": tStr, "emg.derivation": tStr, "meg.sensor_types": tStrList, "implant.array_type": tStr,
+  "implant.array_count": tIntGe1, "implant.features": tStrList, "implant.bin_s": tNonneg, "implant.areas": tStrList,
 };
 const DEFINED_NAMESPACES = [...new Set(Object.keys(DEFINED_KEYS).filter((k) => k.includes(".")).map((k) => k.split(".")[0]))].sort();
 /** Namespaces in which a custom key gets the MET-3 warning: the defined ones plus the planned ones (RC4, SC-2). */

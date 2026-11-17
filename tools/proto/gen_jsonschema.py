@@ -48,7 +48,7 @@ ARRAY_OPTS = {"min_items": "minItems", "max_items": "maxItems", "unique_items": 
 VALUE_OPTS = {"minimum": "minimum", "maximum": "maximum", "exclusive_minimum": "exclusiveMinimum",
               "exclusive_maximum": "exclusiveMaximum", "pattern": "pattern", "min_length": "minLength"}
 KNOWN_FIELD_OPTS = set(ARRAY_OPTS) | set(VALUE_OPTS) | {"json_required", "json_nullable", "null_binary", "json_inline",
-                                                        "json_profile"}
+                                                        "json_profile", "json_null_list"}
 #: Largest portable JSON integer (GEN-10).
 MAX_JSON_INT = 2**53 - 1
 #: A spec_version of a newer 1.x minor version (VER-8): unknown enumeration values are allowed.
@@ -138,6 +138,8 @@ def lint(ps: ProtoSet) -> None:
                 raise MappingError(f"{m.name}.{f.name}: null_binary {nb} needs a double field")
             if nb == "unset" and f.options.get("json_nullable") and f.label == "repeated":
                 raise MappingError(f"{m.name}.{f.name}: a repeated field with null items needs null_binary")
+            if f.options.get("json_null_list") and f.label != "repeated":
+                raise MappingError(f"{m.name}.{f.name}: json_null_list needs a repeated field")
             if any(k in f.options for k in ARRAY_OPTS) and f.label != "repeated":
                 raise MappingError(f"{m.name}.{f.name}: array options need a repeated field")
         for r in m.options.get("json_rule", []):
@@ -185,7 +187,7 @@ def scalar_schema(f: Field, ps: ProtoSet, strict: bool = False) -> dict[str, Any
 def field_schema(f: Field, ps: ProtoSet, strict: bool = False) -> dict[str, Any]:
     item = scalar_schema(f, ps, strict)
     if f.label == "repeated":
-        s: dict[str, Any] = {"type": "array", "items": item}
+        s: dict[str, Any] = {"type": ["array", "null"] if f.options.get("json_null_list") else "array", "items": item}
         for opt, kw in ARRAY_OPTS.items():
             if opt in f.options:
                 s[kw] = _num(f.options[opt])

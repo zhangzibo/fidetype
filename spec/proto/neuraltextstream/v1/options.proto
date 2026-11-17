@@ -33,6 +33,10 @@ extend google.protobuf.FieldOptions {
   // "control"). It has its type and meaning only on decisions of that profile;
   // on other decisions it is a custom key (NTS 1.0 RC3, PRF-5).
   string json_profile = 50105;
+  // Repeated fields only: the whole JSON value MAY be null, which means "no
+  // value" (the same as an absent key, GEN-9). Binary form of that null: no
+  // items. (NTS 1.0 RC4 amendment, gap G-13 part b: control "absent".)
+  bool json_null_list = 50106;
 
   // Value constraints. For a repeated field they apply to each item.
   double minimum = 50110;
