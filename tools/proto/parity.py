@@ -133,6 +133,11 @@ REJECT_CLASS: dict[str, tuple[str, str]] = {
     "D26": ("schema", "INT-T8 pending_cleared type"), "I25": ("schema", "TIM-4 t_decoded type on an intent event"),
     "C25": ("schema", "TIM-4 t_emitted type on control_enable"), "E26": ("schema", "CTL-T8 level type"),
     "E27": ("schema", "TD-F2 reason type"),
+    # NTS 1.0 RC4 amendment (gap G-13 a, option A2): sparse keys on a dense frame keep their types (FRM-2, GEN-11)
+    "V89": ("schema", "FRM-2 / GEN-11 top_ids type on a dense frame"),
+    "V90": ("schema", "FRM-2 / GEN-11 top_log_probs type on a dense frame"),
+    "V91": ("schema", "FRM-2 / GEN-11 rest_log_prob type on a dense frame"),
+    "V92": ("schema", "FRM-2 / GEN-11 top_ids unique on a dense frame"),
 }
 
 

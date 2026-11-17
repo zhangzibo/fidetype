@@ -30,7 +30,7 @@ from typing import Any
 
 import numpy as np
 
-from fidetype.streams.spec import NPZ_NO_BLANK, NeuralTextStream, json_int
+from fidetype.streams.spec import NPZ_NO_BLANK, NeuralTextStream, dense_sparse_keys_check, json_int
 
 #: NPZ keys that spec 6.1 marks "Required: Yes".
 NPZ_REQUIRED = ("version", "log_probs", "frame_times", "vocab", "blank_id", "source", "meta_json")
@@ -311,6 +311,7 @@ def read_jsonl(path: str | PathLike[str]) -> RawStream:
                 if not isinstance(lp, list):
                     raise TypeError("log_probs is not a list")
                 row = np.array([_lp_value(x) for x in lp], dtype=np.float64)
+                dense_sparse_keys_check(obj)
             elif "top_ids" in obj or "top_log_probs" in obj:
                 row = _sparse_row(obj, V, n, raw)
             else:

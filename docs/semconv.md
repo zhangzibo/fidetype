@@ -36,6 +36,7 @@ A modality key goes with its `device.modality` (MET-11). `eeg.*` and `fnirs.*` a
 1. Look up each key in [registry.md](../spec/semconv/registry.md). Use the given type.
 2. Check the "Requirement" column for the conformance level that you claim. For example, level `trust-ready` needs `device.modality`, `decoder.causal` and `data.derived = true`.
 3. Put your own keys in your own namespace, for example `acme.gain`. Do not add keys to a reserved namespace (MET-3).
+   Example: the BrainFlow bridge writes `brainflow.board_id` and `brainflow.board_name`, not `device.board_id` (roadmap P4-09). A BrainFlow board id has a meaning only inside BrainFlow, and only one producer writes it. The registry takes a key only from a FEP with real-producer evidence for a fact that is common to producers (SC-1, SC-9), so a vendor key stays in the vendor namespace. The common fact (the device model) already has the key `device.model`.
 4. Run the conformance check on your stream:
 
 ```bash

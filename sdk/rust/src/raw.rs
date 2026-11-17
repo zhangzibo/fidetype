@@ -213,7 +213,11 @@ pub fn read_jsonl_raw(bytes: &[u8]) -> RawStream {
         };
         let row: Result<Option<Vec<f64>>, String> = if obj.has("log_probs") {
             match obj.get("log_probs") {
-                Value::Arr(a) => a.iter().map(lp_value).collect::<Result<Vec<f64>, String>>().map(Some),
+                Value::Arr(a) => a
+                    .iter()
+                    .map(lp_value)
+                    .collect::<Result<Vec<f64>, String>>()
+                    .and_then(|r| dense_sparse_keys_error(&obj).map_or(Ok(Some(r)), Err)),
                 _ => Err("log_probs is not a list".to_string()),
             }
         } else if obj.has("top_ids") || obj.has("top_log_probs") {
@@ -246,6 +250,40 @@ pub fn read_jsonl_raw(bytes: &[u8]) -> RawStream {
         raw.frame_times = Some(NdArray { shape: vec![times.len()], data: times });
     }
     raw
+}
+
+/// FRM-2 / GEN-11 (NTS 1.0 RC4 amendment, gap G-13 a, option A2): a dense frame MAY also carry sparse keys.
+/// The dense form wins and the sparse keys are not used, but each sparse key that is present MUST have its type:
+/// `top_ids` a list of unique integers >= 0, `top_log_probs` a list of numbers or null, `rest_log_prob` a number
+/// or null. Returns the error message, or `None` when the keys are well typed.
+pub fn dense_sparse_keys_error(obj: &Map) -> Option<String> {
+    if obj.has("top_ids") {
+        let ok = match obj.get("top_ids") {
+            Value::Arr(ids) => {
+                let ints = ids.iter().all(|x| x.is_int() && x.as_f64().map_or(false, |x| x >= 0.0));
+                let mut s: Vec<f64> = ids.iter().filter_map(|x| x.as_f64()).collect();
+                s.sort_by(|a, b| a.partial_cmp(b).unwrap_or(core::cmp::Ordering::Equal));
+                ints && s.windows(2).all(|w| w[0] != w[1])
+            }
+            _ => false,
+        };
+        if !ok {
+            return Some("dense frame: top_ids must be a list of unique integers >= 0 (FRM-2, GEN-11)".to_string());
+        }
+    }
+    if obj.has("top_log_probs") {
+        let ok = match obj.get("top_log_probs") {
+            Value::Arr(vals) => vals.iter().all(|x| matches!(x, Value::Null | Value::Num(_, _))),
+            _ => false,
+        };
+        if !ok {
+            return Some("dense frame: top_log_probs must be a list of numbers or null (FRM-2, GEN-11)".to_string());
+        }
+    }
+    if obj.has("rest_log_prob") && !matches!(obj.get("rest_log_prob"), Value::Null | Value::Num(_, _)) {
+        return Some("dense frame: rest_log_prob must be a number or null (FRM-2, GEN-11)".to_string());
+    }
+    None
 }
 
 fn sparse_row(obj: &Map, v: Option<usize>, n: usize, raw: &mut RawStream) -> Result<Option<Vec<f64>>, String> {

@@ -334,3 +334,12 @@ test("validateEventSchema dispatches by type and profile", () => {
   assert.ok(sdk.validateEventSchema({ type: "header", spec_version: "0.1", vocab: [], vocab_type: "char", blank_id: null, decode_declaration: { decoder: "" } })
     .some((e) => e.path === "/decode_declaration/decoder"));
 });
+
+test("frameRow: a dense frame with sparse keys (RC4 amendment, G-13 a, option A2)", () => {
+  const dense = { type: "frame", t: 0, log_probs: [Math.log(0.5), Math.log(0.5)] };
+  const row = sdk.frameRow({ ...dense, top_ids: [0], top_log_probs: [null], rest_log_prob: -3 }, 2);
+  assert.equal(row.length, 2);
+  for (const bad of [{ top_ids: "0" }, { top_ids: [1, 1] }, { top_ids: [-1] }, { top_log_probs: ["x"] }, { rest_log_prob: "-inf" }]) {
+    assert.throws(() => sdk.frameRow({ ...dense, ...bad }, 2), /dense frame/);
+  }
+});

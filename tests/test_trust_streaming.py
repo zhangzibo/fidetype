@@ -454,3 +454,16 @@ def test_cli_replay(setup, tmp_path, capsys):
     lines = [json.loads(x) for x in capsys.readouterr().out.splitlines()]
     assert len(lines) == 1 and lines[0]["type"] == "trust_decision" and lines[0]["is_final"]
     assert "shown" not in lines[0]
+
+
+def test_frame_row_dense_frame_with_sparse_keys():
+    """NTS 1.0 RC4 amendment (gap G-13 a, option A2): the dense form wins; the sparse keys keep their types."""
+    from fidetype.trust.streaming import StreamEventError, frame_row
+
+    dense = {"type": "frame", "t": 0.0, "log_probs": [math.log(0.5), math.log(0.5)]}
+    row = frame_row(dense | {"top_ids": [0], "top_log_probs": [None], "rest_log_prob": -3.0}, 2)
+    assert np.allclose(row, np.log([0.5, 0.5]))
+    for bad in ({"top_ids": "0"}, {"top_ids": [1, 1]}, {"top_ids": [-1]}, {"top_log_probs": ["x"]},
+                {"rest_log_prob": "-inf"}):
+        with pytest.raises(StreamEventError, match="dense frame"):
+            frame_row(dense | bad, 2)

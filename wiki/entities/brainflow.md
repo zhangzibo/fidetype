@@ -3,7 +3,7 @@ title: BrainFlow
 type: entity
 tags: [sdk, eeg, biosignals, open-source, tooling]
 sources: [neural-input-landscape-2026]
-updated: 2026-11-13
+updated: 2026-11-16
 ---
 
 # BrainFlow
@@ -42,7 +42,7 @@ fidetype lsl brainflow-bridge --board synthetic --trial-s 4 --pause 20:3 --durat
 fidetype lsl run --config trust.json --stream-name fidetype.brainflow --signal-decoder toy-flat --decoder demo
 ```
 
-The bridge sends an `EEG` stream (`desc/fidetype/role = signal`, unit `microvolts`) and a `Markers` stream (`segment_end` every `--trial-s` seconds). Details and the live results: [LSL input, BrainFlow live test](../concepts/lsl-input.md#brainflow-live-test-m6-08) and [results.md](../../experiments/2026-11-13-m6-08-brainflow-live/results.md).
+The bridge sends an `EEG` stream (`desc/fidetype/role = signal`, unit `microvolts`; board facts in the vendor keys `brainflow.board_id` and `brainflow.board_name`, P4-09) and a `Markers` stream (`segment_end` every `--trial-s` seconds). Details and the live results: [LSL input, BrainFlow live test](../concepts/lsl-input.md#brainflow-live-test-m6-08) and [results.md](../../experiments/2026-11-13-m6-08-brainflow-live/results.md).
 
 > **Our take:** the M6-08 run showed the full path BrainFlow → LSL → trust layer, with 26 of 26 ABSTAIN on toy input that carries no text information. Fidetype has no EEG text decoder. A real-board test needs hardware (externally blocked).
 

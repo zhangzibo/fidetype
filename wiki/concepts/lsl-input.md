@@ -3,7 +3,7 @@ title: LSL input (Lab Streaming Layer adapter)
 type: concept
 tags: [lsl, streaming, real-time, adapter, trust, neuraltextstream, m6]
 sources: [neural-input-landscape-2026]
-updated: 2026-11-15
+updated: 2026-11-16
 ---
 
 # LSL input (Lab Streaming Layer adapter)
@@ -176,6 +176,7 @@ The bridge (`fidetype.adapters.brainflow_bridge`, our own code) sends two LSL st
 | `fidetype.brainflow` | `EEG` (or `EMG`, `ExG` with `--kind`) | the board channels of that kind, float32, `nominal_srate` = board rate; channel `label` = electrode name, `unit` = `microvolts` | `signal` |
 | `fidetype.brainflow.markers` | `Markers` | plain `segment_end` every `--trial-s` seconds (a fixed trial clock); `brainflow_marker:<v>` for the BrainFlow marker channel | `signal_markers` |
 
+- **Desc keys of the signal stream.** `desc/fidetype` has `role`, `binding`, `events_source_id` and `device.modality` (`eeg`, `emg`, or `other` for `ExG`: the registry list is closed). The board id and name are BrainFlow facts, so they use the vendor namespace: `brainflow.board_id`, `brainflow.board_name`. Before P4-09 (2026-11-16) they were `device.board_id` / `device.board_name`, custom keys in the reserved `device` namespace (MET-3 warning).
 - **Stamps.** The Synthetic board sends samples in packets (about 16 ms apart). Raw stamps would look like gaps. The bridge maps the board time to the LSL clock and smooths it (1 / srate per sample, 1 % pull to the board time). If the board time jumps more than 0.25 s ahead (lost data), the stamp jumps too, so the consumer sees a real gap.
 - **Dropout test.** `--pause AT:FOR` discards the board data for FOR seconds (repeatable).
 - **Toy decoders** (`fidetype.decoders.toy_signal`): `flat` gives near-uniform frames that ignore the signal. `features` maps per-channel log variance through a fixed random matrix: the frames change with the signal but carry no text information. 25 frames/s over the 28-token character vocab. The header says `decoder.toy = true` and `decoder.text_information = none`.

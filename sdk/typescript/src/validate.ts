@@ -9,6 +9,7 @@
 import { DECLARATION_KEY, NORM_TOL, VOCAB_TYPES, isSupportedSpecVersion } from "./constants.js";
 import { cpLen, get, has, isIntAt, isObj, parseJson } from "./json.js";
 import { validateDeclaration } from "./profiles/fep0001.js";
+import { denseSparseKeysError } from "./raw.js";
 
 export class StreamEventError extends Error {
   constructor(message: string) {
@@ -44,6 +45,8 @@ export function frameRow(event: Record<string, unknown>, V: number): Float64Arra
     const v = event.log_probs;
     if (!Array.isArray(v)) throw new StreamEventError("log_probs is not a list");
     row = Float64Array.from(v.map(lp));
+    const bad = denseSparseKeysError(event); // FRM-2 / GEN-11 (RC4 amendment, G-13 a)
+    if (bad !== null) throw new StreamEventError(bad);
   } else if (has(event, "top_ids")) {
     const ids = event.top_ids;
     const vals = get(event, "top_log_probs");

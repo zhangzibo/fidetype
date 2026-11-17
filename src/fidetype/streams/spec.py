@@ -108,6 +108,28 @@ def json_int(s: str) -> Any:
     return v if -MAX_JSON_INT <= v <= MAX_JSON_INT else float(s)
 
 
+def dense_sparse_keys_check(obj: dict) -> None:
+    """FRM-2 / GEN-11 (NTS 1.0 RC4 amendment, gap G-13 a, option A2): a dense frame MAY also carry sparse keys.
+
+    The dense form wins and the sparse keys are not used, but each sparse key that is present MUST have its
+    type: ``top_ids`` a list of unique integers >= 0, ``top_log_probs`` a list of numbers or null,
+    ``rest_log_prob`` a number or null. Raises ``TypeError`` on a wrong type.
+    """
+    if "top_ids" in obj:
+        ids = obj["top_ids"]
+        if not isinstance(ids, list) or any(isinstance(i, bool) or not isinstance(i, int) or i < 0 for i in ids)                 or len(set(ids)) != len(ids):
+            raise TypeError("dense frame: top_ids must be a list of unique integers >= 0 (FRM-2, GEN-11)")
+    if "top_log_probs" in obj:
+        vals = obj["top_log_probs"]
+        if not isinstance(vals, list) or any(x is not None and (isinstance(x, bool) or not isinstance(x, (int, float)))
+                                             for x in vals):
+            raise TypeError("dense frame: top_log_probs must be a list of numbers or null (FRM-2, GEN-11)")
+    if "rest_log_prob" in obj:
+        r = obj["rest_log_prob"]
+        if r is not None and (isinstance(r, bool) or not isinstance(r, (int, float))):
+            raise TypeError("dense frame: rest_log_prob must be a number or null (FRM-2, GEN-11)")
+
+
 def _logsumexp_rows(x: np.ndarray) -> np.ndarray:
     """Return the log-sum-exp of each row. Rows of only -inf give -inf."""
     x64 = x.astype(np.float64)

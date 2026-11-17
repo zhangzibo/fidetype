@@ -477,6 +477,23 @@ def build_vectors() -> list[Vector]:
         'meg.sensor_types has an empty string item (type list of non-empty strings)', None,
         failing_check="NTS-META-TYPES",
         writer=_w_npz(meta_json=np.array(json.dumps(mod_meg | {"meg.sensor_types": ["magnetometer", ""]}))))
+    # --- NTS 1.0 RC4 amendment (gap G-13 a, option A2): a dense frame with sparse keys (FRM-2, GEN-11)
+    both = _frames(2, V)
+    extra = {"top_ids": [0, 1], "top_log_probs": [round(math.log(0.6), 6), None], "rest_log_prob": -0.5}
+    add("V88", "v88-dense-frame-sparse-keys.jsonl", "accept", "1.0 RC4 4.2 (FRM-2, GEN-11)",
+        "A dense frame that also carries well-typed sparse keys (not normalised): the dense form wins", None,
+        {"n_frames": 2}, writer=_w_lines([_header(spec_version="1.0"), both[0], both[1] | extra, {"type": "end"}]))
+    for vid, fname, desc, keys in (
+            ("V89", "v89-dense-frame-top-ids-string.jsonl", 'a dense frame with top_ids "0,1" (not a list)',
+             {"top_ids": "0,1"}),
+            ("V90", "v90-dense-frame-top-log-probs-string.jsonl", 'a dense frame with top_log_probs [-0.5, "x"]',
+             {"top_ids": [0, 1], "top_log_probs": [-0.5, "x"]}),
+            ("V91", "v91-dense-frame-rest-string.jsonl", 'a dense frame with rest_log_prob "-inf" (a string)',
+             {"rest_log_prob": "-inf"}),
+            ("V92", "v92-dense-frame-top-ids-repeated.jsonl", "a dense frame with top_ids [1, 1] (not unique)",
+             {"top_ids": [1, 1], "top_log_probs": [-1.0, -1.0]})):
+        add(vid, fname, "reject", "1.0 RC4 4.2 (FRM-2, GEN-11)", desc, None, failing_check="NTS-JSONL-FRAME",
+            writer=_w_lines([_header(spec_version="1.0"), both[0], both[1] | keys, {"type": "end"}]))
     vs.sort(key=lambda v: v.vid)
     return vs
 

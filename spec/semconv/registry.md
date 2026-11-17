@@ -80,7 +80,7 @@ The recording device. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 41 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
+| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 42 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
 | `device.vendor` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The maker of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.model` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The model of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.channel_count` | `int` | - | optional | development (proposed stable) | `integer_min_1` | The number of input channels that the decoder used (integer >= 1). | MET-1<br>checks: NTS-META-TYPES |
@@ -93,9 +93,9 @@ The decoder (model) that made the frames or events. Container: header `meta`. Sp
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 41 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 41 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 41 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
+| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 42 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 42 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 42 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
 | `decoder.lookahead_s` | `double` | s | optional | development (proposed stable) | `finite_number_min_0` | The algorithmic lookahead of the decoder (number >= 0). It equals the header field latency when both are present. | MET-1, MET-4, TIM-1<br>checks: NTS-META-LOOKAHEAD, NTS-META-TYPES |
 | `decoder.calibration_id` | `string` | - | provenance: conditionally required (calibration.applied is true) | development (proposed stable) | `non_empty_string` | The identifier of the calibration that was applied. | MET-1<br>checks: NTS-META-TYPES, PV-CALIB-ID |
 | `decoder.calibration_method` | `string` | - | trust-ready: conditionally required (calibration.applied is true; the value is then not none) | development (proposed stable) | `non_empty_string` | The calibration method. Open list (SC-4). Registered values: `temperature`, `platt`, `isotonic`, `none`. Other values are valid. | MET-1, MET-6<br>checks: NTS-META-TYPES, TR-CALIB |
@@ -164,7 +164,7 @@ The kind of data in the stream. Container: header `meta`. Spec [3.4](../nts-1.0-
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 41 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
+| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 42 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
 
 ## `consent`
 
@@ -180,7 +180,7 @@ The language of the decoded text. Container: header `meta`. Spec [3.4](../nts-1.
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 41 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
+| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 42 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
 
 ## `emg`
 

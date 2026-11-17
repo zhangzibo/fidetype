@@ -16,8 +16,12 @@ Streams (FEP-0002, raw-signal stream):
   or ``ch<N>``), ``unit`` ``microvolts``, ``type``. ``desc/acquisition``:
   ``manufacturer`` BrainFlow, ``model`` the board name.
   ``desc/fidetype``: ``role`` ``signal``, ``binding`` ``nts-lsl/0.1``,
-  ``events_source_id``, ``device.board_id``, ``device.modality``. It has
-  no ``nts_header``: a consumer needs a signal decoder to make frames.
+  ``events_source_id``, ``device.modality`` (``eeg``, ``emg``, or
+  ``other`` for ``exg``), and the vendor keys ``brainflow.board_id`` and
+  ``brainflow.board_name``. It has no ``nts_header``: a consumer needs a
+  signal decoder to make frames. The board id and name are BrainFlow
+  facts, so they use the vendor namespace ``brainflow``, not the reserved
+  namespace ``device`` (NTS MET-3, roadmap P4-09).
 - **Markers stream**: type ``Markers``, 1 string channel, irregular rate,
   ``desc/fidetype/role`` ``signal_markers``. With ``trial_s`` the bridge
   sends the plain marker ``segment_end`` every ``trial_s`` seconds (a
@@ -72,6 +76,9 @@ __all__ = [
 SYNTHETIC_BOARD_ID = -1
 UNIT = "microvolts"
 CHANNEL_KINDS = {"eeg": ("eeg_channels", "EEG"), "emg": ("emg_channels", "EMG"), "exg": ("exg_channels", "ExG")}
+#: ``device.modality`` (closed list, NTS 3.4) of each channel kind: ExG (mixed bio-potential channels) has no value
+#: of its own, so it uses the fallback ``other``.
+KIND_MODALITY = {"eeg": "eeg", "emg": "emg", "exg": "other"}
 SEGMENT_END = "segment_end"
 
 
@@ -252,8 +259,9 @@ def stream_desc(descr: dict[str, Any], board_id: int, cfg: BridgeConfig, events_
     labels = names if len(names) == len(rows) else [f"ch{r}" for r in rows]
     return {"rows": rows, "labels": labels, "type": lsl_type, "srate": float(descr["sampling_rate"]),
             "fidetype": {"role": "signal", "binding": BINDING_VERSION, "events_source_id": events_source_id,
-                         "device.board_id": str(board_id), "device.board_name": str(descr.get("name", "")),
-                         "device.modality": cfg.kind}}
+                         "device.modality": KIND_MODALITY[cfg.kind],
+                         # Vendor namespace (MET-3): a BrainFlow board id means nothing outside BrainFlow (P4-09).
+                         "brainflow.board_id": str(board_id), "brainflow.board_name": str(descr.get("name", ""))}}
 
 
 def make_pylsl_outlets(sd: dict[str, Any], descr: dict[str, Any], cfg: BridgeConfig, source_id: str,

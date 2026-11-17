@@ -454,3 +454,22 @@ fn fep0005_safety_ctl_s7_and_engaged_after() {
     assert_eq!(engaged_after(&hold(0, 0, r#""engagement":4"#), Some(3.0)), (true, None));
     assert_eq!(engaged_after(&hold(0, 0, r#""engagement":1,"reasons":["disengaged"]"#), None), (false, None));
 }
+
+#[test]
+fn frame_row_dense_frame_with_sparse_keys() {
+    // NTS 1.0 RC4 amendment (gap G-13 a, option A2): the dense form wins; the sparse keys keep their types.
+    let base = r#""type": "frame", "t": 0.0, "log_probs": [-0.6931471805599453, -0.6931471805599453]"#;
+    let obj = |extra: &str| -> Map {
+        match parse_json(&format!("{{{}, {}}}", base, extra)).unwrap() {
+            Value::Obj(m) => m,
+            _ => panic!("not an object"),
+        }
+    };
+    let ok = fidetype::validate::frame_row(&obj(r#""top_ids": [0], "top_log_probs": [null], "rest_log_prob": -3.0"#), 2);
+    assert_eq!(ok.unwrap().len(), 2);
+    for bad in [r#""top_ids": "0""#, r#""top_ids": [1, 1]"#, r#""top_ids": [-1]"#, r#""top_log_probs": ["x"]"#,
+                r#""rest_log_prob": "-inf""#] {
+        let e = fidetype::validate::frame_row(&obj(bad), 2).unwrap_err();
+        assert!(format!("{:?}", e).contains("dense frame"), "{}", bad);
+    }
+}

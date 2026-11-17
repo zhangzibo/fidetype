@@ -167,6 +167,8 @@ export function readJsonlRaw(bytes: Uint8Array): RawStream {
         const lp = obj.log_probs;
         if (!Array.isArray(lp)) throw new TypeError("log_probs is not a list");
         row = Float64Array.from(lp.map(lpValue));
+        const bad = denseSparseKeysError(obj);
+        if (bad !== null) throw new TypeError(bad);
       } else if (has(obj, "top_ids") || has(obj, "top_log_probs")) {
         row = sparseRow(obj, V, n, raw);
       } else {
@@ -198,6 +200,32 @@ export function readJsonlRaw(bytes: Uint8Array): RawStream {
     raw.frameTimes = { shape: [times.length], data: Float64Array.from(times) };
   }
   return raw;
+}
+
+/**
+ * FRM-2 / GEN-11 (NTS 1.0 RC4 amendment, gap G-13 a, option A2): a dense frame MAY also carry sparse keys.
+ * The dense form wins and the sparse keys are not used, but each sparse key that is present MUST have its type:
+ * `top_ids` a list of unique integers >= 0, `top_log_probs` a list of numbers or null, `rest_log_prob` a number
+ * or null. Returns the error message, or null when the keys are well typed.
+ */
+export function denseSparseKeysError(obj: Record<string, unknown>): string | null {
+  if (has(obj, "top_ids")) {
+    const ids = obj.top_ids;
+    if (!Array.isArray(ids) || !ids.every((x, k) => isIntAt(ids, k) && (x as number) >= 0) || new Set(ids).size !== ids.length) {
+      return "dense frame: top_ids must be a list of unique integers >= 0 (FRM-2, GEN-11)";
+    }
+  }
+  if (has(obj, "top_log_probs")) {
+    const vals = obj.top_log_probs;
+    if (!Array.isArray(vals) || !vals.every((x) => x === null || typeof x === "number")) {
+      return "dense frame: top_log_probs must be a list of numbers or null (FRM-2, GEN-11)";
+    }
+  }
+  if (has(obj, "rest_log_prob")) {
+    const r = obj.rest_log_prob;
+    if (r !== null && typeof r !== "number") return "dense frame: rest_log_prob must be a number or null (FRM-2, GEN-11)";
+  }
+  return null;
 }
 
 function sparseRow(obj: Record<string, unknown>, V: number | null, n: number, raw: RawStream): Float64Array | null {

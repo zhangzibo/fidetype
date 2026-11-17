@@ -40,7 +40,14 @@ fn lp(x: &Value) -> Result<f64, Error> {
 pub fn frame_row(event: &Map, v: usize) -> Result<Vec<f64>, Error> {
     let row: Vec<f64> = if event.has("log_probs") {
         match event.get("log_probs") {
-            Value::Arr(a) => a.iter().map(lp).collect::<Result<_, _>>()?,
+            Value::Arr(a) => {
+                let r: Vec<f64> = a.iter().map(lp).collect::<Result<_, _>>()?;
+                // FRM-2 / GEN-11 (RC4 amendment, G-13 a): sparse keys on a dense frame keep their types.
+                if let Some(e) = crate::raw::dense_sparse_keys_error(event) {
+                    return Err(Error::event(e));
+                }
+                r
+            }
             _ => return Err(Error::event("log_probs is not a list")),
         }
     } else if event.has("top_ids") {

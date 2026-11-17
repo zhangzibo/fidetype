@@ -959,6 +959,58 @@
    "clause": "1.0 RC4 3.4 (MET-1, MET-7; FEP-0009)",
    "description": "meg.sensor_types has an empty string item (type list of non-empty strings)",
    "failing_check": "NTS-META-TYPES"
+  },
+  {
+   "id": "V88",
+   "file": "v88-dense-frame-sparse-keys.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.2 (FRM-2, GEN-11)",
+   "description": "A dense frame that also carries well-typed sparse keys (not normalised): the dense form wins",
+   "expected": {
+    "n_frames": 2
+   }
+  },
+  {
+   "id": "V89",
+   "file": "v89-dense-frame-top-ids-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.2 (FRM-2, GEN-11)",
+   "description": "a dense frame with top_ids \"0,1\" (not a list)",
+   "failing_check": "NTS-JSONL-FRAME"
+  },
+  {
+   "id": "V90",
+   "file": "v90-dense-frame-top-log-probs-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.2 (FRM-2, GEN-11)",
+   "description": "a dense frame with top_log_probs [-0.5, \"x\"]",
+   "failing_check": "NTS-JSONL-FRAME"
+  },
+  {
+   "id": "V91",
+   "file": "v91-dense-frame-rest-string.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.2 (FRM-2, GEN-11)",
+   "description": "a dense frame with rest_log_prob \"-inf\" (a string)",
+   "failing_check": "NTS-JSONL-FRAME"
+  },
+  {
+   "id": "V92",
+   "file": "v92-dense-frame-top-ids-repeated.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 4.2 (FRM-2, GEN-11)",
+   "description": "a dense frame with top_ids [1, 1] (not unique)",
+   "failing_check": "NTS-JSONL-FRAME"
   }
  ]
 }

@@ -33,8 +33,18 @@ Additive change to the RC4 draft ([FEP-0009](../../spec/feps/0009-modality-seman
 | New rule MET-11 | A modality key goes with its `device.modality`. Not checked by the validators |
 | Still open | `eeg.*`, `fnirs.*`: no reference producer yet (SC-9) |
 | G-13 part b closed | New proto option `json_null_list`; the generated schema accepts control `absent: null` (GEN-9). Vector C26 |
-| G-13 part a open | A dense frame with wrong-typed sparse keys. Options A1 (forbid both forms), A2 (both allowed, sparse keys still typed; recommended), A3 (sparse keys ignored, schema relaxed). Decision for 1.0 Stable |
+| G-13 part a | A dense frame with wrong-typed sparse keys. Options A1 (forbid both forms), A2 (both allowed, sparse keys still typed; recommended), A3 (sparse keys ignored, schema relaxed). **Closed by amendment 2 (below): A2** |
 | Vectors and parity | V83 … V87, C26 (336 in all); Python = TypeScript = Rust on all 336; schema 205 / 205 one-line verdicts |
+
+## RC4 amendment 2: G-13 part a closed with option A2 (2026-11-16)
+Roadmap P1-14. Rule FRM-2 of [RC4 section 4.2](../../spec/nts-1.0-rc4.md#42-frame); summary in RC4 section 1.6. No earlier vector changed its verdict.
+
+| Item | Detail |
+|---|---|
+| Rule (FRM-2) | A dense frame MAY also carry sparse keys. The dense form wins; the consumer does not use the sparse keys. Each sparse key that is present keeps its type (GEN-11): `top_ids` unique integers >= 0, `top_log_probs` numbers or null, `rest_log_prob` a number or null |
+| Why A2 | It follows GEN-11 (a field of a table has its type when present). It keeps every stream with well-typed keys valid. The schema already typed the keys, so the schema does not change |
+| SDK change | Python, TypeScript, Rust: the JSONL readers and the streaming validators refuse a wrong type (check NTS-JSONL-FRAME) |
+| Vectors and parity | V88 (accept), V89 … V92 (reject); 341 in all. Python = TypeScript = Rust on all 341 and on 27,497 fuzz mutants (seeds 1-3, `--n 30`); schema 210 / 210 one-line verdicts |
 
 ## RC4: semantic conventions and optional field types (2026-11-15)
 RC4 answers the open questions SC-2 … SC-8 of the [semantic-convention registry](../../spec/semconv/registry.md) (roadmap P1-04) and closes gap G-12. Rule: the simplest rule that keeps valid data valid. No RC3 vector changed its verdict. Normative changes: [FEP-0008](../../spec/feps/0008-optional-field-types-and-semconv.md).

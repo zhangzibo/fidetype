@@ -353,6 +353,6 @@ def test_cli_profiles(tmp_path, capsys):
     assert cli(["list", "--profile", "fep-0001", "--markdown"]) == 0
     assert "`FEP1-TD-FINAL`" in capsys.readouterr().out
     assert cli(["consumer"]) == 0  # v0.1 unchanged
-    assert "87/87" in capsys.readouterr().out
+    assert "92/92" in capsys.readouterr().out
     with pytest.raises(SystemExit):
         cli([])

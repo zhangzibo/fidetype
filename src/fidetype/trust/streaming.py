@@ -147,7 +147,8 @@ from typing import Any, Callable, Iterable, Iterator, Literal, Sequence
 
 import numpy as np
 
-from fidetype.streams.spec import NORM_TOL, SPEC_VERSION, VOCAB_TYPES, NeuralTextStream, is_supported_spec_version
+from fidetype.streams.spec import (NORM_TOL, SPEC_VERSION, VOCAB_TYPES, NeuralTextStream, dense_sparse_keys_check,
+                                   is_supported_spec_version)
 from fidetype.trust.conformal import PredictionSet
 from fidetype.trust.declaration import DECLARATION_KEY, compare_declaration, validate_declaration
 from fidetype.trust.frozen import FrozenTrustConfig
@@ -393,6 +394,10 @@ def frame_row(event: dict[str, Any], V: int) -> np.ndarray:
         if not isinstance(lp, list):
             raise StreamEventError("log_probs is not a list")
         row = np.array([_lp(x) for x in lp], dtype=np.float64)
+        try:  # FRM-2 / GEN-11 (RC4 amendment, G-13 a): sparse keys on a dense frame keep their types
+            dense_sparse_keys_check(event)
+        except TypeError as e:
+            raise StreamEventError(str(e)) from None
     elif "top_ids" in event:
         ids, vals = event.get("top_ids"), event.get("top_log_probs")
         if not isinstance(ids, list) or not isinstance(vals, list) or len(ids) != len(vals):

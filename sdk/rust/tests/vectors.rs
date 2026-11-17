@@ -17,7 +17,7 @@ fn run(profile: &str, expected_total: usize) {
 
 #[test]
 fn v01_vectors() {
-    run("v0.1", 87);
+    run("v0.1", 92);
 }
 
 #[test]

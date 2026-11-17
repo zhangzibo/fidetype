@@ -89,6 +89,27 @@ def test_stream_desc_follows_fep0002_raw_signal():
         B.stream_desc(board.descr, -1, B.BridgeConfig(kind="emg"), "x")
 
 
+def test_stream_desc_keys_follow_met3():
+    """P4-09: the dotted desc/fidetype keys use the registry (device.modality) or a vendor namespace (brainflow.*).
+
+    Read as NTS meta, they give no MET-3 warning (NTS-NAMESPACE) and have the registry types (NTS-META-TYPES).
+    """
+    from fidetype.conformance.checks import PASS, c_meta_types, c_namespace
+    from fidetype.conformance.io import RawStream
+
+    br, board, wall, outs = _bridge()
+    f = outs["sd"]["fidetype"]
+    assert f["brainflow.board_id"] == "-1" and f["brainflow.board_name"] == board.descr["name"]
+    assert not [k for k in f if k.startswith("device.") and k != "device.modality"]
+    exg = B.stream_desc(dict(board.descr, exg_channels=[1, 2]), -1, B.BridgeConfig(kind="exg"), "x")["fidetype"]
+    assert exg["device.modality"] == "other"  # closed list (3.4): ExG has no value of its own
+    for desc in (f, exg):
+        meta = {k: v for k, v in desc.items() if "." in k}
+        raw = RawStream(format="object", header={"meta": meta})
+        assert c_namespace(raw)[0] == PASS, c_namespace(raw)
+        assert c_meta_types(raw)[0] == PASS, c_meta_types(raw)
+
+
 def test_bursty_board_stamps_become_regular():
     br, board, wall, outs = _bridge()
     _drive(br, wall, 3.0)
