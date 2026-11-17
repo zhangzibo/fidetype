@@ -1,0 +1,105 @@
+{
+ "seed": 20261116,
+ "false_alarms": [
+  {
+   "test": "scores",
+   "level": 0.01,
+   "runs": 1000,
+   "rate": 0.011,
+   "limit": 0.019439279633531363,
+   "pass": true
+  },
+  {
+   "test": "risk",
+   "level": 0.01,
+   "runs": 1000,
+   "rate": 0.004,
+   "limit": 0.019439279633531363,
+   "pass": true
+  },
+  {
+   "test": "scores",
+   "level": 0.05,
+   "runs": 1000,
+   "rate": 0.048,
+   "limit": 0.07067607312813534,
+   "pass": true
+  },
+  {
+   "test": "risk",
+   "level": 0.05,
+   "runs": 1000,
+   "rate": 0.038,
+   "limit": 0.07067607312813534,
+   "pass": true
+  }
+ ],
+ "delays": {
+  "scores": [
+   {
+    "runs": 200,
+    "never_detected": 63,
+    "median": 535.5,
+    "p90": "inf",
+    "mean_detected": 454.1970802919708,
+    "shift": -0.25,
+    "sd": 1.0
+   },
+   {
+    "runs": 200,
+    "never_detected": 0,
+    "median": 98.5,
+    "p90": 163.89999999999995,
+    "mean_detected": 108.38,
+    "shift": -0.5,
+    "sd": 1.0
+   },
+   {
+    "runs": 200,
+    "never_detected": 0,
+    "median": 46.0,
+    "p90": 58.0,
+    "mean_detected": 45.43,
+    "shift": -1.0,
+    "sd": 1.0
+   },
+   {
+    "runs": 200,
+    "never_detected": 200,
+    "median": "inf",
+    "p90": "inf",
+    "mean_detected": null,
+    "shift": 0.0,
+    "sd": 2.0
+   }
+  ],
+  "risk": [
+   {
+    "runs": 200,
+    "never_detected": 0,
+    "median": 491.5,
+    "p90": 894.3999999999999,
+    "mean_detected": 527.825,
+    "rate": 0.1
+   },
+   {
+    "runs": 200,
+    "never_detected": 0,
+    "median": 84.0,
+    "p90": 136.0,
+    "mean_detected": 86.765,
+    "rate": 0.2
+   },
+   {
+    "runs": 200,
+    "never_detected": 0,
+    "median": 16.0,
+    "p90": 24.0,
+    "mean_detected": 16.835,
+    "rate": 0.5
+   }
+  ]
+ },
+ "S1_pass": true,
+ "seconds": 67.1
+}

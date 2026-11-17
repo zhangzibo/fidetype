@@ -1,0 +1,1522 @@
+{
+ "summary": {
+  "n_items": 6720,
+  "days": [
+   "S8",
+   "S9",
+   "S10",
+   "S11",
+   "S12",
+   "S13",
+   "S14",
+   "S15",
+   "S16",
+   "S17",
+   "S18",
+   "S19",
+   "S20",
+   "S21",
+   "S22",
+   "S23"
+  ],
+  "n_known": 5390,
+  "n_right": 2,
+  "criteria": {
+   "R1": true,
+   "R2": true,
+   "R3": true,
+   "R4": true,
+   "R5": true
+  },
+  "seconds": 18.8
+ },
+ "arms": {
+  "A0-static": {
+   "arm": "A0-static",
+   "n_items": 6720,
+   "commits": 0,
+   "wrong_commits": 0,
+   "wrong_commit_rate": 0.0,
+   "cp95": [
+    0.0,
+    0.0005
+   ],
+   "days_rate_above_alpha": 0,
+   "max_day_rate": 0.0,
+   "labels_spent_check_blocks": 96,
+   "proposals": 2,
+   "accepted": 1,
+   "rejected": 1,
+   "offer_only_items": 118,
+   "loop_monitor_alarms": 0,
+   "lambda_changes_outside_finish_update": 0,
+   "alarms": [],
+   "tightenings": 0,
+   "updates": [
+    {
+     "type": "update",
+     "proposal": 1,
+     "session": "A0-static-s1",
+     "reason": "initial",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.16,
+     "days": [
+      8
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A0-static-v1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A0-static-v1'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 2,
+     "session": "A0-static-s2",
+     "reason": "initial",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.25,
+     "days": [
+      8
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A0-static-v2'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A0-static-v2'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    }
+   ],
+   "per_day": {
+    "S8": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 118
+    },
+    "S9": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S10": {
+     "n": 320,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S11": {
+     "n": 520,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S12": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S13": {
+     "n": 400,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S14": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S15": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S16": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S17": {
+     "n": 240,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S18": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S19": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S20": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S21": {
+     "n": 480,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S22": {
+     "n": 560,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S23": {
+     "n": 560,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    }
+   },
+   "aci": {
+    "method": "aci",
+    "alpha": 0.05,
+    "n_observed": 6602,
+    "n_missing": 0,
+    "pending": 0,
+    "mean_loss": 0.0,
+    "certificate": 0.046970614965162076,
+    "threshold": 0.0,
+    "lam_1": 1.0000000000000002,
+    "alpha_t": 0.05,
+    "upper_clip_hits": 0,
+    "guarantee": "long-run average, any sequence (realised-loss feedback)"
+   }
+  },
+  "A1-daily": {
+   "arm": "A1-daily",
+   "n_items": 6720,
+   "commits": 15,
+   "wrong_commits": 15,
+   "wrong_commit_rate": 0.002232142857142857,
+   "cp95": [
+    0.0012,
+    0.0037
+   ],
+   "days_rate_above_alpha": 0,
+   "max_day_rate": 0.00909090909090909,
+   "labels_spent_check_blocks": 768,
+   "proposals": 16,
+   "accepted": 9,
+   "rejected": 7,
+   "offer_only_items": 932,
+   "loop_monitor_alarms": 0,
+   "lambda_changes_outside_finish_update": 0,
+   "alarms": [],
+   "tightenings": 0,
+   "updates": [
+    {
+     "type": "update",
+     "proposal": 1,
+     "session": "A1-daily-s1",
+     "reason": "day S8",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.16,
+     "days": [
+      8
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v1'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 2,
+     "session": "A1-daily-s2",
+     "reason": "day S9",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.15,
+     "days": [
+      9
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v2'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v2'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 3,
+     "session": "A1-daily-s3",
+     "reason": "day S10",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.16,
+     "days": [
+      10
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v3'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v3'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 4,
+     "session": "A1-daily-s4",
+     "reason": "day S11",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.15,
+     "days": [
+      11
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v4'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v4'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ],
+     "rollback": {
+      "accepted": false,
+      "reasons": [
+       "null controls failed (shuffled 20/20 > 1)"
+      ],
+      "lambda": 0.15
+     }
+    },
+    {
+     "type": "update",
+     "proposal": 5,
+     "session": "A1-daily-s5",
+     "reason": "day S12",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.15,
+     "days": [
+      12
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v5'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v5'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ],
+     "rollback": {
+      "accepted": false,
+      "reasons": [
+       "null controls failed (shuffled 20/20 > 1)"
+      ],
+      "lambda": 0.15
+     }
+    },
+    {
+     "type": "update",
+     "proposal": 6,
+     "session": "A1-daily-s6",
+     "reason": "day S13",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.16,
+     "days": [
+      13
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v6'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v6'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ],
+     "rollback": {
+      "accepted": false,
+      "reasons": [
+       "null controls failed (shuffled 20/20 > 1)"
+      ],
+      "lambda": 0.16
+     }
+    },
+    {
+     "type": "update",
+     "proposal": 7,
+     "session": "A1-daily-s7",
+     "reason": "day S14",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.16,
+     "days": [
+      14
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v7'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v7'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 8,
+     "session": "A1-daily-s8",
+     "reason": "day S15",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.17,
+     "days": [
+      15
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v8'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v8'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 9,
+     "session": "A1-daily-s9",
+     "reason": "day S16",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.15,
+     "days": [
+      16
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v9'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v9'",
+       "n": 20,
+       "n_commit": 1,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 10,
+     "session": "A1-daily-s10",
+     "reason": "day S17",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.18,
+     "days": [
+      17
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v10'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v10'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ],
+     "rollback": {
+      "accepted": false,
+      "reasons": [
+       "null controls failed (shuffled 20/20 > 1)"
+      ],
+      "lambda": 0.18
+     }
+    },
+    {
+     "type": "update",
+     "proposal": 11,
+     "session": "A1-daily-s11",
+     "reason": "day S18",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.15,
+     "days": [
+      18
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v11'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v11'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ],
+     "rollback": {
+      "accepted": false,
+      "reasons": [
+       "null controls failed (shuffled 20/20 > 1)"
+      ],
+      "lambda": 0.15
+     }
+    },
+    {
+     "type": "update",
+     "proposal": 12,
+     "session": "A1-daily-s12",
+     "reason": "day S19",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.15,
+     "days": [
+      19
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v12'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v12'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 13,
+     "session": "A1-daily-s13",
+     "reason": "day S20",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.18,
+     "days": [
+      20
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v13'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v13'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 14,
+     "session": "A1-daily-s14",
+     "reason": "day S21",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.16,
+     "days": [
+      21
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v14'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v14'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 15,
+     "session": "A1-daily-s15",
+     "reason": "day S22",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.16,
+     "days": [
+      22
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v15'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v15'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 16,
+     "session": "A1-daily-s16",
+     "reason": "day S23",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.18,
+     "days": [
+      23
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A1-daily-v16'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A1-daily-v16'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    }
+   ],
+   "per_day": {
+    "S8": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 59
+    },
+    "S9": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 57
+    },
+    "S10": {
+     "n": 320,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 54
+    },
+    "S11": {
+     "n": 520,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 57
+    },
+    "S12": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 55
+    },
+    "S13": {
+     "n": 400,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 60
+    },
+    "S14": {
+     "n": 440,
+     "commits": 3,
+     "wrong": 3,
+     "offer_only": 58
+    },
+    "S15": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 65
+    },
+    "S16": {
+     "n": 440,
+     "commits": 4,
+     "wrong": 4,
+     "offer_only": 61
+    },
+    "S17": {
+     "n": 240,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 56
+    },
+    "S18": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 58
+    },
+    "S19": {
+     "n": 360,
+     "commits": 3,
+     "wrong": 3,
+     "offer_only": 55
+    },
+    "S20": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 65
+    },
+    "S21": {
+     "n": 480,
+     "commits": 2,
+     "wrong": 2,
+     "offer_only": 59
+    },
+    "S22": {
+     "n": 560,
+     "commits": 3,
+     "wrong": 3,
+     "offer_only": 55
+    },
+    "S23": {
+     "n": 560,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 58
+    }
+   },
+   "aci": {
+    "method": "aci",
+    "alpha": 0.05,
+    "n_observed": 3430,
+    "n_missing": 0,
+    "pending": 0,
+    "mean_loss": 0.004373177842565598,
+    "certificate": 0.04416909620991254,
+    "threshold": 0.0,
+    "lam_1": 1.0000000000000002,
+    "alpha_t": 0.05,
+    "upper_clip_hits": 0,
+    "guarantee": "long-run average, any sequence (realised-loss feedback)"
+   }
+  },
+  "A2-drift": {
+   "arm": "A2-drift",
+   "n_items": 6720,
+   "commits": 0,
+   "wrong_commits": 0,
+   "wrong_commit_rate": 0.0,
+   "cp95": [
+    0.0,
+    0.0005
+   ],
+   "days_rate_above_alpha": 0,
+   "max_day_rate": 0.0,
+   "labels_spent_check_blocks": 96,
+   "proposals": 2,
+   "accepted": 1,
+   "rejected": 1,
+   "offer_only_items": 118,
+   "loop_monitor_alarms": 0,
+   "lambda_changes_outside_finish_update": 0,
+   "alarms": [],
+   "tightenings": 0,
+   "updates": [
+    {
+     "type": "update",
+     "proposal": 1,
+     "session": "A2-drift-s1",
+     "reason": "initial",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.16,
+     "days": [
+      8
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2-drift-v1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2-drift-v1'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 2,
+     "session": "A2-drift-s2",
+     "reason": "initial",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.25,
+     "days": [
+      8
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2-drift-v2'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2-drift-v2'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    }
+   ],
+   "per_day": {
+    "S8": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 118
+    },
+    "S9": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S10": {
+     "n": 320,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S11": {
+     "n": 520,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S12": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S13": {
+     "n": 400,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S14": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S15": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S16": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S17": {
+     "n": 240,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S18": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S19": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S20": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S21": {
+     "n": 480,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S22": {
+     "n": 560,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S23": {
+     "n": 560,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    }
+   },
+   "aci": {
+    "method": "aci",
+    "alpha": 0.05,
+    "n_observed": 6602,
+    "n_missing": 0,
+    "pending": 0,
+    "mean_loss": 0.0,
+    "certificate": 0.046970614965162076,
+    "threshold": 0.0,
+    "lam_1": 1.0000000000000002,
+    "alpha_t": 0.05,
+    "upper_clip_hits": 0,
+    "guarantee": "long-run average, any sequence (realised-loss feedback)"
+   }
+  },
+  "A2g-drift-guard": {
+   "arm": "A2g-drift-guard",
+   "n_items": 6720,
+   "commits": 15,
+   "wrong_commits": 15,
+   "wrong_commit_rate": 0.002232142857142857,
+   "cp95": [
+    0.0012,
+    0.0037
+   ],
+   "days_rate_above_alpha": 0,
+   "max_day_rate": 0.01730769230769231,
+   "labels_spent_check_blocks": 384,
+   "proposals": 8,
+   "accepted": 5,
+   "rejected": 3,
+   "offer_only_items": 118,
+   "loop_monitor_alarms": 0,
+   "lambda_changes_outside_finish_update": 0,
+   "alarms": [
+    {
+     "type": "alarm",
+     "test": "guard_risk",
+     "item": 697,
+     "day": 9,
+     "n_in_test": 580
+    },
+    {
+     "type": "alarm",
+     "test": "guard_risk",
+     "item": 1794,
+     "day": 12,
+     "n_in_test": 983
+    },
+    {
+     "type": "alarm",
+     "test": "guard_risk",
+     "item": 2159,
+     "day": 13,
+     "n_in_test": 306
+    },
+    {
+     "type": "alarm",
+     "test": "guard_risk",
+     "item": 6647,
+     "day": 23,
+     "n_in_test": 4377
+    }
+   ],
+   "tightenings": 0,
+   "updates": [
+    {
+     "type": "update",
+     "proposal": 1,
+     "session": "A2g-drift-guard-s1",
+     "reason": "initial",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.16,
+     "days": [
+      8
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2g-drift-guard-v1'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2g-drift-guard-v1'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 2,
+     "session": "A2g-drift-guard-s2",
+     "reason": "initial",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.25,
+     "days": [
+      8
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2g-drift-guard-v2'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2g-drift-guard-v2'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 3,
+     "session": "A2g-drift-guard-s3",
+     "reason": "guard_risk alarm",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.15,
+     "days": [
+      9,
+      10
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2g-drift-guard-v3'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2g-drift-guard-v3'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ],
+     "rollback": {
+      "accepted": false,
+      "reasons": [
+       "null controls failed (shuffled 20/20 > 1)"
+      ],
+      "lambda": 0.15
+     }
+    },
+    {
+     "type": "update",
+     "proposal": 4,
+     "session": "A2g-drift-guard-s4",
+     "reason": "guard_risk alarm",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.16,
+     "days": [
+      10
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2g-drift-guard-v4'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2g-drift-guard-v4'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 5,
+     "session": "A2g-drift-guard-s5",
+     "reason": "guard_risk alarm",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.18,
+     "days": [
+      12
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2g-drift-guard-v5'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2g-drift-guard-v5'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 6,
+     "session": "A2g-drift-guard-s6",
+     "reason": "guard_risk alarm",
+     "accepted": false,
+     "reasons": [
+      "null controls failed (shuffled 20/20 > 1)"
+     ],
+     "lambda": 0.16,
+     "days": [
+      13
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2g-drift-guard-v6'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2g-drift-guard-v6'",
+       "n": 20,
+       "n_commit": 20,
+       "allowed": 1,
+       "passed": false
+      }
+     ],
+     "rollback": {
+      "accepted": false,
+      "reasons": [
+       "null controls failed (shuffled 20/20 > 1)"
+      ],
+      "lambda": 0.16
+     }
+    },
+    {
+     "type": "update",
+     "proposal": 7,
+     "session": "A2g-drift-guard-s7",
+     "reason": "guard_risk alarm",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.19,
+     "days": [
+      13
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2g-drift-guard-v7'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2g-drift-guard-v7'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    },
+    {
+     "type": "update",
+     "proposal": 8,
+     "session": "A2g-drift-guard-s8",
+     "reason": "guard_risk alarm",
+     "accepted": true,
+     "reasons": [],
+     "lambda": 0.15,
+     "days": [
+      23
+     ],
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'A2g-drift-guard-v8'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'A2g-drift-guard-v8'",
+       "n": 20,
+       "n_commit": 0,
+       "allowed": 1,
+       "passed": true
+      }
+     ]
+    }
+   ],
+   "per_day": {
+    "S8": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 118
+    },
+    "S9": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S10": {
+     "n": 320,
+     "commits": 1,
+     "wrong": 1,
+     "offer_only": 0
+    },
+    "S11": {
+     "n": 520,
+     "commits": 9,
+     "wrong": 9,
+     "offer_only": 0
+    },
+    "S12": {
+     "n": 440,
+     "commits": 1,
+     "wrong": 1,
+     "offer_only": 0
+    },
+    "S13": {
+     "n": 400,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S14": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S15": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S16": {
+     "n": 440,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S17": {
+     "n": 240,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S18": {
+     "n": 440,
+     "commits": 1,
+     "wrong": 1,
+     "offer_only": 0
+    },
+    "S19": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S20": {
+     "n": 360,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S21": {
+     "n": 480,
+     "commits": 0,
+     "wrong": 0,
+     "offer_only": 0
+    },
+    "S22": {
+     "n": 560,
+     "commits": 2,
+     "wrong": 2,
+     "offer_only": 0
+    },
+    "S23": {
+     "n": 560,
+     "commits": 1,
+     "wrong": 1,
+     "offer_only": 0
+    }
+   },
+   "aci": {
+    "method": "aci",
+    "alpha": 0.05,
+    "n_observed": 6488,
+    "n_missing": 0,
+    "pending": 0,
+    "mean_loss": 0.002311960542540074,
+    "certificate": 0.047025277435265106,
+    "threshold": 0.03499999999999999,
+    "lam_1": 1.0000000000000002,
+    "alpha_t": 0.05,
+    "upper_clip_hits": 0,
+    "guarantee": "long-run average, any sequence (realised-loss feedback)"
+   }
+  }
+ }
+}
