@@ -284,7 +284,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P3-10 LSL merge window inside the latency budget (idle events stream)
 - **Gap:** 43 of the [open-gap list](open-gaps.md). Follow-up of P3-07.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17). NTS 1.0 RC4 amendment 5: LSL-C7 heartbeat (an empty events-stream sample moves the events watermark; a two-stream producer SHOULD send one after each frame) and LSL-C8 (at equal times the frame goes first; markers carry the time of the frame before them). FEP-0002 section 6 rules 7-8, vectors L36, L37 (three SDKs). At the receiver default (0.05 s): implant-speech p95 added 1.07 ms (was 60.4 ms), emg-key 2.89 ms; the bench and the CI LSL tests (both gated profiles) now use the default ([collector doc](../../docs/collector.md#lsl-heartbeat-and-equal-times-p3-10)).
 - **Depends on:** P3-07 (done); FEP-0002 (LSL binding, LSL-C6 merge).
 - **Source:** P3-07 (2026-11-17): with receive stamps, the inlet merge window is most of the LSL added latency. A frames stream and an idle events stream go through one merge, so each frame and each boundary waits about `merge_window_s`. At the receiver default (0.05 s) implant-speech has p95 added 60.4 ms (over the 50 ms budget); the bench uses 0.02 s (p95 26.8 ms).
 - **Done when:** the LSL receiver meets the 50 ms budget at its default settings with a two-stream producer (for example: an events-stream heartbeat in the binding that lets the merge release frames at once, or a default `merge_window_s` below the budget with a measured `late_releases` rate), and FEP-0002 and the docs say the same.
@@ -881,7 +881,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-20 Streaming validators: `trust_decision` in a live input stream (TD-4)
 - **Gap:** 46 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-17). Follow-up of P14-17.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17). RC4 amendment 5, rule TD-14: an event-by-event consumer refuses a `trust_decision` between the header and `end` (ignored after `end`; a stream without a header is a decision log). Python `StreamingTrustLayer.push`, TypeScript / Rust `StreamValidator` and the collector `validate` processor do the same; parity test on the streaming cases S01-S06 (`spec/conformance/streaming/td-input.json`) in all three SDKs, plus V97 event by event.
 - **Depends on:** P14-17 (done).
 - **Source:** P14-17 (2026-11-17): the file validators of the three SDKs now refuse a `trust_decision` in an input stream (`NTS-TD-INPUT`, TD-4). The event-by-event validators still ignore it as an unknown event type: Python `StreamingTrustLayer.push`, TypeScript and Rust `StreamValidator` (and the collector `validate` processor on live input).
 - **Done when:** the spec says what a streaming consumer does with a `trust_decision` in an input stream (refuse the event or ignore it and warn), and the three streaming validators do the same thing, with a parity test.

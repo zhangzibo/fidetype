@@ -1091,3 +1091,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - P3-08: 120 T15 `val_eval` trials at real time over WebSocket; n-best guard calibrated on `val_select` (null controls pass); p95 added 2.43 ms (budget 50 ms), producer level NTS Trust-ready, 120 OFFER, 0 COMMIT ([results](../experiments/2026-11-17-p3-08-b2t25-collector-replay/results.md)).
 - Tracker: P7-06 run stats filled (1787 s, 258,657 tokens, 96 tool uses).
 - Pages: [roadmap](questions/roadmap-standard.md) (P3-07, P3-08, P7-07, P3-10), [open gaps](questions/open-gaps.md), [collector concept](concepts/collector.md).
+
+## [2026-11-17] setup | P3-10 and P14-20 done: LSL heartbeat and equal-time order; TD-14 in the streaming validators (gaps 43, 46 closed; NTS 1.0 RC4 amendment 5)
+- P3-10: new binding rules LSL-C7 (an empty events-stream sample is a heartbeat; it moves the events watermark) and LSL-C8 (at equal times the frame goes first). `NTSOutlet` sends a heartbeat after each frame and stamps markers with the previous frame's time. At the receiver default window (0.05 s) the collector's LSL p95 added latency is 1.07 ms for implant-speech (was 60.4 ms) and 2.89 ms for emg-key. Vectors L36, L37 in all three SDKs. Binding version unchanged.
+- P14-20: rule TD-14: an event-by-event consumer refuses a `trust_decision` inside an input stream (ignored after `end`). Python `StreamingTrustLayer`, TypeScript / Rust `StreamValidator` and the collector `validate` processor agree on the streaming cases S01-S06.
+- Code commit `c241726`. Tracker: P14-17 run stats filled (2386 s, 324,608 tokens, 61 tool uses).
+- Pages: [roadmap](questions/roadmap-standard.md) (P3-10, P14-20), [open gaps](questions/open-gaps.md), [LSL input](concepts/lsl-input.md). No new gap.
