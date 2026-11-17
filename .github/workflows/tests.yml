@@ -40,7 +40,25 @@ jobs:
           enable-cache: true
       - run: uv sync --extra dev --extra lsl --extra brainflow
       - run: uv run python -c "import pylsl, brainflow; print('pylsl', pylsl.library_version())"
-      - run: uv run pytest -q tests/test_live.py -rs
+      - run: uv run pytest -q tests/test_live.py tests/test_live_reconnect.py tests/test_live_onset.py -rs
+
+  # P14-11: replay a public EMG recording over a pylsl loopback through `fidetype live` (markers and detect timing)
+  # and validate the NTS output. Data: KT-sEMG run3, copyright 2021 Nokia, CC BY 4.0 (doi:10.7910/DVN/AV6XIR);
+  # downloaded at run time, SHA-256 pinned in tools/ci/kt-semg-run3.sha256, cached, never committed.
+  live-kt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: uv sync --extra dev --extra lsl
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/fidetype-ci/kt-semg
+          key: kt-semg-run3-${{ hashFiles('tools/ci/kt-semg-run3.sha256') }}
+      - run: uv run python tools/ci/kt_lsl_replay.py --cache ~/.cache/fidetype-ci/kt-semg --work ${{ runner.temp }}/kt
 
   # P1-02: the proto files (spec/proto) are the source of truth. protoc must accept them, the
   # generated JSON Schema must be up to date, and the schema must give the SDK verdict on every

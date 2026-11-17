@@ -75,7 +75,16 @@ fidetype live --source lsl --stream-name MyEMG --model my.model.json --guard my.
 - Markers: `--markers auto` (default) reads the stream named by `desc/fidetype/events_source_id` of the signal stream (the BrainFlow bridge and the replay commands set it). `--markers <name>` reads that marker stream; `--markers none` reads none.
 - Marker strings: `keypress` (a key onset; never the key itself) and `segment_end`. A plain-string marker stream from your stimulus program works.
 - Times are corrected to the receiver clock with LSL `time_correction()`.
-- A lost stream ends the run. (`fidetype lsl run` has automatic reconnect; this path does not have it yet.)
+- **Reconnect (P4-11).** When the signal or marker stream is lost, `fidetype live` resolves both again (same `source_id`, else name and type; the reconnect code of `fidetype lsl run`, with backoff: 0.05 s, x2, at most 2 s between tries). Options: `--max-reconnects N` (default 5 per run; 0 = end the run at a loss), `--reconnect-timeout S` (default 30 s per loss), `--reconnect-backoff F` (default 2). A stream that comes back with another channel count or rate ends the run.
+- **No decision on a cut input** (spec LSL-G2). At a loss the decoder drops the open segment, the pending key onsets and the signal buffer (no window spans the gap). It also drops the first segment after the gap, up to the next `segment_end` (its start can be inside the gap). A time jump of more than 2.5 sample periods inside a live stream is handled the same way (LSL-G1).
+- **Gap record in the NTS file** (LSL-G1 `abort` mode, LSL-G3 fields): one event per gap,
+
+  ```json
+  {"type": "lsl_status", "status": "gap_abort", "t_start": 1012.31, "t_end": 1015.92, "missing_frames": 7219,
+   "stream": "MyEMG", "lsl_cause": "lost"}
+  ```
+
+  `t_start` = last sample before the gap, `t_end` = first sample after it, `missing_frames` = missing samples, `lsl_cause` = `lost` or `timestamp`. A consumer drops its open utterance there. A run that ends while the stream is lost writes `{"type": "lsl_status", "status": "lost", ...}`. The file keeps its one header (JSONL rule 6.2.1); the run summary counts `losses`, `gaps`, `dropped_segments` and `dropped_frames`.
 
 Test the LSL path on one machine with no data:
 
@@ -103,9 +112,35 @@ fidetype live --source lsl --stream-name fidetype.replay.kt-semg \
 
 - Splits: the runs of benchmark track `kt-semg` (tracks v0.2). The model trains on train runs, the guard calibrates on other train runs plus the `cal` runs, and the replay uses a `test` run.
 - The model is the KT-sEMG reference decoder (log-RMS window features, shrinkage LDA) with a causal running z-score. It is a weak baseline. Expect mostly offers and withholds.
-- Key onsets come from the key log of the recording (oracle timing, as in the P4-01 replay streams). A live key-onset detector does not exist yet (open gap).
+- Key onsets come from the key log of the recording (oracle timing, as in the P4-01 replay streams). To find them in the EMG instead, add `--timing detect` (section 5a).
 - The trained files stay on your machine. We do not ship KT-sEMG weights.
 - Our run: see [the results](../experiments/2026-11-16-p14-04-live/results.md).
+
+## 5a. Key onsets from the signal: `--timing detect` (P4-10)
+
+A real EMG board sends no key markers. `--timing detect` finds the key onsets in the signal with a causal detector ([`fidetype.live.onset`](../src/fidetype/live/onset.py), numpy only) and cuts one key window per onset. `keypress` markers are then ignored; `segment_end` markers (or `--segment-s`) still end the segments.
+
+```bash
+fidetype live --source lsl --stream-name fidetype.replay.kt-semg --timing detect --onset envelope \
+    --model kt-semg-lda.model.json --guard kt-semg-lda.guard.json
+```
+
+| `--onset` | Detector | Training |
+|---|---|---|
+| `envelope` (default) | mean log energy over channels (first difference, 5 ms blocks, 20 ms window) as a z-score against an adaptive baseline; onset = upward crossing of `theta`, refractory 60 ms | none; defaults tuned on KT-sEMG cal run21 |
+| `PATH.onset.json` | linear (binary shrinkage LDA) on 200 ms of per-channel log energy; onset = local maximum above `theta`, 50 ms after the onset | trained per dataset (`experiments/2026-11-17-p4-10-onset/run.py`) |
+
+- The detector adds about 10 ms (envelope: none) to the window wait, because the key window already needs `post_s` = 50 ms after the onset.
+- A guard calibrated with `markers` timing is not calibrated for `detect` timing (other frames). Re-calibrate the guard with `detect` timing.
+- Results on the KT-sEMG test runs: [P4-10 results](../experiments/2026-11-17-p4-10-onset/results.md).
+
+## 5b. CI: replay of a public recording (P14-11)
+
+The CI job `live-kt` downloads KT-sEMG `run3` (77 s, 53 MB; copyright 2021 Nokia, CC BY 4.0, doi:10.7910/DVN/AV6XIR) from Harvard Dataverse, checks the SHA-256 values in [`tools/ci/kt-semg-run3.sha256`](../tools/ci/kt-semg-run3.sha256), caches the files (`actions/cache`), trains an **in-sample plumbing model** on run3 (`train-kt --fit-run run3 --guard-run run3 --guard-chunk-keys 5`; its guard never commits), replays run3 over a pylsl loopback with `markers` and with `detect` timing, and checks that `fidetype validate` passes at `trust-ready` with trust decisions and the replay attribution in the header. Nothing from the recording is committed. Run it locally:
+
+```bash
+python tools/ci/kt_lsl_replay.py --cache ~/.cache/fidetype-ci/kt-semg --work /tmp/kt
+```
 
 ## 6. Latency
 
@@ -140,12 +175,12 @@ stats = dec.run()
 
 ## 8. What the NTS file holds
 
-`--out` writes JSON Lines (spec 6.2) with [`StreamWriter`](../src/fidetype/writer.py): a `header` (vocab = 32 W3C `KeyboardEvent.code` names, `vocab_type` `key`, no blank, `latency` = `post_s`, `meta` with decoder, weights SHA-256, `stream.id`, `fidetype.live` {source, timing, model, trust config id}), one `frame` per window, then per segment a final `hypothesis` (the n-best list), the `trust_decision` (FEP-0001) and `segment_end`, and `end`. Check it with `fidetype validate s.nts.jsonl --level trust-ready`.
+`--out` writes JSON Lines (spec 6.2) with [`StreamWriter`](../src/fidetype/writer.py): a `header` (vocab = 32 W3C `KeyboardEvent.code` names, `vocab_type` `key`, no blank, `latency` = `post_s`, `meta` with decoder, weights SHA-256, `stream.id`, `fidetype.live` {source, timing, model, trust config id}), one `frame` per window, `lsl_status` gap records (section 4), then per segment a final `hypothesis` (the n-best list), the `trust_decision` (FEP-0001) and `segment_end`, and `end`. Check it with `fidetype validate s.nts.jsonl --level trust-ready`.
 
 ## 9. Limits
 
-- Live key-onset detection: none. `markers` timing needs onset markers; boards use `fixed` timing.
-- No reconnect in `--source lsl`.
+- Onset detection (`--timing detect`): tested on one typist (KT-sEMG); see the P4-10 results for its recall and false alarms. Segment ends still come from markers or `--segment-s`.
+- BrainFlow boards have no reconnect in `fidetype live` (only `--source lsl`).
 - Real OpenBCI boards: untested (P4-06, hardware).
-- The CI test of the LSL path replays a **synthetic** recording. A public recording cannot go into the repository (participant data rule); the KT-sEMG replay runs only on a machine with the data.
+- The CI replay of KT-sEMG run3 uses an in-sample model: it checks plumbing, not accuracy.
 - The trust guarantee holds only for the decoder, device, user and session type of the calibration data ([trust guarantee](trust-guarantee.md)).

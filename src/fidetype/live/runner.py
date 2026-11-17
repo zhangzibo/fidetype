@@ -6,8 +6,10 @@ and does four things:
 1. **Windows.** It keeps a ring buffer of the signal. ``timing="markers"``:
    one window per ``keypress`` marker (the key onset; a key detector or the
    recording's key log gives it). ``timing="fixed"``: one window every
-   ``hop_s`` seconds (a board with no onset markers). A window is decoded
-   when the signal has reached ``t + post_s``.
+   ``hop_s`` seconds (a board with no onset markers). ``timing="detect"``
+   (P4-10): one window per onset that a causal detector finds in the signal
+   (:mod:`fidetype.live.onset`; ``keypress`` markers are ignored). A window
+   is decoded when the signal has reached ``t + post_s``.
 2. **Model.** :class:`~fidetype.live.model.KeyWindowModel` gives one key
    posterior (a ``frame`` over 32 key codes) per window.
 3. **Trust.** At each ``segment_end`` marker (or every ``segment_s``
@@ -19,6 +21,21 @@ and does four things:
    JSON Lines file (header, ``frame``, final ``hypothesis``,
    ``trust_decision``, ``segment_end``, ``end``) written with
    :class:`fidetype.writer.StreamWriter`.
+
+Stream loss and gaps (P4-11, spec LSL-G1 abort mode, LSL-G2, LSL-G3). A
+chunk with ``lost`` or ``gap`` set (:class:`~fidetype.live.sources.LSLSource`
+sets them) is a discontinuity. The decoder drops the open segment (no
+decision on a cut input), the pending key onsets and segment ends, and
+the signal buffer (no window spans the gap). With ``segment_end``
+markers it also drops the first segment after the gap, up to the next
+``segment_end`` (its start may be inside the gap; compare WS-Q5). The NTS
+output gets one ``lsl_status`` record with ``status = "gap_abort"`` and
+the LSL-G3 fields (``t_start``, ``t_end``, ``missing_frames``,
+``stream``) plus ``lsl_cause`` (``lost`` or ``timestamp``). A consumer
+drops its open utterance there. A run that ends while the stream is
+lost writes ``lsl_status`` with ``status = "lost"``. The file keeps its
+one header (JSONL rule 6.2.1); the source checks that a reconnected
+stream has the same channel count and rate.
 
 Latency. ``frame_ms``: compute time of one window (features + scaler +
 LDA). ``decision_ms``: compute time of one decision (beam search + guard).
@@ -110,6 +127,13 @@ class LiveStats:
     withholds: int = 0
     empty_segments: int = 0
     late_keys: int = 0
+    #: P4-10: onsets found by the detector (``detect`` timing).
+    onsets: int = 0
+    #: P4-11: stream losses, gap records written, segments and frames dropped at a discontinuity.
+    losses: int = 0
+    gaps: int = 0
+    dropped_segments: int = 0
+    dropped_frames: int = 0
     frame_ms: list[float] = field(default_factory=list)
     frame_added_ms: list[float] = field(default_factory=list)
     decision_ms: list[float] = field(default_factory=list)
@@ -136,7 +160,7 @@ class LiveDecoder:
     def __init__(self, model: KeyWindowModel, guard: Any, source: Any, *, timing: str | None = None,
                  hop_s: float | None = None, segment_s: float | None = None, writer: Any = None,
                  on_decision: Callable[[LiveDecision], None] | None = None, buffer_s: float = 10.0,
-                 clock: Callable[[], float] = time.perf_counter) -> None:
+                 clock: Callable[[], float] = time.perf_counter, detector: Any = None) -> None:
         if guard is not None and getattr(guard, "input_kind", None) != "nbest":
             raise ValueError("fidetype live needs a guard calibrated on n-best input (input_kind 'nbest')")
         info = source.info
@@ -148,8 +172,14 @@ class LiveDecoder:
         self.guard = guard
         self.source = source
         self.timing = timing or model.timing
-        if self.timing not in ("markers", "fixed"):
+        if self.timing not in ("markers", "fixed", "detect"):
             raise ValueError(f"unknown timing {self.timing!r}")
+        if self.timing == "detect" and detector is None:
+            raise ValueError("timing 'detect' needs an onset detector (fidetype.live.onset)")
+        #: P4-10: the onset detector of ``detect`` timing.
+        self.detector = detector
+        #: ``detect`` timing: a segment end waits this long for late onsets (the detector's delay).
+        self.detect_wait_s = 0.15
         self.hop_s = float(hop_s or model.hop_s)
         self.segment_s = segment_s
         self.writer = writer
@@ -175,6 +205,11 @@ class LiveDecoder:
         self.collected: list[tuple[list[dict[str, Any]], float, float]] = []
         self._poll_end = clock()
         self.t_first: float | None = None
+        #: P4-11: markers before this time are ignored (they belong to a cut segment).
+        self._floor = -math.inf
+        #: P4-11: True from a discontinuity to the next ``segment_end`` marker (that segment is dropped).
+        self._skip = False
+        self._lost_open = False
 
     # --- buffer -------------------------------------------------------------
 
@@ -197,6 +232,8 @@ class LiveDecoder:
     # --- frames -------------------------------------------------------------
 
     def _frame(self, tk: float) -> None:
+        if self._skip:  # inside the segment cut by a gap: no frame, no output
+            return
         if len(self.buf_t) == 0 or tk - self.model.pre_s < self.buf_t[0]:
             self.stats.late_keys += 1
             return
@@ -221,7 +258,7 @@ class LiveDecoder:
     def _due_frames(self) -> None:
         now = self.t_now
         post = self.model.post_s
-        if self.timing == "markers":
+        if self.timing in ("markers", "detect"):
             while self.keys and self.keys[0] + post <= now:
                 self._frame(self.keys.pop(0))
         else:
@@ -245,7 +282,9 @@ class LiveDecoder:
         while self.seg_ends:
             te = self.seg_ends[0]
             # all frames before te must be done: no pending key/fixed window before te
-            if not final and self.timing == "markers" and self.keys and self.keys[0] < te:
+            if not final and self.timing in ("markers", "detect") and self.keys and self.keys[0] < te:
+                break
+            if not final and self.timing == "detect" and te + self.detect_wait_s > now:
                 break
             if not final and self.timing == "fixed" and self.next_fixed is not None and self.next_fixed < te:
                 break
@@ -253,6 +292,35 @@ class LiveDecoder:
             self._decide(te)
         if final and self.seg_frames:
             self._decide(max(now, self.seg_times[-1]))
+
+    # --- discontinuities (P4-11) ---------------------------------------------------
+
+    def _discontinuity(self, gap: dict[str, Any] | None) -> None:
+        """Drop all state that a gap cuts (module docstring). ``gap`` None: the stream is lost now."""
+        if self.seg_frames:
+            self.stats.dropped_segments += 1
+            self.stats.dropped_frames += len(self.seg_frames)
+        self.seg_frames, self.seg_times, self.seg_t0 = [], [], None
+        self.keys, self.seg_ends = [], []
+        self.buf = np.zeros((0, self.model.channels), np.float32)
+        self.buf_t = np.zeros(0)
+        self.next_fixed = None
+        self.next_seg = None
+        self._skip = not self.segment_s
+        if self.detector is not None:
+            self.detector.reset()
+        if gap is None:
+            self.stats.losses += 1
+            self._lost_open = True
+            return
+        self._lost_open = False
+        self.stats.gaps += 1
+        self._floor = float(gap["t_end"])
+        if self.writer is not None:
+            rec = {"type": "lsl_status", "status": "gap_abort", "t_start": float(gap["t_start"]),
+                   "t_end": float(gap["t_end"]), "missing_frames": gap.get("missing_frames"),
+                   "stream": str(gap.get("stream") or ""), "lsl_cause": str(gap.get("cause") or "lost")}
+            self.writer.event(rec)
 
     def _decide(self, t_end: float) -> None:
         if not self.seg_frames:
@@ -302,10 +370,31 @@ class LiveDecoder:
     def feed(self, chunk: Any) -> None:
         """Process one chunk (samples, times, markers)."""
         self._poll_end = self.clock()
+        if getattr(chunk, "lost", False):
+            self._discontinuity(None)
+        gap = getattr(chunk, "gap", None)
+        if gap is not None:
+            self._discontinuity(gap)
         self._append(chunk.samples, chunk.times)
+        if self.timing == "detect" and len(chunk.times):
+            for t in self.detector.process(chunk.samples, chunk.times):
+                if t >= self._floor and not self._skip:
+                    self.keys.append(float(t))
+                    self.stats.onsets += 1
         for t, m in chunk.markers:
             m = m.strip()
-            if m == KEYPRESS and self.timing == "markers":
+            if float(t) < self._floor:
+                continue
+            if m == SEGMENT_END and not self.segment_s and self._skip:
+                # the end of the segment that the gap cut: drop it, start clean after it
+                self._skip = False
+                self.stats.dropped_segments += 1
+                self._floor = float(t)
+                self.keys = [k for k in self.keys if k >= t]
+                if self.timing == "fixed":
+                    self.next_fixed = float(t)
+                continue
+            if m == KEYPRESS and self.timing == "markers" and not self._skip:
                 self.keys.append(float(t))
             elif m == SEGMENT_END and not self.segment_s:
                 self.seg_ends.append(float(t))
@@ -336,7 +425,13 @@ class LiveDecoder:
             reason = "interrupted"
         finally:
             self.source.close()
-        if reason == "end of source":
+        why = getattr(self.source, "stop_reason", "")
+        if reason == "end of source" and why:
+            reason = why
+        if self._lost_open and self.writer is not None:
+            self.writer.event({"type": "lsl_status", "status": "lost",
+                               "stream": str(getattr(self.source, "stream_name", "")), "detail": why or "lost"})
+        if reason == "end of source" or why:
             # decode the windows the last samples allow, then the open segment
             self._due_frames()
             self._due_segments(final=True)
@@ -346,7 +441,7 @@ class LiveDecoder:
 
 
 def make_writer(target: str | IO[str], model: KeyWindowModel, source_info: dict[str, Any], guard: Any,
-                source_kind: str) -> Any:
+                source_kind: str, timing: str | None = None) -> Any:
     """A :class:`~fidetype.writer.StreamWriter` with the header and ``meta`` of a live stream."""
     from fidetype import __version__
     from fidetype.writer import StreamWriter, stream_meta
@@ -354,7 +449,7 @@ def make_writer(target: str | IO[str], model: KeyWindowModel, source_info: dict[
     extra: dict[str, Any] = {
         "device.channel_count": int(source_info["channels"]),
         "fidetype.vocab_id": "key.w3c-code.az-space-punct-edit-32",
-        "fidetype.live": {"source": source_kind, "timing": model.timing, "model": model.name,
+        "fidetype.live": {"source": source_kind, "timing": timing or model.timing, "model": model.name,
                           "trust_config_id": guard.config_id},
     }
     for k, v in (source_info.get("meta") or {}).items():

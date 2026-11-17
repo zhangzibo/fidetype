@@ -49,7 +49,10 @@ def _run_parser() -> argparse.ArgumentParser:
     ap.add_argument("--summary", help="write the run summary (counts, latency) as JSON here")
     ap.add_argument("--duration", type=float, help="stop after this many seconds")
     ap.add_argument("--max-decisions", type=int, help="stop after this many decisions")
-    ap.add_argument("--timing", choices=("markers", "fixed"), help="window timing (default: the model's)")
+    ap.add_argument("--timing", choices=("markers", "fixed", "detect"),
+                    help="window timing (default: the model's); detect = find key onsets in the signal (P4-10)")
+    ap.add_argument("--onset", help='detect timing: onset detector, "envelope" or a *.onset.json file '
+                    "(default: the model card's onset file, else envelope)")
     ap.add_argument("--hop", type=float, help="fixed timing: seconds between windows (default: the model's)")
     ap.add_argument("--segment-s", type=float, help="end a segment every S seconds (instead of segment_end markers)")
     g = ap.add_argument_group("synthetic source")
@@ -74,6 +77,12 @@ def _run_parser() -> argparse.ArgumentParser:
     lg.add_argument("--source-id")
     lg.add_argument("--markers", default="auto", help='marker stream: "auto" (from the signal desc), "none", or a name')
     lg.add_argument("--resolve-timeout", type=float, default=10.0)
+    lg.add_argument("--max-reconnects", type=int, default=5,
+                    help="reconnects allowed in one run after a lost stream (default 5; 0 = end the run at a loss)")
+    lg.add_argument("--reconnect-timeout", type=float, default=30.0,
+                    help="seconds to find a lost stream again before the run ends (default 30)")
+    lg.add_argument("--reconnect-backoff", type=float, default=2.0,
+                    help="retry wait factor after each failed try (0.05 s, x2, at most 2 s; default 2)")
     return ap
 
 
@@ -89,7 +98,9 @@ def _open_source(a: Any) -> Any:
         return S.BrainFlowSource(bid, a.kind, a.trial_s, serial_port=a.serial_port, ip_address=a.ip_address,
                                  ip_port=a.ip_port, mac_address=a.mac_address, serial_number=a.serial_number,
                                  other=a.other_info)
-    return S.LSLSource(a.stream_name, a.stream_type, a.source_id, a.markers, a.resolve_timeout)
+    return S.LSLSource(a.stream_name, a.stream_type, a.source_id, a.markers, a.resolve_timeout,
+                       max_reconnects=a.max_reconnects, reconnect_timeout=a.reconnect_timeout,
+                       backoff=a.reconnect_backoff, log=_err)
 
 
 def run_main(argv: Sequence[str]) -> int:
@@ -125,9 +136,24 @@ def run_main(argv: Sequence[str]) -> int:
     if a.source == "brainflow" and "brainflow" not in json.dumps(model.card.get("training", {})).lower():
         _err("note: the model was not trained on this board; expect no commits (the correct output on a "
              "signal with no text information)")
-    writer = make_writer(a.out, model, info, guard, a.source) if a.out else None
+    detector = None
+    if timing == "detect":
+        from fidetype.live.onset import load_onset
+
+        ospec = a.onset or model.card.get("onset") or "envelope"
+        if not a.onset and ospec != "envelope" and not Path(str(ospec)).is_absolute():
+            ospec = str(Path(resolve_asset(a.model, ".model.json")).parent / str(ospec))  # next to the model
+        try:
+            detector = load_onset(ospec, model.sample_rate, model.channels)
+        except (OSError, ValueError) as e:
+            src.close()
+            _err(f"cannot load the onset detector {ospec!r}: {e}")
+            return 2
+        _err(f"onset detector: {detector.kind} {json.dumps(detector.params)}")
+    writer = make_writer(a.out, model, info, guard, a.source, timing) if a.out else None
     try:
         dec = LiveDecoder(model, guard, src, timing=timing, hop_s=a.hop, segment_s=a.segment_s, writer=writer,
+                          detector=detector,
                           on_decision=lambda d: print_decision(d, as_json=a.json, include_text=not a.no_text))
     except ValueError as e:
         src.close()
@@ -141,6 +167,9 @@ def run_main(argv: Sequence[str]) -> int:
         if writer is not None:
             writer.close()
     s = st.as_dict()
+    if st.losses or st.gaps:
+        _err(f"stream losses {st.losses}, gap records {st.gaps}, segments dropped at a gap {st.dropped_segments} "
+             f"({st.dropped_frames} frames; no decision on a cut input)")
     _err(f"stop ({st.stop_reason}): {st.decisions} decisions ({st.commits} commit, {st.offers} offer, "
          f"{st.withholds} withhold), {st.frames} windows, {st.samples} samples in {st.wall_s:.1f} s")
     fm, dm = s["frame_ms"], s["decision_ms"]
@@ -179,10 +208,14 @@ def _train_kt(argv: Sequence[str]) -> int:
     ap.add_argument("--model-runs", type=int, default=12, help="train runs for the model (default 12)")
     ap.add_argument("--guard-runs", type=int, default=4, help="extra train runs for the guard (plus the cal runs)")
     ap.add_argument("--max-csv-mb", type=float, default=1000.0, help="skip larger runs (RAM; default 1000)")
+    ap.add_argument("--fit-run", action="append", help="train the model on this run id (repeat; overrides the split)")
+    ap.add_argument("--guard-run", action="append", help="calibrate the guard on this run id (repeat)")
+    ap.add_argument("--guard-chunk-keys", type=int, help="cut guard segments into chunks of N keys")
     a = ap.parse_args(list(argv))
     from fidetype.live.build import train_kt
 
-    print(json.dumps(train_kt(a.data, a.out, a.model_runs, a.guard_runs, a.max_csv_mb, log=_err), indent=2))
+    print(json.dumps(train_kt(a.data, a.out, a.model_runs, a.guard_runs, a.max_csv_mb, log=_err, fit_ids=a.fit_run,
+                              guard_ids=a.guard_run, guard_chunk_keys=a.guard_chunk_keys), indent=2))
     return 0
 
 

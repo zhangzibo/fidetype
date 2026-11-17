@@ -766,12 +766,23 @@ class _Reconnector:
     (``prewarm_tc_s`` > 0): liblsl's first estimate can take a while,
     and the loop asks for it at once (the new header). :meth:`cancel`
     stops the worker; an inlet that comes after the cancel is closed.
+
+    Backoff (P4-11, ``fidetype live``): after the k-th failed try the
+    worker waits ``min(retry_s * backoff**k, max_retry_s)``. The default
+    ``backoff=1`` keeps the fixed wait of M6-14. ``max_tries`` (None: no
+    limit) ends the worker after that many tries.
     """
 
     def __init__(self, reopen: Callable[[], InletLike], retry_s: float, prewarm_tc_s: float,
-                 give_up_s: float, name: str) -> None:
+                 give_up_s: float, name: str, backoff: float = 1.0, max_retry_s: float | None = None,
+                 max_tries: int | None = None) -> None:
+        if backoff < 1.0:
+            raise ValueError("backoff must be >= 1")
         self._reopen = reopen
         self._retry_s = retry_s
+        self._backoff = float(backoff)
+        self._max_retry_s = max_retry_s
+        self._max_tries = max_tries
         self._prewarm_tc_s = prewarm_tc_s
         self._give_up_s = give_up_s
         self._lock = threading.Lock()
@@ -785,18 +796,20 @@ class _Reconnector:
     def _work(self) -> None:
         t_end = time.monotonic() + self._give_up_s
         while not self._stop.is_set() and time.monotonic() < t_end:
+            if self._max_tries is not None and self.attempts >= self._max_tries:
+                return
             self.attempts += 1
             try:
                 inlet = self._reopen()
             except Exception:  # noqa: BLE001 - not visible yet: try again
-                self._stop.wait(self._retry_s)
+                self._stop.wait(self.retry_wait(self.attempts))
                 continue
             if self._prewarm_tc_s > 0:
                 try:
                     inlet.time_correction(self._prewarm_tc_s)
                 except LSLStreamLost:  # lost again at once: drop it and try again
                     _close_quietly(inlet)
-                    self._stop.wait(self._retry_s)
+                    self._stop.wait(self.retry_wait(self.attempts))
                     continue
                 except Exception:  # noqa: BLE001 - a time-out: the loop's ClockSync counts it
                     pass
@@ -807,6 +820,11 @@ class _Reconnector:
                 self._inlet = inlet
                 self._ready.set()
             return
+
+    def retry_wait(self, tries: int) -> float:
+        """The wait after ``tries`` failed tries (seconds)."""
+        w = self._retry_s * self._backoff ** max(0, tries - 1)
+        return w if self._max_retry_s is None else min(w, self._max_retry_s)
 
     def take(self, wait_s: float = 0.0) -> InletLike | None:
         """The ready inlet (once), or None. Wait up to ``wait_s`` for it."""

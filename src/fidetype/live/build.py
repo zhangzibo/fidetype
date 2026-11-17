@@ -16,6 +16,11 @@ calibration n-best lists are made exactly as the live ones.
     train runs, the guard calibrates on the last ``guard_train_runs``
     train runs plus the ``cal`` runs, and the ``test`` runs stay for the
     replay. The files go to a local folder; they are not committed.
+    ``fit_ids`` / ``guard_ids`` pick runs by id instead (any split), and
+    ``guard_chunk_keys`` cuts the guard segments into chunks of that many
+    keys (more calibration items from a short recording). The CI job
+    ``live-kt`` (P14-11) uses ``fit_ids = guard_ids = ["run3"]``: an
+    in-sample plumbing model, marked so in its card.
 
 Null input for the guard (required for n-best input). Synthetic: the same
 key timing with no key bursts in the signal (no signal). KT-sEMG: the
@@ -127,12 +132,32 @@ def kt_segments(events: Sequence[Any], max_gap_s: float = 2.0, min_keys: int = 5
 
 def kt_markers(events: Sequence[Any], segments: Sequence[tuple[int, int]],
                end_pad_s: float = 0.5) -> list[tuple[float, str]]:
-    """Markers of the kept segments: ``keypress`` at each key time, ``segment_end`` after the last key."""
+    """Markers of the kept segments: ``keypress`` at each key time, ``segment_end`` after the last key.
+
+    The ``segment_end`` comes ``end_pad_s`` after the last key, or half way to the next key if that is
+    sooner (chunks of one burst, :func:`kt_chunks`).
+    """
     mk: list[tuple[float, str]] = []
     for a, b in segments:
         mk += [(float(e.t), KEYPRESS) for e in events[a:b]]
-        mk.append((float(events[b - 1].t) + end_pad_s, SEGMENT_END))
+        pad = end_pad_s
+        if b < len(events):
+            pad = min(pad, (float(events[b].t) - float(events[b - 1].t)) / 2)
+        mk.append((float(events[b - 1].t) + pad, SEGMENT_END))
     return mk
+
+
+def kt_chunks(segments: Sequence[tuple[int, int]], keys: int) -> list[tuple[int, int]]:
+    """Cut each segment into chunks of ``keys`` keys (a short last chunk joins the one before it)."""
+    out: list[tuple[int, int]] = []
+    for a, b in segments:
+        cuts = list(range(a, b, keys))
+        parts = [(c, min(b, c + keys)) for c in cuts]
+        if len(parts) > 1 and parts[-1][1] - parts[-1][0] < keys:
+            last = parts.pop()
+            parts[-1] = (parts[-1][0], last[1])
+        out += parts
+    return out
 
 
 def kt_text(events: Sequence[Any]) -> str:
@@ -154,7 +179,8 @@ def _kt_runs(data: str | PathLike[str]) -> dict[str, list[dict[str, Any]]]:
 
 def train_kt(data: str | PathLike[str], out: str | PathLike[str], model_train_runs: int = 12,
              guard_train_runs: int = 4, max_csv_mb: float = 1000.0, alpha: float = 0.05, delta: float = 0.1,
-             log: Callable[[str], None] = print) -> dict[str, Any]:
+             log: Callable[[str], None] = print, fit_ids: Sequence[str] | None = None,
+             guard_ids: Sequence[str] | None = None, guard_chunk_keys: int | None = None) -> dict[str, Any]:
     """Train ``kt-semg-lda`` and calibrate its guard on KT-sEMG (module docstring). Return a summary dict.
 
     ``max_csv_mb``: skip runs whose CSV is larger (RAM limit: one run is read at a time).
@@ -168,6 +194,16 @@ def train_kt(data: str | PathLike[str], out: str | PathLike[str], model_train_ru
     fit_runs = small[:model_train_runs]
     guard_runs = small[model_train_runs:model_train_runs + guard_train_runs] + runs["cal"]
     guard_runs = [r for r in guard_runs if Path(r["csv"]).stat().st_size <= max_csv_mb * 1e6]
+    if fit_ids or guard_ids:
+        by_id = {r["id"]: r for rs in runs.values() for r in rs}
+        missing = [i for i in list(fit_ids or []) + list(guard_ids or []) if i not in by_id]
+        if missing:
+            raise ValueError(f"unknown runs {missing} (have {sorted(by_id)})")
+        if fit_ids:
+            fit_runs = [by_id[i] for i in fit_ids]
+        if guard_ids:
+            guard_runs = [by_id[i] for i in guard_ids]
+    in_sample = sorted({r["id"] for r in fit_runs} & {r["id"] for r in guard_runs})
     card = {"name": KT_NAME, "version": "1", "sample_rate": K.SAMPLE_RATE_HZ, "channels": K.N_CHANNELS,
             "modality": "emg", "window": {"pre_s": K.WINDOW_PRE_S, "post_s": K.WINDOW_POST_S, "n_sub": 2},
             "timing": "markers",
@@ -175,6 +211,11 @@ def train_kt(data: str | PathLike[str], out: str | PathLike[str], model_train_ru
                          "attribution": K.ATTRIBUTION, "split": "benchmark track kt-semg (tracks v0.2)",
                          "model_runs": [r["id"] for r in fit_runs], "guard_runs": [r["id"] for r in guard_runs]},
             "warning": "One typist. Session-to-session transfer only; no transfer to other people or devices."}
+    if in_sample:
+        card["warning"] = (f"IN-SAMPLE plumbing model: runs {in_sample} train the model and calibrate the guard. "
+                           "Its decisions and its guard sheet say nothing about accuracy or risk. " + card["warning"])
+    if guard_chunk_keys:
+        card["training"]["guard_chunk_keys"] = int(guard_chunk_keys)
     tmp = KeyWindowModel(None, card)  # type: ignore[arg-type]
     feats, labels = [], []
     for r in fit_runs:
@@ -195,6 +236,8 @@ def train_kt(data: str | PathLike[str], out: str | PathLike[str], model_train_ru
         rec = K.read_emg_csv(r["csv"])
         ev = kt_run_events(r["csv"], r["keys"], r["ts"], rec.n_samples)
         segs = kt_segments(ev)
+        if guard_chunk_keys:
+            segs = kt_chunks(segs, int(guard_chunk_keys))
         src = ArraySource(rec.emg, K.SAMPLE_RATE_HZ, kt_markers(ev, segs), speed=0, chunk_s=0.5)
         got = collect_nbests(model, src)
         nbs += got

@@ -19,12 +19,20 @@ one clock per source (the LSL clock for LSL and BrainFlow).
   reuses :func:`fidetype.adapters.lsl.resolve` and
   :class:`fidetype.adapters.lsl.PylslInlet`. Needs the ``[lsl]`` extra.
   Times are corrected to the receiver clock (``time_correction()``).
+  **Reconnect (P4-11):** a lost stream is resolved again (same query:
+  ``source_id`` if the stream has one, else name and type) with the
+  reconnect code of :mod:`fidetype.adapters.lsl` (``_Reopener``,
+  ``_Reconnector``, with backoff). The chunk at the loss has
+  ``lost=True``; the first chunk after the reconnect (or after a time
+  jump of more than ``gap_factor`` sample periods) carries ``gap``, the
+  LSL-G3 fields of the discontinuity.
 
 Our own code (Apache-2.0).
 """
 
 from __future__ import annotations
 
+import math
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -42,6 +50,11 @@ class Chunk:
     samples: np.ndarray  # (n, C) float32
     times: np.ndarray  # (n,) float64 seconds
     markers: list[tuple[float, str]] = field(default_factory=list)
+    #: True on the chunk at which the source lost its stream (no samples after this point until ``gap``).
+    lost: bool = False
+    #: A discontinuity before ``samples[0]`` (P4-11): the LSL-G3 fields ``t_start`` (last sample before),
+    #: ``t_end`` (first sample after), ``missing_frames``, ``stream``, plus ``cause`` ("lost" or "timestamp").
+    gap: dict[str, Any] | None = None
 
 
 def _empty(c: int) -> Chunk:
@@ -214,50 +227,100 @@ class LSLSource:
     of the signal stream (the BrainFlow bridge and ``fidetype live
     replay-kt`` set it), ``"none"`` reads none, any other value is a
     stream name. Marker samples are plain strings: ``keypress`` (key
-    onset) and ``segment_end``. A lost stream ends the run (no reconnect;
-    the ``fidetype lsl run`` path has reconnect).
+    onset) and ``segment_end``.
+
+    Reconnect (P4-11). When an inlet is lost (signal or markers), the
+    source closes both inlets and resolves both streams again on worker
+    threads (:class:`fidetype.adapters.lsl._Reopener` and ``_Reconnector``:
+    a continuous resolver that prefers a new outlet; the wait after the
+    k-th failed try is ``retry_s * backoff**(k-1)``, at most
+    ``max_retry_s``). It gives up after ``reconnect_timeout`` seconds per
+    loss, or at a loss after ``max_reconnects`` reconnects in one run
+    (0: no reconnect, the P14-04 behaviour). Then ``poll`` returns
+    ``None`` and :attr:`stop_reason` says why. A new stream must have the
+    same channel count and rate. ``inlet`` / ``marker_inlet`` / ``reopen``
+    / ``reopen_markers`` inject fakes (tests); then no stream is resolved.
     """
 
     def __init__(self, name: str | None = None, type: str | None = None, source_id: str | None = None,
-                 markers: str = "auto", timeout: float = 10.0, modality: str | None = None) -> None:
+                 markers: str = "auto", timeout: float = 10.0, modality: str | None = None, *,
+                 max_reconnects: int = 5, reconnect_timeout: float = 30.0, retry_s: float = 0.05,
+                 backoff: float = 2.0, max_retry_s: float = 2.0, gap_factor: float = 2.5,
+                 inlet: Any = None, marker_inlet: Any = None, reopen: Callable[[], Any] | None = None,
+                 reopen_markers: Callable[[], Any] | None = None, clock: Callable[[], float] | None = None,
+                 log: Callable[[str], None] | None = None) -> None:
         from fidetype.adapters import lsl as L
 
         self.L = L
-        pl = L.require_pylsl()
-        if not (name or type or source_id):
-            raise ValueError("give a stream name, type or source_id")
-        self.inlet = L._open_first(lambda left: L.resolve(name, type, source_id, left), L.DEFAULT_OPEN_TIMEOUT_S,
-                                   timeout)
+        self.log = log or (lambda m: None)
+        if max_reconnects < 0 or reconnect_timeout < 0 or gap_factor <= 1 or backoff < 1:
+            raise ValueError("max_reconnects and reconnect_timeout must be >= 0; gap_factor > 1; backoff >= 1")
+        self.max_reconnects = int(max_reconnects)
+        self.reconnect_timeout = float(reconnect_timeout)
+        self.retry_s, self.backoff, self.max_retry_s = float(retry_s), float(backoff), float(max_retry_s)
+        self.gap_factor = float(gap_factor)
+        injected = inlet is not None
+        mapping = L.LSLMapping(reconnect_timeout_s=reconnect_timeout)
+        if not injected:
+            pl = L.require_pylsl()
+            if not (name or type or source_id):
+                raise ValueError("give a stream name, type or source_id")
+            inlet = L._open_first(lambda left: L.resolve(name, type, source_id, left), L.DEFAULT_OPEN_TIMEOUT_S,
+                                  timeout)
+            self._local_clock = pl.local_clock
+        else:
+            self._local_clock = clock or time.perf_counter
+        self.inlet = inlet
         si = self.inlet.info()
         if si.is_string or si.channel_count < 1:
             raise ValueError(f"stream {si.name!r} is not a numeric signal stream")
-        self.marker_inlet = None
-        q: dict[str, Any] | None = None
-        if markers == "auto":
-            esid = si.fidetype.get("events_source_id")
-            if esid:
-                q = {"source_id": esid}
-        elif markers != "none":
-            q = {"name": markers}
-        if q is not None:
+        if reopen is None and not injected:
+            q = {"source_id": si.source_id} if si.source_id else {"name": si.name, "type": si.type or None}
+            reopen = L._Reopener(q, si.uid, mapping)
+        self.reopen = reopen
+        self.marker_inlet = marker_inlet
+        self.reopen_markers = reopen_markers
+        q2: dict[str, Any] | None = None
+        if not injected and markers != "none":
+            if markers == "auto":
+                esid = si.fidetype.get("events_source_id")
+                if esid:
+                    q2 = {"source_id": esid}
+            else:
+                q2 = {"name": markers}
+        if q2 is not None:
             try:
-                self.marker_inlet = L._open_first(lambda left: L.resolve(timeout=left, **q), L.DEFAULT_OPEN_TIMEOUT_S,
-                                                  min(timeout, 5.0))
+                self.marker_inlet = L._open_first(lambda left: L.resolve(timeout=left, **q2),
+                                                  L.DEFAULT_OPEN_TIMEOUT_S, min(timeout, 5.0))
+                self.reopen_markers = L._Reopener(q2, self.marker_inlet.info().uid, mapping)
             except L.LSLResolveError:
                 if markers != "auto":
                     raise
         typ = (si.type or "").lower()
         mod = modality or (si.fidetype.get("device.modality") or ("emg" if typ == "emg" else
                                                                    "eeg" if typ == "eeg" else "other"))
+        self.stream_name = si.name
         self.info = {"name": f"lsl:{si.name}", "sample_rate": float(si.nominal_srate),
                      "channels": int(si.channel_count),
                      "modality": mod, "meta": {k: v for k, v in si.fidetype.items()
                                                if k.startswith(("brainflow.", "fidetype.replay"))}}
-        self._local_clock = pl.local_clock
+        self._period = 1.0 / float(si.nominal_srate) if si.nominal_srate > 0 else None
         self._off = 0.0
         self._moff = 0.0
         self._last_tc = -1e9
         self._ended = False
+        #: Why the source ended ("" while it runs), for the run summary.
+        self.stop_reason = ""
+        self.reconnects = 0
+        self.losses = 0
+        self.gaps = 0
+        self._last_t = -math.inf  # last delivered sample time (corrected)
+        self._lost_since: float | None = None
+        self._lost_t: float | None = None
+        self._rc: dict[str, Any] = {}
+        self._got: dict[str, Any] = {}
+        self._pending_gap: dict[str, Any] | None = None
+        self._stash: Chunk | None = None
 
     def start(self) -> None:
         pass
@@ -270,9 +333,101 @@ class LSLSource:
                 self._moff = float(self.marker_inlet.time_correction(2.0))
             self._last_tc = now
 
+    # --- loss and reconnect ---------------------------------------------------------------
+
+    def _end(self, why: str) -> None:
+        self._ended = True
+        self.stop_reason = why
+        for rc in self._rc.values():
+            rc.cancel()
+        self._rc, self._got = {}, {}
+        self.log(why)
+
+    def _worker(self, reopen: Callable[[], Any], role: str) -> Any:
+        return self.L._Reconnector(reopen, retry_s=self.retry_s, prewarm_tc_s=0.0,
+                                   give_up_s=self.reconnect_timeout + 1.0, name=f"live-{role}",
+                                   backoff=self.backoff, max_retry_s=self.max_retry_s)
+
+    def _on_lost(self, why: str) -> Chunk | None:
+        self.losses += 1
+        self.L._close_quietly(self.inlet)
+        if self.marker_inlet is not None:
+            self.L._close_quietly(self.marker_inlet)
+        ch = _empty(self.info["channels"])
+        ch.lost = True  # the consumer drops the open segment; the next poll ends the run if we give up
+        if self.reopen is None or self.max_reconnects == 0:
+            self._end(f"stream {self.stream_name!r} lost ({why}); reconnect is off")
+            return ch
+        if self.reconnects >= self.max_reconnects:
+            self._end(f"stream {self.stream_name!r} lost ({why}); max_reconnects {self.max_reconnects} reached")
+            return ch
+        self.log(f"stream {self.stream_name!r} lost ({why}); resolving it again (up to {self.reconnect_timeout:g} s)")
+        self._lost_since = time.monotonic()
+        self._lost_t = self._last_t if math.isfinite(self._last_t) else None
+        self._rc = {"signal": self._worker(self.reopen, "signal")}
+        if self.reopen_markers is not None:
+            self._rc["markers"] = self._worker(self.reopen_markers, "markers")
+        self._got = {}
+        return ch
+
+    def _try_reconnect(self, timeout: float) -> Chunk | None:
+        assert self._lost_since is not None
+        for k, rc in list(self._rc.items()):
+            if k in self._got:
+                continue
+            got = rc.take(timeout if not self._got else 0.0)
+            if got is None and rc.done():
+                got = rc.take()  # it may have finished just after the first take
+            if got is not None:
+                self._got[k] = got
+            elif rc.done():  # the worker ended without an inlet: start a new one
+                self._rc[k] = self._worker(rc._reopen, k)
+        if len(self._got) < len(self._rc):
+            if time.monotonic() - self._lost_since > self.reconnect_timeout:
+                for v in self._got.values():
+                    self.L._close_quietly(v)
+                self._end(f"stream {self.stream_name!r} lost and not back within {self.reconnect_timeout:g} s")
+                return None
+            return _empty(self.info["channels"])
+        sig = self._got["signal"]
+        si = sig.info()
+        if int(si.channel_count) != self.info["channels"] or \
+                abs(float(si.nominal_srate) - self.info["sample_rate"]) > 1e-9:
+            for v in self._got.values():
+                self.L._close_quietly(v)
+            self._end(f"stream {si.name!r} came back with {si.channel_count} ch at {si.nominal_srate} Hz; "
+                      f"expected {self.info['channels']} ch at {self.info['sample_rate']:g} Hz")
+            return None
+        self.inlet = sig
+        if "markers" in self._got:
+            self.marker_inlet = self._got["markers"]
+        self.reconnects += 1
+        self.log(f"stream {si.name!r} reconnected after {time.monotonic() - self._lost_since:.2f} s "
+                 f"(reconnect {self.reconnects})")
+        self._rc, self._got = {}, {}
+        self._lost_since = None
+        self._last_tc = -1e9  # a new outlet: ask for the clock offset again
+        self._pending_gap = {"t_start": self._lost_t}
+        return _empty(self.info["channels"])
+
+    def _gap_fields(self, t0: float | None, t1: float, cause: str) -> dict[str, Any]:
+        missing = None
+        if self._period is not None and t0 is not None:
+            missing = max(0, int(round((t1 - t0) / self._period)) - 1)
+        self.gaps += 1
+        return {"t_start": t0 if t0 is not None else t1, "t_end": t1, "missing_frames": missing,
+                "stream": self.stream_name, "cause": cause}
+
+    # --- polling ----------------------------------------------------------------------------
+
     def poll(self, timeout: float = 0.05) -> Chunk | None:
         if self._ended:
             return None
+        if self._stash is not None:
+            ch, self._stash = self._stash, None
+            return ch
+        if self._lost_since is not None:
+            return self._try_reconnect(timeout)
         try:
             self._tc()
             rows, ts = self.inlet.pull_chunk(timeout, 4096)
@@ -280,18 +435,39 @@ class LSLSource:
             if self.marker_inlet is not None:
                 mrows, mts = self.marker_inlet.pull_chunk(0.0, 1024)
                 mk = [(float(t) + self._moff, str(r[0])) for r, t in zip(mrows, mts)]
-        except self.L.LSLStreamLost:
-            self._ended = True
-            return None
+        except self.L.LSLStreamLost as e:
+            return self._on_lost(str(e))
         c = self.info["channels"]
         if not rows:
             ch = _empty(c)
             ch.markers = mk
             return ch
-        return Chunk(np.asarray(rows, dtype=np.float32).reshape(len(rows), c),
-                     np.asarray(ts, dtype=np.float64) + self._off, mk)
+        x = np.asarray(rows, dtype=np.float32).reshape(len(rows), c)
+        t = np.asarray(ts, dtype=np.float64) + self._off
+        gap = None
+        if self._pending_gap is not None:  # the first samples after a reconnect
+            gap = self._gap_fields(self._pending_gap["t_start"], float(t[0]), "lost")
+            self._pending_gap = None
+        elif self._period is not None and math.isfinite(self._last_t) and \
+                t[0] - self._last_t > self.gap_factor * self._period:
+            gap = self._gap_fields(self._last_t, float(t[0]), "timestamp")
+        if self._period is not None and len(t) > 1:  # a time jump inside the chunk: deliver it in two parts
+            k = np.flatnonzero(np.diff(t) > self.gap_factor * self._period)
+            if k.size:
+                j = int(k[0]) + 1
+                self._stash = Chunk(x[j:], t[j:], [m for m in mk if m[0] >= t[j]],
+                                    gap=self._gap_fields(float(t[j - 1]), float(t[j]), "timestamp"))
+                mk = [m for m in mk if m[0] < t[j]]
+                x, t = x[:j], t[:j]
+                self._last_t = float(self._stash.times[-1])
+                return Chunk(x, t, mk, gap=gap)
+        self._last_t = float(t[-1])
+        return Chunk(x, t, mk, gap=gap)
 
     def close(self) -> None:
+        for rc in self._rc.values():
+            rc.cancel()
+        self._rc, self._got = {}, {}
         self.L._close_quietly(self.inlet)
         if self.marker_inlet is not None:
             self.L._close_quietly(self.marker_inlet)

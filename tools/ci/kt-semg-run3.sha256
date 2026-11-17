@@ -1,0 +1,5 @@
+# KT-sEMG v1.1 (doi:10.7910/DVN/AV6XIR), copyright 2021 Nokia, CC BY 4.0. Pinned for the CI job live-kt (P14-11).
+# Format: sha256  file  dataverse_file_id  query (run3.csv is the original upload: ?format=original).
+1ba185694a58f04fe0794abad759d8dbeba1fce7de385806642fb28ebf6f6cc6  run3.csv  5204626  format=original
+de0d038cd8fcb703528997faa0255b1974abe5755e1566c77bc16b31ca9f7de5  run3_keys.txt  5204564  -
+ea6155c524d5678ea182a3573bd642eb3d5efa53ef640cb1bc894921a18c4f39  run3_ts.txt  5204601  -
