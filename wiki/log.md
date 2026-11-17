@@ -1058,3 +1058,12 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Inventory of P3-01 / P3-02 / P3-03 in the tracker notes; all three stay in progress (missing: gRPC, YAML decision, LM rescoring, rate limiter, `meta` privacy filter, real OS input backends, HID bridge, Arrow / Parquet).
 - New gaps: 37 = P3-06 (logits guard inside the budget), 38 = P3-07 (LSL receive stamps), 39 = P3-08 (B2T '25 replay through the collector), 40 = P3-09 (YAML: roadmap vs FEP-0006, user decision), 41 = P7-07 (collector consumer for intent, control and captures).
 - Pages: [collector](concepts/collector.md), [roadmap](questions/roadmap-standard.md) (P3 status, P3-06 ... P3-09, P7-05, P7-07), [open gaps](questions/open-gaps.md), [docs](../docs/collector.md#integration-test-and-latency-budget-p3-04), tracker.
+
+## [2026-11-17] setup | P14-16 done: `fidetype live --publish` over LSL and WebSocket (gap 36 closed); new gap 42 (P14-17)
+- Commit `2fd39fc`. New option `fidetype live --publish TARGET` (repeatable): `lsl` / `lsl:NAME` (frames stream `NAME`, events stream `NAME.events`, decisions stream `NAME.decisions`), `ws://HOST:PORT/nts` (send to a server), `ws://HOST:PORT/decisions` (serve the decisions). `--publish-wait S`, `--publish-linger S`. Code: `src/fidetype/live/publish.py`.
+- No new outlet code: `replay_to_lsl` now uses a new `NTSOutlet` class (the same outlets, cut out of the function); `DecisionOutlet`, `WSProducer`, `WSServer` + `OutputHub` reused.
+- `trust_decision` events go only on the decisions channel. FEP-0001 section 3 r4 forbids them in an input stream; the first capture failed on this (FEP1-TD-INPUT).
+- Evidence: `python -m fidetype.conformance.binding_producers --target live-lsl --target live-ws` runs the CLI (synthetic typist, 4 utterances) in a child process on loopback, about 7 s; both reach NTS Trust-ready with nts-lsl/0.1 and nts-ws/0.1. [`certified.json`](../spec/conformance/certified.json): `fidetype-live-lsl`, `fidetype-live-ws` (16 entries). CI job `live`: new step. Tests: `tests/test_live_publish.py`.
+- New gap 42 = P14-17: the `--out` file of `fidetype live` holds `trust_decision` events, so `nts-conform check` gives it no producer level.
+- Tracker: run stats filled for R-26 (T15 split audit) and P7-02 (shared with P1-16).
+- Pages: [roadmap](questions/roadmap-standard.md) (P14-16, P14-17), [open gaps](questions/open-gaps.md), [docs](../docs/live-decode.md#8a-publish-over-a-binding---publish-p14-16), [conformance docs](../docs/conformance.md), tracker.

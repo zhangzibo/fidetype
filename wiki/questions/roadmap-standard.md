@@ -844,10 +844,17 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-16 `fidetype live` publishes over a binding (LSL, WebSocket)
 - **Gap:** 36 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P7-06). Follow-up of P14-04, P7-06.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, commit `2fd39fc`). `fidetype live --publish TARGET` (repeatable): `lsl` / `lsl:NAME` (`NTSOutlet`, now shared with `replay_to_lsl`: frames stream `NAME` + events stream `NAME.events`; `DecisionOutlet`: `NAME.decisions`), `ws://HOST:PORT/nts` (`WSProducer`), `ws://HOST:PORT/decisions` (`WSServer` + `OutputHub`); `--publish-wait`, `--publish-linger`. Decisions go on the decisions channel only (FEP-0001 section 3 r4). A failed target stops with one log line; the decode goes on. `python -m fidetype.conformance.binding_producers --target live-lsl --target live-ws` runs the CLI in a child process on loopback and records it with `nts-conform capture`; both reach NTS Trust-ready with the binding. `certified.json`: `fidetype-live-lsl`, `fidetype-live-ws` (16 entries). CI job `live`: step "fidetype live publish captures (P14-16)". Docs: [live decode 8a](../../docs/live-decode.md#8a-publish-over-a-binding---publish-p14-16), [conformance](../../docs/conformance.md). New gap 42 = P14-17.
 - **Depends on:** P14-04 (done), P7-06 (done: `nts-conform capture`).
 - **Source:** P7-06 (2026-11-17): `fidetype live` reads raw signal over LSL but writes its NTS output (frames, hypotheses, trust decisions) only to a JSON Lines file or stdout. Other programs cannot subscribe to it live, and it has no binding producer evidence.
 - **Done when:** `fidetype live` has options to publish its NTS frames + events and its trust decisions as LSL streams (FEP-0002) and / or to send them to a WebSocket server and serve `/decisions` (FEP-0004); a test captures them with `nts-conform capture` on loopback, `nts-conform check` gives a producer level with the binding, and `certified.json` lists `fidetype live` with that evidence.
+
+#### P14-17 `fidetype live --out`: trust decisions in a separate decision log
+- **Gap:** 42 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-16). Follow-up of P14-04, P14-16.
+- **Status:** `todo`.
+- **Depends on:** P14-16 (done).
+- **Source:** P14-16 (2026-11-17): the `--out` file of `fidetype live` holds the `trust_decision` events next to the frames and hypotheses. `nts-conform check` fails it (FEP1-TD-INPUT, FEP-0001 section 3 r4: no `trust_decision` in an input stream), so its producer level is none. `fidetype validate --level trust-ready` (the older check that docs/live-decode.md names) passes it. `--publish` already splits the two channels.
+- **Done when:** `fidetype live --out` writes an input stream without `trust_decision` events, and a new option (for example `--decisions-out`) writes the FEP-0001 decision log; `nts-conform check` on both files gives NTS Trust-ready; docs/live-decode.md section 8 and the P14-11 CI replay use the new form; tests updated.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
