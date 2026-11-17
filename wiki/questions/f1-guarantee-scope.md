@@ -71,6 +71,9 @@ Notation: score `s_t`, top-1 error `c_t` ∈ {0, 1}, threshold `λ_t`, commit if
 
 > **Our take:** the claim that F1 can make is narrow and honest: "for the text that the user saw and checked, the long-run rate of wrong inserted text stays at or under α plus a stated slack, for any sequence, through every decoder update". The public wording must add "silent errors are measured, not bounded". The audit bound G3 is the tool for a fair champion / challenger comparison under shown-only feedback, but at ε = 0.05 it is wide: each withheld item adds 1/ε to the variance term. On the weak T12 / T15 decoders `rule="max"` never commits.
 
+## On the drop-in API (P5-02)
+Since P5-02, the same controllers run behind the drop-in guard: `guard.online("aci" | "aci_window" | "window" | "bandit")` ([docs section 11](../../docs/trust-guarantee.md)). Each online policy also has a uniform guarantee sheet (`policy_type` `online_*` or `bandit`, [docs section 12](../../docs/trust-guarantee.md)) that states the statement, the feedback it needs and what is NOT guaranteed (silent errors, one short session). Code: `src/fidetype/trust/online_guard.py`, `src/fidetype/trust/guarantee_sheet.py`.
+
 ## Related pages
 - [North star](north-star.md) · [roadmap P15-04](roadmap-standard.md#p15-04-bandit-feedback-online-risk-control-and-guarantee-statement)
 - [M2-16 online re-calibration](m2-16-online-recal-result.md) · [per-session risk control](per-session-risk-control.md)

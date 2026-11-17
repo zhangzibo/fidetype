@@ -346,9 +346,15 @@ def _counts(a: Mapping[str, np.ndarray], c: Config) -> dict[str, int]:
             "wc_loss": int(wc.sum()), "h_loss": int(h.sum())}
 
 
-def _pvals(k: Mapping[str, int], alpha: float, alpha_h: float) -> tuple[float, float]:
+def _pvals(k: Mapping[str, int], alpha: float, alpha_h: float, beta: float | None = None) -> tuple[float, ...]:
     n = max(1, k["n"])
-    return binomial_pvalue(k["wc_loss"] / n, n, alpha), binomial_pvalue(k["h_loss"] / n, n, alpha_h)
+    pv = (binomial_pvalue(k["wc_loss"] / n, n, alpha), binomial_pvalue(k["h_loss"] / n, n, alpha_h))
+    if beta is None:
+        return pv
+    from fidetype.trust.precision_bound import precision_pvalue
+
+    # P5-02: third risk = error rate among commits (exact binomial p-value given the number of commits)
+    return (*pv, precision_pvalue(k["commits"] - k["right"], k["commits"], beta))
 
 
 @dataclass
@@ -367,19 +373,25 @@ class JointLTTResult:
     #: Counts of the selected configuration on the ordering and test items.
     order_counts: dict[str, int] = field(default_factory=dict)
     test_counts: dict[str, int] = field(default_factory=dict)
-    test_pvalues: tuple[float, float] = (math.nan, math.nan)
+    #: (p_wc, p_h) of the selected configuration on the test items; (p_wc, p_h, p_precision) with a precision target.
+    test_pvalues: tuple[float, ...] = (math.nan, math.nan)
+    #: P5-02 joint precision target (None: off, the P15-06 two-risk test).
+    target_precision: float | None = None
 
     @property
     def feasible(self) -> bool:
         return self.selected is not None
 
     def to_dict(self) -> dict[str, Any]:
-        return {"selected": self.selected.to_dict() if self.selected else None, "n_certified": len(self.certified),
-                "chain_length": self.chain_length, "n_tested": self.n_tested, "alpha": self.alpha,
-                "alpha_h": self.alpha_h, "delta": self.delta, "n_order": self.n_order, "n_test": self.n_test,
-                "order_counts": dict(self.order_counts), "test_counts": dict(self.test_counts),
-                "test_pvalues": [None if math.isnan(x) else float(x) for x in self.test_pvalues],  # JSON: no NaN
-                "feasible": self.feasible}
+        d = {"selected": self.selected.to_dict() if self.selected else None, "n_certified": len(self.certified),
+             "chain_length": self.chain_length, "n_tested": self.n_tested, "alpha": self.alpha,
+             "alpha_h": self.alpha_h, "delta": self.delta, "n_order": self.n_order, "n_test": self.n_test,
+             "order_counts": dict(self.order_counts), "test_counts": dict(self.test_counts),
+             "test_pvalues": [None if math.isnan(x) else float(x) for x in self.test_pvalues],  # JSON: no NaN
+             "feasible": self.feasible}
+        if self.target_precision is not None:
+            d["target_precision"] = self.target_precision
+        return d
 
 
 def grid(commit_p: Iterable[float] = DEFAULT_COMMIT_P_GRID, tau_commit: Iterable[float] = DEFAULT_TAU_COMMIT_GRID,
@@ -398,15 +410,25 @@ SELECT_RULES = ("fewest_halluc", "most_right")
 
 def joint_ltt(order_items: Sequence[ItemStats], test_items: Sequence[ItemStats], configs: Sequence[Config], *,
               alpha: float, alpha_h: float, delta: float, min_commit_p: float = -math.inf,
-              select: str = "fewest_halluc") -> JointLTTResult:
+              select: str = "fewest_halluc", target_precision: float | None = None) -> JointLTTResult:
     """Learn then Test over ``configs`` with the wrong-commit and the hallucination risk (module docstring).
 
     ``select`` (any rule keeps the guarantee): ``"fewest_halluc"`` (default) = fewest fluent-wrong commits on
     ordering + test items, then most right commits; ``"most_right"`` = most right commits, then fewest
     fluent-wrong. Further ties: fewest commits, then the strictest thresholds.
+
+    ``target_precision`` (P5-02, default None = off): add a third risk, the error rate among commits
+    ``P(wrong | commit) <= 1 - target_precision``. Its p-value is the exact binomial tail on the commits of
+    the configuration (valid given the number of commits, see :mod:`fidetype.trust.precision_bound`). The
+    p-value of a configuration is then ``max(p_wc, p_h, p_precision)`` (intersection-union test), with the
+    same ordering split and the same fixed-sequence test. With exchangeable data, ``P(every certified
+    configuration meets all three risks) >= 1 - delta``: one test, one delta, no union bound.
     """
     if not (0 < alpha < 1 and 0 < alpha_h < 1 and 0 < delta < 1):
         raise ValueError("alpha, alpha_h and delta must be in (0, 1)")
+    if target_precision is not None and not 0 < target_precision < 1:
+        raise ValueError("target_precision must be in (0, 1)")
+    beta = None if target_precision is None else 1.0 - float(target_precision)
     if select not in SELECT_RULES:
         raise ValueError(f"select must be one of {SELECT_RULES}")
     if not configs:
@@ -415,20 +437,22 @@ def joint_ltt(order_items: Sequence[ItemStats], test_items: Sequence[ItemStats],
     keyed = []
     for c in configs:
         ko = _counts(ao, c)
-        keyed.append((max(_pvals(ko, alpha, alpha_h)), ko["commits"], _strictness(c), c, ko))
+        keyed.append((max(_pvals(ko, alpha, alpha_h, beta)), ko["commits"], _strictness(c), c, ko))
     keyed.sort(key=lambda r: (r[0], r[1], r[2]))
-    certified: list[tuple[Config, dict[str, int], dict[str, int], tuple[float, float]]] = []
+    certified: list[tuple[Config, dict[str, int], dict[str, int], tuple[float, ...]]] = []
     n_tested = 0
     for _, _, _, c, ko in keyed:
         kt = _counts(at, c)
-        pv = _pvals(kt, alpha, alpha_h)
+        pv = _pvals(kt, alpha, alpha_h, beta)
         n_tested += 1
         if max(pv) > delta:
             break
         certified.append((c, ko, kt, pv))
     pool = [r for r in certified if r[0].commit_p >= min_commit_p]
     res = JointLTTResult(None, [r[0] for r in certified], len(keyed), n_tested, alpha, alpha_h, delta,
-                         len(order_items), len(test_items))
+                         len(order_items), len(test_items),
+                         test_pvalues=(math.nan,) * (2 if beta is None else 3),
+                         target_precision=None if target_precision is None else float(target_precision))
     if pool:
         def key(r):
             c, ko, kt, _ = r

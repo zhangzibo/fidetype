@@ -275,8 +275,10 @@ class GuaranteeSheet:
                 f"  test commits       {tc.get('commits', 0)} commits, {tc.get('wrong', 0)} wrong"
                 + (f" (precision lower bound {lo:.3f}, one-sided CP {1 - q['delta_p']:g})" if lo is not None else ""),
                 f"  commits needed     >= {q['min_commits']} right test commits to certify any threshold",
-                f"  joint              both bounds together hold with probability >= "
-                f"{max(0.0, 1 - self.delta - q['delta_p']):g}",
+                (f"  joint              wrong-commit, fluent-wrong and precision bounds hold together with "
+                 f"probability >= {1 - q['delta_p']:g} (one joint test)" if q.get("joint_with") == "halluc" else
+                 f"  joint              both bounds together hold with probability >= "
+                 f"{max(0.0, 1 - self.delta - q['delta_p']):g}"),
             ]
         lines.append("assumptions")
         lines += [f"  - {a}" for a in self.assumptions]
@@ -668,6 +670,12 @@ class TrustGuard:
         """
         events, st = self._codec.events(x)
         r = self._result(*self._final_gated(events))
+        self._log(r, events, utterance_id)
+        return r
+
+    def _log(self, r: TrustResult, events: Sequence[Mapping[str, Any]], utterance_id: str | None,
+             extra: Mapping[str, Any] | None = None) -> None:
+        """Append the audit record of one decision (``extra``: more keys, e.g. the online threshold)."""
         rec: dict[str, Any] = dict(r.event)
         rec["seq"] = r.seq
         if not self.audit_text:
@@ -678,9 +686,10 @@ class TrustGuard:
         rec["input_sha256"] = _input_sha(events)
         if utterance_id is not None:
             rec["utterance_id"] = str(utterance_id)
+        if extra:
+            rec.update(extra)
         self.audit_log.append(rec)
         self._seq += 1
-        return r
 
     __call__ = decide
 
@@ -695,6 +704,25 @@ class TrustGuard:
         output (check it with ``fidetype.validate``).
         """
         return self._codec.events(x)[0]
+
+    # --- P5-02: online use and the per-policy guarantee sheets ------------
+
+    def online(self, method: str = "aci", **kwargs: Any) -> Any:
+        """An online guard that re-calibrates ``commit_p`` from feedback during use (P5-02).
+
+        ``method``: ``"aci"`` (default), ``"aci_window"``, ``"window"`` or ``"bandit"``. See
+        :func:`fidetype.trust.online_guard.online` for the arguments and the guarantee of each method.
+        This guard is not changed.
+        """
+        from fidetype.trust.online_guard import online
+
+        return online(self, method, **kwargs)
+
+    def policy_sheets(self) -> list[Any]:
+        """One uniform :class:`~fidetype.trust.guarantee_sheet.PolicySheet` per guarantee of this guard (P5-02)."""
+        from fidetype.trust.guarantee_sheet import policy_sheets
+
+        return policy_sheets(self)
 
     # --- audit log ------------------------------------------------------
 
@@ -1004,8 +1032,12 @@ def calibrate(
         test order from the policy-grid items, fixed-sequence test on the
         LTT items, exact binomial p-values on the commits. The P14-03
         bound and the null controls still hold. If no threshold is
-        certified, the guard never commits. Not yet combinable with the
-        hallucination bound (``grounding=`` / ``llm=``).
+        certified, the guard never commits. With the hallucination bound
+        (``grounding=`` / ``llm=``) the precision risk joins the same joint
+        Learn then Test as a third risk (p-value ``max(p_wc, p_h, p_prec)``,
+        one fixed-sequence test at level ``min(halluc_delta,
+        precision_delta)``): all three bounds then hold together with that
+        probability (see ``docs/trust-guarantee.md`` section 10).
 
     Raises
     ------
@@ -1071,9 +1103,6 @@ def calibrate(
         p_delta = float(delta if precision_delta is None else precision_delta)
         if not (0.0 < float(target_precision) < 1.0 and 0.0 < p_delta < 1.0):
             raise ValueError("target_precision and precision_delta must be in (0, 1)")
-        if halluc_on:
-            raise ValueError("target_precision cannot be combined with the hallucination bound (grounding= / llm=) "
-                             "yet: the gate is chosen on the same LTT items")
         if precision_grid is not None and not any(math.isfinite(float(c)) for c in precision_grid):
             raise ValueError("precision_grid has no finite threshold")
     elif precision_delta is not None or precision_grid is not None:
@@ -1226,8 +1255,9 @@ def calibrate(
         guard = _halluc_bound(guard, sheet, inputs, texts, order, n_fit, n_pol, kind, decode_fn, audit_text,
                               _as_commit_grounding(grounding), llm, float(halluc_alpha), h_delta,
                               fluent_threshold, halluc_grid, rng_controls, null_trials, rate, null_inputs,
-                              halluc_select)
-    if prec_on:
+                              halluc_select, target_precision=float(target_precision) if prec_on else None,
+                              delta_p=p_delta if prec_on else None)
+    elif prec_on:
         guard = _precision_bound(guard, sheet, inputs, texts, order, n_fit, n_pol, kind, decode_fn, audit_text,
                                  float(target_precision), p_delta, precision_grid, rng_controls, null_trials, rate,
                                  null_inputs)
@@ -1324,9 +1354,18 @@ def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any
                   audit_text: bool, grounding: Any, llm: Any, alpha_h: float, delta_h: float,
                   fluent_threshold: float | None, halluc_grid: Mapping[str, Sequence[float]] | None,
                   rng_controls: np.random.Generator, null_trials: int, rate: float,
-                  null_inputs: Sequence[Any] | None, select: str = "fewest_halluc") -> TrustGuard:
-    """The P15-06 step of :func:`calibrate`: joint LTT of (commit_p, tau_commit, tau_word); a new guard."""
+                  null_inputs: Sequence[Any] | None, select: str = "fewest_halluc", *,
+                  target_precision: float | None = None, delta_p: float | None = None) -> TrustGuard:
+    """The P15-06 step of :func:`calibrate`: joint LTT of (commit_p, tau_commit, tau_word); a new guard.
+
+    With ``target_precision`` (P5-02), the precision risk is a third risk of the same joint test, at level
+    ``min(delta_h, delta_p)``.
+    """
     from fidetype.trust import halluc_bound as H
+
+    joint_p = target_precision is not None
+    if joint_p:
+        delta_h = min(float(delta_h), float(delta_p if delta_p is not None else delta_h))
 
     frozen = guard.config
     codec = guard._codec
@@ -1364,7 +1403,7 @@ def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any
                      hg.get("tau_word", H.DEFAULT_TAU_WORD_GRID))
     c0 = float(frozen.policy.get("commit_p", math.inf))
     res = H.joint_ltt(o_items, t_items, configs, alpha=float(guard.alpha), alpha_h=alpha_h, delta=delta_h,
-                      min_commit_p=c0, select=select)
+                      min_commit_p=c0, select=select, target_precision=target_precision)
     sel = res.selected if res.selected is not None else H.Config(math.inf, H.HallucGate())
     info = {
         "loss": "fluent_wrong" if llm is not None else "wrong",
@@ -1372,7 +1411,8 @@ def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any
         "fluent_threshold": _json_float(thr),
         "alpha_h": alpha_h,
         "delta_h": delta_h,
-        "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), "
+        "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value "
+                  + ("max(p_wc, p_h, p_precision)" if joint_p else "max(p_wc, p_h)") + ", "
                   "exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; "
                   f"select commit_p >= {_fmt(c0)} (P14-03 value), rule {select!r}",
         "grid": {"commit_p": len(set(c.commit_p for c in configs)),
@@ -1388,6 +1428,12 @@ def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any
     info["select"] = select
     recipe["halluc_bound"] = {k: info[k] for k in ("loss", "fluent_threshold", "alpha_h", "delta_h", "method",
                                                    "grounding", "selected", "select")}
+    prec_info = None
+    if joint_p:
+        prec_info = _joint_precision_info(res, float(target_precision), float(delta_h), c0, frozen.config_id,
+                                          len({c.commit_p for c in configs if math.isfinite(c.commit_p)}))
+        info["target_precision"] = float(target_precision)
+        recipe["precision_bound"] = {k: prec_info[k] for k in ("target_precision", "delta_p", "method", "selected")}
     final = replace(frozen.with_policy(commit_p=sel.commit_p), recipe=recipe)
     gate = None if sel.gate.is_off or grounding is None else sel.gate
     new = TrustGuard(final, codec, None, user_fn, audit_text, halluc_gate=gate,
@@ -1408,14 +1454,60 @@ def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any
     warnings = list(sheet.warnings)
     if res.selected is None:
         warnings.append("hallucination bound: no configuration certified, so the guard never commits.")
+    assumptions = sheet.assumptions + _HALLUC_ASSUMPTIONS
+    not_guaranteed = sheet.not_guaranteed + _HALLUC_NOT_GUARANTEED
+    if joint_p:
+        if res.selected is not None and n_com < prec_info["min_commits"]:
+            warnings.append(f"precision bound: only {n_com} in-sample commits (fewer than {prec_info['min_commits']}).")
+        assumptions += _PRECISION_ASSUMPTIONS
+        not_guaranteed = tuple(a for a in not_guaranteed if not a.startswith("The error rate among commits"))             + _PRECISION_NOT_GUARANTEED
     new.sheet = replace(sheet, config_id=final.config_id, commit_threshold=float(sel.commit_p),
                         ltt_commits=n_com, ltt_wrong_commits=n_wrong, ltt_gate_blocked=int(n_blocked),
                         ltt_median_guard_risk=float(np.median(risks)) if risks else math.nan,
-                        controls=tuple(controls), warnings=tuple(warnings), halluc=info,
-                        assumptions=sheet.assumptions + _HALLUC_ASSUMPTIONS,
-                        not_guaranteed=sheet.not_guaranteed + _HALLUC_NOT_GUARANTEED)
+                        controls=tuple(controls), warnings=tuple(warnings), halluc=info, precision=prec_info,
+                        assumptions=assumptions, not_guaranteed=not_guaranteed)
     new.halluc_items = {"order": o_items, "test": t_items}  # per-item statistics (not saved)
     return new
+
+
+def _joint_precision_info(res: Any, target_precision: float, delta_j: float, c0: float, base_id: str,
+                          n_grid: int) -> dict[str, Any]:
+    """The sheet "precision bound" block when the precision risk is part of the P15-06 joint test."""
+    from fidetype.trust import precision_bound as P
+    from fidetype.utils.binomial import cp_upper
+
+    tc = dict(res.test_counts)
+    oc = dict(res.order_counts)
+    commits = int(tc.get("commits", 0))
+    wrong = commits - int(tc.get("right", 0))
+    pvs = list(res.test_pvalues)
+    sel = res.selected.commit_p if res.selected is not None else math.inf
+    return {
+        "target_precision": target_precision,
+        "beta": 1.0 - target_precision,
+        "delta_p": delta_j,
+        "joint_with": "halluc",
+        "method": "joint with the hallucination bound: third risk of the same Learn then Test (p-value "
+                  "max(p_wc, p_h, p_precision); P(Bin(commits, beta) <= wrong) on the commits of each grid point); "
+                  "order from the policy-grid items, fixed-sequence test on the LTT items; one level for all risks",
+        "grid": n_grid,
+        "base_commit_p": _json_float(c0),
+        "base_config_id": base_id,
+        "min_commits": P.min_commits_needed(target_precision, delta_j),
+        "feasible": res.selected is not None,
+        "n_certified": len(res.certified),
+        "chain_length": res.chain_length,
+        "n_tested": res.n_tested,
+        "n_order": res.n_order,
+        "n_test": res.n_test,
+        "min_commit_p": _json_float(c0),
+        "order_counts": {"n": int(oc.get("n", 0)), "commits": int(oc.get("commits", 0)),
+                         "wrong": int(oc.get("commits", 0)) - int(oc.get("right", 0))} if oc else {},
+        "test_counts": {"n": int(tc.get("n", 0)), "commits": commits, "wrong": wrong} if tc else {},
+        "test_pvalue": pvs[2] if len(pvs) == 3 and pvs[2] is not None and not math.isnan(pvs[2]) else None,
+        "test_precision_lower": (1.0 - cp_upper(wrong, commits, delta_j)) if commits else None,
+        "selected": _json_float(sel),
+    }
 
 
 _HALLUC_ASSUMPTIONS = (

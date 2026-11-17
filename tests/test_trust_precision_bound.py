@@ -212,5 +212,5 @@ def test_bad_arguments():
         ft.calibrate(xs, ts, null_inputs=null, precision_delta=0.1)
     with pytest.raises(ValueError, match="finite"):
         ft.calibrate(xs, ts, null_inputs=null, target_precision=0.9, precision_grid=[math.inf])
-    with pytest.raises(ValueError, match="cannot be combined"):
-        ft.calibrate(xs, ts, null_inputs=null, target_precision=0.9, llm=object())
+    # since P5-02 completion, target_precision combines with the hallucination bound (joint LTT); see
+    # tests/test_trust_p5_02_sheets_online.py::test_calibrate_precision_with_halluc_bound

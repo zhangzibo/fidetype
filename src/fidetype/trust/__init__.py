@@ -180,6 +180,16 @@ _DROPIN = (
 )
 __all__ += list(_DROPIN)
 
+#: P5-02 names (per-policy guarantee sheets, online drop-in guard), imported on first use.
+_P5_02 = {
+    "PolicySheet": "fidetype.trust.guarantee_sheet",
+    "policy_sheets": "fidetype.trust.guarantee_sheet",
+    "save_sheets": "fidetype.trust.guarantee_sheet",
+    "load_sheets": "fidetype.trust.guarantee_sheet",
+    "OnlineGuard": "fidetype.trust.online_guard",
+}
+__all__ += list(_P5_02)
+
 
 def __getattr__(name: str):
     if name in _PROVENANCE:
@@ -190,4 +200,8 @@ def __getattr__(name: str):
         from fidetype.trust import dropin
 
         return getattr(dropin, name)
+    if name in _P5_02:
+        import importlib
+
+        return getattr(importlib.import_module(_P5_02[name]), name)
     raise AttributeError(f"module 'fidetype.trust' has no attribute {name!r}")

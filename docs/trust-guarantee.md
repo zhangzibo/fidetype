@@ -174,17 +174,50 @@ print(guard.sheet)                                   # adds a "precision bound" 
 | Error rate among commits | Wrong COMMITs / all COMMITs. Precision = 1 − this rate |
 | Guarantee | With probability at least 1 − `precision_delta` (default δ), the error rate among commits on new utterances is at most 1 − `target_precision` |
 | Together with section 1 | Both statements hold together with probability at least 1 − δ − `precision_delta` (union bound) |
+| Together with section 9 | Allowed since the P5-02 completion. With `grounding=` / `llm=` **and** `target_precision=`, the precision risk is a **third risk of the same joint test** (no second test on the same LTT part): p-value = max(p_wc, p_h, p_precision) for each grid point (`commit_p`, `tau_commit`, `tau_word`), test order from the policy part, fixed-sequence test on the LTT part at level δ_j = min(`halluc_delta`, `precision_delta`). Then wrong-commit ≤ α, fluent-wrong ≤ α_h and error among commits ≤ 1 − `target_precision` hold **together** with probability at least 1 − δ_j. The sheet shows both blocks; the precision block has `joint_with: halluc` |
 | How | For each threshold `commit_p` (grid 1.00 → 0.00, step 0.01, or `precision_grid`): exact binomial p-value P(Bin(commits, β) ≤ wrong) on the commits of the LTT part, β = 1 − `target_precision`. Given the number of commits, the commits are an exchangeable sample, so the p-value is valid. p ≤ δ is the same test as "one-sided Clopper-Pearson upper bound ≤ β". The error rate is not monotone in `commit_p`, so the test order comes from the policy part (smallest p-value first), and a fixed-sequence test on the LTT part certifies the thresholds ([learn then test](../wiki/concepts/learn-then-test.md)) |
 | Selection | The certified threshold with the most commits, but never below the plain `commit_p`. A higher threshold only removes commits, so section 1 and the null controls still hold |
 | No certified threshold | The guard never commits (sheet warning). It still offers and withholds |
 | Cost | To certify a threshold, the LTT part needs at least log δ / log(`target_precision`) right commits: 22 for 0.9, 45 for 0.95, 230 for 0.99 (δ 0.1). A decoder that is rarely right cannot get a useful precision guarantee |
 | Sheet | A "precision bound" block: target, δ_p, the selected threshold, the P14-03 threshold, how many thresholds were tested and certified, the test commits and a one-sided CP lower bound on precision |
 
-Not guaranteed: precision for one session or one user; any single commit; data that differ from the calibration data (section 3). The precision bound cannot be combined with the hallucination bound (section 9) yet. `ft.load` needs nothing extra. Code: [`src/fidetype/trust/precision_bound.py`](../src/fidetype/trust/precision_bound.py). Validated on synthetic exchangeable data (the test suite: violation rate at most δ over 200 draws). On the P14-03 replay sets (T15, T12; targets 0.5 to 0.95) no threshold was certified: the decoders are right on only about 8 % of sentences, so the guard never commits (P14-03 guard: 2 of 2 and 15 of 25 commits wrong). Safe, but not yet useful on these decoders ([experiment](../experiments/2026-11-16-p5-02-precision/results.md)).
+Not guaranteed: precision for one session or one user; any single commit; data that differ from the calibration data (section 3). The joint test with section 9 needs more data: each certified grid point must pass all three tests on the same LTT part. `ft.load` needs nothing extra (with section 9: the same `grounding=`). Code: [`src/fidetype/trust/precision_bound.py`](../src/fidetype/trust/precision_bound.py). Validated on synthetic exchangeable data (the test suite: violation rate at most δ over 200 draws). On the P14-03 replay sets (T15, T12; targets 0.5 to 0.95) no threshold was certified: the decoders are right on only about 8 % of sentences, so the guard never commits (P14-03 guard: 2 of 2 and 15 of 25 commits wrong). Safe, but not yet useful on these decoders ([experiment](../experiments/2026-11-16-p5-02-precision/results.md)).
 
-## 11. Online use: feedback only on what was shown (P15-04)
+## 11. Online use: adaptive risk control for drift (P5-02, P15-04)
 
-The guard above is calibrated once. For online re-calibration during use, the user's feedback exists only for text that was SHOWN (a commit that the user may correct, or an offer that the user picks from or retypes). Withheld items get no label. `BanditCommitRiskControl` works with exactly this feedback.
+The guard above is calibrated once. Its bound needs exchangeable data (section 3). Live data drift: within a session, between days, after a decoder update. Adaptive conformal methods move the COMMIT threshold from the user's feedback. Their bound holds for **any** sequence of utterances. But it is a **long-run average**, not a 1 − δ statement.
+
+### 11.1 On the drop-in guard: `guard.online(...)`
+
+```python
+og = guard.online("aci")                 # or "aci_window", "window", "bandit"
+r, tk = og.decide(x)                     # a TrustResult, as from guard.decide(x)
+og.feedback(tk, final_text)              # the user's final text, or None if unknown
+og.report()["certificate"]               # mean wrong-commit loss <= this number (any sequence)
+for s in og.policy_sheets(): print(s)    # offline sheet(s) + the online sheet (section 12)
+```
+
+| `method` | Guarantee | Feedback it needs | Controller |
+|---|---|---|---|
+| `"aci"` (default) | mean wrong-commit loss ≤ α + (λ_end − λ_1)/(η T), any sequence (Gibbs & Candès 2021) | the loss of each decision (labels of commits) | `OnlineCommitRiskControl(method="aci")` |
+| `"aci_window"` | mean loss ≤ α + (α_1 − α_end)/(γ T), any sequence; window CRC at an adaptive level | full feedback (truth of non-commits) for the window | `OnlineCommitRiskControl(method="aci_window")` |
+| `"window"` | approximate only (weighted CRC; exact only under exchangeability) | full feedback | `OnlineCommitRiskControl(method="window")` |
+| `"bandit"` | (G1) marginal or (G2) precision ACI, any sequence; with `explore` > 0 also the (G3) audit | labels of shown items only (section 11.2) | `BanditCommitRiskControl` |
+
+| Item | Meaning |
+|---|---|
+| Commit score | The guard runs once at `commit_p = 0` (all other rules, the commit gate and the grounding gate unchanged). If it would commit, the score is `p_top1`; else −∞ |
+| Floor (`floor=True`, default) | The online threshold never goes below the offline `commit_p`. So the online guard commits a subset of the offline commits: the offline sheet still holds (under section 3), and the online bound holds for any sequence on top. If the offline guard never commits, the online guard never commits either. `floor=False`: only the online bound holds |
+| Audit log | Each decision goes into the audit log of the wrapped guard, with an `online` record (method, threshold, ticket, score) |
+| The wrapped guard | It does not change. `guard.decide` gives the same results as before |
+
+Tested in `tests/test_trust_p5_02_sheets_online.py`: a synthetic stream drifts after calibration (30 % of the utterances are confidently wrong). The offline guard's wrong-commit rate rises above 2α. The `aci` online guard keeps the realised rate below its certificate and near α.
+
+Not covered: silent errors (a wrong commit that the user does not correct looks right); one short session (slack O(1/(η T))); any single utterance.
+
+### 11.2 Feedback only on what was shown (P15-04)
+
+For online re-calibration during use, the user's feedback exists only for text that was SHOWN (a commit that the user may correct, or an offer that the user picks from or retypes). Withheld items get no label. `BanditCommitRiskControl` works with exactly this feedback. On the drop-in guard, use `guard.online("bandit", explore=0.05)`. On a `DecisionPolicy`:
 
 ```python
 from fidetype.trust import BanditCommitRiskControl, BanditTrustPolicy
@@ -200,9 +233,48 @@ bp.controller.report()               # realised rate, certificate, audit per thr
 | Long-run error rate among commits ≤ α + (λ_end − λ_start)/(η N_commits) (`target="precision"`) | any sequence | the labels of commits only; set `lam_init` (at "never commit" it never moves) |
 | Audit: upper bound on the wrong commits that any grid threshold would have made on the items so far | probability ≥ 1 − δ over the exploration coins | `explore` > 0: withheld items are shown as an OFFER at this rate (never committed) |
 
-Not covered: silent errors (wrong commits that the user does not correct), one short session, future items for the audit bound. Full scope: [F1 guarantee scope](../wiki/questions/f1-guarantee-scope.md). Code: [`src/fidetype/trust/bandit_risk.py`](../src/fidetype/trust/bandit_risk.py). Replay: [P15-04](../experiments/2026-11-16-p15-04-bandit/results.md).
+Not covered: silent errors (wrong commits that the user does not correct), one short session, future items for the audit bound. Full scope: [F1 guarantee scope](../wiki/questions/f1-guarantee-scope.md). Code: [`src/fidetype/trust/bandit_risk.py`](../src/fidetype/trust/bandit_risk.py), [`src/fidetype/trust/online_guard.py`](../src/fidetype/trust/online_guard.py). Replay: [P15-04](../experiments/2026-11-16-p15-04-bandit/results.md).
 
-## 12. Related
+## 12. One guarantee sheet per policy (P5-02)
+
+Each way to choose the COMMIT threshold gives a different kind of statement. `PolicySheet` states each one in **one format**: machine-readable JSON (schema `fidetype.guarantee-sheet/1.0`) and printable text.
+
+```python
+sheets = guard.policy_sheets()           # or og.policy_sheets(), ft.policy_sheets(controller)
+print(sheets[0])                         # printable text
+ft.save_sheets(sheets, "sheets.json")    # JSON; ft.load_sheets("sheets.json") gives the same sheets back
+```
+
+Command line (no decoder needed): `python -m fidetype.trust.guarantee_sheet guard.json` (add `--json` for JSON). It reads a saved guard or a sheet file.
+
+| `policy_type` | Made from | Statement | `validity` |
+|---|---|---|---|
+| `offline_crc` | `CommitRiskControl(method="crc")` | E[wrong-commit loss] ≤ α | `finite_sample_expectation` |
+| `offline_ltt` | every `calibrate` guard; `CommitRiskControl(method="ltt")` | P(wrong-commit rate ≤ α) ≥ 1 − δ | `finite_sample_probability` |
+| `precision_ltt` | `calibrate(target_precision=)` | P(error among commits ≤ 1 − target) ≥ 1 − δ_p | `finite_sample_probability` |
+| `joint_fluent_wrong` | `calibrate(grounding= / llm=)`, optionally with `target_precision=` | P(wrong-commit ≤ α and fluent-wrong ≤ α_h [and precision]) ≥ 1 − δ_h (one joint test) | `finite_sample_probability` |
+| `online_aci` | `guard.online("aci")`; `OnlineCommitRiskControl(method="aci")` | mean loss ≤ certificate, any sequence | `deterministic_long_run` |
+| `online_aci_window` | `guard.online("aci_window")` | mean loss ≤ certificate, any sequence | `deterministic_long_run` |
+| `online_window` | `guard.online("window")` | approximate | `approximate` |
+| `bandit` | `guard.online("bandit")`; `BanditCommitRiskControl` | (G1) / (G2) any sequence; (G3) audit with `explore` > 0 | `deterministic_long_run` (`+anytime_audit`) |
+
+| Field | Meaning |
+|---|---|
+| `schema` | `fidetype.guarantee-sheet/1.0`. A reader accepts every 1.x sheet. It keeps unknown keys in `extra` and writes them back |
+| `policy_type`, `validity` | The table above |
+| `statement` | The guarantee in one sentence |
+| `method` | How the threshold is chosen, with its parameters |
+| `risk` | The controlled risk (name and definition); a list for a joint test |
+| `levels` | `alpha` and `delta` always (`delta: null` = deterministic, no failure probability); also `alpha_h`, `target_precision`, `eta`, `explore`, ... |
+| `calibration` | Size and scope: `n_items`, the split, ordering and test items, the data scope, the feedback kind (online) |
+| `assumptions`, `not_guaranteed` | What must be true; what the sheet does **not** promise. Every sheet lists both |
+| `controls` | Null-control results. Empty for an online controller: its controls are those of the wrapped guard |
+| `status` | The current state: `feasible`, the threshold; online also `n_observed`, `realised`, `certificate` |
+| `warnings`, `config_id`, `references`, `created_utc` | — |
+
+The files write `inf` as the string `"inf"` and nan as `null`, so they are strict JSON. The old `GuaranteeSheet` (`guard.sheet`, section 6) does not change. The policy sheets are made from it.
+
+## 13. Related
 
 - [10-minute quickstart](trust-quickstart.md)
 - [Concepts: the trust layer](concepts.md)
