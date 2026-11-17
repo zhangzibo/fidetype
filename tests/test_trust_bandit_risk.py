@@ -206,3 +206,193 @@ def test_policy_wrapper_explores_as_offer_and_never_commits_below_threshold():
     d, tk = bp.decide(_inputs(0.9))
     assert tk.commit and d.action == Action.COMMIT
     assert bp.feedback(tk, "zz") == 1.0
+
+
+# --- review fixes (wiki/questions/g3-audit-review.md): H1, M1, M2, L4 --------------------------
+
+
+def _single(eps=0.2, delta=0.5, bet=0.1, seed=None):
+    """K = J = 1 controller that never commits (threshold far above every score)."""
+    return BanditCommitRiskControl(alpha=0.05, explore=eps, delta=delta, eta=1e-9, lam_init=100.0,
+                                   grid=(0.5,), bets=(bet,), seed=seed)
+
+
+def test_single_threshold_bound_is_tight_enough_to_catch_a_halved_slack():
+    """K = J = 1, delta 0.5: true failure rate about 0.33 with the full slack, about 0.76 with half of it.
+
+    Every item has s = 0.6 >= 0.5 and is wrong (c = 1); it is withheld and explored at rate 0.2. The
+    bound is checked after every item. Runs: 300 (sd of the rate about 0.03), so the pass rule
+    "rate <= delta" fails with high probability if the slack in the code were halved. The naive
+    estimate (no 1/pi) must fail almost always (negative control).
+    """
+    eps, delta, n, runs = 0.2, 0.5, 200, 300
+    fails = fails_half = fails_naive = 0
+    for seed in range(runs):
+        rc = _single(eps, delta, seed=10_000 + seed)
+        f = fh = fn = False
+        n_shown_wrong = 0
+        for t in range(1, n + 1):
+            tk = rc.decide(0.6)
+            n_shown_wrong += tk.shown
+            rc.observe(tk, 1.0 if tk.shown else None)
+            slack = ipw_slack(rc._V, 1, delta, rc.bets)[0]
+            f |= t > rc.audit_upper()[0] + 1e-9
+            fh |= t > rc._SX[0] + 0.5 * slack + 1e-9
+            fn |= t > n_shown_wrong + slack + 1e-9
+        fails += f
+        fails_half += fh
+        fails_naive += fn
+    assert fails / runs <= delta
+    assert fails / runs > 0.15             # the event is not trivially empty: the bound is near its level
+    assert fails_half / runs > delta + 0.1  # a halved slack would fail the same rule
+    assert fails_naive / runs > 0.95        # negative control: complete-case count without 1/pi
+
+
+def test_coin_adaptive_adversary():
+    """The data depend on the PAST coins: after an explored item, the next 3 items are right (c = 0).
+
+    So the adversary makes the items near a shown one right and the others wrong, as far as the past
+    coins allow. It cannot see the coin of the current item.
+    """
+    eps, delta, n, runs = 0.2, 0.5, 200, 300
+    fails = 0
+    for seed in range(runs):
+        rc = _single(eps, delta, seed=20_000 + seed)
+        quiet = 0
+        y = 0.0
+        f = False
+        for _ in range(n):
+            c = 0.0 if quiet > 0 else 1.0
+            quiet = max(0, quiet - 1)
+            tk = rc.decide(0.6)
+            rc.observe(tk, c if tk.shown else None)
+            if tk.explore:
+                quiet = 3
+            y += c
+            f |= y > rc.audit_upper()[0] + 1e-9
+        fails += f
+    assert fails / runs <= delta + 3 * math.sqrt(delta * (1 - delta) / runs)
+
+
+def test_cs_rule_audit_holds_uniformly_in_time():
+    """rule='cs': the threshold (and so pi_t) depends on the past coins through the audit."""
+    delta, n, runs = 0.1, 1000, 60
+    fails = certified = 0
+    for seed in range(runs):
+        rng = np.random.default_rng(3000 + seed)
+        rc = BanditCommitRiskControl(alpha=0.1, rule="cs", explore=0.2, delta=delta, seed=seed)
+        grid = np.asarray(rc.grid)
+        sh, ch = [], []
+        failed = False
+        for t in range(n):
+            s = rng.uniform(0, 1)
+            c = float(rng.uniform() < 1.5 * (1 - s) ** 3)
+            tk = rc.decide(s)
+            rc.observe(tk, c if tk.shown else None)
+            sh.append(s)
+            ch.append(c)
+            if (t + 1) % 50 == 0 and np.any(_true_counts(sh, ch, grid) > rc.audit_upper() + 1e-9):
+                failed = True
+        fails += failed
+        certified += rc.threshold <= 1.0
+    assert fails / runs <= delta + 3 * math.sqrt(delta * (1 - delta) / runs)
+    assert certified >= runs // 2  # the rule really commits, so it is tested
+
+
+def _delayed_run(seed, mode, n=2000, lag=300, eps=0.05):
+    """Reviewer probe B: lam fixed 0.6, every item below 0.6 is wrong. Shown items get their label late
+    (``mode="lag"``: a random lag up to ``lag``, out of order) or never (``mode="never"``); withheld items
+    are fed back at once. Returns (audit failed, old observe-time accounting failed)."""
+    rng = np.random.default_rng(seed)
+    rc = BanditCommitRiskControl(alpha=0.05, explore=eps, delta=0.1, eta=1e-9, lam_init=0.6, seed=seed)
+    grid = np.asarray(rc.grid)
+    K = grid.size
+    sh, ch = [], []
+    queue = []  # (due time, ticket, c)
+    old_sx, old_v = np.zeros(K), np.zeros(K)  # what the pre-fix code summed (observed items only)
+
+    def feed(tk, c):
+        rc.observe(tk, c)
+        above = tk.score >= grid
+        if tk.shown:
+            old_sx[:] += above * ((1.0 if c is None else c) / tk.propensity)
+        if tk.propensity < 1.0:
+            old_v[:] += above / tk.propensity
+
+    failed = failed_old = False
+    for t in range(n):
+        s = rng.uniform(0, 1)
+        c = 1.0 if s < 0.6 else float(rng.uniform() < 0.05)
+        tk = rc.decide(s)
+        sh.append(s)
+        ch.append(c)
+        if not tk.shown:
+            feed(tk, None)
+        elif mode == "lag":
+            queue.append((t + int(rng.integers(1, lag + 1)), tk, c))
+        due = [q for q in queue if q[0] <= t]
+        queue = [q for q in queue if q[0] > t]
+        for q in sorted(due, key=lambda q: rng.uniform()):  # out of order
+            feed(q[1], q[2])
+        if (t + 1) % 100 == 0:
+            true = _true_counts(sh, ch, grid)
+            failed |= bool(np.any(true > rc.audit_upper() + 1e-9))
+            failed_old |= bool(np.any(true > old_sx + ipw_slack(old_v, K, 0.1, rc.bets) + 1e-9))
+    return failed, failed_old
+
+
+@pytest.mark.parametrize("mode", ["lag", "never"])
+def test_audit_holds_with_delayed_or_never_returned_feedback(mode):
+    """H1: the audit counts every decided item at decide time, so missing labels cannot break it."""
+    runs = 40
+    res = [_delayed_run(500 + seed, mode) for seed in range(runs)]
+    fails = sum(r[0] for r in res)
+    assert fails / runs <= 0.1 + 3 * math.sqrt(0.1 * 0.9 / runs)
+    if mode == "never":
+        # negative control: the old accounting (sums updated in observe) fails in (almost) every run
+        assert sum(r[1] for r in res) / runs >= 0.9
+
+
+def test_pending_shown_item_counts_as_wrong_until_its_label_arrives():
+    rc = BanditCommitRiskControl(alpha=0.1, explore=1.0, eta=1e-9, lam_init=0.9, seed=0)
+    tk = rc.decide(0.5)
+    assert tk.explore and tk.propensity == 1.0
+    k = 50  # grid point 0.50
+    rep = rc.report()
+    assert rc._SX[k] == 1.0 and rep["n_decided"] == 1 and rep["n_observed"] == 0
+    rc.observe(tk, 0.0)
+    assert rc._SX[k] == 0.0
+    rc2 = BanditCommitRiskControl(alpha=0.1, explore=0.5, eta=1e-9, lam_init=0.9, seed=1)
+    tks = [rc2.decide(0.5) for _ in range(40)]
+    before = rc2.audit_upper().copy()
+    for tk in tks:
+        rc2.observe(tk, 0.0 if tk.shown else None)
+    after = rc2.audit_upper()
+    assert np.all(after <= before + 1e-9) and after[k] < before[k]  # labels only lower the bound
+    assert rc2._N[k] == 40  # every decided item is in the audit
+
+
+def test_forbidden_items_are_never_explored_and_the_coin_stream_is_unchanged():
+    """L4: s = -inf adds nothing to the audit, so it is never shown for exploration."""
+    rc = BanditCommitRiskControl(alpha=0.1, explore=1.0, eta=1e-9, lam_init=0.9, seed=7)
+    for _ in range(20):
+        tk = rc.decide(-math.inf)
+        assert not tk.shown and not tk.explore and tk.propensity == 0.0
+        rc.observe(tk, None)
+    assert rc.n_explore == 0 and np.all(rc._V == 0) and np.all(rc._SX == 0)
+    # one coin per withheld item, whatever the score: the next coins continue the same stream
+    rng = np.random.default_rng(7)
+    rng.random(20)
+    rc.explore = 0.5
+    u = rng.random(10)
+    got = [rc.decide(0.3).explore for _ in range(10)]
+    assert got == list(u < 0.5)
+
+
+def test_default_seed_draws_fresh_coins():
+    """M1: the default seed is None (OS entropy); fixed seeds reproduce."""
+    assert BanditCommitRiskControl().seed is None
+    a = [BanditCommitRiskControl(explore=0.5, lam_init=0.9).decide(0.3).explore for _ in range(64)]
+    assert 0 < sum(a) < 64  # independent streams, not one fixed coin repeated
+    s1 = [BanditCommitRiskControl(explore=0.5, lam_init=0.9, seed=3) for _ in range(2)]
+    assert [s1[0].decide(0.3).explore for _ in range(30)] == [s1[1].decide(0.3).explore for _ in range(30)]

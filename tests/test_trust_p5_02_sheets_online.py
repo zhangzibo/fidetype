@@ -210,6 +210,25 @@ def test_online_methods_and_bandit(guards):
         base.online("aci", explore=0.1)
 
 
+def test_bandit_audit_rows_below_the_floor_are_marked_floored(guards):
+    """G3 review L2: rows with a grid threshold below the floor are not bounds for that threshold."""
+    base, _ = guards
+    ob = base.online("bandit", explore=0.2, seed=5)
+    if not math.isfinite(ob.floor):
+        pytest.skip("offline guard never commits")
+    xs, ts = drifted(100, 6, 0.2)
+    for x, t in zip(xs, ts):
+        r, tk = ob.decide(x)
+        ob.feedback(tk, t if tk.shown else None)
+    a = ob.report()["audit"]
+    assert a["floored"] == [g < ob.floor for g in a["grid"]] and any(a["floored"])
+    for g, f, ub in zip(a["grid"], a["floored"], a["upper_wrong"]):
+        assert (ub is None) == f
+    assert ob.controller.seed == 5 and base.online("bandit", explore=0.1).controller.seed is None
+    s = ob.policy_sheets()[-1]
+    assert any("floored" in x for x in s.assumptions) and any("unpredictable" in x for x in s.assumptions)
+
+
 def test_online_floor_when_offline_never_commits(guards):
     base, _ = guards
     g = ft.TrustGuard(base.config.with_policy(commit_p=math.inf), base._codec, base.sheet)

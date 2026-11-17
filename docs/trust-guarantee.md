@@ -231,7 +231,9 @@ bp.controller.report()               # realised rate, certificate, audit per thr
 |---|---|---|
 | Long-run wrong-commit rate per item ≤ α + (λ_end − λ_start)/(η T) (`target="marginal"`, default) | any sequence (drift, decoder updates) | the labels of commits only |
 | Long-run error rate among commits ≤ α + (λ_end − λ_start)/(η N_commits) (`target="precision"`) | any sequence | the labels of commits only; set `lam_init` (at "never commit" it never moves) |
-| Audit: upper bound on the wrong commits that any grid threshold would have made on the items so far | probability ≥ 1 − δ over the exploration coins | `explore` > 0: withheld items are shown as an OFFER at this rate (never committed) |
+| Audit: upper bound on the wrong commits that any grid threshold would have made on the items decided so far | probability ≥ 1 − δ over the exploration coins | `explore` > 0: withheld items are shown as an OFFER at this rate (never committed); coins unpredictable to whatever produces the data (default `seed=None`, OS entropy; a fixed seed only for replays and tests); every decided item enters the audit at decision time (automatic since the G3 review fix: a shown item counts as wrong until its label arrives, so late or lost labels only widen the bound) |
+
+Audit details. Items that the policy forbids to commit (score −inf) are never explored: they add nothing to the audit. With the floor on (`floor=True`), audit rows for grid thresholds below the floor are marked `floored` in `report()["audit"]` and their numbers are None: scores below the floor never reach the controller, so these rows are not bounds for those thresholds. Review: [G3 audit review](../wiki/questions/g3-audit-review.md).
 
 Not covered: silent errors (wrong commits that the user does not correct), one short session, future items for the audit bound. Full scope: [F1 guarantee scope](../wiki/questions/f1-guarantee-scope.md). Code: [`src/fidetype/trust/bandit_risk.py`](../src/fidetype/trust/bandit_risk.py), [`src/fidetype/trust/online_guard.py`](../src/fidetype/trust/online_guard.py). Replay: [P15-04](../experiments/2026-11-16-p15-04-bandit/results.md).
 

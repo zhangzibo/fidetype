@@ -46,12 +46,36 @@ anyway if the policy OFFERs it (``offered=True``), else it is explored
 item t is shown is::
 
     pi_t = 1          if s_t >= lam_t or offered
+           0          if s_t = -inf (the policy forbids COMMIT: never explored)
            explore    otherwise
 
 ``pi_t`` depends only on the past and on ``s_t``. The coin is drawn after
 ``s_t`` and ``c_t`` are fixed. The IPW term ``X_t(lam) = O_t c^_t 1[s_t >= lam] / pi_t``
 (``O_t`` = shown; ``c^_t`` = the label, or 1 if a shown item gets no
 label: pessimistic) has ``E[X_t | past, s_t, c_t] >= Y_t(lam)``.
+
+An item with ``s_t = -inf`` adds 0 to every ``Y``, ``X`` and ``V`` (no grid
+threshold commits it), so exploring it costs user effort and gives the audit
+no information. It is never shown for exploration (``pi_t = 0``). A coin is
+still drawn for every withheld item, so the coin stream does not depend on
+the scores.
+
+Audit accounting (decision order). The audit adds item t at ``decide`` time,
+before its label can arrive: ``N``, ``V`` and, for a shown item, ``X`` with a
+provisional ``c^_t = 1``. When the label arrives, ``observe`` lowers ``X`` to
+the true ``c^_t``. So at every moment the audit sum contains EVERY decided
+item, in decision order, and each term is ``>=`` the term of the proof.
+Late, out-of-order or never-returned feedback can only make the bound larger.
+(Before this fix the sums were updated in ``observe``: explored offers that
+waited for a label were missing, the set in the sum depended on the coins,
+and with never-returned feedback the bound failed with probability 1; see
+``wiki/questions/g3-audit-review.md``, finding H1.)
+
+Coins (seed). The probability in (G3) is over the exploration coins. The
+coins must be unpredictable to whatever produces the data (the user, the
+decoder, the integration). The default ``seed=None`` takes fresh OS entropy.
+A fixed seed gives a fixed, public coin stream (the repo is public): use it
+only for replays and tests.
 
 Guarantees (what this module claims; the full scope is in the wiki page
 ``wiki/questions/f1-guarantee-scope.md``)
@@ -77,7 +101,8 @@ allowed error rate among commits (``1 - target precision``).
 (G3) Audit (needs ``explore > 0``). For every threshold lam_k of a fixed
 grid (K points) and every time t at once, with probability >= 1 - delta
 over the exploration coins only (``s_t`` and ``c_t`` may be ANY adaptive
-sequence that does not see the coin of item t)::
+sequence that does not see the coin of item t, and the coins are
+unpredictable to the data source: ``seed=None`` in live use)::
 
     sum_{i<=t} Y_i(lam_k) <= sum_{i<=t} X_i(lam_k)
                              + min_b [ psi(b) V_t(lam_k) + log(K J / delta) ] / b
@@ -88,9 +113,20 @@ Proof sketch: ``D_i = Y_i - X_i <= 1`` has conditional mean <= 0 and
 ``E[D_i^2 | .] <= 1[s_i >= lam] / pi_i`` (0 if pi_i = 1, because then
 D_i <= 0); Bennett's lemma ``E e^{b D} <= exp(psi(b) E D^2)`` makes
 ``exp(b sum D - psi(b) V)`` a non-negative supermartingale; Ville's
-inequality and a union bound over (lam_k, b) finish it. This is a design-
-based statement: it bounds the wrong commits that threshold lam_k WOULD
-HAVE MADE on the items seen so far. Divided by the known count
+inequality and a union bound over (lam_k, b) finish it.
+
+Why late labels are safe. The label of a shown item arrives AFTER its coin,
+and whether (and when) it arrives may depend on the coin. So the ``c^_t``
+that the code uses is not fixed at step t. The supermartingale is therefore
+built on ``D'_t = Y_t - X'_t`` with ``X'_t = O_t c_t 1[s_t >= lam] / pi_t``
+(the TRUE ``c_t``, fixed before the coin: the steps above hold for ``D'_t``).
+The code holds ``X_t`` with ``c^_t`` in {provisional 1, label 1 if missing,
+true ``c_t``}, so ``X_t >= X'_t`` for every item at every moment, and the
+bound on ``sum Y`` with ``X'`` implies the bound with ``X``.
+
+This is a design-based statement: it bounds the wrong commits that threshold
+lam_k WOULD HAVE MADE on the items DECIDED so far (all of them, whether their
+feedback arrived or not). Divided by the known count
 ``N_t(lam_k) = sum 1[s_i >= lam_k]`` it bounds the counterfactual precision
 error. It does not say anything about future items unless they are like
 the past (exchangeable / stationary).
@@ -168,7 +204,7 @@ class BanditTicket:
 class BanditCommitRiskControl:
     """Online COMMIT threshold with shown-only feedback (module docstring)::
 
-        rc = BanditCommitRiskControl(alpha=0.05, explore=0.05, seed=0)
+        rc = BanditCommitRiskControl(alpha=0.05, explore=0.05)   # seed=None: OS entropy
         for item in session:
             tk = rc.decide(score(item), offered=policy_offers(item))
             if tk.commit: insert top-1          # the user may correct it
@@ -177,6 +213,11 @@ class BanditCommitRiskControl:
             ...                                 # later, maybe out of order:
             rc.observe(tk, commit_loss)         # None if no label arrived
         rc.report()                             # realised rate, certificate, audit
+
+    The audit counts every item at ``decide`` time (a shown item as wrong until
+    its label arrives), so late, out-of-order or never-returned feedback keeps
+    (G3) valid; it only makes the bound larger. The ACI state (G1 / G2) moves
+    at ``observe`` time, on the realised losses.
     """
 
     #: marginal: allowed wrong-commit rate per decided item; precision: allowed error rate among commits.
@@ -193,7 +234,9 @@ class BanditCommitRiskControl:
     score_max: float = 1.0
     grid: Sequence[float] = DEFAULT_GRID
     bets: Sequence[float] = DEFAULT_BETS
-    seed: int | None = 0
+    #: Seed of the exploration coins. None (default): fresh OS entropy, required for (G3) in live use
+    #: (the coins must be unpredictable to the data source). Fixed seeds: replays and tests only.
+    seed: int | None = None
 
     # --- state ---
     lam_t: float = math.nan
@@ -229,11 +272,11 @@ class BanditCommitRiskControl:
         K = g.size
         self._SX = np.zeros(K)      # sum of IPW terms X_i(lam_k)
         self._V = np.zeros(K)       # variance proxy V_t(lam_k)
-        self._N = np.zeros(K)       # N_t(lam_k): items with s_i >= lam_k (decided and observed)
+        self._N = np.zeros(K)       # N_t(lam_k): decided items with s_i >= lam_k
         self._NC_lab = np.zeros(K)  # naive complete case: labelled items with s_i >= lam_k
         self._NW_lab = np.zeros(K)  # naive complete case: labelled wrong items with s_i >= lam_k
         self._n_lab = 0
-        self._n_seen = 0            # items fed to the audit (observe calls)
+        self._n_seen = 0            # items in the audit (= decided items; added at decide time)
         self._rng = np.random.default_rng(self.seed)
         if math.isnan(self.lam_t):
             lam = self._never if self.lam_init is None or not math.isfinite(self.lam_init) else float(self.lam_init)
@@ -288,13 +331,26 @@ class BanditCommitRiskControl:
         if commit or offered:
             shown, pi = True, 1.0
         else:
-            pi = float(self.explore)
-            explore = shown = bool(pi > 0 and self._rng.random() < pi)
+            # one coin per withheld item (the stream does not depend on the score);
+            # s = -inf: no grid threshold commits it, so it is never explored (pi = 0)
+            pi = float(self.explore) if score > -math.inf else 0.0
+            u = self._rng.random() if self.explore > 0 else 1.0
+            explore = shown = bool(pi > 0 and u < pi)
         tk = BanditTicket(self._next_id, float(score), lam, commit, shown, explore, pi, top1)
         self._next_id += 1
         self._pending[tk.id] = tk
         self.n_explore += explore
         self.n_shown += shown
+        # (G3) audit, in decision order: add the item NOW (H1 fix); a shown item counts as wrong
+        # (c^ = 1) until observe() lowers it to its label
+        above = score >= self._g
+        self._n_seen += 1
+        self._N += above
+        if shown:
+            self._SX += above * (1.0 / pi)
+        if pi < 1.0 and score > -math.inf:
+            self._V += above / max(pi, 1e-300)
+        self._cs_cache = None
         return tk
 
     @property
@@ -321,15 +377,10 @@ class BanditCommitRiskControl:
         self.n_obs += 1
         self.n_commits += ticket.commit
         self.sum_loss += loss
-        # audit sums
-        s = ticket.score
-        above = s >= self._g
-        self._n_seen += 1
-        self._N += above
-        if ticket.shown:
-            self._SX += above * (c_hat / ticket.propensity)
-        if ticket.propensity < 1.0:
-            self._V += above / max(ticket.propensity, 1e-300)
+        # audit: decide() added this item with c^ = 1; lower X to the label (never raises it)
+        above = ticket.score >= self._g
+        if ticket.shown and c_hat < 1.0:
+            self._SX -= above * ((1.0 - c_hat) / ticket.propensity)
         if ticket.shown and c is not None:
             self._n_lab += 1
             self._NC_lab += above
@@ -383,6 +434,7 @@ class BanditCommitRiskControl:
             "explore": self.explore,
             "delta": self.delta,
             "n_observed": T,
+            "n_decided": self._n_seen,
             "n_commits": self.n_commits,
             "n_shown": self.n_shown,
             "n_explore": self.n_explore,

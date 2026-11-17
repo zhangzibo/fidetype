@@ -68,3 +68,10 @@ Both overshoot 0.5 on these streams. The (G2) bound is long-run per commit: with
 - Items are held-out trials of a frozen decoder: no decoder update happens in this replay (the update loop is P15-02 / P15-03).
 - The simulated user always gives the label of an explored offer, and no `p_sloppy` noise.
 - Start threshold 0.3 (the P14-03 value). The certificate slack depends on it.
+
+## Rerun after the G3 review fixes (2026-11-16)
+
+The [G3 audit review](../../wiki/questions/g3-audit-review.md) found issues H1, M1 and L4. The fixes changed `bandit_risk.py`: the audit now adds each item at decide time (H1), the default seed is None (M1), and items with s = −inf (the policy forbids COMMIT) are never explored (L4). The replay passes an explicit seed per run, so M1 does not change it. We ran the replay again with the same command (CPU, 26.5 s). The original numbers above stay as they were.
+
+- **Changed:** only `explored_median` (the user cost of exploration). It is lower because forbidden items are no longer offered. T12: B05 18 → 16 (q 1.0 and 0.9); B20 73 → 68 and 72.5 → 67; E_max 80 → 75; P_bandit 19 → 17.5. T15: B05 32 → 31 and 32 → 30.5; B20 129 → 124 and 128.5 → 123; E_max 139 → 133; P_bandit 35 → 33.
+- **Not changed:** every rate, commit count, certificate, CP95 interval, audit violation fraction (still 0.0) and bias value. The coin stream is the same (one coin per withheld item, also for forbidden items), and in this replay each item is fed back before the next decision, so the H1 accounting gives the same sums.

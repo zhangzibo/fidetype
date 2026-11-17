@@ -64,7 +64,7 @@
      "r1_all": true,
      "commits_median": 35.0,
      "commits_max": 35,
-     "explored_median": 18.0,
+     "explored_median": 16.0,
      "median_seed_cp95": [
       0.0308,
       0.0762
@@ -96,7 +96,7 @@
      "r1_all": true,
      "commits_median": 37.0,
      "commits_max": 45,
-     "explored_median": 18.0,
+     "explored_median": 16.0,
      "median_seed_cp95": [
       0.0348,
       0.0821
@@ -113,7 +113,7 @@
      "r1_all": true,
      "commits_median": 35.0,
      "commits_max": 35,
-     "explored_median": 73.0,
+     "explored_median": 68.0,
      "median_seed_cp95": [
       0.0308,
       0.0762
@@ -144,7 +144,7 @@
      "r1_all": true,
      "commits_median": 37.0,
      "commits_max": 45,
-     "explored_median": 72.5,
+     "explored_median": 67.0,
      "median_seed_cp95": [
       0.0348,
       0.0821
@@ -161,7 +161,7 @@
      "r1_all": true,
      "commits_median": 0.0,
      "commits_max": 0,
-     "explored_median": 80.0,
+     "explored_median": 75.0,
      "median_seed_cp95": [
       0.0,
       0.0092
@@ -192,7 +192,7 @@
      "r1_all": true,
      "commits_median": 7.0,
      "commits_max": 7,
-     "explored_median": 19.0,
+     "explored_median": 17.5,
      "audit_violation_frac": 0.0,
      "bias_naive": {
       "0.15": -0.0165393435937124,
@@ -309,7 +309,7 @@
      "r1_all": true,
      "commits_median": 48.0,
      "commits_max": 48,
-     "explored_median": 32.0,
+     "explored_median": 31.0,
      "median_seed_cp95": [
       0.0326,
       0.0655
@@ -341,7 +341,7 @@
      "r1_all": true,
      "commits_median": 52.0,
      "commits_max": 65,
-     "explored_median": 32.0,
+     "explored_median": 30.5,
      "median_seed_cp95": [
       0.0374,
       0.072
@@ -358,7 +358,7 @@
      "r1_all": true,
      "commits_median": 48.0,
      "commits_max": 48,
-     "explored_median": 129.0,
+     "explored_median": 124.0,
      "median_seed_cp95": [
       0.0326,
       0.0655
@@ -389,7 +389,7 @@
      "r1_all": true,
      "commits_median": 52.0,
      "commits_max": 65,
-     "explored_median": 128.5,
+     "explored_median": 123.0,
      "median_seed_cp95": [
       0.0374,
       0.072
@@ -406,7 +406,7 @@
      "r1_all": true,
      "commits_median": 2.0,
      "commits_max": 2,
-     "explored_median": 139.0,
+     "explored_median": 133.0,
      "median_seed_cp95": [
       0.0,
       0.0079
@@ -437,7 +437,7 @@
      "r1_all": true,
      "commits_median": 2.0,
      "commits_max": 2,
-     "explored_median": 35.0,
+     "explored_median": 33.0,
      "audit_violation_frac": 0.0,
      "bias_naive": {
       "0.15": 0.011557968394710173,
@@ -499,5 +499,5 @@
    }
   }
  },
- "runtime_s": 26.6
+ "runtime_s": 26.5
 }

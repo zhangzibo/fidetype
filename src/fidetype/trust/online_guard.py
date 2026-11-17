@@ -51,6 +51,18 @@ sequence on top. The cost: if the offline guard never commits
 (``commit_p = inf``), the online guard never commits either. With
 ``floor=False`` only the online bound holds.
 
+Audit rows below the floor (``"bandit"``). A commit score below the floor
+becomes ``-inf`` before the controller sees it. So the (G3) audit row of a
+grid threshold lam < floor is the bound for "commit iff p >= floor", not for
+threshold lam on the raw score. :meth:`OnlineGuard.report` marks these rows
+in ``audit["floored"]`` and sets their numbers to None; they are not bounds
+for lam.
+
+Exploration coins (``"bandit"``). The default ``seed=None`` draws fresh OS
+entropy. The (G3) probability is over the coins, so the coins must be
+unpredictable to whatever produces the data. Use a fixed seed only for
+replays and tests (the repo is public).
+
 Licence: our own code, Apache-2.0.
 """
 
@@ -160,6 +172,16 @@ class OnlineGuard:
     def report(self) -> dict[str, Any]:
         """The controller report (realised rate, certificate, threshold), plus the floor and the method."""
         rep = dict(self.controller.report())
+        if self.method == "bandit" and math.isfinite(self.floor) and "audit" in rep:
+            a = dict(rep["audit"])
+            fl = [g < self.floor for g in a["grid"]]
+            for k, v in a.items():
+                if k != "grid" and isinstance(v, list) and len(v) == len(fl):
+                    a[k] = [None if f else x for f, x in zip(fl, v)]
+            a["floored"] = fl
+            a["floored_note"] = (f"rows with grid threshold < floor {self.floor:g} are floored: scores below the "
+                                 "floor never reach the controller, so these rows are not bounds for that threshold")
+            rep["audit"] = a
         rep["floor"] = self.floor
         rep["online_method"] = self.method
         rep["base_config_id"] = self.guard.config_id
@@ -194,7 +216,7 @@ def online(guard: Any, method: OnlineGuardMethod = "aci", *, alpha: float | None
            eta: float = 0.05, gamma: float = 0.005, window: int | None = 200, decay: float | None = None,
            missing: Literal["skip", "pessimistic"] = "skip", target: Literal["marginal", "precision"] = "marginal",
            rule: Literal["aci", "cs", "max"] = "aci", explore: float = 0.0, delta: float | None = None,
-           lam_init: float | None = None, seed: int | None = 0) -> OnlineGuard:
+           lam_init: float | None = None, seed: int | None = None) -> OnlineGuard:
     """Wrap a calibrated :class:`~fidetype.trust.dropin.TrustGuard` in an online controller.
 
     Parameters
@@ -216,7 +238,8 @@ def online(guard: Any, method: OnlineGuardMethod = "aci", *, alpha: float | None
         Start threshold. Default: the offline ``commit_p`` if finite, else "never commit" (ACI then
         lowers it while the losses stay below alpha).
     seed
-        ``"bandit"``: seed of the exploration coins.
+        ``"bandit"``: seed of the exploration coins. None (default): fresh OS entropy. The (G3) audit
+        needs coins that the data source cannot predict; pass a fixed seed only for replays and tests.
     """
     from fidetype.trust.bandit_risk import BanditCommitRiskControl
     from fidetype.trust.online_risk import OnlineCommitRiskControl

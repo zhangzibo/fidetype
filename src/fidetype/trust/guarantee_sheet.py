@@ -571,7 +571,16 @@ def sheet_from_bandit(ctrl: Any, *, scope: str = "the live stream of one guard",
                      "feedback": "shown-only (bandit): labels of COMMITs and OFFERs only; withheld items get none"},
         assumptions=("Each utterance is decided once; the exploration coin is drawn after the score and the truth "
                      "are fixed.",
-                     "A shown item without a label counts as wrong in the audit (pessimistic)."),
+                     "A shown item without a label counts as wrong in the audit (pessimistic).")
+                    + (("Audit: the exploration coins are unpredictable to whatever produces the data (seed=None, "
+                        "fresh OS entropy, in live use; a fixed seed is a public, fixed coin stream).",
+                        "Audit: every decided item enters the audit at decision time, in decision order; a shown item "
+                        "counts as wrong until its label arrives, so late or never-returned feedback only makes the "
+                        "bound larger.")
+                       + ((f"Audit rows for grid thresholds below the floor {floor:g} are floored (scores below the "
+                           "floor never reach the controller): they are not bounds for those thresholds.",)
+                          if floor is not None else ())
+                       if ctrl.explore > 0 else ()),
         not_guaranteed=_online_common_not(True) + (
             "Future items for the audit bound unless they are like the past (the audit is about items seen so far).",
             "A user whose intended text changes because of what was shown."),
