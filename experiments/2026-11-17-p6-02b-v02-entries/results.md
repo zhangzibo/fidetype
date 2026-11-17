@@ -5,7 +5,7 @@ task: P6-08
 updated: 2026-11-17
 ---
 
-# P6-02b: v0.2 entries for the three tracks that had only v0.1 entries (closes gap 27 = P6-08)
+# P6-02b: v0.2 entries for the three tracks that had only v0.1 entries (closes gap 31 = P6-08)
 
 Runner: [run.py](run.py). Score cards (aggregates, no text): [`benchmark/results/v0.2/`](../../benchmark/results/v0.2/). Table of all new cards: [results/tables.md](results/tables.md). Stage checks: [results/stages.json](results/stages.json). Submissions (they hold decoded text) and truth files: `C:\Users\zhang\bci-data\derived\p6-02b-v02-entries\` only. CPU only, no GPU. Peak RSS about 0.9 GB.
 
@@ -80,7 +80,7 @@ The b2t25-t15 track scores the copy-task trials of `t15_copyTask.pkl` (second ha
 
 So the decoder trained on about 368 test trials. Only the 103 val_eval trials are scored (declared subset, `[partial: 103/816]` on the board). The 106 val_select trials that are track test units are removed from the guard calibration (616 of 722 kept). The guard (`tcfg-065ec812c6cd643e`, n_LTT 231) commits on none of the 103 trials: safe WPM 0.00 (vacuous). This agrees with P14-05 (val_eval 701: 2 commits, both wrong).
 
-> **Our take:** a full-coverage M4-x entry on b2t25-t15 needs a decoder retrained without the track test trials, or a track variant built on the HDF5 val_eval partition. The partial entry must not rank against full ones (open rule: gap 26 = P6-07).
+> **Our take:** a full-coverage M4-x entry on b2t25-t15 needs a decoder retrained without the track test trials, or a track variant built on the HDF5 val_eval partition. The partial entry must not rank against full ones (open rule: gap 30 = P6-07).
 
 ### M4-13: one command when its outputs exist
 

@@ -1,4 +1,4 @@
-"""P6-02b: v0.2-format entries for b2t25-t15, toronto-semg and spanishbcbl-meg (closes open gap 27 = P6-08).
+"""P6-02b: v0.2-format entries for b2t25-t15, toronto-semg and spanishbcbl-meg (closes open gap 31 = P6-08).
 
 The v0.1 entries of these three tracks were scored from committed per-trial arrays or aggregates, with no
 per-unit text. A v0.2 submission needs per-unit text, a decision and the two control runs. So this script
