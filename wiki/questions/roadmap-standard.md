@@ -181,7 +181,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P1-14 Gap G-13 part (a): apply option A2 (dense + sparse in one frame, sparse keys type-checked)
 - **Gap:** 5 of the [open-gap list](open-gaps.md). Follow-up of P1-13, P1-04.
-- **Status:** `todo`.
+- **Status:** `done`. Commit `18713f9` (2026-11-16): RC4 amendment 2 applies A2 (FRM-2); three validators type-check the sparse keys; vectors V88 … V92; parity 341/341; G-13 closed.
 - **Depends on:** P1-13 (RC4), GEN-11.
 - **Source:** Commit `de2f242` (P1-04 done: G-13 part b closed, part a open with options A1-A3, A2 recommended).
 - **Done when:** The next spec draft applies option A2 of RC4 Appendix C.2: a frame may carry dense and sparse values together, and the sparse keys are type-checked (in line with GEN-11). The Python, TypeScript and Rust validators, the proto / JSON Schema and new conformance vectors agree (parity check passes), and G-13 is marked closed in the traceability table.
@@ -280,7 +280,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P4-09 BrainFlow bridge: move `device.board_id` / `device.board_name` out of the reserved namespace
 - **Gap:** 9 of the [open-gap list](open-gaps.md). Follow-up of P4-02.
-- **Status:** `todo`.
+- **Status:** `done`. Commit `18713f9` (2026-11-16): vendor keys `brainflow.board_id`, `brainflow.board_name`; test with no MET-3 warning.
 - **Depends on:** P1-04 (semconv registry).
 - **Source:** MET-3 warning on BrainFlow bridge streams ([docs/semconv.md](../../docs/semconv.md) rule 3); open-gap list 2026-11-16.
 - **Done when:** `src/fidetype/adapters/brainflow_bridge.py` no longer writes custom keys in the reserved `device` namespace: the keys move to a vendor namespace (for example `brainflow.*`) or a FEP registers them in `spec/semconv/`. A bridge stream validates with no MET-3 warning, and a test checks this.
@@ -817,7 +817,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-17 G3 audit: independent proof review and its fixes
 - **Gap:** 6 of the [open-gap list](open-gaps.md). Follow-up of P15-04.
-- **Status:** `todo`.
+- **Status:** `done`. Commits `98daec3` and `2e4e38d` (2026-11-16): all review findings fixed; optional L5 (V uses 1/π) written down as a limit.
 - **Partly closed:** Review part done, commit `4cd9cb5`: [G3 audit review](g3-audit-review.md), verdict "sound with fixes" (H1 high: delayed / out-of-order feedback can break the bound; M1 fixed public seed; M2 low-power tests; L1-L5).
 - **Depends on:** P15-04.
 - **Source:** Commit `4860e51` (P15-04 done; P15-04 done-when asks for a fresh-agent check of any new derivation); review `4cd9cb5`.
