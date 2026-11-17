@@ -24,6 +24,19 @@ Both are our own implementation of published methods.
    2021, "Retrain or not retrain: conformal test martingales for
    change-point detection", COPA, PMLR 152).
 
+   **Spread bets (P5-09, opt-in ``spread=True``).** The bets above react
+   only to the mean of the p-values. A change of spread at the same
+   centre (for example sd 1 -> 2) gives p-values near 0 *and* near 1, so
+   their mean stays near 1/2 and the test does not alarm. With
+   ``spread=True`` the mixture also holds the betting functions
+   ``1 + eps * (|2p - 1| - 1/2)``, ``eps`` in {-1, 1}. Under the null,
+   ``|2p - 1|`` is uniform on [0, 1], so each factor has mean 1 and lies
+   in [1/2, 3/2]. The mixture stays a non-negative martingale and the
+   anytime false-alarm bound does not change. ``eps = 1`` wins on a
+   wider spread, ``eps = -1`` on a narrower one. Cost: more components
+   share the capital, so a pure mean shift is detected a little later
+   (``experiments/2026-11-16-p5-09-drift-spread/results.md``).
+
 2. :class:`RiskDriftTest` -- drift of the observed wrong-commit loss.
    Null hypothesis: ``E[L_t | past] <= alpha`` at every step, where
    ``L_t`` in [0, 1] is the per-item loss (1 = a wrong commit the user saw,
@@ -141,7 +154,8 @@ class ConformalDriftTest:
     ``reference``: scores from the calibration data (at least 1; -inf is allowed, for "no text").
     ``level``: false-alarm probability over the whole stream. ``jump``: Simple Jumper rate (Vovk 2021 uses
     0.01). ``side``: ``"both"`` (default), ``"down"`` (bet only on live scores lower than the reference) or
-    ``"up"`` (only higher). ``seed``: random tie-breaking of the smoothed p-values.
+    ``"up"`` (only higher). ``seed``: random tie-breaking of the smoothed p-values. ``spread``: also bet on
+    ``|2p - 1|`` (a change of spread at the same centre; module docstring). Default False: the P5-01 bets.
 
     ``update(score)`` adds one live score and returns a :class:`DriftStatus`.
     """
@@ -149,7 +163,7 @@ class ConformalDriftTest:
     name = "scores"
 
     def __init__(self, reference: Iterable[float], *, level: float = 0.01, jump: float = 0.01,
-                 side: str = "both", seed: int = 0) -> None:
+                 side: str = "both", seed: int = 0, spread: bool = False) -> None:
         ref = [float(x) for x in reference]
         if not ref:
             raise ValueError("reference needs at least one score")
@@ -161,6 +175,9 @@ class ConformalDriftTest:
             raise ValueError("side must be 'both', 'down' or 'up'")
         self.side = side
         self._eps = np.asarray(eps)
+        self.spread = bool(spread)
+        #: Spread bets ``1 + eps * (|2p - 1| - 1/2)`` (P5-09); empty without ``spread``.
+        self._eps_spread = np.asarray((-1.0, 1.0) if self.spread else (), dtype=float)
         self._jump = float(jump)
         self._seed = int(seed)
         self._ref = sorted(ref)
@@ -179,7 +196,7 @@ class ConformalDriftTest:
             self._ref = ref
         self._bag = list(self._ref)
         self._rng = np.random.default_rng(self._seed)
-        self._mart = _Jumper(len(self._eps), self._jump)
+        self._mart = _Jumper(len(self._eps) + len(self._eps_spread), self._jump)
         self.n = 0
         self.alarm_at: int | None = None
         self.p_values: list[float] = []
@@ -199,7 +216,10 @@ class ConformalDriftTest:
         p = self.p_value(score)
         self.p_values.append(p)
         self.n += 1
-        self._mart.step(1.0 + self._eps * (p - 0.5))
+        f = 1.0 + self._eps * (p - 0.5)
+        if self.spread:
+            f = np.concatenate((f, 1.0 + self._eps_spread * (abs(2.0 * p - 1.0) - 0.5)))
+        self._mart.step(f)
         if self.alarm_at is None and self._mart.log_capital >= math.log(1.0 / self.level):
             self.alarm_at = self.n
         return self.status()
@@ -227,6 +247,8 @@ class ConformalDriftTest:
         d = self.status().to_dict()
         d.update({"test": "conformal-simple-jumper", "jump": self._jump, "side": self.side,
                   "n_reference": self.n_reference})
+        if self.spread:
+            d["spread"] = True
         return d
 
 
@@ -303,7 +325,8 @@ class DriftMonitor:
 
     ``reference_scores``: the score reference of :class:`ConformalDriftTest` (None: no score test).
     ``alpha``: the guard's risk limit (None: no risk test). ``level_scores`` / ``level_risk``: the levels of
-    the two tests; ``P(any false alarm) <= level_scores + level_risk``.
+    the two tests; ``P(any false alarm) <= level_scores + level_risk``. ``spread``: the score test also bets
+    on a change of spread (P5-09; default False).
     """
 
     reference_scores: Sequence[float] | None = None
@@ -313,13 +336,14 @@ class DriftMonitor:
     jump: float = 0.01
     side: str = "both"
     seed: int = 0
+    spread: bool = False
     scores: ConformalDriftTest | None = field(init=False, default=None)
     risk: RiskDriftTest | None = field(init=False, default=None)
 
     def __post_init__(self) -> None:
         if self.reference_scores is not None:
             self.scores = ConformalDriftTest(self.reference_scores, level=self.level_scores, jump=self.jump,
-                                             side=self.side, seed=self.seed)
+                                             side=self.side, seed=self.seed, spread=self.spread)
         if self.alpha is not None:
             self.risk = RiskDriftTest(self.alpha, level=self.level_risk, jump=self.jump)
 
@@ -347,7 +371,7 @@ class DriftMonitor:
             self.reference_scores = list(reference_scores)
             if self.scores is None:
                 self.scores = ConformalDriftTest(self.reference_scores, level=self.level_scores, jump=self.jump,
-                                                 side=self.side, seed=self.seed)
+                                                 side=self.side, seed=self.seed, spread=self.spread)
             else:
                 self.scores.reset(self.reference_scores)
         elif self.scores is not None:

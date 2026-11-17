@@ -35,6 +35,16 @@ How a change happens (the rules):
    :class:`~fidetype.trust.drift.RiskDriftTest` at the guard's ``alpha``.
    Both are anytime valid: ``P(any false alarm) <= level_scores +
    level_risk`` while the data match the calibration.
+   **Guard-risk test (P5-10, opt-in ``guard_risk_test=True``).** A third
+   :class:`~fidetype.trust.drift.ConformalDriftTest` watches the
+   ``guard_risk`` of each decision (reference: the profile's
+   ``reference_guard_risk``). On the T12 replay of P5-01 the guard risk
+   drifts while ``p_top1`` does not, so only this test sees the change.
+   Its default action is ``"propose"``. With it, ``P(any false alarm) <=
+   level_scores + level_risk + level_guard_risk``. It is off by default,
+   so the default behaviour and the default false-alarm budget do not
+   change. ``spread=True`` adds the P5-09 spread bets to both score-type
+   tests (``p_top1`` and guard risk).
 2. **Tighten at once, loosen only through the gate.** A risk alarm
    (default action ``"tighten"``) sets the commit threshold to infinity
    (offer / withhold only). A higher threshold only removes commits, so this
@@ -87,7 +97,7 @@ from typing import Any, Hashable, Mapping, Sequence
 
 import numpy as np
 
-from fidetype.trust.drift import DriftMonitor
+from fidetype.trust.drift import ConformalDriftTest, DriftMonitor
 
 __all__ = [
     "PROFILE_SCHEMA",
@@ -182,6 +192,8 @@ def calibration_stats(guard: Any, inputs: Sequence[Any], texts: Sequence[str] | 
     if len(idx) > max_reference:
         idx = np.sort(np.random.default_rng(seed).choice(len(idx), size=max_reference, replace=False))
     out["reference_scores"] = [round(float(p[i]), 4) for i in idx]
+    # P5-10: the same items' guard risk, for the opt-in guard-risk drift test (no text; non-finite -> 1.0).
+    out["reference_guard_risk"] = [round(float(risk[i]), 4) if math.isfinite(risk[i]) else 1.0 for i in idx]
     return out
 
 
@@ -239,6 +251,11 @@ class UserProfile:
     @property
     def reference_scores(self) -> list[float]:
         return [_fj(x) for x in self.calibration.get("reference_scores", [])]
+
+    @property
+    def reference_guard_risk(self) -> list[float]:
+        """Reference guard risks of the guard-risk drift test (P5-10). Empty in profiles made before P5-10."""
+        return [_fj(x) for x in self.calibration.get("reference_guard_risk", [])]
 
     def add_history(self, event: str, **details: Any) -> dict[str, Any]:
         rec = {"time_utc": _now(), "event": str(event)}
@@ -334,6 +351,10 @@ class PersonalTrust:
     ``level_scores`` / ``level_risk``: false-alarm levels of the two drift tests.
     ``on_score_drift`` / ``on_risk_drift``: ``"propose"`` (ask for a gated re-calibration), ``"tighten"``
     (offer-only now, and propose) or ``"ignore"`` (record only).
+    ``guard_risk_test``: also run the drift test on the guard risk (P5-10; default False). It needs
+    ``profile.reference_guard_risk`` (profiles from :func:`calibration_stats` have it). ``level_guard_risk`` /
+    ``on_guard_risk_drift``: its level and its action. ``spread``: the score-type tests also bet on a change
+    of spread (P5-09; default False).
     ``n_recal`` / ``n_check``: labelled items for the candidate's calibration / the loop's check block
     (default ``n_check``: the loop's minimum). ``recalibrate_every``: also propose after this many new labels
     (None: only on drift). ``null_inputs``: your decoder's output on null input (needed for n-best input).
@@ -347,10 +368,12 @@ class PersonalTrust:
                  n_check: int | None = None, recalibrate_every: int | None = None,
                  null_inputs: Sequence[Any] | None = None, calibrate_kwargs: Mapping[str, Any] | None = None,
                  null_trials: int = 100, profile_path: str | os.PathLike[str] | None = None,
-                 max_buffer: int = 5000, seed: int = 0) -> None:
+                 max_buffer: int = 5000, seed: int = 0, guard_risk_test: bool = False,
+                 level_guard_risk: float = 0.005, on_guard_risk_drift: str = "propose", spread: bool = False) -> None:
         from fidetype.trust.update_hooks import TrustGuardUpdater
 
-        for name, v in (("on_score_drift", on_score_drift), ("on_risk_drift", on_risk_drift)):
+        for name, v in (("on_score_drift", on_score_drift), ("on_risk_drift", on_risk_drift),
+                        ("on_guard_risk_drift", on_guard_risk_drift)):
             if v not in ("propose", "tighten", "ignore"):
                 raise ValueError(f"{name} must be 'propose', 'tighten' or 'ignore'")
         self.profile = profile
@@ -368,13 +391,24 @@ class PersonalTrust:
         self.n_recal = int(n_recal)
         self.recalibrate_every = recalibrate_every
         self.on_score_drift, self.on_risk_drift = on_score_drift, on_risk_drift
+        self.on_guard_risk_drift = on_guard_risk_drift
         self.null_inputs = None if null_inputs is None else list(null_inputs)
         self.calibrate_kwargs = dict(calibrate_kwargs or {})
         self.profile_path = None if profile_path is None else Path(profile_path)
         self.max_buffer = int(max_buffer)
         ref = profile.reference_scores
         self.monitor = DriftMonitor(reference_scores=ref or None, alpha=guard.alpha, level_scores=level_scores,
-                                    level_risk=level_risk, jump=jump, seed=seed)
+                                    level_risk=level_risk, jump=jump, seed=seed, spread=spread)
+        #: The opt-in guard-risk drift test (P5-10), or None.
+        self.guard_risk_test: ConformalDriftTest | None = None
+        if guard_risk_test:
+            gref = profile.reference_guard_risk
+            if not gref:
+                raise ValueError("guard_risk_test=True needs reference guard risks in the profile "
+                                 "(calibration['reference_guard_risk'], from calibration_stats)")
+            self.guard_risk_test = ConformalDriftTest(gref, level=level_guard_risk, jump=jump, seed=seed,
+                                                      spread=spread)
+            self.guard_risk_test.name = "guard_risk"
         self._pending: dict[int, _Pending] = {}
         self._buffer: list[tuple[Any, str]] = []
         self._labels_since = 0
@@ -382,7 +416,7 @@ class PersonalTrust:
         self.tightened = False
         self.n_proposals = 0
         self.outcomes: list[Any] = []
-        self._alarm_seen = {"scores": False, "risk": False}
+        self._alarm_seen = {"scores": False, "risk": False, "guard_risk": False}
 
     # --- construction -----------------------------------------------------------
 
@@ -428,6 +462,12 @@ class PersonalTrust:
         if st is not None and st.alarmed and not self._alarm_seen["scores"]:
             self._alarm_seen["scores"] = True
             self._on_alarm("scores", self.on_score_drift)
+        if self.guard_risk_test is not None:
+            gr = float(r.guard_risk)
+            gst = self.guard_risk_test.update(gr if not math.isnan(gr) else math.inf)
+            if gst.alarmed and not self._alarm_seen["guard_risk"]:
+                self._alarm_seen["guard_risk"] = True
+                self._on_alarm("guard_risk", self.on_guard_risk_drift)
         return r
 
     __call__ = decide
@@ -458,14 +498,15 @@ class PersonalTrust:
         return loss
 
     def _on_alarm(self, which: str, action: str) -> None:
-        test = self.monitor.scores if which == "scores" else self.monitor.risk
+        test = {"scores": self.monitor.scores, "risk": self.monitor.risk,
+                "guard_risk": self.guard_risk_test}[which]
         self.profile.add_history("drift_alarm", test=which, config_id=self.guard.config_id, action=action,
                                  n=test.n, e_value=_jf(test.e_value), level=test.level)
         if action == "tighten":
             self.tighten(f"{which} drift alarm")
         if action in ("tighten", "propose"):
             self._open_proposal(f"{which} drift alarm")
-        self.profile.drift = self.monitor.summary()
+        self.profile.drift = self.drift_summary()
         self._save()
 
     def _open_proposal(self, reason: str, clear: bool = True) -> None:
@@ -530,14 +571,24 @@ class PersonalTrust:
             self.profile.add_history("recalibrate_accepted", from_config_id=before, config_id=self.guard.config_id,
                                      update_config_id=ucid, reason=reason, n_recal=len(cal), n_check=len(chk))
             self.monitor.reset(stats["reference_scores"])
-            self._alarm_seen = {"scores": False, "risk": False}
+            if self.guard_risk_test is not None:
+                self.guard_risk_test.reset(stats["reference_guard_risk"])
+            self._alarm_seen = {"scores": False, "risk": False, "guard_risk": False}
             self.proposal_reason = None
         else:
             self.profile.add_history("recalibrate_rejected", config_id=self.guard.config_id, update_config_id=ucid,
                                      reason=reason, reasons=list(out.reasons))
-        self.profile.drift = self.monitor.summary()
+        self.profile.drift = self.drift_summary()
         self._save()
         return out
+
+    def drift_summary(self) -> dict[str, Any]:
+        """The drift-test summary of the profile. The ``guard_risk`` key exists only with ``guard_risk_test``."""
+        d = self.monitor.summary()
+        if self.guard_risk_test is not None:
+            d["guard_risk"] = self.guard_risk_test.state_summary()
+            d["level_total"] = d["level_total"] + self.guard_risk_test.level
+        return d
 
     def _save(self) -> None:
         if self.profile_path is not None:
@@ -548,4 +599,4 @@ class PersonalTrust:
                 "tightened": self.tightened, "proposal_open": self.proposal_reason,
                 "labels": len(self._buffer), "labels_needed": self.labels_needed,
                 "n_proposals": self.n_proposals, "n_accepted": sum(o.accepted for o in self.outcomes),
-                "drift": self.monitor.summary(), "profile_version": self.profile.profile_version}
+                "drift": self.drift_summary(), "profile_version": self.profile.profile_version}

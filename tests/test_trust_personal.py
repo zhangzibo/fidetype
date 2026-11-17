@@ -284,3 +284,127 @@ def test_load_controller_from_a_saved_profile(guard_and_data, tmp_path):
     assert pt2.monitor.scores.n_reference == 300 and pt2.monitor.risk.alpha == pt.guard.alpha
     with pytest.raises(ValueError):
         PersonalTrust(pt.profile, pt.guard, on_risk_drift="panic")
+
+
+# --- P5-09: spread bets of the score test --------------------------------------------------------
+
+
+@pytest.mark.parametrize("level", [0.05])
+def test_spread_bets_keep_the_false_alarm_level(level):
+    rng = np.random.default_rng(20)
+    runs, alarms = 300, 0
+    for r in range(runs):
+        t = ConformalDriftTest(rng.normal(size=100), level=level, seed=r, spread=True)
+        t.update_many(rng.normal(size=600))
+        alarms += t.alarmed
+    assert alarms / runs <= level + 3 * _se(level, runs)
+
+
+@pytest.mark.parametrize("sd", [2.0, 0.5])
+def test_spread_bets_detect_a_spread_change_at_the_same_centre(sd):
+    rng = np.random.default_rng(21)
+    delays, delays_old = [], []
+    for r in range(30):
+        ref, null, live = rng.normal(size=200), rng.normal(size=500), rng.normal(0.0, sd, size=3000)
+        for spread, out in ((True, delays), (False, delays_old)):
+            t = ConformalDriftTest(ref, level=0.01, seed=r, spread=spread)
+            t.update_many(null)
+            n0 = t.n
+            for x in live:
+                if t.update(x).alarmed:
+                    break
+            out.append(t.n - n0 if t.alarmed else math.inf)
+    assert np.median(delays) <= 400 and sum(math.isinf(d) for d in delays) <= 1
+    if sd == 2.0:  # the gap of P5-01: the mean bets alone do not see a wider spread
+        assert sum(math.isinf(d) for d in delays_old) >= 25
+
+
+def test_spread_off_is_the_p5_01_test_and_spread_on_is_reported():
+    rng = np.random.default_rng(22)
+    ref, live = rng.normal(size=50), rng.normal(size=300)
+    a, b = ConformalDriftTest(ref, seed=3), ConformalDriftTest(ref, seed=3, spread=False)
+    for x in live:
+        assert a.update(x).e_value == b.update(x).e_value
+    c = ConformalDriftTest(ref, seed=3, spread=True)
+    c.update_many(live)
+    assert c.p_values == a.p_values  # same p-values; only the bets differ
+    assert c.state_summary()["spread"] is True and "spread" not in a.state_summary()
+    m = DriftMonitor(reference_scores=ref, alpha=0.05, spread=True)
+    assert m.scores.spread and not DriftMonitor(reference_scores=ref, alpha=0.05).scores.spread
+
+
+# --- P5-10: guard-risk drift test in PersonalTrust -------------------------------------------------
+
+
+class _StubResult:
+    def __init__(self, seq: int, p: float, gr: float) -> None:
+        self.seq, self.p_top1, self.guard_risk, self.action, self.text = seq, p, gr, "offer", None
+
+
+class _StubGuard:
+    """Replays recorded (p_top1, guard_risk) pairs; never commits (only the alarm path is tested)."""
+
+    alpha, delta, config_id = 0.05, 0.1, "tcfg-stub"
+
+    def __init__(self) -> None:
+        self.seq = 0
+
+    def decide(self, x, utterance_id=None):
+        self.seq += 1
+        return _StubResult(self.seq, float(x[0]), float(x[1]))
+
+
+class _StubUpdater:
+    def __init__(self, guard) -> None:
+        self.guard = guard
+        self.loop = type("L", (), {"n_check": 48})()
+
+
+def _stub_controller(rng, **kw):
+    g = _StubGuard()
+    prof = UserProfile.new("user-2", None, salt="k", calibration={
+        "reference_scores": list(rng.uniform(0.1, 0.2, size=200)),
+        "reference_guard_risk": list(rng.uniform(0.0, 0.5, size=200))})
+    return PersonalTrust(prof, g, updater=_StubUpdater(g), **kw)
+
+
+def test_guard_risk_test_is_opt_in_and_sees_a_guard_risk_drift():
+    rng = np.random.default_rng(30)
+    live = [(float(p), float(gr)) for p, gr in zip(rng.uniform(0.1, 0.2, 2000), rng.uniform(0.3, 1.0, 2000))]
+    old = _stub_controller(np.random.default_rng(31))  # default: p_top1 + observed risk only
+    new = _stub_controller(np.random.default_rng(31), guard_risk_test=True, level_guard_risk=0.0025)
+    assert old.guard_risk_test is None and "guard_risk" not in old.report()["drift"]
+    alarm_at = None
+    for i, x in enumerate(live):
+        r0, r1 = old.decide(x), new.decide(x)
+        old.feedback(r0, None)
+        new.feedback(r1, None)
+        if alarm_at is None and new.guard_risk_test.alarmed:
+            alarm_at = i
+    assert alarm_at is not None and alarm_at < 300
+    assert not old.monitor.score_alarm and not new.monitor.score_alarm and old.proposal_reason is None
+    ev = [h for h in new.profile.history if h["event"] == "drift_alarm"]
+    assert [h["test"] for h in ev] == ["guard_risk"] and ev[0]["action"] == "propose"
+    assert new.proposal_reason == "guard_risk drift alarm" and not new.tightened
+    d = new.report()["drift"]
+    assert d["guard_risk"]["name"] == "guard_risk" and d["level_total"] == pytest.approx(0.0125)
+    assert json.dumps(new.profile.to_dict())
+
+
+def test_guard_risk_test_needs_a_reference_and_real_profiles_have_one(guard_and_data, tmp_path):
+    g, xs, ts, _ = guard_and_data
+    stats = calibration_stats(g, xs, ts)
+    assert len(stats["reference_guard_risk"]) == len(stats["reference_scores"]) == 300
+    assert all(0.0 <= v <= 1.0 for v in stats["reference_guard_risk"])
+    pt = _controller(guard_and_data, tmp_path, guard_risk_test=True)
+    assert pt.guard_risk_test.n_reference == 300
+    xs2, ts2 = nbest_data(300, 13)
+    for x, t in zip(xs2, ts2):
+        pt.feedback(pt.decide(x), t)
+    assert not pt.guard_risk_test.alarmed and pt.guard_risk_test.n == 300
+    stats.pop("reference_guard_risk")  # a profile from before P5-10
+    prof = UserProfile.new("u", pt.guard, calibration=stats)
+    with pytest.raises(ValueError, match="reference guard risks"):
+        PersonalTrust(prof, pt.guard, guard_risk_test=True)
+    with pytest.raises(ValueError):
+        PersonalTrust(prof, pt.guard, on_guard_risk_drift="panic")
