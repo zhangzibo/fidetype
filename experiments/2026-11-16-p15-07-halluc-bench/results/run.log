@@ -1,0 +1,30 @@
+2026-11-16 22:20:54 stage t15 start; systems ['p14-03-guard']
+2026-11-16 22:20:55 t15: 701 held out; split written; controls sha256 1241845b9cbb2f7a
+2026-11-16 22:20:59 t15 p14-03-guard: guard tcfg-09baa8a632ade86e (frame T 1.2889) from guard-t15-a0.05.json
+2026-11-16 22:21:19 t15 p14-03-guard [llm]: b2t25-t15-val-eval/p14-03-guard  real commit 2/701 wrong 2 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 2/701
+2026-11-16 22:21:19 t15 p14-03-guard [conservative]: b2t25-t15-val-eval/p14-03-guard  real commit 2/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 2/701
+2026-11-16 22:21:19 stage t15 done in 24.6 s
+2026-11-16 22:21:56 stage t15 start; systems ['p14-03-guard', 'p15-05-B0_rescore', 'p15-06-B1_rescore_G']
+2026-11-16 22:21:56 t15: 701 held out; split written; controls sha256 1241845b9cbb2f7a
+2026-11-16 22:22:00 t15 p14-03-guard: guard tcfg-09baa8a632ade86e (frame T 1.2889) from guard-t15-a0.05.json
+2026-11-16 22:22:23 t15 p14-03-guard [llm]: b2t25-t15-val-eval/p14-03-guard  real commit 2/701 wrong 2 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 2/701
+2026-11-16 22:22:23 t15 p14-03-guard [conservative]: b2t25-t15-val-eval/p14-03-guard  real commit 2/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 2/701
+2026-11-16 22:22:23 t15 p15-05-B0_rescore: guard tcfg-57d5efac1afbb69c (frame T 1.2889) from guard-t15-B0_rescore.json
+2026-11-16 22:22:56 t15 p15-05-B0_rescore [llm]: b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701 wrong 2 fluent-wrong 2 (llm-table)  null 0/300  scrambled 0/300  swapped 9/701
+2026-11-16 22:22:56 t15 p15-05-B0_rescore [conservative]: b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 9/701
+2026-11-16 22:22:56 t15 p15-06-B1_rescore_G: guard tcfg-fc560b2579dac3ac (frame T 1.2889) from guard-B1_rescore_G.json
+2026-11-16 22:24:32 t15 p15-06-B1_rescore_G [llm]: b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701 wrong 0 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701
+2026-11-16 22:24:32 t15 p15-06-B1_rescore_G [conservative]: b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701 wrong 0 fluent-wrong 0 (conservative)  null 0/300  scrambled 0/300  swapped 0/701
+2026-11-16 22:24:32 stage t15 done in 155.8 s
+2026-11-16 22:24:32 stage t12 start; systems ['p14-03-guard', 'p15-05-B0_rescore', 'p15-06-B1_rescore_G']
+2026-11-16 22:24:32 t12: 400 held out; split written; controls sha256 fc20f552a407ec4f
+2026-11-16 22:24:38 t12 p14-03-guard: guard tcfg-ca5af419ca3738f1 (frame T 2.5281) from guard-t12-a0.05.json
+2026-11-16 22:24:43 t12 p14-03-guard [llm]: b2t24-t12-test/p14-03-guard  real commit 25/400 wrong 15 fluent-wrong 4 (llm-table)  null 0/300  scrambled 0/300  swapped 25/400 FAIL
+2026-11-16 22:24:43 t12 p14-03-guard [conservative]: b2t24-t12-test/p14-03-guard  real commit 25/400 wrong 15 fluent-wrong 15 (conservative)  null 0/300  scrambled 0/300  swapped 25/400 FAIL
+2026-11-16 22:24:43 t12 p15-05-B0_rescore: guard tcfg-23e36bda05f5c7eb (frame T 2.5281) from guard-t12-B0_rescore.json
+2026-11-16 22:24:49 t12 p15-05-B0_rescore [llm]: b2t24-t12-test/p15-05-B0_rescore  real commit 15/400 wrong 8 fluent-wrong 4 (llm-table)  null 0/300  scrambled 0/300  swapped 15/400
+2026-11-16 22:24:49 t12 p15-05-B0_rescore [conservative]: b2t24-t12-test/p15-05-B0_rescore  real commit 15/400 wrong 8 fluent-wrong 8 (conservative)  null 0/300  scrambled 0/300  swapped 15/400
+2026-11-16 22:24:49 t12 p15-06-B1_rescore_G: guard tcfg-77bf40445ed5b0d9 (frame T 2.5281) from guard-B1_rescore_G.json
+2026-11-16 22:25:03 t12 p15-06-B1_rescore_G [llm]: b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400 wrong 0 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 0/400
+2026-11-16 22:25:03 t12 p15-06-B1_rescore_G [conservative]: b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400 wrong 0 fluent-wrong 0 (conservative)  null 0/300  scrambled 0/300  swapped 0/400
+2026-11-16 22:25:03 stage t12 done in 30.6 s

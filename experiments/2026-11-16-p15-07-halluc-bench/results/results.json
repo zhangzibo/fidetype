@@ -1,0 +1,298 @@
+{
+ "fidetype_version": "0.0.1",
+ "seed": 0,
+ "n_null": 300,
+ "protocol": "fidetype.halluc/0.1",
+ "t15": {
+  "dataset": "b2t25-t15-val-eval",
+  "n_real": 701,
+  "fluent_threshold": -7.88165954200173,
+  "systems": {
+   "p14-03-guard": {
+    "status": "ok",
+    "guard_config_id": "tcfg-09baa8a632ade86e",
+    "description": "P14-03 drop-in guard (alpha 0.05, delta 0.1), n-gram word decoder, no LLM",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--p14-03-guard--llm.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0,
+       "fluent_wrong_cp95": [
+        0.0,
+        0.0052
+       ],
+       "wrong_commit_rate": 0.0028530670470756064,
+       "commit_rate": 0.0028530670470756064,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 2
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t25-t15-val-eval/p14-03-guard  real commit 2/701 wrong 2 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 2/701"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--p14-03-guard--conservative.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0028530670470756064,
+       "fluent_wrong_cp95": [
+        0.0003,
+        0.0103
+       ],
+       "wrong_commit_rate": 0.0028530670470756064,
+       "commit_rate": 0.0028530670470756064,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 2
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t25-t15-val-eval/p14-03-guard  real commit 2/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 2/701"
+     }
+    },
+    "seconds": 22.1
+   },
+   "p15-05-B0_rescore": {
+    "status": "ok",
+    "guard_config_id": "tcfg-57d5efac1afbb69c",
+    "description": "P15-05 LLM rescoring (Qwen2.5-1.5B), no grounding, P14-03-type guard",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--p15-05-B0_rescore--llm.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0028530670470756064,
+       "fluent_wrong_cp95": [
+        0.0003,
+        0.0103
+       ],
+       "wrong_commit_rate": 0.0028530670470756064,
+       "commit_rate": 0.012838801711840228,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 9
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701 wrong 2 fluent-wrong 2 (llm-table)  null 0/300  scrambled 0/300  swapped 9/701"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--p15-05-B0_rescore--conservative.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0028530670470756064,
+       "fluent_wrong_cp95": [
+        0.0003,
+        0.0103
+       ],
+       "wrong_commit_rate": 0.0028530670470756064,
+       "commit_rate": 0.012838801711840228,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 9
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 9/701"
+     }
+    },
+    "seconds": 33.6
+   },
+   "p15-06-B1_rescore_G": {
+    "status": "ok",
+    "guard_config_id": "tcfg-fc560b2579dac3ac",
+    "description": "P15-06 guard: LLM rescoring + CTC grounding + fluent-wrong bound (joint LTT)",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--p15-06-B1_rescore_G--llm.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0,
+       "fluent_wrong_cp95": [
+        0.0,
+        0.0052
+       ],
+       "wrong_commit_rate": 0.0,
+       "commit_rate": 0.0,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 0
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701 wrong 0 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--p15-06-B1_rescore_G--conservative.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0,
+       "fluent_wrong_cp95": [
+        0.0,
+        0.0052
+       ],
+       "wrong_commit_rate": 0.0,
+       "commit_rate": 0.0,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 0
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701 wrong 0 fluent-wrong 0 (conservative)  null 0/300  scrambled 0/300  swapped 0/701"
+     }
+    },
+    "seconds": 95.7
+   }
+  },
+  "seconds": 155.8
+ },
+ "t12": {
+  "dataset": "b2t24-t12-test",
+  "n_real": 400,
+  "fluent_threshold": -8.916451934532247,
+  "systems": {
+   "p14-03-guard": {
+    "status": "ok",
+    "guard_config_id": "tcfg-ca5af419ca3738f1",
+    "description": "P14-03 drop-in guard (alpha 0.05, delta 0.1), n-gram word decoder, no LLM",
+    "cards": {
+     "llm": {
+      "file": "b2t24-t12-test--p14-03-guard--llm.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.01,
+       "fluent_wrong_cp95": [
+        0.0027,
+        0.0254
+       ],
+       "wrong_commit_rate": 0.0375,
+       "commit_rate": 0.0625,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 25
+       }
+      },
+      "controls_passed": false,
+      "summary": "b2t24-t12-test/p14-03-guard  real commit 25/400 wrong 15 fluent-wrong 4 (llm-table)  null 0/300  scrambled 0/300  swapped 25/400 FAIL"
+     },
+     "conservative": {
+      "file": "b2t24-t12-test--p14-03-guard--conservative.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0375,
+       "fluent_wrong_cp95": [
+        0.0211,
+        0.0611
+       ],
+       "wrong_commit_rate": 0.0375,
+       "commit_rate": 0.0625,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 25
+       }
+      },
+      "controls_passed": false,
+      "summary": "b2t24-t12-test/p14-03-guard  real commit 25/400 wrong 15 fluent-wrong 15 (conservative)  null 0/300  scrambled 0/300  swapped 25/400 FAIL"
+     }
+    },
+    "seconds": 5.4
+   },
+   "p15-05-B0_rescore": {
+    "status": "ok",
+    "guard_config_id": "tcfg-23e36bda05f5c7eb",
+    "description": "P15-05 LLM rescoring (Qwen2.5-1.5B), no grounding, P14-03-type guard",
+    "cards": {
+     "llm": {
+      "file": "b2t24-t12-test--p15-05-B0_rescore--llm.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.01,
+       "fluent_wrong_cp95": [
+        0.0027,
+        0.0254
+       ],
+       "wrong_commit_rate": 0.02,
+       "commit_rate": 0.0375,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 15
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t24-t12-test/p15-05-B0_rescore  real commit 15/400 wrong 8 fluent-wrong 4 (llm-table)  null 0/300  scrambled 0/300  swapped 15/400"
+     },
+     "conservative": {
+      "file": "b2t24-t12-test--p15-05-B0_rescore--conservative.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.02,
+       "fluent_wrong_cp95": [
+        0.0087,
+        0.039
+       ],
+       "wrong_commit_rate": 0.02,
+       "commit_rate": 0.0375,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 15
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t24-t12-test/p15-05-B0_rescore  real commit 15/400 wrong 8 fluent-wrong 8 (conservative)  null 0/300  scrambled 0/300  swapped 15/400"
+     }
+    },
+    "seconds": 5.3
+   },
+   "p15-06-B1_rescore_G": {
+    "status": "ok",
+    "guard_config_id": "tcfg-77bf40445ed5b0d9",
+    "description": "P15-06 guard: LLM rescoring + CTC grounding + fluent-wrong bound (joint LTT)",
+    "cards": {
+     "llm": {
+      "file": "b2t24-t12-test--p15-06-B1_rescore_G--llm.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0,
+       "fluent_wrong_cp95": [
+        0.0,
+        0.0092
+       ],
+       "wrong_commit_rate": 0.0,
+       "commit_rate": 0.0,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 0
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400 wrong 0 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 0/400"
+     },
+     "conservative": {
+      "file": "b2t24-t12-test--p15-06-B1_rescore_G--conservative.card.json",
+      "headline": {
+       "fluent_wrong_rate": 0.0,
+       "fluent_wrong_cp95": [
+        0.0,
+        0.0092
+       ],
+       "wrong_commit_rate": 0.0,
+       "commit_rate": 0.0,
+       "control_commits": {
+        "null": 0,
+        "scrambled": 0,
+        "swapped": 0
+       }
+      },
+      "controls_passed": true,
+      "summary": "b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400 wrong 0 fluent-wrong 0 (conservative)  null 0/300  scrambled 0/300  swapped 0/400"
+     }
+    },
+    "seconds": 13.9
+   }
+  },
+  "seconds": 30.6
+ }
+}

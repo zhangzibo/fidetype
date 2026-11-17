@@ -18,6 +18,8 @@ The sections follow the plan for the future documentation site ([docs site plan]
 | Conformance | [conformance.md](conformance.md) | Check a producer or a consumer; profiles and golden vectors |
 | Semantic conventions | [semconv.md](semconv.md) | The registry of standard key names (`meta`, `trust_decision` objects): types, units, requirement levels, stability |
 | Benchmark | [../benchmark/README.md](../benchmark/README.md) | Score neural text entry on public datasets; submit a result |
+| Safe WPM | [safe-wpm.md](safe-wpm.md) | The headline metric: words per minute that the system types right by itself, at a certified wrong-commit rate |
+| Hallucination benchmark | [hallucination-benchmark.md](hallucination-benchmark.md) | Null, scrambled and swapped-signal tracks and the fluent-wrong metric: does your decoder invent text? |
 | Specification | [../spec/README.md](../spec/README.md) | All spec versions; the current draft is [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) |
 | Proposals (FEPs) | [../spec/README.md#proposals-feps](../spec/README.md#proposals-feps) | Enhancement proposals and how to write one |
 | Releasing | [RELEASING.md](RELEASING.md) | Versioning policy and the release checklist of each SDK (maintainers) |
