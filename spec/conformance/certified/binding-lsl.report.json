@@ -1,0 +1,1146 @@
+{
+ "schema": "fidetype.nts-conform.report/1",
+ "tool": "nts-conform",
+ "tool_version": "0.2.0",
+ "spec": "NTS 1.0 RC4 (draft)",
+ "kit_version": "0.2.0",
+ "level": "core",
+ "ok": true,
+ "producer": {
+  "class": "producer",
+  "level": "trust-ready",
+  "title": "NTS Trust-ready",
+  "levels": {
+   "core": true,
+   "full": true,
+   "trust-ready": true
+  },
+  "profiles": [
+   "text"
+  ],
+  "covered": [
+   "text"
+  ],
+  "bindings": [
+   "nts-lsl/0.1"
+  ],
+  "why_not_higher": []
+ },
+ "targets": [
+  {
+   "target": "evidence/lsl/lsl-frames.capture.json",
+   "form": "lsl-capture",
+   "profiles": [
+    "fep-0002"
+   ],
+   "level": "core",
+   "verdict": "pass",
+   "ok": true,
+   "stream_level": null,
+   "covers": [],
+   "counts": {
+    "pass": 7,
+    "fail": 0,
+    "warn": 0,
+    "skip": 4
+   },
+   "rules": {
+    "GEN-8": "pass",
+    "HDR-13": "pass",
+    "HDR-2": "pass",
+    "LSL-C2": "pass",
+    "LSL-C3": "pass",
+    "LSL-C4": "pass",
+    "LSL-C5": "pass",
+    "LSL-C6": "pass",
+    "LSL-D1": "pass",
+    "LSL-D2": "pass",
+    "LSL-D3": "pass",
+    "LSL-E1": "pass",
+    "LSL-E2": "pass",
+    "LSL-E3": "pass",
+    "LSL-E4": "pass",
+    "LSL-E5": "pass",
+    "LSL-F1": "pass",
+    "LSL-F2": "pass",
+    "LSL-F3": "pass",
+    "LSL-F4": "pass",
+    "LSL-F5": "pass",
+    "LSL-F6": "pass",
+    "LSL-F7": "pass",
+    "LSL-G1": "pass",
+    "LSL-G2": "pass",
+    "LSL-G3": "pass",
+    "LSL-V1": "pass",
+    "VER-3": "pass",
+    "VER-5": "pass",
+    "VER-9": "pass"
+   },
+   "results": [
+    {
+     "outcome": "pass",
+     "rules": [
+      "LSL-C5",
+      "LSL-V1",
+      "VER-9"
+     ],
+     "check": "FEP2-BINDING",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 9",
+     "location": "inlet primary",
+     "message": "inlet primary: nts-lsl/0.1"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-2",
+      "LSL-D1",
+      "LSL-D2",
+      "LSL-D3",
+      "VER-3",
+      "VER-5",
+      "VER-9"
+     ],
+     "check": "FEP2-DESC",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 4",
+     "location": "inlet primary",
+     "message": "inlet primary"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "LSL-F1",
+      "LSL-F2",
+      "LSL-F3",
+      "LSL-F6"
+     ],
+     "check": "FEP2-FRAMES",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 3",
+     "location": "inlet primary",
+     "message": "inlet primary"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "LSL-C5",
+      "LSL-V1",
+      "VER-9"
+     ],
+     "check": "FEP2-BINDING",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 9",
+     "location": "inlet events",
+     "message": "inlet events: nts-lsl/0.1"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-2",
+      "LSL-D1",
+      "LSL-D2",
+      "LSL-D3",
+      "VER-3",
+      "VER-5",
+      "VER-9"
+     ],
+     "check": "FEP2-DESC",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 4",
+     "location": "inlet events",
+     "message": "inlet events"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "LSL-E1"
+     ],
+     "check": "FEP2-MARKERS",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 5",
+     "location": "inlet events",
+     "message": "inlet events"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "GEN-8",
+      "HDR-13",
+      "LSL-F4",
+      "LSL-F5",
+      "LSL-F7",
+      "LSL-E2",
+      "LSL-E4",
+      "LSL-E3",
+      "LSL-E5",
+      "LSL-C2",
+      "LSL-C3",
+      "LSL-C4",
+      "LSL-C5",
+      "LSL-C6",
+      "LSL-G1",
+      "LSL-G2",
+      "LSL-G3"
+     ],
+     "check": "FEP2-CONSUME",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 3-7",
+     "location": "",
+     "message": "accepted"
+    }
+   ]
+  },
+  {
+   "target": "evidence/lsl/lsl-frames.received.jsonl",
+   "form": "jsonl-stream",
+   "profiles": [
+    "v0.1",
+    "fep-0001"
+   ],
+   "level": "core",
+   "verdict": "pass",
+   "ok": true,
+   "stream_level": "provenance",
+   "covers": [
+    "text"
+   ],
+   "counts": {
+    "pass": 51,
+    "fail": 0,
+    "warn": 0,
+    "skip": 17
+   },
+   "rules": {
+    "CNF-3": "pass",
+    "CNF-4": "pass",
+    "DCL-1": "pass",
+    "DEC-5": "pass",
+    "EVD-1": "pass",
+    "EVD-3": "pass",
+    "EVD-4": "pass",
+    "FIL-1": "pass",
+    "FRM-1": "pass",
+    "FRM-2": "pass",
+    "FRM-3": "pass",
+    "FRM-4": "pass",
+    "FRM-6": "pass",
+    "FRM-7": "pass",
+    "FRM-8": "pass",
+    "FRM-9": "pass",
+    "GEN-2": "pass",
+    "GEN-3": "pass",
+    "HDR-1": "pass",
+    "HDR-10": "pass",
+    "HDR-11": "pass",
+    "HDR-12": "pass",
+    "HDR-2": "pass",
+    "HDR-3": "pass",
+    "HDR-4": "pass",
+    "HDR-5": "pass",
+    "HDR-6": "pass",
+    "HDR-7": "pass",
+    "HDR-8": "pass",
+    "HDR-9": "pass",
+    "MET-1": "pass",
+    "MET-11": "pass",
+    "MET-2": "pass",
+    "MET-3": "pass",
+    "MET-4": "pass",
+    "MET-5": "pass",
+    "MET-6": "pass",
+    "MET-7": "pass",
+    "SEC-2": "pass",
+    "SEC-3": "pass",
+    "SEC-4": "pass",
+    "SEC-5": "pass",
+    "SEC-6": "pass",
+    "SEC-8": "pass",
+    "SEG-4": "pass",
+    "SEG-5": "pass",
+    "SEG-6": "pass",
+    "TD-11": "pass",
+    "TD-4": "pass",
+    "TIM-1": "pass",
+    "TIM-2": "pass",
+    "VER-1": "pass",
+    "VER-3": "pass",
+    "VER-5": "pass"
+   },
+   "results": [
+    {
+     "outcome": "pass",
+     "rules": [
+      "GEN-2",
+      "FIL-1"
+     ],
+     "check": "NTS-PARSE",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "6.1 / 6.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [],
+     "check": "NTS-UNKNOWN-KEYS",
+     "profile": "v0.1",
+     "level": "advisory",
+     "keyword": "MUST",
+     "clause": "6.1 note / 6.2.5",
+     "location": "",
+     "message": "unknown keys (a consumer ignores them): ['lsl']"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-1"
+     ],
+     "check": "NTS-JSONL-HEADER",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "6.2.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "GEN-3",
+      "FRM-2"
+     ],
+     "check": "NTS-JSONL-FRAME",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "6.2.2 / 6.2.3",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [],
+     "check": "NTS-JSONL-END",
+     "profile": "v0.1",
+     "level": "advisory",
+     "keyword": "SHOULD",
+     "clause": "6.2",
+     "location": "",
+     "message": "end marker present"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-2",
+      "VER-1",
+      "VER-3",
+      "VER-5"
+     ],
+     "check": "NTS-VERSION",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.1.4",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "FRM-7"
+     ],
+     "check": "NTS-LP-2D",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.1.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "FRM-1",
+      "FRM-8"
+     ],
+     "check": "NTS-V-MATCH",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.1.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "FRM-9"
+     ],
+     "check": "NTS-FT-SHAPE",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.1.3",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-5"
+     ],
+     "check": "NTS-VOCAB-TYPE",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.1.5",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-3"
+     ],
+     "check": "NTS-VOCAB-STR",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "3.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-4"
+     ],
+     "check": "NTS-VOCAB-UNIQUE",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.2.4",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-6"
+     ],
+     "check": "NTS-BLANK",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "3.1 / 5.1.6",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-7"
+     ],
+     "check": "NTS-SOURCE",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.1.7",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-8"
+     ],
+     "check": "NTS-META-OBJECT",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.1.7",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "MET-2"
+     ],
+     "check": "NTS-META-JSON",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "4.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "FRM-4"
+     ],
+     "check": "NTS-LP-FINITE",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.2.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-12",
+      "FRM-3"
+     ],
+     "check": "NTS-NORM",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.2.1",
+     "location": "",
+     "message": "max |log-sum-exp| = 3.84e-07"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TIM-1"
+     ],
+     "check": "NTS-FT-FINITE",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.2.3",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "FRM-6",
+      "TIM-2"
+     ],
+     "check": "NTS-FT-MONO",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.2.3 / 6.2.4",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-9"
+     ],
+     "check": "NTS-FRAME-PERIOD",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "3.2 / 5.2.5",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-10"
+     ],
+     "check": "NTS-LATENCY",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "3.2 / 5.2.5",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "MET-1",
+      "MET-7",
+      "MET-11"
+     ],
+     "check": "NTS-META-TYPES",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "4.1 / 4.2",
+     "location": "",
+     "message": "14 defined key(s) checked"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "MET-4"
+     ],
+     "check": "NTS-META-LOOKAHEAD",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "4.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "MET-3"
+     ],
+     "check": "NTS-NAMESPACE",
+     "profile": "v0.1",
+     "level": "advisory",
+     "keyword": "SHOULD",
+     "clause": "4.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "SEC-8"
+     ],
+     "check": "NTS-LEAK-KEYS",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.3.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "SEC-3",
+      "SEC-5",
+      "SEC-6"
+     ],
+     "check": "NTS-PRIVACY",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "5.4.1 / 4.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [],
+     "check": "NTS-FREE-TEXT",
+     "profile": "v0.1",
+     "level": "advisory",
+     "keyword": "SHOULD NOT",
+     "clause": "5.4.3",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "CNF-3"
+     ],
+     "check": "NTS-VT-CHAR",
+     "profile": "v0.1",
+     "level": "trust-ready",
+     "keyword": "PROFILE",
+     "clause": "3.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [],
+     "check": "NTS-BLANK-TOKEN",
+     "profile": "v0.1",
+     "level": "advisory",
+     "keyword": "SHOULD",
+     "clause": "3.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [],
+     "check": "NTS-SHARPENED",
+     "profile": "v0.1",
+     "level": "advisory",
+     "keyword": "MUST NOT",
+     "clause": "2.4.4",
+     "location": "",
+     "message": "0% one-hot rows"
+    },
+    {
+     "outcome": "pass",
+     "rules": [],
+     "check": "NTS-FP-CONSIST",
+     "profile": "v0.1",
+     "level": "advisory",
+     "keyword": "SHOULD",
+     "clause": "3.2",
+     "location": "step 0",
+     "message": "median step 0.04 s"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "HDR-11"
+     ],
+     "check": "NTS-CLOCK",
+     "profile": "v0.1",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "3.8",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "CNF-3"
+     ],
+     "check": "TR-SOURCE",
+     "profile": "v0.1",
+     "level": "trust-ready",
+     "keyword": "PROFILE",
+     "clause": "3.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "CNF-3"
+     ],
+     "check": "TR-MODALITY",
+     "profile": "v0.1",
+     "level": "trust-ready",
+     "keyword": "PROFILE",
+     "clause": "4.2",
+     "location": "",
+     "message": "eeg"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "MET-5",
+      "CNF-3"
+     ],
+     "check": "TR-CAUSAL",
+     "profile": "v0.1",
+     "level": "trust-ready",
+     "keyword": "SHOULD",
+     "clause": "3.2 / 4.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "SEC-2",
+      "CNF-3"
+     ],
+     "check": "TR-DERIVED",
+     "profile": "v0.1",
+     "level": "trust-ready",
+     "keyword": "SHOULD",
+     "clause": "4.2 / 5.4.4",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "MET-6",
+      "DEC-5",
+      "CNF-3"
+     ],
+     "check": "TR-CALIB",
+     "profile": "v0.1",
+     "level": "trust-ready",
+     "keyword": "MUST",
+     "clause": "4.1 / 4.2 / 3.5.3",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "CNF-3"
+     ],
+     "check": "TR-LANGUAGE",
+     "profile": "v0.1",
+     "level": "trust-ready",
+     "keyword": "PROFILE",
+     "clause": "4.2",
+     "location": "",
+     "message": "en"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "CNF-4"
+     ],
+     "check": "PV-STREAM-ID",
+     "profile": "v0.1",
+     "level": "provenance",
+     "keyword": "PROFILE",
+     "clause": "4.3.1",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "CNF-4"
+     ],
+     "check": "PV-DECODER",
+     "profile": "v0.1",
+     "level": "provenance",
+     "keyword": "SHOULD",
+     "clause": "4.3.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "CNF-4"
+     ],
+     "check": "PV-WEIGHTS",
+     "profile": "v0.1",
+     "level": "provenance",
+     "keyword": "SHOULD",
+     "clause": "4.2 / 4.3.2",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "CNF-4"
+     ],
+     "check": "PV-ADAPTER",
+     "profile": "v0.1",
+     "level": "provenance",
+     "keyword": "SHOULD",
+     "clause": "4.2 / 4.3.2",
+     "location": "",
+     "message": "adapter keys present"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "SEC-4",
+      "CNF-4"
+     ],
+     "check": "PV-PSEUDONYM",
+     "profile": "v0.1",
+     "level": "provenance",
+     "keyword": "MUST",
+     "clause": "5.4.2 / 4.3.4",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "GEN-2"
+     ],
+     "check": "FEP1-PARSE",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 6.2 (v0.1)",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TD-11"
+     ],
+     "check": "FEP1-KIND",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 3 r4 / 6.2.1",
+     "location": "",
+     "message": "input"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "SEG-4",
+      "SEG-5",
+      "SEG-6"
+     ],
+     "check": "FEP1-SEGMENT",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 1 table, r5",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "EVD-1",
+      "EVD-4"
+     ],
+     "check": "FEP1-EVIDENCE",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 2 table, r1, r4",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "EVD-3"
+     ],
+     "check": "FEP1-SCORE",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 2 r3",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "DCL-1"
+     ],
+     "check": "FEP1-DECL",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 4 table",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TD-4"
+     ],
+     "check": "FEP1-TD-INPUT",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 3 r4",
+     "location": "",
+     "message": ""
+    }
+   ]
+  },
+  {
+   "target": "evidence/lsl/lsl-decisions.capture.json",
+   "form": "lsl-decisions-capture",
+   "profiles": [
+    "fep-0002"
+   ],
+   "level": "core",
+   "verdict": "pass",
+   "ok": true,
+   "stream_level": null,
+   "covers": [],
+   "counts": {
+    "pass": 3,
+    "fail": 0,
+    "warn": 0,
+    "skip": 3
+   },
+   "rules": {
+    "LSL-C5": "pass",
+    "LSL-V1": "pass",
+    "LSL-X1": "pass",
+    "LSL-X2": "pass",
+    "TD-6": "pass",
+    "VER-9": "pass"
+   },
+   "results": [
+    {
+     "outcome": "pass",
+     "rules": [
+      "LSL-C5",
+      "LSL-V1",
+      "VER-9"
+     ],
+     "check": "FEP2-BINDING",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 9",
+     "location": "decisions stream",
+     "message": "decisions stream: nts-lsl/0.1"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TD-6",
+      "LSL-X1",
+      "LSL-X2"
+     ],
+     "check": "FEP2-DECISIONS",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 8",
+     "location": "decisions stream",
+     "message": "decisions stream"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TD-6",
+      "LSL-X1",
+      "LSL-X2"
+     ],
+     "check": "FEP2-DECISIONS",
+     "profile": "fep-0002",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0002 8",
+     "location": "",
+     "message": "accepted"
+    }
+   ]
+  },
+  {
+   "target": "evidence/lsl/lsl-decisions.received.jsonl",
+   "form": "jsonl-decision-log",
+   "profiles": [
+    "fep-0001"
+   ],
+   "level": "core",
+   "verdict": "pass",
+   "ok": true,
+   "stream_level": null,
+   "covers": [
+    "text"
+   ],
+   "counts": {
+    "pass": 5,
+    "fail": 0,
+    "warn": 0,
+    "skip": 6
+   },
+   "rules": {
+    "GEN-2": "pass",
+    "TD-11": "pass",
+    "TD-12": "pass",
+    "TD-5": "pass",
+    "TD-6": "pass",
+    "TD-7": "pass",
+    "TD-8": "pass",
+    "TD-9": "pass",
+    "TD-F1": "pass",
+    "TD-F2": "pass",
+    "TD-F3": "pass",
+    "VER-1": "pass",
+    "VER-2": "pass",
+    "VER-3": "pass",
+    "VER-5": "pass"
+   },
+   "results": [
+    {
+     "outcome": "pass",
+     "rules": [
+      "GEN-2"
+     ],
+     "check": "FEP1-PARSE",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 6.2 (v0.1)",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TD-11"
+     ],
+     "check": "FEP1-KIND",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 3 r4 / 6.2.1",
+     "location": "",
+     "message": "decisions"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TD-F1",
+      "TD-F2",
+      "TD-F3",
+      "TD-8",
+      "TD-9",
+      "VER-1",
+      "VER-2",
+      "VER-3",
+      "VER-5"
+     ],
+     "check": "FEP1-TD-FORMAT",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 3 table, r2, r8, r9 (1.x)",
+     "location": "",
+     "message": "2 decision(s)"
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TD-5",
+      "TD-6",
+      "TD-7"
+     ],
+     "check": "FEP1-TD-FINAL",
+     "profile": "fep-0001",
+     "level": "core",
+     "keyword": "MUST",
+     "clause": "FEP-0001 3 r5-r7",
+     "location": "",
+     "message": ""
+    },
+    {
+     "outcome": "pass",
+     "rules": [
+      "TD-12"
+     ],
+     "check": "FEP1-TD-SHOWN",
+     "profile": "fep-0001",
+     "level": "advisory",
+     "keyword": "SHOULD NOT",
+     "clause": "FEP-0001 3 (1.x, NTS 1.0 RC2 TD-12)",
+     "location": "",
+     "message": ""
+    }
+   ]
+  }
+ ]
+}

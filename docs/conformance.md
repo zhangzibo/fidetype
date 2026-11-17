@@ -47,9 +47,35 @@ spec/conformance/kit/fep-0003/k20-intent-undeclared.jsonl  [jsonl-stream; profil
 - Each file line shows the **stream level** that the file reaches (core, trust-ready or provenance; spec 9.2). The last line shows the **producer level** of all files together (spec 9.6, below).
 - The rule ids come from the traceability table of the spec ([Appendix C.1](../spec/nts-1.0-rc4.md#c1-table)). If the message names a rule of the check, only that rule is listed. Else a table of message patterns names the one or two rules of the finding (for example `FEP2-CONSUME`, which tests 17 rules, reports `LSL-F2` for a wrong channel count). Only a message that no pattern knows lists all rules of the check. The map and the pattern table (`refine`) are in [`rule-map.json`](../spec/conformance/kit/rule-map.json).
 - An LSL capture or a WebSocket capture is a scenario JSON file (schemas `fidetype.conformance.lsl-scenario/1`, `fidetype.conformance.ws-scenario/1`): the stream infos and the recorded chunks or messages. See the kit files K26-K31.
+- `nts-conform capture` records such a capture from a live producer. See [Record a capture from a live producer](#record-a-capture-from-a-live-producer-lsl-websocket).
 - `--json OUT` writes the report (schema `fidetype.nts-conform.report/1`): per target the form, the profiles, the verdict, the outcome per rule id, and every result with rule ids, check, level, location and message.
 
 Exit codes: 0 = every target passes, 1 = a target fails, 2 = an input error (no such file, unknown form).
+
+### Record a capture from a live producer (LSL, WebSocket)
+
+`nts-conform capture` records what a consumer receives from your running producer and writes it as a capture file (roadmap P7-06). Then `nts-conform check` judges it like any other file.
+
+```sh
+# LSL (needs pylsl: pip install "fidetype[lsl]"). QUERY = a stream name, or key=value pairs (name, type, source_id).
+nts-conform capture --lsl my.nts --out lsl.json --received lsl.received.jsonl
+nts-conform capture --lsl type=Markers,name=fidetype.decisions --no-wait-end --seconds 10 --out dec.json
+# WebSocket (needs websockets: pip install "fidetype[ws]")
+nts-conform capture --ws ws://127.0.0.1:8765/nts --out ws.json --received ws.received.jsonl   # listens; your producer connects
+nts-conform capture --ws ws://127.0.0.1:8765/decisions --seconds 10 --out wsd.json             # subscribes to your server
+nts-conform check lsl.json lsl.received.jsonl --require-level core
+```
+
+| Form | What the tool does | Capture |
+|---|---|---|
+| `--lsl QUERY`, a frames stream | Opens the frames stream and the events stream that `desc/fidetype/events_source_id` names. Stops after the `end` event (or `--seconds`). | `lsl-scenario/1`, kind `inlet` |
+| `--lsl QUERY`, a decisions stream (`role = trust_decisions`) | Records the samples for `--seconds`. | `lsl-scenario/1`, kind `decisions` |
+| `--ws ws://HOST:PORT/nts` | Starts a recording server. It answers like the reference server (welcome, acks) and records each open, message and close with its time. Stops after `end` and the close (or `--seconds`). | `ws-scenario/1`, kind `ingest` |
+| `--ws ws://HOST:PORT/decisions` | Subscribes with `from_seq` 1 and records every message. Stops after `--seconds` or `--max-decisions`. | `ws-scenario/1`, kind `subscribe` |
+
+- `--received OUT.jsonl` also writes what the reference consumer reads from the capture: the NTS stream (header, frames, events) or the decision log. A producer level needs an input stream (spec 9.6), so binding evidence is the capture **and** its received stream.
+- The capture keeps only the LSL stream-info fields that FEP-0002 uses. It removes the host name, uid, creation time and addresses. It never records an `Authorization` header, a token or a client address.
+- Use a loopback address for the recording server. The tool warns for any other host.
 
 ### Run the kit against your implementation
 
@@ -116,12 +142,17 @@ Current entries (all from this repository; no outside entry yet):
 | `adapter-text-nbest` | producer | NTS Trust-ready, text |
 | `adapter-spanishbcbl`, `-toronto`, `-ctc-logits`, `-kt-semg`, `-emg2qwerty` | producer | NTS Core (frames only); stream level provenance |
 | `adapter-b2t25`, `adapter-willett` | producer | NTS Core (frames only); stream level trust-ready (no published weights hash) |
+| `binding-lsl` (`replay_to_lsl` frames + events streams, `DecisionOutlet`) | producer | NTS Trust-ready, text, nts-lsl/0.1 |
+| `binding-ws` (`WSProducer` / `replay_to_ws`, the `/decisions` channel of `WSServer`) | producer | NTS Trust-ready, text, nts-ws/0.1 |
+
+The two `binding-*` entries (P7-06) come from captures of our own outlets. `python -m fidetype.conformance.binding_producers --out DIR` runs them in one process on loopback with synthetic input (WebSocket on 127.0.0.1; LSL with `ResolveScope = machine`), records them with `nts-conform capture` and writes each capture with its received stream. CI (job `live`) runs it and `nts-conform check DIR/lsl` / `DIR/ws --require-level trust-ready`.
 
 ### Add your implementation (pull request)
 
 1. Run the kit with the current kit version and save the JSON report.
    - Consumer (reader, validator, trust layer): `nts-conform kit --cmd "YOUR-PROGRAM --profile {profile} --level {level} {path}" --json kit-report.json` (or `--impl`, or `--verdicts`). Run the full kit: no `--profile`.
    - Producer: write real output of your producer (or the output of the same code on synthetic input) into a folder, then `nts-conform check FOLDER --json report.json`. Add `--claim` for the profiles that you claim.
+   - Binding producer (LSL outlet, WebSocket sender): record it with `nts-conform capture ... --received ...` (above), then `nts-conform check FOLDER --json report.json` on the captures and the received streams. The report lists the binding (`bindings`).
 2. Check the level in the last line of the output (`[consumer level: ...]` or `[producer level: ...]`).
 3. Add the report as `spec/conformance/certified/<id>.kit-report.json` (consumer) or `spec/conformance/certified/<id>.report.json` (producer). It must hold no personal data and no raw recordings.
 4. Add one entry to `certified.json`: `id` (lower case, digits, `-`), `implementation`, `language`, `class` (`producer` or `consumer`), `level` (`core`, `full`, `trust-ready`) and `level_title`, `profiles`, `bindings`, `spec` (`NTS 1.0 RC4 (draft)`: a claim names the draft, CNF-1), `kit_version` (from the report), `version` (of your implementation), `evidence` (the path from step 3, relative to `spec/conformance/`), `evidence_command` (the command of step 1), `maintainer`, `repository` (public URL), `licence`, `date` (YYYY-MM-DD). Optional: a link to your passing CI run.

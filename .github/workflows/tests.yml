@@ -41,6 +41,17 @@ jobs:
       - run: uv sync --extra dev --extra lsl --extra brainflow
       - run: uv run python -c "import pylsl, brainflow; print('pylsl', pylsl.library_version())"
       - run: uv run pytest -q tests/test_live.py tests/test_live_reconnect.py tests/test_live_onset.py -rs
+      # P7-06: our own LSL outlets and WebSocket producer / decisions channel, recorded on loopback with
+      # nts-conform capture; the captures and their received streams must reach NTS Trust-ready with the binding.
+      - name: Binding producer captures (P7-06)
+        run: |
+          set -o pipefail
+          uv run pytest -q tests/test_conformance_capture.py -rs
+          uv run python -m fidetype.conformance.binding_producers --out "$RUNNER_TEMP/p7-06"
+          uv run nts-conform check "$RUNNER_TEMP/p7-06/lsl" --require-level trust-ready | tee "$RUNNER_TEMP/lsl.txt"
+          uv run nts-conform check "$RUNNER_TEMP/p7-06/ws" --require-level trust-ready | tee "$RUNNER_TEMP/ws.txt"
+          grep -q "bindings nts-lsl/0.1" "$RUNNER_TEMP/lsl.txt"
+          grep -q "bindings nts-ws/0.1" "$RUNNER_TEMP/ws.txt"
 
   # P14-11: replay a public EMG recording over a pylsl loopback through `fidetype live` (markers and detect timing)
   # and validate the NTS output. Data: KT-sEMG run3, copyright 2021 Nokia, CC BY 4.0 (doi:10.7910/DVN/AV6XIR);

@@ -20,6 +20,11 @@ Sub-commands::
     nts-conform rules [--write | --check]         the check -> rule map from spec Appendix C
     nts-conform levels [--write | --check | --json]   the implementation levels (spec 9.6)
     nts-conform certified [--check]               the self-certification list (spec 9.7)
+    nts-conform capture (--lsl QUERY | --ws URL) --out CAP.json [--seconds N] [--received OUT.jsonl]
+        Record an LSL or WebSocket capture from a live producer (P7-06): an LSL
+        frames + events stream or decisions stream, a producer that connects to
+        ws://HOST:PORT/nts (a recording server), or a /decisions channel. See
+        fidetype.conformance.capture.
 
 Levels (P7-02, spec 9.6). ``check`` reports the stream level of each target
 (9.2: core, trust-ready, provenance) and the producer level of all targets
@@ -719,6 +724,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     ce = sub.add_parser("certified", help="the self-certification list spec/conformance/certified.json (spec 9.7)")
     ce.add_argument("--check", action="store_true", help="exit 1 if an entry does not match its evidence")
     ce.set_defaults(func=cmd_certified)
+    from fidetype.conformance.capture import add_parser as add_capture
+
+    add_capture(sub)
     a = p.parse_args(argv)
     try:
         return a.func(a)

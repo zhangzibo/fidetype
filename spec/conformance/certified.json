@@ -267,6 +267,58 @@
    "stream_levels": [
     "provenance"
    ]
+  },
+  {
+   "id": "binding-lsl",
+   "implementation": "fidetype LSL binding (src/fidetype/adapters/lsl.py): replay_to_lsl (frames + events streams) and DecisionOutlet of LSLTrustRunner (fidetype.decisions stream), on the synthetic ctc-logits stream",
+   "language": "Python",
+   "class": "producer",
+   "level": "trust-ready",
+   "level_title": "NTS Trust-ready",
+   "profiles": [
+    "text"
+   ],
+   "bindings": [
+    "nts-lsl/0.1"
+   ],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/binding-lsl.report.json",
+   "evidence_command": "python -m fidetype.conformance.binding_producers --out DIR --target lsl (nts-conform capture of our own outlets on loopback), then nts-conform check DIR/lsl --json",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ]
+  },
+  {
+   "id": "binding-ws",
+   "implementation": "fidetype WS binding (src/fidetype/adapters/ws.py): WSProducer / replay_to_ws (/nts) and the /decisions channel of WSServer + WSTrustRunner, on the synthetic ctc-logits stream",
+   "language": "Python",
+   "class": "producer",
+   "level": "trust-ready",
+   "level_title": "NTS Trust-ready",
+   "profiles": [
+    "text"
+   ],
+   "bindings": [
+    "nts-ws/0.1"
+   ],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/binding-ws.report.json",
+   "evidence_command": "python -m fidetype.conformance.binding_producers --out DIR --target ws (nts-conform capture of our own outlets on loopback), then nts-conform check DIR/ws --json",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17",
+   "stream_levels": [
+    "provenance"
+   ]
   }
  ]
 }

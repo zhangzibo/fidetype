@@ -15,6 +15,10 @@ Entries:
 * ``adapter-<name>``: producers. The synthetic streams of ``fidetype.conformance.producers`` (the adapter code
   on synthetic input), written as JSON Lines with ``fidetype.writer.write_stream``, then ``nts-conform check``.
 * ``adapter-text-nbest``: producer. A hypothesis-only stream of ``fidetype.adapters.text_nbest``.
+* ``binding-lsl``, ``binding-ws``: binding producers (P7-06). ``fidetype.conformance.binding_producers`` runs our
+  LSL outlets (``replay_to_lsl``, ``DecisionOutlet``) and our WebSocket producer and ``/decisions`` channel in
+  this process on loopback; ``nts-conform capture`` records them; then ``nts-conform check`` on the captures and
+  their received streams. ``binding-lsl`` needs pylsl (``--extra lsl``), ``binding-ws`` needs websockets.
 
 Third-party implementations add their own entry by pull request (docs/conformance.md, "Self-certification");
 this tool never writes them.
@@ -170,7 +174,45 @@ def producer_entries() -> list[dict]:
     return out
 
 
+BINDING_IMPL = {
+    "lsl": ("src/fidetype/adapters/lsl.py", "replay_to_lsl (frames + events streams) and DecisionOutlet of "
+            "LSLTrustRunner (fidetype.decisions stream)"),
+    "ws": ("src/fidetype/adapters/ws.py", "WSProducer / replay_to_ws (/nts) and the /decisions channel of WSServer + "
+           "WSTrustRunner"),
+}
+
+
+def binding_entries() -> list[dict]:
+    """Binding producers (P7-06): captures of our own LSL and WebSocket outlets, recorded on loopback."""
+    from fidetype.adapters.lsl import pylsl_available
+    from fidetype.adapters.ws import websockets_available
+    from fidetype.conformance import nts_conform as NC
+    from fidetype.conformance.binding_producers import write_evidence
+
+    v = _versions()
+    base = {"class": "producer", "language": "Python", "version": v["python"], "maintainer": "Fidetype project",
+            "repository": URL, "licence": "Apache-2.0", "date": DATE}
+    have = {"lsl": pylsl_available(), "ws": websockets_available()}
+    out = []
+    for name, (module, what) in BINDING_IMPL.items():
+        if not have[name]:
+            print(f"certify: skip binding-{name} (install the {name} extra)", file=sys.stderr)
+            continue
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            files = write_evidence(name, tmp / name)
+            rep = NC.build_report([NC.conform_file(f, "core") for f in files], "core")
+            ev = _write(f"binding-{name}.report.json", rep, tmp)
+        out.append({**base, "id": f"binding-{name}", "implementation": f"fidetype {name.upper()} binding "
+                    f"({module}): {what}, on the synthetic ctc-logits stream", "bindings": rep["producer"]["bindings"],
+                    "evidence": ev, "evidence_command": "python -m fidetype.conformance.binding_producers --out DIR "
+                    f"--target {name} (nts-conform capture of our own outlets on loopback), then nts-conform check "
+                    f"DIR/{name} --json", "_rep": rep})
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
+    from fidetype.conformance.binding_producers import loopback_lsl_config
     from fidetype.conformance.certified import CERTIFIED_SCHEMA, check_certified
     from fidetype.conformance.kit import KIT_VERSION
     from fidetype.conformance.levels import LEVEL_TITLES
@@ -179,7 +221,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--python-only", action="store_true", help="skip the TypeScript and Rust consumers")
     a = ap.parse_args(argv)
-    entries = consumer_entries(a.python_only) + producer_entries()
+    loopback_lsl_config()
+    entries = consumer_entries(a.python_only) + producer_entries() + binding_entries()
     rows = []
     for e in entries:
         rep = e.pop("_rep")

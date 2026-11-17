@@ -156,12 +156,24 @@ Roadmap task P7-02 (2026-11-17) writes the levels into the spec as RC4 amendment
 | Python, TypeScript, Rust SDKs | consumer | NTS Trust-ready (text + intent + control, both bindings) |
 | text n-best adapter | producer | NTS Trust-ready (text) |
 | 7 frame adapters (MEG, B2T '25, Toronto, CTC logits, Willett, KT-sEMG, emg2qwerty) | producer | NTS Core; stream level provenance (B2T '25 and Willett: trust-ready, no published weights hash) |
+| LSL binding (`replay_to_lsl`, `DecisionOutlet`), WebSocket binding (`WSProducer`, `/decisions` of `WSServer`) | producer | NTS Trust-ready (text) + `nts-lsl/0.1` / `nts-ws/0.1` (P7-06) |
 
 > **Our take:** a frames-only adapter is the main input of a text trust layer, but it is only NTS Core, because it writes no event of an output profile. We keep the rule simple and show the stream level next to the level. If outside users find this confusing, a later FEP can define a "frames-only Trust-ready" claim.
 
 > **Our take:** the list has no outside entry yet. The first one is roadmap exit criterion P7 (externally blocked).
 
 **P1-16 (gap 20, closed):** MET-11 has its C.1 row, and the three validators give the same advisory warning `NTS-MODALITY-MATCH` when a modality key does not fit `device.modality` (V93, V94, V96 warn; V95 `opm-meg` + `meg.*` does not). `KNOWN_UNTRACED` is empty: every rule id of RC4 has a C.1 row.
+
+## Binding producers and `nts-conform capture` (P7-06)
+Roadmap task P7-06 (2026-11-17, gap 24) gives our binding code producer evidence.
+
+- **`nts-conform capture`** ([`capture.py`](../../src/fidetype/conformance/capture.py)) records what a consumer receives from a running producer, in the scenario form that `nts-conform check` reads. `--lsl QUERY`: a frames stream and its events stream (`inlet` capture) or a decisions stream (`decisions` capture), with the raw LSL timestamps and `time_correction()`. `--ws ws://HOST:PORT/nts`: a recording server that answers like the reference server and records each open, message and close (`ingest` capture). `--ws ws://HOST:PORT/decisions`: a subscriber (`subscribe` capture).
+- **`--received`** writes what the reference consumer reads from the capture (the NTS stream or the decision log). A producer level needs an input stream (spec 9.6, CNF-5), so binding evidence = capture + received stream.
+- **Privacy:** the LSL stream info keeps only the FEP-0002 fields (no host name, uid, creation time or address). A WebSocket capture never records a token or the client address.
+- **Our outlets** ([`binding_producers.py`](../../src/fidetype/conformance/binding_producers.py)): synthetic `ctc-logits` stream, two utterances, one process, loopback. LSL: `replay_to_lsl` -> `inlet` capture; `LSLTrustRunner` reads that capture and publishes on `DecisionOutlet` -> `decisions` capture. WebSocket: `replay_to_ws` -> recording server; the same stream to `WSServer` + `WSTrustRunner` -> `/decisions` capture. Run time about 6 s.
+- **Result:** both reach **NTS Trust-ready** (text) with the binding (`binding-lsl`: `nts-lsl/0.1`; `binding-ws`: `nts-ws/0.1`); stream level provenance. CI job `live` regenerates the captures and checks them.
+
+> **Our take:** the received stream is the consumer's view, not the producer's internal state. That is the right evidence for a binding: it shows what reaches the other side. `fidetype live` reads LSL but writes NTS only to a file, so it has no binding producer yet (gap 36, P14-16).
 
 ## Limits
 - Leakage (5.3) and privacy (5.4) checks are heuristics. They find clear signs (a `target_text` key, an e-mail address). They cannot prove that a stream is clean. With `--truth`, the suite also searches the header for the real truth texts.
