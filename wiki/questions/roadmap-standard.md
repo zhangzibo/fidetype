@@ -3,7 +3,7 @@ title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
 tags: [planning, roadmap, north-star, frontier, write-side, affect, memory, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-15
+updated: 2026-11-16
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -19,6 +19,8 @@ updated: 2026-11-15
 **Update (2026-11-11):** the user added two scope items at the end: [P12](#p12-beyond-text-intent-and-control-added-2026-11-11) (intent beyond text) and [P13](#p13-public-benchmark-hub-added-2026-11-11) (public benchmark hub). Priorities and the order of P1–P11 do not change.
 
 **Update (2026-11-15):** the user added [P14](#p14-value-first-a-useful-toolkit-added-2026-11-15) (value first: pretrained decoders, a drop-in trust wrapper, live lab inputs, a safe-WPM metric, a visible demo, result write-ups, an example AAC integration). No existing item moves, changes its ID or changes its priority.
+
+**Update (2026-11-16):** the user asked that known gaps are fixed later, not forgotten. 15 new items register the open gaps of 2026-11-16 at the end of their phases (P1-14, P1-15, P4-09, P5-08 … P5-11, P14-10, P15-13 … P15-19). Convention: new numbered ids that continue each phase; "follow-up of" names the item they extend. No existing item moved. List: [open gaps](open-gaps.md).
 
 **Context:** [project plan](project-plan.md) (M0–M7 = v0.1), [open-source playbook](open-source-playbook.md) (stages 0–5), [architecture](architecture.md), [direction decision](direction-decision.md#scope-decision-2026-11-08-neural-input-opentelemetry-level), [spec v0.1](../../spec/neuraltextstream-v0.1.md), [public datasets](public-datasets.md), [progress dashboard](../progress/index.html) (milestones P1–P11).
 
@@ -174,6 +176,23 @@ Reasons:
 
 **Effort:** 25–40 agent-days; about 15 h of user review. **Depends on:** v0.1 spec; lessons from P4 adapters and P6 benchmark (real producers find spec gaps).
 
+### Open-gap items (added 2026-11-16)
+The user asked that known gaps are fixed later, not forgotten. These items come from agent reports of 2026-11-16. Full list: [open gaps](open-gaps.md). No existing item moved.
+
+#### P1-14 Gap G-13 part (a): apply option A2 (dense + sparse in one frame, sparse keys type-checked)
+- **Gap:** 5 of the [open-gap list](open-gaps.md). Follow-up of P1-13, P1-04.
+- **Status:** `todo`.
+- **Depends on:** P1-13 (RC4), GEN-11.
+- **Source:** Commit `de2f242` (P1-04 done: G-13 part b closed, part a open with options A1-A3, A2 recommended).
+- **Done when:** The next spec draft applies option A2 of RC4 Appendix C.2: a frame may carry dense and sparse values together, and the sparse keys are type-checked (in line with GEN-11). The Python, TypeScript and Rust validators, the proto / JSON Schema and new conformance vectors agree (parity check passes), and G-13 is marked closed in the traceability table.
+
+#### P1-15 SC-9: `eeg.*` and `fnirs.*` semconv keys from a real producer
+- **Gap:** 7 of the [open-gap list](open-gaps.md). Follow-up of P1-04.
+- **Status:** `externally_blocked`.
+- **Depends on:** An EEG or fNIRS adapter (P4) or dataset that emits the keys.
+- **Source:** Commit `de2f242` (FEP-0009: `eeg` and `fnirs` stay planned, SC-9).
+- **Done when:** A FEP defines `eeg.*` and / or `fnirs.*` keys from the evidence of a real producer (a public dataset adapter or a device adapter that fills them). The registry, the three SDK validators, the vectors and the `semconv` CI check include them. Externally blocked until such a dataset or adapter exists.
+
 ## P2. Reference SDKs
 **Goal:** any decoder or app can emit and read NTS in its own language, with the same behaviour everywhere.
 
@@ -256,6 +275,16 @@ Reasons:
 
 **Effort:** 30–60 agent-days; user: hardware purchase or loans (**user-owned**). **Depends on:** P1, P2; dataset downloads.
 
+### Open-gap items (added 2026-11-16)
+The user asked that known gaps are fixed later, not forgotten. These items come from agent reports of 2026-11-16. Full list: [open gaps](open-gaps.md). No existing item moved.
+
+#### P4-09 BrainFlow bridge: move `device.board_id` / `device.board_name` out of the reserved namespace
+- **Gap:** 9 of the [open-gap list](open-gaps.md). Follow-up of P4-02.
+- **Status:** `todo`.
+- **Depends on:** P1-04 (semconv registry).
+- **Source:** MET-3 warning on BrainFlow bridge streams ([docs/semconv.md](../../docs/semconv.md) rule 3); open-gap list 2026-11-16.
+- **Done when:** `src/fidetype/adapters/brainflow_bridge.py` no longer writes custom keys in the reserved `device` namespace: the keys move to a vendor namespace (for example `brainflow.*`) or a FEP registers them in `spec/semconv/`. A bridge stream validates with no MET-3 warning, and a test checks this.
+
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
 
@@ -288,6 +317,37 @@ Reasons:
 
 **Value-first link (2026-11-15):** [P14-03](#p14-03-trust-layer-as-a-drop-in-wrapper) packages the deliverable-2 guarantees as a drop-in wrapper for any decoder. P5 scope does not change.
 
+### Open-gap items (added 2026-11-16)
+The user asked that known gaps are fixed later, not forgotten. These items come from agent reports of 2026-11-16. Full list: [open gaps](open-gaps.md). No existing item moved.
+
+#### P5-08 Non-vacuous precision bound ("when it types, it is right")
+- **Gap:** 3 of the [open-gap list](open-gaps.md). Follow-up of P5-02.
+- **Status:** `todo`.
+- **Depends on:** M4-13 rerun ([plan](../../experiments/2026-11-17-p5-02-precision-m4-13/plan.md)) or a per-word commit; P11-01.
+- **Source:** Commits `13f1853` (precision replay vacuous on T15 + T12) and `3dc84bf` (P5-02 done, open point).
+- **Done when:** On held-out data of at least one public set, `calibrate(target_precision=)` certifies a commit threshold with at least one commit, and the measured error among commits is at or below the target at the stated confidence. Either the stronger M4-13 decoder (pre-registered rerun) or a per-word commit gives this. If neither does, the result says so with numbers, and the item stays open for P11 decoders.
+
+#### P5-09 Drift test that detects a spread change at the same centre
+- **Gap:** 11 of the [open-gap list](open-gaps.md). Follow-up of P5-01.
+- **Status:** `todo`.
+- **Depends on:** P5-01.
+- **Source:** Commit `9cb7a81` (P5-01 done; scale changes not detected).
+- **Done when:** `ConformalDriftTest` (`src/fidetype/trust/drift.py`) can also bet on |p − 1/2| (or an equal spread statistic), so a change of spread at the same centre raises an alarm. A plan with the alarm criteria and the false-alarm check is committed before any test run. Synthetic results show the false-alarm rate at or below the level and detection of a pure spread change.
+
+#### P5-10 PersonalTrust watches the guard risk
+- **Gap:** 12 of the [open-gap list](open-gaps.md). Follow-up of P5-01.
+- **Status:** `todo`.
+- **Depends on:** P5-01.
+- **Source:** Commit `9cb7a81` (P5-01: on T12 the guard risk drifts, `p_top1` does not; test not wired into `PersonalTrust`).
+- **Done when:** `PersonalTrust` can run the guard-risk drift test (`RiskDriftTest` on the guard risk), not only the `p_top1` test. The default behaviour stays the same and the guard-risk test is opt-in, or the change of default is documented in the changelog and the docs. A test and the T12 replay show the alarm path through `PersonalTrust`.
+
+#### P5-11 Replay the online guards on T12 / T15 through the drop-in API
+- **Gap:** 15 of the [open-gap list](open-gaps.md). Follow-up of P5-02.
+- **Status:** `todo`.
+- **Depends on:** P5-02, P15-04.
+- **Source:** Commit `3dc84bf` (P5-02 done; online guards not yet replayed via the drop-in API).
+- **Done when:** A replay on T12 and T15 through the drop-in surface (`guard.online(...)`, `src/fidetype/trust/online_guard.py`) reproduces the P15-04 long-run wrong-commit numbers (which used the controllers directly), or the result explains each difference.
+
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
 
@@ -307,6 +367,8 @@ Reasons:
 **Effort:** 15–25 agent-days. **Depends on:** M5 harness, P4 replay adapters.
 
 **Status (2026-11-11):** v0.1 is done as M5-01..03: [open benchmark](../concepts/open-benchmark.md) (3 tracks, NTS submissions, fixed splits, static leaderboard with our baselines).
+
+**Status (2026-11-16): P6-01 done** (commit `1d4ff8c`): benchmark tracks v0.2 with licence-clean fixed splits for 7 datasets (B2T '25, B2T '24, Willett handwriting, Toronto sEMG, KT-sEMG; SpanishBCBL and emg2qwerty research only), hash-only split files and a `verify` command ([docs/benchmark-tracks.md](../../docs/benchmark-tracks.md), [results](../../experiments/2026-11-16-p6-01-tracks/results.md)). P6-01 also gives exact Toronto safe WPM and null-commit audits for B2T and MEG. Scorer and baselines of the new tracks: P6-02.
 
 **Value-first link (2026-11-15):** [P14-05](#p14-05-headline-metric-safe-words-per-minute) adds a "safe WPM at α" column to this leaderboard. It is not a second leaderboard.
 
@@ -484,6 +546,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | **P14-07** | Live demo with a real wristband (hardware: user decision) | P14-06, P4-05, P4-06 | BCI companies, small teams |
 | **P14-08** | Results write-ups (credibility), linked to the paper track | P14-01, P14-05, PUB (P11-04, M4-04) | research labs, BCI companies, clinical trials |
 | **P14-09** | Example AAC integration: NTS into an open-source AAC or text-entry app | P3 WebSocket exporter, P14-03, P14-06; pilot: P10-05 | AAC app makers |
+| **P14-10** | Safe WPM on the remaining tracks (b2t24-t12, willett-hw, kt-semg, emg2qwerty, P11-01) (open gap 8, [details](#p14-10-safe-wpm-on-the-remaining-tracks-b2t24-t12-willett-hw-kt-semg-emg2qwerty-p11-01)) | P14-05, P6-01 (done), P6-02, P11-01 | research labs, BCI companies |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -572,6 +635,17 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 
 **Effort:** 25–40 agent-days (our estimate); user: about 6 h (weight hosting decision, accounts, hardware decision). **Depends on:** M4-12, P4-01, P4-02, P4-07, P5-02, P6-02, P6-03, P11-01. **Window:** 2026-11-16 → 2027-03-31, before most of P10, as the rule "demo + benchmark before outreach" needs. Items that need the user or hardware have no date.
 
+### Open-gap items (added 2026-11-16)
+The user asked that known gaps are fixed later, not forgotten. These items come from agent reports of 2026-11-16. Full list: [open gaps](open-gaps.md). No existing item moved.
+
+#### P14-10 Safe WPM on the remaining tracks (b2t24-t12, willett-hw, kt-semg, emg2qwerty, P11-01)
+- **Gap:** 8 of the [open-gap list](open-gaps.md). Follow-up of P14-05.
+- **Status:** `todo`.
+- **Partly closed:** P6-01, commit `1d4ff8c`: exact Toronto safe WPM (participant CI) and null-commit audits at the CRC / LTT thresholds for B2T ours, B2T published and MEG.
+- **Depends on:** P14-05, P6-01 (done), P6-02, P11-01.
+- **Source:** Commit `7d74c0f` (P14-05 safe WPM baselines; missing tracks and controls); partly closed by `1d4ff8c` (P6-01).
+- **Done when:** The scorer, baselines and safe WPM exist for the tracks `b2t24-t12`, `willett-hw`, `kt-semg` and `emg2qwerty` (research only), and for the P11-01 decoder when it exists, each with its null-commit audit; or the result states why a track has no certified number. The scorer and baselines of these tracks come with P6-02. Part already closed by P6-01 (commit `1d4ff8c`): exact Toronto safe WPM with a participant CI, and null-commit audits for B2T ours, B2T published and MEG (the two B2T published entries still show "controls: no" because shuffled / zeros CER is not defined for a text-only decoder; P6-01 documents this).
+
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
 
@@ -609,6 +683,13 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | **P15-10** | Focused literature check before any public novelty claim | all | — |
 | **P15-11** | Demo shows F1 / F2: a decoder that improves across sessions while the guarantee line stays | F1, F2 | P15-03 or P15-01, P15-06, P14-06 |
 | **P15-12** | Frontier result write-ups (one per experiment, negative results included) | all | P15-01, P15-03, P15-05, P15-08 |
+| **P15-13** | Update gate: PER-based non-inferiority challenger test (open gap 1, [details](#p15-13-update-gate-per-based-non-inferiority-challenger-test)) | F1 | M4-13 rerun result H3 (plan); P15-02 |
+| **P15-14** | Certified hallucination bound on T12 (or proof that none is possible) (open gap 2, [details](#p15-14-certified-hallucination-bound-on-t12-or-proof-that-none-is-possible)) | F2 | M4-13; pre-registered V-single variant (plan); P15-06 |
+| **P15-15** | Hallucination benchmark protocol 0.2: paired swapped / real commit-ratio pass rule (open gap 4, [details](#p15-15-hallucination-benchmark-protocol-02-paired-swapped--real-commit-ratio-pass-rule)) | F2 | P15-07 |
+| **P15-16** | Hallucination benchmark baseline that commits often and checks the signal (open gap 4, [details](#p15-16-hallucination-benchmark-baseline-that-commits-often-and-checks-the-signal)) | F2 | P15-15; M4-13 / P11 decoders; P15-06 |
+| **P15-17** | G3 audit: independent proof review and its fixes (open gap 6, [details](#p15-17-g3-audit-independent-proof-review-and-its-fixes)) | F1 | P15-04 |
+| **P15-18** | Pilots store per-item null-control outputs (open gap 13, [details](#p15-18-pilots-store-per-item-null-control-outputs)) | all | — |
+| **P15-19** | Show usefulness on stronger decoders (P5-01, P15-02, P5-02, P15-06) (open gap 14, [details](#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06)) | all | M4-13 rerun queue, P11-01 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -702,6 +783,59 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - The demo shows F1 / F2 (P15-11). Each experiment has a write-up (P15-12).
 
 **Effort:** 30–60 agent-days (our estimate); about 30–60 GPU-h in total; user: about 8 h (review of claims, LLM licence choice). **Depends on:** trust layer (P5, P14-03), decoders (M4-12 / M4-13, T12 v2, P11-01), the GPU queue. **Window:** 2026-11-16 → 2027-06-30 for the first round. Later rounds (joint model on one GPU, live user studies) come after it; user studies need ethics approval and volunteers (**externally blocked**).
+
+### Open-gap items (added 2026-11-16)
+The user asked that known gaps are fixed later, not forgotten. These items come from agent reports of 2026-11-16. Full list: [open gaps](open-gaps.md). No existing item moved.
+
+#### P15-13 Update gate: PER-based non-inferiority challenger test
+- **Gap:** 1 of the [open-gap list](open-gaps.md). Follow-up of P15-02, P15-03.
+- **Status:** `todo`.
+- **Depends on:** M4-13 rerun result H3 ([plan](../../experiments/2026-11-17-p15-03-f1-m4-13/plan.md)); P15-02.
+- **Source:** Commit `97a2fc4` (trust reruns on M4-13, dry run): the gate accepted the reversed decoder (2 discordant pairs, p 0.25).
+- **Done when:** The champion / challenger gate of `GuardedUpdateLoop` (`src/fidetype/trust/adaptive.py`) has a per-item PER (or other continuous loss) non-inferiority test next to the sign test, with a margin fixed in a plan before the runs. A unit test and a replay show that the gate refuses the reversed (broken) decoder of the P15-03a dry run, also when the champion is weak and there are few discordant pairs. The change is decided only after the pre-registered H3 result of the M4-13 rerun is read, and the H3 outcome is quoted in the results.
+
+#### P15-14 Certified hallucination bound on T12 (or proof that none is possible)
+- **Gap:** 2 of the [open-gap list](open-gaps.md). Follow-up of P15-06.
+- **Status:** `todo`.
+- **Depends on:** M4-13; pre-registered V-single variant ([plan](../../experiments/2026-11-17-f2-m4-13/plan.md)); P15-06.
+- **Source:** Commit `958040a` (P15-06 T12: 180 LTT test items < 230 needed at α 0.01, δ 0.1).
+- **Done when:** A certified fluent-wrong bound (α, δ stated) exists on held-out T12 data, or a written result shows that no certified bound is possible with the T12 data at the stated α and δ (with the arithmetic). The first try is the pre-registered V-single variant (no ordering split, test on all non-fit items) in the M4-13 rerun queue. The result is filed in the P15-06 results and on this page.
+
+#### P15-15 Hallucination benchmark protocol 0.2: paired swapped / real commit-ratio pass rule
+- **Gap:** 4 of the [open-gap list](open-gaps.md). Follow-up of P15-07.
+- **Status:** `todo`.
+- **Depends on:** P15-07.
+- **Source:** Commit `bdefe45` (P15-07 done; fixed rule lets rarely-committing systems pass).
+- **Done when:** Protocol `fidetype.halluc/0.2` replaces the fixed 0.05 swapped-commit rule with a pass rule on the swapped / real commit ratio, judged by a paired test on the same items. A system that rarely commits cannot pass only because it rarely commits. The docs, the scorer, the CI re-score of the committed outcomes and the score cards use the new rule; 0.1 results stay readable and are marked as the old protocol.
+
+#### P15-16 Hallucination benchmark baseline that commits often and checks the signal
+- **Gap:** 4 of the [open-gap list](open-gaps.md). Follow-up of P15-07.
+- **Status:** `todo`.
+- **Depends on:** P15-15; M4-13 / P11 decoders; P15-06.
+- **Source:** Commit `bdefe45` (P15-07 open point).
+- **Done when:** The benchmark has at least one baseline that commits on a useful part of the real-signal items (rate stated in a plan before the run) and also passes the null, scrambled and swapped tracks under the protocol 0.2 rule. If no such baseline exists on current decoders, the result says so and names the decoder it waits for.
+
+#### P15-17 G3 audit: independent proof review and its fixes
+- **Gap:** 6 of the [open-gap list](open-gaps.md). Follow-up of P15-04.
+- **Status:** `todo`.
+- **Partly closed:** Review part done, commit `4cd9cb5`: [G3 audit review](g3-audit-review.md), verdict "sound with fixes" (H1 high: delayed / out-of-order feedback can break the bound; M1 fixed public seed; M2 low-power tests; L1-L5).
+- **Depends on:** P15-04.
+- **Source:** Commit `4860e51` (P15-04 done; P15-04 done-when asks for a fresh-agent check of any new derivation); review `4cd9cb5`.
+- **Done when:** A fresh agent with no context reviews the G3 derivation (forced exploration + IPW + Bennett / Ville audit) in `src/fidetype/trust/bandit_risk.py` against the [scope page](f1-guarantee-scope.md) and the cited papers, and the review is filed in the wiki (done: [G3 audit review](g3-audit-review.md)). The item closes when each issue of that review (H1, M1, M2, L1-L5) is fixed in code, tests or docs, or written as a limit on the scope page and the guarantee sheet. An outside human review, if wanted later, is a separate externally blocked step.
+
+#### P15-18 Pilots store per-item null-control outputs
+- **Gap:** 13 of the [open-gap list](open-gaps.md). Follow-up of P15-12.
+- **Status:** `todo`.
+- **Depends on:** —.
+- **Source:** Commit `9cb7a81` (P5-01 replay used conservative proxies from the P15-02 counts).
+- **Done when:** Every new pilot and replay stores per-item outputs of its null controls (uniform, shuffled, swapped where used) next to the real-signal outputs, in the local derived-data folder. The pre-registration template or the P15 rules say so, and the next P15 replay (P15-03 or later) does it, so later work does not need proxies.
+
+#### P15-19 Show usefulness on stronger decoders (P5-01, P15-02, P5-02, P15-06)
+- **Gap:** 14 of the [open-gap list](open-gaps.md). Follow-up of P5-01, P15-02, P5-02, P15-06.
+- **Status:** `todo`.
+- **Depends on:** M4-13 rerun queue, P11-01.
+- **Source:** Commits `9cb7a81`, `4355946`, `3dc84bf`, `958040a` (open points: weak decoder).
+- **Done when:** P5-01 (personal trust), P15-02 (update loop), P5-02 (precision and online guards) and P15-06 (hallucination bound) are rerun on the M4-13 decoder and on the P11 decoders. Each rerun reports a useful operating point (commits that are mostly right, with the bound kept) or a stated null result. The current decoders are too weak (top-1 almost never right), so the safety results exist but the usefulness does not.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
@@ -816,6 +950,7 @@ These steps need the user or outside people. They are tracked as `externally_blo
 - [LangChain case study](../sources/case-study-langchain.md) (the reason for P14: useful first)
 - [Spec v0.1](../../spec/neuraltextstream-v0.1.md)
 - [North star](north-star.md) (the reason for P15: frontier first)
+- [Open gaps](open-gaps.md) (2026-11-16: known gaps registered as items)
 - [Progress dashboard](../progress/index.html) (milestones P1–P16)
 - [Apple BCI HID](../entities/apple-bci-hid.md)
 - [Diagrams](../diagrams/index.html) (diagram 11: long-term roadmap)

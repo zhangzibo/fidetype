@@ -970,3 +970,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Independent review of the (G3) audit in `fidetype.trust.bandit_risk`: proof, code, tests, scope page, docs 11.2. Verdict: sound with fixes. Bennett supermartingale, filtration, union bound over 101 x 12 and code match, in decision order with complete feedback.
 - H1 (high): audit sums update at `observe`; explored offers that are fed back late or never are missing, so the anytime bound can fail (Monte Carlo: never-fed-back offers, failure rate 1.00). M1: default `seed=0` makes coins a fixed public sequence. M2: the coverage test still passes with half the slack and its adversary does not depend on coins. L1-L5: proof-sketch wording, floor rows, docs assumptions, exploring s = -inf items, optional tighter V.
 - Pages: new [G3 audit review](questions/g3-audit-review.md); link from [F1 guarantee scope](questions/f1-guarantee-scope.md); index. No library code changed.
+
+## [2026-11-16] query | Open gaps registered as roadmap items (user: "make sure we do indeed fix the gap later")
+- New page [open gaps](questions/open-gaps.md): 15 open gaps, each with a new id, status, follow-up of, depends on and source commit. Linked from the index, the roadmap and HANDOFF.
+- Convention: new numbered ids that continue each phase (P1-14, P1-15, P4-09, P5-08 … P5-11, P14-10, P15-13 … P15-19); "follow-up of" names the extended item. No existing item moved, renumbered or removed.
+- Roadmap: an "Open-gap items (added 2026-11-16)" block at the end of P1, P4, P5, P14 and P15; rows in the P14 and P15 tables; P6 status line for P6-01 (1d4ff8c). Tracker: 15 new tasks (P1-15 externally_blocked, the rest todo).
+- Closed: gap 10 (target_precision + hallucination bound) by P5-02, 3dc84bf. Partly closed: gap 8 (Toronto safe WPM, null-commit audits) by P6-01, 1d4ff8c, the rest is P14-10 with P6-02; gap 6 review done (g3-audit-review, 4cd9cb5), its fixes stay open as P15-17. Added gap 15 (online guards via the drop-in API, P5-11).
+- Tracker: null run stats filled for P14-05 (1413.799 s, 249,419 tokens, 106 tools) and P5-01 (1371.878 s, 253,739 tokens, 86 tools).
