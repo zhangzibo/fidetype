@@ -53,7 +53,7 @@ If an assumption is false, the numbers on the sheet can be wrong in either direc
 | Any single utterance | The bound is on a rate over many utterances |
 | A bound per user, per session or per sentence type | The bound is on the mix of the calibration data. One user in a mix can be worse |
 | Data that differ from the calibration data | See A1 |
-| The error rate among commits (precision) | The rate is wrong commits / all utterances. With few commits, many of them can be wrong (M2-19: 6 of 9 commits wrong at a rate of 0.0086) |
+| The error rate among commits (precision) | The rate is wrong commits / all utterances. With few commits, many of them can be wrong (M2-19: 6 of 9 commits wrong at a rate of 0.0086). An optional bound exists: section 10 |
 | A minimum number of commits or a typing speed | The guard may commit rarely or never. It trades commits for safety |
 | Offered and withheld text | Only commits count. An offer can hold no right choice |
 | Hallucination on inputs that the null controls do not cover | The controls test two kinds of null input (section 5), not every failure |
@@ -159,7 +159,30 @@ guard = ft.calibrate(cal_logits, cal_texts, vocab=VOCAB, decode_fn=my_decoder,
 
 Not guaranteed: wrong commits that the LLM finds non-fluent (they count only in section 1); that each committed word was said. `ft.load` needs the same `grounding=` again. Validated on T15 (one set): the bound held in all arms, but with the strict selection rule the LLM-rescoring guard did not commit at all ([experiment](../experiments/2026-11-16-p15-06-halluc-bound/results.md)).
 
-## 10. Related
+## 10. Optional: a bound on the error rate among commits (P5-02)
+
+Section 1 bounds wrong commits / **all** utterances. A guard that commits rarely meets it even if most of its commits are wrong (P14-03: T15 2 of 2 commits wrong, T12 15 of 25). The precision bound answers the user's question: "when it types, is it right?". It is off by default; without these arguments nothing changes.
+
+```python
+guard = ft.calibrate(cal_logits, cal_texts, vocab=VOCAB, decode_fn=my_decoder,
+                     target_precision=0.95)          # precision_delta defaults to delta
+print(guard.sheet)                                   # adds a "precision bound" block
+```
+
+| Item | Meaning |
+|---|---|
+| Error rate among commits | Wrong COMMITs / all COMMITs. Precision = 1 − this rate |
+| Guarantee | With probability at least 1 − `precision_delta` (default δ), the error rate among commits on new utterances is at most 1 − `target_precision` |
+| Together with section 1 | Both statements hold together with probability at least 1 − δ − `precision_delta` (union bound) |
+| How | For each threshold `commit_p` (grid 1.00 → 0.00, step 0.01, or `precision_grid`): exact binomial p-value P(Bin(commits, β) ≤ wrong) on the commits of the LTT part, β = 1 − `target_precision`. Given the number of commits, the commits are an exchangeable sample, so the p-value is valid. p ≤ δ is the same test as "one-sided Clopper-Pearson upper bound ≤ β". The error rate is not monotone in `commit_p`, so the test order comes from the policy part (smallest p-value first), and a fixed-sequence test on the LTT part certifies the thresholds ([learn then test](../wiki/concepts/learn-then-test.md)) |
+| Selection | The certified threshold with the most commits, but never below the plain `commit_p`. A higher threshold only removes commits, so section 1 and the null controls still hold |
+| No certified threshold | The guard never commits (sheet warning). It still offers and withholds |
+| Cost | To certify a threshold, the LTT part needs at least log δ / log(`target_precision`) right commits: 22 for 0.9, 45 for 0.95, 230 for 0.99 (δ 0.1). A decoder that is rarely right cannot get a useful precision guarantee |
+| Sheet | A "precision bound" block: target, δ_p, the selected threshold, the P14-03 threshold, how many thresholds were tested and certified, the test commits and a one-sided CP lower bound on precision |
+
+Not guaranteed: precision for one session or one user; any single commit; data that differ from the calibration data (section 3). The precision bound cannot be combined with the hallucination bound (section 9) yet. `ft.load` needs nothing extra. Code: [`src/fidetype/trust/precision_bound.py`](../src/fidetype/trust/precision_bound.py). Validated on synthetic exchangeable data (the test suite: violation rate at most δ over 200 draws). On the P14-03 replay sets (T15, T12; targets 0.5 to 0.95) no threshold was certified: the decoders are right on only about 8 % of sentences, so the guard never commits (P14-03 guard: 2 of 2 and 15 of 25 commits wrong). Safe, but not yet useful on these decoders ([experiment](../experiments/2026-11-16-p5-02-precision/results.md)).
+
+## 11. Related
 
 - [10-minute quickstart](trust-quickstart.md)
 - [Concepts: the trust layer](concepts.md)

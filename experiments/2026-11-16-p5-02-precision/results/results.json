@@ -1,0 +1,699 @@
+{
+ "fidetype_version": "0.0.1",
+ "t15": {
+  "split": {
+   "calibration": "val_select (even-index val trials)",
+   "held_out": "val_eval (odd-index val trials)"
+  },
+  "n_calibration": 722,
+  "n_held_out": 701,
+  "alpha": 0.05,
+  "delta": 0.1,
+  "delta_p": 0.1,
+  "targets": {
+   "0.5": {
+    "config_id": "tcfg-83f89e159ce1a2e7",
+    "commit_p": Infinity,
+    "feasible": false,
+    "certified": 0,
+    "calibration_test_counts": {},
+    "calibration_precision_lower": null,
+    "min_commits": 4,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "controls_pass": true,
+    "n": 701,
+    "commits": 0,
+    "wrong": 0,
+    "commit_rate": 0.0,
+    "precision": null,
+    "precision_cp95": null,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0052
+    ],
+    "p1_pass": null,
+    "marginal_le_alpha": true
+   },
+   "0.8": {
+    "config_id": "tcfg-94751a14efb191ec",
+    "commit_p": Infinity,
+    "feasible": false,
+    "certified": 0,
+    "calibration_test_counts": {},
+    "calibration_precision_lower": null,
+    "min_commits": 11,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "controls_pass": true,
+    "n": 701,
+    "commits": 0,
+    "wrong": 0,
+    "commit_rate": 0.0,
+    "precision": null,
+    "precision_cp95": null,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0052
+    ],
+    "p1_pass": null,
+    "marginal_le_alpha": true
+   },
+   "0.9": {
+    "config_id": "tcfg-20a6a530d014e805",
+    "commit_p": Infinity,
+    "feasible": false,
+    "certified": 0,
+    "calibration_test_counts": {},
+    "calibration_precision_lower": null,
+    "min_commits": 22,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "controls_pass": true,
+    "n": 701,
+    "commits": 0,
+    "wrong": 0,
+    "commit_rate": 0.0,
+    "precision": null,
+    "precision_cp95": null,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0052
+    ],
+    "p1_pass": null,
+    "marginal_le_alpha": true
+   },
+   "0.95": {
+    "config_id": "tcfg-30a710b61cb66944",
+    "commit_p": Infinity,
+    "feasible": false,
+    "certified": 0,
+    "calibration_test_counts": {},
+    "calibration_precision_lower": null,
+    "min_commits": 45,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "controls_pass": true,
+    "n": 701,
+    "commits": 0,
+    "wrong": 0,
+    "commit_rate": 0.0,
+    "precision": null,
+    "precision_cp95": null,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0052
+    ],
+    "p1_pass": null,
+    "marginal_le_alpha": true
+   }
+  },
+  "base": {
+   "config_id": "tcfg-7ecd016879246eb6",
+   "commit_p": 0.3,
+   "held_out_can_commit": 673,
+   "held_out_top1_right": 59,
+   "held_out_curve": [
+    {
+     "commit_p": 1.0,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.99,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.95,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.9,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.8,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.7,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.6,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.5,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.4,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.3,
+     "commits": 2,
+     "wrong": 2,
+     "precision": 0.0
+    },
+    {
+     "commit_p": 0.2,
+     "commits": 90,
+     "wrong": 57,
+     "precision": 0.3666666666666667
+    },
+    {
+     "commit_p": 0.1,
+     "commits": 673,
+     "wrong": 614,
+     "precision": 0.08766716196136703
+    },
+    {
+     "commit_p": 0.0,
+     "commits": 673,
+     "wrong": 614,
+     "precision": 0.08766716196136703
+    }
+   ]
+  },
+  "resampling": {
+   "0.5": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.8": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.9": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.95": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   }
+  },
+  "resampling_unconstrained": {
+   "0.5": {
+    "draws": 1000,
+    "feasible": 11,
+    "violations": 3,
+    "violation_rate": 0.2727272727272727,
+    "limit": 0.3713602101199873,
+    "pass": null,
+    "mean_population_precision": 0.5435650623885917,
+    "mean_commit_rate": 0.033458695370250285
+   },
+   "0.8": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.9": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.95": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   }
+  },
+  "seconds": 567.5
+ },
+ "t12": {
+  "split": {
+   "calibration": "trust pool, 14 fit_a + calibration sessions",
+   "held_out": "trust pool, 10 test sessions"
+  },
+  "n_calibration": 480,
+  "n_held_out": 400,
+  "alpha": 0.05,
+  "delta": 0.1,
+  "delta_p": 0.1,
+  "targets": {
+   "0.5": {
+    "config_id": "tcfg-963c677d9e317471",
+    "commit_p": Infinity,
+    "feasible": false,
+    "certified": 0,
+    "calibration_test_counts": {},
+    "calibration_precision_lower": null,
+    "min_commits": 4,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "controls_pass": true,
+    "n": 400,
+    "commits": 0,
+    "wrong": 0,
+    "commit_rate": 0.0,
+    "precision": null,
+    "precision_cp95": null,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0092
+    ],
+    "p1_pass": null,
+    "marginal_le_alpha": true
+   },
+   "0.8": {
+    "config_id": "tcfg-ab4b110d86112486",
+    "commit_p": Infinity,
+    "feasible": false,
+    "certified": 0,
+    "calibration_test_counts": {},
+    "calibration_precision_lower": null,
+    "min_commits": 11,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "controls_pass": true,
+    "n": 400,
+    "commits": 0,
+    "wrong": 0,
+    "commit_rate": 0.0,
+    "precision": null,
+    "precision_cp95": null,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0092
+    ],
+    "p1_pass": null,
+    "marginal_le_alpha": true
+   },
+   "0.9": {
+    "config_id": "tcfg-b1da00d198812082",
+    "commit_p": Infinity,
+    "feasible": false,
+    "certified": 0,
+    "calibration_test_counts": {},
+    "calibration_precision_lower": null,
+    "min_commits": 22,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "controls_pass": true,
+    "n": 400,
+    "commits": 0,
+    "wrong": 0,
+    "commit_rate": 0.0,
+    "precision": null,
+    "precision_cp95": null,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0092
+    ],
+    "p1_pass": null,
+    "marginal_le_alpha": true
+   },
+   "0.95": {
+    "config_id": "tcfg-d9168bcea10018c4",
+    "commit_p": Infinity,
+    "feasible": false,
+    "certified": 0,
+    "calibration_test_counts": {},
+    "calibration_precision_lower": null,
+    "min_commits": 45,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "controls_pass": true,
+    "n": 400,
+    "commits": 0,
+    "wrong": 0,
+    "commit_rate": 0.0,
+    "precision": null,
+    "precision_cp95": null,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0092
+    ],
+    "p1_pass": null,
+    "marginal_le_alpha": true
+   }
+  },
+  "base": {
+   "config_id": "tcfg-bd955c64a9cd7966",
+   "commit_p": 0.3,
+   "held_out_can_commit": 376,
+   "held_out_top1_right": 31,
+   "held_out_curve": [
+    {
+     "commit_p": 1.0,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.99,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.95,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.9,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.8,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.7,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.6,
+     "commits": 0,
+     "wrong": 0,
+     "precision": null
+    },
+    {
+     "commit_p": 0.5,
+     "commits": 1,
+     "wrong": 1,
+     "precision": 0.0
+    },
+    {
+     "commit_p": 0.4,
+     "commits": 4,
+     "wrong": 2,
+     "precision": 0.5
+    },
+    {
+     "commit_p": 0.3,
+     "commits": 25,
+     "wrong": 15,
+     "precision": 0.4
+    },
+    {
+     "commit_p": 0.2,
+     "commits": 108,
+     "wrong": 83,
+     "precision": 0.2314814814814815
+    },
+    {
+     "commit_p": 0.1,
+     "commits": 376,
+     "wrong": 346,
+     "precision": 0.07978723404255317
+    },
+    {
+     "commit_p": 0.0,
+     "commits": 376,
+     "wrong": 346,
+     "precision": 0.07978723404255317
+    }
+   ]
+  },
+  "resampling": {
+   "0.5": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.8": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.9": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.95": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   }
+  },
+  "resampling_unconstrained": {
+   "0.5": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.8": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.9": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   },
+   "0.95": {
+    "draws": 1000,
+    "feasible": 0,
+    "violations": 0,
+    "violation_rate": null,
+    "limit": null,
+    "pass": null,
+    "mean_population_precision": null,
+    "mean_commit_rate": null
+   }
+  },
+  "seconds": 307.8
+ }
+}

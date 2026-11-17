@@ -192,6 +192,9 @@ class GuaranteeSheet:
     #: The hallucination (fluent-wrong) bound of P15-06, or None (not requested). See
     #: :mod:`fidetype.trust.halluc_bound`.
     halluc: dict[str, Any] | None = None
+    #: The precision-type bound of P5-02 (error rate among commits), or None (not requested). See
+    #: :mod:`fidetype.trust.precision_bound`.
+    precision: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         d = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -202,6 +205,8 @@ class GuaranteeSheet:
             d[k] = _json_float(d[k])
         if d.get("halluc") is None:
             d.pop("halluc", None)  # pre-P15-06 sheets keep their bytes
+        if d.get("precision") is None:
+            d.pop("precision", None)  # pre-P5-02 sheets keep their bytes
         return d
 
     @classmethod
@@ -253,6 +258,25 @@ class GuaranteeSheet:
                 f"  chain              {h['n_tested']} of {h['chain_length']} grid points tested, "
                 f"{h['n_certified']} certified ({h['n_order']} ordering + {h['n_test']} test items)",
                 f"  grounding          {h.get('grounding') or 'none'}",
+            ]
+        if self.precision:
+            q = self.precision
+            tc = q.get("test_counts") or {}
+            lo = q.get("test_precision_lower")
+            lines += [
+                f"precision bound      P( error rate among commits <= {q['beta']:.4g} ) >= {1 - q['delta_p']:g}"
+                f"  (precision >= {q['target_precision']:g})",
+                "                     error rate among commits = wrong COMMITs / all COMMITs",
+                f"  method             {q['method']}",
+                f"  selected           commit_p {q.get('selected')} (feasible: {q['feasible']}; P14-03 commit_p "
+                f"{q.get('base_commit_p')})",
+                f"  chain              {q['n_tested']} of {q['chain_length']} thresholds tested, {q['n_certified']} "
+                f"certified ({q['n_order']} ordering + {q['n_test']} test items)",
+                f"  test commits       {tc.get('commits', 0)} commits, {tc.get('wrong', 0)} wrong"
+                + (f" (precision lower bound {lo:.3f}, one-sided CP {1 - q['delta_p']:g})" if lo is not None else ""),
+                f"  commits needed     >= {q['min_commits']} right test commits to certify any threshold",
+                f"  joint              both bounds together hold with probability >= "
+                f"{max(0.0, 1 - self.delta - q['delta_p']):g}",
             ]
         lines.append("assumptions")
         lines += [f"  - {a}" for a in self.assumptions]
@@ -546,6 +570,8 @@ class TrustGuard:
         self._last_lp: np.ndarray | None = None
         #: Per-item statistics of the P15-06 calibration (set by :func:`calibrate`; not saved).
         self.halluc_items: dict[str, Any] | None = None
+        #: Per-item statistics of the P5-02 precision calibration (set by :func:`calibrate`; not saved).
+        self.precision_items: dict[str, Any] | None = None
         decode = _decode_fn_for(decode_fn, codec.lexicon) if frames else None
 
         def capture(stream: NeuralTextStream) -> NBest:
@@ -863,6 +889,9 @@ def calibrate(
     fluent_threshold: float | None = None,
     halluc_grid: Mapping[str, Sequence[float]] | None = None,
     halluc_select: str = "fewest_halluc",
+    target_precision: float | None = None,
+    precision_delta: float | None = None,
+    precision_grid: Sequence[float] | None = None,
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -963,6 +992,20 @@ def calibrate(
         certified configurations (``"fewest_halluc"`` or ``"most_right"``,
         see :func:`~fidetype.trust.halluc_bound.joint_ltt`); both keep the
         guarantee.
+    target_precision, precision_delta, precision_grid
+        Optional precision-type bound (P5-02,
+        :mod:`fidetype.trust.precision_bound`): "when it types, it is
+        right". Off by default (``None``: nothing changes). With
+        ``target_precision=0.95``, ``commit_p`` is raised (never lowered)
+        so that with probability at least ``1 - precision_delta`` (default
+        ``delta``) the error rate **among commits** (wrong COMMITs / all
+        COMMITs) is at most ``1 - target_precision``. Learn then Test over
+        the thresholds ``precision_grid`` (default 1.00 -> 0.00 step 0.01):
+        test order from the policy-grid items, fixed-sequence test on the
+        LTT items, exact binomial p-values on the commits. The P14-03
+        bound and the null controls still hold. If no threshold is
+        certified, the guard never commits. Not yet combinable with the
+        hallucination bound (``grounding=`` / ``llm=``).
 
     Raises
     ------
@@ -1023,6 +1066,18 @@ def calibrate(
 
         if halluc_select not in SELECT_RULES:
             raise ValueError(f"halluc_select must be one of {SELECT_RULES}")
+    prec_on = target_precision is not None
+    if prec_on:
+        p_delta = float(delta if precision_delta is None else precision_delta)
+        if not (0.0 < float(target_precision) < 1.0 and 0.0 < p_delta < 1.0):
+            raise ValueError("target_precision and precision_delta must be in (0, 1)")
+        if halluc_on:
+            raise ValueError("target_precision cannot be combined with the hallucination bound (grounding= / llm=) "
+                             "yet: the gate is chosen on the same LTT items")
+        if precision_grid is not None and not any(math.isfinite(float(c)) for c in precision_grid):
+            raise ValueError("precision_grid has no finite threshold")
+    elif precision_delta is not None or precision_grid is not None:
+        raise ValueError("precision_delta and precision_grid need target_precision=")
     lex = tuple(sorted({w for entry in lexicon for w in str(entry).split()})) if lexicon is not None else None
     if lex is not None and not lex:
         raise ValueError("lexicon is empty")
@@ -1172,7 +1227,96 @@ def calibrate(
                               _as_commit_grounding(grounding), llm, float(halluc_alpha), h_delta,
                               fluent_threshold, halluc_grid, rng_controls, null_trials, rate, null_inputs,
                               halluc_select)
+    if prec_on:
+        guard = _precision_bound(guard, sheet, inputs, texts, order, n_fit, n_pol, kind, decode_fn, audit_text,
+                                 float(target_precision), p_delta, precision_grid, rng_controls, null_trials, rate,
+                                 null_inputs)
     return guard
+
+
+def _precision_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any], texts: Sequence[str],
+                     order: np.ndarray, n_fit: int, n_pol: int, kind: str, decode_fn: UserDecodeFn | None,
+                     audit_text: bool, target_precision: float, delta_p: float,
+                     grid: Sequence[float] | None, rng_controls: np.random.Generator, null_trials: int,
+                     rate: float, null_inputs: Sequence[Any] | None) -> TrustGuard:
+    """The P5-02 step of :func:`calibrate`: LTT on the error rate among commits; a new guard."""
+    from fidetype.trust import precision_bound as P
+
+    frozen = guard.config
+    codec = guard._codec
+    user_fn = decode_fn if kind == "logits" else None
+    g0 = TrustGuard(frozen.with_policy(commit_p=0.0), codec, None, user_fn, audit_text)
+
+    def item(i: int) -> P.PrecisionItem:
+        r0 = g0._decide_quiet(inputs[i])
+        can = r0.action == "commit"
+        top = r0.text if can else (r0.choices[0] if r0.choices else "")
+        return P.PrecisionItem(can, float(r0.p_top1), top != texts[i])
+
+    o_items = [item(int(i)) for i in order[n_fit:n_fit + n_pol]]
+    t_items = [item(int(i)) for i in order[n_fit + n_pol:]]
+    thr = tuple(grid) if grid is not None else P.DEFAULT_COMMIT_P_GRID
+    c0 = float(frozen.policy.get("commit_p", math.inf))
+    res = P.precision_ltt(o_items, t_items, thr, target_precision=target_precision, delta=delta_p, min_commit_p=c0)
+    sel = res.selected if res.selected is not None else math.inf
+    info = {
+        "target_precision": target_precision,
+        "beta": 1.0 - target_precision,
+        "delta_p": delta_p,
+        "method": "Learn then Test over commit_p; exact binomial p-value P(Bin(commits, beta) <= wrong) per "
+                  "threshold; order from the policy-grid items, fixed-sequence test on the LTT items; select the "
+                  f"most commits with commit_p >= {_fmt(c0)} (P14-03 value)",
+        "grid": len({float(c) for c in thr if math.isfinite(float(c))}),
+        "base_commit_p": _json_float(c0),
+        "base_config_id": frozen.config_id,
+        "min_commits": P.min_commits_needed(target_precision, delta_p),
+        **{k: v for k, v in res.to_dict().items() if k not in ("target_precision", "beta", "delta")},
+        "selected": _json_float(sel),
+    }
+    recipe = dict(frozen.recipe)
+    recipe["precision_bound"] = {k: info[k] for k in ("target_precision", "delta_p", "method", "selected")}
+    final = replace(frozen.with_policy(commit_p=sel), recipe=recipe)
+    new = TrustGuard(final, codec, None, user_fn, audit_text)
+    # in-sample LTT check and null controls of the final guard (same control inputs as before)
+    n_com = n_wrong = n_blocked = 0
+    risks = []
+    for i in order[n_fit + n_pol:]:
+        r = new._decide_quiet(inputs[int(i)])
+        risks.append(r.guard_risk)
+        n_blocked += r.reason.startswith(_GATE_RISK_REASON)
+        if r.action == "commit":
+            n_com += 1
+            n_wrong += int(r.text != texts[int(i)])
+    controls = _run_controls(new, inputs, kind, rng_controls, null_trials, rate, null_inputs)
+    info["controls_final"] = [c.to_dict() for c in controls]
+    warnings = list(sheet.warnings)
+    if res.selected is None:
+        warnings.append(f"precision bound: no threshold certified for precision {target_precision:g}, so the guard "
+                        f"never commits. About {info['min_commits']} or more right commits on the LTT part are needed.")
+    elif n_com < info["min_commits"]:
+        warnings.append(f"precision bound: only {n_com} in-sample commits (fewer than {info['min_commits']}).")
+    if res.selected is not None and (n_com, n_wrong) != (res.test_counts.get("commits", 0),
+                                                         res.test_counts.get("wrong", 0)):
+        warnings.append("precision bound: the final guard's in-sample commits differ from the LTT count; the commit "
+                        "rule is not monotone in commit_p for this policy, so check the held-out precision.")
+    new.sheet = replace(sheet, config_id=final.config_id, commit_threshold=float(sel), ltt_commits=n_com,
+                        ltt_wrong_commits=n_wrong, ltt_gate_blocked=int(n_blocked),
+                        ltt_median_guard_risk=float(np.median(risks)) if risks else math.nan,
+                        controls=tuple(controls), warnings=tuple(warnings), precision=info,
+                        assumptions=sheet.assumptions + _PRECISION_ASSUMPTIONS,
+                        not_guaranteed=tuple(a for a in sheet.not_guaranteed if not a.startswith(
+                            "The error rate among commits")) + _PRECISION_NOT_GUARANTEED)
+    new.precision_items = {"order": o_items, "test": t_items}  # per-item statistics (not saved)
+    return new
+
+
+_PRECISION_ASSUMPTIONS = (
+    "Precision bound: the same exchangeability as above, for the utterances on which the guard commits.",
+)
+_PRECISION_NOT_GUARANTEED = (
+    "Precision bound: the error rate among commits of one session or one user; any single commit; precision when "
+    "the guard commits rarely is a rate over few events (the bound is still valid, but a long run is needed to see it).",
+)
 
 
 def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any], texts: Sequence[str],

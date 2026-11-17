@@ -26,6 +26,7 @@ from typing import Any, Callable, Iterator
 import numpy as np
 
 from fidetype.demo.live.config import DemoConfigError, expand
+from fidetype.utils.binomial import _bisect, binom_cdf, clopper_pearson  # noqa: F401 (re-exported)
 
 Timed = tuple[float, dict[str, Any]]
 
@@ -53,40 +54,8 @@ def outcome(action: str, shown: list[str], truth: str | None, norm: Callable[[st
     return "offer-hit" if t is not None and t in [norm(s) for s in shown] else "offer-miss"
 
 
-def _binom_cdf(k: int, n: int, p: float) -> float:
-    """P(X <= k) for X ~ Binomial(n, p) (log-space sum; no scipy needed)."""
-    if p <= 0.0:
-        return 1.0
-    if p >= 1.0:
-        return 1.0 if k >= n else 0.0
-    lp, lq = math.log(p), math.log1p(-p)
-    terms = [math.lgamma(n + 1) - math.lgamma(i + 1) - math.lgamma(n - i + 1) + i * lp + (n - i) * lq
-             for i in range(0, k + 1)]
-    m = max(terms)
-    return min(1.0, math.exp(m) * sum(math.exp(t - m) for t in terms))
-
-
-def _bisect(f: Callable[[float], float], target: float, increasing: bool) -> float:
-    lo, hi = 0.0, 1.0
-    for _ in range(80):
-        mid = (lo + hi) / 2
-        if (f(mid) < target) == increasing:
-            lo = mid
-        else:
-            hi = mid
-    return (lo + hi) / 2
-
-
-def clopper_pearson(k: int, n: int, level: float = 0.95) -> list[float | None]:
-    """Exact (Clopper-Pearson) interval for k successes in n trials, by bisection on the binomial CDF."""
-    if n == 0:
-        return [None, None]
-    a = (1.0 - level) / 2
-    # lower: P(X >= k | p) = a  <=>  1 - cdf(k-1) = a (increasing in p)
-    lo = 0.0 if k == 0 else _bisect(lambda p: 1.0 - _binom_cdf(k - 1, n, p), a, increasing=True)
-    # upper: P(X <= k | p) = a (decreasing in p)
-    hi = 1.0 if k == n else _bisect(lambda p: _binom_cdf(k, n, p), a, increasing=False)
-    return [round(lo, 4), round(hi, 4)]
+# The exact binomial helpers moved to fidetype.utils.binomial (P5-02 reuses them); the old names stay here.
+_binom_cdf = binom_cdf
 
 
 def tally(outcomes: list[str], top1_wrong: list[bool] | None) -> dict[str, Any]:
