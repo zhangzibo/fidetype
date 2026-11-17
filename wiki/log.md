@@ -931,3 +931,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Python, TypeScript and Rust validators check the new keys; six adapters write them. Vectors V83 … V87; parity 336 / 336.
 - G-13 part b closed (proto option `json_null_list`, schema accepts control `absent: null`, vector C26). Part a left open with options A1 … A3 in RC4 C.2.
 - [NTS spec](concepts/nts-spec.md) page, roadmap P1-04 row; tracker P1-04 done; null run stats filled for P15-02, P15-05, P15-06 (fragments).
+
+## [2026-11-16] query | P15-04: online risk control with bandit (shown-only) feedback + scope of the guarantee (P15-04 done)
+- New `fidetype.trust.bandit_risk`: `BanditCommitRiskControl` (targets marginal / precision; rules aci / cs / max; forced exploration shown as an OFFER, never a commit), `BanditTrustPolicy`, `NaiveShownOnlyControl` (biased baseline). Exported from `fidetype.trust`; existing functions and defaults unchanged. 13 tests (identity certificates for adversarial streams, audit coverage over 120 seeds incl. an adaptive adversary, naive bias, naive precision controller overshoots, wrapper).
+- Guarantees: G1 marginal and G2 precision ACI need only commit labels (valid with shown-only feedback, any sequence); G3 IPW + Bennett / Ville anytime audit per grid threshold (design-based). No new theorem claimed.
+- Pre-registered replay ([plan](../experiments/2026-11-16-p15-04-bandit/plan.md), commit d90a49b; [results](../experiments/2026-11-16-p15-04-bandit/results.md)): T12 0.0500 [CP95 0.0308, 0.0762], T15 0.0471 [0.0326, 0.0655], identical to `aci`; audit violations 0 / 200; naive shown-only estimate optimistic by up to 0.235; silent errors not covered (q_notice 0.9: 0.0550 true vs 0.0500 observed); precision target 0.5 not reachable (2-7 commits).
+- New page [F1 guarantee scope](questions/f1-guarantee-scope.md); docs/trust-guarantee.md section 11; roadmap P15-04 result line; index; north star link; tracker P15-04 done (fragment).

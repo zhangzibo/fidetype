@@ -3,7 +3,7 @@ title: Adaptive conformal inference (ACI)
 type: concept
 tags: [conformal, online, distribution-shift, drift, guarantee, trust]
 sources: [adaptive-conformal-inference, rolling-risk-control, conformal-pid-control]
-updated: 2026-11-14
+updated: 2026-11-16
 ---
 
 # Adaptive conformal inference (ACI)
@@ -53,3 +53,4 @@ The eWPM cost is −0.3 % to −0.6 % ([CRC concept](conformal-risk-control.md#o
 - [Conformal risk control](conformal-risk-control.md)
 - [Learn then Test](learn-then-test.md)
 - [Streaming trust layer](streaming-trust-layer.md)
+- [F1 guarantee scope](../questions/f1-guarantee-scope.md) (P15-04: ACI needs only the realised loss, so it stays valid when the user labels only shown text; IPW audit with forced exploration)

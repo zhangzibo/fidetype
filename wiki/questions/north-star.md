@@ -114,7 +114,7 @@ The success criteria below are **proposed**. Each experiment freezes them in its
 
 **Blockers:** no decoder-update loop code yet; no "re-calibrate after update" hook in `TrustGuard` / `OnlineTrustPolicy`; `t15_personalUse.pkl` (real user ratings, to set the simulated accept rate) is not local.
 
-**Follow-ups:** online risk control with **bandit feedback** (we see the truth only for what we showed); a formal statement of what the guarantee covers; T15 (45 sessions over 20 months) as the second dataset.
+**Follow-ups:** online risk control with **bandit feedback** (we see the truth only for what we showed); a formal statement of what the guarantee covers (both done in P15-04: [F1 guarantee scope](f1-guarantee-scope.md)); T15 (45 sessions over 20 months) as the second dataset.
 
 **CPU pilot result (2026-11-16, [P15-01](../../experiments/2026-11-16-f1-e2-selfimprove-pilot/results.md)):** feedback-only adaptation lowers PER from 0.686 (frozen) to 0.470 over 16 T12 days; the wrong-commit bound holds through every daily update (also under bad updates); self-training collapses; but uniform null inputs commit in every arm (no evidence gate yet) and 88-100 % of commits are wrong, so this is a working harness, not F1 evidence.
 

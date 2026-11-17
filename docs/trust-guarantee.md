@@ -182,7 +182,27 @@ print(guard.sheet)                                   # adds a "precision bound" 
 
 Not guaranteed: precision for one session or one user; any single commit; data that differ from the calibration data (section 3). The precision bound cannot be combined with the hallucination bound (section 9) yet. `ft.load` needs nothing extra. Code: [`src/fidetype/trust/precision_bound.py`](../src/fidetype/trust/precision_bound.py). Validated on synthetic exchangeable data (the test suite: violation rate at most δ over 200 draws). On the P14-03 replay sets (T15, T12; targets 0.5 to 0.95) no threshold was certified: the decoders are right on only about 8 % of sentences, so the guard never commits (P14-03 guard: 2 of 2 and 15 of 25 commits wrong). Safe, but not yet useful on these decoders ([experiment](../experiments/2026-11-16-p5-02-precision/results.md)).
 
-## 11. Related
+## 11. Online use: feedback only on what was shown (P15-04)
+
+The guard above is calibrated once. For online re-calibration during use, the user's feedback exists only for text that was SHOWN (a commit that the user may correct, or an offer that the user picks from or retypes). Withheld items get no label. `BanditCommitRiskControl` works with exactly this feedback.
+
+```python
+from fidetype.trust import BanditCommitRiskControl, BanditTrustPolicy
+bp = BanditTrustPolicy(policy, BanditCommitRiskControl(alpha=0.05, explore=0.05))
+decision, tk = bp.decide(x)          # COMMIT, OFFER (also exploration) or the policy's other action
+bp.feedback(tk, final_text)          # the user's final text if shown, else None
+bp.controller.report()               # realised rate, certificate, audit per threshold
+```
+
+| Statement | Holds for | Needs |
+|---|---|---|
+| Long-run wrong-commit rate per item ≤ α + (λ_end − λ_start)/(η T) (`target="marginal"`, default) | any sequence (drift, decoder updates) | the labels of commits only |
+| Long-run error rate among commits ≤ α + (λ_end − λ_start)/(η N_commits) (`target="precision"`) | any sequence | the labels of commits only; set `lam_init` (at "never commit" it never moves) |
+| Audit: upper bound on the wrong commits that any grid threshold would have made on the items so far | probability ≥ 1 − δ over the exploration coins | `explore` > 0: withheld items are shown as an OFFER at this rate (never committed) |
+
+Not covered: silent errors (wrong commits that the user does not correct), one short session, future items for the audit bound. Full scope: [F1 guarantee scope](../wiki/questions/f1-guarantee-scope.md). Code: [`src/fidetype/trust/bandit_risk.py`](../src/fidetype/trust/bandit_risk.py). Replay: [P15-04](../experiments/2026-11-16-p15-04-bandit/results.md).
+
+## 12. Related
 
 - [10-minute quickstart](trust-quickstart.md)
 - [Concepts: the trust layer](concepts.md)

@@ -3,7 +3,7 @@ title: "M2-16 result: online re-calibration of the wrong-commit guarantee under 
 type: question
 tags: [trust, conformal, risk-control, online, drift, wrong-commit, b2t25, emg, meg]
 sources: [adaptive-conformal-inference, conformal-pid-control, rolling-risk-control, conformal-beyond-exchangeability, non-exchangeable-crc, conformal-covariate-shift, conformal-risk-control, brain-to-text-25-copytask, toronto-semg-typing]
-updated: 2026-11-11
+updated: 2026-11-16
 ---
 
 # Can the trust gate keep wrong-commit ≤ 0.05 under drift inside a session?
@@ -56,6 +56,7 @@ API: same as `CommitRiskControl` (`fit`, `fit_policy`, `threshold`, `apply(polic
 ## Related
 - [Conformal risk control (concept)](../concepts/conformal-risk-control.md)
 - [M2-13 conformal result](m2-13-conformal-result.md)
+- [F1 guarantee scope](f1-guarantee-scope.md) (P15-04: online control with shown-only feedback, scope of the bound)
 - [Per-session risk control](per-session-risk-control.md) (A2: per-day guarantee, session-start block, e-process monitor)
 - [B2T '25 trust result](b2t25-trust-result.md)
 - [EMG Toronto trust result](emg-toronto-trust-result.md)
