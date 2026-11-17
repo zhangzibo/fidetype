@@ -853,7 +853,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-17 `fidetype live --out`: trust decisions in a separate decision log
 - **Gap:** 42 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-16). Follow-up of P14-04, P14-16.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, commit `9de7e61, 1145f2e`). `fidetype live --out S.jsonl` writes a pure NTS input stream (no `trust_decision`); the new option `--decisions-out FILE` writes the FEP-0001 decision log (default with `--out`: `S.decisions.jsonl`; `none` = off). `nts-conform check` on both files: NTS Trust-ready. Validator disagreement: the v0.1 suite (`fidetype validate`, `fidetype-ts validate`, `fidetype-rs validate`) read a `trust_decision` line as an unknown event type and ignored it (6.2 rule 5); only the opt-in `fep-0001` profile tested TD-4. New core check `NTS-TD-INPUT` in all three SDKs, vector V97 (v0.1 97), RC4 amendment 4 (C.1 row TD-4). docs/live-decode.md section 8, the P14-11 CI replay (`tools/ci/kt_lsl_replay.py`: `nts-conform check --require-level trust-ready` on both files) and tests updated. certified.json: `fidetype-live-file` (producer, NTS Trust-ready, text). New gap 46 = P14-20.
 - **Depends on:** P14-16 (done).
 - **Source:** P14-16 (2026-11-17): the `--out` file of `fidetype live` holds the `trust_decision` events next to the frames and hypotheses. `nts-conform check` fails it (FEP1-TD-INPUT, FEP-0001 section 3 r4: no `trust_decision` in an input stream), so its producer level is none. `fidetype validate --level trust-ready` (the older check that docs/live-decode.md names) passes it. `--publish` already splits the two channels.
 - **Done when:** `fidetype live --out` writes an input stream without `trust_decision` events, and a new option (for example `--decisions-out`) writes the FEP-0001 decision log; `nts-conform check` on both files gives NTS Trust-ready; docs/live-decode.md section 8 and the P14-11 CI replay use the new form; tests updated.
@@ -871,6 +871,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-15 (done). CPU only (about 1 h per 35 rebuilt splits).
 - **Source:** P14-15 ([results](../../experiments/2026-11-17-p14-15-retune/results.md), post hoc): (1) `published_plus_fn` uses our word n-best (gate score and word confidences), so the "B2T published" re-split rows also depend on the word setting; the audit called them clean. (2) The R4 forward chain (V1, V2, V4) tests on whole days; the fit prefix "day 1 only" (30 trials, used by one test day in V1 and one in V4) picks edit penalty 8. (3) R4 population-risk, per-day, reuse, joint-LTT, no-guard, M2-18, M3-01/02, trust v5 and A2 read the same split tables (P14-15 found no effect on the guard-on "ours" tables).
 - **Done when:** the published-gate tables of the 35 changed re-splits and the guard-off "ours" tables are rebuilt with each split's fit-A setting, the forward-chain day-1 prefix is rerun, and the same rule as P14-15 (change < CI half-width = no effect) is applied; "no effect" closes the item, else the tables get dated correction notes and the paper track gets a note.
+
+#### P14-20 Streaming validators: `trust_decision` in a live input stream (TD-4)
+- **Gap:** 46 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-17). Follow-up of P14-17.
+- **Status:** `todo`.
+- **Depends on:** P14-17 (done).
+- **Source:** P14-17 (2026-11-17): the file validators of the three SDKs now refuse a `trust_decision` in an input stream (`NTS-TD-INPUT`, TD-4). The event-by-event validators still ignore it as an unknown event type: Python `StreamingTrustLayer.push`, TypeScript and Rust `StreamValidator` (and the collector `validate` processor on live input).
+- **Done when:** the spec says what a streaming consumer does with a `trust_decision` in an input stream (refuse the event or ignore it and warn), and the three streaming validators do the same thing, with a parity test.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
