@@ -152,17 +152,18 @@
   "n_wrong_commits": 0,
   "n_correct_commits": 0,
   "error_among_commits": null,
-  "committed_correct_words": 0.0,
+  "committed_correct_words": 0,
   "total_words": 3652,
-  "minutes_neural": 225.54840000000004,
+  "minutes_neural": 225.54839999999993,
   "minutes_correction": 0.0,
-  "timing": "track rate model: len(truth) * 60 / 75.7576 chars/min (composed sentences, no natural typing time)",
+  "timing": "track rate model: len(truth) * 60 / 75.76 chars/min (composed sentences)",
   "correction_rule": {
    "name": "rewrite",
    "overhead_s": 2.0,
    "s_per_char": 0.7894736842105263,
    "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
   },
+  "ci_unit": "participant",
   "no_bci_wpm": 4.274594721133025,
   "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
   "controls": {
@@ -177,6 +178,6 @@
     "null_commit": "null audit, zeros input"
    }
   },
-  "basis": "aggregate approximation: committed-correct words = share_words_system x test words; wrong-commit penalty at the mean test sentence length; no per-trial data, so no CI"
+  "basis": "exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates equal the committed aggregates)"
  }
 }

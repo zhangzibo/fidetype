@@ -1,0 +1,18 @@
+22:44:38 stage toronto start
+22:45:23 toronto calib: commit 0.0381 (ref 0.0381) wrong 0.0036 (ref 0.0036) eWPM 7.977 (ref 7.977) same=True
+22:45:23 toronto calib: safe WPM 0.5473422892202503 CI [0.28232357807553443, 0.8620378891202464] status certified (45s)
+22:46:07 toronto xsession: commit 0.0181 (ref 0.0181) wrong 0.0036 (ref 0.0036) eWPM 4.677 (ref 4.677) same=True
+22:46:07 toronto xsession: safe WPM 0.25189348854789406 CI [0.06217982468497403, 0.45886555275737045] status certified (44s)
+22:46:44 toronto xsubject: commit 0.0000 (ref 0.0000) wrong 0.0000 (ref 0.0000) eWPM 4.080 (ref 4.080) same=True
+22:46:44 toronto xsubject: safe WPM 0.0 CI None status vacuous (38s)
+22:46:44 stage b2t-null start
+22:51:54 b2t25-t15-copytask__ours__crc: lam 0.4893 real-match True real 68/300 other_trial 68/300 frame_shuffled 0/300 uniform 0/300
+22:51:54 b2t25-t15-copytask__ours__ltt: lam 0.5400 real-match True real 50/300 other_trial 50/300 frame_shuffled 0/300 uniform 0/300
+22:51:54 b2t-ours: 305s
+22:53:08 b2t25-t15-copytask__published__crc: lam 0.6717 real-match True real 149/300 other_trial 0/300 frame_shuffled 0/300 uniform 0/300
+22:53:08 b2t25-t15-copytask__published__ltt: lam 0.7200 real-match True real 132/300 other_trial 0/300 frame_shuffled 0/300 uniform 0/300
+22:53:08 b2t-published: 74s
+22:53:08 stage meg-null start
+23:01:28 spanishbcbl-meg-async__convctc-m-async__crc: lam 0.1024 real-match True real 14/637 shuffled_meg 0/637 zeros_meg 0/637 other_sentence 14/637 frame_shuffled 5/637 uniform 0/637
+23:01:28 spanishbcbl-meg-async__convctc-m-async__ltt: lam 0.0000 real-match True real 15/637 shuffled_meg 0/637 zeros_meg 0/637 other_sentence 15/637 frame_shuffled 8/637 uniform 0/637
+23:01:28 done

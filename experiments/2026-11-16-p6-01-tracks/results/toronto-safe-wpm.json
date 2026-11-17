@@ -1,0 +1,190 @@
+{
+ "timing": "track rate model: len(truth) * 60 / 75.76 chars/min (composed sentences)",
+ "ci_unit": "participant",
+ "conditions": {
+  "calib": {
+   "same_as_committed": true,
+   "lm_weight": 1.0,
+   "rate_commit": 0.038112522686025406,
+   "wrong_commit_rate": 0.003629764065335753,
+   "ewpm": 7.976984532053387,
+   "safe_wpm": {
+    "definition": "safe-wpm/0.1",
+    "value": 0.5473422892202503,
+    "ci": [
+     0.28232357807553443,
+     0.8620378891202464
+    ],
+    "status": "certified",
+    "unguarded_wpm": 0.5473422892202503,
+    "wpm_no_penalty": 0.5497711355966172,
+    "method": "crc",
+    "alpha": 0.05,
+    "delta": null,
+    "n_cal": 142,
+    "calibration": "cal (held-out half of the fit items)",
+    "confidence": "in expectation (CRC has no delta)",
+    "measured_wrong_commit": 0.003629764065335753,
+    "measured_wrong_commit_cp95": [
+     0.0004,
+     0.013
+    ],
+    "n_trials": 551,
+    "n_commits": 21,
+    "n_wrong_commits": 2,
+    "n_correct_commits": 19,
+    "error_among_commits": 0.09523809523809523,
+    "committed_correct_words": 124,
+    "total_words": 3652,
+    "minutes_neural": 225.54839999999993,
+    "minutes_correction": 1.0008771929824563,
+    "timing": "track rate model: len(truth) * 60 / 75.76 chars/min (composed sentences)",
+    "correction_rule": {
+     "name": "rewrite",
+     "overhead_s": 2.0,
+     "s_per_char": 0.7894736842105263,
+     "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+    },
+    "ci_unit": "participant",
+    "no_bci_wpm": 4.274594721133025,
+    "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+    "controls": {
+     "shuffled": "pass",
+     "zeros": "pass",
+     "null_commit": "pass",
+     "passed": true,
+     "commit_rate_zeros": 0.0,
+     "basis": {
+      "shuffled": "aggregate null audit (n=200): wrong-commit real 0.575 vs frame-shuffled 1.000",
+      "zeros": "aggregate null audit: wrong-commit real 0.575 vs zeros input 1.000",
+      "null_commit": "null audit, zeros input"
+     }
+    },
+    "basis": "exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates equal the committed aggregates)"
+   },
+   "seconds": 44.6
+  },
+  "xsession": {
+   "same_as_committed": true,
+   "lm_weight": 1.0,
+   "rate_commit": 0.018148820326678767,
+   "wrong_commit_rate": 0.003629764065335753,
+   "ewpm": 4.676921023830239,
+   "safe_wpm": {
+    "definition": "safe-wpm/0.1",
+    "value": 0.25189348854789406,
+    "ci": [
+     0.06217982468497403,
+     0.45886555275737045
+    ],
+    "status": "certified",
+    "unguarded_wpm": 0.25189348854789406,
+    "wpm_no_penalty": 0.2527173768468321,
+    "method": "crc",
+    "alpha": 0.05,
+    "delta": null,
+    "n_cal": 142,
+    "calibration": "cal (held-out half of the fit items)",
+    "confidence": "in expectation (CRC has no delta)",
+    "measured_wrong_commit": 0.003629764065335753,
+    "measured_wrong_commit_cp95": [
+     0.0004,
+     0.013
+    ],
+    "n_trials": 551,
+    "n_commits": 10,
+    "n_wrong_commits": 2,
+    "n_correct_commits": 8,
+    "error_among_commits": 0.2,
+    "committed_correct_words": 57,
+    "total_words": 3652,
+    "minutes_neural": 225.54839999999993,
+    "minutes_correction": 0.737719298245614,
+    "timing": "track rate model: len(truth) * 60 / 75.76 chars/min (composed sentences)",
+    "correction_rule": {
+     "name": "rewrite",
+     "overhead_s": 2.0,
+     "s_per_char": 0.7894736842105263,
+     "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+    },
+    "ci_unit": "participant",
+    "no_bci_wpm": 4.274594721133025,
+    "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+    "controls": {
+     "shuffled": "pass",
+     "zeros": "pass",
+     "null_commit": "pass",
+     "passed": true,
+     "commit_rate_zeros": 0.0,
+     "basis": {
+      "shuffled": "aggregate null audit (n=200): wrong-commit real 0.875 vs frame-shuffled 1.000",
+      "zeros": "aggregate null audit: wrong-commit real 0.875 vs zeros input 1.000",
+      "null_commit": "null audit, zeros input"
+     }
+    },
+    "basis": "exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates equal the committed aggregates)"
+   },
+   "seconds": 43.6
+  },
+  "xsubject": {
+   "same_as_committed": true,
+   "lm_weight": 1.5,
+   "rate_commit": 0.0,
+   "wrong_commit_rate": 0.0,
+   "ewpm": 4.0800135493987755,
+   "safe_wpm": {
+    "definition": "safe-wpm/0.1",
+    "value": 0.0,
+    "ci": null,
+    "status": "vacuous",
+    "unguarded_wpm": 0.0,
+    "wpm_no_penalty": 0.0,
+    "method": "crc",
+    "alpha": 0.05,
+    "delta": null,
+    "n_cal": 142,
+    "calibration": "cal (held-out half of the fit items)",
+    "confidence": "in expectation (CRC has no delta)",
+    "measured_wrong_commit": 0.0,
+    "measured_wrong_commit_cp95": [
+     0.0,
+     0.0067
+    ],
+    "n_trials": 551,
+    "n_commits": 0,
+    "n_wrong_commits": 0,
+    "n_correct_commits": 0,
+    "error_among_commits": null,
+    "committed_correct_words": 0,
+    "total_words": 3652,
+    "minutes_neural": 225.54839999999993,
+    "minutes_correction": 0.0,
+    "timing": "track rate model: len(truth) * 60 / 75.76 chars/min (composed sentences)",
+    "correction_rule": {
+     "name": "rewrite",
+     "overhead_s": 2.0,
+     "s_per_char": 0.7894736842105263,
+     "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+    },
+    "ci_unit": "participant",
+    "no_bci_wpm": 4.274594721133025,
+    "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+    "controls": {
+     "shuffled": "pass",
+     "zeros": "pass",
+     "null_commit": "pass",
+     "passed": true,
+     "commit_rate_zeros": 0.0,
+     "basis": {
+      "shuffled": "aggregate null audit (n=200): wrong-commit real 0.950 vs frame-shuffled 1.000",
+      "zeros": "aggregate null audit: wrong-commit real 0.950 vs zeros input 1.000",
+      "null_commit": "null audit, zeros input"
+     }
+    },
+    "basis": "exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates equal the committed aggregates)"
+   },
+   "seconds": 37.6
+  }
+ },
+ "seconds": 125.9
+}

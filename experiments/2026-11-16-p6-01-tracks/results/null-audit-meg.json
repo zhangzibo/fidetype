@@ -1,0 +1,141 @@
+{
+ "n_audit": 637,
+ "audit_rule": "all 637 test trials, as experiments/2026-11-11-g1-async-meg-trust stage_null",
+ "entries": {
+  "spanishbcbl-meg-async__convctc-m-async__crc": {
+   "threshold": 0.10239239302166811,
+   "method": "crc",
+   "real_scores_match_items": true,
+   "audit": {
+    "real": {
+     "n": 637,
+     "commits": 14,
+     "commit_rate": 0.02197802197802198,
+     "wrong_commits": 13,
+     "commit_rate_cp95": [
+      0.0121,
+      0.0366
+     ]
+    },
+    "shuffled_meg": {
+     "n": 637,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0058
+     ]
+    },
+    "zeros_meg": {
+     "n": 637,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0058
+     ]
+    },
+    "other_sentence": {
+     "n": 637,
+     "commits": 14,
+     "commit_rate": 0.02197802197802198,
+     "wrong_commits": 14,
+     "commit_rate_cp95": [
+      0.0121,
+      0.0366
+     ]
+    },
+    "frame_shuffled": {
+     "n": 637,
+     "commits": 5,
+     "commit_rate": 0.007849293563579277,
+     "wrong_commits": 5,
+     "commit_rate_cp95": [
+      0.0026,
+      0.0182
+     ]
+    },
+    "uniform": {
+     "n": 637,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0058
+     ]
+    }
+   }
+  },
+  "spanishbcbl-meg-async__convctc-m-async__ltt": {
+   "threshold": 0.0,
+   "method": "ltt",
+   "real_scores_match_items": true,
+   "audit": {
+    "real": {
+     "n": 637,
+     "commits": 15,
+     "commit_rate": 0.023547880690737835,
+     "wrong_commits": 14,
+     "commit_rate_cp95": [
+      0.0132,
+      0.0385
+     ]
+    },
+    "shuffled_meg": {
+     "n": 637,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0058
+     ]
+    },
+    "zeros_meg": {
+     "n": 637,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0058
+     ]
+    },
+    "other_sentence": {
+     "n": 637,
+     "commits": 15,
+     "commit_rate": 0.023547880690737835,
+     "wrong_commits": 15,
+     "commit_rate_cp95": [
+      0.0132,
+      0.0385
+     ]
+    },
+    "frame_shuffled": {
+     "n": 637,
+     "commits": 8,
+     "commit_rate": 0.012558869701726845,
+     "wrong_commits": 8,
+     "commit_rate_cp95": [
+      0.0054,
+      0.0246
+     ]
+    },
+    "uniform": {
+     "n": 637,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0058
+     ]
+    }
+   }
+  }
+ },
+ "seconds": 499.9
+}

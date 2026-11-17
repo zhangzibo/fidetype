@@ -115,10 +115,15 @@
    "basis": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)"
   },
   "null_commit": {
-   "status": "missing",
-   "basis": "no null audit at this threshold"
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "commit_rate_zeros_cp95": [
+    0.0,
+    0.0058
+   ],
+   "basis": "P6-01 null audit at this entry's threshold (CRC lambda 0.1024), zeros MEG input, n=637; commits per null input: shuffled_meg 0/637, zeros_meg 0/637, other_sentence 14/637, frame_shuffled 5/637, uniform 0/637"
   },
-  "passed": false
+  "passed": true
  },
  "guarantee": {
   "method": "crc",
@@ -196,12 +201,13 @@
   "controls": {
    "shuffled": "pass",
    "zeros": "pass",
-   "null_commit": "missing",
-   "passed": false,
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0,
    "basis": {
     "shuffled": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
     "zeros": "per-trial CER of the M1-09 control run (beam + LM, val-tuned; same network)",
-    "null_commit": "no null audit at this threshold"
+    "null_commit": "P6-01 null audit at this entry's threshold (CRC lambda 0.1024), zeros MEG input, n=637; commits per null input: shuffled_meg 0/637, zeros_meg 0/637, other_sentence 14/637, frame_shuffled 5/637, uniform 0/637"
    }
   }
  }

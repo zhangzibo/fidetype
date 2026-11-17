@@ -200,6 +200,11 @@ def main(argv=None) -> int:
     p.add_argument("--B", type=int, default=2000)
     p.add_argument("--seed", type=int, default=0)
     p.set_defaults(fn=cmd_safe_wpm)
+    p = sub.add_parser("verify", add_help=False,
+                       help="tracks v0.2 (P6-01): check a local dataset copy against the split hashes; "
+                       "same as `python -m fidetype.benchmark.tracks verify`")
+    p.add_argument("rest", nargs=argparse.REMAINDER)
+    p.set_defaults(fn=lambda a: __import__("fidetype.benchmark.tracks", fromlist=["main"]).main(["verify", *a.rest]))
     p = sub.add_parser("leaderboard")
     p.add_argument("--results", default="benchmark/results/v0.1")
     p.add_argument("--out", default="benchmark/site")

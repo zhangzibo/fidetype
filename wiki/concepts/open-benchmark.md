@@ -49,12 +49,12 @@ Selected rows; full table in [`leaderboard.md`](../../benchmark/site/leaderboard
 |---|---|---|---|---|---|---|---|---|---|
 | MEG | ConvCTC-M async, always commit | 0.522 | 2.58 [2.32, 2.88] | 3.15 | 0.997 | 0.997 | 1.000 | no (null fail) | none |
 | MEG | ConvCTC-M async, trust gate | 0.522 | 3.20 [3.01, 3.45] | 3.15 | 0.000 | n/a | 0.000 | yes | none |
-| MEG | ConvCTC-M async, CRC | 0.522 | 3.20 [3.01, 3.44] | 3.15 | 0.020 | 0.929 | 0.022 | no (null missing) | CRC α 0.05, n_cal 437: met |
+| MEG | ConvCTC-M async, CRC | 0.522 | 3.20 [3.01, 3.44] | 3.15 | 0.020 | 0.929 | 0.022 | yes (null audit at the CRC threshold, P6-01) | CRC α 0.05, n_cal 437: met |
 | B2T | Published sentence, always commit (**stream-scored**) | 0.031 | 19.55 [17.92, 21.21] | 4.08 | 0.194 | 0.194 | 1.000 | no (text only) | none |
 | B2T | Published sentence, trust gate | 0.031 | 18.77 [17.22, 20.35] | 4.08 | 0.044 | 0.093 | 0.473 | no (text only) | none |
 | B2T | Our word decoder, always commit | 0.095 | 11.45 [10.72, 12.32] | 4.08 | 0.610 | 0.610 | 1.000 | no (null fail) | none |
 | B2T | Our word decoder, trust gate | 0.095 | 11.55 [10.85, 12.34] | 4.08 | 0.059 | 0.254 | 0.232 | yes | none |
-| B2T | Our word decoder, CRC | 0.095 | 11.55 [10.86, 12.35] | 4.08 | 0.062 | 0.256 | 0.244 | no (null missing) | CRC α 0.05, n_cal 812: **NOT met** |
+| B2T | Our word decoder, CRC | 0.095 | 11.55 [10.86, 12.35] | 4.08 | 0.062 | 0.256 | 0.244 | yes (null audit at the CRC threshold, P6-01) | CRC α 0.05, n_cal 812: **NOT met** |
 | EMG | CNN session-calibrated, always commit | 0.123 | 7.81 [6.60, 9.01] | 4.27 | 0.541 | 0.541 | 1.000 | no (null fail) | none |
 | EMG | CNN session-calibrated, trust gate | 0.123 | 8.02 [6.90, 9.15] | 4.27 | 0.004 | 0.095 | 0.038 | yes | none |
 | EMG | CNN cross-subject, trust gate | 0.479 | 4.08 [3.83, 4.36] | 4.27 | 0.000 | n/a | 0.000 | yes | none |
@@ -77,8 +77,20 @@ Baselines (3 systems x 2 sets): null and scrambled give 0 commits everywhere. On
 
 > **Our take:** the swapped track is the informative one. A fixed 0.05 pass rule lets a rarely-committing system without a signal check pass; the swapped-to-real commit ratio shows the problem directly.
 
+## Tracks v0.2 (P6-01, 2026-11-16)
+Seven tracks with fixed, versioned, licence-clean splits: `b2t25-t15` (CC0), `b2t24-t12` (CC0), `willett-hw` (CC0), `toronto-semg` (CC BY 4.0), `kt-semg` (CC BY 4.0), `spanishbcbl-meg` (CC BY-NC 4.0, **research only**), `emg2qwerty` (CC BY-NC-SA 4.0, **research only**). Definition, rules and counts: [docs/benchmark-tracks.md](../../docs/benchmark-tracks.md). Code `fidetype.benchmark.tracks`; split files `src/fidetype/benchmark/splits/tracks-v0.2/`.
+
+- The split files hold only salted hashes per unit: id hash, split, group hash (CI cluster), fingerprint of the truth text and / or size. No text, signals or plain ids (the `halluc-v0.1` pattern).
+- `python -m fidetype.benchmark verify <track> --data <path>` checks a local copy against the hashes; `select` maps a split to the local data (adapter input).
+- `b2t25-t15`, `toronto-semg` (sentences) and `spanishbcbl-meg` hold exactly the v0.1 trials and splits (tested from the committed files). So v0.1 results stay valid.
+- Test data is later in time than training data on every track except SpanishBCBL (split by sentence).
+
+Side results of P6-01 ([results](../../experiments/2026-11-16-p6-01-tracks/results.md)):
+- **Toronto safe WPM, exact per trial** (was an aggregate approximation): CNN session-calibrated + CRC 0.55 [0.28, 0.86] (was 0.58), cross-session 0.25 [0.06, 0.46] (was 0.27), cross-subject 0.00 (vacuous). CI over participants. The CRC rerun reproduces the committed commit and wrong-commit rates exactly.
+- **Null-commit audits at the CRC / LTT thresholds** (were "missing"): MEG ConvCTC-M CRC / LTT: 0 / 637 commits on zeros MEG input (frame-shuffled 5 and 8 of 637), so both entries now pass all controls. B2T ours CRC / LTT: 0 / 300 commits on uniform and frame-shuffled input, so these two entries now pass all controls. B2T published CRC / LTT: 0 / 300 commits on null input; the shuffled and zeros CER controls stay "missing" (text-only decoder).
+
 ## Relation to the roadmap
-- **P6** (benchmark + leaderboard): v0.1 delivers the metrics, the NTS submission format, licence-clean fixed splits, the static page and baselines on 3 tracks. Open for P6: replay adapters (P4), Willett handwriting and KT-sEMG tracks, latency and ECE columns, all baselines as stream submissions, first outside submission (externally blocked).
+- **P6** (benchmark + leaderboard): v0.1 delivers the metrics, the NTS submission format, licence-clean fixed splits, the static page and baselines on 3 tracks. Tracks v0.2 (P6-01) adds the Willett handwriting, B2T '24 T12, KT-sEMG and emg2qwerty tracks with hash-only splits. Open for P6: scorer support for the new tracks (P6-02), replay adapters (P4), latency and ECE columns, all baselines as stream submissions, first outside submission (externally blocked).
 - **P13** (benchmark hub): the dataset registry, guarantee reporting and the "scored from" column are the first steps. Open: CI scoring of pull requests, per-track pages and history, intent tracks after P12.
 
 ## Related

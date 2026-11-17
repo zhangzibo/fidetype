@@ -101,8 +101,13 @@
    "basis": "text-only decoder: cannot rerun on zero input"
   },
   "null_commit": {
-   "status": "missing",
-   "basis": "no null audit at this threshold"
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "commit_rate_zeros_cp95": [
+    0.0,
+    0.0122
+   ],
+   "basis": "P6-01 null audit at this entry's threshold (LTT lambda 0.7200), uniform logits stand in for zeros input, n=300; commits per null input: other_trial 0/300, frame_shuffled 0/300, uniform 0/300"
   },
   "passed": false
  },
@@ -181,12 +186,13 @@
   "controls": {
    "shuffled": "missing",
    "zeros": "missing",
-   "null_commit": "missing",
+   "null_commit": "pass",
    "passed": false,
+   "commit_rate_zeros": 0.0,
    "basis": {
     "shuffled": "text-only decoder: cannot rerun on shuffled input",
     "zeros": "text-only decoder: cannot rerun on zero input",
-    "null_commit": "no null audit at this threshold"
+    "null_commit": "P6-01 null audit at this entry's threshold (LTT lambda 0.7200), uniform logits stand in for zeros input, n=300; commits per null input: other_trial 0/300, frame_shuffled 0/300, uniform 0/300"
    }
   }
  }

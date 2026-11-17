@@ -1,0 +1,195 @@
+{
+ "n_audit": 300,
+ "audit_rule": "300 test trials, seed 0, as experiments/2026-11-10-b2t25-trust",
+ "entries": {
+  "b2t25-t15-copytask__ours__crc": {
+   "threshold": 0.48927426845213917,
+   "method": "crc",
+   "real_scores_match_m2_13": true,
+   "audit": {
+    "real": {
+     "n": 300,
+     "commits": 68,
+     "commit_rate": 0.22666666666666666,
+     "wrong_commits": 23,
+     "commit_rate_cp95": [
+      0.1805,
+      0.2783
+     ]
+    },
+    "other_trial": {
+     "n": 300,
+     "commits": 68,
+     "commit_rate": 0.22666666666666666,
+     "wrong_commits": 68,
+     "commit_rate_cp95": [
+      0.1805,
+      0.2783
+     ]
+    },
+    "frame_shuffled": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    },
+    "uniform": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    }
+   }
+  },
+  "b2t25-t15-copytask__ours__ltt": {
+   "threshold": 0.54,
+   "method": "ltt",
+   "real_scores_match_m2_13": true,
+   "audit": {
+    "real": {
+     "n": 300,
+     "commits": 50,
+     "commit_rate": 0.16666666666666666,
+     "wrong_commits": 16,
+     "commit_rate_cp95": [
+      0.1263,
+      0.2138
+     ]
+    },
+    "other_trial": {
+     "n": 300,
+     "commits": 50,
+     "commit_rate": 0.16666666666666666,
+     "wrong_commits": 50,
+     "commit_rate_cp95": [
+      0.1263,
+      0.2138
+     ]
+    },
+    "frame_shuffled": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    },
+    "uniform": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    }
+   }
+  },
+  "b2t25-t15-copytask__published__crc": {
+   "threshold": 0.6717050752793481,
+   "method": "crc",
+   "real_scores_match_m2_13": true,
+   "audit": {
+    "real": {
+     "n": 300,
+     "commits": 149,
+     "commit_rate": 0.49666666666666665,
+     "wrong_commits": 16,
+     "commit_rate_cp95": [
+      0.4387,
+      0.5547
+     ]
+    },
+    "other_trial": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    },
+    "frame_shuffled": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    },
+    "uniform": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    }
+   }
+  },
+  "b2t25-t15-copytask__published__ltt": {
+   "threshold": 0.72,
+   "method": "ltt",
+   "real_scores_match_m2_13": true,
+   "audit": {
+    "real": {
+     "n": 300,
+     "commits": 132,
+     "commit_rate": 0.44,
+     "wrong_commits": 16,
+     "commit_rate_cp95": [
+      0.383,
+      0.4982
+     ]
+    },
+    "other_trial": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    },
+    "frame_shuffled": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    },
+    "uniform": {
+     "n": 300,
+     "commits": 0,
+     "commit_rate": 0.0,
+     "wrong_commits": 0,
+     "commit_rate_cp95": [
+      0.0,
+      0.0122
+     ]
+    }
+   }
+  }
+ },
+ "seconds": 383.7
+}

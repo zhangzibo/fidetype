@@ -93,8 +93,8 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 | B2T '25 T15 copy task | ours + LTT | 4.05 [3.22, 4.77] | certified | 0.047 [0.033, 0.063] | 159 (38) | 11.51 | 4.08 | measured |
 | SpanishBCBL MEG (async) | ConvCTC-M + CRC | 0.03 [0.00, 0.17] | certified | 0.020 [0.011, 0.035] | 14 (13) | 3.20 | 3.15 | rate model 152 chars/min |
 | SpanishBCBL MEG (async) | ConvCTC-M + LTT | 0.03 [0.00, 0.17] | certified | 0.022 [0.012, 0.037] | 15 (14) | 3.20 | 3.15 | rate model |
-| Toronto sEMG (composed) | CNN session-calibrated + CRC | 0.58 (no CI) | certified | 0.004 [0.000, 0.013] | 21 (2) | 7.98 | 4.27 | rate model 75.76 chars/min; aggregate approximation |
-| Toronto sEMG (composed) | CNN cross-session + CRC | 0.27 (no CI) | certified | 0.004 [0.000, 0.013] | 10 (2) | 4.68 | 4.27 | as above |
+| Toronto sEMG (composed) | CNN session-calibrated + CRC | 0.55 [0.28, 0.86] | certified | 0.004 [0.000, 0.013] | 21 (2) | 7.98 | 4.27 | rate model 75.76 chars/min; exact per-trial decisions (P6-01; the aggregate approximation gave 0.58) |
+| Toronto sEMG (composed) | CNN cross-session + CRC | 0.25 [0.06, 0.46] | certified | 0.004 [0.000, 0.013] | 10 (2) | 4.68 | 4.27 | as above (approximation gave 0.27) |
 | Toronto sEMG (composed) | CNN cross-subject + CRC | 0.00 | vacuous | 0.000 | 0 | 4.08 | 4.27 | as above |
 | Replay: T15 val_eval (701) | M4-12 + P14-03 drop-in guard (LTT) | 0.00 | certified | 0.0029 [0.0003, 0.0103] | 2 (2) | 6.02 | 4.02 | measured trial window (20 ms bins) |
 | Replay: T12 v2, 10 later sessions (400) | T12 v2 decoder + P14-03 drop-in guard (LTT) | 1.27 (no CI) | certified | 0.0375 [0.0211, 0.0611] | 25 (15) | 7.13 | 4.11 | measured trial window |
@@ -107,7 +107,7 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 ## 6. Assumptions and limits
 
 - **Timing.** B2T '25 copy task: `speech_duration_s` of `t15_copyTask.pkl` (measured). T15 / T12 replay sets: the length of the neural trial (20 ms bins). This window also holds time before and after speech, so it is longer than the speech: T15 trials average 18.7 s. This makes those numbers conservative. MEG and Toronto sEMG: the track rate model, because the committed per-trial data hold no times. Toronto sentences are composed from single key presses, so their time is not natural typing time.
-- **Toronto is an approximation.** Only aggregates are committed: committed-right words = `share_words_system` x test words, and the penalty uses the mean sentence length. There is no CI.
+- **Toronto timing is a rate model.** Since P6-01 the Toronto values use exact per-trial CRC decisions with a participant-cluster CI ([results](../experiments/2026-11-16-p6-01-tracks/results.md)). The neural time is still the rate model (composed sentences, 0.792 s per character).
 - **No reading time.** The user reads committed text, but we add no time for it. The penalty adds time only for wrong commits.
 - **The bound is marginal.** It covers wrong commits / all trials, not precision. A certified policy can still be wrong on most of its few commits (T15 M4-12: 2 of 2).
 - **Exchangeability.** On the B2T copy track, `cal` is the first half of each day and `test` the second half. Drift can break the bound, as the `ours + CRC` entry shows.

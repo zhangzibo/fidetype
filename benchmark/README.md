@@ -18,6 +18,29 @@ This benchmark scores neural text entry from **NeuralTextStream (NTS) files**. T
 
 `python -m fidetype.benchmark info <track>` prints the source URL, version, checksum and download steps.
 
+## Tracks v0.2: seven datasets, licence-clean fixed splits (P6-01)
+
+Full definition: [docs/benchmark-tracks.md](../docs/benchmark-tracks.md). Split files: [`src/fidetype/benchmark/splits/tracks-v0.2/`](../src/fidetype/benchmark/splits/tracks-v0.2/). They hold only salted hashes (no text, no signals, no plain ids).
+
+| Track | Modality | Licence | Scored split (test) |
+|---|---|---|---|
+| `b2t25-t15` | intracortical speech | CC0 1.0 | 816 trials (same as v0.1 `b2t25-t15-copytask`) |
+| `b2t24-t12` | intracortical speech | CC0 1.0 | 880 trials (official test partition) |
+| `willett-hw` | intracortical handwriting | CC0 1.0 | 254 trials, last 3 sessions |
+| `toronto-semg` | forearm sEMG | CC BY 4.0 | 551 composed sentences (same as v0.1) |
+| `kt-semg` | forearm sEMG | CC BY 4.0 | 172 typing bursts, last 6 runs |
+| `spanishbcbl-meg` | MEG | CC BY-NC 4.0 (**research only**) | 637 trials (same as v0.1) |
+| `emg2qwerty` | wrist sEMG | CC BY-NC-SA 4.0 (**research only**) | 104 sessions, one per user |
+
+Check your download against the split hashes, then list the units of a split:
+
+```bash
+python -m fidetype.benchmark verify <track> --data <path>      # = python -m fidetype.benchmark.tracks verify
+python -m fidetype.benchmark.tracks select <track> --data <path> --split test --out units.jsonl   # local only
+```
+
+Every entry on a v0.2 track reports CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha 0.05, and runs the shuffled and null-input controls. The v0.1 leaderboard below keeps its three tracks; the scorer for the new tracks is P6-02.
+
 ## Hallucination tracks
 
 The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the fluent-wrong rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Baseline score cards (T15, T12): [`results/halluc-v0.1/`](results/halluc-v0.1/). Command: `python -m fidetype.benchmark.hallucination --help`.

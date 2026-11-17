@@ -131,11 +131,14 @@
  "status": "baseline",
  "safe_wpm": {
   "definition": "safe-wpm/0.1",
-  "value": 0.2738139253307581,
-  "ci": null,
+  "value": 0.25189348854789406,
+  "ci": [
+   0.06217982468497403,
+   0.45886555275737045
+  ],
   "status": "certified",
-  "unguarded_wpm": 0.2738139253307581,
-  "wpm_no_penalty": 0.2748855677983084,
+  "unguarded_wpm": 0.25189348854789406,
+  "wpm_no_penalty": 0.2527173768468321,
   "method": "crc",
   "alpha": 0.05,
   "delta": null,
@@ -152,17 +155,18 @@
   "n_wrong_commits": 2,
   "n_correct_commits": 8,
   "error_among_commits": 0.2,
-  "committed_correct_words": 62.0,
+  "committed_correct_words": 57,
   "total_words": 3652,
-  "minutes_neural": 225.54840000000004,
-  "minutes_correction": 0.8827427006718248,
-  "timing": "track rate model: len(truth) * 60 / 75.7576 chars/min (composed sentences, no natural typing time)",
+  "minutes_neural": 225.54839999999993,
+  "minutes_correction": 0.737719298245614,
+  "timing": "track rate model: len(truth) * 60 / 75.76 chars/min (composed sentences)",
   "correction_rule": {
    "name": "rewrite",
    "overhead_s": 2.0,
    "s_per_char": 0.7894736842105263,
    "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
   },
+  "ci_unit": "participant",
   "no_bci_wpm": 4.274594721133025,
   "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
   "controls": {
@@ -177,6 +181,6 @@
     "null_commit": "null audit, zeros input"
    }
   },
-  "basis": "aggregate approximation: committed-correct words = share_words_system x test words; wrong-commit penalty at the mean test sentence length; no per-trial data, so no CI"
+  "basis": "exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates equal the committed aggregates)"
  }
 }
