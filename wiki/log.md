@@ -1012,3 +1012,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Parity: Python = TypeScript = Rust on 31/31 kit files; schema parity 0 mismatches (new reject class `semconv`). Kit runs in `npm run ci`, `cargo test`, CI jobs `rust`, `typescript-parity`, `rust-parity`, `packaging`.
 - Pages: [docs/conformance.md](../docs/conformance.md) (kit section), [conformance suite](concepts/conformance-suite.md), [roadmap P7](questions/roadmap-standard.md#p7-conformance--certification), [open gaps](questions/open-gaps.md).
 - New gap 20 = P1-16: MET-11 has no Appendix C.1 row and no modality-match check.
+
+## [2026-11-17] setup | P4-11, P4-10, P14-11 done (gaps 16, 17, 18 closed); new gaps 21 (P4-12), 22 (P4-13)
+- P4-11 (commit `c3834c2`): `fidetype live --source lsl` reconnects with the `fidetype.adapters.lsl` reconnect code (new opt-in backoff), drops the cut segment and the first segment after a gap, writes `lsl_status` `gap_abort` with the LSL-G3 fields. [docs](../docs/live-decode.md#4-lsl-streams).
+- P4-10 (pre-registered in `c3834c2`, results `de7f84e`): `--timing detect` with causal onset detectors ([results](../experiments/2026-11-17-p4-10-onset/results.md)). KT-sEMG test runs ±50 ms: linear F1 0.588 (H1 >= 0.70 failed), envelope 0.461; effective key accuracy 0.84x oracle; 0 commits.
+- P14-11 (`c3834c2`): CI job `live-kt` replays KT-sEMG run3 (CC BY 4.0, SHA-256 pinned, cached) over pylsl and validates the NTS. First run PASS.
+- Pages: [roadmap](questions/roadmap-standard.md) (P4-10, P4-11, P14-11 status; new P4-12, P4-13), [open gaps](questions/open-gaps.md), tracker.

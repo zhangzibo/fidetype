@@ -295,17 +295,31 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P4-10 Live key-onset detector for EMG (no oracle key markers)
 - **Gap:** 16 of the [open-gap list](open-gaps.md) (added 2026-11-16 by P14-04). Follow-up of P4-02 / P14-04.
-- **Status:** `todo`.
+- **Status:** `done`. Commits `c3834c2` (code + pre-registered plan, before any test run) and `de7f84e` (results), 2026-11-17: `fidetype live --timing detect` with `--onset envelope` or a trained linear `*.onset.json` (`fidetype.live.onset`, causal, numpy only). KT-sEMG test runs, ±50 ms: linear detector recall 0.829, precision 0.456, F1 0.588 (H1 >= 0.70 failed; 0.73 on the two dense-typing runs), 238 false alarms / min, matched error median about 20 ms; envelope F1 0.461. End to end: effective key accuracy 0.229 vs 0.274 oracle (0.84x), 172 decisions, 0 commits in every arm (vacuous). New gaps P4-12, P4-13. [Results](../../experiments/2026-11-17-p4-10-onset/results.md).
 - **Depends on:** P14-04 (done); KT-sEMG or emg2qwerty data; P11-01 (a stronger EMG decoder can share the detector).
 - **Source:** P14-04: `fidetype live` with `markers` timing needs `keypress` onset markers. In the KT-sEMG replay they come from the key log (oracle timing, as in P4-01). A real board gives no markers, so boards use `fixed` timing.
 - **Done when:** a causal onset detector (for example an EMG envelope with an adaptive threshold, or a small classifier) runs inside `fidetype live` as `--timing detect`. On the KT-sEMG test runs it finds key onsets with a stated recall and false-alarm rate at a stated tolerance (for example ±50 ms), and the end-to-end replay with detected onsets reports decisions and the wrong-commit rate next to the oracle-timing run.
 
 #### P4-11 Reconnect in `fidetype live --source lsl`
 - **Gap:** 17 of the [open-gap list](open-gaps.md) (added 2026-11-16 by P14-04). Follow-up of P4-02 / P14-04.
-- **Status:** `todo`.
+- **Status:** `done`. Commit `c3834c2` (2026-11-17): `LSLSource` re-resolves a lost signal / marker stream with `fidetype.adapters.lsl._Reopener` / `_Reconnector` (new opt-in backoff), drops the cut segment and the first segment after the gap, and writes `lsl_status` `gap_abort` with the LSL-G3 fields (plus `lsl_cause`); `--max-reconnects`, `--reconnect-timeout`, `--reconnect-backoff`. Tests: scripted-inlet loss (always runs) and a real pylsl outlet closed and opened again (reconnect in 1.9 s; no decision spans the gap; ran in CI, not skipped). [Docs](../../docs/live-decode.md#4-lsl-streams).
 - **Depends on:** P14-04 (done); M6-14 / M6-16 (the reconnect code of `fidetype lsl run`).
 - **Source:** P14-04: `LSLSource` ends the run when the stream is lost. `fidetype lsl run` has non-blocking reconnect, but its event source makes NTS frames inside the inlet and cannot pass key markers to a raw-signal model.
 - **Done when:** `fidetype live --source lsl` survives a stream loss: it drops the open segment (no decision on a cut input), re-resolves the stream (reusing the `fidetype.adapters.lsl` reconnect code, not a copy) and goes on. A test kills and restarts a loopback outlet and checks that no decision spans the gap.
+
+#### P4-12 Onset detector: false alarms on forearm activity without typing
+- **Gap:** 21 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P4-10). Follow-up of P4-10.
+- **Status:** `todo`.
+- **Depends on:** P4-10 (done); KT-sEMG or emg2qwerty data; P11-01 (a stronger EMG decoder can share features).
+- **Source:** P4-10 ([results](../../experiments/2026-11-17-p4-10-onset/results.md)): on the KT-sEMG test runs with little typing (run26: 107 keys, run27: 230 keys) the linear detector keeps recall 0.90-0.94 but has precision 0.02-0.04; pooled F1 0.588 < 0.70 (H1).
+- **Done when:** a pre-registered rerun on the same test runs reaches pooled F1 >= 0.70 at ±50 ms with no run below precision 0.3 (for example with a typing-activity gate, or idle-period negatives in training), and the end-to-end CER with detected onsets is reported next to the oracle CER.
+
+#### P4-13 Segment ends from the signal (no `segment_end` markers)
+- **Gap:** 22 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P4-10). Follow-up of P4-10.
+- **Status:** `todo`.
+- **Depends on:** P4-10 (done), P4-12.
+- **Source:** P4-10: with `--timing detect` the segment ends still come from markers (oracle bursts in the evaluation) or a fixed `--segment-s`.
+- **Done when:** `fidetype live` can end a segment after a pause in the detected onsets (for example `--segment-pause S`), and a KT-sEMG replay with no markers at all reports decisions, wrong commits and segment boundary error against the benchmark bursts.
 
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
@@ -680,7 +694,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-11 CI: LSL replay of a public recording
 - **Gap:** 18 of the [open-gap list](open-gaps.md) (added 2026-11-16 by P14-04). Follow-up of P14-04.
-- **Status:** `todo`.
+- **Status:** `done`. Commit `c3834c2` (2026-11-17): CI job `live-kt` downloads KT-sEMG run3 (53 MB, CC BY 4.0, Nokia) from Harvard Dataverse, checks SHA-256 (`tools/ci/kt-semg-run3.sha256`), caches it (`actions/cache`), trains an in-sample plumbing model, replays run3 over a pylsl loopback with `markers` and `detect` timing and checks `trust-ready` NTS with trust decisions and the replay attribution (`tools/ci/kt_lsl_replay.py`, one command). First CI run: PASS (3 decisions per timing). Nothing from the recording is committed.
 - **Depends on:** P14-04 (done).
 - **Source:** the P14-04 "done when" asks for an LSL replay of a public recording in CI. The repository rule forbids committed recordings, so the CI job `live` replays the synthetic typist instead. The KT-sEMG replay (`fidetype live replay-kt`) runs only on a machine with the data.
 - **Done when:** a CI job downloads one small public recording with a clear licence (for example KT-sEMG `run3.csv`, 53 MB, CC BY 4.0, from Harvard Dataverse, SHA-256 checked, cached between runs), trains or loads a local model, replays the run over LSL and checks valid NTS with trust decisions from one command. Nothing from the recording is committed.
