@@ -3,7 +3,7 @@ title: Collector (receivers, processors, exporters)
 type: concept
 tags: [collector, pipeline, standard, p3, privacy, websocket, lsl, trust-layer]
 sources: []
-updated: 2026-11-14
+updated: 2026-11-17
 ---
 
 # Collector
@@ -86,7 +86,10 @@ The `lsl` exporter publishes `trust_decision` events only, one JSON per sample, 
 
 Decision logs of the collector pass the FEP-0001 profile in the Python, TypeScript (`fidetype-ts consume`) and Rust (`fidetype-rs consume`) consumers, also a log with a gated blank COMMIT (checked 2026-11-14).
 
-## Tests (2026-11-14)
+## Tests (2026-11-14; P3-04 additions 2026-11-17)
+`tests/test_collector_pipeline.py` (P3-04, P7-05): segmenter rules, guard processor (profile, online ACI, gap loss rule, valid decisions, feedback), `os_text` commit filter, latency helpers, NPZ input, the kit against the consumer entry point, and the integration runs (WebSocket at 50 Hz for both gated profiles, file, LSL if pylsl is installed, the logits guard reported). CI job `collector`.
+
+
 `tests/test_collector.py`, 44 tests (29 in v0, 15 in v0.1):
 - File → validate → trust → jsonl gives the same decisions as `fidetype trust` (the reference replay) on a synthetic 4-utterance stream.
 - `redact` drop: no committed text appears in the log file. `redact` hmac: `shown_hmac` equals the HMAC of the reference text; the key is not in the file.
@@ -96,11 +99,28 @@ Decision logs of the collector pass the FEP-0001 profile in the Python, TypeScri
 - `tests/test_collector_lsl.py` (17): scripted LSL inlets (loss mid-utterance + reconnect, `abort` / `mark` gaps, gap between utterances, shutdown, give-up, `stop_at_end = false`), the exporter (`no_text`), configuration errors, `config_id` from the trust processor, and a real LSL loopback: outlet → collector → decisions outlet → inlet gives the same decisions as the file receiver, the desc keys of LSL-X1, and no host name (skips without pylsl).
 - v0.1: the `eof = "close"` warning (once per stream) and its counter; the `<receiver>/<id>` prefix with two receivers (a cut stream still reaches its own session); health default listen, refused open bind, warning with `allow_unauthenticated`, bearer token (`/metrics` 401 without it, `/healthz` open; token never in metrics or logs); `spec_version` on every decision and the FEP-0001 profile check; a blank final COMMIT is gated, and its blank-only OFFER becomes `ABSTAIN` with `shown = []` (TD-12; the log passes the FEP-0001 profile with no warning); `drop_blank_candidates` cases; gate rules and the `always_commit` refusal; file → trust → standalone `/decisions` with token, `from_seq = 1` replay after the input is done, and `/nts` refused.
 
+## P3-04 integration test, latency budget, consumer entry point (2026-11-17)
+New parts ([docs](../../docs/collector.md#integration-test-and-latency-budget-p3-04)):
+
+| Part | Kind | What it does |
+|---|---|---|
+| `segment` | processor (P3-02) | Adds `segment_end` on a pause, a blank run or a length limit; causal; copies the receive stamps of the frame that caused the cut |
+| `guard` | processor (P3-02) | The drop-in guard ([trust quickstart](../../docs/trust-quickstart.md)), optional per-user profile ([personalisation](trust-personalisation.md)) (`PersonalTrust` drift tests) and online control (`guard.online`); key frames use the `fidetype live` key beam search (no copy of the live runner); `passthrough` writes the NTS input next to the decision log |
+| `os_text` | exporter (P3-03) | `stub` backend: types only final text COMMITs, logs the full decision next to each typed text |
+| `file` receiver | receiver (P3-01) | Now also reads NPZ streams (reference reader, no pickle) |
+| `[service] latency` | service | Per-stage latency (`receive`, each processor and exporter, `pipeline`, `added`, `e2e`) in `/metrics` |
+| `fidetype-collector consume` | entry point (P7-05) | The kit contract: file receiver + `validate` at a stream level; exit 0 = accept |
+
+Results ([docs](../../docs/collector.md#results-2026-11-17-windows-11-laptop-cpu-12-segments-per-run)): with 50 Hz synthetic frames the p95 **added** latency is 1.1 to 1.3 ms (implant-speech, decoder n-best before the collector) and 1.2 to 2.3 ms (emg-key, key beam search in the collector), over WebSocket, file and LSL input: far below the 50 ms budget. Every run reaches producer level NTS Trust-ready with `nts-conform`. The logits guard with its built-in CTC beam search inside the collector needs 104 to 108 ms at p95 (gap P3-06). The collector consumer reaches consumer level NTS Trust-ready on the kit for the profile `text`.
+
+> **Our take:** the collector itself costs well under 1 ms per decision. The budget question is where the decoder runs. A decoder that searches only at the segment end (the built-in CTC beam of the drop-in guard) does not fit 50 ms; an incremental decoder, or a decoder before the collector, does.
+
 ## What v0 does not do
-- No gRPC, OTLP, Arrow or Parquet. No OS input-method exporter, no Apple BCI HID bridge, no AAC API (P3-03).
-- No per-user calibration, LM rescoring, segmenter or rate limiter (P3-02, P5).
-- Text profile only in the trust processor (intent and control layers are separate tools).
-- No latency budget measurement yet (P3-04, target < 50 ms added).
+- No gRPC, OTLP, Arrow or Parquet. No real OS input-method backend (only the `os_text` stub), no Apple BCI HID bridge (P3-03).
+- No LM rescoring processor, no rate limiter, no `meta`-key privacy filter (P3-02). The `redact` processor covers decoded text only.
+- Text profile only in the trust and guard processors (intent and control layers are separate tools).
+- YAML configuration: FEP-0006 says no (no new dependency); the roadmap exit criterion says YAML (gap P3-09).
+- The integration run uses synthetic input; a B2T '25 replay through the collector is gap P3-08.
 - One process, one loop thread. No hot reload, no fan-out of one receiver to two pipelines (future work), no plug-in registry.
 - The example trust configuration is a toy (not calibrated). It shows the wiring only.
 

@@ -516,3 +516,380 @@ class ThinProcessor(Processor):
             out.append((sid, ev))
         return out
 
+
+# ---------------------------------------------------------------------------
+# segment (P3-02 segmenter)
+# ---------------------------------------------------------------------------
+
+#: Keys of the WebSocket binding (FEP-0004) and private keys of the collector. They are not NTS fields:
+#: a processor that passes input events on to an exporter removes them (:func:`strip_binding_keys`).
+BINDING_KEY_PREFIXES = ("ws_", "_fidetype")
+#: Receive stamps that a segmenter copies onto a segment_end it adds (latency of the added boundary).
+STAMP_KEYS = ("ws_t_recv", "ws_t_sent")
+
+
+def strip_binding_keys(ev: dict[str, Any]) -> dict[str, Any]:
+    """The event without the ``ws`` record and ``ws_*`` keys (FEP-0004 binding fields) and private keys."""
+    def drop(k: str) -> bool:
+        return k == "ws" or k.startswith(BINDING_KEY_PREFIXES)
+
+    if not any(drop(k) for k in ev):
+        return ev
+    return {k: v for k, v in ev.items() if not drop(k)}
+
+
+class _SegState:
+    def __init__(self, V: int = 0, blank: int | None = None) -> None:
+        self.V = V
+        self.blank = blank
+        self.frames = 0  # frames since the last boundary
+        self.nonblank = 0  # frames since the last boundary whose top token is not blank
+        self.blank_run = 0
+        self.last_t: float | None = None
+
+
+class SegmenterProcessor(Processor):
+    """Add ``segment_end`` events to a frame stream that has no (or too few) boundaries (P3-02).
+
+    Causal rules; each one is optional (none set: the processor passes items on unchanged):
+
+    - ``pause_s``: the time between two frames is more than ``pause_s`` -> a boundary after the
+      earlier frame (``t`` of that frame). It fires when the next frame arrives.
+    - ``blank_frames``: ``blank_frames`` frames in a row whose top token is the blank (``blank_id``),
+      after at least one non-blank frame -> a boundary at the last of them.
+    - ``max_frames``: the open segment reached ``max_frames`` frames -> a boundary.
+
+    A ``segment_end`` from the source passes through and starts a new segment. At ``end`` an open
+    segment with a non-blank frame gets a boundary before ``end``. A ``gap``, ``lost`` or ``closed``
+    status resets the state (the guard drops a cut segment). The added event is
+    ``{"type": "segment_end", "t": ..., "unit": "utterance", "reason": "segmenter: ..."}``; it
+    carries the receive stamps (``ws_t_recv``, ``ws_t_sent``) of the frame that caused it, so the
+    latency counts from that frame. Exporters never see these stamps (:func:`strip_binding_keys`).
+    """
+
+    type = "segment"
+
+    def __init__(self, name: str, log: Callable[[str], None], pause_s: float | None = None,
+                 blank_frames: int | None = None, max_frames: int | None = None, unit: str = "utterance") -> None:
+        super().__init__(name, log)
+        self.pause_s = pause_s
+        self.blank_frames = blank_frames
+        self.max_frames = max_frames
+        self.unit = unit
+        self.streams: dict[str, _SegState] = {}
+        self.counts.update(added_boundaries=0, source_boundaries=0)
+
+    def _boundary(self, sid: str, st: _SegState, t: float | None, why: str, trigger: dict[str, Any]) -> Item:
+        ev: dict[str, Any] = {"type": "segment_end", "unit": self.unit, "reason": f"segmenter: {why}"}
+        if t is not None:
+            ev["t"] = t
+        for k in STAMP_KEYS:
+            if k in trigger:
+                ev[k] = trigger[k]
+        st.frames = st.nonblank = st.blank_run = 0
+        self.counts["added_boundaries"] += 1
+        return sid, ev
+
+    def _process(self, items: list[Item]) -> list[Item]:
+        from fidetype.trust.streaming import StreamEventError, frame_row
+
+        out: list[Item] = []
+        for sid, ev in items:
+            typ = ev.get("type")
+            if typ == STATUS:
+                st = self.streams.get(sid)
+                if st is not None and ev.get("status") in ("gap", "lost", "replaced", "closed"):
+                    st.frames = st.nonblank = st.blank_run = 0
+                    st.last_t = None
+                out.append((sid, ev))
+                continue
+            if typ == "header":
+                b = ev.get("blank_id")
+                self.streams[sid] = _SegState(len(ev.get("vocab") or []), b if _int(b) else None)
+                out.append((sid, ev))
+                continue
+            st = self.streams.get(sid)
+            if st is None:
+                out.append((sid, ev))
+                continue
+            if typ == "frame":
+                t = float(ev["t"]) if _num(ev.get("t")) else None
+                if (self.pause_s is not None and st.frames and t is not None and st.last_t is not None
+                        and t - st.last_t > self.pause_s):
+                    out.append(self._boundary(sid, st, st.last_t, f"pause > {self.pause_s:g} s", ev))
+                out.append((sid, ev))
+                st.frames += 1
+                st.last_t = t
+                is_blank = False
+                if st.blank is not None and self.blank_frames is not None:
+                    try:
+                        is_blank = int(np.argmax(frame_row(ev, st.V))) == st.blank
+                    except (StreamEventError, ValueError):
+                        is_blank = False
+                if is_blank:
+                    st.blank_run += 1
+                else:
+                    st.blank_run = 0
+                    st.nonblank += 1
+                if self.blank_frames is not None and st.nonblank and st.blank_run >= self.blank_frames:
+                    out.append(self._boundary(sid, st, t, f"{self.blank_frames} blank frames", ev))
+                elif self.max_frames is not None and st.frames >= self.max_frames:
+                    out.append(self._boundary(sid, st, t, f"{self.max_frames} frames", ev))
+                continue
+            if typ == "segment_end":
+                st.frames = st.nonblank = st.blank_run = 0
+                self.counts["source_boundaries"] += 1
+            elif typ == "end" and st.nonblank:
+                out.append(self._boundary(sid, st, st.last_t, "end of stream", ev))
+            out.append((sid, ev))
+        return out
+
+
+# ---------------------------------------------------------------------------
+# guard (the drop-in trust guard, P14-03 / P5-01 / P5-02, in the collector)
+# ---------------------------------------------------------------------------
+
+
+class _GState:
+    def __init__(self, header: dict[str, Any]) -> None:
+        self.vocab = list(header.get("vocab") or [])
+        self.vocab_type = header.get("vocab_type")
+        self.rows: list[np.ndarray] = []
+        self.times: list[float] = []
+        self.nbest: list[Any] | None = None
+        self.utterance = 0
+        self.skip = False  # after a gap: drop frames up to the next boundary
+
+
+def _norm_text(t: str | None) -> str:
+    return " ".join(str(t or "").split()).lower()
+
+
+class GuardProcessor(Processor):
+    """The drop-in trust guard (:class:`fidetype.trust.dropin.TrustGuard`) as a collector processor.
+
+    One decision per segment (``segment_end``, ``end``, or a closed stream with content). The guard
+    comes from ``guard`` (a saved guard, :func:`fidetype.trust.load`) or from ``profile`` (a
+    per-user profile, :class:`fidetype.trust.personal.PersonalTrust`: the profile's guard plus its
+    drift tests). ``online`` (``"aci"``, ``"aci_window"``, ``"window"``, ``"bandit"``) puts the
+    online controller of :meth:`TrustGuard.online` on top; :meth:`feedback` gives it the user's
+    final text.
+
+    Input of a segment, by the guard's input kind (the same parts as ``fidetype live``):
+
+    - ``nbest``: the last final ``hypothesis`` of the segment; without one, key frames
+      (``vocab_type = "key"``) go through the key beam search
+      (:func:`fidetype.live.runner.nbest_of_frames`).
+    - ``logits``: the frames of the segment as one ``(T, V)`` log-probability matrix. The stream's
+      vocabulary must be the guard's vocabulary.
+
+    Loss rules as the ``trust`` processor: ``gap``, ``lost`` and ``replaced`` drop the open segment
+    without a decision; after a gap the frames up to the next boundary are dropped.
+
+    Output: ``trust_decision`` events (``spec_version "1.0"``, ``session`` = stream id,
+    ``utterance`` and ``seq`` count per stream, ``is_final = true``), TD-12 applied as in the trust
+    processor. ``passthrough = true`` also passes the input events on (``ws_*`` binding keys
+    removed), so an exporter can write the NTS input stream next to the decision log (TD-11: two
+    files). The guard's in-memory audit log keeps the last ``audit_keep`` records (bounded memory).
+    """
+
+    type = "guard"
+
+    def __init__(self, name: str, log: Callable[[str], None], guard_path: Any = None, profile_path: Any = None,
+                 online: str | None = None, online_options: dict[str, Any] | None = None,
+                 passthrough: bool = False, save_profile: bool = False, audit_keep: int = 1024,
+                 guard: Any = None) -> None:
+        super().__init__(name, log)
+        import fidetype.trust as ft
+
+        self.personal: Any = None
+        if guard is not None:
+            self.guard = guard
+        elif profile_path is not None:
+            from fidetype.trust.personal import PersonalTrust
+
+            self.personal = PersonalTrust.load(profile_path, profile_path=profile_path if save_profile else None)
+            self.guard = self.personal.guard
+        elif guard_path is not None:
+            self.guard = ft.load(guard_path)
+        else:
+            raise ValueError(f"processors.{name}: give 'guard' or 'profile'")
+        self.online: Any = None
+        if online:
+            self.online = self.guard.online(online, **dict(online_options or {}))
+        self.kind = self.guard.input_kind
+        if self.kind == "nbest":  # import the key beam search now, not inside the first decision (latency)
+            import fidetype.live.runner  # noqa: F401
+        vocab = getattr(self.guard._codec, "vocab", None)
+        self.guard_vocab = list(vocab.tokens) if self.kind == "logits" and vocab is not None else None
+        self.passthrough = passthrough
+        self.audit_keep = int(audit_keep)
+        self.streams: dict[str, _GState] = {}
+        self.seq: dict[str, int] = {}
+        self.tickets: dict[tuple[str, int], Any] = {}
+        self.results: dict[tuple[str, int], Any] = {}
+        self.counts.update(decisions=0, commits=0, offers=0, withholds=0, aborted_segments=0, skipped_after_gap=0,
+                           empty_segments=0, unusable_segments=0, blank_candidates_dropped=0)
+        self._logged: set[str] = set()
+
+    @property
+    def config_id(self) -> str:
+        return self.guard.config_id
+
+    def _once(self, key: str, msg: str) -> None:
+        if key not in self._logged:
+            self._logged.add(key)
+            self.log(f"processors.{self.name}: {msg}")
+
+    def _input(self, sid: str, st: _GState) -> Any:
+        """The guard input of the open segment, or None (logged once) when the segment cannot be used."""
+        if self.kind == "nbest":
+            if st.nbest:
+                return st.nbest
+            if st.rows and st.vocab_type == "key":
+                from fidetype.adapters.kt_semg import KEY_VOCAB
+                from fidetype.live.runner import nbest_of_frames
+
+                if st.vocab != list(KEY_VOCAB):
+                    self._once(f"keys:{sid}", f"stream {sid}: key frames need the 32-key KT-sEMG vocabulary")
+                    return None
+                return nbest_of_frames(np.vstack(st.rows), np.asarray(st.times))
+            self._once(f"nb:{sid}", f"stream {sid}: an n-best guard needs a final hypothesis or key frames")
+            return None
+        if not st.rows:
+            return None
+        if self.guard_vocab is not None and st.vocab != self.guard_vocab:
+            self._once(f"vocab:{sid}", f"stream {sid}: the stream vocabulary is not the guard's vocabulary")
+            return None
+        return np.vstack(st.rows)
+
+    def _decide(self, sid: str, st: _GState, out: list[Item]) -> None:
+        if not st.rows and not st.nbest:
+            self.counts["empty_segments"] += 1
+            return
+        x = self._input(sid, st)
+        st.rows, st.times, st.nbest = [], [], None
+        utt = st.utterance
+        st.utterance += 1
+        if x is None:
+            self.counts["unusable_segments"] += 1
+            return
+        uid = f"{sid}#{utt}"
+        if self.online is not None:
+            r, tk = self.online.decide(x, utterance_id=uid)
+            self.tickets[(sid, utt)] = tk
+            if self.personal is not None:  # the profile's score drift test still sees each decision
+                self.personal.monitor.update_score(float(r.p_top1) if math.isfinite(r.p_top1) else -math.inf)
+        elif self.personal is not None:
+            r = self.personal.decide(x, utterance_id=uid)
+        else:
+            r = self.guard.decide(x, utterance_id=uid)
+        self.results[(sid, utt)] = r
+        for d in (self.tickets, self.results):
+            while len(d) > 4096:
+                d.pop(next(iter(d)))
+        alog = self.guard.audit_log
+        if len(alog) > self.audit_keep:
+            del alog[: len(alog) - self.audit_keep]
+        seq = self.seq.get(sid, 0)
+        self.seq[sid] = seq + 1
+        ev = {"type": "trust_decision", "spec_version": DECISION_SPEC_VERSION, **dict(r.event)}
+        ev.update(session=sid, seq=seq, utterance=utt, is_final=True, final_attempt=True, config_id=r.config_id)
+        ev.setdefault("attempt", 1)
+        ev, dropped, _ = drop_blank_candidates(ev)  # TD-12
+        self.counts["blank_candidates_dropped"] += dropped
+        self.counts["decisions"] += 1
+        self.counts[{"commit": "commits", "offer": "offers"}.get(r.action, "withholds")] += 1
+        out.append((sid, ev))
+
+    def feedback(self, session: str, utterance: int, truth: str | None) -> None:
+        """The user's final text for one decision (None: unknown). Feeds the online controller and the profile."""
+        key = (session, utterance)
+        tk = self.tickets.pop(key, None)
+        r = self.results.pop(key, None)
+        if tk is not None and self.online is not None:
+            self.online.feedback(tk, truth)
+        if r is not None and self.personal is not None:
+            if self.online is None:
+                self.personal.feedback(r, truth)
+            else:  # the profile's risk drift test still sees the observed loss
+                wrong = r.action == "commit" and truth is not None and _norm_text(r.text) != _norm_text(truth)
+                self.personal.monitor.update_loss(float(wrong))
+
+    def _process(self, items: list[Item]) -> list[Item]:
+        from fidetype.trust.streaming import StreamEventError, frame_row
+
+        out: list[Item] = []
+        for sid, ev in items:
+            typ = ev.get("type")
+            if typ == STATUS:
+                s = ev.get("status")
+                st = self.streams.get(sid)
+                if st is not None and s in ("gap", "lost", "replaced"):
+                    if st.rows or st.nbest:
+                        self.counts["aborted_segments"] += 1
+                        st.utterance += 1
+                    st.rows, st.times, st.nbest = [], [], None
+                    st.skip = s == "gap"
+                    if s != "gap":
+                        self.streams.pop(sid, None)
+                elif st is not None and s == "closed":
+                    if (st.rows or st.nbest) and not st.skip:
+                        self._decide(sid, st, out)
+                    self.streams.pop(sid, None)
+                continue
+            if typ == "trust_decision":
+                continue  # TD-4: decisions are output; an input decision is not passed on
+            if self.passthrough:
+                out.append((sid, strip_binding_keys(ev)))
+            if typ == "header":
+                old = self.streams.get(sid)
+                if old is not None and (old.rows or old.nbest):
+                    self._decide(sid, old, out)
+                st = _GState(ev)
+                if old is not None:
+                    st.utterance = old.utterance
+                self.streams[sid] = st
+                continue
+            st = self.streams.get(sid)
+            if st is None:
+                continue
+            if typ == "frame":
+                if st.skip:
+                    self.counts["skipped_after_gap"] += 1
+                    continue
+                try:
+                    st.rows.append(frame_row(ev, len(st.vocab)))
+                    st.times.append(float(ev["t"]) if _num(ev.get("t")) else float(len(st.times)))
+                except (StreamEventError, ValueError, TypeError):
+                    self.counts["aborted_segments"] += 1
+                    st.rows, st.times, st.nbest, st.skip = [], [], None, True
+            elif typ == "hypothesis":
+                nb = ev.get("nbest")
+                if not st.skip and ev.get("is_final") is True and isinstance(nb, list) and nb:
+                    st.nbest = [{k: v for k, v in it.items() if k in ("text", "score", "char_confidences")}
+                                for it in nb if isinstance(it, dict) and isinstance(it.get("text"), str)] or None
+            elif typ in ("segment_end", "end"):
+                if st.skip:
+                    st.skip = False
+                    st.rows, st.times, st.nbest = [], [], None
+                else:
+                    self._decide(sid, st, out)
+        return out
+
+    def finish(self) -> list[Item]:
+        for st in self.streams.values():
+            if st.rows or st.nbest:
+                self.counts["aborted_segments"] += 1  # stopped inside a segment: no decision
+        self.streams.clear()
+        return []
+
+    def stats(self) -> dict[str, Any]:
+        s = {**super().stats(), "config_id": self.config_id, "input_kind": self.kind,
+             "online": None if self.online is None else self.online.method,
+             "profile": self.personal is not None, "sessions": len(self.seq)}
+        if self.online is not None:
+            thr = self.online.threshold
+            s["online_threshold"] = thr if math.isfinite(thr) else None
+        return s
+

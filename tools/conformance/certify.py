@@ -10,6 +10,7 @@ levels that the reports reach. No network, no GPU, synthetic data only.
 
 Entries:
 
+* ``fidetype-collector``: consumer, claim ``text`` (P7-05): ``--cmd "fidetype-collector consume ..."``.
 * ``fidetype-python``, ``fidetype-typescript``, ``fidetype-rust``: consumers. ``nts-conform kit`` with the
   reference (Python) or ``--cmd "... consume --profile {profile} --level {level} {path}"``.
 * ``adapter-<name>``: producers. The synthetic streams of ``fidetype.conformance.producers`` (the adapter code
@@ -96,6 +97,19 @@ def consumer_entries(python_only: bool) -> list[dict]:
                 "nts-conform)", "language": "Python", "version": v["python"],
                 "evidence": _write("fidetype-python.kit-report.json", rep),
                 "evidence_command": "nts-conform kit --json spec/conformance/certified/fidetype-python.kit-report.json",
+                "_rep": rep})
+    # P7-05: the collector's input path (file receiver + validate processor). Claim: text, no bindings
+    # (it has no reader for LSL / WebSocket captures and no intent / control checks; docs/collector.md).
+    cmd = f'"{sys.executable}" -m fidetype.collector consume -q --profile {{profile}} --level {{level}} {{path}}'
+    rep = NC.run_kit(validator=NC._cmd_validator(cmd), claim=["text"],
+                     name="fidetype-collector consume -q --profile {profile} --level {level} {path}")
+    out.append({**base, "profiles": ["text"], "id": "fidetype-collector",
+                "implementation": "fidetype-collector (collector input path: file receiver + validate processor, "
+                "FEP-0006)", "language": "Python", "version": v["python"],
+                "evidence": _write("fidetype-collector.kit-report.json", rep),
+                "evidence_command": 'nts-conform kit --claim text --cmd "fidetype-collector consume -q --profile '
+                                    '{profile} --level {level} {path}" --json '
+                                    'spec/conformance/certified/fidetype-collector.kit-report.json',
                 "_rep": rep})
     if python_only:
         return out

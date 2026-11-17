@@ -319,3 +319,24 @@ jobs:
           node-version: "24"
       - run: node tools/hygiene/check.js --ci
       - run: node tools/hygiene/links.js --ci
+
+  # P3-04: collector pipeline integration test and latency budget (p95 added < 50 ms x FIDETYPE_LATENCY_TOLERANCE,
+  # default 1.0; docs/collector.md). The lsl extra makes the LSL receiver test run too. P7-05: the collector's
+  # consumer entry point (file receiver + validate processor) against the conformance kit: NTS Trust-ready, text.
+  collector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: uv sync --extra dev --extra lsl
+      - run: uv run pytest -q tests/test_collector_pipeline.py tests/test_collector.py tests/test_collector_lsl.py -rs
+      - name: Bench report (all profiles; implant-logits is reported, not gated)
+        run: uv run python -m fidetype.collector.bench --out "$RUNNER_TEMP/bench" --receiver websocket --receiver file --receiver lsl
+      - name: Conformance kit against the collector consumer (P7-05)
+        run: >
+          uv run nts-conform kit --claim text --require-level trust-ready
+          --json "$RUNNER_TEMP/collector.kit-report.json"
+          --cmd "$GITHUB_WORKSPACE/.venv/bin/fidetype-collector consume -q --profile {profile} --level {level} {path}"

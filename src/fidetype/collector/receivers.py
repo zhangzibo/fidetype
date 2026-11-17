@@ -80,6 +80,9 @@ class FileReceiver(Receiver):
       the processors and exporters took the last ones; nothing is dropped.
     - The stream id is ``stream_id`` (one file only) or ``<receiver>-<index>``. The file name is not
       used: it can hold personal data (SEC-6).
+    - An ``.npz`` file (spec 6.1) is read whole with the reference reader (``allow_pickle=False``)
+      and becomes ``header``, one ``frame`` per row and ``end``. A file that the reader cannot load
+      becomes a ``lost`` status (no event of it reaches a processor). No tail mode for NPZ.
     """
 
     type = "file"
@@ -102,6 +105,7 @@ class FileReceiver(Receiver):
         self.partial = ""
         self.ended = False
         self.last_data = 0.0
+        self.npz: list[Item] | None = None
         self.counts.update(lines=0, bad_lines=0, lines_after_end=0, cut_streams=0, closed_without_end=0)
 
     def start(self) -> None:
@@ -118,8 +122,15 @@ class FileReceiver(Receiver):
         if self.index >= len(self.paths):
             self.done = True
             return
-        self.fh = open(self.paths[self.index], "r", encoding="utf-8", newline="")
         self.sid = self.stream_id or f"{self.name}-{self.index}"
+        self.npz = None
+        self.partial = ""
+        self.ended = False
+        if self.paths[self.index].suffix.lower() == ".npz":
+            self.npz = self._npz_items(self.paths[self.index])
+            self.counts["streams"] += 1
+            return
+        self.fh = open(self.paths[self.index], "r", encoding="utf-8", newline="")
         self.partial = ""
         self.ended = False
         self.last_data = self.clock()
@@ -161,10 +172,45 @@ class FileReceiver(Receiver):
         out.append(status(self.sid, "closed"))
         self._next_file()
 
+    def _npz_items(self, path: Path) -> list[Item]:
+        """The events of an NPZ stream (header, frames, end), or a ``lost`` status if it cannot be read."""
+        import math
+
+        from fidetype.conformance.io import read_npz
+
+        raw = read_npz(path)
+        lp, ft = raw.log_probs, raw.frame_times
+        if raw.issues or lp is None or ft is None or lp.ndim != 2 or ft.shape != (lp.shape[0],):
+            why = raw.issues[0].message if raw.issues else "log_probs / frame_times missing or of the wrong shape"
+            self.counts["bad_lines"] += 1
+            self.log(f"receivers.{self.name}: stream {self.sid}: NPZ file unreadable ({why})")
+            return [status(self.sid, "lost", "unreadable NPZ file")]
+        hdr = {k: v for k, v in raw.header.items() if not k.startswith("_")}
+        items: list[Item] = [(self.sid, {"type": "header", **hdr})]
+        items += [(self.sid, {"type": "frame", "t": float(t),
+                              "log_probs": [None if v == -math.inf else float(v) for v in row]})
+                  for t, row in zip(ft, lp)]
+        items.append((self.sid, {"type": "end"}))
+        return items
+
+    def _poll_npz(self) -> list[Item]:
+        assert self.npz is not None
+        out, self.npz = self.npz[: self.batch], self.npz[self.batch:]
+        if not self.npz:
+            if out and out[-1][1].get("type") == "end":
+                self.counts["ended_streams"] += 1
+            out.append(status(self.sid, "closed"))
+            self.npz = None
+            self._next_file()
+        self.counts["items"] += len(out)
+        return out
+
     def poll(self, timeout: float) -> list[Item]:
         out: list[Item] = []
         if self.done:
             return out
+        if self.npz is not None:
+            return self._poll_npz()
         n = 0
         while n < self.batch:
             chunk = self.fh.readline()

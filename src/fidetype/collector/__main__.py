@@ -10,6 +10,11 @@ from fidetype.collector.config import ConfigError, load
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    if args[:1] == ["consume"]:  # P7-05: the kit contract (fidetype.collector.consume)
+        from fidetype.collector.consume import main as consume_main
+
+        return consume_main(args[1:])
     ap = argparse.ArgumentParser(prog="fidetype collector",
                                  description="Run the Fidetype collector v0.1 (FEP-0006): receivers -> processors -> "
                                              "exporters, from one TOML or JSON configuration file.")
@@ -17,7 +22,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap.add_argument("--check", action="store_true", help="check the configuration, print the pipelines, and exit")
     ap.add_argument("--duration", type=float, default=None, help="stop after this many seconds")
     ap.add_argument("--max-streams", type=int, default=None, help="stop after this many streams sent end")
-    a = ap.parse_args(argv)
+    a = ap.parse_args(args)
     try:
         cfg = load(a.config)
         if a.check:

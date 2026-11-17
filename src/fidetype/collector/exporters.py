@@ -258,3 +258,90 @@ class LSLExporter(Exporter):
     def stats(self) -> dict[str, Any]:
         # Counters only: no stream name, host name or address (LSL-C3).
         return {**super().stats(), "no_text": self.no_text}
+
+
+# ---------------------------------------------------------------------------
+# os_text (P3-03): OS text input. v0: the "stub" backend only.
+# ---------------------------------------------------------------------------
+
+#: Backends of the ``os_text`` exporter. Only ``stub`` exists (P3-03: Windows TSF, Android IME, macOS, IBus open).
+OS_TEXT_BACKENDS = ("stub",)
+
+
+def committed_text(ev: dict[str, Any]) -> str | None:
+    """The text that an OS input exporter may type for one item, or None.
+
+    Only a final text COMMIT with a non-blank first ``shown`` text (roadmap P3 hard rule: "an
+    exporter to an OS input method sends only committed decisions"; TD-1: no action on a
+    provisional decision; TD-9: no blank COMMIT).
+    """
+    if ev.get("type") != "trust_decision" or ev.get("is_final") is not True or ev.get("action") != "COMMIT":
+        return None
+    if ev.get("profile", "text") != "text":
+        return None
+    sh = ev.get("shown")
+    if not isinstance(sh, list) or not sh or not isinstance(sh[0], str) or not sh[0].strip():
+        return None
+    return sh[0]
+
+
+class OsTextExporter(Exporter):
+    """Type committed text into the operating system's text input (P3-03). v0: ``backend = "stub"``.
+
+    The ``stub`` backend types into memory (:attr:`typed`) and, with ``path``, appends one JSON line
+    per typed text: ``{"typed": text, "decision": <the full trust_decision>}`` (the roadmap rule
+    "log the full NTS next to each output"). It is the test double of a real input-method backend:
+    the same filter (:func:`committed_text`), the same log. OFFER, ASK, ABSTAIN and provisional
+    decisions are counted and never typed. ``separator`` goes between two typed texts.
+    """
+
+    type = "os_text"
+
+    def __init__(self, name: str, log: Callable[[str], None], backend: str = "stub", path: Path | None = None,
+                 separator: str = " ", on_type: Callable[[str, dict[str, Any]], None] | None = None) -> None:
+        super().__init__(name, log)
+        if backend not in OS_TEXT_BACKENDS:
+            raise ValueError(f"exporters.{name}: backend {backend!r} is not implemented (known: "
+                             f"{', '.join(OS_TEXT_BACKENDS)})")
+        self.backend = backend
+        self.path = path
+        self.separator = separator
+        self.on_type = on_type
+        self.typed: list[str] = []
+        self.fh: TextIO | None = None
+        self.counts.update(typed=0, not_committed=0)
+
+    def start(self) -> None:
+        if self.path is not None:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            self.fh = open(self.path, "w", encoding="utf-8", newline="\n")
+
+    def export(self, items: list[Item]) -> None:
+        n = 0
+        for _, ev in items:
+            if ev.get("type") != "trust_decision":
+                continue
+            text = committed_text(ev)
+            if text is None:
+                self.counts["not_committed"] += 1
+                continue
+            out = (self.separator if self.typed else "") + text
+            self.typed.append(text)
+            if self.on_type is not None:
+                self.on_type(out, ev)
+            if self.fh is not None:
+                self.fh.write(dumps({"typed": out, "decision": ev}) + "\n")
+            n += 1
+        if n:
+            if self.fh is not None:
+                self.fh.flush()
+            self.counts["typed"] += n
+            self.counts["exported"] += n
+
+    def stop(self) -> None:
+        if self.fh is not None:
+            self.fh.close()
+            self.fh = None
+
+    def stats(self) -> dict[str, Any]:
+        return {**super().stats(), "backend": self.backend}  # counts only: no typed text

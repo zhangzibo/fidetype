@@ -24,6 +24,7 @@ from fidetype.collector import exporters as E
 from fidetype.collector import processors as P
 from fidetype.collector import receivers as R
 from fidetype.collector.config import DEFAULT_HEALTH_LISTEN, CollectorConfig, ComponentConfig, ConfigError, is_loopback
+from fidetype.collector.latency import BUDGET_MS, LatencyRecorder, trigger_stamps
 
 
 #: Default gap mode of an ``lsl`` receiver. Stricter than the LSL-G1 reference default (``mark``):
@@ -56,8 +57,13 @@ class Pipeline:
     receivers: list[R.Receiver]
     processors: list[P.Processor]
     exporters: list[E.Exporter]
+    #: P3-04: per-stage latency (``[service] latency = true``), or None (no timing cost).
+    latency: LatencyRecorder | None = None
 
     def _run(self, items: list[R.Item], start: int = 0) -> None:
+        if self.latency is not None and start == 0 and items:
+            self._run_timed(items)
+            return
         for proc in self.processors[start:]:
             if not items:
                 return
@@ -66,9 +72,43 @@ class Pipeline:
             for ex in self.exporters:
                 ex.export(items)
 
+    def _run_timed(self, items: list[R.Item]) -> None:
+        """:meth:`_run` with the stage times of :mod:`fidetype.collector.latency` (decision steps only)."""
+        rec = self.latency
+        assert rec is not None
+        clock = time.perf_counter
+        t0 = clock()
+        t_recv, t_sent = trigger_stamps(items)
+        stages: list[tuple[str, float]] = []
+        out = items
+        for proc in self.processors:
+            if not out:
+                break
+            a = clock()
+            out = proc.process(out)
+            stages.append((f"processor.{proc.name}", clock() - a))
+        if out:
+            for ex in self.exporters:
+                a = clock()
+                ex.export(out)
+                stages.append((f"exporter.{ex.name}", clock() - a))
+        t_end = clock()
+        if not any(ev.get("type") == "trust_decision" for _, ev in out):
+            return
+        rec.steps += 1
+        for k, v in stages:
+            rec.add(k, v)
+        rec.add("pipeline", t_end - t0)
+        if t_recv is not None:
+            rec.add("receive", max(0.0, t0 - t_recv))
+            rec.add("added", t_end - t_recv)
+        else:
+            rec.add("added", t_end - t0)
+        if t_sent is not None:
+            rec.add("e2e", t_end - t_sent)
+
     def step(self, timeout: float) -> int:
         n = 0
-        multi = len(self.receivers) > 1
         for rec in self.receivers:
             if rec.done:
                 continue
@@ -208,6 +248,19 @@ class Collector:
             return P.RedactProcessor(c.name, self.log, mode=o.get("mode", "drop"),
                                      key=key.encode("utf-8") if key else None, key_id=o.get("key_id"),
                                      hypothesis_text=o.get("hypothesis_text", True))
+        if c.type == "segment":
+            return P.SegmenterProcessor(c.name, self.log, pause_s=o.get("pause_s"), blank_frames=o.get("blank_frames"),
+                                        max_frames=o.get("max_frames"), unit=o.get("unit", "utterance"))
+        if c.type == "guard":
+            try:
+                return P.GuardProcessor(
+                    c.name, self.log, guard_path=self.config.path(o["guard"]) if "guard" in o else None,
+                    profile_path=self.config.path(o["profile"]) if "profile" in o else None,
+                    online=o.get("online"), online_options=o.get("online_options"),
+                    passthrough=o.get("passthrough", False), save_profile=o.get("save_profile", False),
+                    audit_keep=o.get("audit_keep", 1024))
+            except (ValueError, KeyError, OSError) as e:
+                raise ConfigError(f"processors.{c.name}: cannot load the guard: {e}") from None
         return P.ThinProcessor(c.name, self.log, keep_provisional=o.get("keep_provisional", "changes"))
 
     def _exporter(self, c: ComponentConfig) -> E.Exporter:
@@ -216,6 +269,10 @@ class Collector:
             return E.JsonlExporter(c.name, self.log, self.config.path(o["path"]), o["types"], append=o.get("append", False))
         if c.type == "stdout":
             return E.StdoutExporter(c.name, self.log, o["types"])
+        if c.type == "os_text":
+            return E.OsTextExporter(c.name, self.log, backend=o.get("backend", "stub"),
+                                    path=self.config.path(o["path"]) if "path" in o else None,
+                                    separator=o.get("separator", " "))
         if c.type == "lsl":
             from fidetype.adapters import lsl as L
 
@@ -248,13 +305,14 @@ class Collector:
         for p in cfg.pipelines.values():
             self.pipelines.append(Pipeline(p.name, [self._receivers[n] for n in p.receivers],
                                            [self._processor(cfg.processors[n]) for n in p.processors],
-                                           [self._exporters[n] for n in p.exporters]))
+                                           [self._exporters[n] for n in p.exporters],
+                                           LatencyRecorder() if cfg.service.get("latency") else None))
         # An LSL decisions outlet names the trust configuration in its desc (LSL-X1): take it from the
         # trust processor(s) of the pipeline(s) it serves, when the file does not set config_id.
         for name, ex in self._exporters.items():
             if isinstance(ex, E.LSLExporter) and ex.config_id is None:
                 ids = {x.config_id for pl in self.pipelines if ex in pl.exporters
-                       for x in pl.processors if isinstance(x, P.TrustProcessor)}
+                       for x in pl.processors if isinstance(x, (P.TrustProcessor, P.GuardProcessor))}
                 if len(ids) == 1:
                     ex.config_id = ids.pop()
 
@@ -307,6 +365,11 @@ class Collector:
             self._health = None
         mf = self.config.service.get("metrics_file")
         self.state = "stopped"
+        budget = float(self.config.service.get("latency_budget_ms", BUDGET_MS))
+        for name, lat in self.latency().items():
+            if lat["within_budget"] is False:
+                self.log(f"pipeline {name}: WARNING: p95 added latency {lat['stages']['added']['p95']:.1f} ms is "
+                         f"above the budget of {budget:g} ms")
         if mf:
             p = self.config.path(mf)
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -352,9 +415,14 @@ class Collector:
 
     # --- metrics and health -------------------------------------------------------------
 
+    def latency(self) -> dict[str, Any]:
+        """Per pipeline: the latency summary (:mod:`fidetype.collector.latency`) when ``[service] latency = true``."""
+        budget = float(self.config.service.get("latency_budget_ms", BUDGET_MS))
+        return {p.name: p.latency.summary(budget) for p in self.pipelines if p.latency is not None}
+
     def metrics(self) -> dict[str, Any]:
         """Counters of every component. No host name, client address, token, key or decoded text."""
-        return {
+        out: dict[str, Any] = {
             "state": self.state,
             "uptime_s": 0.0 if self.started_at is None else round(time.monotonic() - self.started_at, 3),
             "pipelines": {p.name: {
@@ -363,6 +431,10 @@ class Collector:
                 "exporters": {x.name: x.stats() for x in p.exporters},
             } for p in self.pipelines},
         }
+        lat = self.latency()
+        for name, s in lat.items():
+            out["pipelines"][name]["latency_ms"] = s
+        return out
 
     def summary(self) -> dict[str, Any]:
         out: dict[str, Any] = {"ended_streams": self.ended_streams()}
@@ -372,6 +444,14 @@ class Collector:
                     s = x.stats()
                     for k in ("final_decisions", "decisions", "aborted_utterances", "rejected_events"):
                         out[k] = out.get(k, 0) + s[k]
+                elif isinstance(x, P.GuardProcessor):
+                    s = x.stats()
+                    out["final_decisions"] = out.get("final_decisions", 0) + s["decisions"]
+                    out["decisions"] = out.get("decisions", 0) + s["decisions"]
+                    out["aborted_utterances"] = out.get("aborted_utterances", 0) + s["aborted_segments"]
+            for name, lat in self.latency().items():
+                added = lat["stages"].get("added", {})
+                out[f"latency_added_p95_ms.{name}"] = added.get("p95")
         return out
 
     def _start_health(self, host: str, port: int, token: str | None = None) -> None:

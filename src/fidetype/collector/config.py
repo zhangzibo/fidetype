@@ -41,6 +41,11 @@ SCHEMA: dict[str, dict[str, tuple[set[str], set[str]]]] = {
                    "ledger"}, {"config"}),
         "redact": ({"mode", "key_env", "key_id", "hypothesis_text"}, set()),
         "thin": ({"keep_provisional"}, set()),
+        # P3-02 segmenter: add segment_end events (pause, blank run, length).
+        "segment": ({"pause_s", "blank_frames", "max_frames", "unit"}, set()),
+        # The drop-in trust guard (P14-03) with an optional per-user profile (P5-01) and online control (P5-02).
+        "guard": ({"guard", "profile", "online", "online_options", "passthrough", "save_profile", "audit_keep"},
+                  set()),
     },
     "exporters": {
         "jsonl": ({"path", "types", "append"}, {"path"}),
@@ -49,10 +54,12 @@ SCHEMA: dict[str, dict[str, tuple[set[str], set[str]]]] = {
         # No ``receiver``: start a standalone /decisions server (for file replay demos).
         "websocket": ({"receiver", "listen", "token_env", "origins", "certfile", "keyfile", "linger_s"}, set()),
         "lsl": ({"stream_name", "source_id", "config_id", "no_text"}, set()),
+        # P3-03 OS text input; v0 has the "stub" backend only (types into memory and a JSON Lines log).
+        "os_text": ({"backend", "path", "separator"}, set()),
     },
 }
 TOP_KEYS = {"service", "receivers", "processors", "exporters", "pipelines"}
-SERVICE_KEYS = {"log", "metrics_file", "health", "duration_s", "max_streams"}
+SERVICE_KEYS = {"log", "metrics_file", "health", "duration_s", "max_streams", "latency", "latency_budget_ms"}
 HEALTH_KEYS = {"listen", "token_env", "allow_unauthenticated"}
 #: Default address of the health and metrics endpoint: localhost only.
 DEFAULT_HEALTH_LISTEN = "127.0.0.1:13133"
@@ -284,7 +291,7 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
             raise ConfigError(f"{where}.merge_window_s: must be >= 0")
     elif kind == "processors" and typ == "validate":
         _opt_enum(where, opts, "on_invalid", ("cut", "log"))
-        _opt_enum(where, opts, "level", ("core",))
+        _opt_enum(where, opts, "level", ("core", "trust-ready", "provenance"))
     elif kind == "processors" and typ == "trust":
         _opt_type(where, opts, "config", (str,), "a file path")
         _opt_enum(where, opts, "decoder", ("none", "greedy", "demo"))
@@ -310,6 +317,39 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
             raise ConfigError(f"{where}: mode 'hmac' needs key_env (the environment variable that holds the key)")
     elif kind == "processors" and typ == "thin":
         _opt_enum(where, opts, "keep_provisional", ("changes", "none", "all"))
+    elif kind == "processors" and typ == "segment":
+        _opt_type(where, opts, "pause_s", num, "a number")
+        for k in ("blank_frames", "max_frames"):
+            _opt_type(where, opts, k, (int,), "an integer")
+            if k in opts and opts[k] < 1:
+                raise ConfigError(f"{where}.{k}: must be >= 1")
+        if "pause_s" in opts and not opts["pause_s"] > 0:
+            raise ConfigError(f"{where}.pause_s: must be > 0")
+        _opt_enum(where, opts, "unit", ("utterance", "word", "trial"))
+        if not any(k in opts for k in ("pause_s", "blank_frames", "max_frames")):
+            raise ConfigError(f"{where}: give at least one of pause_s, blank_frames, max_frames")
+    elif kind == "processors" and typ == "guard":
+        if ("guard" in opts) == ("profile" in opts):
+            raise ConfigError(f"{where}: give exactly one of 'guard' (a saved guard file) and 'profile' "
+                              "(a per-user profile file)")
+        _opt_type(where, opts, "guard", (str,), "a file path")
+        _opt_type(where, opts, "profile", (str,), "a file path")
+        _opt_enum(where, opts, "online", ("aci", "aci_window", "window", "bandit"))
+        if "online_options" in opts and not isinstance(opts["online_options"], dict):
+            raise ConfigError(f"{where}.online_options: must be a table of keyword arguments")
+        if "online_options" in opts and "online" not in opts:
+            raise ConfigError(f"{where}.online_options: needs online")
+        for k in ("passthrough", "save_profile"):
+            _opt_type(where, opts, k, (bool,), "true or false")
+        if "save_profile" in opts and "profile" not in opts:
+            raise ConfigError(f"{where}.save_profile: needs profile")
+        _opt_type(where, opts, "audit_keep", (int,), "an integer")
+        if opts.get("audit_keep", 1) < 1:
+            raise ConfigError(f"{where}.audit_keep: must be >= 1")
+    elif kind == "exporters" and typ == "os_text":
+        _opt_enum(where, opts, "backend", ("stub",))
+        _opt_type(where, opts, "path", (str,), "a file path")
+        _opt_type(where, opts, "separator", (str,), "a string")
     elif kind == "exporters" and typ in ("jsonl", "stdout"):
         if typ == "jsonl":
             _opt_type(where, opts, "path", (str,), "a file path")
@@ -368,6 +408,10 @@ def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> Col
     _opt_type("service", service, "metrics_file", (str,), "a file path")
     _opt_type("service", service, "duration_s", (int, float), "a number")
     _opt_type("service", service, "max_streams", (int,), "an integer")
+    _opt_type("service", service, "latency", (bool,), "true or false")
+    _opt_type("service", service, "latency_budget_ms", (int, float), "a number")
+    if "latency_budget_ms" in service and not service["latency_budget_ms"] > 0:
+        raise ConfigError("service.latency_budget_ms: must be > 0")
     if "health" in service:
         h = _check_keys("service.health", service["health"], HEALTH_KEYS)
         h.setdefault("listen", DEFAULT_HEALTH_LISTEN)
@@ -409,13 +453,19 @@ def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> Col
                                           f"{used[k][n]!r}; a {k[:-1]} keeps state, so define a second one")
                     used[k][n] = pname
         types = [comps["processors"][n].type for n in lists["processors"]]
-        if "redact" in types and "trust" in types and types.index("redact") < types.index("trust"):
-            raise ConfigError(f"{where}.processors: 'redact' comes before 'trust'; the trust layer needs the "
-                              "text, so put redact after trust")
-        if "trust" in types and "validate" in types and types.index("validate") > types.index("trust"):
-            raise ConfigError(f"{where}.processors: put 'validate' before 'trust' (it checks the input events)")
-        if types.count("trust") > 1:
-            raise ConfigError(f"{where}.processors: at most one trust processor per pipeline")
+        # "guard" is a trust step too (the drop-in guard): the same order rules as "trust".
+        steps = ["trust" if t == "guard" else t for t in types]
+        if "redact" in steps and "trust" in steps and steps.index("redact") < steps.index("trust"):
+            raise ConfigError(f"{where}.processors: 'redact' comes before the trust step; the trust layer needs "
+                              "the text, so put redact after trust / guard")
+        if "trust" in steps and "validate" in steps and steps.index("validate") > steps.index("trust"):
+            raise ConfigError(f"{where}.processors: put 'validate' before the trust step (it checks the input "
+                              "events)")
+        if "trust" in steps and "segment" in steps and steps.index("segment") > steps.index("trust"):
+            raise ConfigError(f"{where}.processors: put 'segment' before the trust step (it adds the boundaries "
+                              "that the trust step decides on)")
+        if steps.count("trust") > 1:
+            raise ConfigError(f"{where}.processors: at most one trust step (trust or guard) per pipeline")
         for i, n in enumerate(lists["exporters"]):
             ex = comps["exporters"][n]
             if ex.type == "websocket" and "receiver" in ex.options:

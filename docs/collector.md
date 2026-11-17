@@ -5,10 +5,11 @@ The Collector is one service. It reads NeuralTextStream (NTS) input from several
 Status: reference v0 in the Python package. The design is the draft [FEP-0006](../spec/feps/0006-collector.md). It is not part of NTS 1.0, because it does not change the format.
 
 ```
- file  ----> receiver --\                                          /--> jsonl (decision log)
- ws /nts --> receiver ---+--> validate --> trust --> thin --> redact --+--> stdout
- LSL -----> receiver --/                                            +--> ws /decisions
-                                                                    \--> LSL decisions outlet
+ file  ----> receiver --\                                                   /--> jsonl (NTS stream, decision log)
+ ws /nts --> receiver ---+--> validate --> segment --> trust | guard --> thin --> redact --+--> stdout
+ LSL -----> receiver --/                                                     +--> ws /decisions
+                                                                             +--> LSL decisions outlet
+                                                                             \--> os_text (stub)
 ```
 
 ## Run it
@@ -24,13 +25,24 @@ fidetype collector --config examples/collector/collector.toml           # run it
 
 | Kind | Types | Job |
 |---|---|---|
-| Receiver | `file` (JSON Lines, also tail mode), `websocket` (FEP-0004 `/nts`), `lsl` (FEP-0002) | Read a source. Turn every loss into a `gap` or `lost` status |
-| Processor | `validate`, `trust`, `thin`, `redact` | Check events, make trust decisions, drop previews, remove or hash decoded text |
-| Exporter | `jsonl`, `stdout`, `websocket` (`/decisions`), `lsl` | Write items out. Never change them |
+| Receiver | `file` (JSON Lines, also tail mode; NPZ), `websocket` (FEP-0004 `/nts`), `lsl` (FEP-0002) | Read a source. Turn every loss into a `gap` or `lost` status |
+| Processor | `validate`, `segment`, `trust`, `guard`, `thin`, `redact` | Check events, add segment ends, make trust decisions, drop previews, remove or hash decoded text |
+| Exporter | `jsonl`, `stdout`, `websocket` (`/decisions`), `lsl`, `os_text` (`stub` backend only) | Write items out. Never change them |
 | Pipeline | any number | Connect named receivers, processors and exporters |
-| Service | `[service]` | Log level, metrics file, health endpoint (`/healthz`, `/metrics`, localhost by default) |
+| Service | `[service]` | Log level, metrics file, health endpoint (`/healthz`, `/metrics`, localhost by default), `latency = true` (per-stage latency) |
 
 Examples: [`collector.toml`](../examples/collector/collector.toml) (file input) and [`collector-lsl.toml`](../examples/collector/collector-lsl.toml) (LSL input; needs the `lsl` extra). Each key is explained in comments in the files.
+
+### The new parts of P3-02 to P3-04
+
+| Component | Keys | What it does |
+|---|---|---|
+| `segment` processor | `pause_s`, `blank_frames`, `max_frames`, `unit` | Adds a `segment_end` when the time between two frames is more than `pause_s`, after `blank_frames` blank frames in a row (after a non-blank frame), or after `max_frames` frames. Causal. A `segment_end` from the source passes through. |
+| `guard` processor | `guard` or `profile`, `online`, `online_options`, `passthrough`, `save_profile`, `audit_keep` | The drop-in trust guard ([trust quickstart](trust-quickstart.md)). `profile` loads a per-user profile ([personalisation](trust-personalisation.md)) with its drift tests. `online = "aci"` (or `aci_window`, `window`, `bandit`) adds the online controller. One decision per segment. `passthrough = true` also passes the input events on (without the `ws_*` binding keys), so a `jsonl` exporter can write the NTS stream next to the decision log. |
+| `os_text` exporter | `backend = "stub"`, `path`, `separator` | Types **only** final text COMMITs (never OFFER, ASK, ABSTAIN or a provisional decision). The stub types into memory and writes one line per typed text with the full decision next to it. Real backends (Windows TSF, Android IME, macOS, IBus) are not written yet (P3-03). |
+| `[service] latency` | `latency = true`, `latency_budget_ms` | Records the time of each stage (section "Latency budget"). The numbers are in `/metrics` and in `metrics_file` (`latency_ms`). |
+
+The `guard` processor uses the same parts as `fidetype live` ([live decode](live-decode.md)): `TrustGuard.decide`, and the key beam search `nbest_of_frames` for key frames. For an n-best guard the segment input is the last final `hypothesis`; for a logits guard it is the frames of the segment.
 
 ## Safety and privacy rules
 
@@ -40,6 +52,88 @@ Examples: [`collector.toml`](../examples/collector/collector.toml) (file input) 
 | No silent drop | An unreadable line or an invalid event becomes a `gap` status |
 | Decoded text is personal data | The `redact` processor removes `shown` or replaces it with an HMAC (key from an environment variable) |
 | No secrets in files | Tokens and keys come only from environment variables. A key in the file is a configuration error |
-| No blank final COMMIT | The `trust` processor adds a commit gate if the configuration has none (rule TD-9) |
+| No blank final COMMIT | The `trust` processor adds a commit gate if the configuration has none (rule TD-9). The `guard` processor always has the gate |
+| Only committed text reaches the OS | The `os_text` exporter types final COMMITs only and logs the full decision next to each typed text |
+
+## Integration test and latency budget (P3-04)
+
+`python -m fidetype.collector.bench` runs the full pipeline from one TOML file on synthetic input at a realistic rate. The test file [`tests/test_collector_pipeline.py`](../tests/test_collector_pipeline.py) runs the same code in CI.
+
+```
+receiver (websocket /nts | file | lsl)
+  -> validate (stream level provenance) -> segment -> guard (per-user profile, online ACI, passthrough)
+  -> jsonl NTS stream + jsonl decision log + os_text stub (+ websocket /decisions)
+```
+
+```sh
+python -m fidetype.collector.bench --out bench-out                                  # all profiles, WebSocket + file
+python -m fidetype.collector.bench --profile emg-key --receiver lsl --json r.json   # needs the lsl extra
+```
+
+Each run checks:
+
+- `nts-conform` gives the outputs (NTS stream file + decision log) the producer level **NTS Trust-ready** (claim `text`).
+- The `os_text` stub typed exactly the final COMMITs.
+- One decision per segment; the `/metrics` file holds the latency numbers.
+
+### Profiles
+
+| Profile | Input | Guard | Gated |
+|---|---|---|---|
+| `implant-speech` | CTC character frames at 50 Hz (20 ms) and the decoder's final n-best `hypothesis` after each utterance (the decoder and its language model run before the collector, as in a B2T '25 replay). No source boundaries: the segmenter cuts after 6 blank frames | n-best guard, calibrated on synthetic n-best lists | yes |
+| `emg-key` | One key-posterior frame per key over the 32-key KT-sEMG vocabulary, sent at 50 Hz (faster than any typist), and a `segment_end` per phrase | `builtin:synthetic-keys` (the guard of `fidetype live`) on the key beam search | yes |
+| `implant-logits` | The implant frames without the hypothesis | logits guard: its built-in CTC prefix beam search (beam 64, lexicon, n-best confidences) runs **inside** the collector | no (reported) |
+
+All input is synthetic and our own. It contains no participant data.
+
+### Stages
+
+| Stage | From | To |
+|---|---|---|
+| `receive` | `ws_t_recv` of the trigger event (WebSocket server) | the receiver's poll returns |
+| `processor.<name>`, `exporter.<name>` | start of the call | end of the call |
+| `pipeline` | poll returns | the last exporter returns |
+| **`added`** (the budget number) | the trigger event is available (`ws_t_recv`; for file and LSL input: the poll return) | the last exporter returns |
+| `e2e` | `ws_t_sent` of the trigger event (producer on the same host) | the last exporter returns |
+
+The trigger event of a step is the last boundary (`segment_end`, `end`) of the batch. A boundary that the segmenter adds carries the stamps of the frame that caused it. One sample per step that wrote a decision. The clock is `time.perf_counter`.
+
+### Results (2026-11-17, Windows 11 laptop, CPU, 12 segments per run)
+
+`added` latency in milliseconds. Budget: **p95 < 50 ms**.
+
+| Profile | Receiver | p50 | p95 | p99 | Budget |
+|---|---|---|---|---|---|
+| implant-speech | websocket | 1.05 | 1.27 | 1.27 | PASS |
+| implant-speech | file | 0.69 | 1.12 | 1.32 | PASS |
+| implant-speech | lsl | 0.81 | 1.11 | 1.19 | PASS |
+| emg-key | websocket | 1.85 | 2.34 | 2.37 | PASS |
+| emg-key | file | 1.01 | 1.16 | 1.21 | PASS |
+| emg-key | lsl | 1.59 | 2.23 | 2.55 | PASS |
+| implant-logits | websocket | 64.2 | 104.1 | 107.4 | over (not gated) |
+| implant-logits | file | 62.5 | 108.0 | 109.6 | over (not gated) |
+| implant-logits | lsl | 66.8 | 107.3 | 117.4 | over (not gated) |
+
+- Almost all of the added time is the `guard` stage (the trust decision; for `emg-key` also the key beam search). `validate`, `segment` and the exporters take less than 0.3 ms per step at p95. The WebSocket `e2e` time (with the loopback transport) is 0.2 to 0.3 ms above `added`.
+- `implant-logits` does not meet the budget: the guard's built-in CTC beam search (n-best confidences over 64 texts) takes 60 to 110 ms per segment. This is decoding work, not collector overhead. It is an open gap (P3-06): decode during the frames, not at the boundary.
+- For LSL input `added` starts at the poll return: the time that the LSL inlet merge window (`merge_window_s`, default 50 ms) holds an event is not in the number. Receive stamps for LSL are an open gap (P3-07).
+
+### The CI gate and its tolerance
+
+- The test `test_pipeline_websocket_at_50_hz_within_budget` (both gated profiles, WebSocket input, 8 segments) and the file and LSL tests fail when the p95 `added` latency is not below **50 ms x `FIDETYPE_LATENCY_TOLERANCE`**.
+- The default tolerance is **1.0** (the budget itself). CI does not set it. Our local p95 is 1 to 3 ms, so a CI runner that is 10 times slower still passes. Set `FIDETYPE_LATENCY_TOLERANCE=2` only on a machine that is known to be slow, and say so in the report.
+- The guard imports its parts when it starts, so the first decision has no import cost.
+- The CI job `collector` runs the pipeline tests with the `lsl` extra (so the LSL test runs), prints the bench report, and runs the kit against the collector consumer (next section).
+
+## The collector as a consumer: the conformance kit (P7-05)
+
+`fidetype-collector consume [--profile P] [--level L] FILE` reads one file through the collector's own input path (the `file` receiver, then the `validate` processor at stream level `L`). Exit 0 = accept, 1 = reject, 2 = usage error. This is the kit contract of [`nts-conform kit`](conformance.md):
+
+```sh
+nts-conform kit --claim text --require-level trust-ready \
+  --cmd "fidetype-collector consume --profile {profile} --level {level} {path}"
+```
+
+Result: consumer level **NTS Trust-ready** for the profile `text` (all `v0.1` and `fep-0001` entries give the expected verdict and stream level). The collector does not check the intent (`fep-0003`) and control (`fep-0005`) profiles, and it cannot read LSL or WebSocket captures (`fep-0002`, `fep-0004`): for these entries it says "not supported" and rejects, so 8 of the 36 kit entries do not match. The claim is therefore `--claim text` without bindings.
 
 Full rule list and design notes: [wiki/concepts/collector.md](../wiki/concepts/collector.md).

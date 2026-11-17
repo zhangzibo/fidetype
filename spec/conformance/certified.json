@@ -32,6 +32,27 @@
    "date": "2026-11-17"
   },
   {
+   "id": "fidetype-collector",
+   "implementation": "fidetype-collector (collector input path: file receiver + validate processor, FEP-0006)",
+   "language": "Python",
+   "class": "consumer",
+   "level": "trust-ready",
+   "level_title": "NTS Trust-ready",
+   "profiles": [
+    "text"
+   ],
+   "bindings": [],
+   "spec": "NTS 1.0 RC4 (draft)",
+   "kit_version": "0.2.0",
+   "version": "0.0.1",
+   "evidence": "certified/fidetype-collector.kit-report.json",
+   "evidence_command": "nts-conform kit --claim text --cmd \"fidetype-collector consume -q --profile {profile} --level {level} {path}\" --json spec/conformance/certified/fidetype-collector.kit-report.json",
+   "maintainer": "Fidetype project",
+   "repository": "https://github.com/zhangzibo/fidetype",
+   "licence": "Apache-2.0",
+   "date": "2026-11-17"
+  },
+  {
    "id": "fidetype-typescript",
    "implementation": "@fidetype/sdk (TypeScript SDK: reader, validator)",
    "language": "TypeScript",
