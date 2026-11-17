@@ -63,6 +63,21 @@ Scratch scripts outside the repo (not committed). Run with the repo `.venv`, CPU
 
 > **Our take:** moderate, coin-independent delays do not break the bound in practice, because the slack is wide. The failure in B3 is the realistic end-of-session case: offers that were explored and never confirmed. The H1 fix (account at decision time, pessimistic until the label arrives) is small and removes the issue fully. After H1 and M1, G3 is a correct, standard, design-based statement.
 
+## Fixes applied (2026-11-16, commit 98daec3)
+
+| ID | Fix | Where |
+|---|---|---|
+| H1 | The audit adds each item at `decide` time: N, V and, for a shown item, X with a provisional ĉ = 1. `observe` only lowers X to the label. The sum always contains every decided item in decision order, and each term is ≥ the proof term. `rule="cs"` uses this sum. New report field `n_decided` | `bandit_risk.py` `decide` / `observe` |
+| M1 | Default `seed=None` (OS entropy) in `BanditCommitRiskControl` and `online(...)`. Fixed seeds stay for replays and tests. Docstrings: "coins must be unpredictable to the data source". The P15-04 replay already passes `seed=seed` per run, so it reproduces | `bandit_risk.py`, `online_guard.py` |
+| M2 | New tests: K = J = 1, δ 0.5 (failure rate about 0.33; fails if the slack is halved, checked by mutation); coin-adaptive adversary; `rule="cs"` uniform-in-time run (60 runs); random lag up to 300, out of order; never-returned feedback (old accounting as negative control: failure 1.00, new: 0.00); naive count without 1/π as negative control (fails > 95 %) | `tests/test_trust_bandit_risk.py` |
+| L1 | Module docstring: "Why late labels are safe" (supermartingale on D′ with the true c; X ≥ X′ pointwise) | `bandit_risk.py` |
+| L2 | `OnlineGuard.report()["audit"]` marks rows with grid λ < floor in `floored` and sets their numbers to None; the sheet says so | `online_guard.py`, `guarantee_sheet.py` |
+| L3 | Both conditions (unpredictable coins; every decided item in the audit) in the docs row, the scope page G3 row and the bandit sheet `assumptions` | `docs/trust-guarantee.md`, [F1 guarantee scope](f1-guarantee-scope.md), `guarantee_sheet.py` |
+| L4 | Items with s = −inf get π = 0 and are never explored. One coin is still drawn per withheld item, so the coin stream does not depend on the scores | `bandit_risk.py` `decide` |
+| L5 | Not done (optional). V keeps 1/π | — |
+
+**P15-04 replay rerun.** Only `explored_median` changed (lower, because of L4; for example T12 B05 18 → 16, T15 B20 129 → 124). Every rate, certificate, interval, audit violation fraction and bias is the same. Dated note in [P15-04 results](../../experiments/2026-11-16-p15-04-bandit/results.md).
+
 ## Related pages
 - [F1 guarantee scope](f1-guarantee-scope.md) (the statement under review)
 - [docs/trust-guarantee.md section 11.2](../../docs/trust-guarantee.md)

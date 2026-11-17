@@ -977,3 +977,8 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Roadmap: an "Open-gap items (added 2026-11-16)" block at the end of P1, P4, P5, P14 and P15; rows in the P14 and P15 tables; P6 status line for P6-01 (1d4ff8c). Tracker: 15 new tasks (P1-15 externally_blocked, the rest todo).
 - Closed: gap 10 (target_precision + hallucination bound) by P5-02, 3dc84bf. Partly closed: gap 8 (Toronto safe WPM, null-commit audits) by P6-01, 1d4ff8c, the rest is P14-10 with P6-02; gap 6 review done (g3-audit-review, 4cd9cb5), its fixes stay open as P15-17. Added gap 15 (online guards via the drop-in API, P5-11).
 - Tracker: null run stats filled for P14-05 (1413.799 s, 249,419 tokens, 106 tools) and P5-01 (1371.878 s, 253,739 tokens, 86 tools).
+
+## [2026-11-16] lint | G3 audit review fixes applied (P15-17)
+- H1: bandit audit now counts every decided item at decide time (provisional "wrong" label until feedback); late or never-returned feedback keeps G3 valid. M1: default `seed=None`. L4: s = −inf items never explored. L2: floored audit rows marked. L1/L3: docs, scope page, sheet assumptions. Commit 98daec3.
+- Tests: K = J = 1 power test (catches half slack), coin-adaptive adversary, `rule="cs"`, delayed and never-returned feedback, naive negative control. Full suite 1174 passed, 11 skipped.
+- P15-04 replay rerun: only exploration counts drop (L4); all rates and bounds unchanged. Pages: [G3 audit review](questions/g3-audit-review.md) "Fixes applied", [F1 guarantee scope](questions/f1-guarantee-scope.md).
