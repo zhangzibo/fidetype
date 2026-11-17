@@ -46,6 +46,7 @@ from fidetype.trust.online_risk import (
     Ticket,
     weighted_crc_threshold,
 )
+from fidetype.trust.bandit_risk import BanditCommitRiskControl, BanditTicket, BanditTrustPolicy
 from fidetype.trust.risk_control import (
     CommitRiskControl,
     RiskControlResult,
@@ -77,6 +78,9 @@ from fidetype.trust.streaming import (
 from fidetype.trust.types import Candidate, NBest, from_lm_hypotheses
 
 __all__ = [
+    "BanditCommitRiskControl",
+    "BanditTicket",
+    "BanditTrustPolicy",
     "FeedbackOutcome",
     "FeedbackUser",
     "GuardedDecision",
