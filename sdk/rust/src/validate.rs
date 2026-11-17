@@ -177,6 +177,10 @@ pub fn check_hypothesis(ev: &Map) -> Result<bool, Error> {
     Ok(fin)
 }
 
+/// TD-4 / TD-14 (P14-20): the error text for a `trust_decision` event in a live input stream (same text in Python and TypeScript).
+pub const TD_INPUT_MESSAGE: &str =
+    "trust_decision event in an input stream: decisions are trust layer output; write them to a decision log (TD-4, TD-14)";
+
 /// What [`StreamValidator::push`] found.
 #[derive(Debug, Clone, PartialEq)]
 pub enum PushResult {
@@ -208,7 +212,8 @@ impl PushResult {
 ///
 /// Rules: header first; frame times increase strictly; frame rows are
 /// normalised; hypothesis events have a string id, a boolean is_final and a
-/// valid n-best list; events after `end` are ignored (spec 10, A5); unknown
+/// valid n-best list; events after `end` are ignored (spec 10, A5); a
+/// `trust_decision` event is refused (TD-4, TD-14; P14-20); other unknown
 /// event types are ignored (spec 6.2 rule 5).
 #[derive(Debug, Clone)]
 pub struct StreamValidator {
@@ -254,7 +259,9 @@ impl StreamValidator {
         } else if self.ended {
             self.ignored_events += 1;
             PushResult::Ignored { reason: "after the end marker" }
-        } else if typ == "frame" {
+        } else if typ == "trust_decision" {
+            return Err(Error::event(TD_INPUT_MESSAGE));
+      } else if typ == "frame" {
             let t = match ev.get("t") {
                 Value::Num(t, _) if t.is_finite() => *t,
                 _ => return Err(Error::event("frame needs a finite numeric t")),

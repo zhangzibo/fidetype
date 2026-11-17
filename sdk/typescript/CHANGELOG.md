@@ -5,6 +5,8 @@ This file lists the changes of the TypeScript SDK (npm package `@fidetype/sdk`).
 ## [Unreleased]
 
 ### Added
+- **TD-14 (P14-20, NTS 1.0 RC4 amendment 5).** `StreamValidator.push` refuses a `trust_decision` event in an input stream (`StreamEventError` with `TD_INPUT_MESSAGE`); after `end` it is ignored. Same as Python `StreamingTrustLayer` and Rust; test on `spec/conformance/streaming/td-input.json`.
+- **LSL-C7 / LSL-C8 (P3-10, amendment 5).** The `fep-0002` runner counts heartbeats (empty marker samples; result key `heartbeats`, not `ignored_markers`) and orders equal times frame first. Vectors L36, L37 (37 in all).
 - **MET-11 advisory check `NTS-MODALITY-MATCH` (P1-16)** and `MODALITY_NAMESPACES`: a modality key that does not fit `device.modality` is a warning, never a reject (same as Python and Rust; vectors V93 … V96).
 - **Levels (P7-02).** The v0.1 consumer summary has `warnings` (sorted ids of the advisory checks that warn) and `level` (highest stream level). The vector runner compares them where a manifest pins them. `fidetype-ts consume --level core|trust-ready|provenance` rejects a v0.1 stream below that level, so `nts-conform kit --cmd "... --level {level} ..."` can measure the NTS Trust-ready consumer level. Tests: kit total 36.
 - **Conformance kit (P7-01).** `npm run conformance:kit` runs `fidetype-ts conformance --vectors ../../spec/conformance/kit` (31 kit files, part of `npm run ci`); a test checks every kit entry. Same verdicts as Python and Rust (`scripts/cross-check.mjs --vectors ../../spec/conformance/kit`). No SDK code change.

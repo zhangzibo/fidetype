@@ -141,6 +141,28 @@ test("StreamValidator checks events one at a time", () => {
   assert.equal(v.push({ type: "frame", t: 9, log_probs: "junk" }).kind, "ignored"); // after end (spec 10, A5)
 });
 
+test("StreamValidator: trust_decision in an input stream is refused (TD-4, TD-14; spec/conformance/streaming/td-input.json)", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const path = fileURLToPath(new URL("../../../spec/conformance/streaming/td-input.json", import.meta.url));
+  const doc = JSON.parse(readFileSync(path, "utf-8"));
+  assert.ok(doc.cases.length >= 6);
+  for (const c of doc.cases) {
+    const v = new sdk.StreamValidator();
+    const got = [];
+    for (const ev of c.events) {
+      try {
+        got.push(v.push(JSON.stringify(ev)).kind === "ignored" ? "ignore" : "accept");
+      } catch (e) {
+        assert.ok(e instanceof sdk.StreamEventError, c.id);
+        got.push(/TD-4/.test(e.message) ? "refuse" : "refuse-header");
+      }
+    }
+    assert.deepEqual(got, c.expected, c.id);
+  }
+  assert.ok(sdk.TD_INPUT_MESSAGE.includes("TD-4"));
+});
+
 test("readNtsEvents splits lines across chunk borders (UTF-8 too)", async () => {
   const text = '{"type":"header","spec_version":"0.1","vocab":["é","b"],"vocab_type":"char","blank_id":null}\r\n{"type":"end"}\n';
   const bytes = enc.encode(text);

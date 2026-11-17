@@ -150,12 +150,44 @@ The same run for the other receivers (no change expected): implant-speech websoc
 
 - B2T '25 replay (P3-08): real T15 data at real time over WebSocket, 120 trials: p95 `added` 2.43 ms, producer level NTS Trust-ready ([results](../experiments/2026-11-17-p3-08-b2t25-collector-replay/results.md)).
 - With LSL input, the merge window is now most of the added latency: about `merge_window_s` plus 1 to 2 ms. The guard itself still takes about 1 to 2 ms.
-- With the receiver default (0.05 s) the implant-speech p95 is over the budget. Choose `merge_window_s` below the budget. A window shorter than the time skew between the two LSL streams can release events out of order (counted as `late_releases`). An idle events stream with a heartbeat would remove most of the wait: open gap P3-10.
+- With the receiver default (0.05 s) the implant-speech p95 is over the budget. Choose `merge_window_s` below the budget. A window shorter than the time skew between the two LSL streams can release events out of order (counted as `late_releases`). An idle events stream with a heartbeat would remove most of the wait: open gap P3-10 (fixed, next section).
+
+### LSL heartbeat and equal times (P3-10)
+
+The merge waited for the window because the events stream is idle between markers. NTS 1.0 RC4 amendment 5 adds two binding rules ([FEP-0002](../spec/feps/0002-nts-over-lsl.md) section 6 rules 7 and 8):
+
+- **LSL-C7 heartbeat.** An empty events-stream sample is a heartbeat. It is not an NTS event, but it tells the consumer that the events stream has passed its timestamp. `NTSOutlet` (used by `replay-to-lsl`, the bench and `fidetype live --publish lsl`) sends one after each frame, with the frame's timestamp. The merge then releases the frame at once.
+- **LSL-C8 equal times.** At equal times the merge gives the frame first. `NTSOutlet` now stamps a marker with the timestamp of the frame before it (before: that time plus a small step). So a `segment_end` leaves the merge as soon as its last frame has arrived, not at the next frame.
+- `LSLEventSource.poll` waits on the inlet that holds the oldest item back (for a held frame: the events inlet), so the heartbeat ends the wait.
+
+Why the order stays right: a frame at time t is released only when the events inlet has a sample at t or later. Events-stream timestamps do not decrease (LSL-C7, MUST), so no later marker has a time before t; a later marker at exactly t goes after the frame anyway (LSL-C8). A marker at time t is released only when the frames inlet has a frame at t or later. Frame times increase strictly (LSL-C4), so every later frame comes after t. The merge window is not needed for the order; it only limits the wait for a producer that sends no heartbeat.
+
+The bench now runs LSL input at the **receiver default** window (0.05 s; `LSL_MERGE_WINDOW_S = None`). `--no-lsl-heartbeat` gives a producer without heartbeats, for comparison.
+
+`added` latency, LSL input, milliseconds (12 segments per run, same laptop, 2026-11-17; the earlier rows are the P3-07 table above):
+
+| Profile | Run | `merge_window_s` | p50 | p95 | p99 | Budget |
+|---|---|---|---|---|---|---|
+| implant-speech | P3-07: stamps + poll wait bound | 0.05 | 58.0 | 60.4 | 60.6 | over |
+| implant-speech | P3-07: stamps + poll wait bound (old bench default) | 0.02 | 21.2 | 26.8 | 30.2 | PASS |
+| implant-speech | P3-10: no heartbeat, marker at frame time | 0.05 | 63.5 | 63.7 | 63.9 | over |
+| implant-speech | **P3-10: heartbeat + equal times (receiver and bench default)** | **0.05** | **0.96** | **1.07** | **1.10** | **PASS** |
+| emg-key | P3-07: stamps + poll wait bound | 0.05 | 21.3 | 35.8 | 49.1 | PASS |
+| emg-key | P3-07: stamps + poll wait bound (old bench default) | 0.02 | 21.6 | 22.9 | 23.3 | PASS |
+| emg-key | P3-10: no heartbeat, marker at frame time | 0.05 | 2.34 | 2.77 | 2.96 | PASS |
+| emg-key | **P3-10: heartbeat + equal times (receiver and bench default)** | **0.05** | **1.74** | **2.89** | **3.36** | **PASS** |
+| implant-logits | P3-07: stamps + poll wait bound | 0.02 | 74.5 | 114.8 | 119.3 | over (not gated) |
+| implant-logits | P3-10: heartbeat + equal times | 0.05 | 61.3 | 123.7 | 147.3 | over (not gated) |
+
+- With heartbeats the LSL `added` latency is the same as for WebSocket and file input (the guard, 1 to 2 ms). The merge window no longer counts.
+- Without heartbeats implant-speech still waits for the full window (each frame is held). emg-key passes without heartbeats too: a marker stamped with the frame time also moves the events watermark to that frame, so the frames before it leave the merge with it (LSL-C8), and the closing marker does not wait for the next frame.
+- implant-logits stays over the budget because of its CTC beam search (P3-06); it gives 13 decisions for 12 segments with and without this change (the same at commit `4350b2d`).
+- A producer of another vendor that sends no heartbeat still gets the 0.05 s wait. For it, choose a smaller `merge_window_s` (P3-07 table).
 
 ### The CI gate and its tolerance
 
 - The test `test_pipeline_websocket_at_50_hz_within_budget` (both gated profiles, WebSocket input, 8 segments) and the file and LSL tests fail when the p95 `added` latency is not below **50 ms x `FIDETYPE_LATENCY_TOLERANCE`**.
-- The default tolerance is **1.0** (the budget itself). CI does not set it. Our local p95 is 1 to 3 ms for WebSocket and file input, so a CI runner that is 10 times slower still passes. For LSL input the p95 is about 23 to 27 ms (merge window 0.02 s, see P3-07); this part is wall-clock waiting, not CPU work. Set `FIDETYPE_LATENCY_TOLERANCE=2` only on a machine that is known to be slow, and say so in the report.
+- The default tolerance is **1.0** (the budget itself). CI does not set it. Our local p95 is 1 to 3 ms for WebSocket and file input, so a CI runner that is 10 times slower still passes. For LSL input the p95 is about 1 to 3 ms at the receiver default window (0.05 s), because the producer sends heartbeats (P3-10). The LSL test runs both gated profiles. Set `FIDETYPE_LATENCY_TOLERANCE=2` only on a machine that is known to be slow, and say so in the report.
 - The guard imports its parts when it starts, so the first decision has no import cost.
 - The CI job `collector` runs the pipeline tests with the `lsl` extra (so the LSL test runs), prints the bench report, and runs the kit against the collector consumer (next section).
 

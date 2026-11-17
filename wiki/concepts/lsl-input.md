@@ -3,7 +3,7 @@ title: LSL input (Lab Streaming Layer adapter)
 type: concept
 tags: [lsl, streaming, real-time, adapter, trust, neuraltextstream, m6]
 sources: [neural-input-landscape-2026]
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # LSL input (Lab Streaming Layer adapter)
@@ -85,6 +85,7 @@ fidetype conformance check --profile fep-0002 frames-info.xml   # producer check
 | Timestamp ≤ the last one (NTS needs strictly increasing times) | At most 5 ms back: move it 1 µs after the last one (clamp). More: drop it. Both are counted | `--out-of-order clamp\|drop\|error` |
 | Gap (step > 2.5 nominal periods) | `mark` (default): an extension `gap` event; the layer ignores it; the count goes into provenance. `segment`: end the utterance at the gap. `abort`: drop the utterance without a decision | `--on-gap` |
 | Two inlets (frames + events) | Merge by time. An item waits until the other inlet has passed its time, or for the merge window | `--merge-window 0.05` |
+| Idle events stream (P3-10, RC4 amendment 5) | An empty marker is a heartbeat (LSL-C7): no event, but it moves the events watermark. At equal times the frame goes first (LSL-C8). `NTSOutlet` sends a heartbeat after each frame, so the merge releases at once: collector p95 added 1.07 ms at the 0.05 s window (was 60.4 ms; [collector doc](../../docs/collector.md#lsl-heartbeat-and-equal-times-p3-10)) | producer side |
 | Stream lost (sender stopped, network) | The runner **drops the cut utterance without a decision** (`StreamingTrustLayer.abort_utterance`). A worker thread re-resolves the stream (by `source_id`) for up to 30 s; the loop keeps running (M6-14, [below](#non-blocking-reconnect-m6-14)). After a reconnect the source sends the header again | `reconnect_mode` `thread` (default) or `inline` |
 | Producer sends no boundary | `--idle-flush S` ends the utterance after S idle seconds | off by default |
 

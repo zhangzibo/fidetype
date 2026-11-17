@@ -1014,6 +1014,8 @@ struct Stats {
     lost: usize,
     reconnects: usize,
     late_releases: usize,
+    /// Empty events-stream samples (LSL-C7 heartbeats, P3-10).
+    heartbeats: usize,
 }
 
 /// The deterministic receiver clock of the scenario runner.
@@ -1069,9 +1071,13 @@ impl SrcState {
     }
 
     fn marker_event(&mut self, s_in: &Value, t: f64, offset: f64, event_clock: &str) -> Option<Map> {
-        self.stats.markers += 1;
         let s = py_str(s_in);
         let txt = py_strip(&s).to_string();
+        if txt.is_empty() {
+            self.stats.heartbeats += 1; // LSL-C7: a heartbeat moves the inlet's watermark only (P3-10)
+            return None;
+        }
+        self.stats.markers += 1;
         if txt.starts_with('{') {
             if let Ok(Value::Obj(mut ev)) = parse_json_opts(&txt, true) {
                 if ev.get("type").is_str() {
@@ -1378,7 +1384,8 @@ impl Reader {
 struct EventSource {
     st: SrcState,
     readers: Vec<Reader>,
-    heap: Vec<(f64, u64, f64, Map)>,
+    /// Held items: (t, rank, seq, arrival, event); rank 0 = frames stream, 1 = events stream (LSL-C8).
+    heap: Vec<(f64, u8, u64, f64, Map)>,
     last_released: f64,
     header_ev: Option<Map>,
     pending_header: bool,
@@ -1464,8 +1471,9 @@ impl EventSource {
                 Err(PullErr::Err(e)) => return Err(e),
             };
             let arrival = self.st.clock.tick();
+            let rank = if self.readers[i].role == Role::Events { 1 } else { 0 };
             for (t, sq, ev) in items {
-                self.heap_push((t, sq, arrival, ev));
+                self.heap_push((t, rank, sq, arrival, ev));
             }
         }
         let now2 = self.st.clock.tick();
@@ -1477,16 +1485,18 @@ impl EventSource {
         self.release(f64::INFINITY, true)
     }
 
-    fn heap_push(&mut self, x: (f64, u64, f64, Map)) {
+    fn heap_push(&mut self, x: (f64, u8, u64, f64, Map)) {
         self.heap.push(x);
-        self.heap.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(core::cmp::Ordering::Equal).then(a.1.cmp(&b.1)));
+        self.heap.sort_by(|a, b| {
+            a.0.partial_cmp(&b.0).unwrap_or(core::cmp::Ordering::Equal).then(a.1.cmp(&b.1)).then(a.2.cmp(&b.2))
+        });
     }
 
     fn release(&mut self, now: f64, force: bool) -> Result<Vec<Map>, Error> {
         let mut out = Vec::new();
         let mw = py_num(&self.st.mapping.merge_window_s, "merge_window_s")?;
         while let Some(first) = self.heap.first() {
-            let (t, arrival) = (first.0, first.2);
+            let (t, arrival) = (first.0, first.3);
             let ok = force
                 || self.readers.len() == 1
                 || self.readers.iter().filter(|r| r.lost_since.is_none()).all(|r| r.seen_t >= t)
@@ -1494,7 +1504,7 @@ impl EventSource {
             if !ok {
                 break;
             }
-            let (t, _, _, ev) = self.heap.remove(0);
+            let (t, _, _, _, ev) = self.heap.remove(0);
             if t < self.last_released {
                 self.st.stats.late_releases += 1;
             }
@@ -1852,6 +1862,7 @@ pub fn run_inlet_scenario(sc: &Map) -> Result<Value, Error> {
         ("reconnects", n(st.reconnects)),
         ("bad_markers", n(st.bad_markers)),
         ("ignored_markers", n(st.ignored_markers)),
+        ("heartbeats", n(st.heartbeats)),
     ])))
 }
 

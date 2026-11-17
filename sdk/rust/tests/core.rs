@@ -156,6 +156,34 @@ fn streaming_validator_rules() {
 }
 
 #[test]
+fn streaming_validator_refuses_trust_decision_in_input() {
+    // P14-20 (TD-4, TD-14): the same cases as the Python and TypeScript tests.
+    let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../spec/conformance/streaming/td-input.json");
+    let doc = parse_json(&std::fs::read_to_string(path).unwrap()).unwrap();
+    let cases = doc.get("cases").as_arr().unwrap();
+    assert!(cases.len() >= 6);
+    for c in cases {
+        let id = c.get("id").as_str().unwrap();
+        let mut v = StreamValidator::new();
+        let mut got: Vec<&str> = Vec::new();
+        for ev in c.get("events").as_arr().unwrap() {
+            let ev = match ev {
+                Value::Obj(m) => m.clone(),
+                _ => panic!("{}: an event must be an object", id),
+            };
+            match v.push(&ev) {
+                Ok(PushResult::Ignored { .. }) => got.push("ignore"),
+                Ok(_) => got.push("accept"),
+                Err(e) => got.push(if e.to_string().contains("TD-4") { "refuse" } else { "refuse-header" }),
+            }
+        }
+        let want: Vec<&str> = c.get("expected").as_arr().unwrap().iter().map(|x| x.as_str().unwrap()).collect();
+        assert_eq!(got, want, "{}", id);
+    }
+    assert!(fidetype::TD_INPUT_MESSAGE.contains("TD-4"));
+}
+
+#[test]
 fn event_reader_across_chunks() {
     let text = sample_stream().replace('\n', "\r\n");
     let bytes = text.as_bytes();

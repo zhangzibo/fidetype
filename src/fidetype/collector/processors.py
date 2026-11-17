@@ -155,7 +155,8 @@ class ValidateProcessor(Processor):
     reference frame reader (FRM-1 ... FRM-4, strictly increasing ``t``); ``segment_end`` (SEG-4,
     SEG-5); ``hypothesis`` (HYP-1); ``signal_quality`` (SQ-1). Decisions: the FEP-0001 format
     checks and, per session, TD-5 (``seq`` increases), TD-6 / TD-7 (one final per utterance, nothing
-    after it).
+    after it). A ``trust_decision`` inside an input stream (after its header, before ``end``) is an
+    invalid input event (TD-4, TD-14; P14-20); decisions of a stream without a header are a decision log.
 
     Intent (FEP-0003) and control (FEP-0005) profiles (P7-07): the header declarations (FEP3-DECL,
     FEP3-VOCAB, FEP5-DECL), the ``intent``, ``intent_feedback``, ``control``, ``control_enable`` and
@@ -264,6 +265,20 @@ class ValidateProcessor(Processor):
                 out.append((sid, ev))
                 continue
             if typ == "trust_decision":
+                inp = self.streams.get(sid)
+                if inp is not None and inp.header_ok:
+                    # TD-4 / TD-14 (P14-20): a decision inside an input stream (after its header). It is refused
+                    # like any invalid input event; after ``end`` it is ignored like every other event (A5).
+                    if not inp.ended:
+                        from fidetype.trust.streaming import TD_INPUT_MESSAGE
+
+                        self.counts["invalid_events"] += 1
+                        self._note(sid, typ, [TD_INPUT_MESSAGE])
+                        if self.on_invalid == "cut":
+                            out.append(status(sid, "gap", f"invalid {typ} event"))
+                            continue
+                    out.append((sid, ev))
+                    continue
                 errs = self._decision(sid, ev)
                 if errs:
                     self.counts["invalid_decisions"] += 1

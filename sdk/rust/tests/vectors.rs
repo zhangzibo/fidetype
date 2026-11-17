@@ -50,7 +50,7 @@ fn fep0001_vectors() {
 
 #[test]
 fn fep0002_vectors() {
-    run("fep-0002", 35);
+    run("fep-0002", 37);
 }
 
 #[test]
@@ -95,6 +95,9 @@ fn accepted_vectors_pass_the_streaming_validator() {
         n += 1;
     }
     assert!(n >= 5);
+    // P14-20 (TD-14): V97 (NTS-TD-INPUT) is refused event by event too.
+    let e = io::validate_file_streaming(dir.join("v97-trust-decision-in-input.jsonl"), |_, _| {}).unwrap_err();
+    assert!(e.to_string().contains("TD-4"), "{}", e);
 }
 
 #[test]

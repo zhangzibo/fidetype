@@ -2,6 +2,21 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC4, DRAFT] amendment 5 of 2026-11-17 (LSL heartbeat and equal times; TD-4 in live input)
+**Still RC4 DRAFT.** Changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 5 of 2026-11-17"; 6.3 TD-14; 8.2.5 LSL-C6 … LSL-C8; 9.3; 9.5; Appendix C.1) and [FEP-0002](feps/0002-nts-over-lsl.md) section 6 rules 6-8. Roadmap P3-10 (gap 43) and P14-20 (gap 46). No earlier vector changed its verdict. Binding version unchanged (`nts-lsl/0.1`).
+
+### Added
+- **LSL-C7 heartbeat.** An empty events-stream sample is a heartbeat: not an NTS event, not an ignored plain string, but it moves the inlet's merge position. Events-stream timestamps MUST NOT decrease. A two-stream producer SHOULD send one after each frame with the frame's timestamp. Vector L36.
+- **LSL-C8 equal times.** At equal times the merge gives the frames-stream item first. A producer MAY stamp a marker with the time of the frame before it. Vector L37 (without the rule: 2 final decisions instead of 1).
+- **TD-14.** An event-by-event consumer MUST refuse a `trust_decision` between the header and `end` of an input stream (TD-4), and ignore it after `end`. Streaming cases S01 … S06 (`conformance/streaming/td-input.json`), run by the Python, TypeScript and Rust tests.
+
+### Changed (reference implementations)
+- Python `NTSOutlet` / `replay-to-lsl` / `fidetype live --publish lsl`: a heartbeat after each frame; markers take the timestamp of the frame before them. Collector bench: LSL input at the receiver default window (0.05 s): implant-speech p95 added 1.07 ms (was 60.4 ms).
+- `StreamingTrustLayer.push`, TypeScript / Rust `StreamValidator`, collector `validate`: refuse a `trust_decision` in an input stream.
+
+### Counts
+- Vectors 348 (fep-0002 37). Streaming cases 6. Kit 36 (unchanged).
+
 ## [1.0 RC4, DRAFT] amendment 4 of 2026-11-17 (TD-4 check in the v0.1 suite)
 **Still RC4 DRAFT.** Changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 4 of 2026-11-17"; 9.3; Appendix C.1 row TD-4). Roadmap P14-17 (gap 42). No rule changed. No earlier vector changed its verdict.
 

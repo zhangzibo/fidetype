@@ -60,7 +60,7 @@ pub use checks::{load_stream, ConsumedStream, Level, Status};
 pub use error::{Error, ErrorKind};
 pub use json::{parse_json, Map, Value};
 pub use trust::{DecisionKind, DecisionTracker, HandledDecision};
-pub use validate::{PushResult, StreamValidator};
+pub use validate::{PushResult, StreamValidator, TD_INPUT_MESSAGE};
 pub use writer::{NbestItem, NtsWriter, WriterOptions};
 
 /// Version of this SDK.

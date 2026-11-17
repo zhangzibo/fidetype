@@ -62,9 +62,11 @@ from fidetype.collector.latency import BUDGET_MS
 PROFILES = ("implant-speech", "emg-key", "implant-logits")
 #: Profiles whose p95 added latency must stay below the budget (the CI gate).
 GATED_PROFILES = ("implant-speech", "emg-key")
-#: P3-07: the LSL inlet merge window of the bench (one frame period at 50 Hz). The receiver default is 0.05 s;
-#: since the LSL latency counts from the pull time, that default alone gives a p95 added latency of about 60 ms.
-LSL_MERGE_WINDOW_S = 0.02
+#: The LSL inlet merge window of the bench. None = the receiver default (0.05 s). P3-07 used 0.02 s: without a
+#: heartbeat the idle events stream held every frame for the whole window (p95 added about 60 ms at 0.05 s).
+#: P3-10: the producer (``NTSOutlet``) sends a heartbeat after each frame (LSL-C7) and stamps markers with the
+#: frame time (LSL-C8), so the merge releases at once and the receiver default meets the budget.
+LSL_MERGE_WINDOW_S: float | None = None
 RECEIVERS = ("websocket", "file", "lsl")
 CHAR_VOCAB = ["_"] + list(string.ascii_lowercase) + [" "]
 PHRASES = ["yes please", "thank you", "i am thirsty", "call my wife", "turn on the light", "i need help",
@@ -344,11 +346,12 @@ def _ws_producer(port: int, evs: list[dict[str, Any]], errors: list[str]) -> Non
 def run(profile: str, receiver: str, out_dir: str | Path, *, n_utterances: int = 12, seed: int = 0,
         profile_file: Path | None = None, timeout_s: float = 120.0,
         merge_window_s: float | None = LSL_MERGE_WINDOW_S, events: list[dict[str, Any]] | None = None,
-        texts: list[str] | None = None, seg_toml: str | None = None) -> BenchResult:
+        texts: list[str] | None = None, seg_toml: str | None = None, lsl_heartbeat: bool = True) -> BenchResult:
     """One integration run: write the inputs and the TOML file, run the collector, check the outputs.
 
     ``merge_window_s``: the LSL inlet merge window (LSL input only; default :data:`LSL_MERGE_WINDOW_S`;
-    None = the receiver default, 0.05 s).
+    None = the receiver default, 0.05 s). ``lsl_heartbeat`` (P3-10): the producer sends LSL-C7 heartbeats
+    (default); False gives the producer of P3-07 (no heartbeat), for comparison.
     Since P3-07 the LSL latency counts from the pull time, so the merge-window wait is part of ``added``.
 
     ``events`` and ``texts`` (P3-08): replay this NTS stream (header first, ``end`` last; one source
@@ -389,7 +392,7 @@ def run(profile: str, receiver: str, out_dir: str | Path, *, n_utterances: int =
         ready = threading.Event()
         th = threading.Thread(target=L.replay_to_lsl, args=(evs, lsl_name), daemon=True,
                               kwargs={"speed": 1.0, "channel_format": "double64", "wait_consumers_s": 20.0,
-                                      "linger_s": 1.0, "ready": ready})
+                                      "linger_s": 1.0, "ready": ready, "heartbeat": lsl_heartbeat})
         th.start()
         threads.append(th)
         if not ready.wait(10):
@@ -469,8 +472,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap.add_argument("--utterances", type=int, default=12, help="segments per run (default 12)")
     ap.add_argument("--json", help="write all reports to this JSON file")
     ap.add_argument("--lsl-merge-window", type=float, default=LSL_MERGE_WINDOW_S, metavar="S",
-                    help=f"LSL inlet merge window in seconds (default {LSL_MERGE_WINDOW_S:g}; the receiver "
-                         "default is 0.05)")
+                    help="LSL inlet merge window in seconds (default: the receiver default, 0.05)")
+    ap.add_argument("--no-lsl-heartbeat", action="store_true",
+                    help="LSL producer without heartbeats (LSL-C7), as before P3-10 (for comparison)")
     a = ap.parse_args(argv)
     reports = []
     ok = True
@@ -482,7 +486,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if not pylsl_available():
                     print(f"{prof} / lsl: skipped (pylsl is not installed)")
                     continue
-            r = run(prof, rec, a.out, n_utterances=a.utterances, merge_window_s=a.lsl_merge_window).report
+            r = run(prof, rec, a.out, n_utterances=a.utterances, merge_window_s=a.lsl_merge_window,
+                    lsl_heartbeat=not a.no_lsl_heartbeat).report
             reports.append(r)
             print(format_report(r))
             ok = ok and r["conformance"]["producer_level"] == "trust-ready"

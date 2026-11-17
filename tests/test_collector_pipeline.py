@@ -350,12 +350,15 @@ def test_pipeline_file_input(tmp_path):
     assert "ws_" not in stream and "segmenter: 6 blank frames" in stream
 
 
-def test_pipeline_lsl_input(tmp_path):
+@pytest.mark.parametrize("profile", ["emg-key", "implant-speech"])
+def test_pipeline_lsl_input(tmp_path, profile):
+    """LSL input at the receiver default merge window (0.05 s): the producer heartbeat (LSL-C7, P3-10) keeps the
+    merge wait out of the budget."""
     from fidetype.adapters.lsl import pylsl_available
 
     if not pylsl_available():
         pytest.skip("pylsl is not installed (extra 'lsl')")
-    r = B.run("emg-key", "lsl", tmp_path, n_utterances=6).report
+    r = B.run(profile, "lsl", tmp_path, n_utterances=6).report
     _check_run(r, gated=True)
 
 

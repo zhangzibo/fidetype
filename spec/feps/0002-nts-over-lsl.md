@@ -93,7 +93,9 @@ Rules:
    - `source` (or absent): the producer's own clock. The consumer MUST leave the fields unchanged.
    - A consumer MUST refuse another value.
    A producer SHOULD use `lsl`. The consumer adds `lsl_t` (the corrected timestamp of the sample) to every marker event.
-6. Two inlets are merged by time. An item waits until every other inlet has passed its time, or for a merge window (reference: 50 ms). A smaller window lowers latency; a late marker is then released out of order and counted.
+6. Two inlets are merged by time. An item waits until every other inlet has passed its time, or for a merge window (reference: 50 ms). A smaller window lowers latency; a late marker is then released out of order and counted. With rules 7 and 8 the merge releases items at once; the window only limits the wait for a producer that sends no heartbeat.
+7. **Heartbeat** (NTS 1.0 RC4 amendment 5, LSL-C7; roadmap P3-10). An events-stream sample whose string is empty after white space is removed is a heartbeat. A consumer MUST NOT give it as an NTS event and MUST NOT count it as an ignored plain string (section 5 rule 3); it MAY count it (reference: `heartbeats`). Its timestamp moves the inlet's merge position like any other sample. A producer MUST push the samples of its events stream with timestamps that do not decrease. A producer with a frames stream and an events stream SHOULD push a heartbeat after each frame, with the timestamp of that frame. *Why:* the events stream is idle between markers, so without a heartbeat each frame waits for the whole merge window. The collector bench measured a p95 added latency of 60.4 ms at the reference window (budget 50 ms); with heartbeats it is 1.07 ms.
+8. **Equal times** (LSL-C8). When a frames-stream item and an events-stream item have the same (corrected) time, the merge MUST give the frames-stream item first. Items of one stream keep their order. A producer MAY stamp a marker with the timestamp of the frame before it (for example a `segment_end`; SEG-4 allows its `t` to equal the last frame time). The merge then releases the marker as soon as that frame has arrived, not at the next frame. The reference producer (`NTSOutlet`) does this.
 
 ### 7. Gaps and stream loss
 Rules:
@@ -146,10 +148,11 @@ With time_correction = 0.25 s the consumer gives `t_start` 5021.55, `t_end` 5022
 ## Compatibility
 - v0.1 streams and files do not change. The binding replaces the sketch of 6.4.
 - Streams from the M6-01 adapter (before this FEP) have no `binding` and no `event_clock`: they read as `nts-lsl/0.1` with `event_clock = source`, which is what M6-01 did.
+- RC4 amendment 5 (rules 6.7, 6.8): the binding version stays `nts-lsl/0.1`. A consumer of the earlier text ignores an empty plain string (section 5 rule 3) and moves its watermark with every sample, so heartbeats change nothing for it except a count. The reference consumer changed only the order at equal times (before: arrival order).
 - Reference-adapter changes in this FEP (small): it now refuses an NTS-native frames stream with an integer format, labels out of vocab order, a `nominal_srate` that differs from 1 / `frame_period`, an unknown `binding` or an unknown `event_clock`; it applies `event_clock = lsl`; `replay-to-lsl` writes `binding` and `event_clock = lsl` and maps the event time fields to the LSL clock; the decisions outlet writes `binding`.
 
 ## Conformance
-Profile `fep-0002` (opt-in, `src/fidetype/conformance/profiles/fep0002.py`). Golden vectors: [`spec/conformance/fep-0002/`](../conformance/fep-0002/) (`manifest.json`; 31 JSON scenarios: 15 accept, 16 reject).
+Profile `fep-0002` (opt-in, `src/fidetype/conformance/profiles/fep0002.py`). Golden vectors: [`spec/conformance/fep-0002/`](../conformance/fep-0002/) (`manifest.json`; 37 JSON scenarios: 19 accept, 18 reject).
 
 ```
 fidetype conformance --profile fep-0002                               # reference consumer over the vectors
@@ -167,6 +170,7 @@ A vector is a JSON scenario (schema `fidetype.conformance.lsl-scenario/1`): stre
 | `hypothesis_times`, `marker_lsl_t` | `[t_start, t_end]` of each hypothesis; `lsl_t` of each marker event |
 | `decisions`, `final_decisions`, `aborted_utterances` | Trust layer output (section 7 rule 3) |
 | `gaps`, `clamped`, `dropped_out_of_order`, `reconnects`, `bad_markers`, `ignored_markers` | Counts of sections 5-7 |
+| `heartbeats` | Heartbeat samples (section 6 rule 7) |
 | `acted` (decisions scenarios) | Texts a subscriber may act on (final COMMIT only) |
 
 | Section | Accept | Reject |
@@ -174,7 +178,7 @@ A vector is a JSON scenario (schema `fidetype.conformance.lsl-scenario/1`): stre
 | 3 frames stream | L01, L02 (double64 bit-exact), L04 (-inf), L14 (foreign), L32 (frames route, `blank_id` null) | L16 (channels), L17 (int16), L18 (labels), L20 (rate), L22 (NaN) |
 | 4 desc keys | L01 | L15 (not JSON), L23 (spec_version), L24 (values) |
 | 5 events stream | L13 (plain markers, bad JSON) | L21 (numeric format) |
-| 6 clock | L01 (receiver), L05 (sender), L09 (order), L11 / L12 (event_clock lsl / source) | L25 (event_clock) |
+| 6 clock | L01 (receiver), L05 (sender), L09 (order), L11 / L12 (event_clock lsl / source), L36 (heartbeats), L37 (equal times: frame first) | L25 (event_clock) |
 | 7 gaps and loss | L06-L08 (mark / segment / abort), L10 (loss, reconnect) | |
 | 8 decisions stream | L26 | L27-L31 |
 | 9 versioning | L03 (no binding key) | L19 (unknown binding) |
@@ -196,4 +200,4 @@ A vector is a JSON scenario (schema `fidetype.conformance.lsl-scenario/1`): stre
 1. Should the binding define a chunk size or a maximum latency for the frames stream?
 2. Should the decisions stream carry a back channel (user selection after `OFFER`) as a second marker stream?
 3. Should `time_correction` statistics (spread, failures) become required provenance fields?
-4. LAN and Wi-Fi tests (M6-10) may change the reference merge window and clamp tolerance.
+4. LAN and Wi-Fi tests (M6-10) may change the reference merge window and clamp tolerance. (Amendment 5: with heartbeats the window matters only for producers that send none.)

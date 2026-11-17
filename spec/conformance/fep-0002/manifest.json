@@ -480,6 +480,52 @@
    "clause": "FEP-0002 4 r2; 1.0 RC2 11.2 (VER-5)",
    "description": "nts_header spec_version \"1.01\" (a minor version with a leading zero)",
    "failing_check": "FEP2-CONSUME"
+  },
+  {
+   "id": "L36",
+   "file": "l36-heartbeat.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 6 r7; 1.0 RC4 amendment 5 (LSL-C7)",
+   "description": "Empty events-stream samples are heartbeats: no NTS event, not an ignored marker, counted as heartbeats",
+   "expected": {
+    "heartbeats": 3,
+    "ignored_markers": 0,
+    "bad_markers": 0,
+    "final_decisions": 1,
+    "frames": 6,
+    "event_types": {
+     "end": 1,
+     "frame": 6,
+     "header": 1,
+     "segment_end": 1
+    }
+   }
+  },
+  {
+   "id": "L37",
+   "file": "l37-equal-times-frame-first.json",
+   "format": "json",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "FEP-0002 6 r8; 1.0 RC4 amendment 5 (LSL-C8)",
+   "description": "A segment_end with the timestamp of the last frame arrives one pull before that frame: at equal times the frame goes first, so the utterance keeps all 6 frames (one final decision)",
+   "expected": {
+    "final_decisions": 1,
+    "decisions": 1,
+    "frames": 6,
+    "marker_lsl_t": [
+     100.875,
+     100.885
+    ],
+    "event_types": {
+     "end": 1,
+     "frame": 6,
+     "header": 1,
+     "segment_end": 1
+    }
+   }
   }
  ]
 }

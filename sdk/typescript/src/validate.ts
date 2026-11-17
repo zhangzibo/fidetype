@@ -118,6 +118,10 @@ export function checkHeader(ev: Record<string, unknown>): number {
   return vocab.length;
 }
 
+/** TD-4 / TD-14 (P14-20): the error text for a `trust_decision` event in a live input stream (same text in Python and Rust). */
+export const TD_INPUT_MESSAGE =
+  "trust_decision event in an input stream: decisions are trust layer output; write them to a decision log (TD-4, TD-14)";
+
 export type PushResult =
   | { kind: "header"; vocabSize: number }
   | { kind: "frame"; t: number; row: Float64Array }
@@ -133,7 +137,8 @@ export type PushResult =
  * Rules: header first; frame times increase strictly; frame rows are
  * normalised; hypothesis events have a string id, a boolean is_final and a
  * valid n-best list; events after `end` are ignored (spec 10, A5);
- * unknown event types are ignored (spec 6.2 rule 5).
+ * a `trust_decision` event is refused (TD-4, TD-14; P14-20);
+ * other unknown event types are ignored (spec 6.2 rule 5).
  */
 export class StreamValidator {
   header: Record<string, unknown> | null = null;
@@ -158,7 +163,9 @@ export class StreamValidator {
     } else if (this.ended) {
       this.ignoredEvents++;
       out = { kind: "ignored", reason: "after the end marker" };
-    } else if (typ === "frame") {
+    } else if (typ === "trust_decision") {
+      throw new StreamEventError(TD_INPUT_MESSAGE);
+  } else if (typ === "frame") {
       const t = get(ev, "t");
       if (typeof t !== "number" || !Number.isFinite(t)) throw new StreamEventError("frame needs a finite numeric t");
       if (!(t > this.lastT)) throw new StreamEventError(`frame t ${t} does not increase (last ${this.lastT}; spec 6.2 rule 4)`);

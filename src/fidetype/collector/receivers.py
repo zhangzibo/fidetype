@@ -472,6 +472,6 @@ class LSLReceiver(Receiver):
         if self.src is not None:
             st = self.src.stats.as_dict()
             s["lsl"] = {k: st[k] for k in ("samples", "markers", "ignored_markers", "bad_markers", "clamped",
-                                           "dropped_out_of_order", "late_releases", "transport_latency_ms")
+                                           "dropped_out_of_order", "late_releases", "heartbeats", "transport_latency_ms")
                         if k in st}
         return s

@@ -5,6 +5,8 @@ This file lists the changes of the Rust SDK (crate `fidetype`). The format follo
 ## [Unreleased]
 
 ### Added
+- **TD-14 (P14-20, NTS 1.0 RC4 amendment 5).** `StreamValidator::push` refuses a `trust_decision` event in an input stream (`TD_INPUT_MESSAGE`); after `end` it is ignored. Same as Python and TypeScript; test on `spec/conformance/streaming/td-input.json`; V97 is refused by `io::validate_file_streaming`.
+- **LSL-C7 / LSL-C8 (P3-10, amendment 5).** The `fep-0002` runner counts heartbeats (`heartbeats`) and orders equal times frame first. Vectors L36, L37 (37 in all).
 - **MET-11 advisory check `NTS-MODALITY-MATCH` (P1-16)** and `checks::MODALITY_NAMESPACES`: a modality key that does not fit `device.modality` is a warning, never a reject (same as Python and TypeScript; vectors V93 … V96). `check_table()` has 60 checks.
 - **Levels (P7-02).** The v0.1 consumer summary has `warnings` (sorted ids of the advisory checks that warn) and `level` (highest stream level). `fidetype-rs consume --level core|trust-ready|provenance` rejects a v0.1 stream below that level (for `nts-conform kit --cmd "... --level {level} ..."`). Tests: v0.1 vectors 96, kit v0.1 entries 19, test `modality_match_warning_and_stream_levels`.
 - **Conformance kit (P7-01).** Test `conformance_kit` runs the 31 kit files of `spec/conformance/kit/` per profile; `fidetype-rs conformance --vectors spec/conformance/kit` runs them from the CLI (CI job `rust`). Same verdicts as Python and TypeScript. No crate code change.

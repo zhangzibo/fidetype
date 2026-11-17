@@ -148,6 +148,16 @@ Also in RC4:
 
 - A stream with a `trust_decision` line next to its input events is now refused by the v0.1 consumers. `fidetype live --out` wrote such files before P14-17; it now writes the decisions to a separate decision log (`--decisions-out`).
 
+**Amendment 5 of 2026-11-17 (still RC4 DRAFT; roadmap P3-10, gap 43, and P14-20, gap 46).** Two additions. No earlier vector changed its verdict. The binding version stays `nts-lsl/0.1`: a consumer of the earlier text already ignores an empty plain string (LSL-E3) and already moves its watermark with every sample.
+
+| Item | Answer | Rules | Vectors | SDK change |
+|---|---|---|---|---|
+| **LSL merge wait** (P3-10) | The events stream is idle between markers, so the merge (LSL-C6) held every frame for the whole merge window: at the reference window (50 ms) the merge wait alone took the collector's added latency over its 50 ms budget. Now: an empty events-stream sample is a **heartbeat**. It is not an NTS event; it tells the consumer that the events stream has passed its timestamp. A producer with both streams SHOULD send one after each frame, with the frame's timestamp, and its events-stream timestamps MUST NOT decrease. **At equal times a frame goes before a marker**, so a producer can stamp a marker with the time of the frame before it and the merge releases the marker at once. | LSL-C7, LSL-C8 (new), LSL-C6 (note) | L36 (heartbeats), L37 (equal times) | Yes: the three LSL consumers (Python reference, TypeScript and Rust `fep-0002` runners) count heartbeats (`heartbeats`) and order equal times frame first. The Python producer (`NTSOutlet`, `replay-to-lsl`, `fidetype live --publish lsl`) sends heartbeats |
+| **TD-4 in a live input stream** (P14-20) | A consumer that reads an input stream event by event (a streaming validator, a trust layer, a collector) **refuses** a `trust_decision` event between the header and `end`: it reports a TD-4 error for that event, does not use it as input and does not pass it on as input. After `end` the event is ignored like every other event (A5). Refuse, not ignore + warn: the file validators refuse the same stream (`NTS-TD-INPUT`), and a live consumer gives the same verdict as a file consumer. | TD-14 (new) | Streaming cases S01 … S06 (`conformance/streaming/td-input.json`); V97 event by event | Yes: Python `StreamingTrustLayer.push`, TypeScript and Rust `StreamValidator`, the collector's `validate` processor |
+
+- Collector (FEP-0006): a refused `trust_decision` is an invalid input event: the `validate` processor cuts the open utterance (`gap`), and `fidetype-collector consume` rejects the file. Decisions of a stream that has no header are a decision log; TD-14 does not apply to them.
+- Vector counts: 348 (fep-0002 37). Streaming cases: 6 (Python = TypeScript = Rust on all 6, and on V97). Informative parts updated: 8.2.5, 9.3, 9.5, C.1.
+
 ---
 
 ## 2. Scope and core data model
@@ -558,6 +568,7 @@ Other keys are allowed (for example `attempt`, the LSL record `lsl`, the WebSock
 - **[TD-8]** A `COMMIT` that carries `shown` MUST have at least one text.
 - **[TD-9]** **(Stricter in 1.0.)** A 1.x trust layer **MUST NOT** emit a final text `COMMIT` whose committed text (`shown[0]`) is blank text (1.4). To show no text, it uses `ABSTAIN`. A bridge MUST NOT forward a blank committed text. For decisions that declare `spec_version` `"0.1"` or omit it, the 0.1 rule stays: SHOULD NOT, with a `reason` that says why (Appendix B). *Why:* in M2-18 the frozen Paper 1 v4 configuration committed 320 empty texts on 400 no-signal (uniform) T12 control streams. An empty COMMIT tells the user "the system understood you" when no text came from the neural evidence. The intent profile already forbids a null-intent COMMIT (INT-S1) and the control profile forbids motion on no-signal input (CTL-S2); TD-9 gives the text profile the same rule. A layer can meet it with a commit gate that turns such a COMMIT into the policy's non-commit decision; the gate only removes commits, so a fitted risk bound still holds (M2-18). *(Resolution of FEP-0001 question 6.)*
 - **[TD-10]** A decision log or decisions channel MAY omit `shown` (privacy). A bridge then acts on no text.
+- **[TD-14]** **(Amendment 5.)** A consumer that reads an input stream event by event (a streaming validator, a trust layer, a collector) MUST refuse a `trust_decision` event that comes after the header and before `end` (TD-4). It reports the refusal, does not use the event as input and does not pass it on as input; its state for the stream does not change because of the event. What it does with the rest of the stream is its rule for any refused event (for example the collector cuts the open utterance, FEP-0006). After `end` the event is ignored (A5). A decision log or a decisions channel (no header) is not an input stream. *Why:* the file validators refuse the same stream (`NTS-TD-INPUT`, amendment 4); a live consumer and a file consumer give the same verdict.
 - **[TD-12]** **(New in RC2.)** A 1.x trust layer SHOULD NOT put blank text (1.4) in `shown` of a text `OFFER`, `ASK` or `OFFER_WORDS` decision. A consumer or a bridge MUST NOT offer a blank candidate to the user: it drops it. If no candidate is left, the user sees no text, as for `ABSTAIN`. For decisions that declare `spec_version` `"0.1"` or omit it, the producer part does not apply; the consumer part applies to decisions of every version (a dropped blank candidate removes no text that the user can read). *Why:* the commit gate of TD-9 turns a blank final COMMIT into the policy's non-commit decision. That decision can be an `OFFER` whose only candidate is the blank text (FEP-0006 question 2). A blank button tells the user that the system has a candidate when it has none. A validator reports a 1.x violation as a warning (advisory check `FEP1-TD-SHOWN`), not as a reject. *Note:* a producer that removes the blank candidates and has no candidate left emits `ABSTAIN` with `shown = []`. It does not omit `shown`, because a decision without `shown` reads as a privacy log (TD-10).
 
 ### 6.4 Decision logs and the reference consumer
@@ -827,7 +838,9 @@ A hypothesis-only producer has no frames stream; its events stream is primary. A
 - **[LSL-C3]** Receiver mode (default): t = timestamp + time_correction, one offset for all streams of one sender host, refreshed (reference 5 s). Sender mode: raw timestamps. The mode and offset go into the provenance. **A consumer MUST NOT write the host name into any output.**
 - **[LSL-C4]** A frame timestamp at or before the previous one is moved to just after it (1 µs) if it is at most a tolerance behind (reference 5 ms), else dropped; both are counted. A consumer MAY instead refuse the stream.
 - **[LSL-C5]** `event_clock = lsl`: in receiver mode the consumer MUST add the same `time_correction` to the time fields inside marker JSON. `source` (or absent): the consumer MUST leave them unchanged. A consumer MUST refuse another value. A producer SHOULD use `lsl`. The consumer adds `lsl_t` to every marker event.
-- **[LSL-C6]** Two inlets are merged by time with a merge window (reference 50 ms); a late marker is released out of order and counted.
+- **[LSL-C6]** Two inlets are merged by time with a merge window (reference 50 ms); a late marker is released out of order and counted. *(Amendment 5: with LSL-C7 heartbeats and LSL-C8 the merge releases items at once; the window then only limits the wait for a producer that sends no heartbeat.)*
+- **[LSL-C7]** **(Amendment 5.)** **Heartbeat.** An events-stream sample whose string is empty after white space is removed is a heartbeat. A consumer MUST NOT give it as an NTS event and MUST NOT count it as an ignored plain string (LSL-E3); it MAY count it (reference: `heartbeats`). Its timestamp moves the inlet's merge position like any other sample. A producer MUST push the samples of its events stream with timestamps that do not decrease. A producer with a frames stream and an events stream SHOULD push a heartbeat after each frame, with the timestamp of that frame. *Why:* without it the idle events stream holds every frame for the merge window (P3-10: 60.4 ms p95 added latency at 50 ms; with heartbeats 1.07 ms).
+- **[LSL-C8]** **(Amendment 5.)** **Equal times.** When a frames-stream item and an events-stream item have the same (corrected) time, the merge MUST give the frames-stream item first. Items of one stream keep their order. A producer MAY stamp a marker (for example `segment_end`) with the timestamp of the frame before it (SEG-4 allows `t` equal to the last frame time); the merge then releases the marker as soon as that frame has arrived.
 
 #### 8.2.6 Gaps, loss and the decisions stream
 - **[LSL-G1]** A frame step larger than 2.5 (reference) nominal periods is a gap. Modes: `mark` (default: extension event `gap`), `segment` (`segment_end` with `reason = "gap"`), `abort` (drop the open utterance; the reference consumer emits the extension event `lsl_status` with `status = "gap_abort"`).
@@ -965,7 +978,8 @@ The levels are cumulative and come from the conformance suite. They are **stream
 |---|---|---|---|---|---|
 | `v0.1` | Sections 3, 4.1–4.6, 4.8, 5, 8.1 (incl. 1.x header versions V53–V61, HDR-12 V62–V65, unknown enumeration values V66–V68; RC4: optional field types V69–V82; amendments: modality keys V83–V87, dense and sparse keys V88–V92, MET-11 warning V93–V96; amendment 4: TD-4 V97) | 97 | yes | yes | yes |
 | `fep-0001` | 4.3, 4.7, 6 (incl. TD-9 for 1.x, TD-F2 types, TD-F3, TD-12 advisory; RC3: VER-8 F57–F59, GEN-10 F60–F61, `declaration` F62; RC4: F63–F66) | 66 | yes | yes | yes |
-| `fep-0002` | 8.2 | 35 | yes | yes (structural) | yes (structural) |
+| `fep-0002` | 8.2 (amendment 5: LSL-C7 L36, LSL-C8 L37) | 37 | yes | yes (structural) | yes (structural) |
+| streaming cases (`conformance/streaming/`) | TD-14 (amendment 5): outcome per event of an event-by-event validator | 6 | yes | yes | yes |
 | `fep-0003` | 7.1, 7.3 (RC3: VER-8 I24, D22, D23; RC4: I25, D24–D26) | 51 | yes | yes | yes |
 | `fep-0004` | 8.3 (incl. W38: header `meta` must be an object; RC3: GEN-10 W44) | 44 | yes | yes | yes |
 | `fep-0005` | 7.4 (RC3: VER-8 C24, E22–E24; RC4: C25, E25–E27; amendment 1: C26) | 53 | yes | yes | yes |
@@ -985,7 +999,7 @@ A claim names the class, the level, the profiles and the bindings, and the RC: f
 *Amendment 3.* A claim of an implementation level (9.6) names that level and the kit version, for example "Consumer, NTS 1.0 RC4 (draft), NTS Trust-ready, profiles text + intent + control, bindings nts-lsl/0.1 + nts-ws/0.1, kit 0.2.0". The stream level of 9.2 ("level provenance") stays the claim about one stream.
 
 ### 9.5 Parity of the reference SDKs
-The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (96 + 66 + 35 + 51 + 44 + 53 = 345 since amendment 3 of 2026-11-17; amendment 2: 341; amendment 1: 336; RC4: 330), the same advisory warnings and stream level where a vector or kit entry pins them (`expected.warnings`, `expected.level`; amendment 3), and the same verdict on the 36 kit entries (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`; amendment 3 run: seeds 1–3, `--n 30`, 27,767 mutants, 0 differences; amendment 2 run: 27,497 mutants; RC4 run: 26,687 mutants; RC3 run: 24,347 mutants). Gap G-1 (control profile in Python only) is closed.
+The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (97 + 66 + 37 + 51 + 44 + 53 = 348 since amendment 5 of 2026-11-17; amendment 4: 346; amendment 3: 345; amendment 2: 341; amendment 1: 336; RC4: 330), the same advisory warnings and stream level where a vector or kit entry pins them (`expected.warnings`, `expected.level`; amendment 3), and the same verdict on the 36 kit entries (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`; amendment 3 run: seeds 1–3, `--n 30`, 27,767 mutants, 0 differences; amendment 2 run: 27,497 mutants; RC4 run: 26,687 mutants; RC3 run: 24,347 mutants). Gap G-1 (control profile in Python only) is closed.
 
 ### 9.6 Implementation levels: NTS Core, NTS Full, NTS Trust-ready (amendment 3)
 The stream levels of 9.2 judge one stream. The implementation levels judge a program: a producer (it writes streams or decision logs) or a consumer (a reader, a validator or a trust layer). The test material is the conformance kit ([`conformance/kit/`](conformance/kit/)) and the tool `nts-conform`. A generated, informative copy of this section is [`conformance/levels.json`](conformance/levels.json) (`nts-conform levels`).
@@ -1450,6 +1464,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | TD-2 | — | see DEC-5 | | |
 | TD-3 | SHOULD | — | — | G-7 |
 | TD-4 | MUST NOT | FEP1-TD-INPUT, NTS-TD-INPUT (amendment 4) | F21, V97 | T |
+| TD-14 | MUST | streaming validators (`StreamingTrustLayer`, `StreamValidator`), collector `validate` (amendment 5) | S01 … S06, V97 (event by event) | T |
 | TD-5 | MUST | FEP1-TD-FINAL, FEP3-TD-FINAL, FEP5-TD-ORDER | F25, F38, D14, E16 | T |
 | TD-6 | MUST | FEP1-TD-FINAL, FEP2-DECISIONS, FEP4-DECISIONS | F26, F36, L31, W37, D13 | T |
 | TD-7 | MUST NOT | FEP1-TD-FINAL | F37 | T |
@@ -1537,6 +1552,8 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | LSL-C4 | MAY | FEP2-CONSUME | L09 | T (accept) |
 | LSL-C5 | MUST | FEP2-CONSUME, FEP2-BINDING | L11, L12 / L25 | T |
 | LSL-C6 | — | FEP2-CONSUME | L01 | P |
+| LSL-C7 | MUST NOT / SHOULD | FEP2-CONSUME | L36 | P (consumer side; the producer SHOULD is not checked) |
+| LSL-C8 | MUST | FEP2-CONSUME | L37 | T (accept; without the rule L37 gives 2 final decisions) |
 | LSL-G1 | — | FEP2-CONSUME | L06, L07, L08 | T (accept) |
 | LSL-G2 | MUST NOT / MUST | FEP2-CONSUME | L10 | T (accept) |
 | LSL-G3 | — | FEP2-CONSUME | L06, L07, L08 | T (accept) |

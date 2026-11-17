@@ -1,0 +1,298 @@
+{
+ "schema": "fidetype.conformance.streaming/1",
+ "profile": "streaming",
+ "spec": "NTS 1.0 RC4, amendment 5 (TD-14)",
+ "how_to_use": "Event-by-event (streaming) consumer cases. Push the events of each case one at a time into a fresh streaming validator. Expected outcome per event: accept (the event is taken), ignore (the event is read and skipped: after end, or an unknown type), refuse (the validator reports a TD-4 error for this event and its state does not change), refuse-header (refused by the header-first rule). After a refused event, push the next event of the case.",
+ "cases": [
+  {
+   "id": "S01",
+   "description": "A final text trust_decision between frames of an input stream is refused; the state does not change (the next frame keeps its order)",
+   "events": [
+    {
+     "type": "header",
+     "spec_version": "1.0",
+     "vocab": [
+      "<blank>",
+      "a",
+      "b"
+     ],
+     "vocab_type": "char",
+     "blank_id": 0
+    },
+    {
+     "type": "frame",
+     "t": 0.0,
+     "log_probs": [
+      -0.2231435513142097,
+      -1.6094379124341003,
+      -100.0
+     ]
+    },
+    {
+     "type": "trust_decision",
+     "session": "s",
+     "seq": 0,
+     "utterance": 0,
+     "is_final": true,
+     "action": "COMMIT",
+     "shown": [
+      "a"
+     ],
+     "p_top1": 0.9,
+     "score_semantics": "calibrated_prob",
+     "set_size": 1
+    },
+    {
+     "type": "frame",
+     "t": 0.02,
+     "log_probs": [
+      -0.2231435513142097,
+      -1.6094379124341003,
+      -100.0
+     ]
+    },
+    {
+     "type": "segment_end",
+     "t": 0.02
+    },
+    {
+     "type": "end"
+    }
+   ],
+   "expected": [
+    "accept",
+    "accept",
+    "refuse",
+    "accept",
+    "accept",
+    "accept"
+   ]
+  },
+  {
+   "id": "S02",
+   "description": "A non-final intent trust_decision in an input stream is refused too (every profile)",
+   "events": [
+    {
+     "type": "header",
+     "spec_version": "1.0",
+     "vocab": [
+      "<blank>",
+      "a",
+      "b"
+     ],
+     "vocab_type": "char",
+     "blank_id": 0
+    },
+    {
+     "type": "frame",
+     "t": 0.0,
+     "log_probs": [
+      -0.2231435513142097,
+      -1.6094379124341003,
+      -100.0
+     ]
+    },
+    {
+     "type": "trust_decision",
+     "profile": "intent",
+     "session": "s",
+     "seq": 1,
+     "unit": "u1",
+     "is_final": false,
+     "action": "OFFER",
+     "p_top1": 0.4,
+     "score_semantics": "none"
+    },
+    {
+     "type": "end"
+    }
+   ],
+   "expected": [
+    "accept",
+    "accept",
+    "refuse",
+    "accept"
+   ]
+  },
+  {
+   "id": "S03",
+   "description": "After end, a trust_decision is ignored like every other event (A5)",
+   "events": [
+    {
+     "type": "header",
+     "spec_version": "1.0",
+     "vocab": [
+      "<blank>",
+      "a",
+      "b"
+     ],
+     "vocab_type": "char",
+     "blank_id": 0
+    },
+    {
+     "type": "frame",
+     "t": 0.0,
+     "log_probs": [
+      -0.2231435513142097,
+      -1.6094379124341003,
+      -100.0
+     ]
+    },
+    {
+     "type": "end"
+    },
+    {
+     "type": "trust_decision",
+     "session": "s",
+     "seq": 0,
+     "utterance": 0,
+     "is_final": true,
+     "action": "COMMIT",
+     "shown": [
+      "a"
+     ],
+     "p_top1": 0.9,
+     "score_semantics": "calibrated_prob",
+     "set_size": 1
+    }
+   ],
+   "expected": [
+    "accept",
+    "accept",
+    "accept",
+    "ignore"
+   ]
+  },
+  {
+   "id": "S04",
+   "description": "A new header starts a new input stream: a trust_decision after it is refused",
+   "events": [
+    {
+     "type": "header",
+     "spec_version": "1.0",
+     "vocab": [
+      "<blank>",
+      "a",
+      "b"
+     ],
+     "vocab_type": "char",
+     "blank_id": 0
+    },
+    {
+     "type": "end"
+    },
+    {
+     "type": "header",
+     "spec_version": "1.0",
+     "vocab": [
+      "<blank>",
+      "a",
+      "b"
+     ],
+     "vocab_type": "char",
+     "blank_id": 0
+    },
+    {
+     "type": "trust_decision",
+     "session": "s",
+     "seq": 0,
+     "utterance": 0,
+     "is_final": true,
+     "action": "COMMIT",
+     "shown": [
+      "a"
+     ],
+     "p_top1": 0.9,
+     "score_semantics": "calibrated_prob",
+     "set_size": 1
+    },
+    {
+     "type": "frame",
+     "t": 0.0,
+     "log_probs": [
+      -0.2231435513142097,
+      -1.6094379124341003,
+      -100.0
+     ]
+    }
+   ],
+   "expected": [
+    "accept",
+    "accept",
+    "accept",
+    "refuse",
+    "accept"
+   ]
+  },
+  {
+   "id": "S05",
+   "description": "Contrast: an unknown event type is ignored (6.2 rule 5), not refused",
+   "events": [
+    {
+     "type": "header",
+     "spec_version": "1.0",
+     "vocab": [
+      "<blank>",
+      "a",
+      "b"
+     ],
+     "vocab_type": "char",
+     "blank_id": 0
+    },
+    {
+     "type": "acme.note",
+     "t": 0.0
+    },
+    {
+     "type": "frame",
+     "t": 0.0,
+     "log_probs": [
+      -0.2231435513142097,
+      -1.6094379124341003,
+      -100.0
+     ]
+    }
+   ],
+   "expected": [
+    "accept",
+    "ignore",
+    "accept"
+   ]
+  },
+  {
+   "id": "S06",
+   "description": "Before the header, a trust_decision is refused by the header-first rule (6.2 rule 1)",
+   "events": [
+    {
+     "type": "trust_decision",
+     "session": "s",
+     "seq": 0,
+     "utterance": 0,
+     "is_final": true,
+     "action": "COMMIT",
+     "shown": [
+      "a"
+     ],
+     "p_top1": 0.9,
+     "score_semantics": "calibrated_prob",
+     "set_size": 1
+    },
+    {
+     "type": "header",
+     "spec_version": "1.0",
+     "vocab": [
+      "<blank>",
+      "a",
+      "b"
+     ],
+     "vocab_type": "char",
+     "blank_id": 0
+    }
+   ],
+   "expected": [
+    "refuse-header",
+    "accept"
+   ]
+  }
+ ]
+}

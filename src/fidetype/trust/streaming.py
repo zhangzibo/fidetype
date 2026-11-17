@@ -166,6 +166,10 @@ DecodeFn = Callable[[NeuralTextStream], NBest]
 SEGMENT_END = "segment_end"
 #: Output event kind (proposed in FEP-0001).
 TRUST_DECISION = "trust_decision"
+#: TD-4 / TD-14 (P14-20): the error text of a ``trust_decision`` event in a live input stream. The same text
+#: in the TypeScript and Rust ``StreamValidator`` and in the collector's ``validate`` processor.
+TD_INPUT_MESSAGE = ("trust_decision event in an input stream: decisions are trust layer output; "
+                    "write them to a decision log (TD-4, TD-14)")
 #: Events that go to the opt-in intent layer only (FEP-0003), and events that both layers read.
 _INTENT_EVENTS = ("intent", "intent_feedback", "decision")
 _INTENT_SHARED = ("header", "signal_quality", "end")
@@ -611,6 +615,8 @@ class StreamingTrustLayer:
             raise StreamEventError(f"{typ!r} event before the header (spec 6.2 rule 1)")
         elif s.ended:
             s.ignored_events += 1  # lines after the end marker (spec 10, A5)
+        elif typ == TRUST_DECISION:
+            raise StreamEventError(TD_INPUT_MESSAGE)
         elif typ == "frame":
             out += self._frame(s, ev, t0)
         elif typ == "hypothesis":

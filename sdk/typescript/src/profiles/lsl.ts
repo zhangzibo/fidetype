@@ -448,6 +448,7 @@ function makeInlet(spec: unknown): ScriptedInlet {
 interface Stats {
   samples: number; frames: number; markers: number; ignored_markers: number; bad_markers: number; clamped: number;
   dropped_out_of_order: number; gaps: number; lost: number; reconnects: number; late_releases: number;
+  heartbeats: number;
 }
 
 type Item = [number, number, Record<string, unknown>];
@@ -630,12 +631,13 @@ class ClockSync {
 }
 
 class EventSource {
-  stats: Stats = { samples: 0, frames: 0, markers: 0, ignored_markers: 0, bad_markers: 0, clamped: 0, dropped_out_of_order: 0, gaps: 0, lost: 0, reconnects: 0, late_releases: 0 };
+  stats: Stats = { samples: 0, frames: 0, markers: 0, ignored_markers: 0, bad_markers: 0, clamped: 0, dropped_out_of_order: 0, gaps: 0, lost: 0, reconnects: 0, late_releases: 0, heartbeats: 0 };
   readers: Reader[];
   clockSync: ClockSync;
   values = "log_probs";
   private seqN = 0;
-  private heap: [number, number, number, Record<string, unknown>][] = [];
+  /** Held items: [t, rank, seq, arrival, event]; rank 0 = frames stream, 1 = events stream (LSL-C8: frame first at equal t). */
+  private heap: [number, number, number, number, Record<string, unknown>][] = [];
   private lastReleased = -Infinity;
   private headerEv: Record<string, unknown> | null = null;
   private pendingHeader = true;
@@ -678,10 +680,14 @@ class EventSource {
   }
 
   markerEvent(sIn: unknown, t: number, offset: number, eventClock: string): Record<string, unknown> | null {
-    this.stats.markers++;
-    const m = this.mapping;
     const s = typeof sIn === "string" ? sIn : pyStr(sIn);
     const txt = s.trim();
+    if (!txt) {
+      this.stats.heartbeats++; // LSL-C7: a heartbeat moves the inlet's watermark only (P3-10)
+      return null;
+    }
+    this.stats.markers++;
+    const m = this.mapping;
     if (txt.startsWith("{")) {
       let ev: unknown = null;
       try {
@@ -738,7 +744,8 @@ class EventSource {
         throw e;
       }
       const arrival = this.clock();
-      for (const [t, sq, ev] of items) this.heapPush([t, sq, arrival, ev]);
+      const rank = r.role === "events" ? 1 : 0;
+      for (const [t, sq, ev] of items) this.heapPush([t, rank, sq, arrival, ev]);
     });
     out.push(...this.release(this.clock()));
     return out;
@@ -748,15 +755,15 @@ class EventSource {
     return this.release(Infinity, true);
   }
 
-  private heapPush(x: [number, number, number, Record<string, unknown>]): void {
+  private heapPush(x: [number, number, number, number, Record<string, unknown>]): void {
     this.heap.push(x);
-    this.heap.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    this.heap.sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
   }
 
   private release(now: number, force = false): Record<string, unknown>[] {
     const out: Record<string, unknown>[] = [];
     while (this.heap.length) {
-      const [t, , arrival, ev] = this.heap[0];
+      const [t, , , arrival, ev] = this.heap[0];
       const others = this.readers.filter((rd) => rd.lostSince === null).map((rd) => rd.seenT);
       const ok = force || this.readers.length === 1 || others.every((x) => x >= t) || now - arrival >= this.mapping.merge_window_s;
       if (!ok) break;
@@ -1022,6 +1029,7 @@ export function runInletScenario(sc: Record<string, unknown>): Record<string, un
     aborted_utterances: aborted,
     gaps: src.stats.gaps, clamped: src.stats.clamped, dropped_out_of_order: src.stats.dropped_out_of_order,
     reconnects: src.stats.reconnects, bad_markers: src.stats.bad_markers, ignored_markers: src.stats.ignored_markers,
+    heartbeats: src.stats.heartbeats,
   };
 }
 

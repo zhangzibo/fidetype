@@ -67,6 +67,8 @@
    "LSL-C4",
    "LSL-C5",
    "LSL-C6",
+   "LSL-C7",
+   "LSL-C8",
    "LSL-G1",
    "LSL-G2",
    "LSL-G3"
@@ -1358,6 +1360,20 @@
    ],
    "status": "P"
   },
+  "LSL-C7": {
+   "keyword": "MUST NOT / SHOULD",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "P (consumer side; the producer SHOULD is not checked)"
+  },
+  "LSL-C8": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept; without the rule L37 gives 2 final decisions)"
+  },
   "LSL-D1": {
    "keyword": "MUST",
    "checks": [
@@ -1782,6 +1798,11 @@
    "keyword": "SHOULD / MUST NOT",
    "checks": [],
    "status": "G-10 (audit data; only the object type is checked, TD-F2)"
+  },
+  "TD-14": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T"
   },
   "TD-2": {
    "keyword": "—",

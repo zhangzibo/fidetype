@@ -184,6 +184,7 @@ def run_inlet_scenario(sc: dict[str, Any]) -> dict[str, Any]:
         "aborted_utterances": runner.summary.aborted_utterances,
         "gaps": st.gaps, "clamped": st.clamped, "dropped_out_of_order": st.dropped_out_of_order,
         "reconnects": st.reconnects, "bad_markers": st.bad_markers, "ignored_markers": st.ignored_markers,
+        "heartbeats": st.heartbeats,
     }
 
 
@@ -649,6 +650,28 @@ def build_vectors() -> list[Vector]:
     add("L35", "l35-header-version-1-01.json", "reject", "4 r2; 1.0 RC2 11.2 (VER-5)",
         'nts_header spec_version "1.01" (a minor version with a leading zero)',
         _std("spec version 1.01", frames_xml=_frames_xml(header=_hdr(spec_version="1.01"))))
+    # --- NTS 1.0 RC4 amendment 5 (P3-10): heartbeat (LSL-C7) and the order at equal times (LSL-C8)
+    rows_h = _rows(6, 6)
+    st_h = _stamps(6)
+    ev_h = ["", "", " ", {"type": "segment_end", "t": st_h[-1]}, {"type": "end"}]
+    add("L36", "l36-heartbeat.json", "accept", "6 r7; 1.0 RC4 amendment 5 (LSL-C7)",
+        "Empty events-stream samples are heartbeats: no NTS event, not an ignored marker, counted as heartbeats",
+        _scenario("inlet", "heartbeats", route="frames", inlets={
+            "primary": _inlet_spec(_frames_xml(), _chunks(rows_h, st_h)),
+            "events": _inlet_spec(_events_xml(), _markers(ev_h, [st_h[2], st_h[5], st_h[5], st_h[5], st_h[5] + 0.01]))}),
+        {"heartbeats": 3, "ignored_markers": 0, "bad_markers": 0, "final_decisions": 1, "frames": 6,
+         "event_types": {"end": 1, "frame": 6, "header": 1, "segment_end": 1}})
+    rows_t = _rows(6, 7)
+    st_t = _stamps(6)
+    add("L37", "l37-equal-times-frame-first.json", "accept", "6 r8; 1.0 RC4 amendment 5 (LSL-C8)",
+        "A segment_end with the timestamp of the last frame arrives one pull before that frame: at equal times "
+        "the frame goes first, so the utterance keeps all 6 frames (one final decision)",
+        _scenario("inlet", "equal times, frame first", route="frames", inlets={
+            "primary": _inlet_spec(_frames_xml(), _chunks(rows_t, st_t)),
+            "events": _inlet_spec(_events_xml(), _markers([{"type": "segment_end", "t": st_t[-1]}, {"type": "end"}],
+                                                          [st_t[-1], st_t[-1] + 0.01]))}),
+        {"final_decisions": 1, "decisions": 1, "frames": 6, "marker_lsl_t": [st_t[-1] + TC, st_t[-1] + 0.01 + TC],
+         "event_types": {"end": 1, "frame": 6, "header": 1, "segment_end": 1}})
     vs.sort(key=lambda v: v.vid)
     return vs
 

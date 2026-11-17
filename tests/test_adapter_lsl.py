@@ -489,6 +489,21 @@ def test_merge_waits_for_the_other_inlet():
     assert vocab
 
 
+def test_heartbeat_releases_frames_without_the_merge_window():
+    """P3-10 (LSL-C7, LSL-C8): an empty marker moves the events watermark; at equal times the frame goes first."""
+    fr, _ = _frames_inlet(stamps=[])
+    fr.script = [([[0.0, -60.0, -60.0]] * 2, [10.0, 10.04]), ([[0.0, -60.0, -60.0]], [10.08]), ([], [])]
+    ev = FakeInlet(LSLStreamInfo("e", "Markers", 1, 0.0, "string", "e1", "u2", "hostA"),
+                   [([""], [10.04]),
+                    ([json.dumps({"type": "segment_end"}), json.dumps({"type": "end"})], [10.08, 10.08])])
+    src = LSLEventSource(fr, ev, LSLMapping(merge_window_s=1e9), clock=Clock())
+    first = src.poll(0)  # the heartbeat at 10.04 releases both frames at once (no window wait)
+    assert [e["type"] for e in first] == ["header", "frame", "frame"]
+    second = src.poll(0)  # segment_end at the frame's own time: the frame first, then the boundary
+    assert [e["type"] for e in second] == ["frame", "segment_end", "end"]
+    assert src.stats.heartbeats == 1 and src.stats.ignored_markers == 0 and src.stats.late_releases == 0
+
+
 def test_runner_skips_bad_events_and_idle_flush():
     inlet, _ = _frames_inlet(n=5)
     bad = [[0.0, 0.0, 0.0]]  # does not sum to 1

@@ -114,7 +114,13 @@ Clock, order, gaps, loss
   inlet open after a resolve, at the start and on reconnect.
 - Two inlets are merged by time with a watermark: an item is released
   when every other inlet has passed its time, or after
-  ``merge_window_s`` of waiting.
+  ``merge_window_s`` of waiting. At equal times a frames-stream item goes
+  before an events-stream item (LSL-C8). An empty events-stream sample is
+  a heartbeat (LSL-C7): it is not an NTS event, but it moves the events
+  inlet's watermark, so a frame is released when the heartbeat of its
+  time arrives, not after the merge window (P3-10). ``NTSOutlet`` sends a
+  heartbeat after each frame and stamps the other events with the time of
+  the frame before them.
 
 Privacy: the host name of a stream is used only to group clock offsets.
 It is never written to a header, a decision or a log line.
@@ -744,6 +750,8 @@ class SourceStats:
     lost: int = 0
     reconnects: int = 0
     late_releases: int = 0
+    #: Empty events-stream samples (LSL-C7 heartbeats): not NTS events, not counted as markers.
+    heartbeats: int = 0
     #: receive time - corrected LSL timestamp, seconds (bounded sample of the latest values).
     transport_latency_s: list[float] = field(default_factory=list)
 
@@ -1039,7 +1047,9 @@ class LSLEventSource:
             if not events.info().is_string:
                 raise ValueError("the events stream must have the string channel format")
             self.readers.append(_Reader("events", events, self, reopen_events))
-        self._heap: list[tuple[float, int, float, dict[str, Any]]] = []
+        #: Held items: (t, rank, seq, arrival, event). rank 0 = frames / signal stream, 1 = events stream, so
+        #: at equal times a frame goes before a marker (LSL-C8).
+        self._heap: list[tuple[float, int, int, float, dict[str, Any]]] = []
         self._last_released = -math.inf
         self._header: dict[str, Any] | None = None
         self.values = "log_probs"
@@ -1089,11 +1099,14 @@ class LSLEventSource:
         are in the sender's LSL clock: ``offset`` (the clock correction of
         this stream) is added to them (FEP-0002 section 6).
         """
-        self.stats.markers += 1
-        m = self.mapping
         if not isinstance(s, str):
             s = str(s)
         txt = s.strip()
+        if not txt:  # LSL-C7: a heartbeat moves the inlet's watermark only (P3-10)
+            self.stats.heartbeats += 1
+            return None
+        self.stats.markers += 1
+        m = self.mapping
         if txt.startswith("{"):
             try:
                 ev = json.loads(txt)
@@ -1137,8 +1150,12 @@ class LSLEventSource:
         # P3-07: a held event is released when its merge window ends, not at the next sample after it.
         wait = timeout
         if self._heap and len(self.readers) > 1:
-            due = min(a for _, _, a, _ in self._heap) + self.mapping.merge_window_s
+            due = min(h[3] for h in self._heap) + self.mapping.merge_window_s
             wait = min(timeout, max(0.0, due - now))
+            # P3-10: wait on the inlet that holds the oldest item back (for a held frame: the events inlet,
+            # whose heartbeat releases it), not always on the primary inlet.
+            t_top = self._heap[0][0]
+            waiter = next((r for r in live if r.seen_t < t_top), waiter)
         for r in self.readers:
             if r.lost_since is not None:
                 out += self._try_reconnect(r, now, wait_s=0.0 if live else timeout)
@@ -1149,8 +1166,9 @@ class LSLEventSource:
                 out += self._lost(r, str(e), now)
                 continue
             arrival = self.clock()
+            rank = 1 if r.role == "events" else 0
             for t, sq, ev in items:
-                heapq.heappush(self._heap, (t, sq, arrival, ev))
+                heapq.heappush(self._heap, (t, rank, sq, arrival, ev))
         out += self._release(self.clock())
         for ev in out:
             if ev.get("type") == "end":
@@ -1164,7 +1182,7 @@ class LSLEventSource:
     def _release(self, now: float, force: bool = False) -> list[dict[str, Any]]:
         out = []
         while self._heap:
-            t, sq, arrival, ev = self._heap[0]
+            t, _, _, arrival, ev = self._heap[0]
             others = [rd.seen_t for rd in self.readers if rd.lost_since is None]
             ok = force or len(self.readers) == 1 or all(x >= t for x in others) or now - arrival >= self.mapping.merge_window_s
             if not ok:
@@ -1511,13 +1529,17 @@ class NTSOutlet:
     Clock: :meth:`start_clock` maps the stream time ``t_file0`` to the LSL time ``base`` (the first
     frame starts the clock if nobody called it). :meth:`stamp` gives the LSL timestamp of the next
     event: a frame gets ``base + (t - t_file0) / speed``; any other event gets the time of the
-    previous frame plus a small step, so the merge at the inlet keeps the stream order.
-    :meth:`push` sends the event.
+    previous frame (LSL-C8: at equal times the inlet merge puts the frame first). Before the first
+    frame, events get small steps from ``base - 1``. :meth:`push` sends the event.
+
+    Heartbeat (LSL-C7, P3-10): with both streams and ``heartbeat`` (default), each frame is followed
+    by an empty events-stream sample with the frame's timestamp. The inlet merge then releases the
+    frame at once instead of after its merge window (the events stream is idle between markers).
     """
 
     def __init__(self, header: dict[str, Any], name: str = "fidetype.nts", source_id: str | None = None,
                  channel_format: Literal["float32", "double64"] = "float32", frames: bool = True,
-                 events: bool = True) -> None:
+                 events: bool = True, heartbeat: bool = True) -> None:
         pl = require_pylsl()
         self._pl = pl
         head = {k: v for k, v in header.items() if k != "type"}
@@ -1567,8 +1589,11 @@ class NTSOutlet:
         self.speed = 1.0
         self._last_ts = 0.0
         self._k = 0
+        self._framed = False  # a frame was stamped since start_clock: events take its time (LSL-C8)
+        self.heartbeat = bool(heartbeat)
         self.frames = 0
         self.events = 0
+        self.heartbeats = 0
 
     def wait_for_consumers(self, timeout: float) -> bool:
         """Wait until each outlet has a consumer (at most ``timeout`` seconds in total). Return True if all have one."""
@@ -1581,6 +1606,7 @@ class NTSOutlet:
         self.t_file0, self.speed = float(t_file0), float(speed)
         self._last_ts = self.base - 1.0  # events before the first frame go well before it
         self._k = 0
+        self._framed = False
         return self.base
 
     def stamp(self, e: dict[str, Any]) -> float:
@@ -1593,10 +1619,13 @@ class NTSOutlet:
             ts = self.base + (dt / self.speed if self.speed > 0 else dt)
             self._k = 0
             self._last_ts = ts
+            self._framed = True
             return ts
         if self.base is None:  # an event before the first frame: its own time (if any) starts the clock
             t = e.get("t")
             self.start_clock(float(t) if isinstance(t, (int, float)) and not isinstance(t, bool) else 0.0)
+        if self._framed:
+            return self._last_ts  # LSL-C8: the time of the previous frame; the merge puts the frame first
         self._k += 1
         return self._last_ts + self.eps * self._k
 
@@ -1610,6 +1639,9 @@ class NTSOutlet:
             row = [(-math.inf if v is None else float(v)) for v in e["log_probs"]]
             self.frames_out.push_sample(row, ts, True)
             self.frames += 1
+            if self.heartbeat and self.events_out is not None:
+                self.events_out.push_sample([""], ts, True)  # LSL-C7 heartbeat: releases the frame at the inlet
+                self.heartbeats += 1
         else:
             if self.events_out is None:
                 raise ValueError("this NTSOutlet has no events stream")
@@ -1636,6 +1668,7 @@ def replay_to_lsl(
     stop: threading.Event | None = None,
     ready: threading.Event | None = None,
     log: Callable[[str], None] | None = None,
+    heartbeat: bool = True,
 ) -> ReplaySummary:
     """Publish a NeuralTextStream (file or events) as LSL streams (module docstring).
 
@@ -1645,7 +1678,7 @@ def replay_to_lsl(
     step, so the merge at the inlet keeps the file order. ``speed`` 1.0 =
     real time, 2.0 = twice as fast, 0 = no pacing (timestamps still
     follow the file times). ``ready`` is set when the outlets exist.
-    The outlets are an :class:`NTSOutlet`.
+    The outlets are an :class:`NTSOutlet` (``heartbeat``: LSL-C7 heartbeats after each frame).
     """
     pl = require_pylsl()
     log = log or (lambda m: None)
@@ -1658,7 +1691,7 @@ def replay_to_lsl(
     for e in others:
         if e.get("type") == "header" and list(e.get("vocab", [])) != list(head.get("vocab", [])):
             raise ValueError("a later header changes the vocab; publish each stream separately")
-    out = NTSOutlet(head, name, source_id, channel_format, frames=has_frames, events=bool(others))
+    out = NTSOutlet(head, name, source_id, channel_format, frames=has_frames, events=bool(others), heartbeat=heartbeat)
     if ready is not None:
         ready.set()
     rs = ReplaySummary(frames_source_id=out.frames_source_id, events_source_id=out.events_source_id)

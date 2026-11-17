@@ -282,7 +282,7 @@ def test_broad_checks_name_the_rule_of_the_finding():
     assert rules_for("FEP1-TD-FORMAT", "line 1: a COMMIT with shown needs at least one text (rule 8)") == ["TD-8"]
     assert rules_for("FEP5-SAFETY", "line 2: motion after a stop without a new engagement (rule 5)") == ["CTL-S5"]
     assert rules_for("FEP3-SAFETY", "line 1: irreversible COMMIT without confirmation_of (rule 4)") == ["INT-S4"]
-    assert len(rules_for("FEP2-CONSUME", "no pattern matches this")) == 17  # unknown message: the full list
+    assert len(rules_for("FEP2-CONSUME", "no pattern matches this")) == 19  # unknown message: the full list (amendment 5: + LSL-C7, LSL-C8)
 
 
 def test_refine_table_is_valid_and_covers_the_vectors():

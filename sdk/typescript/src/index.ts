@@ -22,7 +22,7 @@ export {
   LEVELS, blocks, runChecks, checkTable, levelReached, loadStream, consumeRaw, StreamRejected, DEFINED_KEYS,
 } from "./checks.js";
 export type { CheckResult, ConsumedStream, Level, Status } from "./checks.js";
-export { StreamValidator, StreamEventError, parseEvent, frameRow, checkHeader, checkNbest } from "./validate.js";
+export { StreamValidator, StreamEventError, parseEvent, frameRow, checkHeader, checkNbest, TD_INPUT_MESSAGE } from "./validate.js";
 export type { PushResult } from "./validate.js";
 export { HEADER_KEYS, NtsWriter, toJsonl } from "./writer.js";
 export type { WriterOptions, NbestItem } from "./writer.js";
