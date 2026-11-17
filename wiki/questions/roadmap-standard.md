@@ -498,7 +498,7 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 
 #### P7-06 Binding producers in the self-certification list
 - **Gap:** 24 of the [open-gap list](open-gaps.md). Follow-up of P7-02.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, commit `f6a2024`). `nts-conform capture` records an `lsl-scenario/1` capture (`--lsl QUERY`: frames + events streams, or a decisions stream) or a `ws-scenario/1` capture (`--ws ws://HOST:PORT/nts`: a recording server; `--ws ws://HOST:PORT/decisions`: a subscriber); `--received` writes what the reference consumer reads (the input stream that a producer level needs, spec 9.6). `python -m fidetype.conformance.binding_producers` runs our LSL outlets (`replay_to_lsl`, `DecisionOutlet` of `LSLTrustRunner`) and our WebSocket producer (`replay_to_ws`) and `/decisions` channel (`WSServer` + `WSTrustRunner`) on synthetic input in one process on loopback (about 6 s). `certified.json`: `binding-lsl` and `binding-ws`, both NTS Trust-ready (text) with `nts-lsl/0.1` / `nts-ws/0.1`. CI job `live` regenerates the captures and checks them (`--require-level trust-ready` + binding). Docs: [conformance](../../docs/conformance.md#record-a-capture-from-a-live-producer-lsl-websocket). `fidetype live` has no outlet: new gap 36 = P14-16.
 - **Depends on:** P7-02; the LSL outlet (`fidetype.adapters.lsl`), the WebSocket sender (`fidetype.adapters.ws`) and `fidetype live` (P14-04).
 - **Source:** P7-02 (2026-11-17): the producer entries of `certified.json` are file producers. Our code that emits NTS over LSL or WebSocket has no producer evidence, because `nts-conform check` judges recorded captures (scenario JSON) and no tool records a capture from a live outlet yet.
 - **Done when:** a tool records an LSL capture (`fidetype.conformance.lsl-scenario/1`) and a WebSocket capture (`ws-scenario/1`) from our own outlets (synthetic input, loopback, CI-safe), `nts-conform check` gives them a producer level with the binding, and `certified.json` lists the binding producers with that evidence.
@@ -804,6 +804,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)), issue D.
 - **Gap detail:** The 3 settings of our phoneme-beam word decoder (`lm_weight`, `edit_penalty`, `word_bonus`; grid of 12) were tuned once on 400 fixed `b2t25-t15` `cal` trials (experiments/2026-11-10-b2t25-trust, `tune.json`). The Paper 1 re-splits put 179-224 of these trials into each test set of 818. 16 of the 400 are M4 `val_eval` trials, and every M4-x word-level result on `val_eval` uses these settings (P14-03 `decode_fn`). The bias is optimistic and probably small.
 - **Done when:** The tune is rerun (a) inside fit-A of at least 10 Paper 1 re-splits (R3 / R4 split files), and (b) on the 400 trials minus the HDF5 `val_eval` and `val_select` trials. If the chosen settings never change, the item closes with "no effect" in the audit page. If they change, the affected tables are rerun, and the Paper 1 drafts and M4-x results pages get a note.
+
+#### P14-16 `fidetype live` publishes over a binding (LSL, WebSocket)
+- **Gap:** 36 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P7-06). Follow-up of P14-04, P7-06.
+- **Status:** `todo`.
+- **Depends on:** P14-04 (done), P7-06 (done: `nts-conform capture`).
+- **Source:** P7-06 (2026-11-17): `fidetype live` reads raw signal over LSL but writes its NTS output (frames, hypotheses, trust decisions) only to a JSON Lines file or stdout. Other programs cannot subscribe to it live, and it has no binding producer evidence.
+- **Done when:** `fidetype live` has options to publish its NTS frames + events and its trust decisions as LSL streams (FEP-0002) and / or to send them to a WebSocket server and serve `/decisions` (FEP-0004); a test captures them with `nts-conform capture` on loopback, `nts-conform check` gives a producer level with the binding, and `certified.json` lists `fidetype live` with that evidence.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
