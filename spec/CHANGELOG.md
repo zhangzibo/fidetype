@@ -2,6 +2,14 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## Conformance kit 0.1.0 (2026-11-17, roadmap P7-01)
+No change to the spec text or to any vector verdict.
+
+### Added
+- **[`conformance/kit/`](conformance/kit/kit.json):** 31 small example files, one or more per wire form of NTS 1.0 RC4: JSON Lines input streams (dense and sparse frames, `meta` conventions, v0.1 events, text, intent and control profiles), NPZ, decision logs (text, intent, control), LSL captures (frames + events, decisions) and WebSocket captures (`/nts`, `/decisions`). 14 accept, 1 accept-with-warnings, 16 reject. Each entry names its verdict, the rule ids that it exercises and the checks that must fail or warn. One `manifest.json` per suite profile in the golden-vector format. Python = TypeScript = Rust on all 31; the generated JSON Schema agrees on every entry that it can judge.
+- **[`conformance/kit/rule-map.json`](conformance/kit/rule-map.json):** check id -> rule ids, generated from Appendix C.1 of RC4.
+- Binary protobuf has no kit file: it is not a wire form in RC4 (binary framing: roadmap P1-05).
+
 ## [1.0 RC4, DRAFT] amendment 2 of 2026-11-16 (gap G-13 part a)
 **Still RC4 DRAFT.** Changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 2 of 2026-11-16"; rule FRM-2). Roadmap P1-14. No earlier vector changed its verdict.
 

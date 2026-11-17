@@ -5,6 +5,7 @@ This file lists the changes of the Rust SDK (crate `fidetype`). The format follo
 ## [Unreleased]
 
 ### Added
+- **Conformance kit (P7-01).** Test `conformance_kit` runs the 31 kit files of `spec/conformance/kit/` per profile; `fidetype-rs conformance --vectors spec/conformance/kit` runs them from the CLI (CI job `rust`). Same verdicts as Python and TypeScript. No crate code change.
 - **NTS 1.0 RC4, optional field types (GEN-11, gap G-12, FEP-0008).** The validators refuse a wrongly typed optional field: `segment_end.reason`; `hypothesis.t_start`, `t_end`, `revision_of`, `nbest[].spans`; `signal_quality.channels`; `pointer.absent`, `score`, `score_semantics` (null refused); `decision.score` and `score_range` for every semantics (DEC-6); header `vocab_id`, `vocab_version` (`NTS-VOCAB-ID`, new title); `trust_decision.reason`; intent `vocab_id`, `pending_cleared` (INT-T8); control `level` without `radius` (CTL-T8). The latency fields (TIM-4) are checked on every event of registry 12.1, frames included (`constants::TIMING_KEYS`, `TIMED_TYPES`; new public field `RawStream::timed`). Same behaviour as Python and TypeScript (vectors V69-V82, F63-F66, D24-D26, I25, C25, E25-E27).
 - `constants::PLANNED_NAMESPACES`: a custom `meta` key in `emg`, `eeg`, `meg`, `fnirs` or `implant` gets the `NTS-NAMESPACE` warning (MET-3, RC4 SC-2).
 - Tests: vector counts 82 / 66 / 35 / 51 / 44 / 52 (330).

@@ -1,0 +1,80 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "1.0",
+ "profile": "fep-0001",
+ "fep": "FEP-0001",
+ "kit": "fidetype.conformance.kit/1",
+ "generator": "nts-conform build --out spec/conformance/kit",
+ "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C).",
+ "vectors": [
+  {
+   "id": "K15",
+   "file": "k15-text-trust-input.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "SEG-4",
+    "SEG-5",
+    "EVD-1",
+    "EVD-3",
+    "EVD-4",
+    "DCL-1",
+    "HYP-1"
+   ],
+   "description": "Input of a text trust layer: decode_declaration, frames, a hypothesis with evidence fields, segment_end"
+  },
+  {
+   "id": "K16",
+   "file": "k16-text-decision-log.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-decision-log",
+   "rules": [
+    "TD-F1",
+    "TD-F2",
+    "TD-5",
+    "TD-6",
+    "TD-8",
+    "VER-1"
+   ],
+   "description": "Text decision log: a provisional OFFER, then one final COMMIT"
+  },
+  {
+   "id": "K17",
+   "file": "k17-commit-empty-shown.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-decision-log",
+   "rules": [
+    "TD-8"
+   ],
+   "description": "A final COMMIT with an empty shown list",
+   "failing_check": "FEP1-TD-FORMAT",
+   "failing_checks": [
+    "FEP1-TD-FORMAT"
+   ],
+   "schema_class": "schema"
+  },
+  {
+   "id": "K18",
+   "file": "k18-two-finals.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-decision-log",
+   "rules": [
+    "TD-6"
+   ],
+   "description": "Two final decisions for the same utterance",
+   "failing_check": "FEP1-TD-FINAL",
+   "failing_checks": [
+    "FEP1-TD-FINAL"
+   ],
+   "schema_class": "cross-line"
+  }
+ ]
+}

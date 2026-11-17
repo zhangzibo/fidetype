@@ -57,6 +57,8 @@ llm = ["llama-cpp-python>=0.3.36"]
 fidetype = "fidetype.cli:main"
 # Same as `fidetype collector` (FEP-0006).
 fidetype-collector = "fidetype.collector.__main__:main"
+# P7-01: the conformance kit runner (spec/conformance/kit/, docs/conformance.md).
+nts-conform = "fidetype.conformance.nts_conform:main"
 
 [project.urls]
 Homepage = "https://github.com/zhangzibo/fidetype"

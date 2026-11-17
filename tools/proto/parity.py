@@ -5,7 +5,8 @@
     python tools/proto/parity.py --engine jsonschema  # same with the reference library (pip/uv: jsonschema)
     python tools/proto/parity.py --json             # machine-readable result
 
-For every vector of the profiles v0.1, fep-0001 ... fep-0005, the runner takes
+For every vector of the profiles v0.1, fep-0001 ... fep-0005 (and every file of the
+conformance kit, spec/conformance/kit/, P7-01), the runner takes
 the JSON objects that the vector holds in a JSON form (JSON Lines lines, LSL
 marker samples and nts_header, WebSocket NTS messages) and validates each one
 against spec/schemas/nts-v1.schema.json. The schema verdict of a vector is
@@ -37,6 +38,9 @@ REPO = HERE.parent.parent
 VECTORS = REPO / "spec" / "conformance"
 SCHEMA = REPO / "spec" / "schemas" / "nts-v1.schema.json"
 PROFILES = ("v0.1", "fep-0001", "fep-0002", "fep-0003", "fep-0004", "fep-0005")
+# P7-01: the conformance kit (spec/conformance/kit/<profile>/manifest.json). A kit entry carries its
+# reject class in the manifest ("schema_class"), so it needs no row in REJECT_CLASS.
+KIT = VECTORS / "kit"
 
 # Why a reject vector is (or is not) a schema verdict. Classes:
 #   schema      a rule on one JSON object that the schema expresses
@@ -48,7 +52,9 @@ PROFILES = ("v0.1", "fep-0001", "fep-0002", "fep-0003", "fep-0004", "fep-0005")
 #   parse       not JSON (GEN-2, LSL-X2, WS-F2): there is no object to validate
 #   binding     a transport rule of LSL or WebSocket (stream info, framing, sequence, auth)
 #   npz         an NPZ vector: not a JSON form
-CLASSES = ("schema", "cross-field", "arithmetic", "cross-line", "trust", "lexical", "parse", "binding", "npz")
+#   semconv     a semantic-convention value in meta (MET-7 ... MET-11): meta is a free object
+#               (google.protobuf.Struct); the registry (spec/semconv) and the validators check it
+CLASSES = ("schema", "cross-field", "arithmetic", "cross-line", "trust", "lexical", "parse", "binding", "npz", "semconv")
 REJECT_CLASS: dict[str, tuple[str, str]] = {
     # v0.1 (NPZ vectors are class npz automatically)
     "V36": ("schema", "DEC-2"), "V37": ("schema", "DEC-3"), "V39": ("cross-field", "TIM-4 order of 4 fields"),
@@ -271,11 +277,13 @@ def run(engine: str = "lite") -> dict[str, Any]:
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     validate = load_engine(engine, schema)
     rows: list[dict[str, Any]] = []
-    for prof in PROFILES:
-        man = json.loads((VECTORS / prof / "manifest.json").read_text(encoding="utf-8"))
+    sets = [(VECTORS, prof, False) for prof in PROFILES]
+    sets += [(KIT, prof, True) for prof in PROFILES if (KIT / prof / "manifest.json").is_file()]
+    for root, prof, is_kit in sets:
+        man = json.loads((root / prof / "manifest.json").read_text(encoding="utf-8"))
         for v in man["vectors"]:
-            vid, path = v["id"], VECTORS / prof / v["file"]
-            row: dict[str, Any] = {"profile": prof, "id": vid, "expect": v["expect"],
+            vid, path = v["id"], root / prof / v["file"]
+            row: dict[str, Any] = {"profile": prof, "id": vid, "kit": is_kit, "expect": v["expect"],
                                    "check": v.get("failing_check"), "description": v["description"]}
             fmt = v.get("format") or path.suffix.lstrip(".")
             if fmt == "npz":
@@ -296,6 +304,10 @@ def run(engine: str = "lite") -> dict[str, Any]:
             verdict = "reject" if errs else "accept"
             if v["expect"] == "accept":
                 cls, reason = "accept", ""
+            elif is_kit:
+                if v.get("schema_class") not in CLASSES:
+                    raise SystemExit(f"kit entry {vid} has no valid schema_class")
+                cls, reason = v["schema_class"], ", ".join(v.get("rules", []))
             else:
                 if vid not in REJECT_CLASS:
                     raise SystemExit(f"reject vector {vid} has no class in REJECT_CLASS")
@@ -306,11 +318,12 @@ def run(engine: str = "lite") -> dict[str, Any]:
             else:
                 row["result"] = "not compared"
             rows.append(row)
-    known = {r["id"] for r in rows}
+    known = {r["id"] for r in rows if not r["kit"]}
     stale = sorted(set(REJECT_CLASS) - known)
     summary = {
         "engine": engine,
-        "vectors": len(rows),
+        "vectors": sum(not r["kit"] for r in rows),
+        "kit_vectors": sum(r["kit"] for r in rows),
         "compared": sum(r["result"] in ("match", "MISMATCH") for r in rows),
         "match": sum(r["result"] == "match" for r in rows),
         "mismatch": sum(r["result"] == "MISMATCH" for r in rows),

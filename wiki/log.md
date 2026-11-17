@@ -1005,3 +1005,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Latency added per window p50 0.22-0.65 ms; per decision p50 1.4-2.5 ms. Quickstart sections 2-4: 107.5 s.
 - Tests `tests/test_live.py` (17); CI job `live` with [lsl,brainflow]. Full suite 1209 passed, 11 skipped.
 - Pages: roadmap (P4-02, P14-04 status; new items P4-10, P4-11, P14-11), [open gaps](questions/open-gaps.md) 16-18, [who uses Fidetype](questions/who-uses-fidetype.md) row 5, [LSL input](concepts/lsl-input.md), [BrainFlow](entities/brainflow.md); docs/README; tracker (fragments).
+
+## [2026-11-17] setup | P7-01 done: conformance kit + `nts-conform` CLI
+- New kit `spec/conformance/kit/`: 31 synthetic example files over every NTS 1.0 RC4 wire form (JSON Lines streams and decision logs for text / intent / control, NPZ, LSL and WebSocket captures). Verdict, rule ids and failing / warning checks per file; `kit.json` index; one vector-format `manifest.json` per profile; `rule-map.json` (check id -> rule ids from RC4 Appendix C.1).
+- New console script `nts-conform` (`check`: per-rule report with location, JSON report, exit 0/1/2, stdin; `kit`: reference run or an external validator via `--cmd` / `--impl` / `--verdicts`; `list`, `build`, `rules`). Code: `fidetype.conformance.kit`, `.rules`, `.nts_conform`.
+- Parity: Python = TypeScript = Rust on 31/31 kit files; schema parity 0 mismatches (new reject class `semconv`). Kit runs in `npm run ci`, `cargo test`, CI jobs `rust`, `typescript-parity`, `rust-parity`, `packaging`.
+- Pages: [docs/conformance.md](../docs/conformance.md) (kit section), [conformance suite](concepts/conformance-suite.md), [roadmap P7](questions/roadmap-standard.md#p7-conformance--certification), [open gaps](questions/open-gaps.md).
+- New gap 20 = P1-16: MET-11 has no Appendix C.1 row and no modality-match check.

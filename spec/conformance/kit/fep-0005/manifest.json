@@ -1,0 +1,63 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "1.0",
+ "profile": "fep-0005",
+ "fep": "FEP-0005",
+ "kit": "fidetype.conformance.kit/1",
+ "generator": "nts-conform build --out spec/conformance/kit",
+ "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C).",
+ "vectors": [
+  {
+   "id": "K23",
+   "file": "k23-control-stream.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "CTL-D1",
+    "CTL-D2",
+    "CTL-1",
+    "CTL-2",
+    "CTL-3",
+    "CTL-4",
+    "CTL-E1"
+   ],
+   "description": "Control stream: control_declaration, engage, two velocity ticks with std, disengage"
+  },
+  {
+   "id": "K24",
+   "file": "k24-control-dims.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "CTL-4"
+   ],
+   "description": "A control tick has three values for a 2-D declaration",
+   "failing_check": "FEP5-CONTROL",
+   "failing_checks": [
+    "FEP5-CONTROL"
+   ],
+   "schema_class": "cross-line"
+  },
+  {
+   "id": "K25",
+   "file": "k25-control-decision-log.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-decision-log",
+   "rules": [
+    "CTL-T1",
+    "CTL-T2",
+    "CTL-T3",
+    "CTL-T4",
+    "CTL-T5",
+    "CTL-S1"
+   ],
+   "description": "Control decision log: hold before engage, then one acting tick"
+  }
+ ]
+}

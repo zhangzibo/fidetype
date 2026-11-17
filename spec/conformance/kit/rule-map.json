@@ -1,0 +1,2099 @@
+{
+ "schema": "fidetype.conformance.rule-map/1",
+ "spec": "NTS 1.0 RC4 (draft)",
+ "source": "spec/nts-1.0-rc4.md Appendix C.1",
+ "generator": "nts-conform rules --write",
+ "checks": {
+  "FEP1-DECL": [
+   "DCL-1"
+  ],
+  "FEP1-EVIDENCE": [
+   "EVD-1",
+   "EVD-4"
+  ],
+  "FEP1-KIND": [
+   "TD-11"
+  ],
+  "FEP1-PARSE": [
+   "GEN-2"
+  ],
+  "FEP1-SCORE": [
+   "EVD-3"
+  ],
+  "FEP1-SEGMENT": [
+   "SEG-4",
+   "SEG-5",
+   "SEG-6"
+  ],
+  "FEP1-TD-FINAL": [
+   "TD-5",
+   "TD-6",
+   "TD-7"
+  ],
+  "FEP1-TD-FORMAT": [
+   "TD-F1",
+   "TD-F2",
+   "TD-F3",
+   "TD-8",
+   "TD-9",
+   "VER-1",
+   "VER-2",
+   "VER-3",
+   "VER-5"
+  ],
+  "FEP1-TD-INPUT": [
+   "TD-4"
+  ],
+  "FEP1-TD-SHOWN": [
+   "TD-12"
+  ],
+  "FEP2-BINDING": [
+   "LSL-C5",
+   "LSL-V1",
+   "VER-9"
+  ],
+  "FEP2-CONSUME": [
+   "GEN-8",
+   "HDR-13",
+   "LSL-F4",
+   "LSL-F5",
+   "LSL-F7",
+   "LSL-E2",
+   "LSL-E4",
+   "LSL-E3",
+   "LSL-E5",
+   "LSL-C2",
+   "LSL-C3",
+   "LSL-C4",
+   "LSL-C5",
+   "LSL-C6",
+   "LSL-G1",
+   "LSL-G2",
+   "LSL-G3"
+  ],
+  "FEP2-DECISIONS": [
+   "TD-6",
+   "LSL-X1",
+   "LSL-X2"
+  ],
+  "FEP2-DESC": [
+   "HDR-2",
+   "LSL-D1",
+   "LSL-D2",
+   "LSL-D3",
+   "VER-3",
+   "VER-5",
+   "VER-9"
+  ],
+  "FEP2-FRAMES": [
+   "LSL-F1",
+   "LSL-F2",
+   "LSL-F3",
+   "LSL-F6"
+  ],
+  "FEP2-MARKERS": [
+   "LSL-E1"
+  ],
+  "FEP3-DECL": [
+   "INT-D1",
+   "INT-D2",
+   "INT-D3",
+   "INT-D4"
+  ],
+  "FEP3-FEEDBACK": [
+   "INT-F1"
+  ],
+  "FEP3-INTENT": [
+   "PRF-3",
+   "INT-E1",
+   "INT-E2",
+   "INT-E3",
+   "INT-E4",
+   "INT-E5",
+   "INT-E7"
+  ],
+  "FEP3-PARSE": [
+   "GEN-2"
+  ],
+  "FEP3-SAFETY": [
+   "INT-S1",
+   "INT-S2",
+   "INT-S3",
+   "INT-S4",
+   "INT-S5"
+  ],
+  "FEP3-TD-FINAL": [
+   "TD-5",
+   "INT-T4",
+   "INT-T6"
+  ],
+  "FEP3-TD-FORMAT": [
+   "PRF-4",
+   "INT-T1",
+   "INT-T2",
+   "INT-T3",
+   "INT-T7",
+   "INT-T8"
+  ],
+  "FEP3-VOCAB": [
+   "INT-D5"
+  ],
+  "FEP4-AUTH": [
+   "WS-T1",
+   "WS-T2"
+  ],
+  "FEP4-CONSUME": [
+   "WS-F4",
+   "WS-M1",
+   "WS-M2",
+   "WS-M3",
+   "WS-S2",
+   "WS-A1",
+   "WS-K1",
+   "WS-K2"
+  ],
+  "FEP4-DECISIONS": [
+   "TD-6",
+   "WS-D1",
+   "WS-D2",
+   "WS-D3",
+   "WS-V1"
+  ],
+  "FEP4-FRAMING": [
+   "GEN-2",
+   "WS-F1",
+   "WS-F2",
+   "WS-F3",
+   "WS-Q1",
+   "WS-Q4"
+  ],
+  "FEP4-HANDSHAKE": [
+   "HDR-2",
+   "HDR-8",
+   "WS-H2",
+   "WS-S1",
+   "WS-V1",
+   "VER-3",
+   "VER-5",
+   "VER-9"
+  ],
+  "FEP4-ORDER": [
+   "WS-Q2",
+   "WS-Q3",
+   "WS-Q5"
+  ],
+  "FEP4-RESUME": [
+   "GEN-8",
+   "WS-R1",
+   "WS-R2"
+  ],
+  "FEP5-CONTROL": [
+   "TIM-4",
+   "CTL-1",
+   "CTL-2",
+   "CTL-3",
+   "CTL-4",
+   "CTL-12"
+  ],
+  "FEP5-DECL": [
+   "CTL-D1",
+   "CTL-D2",
+   "CTL-D3"
+  ],
+  "FEP5-ENABLE": [
+   "CTL-E1"
+  ],
+  "FEP5-PARSE": [
+   "GEN-2"
+  ],
+  "FEP5-SAFETY": [
+   "CTL-S1",
+   "CTL-S2",
+   "CTL-S3",
+   "CTL-S4",
+   "CTL-S5",
+   "CTL-S6",
+   "CTL-S7",
+   "VER-10"
+  ],
+  "FEP5-TD-FORMAT": [
+   "CTL-T1",
+   "CTL-T2",
+   "CTL-T3",
+   "CTL-T4",
+   "CTL-T8",
+   "CTL-T9"
+  ],
+  "FEP5-TD-ORDER": [
+   "TD-5",
+   "CTL-T5"
+  ],
+  "FEP5-V01-CORE": [
+   "CTL-D4"
+  ],
+  "NTS-BLANK": [
+   "HDR-6"
+  ],
+  "NTS-CLOCK": [
+   "HDR-11"
+  ],
+  "NTS-EVT-DECISION": [
+   "DEC-2",
+   "DEC-3",
+   "DEC-4",
+   "DEC-6"
+  ],
+  "NTS-EVT-HYPOTHESIS": [
+   "HYP-1",
+   "HYP-5"
+  ],
+  "NTS-EVT-POINTER": [
+   "DEC-6",
+   "PTR-1"
+  ],
+  "NTS-EVT-SIGNAL-QUALITY": [
+   "SQ-1"
+  ],
+  "NTS-EVT-TIMING": [
+   "TIM-4"
+  ],
+  "NTS-FRAME-PERIOD": [
+   "HDR-9"
+  ],
+  "NTS-FT-FINITE": [
+   "TIM-1"
+  ],
+  "NTS-FT-MONO": [
+   "FRM-6",
+   "TIM-2"
+  ],
+  "NTS-FT-SHAPE": [
+   "FRM-9"
+  ],
+  "NTS-JSONL-FRAME": [
+   "GEN-3",
+   "FRM-2"
+  ],
+  "NTS-JSONL-HEADER": [
+   "HDR-1"
+  ],
+  "NTS-LATENCY": [
+   "HDR-10"
+  ],
+  "NTS-LEAK-KEYS": [
+   "SEC-8"
+  ],
+  "NTS-LP-2D": [
+   "FRM-7"
+  ],
+  "NTS-LP-FINITE": [
+   "FRM-4"
+  ],
+  "NTS-META-JSON": [
+   "MET-2"
+  ],
+  "NTS-META-LOOKAHEAD": [
+   "MET-4"
+  ],
+  "NTS-META-OBJECT": [
+   "HDR-8"
+  ],
+  "NTS-META-TYPES": [
+   "MET-1",
+   "MET-7"
+  ],
+  "NTS-NAMESPACE": [
+   "MET-3"
+  ],
+  "NTS-NORM": [
+   "HDR-12",
+   "FRM-3"
+  ],
+  "NTS-NPZ-DTYPE": [
+   "FIL-5"
+  ],
+  "NTS-NPZ-KEYS": [
+   "FIL-2"
+  ],
+  "NTS-PARSE": [
+   "GEN-2",
+   "FIL-1"
+  ],
+  "NTS-PRIVACY": [
+   "SEC-3",
+   "SEC-5",
+   "SEC-6"
+  ],
+  "NTS-SOURCE": [
+   "HDR-7"
+  ],
+  "NTS-SPARSE": [
+   "FRM-3",
+   "FRM-5"
+  ],
+  "NTS-V-MATCH": [
+   "FRM-1",
+   "FRM-8"
+  ],
+  "NTS-VERSION": [
+   "HDR-2",
+   "VER-1",
+   "VER-3",
+   "VER-5"
+  ],
+  "NTS-VOCAB-ID": [
+   "HDR-15",
+   "HDR-16"
+  ],
+  "NTS-VOCAB-STR": [
+   "HDR-3"
+  ],
+  "NTS-VOCAB-TYPE": [
+   "HDR-5"
+  ],
+  "NTS-VOCAB-UNIQUE": [
+   "HDR-4"
+  ],
+  "PV-CALIB-ID": [
+   "DEC-5"
+  ],
+  "PV-PSEUDONYM": [
+   "SEC-4"
+  ],
+  "TR-CALIB": [
+   "MET-6",
+   "DEC-5"
+  ],
+  "TR-CAUSAL": [
+   "MET-5"
+  ],
+  "TR-DERIVED": [
+   "SEC-2"
+  ],
+  "TR-OFFLINE-LATENCY": [
+   "MET-5"
+  ]
+ },
+ "rules": {
+  "CNF-1": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "—"
+  },
+  "CTL-1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-CONTROL"
+   ],
+   "status": "T"
+  },
+  "CTL-12": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-CONTROL"
+   ],
+   "status": "T"
+  },
+  "CTL-2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-CONTROL"
+   ],
+   "status": "T"
+  },
+  "CTL-3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-CONTROL"
+   ],
+   "status": "T"
+  },
+  "CTL-4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-CONTROL"
+   ],
+   "status": "T"
+  },
+  "CTL-D1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-DECL"
+   ],
+   "status": "T"
+  },
+  "CTL-D2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-DECL"
+   ],
+   "status": "T"
+  },
+  "CTL-D3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-DECL"
+   ],
+   "status": "T"
+  },
+  "CTL-D4": {
+   "keyword": "—",
+   "checks": [
+    "FEP5-V01-CORE"
+   ],
+   "status": "P"
+  },
+  "CTL-E1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-ENABLE"
+   ],
+   "status": "T"
+  },
+  "CTL-E2": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "CTL-E3": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "CTL-S1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-SAFETY"
+   ],
+   "status": "T"
+  },
+  "CTL-S2": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP5-SAFETY"
+   ],
+   "status": "P (the gates need the input stream)"
+  },
+  "CTL-S3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-SAFETY"
+   ],
+   "status": "P (accel bound and \"no delay of a stop\" untested)"
+  },
+  "CTL-S4": {
+   "keyword": "MUST / SHOULD",
+   "checks": [
+    "FEP5-SAFETY"
+   ],
+   "status": "P"
+  },
+  "CTL-S5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-SAFETY"
+   ],
+   "status": "T"
+  },
+  "CTL-S6": {
+   "keyword": "SHOULD / MUST NOT",
+   "checks": [
+    "FEP5-SAFETY"
+   ],
+   "status": "P"
+  },
+  "CTL-S7": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP5-SAFETY"
+   ],
+   "status": "T"
+  },
+  "CTL-S8": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-10"
+  },
+  "CTL-T1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "CTL-T2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "CTL-T3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "CTL-T4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "CTL-T5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-TD-ORDER"
+   ],
+   "status": "T"
+  },
+  "CTL-T6": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-7"
+  },
+  "CTL-T7": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-8"
+  },
+  "CTL-T8": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP5-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "CTL-T9": {
+   "keyword": "MUST / SHOULD / MUST NOT",
+   "checks": [
+    "FEP5-TD-FORMAT"
+   ],
+   "status": "P"
+  },
+  "DCL-1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-DECL"
+   ],
+   "status": "T"
+  },
+  "DCL-2": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-8"
+  },
+  "DCL-3": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "P"
+  },
+  "DCL-4": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-6"
+  },
+  "DCL-5": {
+   "keyword": "MUST / SHOULD",
+   "checks": [],
+   "status": "G-9"
+  },
+  "DCL-6": {
+   "keyword": "MUST / SHOULD",
+   "checks": [],
+   "status": "G-9"
+  },
+  "DCL-7": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "DEC-1": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "DEC-2": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-DECISION"
+   ],
+   "status": "T"
+  },
+  "DEC-3": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-DECISION"
+   ],
+   "status": "T"
+  },
+  "DEC-4": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-DECISION"
+   ],
+   "status": "T"
+  },
+  "DEC-5": {
+   "keyword": "MUST NOT / SHOULD",
+   "checks": [
+    "TR-CALIB",
+    "PV-CALIB-ID"
+   ],
+   "status": "P"
+  },
+  "DEC-6": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-DECISION",
+    "NTS-EVT-POINTER"
+   ],
+   "status": "T"
+  },
+  "EVD-1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-EVIDENCE"
+   ],
+   "status": "T"
+  },
+  "EVD-2": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "EVD-3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-SCORE"
+   ],
+   "status": "T"
+  },
+  "EVD-4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-EVIDENCE"
+   ],
+   "status": "T"
+  },
+  "EXT-1": {
+   "keyword": "—",
+   "checks": [],
+   "status": "—"
+  },
+  "EXT-2": {
+   "keyword": "—",
+   "checks": [],
+   "status": "—"
+  },
+  "EXT-3": {
+   "keyword": "—",
+   "checks": [],
+   "status": "—"
+  },
+  "EXT-4": {
+   "keyword": "—",
+   "checks": [],
+   "status": "—"
+  },
+  "EXT-5": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": ""
+  },
+  "FEP-1": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "—"
+  },
+  "FIL-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-PARSE"
+   ],
+   "status": "T"
+  },
+  "FIL-2": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-NPZ-KEYS"
+   ],
+   "status": "T"
+  },
+  "FIL-3": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "FIL-4": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "FIL-5": {
+   "keyword": "SHOULD / MUST",
+   "checks": [
+    "NTS-NPZ-DTYPE"
+   ],
+   "status": "T"
+  },
+  "FIL-6": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-8"
+  },
+  "FRM-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-V-MATCH"
+   ],
+   "status": "T"
+  },
+  "FRM-2": {
+   "keyword": "—",
+   "checks": [
+    "NTS-JSONL-FRAME"
+   ],
+   "status": "T"
+  },
+  "FRM-3": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-NORM",
+    "NTS-SPARSE"
+   ],
+   "status": "T"
+  },
+  "FRM-4": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "NTS-LP-FINITE"
+   ],
+   "status": "T"
+  },
+  "FRM-5": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-SPARSE"
+   ],
+   "status": "P (dense spreading is consumer behaviour)"
+  },
+  "FRM-6": {
+   "keyword": "—",
+   "checks": [
+    "NTS-FT-MONO"
+   ],
+   "status": "T (via TIM-2)"
+  },
+  "FRM-7": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-LP-2D"
+   ],
+   "status": "P"
+  },
+  "FRM-8": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-V-MATCH"
+   ],
+   "status": "T"
+  },
+  "FRM-9": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-FT-SHAPE"
+   ],
+   "status": "P"
+  },
+  "GEN-1": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "GEN-10": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "GEN-11": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "GEN-2": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-PARSE",
+    "FEP1-PARSE",
+    "FEP3-PARSE",
+    "FEP5-PARSE",
+    "FEP4-FRAMING"
+   ],
+   "status": "T"
+  },
+  "GEN-3": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-JSONL-FRAME"
+   ],
+   "status": "T (accept)"
+  },
+  "GEN-4": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "GEN-5": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T (reject vectors; JSON Schema `integer` counts `1.0` as an integer, so only the validators check it)"
+  },
+  "GEN-6": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-7"
+  },
+  "GEN-7": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "P (second header: no vector)"
+  },
+  "GEN-8": {
+   "keyword": "MAY / MUST NOT",
+   "checks": [
+    "FEP2-CONSUME",
+    "FEP4-RESUME"
+   ],
+   "status": "T"
+  },
+  "GEN-9": {
+   "keyword": "MAY / MUST",
+   "checks": [],
+   "status": "P (no vector per field; SDK probes in the RC3 work)"
+  },
+  "HDR-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-JSONL-HEADER"
+   ],
+   "status": "T"
+  },
+  "HDR-10": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-LATENCY"
+   ],
+   "status": "T"
+  },
+  "HDR-11": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-CLOCK"
+   ],
+   "status": "T"
+  },
+  "HDR-12": {
+   "keyword": "MAY",
+   "checks": [
+    "NTS-NORM"
+   ],
+   "status": "T"
+  },
+  "HDR-13": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "HDR-14": {
+   "keyword": "—",
+   "checks": [],
+   "status": "P (advisory warning)"
+  },
+  "HDR-15": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VOCAB-ID"
+   ],
+   "status": "P"
+  },
+  "HDR-16": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VOCAB-ID"
+   ],
+   "status": "T"
+  },
+  "HDR-2": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VERSION",
+    "FEP2-DESC",
+    "FEP4-HANDSHAKE"
+   ],
+   "status": "T"
+  },
+  "HDR-3": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VOCAB-STR"
+   ],
+   "status": "P"
+  },
+  "HDR-4": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VOCAB-UNIQUE"
+   ],
+   "status": "T"
+  },
+  "HDR-5": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VOCAB-TYPE"
+   ],
+   "status": "T"
+  },
+  "HDR-6": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-BLANK"
+   ],
+   "status": "T"
+  },
+  "HDR-7": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-SOURCE"
+   ],
+   "status": "P"
+  },
+  "HDR-8": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-META-OBJECT",
+    "FEP4-HANDSHAKE"
+   ],
+   "status": "T (WebSocket); P (files)"
+  },
+  "HDR-9": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-FRAME-PERIOD"
+   ],
+   "status": "T"
+  },
+  "HYP-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-HYPOTHESIS"
+   ],
+   "status": "P (accept only)"
+  },
+  "HYP-2": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "P"
+  },
+  "HYP-3": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "P"
+  },
+  "HYP-4": {
+   "keyword": "—",
+   "checks": [],
+   "status": ""
+  },
+  "HYP-5": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-HYPOTHESIS"
+   ],
+   "status": "T"
+  },
+  "INT-D1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-DECL"
+   ],
+   "status": "T"
+  },
+  "INT-D2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-DECL"
+   ],
+   "status": "T"
+  },
+  "INT-D3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-DECL"
+   ],
+   "status": "T"
+  },
+  "INT-D4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-DECL"
+   ],
+   "status": "T"
+  },
+  "INT-D5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-VOCAB"
+   ],
+   "status": "T"
+  },
+  "INT-D6": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-8"
+  },
+  "INT-E1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-INTENT"
+   ],
+   "status": "T"
+  },
+  "INT-E2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-INTENT"
+   ],
+   "status": "T"
+  },
+  "INT-E3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-INTENT"
+   ],
+   "status": "T"
+  },
+  "INT-E4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-INTENT"
+   ],
+   "status": "T"
+  },
+  "INT-E5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-INTENT"
+   ],
+   "status": "T"
+  },
+  "INT-E6": {
+   "keyword": "—",
+   "checks": [],
+   "status": "P"
+  },
+  "INT-E7": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-INTENT"
+   ],
+   "status": "T"
+  },
+  "INT-F1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-FEEDBACK"
+   ],
+   "status": "T"
+  },
+  "INT-F2": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "INT-S1": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP3-SAFETY"
+   ],
+   "status": "T"
+  },
+  "INT-S10": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-10"
+  },
+  "INT-S2": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP3-SAFETY"
+   ],
+   "status": "T"
+  },
+  "INT-S3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-SAFETY"
+   ],
+   "status": "P (the fit method is not testable on a log)"
+  },
+  "INT-S4": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP3-SAFETY"
+   ],
+   "status": "T"
+  },
+  "INT-S5": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP3-SAFETY"
+   ],
+   "status": "T"
+  },
+  "INT-S6": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-5 (needs the input stream next to the log)"
+  },
+  "INT-S7": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-5"
+  },
+  "INT-S8": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-11"
+  },
+  "INT-S9": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-9"
+  },
+  "INT-T1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "INT-T2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "INT-T3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "INT-T4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-TD-FINAL"
+   ],
+   "status": "T"
+  },
+  "INT-T5": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "P"
+  },
+  "INT-T6": {
+   "keyword": "MAY / MUST",
+   "checks": [
+    "FEP3-TD-FINAL"
+   ],
+   "status": "T"
+  },
+  "INT-T7": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-TD-FORMAT"
+   ],
+   "status": "P (no reject vector)"
+  },
+  "INT-T8": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "LSL-C1": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-7 (producer behaviour)"
+  },
+  "LSL-C2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept); host-name rule G-6"
+  },
+  "LSL-C3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept); host-name rule G-6"
+  },
+  "LSL-C4": {
+   "keyword": "MAY",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-C5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-CONSUME",
+    "FEP2-BINDING"
+   ],
+   "status": "T"
+  },
+  "LSL-C6": {
+   "keyword": "—",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "P"
+  },
+  "LSL-D1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-DESC"
+   ],
+   "status": "T"
+  },
+  "LSL-D2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-DESC"
+   ],
+   "status": "T"
+  },
+  "LSL-D3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-DESC"
+   ],
+   "status": "T"
+  },
+  "LSL-D4": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "P"
+  },
+  "LSL-E1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-MARKERS"
+   ],
+   "status": "T"
+  },
+  "LSL-E2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-E3": {
+   "keyword": "MAY / MUST",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-E4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-E5": {
+   "keyword": "—",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "P"
+  },
+  "LSL-F1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-FRAMES"
+   ],
+   "status": "T"
+  },
+  "LSL-F2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-FRAMES"
+   ],
+   "status": "T"
+  },
+  "LSL-F3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-FRAMES"
+   ],
+   "status": "T"
+  },
+  "LSL-F4": {
+   "keyword": "MUST / SHOULD",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-F5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T"
+  },
+  "LSL-F6": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-FRAMES"
+   ],
+   "status": "T"
+  },
+  "LSL-F7": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-G1": {
+   "keyword": "—",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-G2": {
+   "keyword": "MUST NOT / MUST",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-G3": {
+   "keyword": "—",
+   "checks": [
+    "FEP2-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "LSL-N1": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-8"
+  },
+  "LSL-V1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-BINDING"
+   ],
+   "status": "T"
+  },
+  "LSL-X1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-DECISIONS"
+   ],
+   "status": "T"
+  },
+  "LSL-X2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-DECISIONS"
+   ],
+   "status": "T"
+  },
+  "LSL-X3": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "T"
+  },
+  "MET-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-META-TYPES"
+   ],
+   "status": "T"
+  },
+  "MET-10": {
+   "keyword": "—",
+   "checks": [],
+   "status": "T (tooling)"
+  },
+  "MET-2": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-META-JSON"
+   ],
+   "status": "T"
+  },
+  "MET-3": {
+   "keyword": "SHOULD",
+   "checks": [
+    "NTS-NAMESPACE"
+   ],
+   "status": "P (advisory warning)"
+  },
+  "MET-4": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-META-LOOKAHEAD"
+   ],
+   "status": "T"
+  },
+  "MET-5": {
+   "keyword": "SHOULD",
+   "checks": [
+    "TR-CAUSAL",
+    "TR-OFFLINE-LATENCY"
+   ],
+   "status": "P (level trust-ready)"
+  },
+  "MET-6": {
+   "keyword": "SHOULD / MUST NOT",
+   "checks": [
+    "TR-CALIB"
+   ],
+   "status": "P"
+  },
+  "MET-7": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "NTS-META-TYPES"
+   ],
+   "status": "P (no reject vector for `\"\"`; all three validators refuse it)"
+  },
+  "MET-8": {
+   "keyword": "MUST NOT / —",
+   "checks": [],
+   "status": "P (definitions; open lists are not checked)"
+  },
+  "MET-9": {
+   "keyword": "MUST NOT / —",
+   "checks": [],
+   "status": "P (definitions; open lists are not checked)"
+  },
+  "PRF-1": {
+   "keyword": "MAY",
+   "checks": [],
+   "status": "T (accept)"
+  },
+  "PRF-2": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "PRF-3": {
+   "keyword": "—",
+   "checks": [
+    "FEP3-INTENT"
+   ],
+   "status": "P"
+  },
+  "PRF-4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP3-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "PRF-5": {
+   "keyword": "— / SHOULD NOT",
+   "checks": [],
+   "status": "P (SDK behaviour; no vector)"
+  },
+  "PRV-1": {
+   "keyword": "SHOULD / MUST",
+   "checks": [],
+   "status": "G-10"
+  },
+  "PRV-2": {
+   "keyword": "SHOULD / MUST",
+   "checks": [],
+   "status": "G-10"
+  },
+  "PRV-3": {
+   "keyword": "SHOULD / MUST",
+   "checks": [],
+   "status": "G-10"
+  },
+  "PTR-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-POINTER"
+   ],
+   "status": "T"
+  },
+  "SEC-1": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "SEC-10": {
+   "keyword": "MUST / SHOULD",
+   "checks": [],
+   "status": ""
+  },
+  "SEC-2": {
+   "keyword": "SHOULD",
+   "checks": [
+    "TR-DERIVED"
+   ],
+   "status": "P"
+  },
+  "SEC-3": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "NTS-PRIVACY"
+   ],
+   "status": "P"
+  },
+  "SEC-4": {
+   "keyword": "MUST",
+   "checks": [
+    "PV-PSEUDONYM"
+   ],
+   "status": "P"
+  },
+  "SEC-5": {
+   "keyword": "MUST NOT / SHOULD NOT",
+   "checks": [
+    "NTS-PRIVACY"
+   ],
+   "status": "P"
+  },
+  "SEC-6": {
+   "keyword": "MUST NOT / SHOULD NOT",
+   "checks": [
+    "NTS-PRIVACY"
+   ],
+   "status": "P"
+  },
+  "SEC-7": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "P"
+  },
+  "SEC-8": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "NTS-LEAK-KEYS"
+   ],
+   "status": "P"
+  },
+  "SEC-9": {
+   "keyword": "MUST / SHOULD",
+   "checks": [],
+   "status": ""
+  },
+  "SEG-1": {
+   "keyword": "MAY / MUST",
+   "checks": [],
+   "status": "T (accept)"
+  },
+  "SEG-2": {
+   "keyword": "MAY / MUST",
+   "checks": [],
+   "status": "T (accept)"
+  },
+  "SEG-3": {
+   "keyword": "SHOULD NOT",
+   "checks": [],
+   "status": "P"
+  },
+  "SEG-4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-SEGMENT"
+   ],
+   "status": "T"
+  },
+  "SEG-5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-SEGMENT"
+   ],
+   "status": "T"
+  },
+  "SEG-6": {
+   "keyword": "MUST / MUST NOT",
+   "checks": [
+    "FEP1-SEGMENT"
+   ],
+   "status": "T (type; the content part is G-6)"
+  },
+  "SQ-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-SIGNAL-QUALITY"
+   ],
+   "status": "T"
+  },
+  "SQ-2": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "TD-1": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "T"
+  },
+  "TD-10": {
+   "keyword": "MAY",
+   "checks": [],
+   "status": "T (accept)"
+  },
+  "TD-11": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-KIND"
+   ],
+   "status": "T"
+  },
+  "TD-12": {
+   "keyword": "SHOULD NOT",
+   "checks": [
+    "FEP1-TD-SHOWN"
+   ],
+   "status": "T (accept with warning)"
+  },
+  "TD-13": {
+   "keyword": "SHOULD / MUST NOT",
+   "checks": [],
+   "status": "G-10 (audit data; only the object type is checked, TD-F2)"
+  },
+  "TD-2": {
+   "keyword": "—",
+   "checks": [],
+   "status": ""
+  },
+  "TD-3": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-7"
+  },
+  "TD-4": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP1-TD-INPUT"
+   ],
+   "status": "T"
+  },
+  "TD-5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-TD-FINAL",
+    "FEP3-TD-FINAL",
+    "FEP5-TD-ORDER"
+   ],
+   "status": "T"
+  },
+  "TD-6": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-TD-FINAL",
+    "FEP2-DECISIONS",
+    "FEP4-DECISIONS"
+   ],
+   "status": "T"
+  },
+  "TD-7": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP1-TD-FINAL"
+   ],
+   "status": "T"
+  },
+  "TD-8": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "TD-9": {
+   "keyword": "MUST NOT",
+   "checks": [
+    "FEP1-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "TD-F1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "TD-F2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "TD-F3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP1-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "TIM-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-FT-FINITE"
+   ],
+   "status": "P"
+  },
+  "TIM-2": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-FT-MONO"
+   ],
+   "status": "T"
+  },
+  "TIM-3": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-7"
+  },
+  "TIM-4": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-EVT-TIMING",
+    "FEP5-CONTROL"
+   ],
+   "status": "T"
+  },
+  "TIM-5": {
+   "keyword": "MAY",
+   "checks": [],
+   "status": "G-7"
+  },
+  "VER-1": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VERSION",
+    "FEP1-TD-FORMAT"
+   ],
+   "status": "P (accept side: a validator cannot require `\"1.0\"` from a producer that claims 0.1)"
+  },
+  "VER-10": {
+   "keyword": "MUST NOT / MUST",
+   "checks": [
+    "FEP5-SAFETY"
+   ],
+   "status": "T"
+  },
+  "VER-2": {
+   "keyword": "—",
+   "checks": [
+    "FEP1-TD-FORMAT"
+   ],
+   "status": "T"
+  },
+  "VER-3": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VERSION",
+    "FEP1-TD-FORMAT",
+    "FEP2-DESC",
+    "FEP4-HANDSHAKE"
+   ],
+   "status": "T"
+  },
+  "VER-4": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "VER-5": {
+   "keyword": "MUST",
+   "checks": [
+    "NTS-VERSION",
+    "FEP1-TD-FORMAT",
+    "FEP2-DESC",
+    "FEP4-HANDSHAKE"
+   ],
+   "status": "T"
+  },
+  "VER-6": {
+   "keyword": "— / MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "VER-7": {
+   "keyword": "— / MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "VER-8": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "T"
+  },
+  "VER-9": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP2-DESC",
+    "FEP2-BINDING",
+    "FEP4-HANDSHAKE"
+   ],
+   "status": "T (RC2 vectors)"
+  },
+  "WS-A1": {
+   "keyword": "—",
+   "checks": [
+    "FEP4-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-A2": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-7 (producer)"
+  },
+  "WS-A3": {
+   "keyword": "SHOULD / MUST NOT",
+   "checks": [],
+   "status": "G-7"
+  },
+  "WS-D1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-DECISIONS"
+   ],
+   "status": "T"
+  },
+  "WS-D2": {
+   "keyword": "—",
+   "checks": [
+    "FEP4-DECISIONS"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-D3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-DECISIONS"
+   ],
+   "status": "T"
+  },
+  "WS-D4": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-7"
+  },
+  "WS-F1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-FRAMING"
+   ],
+   "status": "T"
+  },
+  "WS-F2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-FRAMING"
+   ],
+   "status": "T"
+  },
+  "WS-F3": {
+   "keyword": "SHOULD / MAY",
+   "checks": [
+    "FEP4-FRAMING"
+   ],
+   "status": "P (message size untested)"
+  },
+  "WS-F4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-H1": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-7 (HTTP layer; vectors are sans-IO)"
+  },
+  "WS-H2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-HANDSHAKE"
+   ],
+   "status": "T"
+  },
+  "WS-H3": {
+   "keyword": "SHOULD",
+   "checks": [],
+   "status": "G-8"
+  },
+  "WS-K1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-CONSUME"
+   ],
+   "status": "P"
+  },
+  "WS-K2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-CONSUME"
+   ],
+   "status": "P"
+  },
+  "WS-K3": {
+   "keyword": "SHOULD NOT / MAY",
+   "checks": [],
+   "status": "G-7"
+  },
+  "WS-K4": {
+   "keyword": "SHOULD NOT / MAY",
+   "checks": [],
+   "status": "G-7"
+  },
+  "WS-M1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-CONSUME"
+   ],
+   "status": "P (WS-M2 no-forward untested)"
+  },
+  "WS-M2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-CONSUME"
+   ],
+   "status": "P (WS-M2 no-forward untested)"
+  },
+  "WS-M3": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-CONSUME"
+   ],
+   "status": "P (WS-M2 no-forward untested)"
+  },
+  "WS-Q1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-FRAMING"
+   ],
+   "status": "T"
+  },
+  "WS-Q2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-ORDER"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-Q3": {
+   "keyword": "—",
+   "checks": [
+    "FEP4-ORDER"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-Q4": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-FRAMING"
+   ],
+   "status": "T"
+  },
+  "WS-Q5": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-ORDER"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-R1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-RESUME"
+   ],
+   "status": "T"
+  },
+  "WS-R2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-RESUME"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-S1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-HANDSHAKE"
+   ],
+   "status": "T"
+  },
+  "WS-S2": {
+   "keyword": "MAY / SHOULD",
+   "checks": [
+    "FEP4-CONSUME"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-T1": {
+   "keyword": "MAY / SHOULD / MUST",
+   "checks": [
+    "FEP4-AUTH"
+   ],
+   "status": "T (accept)"
+  },
+  "WS-T2": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-AUTH"
+   ],
+   "status": "T"
+  },
+  "WS-T3": {
+   "keyword": "MUST NOT",
+   "checks": [],
+   "status": "G-6"
+  },
+  "WS-T4": {
+   "keyword": "MUST",
+   "checks": [],
+   "status": "G-7"
+  },
+  "WS-V1": {
+   "keyword": "MUST",
+   "checks": [
+    "FEP4-HANDSHAKE",
+    "FEP4-DECISIONS"
+   ],
+   "status": "T"
+  }
+ }
+}

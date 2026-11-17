@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as sdk from "../dist/index.js";
@@ -54,7 +54,9 @@ function eventsOfAccepted(profile) {
 
 test("schemas: every event of every accepted JSON Lines vector is valid", () => {
   let n = 0;
-  for (const p of readdirSync(conf)) {
+  // The profile folders, then the conformance kit (P7-01) folders.
+  const dirs = [...readdirSync(conf), ...readdirSync(join(conf, "kit")).map((p) => join("kit", p))];
+  for (const p of dirs.filter((d) => existsSync(join(conf, d, "manifest.json")))) {
     for (const [id, ev] of eventsOfAccepted(p)) {
       const errs = sdk.validateEventSchema(ev);
       assert.deepEqual(errs, [], `${p} ${id} ${ev.type}: ${JSON.stringify(errs)}`);
@@ -132,4 +134,18 @@ test("fep-0005: DecisionTracker accepts exactly the accept decision logs and act
       assert.ok(errs.length > 0, `${v.id}: the tracker found no error`);
     }
   }
+});
+
+test("the conformance kit (P7-01) gives the expected verdict on every entry", async () => {
+  const kit = join(conf, "kit");
+  const profiles = await node.listProfiles(kit);
+  assert.deepEqual(profiles, ["v0.1", "fep-0001", "fep-0002", "fep-0003", "fep-0004", "fep-0005"]);
+  let total = 0;
+  for (const p of profiles) {
+    const r = await node.runProfileDir(p, join(kit, p));
+    const bad = r.vectors.filter((v) => !v.ok).map((v) => `${v.id}: ${v.detail}`);
+    assert.deepEqual(bad, [], `kit ${p}: ${bad.join("; ")}`);
+    total += r.total;
+  }
+  assert.equal(total, 31);
 });

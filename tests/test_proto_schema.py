@@ -43,6 +43,7 @@ def test_parity_with_sdk_verdicts() -> None:
            for r in res["rows"] if r["result"] == "MISMATCH"]
     assert not bad, "\n".join(bad)
     assert s["vectors"] == 341
+    assert s["kit_vectors"] == 31  # P7-01 conformance kit (spec/conformance/kit/)
     assert s["stale_classes"] == []
     # A reject vector that the schema rejects is a schema vector: its class must say so.
     assert s["not_compared_but_schema_rejects"] == []

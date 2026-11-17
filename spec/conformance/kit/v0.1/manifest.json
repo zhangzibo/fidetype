@@ -1,0 +1,253 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "1.0",
+ "profile": "v0.1",
+ "fep": null,
+ "kit": "fidetype.conformance.kit/1",
+ "generator": "nts-conform build --out spec/conformance/kit",
+ "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C).",
+ "vectors": [
+  {
+   "id": "K01",
+   "file": "k01-text-stream.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "HDR-1",
+    "HDR-2",
+    "HDR-4",
+    "HDR-5",
+    "HDR-6",
+    "HDR-7",
+    "HDR-9",
+    "HDR-10",
+    "HDR-11",
+    "FRM-1",
+    "FRM-2",
+    "FRM-3",
+    "FRM-4",
+    "FRM-6",
+    "TIM-1",
+    "TIM-2",
+    "SQ-1",
+    "HYP-1",
+    "GEN-2",
+    "GEN-3",
+    "MET-1"
+   ],
+   "description": "A complete text stream: 1.0 header with provenance meta, six dense frames (one cell -inf as null), signal_quality, a final hypothesis, end"
+  },
+  {
+   "id": "K02",
+   "file": "k02-sparse-frames.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "FRM-2",
+    "FRM-3",
+    "FRM-5",
+    "GEN-3"
+   ],
+   "description": "Sparse frames: the top two tokens and the rest mass per frame"
+  },
+  {
+   "id": "K03",
+   "file": "k03-frames.npz",
+   "format": "npz",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "npz",
+   "rules": [
+    "FIL-1",
+    "FIL-2",
+    "FRM-1",
+    "FRM-3",
+    "FRM-6",
+    "HDR-2"
+   ],
+   "description": "The same six frames as NPZ (allow_pickle=False, table dtypes)"
+  },
+  {
+   "id": "K04",
+   "file": "k04-npz-float64.npz",
+   "format": "npz",
+   "expect": "accept",
+   "verdict": "accept-with-warnings",
+   "wire_form": "npz",
+   "rules": [
+    "FIL-5"
+   ],
+   "description": "NPZ with float64 log_probs: a reader accepts any real dtype; the writer SHOULD use float32 (warning)",
+   "warning_checks": [
+    "NTS-NPZ-DTYPE"
+   ]
+  },
+  {
+   "id": "K05",
+   "file": "k05-npz-pickled.npz",
+   "format": "npz",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "npz",
+   "rules": [
+    "FIL-1"
+   ],
+   "description": "NPZ whose vocab is a pickled object array: it does not load with allow_pickle=False",
+   "failing_check": "NTS-PARSE",
+   "failing_checks": [
+    "NTS-PARSE"
+   ],
+   "schema_class": "npz"
+  },
+  {
+   "id": "K06",
+   "file": "k06-header-not-first.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "HDR-1"
+   ],
+   "description": "A frame comes before the header",
+   "failing_check": "NTS-JSONL-HEADER",
+   "failing_checks": [
+    "NTS-JSONL-HEADER"
+   ],
+   "schema_class": "cross-line"
+  },
+  {
+   "id": "K07",
+   "file": "k07-short-frame.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "FRM-1"
+   ],
+   "description": "Frame 3 has four values for a five-token vocab",
+   "failing_check": "NTS-V-MATCH",
+   "failing_checks": [
+    "NTS-V-MATCH"
+   ],
+   "schema_class": "cross-line"
+  },
+  {
+   "id": "K08",
+   "file": "k08-unnormalised-frame.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "FRM-3"
+   ],
+   "description": "Frame 2 is not normalised (raw scores, not log_softmax output)",
+   "failing_check": "NTS-NORM",
+   "failing_checks": [
+    "NTS-NORM"
+   ],
+   "schema_class": "arithmetic"
+  },
+  {
+   "id": "K09",
+   "file": "k09-nan-token.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "GEN-2"
+   ],
+   "description": "A frame holds the token NaN: the line is not JSON",
+   "failing_check": "NTS-PARSE",
+   "failing_checks": [
+    "NTS-PARSE"
+   ],
+   "schema_class": "parse"
+  },
+  {
+   "id": "K10",
+   "file": "k10-forward-compatible.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "GEN-4",
+    "MET-3",
+    "HDR-2",
+    "VER-3"
+   ],
+   "description": "Header 1.3 (a newer minor version) with an unknown header key, a namespaced custom meta key, an unknown frame key and an unknown event type: a consumer ignores them"
+  },
+  {
+   "id": "K11",
+   "file": "k11-unknown-major.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "HDR-2",
+    "VER-5"
+   ],
+   "description": "Header spec_version \"2.0\": an unknown major version",
+   "failing_check": "NTS-VERSION",
+   "failing_checks": [
+    "NTS-VERSION"
+   ],
+   "schema_class": "schema"
+  },
+  {
+   "id": "K12",
+   "file": "k12-decision-pointer.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "DEC-2",
+    "DEC-3",
+    "DEC-4",
+    "PTR-1"
+   ],
+   "description": "A command stream with decision events (calibrated_prob) and a pointer event (the v0.1 control forms)"
+  },
+  {
+   "id": "K13",
+   "file": "k13-modality-keys.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "MET-1",
+    "MET-7"
+   ],
+   "description": "EMG modality keys from the semantic-convention registry (emg.placement, emg.derivation)"
+  },
+  {
+   "id": "K14",
+   "file": "k14-bad-weights-hash.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "MET-1"
+   ],
+   "description": "decoder.weights_sha256 is not 64 lowercase hex digits",
+   "failing_check": "NTS-META-TYPES",
+   "failing_checks": [
+    "NTS-META-TYPES"
+   ],
+   "schema_class": "semconv"
+  }
+ ]
+}

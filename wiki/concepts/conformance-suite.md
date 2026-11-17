@@ -3,7 +3,7 @@ title: NeuralTextStream conformance suite
 type: concept
 tags: [spec, neuraltextstream, conformance, testing, standard, adapters, provenance]
 sources: [brain-to-text-25-copytask, toronto-semg-typing]
-updated: 2026-11-14
+updated: 2026-11-17
 ---
 
 # NeuralTextStream conformance suite
@@ -115,6 +115,24 @@ fidetype conformance list --profile fep-0002
 ```
 
 Code: `src/fidetype/conformance/profiles/` (`fep0001.py`, `fep0002.py`). Tests: `tests/test_fep_profiles.py`.
+
+## Conformance kit and `nts-conform` (P7-01)
+Roadmap task P7-01 (2026-11-17) adds a short entry point on top of the suite. It reuses the checks, the profile consumers and the vector manifest format. It adds no new check.
+
+| Part | What it is |
+|---|---|
+| Kit | `spec/conformance/kit/`: 31 example files over every wire form of [NTS 1.0 RC4](../../spec/nts-1.0-rc4.md): JSON Lines input streams (dense, sparse, `meta` keys, events, text / intent / control), NPZ, decision logs (text, intent, control), LSL captures (frames + events, decisions), WebSocket captures (`/nts`, `/decisions`). Verdicts: 14 accept, 1 accept-with-warnings, 16 reject. Each entry lists the rule ids that it exercises and the checks that must fail or warn. |
+| `nts-conform check` | Finds the wire form, runs every profile that applies, prints one line per finding: outcome, rule ids, check id, location, message. JSON report `fidetype.nts-conform.report/1`; exit 0 / 1 / 2; stdin for a live capture. |
+| `nts-conform kit` | The reference run (consumer verdict and producer check both match), or an external validator (`--cmd`, `--impl`, `--verdicts`) checked against the kit. |
+| Rule map | `rule-map.json`: check id -> rule ids, generated from RC4 Appendix C.1. A check that tests several rules lists them all; a message that names one rule narrows the list. |
+
+Parity: Python = TypeScript = Rust on all 31 kit files (`cross-check.mjs --vectors spec/conformance/kit --rust`); the generated JSON Schema gives the SDK verdict on every kit file that it can judge (`tools/proto/parity.py`, new reject class `semconv`). Binary protobuf has no kit file, because it is not a wire form in RC4.
+
+The rule map found one traceability gap: MET-11 (RC4 amendment 1) has no C.1 row, and its modality match has no check. It is [open gap 20](../questions/open-gaps.md) (P1-16).
+
+> **Our take:** the kit is the first thing that an outside implementer runs; the golden vectors are the full regression set. Levels per class (P7-02) can reuse the per-rule report: a level is a set of rule ids that must have no finding.
+
+How to run it: [docs/conformance.md](../../docs/conformance.md).
 
 ## Limits
 - Leakage (5.3) and privacy (5.4) checks are heuristics. They find clear signs (a `target_text` key, an e-mail address). They cannot prove that a stream is clean. With `--truth`, the suite also searches the header for the real truth texts.

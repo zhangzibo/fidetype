@@ -114,6 +114,8 @@ jobs:
           npm ci --no-audit --no-fund
           npm run build
           FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" npm run cross-check
+          # P7-01: the same verdicts on the conformance kit
+          FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" node scripts/cross-check.mjs --vectors ../../spec/conformance/kit
           # M7-11: --n 30 at 3 seeds (about 12,000 mutants); --n 10 at one seed missed 4 TypeScript gaps.
           for s in 1 2 3; do FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" node scripts/fuzz-parity.mjs --n 30 --seed $s || exit 1; done
 
@@ -141,6 +143,7 @@ jobs:
       - run: cargo test --locked
       - run: cargo build --locked --no-default-features --lib --target thumbv7em-none-eabihf
       - run: cargo run --locked --release --bin fidetype-rs -- conformance
+      - run: cargo run --locked --release --bin fidetype-rs -- conformance --vectors ../../spec/conformance/kit
 
   # Python, TypeScript and Rust must give the same verdict on every golden vector and on the fuzz mutants.
   rust-parity:
@@ -175,6 +178,7 @@ jobs:
           export FIDETYPE_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python"
           export FIDETYPE_RUST_BIN="$GITHUB_WORKSPACE/sdk/rust/target/release/fidetype-rs"
           node scripts/cross-check.mjs
+          node scripts/cross-check.mjs --vectors ../../spec/conformance/kit  # P7-01 conformance kit
           for s in 1 2 3; do node scripts/fuzz-parity.mjs --n 30 --seed $s || exit 1; done
 
   # P2 packaging guard (docs/RELEASING.md section 6): build every SDK package and run the registry
@@ -200,7 +204,8 @@ jobs:
           bad = [n for n in whl if re.search(r"(\.(pt|ckpt|npy|fif|edf|bdf|mat|h5|hdf5|pyc)$)|__pycache__|^tests/|/data/raw", n)]
           assert not bad, f"forbidden files in the wheel: {bad[:10]}"
           for need in ["fidetype/py.typed", "fidetype/_spec/conformance/fep-0001/manifest.json",
-                       "fidetype/_spec/conformance/v0.1/manifest.json"]:
+                       "fidetype/_spec/conformance/v0.1/manifest.json", "fidetype/_spec/conformance/kit/kit.json",
+                       "fidetype/_spec/conformance/kit/rule-map.json"]:
               assert need in whl, f"missing in the wheel: {need}"
           sd = [m.name.split("/", 1)[1] for m in tarfile.open(glob.glob(f"{d}/*.tar.gz")[0]).getmembers() if "/" in m.name]
           tops = {n.split("/")[0] for n in sd}
@@ -218,6 +223,7 @@ jobs:
           v/bin/fidetype version
           v/bin/fidetype conformance --profile fep-0001
           v/bin/fidetype conformance consumer
+          v/bin/nts-conform kit
           v/bin/fidetype-collector --help
       - uses: actions/setup-node@v6
         with:

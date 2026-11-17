@@ -17,7 +17,7 @@ The sections follow the plan for the future documentation site ([docs site plan]
 | SDKs | [sdks.md](sdks.md) | The three reference SDKs side by side, and the Python SDK guide |
 | SDKs (per language) | [TypeScript](../sdk/typescript/README.md), [Rust](../sdk/rust/README.md) | Full guides of the other two SDKs |
 | Collector | [collector.md](collector.md) | Run the Collector: receivers, processors, exporters, configuration |
-| Conformance | [conformance.md](conformance.md) | Check a producer or a consumer; profiles and golden vectors |
+| Conformance | [conformance.md](conformance.md) | The conformance kit (31 example files, one per wire form) and `nts-conform`: per-rule report on your files, and your validator checked against the kit; profiles and golden vectors |
 | Semantic conventions | [semconv.md](semconv.md) | The registry of standard key names (`meta`, `trust_decision` objects): types, units, requirement levels, stability |
 | Benchmark | [../benchmark/README.md](../benchmark/README.md) | Score neural text entry on public datasets; submit a result |
 | Benchmark tracks | [benchmark-tracks.md](benchmark-tracks.md) | The seven tracks (intracortical speech and handwriting, sEMG, MEG), licence-clean fixed splits (hashes only), verify your dataset copy |

@@ -1,0 +1,6 @@
+{"type": "header", "spec_version": "1.0", "vocab": ["control"], "vocab_type": "command", "blank_id": null, "source": "kit-decoder", "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial", "meta": {"device.modality": "emg", "decoder.name": "kit-decoder", "decoder.version": "1.0.0", "decoder.causal": true, "decoder.weights_sha256": "5d41402abc4b2a76b9719d911017c592aaf4d2b2c1f3e5a6978877665544332f", "adapter.name": "kit-adapter", "adapter.version": "1.0.0", "stream.id": "kit-stream-0001", "calibration.applied": false, "data.derived": true, "language": "en"}, "control_declaration": {"dims": 2, "quantity": "velocity", "units": "mm/s", "frame": "workspace", "rate_hz": 50.0, "uncertainty": "std", "axes": ["x", "y"], "max_speed": 400.0, "latency_s": 0.1, "window_s": 0.2}}
+{"type": "control_enable", "t": 0.0, "enabled": true, "source": "switch"}
+{"type": "control", "t": 0.02, "tick": 0, "values": [40.0, -12.5], "std": [15.0, 15.0]}
+{"type": "control", "t": 0.04, "tick": 1, "values": [55.0, -20.0], "std": [15.0, 15.0]}
+{"type": "control_enable", "t": 0.05, "enabled": false, "source": "switch", "reason": "user switch"}
+{"type": "end"}

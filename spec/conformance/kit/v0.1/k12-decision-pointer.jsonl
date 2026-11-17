@@ -1,0 +1,5 @@
+{"type": "header", "spec_version": "1.0", "vocab": ["rest", "select", "next"], "vocab_type": "command", "blank_id": null, "source": "kit-decoder", "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial", "meta": {"device.modality": "emg", "decoder.name": "kit-decoder", "decoder.version": "1.0.0", "decoder.causal": true, "decoder.weights_sha256": "5d41402abc4b2a76b9719d911017c592aaf4d2b2c1f3e5a6978877665544332f", "adapter.name": "kit-adapter", "adapter.version": "1.0.0", "stream.id": "kit-stream-0001", "calibration.applied": false, "data.derived": true, "language": "en"}}
+{"type": "frame", "t": 0.0, "log_probs": [-0.3567, -1.6094, -2.3026]}
+{"type": "decision", "t": 0.04, "label": "select", "score": 0.82, "score_semantics": "calibrated_prob"}
+{"type": "pointer", "t": 0.04, "dims": 2, "mode": "absolute", "values": [0.5, 0.25]}
+{"type": "end"}

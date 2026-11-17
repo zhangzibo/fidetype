@@ -128,3 +128,17 @@ fn fep0005_decision_tracker_matches_the_decision_log_vectors() {
     }
     assert!(n >= 21);
 }
+
+/// P7-01: the conformance kit (spec/conformance/kit/<profile>/manifest.json) gives the expected verdict.
+#[test]
+fn conformance_kit() {
+    let kit = vectors().join("kit");
+    let counts = [("v0.1", 14), ("fep-0001", 4), ("fep-0002", 3), ("fep-0003", 4), ("fep-0004", 3), ("fep-0005", 3)];
+    assert_eq!(io::list_profiles(&kit), counts.iter().map(|c| c.0).collect::<Vec<_>>());
+    for (profile, n) in counts {
+        let r = io::run_profile_dir(profile, kit.join(profile)).unwrap();
+        let fails: Vec<_> = r.vectors.iter().filter(|o| !o.ok).map(|o| format!("{} {} {}", o.id, o.actual, o.detail)).collect();
+        assert!(fails.is_empty(), "kit {}: {:#?}", profile, fails);
+        assert_eq!(r.total, n, "kit {}: entry count changed", profile);
+    }
+}

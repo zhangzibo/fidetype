@@ -1,0 +1,59 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "1.0",
+ "profile": "fep-0004",
+ "fep": "FEP-0004",
+ "kit": "fidetype.conformance.kit/1",
+ "generator": "nts-conform build --out spec/conformance/kit",
+ "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C).",
+ "vectors": [
+  {
+   "id": "K29",
+   "file": "k29-ws-session.json",
+   "format": "json",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "ws-capture",
+   "rules": [
+    "WS-H2",
+    "WS-S1",
+    "WS-Q1",
+    "WS-Q2",
+    "WS-F1",
+    "WS-V1"
+   ],
+   "description": "WebSocket /nts session: subprotocol nts-ws.0.1, header, six frames and segment_end with ws_seq 1-8, clean close"
+  },
+  {
+   "id": "K30",
+   "file": "k30-ws-first-not-header.json",
+   "format": "json",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "ws-capture",
+   "rules": [
+    "WS-S1"
+   ],
+   "description": "The first WebSocket message is a frame, not the header",
+   "failing_check": "FEP4-HANDSHAKE",
+   "failing_checks": [
+    "FEP4-HANDSHAKE"
+   ],
+   "schema_class": "cross-line"
+  },
+  {
+   "id": "K31",
+   "file": "k31-ws-decisions.json",
+   "format": "json",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "ws-decisions-capture",
+   "rules": [
+    "WS-D1",
+    "WS-D2",
+    "TD-6"
+   ],
+   "description": "WebSocket /decisions channel: welcome, a provisional OFFER, a final COMMIT"
+  }
+ ]
+}

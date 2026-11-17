@@ -1,0 +1,101 @@
+{
+ "schema": "fidetype.conformance.lsl-scenario/1",
+ "kind": "inlet",
+ "fep": "FEP-0002",
+ "description": "kit LSL capture",
+ "route": "frames",
+ "inlets": {
+  "primary": {
+   "info_xml": "<info><name>acme.nts</name><type>NTS</type><channel_count>5</channel_count><channel_format>float32</channel_format><source_id>acme-1</source_id><nominal_srate>25.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1</uid><hostname /><desc><channels><channel><label>&lt;blank&gt;</label><unit>log_prob</unit></channel><channel><label>a</label><unit>log_prob</unit></channel><channel><label>b</label><unit>log_prob</unit></channel><channel><label>c</label><unit>log_prob</unit></channel><channel><label> </label><unit>log_prob</unit></channel></channels><fidetype><nts_header>{\"spec_version\": \"1.0\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"kit-decoder\", \"frame_period\": 0.04, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"emg\", \"decoder.name\": \"kit-decoder\", \"decoder.version\": \"1.0.0\", \"decoder.causal\": true, \"decoder.weights_sha256\": \"5d41402abc4b2a76b9719d911017c592aaf4d2b2c1f3e5a6978877665544332f\", \"adapter.name\": \"kit-adapter\", \"adapter.version\": \"1.0.0\", \"stream.id\": \"kit-stream-0001\", \"calibration.applied\": false, \"data.derived\": true, \"language\": \"en\"}}</nts_header><values>log_probs</values><role>nts_frames</role><binding>nts-lsl/0.1</binding><events_source_id>acme-1.events</events_source_id></fidetype></desc></info>",
+   "time_correction": 0.1,
+   "chunks": [
+    {
+     "samples": [
+      [
+       -0.22310000658035278,
+       -2.3025999069213867,
+       -3.218899965286255,
+       -3.5065999031066895,
+       -3.5065999031066895
+      ],
+      [
+       -2.3025999069213867,
+       -0.28769999742507935,
+       -2.995699882507324,
+       -2.995699882507324,
+       -2.995699882507324
+      ],
+      [
+       -0.16249999403953552,
+       -2.995699882507324,
+       -3.218899965286255,
+       -3.5065999031066895,
+       -3.5065999031066895
+      ]
+     ],
+     "timestamps": [
+      500.0,
+      500.04,
+      500.08
+     ]
+    },
+    {
+     "samples": [
+      [
+       -2.995699882507324,
+       -2.995699882507324,
+       -0.22310000658035278,
+       -2.995699882507324,
+       -2.995699882507324
+      ],
+      [
+       -0.35670000314712524,
+       -2.3025999069213867,
+       -2.3025999069213867,
+       -2.995699882507324,
+       -2.995699882507324
+      ],
+      [
+       -2.8134000301361084,
+       -3.218899965286255,
+       -3.218899965286255,
+       -2.8134000301361084,
+       -0.22310000658035278
+      ]
+     ],
+     "timestamps": [
+      500.12,
+      500.16,
+      500.2
+     ]
+    }
+   ]
+  },
+  "events": {
+   "info_xml": "<info><name>acme.nts.events</name><type>Markers</type><channel_count>1</channel_count><channel_format>string</channel_format><source_id>acme-1.events</source_id><nominal_srate>0.0</nominal_srate><created_at>0.0</created_at><uid>uid-acme-1.events</uid><hostname /><desc><fidetype><nts_header>{\"spec_version\": \"1.0\", \"vocab\": [\"&lt;blank&gt;\", \"a\", \"b\", \"c\", \" \"], \"vocab_type\": \"char\", \"blank_id\": 0, \"source\": \"kit-decoder\", \"frame_period\": 0.04, \"latency\": 0.0, \"clock_domain\": \"trial\", \"meta\": {\"device.modality\": \"emg\", \"decoder.name\": \"kit-decoder\", \"decoder.version\": \"1.0.0\", \"decoder.causal\": true, \"decoder.weights_sha256\": \"5d41402abc4b2a76b9719d911017c592aaf4d2b2c1f3e5a6978877665544332f\", \"adapter.name\": \"kit-adapter\", \"adapter.version\": \"1.0.0\", \"stream.id\": \"kit-stream-0001\", \"calibration.applied\": false, \"data.derived\": true, \"language\": \"en\"}}</nts_header><role>nts_events</role><binding>nts-lsl/0.1</binding><frames_source_id>acme-1</frames_source_id><event_clock>lsl</event_clock></fidetype></desc></info>",
+   "time_correction": 0.1,
+   "chunks": [
+    {
+     "samples": [
+      [
+       "{\"type\": \"segment_end\", \"t\": 500.21}"
+      ]
+     ],
+     "timestamps": [
+      500.21
+     ]
+    },
+    {
+     "samples": [
+      [
+       "{\"type\": \"end\"}"
+      ]
+     ],
+     "timestamps": [
+      500.21999999999997
+     ]
+    }
+   ]
+  }
+ }
+}

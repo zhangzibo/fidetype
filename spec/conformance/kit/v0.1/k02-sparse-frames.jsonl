@@ -1,0 +1,8 @@
+{"type": "header", "spec_version": "1.0", "vocab": ["<blank>", "a", "b", "c", " "], "vocab_type": "char", "blank_id": 0, "source": "kit-decoder", "frame_period": 0.04, "latency": 0.0, "clock_domain": "trial", "meta": {"device.modality": "emg", "decoder.name": "kit-decoder", "decoder.version": "1.0.0", "decoder.causal": true, "decoder.weights_sha256": "5d41402abc4b2a76b9719d911017c592aaf4d2b2c1f3e5a6978877665544332f", "adapter.name": "kit-adapter", "adapter.version": "1.0.0", "stream.id": "kit-stream-0001", "calibration.applied": false, "data.derived": true, "language": "en"}}
+{"type": "frame", "t": 0.0, "top_ids": [0, 1], "top_log_probs": [-0.223144, -2.302585], "rest_log_prob": -2.302585}
+{"type": "frame", "t": 0.04, "top_ids": [1, 0], "top_log_probs": [-0.287682, -2.302585], "rest_log_prob": -1.89712}
+{"type": "frame", "t": 0.08, "top_ids": [0, 1], "top_log_probs": [-0.162519, -2.995732], "rest_log_prob": -2.302585}
+{"type": "frame", "t": 0.12, "top_ids": [2, 0], "top_log_probs": [-0.223144, -2.995732], "rest_log_prob": -1.89712}
+{"type": "frame", "t": 0.16, "top_ids": [0, 1], "top_log_probs": [-0.356675, -2.302585], "rest_log_prob": -1.609438}
+{"type": "frame", "t": 0.2, "top_ids": [4, 0], "top_log_probs": [-0.223144, -2.813411], "rest_log_prob": -1.966113}
+{"type": "end"}

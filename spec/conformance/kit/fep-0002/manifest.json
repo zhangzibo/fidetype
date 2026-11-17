@@ -1,0 +1,62 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "1.0",
+ "profile": "fep-0002",
+ "fep": "FEP-0002",
+ "kit": "fidetype.conformance.kit/1",
+ "generator": "nts-conform build --out spec/conformance/kit",
+ "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C).",
+ "vectors": [
+  {
+   "id": "K26",
+   "file": "k26-lsl-capture.json",
+   "format": "json",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "lsl-capture",
+   "rules": [
+    "LSL-F1",
+    "LSL-F2",
+    "LSL-F3",
+    "LSL-D1",
+    "LSL-D2",
+    "LSL-E1",
+    "LSL-C2",
+    "LSL-V1"
+   ],
+   "description": "LSL capture: a float32 NTS frames stream (5 channels) and its Markers events stream, receiver clock"
+  },
+  {
+   "id": "K27",
+   "file": "k27-lsl-channel-count.json",
+   "format": "json",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "lsl-capture",
+   "rules": [
+    "LSL-F2"
+   ],
+   "description": "LSL frames stream with 4 channels for a 5-token vocab",
+   "failing_check": "FEP2-CONSUME",
+   "failing_checks": [
+    "FEP2-CONSUME",
+    "FEP2-FRAMES"
+   ],
+   "schema_class": "binding"
+  },
+  {
+   "id": "K28",
+   "file": "k28-lsl-decisions.json",
+   "format": "json",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "lsl-decisions-capture",
+   "rules": [
+    "LSL-X1",
+    "LSL-X2",
+    "TD-6"
+   ],
+   "description": "LSL fidetype.decisions stream: a provisional OFFER, then a final COMMIT"
+  }
+ ]
+}

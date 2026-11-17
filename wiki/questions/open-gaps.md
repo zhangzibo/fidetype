@@ -3,7 +3,7 @@ title: Open gaps (registered as roadmap items)
 type: question
 tags: [planning, roadmap, gaps, trust, benchmark, spec]
 sources: []
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # Open gaps (registered as roadmap items)
@@ -32,6 +32,7 @@ updated: 2026-11-16
 | 16 | [P4-10](roadmap-standard.md#p4-10-live-key-onset-detector-for-emg-no-oracle-key-markers) | Live key-onset detector for EMG (no oracle key markers) | `todo` | P4-02, P14-04 | P14-04; KT-sEMG / emg2qwerty; P11-01 | P14-04 (2026-11-16): `markers` timing needs onset markers; the KT-sEMG replay takes them from the key log. |
 | 17 | [P4-11](roadmap-standard.md#p4-11-reconnect-in-fidetype-live---source-lsl) | Reconnect in `fidetype live --source lsl` | `todo` | P4-02, P14-04 | P14-04; M6-14 / M6-16 reconnect code | P14-04 (2026-11-16): a lost LSL stream ends the run. |
 | 18 | [P14-11](roadmap-standard.md#p14-11-ci-lsl-replay-of-a-public-recording) | CI: LSL replay of a public recording | `todo` | P14-04 | P14-04 | P14-04 (2026-11-16): CI replays a synthetic recording; recordings cannot be committed. |
+| 20 | [P1-16](roadmap-standard.md#p1-16-met-11-traceability-row-in-appendix-c1-and-an-advisory-modality-match-check) | MET-11: traceability row in Appendix C.1 and an advisory modality-match check | `todo` | P1-04, P7-01 | P1-04, P7-01 | P7-01 (2026-11-17): of 267 rule ids in RC4, only MET-11 has no C.1 row; the modality match of MET-11 is not checked. |
 
 ## Closed gaps
 | Gap | Item | How it closed |

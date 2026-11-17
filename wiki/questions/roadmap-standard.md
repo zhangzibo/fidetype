@@ -193,6 +193,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** Commit `de2f242` (FEP-0009: `eeg` and `fnirs` stay planned, SC-9).
 - **Done when:** A FEP defines `eeg.*` and / or `fnirs.*` keys from the evidence of a real producer (a public dataset adapter or a device adapter that fills them). The registry, the three SDK validators, the vectors and the `semconv` CI check include them. Externally blocked until such a dataset or adapter exists.
 
+#### P1-16 MET-11: traceability row in Appendix C.1 and an advisory modality-match check
+- **Gap:** 20 of the [open-gap list](open-gaps.md). Follow-up of P1-04, P7-01.
+- **Status:** `todo`.
+- **Depends on:** P1-04 (FEP-0009, RC4 amendment 1), P7-01 (`rule-map.json`, test `test_every_defined_rule_has_a_traceability_row`).
+- **Source:** P7-01 (2026-11-17): `nts-conform` maps checks to rule ids from RC4 Appendix C.1. Of the 267 rule ids that the RC4 text defines, only MET-11 (amendment 1) has no C.1 row. The spec text says that the validators check the types of the modality keys but not the modality match ("a producer SHOULD NOT write the keys of another modality").
+- **Done when:** The next spec draft (or an editorial amendment of RC4) adds a C.1 row for MET-11 (checks, vectors, status). The Python, TypeScript and Rust validators have an advisory check (a warning, never a level block) for a modality key that does not match `device.modality`, with accept-with-warning vectors in all three SDKs (parity passes). `KNOWN_UNTRACED` in `tests/test_nts_conform.py` is empty and `spec/conformance/kit/rule-map.json` is rebuilt (`nts-conform rules --write`).
+
 ## P2. Reference SDKs
 **Goal:** any decoder or app can emit and read NTS in its own language, with the same behaviour everywhere.
 
@@ -398,6 +405,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 ## P7. Conformance + certification
 **Goal:** anyone can prove that an implementation speaks NTS correctly.
+
+**Status (2026-11-17):** P7-01 `done`: conformance kit `spec/conformance/kit/` (31 example files over every RC4 wire form: JSON Lines streams and decision logs, NPZ, LSL and WebSocket captures; verdict + rule ids per file) and the `nts-conform` CLI (per-rule report with location, JSON report, exit codes; kit mode checks an external validator's verdicts). Python = TypeScript = Rust on all 31 files; schema parity 0 mismatches. [Docs](../../docs/conformance.md), [concept](../concepts/conformance-suite.md#conformance-kit-and-nts-conform-p7-01). Levels (P7-02) and the certification list stay open. New gap 20 = P1-16 (MET-11 traceability).
 
 ### Deliverables
 - **Conformance kit:** valid and invalid example files in each wire form (start from cases C1–C20 of [spec 7.1](../../spec/neuraltextstream-v0.1.md#71-conformance-cases)); a test runner CLI (`nts-conform`) for producers, consumers and collector components.

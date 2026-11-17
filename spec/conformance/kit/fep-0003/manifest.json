@@ -1,0 +1,82 @@
+{
+ "schema": "fidetype.conformance.vectors/1",
+ "spec_version": "1.0",
+ "profile": "fep-0003",
+ "fep": "FEP-0003",
+ "kit": "fidetype.conformance.kit/1",
+ "generator": "nts-conform build --out spec/conformance/kit",
+ "how_to_use": "NTS conformance kit (P7-01). Each entry is one file with an expected verdict. A conforming consumer accepts the files with expect = accept and rejects the others. A producer-side validator (nts-conform check) reports no failed check for verdict accept, only the listed warning checks for accept-with-warnings, and at least the listed failing checks for reject. 'rules' are the NTS 1.0 RC4 rule ids that the file exercises (spec Appendix C).",
+ "vectors": [
+  {
+   "id": "K19",
+   "file": "k19-intent-stream.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "INT-D1",
+    "INT-D2",
+    "INT-D3",
+    "INT-D4",
+    "INT-D5",
+    "INT-E1",
+    "INT-E2",
+    "INT-E3",
+    "INT-E4",
+    "PRF-3"
+   ],
+   "description": "Intent stream: intent_declaration in the header, two final intent events"
+  },
+  {
+   "id": "K20",
+   "file": "k20-intent-undeclared.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-stream",
+   "rules": [
+    "INT-E2"
+   ],
+   "description": "An intent event names an intent that the declaration does not list",
+   "failing_check": "FEP3-INTENT",
+   "failing_checks": [
+    "FEP3-INTENT"
+   ],
+   "schema_class": "cross-line"
+  },
+  {
+   "id": "K21",
+   "file": "k21-intent-decision-log.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "verdict": "accept",
+   "wire_form": "jsonl-decision-log",
+   "rules": [
+    "INT-T1",
+    "INT-T2",
+    "INT-T3",
+    "INT-S1",
+    "PRF-4"
+   ],
+   "description": "Intent decision log: COMMIT of an undoable intent, ABSTAIN on the null intent"
+  },
+  {
+   "id": "K22",
+   "file": "k22-intent-irreversible-direct.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "verdict": "reject",
+   "wire_form": "jsonl-decision-log",
+   "rules": [
+    "INT-S4"
+   ],
+   "description": "A direct COMMIT of an irreversible intent without the confirm step (safety rule)",
+   "failing_check": "FEP3-SAFETY",
+   "failing_checks": [
+    "FEP3-SAFETY"
+   ],
+   "schema_class": "trust"
+  }
+ ]
+}

@@ -5,6 +5,7 @@ This file lists the changes of the TypeScript SDK (npm package `@fidetype/sdk`).
 ## [Unreleased]
 
 ### Added
+- **Conformance kit (P7-01).** `npm run conformance:kit` runs `fidetype-ts conformance --vectors ../../spec/conformance/kit` (31 kit files, part of `npm run ci`); a test checks every kit entry. Same verdicts as Python and Rust (`scripts/cross-check.mjs --vectors ../../spec/conformance/kit`). No SDK code change.
 - **NTS 1.0 RC4, optional field types (GEN-11, gap G-12, FEP-0008).** The validators refuse a wrongly typed optional field: `segment_end.reason`; `hypothesis.t_start`, `t_end`, `revision_of`, `nbest[].spans`; `signal_quality.channels`; `pointer.absent`, `score`, `score_semantics` (null refused); `decision.score` and `score_range` for every semantics (DEC-6); header `vocab_id`, `vocab_version` (`NTS-VOCAB-ID`, new title); `trust_decision.reason`; intent `vocab_id`, `pending_cleared` (INT-T8); control `level` without `radius` (CTL-T8). The latency fields (TIM-4) are checked on every event of registry 12.1, frames included (`TIMING_KEYS`, `TIMED_TYPES` in `constants`; `RawStream.timed`). Same behaviour as Python and Rust (vectors V69-V82, F63-F66, D24-D26, I25, C25, E25-E27).
 - `PLANNED_NAMESPACES` (`constants`): a custom `meta` key in `emg`, `eeg`, `meg`, `fnirs` or `implant` gets the `NTS-NAMESPACE` warning (MET-3, RC4 SC-2).
 - Tests: vector count of `fep-0005` 52.
