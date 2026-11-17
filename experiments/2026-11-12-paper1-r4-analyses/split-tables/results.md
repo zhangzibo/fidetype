@@ -14,3 +14,6 @@ Checks:
 - A rebuild of R3 split 0 (published) gives the same scores and outcomes as the R3 table (scratch check).
 - Frame temperature snapped to 0.02 (B2T; largest relative change 0.283 %) / 0.01 (sEMG; 0.384 %). One new temperature (3.42) was decoded; its cache is in the R4 cache folder.
 - Wall time about 37 min on 8 + 3 CPU processes.
+
+## Check 2026-11-17 (P14-15): word-decoder tune overlap, no effect
+179-224 of the 400 word-decoder tune trials are in each test set of the 200 splits ([T15 split audit](../../../wiki/questions/t15-split-audit.md), issue D). P14-15 re-tuned the settings inside each split's fit-A (pre-registered). 35 of 200 splits change their setting (28 are exact WER ties). With the 35 guard-on "ours" tables rebuilt, no metric of the R = 200 aggregation moved by its CI half-width (largest: 0.27 of it). The tables stand. Details: [P14-15 results](../../2026-11-17-p14-15-retune/results.md). Guard-off and published-gate tables and the downstream analyses: gap 45 (P14-19).

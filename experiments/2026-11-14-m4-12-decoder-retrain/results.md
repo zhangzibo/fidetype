@@ -96,3 +96,6 @@ Data and model as M4-01/02: Brain-to-Text '25, T15 (CC0), `fidetype.decoders.loo
 
 ## GPU time
 About 19.6 h of training (fixed0 3.85, fixed25 about 4.1 active, shared 3.93, fixed10 3.83, fixed15 3.82), plus about 0.5 h for benchmarks and smoke tests, plus about 2 min of GPU decoding per model. The queue ended 2026-11-15 13:58 (`m4-12-queue.DONE`, ok=True).
+
+## Note 2026-11-17 (P14-15): word-decoder settings
+The word-decoder settings (lm 1.0, edit penalty 12, bonus 3) were tuned on 400 B2T track `cal` trials; 16 of them are `val_eval` trials ([T15 split audit](../../wiki/questions/t15-split-audit.md), issue D). A re-tune without these 16 trials picks edit penalty 8 (an exact WER tie, decided by truth-in-n-best); without `val_eval` and `val_select` the setting stays the same ([P14-15 results](../2026-11-17-p14-15-retune/results.md)). The word-level numbers on this page are not changed. Gap 44 (P14-18) reruns the M4-12 `val_eval` word decode with edit penalty 8.

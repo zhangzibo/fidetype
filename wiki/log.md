@@ -1067,3 +1067,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New gap 42 = P14-17: the `--out` file of `fidetype live` holds `trust_decision` events, so `nts-conform check` gives it no producer level.
 - Tracker: run stats filled for R-26 (T15 split audit) and P7-02 (shared with P1-16).
 - Pages: [roadmap](questions/roadmap-standard.md) (P14-16, P14-17), [open gaps](questions/open-gaps.md), [docs](../docs/live-decode.md#8a-publish-over-a-binding---publish-p14-16), [conformance docs](../docs/conformance.md), tracker.
+
+## [2026-11-17] setup | P14-15 done (no effect on re-split rows) and P15-20 done; gaps 34, 35 closed; new gaps 44, 45
+- P14-15 (pre-registered, `fc8478c`): word-decoder grid re-tuned inside the fit-A of all 200 Paper 1 re-splits and on the 400 tune trials without M4 `val_eval` (and `val_select`) trials. 35 / 200 splits change (28 exact WER ties); rebuilt tables move 0 / 80 primary metrics by their CI half-width -> no effect. T2a picks edit penalty 8 (WER tie); T2b unchanged. [Results](../experiments/2026-11-17-p14-15-retune/results.md).
+- Notes added to R3 repeated-splits, R4 split-tables, M4-12, M4-01/02 results pages and to the [T15 split audit](questions/t15-split-audit.md) (also a correction: the published gate uses our word n-best).
+- P15-20 (`645dd1b`): halluc-v0.1 T15 split states i = val_eval position (HDF5 val index 2i + 1); `ids_from_rule` + test.
+- New gaps 44 = P14-18, 45 = P14-19 in [open gaps](questions/open-gaps.md) and the [roadmap](questions/roadmap-standard.md).

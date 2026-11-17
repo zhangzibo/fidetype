@@ -131,6 +131,12 @@ Known and already stated (no new gap): every M4 guard is calibrated on `val_sele
 
 > **Our take:** an outside team that trains on the B2T '25 HDF5 `train` partition (the normal recipe of the B2T '25 challenge) has the same overlap with our `b2t25-t15` test set. So gap 33 matters for the benchmark as a whole, not only for our decoders.
 
+## Follow-up 2026-11-17: gaps 34 and 35 closed
+
+- **Issue C (gap 34, P15-20):** done, commit `645dd1b`. The split file states the index rule exactly (i = position inside the session's `val_eval` list; HDF5 `val` index = 2i + 1). A test rebuilds the 701 ids from the rule.
+- **Issue D (gap 35, P14-15):** **no effect** on the Paper 1 re-split "B2T ours" rows ([results](../../experiments/2026-11-17-p14-15-retune/results.md), pre-registered). A re-tune inside each re-split's fit-A changes the setting in 35 of 200 splits, mostly exact WER ties. With these 35 tables rebuilt, 0 of 80 primary metrics move by their CI half-width (largest 0.27 of it). Without the 16 `val_eval` tune trials the setting changes to edit penalty 8 (an exact WER tie); without `val_eval` and `val_select` it stays the same. Gap 44 (P14-18) reruns the M4-12 word decode with edit penalty 8.
+- **Correction to the table above:** the "B2T published" re-split rows are not fully independent of our word decoder. `published_plus_fn` uses our word n-best for the gate score and the word confidences. Gap 45 (P14-19) checks them, together with the forward chain (V1 / V2 / V4 test on whole days) and the downstream tables.
+
 ## Limits of this audit
 
 - The match is on (date, sentence, frame count), not on a shared trial id. 141 test trials stay unmatched. The bounds above cover the ones with a same-day, same-sentence candidate. The rest have no labelled candidate, so they cannot be in M4 train under this match. A different trial order would not change this.

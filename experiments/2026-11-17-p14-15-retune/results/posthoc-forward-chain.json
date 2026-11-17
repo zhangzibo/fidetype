@@ -1,0 +1,175 @@
+{
+ "note": "post hoc, not pre-registered",
+ "prefixes": [
+  {
+   "fit_days": 1,
+   "n": 30,
+   "choice": [
+    1.0,
+    8.0,
+    3.0
+   ],
+   "same_as_paper": false,
+   "wer_choice": 0.2538860103626943,
+   "wer_paper_point": 0.26424870466321243,
+   "paper_point_rank": 3
+  },
+  {
+   "fit_days": 2,
+   "n": 130,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.21382842509603073,
+   "wer_paper_point": 0.21382842509603073,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 3,
+   "n": 229,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.18361375274323335,
+   "wer_paper_point": 0.18361375274323335,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 4,
+   "n": 344,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.18094782192436573,
+   "wer_paper_point": 0.18094782192436573,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 5,
+   "n": 459,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.18256814921090386,
+   "wer_paper_point": 0.18256814921090386,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 6,
+   "n": 533,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.17932943709627808,
+   "wer_paper_point": 0.17932943709627808,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 7,
+   "n": 741,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.17758658724906243,
+   "wer_paper_point": 0.17758658724906243,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 8,
+   "n": 879,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.17457375833951075,
+   "wer_paper_point": 0.17457375833951075,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 9,
+   "n": 1048,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.16965389369592088,
+   "wer_paper_point": 0.16965389369592088,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 10,
+   "n": 1138,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.16537800687285223,
+   "wer_paper_point": 0.16537800687285223,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 11,
+   "n": 1286,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.16076603250598462,
+   "wer_paper_point": 0.16076603250598462,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 12,
+   "n": 1336,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.15875713071974754,
+   "wer_paper_point": 0.15875713071974754,
+   "paper_point_rank": 1
+  },
+  {
+   "fit_days": 13,
+   "n": 1482,
+   "choice": [
+    1.0,
+    12.0,
+    3.0
+   ],
+   "same_as_paper": true,
+   "wer_choice": 0.15616883116883118,
+   "wer_paper_point": 0.15616883116883118,
+   "paper_point_rank": 1
+  }
+ ],
+ "n_changed": 1
+}

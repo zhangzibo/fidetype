@@ -701,7 +701,9 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | **P14-12** | Willett-hw: word LM for exact-sentence commits and full test coverage (open gap 26, [details](#p14-12-willett-hw-word-lm-for-exact-sentence-commits-and-full-test-coverage)) | P6-02 (done); a word LM (for example the Tatoeba word LM of the T12 v2 recipe, or the published 50k-word n-gram); P15-08 (Willett decoder of our own, for full coverage) | research labs, BCI companies |
 | **P14-13** | Conformant EMG baselines without oracle key timing (kt-semg, emg2qwerty) (open gap 27, [details](#p14-13-conformant-emg-baselines-without-oracle-key-timing-kt-semg-emg2qwerty)) | P11-01 (continuous EMG decoder); P4-10 (live key-onset detector) | research labs, BCI companies |
 | **P14-14** | T12 safe WPM above the no-BCI reference (open gap 29, [details](#p14-14-t12-safe-wpm-above-the-no-bci-reference)) | M4-13 (stronger T15 recipe to port), P15-19 (usefulness on stronger decoders), P6-06 | research labs, BCI companies |
-| **P14-15** | Word-decoder settings tuned without evaluation trials (T15) (open gap 35, [details](#p14-15-word-decoder-settings-tuned-without-evaluation-trials-t15)) | — | research labs, reviewers |
+| **P14-15** | Word-decoder settings tuned without evaluation trials (T15) (gap 35, done: no effect on the re-split rows; [details](#p14-15-word-decoder-settings-tuned-without-evaluation-trials-t15)) | — | research labs, reviewers |
+| **P14-18** | M4-x word-level results with word settings tuned without val_eval trials (T15) (open gap 44, [details](#p14-18-m4-x-word-level-results-with-word-settings-tuned-without-val_eval-trials-t15)) | P14-15 | research labs, reviewers |
+| **P14-19** | Re-split published-gate rows, forward chain and downstream tables with per-fit word settings (open gap 45, [details](#p14-19-re-split-published-gate-rows-forward-chain-and-downstream-tables-with-per-fit-word-settings)) | P14-15 | research labs, reviewers |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -836,7 +838,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-15 Word-decoder settings tuned without evaluation trials (T15)
 - **Gap:** 35 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the T15 split audit). Follow-up of P14-03.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, pre-registration `fc8478c`; [results](../../experiments/2026-11-17-p14-15-retune/results.md)). Re-split "B2T ours" rows: **no effect**. The fit-A re-tune changed the setting in 35 of 200 re-splits (8 of 50 R3), mostly exact WER ties; after rebuilding them, 0 of 80 primary metrics moved by their CI half-width (largest 0.27 of it). Tune without the 16 `val_eval` trials: edit penalty 8 instead of 12 (exact WER tie); without `val_eval` and `val_select`: unchanged. Follow-ups P14-18 (gap 44, M4 rows) and P14-19 (gap 45, published gate, forward chain, downstream tables).
 - **Depends on:** — (CPU only).
 - **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)), issue D.
 - **Gap detail:** The 3 settings of our phoneme-beam word decoder (`lm_weight`, `edit_penalty`, `word_bonus`; grid of 12) were tuned once on 400 fixed `b2t25-t15` `cal` trials (experiments/2026-11-10-b2t25-trust, `tune.json`). The Paper 1 re-splits put 179-224 of these trials into each test set of 818. 16 of the 400 are M4 `val_eval` trials, and every M4-x word-level result on `val_eval` uses these settings (P14-03 `decode_fn`). The bias is optimistic and probably small.
@@ -855,6 +857,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-16 (done).
 - **Source:** P14-16 (2026-11-17): the `--out` file of `fidetype live` holds the `trust_decision` events next to the frames and hypotheses. `nts-conform check` fails it (FEP1-TD-INPUT, FEP-0001 section 3 r4: no `trust_decision` in an input stream), so its producer level is none. `fidetype validate --level trust-ready` (the older check that docs/live-decode.md names) passes it. `--publish` already splits the two channels.
 - **Done when:** `fidetype live --out` writes an input stream without `trust_decision` events, and a new option (for example `--decisions-out`) writes the FEP-0001 decision log; `nts-conform check` on both files gives NTS Trust-ready; docs/live-decode.md section 8 and the P14-11 CI replay use the new form; tests updated.
+
+#### P14-18 M4-x word-level results with word settings tuned without val_eval trials (T15)
+- **Gap:** 44 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-15). Follow-up of P14-15, P14-03.
+- **Status:** `todo`.
+- **Depends on:** P14-15 (done). CPU only.
+- **Source:** P14-15 ([results](../../experiments/2026-11-17-p14-15-retune/results.md)), step 3: without the 16 M4 `val_eval` trials (384 tune trials), the pre-registered rule picks edit penalty 8 instead of 12 (lm 1.0, bonus 3). It is an exact WER tie (0.16477), decided by truth-in-n-best (0.5469 vs 0.5443). Without `val_eval` and `val_select` (368) the paper point stays first.
+- **Done when:** the M4-12 `fixed0` `val_eval` word-level decode (P14-03 `decode_fn`) is rerun with edit penalty 8, and the word WER and the P14-03 guard rows are compared with the committed ones. If every change is below its CI half-width, close with "no effect" on the M4 results pages; else rerun the affected M4-x / M2-19 / P15-05..07 / P5-02 rows and add notes.
+
+#### P14-19 Re-split published-gate rows, forward chain and downstream tables with per-fit word settings
+- **Gap:** 45 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-15, post hoc). Follow-up of P14-15.
+- **Status:** `todo`.
+- **Depends on:** P14-15 (done). CPU only (about 1 h per 35 rebuilt splits).
+- **Source:** P14-15 ([results](../../experiments/2026-11-17-p14-15-retune/results.md), post hoc): (1) `published_plus_fn` uses our word n-best (gate score and word confidences), so the "B2T published" re-split rows also depend on the word setting; the audit called them clean. (2) The R4 forward chain (V1, V2, V4) tests on whole days; the fit prefix "day 1 only" (30 trials, used by one test day in V1 and one in V4) picks edit penalty 8. (3) R4 population-risk, per-day, reuse, joint-LTT, no-guard, M2-18, M3-01/02, trust v5 and A2 read the same split tables (P14-15 found no effect on the guard-on "ours" tables).
+- **Done when:** the published-gate tables of the 35 changed re-splits and the guard-off "ours" tables are rebuilt with each split's fit-A setting, the forward-chain day-1 prefix is rerun, and the same rule as P14-15 (change < CI half-width = no effect) is applied; "no effect" closes the item, else the tables get dated correction notes and the paper track gets a note.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.

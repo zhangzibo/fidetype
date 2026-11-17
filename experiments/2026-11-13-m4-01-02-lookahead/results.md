@@ -89,3 +89,6 @@ Data: Brain-to-Text '25, participant T15, `t15_copyTask_neuralData` (CC0). Setti
 - The frozen trust config was not fitted to this decoder, so no commit-side result.
 - Emission timing uses the greedy path and exact matches only.
 - Compute latency: one machine (Ryzen 7 9800X3D), not clean (see above), no LM rescoring of the word lists.
+
+## Note 2026-11-17 (P14-15): word-decoder settings
+The word-decoder settings (lm 1.0, edit penalty 12, bonus 3) were tuned on 400 B2T track `cal` trials; 16 of them are `val_eval` trials ([T15 split audit](../../wiki/questions/t15-split-audit.md), issue D). A re-tune without these 16 trials picks edit penalty 8 (an exact WER tie, decided by truth-in-n-best); without `val_eval` and `val_select` the setting stays the same ([P14-15 results](../2026-11-17-p14-15-retune/results.md)). The word-level numbers on this page are not changed. Gap 44 (P14-18) reruns the M4-12 `val_eval` word decode with edit penalty 8.
