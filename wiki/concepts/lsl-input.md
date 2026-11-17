@@ -233,6 +233,9 @@ We state only what their documentation says (checked 2026-11-12).
 | **LabRecorder** | "LabRecorder saves data to Extensible Data Format (xdf)" ([LSL getting started](https://labstreaminglayer.readthedocs.io/info/getting_started.html)) | It can record the NTS streams and `fidetype.decisions` next to the raw signal. Not tested by us |
 | **Muse, Emotiv, g.tec** | Listed in the LSL device list (third-party or vendor software) ([LSL devices](https://labstreaminglayer.readthedocs.io/info/supported_devices.html)) | Raw signals: same path as OpenBCI. Not tested (no hardware) |
 
+## One-command live decode (P14-04)
+`fidetype live --source lsl` reads a **raw-signal** LSL stream and its marker stream (`keypress` onsets, `segment_end`), decodes key windows with a model, and runs the drop-in trust guard on each segment. `--source brainflow` reads a BrainFlow board in the same process through the bridge code. It writes one decision per segment and an NTS file. Guide: [docs/live-decode.md](../../docs/live-decode.md). Limits: no reconnect in this path yet (P4-11); onset markers needed for `markers` timing (P4-10).
+
 ## Limits and follow-ups
 - Tested on one machine (localhost) only. LAN and Wi-Fi latency are not measured.
 - No real device was tested (the user has no hardware). The BrainFlow Synthetic board test is done (M6-08), and so are a 6.78 h + 2.5 h soak test (M6-13) and a 7 h soak test on the fixed code (M6-15). A real board (OpenBCI) needs hardware.

@@ -48,4 +48,6 @@ The bridge sends an `EEG` stream (`desc/fidetype/role = signal`, unit `microvolt
 
 The M6-13 soak test ran the bridge for 6.78 h + 2.5 h with restarts every 30 min: [LSL input, soak test](../concepts/lsl-input.md#soak-test-m6-13).
 
+One-command live decode (P14-04, 2026-11-16): `fidetype live --source brainflow --board-id -1` reads the board in-process (bridge code, no LSL hop), cuts a segment every `--trial-s` seconds and runs a model + the drop-in trust guard. On the Synthetic board the correct output is no commit (sine waves carry no text); the CI job `live` checks this. OpenBCI Cyton / Ganglion use board ids 0 / 1 (untested: P4-06). Guide: [docs/live-decode.md](../../docs/live-decode.md).
+
 Related: [Lab Streaming Layer](lab-streaming-layer.md), [LSL input](../concepts/lsl-input.md).

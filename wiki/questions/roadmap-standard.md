@@ -266,6 +266,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Status (2026-11-15):** two generic decoder-output adapters exist: [CTC-logits adapter](../concepts/ctc-logits-adapter.md) (frames from any CTC decoder) and [text n-best adapter](../concepts/text-nbest-adapter.md) (text-only decoders → hypothesis stream). Dataset replay adapters so far: B2T '25, Toronto sEMG, SpanishBCBL, [Willett handwriting](../entities/willett-handwriting-2021.md#replay-adapter-p4-01-2026-11-14) and [KT-sEMG](../entities/kt-semg-dataset.md#replay-adapter-p4-01-2026-11-14) (both 2026-11-14). [emg2qwerty](../entities/emg2qwerty.md#replay-adapter-p4-01-2026-11-15) followed on 2026-11-15 (research only). All six replay adapters of deliverable 1 exist; P4-01 is done.
 - Each adapter has a replay test that runs in CI with no hardware.
 - **Value-first link (2026-11-15):** [P14-04](#p14-04-live-decode-from-lab-tools) builds a one-command live path on the LSL and BrainFlow / OpenBCI adapters of deliverables 2–3 (task P4-02). P4 scope does not change.
+- **P4-02 done (2026-11-16):** LSL in/out (M6-01, `fidetype lsl`), BrainFlow → LSL bridge (M6-08) and an in-process BrainFlow source in `fidetype live` (OpenBCI Cyton / Ganglion through their BrainFlow board ids; untested on a real board: P4-06). Synthetic-board test: CI job `live` runs `fidetype live --source brainflow --board-id -1` and a real pylsl loopback end to end ([docs](../../docs/live-decode.md), `tests/test_live.py`). New gaps: P4-10 (live key-onset detector), P4-11 (reconnect in `fidetype live --source lsl`).
 - Licence rule: before any code, an agent records the licence or terms in the adapter README. Copyleft toolkits get **process-separated** adapters only. We copy no third-party code.
 
 ### Exit criteria
@@ -284,6 +285,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P1-04 (semconv registry).
 - **Source:** MET-3 warning on BrainFlow bridge streams ([docs/semconv.md](../../docs/semconv.md) rule 3); open-gap list 2026-11-16.
 - **Done when:** `src/fidetype/adapters/brainflow_bridge.py` no longer writes custom keys in the reserved `device` namespace: the keys move to a vendor namespace (for example `brainflow.*`) or a FEP registers them in `spec/semconv/`. A bridge stream validates with no MET-3 warning, and a test checks this.
+
+#### P4-10 Live key-onset detector for EMG (no oracle key markers)
+- **Gap:** 16 of the [open-gap list](open-gaps.md) (added 2026-11-16 by P14-04). Follow-up of P4-02 / P14-04.
+- **Status:** `todo`.
+- **Depends on:** P14-04 (done); KT-sEMG or emg2qwerty data; P11-01 (a stronger EMG decoder can share the detector).
+- **Source:** P14-04: `fidetype live` with `markers` timing needs `keypress` onset markers. In the KT-sEMG replay they come from the key log (oracle timing, as in P4-01). A real board gives no markers, so boards use `fixed` timing.
+- **Done when:** a causal onset detector (for example an EMG envelope with an adaptive threshold, or a small classifier) runs inside `fidetype live` as `--timing detect`. On the KT-sEMG test runs it finds key onsets with a stated recall and false-alarm rate at a stated tolerance (for example ±50 ms), and the end-to-end replay with detected onsets reports decisions and the wrong-commit rate next to the oracle-timing run.
+
+#### P4-11 Reconnect in `fidetype live --source lsl`
+- **Gap:** 17 of the [open-gap list](open-gaps.md) (added 2026-11-16 by P14-04). Follow-up of P4-02 / P14-04.
+- **Status:** `todo`.
+- **Depends on:** P14-04 (done); M6-14 / M6-16 (the reconnect code of `fidetype lsl run`).
+- **Source:** P14-04: `LSLSource` ends the run when the stream is lost. `fidetype lsl run` has non-blocking reconnect, but its event source makes NTS frames inside the inlet and cannot pass key markers to a raw-signal model.
+- **Done when:** `fidetype live --source lsl` survives a stream loss: it drops the open segment (no decision on a cut input), re-resolves the stream (reusing the `fidetype.adapters.lsl` reconnect code, not a copy) and goes on. A test kills and restarts a loopback outlet and checks that no decision spans the gap.
 
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
@@ -594,6 +609,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - **Note:** our pretrained models do not transfer to a new device or a new person without calibration. So the live test checks the plumbing (synthetic board, LSL replay of a public recording). Replay checks the decoding quality.
 - **Depends on:** P4-02, P14-01, P14-03. Real boards: P4-06.
 - **Done when:** in CI, the BrainFlow synthetic board and an LSL replay of a public recording each give valid NTS end to end, with trust decisions, from one command. The test on a real OpenBCI board is part of P4-06 (**externally blocked**, hardware).
+- **Status (2026-11-16): done**, with one gap. `fidetype live --source {synthetic,brainflow,lsl}` ([docs](../../docs/live-decode.md), code `src/fidetype/live/`): ring buffer → key windows (onset markers or fixed hop) → model (KT-sEMG reference features + causal z-score + LDA) → key beam search → drop-in guard (`fidetype.trust.load`, n-best input) → one line per decision + NTS file (trust-ready and provenance pass). Packaged demo model and guard `builtin:synthetic-keys` (our synthetic signal, no real data); KT-sEMG model + guard made locally by `fidetype live train-kt` (CC BY 4.0, not committed); `replay-kt` / `replay-synthetic` publish over LSL. CI: core tests with no optional package, plus job `live` with the real BrainFlow Synthetic board and a real pylsl loopback. Added latency per window well below 1 ms, per decision a few ms ([results](../../experiments/2026-11-16-p14-04-live/results.md)). **Gap:** the CI LSL replay uses a synthetic recording, not a public one (a recording cannot go into the repository): P14-11.
 
 #### P14-05 Headline metric: safe words per minute
 - **Serves:** research labs, BCI companies ([who uses Fidetype](who-uses-fidetype.md)).
@@ -652,6 +668,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-05, P6-01 (done), P6-02, P11-01.
 - **Source:** Commit `7d74c0f` (P14-05 safe WPM baselines; missing tracks and controls); partly closed by `1d4ff8c` (P6-01).
 - **Done when:** The scorer, baselines and safe WPM exist for the tracks `b2t24-t12`, `willett-hw`, `kt-semg` and `emg2qwerty` (research only), and for the P11-01 decoder when it exists, each with its null-commit audit; or the result states why a track has no certified number. The scorer and baselines of these tracks come with P6-02. Part already closed by P6-01 (commit `1d4ff8c`): exact Toronto safe WPM with a participant CI, and null-commit audits for B2T ours, B2T published and MEG (the two B2T published entries still show "controls: no" because shuffled / zeros CER is not defined for a text-only decoder; P6-01 documents this).
+
+#### P14-11 CI: LSL replay of a public recording
+- **Gap:** 18 of the [open-gap list](open-gaps.md) (added 2026-11-16 by P14-04). Follow-up of P14-04.
+- **Status:** `todo`.
+- **Depends on:** P14-04 (done).
+- **Source:** the P14-04 "done when" asks for an LSL replay of a public recording in CI. The repository rule forbids committed recordings, so the CI job `live` replays the synthetic typist instead. The KT-sEMG replay (`fidetype live replay-kt`) runs only on a machine with the data.
+- **Done when:** a CI job downloads one small public recording with a clear licence (for example KT-sEMG `run3.csv`, 53 MB, CC BY 4.0, from Harvard Dataverse, SHA-256 checked, cached between runs), trains or loads a local model, replays the run over LSL and checks valid NTS with trust decisions from one command. Nothing from the recording is committed.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.

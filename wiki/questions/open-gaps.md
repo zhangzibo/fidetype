@@ -29,6 +29,9 @@ updated: 2026-11-16
 | 13 | [P15-18](roadmap-standard.md#p15-18-pilots-store-per-item-null-control-outputs) | Pilots store per-item null-control outputs | `todo` | P15-12 | — | Commit `9cb7a81` (P5-01 replay used conservative proxies from the P15-02 counts). |
 | 14 | [P15-19](roadmap-standard.md#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06) | Show usefulness on stronger decoders (P5-01, P15-02, P5-02, P15-06) | `todo` | P5-01, P15-02, P5-02, P15-06 | M4-13 rerun queue, P11-01 | Commits `9cb7a81`, `4355946`, `3dc84bf`, `958040a` (open points: weak decoder). |
 | 19 | [P5-12](roadmap-standard.md#p5-12-spread-aware-drift-test-without-the-small-shift-cost) | Spread-aware drift test without the small-shift cost | `todo` | P5-09 | P5-09 | Commit `9277177` (P5-09 S3: spread bets lose power on a -0.25 sd mean shift, 0.445 vs 0.61 detected). |
+| 16 | [P4-10](roadmap-standard.md#p4-10-live-key-onset-detector-for-emg-no-oracle-key-markers) | Live key-onset detector for EMG (no oracle key markers) | `todo` | P4-02, P14-04 | P14-04; KT-sEMG / emg2qwerty; P11-01 | P14-04 (2026-11-16): `markers` timing needs onset markers; the KT-sEMG replay takes them from the key log. |
+| 17 | [P4-11](roadmap-standard.md#p4-11-reconnect-in-fidetype-live---source-lsl) | Reconnect in `fidetype live --source lsl` | `todo` | P4-02, P14-04 | P14-04; M6-14 / M6-16 reconnect code | P14-04 (2026-11-16): a lost LSL stream ends the run. |
+| 18 | [P14-11](roadmap-standard.md#p14-11-ci-lsl-replay-of-a-public-recording) | CI: LSL replay of a public recording | `todo` | P14-04 | P14-04 | P14-04 (2026-11-16): CI replays a synthetic recording; recordings cannot be committed. |
 
 ## Closed gaps
 | Gap | Item | How it closed |

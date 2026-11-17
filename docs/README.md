@@ -10,6 +10,7 @@ The sections follow the plan for the future documentation site ([docs site plan]
 |---|---|---|
 | Get started | [getting-started.md](getting-started.md) | Install from a clone, run the demo, emit your first stream, run the trust layer |
 | Live demo | [demo.md](demo.md) | One command: recorded decoder output replayed in the browser, each trust decision visible |
+| Live decode | [live-decode.md](live-decode.md) | One command: live signal from LSL, BrainFlow / OpenBCI boards or a synthetic source -> model -> trust guard -> decisions and NTS |
 | Concepts | [concepts.md](concepts.md) | The NTS data model, profiles, bindings, the trust layer, conformance levels, terms |
 | Trust for your decoder | [trust-quickstart.md](trust-quickstart.md), [trust-guarantee.md](trust-guarantee.md) | Add the trust layer to your own decoder in 10 minutes (logits or n-best in; commit / offer / withhold out); what the guarantee covers and how to read the audit log |
 | Personalisation | [trust-personalisation.md](trust-personalisation.md) | One trust profile per user (hashed id, no text), anytime-valid drift tests, re-calibration only through the gated update path |

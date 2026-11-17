@@ -28,6 +28,20 @@ jobs:
 
       - run: uv run pytest -q
 
+  # P14-04 / P4-02: `fidetype live` end to end on the real BrainFlow Synthetic board and a real pylsl loopback
+  # (synthetic recording). Only tests/test_live.py runs here, so other LSL tests stay out of this job.
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: uv sync --extra dev --extra lsl --extra brainflow
+      - run: uv run python -c "import pylsl, brainflow; print('pylsl', pylsl.library_version())"
+      - run: uv run pytest -q tests/test_live.py -rs
+
   # P1-02: the proto files (spec/proto) are the source of truth. protoc must accept them, the
   # generated JSON Schema must be up to date, and the schema must give the SDK verdict on every
   # vector that fails or passes on schema grounds (with our validator and with the jsonschema library).

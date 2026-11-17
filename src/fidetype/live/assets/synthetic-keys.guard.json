@@ -1,0 +1,152 @@
+{
+  "config": {
+    "char_temperature": 1.0,
+    "commit_gate": {
+      "max_guard_risk": 1.0,
+      "min_chars": 1,
+      "min_words": 0
+    },
+    "conformal_alpha": 0.1,
+    "conformal_mode": "conditional",
+    "conformal_q": 0.8865381843976476,
+    "conformal_score": "lac",
+    "frame_temperature": 1.0,
+    "guard": {
+      "cluster_max_word_edits": 0,
+      "combine": "max",
+      "consistency_k": 5,
+      "low_conf_threshold": 0.5,
+      "w_consistency": 1.0,
+      "w_evidence": 1.0
+    },
+    "name": "synthetic-keys",
+    "policy": {
+      "abstain_risk": 0.6,
+      "commit_max_risk": 0.3,
+      "commit_max_set": null,
+      "commit_p": 0.7,
+      "final_fallback": "offer",
+      "offer_max_k": 1,
+      "offer_words": false,
+      "offer_words_k": 3,
+      "offer_words_max_slots": null,
+      "offer_words_min_conf": 0.0,
+      "word_conf_threshold": 0.9
+    },
+    "policy_class": "trust",
+    "recipe": {
+      "calibration": "clean calibration half, same user and session (exchangeable)",
+      "commit_gate": "always on (re-tune rule 2026-11-15)",
+      "commit_threshold": "max(grid commit_p, LTT lambda_hat)",
+      "decoder": "user n-best",
+      "fitted_by": "fidetype.trust.calibrate (P14-03 drop-in)",
+      "frame_temperature": "not fitted (1.0)",
+      "git_tag": "paper1-v4-frozen-config",
+      "guard": "on (GuardConfig defaults, combine=max)",
+      "input_kind": "nbest",
+      "name": "paper1-v4-frozen-config",
+      "null_controls": "uniform + shuffled, automatic",
+      "policy_fit": "grid search, max eWPM s.t. plug-in wrong-commit <= 0.05",
+      "risk_control": {
+        "alpha": 0.05,
+        "combine": "max",
+        "delta": 0.1,
+        "grid": "1.00 to 0.00, step 0.01",
+        "method": "ltt",
+        "pvalue": "auto (binomial for 0/1 losses)"
+      },
+      "split": {
+        "fit": 150,
+        "ltt": 225,
+        "policy_grid": 225,
+        "seed": 0
+      }
+    },
+    "risk_control": {
+      "alpha": 0.05,
+      "bound": 0.06408262519293097,
+      "combine": "max",
+      "delta": 0.1,
+      "feasible": true,
+      "method": "ltt-binomial",
+      "n": 225,
+      "threshold": 0.69
+    },
+    "schema": "fidetype.trust-config/0.1",
+    "sentence_temperature": 1.494796847757492,
+    "use_guard": true,
+    "word_max_alternatives": 5
+  },
+  "decode_fn": null,
+  "input": {
+    "decoder": {
+      "modality": "other",
+      "name": "synthetic-keys",
+      "version": "1"
+    },
+    "kind": "nbest"
+  },
+  "schema": "fidetype.trust-guard/0.1",
+  "sheet": {
+    "alpha": 0.05,
+    "assumptions": [
+      "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+      "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+      "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+      "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+    ],
+    "commit_gate": {
+      "max_guard_risk": 1.0,
+      "min_chars": 1,
+      "min_words": 0
+    },
+    "commit_threshold": 0.7,
+    "config_id": "tcfg-6d773da9eaeb41ed",
+    "controls": [
+      {
+        "allowed": 15,
+        "description": "calibration n-best lists with equal scores and no character confidences (no evidence)",
+        "n": 300,
+        "n_commit": 0,
+        "name": "uniform",
+        "passed": true
+      },
+      {
+        "allowed": 15,
+        "description": "your decoder output on null input (null_inputs)",
+        "n": 300,
+        "n_commit": 1,
+        "name": "shuffled",
+        "passed": true
+      }
+    ],
+    "created_utc": "2026-11-17T07:51:16+00:00",
+    "decoder": "your n-best lists",
+    "delta": 0.1,
+    "feasible": true,
+    "input_kind": "nbest",
+    "lambda_hat": 0.69,
+    "ltt_commits": 119,
+    "ltt_gate_blocked": 0,
+    "ltt_median_guard_risk": 0.12891369080663329,
+    "ltt_wrong_commits": 6,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_fit": 150,
+    "n_items": 600,
+    "n_ltt": 225,
+    "n_ltt_min": 45,
+    "n_policy": 225,
+    "not_guaranteed": [
+      "Any single utterance: the bound is on the rate over many utterances.",
+      "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+      "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+      "The error rate among commits (precision): with few commits it can be high.",
+      "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+      "Correctness of the text that the guard withholds or offers.",
+      "Any medical or legal claim. Fidetype is research software, not a medical device."
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "warnings": []
+  }
+}
