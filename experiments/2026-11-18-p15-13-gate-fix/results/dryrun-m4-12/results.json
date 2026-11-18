@@ -1,0 +1,447 @@
+{
+ "fidetype_version": "0.0.1",
+ "dry_run": true,
+ "gate": "noninferiority",
+ "gate_settings": {
+  "level": 0.05,
+  "margin": 0.1,
+  "margin_abs": 0.1
+ },
+ "provenance": {
+  "source": "m4-12",
+  "cal": {
+   "file": "C:\\Users\\zhang\\bci-data\\derived\\m2-19-trust-retune\\logprobs-m2-19-m4-12-fixed0.npz",
+   "checkpoint_sha256": "2b92ab33d12d4b887eed150b09749fec303e3286aa84e05442721444a9351fd5",
+   "step": null,
+   "epoch": 98,
+   "device": "cuda"
+  },
+  "held": {
+   "file": "C:\\Users\\zhang\\bci-data\\derived\\m4-01-02-lookahead\\logprobs-m4-12-fixed0.npz",
+   "checkpoint_sha256": "2b92ab33d12d4b887eed150b09749fec303e3286aa84e05442721444a9351fd5",
+   "step": null,
+   "epoch": 98,
+   "device": "cuda"
+  },
+  "m4-13": null
+ },
+ "n_cal": 160,
+ "n_held": 360,
+ "schedule": [
+  [
+   "B1",
+   "decoder",
+   "m4-13",
+   "better challenger: M4-13 vs live M4-12"
+  ],
+  [
+   "B2",
+   "decoder",
+   "other",
+   "worse challenger: the decoder that is not live (M4-12 if M4-13 is live)"
+  ],
+  [
+   "B3",
+   "broken",
+   "m4-13-rev",
+   "broken challenger: time-reversed M4-13 log-probs"
+  ],
+  [
+   "B4",
+   "recal",
+   "live",
+   "re-calibration of the live decoder (seed + 100)"
+  ],
+  [
+   "B5",
+   "decoder",
+   "other",
+   "worse challenger, replication on new items"
+  ],
+  [
+   "B6",
+   "recal",
+   "live",
+   "re-calibration of the live decoder (seed + 200)"
+  ],
+  [
+   "B7",
+   "decoder",
+   "other",
+   "worse challenger, second replication"
+  ]
+ ],
+ "runs": {
+  "s0-feedback-r0.3": {
+   "seed": 0,
+   "user": "feedback-r0.3",
+   "gate": "noninferiority",
+   "weak_champion_probe": {
+    "check_truth_known": 14,
+    "check_sources": {
+     "reject": 34,
+     "retype": 14
+    },
+    "noninferiority": {
+     "accepted": false,
+     "reasons": [
+      "worse than champion 'm4-12' or not shown non-inferior (p 1 > 0.05; 48 worse incl. 34 unknown vs 0 better of 48; margins 0.1 / 0.1)"
+     ],
+     "config_changed": false,
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 48,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": true,
+      "method": "noninferiority",
+      "margin": 0.1,
+      "margin_abs": 0.1,
+      "n_unknown": 34,
+      "n_identical": 0,
+      "n_tie": 0,
+      "n_cer_decided": 14,
+      "p_noninferior": 1.0,
+      "p_abs": 1.0,
+      "passed_by": null,
+      "legacy_worse": 0,
+      "legacy_better": 0,
+      "legacy_p_value": 1.0
+     },
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'W-m4-13-rev'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'W-m4-13-rev'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      }
+     ],
+     "ledger_verify_ok": true
+    },
+    "sign": {
+     "accepted": true,
+     "reasons": [],
+     "config_changed": true,
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 48,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": false
+     },
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'W-m4-13-rev'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'W-m4-13-rev'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      }
+     ],
+     "ledger_verify_ok": true
+    },
+    "per_test": {
+     "n": 48,
+     "per_challenger": 0.8232520497062081,
+     "per_champion": 0.2501277473923489,
+     "n_nonzero": 48,
+     "p_worse": 8.145049960189132e-10,
+     "p_better": 0.999999999185495
+    }
+   },
+   "rows": [
+    {
+     "block": "B1",
+     "what": "better challenger: M4-13 vs live M4-12",
+     "kind": "decoder",
+     "candidate": "m4-13",
+     "live_before": "m4-12",
+     "live_after": "m4-13",
+     "accepted": true,
+     "reasons": [],
+     "config_changed": true,
+     "commit_p_before": 0.3,
+     "commit_p_after": 0.79,
+     "lambda_session": 0.0,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'B1-m4-13'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'B1-m4-13'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 43,
+      "champion_wrong": 43,
+      "worse_only": 0,
+      "better_only": 1,
+      "p_value": 0.012725370882271885,
+      "level": 0.05,
+      "refused": false,
+      "method": "noninferiority",
+      "margin": 0.1,
+      "margin_abs": 0.1,
+      "n_unknown": 0,
+      "n_identical": 45,
+      "n_tie": 47,
+      "n_cer_decided": 1,
+      "p_noninferior": 0.4,
+      "p_abs": 0.006362685441135943,
+      "passed_by": "few worse items",
+      "legacy_worse": 0,
+      "legacy_better": 0,
+      "legacy_p_value": 1.0
+     },
+     "per_test": {
+      "n": 48,
+      "per_challenger": 0.2210298774459146,
+      "per_champion": 0.2210298774459146,
+      "n_nonzero": 0,
+      "p_worse": null,
+      "p_better": null
+     },
+     "per_test_known_only": {
+      "n": 16,
+      "per_challenger": 0.19641807052312457,
+      "per_champion": 0.19641807052312457,
+      "n_nonzero": 0,
+      "p_worse": null,
+      "p_better": null
+     },
+     "check_items": 48,
+     "check_truth_known": 16,
+     "check_sources": {
+      "accept": 5,
+      "reject": 32,
+      "retype": 11
+     },
+     "phase_c_items": 3,
+     "phase_c_commits": 0,
+     "phase_c_wrong_commits": 0
+    },
+    {
+     "block": "B2",
+     "what": "worse challenger: the decoder that is not live (M4-12 if M4-13 is live)",
+     "kind": "decoder",
+     "candidate": "m4-12",
+     "live_before": "m4-13",
+     "live_after": "m4-12",
+     "accepted": true,
+     "reasons": [],
+     "config_changed": true,
+     "commit_p_before": 0.79,
+     "commit_p_after": 0.3,
+     "lambda_session": 0.0,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'B2-m4-12'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'B2-m4-12'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 44,
+      "champion_wrong": 44,
+      "worse_only": 0,
+      "better_only": 0,
+      "p_value": 0.012725370882271885,
+      "level": 0.05,
+      "refused": false,
+      "method": "noninferiority",
+      "margin": 0.1,
+      "margin_abs": 0.1,
+      "n_unknown": 0,
+      "n_identical": 48,
+      "n_tie": 48,
+      "n_cer_decided": 0,
+      "p_noninferior": 1.0,
+      "p_abs": 0.006362685441135943,
+      "passed_by": "identical top-1",
+      "legacy_worse": 0,
+      "legacy_better": 0,
+      "legacy_p_value": 1.0
+     },
+     "per_test": {
+      "n": 48,
+      "per_challenger": 0.2382302098881223,
+      "per_champion": 0.2382302098881223,
+      "n_nonzero": 0,
+      "p_worse": null,
+      "p_better": null
+     },
+     "per_test_known_only": {
+      "n": 14,
+      "per_challenger": 0.24164984764608827,
+      "per_champion": 0.24164984764608827,
+      "n_nonzero": 0,
+      "p_worse": null,
+      "p_better": null
+     },
+     "check_items": 48,
+     "check_truth_known": 14,
+     "check_sources": {
+      "accept": 4,
+      "reject": 34,
+      "retype": 10
+     },
+     "phase_c_items": 4,
+     "phase_c_commits": 0,
+     "phase_c_wrong_commits": 0
+    },
+    {
+     "block": "B3",
+     "what": "broken challenger: time-reversed M4-13 log-probs",
+     "kind": "broken",
+     "candidate": "m4-13-rev",
+     "live_before": "m4-12",
+     "live_after": "m4-12",
+     "accepted": false,
+     "reasons": [
+      "worse than champion 'B2-m4-12' or not shown non-inferior (p 1 > 0.05; 48 worse incl. 28 unknown vs 0 better of 48; margins 0.1 / 0.1)"
+     ],
+     "config_changed": false,
+     "commit_p_before": 0.3,
+     "commit_p_after": 0.3,
+     "lambda_session": 0.0,
+     "controls": [
+      {
+       "name": "uniform",
+       "description": "uniform (no-signal) input through version 'B3-m4-13-rev'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "frame-shuffled real input through version 'B3-m4-13-rev'",
+       "n": 100,
+       "n_commit": 0,
+       "allowed": 5,
+       "passed": true
+      }
+     ],
+     "challenger_test": {
+      "n": 48,
+      "challenger_wrong": 48,
+      "champion_wrong": 46,
+      "worse_only": 48,
+      "better_only": 0,
+      "p_value": 1.0,
+      "level": 0.05,
+      "refused": true,
+      "method": "noninferiority",
+      "margin": 0.1,
+      "margin_abs": 0.1,
+      "n_unknown": 28,
+      "n_identical": 0,
+      "n_tie": 0,
+      "n_cer_decided": 18,
+      "p_noninferior": 1.0,
+      "p_abs": 1.0,
+      "passed_by": null,
+      "legacy_worse": 2,
+      "legacy_better": 0,
+      "legacy_p_value": 0.2500000000000001
+     },
+     "per_test": {
+      "n": 48,
+      "per_challenger": 0.8232520497062081,
+      "per_champion": 0.2501277473923489,
+      "n_nonzero": 48,
+      "p_worse": 8.145049960189132e-10,
+      "p_better": 0.999999999185495
+     },
+     "per_test_known_only": {
+      "n": 20,
+      "per_challenger": 0.8428248401311293,
+      "per_champion": 0.22851774783416223,
+      "n_nonzero": 20,
+      "p_worse": 9.5367431640625e-07,
+      "p_better": 1.0
+     },
+     "check_items": 48,
+     "check_truth_known": 20,
+     "check_sources": {
+      "reject": 28,
+      "retype": 20
+     },
+     "phase_c_items": 3,
+     "phase_c_commits": 0,
+     "phase_c_wrong_commits": 0
+    }
+   ],
+   "initial_config_id": "tcfg-5bcd906dc73b160f",
+   "final_config_id": "tcfg-4d6bca0fb197eafd",
+   "final_live": "m4-12",
+   "loop_config_id": "gul-c672647f83c4c226",
+   "n_proposed": 3,
+   "n_accepted": 2,
+   "n_rejected": 1,
+   "ledger_verify_ok": true,
+   "ledger_errors": [],
+   "every_proposal_decided": true,
+   "guard_unchanged_on_reject": true,
+   "phase_c_items": 10,
+   "phase_c_commits": 0,
+   "phase_c_wrong_commits": 0,
+   "phase_c_wrong_commit_rate": 0.0,
+   "phase_c_wrong_commit_cp95": [
+    0.0,
+    0.3085
+   ],
+   "phase_c_precision": null,
+   "seconds": 779.4,
+   "peak_mb": 926
+  }
+ }
+}

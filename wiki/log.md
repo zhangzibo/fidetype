@@ -1176,3 +1176,8 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - P5-19 (gap 57 closed, FEP-0010 LIC-2): advisory `NTS-LICENCE-MATCH` (MET-12) in Python, TypeScript, Rust; vectors V101-V104 (355); parity 355/355, kit 36/36, 28,487 fuzz mutants, 0 differences.
 - New gap 61 = [P5-22](questions/roadmap-standard.md#p5-22-licence-gate-for-input-event-exporters) (licence gate for input-event exporters).
 - Pages: [nts-spec](concepts/nts-spec.md), [collector](concepts/collector.md), [conformance suite](concepts/conformance-suite.md), [open gaps](questions/open-gaps.md), [roadmap](questions/roadmap-standard.md).
+
+## [2026-11-18] setup | P15-13 default-deny update gate (code + pre-registered replay launched); P5-21 stable trust config_id done (gap 59 closed)
+- P15-13 (gap 1, now in progress): `GuardedUpdateLoop` default `challenger_test="noninferiority"`: the challenger must show it is not materially worse; a pair with unknown truth counts as worse unless the texts are equal, the challenger is right or the champion is known wrong; top-1 + CER tie-break; exact one-sided tests at 0.05 with margins 0.1 / 0.1. `challenger_test="sign"` = old behaviour (same records and loop ids). `TrustGuardUpdater` takes unknown truth (`None`) and `check_rejected`. Code `e788029`.
+- P15-13 replay of P15-03a with both users, 2 seeds, plus a weak-champion probe: pre-registered in `e788029` ([plan](../experiments/2026-11-18-p15-13-gate-fix/plan.md)); plumbing dry run passed (M4-12 only, labels meaningless); real run detached since 10:02.
+- P5-21 (gap 59, closed): the recipe field `decoder` drops the module path; `decoder_id = <name>@<version>` enters the hash; `decoder_label="module"` reproduces old ids (CHANGELOG notes the id bump).
