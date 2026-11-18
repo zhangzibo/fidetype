@@ -92,3 +92,7 @@ Stream = batch 701/701 with the gate. The gate removed the 2 real commits with g
 
 ## Deviations from the plan
 - Added a post hoc commit-gate analysis after the uniform control failed (labelled as post hoc; no pre-declared number changed).
+
+## Note 2026-11-18: P14-21 rerun with word-decoder edit penalty 8
+
+P14-21 ([results](../2026-11-17-p14-21-edit8-rows/results.md)) refit and re-evaluated with the word decoder at edit penalty 8. Reference (edit 12) reproduced all configs and rows. **Effect:** dedicated_0 LTT / CRC 9 -> 21 commits, 6 -> 15 wrong; shared LTT 9 -> 28, 7 -> 18 (commit-rate half-width 0.009). Held-out wrong-commit stays below alpha 0.05 (CP95 upper 0.035 / 0.040). eWPM does not change by its half-width. Ungated frame-shuffled control: 0 -> 3 of 300 commits (the M2-18 gate used by later rows keeps it at 0). The numbers above stay as committed.

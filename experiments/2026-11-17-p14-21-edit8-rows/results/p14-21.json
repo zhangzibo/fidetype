@@ -1,0 +1,2046 @@
+{
+ "plan": "experiments/2026-11-17-p14-21-edit8-rows/plan.md (commit 095150c)",
+ "setting": {
+  "reference": "lm 1.0 / edit 12 / bonus 3",
+  "new": "lm 1.0 / edit 8 / bonus 3"
+ },
+ "summary": {
+  "R1": {
+   "n_metrics": 8,
+   "n_decided": 7,
+   "n_effects": 0,
+   "all_reproduced": true,
+   "rows_not_used": [],
+   "not_reproduced": [],
+   "effects": []
+  },
+  "R2": {
+   "n_metrics": 16,
+   "n_decided": 16,
+   "n_effects": 4,
+   "all_reproduced": true,
+   "rows_not_used": [],
+   "not_reproduced": [],
+   "effects": [
+    "R2/trust_gated:commit_rate 0.12981455064194009 -> 0.017118402282453638 (hw 0.02489)",
+    "R2/trust_gated:wrong_commit_rate 0.015691868758915834 -> 0.0014265335235378032 (hw 0.009547)",
+    "R2/trust_ungated:commit_rate 0.1312410841654779 -> 0.017118402282453638 (hw 0.02501)",
+    "R2/trust_ungated:wrong_commit_rate 0.015691868758915834 -> 0.0014265335235378032 (hw 0.009547)"
+   ]
+  },
+  "R3": {
+   "n_metrics": 24,
+   "n_decided": 22,
+   "n_effects": 6,
+   "all_reproduced": true,
+   "rows_not_used": [],
+   "not_reproduced": [],
+   "effects": [
+    "R3/dedicated_0/ltt:commit_rate 0.012838801711840228 -> 0.029957203994293864 (hw 0.008725)",
+    "R3/dedicated_0/ltt:wrong_commit_rate 0.008559201141226819 -> 0.021398002853067047 (hw 0.007309)",
+    "R3/dedicated_0/crc:commit_rate 0.012838801711840228 -> 0.029957203994293864 (hw 0.008725)",
+    "R3/dedicated_0/crc:wrong_commit_rate 0.008559201141226819 -> 0.021398002853067047 (hw 0.007309)",
+    "R3/shared/ltt:commit_rate 0.012838801711840228 -> 0.039942938659058486 (hw 0.008725)",
+    "R3/shared/ltt:wrong_commit_rate 0.009985734664764621 -> 0.025677603423680456 (hw 0.007811)"
+   ]
+  },
+  "R4": {
+   "n_metrics": 18,
+   "n_decided": 16,
+   "n_effects": 0,
+   "all_reproduced": true,
+   "rows_not_used": [],
+   "not_reproduced": [],
+   "effects": []
+  },
+  "R5": {
+   "n_metrics": 14,
+   "n_decided": 10,
+   "n_effects": 1,
+   "all_reproduced": true,
+   "rows_not_used": [],
+   "not_reproduced": [],
+   "effects": [
+    "R5/base:held_out_can_commit_rate 0.9600570613409415 -> 0.0 (hw 0.01467)"
+   ]
+  },
+  "R6": {
+   "n_metrics": 6,
+   "n_decided": 0,
+   "n_effects": 0,
+   "all_reproduced": false,
+   "rows_not_used": [
+    "R6/m4-12",
+    "R6/m4-13"
+   ],
+   "not_reproduced": [
+    "R6/m4-13:commit_rate",
+    "R6/m4-13:wrong_commit_rate",
+    "R6/m4-13:error_among_commits"
+   ],
+   "effects": []
+  }
+ },
+ "all": {
+  "n_metrics": 86,
+  "n_decided": 71,
+  "n_effects": 11,
+  "all_reproduced": false,
+  "rows_not_used": [
+   "R6/m4-12",
+   "R6/m4-13"
+  ],
+  "not_reproduced": [
+   "R6/m4-13:commit_rate",
+   "R6/m4-13:wrong_commit_rate",
+   "R6/m4-13:error_among_commits"
+  ],
+  "effects": [
+   "R2/trust_gated:commit_rate 0.12981455064194009 -> 0.017118402282453638 (hw 0.02489)",
+   "R2/trust_gated:wrong_commit_rate 0.015691868758915834 -> 0.0014265335235378032 (hw 0.009547)",
+   "R2/trust_ungated:commit_rate 0.1312410841654779 -> 0.017118402282453638 (hw 0.02501)",
+   "R2/trust_ungated:wrong_commit_rate 0.015691868758915834 -> 0.0014265335235378032 (hw 0.009547)",
+   "R3/dedicated_0/ltt:commit_rate 0.012838801711840228 -> 0.029957203994293864 (hw 0.008725)",
+   "R3/dedicated_0/ltt:wrong_commit_rate 0.008559201141226819 -> 0.021398002853067047 (hw 0.007309)",
+   "R3/dedicated_0/crc:commit_rate 0.012838801711840228 -> 0.029957203994293864 (hw 0.008725)",
+   "R3/dedicated_0/crc:wrong_commit_rate 0.008559201141226819 -> 0.021398002853067047 (hw 0.007309)",
+   "R3/shared/ltt:commit_rate 0.012838801711840228 -> 0.039942938659058486 (hw 0.008725)",
+   "R3/shared/ltt:wrong_commit_rate 0.009985734664764621 -> 0.025677603423680456 (hw 0.007811)",
+   "R5/base:held_out_can_commit_rate 0.9600570613409415 -> 0.0 (hw 0.01467)"
+  ]
+ },
+ "details": {
+  "R1/m4-13": {
+   "committed": {
+    "value": 2.2253170716630644,
+    "status": "certified",
+    "n_commits": 104,
+    "n_wrong_commits": 17,
+    "unguarded_wpm": 2.2253170716630644,
+    "no_bci_wpm": 4.015288155973546,
+    "config_id": "tcfg-1016759f08a3f9a1"
+   },
+   "ref_e12": {
+    "value": 2.2253170716630644,
+    "status": "certified",
+    "n_commits": 104,
+    "n_wrong_commits": 17,
+    "unguarded_wpm": 2.2253170716630644,
+    "config_id": "tcfg-1016759f08a3f9a1"
+   },
+   "e8": {
+    "value": 2.283541533012561,
+    "status": "certified",
+    "n_commits": 99,
+    "n_wrong_commits": 15,
+    "unguarded_wpm": 2.283541533012561,
+    "wpm_no_penalty": 2.3547053640554685,
+    "error_among_commits": 0.15151515151515152,
+    "measured_wrong_commit": 0.021398002853067047,
+    "measured_wrong_commit_cp95": [
+     0.012,
+     0.035
+    ],
+    "no_bci_wpm": 4.015288155973546,
+    "config_id": "tcfg-2bf66777c2c6b960",
+    "committed_correct_words": 514,
+    "total_words": 4675
+   },
+   "e8_sheet": {
+    "config_id": "tcfg-2bf66777c2c6b960",
+    "commit_threshold": 0.58,
+    "feasible": true,
+    "n_items": 722,
+    "n_ltt": 271
+   },
+   "ref_sheet": {
+    "config_id": "tcfg-1016759f08a3f9a1",
+    "commit_threshold": 0.73,
+    "feasible": true,
+    "n_items": 722,
+    "n_ltt": 271
+   },
+   "patch_e8": {
+    "edit": 8.0,
+    "changed": 1,
+    "constructed": 1,
+    "decoder_edit_penalty": 8.0,
+    "decoder_lm_weight": 1.0,
+    "decoder_word_bonus": 3.0
+   },
+   "patch_ref": {
+    "edit": 12.0,
+    "changed": 1,
+    "constructed": 1,
+    "decoder_edit_penalty": 12.0,
+    "decoder_lm_weight": 1.0,
+    "decoder_word_bonus": 3.0
+   },
+   "e8_above_no_bci": false
+  },
+  "R1/m4-12": {
+   "committed": {
+    "value": 0.0,
+    "status": "certified",
+    "n_commits": 2,
+    "n_wrong_commits": 2,
+    "unguarded_wpm": 0.0,
+    "no_bci_wpm": 4.015288155973546,
+    "config_id": "tcfg-fcd45cf2cc381ca7"
+   },
+   "ref_e12": {
+    "value": 0.0,
+    "status": "certified",
+    "n_commits": 2,
+    "n_wrong_commits": 2,
+    "unguarded_wpm": 0.0,
+    "config_id": "tcfg-fcd45cf2cc381ca7"
+   },
+   "e8": {
+    "value": 0.0,
+    "status": "vacuous",
+    "n_commits": 0,
+    "n_wrong_commits": 0,
+    "unguarded_wpm": 0.0,
+    "wpm_no_penalty": 0.0,
+    "error_among_commits": null,
+    "measured_wrong_commit": 0.0,
+    "measured_wrong_commit_cp95": [
+     0.0,
+     0.0052
+    ],
+    "no_bci_wpm": 4.015288155973546,
+    "config_id": "tcfg-1eb5a6e9a3f38388",
+    "committed_correct_words": 0,
+    "total_words": 4675
+   },
+   "e8_sheet": {
+    "config_id": "tcfg-1eb5a6e9a3f38388",
+    "commit_threshold": 0.3,
+    "feasible": true,
+    "n_items": 722,
+    "n_ltt": 271
+   },
+   "ref_sheet": {
+    "config_id": "tcfg-fcd45cf2cc381ca7",
+    "commit_threshold": 0.3,
+    "feasible": true,
+    "n_items": 722,
+    "n_ltt": 271
+   },
+   "patch_e8": {
+    "edit": 8.0,
+    "changed": 1,
+    "constructed": 1,
+    "decoder_edit_penalty": 8.0,
+    "decoder_lm_weight": 1.0,
+    "decoder_word_bonus": 3.0
+   },
+   "patch_ref": {
+    "edit": 12.0,
+    "changed": 1,
+    "constructed": 1,
+    "decoder_edit_penalty": 12.0,
+    "decoder_lm_weight": 1.0,
+    "decoder_word_bonus": 3.0
+   },
+   "e8_above_no_bci": false
+  },
+  "R2": {
+   "controls_commits_committed_ref_e8": {
+    "real/gated": [
+     39,
+     39,
+     5
+    ],
+    "real/ungated": [
+     39,
+     39,
+     5
+    ],
+    "frame_shuffled/gated": [
+     0,
+     0,
+     0
+    ],
+    "frame_shuffled/ungated": [
+     2,
+     2,
+     2
+    ],
+    "uniform/gated": [
+     0,
+     0,
+     0
+    ],
+    "uniform/ungated": [
+     186,
+     186,
+     174
+    ]
+   },
+   "controls_pass_gated_e8": true,
+   "cache_misses": {
+    "ref": 0,
+    "e8": 2002
+   },
+   "patch": {
+    "ref": {
+     "edit": 12.0,
+     "changed": 1,
+     "constructed": 1,
+     "decoder_edit_penalty": 12.0,
+     "decoder_lm_weight": 1.0,
+     "decoder_word_bonus": 3.0
+    },
+    "e8": {
+     "edit": 8.0,
+     "changed": 1,
+     "constructed": 1,
+     "decoder_edit_penalty": 8.0,
+     "decoder_lm_weight": 1.0,
+     "decoder_word_bonus": 3.0
+    }
+   },
+   "configs": {
+    "gated": "tcfg-4e6143e37d1642f3",
+    "ungated": "tcfg-e7e8c472f6d9ab33",
+    "chain_e8_gated": "tcfg-f410c34a141b762c"
+   },
+   "secondary_chain_e8_gated": {
+    "config_id": "tcfg-f410c34a141b762c",
+    "n": 701,
+    "n_commit": 103,
+    "commit_rate": 0.14693295292439373,
+    "commit_rate_cp95": [
+     0.12154183657960936,
+     0.17533692401850595
+    ],
+    "n_wrong_commit": 18,
+    "wrong_commit": 0.025677603423680456,
+    "wrong_commit_cp95": [
+     0.015287583869184163,
+     0.04027894064050071
+    ],
+    "error_among_commits": 0.17475728155339806,
+    "error_among_commits_cp95": [
+     0.10698786790745929,
+     0.26205719367859703
+    ],
+    "guarantee_point_holds": true,
+    "guarantee_cp_upper_holds": true,
+    "n_commit_empty": 0,
+    "ewpm": 9.769861236169538,
+    "silent_error": 0.0,
+    "rate_offer": 0.8530670470756063,
+    "abstain_rate": 0.0,
+    "stream_equals_batch": 701,
+    "actions": {
+     "COMMIT": 103,
+     "OFFER": 598,
+     "ASK": 0,
+     "ABSTAIN": 0,
+     "OFFER_WORDS": 0
+    }
+   }
+  },
+  "R3": {
+   "fit_committed_ref_e8": {
+    "dedicated_0/ltt": {
+     "config_id": [
+      "tcfg-e7e8c472f6d9ab33",
+      "tcfg-e7e8c472f6d9ab33",
+      "tcfg-065aa5538215a7ce"
+     ],
+     "lambda_hat": [
+      0.33,
+      0.33,
+      0.27
+     ],
+     "feasible": [
+      true,
+      true,
+      true
+     ],
+     "final_commit_p": [
+      0.4,
+      0.4,
+      0.3
+     ],
+     "frame_T": [
+      1.2384909402024311,
+      1.2384909402024311,
+      1.2384909402024311
+     ],
+     "sentence_T": [
+      7.799845423189583,
+      7.799845423189583,
+      7.49947085006983
+     ]
+    },
+    "dedicated_0/crc": {
+     "config_id": [
+      "tcfg-aa410b001a0f1db5",
+      "tcfg-aa410b001a0f1db5",
+      "tcfg-c7c538287b43f45f"
+     ],
+     "lambda_hat": [
+      0.30618316152484526,
+      0.30618316152484526,
+      0.2555727753535146
+     ],
+     "feasible": [
+      true,
+      true,
+      true
+     ],
+     "final_commit_p": [
+      0.4,
+      0.4,
+      0.3
+     ],
+     "frame_T": [
+      1.2384909402024311,
+      1.2384909402024311,
+      1.2384909402024311
+     ],
+     "sentence_T": [
+      7.799845423189583,
+      7.799845423189583,
+      7.49947085006983
+     ]
+    },
+    "shared/ltt": {
+     "config_id": [
+      "tcfg-af10f34fd5cc03a5",
+      "tcfg-af10f34fd5cc03a5",
+      "tcfg-220db7caa6c8173d"
+     ],
+     "lambda_hat": [
+      0.33,
+      0.33,
+      0.29
+     ],
+     "feasible": [
+      true,
+      true,
+      true
+     ],
+     "final_commit_p": [
+      0.4,
+      0.4,
+      0.3
+     ],
+     "frame_T": [
+      1.1944761770841859,
+      1.1944761770841859,
+      1.1944761770841859
+     ],
+     "sentence_T": [
+      7.830825336962214,
+      7.830825336962214,
+      6.938522934582529
+     ]
+    }
+   },
+   "controls_commits_committed_ref_e8": {
+    "real": [
+     4,
+     4,
+     10
+    ],
+    "frame_shuffled": [
+     0,
+     0,
+     3
+    ],
+    "uniform": [
+     186,
+     186,
+     211
+    ]
+   },
+   "cache_misses": {
+    "ref": 0,
+    "e8": 4848
+   },
+   "eval_e8": {
+    "dedicated_0/ltt": {
+     "n_commit": 21,
+     "n_wrong_commit": 15,
+     "ewpm": 6.014882559379165,
+     "error_among_commits": 0.7142857142857143,
+     "wrong_commit_cp95": [
+      0.012024575588255433,
+      0.0350474671971889
+     ]
+    },
+    "dedicated_0/crc": {
+     "n_commit": 21,
+     "n_wrong_commit": 15,
+     "ewpm": 6.014882559379165,
+     "error_among_commits": 0.7142857142857143,
+     "wrong_commit_cp95": [
+      0.012024575588255433,
+      0.0350474671971889
+     ]
+    },
+    "shared/ltt": {
+     "n_commit": 28,
+     "n_wrong_commit": 18,
+     "ewpm": 5.9119859658379585,
+     "error_among_commits": 0.6428571428571429,
+     "wrong_commit_cp95": [
+      0.015287583869184163,
+      0.04027894064050071
+     ]
+    }
+   }
+  },
+  "R4/m4-13": {
+   "status": [
+    "scored",
+    "scored",
+    "scored"
+   ],
+   "safe_wpm_e8": {
+    "value": 3.4708893893917034,
+    "ci": [
+     2.255655327231911,
+     4.875638193914141
+    ],
+    "status": "certified",
+    "n_commits": 18,
+    "n_wrong_commits": 4,
+    "no_bci_wpm": 4.116541353383458
+   },
+   "safe_wpm_committed": {
+    "value": 4.065168084942968,
+    "ci": [
+     2.5113107617610324,
+     5.74087655261503
+    ],
+    "status": "certified",
+    "n_commits": 19,
+    "n_wrong_commits": 3,
+    "no_bci_wpm": 4.116541353383458
+   },
+   "stage_info_e8": {
+    "model": "m4-13",
+    "day_offset": 197,
+    "n_val_select": 722,
+    "n_cal_used": 616,
+    "n_val_eval": 701,
+    "n_scored": 103,
+    "config_id": "tcfg-9134019134830192",
+    "sheet": {
+     "n_items": 616,
+     "n_fit": 154,
+     "n_ltt": 231,
+     "feasible": true,
+     "commit_threshold": 0.39
+    },
+    "commits": 18,
+    "seconds": 403.9
+   },
+   "stage_info_ref": {
+    "model": "m4-13",
+    "day_offset": 197,
+    "n_val_select": 722,
+    "n_cal_used": 616,
+    "n_val_eval": 701,
+    "n_scored": 103,
+    "config_id": "tcfg-995e4aad89eb96aa",
+    "sheet": {
+     "n_items": 616,
+     "n_fit": 154,
+     "n_ltt": 231,
+     "feasible": true,
+     "commit_threshold": 0.51
+    },
+    "commits": 19,
+    "seconds": 406.5
+   }
+  },
+  "R4/m4-12": {
+   "status": [
+    "scored",
+    "scored",
+    "scored"
+   ],
+   "safe_wpm_e8": {
+    "value": 0.0,
+    "ci": null,
+    "status": "vacuous",
+    "n_commits": 0,
+    "n_wrong_commits": 0,
+    "no_bci_wpm": 4.116541353383458
+   },
+   "safe_wpm_committed": {
+    "value": 0.0,
+    "ci": null,
+    "status": "vacuous",
+    "n_commits": 0,
+    "n_wrong_commits": 0,
+    "no_bci_wpm": 4.116541353383458
+   },
+   "stage_info_e8": {
+    "model": "m4-12",
+    "day_offset": 197,
+    "n_val_select": 722,
+    "n_cal_used": 616,
+    "n_val_eval": 701,
+    "n_scored": 103,
+    "config_id": "tcfg-8b54e20634198367",
+    "sheet": {
+     "n_items": 616,
+     "n_fit": 154,
+     "n_ltt": 231,
+     "feasible": true,
+     "commit_threshold": 0.3
+    },
+    "commits": 0,
+    "seconds": 355.7
+   },
+   "stage_info_ref": {
+    "model": "m4-12",
+    "day_offset": 197,
+    "n_val_select": 722,
+    "n_cal_used": 616,
+    "n_val_eval": 701,
+    "n_scored": 103,
+    "config_id": "tcfg-065ec812c6cd643e",
+    "sheet": {
+     "n_items": 616,
+     "n_fit": 154,
+     "n_ltt": 231,
+     "feasible": true,
+     "commit_threshold": 0.3
+    },
+    "commits": 0,
+    "seconds": 354.7
+   }
+  },
+  "R5": {
+   "targets": {
+    "0.5": {
+     "commit_p": [
+      "inf",
+      "inf",
+      "inf"
+     ],
+     "feasible": [
+      false,
+      false,
+      false
+     ],
+     "commits": [
+      0,
+      0,
+      0
+     ],
+     "wrong": [
+      0,
+      0,
+      0
+     ],
+     "precision": [
+      null,
+      null,
+      null
+     ],
+     "controls_pass": [
+      true,
+      true,
+      true
+     ]
+    },
+    "0.8": {
+     "commit_p": [
+      "inf",
+      "inf",
+      "inf"
+     ],
+     "feasible": [
+      false,
+      false,
+      false
+     ],
+     "commits": [
+      0,
+      0,
+      0
+     ],
+     "wrong": [
+      0,
+      0,
+      0
+     ],
+     "precision": [
+      null,
+      null,
+      null
+     ],
+     "controls_pass": [
+      true,
+      true,
+      true
+     ]
+    },
+    "0.9": {
+     "commit_p": [
+      "inf",
+      "inf",
+      "inf"
+     ],
+     "feasible": [
+      false,
+      false,
+      false
+     ],
+     "commits": [
+      0,
+      0,
+      0
+     ],
+     "wrong": [
+      0,
+      0,
+      0
+     ],
+     "precision": [
+      null,
+      null,
+      null
+     ],
+     "controls_pass": [
+      true,
+      true,
+      true
+     ]
+    },
+    "0.95": {
+     "commit_p": [
+      "inf",
+      "inf",
+      "inf"
+     ],
+     "feasible": [
+      false,
+      false,
+      false
+     ],
+     "commits": [
+      0,
+      0,
+      0
+     ],
+     "wrong": [
+      0,
+      0,
+      0
+     ],
+     "precision": [
+      null,
+      null,
+      null
+     ],
+     "controls_pass": [
+      true,
+      true,
+      true
+     ]
+    }
+   },
+   "base_commit_p": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "resampling_e8": {
+    "0.5": {
+     "draws": 1000,
+     "feasible": 0,
+     "violations": 0,
+     "violation_rate": null,
+     "limit": null,
+     "pass": null,
+     "mean_population_precision": null,
+     "mean_commit_rate": null
+    },
+    "0.8": {
+     "draws": 1000,
+     "feasible": 0,
+     "violations": 0,
+     "violation_rate": null,
+     "limit": null,
+     "pass": null,
+     "mean_population_precision": null,
+     "mean_commit_rate": null
+    },
+    "0.9": {
+     "draws": 1000,
+     "feasible": 0,
+     "violations": 0,
+     "violation_rate": null,
+     "limit": null,
+     "pass": null,
+     "mean_population_precision": null,
+     "mean_commit_rate": null
+    },
+    "0.95": {
+     "draws": 1000,
+     "feasible": 0,
+     "violations": 0,
+     "violation_rate": null,
+     "limit": null,
+     "pass": null,
+     "mean_population_precision": null,
+     "mean_commit_rate": null
+    }
+   }
+  },
+  "_r6_m413_ref_ok": false,
+  "R6/m4-13": {
+   "prep_check_ref": {
+    "nbest-val_select.json": {
+     "n": 722,
+     "same_keys": true,
+     "n_equal_lists": 722
+    },
+    "nbest-val_eval.json": {
+     "n": 701,
+     "same_keys": true,
+     "n_equal_lists": 701
+    },
+    "nbest-null-shuffled.json": {
+     "n": 200,
+     "same_keys": true,
+     "n_equal_lists": 200
+    },
+    "guard_sheet": {
+     "commit_threshold": [
+      0.74,
+      0.74
+     ],
+     "config_id": [
+      "tcfg-aee7fe896ecfca23",
+      "tcfg-aee7fe896ecfca23"
+     ],
+     "controls_passed": [
+      [
+       true,
+       true
+      ],
+      [
+       true,
+       true
+      ]
+     ]
+    }
+   },
+   "reference_replay": true,
+   "actions": [
+    {
+     "COMMIT": 16,
+     "OFFER": 104
+    },
+    {
+     "COMMIT": 3,
+     "OFFER": 24
+    },
+    {
+     "COMMIT": 18,
+     "OFFER": 102
+    }
+   ],
+   "added_p95_ms": [
+    1.971,
+    38.186,
+    2.23
+   ],
+   "producer_level_e8": "trust-ready"
+  },
+  "R6/m4-12": {
+   "prep_check_ref": {
+    "nbest-val_select.json": {
+     "n": 722,
+     "same_keys": true,
+     "n_equal_lists": 722
+    },
+    "nbest-val_eval.json": {
+     "n": 701,
+     "same_keys": true,
+     "n_equal_lists": 701
+    },
+    "nbest-null-shuffled.json": {
+     "n": 200,
+     "same_keys": true,
+     "n_equal_lists": 200
+    },
+    "guard_sheet": {
+     "commit_threshold": [
+      0.3,
+      0.3
+     ],
+     "config_id": [
+      "tcfg-c5fd95a99143f814",
+      "tcfg-c5fd95a99143f814"
+     ],
+     "controls_passed": [
+      [
+       true,
+       true
+      ],
+      [
+       true,
+       true
+      ]
+     ]
+    }
+   },
+   "reference_replay": false,
+   "actions": [
+    {
+     "OFFER": 120
+    },
+    null,
+    {
+     "OFFER": 120
+    }
+   ],
+   "added_p95_ms": [
+    2.427,
+    null,
+    2.563
+   ],
+   "producer_level_e8": "trust-ready"
+  }
+ },
+ "metrics": [
+  {
+   "row": "R1/m4-13",
+   "metric": "commit_rate",
+   "committed": 0.14835948644793154,
+   "ref_e12": 0.14835948644793154,
+   "e8": 0.14122681883024252,
+   "delta": -0.00713266761768902,
+   "half_width": 0.0263113610552144,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.2710869879639109,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R1/m4-13",
+   "metric": "wrong_commit_rate",
+   "committed": 0.024251069900142655,
+   "ref_e12": 0.024251069900142655,
+   "e8": 0.021398002853067047,
+   "delta": -0.002853067047075608,
+   "half_width": 0.011648544331628303,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.24492906288118058,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R1/m4-13",
+   "metric": "error_among_commits",
+   "committed": 0.16346153846153846,
+   "ref_e12": 0.16346153846153846,
+   "e8": 0.15151515151515152,
+   "delta": -0.011946386946386944,
+   "half_width": 0.07081413330646708,
+   "hw_kind": "Wilson n=104",
+   "ratio": 0.16870060238802562,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R1/m4-13",
+   "metric": "safe_wpm",
+   "committed": 2.2253170716630644,
+   "ref_e12": 2.2253170716630644,
+   "e8": 2.283541533012561,
+   "delta": 0.05822446134949644,
+   "half_width": 0.46224986531543977,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.12595884978736338,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R1/m4-12",
+   "metric": "commit_rate",
+   "committed": 0.0028530670470756064,
+   "ref_e12": 0.0028530670470756064,
+   "e8": 0.0,
+   "delta": -0.0028530670470756064,
+   "half_width": 0.0047798063403142535,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.5969001344284648,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R1/m4-12",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0028530670470756064,
+   "ref_e12": 0.0028530670470756064,
+   "e8": 0.0,
+   "delta": -0.0028530670470756064,
+   "half_width": 0.0047798063403142535,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.5969001344284648,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R1/m4-12",
+   "metric": "error_among_commits (0 commits: commit rate decides)",
+   "committed": 1.0,
+   "ref_e12": 1.0,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "not compared",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R1/m4-12",
+   "metric": "safe_wpm",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.0,
+   "hw_kind": "trial bootstrap",
+   "ratio": null,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/words_T1",
+   "metric": "wer",
+   "committed": 0.18802139037433155,
+   "ref_e12": 0.18802139037433155,
+   "e8": 0.1925133689839572,
+   "delta": 0.004491978609625663,
+   "half_width": 0.015107338171542486,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.2973375295250324,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/words_T1",
+   "metric": "sentence_exact",
+   "committed": 0.3651925820256776,
+   "ref_e12": 0.3651925820256776,
+   "e8": 0.34950071326676174,
+   "delta": -0.015691868758915872,
+   "half_width": 0.03555306885458967,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.44136467721239075,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/words_T1",
+   "metric": "truth_in_nbest",
+   "committed": 0.5263908701854494,
+   "ref_e12": 0.5263908701854494,
+   "e8": 0.5306704707560628,
+   "delta": 0.004279600570613384,
+   "half_width": 0.03686123515212316,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.1161003030135002,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/words_cfgT",
+   "metric": "wer",
+   "committed": 0.18737967914438503,
+   "ref_e12": 0.18737967914438503,
+   "e8": 0.19315508021390373,
+   "delta": 0.00577540106951871,
+   "half_width": 0.015177427257296344,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.38052569593059743,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/words_cfgT",
+   "metric": "sentence_exact",
+   "committed": 0.3680456490727532,
+   "ref_e12": 0.3680456490727532,
+   "e8": 0.35235378031383735,
+   "delta": -0.015691868758915872,
+   "half_width": 0.03561103919799837,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.4406461904037297,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/words_cfgT",
+   "metric": "truth_in_nbest",
+   "committed": 0.5278174037089871,
+   "ref_e12": 0.5278174037089871,
+   "e8": 0.5335235378031383,
+   "delta": 0.005706134094151216,
+   "half_width": 0.036855549078268345,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.15482428662325382,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/trust_gated",
+   "metric": "commit_rate",
+   "committed": 0.12981455064194009,
+   "ref_e12": 0.12981455064194009,
+   "e8": 0.017118402282453638,
+   "delta": -0.11269614835948645,
+   "half_width": 0.024894358353262227,
+   "hw_kind": "Wilson n=701",
+   "ratio": 4.526975419903459,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R2/trust_gated",
+   "metric": "wrong_commit_rate",
+   "committed": 0.015691868758915834,
+   "ref_e12": 0.015691868758915834,
+   "e8": 0.0014265335235378032,
+   "delta": -0.01426533523537803,
+   "half_width": 0.00954711566918746,
+   "hw_kind": "Wilson n=701",
+   "ratio": 1.4942036662882634,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R2/trust_gated",
+   "metric": "error_among_commits",
+   "committed": 0.12087912087912088,
+   "ref_e12": 0.12087912087912088,
+   "e8": 0.08333333333333333,
+   "delta": -0.03754578754578755,
+   "half_width": 0.06737994960548085,
+   "hw_kind": "Wilson n=91",
+   "ratio": 0.5572249276769047,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/trust_gated",
+   "metric": "ewpm",
+   "committed": 9.93629240775816,
+   "ref_e12": 9.93629240775816,
+   "e8": 9.723632002377519,
+   "delta": -0.21266040538064068,
+   "half_width": 0.5105407012289644,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.41653957239594874,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/trust_ungated",
+   "metric": "commit_rate",
+   "committed": 0.1312410841654779,
+   "ref_e12": 0.1312410841654779,
+   "e8": 0.017118402282453638,
+   "delta": -0.11412268188302425,
+   "half_width": 0.025008855989508617,
+   "hw_kind": "Wilson n=701",
+   "ratio": 4.563290777111096,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R2/trust_ungated",
+   "metric": "wrong_commit_rate",
+   "committed": 0.015691868758915834,
+   "ref_e12": 0.015691868758915834,
+   "e8": 0.0014265335235378032,
+   "delta": -0.01426533523537803,
+   "half_width": 0.00954711566918746,
+   "hw_kind": "Wilson n=701",
+   "ratio": 1.4942036662882634,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R2/trust_ungated",
+   "metric": "error_among_commits",
+   "committed": 0.11956521739130435,
+   "ref_e12": 0.11956521739130435,
+   "e8": 0.08333333333333333,
+   "delta": -0.03623188405797102,
+   "half_width": 0.06672222392267194,
+   "hw_kind": "Wilson n=92",
+   "ratio": 0.5430257255807622,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/trust_ungated",
+   "metric": "ewpm",
+   "committed": 9.936820403229442,
+   "ref_e12": 9.936820403229442,
+   "e8": 9.723632002377519,
+   "delta": -0.21318840085192292,
+   "half_width": 0.5101554712699548,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.4178890805997291,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/always_commit",
+   "metric": "wrong_commit_rate",
+   "committed": 0.6319543509272468,
+   "ref_e12": 0.6319543509272468,
+   "e8": 0.6476462196861626,
+   "delta": 0.015691868758915817,
+   "half_width": 0.03561103919799837,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.44064619040372816,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R2/always_commit",
+   "metric": "ewpm",
+   "committed": 9.896263342539875,
+   "ref_e12": 9.896263342539875,
+   "e8": 9.701963477914262,
+   "delta": -0.19429986462561288,
+   "half_width": 0.5761050128170773,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.3372646658211014,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/ltt",
+   "metric": "commit_rate",
+   "committed": 0.012838801711840228,
+   "ref_e12": 0.012838801711840228,
+   "e8": 0.029957203994293864,
+   "delta": 0.017118402282453635,
+   "half_width": 0.00872489964139191,
+   "hw_kind": "Wilson n=701",
+   "ratio": 1.962017098883522,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/ltt",
+   "metric": "wrong_commit_rate",
+   "committed": 0.008559201141226819,
+   "ref_e12": 0.008559201141226819,
+   "e8": 0.021398002853067047,
+   "delta": 0.012838801711840228,
+   "half_width": 0.007309110783690695,
+   "hw_kind": "Wilson n=701",
+   "ratio": 1.7565476966758116,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/ltt",
+   "metric": "error_among_commits",
+   "committed": 0.6666666666666666,
+   "ref_e12": 0.6666666666666666,
+   "e8": 0.7142857142857143,
+   "delta": 0.04761904761904767,
+   "half_width": 0.26260702301634636,
+   "hw_kind": "Wilson n=9",
+   "ratio": 0.18133196542913307,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/ltt",
+   "metric": "ewpm",
+   "committed": 6.033406935623832,
+   "ref_e12": 6.033406935623832,
+   "e8": 6.014882559379165,
+   "delta": -0.01852437624466674,
+   "half_width": 0.20838761260993888,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.08889384552497741,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/crc",
+   "metric": "commit_rate",
+   "committed": 0.012838801711840228,
+   "ref_e12": 0.012838801711840228,
+   "e8": 0.029957203994293864,
+   "delta": 0.017118402282453635,
+   "half_width": 0.00872489964139191,
+   "hw_kind": "Wilson n=701",
+   "ratio": 1.962017098883522,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/crc",
+   "metric": "wrong_commit_rate",
+   "committed": 0.008559201141226819,
+   "ref_e12": 0.008559201141226819,
+   "e8": 0.021398002853067047,
+   "delta": 0.012838801711840228,
+   "half_width": 0.007309110783690695,
+   "hw_kind": "Wilson n=701",
+   "ratio": 1.7565476966758116,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/crc",
+   "metric": "error_among_commits",
+   "committed": 0.6666666666666666,
+   "ref_e12": 0.6666666666666666,
+   "e8": 0.7142857142857143,
+   "delta": 0.04761904761904767,
+   "half_width": 0.26260702301634636,
+   "hw_kind": "Wilson n=9",
+   "ratio": 0.18133196542913307,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/crc",
+   "metric": "ewpm",
+   "committed": 6.033406935623832,
+   "ref_e12": 6.033406935623832,
+   "e8": 6.014882559379165,
+   "delta": -0.01852437624466674,
+   "half_width": 0.20838761260993888,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.08889384552497741,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/ltt",
+   "metric": "commit_rate",
+   "committed": 0.012838801711840228,
+   "ref_e12": 0.012838801711840228,
+   "e8": 0.039942938659058486,
+   "delta": 0.027104136947218256,
+   "half_width": 0.00872489964139191,
+   "hw_kind": "Wilson n=701",
+   "ratio": 3.106527073232243,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/ltt",
+   "metric": "wrong_commit_rate",
+   "committed": 0.009985734664764621,
+   "ref_e12": 0.009985734664764621,
+   "e8": 0.025677603423680456,
+   "delta": 0.015691868758915834,
+   "half_width": 0.007811023357226979,
+   "hw_kind": "Wilson n=701",
+   "ratio": 2.0089389112371907,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/ltt",
+   "metric": "error_among_commits",
+   "committed": 0.7777777777777778,
+   "ref_e12": 0.7777777777777778,
+   "e8": 0.6428571428571429,
+   "delta": -0.13492063492063489,
+   "half_width": 0.2420929618875822,
+   "hw_kind": "Wilson n=9",
+   "ratio": 0.557309200022454,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/ltt",
+   "metric": "ewpm",
+   "committed": 5.940865130581849,
+   "ref_e12": 5.940865130581849,
+   "e8": 5.9119859658379585,
+   "delta": -0.028879164743890406,
+   "half_width": 0.20246622617922894,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.14263694883276848,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/always_commit",
+   "metric": "wrong_commit_rate",
+   "committed": 0.912981455064194,
+   "ref_e12": 0.912981455064194,
+   "e8": 0.9229671897289586,
+   "delta": 0.0099857346647646,
+   "half_width": 0.02092980430809881,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.47710597374771485,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/always_commit",
+   "metric": "ewpm",
+   "committed": 5.601267798909205,
+   "ref_e12": 5.601267798909205,
+   "e8": 5.582294528515948,
+   "delta": -0.018973270393256136,
+   "half_width": 0.25130998417497397,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.07549747955913301,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/old_frozen",
+   "metric": "commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/old_frozen",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/old_frozen",
+   "metric": "error_among_commits (0 commits: commit rate decides)",
+   "committed": null,
+   "ref_e12": null,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "not compared",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R3/dedicated_0/old_frozen",
+   "metric": "ewpm",
+   "committed": 5.944823109315387,
+   "ref_e12": 5.944823109315387,
+   "e8": 6.028911370541873,
+   "delta": 0.08408826122648527,
+   "half_width": 0.19575520238260902,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.42955824521144736,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/always_commit",
+   "metric": "wrong_commit_rate",
+   "committed": 0.912981455064194,
+   "ref_e12": 0.912981455064194,
+   "e8": 0.9172610556348074,
+   "delta": 0.004279600570613384,
+   "half_width": 0.02092980430809881,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.2044739887490199,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/always_commit",
+   "metric": "ewpm",
+   "committed": 5.520975205533037,
+   "ref_e12": 5.520975205533037,
+   "e8": 5.527522020954262,
+   "delta": 0.0065468154212249274,
+   "half_width": 0.23852972858178578,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.02744653867737996,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/old_frozen",
+   "metric": "commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/old_frozen",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/old_frozen",
+   "metric": "error_among_commits (0 commits: commit rate decides)",
+   "committed": null,
+   "ref_e12": null,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "not compared",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R3/shared/old_frozen",
+   "metric": "ewpm",
+   "committed": 5.880120662630389,
+   "ref_e12": 5.880120662630389,
+   "e8": 5.957296060691642,
+   "delta": 0.07717539806125373,
+   "half_width": 0.1964460296518009,
+   "hw_kind": "trial bootstrap",
+   "ratio": 0.3928580190602301,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "cer",
+   "committed": 0.06704260651629072,
+   "ref_e12": 0.06704260651629072,
+   "e8": 0.08114035087719298,
+   "delta": 0.014097744360902262,
+   "half_width": 0.01580107228939738,
+   "hw_kind": "committed card CI",
+   "ratio": 0.8922017507863651,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "wer",
+   "committed": 0.1126331811263318,
+   "ref_e12": 0.1126331811263318,
+   "e8": 0.1278538812785388,
+   "delta": 0.015220700152207,
+   "half_width": 0.02453683857960843,
+   "hw_kind": "committed card CI",
+   "ratio": 0.6203203441561663,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "ewpm",
+   "committed": 12.834725635147173,
+   "ref_e12": 12.834725635147173,
+   "e8": 12.118584696430922,
+   "delta": -0.7161409387162507,
+   "half_width": 1.685941821176236,
+   "hw_kind": "committed card CI",
+   "ratio": 0.42477203526312585,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "ewpm_minus_gaze",
+   "committed": 8.718184281763714,
+   "ref_e12": 8.718184281763714,
+   "e8": 8.002043343047463,
+   "delta": -0.7161409387162507,
+   "half_width": 1.5848665580009529,
+   "hw_kind": "committed card CI",
+   "ratio": 0.4518619786006111,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "wrong_commit_rate",
+   "committed": 0.02912621359223301,
+   "ref_e12": 0.02912621359223301,
+   "e8": 0.038834951456310676,
+   "delta": 0.009708737864077666,
+   "half_width": 0.024406469555035126,
+   "hw_kind": "committed card CI",
+   "ratio": 0.3977936195230959,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "commit_rate",
+   "committed": 0.18446601941747573,
+   "ref_e12": 0.18446601941747573,
+   "e8": 0.17475728155339806,
+   "delta": -0.009708737864077666,
+   "half_width": 0.05602343377562369,
+   "hw_kind": "committed card CI",
+   "ratio": 0.1732978007553337,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "error_among_commits",
+   "committed": 0.15789473684210525,
+   "ref_e12": 0.15789473684210525,
+   "e8": 0.2222222222222222,
+   "delta": 0.06432748538011696,
+   "half_width": 0.1345108695652174,
+   "hw_kind": "committed card CI",
+   "ratio": 0.4782326185834957,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "silent_error_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.01797737911432408,
+   "hw_kind": "Wilson n=103 (zero-width card CI)",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-13",
+   "metric": "safe_wpm",
+   "committed": 4.065168084942968,
+   "ref_e12": 4.065168084942968,
+   "e8": 3.4708893893917034,
+   "delta": -0.5942786955512647,
+   "half_width": 1.614782895426999,
+   "hw_kind": "committed card CI",
+   "ratio": 0.36802389797058066,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "cer",
+   "committed": 0.20363408521303258,
+   "ref_e12": 0.20363408521303258,
+   "e8": 0.20958646616541354,
+   "delta": 0.005952380952380959,
+   "half_width": 0.01964905305148515,
+   "hw_kind": "committed card CI",
+   "ratio": 0.30293474890542144,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "wer",
+   "committed": 0.2998477929984779,
+   "ref_e12": 0.2998477929984779,
+   "e8": 0.30441400304414,
+   "delta": 0.0045662100456621,
+   "half_width": 0.028677919251201223,
+   "hw_kind": "committed card CI",
+   "ratio": 0.15922389646420518,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "ewpm",
+   "committed": 7.329787309339323,
+   "ref_e12": 7.329787309339323,
+   "e8": 7.22500035247238,
+   "delta": -0.10478695686694284,
+   "half_width": 0.6744821998059054,
+   "hw_kind": "committed card CI",
+   "ratio": 0.15535911384629159,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "ewpm_minus_gaze",
+   "committed": 3.2132459559558635,
+   "ref_e12": 3.2132459559558635,
+   "e8": 3.1084589990889206,
+   "delta": -0.10478695686694284,
+   "half_width": 0.540980321643133,
+   "hw_kind": "committed card CI",
+   "ratio": 0.19369827824544672,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.01797737911432408,
+   "hw_kind": "Wilson n=103 (zero-width card CI)",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.01797737911432408,
+   "hw_kind": "Wilson n=103 (zero-width card CI)",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "error_among_commits",
+   "committed": null,
+   "ref_e12": null,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "no CI",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "silent_error_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.01797737911432408,
+   "hw_kind": "Wilson n=103 (zero-width card CI)",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R4/m4-12",
+   "metric": "safe_wpm",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": null,
+   "hw_kind": "committed card CI",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R5/base",
+   "metric": "held_out_top1_right_rate",
+   "committed": 0.08416547788873038,
+   "ref_e12": 0.08416547788873038,
+   "e8": 0.07703281027104136,
+   "delta": -0.00713266761768902,
+   "half_width": 0.020621330338877444,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.3458878501277769,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/base",
+   "metric": "held_out_can_commit_rate",
+   "committed": 0.9600570613409415,
+   "ref_e12": 0.9600570613409415,
+   "e8": 0.0,
+   "delta": -0.9600570613409415,
+   "half_width": 0.01467258287205896,
+   "hw_kind": "Wilson n=701",
+   "ratio": 65.4320421777396,
+   "effect": true,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.5",
+   "metric": "commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.5",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.5",
+   "metric": "error_among_commits (0 commits: commit rate decides)",
+   "committed": null,
+   "ref_e12": null,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "not compared",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.8",
+   "metric": "commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.8",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.8",
+   "metric": "error_among_commits (0 commits: commit rate decides)",
+   "committed": null,
+   "ref_e12": null,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "not compared",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.9",
+   "metric": "commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.9",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.9",
+   "metric": "error_among_commits (0 commits: commit rate decides)",
+   "committed": null,
+   "ref_e12": null,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "not compared",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.95",
+   "metric": "commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.95",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.002725051692561802,
+   "hw_kind": "Wilson n=701",
+   "ratio": 0.0,
+   "effect": false,
+   "reproduced": true
+  },
+  {
+   "row": "R5/target_0.95",
+   "metric": "error_among_commits (0 commits: commit rate decides)",
+   "committed": null,
+   "ref_e12": null,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "not compared",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true
+  },
+  {
+   "row": "R6/m4-13",
+   "metric": "commit_rate",
+   "committed": 0.13333333333333333,
+   "ref_e12": 0.025,
+   "e8": 0.15,
+   "delta": 0.016666666666666663,
+   "half_width": 0.060940938059984864,
+   "hw_kind": "Wilson n=120",
+   "ratio": 0.27348884341526664,
+   "effect": null,
+   "reproduced": false,
+   "not_used": true
+  },
+  {
+   "row": "R6/m4-13",
+   "metric": "wrong_commit_rate",
+   "committed": 0.025,
+   "ref_e12": 0.0,
+   "e8": 0.03333333333333333,
+   "delta": 0.008333333333333331,
+   "half_width": 0.031195929278981932,
+   "hw_kind": "Wilson n=120",
+   "ratio": 0.2671288698858496,
+   "effect": null,
+   "reproduced": false,
+   "not_used": true
+  },
+  {
+   "row": "R6/m4-13",
+   "metric": "error_among_commits",
+   "committed": 0.1875,
+   "ref_e12": 0.0,
+   "e8": 0.2222222222222222,
+   "delta": 0.03472222222222221,
+   "half_width": 0.18208640945273,
+   "hw_kind": "Wilson n=16",
+   "ratio": 0.19069090508501774,
+   "effect": null,
+   "reproduced": false,
+   "not_used": true
+  },
+  {
+   "row": "R6/m4-12",
+   "metric": "commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.015509583209351743,
+   "hw_kind": "Wilson n=120",
+   "ratio": 0.0,
+   "effect": null,
+   "reproduced": true,
+   "not_used": true
+  },
+  {
+   "row": "R6/m4-12",
+   "metric": "wrong_commit_rate",
+   "committed": 0.0,
+   "ref_e12": 0.0,
+   "e8": 0.0,
+   "delta": 0.0,
+   "half_width": 0.015509583209351743,
+   "hw_kind": "Wilson n=120",
+   "ratio": 0.0,
+   "effect": null,
+   "reproduced": true,
+   "not_used": true
+  },
+  {
+   "row": "R6/m4-12",
+   "metric": "error_among_commits (0 commits: commit rate decides)",
+   "committed": null,
+   "ref_e12": null,
+   "e8": null,
+   "delta": null,
+   "half_width": null,
+   "hw_kind": "not compared",
+   "ratio": null,
+   "effect": null,
+   "reproduced": true,
+   "not_used": true
+  }
+ ]
+}

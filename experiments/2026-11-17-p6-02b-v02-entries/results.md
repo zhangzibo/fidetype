@@ -127,3 +127,7 @@ python -m fidetype.benchmark truth toronto-semg --data <toronto extracted> --cac
 ```
 
 Times (CPU, background class, 4 threads): toronto 11 min, b2t 13 min, meg 9 min, t15-m4-12 6 min, score 1 min.
+
+## Note 2026-11-18: P14-21 rerun with word-decoder edit penalty 8
+
+P14-21 ([results](../2026-11-17-p14-21-edit8-rows/results.md)) reran the two partial T15 entries with the word decoder at edit penalty 8 (guard recalibrated). Reference reproduced both cards. **No effect** (0 of 16 metrics). `b2t25-t15__m4-13__guard`: safe WPM 4.07 [2.51, 5.74] -> 3.47 [2.26, 4.88], 19 -> 18 commits, 3 -> 4 wrong, WER 0.113 -> 0.128. M4-12: 0 commits in both. The committed cards are not changed.

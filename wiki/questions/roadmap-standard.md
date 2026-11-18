@@ -800,9 +800,11 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | **P14-15** | Word-decoder settings tuned without evaluation trials (T15) (gap 35, done: no effect on the re-split rows; [details](#p14-15-word-decoder-settings-tuned-without-evaluation-trials-t15)) | — | research labs, reviewers |
 | **P14-18** | M4-x word-level results with word settings tuned without val_eval trials (T15) (gap 44, done 2026-11-17: effect, all changes favour edit 8, follow-up P14-21; [details](#p14-18-m4-x-word-level-results-with-word-settings-tuned-without-val_eval-trials-t15)) | P14-15 | research labs, reviewers |
 | **P14-19** | Re-split published-gate rows, forward chain and downstream tables with per-fit word settings (gap 45, done 2026-11-17: re-split rows no effect, forward-chain prefix 0 corrected, follow-up P14-22; [details](#p14-19-re-split-published-gate-rows-forward-chain-and-downstream-tables-with-per-fit-word-settings)) | P14-15 | research labs, reviewers |
-| **P14-21** | M4-x / M2-19 / P15-05..07 / P5-02 rows with the T15 word decoder tuned without val_eval (edit penalty 8) (open gap 50, [details](#p14-21-m4-x-rows-with-the-t15-word-decoder-tuned-without-val_eval-edit-penalty-8)) | P14-18 | research labs, reviewers |
+| **P14-21** | M4-x / M2-19 / P15-05..07 / P5-02 rows with the T15 word decoder tuned without val_eval (edit penalty 8) (gap 50, done 2026-11-18: effect on trust commit counts, no guarantee breaks, M4-13 safe WPM 2.28, follow-ups P14-24, P14-25; [details](#p14-21-m4-x-rows-with-the-t15-word-decoder-tuned-without-val_eval-edit-penalty-8)) | P14-18 | research labs, reviewers |
 | **P14-22** | R3-level analyses on the re-split tables with per-fit word settings (open gap 51, [details](#p14-22-r3-level-analyses-on-the-re-split-tables-with-per-fit-word-settings)) | P14-19 | research labs, reviewers |
 | **P14-23** | T15 safe WPM above the no-BCI reference with our causal decoder (open gap 53, [details](#p14-23-t15-safe-wpm-above-the-no-bci-reference-with-our-causal-decoder)) | P14-05, M4-13 | research labs, BCI companies |
+| **P14-24** | F2 and M4-13 trust-rerun rows with word-decoder edit penalty 8 (open gap 62, [details](#p14-24-f2-and-m4-13-trust-rerun-rows-with-word-decoder-edit-penalty-8)) | P14-21 | research labs, reviewers |
+| **P14-25** | P3-08 collector replays with edit penalty 8 and a keep-awake (open gap 63, [details](#p14-25-p3-08-collector-replays-with-edit-penalty-8-and-a-keep-awake)) | P14-21 | research labs, reviewers |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -980,7 +982,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-21 M4-x rows with the T15 word decoder tuned without val_eval (edit penalty 8)
 - **Gap:** 50 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-18). Follow-up of P14-18.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-18; pre-registration `095150c`, [results](../../experiments/2026-11-17-p14-21-edit8-rows/results.md)). Effect on 11 of 71 decided metrics (trust commit counts; no guarantee breaks). M4-13 safe WPM 2.23 -> 2.28, still below no-BCI 4.02. Deferred rows: P14-24, P14-25.
 - **Depends on:** P14-18 (done). CPU only.
 - **Source:** P14-18 ([results](../../experiments/2026-11-17-p14-18-19-followups/results.md)): with lm 1.0 / edit 8 / bonus 3, 14 of 166 M4 metrics move by their CI half-width (1 in M4-12, 11 in M4-01/02, 2 in P14-03). All of them favour edit 8.
 - **Done when:** the M4-x word-level rows that use `val_eval` decodes of the B2T word decoder (M4-06 replays, M2-19, P15-05..07, P5-02, the M4-13 trust rows) are rerun with edit 8 or shown not to use the word decoder, compared with the P14-15 rule, and their pages carry dated notes.
@@ -999,6 +1001,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** M4-13 rows ([P14-05 results](../../experiments/2026-11-16-p14-05-safe-wpm/results.md)): on T15 `val_eval` (701) M4-13 + drop-in guard gives safe WPM 2.23 (certified; 104 commits, 17 wrong, error among commits 0.163), below the no-BCI reference 4.02. The partial v0.2 entry (103 units) gives 4.07 [2.51, 5.74] vs 4.12. The published Card et al. decoder gives 12.2-13.4.
 - **Done when:** a T15 entry with our causal decoder reports a certified safe WPM above the no-BCI reference on all 701 `val_eval` trials (or a full-coverage track entry), with both controls passing; or a result states with numbers which commit rate and error among commits that needs and why the current decoder and guard do not reach it.
 
+
+#### P14-24 F2 and M4-13 trust-rerun rows with word-decoder edit penalty 8
+- **Gap:** 62 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P14-21). Follow-up of P14-21.
+- **Status:** `todo`.
+- **Depends on:** P14-21 (done). CPU; the LLM arms need more than 1.5 GB RAM (about 2.5-4.5 GB).
+- **Source:** P14-21 ([results](../../experiments/2026-11-17-p14-21-edit8-rows/results.md)): P15-05, P15-06, P15-07 and the M4-13 trust reruns (P5-02 / P15-03 / F2 on M4-13, pre-registered with edit 12) use the B2T '25 word decoder, but were not rerun with edit 8.
+- **Done when:** these rows are rerun with lm 1.0 / edit 8 / bonus 3 (edit-12 references first), compared with the P14-15 rule, and their pages carry dated notes.
+
+#### P14-25 P3-08 collector replays with edit penalty 8 and a keep-awake
+- **Gap:** 63 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P14-21). Follow-up of P14-21.
+- **Status:** `todo`.
+- **Depends on:** P14-21 (done). CPU, about 2 h real time (3 replays of 37 min).
+- **Source:** P14-21: the edit-12 reference replay of M4-13 was cut by machine sleep (27 of 120 decisions, bench `duration` stop), so the edit-8 replays were not used. The prep reproduced exactly.
+- **Done when:** the M4-13 reference replay reproduces 16 COMMIT / 104 OFFER / 3 wrong with a keep-awake held, and the edit-8 replays of M4-13 and M4-12 are compared with the P14-15 rule (the P14-21 queue outputs in `derived/p14-21/r6-*` may be reused).
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
 

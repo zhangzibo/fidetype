@@ -72,3 +72,7 @@ Stage `t15-m4-12-recompute` runs the M4-13 code path (calibrate on val_select, d
 - No reading time for committed text. The correction penalty uses the `aac-gaze-v1` constants; other user models give other values.
 - The M4-13 row has no eWPM (the stage does not compute it).
 - Not computed: emg2qwerty LDA demo (3 of 3 commits wrong, so 0; no per-trial timing export), KT-sEMG and Willett T12 handwriting (no trust-guarded decoder outputs yet), P11-01 EMG decoder (training).
+
+## Note 2026-11-18: P14-21 rerun with word-decoder edit penalty 8
+
+P14-21 ([results](../2026-11-17-p14-21-edit8-rows/results.md)) reran the T15 rows with the B2T '25 word decoder at lm 1.0 / edit 8 / bonus 3 (tuned without `val_eval`; P14-15, P14-18), guard recalibrated on `val_select`. The edit-12 reference reproduced both blocks exactly. **No effect.** M4-13: safe WPM 2.23 -> **2.28** certified (104 -> 99 commits, 17 -> 15 wrong; half-width 0.46), still below no-BCI 4.02 (gap 53). M4-12: 2 -> 0 commits, value 0 -> 0 (vacuous). The numbers above stay as committed.

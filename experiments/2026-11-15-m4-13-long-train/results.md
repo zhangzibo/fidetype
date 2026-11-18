@@ -85,3 +85,7 @@ The gated config passes both controls (the 2026-11-15 rule). Without the gate, u
 - 4-days-per-batch sampling was not used (smoke-tested before the plan: 5.4-6.0 s per step, not feasible; recorded in the plan).
 - One pause on user request (step 1,974, 15:41-17:25 on 2026-11-15), resumed from `latest.pt`.
 - Claude Code stopped the agent's wait loop twice because the system was low on memory. The training job was not affected.
+
+## Note 2026-11-18: P14-21 rerun with word-decoder edit penalty 8
+
+P14-21 ([results](../2026-11-17-p14-21-edit8-rows/results.md)) reran this evaluation with the word decoder at edit penalty 8 (frozen M2-19 configs kept). Reference (edit 12) reproduced every number. **Effect on the trust rows:** gated config 91 -> 12 commits, 11 -> 1 wrong (commit-rate half-width 0.025); eWPM 9.94 -> 9.72 (no effect); WER T = 1 0.188 -> 0.193 (no effect); gated null controls still 0 / 300. The frozen config was fitted on edit-12 n-best lists; edit-8 lists have lower top-1 probability, so fewer trials pass. With the edit-8 M2-19 config + gate: 103 commits, 18 wrong (CP95 upper 0.040), eWPM 9.77. The numbers above stay as committed.

@@ -101,3 +101,7 @@ Held-out precision curve (diagnostic, no guarantee):
 - "cal. test commits" = commits of the selected threshold on the LTT part of the calibration set (empty: nothing certified).
 - The unconstrained resampling (no `min_commit_p`) is an extra diagnostic, not in the plan. On T15 at target 0.5 it was feasible in 11 / 1000 draws, with 3 violations (too few draws to judge; the bound is a 1 - delta statement over draws, and 11 draws give no power).
 - Held-out sets are used as a finite population in the resampling. For T12 (later sessions) this checks the method, not drift.
+
+## Note 2026-11-18: P14-21 rerun with word-decoder edit penalty 8
+
+P14-21 ([results](../2026-11-17-p14-21-edit8-rows/results.md)) reran T15 with the word decoder at edit penalty 8. Reference reproduced all rows. **Effect on one diagnostic:** the base grid fit now picks `commit_max_risk` 0.1, so 673 -> 0 of 701 held-out units can commit at commit_p 0. All 4 precision targets stay infeasible with 0 commits; the conclusion does not change. The numbers above stay as committed.

@@ -86,3 +86,7 @@ It writes `results/m4-13-summary.json`. `--trials 0` replays all 701 `val_eval` 
 - 120 of 701 trials (a fixed, even spread), one run. The latency sample is 120 decision steps.
 - The decoder and its language model run before the collector (as in the bench profile `implant-speech`); their time is not collector latency.
 - Same host, loopback WebSocket. The full pytest suite (4 threads) ran on the same laptop during the first 12 minutes of this replay, so the tail numbers are, if anything, pessimistic. A first replay at 02:32 stopped with the agent session; this run started at 03:11.
+
+## Note 2026-11-18: P14-21 rerun with word-decoder edit penalty 8
+
+P14-21 ([results](../2026-11-17-p14-21-edit8-rows/results.md)) reran prep and replay with the word decoder at edit penalty 8. The edit-12 prep reproduced every n-best list and both guard sheets, but the edit-12 reference replay of M4-13 was interrupted by machine sleep (27 of 120 decisions), so by the plan no edit-8 replay result is used. Information only: M4-13 edit 8 gives 18 COMMIT / 102 OFFER, 4 wrong; M4-12 0 / 120. Gap 63 (P14-25) reruns this with a keep-awake. The numbers above stay as committed.
