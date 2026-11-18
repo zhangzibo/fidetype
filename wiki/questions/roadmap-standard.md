@@ -527,7 +527,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-22 Licence gate for input-event exporters
 - **Gap:** 61 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P5-18). Follow-up of P5-18.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-18, code `a38fe87`): yes, per stream by the header keys (FEP-0010 decision 6, FEP-0006 section 4 rule 6); a refused stream writes no file; test `tests/test_input_event_licence_gate.py`.
 - **Depends on:** P5-18 (done).
 - **Source:** P5-18: `refuse_research_only` acts on decisions only. A `jsonl` or `stdout` exporter of input events (header, frames) copies a research-only stream (`data.research_only = true` in its header) unchanged, for example into a product data store.
 - **Done when:** a decision is written down (with a reason) whether an input-event exporter can refuse a research-only stream (by its header keys, per stream, with the unknown rule of P5-18), and, if yes, the option works per stream (header and all its events), with counters and a test (a CC-BY-NC stream writes no file, a CC0 stream writes the same file as before).

@@ -1193,3 +1193,8 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Platform bugs fixed: live model assets CRLF on Windows (pinned SHA-256; `.gitattributes`), GuardScore NaN equality on Python 3.13+ (tests), macOS timing bounds (`FIDETYPE_LATENCY_TOLERANCE`), reopener timing test.
 - Classifiers 3.12, 3.13, 3.14; `requires-python` unchanged. [Publishing checklist](../docs/publishing-checklist.md) D9 updated.
 - New gaps 64 = [P2-10](questions/roadmap-standard.md#p2-10-python-315-in-the-ci-matrix) (Python 3.15), 65 = [P2-11](questions/roadmap-standard.md#p2-11-required-status-check-on-main) (required check, owner). Pages: [open gaps](questions/open-gaps.md), [roadmap](questions/roadmap-standard.md).
+
+## [2026-11-18] setup | P5-22: licence gate for input-event exporters (gap 61 closed)
+- Code `a38fe87`. `refuse_research_only` on a `jsonl` / `stdout` exporter of input events judges each stream by its header (`data.licence`, `data.research_only`) and drops a refused stream whole; the P5-18 `unknown_licence` rule; four new counters; a refused stream writes no file.
+- Decision with reasons: FEP-0010 decision 6; FEP-0006 section 4 rule 6 (the P5-18 config error for this case is gone). Docs: collector, provenance and privacy, example config, spec CHANGELOG, [collector](concepts/collector.md).
+- Test: CC-BY-NC stream writes no file, CC0 stream writes byte-identical files, unknown both ways, three-stream pipeline. Full pytest 1519 passed, 11 skipped. No new gap.
