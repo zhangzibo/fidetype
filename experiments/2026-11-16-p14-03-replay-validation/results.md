@@ -64,3 +64,6 @@ The drop-in uses its own random split of the calibration set (not the earlier fi
 
 ## Deviations from the plan
 None.
+
+## Correction note 2026-11-17 (P14-18): T15 rows with edit penalty 8
+Pre-registered rerun ([P14-18/19 results](../2026-11-17-p14-18-19-followups/results.md)) of the T15 rows with the word decoder tuned without the M4 `val_eval` trials (lm 1.0, **edit penalty 8**, bonus 3). The reference run (edit 12) reproduced 2 / 701 commits, 2 wrong, eWPM 6.016. With edit 8: **0 / 701 commits** at alpha 0.05 and 0.10 (wrong-commit 0.0029 → 0, half-width 0.0048), eWPM 6.016 → 6.013, sentence temperature 11.96 → 12.61. The error among commits (2 of 2) has no value with 0 commits; the script counts this as an effect. The pass verdict stays. The numbers above are not changed.

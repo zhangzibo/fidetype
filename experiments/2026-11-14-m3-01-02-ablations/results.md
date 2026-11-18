@@ -114,3 +114,6 @@ Control commits = shuffled MEG + zero MEG (the decoder's real outputs) + frame-s
 - B2T zero input is a stand-in (every frame = the first frame); the T15 RNN is not available.
 - The simulator LM is in-domain (template sentences), so simulator decoders are optimistic.
 - Gate B and the monitor were tested where Paper 1 data allow; their target failures (empty commits, a bad day) are rare here.
+
+## Note 2026-11-17 (P14-19): repeated-split arms, no effect
+Rerun of the B2T repeated-split arms with the 35 changed re-splits rebuilt with their own word setting ([P14-18/19 results](../2026-11-17-p14-18-19-followups/results.md)): 0 of 9 values with a CI move by their half-width (largest 0.26). Fixed splits A and B keep the paper point (P14-15). The numbers above are not changed.

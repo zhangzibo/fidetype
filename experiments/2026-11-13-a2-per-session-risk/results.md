@@ -89,3 +89,6 @@ Global LTT max: 0 of 19 participants above α in all three conditions (max 0.038
 - Library default stays **off** (existing behaviour unchanged).
 - For a deployment that must hold α **per session**: "certify, then commit": an offer-only warm-up of k ≥ 45 sentences (60 is better), then COMMIT at max(global, block LTT), with the monitor (γ = 0.1) on top as a drift alarm. This is the remedy Paper 1 should name. Cost here: −2.2 % eWPM, 45 labelled sentences per session.
 - The monitor alone (`StreamingTrustLayer(session_risk=SessionRiskMonitor())`) is a cheap safety net: valid false-alarm control (3 % observed) and fast on gross failures (0.200 day: alarm at item 15). It is too slow for a 2α day within one session (median 93 items at ρ = 0.10).
+
+## Correction note 2026-11-17 (P14-19): forward-chain prefix 0
+The forward-chain fit prefix "day 1 only" picks edit penalty 8 when tuned on its own fit data (P14-15). Pre-registered rerun ([P14-18/19 results](../2026-11-17-p14-18-19-followups/results.md)): **effect on test day 34 in V3 ("ours")**. With the edit-8 prefix, that day has 0 wrong commits under every method (for example global 20/100 = 0.20 → 0.00, block-LTT k = 60 0.13 → 0.00). The re-split parts change by less than the reported values can show (no CI in the files; the source tables have no effect, P14-19 step 2). The numbers above are not changed.

@@ -54,3 +54,6 @@ With the guard (paper, Sec. 7.6) the layer committed none of the B2T or sEMG sig
 - **The plain threshold fails the signal-destroying control on our intracortical decoder.** It committed 203 of 300 uniform (no-information) streams, 68 % of them wrong, and 2-3 of 300 frame-shuffled streams. Uniform streams give flat phoneme posteriors; the word decoder then returns a fluent LM-driven sentence with a high calibrated p_top1. The guard (low evidence share, consistency) is what rejects these streams. The published gate and sEMG did not commit any control without the guard.
 - So the frozen configuration "plain threshold + LTT max" cannot be carried forward as is. Either keep the guard (or at least its low-evidence term) as a pre-filter, or add an input-validity check, or freeze joint LTT (which commits nothing on controls here because it commits almost nothing).
 - On real data the guard does not help the wrong-commit rate: plain + LTT max had 0/200 splits above α on our decoder (guard: 7 %) and the lower mean on the published gate (0.024 vs 0.030).
+
+## Note 2026-11-17 (P14-19): no effect
+Tab. 2 rows rerun with the 35 changed re-splits rebuilt with their own word setting ([P14-18/19 results](../../2026-11-17-p14-18-19-followups/results.md)): 0 of 18 values with a CI move by their half-width (largest 0.43). The numbers above are not changed.

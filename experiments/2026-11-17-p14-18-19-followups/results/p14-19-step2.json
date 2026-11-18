@@ -1,0 +1,3612 @@
+{
+ "changed_splits": [
+  7,
+  13,
+  19,
+  26,
+  30,
+  31,
+  42,
+  43,
+  55,
+  61,
+  73,
+  82,
+  84,
+  89,
+  97,
+  100,
+  102,
+  110,
+  111,
+  114,
+  123,
+  132,
+  135,
+  138,
+  154,
+  162,
+  164,
+  168,
+  170,
+  174,
+  177,
+  181,
+  183,
+  186,
+  192
+ ],
+ "tables": {
+  "b2t-published-g1/R50": {
+   "n_changed": 8,
+   "rows": [
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean wrong_commit",
+     "orig": 0.039413202933985335,
+     "new": 0.0397799511002445,
+     "delta": 0.00036674816625916623,
+     "ci_half": 0.0037854909950384256,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean commit_rate",
+     "orig": 0.4332762836185819,
+     "new": 0.4355256723716381,
+     "delta": 0.002249388753056192,
+     "ci_half": 0.014756048460165034,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean ewpm",
+     "orig": 18.542162164402328,
+     "new": 18.545195277026473,
+     "delta": 0.0030331126241449624,
+     "ci_half": 0.06625742817215692,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "pooled error among commits",
+     "orig": 0.0909655211331189,
+     "new": 0.09133778700948746,
+     "delta": 0.0003722658763685577,
+     "ci_half": 0.004234368762010869,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.22,
+     "new": 0.22,
+     "delta": 0.0,
+     "ci_half": 0.11244014732578632,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.048875305623471886,
+     "new": 0.04841075794621027,
+     "delta": -0.0004645476772616175,
+     "ci_half": 0.004214296680001887,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.47789731051344747,
+     "new": 0.47603911980440095,
+     "delta": -0.0018581907090465255,
+     "ci_half": 0.014228716917713675,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.60446980290991,
+     "new": 18.601729432116677,
+     "delta": -0.0027403707932336374,
+     "ci_half": 0.0688651269897083,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.10227156451447866,
+     "new": 0.1016949152542373,
+     "delta": -0.0005766492602413686,
+     "ci_half": 0.004248228778363467,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.42,
+     "new": 0.42,
+     "delta": 0.0,
+     "ci_half": 0.13196003038827617,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03569682151589242,
+     "new": 0.03611246943765281,
+     "delta": 0.0004156479217603884,
+     "ci_half": 0.0031049303977756463,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.41836185819070904,
+     "new": 0.4207090464547678,
+     "delta": 0.002347188264058775,
+     "ci_half": 0.01202949175963084,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.52387070639226,
+     "new": 18.52702786175161,
+     "delta": 0.003157155359350128,
+     "ci_half": 0.06804235181598105,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.08532522938460639,
+     "new": 0.0858371592956355,
+     "delta": 0.0005119299110291076,
+     "ci_half": 0.004186480525392563,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.14,
+     "new": 0.14,
+     "delta": 0.0,
+     "ci_half": 0.09617855968252614,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03420537897310513,
+     "new": 0.0336919315403423,
+     "delta": -0.0005134474327628327,
+     "ci_half": 0.0028404488659338153,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.4099511002444987,
+     "new": 0.4077017114914425,
+     "delta": -0.002249388753056192,
+     "ci_half": 0.012574906149012651,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.51230955053329,
+     "new": 18.50910540671886,
+     "delta": -0.003204143814429017,
+     "ci_half": 0.06717328530495809,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.08343770501580486,
+     "new": 0.08263868065967017,
+     "delta": -0.0007990243561346866,
+     "ci_half": 0.004186524568487487,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.06,
+     "new": 0.04,
+     "delta": -0.019999999999999997,
+     "ci_half": 0.07077941867206977,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.030684596577017116,
+     "new": 0.03092909535452323,
+     "delta": 0.0002444987775061143,
+     "ci_half": 0.002535088024039093,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.39151589242053786,
+     "new": 0.39339853300733496,
+     "delta": 0.0018826405867971019,
+     "ci_half": 0.010336005021415533,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.487554237334614,
+     "new": 18.49008077744645,
+     "delta": 0.0025265401118375053,
+     "ci_half": 0.0673746845885871,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.07837382127021794,
+     "new": 0.07862026103169671,
+     "delta": 0.00024643976147877,
+     "ci_half": 0.004163501113037669,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.02,
+     "new": 0.02,
+     "delta": 0.0,
+     "ci_half": 0.050708848314696534,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.049731051344743274,
+     "new": 0.04951100244498777,
+     "delta": -0.00022004889975550668,
+     "ci_half": 0.0033119477703081974,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.4824938875305624,
+     "new": 0.48178484107579467,
+     "delta": -0.0007090464547677144,
+     "ci_half": 0.009909033520358894,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.60939864688808,
+     "new": 18.608448006700154,
+     "delta": -0.0009506401879271209,
+     "ci_half": 0.06914725442910308,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.10307084220127698,
+     "new": 0.10276579548337986,
+     "delta": -0.00030504671789712,
+     "ci_half": 0.004242533115464969,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.48,
+     "new": 0.46,
+     "delta": -0.019999999999999962,
+     "ci_half": 0.1334578767284293,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03919315403422983,
+     "new": 0.03951100244498777,
+     "delta": 0.00031784841075794407,
+     "ci_half": 0.0037686466399791266,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.4320293398533007,
+     "new": 0.43410757946210266,
+     "delta": 0.002078239608801935,
+     "ci_half": 0.014481280957214234,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.54041951854236,
+     "new": 18.543223024574612,
+     "delta": 0.00280350603225088,
+     "ci_half": 0.06601128324165699,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.09071873231465762,
+     "new": 0.09101661503801746,
+     "delta": 0.00029788272335984356,
+     "ci_half": 0.004235298532475319,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.22,
+     "new": 0.22,
+     "delta": 0.0,
+     "ci_half": 0.11244014732578632,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03550122249388753,
+     "new": 0.03557457212713936,
+     "delta": 7.334963325183325e-05,
+     "ci_half": 0.003172837414162875,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.4172860635696821,
+     "new": 0.4177017114914426,
+     "delta": 0.0004156479217604647,
+     "ci_half": 0.011830179463698583,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.52151632684189,
+     "new": 18.52207423947407,
+     "delta": 0.0005579126321784145,
+     "ci_half": 0.06676364130337736,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.08507646335032519,
+     "new": 0.08516740810114727,
+     "delta": 9.094475082208064e-05,
+     "ci_half": 0.004186333029375887,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.12,
+     "new": 0.12,
+     "delta": 0.0,
+     "ci_half": 0.09093777587999467,
+     "effect": false
+    }
+   ],
+   "n_effect": 0,
+   "n_metrics": 40,
+   "max_ratio": 0.282568017302637
+  },
+  "b2t-published-g1/R200": {
+   "n_changed": 35,
+   "rows": [
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03953545232273838,
+     "new": 0.03968215158924205,
+     "delta": 0.0001466992665036665,
+     "ci_half": 0.0020576513764646144,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean commit_rate",
+     "orig": 0.4369865525672372,
+     "new": 0.43715158924205383,
+     "delta": 0.0001650366748166543,
+     "ci_half": 0.007734536988001195,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean ewpm",
+     "orig": 18.571933351516726,
+     "new": 18.5721565600795,
+     "delta": 0.00022320856277247003,
+     "ci_half": 0.04230969152493678,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "pooled error among commits",
+     "orig": 0.09047292666209733,
+     "new": 0.09077435051315752,
+     "delta": 0.00030142385106018965,
+     "ci_half": 0.002102856472988857,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.265,
+     "new": 0.27,
+     "delta": 0.0050000000000000044,
+     "ci_half": 0.0607482112747057,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.0495721271393643,
+     "new": 0.0493643031784841,
+     "delta": -0.00020782396088019767,
+     "ci_half": 0.002030432446654667,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.48386919315403426,
+     "new": 0.4828973105134475,
+     "delta": -0.0009718826405867853,
+     "ci_half": 0.006732671120527548,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.636404983417222,
+     "new": 18.635035411425662,
+     "delta": -0.0013695719915602922,
+     "ci_half": 0.04268401451781753,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.10244943848612321,
+     "new": 0.10222526011999696,
+     "delta": -0.00022417836612625974,
+     "ci_half": 0.0021124783224318686,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.425,
+     "new": 0.425,
+     "delta": 0.0,
+     "ci_half": 0.0678784983514438,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03636919315403423,
+     "new": 0.036454767726161366,
+     "delta": 8.557457212713532e-05,
+     "ci_half": 0.0018136059865229565,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.4236430317848411,
+     "new": 0.42355134474327627,
+     "delta": -9.168704156481411e-05,
+     "ci_half": 0.006480973898133975,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.554352128168503,
+     "new": 18.55423841823334,
+     "delta": -0.00011370993516379713,
+     "ci_half": 0.04226829836956505,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.08584867547757835,
+     "new": 0.08606929992928579,
+     "delta": 0.00022062445170743794,
+     "ci_half": 0.002085712773341998,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.175,
+     "new": 0.18,
+     "delta": 0.0050000000000000044,
+     "ci_half": 0.05252054017736494,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.0337041564792176,
+     "new": 0.033575794621026896,
+     "delta": -0.00012836185819070645,
+     "ci_half": 0.001641753743267762,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.4106051344743276,
+     "new": 0.40955990220048905,
+     "delta": -0.00104523227383857,
+     "ci_half": 0.006555643727608907,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.538131785905442,
+     "new": 18.536662740950746,
+     "delta": -0.0014690449546961304,
+     "ci_half": 0.04266066092264005,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.08208410867138072,
+     "new": 0.08198018028774401,
+     "delta": -0.00010392838363670887,
+     "ci_half": 0.0020758672896639806,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.115,
+     "new": 0.11,
+     "delta": -0.0050000000000000044,
+     "ci_half": 0.04439254006031037,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.030336185819070903,
+     "new": 0.030391198044009783,
+     "delta": 5.501222493888014e-05,
+     "ci_half": 0.0014605560519640828,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.3938325183374083,
+     "new": 0.3936919315403424,
+     "delta": -0.00014058679706591137,
+     "ci_half": 0.005441781554167708,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.51488419813685,
+     "new": 18.514658103746616,
+     "delta": -0.00022609439023568711,
+     "ci_half": 0.04202406330438749,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.07702813862892086,
+     "new": 0.0771953794559682,
+     "delta": 0.00016724082704734633,
+     "ci_half": 0.002058956621408523,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.055,
+     "new": 0.06,
+     "delta": 0.0049999999999999975,
+     "ci_half": 0.0324014518322827,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.049749388753056234,
+     "new": 0.0496760391198044,
+     "delta": -7.334963325183325e-05,
+     "ci_half": 0.0016895323705961726,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.48551344743276287,
+     "new": 0.4850305623471883,
+     "delta": -0.0004828850855745914,
+     "ci_half": 0.005420843546109138,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.638269240536218,
+     "new": 18.63755949914095,
+     "delta": -0.0007097413952692477,
+     "ci_half": 0.04200719758966104,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.10246758151831802,
+     "new": 0.10241836901866391,
+     "delta": -4.921249965410268e-05,
+     "ci_half": 0.002109063461745329,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.475,
+     "new": 0.465,
+     "delta": -0.009999999999999953,
+     "ci_half": 0.06855614274697196,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03926039119804401,
+     "new": 0.03937652811735941,
+     "delta": 0.00011613691931539744,
+     "ci_half": 0.002038050349756122,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.4356845965770171,
+     "new": 0.4357518337408313,
+     "delta": 6.723716381423772e-05,
+     "ci_half": 0.007645226664380834,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.570049098535577,
+     "new": 18.570139709824083,
+     "delta": 9.061128850618161e-05,
+     "ci_half": 0.04225463367433608,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.09011195600325486,
+     "new": 0.09036457237441961,
+     "delta": 0.0002526163711647489,
+     "ci_half": 0.0021022084712934946,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.255,
+     "new": 0.26,
+     "delta": 0.0050000000000000044,
+     "ci_half": 0.060013241621961165,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03463936430317848,
+     "new": 0.03470660146699266,
+     "delta": 6.723716381418221e-05,
+     "ci_half": 0.001654686353731155,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.4157334963325184,
+     "new": 0.41543398533007336,
+     "delta": -0.0002995110024450187,
+     "ci_half": 0.005947843864204838,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.54350028611209,
+     "new": 18.54305005179616,
+     "delta": -0.00045023431592738916,
+     "ci_half": 0.04168777392826263,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.08332108095392125,
+     "new": 0.08354300007356728,
+     "delta": 0.00022191911964603017,
+     "ci_half": 0.002077105687678183,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.135,
+     "new": 0.135,
+     "delta": 0.0,
+     "ci_half": 0.047413712390984256,
+     "effect": false
+    }
+   ],
+   "n_effect": 0,
+   "n_metrics": 40,
+   "max_ratio": 0.1594400667987194
+  },
+  "b2t-ours-g0/R50": {
+   "n_changed": 8,
+   "rows": [
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03762836185819071,
+     "new": 0.03757946210268948,
+     "delta": -4.88997555012291e-05,
+     "ci_half": 0.003086224847104924,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean commit_rate",
+     "orig": 0.16506112469437656,
+     "new": 0.16420537897310516,
+     "delta": -0.0008557457212713948,
+     "ci_half": 0.00873269686980095,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean ewpm",
+     "orig": 11.066893809217422,
+     "new": 11.062094192687889,
+     "delta": -0.004799616529533424,
+     "ci_half": 0.04829575111812297,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "pooled error among commits",
+     "orig": 0.2279662272255962,
+     "new": 0.22885646217986896,
+     "delta": 0.0008902349542727617,
+     "ci_half": 0.010005845958163694,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.1,
+     "new": 0.1,
+     "delta": 0.0,
+     "ci_half": 0.0850648896781564,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.04662591687041566,
+     "new": 0.04660146699266504,
+     "delta": -2.444987775061802e-05,
+     "ci_half": 0.003884149042145656,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.19244498777506117,
+     "new": 0.19112469437652815,
+     "delta": -0.0013202933985330123,
+     "ci_half": 0.009497180596618991,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 11.07935953430232,
+     "new": 11.073226876717534,
+     "delta": -0.006132657584785761,
+     "ci_half": 0.04883207276552515,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.24228179392707408,
+     "new": 0.243827555328131,
+     "delta": 0.0015457614010569165,
+     "ci_half": 0.009464283291843978,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.4,
+     "new": 0.4,
+     "delta": 0.0,
+     "ci_half": 0.1310531055549744,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.0341320293398533,
+     "new": 0.03398533007334963,
+     "delta": -0.0001466992665036665,
+     "ci_half": 0.002263148306411532,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.15645476772616138,
+     "new": 0.15525672371638144,
+     "delta": -0.001198044009779936,
+     "ci_half": 0.006982378331485162,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 11.062441952111604,
+     "new": 11.057261450126347,
+     "delta": -0.005180501985256214,
+     "ci_half": 0.04838444448140368,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.21815908735739958,
+     "new": 0.2188976377952756,
+     "delta": 0.0007385504378760177,
+     "ci_half": 0.010117569803361601,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.04,
+     "new": 0.04,
+     "delta": 0.0,
+     "ci_half": 0.061782363059360045,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.0354278728606357,
+     "new": 0.03518337408312958,
+     "delta": -0.00024449877750611776,
+     "ci_half": 0.003273552998490135,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.1587041564792176,
+     "new": 0.15699266503667483,
+     "delta": -0.0017114914425427619,
+     "ci_half": 0.009167382124737286,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 11.062438539485639,
+     "new": 11.056560964464147,
+     "delta": -0.0058775750214916656,
+     "ci_half": 0.04859354725450315,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.22323216761670003,
+     "new": 0.22410839433110108,
+     "delta": 0.000876226714401046,
+     "ci_half": 0.010128672415733791,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.12,
+     "new": 0.1,
+     "delta": -0.01999999999999999,
+     "ci_half": 0.09093777587999467,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.030488997555012224,
+     "new": 0.03019559902200489,
+     "delta": -0.000293398533007333,
+     "ci_half": 0.0023974665960866917,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.14290953545232274,
+     "new": 0.14163814180929096,
+     "delta": -0.0012713936430317763,
+     "ci_half": 0.007495707289910512,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 11.053024481555976,
+     "new": 11.04791752902138,
+     "delta": -0.005106952534596587,
+     "ci_half": 0.04817990395653145,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.2133447390932421,
+     "new": 0.21318833074400137,
+     "delta": -0.00015640834924071645,
+     "ci_half": 0.010500842779832768,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.035675017087159366,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.051320293398533,
+     "new": 0.05144254278728606,
+     "delta": 0.0001222493887530554,
+     "ci_half": 0.003832817737278759,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.20440097799511003,
+     "new": 0.20393643031784844,
+     "delta": -0.00046454767726158974,
+     "ci_half": 0.008863873499655872,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 11.08409698488324,
+     "new": 11.079142126755988,
+     "delta": -0.004954858127252493,
+     "ci_half": 0.04823191699546605,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.25107655502392345,
+     "new": 0.25224793190264955,
+     "delta": 0.0011713768787260936,
+     "ci_half": 0.009294110446726542,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.44,
+     "new": 0.44,
+     "delta": 0.0,
+     "ci_half": 0.13266112994810567,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03753056234718827,
+     "new": 0.03748166259168704,
+     "delta": -4.88997555012291e-05,
+     "ci_half": 0.0030717338048695613,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.16462102689486552,
+     "new": 0.16376528117359412,
+     "delta": -0.0008557457212713948,
+     "ci_half": 0.008653747551213694,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean ewpm",
+     "orig": 11.06677549675354,
+     "new": 11.061975880224006,
+     "delta": -0.004799616529533424,
+     "ci_half": 0.04830627017869647,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.22798158324669537,
+     "new": 0.2288742908330845,
+     "delta": 0.0008927075863891243,
+     "ci_half": 0.01001944503383918,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.1,
+     "new": 0.1,
+     "delta": 0.0,
+     "ci_half": 0.0850648896781564,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03885085574572127,
+     "new": 0.03907090464547677,
+     "delta": 0.00022004889975549974,
+     "ci_half": 0.0033097182433466507,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.17014669926650366,
+     "new": 0.17024449877750614,
+     "delta": 9.779951100247208e-05,
+     "ci_half": 0.008466522420745895,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 11.0699764455134,
+     "new": 11.0654458061709,
+     "delta": -0.00453063934250153,
+     "ci_half": 0.04833132173464521,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.22833740479954015,
+     "new": 0.22949877926181245,
+     "delta": 0.0011613744622722966,
+     "ci_half": 0.009860870226886444,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.2,
+     "new": 0.2,
+     "delta": 0.0,
+     "ci_half": 0.10896871079255678,
+     "effect": false
+    }
+   ],
+   "n_effect": 0,
+   "n_metrics": 40,
+   "max_ratio": 0.21993060426717312
+  },
+  "b2t-ours-g0/R200": {
+   "n_changed": 35,
+   "rows": [
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean wrong_commit",
+     "orig": 0.035030562347188265,
+     "new": 0.034975550122249385,
+     "delta": -5.501222493888014e-05,
+     "ci_half": 0.0017184338909386216,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean commit_rate",
+     "orig": 0.15811735941320293,
+     "new": 0.1573655256723716,
+     "delta": -0.0007518337408313203,
+     "ci_half": 0.004911472063702775,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean ewpm",
+     "orig": 11.095509226025461,
+     "new": 11.091854037837248,
+     "delta": -0.0036551881882136428,
+     "ci_half": 0.02427964448977395,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "pooled error among commits",
+     "orig": 0.2215478583578166,
+     "new": 0.22225674888327832,
+     "delta": 0.0007088905254617195,
+     "ci_half": 0.005060653842253877,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.095,
+     "new": 0.095,
+     "delta": 0.0,
+     "ci_half": 0.04097001874705638,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.04759779951100244,
+     "new": 0.047634474327628365,
+     "delta": 3.667481662592703e-05,
+     "ci_half": 0.0018545305211164044,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.19568459657701712,
+     "new": 0.19487775061124693,
+     "delta": -0.0008068459657701865,
+     "ci_half": 0.003966468168133051,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 11.113673917853799,
+     "new": 11.109408825542257,
+     "delta": -0.004265092311541707,
+     "ci_half": 0.02445070390366258,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.2432373336665209,
+     "new": 0.24443259519478075,
+     "delta": 0.0011952615282598555,
+     "ci_half": 0.004699637311622999,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.41,
+     "new": 0.415,
+     "delta": 0.0050000000000000044,
+     "ci_half": 0.06754054874183596,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03292176039119804,
+     "new": 0.032830073349633254,
+     "delta": -9.168704156478635e-05,
+     "ci_half": 0.0014226755030449629,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.15303789731051345,
+     "new": 0.15213936430317848,
+     "delta": -0.0008985330073349729,
+     "ci_half": 0.004216322534867081,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 11.09417187235646,
+     "new": 11.090266470668734,
+     "delta": -0.00390540168772624,
+     "ci_half": 0.024268925317915753,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.21512162000239646,
+     "new": 0.21578947368421053,
+     "delta": 0.0006678536818140735,
+     "ci_half": 0.0050896841879813975,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.05,
+     "new": 0.05,
+     "delta": 0.0,
+     "ci_half": 0.031098353634599427,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.035012224938875305,
+     "new": 0.034975550122249385,
+     "delta": -3.667481662592009e-05,
+     "ci_half": 0.0015122784180084255,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.15957823960880194,
+     "new": 0.15899144254278727,
+     "delta": -0.000586797066014666,
+     "ci_half": 0.004022349074787693,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 11.098541525613092,
+     "new": 11.094618696842572,
+     "delta": -0.0039228287705199705,
+     "ci_half": 0.02418171235500265,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.21940475734477344,
+     "new": 0.21998385298527545,
+     "delta": 0.0005790956405020142,
+     "ci_half": 0.005019914184747119,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.08,
+     "new": 0.075,
+     "delta": -0.0050000000000000044,
+     "ci_half": 0.03807516730942837,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.02955378973105135,
+     "new": 0.02946210268948655,
+     "delta": -9.168704156479676e-05,
+     "ci_half": 0.0012797176496459257,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.14127750611246945,
+     "new": 0.1406723716381418,
+     "delta": -0.0006051344743276399,
+     "ci_half": 0.0038351544996367984,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 11.087212277792997,
+     "new": 11.083328101579523,
+     "delta": -0.003884176213473367,
+     "ci_half": 0.02413672991358246,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.2091896335395665,
+     "new": 0.20943773355348919,
+     "delta": 0.0002481000139226974,
+     "ci_half": 0.005243442697632641,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.009423002959160447,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.049272616136919314,
+     "new": 0.04930317848410757,
+     "delta": 3.056234718825518e-05,
+     "ci_half": 0.0017840509107289375,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.19985330073349636,
+     "new": 0.19918092909535454,
+     "delta": -0.0006723716381418221,
+     "ci_half": 0.0037746230067602776,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 11.114105480007549,
+     "new": 11.110316537959495,
+     "delta": -0.0037889420480539115,
+     "ci_half": 0.024408486030749223,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.24654391974553463,
+     "new": 0.2475296139446388,
+     "delta": 0.000985694199104159,
+     "ci_half": 0.004671627303659385,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.445,
+     "new": 0.45,
+     "delta": 0.0050000000000000044,
+     "ci_half": 0.06823171335085321,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03493887530562347,
+     "new": 0.03487775061124695,
+     "delta": -6.112469437652424e-05,
+     "ci_half": 0.0016980627062781342,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.157799511002445,
+     "new": 0.15703545232273838,
+     "delta": -0.0007640586797066085,
+     "ci_half": 0.004855434263044019,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean ewpm",
+     "orig": 11.095419798618941,
+     "new": 11.091742170275127,
+     "delta": -0.003677628343814021,
+     "ci_half": 0.02427372910570154,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.22141307716145026,
+     "new": 0.22210112490755518,
+     "delta": 0.000688047746104925,
+     "ci_half": 0.005064645073988248,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.095,
+     "new": 0.095,
+     "delta": 0.0,
+     "ci_half": 0.04097001874705638,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03699266503667482,
+     "new": 0.037127139364303174,
+     "delta": 0.00013447432762835748,
+     "ci_half": 0.0015142992792400909,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.16592298288508556,
+     "new": 0.16566625916870414,
+     "delta": -0.0002567237163814129,
+     "ci_half": 0.003832120175608543,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 11.101984642946459,
+     "new": 11.098251934424416,
+     "delta": -0.0037327085220422163,
+     "ci_half": 0.02428085019092218,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.22295081967213115,
+     "new": 0.22410803232114526,
+     "delta": 0.001157212649014111,
+     "ci_half": 0.004951340832976972,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.135,
+     "new": 0.135,
+     "delta": 0.0,
+     "ci_half": 0.047413712390984256,
+     "effect": false
+    }
+   ],
+   "n_effect": 0,
+   "n_metrics": 40,
+   "max_ratio": 0.25433058957630017
+  },
+  "b2t-published-g0/R50": {
+   "n_changed": 8,
+   "rows": [
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean wrong_commit",
+     "orig": 0.024376528117359415,
+     "new": 0.02444987775061125,
+     "delta": 7.334963325183325e-05,
+     "ci_half": 0.0011706601466992665,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean commit_rate",
+     "orig": 0.3633007334963325,
+     "new": 0.3643031784841076,
+     "delta": 0.0010024449877750752,
+     "ci_half": 0.0050649460314774975,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean ewpm",
+     "orig": 18.44920262399508,
+     "new": 18.45076230928453,
+     "delta": 0.0015596852894503854,
+     "ci_half": 0.06526403543118275,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "pooled error among commits",
+     "orig": 0.06709738205801198,
+     "new": 0.06711409395973154,
+     "delta": 1.6711901719562716e-05,
+     "ci_half": 0.004023871114535694,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.035675017087159366,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.050880195599022,
+     "new": 0.050660146699266495,
+     "delta": -0.00022004889975550668,
+     "ci_half": 0.003526762240454273,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.5029339853300734,
+     "new": 0.5022738386308068,
+     "delta": -0.0006601466992666172,
+     "ci_half": 0.01242915204819426,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.642973491042113,
+     "new": 18.64192168934428,
+     "delta": -0.0010518016978338096,
+     "ci_half": 0.06821766157490108,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.10116674769081187,
+     "new": 0.10086160736017134,
+     "delta": -0.00030514033064052426,
+     "ci_half": 0.004121238529110793,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.48,
+     "new": 0.48,
+     "delta": 0.0,
+     "ci_half": 0.1334578767284293,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.024376528117359415,
+     "new": 0.02444987775061125,
+     "delta": 7.334963325183325e-05,
+     "ci_half": 0.0011706601466992665,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.3633007334963325,
+     "new": 0.3643031784841076,
+     "delta": 0.0010024449877750752,
+     "ci_half": 0.0050649460314774975,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.44920262399508,
+     "new": 18.45076230928453,
+     "delta": 0.0015596852894503854,
+     "ci_half": 0.06526403543118275,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.06709738205801198,
+     "new": 0.06711409395973154,
+     "delta": 1.6711901719562716e-05,
+     "ci_half": 0.004023871114535694,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.035675017087159366,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03432762836185818,
+     "new": 0.0334963325183374,
+     "delta": -0.0008312958435207837,
+     "ci_half": 0.0030198702710135528,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.4214425427872861,
+     "new": 0.4182640586797066,
+     "delta": -0.0031784841075794823,
+     "ci_half": 0.012885666197372624,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.52932829248724,
+     "new": 18.52491246052451,
+     "delta": -0.004415831962727879,
+     "ci_half": 0.0678813966333071,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.08145268898300169,
+     "new": 0.08008417606827614,
+     "delta": -0.0013685129147255476,
+     "ci_half": 0.004084073775804583,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.1,
+     "new": 0.06,
+     "delta": -0.04000000000000001,
+     "ci_half": 0.0850648896781564,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.024376528117359415,
+     "new": 0.02444987775061125,
+     "delta": 7.334963325183325e-05,
+     "ci_half": 0.0011706601466992665,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.3633007334963325,
+     "new": 0.3643031784841076,
+     "delta": 0.0010024449877750752,
+     "ci_half": 0.0050649460314774975,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.44920262399508,
+     "new": 18.45076230928453,
+     "delta": 0.0015596852894503854,
+     "ci_half": 0.06526403543118275,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.06709738205801198,
+     "new": 0.06711409395973154,
+     "delta": 1.6711901719562716e-05,
+     "ci_half": 0.004023871114535694,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.035675017087159366,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.049853300733496336,
+     "new": 0.04990220048899755,
+     "delta": 4.8899755501215225e-05,
+     "ci_half": 0.003669009755002245,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.4987775061124695,
+     "new": 0.49907090464547677,
+     "delta": 0.0002933985330072497,
+     "ci_half": 0.012718396810218724,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.634859704160636,
+     "new": 18.635278490790682,
+     "delta": 0.0004187866300462417,
+     "ci_half": 0.06689545245080109,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.09995098039215686,
+     "new": 0.09999020184205369,
+     "delta": 3.922144989683407e-05,
+     "ci_half": 0.004116228076656341,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.46,
+     "new": 0.46,
+     "delta": 0.0,
+     "ci_half": 0.13315965534914642,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.024376528117359415,
+     "new": 0.02444987775061125,
+     "delta": 7.334963325183325e-05,
+     "ci_half": 0.0011706601466992665,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.3633007334963325,
+     "new": 0.3643031784841076,
+     "delta": 0.0010024449877750752,
+     "ci_half": 0.0050649460314774975,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.44920262399508,
+     "new": 18.45076230928453,
+     "delta": 0.0015596852894503854,
+     "ci_half": 0.06526403543118275,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.06709738205801198,
+     "new": 0.06711409395973154,
+     "delta": 1.6711901719562716e-05,
+     "ci_half": 0.004023871114535694,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.035675017087159366,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.033080684596577016,
+     "new": 0.03312958435207824,
+     "delta": 4.8899755501222164e-05,
+     "ci_half": 0.003468824576973549,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.415281173594132,
+     "new": 0.41652811735941325,
+     "delta": 0.0012469437652812276,
+     "ci_half": 0.014167221264464626,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.519044975133806,
+     "new": 18.520563226081933,
+     "delta": 0.0015182509481270756,
+     "ci_half": 0.06493237893030916,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.07965852222549308,
+     "new": 0.0795374501056586,
+     "delta": -0.00012107211983447552,
+     "ci_half": 0.004072706505444055,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.08,
+     "new": 0.08,
+     "delta": 0.0,
+     "ci_half": 0.07841801109742318,
+     "effect": false
+    }
+   ],
+   "n_effect": 0,
+   "n_metrics": 40,
+   "max_ratio": 0.47022925852652353
+  },
+  "b2t-published-g0/R200": {
+   "n_changed": 35,
+   "rows": [
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean wrong_commit",
+     "orig": 0.025079462102689486,
+     "new": 0.02508557457212714,
+     "delta": 6.112469437654505e-06,
+     "ci_half": 0.0010694040384978413,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean commit_rate",
+     "orig": 0.3729339853300733,
+     "new": 0.37294621026894864,
+     "delta": 1.222493887531595e-05,
+     "ci_half": 0.005079794065764487,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "mean ewpm",
+     "orig": 18.48736387940054,
+     "new": 18.48741389714473,
+     "delta": 5.001774419000071e-05,
+     "ci_half": 0.04190638276891938,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "pooled error among commits",
+     "orig": 0.06724906575755589,
+     "new": 0.06726325105713443,
+     "delta": 1.418529957854242e-05,
+     "ci_half": 0.0019874744589301724,
+     "effect": false
+    },
+    {
+     "policy": "plug-in (fit-A)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.025,
+     "new": 0.025,
+     "delta": 0.0,
+     "ci_half": 0.023227291340414718,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.048533007334963324,
+     "new": 0.04862469437652811,
+     "delta": 9.168704156478635e-05,
+     "ci_half": 0.0017968452559830618,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.49767726161369197,
+     "new": 0.49787897310513446,
+     "delta": 0.00020171149144249112,
+     "ci_half": 0.006480665842892437,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.660035224052614,
+     "new": 18.660124460141095,
+     "delta": 8.923608848121489e-05,
+     "ci_half": 0.04195357291235127,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.09751903709162368,
+     "new": 0.09766368335113501,
+     "delta": 0.00014464625951132737,
+     "ci_half": 0.002037806111736911,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.415,
+     "new": 0.415,
+     "delta": 0.0,
+     "ci_half": 0.06766021877056089,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.024798288508557458,
+     "new": 0.024804400977995113,
+     "delta": 6.112469437654505e-06,
+     "ci_half": 0.0010046379165446684,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.37159535452322734,
+     "new": 0.3716136919315403,
+     "delta": 1.8337408312973924e-05,
+     "ci_half": 0.004574547838377769,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.485283969323877,
+     "new": 18.485342293840795,
+     "delta": 5.8324516917451774e-05,
+     "ci_half": 0.04180059853668879,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.06673465695063577,
+     "new": 0.06674781235607606,
+     "delta": 1.3155405440293255e-05,
+     "ci_half": 0.0019839704511077664,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.025,
+     "new": 0.025,
+     "delta": 0.0,
+     "ci_half": 0.023227291340414718,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.03099022004889975,
+     "new": 0.03097799511002445,
+     "delta": -1.2224938875302072e-05,
+     "ci_half": 0.0014523028711475828,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.4103667481662592,
+     "new": 0.4101344743276284,
+     "delta": -0.000232273838630781,
+     "ci_half": 0.006339857129360676,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.53870255485336,
+     "new": 18.538456454069177,
+     "delta": -0.0002461007841816354,
+     "ci_half": 0.04254308615026926,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.07551835081029552,
+     "new": 0.0755313124087156,
+     "delta": 1.2961598420083154e-05,
+     "ci_half": 0.0019988185695061856,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.09,
+     "new": 0.085,
+     "delta": -0.0049999999999999906,
+     "ci_half": 0.040039883711977954,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean wrong_commit",
+     "orig": 0.023942542787286067,
+     "new": 0.023948655256723718,
+     "delta": 6.112469437651036e-06,
+     "ci_half": 0.0007901921332173625,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean commit_rate",
+     "orig": 0.36687652811735944,
+     "new": 0.36690097799511007,
+     "delta": 2.44498777506319e-05,
+     "ci_half": 0.0033258210008396054,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "mean ewpm",
+     "orig": 18.47862647092602,
+     "new": 18.478692306496868,
+     "delta": 6.583557084738345e-05,
+     "ci_half": 0.04141886826189332,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "pooled error among commits",
+     "orig": 0.06526049216107696,
+     "new": 0.06527280299875052,
+     "delta": 1.2310837673557007e-05,
+     "ci_half": 0.001976078010855572,
+     "effect": false
+    },
+    {
+     "policy": "LTT max-rule (clean)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.005,
+     "new": 0.005,
+     "delta": 0.0,
+     "ci_half": 0.013445626940202637,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.048111246943765285,
+     "new": 0.048245721271393635,
+     "delta": 0.00013447432762835054,
+     "ci_half": 0.0016829195584607886,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.4976894865525673,
+     "new": 0.4977322738386308,
+     "delta": 4.27872860634948e-05,
+     "ci_half": 0.006161606040478626,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.65938596911138,
+     "new": 18.65933111101343,
+     "delta": -5.485809795047203e-05,
+     "ci_half": 0.0425759129837878,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.0966692048832011,
+     "new": 0.09693106878384851,
+     "delta": 0.00026186390064740495,
+     "ci_half": 0.00202983860814098,
+     "effect": false
+    },
+    {
+     "policy": "CRC pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.425,
+     "new": 0.425,
+     "delta": 0.0,
+     "ci_half": 0.0678784983514438,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.025024449877750612,
+     "new": 0.025030562347188267,
+     "delta": 6.112469437654505e-06,
+     "ci_half": 0.001052535498892043,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.37265281173594134,
+     "new": 0.3726650366748166,
+     "delta": 1.2224938875260438e-05,
+     "ci_half": 0.005001134343250966,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.4869663504401,
+     "new": 18.487016368184282,
+     "delta": 5.0017744182895285e-05,
+     "ci_half": 0.04182620488346245,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.0671521831840698,
+     "new": 0.06716638236451909,
+     "delta": 1.4199180449286919e-05,
+     "ci_half": 0.0019868950308130386,
+     "effect": false
+    },
+    {
+     "policy": "CRC max-rule (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.02,
+     "new": 0.02,
+     "delta": 0.0,
+     "ci_half": 0.02124178266439984,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean wrong_commit",
+     "orig": 0.029908312958435202,
+     "new": 0.030073349633251832,
+     "delta": 0.00016503667481663,
+     "ci_half": 0.0014937395288683846,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean commit_rate",
+     "orig": 0.4048533007334963,
+     "new": 0.40566014669926653,
+     "delta": 0.000806845965770242,
+     "ci_half": 0.0061107647865436725,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "mean ewpm",
+     "orig": 18.530616050333656,
+     "new": 18.5317260581693,
+     "delta": 0.0011100078356456322,
+     "ci_half": 0.042140623981981214,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "pooled error among commits",
+     "orig": 0.07387444514901712,
+     "new": 0.07413434590000904,
+     "delta": 0.0002599007509919288,
+     "ci_half": 0.0019921335869905795,
+     "effect": false
+    },
+    {
+     "policy": "LTT pure (reused)",
+     "metric": "share wrong-commit > alpha",
+     "orig": 0.06,
+     "new": 0.06,
+     "delta": 0.0,
+     "ci_half": 0.03364039270278969,
+     "effect": false
+    }
+   ],
+   "n_effect": 0,
+   "n_metrics": 40,
+   "max_ratio": 0.13203682255075055
+  }
+ },
+ "forward_chain": {
+  "prefix0": {
+   "ours-g1": {
+    "ok_orig": true,
+    "ok_new": true,
+    "T_orig": 2.78,
+    "T_new": 2.78,
+    "commit_p_orig": 0.3,
+    "commit_p_new": 0.3
+   },
+   "ours-g0": {
+    "ok_orig": true,
+    "ok_new": true,
+    "T_orig": 2.78,
+    "T_new": 2.78,
+    "commit_p_orig": 0.3,
+    "commit_p_new": 0.3
+   },
+   "published-g1": {
+    "ok_orig": true,
+    "ok_new": true,
+    "T_orig": 2.78,
+    "T_new": 2.78,
+    "commit_p_orig": 0.8,
+    "commit_p_new": 0.8
+   },
+   "published-g0": {
+    "ok_orig": true,
+    "ok_new": true,
+    "T_orig": 2.78,
+    "T_new": 2.78,
+    "commit_p_orig": 0.95,
+    "commit_p_new": 0.8
+   }
+  },
+  "n_metrics": 320,
+  "n_changed": 120,
+  "n_effect": 9,
+  "max_ratio": 1.5303787337127597,
+  "changed_rows": [
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.0520694259012016,
+    "new": 0.04072096128170895,
+    "delta": -0.011348464619492654,
+    "ci_half": 0.01159430469966765,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "share_days_above_alpha",
+    "orig": 0.4166666666666667,
+    "new": 0.3333333333333333,
+    "delta": -0.08333333333333337,
+    "ci_half": 0.285839042254732,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.2096128170894526,
+    "new": 0.17890520694259013,
+    "delta": -0.030707610146862463,
+    "ci_half": 0.02059943901345507,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 11.435689319062318,
+    "new": 11.388017480918053,
+    "delta": -0.047671838144264456,
+    "ci_half": 0.5946020326923755,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.036048064085447265,
+    "new": 0.03337783711615487,
+    "delta": -0.002670226969292394,
+    "ci_half": 0.009790511027108241,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.157543391188251,
+    "new": 0.14686248331108145,
+    "delta": -0.010680907877169549,
+    "ci_half": 0.018446251240400648,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.398283245915595,
+    "new": 11.362054962715524,
+    "delta": -0.03622828320007088,
+    "ci_half": 0.5952405237432873,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.10881174899866489,
+    "new": 0.10614152202937249,
+    "delta": -0.002670226969292394,
+    "ci_half": 0.01578124992096152,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.374479354028617,
+    "new": 11.346861873504468,
+    "delta": -0.027617480524149585,
+    "ci_half": 0.5928669442849733,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "joint LTT b0.10",
+    "metric": "mean_day_ewpm",
+    "orig": 11.278354149006008,
+    "new": 11.255427966067003,
+    "delta": -0.02292618293900439,
+    "ci_half": 0.5743859104828354,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V1 previous day",
+    "rule": "joint LTT b0.20",
+    "metric": "mean_day_ewpm",
+    "orig": 11.278354149006008,
+    "new": 11.255427966067003,
+    "delta": -0.02292618293900439,
+    "ci_half": 0.5743859104828354,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.06004288777698356,
+    "new": 0.045746962115797,
+    "delta": -0.014295925661186558,
+    "ci_half": 0.012814344809871772,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "share_days_above_alpha",
+    "orig": 0.45454545454545453,
+    "new": 0.36363636363636365,
+    "delta": -0.09090909090909088,
+    "ci_half": 0.29935915413847386,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.22087205146533237,
+    "new": 0.1908506075768406,
+    "delta": -0.03002144388849176,
+    "ci_half": 0.021721788737093874,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 11.413503881590167,
+    "new": 11.359646806038844,
+    "delta": -0.05385707555132235,
+    "ci_half": 0.6547723353929149,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.04217298070050036,
+    "new": 0.03788420300214439,
+    "delta": -0.004288777698355971,
+    "ci_half": 0.010904550414061607,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.36363636363636365,
+    "new": 0.2727272727272727,
+    "delta": -0.09090909090909094,
+    "ci_half": 0.29141592058461235,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.18656182987848463,
+    "new": 0.17512508934953538,
+    "delta": -0.011436740528949246,
+    "ci_half": 0.020403752250232506,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.410506042771713,
+    "new": 11.354442266956973,
+    "delta": -0.056063775814740424,
+    "ci_half": 0.6478234092791972,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.027162258756254467,
+    "new": 0.02501786990707648,
+    "delta": -0.0021443888491779854,
+    "ci_half": 0.008900667391704817,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.13795568263045033,
+    "new": 0.13080771979985703,
+    "delta": -0.007147962830593296,
+    "ci_half": 0.01807343779576388,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.387916200759417,
+    "new": 11.333377614113413,
+    "delta": -0.05453858664600375,
+    "ci_half": 0.6332280406045018,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "joint LTT b0.10",
+    "metric": "mean_day_ewpm",
+    "orig": 11.259485301900934,
+    "new": 11.218086359302994,
+    "delta": -0.04139894259794019,
+    "ci_half": 0.6327092725199809,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V4 two previous days",
+    "rule": "joint LTT b0.20",
+    "metric": "mean_day_ewpm",
+    "orig": 11.259485301900934,
+    "new": 11.218086359302994,
+    "delta": -0.04139894259794019,
+    "ci_half": 0.6327092725199809,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.05771643663739021,
+    "new": 0.043914680050188205,
+    "delta": -0.013801756587202008,
+    "ci_half": 0.01683816179724978,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "share_days_above_alpha",
+    "orig": 0.38461538461538464,
+    "new": 0.3076923076923077,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.27282152909788815,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.22208281053952322,
+    "new": 0.1932245922208281,
+    "delta": -0.028858218318695117,
+    "ci_half": 0.028818549147613857,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 11.810752434719982,
+    "new": 11.750181348331747,
+    "delta": -0.06057108638823472,
+    "ci_half": 0.7086396460810449,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.028858218318695106,
+    "new": 0.025094102885821833,
+    "delta": -0.003764115432873274,
+    "ci_half": 0.01230422163003925,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.23076923076923078,
+    "new": 0.15384615384615385,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.24387523287144466,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.13676286072772897,
+    "new": 0.13048933500627352,
+    "delta": -0.006273525721455453,
+    "ci_half": 0.02386123554385535,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.761810376888455,
+    "new": 11.724260792265655,
+    "delta": -0.037549584622800225,
+    "ci_half": 0.72538476935568,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.015056461731493099,
+    "new": 0.011292346298619825,
+    "delta": -0.003764115432873274,
+    "ci_half": 0.009174661765192582,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.15384615384615385,
+    "new": 0.07692307692307693,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.2176321918470146,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.08657465495608532,
+    "new": 0.08030112923462986,
+    "delta": -0.006273525721455467,
+    "ci_half": 0.019577375407259658,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.6976940064159,
+    "new": 11.660144421793099,
+    "delta": -0.037549584622800225,
+    "ci_half": 0.7105260056616982,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "joint LTT b0.10",
+    "metric": "mean_day_ewpm",
+    "orig": 11.630370439744222,
+    "new": 11.602792042177109,
+    "delta": -0.027578397567113555,
+    "ci_half": 0.7289436338601374,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "joint LTT b0.20",
+    "metric": "mean_day_ewpm",
+    "orig": 11.630370439744222,
+    "new": 11.602792042177109,
+    "delta": -0.027578397567113555,
+    "ci_half": 0.7289436338601374,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.038050734312416554,
+    "new": 0.027369826435246995,
+    "delta": -0.010680907877169559,
+    "ci_half": 0.010038045107960306,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "share_days_above_alpha",
+    "orig": 0.08333333333333333,
+    "new": 0.0,
+    "delta": -0.08333333333333333,
+    "ci_half": 0.19134428595954192,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.16421895861148197,
+    "new": 0.13551401869158877,
+    "delta": -0.028704939919893202,
+    "ci_half": 0.01875675562365786,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 11.39600361029128,
+    "new": 11.349652372681026,
+    "delta": -0.04635123761025284,
+    "ci_half": 0.6114121240578786,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.02870493991989319,
+    "new": 0.0267022696929239,
+    "delta": -0.002002670226969292,
+    "ci_half": 0.008811001562716412,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.1348464619492657,
+    "new": 0.1261682242990654,
+    "delta": -0.008678237650200288,
+    "ci_half": 0.017299927656431912,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.375937142849645,
+    "new": 11.341029460183583,
+    "delta": -0.03490768266606281,
+    "ci_half": 0.6115586815165354,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.018024032042723633,
+    "new": 0.018691588785046728,
+    "delta": 0.0006675567423230951,
+    "ci_half": 0.007102816890842718,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.09612817089452604,
+    "new": 0.09546061415220294,
+    "delta": -0.0006675567423230916,
+    "ci_half": 0.014943867418181987,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.35847723108399,
+    "new": 11.332180351093848,
+    "delta": -0.02629687999014152,
+    "ci_half": 0.6021867824674143,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "joint LTT b0.10",
+    "metric": "mean_day_ewpm",
+    "orig": 11.274378256883283,
+    "new": 11.251452073944277,
+    "delta": -0.022926182939006168,
+    "ci_half": 0.5775555563716892,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V1 previous day",
+    "rule": "joint LTT b0.20",
+    "metric": "mean_day_ewpm",
+    "orig": 11.274378256883283,
+    "new": 11.251452073944277,
+    "delta": -0.022926182939006168,
+    "ci_half": 0.5775555563716892,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.04145818441744103,
+    "new": 0.027877055039313797,
+    "delta": -0.013581129378127232,
+    "ci_half": 0.0108191727730025,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "share_days_above_alpha",
+    "orig": 0.2727272727272727,
+    "new": 0.18181818181818182,
+    "delta": -0.09090909090909088,
+    "ci_half": 0.27476241269975726,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.16654753395282346,
+    "new": 0.13867047891350964,
+    "delta": -0.027877055039313814,
+    "ci_half": 0.019518079450056135,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 11.35901354433513,
+    "new": 11.302134085863129,
+    "delta": -0.05687945847200204,
+    "ci_half": 0.6565044399436081,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.031451036454610434,
+    "new": 0.027877055039313797,
+    "delta": -0.0035739814152966377,
+    "ci_half": 0.009524912104309925,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.2727272727272727,
+    "new": 0.18181818181818182,
+    "delta": -0.09090909090909088,
+    "ci_half": 0.27476241269975726,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.14796283059328091,
+    "new": 0.13867047891350964,
+    "delta": -0.009292351679771271,
+    "ci_half": 0.01860548976031713,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.361220244598547,
+    "new": 11.302134085863129,
+    "delta": -0.05908615873541834,
+    "ci_half": 0.6547338490312977,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.027162258756254467,
+    "new": 0.02573266619013581,
+    "delta": -0.0014295925661186558,
+    "ci_half": 0.008900667391704817,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.13795568263045033,
+    "new": 0.13295210864903503,
+    "delta": -0.0050035739814152935,
+    "ci_half": 0.01807343779576388,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.362062875639776,
+    "new": 11.304501906073096,
+    "delta": -0.05756096956667989,
+    "ci_half": 0.6507289581181128,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "joint LTT b0.10",
+    "metric": "mean_day_ewpm",
+    "orig": 11.234268320897613,
+    "new": 11.192869378299674,
+    "delta": -0.041398942597938415,
+    "ci_half": 0.6403502201893903,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V4 two previous days",
+    "rule": "joint LTT b0.20",
+    "metric": "mean_day_ewpm",
+    "orig": 11.234268320897613,
+    "new": 11.192869378299674,
+    "delta": -0.041398942597938415,
+    "ci_half": 0.6403502201893903,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.04265997490589712,
+    "new": 0.028858218318695106,
+    "delta": -0.013801756587202011,
+    "ci_half": 0.014692102310813679,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "share_days_above_alpha",
+    "orig": 0.23076923076923078,
+    "new": 0.15384615384615385,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.24387523287144466,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.17063989962358847,
+    "new": 0.14303638644918445,
+    "delta": -0.027603513174404015,
+    "ci_half": 0.026103070091882678,
+    "effect": true
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 11.775540053854611,
+    "new": 11.715658689203055,
+    "delta": -0.05988136465155591,
+    "ci_half": 0.7500715834782127,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.025094102885821833,
+    "new": 0.02132998745294856,
+    "delta": -0.003764115432873274,
+    "ci_half": 0.01154836338162048,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.15384615384615385,
+    "new": 0.07692307692307693,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.2176321918470146,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.12170639899623588,
+    "new": 0.11668757841907151,
+    "delta": -0.005018820577164365,
+    "ci_half": 0.02271691671826384,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.711413138262998,
+    "new": 11.674553275376876,
+    "delta": -0.03685986288612142,
+    "ci_half": 0.7468305078288057,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.01756587202007528,
+    "new": 0.013801756587202008,
+    "delta": -0.003764115432873274,
+    "ci_half": 0.009830604677667568,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.15384615384615385,
+    "new": 0.07692307692307693,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.2176321918470146,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.09410288582183186,
+    "new": 0.0890840652446675,
+    "delta": -0.005018820577164365,
+    "ci_half": 0.020315499979566828,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 11.667903859536569,
+    "new": 11.631043996650448,
+    "delta": -0.03685986288612142,
+    "ci_half": 0.729517949207175,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "joint LTT b0.10",
+    "metric": "mean_day_ewpm",
+    "orig": 11.604326949949499,
+    "new": 11.576748552382385,
+    "delta": -0.027578397567113555,
+    "ci_half": 0.734880008919151,
+    "effect": false
+   },
+   {
+    "condition": "b2t-ours/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "joint LTT b0.20",
+    "metric": "mean_day_ewpm",
+    "orig": 11.604326949949499,
+    "new": 11.576748552382385,
+    "delta": -0.027578397567113555,
+    "ci_half": 0.734880008919151,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.02336448598130841,
+    "new": 0.024699599465954607,
+    "delta": 0.001335113484646197,
+    "ci_half": 0.008009356966614957,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.38050734312416556,
+    "new": 0.3818424566088118,
+    "delta": 0.001335113484646211,
+    "ci_half": 0.024557109786169658,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 19.39801105770586,
+    "new": 19.400541974799754,
+    "delta": 0.0025309170938925263,
+    "ci_half": 1.083763607790259,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.021361815754339118,
+    "new": 0.02336448598130841,
+    "delta": 0.002002670226969292,
+    "ci_half": 0.007683683764848886,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.3664886515353805,
+    "new": 0.3758344459279039,
+    "delta": 0.009345794392523366,
+    "ci_half": 0.02437216512693047,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 19.370764109609123,
+    "new": 19.388171464331574,
+    "delta": 0.01740735472245092,
+    "ci_half": 1.0866954093909544,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.01602136181575434,
+    "new": 0.016688918558077435,
+    "delta": 0.0006675567423230951,
+    "ci_half": 0.006726884901840413,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.3164218958611482,
+    "new": 0.32643524699599463,
+    "delta": 0.010013351134846415,
+    "ci_half": 0.02352652951344958,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 19.293820481617576,
+    "new": 19.31184753409246,
+    "delta": 0.018027052474884897,
+    "ci_half": 1.0958224188234489,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.3538241601143674,
+    "new": 0.3559685489635454,
+    "delta": 0.0021443888491780028,
+    "ci_half": 0.025025134501778696,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 19.399774500638163,
+    "new": 19.40252383029374,
+    "delta": 0.002749329655578947,
+    "ci_half": 1.1862054476985533,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.027603513174404015,
+    "new": 0.025094102885821833,
+    "delta": -0.0025094102885821826,
+    "ci_half": 0.012058483528996616,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.020075282308657464,
+    "new": 0.01631116687578419,
+    "delta": -0.003764115432873274,
+    "ci_half": 0.010439742576344675,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.07692307692307693,
+    "new": 0.0,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.17917590338526537,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.010037641154328732,
+    "new": 0.006273525721455458,
+    "delta": -0.003764115432873274,
+    "ci_half": 0.007669349863545604,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.07692307692307693,
+    "new": 0.0,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.17917590338526537,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.18820577164366373,
+    "new": 0.1806775407779172,
+    "delta": -0.007528230865746527,
+    "ci_half": 0.027113400535635823,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 18.941723155122354,
+    "new": 18.93560382206937,
+    "delta": -0.006119333052982512,
+    "ci_half": 1.6317396872783225,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.01602136181575434,
+    "new": 0.015353805073431242,
+    "delta": -0.0006675567423230985,
+    "ci_half": 0.006726884901840413,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "share_days_above_alpha",
+    "orig": 0.08333333333333333,
+    "new": 0.0,
+    "delta": -0.08333333333333333,
+    "ci_half": 0.19134428595954192,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.3444592790387183,
+    "new": 0.34979973297730305,
+    "delta": 0.005340453938584733,
+    "ci_half": 0.02403655869754767,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 19.35234621916029,
+    "new": 19.36242127091622,
+    "delta": 0.01007505175592982,
+    "ci_half": 1.0761802718540647,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.014686248331108143,
+    "new": 0.015353805073431242,
+    "delta": 0.0006675567423230985,
+    "ci_half": 0.006462539173658083,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.3384512683578104,
+    "new": 0.3464619492656876,
+    "delta": 0.008010680907877155,
+    "ci_half": 0.02393523705705452,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 19.3411649042495,
+    "new": 19.35610920744266,
+    "delta": 0.01494430319316109,
+    "ci_half": 1.0785469484667702,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.010013351134846462,
+    "new": 0.010680907877169559,
+    "delta": 0.0006675567423230968,
+    "ci_half": 0.0054234381038819396,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.27436582109479307,
+    "new": 0.28437917222963954,
+    "delta": 0.010013351134846471,
+    "ci_half": 0.02257407000792611,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V1 previous day",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 19.25420141600556,
+    "new": 19.272228468480446,
+    "delta": 0.018027052474884897,
+    "ci_half": 1.0906869606662324,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.3402430307362402,
+    "new": 0.3416726233023588,
+    "delta": 0.0014295925661186315,
+    "ci_half": 0.024797389528112324,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V4 two previous days",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 19.38243667665204,
+    "new": 19.384290413978924,
+    "delta": 0.001853737326882765,
+    "ci_half": 1.16288028093696,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.3359542530378842,
+    "new": 0.3416726233023588,
+    "delta": 0.005718370264474637,
+    "ci_half": 0.02472080133226377,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V4 two previous days",
+    "rule": "CRC max",
+    "metric": "mean_day_ewpm",
+    "orig": 19.376901917398413,
+    "new": 19.384290413978924,
+    "delta": 0.007388496580510662,
+    "ci_half": 1.1671586140626313,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.3330950679056469,
+    "new": 0.33523945675482486,
+    "delta": 0.0021443888491779473,
+    "ci_half": 0.024668479199455338,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V4 two previous days",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 19.373233964925475,
+    "new": 19.375983294581054,
+    "delta": 0.002749329655578947,
+    "ci_half": 1.1700407136344886,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.02132998745294856,
+    "new": 0.020075282308657464,
+    "delta": -0.0012547051442910948,
+    "ci_half": 0.010729430379199992,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "pooled_commit_rate",
+    "orig": 0.36386449184441655,
+    "new": 0.36511919698870765,
+    "delta": 0.0012547051442911017,
+    "ci_half": 0.03332811887471977,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "plug-in",
+    "metric": "mean_day_ewpm",
+    "orig": 19.267007642331357,
+    "new": 19.268048743943908,
+    "delta": 0.0010411016125502215,
+    "ci_half": 1.7659330468279735,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.020075282308657464,
+    "new": 0.01631116687578419,
+    "delta": -0.003764115432873274,
+    "ci_half": 0.010439742576344675,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "CRC max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.07692307692307693,
+    "new": 0.0,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.17917590338526537,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "pooled_wrong_commit",
+    "orig": 0.013801756587202008,
+    "new": 0.010037641154328732,
+    "delta": -0.0037641154328732756,
+    "ci_half": 0.008825661492195026,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "share_days_above_alpha",
+    "orig": 0.07692307692307693,
+    "new": 0.0,
+    "delta": -0.07692307692307693,
+    "ci_half": 0.17917590338526537,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "pooled_commit_rate",
+    "orig": 0.2095357590966123,
+    "new": 0.20075282308657466,
+    "delta": -0.008782936010037629,
+    "ci_half": 0.028221682247353254,
+    "effect": false
+   },
+   {
+    "condition": "b2t-published/no guard",
+    "variant": "V3 session start (first half of the test day)",
+    "rule": "LTT max",
+    "metric": "mean_day_ewpm",
+    "orig": 18.968987938721106,
+    "new": 18.96184098429332,
+    "delta": -0.007146954427785346,
+    "ci_half": 1.6380419036962162,
+    "effect": false
+   }
+  ]
+ },
+ "decision_step2": "effect"
+}

@@ -138,3 +138,6 @@ Recommendation for new configurations:
 - Simulator streams have no temporal structure inside a key, and the LM is in-domain, so frame-shuffled simulator streams are a hard, partly artificial control.
 - Fixed-split McNemar tests are conditional on one fitted pipeline per split. Repeated splits share trials (descriptive).
 - Another agent's uncommitted, value-neutral change (edit-distance cache bound in `trust/guard.py`, `trust/_align.py`) was in the working tree; the exact v4 reproduction shows no effect.
+
+## Note 2026-11-17 (P14-19): split rows, no effect
+The B2T split rows of the 8 changed R3 splits were refitted with their own word setting ([P14-18/19 results](../2026-11-17-p14-18-19-followups/results.md)): 0 of 10 summary values with a CI move by their half-width (largest 0.24). The numbers above are not changed.

@@ -48,3 +48,6 @@ LTT max is never above α in a split where CRC max is not (it is always at least
 - Replace "(allowed: 10 %)" with the shares and their CIs: LTT max 4/50 = 0.08 [0.02, 0.19] and 1/50 = 0.02 [0.001, 0.11]; with 200 splits 0.075 [0.043, 0.121] and 0.055 [0.028, 0.096].
 - App. R: replace 0.5 % / 1.5 % (biased low) with the with-replacement values 4.7 % [3.8, 5.7] / 4.1 % [3.3, 5.1] (LTT pure, n_cal 408).
 - The population view gives a cleaner statement: over the repeated splits, the exact population risk of LTT max exceeded α in 2.0 % / 1.6 % of draws (R = 200), LTT pure in 6.0 % / 5.9 %, both ≤ δ; CRC pure in 39 % / 41 % (not promised).
+
+## Note 2026-11-17 (P14-19): word setting per fit
+Rerun with the 35 changed re-splits rebuilt ([P14-18/19 results](../../2026-11-17-p14-18-19-followups/results.md)): 1 of 24 values with a CI moves by its half-width. "Ours" R = 50, CRC max, population share > α (with replacement) is 0.1685 → 0.1604. Its CI (half-width 0.0074) is the CP interval over 10,000 resampling draws, so it covers only resampling noise. Test-exceedance shares do not move by their half-widths. The numbers above are not changed.

@@ -42,3 +42,6 @@ For each λ on the grid 0.05, 0.10, ..., 1.00 (20 points; the R3 LTT-sel grid):
 - Cost: with β = 0.10 it commits nothing on our decoder, sEMG and MEG, and 6-7 % on the published gate (no commit in 76-81 % of splits; nothing in either fixed split). The frozen rule then equals "always offer" for every condition except, sometimes, the published gate. With β = 0.20 the published gate commits 32 % with EAC 0.06.
 - In forward-chaining (item 1), joint LTT β = 0.10 committed nothing with single-day calibration.
 - Make LTT-sel (not SGR) the reference selective controller; state SGR's guarantee as given by Geifman & El-Yaniv (2017).
+
+## Note 2026-11-17 (P14-19): word setting per fit
+Rerun with the 35 changed re-splits rebuilt ([P14-18/19 results](../../2026-11-17-p14-18-19-followups/results.md)): the means over splits move by at most 0.24 of their MC half-widths (0 of 36). Two values with a CI move by their half-width. Both are the share of committing splits with EAC > β = 0.20 ("ours", guard on, R = 50, SGR rules): 0.5 → 0.0. Only 2 splits commit, so one split decides (CP half-width 0.49). The numbers above are not changed.

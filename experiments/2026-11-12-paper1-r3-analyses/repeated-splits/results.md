@@ -70,3 +70,6 @@ The paper's split A (CRC not binding) is not typical: on B2T ours the max rule c
 
 ## Check 2026-11-17 (P14-15): word-decoder tune overlap, no effect
 The word-decoder settings were tuned on 400 fixed trials, and 182-218 of them are in each test set here ([T15 split audit](../../../wiki/questions/t15-split-audit.md), issue D). P14-15 re-tuned the settings inside each split's fit-A (pre-registered). 8 of these 50 splits change their setting (mostly exact WER ties). With those 8 tables rebuilt, no "B2T ours" metric moved by its CI half-width (largest: 0.26 of it). The numbers above stand. Details: [P14-15 results](../../2026-11-17-p14-15-retune/results.md). The "B2T published" rows also use our word n-best; gap 45 (P14-19) checks them.
+
+## Note 2026-11-17 (P14-19): published gate and guard off, no effect
+The "B2T published" tables (guard on) and the guard-off tables of the 8 R3 splits whose fit-A tune changes the word setting were rebuilt ([P14-18/19 results](../../2026-11-17-p14-18-19-followups/results.md)). 0 of 40 primary metrics per table move by their CI half-width (largest 0.28 guard on, 0.47 guard off). The numbers above are not changed.

@@ -17,3 +17,6 @@ Checks:
 
 ## Check 2026-11-17 (P14-15): word-decoder tune overlap, no effect
 179-224 of the 400 word-decoder tune trials are in each test set of the 200 splits ([T15 split audit](../../../wiki/questions/t15-split-audit.md), issue D). P14-15 re-tuned the settings inside each split's fit-A (pre-registered). 35 of 200 splits change their setting (28 are exact WER ties). With the 35 guard-on "ours" tables rebuilt, no metric of the R = 200 aggregation moved by its CI half-width (largest: 0.27 of it). The tables stand. Details: [P14-15 results](../../2026-11-17-p14-15-retune/results.md). Guard-off and published-gate tables and the downstream analyses: gap 45 (P14-19).
+
+## Note 2026-11-17 (P14-19): tables with the per-split word setting
+For the 35 re-splits whose fit-A tune changes the word setting (P14-15), the published-g1, ours-g0, published-g0 and published-margin tables were rebuilt outside this cache (`derived/p14-18-19/tables`; [results](../../2026-11-17-p14-18-19-followups/results.md)). R3 policies: 0 of 240 metrics move by their CI half-width. The cache tables here are not changed.

@@ -1,0 +1,1977 @@
+{
+ "m4": {
+  "m412": {
+   "conditions": 10,
+   "reproduces_all": true,
+   "cache_misses": {
+    "dedicated_0/L0": 0,
+    "dedicated_10/L10": 0,
+    "dedicated_15/L15": 0,
+    "dedicated_25/L25": 0,
+    "shared/L0": 0,
+    "shared/L2": 0,
+    "shared/L5": 0,
+    "shared/L10": 0,
+    "shared/L15": 0,
+    "shared/L25": 0
+   },
+   "rows": [
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "words_T1.wer",
+     "orig": 0.3997860962566845,
+     "new": 0.3976470588235294,
+     "delta": -0.0021390374331550777,
+     "ci_half": 0.017316359846301838,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "words_frozenT.wer",
+     "orig": 0.4104812834224599,
+     "new": 0.40406417112299464,
+     "delta": -0.006417112299465233,
+     "ci_half": 0.017231334633784318,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.07417974322396577,
+     "new": 0.07417974322396577,
+     "delta": 0.0,
+     "ci_half": 0.019485824746420088,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.1312410841654779,
+     "new": 0.14265335235378032,
+     "delta": 0.011412268188302432,
+     "ci_half": 0.025009315988628513,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.ewpm",
+     "orig": 5.944823109315387,
+     "new": 6.028911370541873,
+     "delta": 0.08408826122648527,
+     "ci_half": 0.18505771210884614,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9258202567760342,
+     "new": 0.9258202567760342,
+     "delta": 0.0,
+     "ci_half": 0.019485824746420095,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "always_commit.ewpm",
+     "orig": 5.529159398283649,
+     "new": 5.601609676016831,
+     "delta": 0.07245027773318213,
+     "ci_half": 0.2248490726855783,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "words_T1.wer",
+     "orig": 0.3922994652406417,
+     "new": 0.3922994652406417,
+     "delta": 0.0,
+     "ci_half": 0.01739356054581981,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "words_frozenT.wer",
+     "orig": 0.4036363636363636,
+     "new": 0.39935828877005347,
+     "delta": -0.004278074866310155,
+     "ci_half": 0.01807893867285515,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.08131241084165478,
+     "new": 0.08416547788873038,
+     "delta": 0.002853067047075608,
+     "ci_half": 0.0203063743466186,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.1398002853067047,
+     "new": 0.15549215406562053,
+     "delta": 0.015691868758915817,
+     "ci_half": 0.02567657755621286,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "trust.ewpm",
+     "orig": 6.0188560372552695,
+     "new": 6.04648094575141,
+     "delta": 0.027624908496140854,
+     "ci_half": 0.20091328566522382,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9186875891583453,
+     "new": 0.9158345221112696,
+     "delta": -0.0028530670470756636,
+     "ci_half": 0.020306374346618597,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "always_commit.ewpm",
+     "orig": 5.624653603525809,
+     "new": 5.637909653577052,
+     "delta": 0.013256050051242418,
+     "ci_half": 0.24945381577637482,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_10/L10",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "words_T1.wer",
+     "orig": 0.3997860962566845,
+     "new": 0.398716577540107,
+     "delta": -0.001069518716577511,
+     "ci_half": 0.01732561855416795,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "words_frozenT.wer",
+     "orig": 0.4109090909090909,
+     "new": 0.4053475935828877,
+     "delta": -0.005561497326203202,
+     "ci_half": 0.018049310733221163,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.07703281027104136,
+     "new": 0.07845934379457917,
+     "delta": 0.001426533523537804,
+     "ci_half": 0.019819791640914918,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.12981455064194009,
+     "new": 0.14265335235378032,
+     "delta": 0.012838801711840236,
+     "ci_half": 0.02489481629645271,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "trust.ewpm",
+     "orig": 5.9665087088686635,
+     "new": 6.0274982829029335,
+     "delta": 0.06098957403427008,
+     "ci_half": 0.19615411589713538,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9229671897289586,
+     "new": 0.9215406562054208,
+     "delta": -0.0014265335235378318,
+     "ci_half": 0.019819791640914918,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "always_commit.ewpm",
+     "orig": 5.536988195925788,
+     "new": 5.584554049127747,
+     "delta": 0.047565853201959385,
+     "ci_half": 0.24364161692727393,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_15/L15",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "words_T1.wer",
+     "orig": 0.45647058823529413,
+     "new": 0.4558288770053476,
+     "delta": -0.000641711229946551,
+     "ci_half": 0.018619434890539882,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "words_frozenT.wer",
+     "orig": 0.43358288770053477,
+     "new": 0.42716577540106954,
+     "delta": -0.006417112299465233,
+     "ci_half": 0.017297096690909064,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.06847360912981455,
+     "new": 0.06990014265335236,
+     "delta": 0.001426533523537804,
+     "ci_half": 0.018793059226549495,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.12838801711840228,
+     "new": 0.14693295292439373,
+     "delta": 0.018544935805991453,
+     "ci_half": 0.02477934238116633,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.ewpm",
+     "orig": 5.770538942614778,
+     "new": 5.879923167223722,
+     "delta": 0.10938422460894337,
+     "ci_half": 0.18177596951494124,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9315263908701854,
+     "new": 0.9300998573466477,
+     "delta": -0.0014265335235377208,
+     "ci_half": 0.018793059226549502,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "always_commit.ewpm",
+     "orig": 5.310731600148106,
+     "new": 5.363391399225987,
+     "delta": 0.05265979907788143,
+     "ci_half": 0.23823885303031211,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "words_T1.wer",
+     "orig": 0.4049197860962567,
+     "new": 0.4032085561497326,
+     "delta": -0.0017112299465240621,
+     "ci_half": 0.017265883609876187,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "words_frozenT.wer",
+     "orig": 0.41946524064171126,
+     "new": 0.4111229946524064,
+     "delta": -0.00834224598930483,
+     "ci_half": 0.017810884166137214,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.06847360912981455,
+     "new": 0.07703281027104136,
+     "delta": 0.00855920114122681,
+     "ci_half": 0.018793059226549495,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.12410841654778887,
+     "new": 0.14407988587731813,
+     "delta": 0.019971469329529257,
+     "ci_half": 0.024426936550316004,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.ewpm",
+     "orig": 5.880120662630389,
+     "new": 5.957296060691642,
+     "delta": 0.07717539806125373,
+     "ci_half": 0.17989909890119016,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9315263908701854,
+     "new": 0.9229671897289586,
+     "delta": -0.008559201141226769,
+     "ci_half": 0.018793059226549502,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "always_commit.ewpm",
+     "orig": 5.443220218176212,
+     "new": 5.540340179040394,
+     "delta": 0.09711996086418129,
+     "ci_half": 0.2273330266281115,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "words_T1.wer",
+     "orig": 0.40342245989304815,
+     "new": 0.4027807486631016,
+     "delta": -0.000641711229946551,
+     "ci_half": 0.017051958546599078,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "words_frozenT.wer",
+     "orig": 0.4173262032085561,
+     "new": 0.40941176470588236,
+     "delta": -0.00791443850267376,
+     "ci_half": 0.017633918954510858,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.06419400855920114,
+     "new": 0.07275320970042796,
+     "delta": 0.008559201141226824,
+     "ci_half": 0.018249896106872568,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.12125534950071326,
+     "new": 0.14835948644793154,
+     "delta": 0.027104136947218277,
+     "ci_half": 0.0241868669694106,
+     "effect": true
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.ewpm",
+     "orig": 5.871638108303563,
+     "new": 5.968971559882381,
+     "delta": 0.09733345157881779,
+     "ci_half": 0.1804673033255053,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9358059914407989,
+     "new": 0.927246790299572,
+     "delta": -0.00855920114122688,
+     "ci_half": 0.01824989610687256,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "always_commit.ewpm",
+     "orig": 5.4236747438055914,
+     "new": 5.513892421351569,
+     "delta": 0.09021767754597754,
+     "ci_half": 0.2248726942690391,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "words_T1.wer",
+     "orig": 0.4032085561497326,
+     "new": 0.40128342245989307,
+     "delta": -0.0019251336898395421,
+     "ci_half": 0.01695280057479842,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "words_frozenT.wer",
+     "orig": 0.41454545454545455,
+     "new": 0.40748663101604277,
+     "delta": -0.007058823529411784,
+     "ci_half": 0.01737762356910927,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.06847360912981455,
+     "new": 0.07132667617689016,
+     "delta": 0.002853067047075608,
+     "ci_half": 0.018793059226549495,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.11412268188302425,
+     "new": 0.1340941512125535,
+     "delta": 0.019971469329529243,
+     "ci_half": 0.023567810963173452,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.ewpm",
+     "orig": 5.8932777539925425,
+     "new": 5.989019597063169,
+     "delta": 0.09574184307062694,
+     "ci_half": 0.1854009766035869,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9315263908701854,
+     "new": 0.9286733238231099,
+     "delta": -0.0028530670470755526,
+     "ci_half": 0.018793059226549502,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "always_commit.ewpm",
+     "orig": 5.439925977512667,
+     "new": 5.530679615768148,
+     "delta": 0.09075363825548077,
+     "ci_half": 0.23813586677719867,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "words_T1.wer",
+     "orig": 0.4006417112299465,
+     "new": 0.40149732620320855,
+     "delta": 0.0008556149732620311,
+     "ci_half": 0.01707791900563263,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "words_frozenT.wer",
+     "orig": 0.41711229946524064,
+     "new": 0.4087700534759358,
+     "delta": -0.00834224598930483,
+     "ci_half": 0.01778667742644177,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.06847360912981455,
+     "new": 0.07417974322396577,
+     "delta": 0.005706134094151216,
+     "ci_half": 0.018793059226549495,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.11982881597717546,
+     "new": 0.1383737517831669,
+     "delta": 0.018544935805991453,
+     "ci_half": 0.02406524658855976,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.ewpm",
+     "orig": 5.881193263330742,
+     "new": 5.958904273387129,
+     "delta": 0.07771101005638759,
+     "ci_half": 0.18396673697177723,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9315263908701854,
+     "new": 0.9258202567760342,
+     "delta": -0.005706134094151216,
+     "ci_half": 0.018793059226549502,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "always_commit.ewpm",
+     "orig": 5.4069119058915796,
+     "new": 5.469035861660249,
+     "delta": 0.06212395576866925,
+     "ci_half": 0.23076829480144045,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "words_T1.wer",
+     "orig": 0.40299465240641713,
+     "new": 0.40149732620320855,
+     "delta": -0.0014973262032085821,
+     "ci_half": 0.017278766408907742,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "words_frozenT.wer",
+     "orig": 0.4154010695187166,
+     "new": 0.41005347593582886,
+     "delta": -0.005347593582887722,
+     "ci_half": 0.01790356146835745,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.07275320970042796,
+     "new": 0.07560627674750357,
+     "delta": 0.002853067047075608,
+     "ci_half": 0.019315819579258774,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.12696148359486448,
+     "new": 0.14407988587731813,
+     "delta": 0.01711840228245365,
+     "ci_half": 0.024662880558561782,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.ewpm",
+     "orig": 5.899460850399699,
+     "new": 5.951797440563544,
+     "delta": 0.05233659016384529,
+     "ci_half": 0.19561180732287609,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.927246790299572,
+     "new": 0.9243937232524965,
+     "delta": -0.0028530670470755526,
+     "ci_half": 0.019315819579258774,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "always_commit.ewpm",
+     "orig": 5.43980327176343,
+     "new": 5.490156594394396,
+     "delta": 0.05035332263096581,
+     "ci_half": 0.23042463482322617,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "words_T1.wer",
+     "orig": 0.40128342245989307,
+     "new": 0.4006417112299465,
+     "delta": -0.000641711229946551,
+     "ci_half": 0.017392081694466183,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "words_frozenT.wer",
+     "orig": 0.40941176470588236,
+     "new": 0.4047058823529412,
+     "delta": -0.004705882352941171,
+     "ci_half": 0.017783681150059988,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.07275320970042796,
+     "new": 0.07703281027104136,
+     "delta": 0.004279600570613398,
+     "ci_half": 0.019315819579258774,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.12553495007132667,
+     "new": 0.1398002853067047,
+     "delta": 0.01426533523537804,
+     "ci_half": 0.024545416766528615,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.ewpm",
+     "orig": 5.933376078608317,
+     "new": 5.992729246838017,
+     "delta": 0.05935316822970016,
+     "ci_half": 0.1895784389505919,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.927246790299572,
+     "new": 0.9229671897289586,
+     "delta": -0.004279600570613384,
+     "ci_half": 0.019315819579258774,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "always_commit.ewpm",
+     "orig": 5.539895487324481,
+     "new": 5.56813669914349,
+     "delta": 0.02824121181900896,
+     "ci_half": 0.2462390652234996,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    }
+   ],
+   "n_effect": 1,
+   "n_metrics": 90,
+   "max_ratio": 1.1206138017584988
+  },
+  "m402": {
+   "conditions": 8,
+   "reproduces_all": true,
+   "cache_misses": {
+    "dedicated_0/L0": 1402,
+    "dedicated_25/L25": 1402,
+    "shared/L0": 1402,
+    "shared/L2": 1402,
+    "shared/L5": 1402,
+    "shared/L10": 1402,
+    "shared/L15": 1402,
+    "shared/L25": 1402
+   },
+   "rows": [
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "words_T1.wer",
+     "orig": 0.9306951871657754,
+     "new": 0.9281283422459893,
+     "delta": -0.002566844919786093,
+     "ci_half": 0.008020838670525055,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "words_frozenT.wer",
+     "orig": 0.9995721925133689,
+     "new": 0.9961497326203208,
+     "delta": -0.0034224598930481243,
+     "ci_half": 0.010379741987657176,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.ewpm",
+     "orig": 3.38046469967786,
+     "new": 3.386626317639399,
+     "delta": 0.006161617961538912,
+     "ci_half": 0.040274705661133225,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "always_commit.wrong_commit",
+     "orig": 1.0,
+     "new": 1.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "always_commit.ewpm",
+     "orig": 2.5718594938317714,
+     "new": 2.576952990041149,
+     "delta": 0.0050934962093776015,
+     "ci_half": 0.11614312778285196,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_0/L0",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "words_T1.wer",
+     "orig": 0.5405347593582888,
+     "new": 0.5356149732620321,
+     "delta": -0.004919786096256651,
+     "ci_half": 0.017994347177740344,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "words_frozenT.wer",
+     "orig": 0.5345454545454545,
+     "new": 0.520855614973262,
+     "delta": -0.013689839572192497,
+     "ci_half": 0.017926477474477398,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.037089871611982884,
+     "new": 0.0456490727532097,
+     "delta": 0.008559201141226817,
+     "ci_half": 0.014178109827710715,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.06990014265335236,
+     "new": 0.08701854493580599,
+     "delta": 0.017118402282453635,
+     "ci_half": 0.018969494999621802,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.ewpm",
+     "orig": 5.1524909844156666,
+     "new": 5.263406530162461,
+     "delta": 0.11091554574679474,
+     "ci_half": 0.14624440684675877,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9629101283880172,
+     "new": 0.9543509272467903,
+     "delta": -0.00855920114122688,
+     "ci_half": 0.014178109827710709,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "always_commit.ewpm",
+     "orig": 4.557051358289015,
+     "new": 4.681703197082487,
+     "delta": 0.12465183879347208,
+     "ci_half": 0.2014219206993837,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "dedicated_25/L25",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "words_T1.wer",
+     "orig": 0.8906951871657754,
+     "new": 0.8889839572192514,
+     "delta": -0.0017112299465240621,
+     "ci_half": 0.008786179877825206,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "words_frozenT.wer",
+     "orig": 0.9306951871657754,
+     "new": 0.9266310160427808,
+     "delta": -0.00406417112299462,
+     "ci_half": 0.008452830862089922,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.ewpm",
+     "orig": 3.4662828909201426,
+     "new": 3.4692383257955006,
+     "delta": 0.0029554348753579873,
+     "ci_half": 0.04759814409219132,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "always_commit.wrong_commit",
+     "orig": 1.0,
+     "new": 1.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "always_commit.ewpm",
+     "orig": 2.652703267200387,
+     "new": 2.6589455842677445,
+     "delta": 0.006242317067357561,
+     "ci_half": 0.11738022107947388,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L0",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "words_T1.wer",
+     "orig": 0.679144385026738,
+     "new": 0.6703743315508022,
+     "delta": -0.008770053475935846,
+     "ci_half": 0.015213402934143305,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "words_frozenT.wer",
+     "orig": 0.7189304812834224,
+     "new": 0.7003208556149733,
+     "delta": -0.018609625668449148,
+     "ci_half": 0.015634308244104944,
+     "effect": true
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.0014265335235378032,
+     "new": 0.0028530670470756064,
+     "delta": 0.0014265335235378032,
+     "ci_half": 0.003892053664854874,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.005706134094151213,
+     "new": 0.009985734664764621,
+     "delta": 0.004279600570613409,
+     "ci_half": 0.006179045825921242,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.ewpm",
+     "orig": 4.12946316140976,
+     "new": 4.20639876367244,
+     "delta": 0.07693560226268037,
+     "ci_half": 0.07822501108399438,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9985734664764622,
+     "new": 0.9971469329529244,
+     "delta": -0.0014265335235377208,
+     "ci_half": 0.003892053664854894,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "always_commit.ewpm",
+     "orig": 3.463983826137216,
+     "new": 3.5427708094865613,
+     "delta": 0.07878698334934553,
+     "ci_half": 0.147761210186653,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L2",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "words_T1.wer",
+     "orig": 0.6310160427807486,
+     "new": 0.6235294117647059,
+     "delta": -0.007486631016042744,
+     "ci_half": 0.01646048424983454,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "words_frozenT.wer",
+     "orig": 0.6823529411764706,
+     "new": 0.6590374331550802,
+     "delta": -0.023315508021390374,
+     "ci_half": 0.016307242091911756,
+     "effect": true
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.005706134094151213,
+     "new": 0.007132667617689016,
+     "delta": 0.0014265335235378032,
+     "ci_half": 0.006179045825921242,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.012838801711840228,
+     "new": 0.019971469329529243,
+     "delta": 0.007132667617689015,
+     "ci_half": 0.008725073858960706,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.ewpm",
+     "orig": 4.265129079324064,
+     "new": 4.368526738877055,
+     "delta": 0.10339765955299107,
+     "ci_half": 0.0881115121303071,
+     "effect": true
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9942938659058488,
+     "new": 0.992867332382311,
+     "delta": -0.0014265335235378318,
+     "ci_half": 0.006179045825921243,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "always_commit.ewpm",
+     "orig": 3.622420507431586,
+     "new": 3.760896104750908,
+     "delta": 0.13847559731932213,
+     "ci_half": 0.15996504884058194,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L5",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "words_T1.wer",
+     "orig": 0.597860962566845,
+     "new": 0.5903743315508021,
+     "delta": -0.007486631016042855,
+     "ci_half": 0.016964185504704354,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "words_frozenT.wer",
+     "orig": 0.6477005347593583,
+     "new": 0.6250267379679144,
+     "delta": -0.02267379679144388,
+     "ci_half": 0.017271848648686472,
+     "effect": true
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.005706134094151213,
+     "new": 0.012838801711840228,
+     "delta": 0.007132667617689015,
+     "ci_half": 0.006179045825921242,
+     "effect": true
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.017118402282453638,
+     "new": 0.028530670470756064,
+     "delta": 0.011412268188302425,
+     "ci_half": 0.00993126155562206,
+     "effect": true
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.ewpm",
+     "orig": 4.442729819168615,
+     "new": 4.533246152659231,
+     "delta": 0.0905163334906165,
+     "ci_half": 0.1002123623396618,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9942938659058488,
+     "new": 0.9871611982881597,
+     "delta": -0.007132667617689048,
+     "ci_half": 0.006179045825921243,
+     "effect": true
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "always_commit.ewpm",
+     "orig": 3.830736855016936,
+     "new": 3.901583950522718,
+     "delta": 0.07084709550578205,
+     "ci_half": 0.16742150228157526,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L10",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "words_T1.wer",
+     "orig": 0.5803208556149733,
+     "new": 0.573475935828877,
+     "delta": -0.0068449197860962485,
+     "ci_half": 0.017144620937118715,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "words_frozenT.wer",
+     "orig": 0.6376470588235295,
+     "new": 0.6151871657754011,
+     "delta": -0.022459893048128343,
+     "ci_half": 0.0169449878907037,
+     "effect": true
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.008559201141226819,
+     "new": 0.012838801711840228,
+     "delta": 0.004279600570613409,
+     "ci_half": 0.0073092622984393596,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.015691868758915834,
+     "new": 0.025677603423680456,
+     "delta": 0.009985734664764621,
+     "ci_half": 0.009547303483794633,
+     "effect": true
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.ewpm",
+     "orig": 4.481077086380782,
+     "new": 4.56861243829688,
+     "delta": 0.08753535191609796,
+     "ci_half": 0.1049220290877595,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9914407988587732,
+     "new": 0.9871611982881597,
+     "delta": -0.004279600570613495,
+     "ci_half": 0.007309262298439341,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "always_commit.ewpm",
+     "orig": 3.873082529914256,
+     "new": 3.965989614311037,
+     "delta": 0.09290708439678097,
+     "ci_half": 0.16684665394098896,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L15",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "words_T1.wer",
+     "orig": 0.5728342245989305,
+     "new": 0.5668449197860963,
+     "delta": -0.0059893048128342175,
+     "ci_half": 0.01725086627545558,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "words_frozenT.wer",
+     "orig": 0.638288770053476,
+     "new": 0.6156149732620321,
+     "delta": -0.02267379679144388,
+     "ci_half": 0.01640602033494959,
+     "effect": true
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "words_frozenT.sentence_exact",
+     "orig": 0.005706134094151213,
+     "new": 0.011412268188302425,
+     "delta": 0.005706134094151213,
+     "ci_half": 0.006179045825921242,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "words_frozenT.truth_in_nbest",
+     "orig": 0.024251069900142655,
+     "new": 0.028530670470756064,
+     "delta": 0.004279600570613409,
+     "ci_half": 0.01164876776173698,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.commit_rate",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.wrong_commit",
+     "orig": 0.0,
+     "new": 0.0,
+     "delta": 0.0,
+     "ci_half": 0.0027251512964047517,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.ewpm",
+     "orig": 4.478181314804944,
+     "new": 4.579099729358635,
+     "delta": 0.100918414553691,
+     "ci_half": 0.09944700612692081,
+     "effect": true
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "always_commit.wrong_commit",
+     "orig": 0.9942938659058488,
+     "new": 0.9885877318116976,
+     "delta": -0.005706134094151216,
+     "ci_half": 0.006179045825921243,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "always_commit.ewpm",
+     "orig": 3.862277978502473,
+     "new": 3.952155107787382,
+     "delta": 0.08987712928490899,
+     "ci_half": 0.16023746845521858,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.n_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    },
+    {
+     "condition": "shared/L25",
+     "metric": "trust.n_wrong_commit",
+     "orig": 0,
+     "new": 0,
+     "delta": 0,
+     "ci_half": null,
+     "effect": false
+    }
+   ],
+   "n_effect": 11,
+   "n_metrics": 72,
+   "max_ratio": 1.4297640207938445
+  }
+ },
+ "p1403": {
+  "rows": [
+   {
+    "alpha": "0.05",
+    "metric": "wrong_commit_rate",
+    "orig": 0.0028530670470756064,
+    "new": 0.0,
+    "delta": -0.0028530670470756064,
+    "ci_half": 0.004779921763565231,
+    "effect": false
+   },
+   {
+    "alpha": "0.05",
+    "metric": "commit_rate",
+    "orig": 0.0028530670470756064,
+    "new": 0.0,
+    "delta": -0.0028530670470756064,
+    "ci_half": 0.004779921763565231,
+    "effect": false
+   },
+   {
+    "alpha": "0.05",
+    "metric": "error_among_commits",
+    "orig": 1.0,
+    "new": null,
+    "delta": null,
+    "ci_half": 0.32881402355519035,
+    "effect": true
+   },
+   {
+    "alpha": "0.05",
+    "metric": "ewpm",
+    "orig": 6.016247658730813,
+    "new": 6.012572314569855,
+    "delta": -0.0036753441609578275,
+    "ci_half": 0.1885850547710355,
+    "effect": false
+   },
+   {
+    "alpha": "0.05",
+    "metric": "n_commit",
+    "orig": 2,
+    "new": 0,
+    "info_only": true
+   },
+   {
+    "alpha": "0.05",
+    "metric": "n_wrong_commit",
+    "orig": 2,
+    "new": 0,
+    "info_only": true
+   },
+   {
+    "alpha": "0.05",
+    "metric": "frame_temperature",
+    "orig": 1.288851364135909,
+    "new": 1.288851364135909,
+    "info_only": true
+   },
+   {
+    "alpha": "0.05",
+    "metric": "sentence_temperature",
+    "orig": 11.957097170584994,
+    "new": 12.614498390399723,
+    "info_only": true
+   },
+   {
+    "alpha": "0.05",
+    "metric": "config_id",
+    "orig": "tcfg-80f1274157bc9dce",
+    "new": "tcfg-e26a6dc2c92e4e85",
+    "info_only": true
+   },
+   {
+    "alpha": "0.1",
+    "metric": "wrong_commit_rate",
+    "orig": 0.0028530670470756064,
+    "new": 0.0,
+    "delta": -0.0028530670470756064,
+    "ci_half": 0.004779921763565231,
+    "effect": false
+   },
+   {
+    "alpha": "0.1",
+    "metric": "commit_rate",
+    "orig": 0.0028530670470756064,
+    "new": 0.0,
+    "delta": -0.0028530670470756064,
+    "ci_half": 0.004779921763565231,
+    "effect": false
+   },
+   {
+    "alpha": "0.1",
+    "metric": "error_among_commits",
+    "orig": 1.0,
+    "new": null,
+    "delta": null,
+    "ci_half": 0.32881402355519035,
+    "effect": true
+   },
+   {
+    "alpha": "0.1",
+    "metric": "ewpm",
+    "orig": 6.016247658730813,
+    "new": 6.012572314569855,
+    "delta": -0.0036753441609578275,
+    "ci_half": 0.1885850547710355,
+    "effect": false
+   },
+   {
+    "alpha": "0.1",
+    "metric": "n_commit",
+    "orig": 2,
+    "new": 0,
+    "info_only": true
+   },
+   {
+    "alpha": "0.1",
+    "metric": "n_wrong_commit",
+    "orig": 2,
+    "new": 0,
+    "info_only": true
+   },
+   {
+    "alpha": "0.1",
+    "metric": "frame_temperature",
+    "orig": 1.288851364135909,
+    "new": 1.288851364135909,
+    "info_only": true
+   },
+   {
+    "alpha": "0.1",
+    "metric": "sentence_temperature",
+    "orig": 11.957097170584994,
+    "new": 12.614498390399723,
+    "info_only": true
+   },
+   {
+    "alpha": "0.1",
+    "metric": "config_id",
+    "orig": "tcfg-12f74dda118f2de6",
+    "new": "tcfg-5190923e48b1b4c6",
+    "info_only": true
+   }
+  ],
+  "reproduces_all": true,
+  "n_effect": 2
+ },
+ "all_reference_runs_reproduce": true,
+ "n_effect": 14,
+ "decision": "effect"
+}

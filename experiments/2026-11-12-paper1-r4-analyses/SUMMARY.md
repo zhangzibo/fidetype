@@ -35,3 +35,6 @@ Shared code: [common4.py](common4.py) (re-uses R3 [common3.py](../2026-11-12-pap
 - Wild-cluster / BCa intervals for the headline paired differences (St-m14, optional): not run.
 - A forward chain on sEMG: not possible with the composed-sentence design (forward-chain/results.md).
 - Writing items (renaming "deployments", abstract, Alg. 1 conditions, "< β", left-continuity argument, Tab. 4 note, Tab. 2 caption): for the reviser.
+
+## Note 2026-11-17 (P14-19): per-fit word settings
+Rerun of the R4 analyses with the 35 re-splits whose fit-A tune changes the word setting rebuilt, and the forward-chain prefix 0 with edit penalty 8 ([results](../../2026-11-17-p14-18-19-followups/results.md)). Re-split tables (both decoders, guard on and off): no effect (0 of 240). Per-day, reuse, cleanup, no-guard and bonus: no change by a CI half-width. Effects: the forward chain (plug-in rows of "ours"; LTT max V3 ours 2/13 → 1/13, published 1/13 → 0/13; correction note on its page), plus two formal effects (joint LTT with 2 committing splits; population risk with a resampling-only CI).

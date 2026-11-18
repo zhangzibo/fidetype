@@ -1,0 +1,1920 @@
+{
+ "analyses": {
+  "r4-population-risk": {
+   "status": "ok",
+   "files": {
+    "population_risk.json": {
+     "n_unchanged": 868,
+     "n_changed": 108,
+     "n_changed_with_ci": 24,
+     "n_effect": 1,
+     "max_ratio": 1.0966981396752051,
+     "top_with_ci": [
+      {
+       "path": "split_pools/b2t-ours/R50/population_with_replacement/CRC max/share_gt_alpha",
+       "orig": 0.1685,
+       "new": 0.1604,
+       "delta": -0.008100000000000024,
+       "ci_half": 0.007385806273364243,
+       "ratio": 1.0966981396752051,
+       "effect": true
+      },
+      {
+       "path": "split_pools/b2t-published/R200/population_with_replacement/CRC max/share_gt_alpha",
+       "orig": 0.091425,
+       "new": 0.093475,
+       "delta": 0.0020499999999999963,
+       "ci_half": 0.002836936736996143,
+       "ratio": 0.7226104034207738,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R200/population_with_replacement/LTT pure/share_gt_alpha",
+       "orig": 0.0605,
+       "new": 0.0589,
+       "delta": -0.0015999999999999973,
+       "ci_half": 0.0023489409581459453,
+       "ratio": 0.6811580318574297,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R50/population_with_replacement/LTT max/share_gt_alpha",
+       "orig": 0.0257,
+       "new": 0.0238,
+       "delta": -0.001899999999999999,
+       "ci_half": 0.003152840364604165,
+       "ratio": 0.6026312087762621,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R200/population_with_replacement/CRC max/share_gt_alpha",
+       "orig": 0.123125,
+       "new": 0.1213,
+       "delta": -0.0018249999999999933,
+       "ci_half": 0.0032325014566357,
+       "ratio": 0.5645782452019075,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R200/population_with_replacement/CRC pure/share_gt_alpha",
+       "orig": 0.38735,
+       "new": 0.38535,
+       "delta": -0.0020000000000000018,
+       "ci_half": 0.004786289310493824,
+       "ratio": 0.4178602400015916,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-published/R200/population_with_replacement/LTT max/share_gt_alpha",
+       "orig": 0.01565,
+       "new": 0.01605,
+       "delta": 0.0003999999999999976,
+       "ci_half": 0.001229088901376821,
+       "ratio": 0.3254443185939756,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R50/population_with_replacement/LTT pure/share_gt_alpha",
+       "orig": 0.0597,
+       "new": 0.0584,
+       "delta": -0.0013000000000000025,
+       "ci_half": 0.0046942101322827515,
+       "ratio": 0.27693689957757056,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R200/population_with_replacement/LTT max/share_gt_alpha",
+       "orig": 0.01965,
+       "new": 0.019275,
+       "delta": -0.00037500000000000033,
+       "ci_half": 0.0013728820747331352,
+       "ratio": 0.27314800513576076,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-published/R50/test_exceedance/LTT pure/share_gt_alpha",
+       "orig": 0.06,
+       "new": 0.04,
+       "delta": -0.019999999999999997,
+       "ci_half": 0.07646667938421942,
+       "ratio": 0.2615518309551106,
+       "effect": false
+      }
+     ],
+     "max_abs_change_no_ci": [
+      {
+       "path": "split_pools/b2t-published/R200/population_with_replacement/CRC max/n_gt_alpha",
+       "orig": 3657.0,
+       "new": 3739.0,
+       "delta": 82.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R50/population_with_replacement/CRC max/n_gt_alpha",
+       "orig": 1685.0,
+       "new": 1604.0,
+       "delta": -81.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R200/population_with_replacement/CRC pure/n_gt_alpha",
+       "orig": 15494.0,
+       "new": 15414.0,
+       "delta": -80.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R200/population_with_replacement/CRC max/n_gt_alpha",
+       "orig": 4925.0,
+       "new": 4852.0,
+       "delta": -73.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R200/population_with_replacement/LTT pure/n_gt_alpha",
+       "orig": 2420.0,
+       "new": 2356.0,
+       "delta": -64.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R50/population_with_replacement/LTT max/n_gt_alpha",
+       "orig": 257.0,
+       "new": 238.0,
+       "delta": -19.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-published/R200/population_with_replacement/CRC pure/n_gt_alpha",
+       "orig": 16333.0,
+       "new": 16351.0,
+       "delta": 18.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-published/R200/population_with_replacement/LTT max/n_gt_alpha",
+       "orig": 626.0,
+       "new": 642.0,
+       "delta": 16.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R200/population_with_replacement/LTT max/n_gt_alpha",
+       "orig": 786.0,
+       "new": 771.0,
+       "delta": -15.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "split_pools/b2t-ours/R50/population_with_replacement/CRC pure/n_gt_alpha",
+       "orig": 3915.0,
+       "new": 3902.0,
+       "delta": -13.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 102.8
+  },
+  "r4-per-day": {
+   "status": "ok",
+   "files": {
+    "per_day.json": {
+     "n_unchanged": 7690,
+     "n_changed": 1857,
+     "n_changed_with_ci": 0,
+     "n_effect": 0,
+     "max_ratio": 0.0,
+     "top_with_ci": [],
+     "max_abs_change_no_ci": [
+      {
+       "path": "repeated/b2t-published/R50/rules/joint LTT b0.20/27/share_gt_alpha",
+       "orig": 0.56,
+       "new": 0.5,
+       "delta": -0.06000000000000005,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-published/R50/rules/joint LTT b0.10/27/share_gt_alpha",
+       "orig": 0.16,
+       "new": 0.1,
+       "delta": -0.06,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/R50/rules/plug-in/95/share_gt_alpha",
+       "orig": 0.52,
+       "new": 0.48,
+       "delta": -0.040000000000000036,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-published/R50/rules/CRC max/81/share_gt_alpha",
+       "orig": 0.3,
+       "new": 0.34,
+       "delta": 0.040000000000000036,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-published/R50/rules/plug-in/69/share_gt_alpha",
+       "orig": 0.3,
+       "new": 0.34,
+       "delta": 0.040000000000000036,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-published/R50/rules/plug-in/81/share_gt_alpha",
+       "orig": 0.42,
+       "new": 0.46,
+       "delta": 0.040000000000000036,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-published/R50/rules/CRC max/69/share_gt_alpha",
+       "orig": 0.12,
+       "new": 0.16,
+       "delta": 0.04000000000000001,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-published/R50/rules/LTT max/69/share_gt_alpha",
+       "orig": 0.0,
+       "new": 0.04,
+       "delta": 0.04,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-published/R50/rules/LTT max/81/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.12,
+       "delta": 0.039999999999999994,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-published/R50/rules/LTT max/27/share_gt_alpha",
+       "orig": 0.58,
+       "new": 0.54,
+       "delta": -0.039999999999999925,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 6.5
+  },
+  "r4-joint-ltt": {
+   "status": "ok",
+   "files": {
+    "joint_ltt.json": {
+     "n_unchanged": 2077,
+     "n_changed": 484,
+     "n_changed_with_ci": 24,
+     "n_effect": 2,
+     "max_ratio": 1.0258075054528104,
+     "top_with_ci": [
+      {
+       "path": "repeated/b2t-ours/guard/R50/SGR b0.20/share_eac_gt_beta_of_committing",
+       "orig": 0.5,
+       "new": 0.0,
+       "delta": -0.5,
+       "ci_half": 0.4874208829065749,
+       "ratio": 1.0258075054528104,
+       "effect": true
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R50/R3 joint max(SGR, CRC max) b0.20/share_eac_gt_beta_of_committing",
+       "orig": 0.5,
+       "new": 0.0,
+       "delta": -0.5,
+       "ci_half": 0.4874208829065749,
+       "ratio": 1.0258075054528104,
+       "effect": true
+      },
+      {
+       "path": "repeated/b2t-ours/no guard/R200/joint LTT b0.20/share_eac_gt_beta_of_committing",
+       "orig": 0.6666666666666666,
+       "new": 1.0,
+       "delta": 0.33333333333333337,
+       "ci_half": 0.44864845864507064,
+       "ratio": 0.7429722022003781,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/no guard/R200/joint LTT b0.20 + max rule (no sel. guarantee)/share_eac_gt_beta_of_committing",
+       "orig": 0.6666666666666666,
+       "new": 1.0,
+       "delta": 0.33333333333333337,
+       "ci_half": 0.44864845864507064,
+       "ratio": 0.7429722022003781,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/no guard/R200/LTT-sel b0.20/share_eac_gt_beta_of_committing",
+       "orig": 0.6666666666666666,
+       "new": 1.0,
+       "delta": 0.33333333333333337,
+       "ci_half": 0.44864845864507064,
+       "ratio": 0.7429722022003781,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/joint LTT b0.20/share_eac_gt_beta_of_committing",
+       "orig": 0.5,
+       "new": 0.3333333333333333,
+       "delta": -0.16666666666666669,
+       "ci_half": 0.43241401351145703,
+       "ratio": 0.3854330837089089,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/joint LTT b0.20 + max rule (no sel. guarantee)/share_eac_gt_beta_of_committing",
+       "orig": 0.5,
+       "new": 0.3333333333333333,
+       "delta": -0.16666666666666669,
+       "ci_half": 0.43241401351145703,
+       "ratio": 0.3854330837089089,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/LTT-sel b0.20/share_eac_gt_beta_of_committing",
+       "orig": 0.5,
+       "new": 0.3333333333333333,
+       "delta": -0.16666666666666669,
+       "ci_half": 0.43241401351145703,
+       "ratio": 0.3854330837089089,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/SGR b0.20/share_eac_gt_beta_of_committing",
+       "orig": 0.5,
+       "new": 0.3333333333333333,
+       "delta": -0.16666666666666669,
+       "ci_half": 0.43241401351145703,
+       "ratio": 0.3854330837089089,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/R3 joint max(SGR, CRC max) b0.20/share_eac_gt_beta_of_committing",
+       "orig": 0.5,
+       "new": 0.3333333333333333,
+       "delta": -0.16666666666666669,
+       "ci_half": 0.43241401351145703,
+       "ratio": 0.3854330837089089,
+       "effect": false
+      }
+     ],
+     "max_abs_change_no_ci": [
+      {
+       "path": "repeated/b2t-ours/guard/R200/joint LTT b0.20/n_committing_splits",
+       "orig": 4.0,
+       "new": 3.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/joint LTT b0.20 + max rule (no sel. guarantee)/n_committing_splits",
+       "orig": 4.0,
+       "new": 3.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/LTT-sel b0.20/n_committing_splits",
+       "orig": 4.0,
+       "new": 3.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/SGR b0.20/n_committing_splits",
+       "orig": 4.0,
+       "new": 3.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R200/R3 joint max(SGR, CRC max) b0.20/n_committing_splits",
+       "orig": 4.0,
+       "new": 3.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R50/joint LTT b0.20/n_committing_splits",
+       "orig": 1.0,
+       "new": 0.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R50/joint LTT b0.20 + max rule (no sel. guarantee)/n_committing_splits",
+       "orig": 1.0,
+       "new": 0.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R50/LTT-sel b0.20/n_committing_splits",
+       "orig": 1.0,
+       "new": 0.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R50/SGR b0.20/n_committing_splits",
+       "orig": 2.0,
+       "new": 1.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/b2t-ours/guard/R50/R3 joint max(SGR, CRC max) b0.20/n_committing_splits",
+       "orig": 2.0,
+       "new": 1.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 29.1,
+   "mc": {
+    "n": 36,
+    "n_effect": 0,
+    "max_ratio": 0.24132777395580923,
+    "top": [
+     {
+      "path": "repeated/b2t-ours/guard/R200/LTT max/commit_rate_mean",
+      "orig": 0.15152200488997555,
+      "new": 0.15059290953545232,
+      "delta": -0.000929095354523235,
+      "ci_half": 0.003849931316622373,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-published/no guard/R200/joint LTT b0.20/commit_rate_mean",
+      "orig": 0.3220232273838631,
+      "new": 0.3196149144254279,
+      "delta": -0.002408312958435188,
+      "ci_half": 0.012072764532433718,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-published/no guard/R200/joint LTT b0.20/wrong_commit_mean",
+      "orig": 0.020470660146699265,
+      "new": 0.020268948655256726,
+      "delta": -0.0002017114914425397,
+      "ci_half": 0.0010653523526447592,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-ours/guard/R200/LTT max/wrong_commit_mean",
+      "orig": 0.03214547677261614,
+      "new": 0.031876528117359415,
+      "delta": -0.0002689486552567219,
+      "ci_half": 0.001567064495237935,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-ours/guard/R200/joint LTT b0.20/ewpm_mean",
+      "orig": 10.988968182583514,
+      "new": 10.98516765764965,
+      "delta": -0.003800524933863514,
+      "ci_half": 0.023205388657937455,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-ours/no guard/R200/LTT max/ewpm_mean",
+      "orig": 11.087212277792997,
+      "new": 11.083328101579523,
+      "delta": -0.003884176213473367,
+      "ci_half": 0.02413672991358246,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-ours/no guard/R200/joint LTT b0.20/ewpm_mean",
+      "orig": 10.984725890750624,
+      "new": 10.980945901797602,
+      "delta": -0.0037799889530223396,
+      "ci_half": 0.023507994373236665,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-ours/guard/R200/LTT max/ewpm_mean",
+      "orig": 11.098274984195864,
+      "new": 11.09444476142613,
+      "delta": -0.003830222769733993,
+      "ci_half": 0.024079968769107795,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-ours/guard/R200/joint LTT b0.10/ewpm_mean",
+      "orig": 10.98698117963747,
+      "new": 10.983341216516052,
+      "delta": -0.0036399631214170114,
+      "ci_half": 0.022956136755653816,
+      "effect": false
+     },
+     {
+      "path": "repeated/b2t-ours/no guard/R200/LTT max/commit_rate_mean",
+      "orig": 0.14127750611246945,
+      "new": 0.1406723716381418,
+      "delta": -0.0006051344743276399,
+      "ci_half": 0.0038351544996367984,
+      "effect": false
+     }
+    ]
+   }
+  },
+  "r4-no-guard-tab2": {
+   "status": "ok",
+   "files": {
+    "no_guard.json": {
+     "n_unchanged": 4163,
+     "n_changed": 269,
+     "n_changed_with_ci": 18,
+     "n_effect": 0,
+     "max_ratio": 0.4327592876972539,
+     "top_with_ci": [
+      {
+       "path": "tab2/b2t-published/no guard/R50/rules/LTT pure/share_gt_alpha",
+       "orig": 0.1,
+       "new": 0.06,
+       "delta": -0.04000000000000001,
+       "ci_half": 0.09243013642258989,
+       "ratio": 0.4327592876972539,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-published/guard/R50/rules/LTT pure/share_gt_alpha",
+       "orig": 0.06,
+       "new": 0.04,
+       "delta": -0.019999999999999997,
+       "ci_half": 0.07646667938421942,
+       "ratio": 0.2615518309551106,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/guard/R200/rules/LTT max/share_gt_alpha",
+       "orig": 0.075,
+       "new": 0.065,
+       "delta": -0.009999999999999995,
+       "ci_half": 0.03905071083128432,
+       "ratio": 0.256077284820864,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/guard/R50/rules/LTT max/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/no guard/R50/rules/LTT pure/share_gt_alpha",
+       "orig": 0.12,
+       "new": 0.1,
+       "delta": -0.01999999999999999,
+       "ci_half": 0.09888299796594933,
+       "ratio": 0.20225923982287686,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/guard/R50/rules/LTT pure/share_gt_alpha",
+       "orig": 0.16,
+       "new": 0.14,
+       "delta": -0.01999999999999999,
+       "ci_half": 0.10971276970591229,
+       "ratio": 0.18229418556846635,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/guard/R200/rules/plug-in/share_gt_alpha",
+       "orig": 0.305,
+       "new": 0.295,
+       "delta": -0.010000000000000009,
+       "ci_half": 0.06592418375508954,
+       "ratio": 0.15168940183090213,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-published/guard/R200/rules/LTT max/share_gt_alpha",
+       "orig": 0.055,
+       "new": 0.06,
+       "delta": 0.0049999999999999975,
+       "ci_half": 0.03425269494095315,
+       "ratio": 0.14597391558881126,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/guard/R50/rules/plug-in/share_gt_alpha",
+       "orig": 0.34,
+       "new": 0.32,
+       "delta": -0.020000000000000018,
+       "ci_half": 0.13779888714310334,
+       "ratio": 0.14513905311318032,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/no guard/R200/rules/LTT pure/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.075,
+       "delta": -0.0050000000000000044,
+       "ci_half": 0.040123623811129557,
+       "ratio": 0.12461486588390096,
+       "effect": false
+      }
+     ],
+     "max_abs_change_no_ci": [
+      {
+       "path": "tab2/b2t-ours/no guard/R50/rules/joint LTT b0.20/share_no_commit",
+       "orig": 0.98,
+       "new": 1.0,
+       "delta": 0.020000000000000018,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/guard/R50/rules/joint LTT b0.20/share_no_commit",
+       "orig": 0.98,
+       "new": 1.0,
+       "delta": 0.020000000000000018,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/guard/R200/rules/joint LTT b0.20/eac_pooled",
+       "orig": 0.215625,
+       "new": 0.20761245674740483,
+       "delta": -0.008012543252595178,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-published/no guard/R50/rules/LTT pure/p95",
+       "orig": 0.05947432762836185,
+       "new": 0.05250611246943762,
+       "delta": -0.006968215158924228,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/no guard/R200/rules/joint LTT b0.20/eac_pooled",
+       "orig": 0.23550724637681159,
+       "new": 0.24166666666666667,
+       "delta": 0.006159420289855083,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/no guard/R50/rules/CRC pure/ewpm_mean",
+       "orig": 11.07935953430232,
+       "new": 11.073226876717534,
+       "delta": -0.006132657584785761,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/no guard/R50/rules/LTT pure/ewpm_mean",
+       "orig": 11.062438539485639,
+       "new": 11.056560964464147,
+       "delta": -0.0058775750214916656,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/guard/R50/rules/plug-in/ewpm_mean",
+       "orig": 11.08295474457507,
+       "new": 11.077081545375338,
+       "delta": -0.005873199199731616,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-published/no guard/R200/rules/joint LTT b0.20/p05",
+       "orig": 0.005806845965770178,
+       "new": 0.0,
+       "delta": -0.005806845965770178,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "tab2/b2t-ours/no guard/R50/rules/CRC max/ewpm_mean",
+       "orig": 11.062441952111604,
+       "new": 11.057261450126347,
+       "delta": -0.005180501985256214,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 9.1
+  },
+  "r4-bonus-repeated": {
+   "status": "ok",
+   "files": {
+    "bonus.json": {
+     "n_unchanged": 1177,
+     "n_changed": 103,
+     "n_changed_with_ci": 3,
+     "n_effect": 0,
+     "max_ratio": 0.19120065690642954,
+     "top_with_ci": [
+      {
+       "path": "repeated/margin 0.5/rules/CRC max/share_gt_alpha",
+       "orig": 0.14,
+       "new": 0.12,
+       "delta": -0.020000000000000018,
+       "ci_half": 0.10460215107831815,
+       "ratio": 0.19120065690642954,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 4/rules/CRC max/share_gt_alpha",
+       "orig": 0.18,
+       "new": 0.16,
+       "delta": -0.01999999999999999,
+       "ci_half": 0.1143036665879933,
+       "ratio": 0.17497251485457452,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 4/rules/plug-in/share_gt_alpha",
+       "orig": 0.32,
+       "new": 0.3,
+       "delta": -0.020000000000000018,
+       "ci_half": 0.13589482272594564,
+       "ratio": 0.14717264130314459,
+       "effect": false
+      }
+     ],
+     "max_abs_change_no_ci": [
+      {
+       "path": "repeated/margin 1/rules/joint LTT b0.10/ewpm_mean",
+       "orig": 18.031677968220606,
+       "new": 18.040930013781516,
+       "delta": 0.00925204556090975,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 1/rules/joint LTT b0.10/commit_rate_mean",
+       "orig": 0.04014669926650367,
+       "new": 0.04748166259168704,
+       "delta": 0.007334963325183373,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 0.5/rules/joint LTT b0.10/ewpm_mean",
+       "orig": 18.039436738808455,
+       "new": 18.04628212396759,
+       "delta": 0.00684538515913502,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 0.5/rules/joint LTT b0.10/commit_rate_mean",
+       "orig": 0.047603911980440096,
+       "new": 0.052958435207823965,
+       "delta": 0.005354523227383869,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 0/rules/plug-in/ewpm_mean",
+       "orig": 17.238818730154975,
+       "new": 17.233925215032997,
+       "delta": -0.004893515121977998,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 0/rules/LTT max/ewpm_mean",
+       "orig": 17.238818730154975,
+       "new": 17.233925215032997,
+       "delta": -0.004893515121977998,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 0/rules/CRC max/ewpm_mean",
+       "orig": 17.238818730154975,
+       "new": 17.233925215032997,
+       "delta": -0.004893515121977998,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 0/rules/joint LTT b0.20/ewpm_mean",
+       "orig": 17.213458252070584,
+       "new": 17.20856473694861,
+       "delta": -0.0048935151219744455,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 4/rules/joint LTT b0.20/ewpm_mean",
+       "orig": 18.389372057102907,
+       "new": 18.385171866050882,
+       "delta": -0.004200191052024849,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "repeated/margin 2/rules/joint LTT b0.10/eac_pooled",
+       "orig": 0.05945945945945946,
+       "new": 0.055980528511821975,
+       "delta": -0.0034789309476374874,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 3.2
+  },
+  "r4-reuse": {
+   "status": "ok",
+   "files": {
+    "reuse.json": {
+     "n_unchanged": 675,
+     "n_changed": 297,
+     "n_changed_with_ci": 0,
+     "n_effect": 0,
+     "max_ratio": 0.0,
+     "top_with_ci": [],
+     "max_abs_change_no_ci": [
+      {
+       "path": "families/R200/b2t-ours / CRC pure/sign_test_splits/positive",
+       "orig": 106.0,
+       "new": 109.0,
+       "delta": 3.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R200/b2t-ours / CRC pure/sign_test_splits/negative",
+       "orig": 82.0,
+       "new": 79.0,
+       "delta": -3.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R200/b2t-ours / LTT pure/sign_test_splits/negative",
+       "orig": 77.0,
+       "new": 74.0,
+       "delta": -3.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R50/b2t-published / LTT pure/sign_test_splits/zero",
+       "orig": 11.0,
+       "new": 9.0,
+       "delta": -2.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R200/b2t-ours / LTT pure/sign_test_splits/zero",
+       "orig": 22.0,
+       "new": 24.0,
+       "delta": 2.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R200/b2t-published / LTT pure/sign_test_splits/zero",
+       "orig": 60.0,
+       "new": 58.0,
+       "delta": -2.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R50/b2t-ours / LTT pure/sign_test_splits/positive",
+       "orig": 31.0,
+       "new": 32.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R50/b2t-ours / LTT pure/sign_test_splits/negative",
+       "orig": 13.0,
+       "new": 12.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R50/b2t-published / CRC pure/sign_test_clusters/negative",
+       "orig": 5.0,
+       "new": 4.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "families/R50/b2t-published / CRC pure/sign_test_clusters/zero",
+       "orig": 1.0,
+       "new": 2.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 24.4
+  },
+  "r4-cleanup": {
+   "status": "ok",
+   "files": {
+    "cleanup.json": {
+     "n_unchanged": 707,
+     "n_changed": 91,
+     "n_changed_with_ci": 0,
+     "n_effect": 0,
+     "max_ratio": 0.0,
+     "top_with_ci": [],
+     "max_abs_change_no_ci": [
+      {
+       "path": "no_commit_comparator/b2t-published/guard/R50/joint LTT b0.10/p95",
+       "orig": 0.4316285167365055,
+       "new": 0.40963672311139104,
+       "delta": -0.021991793625114442,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-ours/guard/R50/plug-in/share_pos",
+       "orig": 1.0,
+       "new": 0.98,
+       "delta": -0.020000000000000018,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-ours/guard/R50/plug-in/share_neg",
+       "orig": 0.0,
+       "new": 0.02,
+       "delta": 0.02,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-published/no guard/R50/joint LTT b0.10/p95",
+       "orig": 0.4753483824369361,
+       "new": 0.46435827174242494,
+       "delta": -0.010990110694511168,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-published/guard/R200/LTT max/p05",
+       "orig": 0.4343042447860784,
+       "new": 0.4240864410434259,
+       "delta": -0.010217803742652465,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-published/guard/R200/joint LTT b0.10/p95",
+       "orig": 0.43785767012766574,
+       "new": 0.4292276983177695,
+       "delta": -0.00862997180989622,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-ours/guard/R200/LTT max/p95",
+       "orig": 0.16793612970266494,
+       "new": 0.16147002321370915,
+       "delta": -0.006466106488955792,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-published/no guard/R50/LTT max/p95",
+       "orig": 0.4998141340545537,
+       "new": 0.5060940296606266,
+       "delta": 0.006279895606072838,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-published/no guard/R50/CRC max/p95",
+       "orig": 0.4998141340545537,
+       "new": 0.5060940296606266,
+       "delta": 0.006279895606072838,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "no_commit_comparator/b2t-published/no guard/R50/plug-in/p95",
+       "orig": 0.4998141340545537,
+       "new": 0.5060940296606266,
+       "delta": 0.006279895606072838,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 11.1
+  },
+  "m3-01-02-splits": {
+   "status": "ok",
+   "files": {
+    "splits.json": {
+     "n_unchanged": 76,
+     "n_changed": 106,
+     "n_changed_with_ci": 9,
+     "n_effect": 0,
+     "max_ratio": 0.26362908626102305,
+     "top_with_ci": [
+      {
+       "path": "b2t-ours/+ session monitor/share_gt_alpha",
+       "orig": 0.07,
+       "new": 0.06,
+       "delta": -0.010000000000000009,
+       "ci_half": 0.03793208155377385,
+       "ratio": 0.26362908626102305,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v4 (baseline)/share_gt_alpha",
+       "orig": 0.075,
+       "new": 0.065,
+       "delta": -0.009999999999999995,
+       "ci_half": 0.03905071083128432,
+       "ratio": 0.256077284820864,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/no risk control/share_gt_alpha",
+       "orig": 0.305,
+       "new": 0.295,
+       "delta": -0.010000000000000009,
+       "ci_half": 0.06592418375508954,
+       "ratio": 0.15168940183090213,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/v4 (baseline)/share_gt_alpha",
+       "orig": 0.055,
+       "new": 0.06,
+       "delta": 0.0049999999999999975,
+       "ci_half": 0.03425269494095315,
+       "ratio": 0.14597391558881126,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/LTT without max/share_gt_alpha",
+       "orig": 0.115,
+       "new": 0.11,
+       "delta": -0.0050000000000000044,
+       "ci_half": 0.04661678539497846,
+       "ratio": 0.10725750301389513,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/LTT without max/share_gt_alpha",
+       "orig": 0.145,
+       "new": 0.14,
+       "delta": -0.004999999999999977,
+       "ci_half": 0.05112643680898609,
+       "ratio": 0.09779676253755995,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/CRC instead of LTT/share_gt_alpha",
+       "orig": 0.175,
+       "new": 0.18,
+       "delta": 0.0050000000000000044,
+       "ci_half": 0.05492977992824864,
+       "ratio": 0.09102530551790293,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/CRC instead of LTT/share_gt_alpha",
+       "orig": 0.185,
+       "new": 0.18,
+       "delta": -0.0050000000000000044,
+       "ci_half": 0.056067401134458364,
+       "ratio": 0.08917837992899341,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/no risk control/share_gt_alpha",
+       "orig": 0.265,
+       "new": 0.27,
+       "delta": 0.0050000000000000044,
+       "ci_half": 0.06331550041134748,
+       "ratio": 0.07896960408614094,
+       "effect": false
+      }
+     ],
+     "max_abs_change_no_ci": [
+      {
+       "path": "b2t-ours/calibration alone/n_up",
+       "orig": 111.0,
+       "new": 114.0,
+       "delta": 3.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/no risk control/n_up",
+       "orig": 116.0,
+       "new": 118.0,
+       "delta": 2.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/CRC instead of LTT/n_up",
+       "orig": 116.0,
+       "new": 118.0,
+       "delta": 2.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/guard off/n_up",
+       "orig": 62.0,
+       "new": 64.0,
+       "delta": 2.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/LTT without max/n_up",
+       "orig": 69.0,
+       "new": 67.0,
+       "delta": -2.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/LTT without max/n_up",
+       "orig": 67.0,
+       "new": 68.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/guard off/n_down",
+       "orig": 82.0,
+       "new": 83.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/+ session monitor/n_down",
+       "orig": 35.0,
+       "new": 34.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/guard off/n_down",
+       "orig": 113.0,
+       "new": 112.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/always commit/ewpm_mean",
+       "orig": 11.05561078219913,
+       "new": 11.04894311928551,
+       "delta": -0.00666766291361931,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 6.6
+  },
+  "trust-v5-splits": {
+   "status": "ok",
+   "files": {
+    "splits.json": {
+     "n_unchanged": 104,
+     "n_changed": 86,
+     "n_changed_with_ci": 10,
+     "n_effect": 0,
+     "max_ratio": 0.2351353045776096,
+     "top_with_ci": [
+      {
+       "path": "b2t-ours/v4/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v5/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v5 - b (v4 grid rule)/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v5 - d (no floor)/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v5 + c (0.8 for 1.0)/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v4 + a/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v4 + c/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v4 + d/share_gt_alpha",
+       "orig": 0.08,
+       "new": 0.06,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.0850574099705165,
+       "ratio": 0.2351353045776096,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v5 - a (no gate)/share_gt_alpha",
+       "orig": 0.1,
+       "new": 0.08,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.09243013642258989,
+       "ratio": 0.21637964384862696,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v4 + b/share_gt_alpha",
+       "orig": 0.1,
+       "new": 0.08,
+       "delta": -0.020000000000000004,
+       "ci_half": 0.09243013642258989,
+       "ratio": 0.21637964384862696,
+       "effect": false
+      }
+     ],
+     "max_abs_change_no_ci": [
+      {
+       "path": "b2t-ours/v5 + c (0.8 for 1.0)/n_up",
+       "orig": 2.0,
+       "new": 3.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v5 + c (0.8 for 1.0)/n_down",
+       "orig": 13.0,
+       "new": 12.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v4 + c/n_up",
+       "orig": 2.0,
+       "new": 3.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-ours/v4 + c/n_down",
+       "orig": 13.0,
+       "new": 12.0,
+       "delta": -1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/v5/n_down",
+       "orig": 0.0,
+       "new": 1.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/v5 - a (no gate)/n_down",
+       "orig": 0.0,
+       "new": 1.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/v5 - b (v4 grid rule)/n_down",
+       "orig": 0.0,
+       "new": 1.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/v5 - d (no floor)/n_down",
+       "orig": 0.0,
+       "new": 1.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/v4 + a/n_down",
+       "orig": 0.0,
+       "new": 1.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "b2t-published/v4 + b/n_down",
+       "orig": 0.0,
+       "new": 1.0,
+       "delta": 1.0,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 0.4
+  },
+  "a2-per-session-risk": {
+   "status": "ok",
+   "files": {
+    "forward_chain.json": {
+     "n_unchanged": 20898,
+     "n_changed": 1493,
+     "n_changed_with_ci": 144,
+     "n_effect": 16,
+     "max_ratio": 2.4214960516706157,
+     "top_with_ci": [
+      {
+       "path": "ours/V3/days/34/methods/global/rate",
+       "orig": 0.2,
+       "new": 0.0,
+       "delta": -0.2,
+       "ci_half": 0.08259356849333613,
+       "ratio": 2.4214960516706157,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-ltt k=60 F/rate",
+       "orig": 0.13,
+       "new": 0.0,
+       "delta": -0.13,
+       "ci_half": 0.07048381545101012,
+       "ratio": 1.8443950454180036,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-test k=60 F/rate",
+       "orig": 0.12,
+       "new": 0.0,
+       "delta": -0.12,
+       "ci_half": 0.06833339052940476,
+       "ratio": 1.7560960910956467,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-ltt k=45 F/rate",
+       "orig": 0.1,
+       "new": 0.0,
+       "delta": -0.1,
+       "ci_half": 0.06360895425926835,
+       "ratio": 1.572105706885272,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/eb k=40 F/rate",
+       "orig": 0.1,
+       "new": 0.0,
+       "delta": -0.1,
+       "ci_half": 0.06360895425926835,
+       "ratio": 1.572105706885272,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/eb k=40 F kappa<=20/rate",
+       "orig": 0.1,
+       "new": 0.0,
+       "delta": -0.1,
+       "ci_half": 0.06360895425926835,
+       "ratio": 1.572105706885272,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/aci/rate",
+       "orig": 0.08,
+       "new": 0.0,
+       "delta": -0.08,
+       "ci_half": 0.05819303667312907,
+       "ratio": 1.3747349266091902,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-ltt k=40 F/rate",
+       "orig": 0.07,
+       "new": 0.0,
+       "delta": -0.07,
+       "ci_half": 0.05515721977420931,
+       "ratio": 1.2690994993321068,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-test k=40 F/rate",
+       "orig": 0.07,
+       "new": 0.0,
+       "delta": -0.07,
+       "ci_half": 0.05515721977420931,
+       "ratio": 1.2690994993321068,
+       "effect": true
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-test k=45 F/rate",
+       "orig": 0.07,
+       "new": 0.0,
+       "delta": -0.07,
+       "ci_half": 0.05515721977420931,
+       "ratio": 1.2690994993321068,
+       "effect": true
+      }
+     ],
+     "max_abs_change_no_ci": [
+      {
+       "path": "ours/V3/days/34/methods/block-ltt k=60 W/time_copy",
+       "orig": 3389.5928198659713,
+       "new": 3660.87101360263,
+       "delta": 271.2781937366585,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-ltt k=60 W + monitor/time_copy",
+       "orig": 3389.5928198659713,
+       "new": 3660.87101360263,
+       "delta": 271.2781937366585,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-test k=60 W/time_copy",
+       "orig": 3402.470263617053,
+       "new": 3660.87101360263,
+       "delta": 258.40074998557657,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-ltt k=45 W/time_copy",
+       "orig": 3412.1101136199377,
+       "new": 3660.8710136026293,
+       "delta": 248.76089998269163,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V3/days/34/methods/block-ltt k=45 W + monitor/time_copy",
+       "orig": 3412.1101136199377,
+       "new": 3660.8710136026293,
+       "delta": 248.76089998269163,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V3/days/34/methods/eb k=40 W/time_copy",
+       "orig": 3429.0800386213796,
+       "new": 3660.8710136026293,
+       "delta": 231.79097498124975,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V3/days/34/methods/global/time",
+       "orig": 3450.5499636228224,
+       "new": 3662.3710136026302,
+       "delta": 211.82104997980787,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V3/days/34/methods/global/time_copy",
+       "orig": 3450.5499636228224,
+       "new": 3662.3710136026302,
+       "delta": 211.82104997980787,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V1/days/46/methods/block-ltt k=60 W/time_copy",
+       "orig": 2942.8268042955283,
+       "new": 3154.512516781826,
+       "delta": 211.6857124862977,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "ours/V1/days/46/methods/block-test k=60 W/time_copy",
+       "orig": 2942.8268042955283,
+       "new": 3154.512516781826,
+       "delta": 211.6857124862977,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    },
+    "rs-b2t-published.json": {
+     "n_unchanged": 4326,
+     "n_changed": 3407,
+     "n_changed_with_ci": 0,
+     "n_effect": 0,
+     "max_ratio": 0.0,
+     "top_with_ci": [],
+     "max_abs_change_no_ci": [
+      {
+       "path": "per_day/monitor/83/alarm_delay_median",
+       "orig": 38.0,
+       "new": 32.5,
+       "delta": -5.5,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/monitor/34/alarm_delay_p25_p75/0",
+       "orig": 64.0,
+       "new": 64.75,
+       "delta": 0.75,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/monitor/83/alarm_delay_p25_p75/1",
+       "orig": 39.0,
+       "new": 38.75,
+       "delta": -0.25,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/eb k=0 F kappa<=20/27/p95",
+       "orig": 0.09090909090909091,
+       "new": 0.04772727272727195,
+       "delta": -0.04318181818181896,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/global LOO (test items)/34/p95",
+       "orig": 0.16099999999999967,
+       "new": 0.18,
+       "delta": 0.019000000000000322,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/eb k=0/83/share_gt_alpha",
+       "orig": 0.25,
+       "new": 0.235,
+       "delta": -0.015000000000000013,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/block-test k=60 F/83/share_gt_alpha",
+       "orig": 0.37,
+       "new": 0.355,
+       "delta": -0.015000000000000013,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/paper LTT max (test items)/83/share_gt_alpha",
+       "orig": 0.37,
+       "new": 0.355,
+       "delta": -0.015000000000000013,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/global LOO (test items)/83/share_gt_alpha",
+       "orig": 0.36,
+       "new": 0.345,
+       "delta": -0.015000000000000013,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/mondrian-global (test items)/83/share_gt_alpha",
+       "orig": 0.37,
+       "new": 0.355,
+       "delta": -0.015000000000000013,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    },
+    "rs-b2t-ours.json": {
+     "n_unchanged": 4089,
+     "n_changed": 3641,
+     "n_changed_with_ci": 0,
+     "n_effect": 0,
+     "max_ratio": 0.0,
+     "top_with_ci": [],
+     "max_abs_change_no_ci": [
+      {
+       "path": "per_day/block-ltt k=60 W + monitor/48/alarm_delay_p25_p75/0",
+       "orig": 71.0,
+       "new": 70.75,
+       "delta": -0.25,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/paper LTT max (test items)/95/p95",
+       "orig": 0.11538461538461539,
+       "new": 0.07884615384615319,
+       "delta": -0.0365384615384622,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/global LOO (test items)/95/p95",
+       "orig": 0.11538461538461539,
+       "new": 0.07884615384615319,
+       "delta": -0.0365384615384622,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/mondrian-global (test items)/95/p95",
+       "orig": 0.11538461538461539,
+       "new": 0.07884615384615319,
+       "delta": -0.0365384615384622,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/global/95/p05",
+       "orig": 0.02631578947368421,
+       "new": 0.0,
+       "delta": -0.02631578947368421,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/monitor/95/p05",
+       "orig": 0.02631578947368421,
+       "new": 0.0,
+       "delta": -0.02631578947368421,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/aci/95/p05",
+       "orig": 0.02631578947368421,
+       "new": 0.0,
+       "delta": -0.02631578947368421,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/block-test k=10 F/95/p05",
+       "orig": 0.02631578947368421,
+       "new": 0.0,
+       "delta": -0.02631578947368421,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/block-test k=20 F/95/p05",
+       "orig": 0.02631578947368421,
+       "new": 0.0,
+       "delta": -0.02631578947368421,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      },
+      {
+       "path": "per_day/block-ltt k=40 F/95/p05",
+       "orig": 0.02631578947368421,
+       "new": 0.0,
+       "delta": -0.02631578947368421,
+       "ci_half": null,
+       "ratio": null,
+       "effect": false
+      }
+     ]
+    }
+   },
+   "seconds": 54.8
+  }
+ },
+ "n_effect": 19,
+ "errors": [],
+ "decision_step3": "effect",
+ "recompared": "2026-11-17: CI pairing fixed (exact sibling pairs only; A2 count vs rate); outputs not rerun"
+}
