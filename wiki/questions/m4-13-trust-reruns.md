@@ -46,7 +46,7 @@ All four reruns were pre-registered in commit `97a2fc4` before any M4-13 output 
 | gap | item | decision | reason |
 |---|---|---|---|
 | 3 | P5-08 non-vacuous precision bound | **closed** | target 0.5 certified on held-out T15 with 104 commits; error 0.163 <= 0.5 (CP95 upper 0.249) |
-| 1 | P15-13 update gate: PER / non-inferiority test | open, unblocked | H3 read: fails with the feedback-r0.3 user; the code change is still to do, and its replay must use partial feedback |
+| 1 | P15-13 update gate: PER / non-inferiority test | open, unblocked; **closed 2026-11-18** | H3 read: fails with the feedback-r0.3 user. Fixed by the default-deny gate ([P15-13 results](../../experiments/2026-11-18-p15-13-gate-fix/results.md): G1-G6 pass; the broken and worse decoders are refused with partial feedback, M4-13 is still accepted) |
 | 2 | P15-14 certified T12 hallucination bound | **closed** | V-single certifies on T12 (alpha_h 0.01, delta_h 0.1); held-out fluent-wrong 0.0025; not useful (3 commits) |
 | 14 | P15-19 usefulness on stronger decoders | open, in progress | M4-13 evidence for P5-02, P15-02 (via P15-03a) and P15-06; still needed: P5-01 on M4-13 and all four on the P11 decoders |
 | 58 (new) | P5-20 certified precision >= 0.8 | new | 0.8 / 0.9 / 0.95 infeasible on M4-13 |

@@ -1104,6 +1104,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-19** | Show usefulness on stronger decoders (P5-01, P15-02, P5-02, P15-06) (open gap 14, [details](#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06)) | all | M4-13 rerun queue, P11-01 |
 | **P15-20** | Hallucination split halluc-v0.1 (T15): exact trial-index rule (open gap 34, [details](#p15-20-hallucination-split-halluc-v01-t15-exact-trial-index-rule)) | F2 | P15-07 |
 | **P15-21** | Hallucination benchmark: absolute bound on unsupported swapped commits next to the ratio rule (open gap 52, [details](#p15-21-hallucination-benchmark-absolute-bound-on-unsupported-swapped-commits-next-to-the-ratio-rule)) | F2 | P15-15, P15-16 |
+| **P15-23** | Update gate refuses a challenger without champion outputs (open gap 71, [details](#p15-23-update-gate-refuses-a-challenger-without-champion-outputs)) | F1 | P15-13 |
+| **P15-24** | Same-decoder re-calibrations under the default-deny gate (open gap 72, [details](#p15-24-same-decoder-re-calibrations-under-the-default-deny-gate)) | F1 | P15-13, P5-01 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1204,7 +1206,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-13 Update gate: PER-based non-inferiority challenger test
 - **Gap:** 1 of the [open-gap list](open-gaps.md). Follow-up of P15-02, P15-03.
-- **Status:** `in_progress`. Code `e788029` (2026-11-18): default-deny non-inferiority gate is the new default of `GuardedUpdateLoop` (unknown truth counts against the challenger; top-1 + CER tie-break; exact tests, level 0.05, margins 0.1 / 0.1); `challenger_test="sign"` keeps the P15-02 test; unit tests include the partial-feedback adversarial case (old test accepts, 2 vs 0, p 0.25; new test refuses). Replay of P15-03a with both users pre-registered in the same commit ([plan](../../experiments/2026-11-18-p15-13-gate-fix/plan.md)); plumbing dry run passed; the real replay runs detached since 2026-11-18 10:02 (about 90 min). Before: unblocked 2026-11-18. H3 of the M4-13 rerun is read ([P15-03a results](../../experiments/2026-11-17-p15-03-f1-m4-13/results.md)): **H3 fails**. The reversed decoder is refused with the oracle user (15-16 worse vs 0 better, p <= 3.1e-5) but accepted with the feedback-r0.3 user in both seeds (2 vs 0, p 0.25); H2 fails the same way (the worse M4-12 is accepted at B2 and B7). Cause: unknown truth counts as wrong for both sides, so the sign test sees 1-6 discordant pairs. The per-item PER test separates the decoders (p_worse about 3e-9), but it used the truth of all 48 items. The new test must work on known-truth items only (or count unknown items against the challenger), and its replay must include the feedback-r0.3 user.
+- **Status:** `done`. Done 2026-11-18 (code + pre-registration `e788029`, [results](../../experiments/2026-11-18-p15-13-gate-fix/results.md)): the default-deny non-inferiority gate (`GuardedUpdateLoop(challenger_test="noninferiority")`, default; unknown truth counts against the challenger; top-1 + CER tie-break; margins 0.1 / 0.1, level 0.05; the sign test stays as an option). Replay of P15-03a on M4-13, both users, 2 seeds: G1-G6 all pass. Broken decoder refused 4 / 4 (48 worse vs 0 better) and 4 / 4 against the weak champion M4-12 (probe W; the old sign test accepted it again with feedback-r0.3: 2 vs 0, p 0.25); worse M4-12 refused in 12 / 12 proposals; better M4-13 accepted 4 / 4 (feedback-r0.3 p 0.038, 0.026); phase-C wrong-commit 0.0082-0.0110 (118 commits); feedback-r0.3 runs now give 28-29 commits (P15-03a: 10-11). Cost: 1 of 8 same-decoder re-calibrations refused (gap 72). Contrast: P15-03a H3 failed. Before: in progress since `e788029`.
 - **Depends on:** M4-13 rerun result H3 ([plan](../../experiments/2026-11-17-p15-03-f1-m4-13/plan.md)); P15-02.
 - **Source:** Commit `97a2fc4` (trust reruns on M4-13, dry run): the gate accepted the reversed decoder (2 discordant pairs, p 0.25).
 - **Done when:** The champion / challenger gate of `GuardedUpdateLoop` (`src/fidetype/trust/adaptive.py`) has a per-item PER (or other continuous loss) non-inferiority test next to the sign test, with a margin fixed in a plan before the runs. A unit test and a replay show that the gate refuses the reversed (broken) decoder of the P15-03a dry run, also when the champion is weak and there are few discordant pairs. The change is decided only after the pre-registered H3 result of the M4-13 rerun is read, and the H3 outcome is quoted in the results.
@@ -1274,6 +1276,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P5-23; P5-24 for the prefix arm; P14-24 (edit 8); about 3 GB RAM for the LLM (P15-05 peak 2.96 GB). CPU.
 - **Source:** P14-23 [analysis](safe-wpm-bottleneck.md) (exploratory): the committed P15-05 arms on M4-13, scored with safe-wpm v0.1, give 4.18 (B1 rescore + G), 4.69 (C1) and 4.77 (D1) against 4.02; not pre-registered for safe WPM, margins inside the usual half-width. LLM-rescored top-1 + a learned score gives 4.50.
 - **Done when:** a pre-registered T15 replay reports safe WPM (v0.1 and, if P14-26 is accepted, v0.2) for LLM rescoring with the learned and prefix confidence, with controls, grounding and the fluent-wrong rate, and states whether it is above the no-BCI reference with its interval.
+
+#### P15-23 Update gate refuses a challenger without champion outputs
+- **Gap:** 71 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P15-13). Follow-up of P15-13.
+- **Status:** `todo`.
+- **Depends on:** none (CPU, code).
+- **Source:** [P15-13 results](../../experiments/2026-11-18-p15-13-gate-fix/results.md#gap-decisions): when a champion exists but its outputs on the check block are not given, `GuardedUpdateLoop._challenger_test` returns None and the challenger can be accepted on the null controls and the block LTT alone. This contradicts "default deny".
+- **Done when:** with the default gate, a challenger whose champion outputs are missing is refused with a clear reason (or needs an explicit, recorded opt-out); `TrustGuardUpdater` and `PersonalTrust` paths still pass; a unit test covers both cases; CHANGELOG notes the change.
+
+#### P15-24 Same-decoder re-calibrations under the default-deny gate
+- **Gap:** 72 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P15-13). Follow-up of P15-13, P5-01.
+- **Status:** `todo`.
+- **Depends on:** none (CPU).
+- **Source:** [P15-13 results](../../experiments/2026-11-18-p15-13-gate-fix/results.md#descriptive-results) (D2): 1 of 8 re-calibrations of the same M4-13 decoder was refused (s1 oracle B6: top-1 changed on 3 of 48 items, 1 worse vs 2 better, p 0.081). With 48 check items and margin_abs 0.1 the absolute branch allows no worse item. A user whose data drift (P5-01 PersonalTrust) may then not be able to re-tune.
+- **Done when:** a pre-registered check (for example the P5-01 replay) measures how often re-calibrations of the same decoder are refused, and a chosen remedy (larger check block, a re-calibration path that keeps the top-1 fixed, or a margin for re-calibrations fixed in a plan) keeps the refusal rate of real re-calibrations low without accepting the P15-13 broken or worse decoders.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
