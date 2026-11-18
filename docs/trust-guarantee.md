@@ -183,6 +183,30 @@ print(guard.sheet)                                   # adds a "precision bound" 
 
 Not guaranteed: precision for one session or one user; any single commit; data that differ from the calibration data (section 3). The joint test with section 9 needs more data: each certified grid point must pass all three tests on the same LTT part. `ft.load` needs nothing extra (with section 9: the same `grounding=`). Code: [`src/fidetype/trust/precision_bound.py`](../src/fidetype/trust/precision_bound.py). Validated on synthetic exchangeable data (the test suite: violation rate at most δ over 200 draws). On the P14-03 replay sets (T15, T12; targets 0.5 to 0.95) no threshold was certified: the decoders are right on only about 8 % of sentences, so the guard never commits (P14-03 guard: 2 of 2 and 15 of 25 commits wrong). Safe, but not yet useful on these decoders ([experiment](../experiments/2026-11-16-p5-02-precision/results.md)).
 
+## 10a. Optional: a learned commit score (P5-23)
+
+By default the guard commits when `p_top1` (the calibrated probability of the top-1 text) is at or above the certified threshold. `p_top1` uses only the n-best scores. Other outputs of the decoder also show whether the top-1 text is right. With `confidence="learned"`, a small model combines them into one commit score. The guarantee of section 1 does not change. Off by default: without the argument nothing changes.
+
+```python
+guard = ft.calibrate(cal_logits, cal_texts, vocab=VOCAB, decode_fn=my_decoder,
+                     confidence="learned")           # confidence_l2=1.0 (L2 weight)
+print(guard.sheet)                                   # "commit threshold  learned commit score >= ..."
+```
+
+| Item | Meaning |
+|---|---|
+| Features (13, fixed) | `p_top1`, logit of `p_top1`, margin to the second candidate, n-best entropy, n-best word agreement (posterior-weighted, per word position), mean and smallest character confidence, guard risk, number of words, acoustic log-probability per character, LM log-probability per word, acoustic gap (best acoustic score in the n-best minus the top-1 one, per character), input frames per character. A missing value (for example no LM score) counts as the fit mean |
+| Model | Logistic regression on standardised features, L2 weight `confidence_l2` (default 1.0), Newton steps (deterministic, numpy only). Each feature is clipped to the range of the fit items, so the score does not extrapolate (for example on null input). Each weight has a fixed allowed sign (more evidence never lowers the score); a weight with the wrong sign removes its feature (backward elimination, listed as `dropped`) |
+| Three-way split | Fit part + policy-grid part of the usual split: fit the score (the temperatures and the conformal threshold are fitted first, on the fit part, as before). LTT part: certify the threshold of the score, LTT with exact binomial p-values, fixed-sequence grid 1.00 → 0.00 step 0.01. The LTT items were not used to fit the score, so the LTT bound holds as in section 2 |
+| Commit rule | COMMIT the top-1 text iff the score ≥ the certified threshold **and** the commit gate passes (non-empty text, guard risk below 1.0). The threshold of the policy grid is not used (no `max` with it) |
+| Null controls | Section 5, on the final guard with the learned score. A failed control refuses the calibration |
+| Files | The score (weights, means, scales, ranges, threshold, the LTT record) is in the frozen configuration (`recipe.commit_score`), so `config_id` covers it. `guard.save` / `ft.load` round-trip it. The configuration has `commit_p = inf`: a trust layer that reads it without the drop-in guard never commits |
+| Sheet | The `commit threshold` line names the learned score. A `commit score` block gives the model, the features used, the fit items and the certify items. The `offline_ltt` policy sheet (section 12) has `status.commit_score = "learned"` and the model |
+| Results | `TrustResult.commit_score` and the audit record key `commit_score`. `p_top1` is still reported |
+| Not combined (this version) | `grounding=`, `llm=`, `target_precision=` (a `ValueError`); `guard.online(...)` (a `ValueError`: the online methods move a threshold on `p_top1`) |
+
+Not guaranteed: anything beyond section 1. A learned score can commit more often than `p_top1` (more right words), but it can also commit less. It needs enough items: it is fitted on about 62 % of the calibration items, and the LTT part is the same size as before. Code: [`src/fidetype/trust/commit_score.py`](../src/fidetype/trust/commit_score.py). Pre-registered test on T15 and T12: [P5-23](../experiments/2026-11-18-p5-23-learned-confidence/plan.md).
+
 ## 11. Online use: adaptive risk control for drift (P5-02, P15-04)
 
 The guard above is calibrated once. Its bound needs exchangeable data (section 3). Live data drift: within a session, between days, after a decoder update. Adaptive conformal methods move the COMMIT threshold from the user's feedback. Their bound holds for **any** sequence of utterances. But it is a **long-run average**, not a 1 − δ statement.

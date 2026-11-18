@@ -195,6 +195,9 @@ class GuaranteeSheet:
     #: The precision-type bound of P5-02 (error rate among commits), or None (not requested). See
     #: :mod:`fidetype.trust.precision_bound`.
     precision: dict[str, Any] | None = None
+    #: The learned commit score of P5-23 (``calibrate(confidence="learned")``), or None (the score is
+    #: ``p_top1``). See :mod:`fidetype.trust.commit_score`.
+    confidence: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         d = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -207,6 +210,8 @@ class GuaranteeSheet:
             d.pop("halluc", None)  # pre-P15-06 sheets keep their bytes
         if d.get("precision") is None:
             d.pop("precision", None)  # pre-P5-02 sheets keep their bytes
+        if d.get("confidence") is None:
+            d.pop("confidence", None)  # pre-P5-23 sheets keep their bytes
         return d
 
     @classmethod
@@ -223,6 +228,7 @@ class GuaranteeSheet:
     def __str__(self) -> str:
         thr = "never commits (no threshold certified)" if not math.isfinite(self.commit_threshold) \
             else f"{self.commit_threshold:g}"
+        score_name = "learned commit score" if self.confidence else "p_top1"
         lines = [
             "Fidetype trust guarantee sheet",
             "==============================",
@@ -234,7 +240,7 @@ class GuaranteeSheet:
             f"calibration items    {self.n_items} = {self.n_fit} fit + {self.n_policy} policy grid + {self.n_ltt} LTT",
             f"LTT items needed     >= {self.n_ltt_min} LTT items (utterances, not commits) to certify any COMMIT",
             f"lambda_hat           {_fmt(self.lambda_hat)} (feasible: {self.feasible})",
-            f"commit threshold     p_top1 >= {thr}",
+            f"commit threshold     {score_name} >= {thr}",
             f"commit gate          {json.dumps(self.commit_gate, sort_keys=True)}",
             f"LTT items (in-sample) {self.ltt_commits} commits, {self.ltt_wrong_commits} wrong "
             f"(of {self.n_ltt}; {self.ltt_gate_blocked} blocked by the commit gate; "
@@ -244,6 +250,15 @@ class GuaranteeSheet:
         for c in self.controls:
             lines.append(f"  {c.name:<18} {c.n_commit}/{c.n} commits (allowed {c.allowed}): "
                          f"{'PASS' if c.passed else 'FAIL'}")
+        if self.confidence:
+            cf = self.confidence
+            lines += [
+                f"commit score         learned ({cf['model']}; {cf.get('n_used', '?')} of {len(cf['features'])} "
+                f"features used, L2 {cf['l2']:g})",
+                f"  fitted on          {cf['fit_items']} items (fit + policy grid; {cf['fit_positive']} right top-1)",
+                f"  certified on       {cf['certify_items']} LTT items, disjoint from the fit items",
+                f"  features           {', '.join(cf['features'])}",
+            ]
         if self.halluc:
             h = self.halluc
             sel = h.get("selected") or {}
@@ -315,6 +330,8 @@ class TrustResult:
     seq: int
     #: The NTS ``trust_decision`` event (FEP-0001) of this decision.
     event: dict[str, Any] = field(repr=False, default_factory=dict)
+    #: The learned commit score of this decision (P5-23, ``confidence="learned"``), else None.
+    commit_score: float | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -587,12 +604,28 @@ class TrustGuard:
         self.halluc_items: dict[str, Any] | None = None
         #: Per-item statistics of the P5-02 precision calibration (set by :func:`calibrate`; not saved).
         self.precision_items: dict[str, Any] | None = None
+        #: P5-23 learned commit score (:class:`~fidetype.trust.commit_score.LearnedCommitScore`), read from the
+        #: frozen configuration (``recipe["commit_score"]``, so ``config_id`` covers it). None: ``p_top1``.
+        self.commit_score = None
+        cs = (config.recipe or {}).get("commit_score")
+        if cs:
+            from fidetype.trust.commit_score import LearnedCommitScore
+
+            if math.isfinite(float(config.policy.get("commit_p", math.inf))):
+                raise ValueError("a configuration with a learned commit score must have commit_p = inf")
+            if self.halluc_gate is not None:
+                raise ValueError("a learned commit score cannot be combined with a commit grounding gate (yet)")
+            self.commit_score = LearnedCommitScore.from_dict(cs)
+        self._last_nb: NBest | None = None
+        self._last_score: float | None = None
         decode = _decode_fn_for(decode_fn, codec.lexicon) if frames else None
 
         def capture(stream: NeuralTextStream) -> NBest:
             # the frame-calibrated log-probabilities that the decoder sees (the grounding gate reads them)
             self._last_lp = np.asarray(stream.log_probs, dtype=np.float64)
-            return decode(stream)
+            nb = decode(stream)
+            self._last_nb = nb
+            return nb
 
         sc = StreamingConfig(route="frames" if frames else "hypothesis", max_attempts=1, provisional=False)
         self._layer = StreamingTrustLayer(config, decode_fn=capture if frames else None, streaming=sc)
@@ -637,9 +670,50 @@ class TrustGuard:
     def _final(self, events: Sequence[Mapping[str, Any]]) -> Any:
         return self._final_gated(events)[0]
 
+    def _features(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> np.ndarray:
+        """The P5-23 commit-score features of one decision (:data:`~fidetype.trust.commit_score.FEATURES`)."""
+        from fidetype.trust.commit_score import commit_features
+
+        if self.input_kind == "logits":
+            nb, n_frames = self._last_nb, (None if self._last_lp is None else int(self._last_lp.shape[0]))
+        else:
+            nb, n_frames = _nbest_of_events(events), None
+        if nb is None or not len(nb):
+            return commit_features(float(sd.inputs.p_top1), float(sd.inputs.guard_risk), [], [], n_frames)
+        cal = self._layer.components.calibrator
+        post = cal.posteriors(nb)
+        cands = cal.calibrate_chars(nb).candidates
+        return commit_features(float(sd.inputs.p_top1), float(sd.inputs.guard_risk), post, cands, n_frames)
+
+    def _learned_commit(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[Any, float]:
+        """Apply the learned commit score to a no-commit decision (P5-23). Returns (decision, score)."""
+        from fidetype.trust.content import REASON_PREFIX
+        from fidetype.trust.policy import Decision
+
+        cs = self.commit_score
+        s = cs.score(self._features(sd, events))
+        thr = cs.threshold
+        if not (s >= thr) or not sd.inputs.texts:
+            return sd, s
+        text = sd.inputs.texts[0]
+        gate = self.config.gate
+        why = (gate.violation(text, float(sd.inputs.guard_risk) if self.config.use_guard else None)
+               if gate is not None else None)
+        if why is not None:
+            d = replace(sd.decision, reason=f"{REASON_PREFIX}{why}; {sd.decision.reason}")
+            return replace(sd, decision=d), s
+        prov = dict(sd.provenance)
+        prov["commit_threshold"] = float(thr)
+        d = Decision(Action.COMMIT, (text,), f"learned commit score {s:.2f} >= {thr:.2f}")
+        return replace(sd, decision=d, provenance=prov), s
+
     def _final_gated(self, events: Sequence[Mapping[str, Any]]) -> tuple[Any, str | None]:
         """The final decision, with the P15-06 grounding gate applied to a COMMIT (reason or None)."""
         sd = self._run_layer(self._layer, events)
+        self._last_score = None
+        if self.commit_score is not None:
+            sd, self._last_score = self._learned_commit(sd, events)
+            return sd, None
         if self.halluc_gate is None or sd.decision.action != Action.COMMIT:
             return sd, None
         text = sd.decision.shown_candidates[0] if sd.decision.shown_candidates else ""
@@ -655,8 +729,13 @@ class TrustGuard:
         act = _ACTION_MAP[d.action]
         shown = tuple(d.shown_candidates)
         ev = sd.to_event(include_text=True)
-        reason = _user_reason(d.reason, float(sd.inputs.p_top1), float(sd.inputs.guard_risk),
-                              float(self.config.policy.get("commit_p", math.inf)))
+        score = self._last_score if self.commit_score is not None else None
+        if score is not None:
+            reason = _learned_reason(d.reason, score, float(self.commit_score.threshold), float(sd.inputs.p_top1),
+                                     float(sd.inputs.guard_risk))
+        else:
+            reason = _user_reason(d.reason, float(sd.inputs.p_top1), float(sd.inputs.guard_risk),
+                                  float(self.config.policy.get("commit_p", math.inf)))
         if halluc_why is not None:
             ev["config_id"] = self.config_id
             ev["reason"] = f"{_HALLUC_REASON} ({halluc_why}); {d.reason}"
@@ -665,6 +744,7 @@ class TrustGuard:
             action=act, text=shown[0] if act == "commit" and shown else None, choices=shown,
             p_top1=float(sd.inputs.p_top1), guard_risk=float(sd.inputs.guard_risk), reason=reason,
             raw_action=d.action.value, config_id=self.config_id, seq=self._seq, event=ev,
+            commit_score=None if score is None else float(score),
         )
 
     def _decide_quiet(self, x: Any, input_scale: str | None = None) -> TrustResult:
@@ -683,7 +763,7 @@ class TrustGuard:
         """
         events, st = self._codec.events(x)
         r = self._result(*self._final_gated(events))
-        self._log(r, events, utterance_id)
+        self._log(r, events, utterance_id, None if r.commit_score is None else {"commit_score": r.commit_score})
         return r
 
     def _log(self, r: TrustResult, events: Sequence[Mapping[str, Any]], utterance_id: str | None,
@@ -727,6 +807,9 @@ class TrustGuard:
         :func:`fidetype.trust.online_guard.online` for the arguments and the guarantee of each method.
         This guard is not changed.
         """
+        if self.commit_score is not None:
+            raise ValueError("online re-calibration works on p_top1; it is not available for a guard with a learned "
+                             "commit score (P5-23)")
         from fidetype.trust.online_guard import online
 
         return online(self, method, **kwargs)
@@ -780,6 +863,27 @@ class TrustGuard:
 
 
 _GATE_RISK_REASON = "commit blocked: low acoustic evidence"
+
+
+def _learned_reason(raw: str, score: float, thr: float, p_top1: float, guard_risk: float) -> str:
+    """:attr:`TrustResult.reason` for a guard with a learned commit score (P5-23)."""
+    from fidetype.trust.content import REASON_PREFIX
+
+    t = f"{thr:.2f}" if math.isfinite(thr) else "none (never commits)"
+    if raw.startswith("learned commit score"):
+        return f"commit: learned commit score {score:.2f} >= threshold {t} (p_top1 {p_top1:.2f})"
+    if raw.startswith(REASON_PREFIX):
+        why, _, rest = raw[len(REASON_PREFIX):].partition("; ")
+        if why.startswith("guard risk"):
+            lead = (f"commit blocked: low acoustic evidence (guard risk {guard_risk:.2f}; the commit gate needs < "
+                    f"{why.rsplit('>=', 1)[-1].strip()}) although learned commit score {score:.2f}")
+        else:
+            lead = f"commit blocked by the commit gate ({why})"
+        return f"{lead}; " + ("offer the top choices" if "offer" in rest else "withhold")
+    if raw == "no candidate":
+        return "withhold: the decoder gave no text"
+    what = "offer" if ("offer" in raw or "conformal set" in raw) else "withhold"
+    return f"{what}: learned commit score {score:.2f} < threshold {t} (p_top1 {p_top1:.2f})"
 _HALLUC_REASON = "commit blocked: text not grounded in the signal"
 
 
@@ -934,6 +1038,8 @@ def calibrate(
     precision_delta: float | None = None,
     precision_grid: Sequence[float] | None = None,
     decoder_label: str = "stable",
+    confidence: str = "p_top1",
+    confidence_l2: float = 1.0,
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -1062,6 +1168,23 @@ def calibrate(
         precision_delta)``): all three bounds then hold together with that
         probability (see ``docs/trust-guarantee.md`` section 10).
 
+    confidence, confidence_l2
+        The commit score (P5-23, :mod:`fidetype.trust.commit_score`).
+        ``"p_top1"`` (default): commit when the calibrated top-1
+        probability is at or above the LTT threshold (P14-03, unchanged).
+        ``"learned"``: fit a small logistic regression (L2 weight
+        ``confidence_l2`` on standardised features) on the fit and
+        policy-grid items, from the n-best and decoder outputs (``p_top1``,
+        margin, n-best entropy and word agreement, character confidences,
+        guard risk, conformal set size, length, acoustic and LM scores);
+        then certify its threshold by Learn then Test on the LTT items
+        only (disjoint from the fit items). Same guarantee, same commit
+        gate, same null controls (they run on the final guard). The score
+        is part of the configuration (``config_id``) and of the guard
+        file. Not combined with ``grounding``, ``llm`` or
+        ``target_precision`` in this version, and :meth:`TrustGuard.online`
+        is not available for it.
+
     Raises
     ------
     NullControlError
@@ -1141,6 +1264,16 @@ def calibrate(
 
     if decoder_label not in DECODER_LABELS:
         raise ValueError(f"decoder_label must be one of {DECODER_LABELS}")
+    from fidetype.trust.commit_score import CONFIDENCE_KINDS
+
+    if confidence not in CONFIDENCE_KINDS:
+        raise ValueError(f"confidence must be one of {CONFIDENCE_KINDS}, not {confidence!r}")
+    learned = confidence == "learned"
+    if learned and (halluc_on or prec_on):
+        raise ValueError('confidence="learned" cannot be combined with grounding=, llm= or target_precision= '
+                         "in this version")
+    if learned and not (float(confidence_l2) > 0.0 and math.isfinite(float(confidence_l2))):
+        raise ValueError("confidence_l2 must be a positive number")
 
     # --- codec and items ------------------------------------------------
     if kind == "logits":
@@ -1206,6 +1339,11 @@ def calibrate(
         # P5-21: a stable identity of your decoder (decoder_name / decoder_version), not its module path
         recipe["decoder_id"] = f"{dec_meta['name']}@{dec_meta['version']}"
     frozen = FrozenTrustConfig.from_pipeline(pipe, name, recipe).with_commit_gate(**COMMIT_GATE)
+    score_info: dict[str, Any] | None = None
+    if learned:
+        frozen, score_info = _fit_commit_score(frozen, codec, decode_fn if kind == "logits" else None, audit_text,
+                                               inputs, texts, order, n_fit, n_pol, alpha, delta,
+                                               float(confidence_l2))
 
     guard = TrustGuard(frozen, codec, None, decode_fn if kind == "logits" else None, audit_text)
 
@@ -1239,7 +1377,9 @@ def calibrate(
         warnings.append("frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the "
                         "truth in the decoder's token space) to fit it. The guarantee does not depend on it.")
     med_risk = float(np.median(risks)) if risks else math.nan
-    can_commit = math.isfinite(float(frozen.policy.get("commit_p", math.inf)))
+    commit_thr = (float(guard.commit_score.threshold) if guard.commit_score is not None
+                  else float(frozen.policy.get("commit_p", math.inf)))
+    can_commit = math.isfinite(commit_thr)
     if not can_commit:
         warnings.append("the guard never commits (no certified threshold). It still offers and withholds.")
     if n_blocked and n_blocked >= n_com:
@@ -1257,15 +1397,17 @@ def calibrate(
         config_id=frozen.config_id, input_kind=kind,
         decoder=_decoder_name(decode_fn, lex) if kind == "logits" else "your n-best lists",
         alpha=float(alpha), delta=float(delta),
-        method="Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, "
-               "combined with the policy-grid threshold by max",
+        method=("Learn then Test on the learned commit score (fitted on the fit + policy-grid items), exact "
+                "binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, on the LTT items only" if learned else
+                "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, "
+                "combined with the policy-grid threshold by max"),
         n_items=len(items), n_fit=n_fit, n_policy=n_pol, n_ltt=n_ltt, n_ltt_min=n_min,
         lambda_hat=float(rc.get("threshold", math.nan)), feasible=bool(rc.get("feasible", False)),
-        commit_threshold=float(frozen.policy.get("commit_p", math.inf)), commit_gate=dict(frozen.commit_gate),
+        commit_threshold=commit_thr, commit_gate=dict(frozen.commit_gate),
         ltt_commits=n_com, ltt_wrong_commits=n_wrong, controls=tuple(controls), null_max_commit_rate=rate,
         seed=int(seed), created_utc=_dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
         assumptions=_ASSUMPTIONS, not_guaranteed=_NOT_GUARANTEED, warnings=tuple(warnings),
-        ltt_median_guard_risk=med_risk, ltt_gate_blocked=int(n_blocked),
+        ltt_median_guard_risk=med_risk, ltt_gate_blocked=int(n_blocked), confidence=score_info,
     )
     failed = [c for c in controls if not c.passed]
     if failed:
@@ -1292,6 +1434,62 @@ def calibrate(
                                  float(target_precision), p_delta, precision_grid, rng_controls, null_trials, rate,
                                  null_inputs)
     return guard
+
+
+def _fit_commit_score(frozen: FrozenTrustConfig, codec: _Codec, decode_fn: UserDecodeFn | None, audit_text: bool,
+                      inputs: Sequence[Any], texts: Sequence[str], order: np.ndarray, n_fit: int, n_pol: int,
+                      alpha: float, delta: float, l2: float) -> tuple[FrozenTrustConfig, dict[str, Any]]:
+    """P5-23: fit the learned commit score on the fit + policy-grid items; certify it by LTT on the LTT items.
+
+    Returns the configuration with ``commit_p = inf`` (the trust layer alone never commits), the score in
+    ``recipe["commit_score"]`` (so ``config_id`` covers it) and the LTT record in ``risk_control``; and the
+    ``confidence`` block of the guarantee sheet.
+    """
+    from fidetype.trust.commit_score import FEATURES, MODEL, LearnedCommitScore
+    from fidetype.trust.risk_control import DEFAULT_LTT_GRID, ltt_threshold
+
+    base = frozen.with_policy(commit_p=math.inf)
+    g0 = TrustGuard(base, codec, None, decode_fn, audit_text)
+    gate = base.gate
+    feats, right, gate_ok = [], [], []
+    for i in order:
+        events, _ = codec.events(inputs[i])
+        sd = g0._run_layer(g0._layer, events)
+        feats.append(g0._features(sd, events))
+        top = _norm_text(sd.inputs.texts[0]) if sd.inputs.texts else ""
+        right.append(bool(sd.inputs.texts) and top == texts[i])
+        ok = bool(sd.inputs.texts) and (gate is None or gate.violation(
+            sd.inputs.texts[0], float(sd.inputs.guard_risk) if base.use_guard else None) is None)
+        gate_ok.append(ok)
+    X = np.array(feats, dtype=np.float64).reshape(len(order), len(FEATURES))
+    y = np.array(right, dtype=bool)
+    k = n_fit + n_pol
+    model = LearnedCommitScore.fit(X[:k], y[:k], l2=l2)
+    s_ltt = np.array([model.score(r) if ok else -math.inf for r, ok in zip(X[k:], gate_ok[k:])])
+    loss = (~y[k:]).astype(np.float64)
+    res = ltt_threshold(s_ltt, loss, alpha=alpha, delta=delta, grid=DEFAULT_LTT_GRID, pvalue="binomial")
+    cert = {"method": res.method, "alpha": float(alpha), "delta": float(delta), "n": int(res.n),
+            "feasible": bool(res.feasible), "empirical_risk": None if math.isnan(res.empirical_risk) else
+            float(res.empirical_risk), "p_value": None if math.isnan(res.bound) else float(res.bound),
+            "ltt_commit_rate": float(res.commit_rate), "grid": "1.00 -> 0.00 step 0.01"}
+    model = model.with_threshold(res.threshold, cert)
+    rc = {"method": res.method, "alpha": float(alpha), "delta": float(delta),
+          "threshold": res.threshold, "feasible": bool(res.feasible), "n": int(res.n),
+          "bound": res.bound, "combine": "none (learned commit score, P5-23)", "score": "learned"}
+    recipe = dict(frozen.recipe)
+    recipe.update({"commit_score": model.to_dict(),
+                   "commit_score_split": {"fit": "fit + policy_grid items", "n_fit": int(k),
+                                          "certify": "ltt items", "n_certify": int(len(order) - k)},
+                   "fitted_by": str(recipe.get("fitted_by", "")) + " + P5-23 learned commit score"})
+    out = replace(base, recipe=recipe, risk_control=rc)
+    info = {"kind": "learned", "schema": model.schema, "model": MODEL,
+            "features": list(FEATURES), "dropped": list(model.dropped),
+            "n_used": int(sum(c != 0.0 for c in model.coef)), "l2": float(l2), "fit_items": int(k),
+            "fit_positive": int(y[:k].sum()),
+            "certify_items": int(len(order) - k), "threshold": _json_float(res.threshold),
+            "feasible": bool(res.feasible),
+            "coef": {f: float(c) for f, c in zip(FEATURES, model.coef)}, "intercept": float(model.intercept)}
+    return out, info
 
 
 def _precision_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any], texts: Sequence[str],

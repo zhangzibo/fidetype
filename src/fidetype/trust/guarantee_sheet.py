@@ -379,6 +379,12 @@ def sheets_from_guarantee_sheet(gs: Any) -> list[PolicySheet]:
     base_status = {"feasible": bool(gs.feasible), "lambda_hat": _f(gs.lambda_hat),
                    "commit_threshold": _f(gs.commit_threshold), "ltt_commits": gs.ltt_commits,
                    "ltt_wrong_commits": gs.ltt_wrong_commits, "commit_gate": dict(gs.commit_gate)}
+    cf = getattr(gs, "confidence", None)
+    if cf:  # P5-23: the learned commit score (fit items disjoint from the LTT items); absent = p_top1
+        base_status["commit_score"] = "learned"
+        cal = dict(cal, score_fit_items=cf.get("fit_items"), score_certify_items=cf.get("certify_items"))
+        base_status["commit_score_model"] = {k: cf.get(k) for k in ("schema", "model", "features", "l2", "coef",
+                                                                    "intercept")}
     # the base statement (assumptions / not-guaranteed lines that belong to other bounds are left out)
     base_ass = tuple(a for a in gs.assumptions if not a.startswith(("Precision bound", "Hallucination bound")))
     base_not = tuple(a for a in gs.not_guaranteed if not a.startswith(("Precision bound", "Hallucination bound")))

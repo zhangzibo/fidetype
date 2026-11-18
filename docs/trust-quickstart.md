@@ -136,7 +136,7 @@ What each line means, and what is not guaranteed: [guarantee sheet](trust-guaran
 | `ValueError: n-best input needs null_inputs=` | Fidetype does not run your decoder, so it cannot make a shuffled control for text | Run your decoder on time-shuffled or no-signal recordings; pass the n-best lists |
 | Sheet says `never commits` | Too few LTT items, or the decoder is wrong too often for `alpha` | More labelled data; a larger `alpha` (state it); a better decoder |
 | Every result is `withhold` with reason `commit blocked: low acoustic evidence (guard risk 1.00 ...)`; the sheet warns `the commit gate blocked ...` | The hallucination guard sees low per-character confidence on most utterances: characters with a posterior below `low_conf_threshold` (0.5) count as no evidence. Noisy calibration data can also raise the fitted frame temperature (for example 3.1), which flattens the posteriors. The commit gate never commits at guard risk 1.00 | Calibrate on data like your real use (not only the hardest cases); check the decoder's confidence on clean utterances; for n-best input give `char_confidences`; or relax the guard with `guard_settings={"low_conf_threshold": 0.3}` (part of the config; the bound still holds) |
-| Few commits, many withholds | The guarantee is on the rate over all utterances, so a weak decoder commits rarely | Expected. The guard trades commits for safety |
+| Few commits, many withholds | The guarantee is on the rate over all utterances, so a weak decoder commits rarely | Expected. The guard trades commits for safety. You can try `confidence="learned"` (P5-23): a commit score fitted from more decoder outputs, with the same guarantee ([section 10a](trust-guarantee.md#10a-optional-a-learned-commit-score-p5-23)) |
 
 ## Later: update the decoder safely (P15-02)
 
@@ -170,7 +170,7 @@ For an `OnlineTrustPolicy`, `OnlinePolicyUpdater(online_policy, loop, {version: 
 
 | Function or class | Signature (short) |
 |---|---|
-| `fidetype.trust.calibrate` | `calibrate(inputs, texts, *, alpha=0.05, delta=0.1, input_kind="auto", vocab=None, blank=0, word_delimiter=None, input_scale="auto", frame_period=0.02, decode_fn=None, lexicon=None, null_inputs=None, stream_texts=None, guard_settings=None, null_trials=300, null_max_commit_rate=None, decoder_name="my-decoder", decoder_version="0", modality="other", name="", seed=0, audit_text=True) -> TrustGuard` |
+| `fidetype.trust.calibrate` | `calibrate(inputs, texts, *, alpha=0.05, delta=0.1, input_kind="auto", vocab=None, blank=0, word_delimiter=None, input_scale="auto", frame_period=0.02, decode_fn=None, lexicon=None, null_inputs=None, stream_texts=None, guard_settings=None, null_trials=300, null_max_commit_rate=None, decoder_name="my-decoder", decoder_version="0", modality="other", name="", seed=0, audit_text=True, confidence="p_top1", confidence_l2=1.0) -> TrustGuard` (`confidence="learned"`: section 10a of the guarantee page) |
 | `fidetype.trust.wrap` | `wrap(calibration_set, *, alpha=0.05, **kwargs) -> TrustGuard` (pairs of output and text) |
 | `fidetype.trust.load` | `load(path, decode_fn=None, *, audit_text=True) -> TrustGuard` |
 | `TrustGuard` | `.decide(x, *, utterance_id=None) -> TrustResult`, `__call__`, `.decide_many(xs)`, `.sheet`, `.audit_log`, `.write_audit(path)`, `.save(path)`, `.nts_events(x)`, `.config_id`, `.input_kind` |
