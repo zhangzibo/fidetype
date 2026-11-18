@@ -346,7 +346,9 @@ def test_pipeline_websocket_at_50_hz_within_budget(tmp_path, profile):
 def test_pipeline_file_input(tmp_path):
     r = B.run("implant-speech", "file", tmp_path, n_utterances=6).report
     _check_run(r, gated=True)
-    stream = (tmp_path / "implant-speech-file" / "out" / "stream.nts.jsonl").read_text(encoding="utf-8")
+    files = B.stream_files(tmp_path / "implant-speech-file")
+    assert len(files) == 1  # P5-17: one file per stream ({session} path)
+    stream = files[0].read_text(encoding="utf-8")
     assert "ws_" not in stream and "segmenter: 6 blank frames" in stream
 
 

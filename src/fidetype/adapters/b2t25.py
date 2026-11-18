@@ -78,6 +78,8 @@ VOCAB: tuple[str, ...] = (BLANK_TOKEN, SIL_TOKEN, *PHONEMES)
 #: Our name for this vocabulary (spec section 3.4 namespace ``phoneme.*``).
 VOCAB_ID = "phoneme.arpabet-39-sil"
 ADAPTER_NAME = "fidetype.adapters.b2t25"
+#: Licence of the Brain-to-Text '25 data (Dryad doi:10.5061/dryad.dncjsxm85; benchmark track b2t25-t15).
+LICENCE = "CC0-1.0"
 SYMBOL_VOCAB_ID = "phoneme.arpabet-39-sil.sym1"
 
 _SYMBOL_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLM"
@@ -342,6 +344,13 @@ def stream_id(trial: CopyTaskTrial) -> str:
     return h.hexdigest()[:32]
 
 
+def _licence_meta(licence: str) -> dict[str, Any]:
+    """``data.licence`` and ``data.research_only`` of the dataset (FEP-0010, NTS 1.0 RC4 amendment 6)."""
+    from fidetype.trust.licence import licence_meta
+
+    return licence_meta(licence)
+
+
 def stream_meta(trial: CopyTaskTrial) -> dict[str, Any]:
     """The ``meta`` of a trial stream (spec section 4 keys). No text, no labels."""
     return {
@@ -366,6 +375,7 @@ def stream_meta(trial: CopyTaskTrial) -> dict[str, Any]:
         "session.id": f"day{trial.post_implant_day:03d}",
         "language": "en-US",
         "data.derived": True,
+        **_licence_meta(LICENCE),  # data.licence, data.research_only: FEP-0010 (MET-12)
         "stream.id": stream_id(trial),
         "fidetype.vocab_id": VOCAB_ID,
         "fidetype.trial_index": trial.index,

@@ -2,6 +2,21 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC4, DRAFT] amendment 6 of 2026-11-17 (data licence keys)
+**Still RC4 DRAFT.** Additive changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 6 of 2026-11-17"; 3.4 MET-12 and two rows; 6.1.1 one row; 6.2 TD-15; 9.3; 9.5; Appendix C.1). New FEP: [FEP-0010](feps/0010-data-licence-keys.md) (Draft). Roadmap P5-13 (gap 47). No earlier vector changed its verdict.
+
+### Added
+- **MET-12 data licence keys.** `data.licence` (non-empty string, an SPDX id) and `data.research_only` (boolean; MUST be `true` for a licence without commercial use) in the reserved namespace `data`. Registry: `spec/semconv/attributes/data.yaml` (54 keys in all). The Python, TypeScript and Rust validators check the types. Vectors V98 (accept), V99, V100 (reject).
+- **TD-15.** A recommended audit key `input.research_only` (boolean) on `trust_decision`: the trust layer copies the research-only flag of its input stream and of its provenance lineage. Audit data (TD-13); no validator change.
+
+### Changed (reference implementations)
+- Adapters emg2qwerty, kt_semg, toronto_semg, willett_handwriting, spanishbcbl_meg (was the custom key `spanishbcbl.licence`) and b2t25 write the two keys.
+- Provenance ledger: a stream with the keys becomes a `source` entry; contexts list it in `stream_sources`; `verify` recomputes the flags.
+- `StreamingTrustLayer`, `IntentTrustLayer`, `ControlTrustLayer` and the collector `guard` processor write `input.research_only`.
+
+### Counts
+- Vectors 351 (v0.1 100). Streaming cases 6, kit 36 (unchanged). Python = TypeScript = Rust on all 351, the 36 kit entries and 28,217 fuzz mutants (seeds 1-3, `--n 30`).
+
 ## [1.0 RC4, DRAFT] amendment 5 of 2026-11-17 (LSL heartbeat and equal times; TD-4 in live input)
 **Still RC4 DRAFT.** Changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 5 of 2026-11-17"; 6.3 TD-14; 8.2.5 LSL-C6 … LSL-C8; 9.3; 9.5; Appendix C.1) and [FEP-0002](feps/0002-nts-over-lsl.md) section 6 rules 6-8. Roadmap P3-10 (gap 43) and P14-20 (gap 46). No earlier vector changed its verdict. Binding version unchanged (`nts-lsl/0.1`).
 

@@ -223,6 +223,9 @@ DEFINED_KEYS: dict[str, Callable[[Any], str | None]] = {
     "language": _t_lang,
     "calibration.applied": _t_bool,
     "data.derived": _t_bool,
+    # Data licence keys (FEP-0010, RC4 amendment 6, MET-12).
+    "data.licence": _t_str,
+    "data.research_only": _t_bool,
     "consent.ref": _t_str,
     # Modality keys (FEP-0009, RC4 amendment).
     "emg.placement": _t_str,

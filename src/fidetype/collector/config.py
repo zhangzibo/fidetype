@@ -68,6 +68,8 @@ DEFAULT_HEALTH_LISTEN = "127.0.0.1:13133"
 #: Keys of a websocket exporter that only a standalone /decisions server uses.
 WS_STANDALONE_KEYS = {"listen", "token_env", "origins", "certfile", "keyfile", "linger_s"}
 PIPELINE_KEYS = {"receivers", "processors", "exporters"}
+#: Keys of ``processors.<trust>.ledger.anchor`` (P5-16: signed anchors written by the collector).
+ANCHOR_KEYS = {"dir", "key_env", "key_file", "every_n", "every_s", "on_stop", "keep"}
 #: Keys that would put a secret into the file. Secrets come from environment variables.
 SECRET_KEYS = {"token", "key", "password", "secret"}
 DECISION_TYPES = {"trust_decision"}
@@ -305,12 +307,36 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
             raise ConfigError(f"{where}.max_attempts: must be >= 1")
         if "ledger" in opts:
             led = _check_keys(f"{where}.ledger", opts["ledger"], {"path", "text_mode", "id_mode", "key_env", "key_id",
-                                                                  "lineage"}, {"path"})
+                                                                  "lineage", "anchor"}, {"path"})
             _opt_type(f"{where}.ledger", led, "lineage", (str,), "a lineage spec file (JSON or TOML)")
             _opt_type(f"{where}.ledger", led, "path", (str,), "a file path")
             _opt_enum(f"{where}.ledger", led, "text_mode", ("store", "hash", "omit"))
             _opt_enum(f"{where}.ledger", led, "id_mode", ("store", "hash", "omit"))
             _opt_type(f"{where}.ledger", led, "key_env", (str,), "the name of an environment variable")
+            if "anchor" in led:  # P5-16: signed anchors written by the collector itself
+                aw = f"{where}.ledger.anchor"
+                an = _check_keys(aw, led["anchor"], ANCHOR_KEYS, {"dir"})
+                _opt_type(aw, an, "dir", (str,), "a directory path (separate from the ledger file)")
+                _opt_type(aw, an, "key_env", (str,), "the name of an environment variable (it holds the PEM key)")
+                _opt_type(aw, an, "key_file", (str,), "a PEM file path (owner-only access)")
+                _opt_type(aw, an, "every_n", (int,), "an integer")
+                _opt_type(aw, an, "every_s", num, "a number")
+                _opt_type(aw, an, "on_stop", (bool,), "true or false")
+                _opt_type(aw, an, "keep", (int,), "an integer")
+                if ("key_env" in an) == ("key_file" in an):
+                    raise ConfigError(f"{aw}: give exactly one of key_env (an environment variable that holds the "
+                                      "Ed25519 private key) and key_file (a PEM file); the key itself never goes "
+                                      "into the configuration")
+                if an.get("every_n", 1) < 1:
+                    raise ConfigError(f"{aw}.every_n: must be >= 1")
+                if "every_s" in an and not an["every_s"] > 0:
+                    raise ConfigError(f"{aw}.every_s: must be > 0")
+                if an.get("keep", 1) < 1:
+                    raise ConfigError(f"{aw}.keep: must be >= 1")
+                if not an.get("on_stop", True) and "every_n" not in an and "every_s" not in an:
+                    raise ConfigError(f"{aw}: with on_stop = false give every_n or every_s (else no anchor is written)")
+                if Path(an["dir"]) == Path(led["path"]):
+                    raise ConfigError(f"{aw}.dir: must not be the ledger file")
     elif kind == "processors" and typ == "redact":
         _opt_enum(where, opts, "mode", ("drop", "hmac"))
         _opt_type(where, opts, "key_env", (str,), "the name of an environment variable")
@@ -431,6 +457,42 @@ def _privacy_policy(where: str, opts: dict[str, Any], base_dir: str | PathLike[s
         raise ConfigError(f"{where}.policy: {e}") from None
 
 
+def stream_sources(receivers: list[ComponentConfig]) -> list[str]:
+    """Why the receivers can give more than one stream (an empty list: at most one stream).
+
+    A ``file`` receiver gives one stream per path. A ``websocket`` receiver takes any number of client
+    streams. An ``lsl`` receiver gives a new stream after each reconnect and after each end event.
+    """
+    why: list[str] = []
+    if len(receivers) > 1:
+        why.append(f"{len(receivers)} receivers")
+    for r in receivers:
+        if r.type == "file" and len(r.options.get("paths", [])) > 1:
+            why.append(f"receiver {r.name!r} reads {len(r.options['paths'])} files")
+        elif r.type in ("websocket", "lsl"):
+            why.append(f"receiver {r.name!r} is a {r.type} receiver (more than one stream per run)")
+    return why
+
+
+def _check_mixed_streams(comps: dict[str, dict[str, ComponentConfig]], pipelines: dict[str, PipelineConfig]) -> None:
+    """P5-17: refuse a ``jsonl`` exporter of input events without ``{session}`` that can get several streams.
+
+    Such a file would hold the streams one after the other (several headers, no stream id): it is not one NTS
+    stream, ``nts-conform`` cannot check it, and an erasure (P5-15) can only delete it whole.
+    """
+    for name, ex in comps["exporters"].items():
+        if ex.type != "jsonl" or "{session}" in ex.options.get("path", ""):
+            continue
+        if not set(ex.options.get("types", [])) - DECISION_TYPES:
+            continue  # a decision log: each line names its session (TD-11)
+        recs = [comps["receivers"][r] for p in pipelines.values() if name in p.exporters for r in p.receivers]
+        why = stream_sources(recs)
+        if why:
+            raise ConfigError(f"exporters.{name}.path: a file of input events would mix streams ({'; '.join(why)}); "
+                              "put {session} in the path (one file per stream, for example "
+                              "'out/streams/{session}.jsonl')")
+
+
 def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> CollectorConfig:
     """Check a configuration dict (already read from TOML or JSON)."""
     _check_keys("<config>", d, TOP_KEYS, {"pipelines"})
@@ -518,6 +580,7 @@ def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> Col
                                       f"{pname!r} (it serves /decisions on the receiver's server); leave out "
                                       "'receiver' for a standalone /decisions server")
         pipelines[pname] = PipelineConfig(pname, lists["receivers"], lists["processors"], lists["exporters"])
+    _check_mixed_streams(comps, pipelines)
     for kind in ("receivers", "processors"):
         unused = sorted(set(comps[kind]) - set(used[kind]))
         if unused:

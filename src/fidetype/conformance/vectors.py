@@ -527,7 +527,22 @@ def build_vectors() -> list[Vector]:
                          {"type": "trust_decision", "spec_version": "1.0", "session": "u1", "seq": 0, "utterance": 0,
                           "is_final": True, "action": "COMMIT", "p_top1": 0.93, "score_semantics": "calibrated_prob",
                           "shown": ["ab"]}, {"type": "end"}]))
-    vs.sort(key=lambda v: v.vid)
+    # --- NTS 1.0 RC4 amendment 6 (FEP-0010, roadmap P5-13): the data licence keys data.licence and
+    # data.research_only (MET-12). The validators check the types; MET-12 (research_only true for an NC licence) is
+    # content and not checked.
+    lic = {**BASE_META, "data.licence": "CC-BY-NC-4.0", "data.research_only": True}
+    add("V98", "v98-data-licence-keys.jsonl", "accept", "1.0 RC4 3.4 (MET-1, MET-12; FEP-0010)",
+        'Data licence keys with their types: data.licence "CC-BY-NC-4.0" and data.research_only true', None,
+        {"n_frames": 2, "warnings": []},
+        writer=_w_lines([_header(spec_version="1.0", meta=lic), *_frames(2, V), {"type": "end"}]))
+    add("V99", "v99-data-licence-empty.jsonl", "reject", "1.0 RC4 3.4 (MET-1, MET-7; FEP-0010)",
+        'data.licence is "" (type non-empty string)', None, failing_check="NTS-META-TYPES",
+        writer=_w_lines([_header(spec_version="1.0", meta=lic | {"data.licence": ""}), *_frames(2, V),
+                         {"type": "end"}]))
+    add("V100", "v100-data-research-only-string.npz", "reject", "1.0 RC4 3.4 (MET-1; FEP-0010)",
+        'data.research_only is the string "yes" (type boolean)', None, failing_check="NTS-META-TYPES",
+        writer=_w_npz(meta_json=np.array(json.dumps(lic | {"data.research_only": "yes"}))))
+    vs.sort(key=lambda v: (len(v.vid), v.vid))  # V100 after V99
     return vs
 
 

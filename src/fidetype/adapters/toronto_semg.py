@@ -390,6 +390,13 @@ def log_softmax(x: np.ndarray) -> np.ndarray:
     return x - m - np.log(np.exp(x - m).sum(axis=-1, keepdims=True))
 
 
+def _licence_meta(licence: str) -> dict[str, Any]:
+    """``data.licence`` and ``data.research_only`` of the dataset (FEP-0010, NTS 1.0 RC4 amendment 6)."""
+    from fidetype.trust.licence import licence_meta
+
+    return licence_meta(licence)
+
+
 def stream_meta(
     subject: str | None = None,
     session: str | None = None,
@@ -427,6 +434,7 @@ def stream_meta(
         "calibration.applied": False,
         "language": "en",
         "data.derived": True,
+        **_licence_meta(LICENCE),  # data.licence, data.research_only: FEP-0010 (MET-12)
         "fidetype.vocab_id": KEY_VOCAB_ID,
         "fidetype.timing": "oracle-keystroke: one frame per key press; key times from the keylogger",
         "fidetype.composed": bool(composed),

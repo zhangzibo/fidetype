@@ -349,6 +349,9 @@ pub const DEFINED_KEYS: &[(&str, TypeFn)] = &[
     ("language", t_lang),
     ("calibration.applied", t_bool),
     ("data.derived", t_bool),
+    // Data licence keys (FEP-0010, RC4 amendment 6, MET-12).
+    ("data.licence", t_str),
+    ("data.research_only", t_bool),
     ("consent.ref", t_str),
     // Modality keys (FEP-0009, RC4 amendment).
     ("emg.placement", t_str),

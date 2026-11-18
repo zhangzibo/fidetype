@@ -198,6 +198,54 @@ def check_product(summary_: Mapping[str, Any], policy: str = "project", what: st
             "Non-commercial data is for research only (licence rule).")
 
 
+#: NTS ``meta`` keys of the data licence (FEP-0010, NTS 1.0 RC4 amendment 6, MET-12).
+META_LICENCE = "data.licence"
+META_RESEARCH_ONLY = "data.research_only"
+
+
+def licence_meta(licence: str, *also: str, research_only: bool | None = None) -> dict[str, Any]:
+    """The ``meta`` keys a producer writes for its data licence (FEP-0010).
+
+    ``licence``: the licence of the recorded data (SPDX id or a common form; it is normalised).
+    ``also``: licences of other inputs that made the stream (for example the training data of the decoder).
+    ``data.research_only`` is true when any of them does not allow commercial use or is unknown (MET-12);
+    ``research_only=True`` forces it (a producer may be stricter, never looser).
+    """
+    spdx = normalise(licence)
+    ro = bool(combine(source_summary(x) for x in (licence, *also))["research_only"])
+    return {META_LICENCE: spdx, META_RESEARCH_ONLY: ro or bool(research_only)}
+
+
+def track_meta(track: str) -> dict[str, Any]:
+    """The ``meta`` licence keys of a benchmark track's dataset (FEP-0010)."""
+    spdx, research_only, _ = track_licence(track)
+    return {META_LICENCE: spdx, META_RESEARCH_ONLY: bool(research_only)}
+
+
+def stream_licence(meta: Mapping[str, Any] | None) -> dict[str, Any] | None:
+    """The licence flags that a stream declares in its ``meta`` (None: it declares neither key).
+
+    ``data.licence`` gives the flags of that licence. ``data.research_only = true`` makes them research only
+    (the most restrictive of the two wins; a stream cannot declare itself looser than its licence). Only
+    ``data.research_only = false`` without a licence: unknown licence, research only (the claim cannot be
+    checked). A wrongly typed value counts as absent (the validators refuse such a stream, NTS-META-TYPES).
+    """
+    meta = meta or {}
+    lic = meta.get(META_LICENCE)
+    ro = meta.get(META_RESEARCH_ONLY)
+    has_lic = isinstance(lic, str) and lic != ""
+    has_ro = isinstance(ro, bool)
+    if not has_lic and not has_ro:
+        return None
+    s = source_summary(lic if has_lic else None)
+    return restrict(s) if ro is True else s
+
+
+def restrict(summary_: Mapping[str, Any]) -> dict[str, Any]:
+    """The flags made research only (no commercial use, no product use); the licence lists stay."""
+    return dict(summary_, commercial_ok=False, research_only=True, product_ok={p: False for p in PRODUCT_POLICIES})
+
+
 def track_licence(track: str) -> tuple[str, bool, str]:
     """``(spdx, research_only, attribution)`` of a benchmark track (``fidetype.benchmark.tracks``)."""
     from fidetype.benchmark.tracks import get_track

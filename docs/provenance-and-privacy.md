@@ -97,6 +97,35 @@ A signed anchor without `--public-key` fails: nobody checked the signature. Reda
 
 Key rules: keep the private key in a secret store or a file with owner-only access, on the operator's side. Publish the public key (for example next to the release notes). Make a new key pair when a person who had access leaves; old anchors stay valid with the old public key.
 
+### 4.1a Automatic signed anchors (P5-16)
+
+The Collector and the Python API can write signed anchors by themselves. Then a rewrite of the newest entries is covered between two manual runs. Each anchor is a separate file `anchor-<seq>.json` in its own directory. An older anchor is never changed.
+
+```toml
+[processors.trust]
+type = "trust"
+config = "trust.json"
+ledger = { path = "out/ledger.jsonl", anchor = { dir = "out/anchors", key_env = "FIDETYPE_ANCHOR_KEY",
+           every_n = 100, every_s = 60 } }
+```
+
+| Option of `ledger.anchor` | Meaning |
+|---|---|
+| `dir` (required) | Directory of the anchor files. It must not be the ledger file. |
+| `key_env` or `key_file` (exactly one) | The environment variable that holds the PEM text, or a PEM file with owner-only access. The key never goes into the configuration file, a log, the metrics or an anchor. |
+| `every_n` | Write an anchor after every N new entries. |
+| `every_s` | Write an anchor when T seconds have passed and there are new entries (checked at each entry and at each loop step). |
+| `on_stop` (default `true`) | Write the last anchor at stop. It covers every entry of the run. |
+| `keep` | Keep only the newest N anchor files of this ledger. |
+
+`verify --anchor` also accepts the directory. It then checks the newest anchor (highest `seq`):
+
+```sh
+python -m fidetype.trust.provenance verify out/ledger.jsonl --anchor out/anchors --public-key anchor.pub.pem --allow-growth
+```
+
+Python API: `AutoAnchor(ledger, load_private_key(key_env="FIDETYPE_ANCHOR_KEY"), "anchors", every_n=100)`; call `tick()` from a loop for the timer and `close()` at stop (or use `with`). It works with every `ProvenanceLedger`, also the one of `StreamingTrustLayer(ledger=)`. The Collector metrics hold `anchors` (count, newest `seq`, `key_id`).
+
 ### 4.2 External store (no code needed)
 
 - **Second host.** Copy each anchor file to a host that the ledger's writer cannot change (another account, a write-once bucket, a public git repository).

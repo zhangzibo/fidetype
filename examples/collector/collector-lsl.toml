@@ -46,6 +46,13 @@ no_text = true                                 # LSL has no access control: drop
 type = "jsonl"
 path = "out/decisions-lsl.jsonl"
 
+# The input events too: an LSL receiver gives a new stream after a reconnect, so the file path needs {session}
+# (one file per stream, P5-17; without it the configuration is refused).
+# [exporters.streams]
+# type = "jsonl"
+# path = "out/streams/{session}.nts.jsonl"
+# types = ["header", "frame", "segment_end", "end"]
+
 [pipelines.main]
 receivers = ["live"]
 processors = ["check", "trust"]

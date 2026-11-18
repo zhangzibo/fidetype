@@ -504,6 +504,13 @@ def session_stream_id(session_name: str, prompt_index: int, tag: str = "") -> st
     return opaque_stream_id(DATASET_SLUG, session_name, prompt_index, tag)
 
 
+def _licence_meta(licence: str) -> dict[str, Any]:
+    """``data.licence`` and ``data.research_only`` of the dataset (FEP-0010, NTS 1.0 RC4 amendment 6)."""
+    from fidetype.trust.licence import licence_meta
+
+    return licence_meta(licence)
+
+
 def stream_meta(
     session_index: int | None = None,
     prompt_index: int | None = None,
@@ -540,6 +547,7 @@ def stream_meta(
         "calibration.applied": False,
         "language": "en",
         "data.derived": True,
+        **_licence_meta(LICENCE),  # data.licence, data.research_only: FEP-0010 (MET-12)
         "fidetype.vocab_id": KEY_VOCAB_ID,
         "fidetype.timing": "oracle-keystroke: one frame per key press; key-down times from the keylogger, on the "
                            "same unix clock as the EMG samples; seconds from the first EMG sample",

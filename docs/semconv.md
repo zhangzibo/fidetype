@@ -17,8 +17,8 @@ The registry belongs to NTS 1.0 RC4 (draft). Since RC4 it is normative for the k
 
 | Container | Keys | Spec |
 |---|---|---|
-| Header `meta` | 32 keys in 15 reserved namespaces (24 keys of RC4 3.4 + 8 modality keys of FEP-0009) | [3.4](../spec/nts-1.0-rc4.md#34-semantic-conventions-for-meta), [12.5](../spec/nts-1.0-rc4.md#125-semantic-convention-namespaces-policy-spec-for-the-listed-keys-first-come-outside) |
-| `trust_decision.input` | 14 recommended keys (audit data) | [6.1.1](../spec/nts-1.0-rc4.md#611-input-keys-recommended) |
+| Header `meta` | 34 keys in 15 reserved namespaces (24 keys of RC4 3.4 + 8 modality keys of FEP-0009 + 2 data licence keys of FEP-0010) | [3.4](../spec/nts-1.0-rc4.md#34-semantic-conventions-for-meta), [12.5](../spec/nts-1.0-rc4.md#125-semantic-convention-namespaces-policy-spec-for-the-listed-keys-first-come-outside) |
+| `trust_decision.input` | 15 recommended keys (audit data; `research_only` from FEP-0010) | [6.1.1](../spec/nts-1.0-rc4.md#611-input-keys-recommended) |
 | `trust_decision.declaration` | 5 recommended keys (audit data) | [6.1.2](../spec/nts-1.0-rc4.md#612-declaration-keys-recommended) |
 
 Modality keys ([FEP-0009](../spec/feps/0009-modality-semantic-conventions.md), RC4 amendment of 2026-11-16, rule MET-11):
@@ -30,6 +30,16 @@ Modality keys ([FEP-0009](../spec/feps/0009-modality-semantic-conventions.md), R
 | `implant.*` | `implant.array_type`, `implant.array_count`, `implant.features`, `implant.bin_s`, `implant.areas` | Willett handwriting and Brain-to-Text '25 adapters; NLB MC_RTT |
 
 A modality key goes with its `device.modality` (MET-11). `eeg.*` and `fnirs.*` are **planned** and reserved (MET-3: a custom key in them gets a warning). They have no keys yet: a key gets into the registry only after a FEP defines it from a real producer (SC-9).
+
+Data licence keys ([FEP-0010](../spec/feps/0010-data-licence-keys.md), RC4 amendment 6 of 2026-11-17, rules MET-12 and TD-15):
+
+| Key | Type | Who writes it |
+|---|---|---|
+| `data.licence` | SPDX licence id (non-empty string) | The six reference adapters (from `fidetype.trust.licence.licence_meta`); `track_meta(track)` for a benchmark track |
+| `data.research_only` | boolean; MUST be `true` for a licence without commercial use | Same |
+| `trust_decision.input.research_only` | boolean (audit data) | The reference trust layers: from the stream keys and from the provenance ledger lineage |
+
+The provenance ledger reads the two stream keys into a `source` entry, so a decision's licence flags include the stream's licence.
 
 ## Use it as a producer
 

@@ -288,7 +288,7 @@ passthrough = true
 
 [exporters.nts]
 type = "jsonl"
-path = "out/stream.nts.jsonl"
+path = "out/streams/{{session}}.nts.jsonl"     # P5-17: one file per stream
 types = ["header", "frame", "segment_end", "hypothesis", "end"]
 
 [exporters.log]
@@ -419,6 +419,11 @@ def run(profile: str, receiver: str, out_dir: str | Path, *, n_utterances: int =
     return BenchResult(profile, receiver, work, report)
 
 
+def stream_files(work: Path) -> list[Path]:
+    """The NTS stream exports of a run (one file per stream, P5-17 ``{session}`` path)."""
+    return sorted((work / "out" / "streams").glob("*.nts.jsonl"))
+
+
 def check_outputs(work: Path, col: Any, texts: list[str]) -> dict[str, Any]:
     """``nts-conform`` on the stream export and the decision log; OS-text rule; latency summary."""
     from fidetype.collector.exporters import committed_text
@@ -426,7 +431,10 @@ def check_outputs(work: Path, col: Any, texts: list[str]) -> dict[str, Any]:
     from fidetype.conformance.nts_conform import conform_file
 
     out = work / "out"
-    targets = [conform_file(out / "stream.nts.jsonl", "trust-ready"), conform_file(out / "decisions.jsonl", "trust-ready")]
+    streams = stream_files(work)
+    if not streams:
+        raise FileNotFoundError(f"no stream export in {out / 'streams'}")
+    targets = [*(conform_file(p, "trust-ready") for p in streams), conform_file(out / "decisions.jsonl", "trust-ready")]
     prod = producer_level([t.level_input() for t in targets], ["text"])
     decisions = [json.loads(x) for x in (out / "decisions.jsonl").read_text(encoding="utf-8").splitlines() if x]
     typed = [json.loads(x) for x in (out / "typed.jsonl").read_text(encoding="utf-8").splitlines() if x]

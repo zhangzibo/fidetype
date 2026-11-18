@@ -13,7 +13,7 @@ The Fidetype code is Apache-2.0 ([`LICENSE`](../LICENSE)). This note says what t
 
 | Dataset | Licence | Commercial use | How Fidetype uses it | Loader / adapter |
 |---|---|---|---|---|
-| SpanishBCBL MEG (Brain2Qwerty v1/v2 data) | CC BY-NC 4.0 | **No** | Research and the `spanishbcbl-meg-async` benchmark track (marked research only) | `src/fidetype/data/spanishbcbl.py` (reads a local copy; `LICENCE`, `SOURCE_URL`, `licence_notice()`), `src/fidetype/adapters/spanishbcbl_meg.py` (streams carry `spanishbcbl.licence`) |
+| SpanishBCBL MEG (Brain2Qwerty v1/v2 data) | CC BY-NC 4.0 | **No** | Research and the `spanishbcbl-meg-async` benchmark track (marked research only) | `src/fidetype/data/spanishbcbl.py` (reads a local copy; `LICENCE`, `SOURCE_URL`, `licence_notice()`), `src/fidetype/adapters/spanishbcbl_meg.py` (streams carry `data.licence` = `CC-BY-NC-4.0` and `data.research_only` = `true`, FEP-0010) |
 | Brain-to-Text '25 (Card et al. 2024) | CC0 1.0 | Yes | Benchmark track `b2t25-t15-copytask` | `src/fidetype/adapters/b2t25.py` (safe unpickler, Dryad SHA-256 check) |
 | Toronto sEMG typing (Achituve et al. 2025) | CC BY 4.0 (attribution) | Yes | Benchmark track `toronto-semg-composed` | `src/fidetype/adapters/toronto_semg.py` |
 | Tatoeba (en, es) | CC BY 2.0 FR (attribution) | Yes | Char and word LMs; held-out sentences of the EMG track | `src/fidetype/lm/corpora.md` |

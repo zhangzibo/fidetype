@@ -303,7 +303,8 @@
   "NTS-META-TYPES": [
    "MET-1",
    "MET-7",
-   "MET-11"
+   "MET-11",
+   "MET-12"
   ],
   "NTS-MODALITY-MATCH": [
    "MET-11"
@@ -1556,6 +1557,13 @@
    ],
    "status": "T (types); P (advisory warning)"
   },
+  "MET-12": {
+   "keyword": "SHOULD / MUST",
+   "checks": [
+    "NTS-META-TYPES"
+   ],
+   "status": "T (types); the agreement of the two keys is not checked (content)"
+  },
   "MET-2": {
    "keyword": "MUST",
    "checks": [
@@ -1803,6 +1811,11 @@
    "keyword": "MUST",
    "checks": [],
    "status": "T"
+  },
+  "TD-15": {
+   "keyword": "SHOULD / MUST NOT",
+   "checks": [],
+   "status": "G-10 (like TD-13)"
   },
   "TD-2": {
    "keyword": "—",

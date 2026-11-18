@@ -13,3 +13,32 @@ attributes:
     target_stability: stable
     rules: [MET-1]
     checks: [NTS-META-TYPES]
+  # FEP-0010 (RC4 amendment 6): the data licence. Producer evidence: the reference adapters (emg2qwerty, kt_semg,
+  # toronto_semg, willett_handwriting, spanishbcbl_meg, b2t25) and the benchmark tracks (fidetype.benchmark.tracks).
+  - key: data.licence
+    type: string
+    validator: non_empty_string
+    examples: [CC0-1.0, CC-BY-4.0, CC-BY-NC-4.0, CC-BY-NC-SA-4.0, LicenseRef-fidetype-consented]
+    brief: >-
+      The licence of the recorded data that the stream was made from: an SPDX licence id, or a
+      LicenseRef- id for a licence that SPDX does not list. Not legal advice; a consumer reads it with
+      data.research_only.
+    requirement:
+      - {scope: provenance, level: recommended, condition: "the producer knows the licence of the data"}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, MET-12]
+    checks: [NTS-META-TYPES]
+  - key: data.research_only
+    type: boolean
+    validator: boolean
+    brief: >-
+      true if the stream may be used for research only: the data licence, or the licence of another input
+      that made the stream (for example the training data of the decoder), does not allow commercial use or
+      is unknown. MUST be true when data.licence does not allow commercial use (MET-12).
+    requirement:
+      - {scope: provenance, level: recommended, condition: "data.licence is present"}
+    stability: development
+    target_stability: stable
+    rules: [MET-1, MET-12]
+    checks: [NTS-META-TYPES]

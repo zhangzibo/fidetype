@@ -131,3 +131,14 @@ attributes:
     stability: development
     target_stability: development
     rules: [TD-13]
+  - key: research_only
+    type: boolean
+    validator: none
+    brief: >-
+      true if the decision depends on research-only data: the input stream declares it (data.licence,
+      data.research_only) or the layer's provenance lineage is research only (FEP-0010).
+    requirement:
+      - {scope: trust-layer, level: recommended, condition: "the input or the lineage declares a licence"}
+    stability: development
+    target_stability: development
+    rules: [TD-13, TD-15]

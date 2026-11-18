@@ -842,6 +842,11 @@ class _GState:
         self.nbest: list[Any] | None = None
         self.utterance = 0
         self.skip = False  # after a gap: drop frames up to the next boundary
+        from fidetype.trust.licence import stream_licence
+
+        sl = stream_licence(header.get("meta") if isinstance(header.get("meta"), dict) else None)
+        #: FEP-0010: research_only of the stream's licence keys (None: the header declares none).
+        self.research_only = None if sl is None else bool(sl["research_only"])
 
 
 def _norm_text(t: str | None) -> str:
@@ -979,6 +984,9 @@ class GuardProcessor(Processor):
         ev = {"type": "trust_decision", "spec_version": DECISION_SPEC_VERSION, **dict(r.event)}
         ev.update(session=sid, seq=seq, utterance=utt, is_final=True, final_attempt=True, config_id=r.config_id)
         ev.setdefault("attempt", 1)
+        if st.research_only is not None:  # FEP-0010 (TD-15): the audit key input.research_only
+            inp = ev.get("input") if isinstance(ev.get("input"), dict) else {}
+            ev["input"] = {**inp, "research_only": st.research_only}
         ev, dropped, _ = drop_blank_candidates(ev)  # TD-12
         self.counts["blank_candidates_dropped"] += dropped
         self.counts["decisions"] += 1

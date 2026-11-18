@@ -126,6 +126,8 @@ export const DEFINED_KEYS: Record<string, TypeFn> = {
   "decoder.calibration_method": tStr, "decoder.weights_sha256": tSha, "adapter.name": tStr, "adapter.version": tStr,
   "stream.id": tStr, "lm.name": tStr, "user.personalized": tBool, "session.id": tStr, "subject.id": tStr,
   language: tLang, "calibration.applied": tBool, "data.derived": tBool, "consent.ref": tStr,
+  // Data licence keys (FEP-0010, RC4 amendment 6, MET-12).
+  "data.licence": tStr, "data.research_only": tBool,
   // Modality keys (FEP-0009, RC4 amendment).
   "emg.placement": tStr, "emg.derivation": tStr, "meg.sensor_types": tStrList, "implant.array_type": tStr,
   "implant.array_count": tIntGe1, "implant.features": tStrList, "implant.bin_s": tNonneg, "implant.areas": tStrList,

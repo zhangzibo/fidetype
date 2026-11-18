@@ -50,7 +50,7 @@ fidetype conformance --profile fep-0005     # control profile: vectors in confor
 The 1.0 rule ids map to these checks and vectors in [Appendix C](nts-1.0-rc4.md#appendix-c-conformance-traceability). RC4: all three SDKs check the type of every optional field of the spec tables (GEN-11; vectors V69-V82, F63-F66, D24-D26, I25, C25, E25-E27) and warn about a custom key in a planned modality namespace (MET-3). RC3: in data of a newer minor version (`"1.1"` …) all three SDKs accept unknown enumeration values and never act on them (VER-8, VER-10; vectors V66-V68, F57-F59, I24, D22, D23, C24, E22-E24); integers above 2^53 - 1 are refused (GEN-10; F60, F61, W44). All three SDKs accept a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` and refuse other values (RC2, gap G-2; vectors V53-V60, F48-F49, L33-L35, W39-W42). One stricter rule is also in the validators of all three SDKs: a `trust_decision` with `"spec_version": "1.x"` MUST NOT be a final COMMIT with an empty committed text (rule TD-9; vectors F41-F47). Decisions without `spec_version`, or with `"0.1"`, keep the 0.1 rule (a SHOULD NOT).
 
 ## Proposals (FEPs)
-FEPs 0001-0005 and 0007-0009 are folded into [NTS 1.0 RC4](nts-1.0-rc4.md). Their open questions are answered or deferred in [Appendix A](nts-1.0-rc4.md#appendix-a-open-questions-resolutions-and-deferrals). The FEP lifecycle (Draft, Under review, Accepted, Implemented, Final, Rejected / Withdrawn) is in [section 11.6](nts-1.0-rc4.md#116-change-process-and-fep-lifecycle).
+FEPs 0001-0005 and 0007-0010 are folded into [NTS 1.0 RC4](nts-1.0-rc4.md). Their open questions are answered or deferred in [Appendix A](nts-1.0-rc4.md#appendix-a-open-questions-resolutions-and-deferrals). The FEP lifecycle (Draft, Under review, Accepted, Implemented, Final, Rejected / Withdrawn) is in [section 11.6](nts-1.0-rc4.md#116-change-process-and-fep-lifecycle).
 
 | FEP | Title | Status | Conformance profile |
 |---|---|---|---|
@@ -62,6 +62,7 @@ FEPs 0001-0005 and 0007-0009 are folded into [NTS 1.0 RC4](nts-1.0-rc4.md). Thei
 | [0007](feps/0007-unknown-enum-values.md) | Unknown enumeration values: version-gated acceptance with a safe fallback per enumeration (forward compatibility of registries) | Draft (in 1.0 RC3, section 11.2.1) | vectors in `v0.1`, `fep-0001`, `fep-0003`, `fep-0005` |
 | [0008](feps/0008-optional-field-types-and-semconv.md) | Optional field types (GEN-11, gap G-12) and the semantic-convention registry (normative YAML, planned namespaces reserved, non-empty strings, open and closed lists, units; SC-2 … SC-8) | Draft (in 1.0 RC4, sections 1.6, 3.4, A.8) | vectors in `v0.1`, `fep-0001`, `fep-0003`, `fep-0005` |
 | [0009](feps/0009-modality-semantic-conventions.md) | Modality keys for `emg`, `meg`, `implant` from producer evidence (MET-11; SC-1 partly; SC-9 open for `eeg`, `fnirs`) | Draft (in the 1.0 RC4 amendment of 2026-11-16, sections 1.6, 3.4, 12.5, A.8) | V83 … V87 in `v0.1` |
+| [0010](feps/0010-data-licence-keys.md) | Data licence keys: `data.licence`, `data.research_only` in `meta` and `research_only` in `trust_decision.input` (MET-12, TD-15; gap 47) | Draft (in RC4 amendment 6 of 2026-11-17, sections 1.6, 3.4, 6.1.1, 6.2) | V98 … V100 in `v0.1` |
 | [0006](feps/0006-collector.md) | The collector (reference architecture, not a format change): receivers → processors → exporters, pipelines, TOML / JSON configuration, loss and privacy rules, health and metrics | Draft (not in 1.0; reference v0 `fidetype collector`) | - |
 
 ## Stability levels
@@ -111,4 +112,5 @@ spec/
     0007-unknown-enum-values.md
     0008-optional-field-types-and-semconv.md
     0009-modality-semantic-conventions.md
+    0010-data-licence-keys.md
 ```

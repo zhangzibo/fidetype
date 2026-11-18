@@ -5,6 +5,7 @@ This file lists the changes of the Rust SDK (crate `fidetype`). The format follo
 ## [Unreleased]
 
 ### Added
+- **Data licence keys (P5-13, NTS 1.0 RC4 amendment 6, FEP-0010).** `DEFINED_KEYS` has `data.licence` (non-empty string) and `data.research_only` (boolean). Vectors V98 (accept), V99, V100 (reject); test count v0.1 100. Same verdicts as Python and TypeScript.
 - **TD-14 (P14-20, NTS 1.0 RC4 amendment 5).** `StreamValidator::push` refuses a `trust_decision` event in an input stream (`TD_INPUT_MESSAGE`); after `end` it is ignored. Same as Python and TypeScript; test on `spec/conformance/streaming/td-input.json`; V97 is refused by `io::validate_file_streaming`.
 - **LSL-C7 / LSL-C8 (P3-10, amendment 5).** The `fep-0002` runner counts heartbeats (`heartbeats`) and orders equal times frame first. Vectors L36, L37 (37 in all).
 - **MET-11 advisory check `NTS-MODALITY-MATCH` (P1-16)** and `checks::MODALITY_NAMESPACES`: a modality key that does not fit `device.modality` is a warning, never a reject (same as Python and TypeScript; vectors V93 … V96). `check_table()` has 60 checks.

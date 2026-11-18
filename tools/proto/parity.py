@@ -146,6 +146,8 @@ REJECT_CLASS: dict[str, tuple[str, str]] = {
     "V92": ("schema", "FRM-2 / GEN-11 top_ids unique on a dense frame"),
     # NTS 1.0 RC4 amendment 4 (P14-17): TD-4 in the v0.1 suite
     "V97": ("cross-line", "TD-4"),
+    # NTS 1.0 RC4 amendment 6 (FEP-0010): data licence keys (MET-12); V100 is an NPZ vector
+    "V99": ("semconv", "MET-7 / MET-12 data.licence is a non-empty string"),
 }
 
 

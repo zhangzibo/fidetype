@@ -43,6 +43,12 @@ config = "trust-example.json"
 decoder = "greedy"                             # none (hypothesis route), greedy or demo
 max_attempts = 2
 # ledger = { path = "out/ledger.jsonl", text_mode = "hash" }   # hash-chained provenance (PRV-1)
+# Signed anchors written by the collector (P5-16; needs the [sign] extra). The key comes from an environment
+# variable (PEM text) or a key file, never from this file:
+# ledger = { path = "out/ledger.jsonl", text_mode = "hash", anchor = { dir = "out/anchors",
+#            key_env = "FIDETYPE_ANCHOR_KEY", every_n = 100, every_s = 60 } }
+# Check: python -m fidetype.trust.provenance verify out/ledger.jsonl --anchor out/anchors --allow-growth
+#        --public-key anchor.pub.pem
 
 [processors.thin]
 type = "thin"
@@ -58,6 +64,14 @@ path = "out/decisions.jsonl"                   # a decision log (spec 6.4)
 
 [exporters.console]
 type = "stdout"
+
+# The input events too (an NTS stream file). {session} gives one file per stream (P5-17): a file of input
+# events without {session} is refused when the pipeline can carry more than one stream (several receivers or
+# files, a websocket or LSL receiver).
+# [exporters.streams]
+# type = "jsonl"
+# path = "out/streams/{session}.nts.jsonl"
+# types = ["header", "frame", "segment_end", "end"]
 
 # [exporters.live_decisions]
 # type = "websocket"

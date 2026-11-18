@@ -158,6 +158,16 @@ Also in RC4:
 - Collector (FEP-0006): a refused `trust_decision` is an invalid input event: the `validate` processor cuts the open utterance (`gap`), and `fidetype-collector consume` rejects the file. Decisions of a stream that has no header are a decision log; TD-14 does not apply to them.
 - Vector counts: 348 (fep-0002 37). Streaming cases: 6 (Python = TypeScript = Rust on all 6, and on V97). Informative parts updated: 8.2.5, 9.3, 9.5, C.1.
 
+**Amendment 6 of 2026-11-17 (still RC4 DRAFT; [FEP-0010](feps/0010-data-licence-keys.md), roadmap P5-13, gap 47).** Additive only. No earlier vector changed its verdict.
+
+| Item | Answer | Rules | Vectors | SDK change |
+|---|---|---|---|---|
+| **Data licence in the stream** | Two optional Development keys in the reserved namespace `data`: `data.licence` (non-empty string, an SPDX id) and `data.research_only` (boolean). `data.research_only` MUST be `true` for a licence that does not allow commercial use. | MET-12, table 3.4 | V98 (accept), V99, V100 (reject) | Yes: the three validators check the types (existing validators `non_empty_string`, `boolean`) |
+| **Licence in trust decisions** | A new recommended `input` key `research_only` (boolean, audit data): the trust layer copies the research-only flag of its input stream and of its provenance lineage. | TD-15, table 6.1.1 | — (audit data, TD-13) | No validator change; the Python reference trust layers write it |
+
+- A stream that wrote a wrong-typed custom key `data.licence` or `data.research_only` (MET-3 said SHOULD NOT) is now refused. No reference producer wrote one. The SpanishBCBL adapter wrote the custom key `spanishbcbl.licence`; it now writes `data.licence`.
+- Vector counts: 351 (v0.1 100). Python = TypeScript = Rust on all 351, on the 36 kit entries and on 28,217 fuzz mutants (seeds 1–3, `--n 30`, 0 differences). Informative parts updated: 9.3, 9.5, C.1 (MET-12, TD-15).
+
 ---
 
 ## 2. Scope and core data model
@@ -307,6 +317,8 @@ Rules:
 | `calibration.applied` | boolean | A calibration step changed the probabilities after the decoder. Default `false` |
 | `data.derived` | boolean | The stream holds only data derived from neural signals, no raw samples. SHOULD be `true` |
 | `consent.ref` | non-empty string | Opaque reference to a consent record kept elsewhere |
+| `data.licence` | non-empty string | The licence of the recorded data that the stream was made from: an SPDX licence id (for example `CC0-1.0`, `CC-BY-4.0`, `CC-BY-NC-4.0`) or a `LicenseRef-` id. See MET-12 |
+| `data.research_only` | boolean | `true` if the stream may be used for research only (its data licence, or the licence of another input that made it, does not allow commercial use or is unknown). See MET-12 |
 | `emg.placement` | non-empty string | Open list (MET-8). Registered: `wrist`, `forearm`, `face`, `neck`. Where the surface EMG electrodes are on the body |
 | `emg.derivation` | non-empty string | Open list (MET-8). Registered: `bipolar` (also called differential), `monopolar` |
 | `meg.sensor_types` | list of non-empty strings | Open list (MET-8). Registered: `magnetometer`, `planar_gradiometer`, `axial_gradiometer`. The sensor kinds that the decoder used; an OPM sensor is a magnetometer |
@@ -317,6 +329,7 @@ Rules:
 | `implant.areas` | list of non-empty strings | Brain areas of the arrays, free text (for example `precentral gyrus`, `6v`, `M1`) |
 
 - **[MET-11]** **(Added to RC4 on 2026-11-16, [FEP-0009](feps/0009-modality-semantic-conventions.md).)** **Modality keys.** A key of the namespaces `emg`, `meg` and `implant` describes the recording of `device.modality`: `emg.*` goes with `emg`; `meg.*` with `meg` or `opm-meg`; `implant.*` with `intracortical` or `ecog`. A producer SHOULD NOT write the keys of another modality. All modality keys are optional and Development. A list key (`meg.sensor_types`, `implant.features`, `implant.areas`) is a JSON array of non-empty strings (MET-7 for each item). *(SC-1. The keys come from the reference adapters, the producer evidence that RC4 asked for: emg2qwerty, KT-sEMG and Toronto sEMG (`emg`); SpanishBCBL MEG (`meg`); Willett handwriting and Brain-to-Text '25 (`implant`), checked against NLB MC_RTT. The validators check the types (NTS-META-TYPES). Amendment 3 (2026-11-17): the modality match is the advisory check NTS-MODALITY-MATCH of all three validators; `meg.*` goes with `meg` and `opm-meg`, and every modality key gets the warning on `device.modality = other`. Without `device.modality` (or with a value of a newer minor version) the check does not apply.)*
+- **[MET-12]** **(Added to RC4 on 2026-11-17, amendment 6, [FEP-0010](feps/0010-data-licence-keys.md).)** **Data licence.** A producer that knows the licence of the recorded data SHOULD write `data.licence` (an SPDX licence id; a licence that SPDX does not list uses a `LicenseRef-` id) and `data.research_only`. `data.research_only` MUST be `true` when the data licence does not allow commercial use (for example any `CC-BY-NC-*` licence) or when the producer knows that another input that made the stream (for example the training data of the decoder) does not allow it. A producer MAY set it `true` for other reasons; it MUST NOT set it `false` against its licence. A consumer that finds `data.research_only` absent reads the licence alone; with neither key the licence is unknown (not "free to use"). Both keys are information for a person or a policy, not legal advice. *(Gap 47, roadmap P5-13. The validators check the types (NTS-META-TYPES); the agreement of the two keys is content and is not checked, like MET-6. Evidence: the reference adapters emg2qwerty, KT-sEMG, Toronto sEMG, Willett handwriting, SpanishBCBL MEG and Brain-to-Text '25, and the benchmark tracks.)*
 
 *Informative.* The table is a copy of the registry (MET-10); [registry.md](semconv/registry.md) adds the validator, the requirement level per conformance level and the stability of each key. Older reference producers used flat keys (`subject`, `session`). These are not conventions. A 1.0 producer uses `subject.id` and `session.id`.
 
@@ -541,6 +554,7 @@ Other keys are allowed (for example `attempt`, the LSL record `lsl`, the WebSock
 | `ref_unit`, `outcome`, `source` | integer, string, string | `feedback` | The `intent_feedback` that caused the decision |
 | `score_semantics` | string | intent routes | The semantics of the input scores (INT-S2) |
 | `sha256`, `hypothesis_sha256` | string (64 lowercase hex) | event routes | SHA-256 of the input event (canonical JSON) |
+| `research_only` | boolean | the input or the lineage declares a licence | `true` if the decision depends on research-only data (TD-15) |
 
 #### 6.1.2 `declaration` keys (recommended)
 | Key | Type | Meaning |
@@ -556,6 +570,7 @@ Other keys are allowed (for example `attempt`, the LSL record `lsl`, the WebSock
 - **[TD-F2]** `shown`, if present, MUST be a list of strings. `set_size`, `seq` and `utterance` MUST be integers ≥ 0 (GEN-5, GEN-10). `guard_risk` MUST be in [0, 1] or null. `session` MUST be a string. `config_id` MUST be a string or null. `input` MUST be an object. `declaration` MUST be an object *(new in RC3, Q-4)*. `latency_s` MUST be a number ≥ 0. `reason` MUST be a string *(RC4, G-12)*.
 - **[TD-F3]** `spec_version`, if present, MUST be `"0.1"` or `"1.<minor>"` (11.2).
 - **[TD-13]** **(New in RC3.)** A trust layer SHOULD write the keys of 6.1.1 and 6.1.2 with the types given there. They are audit data. A consumer MUST NOT base an action on them, and MUST ignore keys that it does not know. *(Resolution of Q-4. The validators check only that both are objects, TD-F2.)*
+- **[TD-15]** **(Amendment 6, [FEP-0010](feps/0010-data-licence-keys.md).)** A trust layer that knows the licence of its input SHOULD write `input.research_only` (6.1.1) on each decision: `true` if the input stream declares research-only data (`data.research_only = true`, or a `data.licence` that does not allow commercial use, MET-12) or if the layer's own provenance lineage (its decoder, language model or calibration data, 6.5) is research only; else `false`. Without a licence on either side it SHOULD leave the key out (unknown). Like every `input` key it is audit data (TD-13): a consumer MUST NOT change a decision because of it. A product that must not use research-only outputs reads it as a policy input outside the decision path.
 
 ### 6.3 Semantic rules (all profiles unless a profile says otherwise)
 - **[TD-1]** **A consumer MUST NOT act on (commit, send, actuate) a `trust_decision` with `is_final = false`.**
@@ -976,7 +991,7 @@ The levels are cumulative and come from the conformance suite. They are **stream
 ### 9.3 Profiles of the suite
 | Suite profile | Covers | Vectors | Python | TypeScript | Rust |
 |---|---|---|---|---|---|
-| `v0.1` | Sections 3, 4.1–4.6, 4.8, 5, 8.1 (incl. 1.x header versions V53–V61, HDR-12 V62–V65, unknown enumeration values V66–V68; RC4: optional field types V69–V82; amendments: modality keys V83–V87, dense and sparse keys V88–V92, MET-11 warning V93–V96; amendment 4: TD-4 V97) | 97 | yes | yes | yes |
+| `v0.1` | Sections 3, 4.1–4.6, 4.8, 5, 8.1 (incl. 1.x header versions V53–V61, HDR-12 V62–V65, unknown enumeration values V66–V68; RC4: optional field types V69–V82; amendments: modality keys V83–V87, dense and sparse keys V88–V92, MET-11 warning V93–V96; amendment 4: TD-4 V97; amendment 6: data licence keys V98–V100) | 100 | yes | yes | yes |
 | `fep-0001` | 4.3, 4.7, 6 (incl. TD-9 for 1.x, TD-F2 types, TD-F3, TD-12 advisory; RC3: VER-8 F57–F59, GEN-10 F60–F61, `declaration` F62; RC4: F63–F66) | 66 | yes | yes | yes |
 | `fep-0002` | 8.2 (amendment 5: LSL-C7 L36, LSL-C8 L37) | 37 | yes | yes (structural) | yes (structural) |
 | streaming cases (`conformance/streaming/`) | TD-14 (amendment 5): outcome per event of an event-by-event validator | 6 | yes | yes | yes |
@@ -999,7 +1014,7 @@ A claim names the class, the level, the profiles and the bindings, and the RC: f
 *Amendment 3.* A claim of an implementation level (9.6) names that level and the kit version, for example "Consumer, NTS 1.0 RC4 (draft), NTS Trust-ready, profiles text + intent + control, bindings nts-lsl/0.1 + nts-ws/0.1, kit 0.2.0". The stream level of 9.2 ("level provenance") stays the claim about one stream.
 
 ### 9.5 Parity of the reference SDKs
-The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (97 + 66 + 37 + 51 + 44 + 53 = 348 since amendment 5 of 2026-11-17; amendment 4: 346; amendment 3: 345; amendment 2: 341; amendment 1: 336; RC4: 330), the same advisory warnings and stream level where a vector or kit entry pins them (`expected.warnings`, `expected.level`; amendment 3), and the same verdict on the 36 kit entries (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`; amendment 3 run: seeds 1–3, `--n 30`, 27,767 mutants, 0 differences; amendment 2 run: 27,497 mutants; RC4 run: 26,687 mutants; RC3 run: 24,347 mutants). Gap G-1 (control profile in Python only) is closed.
+The three SDKs give the same verdict as the Python reference on every vector of `v0.1` … `fep-0005` (100 + 66 + 37 + 51 + 44 + 53 = 351 since amendment 6 of 2026-11-17; amendment 5: 348; amendment 4: 346; amendment 3: 345; amendment 2: 341; amendment 1: 336; RC4: 330), the same advisory warnings and stream level where a vector or kit entry pins them (`expected.warnings`, `expected.level`; amendment 3), and the same verdict on the 36 kit entries (`sdk/typescript/scripts/cross-check.mjs --rust`) and on the fuzz mutants of those vectors (`fuzz-parity.mjs`; amendment 6 run: seeds 1–3, `--n 30`, 28,217 mutants, 0 differences; amendment 3 run: seeds 1–3, `--n 30`, 27,767 mutants, 0 differences; amendment 2 run: 27,497 mutants; RC4 run: 26,687 mutants; RC3 run: 24,347 mutants). Gap G-1 (control profile in Python only) is closed.
 
 ### 9.6 Implementation levels: NTS Core, NTS Full, NTS Trust-ready (amendment 3)
 The stream levels of 9.2 judge one stream. The implementation levels judge a program: a producer (it writes streams or decision logs) or a consumer (a reader, a validator or a trust layer). The test material is the conformance kit ([`conformance/kit/`](conformance/kit/)) and the tool `nts-conform`. A generated, informative copy of this section is [`conformance/levels.json`](conformance/levels.json) (`nts-conform levels`).
@@ -1418,6 +1433,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | MET-8, MET-9 | MUST NOT / — | registry (`semconv.py --check`) | — | P (definitions; open lists are not checked) |
 | MET-10 | — | CI job `semconv` (`tools/semconv/semconv.py --check`) | (all accept vectors: meta values pass the registry validators) | T (tooling) |
 | MET-11 | SHOULD NOT | NTS-META-TYPES (types of the modality keys), advisory (NTS-MODALITY-MATCH; amendment 3) | V83, V84, V85, V95 / V86, V87 (types); V93, V94, V96, K32 (warning) | T (types); P (advisory warning) |
+| MET-12 | SHOULD / MUST | NTS-META-TYPES (types of `data.licence`, `data.research_only`; amendment 6) | V98 / V99, V100 | T (types); the agreement of the two keys is not checked (content) |
 | FRM-1 | MUST | NTS-V-MATCH | V46 | T |
 | FRM-2 | — | NTS-JSONL-FRAME | V42, V88 (accept); V89 … V92 (reject: sparse keys of a wrong type on a dense frame, amendment 2) | T |
 | FRM-3 | MUST | NTS-NORM, NTS-SPARSE | V08, V23, V24, V43, F40 | T |
@@ -1476,6 +1492,7 @@ Each normative rule id, its keyword, and the check ids and vectors that test it.
 | TD-12 (1.x producer) | SHOULD NOT | FEP1-TD-SHOWN (advisory), SDK `DecisionTracker` warning | F55 (warns), F56 (0.1: no warning) | T (accept with warning) |
 | TD-12 (consumer) | MUST NOT | consumer `offered` lists, SDK `DecisionTracker.offered` | F55, F56 | T (accept) |
 | TD-13 | SHOULD / MUST NOT | — | — | G-10 (audit data; only the object type is checked, TD-F2) |
+| TD-15 | SHOULD / MUST NOT | — (audit data, TD-13); reference tests of the trust layers (`tests/test_licence_keys.py`) | — | G-10 (like TD-13) |
 | PRV-1 … PRV-3 | SHOULD / MUST | — | — | G-10 |
 | PRF-1 | MAY | — | I02, D04, C02, E02 | T (accept) |
 | PRF-2 | MUST NOT | — | — | G-6 |

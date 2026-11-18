@@ -32,8 +32,9 @@ Licence
 -------
 The source data are CC BY-NC 4.0 (research only; see
 :data:`fidetype.data.spanishbcbl.LICENCE_NOTICE`). The streams carry
-``spanishbcbl.licence`` so a consumer can see that the output is
-derived from non-commercial data. Fidetype ships no such streams or weights.
+``data.licence = "CC-BY-NC-4.0"`` and ``data.research_only = true``
+(FEP-0010; before 2026-11-17 the custom key ``spanishbcbl.licence``) so a
+consumer can see that the output is derived from non-commercial data. Fidetype ships no such streams or weights.
 """
 
 from __future__ import annotations
@@ -50,6 +51,8 @@ from fidetype.streams.vocab import BLANK_ID, VOCAB
 SOURCE = "spanishbcbl-convctc"
 ADAPTER_NAME = "fidetype.adapters.spanishbcbl_meg"
 VOCAB_ID = "char.b2q-28"
+#: Licence of the SpanishBCBL data (:data:`fidetype.data.spanishbcbl.LICENCE`; the data module is not imported here).
+_SPANISHBCBL_LICENCE = "CC-BY-NC-4.0"
 N_MEG_CHANNELS = 306
 
 
@@ -63,6 +66,13 @@ def stream_latency(frame_period_s: float, lookahead_frames: int | None, conforme
     if lookahead_frames is None:
         return None
     return float(lookahead_frames * conformer_layers * frame_period_s)
+
+
+def _licence_meta(licence: str) -> dict[str, Any]:
+    """``data.licence`` and ``data.research_only`` of the dataset (FEP-0010, NTS 1.0 RC4 amendment 6)."""
+    from fidetype.trust.licence import licence_meta
+
+    return licence_meta(licence)
 
 
 def stream_meta(
@@ -103,6 +113,7 @@ def stream_meta(
         "language": "es",
         "calibration.applied": False,
         "data.derived": True,
+        **_licence_meta(_SPANISHBCBL_LICENCE),  # data.licence, data.research_only: FEP-0010 (MET-12)
         "fidetype.vocab_id": VOCAB_ID,
         "spanishbcbl.subject": str(subject),
         "spanishbcbl.session": str(session),
@@ -110,7 +121,6 @@ def stream_meta(
         "spanishbcbl.checkpoint": checkpoint,
         "spanishbcbl.lookahead_frames": lookahead_frames,
         "spanishbcbl.model": model,
-        "spanishbcbl.licence": "CC-BY-NC-4.0",
     }
     if latency is not None:
         m["decoder.lookahead_s"] = float(latency)

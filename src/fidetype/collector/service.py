@@ -159,6 +159,8 @@ class Collector:
         self._receivers: dict[str, R.Receiver] = {}
         self._exporters: dict[str, E.Exporter] = {}
         self.pipelines: list[Pipeline] = []
+        #: P5-16: automatic signed anchors of the trust ledgers (written on stop and every N entries / T s).
+        self._anchors: list[Any] = []
         self._health: ThreadingHTTPServer | None = None
         self._lock = threading.Lock()
         self._build()
@@ -243,6 +245,24 @@ class Collector:
                         record_lineage_spec(ledger, self.config.path(lo["lineage"]))
                     except (ValueError, KeyError, OSError) as e:
                         raise ConfigError(f"processors.{c.name}.ledger.lineage: {e}") from None
+                if "anchor" in lo:  # P5-16: signed anchors on stop and every N entries / T seconds
+                    from fidetype.trust import anchor as A
+
+                    ao = lo["anchor"]
+                    where = f"processors.{c.name}.ledger.anchor"
+                    if not A.signing_available():
+                        raise ConfigError(f'{where}: signed anchors need the package cryptography: '
+                                          'pip install "fidetype[sign]"')
+                    try:
+                        pk = A.load_private_key(key_env=ao.get("key_env"),
+                                                key_file=self.config.path(ao["key_file"]) if "key_file" in ao else None)
+                        auto = A.AutoAnchor(ledger, pk, self.config.path(ao["dir"]), every_n=ao.get("every_n"),
+                                            every_s=ao.get("every_s"), on_stop=ao.get("on_stop", True),
+                                            keep=ao.get("keep"))
+                    except ValueError as e:
+                        raise ConfigError(f"{where}: {e}") from None
+                    self._anchors.append(auto)
+                    self.log(f"{where}: signed anchors to {ao['dir']} (key id {auto.key_id})")
             try:
                 return P.TrustProcessor(c.name, self.log, cfg_path, decoder=o.get("decoder", "none"),
                                         max_attempts=o.get("max_attempts", 2), route=o.get("route", "auto"),
@@ -358,7 +378,10 @@ class Collector:
 
     def step(self, timeout: float = 0.05) -> int:
         with self._lock:
-            return sum(p.step(timeout) for p in self.pipelines if not p.done)
+            n = sum(p.step(timeout) for p in self.pipelines if not p.done)
+            for a in self._anchors:
+                a.tick()
+            return n
 
     @property
     def done(self) -> bool:
@@ -374,6 +397,8 @@ class Collector:
         with self._lock:
             for p in self.pipelines:
                 p.finish()
+            for a in self._anchors:  # P5-16: the last signed anchor covers every entry of this run
+                a.close()
         for rec in self._receivers.values():
             rec.stop()
         for ex in self._exporters.values():
@@ -450,6 +475,8 @@ class Collector:
                 "exporters": {x.name: x.stats() for x in p.exporters},
             } for p in self.pipelines},
         }
+        if self._anchors:
+            out["anchors"] = [a.stats() for a in self._anchors]
         lat = self.latency()
         for name, s in lat.items():
             out["pipelines"][name]["latency_ms"] = s

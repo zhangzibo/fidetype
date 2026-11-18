@@ -4,7 +4,7 @@
 
 This page lists the convention keys of NeuralTextStream 1.0 RC4 (draft) ([spec](../nts-1.0-rc4.md)). The source of truth is the YAML in this folder: [manifest.yaml](manifest.yaml) and [attributes/](attributes/). It is normative for the key names, types, value lists and validators; the key tables of the spec are informative copies (spec 3.4, resolution SC-7). The check `python tools/semconv/semconv.py --check` makes the YAML, the spec tables, the proto files, the JSON Schema and the three SDK validators agree. How to use it: [docs/semconv.md](../../docs/semconv.md).
 
-Counts: 51 keys (32 `meta` keys), 3 containers, 15 reserved and 2 planned namespaces, 1 open question(s), 8 resolved question(s).
+Counts: 54 keys (34 `meta` keys), 3 containers, 15 reserved and 2 planned namespaces, 1 open question(s), 8 resolved question(s).
 
 ## How to read the tables
 
@@ -65,7 +65,7 @@ Spec [12.5](../nts-1.0-rc4.md#125-semantic-convention-namespaces-policy-spec-for
 | `session.*` | reserved | `session.id` |
 | `subject.*` | reserved | `subject.id` |
 | `calibration.*` | reserved | `calibration.applied` |
-| `data.*` | reserved | `data.derived` |
+| `data.*` | reserved | `data.derived`, `data.licence`, `data.research_only` |
 | `consent.*` | reserved | `consent.ref` |
 | `language` | reserved | `language` |
 | `emg.*` | reserved | `emg.placement`, `emg.derivation` |
@@ -80,7 +80,7 @@ The recording device. Container: header `meta`. Spec [3.4](../nts-1.0-rc4.md#34-
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 45 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
+| `device.modality` | enum: `emg`, `eeg`, `meg`, `opm-meg`, `ecog`, `intracortical`, `fnirs`, `other` | - | trust-ready: required | development (proposed stable) | `enum` | The signal modality of the recording device. Closed list (SC-4). Unknown value of a newer minor version: read as `other`. Used in 46 accept vector(s). | MET-1, VER-8<br>checks: NTS-META-TYPES, TR-MODALITY |
 | `device.vendor` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The maker of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.model` | `string` | - | optional | development (proposed stable) | `non_empty_string` | The model of the recording device. | MET-1<br>checks: NTS-META-TYPES |
 | `device.channel_count` | `int` | - | optional | development (proposed stable) | `integer_min_1` | The number of input channels that the decoder used (integer >= 1). | MET-1<br>checks: NTS-META-TYPES |
@@ -93,9 +93,9 @@ The decoder (model) that made the frames or events. Container: header `meta`. Sp
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 45 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 45 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
-| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 45 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
+| `decoder.name` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The name of the decoder or model. Used in 46 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.version` | `string` | - | provenance: required | development (proposed stable) | `non_empty_string` | The version of the decoder or model. Used in 46 accept vector(s). | MET-1, PRV-1<br>checks: NTS-META-TYPES, PV-DECODER |
+| `decoder.causal` | `boolean` | - | trust-ready: required | development (proposed stable) | `boolean` | true if frame t uses no signal after frame_times[t] + latency (an absent latency reads as 0). A full-sequence (offline) decoder sets false and omits latency. Used in 46 accept vector(s). | MET-1, MET-5<br>checks: NTS-META-TYPES, TR-CAUSAL, TR-OFFLINE-LATENCY |
 | `decoder.lookahead_s` | `double` | s | optional | development (proposed stable) | `finite_number_min_0` | The algorithmic lookahead of the decoder (number >= 0). It equals the header field latency when both are present. | MET-1, MET-4, TIM-1<br>checks: NTS-META-LOOKAHEAD, NTS-META-TYPES |
 | `decoder.calibration_id` | `string` | - | provenance: conditionally required (calibration.applied is true) | development (proposed stable) | `non_empty_string` | The identifier of the calibration that was applied. | MET-1<br>checks: NTS-META-TYPES, PV-CALIB-ID |
 | `decoder.calibration_method` | `string` | - | trust-ready: conditionally required (calibration.applied is true; the value is then not none) | development (proposed stable) | `non_empty_string` | The calibration method. Open list (SC-4). Registered values: `temperature`, `platt`, `isotonic`, `none`. Other values are valid. | MET-1, MET-6<br>checks: NTS-META-TYPES, TR-CALIB |
@@ -164,7 +164,9 @@ The kind of data in the stream. Container: header `meta`. Spec [3.4](../nts-1.0-
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 45 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
+| `data.derived` | `boolean` | - | trust-ready: required (the value is true) | development (proposed stable) | `boolean` | true if the stream holds only data derived from neural signals, no raw samples. SHOULD be true. Used in 46 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-DERIVED |
+| `data.licence` | `string` | - | provenance: recommended (the producer knows the licence of the data) | development (proposed stable) | `non_empty_string` | The licence of the recorded data that the stream was made from: an SPDX licence id, or a LicenseRef- id for a licence that SPDX does not list. Not legal advice; a consumer reads it with data.research_only. Examples: `CC0-1.0`, `CC-BY-4.0`, `CC-BY-NC-4.0`, `CC-BY-NC-SA-4.0`, `LicenseRef-fidetype-consented`. Used in 1 accept vector(s). | MET-1, MET-12<br>checks: NTS-META-TYPES |
+| `data.research_only` | `boolean` | - | provenance: recommended (data.licence is present) | development (proposed stable) | `boolean` | true if the stream may be used for research only: the data licence, or the licence of another input that made the stream (for example the training data of the decoder), does not allow commercial use or is unknown. MUST be true when data.licence does not allow commercial use (MET-12). Used in 1 accept vector(s). | MET-1, MET-12<br>checks: NTS-META-TYPES |
 
 ## `consent`
 
@@ -180,7 +182,7 @@ The language of the decoded text. Container: header `meta`. Spec [3.4](../nts-1.
 
 | Key | Type | Unit | Requirement | Stability | Validator | Description | Rules |
 |---|---|---|---|---|---|---|---|
-| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 45 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
+| `language` | `string` | - | trust-ready: conditionally required (vocab_type is char, word or phoneme) | development (proposed stable) | `bcp47_tag` | The BCP 47 tag of the decoded text. Used in 46 accept vector(s). | MET-1<br>checks: NTS-META-TYPES, TR-LANGUAGE |
 
 ## `emg`
 
@@ -231,6 +233,7 @@ Reference to the input of a trust decision. Container: `trust_decision.input`. S
 | `score_semantics` | `string` | - | trust-layer: recommended (intent routes) | development (proposed development) | `none` | The semantics of the input scores. | TD-13, INT-S2 |
 | `sha256` | `string` | - | trust-layer: recommended (event routes) | development (proposed development) | `none` | The SHA-256 of the input event (canonical JSON), 64 lowercase hex characters. | TD-13 |
 | `hypothesis_sha256` | `string` | - | trust-layer: recommended (event routes) | development (proposed development) | `none` | The SHA-256 of the input hypothesis (canonical JSON), 64 lowercase hex characters. | TD-13 |
+| `research_only` | `boolean` | - | trust-layer: recommended (the input or the lineage declares a licence) | development (proposed development) | `none` | true if the decision depends on research-only data: the input stream declares it (data.licence, data.research_only) or the layer's provenance lineage is research only (FEP-0010). | TD-13, TD-15 |
 
 ## `trust_decision.declaration`
 

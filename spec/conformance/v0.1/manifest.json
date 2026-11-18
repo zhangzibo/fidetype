@@ -1078,6 +1078,39 @@
    "clause": "1.0 RC4 6.1 (TD-4)",
    "description": "A trust_decision event inside an input stream (it belongs in a decision log)",
    "failing_check": "NTS-TD-INPUT"
+  },
+  {
+   "id": "V98",
+   "file": "v98-data-licence-keys.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-1, MET-12; FEP-0010)",
+   "description": "Data licence keys with their types: data.licence \"CC-BY-NC-4.0\" and data.research_only true",
+   "expected": {
+    "n_frames": 2,
+    "warnings": []
+   }
+  },
+  {
+   "id": "V99",
+   "file": "v99-data-licence-empty.jsonl",
+   "format": "jsonl",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-1, MET-7; FEP-0010)",
+   "description": "data.licence is \"\" (type non-empty string)",
+   "failing_check": "NTS-META-TYPES"
+  },
+  {
+   "id": "V100",
+   "file": "v100-data-research-only-string.npz",
+   "format": "npz",
+   "expect": "reject",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-1; FEP-0010)",
+   "description": "data.research_only is the string \"yes\" (type boolean)",
+   "failing_check": "NTS-META-TYPES"
   }
  ]
 }

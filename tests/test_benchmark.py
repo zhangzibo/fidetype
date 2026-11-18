@@ -301,7 +301,10 @@ def test_spanishbcbl_is_marked_non_commercial():
     assert "research" in S.licence_notice()
     import inspect
 
-    assert "spanishbcbl.licence" in inspect.getsource(stream_meta)
+    assert "_SPANISHBCBL_LICENCE" in inspect.getsource(stream_meta)
+    from fidetype.adapters import spanishbcbl_meg as M
+
+    assert M._SPANISHBCBL_LICENCE == S.LICENCE
 
 
 def test_no_data_or_weights_in_package_or_benchmark():

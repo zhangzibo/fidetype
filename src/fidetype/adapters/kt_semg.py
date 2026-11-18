@@ -453,6 +453,13 @@ def opaque_stream_id(*parts: Any) -> str:
     return hashlib.sha256("/".join(str(p) for p in parts).encode()).hexdigest()[:32]
 
 
+def _licence_meta(licence: str) -> dict[str, Any]:
+    """``data.licence`` and ``data.research_only`` of the dataset (FEP-0010, NTS 1.0 RC4 amendment 6)."""
+    from fidetype.trust.licence import licence_meta
+
+    return licence_meta(licence)
+
+
 def stream_meta(
     run_index: int | None = None,
     segment_index: int | None = None,
@@ -488,6 +495,7 @@ def stream_meta(
         "calibration.applied": False,
         "language": "en",
         "data.derived": True,
+        **_licence_meta(LICENCE),  # data.licence, data.research_only: FEP-0010 (MET-12)
         "fidetype.vocab_id": KEY_VOCAB_ID,
         "fidetype.timing": "oracle-keystroke: one frame per key press; key times from the key log, seconds from "
                            "the first EMG sample (UTC offset of the start time inferred)",

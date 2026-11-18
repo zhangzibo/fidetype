@@ -513,6 +513,8 @@ class _CSession:
     ended: bool = False
     stale_reported: bool = False
     stats: dict[str, int] = field(default_factory=lambda: {s: 0 for s in STATES} | {"ticks": 0, "clicks_blocked": 0})
+    #: FEP-0010: research_only of the stream's licence keys (None: the header declares none).
+    research_only: bool | None = None
 
 
 class ControlTrustLayer:
@@ -587,6 +589,10 @@ class ControlTrustLayer:
 
     def _header(self, s: _CSession, ev: dict[str, Any], t0: float) -> list[Any]:
         out: list[Any] = []
+        from fidetype.trust.licence import stream_licence
+
+        sl = stream_licence(ev.get("meta") if isinstance(ev.get("meta"), dict) else None)
+        s.research_only = None if sl is None else bool(sl["research_only"])
         if s.engaged:
             out = self._stop(s, s.last_t, ("disengaged",), t0)
         d = ev.get(DECLARATION_KEY)
@@ -737,6 +743,8 @@ class ControlTrustLayer:
         vel = tuple(float(x) for x in v) if v is not None and state in ("act", "attenuate") else (0.0,) * dims
         s.stats[state] += 1
         rate = s.decl.rate_hz if s.decl is not None else 50.0
+        if s.research_only is not None and ref is not None:  # FEP-0010 (TD-15): input.research_only
+            ref = {**ref, "research_only": s.research_only}
         prov = {"config_id": self.config.config_id, "input": ref, "latency_s": round(max(0.0, self.clock() - t0), 6)}
         return ControlDecision(s.id, self._alloc(s)(), int(tick), None if t is None else float(t), state, vel,
                                None if raw is None else tuple(float(x) for x in raw), gain if state in ("act", "attenuate") else 0.0,

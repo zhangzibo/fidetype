@@ -1054,6 +1054,11 @@ class IntentTrustLayer:
             prov["vocab_id"] = self.vocab.vocab_id
         if ref is not None:
             prov["input"] = ref
+            from fidetype.trust.licence import stream_licence
+
+            sl = stream_licence((s.header or {}).get("meta"))
+            if sl is not None:  # FEP-0010 (TD-15): the audit key input.research_only
+                prov["input"] = {**ref, "research_only": bool(sl["research_only"])}
         d = IntentDecision(s.id, alloc(), s.unit, final, provenance=prov, **kw)
         if final:
             s.offers = {}  # a feedback may answer only the latest final OFFER

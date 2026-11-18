@@ -97,7 +97,7 @@ def test_accept_everything_consumer_fails():
 
 def test_frame_core_validator_agrees_except_meta_rules():
     """NeuralTextStream.from_npz covers the frame core only (spec 7)."""
-    meta_only = {"V30", "V31", "V32", "V33", "V86", "V87"}  # 4.2 types, lookahead, 5.3 leakage: beyond validate()
+    meta_only = {"V30", "V31", "V32", "V33", "V86", "V87", "V100"}  # 4.2 types, lookahead, 5.3 leakage: beyond validate()
     for v in MANIFEST["vectors"]:
         if v["format"] != "npz":
             continue

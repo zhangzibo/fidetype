@@ -3,7 +3,7 @@
 # This file and the files in attributes/ are the machine-readable form of the
 # key conventions of NTS 1.0 RC4 (spec/nts-1.0-rc4.md): the `meta` keys of
 # section 3.4, the trust_decision `input` keys of 6.1.1 and the trust_decision
-# `declaration` keys of 6.1.2, and the modality keys of FEP-0009 (emg, meg, implant). Since RC4 this registry is NORMATIVE for the key
+# `declaration` keys of 6.1.2, the modality keys of FEP-0009 (emg, meg, implant) and the data licence keys of FEP-0010. Since RC4 this registry is NORMATIVE for the key
 # names, types, value lists and validators; the key tables of the spec are
 # informative copies, and the check below keeps them equal (resolution SC-7).
 # The rules about the keys (MET-1 ... MET-7, TD-13) stay in the spec text.

@@ -30,6 +30,11 @@ RFC 3161 timestamp token for the anchor file from a timestamp authority (for exa
 ``openssl ts -query -data anchor.json -sha256 -cert``) and check it with ``openssl ts -verify``. See
 ``docs/provenance-and-privacy.md``.
 
+Automatic anchors (P5-16): :class:`AutoAnchor` listens to a ledger and writes a signed anchor file
+``anchor-<seq>.json`` into a separate directory every N entries, every T seconds (when there are new entries)
+and at stop. The Collector ``trust`` processor option ``ledger.anchor`` uses it. ``verify --anchor <directory>
+--allow-growth --public-key ...`` checks the newest anchor of the directory.
+
 Needs the optional package ``cryptography`` (``pip install "fidetype[sign]"``) for keys and signatures.
 An unsigned anchor works without it.
 """
@@ -231,3 +236,189 @@ def verify_anchored(
             errors.append(f"{len(entries) - s - 1} entries after the anchored head (pass allow_growth to accept "
                           "entries added after the anchor)")
     return VerifyResult(not errors, len(entries), errors, res.head_hash, res.head_seq)
+
+
+# ---------------------------------------------------------------------------
+# Automatic signed anchors (P5-16)
+# ---------------------------------------------------------------------------
+
+#: File name of an automatic anchor: ``anchor-<seq, 10 digits>.json`` (the newest has the highest seq).
+AUTO_ANCHOR_PREFIX = "anchor-"
+
+
+def load_private_key(*, key_env: str | None = None, key_file: str | os.PathLike[str] | None = None) -> Any:
+    """Load an Ed25519 private key from an environment variable (PEM text) or a PEM file. Exactly one source.
+
+    The error messages name the variable or the file, never the key.
+    """
+    if (key_env is None) == (key_file is None):
+        raise ValueError("give exactly one of key_env (an environment variable) and key_file (a PEM file)")
+    if key_env is not None:
+        pem = os.environ.get(key_env, "")
+        if not pem:
+            raise ValueError(f"environment variable {key_env!r} that should hold the anchor signing key is empty "
+                             "or not set")
+        data = pem.encode("utf-8")
+    else:
+        p = Path(key_file)  # type: ignore[arg-type]
+        if not p.is_file():
+            raise ValueError(f"anchor signing key file not found: {p}")
+        data = p.read_bytes()
+    try:
+        return _private(data)
+    except SigningUnavailable:
+        raise
+    except (ValueError, TypeError):
+        src = f"environment variable {key_env!r}" if key_env is not None else f"file {key_file}"
+        raise ValueError(f"{src}: not an Ed25519 private key in PEM form") from None
+
+
+def anchor_files(directory: str | os.PathLike[str], ledger_id: str | None = None) -> list[Path]:
+    """The automatic anchor files of ``directory``, oldest first (by anchored ``seq``).
+
+    ``ledger_id``: keep only the anchors of that ledger. A file that is not an anchor is skipped.
+    """
+    import json
+
+    d = Path(directory)
+    if not d.is_dir():
+        return []
+    out: list[tuple[int, str, Path]] = []
+    for p in d.glob(f"{AUTO_ANCHOR_PREFIX}*.json"):
+        try:
+            a = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if not isinstance(a, dict) or a.get("schema") != ANCHOR_SCHEMA or not isinstance(a.get("seq"), int):
+            continue
+        if ledger_id is not None and a.get("ledger_id") != ledger_id:
+            continue
+        out.append((a["seq"], p.name, p))
+    return [p for _, _, p in sorted(out)]
+
+
+def newest_anchor(path: str | os.PathLike[str], ledger_id: str | None = None) -> dict[str, Any]:
+    """Read an anchor file, or the newest automatic anchor (highest ``seq``) of a directory."""
+    import json
+
+    p = Path(path)
+    if p.is_dir():
+        files = anchor_files(p, ledger_id)
+        if not files:
+            raise ValueError(f"no anchor file ({AUTO_ANCHOR_PREFIX}*.json) in {p}")
+        p = files[-1]
+    a = json.loads(p.read_text(encoding="utf-8"))
+    if not isinstance(a, dict):
+        raise ValueError(f"{p}: an anchor must be a JSON object")
+    return a
+
+
+class AutoAnchor:
+    """Write signed anchors of a :class:`~fidetype.trust.provenance.ProvenanceLedger` by itself (P5-16).
+
+    An anchor is written after every ``every_n`` new entries, when ``every_s`` seconds have passed since the
+    last anchor and there are new entries (checked at each new entry and at each :meth:`tick`), and at
+    :meth:`close` (``on_stop``). Each anchor is a separate file ``anchor-<seq>.json`` in ``directory`` (atomic
+    write; an older anchor is never changed). ``verify --anchor <directory> --allow-growth`` checks the newest.
+
+    ``private_key``: PEM bytes / str or a key object; load it with :func:`load_private_key` (environment
+    variable or key file). The key is never written to an anchor, a log or an error message.
+    ``keep``: keep only the newest ``keep`` anchor files of this ledger (None: keep all).
+    """
+
+    def __init__(self, ledger: Any, private_key: Any, directory: str | os.PathLike[str], *,
+                 every_n: int | None = None, every_s: float | None = None, on_stop: bool = True,
+                 keep: int | None = None, clock: Any = None) -> None:
+        import time
+
+        if every_n is not None and (isinstance(every_n, bool) or not isinstance(every_n, int) or every_n < 1):
+            raise ValueError("every_n must be an integer >= 1")
+        if every_s is not None and not every_s > 0:
+            raise ValueError("every_s must be > 0")
+        if keep is not None and (isinstance(keep, bool) or not isinstance(keep, int) or keep < 1):
+            raise ValueError("keep must be an integer >= 1")
+        self.ledger = ledger
+        self._key = _private(private_key)
+        self.key_id = key_id(self._key)
+        self.directory = Path(directory)
+        self.every_n, self.every_s, self.on_stop, self.keep = every_n, every_s, on_stop, keep
+        self._clock = clock or time.monotonic
+        self._last_t = self._clock()
+        self._busy = False
+        self.closed = False
+        #: seq of the newest written anchor (None: none yet), and the number of anchors written.
+        self.last_seq: int | None = None
+        self.written = 0
+        ledger.on_append.append(self._after_append)
+
+    def __enter__(self) -> "AutoAnchor":
+        return self
+
+    def __exit__(self, *exc: Any) -> None:
+        self.close()
+
+    def __repr__(self) -> str:  # never shows the key
+        return f"AutoAnchor(key_id={self.key_id!r}, directory={str(self.directory)!r}, written={self.written})"
+
+    @property
+    def pending(self) -> int:
+        """Entries after the newest anchor."""
+        head = self.ledger.head["seq"]
+        return head + 1 if self.last_seq is None else head - self.last_seq
+
+    def _due(self) -> bool:
+        n = self.pending
+        if n <= 0:
+            return False
+        if self.every_n is not None and n >= self.every_n:
+            return True
+        return self.every_s is not None and self._clock() - self._last_t >= self.every_s
+
+    def _after_append(self, entry: Mapping[str, Any]) -> None:
+        if not self._busy and not self.closed and self._due():
+            self.write()
+
+    def tick(self) -> Path | None:
+        """Check the timer (call it from a loop). Return the written file, or None."""
+        if not self.closed and self._due():
+            return self.write()
+        return None
+
+    def write(self) -> Path | None:
+        """Sign and write the anchor of the current head now. Return the file (None: no new entry)."""
+        import json
+
+        if self.pending <= 0:
+            return None
+        self._busy = True
+        try:
+            anc = sign_anchor(make_anchor(self.ledger.entries), self._key)
+            self.directory.mkdir(parents=True, exist_ok=True)
+            p = self.directory / f"{AUTO_ANCHOR_PREFIX}{int(anc['seq']):010d}.json"
+            tmp = p.with_name(p.name + ".tmp")
+            tmp.write_text(json.dumps(anc, indent=1) + "\n", encoding="utf-8")
+            os.replace(tmp, p)
+            self.last_seq = int(anc["seq"])
+            self._last_t = self._clock()
+            self.written += 1
+            if self.keep is not None:
+                for old in anchor_files(self.directory, self.ledger.ledger_id)[:-self.keep]:
+                    old.unlink(missing_ok=True)
+            return p
+        finally:
+            self._busy = False
+
+    def close(self) -> Path | None:
+        """Write the last anchor (``on_stop``) and stop listening to the ledger."""
+        if self.closed:
+            return None
+        p = self.write() if self.on_stop else None
+        self.closed = True
+        try:
+            self.ledger.on_append.remove(self._after_append)
+        except ValueError:
+            pass
+        return p
+
+    def stats(self) -> dict[str, Any]:
+        return {"anchors_written": self.written, "last_anchor_seq": self.last_seq, "key_id": self.key_id}

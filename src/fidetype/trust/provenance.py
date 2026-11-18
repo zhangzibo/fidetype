@@ -169,7 +169,7 @@ TEXT_MODES = ("store", "hash", "omit")
 MAX_NUMERIC_LIST = 64
 #: Stream ``meta`` keys copied into a context (spec section 4.2 namespaces).
 META_PREFIXES = ("device.", "decoder.", "lm.", "calibration.", "adapter.", "fidetype.vocab_id")
-META_KEYS = ("data.derived", "consent.ref", "language", "user.personalized")
+META_KEYS = ("data.derived", "data.licence", "data.research_only", "consent.ref", "language", "user.personalized")
 ID_KEYS = ("subject.id", "session.id")
 
 TextMode = Literal["store", "hash", "omit"]
@@ -460,6 +460,8 @@ class ProvenanceLedger:
         self._proposals: dict[str, dict] = {}
         self._decided: set[str] = set()
         self._chain_head: dict[str, str | None] = {}
+        #: P5-16: callables run after each new entry (for example :class:`fidetype.trust.anchor.AutoAnchor`).
+        self.on_append: list[Callable[[dict], None]] = []
         if self.path is not None and self.path.exists() and self.path.stat().st_size > 0:
             entries = read_entries(self.path)
             res = verify(entries)
@@ -530,6 +532,8 @@ class ProvenanceLedger:
                 f.flush()
                 if self.fsync:
                     os.fsync(f.fileno())
+        for fn in list(self.on_append):
+            fn(entry)
         return entry
 
     def _index(self, e: dict) -> None:
@@ -606,16 +610,36 @@ class ProvenanceLedger:
             ctx["stream_meta"] = meta_subset(ctx["stream_meta"])
         if ctx.get("lineage") is None and self.default_lineage is not None:
             ctx["lineage"] = list(self.default_lineage)
+        # FEP-0010: a stream that declares data.licence / data.research_only becomes a source of the context.
+        sm = ctx.get("stream_meta")
+        if isinstance(sm, dict) and "stream_sources" not in ctx:
+            from fidetype.trust.licence import META_LICENCE, META_RESEARCH_ONLY, UNKNOWN, stream_licence
+
+            if stream_licence(sm) is not None:
+                lt = sm.get(META_LICENCE)
+                ctx["stream_sources"] = [self.record_source(
+                    str(sm.get("adapter.name") or "stream data"), lt if isinstance(lt, str) and lt else UNKNOWN,
+                    research_only=sm.get(META_RESEARCH_ONLY) is True, details={"from": "stream meta"})]
         lic = None
+        parts: list[dict] = []
         if ctx.get("lineage") is not None:
             ids = sorted(set(str(a) for a in ctx["lineage"]))
             unknown = [a for a in ids if a not in self._artifacts]
             if unknown:
                 raise ValueError(f"unknown artifact id(s) in lineage: {unknown} (call record_artifact first)")
             ctx["lineage"] = ids
+            parts += [self._artifacts[a] for a in ids]
+        if ctx.get("stream_sources") is not None:
+            sids = sorted(set(str(x) for x in ctx["stream_sources"]))
+            unknown = [x for x in sids if x not in self._sources]
+            if unknown:
+                raise ValueError(f"unknown source id(s) in stream_sources: {unknown} (call record_source first)")
+            ctx["stream_sources"] = sids
+            parts += [self._sources[x] for x in sids]
+        if ctx.get("lineage") is not None or ctx.get("stream_sources") is not None:
             from fidetype.trust.licence import combine
 
-            lic = combine(self._artifacts[a] for a in ids)
+            lic = combine(parts)
         cid = "ctx-" + content_id(ctx)[:24]
         if cid not in self._contexts:
             body: dict[str, Any] = {"context_id": cid, "context": ctx}
@@ -638,8 +662,12 @@ class ProvenanceLedger:
         consent: Mapping[str, Any] | None = None,
         track: str | None = None,
         details: dict | None = None,
+        research_only: bool | None = None,
     ) -> str:
         """Write one data source (content addressed, once). Return its id ``src-...``.
+
+        ``research_only=True`` (FEP-0010: a stream that declares ``data.research_only = true``) makes the flags
+        research only even when the licence allows more; it is kept in the source as ``research_only``.
 
         ``licence``: an SPDX id or a common form (``"CC BY-NC 4.0"``); it is normalised
         (:func:`fidetype.trust.licence.normalise`), the given text stays in ``licence_text``.
@@ -647,7 +675,7 @@ class ProvenanceLedger:
         data (``LicenseRef-fidetype-consented``) a dict with ``ref`` (an opaque consent reference) and
         ``scope`` (purposes, :data:`fidetype.trust.privacy.PURPOSES`); required for that licence.
         """
-        from fidetype.trust.licence import CONSENTED, normalise, source_summary
+        from fidetype.trust.licence import CONSENTED, normalise, restrict, source_summary
 
         spdx = normalise(licence)
         src: dict[str, Any] = {"name": str(name), "licence": spdx, "licence_text": str(licence)}
@@ -665,9 +693,13 @@ class ProvenanceLedger:
             raise ValueError(f"a {CONSENTED} source needs consent={{'ref': ..., 'scope': [...]}}")
         if details:
             src["details"] = dict(details)
+        if research_only:
+            src["research_only"] = True
         sid = "src-" + content_id(src)[:24]
         if sid not in self._sources:
-            self.append("source", {"source_id": sid, "source": src, "licence": source_summary(spdx, scope)})
+            flags = source_summary(spdx, scope)
+            self.append("source", {"source_id": sid, "source": src,
+                                   "licence": restrict(flags) if research_only else flags})
         return sid
 
     def record_track_source(self, track: str, *, digest: str | None = None) -> str:
@@ -763,6 +795,14 @@ class ProvenanceLedger:
     def licence_of(self, context_id: str) -> dict | None:
         """The combined licence flags of a context (None: the context has no lineage)."""
         return self._ctx_licence.get(context_id)
+
+    def lineage_licence(self, artifact_ids: Sequence[str] | None) -> dict | None:
+        """The combined licence flags of these artifacts (None: no ids given). Unknown ids raise ``KeyError``."""
+        if artifact_ids is None:
+            return None
+        from fidetype.trust.licence import combine
+
+        return combine(self._artifacts[a] for a in artifact_ids)
 
     def record_decision(
         self,
@@ -1155,7 +1195,7 @@ def verify(
     not match (``salted-body`` rule), a tombstone that no later redaction
     entry names, a redaction target that is unknown, later or not redactable.
     """
-    from fidetype.trust.licence import combine, flag, source_summary
+    from fidetype.trust.licence import combine, flag, restrict, source_summary
 
     errors: list[str] = []
     try:
@@ -1230,13 +1270,18 @@ def verify(
                 errors.append(f"{tag}: context_id does not match the context content")
             contexts.add(cid)
             lin = ctx.get("lineage") if isinstance(ctx, dict) else None
-            if lin is not None:
-                bad = [a for a in lin if a not in artifacts]
+            ssrc = ctx.get("stream_sources") if isinstance(ctx, dict) else None
+            if lin is not None or ssrc is not None:
+                bad = [a for a in (lin or ()) if a not in artifacts]
+                bad_s = [x for x in (ssrc or ()) if x not in sources]
                 if bad:
                     errors.append(f"{tag}: lineage names unknown or later artifacts {bad}")
+                if bad_s:
+                    errors.append(f"{tag}: stream_sources names unknown or later sources {bad_s}")
+                if bad or bad_s:
                     ctx_lic[cid] = b.get("licence")
                 else:
-                    want = combine(artifacts[a] for a in lin)
+                    want = combine([*(artifacts[a] for a in (lin or ())), *(sources[x] for x in (ssrc or ()))])
                     if b.get("licence") != want:
                         errors.append(f"{tag}: context licence flags differ from the lineage")
                     ctx_lic[cid] = want
@@ -1249,6 +1294,8 @@ def verify(
             if sid != "src-" + content_id(src)[:24]:
                 errors.append(f"{tag}: source_id does not match the source content")
             want = source_summary(src.get("licence"), (src.get("consent") or {}).get("scope"))
+            if src.get("research_only") is True:  # FEP-0010: declared research only by the stream
+                want = restrict(want)
             if b.get("licence") != want:
                 errors.append(f"{tag}: source licence flags differ from its licence")
             sources[sid] = want
@@ -1399,8 +1446,11 @@ class LedgerView:
                     visit(y)
             order.append(x)
 
-        for a in ((ctx or {}).get("body", {}).get("context", {}).get("lineage") or ()):
+        cbody = (ctx or {}).get("body", {}).get("context", {})
+        for a in (cbody.get("lineage") or ()):
             visit(a)
+        for x in (cbody.get("stream_sources") or ()):  # FEP-0010: the licence that the input stream declared
+            visit(x)
         arts = [self.artifacts[x] for x in order if x in self.artifacts]
         srcs = [self.sources[x] for x in order if x in self.sources]
         corr = list(self.corrections.get(decision_id, ()))
@@ -1739,6 +1789,10 @@ def record_lineage_spec(ledger: ProvenanceLedger, spec: str | os.PathLike | Mapp
 
 def _anchor_arg(head: str | None, anchor: str | None) -> str | dict | None:
     if anchor:
+        if Path(anchor).is_dir():  # P5-16: a directory of automatic anchors -> the newest one
+            from fidetype.trust.anchor import newest_anchor
+
+            return newest_anchor(anchor)
         return json.loads(Path(anchor).read_text(encoding="utf-8"))
     return head
 
@@ -1749,7 +1803,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     v = sub.add_parser("verify", help="verify the hash chain of a ledger")
     v.add_argument("path")
     v.add_argument("--head", default=None, help="expected head hash (detects a cut at the end)")
-    v.add_argument("--anchor", default=None, help="anchor JSON file from the 'anchor' command")
+    v.add_argument("--anchor", default=None, help="anchor JSON file from the 'anchor' command, or a directory of "
+                   "automatic anchors (P5-16: the newest one is checked)")
     v.add_argument("--public-key", default=None, help="Ed25519 public key (PEM) that checks a signed anchor")
     v.add_argument("--allow-growth", action="store_true",
                    help="accept entries after the anchored head (the anchored entry must still be in the chain)")

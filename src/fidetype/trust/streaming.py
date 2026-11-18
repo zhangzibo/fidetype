@@ -943,6 +943,9 @@ class StreamingTrustLayer:
             prov["over_budget"] = lat > b
         if final and self.ledger is not None:
             prov.update(self._ledger_decision(s, d, inputs, stream, ref, final_attempt, threshold))
+        ro = self._research_only(s)
+        if ro is not None:  # FEP-0010 (TD-15): the audit key input.research_only
+            prov["input"] = {**ref, "research_only": ro}
         sd = StreamDecision(s.id, s.seq, s.utterance, final, route, d, inputs, g, s.attempt, final_attempt, ticket, prov)
         s.seq += 1
         if final:
@@ -1002,6 +1005,26 @@ class StreamingTrustLayer:
                         s.id, self.config_id, "; ".join(mism))
 
     # --- provenance ledger ----------------------------------------------------
+
+    def _research_only(self, s: _Session) -> bool | None:
+        """FEP-0010 (TD-15): True if the input stream or the ledger lineage is research only (None: unknown).
+
+        Sources: the stream's ``data.licence`` / ``data.research_only`` (MET-12) and, with a ledger, the licence
+        flags of the session's context (its lineage), or of the ledger's default lineage before the first final
+        decision. Any research-only source makes the decision research only.
+        """
+        from fidetype.trust.licence import stream_licence
+
+        flags: list[bool] = []
+        sl = stream_licence((s.header or {}).get("meta"))
+        if sl is not None:
+            flags.append(bool(sl["research_only"]))
+        if self.ledger is not None:
+            lic = (self.ledger.licence_of(s.ledger_context) if s.ledger_context is not None
+                   else self.ledger.lineage_licence(self.ledger.default_lineage))
+            if lic is not None:
+                flags.append(bool(lic["research_only"]))
+        return any(flags) if flags else None
 
     def _ledger_decision(self, s: _Session, d: Decision, inputs: PolicyInputs, stream: NeuralTextStream | None,
                          ref: dict[str, Any], final_attempt: bool, threshold: float | None) -> dict[str, Any]:
