@@ -3,12 +3,14 @@ title: Lookahead vs accuracy and latency (causal decoder, M4-01 / M4-02)
 type: question
 tags: [decoder, causal, lookahead, latency, streaming, ctc, intracortical, neuraltextstream, trust-core]
 sources: [brain-to-text-25-copytask]
-updated: 2026-11-15
+updated: 2026-11-17
 ---
 
 # How much accuracy does a causal decoder lose per millisecond of lookahead?
 
 **Question:** A streaming decoder may wait L ms of future signal before it emits a frame. How do accuracy, trust outcomes and latency change with L from 0 to 500 ms? What should the NTS fields `latency` and `decoder.causal` say?
+
+**Decoder accuracy update (2026-11-17, M4-13, L = 0 only):** a long run of the same causal GRU (115,000 steps x 64, 91 % of the published trial passes) reaches val_eval greedy PER **0.1210** (WER 0.1880, sentence exact 0.365), against 0.101 for the published decoder. That is "close" by the pre-declared rule (<= 0.151). So the M4-12 gap was mostly training length. Lookahead was not re-tested at this accuracy. Details: [M4-13 section](#m4-13-long-training-run-2026-11-17-l-0).
 
 **Answer (2026-11-15, M4-12, retrained decoder; supersedes the accuracy numbers below):** With a better trained causal GRU (val_eval greedy PER 0.2574 at L = 0, was 0.6954), lookahead gives **no measurable accuracy gain**: shared model PER 0.2634 at L = 0 and 0.2608 to 0.2623 for L = 40 to 500 ms. Dedicated models at 200 and 300 ms equal L = 0 (0.2594, 0.2599); the dedicated L = 500 ms model is worse (0.2988). Its phonemes are now ready 100 ms **later** than those of the L = 0 model (median), not 180 ms earlier. The M4-02 gain was an artefact of under-training. Details: [M4-12 section](#m4-12-retrained-decoder-2026-11-15-supersedes-the-m4-0102-accuracy-numbers).
 
@@ -25,6 +27,23 @@ Experiment: [results.md](../../experiments/2026-11-13-m4-01-02-lookahead/results
 ![Accuracy and phoneme ready time against lookahead L](lookahead-latency-accuracy.svg)
 
 *Left: error rates on T15 val_eval (701 trials) against L. Right: median phoneme ready time (first greedy frame + L) relative to the dedicated L = 0 model. The dotted line is the nominal delay (ready L ms later).*
+
+## M4-13: long training run (2026-11-17, L 0)
+Experiment: [M4-13 results](../../experiments/2026-11-15-m4-13-long-train/results.md), pre-declared [plan](../../experiments/2026-11-15-m4-13-long-train/plan.md) (committed before training). Same model, data, splits and causal smoothing as M4-12, dedicated L = 0 only. Changes: 115,000 steps x batch 64 (was 10,000 x 96), cosine LR 5e-3 -> 1e-4 over the full budget. 4-days-per-batch sampling was smoke-tested and dropped (about 4x slower per step on our GPU).
+
+| measure (val_eval, 701 trials) | M4-12 L 0 | **M4-13 L 0** | published |
+|---|---|---|---|
+| greedy PER | 0.2574 | **0.1210** | 0.101 (validation partition); 0.0954 (online output) |
+| WER (T = 1) | 0.3998 | **0.1880** | — |
+| sentence exact (T = 1) | 0.090 | **0.365** | — |
+| trust, M2-19 config + commit gate (not refitted): commits / wrong | 7 / 4 | **91 / 11** (wrong-commit 0.0157, CP95 [0.0079, 0.0279]) | — |
+| eWPM (gaze alone 4.02; always commit 9.90) | 6.03 | **9.94** | — |
+
+- val_select PER: 0.1392 at 25 %, 0.1252 at 50 %, 0.1211 at 75 %, 0.1204 at 100 %. Flat after 75 %.
+- Null controls with the gate: uniform 0/300, frame-shuffled 0/300 commits (without the gate: 186/300 and 2/300).
+- GPU time 40.6 h (1.27 s per step).
+
+> **Our take:** The causal decoder without lookahead and without centred smoothing is now 1.2x the published PER (it was 2.5x). The real-time rule costs at most about 0.020 PER on T15, and maybe less: the remaining gap also includes 4-days-per-batch sampling and recipe details. The flat lookahead curve of M4-12 was measured on a weaker decoder; a re-test at this accuracy is open.
 
 ## M4-12: retrained decoder (2026-11-15, supersedes the M4-01/02 accuracy numbers)
 Experiment: [M4-12 results](../../experiments/2026-11-14-m4-12-decoder-retrain/results.md), pre-declared [plan](../../experiments/2026-11-14-m4-12-decoder-retrain/plan.md). Same model class, data, splits and evaluation code as M4-01/02. Only the training recipe changed, toward the published B2T '25 baseline ([source](../sources/brain-to-text-25-copytask.md); its code has no licence, so we read facts only): 10,000 steps x batch 96 (M4-01: 4,560 steps, about 53 per batch), LR 5e-3 (was 5e-4), Adam eps 0.1, Xavier / orthogonal init, input dropout 0.2, stronger noise and random cut.

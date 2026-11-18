@@ -1097,3 +1097,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - P14-20: rule TD-14: an event-by-event consumer refuses a `trust_decision` inside an input stream (ignored after `end`). Python `StreamingTrustLayer`, TypeScript / Rust `StreamValidator` and the collector `validate` processor agree on the streaming cases S01-S06.
 - Code commit `c241726`. Tracker: P14-17 run stats filled (2386 s, 324,608 tokens, 61 tool uses).
 - Pages: [roadmap](questions/roadmap-standard.md) (P3-10, P14-20), [open gaps](questions/open-gaps.md), [LSL input](concepts/lsl-input.md). No new gap.
+
+## [2026-11-17] query | M4-13 done: long causal decoder run reaches PER 0.1210 (published 0.101); trust layer now useful
+- Plan pre-declared (`01cea4b`): M4-12 recipe, dedicated L 0, causal smoothing, 115,000 steps x 64 (6.97 M trial passes), cosine 5e-3 -> 1e-4. 4-days-per-batch sampling smoke-tested (5.4-6.0 s per step vs 1.33-1.42): not used.
+- val_eval (701): greedy PER 0.1210 (M4-12 0.2574), WER 0.1880, sentence exact 0.365. "Close" (<= 0.151): yes. val_select 0.1392 / 0.1252 / 0.1211 / 0.1204 at 25 / 50 / 75 / 100 %.
+- Trust, M2-19 config with the M2-18 commit gate (not refitted): 91 commits, 11 wrong (0.0157, CP95 upper 0.0279), eWPM 9.94 (gaze 4.02, always commit 9.90 with 63 % wrong). Controls with the gate: uniform 0/300, frame-shuffled 0/300.
+- 2026-11-15 decision in [streaming trust layer](concepts/streaming-trust-layer.md): every trust re-tune enables the commit gate and passes both null controls.
+- Pages: [lookahead vs accuracy and latency](questions/lookahead-latency-accuracy.md) (new M4-13 section), [index](index.md). Experiment: [results](../experiments/2026-11-15-m4-13-long-train/results.md).
