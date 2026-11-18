@@ -13,7 +13,8 @@ permissions:
 
 jobs:
   # P2-09: the full Python suite on every supported Python (Linux) and on Windows and macOS.
-  # 3.15 is not in the matrix: h5py (dev extra) has no cp315 wheel yet (gap 62).
+  # 3.15 is not in the matrix: h5py (dev extra) has no cp315 wheel yet (gap 62). macOS runs one Python (3.13) only:
+  # macOS runners are scarce, and with 3.12 and 3.13 the macOS jobs of busy days queued for 20 min and were cancelled.
   # fail-fast is off, so one red platform does not hide the others.
   pytest:
     name: pytest (${{ matrix.os }}, py${{ matrix.python }})
@@ -27,7 +28,6 @@ jobs:
         include:
           - { os: windows-latest, python: "3.12" }
           - { os: windows-latest, python: "3.13" }
-          - { os: macos-latest, python: "3.12" }
           - { os: macos-latest, python: "3.13" }
     env:
       # macOS runners have larger scheduler jitter: wall-clock test bounds (LSL reconnect stall, collector latency

@@ -108,11 +108,13 @@ def test_reopener_prefers_a_new_outlet_over_stale_info(monkeypatch):
 
 def test_reopener_takes_the_old_uid_after_a_while_and_times_out(monkeypatch):
     _fake_pylsl(monkeypatch, lambda n: ["old"])
-    monkeypatch.setattr(L._Reopener, "SAME_UID_AFTER_S", 0.1)
+    # 0.5 s, not 0.1 s: the first try must end before this time also on a slow CI runner (P2-09: a macOS runner took
+    # longer than 0.1 s and accepted the old uid on the first try).
+    monkeypatch.setattr(L._Reopener, "SAME_UID_AFTER_S", 0.5)
     r = L._Reopener({"source_id": "sid"}, "old", LSLMapping(reconnect_interval_s=0.03))
     with pytest.raises(LSLResolveError, match="no new LSL stream"):
         r()  # the first try is too early for the old uid
-    time.sleep(0.12)
+    time.sleep(0.55)
     assert r().opened.uid() == "old"  # the same outlet is still there (a network break)
 
     _fake_pylsl(monkeypatch, lambda n: [])
