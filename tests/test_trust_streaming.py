@@ -9,6 +9,7 @@ conformance golden vectors. No participant data.
 from __future__ import annotations
 
 import copy
+import dataclasses
 import json
 import math
 from pathlib import Path
@@ -35,6 +36,18 @@ from fidetype.trust.streaming import (
     replay,
 )
 from fidetype.trust.testing import RefCharLM, ReferenceDecoder, greedy_nbest
+
+
+def same_guard(a, b):
+    """GuardScore equality where NaN equals NaN (P2-09). Python 3.13+ dataclass ``==`` compares field by field,
+    so a NaN field (for example ``lm_acoustic_gap`` without an LM) never equals itself; 3.12 compared tuples, whose
+    identity shortcut hid this."""
+    if type(a) is not type(b):
+        return False
+    fa, fb = dataclasses.astuple(a), dataclasses.astuple(b)
+    return all((x == y) or (isinstance(x, float) and isinstance(y, float) and math.isnan(x) and math.isnan(y))
+               for x, y in zip(fa, fb, strict=True))
+
 
 VECTORS = Path(__file__).resolve().parents[1] / "spec" / "conformance" / "v0.1"
 SMALL_GRID = {
@@ -71,7 +84,7 @@ def _same(sd, d, an):
     assert sd.final
     assert sd.decision == d
     assert sd.inputs == an.inputs
-    assert sd.guard == an.guard
+    assert same_guard(sd.guard, an.guard)
 
 
 def _layer(cfg, dec, tmp_path, **kw):

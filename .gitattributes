@@ -1,3 +1,6 @@
 # Golden conformance vectors: keep LF bytes on every platform (M5-10).
 spec/conformance/** text eol=lf
 spec/conformance/**/*.npz binary
+# Built-in live model assets: the model card pins the SHA-256 of the weights file, so keep LF bytes (P2-09;
+# a Windows checkout with core.autocrlf=true changed the hash).
+src/fidetype/live/assets/** text eol=lf

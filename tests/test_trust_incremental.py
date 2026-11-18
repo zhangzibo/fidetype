@@ -8,7 +8,9 @@ default frame route. Synthetic streams only.
 
 from __future__ import annotations
 
+import dataclasses
 import json
+import math
 from dataclasses import replace
 
 import numpy as np
@@ -34,6 +36,18 @@ from fidetype.trust.incremental import (
 )
 from fidetype.trust.streaming import StreamingConfig, StreamingTrustLayer, main, replay
 from fidetype.trust.testing import RefCharLM, ReferenceDecoder, greedy_nbest
+
+
+def same_guard(a, b):
+    """GuardScore equality where NaN equals NaN (P2-09). Python 3.13+ dataclass ``==`` compares field by field,
+    so a NaN field (for example ``lm_acoustic_gap`` without an LM) never equals itself; 3.12 compared tuples, whose
+    identity shortcut hid this."""
+    if type(a) is not type(b):
+        return False
+    fa, fb = dataclasses.astuple(a), dataclasses.astuple(b)
+    return all((x == y) or (isinstance(x, float) and isinstance(y, float) and math.isnan(x) and math.isnan(y))
+               for x, y in zip(fa, fb, strict=True))
+
 
 GRID = {"commit_p": (0.3, 0.8), "commit_max_risk": (0.4, 1.0), "offer_max_k": (0, 3), "abstain_risk": (0.45, 1.01),
         "final_fallback": ("offer",)}
@@ -185,7 +199,7 @@ def _same_final(a, b):
     assert len(fa) == len(fb) == 1
     assert fa[0].decision == fb[0].decision
     assert fa[0].inputs == fb[0].inputs
-    assert fa[0].guard == fb[0].guard
+    assert same_guard(fa[0].guard, fb[0].guard)
     assert fa[0].provenance["input"]["stream_sha256"] == fb[0].provenance["input"]["stream_sha256"]
 
 

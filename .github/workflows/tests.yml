@@ -29,6 +29,10 @@ jobs:
           - { os: windows-latest, python: "3.13" }
           - { os: macos-latest, python: "3.12" }
           - { os: macos-latest, python: "3.13" }
+    env:
+      # macOS runners have larger scheduler jitter: wall-clock test bounds (LSL reconnect stall, collector latency
+      # budget) are multiplied by 4 there. Linux and Windows keep the plain bounds.
+      FIDETYPE_LATENCY_TOLERANCE: ${{ matrix.os == 'macos-latest' && '4' || '1' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -68,7 +72,7 @@ jobs:
           uvx --from build pyproject-build --installer uv --outdir "$RUNNER_TEMP/pydist" .
           uv venv "$RUNNER_TEMP/v"
           if [ "$RUNNER_OS" = "Windows" ]; then b="$RUNNER_TEMP/v/Scripts"; else b="$RUNNER_TEMP/v/bin"; fi
-          uv pip install --python "$b/python" "$RUNNER_TEMP"/pydist/*.whl
+          uv pip install --python "$RUNNER_TEMP/v" "$RUNNER_TEMP"/pydist/*.whl
           cd "$RUNNER_TEMP"
           "$b/fidetype" version
           "$b/fidetype" conformance --profile fep-0001
@@ -77,14 +81,17 @@ jobs:
           "$b/nts-conform" certified --check
           "$b/fidetype-collector" --help
       - uses: actions/setup-node@v6
+        if: ${{ !cancelled() }}
         with:
           node-version: "24"
       - name: TypeScript SDK (build, tests, golden vectors, conformance kit)
+        if: ${{ !cancelled() }}  # run each SDK even when an earlier SDK step failed
         working-directory: sdk/typescript
         run: |
           npm ci --no-audit --no-fund
           npm run ci
       - name: Rust SDK (tests, golden vectors, conformance kit)
+        if: ${{ !cancelled() }}  # run each SDK even when an earlier SDK step failed
         working-directory: sdk/rust
         run: |
           rustup toolchain install stable --profile minimal

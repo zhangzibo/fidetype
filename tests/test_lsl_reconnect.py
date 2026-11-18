@@ -10,6 +10,7 @@ runs only when pylsl / liblsl is available.
 from __future__ import annotations
 
 import json
+import os
 import threading
 import time
 import uuid
@@ -26,8 +27,11 @@ from fidetype.trust.testing import RefCharLM, greedy_nbest
 CFG = FrozenTrustConfig(name="lsl-reconnect-test").with_policy(commit_p=0.3, commit_max_risk=1.0, abstain_risk=1.01)
 SRATE = 25.0
 VOCAB = ["<b>", "a", "b"]
+#: Wall-clock bounds scale with FIDETYPE_LATENCY_TOLERANCE (default 1.0), as in tests/test_collector_pipeline.py.
+#: CI sets it on macOS runners only, whose scheduler jitter is larger (P2-09); Linux and Windows keep the plain bounds.
+TOLERANCE = float(os.environ.get("FIDETYPE_LATENCY_TOLERANCE", "1.0"))
 #: The loop's stall bound while a reconnect is in progress (task M6-14).
-MAX_STALL_S = 0.050
+MAX_STALL_S = 0.050 * TOLERANCE
 
 
 class FakeInlet:
@@ -231,7 +235,7 @@ def test_stop_signal_is_seen_while_reconnecting():
     threading.Timer(0.3, stop.set).start()
     t0 = time.monotonic()
     s = runner.run(stop=stop, poll_timeout=0.02)
-    assert s.stop_reason == "stopped" and time.monotonic() - t0 < 0.3 + 0.2
+    assert s.stop_reason == "stopped" and time.monotonic() - t0 < 0.3 + 0.2 * TOLERANCE
     assert s.aborted_utterances == 1 and s.final_decisions == 0  # the cut utterance gives no decision
     src.close()
     gate.set()
@@ -255,7 +259,7 @@ def test_reconnect_timeout_still_raises_and_cancels_the_worker():
             t1 = time.perf_counter()
             src.poll(0.01)
             assert time.perf_counter() - t1 < MAX_STALL_S
-    assert time.monotonic() - t0 < 1.0 and calls["n"] >= 2
+    assert time.monotonic() - t0 < 1.0 * TOLERANCE and calls["n"] >= 2
     assert src.primary.reconnector is None
 
 
@@ -369,4 +373,4 @@ def test_real_lsl_producer_restart_does_not_stall_the_loop():
         state["run"] = False
         src.close()
     assert src.stats.lost >= 1 and src.stats.reconnects >= 1
-    assert stalls and max(stalls) < 0.25, f"max stall {max(stalls) * 1e3:.1f} ms"
+    assert stalls and max(stalls) < 0.25 * TOLERANCE, f"max stall {max(stalls) * 1e3:.1f} ms"
