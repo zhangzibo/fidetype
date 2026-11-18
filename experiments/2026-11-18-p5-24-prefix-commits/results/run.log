@@ -1,0 +1,38 @@
+2026-11-18 12:14:24 stage t15 start
+2026-11-18 12:14:31 t15: calibration 722, evaluation 701; mean speech span 12.11 s, mean trial 18.68 s; peak 551 MB
+2026-11-18 12:19:46 p5-24-t15-m4-13 current: calibrated tcfg-6bc45a1a5473c896 in 315 s; threshold 0.73; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; peak 784 MB
+2026-11-18 12:21:46 p5-24-t15-m4-13 current: decided 701 in 434 s total; peak 784 MB
+2026-11-18 12:21:46 t15 current v0.1: safe WPM 2.23 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 17/701 = 0.0243; commits 104; unguarded 2.23; no-BCI 4.02)
+2026-11-18 12:21:46 t15 current v0.2: safe WPM 2.23 [safe-wpm/0.2, proposed; 0 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 17/701 = 0.0243; commits 104; unguarded 2.23; no-BCI 4.02)
+2026-11-18 12:22:09 p5-24-t15-m4-13 sentence: calibrated tcfg-065862cc9fcf4d68 in 23 s; threshold 0.87; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; peak 784 MB
+2026-11-18 12:22:16 p5-24-t15-m4-13 sentence: decided 701 in 30 s total; peak 784 MB
+2026-11-18 12:22:16 t15 sentence v0.1: safe WPM 2.64 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 10/701 = 0.0143; commits 113; unguarded 2.64; no-BCI 4.02)
+2026-11-18 12:22:16 t15 sentence v0.2: safe WPM 2.64 [safe-wpm/0.2, proposed; 0 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 10/701 = 0.0143; commits 113; unguarded 2.64; no-BCI 4.02)
+2026-11-18 12:22:40 p5-24-t15-m4-13 prefix: calibrated tcfg-e9758d5133d07fa6 in 24 s; threshold 0.94; controls [('uniform', 0, 15), ('shuffled', 1, 15)]; peak 784 MB
+2026-11-18 12:22:47 p5-24-t15-m4-13 prefix: decided 701 in 31 s total; peak 784 MB
+2026-11-18 12:22:47 t15 prefix v0.1: safe WPM 0.53 (above-alpha; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 421/701 = 0.6006; commits 465; unguarded 0.53; no-BCI 4.02)
+2026-11-18 12:22:47 t15 prefix v0.2: safe WPM 4.87 [safe-wpm/0.2, proposed; 421 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 13/701 = 0.0185; commits 465; unguarded 4.87; no-BCI 4.02)
+2026-11-18 12:22:47 t15: current arm vs committed reference decisions: 701/701
+2026-11-18 12:22:47 t15: sentence arm vs committed reference decisions: 701/701
+2026-11-18 12:22:48 stage t15 done in 504 s
+2026-11-18 12:23:08 stage t12 start
+2026-11-18 12:23:17 t12: calibration 480, evaluation 400; mean speech span 4.48 s, mean trial 5.48 s; peak 2340 MB
+2026-11-18 12:26:08 p5-24-t12-v2 current: calibrated tcfg-5782e81b33653464 in 171 s; threshold 0.3; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; peak 2340 MB
+2026-11-18 12:27:01 p5-24-t12-v2 current: decided 400 in 224 s total; peak 2340 MB
+2026-11-18 12:27:01 t12 current v0.1: safe WPM 1.27 (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 15/400 = 0.0375; commits 25; unguarded 1.27; no-BCI 4.11)
+2026-11-18 12:27:01 t12 current v0.2: safe WPM 1.27 [safe-wpm/0.2, proposed; 0 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 15/400 = 0.0375; commits 25; unguarded 1.27; no-BCI 4.11)
+2026-11-18 12:27:13 p5-24-t12-v2 sentence: calibrated tcfg-836af218bf7e6107 in 12 s; threshold 0.28; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; peak 2340 MB
+2026-11-18 12:27:15 p5-24-t12-v2 sentence: decided 400 in 14 s total; peak 2340 MB
+2026-11-18 12:27:15 t12 sentence v0.1: safe WPM 1.87 (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 15/400 = 0.0375; commits 31; unguarded 1.87; no-BCI 4.11)
+2026-11-18 12:27:15 t12 sentence v0.2: safe WPM 1.87 [safe-wpm/0.2, proposed; 0 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 15/400 = 0.0375; commits 31; unguarded 1.87; no-BCI 4.11)
+2026-11-18 12:27:27 p5-24-t12-v2 prefix: calibrated tcfg-d32c2a1474a7c5fb in 12 s; threshold 0.87; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; peak 2340 MB
+2026-11-18 12:27:29 p5-24-t12-v2 prefix: decided 400 in 14 s total; peak 2340 MB
+2026-11-18 12:27:29 t12 prefix v0.1: safe WPM 0.00 (above-alpha; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 133/400 = 0.3325; commits 133; unguarded 0.00; no-BCI 4.11)
+2026-11-18 12:27:29 t12 prefix v0.2: safe WPM 4.76 [safe-wpm/0.2, proposed; 132 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 19/400 = 0.0475; commits 133; unguarded 4.76; no-BCI 4.11)
+2026-11-18 12:27:29 t12: current arm vs committed reference decisions: 400/400
+2026-11-18 12:27:29 t12: sentence arm vs committed reference decisions: 400/400
+2026-11-18 12:27:29 stage t12 done in 260 s
+2026-11-18 12:27:31 stage verdict start
+2026-11-18 12:27:31 verdict t15: {'verdict': 'prefix beats sentence', 'diff_v0_2': 2.2216094262435373, 'half_width': 0.37783974787794294, 'diff_ci95': [1.8378813274311887, 2.5935608231870746], 'prefix_safe': True, 'prefix_clear_violation': False, 'prefix_controls_pass': True, 'prefix_v0_2': 4.866011441941262, 'prefix_v0_2_ci95': [4.432728082731917, 5.29595386991403], 'sentence_v0_2': 2.6444020156977244, 'current_v0_2': 2.2253170716630644, 'prefix_v0_1_literal': 0.5335289829131576, 'prefix_v0_1_literal_status': 'above-alpha', 'prefix_v0_1_complete_only': 1.0261751002887645, 'prefix_v0_1_complete_only_status': 'certified', 'sentence_v0_1': 2.6444020156977244, 'no_bci': 4.02, 'prefix_v0_2_above_no_bci': True, 'prefix_v0_2_ci_above_no_bci': True, 'any_v0_1_above_no_bci': False}
+2026-11-18 12:27:31 verdict t12: {'verdict': 'prefix beats sentence', 'diff_v0_2': 2.8937425572454725, 'half_width': 1.0479963976661488, 'diff_ci95': [1.8916395478391068, 3.9876323431714047], 'prefix_safe': True, 'prefix_clear_violation': False, 'prefix_controls_pass': True, 'prefix_v0_2': 4.7613478791118835, 'prefix_v0_2_ci95': [3.842876717724111, 5.784913473034689], 'sentence_v0_2': 1.867605321866411, 'current_v0_2': 1.2679142316575693, 'prefix_v0_1_literal': 0.0, 'prefix_v0_1_literal_status': 'above-alpha', 'prefix_v0_1_complete_only': 0.0, 'prefix_v0_1_complete_only_status': 'certified', 'sentence_v0_1': 1.867605321866411, 'no_bci': 4.11, 'prefix_v0_2_above_no_bci': True, 'prefix_v0_2_ci_above_no_bci': False, 'any_v0_1_above_no_bci': False}
+2026-11-18 12:27:31 stage verdict done in 0 s

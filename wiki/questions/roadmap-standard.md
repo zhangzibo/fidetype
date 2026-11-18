@@ -541,7 +541,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-24 Certified prefix commits in the trust guard
 - **Gap:** 68 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P14-23). Follow-up of P14-23, P5-08.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-18; code + pre-registration `00a64ba`, [results](../../experiments/2026-11-18-p5-24-prefix-commits/results.md)). `calibrate(confidence="learned", commit_unit="prefix")`; T15 under the PROPOSED safe-wpm v0.2: 4.87 [4.43, 5.30] vs 2.64 (sentence), prefix beats sentence; v0.1 0.53 literal / 1.03 complete-only; T12 4.76 vs 1.87. Follow-ups: P14-28, P5-27.
 - **Depends on:** P14-26 (metric v0.2), P5-23 (score fitting). CPU.
 - **Source:** P14-23 [analysis](safe-wpm-bottleneck.md) (exploratory): right prefixes of the T15 top-1 sentences hold 57.5 % of all words, exactly-right sentences 33.8 %. A learned, monotone prefix confidence with LTT on the wrong-prefix loss gives about 5.4 safe WPM (505 prefix commits, 23 wrong). A posterior from the 10-best alone is not feasible (shared prefixes get mass 1.0).
 - **Done when:** the guard can commit the longest prefix whose confidence passes a certified threshold (loss: the committed prefix is not a prefix of the truth; bound on the rate over all trials), the decision event says how many words are committed, the null controls cover prefixes, and a pre-registered T15 replay reports safe WPM v0.2 next to v0.1.
@@ -559,6 +559,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P5-23 (done). CPU (LLM arm about 3 GB RAM).
 - **Source:** P5-23: `calibrate(confidence="learned")` refuses `target_precision=`, `grounding=` and `llm=` (ValueError). The precision bound and the joint fluent-wrong test choose `commit_p` on `p_top1`.
 - **Done when:** the precision LTT and the joint test can run on the learned score (same three-way split: score fit on the fit + policy-grid items, ordering and test on the LTT part as now), with unit tests of the bounds and one T15 replay that states the bounds with the learned score.
+
+#### P5-27 Word-by-word streaming prefix commits within a trial
+- **Gap:** 76 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P5-24). Follow-up of P5-24, P3-06.
+- **Status:** `todo`.
+- **Depends on:** P5-24 (done); a metric rule for several commits per trial (v0.3, after the P14-26 decision). CPU.
+- **Source:** P5-24 ([results](../../experiments/2026-11-18-p5-24-prefix-commits/results.md)): the prefix guard decides once per trial at the end. On T15 it commits 1,073 of the 2,688 words in the right prefixes of the top-1 texts.
+- **Done when:** a streaming guard can commit further words of the same utterance as evidence arrives (each commit certified under one loss that covers all commits of a trial), the decision events chain the commits, and a pre-registered T15 replay reports safe WPM next to the one-commit prefix guard.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
@@ -1039,7 +1046,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-23 T15 safe WPM above the no-BCI reference with our causal decoder
 - **Gap:** 53 of the [open-gap list](open-gaps.md) (added 2026-11-17 by the M4-13 rows task). Follow-up of P14-05, M4-13.
-- **Status:** `in_progress`. Analysis done 2026-11-18 ([analysis](safe-wpm-bottleneck.md), exploratory): the guard factor (commits 87 of 257 exactly-right sentences, x 0.32) is as large as the decoder factor (x 0.34); a perfect guard at M4-13 gives 7.23. A sentence guard needs about 159 right commits (commit rate about 0.26, error among commits about 0.12) for 4.02. Levers registered as P14-26, P5-23, P5-24, P15-22, P14-27 (gaps 66-70); the item stays open until a pre-registered lever passes. P5-23 (2026-11-18, pre-registered, [results](../../experiments/2026-11-18-p5-23-learned-confidence/results.md)): learned commit score 2.64 on all 701 `val_eval` trials (p_top1 guard 2.23; +0.42 [0.07, 0.78]), still below 4.02.
+- **Status:** `in_progress`. Analysis done 2026-11-18 ([analysis](safe-wpm-bottleneck.md), exploratory): the guard factor (commits 87 of 257 exactly-right sentences, x 0.32) is as large as the decoder factor (x 0.34); a perfect guard at M4-13 gives 7.23. A sentence guard needs about 159 right commits (commit rate about 0.26, error among commits about 0.12) for 4.02. Levers registered as P14-26, P5-23, P5-24, P15-22, P14-27 (gaps 66-70); the item stays open until a pre-registered lever passes. P5-23 (2026-11-18, pre-registered, [results](../../experiments/2026-11-18-p5-23-learned-confidence/results.md)): learned commit score 2.64 on all 701 `val_eval` trials (p_top1 guard 2.23; +0.42 [0.07, 0.78]), still below 4.02. P5-24 (2026-11-18, pre-registered, [results](../../experiments/2026-11-18-p5-24-prefix-commits/results.md)): prefix commits 4.87 [4.43, 5.30] under the PROPOSED v0.2 (above 4.02); v0.1 0.53 literal / 1.03 complete-only. Not closed: v0.2 is not adopted and no v0.1 value is above 4.02.
 - **Depends on:** M4-13 (done); P14-21 (word decoder with edit 8); P6-09 (full-coverage entry). CPU for the guard; a stronger decoder may need the GPU.
 - **Source:** M4-13 rows ([P14-05 results](../../experiments/2026-11-16-p14-05-safe-wpm/results.md)): on T15 `val_eval` (701) M4-13 + drop-in guard gives safe WPM 2.23 (certified; 104 commits, 17 wrong, error among commits 0.163), below the no-BCI reference 4.02. The partial v0.2 entry (103 units) gives 4.07 [2.51, 5.74] vs 4.12. The published Card et al. decoder gives 12.2-13.4.
 - **Done when:** a T15 entry with our causal decoder reports a certified safe WPM above the no-BCI reference on all 701 `val_eval` trials (or a full-coverage track entry), with both controls passing; or a result states with numbers which commit rate and error among commits that needs and why the current decoder and guard do not reach it.
@@ -1060,7 +1067,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Done when:** the M4-13 reference replay reproduces 16 COMMIT / 104 OFFER / 3 wrong with a keep-awake held, and the edit-8 replays of M4-13 and M4-12 are compared with the P14-15 rule (the P14-21 queue outputs in `derived/p14-21/r6-*` may be reused).
 #### P14-26 Safe WPM v0.2 proposal: prefix credit and a speech-time field
 - **Gap:** 66 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P14-23). Follow-up of P14-05, P14-23.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-18, commit `00a64ba`, [proposal](../../docs/safe-wpm-v0.2-proposal.md)). v0.2 is PROPOSED, NOT ADOPTED: the user decides at the weekend; `metric_version="0.2"` switches it on; v0.1 stays the headline.
 - **Depends on:** none (docs + scorer, CPU).
 - **Source:** P14-23 [analysis](safe-wpm-bottleneck.md): `safe-wpm/0.1` credits only whole sentences and times the whole trial window. On T15 the window is 18.7 s per trial against 12.1 s of active speech (factor 1.51), and the correction penalty costs only 0.08 WPM.
 - **Done when:** a pre-registered `safe-wpm/0.2` text defines (1) credit for a committed prefix that is a prefix of the truth, (2) the cost of a wrong prefix, (3) a `timing` field for speech-span or measured speech time next to the trial window, and (4) that v0.1 stays the headline column until the user accepts v0.2; the scorer computes both; tests; the leaderboard shows both with a note.
@@ -1071,6 +1078,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** GPU (after P11-01). One training run with centred smoothing, else the M4-13 recipe.
 - **Source:** P14-23 [analysis](safe-wpm-bottleneck.md): M4-13 (causal) is 0.020 PER behind the published decoder (0.121 vs 0.101); if centred smoothing explains all of it, safe WPM gains at most about 0.7. At today's guard, 4.02 needs P(exact) about 0.66 (WER about 0.105, PER about 0.072).
 - **Done when:** a pre-registered T15 run measures PER, WER, P(exact) and safe WPM with centred vs causal smoothing (same recipe, L 0), and the decoder accuracy target for safe WPM 4.02 is restated with the measured guard.
+
+#### P14-28 Reading cost and short prefixes in safe WPM v0.2
+- **Gap:** 75 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P5-24). Follow-up of P14-26, P5-24.
+- **Status:** `todo`.
+- **Depends on:** P14-26 (proposal done); the user decision on v0.2. CPU, docs + scorer.
+- **Source:** P5-24 ([results](../../experiments/2026-11-18-p5-24-prefix-commits/results.md)): 181 of 465 T15 prefix commits are one word. v0.2 (like v0.1) adds no reading or checking time per commit, so many short commits may overstate the user's gain.
+- **Done when:** a pre-registered sensitivity analysis reports v0.2 with a per-commit reading / checking time (from the `aac-gaze-v1` user model or the literature) and with a minimum prefix length, and the proposal states which variant it recommends.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
