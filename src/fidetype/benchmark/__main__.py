@@ -227,6 +227,12 @@ def cmd_safe_wpm(a) -> int:
                "penalty_chars": cols["penalty_chars"]}
         if not any(math.isnan(x) for x in sp):
             v02.update(speech_s=sp, speech_timing="per-trial speech_s")
+        v02.update(read_s_per_commit=a.read_s_per_commit, read_s_per_word=a.read_s_per_word,
+                   min_prefix_words=a.min_prefix_words)  # P14-28 sensitivity options (default: off)
+    elif (a.read_s_per_commit, a.read_s_per_word, a.min_prefix_words) != (0.0, 0.0, 1):
+        print("--read-s-per-commit, --read-s-per-word and --min-prefix-words need --metric-version 0.2",
+              file=sys.stderr)
+        return 2
     ok = cols["correct_v02"] if a.metric_version == "0.2" else cols["correct"]
     res = safe_wpm(cols["committed"], ok, cols["n_words"], cols["n_chars"], ns, guarantee=guarantee,
                    rule=CorrectionRule(name=a.correction), timing=timing, clusters=clusters,
@@ -289,6 +295,12 @@ def main(argv=None) -> int:
     p.add_argument("--metric-version", default="0.1", choices=("0.1", "0.2"),
                    help="0.1 (default, the headline) or 0.2 (PROPOSED, not adopted: prefix credit and speech time; "
                    "docs/safe-wpm-v0.2-proposal.md)")
+    p.add_argument("--read-s-per-commit", type=float, default=0.0,
+                   help="v0.2 only (P14-28 sensitivity): reading / checking seconds added to every commit")
+    p.add_argument("--read-s-per-word", type=float, default=0.0,
+                   help="v0.2 only (P14-28 sensitivity): reading seconds per committed word")
+    p.add_argument("--min-prefix-words", type=int, default=1,
+                   help="v0.2 only (P14-28 sensitivity): prefix commits with fewer words count as no commit")
     p.add_argument("--out", default=None)
     p.add_argument("--B", type=int, default=2000)
     p.add_argument("--seed", type=int, default=0)

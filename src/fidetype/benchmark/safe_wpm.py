@@ -65,6 +65,13 @@ loss (guarantee ``risk = "wrong-prefix-commit"``). An optional per-trial
 ``speech_s`` adds a ``speech_time`` block (the same credit over speech
 time); the headline time stays ``neural_s``. For a policy with only
 complete commits, v0.2 gives the same value as v0.1.
+
+Optional v0.2 sensitivity options (P14-28; the defaults keep every
+published value): ``read_s_per_commit`` + ``read_s_per_word`` add a
+reading / checking time to every commit, right or wrong
+(``read_s_per_commit + read_s_per_word * k_i``, k_i = words of the
+committed text), and ``min_prefix_words`` m turns a prefix commit
+(not complete) with fewer than m words into no commit (0 words, no time).
 """
 
 from __future__ import annotations
@@ -181,6 +188,8 @@ def _point(a: dict[str, np.ndarray], pen: np.ndarray, w: np.ndarray | None = Non
     t_neural = float((a["ns"] * w).sum())
     t_pen = float((np.where(a["wrong"], pen, 0.0) * w).sum())
     t = t_neural + t_pen
+    if "rd" in a:  # safe-wpm/0.2 reading time per commit (P14-28); absent = 0
+        t += float((np.where(a["cm"], a["rd"], 0.0) * w).sum())
     return {"wpm": 60.0 * credit / t if t > 0 else math.nan,
             "wpm_no_penalty": 60.0 * credit / t_neural if t_neural > 0 else math.nan,
             "wrong_commit_rate": float((a["wrong"] * w).sum() / w.sum()) if w.sum() > 0 else math.nan}
@@ -194,7 +203,8 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
              B: int = 2000, seed: int = 0, metric_version: str = "0.1",
              committed_words: Sequence[float] | None = None, complete: Sequence[bool] | None = None,
              penalty_chars: Sequence[float] | None = None, speech_s: Sequence[float] | None = None,
-             speech_timing: str = "unspecified") -> dict[str, Any]:
+             speech_timing: str = "unspecified", read_s_per_commit: float = 0.0, read_s_per_word: float = 0.0,
+             min_prefix_words: int = 1) -> dict[str, Any]:
     """Compute safe WPM for one entry (see the module docstring for the definition).
 
     Per-trial inputs: ``committed`` (the policy committed), ``correct`` (the
@@ -210,6 +220,14 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
     ``committed_words`` (k_i) and ``penalty_chars`` are needed for the
     commits that are not complete, and ``speech_s`` (optional) adds a
     ``speech_time`` block. The v0.2 arguments are refused with v0.1.
+
+    v0.2 sensitivity options (P14-28, all off by default):
+    ``read_s_per_commit`` and ``read_s_per_word`` (seconds, >= 0) add
+    ``read_s_per_commit + read_s_per_word * k_i`` to the time of every
+    commit (k_i from ``committed_words``; for a complete commit without
+    it, the truth length). ``min_prefix_words`` (>= 1) drops prefix
+    commits with fewer words (they become no commit). A ``reading_cost``
+    block reports them when one is not at its default.
     """
     if metric_version not in METRIC_VERSIONS:
         raise ValueError(f"metric_version must be one of {METRIC_VERSIONS}, not {metric_version!r}")
@@ -218,9 +236,13 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
                              timing=timing, clusters=clusters, ci_unit=ci_unit, controls=controls,
                              gaze_chars_per_min=gaze_chars_per_min, B=B, seed=seed, committed_words=committed_words,
                              complete=complete, penalty_chars=penalty_chars, speech_s=speech_s,
-                             speech_timing=speech_timing)
+                             speech_timing=speech_timing, read_s_per_commit=read_s_per_commit,
+                             read_s_per_word=read_s_per_word, min_prefix_words=min_prefix_words)
     extra = [k for k, v in (("committed_words", committed_words), ("complete", complete),
                             ("penalty_chars", penalty_chars), ("speech_s", speech_s)) if v is not None]
+    extra += [k for k, v, d in (("read_s_per_commit", read_s_per_commit, 0.0),
+                                ("read_s_per_word", read_s_per_word, 0.0),
+                                ("min_prefix_words", min_prefix_words, 1)) if v != d]
     if extra:
         raise ValueError(f"{extra} are safe-wpm/0.2 fields; pass metric_version='0.2' (proposed, not adopted)")
     a = _arrays(committed, correct, n_words, n_chars, neural_s)
@@ -278,8 +300,15 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
 
 def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, rule, timing, clusters, ci_unit,
                   controls, gaze_chars_per_min, B, seed, committed_words, complete, penalty_chars, speech_s,
-                  speech_timing) -> dict[str, Any]:
+                  speech_timing, read_s_per_commit=0.0, read_s_per_word=0.0,
+                  min_prefix_words=1) -> dict[str, Any]:
     """``safe-wpm/0.2`` (proposed): prefix credit, prefix penalty, optional speech time (module docstring)."""
+    rsc, rsw = float(read_s_per_commit), float(read_s_per_word)
+    if not (math.isfinite(rsc) and rsc >= 0 and math.isfinite(rsw) and rsw >= 0):
+        raise ValueError("read_s_per_commit and read_s_per_word must be finite and >= 0")
+    if isinstance(min_prefix_words, bool) or int(min_prefix_words) != min_prefix_words or min_prefix_words < 1:
+        raise ValueError("min_prefix_words must be an integer >= 1")
+    min_prefix_words = int(min_prefix_words)
     a = _arrays(committed, correct, n_words, n_chars, neural_s)
     n = len(a["cm"])
     full = np.ones(n, bool) if complete is None else np.asarray(complete, bool)
@@ -295,6 +324,15 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
             raise ValueError(f"{name} is needed (finite, >= 0) for every commit that is not complete")
     if partial.any() and np.any(kw[partial] < 1):
         raise ValueError("a prefix commit needs at least one word")
+    dropped = partial & (np.nan_to_num(kw) < min_prefix_words)
+    if dropped.any():  # P14-28: a prefix commit shorter than min_prefix_words becomes no commit
+        a["cm"] = a["cm"] & ~dropped
+        a["ok"] = a["ok"] & a["cm"]
+        a["wrong"] = a["cm"] & ~a["ok"]
+        partial = partial & ~dropped
+    read_on = rsc > 0 or rsw > 0
+    if read_on:
+        a["rd"] = rsc + rsw * np.where(np.isfinite(kw), kw, a["nw"])
     total_words = a["nw"].copy()
     credit_words = np.where(partial, np.nan_to_num(kw), a["nw"])
     if np.any(a["ok"] & partial & (credit_words > total_words)):
@@ -350,6 +388,18 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
         "correction_rule": dict(rule.to_dict(), prefix=("a wrong prefix of k words costs the penalty of the first k "
                                                         "words of the truth")),
     }
+    if read_on or min_prefix_words != 1:
+        t_read = float(np.where(a["cm"], a["rd"], 0.0).sum()) if read_on else 0.0
+        b = {k: v for k, v in a.items() if k != "rd"}
+        out["reading_cost"] = {
+            "read_s_per_commit": rsc, "read_s_per_word": rsw, "min_prefix_words": min_prefix_words,
+            "formula": (f"{rsc:g} s + {rsw:g} s/word * k per commit (right or wrong); prefix commits with fewer "
+                        f"than {min_prefix_words} word(s) count as no commit"),
+            "minutes_reading": t_read / 60.0, "n_prefix_commits_dropped": int(dropped.sum()),
+            "wpm_without_reading": _point(b, pen)["wpm"],
+            "note": ("P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the "
+                     "proposal as committed"),
+        }
     if ci is not None:
         out["ci_unit"] = ci_unit
     if speech_s is not None:

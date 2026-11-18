@@ -245,3 +245,94 @@ def test_v02_cli(tmp_path) -> None:
     assert main(["safe-wpm", "--trials", str(p), "--guarantee", g, "--out", str(out)]) == 0
     r1 = json.loads(out.read_text(encoding="utf-8"))
     assert r1["definition"] == "safe-wpm/0.1" and r1["n_wrong_commits"] == 1
+
+
+def _prefix_case():
+    from fidetype.benchmark.safe_wpm import prefix_outcome
+
+    truths = ["i need some water", "call my wife", "good morning", "open the window", "yes please"]
+    # 0: right 2-word prefix; 1: wrong 2-word prefix; 2: right complete; 3: withhold; 4: right 1-word prefix
+    outs = [prefix_outcome("i need", truths[0], False), prefix_outcome("call me", truths[1], False),
+            prefix_outcome("good morning", truths[2], True), None, prefix_outcome("yes", truths[4], False)]
+    kw = dict(guarantee=LTT_PREFIX, metric_version="0.2",
+              committed_words=[o["committed_words"] if o else math.nan for o in outs],
+              complete=[bool(o and o["complete"]) for o in outs],
+              penalty_chars=[o["penalty_chars"] if o else math.nan for o in outs])
+    args = ([o is not None for o in outs], [bool(o and o["correct"]) for o in outs],
+            [len(t.split()) for t in truths], [len(t) for t in truths], [3.0, 4.0, 2.0, 5.0, 1.0])
+    return args, kw
+
+
+def test_v02_reading_cost_defaults_change_nothing() -> None:
+    args, kw = _prefix_case()
+    a = safe_wpm(*args, **kw)
+    b = safe_wpm(*args, **kw, read_s_per_commit=0.0, read_s_per_word=0.0, min_prefix_words=1)
+    assert a == b and "reading_cost" not in a
+
+
+def test_v02_reading_cost_hand_computed() -> None:
+    args, kw = _prefix_case()
+    pen = 2.0 + DEFAULT_S_PER_CHAR * len("call my")
+    base = 15.0 + pen
+    r = safe_wpm(*args, **kw, read_s_per_commit=1.0, read_s_per_word=0.5)
+    # 4 commits, committed words 2 + 2 + 2 + 1 = 7: reading 4 * 1.0 + 7 * 0.5 = 7.5 s, right or wrong
+    assert r["value"] == pytest.approx(60 * (2 + 2 + 1) / (base + 7.5))
+    rc = r["reading_cost"]
+    assert rc["minutes_reading"] == pytest.approx(7.5 / 60) and rc["n_prefix_commits_dropped"] == 0
+    assert rc["wpm_without_reading"] == pytest.approx(60 * 5 / base)
+    assert r["n_commits"] == 4 and r["status"] == "certified"
+
+
+def test_v02_min_prefix_words() -> None:
+    args, kw = _prefix_case()
+    pen = 2.0 + DEFAULT_S_PER_CHAR * len("call my")
+    r2 = safe_wpm(*args, **kw, min_prefix_words=2)  # drops the 1-word prefix (trial 4)
+    assert r2["value"] == pytest.approx(60 * 4 / (15.0 + pen))
+    assert r2["n_commits"] == 3 and r2["n_prefix_commits"] == 2 and r2["reading_cost"]["n_prefix_commits_dropped"] == 1
+    r3 = safe_wpm(*args, **kw, min_prefix_words=3)  # drops all prefix commits, also the wrong one; complete stays
+    assert r3["value"] == pytest.approx(60 * 2 / 15.0)
+    assert r3["n_commits"] == 1 and r3["n_wrong_commits"] == 0 and r3["n_complete_commits"] == 1
+    # reading cost and minimum length together; speech time also pays the reading cost
+    r4 = safe_wpm(*args, **kw, min_prefix_words=2, read_s_per_commit=2.0, speech_s=[1.0] * 5)
+    assert r4["value"] == pytest.approx(60 * 4 / (15.0 + pen + 3 * 2.0))
+    assert r4["speech_time"]["value"] == pytest.approx(60 * 4 / (5.0 + pen + 3 * 2.0))
+
+
+def test_v02_reading_cost_refused_with_v01_and_bad_values() -> None:
+    args, kw = _prefix_case()
+    with pytest.raises(ValueError, match="metric_version"):
+        safe_wpm(*args, guarantee=LTT, read_s_per_commit=1.0)
+    with pytest.raises(ValueError, match="metric_version"):
+        safe_wpm(*args, guarantee=LTT, min_prefix_words=2)
+    for bad in ({"read_s_per_commit": -1.0}, {"read_s_per_word": math.inf}, {"min_prefix_words": 0},
+                {"min_prefix_words": 1.5}):
+        with pytest.raises(ValueError):
+            safe_wpm(*args, **kw, **bad)
+
+
+def test_v02_sentence_policy_with_reading_cost_uses_truth_length() -> None:
+    # complete commits without committed_words: k = truth words
+    r = safe_wpm([True, True, False], [True, False, False], [3, 2, 4], [12, 8, 15], [3.0, 3.0, 3.0],
+                 guarantee=LTT, metric_version="0.2", read_s_per_word=1.0)
+    pen = 2.0 + DEFAULT_S_PER_CHAR * 8
+    assert r["value"] == pytest.approx(60 * 3 / (9.0 + pen + 5.0))
+
+
+def test_v02_cli_reading_cost(tmp_path) -> None:
+    from fidetype.benchmark.__main__ import main
+
+    p = tmp_path / "t.jsonl"
+    rows = [{"committed": True, "committed_text": "hello", "complete": False, "truth": "hello world",
+             "neural_s": 3.0},
+            {"committed": False, "truth": "not now", "neural_s": 2.0}]
+    p.write_text("\n".join(json.dumps(r) for r in rows), encoding="utf-8")
+    out = tmp_path / "r.json"
+    g = json.dumps({"method": "ltt", "alpha": 0.5, "delta": 0.1, "risk": "wrong-prefix-commit"})
+    assert main(["safe-wpm", "--trials", str(p), "--guarantee", g, "--metric-version", "0.2", "--out", str(out),
+                 "--read-s-per-commit", "1", "--read-s-per-word", "0.5"]) == 0
+    r = json.loads(out.read_text(encoding="utf-8"))
+    assert r["value"] == pytest.approx(60 * 1 / 6.5)
+    assert main(["safe-wpm", "--trials", str(p), "--guarantee", g, "--metric-version", "0.2", "--out", str(out),
+                 "--min-prefix-words", "2"]) == 0
+    assert json.loads(out.read_text(encoding="utf-8"))["value"] == 0.0
+    assert main(["safe-wpm", "--trials", str(p), "--guarantee", g, "--read-s-per-commit", "1"]) == 2
