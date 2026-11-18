@@ -438,7 +438,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-13 Licence flags in the stream and in trust decisions (FEP)
 - **Gap:** 47 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-03). Follow-up of P5-03.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-17 (code `29d17d0`): [FEP-0010](../../spec/feps/0010-data-licence-keys.md), NTS 1.0 RC4 amendment 6. `meta` keys `data.licence` (SPDX id, non-empty string) and `data.research_only` (boolean; MUST be true for a licence without commercial use, MET-12); `trust_decision.input.research_only` (audit key, TD-15). Registry 54 keys (`spec/semconv/attributes/data.yaml`, `trust-decision-input.yaml`). Python, TypeScript, Rust validators check the types; vectors V98 (accept), V99, V100 (reject); 351 vectors. Parity Python = TypeScript = Rust 351/351, kit 36/36, 28,217 fuzz mutants (seeds 1-3, `--n 30`), 0 differences. Producers: the six adapters (emg2qwerty, kt_semg, toronto_semg, willett_handwriting, spanishbcbl_meg (custom `spanishbcbl.licence` dropped), b2t25) via `fidetype.trust.licence.licence_meta`; `track_meta` for the benchmark tracks (test: adapter keys = track keys). Ledger: a stream with the keys becomes a `source` entry; context `stream_sources`; `verify` recomputes the flags. Trust layers: `StreamingTrustLayer` (stream keys + ledger lineage), `IntentTrustLayer`, `ControlTrustLayer`, collector `guard` copy `research_only`. Decisions in the FEP: spelling `licence`; key inside `input` (no schema change); validators check types only. New gaps 56 = P5-18 (LIC-3), 57 = P5-19 (LIC-2).
 - **Depends on:** P5-03 (done); a FEP (semantic conventions, MET-10).
 - **Source:** P5-03: licence flags live in the provenance ledger only. A producer has no registered `meta` key to declare the data licence (the SpanishBCBL adapter writes the custom key `spanishbcbl.licence`), and an emitted `trust_decision` does not carry `research_only`, so a consumer that reads only the stream or the decision log cannot see that an output depends on NC data.
 - **Done when:** a FEP adds optional keys (for example `data.licence` (SPDX id) and `data.research_only`) to the registry with accept / reject vectors in the three SDKs, the reference adapters write them, the ledger reads them into `source` entries, and the trust layers copy `research_only` into `trust_decision` (an audit key, TD-13), with Python = TypeScript = Rust on the vectors.
@@ -459,17 +459,31 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-16 Signed anchors written by the Collector and the trust layers
 - **Gap:** 54 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-14). Follow-up of P5-14.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-17 (code `29d17d0`): `fidetype.trust.anchor.AutoAnchor(ledger, key, dir, every_n=, every_s=, on_stop=, keep=)` (hooks `ProvenanceLedger.on_append`; timer checked at each entry and each collector loop step) writes Ed25519-signed `anchor-<seq>.json` files into a separate directory (atomic; older anchors unchanged); `load_private_key(key_env= | key_file=)`. Collector `trust` option `ledger.anchor` (`dir`, `key_env` or `key_file`, `every_n`, `every_s`, `on_stop`, `keep`); the key never goes into the config, a log or the metrics (metrics `anchors`: count, newest seq, key id). `verify --anchor <dir> --allow-growth --public-key` checks the newest anchor. Test: a rewrite after the last manual anchor passes the manual anchor but fails against the automatic one (API and CLI); a collector run writes anchors and the key is in no output. Tests skip without `cryptography`. Docs section 4.1a, FEP-0006 section 4.
 - **Depends on:** P5-14 (done).
 - **Source:** P5-14: an anchor is signed only when the operator runs `anchor --sign-key-file` (or calls `sign_anchor`). The Collector `trust` processor ledger, `StreamingTrustLayer(ledger=)` and live loops never write a signed anchor, so between two manual runs a rewrite of the newest entries is not covered.
 - **Done when:** the Collector `trust` ledger option (and the Python API) can write a signed anchor on stop and every N entries or T seconds (key from an environment variable, never in the config file), the anchors go to a separate file or directory, `verify --anchor` can check the newest one with `--allow-growth`, and a test shows that a rewrite of entries written after the last manual anchor fails against the automatic one.
 
 #### P5-17 Collector refuses an input-event file that would mix streams
 - **Gap:** 55 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-15). Follow-up of P5-15, P3-04.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-17 (code `29d17d0`): the config check refuses (ConfigError naming the reasons) a `jsonl` exporter of input events without `{session}` when its pipelines can carry more than one stream (several receivers, several file paths, a websocket or LSL receiver, or one exporter shared by two pipelines); a decision log is not affected. Reason in docs/collector.md and FEP-0006 section 6 rule 5. Example configs show `{session}`; the P3-04 bench writes `out/streams/{session}.nts.jsonl`. Tests: refused for each case, accepted with `{session}` and for one stream.
 - **Depends on:** P5-15 (done).
 - **Source:** P5-15: a `jsonl` exporter of input event types without `{session}` writes all streams of a pipeline into one file, one header after the other, with no stream id. Such a file is not one NTS stream, and an erasure can only delete it whole (it reads the first header only).
 - **Done when:** the config check refuses (or warns, with a reason in the docs) an input-event `jsonl` exporter without `{session}` when its pipeline can carry more than one stream (several receivers, several file paths, a websocket or LSL receiver), the example configs use `{session}`, and a test covers both cases.
+
+#### P5-18 Collector policy for research-only decisions
+- **Gap:** 56 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-13). Follow-up of P5-13.
+- **Status:** `todo`.
+- **Depends on:** P5-13 (done).
+- **Source:** FEP-0010 open question LIC-3: every reference trust layer writes `trust_decision.input.research_only`, but no collector exporter can refuse such decisions. A product build (for example the `os_text` exporter) could type output that depends on non-commercial data.
+- **Done when:** an exporter option (for example `refuse_research_only = true`, FEP-0006) drops or blocks research-only decisions with a counter and a log line, a decision without the key is treated by a documented rule (unknown), and a test shows that a CC-BY-NC stream types nothing through a product exporter while a CC0 stream types as before.
+
+#### P5-19 Advisory check: data.research_only agrees with data.licence
+- **Gap:** 57 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-13). Follow-up of P5-13.
+- **Status:** `todo`.
+- **Depends on:** P5-13 (done).
+- **Source:** FEP-0010 open question LIC-2: the validators check only the types of `data.licence` and `data.research_only`. A stream with `data.research_only = false` and `data.licence = "CC-BY-NC-4.0"` breaks MET-12 but passes.
+- **Done when:** an advisory check (a warning, never a reject; like NTS-MODALITY-MATCH) flags `data.research_only = false` with a licence id that has `NC` (and `LicenseRef-unknown`) in Python, TypeScript and Rust with the same warning, with accept vectors that pin the warning, and three-SDK parity.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.

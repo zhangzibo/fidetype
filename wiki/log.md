@@ -1147,3 +1147,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New gaps 54 = P5-16 (Collector writes signed anchors itself), 55 = P5-17 (refuse input-event files that mix streams).
 - Tracker: P15-15 agent stats filled (2045.429 s, 219256 tokens, 78 tools).
 - Pages: [roadmap](questions/roadmap-standard.md), [open gaps](questions/open-gaps.md), [provenance ledger](concepts/provenance-ledger.md); docs [provenance and privacy](../docs/provenance-and-privacy.md) sections 4.1, 4.2, 8, [collector](../docs/collector.md).
+
+## [2026-11-17] setup | P5-13, P5-16, P5-17 done: data licence keys (FEP-0010, RC4 amendment 6); automatic signed anchors; no mixed-stream input files; gaps 47, 54, 55 closed; new gaps 56, 57
+- Code `29d17d0`. P5-13: [FEP-0010](../spec/feps/0010-data-licence-keys.md): `data.licence`, `data.research_only` (MET-12) and `trust_decision.input.research_only` (TD-15). Vectors V98-V100 (351 in all); Python = TypeScript = Rust 351/351, kit 36/36, 28,217 fuzz mutants. Six adapters write the keys; the ledger reads them into `source` entries; the trust layers copy the flag.
+- P5-16: `AutoAnchor` and the Collector option `ledger.anchor` write signed anchors every N entries / T seconds / at stop; `verify --anchor <dir>` checks the newest. A rewrite after the last manual anchor fails against the automatic one.
+- P5-17: the Collector refuses an input-event `jsonl` file without `{session}` when its pipelines can carry more than one stream.
+- New gaps 56 = P5-18 (collector policy for research-only decisions), 57 = P5-19 (advisory check: `data.research_only` agrees with `data.licence`).
+- Tracker: P5-14 / P5-15 agent stats filled (1469.213 s, 218411 tokens, 97 tools).
+- Pages: [NTS spec](concepts/nts-spec.md), [provenance ledger](concepts/provenance-ledger.md), [roadmap](questions/roadmap-standard.md), [open gaps](questions/open-gaps.md).
