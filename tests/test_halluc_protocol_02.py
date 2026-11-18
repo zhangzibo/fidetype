@@ -132,6 +132,22 @@ def test_cli_protocol_flag(tmp_path):
 CARDS_V02 = sorted(V02.glob("*.card.json"))
 
 
+def _assert_same(a, b, path="card"):
+    """Equal, except that floats may differ in the last bits (the CP bisection runs on other platforms in CI)."""
+    if isinstance(a, float) or isinstance(b, float):
+        assert a == pytest.approx(b, rel=1e-9, abs=1e-12), path
+    elif isinstance(a, dict):
+        assert isinstance(b, dict) and a.keys() == b.keys(), path
+        for k in a:
+            _assert_same(a[k], b[k], f"{path}.{k}")
+    elif isinstance(a, list):
+        assert isinstance(b, list) and len(a) == len(b), path
+        for i, (x, y) in enumerate(zip(a, b)):
+            _assert_same(x, y, f"{path}[{i}]")
+    else:
+        assert a == b, path
+
+
 def _outcomes_for(card: dict, card_path: Path) -> dict:
     rel = card["meta"]["outcomes_file"]
     return json.loads((REPO / rel).read_text(encoding="utf-8"))
@@ -152,7 +168,7 @@ def test_v02_cards_reproduce(path):
     card = HB.score_outcomes(oc, alpha_wrong=r["alpha_wrong"], alpha_fluent=r["alpha_fluent"],
                              swap_ratio_max=r["swap_ratio_max"], swap_alpha=r["swap_alpha"], swap_m_min=r["swap_m_min"])
     card["meta"] = {**card["meta"], "outcomes_file": ref["meta"]["outcomes_file"]}
-    assert json.loads(json.dumps(card)) == ref
+    _assert_same(json.loads(json.dumps(card)), ref)
 
 
 def test_v02_verdicts_of_p15_07_baselines():
