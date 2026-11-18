@@ -113,13 +113,17 @@ cannot detect a cut of the last entries by itself. For that, store the
 head (:meth:`ProvenanceLedger.anchor`) in a second place and pass it to
 :func:`verify` as ``expected_head``. The ledger is tamper-evident, not
 tamper-proof: a person who can rewrite the whole file can recompute the
-chain. A signed or external anchor closes that gap.
+chain. A signed anchor (:mod:`fidetype.trust.anchor`, P5-14) closes that
+gap: the head is signed with an Ed25519 key kept outside the ledger.
 
 Command line::
 
-    python -m fidetype.trust.provenance verify ledger.jsonl [--head <hash> | --anchor anchor.json]
+    python -m fidetype.trust.provenance verify ledger.jsonl [--head <hash> | --anchor anchor.json
+        [--public-key pub.pem] [--allow-growth]]
     python -m fidetype.trust.provenance report ledger.jsonl [--max-items 20]
     python -m fidetype.trust.provenance anchor ledger.jsonl [--out anchor.json]
+        [--sign-key-file key.pem | --sign-key-env VAR]
+    python -m fidetype.trust.provenance keygen --private key.pem --public pub.pem
     python -m fidetype.trust.provenance lineage ledger.jsonl <decision_id> [--word N] [--json]
     python -m fidetype.trust.provenance redact ledger.jsonl --decision <id> [--decision <id> ...]
         --request-ref <opaque ref> [--reason erasure-request] [--key-env VAR]
@@ -1746,6 +1750,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     v.add_argument("path")
     v.add_argument("--head", default=None, help="expected head hash (detects a cut at the end)")
     v.add_argument("--anchor", default=None, help="anchor JSON file from the 'anchor' command")
+    v.add_argument("--public-key", default=None, help="Ed25519 public key (PEM) that checks a signed anchor")
+    v.add_argument("--allow-growth", action="store_true",
+                   help="accept entries after the anchored head (the anchored entry must still be in the chain)")
     r = sub.add_parser("report", help="print a Markdown audit report")
     r.add_argument("path")
     r.add_argument("--max-items", type=int, default=20)
@@ -1754,6 +1761,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     an = sub.add_parser("anchor", help="print (or write) the head of the chain, to keep in a second place")
     an.add_argument("path")
     an.add_argument("--out", default=None)
+    an.add_argument("--sign-key-file", default=None, help="Ed25519 private key (PEM file) that signs the anchor")
+    an.add_argument("--sign-key-env", default=None,
+                    help="environment variable that holds the Ed25519 private key (PEM text)")
+    kg = sub.add_parser("keygen", help="write a new Ed25519 key pair for signed anchors (never commit the private key)")
+    kg.add_argument("--private", required=True)
+    kg.add_argument("--public", required=True)
     li = sub.add_parser("lineage", help="print the full lineage of one decision (Markdown or JSON)")
     li.add_argument("path")
     li.add_argument("decision_id")
@@ -1771,7 +1784,34 @@ def main(argv: Sequence[str] | None = None) -> int:
     rd.add_argument("--key-env", default=None, help="environment variable with the ledger's hash key")
     a = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+    if a.cmd == "keygen":
+        from fidetype.trust.anchor import write_key_pair
+
+        try:
+            kid = write_key_pair(a.private, a.public)
+        except (FileExistsError, RuntimeError) as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 2
+        print(f"key pair written; key id {kid}. Keep the private key out of any repository.")
+        return 0
+    if a.cmd == "verify" and a.anchor:
+        from fidetype.trust.anchor import verify_anchored
+
+        pub = Path(a.public_key).read_bytes() if a.public_key else None
+        try:
+            res = verify_anchored(a.path, _anchor_arg(None, a.anchor), pub, allow_growth=a.allow_growth)
+        except (RuntimeError, ValueError) as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 2
+        print(f"{'PASS' if res.ok else 'FAIL'}: {res.n_entries} entries, head seq {res.head_seq}, head {res.head_hash}"
+              + ("; anchor signature checked" if pub is not None and res.ok else ""))
+        for e in res.errors:
+            print("  " + e)
+        return 0 if res.ok else 1
     if a.cmd == "verify":
+        if a.public_key or a.allow_growth:
+            print("--public-key and --allow-growth need --anchor", file=sys.stderr)
+            return 2
         res = verify(a.path, _anchor_arg(a.head, a.anchor))
         print(f"{'PASS' if res.ok else 'FAIL'}: {res.n_entries} entries, head seq {res.head_seq}, head {res.head_hash}")
         for e in res.errors:
@@ -1783,9 +1823,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not res.ok:
             print(f"FAIL: the ledger does not verify ({res.errors[:3]}); no anchor written", file=sys.stderr)
             return 1
-        g = ents[0]["body"]
-        anc = {"ledger_id": g.get("ledger_id"), "seq": ents[-1]["seq"], "hash": ents[-1]["hash"],
-               "ts": ents[-1]["ts"], "n_entries": len(ents)}
+        from fidetype.trust.anchor import make_anchor, sign_anchor
+
+        anc = make_anchor(ents)
+        if a.sign_key_file or a.sign_key_env:
+            pem = (Path(a.sign_key_file).read_bytes() if a.sign_key_file
+                   else os.environ.get(a.sign_key_env, "").encode("utf-8"))
+            if not pem:
+                print(f"environment variable {a.sign_key_env} is empty", file=sys.stderr)
+                return 2
+            try:
+                anc = sign_anchor(anc, pem)
+            except (RuntimeError, ValueError) as e:
+                print(f"error: {e}", file=sys.stderr)
+                return 2
         txt = json.dumps(anc, indent=1)
         if a.out:
             Path(a.out).write_text(txt + "\n", encoding="utf-8")

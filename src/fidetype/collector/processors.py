@@ -17,6 +17,7 @@ import collections
 import copy
 import hashlib
 import hmac
+import json
 import math
 from typing import Any, Callable
 
@@ -572,12 +573,18 @@ class PrivacyProcessor(Processor):
     removed or replaced by its HMAC (``shown_hmac`` / ``text_hmac``, as the ``redact`` processor), and the
     event gets ``redaction`` with the policy id. The key comes from an environment variable; it never
     appears in an output.
+
+    ``subject_index`` (P5-15): a JSON Lines file. For each header whose input ``meta`` names a
+    ``subject.id``, one line ``{"schema": "fidetype.subject-index/1.0", "session": <stream id>,
+    "subject": "h:" + HMAC-SHA256(key, subject.id)[:32]}`` is appended (before the policy filters the
+    meta). An erasure request (:func:`fidetype.trust.erasure.erase_outputs`) finds the subject's sessions
+    there, also when the policy drops ``subject.id`` from the stream.
     """
 
     type = "privacy"
 
     def __init__(self, name: str, log: Callable[[str], None], policy: Any = None, key: bytes | None = None,
-                 key_id: str | None = None) -> None:
+                 key_id: str | None = None, subject_index: Any = None) -> None:
         super().__init__(name, log)
         from fidetype.trust.privacy import PrivacyPolicy
 
@@ -586,8 +593,29 @@ class PrivacyProcessor(Processor):
             raise ValueError(f"processors.{name}: the privacy policy hashes values but no key was given")
         self._key = key
         self.key_id = key_id
+        if subject_index is not None and not key:
+            raise ValueError(f"processors.{name}: subject_index needs a key (the index holds HMAC codes)")
+        self.subject_index = subject_index
         self.counts.update(headers=0, meta_kept=0, meta_dropped=0, meta_hashed=0, meta_pii_dropped=0,
                            text_decisions=0, text_hypotheses=0)
+        if subject_index is not None:
+            self.counts.update(index_lines=0, index_no_subject=0)
+
+    def _index(self, sid: str, meta: dict[str, Any]) -> None:
+        from pathlib import Path
+
+        from fidetype.trust.erasure import index_line, subject_code
+
+        sub = meta.get("subject.id")
+        if not isinstance(sub, str) or not sub:
+            self.counts["index_no_subject"] += 1
+            return
+        assert self._key is not None
+        p = Path(self.subject_index)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with open(p, "a", encoding="utf-8", newline="\n") as f:
+            f.write(json.dumps(index_line(sid, subject_code(sub, self._key))) + "\n")
+        self.counts["index_lines"] += 1
 
     def _record(self) -> dict[str, Any]:
         rec: dict[str, Any] = {"mode": "drop" if self.policy.text == "drop" else "hmac-sha256",
@@ -602,6 +630,8 @@ class PrivacyProcessor(Processor):
         for sid, ev in items:
             typ = ev.get("type")
             if typ == "header" and isinstance(ev.get("meta"), dict):
+                if self.subject_index is not None:
+                    self._index(sid, ev["meta"])
                 ev = dict(ev)
                 ev["meta"], n = self.policy.apply_meta(ev["meta"], self._key)
                 self.counts["headers"] += 1

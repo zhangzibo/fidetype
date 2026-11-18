@@ -262,7 +262,9 @@ class Collector:
             try:
                 return P.PrivacyProcessor(c.name, self.log, policy=_privacy_policy(f"processors.{c.name}", o,
                                                                                   self.config.base_dir),
-                                          key=key.encode("utf-8") if key else None, key_id=o.get("key_id"))
+                                          key=key.encode("utf-8") if key else None, key_id=o.get("key_id"),
+                                          subject_index=(self.config.path(o["subject_index"])
+                                                         if "subject_index" in o else None))
             except ValueError as e:
                 raise ConfigError(str(e)) from None
         if c.type == "segment":

@@ -2,6 +2,8 @@
 
 - ``jsonl``: a JSON Lines file. With the default ``types = ["trust_decision"]`` it is a decision
   log (spec 6.4: no header, decisions only). A file never mixes decisions and input events (TD-11).
+  P5-15: a path with ``{session}`` writes one file per stream / decision session (file name from
+  :func:`fidetype.trust.erasure.session_token`), so an erasure can delete one session's whole file.
 - ``stdout``: JSON Lines on standard output (logs go to standard error).
 - ``websocket``: the ``/decisions`` channel (FEP-0004, WS-D1 ... WS-D4). With ``receiver`` it is
   served by that websocket receiver's server. Without ``receiver`` the exporter starts its own
@@ -26,6 +28,9 @@ from typing import Any, Callable, TextIO
 
 from fidetype.adapters import ws as W
 from fidetype.collector.receivers import STATUS, Item
+
+#: Output event types of a decision (their file key is the decision's ``session``).
+DECISION_TYPES = {"trust_decision", "intent_decision", "control_decision"}
 
 
 def dumps(ev: dict[str, Any]) -> str:
@@ -86,15 +91,50 @@ class JsonlExporter(_LinesExporter):
         super().__init__(name, log, types)
         self.path = path
         self.append = append
+        #: P5-15: ``{session}`` in the path -> one file per session, opened at its first item.
+        self.per_session = "{session}" in str(path)
+        self.fhs: dict[str, TextIO] = {}
+        if self.per_session:
+            self.counts.update(files=0)
 
     def start(self) -> None:
+        if self.per_session:
+            return
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.fh = open(self.path, "a" if self.append else "w", encoding="utf-8", newline="\n")
+
+    def _session_fh(self, session: str) -> TextIO:
+        fh = self.fhs.get(session)
+        if fh is None:
+            from fidetype.trust.erasure import session_path
+
+            p = Path(session_path(str(self.path), session))
+            p.parent.mkdir(parents=True, exist_ok=True)
+            fh = self.fhs[session] = open(p, "a" if self.append else "w", encoding="utf-8", newline="\n")
+            self.counts["files"] += 1
+        return fh
+
+    def export(self, items: list[Item]) -> None:
+        if not self.per_session:
+            return super().export(items)
+        touched: set[str] = set()
+        for sid, ev in items:
+            if not self.wants(ev):
+                continue
+            s = str(ev.get("session") or sid) if ev.get("type") in DECISION_TYPES else str(sid)
+            self._session_fh(s).write(dumps(ev) + "\n")
+            touched.add(s)
+            self.counts["exported"] += 1
+        for s in touched:
+            self.fhs[s].flush()
 
     def stop(self) -> None:
         if self.fh is not None:
             self.fh.close()
             self.fh = None
+        for fh in self.fhs.values():
+            fh.close()
+        self.fhs = {}
 
 
 class StdoutExporter(_LinesExporter):

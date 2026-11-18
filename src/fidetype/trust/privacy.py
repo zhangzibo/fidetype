@@ -62,7 +62,9 @@ Deletion
   bodies of a subject's decisions and corrections; the chain still verifies
   (tombstones).
 - :func:`erase` does both for one request and returns one receipt
-  (``fidetype.deletion-receipt/1.0``).
+  (``fidetype.deletion-receipt/1.1``). P5-15: it can also remove the subject's
+  items from Collector output files (decision logs, NTS stream files, the
+  ``os_text`` log, per-session files) through :mod:`fidetype.trust.erasure`.
 
 Command line::
 
@@ -70,6 +72,8 @@ Command line::
     python -m fidetype.trust.privacy check-consent-ref <ref>
     python -m fidetype.trust.privacy erase --request-ref <ref> [--profile p.json] [--ledger l.jsonl ...]
         [--subject-env VAR] [--ledger-key-env VAR] [--receipt out.json]
+        [--output FILE ...] [--output-template 'out/{session}.jsonl' ...] [--subject-index FILE ...]
+        [--index-key-env VAR] [--sessions-env VAR]
 """
 
 from __future__ import annotations
@@ -90,7 +94,8 @@ from typing import Any, Mapping, Sequence
 PURPOSES = ("decode", "store-text", "store-ledger", "calibrate", "personalise", "train-research", "train-product",
             "share-research")
 POLICY_SCHEMA = "fidetype.privacy-policy/1.0"
-RECEIPT_SCHEMA = "fidetype.deletion-receipt/1.0"
+#: 1.1 (P5-15) adds ``outputs`` (Collector output files); a 1.0 receipt is a 1.1 receipt without it.
+RECEIPT_SCHEMA = "fidetype.deletion-receipt/1.1"
 META_ACTIONS = ("keep", "drop", "hash")
 
 _REF_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/#-]{3,127}$")
@@ -341,8 +346,18 @@ def erase(
     subject_id: str | None = None,
     ledger_key: bytes | None = None,
     reason: str = "erasure-request",
+    outputs: Sequence[str | os.PathLike[str]] = (),
+    output_templates: Sequence[str] = (),
+    subject_indexes: Sequence[str | os.PathLike[str]] = (),
+    index_key: bytes | None = None,
+    sessions: Sequence[str] = (),
 ) -> dict[str, Any]:
     """Carry out one erasure request: delete the profile, redact the subject in each ledger. Return a receipt.
+
+    P5-15: ``outputs`` (Collector decision logs, NTS stream files, ``os_text`` logs), ``output_templates``
+    (per-session paths with ``{session}``) and ``subject_indexes`` (with the privacy key ``index_key``) also
+    lose the subject's items (:func:`fidetype.trust.erasure.erase_outputs`); ``sessions`` adds session ids
+    directly. The receipt then has ``outputs`` (no path, no session id, no subject id).
 
     ``subject_id``: the stream ``subject.id`` of the person (pseudonymous; it is not written to the receipt).
     A ledger without a decision of the subject is listed with ``n_redacted = 0``. The receipt
@@ -369,7 +384,21 @@ def erase(
         res = verify(lp)
         row.update(verify_ok=res.ok, head=led.anchor())
         rec["ledgers"].append(row)
+    if outputs or output_templates or subject_indexes or sessions:
+        from fidetype.trust.erasure import erase_outputs
+
+        rec["outputs"] = erase_outputs(subject_id=subject_id, key=index_key, indexes=subject_indexes,
+                                       sessions=sessions, files=outputs, templates=output_templates)
     return rec
+
+
+def outputs_ok(rec: Mapping[str, Any]) -> bool:
+    """True when no rewritten output file of the receipt lost conformance (``nts-conform`` ok before -> after)."""
+    for r in (rec.get("outputs") or {}).get("files", ()):
+        c = r.get("conform")
+        if c and c.get("before") and c["before"].get("ok") and c.get("after") and not c["after"].get("ok"):
+            return False
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -392,6 +421,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     er.add_argument("--ledger-key-env", default=None, help="environment variable with the ledgers' hash key")
     er.add_argument("--reason", default="erasure-request")
     er.add_argument("--receipt", default=None, help="write the receipt JSON here")
+    er.add_argument("--output", action="append", default=[],
+                    help="Collector output file: decision log, NTS stream file or os_text log (repeat)")
+    er.add_argument("--output-template", action="append", default=[],
+                    help="per-session output path with {session}; each session's file is deleted (repeat)")
+    er.add_argument("--subject-index", action="append", default=[],
+                    help="subject index file of a privacy processor (repeat); needs --index-key-env")
+    er.add_argument("--index-key-env", default=None,
+                    help="environment variable with the privacy key of the subject index (HMAC codes)")
+    er.add_argument("--sessions-env", default=None,
+                    help="environment variable with comma-separated session ids to erase (not on the command line)")
     a = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
     try:
@@ -410,8 +449,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"environment variable {a.subject_env} is empty", file=sys.stderr)
             return 2
         key = os.environ.get(a.ledger_key_env, "").encode("utf-8") if a.ledger_key_env else None
+        ikey = os.environ.get(a.index_key_env, "").encode("utf-8") if a.index_key_env else None
+        if a.subject_index and not ikey:
+            print("--subject-index needs --index-key-env (a non-empty key)", file=sys.stderr)
+            return 2
+        sess = [s.strip() for s in os.environ.get(a.sessions_env, "").split(",") if s.strip()] if a.sessions_env else []
         rec = erase(request_ref=a.request_ref, profile=a.profile, ledgers=a.ledger, subject_id=subj,
-                    ledger_key=key or None, reason=a.reason)
+                    ledger_key=key or None, reason=a.reason, outputs=a.output, output_templates=a.output_template,
+                    subject_indexes=a.subject_index, index_key=ikey or None, sessions=sess)
     except (ValueError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
@@ -419,7 +464,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if a.receipt:
         Path(a.receipt).write_text(txt + "\n", encoding="utf-8")
     print(txt)
-    return 0 if all(r.get("verify_ok") for r in rec["ledgers"]) else 1
+    return 0 if all(r.get("verify_ok") for r in rec["ledgers"]) and outputs_ok(rec) else 1
 
 
 if __name__ == "__main__":

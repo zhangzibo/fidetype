@@ -26,6 +26,7 @@ The ledger is task **M2-09** of the [project plan](../questions/project-plan.md)
 | Hash rule `salted-body` (P5-04) | New ledgers: each entry holds `salt` and `body_sha256`; the entry hash covers the digest, not the body. Old ledgers keep rule `v0` and still verify |
 | Redaction (P5-04) | Kind `redaction` names removed entries (decisions, their corrections, notes) by seq + hash, with a reason code and an opaque request ref. The bodies are then removed (tombstones); the chain still verifies. `redact_subject`, `redact_decisions`, CLI `redact`, `fidetype.trust.privacy.erase` |
 | Truncation | The chain alone cannot see a cut at the end. Store `ledger.anchor()` (head seq + hash) in a second place and pass it as `expected_head` |
+| Signed anchor (P5-14) | `anchor --sign-key-file` signs the head with Ed25519 (`fidetype.trust.anchor`, extra `[sign]`); `verify --anchor --public-key` checks the signature, the ledger id, the anchored entry and the chain. A rewritten ledger with a recomputed chain fails. Option: RFC 3161 timestamp or a second host ([docs](../../docs/provenance-and-privacy.md) section 4) |
 | Corrections | `record_correction(decision_id, text, source)` stores `decision_hash`, `changed`, character and word edit distance, `relation` (correction / confirmation / rejection). The latest correction wins |
 | Hooks | `TrustPipeline.attach_ledger(ledger, context, corrections="user" or "oracle" or "none")` writes one decision per attempt in `evaluate()`; the policy fit writes nothing. `run_harness(..., ledger=)`. `LedgeredPolicy(policy, ledger, context_id)` for a live loop |
 | Queries | `LedgerView(path).wrong_commits()` (each with its context and corrections), `.summary(keys)` per decoder / calibration / policy version, `audit_report(path)` (Markdown), CLI `python -m fidetype.trust.provenance verify | report | anchor | lineage | redact <file>`; `LedgerView.lineage(decision_id)` and `lineage_report` (P5-03) |
@@ -73,11 +74,11 @@ The M6-06 trust pipeline replayed the B2T '25 test half (816 trials) with a ledg
 - Cost: about 0.1 ms per decision (in memory, hash mode); about 1.1 kB per decision entry.
 
 ## Limits
-- **Tamper-evident, not tamper-proof.** A person who can rewrite the whole file can recompute the chain. An external anchor (a second copy of the head, a signature, or a timestamping service) closes this gap. Signing is not in v0.
+- **Tamper-evident, not tamper-proof.** A person who can rewrite the whole file can recompute the chain. An external anchor (a second copy of the head, a signature, or a timestamping service) closes this gap. P5-14 (2026-11-17) adds signed anchors (Ed25519); the private key stays with the operator.
 - **Wrong commits are known only after a correction.** In live use, a silent error has no correction, so the ledger undercounts wrong commits. A replay with ground truth (`corrections="oracle"`) gives the full count.
 - **Single writer.** The file is appended by one process. There is no locking or rotation yet.
 - **Training lineage is free-form** in the context's `decoder.training_data`. **Closed by P5-03 (2026-11-17):** `source` / `artifact` entries carry checked licence flags; a product artifact with NC inputs is refused. The flags are only as good as the declared inputs: the ledger cannot see an input that nobody records.
-- **Redaction removes bodies, not copies.** Exported decision logs, backups and synced folders are outside the ledger (P5-04).
+- **Redaction removes bodies, not copies.** Backups and synced folders are outside the ledger (P5-04). P5-15 (2026-11-17): `erase` also removes the subject from Collector output files (decision logs, NTS stream files, `os_text` log) through a subject index and per-session files ([docs](../../docs/provenance-and-privacy.md) section 8).
 
 > **Our take:** The record format follows the IEC 62304 idea of traceability (each output traces to a versioned software item and its configuration) and the "audit trail" idea of medical device software. This is our interpretation. We did not check the standards' text. The ledger supports such a story; it is not a compliance claim.
 

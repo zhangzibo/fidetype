@@ -36,9 +36,9 @@ classifiers = [
 dependencies = ["numpy"]
 
 [project.optional-dependencies]
-# dev includes [ws] and [emg2qwerty], so CI runs the WebSocket and HDF5 tests (they skip cleanly when the
-# package is missing).
-dev = ["pytest", "fidetype[ws,emg2qwerty]"]
+# dev includes [ws], [emg2qwerty] and [sign], so CI runs the WebSocket, HDF5 and signed-anchor tests (they skip
+# cleanly when the package is missing).
+dev = ["pytest", "fidetype[ws,emg2qwerty,sign]"]
 data = ["mne>=1.8", "scipy>=1.13"]
 # Lab Streaming Layer adapter (fidetype.adapters.lsl). pylsl is MIT; its Windows wheel includes liblsl.
 lsl = ["pylsl>=1.16"]
@@ -52,6 +52,9 @@ emg2qwerty = ["h5py>=3.10"]
 # prebuilt CPU wheel: uv pip install llama-cpp-python --only-binary llama-cpp-python
 #   --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu --index-strategy unsafe-best-match
 llm = ["llama-cpp-python>=0.3.36"]
+# Signed ledger anchors (fidetype.trust.provenance sign_anchor / verify_anchor, P5-14): Ed25519.
+# cryptography is Apache-2.0 OR BSD-3-Clause.
+sign = ["cryptography>=43"]
 
 [project.scripts]
 fidetype = "fidetype.cli:main"

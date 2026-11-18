@@ -41,7 +41,7 @@ SCHEMA: dict[str, dict[str, tuple[set[str], set[str]]]] = {
                    "ledger"}, {"config"}),
         "redact": ({"mode", "key_env", "key_id", "hypothesis_text"}, set()),
         # P5-04 privacy filter: header meta keys (keep / drop / hash) and decoded text, per a policy file.
-        "privacy": ({"policy", "key_env", "key_id"}, set()),
+        "privacy": ({"policy", "key_env", "key_id", "subject_index"}, set()),
         "thin": ({"keep_provisional"}, set()),
         # P3-02 segmenter: add segment_end events (pause, blank run, length).
         "segment": ({"pause_s", "blank_frames", "max_frames", "unit"}, set()),
@@ -322,6 +322,11 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
         _opt_type(where, opts, "policy", (str,), "a privacy policy file (TOML or JSON)")
         _opt_type(where, opts, "key_env", (str,), "the name of an environment variable")
         _opt_type(where, opts, "key_id", (str,), "a string")
+        # P5-15: the subject index links each stream (session) to an HMAC code of its subject.id.
+        _opt_type(where, opts, "subject_index", (str,), "a file path")
+        if "subject_index" in opts and "key_env" not in opts:
+            raise ConfigError(f"{where}.subject_index: needs key_env (the index holds HMAC codes of subject.id, "
+                              "never the raw id)")
     elif kind == "processors" and typ == "thin":
         _opt_enum(where, opts, "keep_provisional", ("changes", "none", "all"))
     elif kind == "processors" and typ == "segment":
@@ -361,6 +366,9 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
         if typ == "jsonl":
             _opt_type(where, opts, "path", (str,), "a file path")
             _opt_type(where, opts, "append", (bool,), "true or false")
+            tpl = opts.get("path", "").replace("{session}", "")
+            if "{" in tpl or "}" in tpl:
+                raise ConfigError(f"{where}.path: the only placeholder is {{session}} (one file per session)")
         types = opts.get("types", ["trust_decision"])
         if isinstance(types, str):
             types = [types]

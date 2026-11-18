@@ -1,6 +1,6 @@
 # Provenance, licences, consent and deletion
 
-This page shows how to record where each output came from (data, weights, calibration), how licence flags travel to each output, how to reference consent, how to filter personal data in the Collector, and how to delete a person's data. Roadmap items P5-03 and P5-04.
+This page shows how to record where each output came from (data, weights, calibration), how licence flags travel to each output, how to reference consent, how to filter personal data in the Collector, and how to delete a person's data. Roadmap items P5-03, P5-04, P5-14 (signed anchors) and P5-15 (erasure in Collector output files).
 
 > **Not legal advice.** These tools help you document consent, keep less data and delete data on request. They do not make a deployment compliant. See the [neural-data law table](../wiki/questions/neural-data-law.md) (design information only).
 
@@ -68,6 +68,48 @@ python -m fidetype.trust.provenance anchor ledger.jsonl --out anchor.json
 python -m fidetype.trust.provenance verify ledger.jsonl --anchor anchor.json
 ```
 
+A plain anchor is tamper-evident, not tamper-proof. A person who can rewrite the ledger can recompute the whole chain and can also rewrite `anchor.json`. Use one of these two options (or both) to close that gap.
+
+### 4.1 Signed anchor (Ed25519)
+
+Install the optional extra: `pip install "fidetype[sign]"` (package `cryptography`, Apache-2.0 OR BSD-3-Clause).
+
+```sh
+# once, on the operator's machine; never commit the private key
+python -m fidetype.trust.provenance keygen --private ~/secrets/anchor.pem --public anchor.pub.pem
+
+python -m fidetype.trust.provenance anchor ledger.jsonl --out anchor.json --sign-key-file ~/secrets/anchor.pem
+#   or: --sign-key-env FT_ANCHOR_KEY   (the environment variable holds the PEM text, e.g. from a secret store)
+
+python -m fidetype.trust.provenance verify ledger.jsonl --anchor anchor.json --public-key anchor.pub.pem
+python -m fidetype.trust.provenance verify ledger.jsonl --anchor anchor.json --public-key anchor.pub.pem --allow-growth
+```
+
+| Check of `verify --anchor --public-key` | Fails when |
+|---|---|
+| Signature (Ed25519 over the canonical JSON of the anchor without `signature`) | the anchor was edited, or signed with another key (`key_id` differs) |
+| Ledger id | the ledger has another genesis |
+| Anchored entry (`seq`, `hash`) | the ledger was rewritten (even with a recomputed chain) or cut below the anchor |
+| Head = anchored entry | entries were added after the anchor (accept them with `--allow-growth`; they need a later anchor) |
+| Whole chain | any check of section 1 |
+
+A signed anchor without `--public-key` fails: nobody checked the signature. Redaction (section 7) keeps the entry hashes, so an anchor stays valid after an erasure. Python API: `fidetype.trust.anchor` (`generate_key`, `sign_anchor`, `verify_anchored`).
+
+Key rules: keep the private key in a secret store or a file with owner-only access, on the operator's side. Publish the public key (for example next to the release notes). Make a new key pair when a person who had access leaves; old anchors stay valid with the old public key.
+
+### 4.2 External store (no code needed)
+
+- **Second host.** Copy each anchor file to a host that the ledger's writer cannot change (another account, a write-once bucket, a public git repository).
+- **RFC 3161 timestamp.** Send the anchor file's hash to a timestamp authority (TSA). The token proves that the anchor existed at that time.
+
+```sh
+openssl ts -query -data anchor.json -sha256 -cert -out anchor.tsq
+# send anchor.tsq to the TSA of your choice (HTTP POST, content type application/timestamp-query) -> anchor.tsr
+openssl ts -verify -data anchor.json -in anchor.tsr -CAfile tsa-ca.pem -untrusted tsa.pem
+```
+
+Fidetype does not call a TSA itself, and the tests never use the network. A signed anchor and a timestamp work together: sign first, then timestamp the signed file.
+
 ## 5. Consent references
 
 A stream, a profile and a ledger hold only an **opaque reference** to a consent record that you keep elsewhere (spec rule SEC-6). `check_consent_ref` accepts 4 to 128 characters of letters, digits and `. _ : / # -`. It refuses spaces, e-mail addresses and phone numbers.
@@ -120,7 +162,53 @@ FT_SUBJECT=<subject.id> FT_LEDGER_KEY=<key> python -m fidetype.trust.privacy era
 3. The bodies of these entries are removed (tombstones). Each entry keeps `body_sha256`, so the chain still verifies. The random `salt` goes with the body, so nobody can confirm a guessed text from the digest.
 4. The receipt lists the request reference, the user hash, the ledger ids, the counts and the new heads. It holds no raw id and no path.
 
-Limits: copies outside these files (backups, synced folders, exported decision logs) are not reached. A ledger written before P5-04 (hash rule `v0`) cannot be redacted without breaking its chain; start a new ledger.
+Limits: copies outside these files (backups, synced folders) are not reached. A ledger written before P5-04 (hash rule `v0`) cannot be redacted without breaking its chain; start a new ledger.
+
+## 8. Erasure in Collector output files (P5-15)
+
+The Collector also writes plain files: decision logs, NTS stream files, the `os_text` stub log. Prepare them so that an erasure can find one subject's items.
+
+```toml
+[processors.priv]
+type = "privacy"
+key_env = "FIDETYPE_PRIVACY_KEY"
+subject_index = "out/subject-index.jsonl"   # one line per stream: session + "h:" HMAC code of subject.id
+
+[exporters.log]
+type = "jsonl"
+path = "out/decisions.jsonl"                # shared decision log: lines are removed by session
+
+[exporters.streams]
+type = "jsonl"
+path = "out/streams/{session}.nts.jsonl"    # one file per stream: the whole file is deleted
+types = ["header", "frame", "segment_end", "end"]
+```
+
+- The subject index never holds the raw `subject.id`. It holds `"h:" + HMAC-SHA256(key, subject.id)[:32]`, the same code as a policy `hash` rule. The policy can still drop `subject.id` from the stream; the index keeps the link.
+- `{session}` is the only path placeholder. Session ids with other characters than letters, digits and `. _ -` get a safe file name with a short hash (`fidetype.trust.erasure.session_token`).
+
+Then add the outputs to the erasure request of section 7:
+
+```sh
+FT_SUBJECT=<subject.id> FT_PRIV_KEY=<privacy key> python -m fidetype.trust.privacy erase \
+    --request-ref er-2026-0007 --subject-env FT_SUBJECT --index-key-env FT_PRIV_KEY \
+    --subject-index out/subject-index.jsonl \
+    --output out/decisions.jsonl --output out/typed.jsonl \
+    --output-template "out/streams/{session}.nts.jsonl" --receipt receipt.json
+```
+
+| File | What the erasure does |
+|---|---|
+| per-session file (`--output-template`) | deleted |
+| NTS stream file (`--output`, starts with a header) | deleted when its header `subject.id` is the subject (raw or `h:` code); else unchanged |
+| decision log (`--output`) | the subject's `trust_decision` lines (by `session`) are removed; other lines stay byte for byte |
+| `os_text` stub log (`--output`) | the lines whose `decision.session` is the subject's are removed |
+| subject index | the subject's lines are removed |
+| file with no line left | deleted (an empty file is not a decision log) |
+
+`--sessions-env VAR` adds session ids directly (comma-separated, from an environment variable). The receipt (`fidetype.deletion-receipt/1.1`) gets `outputs`: per file its position in the request, the form, the action, the counts, SHA-256 before and after, and the `nts-conform` result before and after. It holds no path, no session id and no subject id. The command exits with 1 when a rewritten file lost conformance.
+
+Decision-log rules are per session (TD-5 … TD-7), so removing whole sessions keeps the other sessions conformant. Not reached: live channels (WebSocket `/decisions`, LSL outlets, standard output) and copies outside these files. The metrics file holds counts only (no id, no text).
 
 ## Reference
 
