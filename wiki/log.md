@@ -1120,3 +1120,8 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Full pytest: 1374 passed, 11 skipped. Tracker: P3-10 / P14-20 and P7-07 / P3-07 / P3-08 run stats filled.
 - Pages: [roadmap](questions/roadmap-standard.md) (P5 deliverables 3-5, exit criterion, P5-13 … P5-15), [open gaps](questions/open-gaps.md), [provenance ledger](concepts/provenance-ledger.md), [landscape](sources/neural-input-landscape-2026.md), [index](index.md); docs [provenance and privacy](../docs/provenance-and-privacy.md), [collector](../docs/collector.md).
 
+## [2026-11-17] setup | Collector decisions: TOML/JSON config (gap 40 = P3-09 closed); Python for collector v1
+- The user delegated both decisions to the orchestrator. Record: [collector decisions 2026-11](questions/collector-decisions-2026-11.md).
+- Config format: TOML/JSON, as FEP-0006 section 6 says. No YAML. Reasons: a deliberate spec decision; TOML has explicit types (no YAML "Norway problem", no octal / bool coercion); `tomllib` is in the standard library; JSON covers machine-written configs.
+- Collector v1 language: Python. The collector, trust layer, adapters and tests exist in Python and meet the latency budget (p95 added about 1–3 ms vs 50 ms). A Rust core can come later for embedded / on-device use (P5-05) if a measured need appears.
+- Pages: [roadmap](questions/roadmap-standard.md) (P3 goal, language line, dated decision note, exit criterion, P3 status, P3-09 `done`; edited in place, no item moved), [open gaps](questions/open-gaps.md) (gap 40 closed), [index](index.md). Tracker: P3-01 title + notes, P3-09 `done`. No code change.

@@ -229,7 +229,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 **Effort:** 40–70 agent-days (about 6–12 per language). User: registry accounts and publish tokens (**user-owned**). **Depends on:** P1 schema (generated code).
 
 ## P3. Collector (pipeline)
-**Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a YAML file.
+**Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a TOML/JSON file (FEP-0006; [decision 2026-11-17](collector-decisions-2026-11.md)).
 
 **Status (2026-11-14):** v0 started early. Draft [FEP-0006](../../spec/feps/0006-collector.md) and `src/fidetype/collector/` ([collector](../concepts/collector.md)): receivers `file` + `websocket`, processors `validate` + `trust` + `redact` + `thin`, exporters `jsonl` + `stdout` + `websocket`, TOML / JSON configuration (no YAML yet), health and metrics. Not yet: LSL, gRPC, OS input exporters, latency budget.
 
@@ -240,19 +240,21 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **Processors** | Trust layer (calibration, conformal sets, decision policy), per-user calibration, LM rescoring, segmenter, **privacy filter** (drop or hash `meta` keys, enforce spec 5.4), rate limiter, provenance stamper |
 | **Exporters** | **OS text input**: Windows TSF / IME, Android IME, macOS input method, Linux IBus; Apple BCI HID bridge (spec 6.5); **AAC apps** (WebSocket API for web AAC tools); files (Arrow, JSON Lines); analytics (Parquet, an optional OTLP export of latency metrics) |
 
-- Language: Rust or Python for v1 (decide by FEP; Rust fits a long-running local service).
+- Language: Python for v1 ([decision 2026-11-17](collector-decisions-2026-11.md)). A Rust core can follow later for embedded or on-device use, if a measured need appears (P5-05 already plans a C or Rust on-device trust core).
 - A `contrib` folder for third-party components, as in OTel.
 - Hard rule: an exporter to an OS input method sends **only committed** decisions. It logs the full NTS next to each output.
 - **Value-first link (2026-11-15):** [P14-09](#p14-09-example-aac-integration) uses the WebSocket exporter for an example AAC app integration. P3 scope does not change.
 
+> **Decision (2026-11-17, orchestrator; the user delegated it):** (1) The collector config format is **TOML/JSON (FEP-0006)**, not YAML. FEP-0006 section 6 made this choice on purpose. TOML has explicit types (no YAML "Norway problem", no octal or bool coercion) and is in the Python standard library (`tomllib`). JSON covers configs that programs write. This closes gap 40 = P3-09. (2) Collector v1 is **Python**. The collector, the trust layer, the adapters and the tests exist in Python and meet the latency budget (p95 added about 1–3 ms vs 50 ms). A Rust core can come later if a measured need appears. Record: [collector decisions 2026-11](collector-decisions-2026-11.md).
+
 ### Exit criteria
-- One YAML config runs: B2T '25 replay → trust processor → file exporter and WebSocket exporter. End-to-end latency is measured and below 50 ms added (our target).
+- One TOML/JSON config (FEP-0006) runs: B2T '25 replay → trust processor → file exporter and WebSocket exporter. End-to-end latency is measured and below 50 ms added (our target).
 - At least one OS input exporter types committed text into a text field on Windows.
 - Components have unit tests and a pipeline integration test in CI.
 
 **Effort:** 30–50 agent-days; about 8 h user testing on the PC. **Depends on:** P2 (Python and Rust), P5 trust API.
 
-**Status (2026-11-17):** P3-04 `done` (commit `2298e3e`): a pipeline integration test and the latency budget. One TOML file runs receiver (WebSocket, file, LSL) → `validate` → `segment` (new) → `guard` (new: drop-in guard, per-user profile, online ACI) → `jsonl` NTS stream + decision log + `os_text` stub (new) + WebSocket `/decisions`. Outputs reach producer level NTS Trust-ready; p95 added latency 1.1–2.3 ms at 50 Hz for the gated profiles (budget 50 ms); CI job `collector` fails above the budget. The logits guard with its built-in CTC beam search in the collector takes 104–108 ms at p95 (gap 37 = P3-06). [Docs](../../docs/collector.md#integration-test-and-latency-budget-p3-04). P3-01, P3-02, P3-03 stay `in_progress` (inventory in the tracker notes). P3 exit criteria still open: YAML (gap 40 = P3-09), an OS input exporter that types on Windows (P3-03). The B2T '25 replay through the collector is done (P3-08, 2026-11-17: p95 added 2.43 ms). P3-07 (LSL receive stamps) and P7-07 (collector consumer, all kit profiles) are done; new gap 43 = P3-10.
+**Status (2026-11-17):** P3-04 `done` (commit `2298e3e`): a pipeline integration test and the latency budget. One TOML file runs receiver (WebSocket, file, LSL) → `validate` → `segment` (new) → `guard` (new: drop-in guard, per-user profile, online ACI) → `jsonl` NTS stream + decision log + `os_text` stub (new) + WebSocket `/decisions`. Outputs reach producer level NTS Trust-ready; p95 added latency 1.1–2.3 ms at 50 Hz for the gated profiles (budget 50 ms); CI job `collector` fails above the budget. The logits guard with its built-in CTC beam search in the collector takes 104–108 ms at p95 (gap 37 = P3-06). [Docs](../../docs/collector.md#integration-test-and-latency-budget-p3-04). P3-01, P3-02, P3-03 stay `in_progress` (inventory in the tracker notes). P3 exit criteria still open: an OS input exporter that types on Windows (P3-03). Config format: TOML/JSON (FEP-0006), decided 2026-11-17 (gap 40 = P3-09 closed). The B2T '25 replay through the collector is done (P3-08, 2026-11-17: p95 added 2.43 ms). P3-07 (LSL receive stamps) and P7-07 (collector consumer, all kit profiles) are done; new gap 43 = P3-10.
 
 #### P3-06 Logits guard inside the latency budget (incremental decoding)
 - **Gap:** 37 of the [open-gap list](open-gaps.md). Follow-up of P3-04, P14-03.
@@ -277,8 +279,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P3-09 YAML configuration: roadmap or FEP-0006 (user decision)
 - **Gap:** 40 of the [open-gap list](open-gaps.md). Follow-up of P3-01.
-- **Status:** `todo`.
-- **Depends on:** a user decision.
+- **Status:** `done` (2026-11-17). Decided: TOML/JSON (FEP-0006), option (a). The P3 goal and exit criterion now say "TOML/JSON (FEP-0006)". FEP-0006 does not change. The user delegated the decision to the orchestrator. Record: [collector decisions 2026-11](collector-decisions-2026-11.md).
+- **Depends on:** a user decision (made 2026-11-17).
 - **Source:** P3-04 (2026-11-17): the P3 exit criterion says "one YAML config"; FEP-0006 section 6 decided "TOML and JSON only, YAML not planned" (no new dependency, PyYAML). The integration test uses TOML.
 - **Done when:** the user chooses: (a) change the exit criterion to "one TOML or JSON config", or (b) add YAML as an optional extra (`fidetype[yaml]`, PyYAML) and amend FEP-0006; then the roadmap and FEP-0006 say the same.
 
