@@ -445,17 +445,31 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-14 Signed or external anchor of the ledger head
 - **Gap:** 48 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-03). Follow-up of P5-03, M2-09.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-17 (code `b268203`): module `fidetype.trust.anchor` (Ed25519 through the optional extra `[sign]` = `cryptography`, Apache-2.0 OR BSD-3-Clause; in `[dev]`): `generate_key`, `sign_anchor`, `check_signature`, `verify_anchored` (signature + key id, ledger id, anchored entry seq + hash, head = anchor unless `allow_growth`, whole chain). Anchor schema `fidetype.ledger-anchor/1.0`. CLI `keygen` (never overwrites; private key owner-only), `anchor --sign-key-file | --sign-key-env`, `verify --anchor --public-key [--allow-growth]`; a signed anchor without a public key fails. Test: a rewritten ledger with a recomputed chain passes `verify` alone but fails against the signed anchor; a re-signed anchor with another key fails. Redaction keeps anchors valid. External option documented (RFC 3161 via `openssl ts`, second host); no network call. Keys: throwaway keys in tests only. Docs section 4.1 / 4.2. New gap 54 = P5-16.
 - **Depends on:** P5-03 (done).
 - **Source:** P5-03 added `anchor` / `verify --anchor`, but the anchor is a plain JSON file. A person who can rewrite the whole ledger and the anchor file can recompute the chain (tamper-evident, not tamper-proof).
 - **Done when:** the anchor can be signed (for example Ed25519 with a key outside the ledger) or sent to an external store (an RFC 3161 timestamp or a second host), `verify` checks the signature, and a test shows that a rewritten ledger with a recomputed chain fails against a signed anchor.
 
 #### P5-15 Erasure in Collector output files
 - **Gap:** 49 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-04). Follow-up of P5-04.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-17 (code `b268203`): module `fidetype.trust.erasure`. Collector: `privacy` option `subject_index` (one line per stream: session + `h:` HMAC code of `subject.id`, never the raw id; needs `key_env`) and `jsonl` path placeholder `{session}` (one file per stream / decision session). `erase(outputs=, output_templates=, subject_indexes=, index_key=, sessions=)` and CLI `erase --output --output-template --subject-index --index-key-env --sessions-env`: per-session files deleted, decision-log and `os_text` lines of the subject's sessions removed (other lines byte for byte), NTS stream files deleted when the header subject matches, index lines removed; atomic rewrite. Receipt `fidetype.deletion-receipt/1.1` `outputs`: per file position, form, action, counts, SHA-256 before / after, `nts-conform` before / after; no path, no session id, no subject id; exit 1 if a rewritten file lost conformance. Test: a two-pipeline run (3 streams, 2 subjects) -> erase one subject -> remaining decision log, per-session files and stream file pass `nts-conform check` at the same verdict. Docs section 8. New gap 55 = P5-17.
 - **Depends on:** P5-04 (done).
 - **Source:** P5-04: `erase` deletes the profile and redacts the ledgers, but the Collector's other outputs (JSON Lines decision logs, passthrough NTS streams, the `os_text` stub log, metrics files) are plain files without a hash chain or a subject index; they are not reached.
 - **Done when:** an erasure request can also remove a subject's items from the Collector output files (by `session` / pseudonymous subject, with a receipt entry per file), or the Collector can write those outputs in a redactable form; a test erases one subject from a pipeline run's outputs and the remaining files still pass `nts-conform check`.
+
+#### P5-16 Signed anchors written by the Collector and the trust layers
+- **Gap:** 54 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-14). Follow-up of P5-14.
+- **Status:** `todo`.
+- **Depends on:** P5-14 (done).
+- **Source:** P5-14: an anchor is signed only when the operator runs `anchor --sign-key-file` (or calls `sign_anchor`). The Collector `trust` processor ledger, `StreamingTrustLayer(ledger=)` and live loops never write a signed anchor, so between two manual runs a rewrite of the newest entries is not covered.
+- **Done when:** the Collector `trust` ledger option (and the Python API) can write a signed anchor on stop and every N entries or T seconds (key from an environment variable, never in the config file), the anchors go to a separate file or directory, `verify --anchor` can check the newest one with `--allow-growth`, and a test shows that a rewrite of entries written after the last manual anchor fails against the automatic one.
+
+#### P5-17 Collector refuses an input-event file that would mix streams
+- **Gap:** 55 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-15). Follow-up of P5-15, P3-04.
+- **Status:** `todo`.
+- **Depends on:** P5-15 (done).
+- **Source:** P5-15: a `jsonl` exporter of input event types without `{session}` writes all streams of a pipeline into one file, one header after the other, with no stream id. Such a file is not one NTS stream, and an erasure can only delete it whole (it reads the first header only).
+- **Done when:** the config check refuses (or warns, with a reason in the docs) an input-event `jsonl` exporter without `{session}` when its pipeline can carry more than one stream (several receivers, several file paths, a websocket or LSL receiver), the example configs use `{session}`, and a test covers both cases.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.

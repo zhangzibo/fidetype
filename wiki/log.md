@@ -1140,3 +1140,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Collector replay (P3-08, `--decoder m4-13`, 120 trials, 2,171 s real time over WebSocket 127.0.0.1): p50 / p95 / p99 added 1.25 / 1.97 / 2.65 ms (PASS vs 50 ms); 16 COMMIT, 104 OFFER, 3 wrong commits; os_text typed only the 16 commits; producer level NTS Trust-ready.
 - [T15 split audit](questions/t15-split-audit.md) rerun (`audit.py` now also reads the M4-13 submission): M4-13 val_eval 701 / val_select 722 keys, 0 on train; entry 103 units clean.
 - New gap 53 = P14-23: T15 safe WPM above the no-BCI reference with our causal decoder. Gap 50 (P14-21) now also lists these rows (edit-12 word decoder).
+
+## [2026-11-17] setup | P5-14 and P5-15 done: signed ledger anchors; erasure in Collector output files; gaps 48, 49 closed; new gaps 54, 55
+- Code `b268203`. P5-14: `fidetype.trust.anchor` (Ed25519, optional extra `[sign]` = `cryptography`, in `[dev]`); CLI `keygen`, `anchor --sign-key-file | --sign-key-env`, `verify --anchor --public-key [--allow-growth]`. A rewritten ledger with a recomputed chain passes the chain check but fails against the signed anchor. RFC 3161 / second host documented as options (no network call).
+- P5-15: `fidetype.trust.erasure`; Collector `privacy` option `subject_index` (HMAC codes, never raw ids) and `jsonl` path `{session}`; `erase --output --output-template --subject-index`; receipt `fidetype.deletion-receipt/1.1` with `outputs` (no path, no id). Test: erase one subject from a two-pipeline run; the remaining files pass `nts-conform check` at the same verdict.
+- New gaps 54 = P5-16 (Collector writes signed anchors itself), 55 = P5-17 (refuse input-event files that mix streams).
+- Tracker: P15-15 agent stats filled (2045.429 s, 219256 tokens, 78 tools).
+- Pages: [roadmap](questions/roadmap-standard.md), [open gaps](questions/open-gaps.md), [provenance ledger](concepts/provenance-ledger.md); docs [provenance and privacy](../docs/provenance-and-privacy.md) sections 4.1, 4.2, 8, [collector](../docs/collector.md).
