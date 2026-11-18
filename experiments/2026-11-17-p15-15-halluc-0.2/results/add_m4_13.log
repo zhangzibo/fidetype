@@ -1,0 +1,13 @@
+2026-11-18 08:59:20 P15-15 add_m4_13: source m4-13, dry False, 701 held out, n_null 300
+2026-11-18 08:59:24 t15 m4-13-p15-05-A0_ngram: guard tcfg-108e97100553a10e (frame T 2.3702) from guard-t15-A0_ngram.json
+2026-11-18 08:59:42 m4-13-p15-05-A0_ngram [llm]: b2t25-t15-val-eval/m4-13-p15-05-A0_ngram  real commit 104/701 wrong 17 fluent-wrong 2 (llm-table)  null 0/300  scrambled 1/300  swapped 104/701 FAIL (paired n10 89 n01 89 n11 15)  fidetype.halluc/0.2
+2026-11-18 08:59:42 m4-13-p15-05-A0_ngram [conservative]: b2t25-t15-val-eval/m4-13-p15-05-A0_ngram  real commit 104/701 wrong 17 fluent-wrong 17 (conservative)  null 0/300  scrambled 1/300  swapped 104/701 FAIL (paired n10 89 n01 89 n11 15)  fidetype.halluc/0.2
+2026-11-18 08:59:42 t15 m4-13-p15-05-B0_rescore: guard tcfg-a21133bd3156c3e2 (frame T 2.3702) from guard-t15-B0_rescore.json
+2026-11-18 09:00:01 m4-13-p15-05-B0_rescore [llm]: b2t25-t15-val-eval/m4-13-p15-05-B0_rescore  real commit 141/701 wrong 10 fluent-wrong 6 (llm-table)  null 0/300  scrambled 0/300  swapped 141/701 FAIL (paired n10 115 n01 115 n11 26)  fidetype.halluc/0.2
+2026-11-18 09:00:01 m4-13-p15-05-B0_rescore [conservative]: b2t25-t15-val-eval/m4-13-p15-05-B0_rescore  real commit 141/701 wrong 10 fluent-wrong 10 (conservative)  null 0/300  scrambled 0/300  swapped 141/701 FAIL (paired n10 115 n01 115 n11 26)  fidetype.halluc/0.2
+2026-11-18 09:00:01 t15 m4-13-p15-06-B1_rescore_G: guard tcfg-b7c9002efc0623b5 (frame T 2.3702) from guard-B1_rescore_G.json
+2026-11-18 09:01:25 m4-13-p15-06-B1_rescore_G [llm]: b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G  real commit 36/701 wrong 2 fluent-wrong 1 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 36 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-18 09:01:25 m4-13-p15-06-B1_rescore_G [conservative]: b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G  real commit 36/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 36 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-18 09:01:25 t15 m4-13-p15-06-B1_rescore_G@single: guard tcfg-30f8e6399d0e1d52 (frame T 2.3702) from guard-B1_rescore_G-single.json
+2026-11-18 09:01:45 m4-13-p15-06-B1_rescore_G@single [llm]: b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G@single  real commit 36/701 wrong 2 fluent-wrong 1 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 36 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-18 09:01:45 m4-13-p15-06-B1_rescore_G@single [conservative]: b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G@single  real commit 36/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 36 n01 0 n11 0)  fidetype.halluc/0.2

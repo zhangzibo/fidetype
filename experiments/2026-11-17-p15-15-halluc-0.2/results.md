@@ -2,7 +2,7 @@
 title: P15-15 results - hallucination benchmark protocol 0.2 (paired swapped / real rule)
 type: experiment
 task: P15-15
-updated: 2026-11-17
+updated: 2026-11-18
 ---
 
 # P15-15 results: protocol `fidetype.halluc/0.2`
@@ -51,3 +51,21 @@ The trust rerun queue had no M4-13 outputs when this ran (only its dry-run folde
 - `--check` lists the 9 inputs (held-out log-probs, P15-05 rerun results, base n-best cache, 2 LLM caches, 4 guards). On 2026-11-17 20:31 only the held-out log-probs existed (8 missing); it exits 2 and writes nothing.
 - It imports the P15-07 runner unchanged and runs it cache-only on the rerun outputs (read only). Systems: P15-05 A0 (n-gram), P15-05 B0, P15-06 B1 and B1 V-single. It checks that the held-out ids, `null_idx` and `swap_perm` equal the committed v0.1 T15 split, writes outcomes to `benchmark/results/halluc-v0.2/`, then runs `rescore.py`.
 - `--dry` plumbing test on the queue's dry-run outputs (M4-12, 60 held out, 20 null, stub LLM): ran in 12.6 s, peak 548 MB. A0: 2 real commits, 0 wrong, 2 swapped unsupported (n10 2, n01 2); B1 and B1 V-single: 0 commits. These equal the aggregates of the queue's own dry run (A0: 2 commits, 0 wrong, swapped 2 / 60; B1: 0). Dry outputs stay in `C:/Users/zhang/bci-data/derived/p15-15-halluc-0.2/dryrun/`.
+
+### Result (run 2026-11-18 08:59, after the M4-13 trust-rerun queue)
+`--check`: all 9 inputs exist. The run took about 2.5 min (cache-only: no decoder or LLM load), peak 667 MB. It wrote 16 new outcome / card files to `benchmark/results/halluc-v0.2/` (aggregate bit strings, no texts) and re-ran `rescore.py` (now 20 entries; the 12 old entries are unchanged). Log: [results/add_m4_13.log](results/add_m4_13.log).
+
+| System (M4-13, T15 701) | Real commits / wrong | Fluent-wrong (llm / conservative) | Null | Scrambled | Swapped commits | n10 | n01 | n11 | m | upper bound of θ | Swapped 0.2 | Controls 0.2 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `m4-13-p15-05-A0_ngram` | 104 / 17 | 2 / 17 | 0 / 300 | 1 / 300 | 104 | 89 | 89 | 15 | 193 | 0.600 | fail | **fail** |
+| `m4-13-p15-05-B0_rescore` | 141 / 10 | 6 / 10 | 0 / 300 | 0 / 300 | 141 | 115 | 115 | 26 | 256 | 0.603 | fail | **fail** |
+| `m4-13-p15-06-B1_rescore_G` | 36 / 2 | 1 / 2 | 0 / 300 | 0 / 300 | 0 | 36 | 0 | 0 | 36 | 0.080 | pass | **pass** |
+| `m4-13-p15-06-B1_rescore_G@single` | 36 / 2 | 1 / 2 | 0 / 300 | 0 / 300 | 0 | 36 | 0 | 0 | 36 | 0.080 | pass | **pass** |
+
+`θ_r` = 0.333. Both fluency modes give the same verdicts.
+
+- **First pass under protocol 0.2.** The M4-13 P15-06 guard (rescoring + grounding + fluent-wrong bound) commits on 36 real items (5.1 %, CP95 [3.6 %, 7.0 %]) and on no swapped item. With m = 36 >= 25 and Y = 0, the upper bound of θ (0.080) is below 1/3.
+- The systems without grounding fail clearly: the swapped commit count equals the real one (ratio 1.0), with almost no pair where both commit (n11 15 and 26). They follow the language side, as on M4-12.
+- B1@single makes the same decisions as B1 on T15 (same selected configuration), so its card is the same.
+
+> **Our take:** P15-16 asks for a baseline that commits "on a useful part" of the real items and passes all tracks under 0.2. The M4-13 B1 guard passes all tracks, but the useful commit rate was never fixed in a plan, and 5.1 % is low. So this is evidence for P15-16, not its closure.

@@ -7,7 +7,7 @@
   "swap_m_min": 25,
   "control_commit_max": 0.05
  },
- "n_entries": 12,
+ "n_entries": 20,
  "n_changed": 10,
  "fluency_mode_mismatch": [],
  "entries": [
@@ -382,6 +382,254 @@
    },
    "summary_v02": "b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701 wrong 0 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 INSUFFICIENT EVIDENCE (paired n10 0 n01 0 n11 0)  fidetype.halluc/0.2",
    "changed": true
+  },
+  {
+   "entry": "b2t25-t15-val-eval--m4-13-p15-05-A0_ngram--conservative",
+   "outcomes": "halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-05-A0_ngram--conservative.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "m4-13-p15-05-A0_ngram",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "fail",
+    "swapped_pass": false
+   },
+   "v02": {
+    "controls": "fail",
+    "swapped": "fail",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 89,
+    "n01": 89,
+    "n11": 15,
+    "m": 193,
+    "Y": 104,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.5997098416143356,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.4002901583856556
+   },
+   "summary_v02": "b2t25-t15-val-eval/m4-13-p15-05-A0_ngram  real commit 104/701 wrong 17 fluent-wrong 17 (conservative)  null 0/300  scrambled 1/300  swapped 104/701 FAIL (paired n10 89 n01 89 n11 15)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t25-t15-val-eval--m4-13-p15-05-A0_ngram--llm",
+   "outcomes": "halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-05-A0_ngram--llm.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "m4-13-p15-05-A0_ngram",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "fail",
+    "swapped_pass": false
+   },
+   "v02": {
+    "controls": "fail",
+    "swapped": "fail",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 89,
+    "n01": 89,
+    "n11": 15,
+    "m": 193,
+    "Y": 104,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.5997098416143356,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.4002901583856556
+   },
+   "summary_v02": "b2t25-t15-val-eval/m4-13-p15-05-A0_ngram  real commit 104/701 wrong 17 fluent-wrong 2 (llm-table)  null 0/300  scrambled 1/300  swapped 104/701 FAIL (paired n10 89 n01 89 n11 15)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t25-t15-val-eval--m4-13-p15-05-B0_rescore--conservative",
+   "outcomes": "halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-05-B0_rescore--conservative.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "m4-13-p15-05-B0_rescore",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "fail",
+    "swapped_pass": false
+   },
+   "v02": {
+    "controls": "fail",
+    "swapped": "fail",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 115,
+    "n01": 115,
+    "n11": 26,
+    "m": 256,
+    "Y": 141,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.6032281586570025,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.39677184134297894
+   },
+   "summary_v02": "b2t25-t15-val-eval/m4-13-p15-05-B0_rescore  real commit 141/701 wrong 10 fluent-wrong 10 (conservative)  null 0/300  scrambled 0/300  swapped 141/701 FAIL (paired n10 115 n01 115 n11 26)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t25-t15-val-eval--m4-13-p15-05-B0_rescore--llm",
+   "outcomes": "halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-05-B0_rescore--llm.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "m4-13-p15-05-B0_rescore",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "fail",
+    "swapped_pass": false
+   },
+   "v02": {
+    "controls": "fail",
+    "swapped": "fail",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 115,
+    "n01": 115,
+    "n11": 26,
+    "m": 256,
+    "Y": 141,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.6032281586570025,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.39677184134297894
+   },
+   "summary_v02": "b2t25-t15-val-eval/m4-13-p15-05-B0_rescore  real commit 141/701 wrong 10 fluent-wrong 6 (llm-table)  null 0/300  scrambled 0/300  swapped 141/701 FAIL (paired n10 115 n01 115 n11 26)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--conservative",
+   "outcomes": "halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--conservative.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "m4-13-p15-06-B1_rescore_G",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "pass",
+    "swapped": "pass",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 36,
+    "n01": 0,
+    "n11": 0,
+    "m": 36,
+    "Y": 0,
+    "ratio_estimate": 0.0,
+    "theta_upper": 0.07984650951989442,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0
+   },
+   "summary_v02": "b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G  real commit 36/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 36 n01 0 n11 0)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--llm",
+   "outcomes": "halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--llm.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "m4-13-p15-06-B1_rescore_G",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "pass",
+    "swapped": "pass",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 36,
+    "n01": 0,
+    "n11": 0,
+    "m": 36,
+    "Y": 0,
+    "ratio_estimate": 0.0,
+    "theta_upper": 0.07984650951989442,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0
+   },
+   "summary_v02": "b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G  real commit 36/701 wrong 2 fluent-wrong 1 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 36 n01 0 n11 0)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G-at-single--conservative",
+   "outcomes": "halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G-at-single--conservative.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "m4-13-p15-06-B1_rescore_G@single",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "pass",
+    "swapped": "pass",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 36,
+    "n01": 0,
+    "n11": 0,
+    "m": 36,
+    "Y": 0,
+    "ratio_estimate": 0.0,
+    "theta_upper": 0.07984650951989442,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0
+   },
+   "summary_v02": "b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G@single  real commit 36/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 36 n01 0 n11 0)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G-at-single--llm",
+   "outcomes": "halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G-at-single--llm.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "m4-13-p15-06-B1_rescore_G@single",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "pass",
+    "swapped": "pass",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 36,
+    "n01": 0,
+    "n11": 0,
+    "m": 36,
+    "Y": 0,
+    "ratio_estimate": 0.0,
+    "theta_upper": 0.07984650951989442,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0
+   },
+   "summary_v02": "b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G@single  real commit 36/701 wrong 2 fluent-wrong 1 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 36 n01 0 n11 0)  fidetype.halluc/0.2",
+   "changed": false
   }
  ]
 }

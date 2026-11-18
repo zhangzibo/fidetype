@@ -1,0 +1,3781 @@
+{
+ "fidetype_version": "0.0.1",
+ "config": {
+  "description": "P15-06 (F2): risk-controlled fluent-wrong bound (joint LTT of commit_p, tau_commit, tau_word) on the P15-05 T15 arms, from the cached P15-05 artefacts. CPU only.",
+  "p15_05_config": "experiments/2026-11-16-f2-e3-llm-grounding/config.json",
+  "p15_05_results": "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\experiments\\2026-11-17-f2-m4-13\\results\\results-t15.json",
+  "p15_05_results_t12": "experiments/2026-11-16-f2-e3-llm-grounding/results/results-t12.json",
+  "halluc": {
+   "alpha_h": 0.01,
+   "delta_h": 0.1,
+   "loss": "fluent_wrong: COMMIT, text != truth, LLM log-prob per word >= -7.8817 (the P15-05 fluent threshold)",
+   "select": "fewest_halluc",
+   "grid": {
+    "commit_p": [
+     "inf",
+     1.0,
+     0.99,
+     0.98,
+     0.97,
+     0.96,
+     0.95,
+     0.94,
+     0.93,
+     0.92,
+     0.91,
+     0.9,
+     0.89,
+     0.88,
+     0.87,
+     0.86,
+     0.85,
+     0.84,
+     0.83,
+     0.82,
+     0.81,
+     0.8,
+     0.79,
+     0.78,
+     0.77,
+     0.76,
+     0.75,
+     0.74,
+     0.73,
+     0.72,
+     0.71,
+     0.7,
+     0.69,
+     0.68,
+     0.67,
+     0.66,
+     0.65,
+     0.64,
+     0.63,
+     0.62,
+     0.61,
+     0.6,
+     0.59,
+     0.58,
+     0.57,
+     0.56,
+     0.55,
+     0.54,
+     0.53,
+     0.52,
+     0.51,
+     0.5,
+     0.49,
+     0.48,
+     0.47,
+     0.46,
+     0.45,
+     0.44,
+     0.43,
+     0.42,
+     0.41,
+     0.4,
+     0.39,
+     0.38,
+     0.37,
+     0.36,
+     0.35,
+     0.34,
+     0.33,
+     0.32,
+     0.31,
+     0.3,
+     0.29,
+     0.28,
+     0.27,
+     0.26,
+     0.25,
+     0.24,
+     0.23,
+     0.22,
+     0.21,
+     0.2,
+     0.19,
+     0.18,
+     0.17,
+     0.16,
+     0.15,
+     0.14,
+     0.13,
+     0.12,
+     0.11,
+     0.1,
+     0.09,
+     0.08,
+     0.07,
+     0.06,
+     0.05,
+     0.04,
+     0.03,
+     0.02,
+     0.01,
+     0.0
+    ],
+    "tau_commit": [
+     0.0,
+     0.002,
+     0.005,
+     0.01,
+     0.02,
+     0.05,
+     "inf"
+    ],
+    "tau_word": [
+     0.25,
+     0.5,
+     1.0,
+     2.0,
+     4.0,
+     "inf"
+    ]
+   }
+  },
+  "arms_primary": [
+   "A0_ngram",
+   "A1_ngram_G",
+   "B0_rescore",
+   "B1_rescore_G",
+   "C0_rewrite",
+   "C1_rewrite_G",
+   "D0_free",
+   "D1_free_G"
+  ],
+  "arms_secondary": [
+   "B1_rescore_G@most_right",
+   "C1_rewrite_G@most_right"
+  ]
+ },
+ "dry_run": false,
+ "source": "m4-13",
+ "provenance": {
+  "source": "m4-13",
+  "cal": {
+   "file": "C:\\Users\\zhang\\bci-data\\derived\\trust-reruns-m4-13\\logprobs-m4-13-long0-val_select.npz",
+   "checkpoint_sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72",
+   "step": 115000,
+   "epoch": null,
+   "device": "cpu"
+  },
+  "held": {
+   "file": "C:\\Users\\zhang\\bci-data\\derived\\m4-13\\logprobs-m4-13-long0-val_eval.npz",
+   "checkpoint_sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72",
+   "step": 115000,
+   "epoch": null,
+   "device": "cuda"
+  }
+ },
+ "arms": {
+  "A0_ngram": {
+   "arm": {
+    "rescore": false,
+    "rewrite": null,
+    "ground": false
+   },
+   "p15_05_arm": "A0_ngram",
+   "select": "fewest_halluc",
+   "status": "ok",
+   "calibrate_seconds": 39.7,
+   "config_id": "tcfg-272582d82cb30f15",
+   "sheet": {
+    "config_id": "tcfg-272582d82cb30f15",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.73,
+    "feasible": true,
+    "commit_threshold": 0.94,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 3,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:28:50+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.35,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.73 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.73,
+     "base_config_id": "tcfg-bc38adeb3eca9173",
+     "selected": {
+      "commit_p": 0.94,
+      "tau_commit": 0.0,
+      "tau_word": 0.25
+     },
+     "n_certified": 336,
+     "chain_length": 4284,
+     "n_tested": 337,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 3,
+      "right": 3,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 3,
+      "right": 3,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      9.18537800051728e-07,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-108e97100553a10e",
+   "p15_05_commit_p": 0.73,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.18267379679144385,
+   "sentence_acc": 0.3666191155492154,
+   "n": 701,
+   "actions": {
+    "commit": 7,
+    "offer": 694,
+    "withhold": 0
+   },
+   "n_commit": 7,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4678,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 64.1
+  },
+  "A1_ngram_G": {
+   "arm": {
+    "rescore": false,
+    "rewrite": null,
+    "ground": true
+   },
+   "p15_05_arm": "A1_ngram_G",
+   "select": "fewest_halluc",
+   "status": "ok",
+   "calibrate_seconds": 90.3,
+   "config_id": "tcfg-926ed65c6b2b8768",
+   "sheet": {
+    "config_id": "tcfg-926ed65c6b2b8768",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.73,
+    "feasible": true,
+    "commit_threshold": 0.94,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 3,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:30:44+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.35,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.73 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.73,
+     "base_config_id": "tcfg-bca7d47e95e67ffb",
+     "selected": {
+      "commit_p": 0.94,
+      "tau_commit": 0.0,
+      "tau_word": 0.25
+     },
+     "n_certified": 336,
+     "chain_length": 4284,
+     "n_tested": 337,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 3,
+      "right": 3,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 3,
+      "right": 3,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      9.18537800051728e-07,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-80af2c733460386d",
+   "p15_05_commit_p": 0.73,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.18267379679144385,
+   "sentence_acc": 0.3666191155492154,
+   "n": 701,
+   "actions": {
+    "commit": 7,
+    "offer": 694,
+    "withhold": 0
+   },
+   "n_commit": 7,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4678,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 179.9
+  },
+  "B0_rescore": {
+   "arm": {
+    "rescore": true,
+    "rewrite": null,
+    "ground": false
+   },
+   "p15_05_arm": "B0_rescore",
+   "select": "fewest_halluc",
+   "status": "ok",
+   "calibrate_seconds": 40.3,
+   "config_id": "tcfg-bcff5a3458ffef2a",
+   "sheet": {
+    "config_id": "tcfg-bcff5a3458ffef2a",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.78,
+    "feasible": true,
+    "commit_threshold": 0.91,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 19,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:32:54+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.36,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.78 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.78,
+     "base_config_id": "tcfg-7af20c6270525cb9",
+     "selected": {
+      "commit_p": 0.91,
+      "tau_commit": 0.0,
+      "tau_word": 0.5
+     },
+     "n_certified": 446,
+     "chain_length": 4284,
+     "n_tested": 447,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 11,
+      "right": 11,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 19,
+      "right": 19,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      9.18537800051728e-07,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-a21133bd3156c3e2",
+   "p15_05_commit_p": 0.78,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16171122994652407,
+   "sentence_acc": 0.46219686162624823,
+   "n": 701,
+   "actions": {
+    "commit": 39,
+    "offer": 662,
+    "withhold": 0
+   },
+   "n_commit": 39,
+   "n_wrong_commit": 2,
+   "wrong_commit_rate": 0.0028530670470756064,
+   "wrong_commit_cp95": [
+    0.00034570660403646683,
+    0.01026792330850958
+   ],
+   "fluent_wrong_commits": 1,
+   "fluent_wrong_rate": 0.0014265335235378032,
+   "fluent_wrong_cp95": [
+    3.611604963185878e-05,
+    0.007922267165732985
+   ],
+   "halluc_gate_blocked": 2,
+   "shown_words": 4677,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 65.5
+  },
+  "B1_rescore_G": {
+   "arm": {
+    "rescore": true,
+    "rewrite": null,
+    "ground": true
+   },
+   "p15_05_arm": "B1_rescore_G",
+   "select": "fewest_halluc",
+   "status": "ok",
+   "calibrate_seconds": 40.8,
+   "config_id": "tcfg-b7c9002efc0623b5",
+   "sheet": {
+    "config_id": "tcfg-b7c9002efc0623b5",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.77,
+    "feasible": true,
+    "commit_threshold": 0.92,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 17,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:34:00+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.358974358974359,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.77 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.77,
+     "base_config_id": "tcfg-3e0a8ee8cc4bd382",
+     "selected": {
+      "commit_p": 0.92,
+      "tau_commit": 0.05,
+      "tau_word": 0.5
+     },
+     "n_certified": 432,
+     "chain_length": 4284,
+     "n_tested": 433,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 11,
+      "right": 11,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 17,
+      "right": 17,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      9.18537800051728e-07,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-c802bfb61330e449",
+   "p15_05_commit_p": 0.77,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16171122994652407,
+   "sentence_acc": 0.46219686162624823,
+   "n": 701,
+   "actions": {
+    "commit": 36,
+    "offer": 665,
+    "withhold": 0
+   },
+   "n_commit": 36,
+   "n_wrong_commit": 2,
+   "wrong_commit_rate": 0.0028530670470756064,
+   "wrong_commit_cp95": [
+    0.00034570660403646683,
+    0.01026792330850958
+   ],
+   "fluent_wrong_commits": 1,
+   "fluent_wrong_rate": 0.0014265335235378032,
+   "fluent_wrong_cp95": [
+    3.611604963185878e-05,
+    0.007922267165732985
+   ],
+   "halluc_gate_blocked": 1,
+   "shown_words": 4677,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 0,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 64.8
+  },
+  "C0_rewrite": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "lattice",
+    "ground": false
+   },
+   "p15_05_arm": "C0_rewrite",
+   "select": "fewest_halluc",
+   "status": "ok",
+   "calibrate_seconds": 34.5,
+   "config_id": "tcfg-f9af9ab85fbfda6a",
+   "sheet": {
+    "config_id": "tcfg-f9af9ab85fbfda6a",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.61,
+    "feasible": true,
+    "commit_threshold": 0.91,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 12,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:35:05+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.358974358974359,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.61 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.61,
+     "base_config_id": "tcfg-c024645d7ba30eb9",
+     "selected": {
+      "commit_p": 0.91,
+      "tau_commit": 0.0,
+      "tau_word": 1.0
+     },
+     "n_certified": 518,
+     "chain_length": 4284,
+     "n_tested": 519,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 8,
+      "right": 8,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 12,
+      "right": 12,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      9.18537800051728e-07,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-9ef5200f4c7b7099",
+   "p15_05_commit_p": 0.61,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16748663101604278,
+   "sentence_acc": 0.4222539229671897,
+   "n": 701,
+   "actions": {
+    "commit": 22,
+    "offer": 679,
+    "withhold": 0
+   },
+   "n_commit": 22,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4669,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {
+    "lattice_rejects": 182
+   },
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 4,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 50.8
+  },
+  "C1_rewrite_G": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "lattice",
+    "ground": true
+   },
+   "p15_05_arm": "C1_rewrite_G",
+   "select": "fewest_halluc",
+   "status": "ok",
+   "calibrate_seconds": 25.1,
+   "config_id": "tcfg-40de2e81d19941dc",
+   "sheet": {
+    "config_id": "tcfg-40de2e81d19941dc",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.61,
+    "feasible": true,
+    "commit_threshold": 0.91,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 13,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:35:49+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.3541666666666667,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.61 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.61,
+     "base_config_id": "tcfg-ab9f92ce82650166",
+     "selected": {
+      "commit_p": 0.91,
+      "tau_commit": 0.0,
+      "tau_word": 1.0
+     },
+     "n_certified": 630,
+     "chain_length": 4284,
+     "n_tested": 631,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 8,
+      "right": 8,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 13,
+      "right": 13,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      9.18537800051728e-07,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-49ec65923e327804",
+   "p15_05_commit_p": 0.61,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16748663101604278,
+   "sentence_acc": 0.4222539229671897,
+   "n": 701,
+   "actions": {
+    "commit": 25,
+    "offer": 676,
+    "withhold": 0
+   },
+   "n_commit": 25,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4673,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {
+    "lattice_rejects": 182
+   },
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 4,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 41.5
+  },
+  "D0_free": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "free",
+    "ground": false
+   },
+   "p15_05_arm": "D0_free",
+   "select": "fewest_halluc",
+   "status": "ok",
+   "calibrate_seconds": 26.2,
+   "config_id": "tcfg-d0450b071095b307",
+   "sheet": {
+    "config_id": "tcfg-d0450b071095b307",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.62,
+    "feasible": true,
+    "commit_threshold": 0.92,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 17,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:36:30+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.375,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.62 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.62,
+     "base_config_id": "tcfg-4ff6e15a68417789",
+     "selected": {
+      "commit_p": 0.92,
+      "tau_commit": 0.0,
+      "tau_word": 1.0
+     },
+     "n_certified": 432,
+     "chain_length": 4284,
+     "n_tested": 433,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 9,
+      "right": 9,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 17,
+      "right": 17,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      9.18537800051728e-07,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-744289ec50d06616",
+   "p15_05_commit_p": 0.62,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16919786096256684,
+   "sentence_acc": 0.42796005706134094,
+   "n": 701,
+   "actions": {
+    "commit": 27,
+    "offer": 674,
+    "withhold": 0
+   },
+   "n_commit": 27,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4653,
+   "unsupported_words": 32,
+   "hallucination_rate": 0.006877283473028154,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 42.4
+  },
+  "D1_free_G": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "free",
+    "ground": true
+   },
+   "p15_05_arm": "D1_free_G",
+   "select": "fewest_halluc",
+   "status": "ok",
+   "calibrate_seconds": 25.4,
+   "config_id": "tcfg-ab42c781c13cdd8b",
+   "sheet": {
+    "config_id": "tcfg-ab42c781c13cdd8b",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.64,
+    "feasible": true,
+    "commit_threshold": 0.93,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 17,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:37:13+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.36363636363636365,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.64 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.64,
+     "base_config_id": "tcfg-94784bc8c2d9326d",
+     "selected": {
+      "commit_p": 0.93,
+      "tau_commit": 0.0,
+      "tau_word": 0.25
+     },
+     "n_certified": 366,
+     "chain_length": 4284,
+     "n_tested": 367,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 9,
+      "right": 9,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 17,
+      "right": 17,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      9.18537800051728e-07,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-97cd198e064435d2",
+   "p15_05_commit_p": 0.64,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16919786096256684,
+   "sentence_acc": 0.42796005706134094,
+   "n": 701,
+   "actions": {
+    "commit": 26,
+    "offer": 675,
+    "withhold": 0
+   },
+   "n_commit": 26,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 4,
+   "shown_words": 4672,
+   "unsupported_words": 18,
+   "hallucination_rate": 0.003852739726027397,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 41.9
+  },
+  "B1_rescore_G@most_right": {
+   "arm": {
+    "rescore": true,
+    "rewrite": null,
+    "ground": true
+   },
+   "p15_05_arm": "B1_rescore_G",
+   "select": "most_right",
+   "status": "ok",
+   "calibrate_seconds": 26.7,
+   "config_id": "tcfg-ed1aa7e4b9d7250e",
+   "sheet": {
+    "config_id": "tcfg-ed1aa7e4b9d7250e",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.77,
+    "feasible": true,
+    "commit_threshold": 0.89,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 29,
+    "ltt_wrong_commits": 1,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:37:54+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.358974358974359,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.77 (P14-03 value), rule 'most_right'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.77,
+     "base_config_id": "tcfg-3e0a8ee8cc4bd382",
+     "selected": {
+      "commit_p": 0.89,
+      "tau_commit": 0.0,
+      "tau_word": 0.5
+     },
+     "n_certified": 432,
+     "chain_length": 4284,
+     "n_tested": 433,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 22,
+      "right": 21,
+      "wc_loss": 1,
+      "h_loss": 1
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 29,
+      "right": 28,
+      "wc_loss": 1,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      1.4019787474470705e-05,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "most_right",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-c802bfb61330e449",
+   "p15_05_commit_p": 0.77,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16171122994652407,
+   "sentence_acc": 0.46219686162624823,
+   "n": 701,
+   "actions": {
+    "commit": 54,
+    "offer": 647,
+    "withhold": 0
+   },
+   "n_commit": 54,
+   "n_wrong_commit": 2,
+   "wrong_commit_rate": 0.0028530670470756064,
+   "wrong_commit_cp95": [
+    0.00034570660403646683,
+    0.01026792330850958
+   ],
+   "fluent_wrong_commits": 1,
+   "fluent_wrong_rate": 0.0014265335235378032,
+   "fluent_wrong_cp95": [
+    3.611604963185878e-05,
+    0.007922267165732985
+   ],
+   "halluc_gate_blocked": 3,
+   "shown_words": 4677,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 42.5
+  },
+  "C1_rewrite_G@most_right": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "lattice",
+    "ground": true
+   },
+   "p15_05_arm": "C1_rewrite_G",
+   "select": "most_right",
+   "status": "ok",
+   "calibrate_seconds": 24.6,
+   "config_id": "tcfg-5ae6692d4a37639f",
+   "sheet": {
+    "config_id": "tcfg-5ae6692d4a37639f",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.61,
+    "feasible": true,
+    "commit_threshold": 0.87,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 29,
+    "ltt_wrong_commits": 1,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:38:37+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.3541666666666667,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.61 (P14-03 value), rule 'most_right'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.61,
+     "base_config_id": "tcfg-ab9f92ce82650166",
+     "selected": {
+      "commit_p": 0.87,
+      "tau_commit": 0.0,
+      "tau_word": 1.0
+     },
+     "n_certified": 630,
+     "chain_length": 4284,
+     "n_tested": 631,
+     "n_order": 271,
+     "n_test": 271,
+     "order_counts": {
+      "n": 271,
+      "commits": 19,
+      "right": 17,
+      "wc_loss": 2,
+      "h_loss": 2
+     },
+     "test_counts": {
+      "n": 271,
+      "commits": 29,
+      "right": 28,
+      "wc_loss": 1,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      1.4019787474470705e-05,
+      0.06563533949318161
+     ],
+     "feasible": true,
+     "select": "most_right",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ]
+    }
+   },
+   "p15_05_config_id": "tcfg-49ec65923e327804",
+   "p15_05_commit_p": 0.61,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16748663101604278,
+   "sentence_acc": 0.4222539229671897,
+   "n": 701,
+   "actions": {
+    "commit": 46,
+    "offer": 655,
+    "withhold": 0
+   },
+   "n_commit": 46,
+   "n_wrong_commit": 1,
+   "wrong_commit_rate": 0.0014265335235378032,
+   "wrong_commit_cp95": [
+    3.611604963185878e-05,
+    0.007922267165732985
+   ],
+   "fluent_wrong_commits": 1,
+   "fluent_wrong_rate": 0.0014265335235378032,
+   "fluent_wrong_cp95": [
+    3.611604963185878e-05,
+    0.007922267165732985
+   ],
+   "halluc_gate_blocked": 1,
+   "shown_words": 4673,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {
+    "lattice_rejects": 182
+   },
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 40.5
+  },
+  "A0_ngram@single": {
+   "arm": {
+    "rescore": false,
+    "rewrite": null,
+    "ground": false
+   },
+   "p15_05_arm": "A0_ngram",
+   "select": "single",
+   "status": "ok",
+   "calibrate_seconds": 26.4,
+   "config_id": "tcfg-6f1e4ecf5f7b75ec",
+   "sheet": {
+    "config_id": "tcfg-6f1e4ecf5f7b75ec",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.73,
+    "feasible": true,
+    "commit_threshold": 0.94,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 3,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:39:17+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.35,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.73 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.73,
+     "base_config_id": "tcfg-bc38adeb3eca9173",
+     "selected": {
+      "commit_p": 0.94,
+      "tau_commit": 0.0,
+      "tau_word": 0.25
+     },
+     "n_certified": 798,
+     "chain_length": 4284,
+     "n_tested": 799,
+     "n_order": 0,
+     "n_test": 542,
+     "order_counts": {
+      "n": 0,
+      "commits": 0,
+      "right": 0,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 542,
+      "commits": 6,
+      "right": 6,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      8.437116901238681e-13,
+      0.004307997790385205
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "variant": "V-single: no ordering split; fixed order = halluc_bound._strictness; test = all 542 non-fit items (primary: 271 order + 271 test)",
+     "primary": {
+      "selected": {
+       "commit_p": 0.94,
+       "tau_commit": 0.0,
+       "tau_word": 0.25
+      },
+      "feasible": true,
+      "n_test": 271,
+      "config_id": "tcfg-272582d82cb30f15"
+     }
+    }
+   },
+   "p15_05_config_id": "tcfg-108e97100553a10e",
+   "p15_05_commit_p": 0.73,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.18267379679144385,
+   "sentence_acc": 0.3666191155492154,
+   "n": 701,
+   "actions": {
+    "commit": 7,
+    "offer": 694,
+    "withhold": 0
+   },
+   "n_commit": 7,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4678,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 42.4
+  },
+  "A1_ngram_G@single": {
+   "arm": {
+    "rescore": false,
+    "rewrite": null,
+    "ground": true
+   },
+   "p15_05_arm": "A1_ngram_G",
+   "select": "single",
+   "status": "ok",
+   "calibrate_seconds": 26.7,
+   "config_id": "tcfg-1e018e091450b784",
+   "sheet": {
+    "config_id": "tcfg-1e018e091450b784",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.73,
+    "feasible": true,
+    "commit_threshold": 0.94,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 3,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:40:00+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.35,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.73 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.73,
+     "base_config_id": "tcfg-bca7d47e95e67ffb",
+     "selected": {
+      "commit_p": 0.94,
+      "tau_commit": 0.0,
+      "tau_word": 0.25
+     },
+     "n_certified": 798,
+     "chain_length": 4284,
+     "n_tested": 799,
+     "n_order": 0,
+     "n_test": 542,
+     "order_counts": {
+      "n": 0,
+      "commits": 0,
+      "right": 0,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 542,
+      "commits": 6,
+      "right": 6,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      8.437116901238681e-13,
+      0.004307997790385205
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "variant": "V-single: no ordering split; fixed order = halluc_bound._strictness; test = all 542 non-fit items (primary: 271 order + 271 test)",
+     "primary": {
+      "selected": {
+       "commit_p": 0.94,
+       "tau_commit": 0.0,
+       "tau_word": 0.25
+      },
+      "feasible": true,
+      "n_test": 271,
+      "config_id": "tcfg-926ed65c6b2b8768"
+     }
+    }
+   },
+   "p15_05_config_id": "tcfg-80af2c733460386d",
+   "p15_05_commit_p": 0.73,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.18267379679144385,
+   "sentence_acc": 0.3666191155492154,
+   "n": 701,
+   "actions": {
+    "commit": 7,
+    "offer": 694,
+    "withhold": 0
+   },
+   "n_commit": 7,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4678,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 42.7
+  },
+  "B0_rescore@single": {
+   "arm": {
+    "rescore": true,
+    "rewrite": null,
+    "ground": false
+   },
+   "p15_05_arm": "B0_rescore",
+   "select": "single",
+   "status": "ok",
+   "calibrate_seconds": 26.3,
+   "config_id": "tcfg-af09c7c16ab1f42b",
+   "sheet": {
+    "config_id": "tcfg-af09c7c16ab1f42b",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.78,
+    "feasible": true,
+    "commit_threshold": 0.91,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 19,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:40:42+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.36,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.78 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.78,
+     "base_config_id": "tcfg-7af20c6270525cb9",
+     "selected": {
+      "commit_p": 0.91,
+      "tau_commit": 0.0,
+      "tau_word": 0.5
+     },
+     "n_certified": 434,
+     "chain_length": 4284,
+     "n_tested": 435,
+     "n_order": 0,
+     "n_test": 542,
+     "order_counts": {
+      "n": 0,
+      "commits": 0,
+      "right": 0,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 542,
+      "commits": 30,
+      "right": 30,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      8.437116901238681e-13,
+      0.004307997790385205
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "variant": "V-single: no ordering split; fixed order = halluc_bound._strictness; test = all 542 non-fit items (primary: 271 order + 271 test)",
+     "primary": {
+      "selected": {
+       "commit_p": 0.91,
+       "tau_commit": 0.0,
+       "tau_word": 0.5
+      },
+      "feasible": true,
+      "n_test": 271,
+      "config_id": "tcfg-bcff5a3458ffef2a"
+     }
+    }
+   },
+   "p15_05_config_id": "tcfg-a21133bd3156c3e2",
+   "p15_05_commit_p": 0.78,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16171122994652407,
+   "sentence_acc": 0.46219686162624823,
+   "n": 701,
+   "actions": {
+    "commit": 39,
+    "offer": 662,
+    "withhold": 0
+   },
+   "n_commit": 39,
+   "n_wrong_commit": 2,
+   "wrong_commit_rate": 0.0028530670470756064,
+   "wrong_commit_cp95": [
+    0.00034570660403646683,
+    0.01026792330850958
+   ],
+   "fluent_wrong_commits": 1,
+   "fluent_wrong_rate": 0.0014265335235378032,
+   "fluent_wrong_cp95": [
+    3.611604963185878e-05,
+    0.007922267165732985
+   ],
+   "halluc_gate_blocked": 2,
+   "shown_words": 4677,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 42.7
+  },
+  "B1_rescore_G@single": {
+   "arm": {
+    "rescore": true,
+    "rewrite": null,
+    "ground": true
+   },
+   "p15_05_arm": "B1_rescore_G",
+   "select": "single",
+   "status": "ok",
+   "calibrate_seconds": 26.6,
+   "config_id": "tcfg-30f8e6399d0e1d52",
+   "sheet": {
+    "config_id": "tcfg-30f8e6399d0e1d52",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.77,
+    "feasible": true,
+    "commit_threshold": 0.92,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 17,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:41:25+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.358974358974359,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.77 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.77,
+     "base_config_id": "tcfg-3e0a8ee8cc4bd382",
+     "selected": {
+      "commit_p": 0.92,
+      "tau_commit": 0.05,
+      "tau_word": 0.5
+     },
+     "n_certified": 422,
+     "chain_length": 4284,
+     "n_tested": 423,
+     "n_order": 0,
+     "n_test": 542,
+     "order_counts": {
+      "n": 0,
+      "commits": 0,
+      "right": 0,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 542,
+      "commits": 28,
+      "right": 28,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      8.437116901238681e-13,
+      0.004307997790385205
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "variant": "V-single: no ordering split; fixed order = halluc_bound._strictness; test = all 542 non-fit items (primary: 271 order + 271 test)",
+     "primary": {
+      "selected": {
+       "commit_p": 0.92,
+       "tau_commit": 0.05,
+       "tau_word": 0.5
+      },
+      "feasible": true,
+      "n_test": 271,
+      "config_id": "tcfg-b7c9002efc0623b5"
+     }
+    }
+   },
+   "p15_05_config_id": "tcfg-c802bfb61330e449",
+   "p15_05_commit_p": 0.77,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16171122994652407,
+   "sentence_acc": 0.46219686162624823,
+   "n": 701,
+   "actions": {
+    "commit": 36,
+    "offer": 665,
+    "withhold": 0
+   },
+   "n_commit": 36,
+   "n_wrong_commit": 2,
+   "wrong_commit_rate": 0.0028530670470756064,
+   "wrong_commit_cp95": [
+    0.00034570660403646683,
+    0.01026792330850958
+   ],
+   "fluent_wrong_commits": 1,
+   "fluent_wrong_rate": 0.0014265335235378032,
+   "fluent_wrong_cp95": [
+    3.611604963185878e-05,
+    0.007922267165732985
+   ],
+   "halluc_gate_blocked": 1,
+   "shown_words": 4677,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 42.6
+  },
+  "C0_rewrite@single": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "lattice",
+    "ground": false
+   },
+   "p15_05_arm": "C0_rewrite",
+   "select": "single",
+   "status": "ok",
+   "calibrate_seconds": 24.2,
+   "config_id": "tcfg-4f8f4cb3a3948c76",
+   "sheet": {
+    "config_id": "tcfg-4f8f4cb3a3948c76",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.61,
+    "feasible": true,
+    "commit_threshold": 0.91,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 12,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:42:08+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.358974358974359,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.61 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.61,
+     "base_config_id": "tcfg-c024645d7ba30eb9",
+     "selected": {
+      "commit_p": 0.91,
+      "tau_commit": 0.0,
+      "tau_word": 1.0
+     },
+     "n_certified": 632,
+     "chain_length": 4284,
+     "n_tested": 633,
+     "n_order": 0,
+     "n_test": 542,
+     "order_counts": {
+      "n": 0,
+      "commits": 0,
+      "right": 0,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 542,
+      "commits": 20,
+      "right": 20,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      8.437116901238681e-13,
+      0.004307997790385205
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "variant": "V-single: no ordering split; fixed order = halluc_bound._strictness; test = all 542 non-fit items (primary: 271 order + 271 test)",
+     "primary": {
+      "selected": {
+       "commit_p": 0.91,
+       "tau_commit": 0.0,
+       "tau_word": 1.0
+      },
+      "feasible": true,
+      "n_test": 271,
+      "config_id": "tcfg-f9af9ab85fbfda6a"
+     }
+    }
+   },
+   "p15_05_config_id": "tcfg-9ef5200f4c7b7099",
+   "p15_05_commit_p": 0.61,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16748663101604278,
+   "sentence_acc": 0.4222539229671897,
+   "n": 701,
+   "actions": {
+    "commit": 22,
+    "offer": 679,
+    "withhold": 0
+   },
+   "n_commit": 22,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4669,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {
+    "lattice_rejects": 182
+   },
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 40.5
+  },
+  "C1_rewrite_G@single": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "lattice",
+    "ground": true
+   },
+   "p15_05_arm": "C1_rewrite_G",
+   "select": "single",
+   "status": "ok",
+   "calibrate_seconds": 25.2,
+   "config_id": "tcfg-6f6c0070ef183d72",
+   "sheet": {
+    "config_id": "tcfg-6f6c0070ef183d72",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.61,
+    "feasible": true,
+    "commit_threshold": 0.91,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 13,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:42:49+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.3541666666666667,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.61 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.61,
+     "base_config_id": "tcfg-ab9f92ce82650166",
+     "selected": {
+      "commit_p": 0.91,
+      "tau_commit": 0.0,
+      "tau_word": 1.0
+     },
+     "n_certified": 630,
+     "chain_length": 4284,
+     "n_tested": 631,
+     "n_order": 0,
+     "n_test": 542,
+     "order_counts": {
+      "n": 0,
+      "commits": 0,
+      "right": 0,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 542,
+      "commits": 21,
+      "right": 21,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      8.437116901238681e-13,
+      0.004307997790385205
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "variant": "V-single: no ordering split; fixed order = halluc_bound._strictness; test = all 542 non-fit items (primary: 271 order + 271 test)",
+     "primary": {
+      "selected": {
+       "commit_p": 0.91,
+       "tau_commit": 0.0,
+       "tau_word": 1.0
+      },
+      "feasible": true,
+      "n_test": 271,
+      "config_id": "tcfg-40de2e81d19941dc"
+     }
+    }
+   },
+   "p15_05_config_id": "tcfg-49ec65923e327804",
+   "p15_05_commit_p": 0.61,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16748663101604278,
+   "sentence_acc": 0.4222539229671897,
+   "n": 701,
+   "actions": {
+    "commit": 25,
+    "offer": 676,
+    "withhold": 0
+   },
+   "n_commit": 25,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4673,
+   "unsupported_words": 0,
+   "hallucination_rate": 0.0,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {
+    "lattice_rejects": 182
+   },
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 41.5
+  },
+  "D0_free@single": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "free",
+    "ground": false
+   },
+   "p15_05_arm": "D0_free",
+   "select": "single",
+   "status": "ok",
+   "calibrate_seconds": 25.0,
+   "config_id": "tcfg-37da5cfb90b6f1d0",
+   "sheet": {
+    "config_id": "tcfg-37da5cfb90b6f1d0",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.62,
+    "feasible": true,
+    "commit_threshold": 0.92,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 17,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:43:30+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.375,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.62 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.62,
+     "base_config_id": "tcfg-4ff6e15a68417789",
+     "selected": {
+      "commit_p": 0.92,
+      "tau_commit": 0.0,
+      "tau_word": 1.0
+     },
+     "n_certified": 434,
+     "chain_length": 4284,
+     "n_tested": 435,
+     "n_order": 0,
+     "n_test": 542,
+     "order_counts": {
+      "n": 0,
+      "commits": 0,
+      "right": 0,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 542,
+      "commits": 26,
+      "right": 26,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      8.437116901238681e-13,
+      0.004307997790385205
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "variant": "V-single: no ordering split; fixed order = halluc_bound._strictness; test = all 542 non-fit items (primary: 271 order + 271 test)",
+     "primary": {
+      "selected": {
+       "commit_p": 0.92,
+       "tau_commit": 0.0,
+       "tau_word": 1.0
+      },
+      "feasible": true,
+      "n_test": 271,
+      "config_id": "tcfg-d0450b071095b307"
+     }
+    }
+   },
+   "p15_05_config_id": "tcfg-744289ec50d06616",
+   "p15_05_commit_p": 0.62,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16919786096256684,
+   "sentence_acc": 0.42796005706134094,
+   "n": 701,
+   "actions": {
+    "commit": 27,
+    "offer": 674,
+    "withhold": 0
+   },
+   "n_commit": 27,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 0,
+   "shown_words": 4653,
+   "unsupported_words": 32,
+   "hallucination_rate": 0.006877283473028154,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 41.9
+  },
+  "D1_free_G@single": {
+   "arm": {
+    "rescore": true,
+    "rewrite": "free",
+    "ground": true
+   },
+   "p15_05_arm": "D1_free_G",
+   "select": "single",
+   "status": "ok",
+   "calibrate_seconds": 25.1,
+   "config_id": "tcfg-efd3d875771cbed5",
+   "sheet": {
+    "config_id": "tcfg-efd3d875771cbed5",
+    "input_kind": "logits",
+    "decoder": "custom:p1506_run.calibrate_arm.<locals>.fn",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+    "n_items": 722,
+    "n_fit": 180,
+    "n_policy": 271,
+    "n_ltt": 271,
+    "n_ltt_min": 45,
+    "lambda_hat": 0.64,
+    "feasible": true,
+    "commit_threshold": 0.93,
+    "commit_gate": {
+     "min_chars": 1,
+     "min_words": 0,
+     "max_guard_risk": 1.0
+    },
+    "ltt_commits": 17,
+    "ltt_wrong_commits": 0,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "null_max_commit_rate": 0.05,
+    "seed": 0,
+    "created_utc": "2026-11-18T07:44:12+00:00",
+    "assumptions": [
+     "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+     "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+     "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
+     "Hallucination bound: the LLM, its fluent threshold and the grounding statistics do not change after calibration (they define the loss and the gate)."
+    ],
+    "not_guaranteed": [
+     "Any single utterance: the bound is on the rate over many utterances.",
+     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+     "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+     "The error rate among commits (precision): with few commits it can be high.",
+     "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+     "Correctness of the text that the guard withholds or offers.",
+     "Any medical or legal claim. Fidetype is research software, not a medical device.",
+     "Hallucination bound: wrong commits that the LLM does not find fluent count only in the wrong-commit bound. The gate is not a proof that each committed word was said."
+    ],
+    "warnings": [],
+    "ltt_median_guard_risk": 0.36363636363636365,
+    "ltt_gate_blocked": 0,
+    "halluc": {
+     "loss": "fluent_wrong",
+     "fluent_rule": "fluent (LLM log-prob per word >= -7.882)",
+     "fluent_threshold": -7.88165954200173,
+     "alpha_h": 0.01,
+     "delta_h": 0.1,
+     "method": "Learn then Test over the joint grid (commit_p, tau_commit, tau_word); p-value max(p_wc, p_h), exact binomial; order from the policy-grid items, fixed-sequence test on the LTT items; select commit_p >= 0.64 (P14-03 value), rule 'fewest_halluc'",
+     "grid": {
+      "commit_p": 102,
+      "tau_commit": 7,
+      "tau_word": 6
+     },
+     "grounding": "cmudict-phonemes (16 variants), anchor = base top-1 without LLM",
+     "base_commit_p": 0.64,
+     "base_config_id": "tcfg-94784bc8c2d9326d",
+     "selected": {
+      "commit_p": 0.93,
+      "tau_commit": 0.0,
+      "tau_word": 0.25
+     },
+     "n_certified": 392,
+     "chain_length": 4284,
+     "n_tested": 393,
+     "n_order": 0,
+     "n_test": 542,
+     "order_counts": {
+      "n": 0,
+      "commits": 0,
+      "right": 0,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_counts": {
+      "n": 542,
+      "commits": 26,
+      "right": 26,
+      "wc_loss": 0,
+      "h_loss": 0
+     },
+     "test_pvalues": [
+      8.437116901238681e-13,
+      0.004307997790385205
+     ],
+     "feasible": true,
+     "select": "fewest_halluc",
+     "controls_final": [
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "variant": "V-single: no ordering split; fixed order = halluc_bound._strictness; test = all 542 non-fit items (primary: 271 order + 271 test)",
+     "primary": {
+      "selected": {
+       "commit_p": 0.93,
+       "tau_commit": 0.0,
+       "tau_word": 0.25
+      },
+      "feasible": true,
+      "n_test": 271,
+      "config_id": "tcfg-ab42c781c13cdd8b"
+     }
+    }
+   },
+   "p15_05_config_id": "tcfg-97cd198e064435d2",
+   "p15_05_commit_p": 0.64,
+   "base_config_matches_p15_05": false,
+   "frame_temperature": 2.37015800035291,
+   "wer": 0.16919786096256684,
+   "sentence_acc": 0.42796005706134094,
+   "n": 701,
+   "actions": {
+    "commit": 26,
+    "offer": 675,
+    "withhold": 0
+   },
+   "n_commit": 26,
+   "n_wrong_commit": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "fluent_wrong_commits": 0,
+   "fluent_wrong_rate": 0.0,
+   "fluent_wrong_cp95": [
+    0.0,
+    0.00524848850655095
+   ],
+   "halluc_gate_blocked": 4,
+   "shown_words": 4672,
+   "unsupported_words": 18,
+   "hallucination_rate": 0.003852739726027397,
+   "unsupported_committed_words": 0,
+   "bound_holds_wc": true,
+   "bound_holds_fw": true,
+   "controls_held_out": {
+    "uniform": {
+     "n": 300,
+     "commits": 0
+    },
+    "shuffled": {
+     "n": 300,
+     "commits": 0
+    },
+    "swapped": {
+     "n": 701,
+     "commits": 0,
+     "commits_not_truth_of_signal": 0,
+     "commits_equal_truth_of_language_trial": 0
+    }
+   },
+   "stats": {},
+   "cache": {
+    "base_misses": 0,
+    "llm_new_scores": 18,
+    "llm_new_rewrites": 0
+   },
+   "seconds": 41.3
+  }
+ }
+}
