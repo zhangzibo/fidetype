@@ -44,7 +44,7 @@ Write your answer next to each item. Claude can then make the release commit (st
 | D6 | Progress dashboard on the public site | include (today); leave out | Your choice. It shows task times and agent token counts. To leave it out, delete the `progress` entry in `SECTIONS` of `tools/site/build.js`. |
 | D7 | First Python upload | TestPyPI first; PyPI directly | TestPyPI first (10 extra minutes). A PyPI version number can never be used again. |
 | D8 | Upload method | trusted publishing from GitHub Actions (no token on disk); API token on your computer | Trusted publishing for PyPI (works for the first upload). npm and crates.io need one manual first upload; then add trusted publishing. |
-| D9 | Supported Python | `>=3.12` (today; CI tests 3.12 on Linux only, gap 60 = P2-09) | Keep. Say "tested on 3.12" in the release notes. |
+| D9 | Supported Python | `>=3.12`. CI tests 3.12, 3.13, 3.14 on Linux, 3.12 and 3.13 on Windows, 3.13 on macOS (P2-09) | Keep. Say "tested on 3.12-3.14 (Linux), Windows and macOS" in the release notes. |
 
 ## B. Accounts and 2FA (30 min, once)
 | Step | Do this | Check |

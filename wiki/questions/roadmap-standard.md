@@ -233,11 +233,26 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Result:** dry runs of the three packages pass (`twine check --strict`, `npm publish --dry-run`, `cargo publish --dry-run --locked`); a clean install of the wheel runs `fidetype conformance --profile fep-0001` (66/66). The names `fidetype` (PyPI, crates.io) and `@fidetype/sdk` (npm) were free on 2026-11-18. Author `Zibo Zhang` in all manifests and `CITATION.cff`; crate `homepage`; SDK READMEs with absolute links (npm and crates.io pages). The release workflow is now `.github/workflows/release.yml` (manual trigger only). New manual-only `.github/workflows/pages.yml` and `tools/site/build.js` (assembles `_site/` from the existing pages and checks local links). Step-by-step guide with time per step and the user decisions: [docs/publishing-checklist.md](../../docs/publishing-checklist.md).
 
 #### P2-09 CI matrix: Python 3.13+ and Windows and macOS for the three SDKs
-- **Gap:** 60 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P2-08). Follow-up of P2-08.
-- **Status:** `todo`.
+- **Gap:** 60 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P2-08, closed 2026-11-18). Follow-up of P2-08.
+- **Status:** `done` (2026-11-18, green run 44369685042).
+- **Result:** `.github/workflows/tests.yml`: full pytest suite on Linux 3.12 / 3.13 / 3.14, Windows 3.12 / 3.13, macOS 3.13 (inside `conformance-os`); job `conformance-os` (Windows, macOS): Python wheel smoke test + `fidetype conformance` + `nts-conform kit --require-level trust-ready`, TypeScript `npm run ci`, Rust `cargo test` + `fidetype-rs conformance` (vectors and kit). Job `all-green` fails when any job fails. Classifiers 3.12-3.14. Platform fixes: `.gitattributes` keeps the live model assets LF (pinned SHA-256); NaN-aware GuardScore comparison in tests (Python 3.13 dataclass `==`); `FIDETYPE_LATENCY_TOLERANCE` 4 on macOS for wall-clock test bounds. Release and pages workflows stay manual (`workflow_dispatch` only). Open: the branch rule that requires `all-green` (P2-11, owner) and Python 3.15 (P2-10).
 - **Depends on:** P2-08 (done).
 - **Source:** P2-08: CI runs the Python tests on Python 3.12 and Linux only. `requires-python = ">=3.12"` lets pip install the package on 3.13 and 3.14 without a test. The P2 exit criteria ask for the conformance kit on Linux, Windows and macOS.
 - **Done when:** CI runs the Python tests on 3.12, 3.13 and 3.14 (Linux) and the conformance suites of the three SDKs on Windows and macOS; the classifiers list each tested Python version; a red platform blocks the merge.
+
+#### P2-10 Python 3.15 in the CI matrix
+- **Gap:** 64 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P2-09). Follow-up of P2-09.
+- **Status:** `todo`.
+- **Depends on:** h5py wheels for CPython 3.15 (outside the project).
+- **Source:** P2-09: Python 3.15.2 is out. h5py 3.16.0 (dev extra `[emg2qwerty]`) has no cp315 wheel in `uv.lock`; the other locked packages have one or are pure Python.
+- **Done when:** the `pytest` job runs on Linux with Python 3.15 (green), and the classifiers list 3.15; or a note says which package still blocks it.
+
+#### P2-11 Required status check on main
+- **Gap:** 65 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P2-09). Follow-up of P2-09.
+- **Status:** `todo` (owner action).
+- **Depends on:** the repository owner (GitHub settings).
+- **Source:** P2-09: the `all-green` job of `tests.yml` fails when any job fails, but `main` has no branch rule (`gh api .../branches/main/protection`: 404), so a red platform does not block a merge.
+- **Done when:** a ruleset on `main` requires the `all-green` check for pull requests, and the decision for direct pushes (agents push to `main`) is written down.
 
 ## P3. Collector (pipeline)
 **Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a TOML/JSON file (FEP-0006; [decision 2026-11-17](collector-decisions-2026-11.md)).
