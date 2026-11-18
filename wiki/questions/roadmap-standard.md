@@ -203,7 +203,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 ## P2. Reference SDKs
 **Goal:** any decoder or app can emit and read NTS in its own language, with the same behaviour everywhere.
 
-**Status (2026-11-14):** three SDKs exist and give the same verdicts: Python `fidetype` ([Python SDK](../concepts/python-sdk.md)), TypeScript `@fidetype/sdk` ([TypeScript SDK](../concepts/typescript-sdk.md)) and Rust `fidetype` ([Rust SDK](../concepts/rust-sdk.md)). All three are **ready to publish, not published** (P2-06 code part): complete registry metadata, one version source each, changelogs, `twine check` / `npm pack` / `cargo publish --dry-run` clean, CI job `packaging` (and `rust-msrv`) on every push. All three names were free on 2026-11-14. The release process, semver policy and SDK-to-spec version rules are in [docs/RELEASING.md](../../docs/RELEASING.md); a proposed manual-only release workflow (trusted publishing) is `docs/release-workflow.example.yml`. Publishing waits for the user (P2-07: accounts, trusted publishers). Not started: C core, C#, Kotlin, WASM. The package names differ from the table below (`@fidetype/sdk`, crate `fidetype`).
+**Status (2026-11-14):** three SDKs exist and give the same verdicts: Python `fidetype` ([Python SDK](../concepts/python-sdk.md)), TypeScript `@fidetype/sdk` ([TypeScript SDK](../concepts/typescript-sdk.md)) and Rust `fidetype` ([Rust SDK](../concepts/rust-sdk.md)). All three are **ready to publish, not published** (P2-06 code part): complete registry metadata, one version source each, changelogs, `twine check` / `npm pack` / `cargo publish --dry-run` clean, CI job `packaging` (and `rust-msrv`) on every push. All three names were free on 2026-11-14. The release process, semver policy and SDK-to-spec version rules are in [docs/RELEASING.md](../../docs/RELEASING.md); the manual-only release workflow (trusted publishing) is `.github/workflows/release.yml` (moved from `docs/` on 2026-11-18); the step-by-step guide for the first release is [docs/publishing-checklist.md](../../docs/publishing-checklist.md) (P2-08). Publishing waits for the user (P2-07: accounts, trusted publishers). Not started: C core, C#, Kotlin, WASM. The package names differ from the table below (`@fidetype/sdk`, crate `fidetype`).
 
 > **Decision (2026-11-14):** The NTS 1.0 SDKs are **Python, TypeScript and Rust**. The C core (`libnts`) moves to after 1.0. It is still planned, for embedded devices and FFI use. Reason: the three SDKs exist, pass the same 283 conformance vectors and are ready to publish. C is not started. Earlier plan (replaced): C core at priority 2 and the gate "Spec 1.0 RC + Python/C 1.0". Diagram `11-roadmap-standard` ([diagrams](../diagrams/index.html)) now shows the gate "Spec 1.0 RC + Python/TS/Rust 1.0".
 
@@ -227,6 +227,17 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - Python, TypeScript and Rust reach **1.0** with spec 1.0 RC (decision 2026-11-14; before: Python and C). The C core follows after 1.0.
 
 **Effort:** 40–70 agent-days (about 6–12 per language). User: registry accounts and publish tokens (**user-owned**). **Depends on:** P1 schema (generated code).
+
+#### P2-08 Publishing prep for the first release
+- **Status:** `done` (2026-11-18). Publishing itself waits for the user (P2-07, M7-09).
+- **Result:** dry runs of the three packages pass (`twine check --strict`, `npm publish --dry-run`, `cargo publish --dry-run --locked`); a clean install of the wheel runs `fidetype conformance --profile fep-0001` (66/66). The names `fidetype` (PyPI, crates.io) and `@fidetype/sdk` (npm) were free on 2026-11-18. Author `Zibo Zhang` in all manifests and `CITATION.cff`; crate `homepage`; SDK READMEs with absolute links (npm and crates.io pages). The release workflow is now `.github/workflows/release.yml` (manual trigger only). New manual-only `.github/workflows/pages.yml` and `tools/site/build.js` (assembles `_site/` from the existing pages and checks local links). Step-by-step guide with time per step and the user decisions: [docs/publishing-checklist.md](../../docs/publishing-checklist.md).
+
+#### P2-09 CI matrix: Python 3.13+ and Windows and macOS for the three SDKs
+- **Gap:** 60 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P2-08). Follow-up of P2-08.
+- **Status:** `todo`.
+- **Depends on:** P2-08 (done).
+- **Source:** P2-08: CI runs the Python tests on Python 3.12 and Linux only. `requires-python = ">=3.12"` lets pip install the package on 3.13 and 3.14 without a test. The P2 exit criteria ask for the conformance kit on Linux, Windows and macOS.
+- **Done when:** CI runs the Python tests on 3.12, 3.13 and 3.14 (Linux) and the conformance suites of the three SDKs on Windows and macOS; the classifiers list each tested Python version; a red platform blocks the merge.
 
 ## P3. Collector (pipeline)
 **Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a TOML/JSON file (FEP-0006; [decision 2026-11-17](collector-decisions-2026-11.md)).

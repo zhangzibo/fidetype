@@ -1164,3 +1164,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Hallucination benchmark 0.2: M4-13 entries added (16 files); the P15-06 B1 guard is the first entry that passes all tracks (36 real commits, 0 swapped).
 - Gap 14 (P15-19) in progress. P15-03: CPU part P15-03a done; GPU part open.
 - Pages: [open gaps](questions/open-gaps.md), [roadmap](questions/roadmap-standard.md), [north star](questions/north-star.md) (F1, F2 result lines), [index](index.md).
+
+## [2026-11-18] setup | P2-08 publishing prep: dry runs, name checks, site build, weekend checklist; new gap 60
+- Dry runs pass: Python wheel + sdist (`twine check --strict`, clean-venv install, `fidetype conformance --profile fep-0001` 66/66), `npm pack` / `npm publish --dry-run` (`@fidetype/sdk` 0.1.0, 53 files, 129.5 kB), `cargo publish --dry-run --locked` (crate `fidetype` 0.1.0, 31 files). No e-mail (only `@example.org` fixtures), no secrets, no data files in any package.
+- Names free on 2026-11-18 (read-only GETs): PyPI and TestPyPI `fidetype`, npm `@fidetype/sdk` and `fidetype`, crates.io `fidetype`.
+- Fixed: author `Zibo Zhang` (pyproject, package.json, Cargo.toml, CITATION.cff); crate `homepage`; absolute links in the SDK READMEs. Release workflow moved to `.github/workflows/release.yml` (manual trigger only); new manual-only `pages.yml`; new `tools/site/build.js` (assembles `_site/`, checks local links). Tests: `tests/test_publishing_metadata.py`.
+- New page [docs/publishing-checklist.md](../docs/publishing-checklist.md): accounts, trusted publishing, commands, checks, rollback, minutes per step, decisions D1-D9. New gap 60 = [P2-09](questions/roadmap-standard.md#p2-09-ci-matrix-python-313-and-windows-and-macos-for-the-three-sdks).
