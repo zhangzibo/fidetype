@@ -65,7 +65,8 @@ path = "out/decisions.jsonl"                   # a decision log (spec 6.4)
 [exporters.console]
 type = "stdout"
 # P5-18: a product exporter can drop research-only decisions (input.research_only = true, FEP-0010) and, by
-# default, decisions with an unknown licence (no input.research_only). Works on every exporter type.
+# default, decisions with an unknown licence (no input.research_only). Works on every exporter type. On an exporter
+# of input events (P5-22) it drops each research-only or unknown-licence stream whole, by its header.
 # refuse_research_only = true
 # unknown_licence = "refuse"                   # or "pass"
 

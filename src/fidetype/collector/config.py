@@ -232,12 +232,8 @@ def _check_licence_options(where: str, typ: str, opts: dict[str, Any]) -> None:
     _opt_enum(where, opts, "unknown_licence", UNKNOWN_LICENCE)
     if "unknown_licence" in opts and not opts.get("refuse_research_only"):
         raise ConfigError(f"{where}.unknown_licence: needs refuse_research_only = true")
-    if opts.get("refuse_research_only") and typ in ("jsonl", "stdout"):
-        types = opts.get("types", ["trust_decision"])
-        types = [types] if isinstance(types, str) else types
-        if isinstance(types, list) and "*" not in types and not set(types) & DECISION_EVENT_TYPES:
-            raise ConfigError(f"{where}.refuse_research_only: acts on decisions only, and this exporter writes "
-                              "no decision type (input events carry data.research_only in their header)")
+    # P5-22: on a jsonl / stdout exporter of input events the option acts per stream (by its header), so it is
+    # valid on every ``types`` list (P5-18 refused it there).
 
 
 def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig:

@@ -8,6 +8,7 @@ All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1
 ### Added
 - **NTS-LICENCE-MATCH (MET-12).** An advisory check in the three validators: `data.research_only = false` with a Creative Commons id with `NC` or `LicenseRef-unknown` (ASCII, without case) gives a warning, never a reject. Other ids give no warning. Vectors V101, V102, V103 (accept with the warning), V104 (accept, no warning).
 - **Collector exporter option `refuse_research_only`** (FEP-0006 section 4 rule 6; an operator policy, not a format rule): drop decisions with `input.research_only = true`; `unknown_licence = "refuse"` (default) or `"pass"` for decisions without the key.
+- **`refuse_research_only` on input-event exporters** (P5-22, FEP-0006 section 4 rule 6, FEP-0010 decision 6; operator policy): a `jsonl` or `stdout` exporter of input events drops a research-only stream whole, by its header keys; the same `unknown_licence` rule. The P5-18 configuration error for this case is gone. No format change.
 
 ### Counts
 - Vectors 355 (v0.1 104). Streaming cases 6, kit 36 (unchanged). Python = TypeScript = Rust on all 355 (warnings pinned by `expected.warnings`), the 36 kit entries and 28,487 fuzz mutants (seeds 1-3, `--n 30`, 0 differences).

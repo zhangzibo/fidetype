@@ -90,7 +90,8 @@ def test_unknown_licence_rule(tmp_path):
 
 def test_gate_unit_decision_types_and_input_events():
     logs: list[str] = []
-    ex = E.StdoutExporter("s", logs.append, ["*"]).refuse_research_only("refuse")
+    # A decisions-only exporter: input events pass (P5-22 judges them per stream only where they are written).
+    ex = E.StdoutExporter("s", logs.append, sorted(E.DECISION_TYPES)).refuse_research_only("refuse")
     seen: list = []
     ex.export = lambda items: seen.extend(items)  # type: ignore[method-assign]
     items = [("a", {"type": "header", "meta": {"data.research_only": True}}),
@@ -120,10 +121,10 @@ def test_config_errors(tmp_path, opts, msg):
         parse(_config(tmp_path, {}, opts), base_dir=tmp_path)
 
 
-def test_config_refuses_the_option_on_an_input_event_file(tmp_path):
+def test_config_takes_the_option_on_an_input_event_file(tmp_path):
+    # P5-18 refused the option here; P5-22 makes it act per stream (tests/test_input_event_licence_gate.py).
     cfg = _config(tmp_path, {})
     cfg["exporters"]["log"].update(types=["header", "frame", "end"], refuse_research_only=True)
-    with pytest.raises(ConfigError, match="acts on decisions only"):
-        parse(cfg, base_dir=tmp_path)
+    parse(cfg, base_dir=tmp_path)
     for typ in ("jsonl", "stdout", "lsl", "websocket", "os_text"):
         assert {"refuse_research_only", "unknown_licence"} <= parse.__globals__["SCHEMA"]["exporters"][typ][0]

@@ -69,7 +69,28 @@ unknown_licence = "refuse"     # default; "pass" exports decisions without the k
 | absent, or not a boolean (**unknown licence**) | exported | `unknown_licence = "refuse"`: dropped, counter `licence_unknown_refused`; `"pass"`: exported |
 
 Rules:
-- The option works on every exporter type (`jsonl`, `stdout`, `websocket`, `lsl`, `os_text`). It acts on decisions only (`trust_decision`, `intent_decision`, `control_decision`). Input events pass unchanged.
+- The option works on every exporter type (`jsonl`, `stdout`, `websocket`, `lsl`, `os_text`). It acts on decisions (`trust_decision`, `intent_decision`, `control_decision`) and, on a `jsonl` or `stdout` exporter of input events, on whole streams (next table, P5-22).
+- An exporter that only writes decisions lets input events pass; it does not write them anyway.
+
+Input-event exporters (P5-22). The header of each stream decides for the whole stream (header and every event up to its `end`):
+
+| Header `meta` of a stream | `refuse_research_only = true` |
+|---|---|
+| `data.research_only = true`, or a `data.licence` without commercial use (for example `CC-BY-NC-4.0`) or not known | stream dropped, counters `research_only_streams_refused`, `research_only_events_refused` |
+| `data.research_only = false` without `data.licence` | dropped as research only (FEP-0010: unknown licence, research only), also with `"pass"` |
+| a `data.licence` with commercial use (for example `CC0-1.0`), not restricted by `data.research_only = true` | exported unchanged |
+| neither key, or an event before any header (**unknown licence**) | `"refuse"`: stream dropped, counters `licence_unknown_streams_refused`, `licence_unknown_events_refused`; `"pass"`: exported |
+
+```toml
+[exporters.store]
+type = "jsonl"
+path = "out/streams/{session}.jsonl"
+types = ["header", "frame", "segment_end", "end"]
+refuse_research_only = true    # a research-only stream writes no file
+```
+
+- The verdict is per stream key. In a pipeline with several streams, each stream is judged by its own header. A new header on the same key starts a new verdict.
+- A refused stream opens no file. With a single path (no `{session}`), the file opens at the first exported item; an older file at that path stays as it is.
 - An unknown licence is refused by default. Reason: the project licence rule reads an unknown licence as research only (table above).
 - The exporter never changes a decision that it exports (FEP-0006 section 4 rule 1). It logs one line at the first drop of each kind; then it only counts. The log line holds no text and no session id.
 - Keep a decision log without the option next to the product exporter. Then the audit trail keeps every decision.

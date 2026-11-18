@@ -20,8 +20,16 @@ Status items (``ws_status``) are internal and never exported.
 P5-18 (FEP-0010 LIC-3, FEP-0006 4 rule 6): every exporter takes ``refuse_research_only = true``. Then it drops
 each decision whose ``input.research_only`` is ``true`` (TD-15), with the counter ``research_only_refused`` and one
 log line. A decision without the key has an **unknown** licence: ``unknown_licence = "refuse"`` (the default) drops
-it too (counter ``licence_unknown_refused``), ``"pass"`` exports it. Input events are not affected. Dropping is
-not a change of an item: an exported decision is exported unchanged (rule 1).
+it too (counter ``licence_unknown_refused``), ``"pass"`` exports it. Dropping is not a change of an item: an
+exported decision is exported unchanged (rule 1).
+
+P5-22: on an exporter that writes input events (``jsonl`` / ``stdout`` whose ``types`` has an input event type), the
+gate also acts per stream. The ``header`` of a stream gives its licence (:func:`fidetype.trust.licence.stream_licence`
+of ``meta``, the same flags that the trust layers copy into ``input.research_only``). A research-only stream is
+dropped whole (header and every event up to its ``end``; counters ``research_only_streams_refused`` and
+``research_only_events_refused``). A stream that declares neither key, or an event before any header, has an unknown
+licence: the ``unknown_licence`` rule (counters ``licence_unknown_streams_refused``,
+``licence_unknown_events_refused``). A refused stream opens no file.
 """
 
 from __future__ import annotations
@@ -58,19 +66,34 @@ class LicenceGate:
     """P5-18 (FEP-0010 LIC-3): drop research-only decisions before a (product) exporter sees them.
 
     ``research_only = true`` -> dropped (``research_only_refused``). No key (unknown licence) -> dropped with
-    ``unknown = "refuse"`` (``licence_unknown_refused``), exported with ``"pass"``. ``research_only = false`` and
-    every input event -> exported unchanged. The first drop of each kind gives one log line (no text, no session id).
+    ``unknown = "refuse"`` (``licence_unknown_refused``), exported with ``"pass"``. ``research_only = false`` ->
+    exported unchanged. The first drop of each kind gives one log line (no text, no session id).
+
+    P5-22: with ``input_events = True`` (an exporter that writes input events) the gate also judges each stream by
+    its ``header`` (:func:`fidetype.trust.licence.stream_licence` of ``meta``) and drops a refused stream whole: the
+    header and every input event of the same stream key up to its ``end``. A new header of the same key judges the
+    new stream. An input event without a header before it has an unknown licence. Without ``input_events`` every
+    input event passes (the exporter ignores them anyway). Status items always pass (no exporter writes them).
     """
 
+    #: Verdicts of a stream (P5-22).
+    PASS, REFUSE_RO, REFUSE_UNKNOWN = "pass", "research_only", "licence_unknown"
+
     def __init__(self, exporter: str, log: Callable[[str], None], counts: dict[str, int],
-                 unknown: str = "refuse") -> None:
+                 unknown: str = "refuse", input_events: bool = False) -> None:
         if unknown not in UNKNOWN_LICENCE:
             raise ValueError(f"unknown_licence must be one of {UNKNOWN_LICENCE}, not {unknown!r}")
         self.exporter = exporter
         self.log = log
         self.counts = counts
         self.unknown = unknown
+        self.input_events = input_events
+        #: P5-22: stream key -> verdict of its current stream (set by its header, removed at its ``end``).
+        self.streams: dict[str, str] = {}
         counts.update(research_only_refused=0, licence_unknown_refused=0)
+        if input_events:
+            counts.update(research_only_streams_refused=0, research_only_events_refused=0,
+                          licence_unknown_streams_refused=0, licence_unknown_events_refused=0)
 
     def _refuse(self, key: str, why: str) -> None:
         if self.counts[key] == 0:
@@ -78,11 +101,56 @@ class LicenceGate:
                      f"further drops are only counted ({key})")
         self.counts[key] += 1
 
+    def _unknown_verdict(self) -> str:
+        return self.REFUSE_UNKNOWN if self.unknown == "refuse" else self.PASS
+
+    def _stream_verdict(self, header: dict[str, Any]) -> str:
+        """The verdict of a stream from its header: the flags that a trust layer copies into ``input.research_only``."""
+        from fidetype.trust.licence import stream_licence
+
+        meta = header.get("meta")
+        sl = stream_licence(meta if isinstance(meta, dict) else None)
+        if sl is None:
+            return self._unknown_verdict()
+        return self.REFUSE_RO if sl["research_only"] else self.PASS
+
+    def _refuse_stream(self, verdict: str) -> None:
+        """Count one refused stream; the first one of each kind gives one log line (no session id, no text)."""
+        key = f"{verdict}_streams_refused"
+        if self.counts[key] == 0:
+            why = ("its header says research only: data.research_only = true, or a data.licence without commercial "
+                   "use or not known" if verdict == self.REFUSE_RO else
+                   "no header with data.licence or data.research_only: unknown licence")
+            self.log(f"exporters.{self.exporter}: refuse_research_only: dropped a stream with all its events "
+                     f"({why}); further drops are only counted ({key})")
+        self.counts[key] += 1
+
+    def _admit_input(self, sid: str, ev: dict[str, Any]) -> bool:
+        """P5-22: True if the input event ``ev`` of stream key ``sid`` goes out."""
+        t = ev.get("type")
+        if t == "header":
+            verdict = self.streams[sid] = self._stream_verdict(ev)
+            if verdict != self.PASS:
+                self._refuse_stream(verdict)
+        else:
+            verdict = self.streams.get(sid) or ""
+            if not verdict:  # no header before it: unknown licence
+                verdict = self.streams[sid] = self._unknown_verdict()
+                if verdict != self.PASS:
+                    self._refuse_stream(verdict)
+            if t == "end":
+                self.streams.pop(sid, None)
+        if verdict == self.PASS:
+            return True
+        self.counts[f"{verdict}_events_refused"] += 1
+        return False
+
     def admit(self, items: list[Item]) -> list[Item]:
         out: list[Item] = []
         for item in items:
             ev = item[1]
-            if ev.get("type") in DECISION_TYPES:
+            t = ev.get("type")
+            if t in DECISION_TYPES:
                 ro = decision_research_only(ev)
                 if ro is True:
                     self._refuse("research_only_refused", "input.research_only = true")
@@ -90,6 +158,8 @@ class LicenceGate:
                 if ro is None and self.unknown == "refuse":
                     self._refuse("licence_unknown_refused", "no input.research_only: unknown licence")
                     continue
+            elif self.input_events and t != STATUS and not self._admit_input(str(item[0]), ev):
+                continue
             out.append(item)
         return out
 
@@ -106,9 +176,14 @@ class Exporter:
         #: P5-18: the ``refuse_research_only`` gate (None: every decision goes out, the default).
         self.licence_gate: LicenceGate | None = None
 
+    def writes_input_events(self) -> bool:
+        """True if this exporter can write input events (P5-22: then the licence gate also acts per stream)."""
+        return False
+
     def refuse_research_only(self, unknown: str = "refuse") -> "Exporter":
         """Turn on the P5-18 licence gate (the ``refuse_research_only`` option). Returns ``self``."""
-        self.licence_gate = LicenceGate(self.name, self.log, self.counts, unknown)
+        self.licence_gate = LicenceGate(self.name, self.log, self.counts, unknown,
+                                        input_events=self.writes_input_events())
         return self
 
     def deliver(self, items: list[Item]) -> None:
@@ -132,6 +207,8 @@ class Exporter:
         out: dict[str, Any] = {"type": self.type, **self.counts}
         if self.licence_gate is not None:
             out["refuse_research_only"] = {"unknown_licence": self.licence_gate.unknown}
+            if self.licence_gate.input_events:
+                out["refuse_research_only"]["streams"] = True  # P5-22: input events are judged per stream
         return out
 
 
@@ -144,6 +221,9 @@ class _LinesExporter(Exporter):
     def wants(self, ev: dict[str, Any]) -> bool:
         t = ev.get("type")
         return t != STATUS and (self.types is None or t in self.types)
+
+    def writes_input_events(self) -> bool:
+        return self.types is None or bool(self.types - DECISION_TYPES)
 
     def export(self, items: list[Item]) -> None:
         if self.fh is None:
@@ -173,8 +253,13 @@ class JsonlExporter(_LinesExporter):
             self.counts.update(files=0)
 
     def start(self) -> None:
-        if self.per_session:
+        # P5-22: with the licence gate, the single file opens at its first exported item, so a refused stream
+        # writes no file (an older file at the path stays as it is).
+        if self.per_session or self.licence_gate is not None:
             return
+        self._open()
+
+    def _open(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.fh = open(self.path, "a" if self.append else "w", encoding="utf-8", newline="\n")
 
@@ -191,6 +276,8 @@ class JsonlExporter(_LinesExporter):
 
     def export(self, items: list[Item]) -> None:
         if not self.per_session:
+            if self.fh is None and self.licence_gate is not None and any(self.wants(ev) for _, ev in items):
+                self._open()
             return super().export(items)
         touched: set[str] = set()
         for sid, ev in items:
