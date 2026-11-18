@@ -114,6 +114,18 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 - **One participant per set.** The replay sets have no CI. A trial bootstrap would be too narrow.
 - **Controls.** The leaderboard shows the required controls next to the value. Many baseline entries lack a null-commit audit at their threshold ("controls: no").
 
+## 6a. Proposed v0.2 (PROPOSED, NOT ADOPTED)
+
+> **Proposed, not adopted (2026-11-18, P14-26).** The user decides adoption. v0.1 above stays the headline metric and no v0.1 number changes. Full text: [safe-wpm-v0.2-proposal.md](safe-wpm-v0.2-proposal.md).
+
+- **Prefix credit.** A commit can claim only its first k words (a prefix commit). If these are the first k words of the truth, the trial earns k words. A complete commit (every sentence-level commit) earns words(y) only if it is exactly right, as in v0.1.
+- **Wrong prefix.** It earns 0 words and costs 2.0 s + 0.79 s per character of the k true words that it replaces. A wrong complete commit costs the v0.1 penalty.
+- **Words after a prefix commit** earn 0 words and add no time (as a withheld trial). One commit per trial.
+- **Risk unit: the trial.** A wrong commit is a wrong prefix or a wrong complete commit; the rate is over all trials. A policy with prefix commits is certified only by a bound on this loss (`risk = "wrong-prefix-commit"`).
+- **Speech time.** An optional per-trial `speech_s` adds a secondary `speech_time` value. The headline v0.2 value still uses `neural_s`.
+- **Same as v0.1 for sentence-level policies.** Every number in section 5 is also its v0.2 value.
+- **Code:** `safe_wpm(..., metric_version="0.2")`; CLI `--metric-version 0.2`. Default: `"0.1"`.
+
 ## 7. Relation to other metrics
 
 | Metric | Counts | Needs a bound |

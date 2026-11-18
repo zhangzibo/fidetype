@@ -228,7 +228,8 @@ class GuaranteeSheet:
     def __str__(self) -> str:
         thr = "never commits (no threshold certified)" if not math.isfinite(self.commit_threshold) \
             else f"{self.commit_threshold:g}"
-        score_name = "learned commit score" if self.confidence else "p_top1"
+        prefix = bool(self.confidence) and self.confidence.get("unit") == "prefix"
+        score_name = ("learned prefix score" if prefix else "learned commit score") if self.confidence else "p_top1"
         lines = [
             "Fidetype trust guarantee sheet",
             "==============================",
@@ -236,6 +237,8 @@ class GuaranteeSheet:
             f"input                {self.input_kind} ({self.decoder})",
             f"guarantee            P( wrong-commit rate <= {self.alpha:g} ) >= {1 - self.delta:g}",
             f"                     wrong-commit rate = wrong COMMITs / all utterances",
+            *([f"                     a COMMIT of a prefix is wrong if its words are not the first words of the "
+               f"true text; a COMMIT of all top-1 words is wrong unless it equals the true text"] if prefix else []),
             f"method               {self.method}",
             f"calibration items    {self.n_items} = {self.n_fit} fit + {self.n_policy} policy grid + {self.n_ltt} LTT",
             f"LTT items needed     >= {self.n_ltt_min} LTT items (utterances, not commits) to certify any COMMIT",
@@ -252,10 +255,15 @@ class GuaranteeSheet:
                          f"{'PASS' if c.passed else 'FAIL'}")
         if self.confidence:
             cf = self.confidence
+            if prefix:
+                lines.append("commit unit          the longest word prefix of the top-1 text whose score passes "
+                             "(prefix scores never rise with length)")
             lines += [
                 f"commit score         learned ({cf['model']}; {cf.get('n_used', '?')} of {len(cf['features'])} "
                 f"features used, L2 {cf['l2']:g})",
-                f"  fitted on          {cf['fit_items']} items (fit + policy grid; {cf['fit_positive']} right top-1)",
+                (f"  fitted on          {cf['fit_items']} items (fit + policy grid; {cf.get('fit_rows')} prefix rows, "
+                 f"{cf['fit_positive']} right)" if prefix else
+                 f"  fitted on          {cf['fit_items']} items (fit + policy grid; {cf['fit_positive']} right top-1)"),
                 f"  certified on       {cf['certify_items']} LTT items, disjoint from the fit items",
                 f"  features           {', '.join(cf['features'])}",
             ]
@@ -330,8 +338,16 @@ class TrustResult:
     seq: int
     #: The NTS ``trust_decision`` event (FEP-0001) of this decision.
     event: dict[str, Any] = field(repr=False, default_factory=dict)
-    #: The learned commit score of this decision (P5-23, ``confidence="learned"``), else None.
+    #: The learned commit score of this decision (P5-23, ``confidence="learned"``), else None. For a prefix
+    #: guard (P5-24): the score of the committed prefix, or of the one-word prefix if nothing is committed.
     commit_score: float | None = None
+    #: ``"sentence"`` (the whole top-1 text) or ``"prefix"`` (P5-24, ``commit_unit="prefix"``).
+    commit_unit: str = "sentence"
+    #: Words in ``text`` for a commit, else None.
+    n_words_committed: int | None = None
+    #: For a commit: True if it claims the whole sentence (every sentence-level commit; a prefix guard's commit
+    #: of all top-1 words), False for a prefix commit; None if nothing is committed.
+    complete: bool | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -616,8 +632,11 @@ class TrustGuard:
             if self.halluc_gate is not None:
                 raise ValueError("a learned commit score cannot be combined with a commit grounding gate (yet)")
             self.commit_score = LearnedCommitScore.from_dict(cs)
+        #: ``"sentence"`` or ``"prefix"`` (P5-24: commit the longest certified word prefix of the top-1 text).
+        self.commit_unit = self.commit_score.unit if self.commit_score is not None else "sentence"
         self._last_nb: NBest | None = None
         self._last_score: float | None = None
+        self._last_prefix: tuple[int, int] | None = None
         decode = _decode_fn_for(decode_fn, codec.lexicon) if frames else None
 
         def capture(stream: NeuralTextStream) -> NBest:
@@ -670,20 +689,64 @@ class TrustGuard:
     def _final(self, events: Sequence[Mapping[str, Any]]) -> Any:
         return self._final_gated(events)[0]
 
-    def _features(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> np.ndarray:
-        """The P5-23 commit-score features of one decision (:data:`~fidetype.trust.commit_score.FEATURES`)."""
-        from fidetype.trust.commit_score import commit_features
-
+    def _nb_parts(self, events: Sequence[Mapping[str, Any]]) -> tuple[Any, Any, int | None]:
+        """Calibrated posteriors, calibrated candidates and frame count of the last decision (P5-23 / P5-24)."""
         if self.input_kind == "logits":
             nb, n_frames = self._last_nb, (None if self._last_lp is None else int(self._last_lp.shape[0]))
         else:
             nb, n_frames = _nbest_of_events(events), None
         if nb is None or not len(nb):
-            return commit_features(float(sd.inputs.p_top1), float(sd.inputs.guard_risk), [], [], n_frames)
+            return [], [], n_frames
         cal = self._layer.components.calibrator
-        post = cal.posteriors(nb)
-        cands = cal.calibrate_chars(nb).candidates
+        return cal.posteriors(nb), cal.calibrate_chars(nb).candidates, n_frames
+
+    def _features(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> np.ndarray:
+        """The P5-23 commit-score features of one decision (:data:`~fidetype.trust.commit_score.FEATURES`)."""
+        from fidetype.trust.commit_score import commit_features
+
+        post, cands, n_frames = self._nb_parts(events)
         return commit_features(float(sd.inputs.p_top1), float(sd.inputs.guard_risk), post, cands, n_frames)
+
+    def _prefix_rows(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[np.ndarray, list[str]]:
+        """P5-24: the prefix features of the top-1 text (one row per word prefix) and its words."""
+        from fidetype.trust.commit_score import commit_features, prefix_features
+
+        post, cands, n_frames = self._nb_parts(events)
+        f = commit_features(float(sd.inputs.p_top1), float(sd.inputs.guard_risk), post, cands, n_frames)
+        rows = prefix_features(f, post, cands)
+        words = str(cands[0].text).split() if len(cands) else []
+        return rows, words
+
+    def _prefix_commit(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[Any, float | None]:
+        """Commit the longest prefix of the top-1 text whose monotone score passes (P5-24). (decision, score)."""
+        from fidetype.trust.commit_score import longest_prefix, monotone_prefix_scores
+        from fidetype.trust.content import REASON_PREFIX
+        from fidetype.trust.policy import Decision
+
+        cs = self.commit_score
+        self._last_prefix = None
+        rows, words = self._prefix_rows(sd, events)
+        if not len(rows) or not sd.inputs.texts:
+            return sd, None
+        mono = monotone_prefix_scores(cs.scores(rows))
+        thr = cs.threshold
+        k = longest_prefix(mono, thr)
+        m = len(words)
+        if k == 0:
+            return sd, float(mono[0])
+        s = float(mono[k - 1])
+        gate = self.config.gate
+        why = (gate.violation(sd.inputs.texts[0], float(sd.inputs.guard_risk) if self.config.use_guard else None)
+               if gate is not None else None)
+        if why is not None:
+            d = replace(sd.decision, reason=f"{REASON_PREFIX}{why}; {sd.decision.reason}")
+            return replace(sd, decision=d), s
+        text = " ".join(words[:k])
+        prov = dict(sd.provenance)
+        prov["commit_threshold"] = float(thr)
+        self._last_prefix = (k, m)
+        d = Decision(Action.COMMIT, (text,), f"learned prefix score {s:.2f} >= {thr:.2f} ({k} of {m} words)")
+        return replace(sd, decision=d, provenance=prov), s
 
     def _learned_commit(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[Any, float]:
         """Apply the learned commit score to a no-commit decision (P5-23). Returns (decision, score)."""
@@ -711,8 +774,12 @@ class TrustGuard:
         """The final decision, with the P15-06 grounding gate applied to a COMMIT (reason or None)."""
         sd = self._run_layer(self._layer, events)
         self._last_score = None
+        self._last_prefix = None
         if self.commit_score is not None:
-            sd, self._last_score = self._learned_commit(sd, events)
+            if self.commit_unit == "prefix":
+                sd, self._last_score = self._prefix_commit(sd, events)
+            else:
+                sd, self._last_score = self._learned_commit(sd, events)
             return sd, None
         if self.halluc_gate is None or sd.decision.action != Action.COMMIT:
             return sd, None
@@ -730,9 +797,11 @@ class TrustGuard:
         shown = tuple(d.shown_candidates)
         ev = sd.to_event(include_text=True)
         score = self._last_score if self.commit_score is not None else None
-        if score is not None:
-            reason = _learned_reason(d.reason, score, float(self.commit_score.threshold), float(sd.inputs.p_top1),
-                                     float(sd.inputs.guard_risk))
+        prefix = self.commit_unit == "prefix"
+        if self.commit_score is not None and (score is not None or prefix):
+            reason = _learned_reason(d.reason, math.nan if score is None else score,
+                                     float(self.commit_score.threshold), float(sd.inputs.p_top1),
+                                     float(sd.inputs.guard_risk), unit=self.commit_unit)
         else:
             reason = _user_reason(d.reason, float(sd.inputs.p_top1), float(sd.inputs.guard_risk),
                                   float(self.config.policy.get("commit_p", math.inf)))
@@ -740,11 +809,21 @@ class TrustGuard:
             ev["config_id"] = self.config_id
             ev["reason"] = f"{_HALLUC_REASON} ({halluc_why}); {d.reason}"
             reason = f"{_HALLUC_REASON} ({halluc_why}); {reason}"
+        text = shown[0] if act == "commit" and shown else None
+        n_words = len(text.split()) if text is not None else None
+        complete = None if text is None else True
+        if prefix:
+            ev["commit_unit"] = "prefix"
+            if text is not None and self._last_prefix is not None:
+                k, m = self._last_prefix
+                complete = k == m
+                ev.update(n_words_committed=k, n_words_top1=m, complete=complete)
         return TrustResult(
-            action=act, text=shown[0] if act == "commit" and shown else None, choices=shown,
+            action=act, text=text, choices=shown,
             p_top1=float(sd.inputs.p_top1), guard_risk=float(sd.inputs.guard_risk), reason=reason,
             raw_action=d.action.value, config_id=self.config_id, seq=self._seq, event=ev,
-            commit_score=None if score is None else float(score),
+            commit_score=None if score is None else float(score), commit_unit=self.commit_unit,
+            n_words_committed=n_words, complete=complete,
         )
 
     def _decide_quiet(self, x: Any, input_scale: str | None = None) -> TrustResult:
@@ -765,6 +844,21 @@ class TrustGuard:
         r = self._result(*self._final_gated(events))
         self._log(r, events, utterance_id, None if r.commit_score is None else {"commit_score": r.commit_score})
         return r
+
+    def is_right(self, result: TrustResult, truth: str) -> bool | None:
+        """Whether a commit is right under this guard's loss (None if ``result`` is not a commit).
+
+        Sentence guard: the text equals the truth (after the whitespace
+        normalisation). Prefix guard (P5-24): a prefix commit is right if
+        its words are the first words of the truth; a complete commit only
+        if it equals the truth.
+        """
+        if result.action != "commit" or result.text is None:
+            return None
+        c, t = str(result.text).split(), str(truth).split()
+        if result.commit_unit == "prefix" and result.complete is False:
+            return len(t) >= len(c) and t[:len(c)] == c
+        return c == t
 
     def _log(self, r: TrustResult, events: Sequence[Mapping[str, Any]], utterance_id: str | None,
              extra: Mapping[str, Any] | None = None) -> None:
@@ -809,7 +903,7 @@ class TrustGuard:
         """
         if self.commit_score is not None:
             raise ValueError("online re-calibration works on p_top1; it is not available for a guard with a learned "
-                             "commit score (P5-23)")
+                             "commit score (P5-23) or prefix commits (P5-24)")
         from fidetype.trust.online_guard import online
 
         return online(self, method, **kwargs)
@@ -865,25 +959,32 @@ class TrustGuard:
 _GATE_RISK_REASON = "commit blocked: low acoustic evidence"
 
 
-def _learned_reason(raw: str, score: float, thr: float, p_top1: float, guard_risk: float) -> str:
-    """:attr:`TrustResult.reason` for a guard with a learned commit score (P5-23)."""
+def _learned_reason(raw: str, score: float, thr: float, p_top1: float, guard_risk: float,
+                    unit: str = "sentence") -> str:
+    """:attr:`TrustResult.reason` for a guard with a learned commit score (P5-23) or prefix score (P5-24)."""
     from fidetype.trust.content import REASON_PREFIX
 
     t = f"{thr:.2f}" if math.isfinite(thr) else "none (never commits)"
     if raw.startswith("learned commit score"):
         return f"commit: learned commit score {score:.2f} >= threshold {t} (p_top1 {p_top1:.2f})"
+    if raw.startswith("learned prefix score"):
+        words = raw[raw.rfind("(") + 1:raw.rfind(")")] if raw.endswith(")") else ""
+        return f"commit {words}: learned prefix score {score:.2f} >= threshold {t} (p_top1 {p_top1:.2f})"
+    name = "learned prefix score" if unit == "prefix" else "learned commit score"
     if raw.startswith(REASON_PREFIX):
         why, _, rest = raw[len(REASON_PREFIX):].partition("; ")
         if why.startswith("guard risk"):
             lead = (f"commit blocked: low acoustic evidence (guard risk {guard_risk:.2f}; the commit gate needs < "
-                    f"{why.rsplit('>=', 1)[-1].strip()}) although learned commit score {score:.2f}")
+                    f"{why.rsplit('>=', 1)[-1].strip()}) although {name} {score:.2f}")
         else:
             lead = f"commit blocked by the commit gate ({why})"
         return f"{lead}; " + ("offer the top choices" if "offer" in rest else "withhold")
     if raw == "no candidate":
         return "withhold: the decoder gave no text"
     what = "offer" if ("offer" in raw or "conformal set" in raw) else "withhold"
-    return f"{what}: learned commit score {score:.2f} < threshold {t} (p_top1 {p_top1:.2f})"
+    if math.isnan(score):
+        return f"{what}: no prefix to score (p_top1 {p_top1:.2f})"
+    return f"{what}: {name} {score:.2f} < threshold {t} (p_top1 {p_top1:.2f})"
 _HALLUC_REASON = "commit blocked: text not grounded in the signal"
 
 
@@ -1040,6 +1141,7 @@ def calibrate(
     decoder_label: str = "stable",
     confidence: str = "p_top1",
     confidence_l2: float = 1.0,
+    commit_unit: str = "sentence",
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -1185,6 +1287,22 @@ def calibrate(
         ``target_precision`` in this version, and :meth:`TrustGuard.online`
         is not available for it.
 
+    commit_unit
+        What a COMMIT holds (P5-24, :mod:`fidetype.trust.commit_score`).
+        ``"sentence"`` (default): the whole top-1 text (unchanged).
+        ``"prefix"``: the longest word prefix of the top-1 text whose
+        learned prefix score passes the certified threshold (needs
+        ``confidence="learned"``). The prefix score is fitted on the fit
+        and policy-grid items (one row per prefix); its threshold is
+        certified by Learn then Test on the LTT items only, with the loss
+        "the committed prefix is wrong" (its words are not the first words
+        of the true text; a commit of all top-1 words must equal the true
+        text). The guarantee is on wrong prefix commits / all utterances.
+        :class:`TrustResult` and the decision event give the number of
+        committed words (``n_words_committed``) and ``complete``. The null
+        controls count every prefix commit. Score prefix guards with
+        ``safe-wpm/0.2`` (proposed), not v0.1.
+
     Raises
     ------
     NullControlError
@@ -1274,6 +1392,14 @@ def calibrate(
                          "in this version")
     if learned and not (float(confidence_l2) > 0.0 and math.isfinite(float(confidence_l2))):
         raise ValueError("confidence_l2 must be a positive number")
+    from fidetype.trust.commit_score import COMMIT_UNITS
+
+    if commit_unit not in COMMIT_UNITS:
+        raise ValueError(f"commit_unit must be one of {COMMIT_UNITS}, not {commit_unit!r}")
+    prefix_on = commit_unit == "prefix"
+    if prefix_on and not learned:
+        raise ValueError('commit_unit="prefix" needs confidence="learned" (a learned prefix score; a plain n-best '
+                         "prefix posterior cannot be certified: prefixes that all candidates share get mass 1.0)")
 
     # --- codec and items ------------------------------------------------
     if kind == "logits":
@@ -1343,7 +1469,7 @@ def calibrate(
     if learned:
         frozen, score_info = _fit_commit_score(frozen, codec, decode_fn if kind == "logits" else None, audit_text,
                                                inputs, texts, order, n_fit, n_pol, alpha, delta,
-                                               float(confidence_l2))
+                                               float(confidence_l2), unit=commit_unit)
 
     guard = TrustGuard(frozen, codec, None, decode_fn if kind == "logits" else None, audit_text)
 
@@ -1359,7 +1485,7 @@ def calibrate(
         n_blocked += r.reason.startswith(_GATE_RISK_REASON)
         if r.action == "commit":
             n_com += 1
-            n_wrong += int(r.text != t)
+            n_wrong += int(not guard.is_right(r, t))
 
     # --- null controls --------------------------------------------------
     import copy
@@ -1397,7 +1523,10 @@ def calibrate(
         config_id=frozen.config_id, input_kind=kind,
         decoder=_decoder_name(decode_fn, lex) if kind == "logits" else "your n-best lists",
         alpha=float(alpha), delta=float(delta),
-        method=("Learn then Test on the learned commit score (fitted on the fit + policy-grid items), exact "
+        method=("Learn then Test on the learned prefix score (fitted on the fit + policy-grid items, one row per "
+                "word prefix), loss = wrong prefix commit, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 "
+                "step 0.01, on the LTT items only" if prefix_on else
+                "Learn then Test on the learned commit score (fitted on the fit + policy-grid items), exact "
                 "binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, on the LTT items only" if learned else
                 "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, "
                 "combined with the policy-grid threshold by max"),
@@ -1438,7 +1567,8 @@ def calibrate(
 
 def _fit_commit_score(frozen: FrozenTrustConfig, codec: _Codec, decode_fn: UserDecodeFn | None, audit_text: bool,
                       inputs: Sequence[Any], texts: Sequence[str], order: np.ndarray, n_fit: int, n_pol: int,
-                      alpha: float, delta: float, l2: float) -> tuple[FrozenTrustConfig, dict[str, Any]]:
+                      alpha: float, delta: float, l2: float,
+                      unit: str = "sentence") -> tuple[FrozenTrustConfig, dict[str, Any]]:
     """P5-23: fit the learned commit score on the fit + policy-grid items; certify it by LTT on the LTT items.
 
     Returns the configuration with ``commit_p = inf`` (the trust layer alone never commits), the score in
@@ -1451,6 +1581,8 @@ def _fit_commit_score(frozen: FrozenTrustConfig, codec: _Codec, decode_fn: UserD
     base = frozen.with_policy(commit_p=math.inf)
     g0 = TrustGuard(base, codec, None, decode_fn, audit_text)
     gate = base.gate
+    if unit == "prefix":
+        return _fit_prefix_score(frozen, base, g0, codec, inputs, texts, order, n_fit, n_pol, alpha, delta, l2)
     feats, right, gate_ok = [], [], []
     for i in order:
         events, _ = codec.events(inputs[i])
@@ -1489,6 +1621,61 @@ def _fit_commit_score(frozen: FrozenTrustConfig, codec: _Codec, decode_fn: UserD
             "certify_items": int(len(order) - k), "threshold": _json_float(res.threshold),
             "feasible": bool(res.feasible),
             "coef": {f: float(c) for f, c in zip(FEATURES, model.coef)}, "intercept": float(model.intercept)}
+    return out, info
+
+
+def _fit_prefix_score(frozen: FrozenTrustConfig, base: FrozenTrustConfig, g0: TrustGuard, codec: _Codec,
+                      inputs: Sequence[Any], texts: Sequence[str], order: np.ndarray, n_fit: int, n_pol: int,
+                      alpha: float, delta: float, l2: float) -> tuple[FrozenTrustConfig, dict[str, Any]]:
+    """P5-24: fit the learned prefix score on the fit + policy-grid items (one row per word prefix of the top-1
+    text); certify its threshold by LTT on the LTT items with the loss "wrong prefix commit"."""
+    from fidetype.trust.commit_score import (MODEL, PREFIX_FEATURES, RISK_PREFIX, LearnedCommitScore,
+                                             ltt_prefix_threshold, monotone_prefix_scores, prefix_right)
+    from fidetype.trust.risk_control import DEFAULT_LTT_GRID
+
+    gate = base.gate
+    per_item: list[tuple[np.ndarray, np.ndarray, bool]] = []
+    for i in order:
+        events, _ = codec.events(inputs[i])
+        sd = g0._run_layer(g0._layer, events)
+        rows, words = g0._prefix_rows(sd, events)
+        right = prefix_right(words, texts[i].split()) if len(rows) else np.zeros(0, bool)
+        ok = bool(sd.inputs.texts) and len(rows) > 0 and (gate is None or gate.violation(
+            sd.inputs.texts[0], float(sd.inputs.guard_risk) if base.use_guard else None) is None)
+        per_item.append((rows, right, ok))
+    k = n_fit + n_pol
+    fit_rows = [r for r, _, _ in per_item[:k] if len(r)]
+    X = (np.vstack(fit_rows) if fit_rows else np.zeros((0, len(PREFIX_FEATURES))))
+    y = np.concatenate([y for r, y, _ in per_item[:k] if len(r)]) if fit_rows else np.zeros(0, bool)
+    model = LearnedCommitScore.fit(X, y, l2=l2, unit="prefix")
+    s_ltt = [monotone_prefix_scores(model.scores(r)) if ok else np.zeros(0) for r, _, ok in per_item[k:]]
+    r_ltt = [y for _, y, _ in per_item[k:]]
+    res = ltt_prefix_threshold(s_ltt, r_ltt, alpha=alpha, delta=delta, grid=DEFAULT_LTT_GRID)
+    cert = {"method": "ltt-binomial (prefix loss)", "alpha": float(alpha), "delta": float(delta), "n": int(res["n"]),
+            "feasible": bool(res["feasible"]),
+            "empirical_risk": None if math.isnan(res["empirical_risk"]) else float(res["empirical_risk"]),
+            "p_value": None if math.isnan(res["p_value"]) else float(res["p_value"]),
+            "ltt_commit_rate": float(res["commit_rate"]), "grid": "1.00 -> 0.00 step 0.01", "risk": RISK_PREFIX}
+    model = model.with_threshold(res["threshold"], cert)
+    rc = {"method": "ltt-binomial", "alpha": float(alpha), "delta": float(delta), "threshold": res["threshold"],
+          "feasible": bool(res["feasible"]), "n": int(res["n"]),
+          "bound": res["p_value"], "combine": "none (learned prefix score, P5-24)", "score": "learned-prefix",
+          "risk": "wrong-prefix-commit"}
+    recipe = dict(frozen.recipe)
+    n_rows_pos = int(y.sum())
+    recipe.update({"commit_score": model.to_dict(),
+                   "commit_score_split": {"fit": "fit + policy_grid items", "n_fit": int(k), "n_fit_rows": int(len(y)),
+                                          "certify": "ltt items", "n_certify": int(len(order) - k)},
+                   "commit_unit": "prefix",
+                   "fitted_by": str(recipe.get("fitted_by", "")) + " + P5-24 learned prefix score"})
+    out = replace(base, recipe=recipe, risk_control=rc)
+    info = {"kind": "learned", "unit": "prefix", "schema": model.schema, "model": MODEL,
+            "features": list(PREFIX_FEATURES), "dropped": list(model.dropped),
+            "n_used": int(sum(c != 0.0 for c in model.coef)), "l2": float(l2), "fit_items": int(k),
+            "fit_positive": n_rows_pos, "fit_rows": int(len(y)),
+            "certify_items": int(len(order) - k), "threshold": _json_float(res["threshold"]),
+            "feasible": bool(res["feasible"]), "risk": RISK_PREFIX,
+            "coef": {f: float(c) for f, c in zip(PREFIX_FEATURES, model.coef)}, "intercept": float(model.intercept)}
     return out, info
 
 

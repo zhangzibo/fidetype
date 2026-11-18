@@ -141,3 +141,107 @@ def test_cli(tmp_path, capsys) -> None:
     r = json.loads(out.read_text(encoding="utf-8"))
     assert r["status"] == "certified" and r["value"] == pytest.approx(60 * 2 / 10.0)
     assert "rate model" in r["timing"]
+
+
+# --- safe-wpm/0.2 (P14-26, proposed, not adopted) ------------------------------------------------
+
+LTT_PREFIX = dict(LTT, risk="wrong-prefix-commit")
+
+
+def test_v02_prefix_outcome() -> None:
+    from fidetype.benchmark.safe_wpm import prefix_outcome
+
+    t = "i need some water now"
+    assert prefix_outcome("i need", t, False) == {"correct": True, "committed_words": 2, "complete": False,
+                                                  "credit_words": 2, "penalty_chars": 6}
+    assert prefix_outcome("i need sun", t, False)["correct"] is False
+    assert prefix_outcome("i need sun", t, False)["penalty_chars"] == len("i need some")
+    # a complete commit claims the whole sentence: a right prefix is still a wrong complete commit
+    assert prefix_outcome("i need", t, True) == {"correct": False, "committed_words": 2, "complete": True,
+                                                 "credit_words": 0, "penalty_chars": len(t)}
+    assert prefix_outcome(t, t, True)["credit_words"] == 5
+    # a prefix longer than the truth is wrong
+    assert prefix_outcome("i need some water now please", t, False)["correct"] is False
+    with pytest.raises(ValueError):
+        prefix_outcome("  ", t, False)
+
+
+def test_v01_is_the_default_and_refuses_v02_fields() -> None:
+    a = safe_wpm([True], [True], [2], [11], [3.0], guarantee=LTT)
+    assert a["definition"] == "safe-wpm/0.1" and "n_prefix_commits" not in a
+    with pytest.raises(ValueError, match="metric_version"):
+        safe_wpm([True], [True], [2], [11], [3.0], guarantee=LTT, committed_words=[1])
+    with pytest.raises(ValueError, match="metric_version must be"):
+        safe_wpm([True], [True], [2], [11], [3.0], guarantee=LTT, metric_version="0.3")
+
+
+def test_v02_equals_v01_for_sentence_commits() -> None:
+    rng = np.random.default_rng(0)
+    n = 50
+    cm, ok = rng.random(n) < 0.5, rng.random(n) < 0.7
+    nw, nc, ns = rng.integers(1, 9, n), rng.integers(5, 40, n), rng.uniform(2, 9, n)
+    a = safe_wpm(cm, ok, nw, nc, ns, guarantee=LTT)
+    b = safe_wpm(cm, ok, nw, nc, ns, guarantee=LTT, metric_version="0.2")
+    assert b["definition"] == "safe-wpm/0.2" and "proposed" in b["definition_status"]
+    for k in ("value", "status", "unguarded_wpm", "wpm_no_penalty", "measured_wrong_commit", "n_commits",
+              "n_wrong_commits", "committed_correct_words", "minutes_correction"):
+        assert a[k] == b[k], k
+    assert b["n_prefix_commits"] == 0
+
+
+def test_v02_hand_computed_prefix_value() -> None:
+    from fidetype.benchmark.safe_wpm import prefix_outcome
+
+    truths = ["i need some water", "call my wife", "good morning", "open the window"]
+    # trial 0: right prefix (2 words); 1: wrong prefix; 2: right complete; 3: withhold
+    outs = [prefix_outcome("i need", truths[0], False), prefix_outcome("call me", truths[1], False),
+            prefix_outcome("good morning", truths[2], True), None]
+    cm = [o is not None for o in outs]
+    r = safe_wpm(cm, [bool(o and o["correct"]) for o in outs], [len(t.split()) for t in truths],
+                 [len(t) for t in truths], [3.0, 4.0, 2.0, 5.0], guarantee=LTT_PREFIX, metric_version="0.2",
+                 committed_words=[o["committed_words"] if o else math.nan for o in outs],
+                 complete=[bool(o and o["complete"]) for o in outs],
+                 penalty_chars=[o["penalty_chars"] if o else math.nan for o in outs],
+                 speech_s=[2.0, 2.0, 1.0, 3.0], speech_timing="test")
+    pen = 2.0 + DEFAULT_S_PER_CHAR * len("call my")
+    assert r["status"] == "certified" and r["risk"] == "wrong-prefix-commit"
+    assert r["value"] == pytest.approx(60 * (2 + 2) / (14.0 + pen))
+    assert r["committed_correct_words"] == 4 and r["n_prefix_commits"] == 2 and r["n_complete_commits"] == 1
+    assert r["n_wrong_commits"] == 1 and r["measured_wrong_commit"] == pytest.approx(0.25)
+    assert r["speech_time"]["value"] == pytest.approx(60 * 4 / (8.0 + pen))
+    # the same prefix decisions under a sentence-level bound are not certified
+    r2 = safe_wpm(cm, [bool(o and o["correct"]) for o in outs], [4, 3, 2, 3], [len(t) for t in truths],
+                  [3.0, 4.0, 2.0, 5.0], guarantee=LTT, metric_version="0.2",
+                  committed_words=[2, 2, 2, math.nan], complete=[False, False, True, False],
+                  penalty_chars=[6, 7, 0, math.nan])
+    assert r2["status"] == "not-certified" and r2["value"] is None and "wrong-prefix-commit" in r2["note"]
+    with pytest.raises(ValueError, match="committed_words"):
+        safe_wpm(cm, [True] * 4, [4, 3, 2, 3], [10] * 4, [1.0] * 4, guarantee=LTT_PREFIX, metric_version="0.2",
+                 complete=[False, True, True, True])
+
+
+def test_v02_guarantee_from_a_prefix_sheet() -> None:
+    sheet = {"alpha": 0.05, "delta": 0.1, "n_ltt": 271, "n_items": 722, "n_fit": 180, "n_policy": 271,
+             "confidence": {"unit": "prefix"}}
+    assert guarantee_from_sheet(sheet)["risk"] == "wrong-prefix-commit"
+    assert "risk" not in guarantee_from_sheet(dict(sheet, confidence={"kind": "learned"}))
+
+
+def test_v02_cli(tmp_path) -> None:
+    from fidetype.benchmark.__main__ import main
+
+    p = tmp_path / "t.jsonl"
+    rows = [{"committed": True, "committed_text": "hello", "complete": False, "truth": "hello world",
+             "neural_s": 3.0, "speech_s": 2.0},
+            {"committed": False, "truth": "not now", "neural_s": 2.0, "speech_s": 1.0}]
+    p.write_text("\n".join(json.dumps(r) for r in rows), encoding="utf-8")
+    out = tmp_path / "r.json"
+    g = json.dumps({"method": "ltt", "alpha": 0.5, "delta": 0.1, "risk": "wrong-prefix-commit"})
+    assert main(["safe-wpm", "--trials", str(p), "--guarantee", g, "--metric-version", "0.2", "--out", str(out)]) == 0
+    r = json.loads(out.read_text(encoding="utf-8"))
+    assert r["definition"] == "safe-wpm/0.2" and r["value"] == pytest.approx(60 * 1 / 5.0)
+    assert r["speech_time"]["value"] == pytest.approx(60 * 1 / 3.0)
+    # v0.1 (default) scores the same file with the v0.1 rule: "correct" is false (no exact sentence)
+    assert main(["safe-wpm", "--trials", str(p), "--guarantee", g, "--out", str(out)]) == 0
+    r1 = json.loads(out.read_text(encoding="utf-8"))
+    assert r1["definition"] == "safe-wpm/0.1" and r1["n_wrong_commits"] == 1

@@ -6,6 +6,8 @@ Tracks v0.1 (three tracks) and tracks v0.2 (seven tracks, P6-01). v0.2 entries a
 
 Safe WPM @ alpha (P14-05): committed, exactly right words per minute, with a time penalty per wrong commit, only under a certified CRC / LTT bound. `! ABOVE alpha` marks a measured test wrong-commit rate above the stated alpha. Definition: [docs/safe-wpm.md](../../docs/safe-wpm.md).
 
+Safe WPM v0.2 (prefix credit, speech-time field) is PROPOSED, NOT ADOPTED ([docs/safe-wpm-v0.2-proposal.md](../../docs/safe-wpm-v0.2-proposal.md)). Every entry here commits whole sentences, so its v0.2 value equals the v0.1 value shown.
+
 ## MEG typing, asynchronous (SpanishBCBL) (tracks v0.1)
 
 Track `spanishbcbl-meg-async`. Data: SpanishBCBL typing MEG (Brain2Qwerty v1/v2 data) (CC BY-NC 4.0, **research only**). CI unit: two_way:sentence,participant. User model: aac-gaze-v1 @ 152 chars/min.

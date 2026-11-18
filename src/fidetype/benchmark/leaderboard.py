@@ -188,7 +188,10 @@ def markdown(by: dict[str, list[dict[str, Any]]]) -> str:
          "non-commercial data; `[partial]` marks entries that cover only part of the scored units.", "",
          "Safe WPM @ alpha (P14-05): committed, exactly right words per minute, with a time penalty per wrong "
          "commit, only under a certified CRC / LTT bound. `! ABOVE alpha` marks a measured test wrong-commit rate "
-         "above the stated alpha. Definition: [docs/safe-wpm.md](../../docs/safe-wpm.md).", ""]
+         "above the stated alpha. Definition: [docs/safe-wpm.md](../../docs/safe-wpm.md).", "",
+         "Safe WPM v0.2 (prefix credit, speech-time field) is PROPOSED, NOT ADOPTED "
+         "([docs/safe-wpm-v0.2-proposal.md](../../docs/safe-wpm-v0.2-proposal.md)). Every entry here commits whole "
+         "sentences, so its v0.2 value equals the v0.1 value shown.", ""]
     for slug, rows in by.items():
         t = track_info(slug)
         L += [f"## {t['title'] if t else slug}" + (f" (tracks v{t['version']})" if t else ""), ""]

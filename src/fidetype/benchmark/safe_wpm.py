@@ -43,6 +43,28 @@ Rules:
 The report always carries alpha, delta, the method, the calibration size,
 the measured wrong-commit rate with its Clopper-Pearson 95 % interval, the
 controls and the no-BCI reference.
+
+Proposed ``safe-wpm/0.2`` (P14-26; PROPOSED, NOT ADOPTED)
+--------------------------------------------------------
+``safe_wpm(..., metric_version="0.2")`` scores word-prefix commits. The
+default stays ``"0.1"``; v0.1 numbers do not change. Full text:
+``docs/safe-wpm-v0.2-proposal.md``. Per trial, a commit has k_i words and
+a flag ``complete_i`` (the commit claims the whole sentence; every
+sentence-level commit is complete)::
+
+    right_i   = (c_i == y_i)                                   if complete_i
+              = (k_i >= 1 and c_i == first k_i words of y_i)   otherwise
+    credit_i  = words(y_i) if right_i and complete_i; k_i if right_i and not complete_i; else 0
+    penalty_i = overhead + s_per_char * len(y_i)                       if complete_i
+              = overhead + s_per_char * len(first k_i words of y_i)    otherwise
+
+Words of y_i after a prefix commit give 0 words and no time (as a withheld
+trial). The risk unit is the trial: a wrong commit is a commit that is not
+right_i. A policy with prefix commits is certified only by a bound on that
+loss (guarantee ``risk = "wrong-prefix-commit"``). An optional per-trial
+``speech_s`` adds a ``speech_time`` block (the same credit over speech
+time); the headline time stays ``neural_s``. For a policy with only
+complete commits, v0.2 gives the same value as v0.1.
 """
 
 from __future__ import annotations
@@ -56,6 +78,13 @@ import numpy as np
 from fidetype.utils.binomial import clopper_pearson
 
 DEFINITION = "safe-wpm/0.1"
+#: The proposed prefix-credit version (P14-26). Not adopted: the default stays v0.1.
+DEFINITION_V02 = "safe-wpm/0.2"
+METRIC_VERSIONS = ("0.1", "0.2")
+V02_STATUS = "proposed, not adopted (P14-26): v0.1 stays the headline metric until the user accepts v0.2"
+#: Loss names of a guarantee (``guarantee["risk"]``). Absent = ``RISK_SENTENCE``.
+RISK_SENTENCE = "wrong-commit"
+RISK_PREFIX = "wrong-prefix-commit"
 CERTIFIED_METHODS = ("ltt", "crc")
 #: aac-gaze-v1 correction constants (``fidetype.interact.simulated_user.UserConfig`` defaults).
 DEFAULT_OVERHEAD_S = 2.0
@@ -91,6 +120,27 @@ class CorrectionRule:
 def model_neural_s(n_chars: Sequence[float], chars_per_min: float) -> np.ndarray:
     """Neural time from a track rate model: ``len(truth) * 60 / chars_per_min``."""
     return np.asarray(n_chars, float) * 60.0 / float(chars_per_min)
+
+
+def prefix_outcome(committed_text: str, truth: str, complete: bool) -> dict[str, Any]:
+    """The ``safe-wpm/0.2`` outcome of one commit (words split on spaces, after the track normalisation).
+
+    ``complete``: the commit claims the whole sentence (a sentence-level
+    commit); otherwise it claims only its first k words. Returns
+    ``correct`` (right_i), ``committed_words`` (k_i), ``complete``,
+    ``credit_words`` and ``penalty_chars`` (the characters of the truth
+    that the user types again after a wrong commit).
+    """
+    c, t = str(committed_text).split(), str(truth).split()
+    k = len(c)
+    if k == 0:
+        raise ValueError("a commit needs at least one word")
+    if complete:
+        right, chars = c == t, len(" ".join(t))
+    else:
+        right, chars = (len(t) >= k and t[:k] == c), len(" ".join(t[:k]))
+    return {"correct": bool(right), "committed_words": k, "complete": bool(complete),
+            "credit_words": (len(t) if complete else k) if right else 0, "penalty_chars": chars}
 
 
 def certification(guarantee: Mapping[str, Any] | None) -> dict[str, Any]:
@@ -141,7 +191,10 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
              rule: CorrectionRule = CorrectionRule(), timing: str = "unspecified",
              clusters: Sequence[Mapping[str, str]] | None = None, ci_unit: str | None = None,
              controls: Mapping[str, Any] | None = None, gaze_chars_per_min: float | None = GAZE_CHARS_PER_MIN,
-             B: int = 2000, seed: int = 0) -> dict[str, Any]:
+             B: int = 2000, seed: int = 0, metric_version: str = "0.1",
+             committed_words: Sequence[float] | None = None, complete: Sequence[bool] | None = None,
+             penalty_chars: Sequence[float] | None = None, speech_s: Sequence[float] | None = None,
+             speech_timing: str = "unspecified") -> dict[str, Any]:
     """Compute safe WPM for one entry (see the module docstring for the definition).
 
     Per-trial inputs: ``committed`` (the policy committed), ``correct`` (the
@@ -150,7 +203,26 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
     ``guarantee``: the declared bound (``method``, ``alpha``, ``delta``,
     ``n_cal``, ...). ``clusters`` + ``ci_unit``: a percentile cluster
     bootstrap CI (as the benchmark scorer); omit for no CI.
+
+    ``metric_version="0.2"`` (P14-26, proposed, not adopted) scores prefix
+    commits: ``correct`` is then right_i (:func:`prefix_outcome`),
+    ``complete`` marks commits that claim the whole sentence (default: all),
+    ``committed_words`` (k_i) and ``penalty_chars`` are needed for the
+    commits that are not complete, and ``speech_s`` (optional) adds a
+    ``speech_time`` block. The v0.2 arguments are refused with v0.1.
     """
+    if metric_version not in METRIC_VERSIONS:
+        raise ValueError(f"metric_version must be one of {METRIC_VERSIONS}, not {metric_version!r}")
+    if metric_version == "0.2":
+        return _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, guarantee=guarantee, rule=rule,
+                             timing=timing, clusters=clusters, ci_unit=ci_unit, controls=controls,
+                             gaze_chars_per_min=gaze_chars_per_min, B=B, seed=seed, committed_words=committed_words,
+                             complete=complete, penalty_chars=penalty_chars, speech_s=speech_s,
+                             speech_timing=speech_timing)
+    extra = [k for k, v in (("committed_words", committed_words), ("complete", complete),
+                            ("penalty_chars", penalty_chars), ("speech_s", speech_s)) if v is not None]
+    if extra:
+        raise ValueError(f"{extra} are safe-wpm/0.2 fields; pass metric_version='0.2' (proposed, not adopted)")
     a = _arrays(committed, correct, n_words, n_chars, neural_s)
     n = len(a["cm"])
     pen = rule.penalty(a["nc"])
@@ -204,6 +276,103 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
     return out
 
 
+def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, rule, timing, clusters, ci_unit,
+                  controls, gaze_chars_per_min, B, seed, committed_words, complete, penalty_chars, speech_s,
+                  speech_timing) -> dict[str, Any]:
+    """``safe-wpm/0.2`` (proposed): prefix credit, prefix penalty, optional speech time (module docstring)."""
+    a = _arrays(committed, correct, n_words, n_chars, neural_s)
+    n = len(a["cm"])
+    full = np.ones(n, bool) if complete is None else np.asarray(complete, bool)
+    if len(full) != n:
+        raise ValueError(f"array 'complete' has length {len(full)}, expected {n}")
+    partial = a["cm"] & ~full
+    kw = np.full(n, np.nan) if committed_words is None else np.asarray(committed_words, float)
+    pc = np.full(n, np.nan) if penalty_chars is None else np.asarray(penalty_chars, float)
+    for name, v in (("committed_words", kw), ("penalty_chars", pc)):
+        if len(v) != n:
+            raise ValueError(f"array {name!r} has length {len(v)}, expected {n}")
+        if partial.any() and not np.all(np.isfinite(v[partial]) & (v[partial] >= 0)):
+            raise ValueError(f"{name} is needed (finite, >= 0) for every commit that is not complete")
+    if partial.any() and np.any(kw[partial] < 1):
+        raise ValueError("a prefix commit needs at least one word")
+    total_words = a["nw"].copy()
+    credit_words = np.where(partial, np.nan_to_num(kw), a["nw"])
+    if np.any(a["ok"] & partial & (credit_words > total_words)):
+        raise ValueError("a right prefix cannot have more words than the truth")
+    a["nw"] = credit_words  # _point credits a["nw"] where a["ok"]
+    pen = rule.penalty(np.where(partial, np.nan_to_num(pc), a["nc"]))
+    pt = _point(a, pen)
+    cert = certification(guarantee)
+    risk = str((guarantee or {}).get("risk", RISK_SENTENCE))
+    note = cert.get("note")
+    if partial.any() and risk != RISK_PREFIX:
+        cert["certified"] = False
+        note = (f"the policy commits prefixes, but its bound is on '{risk}', not on '{RISK_PREFIX}' "
+                "(safe-wpm/0.2 needs a bound on wrong-prefix commits)")
+    k_wrong, k_commit = int(a["wrong"].sum()), int(a["cm"].sum())
+    measured = k_wrong / n if n else math.nan
+    ci = None
+    if clusters is not None and ci_unit and n:
+        from fidetype.benchmark.scoring import bootstrap_ci
+
+        ci = bootstrap_ci(lambda w: {"wpm": _point(a, pen, w)["wpm"]}, ci_unit, list(clusters), B=B, seed=seed)["wpm"]
+    if not cert["certified"]:
+        status, value = "not-certified", None
+    elif k_commit == 0:
+        status, value = "vacuous", 0.0
+    elif isinstance(cert["alpha"], (int, float)) and measured > cert["alpha"]:
+        status, value = "above-alpha", pt["wpm"]
+    else:
+        status, value = "certified", pt["wpm"]
+    t_neural = float(a["ns"].sum())
+    t_pen = float(np.where(a["wrong"], pen, 0.0).sum())
+    out: dict[str, Any] = {
+        "definition": DEFINITION_V02,
+        "definition_status": V02_STATUS,
+        "value": value,
+        "ci": (ci if value is not None and status != "vacuous" else None),
+        "status": status,
+        "unguarded_wpm": pt["wpm"],
+        "wpm_no_penalty": pt["wpm_no_penalty"],
+        **{k: cert[k] for k in ("method", "alpha", "delta", "n_cal", "calibration")},
+        "confidence": cert.get("confidence"),
+        "risk": risk,
+        "measured_wrong_commit": measured,
+        "measured_wrong_commit_cp95": clopper_pearson(k_wrong, n) if n else [None, None],
+        "n_trials": n, "n_commits": k_commit, "n_wrong_commits": k_wrong, "n_correct_commits": k_commit - k_wrong,
+        "n_prefix_commits": int(partial.sum()), "n_complete_commits": int((a["cm"] & full).sum()),
+        "n_right_complete_commits": int((a["ok"] & full).sum()),
+        "error_among_commits": (k_wrong / k_commit) if k_commit else None,
+        "committed_correct_words": int(np.where(a["ok"], credit_words, 0.0).sum()),
+        "total_words": int(total_words.sum()),
+        "minutes_neural": t_neural / 60.0, "minutes_correction": t_pen / 60.0,
+        "timing": timing,
+        "correction_rule": dict(rule.to_dict(), prefix=("a wrong prefix of k words costs the penalty of the first k "
+                                                        "words of the truth")),
+    }
+    if ci is not None:
+        out["ci_unit"] = ci_unit
+    if speech_s is not None:
+        sp = np.asarray(speech_s, float)
+        if len(sp) != n or (n and (not np.all(np.isfinite(sp)) or np.any(sp < 0))):
+            raise ValueError("speech_s must have one finite value >= 0 per trial")
+        b = dict(a, ns=sp)
+        ps = _point(b, pen)
+        out["speech_time"] = {"value": (0.0 if status == "vacuous" else ps["wpm"]) if value is not None else None,
+                              "wpm_no_penalty": ps["wpm_no_penalty"], "minutes_speech": float(sp.sum()) / 60.0,
+                              "timing": speech_timing,
+                              "note": "same credit and penalty over speech time; the headline value uses neural_s"}
+    if gaze_chars_per_min:
+        out["no_bci_wpm"] = (60.0 * total_words.sum() / (a["nc"].sum() * 60.0 / gaze_chars_per_min)
+                             if a["nc"].sum() else None)
+        out["no_bci_note"] = f"gaze typing of every sentence at {gaze_chars_per_min:g} chars/min (the eWPM reference)"
+    if note:
+        out["note"] = note
+    if controls is not None:
+        out["controls"] = summarize_controls(controls)
+    return out
+
+
 def summarize_controls(c: Mapping[str, Any]) -> dict[str, Any]:
     """Keep the status of the required controls (shuffled, zeros, null_commit) and the overall flag."""
     out: dict[str, Any] = {k: (c.get(k) or {}).get("status", "missing") for k in ("shuffled", "zeros", "null_commit")}
@@ -227,7 +396,8 @@ def guarantee_from_sheet(sheet: Mapping[str, Any]) -> dict[str, Any]:
             "calibration_split": (f"{sheet.get('n_items')} items: {sheet.get('n_fit')} fit + {sheet.get('n_policy')} "
                                   f"grid + {n_ltt} LTT (fidetype.trust.calibrate)"),
             "feasible": sheet.get("feasible", True), "config_id": sheet.get("config_id"),
-            "commit_threshold": sheet.get("commit_threshold")}
+            "commit_threshold": sheet.get("commit_threshold"),
+            **({"risk": RISK_PREFIX} if (sheet.get("confidence") or {}).get("unit") == "prefix" else {})}
 
 
 def controls_from_sheet(sheet: Mapping[str, Any]) -> dict[str, Any]:
@@ -271,10 +441,17 @@ def load_trials_jsonl(path: str) -> dict[str, list]:
     either ``truth`` (text; lengths taken from it) or ``n_words`` +
     ``n_chars``; ``neural_s`` (seconds; optional if ``--chars-per-min``
     is given); optional ``cluster`` (string) for the bootstrap.
+    ``safe-wpm/0.2`` (proposed) fields, ignored by v0.1: ``complete``
+    (default true), ``committed_text`` (with ``truth``: sets ``correct``,
+    ``committed_words`` and ``penalty_chars`` by :func:`prefix_outcome`, in
+    ``correct_v02``; ``correct`` then means the exact sentence, as in v0.1)
+    or ``committed_words`` + ``penalty_chars``; ``speech_s``.
     """
     import json
 
-    cols: dict[str, list] = {k: [] for k in ("committed", "correct", "n_words", "n_chars", "neural_s", "cluster")}
+    cols: dict[str, list] = {k: [] for k in ("committed", "correct", "n_words", "n_chars", "neural_s", "cluster",
+                                             "correct_v02", "committed_words", "complete", "penalty_chars",
+                                             "speech_s")}
     with open(path, encoding="utf-8") as f:
         for ln, line in enumerate(f, 1):
             if not line.strip():
@@ -291,6 +468,22 @@ def load_trials_jsonl(path: str) -> dict[str, list]:
             cols["n_chars"].append(float(nc))
             cols["neural_s"].append(float(d["neural_s"]) if d.get("neural_s") is not None else math.nan)
             cols["cluster"].append(str(d["cluster"]) if d.get("cluster") is not None else "")
+            # safe-wpm/0.2 (proposed) fields; v0.1 ignores them
+            comp = bool(d.get("complete", True))
+            kw, pch = d.get("committed_words"), d.get("penalty_chars")
+            ok2 = cols["correct"][-1]
+            if d.get("committed_text") is not None and bool(d["committed"]):
+                if "truth" not in d:
+                    raise ValueError(f"line {ln}: committed_text needs truth")
+                po = prefix_outcome(d["committed_text"], d["truth"], comp)
+                ok2, kw, pch = po["correct"], po["committed_words"], po["penalty_chars"]
+                # v0.1: only the exact sentence is right
+                cols["correct"][-1] = " ".join(str(d["committed_text"]).split()) == " ".join(str(d["truth"]).split())
+            cols["correct_v02"].append(bool(ok2))
+            cols["complete"].append(comp)
+            cols["committed_words"].append(float(kw) if kw is not None else math.nan)
+            cols["penalty_chars"].append(float(pch) if pch is not None else math.nan)
+            cols["speech_s"].append(float(d["speech_s"]) if d.get("speech_s") is not None else math.nan)
     return cols
 
 
@@ -307,10 +500,13 @@ def format_line(r: Mapping[str, Any]) -> str:
         g += f" d={r['delta']}"
     if r.get("n_cal") is not None:
         g += f" n_cal={r['n_cal']}"
+    if r.get("definition") == DEFINITION_V02:
+        vs += f" [{DEFINITION_V02}, proposed; {r.get('n_prefix_commits', 0)} prefix commits]"
     return (f"safe WPM {vs} ({r['status']}; {g}; test wrong-commit {r['n_wrong_commits']}/{r['n_trials']} = "
             f"{r['measured_wrong_commit']:.4f}; commits {r['n_commits']}; unguarded {r['unguarded_wpm']:.2f}; "
             f"no-BCI {r.get('no_bci_wpm') or float('nan'):.2f})")
 
 
-__all__ = ["DEFINITION", "CorrectionRule", "certification", "model_neural_s", "safe_wpm", "from_trial_scores",
+__all__ = ["DEFINITION", "DEFINITION_V02", "METRIC_VERSIONS", "RISK_SENTENCE", "RISK_PREFIX", "prefix_outcome",
+           "CorrectionRule", "certification", "model_neural_s", "safe_wpm", "from_trial_scores",
            "summarize_controls", "guarantee_from_sheet", "controls_from_sheet", "load_trials_jsonl", "format_line"]

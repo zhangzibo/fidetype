@@ -351,6 +351,9 @@ _NEX_REF = "Barber, Candes, Ramdas & Tibshirani 2023, arXiv:2202.13415; Farinhas
 _BANDIT_REF = ("Ge, Bastani & Bastani 2024, arXiv:2405.13268; Waudby-Smith et al. 2022, arXiv:2210.10768 "
                "(IPW confidence sequences)")
 _WRONG_COMMIT = {"name": "wrong-commit rate", "definition": "wrong COMMITs / all utterances"}
+_WRONG_PREFIX = {"name": "wrong-commit rate (prefix commits)",
+                 "definition": "wrong COMMITs / all utterances; a COMMIT of a word prefix is wrong if its words are not "
+                               "the first words of the true text, a COMMIT of all top-1 words if it is not the true text"}
 _PRECISION = {"name": "error rate among commits", "definition": "wrong COMMITs / all COMMITs (1 - precision)"}
 
 _OFFLINE_ASSUMPTIONS = (
@@ -382,6 +385,9 @@ def sheets_from_guarantee_sheet(gs: Any) -> list[PolicySheet]:
     cf = getattr(gs, "confidence", None)
     if cf:  # P5-23: the learned commit score (fit items disjoint from the LTT items); absent = p_top1
         base_status["commit_score"] = "learned"
+        if cf.get("unit") == "prefix":  # P5-24: the longest certified word prefix; loss = wrong prefix commit
+            base_status["commit_unit"] = "prefix"
+            base_status["risk"] = cf.get("risk")
         cal = dict(cal, score_fit_items=cf.get("fit_items"), score_certify_items=cf.get("certify_items"))
         base_status["commit_score_model"] = {k: cf.get(k) for k in ("schema", "model", "features", "l2", "coef",
                                                                     "intercept")}
@@ -394,7 +400,8 @@ def sheets_from_guarantee_sheet(gs: Any) -> list[PolicySheet]:
         policy_type="offline_ltt",
         statement=f"With probability >= {1 - gs.delta:g} over the calibration draw, the wrong-commit rate on new "
                   f"utterances from the same distribution is <= {gs.alpha:g}.",
-        method=gs.method, risk=dict(_WRONG_COMMIT), levels={"alpha": gs.alpha, "delta": gs.delta},
+        method=gs.method, risk=dict(_WRONG_PREFIX if (cf or {}).get("unit") == "prefix" else _WRONG_COMMIT),
+        levels={"alpha": gs.alpha, "delta": gs.delta},
         validity="finite_sample_probability", calibration=cal, assumptions=base_ass, not_guaranteed=base_not,
         controls=controls, status=base_status, warnings=tuple(gs.warnings), config_id=gs.config_id,
         references=(_LTT_REF,), created_utc=gs.created_utc,

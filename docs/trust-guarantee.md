@@ -207,6 +207,23 @@ print(guard.sheet)                                   # "commit threshold  learne
 
 Not guaranteed: anything beyond section 1. A learned score can commit more often than `p_top1` (more right words), but it can also commit less. It needs enough items: it is fitted on about 62 % of the calibration items, and the LTT part is the same size as before. Code: [`src/fidetype/trust/commit_score.py`](../src/fidetype/trust/commit_score.py). Validated (pre-registered, [P5-23 results](../experiments/2026-11-18-p5-23-learned-confidence/results.md)): T15 M4-13 `val_eval` (701): safe WPM 2.64 vs 2.23 with `p_top1` (paired difference +0.42 [0.07, 0.78]), 113 commits and 10 wrong (0.0143) vs 104 and 17; T12 (400): 1.87 vs 1.27, difference not clear (interval includes 0), 15 wrong in both. Null controls 0 / 300 everywhere. One participant per set.
 
+## 10b. Optional: certified word-prefix commits (P5-24)
+
+`calibrate(..., confidence="learned", commit_unit="prefix")` lets the guard commit the first words of the top-1 text when the whole text is not safe to commit. The default stays `commit_unit="sentence"`.
+
+| Step | What happens |
+|---|---|
+| Score | A learned prefix score (module `fidetype.trust.commit_score`, same model type as 10a) scores every word prefix k of the top-1 text: prefix posterior mass, smallest and mean n-best word agreement over the prefix, prefix character confidences, k, k / m, "complete" (k = m), and the sentence features. The score of prefix k is the smallest raw score of prefixes 1..k, so it never rises with k. |
+| Fit | One row per prefix of the fit + policy-grid items. Label: the prefix is right. |
+| Loss | The committed prefix is wrong: its words are not the first words of the true text. A commit of all m top-1 words (complete) is wrong unless it equals the true text. |
+| Certify | LTT on the LTT items only (disjoint from the fit items): fixed sequence 1.00 -> 0.00 step 0.01, exact binomial p-values, loss as above. The loss is monotone in the threshold: a lower threshold gives a longer prefix, and a wrong prefix stays wrong when it grows. |
+| Guarantee | P( wrong-prefix-commit rate <= alpha ) >= 1 - delta; rate = wrong commits (prefix or complete) / all utterances. |
+| Decide | Commit the longest prefix with score >= the threshold; the commit gate (non-empty text, guard risk < 1.0 of the top-1 text) still applies. |
+| Output | `TrustResult.text` is the committed prefix; `n_words_committed`, `complete`, `commit_unit`; the decision event has `commit_unit`, `n_words_committed`, `n_words_top1`, `complete`. `guard.is_right(result, truth)` applies the loss. |
+| Controls | The uniform and shuffled null controls run on the final prefix guard; every prefix commit counts. |
+
+Not in this version: `online()`, `target_precision=`, `grounding=`, `llm=`. A plain n-best prefix posterior is not offered: when all candidates share a prefix its mass is 1.0, also when the truth is not in the list, so LTT finds no feasible threshold (P14-23). Score a prefix guard with [safe WPM v0.2 (proposed)](safe-wpm-v0.2-proposal.md); v0.1 gives a right prefix 0 words.
+
 ## 11. Online use: adaptive risk control for drift (P5-02, P15-04)
 
 The guard above is calibrated once. Its bound needs exchangeable data (section 3). Live data drift: within a session, between days, after a decoder update. Adaptive conformal methods move the COMMIT threshold from the user's feedback. Their bound holds for **any** sequence of utterances. But it is a **long-run average**, not a 1 − δ statement.

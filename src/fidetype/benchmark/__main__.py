@@ -220,9 +220,18 @@ def cmd_safe_wpm(a) -> int:
     else:
         timing = "measured per-trial durations (neural_s)"
     clusters = [{"cluster": c} for c in cols["cluster"]] if all(cols["cluster"]) else None
-    res = safe_wpm(cols["committed"], cols["correct"], cols["n_words"], cols["n_chars"], ns, guarantee=guarantee,
+    v02 = {}
+    if a.metric_version == "0.2":  # P14-26: proposed, not adopted
+        sp = cols["speech_s"]
+        v02 = {"committed_words": cols["committed_words"], "complete": cols["complete"],
+               "penalty_chars": cols["penalty_chars"]}
+        if not any(math.isnan(x) for x in sp):
+            v02.update(speech_s=sp, speech_timing="per-trial speech_s")
+    ok = cols["correct_v02"] if a.metric_version == "0.2" else cols["correct"]
+    res = safe_wpm(cols["committed"], ok, cols["n_words"], cols["n_chars"], ns, guarantee=guarantee,
                    rule=CorrectionRule(name=a.correction), timing=timing, clusters=clusters,
-                   ci_unit="cluster" if clusters else None, controls=controls, B=a.B, seed=a.seed)
+                   ci_unit="cluster" if clusters else None, controls=controls, B=a.B, seed=a.seed,
+                   metric_version=a.metric_version, **v02)
     _dump(res, a.out)
     print(format_line(res), file=sys.stderr)
     return 0
@@ -277,6 +286,9 @@ def main(argv=None) -> int:
     p.add_argument("--n-cal", type=int, default=None)
     p.add_argument("--chars-per-min", type=float, default=None, help="rate model for trials without neural_s")
     p.add_argument("--correction", default="rewrite", choices=("rewrite", "none"))
+    p.add_argument("--metric-version", default="0.1", choices=("0.1", "0.2"),
+                   help="0.1 (default, the headline) or 0.2 (PROPOSED, not adopted: prefix credit and speech time; "
+                   "docs/safe-wpm-v0.2-proposal.md)")
     p.add_argument("--out", default=None)
     p.add_argument("--B", type=int, default=2000)
     p.add_argument("--seed", type=int, default=0)
