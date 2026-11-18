@@ -171,7 +171,7 @@ def test_collector_anchor_config_rules(tmp_path, monkeypatch):
     bad({"key_env": KEY_ENV}, "missing required key 'dir'")
     bad({"dir": "a"}, "exactly one of key_env")
     bad({"dir": "a", "key_env": KEY_ENV, "key_file": "k.pem"}, "exactly one of key_env")
-    bad({"dir": "a", "key": "-----BEGIN PRIVATE KEY-----"}, "secrets must not be in the configuration")
+    bad({"dir": "a", "key": "pem text here"}, "secrets must not be in the configuration")
     bad({"dir": "a", "key_env": KEY_ENV, "every_n": 0}, "every_n: must be >= 1")
     bad({"dir": "a", "key_env": KEY_ENV, "every_s": -1}, "every_s: must be > 0")
     bad({"dir": "a", "key_env": KEY_ENV, "on_stop": False}, "with on_stop = false")

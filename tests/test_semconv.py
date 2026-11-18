@@ -65,8 +65,8 @@ def test_render_lists_every_key_and_open_question(base):
 
 
 def test_registry_covers_spec_tables(base):
-    assert len(base.in_container("header.meta")) == 32  # 24 keys of RC4 3.4 + 8 modality keys (FEP-0009)
-    assert len(base.in_container("trust_decision.input")) == 14
+    assert len(base.in_container("header.meta")) == 34  # 24 keys of RC4 3.4 + 8 modality keys (FEP-0009) + 2 (FEP-0010)
+    assert len(base.in_container("trust_decision.input")) == 15  # + research_only (FEP-0010)
     assert len(base.in_container("trust_decision.declaration")) == 5
     planned = {n["name"] for n in base.manifest["namespaces"] if n["status"] == "planned"}
     assert planned == {"eeg", "fnirs"}
@@ -258,7 +258,7 @@ def _sources():
 def test_sdk_tables_read_all_keys():
     for lang, (a, b) in _sources().items():
         table, mods = sc.sdk_table(lang, a, b)
-        assert len(table) == 32, lang  # 24 + 8 modality keys (FEP-0009)
+        assert len(table) == 34, lang  # 24 + 8 modality keys (FEP-0009) + 2 licence keys (FEP-0010)
         assert "other" in mods, lang
 
 
