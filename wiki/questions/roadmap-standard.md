@@ -484,14 +484,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-18 Collector policy for research-only decisions
 - **Gap:** 56 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-13). Follow-up of P5-13.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-18 (code `9bccef8`): every collector exporter takes `refuse_research_only = true` (FEP-0006 section 4 rule 6; FEP-0010 LIC-3 answered). It drops decisions (trust, intent, control) with `input.research_only = true` (counter `research_only_refused`); a decision without the key has an unknown licence: `unknown_licence = "refuse"` (default) drops it (counter `licence_unknown_refused`), `"pass"` exports it. One log line at the first drop of each kind (no text, no session id). Input events pass; the option on a `jsonl`/`stdout` exporter without a decision type is a config error. Default (option absent) unchanged. `fidetype.collector.exporters.LicenceGate`, `Exporter.deliver`. Test (`tests/test_research_only_policy.py`): a CC-BY-NC stream types nothing through `os_text` (the decision log keeps all); a CC0 stream types the same text as without the option; unknown rule both ways. Docs: docs/collector.md, docs/provenance-and-privacy.md section 2, examples/collector/collector.toml. New gap 61 = P5-22 (input events).
 - **Depends on:** P5-13 (done).
 - **Source:** FEP-0010 open question LIC-3: every reference trust layer writes `trust_decision.input.research_only`, but no collector exporter can refuse such decisions. A product build (for example the `os_text` exporter) could type output that depends on non-commercial data.
 - **Done when:** an exporter option (for example `refuse_research_only = true`, FEP-0006) drops or blocks research-only decisions with a counter and a log line, a decision without the key is treated by a documented rule (unknown), and a test shows that a CC-BY-NC stream types nothing through a product exporter while a CC0 stream types as before.
 
 #### P5-19 Advisory check: data.research_only agrees with data.licence
 - **Gap:** 57 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-13). Follow-up of P5-13.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-18 (code `9bccef8`): NTS 1.0 RC4 amendment 7. Advisory check `NTS-LICENCE-MATCH` (MET-12) in Python, TypeScript and Rust: `data.research_only = false` with a Creative Commons id with `NC` or `LicenseRef-unknown` (ASCII, without case) is a warning, never a reject; other ids are silent. One table: `fidetype.trust.licence.no_commercial_id` (pattern of `terms`), mirrored by TS `noCommercialId` and Rust `checks::no_commercial_id`; the same test lists in the three SDKs. Vectors V101, V102 (NPZ), V103 (lower case, -IGO): accept with the warning; V104 (CC-BY-SA-4.0): accept, no warning; 355 vectors (v0.1 104). C.1 MET-12 row; rule-map.json regenerated (levels.json unchanged); semconv registry. Parity: Python = TypeScript = Rust 355/355, kit 36/36, 28,487 fuzz mutants (seeds 1-3, `--n 30`), 0 differences. FEP-0010 LIC-2 answered (decision 4).
 - **Depends on:** P5-13 (done).
 - **Source:** FEP-0010 open question LIC-2: the validators check only the types of `data.licence` and `data.research_only`. A stream with `data.research_only = false` and `data.licence = "CC-BY-NC-4.0"` breaks MET-12 but passes.
 - **Done when:** an advisory check (a warning, never a reject; like NTS-MODALITY-MATCH) flags `data.research_only = false` with a licence id that has `NC` (and `LicenseRef-unknown`) in Python, TypeScript and Rust with the same warning, with accept vectors that pin the warning, and three-SDK parity.
@@ -509,6 +509,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** none (CPU, code).
 - **Source:** [F2 rerun V4](../../experiments/2026-11-17-f2-m4-13/results.md#v4-on-t12-why-the-ids-differ-exploratory-check-not-pre-registered): the recipe field `decoder` stores the Python module path of a custom decode function (`custom:__main__.calibrate_arm.<locals>.fn` vs `custom:p1506_run.calibrate_arm.<locals>.fn`). The same T12 configuration gets a different `config_id` when the script is imported instead of run (8 of 8 arms; equal after relabelling).
 - **Done when:** a decision is written down (with a reason) on which recipe fields enter the content hash, the `config_id` of one configuration no longer depends on how the defining script is loaded (or a stable user-given decoder name is required), old ids still verify (or a migration note says why not), and a test loads the same decoder as `__main__` and as a module and gets one id.
+
+#### P5-22 Licence gate for input-event exporters
+- **Gap:** 61 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P5-18). Follow-up of P5-18.
+- **Status:** `todo`.
+- **Depends on:** P5-18 (done).
+- **Source:** P5-18: `refuse_research_only` acts on decisions only. A `jsonl` or `stdout` exporter of input events (header, frames) copies a research-only stream (`data.research_only = true` in its header) unchanged, for example into a product data store.
+- **Done when:** a decision is written down (with a reason) whether an input-event exporter can refuse a research-only stream (by its header keys, per stream, with the unknown rule of P5-18), and, if yes, the option works per stream (header and all its events), with counters and a test (a CC-BY-NC stream writes no file, a CC0 stream writes the same file as before).
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.

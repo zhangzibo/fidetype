@@ -1170,3 +1170,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Names free on 2026-11-18 (read-only GETs): PyPI and TestPyPI `fidetype`, npm `@fidetype/sdk` and `fidetype`, crates.io `fidetype`.
 - Fixed: author `Zibo Zhang` (pyproject, package.json, Cargo.toml, CITATION.cff); crate `homepage`; absolute links in the SDK READMEs. Release workflow moved to `.github/workflows/release.yml` (manual trigger only); new manual-only `pages.yml`; new `tools/site/build.js` (assembles `_site/`, checks local links). Tests: `tests/test_publishing_metadata.py`.
 - New page [docs/publishing-checklist.md](../docs/publishing-checklist.md): accounts, trusted publishing, commands, checks, rollback, minutes per step, decisions D1-D9. New gap 60 = [P2-09](questions/roadmap-standard.md#p2-09-ci-matrix-python-313-and-windows-and-macos-for-the-three-sdks).
+
+## [2026-11-18] setup | P5-18 + P5-19: collector refuse_research_only; advisory check NTS-LICENCE-MATCH (RC4 amendment 7); new gap 61
+- P5-18 (gap 56 closed, FEP-0010 LIC-3): exporter option `refuse_research_only` (+ `unknown_licence`, default `"refuse"`) on every exporter; FEP-0006 section 4 rule 6. A CC-BY-NC stream types nothing through `os_text`; a CC0 stream types as before. Code `9bccef8`.
+- P5-19 (gap 57 closed, FEP-0010 LIC-2): advisory `NTS-LICENCE-MATCH` (MET-12) in Python, TypeScript, Rust; vectors V101-V104 (355); parity 355/355, kit 36/36, 28,487 fuzz mutants, 0 differences.
+- New gap 61 = [P5-22](questions/roadmap-standard.md#p5-22-licence-gate-for-input-event-exporters) (licence gate for input-event exporters).
+- Pages: [nts-spec](concepts/nts-spec.md), [collector](concepts/collector.md), [conformance suite](concepts/conformance-suite.md), [open gaps](questions/open-gaps.md), [roadmap](questions/roadmap-standard.md).
