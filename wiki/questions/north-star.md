@@ -3,7 +3,7 @@ title: North star — a BCI that teaches itself and never puts words in your mou
 type: question
 tags: [planning, north-star, frontier, self-improving, online-learning, conformal, risk-control, hallucination, llm, cross-modality, emg, implant, roadmap]
 sources: [adaptive-conformal-inference, conformal-risk-control, brain-to-text-25-copytask, brain2qwerty-v2, continual-calibration, conformal-gating-mi-bci, corteg-eeg-to-ecog]
-updated: 2026-11-15
+updated: 2026-11-18
 ---
 
 # North star (2026-11-15)
@@ -118,6 +118,8 @@ The success criteria below are **proposed**. Each experiment freezes them in its
 
 **CPU pilot result (2026-11-16, [P15-01](../../experiments/2026-11-16-f1-e2-selfimprove-pilot/results.md)):** feedback-only adaptation lowers PER from 0.686 (frozen) to 0.470 over 16 T12 days; the wrong-commit bound holds through every daily update (also under bad updates); self-training collapses; but uniform null inputs commit in every arm (no evidence gate yet) and 88-100 % of commits are wrong, so this is a working harness, not F1 evidence.
 
+**M4-13 rerun (2026-11-18, [P15-03a](../../experiments/2026-11-17-p15-03-f1-m4-13/results.md), [summary](m4-13-trust-reruns.md)):** with real decoders of different quality, the champion / challenger gate accepts M4-13 and keeps the wrong-commit bound (0.0055-0.0082) in all 4 runs. It refuses the worse M4-12 and a time-reversed decoder with an oracle user, but accepts both with the feedback-r0.3 user (H2, H3 fail). A feedback-aware non-inferiority test is open (P15-13).
+
 ### F2: faithful language-model decoding (E3)
 **Goal:** an LLM improves the decoded text, and a run-time check makes sure that it adds nothing that the neural evidence does not support, with a risk-controlled bound on hallucinated commits.
 
@@ -141,6 +143,8 @@ The success criteria below are **proposed**. Each experiment freezes them in its
 **Blockers:** no local LLM stack (no `transformers`, no llama.cpp); a 1–10 GB model download; LLM licences differ (prefer Apache-2.0 or MIT).
 
 **Result (2026-11-16, T15 + T12, [P15-05](../../experiments/2026-11-16-f2-e3-llm-grounding/results.md)):** on T15, LLM rescoring lowers WER 0.3985 -> 0.3831 under the bound (wrong-commit 0.0029, null 0/300), but fluent-wrong commits are 2 vs 0 (S4 fails). The T12 replication gives no significant WER gain (0.3885 -> 0.3851, CI95 [-0.0086, +0.0021]) with the bound, controls and fluent-wrong count held (4 vs 4). On both sets the grounding check stops all swapped-signal commits (ungrounded up to 28 of 701 and 25 of 400) but does not block fluent text on the true signal. E3 does not pass its pre-registered criteria (next: P15-06).
+
+**M4-13 rerun (2026-11-18, [F2 reruns](../../experiments/2026-11-17-f2-m4-13/results.md), [summary](m4-13-trust-reruns.md)):** on T15, LLM rescoring + grounding lowers WER 0.1827 -> 0.1617 with 154 commits (12 wrong); S4 fails again (fluent-wrong 6 vs 2). The fluent-wrong bound now commits 36 sentences (34 right; fluent-wrong 1 / 701) and is the first entry that passes all tracks of the hallucination benchmark 0.2. On T12 the pre-registered V-single variant gives a certified bound (closes P15-14), but only 3 commits.
 
 **Follow-ups:** a **public hallucination benchmark** with null / scrambled / swapped-signal tracks as standard tracks (it joins the P6 leaderboard and the P13 hub; it does not replace them).
 

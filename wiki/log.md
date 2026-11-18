@@ -1155,3 +1155,12 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - New gaps 56 = P5-18 (collector policy for research-only decisions), 57 = P5-19 (advisory check: `data.research_only` agrees with `data.licence`).
 - Tracker: P5-14 / P5-15 agent stats filled (1469.213 s, 218411 tokens, 97 tools).
 - Pages: [NTS spec](concepts/nts-spec.md), [provenance ledger](concepts/provenance-ledger.md), [roadmap](questions/roadmap-standard.md), [open gaps](questions/open-gaps.md).
+
+## [2026-11-18] query | M4-13 trust reruns written up against the pre-registrations; gaps 2, 3 closed; new gaps 58, 59
+- Results `053e329` (pre-registration `97a2fc4`). New page [M4-13 trust reruns](questions/m4-13-trust-reruns.md).
+- P5-02 on M4-13: P1-P3 pass at precision target 0.5 (104 / 701 commits, precision 0.837, CP95 [0.751, 0.902]); targets 0.8 / 0.9 / 0.95 infeasible. Gap 3 (P5-08) closed; new gap 58 = P5-20 (precision >= 0.8).
+- P15-03a: H1, H4, H5, H6 pass; H2 and H3 fail (worse and time-reversed decoders accepted with the feedback-r0.3 user; refused with the oracle user). H7: PER test agrees on 12 of 16. Gap 1 (P15-13) confirmed and unblocked; stays open.
+- F2: Part A S1-S3 pass, S4 fail (fluent-wrong 6 > 2); Part B H1-H4 pass, safe but costly (34 of 142 right commits kept); Part C V1-V3 pass (certified T12 bound, 3 commits), V4 T15 pass, V4 T12 fails as written (`config_id` label only). Gap 2 (P15-14) closed; new gap 59 = P5-21 (stable `config_id`). Note added to the P15-06 results.
+- Hallucination benchmark 0.2: M4-13 entries added (16 files); the P15-06 B1 guard is the first entry that passes all tracks (36 real commits, 0 swapped).
+- Gap 14 (P15-19) in progress. P15-03: CPU part P15-03a done; GPU part open.
+- Pages: [open gaps](questions/open-gaps.md), [roadmap](questions/roadmap-standard.md), [north star](questions/north-star.md) (F1, F2 result lines), [index](index.md).

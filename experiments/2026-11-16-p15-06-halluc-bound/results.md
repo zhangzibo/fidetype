@@ -118,3 +118,11 @@ Findings:
 Compute: CPU, 4 threads, background class, 3.6 min for all 10 arms. No base decode (0 cache misses; the T12 word decoder never loaded). New LLM sentence scores: 65 (C / D rewrites), into the own copy of the cache. The LLM load raised private memory to 2,371 MB (before the load: under 700 MB).
 
 Code fix during the T12 run: the first attempt stopped in `guard.save` of arm A0, before any held-out decision. An infeasible joint LTT kept NaN test p-values, and the sheet JSON refuses NaN. `JointLTTResult.to_dict` now writes `null` for them (test added in `tests/test_trust_halluc_bound.py`). The T15 results do not change (all T15 guards were feasible).
+
+## Update 2026-11-18: certified T12 bound (V-single)
+The pre-registered variant V-single ([plan](../2026-11-17-f2-m4-13/plan.md), commit `97a2fc4`) ran on the T12 caches of this experiment (read only) in the M4-13 trust-rerun queue. Full results: [F2 reruns](../2026-11-17-f2-m4-13/results.md#t12-v2-360-non-fit-items-in-one-test-set-primary-180--180).
+
+- V-single drops the ordering split. It tests the grid in a fixed, data-independent order (`halluc_bound._strictness`) on all 360 non-fit T12 items. Zero fluent-wrong commits in 360 items gives p = 0.99^360 = 0.027 <= 0.1, so a certificate is possible (the primary split had 180 items: 0.164).
+- B1 on T12 is certified at alpha_h 0.01, delta_h 0.1 (alpha 0.05): commit_p 0.40, tau_commit 0, tau_word 0.5. Held out (400): 3 commits, 2 wrong, 1 fluent-wrong (rate 0.0025); wrong-commit rate 0.0050; uniform, shuffled and swapped commits 0. All 8 arms certify.
+- So gap P15-14 is closed: a certified T12 bound exists. It is not useful (1 right commit of 400).
+- The primary guards of this page were reproduced inside the rerun: same selection in 8 / 8 arms. The `config_id` differs only by the decoder label in the recipe (`__main__` vs the imported module name); see gap P5-21.

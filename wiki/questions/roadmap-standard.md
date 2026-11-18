@@ -403,7 +403,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-08 Non-vacuous precision bound ("when it types, it is right")
 - **Gap:** 3 of the [open-gap list](open-gaps.md). Follow-up of P5-02.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-18 (pre-registration `97a2fc4`, results `053e329`, [P5-02 rerun](../../experiments/2026-11-17-p5-02-precision-m4-13/results.md), [summary](m4-13-trust-reruns.md)): on held-out T15 val_eval with the M4-13 decoder, `calibrate(target_precision=0.5)` certifies commit_p 0.73; 104 commits, 17 wrong, precision 0.837 CP95 [0.751, 0.902]; P1-P3 pass. Targets 0.8, 0.9, 0.95 stay infeasible: follow-up P5-20 (gap 58).
 - **Depends on:** M4-13 rerun ([plan](../../experiments/2026-11-17-p5-02-precision-m4-13/plan.md)) or a per-word commit; P11-01.
 - **Source:** Commits `13f1853` (precision replay vacuous on T15 + T12) and `3dc84bf` (P5-02 done, open point).
 - **Done when:** On held-out data of at least one public set, `calibrate(target_precision=)` certifies a commit threshold with at least one commit, and the measured error among commits is at or below the target at the stated confidence. Either the stronger M4-13 decoder (pre-registered rerun) or a per-word commit gives this. If neither does, the result says so with numbers, and the item stays open for P11 decoders.
@@ -484,6 +484,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P5-13 (done).
 - **Source:** FEP-0010 open question LIC-2: the validators check only the types of `data.licence` and `data.research_only`. A stream with `data.research_only = false` and `data.licence = "CC-BY-NC-4.0"` breaks MET-12 but passes.
 - **Done when:** an advisory check (a warning, never a reject; like NTS-MODALITY-MATCH) flags `data.research_only = false` with a licence id that has `NC` (and `LicenseRef-unknown`) in Python, TypeScript and Rust with the same warning, with accept vectors that pin the warning, and three-SDK parity.
+
+#### P5-20 Certified precision at a useful target (0.8 or more)
+- **Gap:** 58 of the [open-gap list](open-gaps.md) (added 2026-11-18 by the M4-13 reruns). Follow-up of P5-08.
+- **Status:** `todo`.
+- **Depends on:** P11-01 decoders, or a per-word commit, or more calibration items.
+- **Source:** [P5-02 rerun on M4-13](../../experiments/2026-11-17-p5-02-precision-m4-13/results.md): target 0.5 is certified (104 commits), but 0.8, 0.9 and 0.95 are infeasible. The LTT part has 271 items; 0.8 is feasible in 42 of 1000 resampling draws. Held-out precision at commit_p 0.8 is 0.855 on 69 commits, so the limit is the sample size as much as the decoder.
+- **Done when:** on held-out data of at least one public set, `calibrate(target_precision=0.8)` (or higher) certifies a threshold with at least 20 held-out commits, the held-out error among commits is at or below 1 - target, and the null controls pass. The plan is written before the run. If no decoder or commit unit gives this, the result says so with numbers.
+
+#### P5-21 Trust config_id independent of the decode-function label
+- **Gap:** 59 of the [open-gap list](open-gaps.md) (added 2026-11-18 by the M4-13 reruns). Follow-up of P15-06.
+- **Status:** `todo`.
+- **Depends on:** none (CPU, code).
+- **Source:** [F2 rerun V4](../../experiments/2026-11-17-f2-m4-13/results.md#v4-on-t12-why-the-ids-differ-exploratory-check-not-pre-registered): the recipe field `decoder` stores the Python module path of a custom decode function (`custom:__main__.calibrate_arm.<locals>.fn` vs `custom:p1506_run.calibrate_arm.<locals>.fn`). The same T12 configuration gets a different `config_id` when the script is imported instead of run (8 of 8 arms; equal after relabelling).
+- **Done when:** a decision is written down (with a reason) on which recipe fields enter the content hash, the `config_id` of one configuration no longer depends on how the defining script is loaded (or a stable user-given decoder name is required), old ids still verify (or a migration note says why not), and a test loads the same decoder as `__main__` and as a module and gets one id.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
@@ -1037,6 +1051,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Goal:** the F1 evidence on real multi-session data.
 - **Deliverable:** T12 with 16–20 adapted sessions × 5 arms × 3 simulated-user settings × 2 seeds; then T15 (45 sessions over 20 months). Simulated accept rates calibrated with `t15_personalUse.pkl` (CC0) when it is local. Results page.
 - **Depends on:** P15-02; the GPU after M4-13 and P11-01 (about 2026-11-19).
+- **Progress (2026-11-18):** CPU part P15-03a done ([results](../../experiments/2026-11-17-p15-03-f1-m4-13/results.md)): champion / challenger replay on T15 with M4-12, M4-13 and a reversed decoder, 4 runs. H1, H4, H5, H6 pass; H2 and H3 fail with the feedback-r0.3 user (see P15-13). The GPU part stays open.
 - **Done when:** the pre-registered criteria of the plan are evaluated on both datasets, including the self-training negative control and the silent-error rates. Cost about 3–8 GPU-h for T12.
 
 #### P15-04 Bandit-feedback online risk control and guarantee statement
@@ -1112,14 +1127,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-13 Update gate: PER-based non-inferiority challenger test
 - **Gap:** 1 of the [open-gap list](open-gaps.md). Follow-up of P15-02, P15-03.
-- **Status:** `todo`.
+- **Status:** `todo` (unblocked 2026-11-18). H3 of the M4-13 rerun is read ([P15-03a results](../../experiments/2026-11-17-p15-03-f1-m4-13/results.md)): **H3 fails**. The reversed decoder is refused with the oracle user (15-16 worse vs 0 better, p <= 3.1e-5) but accepted with the feedback-r0.3 user in both seeds (2 vs 0, p 0.25); H2 fails the same way (the worse M4-12 is accepted at B2 and B7). Cause: unknown truth counts as wrong for both sides, so the sign test sees 1-6 discordant pairs. The per-item PER test separates the decoders (p_worse about 3e-9), but it used the truth of all 48 items. The new test must work on known-truth items only (or count unknown items against the challenger), and its replay must include the feedback-r0.3 user.
 - **Depends on:** M4-13 rerun result H3 ([plan](../../experiments/2026-11-17-p15-03-f1-m4-13/plan.md)); P15-02.
 - **Source:** Commit `97a2fc4` (trust reruns on M4-13, dry run): the gate accepted the reversed decoder (2 discordant pairs, p 0.25).
 - **Done when:** The champion / challenger gate of `GuardedUpdateLoop` (`src/fidetype/trust/adaptive.py`) has a per-item PER (or other continuous loss) non-inferiority test next to the sign test, with a margin fixed in a plan before the runs. A unit test and a replay show that the gate refuses the reversed (broken) decoder of the P15-03a dry run, also when the champion is weak and there are few discordant pairs. The change is decided only after the pre-registered H3 result of the M4-13 rerun is read, and the H3 outcome is quoted in the results.
 
 #### P15-14 Certified hallucination bound on T12 (or proof that none is possible)
 - **Gap:** 2 of the [open-gap list](open-gaps.md). Follow-up of P15-06.
-- **Status:** `todo`.
+- **Status:** `done`. Done 2026-11-18 (pre-registration `97a2fc4`, results `053e329`, [F2 rerun results](../../experiments/2026-11-17-f2-m4-13/results.md), [summary](m4-13-trust-reruns.md)): the pre-registered variant V-single (one fixed-order test on all 360 non-fit T12 items) certifies B1 on T12 v2 at alpha_h 0.01, delta_h 0.1 (0.99^360 = 0.027 <= 0.1); held out (400): fluent-wrong 0.0025, wrong-commit 0.0050, controls 0. V1-V3 pass; V4 fails as written (`config_id` label only; P5-21). Not useful: 3 commits, 1 right. Also filed in the [P15-06 results](../../experiments/2026-11-16-p15-06-halluc-bound/results.md#update-2026-11-18-certified-t12-bound-v-single).
 - **Depends on:** M4-13; pre-registered V-single variant ([plan](../../experiments/2026-11-17-f2-m4-13/plan.md)); P15-06.
 - **Source:** Commit `958040a` (P15-06 T12: 180 LTT test items < 230 needed at α 0.01, δ 0.1).
 - **Done when:** A certified fluent-wrong bound (α, δ stated) exists on held-out T12 data, or a written result shows that no certified bound is possible with the T12 data at the stated α and δ (with the arithmetic). The first try is the pre-registered V-single variant (no ordering split, test on all non-fit items) in the M4-13 rerun queue. The result is filed in the P15-06 results and on this page.
@@ -1155,7 +1170,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-19 Show usefulness on stronger decoders (P5-01, P15-02, P5-02, P15-06)
 - **Gap:** 14 of the [open-gap list](open-gaps.md). Follow-up of P5-01, P15-02, P5-02, P15-06.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-18). M4-13 evidence ([summary](m4-13-trust-reruns.md)): P5-02 useful at precision 0.5 (104 commits, precision 0.837); P15-02 loop (P15-03a) useful with the oracle user (28-29 phase-C commits, precision 0.89-0.90) but the gate fails with partial feedback (P15-13); P15-06 non-vacuous on T15 (36 commits, 34 right) but costly (24 % of the right commits kept). Still needed: P5-01 on M4-13 and all four on the P11 decoders.
 - **Depends on:** M4-13 rerun queue, P11-01.
 - **Source:** Commits `9cb7a81`, `4355946`, `3dc84bf`, `958040a` (open points: weak decoder).
 - **Done when:** P5-01 (personal trust), P15-02 (update loop), P5-02 (precision and online guards) and P15-06 (hallucination bound) are rerun on the M4-13 decoder and on the P11 decoders. Each rerun reports a useful operating point (commits that are mostly right, with the bound kept) or a stated null result. The current decoders are too weak (top-1 almost never right), so the safety results exist but the usefulness does not.
