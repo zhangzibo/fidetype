@@ -1125,3 +1125,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Config format: TOML/JSON, as FEP-0006 section 6 says. No YAML. Reasons: a deliberate spec decision; TOML has explicit types (no YAML "Norway problem", no octal / bool coercion); `tomllib` is in the standard library; JSON covers machine-written configs.
 - Collector v1 language: Python. The collector, trust layer, adapters and tests exist in Python and meet the latency budget (p95 added about 1–3 ms vs 50 ms). A Rust core can come later for embedded / on-device use (P5-05) if a measured need appears.
 - Pages: [roadmap](questions/roadmap-standard.md) (P3 goal, language line, dated decision note, exit criterion, P3 status, P3-09 `done`; edited in place, no item moved), [open gaps](questions/open-gaps.md) (gap 40 closed), [index](index.md). Tracker: P3-01 title + notes, P3-09 `done`. No code change.
+
+## [2026-11-17] setup | P15-15 done: hallucination benchmark protocol 0.2 (paired swapped / real commit rule); gap 4 part closed; new gap 52 = P15-21
+- Pre-registration `4e44c23` ([plan](../experiments/2026-11-17-p15-15-halluc-0.2/plan.md)) before any scoring; code `40922c5`.
+- Rule: pairs = real item j + swapped item j (same signal). Pass iff the one-sided CP upper bound of Y / m < r / (1 + r), with Y = n01 + n11, m = pairs with any commit, r 0.5, alpha 0.05. Fail if m >= 25 or clear evidence (CP lower bound of n01 / m > 1/3). Otherwise "insufficient evidence" (not a pass). Null / scrambled unchanged.
+- Re-score of the 12 committed v0.1 outcome files: 10 change verdict. T15 P14-03 guard, T15 P15-05 B0 and both P15-06 guards: pass -> insufficient evidence. T12 P15-05 B0: pass -> fail. T12 P14-03 guard stays fail. No baseline passes ([results](../experiments/2026-11-17-p15-15-halluc-0.2/results.md)).
+- 0.1 scoring kept (`--protocol 0.1`; CI still reproduces the 0.1 cards). New cards in `benchmark/results/halluc-v0.2/`. Docs section 1.1.
+- M4-13: no rerun outputs yet; `add_m4_13.py` adds the entries in one command (dry run matches the queue's dry aggregates).
+- New gap 52 = P15-21: absolute bound on unsupported swapped commits next to the ratio rule; pair-independence check.

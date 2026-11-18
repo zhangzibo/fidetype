@@ -976,6 +976,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-18** | Pilots store per-item null-control outputs (open gap 13, [details](#p15-18-pilots-store-per-item-null-control-outputs)) | all | — |
 | **P15-19** | Show usefulness on stronger decoders (P5-01, P15-02, P5-02, P15-06) (open gap 14, [details](#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06)) | all | M4-13 rerun queue, P11-01 |
 | **P15-20** | Hallucination split halluc-v0.1 (T15): exact trial-index rule (open gap 34, [details](#p15-20-hallucination-split-halluc-v01-t15-exact-trial-index-rule)) | F2 | P15-07 |
+| **P15-21** | Hallucination benchmark: absolute bound on unsupported swapped commits next to the ratio rule (open gap 52, [details](#p15-21-hallucination-benchmark-absolute-bound-on-unsupported-swapped-commits-next-to-the-ratio-rule)) | F2 | P15-15, P15-16 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1089,7 +1090,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-15 Hallucination benchmark protocol 0.2: paired swapped / real commit-ratio pass rule
 - **Gap:** 4 of the [open-gap list](open-gaps.md). Follow-up of P15-07.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17; pre-registration `4e44c23`, code `40922c5`, [results](../../experiments/2026-11-17-p15-15-halluc-0.2/results.md)). Protocol `fidetype.halluc/0.2`: paired swapped / real test (r 0.5, alpha 0.05, m_min 25), verdict pass / fail / insufficient evidence; 0.1 kept. 10 of 12 committed entries change verdict; no baseline passes. Follow-up: P15-21 (gap 52).
 - **Depends on:** P15-07.
 - **Source:** Commit `bdefe45` (P15-07 done; fixed rule lets rarely-committing systems pass).
 - **Done when:** Protocol `fidetype.halluc/0.2` replaces the fixed 0.05 swapped-commit rule with a pass rule on the swapped / real commit ratio, judged by a paired test on the same items. A system that rarely commits cannot pass only because it rarely commits. The docs, the scorer, the CI re-score of the committed outcomes and the score cards use the new rule; 0.1 results stay readable and are marked as the old protocol.
@@ -1130,6 +1131,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)), issue C.
 - **Gap detail:** `src/fidetype/benchmark/splits/halluc-v0.1/b2t25-t15-val-eval.json` says "odd-index trials per session (val_eval) ... Trial id = <session>|val|<i>". The 701 ids use `i` = the index inside `val_eval` (checked: 701/701). If someone reads `i` as the index inside the HDF5 `val` file, 358 of the 701 ids point to `val_select` (calibration) trials. The text hashes catch such a rebuild, but the rule text should not allow it.
 - **Done when:** The rule text and docs/hallucination-benchmark.md state the index exactly (for example "i = position inside the session's val_eval list; the HDF5 val index is 2i + 1"), or protocol 0.2 uses ids that name the HDF5 file index. The split verify command still passes; a test rebuilds the ids from the rule.
+
+#### P15-21 Hallucination benchmark: absolute bound on unsupported swapped commits next to the ratio rule
+- **Gap:** 52 of the [open-gap list](open-gaps.md) (added 2026-11-17 from P15-15). Follow-up of P15-15.
+- **Status:** `todo`.
+- **Depends on:** P15-15 (done); P15-16 (the hole matters only for a system that commits often).
+- **Source:** P15-15 results, 2026-11-17 ([results](../../experiments/2026-11-17-p15-15-halluc-0.2/results.md)).
+- **Gap detail:** the 0.2 swapped rule bounds P(swapped commit) / P(real commit) <= 0.5. A system that commits on most real items can pass it with a high absolute rate of unsupported swapped commits. The test also treats the pairs as independent, but the language trial of swapped item j is real item perm[j].
+- **Done when:** a pre-registered protocol version adds an absolute upper bound on the unsupported swapped-commit rate next to the ratio rule (or a written result shows why the ratio rule is enough), and a simulation or permutation check shows the pair-independence assumption keeps the error at most alpha on the committed outcome patterns. Old protocol results stay readable.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
