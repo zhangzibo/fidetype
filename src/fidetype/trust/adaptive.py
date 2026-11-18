@@ -64,6 +64,14 @@ Rules the loop enforces (P15-02):
   block, if its block outputs were given) and must pass its own null
   controls before it commits. Without champion outputs the session is
   offer-only.
+- **No champion outputs, no acceptance (P15-23, 2026-11-18).** With the
+  default test, a challenger whose champion outputs on the check block are
+  missing (for some or all items) is refused: the comparison cannot run,
+  and default deny counts that against the challenger. The explicit,
+  recorded opt-out is ``allow_missing_champion=True`` (the decision record
+  then carries a note). ``challenger_test="sign"`` keeps the P15-02
+  behaviour (the test is skipped). The first version without a champion
+  and the champion's own re-check after a rollback need no comparison.
 - Each :meth:`finish_update` writes an :class:`UpdateRecord`
   (:attr:`updates`, :meth:`audit_records`).
 - **Ledger (optional).** With ``ledger=`` (a
@@ -121,6 +129,25 @@ Champion / challenger test (P15-13, 2026-11-18). Two tests are available:
   accepts with probability at most ``challenger_level`` (exact binomial
   tests, Bonferroni; unknown items only add to ``w``). Few labelled
   items therefore give a rejection, never an acceptance.
+- **Same-decoder re-calibration rule (P15-24, 2026-11-18).** A proposal
+  registered with ``new_version(..., kind="recalibration")`` keeps the
+  decoder and changes only the guard (thresholds, temperatures). Its
+  top-1 texts differ from the champion's on few items, so the first
+  branch has almost no data, and the Bonferroni split leaves the second
+  branch at ``level / 2``: with ``N = 48`` and ``margin_abs`` 0.1 no
+  worse item is allowed. With ``recalibration_rule="absolute"`` (default)
+  such a proposal uses the absolute branch alone at the full level: pass
+  if ``p_abs = P(Bin(N, margin_abs) <= w) <= challenger_level`` (``N =
+  48``: ``w <= 1``), or if the top-1 texts are identical. Guarantee: if
+  the true share of worse items is at least ``margin_abs``, the gate
+  accepts with probability at most ``challenger_level``. This null
+  hypothesis contains the null hypothesis of the decoder rule, so the
+  documented guarantee holds for any proposal, also for a decoder change
+  that is wrongly declared a re-calibration (such a proposal only loses
+  power). The new thresholds themselves are checked by the block LTT on
+  the same check block, as for every version.
+  ``recalibration_rule="decoder"`` uses the decoder rule (the P15-13
+  behaviour).
 - ``challenger_test="sign"`` (the P15-02 behaviour, kept for
   reproducibility). Paired exact sign test on top-1 errors; unknown truth
   counts as wrong for **both** sides; reject only if the challenger is
@@ -294,6 +321,7 @@ class ChallengerTest:
     ``method="noninferiority"`` (P15-13 default): ``worse_only`` includes the pairs with unknown truth
     (``n_unknown``); ``p_value`` = ``min(1, 2 min(p_noninferior, p_abs))``; refused unless
     ``passed_by`` is set. The ``legacy_*`` fields give the P15-02 sign test on the same block (report only).
+    ``rule="recalibration"`` (P15-24): ``p_value`` = ``p_abs`` (the absolute branch at the full level).
     """
 
     n: int
@@ -321,6 +349,8 @@ class ChallengerTest:
     legacy_worse: int | None = None
     legacy_better: int | None = None
     legacy_p_value: float | None = None
+    #: "decoder" (two branches, Bonferroni) or "recalibration" (P15-24: the absolute branch at the full level).
+    rule: str = "decoder"
 
     @property
     def refused(self) -> bool:
@@ -338,6 +368,8 @@ class ChallengerTest:
                      p_noninferior=self.p_noninferior, p_abs=self.p_abs, passed_by=self.passed_by,
                      legacy_worse=self.legacy_worse, legacy_better=self.legacy_better,
                      legacy_p_value=self.legacy_p_value)
+            if self.rule != "decoder":  # the P15-13 records keep their exact keys
+                d["rule"] = self.rule
         return d
 
 
@@ -366,6 +398,8 @@ class UpdateRecord:
     challenger_test: ChallengerTest | None
     gate: Mapping[str, Any] | None
     unsafe: bool
+    #: Recorded notes, for example an opt-out of a default-deny rule (P15-23). Empty: no key in the dict.
+    notes: tuple[str, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         def j(x: Any) -> Any:
@@ -381,7 +415,8 @@ class UpdateRecord:
                 "n_block_commits": self.n_block_commits, "block_wrong_among_commits": self.block_wrong_among_commits,
                 "controls": [c.to_dict() for c in self.controls],
                 "challenger_test": None if self.challenger_test is None else self.challenger_test.to_dict(),
-                "gate": None if self.gate is None else dict(self.gate), "unsafe": self.unsafe}
+                "gate": None if self.gate is None else dict(self.gate), "unsafe": self.unsafe,
+                **({"notes": list(self.notes)} if self.notes else {})}
 
 
 def _status(loss: float | None, text: str | None, truth: str | None, not_truth: frozenset) -> tuple:
@@ -463,6 +498,10 @@ class GuardedUpdateLoop:
     #: Non-inferiority margins (module docstring); fixed before a run.
     challenger_margin: float = 0.1
     challenger_margin_abs: float = 0.1
+    #: P15-23: accept a challenger without champion outputs (explicit, recorded opt-out of default deny).
+    allow_missing_champion: bool = False
+    #: P15-24: test for ``kind="recalibration"`` proposals: "absolute" (default) or "decoder" (P15-13 behaviour).
+    recalibration_rule: str = "absolute"
     #: Pre-P15-02 behaviour (no evidence gate needed, no null controls, no finish_update). Not for real use.
     unsafe: bool = False
     #: Optional :class:`~fidetype.trust.provenance.ProvenanceLedger`: one ``update`` entry per proposal / decision.
@@ -474,6 +513,8 @@ class GuardedUpdateLoop:
     aci: OnlineCommitRiskControl = field(init=False)
     monitor: SessionRiskMonitor = field(init=False)
     version: Hashable | None = None
+    #: "decoder" or "recalibration" (P15-24): the kind of the current proposal (see :meth:`new_version`).
+    version_kind: str = "decoder"
     session: Hashable | None = None
     lambda_session: float = math.inf
     calibrated: bool = False
@@ -526,6 +567,8 @@ class GuardedUpdateLoop:
             raise ValueError("challenger_margin must be in [0, 0.5)")
         if not 0.0 < self.challenger_margin_abs < 1.0:
             raise ValueError("challenger_margin_abs must be in (0, 1)")
+        if self.recalibration_rule not in ("absolute", "decoder"):
+            raise ValueError("recalibration_rule must be 'absolute' or 'decoder'")
         self.aci = OnlineCommitRiskControl(alpha=self.alpha, method="aci", eta=self.eta, lam_init=self.lam_init,
                                            score_max=self.score_max)
         self.monitor = SessionRiskMonitor(alpha=self.alpha, gamma=self.gamma)
@@ -569,7 +612,8 @@ class GuardedUpdateLoop:
                                       "n_trained_on": len(tr),
                                       "trained_on_sha256": hashlib.sha256(
                                           json.dumps(tr).encode("utf-8")).hexdigest(),
-                                      "alpha": self.alpha, "delta": self.delta, "unsafe": self.unsafe})
+                                      "alpha": self.alpha, "delta": self.delta, "unsafe": self.unsafe,
+                                      **({"kind": self.version_kind} if self.version_kind != "decoder" else {})})
         self.open_update = uid
 
     def _decide_hooks(self, rec: "UpdateRecord") -> None:
@@ -659,10 +703,19 @@ class GuardedUpdateLoop:
         self.champion_trained_on = set(trained_on)
         if self.version is None:
             self.version, self.trained_on = version, set(trained_on)
+            self.version_kind = "decoder"
 
-    def new_version(self, version: Hashable, trained_on: Iterable[Hashable] = ()) -> None:
-        """Register a decoder update (a challenger). It may not commit before the checks on a fresh block."""
+    def new_version(self, version: Hashable, trained_on: Iterable[Hashable] = (), *, kind: str = "decoder") -> None:
+        """Register a decoder update (a challenger). It may not commit before the checks on a fresh block.
+
+        ``kind``: ``"decoder"`` (default: a changed decoder) or ``"recalibration"`` (the same decoder, only the
+        guard configuration changes; P15-24). The kind selects the champion / challenger rule (module
+        docstring) and goes into the ledger proposal.
+        """
+        if kind not in ("decoder", "recalibration"):
+            raise ValueError("kind must be 'decoder' or 'recalibration'")
         self.version = version
+        self.version_kind = kind
         self.trained_on = set(trained_on)
         self.n_versions += 1
         self._invalidate()
@@ -783,9 +836,16 @@ class GuardedUpdateLoop:
         self.controls_passed = all(c.passed for c in out)
         return out
 
+    def _needs_comparison(self) -> bool:
+        """True if a champion exists and the current version is a challenger to it."""
+        return self.champion is not None and self.version != self.champion
+
+    def _champion_outputs_missing(self) -> bool:
+        """True if the champion's outputs are missing for at least one check item (P15-23)."""
+        return not self.check_champion or any(c is None for c in self.check_champion)
+
     def _challenger_test(self) -> ChallengerTest | None:
-        if (self.champion is None or self.version == self.champion or not self.check_champion
-                or any(c is None for c in self.check_champion)):
+        if not self._needs_comparison() or self._champion_outputs_missing():
             return None
         ch = np.asarray(self.check_losses) >= 0.5
         cp = np.asarray([c[1] for c in self.check_champion]) >= 0.5
@@ -816,17 +876,21 @@ class GuardedUpdateLoop:
         m, m_abs, lev = self.challenger_margin, self.challenger_margin_abs, self.challenger_level
         p_ni = binom_cdf(w, n, 0.5 + m) if n else 1.0
         p_abs = binom_cdf(w, n_items, m_abs) if n_items else 1.0
-        p = min(1.0, 2.0 * min(p_ni, p_abs))
+        recal = self.version_kind == "recalibration" and self.recalibration_rule == "absolute"
+        p = p_abs if recal else min(1.0, 2.0 * min(p_ni, p_abs))
         passed: str | None = None
         if n_items and ident == n_items and w == 0:
             passed = "identical top-1"
         elif p <= lev:
-            passed = "noninferior" if p_ni <= p_abs else "few worse items"
+            if recal:
+                passed = "re-calibration: few worse items"
+            else:
+                passed = "noninferior" if p_ni <= p_abs else "few worse items"
         return ChallengerTest(n_items, ch_wrong, cp_wrong, w, better, float(p), lev, method="noninferiority",
                               margin=m, margin_abs=m_abs, n_unknown=unknown, n_identical=ident,
                               n_tie=n_items - w - better, n_cer_decided=cer, p_noninferior=float(p_ni),
                               p_abs=float(p_abs), passed_by=passed, legacy_worse=leg_b, legacy_better=leg_c,
-                              legacy_p_value=leg_p)
+                              legacy_p_value=leg_p, rule="recalibration" if recal else "decoder")
 
     def _new_config_id(self) -> str:
         g = self.commit_gate.to_dict() if self.commit_gate is not None else None
@@ -838,6 +902,10 @@ class GuardedUpdateLoop:
         if self.challenger_test != "sign":  # P15-02 loops (sign test) keep their ids
             payload["challenger"] = {"test": self.challenger_test, "level": self.challenger_level,
                                      "margin": self.challenger_margin, "margin_abs": self.challenger_margin_abs}
+            if self.allow_missing_champion:  # P15-13 loops keep their ids
+                payload["challenger"]["allow_missing_champion"] = True
+            if self.version_kind == "recalibration":
+                payload["challenger"]["recalibration_rule"] = self.recalibration_rule
         h = hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
         return f"gul-{h[:16]}"
 
@@ -863,13 +931,25 @@ class GuardedUpdateLoop:
                 and self.block_wrong_among_commits > self.max_wrong_among_commits):
             reasons.append(f"block wrong among commits {self.block_wrong_among_commits:.3f} > "
                            f"{self.max_wrong_among_commits:.3f}")
+        notes: list[str] = []
         test = self._challenger_test()
+        if (test is None and self.challenger_test != "sign" and self._needs_comparison()
+                and self._champion_outputs_missing()):
+            k = sum(c is None for c in self.check_champion)
+            msg = (f"no champion outputs for {k} of {self.n_check_items} check items: the champion / challenger "
+                   f"test against {self.champion!r} cannot run")
+            if self.allow_missing_champion:
+                notes.append(f"{msg}; accepted without the comparison (allow_missing_champion=True)")
+            else:
+                reasons.append(f"{msg} (default deny; give champion= for every item, or set "
+                               "allow_missing_champion=True)")
         if test is not None and test.refused:
             if test.method == "sign":
                 reasons.append(f"worse than champion {self.champion!r} (sign test p {test.p_value:.4g} <= "
                                f"{test.level:g}; {test.worse_only} worse vs {test.better_only} better)")
             else:
-                reasons.append(f"worse than champion {self.champion!r} or not shown non-inferior (p "
+                rule = " (re-calibration rule)" if test.rule == "recalibration" else ""
+                reasons.append(f"worse than champion {self.champion!r} or not shown non-inferior{rule} (p "
                                f"{test.p_value:.4g} > {test.level:g}; {test.worse_only} worse incl. "
                                f"{test.n_unknown} unknown vs {test.better_only} better of {test.n}; margins "
                                f"{test.margin:g} / {test.margin_abs:g})")
@@ -889,6 +969,7 @@ class GuardedUpdateLoop:
                              and all(c is not None for c in self.check_champion))
             if can_roll_back:
                 self.version, self.trained_on = champ_before, set(self.champion_trained_on)
+                self.version_kind = "decoder"
                 self._calibrate([c[0] for c in self.check_champion], [c[1] for c in self.check_champion])
                 self.check_scores = [c[0] for c in self.check_champion]
                 self.check_losses = [c[1] for c in self.check_champion]
@@ -897,7 +978,8 @@ class GuardedUpdateLoop:
                 self.accepted, self.rejected = self.unsafe, False  # safe: the champion needs its own null controls
         rec = UpdateRecord(len(self.updates), self.session, version, champ_before, accepted, tuple(reasons), parent,
                            self.config_id, self.version, lam, feasible, n_chk, n_bc, wac, controls, test,
-                           None if self.commit_gate is None else self.commit_gate.to_dict(), self.unsafe)
+                           None if self.commit_gate is None else self.commit_gate.to_dict(), self.unsafe,
+                           tuple(notes))
         self.updates.append(rec)
         self._decide_hooks(rec)
         return rec
@@ -917,6 +999,7 @@ class GuardedUpdateLoop:
         self.rejected = True
         if champ_before is not None and version != champ_before:
             self.version, self.trained_on = champ_before, set(self.champion_trained_on)
+            self.version_kind = "decoder"
         rec = UpdateRecord(len(self.updates), self.session, version, champ_before, False, (str(reason),),
                            self.config_id, self.config_id, self.version, math.inf, False, 0, 0, None, (), None,
                            None if self.commit_gate is None else self.commit_gate.to_dict(), self.unsafe)

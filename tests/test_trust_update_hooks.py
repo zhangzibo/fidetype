@@ -438,3 +438,54 @@ def test_swap_guard_with_logits_input():
     assert (a.action, a.text, a.p_top1) == (b.action, b.text, b.p_top1)
     with pytest.raises(ValueError, match="input kind"):
         swap_guard(live, _fresh_guard(0, "1"))
+
+
+# --- P15-23 / P15-24 -----------------------------------------------------------------------
+
+
+def test_same_decoder_recalibration_is_registered_as_a_recalibration(guard_v1):
+    from fidetype.trust.update_hooks import same_decoder
+
+    live = _copy_guard(guard_v1)
+    led = ProvenanceLedger()
+    up = TrustGuardUpdater(live, GuardedUpdateLoop(alpha=live.alpha, delta=live.delta, ledger=led), null_trials=40)
+    cx, ct = nbest_data(120, 63)
+    rng = np.random.default_rng(10)
+    cand = _fresh_guard(13, "1")  # same decoder name and version: a new calibration of the same decoder
+    assert same_decoder(cand, live) and not same_decoder(_fresh_guard(13, "2"), live)
+    up.propose(cand, cx, ct, version="v1-recal", null_inputs=[noise_nbest(rng) for _ in range(40)])
+    assert up.loop.updates[-1].challenger_test.rule == "recalibration"
+    prop = [e["body"] for e in led.entries if e["kind"] == "update" and e["body"]["stage"] == "proposed"][-1]
+    assert prop["details"]["kind"] == "recalibration" and verify(led.entries).ok
+    # another decoder version, or other decoder outputs: a decoder change
+    up.propose(_fresh_guard(13, "2"), cx, ct, version="v2", null_inputs=[noise_nbest(rng) for _ in range(40)])
+    assert up.loop.updates[-1].challenger_test.rule == "decoder"
+    with pytest.raises(ValueError, match="recalibration"):
+        up.propose(cand, cx, ct, champion_inputs=cx, version="v3", kind="recalibration")
+    with pytest.raises(ValueError, match="recalibration"):
+        up.propose(_fresh_guard(13, "3"), cx, ct, version="v4", kind="recalibration")
+    with pytest.raises(ValueError):
+        up.propose(cand, cx, ct, version="v5", kind="threshold")
+
+
+def test_hooked_loop_refuses_a_challenger_without_champion_outputs(guard_v1):
+    live = _copy_guard(guard_v1)
+    led = ProvenanceLedger()
+    loop = GuardedUpdateLoop(alpha=live.alpha, delta=live.delta, ledger=led)
+    up = TrustGuardUpdater(live, loop, null_trials=40)
+    cfg, cid = live.config, live.config_id
+    loop.start_session("raw")
+    loop.new_version("raw-challenger")
+    for i in range(48):  # outputs of a new decoder, but none of the live champion
+        loop.add_check_item(("raw", i), 0.9, 0.0, text="a b", guard_risk=GOOD_RISK)
+    loop.recalibrate()
+    loop.check_null_controls(uniform=quiet_nulls(), shuffled=quiet_nulls())
+    rec = loop.finish_update()
+    assert not rec.accepted and "no champion outputs for 48 of 48" in rec.reasons[0]
+    assert live.config is cfg and live.config_id == cid and not up.outcomes
+    assert verify(led.entries).ok
+    # the updater's own proposals always give the champion outputs: they still reach the comparison
+    cx, ct = nbest_data(120, 64)
+    nrng = np.random.default_rng(11)
+    out = up.propose(_fresh_guard(14, "2"), cx, ct, version="v2", null_inputs=[noise_nbest(nrng) for _ in range(40)])
+    assert out.record.challenger_test is not None and not any("no champion outputs" in r for r in out.reasons)

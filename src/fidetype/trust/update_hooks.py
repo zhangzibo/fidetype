@@ -36,6 +36,15 @@ loop to the two live objects of the trust layer:
 Every proposal and decision is an ``update`` entry in the ledger (if the
 loop has one): see :meth:`fidetype.trust.provenance.ProvenanceLedger.record_update`.
 
+Same-decoder re-calibration (P15-24). :meth:`TrustGuardUpdater.propose`
+registers a proposal as ``kind="recalibration"`` when no
+``champion_inputs`` are given (both guards read the same decoder outputs)
+and the candidate has the same decoder as the live guard
+(:func:`same_decoder`: the same ``decode_fn`` object and the same codec:
+input kind, vocabulary, decoder name). The loop then uses its
+re-calibration rule (see :mod:`fidetype.trust.adaptive`). Every other
+proposal is a decoder change.
+
 What this does not cover: the check block must be exchangeable with the
 live data and unseen by both decoders (the loop checks ids, not
 content); the null controls are a refusal rule, not a bound; silent
@@ -61,6 +70,7 @@ __all__ = [
     "GuardUpdateOutcome",
     "OnlinePolicyUpdater",
     "TrustGuardUpdater",
+    "same_decoder",
     "swap_guard",
 ]
 
@@ -71,6 +81,17 @@ def _norm(t: str | None) -> str:
 
 def _commit_p(guard: Any) -> float:
     return float(guard.config.policy.get("commit_p", math.inf))
+
+
+def same_decoder(a: Any, b: Any) -> bool:
+    """True if guards ``a`` and ``b`` decode the same input to the same candidates up to their calibration (P15-24).
+
+    Same ``decode_fn`` object (or none), same input kind and the same codec (vocabulary, blank, frame period,
+    input scale, lexicon, decoder name / version / modality). Fitted values (temperatures, thresholds) may differ.
+    """
+    if a.input_kind != b.input_kind or a._user_decode is not b._user_decode:
+        return False
+    return a._codec.to_dict() == b._codec.to_dict()
 
 
 def swap_guard(live: Any, new: Any, *, note: Mapping[str, Any] | None = None) -> None:
@@ -248,7 +269,8 @@ class TrustGuardUpdater:
                 champion_inputs: Sequence[Any] | None = None, check_ids: Sequence[Hashable] | None = None,
                 trained_on: Iterable[Hashable] = (), version: Hashable | None = None,
                 session: Hashable | None = None, null_inputs: Sequence[Any] | None = None,
-                check_rejected: Sequence[Sequence[str] | None] | None = None) -> GuardUpdateOutcome:
+                check_rejected: Sequence[Sequence[str] | None] | None = None,
+                kind: str | None = None) -> GuardUpdateOutcome:
         """Run the loop checks for ``candidate`` (a calibrated guard of the new decoder).
 
         ``check_inputs``: the new decoder's outputs on the check block; ``champion_inputs``: the live
@@ -259,7 +281,9 @@ class TrustGuardUpdater:
         wrong. ``check_ids`` / ``trained_on``: item ids, so that the
         loop refuses a check item the candidate trained on. ``session``: a new session id starts a new
         loop session. ``null_inputs``: your decoder's output on null input (logits: an extra control;
-        n-best: the shuffled control).
+        n-best: the shuffled control). ``kind``: ``"decoder"`` or ``"recalibration"`` (P15-24); None
+        (default): ``"recalibration"`` if ``champion_inputs`` is None and :func:`same_decoder` holds, else
+        ``"decoder"``. ``"recalibration"`` with ``champion_inputs`` or another decoder raises ``ValueError``.
         """
         from fidetype.trust.dropin import TrustGuard
 
@@ -282,10 +306,18 @@ class TrustGuardUpdater:
             version = candidate.config_id
         if version == loop.champion:
             raise ValueError(f"version {version!r} is the live champion")
+        recal_ok = champion_inputs is None and same_decoder(candidate, self.guard)
+        if kind is None:
+            kind = "recalibration" if recal_ok else "decoder"
+        elif kind == "recalibration" and not recal_ok:
+            raise ValueError("kind='recalibration' needs champion_inputs=None and the same decoder as the live guard "
+                             "(same decode_fn object and codec)")
+        elif kind not in ("decoder", "recalibration"):
+            raise ValueError("kind must be 'decoder', 'recalibration' or None")
         before, cp_before = self.guard.config_id, _commit_p(self.guard)
         if session is not None and session != loop.session:
             loop.start_session(session)
-        loop.new_version(version, trained_on)
+        loop.new_version(version, trained_on, kind=kind)
         champ_x = check_inputs if champion_inputs is None else champion_inputs
         for i in range(n):
             s, t, risk, _ = self._item(candidate, check_inputs[i])
@@ -317,12 +349,12 @@ class TrustGuardUpdater:
                             cal_ids: Iterable[Hashable] = (), version: Hashable | None = None,
                             session: Hashable | None = None, null_inputs: Sequence[Any] | None = None,
                             check_rejected: Sequence[Sequence[str] | None] | None = None,
-                            **calibrate_kwargs: Any) -> GuardUpdateOutcome:
+                            kind: str | None = None, **calibrate_kwargs: Any) -> GuardUpdateOutcome:
         """:func:`~fidetype.trust.dropin.calibrate` a candidate, then :meth:`propose` it.
 
         If the calibration refuses (:class:`~fidetype.trust.dropin.NullControlError`, or any
         ``ValueError``), the proposal is recorded as rejected and the guard stays unchanged.
-        ``cal_ids``: ids of the calibration items (the candidate trained on them).
+        ``cal_ids``: ids of the calibration items (the candidate trained on them). ``kind``: see :meth:`propose`.
         """
         from fidetype.trust.dropin import NullControlError, calibrate
 
@@ -341,7 +373,7 @@ class TrustGuardUpdater:
             return self._outcome(False, rec, before, cp, rec.reasons)
         return self.propose(cand, check_inputs, check_texts, champion_inputs=champion_inputs, check_ids=check_ids,
                             trained_on=cal_ids, version=version, session=session, null_inputs=null_inputs,
-                            check_rejected=check_rejected)
+                            check_rejected=check_rejected, kind=kind)
 
     def _raised(self, candidate: Any, lam: float) -> Any:
         """A copy of ``candidate`` with ``commit_p = lam`` (only removes commits) and an updated sheet."""

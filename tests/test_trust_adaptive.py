@@ -553,3 +553,150 @@ def test_sign_option_keeps_the_p15_02_records_and_config_ids():
         GuardedUpdateLoop(challenger_test="t-test")
     with pytest.raises(ValueError):
         GuardedUpdateLoop(challenger_margin=0.5)
+
+
+# P15-23: no champion outputs, no acceptance (default deny)
+
+
+def _challenger_without_champion_outputs(loop: GuardedUpdateLoop, n_with: int = 0):
+    _start_with_champion(loop)
+    loop.start_session("d2")
+    loop.new_version("v2", trained_on=[("cal", 0)])
+    for i in range(48):
+        loop.add_check_item(("c", i), 0.9, 0.0, text="a b", guard_risk=GOOD_RISK,
+                            champion=(0.9, 0.0, GOOD_RISK, "a b") if i < n_with else None)
+    return validate(loop)
+
+
+@pytest.mark.parametrize("n_with", [0, 24])
+def test_challenger_without_champion_outputs_is_refused_by_default(n_with):
+    loop = GuardedUpdateLoop(lam_init=0.0)
+    rec = _challenger_without_champion_outputs(loop, n_with)
+    assert not rec.accepted and rec.challenger_test is None
+    assert any(f"no champion outputs for {48 - n_with} of 48" in r for r in rec.reasons), rec.reasons
+    assert loop.config_id == rec.parent_config_id
+    assert not loop.can_commit and loop.decide(0.99, text="a b", guard_risk=GOOD_RISK).reason == "rejected"
+    assert "notes" not in rec.to_dict()
+
+
+def test_missing_champion_outputs_explicit_opt_out_is_recorded():
+    loop = GuardedUpdateLoop(lam_init=0.0, allow_missing_champion=True)
+    rec = _challenger_without_champion_outputs(loop)
+    assert rec.accepted and loop.can_commit and rec.challenger_test is None
+    assert len(rec.notes) == 1 and "allow_missing_champion=True" in rec.notes[0]
+    assert rec.to_dict()["notes"] == list(rec.notes)
+    ref = GuardedUpdateLoop(lam_init=0.0)
+    _start_with_champion(ref)
+    assert ref.config_id != loop.updates[0].config_id  # the opt-out is part of the config id
+
+
+def test_missing_champion_outputs_sign_test_keeps_the_p15_02_behaviour():
+    loop = GuardedUpdateLoop(lam_init=0.0, challenger_test="sign")
+    rec = _challenger_without_champion_outputs(loop)
+    assert rec.accepted and rec.challenger_test is None and not rec.notes
+
+
+def test_missing_champion_outputs_with_a_ledger_records_the_refusal():
+    from fidetype.trust.provenance import ProvenanceLedger, verify
+
+    led = ProvenanceLedger()
+    loop = GuardedUpdateLoop(lam_init=0.0, ledger=led)
+    rec = _challenger_without_champion_outputs(loop)
+    body = [e["body"] for e in led.entries if e["kind"] == "update"][-1]
+    assert body["stage"] == "rejected" and "no champion outputs" in body["details"]["reasons"][0]
+    assert not rec.accepted and verify(led.entries).ok
+
+
+# P15-24: same-decoder re-calibration rule
+
+
+def _recal_block(loop: GuardedUpdateLoop, *, worse: int, better: int, kind: str = "recalibration",
+                 unknown: int = 0) -> None:
+    """48 items; the top-1 differs on ``worse + better + unknown`` items (truth known except ``unknown``)."""
+    loop.start_session(f"recal-{worse}-{better}-{unknown}-{kind}")
+    loop.new_version(f"r{worse}{better}{unknown}{kind}", trained_on=[("cal", 1)], kind=kind)
+    for i in range(48):
+        truth = f"t {i}"
+        if i < worse + better + unknown and i >= worse + better:
+            loop.add_check_item(("r", i), 0.9, None, text=f"c {i}", guard_risk=GOOD_RISK,
+                                champion=(0.9, None, GOOD_RISK, f"p {i}"))
+            continue
+        if i < worse:
+            ct, pt = f"x {i}", truth
+        elif i < worse + better:
+            ct, pt = truth, f"x {i}"
+        else:
+            ct = pt = truth
+        loop.add_check_item(("r", i), 0.9, float(ct != truth), text=ct, guard_risk=GOOD_RISK,
+                            champion=(0.9, float(pt != truth), GOOD_RISK, pt), truth=truth)
+
+
+def test_recalibration_rule_accepts_the_p15_13_d2_case():
+    # P15-13 D2, s1 oracle B6: top-1 changed on 3 of 48 items, 1 worse vs 2 better -> refused (p 0.081)
+    for kind, rule, accepted in (("decoder", "absolute", False), ("recalibration", "decoder", False),
+                                 ("recalibration", "absolute", True)):
+        loop = GuardedUpdateLoop(lam_init=0.0, recalibration_rule=rule)
+        _start_with_champion(loop)
+        _recal_block(loop, worse=1, better=2, kind=kind)
+        rec = validate(loop)
+        t = rec.challenger_test
+        assert rec.accepted is accepted, (kind, rule, rec.reasons, t.to_dict())
+        if kind == "decoder" or rule == "decoder":
+            assert t.rule == "decoder" and t.p_value == pytest.approx(0.0809, abs=5e-4) and "rule" not in t.to_dict()
+        else:
+            assert t.rule == "recalibration" and t.to_dict()["rule"] == "recalibration"
+            assert t.p_value == pytest.approx(t.p_abs) and t.p_abs == pytest.approx(0.0404, abs=5e-4)
+            assert t.passed_by == "re-calibration: few worse items"
+
+
+def test_recalibration_rule_refuses_two_worse_items_and_unknowns():
+    for worse, unknown in ((2, 0), (0, 2), (1, 1)):
+        loop = GuardedUpdateLoop(lam_init=0.0)
+        _start_with_champion(loop)
+        _recal_block(loop, worse=worse, better=5, unknown=unknown)
+        rec = validate(loop)
+        assert not rec.accepted and "re-calibration rule" in rec.reasons[0], rec.reasons
+        assert rec.challenger_test.worse_only == 2
+
+
+def test_recalibration_rule_refuses_a_broken_decoder_declared_as_a_recalibration():
+    loop = GuardedUpdateLoop(lam_init=0.0)
+    _start_with_champion(loop)
+    _recal_block(loop, worse=40, better=0, unknown=8)
+    rec = validate(loop)
+    assert not rec.accepted and rec.challenger_test.p_value > 0.99 and loop.version == "champ"
+
+
+def test_recalibration_rule_type_one_error_at_the_null_boundary():
+    # true worse share 0.1 = margin_abs (better share 0.3): accept rate <= level
+    r = rng(12)
+    acc = 0
+    n_sim = 400
+    for s in range(n_sim):
+        loop = GuardedUpdateLoop(lam_init=0.0)
+        loop.champion, loop.version = "champ", "champ"
+        loop.new_version(f"v{s}", kind="recalibration")
+        for i in range(48):
+            u = r.random()
+            ch, cp = (1.0, 0.0) if u < 0.1 else ((0.0, 1.0) if u < 0.4 else (0.0, 0.0))
+            loop.add_check_item(i, 0.9, ch, text=f"c{ch}", guard_risk=GOOD_RISK, champion=(0.9, cp, GOOD_RISK, f"p{cp}"))
+        acc += not loop._challenger_test().refused
+    assert acc / n_sim <= 0.05 + 3 * math.sqrt(0.05 * 0.95 / n_sim)
+
+
+def test_recalibration_kind_goes_to_the_ledger_and_the_config_id():
+    from fidetype.trust.provenance import ProvenanceLedger, verify
+
+    led = ProvenanceLedger()
+    loop = GuardedUpdateLoop(lam_init=0.0, ledger=led)
+    _start_with_champion(loop)
+    _recal_block(loop, worse=0, better=0)
+    rec = validate(loop)
+    assert rec.accepted and rec.challenger_test.passed_by == "identical top-1"
+    st = [e["body"] for e in led.entries if e["kind"] == "update"]
+    assert "kind" not in st[0]["details"] and st[-2]["details"]["kind"] == "recalibration"
+    assert verify(led.entries).ok
+    with pytest.raises(ValueError):
+        loop.new_version("bad", kind="threshold")
+    with pytest.raises(ValueError):
+        GuardedUpdateLoop(recalibration_rule="lenient")

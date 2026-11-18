@@ -408,3 +408,28 @@ def test_guard_risk_test_needs_a_reference_and_real_profiles_have_one(guard_and_
         PersonalTrust(prof, pt.guard, guard_risk_test=True)
     with pytest.raises(ValueError):
         PersonalTrust(prof, pt.guard, on_guard_risk_drift="panic")
+
+
+# --- P15-23 / P15-24: PersonalTrust re-calibrations through the default-deny gate -----------------
+
+
+def test_personal_recalibration_uses_the_same_decoder_rule(guard_and_data, tmp_path):
+    pt = _controller(guard_and_data, tmp_path, recalibrate_every=250)
+    xs, ts = nbest_data(600, 15)
+    outs = []
+    for x, t in zip(xs, ts):
+        pt.feedback(pt.decide(x), t)
+        o = pt.maybe_recalibrate()
+        if o is not None:
+            outs.append(o)
+    reached = [o for o in outs if o.record is not None and o.record.challenger_test is not None]
+    assert reached, [o.reasons for o in outs]
+    for o in reached:
+        assert o.record.challenger_test.rule == "recalibration"
+        assert not any("no champion outputs" in r for r in o.reasons)
+    led = pt.updater.loop.ledger
+    kinds = [e["body"]["details"].get("kind") for e in led.entries
+             if e["kind"] == "update" and e["body"]["stage"] == "proposed"]
+    assert kinds and all(k == "recalibration" for k in kinds)
+    assert any(o.accepted for o in outs), [o.reasons for o in outs]
+    assert verify(led.entries).ok

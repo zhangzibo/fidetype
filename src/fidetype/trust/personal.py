@@ -59,7 +59,9 @@ How a change happens (the rules):
    first ``n_recal`` items, then the loop checks of
    :class:`~fidetype.trust.adaptive.GuardedUpdateLoop` on the last
    ``n_check`` items (block LTT, evidence gate, uniform and shuffled null
-   controls, champion / challenger test; P15-13 default-deny non-inferiority). Only an accepted update
+   controls, champion / challenger test; P15-13 default-deny non-inferiority). The candidate keeps the
+   live decoder's identity (``decoder_name`` / ``decoder_version`` / ``modality``, unless
+   ``calibrate_kwargs`` set them), so the loop uses its same-decoder re-calibration rule (P15-24). Only an accepted update
    changes the guard (and removes a tightening). A rejected one changes
    nothing; the proposal stays open and needs new items.
 4. Each change (calibration, alarm, tightening, accepted or rejected
@@ -564,10 +566,17 @@ class PersonalTrust:
         chk_ids = [("recal", k, "check", i) for i in range(len(chk))]
         before = self.guard.config_id
         reason = self.proposal_reason
+        # P15-24: the candidate re-calibrates the live decoder, so it keeps the live decoder's identity (the
+        # update loop then applies its same-decoder re-calibration rule; explicit calibrate_kwargs win)
+        kw = dict(self.calibrate_kwargs)
+        dec = dict(getattr(getattr(self.guard, "_codec", None), "decoder", None) or {})
+        for key, name in (("decoder_name", "name"), ("decoder_version", "version"), ("modality", "modality")):
+            if dec.get(name) is not None:
+                kw.setdefault(key, dec[name])
         out = self.updater.propose_calibration(
             [x for x, _ in cal], [t for _, t in cal], [x for x, _ in chk], [t for _, t in chk],
             check_ids=chk_ids, cal_ids=cal_ids, version=f"recal-{k}-{before}", session=session,
-            null_inputs=self.null_inputs, **self.calibrate_kwargs)
+            null_inputs=self.null_inputs, **kw)
         self.outcomes.append(out)
         self._buffer.clear()
         self._labels_since = 0

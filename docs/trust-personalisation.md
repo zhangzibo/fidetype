@@ -60,6 +60,7 @@ feedback ──► loss   ──► risk test (betting e-process)  ────�
 1. A higher commit threshold only removes commits, so tightening needs no evidence. Every other change goes through the existing gated update path (P15-02). There is no other way to change a live guard.
 2. A proposal uses only items labelled **after** the trigger: the old ones may come from the old distribution.
 3. `recalibrate_every=N` also proposes after N new labels (a schedule, without drift).
+4. A re-calibration keeps the live decoder: the candidate gets the live guard's `decoder_name`, `decoder_version` and `modality` (unless `calibrate_kwargs` set them). The update loop then uses its **same-decoder re-calibration rule** (P15-24): the new guard passes if its top-1 texts equal the live guard's, or if `P(Bin(N, 0.1) <= w) <= 0.05` for `w` worse items of `N` check items (`N = 48`: at most 1 worse item). A decoder change uses the stricter two-branch rule of P15-13. Guarantee of the re-calibration rule: if the new guard is worse on at least 10 % of the items, it is accepted with probability at most 0.05. The decoder rule gives this bound only if, in addition, the worse share among the items where the two differ is at least 0.6. So the re-calibration rule is never less safe. A challenger without champion outputs is refused (P15-23).
 
 ## 4. The drift tests and their guarantee
 
