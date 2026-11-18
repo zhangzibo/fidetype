@@ -94,7 +94,7 @@ These are being folded into [NeuralTextStream v0.1](../../spec/neuraltextstream-
 | Area | Fact |
 |---|---|
 | FDA | The 2021 implanted-BCI guidance treats implanted BCIs as significant-risk devices. The 2023 device-software guidance applies, at "Enhanced" documentation |
-| US state neural-data laws | Colorado HB24-1058 (Aug 2024); California SB 1223 (CCPA regulations from 1 Jan 2026); Montana SB 163 (Oct 2025); Connecticut SB 1295 (Jul 2026); Delaware HB 380 (Jan 2027, **UNVERIFIED**) |
+| US state neural-data laws | Colorado HB24-1058 (Aug 2024); California SB 1223 (CCPA regulations from 1 Jan 2026); Montana SB 163 (Oct 2025); Connecticut SB 1295 (Jul 2026); Delaware HB 380 (Jan 2027, **UNVERIFIED**; verified 2026-11-17 from a secondary source). Checked table: [neural-data law table](../questions/neural-data-law.md) |
 | US federal | The MIND Act (S.2925) is pending |
 | EU AI Act | Emotion recognition is banned in workplaces and education. Attention measurement may count as emotion recognition |
 | EU other | Medical BCIs also fall under the MDR and GDPR |

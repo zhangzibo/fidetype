@@ -26,7 +26,7 @@ fidetype collector --config examples/collector/collector.toml           # run it
 | Kind | Types | Job |
 |---|---|---|
 | Receiver | `file` (JSON Lines, also tail mode; NPZ), `websocket` (FEP-0004 `/nts`), `lsl` (FEP-0002) | Read a source. Turn every loss into a `gap` or `lost` status |
-| Processor | `validate`, `segment`, `trust`, `guard`, `thin`, `redact` | Check events, add segment ends, make trust decisions, drop previews, remove or hash decoded text |
+| Processor | `validate`, `segment`, `trust`, `guard`, `thin`, `redact`, `privacy` | Check events, add segment ends, make trust decisions, drop previews, remove or hash decoded text, filter `meta` keys per a privacy policy |
 | Exporter | `jsonl`, `stdout`, `websocket` (`/decisions`), `lsl`, `os_text` (`stub` backend only) | Write items out. Never change them |
 | Pipeline | any number | Connect named receivers, processors and exporters |
 | Service | `[service]` | Log level, metrics file, health endpoint (`/healthz`, `/metrics`, localhost by default), `latency = true` (per-stage latency) |
@@ -40,6 +40,8 @@ Examples: [`collector.toml`](../examples/collector/collector.toml) (file input) 
 | `segment` processor | `pause_s`, `blank_frames`, `max_frames`, `unit` | Adds a `segment_end` when the time between two frames is more than `pause_s`, after `blank_frames` blank frames in a row (after a non-blank frame), or after `max_frames` frames. Causal. A `segment_end` from the source passes through. |
 | `guard` processor | `guard` or `profile`, `online`, `online_options`, `passthrough`, `save_profile`, `audit_keep` | The drop-in trust guard ([trust quickstart](trust-quickstart.md)). `profile` loads a per-user profile ([personalisation](trust-personalisation.md)) with its drift tests. `online = "aci"` (or `aci_window`, `window`, `bandit`) adds the online controller. One decision per segment. `passthrough = true` also passes the input events on (without the `ws_*` binding keys), so a `jsonl` exporter can write the NTS stream next to the decision log. |
 | `os_text` exporter | `backend = "stub"`, `path`, `separator` | Types **only** final text COMMITs (never OFFER, ASK, ABSTAIN or a provisional decision). The stub types into memory and writes one line per typed text with the full decision next to it. Real backends (Windows TSF, Android IME, macOS, IBus) are not written yet (P3-03). |
+| `privacy` processor (P5-04) | `policy`, `key_env`, `key_id` | Filters header `meta` keys per a policy file (keep / drop / hash per key or `namespace.*`; default for other keys; PII scan) and, with `text = "drop"` or `"hash"`, the decoded text (then it must come after the trust step). Without `policy` the built-in default keeps the provenance keys and drops `subject.*`, `session.*`, `user.*` and unknown keys. See [provenance and privacy](provenance-and-privacy.md) |
+| `trust` processor, `ledger.lineage` (P5-03) | a lineage spec file | Writes sources and artifacts (with licences) into the ledger at start; each decision then carries licence flags |
 | `[service] latency` | `latency = true`, `latency_budget_ms` | Records the time of each stage (section "Latency budget"). The numbers are in `/metrics` and in `metrics_file` (`latency_ms`). |
 
 The `guard` processor uses the same parts as `fidetype live` ([live decode](live-decode.md)): `TrustGuard.decide`, and the key beam search `nbest_of_frames` for key frames. For an n-best guard the segment input is the last final `hypothesis`; for a logits guard it is the frames of the segment.
@@ -51,6 +53,7 @@ The `guard` processor uses the same parts as `fidetype live` ([live decode](live
 | No final decision on a cut segment | A gap or a lost input drops the open utterance without a decision |
 | No silent drop | An unreadable line or an invalid event becomes a `gap` status |
 | Decoded text is personal data | The `redact` processor removes `shown` or replaces it with an HMAC (key from an environment variable) |
+| `meta` holds only what the policy allows (SEC-3, SEC-4) | The `privacy` processor drops or hashes `meta` keys per a policy file and drops a value that looks like an e-mail address, a phone number or an IP address |
 | No secrets in files | Tokens and keys come only from environment variables. A key in the file is a configuration error |
 | No blank final COMMIT | The `trust` processor adds a commit gate if the configuration has none (rule TD-9). The `guard` processor always has the gate |
 | Only committed text reaches the OS | The `os_text` exporter types final COMMITs only and logs the full decision next to each typed text |

@@ -364,25 +364,31 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 ### Deliverables
 1. **Personalisation:** per-user calibration profiles; online recalibration from user corrections; drift detection. **Done (P5-01, 2026-11-16):** `fidetype.trust.personal` (`UserProfile`: hashed id, guard, calibration stats, `config_id` history, `consent_ref` placeholder, no text; `PersonalTrust`: tighten at once, re-calibrate only through `TrustGuardUpdater` / `GuardedUpdateLoop`) and `fidetype.trust.drift` (anytime-valid conformal and betting tests). T12 16-day replay: drift-triggered re-calibration on the guard risk needs 384 check labels vs 768 daily, same 15 commits and wrong-commit rate 0.0022 ([results](../../experiments/2026-11-16-p5-01-personal/results.md), [concept](../concepts/trust-personalisation.md)).
 2. **Safety guarantees:** conformal risk control for a wrong-commit limit (finite-sample, as in M2-13); adaptive conformal for non-exchangeable streams; a written guarantee sheet per policy (what holds, under which assumptions). **Done 2026-11-16 (P5-02):** CRC / LTT drop-in (P14-03), precision LTT, joint fluent-wrong + precision LTT (one test), adaptive conformal on the drop-in guard (`guard.online`: ACI, ACI-window, window, bandit), and one uniform sheet per policy (`fidetype.guarantee-sheet/1.0`; [docs](../../docs/trust-guarantee.md) sections 10-12). Useful operating points still need a stronger decoder (M4-13, P11).
-3. **Provenance ledger:** an append-only, hash-chained ledger: data → weights → calibration → each committed output. Licence flags (NC data cannot reach product weights; [licence rule](project-plan.md#licence-rule)). v0 done (M2-09, 2026-11-11): decision-level ledger, [provenance ledger](../concepts/provenance-ledger.md); licence checks still open.
-4. **Privacy and consent:** consent records referenced by `consent.ref`; the privacy processor (P3); data minimisation defaults (`data.derived = true`, no raw samples); deletion on request.
+3. **Provenance ledger:** an append-only, hash-chained ledger: data → weights → calibration → each committed output. Licence flags (NC data cannot reach product weights; [licence rule](project-plan.md#licence-rule)). v0 done (M2-09, 2026-11-11): decision-level ledger, [provenance ledger](../concepts/provenance-ledger.md). **Done 2026-11-17 (P5-03):** `source` / `artifact` entries with SPDX licences and checked flags (`fidetype.trust.licence`); each decision carries `research_only` / `commercial_ok` / `product_ok`; a product artifact with NC inputs is refused; `LedgerView.lineage`, CLI `lineage`, `anchor`, `verify --anchor`; lineage spec files and the Collector option `ledger.lineage`. B2T '25 demo: full lineage of one committed word, 8 entries, verify PASS ([experiment](../../experiments/2026-11-17-p5-03-lineage/results.md); [docs](../../docs/provenance-and-privacy.md)). Open: gaps 47 (licence keys in NTS), 48 (signed anchor).
+4. **Privacy and consent:** consent records referenced by `consent.ref`; the privacy processor (P3); data minimisation defaults (`data.derived = true`, no raw samples); deletion on request. **Done 2026-11-17 (P5-04):** `fidetype.trust.privacy` (`check_consent_ref`, `ConsentRecord` with purposes / expiry / withdrawal, `PrivacyPolicy`, `delete_profile`, `erase` with a deletion receipt); Collector processor `privacy` (keep / drop / hash per `meta` key, PII scan, text drop or HMAC; built-in minimal default); ledger redaction with tombstones under the new hash rule `salted-body` (the chain still verifies). Open: gap 49 (erasure in Collector output files).
 5. **Neural-data law review** (information for design, not legal advice):
 
-   | Jurisdiction | Instrument | Status in this wiki |
+   | Jurisdiction | Instrument | Status in this wiki (checked 2026-11-17, P5-04) |
    |---|---|---|
-   | Colorado | HB24-1058 (Aug 2024) | Cited in [landscape](../sources/neural-input-landscape-2026.md) |
-   | California | SB 1223 (CCPA regulations from 1 Jan 2026) | Cited in [landscape](../sources/neural-input-landscape-2026.md) |
-   | Montana | SB 163 (Oct 2025) | Cited in [landscape](../sources/neural-input-landscape-2026.md) |
-   | Connecticut | SB 1295 (Jul 2026) | Cited in [landscape](../sources/neural-input-landscape-2026.md) |
-   | Chile | Constitutional "neurorights" protection | **To check** (not verified in this wiki) |
-   | EU | GDPR special-category data; AI Act | **To check** |
-   | US federal | Proposed neural-data bills | **To check** |
+   | Colorado | HB24-1058 (effective 7 Aug 2024) | Verified (primary) |
+   | California | SB 1223 (effective 1 Jan 2025); AB 1883 workplace (chaptered 30 Sep 2026); SB 44 failed | Verified (secondary) |
+   | Montana | SB 163 (effective 1 Oct 2025; genetic-data businesses only) | Verified (secondary) |
+   | Connecticut | SB 1295 = PA 25-113 (effective 1 Jul 2026; CNS only) | Verified (secondary) |
+   | Vermont | Act 101 (neurological rights, 18 May 2026); Act 145 (privacy act, effective 1 Jan 2028) | Verified (primary) |
+   | Delaware | HB 380 (effective 1 Jan 2027) | Verified (secondary) |
+   | Minnesota | SF 1240 | Pending, no action (primary) |
+   | Chile | Ley 21.383, Art. 19 No. 1 (Oct 2021); Girardi v. Emotiv (Aug 2023) | Verified (primary / secondary) |
+   | EU | GDPR Art. 9 (neural data not named); AI Act Art. 5 (from 2 Feb 2025); EDPS TechDispatch 2024 | Verified (primary / secondary) |
+   | US federal | MIND Act S. 2925 (introduced 29 Sep 2025; study bill; no progress) | Verified (primary) |
+   | UNESCO | Recommendation on the Ethics of Neurotechnology (adopted 11 Nov 2025) | Verified (primary) |
+
+   Full table with dates, scopes, duties and confidence marks: [neural-data law table](neural-data-law.md) (**not legal advice**). The legal review stays P5-06 (externally blocked).
 
 6. **On-device operation:** a quantised trust core in the C/Rust SDK; runs on a phone or a Raspberry-Pi-class board; no network needed.
 
 ### Exit criteria
 - On B2T '25 and two other replay sets, the wrong-commit rate stays below the set limit at the stated confidence level.
-- The ledger reproduces the full lineage of one committed word.
+- The ledger reproduces the full lineage of one committed word. **Met 2026-11-17 (P5-03)** on a B2T '25 subset replay ([report](../../experiments/2026-11-17-p5-03-lineage/results/lineage-report.md)).
 - The trust core runs on-device with less than 20 ms per decision (our target).
 - A legal review of the law table: **externally blocked** (needs a lawyer; user-owned).
 
@@ -427,6 +433,27 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P5-09 (done).
 - **Source:** Commit `9277177` (P5-09 S3: with `spread=True` a -0.25 sd mean shift is detected in 0.445 of runs vs 0.61 without; margin 0.10 missed). On T12 the spread bets also lose 2 of 4 guard-risk alarms.
 - **Done when:** a spread-aware variant (for example prior weights that favour the mean bets, or a separate spread test with its own level) keeps the false-alarm level, detects sd 1 -> 2 in at least 95 % of runs, and loses at most 0.10 of detected share at -0.25 sd and at most 25 % median delay at -0.5 / -1.0 sd against the P5-01 test, in a plan committed before the run. Only then may the default of `spread` change (documented in the changelog).
+
+#### P5-13 Licence flags in the stream and in trust decisions (FEP)
+- **Gap:** 47 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-03). Follow-up of P5-03.
+- **Status:** `todo`.
+- **Depends on:** P5-03 (done); a FEP (semantic conventions, MET-10).
+- **Source:** P5-03: licence flags live in the provenance ledger only. A producer has no registered `meta` key to declare the data licence (the SpanishBCBL adapter writes the custom key `spanishbcbl.licence`), and an emitted `trust_decision` does not carry `research_only`, so a consumer that reads only the stream or the decision log cannot see that an output depends on NC data.
+- **Done when:** a FEP adds optional keys (for example `data.licence` (SPDX id) and `data.research_only`) to the registry with accept / reject vectors in the three SDKs, the reference adapters write them, the ledger reads them into `source` entries, and the trust layers copy `research_only` into `trust_decision` (an audit key, TD-13), with Python = TypeScript = Rust on the vectors.
+
+#### P5-14 Signed or external anchor of the ledger head
+- **Gap:** 48 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-03). Follow-up of P5-03, M2-09.
+- **Status:** `todo`.
+- **Depends on:** P5-03 (done).
+- **Source:** P5-03 added `anchor` / `verify --anchor`, but the anchor is a plain JSON file. A person who can rewrite the whole ledger and the anchor file can recompute the chain (tamper-evident, not tamper-proof).
+- **Done when:** the anchor can be signed (for example Ed25519 with a key outside the ledger) or sent to an external store (an RFC 3161 timestamp or a second host), `verify` checks the signature, and a test shows that a rewritten ledger with a recomputed chain fails against a signed anchor.
+
+#### P5-15 Erasure in Collector output files
+- **Gap:** 49 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P5-04). Follow-up of P5-04.
+- **Status:** `todo`.
+- **Depends on:** P5-04 (done).
+- **Source:** P5-04: `erase` deletes the profile and redacts the ledgers, but the Collector's other outputs (JSON Lines decision logs, passthrough NTS streams, the `os_text` stub log, metrics files) are plain files without a hash chain or a subject index; they are not reached.
+- **Done when:** an erasure request can also remove a subject's items from the Collector output files (by `session` / pseudonymous subject, with a receipt entry per file), or the Collector can write those outputs in a redactable form; a test erases one subject from a pipeline run's outputs and the remaining files still pass `nts-conform check`.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.

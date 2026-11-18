@@ -1,0 +1,4 @@
+05:24:52 loaded 203 fit / 68 test trials (subset) (5s)
+05:24:52 product LM under the project rule: refused
+05:25:44 fit + replay: eWPM 10.449 wrong-commit 0.0441 commit 0.206 on 68 trials (52s)
+05:25:44 verify True; lineage of dec-000007-461459b3: 8 entries; erasure verify True; done (57s)

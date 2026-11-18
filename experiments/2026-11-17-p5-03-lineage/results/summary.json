@@ -1,0 +1,80 @@
+{
+ "anchor": {
+  "ledger_id": "6c187f06-de1b-43d7-ac27-5d22a353b850",
+  "seq": 79,
+  "hash": "ab089109f35b900cec682db89fb381114e6cebe1e7b21112df606dc3253259f5"
+ },
+ "verify": {
+  "ok": true,
+  "n_entries": 80,
+  "errors": [],
+  "ok_gz": true
+ },
+ "entry_kinds": {
+  "genesis": 1,
+  "note": 1,
+  "source": 3,
+  "artifact": 3,
+  "context": 1,
+  "decision": 68,
+  "correction": 3
+ },
+ "subset": {
+  "fit": 203,
+  "test": 68
+ },
+ "metrics_subset": {
+  "ewpm": 10.44935352400965,
+  "wrong_commit_rate": 0.04411764705882353,
+  "rate_commit": 0.20588235294117646
+ },
+ "picked_decision": "dec-000007-461459b3",
+ "lineage": {
+  "n_entries": 8,
+  "kinds": [
+   "source",
+   "source",
+   "source",
+   "artifact",
+   "artifact",
+   "artifact",
+   "context",
+   "decision"
+  ],
+  "artifacts": [
+   "lm",
+   "weights",
+   "calibration"
+  ],
+  "sources": [
+   "BSD-2-Clause",
+   "CC-BY-2.0-FR",
+   "CC0-1.0"
+  ],
+  "licence": {
+   "commercial_ok": true,
+   "product_ok": {
+    "commercial": true,
+    "project": false
+   },
+   "research_only": false
+  }
+ },
+ "licence_flags": {
+  "decisions": 68,
+  "with_licence_flags": 68,
+  "research_only": 0
+ },
+ "product_lm_refused": true,
+ "erasure": {
+  "redaction_seq": 80,
+  "n_redacted": 1,
+  "verify_after": true,
+  "decision_gone": true
+ },
+ "bytes": {
+  "ledger_jsonl": 100970,
+  "ledger_jsonl_gz": 22659
+ },
+ "elapsed_s": 56.62007451057434
+}

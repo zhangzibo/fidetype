@@ -11,8 +11,9 @@ parts; it adds no new way to change a live guard.
   settings, guarantee sheet), calibration statistics (counts, rates,
   quantiles and a sample of reference **scores**), the history of
   ``config_id`` values with the reason for each change, the last drift-test
-  summary, and ``consent_ref`` (a placeholder for the consent record of
-  P5-04). It holds **no text and no signal**: :meth:`UserProfile.save`
+  summary, and ``consent_ref`` (an opaque reference to a consent record
+  kept elsewhere; P5-04 checks its form with
+  :func:`fidetype.trust.privacy.check_consent_ref`). It holds **no text and no signal**: :meth:`UserProfile.save`
   refuses a profile with a text-like key.
 - :class:`PersonalTrust` -- the live controller for one user::
 
@@ -78,8 +79,9 @@ What this does not cover:
 - The initial reference scores come from the calibration items, and the
   guard's temperature was fitted on a part of them. Give held-out items as
   ``reference_inputs=`` for a cleaner reference.
-- Not legal advice. ``consent_ref`` is only a reference; P5-04 defines the
-  consent record.
+- Not legal advice. ``consent_ref`` is only a reference to a record kept
+  elsewhere (:class:`fidetype.trust.privacy.ConsentRecord`). Deletion:
+  :func:`fidetype.trust.privacy.delete_profile` / :func:`~fidetype.trust.privacy.erase`.
 """
 
 from __future__ import annotations
@@ -206,7 +208,7 @@ class UserProfile:
     calibration: dict[str, Any] = field(default_factory=dict)
     history: list[dict[str, Any]] = field(default_factory=list)
     drift: dict[str, Any] | None = None
-    #: Reference to the consent record (P5-04). Placeholder: stored as given, not checked.
+    #: Opaque reference to the consent record (P5-04: checked by ``check_consent_ref`` on new / save).
     consent_ref: str | None = None
     profile_version: int = 0
     created_utc: str = field(default_factory=_now)
@@ -221,6 +223,10 @@ class UserProfile:
             reason: str = "initial calibration") -> "UserProfile":
         """A new profile. ``guard``: a :class:`~fidetype.trust.dropin.TrustGuard` or its dict (or None)."""
         gd = guard.to_dict() if hasattr(guard, "to_dict") else (dict(guard) if guard is not None else None)
+        if consent_ref is not None:
+            from fidetype.trust.privacy import check_consent_ref
+
+            check_consent_ref(consent_ref)
         p = cls(hash_user_id(user_id, salt), gd, dict(calibration or {}), consent_ref=consent_ref,
                 id_hash="hmac-sha256" if salt is not None else "sha256")
         cid = p.config_id
@@ -279,6 +285,10 @@ class UserProfile:
              "updated_utc": self.updated_utc, "consent_ref": self.consent_ref, "guard": self.guard,
              "calibration": self.calibration, "history": self.history, "drift": self.drift, "extra": self.extra}
         _check_private(d)
+        if self.consent_ref is not None:
+            from fidetype.trust.privacy import check_consent_ref
+
+            check_consent_ref(self.consent_ref)
         return d
 
     def content_sha256(self) -> str:

@@ -14,6 +14,7 @@ The sections follow the plan for the future documentation site ([docs site plan]
 | Concepts | [concepts.md](concepts.md) | The NTS data model, profiles, bindings, the trust layer, conformance levels, terms |
 | Trust for your decoder | [trust-quickstart.md](trust-quickstart.md), [trust-guarantee.md](trust-guarantee.md) | Add the trust layer to your own decoder in 10 minutes (logits or n-best in; commit / offer / withhold out); what the guarantee covers and how to read the audit log |
 | Personalisation | [trust-personalisation.md](trust-personalisation.md) | One trust profile per user (hashed id, no text), anytime-valid drift tests, re-calibration only through the gated update path |
+| Provenance and privacy | [provenance-and-privacy.md](provenance-and-privacy.md) | Lineage of each output (data -> weights -> calibration -> decision), licence flags (NC data is research only), anchors, consent references, the Collector `privacy` processor, deletion on request |
 | SDKs | [sdks.md](sdks.md) | The three reference SDKs side by side, and the Python SDK guide |
 | SDKs (per language) | [TypeScript](../sdk/typescript/README.md), [Rust](../sdk/rust/README.md) | Full guides of the other two SDKs |
 | Collector | [collector.md](collector.md) | Run the Collector: receivers, processors, exporters, configuration |

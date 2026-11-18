@@ -236,6 +236,13 @@ class Collector:
                 ledger = ProvenanceLedger(self.config.path(lo["path"]), text_mode=lo.get("text_mode", "hash"),
                                           id_mode=lo.get("id_mode", "hash"),
                                           hash_key=key.encode("utf-8") if key else None, key_id=lo.get("key_id"))
+                if "lineage" in lo:  # P5-03: sources + artifacts; every context of this ledger names them
+                    from fidetype.trust.provenance import record_lineage_spec
+
+                    try:
+                        record_lineage_spec(ledger, self.config.path(lo["lineage"]))
+                    except (ValueError, KeyError, OSError) as e:
+                        raise ConfigError(f"processors.{c.name}.ledger.lineage: {e}") from None
             try:
                 return P.TrustProcessor(c.name, self.log, cfg_path, decoder=o.get("decoder", "none"),
                                         max_attempts=o.get("max_attempts", 2), route=o.get("route", "auto"),
@@ -248,6 +255,16 @@ class Collector:
             return P.RedactProcessor(c.name, self.log, mode=o.get("mode", "drop"),
                                      key=key.encode("utf-8") if key else None, key_id=o.get("key_id"),
                                      hypothesis_text=o.get("hypothesis_text", True))
+        if c.type == "privacy":
+            from fidetype.collector.config import _privacy_policy
+
+            key = _env_secret(f"processors.{c.name}.key_env", o.get("key_env"))
+            try:
+                return P.PrivacyProcessor(c.name, self.log, policy=_privacy_policy(f"processors.{c.name}", o,
+                                                                                  self.config.base_dir),
+                                          key=key.encode("utf-8") if key else None, key_id=o.get("key_id"))
+            except ValueError as e:
+                raise ConfigError(str(e)) from None
         if c.type == "segment":
             return P.SegmenterProcessor(c.name, self.log, pause_s=o.get("pause_s"), blank_frames=o.get("blank_frames"),
                                         max_frames=o.get("max_frames"), unit=o.get("unit", "utterance"))

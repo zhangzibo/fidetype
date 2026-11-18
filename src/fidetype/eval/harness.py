@@ -443,7 +443,7 @@ class TrustPipeline:
         """Record every test decision of :meth:`evaluate` in ``ledger``.
 
         ``context``: extra provenance (keys ``adapter``, ``decoder``, ``lm``,
-        ``calibration_set_id``, ``extra``) for
+        ``calibration_set_id``, ``extra``, ``lineage``: artifact ids, P5-03) for
         :func:`~fidetype.trust.provenance.pipeline_context`.
         ``corrections``: ``"user"`` writes a correction when the simulated
         user saw a wrong COMMIT / OFFER_WORDS text (not for silent errors);
@@ -468,6 +468,7 @@ class TrustPipeline:
             calibration_set_id=ex.get("calibration_set_id"),
             stream_meta=stream.meta if stream is not None else None,
             extra=ex.get("extra"),
+            lineage=ex.get("lineage"),
         )
 
     def _ledger_record(self, ledger, ctx_id, it, i, a, final_attempt, an, d, o) -> None:

@@ -1,4 +1,4 @@
-"""Provenance ledger v0 (M2-09): an append-only, hash-chained audit trail.
+"""Provenance ledger (M2-09 v0; P5-03 lineage + licence flags; P5-04 redaction): a hash-chained audit trail.
 
 For each decision of the trust layer, the ledger records where the text
 came from: the device and adapter, the decoder (id, version, weights
@@ -22,6 +22,15 @@ JSON Lines, UTF-8, one entry per line. Every entry has these keys::
 - ``hash`` = SHA-256 (hex) of the canonical JSON (:func:`canonical_json`)
   of the entry without ``hash``. Because the entry holds ``prev_hash``,
   each hash covers the full history before it.
+- **Hash rule ``salted-body`` (P5-04, default for new ledgers).** Each
+  entry also holds ``salt`` (16 random bytes, hex) and ``body_sha256`` =
+  SHA-256 of ``salt + "\\n" + canonical_json(body)``. The entry ``hash``
+  then covers ``body_sha256`` instead of ``body`` (the keys ``body``,
+  ``salt`` and ``redacted`` are left out). So a ``body`` can be removed
+  later (a tombstone, see ``redaction``) and the chain still verifies. The
+  salt goes with the body, so nobody can confirm a guessed body from its
+  digest. Ledgers written before P5-04 have no ``salt`` (genesis without
+  ``hash_rule``): they keep the old rule (``v0``) and cannot be redacted.
 
 Entry kinds (``kind``)
 ----------------------
@@ -50,6 +59,38 @@ Entry kinds (``kind``)
     must start from the last accepted ``config_id`` of its chain and give
     a new one; a rejected update leaves it unchanged. :func:`verify`
     checks these rules. See :meth:`ProvenanceLedger.record_update`.
+``source`` (P5-03)
+    One data source: name, version, URL, content digest and **licence**
+    (SPDX id), plus its licence flags (:mod:`fidetype.trust.licence`).
+    Consented own data names its consent reference and scope (no personal
+    data). Content addressed (``src-...``), written once.
+``artifact`` (P5-03)
+    One derived artifact (``weights``, ``lm``, ``calibration``, ``split``,
+    ``config``, ``other``): name, version, SHA-256, ``derived_from`` (earlier
+    source / artifact ids), ``purpose`` (``research`` or ``product``) and the
+    combined licence flags of all inputs. An artifact for ``product`` use
+    whose inputs the product policy does not allow (for example NC data) is
+    refused when it is written, and :func:`verify` flags it. Content
+    addressed (``art-...``), written once.
+``redaction`` (P5-04)
+    An erasure record: the ``seq`` and ``hash`` of each removed entry
+    (decisions, corrections, notes), a reason code and an opaque request
+    reference. After this entry the bodies of the targets are removed
+    (tombstones: every key except ``body`` and ``salt`` stays). :func:`verify`
+    accepts a tombstone only if a later ``redaction`` entry names it.
+
+Lineage and licence flags (P5-03)
+---------------------------------
+A ``context`` may name ``lineage``: the artifact ids of the models and the
+calibration that it uses (in the context dict, or for every context
+through :meth:`ProvenanceLedger.set_lineage`). The context entry then
+carries the combined licence flags (``licence``), and each ``decision`` of
+that context carries the short flags (``research_only``,
+``commercial_ok``, ``product_ok``). So an output that depends on NC data
+is flagged. :meth:`LedgerView.lineage` gives the full chain of one
+decision: corrections, context, artifacts, sources, licence flags (CLI
+``lineage``). :func:`record_lineage_spec` writes sources and artifacts
+from a JSON / TOML file.
 
 Privacy by design
 -----------------
@@ -76,8 +117,12 @@ chain. A signed or external anchor closes that gap.
 
 Command line::
 
-    python -m fidetype.trust.provenance verify ledger.jsonl [--head <hash>]
+    python -m fidetype.trust.provenance verify ledger.jsonl [--head <hash> | --anchor anchor.json]
     python -m fidetype.trust.provenance report ledger.jsonl [--max-items 20]
+    python -m fidetype.trust.provenance anchor ledger.jsonl [--out anchor.json]
+    python -m fidetype.trust.provenance lineage ledger.jsonl <decision_id> [--word N] [--json]
+    python -m fidetype.trust.provenance redact ledger.jsonl --decision <id> [--decision <id> ...]
+        --request-ref <opaque ref> [--reason erasure-request] [--key-env VAR]
 """
 
 from __future__ import annotations
@@ -95,14 +140,24 @@ from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Literal, Sequence
+from typing import Any, Callable, Literal, Mapping, Sequence
 
 import numpy as np
 
 SCHEMA = "fidetype.provenance/0.1"
 SCHEMA_VERSION = "0.1"
 GENESIS_PREV = "0" * 64
-KINDS = ("genesis", "context", "decision", "correction", "note", "update")
+KINDS = ("genesis", "context", "decision", "correction", "note", "update", "source", "artifact", "redaction")
+#: ``salted-body``: entries hold ``salt`` + ``body_sha256`` (redactable, P5-04); ``v0``: the M2-09 rule.
+HASH_RULES = ("salted-body", "v0")
+#: Keys left out of the entry hash under the ``salted-body`` rule.
+_BODY_KEYS = ("hash", "body", "salt", "redacted")
+#: Artifact kinds and purposes (P5-03).
+ARTIFACT_KINDS = ("weights", "lm", "calibration", "split", "config", "other")
+PURPOSES = ("research", "product")
+#: Entry kinds that a ``redaction`` may remove (P5-04).
+REDACTABLE_KINDS = ("decision", "correction", "note")
+REDACTION_REASONS = ("erasure-request", "consent-withdrawn", "retention-expired", "other")
 #: Stages of an ``update`` entry (P15-02).
 UPDATE_STAGES = ("proposed", "accepted", "rejected")
 TEXT_MODES = ("store", "hash", "omit")
@@ -157,9 +212,30 @@ def sha256_hex(data: bytes | str) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def body_digest(salt: str, body: Any) -> str:
+    """``body_sha256`` of the ``salted-body`` rule: SHA-256 of ``salt + "\\n" + canonical_json(body)``."""
+    return sha256_hex(f"{salt}\n{canonical_json(body)}")
+
+
 def entry_hash(entry: dict) -> str:
-    """SHA-256 of the canonical JSON of ``entry`` without its ``hash`` key."""
-    return sha256_hex(canonical_json({k: v for k, v in entry.items() if k != "hash"}))
+    """The ``hash`` of an entry.
+
+    Rule ``v0`` (no ``salt`` / ``body_sha256`` key): SHA-256 of the canonical JSON of ``entry`` without
+    ``hash``. Rule ``salted-body``: the same over the entry without ``body``, ``salt`` and ``redacted``, with
+    ``body_sha256`` recomputed from ``salt`` and ``body`` when the body is present (the stored value for a
+    tombstone).
+    """
+    if "body_sha256" not in entry and "salt" not in entry:
+        return sha256_hex(canonical_json({k: v for k, v in entry.items() if k != "hash"}))
+    head = {k: v for k, v in entry.items() if k not in _BODY_KEYS}
+    if "body" in entry and "salt" in entry:
+        head["body_sha256"] = body_digest(entry["salt"], entry["body"])
+    return sha256_hex(canonical_json(head))
+
+
+def is_tombstone(entry: dict) -> bool:
+    """True if the body of ``entry`` was removed by a redaction (P5-04)."""
+    return "body" not in entry and "body_sha256" in entry
 
 
 def content_id(obj: Any) -> str:
@@ -250,6 +326,7 @@ def pipeline_context(
     calibration_set_id: str | None = None,
     stream_meta: dict | None = None,
     extra: dict | None = None,
+    lineage: Sequence[str] | None = None,
 ) -> dict:
     """Build a provenance context from a fitted ``TrustPipeline``.
 
@@ -307,6 +384,8 @@ def pipeline_context(
     }
     if extra:
         ctx["extra"] = extra
+    if lineage is not None:
+        ctx["lineage"] = list(lineage)  # artifact ids (P5-03); the ledger checks them
     return ctx
 
 
@@ -347,15 +426,27 @@ class ProvenanceLedger:
         ledger_id: str | None = None,
         clock: Callable[[], str] | None = None,
         fsync: bool = False,
+        hash_rule: str = "salted-body",
     ) -> None:
         if text_mode not in TEXT_MODES or id_mode not in TEXT_MODES:
             raise ValueError(f"text_mode and id_mode must be one of {TEXT_MODES}")
+        if hash_rule not in HASH_RULES:
+            raise ValueError(f"hash_rule must be one of {HASH_RULES}")
         self.path = None if path is None else Path(path)
         self.hash_key = hash_key
         self.clock = clock or _utc_now
         self.fsync = fsync
+        self.hash_rule = hash_rule
         self.entries: list[dict] = []
         self._contexts: set[str] = set()
+        #: P5-03: context id -> combined licence flags (None: no lineage); source / artifact id -> licence flags.
+        self._ctx_licence: dict[str, dict | None] = {}
+        self._sources: dict[str, dict] = {}
+        self._artifacts: dict[str, dict] = {}
+        #: Artifact ids added to every new context without its own ``lineage`` (:meth:`set_lineage`).
+        self.default_lineage: list[str] | None = None
+        #: P5-04: seq -> redaction seq of each entry named by a redaction entry.
+        self._redaction_targets: dict[int, int] = {}
         self._decisions: dict[str, dict] = {}
         #: In memory only (never written): the first shown text of each
         #: decision of this session, so a correction can compute its
@@ -374,21 +465,27 @@ class ProvenanceLedger:
             g = entries[0]["body"]
             self.text_mode, self.id_mode = g["text_mode"], g["id_mode"]
             self.ledger_id = g["ledger_id"]
+            self.hash_rule = g.get("hash_rule", "v0")
             if g.get("text_hash_alg") == "hmac-sha256" and hash_key is None:
                 raise ValueError("this ledger uses keyed text hashes: pass hash_key")
             for e in entries:
                 self._index(e)
+            if self.pending_redactions():
+                self.apply_redactions()  # finish an erasure that stopped between the entry and the rewrite
         else:
             self.text_mode, self.id_mode = text_mode, id_mode
             self.ledger_id = ledger_id or str(uuid.uuid4())
-            self.append("genesis", {
+            gen = {
                 "ledger_id": self.ledger_id,
                 "schema": SCHEMA,
                 "text_mode": text_mode,
                 "id_mode": id_mode,
                 "text_hash_alg": "hmac-sha256" if hash_key is not None else "sha256",
                 "key_id": key_id,
-            })
+            }
+            if hash_rule != "v0":
+                gen["hash_rule"] = hash_rule
+            self.append("genesis", gen)
 
     # --- low level --------------------------------------------------------
 
@@ -416,6 +513,9 @@ class ProvenanceLedger:
             "prev_hash": GENESIS_PREV if prev is None else prev["hash"],
             "body": body,
         }
+        if self.hash_rule == "salted-body":
+            entry["salt"] = os.urandom(16).hex()
+            entry["body_sha256"] = body_digest(entry["salt"], body)
         entry["hash"] = entry_hash(entry)
         self.entries.append(entry)
         self._index(entry)
@@ -429,8 +529,18 @@ class ProvenanceLedger:
         return entry
 
     def _index(self, e: dict) -> None:
+        if is_tombstone(e):
+            return
         if e["kind"] == "context":
             self._contexts.add(e["body"]["context_id"])
+            self._ctx_licence[e["body"]["context_id"]] = e["body"].get("licence")
+        elif e["kind"] == "source":
+            self._sources[e["body"]["source_id"]] = e["body"]["licence"]
+        elif e["kind"] == "artifact":
+            self._artifacts[e["body"]["artifact_id"]] = e["body"]["licence"]
+        elif e["kind"] == "redaction":
+            for t in e["body"].get("targets", ()):
+                self._redaction_targets[int(t["seq"])] = e["seq"]
         elif e["kind"] == "decision":
             self._decisions[e["body"]["decision_id"]] = e
         elif e["kind"] == "update":
@@ -481,14 +591,174 @@ class ProvenanceLedger:
     # --- high level ---------------------------------------------------------
 
     def record_context(self, context: dict) -> str:
-        """Write ``context`` once (content addressed). Return its id."""
+        """Write ``context`` once (content addressed). Return its id.
+
+        P5-03: ``context["lineage"]`` (or else :attr:`default_lineage`) lists the artifact ids that the
+        context uses. They must be in this ledger. The context entry then holds their combined licence flags
+        (``licence``), and each decision of the context gets the short flags.
+        """
         ctx = dict(_plain(context))
         if "stream_meta" in ctx:
             ctx["stream_meta"] = meta_subset(ctx["stream_meta"])
+        if ctx.get("lineage") is None and self.default_lineage is not None:
+            ctx["lineage"] = list(self.default_lineage)
+        lic = None
+        if ctx.get("lineage") is not None:
+            ids = sorted(set(str(a) for a in ctx["lineage"]))
+            unknown = [a for a in ids if a not in self._artifacts]
+            if unknown:
+                raise ValueError(f"unknown artifact id(s) in lineage: {unknown} (call record_artifact first)")
+            ctx["lineage"] = ids
+            from fidetype.trust.licence import combine
+
+            lic = combine(self._artifacts[a] for a in ids)
         cid = "ctx-" + content_id(ctx)[:24]
         if cid not in self._contexts:
-            self.append("context", {"context_id": cid, "context": ctx})
+            body: dict[str, Any] = {"context_id": cid, "context": ctx}
+            if lic is not None:
+                body["licence"] = lic
+            self.append("context", body)
         return cid
+
+    # --- lineage and licence flags (P5-03) -------------------------------------
+
+    def record_source(
+        self,
+        name: str,
+        licence: str,
+        *,
+        version: str | None = None,
+        url: str | None = None,
+        digest: str | None = None,
+        attribution: str | None = None,
+        consent: Mapping[str, Any] | None = None,
+        track: str | None = None,
+        details: dict | None = None,
+    ) -> str:
+        """Write one data source (content addressed, once). Return its id ``src-...``.
+
+        ``licence``: an SPDX id or a common form (``"CC BY-NC 4.0"``); it is normalised
+        (:func:`fidetype.trust.licence.normalise`), the given text stays in ``licence_text``.
+        ``digest``: a content hash of the data or of the split file (no data). ``consent``: for own consented
+        data (``LicenseRef-fidetype-consented``) a dict with ``ref`` (an opaque consent reference) and
+        ``scope`` (purposes, :data:`fidetype.trust.privacy.PURPOSES`); required for that licence.
+        """
+        from fidetype.trust.licence import CONSENTED, normalise, source_summary
+
+        spdx = normalise(licence)
+        src: dict[str, Any] = {"name": str(name), "licence": spdx, "licence_text": str(licence)}
+        for k, v in (("version", version), ("url", url), ("digest", digest), ("attribution", attribution),
+                     ("track", track)):
+            if v is not None:
+                src[k] = str(v)
+        scope: list[str] = []
+        if consent is not None:
+            from fidetype.trust.privacy import check_consent_ref, check_scope
+
+            scope = check_scope(consent.get("scope") or ())
+            src["consent"] = {"ref": check_consent_ref(consent.get("ref")), "scope": scope}
+        elif spdx == CONSENTED:
+            raise ValueError(f"a {CONSENTED} source needs consent={{'ref': ..., 'scope': [...]}}")
+        if details:
+            src["details"] = dict(details)
+        sid = "src-" + content_id(src)[:24]
+        if sid not in self._sources:
+            self.append("source", {"source_id": sid, "source": src, "licence": source_summary(spdx, scope)})
+        return sid
+
+    def record_track_source(self, track: str, *, digest: str | None = None) -> str:
+        """Write the dataset of a benchmark track (``fidetype.benchmark.tracks``) as a source.
+
+        Licence, URL and attribution come from the track definition. ``digest`` defaults to the digest of the
+        track's split file (if it is in the package).
+        """
+        from fidetype.benchmark.tracks import TRACKS_VERSION, get_track, load_split
+        from fidetype.trust.licence import track_licence
+
+        t = get_track(track)
+        spdx, _, attribution = track_licence(track)
+        if digest is None:
+            try:
+                sp = load_split(track)
+                digest = sp.get("digest") or sp.get("entries_digest")
+            except (OSError, ValueError, KeyError):
+                digest = None
+        return self.record_source(t.dataset_title, spdx, version=f"tracks-{TRACKS_VERSION}", url=t.url,
+                                  digest=digest, attribution=attribution, track=track)
+
+    def record_artifact(
+        self,
+        kind: str,
+        name: str,
+        *,
+        derived_from: Sequence[str] = (),
+        version: str | None = None,
+        sha256: str | None = None,
+        licence: str | None = None,
+        purpose: str = "research",
+        product_policy: str = "project",
+        details: dict | None = None,
+    ) -> str:
+        """Write one derived artifact (content addressed, once). Return its id ``art-...``.
+
+        ``derived_from``: earlier source / artifact ids (the training data of weights, the corpus of an LM,
+        the calibration split of a calibration, the weights a calibration belongs to). ``licence``: the
+        artifact's own licence, if it has one (for example third-party weights). The entry holds the
+        combined flags of all inputs. ``purpose="product"`` raises
+        :class:`~fidetype.trust.licence.LicenceError` if the inputs do not allow product use under
+        ``product_policy`` (``"project"``: CC0 / own / consented with the product scope; ``"commercial"``).
+        """
+        from fidetype.trust.licence import PRODUCT_POLICIES, check_product, combine, source_summary
+
+        if kind not in ARTIFACT_KINDS:
+            raise ValueError(f"artifact kind must be one of {ARTIFACT_KINDS}")
+        if purpose not in PURPOSES:
+            raise ValueError(f"purpose must be one of {PURPOSES}")
+        if product_policy not in PRODUCT_POLICIES:
+            raise ValueError(f"product_policy must be one of {PRODUCT_POLICIES}")
+        inputs = sorted(set(str(x) for x in derived_from))
+        unknown = [x for x in inputs if x not in self._sources and x not in self._artifacts]
+        if unknown:
+            raise ValueError(f"unknown input id(s) {unknown}: record the sources and artifacts first")
+        parts = [self._sources.get(x) or self._artifacts[x] for x in inputs]
+        if licence is not None:
+            parts.append(source_summary(licence))
+        lic = combine(parts)
+        if not inputs and licence is None:
+            from fidetype.trust.licence import UNKNOWN
+
+            lic = source_summary(UNKNOWN)  # no recorded input: unknown lineage, research only
+        art: dict[str, Any] = {"kind": kind, "name": str(name), "derived_from": inputs, "purpose": purpose,
+                               "product_policy": product_policy}
+        for k, v in (("version", version), ("sha256", sha256)):
+            if v is not None:
+                art[k] = str(v)
+        if licence is not None:
+            from fidetype.trust.licence import normalise
+
+            art["licence"] = normalise(licence)
+        if details:
+            art["details"] = dict(details)
+        if purpose == "product":
+            check_product(lic, product_policy, what=f"artifact {name!r}")
+        aid = "art-" + content_id(art)[:24]
+        if aid not in self._artifacts:
+            self.append("artifact", {"artifact_id": aid, "artifact": art, "licence": lic})
+        return aid
+
+    def set_lineage(self, artifact_ids: Sequence[str] | None) -> None:
+        """Use ``artifact_ids`` as the lineage of every new context that has none (None: stop)."""
+        if artifact_ids is not None:
+            unknown = [a for a in artifact_ids if a not in self._artifacts]
+            if unknown:
+                raise ValueError(f"unknown artifact id(s): {unknown}")
+            self.default_lineage = sorted(set(artifact_ids))
+        else:
+            self.default_lineage = None
+
+    def licence_of(self, context_id: str) -> dict | None:
+        """The combined licence flags of a context (None: the context has no lineage)."""
+        return self._ctx_licence.get(context_id)
 
     def record_decision(
         self,
@@ -570,6 +840,11 @@ class ProvenanceLedger:
                 for w in getattr(decision, "word_choices", ())
             ],
         }
+        lic = self._ctx_licence.get(context_id)
+        if lic is not None:
+            from fidetype.trust.licence import flag
+
+            body["licence"] = flag(lic)
         entry = self.append("decision", body)
         shown = tuple(getattr(decision, "shown_candidates", ()))
         if shown:
@@ -691,6 +966,122 @@ class ProvenanceLedger:
         body["details"] = dict(details or {})
         return self.append("update", body)
 
+    # --- redaction (P5-04) -------------------------------------------------------
+
+    def pending_redactions(self) -> list[int]:
+        """The seqs named by a redaction entry whose body is still present."""
+        return sorted(s for s in self._redaction_targets if not is_tombstone(self.entries[s]))
+
+    def redact(self, seqs: Sequence[int], *, request_ref: str, reason: str = "erasure-request",
+               subject: str | None = None) -> dict:
+        """Remove the bodies of the entries ``seqs`` and keep the chain verifiable. Return the redaction entry.
+
+        Only ``decision``, ``correction`` and ``note`` entries can be removed. A removed decision takes its
+        corrections with it. Steps: (1) append a ``redaction`` entry that names each target by ``seq`` and
+        ``hash``, with ``reason`` (:data:`REDACTION_REASONS`) and ``request_ref`` (an opaque reference to the
+        erasure request: no personal data, checked like a consent reference); (2) replace each target by a
+        tombstone (the entry without ``body`` and ``salt``); (3) rewrite the file (atomic replace). If the
+        process stops between (1) and (3), the next open of the file finishes the job.
+        ``subject``: the pseudonymous subject value as stored in the decisions (optional, for the record).
+        """
+        from fidetype.trust.privacy import check_opaque_ref
+
+        if self.hash_rule != "salted-body":
+            raise ValueError("this ledger uses the v0 hash rule (written before P5-04): a body cannot be removed "
+                             "without breaking the chain; start a new ledger")
+        if reason not in REDACTION_REASONS:
+            raise ValueError(f"reason must be one of {REDACTION_REASONS}")
+        targets = sorted(set(int(s) for s in seqs))
+        # A removed decision takes its corrections with it.
+        dids = {self.entries[s]["body"]["decision_id"] for s in targets
+                if 0 <= s < len(self.entries) and self.entries[s]["kind"] == "decision" and not is_tombstone(self.entries[s])}
+        for e in self.entries:
+            if e["kind"] == "correction" and not is_tombstone(e) and e["body"].get("decision_id") in dids:
+                targets.append(e["seq"])
+        targets = sorted(set(targets))
+        if not targets:
+            raise ValueError("nothing to redact")
+        for s in targets:
+            if not 0 <= s < len(self.entries):
+                raise ValueError(f"no entry with seq {s}")
+            e = self.entries[s]
+            if e["kind"] not in REDACTABLE_KINDS:
+                raise ValueError(f"entry {s} is a {e['kind']!r} entry; only {REDACTABLE_KINDS} can be redacted")
+            if is_tombstone(e) or s in self._redaction_targets:
+                raise ValueError(f"entry {s} is already redacted")
+        body = {
+            "targets": [{"seq": s, "hash": self.entries[s]["hash"], "kind": self.entries[s]["kind"]} for s in targets],
+            "n": len(targets),
+            "reason": reason,
+            "request_ref": check_opaque_ref(request_ref, "request_ref"),
+        }
+        if subject is not None:
+            body["subject"] = str(subject)
+        entry = self.append("redaction", body)
+        self.apply_redactions()
+        return entry
+
+    def redact_decisions(self, decision_ids: Sequence[str], **kw: Any) -> dict:
+        """:meth:`redact` the decisions ``decision_ids`` (and their corrections)."""
+        seqs = []
+        for did in decision_ids:
+            e = self._decisions.get(did)
+            if e is None:
+                raise ValueError(f"unknown or already redacted decision {did!r}")
+            seqs.append(e["seq"])
+        return self.redact(seqs, **kw)
+
+    def redact_subject(self, subject_id: str, **kw: Any) -> dict:
+        """:meth:`redact` every decision whose input names ``subject_id`` (as the stream's ``subject.id``).
+
+        The ledger finds them through :meth:`id_value` (same ``id_mode`` and key as at write time). With
+        ``id_mode="omit"`` the decisions hold no subject, so this raises ``ValueError``.
+        """
+        if self.id_mode == "omit":
+            raise ValueError("id_mode 'omit': the decisions name no subject; redact by decision id")
+        v = self.id_value(subject_id)
+        dids = [did for did, e in self._decisions.items() if (e["body"].get("input") or {}).get("subject") == v]
+        if not dids:
+            raise ValueError("no decision of this subject in the ledger")
+        return self.redact_decisions(dids, subject=v if self.id_mode == "hash" else "stored-id", **kw)
+
+    def apply_redactions(self) -> int:
+        """Replace every target of a redaction entry by its tombstone; rewrite the file. Return the count."""
+        n = 0
+        for s, by in sorted(self._redaction_targets.items()):
+            e = self.entries[s]
+            if is_tombstone(e):
+                continue
+            if e["kind"] == "decision":
+                did = e["body"].get("decision_id")
+                self._decisions.pop(did, None)
+                self._shown_text.pop(did, None)
+            tomb = {k: v for k, v in e.items() if k not in ("body", "salt")}
+            tomb["redacted"] = {"by_seq": by}
+            self.entries[s] = tomb
+            n += 1
+        if n and self.path is not None:
+            self._rewrite()
+        return n
+
+    def _rewrite(self) -> None:
+        import tempfile
+
+        p = self.path
+        assert p is not None
+        fd, tmp = tempfile.mkstemp(prefix=p.name + ".", suffix=".tmp", dir=str(p.parent))
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+                for e in self.entries:
+                    f.write(canonical_json(e) + "\n")
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(tmp, p)
+        except BaseException:
+            if os.path.exists(tmp):
+                os.unlink(tmp)
+            raise
+
 
 class LedgeredPolicy:
     """Wrap a policy so that each ``decide`` call writes a decision entry.
@@ -746,14 +1137,22 @@ def verify(
     source: str | os.PathLike | Sequence[dict],
     expected_head: str | dict | None = None,
 ) -> VerifyResult:
-    """Check a ledger: schema, sequence, hash chain and references.
+    """Check a ledger: schema, sequence, hash chain, references, lineage, licence flags and redactions.
 
     Detects an edited entry (hash mismatch), a deleted entry (seq gap and
     ``prev_hash`` mismatch), a reordered entry, a correction or decision
     that points to an unknown or later entry, and a bad genesis. Pass
     ``expected_head`` (a hash, or the dict from
     :meth:`ProvenanceLedger.anchor`) to detect a cut at the end.
+    P5-03: a source / artifact / context whose licence flags differ from the
+    recomputed ones, an artifact input that is unknown or later, a product
+    artifact that the product policy does not allow, a decision whose
+    licence flags differ from its context's. P5-04: a body digest that does
+    not match (``salted-body`` rule), a tombstone that no later redaction
+    entry names, a redaction target that is unknown, later or not redactable.
     """
+    from fidetype.trust.licence import combine, flag, source_summary
+
     errors: list[str] = []
     try:
         entries = list(source) if not isinstance(source, (str, os.PathLike)) else read_entries(source)
@@ -761,15 +1160,29 @@ def verify(
         return VerifyResult(False, 0, [str(e)])
     if not entries:
         return VerifyResult(False, 0, ["empty ledger"])
+    # Redaction targets named anywhere in the file (a redaction entry itself is never redacted).
+    named: dict[int, tuple[int, str]] = {}
+    for i, e in enumerate(entries):
+        if e.get("kind") == "redaction" and isinstance(e.get("body"), dict):
+            for t in e["body"].get("targets", ()):
+                if isinstance(t, dict) and isinstance(t.get("seq"), int):
+                    named[t["seq"]] = (i, str(t.get("hash")))
     contexts: set[str] = set()
+    ctx_lic: dict[str, Any] = {}
+    sources: dict[str, Any] = {}
+    artifacts: dict[str, Any] = {}
     decisions: dict[str, str] = {}
     proposals: dict[str, str] = {}
     decided: set[str] = set()
     chain_head: dict[str, Any] = {}
+    g0 = entries[0].get("body") if isinstance(entries[0].get("body"), dict) else {}
+    salted = g0.get("hash_rule") == "salted-body"
     prev = GENESIS_PREV
     for i, e in enumerate(entries):
         tag = f"entry {i}"
-        missing = {"schema", "seq", "ts", "kind", "prev_hash", "body", "hash"} - set(e)
+        tomb = is_tombstone(e)
+        need = {"schema", "seq", "ts", "kind", "prev_hash", "hash"} | (set() if tomb else {"body"})
+        missing = need - set(e)
         if missing:
             errors.append(f"{tag}: missing keys {sorted(missing)}")
             prev = e.get("hash", prev)
@@ -780,6 +1193,8 @@ def verify(
             errors.append(f"{tag}: seq {e['seq']} != {i} (entry deleted, inserted or reordered)")
         if e["prev_hash"] != prev:
             errors.append(f"{tag}: prev_hash does not match the previous entry (chain broken)")
+        if salted and not tomb and ("salt" not in e or "body_sha256" not in e):
+            errors.append(f"{tag}: salt / body_sha256 missing (the ledger uses the salted-body rule)")
         try:
             h = entry_hash(e)
         except (TypeError, ValueError) as ex:
@@ -787,36 +1202,109 @@ def verify(
             h = None
         if h != e["hash"]:
             errors.append(f"{tag}: hash mismatch (entry edited)")
+        elif not tomb and "salt" in e and e.get("body_sha256") != body_digest(e["salt"], e["body"]):
+            errors.append(f"{tag}: hash mismatch (body edited: body_sha256 differs)")
         if e["kind"] not in KINDS:
             errors.append(f"{tag}: unknown kind {e['kind']!r}")
         if (i == 0) != (e["kind"] == "genesis"):
             errors.append(f"{tag}: genesis must be entry 0 and only entry 0")
+        if tomb:
+            if i not in named:
+                errors.append(f"{tag}: body removed, but no redaction entry names this entry")
+            elif named[i][0] <= i or named[i][1] != e["hash"]:
+                errors.append(f"{tag}: body removed, but the redaction entry is earlier or names another hash")
+            if e["kind"] not in REDACTABLE_KINDS:
+                errors.append(f"{tag}: a {e['kind']!r} entry must not be redacted")
+            prev = e["hash"]
+            continue
         b = e["body"] if isinstance(e["body"], dict) else {}
-        if e["kind"] == "context":
+        k = e["kind"]
+        if k == "context":
             cid = b.get("context_id")
-            if cid != "ctx-" + content_id(b.get("context", {}))[:24]:
+            ctx = b.get("context", {}) or {}
+            if cid != "ctx-" + content_id(ctx)[:24]:
                 errors.append(f"{tag}: context_id does not match the context content")
             contexts.add(cid)
-        elif e["kind"] == "decision":
+            lin = ctx.get("lineage") if isinstance(ctx, dict) else None
+            if lin is not None:
+                bad = [a for a in lin if a not in artifacts]
+                if bad:
+                    errors.append(f"{tag}: lineage names unknown or later artifacts {bad}")
+                    ctx_lic[cid] = b.get("licence")
+                else:
+                    want = combine(artifacts[a] for a in lin)
+                    if b.get("licence") != want:
+                        errors.append(f"{tag}: context licence flags differ from the lineage")
+                    ctx_lic[cid] = want
+            else:
+                if "licence" in b:
+                    errors.append(f"{tag}: context has licence flags but no lineage")
+                ctx_lic[cid] = None
+        elif k == "source":
+            sid, src = b.get("source_id"), b.get("source", {}) or {}
+            if sid != "src-" + content_id(src)[:24]:
+                errors.append(f"{tag}: source_id does not match the source content")
+            want = source_summary(src.get("licence"), (src.get("consent") or {}).get("scope"))
+            if b.get("licence") != want:
+                errors.append(f"{tag}: source licence flags differ from its licence")
+            sources[sid] = want
+        elif k == "artifact":
+            aid, art = b.get("artifact_id"), b.get("artifact", {}) or {}
+            if aid != "art-" + content_id(art)[:24]:
+                errors.append(f"{tag}: artifact_id does not match the artifact content")
+            ins = list(art.get("derived_from") or [])
+            bad = [x for x in ins if x not in sources and x not in artifacts]
+            if bad:
+                errors.append(f"{tag}: artifact input(s) unknown or later: {bad}")
+            parts = [sources.get(x) or artifacts.get(x) for x in ins if x in sources or x in artifacts]
+            if art.get("licence") is not None:
+                parts.append(source_summary(art["licence"]))
+            want = combine(parts) if (ins or art.get("licence") is not None) else source_summary(None)
+            if not bad and b.get("licence") != want:
+                errors.append(f"{tag}: artifact licence flags differ from its inputs")
+            pol = art.get("product_policy", "project")
+            if art.get("purpose") == "product" and not want["product_ok"].get(pol, False):
+                errors.append(f"{tag}: product artifact {art.get('name')!r} has inputs that the {pol!r} policy "
+                              "does not allow (licence rule)")
+            artifacts[aid] = want
+        elif k == "decision":
             did = b.get("decision_id")
             if did in decisions:
                 errors.append(f"{tag}: duplicate decision id {did!r}")
-            if b.get("context_id") not in contexts:
+            cid = b.get("context_id")
+            if cid not in contexts:
                 errors.append(f"{tag}: decision refers to an unknown or later context")
+            elif ctx_lic.get(cid) is not None:
+                if b.get("licence") != flag(ctx_lic[cid]):
+                    errors.append(f"{tag}: decision licence flags differ from its context")
+            elif "licence" in b:
+                errors.append(f"{tag}: decision has licence flags but its context has no lineage")
             decisions[did] = e["hash"]
-        elif e["kind"] == "correction":
+        elif k == "correction":
             did = b.get("decision_id")
             if did not in decisions:
-                errors.append(f"{tag}: correction refers to an unknown or later decision {did!r}")
+                errors.append(f"{tag}: correction refers to an unknown, later or redacted decision {did!r}")
             elif b.get("decision_hash") != decisions[did]:
                 errors.append(f"{tag}: decision_hash does not match decision {did!r}")
-        elif e["kind"] == "update":
+        elif k == "update":
             errors += _verify_update(tag, b, e["hash"], proposals, decided, chain_head)
+        elif k == "redaction":
+            for t in b.get("targets", ()):
+                s = t.get("seq") if isinstance(t, dict) else None
+                if not isinstance(s, int) or not 0 < s < i:
+                    errors.append(f"{tag}: redaction target {s!r} is not an earlier entry")
+                    continue
+                if entries[s].get("hash") != t.get("hash"):
+                    errors.append(f"{tag}: redaction target {s} has another hash")
+                if entries[s].get("kind") not in REDACTABLE_KINDS:
+                    errors.append(f"{tag}: redaction target {s} is a {entries[s].get('kind')!r} entry")
+            if b.get("reason") not in REDACTION_REASONS:
+                errors.append(f"{tag}: unknown redaction reason {b.get('reason')!r}")
         prev = e["hash"]
     last = entries[-1]
     if expected_head is not None:
-        want = expected_head["hash"] if isinstance(expected_head, dict) else expected_head
-        if last.get("hash") != want:
+        want_h = expected_head["hash"] if isinstance(expected_head, dict) else expected_head
+        if last.get("hash") != want_h:
             errors.append("head hash != expected head (entries cut or added at the end)")
     return VerifyResult(not errors, len(entries), errors, last.get("hash"), last.get("seq"))
 
@@ -868,13 +1356,57 @@ class LedgerView:
         else:
             entries = list(source)
         self.entries = entries
-        self.genesis = entries[0]["body"] if entries else {}
-        self.contexts = {e["body"]["context_id"]: e["body"]["context"] for e in entries if e["kind"] == "context"}
-        self.decisions = {e["body"]["decision_id"]: e for e in entries if e["kind"] == "decision"}
+        live = [e for e in entries if not is_tombstone(e)]
+        #: Entries whose body a redaction removed (P5-04).
+        self.redacted = [e for e in entries if is_tombstone(e)]
+        self.genesis = entries[0]["body"] if entries and "body" in entries[0] else {}
+        self.context_entries = {e["body"]["context_id"]: e for e in live if e["kind"] == "context"}
+        self.contexts = {cid: e["body"]["context"] for cid, e in self.context_entries.items()}
+        self.decisions = {e["body"]["decision_id"]: e for e in live if e["kind"] == "decision"}
+        self.sources = {e["body"]["source_id"]: e for e in live if e["kind"] == "source"}
+        self.artifacts = {e["body"]["artifact_id"]: e for e in live if e["kind"] == "artifact"}
         self.corrections: dict[str, list[dict]] = defaultdict(list)
-        for e in entries:
+        for e in live:
             if e["kind"] == "correction":
                 self.corrections[e["body"]["decision_id"]].append(e)
+
+    def lineage(self, decision_id: str) -> dict:
+        """The full lineage of one decision (P5-03).
+
+        Returns ``decision`` (entry), ``corrections`` (entries), ``context`` (entry), ``artifacts`` (entries,
+        inputs before the artifacts that use them), ``sources`` (entries), ``licence`` (the decision's flags,
+        or None without lineage) and ``entries`` (seq, kind, hash of every entry in the lineage, by seq).
+        Raises ``KeyError`` for an unknown or redacted decision.
+        """
+        if decision_id not in self.decisions:
+            raise KeyError(f"unknown or redacted decision {decision_id!r}")
+        d = self.decisions[decision_id]
+        ctx = self.context_entries.get(d["body"]["context_id"])
+        order: list[str] = []
+        seen: set[str] = set()
+
+        def visit(x: str) -> None:
+            if x in seen:
+                return
+            seen.add(x)
+            a = self.artifacts.get(x)
+            if a is not None:
+                for y in a["body"]["artifact"].get("derived_from", ()):
+                    visit(y)
+            order.append(x)
+
+        for a in ((ctx or {}).get("body", {}).get("context", {}).get("lineage") or ()):
+            visit(a)
+        arts = [self.artifacts[x] for x in order if x in self.artifacts]
+        srcs = [self.sources[x] for x in order if x in self.sources]
+        corr = list(self.corrections.get(decision_id, ()))
+        allents = [d, *corr, *([ctx] if ctx else []), *arts, *srcs]
+        return {
+            "decision": d, "corrections": corr, "context": ctx, "artifacts": arts, "sources": srcs,
+            "licence": d["body"].get("licence"),
+            "entries": [{"seq": e["seq"], "kind": e["kind"], "hash": e["hash"]}
+                        for e in sorted(allents, key=lambda e: e["seq"])],
+        }
 
     def latest_correction(self, decision_id: str) -> dict | None:
         cs = self.corrections.get(decision_id)
@@ -976,6 +1508,12 @@ def audit_report(
     lines.append(f"- Chain verification: **{'PASS' if res.ok else 'FAIL'}**.")
     for err in res.errors[:20]:
         lines.append(f"  - {err}")
+    n_ro = sum(bool((e["body"].get("licence") or {}).get("research_only")) for e in view.decisions.values())
+    n_lic = sum("licence" in e["body"] for e in view.decisions.values())
+    lines.append(f"- Lineage: {len(view.sources)} sources, {len(view.artifacts)} artifacts; decisions with licence "
+                 f"flags {n_lic} of {len(view.decisions)}, research-only {n_ro}.")
+    if view.redacted:
+        lines.append(f"- Redacted entries (body removed, P5-04): {len(view.redacted)}.")
     lines += ["", "## Summary per decoder / calibration / policy version", ""]
     rows = view.summary(keys)
     head = list(keys) + ["decisions", "commits", "wrong commits", "wrong-commit rate", "commit precision", "actions"]
@@ -1022,9 +1560,183 @@ def audit_report(
     return "\n".join(lines)
 
 
+def _short(h: Any) -> str:
+    return "—" if not h else f"`{str(h)[:16]}…`"
+
+
+def lineage_report(
+    source: str | os.PathLike | Sequence[dict] | ProvenanceLedger,
+    decision_id: str,
+    *,
+    word: int | None = None,
+    expected_head: str | dict | None = None,
+) -> str:
+    """A Markdown report of the full lineage of one decision (P5-03), from the output back to the data.
+
+    ``word``: a 0-based word index of the shown text; the report then names that word (``store`` mode) and
+    its word choice, if any. The report first verifies the whole ledger: a lineage is only as good as the
+    chain.
+    """
+    view = LedgerView(source)
+    res = verify(view.entries, expected_head)
+    lin = view.lineage(decision_id)
+    d = lin["decision"]
+    b = d["body"]
+    lines = [f"# Lineage of decision `{decision_id}`", ""]
+    lines.append(f"- Ledger `{view.genesis.get('ledger_id')}`: chain verification **{'PASS' if res.ok else 'FAIL'}** "
+                 f"({res.n_entries} entries, head `{str(res.head_hash)[:16]}…`).")
+    for err in res.errors[:10]:
+        lines.append(f"  - {err}")
+    lic = lin["licence"]
+    if lic is None:
+        lines.append("- Licence flags: **none** (the context has no recorded lineage).")
+    else:
+        lines.append(f"- Licence flags: research_only **{lic['research_only']}**, commercial_ok {lic['commercial_ok']}, "
+                     f"product_ok project {lic['product_ok'].get('project')} / commercial "
+                     f"{lic['product_ok'].get('commercial')}.")
+    lines += ["", "## 1. Output", ""]
+    shown = b["shown"][0] if b.get("shown") else None
+    lines.append(f"- Entry {d['seq']} (`{d['hash'][:16]}…`): action **{b['action']}**, reason: {b.get('reason')}.")
+    lines.append(f"- Shown text: {_text(shown)}.")
+    if word is not None:
+        w = None
+        if shown is not None and "text" in shown:
+            ws = shown["text"].split()
+            w = ws[word] if 0 <= word < len(ws) else None
+        wc = next((c for c in b.get("word_choices", ()) if c.get("index") == word), None)
+        lines.append(f"- Word {word}: {repr(w) if w is not None else '(text not stored)'}; word choice: "
+                     f"{wc if wc is not None else 'none (the word came with the whole text)'}.")
+    s = b.get("scores", {})
+    lines.append(f"- Scores: p_top1 {_fmt(s.get('p_top1'))}, set size {s.get('set_size')}, guard risk "
+                 f"{_fmt(s.get('guard_risk'))}.")
+    inp = b.get("input", {})
+    lines.append(f"- Input: stream `{str(inp.get('stream_id'))[:16]}…`, frames {inp.get('frame_range')}, "
+                 f"t {inp.get('t_range')}, item {inp.get('item_ref')}, subject {inp.get('subject')}.")
+    lines += ["", "## 2. Corrections", ""]
+    if not lin["corrections"]:
+        lines.append("- None.")
+    for c in lin["corrections"]:
+        cb = c["body"]
+        lines.append(f"- Entry {c['seq']}: {cb.get('relation')} by {cb.get('source')}: {_text(cb.get('corrected'))}; "
+                     f"changed {cb.get('changed')}; linked to the decision hash "
+                     f"{'yes' if cb.get('decision_hash') == d['hash'] else 'NO'}.")
+    lines += ["", "## 3. Context (trust configuration)", ""]
+    ctx_e = lin["context"]
+    if ctx_e is not None:
+        ctx = ctx_e["body"]["context"]
+        cal, pol = ctx.get("calibration", {}) or {}, ctx.get("policy", {}) or {}
+        lines.append(f"- Entry {ctx_e['seq']}: `{ctx_e['body']['context_id']}`; software "
+                     f"{(ctx.get('software') or {}).get('package')} {(ctx.get('software') or {}).get('version')}.")
+        lines.append(f"- Decoder: {(ctx.get('decoder') or {}).get('name')} {(ctx.get('decoder') or {}).get('version')}; "
+                     f"LM {(ctx.get('lm') or {}).get('name')}; adapter {(ctx.get('adapter') or {}).get('name')}.")
+        if cal:
+            lines.append(f"- Calibration `{cal.get('id')}`: set {cal.get('calibration_set_id')}.")
+        if pol:
+            lines.append(f"- Policy `{pol.get('version')}`.")
+        if ctx.get("trust_config"):
+            lines.append(f"- Trust configuration `{ctx['trust_config'].get('id')}`.")
+    lines += ["", "## 4. Artifacts (inputs first)", ""]
+    if not lin["artifacts"]:
+        lines.append("- None recorded.")
+    for a in lin["artifacts"]:
+        ab, la = a["body"]["artifact"], a["body"]["licence"]
+        lines.append(f"- Entry {a['seq']}: **{ab['kind']}** {ab['name']}{' ' + ab['version'] if ab.get('version') else ''} "
+                     f"(`{a['body']['artifact_id']}`); sha256 {_short(ab.get('sha256'))}; purpose {ab['purpose']}; "
+                     f"from {ab.get('derived_from')}; licences {la['licences']}; research_only {la['research_only']}.")
+    lines += ["", "## 5. Data sources", ""]
+    if not lin["sources"]:
+        lines.append("- None recorded.")
+    for sr in lin["sources"]:
+        sb, ls = sr["body"]["source"], sr["body"]["licence"]
+        extra = f"; consent `{sb['consent']['ref']}` scope {sb['consent']['scope']}" if sb.get("consent") else ""
+        lines.append(f"- Entry {sr['seq']}: {sb['name']} (`{sr['body']['source_id']}`); licence **{sb['licence']}**"
+                     f"{'; track ' + sb['track'] if sb.get('track') else ''}; url {sb.get('url')}; "
+                     f"digest {_short(sb.get('digest'))}; research_only {ls['research_only']}{extra}.")
+    lines += ["", "## 6. Entries of this lineage", "", "| seq | kind | hash |", "|---|---|---|"]
+    for e in lin["entries"]:
+        lines.append(f"| {e['seq']} | {e['kind']} | `{e['hash'][:16]}…` |")
+    return "\n".join(lines)
+
+
+def record_lineage_spec(ledger: ProvenanceLedger, spec: str | os.PathLike | Mapping[str, Any],
+                        *, set_default: bool = True) -> dict[str, str]:
+    """Write the sources and artifacts of a lineage spec into ``ledger``; return {local name: id}.
+
+    ``spec``: a dict or a JSON / TOML file (schema ``fidetype.lineage-spec/0.1``)::
+
+        schema = "fidetype.lineage-spec/0.1"
+        use = ["decoder", "calibration"]          # lineage of the contexts (set_default)
+
+        [sources.t15]
+        track = "b2t25-t15"                       # licence, URL, attribution from the track
+
+        [sources.mydata]
+        name = "Our sEMG pilot"
+        licence = "LicenseRef-fidetype-consented"
+        consent = {ref = "cr-2026-0001", scope = ["decode", "train-research"]}
+
+        [artifacts.decoder]
+        kind = "weights"
+        name = "fidetype-emg-ctc"
+        file = "ckpt/model.pt"                    # sha256 computed (relative to the spec file)
+        derived_from = ["t15"]                    # local names, defined above
+        purpose = "research"
+
+    Artifacts may name earlier artifacts. With ``set_default`` the ``use`` list becomes
+    :attr:`ProvenanceLedger.default_lineage`.
+    """
+    base = Path(".")
+    if not isinstance(spec, Mapping):
+        path = Path(spec)
+        base = path.parent
+        text = path.read_text(encoding="utf-8")
+        if path.suffix.lower() == ".toml":
+            import tomllib
+
+            spec = tomllib.loads(text)
+        else:
+            spec = json.loads(text)
+    if spec.get("schema", "fidetype.lineage-spec/0.1") != "fidetype.lineage-spec/0.1":
+        raise ValueError(f"unknown lineage spec schema {spec.get('schema')!r}")
+    ids: dict[str, str] = {}
+    for name, s in (spec.get("sources") or {}).items():
+        s = dict(s)
+        if "track" in s:
+            ids[name] = ledger.record_track_source(s["track"], digest=s.get("digest"))
+            continue
+        ids[name] = ledger.record_source(
+            s.get("name", name), s["licence"], version=s.get("version"), url=s.get("url"), digest=s.get("digest"),
+            attribution=s.get("attribution"), consent=s.get("consent"), details=s.get("details"))
+    for name, a in (spec.get("artifacts") or {}).items():
+        a = dict(a)
+        missing = [x for x in a.get("derived_from", ()) if x not in ids]
+        if missing:
+            raise ValueError(f"artifact {name!r}: unknown input(s) {missing} (define them above it)")
+        sha = a.get("sha256")
+        if sha is None and a.get("file"):
+            sha = file_sha256(base / a["file"])
+        ids[name] = ledger.record_artifact(
+            a["kind"], a.get("name", name), derived_from=[ids[x] for x in a.get("derived_from", ())],
+            version=a.get("version"), sha256=sha, licence=a.get("licence"), purpose=a.get("purpose", "research"),
+            product_policy=a.get("product_policy", "project"), details=a.get("details"))
+    use = spec.get("use")
+    if set_default and use:
+        bad = [u for u in use if u not in ids]
+        if bad:
+            raise ValueError(f"use: unknown name(s) {bad}")
+        ledger.set_lineage([ids[u] for u in use])
+    return ids
+
+
 # ---------------------------------------------------------------------------
 # Command line
 # ---------------------------------------------------------------------------
+
+
+def _anchor_arg(head: str | None, anchor: str | None) -> str | dict | None:
+    if anchor:
+        return json.loads(Path(anchor).read_text(encoding="utf-8"))
+    return head
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -1033,19 +1745,89 @@ def main(argv: Sequence[str] | None = None) -> int:
     v = sub.add_parser("verify", help="verify the hash chain of a ledger")
     v.add_argument("path")
     v.add_argument("--head", default=None, help="expected head hash (detects a cut at the end)")
+    v.add_argument("--anchor", default=None, help="anchor JSON file from the 'anchor' command")
     r = sub.add_parser("report", help="print a Markdown audit report")
     r.add_argument("path")
     r.add_argument("--max-items", type=int, default=20)
     r.add_argument("--head", default=None)
+    r.add_argument("--anchor", default=None)
+    an = sub.add_parser("anchor", help="print (or write) the head of the chain, to keep in a second place")
+    an.add_argument("path")
+    an.add_argument("--out", default=None)
+    li = sub.add_parser("lineage", help="print the full lineage of one decision (Markdown or JSON)")
+    li.add_argument("path")
+    li.add_argument("decision_id")
+    li.add_argument("--word", type=int, default=None)
+    li.add_argument("--json", action="store_true")
+    li.add_argument("--head", default=None)
+    li.add_argument("--anchor", default=None)
+    rd = sub.add_parser("redact", help="remove the bodies of decisions (and their corrections); chain stays valid")
+    rd.add_argument("path")
+    rd.add_argument("--decision", action="append", default=[], help="decision id (repeat)")
+    rd.add_argument("--subject-env", default=None,
+                    help="environment variable that holds the subject.id to erase (not on the command line)")
+    rd.add_argument("--request-ref", required=True, help="opaque reference to the erasure request")
+    rd.add_argument("--reason", default="erasure-request", choices=REDACTION_REASONS)
+    rd.add_argument("--key-env", default=None, help="environment variable with the ledger's hash key")
     a = ap.parse_args(argv)
+    sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
     if a.cmd == "verify":
-        res = verify(a.path, a.head)
+        res = verify(a.path, _anchor_arg(a.head, a.anchor))
         print(f"{'PASS' if res.ok else 'FAIL'}: {res.n_entries} entries, head seq {res.head_seq}, head {res.head_hash}")
         for e in res.errors:
             print("  " + e)
         return 0 if res.ok else 1
-    sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
-    print(audit_report(a.path, a.max_items, expected_head=a.head))
+    if a.cmd == "anchor":
+        ents = read_entries(a.path)
+        res = verify(ents)
+        if not res.ok:
+            print(f"FAIL: the ledger does not verify ({res.errors[:3]}); no anchor written", file=sys.stderr)
+            return 1
+        g = ents[0]["body"]
+        anc = {"ledger_id": g.get("ledger_id"), "seq": ents[-1]["seq"], "hash": ents[-1]["hash"],
+               "ts": ents[-1]["ts"], "n_entries": len(ents)}
+        txt = json.dumps(anc, indent=1)
+        if a.out:
+            Path(a.out).write_text(txt + "\n", encoding="utf-8")
+        print(txt)
+        return 0
+    if a.cmd == "lineage":
+        view = LedgerView(a.path)
+        if a.decision_id not in view.decisions:
+            print(f"unknown or redacted decision {a.decision_id!r}", file=sys.stderr)
+            return 1
+        exp = _anchor_arg(a.head, a.anchor)
+        if a.json:
+            res = verify(view.entries, exp)
+            print(json.dumps({"verify": {"ok": res.ok, "errors": res.errors}, **view.lineage(a.decision_id)},
+                             indent=1, ensure_ascii=False))
+            return 0 if res.ok else 1
+        print(lineage_report(view.entries, a.decision_id, word=a.word, expected_head=exp))
+        return 0
+    if a.cmd == "redact":
+        key = os.environ.get(a.key_env, "").encode("utf-8") if a.key_env else None
+        ents = read_entries(a.path)
+        g = ents[0]["body"]
+        if g.get("text_hash_alg") == "hmac-sha256" and not key:
+            print("this ledger uses keyed hashes: pass --key-env", file=sys.stderr)
+            return 2
+        led = ProvenanceLedger(a.path, hash_key=key or None)
+        if a.subject_env:
+            subj = os.environ.get(a.subject_env)
+            if not subj:
+                print(f"environment variable {a.subject_env} is empty", file=sys.stderr)
+                return 2
+            e = led.redact_subject(subj, request_ref=a.request_ref, reason=a.reason)
+        elif a.decision:
+            e = led.redact_decisions(a.decision, request_ref=a.request_ref, reason=a.reason)
+        else:
+            print("give --decision or --subject-env", file=sys.stderr)
+            return 2
+        res = verify(a.path)
+        print(f"redacted {e['body']['n']} entries (redaction entry seq {e['seq']}); verify "
+              f"{'PASS' if res.ok else 'FAIL'}; new head {res.head_hash}")
+        return 0 if res.ok else 1
+    print(audit_report(a.path, a.max_items, expected_head=_anchor_arg(a.head, a.anchor)))
     return 0
 
 

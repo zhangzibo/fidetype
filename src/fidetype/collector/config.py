@@ -40,6 +40,8 @@ SCHEMA: dict[str, dict[str, tuple[set[str], set[str]]]] = {
         "trust": ({"config", "decoder", "max_attempts", "route", "min_signal_quality", "declaration_check",
                    "ledger"}, {"config"}),
         "redact": ({"mode", "key_env", "key_id", "hypothesis_text"}, set()),
+        # P5-04 privacy filter: header meta keys (keep / drop / hash) and decoded text, per a policy file.
+        "privacy": ({"policy", "key_env", "key_id"}, set()),
         "thin": ({"keep_provisional"}, set()),
         # P3-02 segmenter: add segment_end events (pause, blank run, length).
         "segment": ({"pause_s", "blank_frames", "max_frames", "unit"}, set()),
@@ -302,8 +304,9 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
         if opts.get("max_attempts", 1) < 1:
             raise ConfigError(f"{where}.max_attempts: must be >= 1")
         if "ledger" in opts:
-            led = _check_keys(f"{where}.ledger", opts["ledger"], {"path", "text_mode", "id_mode", "key_env", "key_id"},
-                              {"path"})
+            led = _check_keys(f"{where}.ledger", opts["ledger"], {"path", "text_mode", "id_mode", "key_env", "key_id",
+                                                                  "lineage"}, {"path"})
+            _opt_type(f"{where}.ledger", led, "lineage", (str,), "a lineage spec file (JSON or TOML)")
             _opt_type(f"{where}.ledger", led, "path", (str,), "a file path")
             _opt_enum(f"{where}.ledger", led, "text_mode", ("store", "hash", "omit"))
             _opt_enum(f"{where}.ledger", led, "id_mode", ("store", "hash", "omit"))
@@ -315,6 +318,10 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
         _opt_type(where, opts, "hypothesis_text", (bool,), "true or false")
         if opts.get("mode", "drop") == "hmac" and "key_env" not in opts:
             raise ConfigError(f"{where}: mode 'hmac' needs key_env (the environment variable that holds the key)")
+    elif kind == "processors" and typ == "privacy":
+        _opt_type(where, opts, "policy", (str,), "a privacy policy file (TOML or JSON)")
+        _opt_type(where, opts, "key_env", (str,), "the name of an environment variable")
+        _opt_type(where, opts, "key_id", (str,), "a string")
     elif kind == "processors" and typ == "thin":
         _opt_enum(where, opts, "keep_provisional", ("changes", "none", "all"))
     elif kind == "processors" and typ == "segment":
@@ -400,6 +407,22 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
     return ComponentConfig(kind, name, typ, opts)
 
 
+def _privacy_policy(where: str, opts: dict[str, Any], base_dir: str | PathLike[str] | None) -> Any:
+    """Load the policy of a ``privacy`` processor (the built-in default without ``policy``)."""
+    from fidetype.trust.privacy import PrivacyPolicy
+
+    if "policy" not in opts:
+        return PrivacyPolicy()
+    q = Path(opts["policy"]).expanduser()
+    q = q if q.is_absolute() else Path(base_dir if base_dir is not None else Path.cwd()) / q
+    try:
+        return PrivacyPolicy.load(q)
+    except FileNotFoundError:
+        raise ConfigError(f"{where}.policy: privacy policy not found: {q}") from None
+    except (ValueError, OSError) as e:
+        raise ConfigError(f"{where}.policy: {e}") from None
+
+
 def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> CollectorConfig:
     """Check a configuration dict (already read from TOML or JSON)."""
     _check_keys("<config>", d, TOP_KEYS, {"pipelines"})
@@ -458,6 +481,18 @@ def parse(d: dict[str, Any], base_dir: str | PathLike[str] | None = None) -> Col
         if "redact" in steps and "trust" in steps and steps.index("redact") < steps.index("trust"):
             raise ConfigError(f"{where}.processors: 'redact' comes before the trust step; the trust layer needs "
                               "the text, so put redact after trust / guard")
+        for i, n in enumerate(lists["processors"]):
+            c = comps["processors"][n]
+            if c.type != "privacy":
+                continue
+            pol = _privacy_policy(f"processors.{n}", c.options, base_dir)
+            if pol.needs_key and "key_env" not in c.options:
+                raise ConfigError(f"processors.{n}: the policy hashes values; set key_env (the environment variable "
+                                  "that holds the key)")
+            if pol.text != "keep" and "trust" in steps and i < steps.index("trust"):
+                raise ConfigError(f"{where}.processors: privacy step {n!r} removes or hashes decoded text before the "
+                                  "trust step; the trust layer needs the text, so put it after trust / guard (or use "
+                                  "a policy with text = \"keep\")")
         if "trust" in steps and "validate" in steps and steps.index("validate") > steps.index("trust"):
             raise ConfigError(f"{where}.processors: put 'validate' before the trust step (it checks the input "
                               "events)")

@@ -558,6 +558,76 @@ class RedactProcessor(Processor):
 
 
 # ---------------------------------------------------------------------------
+# privacy (P5-04)
+# ---------------------------------------------------------------------------
+
+
+class PrivacyProcessor(Processor):
+    """Filter header ``meta`` keys and decoded text per a privacy policy (P5-04, SEC-3 … SEC-7).
+
+    ``policy``: a :class:`fidetype.trust.privacy.PrivacyPolicy` (the built-in default if None). Each
+    ``header`` event gets the filtered ``meta`` (keep / drop / hash per key; a kept string that looks like an
+    e-mail address, a phone number or an IP address is dropped when ``scan_pii`` is on). With ``text`` =
+    ``drop`` or ``hash`` the decoded text of ``trust_decision.shown`` and of each ``hypothesis`` n-best item is
+    removed or replaced by its HMAC (``shown_hmac`` / ``text_hmac``, as the ``redact`` processor), and the
+    event gets ``redaction`` with the policy id. The key comes from an environment variable; it never
+    appears in an output.
+    """
+
+    type = "privacy"
+
+    def __init__(self, name: str, log: Callable[[str], None], policy: Any = None, key: bytes | None = None,
+                 key_id: str | None = None) -> None:
+        super().__init__(name, log)
+        from fidetype.trust.privacy import PrivacyPolicy
+
+        self.policy = policy if policy is not None else PrivacyPolicy()
+        if self.policy.needs_key and not key:
+            raise ValueError(f"processors.{name}: the privacy policy hashes values but no key was given")
+        self._key = key
+        self.key_id = key_id
+        self.counts.update(headers=0, meta_kept=0, meta_dropped=0, meta_hashed=0, meta_pii_dropped=0,
+                           text_decisions=0, text_hypotheses=0)
+
+    def _record(self) -> dict[str, Any]:
+        rec: dict[str, Any] = {"mode": "drop" if self.policy.text == "drop" else "hmac-sha256",
+                               "policy_id": self.policy.id}
+        if self.key_id and self.policy.text == "hash":
+            rec["key_id"] = self.key_id
+        return rec
+
+    def _process(self, items: list[Item]) -> list[Item]:
+        out: list[Item] = []
+        txt = self.policy.text
+        for sid, ev in items:
+            typ = ev.get("type")
+            if typ == "header" and isinstance(ev.get("meta"), dict):
+                ev = dict(ev)
+                ev["meta"], n = self.policy.apply_meta(ev["meta"], self._key)
+                self.counts["headers"] += 1
+                for k, v in n.items():
+                    self.counts[f"meta_{k}"] += v
+            elif txt != "keep" and typ == "trust_decision" and "shown" in ev:
+                ev = dict(ev)
+                shown = ev.pop("shown")
+                if txt == "hash" and isinstance(shown, list):
+                    ev["shown_hmac"] = [self.policy.text_value(t, self._key) for t in shown if isinstance(t, str)]
+                ev["redaction"] = self._record()
+                self.counts["text_decisions"] += 1
+            elif txt != "keep" and typ == "hypothesis" and isinstance(ev.get("nbest"), list):
+                ev = copy.deepcopy(ev)
+                for it in ev["nbest"]:
+                    if isinstance(it, dict) and "text" in it:
+                        t = it.pop("text")
+                        if txt == "hash" and isinstance(t, str):
+                            it["text_hmac"] = self.policy.text_value(t, self._key)
+                ev["redaction"] = self._record()
+                self.counts["text_hypotheses"] += 1
+            out.append((sid, ev))
+        return out
+
+
+# ---------------------------------------------------------------------------
 # thin
 # ---------------------------------------------------------------------------
 
