@@ -13,8 +13,9 @@ permissions:
 
 jobs:
   # P2-09: the full Python suite on every supported Python (Linux) and on Windows and macOS.
-  # 3.15 is not in the matrix: h5py (dev extra) has no cp315 wheel yet (gap 62). macOS runs one Python (3.13) only:
-  # macOS runners are scarce, and with 3.12 and 3.13 the macOS jobs of busy days queued for 20 min and were cancelled.
+  # 3.15 is not in the matrix: h5py (dev extra) has no cp315 wheel yet (gap 64). macOS runs the suite (3.13) inside
+  # the conformance-os job: GitHub's macOS arm64 runners have "capacity constraints", and separate macOS jobs queued
+  # for 20 min and were then cancelled ("not acquired by Runner"). One macOS job per push keeps the queue short.
   # fail-fast is off, so one red platform does not hide the others.
   pytest:
     name: pytest (${{ matrix.os }}, py${{ matrix.python }})
@@ -28,11 +29,6 @@ jobs:
         include:
           - { os: windows-latest, python: "3.12" }
           - { os: windows-latest, python: "3.13" }
-          - { os: macos-latest, python: "3.13" }
-    env:
-      # macOS runners have larger scheduler jitter: wall-clock test bounds (LSL reconnect stall, collector latency
-      # budget) are multiplied by 4 there. Linux and Windows keep the plain bounds.
-      FIDETYPE_LATENCY_TOLERANCE: ${{ matrix.os == 'macos-latest' && '4' || '1' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -49,6 +45,7 @@ jobs:
 
   # P2-09: the conformance suites of the three SDKs (Python, TypeScript, Rust) and the Python wheel smoke test
   # on Windows and macOS. Linux runs the same steps in the packaging, typescript and rust jobs.
+  # On macOS this job also runs the full pytest suite (Python 3.13; see the pytest job comment).
   conformance-os:
     name: conformance (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -56,7 +53,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest]
+        include:
+          - { os: windows-latest, python: "3.12" }
+          - { os: macos-latest, python: "3.13" }
+    env:
+      # macOS runners have larger scheduler jitter: wall-clock test bounds (LSL reconnect stall, collector latency
+      # budget) are multiplied by 4 there. Windows keeps the plain bounds.
+      FIDETYPE_LATENCY_TOLERANCE: ${{ matrix.os == 'macos-latest' && '4' || '1' }}
     defaults:
       run:
         shell: bash
@@ -64,7 +67,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.3.3
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python }}
           enable-cache: true
       - name: Python wheel in a clean venv; conformance suite and kit
         run: |
@@ -99,6 +102,11 @@ jobs:
           cargo test --locked
           cargo run --locked --release --bin fidetype-rs -- conformance
           cargo run --locked --release --bin fidetype-rs -- conformance --vectors ../../spec/conformance/kit
+      - name: Full pytest suite (macOS only)
+        if: ${{ !cancelled() && runner.os == 'macOS' }}
+        run: |
+          uv sync --extra dev
+          uv run pytest -q
 
   # P14-04 / P4-02: `fidetype live` end to end on the real BrainFlow Synthetic board and a real pylsl loopback
   # (synthetic recording). Only tests/test_live.py runs here, so other LSL tests stay out of this job.
