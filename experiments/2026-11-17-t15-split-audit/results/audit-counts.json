@@ -41,8 +41,20 @@
    "keys_on_a_train_trial": 0,
    "non_val_select_keys_on_a_val_select_trial": 0
   },
-  "m4-13 val_eval (M4-13 queue)": "file not present yet",
-  "m4-13 val_select (trust-reruns CPU decode)": "file not present yet"
+  "m4-13 val_eval (M4-13 queue)": {
+   "keys_by_part": {
+    "val_eval": 701
+   },
+   "keys_on_a_train_trial": 0,
+   "non_val_select_keys_on_a_val_select_trial": 0
+  },
+  "m4-13 val_select (trust-reruns CPU decode)": {
+   "keys_by_part": {
+    "val_select": 722
+   },
+   "keys_on_a_train_trial": 0,
+   "non_val_select_keys_on_a_val_select_trial": 0
+  }
  },
  "track_split_equals_v01_file": true,
  "track_v02_hashes_match_ours": true,
@@ -70,6 +82,13 @@
   "test|val_select": 4
  },
  "p6_08_partial_scored_units": {
+  "n": 103,
+  "track_split|m4_part": {
+   "test|unmatched": 5,
+   "test|val_eval": 98
+  }
+ },
+ "p6_08_m4_13_partial_scored_units": {
   "n": 103,
   "track_split|m4_part": {
    "test|unmatched": 5,

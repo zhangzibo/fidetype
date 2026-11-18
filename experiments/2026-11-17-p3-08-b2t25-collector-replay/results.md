@@ -7,7 +7,7 @@ updated: 2026-11-17
 
 # P3-08: B2T '25 (T15) replay through the collector, latency against the 50 ms budget
 
-Code: [run.py](run.py). Numbers: [`results/m4-12-summary.json`](results/m4-12-summary.json) (aggregates only: latency, decision counts, conformance levels). Log: `results/run.log`. Per-trial files (n-best texts, truths, decisions, collector outputs): `C:\Users\zhang\bci-data\derived\p3-08-collector-replay\m4-12\` only.
+Code: [run.py](run.py). Numbers: [`results/m4-12-summary.json`](results/m4-12-summary.json) and [`results/m4-13-summary.json`](results/m4-13-summary.json) (aggregates only: latency, decision counts, conformance levels). Log: `results/run.log`. Per-trial files (n-best texts, truths, decisions, collector outputs): `C:\Users\zhang\bci-data\derived\p3-08-collector-replay\m4-12\` only.
 
 ## Outcome: **PASS**. p95 added latency **2.43 ms** (budget 50 ms); outputs reach producer level **NTS Trust-ready**
 
@@ -49,6 +49,25 @@ The numbers agree with the synthetic `implant-speech` WebSocket bench (p95 1.27 
 | `nts-conform` | producer level NTS Trust-ready; stream export `pass-with-warnings` (stream level provenance; one advisory warning `NTS-VT-PHONEME`: the B2T symbol set is neither ARPAbet nor IPA), decision log `pass` |
 
 > **Our take:** the collector side meets the budget with a wide margin on real implant data at real time. The trust side is vacuous here: the M4-12 decoder is weak, so the calibrated guard commits nothing (0 of 271 LTT items in-sample; the sheet warns). This is the known root cause of gap 14 (P15-19), not a collector issue.
+
+## M4-13 replay (2026-11-17)
+
+Same set-up, same 120 `val_eval` trials (default `--trials 120`), with the M4-13 `long0` phoneme log-probs ([M4-13 results](../2026-11-15-m4-13-long-train/results.md)). Prep 4 min CPU; replay 20:37:53-21:14:06 local (2,171 s wall, real time). Summary: [`results/m4-13-summary.json`](results/m4-13-summary.json). Per-trial files: `C:\Users\zhang\bci-data\derived\p3-08-collector-replay\m4-13\` only.
+
+Trust step: `fidetype.trust.calibrate` on the M4-13 `val_select` 10-best lists (alpha 0.05, delta 0.1, seed 0) gives `tcfg-aee7fe896ecfca23`: lambda_hat 0.74 (feasible), 53 in-sample LTT commits (8 wrong) of 271; null controls uniform 0/300, shuffled 1/200 (allowed 10): pass. The online ACI threshold at the end of the replay is 0.775.
+
+| Item (120 decision steps) | M4-12 | M4-13 |
+|---|---|---|
+| `added` p50 / p95 / p99 / max (ms) | 1.45 / **2.43** / 3.37 / 7.82 | 1.25 / **1.97** / 2.65 / 4.09 |
+| `processor.guard` p95 (ms) | 2.31 | 1.82 |
+| `e2e` p95 (ms) | 2.64 | 2.39 |
+| Budget (p95 added < 50 ms) | PASS | PASS |
+| Actions | OFFER 120, COMMIT 0 | **OFFER 104, COMMIT 16** |
+| Typed by `os_text` (commits only) | 0 (yes) | 16 (yes) |
+| Wrong commits | 0 | **3 of 16** (3 / 120 = 0.025 of trials) |
+| Producer level | NTS Trust-ready | NTS Trust-ready (stream `pass-with-warnings`, log `pass`) |
+
+> **Our take:** with M4-13 the collector path is no longer vacuous: the guard commits 16 of 120 trials and the stub types exactly those 16. 3 of them are wrong, so the error among commits is 0.19 (small sample). The wrong-commit rate over trials (0.025) is under alpha 0.05, but 120 trials and one online run do not test the bound. Latency stays far under budget (p95 1.97 ms).
 
 ## Re-run with the M4-13 decoder
 

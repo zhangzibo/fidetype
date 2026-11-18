@@ -742,6 +742,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | **P14-19** | Re-split published-gate rows, forward chain and downstream tables with per-fit word settings (gap 45, done 2026-11-17: re-split rows no effect, forward-chain prefix 0 corrected, follow-up P14-22; [details](#p14-19-re-split-published-gate-rows-forward-chain-and-downstream-tables-with-per-fit-word-settings)) | P14-15 | research labs, reviewers |
 | **P14-21** | M4-x / M2-19 / P15-05..07 / P5-02 rows with the T15 word decoder tuned without val_eval (edit penalty 8) (open gap 50, [details](#p14-21-m4-x-rows-with-the-t15-word-decoder-tuned-without-val_eval-edit-penalty-8)) | P14-18 | research labs, reviewers |
 | **P14-22** | R3-level analyses on the re-split tables with per-fit word settings (open gap 51, [details](#p14-22-r3-level-analyses-on-the-re-split-tables-with-per-fit-word-settings)) | P14-19 | research labs, reviewers |
+| **P14-23** | T15 safe WPM above the no-BCI reference with our causal decoder (open gap 53, [details](#p14-23-t15-safe-wpm-above-the-no-bci-reference-with-our-causal-decoder)) | P14-05, M4-13 | research labs, BCI companies |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -930,6 +931,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-19 (done). CPU only (no new decodes: the rebuilt tables exist in `derived/p14-18-19/tables`).
 - **Source:** P14-19 ([results](../../experiments/2026-11-17-p14-18-19-followups/results.md)): the R4 analyses, M3-01/02, trust v5 and A2 were rerun; the R3 `repeated-splits` analyze (full output), `selective-risk`, `deployable-rule`, `v3-derived` and R4 `v4-derived` guard controls read the same tables but were not rerun. Paper 1 Fig. `fig:deploy`a uses the corrected forward chain.
 - **Done when:** these analyses are rerun with the redirected loader of P14-19, compared with the P14-15 rule, and their pages (and the paper correction note, if needed) carry dated notes.
+
+#### P14-23 T15 safe WPM above the no-BCI reference with our causal decoder
+- **Gap:** 53 of the [open-gap list](open-gaps.md) (added 2026-11-17 by the M4-13 rows task). Follow-up of P14-05, M4-13.
+- **Status:** `todo`.
+- **Depends on:** M4-13 (done); P14-21 (word decoder with edit 8); P6-09 (full-coverage entry). CPU for the guard; a stronger decoder may need the GPU.
+- **Source:** M4-13 rows ([P14-05 results](../../experiments/2026-11-16-p14-05-safe-wpm/results.md)): on T15 `val_eval` (701) M4-13 + drop-in guard gives safe WPM 2.23 (certified; 104 commits, 17 wrong, error among commits 0.163), below the no-BCI reference 4.02. The partial v0.2 entry (103 units) gives 4.07 [2.51, 5.74] vs 4.12. The published Card et al. decoder gives 12.2-13.4.
+- **Done when:** a T15 entry with our causal decoder reports a certified safe WPM above the no-BCI reference on all 701 `val_eval` trials (or a full-coverage track entry), with both controls passing; or a result states with numbers which commit rate and error among commits that needs and why the current decoder and guard do not reach it.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.

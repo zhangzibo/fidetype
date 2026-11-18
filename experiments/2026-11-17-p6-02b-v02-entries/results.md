@@ -93,6 +93,23 @@ The M4-13 queue writes `derived/m4-13/logprobs-m4-13-long0-val_eval.npz`; the tr
 
 It stops with a clear message if a log-prob file is missing. It writes `benchmark/results/v0.2/b2t25-t15__m4-13__guard.json`.
 
+### M4-13 result (2026-11-17)
+
+Run with the one command above (CPU, background class, 4 threads, 276 s; guard `tcfg-995e4aad89eb96aa`, n_LTT 231, calibrated on 616 val_select trials). Card: [`b2t25-t15__m4-13__guard.json`](../../benchmark/results/v0.2/b2t25-t15__m4-13__guard.json). **Partial coverage: 103 of 816 test units** (only the units in the decoder's held-out val_eval partition; the card has `coverage.partial = true` and the board shows `[partial: 103/816 units]`).
+
+| Metric (103 units) | M4-13 + guard | M4-12 + guard |
+|---|---|---|
+| CER [95 % CI] | 0.067 [0.052, 0.084] | 0.204 [0.185, 0.224] |
+| WER | 0.113 [0.090, 0.139] | 0.300 [0.275, 0.332] |
+| eWPM / no-BCI | 12.83 [11.28, 14.65] / 4.12 | 7.33 / 4.12 |
+| Safe WPM @ 0.05 | **4.07 [2.51, 5.74], certified** | 0.00 (vacuous) |
+| Commits (wrong) | 19 (3) | 0 |
+| Wrong-commit [CI] | 0.029 [0.008, 0.057] | 0.000 |
+| Error among commits | 0.158 [0.043, 0.312] | n/a |
+| Controls (shuffled / zeros / null) | pass / pass / pass | pass / pass / pass |
+
+> **Our take:** on these 103 units the M4-13 safe WPM (4.07) is at the no-BCI level (4.12), and its CI holds both. On all 701 val_eval trials (P14-05, same recipe but the full val_select for calibration) it is 2.23. The 103-unit value is a small sample; we do not read it as better than gaze typing. The entry must not rank against full-coverage entries (gap 30 = P6-07).
+
 ## Our take
 
 > **Our take:** the v0.2 format reproduces every v0.1 number that has the same definition. The certified numbers stand: B2T published CRC 13.42 / LTT 12.24, B2T ours LTT 4.05 (CRC 4.90 is above alpha: cal / test drift within a day), Toronto 0.55 / 0.25 / 0, MEG 0.03 (research only).

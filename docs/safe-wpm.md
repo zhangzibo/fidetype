@@ -98,9 +98,9 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 | Toronto sEMG (composed) | CNN cross-subject + CRC | 0.00 | vacuous | 0.000 | 0 | 4.08 | 4.27 | as above |
 | Replay: T15 val_eval (701) | M4-12 + P14-03 drop-in guard (LTT) | 0.00 | certified | 0.0029 [0.0003, 0.0103] | 2 (2) | 6.02 | 4.02 | measured trial window (20 ms bins) |
 | Replay: T12 v2, 10 later sessions (400) | T12 v2 decoder + P14-03 drop-in guard (LTT) | 1.27 (no CI) | certified | 0.0375 [0.0211, 0.0611] | 25 (15) | 7.13 | 4.11 | measured trial window |
-| Replay: T15 val_eval | M4-13 + drop-in guard | pending | | | | | | `run.py t15-m4-13` |
+| Replay: T15 val_eval (701) | M4-13 + drop-in guard (same recipe, LTT; added 2026-11-17) | 2.23 (no CI) | certified | 0.0243 [0.0142, 0.0385] | 104 (17) | not computed | 4.02 | measured trial window |
 
-> **Our take:** The headline result is plain. Only the published Card et al. decoder gives a safe WPM clearly above the no-BCI reference (12-13 vs 4.1). Our own T15 word decoder is at the no-BCI level (LTT 4.05; the CRC entry, 4.90, is above alpha). Our other decoders give under 1.3 safe WPM. Their eWPM gain comes almost fully from offers, not from commits. A stronger decoder (M4-13, P11-01) is the main lever, not the trust layer.
+> **Our take:** The headline result is plain. Only the published Card et al. decoder gives a safe WPM clearly above the no-BCI reference (12-13 vs 4.1). Our own T15 word decoder is at the no-BCI level (LTT 4.05; the CRC entry, 4.90, is above alpha). Our other decoders give under 1.3 safe WPM. Their eWPM gain comes almost fully from offers, not from commits. A stronger decoder (M4-13, P11-01) is the main lever, not the trust layer. The M4-13 row (2026-11-17) confirms the direction but not the level: the drop-in row goes from 0.00 (M4-12) to 2.23, still below the no-BCI 4.02.
 
 > **Our take:** Safe WPM punishes wrong commits much more than eWPM does. On T12, 15 of 25 commits are wrong. The corrections take 6.1 of 42.6 minutes, and the value drops from 1.48 to 1.27.
 

@@ -2,7 +2,7 @@
 title: P14-05 safe WPM baselines - results
 type: experiment
 task: P14-05
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # P14-05: safe WPM at a certified wrong-commit rate (baselines)
@@ -31,9 +31,14 @@ Definition: [docs/safe-wpm.md](../../docs/safe-wpm.md) (`safe-wpm/0.1`). Code: [
 | Toronto sEMG | CNN cross-subject + CRC | 0.00 | vacuous | 0.000 | 0 | 0.00 | 4.08 | 4.27 |
 | T15 val_eval (701) | M4-12 + P14-03 drop-in guard (LTT, n_cal 271) | 0.00 | certified | 0.0029 [0.0003, 0.0103] | 2 (2) | 0.00 | 6.02 | 4.02 |
 | T12 v2 test sessions (400) | T12 v2 + P14-03 drop-in guard (LTT, n_cal 180) | 1.27 | certified | 0.0375 [0.0211, 0.0611] | 25 (15) | 1.48 | 7.13 | 4.11 |
-| T15 val_eval (701) | M4-13 + drop-in guard (same recipe) | **pending** (decoder finishes 2026-11-17) | | | | | | |
+| T15 val_eval (701) | M4-13 + drop-in guard (same recipe, LTT, n_cal 271; added 2026-11-17) | 2.23 | certified | 0.0243 [0.0142, 0.0385] | 104 (17) | 2.31 | not computed | 4.02 |
 
 Policies without a certified bound (always commit, plug-in trust fit) get "n/a (no certified bound)" on the board. Their `unguarded_wpm` is in the result JSON for reference (B2T published + plug-in: 12.92).
+
+## M4-13 row (2026-11-17)
+Stage `t15-m4-13` (CPU, background class, 4 threads, 320 s; guard `tcfg-1016759f08a3f9a1`, file `results/guard-t15-m4-13.json`). M4-13 = the long-trained T15 decoder ([results](../2026-11-15-m4-13-long-train/results.md); greedy PER 0.1210). The guard commits 104 of 701 trials; 17 commits are wrong (wrong-commit 0.0243, CP95 upper 0.0385 < alpha 0.05), so the value is certified. Of 4,675 words, 504 are committed and right. 218.3 min neural time + 8.2 min corrections give **2.23 safe WPM**. This is below the no-BCI reference (4.02). Controls: shuffled 0/300, uniform 0/300 commits (pass). The eWPM of this drop-in config is not computed here; the M4-13 results page gives eWPM 9.94 for a different config (M2-19 + commit gate, 91 commits).
+
+> **Our take:** M4-13 moves the T15 drop-in row from 0.00 (M4-12, 2 of 2 commits wrong) to 2.23, with 87 of 104 commits right. It is still about half of gaze typing. The error among commits (0.163) is the limit: each wrong commit costs about 5 s of correction, and only 15 % of trials commit.
 
 ## Timing per set
 | Set | Neural time | Source |
@@ -65,4 +70,5 @@ Stage `t15-m4-12-recompute` runs the M4-13 code path (calibrate on val_select, d
 - Toronto values are an aggregate approximation (committed-right words = `share_words_system` x test words; penalty at the mean sentence length).
 - The T15 / T12 trial windows include time outside speech, so those values are conservative.
 - No reading time for committed text. The correction penalty uses the `aac-gaze-v1` constants; other user models give other values.
+- The M4-13 row has no eWPM (the stage does not compute it).
 - Not computed: emg2qwerty LDA demo (3 of 3 commits wrong, so 0; no per-trial timing export), KT-sEMG and Willett T12 handwriting (no trust-guarded decoder outputs yet), P11-01 EMG decoder (training).

@@ -1,0 +1,156 @@
+{
+ "task": "P3-08",
+ "decoder": "m4-13",
+ "receiver": "websocket",
+ "fidetype_version": "0.0.1",
+ "date": "2026-11-17 21:14",
+ "dataset": "Brain-to-Text '25 T15 (CC0), val_eval only",
+ "replay": {
+  "trials": 120,
+  "of": 701,
+  "frames": 26394,
+  "stream_seconds": 2171.5
+ },
+ "decoder_checkpoint_sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72",
+ "guard": {
+  "alpha": 0.05,
+  "delta": 0.1,
+  "seed": 0,
+  "input_kind": "nbest",
+  "calibration": "val_select",
+  "null_control": "200 time-shuffled val_select trials"
+ },
+ "budget_ms": 50.0,
+ "within_budget": true,
+ "latency_ms": {
+  "receive": {
+   "n": 120,
+   "p50": 0.048,
+   "p95": 0.088,
+   "p99": 0.177,
+   "max": 1.136,
+   "mean": 0.06
+  },
+  "processor.check": {
+   "n": 120,
+   "p50": 0.008,
+   "p95": 0.016,
+   "p99": 0.054,
+   "max": 0.058,
+   "mean": 0.01
+  },
+  "processor.guard": {
+   "n": 120,
+   "p50": 1.119,
+   "p95": 1.823,
+   "p99": 2.528,
+   "max": 3.862,
+   "mean": 1.207
+  },
+  "processor.seg": {
+   "n": 120,
+   "p50": 0.002,
+   "p95": 0.004,
+   "p99": 0.004,
+   "max": 0.005,
+   "mean": 0.002
+  },
+  "exporter.aac": {
+   "n": 120,
+   "p50": 0.003,
+   "p95": 0.004,
+   "p99": 0.006,
+   "max": 0.007,
+   "mean": 0.003
+  },
+  "exporter.log": {
+   "n": 120,
+   "p50": 0.019,
+   "p95": 0.071,
+   "p99": 0.113,
+   "max": 0.16,
+   "mean": 0.026
+  },
+  "exporter.nts": {
+   "n": 120,
+   "p50": 0.025,
+   "p95": 0.051,
+   "p99": 0.071,
+   "max": 0.08,
+   "mean": 0.028
+  },
+  "exporter.typing": {
+   "n": 120,
+   "p50": 0.002,
+   "p95": 0.019,
+   "p99": 0.05,
+   "max": 0.159,
+   "mean": 0.006
+  },
+  "pipeline": {
+   "n": 120,
+   "p50": 1.203,
+   "p95": 1.915,
+   "p99": 2.604,
+   "max": 4.034,
+   "mean": 1.288
+  },
+  "added": {
+   "n": 120,
+   "p50": 1.245,
+   "p95": 1.971,
+   "p99": 2.646,
+   "max": 4.092,
+   "mean": 1.348
+  },
+  "e2e": {
+   "n": 120,
+   "p50": 1.628,
+   "p95": 2.393,
+   "p99": 2.944,
+   "max": 4.372,
+   "mean": 1.695
+  }
+ },
+ "decision_steps": 120,
+ "conformance": {
+  "producer_level": "trust-ready",
+  "levels": {
+   "core": true,
+   "full": true,
+   "trust-ready": true
+  },
+  "why_not_higher": [],
+  "targets": [
+   {
+    "target": "stream.nts.jsonl",
+    "form": "jsonl-stream",
+    "verdict": "pass-with-warnings",
+    "stream_level": "provenance",
+    "fails": []
+   },
+   {
+    "target": "decisions.jsonl",
+    "form": "jsonl-decision-log",
+    "verdict": "pass",
+    "stream_level": null,
+    "fails": []
+   }
+  ]
+ },
+ "decisions": 120,
+ "segments": 120,
+ "actions": {
+  "COMMIT": 16,
+  "OFFER": 104
+ },
+ "typed": 16,
+ "committed": 16,
+ "typed_only_commits": true,
+ "wrong_commits": 3,
+ "stop_reason": "max_streams",
+ "wall_s": 2171.092,
+ "frames": 26394,
+ "producer_errors": [],
+ "online_threshold": 0.7750000000000002
+}

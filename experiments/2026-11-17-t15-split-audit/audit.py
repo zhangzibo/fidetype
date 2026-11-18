@@ -136,15 +136,20 @@ def main() -> None:
 
     # 5. P6-08 partial entry (M4-12 + guard): scored units -> M4 part
     h2pkl = {id_hash("b2t25-t15", f"t15-copytask-{m['pkl_index']:04d}"): m["pkl_index"] for m in match}
-    sub = DER / "p6-02b-v02-entries" / "submissions" / "b2t25-t15__m4-12__guard" / "units.jsonl"
-    units = []
-    with sub.open(encoding="utf-8") as f:
-        for line in f:
-            r = json.loads(line)
-            if "unit" in r:
-                units.append(r["unit"])
-    pc = Counter((by_index[h2pkl[u]]["track_split"], by_index[h2pkl[u]]["m4_part"] or "unmatched") for u in units)
-    res["p6_08_partial_scored_units"] = {"n": len(units), "track_split|m4_part": {f"{a}|{b}": n for (a, b), n in pc.items()}}
+    # (and the same check for the M4-13 entry, when its submission exists)
+    for model, key in (("m4-12", "p6_08_partial_scored_units"), ("m4-13", "p6_08_m4_13_partial_scored_units")):
+        sub = DER / "p6-02b-v02-entries" / "submissions" / f"b2t25-t15__{model}__guard" / "units.jsonl"
+        if not sub.exists():
+            res[key] = "submission not present yet"
+            continue
+        units = []
+        with sub.open(encoding="utf-8") as f:
+            for line in f:
+                r = json.loads(line)
+                if "unit" in r:
+                    units.append(r["unit"])
+        pc = Counter((by_index[h2pkl[u]]["track_split"], by_index[h2pkl[u]]["m4_part"] or "unmatched") for u in units)
+        res[key] = {"n": len(units), "track_split|m4_part": {f"{a}|{b}": n for (a, b), n in pc.items()}}
     # calibration of that entry: val_select minus every val_select trial with (day, sentence) of a test trial;
     # check: strict-matched val_select<->test trials all removed?
     texts = json.loads((DER / "m4-01-02-lookahead" / "texts.json").read_text(encoding="utf-8"))

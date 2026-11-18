@@ -864,6 +864,61 @@
     "config_id": "tcfg-fcd45cf2cc381ca7",
     "ci_note": "no CI: one participant; a trial bootstrap would be too narrow (see docs/safe-wpm.md)"
    }
+  },
+  "t15-m4-13": {
+   "seconds": 320.1,
+   "result": {
+    "definition": "safe-wpm/0.1",
+    "value": 2.2253170716630644,
+    "ci": null,
+    "status": "certified",
+    "unguarded_wpm": 2.2253170716630644,
+    "wpm_no_penalty": 2.30889397564972,
+    "method": "ltt",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_cal": 271,
+    "calibration": "722 items: 180 fit + 271 grid + 271 LTT (fidetype.trust.calibrate)",
+    "confidence": "probability >= 0.9 over calibration draws",
+    "measured_wrong_commit": 0.024251069900142655,
+    "measured_wrong_commit_cp95": [
+     0.0142,
+     0.0385
+    ],
+    "n_trials": 701,
+    "n_commits": 104,
+    "n_wrong_commits": 17,
+    "n_correct_commits": 87,
+    "error_among_commits": 0.16346153846153846,
+    "committed_correct_words": 504,
+    "total_words": 4675,
+    "minutes_neural": 218.28633333333335,
+    "minutes_correction": 8.198245614035086,
+    "timing": "measured trial duration: 20 ms neural bins per val_eval trial (B2T '25)",
+    "correction_rule": {
+     "name": "rewrite",
+     "overhead_s": 2.0,
+     "s_per_char": 0.7894736842105263,
+     "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+    },
+    "no_bci_wpm": 4.015288155973546,
+    "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+    "controls": {
+     "shuffled": "pass",
+     "zeros": "pass",
+     "null_commit": "pass",
+     "passed": true,
+     "commit_rate_zeros": 0.0,
+     "basis": {
+      "shuffled": "drop-in null control 'shuffled': 0/300 commits (allowed 15)",
+      "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+      "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+     }
+    },
+    "set": "T15 M4-13 (val_eval 701) + drop-in guard (P14-03 recipe, recomputed)",
+    "config_id": "tcfg-1016759f08a3f9a1",
+    "ci_note": "no CI: one participant; a trial bootstrap would be too narrow (see docs/safe-wpm.md)"
+   }
   }
  }
 }

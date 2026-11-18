@@ -53,7 +53,7 @@ No M4 decoder reads the HDF5 `test` partition. All three use the same derived fi
 | `logprobs-m4-12-fixed0.npz` keys (701): on a train trial / on a val_select trial | **0 / 0** (all 701 are `val_eval`) |
 | `logprobs-m4-01-la-fixed0.npz` keys (701): on a train / val_select trial | **0 / 0** |
 | `logprobs-m2-19-m4-12-fixed0.npz` (722 val_select + 701 val_eval): on a train trial | **0** |
-| M4-13 `val_eval` / `val_select` log-probs | not written yet (the M4-13 queue and the trust-reruns queue make them) |
+| M4-13 `val_eval` (701) / `val_select` (722) log-probs: on a train trial; `val_eval` keys on a val_select trial | **0 / 0; 0** (checked 2026-11-17, audit rerun) |
 | Hallucination split `halluc-v0.1/b2t25-t15-val-eval.json`: ids equal to the `val_eval` ids | **701 / 701** |
 | Track split we rebuilt = committed v0.1 split file; = v0.2 hashes | **yes / yes** |
 
@@ -79,7 +79,7 @@ Legend: **clean** = no trial in two roles. **clean, not comparable** = clean, bu
 | "B2T ours" x always-commit / plug-in / CRC / LTT (v0.1 and v0.2, 8 cards) | **not M4**: published online RNN logits (pkl) + our phoneme-beam CMUdict word decoder (m6-06, no trained weights) | 3 word-decoder settings tuned on 400 track `cal` trials ([b2t25-trust](../../experiments/2026-11-10-b2t25-trust/run.py) `stage_tune`, seed 0) | 812 track `cal` | 816 track `test` | 0 (tune ⊂ cal) | 0 | **clean** |
 | "B2T published" x 4 policies (8 cards) | published online RNN + published word output | Card et al. online decoder (trained before each evaluation block, per the paper; we cannot check this) | 812 `cal` | 816 `test` | n/a (not ours) | 0 | **clean** (as published) |
 | `b2t25-t15__m4-12__guard` (v0.2, partial) | M4-12 `fixed0` | HDF5 train | 616 `val_select` (106 that match a track test trial removed; 0 strict matches left) | 103 track test units | **0**: 98 strict `val_eval`; the other 5 have only a `val_eval` same-day, same-sentence candidate (frame count off); none in train or val_select | 0 | **clean**, partial 103/816, not comparable to full entries (gap 30 = P6-07) |
-| M4-13 one-command entry (`run.py t15-m4-13`, not run) | M4-13 | HDF5 train (same partitions) | val_select minus track test trials | val_eval track test units | 0 by design (same code) | 0 | **clean by design**. Rerun [audit.py](../../experiments/2026-11-17-t15-split-audit/audit.py) when the M4-13 log-probs exist |
+| `b2t25-t15__m4-13__guard` (v0.2, partial; run 2026-11-17) | M4-13 `long0` | HDF5 train (same partitions) | 616 `val_select` (same 106 removed) | 103 track test units | **0**: 98 strict `val_eval`, 5 with only a `val_eval` candidate (same units as M4-12); none in train or val_select | 0 | **clean** (audit rerun 2026-11-17), partial 103/816 |
 
 ### M4-x results on `val_eval`
 
@@ -140,6 +140,10 @@ Known and already stated (no new gap): every M4 guard is calibrated on `val_sele
 ## Follow-up 2026-11-17: gaps 44 and 45 closed (P14-18, P14-19)
 - **P14-18 (gap 44): effect, favourable.** We reran the M4 word decodes of `val_eval` with the setting tuned without the 16 `val_eval` tune trials (edit penalty 8). The result is 14 of 166 metrics moving by their CI half-width: 1 in M4-12 (truth in n-best of one condition), 11 in the superseded M4-01/02 rows (WER at the frozen T 0.019-0.023 lower), and 2 in P14-03 (2 wrong commits become 0). Every change favours edit 8, so the overlap did not make the committed M4 rows optimistic ([results](../../experiments/2026-11-17-p14-18-19-followups/results.md)). Gap 50 (P14-21) reruns the downstream M4-x rows.
 - **P14-19 (gap 45): re-split rows clean; forward chain corrected.** The rebuilt published-gate and guard-off re-split tables show no effect (0 of 240). The forward-chain prefix "day 1 only" (edit 8) changes 9 plug-in-rule rows and the V3 LTT max counts (ours 2/13 → 1/13, published 1/13 → 0/13); after the fix no day has a CP lower bound above α. A correction note informs the paper track (`papers/paper1/correction-2026-11-17-p14-19.md`). Gap 51 (P14-22) covers the R3-level analyses not rerun.
+
+## Follow-up 2026-11-17: M4-13 entry checked
+
+- **2026-11-17 (M4-13 rows):** we reran [audit.py](../../experiments/2026-11-17-t15-split-audit/audit.py) (4 s CPU) after the M4-13 log-probs and the M4-13 v0.2 entry existed. `audit.py` now also reads the M4-13 submission. Results ([counts](../../experiments/2026-11-17-t15-split-audit/results/audit-counts.json)): M4-13 `val_eval` log-probs 701 keys, all `val_eval`, 0 on a train trial, 0 on a `val_select` trial; M4-13 `val_select` log-probs 722 keys, 0 on a train trial. The partial entry `b2t25-t15__m4-13__guard` scores 103 units: 98 strict `val_eval` matches and 5 units with only a `val_eval` candidate, none in train or `val_select`. Its calibration removes the same 106 `val_select` trials (616 kept, 0 strict test matches left). **Clean.**
 
 ## Limits of this audit
 

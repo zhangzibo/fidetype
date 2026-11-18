@@ -811,6 +811,38 @@
     "safe_wpm_s": "12.24 [11.05, 13.51] (LTT a=0.05 d=0.1)"
    },
    {
+    "entry_id": "b2t25-t15/m4-13/guard",
+    "track": "b2t25-t15",
+    "decoder": "M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units]",
+    "policy": "drop-in guard (P14-03 recipe)",
+    "cer": 0.06704260651629072,
+    "wer": 0.1126331811263318,
+    "ewpm": 12.834725635147173,
+    "ewpm_ci": [
+     11.28103441196649,
+     14.652918054318961
+    ],
+    "gaze_ewpm": 4.116541353383459,
+    "wrong_commit_rate": 0.02912621359223301,
+    "error_among_commits": 0.15789473684210525,
+    "commit_rate": 0.18446601941747573,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=231; test 0.029 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 103,
+    "ci_unit": "group",
+    "notes": [
+     "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries."
+    ],
+    "file": "b2t25-t15__m4-13__guard.json",
+    "safe_wpm": 4.065168084942968,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "4.07 [2.51, 5.74] (LTT a=0.05 d=0.1)"
+   },
+   {
     "entry_id": "b2t25-t15/ours/always-commit",
     "track": "b2t25-t15",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",

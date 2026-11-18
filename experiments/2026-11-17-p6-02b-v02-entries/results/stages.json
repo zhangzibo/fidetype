@@ -151,5 +151,23 @@
   },
   "commits": 0,
   "seconds": 346.9
+ },
+ "t15-m4-13": {
+  "model": "m4-13",
+  "day_offset": 197,
+  "n_val_select": 722,
+  "n_cal_used": 616,
+  "n_val_eval": 701,
+  "n_scored": 103,
+  "config_id": "tcfg-995e4aad89eb96aa",
+  "sheet": {
+   "n_items": 616,
+   "n_fit": 154,
+   "n_ltt": 231,
+   "feasible": true,
+   "commit_threshold": 0.51
+  },
+  "commits": 19,
+  "seconds": 276.2
  }
 }

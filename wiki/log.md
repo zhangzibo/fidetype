@@ -1133,3 +1133,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - 0.1 scoring kept (`--protocol 0.1`; CI still reproduces the 0.1 cards). New cards in `benchmark/results/halluc-v0.2/`. Docs section 1.1.
 - M4-13: no rerun outputs yet; `add_m4_13.py` adds the entries in one command (dry run matches the queue's dry aggregates).
 - New gap 52 = P15-21: absolute bound on unsupported swapped commits next to the ratio rule; pair-independence check.
+
+## [2026-11-17] query | M4-13 rows: safe WPM, benchmark v0.2 entry, collector replay, split audit; new gap 53
+- Safe WPM (P14-05, `run.py t15-m4-13`, 320 s CPU): T15 val_eval 701, M4-13 + drop-in guard (P14-03 recipe, `tcfg-1016759f08a3f9a1`): 2.23, certified; 104 commits, 17 wrong (0.0243, CP95 [0.0142, 0.0385]); no-BCI 4.02. M4-12 was 0.00. Rows in [P14-05 results](../experiments/2026-11-16-p14-05-safe-wpm/results.md) and `docs/safe-wpm.md` section 5.
+- Benchmark v0.2 (`run.py t15-m4-13 score-m4-13 table`, 276 s): `b2t25-t15__m4-13__guard`, partial 103/816 units (val_eval only; card `coverage.partial`, board `[partial: 103/816 units]`): CER 0.067, WER 0.113, eWPM 12.83, safe WPM 4.07 [2.51, 5.74] certified (19 commits, 3 wrong), no-BCI 4.12; controls pass. Static board rebuilt; Pages not published.
+- Collector replay (P3-08, `--decoder m4-13`, 120 trials, 2,171 s real time over WebSocket 127.0.0.1): p50 / p95 / p99 added 1.25 / 1.97 / 2.65 ms (PASS vs 50 ms); 16 COMMIT, 104 OFFER, 3 wrong commits; os_text typed only the 16 commits; producer level NTS Trust-ready.
+- [T15 split audit](questions/t15-split-audit.md) rerun (`audit.py` now also reads the M4-13 submission): M4-13 val_eval 701 / val_select 722 keys, 0 on train; entry 103 units clean.
+- New gap 53 = P14-23: T15 safe WPM above the no-BCI reference with our causal decoder. Gap 50 (P14-21) now also lists these rows (edit-12 word decoder).

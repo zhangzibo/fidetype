@@ -33,3 +33,7 @@
 2026-11-16 22:29:23 t15-m4-12: calibrated tcfg-fcd45cf2cc381ca7 in 302 s
 2026-11-16 22:31:24 T15 M4-12 (val_eval 701) + drop-in guard (P14-03 recipe, recomputed): safe WPM 0.00 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 2/701 = 0.0029; commits 2; unguarded 0.00; no-BCI 4.02)
 2026-11-16 22:31:24 stage t15-m4-12-recompute done in 433 s
+2026-11-17 20:22:27 stage t15-m4-13 start
+2026-11-17 20:26:19 t15-m4-13: calibrated tcfg-1016759f08a3f9a1 in 227 s
+2026-11-17 20:27:47 T15 M4-13 (val_eval 701) + drop-in guard (P14-03 recipe, recomputed): safe WPM 2.23 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 17/701 = 0.0243; commits 104; unguarded 2.23; no-BCI 4.02)
+2026-11-17 20:27:47 stage t15-m4-13 done in 320 s
