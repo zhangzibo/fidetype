@@ -1,14 +1,13 @@
-# PROPOSED release workflow for the Fidetype SDKs. It is an EXAMPLE: GitHub does not run files
-# outside .github/workflows/, so this file does nothing where it is.
+# Release workflow for the Fidetype SDKs (PyPI, npm, crates.io).
 #
-# To use it (maintainer only), see docs/RELEASING.md:
-#   1. Do the one-time registry setup (section 3: trusted publishers, environments with a required reviewer).
-#   2. Copy this file to .github/workflows/release.yml in a reviewed pull request.
-#   3. Run it from the Actions tab. It has no push or tag trigger: it runs only by hand.
-#
-# Each publish job runs in a protected environment (release-pypi, release-npm, release-crates),
-# so GitHub waits for your approval before anything is uploaded.
-# Check the action versions before you copy the file; pin them to the versions used in tests.yml.
+# It NEVER runs by itself: the only trigger is workflow_dispatch (a maintainer clicks "Run workflow"
+# in the Actions tab). It has no push, tag, schedule or pull_request trigger.
+# With target "dry-run" it only builds and checks the package. A publish needs:
+#   1. the one-time registry setup (docs/RELEASING.md section 3: trusted publishers),
+#   2. the protected environments release-pypi, release-npm, release-crates (required reviewer),
+#   3. an existing tag py-vX.Y.Z, ts-vX.Y.Z or rs-vX.Y.Z whose version equals the package version.
+# Without the trusted-publisher setup, every upload step fails; nothing is published.
+# Step-by-step guide: docs/publishing-checklist.md.
 name: release
 
 on:
@@ -50,7 +49,7 @@ jobs:
           test "py-v$v" = "${{ inputs.tag }}" || { echo "tag ${{ inputs.tag }} != py-v$v"; exit 1; }
       - run: uvx --from build pyproject-build --installer uv --outdir dist .
       - run: uvx twine check --strict dist/*
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: python-dist
           path: dist/
@@ -63,7 +62,7 @@ jobs:
     permissions:
       id-token: write   # PyPI trusted publishing (OIDC) + attestations
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: python-dist
           path: dist/

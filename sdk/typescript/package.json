@@ -24,7 +24,7 @@
     "directory": "sdk/typescript"
   },
   "license": "Apache-2.0",
-  "author": "zhangzibo",
+  "author": "Zibo Zhang",
   "type": "module",
   "engines": {
     "node": ">=18"

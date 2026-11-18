@@ -1,6 +1,6 @@
 # Fidetype TypeScript SDK (`@fidetype/sdk`)
 
-> Part of [Fidetype](../../README.md). Status: NTS 1.0 is a draft RC ([RC4](../../spec/nts-1.0-rc4.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](../../docs/sdks.md).
+> Part of [Fidetype](https://github.com/zhangzibo/fidetype/blob/main/README.md). Status: NTS 1.0 is a draft RC ([RC4](https://github.com/zhangzibo/fidetype/blob/main/spec/nts-1.0-rc4.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](https://github.com/zhangzibo/fidetype/blob/main/docs/sdks.md).
 
 TypeScript SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. It works in Node (>= 18) and in the browser (ESM). The core has **zero runtime dependencies** and no Node API.
 
@@ -28,9 +28,9 @@ npm test          # unit tests + golden vectors
 npm run conformance
 ```
 
-Not yet published to npm; the package is ready ([docs/RELEASING.md](../../docs/RELEASING.md)). After the first release: `npm install @fidetype/sdk`. Until then, in another local project: `npm install ../path/to/sdk/typescript`.
+Not yet published to npm; the package is ready ([docs/RELEASING.md](https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md)). After the first release: `npm install @fidetype/sdk`. Until then, in another local project: `npm install ../path/to/sdk/typescript`.
 
-The package is **ESM only** (`import`, not `require`, on Node 18-20). Entry points: `@fidetype/sdk` (browser-safe core) and `@fidetype/sdk/node` (file helpers and the conformance runner). The npm tarball contains only `dist/` (`.js` + `.d.ts`), `bin/`, `README.md`, `CHANGELOG.md` and `LICENSE`. It does not contain the golden vectors: outside the repository, run `fidetype-ts conformance --vectors DIR` with `spec/conformance/` of a checkout. Changes: [CHANGELOG.md](CHANGELOG.md).
+The package is **ESM only** (`import`, not `require`, on Node 18-20). Entry points: `@fidetype/sdk` (browser-safe core) and `@fidetype/sdk/node` (file helpers and the conformance runner). The npm tarball contains only `dist/` (`.js` + `.d.ts`), `bin/`, `README.md`, `CHANGELOG.md` and `LICENSE`. It does not contain the golden vectors: outside the repository, run `fidetype-ts conformance --vectors DIR` with `spec/conformance/` of a checkout. Changes: [CHANGELOG.md](https://github.com/zhangzibo/fidetype/blob/main/sdk/typescript/CHANGELOG.md).
 
 ## Examples
 
@@ -190,7 +190,7 @@ The SDK has its own small JSON Schema validator, DEFLATE decoder, NPY reader and
 
 ## Open items
 
-- **npm publishing is a user decision.** The package is ready: `npm pack` and a clean install pass in CI (job `packaging`). The name `@fidetype/sdk` was free on 2026-11-14; the scope needs an npm organization `fidetype`. Versioning, the release checklist and trusted publishing: [docs/RELEASING.md](../../docs/RELEASING.md).
+- **npm publishing is a user decision.** The package is ready: `npm pack` and a clean install pass in CI (job `packaging`). The name `@fidetype/sdk` was free on 2026-11-14; the scope needs an npm organization `fidetype`. Versioning, the release checklist and trusted publishing: [docs/RELEASING.md](https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md).
 - Optional: an IIFE bundle for the offline demo (`demo/index.html` works from `file://`, which cannot load ES modules).
 - FEP-0002: a full TypeScript trust layer (decoding and policy) is not part of this SDK.
 - The parity fuzz mutates JSON vectors only, not NPZ files.

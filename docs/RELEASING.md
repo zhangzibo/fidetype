@@ -1,6 +1,6 @@
 # Releasing the Fidetype SDKs
 
-This page tells a maintainer how to version and publish the three reference SDKs. **Publishing is a maintainer decision.** No automation in this repository publishes anything by itself.
+This page tells a maintainer how to version and publish the three reference SDKs. **Publishing is a maintainer decision.** No automation in this repository publishes anything by itself. The weekend step-by-step guide (accounts, commands, checks, rollback, time per step) is [docs/publishing-checklist.md](publishing-checklist.md).
 
 | SDK | Folder | Registry | Package name | Version source of truth | Changelog |
 |---|---|---|---|---|---|
@@ -77,7 +77,7 @@ A name is not reserved until the first publish. Check again just before the firs
 
 ### 3.2 GitHub
 1. Create three **environments** in the repository settings: `release-pypi`, `release-npm` and `release-crates`. For each, add a **required reviewer** (yourself). Then no publish job runs without your click.
-2. Restrict each environment to tags that match `py-v*`, `ts-v*` or `rs-v*` (Deployment branches and tags → Selected).
+2. Restrict each environment to the branch `main` (Deployment branches and tags → Selected branches and tags → `main`). The workflow is started from `main` and checks out the tag that you type.
 
 ### 3.3 PyPI (trusted publishing)
 1. Create a PyPI account and turn on 2FA.
@@ -96,11 +96,11 @@ A name is not reserved until the first publish. Check again just before the firs
 3. On the crate settings page, add a **trusted publisher**: GitHub, owner `zhangzibo`, repository `fidetype`, workflow `release.yml`, environment `release-crates`. Later releases from the workflow need no token.
 
 ## 4. Release workflow
-A proposed workflow is in [docs/release-workflow.example.yml](release-workflow.example.yml). It is **not** in `.github/workflows/`, so GitHub never runs it. To use it:
+The workflow is [.github/workflows/release.yml](../.github/workflows/release.yml) (it was `docs/release-workflow.example.yml` until 2026-11-18). Its only trigger is `workflow_dispatch`: GitHub never runs it by itself. Without the setup of section 3, every upload step fails. To use it:
 
 1. Do the one-time setup (section 3).
-2. Copy it to `.github/workflows/release.yml` in a reviewed pull request.
-3. Run it by hand from the Actions tab (`workflow_dispatch` only): choose the SDK, the tag and the target (`testpypi` or `pypi` for Python; `dry-run` or `publish` for npm and crates.io).
+2. Push the tag (section 2, step 7).
+3. Run it by hand from the Actions tab (Use workflow from: `main`): choose the SDK, the tag and the target (`dry-run` builds and checks only; `testpypi` or `pypi` for Python; `publish` for npm and crates.io).
 
 What the workflow does:
 - It checks out the tag. It checks that the tag version equals the package version.

@@ -7,7 +7,9 @@ abstract: >-
   It defines the NeuralTextStream format for the output of any neural input
   decoder, and it calibrates, abstains and flags hallucinated text.
 authors:
-  - alias: zhangzibo
+  - given-names: Zibo
+    family-names: Zhang
+    alias: zhangzibo
 repository-code: "https://github.com/zhangzibo/fidetype"
 url: "https://github.com/zhangzibo/fidetype"
 license: Apache-2.0

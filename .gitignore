@@ -76,3 +76,6 @@ wiki/progress/fragments/.merge.lock
 /agent-memory/
 # H-5: archived tracker fragments (tracker.json holds the merged result; build.js does not read them)
 wiki/progress/fragments/archive/
+
+# Static site build output (node tools/site/build.js; docs/publishing-checklist.md)
+/_site/

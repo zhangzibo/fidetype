@@ -28,6 +28,7 @@ The sections follow the plan for the future documentation site ([docs site plan]
 | Specification | [../spec/README.md](../spec/README.md) | All spec versions; the current draft is [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) |
 | Proposals (FEPs) | [../spec/README.md#proposals-feps](../spec/README.md#proposals-feps) | Enhancement proposals and how to write one |
 | Releasing | [RELEASING.md](RELEASING.md) | Versioning policy and the release checklist of each SDK (maintainers) |
+| Publishing checklist | [publishing-checklist.md](publishing-checklist.md) | First public release, step by step: accounts, commands, checks, rollback, time per step (maintainers) |
 | Project | [../GOVERNANCE.md](../GOVERNANCE.md), [../CONTRIBUTING.md](../CONTRIBUTING.md) | Governance, decision process, how to contribute |
 
 ## Status in one table

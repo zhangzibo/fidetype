@@ -7,7 +7,7 @@ description = "An open trust layer for neural text entry: calibrated, abstaining
 requires-python = ">=3.12"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-authors = [{ name = "zhangzibo" }]
+authors = [{ name = "Zibo Zhang" }]
 keywords = [
     "brain-computer-interface",
     "bci",
