@@ -1,5 +1,7 @@
 # P15-07 results: hallucination benchmark baselines (T15, T12)
 
+> **Old protocol.** These results use protocol `fidetype.halluc/0.1` (swapped rule: commit rate <= 0.05). Protocol 0.2 (P15-15) re-scores the same outcomes with a paired swapped / real rule: 5 of the 6 systems change verdict ([P15-15 results](../2026-11-17-p15-15-halluc-0.2/results.md)).
+
 Date: 2026-11-16. Code: `fidetype.benchmark.hallucination` (protocol `fidetype.halluc/0.1`). Docs: [docs/hallucination-benchmark.md](../../docs/hallucination-benchmark.md). Runner: [run.py](run.py). CPU only. RAM stayed well under 2 GB: the decoders and the LLM run from the P15-05 / P15-06 caches (read only), and no cache miss occurred.
 
 ## Setup

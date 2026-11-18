@@ -177,9 +177,12 @@ def test_outcomes_validation():
 def test_skipped_swapped_track_is_reported():
     xs, texts = _data()
     d, _ = _toy_system(xs, texts)
-    card = HB.score_outcomes(HB.to_outcomes(HB.run_tracks(d, xs, texts, n_null=5)))
-    assert card["tracks"]["swapped"]["status"] == "not run"
-    assert card["controls_passed"] and not card["controls_complete"]
+    oc = HB.to_outcomes(HB.run_tracks(d, xs, texts, n_null=5))
+    old = HB.score_outcomes(oc, protocol="0.1")
+    assert old["tracks"]["swapped"]["status"] == "not run"
+    assert old["controls_passed"] and not old["controls_complete"]
+    card = HB.score_outcomes(oc)  # protocol 0.2: a missing swapped track is never a pass
+    assert not card["controls_passed"] and card["controls_verdict"] == HB.INSUFFICIENT
 
 
 # --- CLI: controls -> decisions file -> score -> rescore ---------------------------------------------------
@@ -230,7 +233,9 @@ def test_baseline_cards_reproduce(path):
     oc = json.loads(path.read_text(encoding="utf-8"))
     card_path = path.with_name(path.name.replace(".outcomes.json", ".card.json"))
     ref = json.loads(card_path.read_text(encoding="utf-8"))
-    card = HB.score_outcomes(oc, alpha_wrong=ref["rules"]["alpha_wrong"], alpha_fluent=ref["rules"]["alpha_fluent"])
+    assert ref["protocol"] == HB.PROTOCOL_V01 and ref["schema"] == HB.SCORECARD_SCHEMA_V01  # the old protocol, kept
+    card = HB.score_outcomes(oc, protocol=ref["protocol"], alpha_wrong=ref["rules"]["alpha_wrong"],
+                             alpha_fluent=ref["rules"]["alpha_fluent"])
     assert json.loads(json.dumps(card)) == ref
     split = json.loads((SPLITS / f"{oc['dataset']}.json").read_text(encoding="utf-8"))
     assert oc["tracks"]["real"]["n"] == split["n_real"]

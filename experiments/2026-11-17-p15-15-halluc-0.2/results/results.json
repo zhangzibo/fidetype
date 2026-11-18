@@ -1,0 +1,387 @@
+{
+ "task": "P15-15",
+ "protocol": "fidetype.halluc/0.2",
+ "rules": {
+  "swap_ratio_max": 0.5,
+  "swap_alpha": 0.05,
+  "swap_m_min": 25,
+  "control_commit_max": 0.05
+ },
+ "n_entries": 12,
+ "n_changed": 10,
+ "fluency_mode_mismatch": [],
+ "entries": [
+  {
+   "entry": "b2t24-t12-test--p14-03-guard--conservative",
+   "outcomes": "halluc-v0.1/b2t24-t12-test--p14-03-guard--conservative.outcomes.json",
+   "dataset": "b2t24-t12-test",
+   "system": "p14-03-guard",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "fail",
+    "swapped_pass": false
+   },
+   "v02": {
+    "controls": "fail",
+    "swapped": "fail",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 400,
+    "n10": 24,
+    "n01": 24,
+    "n11": 1,
+    "m": 49,
+    "Y": 25,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.6347562978834567,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.365243702116551
+   },
+   "summary_v02": "b2t24-t12-test/p14-03-guard  real commit 25/400 wrong 15 fluent-wrong 15 (conservative)  null 0/300  scrambled 0/300  swapped 25/400 FAIL (paired n10 24 n01 24 n11 1)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t24-t12-test--p14-03-guard--llm",
+   "outcomes": "halluc-v0.1/b2t24-t12-test--p14-03-guard--llm.outcomes.json",
+   "dataset": "b2t24-t12-test",
+   "system": "p14-03-guard",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "fail",
+    "swapped_pass": false
+   },
+   "v02": {
+    "controls": "fail",
+    "swapped": "fail",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 400,
+    "n10": 24,
+    "n01": 24,
+    "n11": 1,
+    "m": 49,
+    "Y": 25,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.6347562978834567,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.365243702116551
+   },
+   "summary_v02": "b2t24-t12-test/p14-03-guard  real commit 25/400 wrong 15 fluent-wrong 4 (llm-table)  null 0/300  scrambled 0/300  swapped 25/400 FAIL (paired n10 24 n01 24 n11 1)  fidetype.halluc/0.2",
+   "changed": false
+  },
+  {
+   "entry": "b2t24-t12-test--p15-05-B0_rescore--conservative",
+   "outcomes": "halluc-v0.1/b2t24-t12-test--p15-05-B0_rescore--conservative.outcomes.json",
+   "dataset": "b2t24-t12-test",
+   "system": "p15-05-B0_rescore",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "fail",
+    "swapped": "fail",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 400,
+    "n10": 14,
+    "n01": 14,
+    "n11": 1,
+    "m": 29,
+    "Y": 15,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.6797037392619756,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.32029626073801687
+   },
+   "summary_v02": "b2t24-t12-test/p15-05-B0_rescore  real commit 15/400 wrong 8 fluent-wrong 8 (conservative)  null 0/300  scrambled 0/300  swapped 15/400 FAIL (paired n10 14 n01 14 n11 1)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t24-t12-test--p15-05-B0_rescore--llm",
+   "outcomes": "halluc-v0.1/b2t24-t12-test--p15-05-B0_rescore--llm.outcomes.json",
+   "dataset": "b2t24-t12-test",
+   "system": "p15-05-B0_rescore",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "fail",
+    "swapped": "fail",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 400,
+    "n10": 14,
+    "n01": 14,
+    "n11": 1,
+    "m": 29,
+    "Y": 15,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.6797037392619756,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.32029626073801687
+   },
+   "summary_v02": "b2t24-t12-test/p15-05-B0_rescore  real commit 15/400 wrong 8 fluent-wrong 4 (llm-table)  null 0/300  scrambled 0/300  swapped 15/400 FAIL (paired n10 14 n01 14 n11 1)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t24-t12-test--p15-06-B1_rescore_G--conservative",
+   "outcomes": "halluc-v0.1/b2t24-t12-test--p15-06-B1_rescore_G--conservative.outcomes.json",
+   "dataset": "b2t24-t12-test",
+   "system": "p15-06-B1_rescore_G",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "insufficient evidence",
+    "swapped": "insufficient evidence",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "ratio_estimate": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0
+   },
+   "summary_v02": "b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400 wrong 0 fluent-wrong 0 (conservative)  null 0/300  scrambled 0/300  swapped 0/400 INSUFFICIENT EVIDENCE (paired n10 0 n01 0 n11 0)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t24-t12-test--p15-06-B1_rescore_G--llm",
+   "outcomes": "halluc-v0.1/b2t24-t12-test--p15-06-B1_rescore_G--llm.outcomes.json",
+   "dataset": "b2t24-t12-test",
+   "system": "p15-06-B1_rescore_G",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "insufficient evidence",
+    "swapped": "insufficient evidence",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "ratio_estimate": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0
+   },
+   "summary_v02": "b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400 wrong 0 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 0/400 INSUFFICIENT EVIDENCE (paired n10 0 n01 0 n11 0)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t25-t15-val-eval--p14-03-guard--conservative",
+   "outcomes": "halluc-v0.1/b2t25-t15-val-eval--p14-03-guard--conservative.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "p14-03-guard",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "insufficient evidence",
+    "swapped": "insufficient evidence",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 2,
+    "n01": 2,
+    "n11": 0,
+    "m": 4,
+    "Y": 2,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.9023885371135858,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.09761146288641392
+   },
+   "summary_v02": "b2t25-t15-val-eval/p14-03-guard  real commit 2/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 2/701 INSUFFICIENT EVIDENCE (paired n10 2 n01 2 n11 0)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t25-t15-val-eval--p14-03-guard--llm",
+   "outcomes": "halluc-v0.1/b2t25-t15-val-eval--p14-03-guard--llm.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "p14-03-guard",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "insufficient evidence",
+    "swapped": "insufficient evidence",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 2,
+    "n01": 2,
+    "n11": 0,
+    "m": 4,
+    "Y": 2,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.9023885371135858,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.09761146288641392
+   },
+   "summary_v02": "b2t25-t15-val-eval/p14-03-guard  real commit 2/701 wrong 2 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 2/701 INSUFFICIENT EVIDENCE (paired n10 2 n01 2 n11 0)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t25-t15-val-eval--p15-05-B0_rescore--conservative",
+   "outcomes": "halluc-v0.1/b2t25-t15-val-eval--p15-05-B0_rescore--conservative.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "p15-05-B0_rescore",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "insufficient evidence",
+    "swapped": "insufficient evidence",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 9,
+    "n01": 9,
+    "n11": 0,
+    "m": 18,
+    "Y": 9,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.7087989244732058,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.2912010755267943
+   },
+   "summary_v02": "b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701 wrong 2 fluent-wrong 2 (conservative)  null 0/300  scrambled 0/300  swapped 9/701 INSUFFICIENT EVIDENCE (paired n10 9 n01 9 n11 0)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t25-t15-val-eval--p15-05-B0_rescore--llm",
+   "outcomes": "halluc-v0.1/b2t25-t15-val-eval--p15-05-B0_rescore--llm.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "p15-05-B0_rescore",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "insufficient evidence",
+    "swapped": "insufficient evidence",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 9,
+    "n01": 9,
+    "n11": 0,
+    "m": 18,
+    "Y": 9,
+    "ratio_estimate": 1.0,
+    "theta_upper": 0.7087989244732058,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.2912010755267943
+   },
+   "summary_v02": "b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701 wrong 2 fluent-wrong 2 (llm-table)  null 0/300  scrambled 0/300  swapped 9/701 INSUFFICIENT EVIDENCE (paired n10 9 n01 9 n11 0)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t25-t15-val-eval--p15-06-B1_rescore_G--conservative",
+   "outcomes": "halluc-v0.1/b2t25-t15-val-eval--p15-06-B1_rescore_G--conservative.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "p15-06-B1_rescore_G",
+   "fluency": "conservative",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "insufficient evidence",
+    "swapped": "insufficient evidence",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "ratio_estimate": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0
+   },
+   "summary_v02": "b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701 wrong 0 fluent-wrong 0 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 INSUFFICIENT EVIDENCE (paired n10 0 n01 0 n11 0)  fidetype.halluc/0.2",
+   "changed": true
+  },
+  {
+   "entry": "b2t25-t15-val-eval--p15-06-B1_rescore_G--llm",
+   "outcomes": "halluc-v0.1/b2t25-t15-val-eval--p15-06-B1_rescore_G--llm.outcomes.json",
+   "dataset": "b2t25-t15-val-eval",
+   "system": "p15-06-B1_rescore_G",
+   "fluency": "llm-table",
+   "v01": {
+    "controls": "pass",
+    "swapped_pass": true
+   },
+   "v02": {
+    "controls": "insufficient evidence",
+    "swapped": "insufficient evidence",
+    "null": "pass",
+    "scrambled": "pass"
+   },
+   "paired": {
+    "n": 701,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "ratio_estimate": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0
+   },
+   "summary_v02": "b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701 wrong 0 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 INSUFFICIENT EVIDENCE (paired n10 0 n01 0 n11 0)  fidetype.halluc/0.2",
+   "changed": true
+  }
+ ]
+}

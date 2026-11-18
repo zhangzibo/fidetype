@@ -55,7 +55,7 @@ The score card holds CER / WER (key error rate on key tracks), eWPM next to the 
 
 ## Hallucination tracks
 
-The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the fluent-wrong rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Baseline score cards (T15, T12): [`results/halluc-v0.1/`](results/halluc-v0.1/). Command: `python -m fidetype.benchmark.hallucination --help`.
+The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the fluent-wrong rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Protocol `fidetype.halluc/0.2` (P15-15): the swapped track uses a paired swapped / real commit-ratio test, so a system that rarely commits cannot pass it only because it rarely commits. Score cards (T15, T12): [`results/halluc-v0.2/`](results/halluc-v0.2/) (current) and [`results/halluc-v0.1/`](results/halluc-v0.1/) (old protocol, kept). Command: `python -m fidetype.benchmark.hallucination --help`.
 
 ## How to submit
 

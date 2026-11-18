@@ -13,7 +13,7 @@ from __future__ import annotations
 import math
 from typing import Callable
 
-__all__ = ["binom_cdf", "clopper_pearson", "cp_upper"]
+__all__ = ["binom_cdf", "clopper_pearson", "cp_lower", "cp_upper"]
 
 
 def binom_cdf(k: int, n: int, p: float) -> float:
@@ -69,3 +69,13 @@ def cp_upper(k: int, n: int, delta: float) -> float:
     if n == 0:
         return 1.0
     return float(clopper_pearson(k, n, level=1.0 - 2.0 * delta, ndigits=None)[1])
+
+
+def cp_lower(k: int, n: int, delta: float) -> float:
+    """One-sided Clopper-Pearson lower bound at confidence ``1 - delta`` (0.0 for n = 0; not rounded).
+
+    It is the lower end of the two-sided interval at level ``1 - 2 delta`` (P15-15).
+    """
+    if n == 0:
+        return 0.0
+    return float(clopper_pearson(k, n, level=1.0 - 2.0 * delta, ndigits=None)[0])

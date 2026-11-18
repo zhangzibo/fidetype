@@ -1,0 +1,309 @@
+{
+ "schema": "fidetype.halluc.scorecard/0.2",
+ "protocol": "fidetype.halluc/0.2",
+ "dataset": "b2t24-t12-test",
+ "system": "p14-03-guard",
+ "fluency": {
+  "mode": "llm-table",
+  "threshold_logp_per_word": -8.916451934532247,
+  "scorer": "Qwen2.5-1.5B-Instruct Q4_K_M (P15-05/06 cache)",
+  "missing_scores_counted_fluent": 0
+ },
+ "meta": {
+  "guard_config_id": "tcfg-ca5af419ca3738f1",
+  "description": "P14-03 drop-in guard (alpha 0.05, delta 0.1), n-gram word decoder, no LLM",
+  "fidetype_version": "0.0.1",
+  "seed": 0,
+  "outcomes_file": "benchmark/results/halluc-v0.1/b2t24-t12-test--p14-03-guard--llm.outcomes.json"
+ },
+ "tracks": {
+  "real": {
+   "status": "run",
+   "n": 400,
+   "commit_rate": {
+    "k": 25,
+    "n": 400,
+    "value": 0.0625,
+    "cp95": [
+     0.0409,
+     0.0909
+    ]
+   },
+   "wrong_commit_rate": {
+    "k": 15,
+    "n": 400,
+    "value": 0.0375,
+    "cp95": [
+     0.0211,
+     0.0611
+    ]
+   },
+   "fluent_wrong_rate": {
+    "k": 4,
+    "n": 400,
+    "value": 0.01,
+    "cp95": [
+     0.0027,
+     0.0254
+    ]
+   },
+   "error_among_commits": {
+    "k": 15,
+    "n": 25,
+    "value": 0.6,
+    "cp95": [
+     0.3867,
+     0.7887
+    ]
+   },
+   "fluent_among_wrong_commits": {
+    "k": 4,
+    "n": 15,
+    "value": 0.26666666666666666,
+    "cp95": [
+     0.0779,
+     0.551
+    ]
+   }
+  },
+  "null": {
+   "status": "run",
+   "n": 300,
+   "commit_rate": {
+    "k": 0,
+    "n": 300,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0122
+    ]
+   },
+   "wrong_commit_rate": {
+    "k": 0,
+    "n": 300,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0122
+    ]
+   },
+   "fluent_wrong_rate": {
+    "k": 0,
+    "n": 300,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0122
+    ]
+   },
+   "error_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "fluent_among_wrong_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 300,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0122
+    ]
+   },
+   "pass": true,
+   "verdict": "pass"
+  },
+  "scrambled": {
+   "status": "run",
+   "n": 300,
+   "commit_rate": {
+    "k": 0,
+    "n": 300,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0122
+    ]
+   },
+   "wrong_commit_rate": {
+    "k": 0,
+    "n": 300,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0122
+    ]
+   },
+   "fluent_wrong_rate": {
+    "k": 0,
+    "n": 300,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0122
+    ]
+   },
+   "error_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "fluent_among_wrong_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 300,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0122
+    ]
+   },
+   "pass": true,
+   "verdict": "pass"
+  },
+  "swapped": {
+   "status": "run",
+   "n": 400,
+   "commit_rate": {
+    "k": 25,
+    "n": 400,
+    "value": 0.0625,
+    "cp95": [
+     0.0409,
+     0.0909
+    ]
+   },
+   "wrong_commit_rate": {
+    "k": 25,
+    "n": 400,
+    "value": 0.0625,
+    "cp95": [
+     0.0409,
+     0.0909
+    ]
+   },
+   "fluent_wrong_rate": {
+    "k": 10,
+    "n": 400,
+    "value": 0.025,
+    "cp95": [
+     0.0121,
+     0.0455
+    ]
+   },
+   "error_among_commits": {
+    "k": 25,
+    "n": 25,
+    "value": 1.0,
+    "cp95": [
+     0.8628,
+     1.0
+    ]
+   },
+   "fluent_among_wrong_commits": {
+    "k": 10,
+    "n": 25,
+    "value": 0.4,
+    "cp95": [
+     0.2113,
+     0.6133
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 25,
+    "n": 400,
+    "value": 0.0625,
+    "cp95": [
+     0.0409,
+     0.0909
+    ]
+   },
+   "pass": false,
+   "leak_commits": 10,
+   "pass_v01_rule": false,
+   "paired": {
+    "test": "paired: Y = n01 + n11 ~ Binomial(m, theta); pass iff cp_upper(Y, m, alpha) < r / (1 + r)",
+    "n": 400,
+    "n10": 24,
+    "n01": 24,
+    "n11": 1,
+    "m": 49,
+    "Y": 25,
+    "real_commits": 25,
+    "swapped_unsupported_commits": 25,
+    "ratio_estimate": 1.0,
+    "theta_hat": 0.5102040816326531,
+    "theta_upper": 0.6347562978834567,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.365243702116551,
+    "ratio_max": 0.5,
+    "alpha": 0.05,
+    "m_min": 25,
+    "verdict": "fail"
+   },
+   "verdict": "fail"
+  }
+ },
+ "controls_run": [
+  "null",
+  "scrambled",
+  "swapped"
+ ],
+ "controls_passed": false,
+ "controls_complete": true,
+ "rules": {
+  "control_commit_max": 0.05,
+  "alpha_wrong": 0.05,
+  "alpha_fluent": 0.01,
+  "swap_ratio_max": 0.5,
+  "swap_alpha": 0.05,
+  "swap_m_min": 25,
+  "swapped_rule": "paired swapped / real commit-ratio test (protocol 0.2)",
+  "null_scrambled_rule": "commit rate <= control_commit_max"
+ },
+ "headline": {
+  "fluent_wrong_rate": 0.01,
+  "fluent_wrong_cp95": [
+   0.0027,
+   0.0254
+  ],
+  "wrong_commit_rate": 0.0375,
+  "commit_rate": 0.0625,
+  "control_commits": {
+   "null": 0,
+   "scrambled": 0,
+   "swapped": 25
+  },
+  "swapped_to_real_commit_ratio": 1.0,
+  "controls_verdict": "fail",
+  "swapped_verdict": "fail"
+ },
+ "wrong_commit_le_alpha": true,
+ "fluent_wrong_le_alpha": true,
+ "controls_verdict": "fail"
+}

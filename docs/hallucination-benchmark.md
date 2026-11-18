@@ -2,7 +2,7 @@
 
 A brain-to-text decoder with a strong language model can write fluent text that the neural signal does not support. This benchmark measures that. It gives your decoder and your trust policy inputs **without** matching neural evidence, and it counts how often the system still **commits** text. It also counts wrong commits on real input that read well ("fluent-wrong").
 
-The benchmark is a set of tracks next to the [open benchmark](../benchmark/README.md). It is not a separate leaderboard. Protocol id: `fidetype.halluc/0.1`. Code: [`fidetype.benchmark.hallucination`](../src/fidetype/benchmark/hallucination.py). Roadmap item: P15-07.
+The benchmark is a set of tracks next to the [open benchmark](../benchmark/README.md). It is not a separate leaderboard. Protocol id: `fidetype.halluc/0.2` (current; P15-15). The old protocol `fidetype.halluc/0.1` (P15-07) stays available: `--protocol 0.1`. The two protocols have the same tracks and files. Only the pass rule of the `swapped` track changes (section 1.1). Code: [`fidetype.benchmark.hallucination`](../src/fidetype/benchmark/hallucination.py). Roadmap items: P15-07, P15-15.
 
 Fidetype is research software, not a medical device.
 
@@ -13,9 +13,31 @@ Fidetype is research software, not a medical device.
 | `real` | The held-out trials as recorded | Right or wrong text | No pass rule. The track gives the metrics in section 2 |
 | `null` | `n_null` trials (default 300), drawn with replacement. Each input becomes a uniform log-probability matrix of the same shape, plus Gaussian noise (σ = 0.05), renormalised per frame | Always a hallucination: the input has no information | commit rate ≤ 0.05 |
 | `scrambled` | The same `n_null` trials. The frames of each input are permuted at random | Always a hallucination: the frame order carries the text | commit rate ≤ 0.05 |
-| `swapped` | Trial `j` gives the **signal** (the evidence the trust layer checks). Trial `perm[j]` gives the **language side** (the n-best list or the language-model context) | Unsupported: any text other than the truth of trial `j`. `leak` counts commits equal to the truth of the language trial | unsupported-commit rate ≤ 0.05 |
+| `swapped` | Trial `j` gives the **signal** (the evidence the trust layer checks). Trial `perm[j]` gives the **language side** (the n-best list or the language-model context) | Unsupported: any text other than the truth of trial `j`. `leak` counts commits equal to the truth of the language trial | 0.2: paired swapped / real commit-ratio test (section 1.1). 0.1: unsupported-commit rate ≤ 0.05 |
 
-`controls_passed` is true only if every control track that ran passes. `controls_complete` is true only if all three control tracks ran.
+Each control track has a `verdict`: `pass`, `fail` or `insufficient evidence` (0.2). `controls_verdict` is `fail` if any control track fails, `pass` if all three control tracks ran and pass, else `insufficient evidence`. `controls_passed` is true only for `pass`. In 0.2 a missing swapped track is never a pass. `controls_complete` is true only if all three control tracks ran. (0.1: `controls_passed` is true if every control track that ran passes.)
+
+### 1.1 The swapped rule of protocol 0.2
+
+Why: the 0.1 rule (≤ 0.05) lets a system that rarely commits pass without a signal check. On T15 two systems with swapped commits = real commits passed it.
+
+Pairs: real item `j` and swapped item `j` have the **same signal** (trial `j`). Per pair, `R` = the real item commits, `S` = the swapped item makes an unsupported commit.
+
+| cell | R | S |
+|---|---|---|
+| `n10` | 1 | 0 |
+| `n01` | 0 | 1 |
+| `n11` | 1 | 1 |
+
+`m = n10 + n01 + n11`, `Y = n01 + n11`, `θ_r = r / (1 + r)`.
+
+| verdict | condition |
+|---|---|
+| `pass` | one-sided Clopper-Pearson upper bound (1 − α) of `Y / m` is below `θ_r`. Then P(swapped commit) / P(real commit) ≤ `r`, with error ≤ α |
+| `fail` | not pass, and `m ≥ m_min`, or the one-sided lower bound of `n01 / m` is above `θ_r` (clear evidence that the ratio is above `r`) |
+| `insufficient evidence` | all other cases. It is **not** a pass |
+
+Constants (pre-registered, [plan](../experiments/2026-11-17-p15-15-halluc-0.2/plan.md)): `r` = 0.5, α = 0.05, `m_min` = 25 (power ≥ 0.9 when the true ratio is 0.1). No pass is possible with `m` < 8. The test is conservative: `n11` counts against the system. The card shows `n10`, `n01`, `n11`, the bound and the ratio estimate (`swapped.paired`), and the old result (`swapped.pass_v01_rule`).
 
 ### Deterministic recipe
 
@@ -91,6 +113,7 @@ python -m fidetype.benchmark.hallucination score decisions.jsonl --truth truth.j
     --outcomes outcomes.json --out card.json            # add --fluency llm --llm-model model.gguf for LLM fluency
 # 4. anyone can re-score the outcomes (flags only, no text)
 python -m fidetype.benchmark.hallucination rescore outcomes.json --check card.json
+# the old protocol: add --protocol 0.1
 ```
 
 `controls.npz` holds `null/00000`, ..., `scrambled/00000`, ... in item order. It is derived from your data: keep it local.
@@ -110,9 +133,9 @@ python -m fidetype.benchmark.hallucination rescore outcomes.json --check card.js
 
 | File | Content | Public? |
 |---|---|---|
-| Split file `src/fidetype/benchmark/splits/halluc-v0.1/<dataset>.json` | Salted trial-id hashes (`sha256("<dataset>\|<trial id>")[:16]`), text hashes, `null_idx`, `swap_perm`, seed, `controls_sha256` | Yes: no text, no signal |
+| Split file `src/fidetype/benchmark/splits/halluc-v0.1/<dataset>.json` (the same for 0.1 and 0.2) | Salted trial-id hashes (`sha256("<dataset>\|<trial id>")[:16]`), text hashes, `null_idx`, `swap_perm`, seed, `controls_sha256` | Yes: no text, no signal |
 | Outcomes `*.outcomes.json` (`fidetype.halluc.outcomes/0.1`) | Per track: flag strings `committed`, `wrong`, `fluent` (`1` / `0` / `-` = not a wrong commit), `leak`. No text | Yes |
-| Score card `*.card.json` (`fidetype.halluc.scorecard/0.1`) | The metrics of section 2, the pass flags, the fluency mode | Yes |
+| Score card `*.card.json` (`fidetype.halluc.scorecard/0.2`; old: `/0.1`) | The metrics of section 2, the verdicts and pass flags, the paired swapped counts (0.2), the fluency mode | Yes |
 | Records, control inputs, truth | Texts and signals | **No.** Keep them local |
 
 **Trial ids of the T15 split (`b2t25-t15-val-eval`).** The id is `<session>|val|<i>`. `i` is the position of the trial inside the session's `val_eval` list. It is **not** the index in the HDF5 file `data_val.hdf5`. The rule (fields `id_rule` and `id_sessions` of the split file):
@@ -131,7 +154,24 @@ The benchmark ships the protocol, the split definitions and the scorer. It ships
 
 ## 5. Baselines
 
-Files: [`benchmark/results/halluc-v0.1/`](../benchmark/results/halluc-v0.1/). CI re-scores every committed outcomes file and checks that the score card is the same (`tests/test_halluc_bench.py`). Experiment: [`experiments/2026-11-16-p15-07-halluc-bench/`](../experiments/2026-11-16-p15-07-halluc-bench/results.md).
+### 5.1 Protocol 0.2 (current)
+
+Cards: [`benchmark/results/halluc-v0.2/`](../benchmark/results/halluc-v0.2/), re-scored from the committed 0.1 outcomes (the outcomes do not change). CI re-scores them (`tests/test_halluc_protocol_02.py`). Experiment: [P15-15 results](../experiments/2026-11-17-p15-15-halluc-0.2/results.md).
+
+| Set | System | Real commits | Swapped unsupported | n10 / n01 / n11 | m | Swapped verdict (0.2) | Controls 0.1 → 0.2 |
+|---|---|---|---|---|---|---|---|
+| T15 (701) | `p14-03-guard` | 2 | 2 | 2 / 2 / 0 | 4 | insufficient evidence | pass → **insufficient evidence** |
+| T15 (701) | `p15-05-B0_rescore` | 9 | 9 | 9 / 9 / 0 | 18 | insufficient evidence | pass → **insufficient evidence** |
+| T15 (701) | `p15-06-B1_rescore_G` | 0 | 0 | 0 / 0 / 0 | 0 | insufficient evidence | pass → **insufficient evidence** |
+| T12 (400) | `p14-03-guard` | 25 | 25 | 24 / 24 / 1 | 49 | fail | fail → fail |
+| T12 (400) | `p15-05-B0_rescore` | 15 | 15 | 14 / 14 / 1 | 29 | fail | pass → **fail** |
+| T12 (400) | `p15-06-B1_rescore_G` | 0 | 0 | 0 / 0 / 0 | 0 | insufficient evidence | pass → **insufficient evidence** |
+
+Both fluency modes give the same verdicts (the commit flags do not depend on fluency). No baseline passes under 0.2: none commits often **and** checks the signal (roadmap P15-16).
+
+### 5.2 Protocol 0.1 (old; kept for reference)
+
+Files: [`benchmark/results/halluc-v0.1/`](../benchmark/results/halluc-v0.1/). These cards use the old pass rule. CI re-scores every committed outcomes file with `protocol="0.1"` and checks that the score card is the same (`tests/test_halluc_bench.py`). Experiment: [`experiments/2026-11-16-p15-07-halluc-bench/`](../experiments/2026-11-16-p15-07-halluc-bench/results.md).
 
 | Set | System | Real commits | Wrong commits (CP95) | Fluent-wrong, LLM (CP95) | Fluent-wrong, conservative | Null | Scrambled | Swapped commits (CP95) | Swapped leaks | Controls |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -149,11 +189,15 @@ What the baselines show:
 - Null and scrambled: 0 commits everywhere.
 - Swapped: for the two systems without grounding, swapped commits equal real commits (`swapped_to_real_commit_ratio` = 1.0 in the card). These systems follow the language side and ignore the signal. On T12 the P14-03 guard fails the track.
 - The P15-06 guard passes all tracks but never commits on these sets.
+- Protocol 0.2 changes 5 of these 6 verdicts (section 5.1).
 
 ## 6. Limits
 
 - The controls test the trust layer and the language side **after** the decoder input. They do not test a decoder that ignores its input in other ways (for example a decoder that leaks the truth through its training data).
 - `null` and `scrambled` reuse the same trials (`idx`). The two tracks are not independent.
 - The swapped track needs a decoder interface that separates the signal from the language side. A pure end-to-end decoder cannot run it. Then the card says `"not run"` and `controls_complete` is false.
-- The pass rule (≤ 0.05) is a point check on a few hundred items. The intervals show the uncertainty. A bound with a stated confidence comes from the trust layer ([`fidetype.trust.halluc_bound`](../src/fidetype/trust/halluc_bound.py)), not from this benchmark.
+- The null and scrambled pass rule (≤ 0.05) is a point check on a few hundred items. The intervals show the uncertainty. A system that never commits passes these two tracks; the 0.2 swapped rule then gives `insufficient evidence`.
+- The 0.2 swapped rule bounds a ratio, not an absolute rate. A system that commits on most items can pass with many unsupported swapped commits, if its real commits are more than twice as many. Read the swapped commit rate next to the verdict.
+- The pairs share the signal trial; the language trial of a swapped item is the real item of another pair. The test treats the pairs as independent.
+- A bound with a stated confidence comes from the trust layer ([`fidetype.trust.halluc_bound`](../src/fidetype/trust/halluc_bound.py)), not from this benchmark.
 - Fluency depends on the model and the threshold. The `conservative` mode is the only mode that is the same on every machine.
