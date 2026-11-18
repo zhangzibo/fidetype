@@ -1,0 +1,24 @@
+2026-11-18 11:23:21 stage t15 start
+2026-11-18 11:23:28 t15: calibration 722, evaluation 701; peak 0 MB
+2026-11-18 11:28:41 p5-23-t15-m4-13 current: calibrated tcfg-f6facf5ce250df6a in 313 s; threshold 0.73; controls [('uniform', 0, 15), ('shuffled', 0, 15)]
+2026-11-18 11:30:40 p5-23-t15-m4-13 current: decided 701 in 432 s total; peak 0 MB
+2026-11-18 11:30:40 t15 current: safe WPM 2.23 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 17/701 = 0.0243; commits 104; unguarded 2.23; no-BCI 4.02)
+2026-11-18 11:31:03 p5-23-t15-m4-13 learned: calibrated tcfg-4211e41a0b5d69b9 in 23 s; threshold 0.87; controls [('uniform', 0, 15), ('shuffled', 0, 15)]
+2026-11-18 11:31:10 p5-23-t15-m4-13 learned: decided 701 in 30 s total; peak 0 MB
+2026-11-18 11:31:10 t15 learned: safe WPM 2.64 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 10/701 = 0.0143; commits 113; unguarded 2.64; no-BCI 4.02)
+2026-11-18 11:31:10 t15: current arm vs committed reference decisions: 701/701
+2026-11-18 11:31:10 stage t15 done in 469 s
+2026-11-18 11:31:22 stage t12 start
+2026-11-18 11:31:30 t12: calibration 480, evaluation 400; peak 0 MB
+2026-11-18 11:34:21 p5-23-t12-v2 current: calibrated tcfg-881af4ed88131053 in 170 s; threshold 0.3; controls [('uniform', 0, 15), ('shuffled', 0, 15)]
+2026-11-18 11:35:15 p5-23-t12-v2 current: decided 400 in 224 s total; peak 0 MB
+2026-11-18 11:35:15 t12 current: safe WPM 1.27 (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 15/400 = 0.0375; commits 25; unguarded 1.27; no-BCI 4.11)
+2026-11-18 11:35:27 p5-23-t12-v2 learned: calibrated tcfg-4131ce53f292693c in 12 s; threshold 0.28; controls [('uniform', 0, 15), ('shuffled', 0, 15)]
+2026-11-18 11:35:29 p5-23-t12-v2 learned: decided 400 in 14 s total; peak 0 MB
+2026-11-18 11:35:29 t12 learned: safe WPM 1.87 (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 15/400 = 0.0375; commits 31; unguarded 1.87; no-BCI 4.11)
+2026-11-18 11:35:29 t12: current arm vs committed reference decisions: 400/400
+2026-11-18 11:35:29 stage t12 done in 247 s
+2026-11-18 11:35:40 stage verdict start
+2026-11-18 11:35:40 verdict t15: {'verdict': 'learned beats current', 'diff': 0.41908494403466, 'half_width': 0.35393621525311536, 'diff_ci95': [0.06765600405602933, 0.7755284345622601], 'learned_safe': True, 'learned_clear_violation': False, 'learned_controls_pass': True, 'learned_feasible': True, 'learned_safe_wpm': 2.6444020156977244, 'current_safe_wpm': 2.2253170716630644}
+2026-11-18 11:35:40 verdict t12: {'verdict': 'no clear difference', 'diff': 0.5996910902088417, 'half_width': 0.7903335892899144, 'diff_ci95': [-0.17869312404722223, 1.4019740545326065], 'learned_safe': True, 'learned_clear_violation': False, 'learned_controls_pass': True, 'learned_feasible': True, 'learned_safe_wpm': 1.867605321866411, 'current_safe_wpm': 1.2679142316575693}
+2026-11-18 11:35:40 stage verdict done in 0 s

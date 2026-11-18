@@ -534,7 +534,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-23 Learned commit-confidence score for the drop-in guard
 - **Gap:** 67 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P14-23). Follow-up of P14-23, P14-03.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-18, code + pre-registration `52ef14c`, [results](../../experiments/2026-11-18-p5-23-learned-confidence/results.md)): pre-registered T15 `val_eval` 701: learned 2.64 vs p_top1 2.23, paired diff +0.42 [0.07, 0.78] > half-width 0.35, "learned beats current"; 113 commits / 10 wrong (0.0143, CP95 [0.0069, 0.0261]) vs 104 / 17; AUROC 0.889 vs 0.834; T12 replication 1.87 vs 1.27, +0.60 [-0.18, 1.40], no clear difference; controls 0/300 on both sets. Below the no-BCI 4.02 (P14-23 stays open). New gaps 73 = P5-25, 74 = P5-26.
 - **Depends on:** none (CPU, code + one pre-registered T15 replay).
 - **Source:** P14-23 [analysis](safe-wpm-bottleneck.md) (exploratory): the guard's `p_top1` has AUROC 0.83 for "top-1 exactly right" on T15 `val_eval`; it commits only 87 of 257 exactly-right sentences. A logistic score on n-best and decoder features (no LLM) has AUROC 0.87 and gives safe WPM 3.50 (168 commits, 30 wrong) against 2.23; with 2 LLM features 4.54. The guard risk is informative but unused by the commit gate (`max_guard_risk` 1.0).
 - **Done when:** `calibrate()` can fit an optional commit score on a fit part that is disjoint from the LTT part (three-way split in the sheet), the config hash covers the score, and a pre-registered T15 replay (calibrate on `val_select`, decide `val_eval`) compares it with the current `p_top1` guard on safe WPM v0.1, wrong-commit rate and controls, with the result written up either way.
@@ -545,6 +545,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-26 (metric v0.2), P5-23 (score fitting). CPU.
 - **Source:** P14-23 [analysis](safe-wpm-bottleneck.md) (exploratory): right prefixes of the T15 top-1 sentences hold 57.5 % of all words, exactly-right sentences 33.8 %. A learned, monotone prefix confidence with LTT on the wrong-prefix loss gives about 5.4 safe WPM (505 prefix commits, 23 wrong). A posterior from the 10-best alone is not feasible (shared prefixes get mass 1.0).
 - **Done when:** the guard can commit the longest prefix whose confidence passes a certified threshold (loss: the committed prefix is not a prefix of the truth; bound on the rate over all trials), the decision event says how many words are committed, the null controls cover prefixes, and a pre-registered T15 replay reports safe WPM v0.2 next to v0.1.
+
+#### P5-25 Online re-calibration for a guard with a learned commit score
+- **Gap:** 73 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P5-23). Follow-up of P5-23, P5-02.
+- **Status:** `todo`.
+- **Depends on:** P5-23 (done). CPU.
+- **Source:** P5-23 ([results](../../experiments/2026-11-18-p5-23-learned-confidence/results.md)): `TrustGuard.online(...)` (ACI, window, bandit) moves a threshold on `p_top1`; for a guard with `confidence="learned"` it raises a ValueError.
+- **Done when:** the online methods move the threshold of the learned score (the score itself stays frozen), their policy sheets state it, and a replay on T15 / T12 with the learned guard reports the online guarantee and safe WPM next to the offline learned guard.
+
+#### P5-26 Learned commit score with the precision and hallucination bounds
+- **Gap:** 74 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P5-23). Follow-up of P5-23, P5-02, P15-06.
+- **Status:** `todo`.
+- **Depends on:** P5-23 (done). CPU (LLM arm about 3 GB RAM).
+- **Source:** P5-23: `calibrate(confidence="learned")` refuses `target_precision=`, `grounding=` and `llm=` (ValueError). The precision bound and the joint fluent-wrong test choose `commit_p` on `p_top1`.
+- **Done when:** the precision LTT and the joint test can run on the learned score (same three-way split: score fit on the fit + policy-grid items, ordering and test on the LTT part as now), with unit tests of the bounds and one T15 replay that states the bounds with the learned score.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
@@ -1025,7 +1039,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-23 T15 safe WPM above the no-BCI reference with our causal decoder
 - **Gap:** 53 of the [open-gap list](open-gaps.md) (added 2026-11-17 by the M4-13 rows task). Follow-up of P14-05, M4-13.
-- **Status:** `in_progress`. Analysis done 2026-11-18 ([analysis](safe-wpm-bottleneck.md), exploratory): the guard factor (commits 87 of 257 exactly-right sentences, x 0.32) is as large as the decoder factor (x 0.34); a perfect guard at M4-13 gives 7.23. A sentence guard needs about 159 right commits (commit rate about 0.26, error among commits about 0.12) for 4.02. Levers registered as P14-26, P5-23, P5-24, P15-22, P14-27 (gaps 66-70); the item stays open until a pre-registered lever passes.
+- **Status:** `in_progress`. Analysis done 2026-11-18 ([analysis](safe-wpm-bottleneck.md), exploratory): the guard factor (commits 87 of 257 exactly-right sentences, x 0.32) is as large as the decoder factor (x 0.34); a perfect guard at M4-13 gives 7.23. A sentence guard needs about 159 right commits (commit rate about 0.26, error among commits about 0.12) for 4.02. Levers registered as P14-26, P5-23, P5-24, P15-22, P14-27 (gaps 66-70); the item stays open until a pre-registered lever passes. P5-23 (2026-11-18, pre-registered, [results](../../experiments/2026-11-18-p5-23-learned-confidence/results.md)): learned commit score 2.64 on all 701 `val_eval` trials (p_top1 guard 2.23; +0.42 [0.07, 0.78]), still below 4.02.
 - **Depends on:** M4-13 (done); P14-21 (word decoder with edit 8); P6-09 (full-coverage entry). CPU for the guard; a stronger decoder may need the GPU.
 - **Source:** M4-13 rows ([P14-05 results](../../experiments/2026-11-16-p14-05-safe-wpm/results.md)): on T15 `val_eval` (701) M4-13 + drop-in guard gives safe WPM 2.23 (certified; 104 commits, 17 wrong, error among commits 0.163), below the no-BCI reference 4.02. The partial v0.2 entry (103 units) gives 4.07 [2.51, 5.74] vs 4.12. The published Card et al. decoder gives 12.2-13.4.
 - **Done when:** a T15 entry with our causal decoder reports a certified safe WPM above the no-BCI reference on all 701 `val_eval` trials (or a full-coverage track entry), with both controls passing; or a result states with numbers which commit rate and error among commits that needs and why the current decoder and guard do not reach it.

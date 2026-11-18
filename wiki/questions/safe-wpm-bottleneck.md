@@ -18,6 +18,8 @@ updated: 2026-11-18
 - **Rule:** every fitted choice uses `val_select` only. For a new score we fit on 451 `val_select` items and run LTT (alpha 0.05, delta 0.1, exact binomial, fixed sequence) on the other 271. `val_eval` is for reporting only.
 - **Code and outputs:** local scratch scripts; aggregates and per-trial tables in `C:\Users\zhang\bci-data\derived\p14-23-analysis\` (local only, they hold text). CPU only, background class, 4 threads; the runs took about 1 minute each.
 
+> **Update 2026-11-18 (P5-23, pre-registered):** lever C1 as a library option (`calibrate(confidence="learned")`, three-way split, no certificate leak) gives **2.64** on T15 `val_eval` (p_top1 guard 2.23; paired difference +0.42 [0.07, 0.78]; 113 commits, 10 wrong; AUROC 0.889), not the exploratory 3.50. T12 replication: 1.87 vs 1.27, interval includes 0. [Results](../../experiments/2026-11-18-p5-23-learned-confidence/results.md).
+
 ## 1. Decomposition at the certified guard
 
 | factor | `val_select` (calibration) | `val_eval` (report) |

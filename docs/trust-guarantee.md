@@ -205,7 +205,7 @@ print(guard.sheet)                                   # "commit threshold  learne
 | Results | `TrustResult.commit_score` and the audit record key `commit_score`. `p_top1` is still reported |
 | Not combined (this version) | `grounding=`, `llm=`, `target_precision=` (a `ValueError`); `guard.online(...)` (a `ValueError`: the online methods move a threshold on `p_top1`) |
 
-Not guaranteed: anything beyond section 1. A learned score can commit more often than `p_top1` (more right words), but it can also commit less. It needs enough items: it is fitted on about 62 % of the calibration items, and the LTT part is the same size as before. Code: [`src/fidetype/trust/commit_score.py`](../src/fidetype/trust/commit_score.py). Pre-registered test on T15 and T12: [P5-23](../experiments/2026-11-18-p5-23-learned-confidence/plan.md).
+Not guaranteed: anything beyond section 1. A learned score can commit more often than `p_top1` (more right words), but it can also commit less. It needs enough items: it is fitted on about 62 % of the calibration items, and the LTT part is the same size as before. Code: [`src/fidetype/trust/commit_score.py`](../src/fidetype/trust/commit_score.py). Validated (pre-registered, [P5-23 results](../experiments/2026-11-18-p5-23-learned-confidence/results.md)): T15 M4-13 `val_eval` (701): safe WPM 2.64 vs 2.23 with `p_top1` (paired difference +0.42 [0.07, 0.78]), 113 commits and 10 wrong (0.0143) vs 104 and 17; T12 (400): 1.87 vs 1.27, difference not clear (interval includes 0), 15 wrong in both. Null controls 0 / 300 everywhere. One participant per set.
 
 ## 11. Online use: adaptive risk control for drift (P5-02, P15-04)
 
