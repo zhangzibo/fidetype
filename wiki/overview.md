@@ -3,7 +3,7 @@ title: Overview — non-invasive brain-to-text, where things stand
 type: overview
 tags: [synthesis, north-star, frontier]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, brain-to-text-25-copytask]
-updated: 2026-11-15
+updated: 2026-11-18
 ---
 
 # Overview
@@ -19,7 +19,16 @@ The project now aims at a frontier that we did not find in BCI work: **a BCI tha
 | **F2** | Faithful LLM decoding: a run-time grounding check against the neural evidence, a risk-controlled hallucination bound, a public hallucination benchmark | Medium-high |
 | **F3** | Cross-body language model: one output space across implant and EMG (later MEG/EEG); a new modality or a new user with minutes of data | High on paper, medium in practice |
 
-We have **no results** for these pillars yet. The first experiments (E2 for F1, E3 for F2, E1 for F3) are in roadmap phase [P15](questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads). The novelty ratings come from abstract-level searches; a focused literature check comes before any public claim.
+The first experiments (E2 for F1, E3 for F2, E1 for F3) are in roadmap phase [P15](questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads). The novelty ratings come from abstract-level searches; the focused literature check ([P15-10](questions/novelty-check-2026-11.md)) narrowed the wordings.
+
+**Frontier results so far (2026-11-18, write-ups of [P15-12](questions/north-star.md#frontier-result-write-ups-p15-12-2026-11-18)):**
+- [E2 self-teaching (F1)](questions/frontier-e2-self-teaching.md): feedback lowers PER in a T12 replay, and the wrong-commit bound holds through every update. The update gate first failed with partial feedback (P15-03a H2, H3); the default-deny gate fixed it (P15-13, G1-G6 pass). The GPU runs have not run.
+- [F1 online guarantees](questions/frontier-f1-online-guarantees.md): the `aci` bound holds with shown-only feedback; a new IPW audit has 0 / 200 violations; an independent review found one high issue, now fixed.
+- [E3 hallucination (F2)](questions/frontier-e3-hallucination.md): E3 fails its pre-registered rule (S4, fluent-wrong commits) on both T15 decoders. Grounding stops every swapped-signal commit. A certified fluent-wrong bound exists on T15 and T12. The M4-13 bound guard is the first entry that passes all hallucination-benchmark tracks.
+- [Decoder quality](questions/frontier-decoder-quality.md): M4-13 (PER 0.1210) made the guarantees useful on T15 without a method change.
+- [Safe WPM](questions/frontier-safe-wpm.md): best adopted-metric value 2.64, below gaze typing (4.02); 4.67-4.87 only under the proposed, not adopted v0.2.
+- [Personalisation and drift](questions/frontier-personalisation-drift.md): drift-triggered re-calibration halves the label cost.
+- E1 (F3) has not run yet.
 
 > **Our take:** the findings below (trust layer, guarantees, decoders, datasets) are the foundation of the north star. The trust layer becomes the guarantee engine for F1 and F2. The decoders and the datasets are the base for F3. The NTS spec and SDKs stay as internal plumbing.
 

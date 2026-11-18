@@ -1226,6 +1226,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Deliverable:** result pages in `experiments/` and the wiki for E2, E3, E1 and their follow-ups, with the plan, the exact config, the controls, a one-command rerun and the limits. Negative results are written up too.
 - **Depends on:** P15-01, P15-03, P15-05, P15-08.
 - **Done when:** each finished experiment has a result page linked from the [north star](north-star.md) and the [overview](../overview.md). Papers in PUB may cite them later; no paper deadline.
+- **Progress (2026-11-18, `in_progress`):** six write-ups exist, linked from the [north star](north-star.md#frontier-result-write-ups-p15-12-2026-11-18) and the [overview](../overview.md): [E2 self-teaching](frontier-e2-self-teaching.md), [F1 online guarantees](frontier-f1-online-guarantees.md), [E3 hallucination](frontier-e3-hallucination.md), [decoder quality](frontier-decoder-quality.md), [safe WPM](frontier-safe-wpm.md), [personalisation and drift](frontier-personalisation-drift.md). Every finished experiment has a page. Left: E1 (P15-08, not run), the P15-03 GPU runs, and the P15-24 verdict (replay running); add them to the pages when they finish.
 
 ### Exit criteria (first round)
 - E2 (F1) has a pilot and full results on T12 and T15, with the update gate in code (P15-01 … P15-04).

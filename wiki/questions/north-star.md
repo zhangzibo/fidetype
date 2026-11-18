@@ -74,6 +74,19 @@ Never say in public: "first conformal BCI", "first guarantee for an adaptive mod
 
 > **Our take:** F1 is the strongest lead. It is new as a composition, it needs no new hardware, it fits our CC0 data, and it builds directly on code that we already have (online re-calibration in [M2-16](m2-16-online-recal-result.md), [per-session risk control](per-session-risk-control.md), the [provenance ledger](../concepts/provenance-ledger.md)). The claim must be "first BCI application with a decoder-update gate", not "a new conformal theorem", unless we prove one. F2 extends the same guarantee engine to LLM output. F3 is the largest idea and the riskiest. We start it small, on one GPU, with strong controls.
 
+## Frontier result write-ups (P15-12, 2026-11-18)
+One write-up per experiment line. Each page gives the question, the pre-registration and its commit, the design, every pre-registered verdict with numbers, the negative results, the library changes, the limits and the open gaps.
+
+| write-up | pillar | steps | main pre-registered verdicts | status |
+|---|---|---|---|---|
+| [E2 self-teaching](frontier-e2-self-teaching.md) | F1 | P15-01, P15-02, P15-03a, P15-13, P15-23, P15-24 | P15-01 S4 pass, **S5 fail**; P15-02 S5 pass; P15-03a **H2, H3 fail**; P15-13 G1-G6 pass | P15-24 replay running; GPU runs (P15-03) not run |
+| [F1 online guarantees](frontier-f1-online-guarantees.md) | F1 | P15-04, G3 review + fixes (P15-17), P5-11 | R1, R3-R5 pass; review "sound with fixes" (H1 fixed) | done |
+| [E3 hallucination](frontier-e3-hallucination.md) | F2 | P15-05, P15-06, P15-14, P15-07, P15-15, M4-13 reruns | **S4 fails on M4-12 and M4-13**; bound H1-H4 pass on T15; T12 certified by V-single; M4-13 B1 first pass of all tracks (protocol 0.2) | done; P15-16 open |
+| [Decoder quality](frontier-decoder-quality.md) | base | M4-12, M4-13 | M4-12 "close" rule **fail** (PER 0.2574); M4-13 pass (0.1210) | done |
+| [Safe WPM](frontier-safe-wpm.md) | value | P14-05, P14-23, P5-23, P5-24, P14-28 | learned beats current (2.64); prefix beats sentence (4.87, v0.2); v0.1 still below 4.02 | v0.2 proposed, not adopted |
+| [Personalisation and drift](frontier-personalisation-drift.md) | F1 | P5-01, P5-09, P5-10, P5-11 | P5-01 all pass; P5-09 **S3 fail** (small-shift cost) | done |
+| E1 cross-body (F3) | F3 | P15-08 | - | **not run yet** (needs the GPU after P11-01) |
+
 ## The three pillars and their first experiments
 The feasibility study numbers the experiments by direction, not by rank: **E2 is the F1 experiment, E3 is the F2 experiment, E1 is the F3 experiment.** We keep these names so the notes and the experiment folders match.
 
