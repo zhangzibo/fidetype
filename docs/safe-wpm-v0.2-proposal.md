@@ -1,6 +1,6 @@
 # Safe WPM v0.2: proposal (prefix credit and speech time)
 
-> **Status: PROPOSED, NOT ADOPTED.** The user decides adoption at the weekend (week of 2026-11-18). Until then, `safe-wpm/0.1` ([docs/safe-wpm.md](safe-wpm.md)) stays the headline metric. No published v0.1 number changes. The scorer computes v0.2 only when the caller asks for it (`metric_version="0.2"`). Adoption needs one switch: the default of `metric_version` and the leaderboard column.
+> **Status: PROPOSED, NOT ADOPTED.** The user decides adoption at the weekend (week of 2026-11-18). Until then, `safe-wpm/0.1` ([docs/safe-wpm.md](safe-wpm.md)) stays the headline metric. No published v0.1 number changes. The scorer computes v0.2 only when the caller asks for it (`metric_version="0.2"`). Adoption needs one switch: the default of `metric_version` and the leaderboard column. **P14-28 (2026-11-18) recommends adopting v0.2 only together with a reading cost per commit (section 6).**
 
 Roadmap item: P14-26 (gap 66). Source: the [P14-23 bottleneck analysis](../wiki/questions/safe-wpm-bottleneck.md). Code: [`src/fidetype/benchmark/safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py) (`safe_wpm(..., metric_version="0.2")`, `prefix_outcome`). Tests: `tests/test_safe_wpm.py` (the `v02` tests). First user: P5-24 ([plan](../experiments/2026-11-18-p5-24-prefix-commits/plan.md)).
 
@@ -103,13 +103,76 @@ Command line: `fidetype benchmark safe-wpm --trials t.jsonl --guarantee g.json -
 
 | Option | Effect |
 |---|---|
-| Adopt v0.2 | Default `metric_version="0.2"`; the leaderboard column becomes v0.2 with a dated note; v0.1 stays as a second column. Every published sentence-level number stays the same (rule 6). |
+| Adopt v0.2 | (Recommended: with the section 6 reading cost.) Default `metric_version="0.2"`; the leaderboard column becomes v0.2 with a dated note; v0.1 stays as a second column. Every published sentence-level number stays the same (rule 6). |
 | Keep v0.1 only | v0.2 stays an opt-in research field. Prefix guards are reported with v0.2 next to v0.1 and never in place of it. |
 | Change v0.2 first | For example a stricter wrong-prefix penalty (the whole sentence, the "sentence" variant), or speech time as the headline. Each change is a new pre-registered text. |
 
 Open points for the decision:
 - The wrong-prefix penalty charges only the k replaced words. A stricter user model (the user re-reads and rewrites the whole sentence) gives the v0.1 penalty. P14-23 found the difference small on T15 (5.43 vs 5.55, exploratory).
 - One commit per trial. A streaming guard that commits word by word needs a v0.3.
-- Reading time is still 0, as in v0.1.
+- Reading time: v0.2 as committed charges 0 s, as v0.1. P14-28 recommends 0.5 s per commit + 0.3 s per committed word (section 6).
 
 > **Our take:** v0.2 removes a strictness of v0.1 that does not protect the user: a right prefix is real typed text. It keeps the safety part: every wrong commit, prefix or complete, counts against the same certified rate and costs correction time. Because v0.2 equals v0.1 for sentence-level policies, adoption changes no existing number.
+
+## 6. Reading cost (P14-28)
+
+Roadmap item P14-28 (gap 75). Pre-registration: [plan](../experiments/2026-11-18-p14-28-reading-cost/plan.md) (commit `691d743`). Results: [results](../experiments/2026-11-18-p14-28-reading-cost/results.md). **This is a sensitivity analysis:** it re-scores the fixed P5-24 decisions. It is not a new test of the guard.
+
+**Why.** On T15, 181 of the 465 prefix commits are one word. v0.2 as committed gives the user no time to read or check a commit. Many short commits could then overstate the gain.
+
+### 6.1 Scorer options
+
+`safe_wpm(..., metric_version="0.2", read_s_per_commit=c, read_s_per_word=w, min_prefix_words=m)` (CLI: `--read-s-per-commit`, `--read-s-per-word`, `--min-prefix-words`):
+
+```
+(5) read_i  = [committed_i] * (c + w * k_i)       k_i = words of the committed text (right or wrong commit)
+    time_i  = neural_s_i + [committed_i and not right_i] * penalty_i + read_i
+(6) a prefix commit (not complete) with k_i < m counts as no commit (0 words, no time)
+```
+
+Defaults c = 0, w = 0, m = 1 give the v0.2 values above. The options are refused with v0.1. A `reading_cost` block reports them. The speech-time block pays the same reading time. With c > 0 or w > 0, rule 6 of section 2.1 (v0.2 = v0.1 for sentence policies) no longer holds: a sentence commit also pays its reading time.
+
+### 6.2 Published estimates
+
+| source | value | use as a commit cost | certainty |
+|---|---|---|---|
+| Card, Moran & Newell, keystroke-level model (CACM 1980; *The Psychology of Human-Computer Interaction*, 1983) | mental operator M = 1.35 s; Kieras' guide: 0.6-1.35 s, "use 1.2 s" | one M per commit (decide to keep the text) | standard HCI constant; not measured on BCI users |
+| Brysbaert, "How many words do we read per minute?", *J. Mem. Lang.* 109:104047 (2019), 190 studies | silent reading 238 wpm (non-fiction) = 0.252 s/word | per committed word | adults under 60; not AAC users |
+| Fidetype `aac-gaze-v1` user model (`fidetype.interact.simulated_user`; checked against Cai et al., *Nat. Commun.* 2024, SpeakFaster) | verify a commit: 0.5 s + 0.3 s/word (200 wpm) | per commit + per word | **project assumption**; the eWPM simulated user already uses it |
+| Trnka, McCaw, Yarrington, McCoy & Pennington, "Word prediction and communication rate in AAC", Telehealth/AT 2008 (28 participants, 1.5 s key delay) | 2.26 s per keystroke without prediction; 2.59 (basic) / 2.95 (advanced) with prediction | overhead 0.33-0.69 s per keystroke | indirect: the list is checked at many keystrokes, not once per commit |
+| Chitnis, Yang & Geramifard, arXiv:2403.15502 (2024), inline autocomplete, N = 9 | about 21 ms per suggestion (9 ms right, 50 ms wrong) | lower bound | small study; fast able-bodied typists |
+| Li & Feit, arXiv:2602.06489 (2026), simulation | gaze shift to the suggestion bar 200 ms (SD 100) | part of a fixed cost | simulation parameter |
+| Koester & Levine, *IEEE Trans. Rehabil. Eng.* 2(3):177-187 (1994); *AAC* 12 (1996) | list search much slower for users with spinal cord injury; prediction lowered their text rate | qualitative only | **uncertain: exact seconds not obtained** (no full text here) |
+
+No source measures the time a BCI user needs to check one committed word. The values above span about 0.01 s to 1.35 s per commit plus about 0.25-0.3 s per word.
+
+### 6.3 Sensitivity (T15 `val_eval` 701, M4-13; no-BCI 4.02)
+
+| reading cost | m | prefix guard (P5-24) | sentence guard (P5-23) | Δ [95 % CI] |
+|---|---|---|---|---|
+| 0 s (as committed) | 1 | 4.87 [4.43, 5.30] | 2.64 | +2.22 [1.84, 2.59] |
+| 1 s per commit | 1 | 4.70 [4.29, 5.11] | 2.62 | +2.08 [1.70, 2.44] |
+| 3 s per commit | 1 | 4.40 [4.02, 4.77] | 2.58 | +1.82 [1.47, 2.17] |
+| **0.5 s + 0.3 s/word (`aac-gaze-v1`)** | 1 | **4.67 [4.26, 5.07]** | 2.60 | +2.07 [1.70, 2.43] |
+| 1.35 s + 0.252 s/word (KLM M + reading) | 1 | 4.55 [4.16, 4.94] | 2.58 | +1.97 [1.61, 2.32] |
+| 0 s | 2 | 4.07 [3.61, 4.51] | 2.64 | +1.43 [1.05, 1.81] |
+| 0.5 s + 0.3 s/word | 2 | 3.94 [3.51, 4.36] | 2.60 | +1.35 [0.99, 1.72] |
+| 0.5 s + 0.3 s/word | 3 | 2.97 [2.54, 3.41] | 2.60 | +0.38 [0.02, 0.73] |
+
+- **Break-even (T15, m = 1):** the prefix value falls to 4.02 at **5.99 s per commit** (or 2.52 s per committed word). With m = 2: 0.58 s. With m = 3: below 4.02 at 0 s.
+- **T12** (test 400, no-BCI 4.11): 4.76 → 4.51 [3.66, 5.42] at `aac-gaze-v1`; break-even 2.78 s per commit (m = 1). The T12 CI includes 4.11 at every cost, as before.
+- A minimum length of 2 words removes 181 T15 commits with 177 right words and 4 wrong commits. It lowers the value more than any literature reading cost.
+- Full grid (0, 0.5, 1, 2, 3 s; three user models; m = 1, 2, 3; both sets): [results](../experiments/2026-11-18-p14-28-reading-cost/results.md).
+
+### 6.4 Recommendation (rule fixed before the numbers)
+
+| decision | recommendation | reason |
+|---|---|---|
+| Reading cost in v0.2 | **Adopt c = 0.5 s per commit + w = 0.3 s per committed word** as the v0.2 default, on every commit of every entry | It is the project's existing user model. It lies inside the published range. It stops a guard from gaining by many tiny commits. |
+| Minimum prefix length | **Keep m = 1** in the metric; m is a guard design option only | m = 2 removes right text and costs more than the reading time it saves. |
+| Claim "above the no-BCI reference" (T15) | Holds under the recommended cost (4.67 [4.26, 5.07]) and up to about 6 s per commit | Pre-registered statements 1 and 2: robust, not fragile. |
+| Rule 6 | Restate it: with a reading cost, a sentence policy's v0.2 value is a little below its v0.1 value (T15 sentence guard 2.64 → 2.60) | The reading time is a real user cost for every commit. |
+
+Until the user decides, the scorer default stays c = 0, w = 0, m = 1. Adoption of the recommendation is one more default change in `safe_wpm` and the CLI.
+
+> **Our take:** the T15 gain of prefix commits under v0.2 is not an artefact of free reading time. The weak points of the v0.2 result are T12 (break-even 2.8 s, CI includes the reference) and the single participant per set, not the one-word commits.

@@ -21,6 +21,8 @@ updated: 2026-11-18
 > **Update 2026-11-18 (P5-23, pre-registered):** lever C1 as a library option (`calibrate(confidence="learned")`, three-way split, no certificate leak) gives **2.64** on T15 `val_eval` (p_top1 guard 2.23; paired difference +0.42 [0.07, 0.78]; 113 commits, 10 wrong; AUROC 0.889), not the exploratory 3.50. T12 replication: 1.87 vs 1.27, interval includes 0. [Results](../../experiments/2026-11-18-p5-23-learned-confidence/results.md).
 
 > **Update 2026-11-18 (P5-24, pre-registered):** lever A1 as a library option (`calibrate(confidence="learned", commit_unit="prefix")`) gives **4.87** [4.43, 5.30] on T15 `val_eval` under the **proposed** [safe-wpm v0.2](../../docs/safe-wpm-v0.2-proposal.md) (465 commits, 13 wrong; sentence-level learned guard 2.64; prefix beats sentence), not the exploratory 5.43. Under v0.1 the same guard gives 0.53 (literal, above alpha) or 1.03 (complete commits only). v0.2 is not adopted, so P14-23 stays open. [Results](../../experiments/2026-11-18-p5-24-prefix-commits/results.md).
+>
+> **Update 2026-11-18 (P14-28, sensitivity, decisions fixed):** with a reading / checking cost of 0.5 s per commit + 0.3 s per committed word (`aac-gaze-v1`), the P5-24 prefix guard keeps **4.67** [4.26, 5.07] under the proposed v0.2; break-even to 4.02 at 5.99 s per commit; a 2-word minimum prefix gives 3.94 ([results](../../experiments/2026-11-18-p14-28-reading-cost/results.md), [proposal section 6](../../docs/safe-wpm-v0.2-proposal.md#6-reading-cost-p14-28)).
 
 ## 1. Decomposition at the certified guard
 

@@ -1,0 +1,2089 @@
+{
+ "fidetype_version": "0.0.1",
+ "plan": "experiments/2026-11-18-p14-28-reading-cost/plan.md",
+ "label": "SENSITIVITY: re-scoring of the fixed P5-24 decisions under the proposed safe-wpm/0.2; not a new test of the guard",
+ "B": 2000,
+ "seed": 0,
+ "sets": {
+  "t15": {
+   "n_trials": 701,
+   "minutes_neural": 218.28633333333335,
+   "no_bci": 4.02,
+   "table": [
+    {
+     "kind": "grid",
+     "reading": "0 s/commit",
+     "read_s_per_commit": 0.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 2.6444020156977244,
+      "status": "certified",
+      "ci95": [
+       2.1385061350799126,
+       3.1672429669401745
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.866011441941262,
+      "status": "certified",
+      "ci95": [
+       4.432728082731916,
+       5.29595386991403
+      ],
+      "n_commits": 465,
+      "n_wrong": 13,
+      "wrong_rate": 0.018544935805991442,
+      "committed_correct_words": 1073,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.2216094262435373,
+     "delta_ci95": [
+      1.8378813274311887,
+      2.5935608231870746
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": true
+    },
+    {
+     "kind": "grid",
+     "reading": "0 s/commit",
+     "read_s_per_commit": 0.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 2.6444020156977244,
+      "status": "certified",
+      "ci95": [
+       2.1385061350799126,
+       3.1672429669401745
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.070156323107231,
+      "status": "certified",
+      "ci95": [
+       3.61269044949675,
+       4.513499024139879
+      ],
+      "n_commits": 284,
+      "n_wrong": 9,
+      "wrong_rate": 0.012838801711840228,
+      "committed_correct_words": 896,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 181
+     },
+     "delta_prefix_minus_sentence": 1.4257543074095063,
+     "delta_ci95": [
+      1.04981091425518,
+      1.8136390872323742
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "0 s/commit",
+     "read_s_per_commit": 0.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 2.6444020156977244,
+      "status": "certified",
+      "ci95": [
+       2.1385061350799126,
+       3.1672429669401745
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.0360076651156063,
+      "status": "certified",
+      "ci95": [
+       2.5884625890642794,
+       3.489345126289682
+      ],
+      "n_commits": 164,
+      "n_wrong": 4,
+      "wrong_rate": 0.005706134094151213,
+      "committed_correct_words": 666,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 301
+     },
+     "delta_prefix_minus_sentence": 0.3916056494178819,
+     "delta_ci95": [
+      0.0258524754915791,
+      0.7625955265286182
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "0.5 s/commit",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 2.6332503561440466,
+      "status": "certified",
+      "ci95": [
+       2.1309721776524113,
+       3.151672650812568
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 0.9416666666666667,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.781977898803868,
+      "status": "certified",
+      "ci95": [
+       4.358372791251649,
+       5.201562886585452
+      ],
+      "n_commits": 465,
+      "n_wrong": 13,
+      "wrong_rate": 0.018544935805991442,
+      "committed_correct_words": 1073,
+      "minutes_reading": 3.875,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.1487275426598216,
+     "delta_ci95": [
+      1.7702517369160737,
+      2.5169818726169932
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": true
+    },
+    {
+     "kind": "grid",
+     "reading": "0.5 s/commit",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 2.6332503561440466,
+      "status": "certified",
+      "ci95": [
+       2.1309721776524113,
+       3.151672650812568
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 0.9416666666666667,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.026864370316352,
+      "status": "certified",
+      "ci95": [
+       3.577248624197501,
+       4.461651427386534
+      ],
+      "n_commits": 284,
+      "n_wrong": 9,
+      "wrong_rate": 0.012838801711840228,
+      "committed_correct_words": 896,
+      "minutes_reading": 2.3666666666666667,
+      "n_prefix_commits_dropped": 181
+     },
+     "delta_prefix_minus_sentence": 1.393614014172305,
+     "delta_ci95": [
+      1.0229021385257768,
+      1.776043521226168
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "0.5 s/commit",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 2.6332503561440466,
+      "status": "certified",
+      "ci95": [
+       2.1309721776524113,
+       3.151672650812568
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 0.9416666666666667,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.0172103068387317,
+      "status": "certified",
+      "ci95": [
+       2.5749494441377183,
+       3.465313649236417
+      ],
+      "n_commits": 164,
+      "n_wrong": 4,
+      "wrong_rate": 0.005706134094151213,
+      "committed_correct_words": 666,
+      "minutes_reading": 1.3666666666666667,
+      "n_prefix_commits_dropped": 301
+     },
+     "delta_prefix_minus_sentence": 0.38395995069468514,
+     "delta_ci95": [
+      0.02121563831107344,
+      0.7523120413361659
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "1 s/commit",
+     "read_s_per_commit": 1.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 2.6221923565392973,
+      "status": "certified",
+      "ci95": [
+       2.123491118194525,
+       3.13625467483045
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 1.8833333333333333,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.700797516150272,
+      "status": "certified",
+      "ci95": [
+       4.286470844184953,
+       5.109201378700342
+      ],
+      "n_commits": 465,
+      "n_wrong": 13,
+      "wrong_rate": 0.018544935805991442,
+      "committed_correct_words": 1073,
+      "minutes_reading": 7.75,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.078605159610975,
+     "delta_ci95": [
+      1.704285738640318,
+      2.4407941923881706
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": true
+    },
+    {
+     "kind": "grid",
+     "reading": "1 s/commit",
+     "read_s_per_commit": 1.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 2.6221923565392973,
+      "status": "certified",
+      "ci95": [
+       2.123491118194525,
+       3.13625467483045
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 1.8833333333333333,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.9844836691327576,
+      "status": "certified",
+      "ci95": [
+       3.5426979755423718,
+       4.4115082686737415
+      ],
+      "n_commits": 284,
+      "n_wrong": 9,
+      "wrong_rate": 0.012838801711840228,
+      "committed_correct_words": 896,
+      "minutes_reading": 4.733333333333333,
+      "n_prefix_commits_dropped": 181
+     },
+     "delta_prefix_minus_sentence": 1.3622913125934604,
+     "delta_ci95": [
+      0.996460385979849,
+      1.7384389221636622
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "1 s/commit",
+     "read_s_per_commit": 1.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 2.6221923565392973,
+      "status": "certified",
+      "ci95": [
+       2.123491118194525,
+       3.13625467483045
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 1.8833333333333333,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.998644282919031,
+      "status": "certified",
+      "ci95": [
+       2.561298838967675,
+       3.4416109583366663
+      ],
+      "n_commits": 164,
+      "n_wrong": 4,
+      "wrong_rate": 0.005706134094151213,
+      "committed_correct_words": 666,
+      "minutes_reading": 2.7333333333333334,
+      "n_prefix_commits_dropped": 301
+     },
+     "delta_prefix_minus_sentence": 0.3764519263797337,
+     "delta_ci95": [
+      0.016839505201298732,
+      0.742194842853745
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "2 s/commit",
+     "read_s_per_commit": 2.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 2.600352656730096,
+      "status": "certified",
+      "ci95": [
+       2.10868548025615,
+       3.1058668869536
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 3.7666666666666666,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.546434084734006,
+      "status": "certified",
+      "ci95": [
+       4.149253342279138,
+       4.935189432416918
+      ],
+      "n_commits": 465,
+      "n_wrong": 13,
+      "wrong_rate": 0.018544935805991442,
+      "committed_correct_words": 1073,
+      "minutes_reading": 15.5,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 1.94608142800391,
+     "delta_ci95": [
+      1.583795259114171,
+      2.2970315370375967
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": true
+    },
+    {
+     "kind": "grid",
+     "reading": "2 s/commit",
+     "read_s_per_commit": 2.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 2.600352656730096,
+      "status": "certified",
+      "ci95": [
+       2.10868548025615,
+       3.1058668869536
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 3.7666666666666666,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.9023433085608805,
+      "status": "certified",
+      "ci95": [
+       3.4755042382816987,
+       4.312262166574694
+      ],
+      "n_commits": 284,
+      "n_wrong": 9,
+      "wrong_rate": 0.012838801711840228,
+      "committed_correct_words": 896,
+      "minutes_reading": 9.466666666666667,
+      "n_prefix_commits_dropped": 181
+     },
+     "delta_prefix_minus_sentence": 1.3019906518307844,
+     "delta_ci95": [
+      0.9431197415927685,
+      1.6698642052375687
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "2 s/commit",
+     "read_s_per_commit": 2.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 2.600352656730096,
+      "status": "certified",
+      "ci95": [
+       2.10868548025615,
+       3.1058668869536
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 3.7666666666666666,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.9621893639751358,
+      "status": "certified",
+      "ci95": [
+       2.534433360769274,
+       3.3929847836001064
+      ],
+      "n_commits": 164,
+      "n_wrong": 4,
+      "wrong_rate": 0.005706134094151213,
+      "committed_correct_words": 666,
+      "minutes_reading": 5.466666666666667,
+      "n_prefix_commits_dropped": 301
+     },
+     "delta_prefix_minus_sentence": 0.3618367072450397,
+     "delta_ci95": [
+      0.006320531445938005,
+      0.7219638087339753
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "3 s/commit",
+     "read_s_per_commit": 3.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 2.578873748679535,
+      "status": "certified",
+      "ci95": [
+       2.0940848720142187,
+       3.076062315550651
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 5.65,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.4018862162685615,
+      "status": "certified",
+      "ci95": [
+       4.021194184701852,
+       4.774485511685187
+      ],
+      "n_commits": 465,
+      "n_wrong": 13,
+      "wrong_rate": 0.018544935805991442,
+      "committed_correct_words": 1073,
+      "minutes_reading": 23.25,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 1.8230124675890265,
+     "delta_ci95": [
+      1.4654135545932312,
+      2.1662060797907428
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": true
+    },
+    {
+     "kind": "grid",
+     "reading": "3 s/commit",
+     "read_s_per_commit": 3.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 2.578873748679535,
+      "status": "certified",
+      "ci95": [
+       2.0940848720142187,
+       3.076062315550651
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 5.65,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.8235211985996296,
+      "status": "certified",
+      "ci95": [
+       3.4103878920693274,
+       4.21735692041208
+      ],
+      "n_commits": 284,
+      "n_wrong": 9,
+      "wrong_rate": 0.012838801711840228,
+      "committed_correct_words": 896,
+      "minutes_reading": 14.2,
+      "n_prefix_commits_dropped": 181
+     },
+     "delta_prefix_minus_sentence": 1.2446474499200946,
+     "delta_ci95": [
+      0.8907794375736536,
+      1.6046926861976483
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "3 s/commit",
+     "read_s_per_commit": 3.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 2.578873748679535,
+      "status": "certified",
+      "ci95": [
+       2.0940848720142187,
+       3.076062315550651
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 5.65,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.9266101733200496,
+      "status": "certified",
+      "ci95": [
+       2.506616492259139,
+       3.3450193749125816
+      ],
+      "n_commits": 164,
+      "n_wrong": 4,
+      "wrong_rate": 0.005706134094151213,
+      "committed_correct_words": 666,
+      "minutes_reading": 8.2,
+      "n_prefix_commits_dropped": 301
+     },
+     "delta_prefix_minus_sentence": 0.3477364246405146,
+     "delta_ci95": [
+      -0.001147609485457989,
+      0.702096158661787
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "aac-gaze-v1 verify (0.5 s + 0.3 s/word)",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 2.595531729709398,
+      "status": "certified",
+      "ci95": [
+       2.105192921911838,
+       3.099548502222951
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 4.1866666666666665,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.667061076225306,
+      "status": "certified",
+      "ci95": [
+       4.261085530504986,
+       5.066611169926971
+      ],
+      "n_commits": 465,
+      "n_wrong": 13,
+      "wrong_rate": 0.018544935805991442,
+      "committed_correct_words": 1073,
+      "minutes_reading": 9.4,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.0715293465159084,
+     "delta_ci95": [
+      1.7041993598843712,
+      2.4275140318064974
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": true
+    },
+    {
+     "kind": "named",
+     "reading": "aac-gaze-v1 verify (0.5 s + 0.3 s/word)",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 2.595531729709398,
+      "status": "certified",
+      "ci95": [
+       2.105192921911838,
+       3.099548502222951
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 4.1866666666666665,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.944953256799448,
+      "status": "certified",
+      "ci95": [
+       3.5123441336169523,
+       4.361509836302762
+      ],
+      "n_commits": 284,
+      "n_wrong": 9,
+      "wrong_rate": 0.012838801711840228,
+      "committed_correct_words": 896,
+      "minutes_reading": 6.986666666666667,
+      "n_prefix_commits_dropped": 181
+     },
+     "delta_prefix_minus_sentence": 1.3494215270900498,
+     "delta_ci95": [
+      0.9910108340874408,
+      1.7198110265388553
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "aac-gaze-v1 verify (0.5 s + 0.3 s/word)",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 2.595531729709398,
+      "status": "certified",
+      "ci95": [
+       2.105192921911838,
+       3.099548502222951
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 4.1866666666666665,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.9711755585003115,
+      "status": "certified",
+      "ci95": [
+       2.5412527144098997,
+       3.4051051956957523
+      ],
+      "n_commits": 164,
+      "n_wrong": 4,
+      "wrong_rate": 0.005706134094151213,
+      "committed_correct_words": 666,
+      "minutes_reading": 4.786666666666666,
+      "n_prefix_commits_dropped": 301
+     },
+     "delta_prefix_minus_sentence": 0.3756438287909134,
+     "delta_ci95": [
+      0.02197477873057264,
+      0.7348744283358821
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M (1.35 s)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 2.6145068544801413,
+      "status": "certified",
+      "ci95": [
+       2.118285553260977,
+       3.1255515408712804
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 2.5425,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.645591979907004,
+      "status": "certified",
+      "ci95": [
+       4.2375573457735065,
+       5.047285931535366
+      ],
+      "n_commits": 465,
+      "n_wrong": 13,
+      "wrong_rate": 0.018544935805991442,
+      "committed_correct_words": 1073,
+      "minutes_reading": 10.4625,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.0310851254268627,
+     "delta_ci95": [
+      1.661476873180588,
+      2.3885795170128166
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": true
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M (1.35 s)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 2.6145068544801413,
+      "status": "certified",
+      "ci95": [
+       2.118285553260977,
+       3.1255515408712804
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 2.5425,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.955344078612464,
+      "status": "certified",
+      "ci95": [
+       3.518923644004431,
+       4.376274881844082
+      ],
+      "n_commits": 284,
+      "n_wrong": 9,
+      "wrong_rate": 0.012838801711840228,
+      "committed_correct_words": 896,
+      "minutes_reading": 6.39,
+      "n_prefix_commits_dropped": 181
+     },
+     "delta_prefix_minus_sentence": 1.3408372241323225,
+     "delta_ci95": [
+      0.9772580430265075,
+      1.7150603467635648
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M (1.35 s)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 2.6145068544801413,
+      "status": "certified",
+      "ci95": [
+       2.118285553260977,
+       3.1255515408712804
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 2.5425,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.9857834330940927,
+      "status": "certified",
+      "ci95": [
+       2.551829213180425,
+       3.4249069682325617
+      ],
+      "n_commits": 164,
+      "n_wrong": 4,
+      "wrong_rate": 0.005706134094151213,
+      "committed_correct_words": 666,
+      "minutes_reading": 3.6900000000000004,
+      "n_prefix_commits_dropped": 301
+     },
+     "delta_prefix_minus_sentence": 0.37127657861395136,
+     "delta_ci95": [
+      0.0135448222617129,
+      0.7350691911028696
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M + silent reading 238 wpm (1.35 s + 0.252 s/word)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.25210084033613445,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 2.58318583789746,
+      "status": "certified",
+      "ci95": [
+       2.0968367548180535,
+       3.0823397120589497
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 5.2693907563025215,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.554049141345956,
+      "status": "certified",
+      "ci95": [
+       4.159961263401669,
+       4.94010212801913
+      ],
+      "n_commits": 465,
+      "n_wrong": 13,
+      "wrong_rate": 0.018544935805991442,
+      "committed_correct_words": 1073,
+      "minutes_reading": 15.105357142857144,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 1.9708633034484961,
+     "delta_ci95": [
+      1.612163890276818,
+      2.3195617293248447
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": true
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M + silent reading 238 wpm (1.35 s + 0.252 s/word)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.25210084033613445,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 2.58318583789746,
+      "status": "certified",
+      "ci95": [
+       2.0968367548180535,
+       3.0823397120589497
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 5.2693907563025215,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.8886978658307956,
+      "status": "certified",
+      "ci95": [
+       3.4661298698942695,
+       4.296356666150697
+      ],
+      "n_commits": 284,
+      "n_wrong": 9,
+      "wrong_rate": 0.012838801711840228,
+      "committed_correct_words": 896,
+      "minutes_reading": 10.272352941176472,
+      "n_prefix_commits_dropped": 181
+     },
+     "delta_prefix_minus_sentence": 1.3055120279333354,
+     "delta_ci95": [
+      0.9505959925742747,
+      1.6713105021231809
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M + silent reading 238 wpm (1.35 s + 0.252 s/word)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.25210084033613445,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 2.58318583789746,
+      "status": "certified",
+      "ci95": [
+       2.0968367548180535,
+       3.0823397120589497
+      ],
+      "n_commits": 113,
+      "n_wrong": 10,
+      "wrong_rate": 0.014265335235378032,
+      "committed_correct_words": 588,
+      "minutes_reading": 5.2693907563025215,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.947802847758989,
+      "status": "certified",
+      "ci95": [
+       2.5245110530428505,
+       3.37413612796854
+      ],
+      "n_commits": 164,
+      "n_wrong": 4,
+      "wrong_rate": 0.005706134094151213,
+      "committed_correct_words": 666,
+      "minutes_reading": 6.563949579831933,
+      "n_prefix_commits_dropped": 301
+     },
+     "delta_prefix_minus_sentence": 0.3646170098615289,
+     "delta_ci95": [
+      0.0141612217886251,
+      0.7207223438200466
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    }
+   ],
+   "break_even": {
+    "m1": {
+     "prefix_s_per_commit_to_no_bci": 5.98790742383161,
+     "prefix_s_per_word_to_no_bci": 2.5197981466802704
+    },
+    "m2": {
+     "prefix_s_per_commit_to_no_bci": 0.5802691324696061,
+     "prefix_s_per_word_to_no_bci": 0.17835111863784428
+    },
+    "m3": {
+     "prefix_s_per_commit_to_no_bci": null,
+     "prefix_s_per_word_to_no_bci": null
+    },
+    "prefix_equals_sentence_s_per_commit_m1": 42.950033601395106
+   },
+   "prefix_words_per_commit": {
+    "1": 181,
+    "2": 121,
+    "3": 67,
+    "4": 42,
+    "5": 27,
+    "6": 15,
+    "7": 8,
+    "8": 4
+   },
+   "seconds": 0.4
+  },
+  "t12": {
+   "n_trials": 400,
+   "minutes_neural": 36.537,
+   "no_bci": 4.11,
+   "table": [
+    {
+     "kind": "grid",
+     "reading": "0 s/commit",
+     "read_s_per_commit": 0.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 1.867605321866411,
+      "status": "certified",
+      "ci95": [
+       0.9868661223534122,
+       2.944943543743393
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.7613478791118835,
+      "status": "certified",
+      "ci95": [
+       3.842876717724111,
+       5.784913473034692
+      ],
+      "n_commits": 133,
+      "n_wrong": 19,
+      "wrong_rate": 0.0475,
+      "committed_correct_words": 185,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.8937425572454725,
+     "delta_ci95": [
+      1.8916395478391064,
+      3.9876323431714047
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "0 s/commit",
+     "read_s_per_commit": 0.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 1.867605321866411,
+      "status": "certified",
+      "ci95": [
+       0.9868661223534122,
+       2.944943543743393
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.057842334282473,
+      "status": "certified",
+      "ci95": [
+       2.159108965130289,
+       4.035976083627284
+      ],
+      "n_commits": 53,
+      "n_wrong": 8,
+      "wrong_rate": 0.02,
+      "committed_correct_words": 116,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 80
+     },
+     "delta_prefix_minus_sentence": 1.1902370124160622,
+     "delta_ci95": [
+      0.09419212357570532,
+      2.2432616892804487
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "0 s/commit",
+     "read_s_per_commit": 0.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 1.867605321866411,
+      "status": "certified",
+      "ci95": [
+       0.9868661223534122,
+       2.944943543743393
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 1.6597713047427471,
+      "status": "certified",
+      "ci95": [
+       0.9022534310162356,
+       2.485495307720697
+      ],
+      "n_commits": 22,
+      "n_wrong": 4,
+      "wrong_rate": 0.01,
+      "committed_correct_words": 62,
+      "minutes_reading": 0.0,
+      "n_prefix_commits_dropped": 111
+     },
+     "delta_prefix_minus_sentence": -0.2078340171236639,
+     "delta_ci95": [
+      -1.136661199647824,
+      0.7631227251903024
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "0.5 s/commit",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 1.8562688131174683,
+      "status": "certified",
+      "ci95": [
+       0.9822822295261168,
+       2.9242427816897427
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.25833333333333336,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.629296311840287,
+      "status": "certified",
+      "ci95": [
+       3.7426487075949897,
+       5.593964464043654
+      ],
+      "n_commits": 133,
+      "n_wrong": 19,
+      "wrong_rate": 0.0475,
+      "committed_correct_words": 185,
+      "minutes_reading": 1.1083333333333334,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.7730274987228185,
+     "delta_ci95": [
+      1.7949583251498753,
+      3.827141817781035
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "0.5 s/commit",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 1.8562688131174683,
+      "status": "certified",
+      "ci95": [
+       0.9822822295261168,
+       2.9242427816897427
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.25833333333333336,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 3.022650679959259,
+      "status": "certified",
+      "ci95": [
+       2.140743395753035,
+       3.9798342551855157
+      ],
+      "n_commits": 53,
+      "n_wrong": 8,
+      "wrong_rate": 0.02,
+      "committed_correct_words": 116,
+      "minutes_reading": 0.44166666666666665,
+      "n_prefix_commits_dropped": 80
+     },
+     "delta_prefix_minus_sentence": 1.166381866841791,
+     "delta_ci95": [
+      0.08822892253717102,
+      2.2033954690546858
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "0.5 s/commit",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 1.8562688131174683,
+      "status": "certified",
+      "ci95": [
+       0.9822822295261168,
+       2.9242427816897427
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.25833333333333336,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 1.651665055039144,
+      "status": "certified",
+      "ci95": [
+       0.8988766631323345,
+       2.4697697080163623
+      ],
+      "n_commits": 22,
+      "n_wrong": 4,
+      "wrong_rate": 0.01,
+      "committed_correct_words": 62,
+      "minutes_reading": 0.18333333333333332,
+      "n_prefix_commits_dropped": 111
+     },
+     "delta_prefix_minus_sentence": -0.2046037580783242,
+     "delta_ci95": [
+      -1.1292610015549247,
+      0.7590424138939412
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "1 s/commit",
+     "read_s_per_commit": 1.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 1.8450691009723594,
+      "status": "certified",
+      "ci95": [
+       0.9777408074556895,
+       2.903031423893161
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.5166666666666667,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.504371739456374,
+      "status": "certified",
+      "ci95": [
+       3.6523983529587896,
+       5.424066202885636
+      ],
+      "n_commits": 133,
+      "n_wrong": 19,
+      "wrong_rate": 0.0475,
+      "committed_correct_words": 185,
+      "minutes_reading": 2.216666666666667,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.659302638484015,
+     "delta_ci95": [
+      1.6872910926224975,
+      3.6736994893047026
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "1 s/commit",
+     "read_s_per_commit": 1.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 1.8450691009723594,
+      "status": "certified",
+      "ci95": [
+       0.9777408074556895,
+       2.903031423893161
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.5166666666666667,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.9882598267514333,
+      "status": "certified",
+      "ci95": [
+       2.122687702022085,
+       3.923861680604054
+      ],
+      "n_commits": 53,
+      "n_wrong": 8,
+      "wrong_rate": 0.02,
+      "committed_correct_words": 116,
+      "minutes_reading": 0.8833333333333333,
+      "n_prefix_commits_dropped": 80
+     },
+     "delta_prefix_minus_sentence": 1.1431907257790739,
+     "delta_ci95": [
+      0.08385640390485768,
+      2.1646620048162966
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "1 s/commit",
+     "read_s_per_commit": 1.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 1.8450691009723594,
+      "status": "certified",
+      "ci95": [
+       0.9777408074556895,
+       2.903031423893161
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.5166666666666667,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 1.6436376016285685,
+      "status": "certified",
+      "ci95": [
+       0.8955250780032397,
+       2.4536897156298423
+      ],
+      "n_commits": 22,
+      "n_wrong": 4,
+      "wrong_rate": 0.01,
+      "committed_correct_words": 62,
+      "minutes_reading": 0.36666666666666664,
+      "n_prefix_commits_dropped": 111
+     },
+     "delta_prefix_minus_sentence": -0.2014314993437909,
+     "delta_ci95": [
+      -1.1167499413042978,
+      0.7554421000014606
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "2 s/commit",
+     "read_s_per_commit": 2.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 1.8230702803107197,
+      "status": "certified",
+      "ci95": [
+       0.9687830329490257,
+       2.8641943887953554
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.0333333333333334,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.2737138431447725,
+      "status": "certified",
+      "ci95": [
+       3.4757086657825775,
+       5.1199893380969
+      ],
+      "n_commits": 133,
+      "n_wrong": 19,
+      "wrong_rate": 0.0475,
+      "committed_correct_words": 185,
+      "minutes_reading": 4.433333333333334,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.4506435628340526,
+     "delta_ci95": [
+      1.5054366448595724,
+      3.4181370121977586
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "2 s/commit",
+     "read_s_per_commit": 2.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 1.8230702803107197,
+      "status": "certified",
+      "ci95": [
+       0.9687830329490257,
+       2.8641943887953554
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.0333333333333334,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.921773620873801,
+      "status": "certified",
+      "ci95": [
+       2.082669850073989,
+       3.819578842627216
+      ],
+      "n_commits": 53,
+      "n_wrong": 8,
+      "wrong_rate": 0.02,
+      "committed_correct_words": 116,
+      "minutes_reading": 1.7666666666666666,
+      "n_prefix_commits_dropped": 80
+     },
+     "delta_prefix_minus_sentence": 1.0987033405630815,
+     "delta_ci95": [
+      0.06949521716082857,
+      2.0910470095163465
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "2 s/commit",
+     "read_s_per_commit": 2.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 1.8230702803107197,
+      "status": "certified",
+      "ci95": [
+       0.9687830329490257,
+       2.8641943887953554
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.0333333333333334,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 1.6278145323211466,
+      "status": "certified",
+      "ci95": [
+       0.888896337472891,
+       2.4216195808411713
+      ],
+      "n_commits": 22,
+      "n_wrong": 4,
+      "wrong_rate": 0.01,
+      "committed_correct_words": 62,
+      "minutes_reading": 0.7333333333333333,
+      "n_prefix_commits_dropped": 111
+     },
+     "delta_prefix_minus_sentence": -0.19525574798957313,
+     "delta_ci95": [
+      -1.0964763785457474,
+      0.7479717338004723
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "3 s/commit",
+     "read_s_per_commit": 3.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 1.80158986404658,
+      "status": "certified",
+      "ci95": [
+       0.9608818568588748,
+       2.827553673487919
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.55,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.065528061782147,
+      "status": "certified",
+      "ci95": [
+       3.3230012391404147,
+       4.846739074540496
+      ],
+      "n_commits": 133,
+      "n_wrong": 19,
+      "wrong_rate": 0.0475,
+      "committed_correct_words": 185,
+      "minutes_reading": 6.65,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.263938197735567,
+     "delta_ci95": [
+      1.3560724184371042,
+      3.1770869259810355
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "3 s/commit",
+     "read_s_per_commit": 3.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 1.80158986404658,
+      "status": "certified",
+      "ci95": [
+       0.9608818568588748,
+       2.827553673487919
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.55,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.8581815446716226,
+      "status": "certified",
+      "ci95": [
+       2.045981444429365,
+       3.7208294387612373
+      ],
+      "n_commits": 53,
+      "n_wrong": 8,
+      "wrong_rate": 0.02,
+      "committed_correct_words": 116,
+      "minutes_reading": 2.65,
+      "n_prefix_commits_dropped": 80
+     },
+     "delta_prefix_minus_sentence": 1.0565916806250426,
+     "delta_ci95": [
+      0.055327123789499014,
+      2.020768430452359
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "grid",
+     "reading": "3 s/commit",
+     "read_s_per_commit": 3.0,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 1.80158986404658,
+      "status": "certified",
+      "ci95": [
+       0.9608818568588748,
+       2.827553673487919
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.55,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 1.6122932110776498,
+      "status": "certified",
+      "ci95": [
+       0.8823650134511097,
+       2.390798505976742
+      ],
+      "n_commits": 22,
+      "n_wrong": 4,
+      "wrong_rate": 0.01,
+      "committed_correct_words": 62,
+      "minutes_reading": 1.1,
+      "n_prefix_commits_dropped": 111
+     },
+     "delta_prefix_minus_sentence": -0.18929665296893017,
+     "delta_ci95": [
+      -1.0795128523717181,
+      0.7398518598879282
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "aac-gaze-v1 verify (0.5 s + 0.3 s/word)",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 1.8211790627904365,
+      "status": "certified",
+      "ci95": [
+       0.9678793052959775,
+       2.8600533258122907
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.0783333333333331,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.506932213089636,
+      "status": "certified",
+      "ci95": [
+       3.6572970129580176,
+       5.4223234440660475
+      ],
+      "n_commits": 133,
+      "n_wrong": 19,
+      "wrong_rate": 0.0475,
+      "committed_correct_words": 185,
+      "minutes_reading": 2.1933333333333334,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.685753150299199,
+     "delta_ci95": [
+      1.736082182414828,
+      3.690721134248669
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "aac-gaze-v1 verify (0.5 s + 0.3 s/word)",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 1.8211790627904365,
+      "status": "certified",
+      "ci95": [
+       0.9678793052959775,
+       2.8600533258122907
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.0783333333333331,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.969644680127679,
+      "status": "certified",
+      "ci95": [
+       2.1117763904743527,
+       3.8929626399910267
+      ],
+      "n_commits": 53,
+      "n_wrong": 8,
+      "wrong_rate": 0.02,
+      "committed_correct_words": 116,
+      "minutes_reading": 1.1266666666666665,
+      "n_prefix_commits_dropped": 80
+     },
+     "delta_prefix_minus_sentence": 1.1484656173372423,
+     "delta_ci95": [
+      0.10563884770198209,
+      2.155316048422279
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "aac-gaze-v1 verify (0.5 s + 0.3 s/word)",
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 1.8211790627904365,
+      "status": "certified",
+      "ci95": [
+       0.9678793052959775,
+       2.8600533258122907
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.0783333333333331,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 1.6353282734098584,
+      "status": "certified",
+      "ci95": [
+       0.892506998598003,
+       2.435898087662148
+      ],
+      "n_commits": 22,
+      "n_wrong": 4,
+      "wrong_rate": 0.01,
+      "committed_correct_words": 62,
+      "minutes_reading": 0.5583333333333333,
+      "n_prefix_commits_dropped": 111
+     },
+     "delta_prefix_minus_sentence": -0.18585078938057809,
+     "delta_ci95": [
+      -1.0870256090912034,
+      0.7572474115732485
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M (1.35 s)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 1.8373093760920884,
+      "status": "certified",
+      "ci95": [
+       0.9745867665990147,
+       2.8886672791819414
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.6975000000000001,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.420861856346934,
+      "status": "certified",
+      "ci95": [
+       3.5887449235507862,
+       5.312098536952143
+      ],
+      "n_commits": 133,
+      "n_wrong": 19,
+      "wrong_rate": 0.0475,
+      "committed_correct_words": 185,
+      "minutes_reading": 2.9924999999999997,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.5835524802548457,
+     "delta_ci95": [
+      1.6199092163719044,
+      3.5887191911489964
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M (1.35 s)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 1.8373093760920884,
+      "status": "certified",
+      "ci95": [
+       0.9745867665990147,
+       2.8886672791819414
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.6975000000000001,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.964648184545314,
+      "status": "certified",
+      "ci95": [
+       2.110228916291426,
+       3.886721081373055
+      ],
+      "n_commits": 53,
+      "n_wrong": 8,
+      "wrong_rate": 0.02,
+      "committed_correct_words": 116,
+      "minutes_reading": 1.1925000000000001,
+      "n_prefix_commits_dropped": 80
+     },
+     "delta_prefix_minus_sentence": 1.1273388084532256,
+     "delta_ci95": [
+      0.07868911277226028,
+      2.1382353113459898
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M (1.35 s)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.0,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 1.8373093760920884,
+      "status": "certified",
+      "ci95": [
+       0.9745867665990147,
+       2.8886672791819414
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 0.6975000000000001,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 1.6380646548847146,
+      "status": "certified",
+      "ci95": [
+       0.8931938016838408,
+       2.442535651511976
+      ],
+      "n_commits": 22,
+      "n_wrong": 4,
+      "wrong_rate": 0.01,
+      "committed_correct_words": 62,
+      "minutes_reading": 0.49500000000000005,
+      "n_prefix_commits_dropped": 111
+     },
+     "delta_prefix_minus_sentence": -0.1992447212073738,
+     "delta_ci95": [
+      -1.1080651978340725,
+      0.7528107017659296
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M + silent reading 238 wpm (1.35 s + 0.252 s/word)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.25210084033613445,
+     "min_prefix_words": 1,
+     "sentence": {
+      "value": 1.8083292941737514,
+      "status": "certified",
+      "ci95": [
+       0.963078298938162,
+       2.837673946030084
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.3865756302521006,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 4.326593892729072,
+      "status": "certified",
+      "ci95": [
+       3.519217078174984,
+       5.183046972178528
+      ],
+      "n_commits": 133,
+      "n_wrong": 19,
+      "wrong_rate": 0.0475,
+      "committed_correct_words": 185,
+      "minutes_reading": 3.904264705882353,
+      "n_prefix_commits_dropped": 0
+     },
+     "delta_prefix_minus_sentence": 2.5182645985553203,
+     "delta_ci95": [
+      1.5823327802780272,
+      3.4764115535887328
+     ],
+     "prefix_above_no_bci": true,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M + silent reading 238 wpm (1.35 s + 0.252 s/word)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.25210084033613445,
+     "min_prefix_words": 2,
+     "sentence": {
+      "value": 1.8083292941737514,
+      "status": "certified",
+      "ci95": [
+       0.963078298938162,
+       2.837673946030084
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.3865756302521006,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 2.9216659155409377,
+      "status": "certified",
+      "ci95": [
+       2.0820564172430354,
+       3.818113818805263
+      ],
+      "n_commits": 53,
+      "n_wrong": 8,
+      "wrong_rate": 0.02,
+      "committed_correct_words": 116,
+      "minutes_reading": 1.7681302521008404,
+      "n_prefix_commits_dropped": 80
+     },
+     "delta_prefix_minus_sentence": 1.1133366213671863,
+     "delta_ci95": [
+      0.09179103955037352,
+      2.100008729137993
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    },
+    {
+     "kind": "named",
+     "reading": "KLM M + silent reading 238 wpm (1.35 s + 0.252 s/word)",
+     "read_s_per_commit": 1.35,
+     "read_s_per_word": 0.25210084033613445,
+     "min_prefix_words": 3,
+     "sentence": {
+      "value": 1.8083292941737514,
+      "status": "certified",
+      "ci95": [
+       0.963078298938162,
+       2.837673946030084
+      ],
+      "n_commits": 31,
+      "n_wrong": 15,
+      "wrong_rate": 0.0375,
+      "committed_correct_words": 79,
+      "minutes_reading": 1.3865756302521006,
+      "n_prefix_commits_dropped": 0
+     },
+     "prefix": {
+      "value": 1.6245391391068218,
+      "status": "certified",
+      "ci95": [
+       0.8879024250955823,
+       2.4140581354579123
+      ],
+      "n_commits": 22,
+      "n_wrong": 4,
+      "wrong_rate": 0.01,
+      "committed_correct_words": 62,
+      "minutes_reading": 0.810126050420168,
+      "n_prefix_commits_dropped": 111
+     },
+     "delta_prefix_minus_sentence": -0.18379015506692964,
+     "delta_ci95": [
+      -1.0761930584406214,
+      0.7511708652745652
+     ],
+     "prefix_above_no_bci": false,
+     "prefix_ci_low_above_no_bci": false
+    }
+   ],
+   "break_even": {
+    "m1": {
+     "prefix_s_per_commit_to_no_bci": 2.77787440171693,
+     "prefix_s_per_word_to_no_bci": 1.7025681816974734
+    },
+    "m2": {
+     "prefix_s_per_commit_to_no_bci": null,
+     "prefix_s_per_word_to_no_bci": null
+    },
+    "m3": {
+     "prefix_s_per_commit_to_no_bci": null,
+     "prefix_s_per_word_to_no_bci": null
+    },
+    "prefix_equals_sentence_s_per_commit_m1": 59.79908104292579
+   },
+   "prefix_words_per_commit": {
+    "1": 80,
+    "2": 31,
+    "3": 15,
+    "4": 6,
+    "6": 1
+   },
+   "seconds": 0.3
+  }
+ },
+ "peak_mb": null
+}

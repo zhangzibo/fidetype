@@ -126,6 +126,7 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 - **Same as v0.1 for sentence-level policies.** Every number in section 5 is also its v0.2 value.
 - **Code:** `safe_wpm(..., metric_version="0.2")`; CLI `--metric-version 0.2`. Default: `"0.1"`.
 - **First use (P5-24, pre-registered, [results](../experiments/2026-11-18-p5-24-prefix-commits/results.md)):** T15 M4-13 `val_eval` 701 with certified prefix commits: v0.2 4.87 [4.43, 5.30] (465 commits, 13 wrong); the same decisions under v0.1: 0.53 (literal, above alpha) or 1.03 (complete commits only). T12: v0.2 4.76, v0.1 0.00.
+- **Reading cost (P14-28, sensitivity, [proposal section 6](safe-wpm-v0.2-proposal.md#6-reading-cost-p14-28)):** optional `read_s_per_commit`, `read_s_per_word`, `min_prefix_words` (v0.2 only; defaults change nothing). With 0.5 s + 0.3 s/word per commit (`aac-gaze-v1`) the T15 prefix value is 4.67 [4.26, 5.07]; it falls to 4.02 at 5.99 s per commit. Recommended for adoption together with v0.2; the user decides.
 
 ## 7. Relation to other metrics
 
