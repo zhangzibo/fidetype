@@ -35,10 +35,11 @@ attributes:
     brief: >-
       true if the stream may be used for research only: the data licence, or the licence of another input
       that made the stream (for example the training data of the decoder), does not allow commercial use or
-      is unknown. MUST be true when data.licence does not allow commercial use (MET-12).
+      is unknown. MUST be true when data.licence does not allow commercial use (MET-12). The advisory check
+      NTS-LICENCE-MATCH warns when it is false with an NC licence id or LicenseRef-unknown (amendment 7).
     requirement:
       - {scope: provenance, level: recommended, condition: "data.licence is present"}
     stability: development
     target_stability: stable
     rules: [MET-1, MET-12]
-    checks: [NTS-META-TYPES]
+    checks: [NTS-META-TYPES, NTS-LICENCE-MATCH]

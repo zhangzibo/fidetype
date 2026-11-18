@@ -285,6 +285,9 @@
   "NTS-LEAK-KEYS": [
    "SEC-8"
   ],
+  "NTS-LICENCE-MATCH": [
+   "MET-12"
+  ],
   "NTS-LP-2D": [
    "FRM-7"
   ],
@@ -1560,9 +1563,10 @@
   "MET-12": {
    "keyword": "SHOULD / MUST",
    "checks": [
-    "NTS-META-TYPES"
+    "NTS-META-TYPES",
+    "NTS-LICENCE-MATCH"
    ],
-   "status": "T (types); the agreement of the two keys is not checked (content)"
+   "status": "T (types); P (advisory warning for an `NC` id or `LicenseRef-unknown`; other disagreements are content)"
   },
   "MET-2": {
    "keyword": "MUST",

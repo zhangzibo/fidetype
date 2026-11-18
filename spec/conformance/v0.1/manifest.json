@@ -1111,6 +1111,63 @@
    "clause": "1.0 RC4 3.4 (MET-1; FEP-0010)",
    "description": "data.research_only is the string \"yes\" (type boolean)",
    "failing_check": "NTS-META-TYPES"
+  },
+  {
+   "id": "V101",
+   "file": "v101-licence-nc-not-research-only.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-12; amendment 7)",
+   "description": "data.licence \"CC-BY-NC-4.0\" with data.research_only false: accepted with the MET-12 warning",
+   "expected": {
+    "n_frames": 2,
+    "warnings": [
+     "NTS-LICENCE-MATCH"
+    ]
+   }
+  },
+  {
+   "id": "V102",
+   "file": "v102-licence-unknown-not-research-only.npz",
+   "format": "npz",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-12; amendment 7)",
+   "description": "NPZ: data.licence \"LicenseRef-unknown\" with data.research_only false: accepted with the MET-12 warning",
+   "expected": {
+    "warnings": [
+     "NTS-LICENCE-MATCH"
+    ]
+   }
+  },
+  {
+   "id": "V103",
+   "file": "v103-licence-nc-lowercase-igo.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-12; amendment 7)",
+   "description": "data.licence \"cc-by-nc-nd-3.0-igo\" (SPDX ids match without case) with data.research_only false: accepted with the MET-12 warning",
+   "expected": {
+    "n_frames": 2,
+    "warnings": [
+     "NTS-LICENCE-MATCH"
+    ]
+   }
+  },
+  {
+   "id": "V104",
+   "file": "v104-licence-sa-not-research-only.jsonl",
+   "format": "jsonl",
+   "expect": "accept",
+   "spec_case": null,
+   "clause": "1.0 RC4 3.4 (MET-12; amendment 7)",
+   "description": "data.licence \"CC-BY-SA-4.0\" (commercial use allowed) with data.research_only false: no warning",
+   "expected": {
+    "n_frames": 2,
+    "warnings": []
+   }
   }
  ]
 }

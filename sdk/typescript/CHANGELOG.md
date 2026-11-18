@@ -5,6 +5,7 @@ This file lists the changes of the TypeScript SDK (npm package `@fidetype/sdk`).
 ## [Unreleased]
 
 ### Added
+- **MET-12 advisory check `NTS-LICENCE-MATCH` (P5-19, NTS 1.0 RC4 amendment 7)** and `noCommercialId`, `LICENCE_UNKNOWN`: `data.research_only = false` with a Creative Commons `NC` id or `LicenseRef-unknown` is a warning, never a reject (same table and warning as Python and Rust; vectors V101-V104).
 - **Data licence keys (P5-13, NTS 1.0 RC4 amendment 6, FEP-0010).** `DEFINED_KEYS` has `data.licence` (non-empty string) and `data.research_only` (boolean). Vectors V98 (accept), V99, V100 (reject); 100 v0.1 vectors. Same verdicts as Python and Rust.
 - **TD-14 (P14-20, NTS 1.0 RC4 amendment 5).** `StreamValidator.push` refuses a `trust_decision` event in an input stream (`StreamEventError` with `TD_INPUT_MESSAGE`); after `end` it is ignored. Same as Python `StreamingTrustLayer` and Rust; test on `spec/conformance/streaming/td-input.json`.
 - **LSL-C7 / LSL-C8 (P3-10, amendment 5).** The `fep-0002` runner counts heartbeats (empty marker samples; result key `heartbeats`, not `ignored_markers`) and orders equal times frame first. Vectors L36, L37 (37 in all).

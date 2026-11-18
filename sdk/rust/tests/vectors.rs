@@ -40,7 +40,7 @@ fn modality_match_warning_and_stream_levels() {
 
 #[test]
 fn v01_vectors() {
-    run("v0.1", 100);
+    run("v0.1", 104);
 }
 
 #[test]

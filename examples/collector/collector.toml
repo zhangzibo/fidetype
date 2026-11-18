@@ -64,6 +64,10 @@ path = "out/decisions.jsonl"                   # a decision log (spec 6.4)
 
 [exporters.console]
 type = "stdout"
+# P5-18: a product exporter can drop research-only decisions (input.research_only = true, FEP-0010) and, by
+# default, decisions with an unknown licence (no input.research_only). Works on every exporter type.
+# refuse_research_only = true
+# unknown_licence = "refuse"                   # or "pass"
 
 # The input events too (an NTS stream file). {session} gives one file per stream (P5-17): a file of input
 # events without {session} is refused when the pipeline can carry more than one stream (several receivers or

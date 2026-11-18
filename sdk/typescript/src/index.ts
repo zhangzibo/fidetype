@@ -20,6 +20,7 @@ export { readNpz, readNpy, inflateRaw } from "./npz.js";
 export type { NpyArray, NpzFile } from "./npz.js";
 export {
   LEVELS, blocks, runChecks, checkTable, levelReached, loadStream, consumeRaw, StreamRejected, DEFINED_KEYS,
+  noCommercialId, LICENCE_UNKNOWN,
 } from "./checks.js";
 export type { CheckResult, ConsumedStream, Level, Status } from "./checks.js";
 export { StreamValidator, StreamEventError, parseEvent, frameRow, checkHeader, checkNbest, TD_INPUT_MESSAGE } from "./validate.js";

@@ -2,6 +2,16 @@
 
 All notable changes to the specifications in `spec/`. Newest first. Earlier v0.1 entries are also in [section 11 of the v0.1 spec](neuraltextstream-v0.1.md#11-changelog).
 
+## [1.0 RC4, DRAFT] amendment 7 of 2026-11-18 (advisory licence check)
+**Still RC4 DRAFT.** Changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 7 of 2026-11-18"; 3.4 MET-12 note; 9.2; 9.3; 9.5; Appendix C.1). [FEP-0010](feps/0010-data-licence-keys.md) open questions LIC-2 and LIC-3 answered; [FEP-0006](feps/0006-collector.md) section 4 rule 6.
+
+### Added
+- **NTS-LICENCE-MATCH (MET-12).** An advisory check in the three validators: `data.research_only = false` with a Creative Commons id with `NC` or `LicenseRef-unknown` (ASCII, without case) gives a warning, never a reject. Other ids give no warning. Vectors V101, V102, V103 (accept with the warning), V104 (accept, no warning).
+- **Collector exporter option `refuse_research_only`** (FEP-0006 section 4 rule 6; an operator policy, not a format rule): drop decisions with `input.research_only = true`; `unknown_licence = "refuse"` (default) or `"pass"` for decisions without the key.
+
+### Counts
+- Vectors 355 (v0.1 104). Streaming cases 6, kit 36 (unchanged). Python = TypeScript = Rust on all 355 (warnings pinned by `expected.warnings`), the 36 kit entries and 28,487 fuzz mutants (seeds 1-3, `--n 30`, 0 differences).
+
 ## [1.0 RC4, DRAFT] amendment 6 of 2026-11-17 (data licence keys)
 **Still RC4 DRAFT.** Additive changes in [nts-1.0-rc4.md](nts-1.0-rc4.md) (section 1.6, "Amendment 6 of 2026-11-17"; 3.4 MET-12 and two rows; 6.1.1 one row; 6.2 TD-15; 9.3; 9.5; Appendix C.1). New FEP: [FEP-0010](feps/0010-data-licence-keys.md) (Draft). Roadmap P5-13 (gap 47). No earlier vector changed its verdict.
 

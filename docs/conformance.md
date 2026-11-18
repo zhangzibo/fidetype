@@ -186,7 +186,7 @@ These `--level` values are the **stream levels** of spec 9.2 (one stream), not t
 | `trust-ready` | The SHOULD rules that a trust layer needs (`source`, `device.modality`, `decoder.causal`, `data.derived`, `language`) (CNF-3) |
 | `provenance` | Stream id, decoder name and version, weights hash, calibration id, pseudonymous ids (CNF-4) |
 
-Advisory checks warn but never block a level. One of them is `NTS-MODALITY-MATCH` (MET-11, P1-16): a key of `emg.*`, `meg.*` or `implant.*` on a stream whose `device.modality` does not fit (`emg.*` with `emg`; `meg.*` with `meg` or `opm-meg`; `implant.*` with `intracortical` or `ecog`). The Python, TypeScript and Rust validators give the same warning (vectors V93-V96, kit K32).
+Advisory checks warn but never block a level. One of them is `NTS-MODALITY-MATCH` (MET-11, P1-16): a key of `emg.*`, `meg.*` or `implant.*` on a stream whose `device.modality` does not fit (`emg.*` with `emg`; `meg.*` with `meg` or `opm-meg`; `implant.*` with `intracortical` or `ecog`). The Python, TypeScript and Rust validators give the same warning (vectors V93-V96, kit K32). Another one is `NTS-LICENCE-MATCH` (MET-12, P5-19, RC4 amendment 7): `data.research_only = false` with a `data.licence` that surely does not allow commercial use, that is, a Creative Commons id with `NC` (`CC-BY-NC-4.0`, `cc-by-nc-sa-4.0`, ...) or `LicenseRef-unknown`. Other ids give no warning. Same warning in the three validators (vectors V101-V104).
 
 `fidetype conformance list` prints every check with its level and spec clause.
 

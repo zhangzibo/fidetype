@@ -3,7 +3,7 @@ title: NeuralTextStream specification (versions, 1.0 RC4)
 type: concept
 tags: [spec, neuraltextstream, standard, versioning, conformance, protobuf, p1]
 sources: []
-updated: 2026-11-17
+updated: 2026-11-18
 ---
 
 # NeuralTextStream specification
@@ -23,6 +23,16 @@ Changelog: [`spec/CHANGELOG.md`](../../spec/CHANGELOG.md). Index of specs and FE
 
 Tools around the spec: the [collector](collector.md) (draft FEP-0006, P3) receives NTS from files and WebSocket, runs the trust layer and the privacy filter, and exports decision logs. It changes no field of NTS.
 
+## RC4 amendment 7: advisory licence check (2026-11-18)
+Roadmap P5-19 (gap 57), FEP-0010 LIC-2. No rule change; no earlier vector changed its verdict or warnings. Text: [RC4 section 1.6](../../spec/nts-1.0-rc4.md#16-changes-from-rc3), 3.4 (MET-12 note), C.1.
+
+| Item | Detail |
+|---|---|
+| New advisory check | `NTS-LICENCE-MATCH`: `data.research_only = false` with a Creative Commons id with `NC` or `LicenseRef-unknown` (ASCII, without case) gives a warning, never a reject |
+| Table | One fixed pattern, not the SPDX list: Python `fidetype.trust.licence.no_commercial_id`, TypeScript `noCommercialId`, Rust `checks::no_commercial_id`. Other ids give no warning (silent, not "permissive") |
+| Vectors and parity | V101, V102 (NPZ), V103 (lower case, `-IGO`): accept with the warning; V104 (`CC-BY-SA-4.0`): accept, no warning. 355 in all. Python = TypeScript = Rust, warnings pinned |
+| Policy half (P5-18, LIC-3) | Collector exporter option `refuse_research_only` ([collector](collector.md)); FEP-0006 section 4 rule 6 |
+
 ## RC4 amendment 6: data licence keys (2026-11-17)
 Roadmap P5-13 (gap 47). Additive; no earlier vector changed its verdict. Text: [FEP-0010](../../spec/feps/0010-data-licence-keys.md), [RC4 section 1.6](../../spec/nts-1.0-rc4.md#16-changes-from-rc3), 3.4 (MET-12), 6.1.1, 6.2 (TD-15).
 
@@ -32,7 +42,7 @@ Roadmap P5-13 (gap 47). Additive; no earlier vector changed its verdict. Text: [
 | New `input` key (TD-15) | `trust_decision.input.research_only` (boolean, audit data, TD-13): from the stream keys and from the provenance lineage |
 | Evidence | The six reference adapters (emg2qwerty, KT-sEMG, Toronto sEMG, Willett, SpanishBCBL, B2T '25) and the 7 benchmark tracks. SpanishBCBL dropped its custom key `spanishbcbl.licence` |
 | Decisions in the FEP | Spelling `licence` (as the ledger and `fidetype.trust.licence`); `research_only` inside `input`, not a new top-level field (no schema change); validators check types only |
-| Open (FEP-0010) | LIC-1 dataset id key; LIC-2 advisory agreement check (gap 57 = P5-19); LIC-3 collector policy for research-only decisions (gap 56 = P5-18) |
+| Open (FEP-0010) | LIC-1 dataset id key. LIC-2 (advisory agreement check) answered by amendment 7 (P5-19); LIC-3 (collector policy) answered by FEP-0006 4 rule 6 (P5-18), both 2026-11-18 |
 | Vectors and parity | V98 (accept), V99, V100 (reject); 351 in all. Python = TypeScript = Rust |
 
 > **Our take:** the stream can now say "research only" without the ledger. This is the format half of the licence rule; the policy half (refuse research-only output in a product build) is gap 56.

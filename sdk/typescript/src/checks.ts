@@ -390,6 +390,31 @@ check("NTS-MODALITY-MATCH", "advisory", "SHOULD NOT", "3.4 (MET-11)", "Modality 
   if (other.length) return bad(`modality keys of another modality than device.modality ${repr(mod)}: ${repr(other)} (MET-11)`);
   return ok(`${keys.length} modality key(s) match device.modality ${repr(mod)}`);
 });
+/** P5-19 (FEP-0010 LIC-2): the Creative Commons SPDX id pattern of the Python reference (fidetype.trust.licence). */
+const CC_ID_RE = /^CC-BY((?:-(?:NC|ND|SA))*)-(\d\.\d)(-[A-Z]{2,3})?$/;
+/** The licence id of an unknown licence (research only). */
+export const LICENCE_UNKNOWN = "LicenseRef-unknown";
+/**
+ * True if `licence` surely does not allow commercial use: a CC SPDX id with the element NC, or LicenseRef-unknown.
+ * ASCII only, case-insensitive, no other normalisation. The same table as Python `no_commercial_id` and Rust
+ * `no_commercial_id` (P5-19, the advisory check NTS-LICENCE-MATCH of MET-12).
+ */
+export function noCommercialId(licence: unknown): boolean {
+  if (typeof licence !== "string" || [...licence].some((c) => c.charCodeAt(0) > 127)) return false;
+  const u = licence.toUpperCase();
+  if (u === LICENCE_UNKNOWN.toUpperCase()) return true;
+  const m = CC_ID_RE.exec(u);
+  return m !== null && m[1].split("-").includes("NC");
+}
+check("NTS-LICENCE-MATCH", "advisory", "MUST", "3.4 (MET-12)", "data.research_only is not false for a licence without commercial use", (raw) => {
+  const m = metaOf(raw);
+  if (!m) return skip("meta is not an object");
+  if (!has(m, "data.research_only") || m["data.research_only"] !== false) return skip("data.research_only is not false");
+  const lic = has(m, "data.licence") ? m["data.licence"] : null;
+  if (typeof lic !== "string" || lic === "") return skip("no data.licence (MET-12 not checkable)");
+  if (noCommercialId(lic)) return bad(`data.research_only is false, but data.licence ${repr(lic)} does not allow commercial use (MET-12)`);
+  return ok(`data.licence ${repr(lic)} is not a known non-commercial id`);
+});
 check("NTS-LEAK-KEYS", "core", "MUST", "5.3.1", "meta has no key that names ground truth or target labels", (raw) => {
   const m = metaOf(raw);
   if (!m) return skip("meta is not an object");

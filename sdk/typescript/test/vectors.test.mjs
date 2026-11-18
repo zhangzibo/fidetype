@@ -166,3 +166,24 @@ test("MET-11 modality match is an advisory warning; the summary gives warnings a
     assert.equal(sdk.loadStream(f, await node.readBytes(join(kit, f))).summary.level, want, f);
   }
 });
+
+test("MET-12 licence match is an advisory warning; the licence table equals Python and Rust (P5-19)", async () => {
+  // The same lists as tests/test_licence_match.py and the Rust test licence_table.
+  for (const id of ["CC-BY-NC-4.0", "CC-BY-NC-SA-4.0", "CC-BY-NC-ND-3.0-IGO", "cc-by-nc-2.5", "CC-BY-SA-NC-4.0", "LicenseRef-unknown", "licenseref-UNKNOWN"]) {
+    assert.equal(sdk.noCommercialId(id), true, id);
+  }
+  for (const id of ["CC-BY-4.0", "CC-BY-SA-4.0", "CC-BY-ND-4.0", "CC0-1.0", "MIT", "LicenseRef-fidetype-consented", "CC BY-NC 4.0", "CC-BY-NC-4.0\n", "CC-BY-NC-4.0-IGOX", "CC-BY-NC-40", "CC-BY-NCX-4.0", "CC-BY-NC-4.0-I", "CC-BY-NC-4.0-1G", "", "CC-BY-NC-4.٠", 4, null]) {
+    assert.equal(sdk.noCommercialId(id), false, String(id));
+  }
+  const v = join(conf, "v0.1");
+  const want = { "v101-licence-nc-not-research-only.jsonl": ["NTS-LICENCE-MATCH"], "v102-licence-unknown-not-research-only.npz": ["NTS-LICENCE-MATCH"],
+    "v103-licence-nc-lowercase-igo.jsonl": ["NTS-LICENCE-MATCH"], "v104-licence-sa-not-research-only.jsonl": [], "v98-data-licence-keys.jsonl": [] };
+  for (const [f, w] of Object.entries(want)) {
+    assert.deepEqual(sdk.loadStream(f, await node.readBytes(join(v, f))).summary.warnings, w, f);
+  }
+  const res = sdk.checkStream("v101.jsonl", await node.readBytes(join(v, "v101-licence-nc-not-research-only.jsonl")));
+  const r = res.results.find((x) => x.id === "NTS-LICENCE-MATCH");
+  assert.equal(r.level, "advisory");
+  assert.equal(r.status, "fail");
+  assert.match(r.message, /CC-BY-NC-4\.0.*MET-12/);
+});

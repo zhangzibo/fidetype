@@ -542,6 +542,32 @@ def build_vectors() -> list[Vector]:
     add("V100", "v100-data-research-only-string.npz", "reject", "1.0 RC4 3.4 (MET-1; FEP-0010)",
         'data.research_only is the string "yes" (type boolean)', None, failing_check="NTS-META-TYPES",
         writer=_w_npz(meta_json=np.array(json.dumps(lic | {"data.research_only": "yes"}))))
+    # --- NTS 1.0 RC4 amendment 7 (roadmap P5-19, gap 57; FEP-0010 LIC-2): the advisory check NTS-LICENCE-MATCH.
+    # data.research_only = false with a licence id that has NC (or LicenseRef-unknown) breaks MET-12: a warning,
+    # never a reject. "expected" pins the warning, so the three SDKs must report it alike.
+    lm = "1.0 RC4 3.4 (MET-12; amendment 7)"
+    add("V101", "v101-licence-nc-not-research-only.jsonl", "accept", lm,
+        'data.licence "CC-BY-NC-4.0" with data.research_only false: accepted with the MET-12 warning', None,
+        {"n_frames": 2, "warnings": ["NTS-LICENCE-MATCH"]},
+        writer=_w_lines([_header(spec_version="1.0", meta=lic | {"data.research_only": False}), *_frames(2, V),
+                         {"type": "end"}]))
+    add("V102", "v102-licence-unknown-not-research-only.npz", "accept", lm,
+        'NPZ: data.licence "LicenseRef-unknown" with data.research_only false: accepted with the MET-12 warning',
+        None, {"warnings": ["NTS-LICENCE-MATCH"]},
+        writer=_w_npz(meta_json=np.array(json.dumps(lic | {"data.licence": "LicenseRef-unknown",
+                                                           "data.research_only": False}))))
+    add("V103", "v103-licence-nc-lowercase-igo.jsonl", "accept", lm,
+        'data.licence "cc-by-nc-nd-3.0-igo" (SPDX ids match without case) with data.research_only false: '
+        "accepted with the MET-12 warning", None, {"n_frames": 2, "warnings": ["NTS-LICENCE-MATCH"]},
+        writer=_w_lines([_header(spec_version="1.0", meta=lic | {"data.licence": "cc-by-nc-nd-3.0-igo",
+                                                                  "data.research_only": False}),
+                         *_frames(2, V), {"type": "end"}]))
+    add("V104", "v104-licence-sa-not-research-only.jsonl", "accept", lm,
+        'data.licence "CC-BY-SA-4.0" (commercial use allowed) with data.research_only false: no warning', None,
+        {"n_frames": 2, "warnings": []},
+        writer=_w_lines([_header(spec_version="1.0", meta=lic | {"data.licence": "CC-BY-SA-4.0",
+                                                                  "data.research_only": False}),
+                         *_frames(2, V), {"type": "end"}]))
     vs.sort(key=lambda v: (len(v.vid), v.vid))  # V100 after V99
     return vs
 

@@ -41,6 +41,8 @@ Data licence keys ([FEP-0010](../spec/feps/0010-data-licence-keys.md), RC4 amend
 
 The provenance ledger reads the two stream keys into a `source` entry, so a decision's licence flags include the stream's licence.
 
+The validators check the types. The advisory check `NTS-LICENCE-MATCH` (RC4 amendment 7, P5-19) also warns when `data.research_only` is `false` and `data.licence` is a Creative Commons id with `NC` or `LicenseRef-unknown`. A Collector exporter with `refuse_research_only = true` drops research-only decisions (P5-18, [collector](collector.md)).
+
 ## Use it as a producer
 
 1. Look up each key in [registry.md](../spec/semconv/registry.md). Use the given type.

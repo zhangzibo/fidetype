@@ -5,7 +5,7 @@
 | **FEP** | 0010 |
 | **Title** | `data.licence` and `data.research_only` in `meta`; `research_only` in `trust_decision.input` |
 | **Author(s)** | Fidetype maintainers |
-| **Status** | Draft (folded into [NTS 1.0 RC4](../nts-1.0-rc4.md) as amendment 6 of 2026-11-17: sections 1.6, 3.4 (MET-12), 6.1.1, 6.2 (TD-15), 9.3, 9.5, C.1; reference implementation and vectors in Python, TypeScript and Rust) |
+| **Status** | Draft (folded into [NTS 1.0 RC4](../nts-1.0-rc4.md) as amendment 6 of 2026-11-17: sections 1.6, 3.4 (MET-12), 6.1.1, 6.2 (TD-15), 9.3, 9.5, C.1; reference implementation and vectors in Python, TypeScript and Rust). 2026-11-18: LIC-2 answered by RC4 amendment 7 (advisory check `NTS-LICENCE-MATCH`, roadmap P5-19); LIC-3 answered by FEP-0006 section 4 rule 6 (exporter option `refuse_research_only`, roadmap P5-18) |
 | **Type** | Spec change (additive) |
 | **Affects** | NTS 1.0 RC4 sections 3.4, 6.1.1, 6.2; the registry [`spec/semconv/`](../semconv/registry.md) |
 | **Created** | 2026-11-17 |
@@ -58,7 +58,9 @@ Normative text: RC4 sections 3.4 (MET-12, two table rows), 6.1.1 (one row), 6.2 
 ### Decisions taken in this FEP (with the options)
 1. **Spelling `licence`, not `license`.** Options: (a) `data.licence` (the roadmap text, the project's British spelling in `fidetype.trust.licence`, the ledger key `licence`); (b) `data.license` (SPDX and OpenTelemetry use US spelling). Taken: (a), so that the stream, the ledger and the code use one word. A later version can add an alias only through a FEP; no producer writes (b).
 2. **Where `research_only` goes in a decision.** Options: (a) a key of `input` (6.1.1), audit data under TD-13; (b) a new top-level field of `trust_decision` (a schema, proto and three-SDK type change); (c) a new container `licence`. Taken: (a). The flag describes the input of the decision, TD-13 already says how a consumer treats audit keys, and the roadmap asks for "an audit key, TD-13". No schema or proto change.
-3. **Validators check types only.** Options: (a) types only; (b) also an advisory check that `data.research_only` agrees with `data.licence` (needs an SPDX NC rule in three SDKs). Taken: (a) now; (b) is open question LIC-2.
+3. **Validators check types only.** Options: (a) types only; (b) also an advisory check that `data.research_only` agrees with `data.licence` (needs an SPDX NC rule in three SDKs). Taken: (a) in amendment 6; (b) added by amendment 7 (LIC-2 below).
+4. **The table of the advisory check (LIC-2, 2026-11-18).** Options: (a) a copy of the SPDX licence list in three SDKs; (b) a fixed rule: a Creative Commons id with the element `NC`, plus `LicenseRef-unknown`; (c) the full normalisation of `fidetype.trust.licence.normalise` (free forms like `"CC BY-NC 4.0"`) in three SDKs. Taken: (b), ASCII only and without case (SPDX ids match without case). It needs no list that changes, it is one pattern that three SDKs can match alike (`fidetype.trust.licence.no_commercial_id`, TypeScript `noCommercialId`, Rust `checks::no_commercial_id`), and it catches the cases that P5-03 found in real data (the CC BY-NC datasets). Any other id gives no warning; the check never reads an unknown id as permissive. A warning, never a reject: MET-12 is content, and a wrong warning must not block a stream.
+5. **Collector policy (LIC-3, 2026-11-18).** Options: (a) an exporter option that drops research-only decisions; (b) the same, but a COMMIT becomes an OFFER (the user still sees the text); (c) a processor before the exporters; (d) refuse at configuration time to connect a research-only source to a product exporter. Taken: (a), `refuse_research_only = true` on any exporter (FEP-0006 section 4 rule 6). Reason: (b) changes an item (FEP-0006 rule 1) and still shows research-only text in a product; (c) would also remove the decisions from the audit log of the same pipeline; (d) cannot know the licence before the header arrives. A decision without `input.research_only` has an **unknown** licence and is dropped by default (`unknown_licence = "refuse"`; `"pass"` exports it), because the project licence rule reads an unknown licence as research only. Default without the option: unchanged.
 
 ## Compatibility
 - Additive. Every earlier vector keeps its verdict.
@@ -74,11 +76,13 @@ Normative text: RC4 sections 3.4 (MET-12, two table rows), 6.1.1 (one row), 6.2 
 - Trust layers: `StreamingTrustLayer` (stream keys and ledger lineage), `IntentTrustLayer`, `ControlTrustLayer` and the collector `guard` processor (stream keys) write `input.research_only`.
 - Vectors (`v0.1`): V98 (accept: both keys), V99 (reject: `data.licence` is `""`), V100 (reject, NPZ: `data.research_only` is `"yes"`). Python = TypeScript = Rust.
 - `tools/semconv/semconv.py --check` compares the new keys with the spec tables, the three SDK tables and the accept vectors.
+- Amendment 7 (P5-19): the advisory check `NTS-LICENCE-MATCH` in the three validators; vectors V101, V102, V103 (accept with the warning), V104 (accept, no warning); `tests/test_licence_match.py`.
+- P5-18: `fidetype.collector.exporters.LicenceGate` and the exporter options `refuse_research_only`, `unknown_licence`; `tests/test_research_only_policy.py`.
 
 ## Privacy and leakage
 No personal data. A licence id is public information about a dataset. `data.licence` MUST NOT hold a consent text or a person's name; own consented data uses `LicenseRef-fidetype-consented` and the separate key `consent.ref` (an opaque reference).
 
 ## Open questions
 - **LIC-1.** Should a stream also name its dataset (`data.source` with a DOI or URL)? The adapters know it (`fidetype.replay`), but a URL in every header can point to a person-level record in some datasets.
-- **LIC-2.** Should the validators warn when `data.research_only = false` but `data.licence` is a `CC-BY-NC-*` id (an advisory check like NTS-MODALITY-MATCH)? Cheap, but it puts an SPDX rule into three SDKs.
-- **LIC-3.** Should the collector refuse (by option) to pass research-only decisions to a product exporter (for example the `os_text` backend in a product build)? This is a policy, not a format rule; it belongs in FEP-0006.
+- ~~**LIC-2.**~~ **Answered 2026-11-18 (roadmap P5-19, RC4 amendment 7):** yes. The advisory check `NTS-LICENCE-MATCH` warns when `data.research_only = false` and `data.licence` is a Creative Commons id with `NC` or `LicenseRef-unknown`, the same in Python, TypeScript and Rust (vectors V101 … V104). Decision 4 above.
+- ~~**LIC-3.**~~ **Answered 2026-11-18 (roadmap P5-18, FEP-0006 section 4 rule 6):** yes, by option. `refuse_research_only = true` on an exporter drops decisions with `input.research_only = true` and, by default, decisions without the key (unknown licence), with counters and a log line. Test: a CC-BY-NC stream types nothing through an `os_text` exporter; a CC0 stream types as before (`tests/test_research_only_policy.py`). Decision 5 above.

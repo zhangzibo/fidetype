@@ -70,7 +70,7 @@ class Pipeline:
             items = proc.process(items)
         if items:
             for ex in self.exporters:
-                ex.export(items)
+                ex.deliver(items)
 
     def _run_timed(self, items: list[R.Item]) -> None:
         """:meth:`_run` with the stage times of :mod:`fidetype.collector.latency` (decision steps only)."""
@@ -90,7 +90,7 @@ class Pipeline:
         if out:
             for ex in self.exporters:
                 a = clock()
-                ex.export(out)
+                ex.deliver(out)
                 stages.append((f"exporter.{ex.name}", clock() - a))
         t_end = clock()
         if not any(ev.get("type") == "trust_decision" for _, ev in out):
@@ -340,7 +340,11 @@ class Collector:
         for name, c in cfg.receivers.items():
             self._receivers[name] = self._receiver(c)
         for name, c in cfg.exporters.items():
-            self._exporters[name] = self._exporter(c)
+            ex = self._exporters[name] = self._exporter(c)
+            if c.options.get("refuse_research_only"):  # P5-18 (FEP-0010 LIC-3): the licence gate
+                ex.refuse_research_only(c.options.get("unknown_licence", "refuse"))
+                self.log(f"exporters.{name}: refuse_research_only (unknown licence: "
+                         f"{c.options.get('unknown_licence', 'refuse')})")
         for p in cfg.pipelines.values():
             self.pipelines.append(Pipeline(p.name, [self._receivers[n] for n in p.receivers],
                                            [self._processor(cfg.processors[n]) for n in p.processors],

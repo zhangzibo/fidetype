@@ -50,6 +50,31 @@ You can also write the lineage as a file and load it with `record_lineage_spec(l
 
 An artifact inherits the most restrictive flags of all its inputs. `record_artifact(..., purpose="product")` refuses an artifact whose inputs the product policy does not allow (`LicenceError`). The default policy `project` is the project's licence rule: product weights come only from CC0 data or our own consented data.
 
+### Keep research-only output out of a product exporter (P5-18)
+
+Every trust layer writes `trust_decision.input.research_only` when it knows the licence of its input (FEP-0010, TD-15). A Collector exporter can refuse such decisions:
+
+```toml
+[exporters.typing]
+type = "os_text"
+backend = "stub"
+refuse_research_only = true    # drop decisions with input.research_only = true
+unknown_licence = "refuse"     # default; "pass" exports decisions without the key
+```
+
+| `input.research_only` of a decision | Without the option (default) | `refuse_research_only = true` |
+|---|---|---|
+| `true` (for example a `CC-BY-NC-4.0` stream, or an NC decoder in the ledger lineage) | exported | dropped, counter `research_only_refused` |
+| `false` (for example a `CC0-1.0` stream) | exported | exported |
+| absent, or not a boolean (**unknown licence**) | exported | `unknown_licence = "refuse"`: dropped, counter `licence_unknown_refused`; `"pass"`: exported |
+
+Rules:
+- The option works on every exporter type (`jsonl`, `stdout`, `websocket`, `lsl`, `os_text`). It acts on decisions only (`trust_decision`, `intent_decision`, `control_decision`). Input events pass unchanged.
+- An unknown licence is refused by default. Reason: the project licence rule reads an unknown licence as research only (table above).
+- The exporter never changes a decision that it exports (FEP-0006 section 4 rule 1). It logs one line at the first drop of each kind; then it only counts. The log line holds no text and no session id.
+- Keep a decision log without the option next to the product exporter. Then the audit trail keeps every decision.
+- This is a policy of the operator, not a format rule. The stream format and the decision format do not change.
+
 ## 3. The lineage of one output
 
 ```sh

@@ -22,6 +22,11 @@ from os import PathLike
 from pathlib import Path
 from typing import Any
 
+#: P5-18 (FEP-0010 LIC-3): the licence options that every exporter takes, and the events they act on.
+LICENCE_KEYS = {"refuse_research_only", "unknown_licence"}
+UNKNOWN_LICENCE = ("refuse", "pass")
+DECISION_EVENT_TYPES = {"trust_decision", "intent_decision", "control_decision"}
+
 #: Keys of an ``lsl`` receiver (FEP-0006 section 2; the settings of ``fidetype.adapters.lsl.LSLMapping``).
 LSL_RECEIVER_KEYS = {"stream_name", "stream_type", "source_id", "events", "stream_id", "stop_at_end", "on_gap",
                      "gap_factor", "clock", "out_of_order", "values", "vocab", "vocab_type", "blank",
@@ -50,14 +55,16 @@ SCHEMA: dict[str, dict[str, tuple[set[str], set[str]]]] = {
                   set()),
     },
     "exporters": {
-        "jsonl": ({"path", "types", "append"}, {"path"}),
-        "stdout": ({"types"}, set()),
+        "jsonl": ({"path", "types", "append"} | LICENCE_KEYS, {"path"}),
+        "stdout": ({"types"} | LICENCE_KEYS, set()),
         # ``receiver``: share the /decisions channel of a websocket receiver's server.
         # No ``receiver``: start a standalone /decisions server (for file replay demos).
-        "websocket": ({"receiver", "listen", "token_env", "origins", "certfile", "keyfile", "linger_s"}, set()),
-        "lsl": ({"stream_name", "source_id", "config_id", "no_text"}, set()),
+        "websocket": ({"receiver", "listen", "token_env", "origins", "certfile", "keyfile", "linger_s"} | LICENCE_KEYS,
+                      set()),
+        "lsl": ({"stream_name", "source_id", "config_id", "no_text"} | LICENCE_KEYS, set()),
         # P3-03 OS text input; v0 has the "stub" backend only (types into memory and a JSON Lines log).
-        "os_text": ({"backend", "path", "separator"}, set()),
+        # P5-18: every exporter takes refuse_research_only / unknown_licence (FEP-0010 LIC-3).
+        "os_text": ({"backend", "path", "separator"} | LICENCE_KEYS, set()),
     },
 }
 TOP_KEYS = {"service", "receivers", "processors", "exporters", "pipelines"}
@@ -219,6 +226,20 @@ def _listen(where: str, v: Any) -> None:
         raise ConfigError(f"{where}: must be 'host:port' with a port in 0..65535, not {v!r}")
 
 
+def _check_licence_options(where: str, typ: str, opts: dict[str, Any]) -> None:
+    """P5-18 (FEP-0010 LIC-3, FEP-0006 4 rule 6): ``refuse_research_only`` and ``unknown_licence`` of an exporter."""
+    _opt_type(where, opts, "refuse_research_only", (bool,), "true or false")
+    _opt_enum(where, opts, "unknown_licence", UNKNOWN_LICENCE)
+    if "unknown_licence" in opts and not opts.get("refuse_research_only"):
+        raise ConfigError(f"{where}.unknown_licence: needs refuse_research_only = true")
+    if opts.get("refuse_research_only") and typ in ("jsonl", "stdout"):
+        types = opts.get("types", ["trust_decision"])
+        types = [types] if isinstance(types, str) else types
+        if isinstance(types, list) and "*" not in types and not set(types) & DECISION_EVENT_TYPES:
+            raise ConfigError(f"{where}.refuse_research_only: acts on decisions only, and this exporter writes "
+                              "no decision type (input events carry data.research_only in their header)")
+
+
 def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig:
     where = f"{kind}.{name}"
     if not isinstance(d, dict):
@@ -233,6 +254,8 @@ def _check_component(kind: str, name: str, d: dict[str, Any]) -> ComponentConfig
     opts = {k: v for k, v in d.items() if k != "type"}
     _check_keys(where, opts, allowed, required)
     num = (int, float)
+    if kind == "exporters":
+        _check_licence_options(where, typ, opts)
     if kind == "receivers" and typ == "file":
         paths = opts["paths"]
         if isinstance(paths, str):

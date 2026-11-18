@@ -782,6 +782,59 @@ fn c_modality_match(raw: &RawStream) -> Out {
     }
     ok_s(format!("{} modality key(s) match device.modality {}", keys.len(), repr(&Value::str(md))))
 }
+/// The licence id of an unknown licence (research only; P5-19).
+pub const LICENCE_UNKNOWN: &str = "LicenseRef-unknown";
+/// True if `licence` surely does not allow commercial use (P5-19, FEP-0010 LIC-2; the advisory check
+/// NTS-LICENCE-MATCH of MET-12): a Creative Commons SPDX id with the element `NC`
+/// (`^CC-BY((?:-(?:NC|ND|SA))*)-(\d\.\d)(-[A-Z]{2,3})?$`, the pattern of the Python reference
+/// `fidetype.trust.licence`), or `LicenseRef-unknown`. ASCII only, case-insensitive, no other normalisation.
+/// The same table as Python `no_commercial_id` and TypeScript `noCommercialId`.
+pub fn no_commercial_id(licence: &str) -> bool {
+    if !licence.is_ascii() {
+        return false;
+    }
+    let u = licence.to_ascii_uppercase();
+    if u == LICENCE_UNKNOWN.to_ascii_uppercase() {
+        return true;
+    }
+    let mut rest = match u.strip_prefix("CC-BY") {
+        Some(r) => r.as_bytes(),
+        None => return false,
+    };
+    let mut nc = false;
+    // The elements -NC, -ND, -SA (any number), then -<digit>.<digit>, then an optional -<2 or 3 letters>.
+    while rest.len() >= 3 && (rest.starts_with(b"-NC") || rest.starts_with(b"-ND") || rest.starts_with(b"-SA")) {
+        nc |= rest.starts_with(b"-NC");
+        rest = &rest[3..];
+    }
+    if rest.len() < 4 || rest[0] != b'-' || !rest[1].is_ascii_digit() || rest[2] != b'.' || !rest[3].is_ascii_digit() {
+        return false;
+    }
+    rest = &rest[4..];
+    let suffix_ok = rest.is_empty()
+        || (rest[0] == b'-' && (rest.len() == 3 || rest.len() == 4) && rest[1..].iter().all(|c| c.is_ascii_uppercase()));
+    nc && suffix_ok
+}
+fn c_licence_match(raw: &RawStream) -> Out {
+    let m = match meta_of(raw) {
+        Some(m) => m,
+        None => return skip("meta is not an object"),
+    };
+    if m.get_opt("data.research_only").and_then(|v| v.as_bool()) != Some(false) {
+        return skip("data.research_only is not false");
+    }
+    let lic = match m.get_opt("data.licence").and_then(|v| v.as_str()) {
+        Some(s) if !s.is_empty() => s,
+        _ => return skip("no data.licence (MET-12 not checkable)"),
+    };
+    if no_commercial_id(lic) {
+        return bad(format!(
+            "data.research_only is false, but data.licence {} does not allow commercial use (MET-12)",
+            repr(&Value::str(lic))
+        ));
+    }
+    ok_s(format!("data.licence {} is not a known non-commercial id", repr(&Value::str(lic))))
+}
 fn c_leak_keys(raw: &RawStream) -> Out {
     let m = match meta_of(raw) {
         Some(m) => m,
@@ -1470,6 +1523,7 @@ static REGISTRY: &[CheckDef] = &[
     chk!("NTS-META-LOOKAHEAD", Core, "MUST", "4.2", "decoder.lookahead_s equals latency when both are present", c_meta_lookahead),
     chk!("NTS-NAMESPACE", Advisory, "SHOULD", "4.1", "meta keys are namespaced; custom keys avoid the defined namespaces", c_namespace),
     chk!("NTS-MODALITY-MATCH", Advisory, "SHOULD NOT", "3.4 (MET-11)", "Modality keys (emg.*, meg.*, implant.*) go with device.modality", c_modality_match),
+    chk!("NTS-LICENCE-MATCH", Advisory, "MUST", "3.4 (MET-12)", "data.research_only is not false for a licence without commercial use", c_licence_match),
     chk!("NTS-LEAK-KEYS", Core, "MUST", "5.3.1", "meta has no key that names ground truth or target labels", c_leak_keys, heuristic),
     chk!("NTS-PRIVACY", Core, "MUST", "5.4.1 / 4.2", "meta has no personal identifiers (e-mail, name, birth date keys)", c_privacy, heuristic),
     chk!("NTS-FREE-TEXT", Advisory, "SHOULD NOT", "5.4.3", "meta has no free-text note fields", c_free_text, heuristic),
@@ -1699,6 +1753,17 @@ mod tests {
         assert!(!is_w3c_code("Keya") && !is_w3c_code("F123"));
         assert!(py_match(is_bcp47, "en-US\n") && !is_bcp47("e"));
         assert!(is_pseudo_id("S01") && !is_pseudo_id("John Smith"));
-        assert_eq!(check_table().len(), 61); // the same 61 checks as the Python REGISTRY (P1-16: NTS-MODALITY-MATCH; P14-17: NTS-TD-INPUT)
+        assert_eq!(check_table().len(), 62); // the same 62 checks as the Python REGISTRY (P1-16: NTS-MODALITY-MATCH; P14-17: NTS-TD-INPUT; P5-19: NTS-LICENCE-MATCH)
+    }
+
+    #[test]
+    fn licence_table() {
+        // P5-19: the same answers as Python no_commercial_id (tests/test_licence_match.py has the same list).
+        for id in ["CC-BY-NC-4.0", "CC-BY-NC-SA-4.0", "CC-BY-NC-ND-3.0-IGO", "cc-by-nc-2.5", "CC-BY-SA-NC-4.0", "LicenseRef-unknown", "licenseref-UNKNOWN"] {
+            assert!(no_commercial_id(id), "{}", id);
+        }
+        for id in ["CC-BY-4.0", "CC-BY-SA-4.0", "CC-BY-ND-4.0", "CC0-1.0", "MIT", "LicenseRef-fidetype-consented", "CC BY-NC 4.0", "CC-BY-NC-4.0\n", "CC-BY-NC-4.0-IGOX", "CC-BY-NC-40", "CC-BY-NCX-4.0", "CC-BY-NC-4.0-I", "CC-BY-NC-4.0-1G", "", "CC-BY-NC-4.\u{0660}"] {
+            assert!(!no_commercial_id(id), "{}", id);
+        }
     }
 }

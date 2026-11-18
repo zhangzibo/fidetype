@@ -16,6 +16,12 @@
   decoded text (SEC-7): the one exporter option that changes an item (FEP-0006 4, rule 1).
 
 Status items (``ws_status``) are internal and never exported.
+
+P5-18 (FEP-0010 LIC-3, FEP-0006 4 rule 6): every exporter takes ``refuse_research_only = true``. Then it drops
+each decision whose ``input.research_only`` is ``true`` (TD-15), with the counter ``research_only_refused`` and one
+log line. A decision without the key has an **unknown** licence: ``unknown_licence = "refuse"`` (the default) drops
+it too (counter ``licence_unknown_refused``), ``"pass"`` exports it. Input events are not affected. Dropping is
+not a change of an item: an exported decision is exported unchanged (rule 1).
 """
 
 from __future__ import annotations
@@ -27,14 +33,65 @@ from pathlib import Path
 from typing import Any, Callable, TextIO
 
 from fidetype.adapters import ws as W
+# P5-18: the licence options of every exporter (FEP-0006 4 rule 6) and the values of ``unknown_licence``.
+from fidetype.collector.config import LICENCE_KEYS, UNKNOWN_LICENCE  # noqa: F401
 from fidetype.collector.receivers import STATUS, Item
 
 #: Output event types of a decision (their file key is the decision's ``session``).
 DECISION_TYPES = {"trust_decision", "intent_decision", "control_decision"}
 
 
+
+
 def dumps(ev: dict[str, Any]) -> str:
     return json.dumps(ev, ensure_ascii=False, allow_nan=False)
+
+
+def decision_research_only(ev: dict[str, Any]) -> bool | None:
+    """``input.research_only`` of a decision (TD-15): True, False, or None (absent or not a boolean: unknown)."""
+    inp = ev.get("input")
+    v = inp.get("research_only") if isinstance(inp, dict) else None
+    return v if isinstance(v, bool) else None
+
+
+class LicenceGate:
+    """P5-18 (FEP-0010 LIC-3): drop research-only decisions before a (product) exporter sees them.
+
+    ``research_only = true`` -> dropped (``research_only_refused``). No key (unknown licence) -> dropped with
+    ``unknown = "refuse"`` (``licence_unknown_refused``), exported with ``"pass"``. ``research_only = false`` and
+    every input event -> exported unchanged. The first drop of each kind gives one log line (no text, no session id).
+    """
+
+    def __init__(self, exporter: str, log: Callable[[str], None], counts: dict[str, int],
+                 unknown: str = "refuse") -> None:
+        if unknown not in UNKNOWN_LICENCE:
+            raise ValueError(f"unknown_licence must be one of {UNKNOWN_LICENCE}, not {unknown!r}")
+        self.exporter = exporter
+        self.log = log
+        self.counts = counts
+        self.unknown = unknown
+        counts.update(research_only_refused=0, licence_unknown_refused=0)
+
+    def _refuse(self, key: str, why: str) -> None:
+        if self.counts[key] == 0:
+            self.log(f"exporters.{self.exporter}: refuse_research_only: dropped a decision ({why}); "
+                     f"further drops are only counted ({key})")
+        self.counts[key] += 1
+
+    def admit(self, items: list[Item]) -> list[Item]:
+        out: list[Item] = []
+        for item in items:
+            ev = item[1]
+            if ev.get("type") in DECISION_TYPES:
+                ro = decision_research_only(ev)
+                if ro is True:
+                    self._refuse("research_only_refused", "input.research_only = true")
+                    continue
+                if ro is None and self.unknown == "refuse":
+                    self._refuse("licence_unknown_refused", "no input.research_only: unknown licence")
+                    continue
+            out.append(item)
+        return out
 
 
 class Exporter:
@@ -46,6 +103,21 @@ class Exporter:
         self.counts: dict[str, int] = {"exported": 0}
         #: Seconds the collector waits after the input is done, before it stops (standalone servers).
         self.linger_s = 0.0
+        #: P5-18: the ``refuse_research_only`` gate (None: every decision goes out, the default).
+        self.licence_gate: LicenceGate | None = None
+
+    def refuse_research_only(self, unknown: str = "refuse") -> "Exporter":
+        """Turn on the P5-18 licence gate (the ``refuse_research_only`` option). Returns ``self``."""
+        self.licence_gate = LicenceGate(self.name, self.log, self.counts, unknown)
+        return self
+
+    def deliver(self, items: list[Item]) -> None:
+        """What the pipeline calls: the licence gate (if any), then :meth:`export`."""
+        if self.licence_gate is not None:
+            items = self.licence_gate.admit(items)
+            if not items:
+                return
+        self.export(items)
 
     def start(self) -> None:
         pass
@@ -57,7 +129,10 @@ class Exporter:
         pass
 
     def stats(self) -> dict[str, Any]:
-        return {"type": self.type, **self.counts}
+        out: dict[str, Any] = {"type": self.type, **self.counts}
+        if self.licence_gate is not None:
+            out["refuse_research_only"] = {"unknown_licence": self.licence_gate.unknown}
+        return out
 
 
 class _LinesExporter(Exporter):

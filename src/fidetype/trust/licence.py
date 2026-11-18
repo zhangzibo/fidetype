@@ -246,6 +246,29 @@ def restrict(summary_: Mapping[str, Any]) -> dict[str, Any]:
     return dict(summary_, commercial_ok=False, research_only=True, product_ok={p: False for p in PRODUCT_POLICIES})
 
 
+def no_commercial_id(licence: Any) -> bool:
+    """True if ``licence`` is a licence id that surely does not allow commercial use (P5-19, FEP-0010 LIC-2).
+
+    The table of the advisory check ``NTS-LICENCE-MATCH`` (MET-12). The TypeScript (``noCommercialId`` in
+    ``sdk/typescript/src/checks.ts``) and Rust (``no_commercial_id`` in ``sdk/rust/src/checks.rs``) validators
+    mirror it exactly; ``tests/test_licence_match.py`` checks it against :func:`terms`.
+
+    - An SPDX Creative Commons id with the element ``NC`` (the pattern of :func:`terms`: ``CC-BY-NC-4.0``,
+      ``CC-BY-NC-SA-4.0``, ``CC-BY-NC-ND-3.0-IGO``, ...), or ``LicenseRef-unknown``.
+    - ASCII only and case-insensitive (SPDX ids match without case). No other normalisation: a stream value is
+      an SPDX id (3.4), not a free form like ``"CC BY-NC 4.0"``.
+    - Any other value gives False, also an id that the table does not know. The check never reads an unknown
+      id as permissive; it only stays silent (the SPDX list changes, and three SDKs must agree).
+    """
+    if not isinstance(licence, str) or not licence.isascii():
+        return False
+    u = licence.upper()
+    if u == UNKNOWN.upper():
+        return True
+    m = _CC.fullmatch(u)
+    return m is not None and "NC" in m.group(1).split("-")
+
+
 def track_licence(track: str) -> tuple[str, bool, str]:
     """``(spdx, research_only, attribution)`` of a benchmark track (``fidetype.benchmark.tracks``)."""
     from fidetype.benchmark.tracks import get_track

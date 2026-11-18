@@ -623,6 +623,25 @@ def c_modality_match(raw: RawStream) -> tuple[str, str]:
     return ok(f"{len(keys)} modality key(s) match device.modality {mod!r}")
 
 
+@check("NTS-LICENCE-MATCH", ADVISORY, "MUST", "3.4 (MET-12)",
+       "data.research_only is not false for a licence without commercial use")
+def c_licence_match(raw: RawStream) -> tuple[str, str]:
+    """P5-19 (FEP-0010 LIC-2, RC4 amendment 7): advisory agreement of data.research_only and data.licence."""
+    from fidetype.trust.licence import no_commercial_id
+
+    m = _meta(raw)
+    if m is None:
+        return skip("meta is not an object")
+    if m.get("data.research_only", None) is not False:
+        return skip("data.research_only is not false")
+    lic = m.get("data.licence")
+    if not isinstance(lic, str) or lic == "":
+        return skip("no data.licence (MET-12 not checkable)")
+    if no_commercial_id(lic):
+        return bad(f"data.research_only is false, but data.licence {lic!r} does not allow commercial use (MET-12)")
+    return ok(f"data.licence {lic!r} is not a known non-commercial id")
+
+
 @check("NTS-LEAK-KEYS", "core", "MUST", "5.3.1", "meta has no key that names ground truth or target labels", heuristic=True)
 def c_leak_keys(raw: RawStream) -> tuple[str, str]:
     m = _meta(raw)

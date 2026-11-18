@@ -3,7 +3,7 @@ title: NeuralTextStream conformance suite
 type: concept
 tags: [spec, neuraltextstream, conformance, testing, standard, adapters, provenance]
 sources: [brain-to-text-25-copytask, toronto-semg-typing]
-updated: 2026-11-17
+updated: 2026-11-18
 ---
 
 # NeuralTextStream conformance suite
@@ -24,9 +24,9 @@ The levels are cumulative. A stream reaches a level only if it also reaches all 
 | **core** | The stream is valid. A consumer MUST accept it. | All MUST rules: structure (5.1), values and normalisation (5.2), NPZ form (6.1), JSON Lines form (6.2), sparse frames (3.3), types of the defined `meta` keys (4.1, 4.2), `decoder.lookahead_s` = `latency` (4.2), Development events (3.5–3.9). Heuristic leakage (5.3) and privacy (5.4) checks. |
 | **trust-ready** | A trust layer can use the stream safely. | `source` names the producer (3.2); `device.modality` (4.2); `decoder.causal` (3.2, 4.2); an offline decoder omits `latency` (3.2); `data.derived = true` (5.4.4); `calibration.applied` agrees with the calibration keys (4.2); text vocabularies state `language` (4.2); a `char` vocabulary has one character per token (3.1). |
 | **provenance** | A decision can be traced to the models that made it. | `stream.id` (4.3.1); `decoder.name` and `decoder.version` (4.3.2); `decoder.weights_sha256` (4.2, 4.3.2); `adapter.name` and `adapter.version` together (4.2); `decoder.calibration_id` if calibrated (3.5.3); pseudonymous ids (5.4.2, heuristic). |
-| *advisory* | Good practice. A warning only. It never blocks a level. | NPZ dtypes (6.1), namespaced keys (4.1), free-text notes (5.4.3), W3C key codes (3.1), ARPAbet / IPA phonemes (3.1), one-hot rows (2.4.4), `frame_period` agrees with the frame steps (3.2), labels in `vocab` (3.5), lines after `end` (6.2), modality keys fit `device.modality` (RC4 3.4 MET-11; P1-16). |
+| *advisory* | Good practice. A warning only. It never blocks a level. | NPZ dtypes (6.1), namespaced keys (4.1), free-text notes (5.4.3), W3C key codes (3.1), ARPAbet / IPA phonemes (3.1), one-hot rows (2.4.4), `frame_period` agrees with the frame steps (3.2), labels in `vocab` (3.5), lines after `end` (6.2), modality keys fit `device.modality` (RC4 3.4 MET-11; P1-16), `data.research_only` is not `false` for an `NC` licence id or `LicenseRef-unknown` (RC4 3.4 MET-12, amendment 7; P5-19). |
 
-Each check has a keyword: `MUST` or `SHOULD` copies the spec text. `PROFILE` marks a requirement that the suite adds for a level; its clause names the spec text that motivates it. Run `python -m fidetype.conformance list --markdown` for the full list of 61 checks.
+Each check has a keyword: `MUST` or `SHOULD` copies the spec text. `PROFILE` marks a requirement that the suite adds for a level; its clause names the spec text that motivates it. Run `python -m fidetype.conformance list --markdown` for the full list of 62 checks.
 
 These are **stream levels** (one stream). RC4 amendment 3 gives them rule ids (CNF-3 trust-ready, CNF-4 provenance) and adds **implementation levels** for a program on top of them ([below](#implementation-levels-and-self-certification-p7-02)).
 
