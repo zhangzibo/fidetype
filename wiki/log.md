@@ -1104,3 +1104,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Trust, M2-19 config with the M2-18 commit gate (not refitted): 91 commits, 11 wrong (0.0157, CP95 upper 0.0279), eWPM 9.94 (gaze 4.02, always commit 9.90 with 63 % wrong). Controls with the gate: uniform 0/300, frame-shuffled 0/300.
 - 2026-11-15 decision in [streaming trust layer](concepts/streaming-trust-layer.md): every trust re-tune enables the commit gate and passes both null controls.
 - Pages: [lookahead vs accuracy and latency](questions/lookahead-latency-accuracy.md) (new M4-13 section), [index](index.md). Experiment: [results](../experiments/2026-11-15-m4-13-long-train/results.md).
+
+## [2026-11-17] query | P14-18 / P14-19: word-setting follow-ups (gaps 44, 45 closed)
+- Pre-registration `3d07cb4` before any run; one hidden CPU queue 03:50-07:28 (4 threads). Reference runs reproduce every committed M4-12, M4-01/02 and P14-03 number; rebuild code-path checks pass.
+- P14-18: with edit penalty 8, 14 of 166 M4 metrics move by their CI half-width, all in favour of edit 8 (M4-12 1/90; M4-01/02 11/72; P14-03 2 wrong commits -> 0). The committed M4 rows are not optimistic. New gap 50 (P14-21).
+- P14-19: re-split tables (published gate, guard off; 35 rebuilt splits) no effect (0/240). Forward-chain prefix 0 with edit 8: 9 plug-in rows of "ours" change by their half-width; no day keeps a CP lower bound above alpha; LTT max V3 ours 2/13 -> 1/13, published 1/13 -> 0/13. Downstream: A2 day 34, two formal effects. New gap 51 (P14-22).
+- Pages: [T15 split audit](questions/t15-split-audit.md), [open gaps](questions/open-gaps.md), [roadmap](questions/roadmap-standard.md) (P14-18, P14-19, P14-21, P14-22). Correction notes on 7 results pages and `papers/paper1/correction-2026-11-17-p14-19.md`; no-effect notes on 6. Experiment: [results](../experiments/2026-11-17-p14-18-19-followups/results.md).

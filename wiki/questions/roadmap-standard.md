@@ -709,8 +709,10 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 | **P14-13** | Conformant EMG baselines without oracle key timing (kt-semg, emg2qwerty) (open gap 27, [details](#p14-13-conformant-emg-baselines-without-oracle-key-timing-kt-semg-emg2qwerty)) | P11-01 (continuous EMG decoder); P4-10 (live key-onset detector) | research labs, BCI companies |
 | **P14-14** | T12 safe WPM above the no-BCI reference (open gap 29, [details](#p14-14-t12-safe-wpm-above-the-no-bci-reference)) | M4-13 (stronger T15 recipe to port), P15-19 (usefulness on stronger decoders), P6-06 | research labs, BCI companies |
 | **P14-15** | Word-decoder settings tuned without evaluation trials (T15) (gap 35, done: no effect on the re-split rows; [details](#p14-15-word-decoder-settings-tuned-without-evaluation-trials-t15)) | — | research labs, reviewers |
-| **P14-18** | M4-x word-level results with word settings tuned without val_eval trials (T15) (open gap 44, [details](#p14-18-m4-x-word-level-results-with-word-settings-tuned-without-val_eval-trials-t15)) | P14-15 | research labs, reviewers |
-| **P14-19** | Re-split published-gate rows, forward chain and downstream tables with per-fit word settings (open gap 45, [details](#p14-19-re-split-published-gate-rows-forward-chain-and-downstream-tables-with-per-fit-word-settings)) | P14-15 | research labs, reviewers |
+| **P14-18** | M4-x word-level results with word settings tuned without val_eval trials (T15) (gap 44, done 2026-11-17: effect, all changes favour edit 8, follow-up P14-21; [details](#p14-18-m4-x-word-level-results-with-word-settings-tuned-without-val_eval-trials-t15)) | P14-15 | research labs, reviewers |
+| **P14-19** | Re-split published-gate rows, forward chain and downstream tables with per-fit word settings (gap 45, done 2026-11-17: re-split rows no effect, forward-chain prefix 0 corrected, follow-up P14-22; [details](#p14-19-re-split-published-gate-rows-forward-chain-and-downstream-tables-with-per-fit-word-settings)) | P14-15 | research labs, reviewers |
+| **P14-21** | M4-x / M2-19 / P15-05..07 / P5-02 rows with the T15 word decoder tuned without val_eval (edit penalty 8) (open gap 50, [details](#p14-21-m4-x-rows-with-the-t15-word-decoder-tuned-without-val_eval-edit-penalty-8)) | P14-18 | research labs, reviewers |
+| **P14-22** | R3-level analyses on the re-split tables with per-fit word settings (open gap 51, [details](#p14-22-r3-level-analyses-on-the-re-split-tables-with-per-fit-word-settings)) | P14-19 | research labs, reviewers |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -867,14 +869,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-18 M4-x word-level results with word settings tuned without val_eval trials (T15)
 - **Gap:** 44 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-15). Follow-up of P14-15, P14-03.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, pre-registration `3d07cb4`; [results](../../experiments/2026-11-17-p14-18-19-followups/results.md)). **Effect, favourable:** with edit penalty 8, 14 of 166 metrics move by their CI half-width (M4-12 1 of 90: truth in n-best of shared L 40 ms; M4-01/02 11 of 72: WER at the frozen T 0.019-0.023 lower; P14-03: 2 wrong commits → 0). Every change favours edit 8, so the committed M4 rows are not optimistic. Notes on the M4-12, M4-01/02 and P14-03 pages. Downstream reruns: P14-21 (gap 50).
 - **Depends on:** P14-15 (done). CPU only.
 - **Source:** P14-15 ([results](../../experiments/2026-11-17-p14-15-retune/results.md)), step 3: without the 16 M4 `val_eval` trials (384 tune trials), the pre-registered rule picks edit penalty 8 instead of 12 (lm 1.0, bonus 3). It is an exact WER tie (0.16477), decided by truth-in-n-best (0.5469 vs 0.5443). Without `val_eval` and `val_select` (368) the paper point stays first.
 - **Done when:** the M4-12 `fixed0` `val_eval` word-level decode (P14-03 `decode_fn`) is rerun with edit penalty 8, and the word WER and the P14-03 guard rows are compared with the committed ones. If every change is below its CI half-width, close with "no effect" on the M4 results pages; else rerun the affected M4-x / M2-19 / P15-05..07 / P5-02 rows and add notes.
 
 #### P14-19 Re-split published-gate rows, forward chain and downstream tables with per-fit word settings
 - **Gap:** 45 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-15, post hoc). Follow-up of P14-15.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-17, pre-registration `3d07cb4`; [results](../../experiments/2026-11-17-p14-18-19-followups/results.md)). Re-split tables (published gate, guard off; 35 rebuilt splits): **no effect** (0 of 240). **Forward chain: effect** (9 of 320, plug-in rows of "ours"): with the edit-8 day-1 prefix no day has a CP lower bound above α; LTT max V3 ours 2/13 → 1/13, published 1/13 → 0/13. Downstream: A2 day 34 (same prefix), two formal effects (joint LTT with 2 committing splits; population risk with a resampling-only CI); per-day, reuse, cleanup, no-guard, bonus, M3-01/02, trust v5: no effect. Correction notes on the pages and in `papers/paper1/correction-2026-11-17-p14-19.md`. Not covered: P14-22 (gap 51).
 - **Depends on:** P14-15 (done). CPU only (about 1 h per 35 rebuilt splits).
 - **Source:** P14-15 ([results](../../experiments/2026-11-17-p14-15-retune/results.md), post hoc): (1) `published_plus_fn` uses our word n-best (gate score and word confidences), so the "B2T published" re-split rows also depend on the word setting; the audit called them clean. (2) The R4 forward chain (V1, V2, V4) tests on whole days; the fit prefix "day 1 only" (30 trials, used by one test day in V1 and one in V4) picks edit penalty 8. (3) R4 population-risk, per-day, reuse, joint-LTT, no-guard, M2-18, M3-01/02, trust v5 and A2 read the same split tables (P14-15 found no effect on the guard-on "ours" tables).
 - **Done when:** the published-gate tables of the 35 changed re-splits and the guard-off "ours" tables are rebuilt with each split's fit-A setting, the forward-chain day-1 prefix is rerun, and the same rule as P14-15 (change < CI half-width = no effect) is applied; "no effect" closes the item, else the tables get dated correction notes and the paper track gets a note.
@@ -885,6 +887,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-17 (done).
 - **Source:** P14-17 (2026-11-17): the file validators of the three SDKs now refuse a `trust_decision` in an input stream (`NTS-TD-INPUT`, TD-4). The event-by-event validators still ignore it as an unknown event type: Python `StreamingTrustLayer.push`, TypeScript and Rust `StreamValidator` (and the collector `validate` processor on live input).
 - **Done when:** the spec says what a streaming consumer does with a `trust_decision` in an input stream (refuse the event or ignore it and warn), and the three streaming validators do the same thing, with a parity test.
+
+#### P14-21 M4-x rows with the T15 word decoder tuned without val_eval (edit penalty 8)
+- **Gap:** 50 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-18). Follow-up of P14-18.
+- **Status:** `todo`.
+- **Depends on:** P14-18 (done). CPU only.
+- **Source:** P14-18 ([results](../../experiments/2026-11-17-p14-18-19-followups/results.md)): with lm 1.0 / edit 8 / bonus 3, 14 of 166 M4 metrics move by their CI half-width (1 in M4-12, 11 in M4-01/02, 2 in P14-03). All of them favour edit 8.
+- **Done when:** the M4-x word-level rows that use `val_eval` decodes of the B2T word decoder (M4-06 replays, M2-19, P15-05..07, P5-02, the M4-13 trust rows) are rerun with edit 8 or shown not to use the word decoder, compared with the P14-15 rule, and their pages carry dated notes.
+
+#### P14-22 R3-level analyses on the re-split tables with per-fit word settings
+- **Gap:** 51 of the [open-gap list](open-gaps.md) (added 2026-11-17 by P14-19). Follow-up of P14-19.
+- **Status:** `todo`.
+- **Depends on:** P14-19 (done). CPU only (no new decodes: the rebuilt tables exist in `derived/p14-18-19/tables`).
+- **Source:** P14-19 ([results](../../experiments/2026-11-17-p14-18-19-followups/results.md)): the R4 analyses, M3-01/02, trust v5 and A2 were rerun; the R3 `repeated-splits` analyze (full output), `selective-risk`, `deployable-rule`, `v3-derived` and R4 `v4-derived` guard controls read the same tables but were not rerun. Paper 1 Fig. `fig:deploy`a uses the corrected forward chain.
+- **Done when:** these analyses are rerun with the redirected loader of P14-19, compared with the P14-15 rule, and their pages (and the paper correction note, if needed) carry dated notes.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
