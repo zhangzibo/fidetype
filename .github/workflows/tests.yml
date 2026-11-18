@@ -12,21 +12,86 @@ permissions:
   contents: read
 
 jobs:
+  # P2-09: the full Python suite on every supported Python (Linux) and on Windows and macOS.
+  # 3.15 is not in the matrix: h5py (dev extra) has no cp315 wheel yet (gap 62).
+  # fail-fast is off, so one red platform does not hide the others.
   pytest:
-    runs-on: ubuntu-latest
+    name: pytest (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.12", "3.13", "3.14"]
+        include:
+          - { os: windows-latest, python: "3.12" }
+          - { os: windows-latest, python: "3.13" }
+          - { os: macos-latest, python: "3.12" }
+          - { os: macos-latest, python: "3.13" }
     steps:
       - uses: actions/checkout@v7
 
-      # Install uv and Python 3.12; cache uv downloads between runs.
+      # Install uv and the matrix Python; cache uv downloads between runs.
       - uses: astral-sh/setup-uv@v10.3.3  # no floating major tag exists after v7
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python }}
           enable-cache: true
 
       # Dev extra only: the "data" extra (mne, scipy) is not needed, and CI has no MEG data.
       - run: uv sync --extra dev
 
       - run: uv run pytest -q
+
+  # P2-09: the conformance suites of the three SDKs (Python, TypeScript, Rust) and the Python wheel smoke test
+  # on Windows and macOS. Linux runs the same steps in the packaging, typescript and rust jobs.
+  conformance-os:
+    name: conformance (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Python wheel in a clean venv; conformance suite and kit
+        run: |
+          set -eo pipefail
+          uvx --from build pyproject-build --installer uv --outdir "$RUNNER_TEMP/pydist" .
+          uv venv "$RUNNER_TEMP/v"
+          if [ "$RUNNER_OS" = "Windows" ]; then b="$RUNNER_TEMP/v/Scripts"; else b="$RUNNER_TEMP/v/bin"; fi
+          uv pip install --python "$b/python" "$RUNNER_TEMP"/pydist/*.whl
+          cd "$RUNNER_TEMP"
+          "$b/fidetype" version
+          "$b/fidetype" conformance --profile fep-0001
+          "$b/fidetype" conformance consumer
+          "$b/nts-conform" kit --require-level trust-ready
+          "$b/nts-conform" certified --check
+          "$b/fidetype-collector" --help
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: TypeScript SDK (build, tests, golden vectors, conformance kit)
+        working-directory: sdk/typescript
+        run: |
+          npm ci --no-audit --no-fund
+          npm run ci
+      - name: Rust SDK (tests, golden vectors, conformance kit)
+        working-directory: sdk/rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          cargo test --locked
+          cargo run --locked --release --bin fidetype-rs -- conformance
+          cargo run --locked --release --bin fidetype-rs -- conformance --vectors ../../spec/conformance/kit
 
   # P14-04 / P4-02: `fidetype live` end to end on the real BrainFlow Synthetic board and a real pylsl loopback
   # (synthetic recording). Only tests/test_live.py runs here, so other LSL tests stay out of this job.
@@ -353,3 +418,16 @@ jobs:
             --cmd "$GITHUB_WORKSPACE/.venv/bin/fidetype-collector consume -q --profile {profile} --level {level} {path}"
           # all 36 entries and both bindings, not only the level
           uv run python -c "import json,sys; r=json.load(open(sys.argv[1])); lv=r['level']; sys.exit(0 if r['ok'] and not lv['bindings_missing'] else 1)" "$RUNNER_TEMP/collector.kit-report.json"
+
+  # P2-09: one check that is green only when every job above is green. Make this the required status check
+  # (branch rule on main) so that a red platform blocks the merge.
+  all-green:
+    if: always()
+    needs: [pytest, conformance-os, live, live-kt, proto, semconv, typescript, typescript-parity, rust, rust-parity,
+            packaging, rust-msrv, hygiene, collector]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every job passed
+        run: |
+          echo '${{ toJSON(needs.*.result) }}'
+          if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "true" ]; then exit 1; fi
