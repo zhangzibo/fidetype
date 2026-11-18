@@ -1,0 +1,195 @@
+{
+  "schema": "fidetype.hub.registry/0.1",
+  "registry_version": "0.1.0",
+  "updated": "2026-11-18",
+  "design": "docs/hub-design.md",
+  "rule": "Metadata only. The hub never hosts, mirrors or re-publishes participant data. Every file comes from the original source.",
+  "datasets": [
+    {
+      "schema": "fidetype.hub.dataset/0.1",
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1,
+      "status": "registered",
+      "title": "Brain-to-Text '25, participant T15 copy task (Card et al. 2024)",
+      "modality": "intracortical",
+      "language": "en",
+      "participants": 1,
+      "citation": {
+        "text": "Card et al., NEJM 391 (2024). Dryad doi:10.5061/dryad.dncjsxm85",
+        "doi": "10.1056/NEJMoa2314132",
+        "data_doi": "10.5061/dryad.dncjsxm85"
+      },
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "licence": {
+        "spdx": "CC0-1.0",
+        "source_text": "CC0 1.0",
+        "research_only": false,
+        "share_alike": false,
+        "attribution": "Data: Card et al. 2024 (Dryad, CC0). No attribution is required; please cite the paper."
+      },
+      "personal_data": {
+        "participant_data": true,
+        "rehost": false,
+        "note": "Neural recordings of one participant. Fidetype commits only salted hashes and aggregate numbers."
+      },
+      "forms": [
+        {
+          "form": "pkl",
+          "description": "Per-trial RNN phoneme logits and sentences (t15_copyTask.pkl).",
+          "files": [
+            {"name": "t15_copyTask.pkl", "bytes": 57786348,
+             "sha256": "7313b9a1102794cfd31455a85d3d16a1aca962aa730a7134d9346fb8f5e165e3"}
+          ]
+        },
+        {
+          "form": "hdf5",
+          "description": "Neural features, partitions train / val / test (t15_copyTask_neuralData.zip). Holds the same trials as the pkl form.",
+          "files": [
+            {"name": "t15_copyTask_neuralData.zip", "bytes": null, "sha256": null,
+             "note": "checksum not yet recorded (gap 79, P13-07)"}
+          ]
+        }
+      ],
+      "same_units": [
+        {"forms": ["pkl", "hdf5"],
+         "note": "About 45 % of the b2t25-t15 test trials are in the HDF5 train partition (T15 split audit). A training-data declaration and an overlap check are required (P6-10).",
+         "map": null}
+      ],
+      "download": {
+        "instructions": "Download from Dryad (login needed) or a mirror with the same SHA-256. Load the pkl only with fidetype.adapters.b2t25.load_copytask (safe unpickler, digest check).",
+        "login_required": true
+      },
+      "verify": {
+        "files": "sha256sum t15_copyTask.pkl",
+        "units": "python -m fidetype.benchmark.tracks verify b2t25-t15 --data <path>/t15_copyTask.pkl"
+      },
+      "prepare": null,
+      "adapters": [
+        {"form": "pkl", "module": "fidetype.adapters.b2t25", "call": "load_copytask(pkl)[index] -> trial_stream(trial)",
+         "emits": "frames (phoneme CTC log-probabilities)", "transports": ["file", "lsl", "ws"]}
+      ],
+      "tracks": [{"track": "b2t25-t15", "split_version": "tracks-v0.2"}],
+      "hub_role": "implant",
+      "steward": "fidetype maintainers"
+    },
+    {
+      "schema": "fidetype.hub.dataset/0.1",
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1,
+      "status": "registered",
+      "title": "SpanishBCBL typing MEG (Brain2Qwerty v1/v2 data)",
+      "modality": "meg",
+      "language": "es",
+      "participants": null,
+      "citation": {
+        "text": "Levy et al., Nature Neuroscience 29 (2026). Dataset bcbl190626/SpanishBCBL (Hugging Face)",
+        "doi": "10.1038/s41593-026-02303-2",
+        "data_doi": null
+      },
+      "url": "https://huggingface.co/datasets/bcbl190626/SpanishBCBL",
+      "licence": {
+        "spdx": "CC-BY-NC-4.0",
+        "source_text": "CC BY-NC 4.0",
+        "research_only": true,
+        "share_alike": false,
+        "attribution": "Contains data from the SpanishBCBL dataset (BCBL; Levy et al. 2026), licensed CC BY-NC 4.0. Non-commercial research use only."
+      },
+      "personal_data": {
+        "participant_data": true,
+        "rehost": false,
+        "note": "MEG recordings and typed text of volunteers. Results and weights derived from it are research-only."
+      },
+      "forms": [
+        {
+          "form": "fif",
+          "description": "316 MEG files (MEG/FIF/**/*.fif) and logs (MEG/logs/*.mat), 251.36 GB. No single archive.",
+          "files": [
+            {"name": "MEG/FIF/**/*.fif + MEG/logs/*.mat", "bytes": 251360000000, "sha256": null,
+             "note": "verify per-file sizes against the Hugging Face file list; a per-file manifest is gap 79 (P13-07)"}
+          ]
+        },
+        {
+          "form": "cache",
+          "description": "Local preprocessing cache (S*/*.json + .npz sidecars) built by tools/data/preprocess_spanishbcbl.py. Never committed.",
+          "files": []
+        }
+      ],
+      "same_units": [],
+      "download": {
+        "instructions": "huggingface-cli download bcbl190626/SpanishBCBL --repo-type dataset --include 'MEG/*' --local-dir <root>",
+        "login_required": false
+      },
+      "verify": {
+        "files": null,
+        "units": "python -m fidetype.benchmark.tracks verify spanishbcbl-meg --data <cache>"
+      },
+      "prepare": "python tools/data/preprocess_spanishbcbl.py --root <root> --cache <cache>",
+      "adapters": [
+        {"form": "cache", "module": "fidetype.adapters.spanishbcbl_meg", "call": "segment_stream(...) on your decoder's logits",
+         "emits": "frames (character CTC log-probabilities of a decoder)", "transports": ["file", "lsl", "ws"]}
+      ],
+      "tracks": [{"track": "spanishbcbl-meg", "split_version": "tracks-v0.2"}],
+      "hub_role": "meg",
+      "steward": "fidetype maintainers"
+    },
+    {
+      "schema": "fidetype.hub.dataset/0.1",
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1,
+      "status": "registered",
+      "title": "Toronto forearm sEMG typing gestures (Achituve et al. 2025)",
+      "modality": "emg",
+      "language": "en",
+      "participants": 19,
+      "citation": {
+        "text": "Achituve, Beutel, Eby, Fetaya, Koivisto, Zariffa, Sci Data 12:440 (2025). Borealis doi:10.5683/SP3/KV65VI",
+        "doi": "10.1038/s41597-025-04763-w",
+        "data_doi": "10.5683/SP3/KV65VI"
+      },
+      "url": "https://doi.org/10.5683/SP3/KV65VI",
+      "licence": {
+        "spdx": "CC-BY-4.0",
+        "source_text": "CC BY 4.0",
+        "research_only": false,
+        "share_alike": false,
+        "attribution": "Contains data from Achituve et al. 2025 (University of Toronto, Borealis doi:10.5683/SP3/KV65VI), licensed CC BY 4.0. Fidetype changed nothing in the data; splits are ours."
+      },
+      "personal_data": {
+        "participant_data": true,
+        "rehost": false,
+        "note": "Forearm sEMG of 19 volunteers."
+      },
+      "forms": [
+        {
+          "form": "zip",
+          "description": "EMG typing dataset.zip (Intan .rhd recordings, key logs).",
+          "files": [
+            {"name": "EMG typing dataset.zip", "bytes": 2766730294,
+             "sha256": "73c4f925b81c627643373dc271878a6fda6c0b59c521ae856a5610c8e5de7ef3",
+             "md5": "27d052ee1b5dcdf1e5eb0b875c698f6d"}
+          ]
+        }
+      ],
+      "same_units": [],
+      "download": {
+        "instructions": "Download https://borealisdata.ca/api/access/datafile/836662 and extract only the data files (.rhd, .txt, .csv).",
+        "login_required": false
+      },
+      "verify": {
+        "files": "sha256sum 'EMG typing dataset.zip'",
+        "units": "python -m fidetype.benchmark.tracks verify toronto-semg --data <extracted> --cache <window cache> --sentences <eng_tatoeba_heldout.txt>"
+      },
+      "prepare": "python experiments/2026-11-11-emg-toronto/prep.py (window cache; a hub command is gap 78, P13-06)",
+      "adapters": [
+        {"form": "zip", "module": "fidetype.adapters.toronto_semg", "call": "read_rhd(path), key_events(...) -> keypress_stream(...)",
+         "emits": "key-press frames (vocab_type key) and their CTC character form", "transports": ["file", "lsl", "ws"]}
+      ],
+      "tracks": [{"track": "toronto-semg", "split_version": "tracks-v0.2"}],
+      "hub_role": "emg",
+      "steward": "fidetype maintainers"
+    }
+  ]
+}

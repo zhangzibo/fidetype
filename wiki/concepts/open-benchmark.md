@@ -3,7 +3,7 @@ title: Open benchmark v0.1
 type: concept
 tags: [benchmark, leaderboard, evaluation, ewpm, conformal, neuraltextstream, licences]
 sources: [brain-to-text-25-copytask, toronto-semg-typing]
-updated: 2026-11-16
+updated: 2026-11-18
 ---
 
 # Open benchmark v0.1
@@ -98,10 +98,11 @@ Side results of P6-01 ([results](../../experiments/2026-11-16-p6-01-tracks/resul
 
 ## Relation to the roadmap
 - **P6** (benchmark + leaderboard): v0.1 delivers the metrics, the NTS submission format, licence-clean fixed splits, the static page and baselines on 3 tracks. Tracks v0.2 (P6-01) adds the Willett handwriting, B2T '24 T12, KT-sEMG and emg2qwerty tracks with hash-only splits. Scorer + baselines for the new tracks: P6-02 (done). Open for P6: replay adapters (P4), latency and ECE columns, all baselines as stream submissions, first outside submission (externally blocked).
-- **P13** (benchmark hub): the dataset registry, guarantee reporting and the "scored from" column are the first steps. Open: CI scoring of pull requests, per-track pages and history, intent tracks after P12.
+- **P13** (benchmark hub): design done 2026-11-18 ([hub design](../questions/hub-design.md), [docs](../../docs/hub-design.md)): versioned dataset registry, replay contract, rerun levels, governance. the dataset registry, guarantee reporting and the "scored from" column are the first steps. Open: CI scoring of pull requests, per-track pages and history, intent tracks after P12.
 
 ## Related
 - [Conformance suite](conformance-suite.md) (the entry gate)
 - [Error metrics](error-metrics.md)
 - [Roadmap to a standard](../questions/roadmap-standard.md) (P6, P13)
+- [Benchmark hub design](../questions/hub-design.md) (P13-01)
 - [B2T '25 trust result](../questions/b2t25-trust-result.md), [EMG Toronto trust result](../questions/emg-toronto-trust-result.md), [M2-13 conformal result](../questions/m2-13-conformal-result.md)

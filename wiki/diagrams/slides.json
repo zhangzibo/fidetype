@@ -103,6 +103,12 @@
       "title": "17. Control events (FEP-0005, P12-03)",
       "caption": "A decoder sends one velocity with an uncertainty per tick. No-signal gates hold the cursor; conformal shrinkage, the hand-off ramp and the clamps can only slow it down. Motion needs an engage, and a stop is latched. Each command has a time-to-live, so a bridge stops by itself when commands stop.",
       "wiki": "../concepts/control-events.md"
+    },
+    {
+      "file": "18-hub-design.drawio",
+      "title": "18. Benchmark hub: dataset registry and replay adapters (P13-01)",
+      "caption": "The registry holds metadata only: licence, research-only flag, checksums and download steps. Users download from the original source and verify the copy. An adapter replays each split unit as one NTS stream over a file, LSL or WebSocket. The scorer writes a card with a rerun recipe, and the static site shows it.",
+      "wiki": "../questions/hub-design.md"
     }
   ]
 }

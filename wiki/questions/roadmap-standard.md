@@ -823,6 +823,25 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - Outside datasets or outside tracks: **externally blocked**.
 
 **Effort:** 10–20 agent-days; about 6 h user review. **Depends on:** P6, P4 replay adapters; P12 for intent tracks.
+**Status (2026-11-18): P13-01 done** (design). [docs/hub-design.md](../../docs/hub-design.md), [summary and open questions](hub-design.md), [diagram 18](../diagrams/index.html). Versioned dataset registry `src/fidetype/benchmark/hub/datasets-0.1.json` (schema `fidetype.hub.dataset/0.1`) with entries for SpanishBCBL (MEG, research only), Brain-to-Text '25 (implant, CC0) and Toronto sEMG (EMG, CC BY 4.0; the EMG choice is open question Q1); stdlib checker `python -m fidetype.benchmark.hub` + `tests/test_hub_registry.py`. Replay contract RA-1 … RA-10 over file / LSL / WebSocket (reuses the existing adapters), rerun recipe and levels (`rescore`, `replay`, `full`), versioning table, dataset governance, outlines for P13-02 and P13-03, seven open questions for the user.
+- **P13-01 done when:** a design doc defines the registry schema (id, version, licence + research-only flag, citation, checksum / verify, download; no re-hosting), the replay contract for the three hub datasets, the rerun recipe, the versioning rules, the PR flow and guarantee reporting outlines and dataset governance; a registry file with the three hub datasets passes a checker test; a diagram is linked. Met 2026-11-18.
+
+### Open-gap items (added 2026-11-18)
+Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item moved.
+
+#### P13-06 Hub command line and rerun recipe
+- **Gap:** 78 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-01). Follow-up of P13-01.
+- **Status:** `todo`.
+- **Depends on:** P13-01 (done); P6-10 for the `training_data` field.
+- **Source:** P13-01 ([design](../../docs/hub-design.md#42-rules)): replay rules RA-4 (unit hash in the stream header), RA-7 (one test that replays a stream over file, LSL and WebSocket and compares the decisions) and RA-9 (adapter hash in the result) are not met. No command reads the registry, and result cards have no rerun recipe.
+- **Done when:** (1) `fidetype hub list | info | verify | replay | rerun` exists and reads `datasets-0.1.json`; (2) score cards carry the rerun recipe of design section 5.1 with the adapter hash; (3) the three hub adapters write the track and unit hash into the header meta; (4) a test replays one stream over file, LSL and WebSocket and gets the same decisions; (5) `fidetype hub rerun` reproduces one committed `b2t25-t15` card byte for byte (level `replay`); (6) the dataset fields of `tracks.py` read from the registry without a change to any split file.
+
+#### P13-07 Registry entries for the other v0.2 datasets and missing checksums
+- **Gap:** 79 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-01). Follow-up of P13-01, P6-01.
+- **Status:** `todo`.
+- **Depends on:** P13-01 (done); local copies of the datasets (CPU, download only).
+- **Source:** P13-01 (`src/fidetype/benchmark/hub/datasets-0.1.json`): only the three hub datasets are registered. The B2T '25 HDF5 zip (`t15_copyTask_neuralData.zip`) has no recorded size or SHA-256, and SpanishBCBL (316 files, no archive) has no per-file manifest; both rely on split fingerprints only.
+- **Done when:** registry entries for B2T '24, Willett handwriting, KT-sEMG and emg2qwerty pass the checker and the test; the B2T '25 HDF5 form has its size and SHA-256; SpanishBCBL has a committed per-file size (and hash, where the source gives one) manifest with a verify command.
 
 ## P14. Value first: a useful toolkit (added 2026-11-15)
 **Goal:** people install `fidetype` because it is useful today, not only because it is a format. The format spreads as a side effect, as with LangChain ([LangChain case study](../sources/case-study-langchain.md)). P14 adds user value and credibility. It does not change the scope, order or priority of P1–P13.
