@@ -159,7 +159,7 @@ print(out.accepted, out.reasons, guard.config_id)
 |---|---|
 | Check block | Block LTT on the check items: the session threshold. A check item that the candidate trained on raises an error (give `check_ids=` and `cal_ids=`) |
 | Null controls | Uniform and time-shuffled inputs (n-best input: your `null_inputs=`) go through the candidate and the commit gate. More than `floor(alpha x n)` commits: rejected |
-| Champion / challenger | Paired sign test on top-1 errors against the live decoder. Significantly worse: rejected |
+| Champion / challenger | Default deny (P15-13): the candidate must show that it is not worse than the live decoder on the check items (top-1 right / wrong, CER as tie-break; exact one-sided tests, margins 0.1). An item with unknown truth counts against the candidate, unless the user rejected both top-1 texts. Not shown: rejected. Pass `check_texts[i] = None` for unknown truth and `check_rejected=` for the lists the user rejected. `GuardedUpdateLoop(challenger_test="sign")` gives the old P15-02 sign test |
 | Accepted | The candidate configuration goes into the **same** `guard` object. `commit_p` is raised to the session threshold if that is higher (this only removes commits). The audit log gets a `config_update` record |
 | Rejected | The guard does not change (same object, same `config_id`). A failed calibration (`NullControlError`) is a rejection too |
 | Ledger | Each proposal and each decision is an `update` entry (stage `proposed`, `accepted` or `rejected`) in the append-only, hash-chained ledger. Check it with `python -m fidetype.trust.provenance verify updates.jsonl` |

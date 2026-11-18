@@ -51,7 +51,7 @@ feedback ──► loss   ──► risk test (betting e-process)  ────�
    n_recal + n_check NEW labels ──► TrustGuardUpdater.propose_calibration
         calibrate() + its null controls  ──►  GuardedUpdateLoop checks:
         block LTT on the check block, evidence gate, uniform + shuffled
-        null controls, champion / challenger sign test
+        null controls, champion / challenger test (default-deny non-inferiority, P15-13)
                                                              ▼
         accepted: new guard (ends a tightening), tests restart
         rejected: nothing changes; the proposal stays open

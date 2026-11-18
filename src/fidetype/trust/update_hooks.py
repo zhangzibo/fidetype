@@ -3,7 +3,8 @@
 A decoder update must not change what the user sees until it passed the
 checks of :class:`~fidetype.trust.adaptive.GuardedUpdateLoop` (block LTT
 on a fresh check block, uniform and shuffled null controls through the
-commit gate, champion / challenger sign test). This module connects the
+commit gate, champion / challenger test: by default the P15-13
+default-deny non-inferiority test). This module connects the
 loop to the two live objects of the trust layer:
 
 - :class:`TrustGuardUpdater` -- for a :class:`~fidetype.trust.dropin.TrustGuard`
@@ -243,15 +244,19 @@ class TrustGuardUpdater:
         self.outcomes.append(o)
         return o
 
-    def propose(self, candidate: Any, check_inputs: Sequence[Any], check_texts: Sequence[str], *,
+    def propose(self, candidate: Any, check_inputs: Sequence[Any], check_texts: Sequence[str | None], *,
                 champion_inputs: Sequence[Any] | None = None, check_ids: Sequence[Hashable] | None = None,
                 trained_on: Iterable[Hashable] = (), version: Hashable | None = None,
-                session: Hashable | None = None, null_inputs: Sequence[Any] | None = None) -> GuardUpdateOutcome:
+                session: Hashable | None = None, null_inputs: Sequence[Any] | None = None,
+                check_rejected: Sequence[Sequence[str] | None] | None = None) -> GuardUpdateOutcome:
         """Run the loop checks for ``candidate`` (a calibrated guard of the new decoder).
 
         ``check_inputs``: the new decoder's outputs on the check block; ``champion_inputs``: the live
         decoder's outputs on the same items (None: the same inputs, for a re-calibration of the same
-        decoder). ``check_texts``: the true texts. ``check_ids`` / ``trained_on``: item ids, so that the
+        decoder). ``check_texts``: the true texts (None: the truth stays unknown, for example the user
+        rejected the offered list and did not retype; P15-13). ``check_rejected``: per item, the texts the
+        user rejected (or None); with the default non-inferiority test, a side whose top-1 is in it is
+        wrong. ``check_ids`` / ``trained_on``: item ids, so that the
         loop refuses a check item the candidate trained on. ``session``: a new session id starts a new
         loop session. ``null_inputs``: your decoder's output on null input (logits: an extra control;
         n-best: the shuffled control).
@@ -265,6 +270,8 @@ class TrustGuardUpdater:
         n = len(check_inputs)
         if len(check_texts) != n or (champion_inputs is not None and len(champion_inputs) != n):
             raise ValueError("check_inputs, check_texts and champion_inputs need the same length")
+        if check_rejected is not None and len(check_rejected) != n:
+            raise ValueError("check_rejected needs one entry per check item")
         if n < self.loop.n_check:
             raise ValueError(f"check block has {n} items; the loop needs >= {self.loop.n_check}")
         ids = list(check_ids) if check_ids is not None else [("check", len(self.outcomes), i) for i in range(n)]
@@ -283,9 +290,12 @@ class TrustGuardUpdater:
         for i in range(n):
             s, t, risk, _ = self._item(candidate, check_inputs[i])
             cs, ct, crisk, _ = self._item(self.guard, champ_x[i])
-            truth = _norm(check_texts[i])
-            loop.add_check_item(ids[i], s, float(t != truth), text=t or None, text_ok=bool(t), guard_risk=risk,
-                                champion=(cs, float(ct != truth), crisk, ct))
+            truth = None if check_texts[i] is None else _norm(check_texts[i])
+            rej = () if check_rejected is None or check_rejected[i] is None else [_norm(r) for r in check_rejected[i]]
+            loop.add_check_item(ids[i], s, None if truth is None else float(t != truth), text=t or None,
+                                text_ok=bool(t), guard_risk=risk,
+                                champion=(cs, None if truth is None else float(ct != truth), crisk, ct),
+                                truth=truth, not_truth=rej)
         loop.recalibrate()
         uni, shu, user = self._null_items(candidate, check_inputs, null_inputs)
         loop.check_null_controls(uniform=uni, shuffled=shu, user=user)
@@ -301,11 +311,12 @@ class TrustGuardUpdater:
         return self._outcome(rec.accepted, rec, before, cp_before, rec.reasons)
 
     def propose_calibration(self, cal_inputs: Sequence[Any], cal_texts: Sequence[str],
-                            check_inputs: Sequence[Any], check_texts: Sequence[str], *,
+                            check_inputs: Sequence[Any], check_texts: Sequence[str | None], *,
                             champion_inputs: Sequence[Any] | None = None,
                             check_ids: Sequence[Hashable] | None = None,
                             cal_ids: Iterable[Hashable] = (), version: Hashable | None = None,
                             session: Hashable | None = None, null_inputs: Sequence[Any] | None = None,
+                            check_rejected: Sequence[Sequence[str] | None] | None = None,
                             **calibrate_kwargs: Any) -> GuardUpdateOutcome:
         """:func:`~fidetype.trust.dropin.calibrate` a candidate, then :meth:`propose` it.
 
@@ -329,7 +340,8 @@ class TrustGuardUpdater:
             rec = loop.reject_proposal(f"calibration refused: {type(e).__name__}: {e}")
             return self._outcome(False, rec, before, cp, rec.reasons)
         return self.propose(cand, check_inputs, check_texts, champion_inputs=champion_inputs, check_ids=check_ids,
-                            trained_on=cal_ids, version=version, session=session, null_inputs=null_inputs)
+                            trained_on=cal_ids, version=version, session=session, null_inputs=null_inputs,
+                            check_rejected=check_rejected)
 
     def _raised(self, candidate: Any, lam: float) -> Any:
         """A copy of ``candidate`` with ``commit_p = lam`` (only removes commits) and an updated sheet."""

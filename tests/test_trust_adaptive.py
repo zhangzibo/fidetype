@@ -405,3 +405,151 @@ def test_aci_certificate_holds_across_updates():
     assert rep["n_observed"] == len(obs)
     assert np.mean(obs) <= rep["certificate"] + 1e-12
     assert loop.report()["n_recalibrations"] == 6
+
+
+# --- P15-13: default-deny non-inferiority gate (partial feedback) --------------------
+
+
+def _start_with_champion(loop: GuardedUpdateLoop) -> None:
+    loop.start_session("d1")
+    loop.new_version("champ")
+    fill_check(loop, 0, 48)
+    assert validate(loop).accepted
+
+
+def _partial_feedback_block(loop: GuardedUpdateLoop, version: str, *, known: int, ch_right: int, cp_right: int,
+                            ch_cer: float, cp_cer: float, seed: int = 0) -> None:
+    """48 items. Truth known (retyped) on ``known`` items; the user rejected the challenger's list on the rest.
+
+    On the known items the challenger is right on the first ``ch_right`` and the champion on the first
+    ``cp_right``; wrong top-1 texts have the given CER. On the unknown items the champion's top-1 is not in
+    the rejected list (its result stays unknown).
+    """
+    loop.start_session(version)
+    loop.new_version(version, trained_on=[("cal", version)])
+    truth = "the quick brown fox jumps"
+
+    def wrong(cer: float, tag: str) -> str:
+        k = max(1, int(round(cer * len(truth))))
+        return (tag * k + truth[k:])[:len(truth)]
+
+    for i in range(48):
+        iid = (version, i)
+        if i < known:
+            ct = truth if i < ch_right else wrong(ch_cer, "x")
+            pt = truth if i < cp_right else wrong(cp_cer, "y")
+            loop.add_check_item(iid, 0.9, float(ct != truth), text=ct, guard_risk=GOOD_RISK,
+                                champion=(0.9, float(pt != truth), GOOD_RISK, pt), truth=truth)
+        else:
+            ct, pt = f"challenger guess {i}", f"champion guess {i}"
+            loop.add_check_item(iid, 0.9, None, text=ct, guard_risk=GOOD_RISK,
+                                champion=(0.9, None, GOOD_RISK, pt), truth=None,
+                                not_truth=[ct, f"other {i}"])
+
+
+def test_partial_feedback_broken_challenger_is_refused_by_default_but_accepted_by_the_sign_test():
+    # the P15-03a failure: truth known on 14 of 48 items (retypes only); the champion is right on 2 of them
+    for test, accepted in (("sign", True), ("noninferiority", False)):
+        loop = GuardedUpdateLoop(lam_init=0.0, challenger_test=test)
+        _start_with_champion(loop)
+        _partial_feedback_block(loop, "broken", known=14, ch_right=0, cp_right=2, ch_cer=0.95, cp_cer=0.3)
+        rec = validate(loop)
+        t = rec.challenger_test
+        assert rec.accepted is accepted, (test, rec.reasons, t.to_dict())
+        if test == "sign":  # the old rule: unknown = wrong for both sides -> 2 worse vs 0 better, p 0.25
+            assert (t.worse_only, t.better_only) == (2, 0) and t.p_value == pytest.approx(0.25)
+        else:
+            assert t.n_unknown == 34 and t.worse_only == 14 + 34 and t.better_only == 0
+            assert t.legacy_p_value == pytest.approx(0.25) and t.passed_by is None
+            assert "not shown non-inferior" in rec.reasons[0] and loop.version == "champ"
+
+
+def test_partial_feedback_better_challenger_is_still_accepted():
+    loop = GuardedUpdateLoop(lam_init=0.0)
+    _start_with_champion(loop)
+    # truth known on 34 items: the challenger is right on 30, the champion on 8; both wrong items: challenger closer
+    _partial_feedback_block(loop, "better", known=34, ch_right=30, cp_right=8, ch_cer=0.1, cp_cer=0.4)
+    rec = validate(loop)
+    t = rec.challenger_test
+    assert rec.accepted, (rec.reasons, t.to_dict())
+    assert t.n_unknown == 14 and t.better_only == 26 and t.passed_by == "noninferior"
+
+
+def test_absence_of_feedback_never_accepts_a_changed_decoder():
+    loop = GuardedUpdateLoop(lam_init=0.0)
+    _start_with_champion(loop)
+    _partial_feedback_block(loop, "silent", known=0, ch_right=0, cp_right=0, ch_cer=0.5, cp_cer=0.5)
+    rec = validate(loop)
+    assert not rec.accepted and rec.challenger_test.n_unknown == 48
+
+
+def test_identical_top1_needs_no_feedback():
+    loop = GuardedUpdateLoop(lam_init=0.0)
+    _start_with_champion(loop)
+    loop.start_session("recal")
+    loop.new_version("recal", trained_on=[("cal", 0)])
+    for i in range(48):  # same decoder, new calibration: same top-1 texts, truth unknown everywhere
+        loop.add_check_item(("r", i), 0.9, None, text=f"text {i}", guard_risk=GOOD_RISK,
+                            champion=(0.9, None, GOOD_RISK, f"text {i}"))
+    rec = validate(loop)
+    assert rec.accepted and rec.challenger_test.passed_by == "identical top-1"
+
+
+def test_rejected_texts_make_a_wrong_champion_a_tie():
+    # the user rejected a list that also holds the champion's top-1: both are wrong -> tie, not worse
+    loop = GuardedUpdateLoop(lam_init=0.0)
+    _start_with_champion(loop)
+    loop.start_session("d2")
+    loop.new_version("v2", trained_on=[("cal", 0)])
+    for i in range(48):
+        known = i < 30
+        truth = "a b" if known else None
+        loop.add_check_item(("c", i), 0.9, 0.0 if known else None, text="a b" if known else f"x {i}",
+                            guard_risk=GOOD_RISK, truth=truth, not_truth=() if known else [f"x {i}", f"y {i}"],
+                            champion=(0.9, 1.0 if known else None, GOOD_RISK, "c d" if known else f"y {i}"))
+    t = validate(loop).challenger_test
+    assert t.n_unknown == 0 and t.better_only == 30 and t.worse_only == 0 and not t.refused
+
+
+def test_noninferiority_type_one_error_at_the_null_boundary():
+    # true shares: worse 0.3, better 0.2 (worse among differing 0.6 = 0.5 + margin; worse share 0.3 >= 0.1)
+    r = rng(11)
+    acc = 0
+    n_sim = 300
+    for s in range(n_sim):
+        loop = GuardedUpdateLoop(lam_init=0.0)
+        loop.champion, loop.version = "champ", "champ"
+        loop.new_version(f"v{s}")
+        for i in range(48):
+            u = r.random()
+            ch, cp = (1.0, 0.0) if u < 0.3 else ((0.0, 1.0) if u < 0.5 else (0.0, 0.0))
+            loop.add_check_item(i, 0.9, ch, text=f"c{ch}", guard_risk=GOOD_RISK, champion=(0.9, cp, GOOD_RISK, f"p{cp}"))
+        acc += not loop._challenger_test().refused
+    assert acc / n_sim <= 0.05 + 3 * math.sqrt(0.05 * 0.95 / n_sim)
+
+
+def test_sign_option_keeps_the_p15_02_records_and_config_ids():
+    # ids computed with the P15-02 code (HEAD before P15-13) for the same scenario
+    def scenario(**kw):
+        loop = GuardedUpdateLoop(lam_init=0.0, **kw)
+        ids = []
+        for day in range(2):
+            loop.start_session(day)
+            loop.new_version(f"v{day}", trained_on=[(day, -1)])
+            for i in range(48):
+                loop.add_check_item((day, i), 0.9, 0.0, text="a b", guard_risk=GOOD_RISK,
+                                    champion=None if day == 0 else (0.9, 0.0, GOOD_RISK, "a b"))
+            assert validate(loop).accepted
+            ids.append(loop.config_id)
+        return loop, ids
+
+    loop, ids = scenario(challenger_test="sign")
+    assert ids == ["gul-a22458fd3a3cf734", "gul-cacedfe4b569a3ec"]
+    assert set(loop.audit_records()[1]["challenger_test"]) == {
+        "n", "challenger_wrong", "champion_wrong", "worse_only", "better_only", "p_value", "level", "refused"}
+    _, ids_ni = scenario()
+    assert ids_ni[0] != ids[0]  # the default gate is part of the config id
+    with pytest.raises(ValueError):
+        GuardedUpdateLoop(challenger_test="t-test")
+    with pytest.raises(ValueError):
+        GuardedUpdateLoop(challenger_margin=0.5)

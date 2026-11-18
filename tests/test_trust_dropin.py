@@ -383,3 +383,50 @@ def test_quickstart_example_runs():
     nb = mod.my_decoder_nbest("thank you", rng)
     assert len(nb) == 4 and all(isinstance(t, str) for t, _ in nb)
     mod.run_nbest(None)  # the n-best route of the quickstart, end to end (a few seconds)
+
+
+_DECODER_SCRIPT = '''
+import numpy as np
+
+
+def calibrate_arm(lexicon):
+    def fn(log_probs):
+        from fidetype.lm.beam import ctc_prefix_beam_search
+
+        hyps = ctc_prefix_beam_search(np.asarray(log_probs), beam=16, n_best=16, prune_topk=None, blank_id=0)
+        return [(h.text, h.score) for h in hyps if h.text and all(w in lexicon for w in h.text.split())][:8]
+    return fn
+'''
+
+
+def test_config_id_does_not_depend_on_how_the_decoder_script_is_loaded(tmp_path: Path):
+    """P5-21: the same decode function run as __main__ and imported as a module gives one config_id."""
+    import importlib.util
+    import runpy
+
+    script = tmp_path / "run.py"
+    script.write_text(_DECODER_SCRIPT, encoding="utf-8")
+    fn_main = runpy.run_path(str(script), run_name="__main__")["calibrate_arm"](LEXICON)
+    spec = importlib.util.spec_from_file_location("p1506_run", script)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    fn_mod = mod.calibrate_arm(LEXICON)
+    assert fn_main.__module__ == "__main__" and fn_mod.__module__ == "p1506_run"
+    rng = np.random.default_rng(21)
+    ts = [str(rng.choice(PHRASES)) for _ in range(120)]
+    xs = [fake_logits(t, rng) for t in ts]
+    kw = dict(vocab=VOCAB, blank="_", null_trials=20, decoder_name="phrase-beam", decoder_version="1", seed=4)
+    g_main = ft.calibrate(xs, ts, decode_fn=fn_main, **kw)
+    g_mod = ft.calibrate(xs, ts, decode_fn=fn_mod, **kw)
+    assert g_main.config_id == g_mod.config_id
+    assert g_main.config.recipe["decoder"] == "custom:calibrate_arm.<locals>.fn"
+    assert g_main.config.recipe["decoder_id"] == "phrase-beam@1"
+    # another decoder identity gives another id
+    assert ft.calibrate(xs, ts, decode_fn=fn_mod, **(kw | {"decoder_version": "2"})).config_id != g_mod.config_id
+    # the pre-P5-21 label (for old ids) keeps the module path, so the two ids differ
+    old_main = ft.calibrate(xs, ts, decode_fn=fn_main, decoder_label="module", **kw)
+    old_mod = ft.calibrate(xs, ts, decode_fn=fn_mod, decoder_label="module", **kw)
+    assert old_main.config_id != old_mod.config_id and "decoder_id" not in old_main.config.recipe
+    assert old_main.config.recipe["decoder"] == "custom:__main__.calibrate_arm.<locals>.fn"
+    with pytest.raises(ValueError, match="decoder_label"):
+        ft.calibrate(xs, ts, decode_fn=fn_mod, decoder_label="path", **kw)

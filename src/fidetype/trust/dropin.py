@@ -436,14 +436,27 @@ def _decode_fn_for(user_fn: UserDecodeFn | None,
     return decode
 
 
-def _decoder_name(user_fn: UserDecodeFn | None, lexicon: Sequence[str] | None = None) -> str:
+def _decoder_name(user_fn: UserDecodeFn | None, lexicon: Sequence[str] | None = None, *,
+                  stable: bool = False) -> str:
+    """Label of the text decoder. ``stable=True``: without the Python module path (P5-21).
+
+    The module path depends on how the defining script was loaded (``__main__`` when run, its import
+    name when imported), so it must not enter a content id. The label with the module path is still
+    shown in the guarantee sheet and the guard file (``stable=False``).
+    """
     if user_fn is None:
         if lexicon:
             return f"builtin:ctc-prefix-beam-64+lexicon({len(lexicon)} words)"
         return BUILTIN_DECODER
-    mod = getattr(user_fn, "__module__", "?")
     qn = getattr(user_fn, "__qualname__", type(user_fn).__name__)
+    if stable:
+        return f"custom:{qn}"
+    mod = getattr(user_fn, "__module__", "?")
     return f"custom:{mod}.{qn}"
+
+
+#: Values of the ``decoder_label`` argument of :func:`calibrate` (P5-21).
+DECODER_LABELS = ("stable", "module")
 
 
 @dataclass
@@ -920,6 +933,7 @@ def calibrate(
     target_precision: float | None = None,
     precision_delta: float | None = None,
     precision_grid: Sequence[float] | None = None,
+    decoder_label: str = "stable",
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -989,6 +1003,15 @@ def calibrate(
     decoder_name, decoder_version, modality
         Stream metadata (NTS ``meta``). ``modality`` is one of ``meg``,
         ``eeg``, ``emg``, ``ecog``, ``intracortical``, ``fnirs``, ``other``.
+        With your own ``decode_fn``, ``decoder_name@decoder_version`` is
+        also the decoder identity in the configuration (``decoder_id``,
+        part of ``config_id``): give a stable, meaningful name.
+    decoder_label
+        ``"stable"`` (default, P5-21): the configuration names your
+        ``decode_fn`` by its qualified name only, so ``config_id`` does
+        not depend on how the defining script was loaded (run as
+        ``__main__`` or imported). ``"module"``: the label before P5-21
+        (with the module path); use it only to reproduce an old id.
     name
         A free name for the configuration.
     seed
@@ -1116,6 +1139,9 @@ def calibrate(
         raise ValueError(f"modality must be one of {MODALITIES}")
     dec_meta = {"name": str(decoder_name), "version": str(decoder_version), "modality": modality}
 
+    if decoder_label not in DECODER_LABELS:
+        raise ValueError(f"decoder_label must be one of {DECODER_LABELS}")
+
     # --- codec and items ------------------------------------------------
     if kind == "logits":
         if vocab is None:
@@ -1168,13 +1194,17 @@ def calibrate(
     pipe.fit(items[:n_fit], items[n_fit:])
     recipe = dict(PAPER1_V4_RECIPE)
     recipe["risk_control"] = dict(recipe["risk_control"], alpha=alpha, delta=delta)
+    stable = decoder_label == "stable"
     recipe.update({"fitted_by": "fidetype.trust.calibrate (P14-03 drop-in)", "input_kind": kind,
-                   "decoder": _decoder_name(decode_fn, lex) if kind == "logits" else "user n-best",
+                   "decoder": _decoder_name(decode_fn, lex, stable=stable) if kind == "logits" else "user n-best",
                    "split": {"fit": n_fit, "policy_grid": n_pol, "ltt": n_ltt, "seed": seed},
                    "commit_gate": "always on (re-tune rule 2026-11-15)",
                    "frame_temperature": ("fitted on stream_texts" if stream_texts is not None else
                                          "fitted on texts" if frame_fit else "not fitted (1.0)"),
                    "null_controls": "uniform + shuffled, automatic"})
+    if stable and kind == "logits" and decode_fn is not None:
+        # P5-21: a stable identity of your decoder (decoder_name / decoder_version), not its module path
+        recipe["decoder_id"] = f"{dec_meta['name']}@{dec_meta['version']}"
     frozen = FrozenTrustConfig.from_pipeline(pipe, name, recipe).with_commit_gate(**COMMIT_GATE)
 
     guard = TrustGuard(frozen, codec, None, decode_fn if kind == "logits" else None, audit_text)

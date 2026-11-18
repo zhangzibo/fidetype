@@ -57,9 +57,9 @@ Rules the loop enforces (P15-02):
   ``alpha``; the rule of :func:`fidetype.trust.dropin.calibrate`).
 - **Champion / challenger.** :meth:`finish_update` accepts the version
   only if both null controls pass, the optional precision check passes
-  and the challenger is not significantly worse than the champion on the
-  same check block (paired exact sign test on top-1 errors, level
-  ``challenger_level``). An accepted update gets a new ``config_id``. A
+  and the champion / challenger test passes on the same check block
+  (``challenger_test``, level ``challenger_level``; see "Champion /
+  challenger test" below). An accepted update gets a new ``config_id``. A
   rejected one is logged; the champion comes back (calibrated on the same
   block, if its block outputs were given) and must pass its own null
   controls before it commits. Without champion outputs the session is
@@ -94,6 +94,39 @@ the share of wrong items among the block items that would commit
 :meth:`finish_update` rejects a version whose share is above it. Default:
 ``None`` (report only). This check is a plug-in estimate, not a
 guarantee.
+
+Champion / challenger test (P15-13, 2026-11-18). Two tests are available:
+
+- ``challenger_test="noninferiority"`` (default, "default deny"). The
+  challenger must **show** that it is not materially worse. Each check
+  item is a pair (challenger, champion). Primary loss: top-1 right or
+  wrong. Tie-break: the character error rate (CER) of the top-1 texts,
+  when the truth is known (``truth=`` of :meth:`add_check_item`). An item
+  with unknown truth is never evidence for the challenger: if the
+  challenger could be worse there, the pair counts as **worse**. Rules:
+  identical top-1 texts are a tie; a challenger that is right is never
+  worse; a champion known to be wrong (``commit_loss`` 1, or its text is
+  in ``not_truth``) makes the pair a tie when the challenger's result is
+  unknown; every other pair with an unknown side counts as worse.
+  With ``w`` worse (unknown included), ``b`` better, ``n = w + b`` and
+  ``N`` items, the test passes if ``p = min(1, 2 min(p_ni, p_abs)) <=
+  challenger_level``, where ``p_ni = P(Bin(n, 0.5 + challenger_margin)
+  <= w)`` (among the items where the two differ, the challenger is worse
+  on less than ``0.5 + margin``) and ``p_abs = P(Bin(N,
+  challenger_margin_abs) <= w)`` (the challenger is worse on less than
+  ``margin_abs`` of all items). If the two top-1 texts are equal on every
+  item, the test passes (no top-1 change). Guarantee: if the true share
+  of worse items among differing items is at least ``0.5 + margin`` and
+  the true share of worse items is at least ``margin_abs``, the gate
+  accepts with probability at most ``challenger_level`` (exact binomial
+  tests, Bonferroni; unknown items only add to ``w``). Few labelled
+  items therefore give a rejection, never an acceptance.
+- ``challenger_test="sign"`` (the P15-02 behaviour, kept for
+  reproducibility). Paired exact sign test on top-1 errors; unknown truth
+  counts as wrong for **both** sides; reject only if the challenger is
+  significantly worse. With partial feedback most pairs are "both wrong"
+  and the test has no power: on M4-13 it accepted a time-reversed decoder
+  (P15-03a, 2 worse vs 0 better, p 0.25).
 
 ``unsafe=True`` (not for real use) gives the pre-P15-02 behaviour: any
 gate (``None`` = refuse empty text only), no null controls and no
@@ -142,6 +175,7 @@ from fidetype.trust.session_risk import (
     block_ltt,
     min_ltt_items,
 )
+from fidetype.utils.binomial import binom_cdf
 
 __all__ = [
     "DEFAULT_EVIDENCE_GATE",
@@ -253,26 +287,58 @@ class GuardedDecision:
 
 @dataclass(frozen=True)
 class ChallengerTest:
-    """Paired exact sign test on the check block: is the challenger worse than the champion (top-1 errors)?"""
+    """Champion / challenger test on the check block (module docstring, "Champion / challenger test").
+
+    ``method="sign"`` (P15-02): paired exact sign test on top-1 errors; ``p_value`` =
+    ``P(Bin(worse_only + better_only, 0.5) >= worse_only)``; refused if ``p_value <= level``.
+    ``method="noninferiority"`` (P15-13 default): ``worse_only`` includes the pairs with unknown truth
+    (``n_unknown``); ``p_value`` = ``min(1, 2 min(p_noninferior, p_abs))``; refused unless
+    ``passed_by`` is set. The ``legacy_*`` fields give the P15-02 sign test on the same block (report only).
+    """
 
     n: int
     challenger_wrong: int
     champion_wrong: int
-    #: Items where only the challenger is wrong / only the champion is wrong.
+    #: Items where the challenger is worse / better than the champion.
     worse_only: int
     better_only: int
-    #: ``P(Bin(worse_only + better_only, 0.5) >= worse_only)``.
     p_value: float
     level: float
+    method: str = "sign"
+    margin: float | None = None
+    margin_abs: float | None = None
+    #: Pairs counted as worse because a result is unknown (included in ``worse_only``).
+    n_unknown: int = 0
+    #: Pairs with identical top-1 texts / other ties.
+    n_identical: int = 0
+    n_tie: int = 0
+    #: Pairs where the two top-1 results differ only in CER (both wrong, truth known).
+    n_cer_decided: int = 0
+    p_noninferior: float | None = None
+    p_abs: float | None = None
+    #: Why the test passed ("noninferior", "few worse items", "identical top-1"); None: refused.
+    passed_by: str | None = None
+    legacy_worse: int | None = None
+    legacy_better: int | None = None
+    legacy_p_value: float | None = None
 
     @property
     def refused(self) -> bool:
-        return self.p_value <= self.level
+        if self.method == "sign":
+            return self.p_value <= self.level
+        return self.passed_by is None
 
     def to_dict(self) -> dict[str, Any]:
-        return {"n": self.n, "challenger_wrong": self.challenger_wrong, "champion_wrong": self.champion_wrong,
-                "worse_only": self.worse_only, "better_only": self.better_only, "p_value": self.p_value,
-                "level": self.level, "refused": self.refused}
+        d = {"n": self.n, "challenger_wrong": self.challenger_wrong, "champion_wrong": self.champion_wrong,
+             "worse_only": self.worse_only, "better_only": self.better_only, "p_value": self.p_value,
+             "level": self.level, "refused": self.refused}
+        if self.method != "sign":  # the P15-02 records keep their exact keys
+            d.update(method=self.method, margin=self.margin, margin_abs=self.margin_abs, n_unknown=self.n_unknown,
+                     n_identical=self.n_identical, n_tie=self.n_tie, n_cer_decided=self.n_cer_decided,
+                     p_noninferior=self.p_noninferior, p_abs=self.p_abs, passed_by=self.passed_by,
+                     legacy_worse=self.legacy_worse, legacy_better=self.legacy_better,
+                     legacy_p_value=self.legacy_p_value)
+        return d
 
 
 @dataclass(frozen=True)
@@ -318,6 +384,38 @@ class UpdateRecord:
                 "gate": None if self.gate is None else dict(self.gate), "unsafe": self.unsafe}
 
 
+def _status(loss: float | None, text: str | None, truth: str | None, not_truth: frozenset) -> tuple:
+    """One side of a check pair: ("right", 0.0), ("wrong", cer or None) or ("unknown", None)."""
+    if truth is not None and text is not None:
+        t, r = " ".join(text.split()), " ".join(str(truth).split())
+        return ("right", 0.0) if t == r else ("wrong", min(1.0, char_error_rate(t, r)))
+    if loss is not None:
+        return ("right", 0.0) if float(loss) < 0.5 else ("wrong", None)
+    if text is not None and " ".join(text.split()) in not_truth:
+        return ("wrong", None)
+    return ("unknown", None)
+
+
+def _pair_outcome(ch: tuple, cp: tuple, identical: bool) -> str:
+    """Outcome of one (challenger, champion) pair: worse, better, tie or unknown (counted as worse)."""
+    if ch[0] != "unknown" and cp[0] != "unknown":
+        if ch[0] == cp[0] == "right":
+            return "tie"
+        if ch[0] == "right":
+            return "better"
+        if cp[0] == "right":
+            return "worse"
+        if ch[1] is not None and cp[1] is not None:  # both wrong, truth known: CER tie-break
+            if ch[1] > cp[1] + 1e-12:
+                return "worse"
+            if ch[1] < cp[1] - 1e-12:
+                return "better"
+        return "tie"
+    if identical or ch[0] == "right" or cp[0] == "wrong":
+        return "tie"  # equal texts; a right challenger is never worse; a wrong champion cannot be beaten
+    return "unknown"
+
+
 def _null_item(x: Any) -> tuple[float, str | None, bool, float | None]:
     """(score, text, text_ok, guard_risk) from ``(score, text_or_ok[, guard_risk])`` or a dict."""
     if isinstance(x, Mapping):
@@ -358,8 +456,13 @@ class GuardedUpdateLoop:
     null_max_commit_rate: float | None = None
     #: If set: reject a version whose block share of wrong among commits is above this (P5-02 link).
     max_wrong_among_commits: float | None = None
-    #: Level of the champion / challenger sign test.
+    #: Level of the champion / challenger test.
     challenger_level: float = 0.05
+    #: "noninferiority" (P15-13 default: default deny) or "sign" (P15-02 behaviour, for reproducibility).
+    challenger_test: str = "noninferiority"
+    #: Non-inferiority margins (module docstring); fixed before a run.
+    challenger_margin: float = 0.1
+    challenger_margin_abs: float = 0.1
     #: Pre-P15-02 behaviour (no evidence gate needed, no null controls, no finish_update). Not for real use.
     unsafe: bool = False
     #: Optional :class:`~fidetype.trust.provenance.ProvenanceLedger`: one ``update`` entry per proposal / decision.
@@ -379,6 +482,8 @@ class GuardedUpdateLoop:
     check_scores: list = field(default_factory=list)
     check_losses: list = field(default_factory=list)
     check_champion: list = field(default_factory=list)
+    #: Per check item: (challenger status, champion status, identical top-1 texts); see ``_status``.
+    check_pairs: list = field(default_factory=list)
     history: list = field(default_factory=list)
     n_alarms: int = 0
     n_versions: int = 0
@@ -415,6 +520,12 @@ class GuardedUpdateLoop:
             raise ValueError("max_wrong_among_commits must be in [0, 1]")
         if not 0.0 < self.challenger_level < 1.0:
             raise ValueError("challenger_level must be in (0, 1)")
+        if self.challenger_test not in ("noninferiority", "sign"):
+            raise ValueError("challenger_test must be 'noninferiority' or 'sign'")
+        if not 0.0 <= self.challenger_margin < 0.5:
+            raise ValueError("challenger_margin must be in [0, 0.5)")
+        if not 0.0 < self.challenger_margin_abs < 1.0:
+            raise ValueError("challenger_margin_abs must be in (0, 1)")
         self.aci = OnlineCommitRiskControl(alpha=self.alpha, method="aci", eta=self.eta, lam_init=self.lam_init,
                                            score_max=self.score_max)
         self.monitor = SessionRiskMonitor(alpha=self.alpha, gamma=self.gamma)
@@ -530,6 +641,7 @@ class GuardedUpdateLoop:
         self.controls, self.controls_passed = [], None
         self.n_block_commits, self.block_wrong_among_commits = 0, None
         self.check_ids, self.check_scores, self.check_losses, self.check_champion = [], [], [], []
+        self.check_pairs = []
 
     def start_session(self, session: Hashable) -> None:
         """A new session (day): the old check block no longer describes the data. New monitor."""
@@ -558,7 +670,8 @@ class GuardedUpdateLoop:
 
     def add_check_item(self, item_id: Hashable, score: float, commit_loss: float | None, *,
                        text: str | None = None, text_ok: bool = True, guard_risk: float | None = None,
-                       champion: Sequence[Any] | None = None) -> None:
+                       champion: Sequence[Any] | None = None, truth: str | None = None,
+                       not_truth: Iterable[str] = ()) -> None:
         """Add one item of the check block (scored by the current version; truth via OFFER feedback).
 
         ``commit_loss`` = 1 if the version's top-1 text is wrong, 0 if right, None if the truth stays unknown.
@@ -566,6 +679,9 @@ class GuardedUpdateLoop:
         score to -inf; no guard risk keeps the raw score). ``champion``: the champion's
         ``(score, commit_loss[, guard_risk[, text]])`` on the same item, for the champion / challenger test
         and a rollback. Give it for all items of the block or for none.
+        ``truth`` (optional): the known true text; the non-inferiority test then breaks "both wrong" ties by
+        the CER of the two top-1 texts. ``not_truth`` (optional): texts the user rejected on this item (for
+        example the offered list when the truth stays unknown); a side whose top-1 text is in it is wrong.
         """
         if item_id in self.trained_on:
             raise ValueError(f"check item {item_id!r} was used to train version {self.version!r}")
@@ -575,6 +691,9 @@ class GuardedUpdateLoop:
         self.check_ids.append(item_id)
         self.check_scores.append(eff)
         self.check_losses.append(1.0 if commit_loss is None else float(commit_loss))  # pessimistic
+        nt = frozenset(" ".join(str(x).split()) for x in not_truth)
+        ch_text = text if isinstance(text, str) else ("" if not text_ok else None)
+        ch_status = _status(commit_loss, ch_text, truth, nt)
         if champion is not None:
             if item_id in self.champion_trained_on:
                 raise ValueError(f"check item {item_id!r} was used to train the champion {self.champion!r}")
@@ -588,8 +707,14 @@ class GuardedUpdateLoop:
             ceff = -math.inf if self.gate_violation(ct if isinstance(ct, str) else None, cr, ok,
                                                     need_risk=False) else cs
             self.check_champion.append((ceff, cl))
+            cp_text = ct if isinstance(ct, str) else None
+            cp_status = _status(c[1], cp_text, truth, nt)
+            ident = ch_text is not None and cp_text is not None and " ".join(ch_text.split()) == " ".join(
+                cp_text.split())
+            self.check_pairs.append((ch_status, cp_status, ident))
         else:
             self.check_champion.append(None)
+            self.check_pairs.append(None)
 
     @property
     def n_check_items(self) -> int:
@@ -666,7 +791,42 @@ class GuardedUpdateLoop:
         cp = np.asarray([c[1] for c in self.check_champion]) >= 0.5
         b, c = int(np.sum(ch & ~cp)), int(np.sum(~ch & cp))
         p = binomial_upper_pvalue(b, b + c, 0.5) if b + c else 1.0
-        return ChallengerTest(int(ch.size), int(ch.sum()), int(cp.sum()), b, c, float(p), self.challenger_level)
+        if self.challenger_test == "sign":
+            return ChallengerTest(int(ch.size), int(ch.sum()), int(cp.sum()), b, c, float(p), self.challenger_level)
+        return self._noninferiority_test(int(ch.sum()), int(cp.sum()), b, c, float(p))
+
+    def _noninferiority_test(self, ch_wrong: int, cp_wrong: int, leg_b: int, leg_c: int,
+                             leg_p: float) -> ChallengerTest:
+        """Default-deny non-inferiority test (module docstring). Unknown results count against the challenger."""
+        pairs = self.check_pairs
+        if len(pairs) != len(self.check_ids) or any(q is None for q in pairs):
+            raise RuntimeError("internal: champion outputs missing for the non-inferiority test")
+        worse = better = unknown = ident = cer = 0
+        for ch_s, cp_s, same in pairs:
+            ident += bool(same)
+            k = _pair_outcome(ch_s, cp_s, same)
+            worse += k == "worse"
+            better += k == "better"
+            unknown += k == "unknown"
+            if k in ("worse", "better") and ch_s[0] == "wrong" and cp_s[0] == "wrong":
+                cer += 1
+        n_items = len(pairs)
+        w = worse + unknown
+        n = w + better
+        m, m_abs, lev = self.challenger_margin, self.challenger_margin_abs, self.challenger_level
+        p_ni = binom_cdf(w, n, 0.5 + m) if n else 1.0
+        p_abs = binom_cdf(w, n_items, m_abs) if n_items else 1.0
+        p = min(1.0, 2.0 * min(p_ni, p_abs))
+        passed: str | None = None
+        if n_items and ident == n_items and w == 0:
+            passed = "identical top-1"
+        elif p <= lev:
+            passed = "noninferior" if p_ni <= p_abs else "few worse items"
+        return ChallengerTest(n_items, ch_wrong, cp_wrong, w, better, float(p), lev, method="noninferiority",
+                              margin=m, margin_abs=m_abs, n_unknown=unknown, n_identical=ident,
+                              n_tie=n_items - w - better, n_cer_decided=cer, p_noninferior=float(p_ni),
+                              p_abs=float(p_abs), passed_by=passed, legacy_worse=leg_b, legacy_better=leg_c,
+                              legacy_p_value=leg_p)
 
     def _new_config_id(self) -> str:
         g = self.commit_gate.to_dict() if self.commit_gate is not None else None
@@ -675,6 +835,9 @@ class GuardedUpdateLoop:
                    "version": repr(self.version), "lambda_session": lam if math.isfinite(lam) else str(lam),
                    "gate": g, "alpha": self.alpha, "delta": self.delta,
                    "null_max_commit_rate": self.null_max_commit_rate, "unsafe": self.unsafe}
+        if self.challenger_test != "sign":  # P15-02 loops (sign test) keep their ids
+            payload["challenger"] = {"test": self.challenger_test, "level": self.challenger_level,
+                                     "margin": self.challenger_margin, "margin_abs": self.challenger_margin_abs}
         h = hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
         return f"gul-{h[:16]}"
 
@@ -702,8 +865,14 @@ class GuardedUpdateLoop:
                            f"{self.max_wrong_among_commits:.3f}")
         test = self._challenger_test()
         if test is not None and test.refused:
-            reasons.append(f"worse than champion {self.champion!r} (sign test p {test.p_value:.4g} <= "
-                           f"{test.level:g}; {test.worse_only} worse vs {test.better_only} better)")
+            if test.method == "sign":
+                reasons.append(f"worse than champion {self.champion!r} (sign test p {test.p_value:.4g} <= "
+                               f"{test.level:g}; {test.worse_only} worse vs {test.better_only} better)")
+            else:
+                reasons.append(f"worse than champion {self.champion!r} or not shown non-inferior (p "
+                               f"{test.p_value:.4g} > {test.level:g}; {test.worse_only} worse incl. "
+                               f"{test.n_unknown} unknown vs {test.better_only} better of {test.n}; margins "
+                               f"{test.margin:g} / {test.margin_abs:g})")
         accepted = not reasons
         parent, champ_before, version = self.config_id, self.champion, self.version
         lam, n_chk = self.lambda_session, self.n_check_items
@@ -724,6 +893,7 @@ class GuardedUpdateLoop:
                 self.check_scores = [c[0] for c in self.check_champion]
                 self.check_losses = [c[1] for c in self.check_champion]
                 self.check_champion = [None] * len(self.check_ids)
+                self.check_pairs = [None] * len(self.check_ids)
                 self.accepted, self.rejected = self.unsafe, False  # safe: the champion needs its own null controls
         rec = UpdateRecord(len(self.updates), self.session, version, champ_before, accepted, tuple(reasons), parent,
                            self.config_id, self.version, lam, feasible, n_chk, n_bc, wac, controls, test,

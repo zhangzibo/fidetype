@@ -314,6 +314,63 @@ def test_worse_candidate_is_rejected_and_the_guard_is_unchanged(guard_v1):
     assert out.config_id_after == out.config_id_before == live.config_id
 
 
+def _partial_feedback(cand, xs, texts, rng, p_retype=0.3):
+    """The P15-03a user: truth known if it is in the candidate's top-5 or retyped; else the list is rejected."""
+    truths, rejected = [], []
+    for x, t in zip(xs, texts):
+        offered = [" ".join(c.split()) for c in cand._decide_quiet(x).choices[:5]]
+        if t in offered or rng.random() < p_retype:
+            truths.append(t)
+            rejected.append(None)
+        else:
+            truths.append(None)
+            rejected.append(offered)
+    return truths, rejected
+
+
+@pytest.mark.parametrize("test,accepted", [("sign", None), ("noninferiority", False)])
+def test_partial_feedback_worse_candidate_is_rejected_by_default(guard_v1, test, accepted):
+    """P15-13 adversarial case: a worse decoder, truth unknown on most items it gets wrong."""
+    live = _copy_guard(guard_v1)
+    up = TrustGuardUpdater(live, GuardedUpdateLoop(alpha=live.alpha, delta=live.delta, challenger_test=test,
+                                                   ledger=ProvenanceLedger()), null_trials=40)
+    cx, ct = nbest_data(120, 61)
+    rng = np.random.default_rng(6)
+    bad_x = []
+    for i, (x, t) in enumerate(zip(cx, ct)):  # wrong top-1 (truth not in its list) on 60 of 120 items
+        if i % 2 == 0:
+            others = [p for p in PHRASES if p != t]
+            bad_x.append([(str(o), -float(k)) for k, o in enumerate(rng.choice(others, size=3, replace=False))])
+        else:
+            bad_x.append(x)
+    cand = _fresh_guard(11, "2")
+    truths, rejected = _partial_feedback(cand, bad_x, ct, np.random.default_rng(7))
+    out = up.propose(cand, bad_x, truths, champion_inputs=cx, version="v2-bad", check_rejected=rejected,
+                     null_inputs=[noise_nbest(rng) for _ in range(40)])
+    t = out.record.challenger_test
+    if accepted is None:  # the P15-02 sign test: unknown = wrong for both sides -> few discordant pairs
+        assert t.method == "sign"
+    else:
+        assert out.accepted is accepted and t.n_unknown > 0 and t.passed_by is None
+        assert any("not shown non-inferior" in r for r in out.reasons)
+        assert out.config_id_after == out.config_id_before
+
+
+def test_partial_feedback_same_decoder_recalibration_is_accepted(guard_v1):
+    live = _copy_guard(guard_v1)
+    up = TrustGuardUpdater(live, GuardedUpdateLoop(alpha=live.alpha, delta=live.delta), null_trials=40)
+    cx, ct = nbest_data(120, 62)
+    rng = np.random.default_rng(8)
+    cand = _fresh_guard(12, "2")
+    truths, rejected = _partial_feedback(cand, cx, ct, np.random.default_rng(9), p_retype=0.0)
+    out = up.propose(cand, cx, truths, version="v2-recal", check_rejected=rejected,
+                     null_inputs=[noise_nbest(rng) for _ in range(40)])
+    t = out.record.challenger_test
+    assert t.n_unknown == 0 and t.worse_only == 0, t.to_dict()
+    if up.loop.lambda_session != math.inf:
+        assert out.accepted, out.reasons
+
+
 def test_candidate_that_fails_the_null_controls_is_rejected(guard_v1):
     live = _copy_guard(guard_v1)
     up = TrustGuardUpdater(live, GuardedUpdateLoop(alpha=live.alpha, delta=live.delta, ledger=ProvenanceLedger()),

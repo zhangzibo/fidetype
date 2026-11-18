@@ -59,7 +59,7 @@ How a change happens (the rules):
    first ``n_recal`` items, then the loop checks of
    :class:`~fidetype.trust.adaptive.GuardedUpdateLoop` on the last
    ``n_check`` items (block LTT, evidence gate, uniform and shuffled null
-   controls, champion / challenger sign test). Only an accepted update
+   controls, champion / challenger test; P15-13 default-deny non-inferiority). Only an accepted update
    changes the guard (and removes a tightening). A rejected one changes
    nothing; the proposal stays open and needs new items.
 4. Each change (calibration, alarm, tightening, accepted or rejected
