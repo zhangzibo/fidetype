@@ -1,9 +1,9 @@
 ---
 title: emg2qwerty (wrist-EMG typing dataset)
 type: entity
-tags: [dataset, emg, typing, public, nc-licence, downloaded, replay-adapter, paper-not-ingested]
+tags: [dataset, emg, typing, public, nc-licence, downloaded, replay-adapter, paper-not-ingested, p11-01-decoder]
 sources: [brain2qwerty-v1, brain2qwerty-v2, neural-input-landscape-2026]
-updated: 2026-11-15
+updated: 2026-11-19
 ---
 
 # emg2qwerty
@@ -109,9 +109,22 @@ Full dataset summary from `metadata.csv` (command `summary`): 1,135 sessions, 10
 
 > **Our take:** A simple windowed LDA reaches 0.54 on 32 keys with oracle timing. The same-user cross-session number (0.51) is much better than on KT-sEMG (0.13 cross-run). The emg2qwerty bands seem to sit in a more repeatable place. The real benchmark task (continuous CTC decoding without key times, across users) is much harder. This baseline exists only so that the trust layer has real-data streams to replay.
 
-**Next step:** ingest the paper and repo (read only; the code is NC, do not copy it). A continuous CTC decoder on emg2qwerty (output through the [CTC-logits adapter](../concepts/ctc-logits-adapter.md)) is a possible later task.
+**Next step:** ingest the paper and repo (read only; the code is NC, do not copy it; gap 90). The continuous CTC decoder (output through the [CTC-logits adapter](../concepts/ctc-logits-adapter.md)) is done: see the next section.
 
-## Continuous decoder (P11-01, prepared 2026-11-15)
-Our own causal CTC decoder on emg2qwerty is prepared; GPU training waits for M4-13. Plan, splits, budget and pre-registered criteria: [P11-01 plan](../../experiments/2026-11-16-p11-01-emg-decoder/plan.md). Published comparison (paper Table 3, no LM, test CER, mean over 8 users): generic 55.38 %, personalised (fine-tuned) 11.28 %. Our primary criterion: personalised test CER <= 20.0 %. Feature cache (12 log bands at 100 frames/s, local only): `C:\Users\zhang\bci-data\derived\p11-01-emg-decoder\`.
+## Continuous decoder (P11-01, done 2026-11-19)
+Our own causal CTC decoder (ring-TCN, 8.75 M parameters, no lookahead) was trained on one GPU (2026-11-17 to 2026-11-19). Plan and pre-registered criteria: [P11-01 plan](../../experiments/2026-11-16-p11-01-emg-decoder/plan.md). Results: [P11-01 results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md). All our numbers: test sessions of our own split (8 users), greedy CTC, no LM. Published numbers: paper Table 3 (checked against the paper on 2026-11-19).
+
+| Model | Ours, no LM, test CER (mean ± SD over 8 users) | Published, no LM, test | Published, 6-gram char LM, test |
+|---|---|---|---|
+| Generic | 53.52 ± 15.31 % | 55.38 ± 4.10 % | 51.78 ± 4.61 % |
+| Personalised (fine-tuned from generic) | **15.09 ± 6.54 %** | 11.28 ± 4.45 % | 6.95 ± 3.61 % |
+
+- Pre-registered: S1 (personalised <= 20.0 %) **pass**; S1+ (<= 11.28 %) **fail**; S2 (generic <= 60 %), S3 (8 of 8 users better after personalisation), C1 (time-shuffled CER 0.986), N1 (2,445 / 2,445 NTS streams `trust-ready`), L1 (no lookahead; median emission delay 70 ms, p90 110 ms) **pass**.
+- The conditions differ from the paper: other test users and splits, 12 log bands at 100 Hz, no lookahead, greedy decoding. The comparison is indicative.
+- The generic model is best at step 30,000 of 150,000 (val CER 0.5457). After that it overfits.
+- Weights and per-user values stay local in `C:\Users\zhang\bci-data\derived\p11-01-emg-decoder\train\`. They are research only (NC data).
+- Open: licence-clean decoder (gap 86), LM + beam search (gap 87), accuracy to 11.28 % (gap 88), trust config + streaming replay (gap 89), paper ingest (gap 90). See [open gaps](../questions/open-gaps.md).
+
+> **Our take:** about 15 % key errors after 18 min of fine-tuning per user, with no lookahead and no LM. This is our first non-implant decoder that is strong enough to make trust-layer tests useful.
 
 Related: [Meta Neural Band](meta-neural-band.md) · [Synchronous vs asynchronous decoding](../concepts/synchronous-vs-asynchronous-decoding.md) · [CTC](../concepts/ctc.md) · [Public datasets survey](../questions/public-datasets.md)

@@ -769,6 +769,44 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 **Effort:** ongoing; GPU-bound (one heavy job at a time on this PC). **Depends on:** GPU, datasets.
 
+### Item status (added 2026-11-19)
+- **P11-01** `done` (2026-11-19, emg2qwerty part; [results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): our own causal CTC decoder, greedy, no LM, our 8-user split. Personalised test CER 15.09 % (mean over 8 users; S1 <= 20 % pass), generic 53.52 % (S2 pass), 8 of 8 users better (S3), time-shuffled 0.986 (C1), 2,445 / 2,445 NTS streams `trust-ready` (N1), median emission delay 70 ms (L1). Stretch S1+ (<= 11.28 %) **failed**. The licence-clean KT-sEMG + Toronto part of the title moves to the new item P11-06 (gap 86); nothing is dropped.
+
+#### P11-06 Licence-clean causal ConvCTC on KT-sEMG and Toronto
+- **Gap:** 86 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P11-01.
+- **Status:** `todo`.
+- **Depends on:** P11-01 (done); KT-sEMG and Toronto data (local, CC BY 4.0); GPU.
+- **Source:** P11-01 ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): P11-01 was titled 'causal ConvCTC on KT-sEMG + Toronto; emg2qwerty research baseline'. Only the emg2qwerty part is done; its weights are research only (CC BY-NC-SA 4.0 data).
+- **Done when:** A causal CTC decoder trained only on CC BY data (KT-sEMG, Toronto sEMG) is evaluated on their held-out splits (plan with criteria before training; no lookahead or a declared bounded lookahead), outputs NTS streams at level `trust-ready`, and its weights carry a licence flag that allows product use.
+
+#### P11-07 CTC beam search with a character LM for the EMG decoder
+- **Gap:** 87 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P11-01.
+- **Status:** `todo`.
+- **Depends on:** P11-01 (done); a licence-clean text corpus for a character n-gram LM; CPU or GPU.
+- **Source:** P11-01 ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): P11-01 decodes greedily with no LM (personalised test CER 15.09 %). The published Table 3 LM column (6-gram char LM) is 6.95 % for the fine-tuned model, 4.33 points better than its no-LM column.
+- **Done when:** The P11-01 personalised models are decoded with a CTC prefix beam search and a character n-gram LM trained on licence-clean text (no emg2qwerty prompts from the test sessions), causally (no future frames beyond the LM step); the test CER (mean over 8 users) is reported against the Table 3 LM column, with a plan written before the test decode.
+
+#### P11-08 EMG decoder accuracy to the published fine-tuned no-LM CER
+- **Gap:** 88 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P11-01.
+- **Status:** `todo`.
+- **Depends on:** P11-01 (done); GPU; the 95.7 GB feature cache (or a new one).
+- **Source:** P11-01 ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): P11-01 stretch criterion S1+ failed: personalised test CER 15.09 % vs 11.28 % published. The generic model is best at step 30,000 of 150,000 (val CER 0.5457) and overfits after that, so a longer run does not help.
+- **Done when:** A pre-registered run tests at least one of: stronger regularisation or a shorter schedule for the generic model, 33 bins at 125 Hz (on a subset if the cache budget needs it), a bounded 100 ms lookahead (reported as non-causal by 100 ms); it reports the personalised test CER on the same 8 users, or a stated null result.
+
+#### P11-09 Trust config and streaming replay for the P11-01 EMG streams
+- **Gap:** 89 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P11-01, P14-10.
+- **Status:** `todo`.
+- **Depends on:** P11-01 (done); the local NTS streams and personalised models in derived/p11-01-emg-decoder/train/.
+- **Source:** P11-01 ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): P11-01 plan step 3: a trust config for EMG (LTT on the personal val streams, commit gate, null controls; the M2-19 rule) is a follow-up. P11-01 evaluated whole sessions in causal chunks offline; no stream went through the collector or the trust layer at real time.
+- **Done when:** A trust config fitted on held-out streams of the 8 users (not the test sessions) is frozen (`config_id`); the test streams replay at real time through the collector (validate -> guard) with added latency reported; wrong-commit rate with its CP95 bound, commit rate, null controls and eWPM / safe WPM are reported. This gives the P11-01 part of P14-10 and the data for a declared-subset emg2qwerty entry (P14-13).
+
+#### P11-10 Ingest the emg2qwerty paper as a wiki source page
+- **Gap:** 90 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P4-01, P11-01.
+- **Status:** `todo`.
+- **Depends on:** the paper PDF (references/papers, git-ignored).
+- **Source:** P11-01 ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): The P11-01 comparison cites Table 3 through the plan and the entity page; the wiki has no source page for the paper (entity tag `paper-not-ingested`). Table 3 was checked against arXiv HTML on 2026-11-19.
+- **Done when:** wiki/sources/emg2qwerty.md exists with citation, licence, TL;DR, Table 3 numbers with page / table, the split scheme and limits; the entity page, the P11-01 results and the frontier decoder page link it.
+
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
 - PUB has no due date. It never counts as late. It is not part of the M1–M7 target or of any phase window.
@@ -1018,6 +1056,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Status:** `todo`.
 - **Partly closed:** P6-01, commit `1d4ff8c`: exact Toronto safe WPM (participant CI) and null-commit audits at the CRC / LTT thresholds for B2T ours, B2T published and MEG.
 - **Partly closed (2026-11-17):** P6-02, commit `5133e04`: scorer, baselines, safe WPM and null-commit audits for b2t24-t12 (0.48 certified), willett-hw (vacuous, partial 81/254), kt-semg (vacuous) and emg2qwerty (vacuous, research only). Only the P11-01 decoder is left (waits on the GPU). Follow-ups: P6-05, P6-06, P14-12, P14-13, P14-14.
+- **Update (2026-11-19):** the P11-01 decoder exists ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): personalised test CER 15.09 %, 2,445 NTS streams `trust-ready`. No safe-WPM number yet: it needs a trust config on held-out streams (new item P11-09, gap 89) and a declared-subset track entry (P14-13). P14-10 stays open for this last part.
 - **Depends on:** P14-05, P6-01 (done), P6-02, P11-01.
 - **Source:** Commit `7d74c0f` (P14-05 safe WPM baselines; missing tracks and controls); partly closed by `1d4ff8c` (P6-01).
 - **Done when:** The scorer, baselines and safe WPM exist for the tracks `b2t24-t12`, `willett-hw`, `kt-semg` and `emg2qwerty` (research only), and for the P11-01 decoder when it exists, each with its null-commit audit; or the result states why a track has no certified number. The scorer and baselines of these tracks come with P6-02. Part already closed by P6-01 (commit `1d4ff8c`): exact Toronto safe WPM with a participant CI, and null-commit audits for B2T ours, B2T published and MEG (the two B2T published entries still show "controls: no" because shuffled / zeros CER is not defined for a text-only decoder; P6-01 documents this).
@@ -1044,6 +1083,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** Commit `5133e04` (P6-02: the kt-semg and emg2qwerty LDA baselines take key times from the key log; the track task gives no key times at test).
 - **Gap detail:** The P6-02 EMG baselines cut key windows at the logged key times (oracle timing). The track task does not allow this. So they are reference entries only, not conformant entries.
 - **Done when:** kt-semg and emg2qwerty (research only) each have an entry whose decoder sees only the EMG at test (no key times): the P11-01 continuous decoder or a decoder with a causal onset detector (P4-10). The entry is scored with the v0.2 scorer with both controls, and the oracle-timing entries are marked `reference (oracle timing)` on the board.
+- **Update (2026-11-19):** the P11-01 continuous decoder exists ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md), benchmark section). No entry yet, for three reasons: (1) its generic model trained on 96 of the 104 emg2qwerty track test sessions, so only a declared-subset entry on the 8 P11-01 test users is clean; (2) no writer maps its 98 ASCII-key CTC tokens to the track's `KeyboardEvent.code` units; (3) the guard needs a trust config (P11-09, gap 89).
 
 #### P14-14 T12 safe WPM above the no-BCI reference
 - **Gap:** 29 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P14-10.

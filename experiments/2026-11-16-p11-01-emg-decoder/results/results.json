@@ -1,0 +1,89 @@
+{
+ "task": "P11-01",
+ "note": "Aggregates only. Per-user values stay local (plan: licence CC BY-NC-SA 4.0, research only). CER = total edits / total reference keys, greedy CTC, no LM, our own splits (plan.md).",
+ "source_files": "C:/Users/zhang/bci-data/derived/p11-01-emg-decoder/train/{results.json,per_user_local.json,budget.json,generic/DONE.json,nts/DONE.json} (local, not committed)",
+ "results": {
+  "note": "aggregate only; CER = total edits / total reference keys, greedy CTC, no LM",
+  "generic_val": {
+   "cer": 0.5456856298179206,
+   "prompt_cer": 0.5895874372277558,
+   "ref": 72386
+  },
+  "generic_test": {
+   "cer": 0.5375230846717779,
+   "prompt_cer": 0.5831627933054863,
+   "ref": 71476,
+   "cer_mean_over_users": 0.5352324150551502
+  },
+  "personal_test": {
+   "cer_pooled": 0.15146342828361967,
+   "prompt_cer_pooled": 0.21483838412155531,
+   "cer_mean_over_users": 0.15089762615370356,
+   "ref": 71476
+  },
+  "control_time_shuffled": {
+   "cer_pooled": 0.9863450668755946
+  },
+  "emission_delay_ms": {
+   "median": 70.0,
+   "p90": 110.0,
+   "n": 64116
+  }
+ },
+ "over_users": {
+  "n_users": 8,
+  "personal_test_cer_sd": 0.06544022810604412,
+  "generic_test_cer_sd": 0.15314928662559862,
+  "sd_note": "sample SD (n-1) over the 8 per-user session-pooled CERs",
+  "users_personal_below_generic": 8
+ },
+ "training": {
+  "budget": {
+   "s_per_step": 0.3639038217067718,
+   "s_per_step_by_impl": {
+    "torch": 0.3639038217067718,
+    "shift": 0.4353266477584839
+   },
+   "conv_impl": "torch",
+   "budget_hours": 26.0,
+   "generic_steps": 150000,
+   "max_steps": 150000,
+   "time": "2026-11-17T17:37:58"
+  },
+  "generic_done": {
+   "stage": "generic",
+   "steps": 150000,
+   "best_step": 30000,
+   "best_val_cer": 0.5456856298179206,
+   "skipped": 0
+  },
+  "personal_steps_each": 3000,
+  "pause": "paused by the pause file at step 26010 (2026-11-17 20:20:56), resumed at step 26010 (2026-11-18 08:53:40), lr and loss continuous, 0 skipped steps"
+ },
+ "nts": {
+  "streams": 2445,
+  "level": "trust-ready",
+  "pass": 2445
+ },
+ "published_table3_cer_pct": {
+  "source": "Sivakumar et al. 2024, arXiv 2410.20081, Table 3, mean +- SD over 8 test users",
+  "generic": {
+   "nolm_val": "55.57 +- 4.40",
+   "nolm_test": "55.38 +- 4.10",
+   "lm_val": "52.10 +- 5.54",
+   "lm_test": "51.78 +- 4.61"
+  },
+  "personal_random_init": {
+   "nolm_val": "15.65 +- 5.95",
+   "nolm_test": "15.38 +- 5.88",
+   "lm_val": "11.03 +- 4.45",
+   "lm_test": "9.55 +- 5.16"
+  },
+  "personal_finetuned": {
+   "nolm_val": "11.39 +- 4.28",
+   "nolm_test": "11.28 +- 4.45",
+   "lm_val": "8.31 +- 3.19",
+   "lm_test": "6.95 +- 3.61"
+  }
+ }
+}
