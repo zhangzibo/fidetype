@@ -1,0 +1,41 @@
+2026-11-19 12:42:17 [121 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 12:42:17 [121 MB] stage t15 start
+2026-11-19 12:42:23 [700 MB] t15: calibration 722, evaluation 701, smoke False; caches {'llm_scores_cached': 43675, 'base_nbest_file_bytes': 14088014}; peak 703 MB
+2026-11-19 12:42:23 [700 MB] t15: split 285b8c0d9baf5a41 / fadfd84557fcb24b; row check {'r1_same_truth': 701, 'r2_same_truth': 701, 'n': 701}
+2026-11-19 12:43:35 [723 MB] llm: calibrated tcfg-36ce11d641b4caaf in 72 s; frame T 2.370158; threshold 0.77; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 12:44:08 [732 MB] llm: decided 701 in 106 s total; fluent-wrong 6; peak 927 MB
+2026-11-19 12:44:09 [785 MB] t15 llm v0.1: safe WPM 4.18 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 12/701 = 0.0171; commits 154; unguarded 4.18; no-BCI 4.02)
+2026-11-19 12:44:09 [785 MB] t15 llm v0.2: safe WPM 4.18 [safe-wpm/0.2, proposed; 0 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 12/701 = 0.0171; commits 154; unguarded 4.18; no-BCI 4.02)
+2026-11-19 12:44:34 [819 MB] llm_learned: calibrated tcfg-f3d68c206c66a874 in 25 s; frame T 2.370158; threshold 0.82; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 12:44:43 [821 MB] llm_learned: decided 701 in 34 s total; fluent-wrong 5; peak 927 MB
+2026-11-19 12:44:43 [821 MB] t15 llm_learned v0.1: safe WPM 4.91 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 13/701 = 0.0185; commits 196; unguarded 4.91; no-BCI 4.02)
+2026-11-19 12:44:43 [821 MB] t15 llm_learned v0.2: safe WPM 4.91 [safe-wpm/0.2, proposed; 0 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 13/701 = 0.0185; commits 196; unguarded 4.91; no-BCI 4.02)
+2026-11-19 12:45:10 [815 MB] llm_prefix: calibrated tcfg-78cb4d69beb70ca3 in 27 s; frame T 2.370158; threshold 0.9; controls [('uniform', 0, 15), ('shuffled', 2, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 12:45:19 [820 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (n_gpu_layers 0)
+2026-11-19 12:45:21 [2466 MB] llm_prefix: decided 701 in 38 s total; fluent-wrong 2; peak 2487 MB
+2026-11-19 12:45:21 [2466 MB] t15 llm_prefix v0.1: safe WPM 1.46 (above-alpha; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 425/701 = 0.6063; commits 530; unguarded 1.46; no-BCI 4.02)
+2026-11-19 12:45:21 [2466 MB] t15 llm_prefix v0.2: safe WPM 7.14 [safe-wpm/0.2, proposed; 422 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 22/701 = 0.0314; commits 530; unguarded 7.14; no-BCI 4.02)
+2026-11-19 12:45:21 [2466 MB] t15: L0 vs committed P15-05 M4-13 B1 decisions: 701/701
+2026-11-19 12:45:22 [2466 MB] t15 paired H1_llm_learned_vs_p5_23_learned_v0_1: 2.644 -> 4.912, diff +2.268 [1.7605834789886148, 2.8107076020983732]
+2026-11-19 12:45:22 [2466 MB] t15 paired H2_llm_learned_vs_llm_v0_1: 4.180 -> 4.912, diff +0.732 [0.19135231259422034, 1.2677329440793823]
+2026-11-19 12:45:22 [2466 MB] t15 paired llm_vs_p5_23_learned_v0_1: 2.644 -> 4.180, diff +1.535 [0.9124362178032301, 2.1676074084856043]
+2026-11-19 12:45:22 [2466 MB] t15 paired llm_prefix_vs_p5_24_prefix_v0_2_reading: 4.667 -> 6.754, diff +2.087 [1.789613813421046, 2.3777143385341413]
+2026-11-19 12:45:22 [2466 MB] t15 paired llm_prefix_vs_p5_24_prefix_v0_2: 4.866 -> 7.139, diff +2.273 [1.947992476843207, 2.593298054737408]
+2026-11-19 12:45:22 [2466 MB] t15 paired llm_prefix_vs_llm_learned_v0_2_reading: 4.752 -> 6.754, diff +2.002 [1.5964040475221974, 2.4029360394696395]
+2026-11-19 12:45:22 [2421 MB] stage t15 done in 185 s
+2026-11-19 12:45:22 [2421 MB] stage halluc start
+2026-11-19 12:46:36 [856 MB] halluc llm [llm]: b2t25-t15-val-eval/p15-22-llm  real commit 154/701 wrong 12 fluent-wrong 6 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 154 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 12:46:36 [856 MB] halluc llm [conservative]: b2t25-t15-val-eval/p15-22-llm  real commit 154/701 wrong 12 fluent-wrong 12 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 154 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 12:46:52 [856 MB] halluc llm_learned [llm]: b2t25-t15-val-eval/p15-22-llm_learned  real commit 196/701 wrong 13 fluent-wrong 5 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 196 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 12:46:52 [856 MB] halluc llm_learned [conservative]: b2t25-t15-val-eval/p15-22-llm_learned  real commit 196/701 wrong 13 fluent-wrong 13 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 196 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 12:47:09 [857 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (n_gpu_layers 0)
+2026-11-19 12:47:23 [2500 MB] halluc llm_prefix [llm]: b2t25-t15-val-eval/p15-22-llm_prefix  real commit 530/701 wrong 425 fluent-wrong 6 (llm-table)  null 0/300  scrambled 1/300  swapped 0/701 (paired n10 530 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 12:47:23 [2500 MB] halluc llm_prefix [conservative]: b2t25-t15-val-eval/p15-22-llm_prefix  real commit 530/701 wrong 425 fluent-wrong 425 (conservative)  null 0/300  scrambled 1/300  swapped 0/701 (paired n10 530 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 12:47:23 [2453 MB] stage halluc done in 122 s
+2026-11-19 12:47:23 [2453 MB] stage verdict start
+2026-11-19 12:47:23 [2453 MB] verdict H1: {'verdict': 'L1 beats the other', 'comparison': 'H1_llm_learned_vs_p5_23_learned_v0_1', 'a': 2.6444020156977244, 'b': 4.9119565090513575, 'diff': 2.267554493353633, 'diff_ci95': [1.7605834789886148, 2.8107076020983732], 'diff_half_width': 0.5250620615548792}
+2026-11-19 12:47:23 [2453 MB] verdict H2: {'verdict': 'L1 beats the other', 'comparison': 'H2_llm_learned_vs_llm_v0_1', 'a': 4.179603992176121, 'b': 4.9119565090513575, 'diff': 0.7323525168752365, 'diff_ci95': [0.19135231259422034, 1.2677329440793823], 'diff_half_width': 0.538190315742581}
+2026-11-19 12:47:23 [2453 MB] verdict P14_23: {'l1_v0_1': 4.9119565090513575, 'l1_ci95': [4.248162955656108, 5.572670758280304], 'certified': True, 'controls_pass': True, 'above_4_02': True, 'ci_lower_above_4_02': True, 'closes_gap_53': True, 'l0_v0_1_reported_only': 4.179603992176121}
+2026-11-19 12:47:23 [2453 MB] stage verdict done in 0 s
+2026-11-19 12:47:23 [2453 MB] keep_awake: cleared
+2026-11-19 12:47:23 [2453 MB] all stages done; DONE written
