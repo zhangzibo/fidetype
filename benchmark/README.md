@@ -120,7 +120,9 @@ Reference submission: `tools/benchmark/make_b2t25_published.py` builds a full st
 ## Rebuild the board
 
 ```bash
-python -m fidetype.benchmark leaderboard --results benchmark/results/v0.1 --out benchmark/site
+python -m fidetype.benchmark leaderboard --results benchmark/results/v0.1 benchmark/results/v0.2 --out benchmark/site
 ```
 
 Never edit `site/` by hand. The folder can be served as a static site (GitHub Pages) later.
+
+Track pages (P13-09): the same command writes `site/tracks/<track>.html`, one page per track, and `site/history.json`. Each page has stable anchors: `#e-<card file name>` for one entry, `#history` for the entry history. The history comes from git: each commit that added or changed a card, with the date, the split, the scorer and metric versions and the rerun level of that version. Run the command after you commit a changed card; a card that is not committed yet shows a "working tree" row. On the main page each track heading has the id `track-<track>`.

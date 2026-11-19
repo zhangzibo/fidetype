@@ -1,5 +1,57 @@
 {
  "benchmark_version": "0.1",
+ "track_pages": {
+  "spanishbcbl-meg-async": {
+   "page": "tracks/spanishbcbl-meg-async.html",
+   "anchor": "track-spanishbcbl-meg-async",
+   "research_only": true
+  },
+  "b2t25-t15-copytask": {
+   "page": "tracks/b2t25-t15-copytask.html",
+   "anchor": "track-b2t25-t15-copytask",
+   "research_only": false
+  },
+  "toronto-semg-composed": {
+   "page": "tracks/toronto-semg-composed.html",
+   "anchor": "track-toronto-semg-composed",
+   "research_only": false
+  },
+  "b2t25-t15": {
+   "page": "tracks/b2t25-t15.html",
+   "anchor": "track-b2t25-t15",
+   "research_only": false
+  },
+  "b2t24-t12": {
+   "page": "tracks/b2t24-t12.html",
+   "anchor": "track-b2t24-t12",
+   "research_only": false
+  },
+  "willett-hw": {
+   "page": "tracks/willett-hw.html",
+   "anchor": "track-willett-hw",
+   "research_only": false
+  },
+  "toronto-semg": {
+   "page": "tracks/toronto-semg.html",
+   "anchor": "track-toronto-semg",
+   "research_only": false
+  },
+  "kt-semg": {
+   "page": "tracks/kt-semg.html",
+   "anchor": "track-kt-semg",
+   "research_only": false
+  },
+  "spanishbcbl-meg": {
+   "page": "tracks/spanishbcbl-meg.html",
+   "anchor": "track-spanishbcbl-meg",
+   "research_only": true
+  },
+  "emg2qwerty": {
+   "page": "tracks/emg2qwerty.html",
+   "anchor": "track-emg2qwerty",
+   "research_only": true
+  }
+ },
  "tracks": {
   "spanishbcbl-meg-async": [
    {
@@ -107,7 +159,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-spanishbcbl-meg-async__convctc-m-async__trust",
+    "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__trust"
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/ltt",
@@ -214,7 +268,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-spanishbcbl-meg-async__convctc-m-async__ltt",
+    "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__ltt"
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/crc",
@@ -321,7 +377,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-spanishbcbl-meg-async__convctc-m-async__crc",
+    "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__crc"
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/always-commit",
@@ -427,7 +485,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-spanishbcbl-meg-async__convctc-m-async__always-commit",
+    "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__always-commit"
    }
   ],
   "b2t25-t15-copytask": [
@@ -535,7 +595,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15-copytask__published__always-commit",
+    "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__always-commit"
    },
    {
     "entry_id": "b2t25-t15-copytask/published/crc",
@@ -640,7 +702,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15-copytask__published__crc",
+    "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__crc"
    },
    {
     "entry_id": "b2t25-t15-copytask/published/trust",
@@ -745,7 +809,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15-copytask__published__trust",
+    "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__trust"
    },
    {
     "entry_id": "b2t25-t15-copytask/published/ltt",
@@ -850,7 +916,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15-copytask__published__ltt",
+    "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__ltt"
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/crc",
@@ -955,7 +1023,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15-copytask__ours__crc",
+    "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__crc"
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/trust",
@@ -1060,7 +1130,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15-copytask__ours__trust",
+    "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__trust"
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/ltt",
@@ -1165,7 +1237,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15-copytask__ours__ltt",
+    "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__ltt"
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/always-commit",
@@ -1268,7 +1342,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15-copytask__ours__always-commit",
+    "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__always-commit"
    }
   ],
   "toronto-semg-composed": [
@@ -1376,7 +1452,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-calib__trust",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__trust"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-calib/crc",
@@ -1482,7 +1560,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-calib__crc",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__crc"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-calib/commit",
@@ -1588,7 +1668,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-calib__commit",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__commit"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/crc",
@@ -1694,7 +1776,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-xsession__crc",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__crc"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/trust",
@@ -1800,7 +1884,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-xsession__trust",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__trust"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/commit",
@@ -1906,7 +1992,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-xsession__commit",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__commit"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/crc",
@@ -2012,7 +2100,9 @@
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-xsubject__crc",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__crc"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/trust",
@@ -2118,7 +2208,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-xsubject__trust",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__trust"
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/commit",
@@ -2224,7 +2316,9 @@
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg-composed__cnn-xsubject__commit",
+    "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__commit"
    }
   ],
   "b2t25-t15": [
@@ -2328,7 +2422,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__published__always-commit",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__always-commit"
    },
    {
     "entry_id": "b2t25-t15/published/crc",
@@ -2430,7 +2526,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__published__crc",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__crc"
    },
    {
     "entry_id": "b2t25-t15/published/trust",
@@ -2532,7 +2630,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__published__trust",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__trust"
    },
    {
     "entry_id": "b2t25-t15/published/ltt",
@@ -2634,7 +2734,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__published__ltt",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__ltt"
    },
    {
     "entry_id": "b2t25-t15/m4-13/guard",
@@ -2736,7 +2838,9 @@
      },
      "code_ref": "git da2981a (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__m4-13__guard",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__m4-13__guard"
    },
    {
     "entry_id": "b2t25-t15/ours/always-commit",
@@ -2838,7 +2942,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__ours__always-commit",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__always-commit"
    },
    {
     "entry_id": "b2t25-t15/ours/crc",
@@ -2940,7 +3046,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__ours__crc",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__crc"
    },
    {
     "entry_id": "b2t25-t15/ours/trust",
@@ -3042,7 +3150,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__ours__trust",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__trust"
    },
    {
     "entry_id": "b2t25-t15/ours/ltt",
@@ -3144,7 +3254,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__ours__ltt",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__ltt"
    },
    {
     "entry_id": "b2t25-t15/m4-12/guard",
@@ -3246,7 +3358,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t25-t15__m4-12__guard",
+    "link": "tracks/b2t25-t15.html#e-b2t25-t15__m4-12__guard"
    }
   ],
   "b2t24-t12": [
@@ -3347,7 +3461,9 @@
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t24-t12__t12v2__guard",
+    "link": "tracks/b2t24-t12.html#e-b2t24-t12__t12v2__guard"
    },
    {
     "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/always commit top-1",
@@ -3446,7 +3562,9 @@
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-b2t24-t12__t12v2__always-commit",
+    "link": "tracks/b2t24-t12.html#e-b2t24-t12__t12v2__always-commit"
    }
   ],
   "willett-hw": [
@@ -3547,7 +3665,9 @@
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-willett-hw__rnn-published__always-commit",
+    "link": "tracks/willett-hw.html#e-willett-hw__rnn-published__always-commit"
    },
    {
     "entry_id": "willett-hw/Willett 2021 real-time RNN (published output) + CTC beam with word list/drop-in guard (built-in CTC beam + word list)",
@@ -3646,7 +3766,9 @@
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-willett-hw__rnn-published__guard",
+    "link": "tracks/willett-hw.html#e-willett-hw__rnn-published__guard"
    }
   ],
   "toronto-semg": [
@@ -3751,7 +3873,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-calib__crc",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__crc"
    },
    {
     "entry_id": "toronto-semg/cnn-calib/trust",
@@ -3854,7 +3978,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-calib__trust",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__trust"
    },
    {
     "entry_id": "toronto-semg/cnn-calib/always-commit",
@@ -3957,7 +4083,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-calib__always-commit",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__always-commit"
    },
    {
     "entry_id": "toronto-semg/cnn-xsession/crc",
@@ -4060,7 +4188,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-xsession__crc",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__crc"
    },
    {
     "entry_id": "toronto-semg/cnn-xsession/trust",
@@ -4163,7 +4293,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-xsession__trust",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__trust"
    },
    {
     "entry_id": "toronto-semg/cnn-xsession/always-commit",
@@ -4266,7 +4398,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-xsession__always-commit",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__always-commit"
    },
    {
     "entry_id": "toronto-semg/cnn-xsubject/crc",
@@ -4369,7 +4503,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-xsubject__crc",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__crc"
    },
    {
     "entry_id": "toronto-semg/cnn-xsubject/trust",
@@ -4472,7 +4608,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-xsubject__trust",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__trust"
    },
    {
     "entry_id": "toronto-semg/cnn-xsubject/always-commit",
@@ -4575,7 +4713,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-toronto-semg__cnn-xsubject__always-commit",
+    "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__always-commit"
    }
   ],
   "kt-semg": [
@@ -4677,7 +4817,9 @@
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-kt-semg__lda-oracle__guard",
+    "link": "tracks/kt-semg.html#e-kt-semg__lda-oracle__guard"
    },
    {
     "entry_id": "kt-semg/shrinkage-LDA key decoder (adapter reference, oracle key timing)/always commit top-1",
@@ -4777,7 +4919,9 @@
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-kt-semg__lda-oracle__always-commit",
+    "link": "tracks/kt-semg.html#e-kt-semg__lda-oracle__always-commit"
    }
   ],
   "spanishbcbl-meg": [
@@ -4883,7 +5027,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-spanishbcbl-meg__convctc-m-async__trust",
+    "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__trust"
    },
    {
     "entry_id": "spanishbcbl-meg/convctc-m-async/ltt",
@@ -4987,7 +5133,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-spanishbcbl-meg__convctc-m-async__ltt",
+    "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__ltt"
    },
    {
     "entry_id": "spanishbcbl-meg/convctc-m-async/crc",
@@ -5091,7 +5239,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-spanishbcbl-meg__convctc-m-async__crc",
+    "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__crc"
    },
    {
     "entry_id": "spanishbcbl-meg/convctc-m-async/always-commit",
@@ -5195,7 +5345,9 @@
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-spanishbcbl-meg__convctc-m-async__always-commit",
+    "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__always-commit"
    }
   ],
   "emg2qwerty": [
@@ -5298,7 +5450,9 @@
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-emg2qwerty__lda-oracle__guard",
+    "link": "tracks/emg2qwerty.html#e-emg2qwerty__lda-oracle__guard"
    },
    {
     "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/always commit top-1",
@@ -5399,7 +5553,9 @@
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
-    }
+    },
+    "anchor": "e-emg2qwerty__lda-oracle__always-commit",
+    "link": "tracks/emg2qwerty.html#e-emg2qwerty__lda-oracle__always-commit"
    }
   ]
  }

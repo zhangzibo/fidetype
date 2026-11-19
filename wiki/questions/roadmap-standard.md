@@ -857,7 +857,7 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 
 #### P13-09 Per-track leaderboard pages with stable anchors and history
 - **Gap:** 80 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-08). Follow-up of P13-08, P6-03.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-18). The leaderboard generator (`python -m fidetype.benchmark leaderboard`) writes one page per track, `benchmark/site/tracks/<track>.html`, and `benchmark/site/history.json`. Stable anchors: `index.html#track-<track>` (track heading, now an `h3` with an `id`), `tracks/<track>.html`, `tracks/<track>.html#e-<card file name>` (one entry), `#entries`, `#history`, `#details`. The entry history comes from git (new module `fidetype.benchmark.entry_history`): for each commit that added or changed a card file (`git log --no-renames`), the card as it was at that commit gives the date, the commit, the changed top-level fields, the split version and digest, the scorer and metric versions, the rerun level, eWPM and safe WPM. Uncommitted cards get a "working tree" row; deleted cards are listed as removed; without git (or in a shallow clone) the page says that there is no history. The main page groups the tracks into v0.2 clean, research-only (separate, marked) and v0.1; each decoder cell links to its entry. Site: track pages at `benchmark/tracks/` with the safe WPM v0.2 PROPOSED bar; the benchmark overview links each track row to its page; local link check passes; not published. Tests: `tests/test_leaderboard_track_pages.py`. The guarantee columns of P13-02 are still open there. Follow-up: P13-12 (gap 84).
 - **Depends on:** P13-08 (done); P13-02 for the guarantee columns.
 - **Source:** P13-08 (2026-11-18): the generated leaderboard (`python -m fidetype.benchmark leaderboard`) is one long page. Its track headings have no `id`, so the site and the docs cannot link to one track. There is no per-track page and no history of entries over versions, which the P13 deliverable "Site" asks for.
 - **Done when:** the leaderboard generator writes one page per track (or stable `id` anchors per track) with the entry history (date, split, scorer and metric versions); the site links each track row of the benchmark overview to it; the site link check passes.
@@ -875,6 +875,13 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 - **Depends on:** P13-06 (done); P14-02 for released weights.
 - **Source:** P13-06 (2026-11-18): the backfilled recipes have `decoder.weights_sha256: null` (no weights released) and `policy.config_id: null` (the cards predate the frozen `config_id` of P5-23). The hallucination score cards (`benchmark/results/halluc-v0.1/`, `halluc-v0.2/`) have no `rerun` block; they rerun only with `python -m fidetype.benchmark.hallucination rescore`.
 - **Done when:** every guard card records the frozen policy `config_id` (or says why none exists); a card with released weights records their SHA-256; every hallucination card carries a `fidetype.hub.recipe/0.1` block that passes `check_recipe`, and CI checks it.
+
+#### P13-12 Leaderboard freshness check and same-commit history rows
+- **Gap:** 84 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-09). Follow-up of P13-09.
+- **Status:** `todo`.
+- **Depends on:** P13-09 (done).
+- **Source:** P13-09 (2026-11-18): the entry history reads git at generation time. A card that is committed together with its regenerated pages shows a "working tree, not committed" row until the next regeneration. No CI job regenerates the leaderboard outputs (`benchmark/site/`) and compares them with the committed files, and the CI checkout is shallow (no history).
+- **Done when:** a CI job with a full-history checkout regenerates `benchmark/site/` and fails on a difference; the regeneration step after a card commit is documented (or automated) so that no committed track page keeps a stale "working tree" row.
 
 ## P14. Value first: a useful toolkit (added 2026-11-15)
 **Goal:** people install `fidetype` because it is useful today, not only because it is a format. The format spreads as a side effect, as with LangChain ([LangChain case study](../sources/case-study-langchain.md)). P14 adds user value and credibility. It does not change the scope, order or priority of P1–P13.

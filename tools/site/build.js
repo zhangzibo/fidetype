@@ -9,6 +9,7 @@
 // Pages (source -> site):
 //   README.md (intro, north star, quick start)            -> index.html
 //   benchmark/site/* + tracks-v0.2 split files             -> benchmark/index.html, benchmark/leaderboard.html
+//   benchmark/site/tracks/*.html (one page per track)      -> benchmark/tracks/*.html (P13-09)
 //   src/fidetype/benchmark/hub/datasets-0.1.json           -> hub/index.html
 //   spec/conformance/certified.json (+ evidence reports)   -> conformance/index.html
 //   docs/*.md, benchmark/README.md, spec/README.md, spec/nts-1.0-rc4.md -> docs/*.html, spec/*.html
@@ -97,12 +98,22 @@ const COPIED = [
   { src: 'wiki/diagrams/index.html', out: 'diagrams/index.html', nav: 'diagrams/index.html', wikiDir: 'wiki/diagrams',
     replace: [['../../tools/drawio/viewer-static.min.js', 'viewer-static.min.js']] },
   { src: 'wiki/progress/index.html', out: 'progress/index.html', nav: 'progress/index.html', wikiDir: 'wiki/progress' },
+  // P13-09: one generated page per track. Their "back" links name the leaderboard file.
+  ...trackPages().map(f => ({ src: `benchmark/site/tracks/${f}`, out: `benchmark/tracks/${f}`, nav: 'benchmark/index.html',
+    replace: [['href="../index.html', 'href="../leaderboard.html']], leaderboardNote: true })),
 ].filter(c => INCLUDE_PROGRESS || c.out !== 'progress/index.html');
+
+// The per-track pages that the leaderboard generator wrote (benchmark/site/tracks/*.html).
+function trackPages() {
+  const dir = path.join(ROOT, 'benchmark/site/tracks');
+  return fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => f.endsWith('.html')).sort() : [];
+}
 
 function assetList() {
   const a = [
     ['benchmark/site/leaderboard.json', 'benchmark/leaderboard.json'],
     ['benchmark/site/leaderboard.md', 'benchmark/leaderboard.md'],
+    ['benchmark/site/history.json', 'benchmark/history.json'],
     ['demo/decision-log.json', 'demo/decision-log.json'],
     ['tools/drawio/viewer-static.min.js', 'diagrams/viewer-static.min.js'],
     ['tools/drawio/LICENSE', 'diagrams/drawio-LICENSE.txt'],
@@ -401,10 +412,17 @@ function benchmarkPage(map) {
     const parts = Object.entries(s.counts).map(([unit, c]) => (c && c.test != null ? `${c.test} ${unit}s` : null)).filter(Boolean);
     return parts.join(', ') || '—';
   };
+  // P13-09: each track cell links to the generated track page (stable URL), when there is one.
+  const pages = lb.track_pages || {};
+  const trackCell = t => {
+    const pg = pages[t] && pages[t].page;
+    const f = pg && P.basename(pg);
+    return f && trackPages().includes(f) ? `<a href="tracks/${esc(f)}"><code>${esc(t)}</code></a>` : `<code>${esc(t)}</code>`;
+  };
   const rowsFor = list => list.map(s => {
     const e = lb.tracks[s.track] || [];
     const b = best(e);
-    return `<tr><td class="nw"><code>${esc(s.track)}</code>${s.research_only ? '<br><span class="badge ro">RESEARCH ONLY</span>' : ''}</td><td class="nw"><code>${esc(s.dataset)}</code></td><td>${esc(s.licence)}</td><td class="num">${esc(testN(s))}</td><td class="num">${e.length}</td><td>${b ? `<span class="num">${fmt(b.safe_wpm)}</span> <span class="muted">(${esc(b.decoder)}; ${esc(b.policy)})</span>` : '<span class="muted">none certified</span>'}</td></tr>`;
+    return `<tr><td class="nw">${trackCell(s.track)}${s.research_only ? '<br><span class="badge ro">RESEARCH ONLY</span>' : ''}</td><td class="nw"><code>${esc(s.dataset)}</code></td><td>${esc(s.licence)}</td><td class="num">${esc(testN(s))}</td><td class="num">${e.length}</td><td>${b ? `<span class="num">${fmt(b.safe_wpm)}</span> <span class="muted">(${esc(b.decoder)}; ${esc(b.policy)})</span>` : '<span class="muted">none certified</span>'}</td></tr>`;
   }).join('\n');
   const head = '<thead><tr><th>Track</th><th>Dataset</th><th>Licence</th><th>Test units</th><th>Entries</th><th>Best certified safe WPM (v0.1)</th></tr></thead>';
   const clean = splits.filter(s => !s.research_only);
@@ -412,7 +430,8 @@ function benchmarkPage(map) {
   const legacy = Object.keys(lb.tracks).filter(t => !v2.has(t)).map(t => {
     const e = lb.tracks[t];
     const b = best(e);
-    return `<tr><td class="nw"><code>${esc(t)}</code></td><td class="num">${e.length}</td><td>${b ? fmt(b.safe_wpm) : '<span class="muted">none certified</span>'}</td></tr>`;
+    const ro = pages[t] && pages[t].research_only ? '<br><span class="badge ro">RESEARCH ONLY</span>' : '';
+    return `<tr><td class="nw">${trackCell(t)}${ro}</td><td class="num">${e.length}</td><td>${b ? fmt(b.safe_wpm) : '<span class="muted">none certified</span>'}</td></tr>`;
   }).join('\n');
   const prop = read('docs/safe-wpm-v0.2-proposal.md');
   const propStatus = docStatus(prop) || 'see the page';
@@ -533,9 +552,9 @@ ${rows}
     sources: ['spec/conformance/certified.json'] });
 }
 
-function leaderboardNote(map) {
+function leaderboardNote(map, from = 'benchmark/leaderboard.html') {
   const status = docStatus(read('docs/safe-wpm-v0.2-proposal.md')) || 'PROPOSED';
-  const href = siteRel('benchmark/leaderboard.html', map.get('docs/safe-wpm-v0.2-proposal.md'));
+  const href = siteRel(from, map.get('docs/safe-wpm-v0.2-proposal.md'));
   return `<div class="ftbar" style="border-bottom:none"><div class="ftin" style="padding:8px 16px;color:var(--ftm)">The "Safe WPM @ alpha" column uses <code>safe-wpm/0.1</code>. Safe WPM v0.2 is <b style="color:var(--ftf)">${esc(status.toUpperCase())}</b>: <a style="color:var(--fta)" href="${href}">proposal</a>.</div></div>`;
 }
 
@@ -568,7 +587,7 @@ function build(out) {
     for (const [a, b] of c.replace || []) html = html.split(a).join(b);
     if (c.wikiDir) html = rewriteWikiLinks(html, c.wikiDir);
     let bar = injectedBar(c.out, c.nav);
-    if (c.out === 'benchmark/leaderboard.html') bar += leaderboardNote(map);
+    if (c.out === 'benchmark/leaderboard.html' || c.leaderboardNote) bar += leaderboardNote(map, c.out);
     html = /<body[^>]*>/i.test(html) ? html.replace(/<body[^>]*>/i, m => `${m}\n${bar}`) : bar + html;
     write(out, c.out, html);
   }
