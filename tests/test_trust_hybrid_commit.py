@@ -135,3 +135,11 @@ def test_hybrid_guard_checks(hybrid_setup):
         H.HybridPrefixGuard(base, base.commit_score, 9, 0.9, 0.9)
     with pytest.raises(ValueError):
         H.HybridPrefixGuard(object(), g.mid_score, 9, 0.9, 0.9)
+
+
+def test_infeasible_certification_switches_off_mid_commits(hybrid_setup):
+    base, g, xs, ts, vs, _ = hybrid_setup
+    # an empty grid certifies nothing: the guard must then commit nowhere, also not mid-trial
+    g0 = H.calibrate_hybrid(base, g.mid_score, vs, ts, step_frames=9, lam_mid=0.0, grid=[])
+    assert not g0.sheet["feasible"] and g0.lam_mid == math.inf and g0.sheet["lam_mid_used"] == "inf"
+    assert all(g0.decide_views(v).n_commits == 0 for v in vs[:30])

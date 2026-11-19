@@ -16,7 +16,8 @@ checkpoint does not start with the committed words, the guard commits nothing th
 **Joint certification.** The risk unit is the utterance: an utterance is wrong if *any* of its commits is
 wrong (:func:`fidetype.trust.stream_commit.stream_wrong`). ``lam_mid`` is fixed before the certification;
 ``lam_end`` is certified by Learn then Test (fixed sequence from 1.00 down, exact binomial p-values) on this
-loss, with the mid-trial commits switched on. So one bound covers all commits of an utterance.
+loss, with the mid-trial commits switched on. So one bound covers all commits of an utterance. If no ``lam_end``
+passes, the guard never commits (``lam_mid`` is set to inf as well).
 
 Each commit gives one decision event; the events of an utterance form a hash chain (``prev_id`` -> ``id``).
 Metric: ``safe_wpm(..., metric_version="0.2", n_commits=...)`` with ``risk = "wrong-stream-commit"`` (the
@@ -284,7 +285,11 @@ def calibrate_hybrid(base: Any, mid_score: LearnedCommitScore, views: Sequence[S
         "guarantee": (f"P(rate of utterances with a wrong commit <= {alpha:g}) >= {1 - delta:g} over the "
                       "calibration draw, if calibration and use utterances are exchangeable"),
     }
-    guard = HybridPrefixGuard(base, mid_score, step_frames, lam_mid, res["threshold"], frame_timing=frame_timing,
+    # No certified lam_end: the pair is not certified, so the guard must not commit mid-trial either (P5-28 fix:
+    # the first version kept lam_mid and so made uncertified mid-trial commits).
+    lam_mid_used = float(lam_mid) if res["feasible"] else math.inf
+    sheet["lam_mid_used"] = _num(lam_mid_used)
+    guard = HybridPrefixGuard(base, mid_score, step_frames, lam_mid_used, res["threshold"], frame_timing=frame_timing,
                               sheet=sheet)
     if control_views is not None:
         counts: dict[str, int] = {}

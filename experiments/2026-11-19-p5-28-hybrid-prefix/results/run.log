@@ -1,2 +1,22 @@
 2026-11-19 12:25:10 stage dry start
 2026-11-19 12:25:15 dry: {'checks': {'base_config_id': 'tcfg-e9758d5133d07fa6', 'base_equals_p5_24': True, 'views_base_config_id': 'tcfg-e9758d5133d07fa6', 'views_step': 6, 'views_match_base': True, 'stream_config_id': 'scfg-9171461e4f8cf0c2', 'stream_equals_p5_27': True, 'base_threshold': 0.94}, 'items': 12, 'checkpoints': 386, 's_decide_12': 0.01900005340576172, 'load_s': 5.685091018676758, 'peak_mb': 539.3203125}
+2026-11-19 12:45:45 stage evaluate start
+2026-11-19 12:45:51 evaluate: checks {'base_config_id': 'tcfg-e9758d5133d07fa6', 'base_equals_p5_24': True, 'views_base_config_id': 'tcfg-e9758d5133d07fa6', 'views_step': 6, 'views_match_base': True, 'stream_config_id': 'scfg-9171461e4f8cf0c2', 'stream_equals_p5_27': True, 'base_threshold': 0.94}; peak 539 MB
+2026-11-19 12:45:51 views read (27296 cal, 27239 eval, 22398 null checkpoints); peak 607 MB
+2026-11-19 12:45:52 reference: end-only decisions vs single arm 465/701
+2026-11-19 12:45:53 reference: lam_end with lam_mid = inf: 0.94 (P5-24: 0.94)
+2026-11-19 12:45:53 hybrid LTT (lam_mid 0.99): lam_end 0.94, empirical risk 0.025830258302583026, p 0.03685043350048465, commit rate 0.7232472324723247
+2026-11-19 12:45:54 hybrid controls: [('shuffled', 0, 15), ('uniform', 0, 15)]
+2026-11-19 12:45:55 hybrid v0_2_read: safe WPM 4.89 [safe-wpm/0.2, proposed; 456 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 18/701 = 0.0257; commits 500; unguarded 4.89; no-BCI 4.02)
+2026-11-19 12:45:55 hybrid v0_2_no_read: safe WPM 5.17 [safe-wpm/0.2, proposed; 456 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 18/701 = 0.0257; commits 500; unguarded 5.17; no-BCI 4.02)
+2026-11-19 12:45:55 hybrid v0_1_complete_only: safe WPM 1.03 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 0/701 = 0.0000; commits 44; unguarded 1.03; no-BCI 4.02)
+2026-11-19 12:45:55 single v0_2_read: safe WPM 4.67 [safe-wpm/0.2, proposed; 421 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 13/701 = 0.0185; commits 465; unguarded 4.67; no-BCI 4.02)
+2026-11-19 12:45:55 single v0_2_no_read: safe WPM 4.87 [safe-wpm/0.2, proposed; 421 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 13/701 = 0.0185; commits 465; unguarded 4.87; no-BCI 4.02)
+2026-11-19 12:45:55 single v0_1_complete_only: safe WPM 1.03 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 0/701 = 0.0000; commits 44; unguarded 1.03; no-BCI 4.02)
+2026-11-19 12:45:59 sensitivity lam_mid 0.99: lam_end 0.95, value 4.631588445692364
+2026-11-19 12:46:01 sensitivity lam_mid 0.98: lam_end inf, value 3.7189654884040935
+2026-11-19 12:46:03 sensitivity lam_mid 0.97: lam_end inf, value 4.1634802170629355
+2026-11-19 12:46:03 stage evaluate done in 18 s
+2026-11-19 12:46:04 stage verdict start
+2026-11-19 12:46:04 verdict: {'verdict': 'hybrid beats single', 'diff': 0.22313414652886188, 'half_width': 0.08183194902974193, 'diff_ci95': [0.14386943387015763, 0.3075333319296415], 'hybrid_value': 4.890195222754168, 'hybrid_ci95': [4.49136581297405, 5.273010842301758], 'single_value': 4.667061076225306, 'hybrid_safe': True, 'hybrid_clear_violation': False, 'hybrid_controls_pass': True, 'hybrid_wrong': [18, 701], 'hybrid_cp95': [0.0153, 0.0403], 'non_inferior': True, 'ni_margin': 0.25, 'latency_median_right_words': {'hybrid': 3.8499999999999996, 'single': 11.2}, 'latency_lower': True, 'hybrid_above_no_bci': True, 'hybrid_ci_above_no_bci': True, 'no_bci': 4.02, 'v0_1_complete_only_value': 1.0261751002887645, 'v0_1_above_no_bci': False}
+2026-11-19 12:46:04 stage verdict done in 0 s
