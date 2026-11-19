@@ -110,7 +110,10 @@ def main(argv: list[str] | None = None) -> int:
             if "rerun" in card and not a.force:
                 continue
             before = card_json({k: v for k, v in card.items() if k != "rerun"})
+            old_ref = (card.get("rerun") or {}).get("code_ref")
             card["rerun"] = fn(card, p)
+            if old_ref:  # --force: keep the commit that made the card, not the backfill commit
+                card["rerun"]["code_ref"] = old_ref
             errs = check_recipe(card["rerun"])
             if errs:
                 raise SystemExit(f"{p.name}: {errs}")

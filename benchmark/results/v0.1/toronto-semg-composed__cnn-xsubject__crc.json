@@ -191,7 +191,8 @@
   "track": {
    "track": "toronto-semg-composed",
    "split_version": "tracks-v0.1",
-   "digest": null
+   "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+   "digest_kind": "file-sha256"
   },
   "adapter": {
    "module": "fidetype.adapters.toronto_semg",
@@ -214,7 +215,7 @@
    "guarantee": "crc"
   },
   "scorer": {
-   "scorer_version": null,
+   "scorer_version": "benchmark-0.1",
    "metrics": {
     "safe_wpm": "safe-wpm/0.1"
    },

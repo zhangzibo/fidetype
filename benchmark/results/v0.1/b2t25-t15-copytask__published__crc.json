@@ -207,7 +207,8 @@
   "track": {
    "track": "b2t25-t15-copytask",
    "split_version": "tracks-v0.1",
-   "digest": null
+   "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+   "digest_kind": "file-sha256"
   },
   "adapter": {
    "module": "fidetype.adapters.b2t25",
@@ -229,7 +230,7 @@
    "guarantee": "crc"
   },
   "scorer": {
-   "scorer_version": null,
+   "scorer_version": "benchmark-0.1",
    "metrics": {
     "safe_wpm": "safe-wpm/0.1"
    },

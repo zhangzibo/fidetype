@@ -109,12 +109,12 @@ download (original source) -> verify -> [prepare] -> tracks select <track> --spl
 | RA-1 Input | The adapter input is `LocalUnit.ref` from `tracks.select` (a file plus an index or key). The adapter never needs plain text from the repo | Yes (`select`) |
 | RA-2 Output | One NTS stream per unit. It passes NTS Core conformance (`fidetype validate --level core`) | Yes for the three hub adapters |
 | RA-3 Licence keys | The header carries `data.licence` and `data.research_only` from the registry entry (FEP-0010, MET-12) | Yes (`_licence_meta` in each adapter) |
-| RA-4 Unit key | The header meta carries the track and the unit hash `h` of the split file, not the plain local id. So a stream file says which unit it is without leaking the id | **No** (P13-06) |
+| RA-4 Unit key | The header meta carries the track and the unit hash `h` of the split file, not the plain local id. So a stream file says which unit it is without leaking the id | **No** (P13-10) |
 | RA-5 Timing | Frame times are neural time from the data (speech duration, bins, key times). LSL and WebSocket replays pace on these times (`speed` 1.0 = real time, 0 = no pacing) | Yes (`replay_to_lsl`, `replay_to_ws`) |
 | RA-6 Determinism | Same input bytes + same adapter version = byte-identical stream. Any random step takes a fixed seed in the call | Yes for the three hub adapters (no random step) |
-| RA-7 Transport neutrality | File, LSL and WebSocket give the same decisions for the same stream. A test replays one stream over all three and compares the decisions | Partly (LSL and WS round-trip tests); a 3-way test is P13-06 |
+| RA-7 Transport neutrality | File, LSL and WebSocket give the same decisions for the same stream. A test replays one stream over all three and compares the decisions | Partly (LSL and WS round-trip tests); a 3-way test is P13-10 |
 | RA-8 Controls | The adapter can make the shuffled and zeros inputs at the **input level** where the form has signals. Else the entry says that the control is a decoder-output stand-in (submission field `controls`) | Partly (P6-06 for T12 and Willett) |
-| RA-9 Adapter hash | The result records the adapter id: module name, package version and SHA-256 of the module source | **No** (P13-06) |
+| RA-9 Adapter hash | The result records the adapter id: module name, package version and SHA-256 of the module source | **Yes** (P13-06: the `adapter` block of the rerun recipe) |
 | RA-10 No text out | Committed outputs of a replay hold no text from the data. Truth and hypotheses stay local | Yes (scorer cards hold no text) |
 
 ### 4.3 What an adapter emits per hub dataset
@@ -310,6 +310,8 @@ With no command, `python -m fidetype.benchmark.hub` checks the committed registr
 | New v0.2 cards | `fidetype.benchmark.scorecard.score` adds it. `command` = `python -m fidetype.benchmark score <track> <submission> --truth <truth.jsonl> --B <B> --seed <seed>` | `rescore` |
 | The 31 committed v0.2 cards | `tools/benchmark/add_rerun_recipes.py` (backfill). Steps `truth`, `build` (the experiment stage that wrote the submission), `score`. `code_ref` = the last commit that changed the card | `rescore` |
 | The 21 committed v0.1 cards | The same tool. Steps `truth` (`prepare`), `build` (`tools/benchmark/import_baselines.py`), `controls`, `safe-wpm`. For `committed-aggregate` cards the command rebuilds the card but does not recompute the numbers. `inputs.how` says so | `rescore` |
+
+The split digest of a v0.2 card is the entries digest of its split file (`digest_kind: entries`). A v0.1 split file has no digest, so a v0.1 recipe holds the SHA-256 of the split file with LF line ends (`digest_kind: file-sha256`). A v0.1 card has no `scorer_version` field, so its recipe names the scorer `benchmark-0.1`.
 
 The backfill changed no other field of a card (checked key by key). The adapter hash (RA-9) is the SHA-256 of the adapter module source with LF line ends. So Windows and Linux checkouts give the same hash. A card whose dataset is not yet in the registry (`b2t24-t12`, `willett-hw`, `kt-semg`, `emg2qwerty`) has `dataset: null` and a `dataset_note` (gap 79).
 

@@ -241,7 +241,8 @@
   "track": {
    "track": "spanishbcbl-meg",
    "split_version": "tracks-v0.2",
-   "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+   "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+   "digest_kind": "entries"
   },
   "adapter": {
    "module": "fidetype.adapters.spanishbcbl_meg",

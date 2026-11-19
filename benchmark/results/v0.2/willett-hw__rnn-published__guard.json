@@ -235,7 +235,8 @@
   "track": {
    "track": "willett-hw",
    "split_version": "tracks-v0.2",
-   "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450"
+   "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450",
+   "digest_kind": "entries"
   },
   "adapter": {
    "module": "fidetype.adapters.willett_handwriting",

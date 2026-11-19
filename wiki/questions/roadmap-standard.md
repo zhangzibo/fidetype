@@ -838,7 +838,7 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 
 #### P13-06 Hub command line and rerun recipe
 - **Gap:** 78 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-01). Follow-up of P13-01.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-18, code `81df2af`, [design section 12](../../docs/hub-design.md#12-hub-command-line-and-rerun-recipes-p13-06)). Hub command line `python -m fidetype.benchmark.hub` / `fidetype hub` with `list`, `show`, `instructions` (prints the official source only; never downloads or re-hosts), `verify` (size + SHA-256 of local files, 1 MiB chunks), `check` (registry or one entry), `recipe` and `rerun` (level `rescore`). Rerun recipe `fidetype.hub.recipe/0.1` (dataset id / version / revision, track + split digest, adapter module + package version + source SHA-256 (RA-9), decoder, policy, scorer + metric versions, exact commands) in all 52 committed cards (backfill `tools/benchmark/add_rerun_recipes.py`; no other field changed) and in every new card (the scorer adds it). Leaderboard: `Rerun` column + a "Rerun recipes" block per track; site rebuilt locally, link check passes, not published. `fidetype hub rerun` gave the same card byte for byte (without the `rerun` block) for `b2t25-t15__published__ltt`, `b2t24-t12__t12v2__guard` and `toronto-semg__cnn-calib__crc`. Done-when parts (1) partly (no `replay`), (2) yes, (3) no, (4) no, (5) at level `rescore` only, (6) no: the rest is P13-10 (gap 82); recipe gaps are P13-11 (gap 83).
 - **Depends on:** P13-01 (done); P6-10 for the `training_data` field.
 - **Source:** P13-01 ([design](../../docs/hub-design.md#42-rules)): replay rules RA-4 (unit hash in the stream header), RA-7 (one test that replays a stream over file, LSL and WebSocket and compares the decisions) and RA-9 (adapter hash in the result) are not met. No command reads the registry, and result cards have no rerun recipe.
 - **Done when:** (1) `fidetype hub list | info | verify | replay | rerun` exists and reads `datasets-0.1.json`; (2) score cards carry the rerun recipe of design section 5.1 with the adapter hash; (3) the three hub adapters write the track and unit hash into the header meta; (4) a test replays one stream over file, LSL and WebSocket and gets the same decisions; (5) `fidetype hub rerun` reproduces one committed `b2t25-t15` card byte for byte (level `replay`); (6) the dataset fields of `tracks.py` read from the registry without a change to any split file.
@@ -861,6 +861,20 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 - **Depends on:** P13-08 (done); P13-02 for the guarantee columns.
 - **Source:** P13-08 (2026-11-18): the generated leaderboard (`python -m fidetype.benchmark leaderboard`) is one long page. Its track headings have no `id`, so the site and the docs cannot link to one track. There is no per-track page and no history of entries over versions, which the P13 deliverable "Site" asks for.
 - **Done when:** the leaderboard generator writes one page per track (or stable `id` anchors per track) with the entry history (date, split, scorer and metric versions); the site links each track row of the benchmark overview to it; the site link check passes.
+
+#### P13-10 Hub replay command, unit key, transport test and replay-level rerun
+- **Gap:** 82 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-06). Follow-up of P13-06.
+- **Status:** `todo`.
+- **Depends on:** P13-06 (done); local copies of the hub datasets (CPU only).
+- **Source:** P13-06 (2026-11-18, [design section 12.5](../../docs/hub-design.md#125-not-done-here)): the hub command line and the recipes exist, but these P13-06 done-when parts are not met: no `fidetype hub replay`; rule RA-4 (track and unit hash in the stream header meta) not met by the three hub adapters; no RA-7 test that replays one stream over file, LSL and WebSocket and compares the decisions; the checked reruns are level `rescore`, not `replay`; the dataset fields of `tracks.py` do not read from the registry.
+- **Done when:** (1) `fidetype hub replay <dataset> --data <path> --track <track>` writes NTS streams from the registered adapter; (2) the three hub adapters write the track and the unit hash into the header meta; (3) a test replays one stream over file, LSL and WebSocket and gets the same decisions; (4) `fidetype hub rerun` reproduces one committed `b2t25-t15` card byte for byte at level `replay`; (5) the dataset fields of `tracks.py` read from the registry with no change to any split file.
+
+#### P13-11 Complete rerun recipes: weights hash, policy config id, hallucination cards
+- **Gap:** 83 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-06). Follow-up of P13-06, P15-15.
+- **Status:** `todo`.
+- **Depends on:** P13-06 (done); P14-02 for released weights.
+- **Source:** P13-06 (2026-11-18): the backfilled recipes have `decoder.weights_sha256: null` (no weights released) and `policy.config_id: null` (the cards predate the frozen `config_id` of P5-23). The hallucination score cards (`benchmark/results/halluc-v0.1/`, `halluc-v0.2/`) have no `rerun` block; they rerun only with `python -m fidetype.benchmark.hallucination rescore`.
+- **Done when:** every guard card records the frozen policy `config_id` (or says why none exists); a card with released weights records their SHA-256; every hallucination card carries a `fidetype.hub.recipe/0.1` block that passes `check_recipe`, and CI checks it.
 
 ## P14. Value first: a useful toolkit (added 2026-11-15)
 **Goal:** people install `fidetype` because it is useful today, not only because it is a format. The format spreads as a side effect, as with LangChain ([LangChain case study](../sources/case-study-langchain.md)). P14 adds user value and credibility. It does not change the scope, order or priority of P1–P13.

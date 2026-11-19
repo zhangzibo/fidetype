@@ -46,7 +46,8 @@
      "track": {
       "track": "spanishbcbl-meg-async",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "28ba9fb27d66d1a72282a837450a7bae2cbd75588c5d5ca4a69dee2d202d808c",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.spanishbcbl_meg",
@@ -69,7 +70,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -152,7 +153,8 @@
      "track": {
       "track": "spanishbcbl-meg-async",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "28ba9fb27d66d1a72282a837450a7bae2cbd75588c5d5ca4a69dee2d202d808c",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.spanishbcbl_meg",
@@ -175,7 +177,7 @@
       "guarantee": "ltt"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -258,7 +260,8 @@
      "track": {
       "track": "spanishbcbl-meg-async",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "28ba9fb27d66d1a72282a837450a7bae2cbd75588c5d5ca4a69dee2d202d808c",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.spanishbcbl_meg",
@@ -281,7 +284,7 @@
       "guarantee": "crc"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -363,7 +366,8 @@
      "track": {
       "track": "spanishbcbl-meg-async",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "28ba9fb27d66d1a72282a837450a7bae2cbd75588c5d5ca4a69dee2d202d808c",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.spanishbcbl_meg",
@@ -386,7 +390,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -471,7 +475,8 @@
      "track": {
       "track": "b2t25-t15-copytask",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -493,7 +498,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -575,7 +580,8 @@
      "track": {
       "track": "b2t25-t15-copytask",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -597,7 +603,7 @@
       "guarantee": "crc"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -679,7 +685,8 @@
      "track": {
       "track": "b2t25-t15-copytask",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -701,7 +708,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -783,7 +790,8 @@
      "track": {
       "track": "b2t25-t15-copytask",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -805,7 +813,7 @@
       "guarantee": "ltt"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -887,7 +895,8 @@
      "track": {
       "track": "b2t25-t15-copytask",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -909,7 +918,7 @@
       "guarantee": "crc"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -991,7 +1000,8 @@
      "track": {
       "track": "b2t25-t15-copytask",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -1013,7 +1023,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1095,7 +1105,8 @@
      "track": {
       "track": "b2t25-t15-copytask",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -1117,7 +1128,7 @@
       "guarantee": "ltt"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1197,7 +1208,8 @@
      "track": {
       "track": "b2t25-t15-copytask",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -1219,7 +1231,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1303,7 +1315,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -1326,7 +1339,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1408,7 +1421,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -1431,7 +1445,7 @@
       "guarantee": "crc"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1513,7 +1527,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -1536,7 +1551,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1618,7 +1633,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -1641,7 +1657,7 @@
       "guarantee": "crc"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1723,7 +1739,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -1746,7 +1763,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1828,7 +1845,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -1851,7 +1869,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -1933,7 +1951,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -1956,7 +1975,7 @@
       "guarantee": "crc"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -2038,7 +2057,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -2061,7 +2081,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -2143,7 +2163,8 @@
      "track": {
       "track": "toronto-semg-composed",
       "split_version": "tracks-v0.1",
-      "digest": null
+      "digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+      "digest_kind": "file-sha256"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -2166,7 +2187,7 @@
       "guarantee": "none"
      },
      "scorer": {
-      "scorer_version": null,
+      "scorer_version": "benchmark-0.1",
       "metrics": {
        "safe_wpm": "safe-wpm/0.1"
       },
@@ -2250,7 +2271,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -2351,7 +2373,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -2452,7 +2475,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -2553,7 +2577,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -2654,7 +2679,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -2755,7 +2781,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -2856,7 +2883,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -2957,7 +2985,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -3058,7 +3087,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -3159,7 +3189,8 @@
      "track": {
       "track": "b2t25-t15",
       "split_version": "tracks-v0.2",
-      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.b2t25",
@@ -3259,7 +3290,8 @@
      "track": {
       "track": "b2t24-t12",
       "split_version": "tracks-v0.2",
-      "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14"
+      "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.benchmark.tracks",
@@ -3357,7 +3389,8 @@
      "track": {
       "track": "b2t24-t12",
       "split_version": "tracks-v0.2",
-      "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14"
+      "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.benchmark.tracks",
@@ -3457,7 +3490,8 @@
      "track": {
       "track": "willett-hw",
       "split_version": "tracks-v0.2",
-      "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450"
+      "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.willett_handwriting",
@@ -3555,7 +3589,8 @@
      "track": {
       "track": "willett-hw",
       "split_version": "tracks-v0.2",
-      "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450"
+      "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.willett_handwriting",
@@ -3658,7 +3693,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -3760,7 +3796,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -3862,7 +3899,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -3964,7 +4002,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -4066,7 +4105,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -4168,7 +4208,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -4270,7 +4311,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -4372,7 +4414,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -4474,7 +4517,8 @@
      "track": {
       "track": "toronto-semg",
       "split_version": "tracks-v0.2",
-      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.toronto_semg",
@@ -4576,7 +4620,8 @@
      "track": {
       "track": "kt-semg",
       "split_version": "tracks-v0.2",
-      "digest": "dfe0acb7444ff4094314a5c50de3a07d43db43d0db92da1d229e50793e869fa4"
+      "digest": "dfe0acb7444ff4094314a5c50de3a07d43db43d0db92da1d229e50793e869fa4",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.kt_semg",
@@ -4675,7 +4720,8 @@
      "track": {
       "track": "kt-semg",
       "split_version": "tracks-v0.2",
-      "digest": "dfe0acb7444ff4094314a5c50de3a07d43db43d0db92da1d229e50793e869fa4"
+      "digest": "dfe0acb7444ff4094314a5c50de3a07d43db43d0db92da1d229e50793e869fa4",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.kt_semg",
@@ -4779,7 +4825,8 @@
      "track": {
       "track": "spanishbcbl-meg",
       "split_version": "tracks-v0.2",
-      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.spanishbcbl_meg",
@@ -4882,7 +4929,8 @@
      "track": {
       "track": "spanishbcbl-meg",
       "split_version": "tracks-v0.2",
-      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.spanishbcbl_meg",
@@ -4985,7 +5033,8 @@
      "track": {
       "track": "spanishbcbl-meg",
       "split_version": "tracks-v0.2",
-      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.spanishbcbl_meg",
@@ -5088,7 +5137,8 @@
      "track": {
       "track": "spanishbcbl-meg",
       "split_version": "tracks-v0.2",
-      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.spanishbcbl_meg",
@@ -5191,7 +5241,8 @@
      "track": {
       "track": "emg2qwerty",
       "split_version": "tracks-v0.2",
-      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f"
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.emg2qwerty",
@@ -5291,7 +5342,8 @@
      "track": {
       "track": "emg2qwerty",
       "split_version": "tracks-v0.2",
-      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f"
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+      "digest_kind": "entries"
      },
      "adapter": {
       "module": "fidetype.adapters.emg2qwerty",

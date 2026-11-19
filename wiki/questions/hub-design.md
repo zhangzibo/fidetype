@@ -42,7 +42,7 @@ The user answered: "i would like to have a site but the rest you can decide". So
 | Q7 | Who signs the licence and consent review? | **Decided:** the founder now; a second reviewer later |
 
 ## New gaps
-- Gap 78 = [P13-06](roadmap-standard.md#p13-06-hub-command-line-and-rerun-recipe): hub command line, rerun recipe in the card, unit key, adapter hash, 3-way transport test.
+- Gap 78 = [P13-06](roadmap-standard.md#p13-06-hub-command-line-and-rerun-recipe): hub command line, rerun recipe in the card, unit key, adapter hash, 3-way transport test. **Closed 2026-11-18:** the hub command line (`list`, `show`, `instructions`, `verify`, `check`, `recipe`, `rerun`) and the rerun recipe with the adapter hash are in every card ([design section 12](../../docs/hub-design.md#12-hub-command-line-and-rerun-recipes-p13-06)). The rest is gap 82 = [P13-10](roadmap-standard.md#p13-10-hub-replay-command-unit-key-transport-test-and-replay-level-rerun) (replay, unit key, 3-way transport test) and gap 83 = [P13-11](roadmap-standard.md#p13-11-complete-rerun-recipes-weights-hash-policy-config-id-hallucination-cards) (weights hash, policy config id, hallucination cards).
 - Gap 79 = [P13-07](roadmap-standard.md#p13-07-registry-entries-for-the-other-v02-datasets-and-missing-checksums): registry entries for the other four v0.2 datasets; checksums for the B2T '25 HDF5 zip and the SpanishBCBL files.
 
 ## Related pages

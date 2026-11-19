@@ -222,7 +222,8 @@
   "track": {
    "track": "spanishbcbl-meg-async",
    "split_version": "tracks-v0.1",
-   "digest": null
+   "digest": "28ba9fb27d66d1a72282a837450a7bae2cbd75588c5d5ca4a69dee2d202d808c",
+   "digest_kind": "file-sha256"
   },
   "adapter": {
    "module": "fidetype.adapters.spanishbcbl_meg",
@@ -245,7 +246,7 @@
    "guarantee": "crc"
   },
   "scorer": {
-   "scorer_version": null,
+   "scorer_version": "benchmark-0.1",
    "metrics": {
     "safe_wpm": "safe-wpm/0.1"
    },

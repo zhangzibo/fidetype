@@ -104,6 +104,19 @@ def _dataset_block(track: str) -> tuple[dict[str, Any] | None, str | None]:
     return None, "dataset not known to the hub registry or to tracks v0.2"
 
 
+def _split_digest(card: Mapping[str, Any]) -> tuple[str | None, str]:
+    """The split digest: the v0.2 entries digest from the card, else the SHA-256 of the v0.1 split file (LF)."""
+    d = (card.get("track_info") or {}).get("split_digest")
+    if d:
+        return d, "entries"
+    from importlib import resources
+
+    f = resources.files("fidetype.benchmark").joinpath("splits", "v0.1", f"{card.get('track')}.json")
+    if f.is_file():
+        return hashlib.sha256(f.read_bytes().replace(b"\r\n", b"\n")).hexdigest(), "file-sha256"
+    return None, "none"
+
+
 def _split_version(card: Mapping[str, Any]) -> str:
     return "tracks-v0.2" if str(card.get("schema", "")).endswith("/0.2") else "tracks-v0.1"
 
@@ -131,7 +144,7 @@ def make_recipe(card: Mapping[str, Any], *, command: str, level: str = "rescore"
     pol = card.get("policy") or {}
     sw = card.get("safe_wpm") or {}
     ci = card.get("ci") or {}
-    ti = card.get("track_info") or {}
+    digest, digest_kind = _split_digest(card)
     metrics: dict[str, Any] = {}
     if sw.get("definition"):
         metrics["safe_wpm"] = sw["definition"]
@@ -140,13 +153,16 @@ def make_recipe(card: Mapping[str, Any], *, command: str, level: str = "rescore"
         "level": level,
         "dataset": ds,
         **({"dataset_note": ds_note} if ds_note else {}),
-        "track": {"track": track, "split_version": _split_version(card), "digest": ti.get("split_digest")},
+        "track": {"track": track, "split_version": _split_version(card), "digest": digest,
+                  "digest_kind": digest_kind},
         "adapter": adapter,
         "decoder": {"name": dec.get("name"), "version": dec.get("version"), "url": dec.get("url"),
                     "weights_sha256": weights_sha256, "training_data": dec.get("training_data")},
         "policy": {"name": pol.get("name"), "config_id": policy_config_id or pol.get("config_id"),
                    "guarantee": (card.get("guarantee") or {}).get("method")},
-        "scorer": {"scorer_version": card.get("scorer_version"), "metrics": metrics,
+        # v0.1 cards have no scorer_version field: the benchmark version names their scorer.
+        "scorer": {"scorer_version": card.get("scorer_version") or f"benchmark-{card.get('benchmark_version')}",
+                   "metrics": metrics,
                    "B": ci.get("B"), "seed": ci.get("seed")},
         "versions": {"fidetype": package_version(), "benchmark": card.get("benchmark_version"),
                      "python": f"{sys.version_info.major}.{sys.version_info.minor}"},

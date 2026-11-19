@@ -229,7 +229,8 @@
   "track": {
    "track": "kt-semg",
    "split_version": "tracks-v0.2",
-   "digest": "dfe0acb7444ff4094314a5c50de3a07d43db43d0db92da1d229e50793e869fa4"
+   "digest": "dfe0acb7444ff4094314a5c50de3a07d43db43d0db92da1d229e50793e869fa4",
+   "digest_kind": "entries"
   },
   "adapter": {
    "module": "fidetype.adapters.kt_semg",

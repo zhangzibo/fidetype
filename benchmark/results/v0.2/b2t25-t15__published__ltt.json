@@ -239,7 +239,8 @@
   "track": {
    "track": "b2t25-t15",
    "split_version": "tracks-v0.2",
-   "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+   "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+   "digest_kind": "entries"
   },
   "adapter": {
    "module": "fidetype.adapters.b2t25",

@@ -230,7 +230,8 @@
   "track": {
    "track": "emg2qwerty",
    "split_version": "tracks-v0.2",
-   "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f"
+   "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+   "digest_kind": "entries"
   },
   "adapter": {
    "module": "fidetype.adapters.emg2qwerty",

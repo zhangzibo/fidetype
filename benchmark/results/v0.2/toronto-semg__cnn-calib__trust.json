@@ -226,7 +226,8 @@
   "track": {
    "track": "toronto-semg",
    "split_version": "tracks-v0.2",
-   "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+   "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+   "digest_kind": "entries"
   },
   "adapter": {
    "module": "fidetype.adapters.toronto_semg",

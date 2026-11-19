@@ -147,7 +147,8 @@ def test_every_committed_card_has_a_valid_recipe():
         assert R.check_recipe(r) == [], (p.name, R.check_recipe(r))
         assert R.rerun_level(card) == "rescore"
         assert r["track"]["track"] == card["track"]
-        assert r["scorer"]["scorer_version"] == card.get("scorer_version")
+        assert r["scorer"]["scorer_version"] == card.get("scorer_version", "benchmark-0.1")
+        assert len(r["track"]["digest"]) == 64 and r["code_ref"].startswith("git ")
         if r["track"]["split_version"] == "tracks-v0.2":
             assert r["track"]["digest"] == TR.load_split(card["track"])["digest"]
             assert "python -m fidetype.benchmark score" in r["command"]

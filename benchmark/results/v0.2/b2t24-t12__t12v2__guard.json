@@ -236,7 +236,8 @@
   "track": {
    "track": "b2t24-t12",
    "split_version": "tracks-v0.2",
-   "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14"
+   "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14",
+   "digest_kind": "entries"
   },
   "adapter": {
    "module": "fidetype.benchmark.tracks",
