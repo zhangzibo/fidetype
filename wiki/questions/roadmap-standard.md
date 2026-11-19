@@ -576,10 +576,24 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-28 Hybrid streaming and end-of-trial prefix guard
 - **Gap:** 92 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P5-27). Follow-up of P5-27.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19; pre-registration + code `e3cb0cb`, results `c359eb6`, [results](../../experiments/2026-11-19-p5-28-hybrid-prefix/results.md)). `fidetype.trust.hybrid_commit`: mid-trial commits with the P5-27 streaming score (λ_mid 0.99, fixed) + the P5-24 end decision (λ_end 0.94, certified jointly on the trial loss). T15 (PROPOSED v0.2 + reading cost + several-commits rule): hybrid 4.89 [4.49, 5.27] vs one-commit guard 4.67 [4.26, 5.07], Δ +0.22 [+0.14, +0.31]: hybrid beats single (18 / 701 wrong; certified; controls pass). Median latency of right words 3.85 s vs 11.20 s. Caution: λ_mid came from P5-27 on the same certify items; the Bonferroni sensitivity gives no clear difference (4.63). T12 moved to P5-29; scorer issue P5-30.
 - **Depends on:** P5-27 (done); local M4-13 log-probs and P5-27 checkpoint decodes; for T12 a loader that stays under 1.5 GB. CPU.
 - **Source:** P5-27 ([results](../../experiments/2026-11-18-p5-27-streaming-prefix/results.md)): one LTT threshold over about 39 checkpoints per trial is strict (0.99 vs 0.94); the streaming guard commits about 1.7 words at a median 31 % of the trial and never extends a commit at the end (0 complete commits). It gets 2.34 against 4.67 for the one-commit guard, but right words appear about 10 s earlier. T12 was not run (shared loader peak 2,340 MB).
 - **Done when:** a guard that combines mid-trial streaming commits with an end-of-trial prefix decision (for example the P5-24 decision at the end, or separate mid / end thresholds on a 2-D LTT grid), certified jointly on the trial loss, is compared in a pre-registered T15 replay with the one-commit prefix guard on safe WPM (proposed v0.2 + reading cost) and on commit latency; plus the T12 replication on a lighter loader, or a recorded reason why it cannot run.
+
+#### P5-29 T12 replication of the streaming and hybrid prefix guards
+- **Gap:** 95 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P5-28). Follow-up of P5-27, P5-28.
+- **Status:** `todo`.
+- **Depends on:** P5-27, P5-28 (done); T12 v2 log-probs (causal decoder); a T12 loader under the memory cap (the shared loader peaked at 2,340 MB in P5-24); CPU, a few hours for the streaming decode.
+- **Source:** P5-28 ([results](../../experiments/2026-11-19-p5-28-hybrid-prefix/results.md)): on T15 the hybrid beats the one-commit guard by +0.22 safe WPM, but λ_mid 0.99 came from P5-27 on the same certify items, and with δ split over three λ_mid values the gain disappears. No T12 checkpoint views exist.
+- **Done when:** a pre-registered T12 replay (new streaming decode of the T12 v2 log-probs with its own frame timing; streaming score fit; **λ_mid = 0.99 fixed before any T12 number**; λ_end certified jointly) reports stream, hybrid and one-commit safe WPM (proposed v0.2 + reading cost) and commit latency, or a recorded reason why it cannot run.
+
+#### P5-30 safe_wpm: refuse "certified" for an infeasible guarantee when the policy commits
+- **Gap:** 96 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P5-28).
+- **Status:** `todo`.
+- **Depends on:** nothing. CPU.
+- **Source:** P5-28 ([results](../../experiments/2026-11-19-p5-28-hybrid-prefix/results.md), Bonferroni sensitivity): `fidetype.benchmark.safe_wpm.certification` reads `feasible: false` as "the policy never commits" and still sets `certified`. The first `calibrate_hybrid` kept mid-trial commits when no λ_end passed, and the scorer labelled that uncertified policy `certified`. `calibrate_hybrid` is fixed (`c359eb6`); the scorer still trusts the flag.
+- **Done when:** `safe_wpm` gives a non-certified status (or refuses) when the guarantee is infeasible and at least one trial is committed, with a test; existing entries re-checked.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
