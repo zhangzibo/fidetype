@@ -2,3 +2,66 @@
 2026-11-18 13:57:30 dry: {'calibrate_s': 322.9567086696625, 'items': 12, 'checkpoints': 386, 's_per_checkpoint': 0.05892823088354397, 'null_inputs': 8, 'null_checkpoints': 416, 'null_s_per_checkpoint': 0.2187819927930832, 'peak_mb': 784.9453125, 'base_config_id': 'tcfg-e9758d5133d07fa6'}
 2026-11-19 09:44:27 stage dry start
 2026-11-19 09:50:15 dry: {'calibrate_s': 263.8275854587555, 'items': 12, 'checkpoints': 386, 's_per_checkpoint': 0.045324404622606666, 'null_inputs': 8, 'null_checkpoints': 416, 'null_s_per_checkpoint': 0.158880050938863, 'peak_mb': 785.51953125, 'base_config_id': 'tcfg-e9758d5133d07fa6'}
+2026-11-19 10:02:48 stage views start
+2026-11-19 10:02:53 views: calibration 722, evaluation 701; peak 540 MB
+2026-11-19 10:06:47 base guard tcfg-e9758d5133d07fa6 (P5-24 prefix guard: tcfg-e9758d5133d07fa6); threshold 0.94; 239 s; peak 787 MB
+2026-11-19 10:08:14 one-commit arm vs P5-24 prefix decisions: 701/701
+2026-11-19 10:09:18 views cal chunk 1/15: 50 items, 1512 checkpoints in 64 s; peak 787 MB
+2026-11-19 10:10:08 views cal chunk 2/15: 50 items, 1376 checkpoints in 50 s; peak 787 MB
+2026-11-19 10:11:08 views cal chunk 3/15: 50 items, 1557 checkpoints in 60 s; peak 787 MB
+2026-11-19 10:13:08 views cal chunk 4/15: 50 items, 2054 checkpoints in 119 s; peak 787 MB
+2026-11-19 10:14:46 views cal chunk 5/15: 50 items, 1917 checkpoints in 98 s; peak 787 MB
+2026-11-19 10:16:44 views cal chunk 6/15: 50 items, 2166 checkpoints in 117 s; peak 787 MB
+2026-11-19 10:18:15 views cal chunk 7/15: 50 items, 1948 checkpoints in 91 s; peak 787 MB
+2026-11-19 10:19:59 views cal chunk 8/15: 50 items, 2060 checkpoints in 105 s; peak 789 MB
+2026-11-19 10:21:41 views cal chunk 9/15: 50 items, 2118 checkpoints in 101 s; peak 789 MB
+2026-11-19 10:23:24 views cal chunk 10/15: 50 items, 2009 checkpoints in 103 s; peak 792 MB
+2026-11-19 10:24:51 views cal chunk 11/15: 50 items, 1745 checkpoints in 87 s; peak 792 MB
+2026-11-19 10:26:41 views cal chunk 12/15: 50 items, 1795 checkpoints in 110 s; peak 795 MB
+2026-11-19 10:28:56 views cal chunk 13/15: 50 items, 2133 checkpoints in 134 s; peak 798 MB
+2026-11-19 10:30:57 views cal chunk 14/15: 50 items, 2069 checkpoints in 121 s; peak 798 MB
+2026-11-19 10:31:52 views cal chunk 15/15: 22 items, 837 checkpoints in 55 s; peak 798 MB
+2026-11-19 10:32:58 views eval chunk 1/15: 50 items, 1536 checkpoints in 66 s; peak 798 MB
+2026-11-19 10:34:04 views eval chunk 2/15: 50 items, 1548 checkpoints in 66 s; peak 798 MB
+2026-11-19 10:35:10 views eval chunk 3/15: 50 items, 1527 checkpoints in 66 s; peak 798 MB
+2026-11-19 10:37:19 views eval chunk 4/15: 50 items, 1986 checkpoints in 129 s; peak 800 MB
+2026-11-19 10:39:12 views eval chunk 5/15: 50 items, 1891 checkpoints in 113 s; peak 800 MB
+2026-11-19 10:41:46 views eval chunk 6/15: 50 items, 2314 checkpoints in 153 s; peak 800 MB
+2026-11-19 10:43:44 views eval chunk 7/15: 50 items, 2240 checkpoints in 118 s; peak 801 MB
+2026-11-19 10:45:29 views eval chunk 8/15: 50 items, 2062 checkpoints in 106 s; peak 801 MB
+2026-11-19 10:47:22 views eval chunk 9/15: 50 items, 1989 checkpoints in 112 s; peak 801 MB
+2026-11-19 10:49:11 views eval chunk 10/15: 50 items, 1978 checkpoints in 108 s; peak 803 MB
+2026-11-19 10:50:55 views eval chunk 11/15: 50 items, 1958 checkpoints in 105 s; peak 803 MB
+2026-11-19 10:52:49 views eval chunk 12/15: 50 items, 1961 checkpoints in 113 s; peak 803 MB
+2026-11-19 10:54:55 views eval chunk 13/15: 50 items, 2198 checkpoints in 126 s; peak 809 MB
+2026-11-19 10:57:06 views eval chunk 14/15: 50 items, 2003 checkpoints in 130 s; peak 812 MB
+2026-11-19 10:57:09 views eval chunk 15/15: 1 items, 48 checkpoints in 3 s; peak 812 MB
+2026-11-19 11:00:32 views null chunk 1/12: 50 items, 1797 checkpoints in 203 s; peak 864 MB
+2026-11-19 11:03:58 views null chunk 2/12: 50 items, 1835 checkpoints in 205 s; peak 864 MB
+2026-11-19 11:07:46 views null chunk 3/12: 50 items, 1925 checkpoints in 228 s; peak 864 MB
+2026-11-19 11:11:40 views null chunk 4/12: 50 items, 1848 checkpoints in 234 s; peak 864 MB
+2026-11-19 11:15:23 views null chunk 5/12: 50 items, 1885 checkpoints in 223 s; peak 879 MB
+2026-11-19 11:19:03 views null chunk 6/12: 50 items, 1909 checkpoints in 219 s; peak 879 MB
+2026-11-19 11:21:56 views null chunk 7/12: 50 items, 1797 checkpoints in 174 s; peak 879 MB
+2026-11-19 11:24:57 views null chunk 8/12: 50 items, 1835 checkpoints in 180 s; peak 879 MB
+2026-11-19 11:28:37 views null chunk 9/12: 50 items, 1925 checkpoints in 220 s; peak 879 MB
+2026-11-19 11:32:01 views null chunk 10/12: 50 items, 1848 checkpoints in 203 s; peak 879 MB
+2026-11-19 11:35:32 views null chunk 11/12: 50 items, 1885 checkpoints in 211 s; peak 879 MB
+2026-11-19 11:39:16 views null chunk 12/12: 50 items, 1909 checkpoints in 223 s; peak 879 MB
+2026-11-19 11:39:16 stage views done in 5788 s
+2026-11-19 11:39:17 stage evaluate start
+2026-11-19 11:39:23 evaluate: views read (27296 cal, 27239 eval checkpoints); peak 607 MB
+2026-11-19 11:39:23 stream score fitted on 451 items, 61821 rows (37292 right); dropped ['acoustic_gap']
+2026-11-19 11:39:24 LTT: threshold 0.99, empirical risk 0.007380073800738007, p 0.00010710761410853021
+2026-11-19 11:39:24 controls: [('shuffled', 0, 15), ('uniform', 0, 15)]
+2026-11-19 11:39:26 stream v0_2_read: safe WPM 2.34 [safe-wpm/0.2, proposed; 310 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 5/701 = 0.0071; commits 310; unguarded 2.34; no-BCI 4.02)
+2026-11-19 11:39:26 stream v0_2_no_read: safe WPM 2.41 [safe-wpm/0.2, proposed; 310 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 5/701 = 0.0071; commits 310; unguarded 2.41; no-BCI 4.02)
+2026-11-19 11:39:26 stream v0_1_complete_only: safe WPM 0.00 (vacuous; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 0/701 = 0.0000; commits 0; unguarded 0.00; no-BCI 4.02)
+2026-11-19 11:39:26 single v0_2_read: safe WPM 4.67 [safe-wpm/0.2, proposed; 421 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 13/701 = 0.0185; commits 465; unguarded 4.67; no-BCI 4.02)
+2026-11-19 11:39:26 single v0_2_no_read: safe WPM 4.87 [safe-wpm/0.2, proposed; 421 prefix commits] (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 13/701 = 0.0185; commits 465; unguarded 4.87; no-BCI 4.02)
+2026-11-19 11:39:26 single v0_1_complete_only: safe WPM 1.03 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 0/701 = 0.0000; commits 44; unguarded 1.03; no-BCI 4.02)
+2026-11-19 11:39:29 secondary stream-p524-score: ltt {'threshold': 1.0, 'feasible': True, 'empirical_risk': 0.0, 'p_value': 9.18537800051728e-07, 'commit_rate': 0.0, 'n': 271}, controls {'uniform': {'n_commit': 0, 'allowed': 15, 'passed': True}, 'shuffled': {'n_commit': 0, 'allowed': 15, 'passed': True}}
+2026-11-19 11:39:29 stage evaluate done in 11 s
+2026-11-19 11:39:29 stage verdict start
+2026-11-19 11:39:29 verdict: {'verdict': 'single beats stream', 'diff': -2.3235211395279833, 'half_width': 0.30771797856326133, 'diff_ci95': [-2.631602615115555, -2.0161666579890323], 'stream_value': 2.343539936697323, 'stream_ci95': [2.109628501365678, 2.5727400141602494], 'single_value': 4.667061076225306, 'stream_safe': True, 'stream_clear_violation': False, 'stream_controls_pass': True, 'stream_wrong': [5, 701], 'stream_cp95': [0.0023, 0.0166], 'stream_above_no_bci': False, 'stream_ci_above_no_bci': False, 'no_bci': 4.02}
+2026-11-19 11:39:29 stage verdict done in 0 s

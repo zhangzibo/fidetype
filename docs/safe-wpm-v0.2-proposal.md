@@ -213,4 +213,8 @@ The commits of a trial are **append-only**: each commit adds words after the wor
 
 All v0.2 fields, plus a `multi_commit` block: `n_commit_events`, `n_trials_with_several_commits`, `max_commits_per_trial`, the rule text and its status. The per-trial JSON Lines file of the CLI takes `n_commits` (default 1 for a committed trial).
 
+### 7.4 Result (P5-27, T15, pre-registered)
+
+[Results](../experiments/2026-11-18-p5-27-streaming-prefix/results.md): under v0.2 + reading cost (0.5 s + 0.3 s/word) + rule (7), the streaming guard gives **2.34 [2.11, 2.57]** (certified; 310 committing trials, 446 commit events, 5 / 701 wrong trials, CP95 [0.0023, 0.0166]) against **4.67 [4.26, 5.07]** for the one-commit prefix guard: Δ −2.32 [−2.63, −2.02], **single beats stream**. The stream commits right words much earlier (median 1.44 s after the true word ends, against 11.20 s), but it never extends a commit at the trial end and makes no complete commit. Rule (7) itself worked as designed: it reproduced the v0.2 value for the one-commit arm (4.67) and charged every commit event its reading cost. A hybrid guard is roadmap item P5-28 (gap 92).
+
 > **Our take:** charging the fixed reading cost per commit, not per trial, is the important part. Without it, a guard could split a sentence into many one-word commits at no cost. With it, each extra commit must earn its 0.5 s.

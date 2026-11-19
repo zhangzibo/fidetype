@@ -1,0 +1,722 @@
+{
+ "fidetype_version": "0.0.1",
+ "plan": "plan.md (pre-registration)",
+ "stages": {
+  "views": {
+   "seconds": 5788.1,
+   "result": {
+    "base_config_id": "tcfg-e9758d5133d07fa6",
+    "p5_24_config_id": "tcfg-e9758d5133d07fa6",
+    "base_equals_p5_24": true,
+    "single_vs_p5_24": [
+     701,
+     701
+    ],
+    "seconds": 5788.1,
+    "peak_mb": 879.2,
+    "step_frames": 6,
+    "split": {
+     "n": 722,
+     "fit": 180,
+     "policy_grid": 271,
+     "ltt": 271,
+     "score_fit_sha": "285b8c0d9baf5a41",
+     "certify_sha": "fadfd84557fcb24b"
+    }
+   }
+  },
+  "evaluate": {
+   "seconds": 11.2,
+   "result": {
+    "info": {
+     "calibration": "val_select (722)",
+     "evaluation": "val_eval (701)",
+     "word_decoder": {
+      "lm_weight": 1.0,
+      "edit_penalty": 12.0,
+      "word_bonus": 3.0
+     },
+     "timing": "measured trial duration: 20 ms neural bins per val_eval trial (B2T '25)",
+     "streaming": "prefix truncations of the causal M4-13 log-probs, every 6 frames + the end"
+    },
+    "split": {
+     "n": 722,
+     "fit": 180,
+     "policy_grid": 271,
+     "ltt": 271,
+     "score_fit_sha": "285b8c0d9baf5a41",
+     "certify_sha": "fadfd84557fcb24b"
+    },
+    "stream_sheet": {
+     "alpha": 0.05,
+     "delta": 0.1,
+     "risk": "wrong-stream-commit: an utterance is wrong if any of its append-only commits is wrong (a prefix commit is wrong if its words are not the first words of the true text; a complete commit is wrong unless it equals the true text); rate over all utterances",
+     "n_items": 722,
+     "n_fit": 451,
+     "n_fit_rows": 61821,
+     "n_fit_positive_rows": 37292,
+     "n_certify": 271,
+     "split": "722 items, numpy default_rng(0) permutation: 451 fit (fit + policy grid of calibrate) + 271 certify (LTT part)",
+     "feasible": true,
+     "threshold": 0.99,
+     "ltt_empirical_risk": 0.007380073800738007,
+     "ltt_p_value": 0.00010710761410853021,
+     "ltt_commit_rate": 0.4354243542435424,
+     "step_frames": 6,
+     "base_config_id": "tcfg-e9758d5133d07fa6",
+     "dropped": [
+      "acoustic_gap"
+     ],
+     "coef": {
+      "prefix_mass": 0.849668530839,
+      "prefix_agree_min": 0.117197485501,
+      "prefix_agree_mean": 0.221563301034,
+      "prefix_char_conf_mean": 0.0596121283665,
+      "prefix_char_conf_min": 0.451812710854,
+      "prefix_log_words": -0.589316998129,
+      "prefix_share": 0.207710919483,
+      "complete": 0.110397634983,
+      "p_top1": 0.388357702855,
+      "nbest_entropy": -0.028236061223,
+      "guard_risk": -0.0132241907307,
+      "acoustic_per_char": 0.867224226769,
+      "lm_per_word": 0.21607610298,
+      "acoustic_gap": 0.0,
+      "frames_per_char": -0.0903423267697,
+      "log_n_words": -0.409300298609,
+      "stable_log": 0.290332620892,
+      "at_end": -0.0115582386478,
+      "open_last_word": -0.0824956869554
+     },
+     "intercept": 0.745141758311,
+     "confidence": {
+      "kind": "learned",
+      "unit": "stream-prefix"
+     },
+     "guarantee": "P(rate of utterances with a wrong commit <= 0.05) >= 0.9 over the calibration draw, if calibration and use utterances are exchangeable",
+     "controls": [
+      {
+       "name": "shuffled",
+       "description": "calibration frames in a random time order, streamed",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      {
+       "name": "uniform",
+       "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths, streamed",
+       "n": 300,
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     ],
+     "controls_rule": "an input with one or more commits counts; pass iff count <= floor(0.05 * n)",
+     "controls_allowed": 15
+    },
+    "stream_config_id": "scfg-9171461e4f8cf0c2",
+    "base_config_id": "tcfg-e9758d5133d07fa6",
+    "stream": {
+     "v0_2_read": {
+      "definition": "safe-wpm/0.2",
+      "definition_status": "proposed, not adopted (P14-26): v0.1 stays the headline metric until the user accepts v0.2",
+      "value": 2.343539936697323,
+      "ci": null,
+      "status": "certified",
+      "unguarded_wpm": 2.343539936697323,
+      "wpm_no_penalty": 2.418841307823516,
+      "method": "ltt",
+      "alpha": 0.05,
+      "delta": 0.1,
+      "n_cal": 271,
+      "calibration": "722 items, numpy default_rng(0) permutation: 451 fit (fit + policy grid of calibrate) + 271 certify (LTT part)",
+      "confidence": "probability >= 0.9 over calibration draws",
+      "risk": "wrong-stream-commit",
+      "measured_wrong_commit": 0.007132667617689016,
+      "measured_wrong_commit_cp95": [
+       0.0023,
+       0.0166
+      ],
+      "n_trials": 701,
+      "n_commits": 310,
+      "n_wrong_commits": 5,
+      "n_correct_commits": 305,
+      "n_prefix_commits": 310,
+      "n_complete_commits": 0,
+      "n_right_complete_commits": 0,
+      "error_among_commits": 0.016129032258064516,
+      "committed_correct_words": 528,
+      "total_words": 4675,
+      "minutes_neural": 218.28633333333335,
+      "minutes_correction": 0.6271929824561404,
+      "timing": "measured trial duration (20 ms neural bins)",
+      "correction_rule": {
+       "name": "rewrite",
+       "overhead_s": 2.0,
+       "s_per_char": 0.7894736842105263,
+       "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit",
+       "prefix": "a wrong prefix of k words costs the penalty of the first k words of the truth"
+      },
+      "reading_cost": {
+       "read_s_per_commit": 0.5,
+       "read_s_per_word": 0.3,
+       "min_prefix_words": 1,
+       "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+       "minutes_reading": 6.386666666666668,
+       "n_prefix_commits_dropped": 0,
+       "wpm_without_reading": 2.411911264168957,
+       "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+      },
+      "multi_commit": {
+       "n_commit_events": 446,
+       "n_trials_with_several_commits": 115,
+       "max_commits_per_trial": 4,
+       "rule": "P5-27 proposed extension: append-only commits; the trial is right only if every commit is right (= its final committed text is right); credit and penalty of that text; every commit pays read_s_per_commit, every committed word read_s_per_word once",
+       "status": "proposed extension of the proposed safe-wpm/0.2 (not adopted)"
+      },
+      "no_bci_wpm": 4.015288155973546,
+      "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+      "controls": {
+       "shuffled": "missing",
+       "zeros": "missing",
+       "null_commit": "missing",
+       "passed": true
+      }
+     },
+     "v0_2_no_read": {
+      "definition": "safe-wpm/0.2",
+      "definition_status": "proposed, not adopted (P14-26): v0.1 stays the headline metric until the user accepts v0.2",
+      "value": 2.411911264168957,
+      "ci": null,
+      "status": "certified",
+      "unguarded_wpm": 2.411911264168957,
+      "wpm_no_penalty": 2.418841307823516,
+      "method": "ltt",
+      "alpha": 0.05,
+      "delta": 0.1,
+      "n_cal": 271,
+      "calibration": "722 items, numpy default_rng(0) permutation: 451 fit (fit + policy grid of calibrate) + 271 certify (LTT part)",
+      "confidence": "probability >= 0.9 over calibration draws",
+      "risk": "wrong-stream-commit",
+      "measured_wrong_commit": 0.007132667617689016,
+      "measured_wrong_commit_cp95": [
+       0.0023,
+       0.0166
+      ],
+      "n_trials": 701,
+      "n_commits": 310,
+      "n_wrong_commits": 5,
+      "n_correct_commits": 305,
+      "n_prefix_commits": 310,
+      "n_complete_commits": 0,
+      "n_right_complete_commits": 0,
+      "error_among_commits": 0.016129032258064516,
+      "committed_correct_words": 528,
+      "total_words": 4675,
+      "minutes_neural": 218.28633333333335,
+      "minutes_correction": 0.6271929824561404,
+      "timing": "measured trial duration (20 ms neural bins)",
+      "correction_rule": {
+       "name": "rewrite",
+       "overhead_s": 2.0,
+       "s_per_char": 0.7894736842105263,
+       "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit",
+       "prefix": "a wrong prefix of k words costs the penalty of the first k words of the truth"
+      },
+      "multi_commit": {
+       "n_commit_events": 446,
+       "n_trials_with_several_commits": 115,
+       "max_commits_per_trial": 4,
+       "rule": "P5-27 proposed extension: append-only commits; the trial is right only if every commit is right (= its final committed text is right); credit and penalty of that text; every commit pays read_s_per_commit, every committed word read_s_per_word once",
+       "status": "proposed extension of the proposed safe-wpm/0.2 (not adopted)"
+      },
+      "no_bci_wpm": 4.015288155973546,
+      "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+      "controls": {
+       "shuffled": "missing",
+       "zeros": "missing",
+       "null_commit": "missing",
+       "passed": true
+      }
+     },
+     "v0_1_complete_only": {
+      "definition": "safe-wpm/0.1",
+      "value": 0.0,
+      "ci": null,
+      "status": "vacuous",
+      "unguarded_wpm": 0.0,
+      "wpm_no_penalty": 0.0,
+      "method": "ltt",
+      "alpha": 0.05,
+      "delta": 0.1,
+      "n_cal": 271,
+      "calibration": "722 items, numpy default_rng(0) permutation: 451 fit (fit + policy grid of calibrate) + 271 certify (LTT part)",
+      "confidence": "probability >= 0.9 over calibration draws",
+      "measured_wrong_commit": 0.0,
+      "measured_wrong_commit_cp95": [
+       0.0,
+       0.0052
+      ],
+      "n_trials": 701,
+      "n_commits": 0,
+      "n_wrong_commits": 0,
+      "n_correct_commits": 0,
+      "error_among_commits": null,
+      "committed_correct_words": 0,
+      "total_words": 4675,
+      "minutes_neural": 218.28633333333335,
+      "minutes_correction": 0.0,
+      "timing": "measured trial duration (20 ms neural bins)",
+      "correction_rule": {
+       "name": "rewrite",
+       "overhead_s": 2.0,
+       "s_per_char": 0.7894736842105263,
+       "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+      },
+      "no_bci_wpm": 4.015288155973546,
+      "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+      "controls": {
+       "shuffled": "missing",
+       "zeros": "missing",
+       "null_commit": "missing",
+       "passed": true
+      }
+     }
+    },
+    "single": {
+     "v0_2_read": {
+      "definition": "safe-wpm/0.2",
+      "definition_status": "proposed, not adopted (P14-26): v0.1 stays the headline metric until the user accepts v0.2",
+      "value": 4.667061076225306,
+      "ci": null,
+      "status": "certified",
+      "unguarded_wpm": 4.667061076225306,
+      "wpm_no_penalty": 4.9155619759368046,
+      "method": "ltt",
+      "alpha": 0.05,
+      "delta": 0.1,
+      "n_cal": 271,
+      "calibration": "722 items: 180 fit + 271 grid + 271 LTT (fidetype.trust.calibrate)",
+      "confidence": "probability >= 0.9 over calibration draws",
+      "risk": "wrong-prefix-commit",
+      "measured_wrong_commit": 0.018544935805991442,
+      "measured_wrong_commit_cp95": [
+       0.0099,
+       0.0315
+      ],
+      "n_trials": 701,
+      "n_commits": 465,
+      "n_wrong_commits": 13,
+      "n_correct_commits": 452,
+      "n_prefix_commits": 421,
+      "n_complete_commits": 44,
+      "n_right_complete_commits": 44,
+      "error_among_commits": 0.02795698924731183,
+      "committed_correct_words": 1073,
+      "total_words": 4675,
+      "minutes_neural": 218.28633333333335,
+      "minutes_correction": 2.2228070175438592,
+      "timing": "measured trial duration (20 ms neural bins)",
+      "correction_rule": {
+       "name": "rewrite",
+       "overhead_s": 2.0,
+       "s_per_char": 0.7894736842105263,
+       "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit",
+       "prefix": "a wrong prefix of k words costs the penalty of the first k words of the truth"
+      },
+      "reading_cost": {
+       "read_s_per_commit": 0.5,
+       "read_s_per_word": 0.3,
+       "min_prefix_words": 1,
+       "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+       "minutes_reading": 9.4,
+       "n_prefix_commits_dropped": 0,
+       "wpm_without_reading": 4.866011441941262,
+       "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+      },
+      "multi_commit": {
+       "n_commit_events": 465,
+       "n_trials_with_several_commits": 0,
+       "max_commits_per_trial": 1,
+       "rule": "P5-27 proposed extension: append-only commits; the trial is right only if every commit is right (= its final committed text is right); credit and penalty of that text; every commit pays read_s_per_commit, every committed word read_s_per_word once",
+       "status": "proposed extension of the proposed safe-wpm/0.2 (not adopted)"
+      },
+      "no_bci_wpm": 4.015288155973546,
+      "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+      "controls": {
+       "shuffled": "pass",
+       "zeros": "pass",
+       "null_commit": "pass",
+       "passed": true,
+       "commit_rate_zeros": 0.0,
+       "basis": {
+        "shuffled": "drop-in null control 'shuffled': 1/300 commits (allowed 15)",
+        "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+        "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+       }
+      }
+     },
+     "v0_2_no_read": {
+      "definition": "safe-wpm/0.2",
+      "definition_status": "proposed, not adopted (P14-26): v0.1 stays the headline metric until the user accepts v0.2",
+      "value": 4.866011441941262,
+      "ci": null,
+      "status": "certified",
+      "unguarded_wpm": 4.866011441941262,
+      "wpm_no_penalty": 4.9155619759368046,
+      "method": "ltt",
+      "alpha": 0.05,
+      "delta": 0.1,
+      "n_cal": 271,
+      "calibration": "722 items: 180 fit + 271 grid + 271 LTT (fidetype.trust.calibrate)",
+      "confidence": "probability >= 0.9 over calibration draws",
+      "risk": "wrong-prefix-commit",
+      "measured_wrong_commit": 0.018544935805991442,
+      "measured_wrong_commit_cp95": [
+       0.0099,
+       0.0315
+      ],
+      "n_trials": 701,
+      "n_commits": 465,
+      "n_wrong_commits": 13,
+      "n_correct_commits": 452,
+      "n_prefix_commits": 421,
+      "n_complete_commits": 44,
+      "n_right_complete_commits": 44,
+      "error_among_commits": 0.02795698924731183,
+      "committed_correct_words": 1073,
+      "total_words": 4675,
+      "minutes_neural": 218.28633333333335,
+      "minutes_correction": 2.2228070175438592,
+      "timing": "measured trial duration (20 ms neural bins)",
+      "correction_rule": {
+       "name": "rewrite",
+       "overhead_s": 2.0,
+       "s_per_char": 0.7894736842105263,
+       "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit",
+       "prefix": "a wrong prefix of k words costs the penalty of the first k words of the truth"
+      },
+      "multi_commit": {
+       "n_commit_events": 465,
+       "n_trials_with_several_commits": 0,
+       "max_commits_per_trial": 1,
+       "rule": "P5-27 proposed extension: append-only commits; the trial is right only if every commit is right (= its final committed text is right); credit and penalty of that text; every commit pays read_s_per_commit, every committed word read_s_per_word once",
+       "status": "proposed extension of the proposed safe-wpm/0.2 (not adopted)"
+      },
+      "no_bci_wpm": 4.015288155973546,
+      "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+      "controls": {
+       "shuffled": "pass",
+       "zeros": "pass",
+       "null_commit": "pass",
+       "passed": true,
+       "commit_rate_zeros": 0.0,
+       "basis": {
+        "shuffled": "drop-in null control 'shuffled': 1/300 commits (allowed 15)",
+        "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+        "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+       }
+      }
+     },
+     "v0_1_complete_only": {
+      "definition": "safe-wpm/0.1",
+      "value": 1.0261751002887645,
+      "ci": null,
+      "status": "certified",
+      "unguarded_wpm": 1.0261751002887645,
+      "wpm_no_penalty": 1.0261751002887645,
+      "method": "ltt",
+      "alpha": 0.05,
+      "delta": 0.1,
+      "n_cal": 271,
+      "calibration": "722 items: 180 fit + 271 grid + 271 LTT (fidetype.trust.calibrate)",
+      "confidence": "probability >= 0.9 over calibration draws",
+      "measured_wrong_commit": 0.0,
+      "measured_wrong_commit_cp95": [
+       0.0,
+       0.0052
+      ],
+      "n_trials": 701,
+      "n_commits": 44,
+      "n_wrong_commits": 0,
+      "n_correct_commits": 44,
+      "error_among_commits": 0.0,
+      "committed_correct_words": 224,
+      "total_words": 4675,
+      "minutes_neural": 218.28633333333335,
+      "minutes_correction": 0.0,
+      "timing": "measured trial duration (20 ms neural bins)",
+      "correction_rule": {
+       "name": "rewrite",
+       "overhead_s": 2.0,
+       "s_per_char": 0.7894736842105263,
+       "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+      },
+      "no_bci_wpm": 4.015288155973546,
+      "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+      "controls": {
+       "shuffled": "pass",
+       "zeros": "pass",
+       "null_commit": "pass",
+       "passed": true,
+       "commit_rate_zeros": 0.0,
+       "basis": {
+        "shuffled": "drop-in null control 'shuffled': 1/300 commits (allowed 15)",
+        "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+        "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+       }
+      }
+     }
+    },
+    "paired_v0_2_read": {
+     "a": 4.667061076225306,
+     "b": 2.343539936697323,
+     "diff": -2.3235211395279833,
+     "diff_ci95": [
+      -2.631602615115555,
+      -2.0161666579890323
+     ],
+     "diff_half_width": 0.30771797856326133,
+     "a_ci95": [
+      4.261085530504986,
+      5.066611169926971
+     ],
+     "b_ci95": [
+      2.109628501365678,
+      2.5727400141602494
+     ],
+     "B": 2000,
+     "seed": 0,
+     "reading_cost": true,
+     "method": "paired percentile trial bootstrap, decisions fixed (conditional on the calibration)"
+    },
+    "paired_v0_2_no_read": {
+     "a": 4.866011441941262,
+     "b": 2.411911264168957,
+     "diff": -2.454100177772305,
+     "diff_ci95": [
+      -2.7851250457642105,
+      -2.12392558621162
+     ],
+     "diff_half_width": 0.33059972977629526,
+     "a_ci95": [
+      4.432728082731917,
+      5.29595386991403
+     ],
+     "b_ci95": [
+      2.1648047151983056,
+      2.6547562054637703
+     ],
+     "B": 2000,
+     "seed": 0,
+     "reading_cost": false,
+     "method": "paired percentile trial bootstrap, decisions fixed (conditional on the calibration)"
+    },
+    "latency": {
+     "word_end": "CTC forced alignment of the true phonemes on the full-trial log-probs",
+     "n_trials_aligned": 701,
+     "stream": {
+      "right_committed_words": {
+       "n": 529,
+       "mean": 1.4714555765595465,
+       "median": 1.4399999999999995,
+       "p10": 0.0,
+       "p90": 2.88
+      },
+      "all_committed_words": {
+       "n": 534,
+       "mean": 1.4582771535580525,
+       "median": 1.36,
+       "p10": 0.0,
+       "p90": 2.88
+      },
+      "share_committed_before_trial_end": 1.0
+     },
+     "single": {
+      "right_committed_words": {
+       "n": 1085,
+       "mean": 11.670488479262673,
+       "median": 11.2,
+       "p10": 4.44,
+       "p90": 19.132
+      },
+      "all_committed_words": {
+       "n": 1105,
+       "mean": 11.65958371040724,
+       "median": 11.2,
+       "p10": 4.428000000000001,
+       "p90": 19.152
+      },
+      "share_committed_before_trial_end": 0.0
+     }
+    },
+    "compute_s_per_checkpoint": {
+     "median": 0.045559999998658895,
+     "p95": 0.14680259999586268,
+     "max": 0.3364229000872001,
+     "step_s": 0.48,
+     "note": "wall clock, CPU 4 threads, background class, decode + features"
+    },
+    "stream_stats": {
+     "commits_per_trial_hist": {
+      "0": 391,
+      "1": 195,
+      "2": 96,
+      "3": 17,
+      "4": 2
+     },
+     "n_conflicts_total": 0,
+     "trials_with_conflict_after_commit": 0,
+     "words_committed": 534,
+     "complete_final": 0,
+     "mean_checkpoints_per_trial": 38.85734664764622
+    },
+    "stream_p524_score": {
+     "ltt": {
+      "threshold": 1.0,
+      "feasible": true,
+      "empirical_risk": 0.0,
+      "p_value": 9.18537800051728e-07,
+      "commit_rate": 0.0,
+      "n": 271
+     },
+     "controls": {
+      "uniform": {
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      },
+      "shuffled": {
+       "n_commit": 0,
+       "allowed": 15,
+       "passed": true
+      }
+     },
+     "v0_2_read": {
+      "definition": "safe-wpm/0.2",
+      "definition_status": "proposed, not adopted (P14-26): v0.1 stays the headline metric until the user accepts v0.2",
+      "value": 0.0,
+      "ci": null,
+      "status": "vacuous",
+      "unguarded_wpm": 0.0,
+      "wpm_no_penalty": 0.0,
+      "method": "ltt",
+      "alpha": 0.05,
+      "delta": 0.1,
+      "n_cal": 271,
+      "calibration": "722 items, numpy default_rng(0) permutation: 451 fit (fit + policy grid of calibrate) + 271 certify (LTT part)",
+      "confidence": "probability >= 0.9 over calibration draws",
+      "risk": "wrong-stream-commit",
+      "measured_wrong_commit": 0.0,
+      "measured_wrong_commit_cp95": [
+       0.0,
+       0.0052
+      ],
+      "n_trials": 701,
+      "n_commits": 0,
+      "n_wrong_commits": 0,
+      "n_correct_commits": 0,
+      "n_prefix_commits": 0,
+      "n_complete_commits": 0,
+      "n_right_complete_commits": 0,
+      "error_among_commits": null,
+      "committed_correct_words": 0,
+      "total_words": 4675,
+      "minutes_neural": 218.28633333333335,
+      "minutes_correction": 0.0,
+      "timing": "measured trial duration (20 ms neural bins)",
+      "correction_rule": {
+       "name": "rewrite",
+       "overhead_s": 2.0,
+       "s_per_char": 0.7894736842105263,
+       "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit",
+       "prefix": "a wrong prefix of k words costs the penalty of the first k words of the truth"
+      },
+      "reading_cost": {
+       "read_s_per_commit": 0.5,
+       "read_s_per_word": 0.3,
+       "min_prefix_words": 1,
+       "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+       "minutes_reading": 0.0,
+       "n_prefix_commits_dropped": 0,
+       "wpm_without_reading": 0.0,
+       "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+      },
+      "multi_commit": {
+       "n_commit_events": 0,
+       "n_trials_with_several_commits": 0,
+       "max_commits_per_trial": 0,
+       "rule": "P5-27 proposed extension: append-only commits; the trial is right only if every commit is right (= its final committed text is right); credit and penalty of that text; every commit pays read_s_per_commit, every committed word read_s_per_word once",
+       "status": "proposed extension of the proposed safe-wpm/0.2 (not adopted)"
+      },
+      "no_bci_wpm": 4.015288155973546,
+      "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+      "controls": {
+       "shuffled": "missing",
+       "zeros": "missing",
+       "null_commit": "missing",
+       "passed": true
+      }
+     },
+     "paired_vs_single_v0_2_read": {
+      "a": 4.667061076225306,
+      "b": 0.0,
+      "diff": -4.667061076225306,
+      "diff_ci95": [
+       -5.066611169926971,
+       -4.261085530504986
+      ],
+      "diff_half_width": 0.4027628197109925,
+      "a_ci95": [
+       4.261085530504986,
+       5.066611169926971
+      ],
+      "b_ci95": [
+       0.0,
+       0.0
+      ],
+      "B": 2000,
+      "seed": 0,
+      "reading_cost": true,
+      "method": "paired percentile trial bootstrap, decisions fixed (conditional on the calibration)"
+     }
+    },
+    "seconds": 11.1,
+    "peak_mb": 672.4
+   }
+  },
+  "verdict": {
+   "seconds": 0.0,
+   "result": {
+    "verdict": "single beats stream",
+    "diff": -2.3235211395279833,
+    "half_width": 0.30771797856326133,
+    "diff_ci95": [
+     -2.631602615115555,
+     -2.0161666579890323
+    ],
+    "stream_value": 2.343539936697323,
+    "stream_ci95": [
+     2.109628501365678,
+     2.5727400141602494
+    ],
+    "single_value": 4.667061076225306,
+    "stream_safe": true,
+    "stream_clear_violation": false,
+    "stream_controls_pass": true,
+    "stream_wrong": [
+     5,
+     701
+    ],
+    "stream_cp95": [
+     0.0023,
+     0.0166
+    ],
+    "stream_above_no_bci": false,
+    "stream_ci_above_no_bci": false,
+    "no_bci": 4.02
+   }
+  }
+ }
+}
