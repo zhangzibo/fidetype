@@ -581,6 +581,94 @@ def prompt_stream(
 greedy_codes = _kt.greedy_codes
 
 
+# --- character-key CTC decoders -> track key codes (P11-09) ----------------------------------------
+#
+# A continuous decoder (for example P11-01) emits CTC tokens that are typed characters ("a", "A",
+# "!", ...) plus Backspace / Enter marks. The emg2qwerty track scores the 32 KeyboardEvent.code classes
+# of KEY_VOCAB. The writer below maps each token to its key code with the same rule as the track truth
+# (key_code -> keep only codes in KEY_VOCAB): "a" and "A" -> KeyA; Backspace / Enter marks -> Backspace /
+# Enter; digits, other symbols and modifiers -> no key (the truth drops them too).
+
+#: Token spellings of Backspace and Enter in character-key CTC vocabularies (P11-01 uses these).
+TOKEN_BACKSPACE = "⌫"
+TOKEN_ENTER = "⏎"
+_TOKEN_TYPED = {TOKEN_BACKSPACE: "\x08", TOKEN_ENTER: "\r", "\x08": "\x08", "\r": "\r", "\n": "\r"}
+#: The guard sees Space as this character, so a key text is one token (no whitespace collapse).
+KEY_SPACE_CHAR = "_"
+
+
+def token_key_code(token: str) -> str | None:
+    """The track key code (one of :data:`KEY_VOCAB`) of a character-key CTC token, or None (no key)."""
+    ch = _TOKEN_TYPED.get(token, token)
+    if len(ch) != 1:
+        return None
+    code = _kt.key_code(ch)
+    return code if code in _CODE_INDEX else None
+
+
+def key_chars() -> list[str]:
+    """One character per :data:`KEY_VOCAB` class: the track text (``keycodes`` normaliser), Space as ``_``."""
+    from fidetype.benchmark.registry import keycodes_to_chars
+
+    ch = [keycodes_to_chars(c) for c in KEY_VOCAB]
+    return [KEY_SPACE_CHAR if c == " " else c for c in ch]
+
+
+def key_ctc_vocab() -> list[str]:
+    """The vocabulary of :func:`merge_to_key_ctc`: ``<blank>`` then :func:`key_chars`."""
+    return ["<blank>", *key_chars()]
+
+
+def token_columns(vocab: Sequence[str], blank: int = 0) -> np.ndarray:
+    """Target column of each vocabulary entry in the key CTC form: 0 = blank (blank and no-key tokens)."""
+    cols = np.zeros(len(vocab), np.int64)
+    for i, tok in enumerate(vocab):
+        if i == blank:
+            continue
+        code = token_key_code(str(tok))
+        cols[i] = 0 if code is None else 1 + _CODE_INDEX[code]
+    return cols
+
+
+def merge_to_key_ctc(log_probs: np.ndarray, vocab: Sequence[str], blank: int = 0) -> np.ndarray:
+    """``(T, V)`` character-key CTC log-probs -> ``(T, 33)`` log-probs over :func:`key_ctc_vocab`.
+
+    Each output column is the log-sum-exp of the input columns with that key code. Tokens with no key
+    code join the blank: in the key space they emit nothing. Rows stay normalised. Known limit: two
+    neighbour frames with different tokens of one key (``a`` then ``A``) collapse to one key press.
+    """
+    x = np.asarray(log_probs, np.float64)
+    if x.ndim != 2 or x.shape[1] != len(vocab):
+        raise ValueError(f"log_probs must be (T, {len(vocab)}), got {x.shape}")
+    cols = token_columns(vocab, blank)
+    out = np.full((x.shape[0], 1 + len(KEY_VOCAB)), -np.inf)
+    for c in np.unique(cols):
+        out[:, c] = np.logaddexp.reduce(x[:, cols == c], axis=1)
+    return out.astype(np.float32)
+
+
+def tokens_to_codes(tokens: str | Sequence[str]) -> str:
+    """The writer: character-key CTC tokens (a string or a token list) -> ``"KeyH KeyI Space"``.
+
+    Tokens with no key code are dropped, as in the track truth.
+    """
+    codes = (token_key_code(str(t)) for t in tokens)
+    return " ".join(c for c in codes if c is not None)
+
+
+def key_text_to_codes(text: str) -> str:
+    """A key text over :func:`key_chars` (guard output) -> key codes. Other characters give ``?`` (unknown)."""
+    inv = dict(zip(key_chars(), KEY_VOCAB))
+    return " ".join(inv.get(c, "?") for c in text if not c.isspace())
+
+
+def codes_to_key_text(codes: str) -> str:
+    """Key codes -> a key text over :func:`key_chars` (the guard text of a truth)."""
+    from fidetype.benchmark.registry import keycodes_to_chars
+
+    return keycodes_to_chars(codes).replace(" ", KEY_SPACE_CHAR)
+
+
 # --- baseline run ---------------------------------------------------------------------------
 
 
@@ -780,5 +868,7 @@ __all__ = [
     "typed_char", "parse_keystrokes", "parse_prompts", "list_sessions", "read_metadata", "metadata_summary",
     "select_subset", "key_events", "prompt_events", "typed_text", "session_features", "stream_meta", "prompt_stream",
     "session_stream_id", "opaque_stream_id", "greedy_codes", "run_session_baseline", "run_cross_session",
-    "run_baseline", "main",
+    "run_baseline", "main", "TOKEN_BACKSPACE", "TOKEN_ENTER", "KEY_SPACE_CHAR", "token_key_code", "key_chars",
+    "key_ctc_vocab", "token_columns", "merge_to_key_ctc", "tokens_to_codes", "key_text_to_codes",
+    "codes_to_key_text",
 ]
