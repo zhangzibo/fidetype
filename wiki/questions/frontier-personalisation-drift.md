@@ -71,7 +71,7 @@ Do the conformal drift tests keep their false-alarm level? Do they find real dri
 | `fidetype.trust.drift` (`ConformalDriftTest`, risk test), `fidetype.trust.personal` (`PersonalTrust`), user guide [docs/trust-personalisation.md](../../docs/trust-personalisation.md) | `bec214c` |
 | opt-in `spread=True` (default unchanged) | `3def17e` |
 | opt-in `PersonalTrust(guard_risk_test=True)` (default unchanged) | `3def17e` |
-| `PersonalTrust` re-calibrations always give champion outputs (P15-23); same-decoder re-calibration rule in `personal.py` under test (P15-24) | `0254ebc` |
+| `PersonalTrust` re-calibrations always give champion outputs (P15-23); same-decoder re-calibration rule (P15-24; R1-R7 pass, 0 of 8 re-calibrations refused, [results](../../experiments/2026-11-18-p15-24-recal-rule/results.md)) | `0254ebc` |
 
 ## Limits
 - One frozen, weak decoder; one participant (T12); one seed for the replay.
@@ -86,7 +86,6 @@ Do the conformal drift tests keep their false-alarm level? Do they find real dri
 | 14 | [P15-19](roadmap-standard.md#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06) | P5-01 on M4-13 and the P11 decoders |
 | 19 | [P5-12](roadmap-standard.md#p5-12-spread-aware-drift-test-without-the-small-shift-cost) | spread-aware drift test without the small-shift cost |
 | 13 | [P15-18](roadmap-standard.md#p15-18-pilots-store-per-item-null-control-outputs) | per-item null-control outputs in pilots |
-| 72 | [P15-24](roadmap-standard.md#p15-24-same-decoder-re-calibrations-under-the-default-deny-gate) | same-decoder re-calibrations under default deny (replay running) |
 
 ## Rerun
 `experiments/2026-11-16-p5-01-personal/synth.py` (CPU, about 67 s; no data needed), `replay.py`, `replay_p5_10.py` (need the local P15-01 per-trial records), `experiments/2026-11-16-p5-09-drift-spread/synth.py`.

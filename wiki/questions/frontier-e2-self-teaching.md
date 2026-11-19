@@ -17,7 +17,7 @@ A simulated user accepts, rejects or retypes the decoder output. The decoder lea
 - **Learning from feedback works in a replay.** On 16 T12 days, feedback-only adaptation lowers PER from 0.686 (frozen) to 0.470 (P15-01, S4 pass).
 - **The bound stays valid through every update.** This is true in every guarded run of P15-01, P15-02, P15-03a and P15-13, also under bad updates.
 - **Three defects were found and fixed, one at a time.** (1) Null input committed (P15-01 S5 fail; fixed by P15-02). (2) The gate accepted a worse and a broken decoder under partial feedback (P15-03a H2, H3 fail; fixed by P15-13, G1-G6 pass). (3) A challenger without champion outputs skipped the test (fixed by P15-23).
-- **One cost of the fix is still open.** The default-deny gate refused 1 of 8 same-decoder re-calibrations. P15-24 tests a new rule. **Its pre-registered replay is still running (2026-11-18). No verdict yet.**
+- **The cost of the fix is removed (P15-24).** The default-deny gate refused 1 of 8 same-decoder re-calibrations (P15-13). A separate rule for re-calibrations of the same decoder fixed this in a pre-registered replay: R1-R7 pass, 0 of 8 refused, and every broken or worse decoder is still refused ([results](../../experiments/2026-11-18-p15-24-recal-rule/results.md)).
 - **The full GPU runs of E2 (P15-03 on T12 and T15 with day-layer adaptation) have not run.**
 
 ## The steps at a glance
@@ -29,7 +29,7 @@ A simulated user accepts, rejects or retypes the decoder output. The decoder lea
 | P15-03a | does the gate refuse worse decoders on real data? | [plan](../../experiments/2026-11-17-p15-03-f1-m4-13/plan.md), `97a2fc4` (before any M4-13 output) | T15, M4-12 / M4-13 / time-reversed M4-13, 2 seeds x 2 users (oracle, feedback-r0.3), 7 blocks | H1, H4, H5, H6 pass; **H2, H3 fail** | [results](../../experiments/2026-11-17-p15-03-f1-m4-13/results.md) |
 | P15-13 | does a default-deny non-inferiority gate fix H2 / H3? | [plan](../../experiments/2026-11-18-p15-13-gate-fix/plan.md), `e788029` (with the code) | P15-03a design + probe W (broken vs the weak champion) | **G1-G6 all pass** | [results](../../experiments/2026-11-18-p15-13-gate-fix/results.md) |
 | P15-23 | refuse a challenger without champion outputs | code only, `0254ebc` | unit tests | done (no replay needed) | [roadmap](roadmap-standard.md#p15-23-update-gate-refuses-a-challenger-without-champion-outputs) |
-| P15-24 | can the same decoder re-tune under default deny? | [plan](../../experiments/2026-11-18-p15-24-recal-rule/plan.md), `0254ebc` (with the code) | P15-13 design, new re-calibration rule | **replay running, no verdict** | (results.md not yet written) |
+| P15-24 | can the same decoder re-tune under default deny? | [plan](../../experiments/2026-11-18-p15-24-recal-rule/plan.md), `0254ebc` (with the code) | P15-13 design, new re-calibration rule | **R1-R7 pass**: re-calibrations refused 0 / 8 (P15-13: 1 / 8); broken refused 4 / 4 (+ 4 / 4 vs weak champion), worse refused 12 / 12; wrong-commit 0.0082 | [results](../../experiments/2026-11-18-p15-24-recal-rule/results.md) |
 
 ## P15-01: CPU pilot on T12
 
@@ -103,7 +103,9 @@ With partial feedback the user now gets 28-29 phase-C commits per run (P15-03a: 
 
 ## P15-23 and P15-24 (2026-11-18)
 - **P15-23 (done, code `0254ebc`).** Under the default non-inferiority test, `GuardedUpdateLoop.finish_update` refuses a challenger whose champion outputs are missing. The opt-out `allow_missing_champion=True` is recorded in the update record and the config id. Closes gap 71.
-- **P15-24 (in progress).** New rule in the same commit: `new_version(kind="recalibration")` with `recalibration_rule="absolute"` (default). A re-calibration passes if its top-1 texts are identical to the champion's, or if `P(Bin(N, 0.1) <= w) <= 0.05` (with `N = 48`: at most 1 worse item). The plan states why the gate guarantee still holds for every proposal. Pass rules R1-R7 are fixed in the [plan](../../experiments/2026-11-18-p15-24-recal-rule/plan.md). **The replay is still running at the time of writing. We report no numbers from it.** If R1, R2, R3, R5, R6 or R7 fails, the rule is withdrawn.
+- **P15-24 (done).** New rule in the same commit: `new_version(kind="recalibration")` with `recalibration_rule="absolute"` (default). A re-calibration passes if its top-1 texts are identical to the champion's, or if `P(Bin(N, 0.1) <= w) <= 0.05` (with `N = 48`: at most 1 worse item). The plan states why the gate guarantee still holds for every proposal. Pass rules R1-R7 are fixed in the [plan](../../experiments/2026-11-18-p15-24-recal-rule/plan.md). **Verdict ([results](../../experiments/2026-11-18-p15-24-recal-rule/results.md)): R1-R7 pass.** Re-calibrations refused 0 of 8 (P15-13: 1 of 8; the refused case, s1 oracle B6 with 1 worse vs 2 better, now passes at p_abs 0.040). Broken decoder refused 4 / 4 and 4 / 4 against the weak champion; worse M4-12 refused 12 / 12, all by the challenger test. Judged by the re-calibration rule, all 20 refused decoder and broken proposals are still refused (at least 34 worse of 48). Phase-C wrong-commit 0.0082 in every run (CP95 upper 0.0238); ledgers verify. W and B1-B5 repeat P15-13 exactly. Closes gap 72.
+
+> **Our take:** the re-calibration rule removes the only cost of default deny that we measured, without a safety cost. It still allows only 1 worse item in 48 check items; a user whose drift changes the top-1 on more items needs a larger check block.
 
 ## What changed in the library because of E2
 
@@ -114,7 +116,7 @@ With partial feedback the user now gets 28-29 phase-C commits per run (P15-03a: 
 | gate accepts worse / broken decoders with partial feedback (P15-03a H2, H3) | default-deny non-inferiority test | `e788029` |
 | `config_id` depends on the script label (V4 T12) | `decoder_id` / `custom:<qualname>` label | `e788029` |
 | challenger without champion outputs skips the test | refuse by default; recorded opt-out | `0254ebc` |
-| same decoder cannot re-tune (P15-13 D2) | re-calibration rule (under test) | `0254ebc` |
+| same decoder cannot re-tune (P15-13 D2) | re-calibration rule (R1-R7 pass, [results](../../experiments/2026-11-18-p15-24-recal-rule/results.md)) | `0254ebc` |
 
 ## Limits
 - P15-01 / P15-02 used a weak CPU decoder (almost every commit wrong). Their positive results are a working harness, not F1 evidence.
@@ -126,7 +128,6 @@ With partial feedback the user now gets 28-29 phase-C commits per run (P15-03a: 
 ## Still open
 | gap | item | what |
 |---|---|---|
-| 72 | [P15-24](roadmap-standard.md#p15-24-same-decoder-re-calibrations-under-the-default-deny-gate) | re-calibration rule; replay running |
 | - | [P15-03](roadmap-standard.md#p15-03-e2-full-runs-on-t12-and-t15) | full GPU runs on T12 and T15 (day-layer adaptation, all arms, realistic retype rate) |
 | 13 | [P15-18](roadmap-standard.md#p15-18-pilots-store-per-item-null-control-outputs) | pilots store per-item null-control outputs |
 | 14 | [P15-19](roadmap-standard.md#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06) | usefulness on stronger decoders |

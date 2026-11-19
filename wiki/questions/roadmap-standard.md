@@ -1341,7 +1341,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-24 Same-decoder re-calibrations under the default-deny gate
 - **Gap:** 72 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P15-13). Follow-up of P15-13, P5-01.
-- **Status:** `in_progress` (2026-11-18: same-decoder re-calibration rule + pre-registration `0254ebc`, [plan](../../experiments/2026-11-18-p15-24-recal-rule/plan.md); replay running).
+- **Status:** `done` (2026-11-18: same-decoder re-calibration rule + pre-registration `0254ebc`, [results](../../experiments/2026-11-18-p15-24-recal-rule/results.md): R1-R7 pass; re-calibrations refused 0 of 8 (P15-13: 1 of 8); every broken or worse decoder still refused).
 - **Depends on:** none (CPU).
 - **Source:** [P15-13 results](../../experiments/2026-11-18-p15-13-gate-fix/results.md#descriptive-results) (D2): 1 of 8 re-calibrations of the same M4-13 decoder was refused (s1 oracle B6: top-1 changed on 3 of 48 items, 1 worse vs 2 better, p 0.081). With 48 check items and margin_abs 0.1 the absolute branch allows no worse item. A user whose data drift (P5-01 PersonalTrust) may then not be able to re-tune.
 - **Done when:** a pre-registered check (for example the P5-01 replay) measures how often re-calibrations of the same decoder are refused, and a chosen remedy (larger check block, a re-calibration path that keeps the top-1 fixed, or a margin for re-calibrations fixed in a plan) keeps the refusal rate of real re-calibrations low without accepting the P15-13 broken or worse decoders.
