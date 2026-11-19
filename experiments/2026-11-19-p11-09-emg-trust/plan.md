@@ -97,3 +97,10 @@ If the leakage checks pass (track splits, truth equality, weights SHA-256) and t
 4. No change of split, window, writer, guard settings, metric, rule or controls after this commit. Any variant (another tail, an LM, a lexicon, prefix commits, per-user guards) is a new item.
 
 Write-up: `results.md` in this folder, with the verdicts and numbers as computed, including a failure.
+
+## Amendment 1 (2026-11-19 15:12, before any evaluation-session decision)
+Found by smoke tests of the code paths on **calibration** prompts only (one user's track-val session, relabelled; no evaluation-session decoder output was used):
+1. **One stream per user.** The collector's `validate` processor (provenance level) refuses a stream header without `decoder.weights_sha256` (check PV-WEIGHTS). Each user has own personal weights, so one stream cannot name one SHA-256. The replay is therefore **8 collector runs, one per user**, each one stream with that user's weights SHA-256, 30 prompts per user spread evenly over that user's evaluation prompts (240 in all, as before). The per-user runs stay local; the repo gets pooled numbers only.
+2. **V5 rule for 8 runs.** The bench keeps per-run quantiles, not the samples. V5 passes iff the p95 of `added` is below 50 ms **in every run**. We report the median over runs of the p50 and the maximum over runs of the p95.
+3. **Seen in the smoke (disclosure).** On 6 calibration prompts of one user, `added` was p50 60 ms, p95 65 ms (built-in beam inside the collector; the full pytest ran on the same machine at the same time). So V5 may fail. The rule does not change.
+4. The calibration smoke guard on 100 track-val prompts of one user was not feasible (no certified threshold). The pre-registered full guard uses all 1,224 track-val prompts. Nothing else changes.
