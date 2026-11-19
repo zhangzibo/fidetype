@@ -375,12 +375,12 @@ class LSLSource:
         for k, rc in list(self._rc.items()):
             if k in self._got:
                 continue
-            got = rc.take(timeout if not self._got else 0.0)
-            if got is None and rc.done():
-                got = rc.take()  # it may have finished just after the first take
+            # one consistent read (P4-14): two done() calls could see a worker that has just
+            # set its inlet, start a second worker and call reopen() once more
+            got, ended = rc.take_or_ended(timeout if not self._got else 0.0)
             if got is not None:
                 self._got[k] = got
-            elif rc.done():  # the worker ended without an inlet: start a new one
+            elif ended:  # the worker ended without an inlet: start a new one
                 self._rc[k] = self._worker(rc._reopen, k)
         if len(self._got) < len(self._rc):
             if time.monotonic() - self._lost_since > self.reconnect_timeout:

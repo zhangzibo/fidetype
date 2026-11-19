@@ -848,6 +848,26 @@ class _Reconnector:
         """True when the worker has ended (with or without an inlet)."""
         return not self.thread.is_alive()
 
+    def take_or_ended(self, wait_s: float = 0.0) -> tuple[InletLike | None, bool]:
+        """Return ``(inlet, False)``, ``(None, False)`` (still trying) or ``(None, True)``.
+
+        ``(None, True)`` means: the worker ended without an inlet, so the
+        caller can start a new worker. Callers must not combine
+        :meth:`take` and :meth:`done` on their own (P4-14, gap 81): if a
+        caller reads ``done()`` twice, the worker can set its inlet and end
+        between the two reads. Then the caller starts a second worker,
+        calls ``reopen()`` once more and leaks the first inlet. Here
+        ``done()`` is read once, before the last :meth:`take`. The worker
+        sets its inlet before its thread ends, so "ended" plus "no inlet"
+        proves that no inlet will come.
+        """
+        got = self.take(wait_s)
+        if got is not None:
+            return got, False
+        ended = self.done()
+        got = self.take()
+        return got, (got is None and ended)
+
     def cancel(self) -> None:
         with self._lock:
             self._stop.set()
@@ -1237,13 +1257,11 @@ class LSLEventSource:
             if r.reconnector is None:
                 self._start_reconnector(r)
             assert r.reconnector is not None
-            got = r.reconnector.take(max(wait_s, m.reconnect_handoff_s))
-            if got is None and r.reconnector.done():
-                got = r.reconnector.take()  # it may have finished just after the first take
+            got, ended = r.reconnector.take_or_ended(max(wait_s, m.reconnect_handoff_s))
             if got is None:
                 if now - r.lost_since > m.reconnect_timeout_s:
                     self._give_up(r)
-                if r.reconnector.done():  # the worker ended without an inlet: start a new one
+                if ended:  # the worker ended without an inlet: start a new one
                     self._start_reconnector(r)
                 return []
             r.reconnector = None

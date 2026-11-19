@@ -74,6 +74,19 @@ def test_event_tee_copies_and_isolates_failures(tmp_path):
     assert [json.loads(x)["type"] for x in dl] == ["trust_decision"] and tee.decisions == 1
 
 
+def test_event_tee_flush_skips_closed_files():
+    """P4-14: the tee is collected after the writer closed its files; flush() and close() raise nothing."""
+    import io
+
+    f, d = io.StringIO(), io.StringIO()
+    tee = P.EventTee([], f, decisions_file=d)
+    tee.write(json.dumps({"type": "header"}) + "\n")
+    f.close()
+    d.close()
+    tee.flush()
+    tee.close()  # what IOBase.__del__ does
+
+
 def test_bad_publish_target_exits_2(capsys):
     assert live_main(["--source", "synthetic", "--speed", "0", "--utterances", "1", "--publish", "udp://x:1"]) == 2
     assert "unknown --publish target" in capsys.readouterr().err

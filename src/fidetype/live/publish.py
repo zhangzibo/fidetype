@@ -308,8 +308,10 @@ class EventTee(io.TextIOBase):
         return len(s)
 
     def flush(self) -> None:
+        # IOBase.__del__ calls close() and so flush() when the tee is collected, often after the
+        # writer has closed the files: skip a closed file (P4-14: "I/O operation on closed file")
         for f in (self.file, self.decisions_file):
-            if f is not None:
+            if f is not None and not getattr(f, "closed", False):
                 f.flush()
 
     def _send(self, ev: dict[str, Any]) -> None:

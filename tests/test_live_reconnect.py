@@ -263,3 +263,86 @@ def test_real_lsl_outlet_restart(tmp_path, capsys):
     for h in hyps:  # no decision spans the gap
         assert h["t_end"] < g[0]["t_start"] + 1e-6 or h["t_start"] > g[0]["t_end"] - 1e-6, (h, g[0])
     assert not check_file(out).failures("trust-ready")
+
+
+# --- P4-14 (gap 81): no second worker when the first one ends just after a take ----------------
+
+
+class _FlipRC:
+    """A fake reconnector worker with a scripted thread schedule (no thread, no sleep).
+
+    The fake worker sets its inlet and ends right after the ``flip_at``-th
+    call of ``take()`` or ``done()``. This models the worker thread
+    finishing between two reads of the loop: the race of CI run
+    44437999699 (macOS), where ``reopen()`` was called 3 times, not 2.
+    """
+
+    def __init__(self, inlet, flip_at: int, reopen=None):
+        self.inlet, self.flip_at, self._reopen = inlet, flip_at, reopen
+        self.calls, self._ready, self._ended = 0, None, False
+
+    def _tick(self):
+        self.calls += 1
+        if self.calls == self.flip_at:
+            self._ready, self._ended = self.inlet, True
+
+    def take(self, wait_s: float = 0.0):
+        got, self._ready = self._ready, None
+        self._tick()
+        return got
+
+    def done(self) -> bool:
+        ended = self._ended
+        self._tick()
+        return ended
+
+    def cancel(self):
+        pass
+
+    take_or_ended = L._Reconnector.take_or_ended
+
+
+@pytest.mark.parametrize("flip_at", [1, 2, 3, 4, 5])
+def test_take_or_ended_never_reports_ended_with_an_inlet_pending(flip_at):
+    rc = _FlipRC(object(), flip_at)
+    seen = []
+    for _ in range(4):
+        got, ended = rc.take_or_ended()
+        seen.append((got is not None, ended))
+        if got is not None:
+            break
+    assert seen[-1] == (True, False)
+    assert all(not e for _, e in seen)  # "ended" without an inlet never shows: the inlet is always taken
+
+
+@pytest.mark.parametrize("flip_at", [1, 2, 3, 4, 5])
+def test_source_starts_one_worker_when_it_ends_between_reads(flip_at):
+    """LSLSource: the worker ends between two reads; the loop takes its inlet and starts no second worker."""
+    src = S.SyntheticSource(2, seed=7, speed=0)
+    s1, _ = _scripts(src, 0, 200)
+    s2, _ = _scripts(src, 300, 500)
+    sig2 = ScriptedInlet(_sig_info(), s2)
+    calls = {"reopen": 0}
+
+    def reopen():
+        calls["reopen"] += 1
+        return sig2
+
+    lsrc = S.LSLSource(inlet=ScriptedInlet(_sig_info(), s1 + ["lost"]), reopen=reopen, reconnect_timeout=5.0)
+    workers = []
+
+    def worker(fn, role):
+        rc = _FlipRC(sig2, flip_at, reopen=fn)
+        workers.append(rc)
+        return rc
+
+    lsrc._worker = worker
+    lost = None
+    for _ in range(50):
+        ch = lsrc.poll(0.0)
+        lost = lost or (ch is not None and ch.lost)
+        if lsrc.reconnects:
+            break
+    assert lost and lsrc.losses == 1 and lsrc.reconnects == 1
+    assert len(workers) == 1 and calls["reopen"] == 0  # one worker; the fake never calls reopen itself
+    assert lsrc.inlet is sig2
