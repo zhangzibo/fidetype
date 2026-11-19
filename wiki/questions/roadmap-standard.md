@@ -569,10 +569,17 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-27 Word-by-word streaming prefix commits within a trial
 - **Gap:** 76 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P5-24). Follow-up of P5-24, P3-06.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19; code + pre-registration `5f74c2f`, results `72be974`, [results](../../experiments/2026-11-18-p5-27-streaming-prefix/results.md)). `fidetype.trust.stream_commit`; metric: the PROPOSED several-commits extension of the PROPOSED v0.2 (proposal section 7). T15: stream 2.34 [2.11, 2.57] vs one-commit prefix guard 4.67 [4.26, 5.07], Δ −2.32 [−2.63, −2.02]: single beats stream (safe: 5 / 701 wrong; certified; controls pass). Right words about 10 s earlier. Follow-up: P5-28.
 - **Depends on:** P5-24 (done); a metric rule for several commits per trial (v0.3, after the P14-26 decision). CPU.
 - **Source:** P5-24 ([results](../../experiments/2026-11-18-p5-24-prefix-commits/results.md)): the prefix guard decides once per trial at the end. On T15 it commits 1,073 of the 2,688 words in the right prefixes of the top-1 texts.
 - **Done when:** a streaming guard can commit further words of the same utterance as evidence arrives (each commit certified under one loss that covers all commits of a trial), the decision events chain the commits, and a pre-registered T15 replay reports safe WPM next to the one-commit prefix guard.
+
+#### P5-28 Hybrid streaming and end-of-trial prefix guard
+- **Gap:** 92 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P5-27). Follow-up of P5-27.
+- **Status:** `todo`.
+- **Depends on:** P5-27 (done); local M4-13 log-probs and P5-27 checkpoint decodes; for T12 a loader that stays under 1.5 GB. CPU.
+- **Source:** P5-27 ([results](../../experiments/2026-11-18-p5-27-streaming-prefix/results.md)): one LTT threshold over about 39 checkpoints per trial is strict (0.99 vs 0.94); the streaming guard commits about 1.7 words at a median 31 % of the trial and never extends a commit at the end (0 complete commits). It gets 2.34 against 4.67 for the one-commit guard, but right words appear about 10 s earlier. T12 was not run (shared loader peak 2,340 MB).
+- **Done when:** a guard that combines mid-trial streaming commits with an end-of-trial prefix decision (for example the P5-24 decision at the end, or separate mid / end thresholds on a 2-D LTT grid), certified jointly on the trial loss, is compared in a pre-registered T15 replay with the one-commit prefix guard on safe WPM (proposed v0.2 + reading cost) and on commit latency; plus the T12 replication on a lighter loader, or a recorded reason why it cannot run.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
