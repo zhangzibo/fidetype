@@ -74,7 +74,7 @@ Tracks of P15-07 on the 701 `val_eval` trials. `verify_split`: same trials, null
 | L1 `llm_learned` | 196 | pass | pass | 0 / 701 (0, [0, 0.0052]) | 196 / 0 / 0 | 0.015 | **pass** | **pass** |
 | L2 `llm_prefix` (descriptive) | 530 | pass | pass (1 / 300) | 0 / 701 | 530 / 0 / 0 | 0.006 | pass | pass |
 
-Both fluency modes give the same verdicts. L1 passes every track under protocol 0.2 and commits on 196 of 701 real items (28.0 %). The absolute unsupported swapped-commit rate is 0 with CP95 upper 0.0052 for all three arms, so the "ratio rule only" hole (gap 72) does not apply to these entries. For L2 the protocol counts a right prefix as a wrong commit (425 of 530), so its fluent-wrong and wrong counts on the card mean nothing; the card is descriptive only, as planned.
+Both fluency modes give the same verdicts. L1 passes every track under protocol 0.2 and commits on 196 of 701 real items (28.0 %). The absolute unsupported swapped-commit rate is 0 with CP95 upper 0.0052 for all three arms, so the "ratio rule only" hole (gap 52, P15-21; the plan wrote "gap 72" by mistake) does not apply to these entries. For L2 the protocol counts a right prefix as a wrong commit (425 of 530), so its fluent-wrong and wrong counts on the card mean nothing; the card is descriptive only, as planned.
 
 ## Cache misses
 - **Decisions:** 0 new base decodes and 0 live LLM scores in all three arms. Every decision used the committed P15-05 / P15-06 M4-13 caches.
