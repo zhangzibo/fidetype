@@ -871,17 +871,24 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 
 #### P13-11 Complete rerun recipes: weights hash, policy config id, hallucination cards
 - **Gap:** 83 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-06). Follow-up of P13-06, P15-15.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19, code `a7f0b6b`, fix `7b6cdd7`, [design 12.6](../../docs/hub-design.md#126-weights-hash-config-id-and-hallucination-recipes-p13-11)). A recipe holds a value or a reason for `decoder.weights_sha256` and `policy.config_id`; `check_recipe` accepts exactly one. 52 leaderboard cards: weights 30 filled / 22 reasons; `config_id` 6 filled (every guard card) / 46 reasons (16 always-commit, 30 TrustPipeline fits never frozen: P13-13). The weights stay outside the repo (hashed read only; `--runs` re-hashes them). Every hallucination card (32) has a `fidetype.hub.recipe/0.1` block at level `rescore` that passes `check_recipe`; all 32 commands reproduce their card; CI checks the recipes (`tests/test_hub_cli.py` in the pytest jobs and the `leaderboard` job). No released weights exist yet (P14-02): the hashes identify the local files. Follow-up: P13-13 (gap 85).
 - **Depends on:** P13-06 (done); P14-02 for released weights.
 - **Source:** P13-06 (2026-11-18): the backfilled recipes have `decoder.weights_sha256: null` (no weights released) and `policy.config_id: null` (the cards predate the frozen `config_id` of P5-23). The hallucination score cards (`benchmark/results/halluc-v0.1/`, `halluc-v0.2/`) have no `rerun` block; they rerun only with `python -m fidetype.benchmark.hallucination rescore`.
 - **Done when:** every guard card records the frozen policy `config_id` (or says why none exists); a card with released weights records their SHA-256; every hallucination card carries a `fidetype.hub.recipe/0.1` block that passes `check_recipe`, and CI checks it.
 
 #### P13-12 Leaderboard freshness check and same-commit history rows
 - **Gap:** 84 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-09). Follow-up of P13-09.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19, code `a7f0b6b`, [design 12.7](../../docs/hub-design.md#127-leaderboard-freshness-check-p13-12)). History base = the parent of the commit that holds the pages; card changes in that commit get a "this commit / with this page" row; the build falls back to base `HEAD` when the committed pages are stale. `python -m fidetype.benchmark.leaderboard --check` in the new CI job `leaderboard` (`fetch-depth: 0`, needed by `all-green`); it passed on the code commit (run 44486952789). The regeneration step is documented in `benchmark/README.md` and design 12.7.
 - **Depends on:** P13-09 (done).
 - **Source:** P13-09 (2026-11-18): the entry history reads git at generation time. A card that is committed together with its regenerated pages shows a "working tree, not committed" row until the next regeneration. No CI job regenerates the leaderboard outputs (`benchmark/site/`) and compares them with the committed files, and the CI checkout is shallow (no history).
 - **Done when:** a CI job with a full-history checkout regenerates `benchmark/site/` and fails on a difference; the regeneration step after a card commit is documented (or automated) so that no committed track page keeps a stale "working tree" row.
+
+#### P13-13 Frozen trust configs for the pre-P5-23 trust cards
+- **Gap:** 85 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P13-11). Follow-up of P13-11.
+- **Status:** `todo`.
+- **Depends on:** P13-11 (done); the local decoder outputs of the build steps (CPU only).
+- **Source:** P13-11 (2026-11-19, code `a7f0b6b`): 30 trust cards (CRC, LTT and plug-in policies on `b2t25-t15`, `b2t25-t15-copytask`, `spanishbcbl-meg`, `spanishbcbl-meg-async`, `toronto-semg`, `toronto-semg-composed`) record `config_id_reason`: the build steps (`experiments/2026-11-17-p6-02b-v02-entries/run.py` stages `b2t`, `meg`, `toronto`, and the v0.1 source experiments) fitted a TrustPipeline in memory and kept only the decisions.
+- **Done when:** for each of the 30 cards, a refit with the build-step settings gives the same decisions as the card, `FrozenTrustConfig.from_pipeline` freezes it (numbers only, committed), and the recipe records its `config_id` and `config_id_source`; a card whose refit does not reproduce keeps a reason that says so.
 
 ## P14. Value first: a useful toolkit (added 2026-11-15)
 **Goal:** people install `fidetype` because it is useful today, not only because it is a format. The format spreads as a side effect, as with LangChain ([LangChain case study](../sources/case-study-langchain.md)). P14 adds user value and credibility. It does not change the scope, order or priority of P1–P13.
