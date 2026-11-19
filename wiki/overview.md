@@ -3,7 +3,7 @@ title: Overview — non-invasive brain-to-text, where things stand
 type: overview
 tags: [synthesis, north-star, frontier]
 sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, brain-to-text-25-copytask]
-updated: 2026-11-18
+updated: 2026-11-19
 ---
 
 # Overview
@@ -26,9 +26,9 @@ The first experiments (E2 for F1, E3 for F2, E1 for F3) are in roadmap phase [P1
 - [F1 online guarantees](questions/frontier-f1-online-guarantees.md): the `aci` bound holds with shown-only feedback; a new IPW audit has 0 / 200 violations; an independent review found one high issue, now fixed.
 - [E3 hallucination (F2)](questions/frontier-e3-hallucination.md): E3 fails its pre-registered rule (S4, fluent-wrong commits) on both T15 decoders. Grounding stops every swapped-signal commit. A certified fluent-wrong bound exists on T15 and T12. The M4-13 bound guard is the first entry that passes all hallucination-benchmark tracks.
 - [Decoder quality](questions/frontier-decoder-quality.md): M4-13 (PER 0.1210) made the guarantees useful on T15 without a method change.
-- [Safe WPM](questions/frontier-safe-wpm.md): best adopted-metric value 2.64, below gaze typing (4.02); 4.67-4.87 only under the proposed, not adopted v0.2.
+- [Safe WPM](questions/frontier-safe-wpm.md): since P15-22 (2026-11-19), LLM rescoring plus a learned commit score gives 4.91 [4.25, 5.57] under the adopted v0.1, certified and pre-registered. This is above gaze typing (4.02), and the lower end of the interval is also above it (earlier best 2.64). One participant, one split, one seed, offline replay, not a user study; replication is gap 93 (P15-26). Under the proposed, not adopted v0.2, a hybrid guard (P5-28) shows the first right word about 5 times sooner (2.7 s vs 14.0 s) at 4.89; its WPM gain is not robust.
 - [Personalisation and drift](questions/frontier-personalisation-drift.md): drift-triggered re-calibration halves the label cost.
-- E1 (F3) has not run yet.
+- E1 (F3, P15-08) is running on the GPU. It has no result yet. Its EMG base decoder (P11-01) gives 15.09 % CER personalised and 53.52 % generic on emg2qwerty, with no LM ([results](../experiments/2026-11-16-p11-01-emg-decoder/results.md)).
 
 > **Our take:** the findings below (trust layer, guarantees, decoders, datasets) are the foundation of the north star. The trust layer becomes the guarantee engine for F1 and F2. The decoders and the datasets are the base for F3. The NTS spec and SDKs stay as internal plumbing.
 

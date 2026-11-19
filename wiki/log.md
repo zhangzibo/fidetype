@@ -1318,3 +1318,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Caution: λ_mid 0.99 came from P5-27 on the same certify items; Bonferroni sensitivity 4.63 (no clear difference). Fix: an infeasible joint certification switches off mid-trial commits.
 - Updated [frontier safe-WPM page](questions/frontier-safe-wpm.md), [proposal 7.5](../docs/safe-wpm-v0.2-proposal.md#75-result-p5-28-t15-pre-registered-hybrid-guard), [open gaps](questions/open-gaps.md) (92 closed; 95 = P5-29 T12, 96 = P5-30 scorer), [roadmap](questions/roadmap-standard.md), tracker, index. v0.1 stays adopted; nothing published.
 
+
+## [2026-11-19] setup | README and wiki status refresh after P15-22, P5-28, P11-01
+- README "Where we are going": status date 2026-11-19; F2 row adds the P15-22 protocol 0.2 pass and gap 74 (fluent-wrong not certified with a learned score); F3 row gives the P11-01 EMG base decoder (CER 15.09 % personalised, 53.52 % generic, no LM) and P15-08 E1 as running, no result yet.
+- README safe-WPM paragraph: v0.1 4.91 [4.25, 5.57] (P15-22, certified, pre-registered) above gaze typing 4.02, lower CI end also above; earlier best 2.64; one participant, one split, one seed, offline replay, not a user study; replication gap 93 (P15-26). P5-28 hybrid: first right word 2.7 s vs 14.0 s at 4.89 (v0.2 PROPOSED), WPM gain not robust; P5-27 streaming 2.34.
+- Same stale claims fixed in [overview](overview.md) and [north star](questions/north-star.md) (safe-WPM write-up row, E1 row). [frontier-safe-wpm](questions/frontier-safe-wpm.md) was already current. Historical result pages unchanged.
+- Tracker: run stats for p5-28-agent and the P15-22 agent filled; dashboard rebuilt. Site build local links OK; leaderboard check fresh; publishing-metadata tests 15 passed. Nothing published.

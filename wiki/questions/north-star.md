@@ -3,7 +3,7 @@ title: North star — a BCI that teaches itself and never puts words in your mou
 type: question
 tags: [planning, north-star, frontier, self-improving, online-learning, conformal, risk-control, hallucination, llm, cross-modality, emg, implant, roadmap]
 sources: [adaptive-conformal-inference, conformal-risk-control, brain-to-text-25-copytask, brain2qwerty-v2, continual-calibration, conformal-gating-mi-bci, corteg-eeg-to-ecog]
-updated: 2026-11-18
+updated: 2026-11-19
 ---
 
 # North star (2026-11-15)
@@ -83,9 +83,9 @@ One write-up per experiment line. Each page gives the question, the pre-registra
 | [F1 online guarantees](frontier-f1-online-guarantees.md) | F1 | P15-04, G3 review + fixes (P15-17), P5-11 | R1, R3-R5 pass; review "sound with fixes" (H1 fixed) | done |
 | [E3 hallucination](frontier-e3-hallucination.md) | F2 | P15-05, P15-06, P15-14, P15-07, P15-15, M4-13 reruns | **S4 fails on M4-12 and M4-13**; bound H1-H4 pass on T15; T12 certified by V-single; M4-13 B1 first pass of all tracks (protocol 0.2) | done; P15-16 open |
 | [Decoder quality](frontier-decoder-quality.md) | base | M4-12, M4-13 | M4-12 "close" rule **fail** (PER 0.2574); M4-13 pass (0.1210) | done |
-| [Safe WPM](frontier-safe-wpm.md) | value | P14-05, P14-23, P5-23, P5-24, P14-28 | learned beats current (2.64); prefix beats sentence (4.87, v0.2); v0.1 still below 4.02 | v0.2 proposed, not adopted |
+| [Safe WPM](frontier-safe-wpm.md) | value | P14-05, P14-23, P5-23, P5-24, P14-28, P5-27, P5-28, P15-22 | learned beats current (2.64); prefix beats sentence (4.87, v0.2); single beats stream (2.34, v0.2); hybrid beats single (4.89, v0.2, WPM gain not robust; first right word 2.7 s vs 14.0 s); **P15-22 LLM + learned 4.91 [4.25, 5.57] v0.1, above 4.02** (gap 53 closed) | one participant; replication gap 93 (P15-26); v0.2 proposed, not adopted |
 | [Personalisation and drift](frontier-personalisation-drift.md) | F1 | P5-01, P5-09, P5-10, P5-11 | P5-01 all pass; P5-09 **S3 fail** (small-shift cost) | done |
-| E1 cross-body (F3) | F3 | P15-08 | - | **not run yet** (needs the GPU after P11-01) |
+| E1 cross-body (F3) | F3 | P15-08 | - | **running** on the GPU (P11-01 done); no result yet |
 
 ## The three pillars and their first experiments
 The feasibility study numbers the experiments by direction, not by rank: **E2 is the F1 experiment, E3 is the F2 experiment, E1 is the F3 experiment.** We keep these names so the notes and the experiment folders match.
