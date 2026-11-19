@@ -229,6 +229,8 @@ def cmd_safe_wpm(a) -> int:
             v02.update(speech_s=sp, speech_timing="per-trial speech_s")
         v02.update(read_s_per_commit=a.read_s_per_commit, read_s_per_word=a.read_s_per_word,
                    min_prefix_words=a.min_prefix_words)  # P14-28 sensitivity options (default: off)
+        if any(x > 1 for x in cols["n_commits"]):  # P5-27: several append-only commits per trial
+            v02["n_commits"] = cols["n_commits"]
     elif (a.read_s_per_commit, a.read_s_per_word, a.min_prefix_words) != (0.0, 0.0, 1):
         print("--read-s-per-commit, --read-s-per-word and --min-prefix-words need --metric-version 0.2",
               file=sys.stderr)

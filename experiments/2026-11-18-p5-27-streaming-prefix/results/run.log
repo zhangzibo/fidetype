@@ -1,0 +1,4 @@
+2026-11-18 13:50:13 stage dry start
+2026-11-18 13:57:30 dry: {'calibrate_s': 322.9567086696625, 'items': 12, 'checkpoints': 386, 's_per_checkpoint': 0.05892823088354397, 'null_inputs': 8, 'null_checkpoints': 416, 'null_s_per_checkpoint': 0.2187819927930832, 'peak_mb': 784.9453125, 'base_config_id': 'tcfg-e9758d5133d07fa6'}
+2026-11-19 09:44:27 stage dry start
+2026-11-19 09:50:15 dry: {'calibrate_s': 263.8275854587555, 'items': 12, 'checkpoints': 386, 's_per_checkpoint': 0.045324404622606666, 'null_inputs': 8, 'null_checkpoints': 416, 'null_s_per_checkpoint': 0.158880050938863, 'peak_mb': 785.51953125, 'base_config_id': 'tcfg-e9758d5133d07fa6'}

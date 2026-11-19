@@ -72,6 +72,21 @@ reading / checking time to every commit, right or wrong
 (``read_s_per_commit + read_s_per_word * k_i``, k_i = words of the
 committed text), and ``min_prefix_words`` m turns a prefix commit
 (not complete) with fewer than m words into no commit (0 words, no time).
+
+Proposed extension "several commits per trial" (P5-27; part of the v0.2
+proposal, not adopted): ``n_commits`` gives the number of append-only
+commit events of each trial (a streaming guard commits more words of the
+same sentence as evidence arrives; committed words are never retracted).
+The per-trial commit arrays then describe the union of the trial's
+commits (its final committed text): the trial is right only if every
+commit is right, which for append-only commits is the same as "the final
+committed text is right" by rule (1). Credit and penalty use that text.
+The reading time is ``read_s_per_commit * n_commits_i + read_s_per_word *
+k_i`` (every commit pays the fixed cost; every committed word is read
+once). A trial with more than one commit is certified only by a bound on
+the trial loss "any commit of the trial is wrong" (guarantee ``risk =
+"wrong-stream-commit"``). With one commit per trial the extension gives
+the v0.2 value.
 """
 
 from __future__ import annotations
@@ -92,6 +107,8 @@ V02_STATUS = "proposed, not adopted (P14-26): v0.1 stays the headline metric unt
 #: Loss names of a guarantee (``guarantee["risk"]``). Absent = ``RISK_SENTENCE``.
 RISK_SENTENCE = "wrong-commit"
 RISK_PREFIX = "wrong-prefix-commit"
+#: P5-27 (proposed extension of v0.2): the trial is wrong if any of its append-only commits is wrong.
+RISK_STREAM = "wrong-stream-commit"
 CERTIFIED_METHODS = ("ltt", "crc")
 #: aac-gaze-v1 correction constants (``fidetype.interact.simulated_user.UserConfig`` defaults).
 DEFAULT_OVERHEAD_S = 2.0
@@ -204,7 +221,7 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
              committed_words: Sequence[float] | None = None, complete: Sequence[bool] | None = None,
              penalty_chars: Sequence[float] | None = None, speech_s: Sequence[float] | None = None,
              speech_timing: str = "unspecified", read_s_per_commit: float = 0.0, read_s_per_word: float = 0.0,
-             min_prefix_words: int = 1) -> dict[str, Any]:
+             min_prefix_words: int = 1, n_commits: Sequence[int] | None = None) -> dict[str, Any]:
     """Compute safe WPM for one entry (see the module docstring for the definition).
 
     Per-trial inputs: ``committed`` (the policy committed), ``correct`` (the
@@ -228,6 +245,12 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
     it, the truth length). ``min_prefix_words`` (>= 1) drops prefix
     commits with fewer words (they become no commit). A ``reading_cost``
     block reports them when one is not at its default.
+
+    ``n_commits`` (P5-27, proposed extension of v0.2): the number of
+    append-only commits of each trial (default: 1 per committed trial).
+    The other per-trial commit arrays then describe the union of the
+    trial's commits. Each commit pays ``read_s_per_commit``. A trial with
+    several commits needs a guarantee with ``risk="wrong-stream-commit"``.
     """
     if metric_version not in METRIC_VERSIONS:
         raise ValueError(f"metric_version must be one of {METRIC_VERSIONS}, not {metric_version!r}")
@@ -237,9 +260,11 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
                              gaze_chars_per_min=gaze_chars_per_min, B=B, seed=seed, committed_words=committed_words,
                              complete=complete, penalty_chars=penalty_chars, speech_s=speech_s,
                              speech_timing=speech_timing, read_s_per_commit=read_s_per_commit,
-                             read_s_per_word=read_s_per_word, min_prefix_words=min_prefix_words)
+                             read_s_per_word=read_s_per_word, min_prefix_words=min_prefix_words,
+                             n_commits=n_commits)
     extra = [k for k, v in (("committed_words", committed_words), ("complete", complete),
-                            ("penalty_chars", penalty_chars), ("speech_s", speech_s)) if v is not None]
+                            ("penalty_chars", penalty_chars), ("speech_s", speech_s),
+                            ("n_commits", n_commits)) if v is not None]
     extra += [k for k, v, d in (("read_s_per_commit", read_s_per_commit, 0.0),
                                 ("read_s_per_word", read_s_per_word, 0.0),
                                 ("min_prefix_words", min_prefix_words, 1)) if v != d]
@@ -301,7 +326,7 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
 def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, rule, timing, clusters, ci_unit,
                   controls, gaze_chars_per_min, B, seed, committed_words, complete, penalty_chars, speech_s,
                   speech_timing, read_s_per_commit=0.0, read_s_per_word=0.0,
-                  min_prefix_words=1) -> dict[str, Any]:
+                  min_prefix_words=1, n_commits=None) -> dict[str, Any]:
     """``safe-wpm/0.2`` (proposed): prefix credit, prefix penalty, optional speech time (module docstring)."""
     rsc, rsw = float(read_s_per_commit), float(read_s_per_word)
     if not (math.isfinite(rsc) and rsc >= 0 and math.isfinite(rsw) and rsw >= 0):
@@ -324,6 +349,20 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
             raise ValueError(f"{name} is needed (finite, >= 0) for every commit that is not complete")
     if partial.any() and np.any(kw[partial] < 1):
         raise ValueError("a prefix commit needs at least one word")
+    if n_commits is None:
+        nci = a["cm"].astype(float)
+    else:
+        nci = np.asarray(n_commits, float)
+        if len(nci) != n:
+            raise ValueError(f"array 'n_commits' has length {len(nci)}, expected {n}")
+        if not np.all(np.isfinite(nci)) or np.any(nci != np.round(nci)) or np.any(nci < 0):
+            raise ValueError("n_commits must be integers >= 0")
+        if np.any(a["cm"] & (nci < 1)):
+            raise ValueError("a committed trial needs n_commits >= 1")
+        nci = np.where(a["cm"], nci, 0.0)
+    multi = a["cm"] & (nci > 1)
+    if multi.any() and min_prefix_words != 1:
+        raise ValueError("min_prefix_words is not defined for trials with several commits (P5-27)")
     dropped = partial & (np.nan_to_num(kw) < min_prefix_words)
     if dropped.any():  # P14-28: a prefix commit shorter than min_prefix_words becomes no commit
         a["cm"] = a["cm"] & ~dropped
@@ -332,7 +371,7 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
         partial = partial & ~dropped
     read_on = rsc > 0 or rsw > 0
     if read_on:
-        a["rd"] = rsc + rsw * np.where(np.isfinite(kw), kw, a["nw"])
+        a["rd"] = rsc * np.maximum(nci, 1.0) + rsw * np.where(np.isfinite(kw), kw, a["nw"])
     total_words = a["nw"].copy()
     credit_words = np.where(partial, np.nan_to_num(kw), a["nw"])
     if np.any(a["ok"] & partial & (credit_words > total_words)):
@@ -343,7 +382,11 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
     cert = certification(guarantee)
     risk = str((guarantee or {}).get("risk", RISK_SENTENCE))
     note = cert.get("note")
-    if partial.any() and risk != RISK_PREFIX:
+    if multi.any() and risk != RISK_STREAM:
+        cert["certified"] = False
+        note = (f"the policy commits several times in a trial, but its bound is on '{risk}', not on "
+                f"'{RISK_STREAM}' (the P5-27 extension needs a bound on the trial loss 'any commit is wrong')")
+    elif partial.any() and risk not in (RISK_PREFIX, RISK_STREAM):
         cert["certified"] = False
         note = (f"the policy commits prefixes, but its bound is on '{risk}', not on '{RISK_PREFIX}' "
                 "(safe-wpm/0.2 needs a bound on wrong-prefix commits)")
@@ -400,6 +443,14 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
             "note": ("P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the "
                      "proposal as committed"),
         }
+    if n_commits is not None:
+        out["multi_commit"] = {
+            "n_commit_events": int(nci.sum()), "n_trials_with_several_commits": int(multi.sum()),
+            "max_commits_per_trial": int(nci.max()) if n else 0,
+            "rule": ("P5-27 proposed extension: append-only commits; the trial is right only if every commit is "
+                     "right (= its final committed text is right); credit and penalty of that text; every commit "
+                     "pays read_s_per_commit, every committed word read_s_per_word once"),
+            "status": "proposed extension of the proposed safe-wpm/0.2 (not adopted)"}
     if ci is not None:
         out["ci_unit"] = ci_unit
     if speech_s is not None:
@@ -447,7 +498,8 @@ def guarantee_from_sheet(sheet: Mapping[str, Any]) -> dict[str, Any]:
                                   f"grid + {n_ltt} LTT (fidetype.trust.calibrate)"),
             "feasible": sheet.get("feasible", True), "config_id": sheet.get("config_id"),
             "commit_threshold": sheet.get("commit_threshold"),
-            **({"risk": RISK_PREFIX} if (sheet.get("confidence") or {}).get("unit") == "prefix" else {})}
+            **({"risk": RISK_PREFIX} if (sheet.get("confidence") or {}).get("unit") == "prefix" else
+               {"risk": RISK_STREAM} if (sheet.get("confidence") or {}).get("unit") == "stream-prefix" else {})}
 
 
 def controls_from_sheet(sheet: Mapping[str, Any]) -> dict[str, Any]:
@@ -495,13 +547,14 @@ def load_trials_jsonl(path: str) -> dict[str, list]:
     (default true), ``committed_text`` (with ``truth``: sets ``correct``,
     ``committed_words`` and ``penalty_chars`` by :func:`prefix_outcome`, in
     ``correct_v02``; ``correct`` then means the exact sentence, as in v0.1)
-    or ``committed_words`` + ``penalty_chars``; ``speech_s``.
+    or ``committed_words`` + ``penalty_chars``; ``speech_s``; ``n_commits`` (P5-27: the number of
+    append-only commits of the trial; default 1 if committed).
     """
     import json
 
     cols: dict[str, list] = {k: [] for k in ("committed", "correct", "n_words", "n_chars", "neural_s", "cluster",
                                              "correct_v02", "committed_words", "complete", "penalty_chars",
-                                             "speech_s")}
+                                             "speech_s", "n_commits")}
     with open(path, encoding="utf-8") as f:
         for ln, line in enumerate(f, 1):
             if not line.strip():
@@ -534,6 +587,8 @@ def load_trials_jsonl(path: str) -> dict[str, list]:
             cols["committed_words"].append(float(kw) if kw is not None else math.nan)
             cols["penalty_chars"].append(float(pch) if pch is not None else math.nan)
             cols["speech_s"].append(float(d["speech_s"]) if d.get("speech_s") is not None else math.nan)
+            cols["n_commits"].append(int(d["n_commits"]) if d.get("n_commits") is not None else
+                                     int(bool(d["committed"])))
     return cols
 
 

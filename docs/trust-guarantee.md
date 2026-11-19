@@ -224,6 +224,23 @@ Not guaranteed: anything beyond section 1. A learned score can commit more often
 
 Not in this version: `online()`, `target_precision=`, `grounding=`, `llm=`. A plain n-best prefix posterior is not offered: when all candidates share a prefix its mass is 1.0, also when the truth is not in the list, so LTT finds no feasible threshold (P14-23). Score a prefix guard with [safe WPM v0.2 (proposed)](safe-wpm-v0.2-proposal.md); v0.1 gives a right prefix 0 words.
 
+## 10c. Optional: streaming word-by-word prefix commits (P5-27)
+
+`fidetype.trust.stream_commit.calibrate_streaming(base, inputs, texts, step_frames=...)` builds a guard that decides at checkpoints while an utterance goes on, not only at its end. `base` is a calibrated prefix guard (10b) with logits input from a **causal** decoder: the first n frames of a stored output must be what the decoder emits live.
+
+| Step | What happens |
+|---|---|
+| Checkpoints | Every `step_frames` decoder frames and at the end of the utterance. At each one the base pipeline decodes the frames so far. |
+| Score | One score per word prefix and checkpoint: the 10b prefix features + `stable_log` (how many earlier checkpoints had the same first k words), `at_end`, `open_last_word`. Same model type as 10a; monotone in k. |
+| Commit | Append-only. With K words committed: if the top-1 text does not start with them, no commit (a conflict). Else commit up to the longest prefix with score >= the threshold. Committed words are never retracted. Only the end checkpoint can make a complete commit. |
+| Loss | An utterance is wrong if any of its commits is wrong (`wrong-stream-commit`). For append-only commits this equals "the final committed text is wrong". |
+| Certify | LTT (fixed sequence 1.00 -> 0.00 step 0.01, exact binomial p-values) on the LTT part of the `calibrate` split; the fit + policy-grid parts fit the score. Fixed-sequence LTT does not need a monotone loss. |
+| Guarantee | P( rate of utterances with a wrong commit <= alpha ) >= 1 - delta over the calibration draw, for exchangeable utterances. |
+| Events | One event per commit (`fidetype.stream-commit-event/0.1`) with the words added, the words committed so far, the checkpoint time and a hash chain (`prev_id` -> `id`); `StreamingPrefixGuard.check_chain(events)` verifies it. |
+| Controls | Uniform and shuffled null inputs are streamed through the final guard; an input with one or more commits counts; more than floor(alpha * n) refuses the guard. |
+
+Score it with `safe_wpm(..., metric_version="0.2", n_commits=...)`, the proposed "several commits per trial" extension (section 7 of the [v0.2 proposal](safe-wpm-v0.2-proposal.md)). The default behaviour of `calibrate` does not change.
+
 ## 11. Online use: adaptive risk control for drift (P5-02, P15-04)
 
 The guard above is calibrated once. Its bound needs exchangeable data (section 3). Live data drift: within a session, between days, after a decoder update. Adaptive conformal methods move the COMMIT threshold from the user's feedback. Their bound holds for **any** sequence of utterances. But it is a **long-run average**, not a 1 − δ statement.

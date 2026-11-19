@@ -54,6 +54,9 @@ import numpy as np
 __all__ = [
     "SCORE_SCHEMA",
     "PREFIX_SCORE_SCHEMA",
+    "STREAM_SCORE_SCHEMA",
+    "STREAM_FEATURES",
+    "STREAM_SIGNS",
     "COMMIT_UNITS",
     "RISK_PREFIX",
     "PREFIX_FEATURES",
@@ -127,10 +130,23 @@ PREFIX_FEATURES: tuple[str, ...] = (
 #: Allowed weight signs of :data:`PREFIX_FEATURES` (as :data:`SIGNS`).
 PREFIX_SIGNS: tuple[int, ...] = (+1, +1, +1, +1, +1, 0, 0, 0, +1, -1, -1, +1, +1, -1, 0, 0)
 
+#: Schema name of a saved streaming prefix score (P5-27, :mod:`fidetype.trust.stream_commit`).
+STREAM_SCORE_SCHEMA = "fidetype.stream-prefix-commit-score/0.1"
+#: The features of word prefix k of the top-1 text at one streaming checkpoint (P5-27): the
+#: :data:`PREFIX_FEATURES` of the decode of the input so far, then three streaming features.
+STREAM_FEATURES: tuple[str, ...] = PREFIX_FEATURES + (
+    "stable_log",      # log(1 + earlier checkpoints in a row whose top-1 text had the same first k words)
+    "at_end",          # 1.0 at the end of the utterance (all input seen), else 0.0
+    "open_last_word",  # 1.0 if k = words of the top-1 text and the utterance has not ended (the word can grow)
+)
+#: Allowed weight signs of :data:`STREAM_FEATURES` (as :data:`SIGNS`).
+STREAM_SIGNS: tuple[int, ...] = PREFIX_SIGNS + (+1, 0, -1)
+
 _CLIP = 12.0
 _IDX = {f: i for i, f in enumerate(FEATURES)}
 _FEATURE_SETS = {"sentence": (FEATURES, SIGNS, SCORE_SCHEMA),
-                 "prefix": (PREFIX_FEATURES, PREFIX_SIGNS, PREFIX_SCORE_SCHEMA)}
+                 "prefix": (PREFIX_FEATURES, PREFIX_SIGNS, PREFIX_SCORE_SCHEMA),
+                 "stream-prefix": (STREAM_FEATURES, STREAM_SIGNS, STREAM_SCORE_SCHEMA)}
 
 
 def _finite(x: Any) -> float:
@@ -364,7 +380,8 @@ class LearnedCommitScore:
     #: Features whose fitted weight had the wrong sign (:data:`SIGNS`) and were removed (weight 0).
     dropped: tuple[str, ...] = ()
     schema: str = SCORE_SCHEMA
-    #: ``"sentence"`` (P5-23: one score for the whole top-1 text) or ``"prefix"`` (P5-24: one score per word prefix).
+    #: ``"sentence"`` (P5-23: one score for the whole top-1 text), ``"prefix"`` (P5-24: one score per word prefix)
+    #: or ``"stream-prefix"`` (P5-27: one score per word prefix and streaming checkpoint).
     unit: str = "sentence"
 
     @classmethod
@@ -376,7 +393,7 @@ class LearnedCommitScore:
         per prefix), label = :func:`prefix_right`.
         """
         if unit not in _FEATURE_SETS:
-            raise ValueError(f"unit must be one of {COMMIT_UNITS}")
+            raise ValueError(f"unit must be one of {tuple(_FEATURE_SETS)}")
         feats, signs, schema = _FEATURE_SETS[unit]
         X = np.asarray(X, dtype=np.float64)
         yv = np.asarray(y, dtype=np.float64)
@@ -457,10 +474,12 @@ class LearnedCommitScore:
 
     @classmethod
     def from_dict(cls, d: Mapping[str, Any]) -> "LearnedCommitScore":
-        unit = {SCORE_SCHEMA: "sentence", PREFIX_SCORE_SCHEMA: "prefix"}.get(d.get("schema"))
+        unit = {SCORE_SCHEMA: "sentence", PREFIX_SCORE_SCHEMA: "prefix",
+                STREAM_SCORE_SCHEMA: "stream-prefix"}.get(d.get("schema"))
         if unit is None or d.get("unit", "sentence") != unit:
-            raise ValueError(f"unknown commit-score schema {d.get('schema')!r} (expected {SCORE_SCHEMA!r} or "
-                             f"{PREFIX_SCORE_SCHEMA!r} with unit 'prefix')")
+            raise ValueError(f"unknown commit-score schema {d.get('schema')!r} (expected {SCORE_SCHEMA!r}, "
+                             f"{PREFIX_SCORE_SCHEMA!r} with unit 'prefix' or {STREAM_SCORE_SCHEMA!r} with unit "
+                             "'stream-prefix')")
         known = _FEATURE_SETS[unit][0]
         feats = tuple(str(f) for f in d["features"])
         if feats != known:

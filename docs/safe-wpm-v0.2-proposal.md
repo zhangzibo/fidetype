@@ -52,7 +52,7 @@ safe WPM v0.2 = 60 * sum_i credit_i / sum_i time_i
 
 1. **Prefix credit.** A right prefix earns exactly its k words. It earns no part of a word.
 2. **Wrong prefix.** The user deletes the committed words and types the k true words that they replace. The penalty uses the v0.1 correction constants (`aac-gaze-v1`: 2.0 s overhead, 2 * 60 / 152 s per character). A wrong prefix earns 0 words, also if some of its words are right.
-3. **Words after a prefix commit.** The words of y_i after the committed prefix earn 0 words and add no time. This is the v0.1 rule for a withheld trial: the user types them, and the BCI did not make them. A trial has at most one commit in v0.2. A second commit in the same trial (streaming, word by word) is not defined here.
+3. **Words after a prefix commit.** The words of y_i after the committed prefix earn 0 words and add no time. This is the v0.1 rule for a withheld trial: the user types them, and the BCI did not make them. A trial has at most one commit in v0.2. A second commit in the same trial (streaming, word by word) is not defined here; section 7 proposes an extension (P5-27).
 4. **A prefix that is too long** (more words than y_i) is wrong.
 5. **A complete commit claims the end of the sentence.** "i need" committed as complete for "i need water" is wrong (penalty for the whole sentence). The same words committed as a prefix are right (2 words).
 6. **v0.2 = v0.1 for sentence-level policies.** If every commit is complete, (1)-(4) are the v0.1 formulas. A test checks this.
@@ -109,7 +109,7 @@ Command line: `fidetype benchmark safe-wpm --trials t.jsonl --guarantee g.json -
 
 Open points for the decision:
 - The wrong-prefix penalty charges only the k replaced words. A stricter user model (the user re-reads and rewrites the whole sentence) gives the v0.1 penalty. P14-23 found the difference small on T15 (5.43 vs 5.55, exploratory).
-- One commit per trial. A streaming guard that commits word by word needs a v0.3.
+- One commit per trial. A streaming guard that commits word by word needs a rule for several commits: section 7 proposes one (P5-27).
 - Reading time: v0.2 as committed charges 0 s, as v0.1. P14-28 recommends 0.5 s per commit + 0.3 s per committed word (section 6).
 
 > **Our take:** v0.2 removes a strictness of v0.1 that does not protect the user: a right prefix is real typed text. It keeps the safety part: every wrong commit, prefix or complete, counts against the same certified rate and costs correction time. Because v0.2 equals v0.1 for sentence-level policies, adoption changes no existing number.
@@ -176,3 +176,41 @@ No source measures the time a BCI user needs to check one committed word. The va
 Until the user decides, the scorer default stays c = 0, w = 0, m = 1. Adoption of the recommendation is one more default change in `safe_wpm` and the CLI.
 
 > **Our take:** the T15 gain of prefix commits under v0.2 is not an artefact of free reading time. The weak points of the v0.2 result are T12 (break-even 2.8 s, CI includes the reference) and the single participant per set, not the one-word commits.
+
+## 7. Several commits per trial (P5-27; PROPOSED EXTENSION, NOT ADOPTED)
+
+> **Status: proposed extension of the proposed v0.2.** It is not part of v0.2 as committed (rule 3 of section 2.1 allows one commit per trial). v0.1 does not change. The scorer applies it only when the caller passes `n_commits`. Roadmap item: P5-27 (gap 76). Pre-registration: [plan](../experiments/2026-11-18-p5-27-streaming-prefix/plan.md). Code: `safe_wpm(..., metric_version="0.2", n_commits=...)`, `fidetype.trust.stream_commit`.
+
+**Why.** A streaming guard decides while the trial goes on. It can commit "i need" after 2 s and "some water" after 4 s. v0.2 as committed has no rule for the second commit.
+
+### 7.1 Rule
+
+The commits of a trial are **append-only**: each commit adds words after the words already committed; no commit removes or changes a committed word. Let J_i be the number of commits of trial i and C_i the union of its commits (the final committed text, K_i words; `complete_i` = the last commit claims the whole sentence).
+
+```
+(7) right_i   = every commit of trial i is right by (1)   ( = C_i is right by (1), because the commits are nested )
+    credit_i  = (2) applied to C_i
+    penalty_i = (4) applied to C_i                        (the user deletes all committed words and types the true ones)
+    read_i    = c * J_i + w * K_i                         (every commit pays c; every committed word is read once)
+    time_i    = neural_s_i + [committed_i and not right_i] * penalty_i + read_i
+```
+
+| Case | Words | Time |
+|---|---|---|
+| "i need" (prefix) then "some water" (complete), truth "i need some water" | 4 | `neural_s` + 2 c + 4 w |
+| "i need" then "some" (both prefix), truth "i need some water" | 3 | `neural_s` + 2 c + 3 w |
+| "i need" then "sun", truth "i need some water" | 0 | `neural_s` + penalty("i need some") + 2 c + 3 w |
+| one commit only | as v0.2 | as v0.2 (J_i = 1) |
+
+### 7.2 Certification
+
+- **Risk unit: the trial.** A trial is wrong if **any** of its commits is wrong. The rate is wrong trials / all trials.
+- A policy with a trial of two or more commits gets status `certified` only with a bound on this loss: `risk = "wrong-stream-commit"`. A `wrong-stream-commit` bound also certifies a policy with one commit per trial (the two losses are then the same).
+- `min_prefix_words` (section 6) is not defined for trials with several commits; the scorer refuses the combination.
+- With one commit per trial, (7) gives exactly the v0.2 value (with or without reading cost). A test checks this.
+
+### 7.3 What an entry reports
+
+All v0.2 fields, plus a `multi_commit` block: `n_commit_events`, `n_trials_with_several_commits`, `max_commits_per_trial`, the rule text and its status. The per-trial JSON Lines file of the CLI takes `n_commits` (default 1 for a committed trial).
+
+> **Our take:** charging the fixed reading cost per commit, not per trial, is the important part. Without it, a guard could split a sentence into many one-word commits at no cost. With it, each extra commit must earn its 0.5 s.
