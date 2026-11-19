@@ -27,5 +27,5 @@ Each stage loads the model with `fidetype.pretrained.load` (release files from t
 
 ## Limits
 
-- Offline replay on the same machine that trained the models. The clean-machine test from the README (done criterion of P14-01) needs hosted weights (P14-02): open gap 97 (P14-30).
+- Offline replay on the same machine that trained the models. The clean-machine test from the README (done criterion of P14-01) needs hosted weights (P14-02): open gap 98 (P14-30).
 - One draw each; the numbers are reproductions, not new results.

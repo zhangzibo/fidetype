@@ -980,6 +980,10 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-23** | T15 safe WPM above the no-BCI reference with our causal decoder (gap 53, done 2026-11-19 by P15-22: 4.91 [4.25, 5.57] safe WPM v0.1, [details](#p14-23-t15-safe-wpm-above-the-no-bci-reference-with-our-causal-decoder)) | P14-05, M4-13 | research labs, BCI companies |
 | **P14-24** | F2 and M4-13 trust-rerun rows with word-decoder edit penalty 8 (open gap 62, [details](#p14-24-f2-and-m4-13-trust-rerun-rows-with-word-decoder-edit-penalty-8)) | P14-21 | research labs, reviewers |
 | **P14-25** | P3-08 collector replays with edit penalty 8 and a keep-awake (open gap 63, [details](#p14-25-p3-08-collector-replays-with-edit-penalty-8-and-a-keep-awake)) | P14-21 | research labs, reviewers |
+| **P14-30** | Clean-machine README test of the pretrained decoders (P14-01 done criterion) (open gap 98, [details](#p14-30-clean-machine-readme-test-of-the-pretrained-decoders-p14-01-done-criterion)) | P14-01 | small teams, research labs |
+| **P14-31** | Packaged trust config for t12-v2 (word trigram LM in the text decoder) (open gap 99, [details](#p14-31-packaged-trust-config-for-t12-v2-word-trigram-lm-in-the-text-decoder)) | P14-01 | small teams, research labs |
+| **P14-32** | Toronto sEMG key-press CNN in the pretrained registry (open gap 100, [details](#p14-32-toronto-semg-key-press-cnn-in-the-pretrained-registry)) | P14-01 | small teams, research labs |
+| **P14-33** | Willett handwriting decoder of our own in the pretrained registry (open gap 101, [details](#p14-33-willett-handwriting-decoder-of-our-own-in-the-pretrained-registry)) | P14-01 | small teams, research labs |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -997,6 +1001,7 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 - **Rules:** weights are not in the git repository and not in the wheel. The package downloads them on first use and checks a SHA-256. Each model card states the data, the licence, the metrics and the limits. Each output stream carries `decoder.weights_sha256` and the licence flag of the [provenance ledger](../concepts/provenance-ledger.md) (P5-03). DATA.md rule 1 ("no trained weights") changes only after P14-02.
 - **Depends on:** M4-12 (T15 decoder), P4-01 (replay adapters), P11-01 (EMG decoders), P2-06 (packaging), P5-03 (licence flags).
 - **Done when:** on a clean machine, `pip install fidetype` and two lines decode one test file of each clean dataset into NTS that passes the conformance level `provenance`. A fresh subagent with no context does this from the README alone. The metrics in each model card match a rerun. No weights are in the repository.
+- **Status (2026-11-19): in progress** (done criterion not met: the weights are not hosted, so the clean-machine README test waits for P14-02; gap 98 = P14-30). Built ([docs](../../docs/pretrained-decoders.md), code [`src/fidetype/pretrained/`](../../src/fidetype/pretrained/__init__.py), commit `2442cbd`): `fidetype.pretrained.load(name)` (alias `fidetype.decoders.load`) -> `.decode(file or array)` -> NTS streams at level `provenance` (`decoder.weights_sha256`, `data.licence`, `data.research_only`), `.guard()` -> the committed trust config, CLI `fidetype decoders list|info|path|verify|decode`. One manifest per model (input spec, files with SHA-256 + size + empty `url` slot, FEP-0010 licence keys, proposed weights licence, metrics, limits). Weights load from `weights=`, `FIDETYPE_PRETRAINED_DIR` or `~/.cache/fidetype/pretrained`; none in git or the wheel (CI checks the wheel). Licence gate: `emg2qwerty-p11-01` (CC BY-NC-SA 4.0) refuses without `accept_research_only=True`. NumPy runtimes, no torch. Models: `t15-m4-13`, `t12-v2`, `kt-semg-lda`, `emg2qwerty-p11-01` available locally; `willett-hw` (gap 101 = P14-33) and `toronto-semg-cnn` (gap 100 = P14-32) planned; T12 guard not packaged (gap 99 = P14-31). Rerun of the card metrics ([results](../../experiments/2026-11-19-p14-01-pretrained/results.md)): T15 val_eval PER 0.1210 (card 0.1210), guard decisions equal to P14-05 on 701 / 701 (104 commits, 17 wrong); T12 test PER 0.2695 (0.269); emg2qwerty generic prompt CER 0.5831 (0.5832); KT run28 key accuracy 0.242 (0.248, other timing path). Hosting = user step, [publishing checklist section J](../../docs/publishing-checklist.md).
 
 #### P14-02 Weight release decision and hosting
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1219,6 +1224,34 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** full texts of Koester & Levine (1994, 1996) or other AAC timing studies; or a public BCI / AAC dataset with commit and confirm timestamps. CPU, literature.
 - **Source:** P14-28 ([results](../../experiments/2026-11-18-p14-28-reading-cost/results.md)): the published values span about 0.01-1.35 s per commit plus 0.25-0.3 s per word, all from able-bodied users or our own `aac-gaze-v1` assumption. The T12 break-even (2.78 s per commit) is within reach of a slow user.
 - **Done when:** the v0.2 reading cost default cites at least one measured checking time for AAC or BCI users (or states that none exists after a documented search), and the sensitivity table is re-read with it.
+
+#### P14-30 Clean-machine README test of the pretrained decoders (P14-01 done criterion)
+- **Gap:** 98 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-01). Follow-up of P14-01.
+- **Status:** `externally_blocked`.
+- **Depends on:** P14-02 (hosted weights; externally blocked, user); M7-09 (PyPI release).
+- **Source:** P14-01 ([results](../../experiments/2026-11-19-p14-01-pretrained/results.md)): the registry, runtimes and reruns are done, but the weights are not hosted, so `pip install fidetype` + two lines cannot run on a clean machine yet; no fresh-agent README test was possible.
+- **Done when:** on a clean machine, `pip install fidetype`, `load(name, download=True)` and `decode(file)` give NTS at level `provenance` for one test file of each clean dataset (T15, T12, KT-sEMG; Willett and Toronto when they exist), done by a fresh subagent from the README alone; SHA-256 checks pass.
+
+#### P14-31 Packaged trust config for t12-v2 (word trigram LM in the text decoder)
+- **Gap:** 99 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-01). Follow-up of P14-01.
+- **Status:** `todo`.
+- **Depends on:** P14-01 (done part); the Tatoeba word trigram LM of the T12 v2 recipe (experiments/2026-11-13-confirmatory-t12-v2/wordlm.py, about 170 MB pickle: needs a pickle-free format).
+- **Source:** P14-01 ([results](../../experiments/2026-11-19-p14-01-pretrained/results.md)): `t12-v2` decodes, but `guard()` raises NoTrustConfig: the committed T12 guards (P6-02, P14-03) used a word decoder with a word trigram LM that is not packaged.
+- **Done when:** `load("t12-v2").guard()` returns the committed T12 guard with its exact text decoder (pickle-free LM file listed in the manifest), and its decisions on the 400 test trials equal the P6-02 / P14-03 decisions.
+
+#### P14-32 Toronto sEMG key-press CNN in the pretrained registry
+- **Gap:** 100 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-01). Follow-up of P14-01.
+- **Status:** `todo`.
+- **Depends on:** P14-01 (done part); experiments/2026-11-11-emg-toronto (local CNN, CC BY 4.0 data).
+- **Source:** P14-01 ([results](../../experiments/2026-11-19-p14-01-pretrained/results.md)): the manifest `toronto-semg-cnn` is `planned`: no NumPy runtime and no reader of the Toronto files yet.
+- **Done when:** `load("toronto-semg-cnn").decode(<Toronto file>)` gives key streams at level `provenance`, and the cross-session key accuracy reruns (card 0.168).
+
+#### P14-33 Willett handwriting decoder of our own in the pretrained registry
+- **Gap:** 101 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-01). Follow-up of P14-01.
+- **Status:** `todo`.
+- **Depends on:** P15-08 (our Willett decoder; running); P14-01 (done part).
+- **Source:** P14-01 ([results](../../experiments/2026-11-19-p14-01-pretrained/results.md)): the manifest `willett-hw` is `planned`: we have no trained Willett handwriting decoder yet.
+- **Done when:** a `willett-hw` manifest with weights, a runtime and a reader; its card metric reruns with `load("willett-hw")`.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
