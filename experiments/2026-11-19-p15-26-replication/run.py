@@ -629,8 +629,8 @@ def t12_unit() -> dict:
         ref = json.loads((SRC_T12 / "trials-t12-B1_rescore_G.json").read_text(encoding="utf-8"))["decisions"]
         extra["reference_check_llm"] = {"same_action_and_text": same_rows(res["llm"]["rows"], ref), "n": len(ref),
                                         "ref_commits": sum(r["action"] == "commit" for r in ref),
-                                        "ref_wrong": sum(r["action"] == "commit" and norm(r["text"]) != norm(r["truth"])
-                                                         for r in ref)}
+                                        "ref_wrong": sum(r["action"] == "commit" and norm(r["text"]) != t
+                                                         for r, t in zip(ref, ht))}  # no truth field in the file
         log(f"t12: L0 vs committed P15-05 T12 B1 decisions: {extra['reference_check_llm']}")
     L0, L1, L2 = rows_of(res["llm"]), rows_of(res["llm_learned"]), rows_of(res["llm_prefix"])
     pairs = [("H1_llm_learned_vs_p5_23_learned_v0_1", r1, L1, "0.1", False),
