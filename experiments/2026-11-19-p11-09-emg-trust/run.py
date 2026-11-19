@@ -180,7 +180,7 @@ def stage_infer() -> dict:
             lp = E.session_log_probs(m, feat, "cpu")
             # check against the cached P11-01 streams (GPU, 6 decimals): first 5 prompt streams
             lab = store.lab(s["session"])
-            diffs = []
+            diffs, pdiffs, agree = [], [], []
             for k in range(min(5, len(lab["prompt_lo"]))):
                 p = P1101 / "train" / "nts" / tag / f"p{k:03d}.jsonl"
                 if not p.exists():
@@ -188,9 +188,15 @@ def stage_infer() -> dict:
                 fr = np.array([r["log_probs"] for r in map(json.loads, p.open(encoding="utf-8"))
                                if r.get("type") == "frame"], np.float32)
                 lo = int(lab["prompt_lo"][k])
-                diffs.append(float(np.abs(fr - lp[lo:lo + len(fr)]).max()))
-            if not diffs or max(diffs) > 1e-3:
-                raise SystemExit(f"p11-09: CPU log-probs of {tag} differ from the P11-01 streams: {diffs}")
+                ref = lp[lo:lo + len(fr)]
+                diffs.append(float(np.abs(fr - ref).max()))
+                pdiffs.append(float(np.abs(np.exp(fr) - np.exp(ref)).max()))
+                agree.append(float((fr.argmax(1) == ref.argmax(1)).mean()))
+            # amendment 2: GPU vs CPU rounding moves very small log-probs (about -30) by up to a few 1e-3, so
+            # the check is on probabilities and on the frame argmax
+            if not diffs or max(pdiffs) > 1e-3 or min(agree) < 1.0:
+                raise SystemExit(f"p11-09: CPU log-probs of {tag} differ from the P11-01 streams: prob {pdiffs}, "
+                                 f"argmax agreement {agree}")
             tmp = f_real.with_name(f_real.stem + ".tmp.npy")
             np.save(tmp, lp.astype(np.float32))
             os.replace(tmp, f_real)
@@ -206,7 +212,9 @@ def stage_infer() -> dict:
                 x = np.full((2000, E.N_CH, E.N_BANDS), np.log(store.index["log_eps"]), np.float32)
                 z = E.session_log_probs(m, x, "cpu")
                 np.save(f_zero, z[-1].astype(np.float32))
-        info["sessions"][tag] = {"frames": int(len(lp)), "max_abs_diff_vs_p1101": max(diffs), "n_checked": len(diffs),
+        info["sessions"][tag] = {"frames": int(len(lp)), "max_abs_diff_vs_p1101": max(diffs),
+                                 "max_abs_prob_diff_vs_p1101": max(pdiffs), "argmax_agreement_min": min(agree),
+                                 "n_checked": len(diffs),
                                  "seconds": round(time.time() - t0, 1)}
         save_json(info, own("infer.json"))
         log(f"infer {tag}: {len(lp)} frames, max diff {max(diffs):.2e}, {time.time() - t0:.0f} s")
