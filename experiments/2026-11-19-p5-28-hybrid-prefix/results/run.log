@@ -1,0 +1,2 @@
+2026-11-19 12:25:10 stage dry start
+2026-11-19 12:25:15 dry: {'checks': {'base_config_id': 'tcfg-e9758d5133d07fa6', 'base_equals_p5_24': True, 'views_base_config_id': 'tcfg-e9758d5133d07fa6', 'views_step': 6, 'views_match_base': True, 'stream_config_id': 'scfg-9171461e4f8cf0c2', 'stream_equals_p5_27': True, 'base_threshold': 0.94}, 'items': 12, 'checkpoints': 386, 's_decide_12': 0.01900005340576172, 'load_s': 5.685091018676758, 'peak_mb': 539.3203125}
