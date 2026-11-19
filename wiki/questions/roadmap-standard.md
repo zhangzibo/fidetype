@@ -386,6 +386,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P4-10: with `--timing detect` the segment ends still come from markers (oracle bursts in the evaluation) or a fixed `--segment-s`.
 - **Done when:** `fidetype live` can end a segment after a pause in the detected onsets (for example `--segment-pause S`), and a KT-sEMG replay with no markers at all reports decisions, wrong commits and segment boundary error against the benchmark bursts.
 
+#### P4-14 Flaky reconnect test on the macOS runner
+- **Gap:** 81 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P13-08). Follow-up of P4-11.
+- **Status:** `todo`.
+- **Depends on:** P4-11 (done).
+- **Source:** CI run 44437999699 (commit `747f2ea`, 2026-11-18), job `conformance (macos-latest)`, full pytest suite: `tests/test_live_reconnect.py::test_loss_drops_cut_segment_and_reconnects` failed with `tries["n"] == 3` (expected 2; `losses == 1`, `reconnects == 1` held), plus "I/O operation on closed file" log errors. 1544 other tests passed. The same commit passed on Linux and Windows, and the previous commit passed on macOS, so the test depends on runner timing.
+- **Done when:** the cause of the extra `reopen()` call is found and fixed in the code or the test (no retry loop, no wider bound); the test passes 20 times in a row on the macOS runner.
+
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
 
