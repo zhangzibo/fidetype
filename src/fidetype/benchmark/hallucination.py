@@ -769,6 +769,24 @@ def cmd_score(a) -> int:
     return 0
 
 
+def _card_diff(a: Any, b: Any, path: str = "card") -> str | None:
+    """The first path where two cards differ, or None. Floats may differ in the last bits (the Clopper-Pearson
+    bisection gives other last bits on other platforms), so they compare with a relative tolerance of 1e-9."""
+    if isinstance(a, float) or isinstance(b, float):
+        if isinstance(a, (int, float)) and isinstance(b, (int, float)) and math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-12):
+            return None
+        return path
+    if isinstance(a, dict):
+        if not isinstance(b, dict) or a.keys() != b.keys():
+            return path
+        return next((d for k in a if (d := _card_diff(a[k], b[k], f"{path}.{k}"))), None)
+    if isinstance(a, list):
+        if not isinstance(b, list) or len(a) != len(b):
+            return path
+        return next((d for i, (x, y) in enumerate(zip(a, b)) if (d := _card_diff(x, y, f"{path}[{i}]"))), None)
+    return None if a == b else path
+
+
 def cmd_rescore(a) -> int:
     oc = json.loads(Path(a.outcomes).read_text(encoding="utf-8"))
     card = score_outcomes(oc, protocol=a.protocol, alpha_wrong=a.alpha_wrong, alpha_fluent=a.alpha_fluent)
@@ -778,8 +796,9 @@ def cmd_rescore(a) -> int:
         rel = (ref.get("meta") or {}).get("outcomes_file")
         if rel and Path(rel).name == Path(a.outcomes).name and "outcomes_file" not in card["meta"]:
             card["meta"] = {**card["meta"], "outcomes_file": rel}  # a pointer the publisher adds to protocol 0.2 cards
-        if ref != json.loads(json.dumps(card)):
-            print(f"score card differs from {a.check}", file=sys.stderr)
+        diff = _card_diff(json.loads(json.dumps(card)), ref)
+        if diff:
+            print(f"score card differs from {a.check} at {diff}", file=sys.stderr)
             return 1
     _dump(card, a.out)
     print(summary_line(card), file=sys.stderr)

@@ -211,6 +211,10 @@ def test_hallucination_rescore_check_ignores_the_recipe(capsys):
         argv[1] = str(ROOT / argv[1])
         assert HB.main(argv) == 0, p.name
     capsys.readouterr()
+    # floats compare with a relative tolerance (other platforms give other last bits); other changes are found
+    assert HB._card_diff({"a": [0.1, {"b": 1}]}, {"a": [0.1 + 1e-16, {"b": 1}]}) is None
+    assert HB._card_diff({"a": [0.1, {"b": 1}]}, {"a": [0.1, {"b": 2}]}) == "card.a[1].b"
+    assert HB._card_diff({"a": 0.1}, {"a": 0.2}) == "card.a" and HB._card_diff({"a": 1}, {"c": 1}) == "card"
 
 
 def test_recipe_value_or_reason():
