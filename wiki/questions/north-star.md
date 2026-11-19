@@ -79,7 +79,7 @@ One write-up per experiment line. Each page gives the question, the pre-registra
 
 | write-up | pillar | steps | main pre-registered verdicts | status |
 |---|---|---|---|---|
-| [E2 self-teaching](frontier-e2-self-teaching.md) | F1 | P15-01, P15-02, P15-03a, P15-13, P15-23, P15-24 | P15-01 S4 pass, **S5 fail**; P15-02 S5 pass; P15-03a **H2, H3 fail**; P15-13 G1-G6 pass | P15-24 replay running; GPU runs (P15-03) not run |
+| [E2 self-teaching](frontier-e2-self-teaching.md) | F1 | P15-01, P15-02, P15-03a, P15-13, P15-23, P15-24 | P15-01 S4 pass, **S5 fail**; P15-02 S5 pass; P15-03a **H2, H3 fail**; P15-13 G1-G6 pass; P15-24 R1-R7 pass | P15-24 done; GPU runs (P15-03) not run |
 | [F1 online guarantees](frontier-f1-online-guarantees.md) | F1 | P15-04, G3 review + fixes (P15-17), P5-11 | R1, R3-R5 pass; review "sound with fixes" (H1 fixed) | done |
 | [E3 hallucination](frontier-e3-hallucination.md) | F2 | P15-05, P15-06, P15-14, P15-07, P15-15, M4-13 reruns | **S4 fails on M4-12 and M4-13**; bound H1-H4 pass on T15; T12 certified by V-single; M4-13 B1 first pass of all tracks (protocol 0.2) | done; P15-16 open |
 | [Decoder quality](frontier-decoder-quality.md) | base | M4-12, M4-13 | M4-12 "close" rule **fail** (PER 0.2574); M4-13 pass (0.1210) | done |

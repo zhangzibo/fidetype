@@ -22,7 +22,15 @@ Three research pillars lead the work ([north star](wiki/questions/north-star.md)
 | **F2** Faithful language-model decoding | Can a language model improve decoded text while a run-time check, with a stated bound, stops text that the neural signal does not support? |
 | **F3** Cross-body language model | Can one shared output space let a new sensor or a new user start with minutes of data? |
 
-**These are open research questions. We have no results for them yet.** The first experiments start in November 2026 on public data. The trust layer, the decoders and NTS below are the foundation that they build on.
+**Status (2026-11-18): first results, not answers.** All results below are pre-registered replays on public, offline data (mainly the T12 and T15 implant datasets). They are **not user studies**. Negative results are kept. The evidence is in the [result write-ups](wiki/questions/north-star.md#frontier-result-write-ups-p15-12-2026-11-18).
+
+| Pillar | First results | Not run yet or open |
+|---|---|---|
+| **F1** | The default-deny update gate passes G1–G6: it refuses worse and broken decoders under partial feedback, which the earlier gate did not ([E2 write-up](wiki/questions/frontier-e2-self-teaching.md)). The same-decoder re-calibration rule passes R1–R7: 0 of 8 re-calibrations refused, every broken or worse decoder still refused ([P15-24 results](experiments/2026-11-18-p15-24-recal-rule/results.md)). The wrong-commit bound holds with feedback on shown items only, and an audit of other thresholds has 0 / 200 violations ([online guarantees](wiki/questions/frontier-f1-online-guarantees.md)). | The full GPU runs of E2 (P15-03). The weak decoders give few commits, so some results are safe but not yet useful. |
+| **F2** | LLM rescoring lowers WER on T15. The grounding check stops every swapped-signal commit. A certified fluent-wrong bound commits 36 sentences on T15 (34 right). This guard is the first system to pass all tracks of hallucination protocol 0.2 ([E3 write-up](wiki/questions/frontier-e3-hallucination.md)). | E3 **fails** its main pre-registered rule (S4: fluent-wrong commits not above the n-gram arm). The WER gain does not replicate on T12. |
+| **F3** | None. | E1 cross-body pretraining (P15-08) is **not run yet**. |
+
+Safe WPM (words per minute that the guard commits right) is the user-value test. Under the adopted metric `safe-wpm/0.1`, the best value is 2.64, below gaze typing (4.02). Under `safe-wpm/0.2` it is 4.87, but **v0.2 is PROPOSED, not adopted** ([safe WPM write-up](wiki/questions/frontier-safe-wpm.md)). The trust layer, the decoders and NTS below are the foundation of this work.
 
 ## Why NTS exists
 
@@ -108,7 +116,7 @@ Next steps: [Getting started](docs/getting-started.md) (emit a stream from your 
 | [spec/nts-1.0-rc4.md](spec/nts-1.0-rc4.md) | The normative NTS 1.0 RC4 draft (rules with stable ids, for example `TD-9`) |
 | [spec/README.md](spec/README.md) | All spec versions, FEPs, stability levels, conformance profiles |
 | [wiki/](wiki/index.md) | The research knowledge base: sources, concepts, results |
-| [Roadmap](wiki/questions/roadmap-standard.md) | Phases P1–P13 from v0.1 to a full standard; live progress on the [dashboard](wiki/progress/index.html) |
+| [Roadmap](wiki/questions/roadmap-standard.md) | Phases P1–P16, from v0.1 to a full standard and the P15 frontier research; live progress on the [dashboard](wiki/progress/index.html) |
 
 ## How NTS relates to other projects
 
