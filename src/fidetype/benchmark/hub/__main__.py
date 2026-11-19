@@ -1,5 +1,5 @@
-"""``python -m fidetype.benchmark.hub``: check the dataset registry."""
+"""``python -m fidetype.benchmark.hub``: the hub command line (list, show, instructions, verify, check, recipe, rerun)."""
 
-from fidetype.benchmark.hub import main
+from fidetype.benchmark.hub.cli import main
 
 raise SystemExit(main())

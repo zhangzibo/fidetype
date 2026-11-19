@@ -648,6 +648,11 @@ def score(track: str, folder: str | PathLike[str], truth: dict[str, dict[str, An
     res["certification"] = (res.get("safe_wpm") or {}).get("status")
     if tdef.research_only:
         res["notes"].append(f"RESEARCH ONLY: {tdef.licence} data. Results and weights are non-commercial.")
+    # Rerun recipe (P13-06, docs/hub-design.md section 5): every versioned input and the exact command.
+    from fidetype.benchmark.hub.recipe import RESCORE_INPUTS, make_recipe, score_command
+
+    res["rerun"] = make_recipe(res, command=score_command(track, B=B, seed=seed), level="rescore",
+                               inputs=RESCORE_INPUTS)
     return res
 
 

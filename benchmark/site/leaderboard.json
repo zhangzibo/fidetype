@@ -33,7 +33,80 @@
     "file": "spanishbcbl-meg-async__convctc-m-async__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1
+     },
+     "track": {
+      "track": "spanishbcbl-meg-async",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.spanishbcbl_meg",
+      "package_version": "0.0.1",
+      "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+     },
+     "decoder": {
+      "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+      "version": "m1-09-r4b-full-medium",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+      "weights_sha256": null,
+      "training_data": [
+       "SpanishBCBL train split (CC BY-NC 4.0)",
+       "Tatoeba es (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-g1-async-meg-trust/results/items-meg-async.json; experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json; experiments/2026-11-11-g1-async-meg-trust/results/null-audit-async.json; experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/per_sentence_cer.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/ltt",
@@ -66,7 +139,80 @@
     "file": "spanishbcbl-meg-async__convctc-m-async__ltt.json",
     "safe_wpm": 0.029166901195842948,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1
+     },
+     "track": {
+      "track": "spanishbcbl-meg-async",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.spanishbcbl_meg",
+      "package_version": "0.0.1",
+      "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+     },
+     "decoder": {
+      "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+      "version": "m1-09-r4b-full-medium",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+      "weights_sha256": null,
+      "training_data": [
+       "SpanishBCBL train split (CC BY-NC 4.0)",
+       "Tatoeba es (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + LTT",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-g1-async-meg-trust/results/items-meg-async.json; experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json; experiments/2026-11-11-g1-async-meg-trust/results/null-audit-async.json; experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/per_sentence_cer.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/crc",
@@ -99,7 +245,80 @@
     "file": "spanishbcbl-meg-async__convctc-m-async__crc.json",
     "safe_wpm": 0.029275959301280442,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.03 [0.00, 0.17] (CRC a=0.05)"
+    "safe_wpm_s": "0.03 [0.00, 0.17] (CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1
+     },
+     "track": {
+      "track": "spanishbcbl-meg-async",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.spanishbcbl_meg",
+      "package_version": "0.0.1",
+      "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+     },
+     "decoder": {
+      "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+      "version": "m1-09-r4b-full-medium",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+      "weights_sha256": null,
+      "training_data": [
+       "SpanishBCBL train split (CC BY-NC 4.0)",
+       "Tatoeba es (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-g1-async-meg-trust/results/items-meg-async.json; experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json; experiments/2026-11-11-g1-async-meg-trust/results/null-audit-async.json; experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/per_sentence_cer.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/always-commit",
@@ -131,7 +350,80 @@
     "file": "spanishbcbl-meg-async__convctc-m-async__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1
+     },
+     "track": {
+      "track": "spanishbcbl-meg-async",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.spanishbcbl_meg",
+      "package_version": "0.0.1",
+      "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+     },
+     "decoder": {
+      "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+      "version": "m1-09-r4b-full-medium",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+      "weights_sha256": null,
+      "training_data": [
+       "SpanishBCBL train split (CC BY-NC 4.0)",
+       "Tatoeba es (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-g1-async-meg-trust/results/items-meg-async.json; experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json; experiments/2026-11-11-g1-async-meg-trust/results/null-audit-async.json; experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/per_sentence_cer.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "b2t25-t15-copytask": [
@@ -166,7 +458,79 @@
     "file": "b2t25-t15-copytask__published__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15-copytask",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Card et al. 2024 online decoder (published sentence)",
+      "version": "t15-copytask-online",
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "weights_sha256": null,
+      "training_data": [
+       "T15 sessions (Card et al. 2024)"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "tools/benchmark/make_b2t25_published.py (local stream submission, 816 NTS files)",
+      "how": "the scorer reads a local NTS stream submission (816 files, never in git)"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15-copytask/published/crc",
@@ -198,7 +562,79 @@
     "file": "b2t25-t15-copytask__published__crc.json",
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "13.42 [11.72, 15.08] (CRC a=0.05)"
+    "safe_wpm_s": "13.42 [11.72, 15.08] (CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15-copytask",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Card et al. 2024 online decoder (published sentence)",
+      "version": "t15-copytask-online",
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "weights_sha256": null,
+      "training_data": [
+       "T15 sessions (Card et al. 2024)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-10-b2t25-trust/results/trust.json; experiments/2026-11-11-m2-13-conformal/results/items-b2t-published.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15-copytask/published/trust",
@@ -230,7 +666,79 @@
     "file": "b2t25-t15-copytask__published__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15-copytask",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Card et al. 2024 online decoder (published sentence)",
+      "version": "t15-copytask-online",
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "weights_sha256": null,
+      "training_data": [
+       "T15 sessions (Card et al. 2024)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-10-b2t25-trust/results/trust.json; experiments/2026-11-11-m2-13-conformal/results/items-b2t-published.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15-copytask/published/ltt",
@@ -262,7 +770,79 @@
     "file": "b2t25-t15-copytask__published__ltt.json",
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "12.24 [10.98, 13.45] (LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "12.24 [10.98, 13.45] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15-copytask",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Card et al. 2024 online decoder (published sentence)",
+      "version": "t15-copytask-online",
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "weights_sha256": null,
+      "training_data": [
+       "T15 sessions (Card et al. 2024)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + LTT",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-10-b2t25-trust/results/trust.json; experiments/2026-11-11-m2-13-conformal/results/items-b2t-published.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/crc",
@@ -294,7 +874,79 @@
     "file": "b2t25-t15-copytask__ours__crc.json",
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "safe_wpm_s": "4.90 [4.10, 5.62] ! ABOVE alpha (test 0.062; CRC a=0.05)"
+    "safe_wpm_s": "4.90 [4.10, 5.62] ! ABOVE alpha (test 0.062; CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15-copytask",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+      "version": "m6-06",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+      "weights_sha256": null,
+      "training_data": [
+       "none (decoding only)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-10-b2t25-trust/results/trust.json; experiments/2026-11-11-m2-13-conformal/results/items-b2t-ours.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/trust",
@@ -326,7 +978,79 @@
     "file": "b2t25-t15-copytask__ours__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15-copytask",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+      "version": "m6-06",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+      "weights_sha256": null,
+      "training_data": [
+       "none (decoding only)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-10-b2t25-trust/results/trust.json; experiments/2026-11-11-m2-13-conformal/results/items-b2t-ours.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/ltt",
@@ -358,7 +1082,79 @@
     "file": "b2t25-t15-copytask__ours__ltt.json",
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "4.05 [3.22, 4.77] (LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "4.05 [3.22, 4.77] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15-copytask",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+      "version": "m6-06",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+      "weights_sha256": null,
+      "training_data": [
+       "none (decoding only)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + LTT",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-10-b2t25-trust/results/trust.json; experiments/2026-11-11-m2-13-conformal/results/items-b2t-ours.json",
+      "how": "the scorer recomputes the metrics from committed per-trial arrays"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15-copytask/ours/always-commit",
@@ -388,7 +1184,79 @@
     "file": "b2t25-t15-copytask__ours__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15-copytask",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+      "version": "m6-06",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+      "weights_sha256": null,
+      "training_data": [
+       "none (decoding only)"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-10-b2t25-trust/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "toronto-semg-composed": [
@@ -422,7 +1290,80 @@
     "file": "toronto-semg-composed__cnn-calib__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (session-calibrated; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg-composed/cnn-calib/crc",
@@ -454,7 +1395,80 @@
     "file": "toronto-semg-composed__cnn-calib__crc.json",
     "safe_wpm": 0.5473422892202503,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.55 [0.28, 0.86] (CRC a=0.05)"
+    "safe_wpm_s": "0.55 [0.28, 0.86] (CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (session-calibrated; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg-composed/cnn-calib/commit",
@@ -486,7 +1500,80 @@
     "file": "toronto-semg-composed__cnn-calib__commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (session-calibrated; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/crc",
@@ -518,7 +1605,80 @@
     "file": "toronto-semg-composed__cnn-xsession__crc.json",
     "safe_wpm": 0.25189348854789406,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.25 [0.06, 0.46] (CRC a=0.05)"
+    "safe_wpm_s": "0.25 [0.06, 0.46] (CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-session; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/trust",
@@ -550,7 +1710,80 @@
     "file": "toronto-semg-composed__cnn-xsession__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-session; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsession/commit",
@@ -582,7 +1815,80 @@
     "file": "toronto-semg-composed__cnn-xsession__commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-session; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/crc",
@@ -614,7 +1920,80 @@
     "file": "toronto-semg-composed__cnn-xsubject__crc.json",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "safe_wpm_s": "0.00 (vacuous: no commits; CRC a=0.05)"
+    "safe_wpm_s": "0.00 (vacuous: no commits; CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-subject; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/trust",
@@ -646,7 +2025,80 @@
     "file": "toronto-semg-composed__cnn-xsubject__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-subject; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg-composed/cnn-xsubject/commit",
@@ -678,7 +2130,80 @@
     "file": "toronto-semg-composed__cnn-xsubject__commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg-composed",
+      "split_version": "tracks-v0.1",
+      "digest": null
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-subject; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": null,
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.1",
+      "python": "3.12"
+     },
+     "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+      },
+      {
+       "step": "controls",
+       "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+      },
+      {
+       "step": "safe-wpm",
+       "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+      }
+     ],
+     "inputs": {
+      "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+      "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+     },
+     "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "b2t25-t15": [
@@ -712,7 +2237,76 @@
     "file": "b2t25-t15__published__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Card et al. 2024 online decoder (published sentence)",
+      "version": "t15-copytask-online",
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "weights_sha256": null,
+      "training_data": [
+       "T15 sessions (Card et al. 2024)"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__always-commit --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__always-commit --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/published/crc",
@@ -744,7 +2338,76 @@
     "file": "b2t25-t15__published__crc.json",
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "13.42 [11.77, 15.17] (CRC a=0.05)"
+    "safe_wpm_s": "13.42 [11.77, 15.17] (CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Card et al. 2024 online decoder (published sentence)",
+      "version": "t15-copytask-online",
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "weights_sha256": null,
+      "training_data": [
+       "T15 sessions (Card et al. 2024)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__crc --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__crc.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__crc --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__crc.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__crc (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/published/trust",
@@ -776,7 +2439,76 @@
     "file": "b2t25-t15__published__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Card et al. 2024 online decoder (published sentence)",
+      "version": "t15-copytask-online",
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "weights_sha256": null,
+      "training_data": [
+       "T15 sessions (Card et al. 2024)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__trust.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__trust.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__trust (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/published/ltt",
@@ -808,7 +2540,76 @@
     "file": "b2t25-t15__published__ltt.json",
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "12.24 [11.05, 13.51] (LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "12.24 [11.05, 13.51] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Card et al. 2024 online decoder (published sentence)",
+      "version": "t15-copytask-online",
+      "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+      "weights_sha256": null,
+      "training_data": [
+       "T15 sessions (Card et al. 2024)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + LTT",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__ltt --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__ltt.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__ltt --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__ltt.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__ltt (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/m4-13/guard",
@@ -840,7 +2641,76 @@
     "file": "b2t25-t15__m4-13__guard.json",
     "safe_wpm": 4.065168084942968,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "4.07 [2.51, 5.74] (LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "4.07 [2.51, 5.74] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours)",
+      "version": "m4-13",
+      "url": "experiments/2026-11-15-m4-13-long-train",
+      "weights_sha256": null,
+      "training_data": [
+       "B2T '25 HDF5 train partition (CC0); it holds about 368 of the 816 b2t25-t15 test trials, so only the val_eval trials are scored"
+      ]
+     },
+     "policy": {
+      "name": "drop-in guard (P14-03 recipe)",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__m4-13__guard --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__m4-13__guard.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py t15-m4-13"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__m4-13__guard --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__m4-13__guard.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__m4-13__guard (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git da2981a (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/ours/always-commit",
@@ -872,7 +2742,76 @@
     "file": "b2t25-t15__ours__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+      "version": "m6-06",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+      "weights_sha256": null,
+      "training_data": [
+       "none (decoding only)"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__always-commit --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__always-commit --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/ours/crc",
@@ -904,7 +2843,76 @@
     "file": "b2t25-t15__ours__crc.json",
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "safe_wpm_s": "4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05)"
+    "safe_wpm_s": "4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+      "version": "m6-06",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+      "weights_sha256": null,
+      "training_data": [
+       "none (decoding only)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__crc --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__crc.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__crc --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__crc.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__crc (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/ours/trust",
@@ -936,7 +2944,76 @@
     "file": "b2t25-t15__ours__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+      "version": "m6-06",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+      "weights_sha256": null,
+      "training_data": [
+       "none (decoding only)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__trust.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__trust.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__trust (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/ours/ltt",
@@ -968,7 +3045,76 @@
     "file": "b2t25-t15__ours__ltt.json",
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "4.05 [3.25, 4.77] (LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "4.05 [3.25, 4.77] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+      "version": "m6-06",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
+      "weights_sha256": null,
+      "training_data": [
+       "none (decoding only)"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + LTT",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__ltt --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__ltt.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__ltt --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__ltt.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__ltt (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t25-t15/m4-12/guard",
@@ -1000,7 +3146,76 @@
     "file": "b2t25-t15__m4-12__guard.json",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "brain-to-text-25",
+      "version": "dryad-2025-07-03",
+      "revision": 1
+     },
+     "track": {
+      "track": "b2t25-t15",
+      "split_version": "tracks-v0.2",
+      "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.b2t25",
+      "package_version": "0.0.1",
+      "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+     },
+     "decoder": {
+      "name": "M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours)",
+      "version": "m4-12",
+      "url": "experiments/2026-11-14-m4-12-decoder-retrain",
+      "weights_sha256": null,
+      "training_data": [
+       "B2T '25 HDF5 train partition (CC0); it holds about 368 of the 816 b2t25-t15 test trials, so only the val_eval trials are scored"
+      ]
+     },
+     "policy": {
+      "name": "drop-in guard (P14-03 recipe)",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__m4-12__guard --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__m4-12__guard.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py t15-m4-12"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__m4-12__guard --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__m4-12__guard.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__m4-12__guard (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "b2t24-t12": [
@@ -1034,7 +3249,73 @@
     "file": "b2t24-t12__t12v2__guard.json",
     "safe_wpm": 0.475882726405761,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.48 [0.20, 0.78] (LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "0.48 [0.20, 0.78] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'brain-to-text-24' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.5061/dryad.x69p8czpq",
+     "track": {
+      "track": "b2t24-t12",
+      "split_version": "tracks-v0.2",
+      "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14"
+     },
+     "adapter": {
+      "module": "fidetype.benchmark.tracks",
+      "package_version": "0.0.1",
+      "sha256": "c330499db0defe8f0d9bbff467cb5d3b24e99245d00009e5de46d991176cd880"
+     },
+     "decoder": {
+      "name": "t12-v2 GRU + word LM (ours)",
+      "version": "5317b0600a5c",
+      "url": "experiments/2026-11-13-confirmatory-t12-v2",
+      "weights_sha256": null,
+      "training_data": [
+       "b2t24-t12 train split (train blocks of the train partition)"
+      ]
+     },
+     "policy": {
+      "name": "drop-in guard (P14-03 recipe)",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t24-t12 <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__guard --truth <derived>/p6-02-scorer/truth/b2t24-t12.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t24-t12__t12v2__guard.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t24-t12 --data <data> --out <derived>/p6-02-scorer/truth/b2t24-t12.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py t12"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t24-t12 <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__guard --truth <derived>/p6-02-scorer/truth/b2t24-t12.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t24-t12__t12v2__guard.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__guard (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/always commit top-1",
@@ -1066,7 +3347,73 @@
     "file": "b2t24-t12__t12v2__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'brain-to-text-24' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.5061/dryad.x69p8czpq",
+     "track": {
+      "track": "b2t24-t12",
+      "split_version": "tracks-v0.2",
+      "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14"
+     },
+     "adapter": {
+      "module": "fidetype.benchmark.tracks",
+      "package_version": "0.0.1",
+      "sha256": "c330499db0defe8f0d9bbff467cb5d3b24e99245d00009e5de46d991176cd880"
+     },
+     "decoder": {
+      "name": "t12-v2 GRU + word LM (ours)",
+      "version": "5317b0600a5c",
+      "url": "experiments/2026-11-13-confirmatory-t12-v2",
+      "weights_sha256": null,
+      "training_data": [
+       "b2t24-t12 train split (train blocks of the train partition)"
+      ]
+     },
+     "policy": {
+      "name": "always commit top-1",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score b2t24-t12 <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__always-commit --truth <derived>/p6-02-scorer/truth/b2t24-t12.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t24-t12__t12v2__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth b2t24-t12 --data <data> --out <derived>/p6-02-scorer/truth/b2t24-t12.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py t12"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score b2t24-t12 <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__always-commit --truth <derived>/p6-02-scorer/truth/b2t24-t12.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t24-t12__t12v2__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "willett-hw": [
@@ -1100,7 +3447,73 @@
     "file": "willett-hw__rnn-published__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'willett-handwriting' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.5061/dryad.wh70rxwmv",
+     "track": {
+      "track": "willett-hw",
+      "split_version": "tracks-v0.2",
+      "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.willett_handwriting",
+      "package_version": "0.0.1",
+      "sha256": "1cd130af2629f6035d62b326241813dee73d4b96fa62b65b7ab2b3ae1eee9af1"
+     },
+     "decoder": {
+      "name": "Willett 2021 real-time RNN (published output) + CTC beam with word list",
+      "version": "dataset",
+      "url": "https://doi.org/10.5061/dryad.wh70rxwmv",
+      "weights_sha256": null,
+      "training_data": [
+       "Willett et al. 2021 own training (earlier sessions)"
+      ]
+     },
+     "policy": {
+      "name": "always commit the real-time RNN text (as typed on screen in the study)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score willett-hw <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__always-commit --truth <derived>/p6-02-scorer/truth/willett-hw.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/willett-hw__rnn-published__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth willett-hw --data <data> --out <derived>/p6-02-scorer/truth/willett-hw.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py willett"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score willett-hw <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__always-commit --truth <derived>/p6-02-scorer/truth/willett-hw.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/willett-hw__rnn-published__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "willett-hw/Willett 2021 real-time RNN (published output) + CTC beam with word list/drop-in guard (built-in CTC beam + word list)",
@@ -1132,7 +3545,73 @@
     "file": "willett-hw__rnn-published__guard.json",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'willett-handwriting' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.5061/dryad.wh70rxwmv",
+     "track": {
+      "track": "willett-hw",
+      "split_version": "tracks-v0.2",
+      "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.willett_handwriting",
+      "package_version": "0.0.1",
+      "sha256": "1cd130af2629f6035d62b326241813dee73d4b96fa62b65b7ab2b3ae1eee9af1"
+     },
+     "decoder": {
+      "name": "Willett 2021 real-time RNN (published output) + CTC beam with word list",
+      "version": "dataset",
+      "url": "https://doi.org/10.5061/dryad.wh70rxwmv",
+      "weights_sha256": null,
+      "training_data": [
+       "Willett et al. 2021 own training (earlier sessions)"
+      ]
+     },
+     "policy": {
+      "name": "drop-in guard (built-in CTC beam + word list)",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score willett-hw <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__guard --truth <derived>/p6-02-scorer/truth/willett-hw.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/willett-hw__rnn-published__guard.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth willett-hw --data <data> --out <derived>/p6-02-scorer/truth/willett-hw.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py willett"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score willett-hw <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__guard --truth <derived>/p6-02-scorer/truth/willett-hw.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/willett-hw__rnn-published__guard.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__guard (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "toronto-semg": [
@@ -1166,7 +3645,77 @@
     "file": "toronto-semg__cnn-calib__crc.json",
     "safe_wpm": 0.5473422892202501,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.55 [0.29, 0.86] (CRC a=0.05)"
+    "safe_wpm_s": "0.55 [0.29, 0.86] (CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (session-calibrated; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__crc.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__crc.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__crc (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg/cnn-calib/trust",
@@ -1198,7 +3747,77 @@
     "file": "toronto-semg__cnn-calib__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (session-calibrated; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__trust.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__trust.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__trust (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg/cnn-calib/always-commit",
@@ -1230,7 +3849,77 @@
     "file": "toronto-semg__cnn-calib__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (session-calibrated; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg/cnn-xsession/crc",
@@ -1262,7 +3951,77 @@
     "file": "toronto-semg__cnn-xsession__crc.json",
     "safe_wpm": 0.251893488547894,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.25 [0.07, 0.47] (CRC a=0.05)"
+    "safe_wpm_s": "0.25 [0.07, 0.47] (CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-session; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__crc.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__crc.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__crc (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg/cnn-xsession/trust",
@@ -1294,7 +4053,77 @@
     "file": "toronto-semg__cnn-xsession__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-session; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__trust.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__trust.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__trust (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg/cnn-xsession/always-commit",
@@ -1326,7 +4155,77 @@
     "file": "toronto-semg__cnn-xsession__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-session; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg/cnn-xsubject/crc",
@@ -1358,7 +4257,77 @@
     "file": "toronto-semg__cnn-xsubject__crc.json",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "safe_wpm_s": "0.00 (vacuous: no commits; CRC a=0.05)"
+    "safe_wpm_s": "0.00 (vacuous: no commits; CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-subject; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__crc.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__crc.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__crc (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg/cnn-xsubject/trust",
@@ -1390,7 +4359,77 @@
     "file": "toronto-semg__cnn-xsubject__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-subject; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__trust.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__trust.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__trust (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "toronto-semg/cnn-xsubject/always-commit",
@@ -1422,7 +4461,77 @@
     "file": "toronto-semg__cnn-xsubject__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "toronto-semg",
+      "version": "borealis-v1-file-836662",
+      "revision": 1
+     },
+     "track": {
+      "track": "toronto-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.toronto_semg",
+      "package_version": "0.0.1",
+      "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+     },
+     "decoder": {
+      "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+      "version": "m6-07",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+      "weights_sha256": null,
+      "training_data": [
+       "Toronto sEMG (cross-subject; CC BY 4.0)",
+       "Tatoeba en (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "kt-semg": [
@@ -1457,7 +4566,73 @@
     "file": "kt-semg__lda-oracle__guard.json",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'kt-semg' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.7910/DVN/AV6XIR",
+     "track": {
+      "track": "kt-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "dfe0acb7444ff4094314a5c50de3a07d43db43d0db92da1d229e50793e869fa4"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.kt_semg",
+      "package_version": "0.0.1",
+      "sha256": "e59d8e6ec5ac9c222b8bfa70adaaa820f7b35a2a3745f1a489083bc4a984a722"
+     },
+     "decoder": {
+      "name": "shrinkage-LDA key decoder (adapter reference, oracle key timing)",
+      "version": "6a30c5ea3cd0",
+      "url": "src/fidetype/adapters/kt_semg.py (LdaKeyDecoder)",
+      "weights_sha256": null,
+      "training_data": [
+       "kt-semg train split (20 runs)"
+      ]
+     },
+     "policy": {
+      "name": "drop-in guard (built-in CTC beam, no LM)",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score kt-semg <derived>/p6-02-scorer/submissions/kt-semg__lda-oracle__guard --truth <derived>/p6-02-scorer/truth/kt-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/kt-semg__lda-oracle__guard.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth kt-semg --data <data> --out <derived>/p6-02-scorer/truth/kt-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py kt"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score kt-semg <derived>/p6-02-scorer/submissions/kt-semg__lda-oracle__guard --truth <derived>/p6-02-scorer/truth/kt-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/kt-semg__lda-oracle__guard.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02-scorer/submissions/kt-semg__lda-oracle__guard (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "kt-semg/shrinkage-LDA key decoder (adapter reference, oracle key timing)/always commit top-1",
@@ -1490,7 +4665,73 @@
     "file": "kt-semg__lda-oracle__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'kt-semg' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.7910/DVN/AV6XIR",
+     "track": {
+      "track": "kt-semg",
+      "split_version": "tracks-v0.2",
+      "digest": "dfe0acb7444ff4094314a5c50de3a07d43db43d0db92da1d229e50793e869fa4"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.kt_semg",
+      "package_version": "0.0.1",
+      "sha256": "e59d8e6ec5ac9c222b8bfa70adaaa820f7b35a2a3745f1a489083bc4a984a722"
+     },
+     "decoder": {
+      "name": "shrinkage-LDA key decoder (adapter reference, oracle key timing)",
+      "version": "6a30c5ea3cd0",
+      "url": "src/fidetype/adapters/kt_semg.py (LdaKeyDecoder)",
+      "weights_sha256": null,
+      "training_data": [
+       "kt-semg train split (20 runs)"
+      ]
+     },
+     "policy": {
+      "name": "always commit top-1",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score kt-semg <derived>/p6-02-scorer/submissions/kt-semg__lda-oracle__always-commit --truth <derived>/p6-02-scorer/truth/kt-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/kt-semg__lda-oracle__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth kt-semg --data <data> --out <derived>/p6-02-scorer/truth/kt-semg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py kt"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score kt-semg <derived>/p6-02-scorer/submissions/kt-semg__lda-oracle__always-commit --truth <derived>/p6-02-scorer/truth/kt-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/kt-semg__lda-oracle__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02-scorer/submissions/kt-semg__lda-oracle__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "spanishbcbl-meg": [
@@ -1525,7 +4766,77 @@
     "file": "spanishbcbl-meg__convctc-m-async__trust.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1
+     },
+     "track": {
+      "track": "spanishbcbl-meg",
+      "split_version": "tracks-v0.2",
+      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.spanishbcbl_meg",
+      "package_version": "0.0.1",
+      "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+     },
+     "decoder": {
+      "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+      "version": "m1-09-r4b-full-medium",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+      "weights_sha256": null,
+      "training_data": [
+       "SpanishBCBL train split (CC BY-NC 4.0)",
+       "Tatoeba es (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate (plug-in fit)",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__trust --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__trust.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__trust --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__trust.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__trust (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "spanishbcbl-meg/convctc-m-async/ltt",
@@ -1558,7 +4869,77 @@
     "file": "spanishbcbl-meg__convctc-m-async__ltt.json",
     "safe_wpm": 0.029166901195842945,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1
+     },
+     "track": {
+      "track": "spanishbcbl-meg",
+      "split_version": "tracks-v0.2",
+      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.spanishbcbl_meg",
+      "package_version": "0.0.1",
+      "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+     },
+     "decoder": {
+      "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+      "version": "m1-09-r4b-full-medium",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+      "weights_sha256": null,
+      "training_data": [
+       "SpanishBCBL train split (CC BY-NC 4.0)",
+       "Tatoeba es (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + LTT",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__ltt --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__ltt.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__ltt --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__ltt.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__ltt (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "spanishbcbl-meg/convctc-m-async/crc",
@@ -1591,7 +4972,77 @@
     "file": "spanishbcbl-meg__convctc-m-async__crc.json",
     "safe_wpm": 0.029275959301280435,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.03 [0.00, 0.17] (CRC a=0.05)"
+    "safe_wpm_s": "0.03 [0.00, 0.17] (CRC a=0.05)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1
+     },
+     "track": {
+      "track": "spanishbcbl-meg",
+      "split_version": "tracks-v0.2",
+      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.spanishbcbl_meg",
+      "package_version": "0.0.1",
+      "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+     },
+     "decoder": {
+      "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+      "version": "m1-09-r4b-full-medium",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+      "weights_sha256": null,
+      "training_data": [
+       "SpanishBCBL train split (CC BY-NC 4.0)",
+       "Tatoeba es (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "trust gate + CRC",
+      "config_id": null,
+      "guarantee": "crc"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__crc --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__crc.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__crc --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__crc.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__crc (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "spanishbcbl-meg/convctc-m-async/always-commit",
@@ -1624,7 +5075,77 @@
     "file": "spanishbcbl-meg__convctc-m-async__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": {
+      "id": "spanishbcbl",
+      "version": "hf-snapshot-2026-11-08",
+      "revision": 1
+     },
+     "track": {
+      "track": "spanishbcbl-meg",
+      "split_version": "tracks-v0.2",
+      "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.spanishbcbl_meg",
+      "package_version": "0.0.1",
+      "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+     },
+     "decoder": {
+      "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+      "version": "m1-09-r4b-full-medium",
+      "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+      "weights_sha256": null,
+      "training_data": [
+       "SpanishBCBL train split (CC BY-NC 4.0)",
+       "Tatoeba es (CC BY 2.0 FR) for the char LM"
+      ]
+     },
+     "policy": {
+      "name": "always-commit",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__always-commit --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__always-commit --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ],
   "emg2qwerty": [
@@ -1660,7 +5181,73 @@
     "file": "emg2qwerty__lda-oracle__guard.json",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)"
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+     "track": {
+      "track": "emg2qwerty",
+      "split_version": "tracks-v0.2",
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.emg2qwerty",
+      "package_version": "0.0.1",
+      "sha256": "fe238f494228ca402863f3f7a8617eeb7c13cbedae6e06e8865c0643c74201cf"
+     },
+     "decoder": {
+      "name": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing)",
+      "version": "0",
+      "url": "src/fidetype/adapters/emg2qwerty.py",
+      "weights_sha256": null,
+      "training_data": [
+       "emg2qwerty: the last train session of each test user"
+      ]
+     },
+     "policy": {
+      "name": "drop-in guard (built-in CTC beam, no LM)",
+      "config_id": null,
+      "guarantee": "ltt"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__lda-oracle__guard.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py e2q"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__lda-oracle__guard.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__guard (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    },
    {
     "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/always commit top-1",
@@ -1694,7 +5281,73 @@
     "file": "emg2qwerty__lda-oracle__always-commit.json",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)"
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+     "track": {
+      "track": "emg2qwerty",
+      "split_version": "tracks-v0.2",
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.emg2qwerty",
+      "package_version": "0.0.1",
+      "sha256": "fe238f494228ca402863f3f7a8617eeb7c13cbedae6e06e8865c0643c74201cf"
+     },
+     "decoder": {
+      "name": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing)",
+      "version": "0",
+      "url": "src/fidetype/adapters/emg2qwerty.py",
+      "weights_sha256": null,
+      "training_data": [
+       "emg2qwerty: the last train session of each test user"
+      ]
+     },
+     "policy": {
+      "name": "always commit top-1",
+      "config_id": null,
+      "guarantee": "none"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__always-commit --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__lda-oracle__always-commit.json",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py e2q"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__always-commit --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__lda-oracle__always-commit.json"
+      }
+     ],
+     "inputs": {
+      "outputs": "submission folder <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__always-commit (decoded text; local only, never in git, hub decision Q3)",
+      "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+    }
    }
   ]
  }

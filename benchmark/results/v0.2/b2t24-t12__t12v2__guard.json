@@ -227,5 +227,70 @@
   "n_parent_covered": 880
  },
  "status": "scored",
- "certification": "certified"
+ "certification": "certified",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": null,
+  "dataset_note": "dataset 'brain-to-text-24' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.5061/dryad.x69p8czpq",
+  "track": {
+   "track": "b2t24-t12",
+   "split_version": "tracks-v0.2",
+   "digest": "fd5ecd37ce7061e86da1792dc9496d67f4edd61d3f83211d29b1ff4126143d14"
+  },
+  "adapter": {
+   "module": "fidetype.benchmark.tracks",
+   "package_version": "0.0.1",
+   "sha256": "c330499db0defe8f0d9bbff467cb5d3b24e99245d00009e5de46d991176cd880"
+  },
+  "decoder": {
+   "name": "t12-v2 GRU + word LM (ours)",
+   "version": "5317b0600a5c",
+   "url": "experiments/2026-11-13-confirmatory-t12-v2",
+   "weights_sha256": null,
+   "training_data": [
+    "b2t24-t12 train split (train blocks of the train partition)"
+   ]
+  },
+  "policy": {
+   "name": "drop-in guard (P14-03 recipe)",
+   "config_id": null,
+   "guarantee": "ltt"
+  },
+  "scorer": {
+   "scorer_version": "0.2",
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.2",
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark score b2t24-t12 <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__guard --truth <derived>/p6-02-scorer/truth/b2t24-t12.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t24-t12__t12v2__guard.json",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark truth b2t24-t12 --data <data> --out <derived>/p6-02-scorer/truth/b2t24-t12.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py t12"
+   },
+   {
+    "step": "score",
+    "command": "python -m fidetype.benchmark score b2t24-t12 <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__guard --truth <derived>/p6-02-scorer/truth/b2t24-t12.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t24-t12__t12v2__guard.json"
+   }
+  ],
+  "inputs": {
+   "outputs": "submission folder <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__guard (decoded text; local only, never in git, hub decision Q3)",
+   "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+   "derived": "<derived> = the local folder for per-unit files (never in git)"
+  },
+  "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+ }
 }

@@ -14,6 +14,7 @@
     fidetype lsl brainflow-bridge --board synthetic      # BrainFlow board -> LSL (needs [lsl,brainflow])
     fidetype ws run|replay-to-ws|subscribe ...           # WebSocket input and output, FEP-0004 (needs the [ws] extra)
     fidetype benchmark tracks|prepare|score|...          # open benchmark v0.1
+    fidetype hub list|show|instructions|verify|check|recipe|rerun   # benchmark hub registry (P13-06)
     fidetype ledger verify|report ...                    # provenance ledger tools
     fidetype collector --config collector.toml           # collector v0: receivers -> processors -> exporters (FEP-0006)
     fidetype version
@@ -22,7 +23,7 @@ Each subcommand runs the same code as its ``python -m`` module, which
 still works: ``python -m fidetype.conformance``,
 ``python -m fidetype.trust.streaming``, ``python -m fidetype.trust.intent``,
 ``python -m fidetype.adapters.lsl``, ``python -m fidetype.adapters.ws``,
-``python -m fidetype.benchmark``, ``python -m fidetype.trust.provenance``,
+``python -m fidetype.benchmark``, ``python -m fidetype.benchmark.hub``, ``python -m fidetype.trust.provenance``,
 ``python -m fidetype.collector``, ``python -m fidetype.demo`` and ``python -m fidetype.live``.
 """
 
@@ -80,6 +81,12 @@ def _benchmark(argv: list[str]) -> int:
     return main(argv)
 
 
+def _hub(argv: list[str]) -> int:
+    from fidetype.benchmark.hub.cli import main
+
+    return main(argv)
+
+
 def _ledger(argv: list[str]) -> int:
     from fidetype.trust.provenance import main
 
@@ -126,6 +133,8 @@ COMMANDS: dict[str, tuple[Callable[[list[str]], int], str, str]] = {
     "lsl": (_lsl, "Lab Streaming Layer input and output (needs the [lsl] extra)", "python -m fidetype.adapters.lsl"),
     "ws": (_ws, "WebSocket input and output, FEP-0004 (needs the [ws] extra)", "python -m fidetype.adapters.ws"),
     "benchmark": (_benchmark, "open benchmark v0.1 (tracks, prepare, score, leaderboard)", "python -m fidetype.benchmark"),
+    "hub": (_hub, "benchmark hub: dataset registry, download / verify steps, rerun recipes",
+            "python -m fidetype.benchmark.hub"),
     "ledger": (_ledger, "provenance ledger tools (verify, report)", "python -m fidetype.trust.provenance"),
     "collector": (_collector, "collector v0: receivers -> processors -> exporters from one config (FEP-0006)",
                   "python -m fidetype.collector"),

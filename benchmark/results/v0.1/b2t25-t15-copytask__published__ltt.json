@@ -195,5 +195,76 @@
     "null_commit": "P6-01 null audit at this entry's threshold (LTT lambda 0.7200), uniform logits stand in for zeros input, n=300; commits per null input: other_trial 0/300, frame_shuffled 0/300, uniform 0/300"
    }
   }
+ },
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": {
+   "id": "brain-to-text-25",
+   "version": "dryad-2025-07-03",
+   "revision": 1
+  },
+  "track": {
+   "track": "b2t25-t15-copytask",
+   "split_version": "tracks-v0.1",
+   "digest": null
+  },
+  "adapter": {
+   "module": "fidetype.adapters.b2t25",
+   "package_version": "0.0.1",
+   "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+  },
+  "decoder": {
+   "name": "Card et al. 2024 online decoder (published sentence)",
+   "version": "t15-copytask-online",
+   "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+   "weights_sha256": null,
+   "training_data": [
+    "T15 sessions (Card et al. 2024)"
+   ]
+  },
+  "policy": {
+   "name": "trust gate + LTT",
+   "config_id": null,
+   "guarantee": "ltt"
+  },
+  "scorer": {
+   "scorer_version": null,
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.1",
+   "python": "3.12"
+  },
+  "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+   },
+   {
+    "step": "controls",
+    "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+   },
+   {
+    "step": "safe-wpm",
+    "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+   }
+  ],
+  "inputs": {
+   "sources": "experiments/2026-11-10-b2t25-trust/results/trust.json; experiments/2026-11-11-m2-13-conformal/results/items-b2t-published.json",
+   "how": "the scorer recomputes the metrics from committed per-trial arrays"
+  },
+  "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
  }
 }

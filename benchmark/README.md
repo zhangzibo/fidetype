@@ -53,6 +53,18 @@ python -m fidetype.benchmark score <track> <submission> --truth truth.jsonl --ou
 
 The score card holds CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha with its certification status, wrong-commit rate, error among commits and commit rate, all with cluster-bootstrap CIs over the track CI unit, plus the control results. Exit code 0 only if the shuffled, zeros and null-commit (<= 5 %) controls pass. Baseline score cards: [`results/v0.2/`](results/v0.2/). All seven v0.2 tracks have entries: the four new tracks from P6-02, and b2t25-t15, toronto-semg and spanishbcbl-meg (the v0.1 decoders and policies rerun in the v0.2 format, same numbers where the definitions agree) from [P6-08](../experiments/2026-11-17-p6-02b-v02-entries/results.md).
 
+### Hub: datasets and rerun recipes (P13-06)
+
+The hub command line reads the dataset registry. It prints the official source of each dataset and checks your local copy. It never downloads or re-hosts data. Every score card carries a rerun recipe (key `rerun`): the dataset version, the split digest, the adapter hash, the scorer version and the exact commands. Guide: [docs/hub-design.md section 12](../docs/hub-design.md#12-hub-command-line-and-rerun-recipes-p13-06).
+
+```bash
+python -m fidetype.benchmark.hub list                                      # or: fidetype hub list
+python -m fidetype.benchmark.hub instructions brain-to-text-25             # official source + verify steps
+python -m fidetype.benchmark.hub verify brain-to-text-25 --data <path>/t15_copyTask.pkl
+python -m fidetype.benchmark.hub recipe results/v0.2/b2t25-t15__published__ltt.json
+python -m fidetype.benchmark.hub rerun <card> --submission <dir> --truth truth.jsonl   # level rescore
+```
+
 ## Hallucination tracks
 
 The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the fluent-wrong rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Protocol `fidetype.halluc/0.2` (P15-15): the swapped track uses a paired swapped / real commit-ratio test, so a system that rarely commits cannot pass it only because it rarely commits. Score cards (T15, T12): [`results/halluc-v0.2/`](results/halluc-v0.2/) (current) and [`results/halluc-v0.1/`](results/halluc-v0.1/) (old protocol, kept). Command: `python -m fidetype.benchmark.hallucination --help`.

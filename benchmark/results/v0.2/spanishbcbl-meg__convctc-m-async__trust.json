@@ -215,5 +215,74 @@
   "n_parent_covered": 637
  },
  "status": "scored",
- "certification": "not-certified"
+ "certification": "not-certified",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": {
+   "id": "spanishbcbl",
+   "version": "hf-snapshot-2026-11-08",
+   "revision": 1
+  },
+  "track": {
+   "track": "spanishbcbl-meg",
+   "split_version": "tracks-v0.2",
+   "digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6"
+  },
+  "adapter": {
+   "module": "fidetype.adapters.spanishbcbl_meg",
+   "package_version": "0.0.1",
+   "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+  },
+  "decoder": {
+   "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+   "version": "m1-09-r4b-full-medium",
+   "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+   "weights_sha256": null,
+   "training_data": [
+    "SpanishBCBL train split (CC BY-NC 4.0)",
+    "Tatoeba es (CC BY 2.0 FR) for the char LM"
+   ]
+  },
+  "policy": {
+   "name": "trust gate (plug-in fit)",
+   "config_id": null,
+   "guarantee": "none"
+  },
+  "scorer": {
+   "scorer_version": "0.2",
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.2",
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__trust --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__trust.json",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg"
+   },
+   {
+    "step": "score",
+    "command": "python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__trust --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__trust.json"
+   }
+  ],
+  "inputs": {
+   "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__trust (decoded text; local only, never in git, hub decision Q3)",
+   "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+   "derived": "<derived> = the local folder for per-unit files (never in git)"
+  },
+  "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+ }
 }

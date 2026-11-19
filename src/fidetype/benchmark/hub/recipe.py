@@ -1,0 +1,259 @@
+"""Rerun recipes for score cards (roadmap P13-06, design ``docs/hub-design.md`` section 5).
+
+A rerun recipe is a small JSON block (key ``rerun``) in a score card. It names every versioned input of the
+number: the registry dataset entry, the track and its split digest, the adapter (module, package version,
+SHA-256 of the source; rule RA-9), the decoder, the trust policy, the scorer and metric versions, and the exact
+command lines with ``<placeholders>`` for local paths. It holds no text from the data and no local path.
+
+::
+
+    from fidetype.benchmark.hub.recipe import make_recipe, check_recipe, recipe_text
+
+Standard library only, except :func:`rescore`, which imports the scorer.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import importlib.util
+import json
+import re
+import sys
+from pathlib import Path
+from typing import Any, Mapping, Sequence
+
+RECIPE_SCHEMA = "fidetype.hub.recipe/0.1"
+LEVELS = ("rescore", "replay", "full")
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
+_MODULE = re.compile(r"(fidetype(?:\.[A-Za-z_][A-Za-z0-9_]*)+)")
+#: The local inputs of a ``rescore`` recipe. Neither goes into git (hub decision Q3; NTS leakage rule).
+RESCORE_INPUTS = {"outputs": "the submission folder (decoded text; never in git, hub decision Q3)",
+                  "truth": "local truth file from `python -m fidetype.benchmark truth <track> --data <data> "
+                           "--out <truth.jsonl>` (never in git)"}
+_REQUIRED = ("schema", "level", "dataset", "track", "adapter", "decoder", "policy", "scorer", "versions", "command")
+
+
+def package_version() -> str:
+    from fidetype import __version__
+
+    return __version__
+
+
+def source_sha256(path: str | Path) -> str:
+    """SHA-256 of a source file with line ends made LF (so a Windows and a Linux checkout give one hash)."""
+    data = Path(path).read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(data).hexdigest()
+
+
+def adapter_id(module: str) -> dict[str, Any]:
+    """Rule RA-9: module name, package version and SHA-256 of the module source. The module is not imported."""
+    spec = importlib.util.find_spec(module)
+    if spec is None or not spec.origin or not spec.origin.endswith(".py"):
+        raise LookupError(f"no Python source for adapter module {module!r}")
+    return {"module": module, "package_version": package_version(), "sha256": source_sha256(spec.origin)}
+
+
+def adapter_module_for(track: str) -> str | None:
+    """The adapter module of a track: the hub registry entry first, else the ``adapter`` field of ``tracks.py``."""
+    d = dataset_for_track(track)
+    if d and d.get("adapters"):
+        return str(d["adapters"][0]["module"])
+    try:
+        from fidetype.benchmark.tracks import TRACKS
+    except ImportError:  # pragma: no cover - numpy missing
+        return None
+    t = TRACKS.get(track)
+    m = _MODULE.search(t.adapter) if t is not None else None
+    parts = m.group(1).split(".") if m else []
+    while len(parts) > 1:  # "fidetype.benchmark.tracks.t12_trial_features" -> the module "fidetype.benchmark.tracks"
+        try:
+            if importlib.util.find_spec(".".join(parts)) is not None:
+                return ".".join(parts)
+        except (ImportError, ValueError):
+            pass
+        parts.pop()
+    return None
+
+
+def dataset_for_track(track: str) -> dict[str, Any] | None:
+    """The newest hub registry entry that lists ``track``, or None (dataset not yet in the hub)."""
+    from fidetype.benchmark import hub
+
+    ds = hub.load_registry()["datasets"]
+    hits = [d for d in ds if any(t.get("track") == track for t in d.get("tracks", []))]
+    if not hits:  # a v0.1 track: same dataset files, older split (fidetype.benchmark.registry)
+        from fidetype.benchmark.registry import TRACKS as V01
+
+        if track in V01:
+            hits = [d for d in ds if d["id"] == V01[track].dataset]
+    return hits[-1] if hits else None
+
+
+def _dataset_block(track: str) -> tuple[dict[str, Any] | None, str | None]:
+    d = dataset_for_track(track)
+    if d is not None:
+        return {"id": d["id"], "version": d["version"], "revision": d["revision"]}, None
+    try:
+        from fidetype.benchmark.tracks import TRACKS
+
+        t = TRACKS.get(track)
+    except ImportError:  # pragma: no cover
+        t = None
+    if t is not None:
+        return None, f"dataset {t.dataset!r} is not yet in the hub registry (gap 79, P13-07); source: {t.url}"
+    return None, "dataset not known to the hub registry or to tracks v0.2"
+
+
+def _split_version(card: Mapping[str, Any]) -> str:
+    return "tracks-v0.2" if str(card.get("schema", "")).endswith("/0.2") else "tracks-v0.1"
+
+
+def make_recipe(card: Mapping[str, Any], *, command: str, level: str = "rescore",
+                steps: Sequence[Mapping[str, str]] | None = None, inputs: Mapping[str, str] | None = None,
+                code_ref: str | None = None, recorded: str | None = None,
+                adapter_module: str | None = None, weights_sha256: str | None = None,
+                policy_config_id: str | None = None) -> dict[str, Any]:
+    """Build the rerun recipe (design section 5.1) of one score card.
+
+    ``command`` is the exact command line that gives the card from local inputs (``<placeholders>`` for local
+    paths). ``steps`` lists the full pipeline (truth, build, score) when more than one command is needed.
+    """
+    if level not in LEVELS:
+        raise ValueError(f"level must be one of {LEVELS}")
+    track = str(card.get("track"))
+    ds, ds_note = _dataset_block(track)
+    module = adapter_module or adapter_module_for(track)
+    try:
+        adapter = adapter_id(module) if module else None
+    except LookupError:
+        adapter = None
+    dec = card.get("decoder") or {}
+    pol = card.get("policy") or {}
+    sw = card.get("safe_wpm") or {}
+    ci = card.get("ci") or {}
+    ti = card.get("track_info") or {}
+    metrics: dict[str, Any] = {}
+    if sw.get("definition"):
+        metrics["safe_wpm"] = sw["definition"]
+    r: dict[str, Any] = {
+        "schema": RECIPE_SCHEMA,
+        "level": level,
+        "dataset": ds,
+        **({"dataset_note": ds_note} if ds_note else {}),
+        "track": {"track": track, "split_version": _split_version(card), "digest": ti.get("split_digest")},
+        "adapter": adapter,
+        "decoder": {"name": dec.get("name"), "version": dec.get("version"), "url": dec.get("url"),
+                    "weights_sha256": weights_sha256, "training_data": dec.get("training_data")},
+        "policy": {"name": pol.get("name"), "config_id": policy_config_id or pol.get("config_id"),
+                   "guarantee": (card.get("guarantee") or {}).get("method")},
+        "scorer": {"scorer_version": card.get("scorer_version"), "metrics": metrics,
+                   "B": ci.get("B"), "seed": ci.get("seed")},
+        "versions": {"fidetype": package_version(), "benchmark": card.get("benchmark_version"),
+                     "python": f"{sys.version_info.major}.{sys.version_info.minor}"},
+        "command": command,
+    }
+    if steps:
+        r["steps"] = [dict(s) for s in steps]
+    if inputs:
+        r["inputs"] = dict(inputs)
+    if code_ref:
+        r["code_ref"] = code_ref
+    if recorded:
+        r["recorded"] = recorded
+    return r
+
+
+def score_command(track: str, *, B: int, seed: int, out: str | None = None) -> str:
+    """The v0.2 scorer command (``python -m fidetype.benchmark score``) with placeholders for local paths."""
+    cmd = f"python -m fidetype.benchmark score {track} <submission> --truth <truth.jsonl> --B {B} --seed {seed}"
+    return cmd + (f" --out {out}" if out else "")
+
+
+def check_recipe(r: Any) -> list[str]:
+    """Return the problems of one rerun recipe (an empty list = valid)."""
+    if not isinstance(r, Mapping):
+        return ["rerun: must be an object"]
+    errs = [f"rerun.{k}: required" for k in _REQUIRED if k not in r]
+    if r.get("schema") != RECIPE_SCHEMA:
+        errs.append(f"rerun.schema: must be {RECIPE_SCHEMA!r}")
+    if r.get("level") not in LEVELS:
+        errs.append(f"rerun.level: one of {', '.join(LEVELS)}")
+    if r.get("dataset") is None and not r.get("dataset_note"):
+        errs.append("rerun.dataset: a registry entry, or a dataset_note that says why there is none")
+    tr = r.get("track") or {}
+    if not tr.get("track") or not re.match(r"^tracks-v\d+\.\d+$", str(tr.get("split_version", ""))):
+        errs.append("rerun.track: needs track and split_version (tracks-vX.Y)")
+    ad = r.get("adapter")
+    if ad is not None and not (str(ad.get("module", "")).startswith("fidetype.") and _SHA256.match(str(ad.get("sha256")))):
+        errs.append("rerun.adapter: module (fidetype.*) and sha256 (RA-9)")
+    cmd = r.get("command")
+    if not (isinstance(cmd, str) and cmd.strip()):
+        errs.append("rerun.command: the exact command line is required")
+    # Local paths never go into a public card: commands use <placeholders>.
+    for s in [cmd, *[x.get("command") for x in r.get("steps") or []]]:
+        if isinstance(s, str) and re.search(r"(?<![A-Za-z])[A-Za-z]:[\\/]|/home/|/Users/", s):
+            errs.append(f"rerun: a command holds a local path ({s[:60]}...); use <placeholders>")
+    return errs
+
+
+def rerun_level(card: Mapping[str, Any]) -> str:
+    """``rescore`` / ``replay`` / ``full``, or ``no`` when the card has no recipe (design section 5.2)."""
+    r = card.get("rerun")
+    return str(r.get("level")) if isinstance(r, Mapping) and r.get("level") in LEVELS else "no"
+
+
+def recipe_text(r: Mapping[str, Any] | None) -> str:
+    """A short human-readable view of a recipe."""
+    if not r:
+        return "rerun: no (this card has no rerun recipe)"
+    ds = r.get("dataset")
+    tr = r.get("track") or {}
+    ad = r.get("adapter")
+    sc = r.get("scorer") or {}
+    lines = [f"rerun level: {r.get('level')}",
+             "dataset: " + (f"{ds['id']} {ds['version']} r{ds['revision']}" if ds else str(r.get("dataset_note"))),
+             f"track: {tr.get('track')} ({tr.get('split_version')}, split digest {str(tr.get('digest'))[:16]}...)",
+             "adapter: " + (f"{ad['module']} {ad['package_version']} sha256 {ad['sha256'][:16]}..." if ad else "none"),
+             f"scorer: {sc.get('scorer_version')} {json.dumps(sc.get('metrics') or {})} B={sc.get('B')} seed={sc.get('seed')}"]
+    if r.get("code_ref"):
+        lines.append(f"code: {r['code_ref']}")
+    for k, v in (r.get("inputs") or {}).items():
+        lines.append(f"input {k}: {v}")
+    if r.get("steps"):
+        lines.append("steps:")
+        lines += [f"  [{s.get('step')}] {s.get('command')}" for s in r["steps"]]
+    lines.append(f"command: {r.get('command')}")
+    return "\n".join(lines)
+
+
+def card_json(card: Mapping[str, Any]) -> str:
+    """Serialise a card as the scorer CLI writes it (``indent=1``, UTF-8, LF line ends, final newline)."""
+    from fidetype.benchmark.scoring import to_jsonable
+
+    return json.dumps(to_jsonable(card), indent=1, ensure_ascii=False) + "\n"
+
+
+def rescore(card: Mapping[str, Any], submission: str | Path, truth: str | Path) -> dict[str, Any]:
+    """Rerun a ``rescore``-level recipe: score ``submission`` against the local ``truth`` with the recorded
+    scorer settings. Returns ``{"card": new card, "same": bool, "diff": [top-level keys that differ]}``.
+    The ``rerun`` block itself is left out of the comparison."""
+    from fidetype.benchmark import scorecard as SC
+
+    r = card.get("rerun") or {}
+    if r.get("level") != "rescore":
+        raise ValueError(f"only rescore-level recipes rerun here (this card: {rerun_level(card)})")
+    track = card["track"]
+    if r.get("scorer", {}).get("scorer_version") != SC.SCORER_VERSION:
+        raise ValueError(f"the card needs scorer {r['scorer'].get('scorer_version')}; installed {SC.SCORER_VERSION}")
+    sc = r.get("scorer") or {}
+    res = SC.score(track, Path(submission), SC.read_truth(truth, track), B=int(sc.get("B") or 2000),
+                   seed=int(sc.get("seed") or 0))
+    new = json.loads(card_json(res))
+    old = {k: v for k, v in card.items() if k not in ("rerun", "_file")}
+    new_cmp = {k: v for k, v in new.items() if k != "rerun"}
+    diff = sorted(k for k in set(old) | set(new_cmp) if old.get(k) != new_cmp.get(k))
+    return {"card": new, "same": not diff and card_json(old) == card_json(new_cmp), "diff": diff}
+
+
+__all__ = ["RECIPE_SCHEMA", "LEVELS", "adapter_id", "adapter_module_for", "dataset_for_track", "make_recipe",
+           "score_command", "check_recipe", "rerun_level", "recipe_text", "card_json", "rescore", "source_sha256"]

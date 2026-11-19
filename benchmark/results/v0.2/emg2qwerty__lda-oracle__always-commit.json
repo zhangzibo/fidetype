@@ -221,5 +221,70 @@
   "n_parent_covered": 104
  },
  "status": "scored: controls failed",
- "certification": "not-certified"
+ "certification": "not-certified",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": null,
+  "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+  "track": {
+   "track": "emg2qwerty",
+   "split_version": "tracks-v0.2",
+   "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f"
+  },
+  "adapter": {
+   "module": "fidetype.adapters.emg2qwerty",
+   "package_version": "0.0.1",
+   "sha256": "fe238f494228ca402863f3f7a8617eeb7c13cbedae6e06e8865c0643c74201cf"
+  },
+  "decoder": {
+   "name": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing)",
+   "version": "0",
+   "url": "src/fidetype/adapters/emg2qwerty.py",
+   "weights_sha256": null,
+   "training_data": [
+    "emg2qwerty: the last train session of each test user"
+   ]
+  },
+  "policy": {
+   "name": "always commit top-1",
+   "config_id": null,
+   "guarantee": "none"
+  },
+  "scorer": {
+   "scorer_version": "0.2",
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.2",
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__always-commit --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__lda-oracle__always-commit.json",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py e2q"
+   },
+   {
+    "step": "score",
+    "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__always-commit --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__lda-oracle__always-commit.json"
+   }
+  ],
+  "inputs": {
+   "outputs": "submission folder <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__always-commit (decoded text; local only, never in git, hub decision Q3)",
+   "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+   "derived": "<derived> = the local folder for per-unit files (never in git)"
+  },
+  "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+ }
 }

@@ -1,16 +1,23 @@
-"""Benchmark hub: versioned dataset registry (roadmap P13-01, design only).
+"""Benchmark hub: versioned dataset registry (roadmap P13-01) and its command line (P13-06).
 
 Design: ``docs/hub-design.md``. The registry file ``datasets-0.1.json``
 next to this module holds **metadata only**: id, version, licence and the
 research-only flag, citation, checksums, verify and download steps,
 adapters and tracks. The hub never hosts participant data.
 
-This module only loads and checks the registry (standard library only).
-The hub command line (``fidetype hub ...``) is a later item (P13-06).
+This module loads and checks the registry (standard library only). The
+command line is in :mod:`fidetype.benchmark.hub.cli`; rerun recipes of
+score cards are in :mod:`fidetype.benchmark.hub.recipe`.
 
 ::
 
-    python -m fidetype.benchmark.hub          # check the registry; exit code 1 on a problem
+    python -m fidetype.benchmark.hub                     # check the registry; exit code 1 on a problem
+    python -m fidetype.benchmark.hub list                # also: fidetype hub list
+    python -m fidetype.benchmark.hub show brain-to-text-25
+    python -m fidetype.benchmark.hub instructions toronto-semg
+    python -m fidetype.benchmark.hub verify brain-to-text-25 --data <path>/t15_copyTask.pkl
+    python -m fidetype.benchmark.hub check --entry my-entry.json
+    python -m fidetype.benchmark.hub recipe benchmark/results/v0.2/<card>.json
 """
 
 from __future__ import annotations
@@ -173,9 +180,7 @@ def get_dataset(dataset_id: str, version: str | None = None) -> dict[str, Any]:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    errs = check_registry(load_registry())
-    for e in errs:
-        print(e, file=sys.stderr)
-    if not errs:
-        print(f"{REGISTRY_FILE}: OK")
-    return 1 if errs else 0
+    """The hub command line (``fidetype.benchmark.hub.cli``). No arguments: check the committed registry."""
+    from fidetype.benchmark.hub.cli import main as cli_main
+
+    return cli_main(argv)

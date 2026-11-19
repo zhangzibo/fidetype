@@ -228,5 +228,74 @@
   "n_parent_covered": 551
  },
  "status": "scored",
- "certification": "certified"
+ "certification": "certified",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": {
+   "id": "toronto-semg",
+   "version": "borealis-v1-file-836662",
+   "revision": 1
+  },
+  "track": {
+   "track": "toronto-semg",
+   "split_version": "tracks-v0.2",
+   "digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f"
+  },
+  "adapter": {
+   "module": "fidetype.adapters.toronto_semg",
+   "package_version": "0.0.1",
+   "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+  },
+  "decoder": {
+   "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+   "version": "m6-07",
+   "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+   "weights_sha256": null,
+   "training_data": [
+    "Toronto sEMG (session-calibrated; CC BY 4.0)",
+    "Tatoeba en (CC BY 2.0 FR) for the char LM"
+   ]
+  },
+  "policy": {
+   "name": "trust gate + CRC",
+   "config_id": null,
+   "guarantee": "crc"
+  },
+  "scorer": {
+   "scorer_version": "0.2",
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.2",
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__crc.json",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto"
+   },
+   {
+    "step": "score",
+    "command": "python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__crc.json"
+   }
+  ],
+  "inputs": {
+   "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__crc (decoded text; local only, never in git, hub decision Q3)",
+   "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+   "derived": "<derived> = the local folder for per-unit files (never in git)"
+  },
+  "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+ }
 }

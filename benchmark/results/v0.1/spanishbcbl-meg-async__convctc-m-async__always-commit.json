@@ -149,5 +149,77 @@
     "null_commit": "null audit (zeros MEG input), n=637"
    }
   }
+ },
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": {
+   "id": "spanishbcbl",
+   "version": "hf-snapshot-2026-11-08",
+   "revision": 1
+  },
+  "track": {
+   "track": "spanishbcbl-meg-async",
+   "split_version": "tracks-v0.1",
+   "digest": null
+  },
+  "adapter": {
+   "module": "fidetype.adapters.spanishbcbl_meg",
+   "package_version": "0.0.1",
+   "sha256": "d38ef246a541f9aceb1a22640315b4ff210a7ad8f76e344ea16e0751e721a1ce"
+  },
+  "decoder": {
+   "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+   "version": "m1-09-r4b-full-medium",
+   "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
+   "weights_sha256": null,
+   "training_data": [
+    "SpanishBCBL train split (CC BY-NC 4.0)",
+    "Tatoeba es (CC BY 2.0 FR) for the char LM"
+   ]
+  },
+  "policy": {
+   "name": "always-commit",
+   "config_id": null,
+   "guarantee": "none"
+  },
+  "scorer": {
+   "scorer_version": null,
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.1",
+   "python": "3.12"
+  },
+  "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+   },
+   {
+    "step": "controls",
+    "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+   },
+   {
+    "step": "safe-wpm",
+    "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+   }
+  ],
+  "inputs": {
+   "sources": "experiments/2026-11-11-g1-async-meg-trust/results/items-meg-async.json; experiments/2026-11-11-g1-async-meg-trust/results/harness-async.json; experiments/2026-11-11-g1-async-meg-trust/results/null-audit-async.json; experiments/2026-11-11-m1-09-async-full/results/beam-m1-09-r4b-full-medium/per_sentence_cer.json",
+   "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+  },
+  "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
  }
 }

@@ -213,5 +213,73 @@
   "n_parent_covered": 816
  },
  "status": "scored: controls failed",
- "certification": "not-certified"
+ "certification": "not-certified",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": {
+   "id": "brain-to-text-25",
+   "version": "dryad-2025-07-03",
+   "revision": 1
+  },
+  "track": {
+   "track": "b2t25-t15",
+   "split_version": "tracks-v0.2",
+   "digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb"
+  },
+  "adapter": {
+   "module": "fidetype.adapters.b2t25",
+   "package_version": "0.0.1",
+   "sha256": "44c9ae95fa2fd7766c179ef2f795cf1bcaf101a0a58ec8cc3972483c33569128"
+  },
+  "decoder": {
+   "name": "Card et al. 2024 online decoder (published sentence)",
+   "version": "t15-copytask-online",
+   "url": "https://doi.org/10.5061/dryad.dncjsxm85",
+   "weights_sha256": null,
+   "training_data": [
+    "T15 sessions (Card et al. 2024)"
+   ]
+  },
+  "policy": {
+   "name": "trust gate (plug-in fit)",
+   "config_id": null,
+   "guarantee": "none"
+  },
+  "scorer": {
+   "scorer_version": "0.2",
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.2",
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__trust.json",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"
+   },
+   {
+    "step": "score",
+    "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__trust.json"
+   }
+  ],
+  "inputs": {
+   "outputs": "submission folder <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__trust (decoded text; local only, never in git, hub decision Q3)",
+   "build": "the build step reads local decoder outputs; see experiments/2026-11-17-p6-02b-v02-entries/results.md",
+   "derived": "<derived> = the local folder for per-unit files (never in git)"
+  },
+  "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+ }
 }

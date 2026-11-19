@@ -213,5 +213,70 @@
   "n_parent_covered": 81
  },
  "status": "scored: controls failed",
- "certification": "not-certified"
+ "certification": "not-certified",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": null,
+  "dataset_note": "dataset 'willett-handwriting' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.5061/dryad.wh70rxwmv",
+  "track": {
+   "track": "willett-hw",
+   "split_version": "tracks-v0.2",
+   "digest": "04d408da408d41ef70ab262a08bcb2919827e41bc8eab0d8b68faae40f583450"
+  },
+  "adapter": {
+   "module": "fidetype.adapters.willett_handwriting",
+   "package_version": "0.0.1",
+   "sha256": "1cd130af2629f6035d62b326241813dee73d4b96fa62b65b7ab2b3ae1eee9af1"
+  },
+  "decoder": {
+   "name": "Willett 2021 real-time RNN (published output) + CTC beam with word list",
+   "version": "dataset",
+   "url": "https://doi.org/10.5061/dryad.wh70rxwmv",
+   "weights_sha256": null,
+   "training_data": [
+    "Willett et al. 2021 own training (earlier sessions)"
+   ]
+  },
+  "policy": {
+   "name": "always commit the real-time RNN text (as typed on screen in the study)",
+   "config_id": null,
+   "guarantee": "none"
+  },
+  "scorer": {
+   "scorer_version": "0.2",
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.2",
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark score willett-hw <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__always-commit --truth <derived>/p6-02-scorer/truth/willett-hw.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/willett-hw__rnn-published__always-commit.json",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark truth willett-hw --data <data> --out <derived>/p6-02-scorer/truth/willett-hw.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I experiments/2026-11-16-p6-02-scorer/run.py willett"
+   },
+   {
+    "step": "score",
+    "command": "python -m fidetype.benchmark score willett-hw <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__always-commit --truth <derived>/p6-02-scorer/truth/willett-hw.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/willett-hw__rnn-published__always-commit.json"
+   }
+  ],
+  "inputs": {
+   "outputs": "submission folder <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__always-commit (decoded text; local only, never in git, hub decision Q3)",
+   "build": "the build step reads local decoder outputs; see experiments/2026-11-16-p6-02-scorer/results.md",
+   "derived": "<derived> = the local folder for per-unit files (never in git)"
+  },
+  "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+ }
 }

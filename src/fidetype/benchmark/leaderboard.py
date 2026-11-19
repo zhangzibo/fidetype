@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from fidetype.benchmark import tracks as TR2
+from fidetype.benchmark.hub.recipe import rerun_level
 from fidetype.benchmark.registry import BENCHMARK_VERSION, DATASETS, TRACKS
 from fidetype.benchmark.scoring import RESULT_SCHEMA
 
@@ -45,7 +46,7 @@ def track_info(slug: str) -> dict[str, Any] | None:
     return None
 
 COLUMNS = ("Decoder", "Policy", "CER", "eWPM [95% CI]", "Safe WPM @ alpha", "Wrong-commit", "Error among commits", "Commit rate",
-           "Controls", "Guarantee", "Conformance", "Weights licence", "Scored from")
+           "Controls", "Guarantee", "Conformance", "Weights licence", "Scored from", "Rerun")
 
 
 def load_results(folder: str | PathLike[str] | list) -> list[dict[str, Any]]:
@@ -153,13 +154,15 @@ def row(d: dict[str, Any]) -> dict[str, Any]:
         "file": d.get("_file"), "ewpm_s": ew_s,
         "safe_wpm": (d.get("safe_wpm") or {}).get("value"), "safe_wpm_status": (d.get("safe_wpm") or {}).get("status"),
         "safe_wpm_s": safe_wpm_text(d.get("safe_wpm")),
+        # P13-06: rerun level (design section 5.2) and the full recipe; "no" when the card has none.
+        "rerun_level": rerun_level(d), "rerun": d.get("rerun"),
     }
 
 
 def cells(r: dict[str, Any]) -> list[str]:
     return [r["decoder"], r["policy"], fmt(r["cer"]), r["ewpm_s"], r["safe_wpm_s"], fmt(r["wrong_commit_rate"]),
             fmt(r["error_among_commits"]), fmt(r["commit_rate"]), r["controls"], r["guarantee"], r["conformance"],
-            r["weights_licence"], r["scored_from"]]
+            r["weights_licence"], r["scored_from"], r["rerun_level"]]
 
 
 def build_rows(results: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
@@ -191,7 +194,11 @@ def markdown(by: dict[str, list[dict[str, Any]]]) -> str:
          "above the stated alpha. Definition: [docs/safe-wpm.md](../../docs/safe-wpm.md).", "",
          "Safe WPM v0.2 (prefix credit, speech-time field) is PROPOSED, NOT ADOPTED "
          "([docs/safe-wpm-v0.2-proposal.md](../../docs/safe-wpm-v0.2-proposal.md)). Every entry here commits whole "
-         "sentences, so its v0.2 value equals the v0.1 value shown.", ""]
+         "sentences, so its v0.2 value equals the v0.1 value shown.", "",
+         "Rerun (P13-06): the rerun level of each entry (`rescore`, `replay`, `full` or `no`). Below each table, "
+         "the exact rerun recipe of every entry: dataset version, split digest, adapter hash, scorer version and "
+         "commands, with `<placeholders>` for local paths ([docs/hub-design.md](../../docs/hub-design.md) "
+         "section 5).", ""]
     for slug, rows in by.items():
         t = track_info(slug)
         L += [f"## {t['title'] if t else slug}" + (f" (tracks v{t['version']})" if t else ""), ""]
@@ -208,7 +215,39 @@ def markdown(by: dict[str, list[dict[str, Any]]]) -> str:
         L += ["| " + " | ".join(COLUMNS) + " |", "|" + "---|" * len(COLUMNS)]
         L += ["| " + " | ".join(c.replace("|", "/") for c in cells(r)) + " |" for r in rows]
         L.append("")
+        L += recipes_markdown(rows)
     return "\n".join(L) + "\n"
+
+
+def _recipe_steps(rc: dict[str, Any]) -> list[str]:
+    steps = rc.get("steps") or [{"step": "score", "command": rc.get("command", "")}]
+    return [f"[{s.get('step')}] {s.get('command')}" for s in steps]
+
+
+def _recipe_facts(rc: dict[str, Any]) -> str:
+    ds, ad, tr = rc.get("dataset"), rc.get("adapter"), rc.get("track") or {}
+    sc = rc.get("scorer") or {}
+    parts = [f"level {rc.get('level')}",
+             (f"dataset {ds['id']} {ds['version']} r{ds['revision']}" if ds else "dataset not in the hub registry"),
+             f"split {tr.get('split_version')} digest {str(tr.get('digest'))[:12]}",
+             (f"adapter {ad['module']} {ad['package_version']} sha256 {ad['sha256'][:12]}" if ad else "adapter none"),
+             f"scorer {sc.get('scorer_version')} B={sc.get('B')} seed={sc.get('seed')}"]
+    if rc.get("code_ref"):
+        parts.append(f"code {rc['code_ref'].split(' (')[0]}")
+    return "; ".join(parts)
+
+
+def recipes_markdown(rows: list[dict[str, Any]]) -> list[str]:
+    """Rerun recipes of one track (P13-06): one item per entry, the full command list in a code block."""
+    have = [r for r in rows if r.get("rerun")]
+    if not have:
+        return []
+    L = ["Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):", ""]
+    for r in have:
+        rc = r["rerun"]
+        L += [f"- **{r['decoder']} / {r['policy']}** (`{r['file']}`): {_recipe_facts(rc)}", "",
+              "  ```", *[f"  {x}" for x in _recipe_steps(rc)], "  ```", ""]
+    return L
 
 
 CSS = """
@@ -222,6 +261,9 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:7px 9px;b
 th{background:var(--head);font-weight:600;white-space:nowrap}td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 tr.ref td{color:var(--muted);font-style:italic}.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
 .note{font-size:13px}ul{margin:6px 0 0 18px;color:var(--muted);font-size:13px}code{font-size:12.5px}
+details{margin:8px 0 0}summary{cursor:pointer;color:var(--accent);font-size:13px}
+pre{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;margin:4px 0 10px}
+.recipe{font-size:13px;color:var(--muted);margin:8px 0 0}
 """
 
 
@@ -247,6 +289,10 @@ def page(by: dict[str, list[dict[str, Any]]]) -> str:
              "<code>python -m fidetype.benchmark score &lt;track&gt; &lt;submission&gt;</code> "
              "(<code>docs/benchmark-submission.md</code>). <b>[RESEARCH ONLY]</b> marks entries on non-commercial "
              "data; <b>[partial]</b> marks entries that cover only part of the scored units.</p>",
+             "<p>Rerun (P13-06): the rerun level of each entry (<code>rescore</code>, <code>replay</code>, "
+             "<code>full</code> or <code>no</code>). Each track lists the exact rerun recipe of every entry: "
+             "dataset version, split digest, adapter hash, scorer version and commands. Local paths are "
+             "<code>&lt;placeholders&gt;</code>. Design: <code>docs/hub-design.md</code> section 5.</p>",
              '<p class="note">How to submit: <code>benchmark/README.md</code>. Generated by '
              "<code>python -m fidetype.benchmark leaderboard</code>; do not edit by hand.</p>"]
     for slug, rows in by.items():
@@ -269,7 +315,7 @@ def page(by: dict[str, list[dict[str, Any]]]) -> str:
             parts.append('<tr class="ref">' + _td(f"No-BCI reference: gaze typing ({cpm:.0f} chars/min)") + _td("type all")
                          + _td("n/a", "num") + _td(f"{g:.2f}", "num") + _td("n/a", "num") + _td("0.000", "num")
                          + _td("n/a", "num")
-                         + _td("0.000", "num") + "".join(_td("") for _ in range(5)) + "</tr>")
+                         + _td("0.000", "num") + "".join(_td("") for _ in range(6)) + "</tr>")
         for r in rows:
             c = cells(r)
             ctl_cls = "ok" if r["controls_passed"] else "bad"
@@ -278,6 +324,15 @@ def page(by: dict[str, list[dict[str, Any]]]) -> str:
                    + [_td(x, "num") for x in c[5:8]] + [_td(c[8], ctl_cls)] + [_td(x) for x in c[9:]])
             parts.append("<tr>" + "".join(tds) + "</tr>")
         parts.append("</tbody></table></div>")
+        have = [r for r in rows if r.get("rerun")]
+        if have:
+            parts.append(f"<details><summary>Rerun recipes ({len(have)} of {len(rows)} entries)</summary>")
+            for r in have:
+                rc = r["rerun"]
+                parts.append(f'<p class="recipe"><b>{html.escape(r["decoder"])} / {html.escape(r["policy"])}</b> '
+                             f"(<code>{html.escape(str(r['file']))}</code>): {html.escape(_recipe_facts(rc))}</p>"
+                             f"<pre><code>{html.escape(chr(10).join(_recipe_steps(rc)))}</code></pre>")
+            parts.append("</details>")
         notes = sorted({n for r in rows for n in r["notes"]})
         if t:
             notes = list(t["notes"]) + notes

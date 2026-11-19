@@ -8,18 +8,58 @@ Safe WPM @ alpha (P14-05): committed, exactly right words per minute, with a tim
 
 Safe WPM v0.2 (prefix credit, speech-time field) is PROPOSED, NOT ADOPTED ([docs/safe-wpm-v0.2-proposal.md](../../docs/safe-wpm-v0.2-proposal.md)). Every entry here commits whole sentences, so its v0.2 value equals the v0.1 value shown.
 
+Rerun (P13-06): the rerun level of each entry (`rescore`, `replay`, `full` or `no`). Below each table, the exact rerun recipe of every entry: dataset version, split digest, adapter hash, scorer version and commands, with `<placeholders>` for local paths ([docs/hub-design.md](../../docs/hub-design.md) section 5).
+
 ## MEG typing, asynchronous (SpanishBCBL) (tracks v0.1)
 
 Track `spanishbcbl-meg-async`. Data: SpanishBCBL typing MEG (Brain2Qwerty v1/v2 data) (CC BY-NC 4.0, **research only**). CI unit: two_way:sentence,participant. User model: aac-gaze-v1 @ 152 chars/min.
 
 No-BCI reference (gaze typing only, 20 chars/min): **3.15 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate (plug-in fit) | 0.522 | 3.20 [3.01, 3.45] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate + LTT | 0.522 | 3.20 [3.01, 3.44] | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate + CRC | 0.522 | 3.20 [3.01, 3.44] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) | always-commit | 0.522 | 2.58 [2.32, 2.88] | n/a (no certified bound) | 0.997 | 0.997 | 1.000 | no (shuf pass, zeros pass, null fail) | none | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-aggregate |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate (plug-in fit) | 0.522 | 3.20 [3.01, 3.45] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate + LTT | 0.522 | 3.20 [3.01, 3.44] | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate + CRC | 0.522 | 3.20 [3.01, 3.44] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) | always-commit | 0.522 | 2.58 [2.32, 2.88] | n/a (no certified bound) | 0.997 | 0.997 | 1.000 | no (shuf pass, zeros pass, null fail) | none | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-aggregate | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate (plug-in fit)** (`spanishbcbl-meg-async__convctc-m-async__trust.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate + LTT** (`spanishbcbl-meg-async__convctc-m-async__ltt.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate + CRC** (`spanishbcbl-meg-async__convctc-m-async__crc.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / always-commit** (`spanishbcbl-meg-async__convctc-m-async__always-commit.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
 
 ## Intracortical attempted speech (Brain-to-Text '25, T15) (tracks v0.1)
 
@@ -27,16 +67,90 @@ Track `b2t25-t15-copytask`. Data: Brain-to-Text '25, participant T15 copy task (
 
 No-BCI reference (gaze typing only, 20 chars/min): **4.08 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | always-commit | 0.031 | 19.55 [17.92, 21.21] | n/a (no certified bound) | 0.194 | 0.194 | 1.000 | no (shuf missing, zeros missing, null missing) | none | trust-ready | not released (outputs in the CC0 dataset) | stream-submission |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 18.80 [17.24, 20.39] | 13.42 [11.72, 15.08] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf missing, zeros missing, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate (plug-in fit) | 0.031 | 18.77 [17.22, 20.35] | n/a (no certified bound) | 0.044 | 0.093 | 0.473 | no (shuf missing, zeros missing, null pass) | none | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 18.73 [17.18, 20.31] | 12.24 [10.98, 13.45] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf missing, zeros missing, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial |
-| Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate + CRC | 0.095 | 11.55 [10.86, 12.35] | 4.90 [4.10, 5.62] ! ABOVE alpha (test 0.062; CRC a=0.05) | 0.062 | 0.256 | 0.244 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=812; test 0.062 (NOT met) | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial |
-| Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate (plug-in fit) | 0.095 | 11.55 [10.85, 12.34] | n/a (no certified bound) | 0.059 | 0.254 | 0.232 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial |
-| Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate + LTT | 0.095 | 11.51 [10.80, 12.31] | 4.05 [3.22, 4.77] (LTT a=0.05 d=0.1) | 0.047 | 0.239 | 0.195 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met) | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial |
-| Phoneme beam -> CMUdict word decoder (Fidetype) | always-commit | 0.095 | 11.45 [10.72, 12.32] | n/a (no certified bound) | 0.610 | 0.610 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-aggregate |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | always-commit | 0.031 | 19.55 [17.92, 21.21] | n/a (no certified bound) | 0.194 | 0.194 | 1.000 | no (shuf missing, zeros missing, null missing) | none | trust-ready | not released (outputs in the CC0 dataset) | stream-submission | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 18.80 [17.24, 20.39] | 13.42 [11.72, 15.08] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf missing, zeros missing, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate (plug-in fit) | 0.031 | 18.77 [17.22, 20.35] | n/a (no certified bound) | 0.044 | 0.093 | 0.473 | no (shuf missing, zeros missing, null pass) | none | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 18.73 [17.18, 20.31] | 12.24 [10.98, 13.45] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf missing, zeros missing, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial | rescore |
+| Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate + CRC | 0.095 | 11.55 [10.86, 12.35] | 4.90 [4.10, 5.62] ! ABOVE alpha (test 0.062; CRC a=0.05) | 0.062 | 0.256 | 0.244 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=812; test 0.062 (NOT met) | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial | rescore |
+| Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate (plug-in fit) | 0.095 | 11.55 [10.85, 12.34] | n/a (no certified bound) | 0.059 | 0.254 | 0.232 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial | rescore |
+| Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate + LTT | 0.095 | 11.51 [10.80, 12.31] | 4.05 [3.22, 4.77] (LTT a=0.05 d=0.1) | 0.047 | 0.239 | 0.195 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met) | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial | rescore |
+| Phoneme beam -> CMUdict word decoder (Fidetype) | always-commit | 0.095 | 11.45 [10.72, 12.32] | n/a (no certified bound) | 0.610 | 0.610 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-aggregate | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / always-commit** (`b2t25-t15-copytask__published__always-commit.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + CRC** (`b2t25-t15-copytask__published__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate (plug-in fit)** (`b2t25-t15-copytask__published__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + LTT** (`b2t25-t15-copytask__published__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate + CRC** (`b2t25-t15-copytask__ours__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate (plug-in fit)** (`b2t25-t15-copytask__ours__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate + LTT** (`b2t25-t15-copytask__ours__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Phoneme beam -> CMUdict word decoder (Fidetype) / always-commit** (`b2t25-t15-copytask__ours__always-commit.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
 
 ## Forearm sEMG key presses, composed sentences (Toronto) (tracks v0.1)
 
@@ -44,17 +158,100 @@ Track `toronto-semg-composed`. Data: Toronto forearm sEMG typing (Achituve et al
 
 No-BCI reference (gaze typing only, 20 chars/min): **4.27 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate (plug-in fit) | 0.123 | 8.02 [6.90, 9.15] | n/a (no certified bound) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
-| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate + CRC | 0.123 | 7.98 [6.91, 9.03] | 0.55 [0.28, 0.86] (CRC a=0.05) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
-| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | always-commit | 0.123 | 7.81 [6.60, 9.01] | n/a (no certified bound) | 0.541 | 0.541 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate + CRC | 0.398 | 4.68 [4.21, 5.25] | 0.25 [0.06, 0.46] (CRC a=0.05) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate (plug-in fit) | 0.398 | 4.68 [4.21, 5.25] | n/a (no certified bound) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | always-commit | 0.398 | 4.10 [3.59, 4.70] | n/a (no certified bound) | 0.882 | 0.882 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate + CRC | 0.479 | 4.08 [3.83, 4.36] | 0.00 (vacuous: no commits; CRC a=0.05) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.000 (met) | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate (plug-in fit) | 0.479 | 4.08 [3.83, 4.36] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | always-commit | 0.479 | 3.53 [3.19, 3.88] | n/a (no certified bound) | 0.962 | 0.962 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate (plug-in fit) | 0.123 | 8.02 [6.90, 9.15] | n/a (no certified bound) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate + CRC | 0.123 | 7.98 [6.91, 9.03] | 0.55 [0.28, 0.86] (CRC a=0.05) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | always-commit | 0.123 | 7.81 [6.60, 9.01] | n/a (no certified bound) | 0.541 | 0.541 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate + CRC | 0.398 | 4.68 [4.21, 5.25] | 0.25 [0.06, 0.46] (CRC a=0.05) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate (plug-in fit) | 0.398 | 4.68 [4.21, 5.25] | n/a (no certified bound) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | always-commit | 0.398 | 4.10 [3.59, 4.70] | n/a (no certified bound) | 0.882 | 0.882 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate + CRC | 0.479 | 4.08 [3.83, 4.36] | 0.00 (vacuous: no commits; CRC a=0.05) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.000 (met) | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate (plug-in fit) | 0.479 | 4.08 [3.83, 4.36] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | always-commit | 0.479 | 3.53 [3.19, 3.88] | n/a (no certified bound) | 0.962 | 0.962 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | not released (trained on CC BY 4.0 data) | committed-aggregate | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-calib__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate + CRC** (`toronto-semg-composed__cnn-calib__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / always-commit** (`toronto-semg-composed__cnn-calib__commit.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate + CRC** (`toronto-semg-composed__cnn-xsession__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-xsession__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / always-commit** (`toronto-semg-composed__cnn-xsession__commit.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate + CRC** (`toronto-semg-composed__cnn-xsubject__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 1d4ff8c
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-xsubject__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / always-commit** (`toronto-semg-composed__cnn-xsubject__commit.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest None; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer None B=2000 seed=0; code git 7d74c0f
+
+  ```
+  [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
+  [build] python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>
+  [controls] python -I experiments/2026-11-16-p6-01-tracks/update_results.py
+  [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
+  ```
 
 ## Intracortical attempted speech, T15 copy task (Brain-to-Text '25) (tracks v0.2)
 
@@ -62,18 +259,100 @@ Track `b2t25-t15`. Data: Brain-to-Text '25, participant T15 copy task (CC0 1.0).
 
 No-BCI reference (gaze typing only, 20 chars/min): **4.08 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | always-commit | 0.031 | 19.60 [17.92, 21.26] | n/a (no certified bound) | 0.194 | 0.194 | 1.000 | no (shuf fail, zeros fail, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 17.06 [15.85, 18.34] | 13.42 [11.77, 15.17] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf fail, zeros fail, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate (plug-in fit) | 0.031 | 16.93 [15.75, 18.15] | n/a (no certified bound) | 0.044 | 0.093 | 0.473 | no (shuf fail, zeros fail, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 16.78 [15.64, 17.98] | 12.24 [11.05, 13.51] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf fail, zeros fail, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) |
-| M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] | drop-in guard (P14-03 recipe) | 0.067 | 12.83 [11.28, 14.65] | 4.07 [2.51, 5.74] (LTT a=0.05 d=0.1) | 0.029 | 0.158 | 0.184 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=231; test 0.029 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) |
-| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | always-commit | 0.095 | 11.35 [10.53, 12.25] | n/a (no certified bound) | 0.610 | 0.610 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) |
-| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate + CRC | 0.095 | 11.24 [10.55, 12.01] | 4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05) | 0.062 | 0.256 | 0.244 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=812; test 0.062 (NOT met) | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) |
-| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate (plug-in fit) | 0.095 | 11.23 [10.56, 12.00] | n/a (no certified bound) | 0.059 | 0.254 | 0.232 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) |
-| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate + LTT | 0.095 | 11.17 [10.50, 11.93] | 4.05 [3.25, 4.77] (LTT a=0.05 d=0.1) | 0.047 | 0.239 | 0.195 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met) | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) |
-| M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] | drop-in guard (P14-03 recipe) | 0.204 | 7.33 [6.66, 8.01] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=231; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | always-commit | 0.031 | 19.60 [17.92, 21.26] | n/a (no certified bound) | 0.194 | 0.194 | 1.000 | no (shuf fail, zeros fail, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 17.06 [15.85, 18.34] | 13.42 [11.77, 15.17] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf fail, zeros fail, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate (plug-in fit) | 0.031 | 16.93 [15.75, 18.15] | n/a (no certified bound) | 0.044 | 0.093 | 0.473 | no (shuf fail, zeros fail, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 16.78 [15.64, 17.98] | 12.24 [11.05, 13.51] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf fail, zeros fail, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
+| M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] | drop-in guard (P14-03 recipe) | 0.067 | 12.83 [11.28, 14.65] | 4.07 [2.51, 5.74] (LTT a=0.05 d=0.1) | 0.029 | 0.158 | 0.184 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=231; test 0.029 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) | rescore |
+| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | always-commit | 0.095 | 11.35 [10.53, 12.25] | n/a (no certified bound) | 0.610 | 0.610 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) | rescore |
+| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate + CRC | 0.095 | 11.24 [10.55, 12.01] | 4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05) | 0.062 | 0.256 | 0.244 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=812; test 0.062 (NOT met) | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) | rescore |
+| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate (plug-in fit) | 0.095 | 11.23 [10.56, 12.00] | n/a (no certified bound) | 0.059 | 0.254 | 0.232 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) | rescore |
+| Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate + LTT | 0.095 | 11.17 [10.50, 11.93] | 4.05 [3.25, 4.77] (LTT a=0.05 d=0.1) | 0.047 | 0.239 | 0.195 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met) | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) | rescore |
+| M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] | drop-in guard (P14-03 recipe) | 0.204 | 7.33 [6.66, 8.01] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=231; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / always-commit** (`b2t25-t15__published__always-commit.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__always-commit --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__always-commit.json
+  ```
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + CRC** (`b2t25-t15__published__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__crc --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__crc.json
+  ```
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate (plug-in fit)** (`b2t25-t15__published__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__trust.json
+  ```
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + LTT** (`b2t25-t15__published__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__ltt --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__ltt.json
+  ```
+
+- **M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] / drop-in guard (P14-03 recipe)** (`b2t25-t15__m4-13__guard.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git da2981a
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py t15-m4-13
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__m4-13__guard --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__m4-13__guard.json
+  ```
+
+- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / always-commit** (`b2t25-t15__ours__always-commit.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__always-commit --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__always-commit.json
+  ```
+
+- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate + CRC** (`b2t25-t15__ours__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__crc --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__crc.json
+  ```
+
+- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate (plug-in fit)** (`b2t25-t15__ours__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__trust.json
+  ```
+
+- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate + LTT** (`b2t25-t15__ours__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__ltt --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__ltt.json
+  ```
+
+- **M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] / drop-in guard (P14-03 recipe)** (`b2t25-t15__m4-12__guard.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py t15-m4-12
+  [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__m4-12__guard --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__m4-12__guard.json
+  ```
 
 ## Intracortical attempted speech, T12 (Brain-to-Text '24 competition data) (tracks v0.2)
 
@@ -81,10 +360,28 @@ Track `b2t24-t12`. Data: Brain-to-Text '24 competitionData, participant T12 (CC0
 
 No-BCI reference (gaze typing only, 20 chars/min): **4.00 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions)) | drop-in guard (P14-03 recipe) | 0.304 | 6.36 [5.89, 6.84] | 0.48 [0.20, 0.78] (LTT a=0.05 d=0.1) | 0.010 | 0.529 | 0.019 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=330; test 0.010 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) |
-| t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions)) | always commit top-1 | 0.304 | 5.96 [5.39, 6.49] | n/a (no certified bound) | 0.931 | 0.931 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions)) | drop-in guard (P14-03 recipe) | 0.304 | 6.36 [5.89, 6.84] | 0.48 [0.20, 0.78] (LTT a=0.05 d=0.1) | 0.010 | 0.529 | 0.019 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=330; test 0.010 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) | rescore |
+| t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions)) | always commit top-1 | 0.304 | 5.96 [5.39, 6.49] | n/a (no certified bound) | 0.931 | 0.931 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions)) / drop-in guard (P14-03 recipe)** (`b2t24-t12__t12v2__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest fd5ecd37ce70; adapter fidetype.benchmark.tracks 0.0.1 sha256 c330499db0de; scorer 0.2 B=2000 seed=0; code git 5133e04
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t24-t12 --data <data> --out <derived>/p6-02-scorer/truth/b2t24-t12.jsonl
+  [build] python -I experiments/2026-11-16-p6-02-scorer/run.py t12
+  [score] python -m fidetype.benchmark score b2t24-t12 <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__guard --truth <derived>/p6-02-scorer/truth/b2t24-t12.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t24-t12__t12v2__guard.json
+  ```
+
+- **t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions)) / always commit top-1** (`b2t24-t12__t12v2__always-commit.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest fd5ecd37ce70; adapter fidetype.benchmark.tracks 0.0.1 sha256 c330499db0de; scorer 0.2 B=2000 seed=0; code git 5133e04
+
+  ```
+  [truth] python -m fidetype.benchmark truth b2t24-t12 --data <data> --out <derived>/p6-02-scorer/truth/b2t24-t12.jsonl
+  [build] python -I experiments/2026-11-16-p6-02-scorer/run.py t12
+  [score] python -m fidetype.benchmark score b2t24-t12 <derived>/p6-02-scorer/submissions/b2t24-t12__t12v2__always-commit --truth <derived>/p6-02-scorer/truth/b2t24-t12.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t24-t12__t12v2__always-commit.json
+  ```
 
 ## Intracortical handwriting, T5 sentences (Willett 2021) (tracks v0.2)
 
@@ -92,10 +389,28 @@ Track `willett-hw`. Data: Data from: High-performance brain-to-text communicatio
 
 No-BCI reference (gaze typing only, 20 chars/min): **3.88 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units] | always commit the real-time RNN text (as typed on screen in the study) | 0.080 | 4.71 [4.06, 5.49] | n/a (no certified bound) | 0.963 | 0.963 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (output in the CC0 data) | submission/0.2 (units-jsonl) |
-| Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units] | drop-in guard (built-in CTC beam + word list) | 0.077 | 3.47 [3.21, 3.75] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=73; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (output in the CC0 data) | submission/0.2 (units-jsonl) |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units] | always commit the real-time RNN text (as typed on screen in the study) | 0.080 | 4.71 [4.06, 5.49] | n/a (no certified bound) | 0.963 | 0.963 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (output in the CC0 data) | submission/0.2 (units-jsonl) | rescore |
+| Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units] | drop-in guard (built-in CTC beam + word list) | 0.077 | 3.47 [3.21, 3.75] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=73; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (output in the CC0 data) | submission/0.2 (units-jsonl) | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units] / always commit the real-time RNN text (as typed on screen in the study)** (`willett-hw__rnn-published__always-commit.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 04d408da408d; adapter fidetype.adapters.willett_handwriting 0.0.1 sha256 1cd130af2629; scorer 0.2 B=2000 seed=0; code git 5133e04
+
+  ```
+  [truth] python -m fidetype.benchmark truth willett-hw --data <data> --out <derived>/p6-02-scorer/truth/willett-hw.jsonl
+  [build] python -I experiments/2026-11-16-p6-02-scorer/run.py willett
+  [score] python -m fidetype.benchmark score willett-hw <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__always-commit --truth <derived>/p6-02-scorer/truth/willett-hw.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/willett-hw__rnn-published__always-commit.json
+  ```
+
+- **Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units] / drop-in guard (built-in CTC beam + word list)** (`willett-hw__rnn-published__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 04d408da408d; adapter fidetype.adapters.willett_handwriting 0.0.1 sha256 1cd130af2629; scorer 0.2 B=2000 seed=0; code git 5133e04
+
+  ```
+  [truth] python -m fidetype.benchmark truth willett-hw --data <data> --out <derived>/p6-02-scorer/truth/willett-hw.jsonl
+  [build] python -I experiments/2026-11-16-p6-02-scorer/run.py willett
+  [score] python -m fidetype.benchmark score willett-hw <derived>/p6-02-scorer/submissions/willett-hw__rnn-published__guard --truth <derived>/p6-02-scorer/truth/willett-hw.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/willett-hw__rnn-published__guard.json
+  ```
 
 ## Forearm sEMG key presses (Toronto typing gestures) (tracks v0.2)
 
@@ -103,17 +418,91 @@ Track `toronto-semg`. Data: Electromyographic typing gesture classification data
 
 No-BCI reference (gaze typing only, 20 chars/min): **4.27 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate + CRC | 0.123 | 7.87 [6.84, 8.92] | 0.55 [0.29, 0.86] (CRC a=0.05) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
-| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate (plug-in fit) | 0.123 | 7.87 [6.84, 8.92] | n/a (no certified bound) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
-| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | always-commit | 0.123 | 7.77 [6.51, 9.07] | n/a (no certified bound) | 0.541 | 0.541 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate + CRC | 0.398 | 4.63 [4.15, 5.20] | 0.25 [0.07, 0.47] (CRC a=0.05) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate (plug-in fit) | 0.398 | 4.63 [4.15, 5.20] | n/a (no certified bound) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | always-commit | 0.398 | 4.06 [3.51, 4.71] | n/a (no certified bound) | 0.882 | 0.882 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate + CRC | 0.479 | 4.03 [3.75, 4.35] | 0.00 (vacuous: no commits; CRC a=0.05) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate (plug-in fit) | 0.479 | 4.03 [3.75, 4.35] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
-| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | always-commit | 0.479 | 3.41 [3.07, 3.78] | n/a (no certified bound) | 0.962 | 0.962 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate + CRC | 0.123 | 7.87 [6.84, 8.92] | 0.55 [0.29, 0.86] (CRC a=0.05) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | trust gate (plug-in fit) | 0.123 | 7.87 [6.84, 8.92] | n/a (no certified bound) | 0.004 | 0.095 | 0.038 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) | always-commit | 0.123 | 7.77 [6.51, 9.07] | n/a (no certified bound) | 0.541 | 0.541 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate + CRC | 0.398 | 4.63 [4.15, 5.20] | 0.25 [0.07, 0.47] (CRC a=0.05) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.004 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | trust gate (plug-in fit) | 0.398 | 4.63 [4.15, 5.20] | n/a (no certified bound) | 0.004 | 0.200 | 0.018 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) | always-commit | 0.398 | 4.06 [3.51, 4.71] | n/a (no certified bound) | 0.882 | 0.882 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate + CRC | 0.479 | 4.03 [3.75, 4.35] | 0.00 (vacuous: no commits; CRC a=0.05) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=142; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | trust gate (plug-in fit) | 0.479 | 4.03 [3.75, 4.35] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+| Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) | always-commit | 0.479 | 3.41 [3.07, 3.78] | n/a (no certified bound) | 0.962 | 0.962 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY 4.0 data) | submission/0.2 (units-jsonl) | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate + CRC** (`toronto-semg__cnn-calib__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__crc.json
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate (plug-in fit)** (`toronto-semg__cnn-calib__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__trust.json
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / always-commit** (`toronto-semg__cnn-calib__always-commit.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__always-commit.json
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate + CRC** (`toronto-semg__cnn-xsession__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__crc.json
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate (plug-in fit)** (`toronto-semg__cnn-xsession__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__trust.json
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / always-commit** (`toronto-semg__cnn-xsession__always-commit.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__always-commit.json
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate + CRC** (`toronto-semg__cnn-xsubject__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__crc.json
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate (plug-in fit)** (`toronto-semg__cnn-xsubject__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__trust --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__trust.json
+  ```
+
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / always-commit** (`toronto-semg__cnn-xsubject__always-commit.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py toronto
+  [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__always-commit.json
+  ```
 
 ## Forearm sEMG natural typing (KT-sEMG, Nokia Bell Labs) (tracks v0.2)
 
@@ -121,10 +510,28 @@ Track `kt-semg`. Data: KT-sEMG (Keyboard Typing via Surface Electromyography) (C
 
 No-BCI reference (gaze typing only, 20 chars/min): **3.61 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist)) | drop-in guard (built-in CTC beam, no LM) | 0.553 | 3.37 [3.08, 3.46] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=34; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) |
-| shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist)) | always commit top-1 | 0.553 | 0.55 [0.38, 1.03] | n/a (no certified bound) | 1.000 | 1.000 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist)) | drop-in guard (built-in CTC beam, no LM) | 0.553 | 3.37 [3.08, 3.46] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=34; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) | rescore |
+| shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist)) | always commit top-1 | 0.553 | 0.55 [0.38, 1.03] | n/a (no certified bound) | 1.000 | 1.000 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist)) / drop-in guard (built-in CTC beam, no LM)** (`kt-semg__lda-oracle__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest dfe0acb7444f; adapter fidetype.adapters.kt_semg 0.0.1 sha256 e59d8e6ec5ac; scorer 0.2 B=2000 seed=0; code git 5133e04
+
+  ```
+  [truth] python -m fidetype.benchmark truth kt-semg --data <data> --out <derived>/p6-02-scorer/truth/kt-semg.jsonl
+  [build] python -I experiments/2026-11-16-p6-02-scorer/run.py kt
+  [score] python -m fidetype.benchmark score kt-semg <derived>/p6-02-scorer/submissions/kt-semg__lda-oracle__guard --truth <derived>/p6-02-scorer/truth/kt-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/kt-semg__lda-oracle__guard.json
+  ```
+
+- **shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist)) / always commit top-1** (`kt-semg__lda-oracle__always-commit.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest dfe0acb7444f; adapter fidetype.adapters.kt_semg 0.0.1 sha256 e59d8e6ec5ac; scorer 0.2 B=2000 seed=0; code git 5133e04
+
+  ```
+  [truth] python -m fidetype.benchmark truth kt-semg --data <data> --out <derived>/p6-02-scorer/truth/kt-semg.jsonl
+  [build] python -I experiments/2026-11-16-p6-02-scorer/run.py kt
+  [score] python -m fidetype.benchmark score kt-semg <derived>/p6-02-scorer/submissions/kt-semg__lda-oracle__always-commit --truth <derived>/p6-02-scorer/truth/kt-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/kt-semg__lda-oracle__always-commit.json
+  ```
 
 ## MEG typing, asynchronous (SpanishBCBL) - RESEARCH ONLY (tracks v0.2)
 
@@ -132,12 +539,46 @@ Track `spanishbcbl-meg`. Data: SpanishBCBL typing MEG (Brain2Qwerty v1/v2 data) 
 
 No-BCI reference (gaze typing only, 20 chars/min): **3.15 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate (plug-in fit) | 0.522 | 3.11 [2.92, 3.35] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + LTT | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + CRC | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | always-commit | 0.522 | 2.51 [2.25, 2.84] | n/a (no certified bound) | 0.997 | 0.997 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate (plug-in fit) | 0.522 | 3.11 [2.92, 3.35] | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + LTT | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + CRC | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | always-commit | 0.522 | 2.51 [2.25, 2.84] | n/a (no certified bound) | 0.997 | 0.997 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate (plug-in fit)** (`spanishbcbl-meg__convctc-m-async__trust.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg
+  [score] python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__trust --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__trust.json
+  ```
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate + LTT** (`spanishbcbl-meg__convctc-m-async__ltt.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg
+  [score] python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__ltt --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__ltt.json
+  ```
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate + CRC** (`spanishbcbl-meg__convctc-m-async__crc.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg
+  [score] python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__crc --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__crc.json
+  ```
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / always-commit** (`spanishbcbl-meg__convctc-m-async__always-commit.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; code git b9fa645
+
+  ```
+  [truth] python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl
+  [build] python -I experiments/2026-11-17-p6-02b-v02-entries/run.py meg
+  [score] python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__always-commit --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__always-commit.json
+  ```
 
 ## Wrist sEMG touch typing (emg2qwerty, Meta) - RESEARCH ONLY (tracks v0.2)
 
@@ -145,8 +586,26 @@ Track `emg2qwerty`. Data: emg2qwerty-data-2021-08 (CC BY-NC-SA 4.0, **research o
 
 No-BCI reference (gaze typing only, 20 chars/min): **2.82 eWPM**.
 
-| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] | drop-in guard (built-in CTC beam, no LM) | 0.490 | 2.57 [2.55, 2.60] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=1125; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (would be CC BY-NC-SA: research only) | submission/0.2 (units-jsonl) |
-| shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] | always commit top-1 | 0.490 | 2.26 [2.23, 2.29] | n/a (no certified bound) | 1.000 | 1.000 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (would be CC BY-NC-SA: research only) | submission/0.2 (units-jsonl) |
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] | drop-in guard (built-in CTC beam, no LM) | 0.490 | 2.57 [2.55, 2.60] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=1125; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (would be CC BY-NC-SA: research only) | submission/0.2 (units-jsonl) | rescore |
+| shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] | always commit top-1 | 0.490 | 2.26 [2.23, 2.29] | n/a (no certified bound) | 1.000 | 1.000 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (would be CC BY-NC-SA: research only) | submission/0.2 (units-jsonl) | rescore |
+
+Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] / drop-in guard (built-in CTC beam, no LM)** (`emg2qwerty__lda-oracle__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 fe238f494228; scorer 0.2 B=2000 seed=0; code git 5133e04
+
+  ```
+  [truth] python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl
+  [build] python -I experiments/2026-11-16-p6-02-scorer/run.py e2q
+  [score] python -m fidetype.benchmark score emg2qwerty <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__lda-oracle__guard.json
+  ```
+
+- **shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] / always commit top-1** (`emg2qwerty__lda-oracle__always-commit.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 fe238f494228; scorer 0.2 B=2000 seed=0; code git 5133e04
+
+  ```
+  [truth] python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl
+  [build] python -I experiments/2026-11-16-p6-02-scorer/run.py e2q
+  [score] python -m fidetype.benchmark score emg2qwerty <derived>/p6-02-scorer/submissions/emg2qwerty__lda-oracle__always-commit --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__lda-oracle__always-commit.json
+  ```
 

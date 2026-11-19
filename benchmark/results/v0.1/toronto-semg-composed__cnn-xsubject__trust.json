@@ -135,5 +135,77 @@
     "null_commit": "null audit, zeros input"
    }
   }
+ },
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": {
+   "id": "toronto-semg",
+   "version": "borealis-v1-file-836662",
+   "revision": 1
+  },
+  "track": {
+   "track": "toronto-semg-composed",
+   "split_version": "tracks-v0.1",
+   "digest": null
+  },
+  "adapter": {
+   "module": "fidetype.adapters.toronto_semg",
+   "package_version": "0.0.1",
+   "sha256": "bc3f52c3291e34a786cdb6ddf6136239abd5bb06236768dd09ed110b92f87944"
+  },
+  "decoder": {
+   "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
+   "version": "m6-07",
+   "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
+   "weights_sha256": null,
+   "training_data": [
+    "Toronto sEMG (cross-subject; CC BY 4.0)",
+    "Tatoeba en (CC BY 2.0 FR) for the char LM"
+   ]
+  },
+  "policy": {
+   "name": "trust gate (plug-in fit)",
+   "config_id": null,
+   "guarantee": "none"
+  },
+  "scorer": {
+   "scorer_version": null,
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.1",
+   "python": "3.12"
+  },
+  "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json> && python -I experiments/2026-11-16-p6-01-tracks/update_results.py && python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python -I tools/benchmark/import_baselines.py --truth-dir <truth-dir> --stream-result <b2t25-published-result.json>"
+   },
+   {
+    "step": "controls",
+    "command": "python -I experiments/2026-11-16-p6-01-tracks/update_results.py"
+   },
+   {
+    "step": "safe-wpm",
+    "command": "python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks"
+   }
+  ],
+  "inputs": {
+   "sources": "experiments/2026-11-11-emg-toronto/results/trust.json",
+   "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
+  },
+  "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
  }
 }

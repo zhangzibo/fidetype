@@ -1,6 +1,6 @@
 # Benchmark hub design: versioned dataset registry and replay adapters
 
-Status: **design v0.1** (roadmap item P13-01, 2026-11-18). The user decided the seven open questions on 2026-11-18 ([Decisions](#decisions-2026-11-18)). This page is a design. Only the registry file and its checker exist as code. The hub command line, the rerun recipe and the pull-request flow are later items (P13-02, P13-03, P13-06).
+Status: **design v0.1** (roadmap item P13-01, 2026-11-18). The user decided the seven open questions on 2026-11-18 ([Decisions](#decisions-2026-11-18)). Code that exists: the registry file and its checker (P13-01), the hub command line and the rerun recipe in every score card (P13-06, 2026-11-18; [section 12](#12-hub-command-line-and-rerun-recipes-p13-06)). Later items: guarantee columns (P13-02), the pull-request flow (P13-03), the replay command and the transport test (P13-10).
 
 The hub **extends** the P6 leaderboard. It does not replace it. Everything below reuses what exists:
 
@@ -46,6 +46,8 @@ The EMG choice is Toronto sEMG (decision Q1, 2026-11-18). KT-sEMG (CC BY 4.0) be
 |---|---|
 | `src/fidetype/benchmark/hub/datasets-0.1.json` | The registry: schema `fidetype.hub.registry/0.1`, a list of dataset entries |
 | `src/fidetype/benchmark/hub/__init__.py` | Loader and checker (standard library only). `python -m fidetype.benchmark.hub` checks the file; exit code 1 on a problem |
+| `src/fidetype/benchmark/hub/cli.py` | The hub command line (P13-06, [section 12](#12-hub-command-line-and-rerun-recipes-p13-06)) |
+| `src/fidetype/benchmark/hub/recipe.py` | Rerun recipes of score cards (P13-06) |
 | `tests/test_hub_registry.py` | The committed file is valid; tracks and licence flags agree with `tracks.py`; bad entries are refused |
 
 The older `src/fidetype/benchmark/registry.py` (v0.1 tracks) and the dataset fields in `tracks.py` stay. The hub registry is the one place for **dataset** facts. Tracks point to it by `dataset` id. Moving the old fields onto the registry is part of P13-06; it must not change a split file.
@@ -125,10 +127,11 @@ download (original source) -> verify -> [prepare] -> tracks select <track> --spl
 
 ## 5. One-command reruns
 
-Each entry gets a **rerun recipe**: a small JSON block in the result card. It names every versioned input. A future command reads it:
+Each entry gets a **rerun recipe**: a small JSON block (key `rerun`, schema `fidetype.hub.recipe/0.1`) in the result card. It names every versioned input. Since P13-06 every committed card has one, and the scorer writes one into every new card ([section 12](#12-hub-command-line-and-rerun-recipes-p13-06)):
 
 ```bash
-fidetype hub rerun <entry-id> --data <path>        # P13-06; today: the per-entry run.py of experiments/
+fidetype hub recipe benchmark/results/v0.2/<card>.json                     # print the recipe
+fidetype hub rerun <card> --submission <dir> --truth <truth.jsonl>          # level rescore: rerun and compare
 ```
 
 ### 5.1 Rerun recipe fields
@@ -143,6 +146,10 @@ fidetype hub rerun <entry-id> --data <path>        # P13-06; today: the per-entr
 | `scorer` | `SCORER_VERSION`, metric versions (`safe-wpm/0.1`, `fidetype.halluc/0.2`) |
 | `command` | The exact command line, with `<path>` placeholders for local data |
 | `level` | `rescore`, `replay` or `full` (5.2) |
+| `steps` (optional) | The full pipeline when one command is not enough: `truth`, `build`, `score` |
+| `versions` | `fidetype` package version, benchmark version, Python version |
+| `inputs` (optional) | What each local input is and where it comes from. Never a local path |
+| `code_ref` (optional) | The git commit that made the card (backfilled cards) |
 
 ### 5.2 Rerun levels
 
@@ -268,6 +275,75 @@ The user answered the questions of section 10 on 2026-11-18: "i would like to ha
 |---|---|
 | P13-02 | Guarantee and control columns (section 9) |
 | P13-03 | Submission by pull request (section 8; Q2 and Q3 decided 2026-11-18: private truth store for CC0 / CC BY tracks, maintainer scoring for research-only tracks, outputs outside git) |
-| P13-06 (gap 78) | Hub command line `fidetype hub list / info / verify / replay / rerun`, rerun recipe in the card, RA-4 unit key, RA-9 adapter hash, RA-7 3-way transport test |
+| P13-06 (gap 78) | **Done 2026-11-18** ([section 12](#12-hub-command-line-and-rerun-recipes-p13-06)): hub command line `list / show / instructions / verify / check / recipe / rerun`, rerun recipe with the RA-9 adapter hash in every card, the leaderboard shows it |
+| P13-10 (gap 82) | The rest of the P13-06 scope: `fidetype hub replay`, RA-4 unit key in the adapter headers, RA-7 3-way transport test, a `replay`-level rerun of one `b2t25-t15` card byte for byte, the dataset fields of `tracks.py` read from the registry |
+| P13-11 (gap 83) | Recipe gaps: the decoder weights SHA-256 and the frozen policy `config_id` are null in the backfilled cards; the hallucination cards have no recipe block |
 | P13-07 (gap 79) | Registry entries for B2T '24, Willett handwriting, KT-sEMG and emg2qwerty; checksums for the B2T '25 HDF5 zip and a per-file manifest for SpanishBCBL |
 | P6-10 | Training-data declaration and the pkl / HDF5 overlap map (the `same_units.map` of the B2T '25 entry) |
+
+## 12. Hub command line and rerun recipes (P13-06)
+
+Status: **built** 2026-11-18. Code: `src/fidetype/benchmark/hub/cli.py`, `src/fidetype/benchmark/hub/recipe.py`. Tests: `tests/test_hub_cli.py`.
+
+### 12.1 Commands
+
+Run them as `python -m fidetype.benchmark.hub <command>` or `fidetype hub <command>`. No command puts participant data in git. No command downloads data.
+
+| Command | What it does | Exit code |
+|---|---|---|
+| `list [--all] [--json]` | One line per dataset version: id, version, revision, status, role, modality, licence, tracks, `RESEARCH ONLY` | 0 |
+| `show DATASET [--version V] [--json]` | One entry: source, citation, licence, attribution, forms, files and checksums, verify commands, adapters, tracks | 0 |
+| `instructions DATASET [--version V]` | The download and verify steps. It prints the **official source only**. It never downloads, mirrors or re-hosts data (rule 1) | 0 |
+| `verify DATASET --data PATH [--form F] [--json]` | Size and SHA-256 of the local files (one file, or the folder that holds them) against the registry. Then it prints the unit-level command (`verify.units`) | 0 = all found files match; 1 = a mismatch; 2 = no registered file found |
+| `check [--registry FILE] [--entry FILE]` | Checks the committed registry, another registry file, or one dataset entry (for example from a pull request). Give one option at most | 1 on a problem |
+| `recipe CARD [--json]` | Prints the rerun recipe of a score card and checks it | 1 if the recipe is not valid |
+| `rerun CARD --submission DIR --truth FILE [--out FILE]` | Level `rescore`: scores the local submission with the recorded scorer settings. Then it compares the new card with CARD, byte for byte, without the `rerun` block | 0 = same card; 1 = different |
+
+With no command, `python -m fidetype.benchmark.hub` checks the committed registry (the P13-01 behaviour). The benchmark CLI (`python -m fidetype.benchmark`) has no `hub` subcommand. The hub is a separate module entry point, and `fidetype hub` calls it.
+
+`verify` reads files in 1 MiB chunks, so a 2.8 GB archive needs little memory. A file pattern (SpanishBCBL: 316 FIF files) shows `not-checkable` until a per-file manifest exists (gap 79, P13-07). A form without a SHA-256 shows `no-checksum`.
+
+### 12.2 Recipe in every card
+
+| Card | Where the recipe comes from | Level |
+|---|---|---|
+| New v0.2 cards | `fidetype.benchmark.scorecard.score` adds it. `command` = `python -m fidetype.benchmark score <track> <submission> --truth <truth.jsonl> --B <B> --seed <seed>` | `rescore` |
+| The 31 committed v0.2 cards | `tools/benchmark/add_rerun_recipes.py` (backfill). Steps `truth`, `build` (the experiment stage that wrote the submission), `score`. `code_ref` = the last commit that changed the card | `rescore` |
+| The 21 committed v0.1 cards | The same tool. Steps `truth` (`prepare`), `build` (`tools/benchmark/import_baselines.py`), `controls`, `safe-wpm`. For `committed-aggregate` cards the command rebuilds the card but does not recompute the numbers. `inputs.how` says so | `rescore` |
+
+The backfill changed no other field of a card (checked key by key). The adapter hash (RA-9) is the SHA-256 of the adapter module source with LF line ends. So Windows and Linux checkouts give the same hash. A card whose dataset is not yet in the registry (`b2t24-t12`, `willett-hw`, `kt-semg`, `emg2qwerty`) has `dataset: null` and a `dataset_note` (gap 79).
+
+The checker (`check_recipe`) refuses a recipe without the required fields, with an unknown level, or with a local path in a command. Local paths are `<placeholders>`: `<data>`, `<derived>`, `<submission>`, `<truth.jsonl>`.
+
+Example (`benchmark/results/v0.2/b2t25-t15__published__ltt.json`, shortened):
+
+```json
+"rerun": {
+ "schema": "fidetype.hub.recipe/0.1",
+ "level": "rescore",
+ "dataset": {"id": "brain-to-text-25", "version": "dryad-2025-07-03", "revision": 1},
+ "track": {"track": "b2t25-t15", "split_version": "tracks-v0.2", "digest": "1120f8195e50...b1ceeb"},
+ "adapter": {"module": "fidetype.adapters.b2t25", "package_version": "0.0.1", "sha256": "44c9ae95fa2f...569128"},
+ "policy": {"name": "trust gate + LTT", "config_id": null, "guarantee": "ltt"},
+ "scorer": {"scorer_version": "0.2", "metrics": {"safe_wpm": "safe-wpm/0.1"}, "B": 2000, "seed": 0},
+ "command": "python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__ltt --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__ltt.json",
+ "steps": [{"step": "truth"}, {"step": "build", "command": "python -I experiments/2026-11-17-p6-02b-v02-entries/run.py b2t"}, {"step": "score"}],
+ "code_ref": "git b9fa645 (last commit that changed this card before P13-06)"
+}
+```
+
+### 12.3 Leaderboard
+
+The leaderboard (`python -m fidetype.benchmark leaderboard`) has a `Rerun` column with the level (`rescore`, `replay`, `full` or `no`). Below each track table, a "Rerun recipes" block lists the facts and the commands of every entry. `leaderboard.json` holds the full recipe of each row. The project site (`node tools/site/build.js`) shows the same page.
+
+### 12.4 Checked reruns
+
+On 2026-11-18, `fidetype hub rerun` gave the same card (byte for byte, without the `rerun` block) for three committed cards from the local submissions: `b2t25-t15__published__ltt`, `b2t24-t12__t12v2__guard` and `toronto-semg__cnn-calib__crc`. This is level `rescore`. A `replay`-level rerun (adapter, trust policy and scorer) is P13-10.
+
+### 12.5 Not done here
+
+| Item | Gap |
+|---|---|
+| `fidetype hub replay`; RA-4 unit key in the adapter headers; RA-7 3-way transport test; a `replay`-level rerun of one `b2t25-t15` card; `tracks.py` dataset fields read from the registry | 82 = P13-10 |
+| The decoder weights SHA-256 and the frozen policy `config_id` in the recipes; recipes for the hallucination cards | 83 = P13-11 |
+| An outputs pointer (URL + SHA-256), so outside people can rescore | P13-03 |
