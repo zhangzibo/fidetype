@@ -84,7 +84,35 @@ Both fluency modes give the same verdicts. L1 passes every track under protocol 
 - One participant (T15), one split, one seed. The intervals are conditional on the calibration (decisions fixed); they do not include the calibration draw. T12 was not part of the plan (new gap 93).
 - The word decoder used edit 12 (as P15-05, P5-23 and P5-24). The edit-8 rows stay in P14-24 (gap 62).
 - The fluent-wrong rate of L1 (5 / 701) is not certified: the joint fluent-wrong bound of P15-06 cannot run with a learned score (gap 74). L1 has fewer fluent-wrong commits than L0 (5 vs 6) with 42 more commits.
-- The top-1 text of the guard's n-best and of the pipeline output differ on 9 of 701 trials (692 equal) in every LLM arm. The decisions use the guard's view; the effect on WPM is small but not explained here (new gap 94).
+- The top-1 text of the guard's n-best and of the pipeline output differ on 9 of 701 trials (692 equal) in every LLM arm. The decisions use the guard's view; the effect on WPM is small but not explained here (new gap 94). Explained on 2026-11-19 by P15-27: see the addendum at the end.
 - `safe-wpm/0.2` is still a proposal (P14-26). The L2 numbers (7.14, 6.75 with reading cost) do not count for P14-23.
 
 > **Our take:** this is the first pre-registered result above the gaze-typing reference under the adopted metric: 4.91 [4.25, 5.57] safe WPM against 4.02, with a certified wrong-commit rate and all hallucination controls passing. Two levers that each looked modest add up: the LLM makes more top-1 texts exactly right (327 vs 257), and the learned score commits more of them (56 % vs 43 %) with a lower error among commits. The proposed prefix guard on the same pipeline reaches 6.75 even with a reading cost. The next risk is generalisation: one participant and one split. A T12 replication and a fresh-calibration-draw check would make the claim stronger.
+
+## Addendum 2026-11-19: P15-27 check of the 9-trial top-1 difference (gap 94)
+
+This section adds to the results above. It does not replace any number.
+
+**Root cause.** `fidetype.trust.grounding.GroundingCheck.apply` lowers the score of each candidate that fails the grounding gate (`best passing score - demote_margin * k`), but it did not re-sort the list. On 9 of 701 trials the LLM-rescored top-1 fails the gate. The pipeline list then still had that failing candidate first (`pipe_top1`). The guard builds an `NBest`, and the `NBest` constructor sorts by score. So the guard saw the best grounded candidate first (`top1`). It is not tie-breaking, n-best dedup, text normalisation, score rounding or a cache key mismatch.
+
+**Which top-1 is right.** The guard's top-1. The gate is designed so that a failing candidate "can never be the top-1" (docstring of `apply`). In all 9 trials the pipeline's first item has `grounded = false`, and its list is not sorted by score (0 unsorted lists on the other 692 trials). On the 9 trials the guard top-1 has fewer or equal word errors (4 fewer, 5 equal; 3 of the 9 are exactly right).
+
+**Fix** (code `296fb88`)**.** `GroundingCheck.apply` now returns the list sorted by the new score, best first (stable sort; the deficits stay in input order). Tests: `tests/test_grounding_llm.py` (`test_grounding_prefers_supported_text_and_gates`, `test_grounding_apply_top1_equals_nbest_top1`).
+
+**Impact on P15-22.** None on any decision or headline number. The check reran stages `t15`, `halluc` and `verdict` of [`run.py`](run.py) with the fixed code, from scratch copies of the committed caches (`derived/p15-22/llm-cache.sqlite`, `base-nbest-t15.pkl`; read only; 0 new decodes, 0 live LLM scores; peak 0.85 GB). It recalibrated all three guards. Compared with the committed `results/results.json`, the only changed field is `top1_equals_pipeline_top1`:
+
+| quantity | committed (before) | fixed code (after) |
+|---|---|---|
+| L1 safe WPM v0.1 (H1 CI) | **4.91** [4.25, 5.57], certified | **4.91** [4.25, 5.57], certified (identical to 1e-12) |
+| L0 safe WPM v0.1 | 4.18 [3.54, 4.83] | 4.18 [3.54, 4.83] |
+| L2 safe WPM v0.2 / + reading cost | 7.14 / 6.75 | 7.14 / 6.75 |
+| guard config ids | `tcfg-36ce11d641b4caaf`, `tcfg-f3d68c206c66a874`, `tcfg-78cb4d69beb70ca3` | the same |
+| actions, texts, commit scores (701 × 3) | - | 701 / 701 equal in each arm |
+| H1, H2 verdicts; hallucination 0.2 cards | L1 beats; pass | the same |
+| top-1 WER (guard view) | 0.1609 | 0.1609 |
+| `top1_equals_pipeline_top1` | 692 / 701 | 701 / 701 |
+
+So **4.91 does not change**. The guard always used the right top-1.
+
+**Impact on P15-05 (reported for completeness).** P15-05 computed the WER of arm B1 (rescore + grounding) from the pipeline's first item. On T15 M4-13 ([F2 reruns](../2026-11-17-f2-m4-13/results.md)) the B1 WER with the fixed order is **0.1609** (was 0.1617, which equals B0 rescore without grounding). S1 vs A0: Δ −0.0218 [−0.0273, −0.0163] (was −0.0210 [−0.0265, −0.0154]); the verdict stays **pass**. B1 − B0: −0.0009 [−0.0018, −0.0002], so grounding now also lowers WER a little. The commits and guard results of P15-05 do not change. The M4-12 and T12 WER values of P15-05 / P15-06 / P15-07 were not recomputed (new gap 97, P15-28).
+

@@ -105,3 +105,7 @@ The committed P15-06 T12 guards store the recipe field `decoder = custom:__main_
 ## Deviations
 - None in the method. The config `description` string in `results-t15.json` still says "T15 M4-12 fixed0 logits": it is copied from the P15-05 config file. The provenance block (`source m4-13`, checkpoint hash) and the run log show the real inputs.
 - The S1 / dWER intervals were computed after the queue (the queue has no report step), with the unchanged P15-05 function on the saved per-trial outputs.
+
+## Addendum 2026-11-19: B1 WER with the grounded top-1 (P15-27)
+
+This section adds to the results above; it does not replace any number. P15-27 found that `GroundingCheck.apply` did not re-sort the list after it demoted ungrounded candidates. The B1 WER above (0.1617) was computed from the first list item, which on 9 of 701 T15 trials was an ungrounded candidate. The guard used the sorted `NBest`, so no commit, guard result or control changes. With the fixed order (code `296fb88`, P15-27), T15 M4-13 B1 WER = **0.1609**; S1 vs A0: Δ −0.0218 [−0.0273, −0.0163] (was −0.0210 [−0.0265, −0.0154]); S1 stays **pass**. B1 − B0: −0.0009 [−0.0018, −0.0002]. Details: [P15-22 results, addendum](../2026-11-19-p15-22-llm-learned/results.md#addendum-2026-11-19-p15-27-check-of-the-9-trial-top-1-difference-gap-94). The M4-12 and T12 values were not recomputed (gap 97).

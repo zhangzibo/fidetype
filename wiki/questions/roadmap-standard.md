@@ -590,7 +590,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-30 safe_wpm: refuse "certified" for an infeasible guarantee when the policy commits
 - **Gap:** 96 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P5-28).
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19, code `296fb88`; `not-certified` for `feasible: false` with commits, v0.1 and v0.2; rule 6 in docs/safe-wpm.md; test; 100 committed safe-WPM blocks re-checked: no label changes, leaderboard fresh).
 - **Depends on:** nothing. CPU.
 - **Source:** P5-28 ([results](../../experiments/2026-11-19-p5-28-hybrid-prefix/results.md), Bonferroni sensitivity): `fidetype.benchmark.safe_wpm.certification` reads `feasible: false` as "the policy never commits" and still sets `certified`. The first `calibrate_hybrid` kept mid-trial commits when no λ_end passed, and the scorer labelled that uncertified policy `certified`. `calibrate_hybrid` is fixed (`c359eb6`); the scorer still trusts the flag.
 - **Done when:** `safe_wpm` gives a non-certified status (or refuses) when the guarantee is infeasible and at least one trial is committed, with a test; existing entries re-checked.
@@ -1271,6 +1271,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-25** | E1 readout with the same character LM (open gap 91, [details](#p15-25-e1-readout-with-the-same-character-lm)) | F3 | P15-08 (E1a), P11-07 |
 | **P15-26** | T12 replication of LLM rescoring + learned commit confidence (open gap 93, [details](#p15-26-t12-replication-of-llm-rescoring--learned-commit-confidence)) | F1, F2 | P15-22 |
 | **P15-27** | Guard n-best top-1 differs from the pipeline top-1 on 9 of 701 trials (open gap 94, [details](#p15-27-guard-n-best-top-1-differs-from-the-pipeline-top-1-on-9-of-701-trials)) | F1 | P15-22 |
+| **P15-28** | Recompute the M4-12 and T12 P15-05 / P15-06 / P15-07 WER values with the sorted grounding order (open gap 97, [details](#p15-28-recompute-the-m4-12-and-t12-p15-05--p15-06--p15-07-wer-values-with-the-sorted-grounding-order)) | F1 | P15-27 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1474,10 +1475,18 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-27 Guard n-best top-1 differs from the pipeline top-1 on 9 of 701 trials
 - **Gap:** 94 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-22). Follow-up of P15-22, P15-05.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19, code `296fb88`, [P15-22 addendum](../../experiments/2026-11-19-p15-22-llm-learned/results.md#addendum-2026-11-19-p15-27-check-of-the-9-trial-top-1-difference-gap-94); cause: `GroundingCheck.apply` did not re-sort after demotion; fixed with tests; no P15-22 decision or number changes, 4.91 stays; follow-up P15-28).
 - **Depends on:** P15-22 (done; per-trial rows in `derived/p15-22/arm-*.json`). CPU, minutes.
 - **Source:** P15-22 ([results](../../experiments/2026-11-19-p15-22-llm-learned/results.md)): in every LLM arm the top-1 text of `guard._last_nb` equals the first item of the decode_fn output on 692 of 701 trials. The decisions use the guard's view. The WER of the guard view is 0.1609, of the pipeline view 0.1617 (P15-05).
 - **Done when:** a written check names the cause (for example re-sorting after calibration, ties, or candidate merging in the n-best conversion), states whether any committed decision depends on it, and either fixes it with a test or documents it in docs/trust-guarantee.md.
+
+
+#### P15-28 Recompute the M4-12 and T12 P15-05 / P15-06 / P15-07 WER values with the sorted grounding order
+- **Gap:** 97 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-27). Follow-up of P15-27, P15-05.
+- **Status:** `todo`.
+- **Depends on:** P15-27 (done); the local M4-12 and T12 caches of P15-05 / P15-06 / P15-07. CPU, cache-only.
+- **Source:** P15-27 ([P15-22 addendum](../../experiments/2026-11-19-p15-22-llm-learned/results.md#addendum-2026-11-19-p15-27-check-of-the-9-trial-top-1-difference-gap-94)): before the fix, `GroundingCheck.apply` left a demoted (ungrounded) candidate first in the list, and the P15-05 family computed the B1 WER from that first item. T15 M4-13 B1: 0.1617 -> 0.1609 (S1 still pass). Decisions never used the unsorted list.
+- **Done when:** the B1 (and P15-06 / P15-07 grounded) WER values on M4-12 and T12 are recomputed with the sorted order from the committed caches, each changed value gets a dated note next to the original (no silent overwrite), and the wiki pages that quote them (frontier-decoder-quality, frontier-e3-hallucination, m4-13-trust-reruns, north-star) are updated or confirmed.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
