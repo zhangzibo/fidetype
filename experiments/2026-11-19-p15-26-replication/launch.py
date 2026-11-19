@@ -33,7 +33,9 @@ CREATE_BREAKAWAY_FROM_JOB = 0x01000000
 
 
 def py() -> str:
-    return str(ROOT / ".venv" / "Scripts" / "python.exe") if os.name == "nt" else sys.executable
+    """The repo venv python; in a pinned snapshot of the repo (no .venv; see results.md) the calling python."""
+    v = ROOT / ".venv" / "Scripts" / "python.exe"
+    return str(v) if os.name == "nt" and v.exists() else sys.executable
 
 
 def env() -> dict:
