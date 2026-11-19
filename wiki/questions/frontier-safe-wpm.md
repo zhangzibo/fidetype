@@ -1,24 +1,25 @@
 ---
-title: "Frontier write-up: the path to safe WPM above gaze typing (P14-05 to P5-27)"
+title: "Frontier write-up: the path to safe WPM above gaze typing (P14-05 to P15-22)"
 type: question
-tags: [frontier, safe-wpm, trust, t15, t12, learned-confidence, prefix-commit, streaming, metric, write-up, negative-result, pre-registration]
+tags: [frontier, safe-wpm, trust, t15, t12, learned-confidence, prefix-commit, streaming, llm, metric, write-up, negative-result, pre-registration]
 sources: []
 updated: 2026-11-19
 ---
 
 # Safe WPM: can a certified guard beat gaze typing (4.02 WPM) on T15?
 
-Write-up for roadmap item [P15-12](roadmap-standard.md#p15-12-frontier-result-write-ups). It joins P14-05 (metric and baselines), the P14-23 analysis, P5-23 (learned confidence), P14-26 + P5-24 (prefix commits, metric v0.2 proposal), P14-28 (reading cost) and P5-27 (streaming word-by-word commits). Safe WPM is the user-value test of F1 / F2: words per minute that the guard commits right, with a certified wrong-commit rate and a time penalty for wrong commits ([docs/safe-wpm.md](../../docs/safe-wpm.md)).
+Write-up for roadmap item [P15-12](roadmap-standard.md#p15-12-frontier-result-write-ups). It joins P14-05 (metric and baselines), the P14-23 analysis, P5-23 (learned confidence), P14-26 + P5-24 (prefix commits, metric v0.2 proposal), P14-28 (reading cost), P5-27 (streaming word-by-word commits) and P15-22 (LLM rescoring + learned confidence). Safe WPM is the user-value test of F1 / F2: words per minute that the guard commits right, with a certified wrong-commit rate and a time penalty for wrong commits ([docs/safe-wpm.md](../../docs/safe-wpm.md)).
 
 ## Question
 With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_eval` (701 trials) go above the no-BCI reference of gaze typing (4.02)?
 
 ## Short answer
-- **Under the adopted metric `safe-wpm/0.1`: no.** The best pre-registered v0.1 value is 2.64 (learned confidence, P5-23). **v0.1 is still below 4.02.**
-- **Under the proposed `safe-wpm/0.2`: yes**, with certified prefix commits: 4.87 [4.43, 5.30] (P5-24), and 4.67 [4.26, 5.07] with a reading cost of 0.5 s + 0.3 s per word per commit (P14-28).
-- **v0.2 is PROPOSED, NOT ADOPTED.** The user decides. So gap 53 (P14-23) stays open.
-- Every pre-registered gain was smaller than its exploratory estimate.
+- **Under the adopted metric `safe-wpm/0.1`: yes, since P15-22 (2026-11-19).** LLM rescoring with grounding (P15-05 B1) plus the learned commit score (P5-23) gives **4.91 [4.25, 5.57]**, certified, 13 / 701 wrong commits, both controls pass. The lower end of the interval is above 4.02. **Gap 53 (P14-23) is closed.**
+- Before P15-22 the best pre-registered v0.1 value was 2.64 (learned confidence on the n-gram n-best, P5-23).
+- **Under the proposed `safe-wpm/0.2`:** prefix commits on the same LLM pipeline give 7.14 [6.54, 7.70], and 6.75 [6.21, 7.26] with a reading cost of 0.5 s + 0.3 s per word per commit (P15-22 secondary). On the n-gram n-best: 4.87 (P5-24) and 4.67 (P14-28). **v0.2 is PROPOSED, NOT ADOPTED.** The user decides.
+- Every pre-registered gain before P15-22 was smaller than its exploratory estimate. P15-22 (4.91) was larger than its estimate (about 4.50).
 - **Streaming word-by-word commits (P5-27) do not help safe WPM:** 2.34 [2.11, 2.57] against 4.67 for the one-commit prefix guard (both v0.2 + reading cost). They commit right words about 10 s earlier.
+- Limit: one participant (T15), one split, one seed. A T12 replication and a second calibration draw are open (gap 93).
 
 ## Steps at a glance
 
@@ -30,6 +31,7 @@ With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_ev
 | P14-26 + P5-24 | [plan](../../experiments/2026-11-18-p5-24-prefix-commits/plan.md), `00a64ba` | certified word-prefix commits vs the sentence guard (v0.2 proposed) | **4.87** [4.43, 5.30] vs 2.64, +2.22 [1.84, 2.59] | **prefix beats sentence** (under v0.2 only) | [results](../../experiments/2026-11-18-p5-24-prefix-commits/results.md) |
 | P14-28 | [plan](../../experiments/2026-11-18-p14-28-reading-cost/plan.md), `691d743` | sensitivity: reading cost per commit, minimum prefix length | 4.67 [4.26, 5.07] at `aac-gaze-v1`; break-even 5.99 s per commit | statement 1 **robust**; 2 **not fragile**; 3 **yes** | [results](../../experiments/2026-11-18-p14-28-reading-cost/results.md) |
 | P5-27 | [plan](../../experiments/2026-11-18-p5-27-streaming-prefix/plan.md), `5f74c2f` | streaming append-only prefix commits vs the one-commit prefix guard (v0.2 + reading cost + several-commits rule, all proposed) | **2.34** [2.11, 2.57] vs 4.67, −2.32 [−2.63, −2.02] | **single beats stream** (safe, certified) | [results](../../experiments/2026-11-18-p5-27-streaming-prefix/results.md) |
+| **P15-22** | [plan](../../experiments/2026-11-19-p15-22-llm-learned/plan.md), `7557b54` | LLM rescoring (P15-05 B1) + learned commit score vs P5-23 learned (H1) and vs the LLM arm alone (H2), v0.1 | **4.91** [4.25, 5.57] vs 2.64 (+2.27 [1.76, 2.81]) and vs 4.18 (+0.73 [0.19, 1.27]) | **both pass; first v0.1 value > 4.02**; closes P14-23 | [results](../../experiments/2026-11-19-p15-22-llm-learned/results.md) |
 
 ## P14-05: the metric and the first numbers
 - `safe-wpm/0.1`: only whole right sentences earn words; an entry whose measured wrong-commit rate is above alpha is marked.
@@ -101,6 +103,21 @@ With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_ev
 - **Negative:** the threshold is strict (0.99 against 0.94), the guard commits about 1.7 words early in a trial (median 31 % of the trial) and never extends the commit at the end. The P5-24 score streamed without refit passes LTT only at 1.00 (no commits).
 - Follow-up: a hybrid guard (stream mid-trial + the P5-24 decision at the end, certified jointly): gap 92 = [P5-28](roadmap-standard.md#p5-28-hybrid-streaming-and-end-of-trial-prefix-guard).
 
+## P15-22: LLM rescoring + the learned commit score
+- Pipeline: the P15-05 arm B1 (n-gram n-best, then Qwen2.5-1.5B rescoring with weight 1.0, then the CTC grounding check), with all values fixed from the committed P15-05 M4-13 rerun. All decisions came from the committed caches (0 new decodes, 0 live LLM scores). CPU only, 5 min.
+- Arms: L0 = B1 + `p_top1` (reproduces the committed P15-05 B1 guard, 701 / 701), **L1 = B1 + `confidence="learned"`** (primary), L2 = B1 + learned prefix score (secondary, v0.2).
+
+| arm | commits / wrong | error among commits | recall of exactly-right top-1 | v0.1 | v0.2 + reading cost |
+|---|---|---|---|---|---|
+| P5-23 learned (n-gram) | 113 / 10 | 0.088 | 103 / 257 | 2.64 [2.14, 3.17] | - |
+| L0 LLM, `p_top1` | 154 / 12 | 0.078 | 142 / 327 | 4.18 [3.54, 4.83] | 4.06 |
+| **L1 LLM + learned** | **196 / 13** | **0.066** | **183 / 327** | **4.91 [4.25, 5.57]** | 4.75 [4.12, 5.37] |
+| L2 LLM + learned prefix | 530 / 22 (wrong prefix) | 0.042 | 298 / 327 (any prefix) | 1.46 literal (above α) | **6.75** [6.21, 7.26] |
+
+- Two levers multiply: the LLM makes more top-1 texts exactly right (327 against 257 of 701), and the learned score commits a larger share of them with a lower error among commits. The P14-23 analysis said a sentence guard needs about 159 right commits for 4.02; L1 has 183.
+- Hallucination protocol 0.2: L0 and L1 pass all tracks (0 swapped commits, null 0 / 300, scrambled 0 / 300). Fluent-wrong commits: L1 5, L0 6 (not certified; gap 74).
+- The edit-8 word decoder (gap 62) and T12 (gap 93) were not part of the plan.
+
 ## What changed in the library
 | change | commit |
 |---|---|
@@ -109,6 +126,7 @@ With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_ev
 | `commit_unit="prefix"`, `safe_wpm(metric_version="0.2")`, v0.2 proposal (not adopted) | `00a64ba` |
 | `read_s_per_commit`, `read_s_per_word`, `min_prefix_words` (defaults change nothing; refused with v0.1) | `691d743` |
 | `fidetype.trust.stream_commit`, `unit="stream-prefix"`, `safe_wpm(..., n_commits=)` (proposed extension, not adopted) | `5f74c2f` |
+| no library change in P15-22 (experiment script only: P15-05 pipeline + `calibrate(confidence="learned")`) | `9643804` |
 
 ## Limits
 - One participant per set, one split, one seed. The intervals are conditional on the calibration (decisions fixed).
@@ -116,20 +134,20 @@ With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_ev
 - The reading costs come from literature values, not from measured BCI users (gap 77).
 - Word-by-word streaming commits (P5-27) were tested on T15 only; T12 was not run (loader memory; gap 92).
 
-> **Our take:** the guard, not only the decoder, decides user value. Prefix commits are the largest pre-registered gain so far, but only if a right prefix counts as typed text. The metric decision (P14-26) now decides which guard is better for a user. We keep v0.1 as the headline until the user adopts v0.2.
+> **Our take:** the guard, not only the decoder, decides user value. With the LLM pipeline and the learned score, a sentence guard beats gaze typing under the adopted v0.1 metric (4.91). Prefix commits on the same pipeline give more (6.75 with reading cost), but only if a right prefix counts as typed text; the metric decision (P14-26) decides that. We keep v0.1 as the headline until the user adopts v0.2. The claim rests on one participant; the T12 replication (gap 93) is the next check.
 
 ## Still open
 | gap | item | what |
 |---|---|---|
-| 53 | [P14-23](roadmap-standard.md#p14-23-t15-safe-wpm-above-the-no-bci-reference-with-our-causal-decoder) | T15 safe WPM above 4.02 (open: v0.1 below; v0.2 not adopted) |
+| 93, 94 | [P15-26](roadmap-standard.md#p15-26-t12-replication-of-llm-rescoring--learned-commit-confidence), [P15-27](roadmap-standard.md#p15-27-guard-n-best-top-1-differs-from-the-pipeline-top-1-on-9-of-701-trials) | T12 replication + second calibration draw of P15-22; guard vs pipeline top-1 on 9 trials |
+| 62 | [P14-24](roadmap-standard.md#p14-24-f2-and-m4-13-trust-rerun-rows-with-word-decoder-edit-penalty-8) | LLM-arm rows with edit 8 |
 | 92 | [P5-28](roadmap-standard.md#p5-28-hybrid-streaming-and-end-of-trial-prefix-guard) | hybrid streaming + end-of-trial prefix guard (P5-27 follow-up; gap 76 closed) |
 | 77 | [P14-29](roadmap-standard.md#p14-29-measured-checking-time-per-commit-for-aac-and-bci-users) | measured checking time per commit |
-| 69 | [P15-22](roadmap-standard.md#p15-22-llm-rescoring-with-learned-and-prefix-confidence-for-safe-wpm) | LLM rescoring with learned and prefix confidence |
 | 73, 74 | [P5-25](roadmap-standard.md#p5-25-online-re-calibration-for-a-guard-with-a-learned-commit-score), [P5-26](roadmap-standard.md#p5-26-learned-commit-score-with-the-precision-and-hallucination-bounds) | learned score with online re-calibration and with the precision / hallucination bounds |
 | 70 | [P14-27](roadmap-standard.md#p14-27-cost-of-causal-smoothing-on-t15-and-the-decoder-accuracy-target) | decoder accuracy target |
 
 ## Rerun
-Scripts: `experiments/2026-11-16-p14-05-safe-wpm/run.py`, `experiments/2026-11-18-p5-23-learned-confidence/run.py`, `experiments/2026-11-18-p5-24-prefix-commits/run.py`, `experiments/2026-11-18-p14-28-reading-cost/run.py`, `experiments/2026-11-18-p5-27-streaming-prefix/run.py` (stages `views`, `evaluate`, `verdict`), through the isolation wrapper (`.venv\Scripts\python.exe -m fidetype.utils.isolation run --class background --threads 4 -- .venv\Scripts\python.exe -I <script>`). They need the local M4-13 and T12 v2 log-probs.
+Scripts: `experiments/2026-11-16-p14-05-safe-wpm/run.py`, `experiments/2026-11-18-p5-23-learned-confidence/run.py`, `experiments/2026-11-18-p5-24-prefix-commits/run.py`, `experiments/2026-11-18-p14-28-reading-cost/run.py`, `experiments/2026-11-18-p5-27-streaming-prefix/run.py` (stages `views`, `evaluate`, `verdict`), `experiments/2026-11-19-p15-22-llm-learned/run.py all` (or `launch.py`, detached; needs the P15-05 M4-13 caches), through the isolation wrapper (`.venv\Scripts\python.exe -m fidetype.utils.isolation run --class background --threads 4 -- .venv\Scripts\python.exe -I <script>`). They need the local M4-13 and T12 v2 log-probs.
 
 ## Related pages
 [Safe WPM bottleneck](safe-wpm-bottleneck.md), [decoder quality write-up](frontier-decoder-quality.md), [E3 write-up](frontier-e3-hallucination.md), [north star](north-star.md).

@@ -3,7 +3,7 @@ title: "Frontier write-up E3 (F2): LLM decoding with a grounding check, a halluc
 type: question
 tags: [frontier, f2, e3, llm, hallucination, grounding, ltt, benchmark, write-up, negative-result, pre-registration]
 sources: []
-updated: 2026-11-18
+updated: 2026-11-19
 ---
 
 # E3 (F2): can an LLM improve decoded text without putting words in the user's mouth?
@@ -19,6 +19,7 @@ An LLM rescores or rewrites the decoder n-best. A run-time check compares the te
 - **The grounding check stops every swapped-signal commit** (wrong neural data for the sentence) in every grounded arm, on T15 and T12. It does **not** stop fluent text on the true signal.
 - **A certified fluent-wrong bound exists** on T15 (P15-06) and on T12 (P15-14, V-single). On M4-12 it was vacuous (0 commits). On M4-13 it commits 36 sentences, 34 right.
 - **First system that passes all tracks** of the hallucination benchmark under protocol 0.2: the M4-13 P15-06 guard (36 real commits, 0 swapped).
+- **P15-22 (2026-11-19): the grounded LLM arm is also useful.** B1 + the learned commit score commits 196 of 701 (13 wrong) and gives 4.91 [4.25, 5.57] safe WPM v0.1, above gaze typing (4.02). It passes all protocol 0.2 tracks (0 swapped commits, null 0 / 300, scrambled 0 / 300), with 5 fluent-wrong commits (not certified).
 
 ## Steps at a glance
 
@@ -29,6 +30,7 @@ An LLM rescores or rewrites the decoder n-best. A run-time check compares the te
 | F2 reruns on M4-13 + V-single (P15-14) | [plan](../../experiments/2026-11-17-f2-m4-13/plan.md), `97a2fc4` (before any M4-13 output) | P15-05 and P15-06 methods unchanged on M4-13; V-single variant on T12 | A: S1-S3 pass, **S4 fail**; B: H1-H4 pass; C: V1-V3 pass, V4 T12 **fail as written** | [results](../../experiments/2026-11-17-f2-m4-13/results.md) |
 | P15-07 benchmark 0.1 | (benchmark build; baselines from the saved guards) | null / scrambled / swapped tracks, fluent-wrong metric, scorer, CI re-score of 12 outcome files | done; P14-03 guard fails swapped on T12 | [results](../../experiments/2026-11-16-p15-07-halluc-bench/results.md) |
 | P15-15 protocol 0.2 | [plan](../../experiments/2026-11-17-p15-15-halluc-0.2/plan.md), `4e44c23` | paired swapped / real commit-ratio rule (r 0.5, α 0.05, m_min 25) | 10 of 12 entries change verdict; none passes on M4-12; M4-13 B1 passes | [results](../../experiments/2026-11-17-p15-15-halluc-0.2/results.md) |
+| P15-22 (M4-13, T15) | [plan](../../experiments/2026-11-19-p15-22-llm-learned/plan.md), `7557b54` | P15-05 B1 + learned commit score (and prefix score); safe WPM primary; protocol 0.2 check secondary | H1 and H2 pass; 4.91 v0.1; protocol 0.2 pass | [results](../../experiments/2026-11-19-p15-22-llm-learned/results.md) |
 
 ## P15-05: LLM rescoring with a grounding check
 
@@ -78,8 +80,12 @@ An LLM rescores or rewrites the decoder n-best. A run-time check compares the te
 | P15-05 A0 n-gram | 104 / 17 | 104 | 89 / 89 / 15 | fail | **fail** |
 | P15-05 B0 rescore | 141 / 10 | 141 | 115 / 115 / 26 | fail | **fail** |
 | **P15-06 B1 rescore + G** | **36 / 2** | **0** | 36 / 0 / 0 | **pass** (upper bound 0.080 < 1/3) | **pass** |
+| P15-22 L0: B1 + `p_top1` (= P15-05 B1) | 154 / 12 | 0 | 154 / 0 / 0 | **pass** (0.019) | **pass** |
+| **P15-22 L1: B1 + learned score** | **196 / 13** | **0** | 196 / 0 / 0 | **pass** (0.015) | **pass** |
 
-> **Our take:** the M4-13 B1 guard is the first entry that passes every track. It commits on 5.1 % of real items. P15-16 asks for a baseline that commits on "a useful part" of the items, with that rate fixed in a plan first. 5.1 % was never fixed in a plan, so this is evidence for P15-16, not its closure.
+P15-22 entries ([results]({R})): files in `experiments/2026-11-19-p15-22-llm-learned/results/halluc/` (not yet in `benchmark/results/halluc-v0.2/`). Both fluency modes give the same verdicts. The absolute unsupported swapped-commit rate is 0 / 701 (CP95 upper 0.0052).
+
+> **Our take:** the M4-13 B1 guard is the first entry that passes every track. It commits on 5.1 % of real items. The P15-22 L1 guard passes every track too and commits on 28.0 %, but that rate was also not fixed in a P15-16 plan. P15-16 asks for a baseline that commits on "a useful part" of the items, with that rate fixed in a plan first. 5.1 % was never fixed in a plan, so this is evidence for P15-16, not its closure.
 
 ## What changed in the library
 | change | commit |
@@ -104,7 +110,7 @@ An LLM rescores or rewrites the decoder n-best. A run-time check compares the te
 |---|---|---|
 | 4 | [P15-16](roadmap-standard.md#p15-16-hallucination-benchmark-baseline-that-commits-often-and-checks-the-signal) | a baseline that commits often and passes all tracks |
 | 52 | [P15-21](roadmap-standard.md#p15-21-hallucination-benchmark-absolute-bound-on-unsupported-swapped-commits-next-to-the-ratio-rule) | absolute bound on swapped commits next to the ratio rule |
-| 69 | [P15-22](roadmap-standard.md#p15-22-llm-rescoring-with-learned-and-prefix-confidence-for-safe-wpm) | LLM rescoring with learned and prefix confidence |
+| 93 | [P15-26](roadmap-standard.md#p15-26-t12-replication-of-llm-rescoring--learned-commit-confidence) | T12 replication of P15-22 (LLM + learned score) |
 | 62 | [P14-24](roadmap-standard.md#p14-24-f2-and-m4-13-trust-rerun-rows-with-word-decoder-edit-penalty-8) | F2 rows with word-decoder edit penalty 8 |
 | 74 | [P5-26](roadmap-standard.md#p5-26-learned-commit-score-with-the-precision-and-hallucination-bounds) | learned commit score with the hallucination bound |
 
