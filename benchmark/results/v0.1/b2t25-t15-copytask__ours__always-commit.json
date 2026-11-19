@@ -159,6 +159,7 @@
    "version": "m6-06",
    "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
    "weights_sha256": null,
+   "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
    "training_data": [
     "none (decoding only)"
    ]
@@ -166,6 +167,7 @@
   "policy": {
    "name": "always-commit",
    "config_id": null,
+   "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
    "guarantee": "none"
   },
   "scorer": {
@@ -205,6 +207,7 @@
    "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
   },
   "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

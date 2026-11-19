@@ -9,6 +9,15 @@ entry history, P13-09) and ``history.json`` (the entry history from git,
 see ``fidetype.benchmark.entry_history``). The output folder can be served
 as is (for example by GitHub Pages later). Never edit the outputs by hand.
 
+Entry history and freshness (P13-12): the history is read from git up to the
+parent of the commit that holds the pages (``entry_history.site_base``), so a
+card committed together with its regenerated pages gets a row "in the commit
+that holds this page" that stays correct after the commit. ``build`` first
+tries that base; if the result differs from the committed pages, the pages will
+go into a new commit on top of ``HEAD``, so it builds with base ``HEAD``. CI
+runs ``python -m fidetype.benchmark.leaderboard --check`` (full-history
+checkout): it regenerates the outputs and fails on any difference.
+
 Stable anchors (P13-09): ``index.html#track-<track>`` (track heading),
 ``tracks/<track>.html`` (track page), ``tracks/<track>.html#e-<card>``
 (one entry; ``<card>`` is the card file name without ``.json``) and
@@ -26,7 +35,7 @@ from pathlib import Path
 from typing import Any
 
 from fidetype.benchmark import tracks as TR2
-from fidetype.benchmark.entry_history import build_history, track_events
+from fidetype.benchmark.entry_history import build_history, git_runner, repo_root, site_base, track_events
 from fidetype.benchmark.hub.recipe import rerun_level
 from fidetype.benchmark.registry import BENCHMARK_VERSION, DATASETS, TRACKS
 from fidetype.benchmark.scoring import RESULT_SCHEMA
@@ -300,6 +309,15 @@ def _recipe_facts(rc: dict[str, Any]) -> str:
              f"split {tr.get('split_version')} digest {str(tr.get('digest'))[:12]}",
              (f"adapter {ad['module']} {ad['package_version']} sha256 {ad['sha256'][:12]}" if ad else "adapter none"),
              f"scorer {sc.get('scorer_version')} B={sc.get('B')} seed={sc.get('seed')}"]
+    dec, pol = rc.get("decoder") or {}, rc.get("policy") or {}
+    if dec.get("weights_sha256"):  # P13-11: a value or the reason
+        parts.append(f"weights sha256 {dec['weights_sha256'][:12]}")
+    elif dec.get("weights_sha256_reason"):
+        parts.append("weights: " + str(dec["weights_sha256_reason"]).split(":")[0].split(";")[0])
+    if pol.get("config_id"):
+        parts.append(f"policy config {pol['config_id']}")
+    elif pol.get("config_id_reason"):
+        parts.append("policy config: " + str(pol["config_id_reason"]).split(":")[0].split(";")[0])
     if rc.get("code_ref"):
         parts.append(f"code {rc['code_ref'].split(' (')[0]}")
     return "; ".join(parts)
@@ -490,8 +508,8 @@ def _sw_short(v: dict[str, Any]) -> str:
 def _history_rows(events: list[dict[str, Any]], names: dict[str, str], show_entry: bool) -> str:
     out = []
     for v in events:
-        date = v["date"] or "not committed"
-        commit = f"<code>{v['commit']}</code>" if v.get("commit") else "working tree"
+        date = v["date"] or "with this page"
+        commit = f"<code>{v['commit']}</code>" if v.get("commit") else "this commit"
         if v.get("anchor"):
             entry = f'<a href="#{v["anchor"]}">{html.escape(names.get(v["file"], v["file"]))}</a>'
         else:
@@ -577,10 +595,10 @@ def track_page_html(slug: str, rows: list[dict[str, Any]], history: dict[str, An
         facts = [f"Card <code>{html.escape(str(r['file']))}</code>", f"entry id <code>{html.escape(str(r['entry_id']))}</code>",
                  f"scored from {html.escape(str(r['scored_from']))}", f"rerun level <b>{html.escape(r['rerun_level'])}</b>"]
         if added:
-            facts.append(f"added {html.escape(added['date'] or 'not committed')}"
+            facts.append(f"added {html.escape(added['date'] or 'with this page')}"
                          + (f" (<code>{added['commit']}</code>)" if added.get("commit") else ""))
         if last and last is not added:
-            facts.append(f"last changed {html.escape(last['date'] or 'not committed')}"
+            facts.append(f"last changed {html.escape(last['date'] or 'with this page')}"
                          + (f" (<code>{last['commit']}</code>)" if last.get("commit") else ""))
         if mine:
             facts.append(f"{len(mine)} version{'s' if len(mine) != 1 else ''}")
@@ -603,30 +621,142 @@ def track_page_html(slug: str, rows: list[dict[str, Any]], history: dict[str, An
     return "\n".join(p for p in parts if p) + "\n"
 
 
-def build(results_dir: str | PathLike[str] | list, out_dir: str | PathLike[str], *,
-          history: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Write the leaderboard outputs. ``history`` (for tests) replaces the history read from git."""
+DEFAULT_RESULTS = ("benchmark/results/v0.1", "benchmark/results/v0.2")
+DEFAULT_OUT = "benchmark/site"
+
+
+def render(results_dir: str | PathLike[str] | list, history: dict[str, Any]) -> dict[str, str]:
+    """All leaderboard outputs as {path relative to the output folder: text (LF line ends)}."""
     folders = list(results_dir) if isinstance(results_dir, (list, tuple)) else [results_dir]
-    results = load_results(folders)
-    by = build_rows(results)
-    hist = history if history is not None else build_history(folders)
-    out = Path(out_dir)
-    out.mkdir(parents=True, exist_ok=True)
+    by = build_rows(load_results(folders))
     payload = {"benchmark_version": BENCHMARK_VERSION,
                "track_pages": {k: {"page": track_page(k), "anchor": track_anchor(k),
                                    "research_only": bool((track_info(k) or {}).get("research_only"))} for k in by},
                "tracks": {k: [{kk: vv for kk, vv in r.items() if kk != "ewpm_s"} for r in v] for k, v in by.items()}}
-    (out / "leaderboard.json").write_text(json.dumps(payload, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-    (out / "leaderboard.md").write_text(markdown(by), encoding="utf-8")
-    (out / "index.html").write_text(page(by), encoding="utf-8")
-    (out / "history.json").write_text(json.dumps(hist, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    files = {"leaderboard.json": json.dumps(payload, indent=1, ensure_ascii=False) + "\n",
+             "leaderboard.md": markdown(by), "index.html": page(by),
+             "history.json": json.dumps(history, indent=1, ensure_ascii=False) + "\n"}
+    for k, v in by.items():
+        files[track_page(k)] = track_page_html(k, v, history)
+    return files
+
+
+def _committed(out: Path, run=git_runner) -> dict[str, str] | None:
+    """The leaderboard outputs as committed in ``HEAD`` ({relative path: text, LF}), or None without git."""
+    root = repo_root(out if out.is_dir() else out.parent, run)
+    if root is None:
+        return None
+    try:
+        rel = out.resolve().relative_to(root).as_posix()
+    except ValueError:
+        return None
+    names = (run(["ls-tree", "-r", "--name-only", "HEAD", f"{rel}/"], root) or "").split("\n")
+    files = {}
+    for n in [x for x in names if x]:
+        sub = n[len(rel) + 1:]
+        if sub in ("leaderboard.json", "leaderboard.md", "index.html", "history.json") or (
+                sub.startswith("tracks/") and sub.endswith(".html")):
+            files[sub] = (run(["show", f"HEAD:{n}"], root) or "").replace("\r\n", "\n")
+    return files
+
+
+def _norm(files: dict[str, str]) -> dict[str, str]:
+    return {k: v.replace("\r\n", "\n") for k, v in files.items()}
+
+
+def plan(results_dir: str | PathLike[str] | list, out_dir: str | PathLike[str], *,
+         history: dict[str, Any] | None = None, history_base: str = "auto") -> tuple[dict[str, str], dict[str, Any]]:
+    """The outputs and the history that ``build`` writes.
+
+    ``history_base``: ``"auto"`` (default; see the module text), ``"site"`` (the parent of the newest commit
+    that changed ``out_dir``: the freshness check) or a git revision."""
+    folders = list(results_dir) if isinstance(results_dir, (list, tuple)) else [results_dir]
+    if history is not None:
+        return render(folders, history), history
+    out = Path(out_dir)
+    if history_base not in ("auto", "site"):
+        h = build_history(folders, base=history_base)
+        return render(folders, h), h
+    sb = site_base(out)
+    if history_base == "site" or sb is None:
+        h = build_history(folders, base=sb or "HEAD")
+        return render(folders, h), h
+    h1 = build_history(folders, base=sb)
+    f1 = render(folders, h1)
+    if _norm(f1) == _committed(out):
+        return f1, h1  # the committed pages are fresh: nothing changes
+    h2 = build_history(folders, base="HEAD")  # the pages go into a new commit on top of HEAD
+    return render(folders, h2), h2
+
+
+def build(results_dir: str | PathLike[str] | list, out_dir: str | PathLike[str], *,
+          history: dict[str, Any] | None = None, history_base: str = "auto") -> dict[str, Any]:
+    """Write the leaderboard outputs. ``history`` (for tests) replaces the history read from git."""
+    folders = list(results_dir) if isinstance(results_dir, (list, tuple)) else [results_dir]
+    files, hist = plan(folders, out_dir, history=history, history_base=history_base)
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
     tdir = out / "tracks"
     tdir.mkdir(exist_ok=True)
-    wanted = {Path(track_page(k)).name for k in by}
     for old in tdir.glob("*.html"):
-        if old.name not in wanted:
+        if f"tracks/{old.name}" not in files:
             old.unlink()
-    for k, v in by.items():
-        (tdir / Path(track_page(k)).name).write_text(track_page_html(k, v, hist), encoding="utf-8")
-    return {"n_results": len(results), "tracks": {k: len(v) for k, v in by.items()}, "out": str(out),
-            "history": hist["available"]}
+    for rel, text in files.items():
+        (out / rel).write_text(text, encoding="utf-8")
+    lb = json.loads(files["leaderboard.json"])
+    pending = sum(1 for vs in (hist.get("cards") or {}).values() for v in vs if v.get("commit") is None)
+    pending += sum(1 for r in hist.get("removed") or [] if r.get("commit") is None)
+    return {"n_results": len(load_results(folders)),
+            "tracks": {k: len(v) for k, v in lb["tracks"].items()}, "out": str(out), "history": hist["available"],
+            "rows_in_this_commit": pending}
+
+
+def check(results_dir: str | PathLike[str] | list = DEFAULT_RESULTS,
+          out_dir: str | PathLike[str] = DEFAULT_OUT) -> list[str]:
+    """P13-12 freshness check: regenerate the outputs (history base = the parent of the commit that holds the
+    pages) and compare them with the files in ``out_dir``. Returns the problems (an empty list = fresh)."""
+    out = Path(out_dir)
+    files, hist = plan(results_dir, out, history_base="site")
+    errs = []
+    if not hist.get("available"):
+        errs.append(f"no git history ({hist.get('note')}); the check needs a full-history checkout (fetch-depth 0)")
+    have = {p.relative_to(out).as_posix() for p in [*(out.glob("*.*")), *(out / "tracks").glob("*.html")]
+            if p.name in ("leaderboard.json", "leaderboard.md", "index.html", "history.json") or p.parent.name == "tracks"}
+    for rel in sorted(set(files) | have):
+        if rel not in files:
+            errs.append(f"{rel}: not generated any more (delete it)")
+        elif rel not in have:
+            errs.append(f"{rel}: missing")
+        elif (out / rel).read_text(encoding="utf-8").replace("\r\n", "\n") != files[rel].replace("\r\n", "\n"):
+            errs.append(f"{rel}: differs from the regenerated file")
+    return errs
+
+
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+    import sys
+
+    ap = argparse.ArgumentParser(prog="python -m fidetype.benchmark.leaderboard",
+                                 description="Build the leaderboard, or check that the committed outputs are fresh.")
+    ap.add_argument("--results", nargs="+", default=list(DEFAULT_RESULTS))
+    ap.add_argument("--out", default=DEFAULT_OUT)
+    ap.add_argument("--check", action="store_true",
+                    help="regenerate and compare with --out; exit 1 on a difference (CI, P13-12)")
+    a = ap.parse_args(argv)
+    if a.check:
+        errs = check(a.results, a.out)
+        for e in errs:
+            print(f"STALE {e}", file=sys.stderr)
+        if errs:
+            print("The leaderboard outputs are not fresh. Regenerate them: python -m fidetype.benchmark leaderboard "
+                  f"--results {' '.join(a.results)} --out {a.out}; then commit {a.out}/ (with the cards or after "
+                  "them).", file=sys.stderr)
+            return 1
+        print(f"leaderboard outputs in {a.out} are fresh", file=sys.stderr)
+        return 0
+    print(json.dumps(build(a.results, a.out)), file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

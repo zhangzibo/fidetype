@@ -233,6 +233,7 @@ def test_baseline_cards_reproduce(path):
     oc = json.loads(path.read_text(encoding="utf-8"))
     card_path = path.with_name(path.name.replace(".outcomes.json", ".card.json"))
     ref = json.loads(card_path.read_text(encoding="utf-8"))
+    ref.pop("rerun")  # the rerun recipe (P13-11) is not a scorer output; tests/test_hub_cli.py checks it
     assert ref["protocol"] == HB.PROTOCOL_V01 and ref["schema"] == HB.SCORECARD_SCHEMA_V01  # the old protocol, kept
     card = HB.score_outcomes(oc, protocol=ref["protocol"], alpha_wrong=ref["rules"]["alpha_wrong"],
                              alpha_fluent=ref["rules"]["alpha_fluent"])

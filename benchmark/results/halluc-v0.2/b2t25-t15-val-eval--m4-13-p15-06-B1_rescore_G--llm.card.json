@@ -305,5 +305,65 @@
  },
  "wrong_commit_le_alpha": true,
  "fluent_wrong_le_alpha": true,
- "controls_verdict": "pass"
+ "controls_verdict": "pass",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": {
+   "id": "brain-to-text-25",
+   "version": "dryad-2025-07-03",
+   "revision": 1
+  },
+  "track": {
+   "track": "halluc/b2t25-t15-val-eval",
+   "split_version": "halluc-v0.1",
+   "digest": "baf1fd5532253b5ba9457fc6d42232b536d202231b422e69ad31f9e2aa3a2a8f",
+   "digest_kind": "file-sha256",
+   "data_track": "b2t25-t15"
+  },
+  "adapter": null,
+  "decoder": {
+   "name": "M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours)",
+   "version": "m4-13",
+   "url": "experiments/2026-11-15-m4-13-long-train",
+   "weights_sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72",
+   "training_data": [
+    "B2T '25 HDF5 train partition (CC0)"
+   ],
+   "weights_files": [
+    {
+     "name": "<runs>/m4-13-long0/best.pt",
+     "sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72"
+    }
+   ]
+  },
+  "policy": {
+   "name": "m4-13-p15-06-B1_rescore_G",
+   "config_id": "tcfg-b7c9002efc0623b5",
+   "guarantee": "ltt",
+   "description": "M4-13 rerun of the P15-06 guard (rescoring + grounding + fluent-wrong bound)"
+  },
+  "scorer": {
+   "scorer_version": "fidetype.halluc/0.2",
+   "metrics": {
+    "halluc": "fidetype.halluc/0.2"
+   },
+   "fluency": "llm-table",
+   "B": null,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": null,
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark.hallucination rescore benchmark/results/halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--llm.outcomes.json --protocol fidetype.halluc/0.2 --alpha-wrong 0.05 --alpha-fluent 0.01 --check benchmark/results/halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--llm.card.json",
+  "inputs": {
+   "outcomes": "benchmark/results/halluc-v0.2/b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--llm.outcomes.json (committed; per-trial flags only, no text)",
+   "split": "src/fidetype/benchmark/splits/halluc-v0.1/b2t25-t15-val-eval.json (committed; hashes only)",
+   "adapter": "none: the rescore reads the committed outcomes file, no adapter runs"
+  },
+  "code_ref": "git 053e329 (last commit that changed this card before P13-11)",
+  "recorded": "2026-11-19, backfill by P13-11 (tools/benchmark/add_rerun_recipes.py --halluc)"
+ }
 }

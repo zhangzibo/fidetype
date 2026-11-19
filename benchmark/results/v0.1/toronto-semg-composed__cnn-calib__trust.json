@@ -159,7 +159,18 @@
    "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
    "version": "m6-07",
    "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-   "weights_sha256": null,
+   "weights_sha256": "580801cf591cd3f02439bcda960c03679f4873e2428161aa4f239fb137a7aaf6",
+   "weights_files": [
+    {
+     "name": "<runs>/emg-toronto/calib_a/best.pt",
+     "sha256": "43bbef9c3d6a8649ce55e5706a209afcaa2c8fede1812ec385338a02d4e5b3f3"
+    },
+    {
+     "name": "<runs>/emg-toronto/calib_b/best.pt",
+     "sha256": "146c23e3f873c16253a152bac62cef121600adbca57d65f2a0f4879c5370d857"
+    }
+   ],
+   "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
    "training_data": [
     "Toronto sEMG (session-calibrated; CC BY 4.0)",
     "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -168,6 +179,7 @@
   "policy": {
    "name": "trust gate (plug-in fit)",
    "config_id": null,
+   "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
    "guarantee": "none"
   },
   "scorer": {
@@ -207,6 +219,7 @@
    "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
   },
   "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

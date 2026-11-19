@@ -157,6 +157,87 @@ def test_every_committed_card_has_a_valid_recipe():
             assert r["dataset"] == {"id": hub_ds["id"], "version": hub_ds["version"], "revision": hub_ds["revision"]}
         else:
             assert r["dataset"] is None and r["dataset_note"]
+        # P13-11: the weights SHA-256 and the policy config_id are a value or a reason, never a bare null.
+        dec, pol = r["decoder"], r["policy"]
+        assert bool(dec["weights_sha256"]) != bool(dec.get("weights_sha256_reason")), p.name
+        assert bool(pol["config_id"]) != bool(pol.get("config_id_reason")), p.name
+        if "guard" in p.stem:
+            assert pol["config_id"], f"{p.name}: a guard card records its frozen config_id"
+        if pol["config_id"]:
+            src = json.loads((ROOT / pol["config_id_source"]).read_text(encoding="utf-8"))
+            assert pol["config_id"] in ((src.get("sheet") or {}).get("config_id"), src.get("config_id"))
+        for f in dec.get("weights_files") or []:
+            assert f["name"].startswith("<runs>/") and ":" not in f["name"]  # never a local path
+        if len(dec.get("weights_files") or []) > 1:  # several files: the SHA-256 of the sorted manifest
+            lines = "".join(f"{f['sha256']}  {f['name']}\n" for f in sorted(dec["weights_files"], key=lambda f: f["name"]))
+            assert dec["weights_sha256"] == hashlib.sha256(lines.encode("utf-8")).hexdigest()
+
+
+def _halluc_cards():
+    return sorted((ROOT / "benchmark" / "results").glob("halluc-v0.*/*.card.json"))
+
+
+def test_every_hallucination_card_has_a_valid_recipe():
+    files = _halluc_cards()
+    assert len(files) >= 24
+    for p in files:
+        card = json.loads(p.read_text(encoding="utf-8"))
+        r = card.get("rerun")
+        assert r is not None, f"{p.name}: no rerun recipe"
+        assert R.check_recipe(r) == [], (p.name, R.check_recipe(r))
+        assert R.rerun_level(card) == "rescore"
+        assert r["scorer"]["scorer_version"] == card["protocol"]
+        assert r["policy"]["config_id"] == card["meta"]["guard_config_id"]
+        assert r["decoder"]["weights_sha256"] and r["track"]["split_version"] == "halluc-v0.1"
+        split = R.halluc_split_file(card["dataset"])
+        assert r["track"]["digest"] == hashlib.sha256(split.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+        rel = p.relative_to(ROOT).as_posix()
+        oc = card["meta"].get("outcomes_file") or rel.replace(".card.json", ".outcomes.json")
+        assert r["command"].startswith("python -m fidetype.benchmark.hallucination rescore ")
+        assert f" {oc} " in r["command"] and r["command"].endswith(f"--check {rel}") and (ROOT / oc).is_file()
+
+
+def test_hallucination_rescore_check_ignores_the_recipe(capsys):
+    """The recipe command of one card of each protocol reproduces the card (the rerun block is not compared)."""
+    import shlex
+
+    from fidetype.benchmark import hallucination as HB
+
+    for folder in ("halluc-v0.1", "halluc-v0.2"):
+        p = next(f for f in _halluc_cards() if f.parent.name == folder and "p14-03-guard--conservative" in f.name)
+        cmd = json.loads(p.read_text(encoding="utf-8"))["rerun"]["command"]
+        argv = shlex.split(cmd)[3:]
+        argv[argv.index("--check") + 1] = str(ROOT / argv[argv.index("--check") + 1])
+        argv[1] = str(ROOT / argv[1])
+        assert HB.main(argv) == 0, p.name
+    capsys.readouterr()
+
+
+def test_recipe_value_or_reason():
+    card = json.loads((ROOT / "benchmark/results/v0.2/b2t24-t12__t12v2__guard.json").read_text(encoding="utf-8"))
+    r = card["rerun"]
+    assert R.check_recipe(r) == []
+    bare = copy.deepcopy(r)
+    bare["decoder"]["weights_sha256"] = None
+    bare["policy"].pop("config_id_source")
+    bare["policy"]["config_id"] = None
+    errs = " | ".join(R.check_recipe(bare))
+    assert "weights_sha256 or weights_sha256_reason" in errs and "config_id or config_id_reason" in errs
+    both = copy.deepcopy(r)
+    both["decoder"]["weights_sha256_reason"] = "x"
+    assert "exactly one" in " ".join(R.check_recipe(both))
+    bad = copy.deepcopy(r)
+    bad["decoder"]["weights_sha256"] = "abc"
+    bad["policy"]["config_id"] = "cfg-1"
+    errs = " | ".join(R.check_recipe(bad))
+    assert "64 lower-case hex" in errs and "tcfg-" in errs
+    # make_recipe gives a reason when the card has no value (a new card from the scorer).
+    new = R.make_recipe({"track": "kt-semg", "decoder": {"name": "d"}, "policy": {"name": "p"}}, command="x")
+    assert new["decoder"]["weights_sha256_reason"] == R.NO_WEIGHTS_GIVEN
+    assert new["policy"]["config_id_reason"] == R.NO_CONFIG_GIVEN
+    assert R.check_recipe(new) == []
+    text = R.recipe_text(r)
+    assert "decoder weights: 5317b0600a5cbfc6..." in text and "policy config: tcfg-da682400ae229448" in text
 
 
 def test_recipe_checker_and_adapter_hash(tmp_path):

@@ -252,6 +252,7 @@
    "version": "t15-copytask-online",
    "url": "https://doi.org/10.5061/dryad.dncjsxm85",
    "weights_sha256": null,
+   "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
    "training_data": [
     "T15 sessions (Card et al. 2024)"
    ]
@@ -259,6 +260,7 @@
   "policy": {
    "name": "trust gate + LTT",
    "config_id": null,
+   "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage b2t, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
    "guarantee": "ltt"
   },
   "scorer": {
@@ -295,6 +297,7 @@
    "derived": "<derived> = the local folder for per-unit files (never in git)"
   },
   "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

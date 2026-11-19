@@ -116,6 +116,8 @@ def _fake_runner(files: dict[str, list[tuple[str, str, str, str | None]]], root:
             return "false\n"
         if args[0] == "log" and "--diff-filter=D" in args:
             return ""
+        if args[0] == "ls-tree":
+            return ""
         if args[0] == "log" and args[2].startswith("--format=%H"):
             rel = args[-1]
             return "".join(f"{h}\t{d}\t{s}\n" for h, d, s, _ in files.get(rel, []))
@@ -151,7 +153,8 @@ def test_card_history_with_a_fake_git(tmp_path):
     hist = H.build_history([res], run=_fake_runner(files, tmp_path.resolve()))
     v = hist["cards"]["kt-semg__a__b.json"]
     assert [x["action"] for x in v] == ["changed", "changed", "added"]
-    assert v[0]["commit"] is None and v[0]["changed"] == ["notes"]  # working tree row
+    assert v[0]["commit"] is None and v[0]["changed"] == ["notes"]  # a row of the commit that holds the page
+    assert v[0]["subject"] == H.PENDING
     assert v[1]["commit"] == "bbbbbbb" and v[1]["changed"] == ["rerun"] and v[1]["rerun_level"] == "rescore"
     assert v[2]["date"] == "2026-11-16" and v[2]["rerun_level"] == "no" and v[2]["split_version"] == "tracks-v0.2"
     assert v[2]["metric_versions"] == {"safe_wpm": "safe-wpm/0.1"}
@@ -215,3 +218,78 @@ def test_site_copies_the_track_pages_and_links_them(tmp_path):
         assert "PROPOSED" in html
         assert f'href="{tp["page"]}"' in overview, slug  # the overview links each track row
     assert (out / "benchmark/history.json").is_file()
+
+
+# --- P13-12: same-commit history rows and the freshness check ---------------------------------------------
+
+
+def _git(repo: Path, *a: str) -> str:
+    r = subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.org", "-c", "commit.gpgsign=false",
+                        "-c", "core.autocrlf=false", *a], cwd=repo, check=True, capture_output=True, text=True)
+    return r.stdout.strip()
+
+
+@pytest.mark.skipif(shutil.which("git") is None, reason="git not installed")
+def test_cards_committed_with_their_pages_stay_fresh(tmp_path):
+    repo = tmp_path
+    _git(repo, "init", "-q")
+    res, site = repo / "res", repo / "site"
+    res.mkdir()
+    (res / "kt-semg__a__b.json").write_text(json.dumps(_card()), encoding="utf-8")
+    (res / "kt-semg__c__d.json").write_text(json.dumps(_card(entry_id="gone")), encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "add two cards")
+    # 1. Change one card, remove one, regenerate the pages and commit all in ONE commit.
+    (res / "kt-semg__a__b.json").write_text(json.dumps(_card(metrics={"ewpm": {"value": 2.5}})), encoding="utf-8")
+    (res / "kt-semg__c__d.json").unlink()
+    info = LB.build([res], site)
+    assert info["rows_in_this_commit"] == 2  # the changed card and the removed card
+    page = (site / "tracks/kt-semg.html").read_text(encoding="utf-8")
+    assert "this commit" in page and "with this page" in page and "working tree" not in page
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "change one card, remove one, regenerate the pages")
+    held = _git(repo, "rev-parse", "--short=7", "HEAD")
+    assert LB.check([res], site) == []  # the committed pages are fresh after the commit
+    assert held not in (site / "tracks/kt-semg.html").read_text(encoding="utf-8")
+    # 2. A later commit that does not touch cards or pages: still fresh; a rebuild changes nothing.
+    (repo / "README").write_text("x", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "other file")
+    assert LB.check([res], site) == []
+    before = {p.name: p.read_bytes() for p in site.rglob("*.*")}
+    LB.build([res], site)
+    assert {p.name: p.read_bytes() for p in site.rglob("*.*")} == before
+    # 3. A card commit without the pages: the check fails until the pages are regenerated and committed.
+    (res / "kt-semg__a__b.json").write_text(json.dumps(_card(metrics={"ewpm": {"value": 3.5}})), encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "change the card again, no pages")
+    card_commit = _git(repo, "rev-parse", "--short=7", "HEAD")
+    errs = LB.check([res], site)
+    assert errs and any("history.json" in e for e in errs)
+    LB.build([res], site)
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "regenerate the pages")
+    assert LB.check([res], site) == []
+    hist = json.loads((site / "history.json").read_text(encoding="utf-8"))
+    v = hist["cards"]["kt-semg__a__b.json"]
+    assert [x["commit"] for x in v][0] == card_commit and all(x["commit"] for x in v)  # no row without a commit
+    assert v[0]["ewpm"] == 3.5 and v[1]["ewpm"] == 2.5 and v[2]["ewpm"] == 1.5
+
+
+def test_check_needs_git_history(tmp_path):
+    res = tmp_path / "res"
+    res.mkdir()
+    (res / "kt-semg__a__b.json").write_text(json.dumps(_card()), encoding="utf-8")
+    LB.build([res], tmp_path / "site", history={"schema": H.HISTORY_SCHEMA, "available": False, "note": "x",
+                                                 "cards": {}, "removed": []})
+    errs = LB.check([res], tmp_path / "site")
+    assert any("full-history checkout" in e for e in errs)
+
+
+@pytest.mark.skipif(H.repo_root(ROOT) is None, reason="needs a full-history git checkout (CI: the leaderboard job)")
+def test_committed_site_is_fresh():
+    """What the CI job checks: the committed outputs equal a regeneration from the cards and git."""
+    if subprocess.run(["git", "diff", "--quiet", "HEAD", "--", "benchmark/results", "benchmark/site"],
+                      cwd=ROOT).returncode != 0:
+        pytest.skip("cards or pages have uncommitted changes")
+    assert LB.check(RESULTS, SITE) == []

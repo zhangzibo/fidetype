@@ -235,6 +235,7 @@
    "version": "dataset",
    "url": "https://doi.org/10.5061/dryad.wh70rxwmv",
    "weights_sha256": null,
+   "weights_sha256_reason": "weights not released by the authors (Willett et al. 2021); the card scores the real-time RNN output in the CC0 dataset",
    "training_data": [
     "Willett et al. 2021 own training (earlier sessions)"
    ]
@@ -242,6 +243,7 @@
   "policy": {
    "name": "always commit the real-time RNN text (as typed on screen in the study)",
    "config_id": null,
+   "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
    "guarantee": "none"
   },
   "scorer": {
@@ -278,6 +280,7 @@
    "derived": "<derived> = the local folder for per-unit files (never in git)"
   },
   "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

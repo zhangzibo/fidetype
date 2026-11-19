@@ -110,7 +110,13 @@
       "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
       "version": "m1-09-r4b-full-medium",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-      "weights_sha256": null,
+      "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+      "weights_files": [
+       {
+        "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+        "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+       }
+      ],
       "training_data": [
        "SpanishBCBL train split (CC BY-NC 4.0)",
        "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -119,6 +125,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -158,7 +165,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-spanishbcbl-meg-async__convctc-m-async__trust",
     "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__trust"
@@ -219,7 +227,13 @@
       "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
       "version": "m1-09-r4b-full-medium",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-      "weights_sha256": null,
+      "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+      "weights_files": [
+       {
+        "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+        "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+       }
+      ],
       "training_data": [
        "SpanishBCBL train split (CC BY-NC 4.0)",
        "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -228,6 +242,7 @@
      "policy": {
       "name": "trust gate + LTT",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -267,7 +282,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-spanishbcbl-meg-async__convctc-m-async__ltt",
     "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__ltt"
@@ -328,7 +344,13 @@
       "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
       "version": "m1-09-r4b-full-medium",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-      "weights_sha256": null,
+      "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+      "weights_files": [
+       {
+        "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+        "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+       }
+      ],
       "training_data": [
        "SpanishBCBL train split (CC BY-NC 4.0)",
        "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -337,6 +359,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -376,7 +399,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-spanishbcbl-meg-async__convctc-m-async__crc",
     "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__crc"
@@ -436,7 +460,13 @@
       "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
       "version": "m1-09-r4b-full-medium",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-      "weights_sha256": null,
+      "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+      "weights_files": [
+       {
+        "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+        "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+       }
+      ],
       "training_data": [
        "SpanishBCBL train split (CC BY-NC 4.0)",
        "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -445,6 +475,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -484,7 +515,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-spanishbcbl-meg-async__convctc-m-async__always-commit",
     "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__always-commit"
@@ -548,6 +580,7 @@
       "version": "t15-copytask-online",
       "url": "https://doi.org/10.5061/dryad.dncjsxm85",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
       "training_data": [
        "T15 sessions (Card et al. 2024)"
       ]
@@ -555,6 +588,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -594,7 +628,8 @@
       "how": "the scorer reads a local NTS stream submission (816 files, never in git)"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15-copytask__published__always-commit",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__always-commit"
@@ -655,6 +690,7 @@
       "version": "t15-copytask-online",
       "url": "https://doi.org/10.5061/dryad.dncjsxm85",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
       "training_data": [
        "T15 sessions (Card et al. 2024)"
       ]
@@ -662,6 +698,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -701,7 +738,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15-copytask__published__crc",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__crc"
@@ -762,6 +800,7 @@
       "version": "t15-copytask-online",
       "url": "https://doi.org/10.5061/dryad.dncjsxm85",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
       "training_data": [
        "T15 sessions (Card et al. 2024)"
       ]
@@ -769,6 +808,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -808,7 +848,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15-copytask__published__trust",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__trust"
@@ -869,6 +910,7 @@
       "version": "t15-copytask-online",
       "url": "https://doi.org/10.5061/dryad.dncjsxm85",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
       "training_data": [
        "T15 sessions (Card et al. 2024)"
       ]
@@ -876,6 +918,7 @@
      "policy": {
       "name": "trust gate + LTT",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -915,7 +958,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15-copytask__published__ltt",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__ltt"
@@ -976,6 +1020,7 @@
       "version": "m6-06",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
       "training_data": [
        "none (decoding only)"
       ]
@@ -983,6 +1028,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -1022,7 +1068,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15-copytask__ours__crc",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__crc"
@@ -1083,6 +1130,7 @@
       "version": "m6-06",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
       "training_data": [
        "none (decoding only)"
       ]
@@ -1090,6 +1138,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -1129,7 +1178,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15-copytask__ours__trust",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__trust"
@@ -1190,6 +1240,7 @@
       "version": "m6-06",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
       "training_data": [
        "none (decoding only)"
       ]
@@ -1197,6 +1248,7 @@
      "policy": {
       "name": "trust gate + LTT",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -1236,7 +1288,8 @@
       "how": "the scorer recomputes the metrics from committed per-trial arrays"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15-copytask__ours__ltt",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__ltt"
@@ -1295,6 +1348,7 @@
       "version": "m6-06",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
       "training_data": [
        "none (decoding only)"
       ]
@@ -1302,6 +1356,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -1341,7 +1396,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15-copytask__ours__always-commit",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__always-commit"
@@ -1403,7 +1459,18 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "580801cf591cd3f02439bcda960c03679f4873e2428161aa4f239fb137a7aaf6",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/calib_a/best.pt",
+        "sha256": "43bbef9c3d6a8649ce55e5706a209afcaa2c8fede1812ec385338a02d4e5b3f3"
+       },
+       {
+        "name": "<runs>/emg-toronto/calib_b/best.pt",
+        "sha256": "146c23e3f873c16253a152bac62cef121600adbca57d65f2a0f4879c5370d857"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (session-calibrated; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -1412,6 +1479,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -1451,7 +1519,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-calib__trust",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__trust"
@@ -1511,7 +1580,18 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "580801cf591cd3f02439bcda960c03679f4873e2428161aa4f239fb137a7aaf6",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/calib_a/best.pt",
+        "sha256": "43bbef9c3d6a8649ce55e5706a209afcaa2c8fede1812ec385338a02d4e5b3f3"
+       },
+       {
+        "name": "<runs>/emg-toronto/calib_b/best.pt",
+        "sha256": "146c23e3f873c16253a152bac62cef121600adbca57d65f2a0f4879c5370d857"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (session-calibrated; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -1520,6 +1600,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -1559,7 +1640,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-calib__crc",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__crc"
@@ -1619,7 +1701,18 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "580801cf591cd3f02439bcda960c03679f4873e2428161aa4f239fb137a7aaf6",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/calib_a/best.pt",
+        "sha256": "43bbef9c3d6a8649ce55e5706a209afcaa2c8fede1812ec385338a02d4e5b3f3"
+       },
+       {
+        "name": "<runs>/emg-toronto/calib_b/best.pt",
+        "sha256": "146c23e3f873c16253a152bac62cef121600adbca57d65f2a0f4879c5370d857"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (session-calibrated; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -1628,6 +1721,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -1667,7 +1761,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-calib__commit",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__commit"
@@ -1727,7 +1822,13 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsession/best.pt",
+        "sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4"
+       }
+      ],
       "training_data": [
        "Toronto sEMG (cross-session; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -1736,6 +1837,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -1775,7 +1877,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-xsession__crc",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__crc"
@@ -1835,7 +1938,13 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsession/best.pt",
+        "sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4"
+       }
+      ],
       "training_data": [
        "Toronto sEMG (cross-session; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -1844,6 +1953,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -1883,7 +1993,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-xsession__trust",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__trust"
@@ -1943,7 +2054,13 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsession/best.pt",
+        "sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4"
+       }
+      ],
       "training_data": [
        "Toronto sEMG (cross-session; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -1952,6 +2069,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -1991,7 +2109,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-xsession__commit",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__commit"
@@ -2051,7 +2170,26 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "e4221b4066934a30ddbb783f4a264369179d60c03ee91706ea2a51c9f76c0c1a",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsubject_f0/best.pt",
+        "sha256": "391f7ed4556e80512f8b563178e7a549b270cd28814f5defa91deedbded817ed"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f1/best.pt",
+        "sha256": "c6fa0b5b8529297bf2f881799c23ff3a8521a04be8c9509cdb58626c0e59facb"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f2/best.pt",
+        "sha256": "3b0c6de53e3fa56d97649297655ddf73161b6ac2a9a6301cbbcb1a62eb21ac5e"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f3/best.pt",
+        "sha256": "f9983ce4e44fd43be9ac75bfb8810b23b2674891eaa77ea1a1e7d0588e562d91"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (cross-subject; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -2060,6 +2198,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -2099,7 +2238,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-xsubject__crc",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__crc"
@@ -2159,7 +2299,26 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "e4221b4066934a30ddbb783f4a264369179d60c03ee91706ea2a51c9f76c0c1a",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsubject_f0/best.pt",
+        "sha256": "391f7ed4556e80512f8b563178e7a549b270cd28814f5defa91deedbded817ed"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f1/best.pt",
+        "sha256": "c6fa0b5b8529297bf2f881799c23ff3a8521a04be8c9509cdb58626c0e59facb"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f2/best.pt",
+        "sha256": "3b0c6de53e3fa56d97649297655ddf73161b6ac2a9a6301cbbcb1a62eb21ac5e"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f3/best.pt",
+        "sha256": "f9983ce4e44fd43be9ac75bfb8810b23b2674891eaa77ea1a1e7d0588e562d91"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (cross-subject; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -2168,6 +2327,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -2207,7 +2367,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-xsubject__trust",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__trust"
@@ -2267,7 +2428,26 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "e4221b4066934a30ddbb783f4a264369179d60c03ee91706ea2a51c9f76c0c1a",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsubject_f0/best.pt",
+        "sha256": "391f7ed4556e80512f8b563178e7a549b270cd28814f5defa91deedbded817ed"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f1/best.pt",
+        "sha256": "c6fa0b5b8529297bf2f881799c23ff3a8521a04be8c9509cdb58626c0e59facb"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f2/best.pt",
+        "sha256": "3b0c6de53e3fa56d97649297655ddf73161b6ac2a9a6301cbbcb1a62eb21ac5e"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f3/best.pt",
+        "sha256": "f9983ce4e44fd43be9ac75bfb8810b23b2674891eaa77ea1a1e7d0588e562d91"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (cross-subject; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -2276,6 +2456,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -2315,7 +2496,8 @@
       "how": "aggregate numbers are copied from committed results; the command rebuilds the card but does not recompute them"
      },
      "code_ref": "git 7d74c0f (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg-composed__cnn-xsubject__commit",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__commit"
@@ -2378,6 +2560,7 @@
       "version": "t15-copytask-online",
       "url": "https://doi.org/10.5061/dryad.dncjsxm85",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
       "training_data": [
        "T15 sessions (Card et al. 2024)"
       ]
@@ -2385,6 +2568,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -2421,7 +2605,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__published__always-commit",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__always-commit"
@@ -2482,6 +2667,7 @@
       "version": "t15-copytask-online",
       "url": "https://doi.org/10.5061/dryad.dncjsxm85",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
       "training_data": [
        "T15 sessions (Card et al. 2024)"
       ]
@@ -2489,6 +2675,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage b2t, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -2525,7 +2712,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__published__crc",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__crc"
@@ -2586,6 +2774,7 @@
       "version": "t15-copytask-online",
       "url": "https://doi.org/10.5061/dryad.dncjsxm85",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
       "training_data": [
        "T15 sessions (Card et al. 2024)"
       ]
@@ -2593,6 +2782,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage b2t, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -2629,7 +2819,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__published__trust",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__trust"
@@ -2690,6 +2881,7 @@
       "version": "t15-copytask-online",
       "url": "https://doi.org/10.5061/dryad.dncjsxm85",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Card et al. 2024); the card scores the published decoder output in the CC0 dataset",
       "training_data": [
        "T15 sessions (Card et al. 2024)"
       ]
@@ -2697,6 +2889,7 @@
      "policy": {
       "name": "trust gate + LTT",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage b2t, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -2733,7 +2926,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__published__ltt",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__ltt"
@@ -2793,14 +2987,21 @@
       "name": "M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours)",
       "version": "m4-13",
       "url": "experiments/2026-11-15-m4-13-long-train",
-      "weights_sha256": null,
+      "weights_sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72",
+      "weights_files": [
+       {
+        "name": "<runs>/m4-13-long0/best.pt",
+        "sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72"
+       }
+      ],
       "training_data": [
        "B2T '25 HDF5 train partition (CC0); it holds about 368 of the 816 b2t25-t15 test trials, so only the val_eval trials are scored"
       ]
      },
      "policy": {
       "name": "drop-in guard (P14-03 recipe)",
-      "config_id": null,
+      "config_id": "tcfg-995e4aad89eb96aa",
+      "config_id_source": "experiments/2026-11-17-p6-02b-v02-entries/results/guard-t15-m4-13.json",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -2837,7 +3038,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git da2981a (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__m4-13__guard",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__m4-13__guard"
@@ -2898,6 +3100,7 @@
       "version": "m6-06",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
       "training_data": [
        "none (decoding only)"
       ]
@@ -2905,6 +3108,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -2941,7 +3145,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__ours__always-commit",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__always-commit"
@@ -3002,6 +3207,7 @@
       "version": "m6-06",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
       "training_data": [
        "none (decoding only)"
       ]
@@ -3009,6 +3215,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage b2t, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -3045,7 +3252,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__ours__crc",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__crc"
@@ -3106,6 +3314,7 @@
       "version": "m6-06",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
       "training_data": [
        "none (decoding only)"
       ]
@@ -3113,6 +3322,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage b2t, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -3149,7 +3359,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__ours__trust",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__trust"
@@ -3210,6 +3421,7 @@
       "version": "m6-06",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
       "training_data": [
        "none (decoding only)"
       ]
@@ -3217,6 +3429,7 @@
      "policy": {
       "name": "trust gate + LTT",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage b2t, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -3253,7 +3466,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__ours__ltt",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__ltt"
@@ -3313,14 +3527,21 @@
       "name": "M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours)",
       "version": "m4-12",
       "url": "experiments/2026-11-14-m4-12-decoder-retrain",
-      "weights_sha256": null,
+      "weights_sha256": "2b92ab33d12d4b887eed150b09749fec303e3286aa84e05442721444a9351fd5",
+      "weights_files": [
+       {
+        "name": "<runs>/m4-12-fixed0/best.pt",
+        "sha256": "2b92ab33d12d4b887eed150b09749fec303e3286aa84e05442721444a9351fd5"
+       }
+      ],
       "training_data": [
        "B2T '25 HDF5 train partition (CC0); it holds about 368 of the 816 b2t25-t15 test trials, so only the val_eval trials are scored"
       ]
      },
      "policy": {
       "name": "drop-in guard (P14-03 recipe)",
-      "config_id": null,
+      "config_id": "tcfg-065ec812c6cd643e",
+      "config_id_source": "experiments/2026-11-17-p6-02b-v02-entries/results/guard-t15-m4-12.json",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -3357,7 +3578,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t25-t15__m4-12__guard",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__m4-12__guard"
@@ -3416,14 +3638,21 @@
       "name": "t12-v2 GRU + word LM (ours)",
       "version": "5317b0600a5c",
       "url": "experiments/2026-11-13-confirmatory-t12-v2",
-      "weights_sha256": null,
+      "weights_sha256": "5317b0600a5cbfc6679116d2c47f4da1007a1544a63962d8dbdf9308f1063787",
+      "weights_files": [
+       {
+        "name": "<runs>/t12-v2-final/best.pt",
+        "sha256": "5317b0600a5cbfc6679116d2c47f4da1007a1544a63962d8dbdf9308f1063787"
+       }
+      ],
       "training_data": [
        "b2t24-t12 train split (train blocks of the train partition)"
       ]
      },
      "policy": {
       "name": "drop-in guard (P14-03 recipe)",
-      "config_id": null,
+      "config_id": "tcfg-da682400ae229448",
+      "config_id_source": "experiments/2026-11-16-p6-02-scorer/results/guard-t12.json",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -3460,7 +3689,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t24-t12__t12v2__guard",
     "link": "tracks/b2t24-t12.html#e-b2t24-t12__t12v2__guard"
@@ -3517,7 +3747,13 @@
       "name": "t12-v2 GRU + word LM (ours)",
       "version": "5317b0600a5c",
       "url": "experiments/2026-11-13-confirmatory-t12-v2",
-      "weights_sha256": null,
+      "weights_sha256": "5317b0600a5cbfc6679116d2c47f4da1007a1544a63962d8dbdf9308f1063787",
+      "weights_files": [
+       {
+        "name": "<runs>/t12-v2-final/best.pt",
+        "sha256": "5317b0600a5cbfc6679116d2c47f4da1007a1544a63962d8dbdf9308f1063787"
+       }
+      ],
       "training_data": [
        "b2t24-t12 train split (train blocks of the train partition)"
       ]
@@ -3525,6 +3761,7 @@
      "policy": {
       "name": "always commit top-1",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -3561,7 +3798,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-b2t24-t12__t12v2__always-commit",
     "link": "tracks/b2t24-t12.html#e-b2t24-t12__t12v2__always-commit"
@@ -3621,6 +3859,7 @@
       "version": "dataset",
       "url": "https://doi.org/10.5061/dryad.wh70rxwmv",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Willett et al. 2021); the card scores the real-time RNN output in the CC0 dataset",
       "training_data": [
        "Willett et al. 2021 own training (earlier sessions)"
       ]
@@ -3628,6 +3867,7 @@
      "policy": {
       "name": "always commit the real-time RNN text (as typed on screen in the study)",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -3664,7 +3904,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-willett-hw__rnn-published__always-commit",
     "link": "tracks/willett-hw.html#e-willett-hw__rnn-published__always-commit"
@@ -3722,13 +3963,15 @@
       "version": "dataset",
       "url": "https://doi.org/10.5061/dryad.wh70rxwmv",
       "weights_sha256": null,
+      "weights_sha256_reason": "weights not released by the authors (Willett et al. 2021); the card scores the real-time RNN output in the CC0 dataset",
       "training_data": [
        "Willett et al. 2021 own training (earlier sessions)"
       ]
      },
      "policy": {
       "name": "drop-in guard (built-in CTC beam + word list)",
-      "config_id": null,
+      "config_id": "tcfg-6d93d75de38cb3c6",
+      "config_id_source": "experiments/2026-11-16-p6-02-scorer/results/willett.json",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -3765,7 +4008,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-willett-hw__rnn-published__guard",
     "link": "tracks/willett-hw.html#e-willett-hw__rnn-published__guard"
@@ -3827,7 +4071,18 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "580801cf591cd3f02439bcda960c03679f4873e2428161aa4f239fb137a7aaf6",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/calib_a/best.pt",
+        "sha256": "43bbef9c3d6a8649ce55e5706a209afcaa2c8fede1812ec385338a02d4e5b3f3"
+       },
+       {
+        "name": "<runs>/emg-toronto/calib_b/best.pt",
+        "sha256": "146c23e3f873c16253a152bac62cef121600adbca57d65f2a0f4879c5370d857"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (session-calibrated; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -3836,6 +4091,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage toronto, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -3872,7 +4128,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-calib__crc",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__crc"
@@ -3932,7 +4189,18 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "580801cf591cd3f02439bcda960c03679f4873e2428161aa4f239fb137a7aaf6",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/calib_a/best.pt",
+        "sha256": "43bbef9c3d6a8649ce55e5706a209afcaa2c8fede1812ec385338a02d4e5b3f3"
+       },
+       {
+        "name": "<runs>/emg-toronto/calib_b/best.pt",
+        "sha256": "146c23e3f873c16253a152bac62cef121600adbca57d65f2a0f4879c5370d857"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (session-calibrated; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -3941,6 +4209,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage toronto, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -3977,7 +4246,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-calib__trust",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__trust"
@@ -4037,7 +4307,18 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "580801cf591cd3f02439bcda960c03679f4873e2428161aa4f239fb137a7aaf6",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/calib_a/best.pt",
+        "sha256": "43bbef9c3d6a8649ce55e5706a209afcaa2c8fede1812ec385338a02d4e5b3f3"
+       },
+       {
+        "name": "<runs>/emg-toronto/calib_b/best.pt",
+        "sha256": "146c23e3f873c16253a152bac62cef121600adbca57d65f2a0f4879c5370d857"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (session-calibrated; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -4046,6 +4327,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -4082,7 +4364,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-calib__always-commit",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__always-commit"
@@ -4142,7 +4425,13 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsession/best.pt",
+        "sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4"
+       }
+      ],
       "training_data": [
        "Toronto sEMG (cross-session; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -4151,6 +4440,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage toronto, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -4187,7 +4477,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-xsession__crc",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__crc"
@@ -4247,7 +4538,13 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsession/best.pt",
+        "sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4"
+       }
+      ],
       "training_data": [
        "Toronto sEMG (cross-session; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -4256,6 +4553,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage toronto, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -4292,7 +4590,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-xsession__trust",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__trust"
@@ -4352,7 +4651,13 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsession/best.pt",
+        "sha256": "4ee4bd245a3e974d6b12fefd6f2a375eceffacacca7f67fabd19dfb8e63d97f4"
+       }
+      ],
       "training_data": [
        "Toronto sEMG (cross-session; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -4361,6 +4666,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -4397,7 +4703,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-xsession__always-commit",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__always-commit"
@@ -4457,7 +4764,26 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "e4221b4066934a30ddbb783f4a264369179d60c03ee91706ea2a51c9f76c0c1a",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsubject_f0/best.pt",
+        "sha256": "391f7ed4556e80512f8b563178e7a549b270cd28814f5defa91deedbded817ed"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f1/best.pt",
+        "sha256": "c6fa0b5b8529297bf2f881799c23ff3a8521a04be8c9509cdb58626c0e59facb"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f2/best.pt",
+        "sha256": "3b0c6de53e3fa56d97649297655ddf73161b6ac2a9a6301cbbcb1a62eb21ac5e"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f3/best.pt",
+        "sha256": "f9983ce4e44fd43be9ac75bfb8810b23b2674891eaa77ea1a1e7d0588e562d91"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (cross-subject; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -4466,6 +4792,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage toronto, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -4502,7 +4829,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-xsubject__crc",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__crc"
@@ -4562,7 +4890,26 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "e4221b4066934a30ddbb783f4a264369179d60c03ee91706ea2a51c9f76c0c1a",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsubject_f0/best.pt",
+        "sha256": "391f7ed4556e80512f8b563178e7a549b270cd28814f5defa91deedbded817ed"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f1/best.pt",
+        "sha256": "c6fa0b5b8529297bf2f881799c23ff3a8521a04be8c9509cdb58626c0e59facb"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f2/best.pt",
+        "sha256": "3b0c6de53e3fa56d97649297655ddf73161b6ac2a9a6301cbbcb1a62eb21ac5e"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f3/best.pt",
+        "sha256": "f9983ce4e44fd43be9ac75bfb8810b23b2674891eaa77ea1a1e7d0588e562d91"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (cross-subject; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -4571,6 +4918,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage toronto, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -4607,7 +4955,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-xsubject__trust",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__trust"
@@ -4667,7 +5016,26 @@
       "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
       "version": "m6-07",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-      "weights_sha256": null,
+      "weights_sha256": "e4221b4066934a30ddbb783f4a264369179d60c03ee91706ea2a51c9f76c0c1a",
+      "weights_files": [
+       {
+        "name": "<runs>/emg-toronto/xsubject_f0/best.pt",
+        "sha256": "391f7ed4556e80512f8b563178e7a549b270cd28814f5defa91deedbded817ed"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f1/best.pt",
+        "sha256": "c6fa0b5b8529297bf2f881799c23ff3a8521a04be8c9509cdb58626c0e59facb"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f2/best.pt",
+        "sha256": "3b0c6de53e3fa56d97649297655ddf73161b6ac2a9a6301cbbcb1a62eb21ac5e"
+       },
+       {
+        "name": "<runs>/emg-toronto/xsubject_f3/best.pt",
+        "sha256": "f9983ce4e44fd43be9ac75bfb8810b23b2674891eaa77ea1a1e7d0588e562d91"
+       }
+      ],
+      "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
       "training_data": [
        "Toronto sEMG (cross-subject; CC BY 4.0)",
        "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -4676,6 +5044,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -4712,7 +5081,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-toronto-semg__cnn-xsubject__always-commit",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__always-commit"
@@ -4773,13 +5143,15 @@
       "version": "6a30c5ea3cd0",
       "url": "src/fidetype/adapters/kt_semg.py (LdaKeyDecoder)",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights file: the build step (experiments/2026-11-16-p6-02-scorer/run.py, stage kt) fits the shrinkage LDA in memory from the train split and saves no file; a full rerun refits it",
       "training_data": [
        "kt-semg train split (20 runs)"
       ]
      },
      "policy": {
       "name": "drop-in guard (built-in CTC beam, no LM)",
-      "config_id": null,
+      "config_id": "tcfg-99a5a0c7b2e70379",
+      "config_id_source": "experiments/2026-11-16-p6-02-scorer/results/guard-kt.json",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -4816,7 +5188,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-kt-semg__lda-oracle__guard",
     "link": "tracks/kt-semg.html#e-kt-semg__lda-oracle__guard"
@@ -4875,6 +5248,7 @@
       "version": "6a30c5ea3cd0",
       "url": "src/fidetype/adapters/kt_semg.py (LdaKeyDecoder)",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights file: the build step (experiments/2026-11-16-p6-02-scorer/run.py, stage kt) fits the shrinkage LDA in memory from the train split and saves no file; a full rerun refits it",
       "training_data": [
        "kt-semg train split (20 runs)"
       ]
@@ -4882,6 +5256,7 @@
      "policy": {
       "name": "always commit top-1",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -4918,7 +5293,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-kt-semg__lda-oracle__always-commit",
     "link": "tracks/kt-semg.html#e-kt-semg__lda-oracle__always-commit"
@@ -4981,7 +5357,13 @@
       "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
       "version": "m1-09-r4b-full-medium",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-      "weights_sha256": null,
+      "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+      "weights_files": [
+       {
+        "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+        "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+       }
+      ],
       "training_data": [
        "SpanishBCBL train split (CC BY-NC 4.0)",
        "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -4990,6 +5372,7 @@
      "policy": {
       "name": "trust gate (plug-in fit)",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage meg, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "none"
      },
      "scorer": {
@@ -5026,7 +5409,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-spanishbcbl-meg__convctc-m-async__trust",
     "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__trust"
@@ -5087,7 +5471,13 @@
       "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
       "version": "m1-09-r4b-full-medium",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-      "weights_sha256": null,
+      "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+      "weights_files": [
+       {
+        "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+        "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+       }
+      ],
       "training_data": [
        "SpanishBCBL train split (CC BY-NC 4.0)",
        "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -5096,6 +5486,7 @@
      "policy": {
       "name": "trust gate + LTT",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage meg, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -5132,7 +5523,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-spanishbcbl-meg__convctc-m-async__ltt",
     "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__ltt"
@@ -5193,7 +5585,13 @@
       "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
       "version": "m1-09-r4b-full-medium",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-      "weights_sha256": null,
+      "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+      "weights_files": [
+       {
+        "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+        "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+       }
+      ],
       "training_data": [
        "SpanishBCBL train split (CC BY-NC 4.0)",
        "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -5202,6 +5600,7 @@
      "policy": {
       "name": "trust gate + CRC",
       "config_id": null,
+      "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage meg, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
       "guarantee": "crc"
      },
      "scorer": {
@@ -5238,7 +5637,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-spanishbcbl-meg__convctc-m-async__crc",
     "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__crc"
@@ -5299,7 +5699,13 @@
       "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
       "version": "m1-09-r4b-full-medium",
       "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-      "weights_sha256": null,
+      "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+      "weights_files": [
+       {
+        "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+        "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+       }
+      ],
       "training_data": [
        "SpanishBCBL train split (CC BY-NC 4.0)",
        "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -5308,6 +5714,7 @@
      "policy": {
       "name": "always-commit",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -5344,7 +5751,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-spanishbcbl-meg__convctc-m-async__always-commit",
     "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__always-commit"
@@ -5406,13 +5814,15 @@
       "version": "0",
       "url": "src/fidetype/adapters/emg2qwerty.py",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights file: the build step (experiments/2026-11-16-p6-02-scorer/run.py, stage e2q) fits the shrinkage LDA in memory from the train split and saves no file; a full rerun refits it",
       "training_data": [
        "emg2qwerty: the last train session of each test user"
       ]
      },
      "policy": {
       "name": "drop-in guard (built-in CTC beam, no LM)",
-      "config_id": null,
+      "config_id": "tcfg-7f4b483e5d258b75",
+      "config_id_source": "experiments/2026-11-16-p6-02-scorer/results/guard-e2q.json",
       "guarantee": "ltt"
      },
      "scorer": {
@@ -5449,7 +5859,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-emg2qwerty__lda-oracle__guard",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__lda-oracle__guard"
@@ -5509,6 +5920,7 @@
       "version": "0",
       "url": "src/fidetype/adapters/emg2qwerty.py",
       "weights_sha256": null,
+      "weights_sha256_reason": "no weights file: the build step (experiments/2026-11-16-p6-02-scorer/run.py, stage e2q) fits the shrinkage LDA in memory from the train split and saves no file; a full rerun refits it",
       "training_data": [
        "emg2qwerty: the last train session of each test user"
       ]
@@ -5516,6 +5928,7 @@
      "policy": {
       "name": "always commit top-1",
       "config_id": null,
+      "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
       "guarantee": "none"
      },
      "scorer": {
@@ -5552,7 +5965,8 @@
       "derived": "<derived> = the local folder for per-unit files (never in git)"
      },
      "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+     "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+     "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
     "anchor": "e-emg2qwerty__lda-oracle__always-commit",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__lda-oracle__always-commit"

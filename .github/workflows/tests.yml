@@ -434,12 +434,33 @@ jobs:
           # all 36 entries and both bindings, not only the level
           uv run python -c "import json,sys; r=json.load(open(sys.argv[1])); lv=r['level']; sys.exit(0 if r['ok'] and not lv['bindings_missing'] else 1)" "$RUNNER_TEMP/collector.kit-report.json"
 
+  # P13-12: the committed leaderboard outputs (benchmark/site/) must equal a regeneration from the committed cards
+  # and git. The entry history needs the full git history, so this job checks out with fetch-depth 0 (the other
+  # jobs keep the shallow checkout; there the history tests skip). The history of the pages is read up to the
+  # parent of the commit that holds them (src/fidetype/benchmark/entry_history.py), so a card committed together
+  # with its regenerated pages passes. P13-11: the recipe tests (value or reason) run here too.
+  leaderboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: uv sync --extra dev
+      - name: Leaderboard outputs are fresh (regenerate benchmark/site/ and compare)
+        run: uv run python -m fidetype.benchmark.leaderboard --check
+      - name: Entry history and rerun recipe tests with the full history
+        run: uv run pytest -q -rs tests/test_leaderboard_track_pages.py tests/test_hub_cli.py
+
   # P2-09: one check that is green only when every job above is green. Make this the required status check
   # (branch rule on main) so that a red platform blocks the merge.
   all-green:
     if: always()
     needs: [pytest, conformance-os, live, live-kt, proto, semconv, typescript, typescript-parity, rust, rust-parity,
-            packaging, rust-msrv, hygiene, collector]
+            packaging, rust-msrv, hygiene, collector, leaderboard]
     runs-on: ubuntu-latest
     steps:
       - name: Every job passed

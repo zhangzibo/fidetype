@@ -253,14 +253,21 @@
    "name": "M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours)",
    "version": "m4-13",
    "url": "experiments/2026-11-15-m4-13-long-train",
-   "weights_sha256": null,
+   "weights_sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72",
+   "weights_files": [
+    {
+     "name": "<runs>/m4-13-long0/best.pt",
+     "sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72"
+    }
+   ],
    "training_data": [
     "B2T '25 HDF5 train partition (CC0); it holds about 368 of the 816 b2t25-t15 test trials, so only the val_eval trials are scored"
    ]
   },
   "policy": {
    "name": "drop-in guard (P14-03 recipe)",
-   "config_id": null,
+   "config_id": "tcfg-995e4aad89eb96aa",
+   "config_id_source": "experiments/2026-11-17-p6-02b-v02-entries/results/guard-t15-m4-13.json",
    "guarantee": "ltt"
   },
   "scorer": {
@@ -297,6 +304,7 @@
    "derived": "<derived> = the local folder for per-unit files (never in git)"
   },
   "code_ref": "git da2981a (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

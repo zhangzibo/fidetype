@@ -10,12 +10,21 @@ Rules:
 
 - No rename or copy detection: a card's history starts at the commit that added that file.
   (``git log --follow`` reports some new v0.2 cards as copies of v0.1 cards; that is wrong.)
-- A card that differs from ``HEAD`` (or is not in git) gets a first row "working tree, not
-  committed". The history of a committed card is fixed for a given ``HEAD``.
+- The history is read up to a **base** commit (default ``HEAD``). A card that differs from the
+  base (or is not in it) gets a first row "in the commit that holds this page" (commit and date
+  empty). Cards deleted after the base get a removed row of the same kind.
+- Same-commit rows (P13-12): a page cannot name the commit that holds it, because the hash is
+  only known after the commit. So the leaderboard builds the history with base = the parent of
+  the commit that holds the pages (:func:`site_base`: the newest commit that changed the output
+  folder). The card changes of that commit (and of later commits that did not regenerate the
+  pages) are the "in the commit that holds this page" rows. The rows are fixed for a given
+  committed page set, so the CI freshness check (``python -m fidetype.benchmark.leaderboard
+  --check``) regenerates them byte for byte.
 - Cards deleted from a results folder are listed as removed entries, with the card as it was
   before the deleting commit.
 - Without git (no ``git`` program, not a repository, a shallow clone) the history is empty and
-  ``available`` is False. The leaderboard then says so; it never guesses dates.
+  ``available`` is False. The leaderboard then says so; it never guesses dates. CI checks out
+  the full history for the freshness check (``fetch-depth: 0``).
 """
 
 from __future__ import annotations
@@ -28,6 +37,8 @@ from typing import Any, Callable, Mapping, Sequence
 from fidetype.benchmark.hub.recipe import rerun_level
 
 HISTORY_SCHEMA = "fidetype.benchmark.history/0.1"
+#: Subject of a row for a change that is not in the base commit: it is in the commit that holds the page.
+PENDING = "in the commit that holds this page"
 
 # runner(args, cwd) -> stdout (str), or None when the git command fails.
 Runner = Callable[[Sequence[str], Path], "str | None"]
@@ -54,6 +65,27 @@ def repo_root(folder: str | Path, run: Runner = git_runner) -> Path | None:
     if (run(["rev-parse", "--is-shallow-repository"], f) or "").strip() == "true":
         return None
     return Path(top.strip()).resolve()
+
+
+def site_base(out_dir: str | Path, run: Runner = git_runner) -> str | None:
+    """The parent of the newest commit that changed ``out_dir`` (full hash), or None.
+
+    None when ``out_dir`` is not in a full git repository, no commit changed it yet, or that commit has no
+    parent. The leaderboard pages committed in commit S describe the history up to the parent of S."""
+    out = Path(out_dir).resolve()
+    probe = out if out.is_dir() else out.parent
+    root = repo_root(probe, run) if probe.is_dir() else None
+    if root is None:
+        return None
+    try:
+        rel = out.relative_to(root).as_posix()
+    except ValueError:
+        return None
+    s = (run(["log", "-1", "--format=%H", "--", rel], root) or "").strip()
+    if not s:
+        return None
+    parent = (run(["rev-parse", "--verify", "--quiet", f"{s}^"], root) or "").strip()
+    return parent or None
 
 
 def _short(h: str) -> str:
@@ -96,8 +128,8 @@ def changed_fields(old: Mapping[str, Any] | None, new: Mapping[str, Any]) -> lis
     return sorted(k for k in keys if old.get(k) != new.get(k))
 
 
-def _log(rel: str, root: Path, run: Runner) -> list[tuple[str, str, str]]:
-    out = run(["log", "--no-renames", "--format=%H%x09%cs%x09%s", "--", rel], root) or ""
+def _log(rel: str, root: Path, run: Runner, base: str = "HEAD") -> list[tuple[str, str, str]]:
+    out = run(["log", "--no-renames", "--format=%H%x09%cs%x09%s", base, "--", rel], root) or ""
     rows = []
     for line in out.splitlines():
         parts = line.split("\t", 2)
@@ -106,11 +138,13 @@ def _log(rel: str, root: Path, run: Runner) -> list[tuple[str, str, str]]:
     return rows
 
 
-def card_history(path: str | Path, root: Path, run: Runner = git_runner) -> list[dict[str, Any]]:
-    """Versions of one card, newest first. Each item: commit, date, subject, action, changed fields, facts."""
+def card_history(path: str | Path, root: Path, run: Runner = git_runner,
+                 base: str = "HEAD") -> list[dict[str, Any]]:
+    """Versions of one card up to ``base``, newest first, plus a first row when the card on disk differs from
+    the base. Each item: commit, date, subject, action, changed fields, facts."""
     p = Path(path).resolve()
     rel = p.relative_to(root).as_posix()
-    commits = _log(rel, root, run)
+    commits = _log(rel, root, run, base)
     cards = [_load(run(["show", f"{h}:{rel}"], root)) for h, _, _ in commits]
     out: list[dict[str, Any]] = []
     for i, ((h, date, subj), card) in enumerate(zip(commits, cards)):
@@ -123,19 +157,28 @@ def card_history(path: str | Path, root: Path, run: Runner = git_runner) -> list
     now = _load(p.read_text(encoding="utf-8")) if p.is_file() else None
     head = cards[0] if cards else None
     if now is not None and now != head:
-        out.insert(0, {"commit": None, "date": None, "subject": "working tree, not committed",
+        out.insert(0, {"commit": None, "date": None, "subject": PENDING,
                        "action": "added" if head is None else "changed",
                        "changed": changed_fields(head, now), **version_facts(now)})
     return out
 
 
-def removed_cards(folder: str | Path, root: Path, run: Runner = git_runner) -> list[dict[str, Any]]:
-    """Cards that a commit deleted from ``folder`` and that are not back in the working tree."""
+def removed_cards(folder: str | Path, root: Path, run: Runner = git_runner,
+                  base: str = "HEAD") -> list[dict[str, Any]]:
+    """Cards deleted from ``folder`` that are not back on disk: deleted after ``base`` (a row of the commit
+    that holds the page), or deleted by a commit up to ``base``."""
     f = Path(folder).resolve()
     rel_dir = f.relative_to(root).as_posix()
-    out_txt = run(["log", "--no-renames", "--diff-filter=D", "--format=@%H%x09%cs%x09%s", "--name-only", "--",
-                   rel_dir], root) or ""
     out: list[dict[str, Any]] = []
+    in_base = (run(["ls-tree", "--name-only", base, f"{rel_dir}/"], root) or "").split()
+    for name in sorted(n for n in in_base if n.endswith(".json") and not (root / n).is_file()):
+        card = _load(run(["show", f"{base}:{name}"], root))
+        if card is None or not str(card.get("schema", "")).startswith("fidetype.benchmark.result/"):
+            continue
+        out.append({"file": Path(name).name, "track": card.get("track"), "entry_id": card.get("entry_id"),
+                    "commit": None, "date": None, "subject": PENDING, "action": "removed", **version_facts(card)})
+    out_txt = run(["log", "--no-renames", "--diff-filter=D", "--format=@%H%x09%cs%x09%s", "--name-only", base,
+                   "--", rel_dir], root) or ""
     cur: tuple[str, str, str] | None = None
     for line in out_txt.splitlines():
         if line.startswith("@"):
@@ -156,8 +199,9 @@ def removed_cards(folder: str | Path, root: Path, run: Runner = git_runner) -> l
     return out
 
 
-def build_history(folders: Sequence[str | Path], run: Runner = git_runner) -> dict[str, Any]:
-    """History of every card in ``folders``: {"available", "note", "cards": {file: [...]}, "removed": [...]}."""
+def build_history(folders: Sequence[str | Path], run: Runner = git_runner, base: str = "HEAD") -> dict[str, Any]:
+    """History of every card in ``folders`` up to the commit ``base``:
+    {"available", "note", "cards": {file: [...]}, "removed": [...]}."""
     folders = [Path(f) for f in folders]
     root = next((r for r in (repo_root(f, run) for f in folders) if r is not None), None)
     if root is None:
@@ -173,7 +217,8 @@ def build_history(folders: Sequence[str | Path], run: Runner = git_runner) -> di
         except ValueError:
             pass
     # Commit order over all result folders (0 = newest): orders the events of one day.
-    order = (run(["log", "--no-renames", "--format=%h", "--abbrev=7", "--", *rels], root) or "").split() if rels else []
+    order = (run(["log", "--no-renames", "--format=%h", "--abbrev=7", base, "--", *rels], root) or "").split() \
+        if rels else []
     seq = {h[:7]: i for i, h in enumerate(order)}
     for f in folders:
         fr = f.resolve()
@@ -182,12 +227,13 @@ def build_history(folders: Sequence[str | Path], run: Runner = git_runner) -> di
         except ValueError:
             continue
         for p in sorted(fr.glob("*.json")):
-            cards[p.name] = card_history(p, root, run)
-        removed += removed_cards(fr, root, run)
+            cards[p.name] = card_history(p, root, run, base)
+        removed += removed_cards(fr, root, run, base)
     for v in [x for vs in cards.values() for x in vs] + removed:
         v["seq"] = -1 if v.get("commit") is None else seq.get(v["commit"], len(seq))
     return {"schema": HISTORY_SCHEMA, "available": True,
-            "note": "from git log (no rename detection); dates are commit dates (YYYY-MM-DD)",
+            "note": "from git log (no rename detection); dates are commit dates (YYYY-MM-DD); a row without a "
+                    "commit is in the commit that holds this page",
             "cards": cards, "removed": removed}
 
 
@@ -202,6 +248,6 @@ def track_events(history: Mapping[str, Any], files: Mapping[str, str], track: st
     for r in history.get("removed") or []:
         if r.get("track") == track:
             ev.append({**r, "anchor": None})
-    # Working-tree rows first, then newest commit first (commit order, then date), then by file name.
+    # Rows of the commit that holds the page first, then newest commit first (commit order, then date), then by file name.
     ev.sort(key=lambda e: (e.get("seq", 0), e["file"]))
     return sorted(ev, key=lambda e: "9999-99-99" if e["date"] is None else e["date"], reverse=True)

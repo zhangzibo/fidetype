@@ -162,6 +162,7 @@ def test_v02_cards_cover_all_v01_entries():
 @pytest.mark.parametrize("path", CARDS_V02, ids=[p.name for p in CARDS_V02])
 def test_v02_cards_reproduce(path):
     ref = json.loads(path.read_text(encoding="utf-8"))
+    ref.pop("rerun")  # the rerun recipe (P13-11) is not a scorer output; tests/test_hub_cli.py checks it
     assert ref["protocol"] == HB.PROTOCOL_V02 and ref["schema"] == HB.SCORECARD_SCHEMA
     oc = _outcomes_for(ref, path)
     r = ref["rules"]

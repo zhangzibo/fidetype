@@ -774,6 +774,10 @@ def cmd_rescore(a) -> int:
     card = score_outcomes(oc, protocol=a.protocol, alpha_wrong=a.alpha_wrong, alpha_fluent=a.alpha_fluent)
     if a.check:
         ref = json.loads(Path(a.check).read_text(encoding="utf-8"))
+        ref.pop("rerun", None)  # the rerun recipe (P13-11) is not a scorer output
+        rel = (ref.get("meta") or {}).get("outcomes_file")
+        if rel and Path(rel).name == Path(a.outcomes).name and "outcomes_file" not in card["meta"]:
+            card["meta"] = {**card["meta"], "outcomes_file": rel}  # a pointer the publisher adds to protocol 0.2 cards
         if ref != json.loads(json.dumps(card)):
             print(f"score card differs from {a.check}", file=sys.stderr)
             return 1

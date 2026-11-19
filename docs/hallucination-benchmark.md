@@ -116,6 +116,8 @@ python -m fidetype.benchmark.hallucination rescore outcomes.json --check card.js
 # the old protocol: add --protocol 0.1
 ```
 
+Each committed score card also holds a rerun recipe (key `rerun`, schema `fidetype.hub.recipe/0.1`, P13-11): the exact `rescore` command with the committed outcomes file, the guard `config_id`, the decoder weights SHA-256 and the split file hash. `rescore --check` leaves out the `rerun` block. `python -m fidetype.benchmark.hub recipe <card>` prints it.
+
 `controls.npz` holds `null/00000`, ..., `scrambled/00000`, ... in item order. It is derived from your data: keep it local.
 
 **Decisions file** (`fidetype.halluc.decisions/0.1`, JSON Lines). The first line is a header with `null_idx` and `swap_perm` copied from the split file. Then one line per decision:

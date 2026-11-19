@@ -253,7 +253,13 @@
    "name": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
    "version": "m1-09-r4b-full-medium",
    "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-m1-09-async-full",
-   "weights_sha256": null,
+   "weights_sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7",
+   "weights_files": [
+    {
+     "name": "<runs>/m1-09-r4b-full-medium/best.pt",
+     "sha256": "61eb7950215482a97bf2c3a8a8487948069a80d278ad8a22145a50dc4263bce7"
+    }
+   ],
    "training_data": [
     "SpanishBCBL train split (CC BY-NC 4.0)",
     "Tatoeba es (CC BY 2.0 FR) for the char LM"
@@ -262,6 +268,7 @@
   "policy": {
    "name": "trust gate + CRC",
    "config_id": null,
+   "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage meg, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
    "guarantee": "crc"
   },
   "scorer": {
@@ -298,6 +305,7 @@
    "derived": "<derived> = the local folder for per-unit files (never in git)"
   },
   "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

@@ -141,8 +141,8 @@ fidetype hub rerun <card> --submission <dir> --truth <truth.jsonl>          # le
 | `dataset` | `id`, `version`, `revision` of the registry entry |
 | `track` | slug + `split_version` + split `digest` |
 | `adapter` | module, package version, SHA-256 of the source (RA-9) |
-| `decoder` | name, URL, commit or tag, SHA-256 of the weights, `training_data` (dataset + partitions, P6-10) |
-| `policy` | trust config id (the frozen config hash of the guard) |
+| `decoder` | name, URL, commit or tag, SHA-256 of the weights **or** `weights_sha256_reason` (exactly one, P13-11), optional `weights_files` (`<runs>/...` + SHA-256 each), `training_data` (dataset + partitions, P6-10) |
+| `policy` | trust config id (the frozen config hash of the guard, `tcfg-` + 16 hex) **or** `config_id_reason` (exactly one, P13-11); `config_id_source` = the committed file that holds it |
 | `scorer` | `SCORER_VERSION`, metric versions (`safe-wpm/0.1`, `fidetype.halluc/0.2`) |
 | `command` | The exact command line, with `<path>` placeholders for local data |
 | `level` | `rescore`, `replay` or `full` (5.2) |
@@ -277,7 +277,9 @@ The user answered the questions of section 10 on 2026-11-18: "i would like to ha
 | P13-03 | Submission by pull request (section 8; Q2 and Q3 decided 2026-11-18: private truth store for CC0 / CC BY tracks, maintainer scoring for research-only tracks, outputs outside git) |
 | P13-06 (gap 78) | **Done 2026-11-18** ([section 12](#12-hub-command-line-and-rerun-recipes-p13-06)): hub command line `list / show / instructions / verify / check / recipe / rerun`, rerun recipe with the RA-9 adapter hash in every card, the leaderboard shows it |
 | P13-10 (gap 82) | The rest of the P13-06 scope: `fidetype hub replay`, RA-4 unit key in the adapter headers, RA-7 3-way transport test, a `replay`-level rerun of one `b2t25-t15` card byte for byte, the dataset fields of `tracks.py` read from the registry |
-| P13-11 (gap 83) | Recipe gaps: the decoder weights SHA-256 and the frozen policy `config_id` are null in the backfilled cards; the hallucination cards have no recipe block |
+| P13-11 (gap 83) | **Done 2026-11-19** ([section 12.6](#126-weights-hash-config-id-and-hallucination-recipes-p13-11)): weights SHA-256 and policy `config_id` filled where an artifact exists, else an explicit reason; every hallucination card has a recipe |
+| P13-12 (gap 84) | **Done 2026-11-19** ([section 12.7](#127-leaderboard-freshness-check-p13-12)): CI regenerates `benchmark/site/` and fails on a difference; history rows for cards committed together with their pages |
+| P13-13 (gap 85) | Refit and freeze the trust configs of the 30 pre-P5-23 trust cards (CRC / LTT / plug-in) so that their recipes carry a `config_id` instead of a reason |
 | P13-07 (gap 79) | Registry entries for B2T '24, Willett handwriting, KT-sEMG and emg2qwerty; checksums for the B2T '25 HDF5 zip and a per-file manifest for SpanishBCBL |
 | P6-10 | Training-data declaration and the pkl / HDF5 overlap map (the `same_units.map` of the B2T '25 entry) |
 
@@ -347,5 +349,35 @@ On 2026-11-18, `fidetype hub rerun` gave the same card (byte for byte, without t
 | Item | Gap |
 |---|---|
 | `fidetype hub replay`; RA-4 unit key in the adapter headers; RA-7 3-way transport test; a `replay`-level rerun of one `b2t25-t15` card; `tracks.py` dataset fields read from the registry | 82 = P13-10 |
-| The decoder weights SHA-256 and the frozen policy `config_id` in the recipes; recipes for the hallucination cards | 83 = P13-11 |
+| The decoder weights SHA-256 and the frozen policy `config_id` in the recipes; recipes for the hallucination cards | 83 = P13-11 (done 2026-11-19, section 12.6) |
 | An outputs pointer (URL + SHA-256), so outside people can rescore | P13-03 |
+
+### 12.6 Weights hash, config id and hallucination recipes (P13-11)
+
+A recipe now holds a value **or** a reason for two fields, never a bare null. `check_recipe` accepts exactly one of the two.
+
+| Field | Value | Reason (when no value exists) |
+|---|---|---|
+| `decoder.weights_sha256` | SHA-256 of the local weights file (one file), or of the sorted `sha256sum` manifest of `weights_files` (several files, `weights_sha256_kind`) | `weights_sha256_reason` |
+| `policy.config_id` | `tcfg-` + 16 hex, from the committed guard file (its id is recomputed from the content) or the logged id; `config_id_source` names the file | `config_id_reason` |
+
+The weights stay outside the repository. `tools/benchmark/add_rerun_recipes.py --fill` records their SHA-256 (hashed read only on 2026-11-19); `--runs <runs>` hashes them again and stops on a difference. Cross-checks: the T12 v2 pre-registration and logprobs meta, and the `checkpoint_sha256` of the M4-12 / M4-13 decode records.
+
+| 52 leaderboard cards | Value | Reason |
+|---|---|---|
+| Weights SHA-256 | 30 (ConvCTC-M async, Toronto CNN calib / xsession / xsubject, T12 v2, M4-12, M4-13) | 22: no trained part (8, phoneme beam over the published logits), not released by the authors (10, Card et al. 2024 and Willett et al. 2021), LDA fitted in memory by the build step (4) |
+| Policy `config_id` | 6 (every drop-in guard card) | 46: always-commit has no trust config (16); the TrustPipeline was fitted in memory and not frozen (30, gap 85 = P13-13) |
+
+Hallucination cards (`benchmark/results/halluc-v0.*/*.card.json`, 32 cards): every card has a recipe at level `rescore`. The command `python -m fidetype.benchmark.hallucination rescore <outcomes> --protocol <p> --alpha-wrong <a> --alpha-fluent <b> --check <card>` uses committed files only, and all 32 commands reproduce their card. `--check` leaves out the `rerun` block (and accepts the `meta.outcomes_file` pointer of the protocol 0.2 cards). All 32 carry the guard `config_id` and the decoder weights SHA-256 (T12 v2, M4-12 fixed0 or M4-13 long0). The track block names the split file `splits/halluc-v0.1/<dataset>.json` (split version `halluc-v0.1`, file SHA-256). Tests: `tests/test_hub_cli.py`.
+
+### 12.7 Leaderboard freshness check (P13-12)
+
+A page cannot name the commit that holds it: the hash exists only after the commit. So the entry history of the leaderboard pages is read up to the **parent of the commit that holds the pages** (the newest commit that changed `benchmark/site/`). Card changes in that commit get a row "this commit / with this page". The rows are fixed for a committed page set.
+
+| Step | What happens |
+|---|---|
+| `python -m fidetype.benchmark leaderboard ...` (build) | Try base = the parent of the newest commit that changed the output folder. If the result equals the committed pages, nothing changes. Else the pages go into a new commit on top of `HEAD`, so build with base = `HEAD` |
+| Commit | Commit the pages together with the cards, or in a later commit. Commit them directly on top of the `HEAD` that you built on |
+| CI job `leaderboard` | `actions/checkout` with `fetch-depth: 0`, then `python -m fidetype.benchmark.leaderboard --check`: regenerate with base = the parent of the commit that holds the pages, and fail on any difference. `all-green` needs this job |
+
+If the check fails, run the build command again and commit `benchmark/site/`. Without git history (a shallow clone) the check fails with a message; the other CI jobs keep the shallow checkout, and there the full-history tests skip. Tests: `tests/test_leaderboard_track_pages.py`.

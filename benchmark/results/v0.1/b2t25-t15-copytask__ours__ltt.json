@@ -219,6 +219,7 @@
    "version": "m6-06",
    "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-10-b2t25-trust",
    "weights_sha256": null,
+   "weights_sha256_reason": "no weights: the decoder has no trained part (phoneme beam search with CMUdict and a Tatoeba word LM over the published RNN logits, CC0)",
    "training_data": [
     "none (decoding only)"
    ]
@@ -226,6 +227,7 @@
   "policy": {
    "name": "trust gate + LTT",
    "config_id": null,
+   "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
    "guarantee": "ltt"
   },
   "scorer": {
@@ -265,6 +267,7 @@
    "how": "the scorer recomputes the metrics from committed per-trial arrays"
   },
   "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

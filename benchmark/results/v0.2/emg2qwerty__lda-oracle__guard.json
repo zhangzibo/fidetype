@@ -255,13 +255,15 @@
    "version": "0",
    "url": "src/fidetype/adapters/emg2qwerty.py",
    "weights_sha256": null,
+   "weights_sha256_reason": "no weights file: the build step (experiments/2026-11-16-p6-02-scorer/run.py, stage e2q) fits the shrinkage LDA in memory from the train split and saves no file; a full rerun refits it",
    "training_data": [
     "emg2qwerty: the last train session of each test user"
    ]
   },
   "policy": {
    "name": "drop-in guard (built-in CTC beam, no LM)",
-   "config_id": null,
+   "config_id": "tcfg-7f4b483e5d258b75",
+   "config_id_source": "experiments/2026-11-16-p6-02-scorer/results/guard-e2q.json",
    "guarantee": "ltt"
   },
   "scorer": {
@@ -298,6 +300,7 @@
    "derived": "<derived> = the local folder for per-unit files (never in git)"
   },
   "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

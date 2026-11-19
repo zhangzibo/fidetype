@@ -242,6 +242,7 @@
    "version": "6a30c5ea3cd0",
    "url": "src/fidetype/adapters/kt_semg.py (LdaKeyDecoder)",
    "weights_sha256": null,
+   "weights_sha256_reason": "no weights file: the build step (experiments/2026-11-16-p6-02-scorer/run.py, stage kt) fits the shrinkage LDA in memory from the train split and saves no file; a full rerun refits it",
    "training_data": [
     "kt-semg train split (20 runs)"
    ]
@@ -249,6 +250,7 @@
   "policy": {
    "name": "always commit top-1",
    "config_id": null,
+   "config_id_reason": "always-commit: no trust configuration exists; every top-1 text is committed",
    "guarantee": "none"
   },
   "scorer": {
@@ -285,6 +287,7 @@
    "derived": "<derived> = the local folder for per-unit files (never in git)"
   },
   "code_ref": "git 5133e04 (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

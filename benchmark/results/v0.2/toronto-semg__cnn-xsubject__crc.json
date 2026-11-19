@@ -249,7 +249,26 @@
    "name": "Key-press CNN + en char 6-gram beam (Fidetype)",
    "version": "m6-07",
    "url": "https://github.com/zhangzibo/fidetype/tree/main/experiments/2026-11-11-emg-toronto",
-   "weights_sha256": null,
+   "weights_sha256": "e4221b4066934a30ddbb783f4a264369179d60c03ee91706ea2a51c9f76c0c1a",
+   "weights_files": [
+    {
+     "name": "<runs>/emg-toronto/xsubject_f0/best.pt",
+     "sha256": "391f7ed4556e80512f8b563178e7a549b270cd28814f5defa91deedbded817ed"
+    },
+    {
+     "name": "<runs>/emg-toronto/xsubject_f1/best.pt",
+     "sha256": "c6fa0b5b8529297bf2f881799c23ff3a8521a04be8c9509cdb58626c0e59facb"
+    },
+    {
+     "name": "<runs>/emg-toronto/xsubject_f2/best.pt",
+     "sha256": "3b0c6de53e3fa56d97649297655ddf73161b6ac2a9a6301cbbcb1a62eb21ac5e"
+    },
+    {
+     "name": "<runs>/emg-toronto/xsubject_f3/best.pt",
+     "sha256": "f9983ce4e44fd43be9ac75bfb8810b23b2674891eaa77ea1a1e7d0588e562d91"
+    }
+   ],
+   "weights_sha256_kind": "manifest: SHA-256 of the sha256sum lines of weights_files, sorted by name",
    "training_data": [
     "Toronto sEMG (cross-subject; CC BY 4.0)",
     "Tatoeba en (CC BY 2.0 FR) for the char LM"
@@ -258,6 +277,7 @@
   "policy": {
    "name": "trust gate + CRC",
    "config_id": null,
+   "config_id_reason": "no frozen config saved: experiments/2026-11-17-p6-02b-v02-entries/run.py, stage toronto, fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
    "guarantee": "crc"
   },
   "scorer": {
@@ -294,6 +314,7 @@
    "derived": "<derived> = the local folder for per-unit files (never in git)"
   },
   "code_ref": "git b9fa645 (last commit that changed this card before P13-06)",
-  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)"
+  "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
  }
 }

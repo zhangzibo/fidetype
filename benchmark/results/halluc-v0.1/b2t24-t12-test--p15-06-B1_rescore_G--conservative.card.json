@@ -269,5 +269,62 @@
   "swapped_to_real_commit_ratio": null
  },
  "wrong_commit_le_alpha": true,
- "fluent_wrong_le_alpha": true
+ "fluent_wrong_le_alpha": true,
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": null,
+  "dataset_note": "dataset 'brain-to-text-24' is not yet in the hub registry (gap 79, P13-07); source: https://doi.org/10.5061/dryad.x69p8czpq",
+  "track": {
+   "track": "halluc/b2t24-t12-test",
+   "split_version": "halluc-v0.1",
+   "digest": "a9ca46d99a94fe2d76104f7eb75c3dce00e895726bbb8faada9c0dd3af71bf15",
+   "digest_kind": "file-sha256",
+   "data_track": "b2t24-t12"
+  },
+  "adapter": null,
+  "decoder": {
+   "name": "t12-v2 GRU + word LM (ours)",
+   "version": "5317b0600a5c",
+   "url": "experiments/2026-11-13-confirmatory-t12-v2",
+   "weights_sha256": "5317b0600a5cbfc6679116d2c47f4da1007a1544a63962d8dbdf9308f1063787",
+   "training_data": [
+    "b2t24-t12 train split (train blocks of the train partition)"
+   ],
+   "weights_files": [
+    {
+     "name": "<runs>/t12-v2-final/best.pt",
+     "sha256": "5317b0600a5cbfc6679116d2c47f4da1007a1544a63962d8dbdf9308f1063787"
+    }
+   ]
+  },
+  "policy": {
+   "name": "p15-06-B1_rescore_G",
+   "config_id": "tcfg-77bf40445ed5b0d9",
+   "guarantee": "ltt",
+   "description": "P15-06 guard: LLM rescoring + CTC grounding + fluent-wrong bound (joint LTT)"
+  },
+  "scorer": {
+   "scorer_version": "fidetype.halluc/0.1",
+   "metrics": {
+    "halluc": "fidetype.halluc/0.1"
+   },
+   "fluency": "conservative",
+   "B": null,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": null,
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark.hallucination rescore benchmark/results/halluc-v0.1/b2t24-t12-test--p15-06-B1_rescore_G--conservative.outcomes.json --protocol fidetype.halluc/0.1 --alpha-wrong 0.05 --alpha-fluent 0.01 --check benchmark/results/halluc-v0.1/b2t24-t12-test--p15-06-B1_rescore_G--conservative.card.json",
+  "inputs": {
+   "outcomes": "benchmark/results/halluc-v0.1/b2t24-t12-test--p15-06-B1_rescore_G--conservative.outcomes.json (committed; per-trial flags only, no text)",
+   "split": "src/fidetype/benchmark/splits/halluc-v0.1/b2t24-t12-test.json (committed; hashes only)",
+   "adapter": "none: the rescore reads the committed outcomes file, no adapter runs"
+  },
+  "code_ref": "git bdefe45 (last commit that changed this card before P13-11)",
+  "recorded": "2026-11-19, backfill by P13-11 (tools/benchmark/add_rerun_recipes.py --halluc)"
+ }
 }

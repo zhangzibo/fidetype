@@ -25,6 +25,14 @@ from typing import Any, Mapping, Sequence
 RECIPE_SCHEMA = "fidetype.hub.recipe/0.1"
 LEVELS = ("rescore", "replay", "full")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
+_CONFIG_ID = re.compile(r"^tcfg-[0-9a-f]{16}$")
+_SPLIT_VERSION = re.compile(r"^(tracks|halluc)-v\d+\.\d+$")
+#: Default reasons when a new card does not give the value (P13-11: a recipe holds a value or a reason, never a
+#: bare null).
+NO_WEIGHTS_GIVEN = ("not given: the scorer reads only the decoded outputs; the submitter adds the weights SHA-256 "
+                    "(or the reason) to the card's decoder block")
+NO_CONFIG_GIVEN = ("not given: the submission names no frozen trust config; the submitter adds the config_id "
+                   "(or the reason) to the card's policy block")
 _MODULE = re.compile(r"(fidetype(?:\.[A-Za-z_][A-Za-z0-9_]*)+)")
 #: The local inputs of a ``rescore`` recipe. Neither goes into git (hub decision Q3; NTS leakage rule).
 RESCORE_INPUTS = {"outputs": "the submission folder (decoded text; never in git, hub decision Q3)",
@@ -125,11 +133,15 @@ def make_recipe(card: Mapping[str, Any], *, command: str, level: str = "rescore"
                 steps: Sequence[Mapping[str, str]] | None = None, inputs: Mapping[str, str] | None = None,
                 code_ref: str | None = None, recorded: str | None = None,
                 adapter_module: str | None = None, weights_sha256: str | None = None,
-                policy_config_id: str | None = None) -> dict[str, Any]:
+                weights_reason: str | None = None, weights_files: Sequence[Mapping[str, Any]] | None = None,
+                policy_config_id: str | None = None, config_id_reason: str | None = None) -> dict[str, Any]:
     """Build the rerun recipe (design section 5.1) of one score card.
 
     ``command`` is the exact command line that gives the card from local inputs (``<placeholders>`` for local
     paths). ``steps`` lists the full pipeline (truth, build, score) when more than one command is needed.
+
+    The decoder weights SHA-256 and the policy ``config_id`` are a value or a reason (P13-11): with no value,
+    the recipe gets ``weights_sha256_reason`` / ``config_id_reason`` (a default reason when none is given).
     """
     if level not in LEVELS:
         raise ValueError(f"level must be one of {LEVELS}")
@@ -148,6 +160,18 @@ def make_recipe(card: Mapping[str, Any], *, command: str, level: str = "rescore"
     metrics: dict[str, Any] = {}
     if sw.get("definition"):
         metrics["safe_wpm"] = sw["definition"]
+    sha = weights_sha256 or dec.get("weights_sha256")
+    cid = policy_config_id or pol.get("config_id")
+    decoder: dict[str, Any] = {"name": dec.get("name"), "version": dec.get("version"), "url": dec.get("url"),
+                               "weights_sha256": sha, "training_data": dec.get("training_data")}
+    if not sha:
+        decoder["weights_sha256_reason"] = weights_reason or NO_WEIGHTS_GIVEN
+    if weights_files:
+        decoder["weights_files"] = [dict(f) for f in weights_files]
+    policy: dict[str, Any] = {"name": pol.get("name"), "config_id": cid,
+                              "guarantee": (card.get("guarantee") or {}).get("method")}
+    if not cid:
+        policy["config_id_reason"] = config_id_reason or NO_CONFIG_GIVEN
     r: dict[str, Any] = {
         "schema": RECIPE_SCHEMA,
         "level": level,
@@ -156,10 +180,8 @@ def make_recipe(card: Mapping[str, Any], *, command: str, level: str = "rescore"
         "track": {"track": track, "split_version": _split_version(card), "digest": digest,
                   "digest_kind": digest_kind},
         "adapter": adapter,
-        "decoder": {"name": dec.get("name"), "version": dec.get("version"), "url": dec.get("url"),
-                    "weights_sha256": weights_sha256, "training_data": dec.get("training_data")},
-        "policy": {"name": pol.get("name"), "config_id": policy_config_id or pol.get("config_id"),
-                   "guarantee": (card.get("guarantee") or {}).get("method")},
+        "decoder": decoder,
+        "policy": policy,
         # v0.1 cards have no scorer_version field: the benchmark version names their scorer.
         "scorer": {"scorer_version": card.get("scorer_version") or f"benchmark-{card.get('benchmark_version')}",
                    "metrics": metrics,
@@ -172,6 +194,73 @@ def make_recipe(card: Mapping[str, Any], *, command: str, level: str = "rescore"
         r["steps"] = [dict(s) for s in steps]
     if inputs:
         r["inputs"] = dict(inputs)
+    if code_ref:
+        r["code_ref"] = code_ref
+    if recorded:
+        r["recorded"] = recorded
+    return r
+
+
+def halluc_split_file(dataset: str, split_version: str = "halluc-v0.1") -> Path | None:
+    """The committed hallucination split file of ``dataset`` (``splits/halluc-v0.1/<dataset>.json``)."""
+    from importlib import resources
+
+    f = resources.files("fidetype.benchmark").joinpath("splits", split_version, f"{dataset}.json")
+    return Path(str(f)) if f.is_file() else None
+
+
+def make_halluc_recipe(card: Mapping[str, Any], *, card_rel: str, outcomes_rel: str, track: str,
+                       decoder: Mapping[str, Any], code_ref: str | None = None, recorded: str | None = None,
+                       split_version: str = "halluc-v0.1") -> dict[str, Any]:
+    """The rerun recipe of one hallucination score card (P13-11).
+
+    Level ``rescore``: ``python -m fidetype.benchmark.hallucination rescore`` recomputes the card from the
+    committed outcomes file (flags only, no text) and ``--check`` compares it with the card (the ``rerun``
+    block is left out of the comparison). ``card_rel`` and ``outcomes_rel`` are repository-relative paths.
+    ``track`` is the leaderboard track of the held-out data (it names the hub dataset entry). ``decoder``
+    holds ``name``, ``version``, ``url``, ``training_data`` and the weights SHA-256 (or the reason).
+    """
+    dataset = str(card.get("dataset"))
+    protocol = str(card.get("protocol"))
+    rules = card.get("rules") or {}
+    meta = card.get("meta") or {}
+    split = halluc_split_file(dataset, split_version)
+    digest = hashlib.sha256(split.read_bytes().replace(b"\r\n", b"\n")).hexdigest() if split else None
+    ds, ds_note = _dataset_block(track)
+    cmd = (f"python -m fidetype.benchmark.hallucination rescore {outcomes_rel} --protocol {protocol}"
+           f" --alpha-wrong {rules.get('alpha_wrong')} --alpha-fluent {rules.get('alpha_fluent')} --check {card_rel}")
+    dec = dict(decoder)
+    sha = dec.get("weights_sha256")
+    d_block: dict[str, Any] = {"name": dec.get("name"), "version": dec.get("version"), "url": dec.get("url"),
+                               "weights_sha256": sha, "training_data": dec.get("training_data")}
+    if not sha:
+        d_block["weights_sha256_reason"] = dec.get("weights_sha256_reason") or NO_WEIGHTS_GIVEN
+    if dec.get("weights_files"):
+        d_block["weights_files"] = [dict(f) for f in dec["weights_files"]]
+    cid = meta.get("guard_config_id")
+    p_block: dict[str, Any] = {"name": card.get("system"), "config_id": cid, "guarantee": "ltt",
+                               "description": meta.get("description")}
+    if not cid:
+        p_block["config_id_reason"] = NO_CONFIG_GIVEN
+    r: dict[str, Any] = {
+        "schema": RECIPE_SCHEMA,
+        "level": "rescore",
+        "dataset": ds,
+        **({"dataset_note": ds_note} if ds_note else {}),
+        "track": {"track": f"halluc/{dataset}", "split_version": split_version, "digest": digest,
+                  "digest_kind": "file-sha256" if digest else "none", "data_track": track},
+        "adapter": None,
+        "decoder": d_block,
+        "policy": p_block,
+        "scorer": {"scorer_version": protocol, "metrics": {"halluc": protocol},
+                   "fluency": (card.get("fluency") or {}).get("mode"), "B": None, "seed": meta.get("seed")},
+        "versions": {"fidetype": package_version(), "benchmark": None,
+                     "python": f"{sys.version_info.major}.{sys.version_info.minor}"},
+        "command": cmd,
+        "inputs": {"outcomes": f"{outcomes_rel} (committed; per-trial flags only, no text)",
+                   "split": f"src/fidetype/benchmark/splits/{split_version}/{dataset}.json (committed; hashes only)",
+                   "adapter": "none: the rescore reads the committed outcomes file, no adapter runs"},
+    }
     if code_ref:
         r["code_ref"] = code_ref
     if recorded:
@@ -197,8 +286,9 @@ def check_recipe(r: Any) -> list[str]:
     if r.get("dataset") is None and not r.get("dataset_note"):
         errs.append("rerun.dataset: a registry entry, or a dataset_note that says why there is none")
     tr = r.get("track") or {}
-    if not tr.get("track") or not re.match(r"^tracks-v\d+\.\d+$", str(tr.get("split_version", ""))):
-        errs.append("rerun.track: needs track and split_version (tracks-vX.Y)")
+    if not tr.get("track") or not _SPLIT_VERSION.match(str(tr.get("split_version", ""))):
+        errs.append("rerun.track: needs track and split_version (tracks-vX.Y or halluc-vX.Y)")
+    errs += _value_or_reason(r)
     ad = r.get("adapter")
     if ad is not None and not (str(ad.get("module", "")).startswith("fidetype.") and _SHA256.match(str(ad.get("sha256")))):
         errs.append("rerun.adapter: module (fidetype.*) and sha256 (RA-9)")
@@ -212,10 +302,46 @@ def check_recipe(r: Any) -> list[str]:
     return errs
 
 
+def _value_or_reason(r: Mapping[str, Any]) -> list[str]:
+    """P13-11: the weights SHA-256 and the policy config_id are each a value or a reason, never both, never
+    neither."""
+    errs = []
+    dec, pol = r.get("decoder"), r.get("policy")
+    if isinstance(dec, Mapping):
+        sha, why = dec.get("weights_sha256"), dec.get("weights_sha256_reason")
+        if sha is not None and not _SHA256.match(str(sha)):
+            errs.append("rerun.decoder.weights_sha256: 64 lower-case hex characters")
+        if (sha is None) == (not (isinstance(why, str) and why.strip())):
+            errs.append("rerun.decoder: weights_sha256 or weights_sha256_reason (exactly one)")
+        for f in dec.get("weights_files") or []:
+            if not (isinstance(f, Mapping) and f.get("name") and _SHA256.match(str(f.get("sha256")))):
+                errs.append("rerun.decoder.weights_files: each item needs name and sha256")
+    elif dec is not None:
+        errs.append("rerun.decoder: must be an object")
+    if isinstance(pol, Mapping):
+        cid, why = pol.get("config_id"), pol.get("config_id_reason")
+        if cid is not None and not _CONFIG_ID.match(str(cid)):
+            errs.append("rerun.policy.config_id: tcfg- + 16 hex characters")
+        if (cid is None) == (not (isinstance(why, str) and why.strip())):
+            errs.append("rerun.policy: config_id or config_id_reason (exactly one)")
+    elif pol is not None:
+        errs.append("rerun.policy: must be an object")
+    return errs
+
+
 def rerun_level(card: Mapping[str, Any]) -> str:
     """``rescore`` / ``replay`` / ``full``, or ``no`` when the card has no recipe (design section 5.2)."""
     r = card.get("rerun")
     return str(r.get("level")) if isinstance(r, Mapping) and r.get("level") in LEVELS else "no"
+
+
+def _value_text(block: Any, key: str, reason_key: str) -> str:
+    if not isinstance(block, Mapping):
+        return "none"
+    v = block.get(key)
+    if v:
+        return f"{str(v)[:16]}..." if len(str(v)) > 24 else str(v)
+    return f"none ({block.get(reason_key) or 'no reason given'})"
 
 
 def recipe_text(r: Mapping[str, Any] | None) -> str:
@@ -230,6 +356,8 @@ def recipe_text(r: Mapping[str, Any] | None) -> str:
              "dataset: " + (f"{ds['id']} {ds['version']} r{ds['revision']}" if ds else str(r.get("dataset_note"))),
              f"track: {tr.get('track')} ({tr.get('split_version')}, split digest {str(tr.get('digest'))[:16]}...)",
              "adapter: " + (f"{ad['module']} {ad['package_version']} sha256 {ad['sha256'][:16]}..." if ad else "none"),
+             "decoder weights: " + _value_text(r.get("decoder"), "weights_sha256", "weights_sha256_reason"),
+             "policy config: " + _value_text(r.get("policy"), "config_id", "config_id_reason"),
              f"scorer: {sc.get('scorer_version')} {json.dumps(sc.get('metrics') or {})} B={sc.get('B')} seed={sc.get('seed')}"]
     if r.get("code_ref"):
         lines.append(f"code: {r['code_ref']}")
@@ -272,4 +400,5 @@ def rescore(card: Mapping[str, Any], submission: str | Path, truth: str | Path) 
 
 
 __all__ = ["RECIPE_SCHEMA", "LEVELS", "adapter_id", "adapter_module_for", "dataset_for_track", "make_recipe",
-           "score_command", "check_recipe", "rerun_level", "recipe_text", "card_json", "rescore", "source_sha256"]
+           "score_command", "check_recipe", "make_halluc_recipe", "halluc_split_file", "NO_WEIGHTS_GIVEN",
+           "NO_CONFIG_GIVEN", "rerun_level", "recipe_text", "card_json", "rescore", "source_sha256"]
