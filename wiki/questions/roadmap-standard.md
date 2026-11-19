@@ -1247,6 +1247,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-21** | Hallucination benchmark: absolute bound on unsupported swapped commits next to the ratio rule (open gap 52, [details](#p15-21-hallucination-benchmark-absolute-bound-on-unsupported-swapped-commits-next-to-the-ratio-rule)) | F2 | P15-15, P15-16 |
 | **P15-23** | Update gate refuses a challenger without champion outputs (open gap 71, [details](#p15-23-update-gate-refuses-a-challenger-without-champion-outputs)) | F1 | P15-13 |
 | **P15-24** | Same-decoder re-calibrations under the default-deny gate (open gap 72, [details](#p15-24-same-decoder-re-calibrations-under-the-default-deny-gate)) | F1 | P15-13, P5-01 |
+| **P15-25** | E1 readout with the same character LM (open gap 91, [details](#p15-25-e1-readout-with-the-same-character-lm)) | F3 | P15-08 (E1a), P11-07 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1307,6 +1308,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Deliverable:** Willett character CER at 10 / 25 / 50 / 100 % data; arms random / text-only / emg2qwerty (research track) / KT-sEMG (clean track) / optional T15 character head; same character LM; 2 seeds; licence tag on each checkpoint. `plan.md` first.
 - **Depends on:** GPU (after P11-01), P11-01 weights for the emg2qwerty arm, CPU caches at a common frame rate.
 - **Done when:** all arms run and the rule "an EMG-pretrained arm beats text-only by more than the seed spread at ≤ 25 % data" is evaluated. A null result is a valid outcome. Cost about 20–45 GPU-h.
+- **Progress (2026-11-19, `in_progress`):** part 1 **E1a** pre-registered (`60620ab`, [plan](../../experiments/2026-11-19-p15-08-e1-cross-body/plan.md)), code `75c92a6`, GPU run launched 2026-11-19 10:28 (detached, about 10 h). Target Willett handwriting (new sensor + new user); shared output space = the P11-01 98-token character head; arms R random / T text-only (synthetic key renderings, 30,000 steps) / E P11-01 EMG trunk / S shuffled-weight control; labelled budgets 3, 10, 30, 100 min and all (506 min); 2 seeds; final-step test CER on the last block of each session, no LM. Primary H1: E beats T at ≥ 2 of {3, 10, 30} min (seed spread + paired bootstrap); V1 gate, C1 time-shuffle, C2 label-shuffle. Left after E1a: the clean-track KT-sEMG arm (needs a KT-sEMG trunk, P11-06 / gap 86), the optional T15 arm, and the same-LM readout (P15-25, gap 91).
 
 #### P15-09 New-modality benchmark and reverse transfer
 - **Goal:** a public test of "new sensor or new user with minutes of data".
@@ -1432,6 +1434,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** none (CPU).
 - **Source:** [P15-13 results](../../experiments/2026-11-18-p15-13-gate-fix/results.md#descriptive-results) (D2): 1 of 8 re-calibrations of the same M4-13 decoder was refused (s1 oracle B6: top-1 changed on 3 of 48 items, 1 worse vs 2 better, p 0.081). With 48 check items and margin_abs 0.1 the absolute branch allows no worse item. A user whose data drift (P5-01 PersonalTrust) may then not be able to re-tune.
 - **Done when:** a pre-registered check (for example the P5-01 replay) measures how often re-calibrations of the same decoder are refused, and a chosen remedy (larger check block, a re-calibration path that keeps the top-1 fixed, or a margin for re-calibrations fixed in a plan) keeps the refusal rate of real re-calibrations low without accepting the P15-13 broken or worse decoders.
+
+#### P15-25 E1 readout with the same character LM
+- **Gap:** 91 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-08). Follow-up of P15-08.
+- **Status:** `todo`.
+- **Depends on:** P15-08 E1a (weights local in `C:/Users/zhang/bci-data/derived/p15-08/runs/`); a licence-clean character LM and CTC beam search (P11-07, gap 87); CPU.
+- **Source:** [E1a plan](../../experiments/2026-11-19-p15-08-e1-cross-body/plan.md#deviations-from-the-roadmap-item): the roadmap and the north star ask for "greedy CER and CER with the same character LM" (the same-LM rule), so that a gain cannot come from English character statistics alone. E1a reads out greedy CTC only, because no licence-clean character LM exists yet.
+- **Done when:** every E1a arm and budget is re-scored with one character LM and one beam setting (fixed before the re-score), and the H1-H4 rules of the E1a plan are evaluated again on the LM CER next to the greedy CER.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
