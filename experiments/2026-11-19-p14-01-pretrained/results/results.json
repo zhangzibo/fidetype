@@ -1,0 +1,76 @@
+{
+ "fidetype_version": "0.0.1",
+ "kt": {
+  "model": "kt-semg-lda",
+  "runs": {
+   "run28": {
+    "segments": 22,
+    "keys": 786,
+    "key_accuracy": 0.24173027989821882,
+    "majority_class": 0.13740458015267176,
+    "guard_actions": {
+     "offer": 22
+    },
+    "provenance_pass": 22,
+    "seconds": 26.9
+   },
+   "run26": {
+    "segments": 3,
+    "keys": 98,
+    "key_accuracy": 0.1326530612244898,
+    "majority_class": 0.09183673469387756,
+    "guard_actions": {
+     "offer": 3
+    },
+    "provenance_pass": 3,
+    "seconds": 13.7
+   }
+  },
+  "card_value_run28": 0.248,
+  "stage_seconds": 40.6
+ },
+ "t12": {
+  "model": "t12-v2",
+  "n": 400,
+  "greedy_per": 0.26948979591836736,
+  "per_edits": 2641,
+  "per_symbols": 9800,
+  "card_value": 0.269,
+  "max_abs_logprob_diff_vs_torch_run": 0.0012946128845214844,
+  "provenance_pass": 400,
+  "seconds": 139.8,
+  "stage_seconds": 140.3
+ },
+ "t15": {
+  "model": "t15-m4-13",
+  "n": 701,
+  "greedy_per": 0.12102200860106248,
+  "per_edits": 2392,
+  "per_symbols": 19765,
+  "card_value": 0.121,
+  "max_abs_logprob_diff_vs_torch_run": 6.866455078125e-05,
+  "provenance_pass": 701,
+  "guard_config_id": "tcfg-1016759f08a3f9a1",
+  "guard_actions_equal_p14_05": 701,
+  "guard_texts_equal_p14_05": 701,
+  "commits": 104,
+  "wrong_commits": 17,
+  "p14_05_commits": 104,
+  "p14_05_wrong_commits": 17,
+  "seconds": 409.2,
+  "stage_seconds": 416.6
+ },
+ "e2q": {
+  "model": "emg2qwerty-p11-01",
+  "sessions": 16,
+  "prompts": 2445,
+  "prompt_cer": 0.5830786913739452,
+  "edits": 41598,
+  "ref_keys": 71342,
+  "card_value_prompt_cer": 0.5832,
+  "card_value_session_cer": 0.5375,
+  "provenance_pass": 2445,
+  "seconds": 967.2,
+  "stage_seconds": 967.3
+ }
+}

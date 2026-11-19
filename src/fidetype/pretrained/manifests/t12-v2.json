@@ -1,0 +1,66 @@
+{
+ "schema": "fidetype.pretrained-manifest/0.1",
+ "name": "t12-v2",
+ "version": "1",
+ "title": "Implant attempted speech (T12): causal GRU-CTC phoneme decoder v2 (M3-28)",
+ "status": "available",
+ "task": "attempted-speech phoneme decoding, CTC over 39 ARPAbet phonemes + word boundary",
+ "modality": "intracortical",
+ "runtime": "gru-ctc",
+ "input": {
+  "kind": "binned implant features",
+  "channels": 512,
+  "bin_s": 0.02,
+  "features": "tx1 (threshold crossings) + spikePow of 256 electrodes, z-scored per trial with the 20 previous trials of the session (clip |z| <= 10)",
+  "file_format": "b2t24-mat",
+  "file_note": "competitionData/test/t12.YYYY.MM.DD.mat (the train file of the same session must be in ../train/ for the rolling normalisation)",
+  "normalisation": {"method": "rolling", "window_trials": 20, "clip_abs_z": 10.0},
+  "session": "required: the session name selects the per-session day layer"
+ },
+ "output": {
+  "vocab_type": "phoneme",
+  "vocab_id": "phoneme.arpabet-39-sil",
+  "frame_period_s": 0.08,
+  "latency_s": 0.0
+ },
+ "architecture": {
+  "patch": 32,
+  "stride": 4,
+  "layers": 5,
+  "hidden": 1024,
+  "smooth_sd": 2.0,
+  "lookahead": null,
+  "input_round": "float16",
+  "code": "experiments/2026-11-13-confirmatory-t12-v2/train_decoder.py (training); fidetype.pretrained._gru (this runtime, NumPy)",
+  "sessions": ["t12.2022.04.28", "t12.2022.05.05", "t12.2022.05.17", "t12.2022.05.19", "t12.2022.05.24", "t12.2022.05.26", "t12.2022.06.02", "t12.2022.06.07", "t12.2022.06.14", "t12.2022.06.16", "t12.2022.06.21", "t12.2022.06.23", "t12.2022.06.28", "t12.2022.07.05", "t12.2022.07.14", "t12.2022.07.21", "t12.2022.07.27", "t12.2022.07.29", "t12.2022.08.02", "t12.2022.08.11", "t12.2022.08.13", "t12.2022.08.18", "t12.2022.08.23", "t12.2022.08.25"]
+ },
+ "files": [
+  {"role": "weights", "name": "t12-v2.weights.npz", "sha256": "cba3925c434b34028f91753a698aecce742e163e362bc81a25318fe7826ed3b5", "size": 340085390, "url": null}
+ ],
+ "licence": {
+  "data.licence": "CC0-1.0",
+  "data.research_only": false,
+  "weights": "CC0-1.0",
+  "weights_status": "proposed, not released: the user decides the weights licence and the host at P14-02 (DATA.md rule 1 changes only then)",
+  "attribution": "Data: Willett et al., Nature 2023, Brain-to-Text '24 competitionData, Dryad doi:10.5061/dryad.x69p8czpq (CC0 1.0)"
+ },
+ "training": {
+  "data": "Brain-to-Text '24 competitionData, participant T12 (Willett et al. 2023)",
+  "doi": "10.5061/dryad.x69p8czpq",
+  "split": "train blocks of all 24 sessions except the last train block of each session (validation); the test blocks ('pool') never trained the decoder",
+  "run": "t12-v2-final (experiments/2026-11-13-confirmatory-t12-v2), epoch 102",
+  "checkpoint_sha256": "5317b0600a5cbfc6679116d2c47f4da1007a1544a63962d8dbdf9308f1063787"
+ },
+ "metrics": [
+  {"name": "greedy PER", "split": "test blocks of the 10 test sessions (400 trials)", "value": 0.269, "source": "experiments/2026-11-13-confirmatory-t12-v2/results.md"},
+  {"name": "greedy PER", "split": "decoder validation (880 trials)", "value": 0.294, "source": "experiments/2026-11-13-confirmatory-t12-v2/results.md"}
+ ],
+ "limits": [
+  "One participant (T12). The day layer exists only for the 24 sessions of the dataset.",
+  "The rolling normalisation needs the earlier trials of the same session (the train file).",
+  "Weaker than t15-m4-13 (PER 0.27 against 0.12). Offline replay only."
+ ],
+ "trust": null,
+ "trust_note": "The committed T12 guards (P6-02, P14-03) were calibrated with a word decoder that also uses a Tatoeba word trigram LM (experiments/2026-11-13-confirmatory-t12-v2/wordlm.py). That LM is not packaged yet (open gap). Pass your own decode_fn to fidetype.trust.calibrate instead.",
+ "hosting": {"host": null, "release": null, "notes": "no download URL yet; hosting is the user step P14-02 (docs/publishing-checklist.md)"}
+}

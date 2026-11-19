@@ -9,6 +9,7 @@
     fidetype demo                                        # offline demo (synthetic streams)
     fidetype demo live                                   # browser replay demo (recorded data, P14-06)
     fidetype live --source synthetic|brainflow|lsl       # live decode + trust guard -> decisions, NTS (P14-04)
+    fidetype decoders list|info|path|verify|decode       # pretrained decoders: load, decode -> NTS (P14-01)
     fidetype conformance ...                             # full conformance suite (check, consumer, vectors, ...)
     fidetype lsl run|replay-to-lsl|list ...              # Lab Streaming Layer input (needs the [lsl] extra)
     fidetype lsl brainflow-bridge --board synthetic      # BrainFlow board -> LSL (needs [lsl,brainflow])
@@ -24,7 +25,8 @@ still works: ``python -m fidetype.conformance``,
 ``python -m fidetype.trust.streaming``, ``python -m fidetype.trust.intent``,
 ``python -m fidetype.adapters.lsl``, ``python -m fidetype.adapters.ws``,
 ``python -m fidetype.benchmark``, ``python -m fidetype.benchmark.hub``, ``python -m fidetype.trust.provenance``,
-``python -m fidetype.collector``, ``python -m fidetype.demo`` and ``python -m fidetype.live``.
+``python -m fidetype.collector``, ``python -m fidetype.demo``, ``python -m fidetype.live`` and
+``python -m fidetype.pretrained``.
 """
 
 from __future__ import annotations
@@ -111,6 +113,12 @@ def _live(argv: list[str]) -> int:
     return main(argv)
 
 
+def _decoders(argv: list[str]) -> int:
+    from fidetype.pretrained.__main__ import main
+
+    return main(argv)
+
+
 def _version(argv: list[str]) -> int:
     from fidetype import __version__
     from fidetype.streams.spec import SPEC_VERSION
@@ -129,6 +137,8 @@ COMMANDS: dict[str, tuple[Callable[[list[str]], int], str, str]] = {
     "demo": (_demo, "offline demo (synthetic streams); `demo live`: browser replay demo", "python -m fidetype.demo"),
     "live": (_live, "live decode from LSL, BrainFlow / OpenBCI or synthetic input, with the trust guard",
              "python -m fidetype.live"),
+    "decoders": (_decoders, "pretrained decoders: list, verify, decode a data file into NTS",
+                 "python -m fidetype.pretrained"),
     "conformance": (_conformance, "the full conformance suite (check, consumer, vectors)", "python -m fidetype.conformance"),
     "lsl": (_lsl, "Lab Streaming Layer input and output (needs the [lsl] extra)", "python -m fidetype.adapters.lsl"),
     "ws": (_ws, "WebSocket input and output, FEP-0004 (needs the [ws] extra)", "python -m fidetype.adapters.ws"),

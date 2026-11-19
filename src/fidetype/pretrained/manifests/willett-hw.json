@@ -1,0 +1,21 @@
+{
+ "schema": "fidetype.pretrained-manifest/0.1",
+ "name": "willett-hw",
+ "version": "0",
+ "title": "Implant handwriting (T5, Willett et al. 2021): character decoder of our own (planned)",
+ "status": "planned",
+ "status_note": "no decoder of our own yet: P15-08 trains one (running). The release follows when its result is in.",
+ "task": "attempted-handwriting character decoding",
+ "modality": "intracortical",
+ "runtime": "planned",
+ "files": [],
+ "licence": {
+  "data.licence": "CC0-1.0",
+  "data.research_only": false,
+  "weights": null,
+  "weights_status": "no weights yet",
+  "attribution": "Data: Willett et al., Nature 2021, handwriting BCI dataset (CC0 1.0)"
+ },
+ "trust": null,
+ "hosting": {"host": null, "release": null, "notes": "no weights yet"}
+}

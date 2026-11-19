@@ -83,6 +83,7 @@ jobs:
           "$b/nts-conform" kit --require-level trust-ready
           "$b/nts-conform" certified --check
           "$b/fidetype-collector" --help
+          "$b/fidetype" decoders list
       - uses: actions/setup-node@v6
         if: ${{ !cancelled() }}
         with:
@@ -325,12 +326,14 @@ jobs:
           import glob, re, sys, tarfile, zipfile
           d = sys.argv[1]
           whl = zipfile.ZipFile(glob.glob(f"{d}/*.whl")[0]).namelist()
-          bad = [n for n in whl if re.search(r"(\.(pt|ckpt|npy|fif|edf|bdf|mat|h5|hdf5|pyc)$)|__pycache__|^tests/|/data/raw", n)]
+          bad = [n for n in whl if re.search(r"(\.(pt|ckpt|npy|fif|edf|bdf|mat|h5|hdf5|pyc)$)|__pycache__|^tests/|/data/raw"
+                                         r"|^fidetype/pretrained/.*\.(npz|pt)$", n)]  # P14-01: no pretrained weights
           assert not bad, f"forbidden files in the wheel: {bad[:10]}"
           for need in ["fidetype/py.typed", "fidetype/_spec/conformance/fep-0001/manifest.json",
                        "fidetype/_spec/conformance/v0.1/manifest.json", "fidetype/_spec/conformance/kit/kit.json",
                        "fidetype/_spec/conformance/kit/rule-map.json", "fidetype/_spec/conformance/levels.json",
-                       "fidetype/_spec/conformance/certified.json"]:
+                       "fidetype/_spec/conformance/certified.json",
+                       "fidetype/pretrained/manifests/t15-m4-13.json", "fidetype/pretrained/guards/t15-m4-13.guard.json"]:
               assert need in whl, f"missing in the wheel: {need}"
           sd = [m.name.split("/", 1)[1] for m in tarfile.open(glob.glob(f"{d}/*.tar.gz")[0]).getmembers() if "/" in m.name]
           tops = {n.split("/")[0] for n in sd}
@@ -352,6 +355,7 @@ jobs:
           v/bin/nts-conform levels
           v/bin/nts-conform certified --check
           v/bin/fidetype-collector --help
+          v/bin/fidetype decoders list
       - uses: actions/setup-node@v6
         with:
           node-version: "24"

@@ -1,0 +1,21 @@
+{
+ "schema": "fidetype.pretrained-manifest/0.1",
+ "name": "toronto-semg-cnn",
+ "version": "0",
+ "title": "Forearm sEMG typing (Toronto sEMG): key-press CNN (planned)",
+ "status": "planned",
+ "status_note": "the CNN exists locally (experiments/2026-11-11-emg-toronto, cross-session key accuracy 0.168) but has no packaged runtime and no data reader yet (open gap)",
+ "task": "key-press classification (27 classes: a-z, space), one window per key press",
+ "modality": "emg",
+ "runtime": "planned",
+ "files": [],
+ "licence": {
+  "data.licence": "CC-BY-4.0",
+  "data.research_only": false,
+  "weights": "CC-BY-4.0",
+  "weights_status": "not released; proposed licence keeps the attribution",
+  "attribution": "Toronto sEMG: Achituve, Beutel, Eby, Fetaya, Koivisto, Zariffa, Sci Data 12:440 (2025), doi:10.5683/SP3/KV65VI, CC BY 4.0"
+ },
+ "trust": null,
+ "hosting": {"host": null, "release": null, "notes": "no runtime yet"}
+}

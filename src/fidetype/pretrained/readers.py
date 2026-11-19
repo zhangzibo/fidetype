@@ -1,0 +1,183 @@
+"""Readers of the public data files that the pretrained decoders take (P14-01). Our own code (Apache-2.0).
+
+Each reader returns :class:`Item` objects: one decodable unit (a trial, a text prompt, a typing
+burst) with its input array and a pseudonymous key. The ground truth (``truth``) is for evaluation
+only; it never goes into a stream.
+
+- Brain-to-Text '25 (T15, CC0): ``data_*.hdf5`` of one session folder (``t15.YYYY.MM.DD``); one
+  HDF5 group per trial with ``input_features`` (T x 512) and the attribute ``sentence_label``.
+  Needs ``h5py`` (``pip install fidetype[emg2qwerty]``).
+- Brain-to-Text '24 (T12, CC0): ``competitionData/{train,test}/t12.YYYY.MM.DD.mat``. The decoder
+  input is ``tx1`` + ``spikePow`` (T x 512), z-scored per trial with the statistics of the 20
+  previous trials of the session (train file first, then test file; T12 v2 recipe). So a test file
+  needs its train file (found next to it). Needs ``scipy`` (``pip install fidetype[data]``).
+- emg2qwerty (CC BY-NC-SA 4.0, research only): one ``*.hdf5`` session; one item per text prompt.
+  Needs ``h5py``.
+- KT-sEMG (CC BY 4.0, Nokia): ``runN.csv`` + ``runN_keys.txt`` + ``runN_ts.txt``; one item per
+  typing burst (key times from the key log, as the ``kt-semg`` benchmark track).
+
+These readers treat every file as untrusted data: no pickle, read-only access.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from os import PathLike
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+__all__ = ["Item", "read_b2t25_hdf5", "read_b2t24_session", "b2t24_normalise", "read_emg2qwerty_session",
+           "read_kt_run", "T15_SESSION", "T12_SESSION"]
+
+T15_SESSION = re.compile(r"^t15\.\d{4}\.\d{2}\.\d{2}$")
+T12_SESSION = re.compile(r"^t12\.\d{4}\.\d{2}\.\d{2}$")
+
+
+@dataclass
+class Item:
+    """One decodable unit of a file."""
+
+    key: str  # pseudonymous: session folder / file name + index; no text
+    x: Any  # the decoder input (array), or None when the runtime reads the file itself
+    session: str | None = None
+    truth: str | None = None  # evaluation only; never written to a stream
+    extra: dict[str, Any] = field(default_factory=dict)
+
+
+def read_b2t25_hdf5(path: str | PathLike[str], limit: int | None = None, indices: list[int] | None = None) -> list[Item]:
+    """Trials of one B2T '25 HDF5 file. ``indices``: trial positions in sorted group order (default all)."""
+    import h5py  # optional dependency
+
+    p = Path(path)
+    sess = p.parent.name
+    out: list[Item] = []
+    with h5py.File(p, "r") as f:
+        keys = sorted(f.keys())
+        sel = range(len(keys)) if indices is None else indices
+        for i in sel:
+            g = f[keys[i]]
+            x = np.asarray(g["input_features"][()], dtype=np.float32)
+            if x.ndim != 2:
+                raise ValueError(f"{p.name}/{keys[i]}: input_features is not 2-D")
+            lab = g.attrs.get("sentence_label", None)
+            if isinstance(lab, bytes):
+                lab = lab.decode("utf-8")
+            out.append(Item(key=f"{sess}|{p.stem}|{i}", x=x, session=sess, truth=None if lab is None else str(lab),
+                            extra={"block": int(g.attrs.get("block_num", -1)), "trial": int(g.attrs.get("trial_num", -1))}))
+            if limit is not None and len(out) >= limit:
+                break
+    return out
+
+
+def _load_mat(p: Path) -> tuple[list[np.ndarray], list[str]]:
+    import scipy.io  # optional dependency
+
+    m = scipy.io.loadmat(str(p))
+    n = m["sentenceText"].shape[0]
+    texts = [str(m["sentenceText"][i]).rstrip() for i in range(n)]
+    feats = []
+    for i in range(n):
+        tx = np.asarray(m["tx1"][0, i] if m["tx1"].shape[0] == 1 else m["tx1"][i, 0], dtype=np.float32)
+        sp = np.asarray(m["spikePow"][0, i] if m["spikePow"].shape[0] == 1 else m["spikePow"][i, 0], dtype=np.float32)
+        feats.append(np.concatenate([tx, sp], axis=1))
+    return feats, texts
+
+
+def b2t24_normalise(seq: list[np.ndarray], window: int = 20, clip: float = 10.0) -> list[np.ndarray]:
+    """Causal rolling z-score of the T12 v2 recipe (float16-rounded, as in training)."""
+    sums = [(x.astype(np.float64).sum(0), (x.astype(np.float64) ** 2).sum(0), x.shape[0]) for x in seq]
+
+    def stats(lo: int, hi: int) -> tuple[np.ndarray, np.ndarray]:
+        s1 = sum(sums[k][0] for k in range(lo, hi))
+        s2 = sum(sums[k][1] for k in range(lo, hi))
+        n = sum(sums[k][2] for k in range(lo, hi))
+        mu = s1 / n
+        sd = np.sqrt(np.maximum(s2 / n - mu ** 2, 0.0))
+        sd[sd < 1e-6] = 1.0
+        return mu, sd
+
+    first = stats(0, min(window, len(seq)))
+    out = []
+    for j, x in enumerate(seq):
+        mu, sd = first if j < window else stats(j - window, j)
+        out.append(np.clip((x - mu) / sd, -clip, clip).astype(np.float16).astype(np.float32))
+    return out
+
+
+def read_b2t24_session(path: str | PathLike[str], *, window: int = 20, clip: float = 10.0,
+                       limit: int | None = None) -> list[Item]:
+    """Trials of one B2T '24 ``.mat`` file, normalised with the session history.
+
+    ``path`` in ``test/`` (or ``competitionHoldOut/``): the train file of the same session
+    (``../train/<name>.mat``) gives the history. ``path`` in ``train/``: its own trials only.
+    """
+    p = Path(path)
+    sess = p.stem
+    if not T12_SESSION.match(sess):
+        raise ValueError(f"{p.name}: expected a session file t12.YYYY.MM.DD.mat")
+    feats, texts = _load_mat(p)
+    hist: list[np.ndarray] = []
+    if p.parent.name != "train":
+        tr = p.parent.parent / "train" / p.name
+        if not tr.is_file():
+            raise FileNotFoundError(f"the T12 recipe needs the train file of the session for the rolling "
+                                    f"normalisation: {tr} is missing")
+        hist, _ = _load_mat(tr)
+    Z = b2t24_normalise(hist + feats, window, clip)[len(hist):]
+    out = []
+    for i, (z, t) in enumerate(zip(Z, texts)):
+        out.append(Item(key=f"{sess}|{p.parent.name}|{i}", x=z, session=sess, truth=t))
+        if limit is not None and len(out) >= limit:
+            break
+    return out
+
+
+def read_emg2qwerty_session(path: str | PathLike[str]) -> tuple[Any, list[Item]]:
+    """Open one emg2qwerty session (``fidetype.adapters.emg2qwerty.Session``). Items = text prompts.
+
+    Returns ``(session, items)``; the caller closes the session. ``item.extra`` holds the sample range
+    ``lo``, ``hi`` of the prompt. ``item.truth`` is the typed text of the prompt keys.
+    """
+    from fidetype.adapters import emg2qwerty as e2q
+
+    sess = e2q.Session(path)
+    try:
+        events = e2q.key_events(sess)
+        items = []
+        t0 = sess.t0
+        for p in sess.prompts:
+            if p.end - t0 < 0 or p.start - t0 > sess.duration_s:
+                continue
+            lo, hi = (int(v) for v in sess.sample_index([p.start, p.end]))
+            if hi - lo < 64:
+                continue
+            ev = e2q.prompt_events(sess, p, events)
+            items.append(Item(key=f"{Path(path).stem}|prompt|{p.index}", x=None, truth=e2q.typed_text(ev),
+                              extra={"lo": lo, "hi": hi, "n_keys": len(ev)}))
+    except Exception:
+        sess.close()
+        raise
+    return sess, items
+
+
+def read_kt_run(csv: str | PathLike[str], max_gap_s: float = 2.0, min_keys: int = 5) -> tuple[np.ndarray, list[Item]]:
+    """One KT-sEMG run: the EMG (n, 32) and one item per typing burst (key times in ``extra['times']``)."""
+    from fidetype.adapters import kt_semg as K
+    from fidetype.live.build import kt_run_events, kt_segments, kt_text
+
+    c = Path(csv)
+    if not re.fullmatch(r"run\d+", c.stem):
+        raise ValueError(f"{c.name}: expected runN.csv")
+    keys, ts = c.with_name(f"{c.stem}_keys.txt"), c.with_name(f"{c.stem}_ts.txt")
+    rec = K.read_emg_csv(c)
+    events = kt_run_events(str(c), str(keys), str(ts), rec.n_samples)
+    items = []
+    for j, (a, b) in enumerate(kt_segments(events, max_gap_s=max_gap_s, min_keys=min_keys)):
+        ev = events[a:b]
+        items.append(Item(key=f"{c.stem}|segment|{j}", x=None, truth=kt_text(ev),
+                          extra={"times": [float(e.t) for e in ev], "codes": [K.key_code(e.char) for e in ev],
+                                 "run": int(c.stem[3:]), "segment": j}))
+    return rec.emg, items

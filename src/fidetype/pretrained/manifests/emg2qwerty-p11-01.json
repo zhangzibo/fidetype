@@ -1,0 +1,64 @@
+{
+ "schema": "fidetype.pretrained-manifest/0.1",
+ "name": "emg2qwerty-p11-01",
+ "version": "1",
+ "title": "Wrist sEMG typing (emg2qwerty): causal ring-TCN CTC decoder, generic model (P11-01) - RESEARCH ONLY",
+ "status": "available",
+ "task": "continuous EMG-to-text, CTC over 95 printable ASCII characters + Backspace + Enter",
+ "modality": "emg",
+ "runtime": "crt-ctc",
+ "input": {
+  "kind": "raw sEMG of two wristbands",
+  "channels": 32,
+  "sample_rate_hz": 2000.0,
+  "features": "log band power: 64-sample Hann windows every 20 samples (100 frames/s), 12 bands, fixed normalisation",
+  "file_format": "emg2qwerty-hdf5",
+  "file_note": "one emg2qwerty session *.hdf5; one stream per text prompt (needs h5py)"
+ },
+ "output": {
+  "vocab_type": "char",
+  "vocab_id": "fidetype-p11-01-keys-v1",
+  "frame_period_s": 0.01,
+  "latency_s": 0.0
+ },
+ "architecture": {
+  "d": 512,
+  "ring_c": 32,
+  "ring_k": 5,
+  "kernel": 5,
+  "dilations": [1, 2, 4, 8, 1, 2, 4, 8],
+  "ff_mult": 2,
+  "vocab": 98,
+  "code": "experiments/2026-11-16-p11-01-emg-decoder/emgdec.py (training); fidetype.pretrained._crt (this runtime, NumPy)"
+ },
+ "files": [
+  {"role": "weights", "name": "emg2qwerty-p11-01.weights.npz", "sha256": "115d672a2ae0cc1d55a403e4e1158b5828b75796a7bfce9a394811688e16d31c", "size": 35030004, "url": null}
+ ],
+ "licence": {
+  "data.licence": "CC-BY-NC-SA-4.0",
+  "data.research_only": true,
+  "weights": "CC-BY-NC-SA-4.0",
+  "weights_status": "research only; never in the wheel; a separate opt-in download after P14-02; the weights keep the share-alike terms",
+  "attribution": "Data: emg2qwerty (Sivakumar et al., Meta, 2024), CC BY-NC-SA 4.0 (repository LICENSE file; the README says CC BY-NC 4.0; we follow the stricter one)",
+  "share_alike": true
+ },
+ "training": {
+  "data": "emg2qwerty, generic-train sessions (users other than the 8 test users)",
+  "doi": null,
+  "split": "prep.py make_splits, salt fidetype-p11-01-2026-11-16 (8 test users; generic train on the other users)",
+  "run": "derived/p11-01-emg-decoder/train/generic, step 30000 (experiments/2026-11-16-p11-01-emg-decoder)",
+  "checkpoint_sha256": "8e6c1825bed20e034341a0850447d640e4e0279f06e7e10fd0d5d83b738463eb"
+ },
+ "metrics": [
+  {"name": "greedy CER (no LM)", "split": "test sessions of the 8 test users (pooled, 71,476 keys)", "value": 0.5375, "source": "experiments/2026-11-16-p11-01-emg-decoder/results.md"},
+  {"name": "greedy CER, mean over users", "split": "same", "value": 0.5352, "source": "experiments/2026-11-16-p11-01-emg-decoder/results.md"}
+ ],
+ "limits": [
+  "Research only (non-commercial data licence, share-alike).",
+  "Generic model: a new user gets CER about 0.54. The personalised models of P11-01 (CER 0.151) are per test user and not in this release.",
+  "Greedy decoding without an LM."
+ ],
+ "trust": null,
+ "trust_note": "No committed EMG trust config yet (P11-09 builds it).",
+ "hosting": {"host": null, "release": null, "notes": "no download URL yet; research-only weights need a separate opt-in host and a licence acceptance step (P14-02)"}
+}

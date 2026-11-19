@@ -1,0 +1,86 @@
+{
+ "schema": "fidetype.pretrained-manifest/0.1",
+ "name": "t15-m4-13",
+ "version": "1",
+ "title": "Implant attempted speech (T15): causal GRU-CTC phoneme decoder (M4-13)",
+ "status": "available",
+ "task": "attempted-speech phoneme decoding, CTC over 39 ARPAbet phonemes + word boundary",
+ "modality": "intracortical",
+ "runtime": "gru-ctc",
+ "input": {
+  "kind": "binned implant features",
+  "channels": 512,
+  "bin_s": 0.02,
+  "features": "threshold crossings + spike band power of 256 electrodes, as input_features in the dataset files (already z-scored by the dataset)",
+  "file_format": "b2t25-hdf5",
+  "file_note": "data_train.hdf5 / data_val.hdf5 / data_test.hdf5 of one session folder t15.YYYY.MM.DD (t15_copyTask_neuralData.zip)",
+  "session": "required: the session name (folder name) selects the per-session day layer"
+ },
+ "output": {
+  "vocab_type": "phoneme",
+  "vocab_id": "phoneme.arpabet-39-sil",
+  "frame_period_s": 0.08,
+  "latency_s": 0.0
+ },
+ "architecture": {
+  "patch": 14,
+  "stride": 4,
+  "layers": 5,
+  "hidden": 768,
+  "smooth_sd": 2.0,
+  "lookahead": {"bins": 0, "max": 25},
+  "input_round": "float16",
+  "code": "fidetype.decoders.lookahead_gru (training: build_torch_model; this runtime: fidetype.pretrained._gru, NumPy)",
+  "sessions": ["t15.2023.08.11", "t15.2023.08.13", "t15.2023.08.18", "t15.2023.08.20", "t15.2023.08.25", "t15.2023.08.27", "t15.2023.09.01", "t15.2023.09.03", "t15.2023.09.24", "t15.2023.09.29", "t15.2023.10.01", "t15.2023.10.06", "t15.2023.10.08", "t15.2023.10.13", "t15.2023.10.15", "t15.2023.10.20", "t15.2023.10.22", "t15.2023.11.03", "t15.2023.11.04", "t15.2023.11.17", "t15.2023.11.19", "t15.2023.11.26", "t15.2023.12.03", "t15.2023.12.08", "t15.2023.12.10", "t15.2023.12.17", "t15.2023.12.29", "t15.2024.02.25", "t15.2024.03.03", "t15.2024.03.08", "t15.2024.03.15", "t15.2024.03.17", "t15.2024.04.25", "t15.2024.04.28", "t15.2024.05.10", "t15.2024.06.14", "t15.2024.07.19", "t15.2024.07.21", "t15.2024.07.28", "t15.2025.01.10", "t15.2025.01.12", "t15.2025.03.14", "t15.2025.03.16", "t15.2025.03.30", "t15.2025.04.13"]
+ },
+ "files": [
+  {"role": "weights", "name": "t15-m4-13.weights.npz", "sha256": "64a8e9c6aa352039e052c90a136952cba65fc3918fbf3dbf675582a7fdb1b11f", "size": 182395020, "url": null},
+  {"role": "text", "name": "cmudict.dict", "sha256": "81917843c7f44ce2b094ac63873c2c7a4cf802040792c455ba3ca406891c3d22", "size": 3618488, "url": null},
+  {"role": "text", "name": "eng_tatoeba_6gram_mkn.npz", "sha256": "616a201e4c846490f99849aad0eaa98877d19ac05380f2c180f4d25fbcc3c538", "size": 3350061, "url": null},
+  {"role": "text", "name": "eng_tatoeba_word_counts.json", "sha256": "a6143894c6b64d13852656774c63f492547ec17e684ac4be8fd5cd2dfa8c393f", "size": 1247300, "url": null}
+ ],
+ "licence": {
+  "data.licence": "CC0-1.0",
+  "data.research_only": false,
+  "weights": "CC0-1.0",
+  "weights_status": "proposed, not released: the user decides the weights licence and the host at P14-02 (DATA.md rule 1 changes only then)",
+  "attribution": "Data: Card et al., NEJM 2024, Brain-to-Text '25, Dryad doi:10.5061/dryad.dncjsxm85 (CC0 1.0)",
+  "text_files": {
+   "cmudict.dict": "BSD-2-Clause style (CMU Pronouncing Dictionary)",
+   "eng_tatoeba_6gram_mkn.npz": "CC-BY-2.0-FR (built from Tatoeba English sentences; attribution: Sentences from Tatoeba (https://tatoeba.org), by the Tatoeba contributors, CC BY 2.0 FR)",
+   "eng_tatoeba_word_counts.json": "CC-BY-2.0-FR (word counts of Tatoeba English sentences; same attribution)"
+  }
+ },
+ "training": {
+  "data": "Brain-to-Text '25, participant T15, t15_copyTask_neuralData.zip (Card et al. 2024)",
+  "doi": "10.5061/dryad.dncjsxm85",
+  "split": "dataset 'train' trials of all 45 sessions; checkpoint chosen on val_select (even 'val' trials); reported on val_eval (odd 'val' trials, 701)",
+  "run": "m4-13-long0 (experiments/2026-11-15-m4-13-long-train), step 115000",
+  "checkpoint_sha256": "8fafe9160616815296a27cab00b16a795dbcbc56dcc52fa75c1c68e82482ac72"
+ },
+ "metrics": [
+  {"name": "greedy PER", "split": "val_eval (701 trials)", "value": 0.1210, "source": "experiments/2026-11-15-m4-13-long-train/results.md"},
+  {"name": "safe WPM v0.1 (with LLM rescoring, P15-22)", "split": "val_eval", "value": 4.91, "source": "experiments/2026-11-19-p15-22-llm-learned (not this release: this release has no LLM step)"}
+ ],
+ "limits": [
+  "One participant (T15). The day layer exists only for the 45 sessions of the dataset; a new person or session needs calibration.",
+  "Offline replay of public recordings; not a user study.",
+  "Phoneme output. Words need a lexicon and an LM (guard() builds the word decoder of the committed trust config)."
+ ],
+ "trust": {
+  "config": "guards/t15-m4-13.guard.json",
+  "config_source": "experiments/2026-11-16-p14-05-safe-wpm/results/guard-t15-m4-13.json",
+  "config_id": "tcfg-1016759f08a3f9a1",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "input": "the log_probs (T, 41) of a decode() stream: guard.decide(stream.log_probs)",
+  "decode": "phoneme-words-v1",
+  "text_files": {"lexicon": "cmudict.dict", "char_lm": "eng_tatoeba_6gram_mkn.npz", "word_counts": "eng_tatoeba_word_counts.json"},
+  "decoder_settings": {
+   "phoneme_beam": {"search": "vector", "beam": 64, "n_best": 20, "prune_topk": null, "prune_logp": -8.0, "space_rules": true},
+   "word_decoder": {"unigram_weight": 1.0, "per_slot": 6, "per_hyp": 8, "n_best": 10, "drop_penalty": 15.0, "oov_logp": -20.0, "lm_weight": 1.0, "edit_penalty": 12.0, "word_bonus": 3.0},
+   "fallback_min_count": 5
+  }
+ },
+ "hosting": {"host": null, "release": null, "notes": "no download URL yet; hosting is the user step P14-02 (docs/publishing-checklist.md)"}
+}

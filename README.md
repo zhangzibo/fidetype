@@ -94,6 +94,18 @@ fidetype conformance --profile fep-0001
 fidetype collector --config examples/collector/collector.toml --check
 ```
 
+**Pretrained decoders** (load, decode, NTS out; [docs](docs/pretrained-decoders.md)). The weights are not in the package and not hosted yet: put the release files in the cache folder that `fidetype decoders path` shows, or pass `weights=<folder>`.
+
+```python
+import fidetype.pretrained as ftp                         # same as fidetype.decoders.load
+
+m = ftp.load("t15-m4-13")                                 # T15 speech (CC0 data); SHA-256 checked
+streams = m.decode("t15.2023.08.13/data_val.hdf5")        # Brain-to-Text '25 file -> one NTS stream per trial
+print(m.guard().decide(streams[0].log_probs).action)      # committed trust config: commit / offer / withhold
+```
+
+`fidetype decoders list` shows the models and their licence flags. A research-only model (emg2qwerty, CC BY-NC-SA 4.0) loads only with `accept_research_only=True`.
+
 **TypeScript** (Node 18 or later; zero runtime dependencies):
 
 ```sh

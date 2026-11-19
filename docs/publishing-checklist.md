@@ -30,6 +30,7 @@ Package content checks (2026-11-18): no e-mail address except `@example.org` pla
 | H. GitHub releases | 10 |
 | I. Final checks | 10 |
 | **Total** | **about 2 h 25 min** (1 h 15 min if you publish only Python and the site) |
+| J. Pretrained weights (optional, P14-02; not in the total) | 45 |
 
 ## A. Decisions you must make (15 min)
 Write your answer next to each item. Claude can then make the release commit (step C1) for you.
@@ -154,6 +155,33 @@ Optional: attach the Python files (`gh release upload py-v0.1.0 dist/*`). Mark t
 - [ ] The PyPI, npm and crates.io pages show the README with working links (the SDK READMEs use absolute GitHub links since 2026-11-18).
 - [ ] No page shows an e-mail address.
 - [ ] Ask Claude to record the release: tracker items P2-07 and M7-09 `done`, `## [Unreleased]` headings back in the changelogs, RELEASING.md section 3.1 (names: taken by us), HANDOFF.md.
+
+## J. Pretrained weights (optional, 45 min; roadmap P14-02)
+The package has a registry of pretrained decoders (`fidetype decoders list`, [pretrained-decoders.md](pretrained-decoders.md)). Each model has a manifest with a SHA-256, a size and an empty `url` slot. The weights are **not** in the wheel or the repository, and no file is hosted yet. This section is the hosting step. You can skip it this weekend: the package works without it (users then pass `weights=<folder>`).
+
+| # | Decision | Options | Recommendation |
+|---|---|---|---|
+| D10 | Host of the weights | GitHub release assets (tag `weights-v1`, 2 GB limit per file); Hugging Face Hub model repositories; both | GitHub release assets for the clean models: no new account, and the files stay next to the code. A model hub later if users ask. |
+| D11 | Licence of our clean weights | CC0-1.0 (like the T15 / T12 data); Apache-2.0 (like the code); CC-BY-4.0 where the data needs attribution | CC0-1.0 for `t15-m4-13` and `t12-v2`; CC-BY-4.0 for `kt-semg-lda` (keeps the Nokia attribution). Then change rule 1 of [`LICENSES/DATA.md`](../LICENSES/DATA.md) ("no trained weights") to "weights only as separate release assets, never in the repository or the wheel". |
+| D12 | Research-only weights (`emg2qwerty-p11-01`, CC BY-NC-SA 4.0) | do not host; host separately behind a licence page | Do not host this weekend. Later, if at all: a separate release (never with the clean weights), the licence text next to the file, and the package keeps the `accept_research_only=True` gate. The weights keep the share-alike terms. |
+
+Licence check per model (do this before any upload):
+
+| Model | Files (local folder `C:\Users\zhang\bci-data\pretrained\<model>\`) | Training data licence | Weights licence (proposal) | Host now? | Check |
+|---|---|---|---|---|---|
+| `t15-m4-13` | `t15-m4-13.weights.npz` (182 MB) + 3 text files of the guard (8 MB, in `pretrained\text\`) | CC0 1.0 (Card et al. 2024) | CC0-1.0 | yes (clean) | The text files are not weights: `cmudict.dict` (BSD-2-Clause style: put its licence file next to it), `eng_tatoeba_6gram_mkn.npz` and `eng_tatoeba_word_counts.json` (CC BY 2.0 FR: keep the Tatoeba attribution). |
+| `t12-v2` | `t12-v2.weights.npz` (340 MB) | CC0 1.0 (Willett et al. 2023) | CC0-1.0 | yes (clean) | none |
+| `kt-semg-lda` | `kt-semg-lda.model.json`, `.weights.json`, `.guard.json` (0.1 MB) | CC BY 4.0 (Nokia) | CC-BY-4.0 | yes (attribution in the release notes and the card) | The card already holds the attribution line. |
+| `emg2qwerty-p11-01` | `emg2qwerty-p11-01.weights.npz` (35 MB) | CC BY-NC-SA 4.0 | CC-BY-NC-SA-4.0 (required) | **no** (D12) | Never in the same release as the clean weights. |
+| `willett-hw`, `toronto-semg-cnn` | none (planned) | CC0 1.0 / CC BY 4.0 | n/a | no | No weights yet. |
+
+| Step | Do this | Check |
+|---|---|---|
+| J-1 (5 min) | Decide D10-D12. Tell Claude the decisions. Claude records them on the roadmap (P14-02) and changes DATA.md rule 1. | The decisions are in the wiki. |
+| J-2 (10 min) | `.venv\Scripts\python.exe -I tools/pretrained/export_weights.py --list` prints the SHA-256 and the size of each local file. Compare them with `fidetype decoders info <model> --json`. | Every file matches its manifest. |
+| J-3 (15 min) | GitHub → Releases → Draft a new release: tag `weights-v1`, title "Pretrained decoders v1 (weights only)". Attach the files of the clean models only (table above), plus a `LICENSE-WEIGHTS.md` with the licence and the attribution of each file. Publish. | The release page lists the files with their sizes. No `emg2qwerty` file. |
+| J-4 (10 min) | Ask Claude to put the asset URLs into the `url` fields of the manifests (`src/fidetype/pretrained/manifests/*.json`) and to run the download test. | `fidetype decoders verify <model>` passes after a `download=True` load into an empty cache. |
+| J-5 (5 min) | Test from a clean folder: `pip install fidetype`, then in Python: `import fidetype.pretrained as p; m = p.load("t15-m4-13", download=True)`. | The SHA-256 check passes; `print(m.card())` prints the card. |
 
 ## Files that support this checklist
 | File | Purpose |
