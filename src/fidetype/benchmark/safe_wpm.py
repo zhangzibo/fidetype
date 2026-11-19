@@ -39,6 +39,10 @@ Rules:
    the status is ``above-alpha`` and the leaderboard marks the entry.
 6. If the policy commits nothing, the status is ``vacuous`` and the value
    is 0.0 (safe, but no value).
+7. A guarantee with ``feasible: false`` (the calibration found no
+   certified threshold) certifies only a policy that never commits. If the
+   policy commits on at least one trial, the status is ``not-certified``
+   (P5-30).
 
 The report always carries alpha, delta, the method, the calibration size,
 the measured wrong-commit rate with its Clopper-Pearson 95 % interval, the
@@ -176,6 +180,7 @@ def certification(guarantee: Mapping[str, Any] | None) -> dict[str, Any]:
            "certified": False}
     if m in CERTIFIED_METHODS and isinstance(g.get("alpha"), (int, float)):
         if g.get("feasible", True) is False:
+            out["infeasible"] = True
             out["note"] = "the calibration found no certified threshold (policy never commits)"
         out["certified"] = True
     if m == "crc":
@@ -183,6 +188,21 @@ def certification(guarantee: Mapping[str, Any] | None) -> dict[str, Any]:
     elif m == "ltt" and isinstance(out["delta"], (int, float)):
         out["confidence"] = f"probability >= {1 - out['delta']:g} over calibration draws"
     return out
+
+
+def _refuse_infeasible(cert: dict[str, Any], k_commit: int, note: str | None) -> str | None:
+    """P5-30: an infeasible guarantee certifies only a policy that never commits.
+
+    ``feasible: false`` means the calibration found no certified threshold.
+    The bound then holds only because the policy commits nothing. If the
+    scored policy commits at least once, it has no bound: the function
+    sets ``certified`` to False and returns the new note (else ``note``).
+    """
+    if cert.get("certified") and cert.get("infeasible") and k_commit > 0:
+        cert["certified"] = False
+        return (f"the calibration found no certified threshold (feasible: false), but the policy commits on "
+                f"{k_commit} trial(s): no bound covers these commits (P5-30)")
+    return note
 
 
 def _arrays(committed, correct, n_words, n_chars, neural_s) -> dict[str, np.ndarray]:
@@ -282,6 +302,7 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
         from fidetype.benchmark.scoring import bootstrap_ci
 
         ci = bootstrap_ci(lambda w: {"wpm": _point(a, pen, w)["wpm"]}, ci_unit, list(clusters), B=B, seed=seed)["wpm"]
+    note = _refuse_infeasible(cert, k_commit, cert.get("note"))
     if not cert["certified"]:
         status, value = "not-certified", None
     elif k_commit == 0:
@@ -316,8 +337,8 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
     if gaze_chars_per_min:
         out["no_bci_wpm"] = 60.0 * a["nw"].sum() / (a["nc"].sum() * 60.0 / gaze_chars_per_min) if a["nc"].sum() else None
         out["no_bci_note"] = f"gaze typing of every sentence at {gaze_chars_per_min:g} chars/min (the eWPM reference)"
-    if cert.get("note"):
-        out["note"] = cert["note"]
+    if note:
+        out["note"] = note
     if controls is not None:
         out["controls"] = summarize_controls(controls)
     return out
@@ -397,6 +418,7 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
         from fidetype.benchmark.scoring import bootstrap_ci
 
         ci = bootstrap_ci(lambda w: {"wpm": _point(a, pen, w)["wpm"]}, ci_unit, list(clusters), B=B, seed=seed)["wpm"]
+    note = _refuse_infeasible(cert, k_commit, note)
     if not cert["certified"]:
         status, value = "not-certified", None
     elif k_commit == 0:

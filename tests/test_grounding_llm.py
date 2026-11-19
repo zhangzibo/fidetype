@@ -102,11 +102,36 @@ def test_grounding_prefers_supported_text_and_gates():
     assert d[1] > 0.1 and math.isinf(d[2])
     items = [{"text": "yo hi", "score": 5.0}, {"text": "hi yo", "score": 1.0}]
     out, dd = g.apply(items, x, anchor="hi yo")
-    assert out[1]["text"] == "hi yo" and out[1]["grounded"]
-    assert not out[0]["grounded"] and out[0]["score"] < out[1]["score"]
+    # P15-27: the list is re-sorted after demotion, so out[0] is the grounded top-1
+    assert out[0]["text"] == "hi yo" and out[0]["grounded"]
+    assert out[1]["text"] == "yo hi" and not out[1]["grounded"] and out[1]["score"] < out[0]["score"]
+    assert dd[0] > 0.1 and dd[1] == pytest.approx(0.0)  # deficits stay in input order
     # nothing passes -> empty list (the trust layer withholds)
     out2, _ = g.apply([{"text": "yo hi", "score": 1.0}], x, anchor="hi yo")
     assert out2 == []
+    out3, _ = g.apply([{"text": "yo hi", "score": 1.0}], x, anchor="hi yo", drop_if_none_pass=False)
+    assert [o["text"] for o in out3] == ["yo hi"] and out3[0]["score"] == 1.0
+
+
+def test_grounding_apply_top1_equals_nbest_top1():
+    """P15-27: the first item of apply() is the top-1 of the NBest the guard builds from the same list."""
+    from fidetype.trust.dropin import _nbest_from_user
+
+    fn = lexicon_label_fn(PRONS, SYM)
+    x = peaked("ab cb")  # "hi yo"
+    g = GroundingCheck(fn, tau=0.1)
+    rng = np.random.default_rng(3)
+    texts = ["yo hi", "hi yo", "hi zz", "yo yo", "hi hi", "a"]
+    for _ in range(50):
+        sc = rng.normal(size=len(texts)) * 3
+        items = sorted(({"text": t, "score": float(s)} for t, s in zip(texts, sc)), key=lambda d: -d["score"])
+        out, dd = g.apply(items, x, anchor="hi yo")
+        assert out, "the anchor text always passes"
+        assert out[0]["grounded"]
+        assert all(out[i]["score"] >= out[i + 1]["score"] for i in range(len(out) - 1))
+        assert sorted(o["text"] for o in out) == sorted(texts)  # failing candidates stay in the list
+        assert _nbest_from_user(out).top.text == out[0]["text"]
+        assert list(dd) == list(g.deficits(x, [d["text"] for d in items], anchor="hi yo"))
 
 
 def test_grounding_cache_key_gives_same_values():

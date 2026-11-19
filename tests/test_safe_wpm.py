@@ -48,6 +48,35 @@ def test_no_bound_is_not_certified() -> None:
     assert r2["status"] == "not-certified"
 
 
+def test_infeasible_guarantee_certifies_only_no_commits() -> None:
+    """P5-30: feasible false + at least one commit -> not-certified; feasible false + no commit -> vacuous."""
+    g = {**LTT, "feasible": False}
+    r = safe_wpm([True, False], [True, False], [3, 3], [12, 12], [4.0, 4.0], guarantee=g)
+    assert r["status"] == "not-certified" and r["value"] is None and r["ci"] is None
+    assert "P5-30" in r["note"] and r["unguarded_wpm"] == pytest.approx(60 * 3 / 8.0)
+    assert "ABOVE" not in safe_wpm_text(r)
+    r0 = safe_wpm([False, False], [True, False], [3, 3], [12, 12], [4.0, 4.0], guarantee=g)
+    assert r0["status"] == "vacuous" and r0["value"] == 0.0 and "never commits" in r0["note"]
+    # v0.2 (sentence and prefix commits) follows the same rule
+    gp = {**g, "risk": "wrong-prefix-commit"}
+    r2 = safe_wpm([True, False], [True, False], [3, 3], [12, 12], [4.0, 4.0], guarantee=gp, metric_version="0.2",
+                  complete=[False, True], committed_words=[1, 0], penalty_chars=[4, 0])
+    assert r2["status"] == "not-certified" and r2["value"] is None and "P5-30" in r2["note"]
+    r3 = safe_wpm([False], [False], [3], [12], [4.0], guarantee=gp, metric_version="0.2")
+    assert r3["status"] == "vacuous"
+    # a feasible guarantee is unchanged
+    assert safe_wpm([True], [True], [3], [12], [4.0], guarantee={**LTT, "feasible": True})["status"] == "certified"
+    # an earlier v0.2 reason (prefix commits under a sentence bound) keeps its note
+    r4 = safe_wpm([True], [True], [3], [12], [4.0], guarantee=g, metric_version="0.2", complete=[False],
+                  committed_words=[1], penalty_chars=[4])
+    assert r4["status"] == "not-certified" and "wrong-prefix" in r4["note"]
+    # the drop-in sheet route
+    sheet = {"alpha": 0.05, "delta": 0.1, "n_ltt": 271, "n_items": 722, "n_fit": 180, "n_policy": 271,
+             "feasible": False, "config_id": "tcfg-x"}
+    r5 = safe_wpm([True], [True], [3], [12], [4.0], guarantee=guarantee_from_sheet(sheet))
+    assert r5["status"] == "not-certified"
+
+
 def test_above_alpha_is_marked() -> None:
     g = {"method": "crc", "alpha": 0.05, "n_cal": 50}
     r = safe_wpm([True] * 10, [True] * 8 + [False] * 2, [3] * 10, [12] * 10, [4.0] * 10, guarantee=g)

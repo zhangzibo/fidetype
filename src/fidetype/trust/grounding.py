@@ -222,12 +222,18 @@ class GroundingCheck:
               key: bytes | None = None, drop_if_none_pass: bool = True) -> tuple[list[dict], np.ndarray]:
         """Gate an n-best list of dicts. Return (new list, deficits in input order).
 
-        A failing candidate keeps its place in the list (so the n-best
-        still shows the decoder's doubt) but its score is lowered to
-        ``best passing score - demote_margin * (1 + rank)``, so it can never
-        be the top-1. If no candidate passes, the list is empty (the trust
-        layer then withholds) when ``drop_if_none_pass``. Each output dict
-        gets ``grounding_deficit`` and ``grounded`` fields.
+        A failing candidate stays in the list (so the n-best still shows
+        the decoder's doubt) but its score is lowered to
+        ``best passing score - demote_margin * k`` (``k``: 1 for the first
+        failing candidate in input order, 2 for the second, ...), so it can
+        never be the top-1. The returned list is sorted by the new score,
+        best first (a stable sort: equal scores keep the input order), so
+        ``out[0]`` is the top-1 that :class:`~fidetype.trust.types.NBest`
+        and the trust layer see (P15-27: before this sort, ``out[0]`` could
+        be a demoted candidate). If no candidate passes, the list is empty
+        (the trust layer then withholds) when ``drop_if_none_pass``, else
+        the input order and scores are kept. Each output dict gets
+        ``grounding_deficit`` and ``grounded`` fields.
         """
         texts = [str(it["text"]) for it in items]
         d = self.deficits(log_probs, texts, anchor, key=key)
@@ -241,6 +247,7 @@ class GroundingCheck:
             if not oi:
                 r += 1
                 o["score"] = min(float(o["score"]), best - self.demote_margin * r)
+        out.sort(key=lambda o: -float(o["score"]))  # stable; the deficits stay in input order
         return out, d
 
 

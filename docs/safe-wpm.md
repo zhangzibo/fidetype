@@ -42,6 +42,7 @@ safe WPM  = 60 * sum_i credit_i / sum_i time_i
    - Any other policy (always commit, a plug-in threshold) gets status `not-certified` and no value. `unguarded_wpm` gives the same formula for reference only.
 4. **Measured rate above alpha.** If the wrong-commit rate on the scored trials is above the stated alpha, the status is `above-alpha`. The leaderboard shows `! ABOVE alpha`.
 5. **No commits.** If the policy commits nothing, the status is `vacuous` and the value is 0.0. The policy is safe, but it gives no value.
+6. **Infeasible calibration.** If the guarantee has `feasible: false` (the calibration found no certified threshold), the bound covers only a policy that never commits. If the policy commits on one trial or more, the status is `not-certified` and the value is None. If it commits nothing, rule 5 applies (`vacuous`). Before P5-30 (2026-11-19) the scorer gave `certified` in this case. No committed score card changed: the two infeasible cards commit nothing.
 
 ## 3. What each entry reports
 
