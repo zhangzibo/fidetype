@@ -125,16 +125,39 @@ def test_site_builds_with_no_broken_local_links(tmp_path):
                        capture_output=True, text=True, timeout=120)
     assert r.returncode == 0, r.stdout + r.stderr
     assert "local links: all OK" in r.stdout
-    for rel in ["index.html", ".nojekyll", "benchmark/index.html", "demo/index.html",
+    for rel in ["index.html", ".nojekyll", "assets/site.css", "benchmark/index.html", "benchmark/leaderboard.html",
+                "benchmark/guide.html", "hub/index.html", "hub/datasets-0.1.json", "conformance/index.html",
+                "conformance/certified.json", "docs/index.html", "docs/trust-guarantee.html", "docs/collector.html",
+                "docs/live-decode.html", "docs/conformance.html", "spec/index.html", "demo/index.html",
                 "diagrams/index.html", "diagrams/viewer-static.min.js", "diagrams/drawio-LICENSE.txt",
                 "progress/index.html"]:
         assert (out / rel).is_file(), rel
+    # Landing page: generated from README.md (north star + quick start).
+    landing = (out / "index.html").read_text(encoding="utf-8")
+    assert "never puts words in the user" in landing and 'id="quick-start"' in landing
+    # Markdown pages keep GitHub heading ids, so deep links work on the site.
+    assert 'id="42-rules"' in (out / "docs/hub-design.html").read_text(encoding="utf-8")
+    # A proposed metric is marked as proposed on its page and on the benchmark page.
+    assert "PROPOSED" in (out / "docs/safe-wpm-v0.2-proposal.html").read_text(encoding="utf-8")
+    assert "PROPOSED" in (out / "benchmark/index.html").read_text(encoding="utf-8")
+    # The certified list and the hub registry are generated from their JSON files.
+    certified = json.loads((ROOT / "spec/conformance/certified.json").read_text(encoding="utf-8"))
+    conf = (out / "conformance/index.html").read_text(encoding="utf-8")
+    assert all(e["id"] in conf for e in certified["entries"])
+    reg = json.loads((ROOT / "src/fidetype/benchmark/hub/datasets-0.1.json").read_text(encoding="utf-8"))
+    hub = (out / "hub/index.html").read_text(encoding="utf-8")
+    assert all(d["id"] in hub for d in reg["datasets"])
+    # Static: no external scripts, stylesheets, images or frames (no trackers).
+    for f in out.rglob("*.html"):
+        html = f.read_text(encoding="utf-8")
+        assert not re.search(r'<(script|img|iframe)[^>]+src="(https?:)?//', html), f
+        assert not re.search(r'<link[^>]+href="(https?:)?//', html), f
     diagrams = (out / "diagrams/index.html").read_text(encoding="utf-8")
     assert "../../tools/drawio" not in diagrams
     assert not re.search(r'href="\.\./[^"]+\.md"', diagrams)  # wiki links now point at GitHub
     assert f'href="{REPO}/blob/main/wiki/' in diagrams
     # Only the expected kinds of files; no data, recordings or PDFs.
-    allowed = {".html", ".json", ".md", ".js", ".txt", ""}
+    allowed = {".html", ".json", ".md", ".js", ".txt", ".css", ".png", ""}
     for f in out.rglob("*"):
         if f.is_file():
             assert f.suffix in allowed, f

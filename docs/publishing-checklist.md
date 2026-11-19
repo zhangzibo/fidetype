@@ -41,7 +41,7 @@ Write your answer next to each item. Claude can then make the release commit (st
 | D3 | npm name | `@fidetype/sdk` (needs the npm organization `fidetype`); unscoped `fidetype` (also free) | `@fidetype/sdk`: the scope also protects later packages (`@fidetype/…`). Create the organization even if you choose the unscoped name. |
 | D4 | Licence of the spec text (roadmap P9-01, open) | Apache-2.0 like the code (today); CC BY 4.0; Open Web Foundation Agreement | Keep Apache-2.0 for this release; the sdist ships `spec/` under the repository licence. A later change to a more open licence is still possible for new versions. |
 | D5 | Copyright line in `LICENSE` (appendix) | `Copyright 2026 zhangzibo` (today); `Copyright 2026 Zibo Zhang` | `Zibo Zhang`, the same as the package metadata (`authors`). Same change in `sdk/typescript/LICENSE` and `sdk/rust/LICENSE`. |
-| D6 | Progress dashboard on the public site | include (today); leave out | Your choice. It shows task times and agent token counts. To leave it out, delete the `progress` entry in `SECTIONS` of `tools/site/build.js`. |
+| D6 | Progress dashboard on the public site | include (today); leave out | Your choice. It shows task times and agent token counts. To leave it out, set `INCLUDE_PROGRESS = false` in `tools/site/build.js`. |
 | D7 | First Python upload | TestPyPI first; PyPI directly | TestPyPI first (10 extra minutes). A PyPI version number can never be used again. |
 | D8 | Upload method | trusted publishing from GitHub Actions (no token on disk); API token on your computer | Trusted publishing for PyPI (works for the first upload). npm and crates.io need one manual first upload; then add trusted publishing. |
 | D9 | Supported Python | `>=3.12`. CI tests 3.12, 3.13, 3.14 on Linux, 3.12 and 3.13 on Windows, 3.13 on macOS (P2-09) | Keep. Say "tested on 3.12-3.14 (Linux), Windows and macOS" in the release notes. |
@@ -129,11 +129,11 @@ The first upload is manual too.
 **Rollback:** `cargo yank --version 0.1.0 fidetype` (new projects can no longer depend on it; `cargo yank --version 0.1.0 --undo fidetype` reverses it). A crate cannot be deleted, except in narrow cases of the crates.io policy.
 
 ## G. GitHub Pages (10 min)
-The site is the pages that exist today: a plain landing page, the benchmark leaderboard, the synthetic trust demo, the diagrams and the progress dashboard. Docs and the spec are links to GitHub (Markdown is not rendered on the site yet: roadmap P8-01). The original UI is roadmap P8-05.
+The project site (hub decision Q6, built locally on 2026-11-18, P13-08): a landing page (what Fidetype is, the north star, quick start), the benchmark overview and leaderboard (safe WPM v0.2 marked PROPOSED), the hub dataset registry, the docs and the NTS spec rendered from Markdown, the certified conformance list, the synthetic trust demo, the diagrams and the progress dashboard. `node tools/site/build.js` generates every page from repository files. It has no trackers and no external scripts. A fuller docs site is roadmap P8-05.
 
 | Step | Do this | Check |
 |---|---|---|
-| G-1 (2 min) | Local preview: `node tools/site/build.js`, then open `_site/index.html` in a browser. | "local links: all OK". |
+| G-1 (2 min) | Local preview: `node tools/site/build.js`, then open `_site/index.html` in a browser. Click Home, Benchmark, Hub, Docs, Spec and Conformance. Make the browser narrow (phone width) once. | "local links: all OK". Safe WPM v0.2 shows PROPOSED (or ADOPTED, if you adopt it this weekend and the docs say so). D6: set `INCLUDE_PROGRESS = false` in `tools/site/build.js` if you do not want the dashboard public. |
 | G-2 (2 min) | Settings → Pages → Build and deployment → Source: **GitHub Actions**. | The page shows "GitHub Actions" as the source. |
 | G-3 (5 min) | Actions → `pages` → Run workflow (branch `main`). The workflow [.github/workflows/pages.yml](../.github/workflows/pages.yml) never runs by itself. | The `deploy` job shows the URL `https://zhangzibo.github.io/fidetype/`. Open it and click each page. |
 | G-4 (1 min) | Optional: add the URL to the repository "About" box (Website). | The link shows on the repository page. |

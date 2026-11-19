@@ -67,7 +67,7 @@ feedback ──► loss   ──► risk test (betting e-process)  ────�
 | Test | Watches | Null hypothesis | Method |
 |---|---|---|---|
 | `ConformalDriftTest` | `p_top1` of every decision (any score works, for example the guard risk) | live scores exchangeable with the reference scores | smoothed conformal p-values + Simple Jumper betting martingale (Vovk, Nouretdinov, Gammerman 2003; Vovk 2021; Vovk et al. 2021) |
-| `RiskDriftTest` | observed per-item loss (1 = wrong commit the user corrected) | `E[L_t | past] <= alpha` at every step | betting e-process with a grid of bets (Waudby-Smith and Ramdas 2024) |
+| `RiskDriftTest` | observed per-item loss (1 = wrong commit the user corrected) | `E[L_t \| past] <= alpha` at every step | betting e-process with a grid of bets (Waudby-Smith and Ramdas 2024) |
 
 Both are **anytime valid**: under the null hypothesis, `P(an alarm ever, over the whole stream) <= level` (Ville's inequality). You may look after every item. `PersonalTrust` defaults: score level 0.005, risk level 0.005, so `P(any false alarm) <= 0.01` per test period. After an accepted re-calibration (or `PersonalTrust.load`), new tests start with a new budget.
 
