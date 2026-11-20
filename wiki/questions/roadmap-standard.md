@@ -261,6 +261,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" The Python, TypeScript and Rust SDKs exist and give the same verdicts (not published). P2-05 plans Kotlin (Android IME) and C# (Windows TSF). No item plans iOS. Per-language API reference docs are already planned (P8-05, [docs site plan](docs-site-plan.md) task T11: autodoc, TypeDoc, rustdoc); this item does not repeat them.
 - **Done when:** A Swift package reads and validates NTS on iOS through the chosen core and passes the conformance vectors in CI (macOS runner, iOS simulator). An Android build of the same core runs the vectors in CI (with P2-05). The compatibility matrix lists both.
 
+#### P2-13 CI latency-budget tests flake on shared runners
+- **Gap:** 124 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a CI failure). Follow-up of P2-09.
+- **Status:** `todo`.
+- **Depends on:** P2-09 (done: CI matrix; `FIDETYPE_LATENCY_TOLERANCE` is 4 on macOS only).
+- **Source:** CI run 44673291448 (2026-11-20 UTC, commit `8180a30`) failed. The test `tests/test_collector_pipeline.py` measured the emg-key WebSocket latency at p95 320 ms. The budget is 50 ms. The runner was windows-latest with Python 3.12. The rerun passed. Wall-clock budget checks on shared CI runners depend on the runner load, not only on our code.
+- **Done when:** The wall-clock budget assertions in CI are either marked as performance tests that run only under the isolation runner or locally, or use a CI-specific tolerance with the strict budget checked in a dedicated performance job. The flake does not recur in 20 consecutive CI runs.
+
 ## P3. Collector (pipeline)
 **Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a TOML/JSON file (FEP-0006; [decision 2026-11-17](collector-decisions-2026-11.md)).
 

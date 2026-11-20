@@ -1409,3 +1409,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Latency: beam push p95 <= 0.7 ms per 40 ms chunk; end-of-window guard work p95 61-70 ms for every beam; CPU model chunk p95 47 ms (GPU 4 ms). The 50 ms CPU rule fails (evidence for gap 37; new gap 122 = [P3-12](questions/roadmap-standard.md#p3-12-guard-end-of-window-cost-and-cpu-acoustic-model-inside-the-50-ms-budget)).
 - P11-12 arm S with the new decoder: certified 3.37 [1.92, 5.18] (P11-12: 4.10); SL 3.16. No new card. New gap 123 = [P11-14](questions/roadmap-standard.md#p11-14-guard-confidence-for-the-in-beam-lm-decoder).
 - Updated: open-gaps (87 closed, 37 evidence, 122-123 added), roadmap (P11-07 done, P3-06 evidence, P3-12, P11-14), tracker, HANDOFF, dashboard.
+
+## [2026-11-19] setup | Records: agent run numbers filled; new gap 124 (CI latency-budget flake)
+- Tracker agent runs filled: P11-13, P14-34, P14-33, P11-07 (run 1 + finish run), P15-08 write-up run (null stats replaced). P11-11 and P11-12 checked (already filled). The three helper runs (README update after P15-26, gap-102 reopen, language/device/UI gap registration) have no record task in the tracker, so they are not recorded.
+- Removed the stale phrase "agent run numbers: to be added by the orchestrator" from the P15-26 and P15-27 notes.
+- New gap 124 = [P2-13](questions/roadmap-standard.md#p2-13-ci-latency-budget-tests-flake-on-shared-runners): CI run 44673291448 (commit `8180a30`) failed `tests/test_collector_pipeline.py` (emg-key WebSocket latency p95 320 ms vs the 50 ms budget, windows-latest, Python 3.12); the rerun passed.
+- Updated: open-gaps (124 added), roadmap (P2-13), tracker (P2-13 `todo`), dashboard.
