@@ -272,6 +272,8 @@ def normalize(text: str, normalizer: str) -> str:
         return " ".join(text.split())
     if normalizer == "keycodes":
         return keycodes_to_chars(text)
+    if normalizer == "keycodes_intended":
+        return keycodes_to_intended_text(text)
     raise ValueError(f"unknown normalizer {normalizer!r}")
 
 
@@ -295,3 +297,32 @@ def keycodes_to_chars(text: str) -> str:
     :data:`UNKNOWN_KEY_CHAR`.
     """
     return "".join(_KEY_CHARS.get(tok, UNKNOWN_KEY_CHAR) for tok in text.split())
+
+
+#: Version tag of the intended-text rule below (P11-13). Change the rule only with a new tag.
+INTENDED_TEXT_RULE = "intended-text/1"
+
+
+def keycodes_to_intended_text(text: str) -> str:
+    """``"KeyH KeyX Backspace KeyI"`` -> ``"hi"``: the text the typist meant, rule ``intended-text/1`` (P11-13).
+
+    Deterministic rule, applied left to right over the key codes (the same rule as the P11-11 / P11-12
+    ``resolve``; a test checks that both give the same text):
+
+    1. A character key appends its :func:`keycodes_to_chars` character; ``Space`` appends a space.
+    2. ``Backspace`` removes the last character, if there is one (a leading Backspace does nothing).
+    3. ``Enter`` is ignored.
+    4. At the end, runs of spaces become one space and the ends are stripped.
+
+    Unknown codes append :data:`UNKNOWN_KEY_CHAR`, as in :func:`keycodes_to_chars`.
+    """
+    out: list[str] = []
+    for tok in text.split():
+        if tok == "Backspace":
+            if out:
+                out.pop()
+        elif tok == "Enter":
+            continue
+        else:
+            out.append(_KEY_CHARS.get(tok, UNKNOWN_KEY_CHAR))
+    return " ".join("".join(out).split())

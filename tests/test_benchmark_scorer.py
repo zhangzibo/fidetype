@@ -272,3 +272,161 @@ def test_sub_unit_keys(kt, tmp_path, monkeypatch):
     short = SC.write_submission(tmp_path / "c", _manifest(), _rows(sub_rows)[:-1])
     with pytest.raises(SubmissionError, match="no output"):
         SC.score("kt-semg", short, truth, B=20, split=split)
+
+
+# ---------------------------------------------------------------------------
+# Scoring targets (P11-13): raw_keys (default) and intended_text (Backspace applied)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("codes, want", [
+    ("KeyH KeyI", "hi"),
+    ("Backspace KeyH KeyI", "hi"),                        # leading Backspace: nothing to remove
+    ("Backspace Backspace Backspace", ""),                # only Backspaces
+    ("KeyH KeyX KeyX Backspace Backspace KeyI", "hi"),     # several Backspaces in a row
+    ("KeyH KeyI Backspace Backspace Backspace KeyO", "o"),  # more Backspaces than characters
+    ("KeyH KeyI Space Backspace KeyO", "hio"),            # Backspace removes the word-boundary space
+    ("KeyH KeyI Space KeyX Backspace KeyO", "hi o"),      # Backspace just after a word boundary
+    ("KeyH KeyI Space Space Enter KeyO Space", "hi o"),   # Enter ignored, spaces joined, ends stripped
+    ("Space Space KeyA", "a"),
+    ("KeyA Foo Backspace KeyB", "ab"),                    # an unknown code is a character; Backspace removes it
+    ("", ""),
+])
+def test_intended_text_rule(codes, want):
+    from fidetype.benchmark.registry import INTENDED_TEXT_RULE, keycodes_to_intended_text
+
+    assert INTENDED_TEXT_RULE == "intended-text/1"
+    assert keycodes_to_intended_text(codes) == want
+    assert normalize(codes, "keycodes_intended") == want
+
+
+def test_intended_text_rule_equals_the_p11_11_resolve():
+    """The library rule is the same as the experiment rule that P11-11 / P11-12 used (no second variant).
+
+    Only ``resolve`` and its two constants are taken from the runner (via ``ast``): importing the whole runner
+    would change process-wide settings (thread counts, visible GPUs)."""
+    import ast
+    import random
+    from pathlib import Path
+
+    from fidetype.adapters import emg2qwerty as A
+    from fidetype.benchmark.registry import keycodes_to_intended_text
+
+    f = Path(__file__).resolve().parents[1] / "experiments" / "2026-11-19-p11-11-emg-nonvacuous" / "run.py"
+    if not f.is_file():
+        pytest.skip("P11-11 runner not present")
+    tree = ast.parse(f.read_text(encoding="utf-8"))
+    keep = [n for n in tree.body if (isinstance(n, ast.FunctionDef) and n.name == "resolve") or (
+        isinstance(n, ast.Assign) and any(getattr(t, "id", "") in ("BS_CHAR", "EN_CHAR") for t in n.targets))]
+    assert len(keep) == 3
+    ns: dict = {"A": A}
+    exec(compile(ast.Module(body=keep, type_ignores=[]), str(f), "exec"), ns)
+    resolve = ns["resolve"]
+    rng = random.Random(0)
+    heavy = list(A.KEY_VOCAB) + ["Backspace"] * 8 + ["Space"] * 6 + ["Enter"] * 2
+    for _ in range(2000):
+        codes = " ".join(rng.choice(heavy) for _ in range(rng.randint(0, 25)))
+        assert keycodes_to_intended_text(codes) == resolve(A.codes_to_key_text(codes)), codes
+
+
+def _bs_truth(rows):
+    """Truth rows with a leading Backspace and a typo + Backspace after the first key (the raw text changes)."""
+    out = {}
+    for r in rows:
+        c = r["text"].split()
+        out[r["unit"]] = dict(r, text=" ".join(["Backspace", c[0], "KeyQ", "Backspace", *c[1:]]))
+    return out
+
+
+def _target_spec(monkeypatch):
+    from dataclasses import replace
+
+    monkeypatch.setitem(SC.SCORE_SPECS, "kt-semg",
+                        replace(SC.SCORE_SPECS["kt-semg"], targets=("raw_keys", "intended_text")))
+
+
+def test_default_target_scores_exactly_as_before(kt, tmp_path, monkeypatch):
+    """Regression: a manifest without a target scores exactly as before the target option existed; declaring
+    raw_keys gives the same numbers plus the target block."""
+    _, split, rows = kt
+    truth = _bs_truth(rows)
+    rws = _rows(list(truth.values()))
+    ctl = {"shuffled": _null_rows(rows), "zeros": _null_rows(rows)}
+    before = SC.score("kt-semg", SC.write_submission(tmp_path / "a", _manifest(), rws, ctl), truth, B=100, split=split)
+    _target_spec(monkeypatch)
+    after = SC.score("kt-semg", SC.write_submission(tmp_path / "a", _manifest(), rws, ctl), truth, B=100, split=split)
+    assert json.dumps(SC_jsonable(before), sort_keys=True) == json.dumps(SC_jsonable(after), sort_keys=True)
+    assert "target" not in after
+    raw = SC.score("kt-semg", SC.write_submission(tmp_path / "b", _manifest(target="raw_keys"), rws, ctl), truth,
+                   B=100, split=split)
+    assert raw["target"]["name"] == "raw_keys" and raw["target"]["version"] == "raw-keys/1"
+    for k in ("metrics", "controls", "safe_wpm", "guarantee", "n_trials", "status"):
+        assert SC_jsonable(raw[k]) == SC_jsonable(after[k]), k
+    assert raw["rerun"]["scorer"]["target"] == "raw-keys/1"
+
+
+def test_intended_text_target(kt, tmp_path, monkeypatch):
+    from fidetype.benchmark.registry import keycodes_to_intended_text
+
+    _, split, rows = kt
+    truth = _bs_truth(rows)
+    _target_spec(monkeypatch)
+    g = {"method": "ltt", "alpha": 0.05, "delta": 0.1, "n_cal": 9, "scope": "marginal", "calibration_split": "cal"}
+    ctl = {"shuffled": _null_rows(rows), "zeros": _null_rows(rows)}
+    # Commit the intended text (no Backspace) for every unit.
+    rws = [SC.unit_row(r["unit"], [r["text"]], action="commit") for r in rows]
+    raw = SC.score("kt-semg", SC.write_submission(tmp_path / "r", _manifest(guarantee=g), rws, ctl), truth, B=50,
+                   split=split)
+    it = SC.score("kt-semg", SC.write_submission(tmp_path / "i", _manifest(guarantee=g, target="intended_text"), rws,
+                                                 ctl), truth, B=50, split=split)
+    # Raw-key scoring calls every intended-text commit wrong; intended-text scoring calls every one right.
+    assert raw["metrics"]["wrong_commit_rate"]["value"] == 1.0
+    assert it["metrics"]["wrong_commit_rate"]["value"] == 0.0 and it["metrics"]["cer"]["value"] == 0.0
+    assert it["target"] == SC.target_block("intended_text") and "key_error_rate" not in it["metrics"]
+    assert it["safe_wpm"]["status"] == "certified" and it["safe_wpm"]["value"] > 0
+    # The no-BCI reference is gaze typing of the INTENDED text (fewer characters than the raw keys).
+    nw = sum(len(keycodes_to_intended_text(r["text"]).split()) for r in truth.values())
+    nc = sum(len(keycodes_to_intended_text(r["text"])) for r in truth.values())
+    assert it["metrics"]["gaze_ewpm"]["value"] == pytest.approx(nw / (nc / 20.0))
+    assert it["safe_wpm"]["total_words"] == nw
+    assert it["metrics"]["gaze_ewpm"]["value"] != raw["metrics"]["gaze_ewpm"]["value"]
+    # A raw-key output (leading Backspace, typo + Backspace kept) is also right under the intended-text target.
+    rk = [SC.unit_row(u, [r["text"]], action="commit") for u, r in truth.items()]
+    it2 = SC.score("kt-semg", SC.write_submission(tmp_path / "k", _manifest(guarantee=g, target="intended_text"), rk,
+                                                  ctl), truth, B=50, split=split)
+    assert it2["metrics"]["wrong_commit_rate"]["value"] == 0.0
+    assert "target intended_text" in SC.score_card_text(it)
+
+
+def test_target_validation(monkeypatch):
+    with pytest.raises(SubmissionError, match="one target"):
+        _manifest(target="intended_text")  # kt-semg has a single target
+    assert SC.SCORE_SPECS["emg2qwerty"].targets == ("raw_keys", "intended_text")
+    assert SC.resolve_target("emg2qwerty", None) == "raw_keys"
+    assert SC.resolve_target("b2t25-t15", None) is None
+    _target_spec(monkeypatch)
+    with pytest.raises(SubmissionError, match="not valid"):
+        _manifest(target="intended")
+    assert SC.parse_manifest(_manifest(target="intended_text")).target == "intended_text"
+
+
+def test_leaderboard_separates_targets():
+    from fidetype.benchmark import leaderboard as LB
+
+    def card(name, target=None, ewpm=1.0):
+        d = {"track": "emg2qwerty", "decoder": {"name": name}, "policy": {"name": "p"}, "_file": f"{name}.json",
+             "metrics": {"ewpm": {"value": ewpm}, "gaze_ewpm": {"value": 3.0 if target else 2.9}}}
+        if target:
+            d["target"] = SC.target_block(target)
+        return d
+
+    old = [LB.row(card("a")), LB.row(card("b", "raw_keys"))]
+    assert LB.target_groups("emg2qwerty", old) == [(None, old)]  # only the default: one table, as before
+    rows = old + [LB.row(card("c", "intended_text", ewpm=9.0))]
+    groups = LB.target_groups("emg2qwerty", rows)
+    assert [g for g, _ in groups] == ["raw_keys", "intended_text"]
+    assert [r["decoder"] for r in groups[1][1]] == ["c [target: intended_text]"]
+    assert all("target" not in r["decoder"] for r in groups[0][1])
+    md = "\n".join(LB._md_track("emg2qwerty", rows))
+    assert "Target intended_text (intended-text/1)" in md and md.count("No-BCI reference") == 2
+    assert LB._board_tables("emg2qwerty", rows, "").count("<table>") == 2

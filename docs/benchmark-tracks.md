@@ -50,6 +50,7 @@ This page defines the seven benchmark tracks of the Fidetype open benchmark (roa
 | Timing | Measured per trial where the data has it (speech duration, neural bins, key times). Else the track rate model, and the entry says so |
 | Regime | Cross-session, session-calibrated, cross-subject or personalised |
 | Licence | The licence of the weights. Research-only data gives research-only weights |
+| Target | `emg2qwerty` only: `raw_keys` (default, the typed key sequence) or `intended_text` (Backspace applied, rule `intended-text/1`). The card declares it; the board shows each target in its own table ([submission format](benchmark-submission.md)) |
 
 ## The split file format
 

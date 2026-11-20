@@ -161,6 +161,46 @@ def safe_wpm_text(sw: dict[str, Any] | None) -> str:
     return f"{s} ({g})"
 
 
+def card_target(d: dict[str, Any]) -> str | None:
+    """The scoring target of a card (P11-13): its ``target`` block, else the track default (None: no targets)."""
+    tg = (d.get("target") or {}).get("name")
+    if tg:
+        return tg
+    from fidetype.benchmark.scorecard import SCORE_SPECS
+
+    spec = SCORE_SPECS.get(str(d.get("track")))
+    return spec.targets[0] if spec is not None and spec.targets else None
+
+
+def _default_target(slug: str) -> str | None:
+    from fidetype.benchmark.scorecard import SCORE_SPECS
+
+    spec = SCORE_SPECS.get(slug)
+    return spec.targets[0] if spec is not None and spec.targets else None
+
+
+def target_groups(slug: str, rows: list[dict[str, Any]]) -> list[tuple[str | None, list[dict[str, Any]]]]:
+    """Rows of one track split by scoring target (P11-13). Entries with different targets are never ranked in one
+    table: each target gets its own table and its own no-BCI reference. One group ``(None, rows)`` when every
+    entry uses the track default (the table then looks as before)."""
+    from fidetype.benchmark.scorecard import SCORE_SPECS
+
+    spec = SCORE_SPECS.get(slug)
+    default = _default_target(slug)
+    if not rows or all(r.get("target") in (None, default) for r in rows):
+        return [(None, rows)]
+    order = list(spec.targets) if spec is not None else []
+    names = sorted({r.get("target") or default for r in rows}, key=lambda t: (order.index(t) if t in order else 99, t))
+    return [(t, [r for r in rows if (r.get("target") or default) == t]) for t in names]
+
+
+def target_label(name: str) -> str:
+    from fidetype.benchmark.scorecard import TARGETS
+
+    version, _, rule = TARGETS.get(name, (name, "", ""))
+    return f"Target {name} ({version}): {rule}."
+
+
 def row(d: dict[str, Any]) -> dict[str, Any]:
     m = d.get("metrics", {})
     ew, ci = _v(m, "ewpm"), _ci(m, "ewpm")
@@ -174,8 +214,11 @@ def row(d: dict[str, Any]) -> dict[str, Any]:
         name += f" [partial: {cov.get('n_covered')}/{cov.get('n_scored_units')} units]"
     if (d.get("track_info") or {}).get("research_only"):
         name += " [RESEARCH ONLY]"
+    tgt = card_target(d)
+    if tgt is not None and tgt != _default_target(str(d.get("track"))):
+        name += f" [target: {tgt}]"
     return {
-        "entry_id": d.get("entry_id"), "track": d.get("track"), "decoder": name,
+        "entry_id": d.get("entry_id"), "track": d.get("track"), "decoder": name, "target": tgt,
         "policy": d.get("policy", {}).get("name", ""),
         "cer": _v(m, "cer"), "wer": _v(m, "wer"), "ewpm": ew, "ewpm_ci": ci, "gaze_ewpm": _v(m, "gaze_ewpm"),
         "wrong_commit_rate": _v(m, "wrong_commit_rate"), "error_among_commits": _v(m, "error_among_commits"),
@@ -283,15 +326,18 @@ def _md_track(slug: str, rows: list[dict[str, Any]]) -> list[str]:
     if t:
         L += [f"Track `{slug}`. Data: {t['data']} ({t['licence']}{', **research only**' if t['research_only'] else ''}). "
               f"CI unit: {t['ci_unit']}. User model: {t['user_model']}.", ""]
-    g = _gaze(rows)
-    if g is not None:
-        L += [f"No-BCI reference (gaze typing only, {t['gaze_cpm'] if t else 20:.0f} chars/min): "
-              f"**{g:.2f} eWPM**.", ""]
     if not rows:
         return L + ["No entries yet.", ""]
-    L += ["| " + " | ".join(COLUMNS) + " |", "|" + "---|" * len(COLUMNS)]
-    L += ["| " + " | ".join(c.replace("|", "/") for c in cells(r)) + " |" for r in rows]
-    L.append("")
+    for tgt, grp in target_groups(slug, rows):
+        if tgt is not None:
+            L += [f"**{target_label(tgt)}**", ""]
+        g = _gaze(grp)
+        if g is not None:
+            L += [f"No-BCI reference (gaze typing only, {t['gaze_cpm'] if t else 20:.0f} chars/min"
+                  + (f", target {tgt}" if tgt else "") + f"): **{g:.2f} eWPM**.", ""]
+        L += ["| " + " | ".join(COLUMNS) + " |", "|" + "---|" * len(COLUMNS)]
+        L += ["| " + " | ".join(c.replace("|", "/") for c in cells(r)) + " |" for r in grp]
+        L.append("")
     L += recipes_markdown(rows)
     return L
 
@@ -421,6 +467,16 @@ def _track_meta(slug: str) -> str:
             f"<code>{html.escape(t['ci_unit'])}</code>. User model: {html.escape(t['user_model'])}.</p>")
 
 
+def _board_tables(slug: str, rows: list[dict[str, Any]], link: str) -> str:
+    """One main table per scoring target (P11-13); one table as before when all entries use the default."""
+    out = []
+    for tgt, grp in target_groups(slug, rows):
+        if tgt is not None:
+            out.append(f'<p class="tgt"><b>{html.escape(target_label(tgt))}</b></p>')
+        out.append(_board_table(slug, grp, link))
+    return chr(10).join(out)
+
+
 def _board_table(slug: str, rows: list[dict[str, Any]], link: str) -> str:
     """The main table of one track. ``link`` is the prefix of the entry links ("" on the track page)."""
     t = track_info(slug)
@@ -464,7 +520,7 @@ def _html_track(slug: str, rows: list[dict[str, Any]]) -> list[str]:
     if not rows:
         parts.append("<p>No entries yet.</p>")
         return parts
-    parts.append(_board_table(slug, rows, page_href))
+    parts.append(_board_tables(slug, rows, page_href))
     have = [r for r in rows if r.get("rerun")]
     if have:
         parts.append(f"<details><summary>Rerun recipes ({len(have)} of {len(rows)} entries)</summary>")
@@ -568,7 +624,7 @@ def track_page_html(slug: str, rows: list[dict[str, Any]], history: dict[str, An
                  "recipes</a></li></ul></nav>")
     parts.append('<h2 id="entries">Entries</h2>')
     if rows:
-        parts.append(_board_table(slug, rows, ""))
+        parts.append(_board_tables(slug, rows, ""))
     else:
         parts.append("<p>No entries yet.</p>")
     parts.append('<h2 id="history">Entry history</h2>')

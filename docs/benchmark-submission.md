@@ -77,11 +77,31 @@ Any other key is refused. So a row cannot carry truth text by accident (NTS spec
 | `spanishbcbl-meg` | characters | `char28` (as v0.1) |
 | `kt-semg`, `emg2qwerty` | space-separated W3C `KeyboardEvent.code` names, for example `KeyH KeyI Space` | one character per key, so **CER = key error rate** |
 
+**Scoring target (`emg2qwerty` only, P11-13).** The manifest field `target` selects what the scorer compares. Both sides (truth and every output text) go through the same normaliser, and the no-BCI reference and safe WPM use the same target text.
+
+| `target` | Version | Normaliser | What is compared |
+|---|---|---|---|
+| `raw_keys` (default) | `raw-keys/1` | `keycodes` | The key sequence as typed. `Backspace` and `Enter` are keys. CER = key error rate |
+| `intended_text` | `intended-text/1` | `keycodes_intended` | The text the typist meant. CER = character error rate of that text |
+
+Rule `intended-text/1` (`fidetype.benchmark.registry.keycodes_to_intended_text`), left to right over the key codes:
+
+1. A character key appends its character. `Space` appends a space.
+2. `Backspace` removes the last character, if there is one. A leading `Backspace` does nothing.
+3. `Enter` is ignored.
+4. At the end, runs of spaces become one space, and the ends are stripped.
+
+Examples: `KeyH KeyX Backspace KeyI` -> `hi`; `Backspace KeyA` -> `a`; `KeyH KeyI Space Backspace KeyO` -> `hio`. This is the same rule as the P11-11 / P11-12 experiment code (a test checks this). Write the outputs as key codes in both cases: an intended text `hi o` is `KeyH KeyI Space KeyO`. A raw-key output is also valid under `intended_text`: the scorer applies the rule to it.
+
+A manifest without `target` scores exactly as before, with the default. On tracks with one target, `target` must be absent. A card from a manifest with `target` has a `target` block (name, version, normaliser, rule). The leaderboard never ranks the two targets in one table: each target gets its own table and its own no-BCI reference, and an `intended_text` entry carries `[target: intended_text]` in its name. Cards without a `target` block count as `raw_keys`.
+
+Known limit: the eWPM user model keeps the track rate (301.33 keys/min) for the neural time of both targets. Safe WPM does not use it: it uses the measured `neural_s` of each prompt.
+
 **NTS streams instead of rows.** You can give `streams/<unit>.jsonl` (or `.npz`) files instead of `units.jsonl`. The file name is the unit key. The scorer reads the last final `hypothesis` event as in v0.1 ([benchmark README](../benchmark/README.md)), and it runs the conformance suite on each file (`--gate` rejects files below `trust-ready`).
 
 ### `submission.json`
 
-Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `regime` and `controls` (required), `coverage` (optional).
+Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `regime` and `controls` (required), `coverage` and `target` (optional).
 
 ```json
 {
@@ -107,6 +127,7 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
 | `controls` | One sentence per control: how you made the input. Say if the control is at the input level (signal) or at the decoder output level (a stand-in) |
 | `coverage` | Leave it out if you cover every scored unit. With `{"subset": "<reason>"}` the scorer accepts missing units, scores only the covered ones, and the board marks the entry `[partial: n/N units]` |
 | `guarantee` | As v0.1. Safe WPM is certified only for `crc` or `ltt` with `alpha` |
+| `target` | `emg2qwerty` only: `raw_keys` (default) or `intended_text` (see the text space above). Leave it out on every other track |
 
 ## What the scorer checks
 

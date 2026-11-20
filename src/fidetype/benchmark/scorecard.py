@@ -109,6 +109,20 @@ class ScoreSpec:
     key_track: bool = False
     #: Unit keys are ``<parent h>#<k>`` (sub-units of a scored parent unit).
     sub_units: bool = False
+    #: Scoring targets a submission may declare (``submission.json`` ``target``), first = default. Empty: the
+    #: track has one target and a manifest must not name one (P11-13).
+    targets: tuple[str, ...] = ()
+
+
+#: Scoring targets (P11-13): {name: (version, normalizer applied to truth AND hypotheses, rule)}.
+TARGETS: dict[str, tuple[str, str, str]] = {
+    "raw_keys": ("raw-keys/1", "keycodes",
+                 "the key sequence as typed: one character per key code; Backspace and Enter are keys"),
+    "intended_text": ("intended-text/1", "keycodes_intended",
+                      "Backspace applied (registry.keycodes_to_intended_text, rule intended-text/1): a character "
+                      "key appends, Backspace removes the last character if any, Enter is ignored, then runs of "
+                      "spaces are joined and the ends stripped"),
+}
 
 
 SCORE_SPECS: dict[str, ScoreSpec] = {
@@ -125,23 +139,43 @@ SCORE_SPECS: dict[str, ScoreSpec] = {
     "spanishbcbl-meg": ScoreSpec("char28", 152.0, "Brain2Qwerty v1 typing rate (v0.1 track)"),
     "emg2qwerty": ScoreSpec("keycodes", 301.3306670286988,
                             "measured: keys / (first to last key-down time) over the 15867 scored test prompts",
-                            key_track=True, sub_units=True),
+                            key_track=True, sub_units=True, targets=("raw_keys", "intended_text")),
 }
 
 
-def scoring_track(slug: str) -> Track:
+def resolve_target(slug: str, target: str | None) -> str | None:
+    """The scoring target of a submission: its declared ``target``, else the track default (None: no targets)."""
+    s = SCORE_SPECS[slug]
+    if target is None:
+        return s.targets[0] if s.targets else None
+    if target not in s.targets:
+        allowed = f"one of {list(s.targets)}" if s.targets else "absent (this track has one target)"
+        raise SubmissionError(f"submission.json: target {target!r} is not valid for {slug}; it must be {allowed}")
+    return target
+
+
+def target_block(target: str) -> dict[str, str]:
+    """The ``target`` block of a score card (P11-13)."""
+    version, norm, rule = TARGETS[target]
+    return {"name": target, "version": version, "normalizer": norm, "rule": rule}
+
+
+def scoring_track(slug: str, target: str | None = None) -> Track:
     """A :class:`~fidetype.benchmark.registry.Track` view of a v0.2 track for :mod:`.scoring`.
 
     The bootstrap cluster key is ``group`` (the split group hash); the MEG
-    track keeps its crossed sentence x participant bootstrap.
+    track keeps its crossed sentence x participant bootstrap. ``target``
+    (P11-13) selects the normalizer of a track with several targets.
     """
     t = TR.get_track(slug)
     s = SCORE_SPECS[slug]
+    tgt = resolve_target(slug, target)
+    norm = TARGETS[tgt][1] if tgt else s.normalizer
     ci = "two_way:sentence,group" if t.ci_unit.startswith("two_way:") else "group"
     um = UserModel(name=f"aac-gaze-v1 @ {s.chars_per_min:.2f} {'keys' if s.key_track else 'chars'}/min",
                    config={"chars_per_min": float(s.chars_per_min)}, note=s.rate_source)
     return Track(slug=t.slug, title=t.title, dataset=t.dataset, modality=t.modality, language=t.language,
-                 split_file=t.split_file, normalizer=s.normalizer, ci_unit=ci, user_model=um,
+                 split_file=t.split_file, normalizer=norm, ci_unit=ci, user_model=um,
                  scored_split=t.scored_split, open_splits=t.open_splits, research_only=t.research_only,
                  notes=t.notes)
 
@@ -164,6 +198,8 @@ class ManifestV02:
     controls: dict[str, str] = field(default_factory=dict)
     coverage: dict[str, Any] = field(default_factory=dict)
     raw: dict[str, Any] = field(default_factory=dict)
+    #: The declared scoring target (P11-13), or None (the track default).
+    target: str | None = None
 
     @property
     def track(self) -> str:
@@ -173,13 +209,15 @@ class ManifestV02:
 def manifest_dict(track: str, decoder: dict[str, Any], *, policy: dict[str, Any] | None = None,
                   guarantee: dict[str, Any] | None = None, regime: str, controls: dict[str, str] | None = None,
                   coverage: dict[str, Any] | None = None, submitter: dict[str, Any] | None = None,
-                  notes: str = "") -> dict[str, Any]:
+                  notes: str = "", target: str | None = None) -> dict[str, Any]:
     """Build a v0.2 manifest dict (validated by :func:`parse_manifest`)."""
     d = {"schema": SUBMISSION_SCHEMA, "track": track, "benchmark_version": TR.TRACKS_VERSION, "decoder": decoder,
          "policy": policy or {}, "guarantee": guarantee or {"method": "none"}, "regime": regime,
          "controls": controls or {}, "submitter": submitter or {}, "notes": notes}
     if coverage:
         d["coverage"] = coverage
+    if target is not None:
+        d["target"] = target
     parse_manifest(d)
     return d
 
@@ -201,7 +239,10 @@ def parse_manifest(d: dict[str, Any]) -> ManifestV02:
     cov = d.get("coverage") or {}
     if cov and not (isinstance(cov, dict) and isinstance(cov.get("subset"), str) and cov["subset"].strip()):
         raise SubmissionError("submission.json: coverage must be {'subset': '<why some units are missing>'}")
-    return ManifestV02(base, regime, dict(ctl), dict(cov), dict(d))
+    tgt = d.get("target")
+    if tgt is not None:
+        resolve_target(d["track"], tgt)
+    return ManifestV02(base, regime, dict(ctl), dict(cov), dict(d), tgt)
 
 
 def load_manifest(folder: str | PathLike[str]) -> ManifestV02:
@@ -542,10 +583,11 @@ def read_truth(path: str | PathLike[str], track: str, split: dict[str, Any] | No
 # ---------------------------------------------------------------------------
 
 
-def _clusters(track: str, keys: Sequence[str], scored: dict[str, Any], truth: dict[str, dict[str, Any]]) -> dict[str, dict[str, str]]:
+def _clusters(track: str, keys: Sequence[str], scored: dict[str, Any], truth: dict[str, dict[str, Any]],
+              norm: str | None = None) -> dict[str, dict[str, str]]:
     from fidetype.benchmark.registry import normalize
 
-    norm = SCORE_SPECS[track].normalizer
+    norm = norm or SCORE_SPECS[track].normalizer
     out = {}
     for k in keys:
         txt = normalize(truth[k]["text"], norm)
@@ -568,7 +610,7 @@ def score(track: str, folder: str | PathLike[str], truth: dict[str, dict[str, An
     chk = check_submission(track, folder, split)
     man = load_manifest(folder)
     spec, tdef = SCORE_SPECS[track], TR.get_track(track)
-    st = scoring_track(track)
+    st = scoring_track(track, man.target)
     scored = scored_entries(split)
     outs, info = read_outputs(folder, "real")  # type: ignore[misc]
     # Units to score: every truth unit (sub-units: of the covered parents too), unless coverage is a declared subset.
@@ -591,7 +633,7 @@ def score(track: str, folder: str | PathLike[str], truth: dict[str, dict[str, An
     texts = {k: truth[k]["text"] for k in ids}
     durs = {k: float(truth[k]["neural_s"]) for k in ids if truth[k].get("neural_s") is not None}
     durations = durs if len(durs) == len(ids) else None
-    clusters = _clusters(track, ids, scored, truth)
+    clusters = _clusters(track, ids, scored, truth, st.normalizer)
     conf: dict[str, Any] = {"level": "not checked (units JSONL: NTS-derived rows)"}
     if info["format"] == "nts-streams":
         from fidetype.benchmark.harness import conformance_gate
@@ -629,9 +671,16 @@ def score(track: str, folder: str | PathLike[str], truth: dict[str, dict[str, An
                          "modality": tdef.modality, "ci_unit": tdef.ci_unit, "split_digest": split["digest"],
                          "rate_source": spec.rate_source, "key_track": spec.key_track}
     res["ci"]["unit_name"] = tdef.ci_unit
-    if spec.key_track:
+    if man.target is not None:
+        # P11-13: the declared target (a manifest without one keeps the track default and the old card form).
+        res["target"] = target_block(man.target)
+    if spec.key_track and st.normalizer == "keycodes":
         m["key_error_rate"] = dict(m["cer"])
         res["notes"].append("Key track: one character per key, so CER = key error rate.")
+    elif spec.key_track:
+        res["notes"].append(f"Target {man.target} ({TARGETS[man.target][0]}): truth and outputs are compared after "
+                            "Backspace is applied, so CER is the character error rate of the intended text and the "
+                            "no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.")
     res["coverage"] = {"n_scored_units": len(truth_keys), "n_covered": len(ids), "partial": len(ids) < len(truth_keys),
                        **({"subset": man.coverage["subset"]} if man.coverage else {})}
     res["regime"] = man.regime
@@ -653,6 +702,8 @@ def score(track: str, folder: str | PathLike[str], truth: dict[str, dict[str, An
 
     res["rerun"] = make_recipe(res, command=score_command(track, B=B, seed=seed), level="rescore",
                                inputs=RESCORE_INPUTS)
+    if man.target is not None:
+        res["rerun"].setdefault("scorer", {})["target"] = TARGETS[man.target][0]
     return res
 
 
@@ -674,11 +725,13 @@ def score_card_text(res: dict[str, Any]) -> str:
     ti = res.get("track_info", {})
     sw = res.get("safe_wpm") or {}
     c = res["controls"]
-    err = "key error" if ti.get("key_track") else "CER"
+    keys = ti.get("key_track") and "key_error_rate" in m
+    err = "key error" if keys else "CER"
+    tg = res.get("target")
     lines = [
         f"{res['track']}  {res['entry_id']}  ({res['n_trials']} units; CI unit {ti.get('ci_unit')})"
-        + ("  RESEARCH ONLY" if ti.get("research_only") else ""),
-        f"  {err} {v('cer')}" + ("" if ti.get("key_track") else f"   WER {v('wer')}"),
+        + ("  RESEARCH ONLY" if ti.get("research_only") else "") + (f"  target {tg['name']}" if tg else ""),
+        f"  {err} {v('cer')}" + ("" if keys else f"   WER {v('wer')}"),
         f"  eWPM {v('ewpm', 2)}   no-BCI {v('gaze_ewpm', 2)}   difference {v('ewpm_minus_gaze', 2)}",
         (f"  safe WPM @ {sw.get('alpha')}: " if sw.get("alpha") is not None else "  safe WPM: ")
         + f"{('n/a' if sw.get('value') is None else format(sw['value'], '.2f'))} ({sw.get('status')})",
@@ -694,6 +747,7 @@ def score_card_text(res: dict[str, Any]) -> str:
 
 
 __all__ = ["SUBMISSION_SCHEMA", "UNITS_SCHEMA", "TRUTH_SCHEMA", "RESULT_SCHEMA_V02", "SCORE_SPECS", "ScoreSpec",
+           "TARGETS", "resolve_target", "target_block",
            "scoring_track", "scored_entries", "manifest_dict", "parse_manifest", "load_manifest", "unit_row",
            "write_units", "write_submission", "read_units", "read_outputs", "check_submission", "build_truth",
            "write_truth", "read_truth", "score", "score_card_text"]
