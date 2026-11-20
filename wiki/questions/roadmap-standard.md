@@ -1316,6 +1316,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-26** | T12 replication of LLM rescoring + learned commit confidence (open gap 93, [details](#p15-26-t12-replication-of-llm-rescoring--learned-commit-confidence)) | F1, F2 | P15-22 |
 | **P15-27** | Guard n-best top-1 differs from the pipeline top-1 on 9 of 701 trials (open gap 94, [details](#p15-27-guard-n-best-top-1-differs-from-the-pipeline-top-1-on-9-of-701-trials)) | F1 | P15-22 |
 | **P15-28** | Recompute the M4-12 and T12 P15-05 / P15-06 / P15-07 WER values with the sorted grounding order (open gap 97, [details](#p15-28-recompute-the-m4-12-and-t12-p15-05--p15-06--p15-07-wer-values-with-the-sorted-grounding-order)) | F1 | P15-27 |
+| **P15-29** | Safe WPM interval that includes the calibration draw (open gap 103, [details](#p15-29-safe-wpm-interval-that-includes-the-calibration-draw)) | F1 | P15-26 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1512,7 +1513,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-26 T12 replication of LLM rescoring + learned commit confidence
 - **Gap:** 93 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-22). Follow-up of P15-22.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19; pre-registration `39e9419`, code `a719794`, `4b7c07c`, `83448eb`, [results](../../experiments/2026-11-19-p15-26-replication/results.md)). T15, four new calibration draws: L1 (B1 + learned) v0.1 5.58, 6.00, 5.23, 5.83 (c1, c2, c3, p1), all certified with the CI lower end above the no-BCI reference; **level and gain replicate (4 / 4 each)**; mean of five T15 values 5.51, SD 0.44 (P15-22 4.91 is the lowest). T12: L1 2.37 [1.34, 3.62] < 4.11: **does not replicate on T12**; H1 vs P5-23 +0.50 [0.05, 1.13], no clear difference; L2 prefix v0.2 + reading cost 4.95 (proposed metric, not decided). Protocol 0.2 passes in every unit. New gap 103 = P15-29.
 - **Depends on:** P15-22 (done); the P15-05 T12 caches (`derived/f2-e3-llm-grounding/t12/`); a T12 loader with the word trigram LM (about 2.5-4 GB RAM with the LLM); CPU.
 - **Source:** P15-22 ([results](../../experiments/2026-11-19-p15-22-llm-learned/results.md)): the 4.91 safe WPM (v0.1) comes from one participant (T15), one split and one seed. P5-23 replicated on T12 only as "no clear difference".
 - **Done when:** a pre-registered T12 replay (fit_a + calibration sessions -> test sessions, as P5-23) reports safe WPM v0.1 (and v0.2) for B1 + learned and B1 + learned prefix against the P5-23 / P5-24 T12 guards, with controls and the hallucination protocol 0.2 check; and a second calibration draw (another seed) on T15 shows how much the 4.91 depends on the split.
@@ -1554,6 +1555,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P16-03** | Ethics and safety page for write-side BCI | P16-01 | todo |
 | **P16-04** | Design study: closed loop "detect state → stimulate → verify" (offline / simulation only) | P16-01, P16-02, P16-03 | todo |
 | **P16-05** | Any real stimulation work | P16-03, P16-04, partners, ethics approval, hardware | **externally blocked** |
+
+#### P15-29 Safe WPM interval that includes the calibration draw
+- **Gap:** 103 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-26). Follow-up of P15-26.
+- **Status:** `todo`.
+- **Depends on:** P15-26 (done; five T15 calibration draws with per-trial decisions in `derived/p15-26/`). CPU.
+- **Source:** P15-26 ([results](../../experiments/2026-11-19-p15-26-replication/results.md)): the L1 safe WPM over five T15 calibration draws has SD 0.44 (4.91-6.00); the reported trial-bootstrap CI (half-width about 0.66) is conditional on one calibration. The P15-26 verdict stage also read a null CI from the `safe_wpm` block (reporting only; the write-up uses the paired-bootstrap interval).
+- **Done when:** a documented method (for example a bootstrap over calibration redraws, or a cross-fit of calibration and evaluation) gives safe WPM entries an interval that includes the calibration draw; `docs/safe-wpm.md` says which interval a leaderboard entry reports; the P15-22 / P15-26 T15 headline is restated with it.
 
 #### P16-01 Literature review: write-side BCI for mood and memory
 - **Serves:** the project (decision input); research labs.

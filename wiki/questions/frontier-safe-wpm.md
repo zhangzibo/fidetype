@@ -20,7 +20,7 @@ With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_ev
 - Every pre-registered gain before P15-22 was smaller than its exploratory estimate. P15-22 (4.91) was larger than its estimate (about 4.50).
 - **Streaming word-by-word commits (P5-27) do not help safe WPM:** 2.34 [2.11, 2.57] against 4.67 for the one-commit prefix guard (both v0.2 + reading cost). They commit right words about 10 s earlier.
 - **A hybrid guard (P5-28) keeps the words and most of the latency gain:** stream commits mid-trial + the P5-24 end decision that can extend them, certified jointly, give 4.89 [4.49, 5.27] against 4.67 (v0.2 + reading cost; Δ +0.22 [+0.14, +0.31], pre-registered verdict **hybrid beats single**). The first right word appears a median 2.7 s after it ends, against 14.0 s. Caution: with δ split over three mid thresholds the WPM gain disappears (4.63).
-- Limit: one participant (T15), one split, one seed. A T12 replication and a second calibration draw are open (gap 93).
+- **Replication (P15-26, pre-registered):** on T15 the result **replicates** over four new calibration draws: 5.58, 6.00, 5.23 and 5.83 safe WPM v0.1, all certified, all with the CI lower end above the no-BCI reference. The P15-22 value (4.91) is the lowest of the five T15 draws (mean 5.51, SD 0.44). **On T12 it does not replicate:** 2.37 [1.34, 3.62] against 4.11. The T12 decoder gets only 35 of 400 top-1 texts exactly right (WER 0.385). So the claim is: **above gaze typing on T15, not on T12.**
 
 ## Steps at a glance
 
@@ -34,6 +34,7 @@ With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_ev
 | P5-27 | [plan](../../experiments/2026-11-18-p5-27-streaming-prefix/plan.md), `5f74c2f` | streaming append-only prefix commits vs the one-commit prefix guard (v0.2 + reading cost + several-commits rule, all proposed) | **2.34** [2.11, 2.57] vs 4.67, −2.32 [−2.63, −2.02] | **single beats stream** (safe, certified) | [results](../../experiments/2026-11-18-p5-27-streaming-prefix/results.md) |
 | P5-28 | [plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md), `e3cb0cb` | hybrid: stream commits mid-trial (λ_mid 0.99) + P5-24 end decision (λ_end 0.94, joint LTT on the trial loss) vs the one-commit prefix guard (v0.2 + reading cost + several-commits rule, all proposed) | **4.89** [4.49, 5.27] vs 4.67, +0.22 [+0.14, +0.31] | **hybrid beats single** (safe, certified); Bonferroni sensitivity: no clear difference | [results](../../experiments/2026-11-19-p5-28-hybrid-prefix/results.md) |
 | **P15-22** | [plan](../../experiments/2026-11-19-p15-22-llm-learned/plan.md), `7557b54` | LLM rescoring (P15-05 B1) + learned commit score vs P5-23 learned (H1) and vs the LLM arm alone (H2), v0.1 | **4.91** [4.25, 5.57] vs 2.64 (+2.27 [1.76, 2.81]) and vs 4.18 (+0.73 [0.19, 1.27]) | **both pass; first v0.1 value > 4.02**; closes P14-23 | [results](../../experiments/2026-11-19-p15-22-llm-learned/results.md) |
+| **P15-26** | [plan](../../experiments/2026-11-19-p15-26-replication/plan.md), `39e9419` | replication of P15-22: four T15 calibration draws + T12 | T15: 5.58, 6.00, 5.23, 5.83 (all > 4.02, CI lower ends > 4.02); T12: 2.37 vs 4.11 | **T15 replicates (4 / 4); T12 does not replicate** | [results](../../experiments/2026-11-19-p15-26-replication/results.md) |
 
 ## P14-05: the metric and the first numbers
 - `safe-wpm/0.1`: only whole right sentences earn words; an entry whose measured wrong-commit rate is above alpha is marked.
@@ -138,6 +139,22 @@ Pre-registered ([plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md)
 - Hallucination protocol 0.2: L0 and L1 pass all tracks (0 swapped commits, null 0 / 300, scrambled 0 / 300). Fluent-wrong commits: L1 5, L0 6 (not certified; gap 74).
 - The edit-8 word decoder (gap 62) and T12 (gap 93) were not part of the plan.
 
+## P15-26: replication over calibration draws and on T12
+- Same L1 pipeline and rules as P15-22. Each T15 draw refits the frame temperature, τ and λ on its own calibration set. Draw c0 (the P15-22 split) reproduced P15-22 exactly (701 / 701 decisions).
+
+| unit | L1 safe WPM v0.1 [95 % CI] | no-BCI | commits / wrong | L1 − n-gram learned guard | test A (level) | test G (gain) |
+|---|---|---|---|---|---|---|
+| c0 = P15-22 | 4.91 [4.25, 5.57] | 4.02 | 196 / 13 | +2.27 | - | - |
+| c1 (seed 1) | 5.58 [4.91, 6.28] | 4.02 | 221 / 16 | +2.91 [2.35, 3.49] | pass | pass |
+| c2 (seed 2) | 6.00 [5.28, 6.72] | 4.02 | 245 / 23 | +2.32 [1.74, 2.93] | pass | pass |
+| c3 (seed 3) | 5.23 [4.58, 5.92] | 4.02 | 211 / 16 | +2.20 [1.66, 2.73] | pass | pass |
+| p1 (pooled re-split) | 5.83 [5.12, 6.56] | 4.00 | 253 / 29 | +2.38 [1.80, 2.98] | pass | pass |
+| **T12** | **2.37** [1.34, 3.62] | 4.11 | 31 / 12 | +0.50 [0.05, 1.13] | **fail** | **fail** (no clear difference) |
+
+- **Negative result, stated plainly:** the P15-22 claim does not transfer to T12. The guard is certified and safe there (12 / 400 wrong, protocol 0.2 pass), but the T12 decoder is too weak.
+- The between-draw SD on T15 (0.44) is about two thirds of the conditional CI half-width. The reported CIs do not include the calibration draw (new gap 103, P15-29).
+- T12 prefix guard (proposed v0.2 + reading cost): 4.95 [4.04, 5.92]; not decided.
+
 ## What changed in the library
 | change | commit |
 |---|---|
@@ -150,7 +167,7 @@ Pre-registered ([plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md)
 | no library change in P15-22 (experiment script only: P15-05 pipeline + `calibrate(confidence="learned")`) | `9643804` |
 
 ## Limits
-- One participant per set, one split, one seed. The intervals are conditional on the calibration (decisions fixed).
+- The intervals are conditional on the calibration (decisions fixed). P15-26 shows a between-draw SD of 0.44 on T15 (gap 103). The headline holds on T15 only; T12 does not replicate.
 - The prefix feature set was designed after the exploratory analysis, which looked at `val_eval`. The score was fitted and certified on `val_select` only.
 - The reading costs come from literature values, not from measured BCI users (gap 77).
 - Word-by-word streaming commits (P5-27) and the hybrid guard (P5-28) were tested on T15 only; no T12 checkpoint views exist (gap 95). The P5-28 mid threshold came from P5-27 on the same certify items.
@@ -160,7 +177,7 @@ Pre-registered ([plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md)
 ## Still open
 | gap | item | what |
 |---|---|---|
-| 93, 94 | [P15-26](roadmap-standard.md#p15-26-t12-replication-of-llm-rescoring--learned-commit-confidence), [P15-27](roadmap-standard.md#p15-27-guard-n-best-top-1-differs-from-the-pipeline-top-1-on-9-of-701-trials) | T12 replication + second calibration draw of P15-22; guard vs pipeline top-1 on 9 trials |
+| 103 | [P15-29](roadmap-standard.md#p15-29-safe-wpm-interval-that-includes-the-calibration-draw) | safe WPM interval that includes the calibration draw |
 | 62 | [P14-24](roadmap-standard.md#p14-24-f2-and-m4-13-trust-rerun-rows-with-word-decoder-edit-penalty-8) | LLM-arm rows with edit 8 |
 | 95, 96 | [P5-29](roadmap-standard.md#p5-29-t12-replication-of-the-streaming-and-hybrid-prefix-guards), [P5-30](roadmap-standard.md#p5-30-safe_wpm-refuse-certified-for-an-infeasible-guarantee-when-the-policy-commits) | T12 replication of the stream + hybrid guards (λ_mid fixed in advance); scorer status for an infeasible guarantee that commits (gaps 76, 92 closed) |
 | 77 | [P14-29](roadmap-standard.md#p14-29-measured-checking-time-per-commit-for-aac-and-bci-users) | measured checking time per commit |

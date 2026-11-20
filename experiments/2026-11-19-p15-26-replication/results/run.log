@@ -1,0 +1,211 @@
+2026-11-19 14:56:08 [121 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 14:56:08 [121 MB] stage t12 start
+2026-11-19 14:56:16 [1933 MB] t12: calibration 480, evaluation 400; llm cache 16612; no-BCI 4.1140; pipeline {'frame_temperature': 2.528091520707864, 'tau': 0.47419631304442217, 'llm_weight': 0.5, 'fluent_logp_per_word': -8.916451934532247}; peak 2435 MB
+2026-11-19 14:56:32 [1947 MB] t12 llm: calibrated tcfg-6d87641496fa4963 in 17 s; frame T 2.528092; threshold 0.31; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 14:56:36 [1951 MB] t12 llm: decided 400 in 20 s total; fluent-wrong 4; peak 2435 MB
+2026-11-19 14:56:45 [1980 MB] t12 llm_learned: calibrated tcfg-84599fa5a7ce76d8 in 9 s; frame T 2.528092; threshold 0.34; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 14:56:47 [1984 MB] t12 llm_learned: decided 400 in 11 s total; fluent-wrong 3; peak 2435 MB
+2026-11-19 14:56:56 [1981 MB] t12 llm_prefix: calibrated tcfg-4982866ab5d0e66a in 9 s; frame T 2.528092; threshold 0.86; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 14:56:58 [1985 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (CPU wheel)
+2026-11-19 14:56:59 [3631 MB] t12 llm_prefix: decided 400 in 13 s total; fluent-wrong 0; peak 3649 MB
+2026-11-19 14:56:59 [3631 MB] keep_awake: cleared
+2026-11-19 14:57:01 [121 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 14:57:01 [121 MB] stage c0 start
+2026-11-19 14:57:05 [688 MB] c0: calibration 722, evaluation 701, seed 0, pool None; llm cache 43943; no-BCI 4.0153
+2026-11-19 14:57:05 [688 MB] t15 prep done: {'fluent_logp_per_word': -7.88165954200173, 'n_cal': 722}
+2026-11-19 14:57:29 [754 MB] c0 ngram_learned: calibrated tcfg-349a794577de223b in 24 s; frame T 2.370158; threshold 0.87; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 14:57:37 [756 MB] c0 ngram_learned: decided 701 in 31 s total; fluent-wrong 2; peak 762 MB
+2026-11-19 14:57:37 [760 MB] t15 ground prep: 0/722
+2026-11-19 14:57:38 [761 MB] t15 ground prep: 200/722
+2026-11-19 14:57:39 [761 MB] t15 ground prep: 400/722
+2026-11-19 14:57:41 [762 MB] t15 ground prep: 600/722
+2026-11-19 14:57:42 [762 MB] t15 ground prep: tau 0.0700, true texts without labels 0
+2026-11-19 14:57:42 [762 MB] t15 ground prep: lambda 0.1: val_select WER 0.1720
+2026-11-19 14:57:42 [762 MB] t15 ground prep: lambda 0.25: val_select WER 0.1652
+2026-11-19 14:57:42 [762 MB] t15 ground prep: lambda 0.5: val_select WER 0.1608
+2026-11-19 14:57:42 [762 MB] t15 ground prep: lambda 1.0: val_select WER 0.1560
+2026-11-19 14:57:42 [762 MB] t15 ground prep: lambda 2.0: val_select WER 0.1574
+2026-11-19 14:57:42 [762 MB] t15 ground prep done: {'frame_temperature': 2.37015800035291, 'tau': 0.06996627059278283, 'true_deficit_quantiles': {'0.5': 0.0, '0.9': 0.0441821710499841, '0.95': 0.06879552952840952, '0.99': 0.15107849992408884}, 'true_deficit_pass_rate_at_tau': 0.9515235457063712, 'true_without_labels': 0, 'llm_weight_grid_wer': {'0.1': 0.17196379709534834, '0.25': 0.16522837297411072, '0.5': 0.1608082508945485, '1.0': 0.15596716480740896, '2.0': 0.1574405388339297}, 'llm_weight': 1.0, 'base_val_select_wer': 0.17701536518627659, 'seconds': 5.1}
+2026-11-19 14:57:42 [737 MB] c0: pipeline values {'frame_temperature': 2.37015800035291, 'tau': 0.06996627059278283, 'llm_weight': 1.0, 'llm_weight_grid_wer': {'0.1': 0.17196379709534834, '0.25': 0.16522837297411072, '0.5': 0.1608082508945485, '1.0': 0.15596716480740896, '2.0': 0.1574405388339297}, 'fluent_logp_per_word': -7.88165954200173}
+2026-11-19 14:58:49 [740 MB] c0 llm: calibrated tcfg-6cd6e27f7d166c5b in 67 s; frame T 2.370158; threshold 0.77; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 14:59:21 [762 MB] c0 llm: decided 701 in 99 s total; fluent-wrong 6; peak 964 MB
+2026-11-19 14:59:43 [765 MB] c0 llm_learned: calibrated tcfg-c21bfcf2898c8f86 in 22 s; frame T 2.370158; threshold 0.82; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 0, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 14:59:51 [754 MB] c0 llm_learned: decided 701 in 30 s total; fluent-wrong 5; peak 964 MB
+2026-11-19 14:59:52 [817 MB] c0 ngram_learned v0.1: safe WPM 2.64 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 10/701 = 0.0143; commits 113; unguarded 2.64; no-BCI 4.02)
+2026-11-19 14:59:52 [817 MB] c0 llm v0.1: safe WPM 4.18 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 12/701 = 0.0171; commits 154; unguarded 4.18; no-BCI 4.02)
+2026-11-19 14:59:52 [817 MB] c0 llm_learned v0.1: safe WPM 4.91 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 13/701 = 0.0185; commits 196; unguarded 4.91; no-BCI 4.02)
+2026-11-19 14:59:52 [817 MB] c0 paired H1_llm_learned_vs_ngram_learned_v0_1: 2.644 -> 4.912, diff +2.268 [1.7605834789886148, 2.8107076020983732]
+2026-11-19 14:59:52 [817 MB] c0 paired H2_llm_learned_vs_llm_v0_1: 4.180 -> 4.912, diff +0.732 [0.19135231259422034, 1.2677329440793823]
+2026-11-19 14:59:52 [817 MB] c0 paired llm_vs_ngram_learned_v0_1: 2.644 -> 4.180, diff +1.535 [0.9124362178032301, 2.1676074084856043]
+2026-11-19 15:01:03 [846 MB] c0 halluc llm_learned [llm]: b2t25-t15-val-eval/p15-26-c0-llm_learned  real commit 196/701 wrong 13 fluent-wrong 5 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 196 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 15:01:03 [846 MB] c0 halluc llm_learned [conservative]: b2t25-t15-val-eval/p15-26-c0-llm_learned  real commit 196/701 wrong 13 fluent-wrong 13 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 196 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 15:01:03 [825 MB] c0 check: {'frame_temperature': [2.37015800035291, 2.37015800035291, True], 'tau': [0.06996627059278283, 0.06996627059278283, True], 'llm_weight': [1.0, 1.0, True], 'fluent': [-7.88165954200173, -7.88165954200173, True], 'l1_same_as_p15_22': 701, 'l0_same_as_p15_22': 701, 'r1prime_same_as_p5_23': 701, 'n': 701, 'reproduces': True}
+2026-11-19 15:01:03 [800 MB] stage c0 done in 243 s; peak 964 MB
+2026-11-19 15:01:03 [800 MB] keep_awake: cleared
+2026-11-19 15:01:05 [121 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 15:01:05 [121 MB] stage c1 start
+2026-11-19 15:01:12 [624 MB] c1: calibration 722, evaluation 701, seed 1, pool None; llm cache 43943; no-BCI 4.0153
+2026-11-19 15:01:12 [625 MB] t15 prep done: {'fluent_logp_per_word': -7.88165954200173, 'n_cal': 722}
+2026-11-19 15:08:28 [859 MB] c1 ngram_learned: calibrated tcfg-90a4711636df8a29 in 435 s; frame T 2.303275; threshold 0.87; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 1322, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 15:11:19 [899 MB] c1 ngram_learned: decided 701 in 606 s total; fluent-wrong 2; peak 916 MB
+2026-11-19 15:11:19 [908 MB] t15 ground prep: 0/722
+2026-11-19 15:12:00 [911 MB] t15 ground prep: 200/722
+2026-11-19 15:12:46 [912 MB] t15 ground prep: 400/722
+2026-11-19 15:13:30 [914 MB] t15 ground prep: 600/722
+2026-11-19 15:13:58 [915 MB] t15 ground prep: tau 0.0711, true texts without labels 0
+2026-11-19 15:13:59 [917 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (CPU wheel)
+2026-11-19 15:23:05 [2564 MB] t15 ground prep: lambda 0.1: val_select WER 0.1724
+2026-11-19 15:23:05 [2564 MB] t15 ground prep: lambda 0.25: val_select WER 0.1667
+2026-11-19 15:23:05 [2564 MB] t15 ground prep: lambda 0.5: val_select WER 0.1619
+2026-11-19 15:23:05 [2564 MB] t15 ground prep: lambda 1.0: val_select WER 0.1564
+2026-11-19 15:23:05 [2564 MB] t15 ground prep: lambda 2.0: val_select WER 0.1574
+2026-11-19 15:23:05 [2564 MB] t15 ground prep done: {'frame_temperature': 2.3032747065730317, 'tau': 0.07107773180764008, 'true_deficit_quantiles': {'0.5': 0.0, '0.9': 0.04675551801790688, '0.95': 0.06823605445121736, '0.99': 0.155473760708209}, 'true_deficit_pass_rate_at_tau': 0.9515235457063712, 'true_without_labels': 0, 'llm_weight_grid_wer': {'0.1': 0.1723847611029257, '0.25': 0.16670174700063145, '0.5': 0.16186066091349188, '1.0': 0.15638812881498632, '2.0': 0.1574405388339297}, 'llm_weight': 1.0, 'base_val_select_wer': 0.1768048831824879, 'seconds': 706.8}
+2026-11-19 15:23:05 [2539 MB] c1: pipeline values {'frame_temperature': 2.3032747065730317, 'tau': 0.07107773180764008, 'llm_weight': 1.0, 'llm_weight_grid_wer': {'0.1': 0.1723847611029257, '0.25': 0.16670174700063145, '0.5': 0.16186066091349188, '1.0': 0.15638812881498632, '2.0': 0.1574405388339297}, 'fluent_logp_per_word': -7.88165954200173}
+2026-11-19 15:49:00 [2572 MB] c1 llm: calibrated tcfg-470dd87dc9ef81ac in 1555 s; frame T 2.303275; threshold 0.58; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 2745, 'llm_texts_scored_live': 3930, 'llm_loaded': True}
+2026-11-19 15:50:01 [2581 MB] c1 llm: decided 701 in 1616 s total; fluent-wrong 6; peak 2722 MB
+2026-11-19 15:50:24 [2573 MB] c1 llm_learned: calibrated tcfg-481abf7197069f19 in 23 s; frame T 2.303275; threshold 0.73; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 2745, 'llm_texts_scored_live': 4133, 'llm_loaded': True}
+2026-11-19 15:50:31 [2580 MB] c1 llm_learned: decided 701 in 30 s total; fluent-wrong 6; peak 2722 MB
+2026-11-19 15:50:39 [2628 MB] c1 ngram_learned v0.1: safe WPM 2.67 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 9/701 = 0.0128; commits 112; unguarded 2.67; no-BCI 4.02)
+2026-11-19 15:50:39 [2629 MB] c1 llm v0.1: safe WPM 3.82 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 10/701 = 0.0143; commits 136; unguarded 3.82; no-BCI 4.02)
+2026-11-19 15:50:39 [2629 MB] c1 llm_learned v0.1: safe WPM 5.58 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 16/701 = 0.0228; commits 221; unguarded 5.58; no-BCI 4.02)
+2026-11-19 15:50:39 [2629 MB] c1 paired H1_llm_learned_vs_ngram_learned_v0_1: 2.671 -> 5.582, diff +2.911 [2.346466817867782, 3.490728555590714]
+2026-11-19 15:50:39 [2629 MB] c1 paired H2_llm_learned_vs_llm_v0_1: 3.823 -> 5.582, diff +1.759 [1.1827884605554158, 2.3300512744343713]
+2026-11-19 15:50:39 [2629 MB] c1 paired llm_vs_ngram_learned_v0_1: 2.671 -> 3.823, diff +1.152 [0.5911637191724995, 1.7640243172114065]
+2026-11-19 15:57:12 [2676 MB] c1 halluc llm_learned [llm]: b2t25-t15-val-eval/p15-26-c1-llm_learned  real commit 221/701 wrong 16 fluent-wrong 6 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 221 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 15:57:12 [2676 MB] c1 halluc llm_learned [conservative]: b2t25-t15-val-eval/p15-26-c1-llm_learned  real commit 221/701 wrong 16 fluent-wrong 16 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 221 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 15:57:12 [2626 MB] stage c1 done in 3368 s; peak 2775 MB
+2026-11-19 15:57:12 [2626 MB] keep_awake: cleared
+2026-11-19 15:57:14 [122 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 15:57:14 [122 MB] stage c2 start
+2026-11-19 15:57:20 [625 MB] c2: calibration 722, evaluation 701, seed 2, pool None; llm cache 48578; no-BCI 4.0153
+2026-11-19 15:57:20 [626 MB] t15 prep done: {'fluent_logp_per_word': -7.88165954200173, 'n_cal': 722}
+2026-11-19 16:02:24 [860 MB] c2 ngram_learned: calibrated tcfg-b8dfc5595d213b68 in 304 s; frame T 2.318721; threshold 0.62; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 1322, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 16:04:15 [899 MB] c2 ngram_learned: decided 701 in 416 s total; fluent-wrong 4; peak 916 MB
+2026-11-19 16:04:16 [907 MB] t15 ground prep: 0/722
+2026-11-19 16:04:44 [911 MB] t15 ground prep: 200/722
+2026-11-19 16:05:15 [912 MB] t15 ground prep: 400/722
+2026-11-19 16:05:45 [914 MB] t15 ground prep: 600/722
+2026-11-19 16:06:04 [915 MB] t15 ground prep: tau 0.0706, true texts without labels 0
+2026-11-19 16:06:05 [916 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (CPU wheel)
+2026-11-19 16:06:07 [2563 MB] t15 ground prep: lambda 0.1: val_select WER 0.1722
+2026-11-19 16:06:07 [2563 MB] t15 ground prep: lambda 0.25: val_select WER 0.1661
+2026-11-19 16:06:07 [2563 MB] t15 ground prep: lambda 0.5: val_select WER 0.1617
+2026-11-19 16:06:07 [2563 MB] t15 ground prep: lambda 1.0: val_select WER 0.1564
+2026-11-19 16:06:07 [2563 MB] t15 ground prep: lambda 2.0: val_select WER 0.1577
+2026-11-19 16:06:07 [2563 MB] t15 ground prep done: {'frame_temperature': 2.318721271409921, 'tau': 0.0705666550155341, 'true_deficit_quantiles': {'0.5': 0.0, '0.9': 0.046460956690186954, '0.95': 0.06783173743983593, '0.99': 0.15443623837319614}, 'true_deficit_pass_rate_at_tau': 0.9515235457063712, 'true_without_labels': 0, 'llm_weight_grid_wer': {'0.1': 0.17217427909913702, '0.25': 0.16607030098926542, '0.5': 0.1616501789097032, '1.0': 0.15638812881498632, '2.0': 0.15765102083771837}, 'llm_weight': 1.0, 'base_val_select_wer': 0.1768048831824879, 'seconds': 111.6}
+2026-11-19 16:06:07 [2538 MB] c2: pipeline values {'frame_temperature': 2.318721271409921, 'tau': 0.0705666550155341, 'llm_weight': 1.0, 'llm_weight_grid_wer': {'0.1': 0.17217427909913702, '0.25': 0.16607030098926542, '0.5': 0.1616501789097032, '1.0': 0.15638812881498632, '2.0': 0.15765102083771837}, 'fluent_logp_per_word': -7.88165954200173}
+2026-11-19 16:17:05 [2575 MB] c2 llm: calibrated tcfg-6f430f2ffc4dcde0 in 658 s; frame T 2.318721; threshold 0.68; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 2745, 'llm_texts_scored_live': 3670, 'llm_loaded': True}
+2026-11-19 16:17:38 [2585 MB] c2 llm: decided 701 in 691 s total; fluent-wrong 6; peak 2720 MB
+2026-11-19 16:17:59 [2575 MB] c2 llm_learned: calibrated tcfg-72379a8dee6688ba in 22 s; frame T 2.318721; threshold 0.65; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 2745, 'llm_texts_scored_live': 3690, 'llm_loaded': True}
+2026-11-19 16:18:07 [2583 MB] c2 llm_learned: decided 701 in 29 s total; fluent-wrong 7; peak 2720 MB
+2026-11-19 16:18:08 [2631 MB] c2 ngram_learned v0.1: safe WPM 3.67 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 23/701 = 0.0328; commits 167; unguarded 3.67; no-BCI 4.02)
+2026-11-19 16:18:08 [2631 MB] c2 llm v0.1: safe WPM 3.85 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 9/701 = 0.0128; commits 134; unguarded 3.85; no-BCI 4.02)
+2026-11-19 16:18:08 [2631 MB] c2 llm_learned v0.1: safe WPM 6.00 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 23/701 = 0.0328; commits 245; unguarded 6.00; no-BCI 4.02)
+2026-11-19 16:18:08 [2631 MB] c2 paired H1_llm_learned_vs_ngram_learned_v0_1: 3.672 -> 5.995, diff +2.323 [1.740269491942356, 2.9295339037599373]
+2026-11-19 16:18:08 [2631 MB] c2 paired H2_llm_learned_vs_llm_v0_1: 3.847 -> 5.995, diff +2.148 [1.6701468370748929, 2.6610846599570968]
+2026-11-19 16:18:08 [2631 MB] c2 paired llm_vs_ngram_learned_v0_1: 3.672 -> 3.847, diff +0.175 [-0.4163566666849792, 0.7930576349321099]
+2026-11-19 16:23:57 [2680 MB] c2 halluc llm_learned [llm]: b2t25-t15-val-eval/p15-26-c2-llm_learned  real commit 245/701 wrong 23 fluent-wrong 7 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 245 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 16:23:57 [2680 MB] c2 halluc llm_learned [conservative]: b2t25-t15-val-eval/p15-26-c2-llm_learned  real commit 245/701 wrong 23 fluent-wrong 23 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 245 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 16:23:57 [2630 MB] stage c2 done in 1604 s; peak 2778 MB
+2026-11-19 16:23:57 [2630 MB] keep_awake: cleared
+2026-11-19 16:23:59 [122 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 16:23:59 [122 MB] stage c3 start
+2026-11-19 16:24:04 [624 MB] c3: calibration 722, evaluation 701, seed 3, pool None; llm cache 52439; no-BCI 4.0153
+2026-11-19 16:24:04 [626 MB] t15 prep done: {'fluent_logp_per_word': -7.88165954200173, 'n_cal': 722}
+2026-11-19 16:28:09 [862 MB] c3 ngram_learned: calibrated tcfg-0806578ce0ed5c58 in 244 s; frame T 2.409326; threshold 0.79; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 1322, 'llm_texts_scored_live': 0, 'llm_loaded': False}
+2026-11-19 16:29:37 [900 MB] c3 ngram_learned: decided 701 in 333 s total; fluent-wrong 2; peak 917 MB
+2026-11-19 16:29:37 [908 MB] t15 ground prep: 0/722
+2026-11-19 16:29:59 [910 MB] t15 ground prep: 200/722
+2026-11-19 16:30:23 [912 MB] t15 ground prep: 400/722
+2026-11-19 16:30:47 [913 MB] t15 ground prep: 600/722
+2026-11-19 16:31:02 [914 MB] t15 ground prep: tau 0.0677, true texts without labels 0
+2026-11-19 16:31:03 [916 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (CPU wheel)
+2026-11-19 16:31:16 [2564 MB] t15 ground prep: lambda 0.1: val_select WER 0.1709
+2026-11-19 16:31:16 [2564 MB] t15 ground prep: lambda 0.25: val_select WER 0.1646
+2026-11-19 16:31:16 [2564 MB] t15 ground prep: lambda 0.5: val_select WER 0.1602
+2026-11-19 16:31:16 [2564 MB] t15 ground prep: lambda 1.0: val_select WER 0.1551
+2026-11-19 16:31:16 [2564 MB] t15 ground prep: lambda 2.0: val_select WER 0.1566
+2026-11-19 16:31:16 [2564 MB] t15 ground prep done: {'frame_temperature': 2.4093261100490837, 'tau': 0.06769811496530338, 'true_deficit_quantiles': {'0.5': 0.0, '0.9': 0.04331731966703121, '0.95': 0.06556119391253336, '0.99': 0.14861746085792496}, 'true_deficit_pass_rate_at_tau': 0.9515235457063712, 'true_without_labels': 0, 'llm_weight_grid_wer': {'0.1': 0.17091138707640496, '0.25': 0.1645969269627447, '0.5': 0.16017680488318248, '1.0': 0.15512523679225426, '2.0': 0.156598610818775}, 'llm_weight': 1.0, 'base_val_select_wer': 0.1757524731635445, 'seconds': 98.7}
+2026-11-19 16:31:16 [2539 MB] c3: pipeline values {'frame_temperature': 2.4093261100490837, 'tau': 0.06769811496530338, 'llm_weight': 1.0, 'llm_weight_grid_wer': {'0.1': 0.17091138707640496, '0.25': 0.1645969269627447, '0.5': 0.16017680488318248, '1.0': 0.15512523679225426, '2.0': 0.156598610818775}, 'fluent_logp_per_word': -7.88165954200173}
+2026-11-19 16:39:40 [2572 MB] c3 llm: calibrated tcfg-28bc945d9d5313c5 in 504 s; frame T 2.409326; threshold 0.52; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 2745, 'llm_texts_scored_live': 3785, 'llm_loaded': True}
+2026-11-19 16:40:11 [2582 MB] c3 llm: decided 701 in 535 s total; fluent-wrong 9; peak 2702 MB
+2026-11-19 16:40:29 [2572 MB] c3 llm_learned: calibrated tcfg-9ef3e5668f2d36f8 in 18 s; frame T 2.409326; threshold 0.75; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 2745, 'llm_texts_scored_live': 3856, 'llm_loaded': True}
+2026-11-19 16:40:35 [2580 MB] c3 llm_learned: decided 701 in 23 s total; fluent-wrong 7; peak 2702 MB
+2026-11-19 16:40:35 [2630 MB] c3 ngram_learned v0.1: safe WPM 3.03 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 12/701 = 0.0171; commits 131; unguarded 3.03; no-BCI 4.02)
+2026-11-19 16:40:35 [2630 MB] c3 llm v0.1: safe WPM 4.78 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 16/701 = 0.0228; commits 177; unguarded 4.78; no-BCI 4.02)
+2026-11-19 16:40:35 [2630 MB] c3 llm_learned v0.1: safe WPM 5.23 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 16/701 = 0.0228; commits 211; unguarded 5.23; no-BCI 4.02)
+2026-11-19 16:40:36 [2630 MB] c3 paired H1_llm_learned_vs_ngram_learned_v0_1: 3.029 -> 5.229, diff +2.200 [1.6593335862539293, 2.7333377640463183]
+2026-11-19 16:40:36 [2630 MB] c3 paired H2_llm_learned_vs_llm_v0_1: 4.778 -> 5.229, diff +0.451 [-0.07107933034602137, 0.9560354991891032]
+2026-11-19 16:40:36 [2630 MB] c3 paired llm_vs_ngram_learned_v0_1: 3.029 -> 4.778, diff +1.749 [1.1172204408745587, 2.3934763805604717]
+2026-11-19 16:45:17 [2677 MB] c3 halluc llm_learned [llm]: b2t25-t15-val-eval/p15-26-c3-llm_learned  real commit 211/701 wrong 16 fluent-wrong 7 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 211 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 16:45:17 [2677 MB] c3 halluc llm_learned [conservative]: b2t25-t15-val-eval/p15-26-c3-llm_learned  real commit 211/701 wrong 16 fluent-wrong 16 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 211 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 16:45:17 [2628 MB] stage c3 done in 1278 s; peak 2776 MB
+2026-11-19 16:45:17 [2628 MB] keep_awake: cleared
+2026-11-19 16:45:18 [121 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 16:45:19 [122 MB] stage p1 start
+2026-11-19 16:45:23 [626 MB] p1: calibration 722, evaluation 701, seed 0, pool p15-26|t15|pool|p1; llm cache 56613; no-BCI 4.0005
+2026-11-19 16:45:24 [627 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (CPU wheel)
+2026-11-19 16:45:38 [2279 MB] t15 prep done: {'fluent_logp_per_word': -7.926069516997278, 'n_cal': 722}
+2026-11-19 16:49:20 [2519 MB] p1 ngram_learned: calibrated tcfg-3c1b5d6cb42b1c82 in 222 s; frame T 2.406318; threshold 0.64; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 1322, 'llm_texts_scored_live': 147, 'llm_loaded': True}
+2026-11-19 16:50:47 [2551 MB] p1 ngram_learned: decided 701 in 309 s total; fluent-wrong 2; peak 2571 MB
+2026-11-19 16:50:47 [2558 MB] t15 ground prep: 0/722
+2026-11-19 16:51:09 [2560 MB] t15 ground prep: 200/722
+2026-11-19 16:51:32 [2561 MB] t15 ground prep: 400/722
+2026-11-19 16:51:54 [2564 MB] t15 ground prep: 600/722
+2026-11-19 16:52:09 [2565 MB] t15 ground prep: tau 0.0683, true texts without labels 0
+2026-11-19 16:52:09 [2565 MB] t15 ground prep: lambda 0.1: val_select WER 0.1719
+2026-11-19 16:52:09 [2565 MB] t15 ground prep: lambda 0.25: val_select WER 0.1666
+2026-11-19 16:52:09 [2565 MB] t15 ground prep: lambda 0.5: val_select WER 0.1615
+2026-11-19 16:52:09 [2565 MB] t15 ground prep: lambda 1.0: val_select WER 0.1577
+2026-11-19 16:52:09 [2565 MB] t15 ground prep: lambda 2.0: val_select WER 0.1596
+2026-11-19 16:52:09 [2565 MB] t15 ground prep done: {'frame_temperature': 2.406318163119516, 'tau': 0.0683019102717672, 'true_deficit_quantiles': {'0.5': 0.0, '0.9': 0.03763407439488558, '0.95': 0.0655890690746455, '0.99': 0.14456474622311374}, 'true_deficit_pass_rate_at_tau': 0.9515235457063712, 'true_without_labels': 0, 'llm_weight_grid_wer': {'0.1': 0.1719380174060709, '0.25': 0.16663128847378475, '0.5': 0.16153682869879007, '1.0': 0.15771598386754404, '2.0': 0.15962640628316704}, 'llm_weight': 1.0, 'base_val_select_wer': 0.1770324771810656, 'seconds': 82.5}
+2026-11-19 16:52:09 [2540 MB] p1: pipeline values {'frame_temperature': 2.406318163119516, 'tau': 0.0683019102717672, 'llm_weight': 1.0, 'llm_weight_grid_wer': {'0.1': 0.1719380174060709, '0.25': 0.16663128847378475, '0.5': 0.16153682869879007, '1.0': 0.15771598386754404, '2.0': 0.15962640628316704}, 'fluent_logp_per_word': -7.926069516997278}
+2026-11-19 17:00:11 [2573 MB] p1 llm: calibrated tcfg-c1a314700c0e7e73 in 482 s; frame T 2.406318; threshold 0.65; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 2745, 'llm_texts_scored_live': 3674, 'llm_loaded': True}
+2026-11-19 17:00:35 [2582 MB] p1 llm: decided 701 in 506 s total; fluent-wrong 5; peak 2722 MB
+2026-11-19 17:00:52 [2573 MB] p1 llm_learned: calibrated tcfg-ae82efcea3162235 in 17 s; frame T 2.406318; threshold 0.69; controls [('uniform', 0, 15), ('shuffled', 0, 15)]; misses {'base_nbest_new_decodes': 2745, 'llm_texts_scored_live': 3674, 'llm_loaded': True}
+2026-11-19 17:00:58 [2579 MB] p1 llm_learned: decided 701 in 23 s total; fluent-wrong 6; peak 2722 MB
+2026-11-19 17:00:58 [2629 MB] p1 ngram_learned v0.1: safe WPM 3.46 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 22/701 = 0.0314; commits 164; unguarded 3.46; no-BCI 4.00)
+2026-11-19 17:00:58 [2629 MB] p1 llm v0.1: safe WPM 3.90 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 7/701 = 0.0100; commits 138; unguarded 3.90; no-BCI 4.00)
+2026-11-19 17:00:58 [2629 MB] p1 llm_learned v0.1: safe WPM 5.83 (certified; LTT a=0.05 d=0.1 n_cal=271; test wrong-commit 29/701 = 0.0414; commits 253; unguarded 5.83; no-BCI 4.00)
+2026-11-19 17:00:59 [2629 MB] p1 paired H1_llm_learned_vs_ngram_learned_v0_1: 3.455 -> 5.831, diff +2.376 [1.79928384503977, 2.9810504211821205]
+2026-11-19 17:00:59 [2630 MB] p1 paired H2_llm_learned_vs_llm_v0_1: 3.901 -> 5.831, diff +1.930 [1.3810957956137793, 2.5072740672756533]
+2026-11-19 17:00:59 [2630 MB] p1 paired llm_vs_ngram_learned_v0_1: 3.455 -> 3.901, diff +0.446 [-0.16159142727771292, 1.0673465347764257]
+2026-11-19 17:12:44 [2691 MB] p1 halluc llm_learned [llm]: b2t25-t15-p15-26-p1/p15-26-p1-llm_learned  real commit 253/701 wrong 29 fluent-wrong 6 (llm-table)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 253 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 17:12:44 [2691 MB] p1 halluc llm_learned [conservative]: b2t25-t15-p15-26-p1/p15-26-p1-llm_learned  real commit 253/701 wrong 29 fluent-wrong 29 (conservative)  null 0/300  scrambled 0/300  swapped 0/701 (paired n10 253 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 17:12:45 [2643 MB] stage p1 done in 1646 s; peak 2779 MB
+2026-11-19 17:12:45 [2643 MB] keep_awake: cleared
+2026-11-19 17:12:46 [121 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 17:12:46 [121 MB] stage verdict start
+2026-11-19 17:12:46 [122 MB] verdict: part a {'level': 'replicates', 'gain': 'replicates', 'n_pass_A': 4, 'n_pass_G': 4}; part b {'level': 'not run', 'gain': 'not run'}; claim: not decided (part a: replicates; part b: not run)
+2026-11-19 17:12:46 [123 MB] stage verdict done in 0 s; peak 123 MB
+2026-11-19 17:12:46 [123 MB] keep_awake: cleared
+2026-11-19 18:04:39 [122 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 18:04:39 [122 MB] stage t12 start
+2026-11-19 18:04:46 [1933 MB] t12: calibration 480, evaluation 400; llm cache 16620; no-BCI 4.1140; pipeline {'frame_temperature': 2.528091520707864, 'tau': 0.47419631304442217, 'llm_weight': 0.5, 'fluent_logp_per_word': -8.916451934532247}; peak 2435 MB
+2026-11-19 18:04:46 [1933 MB] t12 llm: done before, loaded arm-llm.json
+2026-11-19 18:04:46 [1933 MB] t12 llm_learned: done before, loaded arm-llm_learned.json
+2026-11-19 18:04:46 [1933 MB] t12 llm_prefix: done before, loaded arm-llm_prefix.json
+2026-11-19 18:04:46 [1934 MB] t12: L0 vs committed P15-05 T12 B1 decisions: {'same_action_and_text': 400, 'n': 400, 'ref_commits': 15, 'ref_wrong': 8}
+2026-11-19 18:04:47 [2013 MB] t12 llm v0.1: safe WPM 1.10 (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 8/400 = 0.0200; commits 15; unguarded 1.10; no-BCI 4.11)
+2026-11-19 18:04:47 [2013 MB] t12 llm_learned v0.1: safe WPM 2.37 (certified; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 12/400 = 0.0300; commits 31; unguarded 2.37; no-BCI 4.11)
+2026-11-19 18:04:47 [2013 MB] t12 llm_prefix v0.1: safe WPM 0.00 (above-alpha; LTT a=0.05 d=0.1 n_cal=180; test wrong-commit 138/400 = 0.3450; commits 138; unguarded 0.00; no-BCI 4.11)
+2026-11-19 18:04:47 [2013 MB] t12 paired H1_llm_learned_vs_p5_23_learned_v0_1: 1.868 -> 2.366, diff +0.498 [0.05100218691759359, 1.1268568843664888]
+2026-11-19 18:04:47 [2013 MB] t12 paired H2_llm_learned_vs_llm_v0_1: 1.096 -> 2.366, diff +1.270 [0.32686527118466996, 2.31043271372807]
+2026-11-19 18:04:48 [2013 MB] t12 paired llm_vs_p5_23_learned_v0_1: 1.868 -> 1.096, diff -0.772 [-1.6002946663774866, 0.031119188205729748]
+2026-11-19 18:04:48 [2013 MB] t12 paired llm_prefix_vs_p5_24_prefix_v0_2_reading: 4.507 -> 4.949, diff +0.442 [0.19317178682606523, 0.7416730206937581]
+2026-11-19 18:04:48 [2013 MB] t12 paired llm_prefix_vs_p5_24_prefix_v0_2: 4.761 -> 5.247, diff +0.485 [0.2135426531824045, 0.8128013561543088]
+2026-11-19 18:04:48 [2014 MB] t12 paired llm_prefix_vs_llm_learned_v0_2_reading: 2.305 -> 4.949, diff +2.644 [1.4644611601260118, 3.807607056979795]
+2026-11-19 18:04:58 [2033 MB] t12 halluc llm [llm]: b2t24-t12-test/p15-26-t12-llm  real commit 15/400 wrong 8 fluent-wrong 4 (llm-table)  null 0/300  scrambled 0/300  swapped 0/400 (paired n10 15 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 18:04:58 [2033 MB] t12 halluc llm [conservative]: b2t24-t12-test/p15-26-t12-llm  real commit 15/400 wrong 8 fluent-wrong 8 (conservative)  null 0/300  scrambled 0/300  swapped 0/400 (paired n10 15 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 18:05:02 [2034 MB] t12 halluc llm_learned [llm]: b2t24-t12-test/p15-26-t12-llm_learned  real commit 31/400 wrong 12 fluent-wrong 3 (llm-table)  null 0/300  scrambled 0/300  swapped 0/400 (paired n10 31 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 18:05:02 [2034 MB] t12 halluc llm_learned [conservative]: b2t24-t12-test/p15-26-t12-llm_learned  real commit 31/400 wrong 12 fluent-wrong 12 (conservative)  null 0/300  scrambled 0/300  swapped 0/400 (paired n10 31 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 18:05:06 [2037 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (CPU wheel)
+2026-11-19 18:05:10 [3683 MB] t12 halluc llm_prefix [llm]: b2t24-t12-test/p15-26-t12-llm_prefix  real commit 138/400 wrong 138 fluent-wrong 0 (llm-table)  null 0/300  scrambled 0/300  swapped 0/400 (paired n10 138 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 18:05:10 [3683 MB] t12 halluc llm_prefix [conservative]: b2t24-t12-test/p15-26-t12-llm_prefix  real commit 138/400 wrong 138 fluent-wrong 138 (conservative)  null 0/300  scrambled 0/300  swapped 0/400 (paired n10 138 n01 0 n11 0)  fidetype.halluc/0.2
+2026-11-19 18:05:10 [3678 MB] stage t12 done in 31 s; peak 3711 MB
+2026-11-19 18:05:10 [3678 MB] keep_awake: cleared
+2026-11-19 18:05:11 [122 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-19 18:05:11 [122 MB] stage verdict start
+2026-11-19 18:05:11 [122 MB] verdict: part a {'level': 'replicates', 'gain': 'replicates', 'n_pass_A': 4, 'n_pass_G': 4}; part b {'level': 'does not replicate on T12', 'gain': 'gain does not replicate on T12'}; claim: above gaze typing on T15 (stable over calibration draws); not replicated on T12
+2026-11-19 18:05:11 [124 MB] stage verdict done in 0 s; peak 124 MB
+2026-11-19 18:05:11 [124 MB] keep_awake: cleared
