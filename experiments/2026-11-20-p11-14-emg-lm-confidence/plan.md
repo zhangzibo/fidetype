@@ -106,3 +106,6 @@ Only if `*` passes H2 (certified, safe, non-vacuous, V6 pass, value > 5.08): a d
 3. No change of split, window, decoder, gate, signal, arm, selection rule, metric or controls after this commit. Any variant is a new item.
 
 Write-up: `results.md` in this folder with the verdicts and numbers as computed, including failures.
+
+## Amendment 1 (2026-11-19, before any real-window guard, selection or decision; only a 6-window calibration smoke test of the decoder code had run)
+A synthetic check of `calibrate` (test `test_two_item_nbest_in_calibrate`, no real data) showed a flaw in the two-item n-best of arms A and L: when c < 0.5, the empty reject item is the top-1. It is always wrong, so the temperature that `calibrate` fits on the fit part grows large and compresses `p_top1` into about [0.50, 0.56]. The LTT grid (step 0.01) then has almost no resolution. Change: **if c <= 0.5, the n-best of arms A and L is empty** (the guard withholds). The guard could not commit there before either (the reject item was the top-1), so the commit rule is the same: commit only if c > 0.5 and the certified threshold is met. In the tuning criterion, items with c <= 0.5 count as not committable for A and L. Nothing else changes.
