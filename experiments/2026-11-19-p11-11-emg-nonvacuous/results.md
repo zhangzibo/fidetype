@@ -29,6 +29,8 @@ Hypotheses: **H1** (S certified, safe, non-vacuous) **not supported**: S was ref
 
 **Gap rule.** The plan closes gap 102 if S gives a certified, non-vacuous v0.1 value with V6 pass, *or* (fallback) X gives a certified, non-vacuous proposed-v0.2 value. The fallback path holds, so gap 102 closes. V6 fails for X, and the sentence-level v0.1 path failed: both go to the new gap 104 (P11-12).
 
+> **Orchestrator note (2026-11-19):** gap 102 is **not closed**. Status: in progress (partial). Arm X is non-vacuous under the proposed v0.2, but it fails the null control V6 (6.2 % > 5 %). The roadmap done-when for P11-11 asks for the same controls as P11-09. The adopted v0.1 value is still 0.07. Gap 102 closes after the P11-12 (gap 104) no-signal gate passes the controls. The agent's text above stays unchanged.
+
 ## Main numbers (1,221 track-test prompts of the 8 users; 4,985 intended words; 119.8 min neural time)
 | Measure | Arm X | Arm K |
 |---|---|---|

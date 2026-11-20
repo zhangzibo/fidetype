@@ -94,6 +94,9 @@ Two **declared-subset** cards in the research-only section (8 of 104 track test 
 
 The latency failure goes to the existing gap 37 (P3-06, logits guard inside the latency budget).
 
+## Correction (2026-11-19)
+`run.py` called `clopper_pearson(wrong, n, 0.05)`. The third argument is the confidence level (`fidetype.utils.binomial.clopper_pearson(k, n, level=0.95)`), so the call gave a 5 % interval. The call now uses 0.95. No number on this page changes: this page quotes the scorer's interval [0.000, 0.003]. Three fields in `results/results.json` were affected: `arms.{P,L,H}.wrong_commit_cp95` held [0.0, 0.0006]. They were recomputed from the stored counts (0 wrong of 1,221 / 1,221 / 1,191) and now hold [0.0, 0.003] / [0.0, 0.003] / [0.0, 0.0031]. Found by the P11-11 agent.
+
 ## Rerun
 | Step | Command (repo root) |
 |---|---|

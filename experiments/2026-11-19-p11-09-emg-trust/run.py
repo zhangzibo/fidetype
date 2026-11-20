@@ -533,7 +533,7 @@ def stage_score(rows: list[dict]) -> dict:
         com = [x["action"] == "commit" for x in d["real"]]
         wrong = sum(c and (x["text"] or "").split() != t.split() for c, x, t in zip(com, d["real"], truths))
         top1 = sum(top1_text(x).split() == t.split() for x, t in zip(d["real"], truths))
-        lo, hi = clopper_pearson(wrong, len(ev), 0.05)
+        lo, hi = clopper_pearson(wrong, len(ev), 0.95)
         a.update(n_commits=int(sum(com)), n_wrong_commits=int(wrong), wrong_commit_rate=wrong / len(ev),
                  wrong_commit_cp95=[lo, hi], commit_rate=sum(com) / len(ev),
                  error_among_commits=(wrong / sum(com)) if sum(com) else None, top1_exact=top1 / len(ev),

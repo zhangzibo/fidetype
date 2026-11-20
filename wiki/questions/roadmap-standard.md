@@ -831,9 +831,9 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Done when:** wiki/sources/emg2qwerty.md exists with citation, licence, TL;DR, Table 3 numbers with page / table, the split scheme and limits; the entity page, the P11-01 results and the frontier decoder page link it.
 
 #### P11-11 Non-vacuous EMG safe WPM (commit unit or LM)
-- **Gap:** 102 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-09; closed 2026-11-19). Follow-up of P11-09, P11-07.
-- **Status:** `done` (2026-11-19).
-- **Depends on:** P11-09 (done); P11-07 (character LM + beam) optional.
+- **Gap:** 102 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-09; reopened 2026-11-19 by the orchestrator). Follow-up of P11-09, P11-07.
+- **Status:** `in_progress` (partial, 2026-11-19). Reason: arm X non-vacuous under proposed v0.2 but fails null control V6 (6.2 % > 5 %); v0.1 still 0.07; closes after P11-12 (gap 104) no-signal gate passes controls.
+- **Depends on:** P11-09 (done); P11-12 (gap 104); P11-07 (character LM + beam) optional.
 - **Source:** P11-09 ([results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)): the certified guard on the P11-01 EMG decoder never commits. A COMMIT must equal the whole prompt key sequence, with the user's own errors and Backspace keys; at 17.9 % key errors the top-1 is exactly right on 2 / 1,221 prompts.
 - **Done when:** a pre-registered EMG guard gives a non-vacuous certified safe WPM on held-out emg2qwerty prompts, with a commit unit the decoder can get right (word or key-prefix commits under the proposed v0.2, or the intended text after Backspace as the target) or with LM / lexicon decoding (P11-07), and the same controls as P11-09; or the result states with numbers why it stays vacuous.
 - **Result (2026-11-19):** [results](../../experiments/2026-11-19-p11-11-emg-nonvacuous/results.md). Pre-registration `b412c76`, amendment 1 + code `5f54a45` (out-of-lexicon gate), results `766b2b3`. Target = intended text after Backspace; key CTC beam 64 n-best rescored with a leak-free Tatoeba 6-gram LM and a track-train lexicon. Word-prefix arm (learned prefix score, LTT alpha 0.05, delta 0.1): certified, **non-vacuous proposed-v0.2 safe WPM 4.23 [2.60, 6.34]** on the 1,221 track-test prompts (420 commits, 35 wrong, CP95 [0.020, 0.040]) > no-BCI 3.09 / 2.93, not clearly above; adopted v0.1 only 0.07. Sentence-level arms refused (time-shuffled null 19-20 / 300); the prefix arm fails the evaluation null control (6.2 %); raw-key track arm vacuous (no card). New gap 104 = P11-12.
