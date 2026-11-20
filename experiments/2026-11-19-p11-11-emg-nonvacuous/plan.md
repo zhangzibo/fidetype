@@ -112,3 +112,11 @@ Gap 102 closes iff arm S gives a certified, non-vacuous v0.1 value (V1 + V3), wi
 3. No change of split, window, decoder, grid, rule, metric or controls after this commit. Any variant is a new item.
 
 Write-up: `results.md` in this folder, with the verdicts and numbers as computed, including a failure.
+
+## Amendment 1 (2026-11-19 18:35, before any evaluation-session decision)
+Found by a smoke test of the code path on **calibration prompts only** (200 track-val prompts of 2 users as calibration, 60 other track-val prompts of the same users as a stand-in evaluation set; the original Tatoeba LM; `(w, c) = (0.5, 2)`; 30 to 100 control trials). No track-test window was decoded.
+1. **Arm X was refused** without a change: the uniform control committed 30 / 30, the time-shuffled control 2 / 30. Reason: on a no-signal input the 64-best list holds variants of the last characters of one long nonsense string, so the n-best agreement features of the learned prefix score say "certain" for the first words. Arms S and K passed all controls.
+2. **Fix (all arms, one decoder): an out-of-lexicon gate.** The decoder returns an **empty n-best list** (the guard then withholds) if the top-1 intended text is empty or more than half of its words are not in the lexicon (`OOV_GATE = 0.5`; for arm K the rule reads the intended text of the top-1 key text). With the gate, the smoke arm X passed (uniform 0 / 100, shuffled 1 / 100, input-level 0 / 100); arm S passed too.
+3. **LM blocklist code:** the containment check is now an indexed form of the same rule (same result, tested); the slow form did not finish. Result: 1,445 more Tatoeba sentences removed (2,399 intended texts, 2,348 of 15+ characters); held-out perplexity 3.158; SHA-256 `7c4f133c...`. Lexicon: 927 track-train sessions, 16,875 words.
+4. Smoke numbers (disclosure, stand-in set of 60 calibration prompts, 2 strong users): S 5 commits, 0 wrong; X 28 commits, 1 wrong. These are not results.
+Nothing else changes: split, window, beam, tuning rule and grid, guards, alpha, delta, metric, verdicts and gap rule are as above.
