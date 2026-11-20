@@ -151,3 +151,16 @@ def test_cpu_smoke_search_select_grid_summary(tmp_path):
 
 def test_refuses_p15_08_folder(tmp_path):
     assert p33.main(["select", "--out", str(p33.P8_OUT / "x")]) == 2
+
+
+def test_pad_time_keeps_valid_outputs():
+    x = np.random.default_rng(0).standard_normal((2, 50, 192)).astype(np.float32)
+    xp = p33.pad_time(x, 128)
+    assert xp.shape == (2, 128, 192) and np.array_equal(xp[:, :50], x) and not xp[:, 50:].any()
+    assert p33.pad_time(xp, 128) is xp
+    torch.manual_seed(0)
+    m = e1.XBody(T8.SMALL, "willett").eval()
+    with torch.no_grad():
+        a = m(torch.from_numpy(x), normalised=True)
+        b = m(torch.from_numpy(xp), normalised=True)[:, :50]
+    assert torch.allclose(a, b, atol=1e-5)

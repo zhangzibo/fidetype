@@ -124,3 +124,9 @@ RAM target ≤ 5 GB (Willett cache about 0.75 GB; no data-loader processes; 2 CP
 | Check | `Get-Content C:\Users\zhang\bci-data\derived\p15-33\run.log -Tail 5`; `Test-Path C:\Users\zhang\bci-data\derived\p15-33\DONE` |
 | Stop (saves latest.pt) | `New-Item C:\Users\zhang\bci-data\derived\p15-33\stop` |
 | Summary only | `C:\venvs\fidetype-rocm\Scripts\python.exe experiments\2026-11-20-p15-33-low-data-recipe\p33.py summary` |
+
+## Amendment 1 (2026-11-19 22:50, before any search result was read)
+- **What:** stretched training batches (strong augmentation, candidates A and C) are post-padded to a multiple of 128 frames (`pad_time` in `p33.py`).
+- **Why:** performance only. The first launch ran at about 1.26 s/step on candidate A (probe: 0.39 s/step). Time stretch gives a new tensor length almost every step, and MIOpen tunes a new kernel for each new shape. The probe did not show this because its second pass reused the shapes of the first pass.
+- **Effect on results:** none by design. The model is causal and CTC uses the true lengths, so padding after the last frame does not change any valid output (unit test `test_pad_time_keeps_valid_outputs`). The noise tensor has a different shape, so the random draws differ; the augmentation distribution is the same.
+- **Handling:** the job was stopped with the `stop` file at step 238 of the first run (A / R-b30-s0). That run folder was deleted and the run restarts from step 0 with the fix. No val or test number was read before this amendment.

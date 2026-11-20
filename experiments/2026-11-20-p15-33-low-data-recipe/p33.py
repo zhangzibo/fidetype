@@ -171,6 +171,20 @@ def stretch(x: np.ndarray, r: float) -> np.ndarray:
     return xf[i0] * (1 - f) + xf[i1] * f
 
 
+PAD_MULT = 128
+
+
+def pad_time(x: np.ndarray, mult: int) -> np.ndarray:
+    """Post-pad a (B, T, C) batch to a multiple of ``mult`` frames. Performance only (amendment 1): stretched
+    batches have a new T almost every step, and MIOpen tunes a kernel per new shape. The model is causal and
+    CTC uses the true lengths, so extra padding after the last frame does not change any valid output."""
+    T = x.shape[1]
+    Tp = -(-T // mult) * mult
+    if Tp == T:
+        return x
+    return np.concatenate([x, np.zeros((x.shape[0], Tp - T, x.shape[2]), x.dtype)], axis=1)
+
+
 def augment(xn: torch.Tensor, lengths: torch.Tensor, rec: Recipe, gen: torch.Generator) -> torch.Tensor:
     """P15-08 augmentation (offset, noise, time masks) + channel dropout (whole electrodes per sentence)."""
     xn = e1.augment_w(xn, lengths, rec, gen)
@@ -239,6 +253,8 @@ def train_run(ctx: Ctx, store, rec: Recipe, arm: str, budget: str, seed: int, la
         else:
             items = [(store.x[i], tgt[i], store.meta[i]["session"]) for i in bi]
         b = e1.collate(items)
+        if rec.stretch_hi > rec.stretch_lo:
+            b["x"] = pad_time(b["x"], PAD_MULT)
         set_train(model, rec)
         for g in opt.param_groups:
             g["lr"] = e1.lr_at(step, total, rec.lr, rec.lr_min, rec.warmup)
