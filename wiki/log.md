@@ -1415,3 +1415,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Removed the stale phrase "agent run numbers: to be added by the orchestrator" from the P15-26 and P15-27 notes.
 - New gap 124 = [P2-13](questions/roadmap-standard.md#p2-13-ci-latency-budget-tests-flake-on-shared-runners): CI run 44673291448 (commit `8180a30`) failed `tests/test_collector_pipeline.py` (emg-key WebSocket latency p95 320 ms vs the 50 ms budget, windows-latest, Python 3.12); the rerun passed.
 - Updated: open-gaps (124 added), roadmap (P2-13), tracker (P2-13 `todo`), dashboard.
+
+## [2026-11-20] setup | P11-14: guard confidence for the in-beam LM EMG decoder (gap 123 closed; new gaps 125-126)
+- Pre-registration `39f6432`, code + amendment 1 `a3d50eb`, card script `659616f`, results `db96a4e`, leaderboard `ecd3773` ([results](../experiments/2026-11-20-p11-14-emg-lm-confidence/results.md)). Research only; aggregates only; CPU only.
+- Primary arm L-FL (selected on calibration tuning items only): certified safe WPM v0.1 **6.80 [4.49, 9.63]**, 285 commits, 52 wrong; above P11-12 S 4.10 / SL 5.08 and P11-07 S 3.37 (reproduced exactly); first EMG CI above no-BCI 3.09; all controls pass.
+- The gain comes from the fused posterior over a wider competitor set plus the LM per character; the acoustic-only posterior fails.
+- New intended_text card `emg2qwerty__p11-14-intended-lfl-subset8__guard`; leaderboard regenerated, `--check` passes.
+- New gaps 125 = [P11-15](questions/roadmap-standard.md#p11-15-latency-cost-of-the-p11-14-confidence) (latency cost of the confidence), 126 = [P11-16](questions/roadmap-standard.md#p11-16-p11-14-confidence-signals-for-prefix-commits) (prefix commits). P15-25 (gap 91) note: use decoder FL + confidence L-FL.
+- Updated: open-gaps (123 closed, 125-126 added), roadmap (P11-14 done, P11-15, P11-16, P15-25 note), tracker, dashboard, HANDOFF.

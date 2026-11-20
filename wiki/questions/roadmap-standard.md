@@ -903,10 +903,25 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-14 Guard confidence for the in-beam LM decoder
 - **Gap:** 123 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-07). Follow-up of P11-07, P11-12.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20).
 - **Depends on:** P11-07 (done); P11-12 (done); CPU.
 - **Source:** P11-07 ([results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md)): with the in-beam LM decoder the top-1 intended text is right more often (32.4 % vs 24.0 %), but the certified safe WPM is lower (arm S 3.37 vs 4.10; SL 3.16 vs 5.08; error among commits 0.28 vs 0.21). The fused n-best is confident on wrong texts too.
 - **Done when:** a pre-registered confidence for the in-beam decoder (for example an n-best temperature or LM-weight split, acoustic-only features, or a learned score with beam features) gives a certified, non-vacuous safe WPM v0.1 at least the P11-12 value on the same split, with the same gate and controls; or the result states with numbers why not.
+- **Result (2026-11-20):** [results](../../experiments/2026-11-20-p11-14-emg-lm-confidence/results.md). Pre-registration `39f6432`, code + amendment 1 `a3d50eb`, card script `659616f`, results `db96a4e`, leaderboard `ecd3773`. Same split, gate, LTT and controls. Six primary candidates ({own n-best posterior P, acoustic-only posterior A, learned score L} x {decoder F, FL}); selection on the 765 calibration tuning items only chose **L-FL**. Certified safe WPM v0.1 **6.80 [4.49, 9.63]** (285 commits, 52 wrong = 0.043; controls 0 / 0 / 0 of 300 and 0 / 1,221 time-shuffled and zero EMG), above P11-12 S 4.10 and SL 5.08, and above P11-07 S 3.37 (reproduced exactly); the first EMG value with the CI above no-BCI 3.09. The gain comes from the fused posterior over a wider competitor set (beam + no-LM 64-best; test AUROC 0.88 vs 0.81) and the LM log-prob per character; the acoustic-only posterior fails (AUROC 0.60, arm A 0.43). New intended_text card (scorer 6.80 [4.36, 9.65]). Gap 123 closed. Follow-ups: [P11-15](#p11-15-latency-cost-of-the-p11-14-confidence) (gap 125), [P11-16](#p11-16-p11-14-confidence-signals-for-prefix-commits) (gap 126).
+
+#### P11-15 Latency cost of the P11-14 confidence
+- **Gap:** 125 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P11-14). Follow-up of P11-14, P3-12.
+- **Status:** `todo`.
+- **Depends on:** P11-14 (done); P3-12 (gap 122); CPU.
+- **Source:** P11-14 ([results](../../experiments/2026-11-20-p11-14-emg-lm-confidence/results.md)): the learned confidence L-FL needs a second beam (no LM, beam 64) and an exact CTC re-scoring of about 70 key sequences per window. The offline decision time with a memoised decode is p50 25 ms, p95 65 ms; the end-of-window cost of the second beam and the re-scoring was not measured.
+- **Done when:** the end-of-window cost of the L-FL confidence is measured on the 1,221 evaluation windows (CPU, class `timing`), and a pre-registered cheaper competitor set (for example the in-beam beam at a larger width only, or the no-LM beam run in streaming form) is tested for the same certified value (within the CI) under the P3-12 50 ms rule; or the result states with numbers why not.
+
+#### P11-16 P11-14 confidence signals for prefix commits
+- **Gap:** 126 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P11-14). Follow-up of P11-14, P11-12.
+- **Status:** `todo`.
+- **Depends on:** P11-14 (done); safe-wpm/0.2 (proposed, P14-26); CPU.
+- **Source:** P11-14 ([results](../../experiments/2026-11-20-p11-14-emg-lm-confidence/results.md)): the wide-set fused posterior `p_fU` and the LM log-prob per character carry the confidence gain for sentence commits. Word-prefix commits (P11-12 arm X, proposed v0.2 4.25) still use the built-in learned prefix score on the old decoder.
+- **Done when:** a pre-registered prefix guard on the in-beam decoder uses the P11-14 signals (per prefix: the wide-set fused mass of the prefix and the LM per character) and reports a certified proposed-v0.2 value with the P11-12 controls, compared with arm X (4.25) and with L-FL (6.80 v0.1); or the result states with numbers why not.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
@@ -1646,6 +1661,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P15-08 E1a (weights local in `C:/Users/zhang/bci-data/derived/p15-08/runs/`); a licence-clean character LM and CTC beam search (P11-07, gap 87); CPU.
 - **Source:** [E1a plan](../../experiments/2026-11-19-p15-08-e1-cross-body/plan.md#deviations-from-the-roadmap-item): the roadmap and the north star ask for "greedy CER and CER with the same character LM" (the same-LM rule), so that a gain cannot come from English character statistics alone. E1a reads out greedy CTC only, because no licence-clean character LM exists yet.
 - **Done when:** every E1a arm and budget is re-scored with one character LM and one beam setting (fixed before the re-score), and the H1-H4 rules of the E1a plan are evaluated again on the LM CER next to the greedy CER.
+- **Note (2026-11-20, P11-14):** use the P11-07 in-beam decoder FL (w 0.25, beta 1, lam 8, beam 8) for the LM CER, and the P11-14 confidence L-FL if any part commits under a guard: it gives the highest certified EMG value (6.80 [4.49, 9.63]). FL uses a research-only lexicon term; decoder F (licence-clean LM only, w 0.5) is the clean alternative (L-F 7.02, not the selected arm). Neither meets the 50 ms CPU budget yet (gaps 122, 125).
 
 #### P15-26 T12 replication of LLM rescoring + learned commit confidence
 - **Gap:** 93 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-22). Follow-up of P15-22.
