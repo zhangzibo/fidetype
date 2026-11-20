@@ -1,0 +1,112 @@
+2026-11-19 18:27:58 lm: {'n_targets': 2399, 'n_long_targets': 2348, 'n_removed_extra': 1445, 'n_train': 600000, 'n_heldout': 5000, 'ppl_heldout_2000': 3.1578027454153936, 'sha256': '7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8', 'seconds': 31.5}
+2026-11-19 18:28:01 lexicon: 927 track-train sessions, 16875 words (count >= 2)
+2026-11-19 18:31:10 nbest: 250 windows (250 new), 46 s
+2026-11-19 18:31:53 nbest: 500 windows (500 new), 89 s
+2026-11-19 18:32:38 nbest: 750 windows (750 new), 134 s
+2026-11-19 18:33:31 nbest: 1000 windows (1000 new), 187 s
+2026-11-19 18:34:07 nbest: 1250 windows (1250 new), 224 s
+2026-11-19 18:34:12 nbest: 1500 windows (1500 new), 228 s
+2026-11-19 18:34:57 nbest: 1750 windows (1750 new), 274 s
+2026-11-19 18:35:39 nbest: 2000 windows (2000 new), 315 s
+2026-11-19 18:36:28 nbest: 2250 windows (2250 new), 364 s
+2026-11-19 18:37:16 nbest: 2500 windows (2500 new), 412 s
+2026-11-19 18:37:56 nbest: 2750 windows (2750 new), 453 s
+2026-11-19 18:37:59 nbest: 3000 windows (3000 new), 456 s
+2026-11-19 18:38:04 nbest: 3250 windows (3250 new), 460 s
+2026-11-19 18:38:08 nbest: 3500 windows (3500 new), 464 s
+2026-11-19 18:38:14 nbest: 3750 windows (3750 new), 470 s
+2026-11-19 18:38:18 nbest: 4002 windows (4000 new), 475 s
+2026-11-19 18:38:25 nbest: 4281 windows (4250 new), 481 s
+2026-11-19 18:38:26 nbest: 4548 windows (4500 new), 482 s
+2026-11-19 18:38:38 nbest: 4827 windows (4750 new), 494 s
+2026-11-19 18:38:54 nbest: 5111 windows (5000 new), 511 s
+2026-11-19 18:38:59 nbest: {'windows': 5187, 'new': 5066, 'cached': 5066, 'seconds': 515.9}
+2026-11-19 18:39:07 tune: w 0.5, c 4, tuning-part exact 0.216 (no LM 0.063)
+2026-11-19 18:47:28 guards S: REFUSED (500 s): calibration refused: the guard commits on null input (user: 19/300 commits, allowed 15). A guard that commits without signal does not depend on your decoder's evidence. Other checks: the inputs are per-frame scores (logits) or real n-best scores; the decoder's confidence drops on noise. No configuration was produced.
+2026-11-19 18:48:14 guards SL: REFUSED (47 s): calibration refused: the guard commits on null input (user: 20/300 commits, allowed 15). A guard that commits without signal does not depend on your decoder's evidence. Other checks: the inputs are per-frame scores (logits) or real n-best scores; the decoder's confidence drops on noise. No configuration was produced.
+2026-11-19 18:49:01 guards X: tcfg-40d579c2cedf3a83 (47 s)
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-40d579c2cedf3a83
+input                logits (custom:__main__.decode_intended)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+                     a COMMIT of a prefix is wrong if its words are not the first words of the true text; a COMMIT of all top-1 words is wrong unless it equals the true text
+method               Learn then Test on the learned prefix score (fitted on the fit + policy-grid items, one row per word prefix), loss = wrong prefix commit, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, on the LTT items only
+calibration items    1224 = 306 fit + 459 policy grid + 459 LTT
+LTT items needed     >= 45 LTT items (utterances, not commits) to certify any COMMIT
+lambda_hat           0.89 (feasible: True)
+commit threshold     learned prefix score >= 0.89
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 167 commits, 14 wrong (of 459; 0 blocked by the commit gate; median guard risk 0.174797)
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           7/300 commits (allowed 15): PASS
+  user               14/300 commits (allowed 15): PASS
+commit unit          the longest word prefix of the top-1 text whose score passes (prefix scores never rise with length)
+commit score         learned (logistic regression, L2 on standardised features, features clipped to the fit range, sign-constrained weights (backward elimination); 11 of 16 features used, L2 1)
+  fitted on          765 items (fit + policy grid; 2559 prefix rows, 1185 right)
+  certified on       459 LTT items, disjoint from the fit items
+  features           prefix_mass, prefix_agree_min, prefix_agree_mean, prefix_char_conf_mean, prefix_char_conf_min, prefix_log_words, prefix_share, complete, p_top1, nbest_entropy, guard_risk, acoustic_per_char, lm_per_word, acoustic_gap, frames_per_char, log_n_words
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+warnings
+  ! frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.
+Details: docs/trust-guarantee.md
+2026-11-19 18:49:32 guards K: tcfg-b138896e0b137793 (31 s)
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-b138896e0b137793
+input                logits (custom:__main__.decode_keys)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    1224 = 306 fit + 459 policy grid + 459 LTT
+LTT items needed     >= 45 LTT items (utterances, not commits) to certify any COMMIT
+lambda_hat           0 (feasible: True)
+commit threshold     p_top1 >= 0.3
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 0 commits, 0 wrong (of 459; 0 blocked by the commit gate; median guard risk 0.775955)
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           0/300 commits (allowed 15): PASS
+  user               0/300 commits (allowed 15): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+warnings
+  ! frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.
+  ! only 0 of 459 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds.
+Details: docs/trust-guarantee.md
+2026-11-19 18:53:25 decide X real: 1221 prompts (233 s)
+2026-11-19 18:54:08 decide X shuffled: 1221 prompts (276 s)
+2026-11-19 18:54:39 decide X zeros: 1221 prompts (306 s)
+2026-11-19 18:55:11 decide K real: 1221 prompts (33 s)
+2026-11-19 18:55:37 decide K shuffled: 1221 prompts (58 s)
+2026-11-19 18:56:01 decide K zeros: 1221 prompts (83 s)
+2026-11-19 18:56:02 score X: commits 420 wrong 35 of 1221; {'V1_guard': 'certified', 'V2_safety': 'holds', 'V3_value': 'non-vacuous', 'V4_vs_no_bci': 'above', 'V4_vs_p1109_2.93': 'above', 'V6_controls': 'fail'}
+2026-11-19 18:56:02 score K: commits 0 wrong 0 of 1221; {'V1_guard': 'certified', 'V2_safety': 'holds', 'V3_value': 'vacuous', 'V4_vs_no_bci': 'below', 'V4_vs_p1109_2.93': 'below', 'V6_controls': 'pass'}
+2026-11-19 18:56:02 all: DONE
+2026-11-19 18:56:39 score X: commits 420 wrong 35 of 1221; {'V1_guard': 'certified', 'V2_safety': 'holds', 'V3_value': 'non-vacuous', 'V4_vs_no_bci': 'above', 'V4_vs_p1109_2.93': 'above', 'V6_controls': 'fail'}
+2026-11-19 18:56:39 score K: commits 0 wrong 0 of 1221; {'V1_guard': 'certified', 'V2_safety': 'holds', 'V3_value': 'vacuous', 'V4_vs_no_bci': 'below', 'V4_vs_p1109_2.93': 'below', 'V6_controls': 'pass'}

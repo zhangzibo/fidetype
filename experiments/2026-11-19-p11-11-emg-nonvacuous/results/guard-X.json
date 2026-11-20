@@ -1,0 +1,130 @@
+{
+ "config_id": "tcfg-40d579c2cedf3a83",
+ "sheet": {
+  "config_id": "tcfg-40d579c2cedf3a83",
+  "input_kind": "logits",
+  "decoder": "custom:__main__.decode_intended",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "method": "Learn then Test on the learned prefix score (fitted on the fit + policy-grid items, one row per word prefix), loss = wrong prefix commit, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, on the LTT items only",
+  "n_items": 1224,
+  "n_fit": 306,
+  "n_policy": 459,
+  "n_ltt": 459,
+  "n_ltt_min": 45,
+  "lambda_hat": 0.89,
+  "feasible": true,
+  "commit_threshold": 0.89,
+  "commit_gate": {
+   "min_chars": 1,
+   "min_words": 0,
+   "max_guard_risk": 1.0
+  },
+  "ltt_commits": 167,
+  "ltt_wrong_commits": 14,
+  "controls": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 7,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "user",
+    "description": "your decoder output on null input (null_inputs)",
+    "n": 300,
+    "n_commit": 14,
+    "allowed": 15,
+    "passed": true
+   }
+  ],
+  "null_max_commit_rate": 0.05,
+  "seed": 0,
+  "created_utc": "2026-11-20T02:49:01+00:00",
+  "assumptions": [
+   "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+   "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+   "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+   "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+  ],
+  "not_guaranteed": [
+   "Any single utterance: the bound is on the rate over many utterances.",
+   "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+   "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+   "The error rate among commits (precision): with few commits it can be high.",
+   "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+   "Correctness of the text that the guard withholds or offers.",
+   "Any medical or legal claim. Fidetype is research software, not a medical device."
+  ],
+  "warnings": [
+   "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it."
+  ],
+  "ltt_median_guard_risk": 0.17479744124057406,
+  "ltt_gate_blocked": 0,
+  "confidence": {
+   "kind": "learned",
+   "unit": "prefix",
+   "schema": "fidetype.prefix-commit-score/0.1",
+   "model": "logistic regression, L2 on standardised features, features clipped to the fit range, sign-constrained weights (backward elimination)",
+   "features": [
+    "prefix_mass",
+    "prefix_agree_min",
+    "prefix_agree_mean",
+    "prefix_char_conf_mean",
+    "prefix_char_conf_min",
+    "prefix_log_words",
+    "prefix_share",
+    "complete",
+    "p_top1",
+    "nbest_entropy",
+    "guard_risk",
+    "acoustic_per_char",
+    "lm_per_word",
+    "acoustic_gap",
+    "frames_per_char",
+    "log_n_words"
+   ],
+   "dropped": [],
+   "n_used": 11,
+   "l2": 1.0,
+   "fit_items": 765,
+   "fit_positive": 1185,
+   "fit_rows": 2559,
+   "certify_items": 459,
+   "threshold": 0.89,
+   "feasible": true,
+   "risk": "wrong-prefix-commit: the committed words are not the first words of the true text (a complete prefix, i.e. the whole top-1 text, is wrong unless it equals the true text); rate over all utterances",
+   "coef": {
+    "prefix_mass": 0.59071636174,
+    "prefix_agree_min": 0.120185985434,
+    "prefix_agree_mean": 0.580447884541,
+    "prefix_char_conf_mean": 0.0,
+    "prefix_char_conf_min": 0.0,
+    "prefix_log_words": -0.502361077821,
+    "prefix_share": -0.237304534751,
+    "complete": 0.146233831869,
+    "p_top1": 0.396907057529,
+    "nbest_entropy": -0.11812232718,
+    "guard_risk": -0.188582644492,
+    "acoustic_per_char": 0.0,
+    "lm_per_word": 0.0,
+    "acoustic_gap": 0.0,
+    "frames_per_char": -0.269088311351,
+    "log_n_words": -0.0310076676104
+   },
+   "intercept": -0.249426659554
+  }
+ },
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true
+}

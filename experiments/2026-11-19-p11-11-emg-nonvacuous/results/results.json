@@ -1,0 +1,441 @@
+{
+ "task": "P11-11",
+ "date": "2026-11-19 18:56",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "note": "aggregates only (no per-user value, no text, no id)",
+ "tune": {
+  "w": 0.5,
+  "c": 4,
+  "rate": 0.21568627450980393,
+  "rate_no_lm": 0.06274509803921569,
+  "n_tune": 765,
+  "tune_digest": "96f175801d6ff225"
+ },
+ "lm": {
+  "n_targets": 2399,
+  "n_long_targets": 2348,
+  "n_removed_extra": 1445,
+  "n_train": 600000,
+  "n_heldout": 5000,
+  "ppl_heldout_2000": 3.1578027454153936,
+  "sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8",
+  "seconds": 31.5
+ },
+ "lexicon": {
+  "n_train_sessions": 927,
+  "n_distinct": 36092,
+  "n_tokens": 578167,
+  "min_count": 2,
+  "n_words": 16875,
+  "data.licence": "CC-BY-NC-SA-4.0",
+  "data.research_only": true,
+  "eval_truth_word_coverage": 0.9532597793380141
+ },
+ "eval": {
+  "n_prompts": 1221,
+  "n_words_intended": 4985,
+  "minutes_neural": 119.75355757077536,
+  "share_with_backspace": 0.32514332514332517
+ },
+ "arms": {
+  "S": {
+   "status": "refused",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "cache": {
+    "hits": 659,
+    "misses": 1924
+   },
+   "reason": "calibration refused: the guard commits on null input (user: 19/300 commits, allowed 15). A guard that commits without signal does not depend on your decoder's evidence. Other checks: the inputs are per-frame scores (logits) or real n-best scores; the decoder's confidence drops on noise. No configuration was produced."
+  },
+  "SL": {
+   "status": "refused",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "cache": {
+    "hits": 3807,
+    "misses": 0
+   },
+   "reason": "calibration refused: the guard commits on null input (user: 20/300 commits, allowed 15). A guard that commits without signal does not depend on your decoder's evidence. Other checks: the inputs are per-frame scores (logits) or real n-best scores; the decoder's confidence drops on noise. No configuration was produced."
+  },
+  "X": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "cache": {
+    "hits": 3807,
+    "misses": 0
+   },
+   "config_id": "tcfg-40d579c2cedf3a83",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.89,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 7,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 14,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it."
+    ],
+    "confidence": {
+     "kind": "learned",
+     "unit": "prefix",
+     "schema": "fidetype.prefix-commit-score/0.1",
+     "model": "logistic regression, L2 on standardised features, features clipped to the fit range, sign-constrained weights (backward elimination)",
+     "features": [
+      "prefix_mass",
+      "prefix_agree_min",
+      "prefix_agree_mean",
+      "prefix_char_conf_mean",
+      "prefix_char_conf_min",
+      "prefix_log_words",
+      "prefix_share",
+      "complete",
+      "p_top1",
+      "nbest_entropy",
+      "guard_risk",
+      "acoustic_per_char",
+      "lm_per_word",
+      "acoustic_gap",
+      "frames_per_char",
+      "log_n_words"
+     ],
+     "dropped": [],
+     "n_used": 11,
+     "l2": 1.0,
+     "fit_items": 765,
+     "fit_positive": 1185,
+     "fit_rows": 2559,
+     "certify_items": 459,
+     "threshold": 0.89,
+     "feasible": true,
+     "risk": "wrong-prefix-commit: the committed words are not the first words of the true text (a complete prefix, i.e. the whole top-1 text, is wrong unless it equals the true text); rate over all utterances",
+     "coef": {
+      "prefix_mass": 0.59071636174,
+      "prefix_agree_min": 0.120185985434,
+      "prefix_agree_mean": 0.580447884541,
+      "prefix_char_conf_mean": 0.0,
+      "prefix_char_conf_min": 0.0,
+      "prefix_log_words": -0.502361077821,
+      "prefix_share": -0.237304534751,
+      "complete": 0.146233831869,
+      "p_top1": 0.396907057529,
+      "nbest_entropy": -0.11812232718,
+      "guard_risk": -0.188582644492,
+      "acoustic_per_char": 0.0,
+      "lm_per_word": 0.0,
+      "acoustic_gap": 0.0,
+      "frames_per_char": -0.269088311351,
+      "log_n_words": -0.0310076676104
+     },
+     "intercept": -0.249426659554
+    }
+   },
+   "safe_v02": {
+    "value": 4.234750117488351,
+    "ci": [
+     2.5972845060973837,
+     6.3404279804138675
+    ],
+    "status": "certified",
+    "n_commits": 420,
+    "n_wrong_commits": 35,
+    "measured_wrong_commit": 0.028665028665028666,
+    "measured_wrong_commit_cp95": [
+     0.02,
+     0.0396
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 527,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 4.692982456140351,
+    "unguarded_wpm": 4.234750117488351,
+    "wpm_no_penalty": 4.4007043355562825,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 4.028542567259224,
+    "ci": [
+     2.5095897545673473,
+     5.911097090400815
+    ],
+    "status": "certified",
+    "n_commits": 420,
+    "n_wrong_commits": 35,
+    "measured_wrong_commit": 0.028665028665028666,
+    "measured_wrong_commit_cp95": [
+     0.02,
+     0.0396
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 527,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 4.692982456140351,
+    "unguarded_wpm": 4.028542567259224,
+    "wpm_no_penalty": 4.4007043355562825,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 6.370000000000001,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 4.234750117488351,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "safe_v01_complete_only": {
+    "value": 0.0668038608813098,
+    "ci": [
+     0.0,
+     0.1676769698310331
+    ],
+    "status": "certified",
+    "n_commits": 2,
+    "n_wrong_commits": 0,
+    "measured_wrong_commit": 0.0,
+    "measured_wrong_commit_cp95": [
+     0.0,
+     0.003
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 8,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 0.0,
+    "unguarded_wpm": 0.0668038608813098,
+    "wpm_no_penalty": 0.0668038608813098,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "n_prefix_commits": 418,
+   "n_complete_commits": 2,
+   "committed_right_words": 527,
+   "n_eval": 1221,
+   "n_commits": 420,
+   "n_wrong_commits": 35,
+   "wrong_commit_rate": 0.028665028665028666,
+   "wrong_commit_cp95": [
+    0.02,
+    0.0396
+   ],
+   "commit_rate": 0.343980343980344,
+   "error_among_commits": 0.08333333333333333,
+   "top1_exact": 0.24488124488124488,
+   "actions": {
+    "commit": 420,
+    "offer": 592,
+    "withhold": 209
+   },
+   "decide_s": {
+    "p50": 0.17155,
+    "p95": 0.40249
+   },
+   "control_shuffled_commits": 76,
+   "control_shuffled_rate": 0.062244062244062245,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "fail"
+   }
+  },
+  "K": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "cache": {
+    "hits": 2583,
+    "misses": 0
+   },
+   "config_id": "tcfg-b138896e0b137793",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.3,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.",
+     "only 0 of 459 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds."
+    ],
+    "confidence": null
+   },
+   "safe_v01": {
+    "value": 0.0,
+    "ci": null,
+    "status": "vacuous",
+    "n_commits": 0,
+    "n_wrong_commits": 0,
+    "measured_wrong_commit": 0.0,
+    "measured_wrong_commit_cp95": [
+     0.0,
+     0.003
+    ],
+    "no_bci_wpm": 2.931857760799955,
+    "committed_correct_words": 0,
+    "total_words": 5219,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 0.0,
+    "unguarded_wpm": 0.0,
+    "wpm_no_penalty": 0.0,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02": {
+    "value": 0.0,
+    "ci": null,
+    "status": "vacuous",
+    "n_commits": 0,
+    "n_wrong_commits": 0,
+    "measured_wrong_commit": 0.0,
+    "measured_wrong_commit_cp95": [
+     0.0,
+     0.003
+    ],
+    "no_bci_wpm": 2.931857760799955,
+    "committed_correct_words": 0,
+    "total_words": 5219,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 0.0,
+    "unguarded_wpm": 0.0,
+    "wpm_no_penalty": 0.0,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 0.0,
+    "ci": null,
+    "status": "vacuous",
+    "n_commits": 0,
+    "n_wrong_commits": 0,
+    "measured_wrong_commit": 0.0,
+    "measured_wrong_commit_cp95": [
+     0.0,
+     0.003
+    ],
+    "no_bci_wpm": 2.931857760799955,
+    "committed_correct_words": 0,
+    "total_words": 5219,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 0.0,
+    "unguarded_wpm": 0.0,
+    "wpm_no_penalty": 0.0,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 0.0,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 0.0,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "always_commit": {
+    "unguarded_wpm": 0.08802383677708313,
+    "n_right": 10
+   },
+   "n_eval": 1221,
+   "n_commits": 0,
+   "n_wrong_commits": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.003
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": null,
+   "top1_exact": 0.00819000819000819,
+   "actions": {
+    "commit": 0,
+    "offer": 1013,
+    "withhold": 208
+   },
+   "decide_s": {
+    "p50": 0.0218,
+    "p95": 0.05088
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "vacuous",
+    "V4_vs_no_bci": "below",
+    "V4_vs_p1109_2.93": "below",
+    "V6_controls": "pass"
+   }
+  }
+ },
+ "digests_match_p1109": true
+}

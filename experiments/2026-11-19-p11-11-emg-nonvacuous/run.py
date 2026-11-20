@@ -654,7 +654,7 @@ def score_arm(arm: str, d: dict, ev: list[dict], sheet: dict) -> dict:
                          ci_unit="group", B=2000, seed=0)
         a.update(safe_v01=safe_block(r01), safe_v02=safe_block(r02), safe_v02_read=safe_block(r02r),
                  always_commit={"unguarded_wpm": ra.get("unguarded_wpm"), "n_right": int(sum(always_k))})
-    lo, hi = clopper_pearson(wrong, len(ev), 0.05)
+    lo, hi = clopper_pearson(wrong, len(ev), 0.95)
     nc = int(sum(com))
     a.update(n_eval=len(ev), n_commits=nc, n_wrong_commits=int(wrong), wrong_commit_rate=wrong / len(ev),
              wrong_commit_cp95=[lo, hi], commit_rate=nc / len(ev), error_among_commits=(wrong / nc) if nc else None,
