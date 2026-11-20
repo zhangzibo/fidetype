@@ -647,6 +647,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P5-28 ([results](../../experiments/2026-11-19-p5-28-hybrid-prefix/results.md), Bonferroni sensitivity): `fidetype.benchmark.safe_wpm.certification` reads `feasible: false` as "the policy never commits" and still sets `certified`. The first `calibrate_hybrid` kept mid-trial commits when no λ_end passed, and the scorer labelled that uncertified policy `certified`. `calibrate_hybrid` is fixed (`c359eb6`); the scorer still trusts the flag.
 - **Done when:** `safe_wpm` gives a non-certified status (or refuses) when the guarantee is infeasible and at least one trial is committed, with a test; existing entries re-checked.
 
+#### P5-31 Null control for offers
+- **Gap:** 136 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-41). Follow-up of P14-41, P14-03.
+- **Status:** `todo`.
+- **Depends on:** P14-41 (done). CPU.
+- **Source:** P14-41 ([results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)): the offer-only `willett-hw` guard offers on 77 / 80 frame-shuffled test inputs, as often as on real input (77 / 80), and the offered top-1 is never exact. The drop-in null controls of `fidetype.trust.calibrate` count only commits.
+- **Done when:** the guarantee sheet reports the offer rate on the null controls next to the commit rate, with a stated rule (for example: the offer rate on frame-shuffled input clearly below the real offer rate, or a warning on the sheet), a test, and a rerun on `willett-hw` and one other packaged guard.
+
+#### P5-32 Memory bound for the vector beam search and the LM caches
+- **Gap:** 137 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-41). Follow-up of P14-41.
+- **Status:** `todo`.
+- **Depends on:** P14-41 (done). CPU.
+- **Source:** P14-41 ([results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)): the loop prefix search (`PREFIX_CACHE_MAX`) and `ctc_forced_align_many` (groups, frame-wise scores) are now bounded and exact. The `search="vector"` path keeps `lm_score` / `lm_arr` for every prefix that entered the beam, and the LM row caches also grow with T.
+- **Done when:** both paths have bounded per-utterance memory with exact results (test), and a CI test decides a long near-uniform input (for example T = 10,000, V = 98) under a stated memory limit.
+
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
 
@@ -1108,7 +1122,7 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-38** | Language hook in safe WPM, the benchmark scorer and the hallucination protocol (open gap 117, [details](#p14-38-language-hook-in-safe-wpm-the-benchmark-scorer-and-the-hallucination-protocol)) | P14-34 | research labs, BCI companies |
 | **P14-39** | Words per minute for scripts without spaces (open gap 118, [details](#p14-39-words-per-minute-for-scripts-without-spaces)) | P14-34 | research labs, BCI companies |
 | **P14-40** | Per-language models and vocabulary registry (open gap 119, [details](#p14-40-per-language-models-and-vocabulary-registry)) | P14-34, P15-31, P15-32 | research labs, BCI companies, AAC app makers |
-| **P14-41** | Trust guard for `willett-hw` (open gap 121, [details](#p14-41-trust-guard-for-willett-hw)) | P14-33 | research labs |
+| **P14-41** | Trust guard for `willett-hw` (gap 121, done 2026-11-20, offer-only, [details](#p14-41-trust-guard-for-willett-hw)) | P14-33 | research labs |
 | **P14-42** | Device and dataset adapter catalogue and contributor template (open gap 127, [details](#p14-42-device-and-dataset-adapter-catalogue-and-contributor-template)) | P4-15, P4-01, P4-02 | BCI companies, research labs, small teams (contributors) |
 | **P14-43** | 10-minute tutorials (gap 128, done 2026-11-20, [details](#p14-43-10-minute-tutorials)) | P14-01, P14-03, P13-06 | small teams, research labs, newcomers |
 | **P14-44** | Pretrained API newcomer ergonomics (open gap 129, [details](#p14-44-pretrained-api-newcomer-ergonomics)) | P14-43 | small teams, newcomers |
@@ -1436,7 +1450,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-41 Trust guard for willett-hw
 - **Gap:** 121 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-33). Follow-up of P14-33.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20). Done 2026-11-20 (pre-registration + memory fix `4565cc1`, results `b26341c`, [results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)). Memory: the CTC prefix beam search kept every prefix ever made (`lm_score`, `_last_id`; T^2 growth on flat null frames, 17.9 GB in a synthetic probe) and the forced alignment held a (T, S) float64 array; both fixed exactly in `fidetype.lm.beam` (caches cut to the beam; frame-wise alignment in groups); run peak 1,194 MB. Guard `tcfg-39aac48688b8bd12` (106 val sentences, alpha 0.05, delta 0.1) returned but LTT not feasible (40 LTT items < 45): offer-only, as pre-stated. Test (80 sentences): 0 commits, 77 offers, 3 withholds; safe WPM v0.1 0.00 (vacuous). Controls pass: calibrate 0/300 uniform, 0/300 frame-shuffled, 0/106 time-shuffled input; test time-shuffled and zero 0/80. Packaged as a release file (local, SHA-256 in the manifest, `trust` set, commits: never). Offers on frame-shuffled frames 77/80 (new gap 136 = P5-31); vector beam path memory (new gap 137 = P5-32).
 - **Depends on:** P14-33 (done); free machine memory (CPU only).
 - **Source:** P14-33 ([results](../../experiments/2026-11-19-p14-33-willett-hw/results.md)): the `guard` stage (`fidetype.trust.calibrate` on the 106 val sentences, 106 time-shuffled nulls, alpha 0.05, delta 0.1) was stopped because the machine was critically low on memory while other jobs ran. `willett-hw` has `trust: null`.
 - **Done when:** a guard calibrated on the val blocks is a release file of `willett-hw` (SHA-256 in the manifest, `trust` set), with its decisions on the test blocks (real and time-shuffled input) reported; or a written refusal (null control) with numbers. With greedy CER 0.305 a guard that only offers is an acceptable result. Run it on a quiet machine or with a lower-memory calibration.

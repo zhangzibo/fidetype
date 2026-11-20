@@ -1465,3 +1465,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Template `templates/adapter/` + `python -m fidetype.adapters.registry new <id>`; [CONTRIBUTING.md 7.1](../CONTRIBUTING.md#71-add-a-new-adapter-in-about-50-lines).
 - New adapters from the template (synthetic files only): `edf` (EDF / EDF+ / BDF; 96 lines, 70 code lines) and `openbci-gui` (67 lines, 43 code lines). EDF is above the 50-line goal.
 - Code `8167853`, CI run 44722287677. Updated: roadmap (P14-42 done, P4-15 progress note, P4-16, P4-17), open gaps (127 closed, 134-135 added), tracker, HANDOFF, dashboard.
+
+## [2026-11-20] setup | P14-41: willett-hw trust guard (offer-only; gap 121 closed; new gaps 136-137)
+- Memory cause of the P14-33 stop: the CTC prefix beam search kept every prefix it ever made (T^2 growth on flat null frames; 17.9 GB in a synthetic probe) and the forced alignment held a (T, S) float64 array. Fixed exactly in `fidetype.lm.beam` (caches cut to the beam, frame-wise alignment in groups), with tests. Run peak 1,194 MB.
+- Pre-registration `4565cc1`, then the run (CPU, 03:29-04:51). Guard `tcfg-39aac48688b8bd12` on the 106 val sentences: returned, LTT not feasible (40 LTT items < 45), so it never commits (pre-stated). Test (80): 0 commits, 77 offers, 3 withholds; safe WPM v0.1 0.00 (vacuous). All null controls pass.
+- Packaged as a release file of `willett-hw` (local, SHA-256 in the manifest, `trust` set, `commits: never`); docs/pretrained-decoders.md updated. [Results](../experiments/2026-11-20-p14-41-willett-guard/results.md), commit `b26341c`.
+- New gaps: 136 = [P5-31](questions/roadmap-standard.md#p5-31-null-control-for-offers) (offers on frame-shuffled input 77/80, as on real input), 137 = [P5-32](questions/roadmap-standard.md#p5-32-memory-bound-for-the-vector-beam-search-and-the-lm-caches) (vector beam path and LM caches).
