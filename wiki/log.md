@@ -1389,3 +1389,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Code `2b5c80f`: `fidetype.lang` (registry by BCP 47 tag). `en` default reuses `VOCAB` / `normalize_text` / `str.split`, so English outputs are bit-identical (pinned by `tests/test_lang.py` and `tests/fixtures/lang/`). `es` provisional (ñ, accents, ¿ ¡). `zh` stub: words and WPM raise `WordsNotDefinedError`, never a silent number.
 - Language tag in the model manifest and the trust guard (saved only if not `en`); `safe_wpm.load_trials_jsonl(language=)`. Spanish config runs end to end on synthetic input.
 - Updated: open-gaps (106 closed; 117 P14-38, 118 P14-39, 119 P14-40 added), roadmap, tracker, HANDOFF, docs index, dashboard.
+
+## [2026-11-19] setup | P15-08 E1a results: cross-body pretraining null at minutes scale (H1 fails, C2 fails); new gap 120
+- [Results](../experiments/2026-11-19-p15-08-e1-cross-body/results.md) against the plan `60620ab`; aggregates in `results/summary.json`. Run 10:28-20:00, 41 adaptation runs + text pretraining; one machine-sleep crash (S-b30-s0), clean resume at step 1000, no lost or repeated step.
+- Verdicts: V1 pass (E at all 0.395); H1 fail (0 of 3; T better than E at 10 and 30 min); H2 fail; H3 fail; H4 partial; C1 pass; C2 fail (0.836 vs 0.810). Roadmap rule passes as written only by ≤ 1 CER point (CI includes 0).
+- Mean test CER R / T / E / S at 3, 10, 30, 100 min, all: R 0.865, 1.327, 0.851, 0.837, 0.613; T 0.960, 0.863, 0.786, 0.777, 0.805; E 0.957, 0.884, 0.812, 0.767, 0.395; S 0.919, 0.922, 1.003, 0.919, 0.925.
+- Records: P15-08 stays `in_progress` (KT-sEMG arm); new gap 120 = [P15-33](questions/roadmap-standard.md#p15-33-e1-low-data-recipe-that-reads-the-target-signal-before-more-source-arms); P14-33 (gap 101) can start; README F3 row and north-star E1 row updated.

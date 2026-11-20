@@ -1315,7 +1315,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 #### P14-33 Willett handwriting decoder of our own in the pretrained registry
 - **Gap:** 101 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-01). Follow-up of P14-01.
 - **Status:** `todo`.
-- **Depends on:** P15-08 (our Willett decoder; running); P14-01 (done part).
+- **Depends on:** P15-08 E1a (done 2026-11-19: a Willett decoder of our own exists; the clean-track run R-all-s0 is best on val 0.258 and test 0.305 greedy CER, CC0 data only; the same recipe fails on seed 1, 0.920; [results](../../experiments/2026-11-19-p15-08-e1-cross-body/results.md)); P14-01 (done part). **Can start.**
 - **Source:** P14-01 ([results](../../experiments/2026-11-19-p14-01-pretrained/results.md)): the manifest `willett-hw` is `planned`: we have no trained Willett handwriting decoder yet.
 - **Done when:** a `willett-hw` manifest with weights, a runtime and a reader; its card metric reruns with `load("willett-hw")`.
 
@@ -1420,6 +1420,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-27** | Guard n-best top-1 differs from the pipeline top-1 on 9 of 701 trials (open gap 94, [details](#p15-27-guard-n-best-top-1-differs-from-the-pipeline-top-1-on-9-of-701-trials)) | F1 | P15-22 |
 | **P15-28** | Recompute the M4-12 and T12 P15-05 / P15-06 / P15-07 WER values with the sorted grounding order (open gap 97, [details](#p15-28-recompute-the-m4-12-and-t12-p15-05--p15-06--p15-07-wer-values-with-the-sorted-grounding-order)) | F1 | P15-27 |
 | **P15-29** | Safe WPM interval that includes the calibration draw (open gap 103, [details](#p15-29-safe-wpm-interval-that-includes-the-calibration-draw)) | F1 | P15-26 |
+| **P15-33** | E1 low-data recipe that reads the target signal before more source arms (open gap 120, [details](#p15-33-e1-low-data-recipe-that-reads-the-target-signal-before-more-source-arms)) | F3 | P15-08 (E1a) |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1481,6 +1482,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** GPU (after P11-01), P11-01 weights for the emg2qwerty arm, CPU caches at a common frame rate.
 - **Done when:** all arms run and the rule "an EMG-pretrained arm beats text-only by more than the seed spread at ≤ 25 % data" is evaluated. A null result is a valid outcome. Cost about 20–45 GPU-h.
 - **Progress (2026-11-19, `in_progress`):** part 1 **E1a** pre-registered (`60620ab`, [plan](../../experiments/2026-11-19-p15-08-e1-cross-body/plan.md)), code `75c92a6`, GPU run launched 2026-11-19 10:28 (detached, about 10 h). Target Willett handwriting (new sensor + new user); shared output space = the P11-01 98-token character head; arms R random / T text-only (synthetic key renderings, 30,000 steps) / E P11-01 EMG trunk / S shuffled-weight control; labelled budgets 3, 10, 30, 100 min and all (506 min); 2 seeds; final-step test CER on the last block of each session, no LM. Primary H1: E beats T at ≥ 2 of {3, 10, 30} min (seed spread + paired bootstrap); V1 gate, C1 time-shuffle, C2 label-shuffle. Left after E1a: the clean-track KT-sEMG arm (needs a KT-sEMG trunk, P11-06 / gap 86), the optional T15 arm, and the same-LM readout (P15-25, gap 91).
+- **Result E1a (2026-11-19, [results](../../experiments/2026-11-19-p15-08-e1-cross-body/results.md)): null for F3 at minutes scale.** V1 pass (E at all 0.395); **H1 fails** (E beats T at 0 of {3, 10, 30} min; at 10 and 30 min T is better, CI95 below 0); H2 and H3 fail; H4 partial (30 min only); C1 pass; **C2 fails** (label-deranged E at 30 min 0.836 vs normal 0.810), so at ≤ 30 min the decoders mostly output the label prior. Mean test CER R / T / E / S: 3 min 0.865 / 0.960 / 0.957 / 0.919; 10 min 1.327 / 0.863 / 0.884 / 0.922; 30 min 0.851 / 0.786 / 0.812 / 1.003; 100 min 0.837 / 0.777 / 0.767 / 0.919; all (506 min) 0.613 / 0.805 / 0.395 / 0.925. Descriptive: at full data the EMG trunk is the best and most stable arm (0.360 / 0.431; R 0.305 / 0.920; T fails at 0.80). One machine-sleep interrupt (S-b30-s0, resume at step 1000) lost or repeated no step. P15-08 stays `in_progress` (KT-sEMG arm); first fix the low-data recipe (P15-33, gap 120).
 
 #### P15-09 New-modality benchmark and reverse transfer
 - **Goal:** a public test of "new sensor or new user with minutes of data".
@@ -1656,6 +1658,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-34; P15-30 (non-English data to test on); a local multilingual LLM with an open licence.
 - **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" The F2 LLM rescoring and grounding check (P15-05, P15-06, P15-22) use English models and English data only. A rescorer can push text toward a dominant language. The grounding check is not tested for this.
 - **Done when:** The P15-05 rescoring and grounding check run with a multilingual LLM on English and Spanish data under one pre-registered plan. The swapped-signal and null controls pass per language. A cross-language control (signal from one language, LM prompt in the other) is reported. The hallucination bound holds per language, or the page says why not.
+
+#### P15-33 E1 low-data recipe that reads the target signal before more source arms
+- **Gap:** 120 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-08 E1a). Follow-up of P15-08.
+- **Status:** `todo`.
+- **Depends on:** P15-08 E1a (done part; local weights and cache in `C:/Users/zhang/bci-data/derived/p15-08/`); GPU.
+- **Source:** [E1a results](../../experiments/2026-11-19-p15-08-e1-cross-body/results.md): C2 fails (label-deranged E at 30 min 0.836 vs normal 0.810) and the time-shuffled CER equals the normal CER at 30 min for every arm, so with ≤ 100 labelled minutes no arm reads the implant signal with the E1a recipe. Random init is unstable (R-b10-s1 1.839, R-all-s1 0.920). A KT-sEMG arm run with the same recipe would hit the same floor.
+- **Done when:** a pre-registered pilot on the val block only (no test) picks a low-data recipe (for example frozen trunk + stem-only or low-LR fine-tuning, longer schedules, Willett-style synthetic sentences) under which at least one arm passes C2 at 30 min; then E1a's H1-H4 are rerun with that recipe (same splits, 2+ seeds) before the KT-sEMG arm.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
