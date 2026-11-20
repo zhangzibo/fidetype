@@ -879,10 +879,11 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-13 Intended-text scoring for the emg2qwerty track
 - **Gap:** 105 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-12). Follow-up of P11-12, P6-02.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19).
 - **Depends on:** P11-12 (done); `fidetype.benchmark.scorecard` (submission v0.2); CPU.
 - **Source:** P11-12 ([results](../../experiments/2026-11-20-p11-12-emg-nosignal-gate/results.md)): the certified EMG guards commit the intended text (Backspace applied), but the emg2qwerty track scorer compares commits to the raw key sequence. So the first non-vacuous certified EMG safe WPM (4.10 v0.1) has no score card and no leaderboard row.
 - **Done when:** the emg2qwerty track (or a declared variant) can score an `intended` target (truth = key sequence with Backspace applied, the P11-11 `resolve` rule) in `fidetype.benchmark`, with tests; the P11-12 arm S gets a declared-subset card with a rerun recipe (code_ref); `python -m fidetype.benchmark.leaderboard --check` passes.
+- **Result (2026-11-19):** [results](../../experiments/2026-11-20-p11-13-intended-text-cards/results.md). Code `698bbe8`, cards `ca73b5c`. Manifest field `target` (emg2qwerty only): `raw_keys` (default, `raw-keys/1`; old cards rescore equal) or `intended_text` (`intended-text/1`: Backspace applied by `registry.keycodes_to_intended_text`, tested equal to the P11-11 `resolve`; truth, outputs and the no-BCI reference all use the target text). Cards declare their target; the leaderboard shows each target in its own table with its own no-BCI row. Declared-subset cards (8 users, 1,221 prompts): arm S certified safe WPM v0.1 **4.10 [1.99, 6.56]** vs no-BCI 3.09; arm SL 5.08 [2.54, 7.95]; controls pass. Same value, commits and words as P11-12; CI differs only by cluster label order. Gap 105 closed.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
