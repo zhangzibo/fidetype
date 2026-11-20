@@ -80,7 +80,7 @@ import math
 from time import perf_counter as _perf_counter
 from dataclasses import dataclass, field
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable, Mapping
 
 import numpy as np
 
@@ -399,6 +399,8 @@ class IncrementalPrefixBeam:
         cand_sets = [{c for c, _ in ct} for ct in cands] if n_lmc else []
         beams = self._beams
         for t in range(T):
+            if len(lm_score) > PREFIX_CACHE_MAX:
+                self._prune_prefix_caches(beams)
             row = rows[t]
             lb = row[blank]
             ct = cands[t]
@@ -464,6 +466,26 @@ class IncrementalPrefixBeam:
                 kept[p] = nxt[p]
             beams = kept
         self._beams = beams
+
+    def _prune_prefix_caches(self, beams: Mapping[str, Any]) -> None:
+        """Loop search: keep the per-prefix caches of the current beam only (P14-41, exact).
+
+        ``lm_score`` and ``_last_id`` held every prefix ever made. On flat
+        frames (for example a near-uniform null control) every token passes
+        ``prune_logp``, so each frame makes about ``beam * V`` new prefixes
+        of growing length: a 100 s input needed tens of GB. A dropped prefix
+        that comes back is made again from its parent, which is in the beam,
+        with the same values (one parent per text with single-character
+        tokens; ``lm_score`` is 0 without an LM). The text of each prefix
+        without its trailing spaces is kept too (the end terms read it).
+        """
+        keep = set(beams)
+        if self.space_id >= 0:
+            keep |= {q.rstrip(" ") for q in beams}
+        for cache in (self.lm_score, self._last_id, self._lm_rows, self._lm_tops):
+            kept = {k: cache[k] for k in keep if k in cache}
+            cache.clear()
+            cache.update(kept)
 
     def beams(self) -> dict[str, list[float]]:
         """The current beam: text -> [pb, pnb] (no end terms)."""
@@ -994,6 +1016,15 @@ def _fused(rows, peak, ids, text, lm, w, blank) -> np.ndarray:
     return out
 
 
+#: Loop search: the per-prefix caches are cut to the current beam when they pass this size (P14-41).
+PREFIX_CACHE_MAX = 4096
+
+#: Upper bound on the back-pointer cells (int8) of one Viterbi pass of :func:`ctc_forced_align_many`.
+#: Sequences are aligned in groups below this bound (P14-41: a 100 s null input with long garbage texts
+#: needed about 20 GB when all texts and an emit matrix (T, S) float64 were held at once).
+ALIGN_MAX_BP_CELLS = 1 << 26
+
+
 def ctc_forced_align_many(log_probs: np.ndarray, ids_list, blank: int = BLANK_ID) -> list[list[tuple[int, int]] | None]:
     """:func:`ctc_forced_align` for several label sequences in one Viterbi pass.
 
@@ -1002,25 +1033,47 @@ def ctc_forced_align_many(log_probs: np.ndarray, ids_list, blank: int = BLANK_ID
     the same order as in :func:`ctc_forced_align`, so the result of each
     sequence is the same (M4-08: this is only faster). An empty sequence
     gives ``[]``.
+
+    Memory (P14-41): the frame scores are read one frame at a time (no
+    ``(T, S)`` float64 copy), a sequence with more labels than frames is
+    ``None`` at once (no CTC path exists), and the sequences go in groups
+    of at most :data:`ALIGN_MAX_BP_CELLS` back-pointer cells. The sequences
+    are independent, so the results are the same as one pass.
     """
     lp = np.asarray(log_probs, dtype=np.float64)
     T = lp.shape[0]
     out: list[list[tuple[int, int]] | None] = [None] * len(ids_list)
-    segs: list[tuple[int, int, int]] = []
-    exts: list[np.ndarray] = []
-    off = 0
+    group: list[tuple[int, np.ndarray]] = []
+    cells = 0
     for k, ids in enumerate(ids_list):
         L = len(ids)
         if L == 0:
             out[k] = []
             continue
+        if T == 0 or L > T:
+            continue  # no CTC path: each label needs at least one frame
         ext = np.full(2 * L + 1, blank, dtype=np.int64)
         ext[1::2] = ids
+        if group and cells + T * ext.shape[0] > ALIGN_MAX_BP_CELLS:
+            _align_group(lp, group, out)
+            group, cells = [], 0
+        group.append((k, ext))
+        cells += T * ext.shape[0]
+    if group:
+        _align_group(lp, group, out)
+    return out
+
+
+def _align_group(lp: np.ndarray, group: list[tuple[int, np.ndarray]],
+                 out: list[list[tuple[int, int]] | None]) -> None:
+    """One Viterbi pass of :func:`ctc_forced_align_many` over the sequences of ``group`` (writes ``out``)."""
+    T = lp.shape[0]
+    segs: list[tuple[int, int, int]] = []
+    off = 0
+    for k, ext in group:
         segs.append((k, off, ext.shape[0]))
-        exts.append(ext)
         off += ext.shape[0]
-    if not segs or T == 0:
-        return out
+    exts = [ext for _, ext in group]
     ext_all = np.concatenate(exts)
     S = ext_all.shape[0]
     skip = np.zeros(S, dtype=bool)
@@ -1029,10 +1082,10 @@ def ctc_forced_align_many(log_probs: np.ndarray, ids_list, blank: int = BLANK_ID
     for (_, o, Sk), ext in zip(segs, exts):
         skip[o + 3 : o + Sk : 2] = ext[3::2] != ext[1:-2:2]
     start[offs] = True
-    emit = lp[:, ext_all]  # (T, S)
+    e0 = lp[0, ext_all]
     delta = np.full(S, NEG_INF)
-    delta[offs] = emit[0, offs]
-    delta[offs + 1] = emit[0, offs + 1]
+    delta[offs] = e0[offs]
+    delta[offs + 1] = e0[offs + 1]
     bp = np.zeros((T, S), dtype=np.int8)
     ar = np.arange(S)
     head = np.array([NEG_INF])
@@ -1046,7 +1099,7 @@ def ctc_forced_align_many(log_probs: np.ndarray, ids_list, blank: int = BLANK_ID
         stack = np.stack([c0, c1, c2])
         arg = np.argmax(stack, axis=0)
         bp[t] = arg
-        delta = stack[arg, ar] + emit[t]
+        delta = stack[arg, ar] + lp[t, ext_all]
     # End state of each sequence: the last label or the final blank (ties: the later state).
     s_loc = np.empty(len(segs), dtype=np.int64)
     ok = np.ones(len(segs), dtype=bool)
@@ -1059,6 +1112,7 @@ def ctc_forced_align_many(log_probs: np.ndarray, ids_list, blank: int = BLANK_ID
     for t in range(T - 1, -1, -1):
         states[t] = s_vec
         s_vec = s_vec - bp[t, offs + s_vec]
+    del bp
     for q, (k, o, Sk) in enumerate(segs):
         if not ok[q]:
             continue
@@ -1070,7 +1124,6 @@ def ctc_forced_align_many(log_probs: np.ndarray, ids_list, blank: int = BLANK_ID
         if np.any(last < first):
             continue  # a label with no frame
         out[k] = [(int(a), int(b)) for a, b in zip(first, last)]
-    return out
 
 
 def ctc_forced_align(log_probs: np.ndarray, ids, blank: int = BLANK_ID) -> list[tuple[int, int]] | None:
@@ -1091,11 +1144,13 @@ def ctc_forced_align(log_probs: np.ndarray, ids, blank: int = BLANK_ID) -> list[
     # label two states back.
     skip = np.zeros(S, dtype=bool)
     skip[3::2] = ext[3::2] != ext[1:-2:2]
-    emit = lp[:, ext]  # (T, S)
+    if T == 0 or L > T:
+        return None  # no CTC path: each label needs at least one frame (P14-41: no (T, S) arrays for it)
+    e0 = lp[0, ext]  # the frame scores are read one frame at a time (no (T, S) float64 copy)
     delta = np.full(S, NEG_INF)
-    delta[0] = emit[0, 0]
+    delta[0] = e0[0]
     if S > 1:
-        delta[1] = emit[0, 1]
+        delta[1] = e0[1]
     bp = np.zeros((T, S), dtype=np.int8)
     for t in range(1, T):
         c0 = delta
@@ -1105,7 +1160,7 @@ def ctc_forced_align(log_probs: np.ndarray, ids, blank: int = BLANK_ID) -> list[
         stack = np.stack([c0, c1, c2])
         arg = np.argmax(stack, axis=0)
         bp[t] = arg
-        delta = stack[arg, np.arange(S)] + emit[t]
+        delta = stack[arg, np.arange(S)] + lp[t, ext]
     ends = [S - 1, S - 2] if S > 1 else [S - 1]
     s = max(ends, key=lambda q: (delta[q], -q))
     if delta[s] == NEG_INF:

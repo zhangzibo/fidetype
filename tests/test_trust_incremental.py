@@ -176,6 +176,58 @@ def test_forced_align_many_equals_single():
         assert got == [ctc_forced_align(lp, s, 0) if s else [] for s in seqs]
 
 
+def test_forced_align_many_groups_equal_one_pass(monkeypatch):
+    """P14-41: the memory bound (groups of sequences) does not change any span."""
+    import fidetype.lm.beam as B
+
+    rng = np.random.default_rng(5)
+    V = 6
+    for _ in range(30):
+        T = int(rng.integers(1, 40))
+        x = rng.normal(0, 2, (T, V))
+        lp = x - np.log(np.exp(x).sum(1, keepdims=True))
+        seqs = [tuple(int(c) for c in rng.integers(1, V, int(rng.integers(0, 50)))) for _ in range(8)]
+        monkeypatch.setattr(B, "ALIGN_MAX_BP_CELLS", 1 << 30)
+        one = B.ctc_forced_align_many(lp, seqs, 0)
+        monkeypatch.setattr(B, "ALIGN_MAX_BP_CELLS", int(rng.integers(1, 200)))
+        assert B.ctc_forced_align_many(lp, seqs, 0) == one
+        assert one == [ctc_forced_align(lp, s, 0) if s else [] for s in seqs]
+
+
+def _hyp_key(hs):
+    return [(h.text, h.score, h.logp_acoustic, h.logp_lm, h.frame_spans, np.asarray(h.char_confidences).tolist())
+            for h in hs]
+
+
+@pytest.mark.parametrize("use_lm", [False, True])
+def test_prefix_cache_pruning_is_exact(monkeypatch, use_lm):
+    """P14-41: cutting the per-prefix caches to the beam keeps every hypothesis, score and partial result."""
+    import fidetype.lm.beam as B
+
+    sents = sentences(60, seed=9)
+    lm = CharNgramLM(order=3).train(sents) if use_lm else None
+    rng = np.random.default_rng(11)
+    V = len(VOCAB)
+    for trial in range(6):
+        T = int(rng.integers(20, 90))
+        flat = trial % 2 == 0  # near-uniform frames: every token passes prune_logp (the null-control case)
+        x = rng.normal(0, 0.05 if flat else 2.0, (T, V))
+        lp = x - np.log(np.exp(x).sum(1, keepdims=True))
+        kw = dict(lm=lm, beam=6, n_best=5, prune_topk=None, space_rules=trial % 3 == 0)
+        out = {}
+        for cap in (1 << 30, 1):
+            monkeypatch.setattr(B, "PREFIX_CACHE_MAX", cap)
+            dec = IncrementalPrefixBeam(list(VOCAB), 0, **kw)
+            parts = []
+            for a, b in _chunks(T, np.random.default_rng(trial)):
+                dec.push(lp[a:b])
+                parts.append([(h.text, h.score) for h in dec.partial(4)])
+            out[cap] = (_hyp_key(dec.finalize()), parts, dec.end_candidates())
+            if cap == 1:
+                assert len(dec.lm_score) <= 6 * V + 2 * 6 + 2  # cut at each frame start: one frame of new prefixes
+        assert out[1] == out[1 << 30]
+
+
 # --- the streaming layer -------------------------------------------------------
 
 
