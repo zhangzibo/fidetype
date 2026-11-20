@@ -78,3 +78,15 @@ In P15-29 the 38 certified draws alone give [3.60, 7.01]. A margin lowers the nu
 6. No change of the method, the arm rule, K, the reference or the decision rule after this commit. Any later variant is a new item.
 
 Known limits (stated before any result): the P15-29 limits (a) pinned pipeline values, (b) duplicates in a resampled LTT part, (c) one participant and one decoder checkpoint, (d) the same evaluation set in every draw; and (e) the claimed guarantee of a margin arm is the weaker statement at alpha 0.05 that the stronger alpha' certificate implies.
+
+## Addendum (2026-11-20 05:20): stage S result and the four arms (before the main run)
+Stage S ran on `val_select` only (4 seeds, R = 500, B = 200; [results/selection.json](results/selection.json)). The check passed for all 4 seeds (recomputed LTT threshold = guard threshold: 0.82, 0.75, 0.69, 0.75). Arms by the rule above:
+
+| arm | alpha' | delta' | predicted mean [2.5 %, 97.5 %] (bootstrap world) | predicted failure fraction |
+|---|---|---|---|---|
+| A0 reference | 0.05 | 0.1 | 5.07 [0.00, 7.00] | 0.055 |
+| **A1 primary** | 0.05 | 0.025 | 4.86 [2.69, 6.78] | 0.013 |
+| A2 alpha margin | 0.04 | 0.1 | 4.86 [2.69, 6.78] | 0.013 |
+| A3 delta margin | 0.05 | 0.01 | 4.63 [2.67, 6.63] | 0.004 |
+
+A1 ties with (0.045, 0.05) and (0.04, 0.1) (same thresholds in the bootstrap world); the tie rule picks the larger alpha'. A3 is (0.05, 0.01) because (0.05, 0.05) has a predicted lower end of 0.00. **No arm of the grid has a predicted lower end above 4.0153** (best 2.69). The main run goes on as pre-registered. Nothing else changes.

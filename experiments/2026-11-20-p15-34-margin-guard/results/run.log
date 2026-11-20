@@ -1,0 +1,39 @@
+2026-11-20 05:10:47 [121 MB] keep_awake: on (SetThreadExecutionState)
+2026-11-20 05:10:47 [121 MB] stage select start (fidetype 0.0.1)
+2026-11-20 05:10:53 [661 MB] t15: loaded; calibration 722, evaluation not loaded; llm cache 63882; pinned {'frame_temperature': 2.37015800035291, 'tau': 0.06996627059278283, 'llm_weight': 1.0, 'fluent': -7.88165954200173}
+2026-11-20 05:11:29 [741 MB] LLM cache miss: loading Qwen2.5-1.5B on the CPU (CPU wheel)
+2026-11-20 05:12:04 [2396 MB] select seed 0: guard threshold 0.82, recomputed 0.82; same True; 71 s
+2026-11-20 05:12:59 [2408 MB] select seed 1: guard threshold 0.75, recomputed 0.75; same True; 54 s
+2026-11-20 05:13:51 [2427 MB] select seed 2: guard threshold 0.69, recomputed 0.69; same True; 53 s
+2026-11-20 05:14:45 [2433 MB] select seed 3: guard threshold 0.75, recomputed 0.75; same True; 53 s
+2026-11-20 05:14:45 [2436 MB] select a0.050-d0.100: predicted 5.068 [0.000, 6.995]; fail 0.055; vacuous 0.000; mean threshold 0.7610350000000001
+2026-11-20 05:14:46 [2436 MB] select a0.050-d0.050: predicted 5.030 [0.000, 6.906]; fail 0.026; vacuous 0.000; mean threshold 0.78398
+2026-11-20 05:14:46 [2436 MB] select a0.050-d0.025: predicted 4.857 [2.685, 6.777]; fail 0.013; vacuous 0.000; mean threshold 0.80857
+2026-11-20 05:14:47 [2436 MB] select a0.050-d0.010: predicted 4.633 [2.673, 6.625]; fail 0.004; vacuous 0.000; mean threshold 0.83334
+2026-11-20 05:14:47 [2436 MB] select a0.045-d0.100: predicted 5.030 [0.000, 6.906]; fail 0.026; vacuous 0.000; mean threshold 0.78398
+2026-11-20 05:14:48 [2436 MB] select a0.045-d0.050: predicted 4.857 [2.685, 6.777]; fail 0.013; vacuous 0.000; mean threshold 0.80857
+2026-11-20 05:14:48 [2437 MB] select a0.045-d0.025: predicted 4.633 [2.673, 6.625]; fail 0.004; vacuous 0.000; mean threshold 0.83334
+2026-11-20 05:14:49 [2437 MB] select a0.045-d0.010: predicted 4.366 [2.540, 6.423]; fail 0.002; vacuous 0.001; mean threshold 0.8561599999999999
+2026-11-20 05:14:49 [2437 MB] select a0.040-d0.100: predicted 4.857 [2.685, 6.777]; fail 0.013; vacuous 0.000; mean threshold 0.80857
+2026-11-20 05:14:49 [2437 MB] select a0.040-d0.050: predicted 4.633 [2.673, 6.625]; fail 0.004; vacuous 0.000; mean threshold 0.83334
+2026-11-20 05:14:50 [2437 MB] select a0.040-d0.025: predicted 4.366 [2.540, 6.423]; fail 0.002; vacuous 0.001; mean threshold 0.8561599999999999
+2026-11-20 05:14:50 [2437 MB] select a0.040-d0.010: predicted 4.039 [2.272, 6.251]; fail 0.000; vacuous 0.004; mean threshold 0.87891
+2026-11-20 05:14:51 [2437 MB] select a0.035-d0.100: predicted 4.633 [2.673, 6.625]; fail 0.004; vacuous 0.000; mean threshold 0.83334
+2026-11-20 05:14:51 [2437 MB] select a0.035-d0.050: predicted 4.366 [2.540, 6.423]; fail 0.002; vacuous 0.001; mean threshold 0.8561599999999999
+2026-11-20 05:14:51 [2437 MB] select a0.035-d0.025: predicted 4.039 [2.272, 6.251]; fail 0.000; vacuous 0.004; mean threshold 0.87891
+2026-11-20 05:14:52 [2437 MB] select a0.035-d0.010: predicted 3.677 [1.943, 6.033]; fail 0.000; vacuous 0.019; mean threshold 0.8981549999999999
+2026-11-20 05:14:52 [2437 MB] select a0.030-d0.100: predicted 4.366 [2.540, 6.423]; fail 0.002; vacuous 0.001; mean threshold 0.8561599999999999
+2026-11-20 05:14:52 [2437 MB] select a0.030-d0.050: predicted 4.039 [2.272, 6.251]; fail 0.000; vacuous 0.004; mean threshold 0.87891
+2026-11-20 05:14:53 [2437 MB] select a0.030-d0.025: predicted 3.677 [1.943, 6.033]; fail 0.000; vacuous 0.019; mean threshold 0.8981549999999999
+2026-11-20 05:14:53 [2437 MB] select a0.030-d0.010: predicted 3.172 [0.000, 5.592]; fail 0.000; vacuous 0.069; mean threshold 0.9190349999999998
+2026-11-20 05:14:53 [2437 MB] select a0.025-d0.100: predicted 4.039 [2.272, 6.251]; fail 0.000; vacuous 0.004; mean threshold 0.87891
+2026-11-20 05:14:54 [2437 MB] select a0.025-d0.050: predicted 3.677 [1.943, 6.033]; fail 0.000; vacuous 0.019; mean threshold 0.8981549999999999
+2026-11-20 05:14:54 [2437 MB] select a0.025-d0.025: predicted 3.172 [0.000, 5.592]; fail 0.000; vacuous 0.069; mean threshold 0.9190349999999998
+2026-11-20 05:14:54 [2437 MB] select a0.025-d0.010: predicted 3.172 [0.000, 5.592]; fail 0.000; vacuous 0.069; mean threshold 0.9190349999999998
+2026-11-20 05:14:55 [2437 MB] select a0.020-d0.100: predicted 3.677 [1.943, 6.033]; fail 0.000; vacuous 0.019; mean threshold 0.8981549999999999
+2026-11-20 05:14:55 [2437 MB] select a0.020-d0.050: predicted 3.172 [0.000, 5.592]; fail 0.000; vacuous 0.069; mean threshold 0.9190349999999998
+2026-11-20 05:14:55 [2437 MB] select a0.020-d0.025: predicted 2.508 [0.000, 4.930]; fail 0.000; vacuous 0.164; mean threshold 0.94078
+2026-11-20 05:14:55 [2437 MB] select a0.020-d0.010: predicted 2.508 [0.000, 4.930]; fail 0.000; vacuous 0.164; mean threshold 0.94078
+2026-11-20 05:14:55 [2437 MB] select: arms {"A0": {"alpha": 0.05, "delta": 0.1, "role": "reference (P15-29 settings)", "name": "a0.050-d0.100"}, "A1": {"alpha": 0.05, "delta": 0.025, "role": "primary", "name": "a0.050-d0.025"}, "A2": {"alpha": 0.04, "delta": 0.1, "role": "secondary (alpha margin)", "name": "a0.040-d0.100"}, "A3": {"alpha": 0.05, "delta": 0.01, "role": "secondary (delta margin)", "name": "a0.050-d0.010"}}
+2026-11-20 05:14:55 [2386 MB] stage select done in 248 s; peak 2522 MB; {"A0": {"alpha": 0.05, "delta": 0.1, "role": "reference (P15-29 settings)", "name": "a0.050-d0.100"}, "A1": {"alpha": 0.05, "delta": 0.025, "role": "primary", "name": "a0.050-d0.025"}, "A2": {"alpha": 0.04, "delta": 0.1, "role": "secondary (alpha margin)", "name": "a0.040-d0.100"}, "A3": {"alpha": 0.05, "delta": 0.01, "role": "secondary (delta margin)", "name": "a0.050-d0.010"}}
+2026-11-20 05:14:55 [2386 MB] keep_awake: cleared
