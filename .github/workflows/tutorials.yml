@@ -1,0 +1,52 @@
+# P14-43: the three 10-minute tutorials (tutorials/) in synthetic mode, each one timed.
+# Done criterion (pre-registered): all three pass, and each takes less than 10 minutes.
+# Install like a newcomer: a clean venv with only the package (numpy) and pytest; no data, no weights, no network
+# after the install. The times go to the job summary and to the tutorial-times artifact.
+name: tutorials
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tutorials:
+    name: tutorials (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, python: "3.12" }
+          - { os: windows-latest, python: "3.12" }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - name: Clean venv with the package and pytest only
+        run: |
+          uv venv "$RUNNER_TEMP/tv"
+          uv pip install --python "$RUNNER_TEMP/tv" . pytest
+      - name: Run and time the three tutorials (synthetic mode)
+        env:
+          FIDETYPE_TUTORIAL_TIMES: ${{ runner.temp }}/tutorial-times.json
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then py="$RUNNER_TEMP/tv/Scripts/python"; else py="$RUNNER_TEMP/tv/bin/python"; fi
+          "$py" -m pytest -q -p no:cacheprovider -rA tutorials/
+          cat "$FIDETYPE_TUTORIAL_TIMES"
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: tutorial-times-${{ matrix.os }}
+          path: ${{ runner.temp }}/tutorial-times.json
+          if-no-files-found: warn
