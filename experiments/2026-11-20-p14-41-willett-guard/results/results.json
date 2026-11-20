@@ -1,0 +1,273 @@
+{
+ "lp": {
+  "n_val": 106,
+  "n_test": 80,
+  "val_frames": 436356,
+  "test_frames": 335829,
+  "split_equal_p15_08": true,
+  "seconds": 722.4,
+  "peak_rss_mb": 1194
+ },
+ "guard": {
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 106,
+  "n_null": 106,
+  "cal": "val blocks",
+  "null": "time-shuffled input of the val sentences (decoder run on the shuffled bins)",
+  "status": "guard",
+  "config_id": "tcfg-39aac48688b8bd12",
+  "guard_sha256": "b16963ed5d2ba09ed0525fc8193b8b8a0a1d0ec7814faf12ee8b6174e93c33fc",
+  "guard_size": 6751,
+  "sheet": {
+   "config_id": "tcfg-39aac48688b8bd12",
+   "input_kind": "logits",
+   "decoder": "builtin:ctc-prefix-beam-16",
+   "alpha": 0.05,
+   "delta": 0.1,
+   "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+   "n_items": 106,
+   "n_fit": 26,
+   "n_policy": 40,
+   "n_ltt": 40,
+   "n_ltt_min": 45,
+   "lambda_hat": "inf",
+   "feasible": false,
+   "commit_threshold": "inf",
+   "commit_gate": {
+    "min_chars": 1,
+    "min_words": 0,
+    "max_guard_risk": 1.0
+   },
+   "ltt_commits": 0,
+   "ltt_wrong_commits": 0,
+   "controls": [
+    {
+     "name": "uniform",
+     "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "description": "calibration frames in a random time order",
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    {
+     "name": "user",
+     "description": "your decoder output on null input (null_inputs)",
+     "n": 106,
+     "n_commit": 0,
+     "allowed": 5,
+     "passed": true
+    }
+   ],
+   "null_max_commit_rate": 0.05,
+   "seed": 0,
+   "created_utc": "2026-11-20T12:34:48+00:00",
+   "assumptions": [
+    "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+    "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+    "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+    "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+   ],
+   "not_guaranteed": [
+    "Any single utterance: the bound is on the rate over many utterances.",
+    "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+    "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+    "The error rate among commits (precision): with few commits it can be high.",
+    "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+    "Correctness of the text that the guard withholds or offers.",
+    "Any medical or legal claim. Fidetype is research software, not a medical device."
+   ],
+   "warnings": [
+    "only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.",
+    "the guard never commits (no certified threshold). It still offers and withholds."
+   ],
+   "ltt_median_guard_risk": 0.2503075809717955,
+   "ltt_gate_blocked": 0
+  },
+  "seconds": 3186.9,
+  "peak_rss_mb": 1194
+ },
+ "decide_run": {
+  "seconds": 983.5,
+  "new_decisions": 400,
+  "peak_rss_mb": 1194
+ },
+ "score": {
+  "guard_status": "guard",
+  "V1": "guard returned, LTT not feasible (no certified commit threshold)",
+  "V1_detail": {
+   "feasible": false,
+   "n_ltt": 40,
+   "n_ltt_min": 45,
+   "commit_threshold": "inf",
+   "lambda_hat": "inf",
+   "ltt_commits": 0,
+   "ltt_wrong_commits": 0,
+   "warnings": [
+    "only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.",
+    "the guard never commits (no certified threshold). It still offers and withholds."
+   ]
+  },
+  "V2": "holds",
+  "V3": "vacuous",
+  "V6": {
+   "calibrate_controls": {
+    "uniform": {
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    "shuffled": {
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    "user": {
+     "n": 106,
+     "n_commit": 0,
+     "allowed": 5,
+     "passed": true
+    }
+   },
+   "calibrate_controls_pass": true,
+   "test_timeshuf_commit_rate": 0.0,
+   "test_zero_commit_rate": 0.0,
+   "pass": true
+  },
+  "V7_offer_top1": {
+   "exact": 0,
+   "n": 80,
+   "cer": 0.2967,
+   "offers": 77
+  },
+  "test": {
+   "real": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 77,
+    "withhold": 3,
+    "commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "timeshuf": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 4,
+    "withhold": 76,
+    "commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "zero": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "frameshuf": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 77,
+    "withhold": 3,
+    "commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "uniform": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "commit_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   }
+  },
+  "safe_wpm": {
+   "definition": "safe-wpm/0.1",
+   "value": 0.0,
+   "ci": null,
+   "status": "vacuous",
+   "unguarded_wpm": 0.0,
+   "wpm_no_penalty": 0.0,
+   "method": "ltt",
+   "alpha": 0.05,
+   "delta": 0.1,
+   "n_cal": 40,
+   "calibration": "106 items: 26 fit + 40 grid + 40 LTT (fidetype.trust.calibrate)",
+   "confidence": "probability >= 0.9 over calibration draws",
+   "measured_wrong_commit": 0.0,
+   "measured_wrong_commit_cp95": [
+    0.0,
+    0.0451
+   ],
+   "n_trials": 80,
+   "n_commits": 0,
+   "n_wrong_commits": 0,
+   "n_correct_commits": 0,
+   "error_among_commits": null,
+   "committed_correct_words": 0,
+   "total_words": 698,
+   "minutes_neural": 55.971500000000006,
+   "minutes_correction": 0.0,
+   "timing": "neural time = 10 ms bins of the sentence window (go cue to sentence end + up to 1 s tail, P15-08 cut)",
+   "correction_rule": {
+    "name": "rewrite",
+    "overhead_s": 2.0,
+    "s_per_char": 0.7894736842105263,
+    "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+   },
+   "no_bci_wpm": 4.048723897911833,
+   "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+   "note": "the calibration found no certified threshold (policy never commits)",
+   "controls": {
+    "shuffled": "pass",
+    "zeros": "pass",
+    "null_commit": "pass",
+    "passed": true,
+    "commit_rate_zeros": 0.0,
+    "basis": {
+     "shuffled": "drop-in null control 'shuffled': 0/300 commits (allowed 15)",
+     "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+     "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+    }
+   },
+   "ci_note": "no CI: one participant (T5); a sentence bootstrap would be too narrow"
+  }
+ },
+ "peak_rss_mb_last_run": 1194
+}

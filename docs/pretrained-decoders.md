@@ -24,7 +24,7 @@ Code: [`src/fidetype/pretrained/`](../src/fidetype/pretrained/__init__.py). Road
 | `t12-v2` | Implant attempted speech, phonemes (CTC), causal GRU | Brain-to-Text '24 `competitionData/test/t12.*.mat` | T12, Willett et al. 2023 (CC0 1.0) | false | available; no packaged trust config (gap) |
 | `kt-semg-lda` | Forearm sEMG typing, one key per press (LDA) | KT-sEMG `runN.csv` + key log | KT-sEMG, Nokia (CC BY 4.0, attribution) | false | available; guard is a release file |
 | `emg2qwerty-p11-01` | Wrist sEMG typing, characters (CTC), causal ring-TCN, generic model | emg2qwerty session `*.hdf5` | emg2qwerty, Meta (CC BY-NC-SA 4.0) | **true** | available, **research only** |
-| `willett-hw` | Implant handwriting, characters (CTC), causal TCN, our own (P15-08 run R-all-s0). **Weak**: greedy test CER 0.305, no LM | Willett handwriting 2021, one session folder `Datasets/t5.*` (`sentences.mat`) | T5, Willett et al. 2021 (CC0 1.0) | false | available; weights licence CC0 1.0 **provisional** (user decision D11); no packaged trust config (gap 121) |
+| `willett-hw` | Implant handwriting, characters (CTC), causal TCN, our own (P15-08 run R-all-s0). **Weak**: greedy test CER 0.305, no LM | Willett handwriting 2021, one session folder `Datasets/t5.*` (`sentences.mat`) | T5, Willett et al. 2021 (CC0 1.0) | false | available; weights licence CC0 1.0 **provisional** (user decision D11); guard is a release file, **offer only** (never commits) |
 | `toronto-semg-cnn` | Forearm sEMG typing, key-press CNN | Toronto sEMG | CC BY 4.0 | false | planned (no runtime yet) |
 
 Each model card (`fidetype decoders info <name>`) gives the input spec, the architecture, the release files with SHA-256 and size, the licence of the data and the proposed licence of the weights, the training run, the metrics and the limits.
@@ -75,7 +75,8 @@ Each stream reaches the conformance level `provenance`. Its `meta` has `decoder.
 
 - `t15-m4-13`: the P14-05 guard (`tcfg-1016759f08a3f9a1`, alpha 0.05, delta 0.1) is in the package. Its text decoder (phoneme beam -> lexicon words -> character LM) is built automatically from three text files (CMU dictionary, Tatoeba character 6-gram LM, Tatoeba word counts). Input: `guard.decide(stream.log_probs)`.
 - `kt-semg-lda`: the guard is a release file next to the weights. Input: the key n-best list, `guard.decide(m.nbest(stream))`. This decoder is weak; its guard offers and never commits (correct behaviour).
-- `t12-v2`, `emg2qwerty-p11-01`, `willett-hw`: no packaged trust config yet (`NoTrustConfig`). Calibrate your own with [`fidetype.trust.calibrate`](trust-quickstart.md). For `willett-hw` the guard is open gap 121 (P14-41).
+- `willett-hw`: the guard is a release file next to the weights (`tcfg-39aac48688b8bd12`, alpha 0.05, delta 0.1, built-in CTC beam, no LM; [P14-41](../experiments/2026-11-20-p14-41-willett-guard/results.md)). Input: `guard.decide(stream.log_probs)`. **It never commits.** The 106 val sentences give 40 LTT items, and alpha 0.05 with delta 0.1 needs at least 45, so no commit threshold is certified. On the 80 test sentences it offers 77 and withholds 3; safe WPM v0.1 is 0 (vacuous). All null controls pass (0 commits). The offers are not certified: the guard offers as often on frame-shuffled decoder frames (77 / 80) as on real input.
+- `t12-v2`, `emg2qwerty-p11-01`: no packaged trust config yet (`NoTrustConfig`). Calibrate your own with [`fidetype.trust.calibrate`](trust-quickstart.md).
 
 ## `willett-hw`: read this before you use it
 

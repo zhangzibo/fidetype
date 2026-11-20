@@ -34,7 +34,8 @@
   "code": "experiments/2026-11-19-p15-08-e1-cross-body/e1.py XBody (training); fidetype.pretrained._xbody (this runtime, NumPy)"
  },
  "files": [
-  {"role": "weights", "name": "willett-hw.weights.npz", "sha256": "66ac659066340c70fac58a1dd16c4b81f3806ba3e5bb8daf04169b79b66bc4a9", "size": 34369716, "url": null}
+  {"role": "weights", "name": "willett-hw.weights.npz", "sha256": "66ac659066340c70fac58a1dd16c4b81f3806ba3e5bb8daf04169b79b66bc4a9", "size": 34369716, "url": null},
+  {"role": "guard", "name": "willett-hw.guard.json", "sha256": "b16963ed5d2ba09ed0525fc8193b8b8a0a1d0ec7814faf12ee8b6174e93c33fc", "size": 6751, "url": null}
  ],
  "licence": {
   "data.licence": "CC0-1.0",
@@ -64,7 +65,17 @@
   "Only the 10 sessions of the dataset: a new session or participant needs its own z-score statistics and probably retraining.",
   "Other split than the benchmark track willett-hw (last 3 sessions): 193 of that track's 254 test trials were in this model's training pool. Score this model only on its own test blocks (the last block of each session), or retrain it on the track's train split first."
  ],
- "trust": null,
- "trust_note": "No committed trust config yet: open gap 121 (P14-41). Calibrate your own with fidetype.trust.calibrate on the val blocks; with greedy CER 0.305, few whole sentences are exact, so expect a guard that mostly offers.",
+ "trust": {
+  "config": "file:willett-hw.guard.json",
+  "config_source": "experiments/2026-11-20-p14-41-willett-guard (C:/Users/zhang/bci-data/derived/p14-41/willett-hw.guard.json)",
+  "config_id": "tcfg-39aac48688b8bd12",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "input": "the log_probs (T, 98) of a decode() stream: guard.decide(stream.log_probs)",
+  "decode": "builtin:ctc-prefix-beam-16 (no LM, no lexicon)",
+  "commits": "never: OFFER / WITHHOLD only. The 106 val sentences give 40 LTT items; alpha 0.05, delta 0.1 needs at least 45, so no commit threshold is certified (feasible: false). Test blocks: 0 commits, 77 offers, 3 withholds of 80; safe WPM v0.1 0.00 (vacuous)",
+  "null_controls": "calibrate: uniform 0/300, frame-shuffled 0/300, time-shuffled input 0/106 commits (all pass); test: time-shuffled and zero input 0/80 commits each"
+ },
+ "trust_note": "Offer-only guard (P14-41): it never commits. A guard that can commit needs about 120 or more calibration sentences and a stronger text decoder (word LM: gap 26 = P14-12; stronger decoder: gap 120 = P15-33). The offer list is not certified: on frame-shuffled decoder frames it offers as often as on real input (77 / 80).",
  "hosting": {"host": null, "release": null, "notes": "no download URL yet; hosting is the user step P14-02 (gap 98, docs/publishing-checklist.md)"}
 }

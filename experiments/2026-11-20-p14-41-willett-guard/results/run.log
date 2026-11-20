@@ -1,0 +1,70 @@
+[2026-11-20 03:29:39] (rss 29 MB, peak 29 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-20 03:29:39] (rss 29 MB, peak 29 MB) start ['lp', 'guard', 'decide', 'score'] (pid 54144)
+[2026-11-20 03:31:29] (rss 247 MB, peak 463 MB) lp: session 1/10 t5.2019.05.08: 12 val, 10 test so far
+[2026-11-20 03:32:38] (rss 325 MB, peak 537 MB) lp: session 2/10 t5.2019.11.25: 22 val, 17 test so far
+[2026-11-20 03:34:23] (rss 454 MB, peak 670 MB) lp: session 3/10 t5.2019.12.09: 32 val, 27 test so far
+[2026-11-20 03:35:30] (rss 533 MB, peak 743 MB) lp: session 4/10 t5.2019.12.11: 42 val, 33 test so far
+[2026-11-20 03:36:46] (rss 627 MB, peak 841 MB) lp: session 5/10 t5.2019.12.18: 52 val, 40 test so far
+[2026-11-20 03:37:50] (rss 701 MB, peak 906 MB) lp: session 6/10 t5.2019.12.20: 62 val, 47 test so far
+[2026-11-20 03:38:43] (rss 763 MB, peak 971 MB) lp: session 7/10 t5.2020.01.06: 72 val, 53 test so far
+[2026-11-20 03:39:39] (rss 910 MB, peak 1037 MB) heartbeat
+[2026-11-20 03:39:41] (rss 835 MB, peak 1037 MB) lp: session 8/10 t5.2020.01.08: 82 val, 60 test so far
+[2026-11-20 03:40:37] (rss 897 MB, peak 1078 MB) lp: session 9/10 t5.2020.01.13: 101 val, 70 test so far
+[2026-11-20 03:41:41] (rss 977 MB, peak 1194 MB) lp: session 10/10 t5.2020.01.15: 106 val, 80 test so far
+[2026-11-20 03:41:41] (rss 983 MB, peak 1194 MB) lp: 106 val, 80 test sentences; split equal to P15-08: True (722 s)
+[2026-11-20 03:41:41] (rss 72 MB, peak 1194 MB) stage lp finished
+[2026-11-20 03:41:41] (rss 399 MB, peak 1194 MB) guard: calibrate on 106 val sentences, 106 time-shuffled nulls
+[2026-11-20 03:49:40] (rss 701 MB, peak 1194 MB) heartbeat
+[2026-11-20 03:59:40] (rss 691 MB, peak 1194 MB) heartbeat
+[2026-11-20 04:09:42] (rss 750 MB, peak 1194 MB) heartbeat
+[2026-11-20 04:19:43] (rss 721 MB, peak 1194 MB) heartbeat
+[2026-11-20 04:29:43] (rss 712 MB, peak 1194 MB) heartbeat
+[2026-11-20 04:34:48] (rss 485 MB, peak 1194 MB) guard: tcfg-39aac48688b8bd12 (3187 s)
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-39aac48688b8bd12
+input                logits (builtin:ctc-prefix-beam-16)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    106 = 26 fit + 40 policy grid + 40 LTT
+LTT items needed     >= 45 LTT items (utterances, not commits) to certify any COMMIT
+lambda_hat           inf (feasible: False)
+commit threshold     p_top1 >= never commits (no threshold certified)
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 0 commits, 0 wrong (of 40; 0 blocked by the commit gate; median guard risk 0.250308)
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           0/300 commits (allowed 15): PASS
+  user               0/106 commits (allowed 5): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+warnings
+  ! only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.
+  ! the guard never commits (no certified threshold). It still offers and withholds.
+Details: docs/trust-guarantee.md
+[2026-11-20 04:34:48] (rss 153 MB, peak 1194 MB) stage guard finished
+[2026-11-20 04:35:23] (rss 551 MB, peak 1194 MB) decide: real done (35 s)
+[2026-11-20 04:35:55] (rss 589 MB, peak 1194 MB) decide: timeshuf done (67 s)
+[2026-11-20 04:36:22] (rss 589 MB, peak 1194 MB) decide: zero done (94 s)
+[2026-11-20 04:36:59] (rss 538 MB, peak 1194 MB) decide: frameshuf done (130 s)
+[2026-11-20 04:39:44] (rss 568 MB, peak 1194 MB) heartbeat
+[2026-11-20 04:49:44] (rss 548 MB, peak 1194 MB) heartbeat
+[2026-11-20 04:51:12] (rss 555 MB, peak 1194 MB) decide: uniform done (983 s)
+[2026-11-20 04:51:12] (rss 555 MB, peak 1194 MB) decide: 400 new decisions (983 s)
+[2026-11-20 04:51:12] (rss 161 MB, peak 1194 MB) stage decide finished
+[2026-11-20 04:51:12] (rss 162 MB, peak 1194 MB) score: V1 guard returned, LTT not feasible (no certified commit threshold); V2 holds; V3 vacuous; V6 pass True; counts real {'n': 80, 'commit': 0, 'wrong_commit': 0, 'offer': 77, 'withhold': 3, 'commit_rate': 0.0, 'wrong_commit_rate': 0.0, 'wrong_commit_cp95': [0.0, 0.0451]}; top-1 exact 0/80; safe WPM 0.00 (vacuous; LTT a=0.05 d=0.1 n_cal=40; test wrong-commit 0/80 = 0.0000; commits 0; unguarded 0.00; no-BCI 4.05)
+[2026-11-20 04:51:12] (rss 162 MB, peak 1194 MB) stage score finished
+[2026-11-20 04:51:12] (rss 162 MB, peak 1194 MB) keep_awake: cleared
+[2026-11-20 04:51:12] (rss 162 MB, peak 1194 MB) end; peak RSS of this run 1194 MB
