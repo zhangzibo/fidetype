@@ -1,0 +1,4190 @@
+{
+ "fidetype_version": "0.0.1",
+ "plan": "plan.md (pre-registration, commit d7169cf)",
+ "cutoff": "2026-11-20T06:00:00",
+ "B_inner": 2000,
+ "units": {
+  "t15": {
+   "unit": "t15",
+   "no_bci_reference": 4.0153,
+   "X4_code_check": {
+    "reference": "p15-22/arm-llm_learned.json",
+    "same_action_and_text": 701,
+    "n": 701,
+    "z0_value": 4.9119565090513575,
+    "k1_interval": [
+     4.248162955656109,
+     5.572670758280303
+    ],
+    "reproduces": true,
+    "k1_interval_matches_p15_22": true
+   },
+   "K_used": 40,
+   "K_min_reached": true,
+   "draws": [
+    {
+     "name": "k01",
+     "seed": 671043445,
+     "boot_seed": 315362505,
+     "k": 1,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       119,
+       173,
+       179
+      ],
+      "sha_desired": "0238e64288f7f27f"
+     },
+     "config_id": "tcfg-d4a1d2aa5f6ef3e3",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.258892056367242,
+      "status": "certified",
+      "n_commits": 257,
+      "n_wrong_commits": 25,
+      "measured_wrong_commit": 0.03566333808844508,
+      "measured_wrong_commit_cp95": [
+       0.0232,
+       0.0522
+      ],
+      "unguarded_wpm": 6.258892056367242,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 759.1,
+     "seconds": 766.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 1200,
+      "llm_texts_scored_live": 4032
+     },
+     "peak_mb": 2662.8,
+     "commit_threshold": 0.63,
+     "ltt_in_sample": [
+      115,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k02",
+     "seed": 2592292547,
+     "boot_seed": 393958720,
+     "k": 2,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       111,
+       169,
+       176
+      ],
+      "sha_desired": "c1ebaba06c28f987"
+     },
+     "config_id": "tcfg-a03a0d44d53b7e5e",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.233670813592241,
+      "status": "certified",
+      "n_commits": 263,
+      "n_wrong_commits": 29,
+      "measured_wrong_commit": 0.04136947218259629,
+      "measured_wrong_commit_cp95": [
+       0.0279,
+       0.0589
+      ],
+      "unguarded_wpm": 6.233670813592241,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 852.4,
+     "seconds": 861.1,
+     "misses_after": {
+      "base_nbest_new_decodes": 1800,
+      "llm_texts_scored_live": 4391
+     },
+     "peak_mb": 2681.0,
+     "commit_threshold": 0.61,
+     "ltt_in_sample": [
+      118,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       1,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k03",
+     "seed": 3602283441,
+     "boot_seed": 2463907440,
+     "k": 3,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       109,
+       167,
+       168
+      ],
+      "sha_desired": "78d932f87f770ab7"
+     },
+     "config_id": "tcfg-1001988c7b8e2916",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.820224679534703,
+      "status": "certified",
+      "n_commits": 288,
+      "n_wrong_commits": 34,
+      "measured_wrong_commit": 0.04850213980028531,
+      "measured_wrong_commit_cp95": [
+       0.0338,
+       0.0671
+      ],
+      "unguarded_wpm": 6.820224679534703,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 841.3,
+     "seconds": 848.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 1800,
+      "llm_texts_scored_live": 7616
+     },
+     "peak_mb": 2680.8,
+     "commit_threshold": 0.44,
+     "ltt_in_sample": [
+      126,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k04",
+     "seed": 2878371137,
+     "boot_seed": 88142564,
+     "k": 4,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       116,
+       172,
+       166
+      ],
+      "sha_desired": "f981ceccd9ec2974"
+     },
+     "config_id": "tcfg-e6c128e5760f53e2",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.604754180946075,
+      "status": "certified",
+      "n_commits": 221,
+      "n_wrong_commits": 16,
+      "measured_wrong_commit": 0.02282453637660485,
+      "measured_wrong_commit_cp95": [
+       0.0131,
+       0.0368
+      ],
+      "unguarded_wpm": 5.604754180946075,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 779.9,
+     "seconds": 787.1,
+     "misses_after": {
+      "base_nbest_new_decodes": 2400,
+      "llm_texts_scored_live": 8051
+     },
+     "peak_mb": 2775.5,
+     "commit_threshold": 0.71,
+     "ltt_in_sample": [
+      94,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k05",
+     "seed": 2362275849,
+     "boot_seed": 2967609999,
+     "k": 5,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       113,
+       172,
+       172
+      ],
+      "sha_desired": "30680e04ea90b896"
+     },
+     "config_id": "tcfg-c9a39782c72608b1",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.953565328507883,
+      "status": "certified",
+      "n_commits": 242,
+      "n_wrong_commits": 22,
+      "measured_wrong_commit": 0.03138373751783167,
+      "measured_wrong_commit_cp95": [
+       0.0198,
+       0.0471
+      ],
+      "unguarded_wpm": 5.953565328507883,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 742.8,
+     "seconds": 749.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 2400,
+      "llm_texts_scored_live": 11119
+     },
+     "peak_mb": 2695.5,
+     "commit_threshold": 0.7,
+     "ltt_in_sample": [
+      91,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       1,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k06",
+     "seed": 3767362797,
+     "boot_seed": 4156117441,
+     "k": 6,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       108,
+       173,
+       173
+      ],
+      "sha_desired": "39b9354bf89ee743"
+     },
+     "config_id": "tcfg-3c640589b0d70924",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.411664978081154,
+      "status": "certified",
+      "n_commits": 204,
+      "n_wrong_commits": 14,
+      "measured_wrong_commit": 0.019971469329529243,
+      "measured_wrong_commit_cp95": [
+       0.011,
+       0.0333
+      ],
+      "unguarded_wpm": 5.411664978081154,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 794.2,
+     "seconds": 801.2,
+     "misses_after": {
+      "base_nbest_new_decodes": 3000,
+      "llm_texts_scored_live": 11744
+     },
+     "peak_mb": 2775.5,
+     "commit_threshold": 0.78,
+     "ltt_in_sample": [
+      89,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k07",
+     "seed": 992146896,
+     "boot_seed": 2388802508,
+     "k": 7,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       113,
+       173,
+       172
+      ],
+      "sha_desired": "88ec096382d5bde6"
+     },
+     "config_id": "tcfg-eea2ebff9233c1b8",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.774726541457303,
+      "status": "certified",
+      "n_commits": 284,
+      "n_wrong_commits": 32,
+      "measured_wrong_commit": 0.0456490727532097,
+      "measured_wrong_commit_cp95": [
+       0.0314,
+       0.0638
+      ],
+      "unguarded_wpm": 6.774726541457303,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 753.9,
+     "seconds": 761.0,
+     "misses_after": {
+      "base_nbest_new_decodes": 3000,
+      "llm_texts_scored_live": 14662
+     },
+     "peak_mb": 2761.4,
+     "commit_threshold": 0.55,
+     "ltt_in_sample": [
+      109,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k08",
+     "seed": 3715032680,
+     "boot_seed": 1209418937,
+     "k": 8,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       114,
+       175,
+       169
+      ],
+      "sha_desired": "a9ee65de89440a74"
+     },
+     "config_id": "tcfg-64da39af9030f2f0",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.67910839432621,
+      "status": "certified",
+      "n_commits": 227,
+      "n_wrong_commits": 18,
+      "measured_wrong_commit": 0.025677603423680456,
+      "measured_wrong_commit_cp95": [
+       0.0153,
+       0.0403
+      ],
+      "unguarded_wpm": 5.67910839432621,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 740.0,
+     "seconds": 747.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 3600,
+      "llm_texts_scored_live": 15261
+     },
+     "peak_mb": 2790.2,
+     "commit_threshold": 0.7,
+     "ltt_in_sample": [
+      96,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k09",
+     "seed": 1161123232,
+     "boot_seed": 4180059879,
+     "k": 9,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       110,
+       172,
+       173
+      ],
+      "sha_desired": "0704a24251c94307"
+     },
+     "config_id": "tcfg-4c6430647982739e",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.3750238376890875,
+      "status": "certified",
+      "n_commits": 215,
+      "n_wrong_commits": 15,
+      "measured_wrong_commit": 0.021398002853067047,
+      "measured_wrong_commit_cp95": [
+       0.012,
+       0.035
+      ],
+      "unguarded_wpm": 5.3750238376890875,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 751.1,
+     "seconds": 759.8,
+     "misses_after": {
+      "base_nbest_new_decodes": 3600,
+      "llm_texts_scored_live": 18236
+     },
+     "peak_mb": 2761.4,
+     "commit_threshold": 0.74,
+     "ltt_in_sample": [
+      87,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k10",
+     "seed": 1439900493,
+     "boot_seed": 3698635765,
+     "k": 10,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       112,
+       168,
+       180
+      ],
+      "sha_desired": "0faee60dd41b709c"
+     },
+     "config_id": "tcfg-e1cbb4194f3571f0",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.466365503953168,
+      "status": "certified",
+      "n_commits": 218,
+      "n_wrong_commits": 18,
+      "measured_wrong_commit": 0.025677603423680456,
+      "measured_wrong_commit_cp95": [
+       0.0153,
+       0.0403
+      ],
+      "unguarded_wpm": 5.466365503953168,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 877.5,
+     "seconds": 888.0,
+     "misses_after": {
+      "base_nbest_new_decodes": 4200,
+      "llm_texts_scored_live": 18776
+     },
+     "peak_mb": 2790.2,
+     "commit_threshold": 0.64,
+     "ltt_in_sample": [
+      77,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k11",
+     "seed": 1247477425,
+     "boot_seed": 3204533918,
+     "k": 11,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       116,
+       175,
+       177
+      ],
+      "sha_desired": "32ba1bce2ef34177"
+     },
+     "config_id": "tcfg-264c8f8ceb732822",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.486834704628654,
+      "status": "certified",
+      "n_commits": 227,
+      "n_wrong_commits": 18,
+      "measured_wrong_commit": 0.025677603423680456,
+      "measured_wrong_commit_cp95": [
+       0.0153,
+       0.0403
+      ],
+      "unguarded_wpm": 5.486834704628654,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 1449.2,
+     "seconds": 1458.7,
+     "misses_after": {
+      "base_nbest_new_decodes": 4200,
+      "llm_texts_scored_live": 21777
+     },
+     "peak_mb": 2761.4,
+     "commit_threshold": 0.76,
+     "ltt_in_sample": [
+      97,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k12",
+     "seed": 1175853381,
+     "boot_seed": 1790333171,
+     "k": 12,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       108,
+       169,
+       173
+      ],
+      "sha_desired": "dc6f55e92576ff8f"
+     },
+     "config_id": "tcfg-ddcaf2610a7cc0d2",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.297160032340587,
+      "status": "certified",
+      "n_commits": 269,
+      "n_wrong_commits": 29,
+      "measured_wrong_commit": 0.04136947218259629,
+      "measured_wrong_commit_cp95": [
+       0.0279,
+       0.0589
+      ],
+      "unguarded_wpm": 6.297160032340587,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 1897.4,
+     "seconds": 1906.2,
+     "misses_after": {
+      "base_nbest_new_decodes": 4800,
+      "llm_texts_scored_live": 22292
+     },
+     "peak_mb": 2790.2,
+     "commit_threshold": 0.57,
+     "ltt_in_sample": [
+      97,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k13",
+     "seed": 4032858886,
+     "boot_seed": 1304796992,
+     "k": 13,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       115,
+       167,
+       173
+      ],
+      "sha_desired": "d7f98de553e2b2c2"
+     },
+     "config_id": "tcfg-7190f9dd0ef65a3a",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.558059348701056,
+      "status": "certified",
+      "n_commits": 225,
+      "n_wrong_commits": 18,
+      "measured_wrong_commit": 0.025677603423680456,
+      "measured_wrong_commit_cp95": [
+       0.0153,
+       0.0403
+      ],
+      "unguarded_wpm": 5.558059348701056,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 1403.7,
+     "seconds": 1411.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 4800,
+      "llm_texts_scored_live": 25300
+     },
+     "peak_mb": 2761.4,
+     "commit_threshold": 0.71,
+     "ltt_in_sample": [
+      99,
+      5
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k14",
+     "seed": 120287312,
+     "boot_seed": 2267200632,
+     "k": 14,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       119,
+       164,
+       159
+      ],
+      "sha_desired": "ea1a1fb592e06e0e"
+     },
+     "config_id": "tcfg-7aa1c1f168706728",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 3.5016094242812428,
+      "status": "certified",
+      "n_commits": 133,
+      "n_wrong_commits": 5,
+      "measured_wrong_commit": 0.007132667617689016,
+      "measured_wrong_commit_cp95": [
+       0.0023,
+       0.0166
+      ],
+      "unguarded_wpm": 3.5016094242812428,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 884.4,
+     "seconds": 892.6,
+     "misses_after": {
+      "base_nbest_new_decodes": 5400,
+      "llm_texts_scored_live": 25766
+     },
+     "peak_mb": 2790.2,
+     "commit_threshold": 0.88,
+     "ltt_in_sample": [
+      65,
+      6
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k15",
+     "seed": 3168724557,
+     "boot_seed": 2656856750,
+     "k": 15,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       114,
+       176,
+       163
+      ],
+      "sha_desired": "b2bdde5143a740bb"
+     },
+     "config_id": "tcfg-86d644d807f11783",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 4.0374343748500525,
+      "status": "certified",
+      "n_commits": 168,
+      "n_wrong_commits": 11,
+      "measured_wrong_commit": 0.015691868758915834,
+      "measured_wrong_commit_cp95": [
+       0.0079,
+       0.0279
+      ],
+      "unguarded_wpm": 4.0374343748500525,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 830.1,
+     "seconds": 837.4,
+     "misses_after": {
+      "base_nbest_new_decodes": 5400,
+      "llm_texts_scored_live": 28810
+     },
+     "peak_mb": 2784.4,
+     "commit_threshold": 0.89,
+     "ltt_in_sample": [
+      79,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k16",
+     "seed": 4012399071,
+     "boot_seed": 852510002,
+     "k": 16,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       112,
+       166,
+       168
+      ],
+      "sha_desired": "fecefd944cd5034a"
+     },
+     "config_id": "tcfg-ef907d820f75555f",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 4.320671461287381,
+      "status": "certified",
+      "n_commits": 166,
+      "n_wrong_commits": 7,
+      "measured_wrong_commit": 0.009985734664764621,
+      "measured_wrong_commit_cp95": [
+       0.004,
+       0.0205
+      ],
+      "unguarded_wpm": 4.320671461287381,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 827.1,
+     "seconds": 834.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 6000,
+      "llm_texts_scored_live": 29407
+     },
+     "peak_mb": 2813.8,
+     "commit_threshold": 0.85,
+     "ltt_in_sample": [
+      69,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k17",
+     "seed": 1449403420,
+     "boot_seed": 2024740405,
+     "k": 17,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       109,
+       175,
+       166
+      ],
+      "sha_desired": "e1db53e1e019ffef"
+     },
+     "config_id": "tcfg-9c8f0038a1ef85b3",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.803372967731925,
+      "status": "certified",
+      "n_commits": 226,
+      "n_wrong_commits": 17,
+      "measured_wrong_commit": 0.024251069900142655,
+      "measured_wrong_commit_cp95": [
+       0.0142,
+       0.0385
+      ],
+      "unguarded_wpm": 5.803372967731925,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 748.8,
+     "seconds": 755.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 6000,
+      "llm_texts_scored_live": 32255
+     },
+     "peak_mb": 2784.4,
+     "commit_threshold": 0.64,
+     "ltt_in_sample": [
+      93,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k18",
+     "seed": 2702263015,
+     "boot_seed": 1327456558,
+     "k": 18,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       116,
+       179,
+       177
+      ],
+      "sha_desired": "11e781a109768df5"
+     },
+     "config_id": "tcfg-5f5e8515e4e4c512",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.490980639699051,
+      "status": "certified",
+      "n_commits": 226,
+      "n_wrong_commits": 19,
+      "measured_wrong_commit": 0.02710413694721826,
+      "measured_wrong_commit_cp95": [
+       0.0164,
+       0.042
+      ],
+      "unguarded_wpm": 5.490980639699051,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 777.9,
+     "seconds": 785.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 6600,
+      "llm_texts_scored_live": 32967
+     },
+     "peak_mb": 2813.8,
+     "commit_threshold": 0.74,
+     "ltt_in_sample": [
+      91,
+      6
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k19",
+     "seed": 3481500647,
+     "boot_seed": 3050900043,
+     "k": 19,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       117,
+       161,
+       174
+      ],
+      "sha_desired": "c1184cd525ef9c5b"
+     },
+     "config_id": "tcfg-f9a5ef0c75e1b908",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.0796466019299285,
+      "status": "certified",
+      "n_commits": 198,
+      "n_wrong_commits": 14,
+      "measured_wrong_commit": 0.019971469329529243,
+      "measured_wrong_commit_cp95": [
+       0.011,
+       0.0333
+      ],
+      "unguarded_wpm": 5.0796466019299285,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 773.1,
+     "seconds": 780.6,
+     "misses_after": {
+      "base_nbest_new_decodes": 6600,
+      "llm_texts_scored_live": 35803
+     },
+     "peak_mb": 2838.9,
+     "commit_threshold": 0.82,
+     "ltt_in_sample": [
+      83,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k20",
+     "seed": 1775185273,
+     "boot_seed": 976934132,
+     "k": 20,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       108,
+       171,
+       176
+      ],
+      "sha_desired": "e942d44d2ff1beca"
+     },
+     "config_id": "tcfg-2ec5b5ca6e9cf84c",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.244223593411021,
+      "status": "certified",
+      "n_commits": 205,
+      "n_wrong_commits": 14,
+      "measured_wrong_commit": 0.019971469329529243,
+      "measured_wrong_commit_cp95": [
+       0.011,
+       0.0333
+      ],
+      "unguarded_wpm": 5.244223593411021,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 782.2,
+     "seconds": 789.7,
+     "misses_after": {
+      "base_nbest_new_decodes": 7200,
+      "llm_texts_scored_live": 36534
+     },
+     "peak_mb": 2813.8,
+     "commit_threshold": 0.82,
+     "ltt_in_sample": [
+      80,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k21",
+     "seed": 4077800375,
+     "boot_seed": 4052896618,
+     "k": 21,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       115,
+       174,
+       170
+      ],
+      "sha_desired": "87ab5c0e532a9605"
+     },
+     "config_id": "tcfg-540a5ea20f021bae",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.54448152032482,
+      "status": "certified",
+      "n_commits": 265,
+      "n_wrong_commits": 25,
+      "measured_wrong_commit": 0.03566333808844508,
+      "measured_wrong_commit_cp95": [
+       0.0232,
+       0.0522
+      ],
+      "unguarded_wpm": 6.54448152032482,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 816.2,
+     "seconds": 846.0,
+     "misses_after": {
+      "base_nbest_new_decodes": 600,
+      "llm_texts_scored_live": 3562
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.59,
+     "ltt_in_sample": [
+      103,
+      3
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k22",
+     "seed": 2662061362,
+     "boot_seed": 2203106352,
+     "k": 22,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       108,
+       174,
+       169
+      ],
+      "sha_desired": "1185a35fb8ecfae6"
+     },
+     "config_id": "tcfg-f1c7b94955601ddc",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.408620167185906,
+      "status": "certified",
+      "n_commits": 205,
+      "n_wrong_commits": 13,
+      "measured_wrong_commit": 0.018544935805991442,
+      "measured_wrong_commit_cp95": [
+       0.0099,
+       0.0315
+      ],
+      "unguarded_wpm": 5.408620167185906,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 839.5,
+     "seconds": 871.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 600,
+      "llm_texts_scored_live": 3568
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.81,
+     "ltt_in_sample": [
+      85,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k23",
+     "seed": 466910376,
+     "boot_seed": 4034701234,
+     "k": 23,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       121,
+       166,
+       170
+      ],
+      "sha_desired": "1bef766ba6ad1389"
+     },
+     "config_id": "tcfg-73fb9c3aec8c5220",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.453497055959445,
+      "status": "certified",
+      "n_commits": 216,
+      "n_wrong_commits": 16,
+      "measured_wrong_commit": 0.02282453637660485,
+      "measured_wrong_commit_cp95": [
+       0.0131,
+       0.0368
+      ],
+      "unguarded_wpm": 5.453497055959445,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 742.5,
+     "seconds": 749.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 1200,
+      "llm_texts_scored_live": 7051
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.68,
+     "ltt_in_sample": [
+      79,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k24",
+     "seed": 2913023060,
+     "boot_seed": 1381014102,
+     "k": 24,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       117,
+       170,
+       173
+      ],
+      "sha_desired": "7dcd85718751fe0b"
+     },
+     "config_id": "tcfg-dce5937597655939",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.3353080942775915,
+      "status": "certified",
+      "n_commits": 255,
+      "n_wrong_commits": 24,
+      "measured_wrong_commit": 0.034236804564907276,
+      "measured_wrong_commit_cp95": [
+       0.0221,
+       0.0505
+      ],
+      "unguarded_wpm": 6.3353080942775915,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 754.7,
+     "seconds": 761.8,
+     "misses_after": {
+      "base_nbest_new_decodes": 1200,
+      "llm_texts_scored_live": 7078
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.66,
+     "ltt_in_sample": [
+      119,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k25",
+     "seed": 3297503228,
+     "boot_seed": 823378097,
+     "k": 25,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       113,
+       171,
+       178
+      ],
+      "sha_desired": "371d80130a08edb6"
+     },
+     "config_id": "tcfg-bac2668d0b82546b",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.4961482553884995,
+      "status": "certified",
+      "n_commits": 266,
+      "n_wrong_commits": 27,
+      "measured_wrong_commit": 0.03851640513552068,
+      "measured_wrong_commit_cp95": [
+       0.0255,
+       0.0555
+      ],
+      "unguarded_wpm": 6.4961482553884995,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 758.2,
+     "seconds": 765.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 1800,
+      "llm_texts_scored_live": 10567
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.61,
+     "ltt_in_sample": [
+      115,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k26",
+     "seed": 4056147681,
+     "boot_seed": 2238692147,
+     "k": 26,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       120,
+       174,
+       177
+      ],
+      "sha_desired": "fd93665e86fb24f7"
+     },
+     "config_id": "tcfg-55cced6f87335c40",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 4.723618984224776,
+      "status": "certified",
+      "n_commits": 183,
+      "n_wrong_commits": 10,
+      "measured_wrong_commit": 0.014265335235378032,
+      "measured_wrong_commit_cp95": [
+       0.0069,
+       0.0261
+      ],
+      "unguarded_wpm": 4.723618984224776,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 758.5,
+     "seconds": 765.5,
+     "misses_after": {
+      "base_nbest_new_decodes": 1800,
+      "llm_texts_scored_live": 10655
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.83,
+     "ltt_in_sample": [
+      74,
+      6
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k27",
+     "seed": 556212086,
+     "boot_seed": 1606960892,
+     "k": 27,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       117,
+       170,
+       168
+      ],
+      "sha_desired": "95d40fda4a5bde42"
+     },
+     "config_id": "tcfg-14cf3d1a902f5f88",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.882929608095934,
+      "status": "certified",
+      "n_commits": 239,
+      "n_wrong_commits": 20,
+      "measured_wrong_commit": 0.028530670470756064,
+      "measured_wrong_commit_cp95": [
+       0.0175,
+       0.0437
+      ],
+      "unguarded_wpm": 5.882929608095934,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 734.2,
+     "seconds": 741.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 2400,
+      "llm_texts_scored_live": 13979
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.63,
+     "ltt_in_sample": [
+      122,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k28",
+     "seed": 1663845069,
+     "boot_seed": 1772672969,
+     "k": 28,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       109,
+       175,
+       164
+      ],
+      "sha_desired": "b2d7e3ca2b059367"
+     },
+     "config_id": "tcfg-2089e3fc501d053c",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.747175952629168,
+      "status": "certified",
+      "n_commits": 230,
+      "n_wrong_commits": 17,
+      "measured_wrong_commit": 0.024251069900142655,
+      "measured_wrong_commit_cp95": [
+       0.0142,
+       0.0385
+      ],
+      "unguarded_wpm": 5.747175952629168,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 727.0,
+     "seconds": 734.1,
+     "misses_after": {
+      "base_nbest_new_decodes": 2400,
+      "llm_texts_scored_live": 14073
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.73,
+     "ltt_in_sample": [
+      115,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k29",
+     "seed": 1149511677,
+     "boot_seed": 434952177,
+     "k": 29,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       109,
+       173,
+       171
+      ],
+      "sha_desired": "97b6c125d07a2e7c"
+     },
+     "config_id": "tcfg-7d3c8fbac77d5482",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.753945004865228,
+      "status": "certified",
+      "n_commits": 228,
+      "n_wrong_commits": 17,
+      "measured_wrong_commit": 0.024251069900142655,
+      "measured_wrong_commit_cp95": [
+       0.0142,
+       0.0385
+      ],
+      "unguarded_wpm": 5.753945004865228,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 774.4,
+     "seconds": 781.8,
+     "misses_after": {
+      "base_nbest_new_decodes": 3000,
+      "llm_texts_scored_live": 17560
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.65,
+     "ltt_in_sample": [
+      86,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k30",
+     "seed": 2899135849,
+     "boot_seed": 181776448,
+     "k": 30,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       119,
+       170,
+       169
+      ],
+      "sha_desired": "46816daa1bd81223"
+     },
+     "config_id": "tcfg-aecbb7c6d1d71226",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.59776788347941,
+      "status": "above-alpha",
+      "n_commits": 295,
+      "n_wrong_commits": 39,
+      "measured_wrong_commit": 0.05563480741797432,
+      "measured_wrong_commit_cp95": [
+       0.0399,
+       0.0753
+      ],
+      "unguarded_wpm": 6.59776788347941,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 734.5,
+     "seconds": 741.7,
+     "misses_after": {
+      "base_nbest_new_decodes": 3000,
+      "llm_texts_scored_live": 17612
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.44,
+     "ltt_in_sample": [
+      111,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k31",
+     "seed": 514576027,
+     "boot_seed": 727570171,
+     "k": 31,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       106,
+       178,
+       174
+      ],
+      "sha_desired": "69a80fb889deaa1a"
+     },
+     "config_id": "tcfg-b1911b713b10bbfb",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 4.824729929790744,
+      "status": "certified",
+      "n_commits": 181,
+      "n_wrong_commits": 10,
+      "measured_wrong_commit": 0.014265335235378032,
+      "measured_wrong_commit_cp95": [
+       0.0069,
+       0.0261
+      ],
+      "unguarded_wpm": 4.824729929790744,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 719.1,
+     "seconds": 726.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 3600,
+      "llm_texts_scored_live": 21090
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.82,
+     "ltt_in_sample": [
+      71,
+      5
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k32",
+     "seed": 92639780,
+     "boot_seed": 2158808614,
+     "k": 32,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       112,
+       173,
+       173
+      ],
+      "sha_desired": "7ad0f99519f62ec1"
+     },
+     "config_id": "tcfg-a6014f8ebb8b1602",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 4.672417742509678,
+      "status": "certified",
+      "n_commits": 174,
+      "n_wrong_commits": 9,
+      "measured_wrong_commit": 0.012838801711840228,
+      "measured_wrong_commit_cp95": [
+       0.0059,
+       0.0242
+      ],
+      "unguarded_wpm": 4.672417742509678,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 731.4,
+     "seconds": 738.6,
+     "misses_after": {
+      "base_nbest_new_decodes": 3600,
+      "llm_texts_scored_live": 21077
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.79,
+     "ltt_in_sample": [
+      77,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k33",
+     "seed": 39353255,
+     "boot_seed": 1007115336,
+     "k": 33,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       117,
+       175,
+       169
+      ],
+      "sha_desired": "13887103b83cc34d"
+     },
+     "config_id": "tcfg-18fe8592c8041fa5",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.458448832828636,
+      "status": "certified",
+      "n_commits": 222,
+      "n_wrong_commits": 18,
+      "measured_wrong_commit": 0.025677603423680456,
+      "measured_wrong_commit_cp95": [
+       0.0153,
+       0.0403
+      ],
+      "unguarded_wpm": 5.458448832828636,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 753.0,
+     "seconds": 760.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 4200,
+      "llm_texts_scored_live": 24643
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.74,
+     "ltt_in_sample": [
+      78,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k34",
+     "seed": 491205075,
+     "boot_seed": 2642904175,
+     "k": 34,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       110,
+       170,
+       176
+      ],
+      "sha_desired": "3d6b992b79ff9487"
+     },
+     "config_id": "tcfg-9a16afc00ede5ba9",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.017514860945811,
+      "status": "certified",
+      "n_commits": 193,
+      "n_wrong_commits": 12,
+      "measured_wrong_commit": 0.017118402282453638,
+      "measured_wrong_commit_cp95": [
+       0.0089,
+       0.0297
+      ],
+      "unguarded_wpm": 5.017514860945811,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 766.8,
+     "seconds": 774.1,
+     "misses_after": {
+      "base_nbest_new_decodes": 4200,
+      "llm_texts_scored_live": 24651
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.82,
+     "ltt_in_sample": [
+      90,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k35",
+     "seed": 383638118,
+     "boot_seed": 1045261732,
+     "k": 35,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       115,
+       175,
+       174
+      ],
+      "sha_desired": "403bb0f50444ae13"
+     },
+     "config_id": "tcfg-975d899e00f0b8ed",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 3.869453518982524,
+      "status": "certified",
+      "n_commits": 150,
+      "n_wrong_commits": 5,
+      "measured_wrong_commit": 0.007132667617689016,
+      "measured_wrong_commit_cp95": [
+       0.0023,
+       0.0166
+      ],
+      "unguarded_wpm": 3.869453518982524,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 750.9,
+     "seconds": 758.2,
+     "misses_after": {
+      "base_nbest_new_decodes": 4800,
+      "llm_texts_scored_live": 28188
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.9,
+     "ltt_in_sample": [
+      57,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k36",
+     "seed": 2073565875,
+     "boot_seed": 3048545603,
+     "k": 36,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       113,
+       173,
+       166
+      ],
+      "sha_desired": "237df52e3d9c0e5b"
+     },
+     "config_id": "tcfg-72b7b0673046c70a",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.796615685676303,
+      "status": "certified",
+      "n_commits": 237,
+      "n_wrong_commits": 20,
+      "measured_wrong_commit": 0.028530670470756064,
+      "measured_wrong_commit_cp95": [
+       0.0175,
+       0.0437
+      ],
+      "unguarded_wpm": 5.796615685676303,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 728.0,
+     "seconds": 735.2,
+     "misses_after": {
+      "base_nbest_new_decodes": 4800,
+      "llm_texts_scored_live": 28154
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.68,
+     "ltt_in_sample": [
+      93,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k37",
+     "seed": 52591990,
+     "boot_seed": 2853000558,
+     "k": 37,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       114,
+       179,
+       171
+      ],
+      "sha_desired": "f2535ab77fdc821d"
+     },
+     "config_id": "tcfg-41530efc7ca54da5",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 4.754028590737386,
+      "status": "certified",
+      "n_commits": 190,
+      "n_wrong_commits": 11,
+      "measured_wrong_commit": 0.015691868758915834,
+      "measured_wrong_commit_cp95": [
+       0.0079,
+       0.0279
+      ],
+      "unguarded_wpm": 4.754028590737386,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 758.0,
+     "seconds": 765.1,
+     "misses_after": {
+      "base_nbest_new_decodes": 5400,
+      "llm_texts_scored_live": 31721
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.79,
+     "ltt_in_sample": [
+      63,
+      7
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k38",
+     "seed": 3085615677,
+     "boot_seed": 417800439,
+     "k": 38,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       106,
+       170,
+       175
+      ],
+      "sha_desired": "b824d2679b05a1b3"
+     },
+     "config_id": "tcfg-3a40f06dfc67a3a9",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 6.881904730051532,
+      "status": "above-alpha",
+      "n_commits": 296,
+      "n_wrong_commits": 36,
+      "measured_wrong_commit": 0.05135520684736091,
+      "measured_wrong_commit_cp95": [
+       0.0362,
+       0.0704
+      ],
+      "unguarded_wpm": 6.881904730051532,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 766.2,
+     "seconds": 773.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 5400,
+      "llm_texts_scored_live": 31676
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.43,
+     "ltt_in_sample": [
+      120,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k39",
+     "seed": 616121845,
+     "boot_seed": 2066866631,
+     "k": 39,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       101,
+       170,
+       172
+      ],
+      "sha_desired": "f219ca00dbbe7993"
+     },
+     "config_id": "tcfg-75921166ddf4d555",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 4.274520970481148,
+      "status": "certified",
+      "n_commits": 166,
+      "n_wrong_commits": 9,
+      "measured_wrong_commit": 0.012838801711840228,
+      "measured_wrong_commit_cp95": [
+       0.0059,
+       0.0242
+      ],
+      "unguarded_wpm": 4.274520970481148,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 779.3,
+     "seconds": 786.8,
+     "misses_after": {
+      "base_nbest_new_decodes": 6000,
+      "llm_texts_scored_live": 35208
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.82,
+     "ltt_in_sample": [
+      84,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k40",
+     "seed": 648515525,
+     "boot_seed": 917869410,
+     "k": 40,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       180,
+       271,
+       271
+      ],
+      "distinct_per_part": [
+       113,
+       172,
+       173
+      ],
+      "sha_desired": "dd928466455c3b46"
+     },
+     "config_id": "tcfg-d41cb01409d3ec4b",
+     "frame_temperature": 2.37015800035291,
+     "v0_1": {
+      "value": 5.755982339671855,
+      "status": "certified",
+      "n_commits": 229,
+      "n_wrong_commits": 18,
+      "measured_wrong_commit": 0.025677603423680456,
+      "measured_wrong_commit_cp95": [
+       0.0153,
+       0.0403
+      ],
+      "unguarded_wpm": 5.755982339671855,
+      "n_cal": 271
+     },
+     "seconds_calibrate": 750.5,
+     "seconds": 757.8,
+     "misses_after": {
+      "base_nbest_new_decodes": 6000,
+      "llm_texts_scored_live": 35162
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.68,
+     "ltt_in_sample": [
+      95,
+      8
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    }
+   ],
+   "combined": {
+    "method": "safe-wpm-calibration-interval/0.1 (proposed reporting addition, P15-29; not adopted)",
+    "description": "two-level bootstrap: K calibration draws (outer) x B trial resamples of the fixed evaluation set (inner, the same resamples in every draw); percentile interval of the pooled values; non-credited draws add 0.0",
+    "definition": "safe-wpm/0.1",
+    "level": 0.95,
+    "B": 2000,
+    "seed": 0,
+    "n_trials": 701,
+    "n_draws": 40,
+    "credit_statuses": [
+     "certified"
+    ],
+    "n_credited": 38,
+    "statuses": {
+     "above-alpha": 2,
+     "certified": 38
+    },
+    "value": 5.179185664447286,
+    "median_draw_value": 5.476600104290911,
+    "draw_value_range": [
+     0.0,
+     6.820224679534703
+    ],
+    "interval": [
+     0.0,
+     6.994532492146426
+    ],
+    "sd_between_draws": 1.428174755966323,
+    "sd_within_draw": 0.34903027848650664,
+    "sd_total": 1.4702058593543403,
+    "between_to_within_sd": 4.091836278959207,
+    "analytic_interval": [
+     2.2976351302530196,
+     8.060736198641553
+    ],
+    "reference": 4.0153,
+    "lower_above_reference": false,
+    "fraction_of_draws_above_reference": 0.9,
+    "draw_values": [
+     6.258892056367242,
+     6.233670813592241,
+     6.820224679534703,
+     5.604754180946075,
+     5.953565328507883,
+     5.411664978081154,
+     6.774726541457303,
+     5.67910839432621,
+     5.3750238376890875,
+     5.466365503953168,
+     5.486834704628654,
+     6.297160032340587,
+     5.558059348701056,
+     3.5016094242812428,
+     4.0374343748500525,
+     4.320671461287381,
+     5.803372967731925,
+     5.490980639699051,
+     5.0796466019299285,
+     5.244223593411021,
+     6.54448152032482,
+     5.408620167185906,
+     5.453497055959445,
+     6.3353080942775915,
+     6.4961482553884995,
+     4.723618984224776,
+     5.882929608095934,
+     5.747175952629168,
+     5.753945004865228,
+     0.0,
+     4.824729929790744,
+     4.672417742509678,
+     5.458448832828636,
+     5.017514860945811,
+     3.869453518982524,
+     5.796615685676303,
+     4.754028590737386,
+     0.0,
+     4.274520970481148,
+     5.755982339671855
+    ],
+    "draw_conditional_intervals": [
+     [
+      5.524484732993081,
+      6.983594226078102
+     ],
+     [
+      5.486510965316743,
+      6.9621814856256306
+     ],
+     [
+      6.050843409938682,
+      7.602979272320163
+     ],
+     [
+      4.93983239906463,
+      6.296484839687812
+     ],
+     [
+      5.244843922423634,
+      6.6765343798025985
+     ],
+     [
+      4.7123181971890515,
+      6.122960107045761
+     ],
+     [
+      6.011733474289048,
+      7.536305747408209
+     ],
+     [
+      5.010372844152599,
+      6.401192788322406
+     ],
+     [
+      4.714578467434103,
+      6.078244664278711
+     ],
+     [
+      4.812519506682251,
+      6.159191998202964
+     ],
+     [
+      4.817671258265566,
+      6.161520330881469
+     ],
+     [
+      5.569606400644014,
+      7.05043570017373
+     ],
+     [
+      4.891596621611163,
+      6.25259838131938
+     ],
+     [
+      2.934739266847575,
+      4.088045029766146
+     ],
+     [
+      3.4476392932975704,
+      4.671948761289741
+     ],
+     [
+      3.7139962364938754,
+      4.960002432596459
+     ],
+     [
+      5.0710399017231,
+      6.522234587084018
+     ],
+     [
+      4.812660644649887,
+      6.179757632130367
+     ],
+     [
+      4.437483084348536,
+      5.752438896822497
+     ],
+     [
+      4.582454456125927,
+      5.943287228534803
+     ],
+     [
+      5.820438999618499,
+      7.295115585663275
+     ],
+     [
+      4.736434110913595,
+      6.10354470946219
+     ],
+     [
+      4.787416191258408,
+      6.15784828996225
+     ],
+     [
+      5.578663273737149,
+      7.073396727013085
+     ],
+     [
+      5.721966336644517,
+      7.236693864743793
+     ],
+     [
+      4.076923675687952,
+      5.38311117707924
+     ],
+     [
+      5.201815356983274,
+      6.6023189874080295
+     ],
+     [
+      5.065613600867603,
+      6.456570807039087
+     ],
+     [
+      5.045389702753183,
+      6.461099738306235
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      4.185613972681487,
+      5.49816309986008
+     ],
+     [
+      4.023250900173945,
+      5.356859887541698
+     ],
+     [
+      4.804266795737854,
+      6.15369083850298
+     ],
+     [
+      4.383478267998268,
+      5.706314724834978
+     ],
+     [
+      3.2851546231129425,
+      4.497045677614737
+     ],
+     [
+      5.081709794243519,
+      6.498237369146062
+     ],
+     [
+      4.102892838662512,
+      5.4037304241526725
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      3.644466959581288,
+      4.90583638611972
+     ],
+     [
+      5.07339914835914,
+      6.460707394460959
+     ]
+    ]
+   },
+   "mean_commits": 222.05,
+   "mean_wrong_commits": 18.275,
+   "X1_analytic": {
+    "analytic_interval": [
+     2.2976351302530196,
+     8.060736198641553
+    ],
+    "sd_between_draws": 1.428174755966323,
+    "sd_within_draw": 0.34903027848650664,
+    "sd_total": 1.4702058593543403,
+    "between_to_within_sd": 4.091836278959207
+   },
+   "verdict": "above, but inside the combined interval",
+   "X2_p15_26_full_refit": {
+    "method": "safe-wpm-calibration-interval/0.1 (proposed reporting addition, P15-29; not adopted)",
+    "description": "two-level bootstrap: K calibration draws (outer) x B trial resamples of the fixed evaluation set (inner, the same resamples in every draw); percentile interval of the pooled values; non-credited draws add 0.0",
+    "definition": "safe-wpm/0.1",
+    "level": 0.95,
+    "B": 2000,
+    "seed": 0,
+    "n_trials": 701,
+    "n_draws": 4,
+    "credit_statuses": [
+     "certified"
+    ],
+    "n_credited": 4,
+    "statuses": {
+     "certified": 4
+    },
+    "value": 5.429693260120762,
+    "median_draw_value": 5.4058853502119995,
+    "draw_value_range": [
+     4.9119565090513575,
+     5.995045831007689
+    ],
+    "interval": [
+     4.457538741231299,
+     6.500040304673219
+    ],
+    "sd_between_draws": 0.46587699878369065,
+    "sd_within_draw": 0.35638965198536016,
+    "sd_total": 0.5865619848216768,
+    "between_to_within_sd": 1.30721247429156,
+    "analytic_interval": [
+     4.280052895169946,
+     6.579333625071578
+    ],
+    "reference": 4.0153,
+    "lower_above_reference": true,
+    "fraction_of_draws_above_reference": 1.0,
+    "draw_values": [
+     4.9119565090513575,
+     5.58240111157949,
+     5.995045831007689,
+     5.229369588844509
+    ],
+    "draws_used": "c0 c1 c2 c3"
+   },
+   "X3_pinned_vs_refit": {
+    "seed1": {
+     "pinned_z": 5.463867206907088,
+     "refit_c": 5.58240111157949,
+     "diff_z_minus_c": -0.11853390467240121,
+     "z_commits": 216
+    },
+    "seed2": {
+     "pinned_z": 5.84791373267924,
+     "refit_c": 5.995045831007689,
+     "diff_z_minus_c": -0.14713209832844854,
+     "z_commits": 232
+    },
+    "seed3": {
+     "pinned_z": 5.255205197304187,
+     "refit_c": 5.229369588844509,
+     "diff_z_minus_c": 0.025835608459678028,
+     "z_commits": 213
+    }
+   }
+  },
+  "t12": {
+   "unit": "t12",
+   "no_bci_reference": 4.114,
+   "X4_code_check": {
+    "reference": "p15-26/t12/arm-llm_learned.json",
+    "same_action_and_text": 400,
+    "n": 400,
+    "z0_value": 2.3656927064012336,
+    "k1_interval": [
+     1.3426591204251985,
+     3.624318652206069
+    ],
+    "reproduces": true
+   },
+   "K_used": 20,
+   "K_min_reached": true,
+   "draws": [
+    {
+     "name": "k01",
+     "seed": 1448059093,
+     "boot_seed": 2478673503,
+     "k": 1,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       73,
+       114,
+       110
+      ],
+      "sha_desired": "4f862778edd55a45"
+     },
+     "config_id": "tcfg-771a3a9c13e829c3",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.64397131273585,
+      "status": "above-alpha",
+      "n_commits": 48,
+      "n_wrong_commits": 24,
+      "measured_wrong_commit": 0.06,
+      "measured_wrong_commit_cp95": [
+       0.0388,
+       0.088
+      ],
+      "unguarded_wpm": 2.64397131273585,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 621.2,
+     "seconds": 625.3,
+     "misses_after": {
+      "base_nbest_new_decodes": 600,
+      "llm_texts_scored_live": 3565
+     },
+     "peak_mb": 3875.5,
+     "commit_threshold": 0.15,
+     "ltt_in_sample": [
+      15,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k02",
+     "seed": 2816098029,
+     "boot_seed": 934884561,
+     "k": 2,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       77,
+       113,
+       108
+      ],
+      "sha_desired": "5647e954398b5c32"
+     },
+     "config_id": "tcfg-2d300b24428e73f3",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.092360068618483,
+      "status": "certified",
+      "n_commits": 31,
+      "n_wrong_commits": 13,
+      "measured_wrong_commit": 0.0325,
+      "measured_wrong_commit_cp95": [
+       0.0174,
+       0.0549
+      ],
+      "unguarded_wpm": 2.092360068618483,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 603.4,
+     "seconds": 604.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 600,
+      "llm_texts_scored_live": 3586
+     },
+     "peak_mb": 3873.6,
+     "commit_threshold": 0.51,
+     "ltt_in_sample": [
+      11,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k03",
+     "seed": 2661675840,
+     "boot_seed": 2949921219,
+     "k": 3,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       70,
+       112,
+       109
+      ],
+      "sha_desired": "06a5d86dd9413227"
+     },
+     "config_id": "tcfg-8d89a47bf945a00e",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 1.9854928398164466,
+      "status": "certified",
+      "n_commits": 28,
+      "n_wrong_commits": 12,
+      "measured_wrong_commit": 0.03,
+      "measured_wrong_commit_cp95": [
+       0.0156,
+       0.0518
+      ],
+      "unguarded_wpm": 1.9854928398164466,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 678.4,
+     "seconds": 680.0,
+     "misses_after": {
+      "base_nbest_new_decodes": 1200,
+      "llm_texts_scored_live": 7098
+     },
+     "peak_mb": 3876.7,
+     "commit_threshold": 0.66,
+     "ltt_in_sample": [
+      7,
+      2
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k04",
+     "seed": 4033434273,
+     "boot_seed": 3737524513,
+     "k": 4,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       82,
+       116,
+       114
+      ],
+      "sha_desired": "07a21e5ca75ad2fd"
+     },
+     "config_id": "tcfg-221a4d7ab5af1f40",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 0.0,
+      "status": "vacuous",
+      "n_commits": 0,
+      "n_wrong_commits": 0,
+      "measured_wrong_commit": 0.0,
+      "measured_wrong_commit_cp95": [
+       0.0,
+       0.0092
+      ],
+      "unguarded_wpm": 0.0,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 626.2,
+     "seconds": 627.7,
+     "misses_after": {
+      "base_nbest_new_decodes": 1200,
+      "llm_texts_scored_live": 7083
+     },
+     "peak_mb": 3873.6,
+     "commit_threshold": 0.01,
+     "ltt_in_sample": [
+      0,
+      0
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k05",
+     "seed": 1578397455,
+     "boot_seed": 2207681462,
+     "k": 5,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       77,
+       120,
+       116
+      ],
+      "sha_desired": "0ffc320370dbd468"
+     },
+     "config_id": "tcfg-4d634542a5f05d58",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.1698997837976446,
+      "status": "certified",
+      "n_commits": 28,
+      "n_wrong_commits": 10,
+      "measured_wrong_commit": 0.025,
+      "measured_wrong_commit_cp95": [
+       0.0121,
+       0.0455
+      ],
+      "unguarded_wpm": 2.1698997837976446,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 719.1,
+     "seconds": 720.8,
+     "misses_after": {
+      "base_nbest_new_decodes": 1800,
+      "llm_texts_scored_live": 10603
+     },
+     "peak_mb": 3896.4,
+     "commit_threshold": 0.59,
+     "ltt_in_sample": [
+      10,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k06",
+     "seed": 3112365583,
+     "boot_seed": 997542258,
+     "k": 6,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       80,
+       105,
+       117
+      ],
+      "sha_desired": "7aaf8724adf17448"
+     },
+     "config_id": "tcfg-4e0e05624576da00",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 0.0,
+      "status": "vacuous",
+      "n_commits": 0,
+      "n_wrong_commits": 0,
+      "measured_wrong_commit": 0.0,
+      "measured_wrong_commit_cp95": [
+       0.0,
+       0.0092
+      ],
+      "unguarded_wpm": 0.0,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 667.4,
+     "seconds": 669.1,
+     "misses_after": {
+      "base_nbest_new_decodes": 1800,
+      "llm_texts_scored_live": 10501
+     },
+     "peak_mb": 3896.5,
+     "commit_threshold": 0.01,
+     "ltt_in_sample": [
+      0,
+      0
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k07",
+     "seed": 3819742025,
+     "boot_seed": 3881657757,
+     "k": 7,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       71,
+       109,
+       112
+      ],
+      "sha_desired": "d974d74219e4eb61"
+     },
+     "config_id": "tcfg-83278fd88bfd9ea3",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 1.682248846603878,
+      "status": "certified",
+      "n_commits": 20,
+      "n_wrong_commits": 7,
+      "measured_wrong_commit": 0.0175,
+      "measured_wrong_commit_cp95": [
+       0.0071,
+       0.0357
+      ],
+      "unguarded_wpm": 1.682248846603878,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 679.7,
+     "seconds": 681.4,
+     "misses_after": {
+      "base_nbest_new_decodes": 2400,
+      "llm_texts_scored_live": 13919
+     },
+     "peak_mb": 3896.4,
+     "commit_threshold": 0.7,
+     "ltt_in_sample": [
+      7,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k08",
+     "seed": 3491951255,
+     "boot_seed": 218158558,
+     "k": 8,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       77,
+       118,
+       114
+      ],
+      "sha_desired": "4d28a310afd1d1a2"
+     },
+     "config_id": "tcfg-93d53d06d581011b",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.0950114419534396,
+      "status": "certified",
+      "n_commits": 34,
+      "n_wrong_commits": 16,
+      "measured_wrong_commit": 0.04,
+      "measured_wrong_commit_cp95": [
+       0.023,
+       0.0641
+      ],
+      "unguarded_wpm": 2.0950114419534396,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 741.6,
+     "seconds": 743.6,
+     "misses_after": {
+      "base_nbest_new_decodes": 2400,
+      "llm_texts_scored_live": 13906
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.21,
+     "ltt_in_sample": [
+      9,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k09",
+     "seed": 130147019,
+     "boot_seed": 500358676,
+     "k": 9,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       71,
+       119,
+       109
+      ],
+      "sha_desired": "1aec442e303d8efd"
+     },
+     "config_id": "tcfg-9e81c197509931ab",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.458470785816905,
+      "status": "certified",
+      "n_commits": 28,
+      "n_wrong_commits": 9,
+      "measured_wrong_commit": 0.0225,
+      "measured_wrong_commit_cp95": [
+       0.0103,
+       0.0423
+      ],
+      "unguarded_wpm": 2.458470785816905,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 619.6,
+     "seconds": 621.2,
+     "misses_after": {
+      "base_nbest_new_decodes": 3000,
+      "llm_texts_scored_live": 17345
+     },
+     "peak_mb": 3921.1,
+     "commit_threshold": 0.37,
+     "ltt_in_sample": [
+      6,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k10",
+     "seed": 93498217,
+     "boot_seed": 3316070407,
+     "k": 10,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       74,
+       111,
+       113
+      ],
+      "sha_desired": "d048d45475453738"
+     },
+     "config_id": "tcfg-962f5c1637eed395",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 1.7072875141294748,
+      "status": "certified",
+      "n_commits": 18,
+      "n_wrong_commits": 5,
+      "measured_wrong_commit": 0.0125,
+      "measured_wrong_commit_cp95": [
+       0.0041,
+       0.0289
+      ],
+      "unguarded_wpm": 1.7072875141294748,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 697.4,
+     "seconds": 699.1,
+     "misses_after": {
+      "base_nbest_new_decodes": 3000,
+      "llm_texts_scored_live": 17291
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.59,
+     "ltt_in_sample": [
+      9,
+      2
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k11",
+     "seed": 2406858504,
+     "boot_seed": 946193385,
+     "k": 11,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       83,
+       112,
+       113
+      ],
+      "sha_desired": "fc5763fefe55b11d"
+     },
+     "config_id": "tcfg-413a5cc3d4887e1c",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.0409756821479124,
+      "status": "certified",
+      "n_commits": 28,
+      "n_wrong_commits": 11,
+      "measured_wrong_commit": 0.0275,
+      "measured_wrong_commit_cp95": [
+       0.0138,
+       0.0487
+      ],
+      "unguarded_wpm": 2.0409756821479124,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 600.9,
+     "seconds": 605.1,
+     "misses_after": {
+      "base_nbest_new_decodes": 600,
+      "llm_texts_scored_live": 3400
+     },
+     "peak_mb": 3945.2,
+     "commit_threshold": 0.47,
+     "ltt_in_sample": [
+      14,
+      3
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k12",
+     "seed": 1097536763,
+     "boot_seed": 1044462101,
+     "k": 12,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       80,
+       112,
+       112
+      ],
+      "sha_desired": "298f752c1e2bdc3c"
+     },
+     "config_id": "tcfg-7dd55c4ed7edb625",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.5236466988655932,
+      "status": "above-alpha",
+      "n_commits": 44,
+      "n_wrong_commits": 21,
+      "measured_wrong_commit": 0.0525,
+      "measured_wrong_commit_cp95": [
+       0.0328,
+       0.0791
+      ],
+      "unguarded_wpm": 2.5236466988655932,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 611.4,
+     "seconds": 615.6,
+     "misses_after": {
+      "base_nbest_new_decodes": 600,
+      "llm_texts_scored_live": 3426
+     },
+     "peak_mb": 3903.1,
+     "commit_threshold": 0.14,
+     "ltt_in_sample": [
+      8,
+      2
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k13",
+     "seed": 1120394506,
+     "boot_seed": 2089221158,
+     "k": 13,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       74,
+       111,
+       117
+      ],
+      "sha_desired": "bf1ad152b8b1a7d2"
+     },
+     "config_id": "tcfg-c366076138fb4331",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.496606486637581,
+      "status": "above-alpha",
+      "n_commits": 43,
+      "n_wrong_commits": 22,
+      "measured_wrong_commit": 0.055,
+      "measured_wrong_commit_cp95": [
+       0.0348,
+       0.0821
+      ],
+      "unguarded_wpm": 2.496606486637581,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 601.4,
+     "seconds": 603.0,
+     "misses_after": {
+      "base_nbest_new_decodes": 1200,
+      "llm_texts_scored_live": 6732
+     },
+     "peak_mb": 3961.3,
+     "commit_threshold": 0.25,
+     "ltt_in_sample": [
+      13,
+      3
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k14",
+     "seed": 1355371714,
+     "boot_seed": 156353696,
+     "k": 14,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       84,
+       125,
+       112
+      ],
+      "sha_desired": "e1d0916fe7d02bb7"
+     },
+     "config_id": "tcfg-8017717d8c56c288",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 0.0,
+      "status": "vacuous",
+      "n_commits": 0,
+      "n_wrong_commits": 0,
+      "measured_wrong_commit": 0.0,
+      "measured_wrong_commit_cp95": [
+       0.0,
+       0.0092
+      ],
+      "unguarded_wpm": 0.0,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 583.5,
+     "seconds": 584.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 1200,
+      "llm_texts_scored_live": 6770
+     },
+     "peak_mb": 3946.7,
+     "commit_threshold": 0.01,
+     "ltt_in_sample": [
+      0,
+      0
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k15",
+     "seed": 3490308097,
+     "boot_seed": 3625351536,
+     "k": 15,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       74,
+       113,
+       117
+      ],
+      "sha_desired": "cb962a80fd7460a8"
+     },
+     "config_id": "tcfg-24b759177c2c614b",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 0.0,
+      "status": "vacuous",
+      "n_commits": 0,
+      "n_wrong_commits": 0,
+      "measured_wrong_commit": 0.0,
+      "measured_wrong_commit_cp95": [
+       0.0,
+       0.0092
+      ],
+      "unguarded_wpm": 0.0,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 639.0,
+     "seconds": 640.5,
+     "misses_after": {
+      "base_nbest_new_decodes": 1800,
+      "llm_texts_scored_live": 10143
+     },
+     "peak_mb": 3961.3,
+     "commit_threshold": 0.01,
+     "ltt_in_sample": [
+      0,
+      0
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k16",
+     "seed": 3073930889,
+     "boot_seed": 666769578,
+     "k": 16,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       76,
+       112,
+       108
+      ],
+      "sha_desired": "e059998bfa1b30dd"
+     },
+     "config_id": "tcfg-b1aac93a48502178",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.0348780722569253,
+      "status": "certified",
+      "n_commits": 23,
+      "n_wrong_commits": 7,
+      "measured_wrong_commit": 0.0175,
+      "measured_wrong_commit_cp95": [
+       0.0071,
+       0.0357
+      ],
+      "unguarded_wpm": 2.0348780722569253,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 616.8,
+     "seconds": 618.2,
+     "misses_after": {
+      "base_nbest_new_decodes": 1800,
+      "llm_texts_scored_live": 10136
+     },
+     "peak_mb": 3946.7,
+     "commit_threshold": 0.59,
+     "ltt_in_sample": [
+      6,
+      1
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k17",
+     "seed": 749071201,
+     "boot_seed": 3689733915,
+     "k": 17,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       73,
+       119,
+       121
+      ],
+      "sha_desired": "d05b3112e120f579"
+     },
+     "config_id": "tcfg-bb2baa141534bfac",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.6546327259071383,
+      "status": "above-alpha",
+      "n_commits": 54,
+      "n_wrong_commits": 29,
+      "measured_wrong_commit": 0.0725,
+      "measured_wrong_commit_cp95": [
+       0.0491,
+       0.1025
+      ],
+      "unguarded_wpm": 2.6546327259071383,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 690.1,
+     "seconds": 691.7,
+     "misses_after": {
+      "base_nbest_new_decodes": 2400,
+      "llm_texts_scored_live": 13501
+     },
+     "peak_mb": 3961.3,
+     "commit_threshold": 0.15,
+     "ltt_in_sample": [
+      15,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k18",
+     "seed": 3492452962,
+     "boot_seed": 3863632437,
+     "k": 18,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       74,
+       111,
+       117
+      ],
+      "sha_desired": "65bb2c144140e98c"
+     },
+     "config_id": "tcfg-09da39e367c715c6",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.7167763644061043,
+      "status": "certified",
+      "n_commits": 43,
+      "n_wrong_commits": 19,
+      "measured_wrong_commit": 0.0475,
+      "measured_wrong_commit_cp95": [
+       0.0288,
+       0.0732
+      ],
+      "unguarded_wpm": 2.7167763644061043,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 638.2,
+     "seconds": 639.9,
+     "misses_after": {
+      "base_nbest_new_decodes": 2400,
+      "llm_texts_scored_live": 13453
+     },
+     "peak_mb": 3953.9,
+     "commit_threshold": 0.3,
+     "ltt_in_sample": [
+      16,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k19",
+     "seed": 1184400307,
+     "boot_seed": 2844594098,
+     "k": 19,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       75,
+       118,
+       108
+      ],
+      "sha_desired": "3296475c4b1d456e"
+     },
+     "config_id": "tcfg-f84bb5edca2be39b",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 1.9415392698731755,
+      "status": "above-alpha",
+      "n_commits": 40,
+      "n_wrong_commits": 22,
+      "measured_wrong_commit": 0.055,
+      "measured_wrong_commit_cp95": [
+       0.0348,
+       0.0821
+      ],
+      "unguarded_wpm": 1.9415392698731755,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 487.0,
+     "seconds": 488.2,
+     "misses_after": {
+      "base_nbest_new_decodes": 3000,
+      "llm_texts_scored_live": 16759
+     },
+     "peak_mb": 3961.3,
+     "commit_threshold": 0.22,
+     "ltt_in_sample": [
+      12,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       4,
+       300,
+       15
+      ]
+     ]
+    },
+    {
+     "name": "k20",
+     "seed": 2701095281,
+     "boot_seed": 2484929322,
+     "k": 20,
+     "status": "ok",
+     "draw_info": {
+      "split": [
+       120,
+       180,
+       180
+      ],
+      "distinct_per_part": [
+       78,
+       109,
+       119
+      ],
+      "sha_desired": "17208a6f3cd1465d"
+     },
+     "config_id": "tcfg-2e668a025eb4b316",
+     "frame_temperature": 2.528091520707864,
+     "v0_1": {
+      "value": 2.6929212518654806,
+      "status": "above-alpha",
+      "n_commits": 44,
+      "n_wrong_commits": 22,
+      "measured_wrong_commit": 0.055,
+      "measured_wrong_commit_cp95": [
+       0.0348,
+       0.0821
+      ],
+      "unguarded_wpm": 2.6929212518654806,
+      "n_cal": 180
+     },
+     "seconds_calibrate": 673.9,
+     "seconds": 675.4,
+     "misses_after": {
+      "base_nbest_new_decodes": 3000,
+      "llm_texts_scored_live": 16794
+     },
+     "peak_mb": 3953.9,
+     "commit_threshold": 0.19,
+     "ltt_in_sample": [
+      19,
+      4
+     ],
+     "controls": [
+      [
+       "uniform",
+       0,
+       300,
+       15
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       15
+      ]
+     ]
+    }
+   ],
+   "combined": {
+    "method": "safe-wpm-calibration-interval/0.1 (proposed reporting addition, P15-29; not adopted)",
+    "description": "two-level bootstrap: K calibration draws (outer) x B trial resamples of the fixed evaluation set (inner, the same resamples in every draw); percentile interval of the pooled values; non-credited draws add 0.0",
+    "definition": "safe-wpm/0.1",
+    "level": 0.95,
+    "B": 2000,
+    "seed": 0,
+    "n_trials": 400,
+    "n_draws": 20,
+    "credit_statuses": [
+     "certified"
+    ],
+    "n_credited": 10,
+    "statuses": {
+     "above-alpha": 6,
+     "certified": 10,
+     "vacuous": 4
+    },
+    "value": 1.0491700699773607,
+    "median_draw_value": 0.841124423301939,
+    "draw_value_range": [
+     0.0,
+     2.7167763644061043
+    ],
+    "interval": [
+     0.0,
+     3.1818755294856467
+    ],
+    "sd_between_draws": 1.0973314169386454,
+    "sd_within_draw": 0.3802780957814934,
+    "sd_total": 1.1613559612503714,
+    "between_to_within_sd": 2.8856024817405435,
+    "analytic_interval": [
+     -1.2270457873042615,
+     3.325385927258983
+    ],
+    "reference": 4.114,
+    "lower_above_reference": false,
+    "fraction_of_draws_above_reference": 0.0,
+    "draw_values": [
+     0.0,
+     2.092360068618483,
+     1.9854928398164466,
+     0.0,
+     2.1698997837976446,
+     0.0,
+     1.682248846603878,
+     2.0950114419534396,
+     2.458470785816905,
+     1.7072875141294748,
+     2.0409756821479124,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     2.0348780722569253,
+     0.0,
+     2.7167763644061043,
+     0.0,
+     0.0
+    ],
+    "draw_conditional_intervals": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      1.1652337499287866,
+      3.228234911979905
+     ],
+     [
+      1.0144361137936966,
+      3.074519834771402
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      1.1852737087710719,
+      3.350595397866212
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.8241031261111168,
+      2.732642277307888
+     ],
+     [
+      1.1520068843880755,
+      3.1702114047555985
+     ],
+     [
+      1.378216009173771,
+      3.697706337431887
+     ],
+     [
+      0.8146248728371679,
+      2.7753466025418034
+     ],
+     [
+      1.084094119001387,
+      3.1374674738813595
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      1.074278369124886,
+      3.1842022970908577
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      1.6357327008485076,
+      3.9538115322324234
+     ],
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0
+     ]
+    ]
+   },
+   "mean_commits": 27.7,
+   "mean_wrong_commits": 12.45,
+   "X1_analytic": {
+    "analytic_interval": [
+     -1.2270457873042615,
+     3.325385927258983
+    ],
+    "sd_between_draws": 1.0973314169386454,
+    "sd_within_draw": 0.3802780957814934,
+    "sd_total": 1.1613559612503714,
+    "between_to_within_sd": 2.8856024817405435
+   },
+   "verdict": "not above"
+  }
+ },
+ "headline": {
+  "t15_verdict": "above, but inside the combined interval",
+  "t12_verdict": "not above",
+  "claim": "the README must stop calling the T15 result 'clearly above'"
+ }
+}

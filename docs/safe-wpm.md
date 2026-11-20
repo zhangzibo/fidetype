@@ -129,6 +129,37 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 - **First use (P5-24, pre-registered, [results](../experiments/2026-11-18-p5-24-prefix-commits/results.md)):** T15 M4-13 `val_eval` 701 with certified prefix commits: v0.2 4.87 [4.43, 5.30] (465 commits, 13 wrong); the same decisions under v0.1: 0.53 (literal, above alpha) or 1.03 (complete commits only). T12: v0.2 4.76, v0.1 0.00.
 - **Reading cost (P14-28, sensitivity, [proposal section 6](safe-wpm-v0.2-proposal.md#6-reading-cost-p14-28)):** optional `read_s_per_commit`, `read_s_per_word`, `min_prefix_words` (v0.2 only; defaults change nothing). With 0.5 s + 0.3 s/word per commit (`aac-gaze-v1`) the T15 prefix value is 4.67 [4.26, 5.07]; it falls to 4.02 at 5.99 s per commit. Recommended for adoption together with v0.2; the user decides.
 
+## 6b. Proposed reporting addition: an interval over calibration draws (PROPOSED, NOT ADOPTED)
+
+> **Proposed, not adopted (2026-11-19, P15-29).** The user decides adoption. It changes no `safe-wpm/0.1` rule, value or status. Until adoption, a leaderboard entry reports the trial-bootstrap `ci` of section 3, and that CI is conditional on one calibration. Pre-registration and first use: [P15-29](../experiments/2026-11-20-p15-29-calibration-ci/plan.md) ([results](../experiments/2026-11-20-p15-29-calibration-ci/results.md)).
+
+**Problem.** The `ci` of section 3 resamples the evaluation trials with the decisions fixed. A new calibration set gives a new guard and new decisions. On T15 the spread between calibration draws was about 2/3 of the trial-bootstrap half-width (P15-26). So the usual CI is too narrow for the question "what does this system give a new user?".
+
+**Method (two-level bootstrap).**
+
+| Level | What changes | How |
+|---|---|---|
+| Outer: K calibration draws | the calibration sample and split | per draw: new calibrate seed, the `calibrate` split into fit / policy / LTT parts, a resample with replacement inside each part, then the full calibration again (learned score, LTT, null controls) |
+| Inner: B trial resamples | the evaluation trials | the same B multinomial resamples for every draw (decisions of that draw fixed) |
+
+- **Credit rule.** A draw adds its values only if its status is `certified`. A refused, `not-certified`, `above-alpha` or `vacuous` draw adds 0.0.
+- **Interval.** The 2.5th and 97.5th percentiles of the pooled K × B values. **Point value:** the mean of the K draw values. With K = 1 the interval is the usual trial-bootstrap CI.
+- **Cross-check.** The law of total variance: total SD² = mean within-draw SD² + between-draw SD². The function also returns the normal interval mean ± 1.96 × total SD.
+- **First use (P15-29, T15 L1 guard, K = 40, pinned pipeline values).** The result is 5.18 [0.00, 6.99]. The trial-bootstrap CI of one draw was 4.91 [4.25, 5.57]. 2 of the 40 draws are above alpha on the test set and earn 0.0. The certified draws range from 3.50 to 6.82. The lower end is not above the no-BCI reference 4.02. T12: 1.05 [0.00, 3.18].
+- **Limits.** The evaluation set is the same in every draw. Duplicates in a resampled LTT part make one draw's certificate invalid as a certificate; the draws only show the sampling variation. Pipeline values fitted before the guard (for example a frame temperature) can be refitted per draw or pinned; the report must say which.
+
+**Code.**
+
+```python
+from fidetype.benchmark.safe_wpm import calibration_draw_interval
+
+r = calibration_draw_interval(
+    [{"committed": c_k, "correct": ok_k, "guarantee": guarantee_from_sheet(sheet_k)} for ...]  # one per draw
+    + [{"refused": True}],                                  # a draw whose calibration was refused
+    n_words, n_chars, neural_s, B=2000, seed=0, level=0.95, reference=no_bci_wpm)
+print(r["value"], r["interval"], r["sd_between_draws"], r["lower_above_reference"])
+```
+
 ## 7. Relation to other metrics
 
 | Metric | Counts | Needs a bound |
