@@ -1,0 +1,78 @@
+{
+ "config_id": "tcfg-6602c07801325406",
+ "sheet": {
+  "config_id": "tcfg-6602c07801325406",
+  "input_kind": "logits",
+  "decoder": "custom:__main__.p11_14_A_F",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+  "n_items": 1224,
+  "n_fit": 306,
+  "n_policy": 459,
+  "n_ltt": 459,
+  "n_ltt_min": 45,
+  "lambda_hat": 0.0,
+  "feasible": true,
+  "commit_threshold": 0.6,
+  "commit_gate": {
+   "min_chars": 1,
+   "min_words": 0,
+   "max_guard_risk": 1.0
+  },
+  "ltt_commits": 14,
+  "ltt_wrong_commits": 1,
+  "controls": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "user",
+    "description": "your decoder output on null input (null_inputs)",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   }
+  ],
+  "null_max_commit_rate": 0.05,
+  "seed": 0,
+  "created_utc": "2026-11-20T07:32:52+00:00",
+  "assumptions": [
+   "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+   "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+   "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+   "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+  ],
+  "not_guaranteed": [
+   "Any single utterance: the bound is on the rate over many utterances.",
+   "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+   "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+   "The error rate among commits (precision): with few commits it can be high.",
+   "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+   "Correctness of the text that the guard withholds or offers.",
+   "Any medical or legal claim. Fidetype is research software, not a medical device."
+  ],
+  "warnings": [
+   "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.",
+   "only 14 of 459 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds."
+  ],
+  "ltt_median_guard_risk": 1.0,
+  "ltt_gate_blocked": 0
+ },
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true
+}

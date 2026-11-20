@@ -1,0 +1,188 @@
+{
+ "task": "P11-14 card",
+ "date": "2026-11-20 02:22",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "note": "aggregates only (no per-user value, no text, no id)",
+ "target": {
+  "name": "intended_text",
+  "version": "intended-text/1",
+  "normalizer": "keycodes_intended",
+  "rule": "Backspace applied (registry.keycodes_to_intended_text, rule intended-text/1): a character key appends, Backspace removes the last character if any, Enter is ignored, then runs of spaces are joined and the ends stripped"
+ },
+ "arms": {
+  "L-FL": {
+   "card": "emg2qwerty__p11-14-intended-lfl-subset8__guard.json",
+   "status": "scored",
+   "certification": "certified",
+   "cer_intended": {
+    "value": 0.18343672456575683,
+    "ci": [
+     0.10797302623609642,
+     0.2633251640037432
+    ]
+   },
+   "ewpm": {
+    "value": 3.7783180797169216,
+    "ci": [
+     3.411533365134323,
+     4.286475236863655
+    ]
+   },
+   "gaze_ewpm": {
+    "value": 3.0924317617866004,
+    "ci": [
+     3.0690313548565507,
+     3.1163634089914334
+    ]
+   },
+   "wrong_commit_rate": {
+    "value": 0.042588042588042586,
+    "ci": [
+     0.03521703521703522,
+     0.05073649754500818
+    ]
+   },
+   "error_among_commits": {
+    "value": 0.1824561403508772,
+    "ci": [
+     0.14713696105145058,
+     0.24509803921568626
+    ]
+   },
+   "commit_rate": {
+    "value": 0.2334152334152334,
+    "ci": [
+     0.1625615763546798,
+     0.31562379140665875
+    ]
+   },
+   "controls": {
+    "shuffled": {
+     "status": "pass",
+     "cer_control": 1.0,
+     "cer_gap": 0.8165632754342432,
+     "cer_gap_ci": [
+      0.735751855439123,
+      0.8895053166897827
+     ]
+    },
+    "zeros": {
+     "status": "pass",
+     "cer_control": 1.0,
+     "cer_gap": 0.8165632754342432,
+     "cer_gap_ci": [
+      0.735751855439123,
+      0.8895053166897827
+     ]
+    },
+    "null_commit": {
+     "status": "pass",
+     "commit_rate_zeros": 0.0,
+     "max": 0.05
+    },
+    "passed": true
+   },
+   "guarantee": {
+    "method": "ltt",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_cal": 459,
+    "scope": "marginal over test prompts pooled over the 8 users; exchangeable val / test sessions; wrong = committed intended text differs from the truth intended text",
+    "calibration_split": "val",
+    "measured_wrong_commit": 0.042588042588042586,
+    "measured_wrong_commit_ci": [
+     0.03521703521703522,
+     0.05073649754500818
+    ],
+    "met_on_test": true
+   },
+   "safe_wpm": {
+    "value": 6.8030849745214,
+    "ci": [
+     4.360828841115923,
+     9.650210788795903
+    ],
+    "status": "certified",
+    "n_trials": 1221,
+    "n_commits": 285,
+    "n_wrong_commits": 52,
+    "measured_wrong_commit": 0.042588042588042586,
+    "measured_wrong_commit_cp95": [
+     0.032,
+     0.0555
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 951,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 20.0359649122807
+   },
+   "coverage": {
+    "n_scored_units": 15867,
+    "n_covered": 1221,
+    "partial": true,
+    "subset": "declared subset: the track test sessions of the 8 P11-01 test users only. The P11-01 generic model trained on 96 of the other 104 track test sessions, so only these 8 sessions are clean (P11-01 results, benchmark section)."
+   },
+   "vs_p11_14": {
+    "safe_wpm_value": [
+     6.8030849745214,
+     6.8030849745214
+    ],
+    "safe_wpm_ci": [
+     [
+      4.360828841115923,
+      9.650210788795903
+     ],
+     [
+      4.486023165888807,
+      9.630032216474465
+     ]
+    ],
+    "n_commits": [
+     285,
+     285
+    ],
+    "n_wrong_commits": [
+     52,
+     52
+    ],
+    "committed_correct_words": [
+     951,
+     951
+    ],
+    "total_words": [
+     4985,
+     4985
+    ],
+    "no_bci_wpm": [
+     3.0924317617866004,
+     3.0924317617866004
+    ],
+    "minutes_correction": [
+     20.0359649122807,
+     20.0359649122807
+    ],
+    "minutes_neural": [
+     119.75355757077536,
+     119.75355757077536
+    ],
+    "status": [
+     "certified",
+     "certified"
+    ]
+   },
+   "same_as_p11_14": {
+    "safe_wpm_value": true,
+    "n_commits": true,
+    "n_wrong_commits": true,
+    "committed_correct_words": true,
+    "total_words": true,
+    "no_bci_wpm": true,
+    "minutes_correction": true,
+    "minutes_neural": true,
+    "status": true
+   }
+  }
+ }
+}
