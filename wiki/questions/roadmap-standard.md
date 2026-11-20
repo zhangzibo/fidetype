@@ -1805,7 +1805,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-34 Calibration-inclusive T15 safe WPM lower end above gaze typing
 - **Gap:** 132 of the [open-gap list](open-gaps.md) (added 2026-11-20 after P15-29). Follow-up of P15-29.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-20 05:15: pre-registered in [experiments/2026-11-20-p15-34-margin-guard](../../experiments/2026-11-20-p15-34-margin-guard/plan.md); main CPU run running).
 - **Depends on:** P15-29 (done; `fidetype.benchmark.safe_wpm.calibration_draw_interval`); the P15-22 L1 pipeline (LLM rescoring + learned commit score); CPU.
 - **Source:** P15-29 ([results](../../experiments/2026-11-20-p15-29-calibration-ci/results.md)): with 40 calibration draws the T15 L1 safe WPM v0.1 is 5.18 [0.00, 6.99]. 2 of 40 draws are above alpha on the test set and earn 0. Certified draws give 3.50-6.82. Variants that were not pre-registered give lower ends of about 3.6. So the lower end is not above the no-BCI 4.0153.
 - **Options:** (1) a larger calibration set, so fewer draws commit too much and the between-draw spread falls; (2) a guard with a safety margin, for example a lower target alpha or a smaller delta, so that fewer draws are above alpha on the test set; (3) both. Choose the option and the rule before any number is computed.
