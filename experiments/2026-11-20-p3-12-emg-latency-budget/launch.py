@@ -8,6 +8,8 @@ Process tree: this launcher (exits at once) -> a hidden driver (this file, ``--d
    -- python -I run.py latency`` (if its record is not clean: once more as ``--tag latency2``)
 3. ``... --class timing --threads 4 --env-json derived/p3-12/iso-latency4.json -- python -I run.py latency4``
 4. ``... --class background --threads 1 -- python -I run.py score``, then the DONE file.
+Before each timing stage the driver waits (up to 3 h, log in launcher.log) until no other registered CPU job runs
+and the machine load is below 25 %; if not, it writes WAITING-NOT-QUIET and stops (resume later).
 Flags: CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP | CREATE_BREAKAWAY_FROM_JOB (no window). run.py holds a
 keep-awake (SetThreadExecutionState).
 
@@ -57,19 +59,66 @@ def _run(cls: str, threads: int, args: list[str], env_json: str | None = None) -
     return rc
 
 
+QUIET_LOAD_PCT = 25.0  # machine CPU load over a 20 s sample (P15-33 GPU feeder: about 1 core = 6 %)
+QUIET_MAX_WAIT_S = 3 * 3600
+
+
+def _recent(job: dict, hours: float = 6.0) -> bool:
+    """A job registered in the last ``hours`` (older entries can be stale: a reused pid; the load test still
+    sees any real load)."""
+    import datetime as dt
+
+    try:
+        since = dt.datetime.strptime(str(job.get("since")), "%Y-%m-%dT%H:%M:%S%z")
+    except ValueError:
+        return True
+    return (dt.datetime.now(since.tzinfo) - since).total_seconds() < hours * 3600
+
+
+def wait_quiet(what: str) -> bool:
+    """Wait until no other registered CPU job runs and the machine load is low (task rule: no timing while
+    another heavy CPU job runs). False after QUIET_MAX_WAIT_S (the driver then stops before the timing stage)."""
+    sys.path.insert(0, str(ROOT / "src"))
+    from fidetype.utils import isolation as I
+
+    t0 = time.time()
+    while True:
+        if (OWN / "STOP").exists():
+            return False
+        jobs = [j for j in I.list_jobs(prune=True) if "p3-12" not in str(j.get("label", "")) and _recent(j)]
+        s0 = I.cpu_times()
+        time.sleep(20)
+        load = I.load_pct(s0, I.cpu_times(), range(os.cpu_count() or 1))
+        if not jobs and load is not None and load < QUIET_LOAD_PCT:
+            _log(f"quiet before {what}: load {load} %, no other registered job")
+            return True
+        if time.time() - t0 > QUIET_MAX_WAIT_S:
+            _log(f"not quiet after {QUIET_MAX_WAIT_S} s before {what}: load {load} %, jobs {jobs}; stop")
+            (OWN / "WAITING-NOT-QUIET").write_text(time.strftime("%Y-%m-%dT%H:%M:%S") + chr(10), encoding="utf-8")
+            return False
+        _log(f"waiting before {what}: load {load} %, other jobs {[j.get('label', '')[:80] for j in jobs]}")
+        time.sleep(40)
+
+
 def drive() -> int:
     rc = _run("background", 1, ["check"])
     if rc:
         return rc
+    if not wait_quiet("latency"):
+        return 4
     rc = _run("timing", 1, ["latency"], "iso-latency.json")
     if rc:
         return rc
     rec = json.loads((OWN / "iso-latency.json").read_text(encoding="utf-8"))
     if not rec.get("clean") and not (OWN / "latency2.json").exists():
         _log(f"latency record not clean ({rec.get('clean_reasons')}): run once more (plan rule)")
+        if not wait_quiet("latency2"):
+            return 4
         rc = _run("timing", 1, ["latency", "--tag", "latency2"], "iso-latency2.json")
         if rc:
             return rc
+    if not wait_quiet("latency4"):
+        return 4
     rc = _run("timing", 4, ["latency4"], "iso-latency4.json")
     if rc:
         return rc
