@@ -1348,3 +1348,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - T15, four new calibration draws (seeds 1-3 inside `val_select`; one pooled re-split): L1 safe WPM v0.1 5.58, 6.00, 5.23, 5.83, all certified, CI lower ends above 4.02. Level and gain replicate (4 / 4 each). P15-22 (4.91) is the lowest of five draws (mean 5.51, SD 0.44).
 - T12: 2.37 [1.34, 3.62] against 4.11: does not replicate. Gain over P5-23 +0.50, no clear difference.
 - Claim on the frontier page: above gaze typing on T15, not on T12. Updated: frontier-safe-wpm, open-gaps, roadmap, tracker, HANDOFF. New gap 103 = P15-29 (interval that includes the calibration draw).
+
+## [2026-11-19] setup | README, overview and north star after P15-26; tracker agent-run stats
+- README (F2 row, safe-WPM paragraph), overview and north-star now give the P15-26 check of the P15-22 headline. The pre-registered headline stays 4.91 [4.25, 5.57] (v0.1, T15).
+- T15: stable over 4 new calibration draws (5.23–6.00, all above gaze 4.02). 4.91 is the lowest of 5 values. T12: not above gaze typing (2.37 [1.34, 3.62] vs 4.11). The T12 decoder is too weak (35 / 400 top-1 exact).
+- The intervals do not yet include calibration-draw variation (gap 103, P15-29). Link: [P15-26 results](../experiments/2026-11-19-p15-26-replication/results.md).
+- tracker.json: agent-run stats added for P15-27 (+P5-30), P14-01, P15-26 (run 1 + resume) and P11-09. Dashboard rebuilt.
