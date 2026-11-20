@@ -101,6 +101,15 @@ ARCHIVE_SHA256 = "7b2d827d0068b838e0a15ffe9d5ddddbdc315f55ba1b667636c84e6b510d75
 LICENCE = "CC-BY-NC-SA-4.0"
 ATTRIBUTION = "emg2qwerty dataset, Sivakumar et al. 2024 (Meta), CC BY-NC-SA 4.0, research use only"
 DATASET_SLUG = "emg2qwerty"
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "emg2qwerty", "kind": "dataset-replay", "signal": "emg", "status": "tested",
+    "target": "emg2qwerty (Meta, wrist sEMG during touch typing, 108 users): key presses per prompt",
+    "extra": "emg2qwerty",
+    "licence": "Code Apache-2.0. Data CC BY-NC-SA 4.0: research only, streams carry data.research_only = true.",
+    "tests": ["tests/test_adapter_emg2qwerty.py", "tests/test_conformance.py"], "docs": "wiki/entities/emg2qwerty.md",
+}
+
 ADAPTER_NAME = "fidetype.adapters.emg2qwerty"
 
 GROUP = "emg2qwerty"

@@ -74,6 +74,16 @@ __all__ = [
 ]
 
 SYNTHETIC_BOARD_ID = -1
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "brainflow", "kind": "device-source", "signal": "any", "status": "experimental", "extra": "brainflow",
+    "target": "BrainFlow boards (OpenBCI Cyton, Ganglion and others) -> LSL, and in-process in fidetype live "
+              "(BrainFlowSource). CI uses the BrainFlow Synthetic board and a fake board only",
+    "licence": "Code Apache-2.0. brainflow is MIT. Real boards untested (roadmap P4-06, needs hardware).",
+    "tests": ["tests/test_brainflow_bridge.py", "tests/test_live.py", "tests/test_adapter_conformance.py"],
+    "docs": "wiki/entities/brainflow.md",
+}
+
 UNIT = "microvolts"
 CHANNEL_KINDS = {"eeg": ("eeg_channels", "EEG"), "emg": ("emg_channels", "EMG"), "exg": ("exg_channels", "ExG")}
 #: ``device.modality`` (closed list, NTS 3.4) of each channel kind: ExG (mixed bio-potential channels) has no value

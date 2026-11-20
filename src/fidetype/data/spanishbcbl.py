@@ -47,6 +47,14 @@ SOURCE_URL = "https://huggingface.co/datasets/bcbl190626/SpanishBCBL"
 DOWNLOAD_COMMAND = (
     "huggingface-cli download bcbl190626/SpanishBCBL --repo-type dataset --include 'MEG/*' --local-dir <root>"
 )
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "spanishbcbl-reader", "kind": "dataset-reader", "signal": "meg", "status": "tested", "extra": "data",
+    "target": "SpanishBCBL typing MEG: file discovery, behavioural logs, clock alignment, typed text",
+    "licence": "Code Apache-2.0. Data CC BY-NC 4.0 (research only). Brain2Qwerty loader (CC BY-NC): not copied.",
+    "tests": ["tests/test_data_spanishbcbl.py"], "docs": "wiki/entities/spanishbcbl-dataset.md",
+}
+
 LICENCE_NOTICE = (
     "SpanishBCBL is CC BY-NC 4.0 (research use only). Download it yourself from "
     f"{SOURCE_URL}. Fidetype ships no SpanishBCBL data and no weights trained on it; "

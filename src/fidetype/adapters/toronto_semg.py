@@ -92,6 +92,15 @@ KEY_VOCAB_ID = "key.w3c-code.az-space"
 SPACE_INDEX = 26
 assert CHAR_VOCAB == ("<blank>", *KEY_CHARS)
 CTC_VOCAB_ID = "char.b2q-28"
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "toronto-semg", "kind": "dataset-replay", "signal": "emg", "status": "tested",
+    "target": "Toronto sEMG typing dataset (Achituve et al. 2025, forearm sEMG, 19 participants): key presses",
+    "licence": "Code Apache-2.0 (own Intan RHD reader). Data CC BY 4.0. Baseline code CC BY-SA 4.0: not copied.",
+    "tests": ["tests/test_adapter_toronto_semg.py", "tests/test_conformance.py"],
+    "docs": "wiki/entities/toronto-semg-typing-dataset.md",
+}
+
 ADAPTER_NAME = "fidetype.adapters.toronto_semg"
 
 #: Default mass given to the blank token on a key frame and to the 27 keys

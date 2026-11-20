@@ -77,6 +77,14 @@ SIL_ID = 1
 VOCAB: tuple[str, ...] = (BLANK_TOKEN, SIL_TOKEN, *PHONEMES)
 #: Our name for this vocabulary (spec section 3.4 namespace ``phoneme.*``).
 VOCAB_ID = "phoneme.arpabet-39-sil"
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "b2t25", "kind": "dataset-replay", "signal": "intracortical", "status": "tested",
+    "target": "Brain-to-Text '25 (Card et al. 2024, participant T15, attempted speech): phoneme CTC logits",
+    "licence": "Code Apache-2.0. Data CC0 (Dryad).",
+    "tests": ["tests/test_adapter_b2t25.py", "tests/test_conformance.py"], "docs": "wiki/entities/brain-to-text-25.md",
+}
+
 ADAPTER_NAME = "fidetype.adapters.b2t25"
 #: Licence of the Brain-to-Text '25 data (Dryad doi:10.5061/dryad.dncjsxm85; benchmark track b2t25-t15).
 LICENCE = "CC0-1.0"

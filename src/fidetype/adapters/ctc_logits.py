@@ -80,6 +80,15 @@ __all__ = [
     "main",
 ]
 
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "ctc-logits", "kind": "decoder-output", "signal": "any", "status": "tested",
+    "target": "Any CTC decoder: (T, V) logits, probabilities or log-probabilities (.npy / .npz, batches)",
+    "licence": "Code Apache-2.0. No dependency beyond NumPy.",
+    "tests": ["tests/test_adapter_ctc_logits.py", "tests/test_conformance.py", "tests/test_adapter_conformance.py"],
+    "docs": "wiki/concepts/ctc-logits-adapter.md",
+}
+
 ADAPTER_NAME = "fidetype.adapters.ctc_logits"
 INPUT_KINDS = ("auto", "logits", "log_probs", "probs")
 LAYOUTS = ("TV", "BTV", "TBV")

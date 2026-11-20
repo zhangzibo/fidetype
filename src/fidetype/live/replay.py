@@ -30,6 +30,14 @@ import numpy as np
 
 from fidetype.adapters.lsl import BINDING_VERSION, DESC_ROOT, MARKERS_TYPE, require_pylsl
 
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "kt-semg-lsl-replay", "kind": "dataset-replay", "signal": "emg", "status": "tested", "extra": "lsl",
+    "target": "KT-sEMG recording replayed as live raw-signal LSL streams (fidetype live replay-kt)",
+    "licence": "Code Apache-2.0. Data CC BY 4.0 (copyright 2021 Nokia). pylsl is MIT.",
+    "tests": ["tests/test_live.py", "tools/ci/kt_lsl_replay.py"], "docs": "docs/live-decode.md",
+}
+
 __all__ = ["publish_signal", "replay_kt"]
 
 

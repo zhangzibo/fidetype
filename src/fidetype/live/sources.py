@@ -42,6 +42,18 @@ import numpy as np
 
 from fidetype.live.synthetic import KEYPRESS, SEGMENT_END, SyntheticTypist, Utterance
 
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = [
+    {"id": "lsl-signal-source", "kind": "device-source", "signal": "any", "status": "tested", "extra": "lsl",
+     "target": "Any raw-signal LSL stream and its marker stream (LSLSource of fidetype live; reconnect P4-11)",
+     "licence": "Code Apache-2.0. pylsl is MIT.", "tests": ["tests/test_live_reconnect.py", "tests/test_live.py"],
+     "docs": "docs/live-decode.md"},
+    {"id": "synthetic-typist", "kind": "synthetic-source", "signal": "other", "status": "tested",
+     "target": "Synthetic typist signal with key-press markers (SyntheticSource; no real data)",
+     "licence": "Code Apache-2.0. Synthetic data, no licence needed.",
+     "tests": ["tests/test_live.py", "tests/test_adapter_conformance.py"], "docs": "docs/live-decode.md"},
+]
+
 __all__ = ["Chunk", "SyntheticSource", "ArraySource", "BrainFlowSource", "LSLSource"]
 
 

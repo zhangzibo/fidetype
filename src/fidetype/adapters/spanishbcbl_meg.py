@@ -49,6 +49,14 @@ from fidetype.streams.spec import NeuralTextStream
 from fidetype.streams.vocab import BLANK_ID, VOCAB
 
 SOURCE = "spanishbcbl-convctc"
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "spanishbcbl-meg", "kind": "dataset-replay", "signal": "meg", "status": "tested",
+    "target": "SpanishBCBL typing MEG (Brain2Qwerty data): ConvCTC output per typing segment",
+    "licence": "Code Apache-2.0. Data CC BY-NC 4.0: research only, streams carry data.research_only = true.",
+    "tests": ["tests/test_conformance.py", "tests/test_restamp_meg.py"], "docs": "wiki/entities/spanishbcbl-dataset.md",
+}
+
 ADAPTER_NAME = "fidetype.adapters.spanishbcbl_meg"
 VOCAB_ID = "char.b2q-28"
 #: Licence of the SpanishBCBL data (:data:`fidetype.data.spanishbcbl.LICENCE`; the data module is not imported here).

@@ -1,0 +1,532 @@
+{
+  "schema": "fidetype.adapter-registry/0.1",
+  "generated_by": "python -m fidetype.adapters.registry",
+  "status_meaning": {
+    "tested": "CI tests run it, and it ran on the real thing it reads: real public dataset files, or the real protocol library (pylsl, websockets, BrainFlow) in a loopback.",
+    "experimental": "Code and CI tests on synthetic data exist. It has not run on real recordings or a real device.",
+    "planned": "No code yet. Not supported."
+  },
+  "kinds": {
+    "dataset-replay": "reads a public dataset and emits NTS streams",
+    "dataset-reader": "reads the raw files of a public dataset",
+    "decoder-output": "turns the output of any decoder into NTS",
+    "transport": "moves NTS between programs (network)",
+    "device-source": "reads a live device (signal source)",
+    "file-reader": "reads a recording file format (signal source)",
+    "synthetic-source": "makes synthetic signals (no real data)"
+  },
+  "adapters": [
+    {
+      "id": "b2t25",
+      "kind": "dataset-replay",
+      "target": "Brain-to-Text '25 (Card et al. 2024, participant T15, attempted speech): phoneme CTC logits",
+      "signal": "intracortical",
+      "status": "tested",
+      "licence": "Code Apache-2.0. Data CC0 (Dryad).",
+      "tests": [
+        "tests/test_adapter_b2t25.py",
+        "tests/test_conformance.py"
+      ],
+      "docs": "wiki/entities/brain-to-text-25.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.adapters.b2t25"
+    },
+    {
+      "id": "brainflow",
+      "kind": "device-source",
+      "target": "BrainFlow boards (OpenBCI Cyton, Ganglion and others) -> LSL, and in-process in fidetype live (BrainFlowSource). CI uses the BrainFlow Synthetic board and a fake board only",
+      "signal": "any",
+      "status": "experimental",
+      "licence": "Code Apache-2.0. brainflow is MIT. Real boards untested (roadmap P4-06, needs hardware).",
+      "tests": [
+        "tests/test_brainflow_bridge.py",
+        "tests/test_live.py",
+        "tests/test_adapter_conformance.py"
+      ],
+      "docs": "wiki/entities/brainflow.md",
+      "hardware_tested": [],
+      "extra": "brainflow",
+      "roadmap": null,
+      "module": "fidetype.adapters.brainflow_bridge"
+    },
+    {
+      "id": "ctc-logits",
+      "kind": "decoder-output",
+      "target": "Any CTC decoder: (T, V) logits, probabilities or log-probabilities (.npy / .npz, batches)",
+      "signal": "any",
+      "status": "tested",
+      "licence": "Code Apache-2.0. No dependency beyond NumPy.",
+      "tests": [
+        "tests/test_adapter_ctc_logits.py",
+        "tests/test_conformance.py",
+        "tests/test_adapter_conformance.py"
+      ],
+      "docs": "wiki/concepts/ctc-logits-adapter.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.adapters.ctc_logits"
+    },
+    {
+      "id": "edf",
+      "kind": "file-reader",
+      "target": "EDF, EDF+ (continuous) and BDF files (many EEG, EMG and sleep systems)",
+      "signal": "any",
+      "status": "experimental",
+      "licence": "Code Apache-2.0; open format, no third-party code. Data: the licence of each file.",
+      "tests": [
+        "tests/test_adapter_edf.py"
+      ],
+      "docs": "docs/adapters.md#edf",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.adapters.edf"
+    },
+    {
+      "id": "emg2qwerty",
+      "kind": "dataset-replay",
+      "target": "emg2qwerty (Meta, wrist sEMG during touch typing, 108 users): key presses per prompt",
+      "signal": "emg",
+      "status": "tested",
+      "licence": "Code Apache-2.0. Data CC BY-NC-SA 4.0: research only, streams carry data.research_only = true.",
+      "tests": [
+        "tests/test_adapter_emg2qwerty.py",
+        "tests/test_conformance.py"
+      ],
+      "docs": "wiki/entities/emg2qwerty.md",
+      "hardware_tested": [],
+      "extra": "emg2qwerty",
+      "roadmap": null,
+      "module": "fidetype.adapters.emg2qwerty"
+    },
+    {
+      "id": "kt-semg",
+      "kind": "dataset-replay",
+      "target": "KT-sEMG (Nokia, forearm sEMG during natural typing): key presses, LDA reference decoder",
+      "signal": "emg",
+      "status": "tested",
+      "licence": "Code Apache-2.0. Data CC BY 4.0 (copyright 2021 Nokia).",
+      "tests": [
+        "tests/test_adapter_kt_semg.py",
+        "tests/test_conformance.py"
+      ],
+      "docs": "wiki/entities/kt-semg-dataset.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.adapters.kt_semg"
+    },
+    {
+      "id": "kt-semg-lsl-replay",
+      "kind": "dataset-replay",
+      "target": "KT-sEMG recording replayed as live raw-signal LSL streams (fidetype live replay-kt)",
+      "signal": "emg",
+      "status": "tested",
+      "licence": "Code Apache-2.0. Data CC BY 4.0 (copyright 2021 Nokia). pylsl is MIT.",
+      "tests": [
+        "tests/test_live.py",
+        "tools/ci/kt_lsl_replay.py"
+      ],
+      "docs": "docs/live-decode.md",
+      "hardware_tested": [],
+      "extra": "lsl",
+      "roadmap": null,
+      "module": "fidetype.live.replay"
+    },
+    {
+      "id": "lsl",
+      "kind": "transport",
+      "target": "Lab Streaming Layer: NTS in (LSL inlets -> trust layer) and out (NTS files -> LSL outlets)",
+      "signal": "any",
+      "status": "tested",
+      "licence": "Code Apache-2.0. pylsl and liblsl are MIT. No LSL code copied.",
+      "tests": [
+        "tests/test_adapter_lsl.py",
+        "tests/test_lsl_reconnect.py",
+        "tests/test_lsl_open_timeout.py"
+      ],
+      "docs": "wiki/concepts/lsl-input.md",
+      "hardware_tested": [],
+      "extra": "lsl",
+      "roadmap": null,
+      "module": "fidetype.adapters.lsl"
+    },
+    {
+      "id": "lsl-signal-source",
+      "kind": "device-source",
+      "target": "Any raw-signal LSL stream and its marker stream (LSLSource of fidetype live; reconnect P4-11)",
+      "signal": "any",
+      "status": "tested",
+      "licence": "Code Apache-2.0. pylsl is MIT.",
+      "tests": [
+        "tests/test_live_reconnect.py",
+        "tests/test_live.py"
+      ],
+      "docs": "docs/live-decode.md",
+      "hardware_tested": [],
+      "extra": "lsl",
+      "roadmap": null,
+      "module": "fidetype.live.sources"
+    },
+    {
+      "id": "openbci-gui",
+      "kind": "file-reader",
+      "target": "OpenBCI GUI v5+ raw recordings (Cyton, Cyton + Daisy, Ganglion)",
+      "signal": "eeg",
+      "status": "experimental",
+      "licence": "Code Apache-2.0; no OpenBCI code used. Data: the licence of each recording.",
+      "tests": [
+        "tests/test_adapter_openbci_gui.py"
+      ],
+      "docs": "docs/adapters.md#openbci-gui",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.adapters.openbci_gui"
+    },
+    {
+      "id": "spanishbcbl-meg",
+      "kind": "dataset-replay",
+      "target": "SpanishBCBL typing MEG (Brain2Qwerty data): ConvCTC output per typing segment",
+      "signal": "meg",
+      "status": "tested",
+      "licence": "Code Apache-2.0. Data CC BY-NC 4.0: research only, streams carry data.research_only = true.",
+      "tests": [
+        "tests/test_conformance.py",
+        "tests/test_restamp_meg.py"
+      ],
+      "docs": "wiki/entities/spanishbcbl-dataset.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.adapters.spanishbcbl_meg"
+    },
+    {
+      "id": "spanishbcbl-reader",
+      "kind": "dataset-reader",
+      "target": "SpanishBCBL typing MEG: file discovery, behavioural logs, clock alignment, typed text",
+      "signal": "meg",
+      "status": "tested",
+      "licence": "Code Apache-2.0. Data CC BY-NC 4.0 (research only). Brain2Qwerty loader (CC BY-NC): not copied.",
+      "tests": [
+        "tests/test_data_spanishbcbl.py"
+      ],
+      "docs": "wiki/entities/spanishbcbl-dataset.md",
+      "hardware_tested": [],
+      "extra": "data",
+      "roadmap": null,
+      "module": "fidetype.data.spanishbcbl"
+    },
+    {
+      "id": "synthetic-typist",
+      "kind": "synthetic-source",
+      "target": "Synthetic typist signal with key-press markers (SyntheticSource; no real data)",
+      "signal": "other",
+      "status": "tested",
+      "licence": "Code Apache-2.0. Synthetic data, no licence needed.",
+      "tests": [
+        "tests/test_live.py",
+        "tests/test_adapter_conformance.py"
+      ],
+      "docs": "docs/live-decode.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.live.sources"
+    },
+    {
+      "id": "text-nbest",
+      "kind": "decoder-output",
+      "target": "Any text-only decoder: CSV id,text or JSON Lines n-best lists -> hypothesis stream",
+      "signal": "any",
+      "status": "tested",
+      "licence": "Code Apache-2.0. No dependency beyond the standard library and NumPy.",
+      "tests": [
+        "tests/test_adapter_text_nbest.py"
+      ],
+      "docs": "wiki/concepts/text-nbest-adapter.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.adapters.text_nbest"
+    },
+    {
+      "id": "toronto-semg",
+      "kind": "dataset-replay",
+      "target": "Toronto sEMG typing dataset (Achituve et al. 2025, forearm sEMG, 19 participants): key presses",
+      "signal": "emg",
+      "status": "tested",
+      "licence": "Code Apache-2.0 (own Intan RHD reader). Data CC BY 4.0. Baseline code CC BY-SA 4.0: not copied.",
+      "tests": [
+        "tests/test_adapter_toronto_semg.py",
+        "tests/test_conformance.py"
+      ],
+      "docs": "wiki/entities/toronto-semg-typing-dataset.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": null,
+      "module": "fidetype.adapters.toronto_semg"
+    },
+    {
+      "id": "willett-handwriting",
+      "kind": "dataset-replay",
+      "target": "Willett et al. 2021 handwriting BCI: real-time RNN character output",
+      "signal": "intracortical",
+      "status": "tested",
+      "licence": "Code Apache-2.0. Data CC0. Reads sentences.mat with SciPy (BSD-3-Clause).",
+      "tests": [
+        "tests/test_adapter_willett_handwriting.py",
+        "tests/test_conformance.py"
+      ],
+      "docs": "wiki/entities/willett-handwriting-2021.md",
+      "hardware_tested": [],
+      "extra": "data",
+      "roadmap": null,
+      "module": "fidetype.adapters.willett_handwriting"
+    },
+    {
+      "id": "ws",
+      "kind": "transport",
+      "target": "WebSocket binding nts-ws/0.1 (FEP-0004): NTS in both directions, decisions out",
+      "signal": "any",
+      "status": "tested",
+      "licence": "Code Apache-2.0. websockets is BSD-3-Clause.",
+      "tests": [
+        "tests/test_adapter_ws.py",
+        "tests/test_conformance_capture.py"
+      ],
+      "docs": "wiki/concepts/websocket-input.md",
+      "hardware_tested": [],
+      "extra": "ws",
+      "roadmap": null,
+      "module": "fidetype.adapters.ws"
+    },
+    {
+      "id": "bids-eeg",
+      "kind": "dataset-reader",
+      "target": "BIDS-EEG datasets (for example OpenNeuro EEG studies) and MOABB-listed BCI datasets",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Per dataset (often CC0 or CC BY 4.0); check each one. MOABB licence not checked.",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P14-42",
+      "module": null
+    },
+    {
+      "id": "brainvision-file",
+      "kind": "file-reader",
+      "target": "BrainVision files (.vhdr / .eeg / .vmrk)",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Open format; not checked.",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P14-42",
+      "module": null
+    },
+    {
+      "id": "brainvision-lsl",
+      "kind": "device-source",
+      "target": "Brain Products amplifiers (LiveAmp, actiCHamp) through their LSL connector",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Not checked (vendor LSL connector). The LSL path itself exists (lsl-signal-source).",
+      "tests": [],
+      "docs": "wiki/concepts/lsl-input.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-05",
+      "module": null
+    },
+    {
+      "id": "consumer-emg-band",
+      "kind": "device-source",
+      "target": "Consumer sEMG wristbands (for example Myo-class bands)",
+      "signal": "emg",
+      "status": "planned",
+      "licence": "Not checked (vendor protocols; some bands are discontinued).",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-05",
+      "module": null
+    },
+    {
+      "id": "emg-wristband",
+      "kind": "device-source",
+      "target": "Open low-cost sEMG wristband (our reference design) as NTS over LSL",
+      "signal": "emg",
+      "status": "planned",
+      "licence": "Our own design (planned open hardware licence).",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md#p18-02-wristband-driver-and-adapter",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P18-02",
+      "module": null
+    },
+    {
+      "id": "emotiv",
+      "kind": "device-source",
+      "target": "Emotiv EPOC X / Insight",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Not checked. The vendor SDK is proprietary; an adapter may need a vendor licence.",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-05",
+      "module": null
+    },
+    {
+      "id": "fnirs-lsl",
+      "kind": "device-source",
+      "target": "fNIRS systems that stream LSL (for example NIRx, Artinis)",
+      "signal": "fnirs",
+      "status": "planned",
+      "licence": "Not checked (vendor software).",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-05",
+      "module": null
+    },
+    {
+      "id": "gdf",
+      "kind": "file-reader",
+      "target": "GDF files (for example BCI Competition IV 2a / 2b)",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Open format. Competition data terms not checked.",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P14-42",
+      "module": null
+    },
+    {
+      "id": "inner-speech-eeg",
+      "kind": "dataset-replay",
+      "target": "Public inner / imagined speech EEG datasets (for example 'Thinking out loud', Kara One)",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Not checked; check each dataset.",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P14-42",
+      "module": null
+    },
+    {
+      "id": "muse",
+      "kind": "device-source",
+      "target": "Interaxon Muse 2 / Muse S headband (4-channel EEG)",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Not checked. BrainFlow lists Muse boards (BrainFlow is MIT).",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md#p4-15-device-support-matrix-generated-from-adapter-metadata",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-05",
+      "module": null
+    },
+    {
+      "id": "neurosity-crown",
+      "kind": "device-source",
+      "target": "Neurosity Crown (8-channel EEG)",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Not checked (vendor SDK; BrainFlow lists the board).",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-05",
+      "module": null
+    },
+    {
+      "id": "openbci-cyton-board",
+      "kind": "device-source",
+      "target": "OpenBCI Cyton / Ganglion on a real board (code exists in brainflow; a real-board test does not)",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "BrainFlow is MIT. Needs hardware (P4-06, externally blocked).",
+      "tests": [],
+      "docs": "wiki/entities/brainflow.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-06",
+      "module": null
+    },
+    {
+      "id": "opm-meg",
+      "kind": "device-source",
+      "target": "OPM-MEG systems (wearable MEG)",
+      "signal": "opm-meg",
+      "status": "planned",
+      "licence": "Not checked (vendor software; lab hardware only).",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-05",
+      "module": null
+    },
+    {
+      "id": "unicorn",
+      "kind": "device-source",
+      "target": "g.tec Unicorn Hybrid Black (8-channel EEG)",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Not checked (vendor SDK and LSL app).",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P4-05",
+      "module": null
+    },
+    {
+      "id": "xdf",
+      "kind": "file-reader",
+      "target": "XDF files (LabRecorder recordings of LSL streams)",
+      "signal": "any",
+      "status": "planned",
+      "licence": "Open format. pyxdf licence not checked (a reader of our own needs no dependency).",
+      "tests": [],
+      "docs": "wiki/concepts/lsl-input.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P14-42",
+      "module": null
+    },
+    {
+      "id": "zuco",
+      "kind": "dataset-replay",
+      "target": "ZuCo (EEG and eye tracking during natural reading)",
+      "signal": "eeg",
+      "status": "planned",
+      "licence": "Not checked.",
+      "tests": [],
+      "docs": "wiki/questions/roadmap-standard.md",
+      "hardware_tested": [],
+      "extra": null,
+      "roadmap": "P14-42",
+      "module": null
+    }
+  ]
+}

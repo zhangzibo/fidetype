@@ -147,6 +147,15 @@ import numpy as np
 from fidetype.streams.spec import SPEC_VERSION, VOCAB_TYPES
 
 ADAPTER_NAME = "fidetype.adapters.lsl"
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "lsl", "kind": "transport", "signal": "any", "status": "tested", "extra": "lsl",
+    "target": "Lab Streaming Layer: NTS in (LSL inlets -> trust layer) and out (NTS files -> LSL outlets)",
+    "licence": "Code Apache-2.0. pylsl and liblsl are MIT. No LSL code copied.",
+    "tests": ["tests/test_adapter_lsl.py", "tests/test_lsl_reconnect.py", "tests/test_lsl_open_timeout.py"],
+    "docs": "wiki/concepts/lsl-input.md",
+}
+
 ADAPTER_VERSION = "0.1"
 #: LSL stream type of an NTS frames stream.
 NTS_STREAM_TYPE = "NTS"

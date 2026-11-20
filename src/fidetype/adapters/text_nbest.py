@@ -70,6 +70,14 @@ __all__ = [
     "main",
 ]
 
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "text-nbest", "kind": "decoder-output", "signal": "any", "status": "tested",
+    "target": "Any text-only decoder: CSV id,text or JSON Lines n-best lists -> hypothesis stream",
+    "licence": "Code Apache-2.0. No dependency beyond the standard library and NumPy.",
+    "tests": ["tests/test_adapter_text_nbest.py"], "docs": "wiki/concepts/text-nbest-adapter.md",
+}
+
 ADAPTER_NAME = "fidetype.adapters.text_nbest"
 _EVIDENCE_KEYS = ("char_confidences", "logp_acoustic", "logp_lm")
 

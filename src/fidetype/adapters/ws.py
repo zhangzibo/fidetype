@@ -64,6 +64,14 @@ import numpy as np
 from fidetype.streams.spec import SPEC_VERSION, is_supported_spec_version
 
 ADAPTER_NAME = "fidetype.adapters.ws"
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "ws", "kind": "transport", "signal": "any", "status": "tested", "extra": "ws",
+    "target": "WebSocket binding nts-ws/0.1 (FEP-0004): NTS in both directions, decisions out",
+    "licence": "Code Apache-2.0. websockets is BSD-3-Clause.",
+    "tests": ["tests/test_adapter_ws.py", "tests/test_conformance_capture.py"], "docs": "wiki/concepts/websocket-input.md",
+}
+
 ADAPTER_VERSION = "0.1"
 #: Binding version (FEP-0004 section 10) and its WebSocket subprotocol token.
 BINDING_VERSION = "nts-ws/0.1"

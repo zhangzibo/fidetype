@@ -87,6 +87,15 @@ ARCHIVE_NAME = "handwritingBCIData.tar.gz"
 ARCHIVE_SIZE = 1_408_201_020
 ARCHIVE_SHA256 = "f41ff3577f8e8d0e76c24f61b46b1bc5a36ab329cd027947960c5e29ab7223ac"
 DATASET_SLUG = "willett-handwriting-2021"
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "willett-handwriting", "kind": "dataset-replay", "signal": "intracortical", "status": "tested",
+    "target": "Willett et al. 2021 handwriting BCI: real-time RNN character output", "extra": "data",
+    "licence": "Code Apache-2.0. Data CC0. Reads sentences.mat with SciPy (BSD-3-Clause).",
+    "tests": ["tests/test_adapter_willett_handwriting.py", "tests/test_conformance.py"],
+    "docs": "wiki/entities/willett-handwriting-2021.md",
+}
+
 ADAPTER_NAME = "fidetype.adapters.willett_handwriting"
 
 BIN_S = 0.01

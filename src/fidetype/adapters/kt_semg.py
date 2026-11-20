@@ -71,6 +71,14 @@ DATAVERSE_VERSION = "1.1"
 LICENCE = "CC-BY-4.0"
 ATTRIBUTION = "KT-sEMG dataset, copyright 2021 Nokia, CC BY 4.0"
 DATASET_SLUG = "kt-semg"
+#: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
+ADAPTER_INFO = {
+    "id": "kt-semg", "kind": "dataset-replay", "signal": "emg", "status": "tested",
+    "target": "KT-sEMG (Nokia, forearm sEMG during natural typing): key presses, LDA reference decoder",
+    "licence": "Code Apache-2.0. Data CC BY 4.0 (copyright 2021 Nokia).",
+    "tests": ["tests/test_adapter_kt_semg.py", "tests/test_conformance.py"], "docs": "wiki/entities/kt-semg-dataset.md",
+}
+
 ADAPTER_NAME = "fidetype.adapters.kt_semg"
 SAMPLE_RATE_HZ = 2000.0
 N_CHANNELS = 32
