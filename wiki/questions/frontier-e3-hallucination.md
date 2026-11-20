@@ -83,7 +83,7 @@ An LLM rescores or rewrites the decoder n-best. A run-time check compares the te
 | P15-22 L0: B1 + `p_top1` (= P15-05 B1) | 154 / 12 | 0 | 154 / 0 / 0 | **pass** (0.019) | **pass** |
 | **P15-22 L1: B1 + learned score** | **196 / 13** | **0** | 196 / 0 / 0 | **pass** (0.015) | **pass** |
 
-P15-22 entries ([results]({R})): files in `experiments/2026-11-19-p15-22-llm-learned/results/halluc/` (not yet in `benchmark/results/halluc-v0.2/`). Both fluency modes give the same verdicts. The absolute unsupported swapped-commit rate is 0 / 701 (CP95 upper 0.0052).
+P15-22 entries ([results](../../experiments/2026-11-19-p15-22-llm-learned/results.md)): files in `experiments/2026-11-19-p15-22-llm-learned/results/halluc/` (not yet in `benchmark/results/halluc-v0.2/`). Both fluency modes give the same verdicts. The absolute unsupported swapped-commit rate is 0 / 701 (CP95 upper 0.0052).
 
 > **Our take:** the M4-13 B1 guard is the first entry that passes every track. It commits on 5.1 % of real items. The P15-22 L1 guard passes every track too and commits on 28.0 %, but that rate was also not fixed in a P15-16 plan. P15-16 asks for a baseline that commits on "a useful part" of the items, with that rate fixed in a plan first. 5.1 % was never fixed in a plan, so this is evidence for P15-16, not its closure.
 
