@@ -1371,3 +1371,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - All arms certified, safe, non-vacuous, all P11-09 controls pass (test time-shuffled / zero EMG 0 / 1,221): sentence S v0.1 4.10 [1.99, 6.60] > no-BCI 3.09 (not clearly above); SL 5.08; prefix X v0.2 4.25 (null 6.2 % -> 0 %). Gate drops 2.2 % of real windows.
 - No score card (intended-text target; the track scorer uses raw keys): new gap 105 = P11-13.
 - Updated: open-gaps (102 and 104 closed, 105 added), roadmap (P11-11 and P11-12 done, P11-13 new; P11-12 depends-on wording fixed), tracker, HANDOFF, dashboard.
+
+## [2026-11-19] setup | New roadmap items: languages, devices, UI, SDKs, production use (gaps 106-116)
+- Source: user question "is this for every language, all devices, UI, SDK, production integration?".
+- New items (roadmap, open gaps, tracker): P14-34 language-agnostic pipeline audit (106), P15-30 first non-English result on SpanishBCBL (107), P15-31 non-Latin scripts scan (108), P15-32 multilingual LM grounding (109), P4-15 device support matrix (110), P14-35 end-user typing UI (111), P14-36 usability study (112, `externally_blocked`), P2-12 iOS / mobile binding (113), P3-11 collector 24 h soak (114), P14-37 end-user installer (115), P8-07 effort-weighted progress view (116).
+- Already covered, cross-referenced only: P4-05 / M6-02 (consumer devices), P4-06 / M6-12 (real-device tests), P14-07, P8-05 + docs site plan T11 (SDK API docs), P2-02 / P2-05 (C core, C# / Kotlin), P3-03 (OS text input), P14-09 (AAC app), gap 37 = P3-06 (EMG latency), M6-13 / M6-15 (live-path soak), M6-04 (real-user eWPM).
+- No existing item moved, changed or was removed. Dashboard rebuilt.

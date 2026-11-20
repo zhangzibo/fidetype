@@ -254,6 +254,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P2-09: the `all-green` job of `tests.yml` fails when any job fails, but `main` has no branch rule (`gh api .../branches/main/protection`: 404), so a red platform does not block a merge.
 - **Done when:** a ruleset on `main` requires the `all-green` check for pull requests, and the decision for direct pushes (agents push to `main`) is written down.
 
+#### P2-12 iOS (Swift) binding and a mobile build check
+- **Gap:** 113 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P2-05.
+- **Status:** `todo`.
+- **Depends on:** P2-02 (C core) or a C ABI on the Rust SDK (choose by a small FEP, as P2 says for C# and Kotlin); P2-05 (Kotlin, Android).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" The Python, TypeScript and Rust SDKs exist and give the same verdicts (not published). P2-05 plans Kotlin (Android IME) and C# (Windows TSF). No item plans iOS. Per-language API reference docs are already planned (P8-05, [docs site plan](docs-site-plan.md) task T11: autodoc, TypeDoc, rustdoc); this item does not repeat them.
+- **Done when:** A Swift package reads and validates NTS on iOS through the chosen core and passes the conformance vectors in CI (macOS runner, iOS simulator). An Android build of the same core runs the vectors in CI (with P2-05). The compatibility matrix lists both.
+
 ## P3. Collector (pipeline)
 **Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a TOML/JSON file (FEP-0006; [decision 2026-11-17](collector-decisions-2026-11.md)).
 
@@ -317,6 +324,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P3-07 (done); FEP-0002 (LSL binding, LSL-C6 merge).
 - **Source:** P3-07 (2026-11-17): with receive stamps, the inlet merge window is most of the LSL added latency. A frames stream and an idle events stream go through one merge, so each frame and each boundary waits about `merge_window_s`. At the receiver default (0.05 s) implant-speech has p95 added 60.4 ms (over the 50 ms budget); the bench uses 0.02 s (p95 26.8 ms).
 - **Done when:** the LSL receiver meets the 50 ms budget at its default settings with a two-stream producer (for example: an events-stream heartbeat in the binding that lets the merge release frames at once, or a default `merge_window_s` below the budget with a measured `late_releases` rate), and FEP-0002 and the docs say the same.
+
+#### P3-11 Collector soak test: 24 h run, reconnects, memory
+- **Gap:** 114 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P3-04, M6-13, M6-15.
+- **Status:** `todo`.
+- **Depends on:** P3-04 (done); the M6-15 soak harness (done).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" M6-13 (1 h+) and M6-15 (7 h) soak-tested the live path (BrainFlow -> LSL -> trust). No soak test covers the collector (receivers, guard processor, exporters, WebSocket clients that connect and drop).
+- **Done when:** A pre-registered 24 h collector run (replay input over WebSocket and LSL, guard on, file and WebSocket exporters, forced client and source reconnects) meets written criteria: no crash, bounded memory growth, no lost or duplicate decisions, p95 added latency inside the 50 ms budget. A results page gives the check, stop and resume commands.
 
 ## P4. Device and toolkit adapters
 **Goal:** NTS comes out of the tools that people already use. Dataset replay stands in for devices we do not own.
@@ -393,6 +407,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P4-11 (done).
 - **Source:** CI run 44437999699 (commit `747f2ea`, 2026-11-18), job `conformance (macos-latest)`, full pytest suite: `tests/test_live_reconnect.py::test_loss_drops_cut_segment_and_reconnects` failed with `tries["n"] == 3` (expected 2; `losses == 1`, `reconnects == 1` held), plus "I/O operation on closed file" log errors. 1544 other tests passed. The same commit passed on Linux and Windows, and the previous commit passed on macOS, so the test depends on runner timing.
 - **Done when:** the cause of the extra `reopen()` call is found and fixed in the code or the test (no retry loop, no wider bound); the test passes 20 times in a row on the macOS runner.
+
+#### P4-15 Device support matrix generated from adapter metadata
+- **Gap:** 110 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P4-01, P4-02, P4-06.
+- **Status:** `todo`.
+- **Depends on:** P4-01, P4-02 (done).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" Adapters exist for six dataset replays, LSL, BrainFlow (OpenBCI and other boards) and WebSocket. No adapter is tested on a real device (the user has no EEG or MEG hardware). No page tells a user which devices work. Real-device tests stay P4-06 and M6-12 (`externally_blocked`, hardware); consumer-device adapters stay P4-05 and M6-02 (wristband demo: P14-07). This item adds no new device item.
+- **Done when:** Each adapter declares in metadata its support level (tested on a real device / replay only / synthetic only / untested) and the devices it was tested on. A script generates `docs/device-support.md` from the metadata. CI fails when the page and the metadata differ. The README links the page.
 
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
@@ -732,6 +753,15 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 
 **Value-first link (2026-11-15):** [P14-06](#p14-06-visible-demo-recorded-emg-to-text) is a smaller single-modality demo (recorded EMG → text). The three-device demo (P8-03) can reuse it. [P14-03](#p14-03-trust-layer-as-a-drop-in-wrapper) adds one quickstart to P8-02.
 
+### Open-gap items (added 2026-11-19)
+
+#### P8-07 Effort-weighted progress view on the dashboard
+- **Gap:** 116 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P8-05 (dashboard: `tools/progress/build.js`).
+- **Status:** `todo`.
+- **Depends on:** —.
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" The progress dashboard counts items. A small fix and a large research item count the same. Negative results look like normal `done` items. `externally_blocked` items mix with the others in the totals.
+- **Done when:** Each tracker item can carry a size (S / M / L or agent-days; old items get a default). The dashboard shows progress weighted by size next to the item count. Items with a negative or null result carry a flag in tracker.json and a visible mark. `externally_blocked` items have a separate total. The build stays offline and the compact tracker layout stays.
+
 ## P9. Governance + community
 **Goal:** the rules that let other people trust and join the project.
 
@@ -1010,6 +1040,10 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-31** | Packaged trust config for t12-v2 (word trigram LM in the text decoder) (open gap 99, [details](#p14-31-packaged-trust-config-for-t12-v2-word-trigram-lm-in-the-text-decoder)) | P14-01 | small teams, research labs |
 | **P14-32** | Toronto sEMG key-press CNN in the pretrained registry (open gap 100, [details](#p14-32-toronto-semg-key-press-cnn-in-the-pretrained-registry)) | P14-01 | small teams, research labs |
 | **P14-33** | Willett handwriting decoder of our own in the pretrained registry (open gap 101, [details](#p14-33-willett-handwriting-decoder-of-our-own-in-the-pretrained-registry)) | P14-01 | small teams, research labs |
+| **P14-34** | Language-agnostic pipeline audit (per-language config) (open gap 106, [details](#p14-34-language-agnostic-pipeline-audit-per-language-config)) | P14-01, P14-03, P14-05 | research labs, BCI companies, AAC app makers |
+| **P14-35** | End-user typing UI (open gap 111, [details](#p14-35-end-user-typing-ui)) | P14-06, P14-09, P8-05 | AAC app makers, small teams |
+| **P14-36** | Usability study of the typing UI (open gap 112, [details](#p14-36-usability-study-of-the-typing-ui)) | P14-35, M6-04 | AAC app makers, small teams |
+| **P14-37** | Packaged installer for end users (open gap 115, [details](#p14-37-packaged-installer-for-end-users)) | P2-08, P14-35 | AAC app makers, small teams |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1281,6 +1315,34 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P14-01 ([results](../../experiments/2026-11-19-p14-01-pretrained/results.md)): the manifest `willett-hw` is `planned`: we have no trained Willett handwriting decoder yet.
 - **Done when:** a `willett-hw` manifest with weights, a runtime and a reader; its card metric reruns with `load("willett-hw")`.
 
+#### P14-34 Language-agnostic pipeline audit (per-language config)
+- **Gap:** 106 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P14-01, P14-03, P14-05.
+- **Status:** `todo`.
+- **Depends on:** — (CPU only).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" All language results so far are English: T15, T12, Willett handwriting, emg2qwerty, KT-sEMG. Only the SpanishBCBL MEG replay adapter reads non-English data (research only). English assumptions are spread over the code, for example: character sets and CTC vocabularies, word lexicons, character and word LMs, safe WPM (`words(y)` counts words separated by spaces; the correction time uses 152 characters per minute), the hallucination benchmark protocol and the no-BCI gaze reference (`aac-gaze-v1`).
+- **Done when:** An audit page lists each English assumption with its file and a fix. Each assumption becomes a per-language config value (a language tag, for example BCP 47, in the trust config and the model manifest). The English defaults give the same outputs as now (tests). A Spanish config loads end to end on synthetic input.
+
+#### P14-35 End-user typing UI
+- **Gap:** 111 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P14-06, P14-09, P8-05.
+- **Status:** `todo`.
+- **Depends on:** P14-06 (done: demo page); P3 WebSocket exporter; P14-03 (done).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" `demo/index.html` and `fidetype demo` show a recorded stream to a viewer. No app lets a user type with Fidetype. P14-09 connects an existing AAC app and P8-05 is the project site. Neither is our own typing UI.
+- **Done when:** A local app (browser or desktop) receives decisions from the collector WebSocket exporter. It shows committed text, OFFER choices and confidence. The user accepts or rejects an offer and corrects committed text; each action goes back as feedback (for the P15 update loops). Accessibility: switch input, eye-gaze dwell selection, large targets, keyboard-only use, screen-reader labels (WCAG 2.2 AA, checked with an automated tool). A replay test runs in CI; a headless Edge screenshot shows the UI.
+
+#### P14-36 Usability study of the typing UI
+- **Gap:** 112 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P14-35, M6-04.
+- **Status:** `externally_blocked`.
+- **Depends on:** P14-35; ethics approval; volunteers, among them AAC users (external); M6-04 (real-user eWPM test; the sessions can be shared).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" The typing UI (P14-35) needs a test with real users. No item plans a usability study.
+- **Done when:** A pre-registered study (tasks; measures such as SUS and task time; accessibility checks with switch and eye-gaze users) runs with consent. A results page reports the findings and the UI fixes. **`externally_blocked`** (ethics approval, volunteers).
+
+#### P14-37 Packaged installer for end users
+- **Gap:** 115 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P2-08, P14-35.
+- **Status:** `todo`.
+- **Depends on:** P14-35; code-signing certificates may be needed (user-owned, as P2-07).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" Today a user installs Fidetype with `pip` or `uv`. No one-click installer exists for a person who is not a developer (an AAC user or a carer).
+- **Done when:** A Windows installer (first; macOS and Linux later) installs the collector, the typing UI and a pretrained model with no Python setup and adds a start-menu entry. An install test on a clean virtual machine passes. If code signing needs certificates, the page names that user step.
+
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
 
@@ -1549,6 +1611,27 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P15-27 (done); the local M4-12 and T12 caches of P15-05 / P15-06 / P15-07. CPU, cache-only.
 - **Source:** P15-27 ([P15-22 addendum](../../experiments/2026-11-19-p15-22-llm-learned/results.md#addendum-2026-11-19-p15-27-check-of-the-9-trial-top-1-difference-gap-94)): before the fix, `GroundingCheck.apply` left a demoted (ungrounded) candidate first in the list, and the P15-05 family computed the B1 WER from that first item. T15 M4-13 B1: 0.1617 -> 0.1609 (S1 still pass). Decisions never used the unsorted list.
 - **Done when:** the B1 (and P15-06 / P15-07 grounded) WER values on M4-12 and T12 are recomputed with the sorted order from the committed caches, each changed value gets a dated note next to the original (no silent overwrite), and the wiki pages that quote them (frontier-decoder-quality, frontier-e3-hallucination, m4-13-trust-reruns, north-star) are updated or confirmed.
+
+#### P15-30 First non-English result: Spanish MEG through the trust layer
+- **Gap:** 107 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P14-34, M1.
+- **Status:** `todo`.
+- **Depends on:** P14-34 (per-language config); SpanishBCBL MEG replay adapter (P4-01, done); a Spanish LM (M1 has a Tatoeba EN/ES character 6-gram, CC BY 2.0 FR); a SpanishBCBL decoder of our own (research-only data, CC BY-NC 4.0).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" SpanishBCBL is Spanish ([SpanishBCBL](../entities/spanishbcbl-dataset.md)). Our M1 MEG decoder ran on it, but no trust result and no safe WPM exist for any non-English data.
+- **Done when:** A pre-registered run on SpanishBCBL gives certified safe WPM with the Spanish config, the shuffled and null controls and a Spanish no-BCI reference. The result is labelled research only. A negative result is reported as such.
+
+#### P15-31 Non-Latin scripts: literature and public dataset scan
+- **Gap:** 108 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P14-34, P15-10.
+- **Status:** `todo`.
+- **Depends on:** P14-34 (the audit names the script-dependent parts).
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" Every dataset we use is in the Latin alphabet (English, Spanish). Scripts such as Mandarin (pinyin input or characters), Arabic (right to left, joined letters) and Hindi (Devanagari) change the output unit, the CTC vocabulary size, word segmentation (Mandarin has no spaces) and the LM.
+- **Done when:** A wiki question page lists published non-English BCI language decoding work and public datasets (modality, language, script, size, licence), in the format of [public datasets](public-datasets.md). It names the best first non-Latin target and the changes per script (output unit, segmentation, safe-WPM unit, LM). Each claim has a source.
+
+#### P15-32 Multilingual LM grounding for the guard
+- **Gap:** 109 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P15-05, P15-06, P14-34.
+- **Status:** `todo`.
+- **Depends on:** P14-34; P15-30 (non-English data to test on); a local multilingual LLM with an open licence.
+- **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" The F2 LLM rescoring and grounding check (P15-05, P15-06, P15-22) use English models and English data only. A rescorer can push text toward a dominant language. The grounding check is not tested for this.
+- **Done when:** The P15-05 rescoring and grounding check run with a multilingual LLM on English and Spanish data under one pre-registered plan. The swapped-signal and null controls pass per language. A cross-language control (signal from one language, LM prompt in the other) is reported. The hallucination bound holds per language, or the page says why not.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
