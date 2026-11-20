@@ -831,11 +831,19 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Done when:** wiki/sources/emg2qwerty.md exists with citation, licence, TL;DR, Table 3 numbers with page / table, the split scheme and limits; the entity page, the P11-01 results and the frontier decoder page link it.
 
 #### P11-11 Non-vacuous EMG safe WPM (commit unit or LM)
-- **Gap:** 102 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-09). Follow-up of P11-09, P11-07.
-- **Status:** `todo`.
+- **Gap:** 102 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-09; closed 2026-11-19). Follow-up of P11-09, P11-07.
+- **Status:** `done` (2026-11-19).
 - **Depends on:** P11-09 (done); P11-07 (character LM + beam) optional.
 - **Source:** P11-09 ([results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)): the certified guard on the P11-01 EMG decoder never commits. A COMMIT must equal the whole prompt key sequence, with the user's own errors and Backspace keys; at 17.9 % key errors the top-1 is exactly right on 2 / 1,221 prompts.
 - **Done when:** a pre-registered EMG guard gives a non-vacuous certified safe WPM on held-out emg2qwerty prompts, with a commit unit the decoder can get right (word or key-prefix commits under the proposed v0.2, or the intended text after Backspace as the target) or with LM / lexicon decoding (P11-07), and the same controls as P11-09; or the result states with numbers why it stays vacuous.
+- **Result (2026-11-19):** [results](../../experiments/2026-11-19-p11-11-emg-nonvacuous/results.md). Pre-registration `b412c76`, amendment 1 + code `5f54a45` (out-of-lexicon gate), results `766b2b3`. Target = intended text after Backspace; key CTC beam 64 n-best rescored with a leak-free Tatoeba 6-gram LM and a track-train lexicon. Word-prefix arm (learned prefix score, LTT alpha 0.05, delta 0.1): certified, **non-vacuous proposed-v0.2 safe WPM 4.23 [2.60, 6.34]** on the 1,221 track-test prompts (420 commits, 35 wrong, CP95 [0.020, 0.040]) > no-BCI 3.09 / 2.93, not clearly above; adopted v0.1 only 0.07. Sentence-level arms refused (time-shuffled null 19-20 / 300); the prefix arm fails the evaluation null control (6.2 %); raw-key track arm vacuous (no card). New gap 104 = P11-12.
+
+#### P11-12 No-signal detector for the EMG intended-text guard
+- **Gap:** 104 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-11). Follow-up of P11-11.
+- **Status:** `todo`.
+- **Depends on:** P11-11 (done); the P11-09 / P11-11 local files (`derived/p11-09`, `derived/p11-11`); CPU.
+- **Source:** P11-11 ([results](../../experiments/2026-11-19-p11-11-emg-nonvacuous/results.md)): time-shuffled EMG decodes to one confident real word after the LM / lexicon rescoring (245 of 246 non-gated null outputs are one word). So the sentence-level guards are refused (19 and 20 / 300 null commits, allowed 15), and the certified prefix guard commits on 6.2 % of the null test inputs.
+- **Done when:** a pre-registered no-signal gate that does not use the language side (for example a minimum word count, a decoded-words-per-second check against the user's calibration range, or an acoustic-only evidence score) makes the sentence-level guard pass all controls and keeps the prefix guard's evaluation null-commit rate at or below 5 %, on the same split; v0.1 and proposed v0.2 values reported.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.

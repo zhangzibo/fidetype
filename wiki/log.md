@@ -1354,3 +1354,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - T15: stable over 4 new calibration draws (5.23–6.00, all above gaze 4.02). 4.91 is the lowest of 5 values. T12: not above gaze typing (2.37 [1.34, 3.62] vs 4.11). The T12 decoder is too weak (35 / 400 top-1 exact).
 - The intervals do not yet include calibration-draw variation (gap 103, P15-29). Link: [P15-26 results](../experiments/2026-11-19-p15-26-replication/results.md).
 - tracker.json: agent-run stats added for P15-27 (+P5-30), P14-01, P15-26 (run 1 + resume) and P11-09. Dashboard rebuilt.
+
+## [2026-11-19] setup | P11-11: non-vacuous certified EMG safe WPM (gap 102 closed; new gap 104)
+- Pre-registration `b412c76`; amendment 1 + code `5f54a45`; results `766b2b3`; [results](../experiments/2026-11-19-p11-11-emg-nonvacuous/results.md). CPU only, research only, aggregates only.
+- Levers: intended text after Backspace as the target; n-best rescoring with a leak-free Tatoeba 6-gram LM and a track-train lexicon; word-prefix commits. Whole-prompt top-1 rises from 0.16 % (P11-09) to 24.5 %.
+- Prefix arm: certified proposed-v0.2 safe WPM 4.23 [2.60, 6.34] > no-BCI 3.09 / 2.93 (not clearly); v0.1 0.07. Sentence arms refused by the time-shuffled null control; the prefix arm fails the eval null control (6.2 %). Raw-key arm vacuous, no card.
+- Updated: open-gaps (102 closed, 104 added), roadmap (P11-11 done, P11-12 new), tracker, HANDOFF, dashboard.
