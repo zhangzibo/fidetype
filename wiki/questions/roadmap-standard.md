@@ -1087,6 +1087,8 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-39** | Words per minute for scripts without spaces (open gap 118, [details](#p14-39-words-per-minute-for-scripts-without-spaces)) | P14-34 | research labs, BCI companies |
 | **P14-40** | Per-language models and vocabulary registry (open gap 119, [details](#p14-40-per-language-models-and-vocabulary-registry)) | P14-34, P15-31, P15-32 | research labs, BCI companies, AAC app makers |
 | **P14-41** | Trust guard for `willett-hw` (open gap 121, [details](#p14-41-trust-guard-for-willett-hw)) | P14-33 | research labs |
+| **P14-42** | Device and dataset adapter catalogue and contributor template (open gap 127, [details](#p14-42-device-and-dataset-adapter-catalogue-and-contributor-template)) | P4-15, P4-01, P4-02 | BCI companies, research labs, small teams (contributors) |
+| **P14-43** | 10-minute tutorials (open gap 128, [details](#p14-43-10-minute-tutorials)) | P14-01, P14-03, P13-06 | small teams, research labs, newcomers |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1412,6 +1414,24 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-33 (done); free machine memory (CPU only).
 - **Source:** P14-33 ([results](../../experiments/2026-11-19-p14-33-willett-hw/results.md)): the `guard` stage (`fidetype.trust.calibrate` on the 106 val sentences, 106 time-shuffled nulls, alpha 0.05, delta 0.1) was stopped because the machine was critically low on memory while other jobs ran. `willett-hw` has `trust: null`.
 - **Done when:** a guard calibrated on the val blocks is a release file of `willett-hw` (SHA-256 in the manifest, `trust` set), with its decisions on the test blocks (real and time-shuffled input) reported; or a written refusal (null control) with numbers. With greedy CER 0.305 a guard that only offers is an acceptable result. Run it on a quiet machine or with a lower-memory calibration.
+
+#### P14-42 Device and dataset adapter catalogue and contributor template
+- **Gap:** 127 of the [open-gap list](open-gaps.md) (added 2026-11-20, user decision). Follow-up of P4-15, P4-01, P4-02.
+- **Status:** `todo`.
+- **Serves:** BCI companies, research labs, small teams (contributors).
+- **Depends on:** P4-15 (gap 110: device support matrix from adapter metadata), P4-01, P4-02, P4-05 (consumer-device adapters), P8-05 (docs site).
+- **Source:** User decision (2026-11-20) after a comparison with LangChain history (17,256 commits: about 38 % integrations, 31 % docs, 11 % core; 3,748 contributors). Fidetype has 395 commits and 1 author. The two largest gaps are integrations and docs.
+- **Goal:** A catalogue page and a machine-readable registry list every adapter and reader in the repo. Each entry gives the device or dataset, the signal type, the status (tested, experimental or planned), the licence notes and the test coverage. Planned entries cover the common non-invasive devices and public BCI datasets (from P4-05, P4-15 and P18-01). A cookiecutter-style template and a new CONTRIBUTING.md section make a new adapter a PR of about 50 lines. Each new adapter must pass a standard conformance test on synthetic data (no real recordings).
+- **Done when:** The registry and the catalogue page exist and list all current adapters and readers with the five fields. CI fails when the page and the registry differ. The template and the CONTRIBUTING.md section exist. The template is used to add at least 2 new adapters, and both pass the conformance test in CI.
+
+#### P14-43 10-minute tutorials
+- **Gap:** 128 of the [open-gap list](open-gaps.md) (added 2026-11-20, user decision). Follow-up of P14-01, P14-03, P13-06.
+- **Status:** `todo`.
+- **Serves:** small teams, research labs, newcomers.
+- **Depends on:** P14-01 (pretrained decoders), P14-03 (trust drop-in), P14-05 (safe WPM), P13 benchmark scorer, P14-30 (gap 98: hosted weights; until then the CI smoke test uses synthetic data), P8-05 (docs site).
+- **Source:** User decision (2026-11-20) after a comparison with LangChain history (17,256 commits: about 38 % integrations, 31 % docs, 11 % core; 3,748 contributors). Fidetype has 395 commits and 1 author. The two largest gaps are integrations and docs.
+- **Goal:** Getting-started tutorials (scripts or notebooks) run in less than 10 minutes on a normal laptop CPU. They use only public or synthetic data and need no hardware. There are at least three: (1) decode text with a pretrained decoder; (2) add the trust guard and read the safe WPM; (3) score a decoder on the benchmark. Each tutorial runs in CI as a smoke test on synthetic data. They extend docs/getting-started.md and docs/trust-quickstart.md.
+- **Done when:** The 3 tutorials pass in CI. Each run is timed, and each takes less than 10 minutes.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
