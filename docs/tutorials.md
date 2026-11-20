@@ -48,10 +48,10 @@ The smoke test [`tutorials/test_tutorials.py`](../tutorials/test_tutorials.py) r
 | Project desktop (AMD Ryzen 7 9800X3D, Windows 11, Python 3.12), repo venv | 0.4 s | 79.3 s | 0.4 s |
 | Same, process pinned to 2 logical CPUs | 0.4 s | 77.9 s | 0.4 s |
 | Same, clean venv (`pip install .` + pytest only) | 1.6 s | 77.5 s | 0.4 s |
-| GitHub Actions `ubuntu-latest`, Python 3.12 | see CI job summary | | |
-| GitHub Actions `windows-latest`, Python 3.12 | see CI job summary | | |
+| GitHub Actions `ubuntu-latest`, Python 3.12, clean venv (run 44723379731) | 0.4 s | 62.5 s | 0.2 s |
+| GitHub Actions `windows-latest`, Python 3.12, clean venv (run 44723379731) | 0.9 s | 94.7 s | 0.4 s |
 
-The project desktop is faster than a normal laptop. Tutorial 2 uses one CPU core, so the pinned run gives the same time. The GitHub runners (2 to 4 virtual CPUs) are closer to a laptop; their times are in the summary of each `tutorials` run.
+The project desktop is faster than a normal laptop. Tutorial 2 uses one CPU core, so the pinned run gives the same time. The GitHub runners (2 to 4 virtual CPUs) are closer to a laptop. Each `tutorials` run writes its times to the job summary and to the `tutorial-times-<os>` artifact. The slowest time so far is 94.7 s, far below the 10-minute limit.
 
 Real-data modes on the project desktop (local data and weights; not in CI):
 

@@ -118,7 +118,7 @@ cd sdk/typescript && npm ci && npm run build && npm test && npm run conformance
 cd sdk/rust && cargo test && cargo run --bin fidetype-rs -- conformance
 ```
 
-Next steps: [Getting started](docs/getting-started.md) (emit a stream from your decoder, run the trust layer) and the [SDK guides](docs/sdks.md).
+Next steps: [Getting started](docs/getting-started.md) (emit a stream from your decoder, run the trust layer), the [10-minute tutorials](docs/tutorials.md) (decode with a pretrained decoder, add the trust guard and read the safe WPM, score a decoder on the benchmark; CPU only, synthetic mode needs no download) and the [SDK guides](docs/sdks.md).
 
 ## Documentation
 

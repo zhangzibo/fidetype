@@ -9,6 +9,7 @@ The sections follow the plan for the future documentation site ([docs site plan]
 | Section | Page | What it gives you |
 |---|---|---|
 | Get started | [getting-started.md](getting-started.md) | Install from a clone, run the demo, emit your first stream, run the trust layer |
+| Tutorials | [tutorials.md](tutorials.md) | Three 10-minute tutorials (CPU, no hardware, synthetic or public data): decode with a pretrained decoder; trust guard + safe WPM; score on the benchmark. Timed in CI |
 | Live demo | [demo.md](demo.md) | One command: recorded decoder output replayed in the browser, each trust decision visible |
 | Live decode | [live-decode.md](live-decode.md) | One command: live signal from LSL, BrainFlow / OpenBCI boards or a synthetic source -> model -> trust guard -> decisions and NTS |
 | Pretrained decoders | [pretrained-decoders.md](pretrained-decoders.md) | One line loads a model for a public dataset (T15, T12 implant speech; KT-sEMG, emg2qwerty EMG), one line decodes a data file into NTS, an optional guard; SHA-256-checked weights, research-only licence gate |

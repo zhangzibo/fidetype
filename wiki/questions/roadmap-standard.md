@@ -1088,7 +1088,10 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-40** | Per-language models and vocabulary registry (open gap 119, [details](#p14-40-per-language-models-and-vocabulary-registry)) | P14-34, P15-31, P15-32 | research labs, BCI companies, AAC app makers |
 | **P14-41** | Trust guard for `willett-hw` (open gap 121, [details](#p14-41-trust-guard-for-willett-hw)) | P14-33 | research labs |
 | **P14-42** | Device and dataset adapter catalogue and contributor template (open gap 127, [details](#p14-42-device-and-dataset-adapter-catalogue-and-contributor-template)) | P4-15, P4-01, P4-02 | BCI companies, research labs, small teams (contributors) |
-| **P14-43** | 10-minute tutorials (open gap 128, [details](#p14-43-10-minute-tutorials)) | P14-01, P14-03, P13-06 | small teams, research labs, newcomers |
+| **P14-43** | 10-minute tutorials (gap 128, done 2026-11-20, [details](#p14-43-10-minute-tutorials)) | P14-01, P14-03, P13-06 | small teams, research labs, newcomers |
+| **P14-44** | Pretrained API newcomer ergonomics (open gap 129, [details](#p14-44-pretrained-api-newcomer-ergonomics)) | P14-43 | small teams, newcomers |
+| **P14-45** | TrustGuard decisions to safe WPM in one call (open gap 130, [details](#p14-45-trustguard-decisions-to-safe-wpm-in-one-call)) | P14-43 | research labs, small teams |
+| **P14-46** | Benchmark glue for custom splits and pretrained decoders (open gap 131, [details](#p14-46-benchmark-glue-for-custom-splits-and-pretrained-decoders)) | P14-43 | research labs, small teams |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1426,12 +1429,30 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-43 10-minute tutorials
 - **Gap:** 128 of the [open-gap list](open-gaps.md) (added 2026-11-20, user decision). Follow-up of P14-01, P14-03, P13-06.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20). Three tutorials in tutorials/ (01 decode with a pretrained decoder, 02 trust guard + safe WPM, 03 score on the benchmark), each a script with a synthetic mode (no download; toy model / simulated decoder made at run time) and a documented real-data mode; pages docs/tutorials.md, docs/tutorials-01-decode.md, docs/tutorials-02-trust.md, docs/tutorials-03-benchmark.md; smoke test tutorials/test_tutorials.py and CI workflow .github/workflows/tutorials.yml (Linux + Windows, clean venv). Commit e7b6cb1. CI: green (run 44723379731: ubuntu-latest 0.4 / 62.5 / 0.2 s, windows-latest 0.9 / 94.7 / 0.4 s, all under 10 min). local CPU (Ryzen 7 9800X3D desktop, Windows, Python 3.12): tutorial 1 0.4 s, tutorial 2 79.3 s, tutorial 3 0.4 s (pinned to 2 CPUs: 0.4 / 77.9 / 0.4 s; clean venv with numpy only: 1.6 / 77.5 / 0.4 s). real-data modes on the project machine (local weights, not in CI): T15 decode 5 trials 12.4 s; T15 guard + safe WPM 65 val_eval trials 48.3 s (10 commits, 5 wrong, safe WPM 1.49 above-alpha on this small subset; all 701 trials: 2.23 certified, P14-05); KT-sEMG run28 score 47.4 s (22 / 172 units, key error 0.748, vacuous). API friction: new gaps 129 (P14-44), 130 (P14-45), 131 (P14-46). Docs: [tutorials](../../docs/tutorials.md).
 - **Serves:** small teams, research labs, newcomers.
 - **Depends on:** P14-01 (pretrained decoders), P14-03 (trust drop-in), P14-05 (safe WPM), P13 benchmark scorer, P14-30 (gap 98: hosted weights; until then the CI smoke test uses synthetic data), P8-05 (docs site).
 - **Source:** User decision (2026-11-20) after a comparison with LangChain history (17,256 commits: about 38 % integrations, 31 % docs, 11 % core; 3,748 contributors). Fidetype has 395 commits and 1 author. The two largest gaps are integrations and docs.
 - **Goal:** Getting-started tutorials (scripts or notebooks) run in less than 10 minutes on a normal laptop CPU. They use only public or synthetic data and need no hardware. There are at least three: (1) decode text with a pretrained decoder; (2) add the trust guard and read the safe WPM; (3) score a decoder on the benchmark. Each tutorial runs in CI as a smoke test on synthetic data. They extend docs/getting-started.md and docs/trust-quickstart.md.
 - **Done when:** The 3 tutorials pass in CI. Each run is timed, and each takes less than 10 minutes.
+
+#### P14-44 Pretrained API newcomer ergonomics
+- **Gap:** 129 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-43). Follow-up of P14-43, P14-01.
+- **Status:** `todo`.
+- **Source:** P14-43 ([tutorial 1](../../docs/tutorials-01-decode.md#api-friction-found-while-writing-this-tutorial)): (1) no toy-model helper: to try the API without weights, a user must know the GRU parameter names and write a manifest with a SHA-256 by hand; (2) no item count, and `decode_file(indices=...)` past the end raises a bare `IndexError`; (3) `decode()` returns one stream for an array and a list for a file; (4) the guard input differs per model (`stream.log_probs` vs `model.nbest(stream)`); (5) `h5py` comes with the extra `emg2qwerty`, also for T15 / T12 files.
+- **Done when:** `fidetype.pretrained` has a documented toy model (for example `toy_model(runtime)`), an item count or a clear error for bad indices, one guard entry point per stream (for example `model.decide(stream)`), and an `h5py` extra with a neutral name; tutorial 1 uses them and still passes the P14-43 smoke test.
+
+#### P14-45 TrustGuard decisions to safe WPM in one call
+- **Gap:** 130 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-43). Follow-up of P14-43, P14-03, P14-05.
+- **Status:** `todo`.
+- **Source:** P14-43 ([tutorial 2](../../docs/tutorials-02-trust.md#api-friction-found-while-writing-this-tutorial)): from `TrustResult`s to safe WPM a user builds five parallel lists by hand, passes `guard.sheet.to_dict()` through two benchmark functions (`guarantee_from_sheet`, `controls_from_sheet`), and must pick the benchmark text normaliser for the correct / wrong test.
+- **Done when:** one documented call (for example `fidetype.trust.safe_wpm(guard, results, truths, neural_s, normalizer=...)`) gives the same report as the manual route on the tutorial 2 data (exact equality test in CI), and tutorial 2 uses it.
+
+#### P14-46 Benchmark glue for custom splits and pretrained decoders
+- **Gap:** 131 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-43). Follow-up of P14-43, P6-02, P14-01.
+- **Status:** `todo`.
+- **Source:** P14-43 ([tutorial 3](../../docs/tutorials-03-benchmark.md#api-friction-found-while-writing-this-tutorial)): (1) `build_truth()` has no `split=` (custom or synthetic splits need hand-built truth rows; the tests monkeypatch `load_split`); (2) `kt-semg-lda` n-best text is screen text, the `kt-semg` track wants key codes, and no converter exists; (3) `guarantee_from_sheet()` output is not a valid submission guarantee (no `scope`, `calibration_split`); (4) `build_truth("kt-semg")` needs every `runN.csv` (about 20 GB) although the truth uses only key logs and start times; (5) the committed leaderboard cards are not in the package.
+- **Done when:** `build_truth(..., split=)` exists; a pretrained model can give track-space n-best text (at least `kt-semg-lda`); a guard sheet converts to a valid submission guarantee in one call; KT truth needs only the key logs and start-time files; tutorial 3 uses these and still passes the P14-43 smoke test.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
