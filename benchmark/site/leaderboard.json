@@ -6122,6 +6122,162 @@
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-12-intended-s-subset8__guard"
    },
    {
+    "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised) + P11-07 in-beam LM key beam (Tatoeba 6-gram, lexicon term) + intended-text merge + P11-11 OOV gate + P11-12 no-signal gate/intended-text guard, sentence commits, learned confidence L (P11-14 arm L-FL)",
+    "track": "emg2qwerty",
+    "decoder": "fidetype P11-01 causal ring-TCN CTC (personalised) + P11-07 in-beam LM key beam (Tatoeba 6-gram, lexicon term) + intended-text merge + P11-11 OOV gate + P11-12 no-signal gate (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] [target: intended_text]",
+    "target": "intended_text",
+    "policy": "intended-text guard, sentence commits, learned confidence L (P11-14 arm L-FL)",
+    "cer": 0.18343672456575683,
+    "wer": 0.33099297893681046,
+    "ewpm": 3.7783180797169216,
+    "ewpm_ci": [
+     3.411533365134323,
+     4.286475236863655
+    ],
+    "gaze_ewpm": 3.0924317617866004,
+    "wrong_commit_rate": 0.042588042588042586,
+    "error_among_commits": 0.1824561403508772,
+    "commit_rate": 0.2334152334152334,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=459; test 0.043 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (CC BY-NC-SA data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 1221,
+    "ci_unit": "group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Target intended_text (intended-text/1): the guard commits the intended text, so truth and outputs are compared after Backspace is applied. Offline decisions on full prompt windows (no latency claim). P11-14 decisions (primary arm, selected on calibration tuning items only).",
+     "Target intended_text (intended-text/1): truth and outputs are compared after Backspace is applied, so CER is the character error rate of the intended text and the no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.",
+     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+    ],
+    "file": "emg2qwerty__p11-14-intended-lfl-subset8__guard.json",
+    "safe_wpm": 6.8030849745214,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "6.80 [4.36, 9.65] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+     "track": {
+      "track": "emg2qwerty",
+      "split_version": "tracks-v0.2",
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+      "digest_kind": "entries"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.emg2qwerty",
+      "package_version": "0.0.1",
+      "sha256": "2dd56a4a1841a00c8bcfef64e15f6432c36fb9cbf5dc2fd97543ed8b210bf605"
+     },
+     "decoder": {
+      "name": "fidetype P11-01 causal ring-TCN CTC (personalised) + P11-07 in-beam LM key beam (Tatoeba 6-gram, lexicon term) + intended-text merge + P11-11 OOV gate + P11-12 no-signal gate",
+      "version": "p11-14-w0.25-b1.0-l8.0-B8-Lc71fc7ed44fa-k15-r1.8424-17.2757",
+      "url": "experiments/2026-11-20-p11-14-emg-lm-confidence/",
+      "weights_sha256": "b87216922a6ac1c17900e434de56a30ee2d6d3785e12b10c7d5d8a9f59c5d89d",
+      "training_data": [
+       "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)",
+       "LM: Tatoeba English (no emg2qwerty text); lexicon: words of the track-train sessions; LM weight 0.25, bonus 1.0, lexicon term 8.0, beam 8 tuned on the calibration tuning part (P11-07); confidence model fitted on the same tuning part (P11-14)"
+      ],
+      "weights_files": [
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u0/best.pt",
+        "sha256": "f89b46fe74313b776ef3b121856878a97d4123f87cd0c9860b12a31987972381"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u1/best.pt",
+        "sha256": "973c5bb0ba378e97ff3926a80b79c9f4ceedba2f0300c82cb660c4c80502d66f"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u2/best.pt",
+        "sha256": "27e4fe0721932c2f7b60510a59d9ed97f639192dc7cfb08759911832ab2bf42b"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u3/best.pt",
+        "sha256": "8fb22111f4c0413f717640655d58fe70206ea83f30617ca4ed9f015033f3f1e1"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u4/best.pt",
+        "sha256": "08f796679bf7ab43e3ca5c51c5881d92117a0adcadb1a2d42a49de8ce7a64d44"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u5/best.pt",
+        "sha256": "49336251a726ec2546e9067aa637d6e2e84bcd68af7ee505935099e69430f6ea"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u6/best.pt",
+        "sha256": "ca6410a84d98dfcd3e0309407615dda21c34bc813c4116686d8307c79d59787a"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u7/best.pt",
+        "sha256": "4ef7026fb8e6d7e3cf13834f1404b271b867de64dd65c04fa22463e91749d6d7"
+       }
+      ],
+      "lm_files": [
+       {
+        "name": "<derived>/p11-11/eng_tatoeba_6gram_mkn_noE2Q.npz",
+        "sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8"
+       },
+       {
+        "name": "<derived>/p11-11/lexicon.json",
+        "sha256": "b239d7b7d9d9c8188ba80bdc8c564b1ab37aace9bdf9c287eace11417ff2bfce"
+       },
+       {
+        "name": "experiments/2026-11-20-p11-14-emg-lm-confidence/results/model-L-FL.json",
+        "sha256": "3c5e5bbc5135a0c5929668fbf8a45c2eb1ff27668ec5d628953a5b0c96c58571"
+       }
+      ]
+     },
+     "policy": {
+      "name": "intended-text guard, sentence commits, learned confidence L (P11-14 arm L-FL)",
+      "config_id": "tcfg-2351fc8f1e60b9e7",
+      "guarantee": "ltt",
+      "config_id_source": "experiments/2026-11-20-p11-14-emg-lm-confidence/results/guard-L-FL.json"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0,
+      "target": "intended-text/1"
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score emg2qwerty <submission> --truth <truth.jsonl> --B 2000 --seed 0",
+     "inputs": {
+      "outputs": "submission folder <derived>/p11-14/cardwork/submissions/emg2qwerty__p11-14-intended-lfl-subset8__guard (decoded key codes, target intended_text; local only, never in git)",
+      "build": "the build step needs the P11-01 feature cache and personal weights, the P11-11 LM, lexicon and beam cache, the P11-12 gate (local, research only); see experiments/2026-11-20-p11-14-emg-lm-confidence/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 659616f (P11-14 run.py and this card script)",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python experiments/2026-11-20-p11-14-emg-lm-confidence/launch.py all (P11-14 decisions; needs the P11-09, P11-11 and P11-12 local files), then python experiments/2026-11-20-p11-14-emg-lm-confidence/cards.py score"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p11-14/cardwork/submissions/emg2qwerty__p11-14-intended-lfl-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-14-intended-lfl-subset8__guard.json"
+      }
+     ],
+     "recorded": "2026-11-20, P11-14 (cards.py cards)"
+    },
+    "anchor": "e-emg2qwerty__p11-14-intended-lfl-subset8__guard",
+    "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-14-intended-lfl-subset8__guard"
+   },
+   {
     "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer/drop-in guard (built-in CTC beam, no LM, key-code space)",
     "track": "emg2qwerty",
     "decoder": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY]",
