@@ -16,7 +16,7 @@ Usage (repo root)::
 
     .venv\Scripts\python.exe -I tools/pretrained/export_weights.py t15-m4-13 kt-semg-lda
     # .pt checkpoints need torch (CPU is enough; never the GPU here):
-    C:\venvs\fidetype-rocm\Scripts\python.exe -I tools/pretrained/export_weights.py t12-v2 emg2qwerty-p11-01
+    C:\venvs\fidetype-rocm\Scripts\python.exe -I tools/pretrained/export_weights.py t12-v2 emg2qwerty-p11-01 willett-hw
     .venv\Scripts\python.exe -I tools/pretrained/export_weights.py --list   # SHA-256 + size of what exists
 """
 
@@ -43,6 +43,11 @@ SOURCES: dict[str, dict] = {
                "files": {"weights": "t12-v2.weights.npz"}},
     "emg2qwerty-p11-01": {"kind": "pt-to-npz", "src": DATA / "derived/p11-01-emg-decoder/train/generic/best.pt",
                           "files": {"weights": "emg2qwerty-p11-01.weights.npz"}},
+    # P15-08 E1a run R-all-s0 (random init, all 506 min of Willett CC0 data), final step 3000 = the
+    # primary readout (test CER 0.305). Clean track only: the run's licence.json must say research_only false.
+    "willett-hw": {"kind": "pt-to-npz", "src": DATA / "derived/p15-08/runs/R-ball-s0/final.pt",
+                   "licence_json": DATA / "derived/p15-08/runs/R-ball-s0/licence.json",
+                   "files": {"weights": "willett-hw.weights.npz"}},
     "kt-semg-lda": {"kind": "copy", "src_dir": DATA / "derived/p14-04-live/kt",
                     "files": {"card": "kt-semg-lda.model.json", "weights": "kt-semg-lda.weights.json",
                               "guard": "kt-semg-lda.guard.json"}},
@@ -84,10 +89,15 @@ def export(name: str, out: Path) -> dict:
     d = out / name
     d.mkdir(parents=True, exist_ok=True)
     extra: dict = {}
+    if spec.get("licence_json"):
+        lic = json.loads(Path(spec["licence_json"]).read_text(encoding="utf-8"))
+        if lic.get("research_only") is not False:
+            raise SystemExit(f"{name}: the training run is not clean-track ({lic}); refusing to export")
+        extra["run_licence"] = lic
     if spec["kind"] == "npz-copy":
         shutil.copyfile(spec["src"], d / spec["files"]["weights"])
     elif spec["kind"] == "pt-to-npz":
-        extra = _pt_to_npz(spec["src"], d / spec["files"]["weights"])
+        extra.update(_pt_to_npz(spec["src"], d / spec["files"]["weights"]))
     elif spec["kind"] == "copy":
         for f in spec["files"].values():
             shutil.copyfile(spec["src_dir"] / f, d / f)

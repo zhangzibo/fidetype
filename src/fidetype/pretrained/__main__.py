@@ -30,11 +30,13 @@ def _cmd_list(a: argparse.Namespace) -> int:
     if a.json:
         print(json.dumps([m.raw for m in ms], indent=1, ensure_ascii=False))
         return 0
-    print(f"{'name':<20} {'status':<10} {'modality':<14} {'data licence':<18} {'research only':<13} title")
+    print(f"{'name':<20} {'status':<10} {'modality':<14} {'data licence':<18} {'research only':<13} "
+          f"{'weights (prop.)':<16} title")
     for m in ms:
         print(f"{m.name:<20} {m.status:<10} {m.modality:<14} {m.data_licence:<18} "
-              f"{str(m.research_only).lower():<13} {m.title}")
-    print(f"\ncache: {ftp.default_cache_dir()} (set {ftp.ENV_DIR} or pass --weights)")
+              f"{str(m.research_only).lower():<13} {str(m.licence.get('weights') or '-'):<16} {m.title}")
+    print("\nweights (prop.) = proposed weights licence; no weights are released yet (the user decides at P14-02).")
+    print(f"cache: {ftp.default_cache_dir()} (set {ftp.ENV_DIR} or pass --weights)")
     return 0
 
 

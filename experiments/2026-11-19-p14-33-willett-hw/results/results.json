@@ -1,0 +1,21 @@
+{
+ "numpy": {
+  "model": "willett-hw",
+  "weights_sha256": "66ac659066340c70fac58a1dd16c4b81f3806ba3e5bb8daf04169b79b66bc4a9",
+  "split_equal_p15_08": true,
+  "n_test": 80,
+  "n_chars": 3448,
+  "test_edits": 1052,
+  "test_cer": 0.3051,
+  "stored_pytorch_gpu_cer": 0.3051,
+  "per_sentence_edits_equal": 80,
+  "max_abs_edit_diff": 0,
+  "nts_provenance": "80 / 80",
+  "decode_file_equal_direct": true,
+  "decode_file_max_abs_diff": 9.54e-07,
+  "val_cer_final_checkpoint": 0.2603,
+  "n_val": 106,
+  "seconds_test_decode": 144.0,
+  "seconds": 346.6
+ }
+}

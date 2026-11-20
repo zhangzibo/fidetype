@@ -162,7 +162,7 @@ The package has a registry of pretrained decoders (`fidetype decoders list`, [pr
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
 | D10 | Host of the weights | GitHub release assets (tag `weights-v1`, 2 GB limit per file); Hugging Face Hub model repositories; both | GitHub release assets for the clean models: no new account, and the files stay next to the code. A model hub later if users ask. |
-| D11 | Licence of our clean weights | CC0-1.0 (like the T15 / T12 data); Apache-2.0 (like the code); CC-BY-4.0 where the data needs attribution | CC0-1.0 for `t15-m4-13` and `t12-v2`; CC-BY-4.0 for `kt-semg-lda` (keeps the Nokia attribution). Then change rule 1 of [`LICENSES/DATA.md`](../LICENSES/DATA.md) ("no trained weights") to "weights only as separate release assets, never in the repository or the wheel". |
+| D11 | Licence of our clean weights | CC0-1.0 (like the T15 / T12 data); Apache-2.0 (like the code); CC-BY-4.0 where the data needs attribution | CC0-1.0 for `t15-m4-13`, `t12-v2` and `willett-hw`; CC-BY-4.0 for `kt-semg-lda` (keeps the Nokia attribution). Then change rule 1 of [`LICENSES/DATA.md`](../LICENSES/DATA.md) ("no trained weights") to "weights only as separate release assets, never in the repository or the wheel". |
 | D12 | Research-only weights (`emg2qwerty-p11-01`, CC BY-NC-SA 4.0) | do not host; host separately behind a licence page | Do not host this weekend. Later, if at all: a separate release (never with the clean weights), the licence text next to the file, and the package keeps the `accept_research_only=True` gate. The weights keep the share-alike terms. |
 
 Licence check per model (do this before any upload):
@@ -173,7 +173,8 @@ Licence check per model (do this before any upload):
 | `t12-v2` | `t12-v2.weights.npz` (340 MB) | CC0 1.0 (Willett et al. 2023) | CC0-1.0 | yes (clean) | none |
 | `kt-semg-lda` | `kt-semg-lda.model.json`, `.weights.json`, `.guard.json` (0.1 MB) | CC BY 4.0 (Nokia) | CC-BY-4.0 | yes (attribution in the release notes and the card) | The card already holds the attribution line. |
 | `emg2qwerty-p11-01` | `emg2qwerty-p11-01.weights.npz` (35 MB) | CC BY-NC-SA 4.0 | CC-BY-NC-SA-4.0 (required) | **no** (D12) | Never in the same release as the clean weights. |
-| `willett-hw`, `toronto-semg-cnn` | none (planned) | CC0 1.0 / CC BY 4.0 | n/a | no | No weights yet. |
+| `willett-hw` | `willett-hw.weights.npz` (34 MB) | CC0 1.0 (Willett et al. 2021) | CC0-1.0 (provisional until D11) | yes (clean), if D11 = CC0 | Trained on Willett CC0 data only (P15-08 run R-all-s0, random init). A weak decoder (greedy CER 0.305): the card says so. |
+| `toronto-semg-cnn` | none (planned) | CC BY 4.0 | n/a | no | No weights yet. |
 
 | Step | Do this | Check |
 |---|---|---|

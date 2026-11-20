@@ -1,21 +1,70 @@
 {
  "schema": "fidetype.pretrained-manifest/0.1",
  "name": "willett-hw",
- "version": "0",
- "title": "Implant handwriting (T5, Willett et al. 2021): character decoder of our own (planned)",
- "status": "planned",
- "status_note": "no decoder of our own yet: P15-08 trains one (running). The release follows when its result is in.",
- "task": "attempted-handwriting character decoding",
+ "version": "1",
+ "title": "Implant handwriting (T5, Willett et al. 2021): causal TCN CTC character decoder of our own (P15-08 run R-all-s0) - WEAK, descriptive only",
+ "status": "available",
+ "task": "attempted-handwriting character decoding, CTC over the 98 P11-01 key tokens (Willett text uses letters, space and . , ' ? only)",
  "modality": "intracortical",
- "runtime": "planned",
- "files": [],
+ "runtime": "xbody-ctc",
+ "language": "en",
+ "input": {
+  "kind": "threshold crossings of two 96-electrode Utah arrays (participant T5, hand knob area)",
+  "channels": 192,
+  "bin_s": 0.01,
+  "features": "raw threshold-crossing counts per 10 ms bin; the runtime z-scores them with fixed per-session statistics (non-test sentences of the session)",
+  "file_format": "willett-hw-mat",
+  "file_note": "one session folder Datasets/t5.YYYY.MM.DD (its sentences.mat; needs scipy); one stream per sentence, from the go cue to the sentence end plus up to 1 s of tail. Only the 10 sessions below have a z-score; a new session needs its own statistics (not in this model)"
+ },
+ "output": {
+  "vocab_type": "char",
+  "vocab_id": "fidetype-p11-01-keys-v1",
+  "frame_period_s": 0.01,
+  "latency_s": 0.0
+ },
+ "architecture": {
+  "d": 512,
+  "stem": "linear 192 -> 512 after the per-session z-score",
+  "kernel": 5,
+  "dilations": [1, 2, 4, 8, 1, 2, 4, 8],
+  "ff_mult": 2,
+  "vocab": 98,
+  "sessions": ["t5.2019.05.08", "t5.2019.11.25", "t5.2019.12.09", "t5.2019.12.11", "t5.2019.12.18", "t5.2019.12.20",
+               "t5.2020.01.06", "t5.2020.01.08", "t5.2020.01.13", "t5.2020.01.15"],
+  "code": "experiments/2026-11-19-p15-08-e1-cross-body/e1.py XBody (training); fidetype.pretrained._xbody (this runtime, NumPy)"
+ },
+ "files": [
+  {"role": "weights", "name": "willett-hw.weights.npz", "sha256": "66ac659066340c70fac58a1dd16c4b81f3806ba3e5bb8daf04169b79b66bc4a9", "size": 34369716, "url": null}
+ ],
  "licence": {
   "data.licence": "CC0-1.0",
   "data.research_only": false,
-  "weights": null,
-  "weights_status": "no weights yet",
-  "attribution": "Data: Willett et al., Nature 2021, handwriting BCI dataset (CC0 1.0)"
+  "weights": "CC0-1.0",
+  "weights_status": "provisional: CC0 1.0 proposed (data CC0, our own code and training); final choice is the user's decision D11. Never in the wheel or the git repository; hosting is the user step P14-02 (gap 98)",
+  "attribution": "Data: Willett, Avansino, Hochberg, Henderson, Shenoy, Nature 593, 249-254 (2021), handwriting BCI dataset (CC0 1.0, Dryad doi:10.5061/dryad.wh70rxwmv)",
+  "notes": "clean track: random init, trained on Willett CC0 data only (run licence.json: research_only false). The research-only T / E / S trunks of P15-08 (emg2qwerty-derived) are not used."
  },
+ "training": {
+  "data": "Willett handwriting 2021 (T5), sentences.mat of 10 sessions: all 781 pool sentences (506.0 min of writing time)",
+  "doi": "10.5061/dryad.wh70rxwmv",
+  "split": "P15-08 make_splits, salt fidetype-p15-08-2026-11-19: test = last block of each session (80 sentences, 3,448 characters); val = one other block per session (106 sentences); pool = the rest",
+  "run": "derived/p15-08/runs/R-ball-s0 (arm R = random init, budget all, seed 0), final step 3000 (experiments/2026-11-19-p15-08-e1-cross-body)",
+  "checkpoint_sha256": "a6cc87b188b4224f10b3e862d714065c3656fc0172debebaa7b2a2a9fdee6791"
+ },
+ "metrics": [
+  {"name": "greedy CER (no LM)", "split": "test blocks of the 10 sessions (80 sentences, 3,448 characters, pooled)", "value": 0.3051, "source": "experiments/2026-11-19-p15-08-e1-cross-body/results.md"},
+  {"name": "greedy CER (no LM), best-val step 2700 (not this checkpoint)", "split": "val blocks (106 sentences)", "value": 0.2580, "source": "experiments/2026-11-19-p15-08-e1-cross-body/results.md"},
+  {"name": "greedy CER of the same recipe, seed 1 (R-all-s1, not released)", "split": "test blocks", "value": 0.920, "source": "experiments/2026-11-19-p15-08-e1-cross-body/results.md"}
+ ],
+ "limits": [
+  "Weak decoder: greedy test CER 0.305. The published Willett et al. 2021 real-time decoder is much better (other recipe).",
+  "Unstable recipe: the same recipe on seed 1 gives test CER 0.920 (training failed). One good seed is not a reliable method.",
+  "No language model: greedy CTC only.",
+  "Descriptive only: an offline replay of one participant (T5); not a user study and not a clinical claim.",
+  "Only the 10 sessions of the dataset: a new session or participant needs its own z-score statistics and probably retraining.",
+  "Other split than the benchmark track willett-hw (last 3 sessions): 193 of that track's 254 test trials were in this model's training pool. Score this model only on its own test blocks (the last block of each session), or retrain it on the track's train split first."
+ ],
  "trust": null,
- "hosting": {"host": null, "release": null, "notes": "no weights yet"}
+ "trust_note": "No committed trust config yet: open gap 121 (P14-41). Calibrate your own with fidetype.trust.calibrate on the val blocks; with greedy CER 0.305, few whole sentences are exact, so expect a guard that mostly offers.",
+ "hosting": {"host": null, "release": null, "notes": "no download URL yet; hosting is the user step P14-02 (gap 98, docs/publishing-checklist.md)"}
 }

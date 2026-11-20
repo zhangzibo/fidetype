@@ -19,7 +19,8 @@ from typing import Mapping, Sequence
 import numpy as np
 
 __all__ = ["WIN", "HOP", "FS", "N_BANDS", "N_CH", "VOCAB", "BAND_EDGES", "n_frames", "frames_from_block",
-           "receptive_field", "crt_log_probs", "required_keys", "erf", "gelu"]
+           "receptive_field", "crt_log_probs", "trunk_log_probs", "trunk_keys", "required_keys", "erf",
+           "gelu"]
 
 FS = 2000
 WIN = 64
@@ -90,14 +91,20 @@ def receptive_field(kernel: int, dilations: Sequence[int]) -> int:
     return 1 + sum((kernel - 1) * d for d in dilations)
 
 
-def required_keys(n_blocks: int) -> list[str]:
-    keys = ["mean", "std", "out_norm.weight", "out_norm.bias", "head.weight", "head.bias"]
-    for side in ("left", "right"):
-        keys += [f"{side}.conv.weight", f"{side}.conv.bias", f"{side}.proj.weight", f"{side}.proj.bias"]
+def trunk_keys(n_blocks: int) -> list[str]:
+    """The arrays of the shared trunk and head (residual blocks, output LayerNorm, linear head)."""
+    keys = ["out_norm.weight", "out_norm.bias", "head.weight", "head.bias"]
     for i in range(n_blocks):
         keys += [f"blocks.{i}.{k}" for k in ("norm.weight", "norm.bias", "dw.weight", "dw.bias", "ff.0.weight",
                                               "ff.0.bias", "ff.3.weight", "ff.3.bias")]
     return keys
+
+
+def required_keys(n_blocks: int) -> list[str]:
+    keys = ["mean", "std"]
+    for side in ("left", "right"):
+        keys += [f"{side}.conv.weight", f"{side}.conv.bias", f"{side}.proj.weight", f"{side}.proj.bias"]
+    return keys + trunk_keys(n_blocks)
 
 
 def _ring(p: Mapping[str, np.ndarray], side: str, x: np.ndarray, k: int) -> np.ndarray:
@@ -118,6 +125,16 @@ def _forward(p: Mapping[str, np.ndarray], feat: np.ndarray, *, ring_k: int, kern
     """(T, 32, 12) raw features -> (T, V) log-probs (one causal pass, zero left padding)."""
     x = (np.asarray(feat, np.float32) - p["mean"].reshape(N_CH, N_BANDS)) / p["std"].reshape(N_CH, N_BANDS)
     h = np.concatenate([_ring(p, "left", x[:, :N_EL], ring_k), _ring(p, "right", x[:, N_EL:], ring_k)], axis=-1)
+    return trunk_log_probs(p, h, kernel=kernel, dilations=dilations)
+
+
+def trunk_log_probs(p: Mapping[str, np.ndarray], h: np.ndarray, *, kernel: int, dilations: Sequence[int]) -> np.ndarray:
+    """(T, d) stem output -> (T, V) log-probs: causal residual blocks -> LayerNorm -> head -> log-softmax.
+
+    The trunk and head are shared by the EMG model (ring stem) and the Willett model (linear stem,
+    :mod:`fidetype.pretrained._xbody`). Zero left padding: one causal pass from the first frame.
+    """
+    h = np.asarray(h, np.float32)
     T = h.shape[0]
     for i, dil in enumerate(dilations):
         q = f"blocks.{i}."

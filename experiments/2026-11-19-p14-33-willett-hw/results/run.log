@@ -1,0 +1,4 @@
+[21:25:12] numpy: 80 test, 106 val sentences; split equal to P15-08: True
+[21:27:21] numpy: test greedy CER 0.3051 (1052 / 3448); stored PyTorch (GPU) 0.3051; per-sentence edits equal 80 / 80 (135 s)
+[21:31:07] numpy: 80 test, 106 val sentences; split equal to P15-08: True
+[21:33:27] numpy: test greedy CER 0.3051 (1052 / 3448); stored PyTorch (GPU) 0.3051; per-sentence edits equal 80 / 80 (145 s)

@@ -143,7 +143,9 @@ def test_packaged_manifests_are_english():
 
     ms = all_manifests()
     assert ms and all(m.language == "en" for m in ms)
-    assert all("language" not in m.raw for m in ms)  # no packaged manifest changed
+    # The P14-34 manifests have no key (default en); willett-hw (P14-33) states "en" explicitly.
+    assert all(m.raw.get("language", "en") == "en" for m in ms)
+    assert {m.name for m in ms if "language" in m.raw} == {"willett-hw"}
 
 
 def test_manifest_language_key_is_checked():

@@ -521,6 +521,59 @@ class CrtCtcDecoder(PretrainedDecoder):
         return super().text(stream)
 
 
+class XBodyCtcDecoder(PretrainedDecoder):
+    """Runtime ``xbody-ctc``: the P15-08 Willett handwriting decoder (linear stem + P11-01 causal trunk)."""
+
+    def __init__(self, *a: Any, **k: Any) -> None:
+        super().__init__(*a, **k)
+        from fidetype.pretrained import _xbody
+
+        arch = self.manifest.architecture
+        self._p = _npz(self._path("weights"), _xbody.required_keys(len(arch["dilations"])))
+        n_s = self._p["mean"].shape[0]
+        if n_s != len(arch.get("sessions") or []):
+            raise WeightsMismatch(f"{self.name}: weights have {n_s} sessions, the manifest lists "
+                                  f"{len(arch.get('sessions') or [])}")
+
+    def log_probs(self, x: Any, session: Any) -> np.ndarray:
+        """``x`` (T, 192) threshold crossings of one sentence (10 ms bins) -> (T, 98) log-probs."""
+        from fidetype.pretrained import _xbody
+
+        a = self.manifest.architecture
+        return _xbody.xbody_log_probs(self._p, np.asarray(x, np.float32), _session_index(self.manifest, session),
+                                      kernel=int(a["kernel"]), dilations=list(a["dilations"]))
+
+    def _stream(self, lp: np.ndarray, id_part: str) -> Any:
+        from fidetype.adapters.ctc_logits import DecoderInfo, from_array, vocab_from_list
+        from fidetype.pretrained import _xbody
+
+        v = vocab_from_list(list(_xbody.VOCAB), blank=0, vocab_type="char", vocab_id=self.manifest.output["vocab_id"])
+        extra = {**self._decoder_extra(), "device.invasive": True, "implant.bin_s": _xbody.BIN_S,
+                 "fidetype.timing": "frame k = end of 10 ms bin k after the go cue: (k + 1) x 0.01 s"}
+        dec = DecoderInfo(modality="intracortical", name=f"fidetype-{self.name}", version=self.manifest.version,
+                          causal=True, language=self.manifest.language, weights_sha256=self.weights_sha256, extra=extra)
+        return from_array(lp, v, dec, frame_period=float(self.manifest.output["frame_period_s"]), t0=_xbody.BIN_S,
+                          latency=float(self.manifest.output.get("latency_s", 0.0)), input_kind="log_probs",
+                          source=f"fidetype-{self.name}", id_parts=(id_part,))
+
+    def decode_array(self, x: Any, session: Any = None, **_: Any) -> Any:
+        """``x`` (T, 192) threshold crossings of one sentence plus ``session=`` -> one character stream."""
+        return self._stream(self.log_probs(x, session), "array")
+
+    def decode_file(self, path: str | PathLike[str], *, limit: int | None = None, with_items: bool = False,
+                    blocks: list[int] | None = None, **_: Any) -> Any:
+        """One Willett session (``t5.YYYY.MM.DD`` folder or its ``sentences.mat``) -> one stream per sentence."""
+        from fidetype.pretrained import readers as R
+
+        items = R.read_willett_session(path, blocks=blocks, limit=limit)
+        streams = [self._stream(self.log_probs(it.x, it.session), it.key) for it in items]
+        return list(zip(items, streams)) if with_items else streams
+
+    def text(self, stream: Any) -> str:
+        """Greedy CTC characters (no LM)."""
+        return super().text(stream)
+
+
 class KeyLdaDecoder(PretrainedDecoder):
     """Runtime ``key-lda``: the ``fidetype live`` KT-sEMG key-window model (one frame per key press)."""
 
@@ -588,6 +641,7 @@ RUNTIMES: dict[str, type[PretrainedDecoder]] = {
     "gru-ctc": GruCtcDecoder,
     "crt-ctc": CrtCtcDecoder,
     "key-lda": KeyLdaDecoder,
+    "xbody-ctc": XBodyCtcDecoder,
 }
 
 

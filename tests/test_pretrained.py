@@ -81,7 +81,14 @@ def test_packaged_manifests_parse_and_flags():
     for n in ("t15-m4-13", "t12-v2", "kt-semg-lda"):
         assert ms[n].research_only is False and ms[n].status == "available"
         assert ms[n].weights_sha256 and all(f.url is None for f in ms[n].files)  # nothing hosted yet (P14-02)
-    assert ms["willett-hw"].status == "planned"
+    assert ms["willett-hw"].status == "available" and ms["willett-hw"].research_only is False
+    assert ms["willett-hw"].language == "en" and ms["willett-hw"].runtime == "xbody-ctc"
+    assert ms["willett-hw"].licence["weights"] == "CC0-1.0" and "D11" in ms["willett-hw"].licence["weights_status"]
+    assert all(f.url is None for f in ms["willett-hw"].files)
+    card = ms["willett-hw"].card()
+    for must in ("0.305", "0.92", "seed 1", "No language model", "Descriptive only"):
+        assert must in card, must
+    assert ms["toronto-semg-cnn"].status == "planned"
     assert "t15-m4-13" in ms["t15-m4-13"].card()
     # the packaged T15 guard exists and is the P14-05 config
     g = json.loads((Path(ftp.__file__).parent / "guards/t15-m4-13.guard.json").read_text(encoding="utf-8"))
@@ -198,8 +205,8 @@ def test_research_only_gate(tmp_path):
 
 
 def test_planned_model_and_unknown_name(tmp_path):
-    with pytest.raises(ftp.ModelNotAvailable, match="P15-08"):
-        ftp.load("willett-hw", cache_dir=tmp_path)
+    with pytest.raises(ftp.ModelNotAvailable, match="runtime"):
+        ftp.load("toronto-semg-cnn", cache_dir=tmp_path)
     with pytest.raises(KeyError, match="known"):
         ftp.load("no-such-model")
 
@@ -325,6 +332,158 @@ def test_crt_model_end_to_end(tmp_path):
     assert C.check(st).passes("provenance")
     with pytest.raises(ValueError, match="32"):
         m.decode(np.zeros((100, 8), np.float32))
+
+
+# --- Willett handwriting model (xbody-ctc runtime, P14-33) -------------------------------------------------
+
+
+def xbody_params(seed: int = 0, d: int = 8, dil: tuple[int, ...] = (1, 2), n_sess: int = 2) -> dict:
+    r = np.random.default_rng(seed)
+    p = {k: v for k, v in crt_params(seed, d=d, dil=dil).items() if k.startswith(("blocks.", "out_norm.", "head."))}
+    p.update({"mean": r.random((n_sess, 192)).astype(np.float32), "std": (1 + r.random((n_sess, 192))).astype(np.float32),
+              "stem.weight": (0.2 * r.standard_normal((d, 192))).astype(np.float32),
+              "stem.bias": (0.1 * r.standard_normal(d)).astype(np.float32)})
+    return p
+
+
+def xbody_reference(p: dict, x: np.ndarray, s: int, dil: tuple[int, ...]) -> np.ndarray:
+    """A plain loop of the same maths (no chunking, explicit causal sums), float64."""
+    p = {k: v.astype(np.float64) for k, v in p.items()}
+    gelu = np.vectorize(lambda v: 0.5 * v * (1 + math.erf(v / math.sqrt(2))))
+
+    def ln(h, w, b):
+        return (h - h.mean(1, keepdims=True)) / np.sqrt(h.var(1, keepdims=True) + 1e-5) * w + b
+
+    h = ((x.astype(np.float64) - p["mean"][s]) / p["std"][s]) @ p["stem.weight"].T + p["stem.bias"]
+    for i, dl in enumerate(dil):
+        q = f"blocks.{i}."
+        n = ln(h, p[q + "norm.weight"], p[q + "norm.bias"])
+        c = np.zeros_like(n)
+        for t in range(len(n)):
+            acc = p[q + "dw.bias"].copy()
+            for j in range(5):
+                k = t - (4 - j) * dl
+                if k >= 0:
+                    acc = acc + p[q + "dw.weight"][:, 0, j] * n[k]
+            c[t] = acc
+        f = gelu(c) @ p[q + "ff.0.weight"].T + p[q + "ff.0.bias"]
+        h = h + gelu(f) @ p[q + "ff.3.weight"].T + p[q + "ff.3.bias"]
+    o = ln(h, p["out_norm.weight"], p["out_norm.bias"]) @ p["head.weight"].T + p["head.bias"]
+    mx = o.max(1, keepdims=True)
+    return o - mx - np.log(np.exp(o - mx).sum(1, keepdims=True))
+
+
+def test_xbody_runtime_equals_reference_chunks_and_causal():
+    from fidetype.pretrained import _xbody
+
+    p = xbody_params()
+    x = np.random.default_rng(1).integers(0, 6, (120, 192)).astype(np.uint8)
+    full = _xbody.xbody_log_probs(p, x, 1, kernel=5, dilations=[1, 2])
+    np.testing.assert_allclose(full, xbody_reference(p, x, 1, (1, 2)), atol=1e-4)
+    np.testing.assert_allclose(_xbody.xbody_log_probs(p, x, 1, kernel=5, dilations=[1, 2], chunk=17), full, atol=1e-5)
+    x2 = x.copy()
+    x2[80:] = 9  # the future does not change the past
+    np.testing.assert_allclose(_xbody.xbody_log_probs(p, x2, 1, kernel=5, dilations=[1, 2])[:80], full[:80], atol=1e-6)
+    assert not np.allclose(_xbody.xbody_log_probs(p, x, 0, kernel=5, dilations=[1, 2]), full)  # per-session z-score
+    with pytest.raises(ValueError, match="192"):
+        _xbody.xbody_log_probs(p, x[:, :10], 0, kernel=5, dilations=[1, 2])
+    with pytest.raises(ValueError, match="session"):
+        _xbody.xbody_log_probs(p, x, 2, kernel=5, dilations=[1, 2])
+    assert _xbody.willett_text("hi>there~#") == "hi there."
+
+
+def xbody_manifest(tmp: Path, sessions: list[str] | None = None) -> Path:
+    w = tmp / "fake-hw.weights.npz"
+    np.savez(w, **xbody_params())
+    doc = {"schema": MANIFEST_SCHEMA, "name": "fake-hw", "version": "1", "title": "tiny XBody", "status": "available",
+           "task": "test", "modality": "intracortical", "runtime": "xbody-ctc", "language": "en",
+           "input": {"bin_s": 0.01, "file_format": "willett-hw-mat"},
+           "output": {"vocab_type": "char", "vocab_id": "fidetype-p11-01-keys-v1", "frame_period_s": 0.01,
+                      "latency_s": 0.0},
+           "architecture": {"kernel": 5, "dilations": [1, 2],
+                            "sessions": sessions or ["t5.2019.05.08", "t5.2019.11.25"]},
+           "files": [entry("weights", w)], "licence": LIC_CC0, "trust": None}
+    return write_manifest(tmp, doc)
+
+
+def fake_sentences_mat(folder: Path) -> None:
+    """A tiny Willett-like sentences.mat: 4 sentences in blocks 1, 1, 2, 2; sentence 1 is excluded."""
+    sio = pytest.importorskip("scipy.io")
+    folder.mkdir(parents=True)
+    rng = np.random.default_rng(3)
+    ts = rng.integers(0, 4, (400, 192)).astype(np.uint8)
+    bts = np.r_[np.ones(200), 2 * np.ones(200)].astype(np.int64)[:, None]
+    texts = np.empty((4, 1), dtype=object)
+    for i, t in enumerate(["ab>c~", "zz", "hello#", "x>y"]):
+        texts[i, 0] = np.array([t])
+    cond = np.empty((4, 1), dtype=object)
+    for i in range(4):
+        cond[i, 0] = np.array(["OL"])
+    sio.savemat(folder / "sentences.mat", {
+        "neuralActivityTimeSeries": ts, "blockNumsTimeSeries": bts,
+        "goCueOnsetTimeBin": np.array([[1], [101], [201], [301]]),  # MATLAB 1-based
+        "numTimeBinsPerSentence": np.array([[50], [40], [60], [80]]),
+        "sentenceBlockNums": np.array([[1], [1], [2], [2]]), "excludedSentences": np.array([[0], [1], [0], [0]]),
+        "intendedText": texts, "sentenceCondition": cond})
+
+
+def test_willett_reader_and_xbody_model_end_to_end(tmp_path):
+    sess = tmp_path / "Datasets" / "t5.2019.11.25"
+    fake_sentences_mat(sess)
+    items = R.read_willett_session(sess)
+    assert [it.extra["trial"] for it in items] == [0, 2, 3]  # the excluded sentence is skipped
+    assert [it.truth for it in items] == ["ab c.", "hello", "x y"]
+    assert items[0].x.shape == (150, 192) and items[0].x.dtype == np.uint8  # 50 bins + 100 tail in the same block
+    assert items[1].x.shape == (160, 192)  # 60 + 100
+    assert items[2].x.shape == (100, 192)  # 80 bins + 20 tail: the recording ends
+    assert R.willett_test_block(items) == 2
+    assert len(R.read_willett_session(sess / "sentences.mat", include_excluded=True)) == 4
+    assert [it.extra["block"] for it in R.read_willett_session(sess, blocks=[2])] == [2, 2]
+    with pytest.raises(ValueError, match="t5"):
+        R.read_willett_session(tmp_path / "Datasets")
+    with pytest.raises(ValueError, match="too large"):
+        R.read_willett_session(sess, max_bytes=10)
+    m = ftp.load(str(xbody_manifest(tmp_path)), weights=tmp_path)
+    assert isinstance(m, ftp.XBodyCtcDecoder)
+    pairs = m.decode(str(sess), with_items=True)
+    assert len(pairs) == 3
+    for it, st in pairs:
+        assert st.vocab_type == "char" and len(st.vocab) == 98 and st.blank_id == 0
+        assert st.frame_times[0] == pytest.approx(0.01) and st.frame_period == pytest.approx(0.01)
+        assert st.meta["data.licence"] == "CC0-1.0" and st.meta["data.research_only"] is False
+        assert st.meta["decoder.weights_sha256"] == m.weights_sha256
+        assert not any(t in json.dumps(st.meta) for t in ("hello", "ab c"))  # truth never in a stream
+        assert C.check(st).passes("provenance"), [f.check_id for f in C.check(st).failures()]
+        assert isinstance(m.text(st), str)
+    st = m.decode(pairs[1][0].x, session="t5.2019.11.25")
+    np.testing.assert_allclose(st.log_probs, pairs[1][1].log_probs)
+    np.testing.assert_allclose(m.decode(pairs[1][0].x, session=1).log_probs, st.log_probs)
+    assert len(m.decode_file(sess, blocks=[1])) == 1
+    with pytest.raises(ValueError, match="unknown session"):
+        m.decode(pairs[1][0].x, session="t5.2099.01.01")
+    with pytest.raises(ftp.NoTrustConfig):
+        m.guard()
+    with pytest.raises(ftp.WeightsMismatch, match="sessions"):
+        ftp.load(str(xbody_manifest(tmp_path, sessions=["t5.2019.05.08"])), weights=tmp_path)
+
+
+WILLETT_WEIGHTS = Path(r"C:\Users\zhang\bci-data\pretrained\willett-hw\willett-hw.weights.npz")
+WILLETT_RAW = Path(r"C:\Users\zhang\bci-data\raw\willett-handwriting\extracted\handwritingBCIData\Datasets")
+
+
+@pytest.mark.skipif(not WILLETT_WEIGHTS.is_file(), reason="willett-hw weights are local only (not hosted, P14-02)")
+def test_willett_hw_real_weights():
+    m = ftp.load("willett-hw", weights=WILLETT_WEIGHTS.parent)
+    st = m.decode(np.zeros((50, 192), np.uint8), session="t5.2020.01.15")
+    assert st.log_probs.shape == (50, 98) and C.check(st).passes("provenance")
+    if (WILLETT_RAW / "t5.2020.01.15" / "sentences.mat").is_file():
+        from fidetype.eval.metrics import edit_distance
+
+        items = R.read_willett_session(WILLETT_RAW / "t5.2020.01.15")
+        tb = R.willett_test_block(items)
+        test = [it for it in items if it.extra["block"] == tb][:3]
+        ed = sum(edit_distance(it.truth, m.text(m.decode(it.x, session=it.session))) for it in test)
+        assert ed / sum(len(it.truth) for it in test) < 0.6  # weak, but far from chance
 
 
 # --- key-window model (KT-sEMG runtime), with the packaged synthetic-keys files ------------------------------

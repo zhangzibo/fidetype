@@ -13,6 +13,9 @@ only; it never goes into a stream.
   needs its train file (found next to it). Needs ``scipy`` (``pip install fidetype[data]``).
 - emg2qwerty (CC BY-NC-SA 4.0, research only): one ``*.hdf5`` session; one item per text prompt.
   Needs ``h5py``.
+- Willett handwriting 2021 (T5, CC0): ``Datasets/t5.YYYY.MM.DD/sentences.mat``; one item per
+  sentence: threshold crossings (T x 192, 10 ms bins) from the go cue to the sentence end plus up to
+  1 s of tail. Needs ``scipy`` (``pip install fidetype[data]``).
 - KT-sEMG (CC BY 4.0, Nokia): ``runN.csv`` + ``runN_keys.txt`` + ``runN_ts.txt``; one item per
   typing burst (key times from the key log, as the ``kt-semg`` benchmark track).
 
@@ -30,10 +33,12 @@ from typing import Any
 import numpy as np
 
 __all__ = ["Item", "read_b2t25_hdf5", "read_b2t24_session", "b2t24_normalise", "read_emg2qwerty_session",
-           "read_kt_run", "T15_SESSION", "T12_SESSION"]
+           "read_kt_run", "read_willett_session", "willett_test_block", "T15_SESSION", "T12_SESSION",
+           "T5_SESSION"]
 
 T15_SESSION = re.compile(r"^t15\.\d{4}\.\d{2}\.\d{2}$")
 T12_SESSION = re.compile(r"^t12\.\d{4}\.\d{2}\.\d{2}$")
+T5_SESSION = re.compile(r"^t5\.\d{4}\.\d{2}\.\d{2}$")
 
 
 @dataclass
@@ -181,3 +186,70 @@ def read_kt_run(csv: str | PathLike[str], max_gap_s: float = 2.0, min_keys: int 
                           extra={"times": [float(e.t) for e in ev], "codes": [K.key_code(e.char) for e in ev],
                                  "run": int(c.stem[3:]), "segment": j}))
     return rec.emg, items
+
+
+#: Variables read from a Willett ``sentences.mat`` (MATLAB 5 file: plain arrays, no code).
+WILLETT_VARS = ("intendedText", "numTimeBinsPerSentence", "sentenceCondition", "sentenceBlockNums",
+                "excludedSentences", "neuralActivityTimeSeries", "blockNumsTimeSeries", "goCueOnsetTimeBin")
+WILLETT_TAIL = 100  # frames kept after the sentence end (the causal decoder emits late; P15-08 recipe)
+
+
+def read_willett_session(path: str | PathLike[str], *, include_excluded: bool = False,
+                         blocks: list[int] | None = None, limit: int | None = None,
+                         max_bytes: int = 400_000_000) -> list[Item]:
+    """Sentences of one Willett handwriting session (``t5.YYYY.MM.DD`` folder or its ``sentences.mat``).
+
+    ``item.x``: uint8 threshold crossings (T, 192) from the go cue to the sentence end, plus up to
+    ``WILLETT_TAIL`` frames while the block goes on (same cut as P15-08). ``item.truth``: the
+    intended text ('>' -> space, '~' -> period, '#' dropped). ``item.extra``: ``trial``, ``block``,
+    ``excluded``, ``n_write`` (bins of writing time), ``cond``. Excluded sentences and sentences
+    with empty text are skipped unless ``include_excluded``. ``blocks``: keep only these blocks.
+    ``max_bytes`` limits the file size (untrusted input; the public files are under 50 MB).
+    """
+    import scipy.io  # optional dependency
+
+    from fidetype.pretrained._xbody import willett_text
+
+    p = Path(path)
+    if p.is_dir():
+        p = p / "sentences.mat"
+    sess = p.parent.name
+    if not T5_SESSION.match(sess):
+        raise ValueError(f"{p}: expected <t5.YYYY.MM.DD>/sentences.mat")
+    if p.stat().st_size > max_bytes:
+        raise ValueError(f"{p.name}: file too large ({p.stat().st_size} bytes)")
+    m = scipy.io.loadmat(str(p), variable_names=list(WILLETT_VARS))
+    ts = m["neuralActivityTimeSeries"]
+    bts = m["blockNumsTimeSeries"].ravel()
+    go = m["goCueOnsetTimeBin"].ravel().astype(np.int64) - 1  # MATLAB 1-based -> 0-based
+    nb = m["numTimeBinsPerSentence"].ravel().astype(np.int64)
+    blk = m["sentenceBlockNums"].ravel().astype(np.int64)
+    exc = m["excludedSentences"].ravel().astype(bool)
+    txt = [str(q[0][0]) if q[0].size else "" for q in m["intendedText"]]
+    cond = [str(q[0][0]) if q[0].size else "" for q in m["sentenceCondition"]]
+    out: list[Item] = []
+    for i in range(len(nb)):
+        text = willett_text(txt[i])
+        if not include_excluded and (exc[i] or not text):
+            continue
+        if blocks is not None and int(blk[i]) not in blocks:
+            continue
+        a, b = int(go[i]), int(go[i] + nb[i])
+        c = b
+        while c < min(len(ts), b + WILLETT_TAIL) and bts[c] == bts[a]:
+            c += 1
+        x = np.clip(np.asarray(ts[a:c], np.float64), 0, 255).astype(np.uint8)
+        out.append(Item(key=f"{sess}|sentences|{i}", x=x, session=sess, truth=text,
+                        extra={"trial": i, "block": int(blk[i]), "excluded": bool(exc[i]), "n_write": int(nb[i]),
+                               "cond": cond[i]}))
+        if limit is not None and len(out) >= limit:
+            break
+    return out
+
+
+def willett_test_block(items: list[Item]) -> int:
+    """The held-out block of a session in the ``willett-hw`` split: the last block with a usable sentence."""
+    ok = [it.extra["block"] for it in items if not it.extra["excluded"] and it.truth]
+    if not ok:
+        raise ValueError("no usable sentence in these items")
+    return max(ok)
