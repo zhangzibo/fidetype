@@ -365,3 +365,76 @@ def test_v02_cli_reading_cost(tmp_path) -> None:
                  "--min-prefix-words", "2"]) == 0
     assert json.loads(out.read_text(encoding="utf-8"))["value"] == 0.0
     assert main(["safe-wpm", "--trials", str(p), "--guarantee", g, "--read-s-per-commit", "1"]) == 2
+
+
+# --- P15-29: interval over calibration draws (proposed reporting addition) -------------------------------------
+
+
+def _toy_draw(rng: np.random.Generator, n: int, p_commit: float, p_right: float) -> dict:
+    cm = rng.random(n) < p_commit
+    ok = cm & (rng.random(n) < p_right)
+    return {"committed": cm.tolist(), "correct": ok.tolist(), "guarantee": LTT}
+
+
+def _toy_eval(n: int = 200, seed: int = 1):
+    rng = np.random.default_rng(seed)
+    nw = rng.integers(3, 12, n).astype(float)
+    nc = nw * 5.0
+    ns = rng.uniform(5.0, 20.0, n)
+    return rng, nw, nc, ns
+
+
+def test_calibration_interval_one_draw_is_the_trial_bootstrap() -> None:
+    from fidetype.benchmark.safe_wpm import calibration_draw_interval
+
+    rng, nw, nc, ns = _toy_eval()
+    d = _toy_draw(rng, len(ns), 0.4, 0.9)
+    r = calibration_draw_interval([d], nw, nc, ns, B=500, seed=0)
+    one = safe_wpm(d["committed"], d["correct"], nw, nc, ns, guarantee=LTT)
+    assert r["value"] == pytest.approx(one["value"])
+    assert r["n_draws"] == 1 and r["sd_between_draws"] == 0.0
+    # same resamples as the P15-22 paired bootstrap: rng.integers(0, n, n) -> bincount weights
+    g = np.random.default_rng(0)
+    cm, ok = np.array(d["committed"]), np.array(d["correct"])
+    pen = CorrectionRule().penalty(nc)
+    vals = []
+    for _ in range(500):
+        w = np.bincount(g.integers(0, len(ns), len(ns)), minlength=len(ns))
+        vals.append(60 * (np.where(ok, nw, 0) * w).sum() / ((ns * w).sum() + (np.where(cm & ~ok, pen, 0) * w).sum()))
+    assert r["interval"] == pytest.approx([np.percentile(vals, 2.5), np.percentile(vals, 97.5)])
+    assert r["interval"] == r["draws"][0]["conditional_interval"]
+
+
+def test_calibration_interval_widens_with_draw_spread_and_credit_rule() -> None:
+    from fidetype.benchmark.safe_wpm import calibration_draw_interval
+
+    rng, nw, nc, ns = _toy_eval()
+    draws = [_toy_draw(rng, len(ns), p, 0.95) for p in (0.2, 0.35, 0.5, 0.65)]
+    r = calibration_draw_interval(draws, nw, nc, ns, B=400, reference=0.0)
+    single = calibration_draw_interval(draws[1:2], nw, nc, ns, B=400)
+    assert r["interval"][1] - r["interval"][0] > single["interval"][1] - single["interval"][0]
+    vals = [d["value"] for d in r["draws"]]
+    assert r["value"] == pytest.approx(np.mean(vals))
+    assert r["sd_between_draws"] == pytest.approx(np.std(vals, ddof=1))
+    assert r["sd_total"] == pytest.approx(math.hypot(r["sd_between_draws"], r["sd_within_draw"]))
+    assert r["lower_above_reference"] is True and r["fraction_of_draws_above_reference"] == 1.0
+    # credit rule: a refused draw and a not-certified draw add 0.0
+    bad = dict(draws[0], guarantee=None)
+    r2 = calibration_draw_interval(draws + [{"refused": True}, bad], nw, nc, ns, B=400)
+    assert r2["n_draws"] == 6 and r2["n_credited"] == 4
+    assert r2["statuses"] == {"certified": 4, "not-certified": 1, "refused": 1}
+    assert r2["value"] == pytest.approx(sum(vals) / 6)
+    assert r2["interval"][0] == 0.0  # 1/3 of the pooled values are 0.0
+
+
+def test_calibration_interval_bad_inputs() -> None:
+    from fidetype.benchmark.safe_wpm import calibration_draw_interval
+
+    rng, nw, nc, ns = _toy_eval(20)
+    d = _toy_draw(rng, 20, 0.5, 0.9)
+    with pytest.raises(ValueError, match="level"):
+        calibration_draw_interval([d], nw, nc, ns, level=0.05 * 100)
+    with pytest.raises(ValueError, match="empty"):
+        calibration_draw_interval([], nw, nc, ns)
+    with pytest.raises(ValueError, match="one value per evaluation trial"):
+        calibration_draw_interval([dict(d, committed=d["committed"][:5])], nw, nc, ns)

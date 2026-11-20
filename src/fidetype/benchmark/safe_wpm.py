@@ -634,6 +634,121 @@ def format_line(r: Mapping[str, Any]) -> str:
             f"no-BCI {r.get('no_bci_wpm') or float('nan'):.2f})")
 
 
+CALIBRATION_INTERVAL = "safe-wpm-calibration-interval/0.1 (proposed reporting addition, P15-29; not adopted)"
+
+
+def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Sequence[float],
+                              n_chars: Sequence[float], neural_s: Sequence[float], *,
+                              rule: CorrectionRule = CorrectionRule(), B: int = 2000, seed: int = 0,
+                              level: float = 0.95, reference: float | None = None,
+                              credit_statuses: Sequence[str] = ("certified",)) -> dict[str, Any]:
+    """Safe-WPM v0.1 interval over calibration draws and evaluation trials (PROPOSED reporting addition).
+
+    The usual ``safe_wpm`` CI is a trial bootstrap with the decisions fixed,
+    so it is conditional on one calibration. This function takes K
+    calibration draws (each draw = one full re-calibration of the guard,
+    then its decisions on the SAME evaluation trials) and returns a
+    two-level bootstrap interval (P15-29):
+
+    * inner level: the same ``B`` multinomial trial resamples for every
+      draw (``numpy.random.default_rng(seed).integers(0, n, n)`` per
+      resample, so K = 1 gives the usual trial-bootstrap CI);
+    * credit rule: a draw adds its values only if its ``safe_wpm`` status is
+      in ``credit_statuses`` (default: ``certified``); any other draw
+      (refused, not-certified, above-alpha, vacuous) adds 0.0 to every
+      resample;
+    * interval: percentiles of the pooled K x B values at ``level``;
+      point: the mean of the K draw values.
+
+    ``draws``: one mapping per draw with ``committed`` and ``correct`` (one
+    bool per evaluation trial, v0.1 sentence commits) and ``guarantee`` (as
+    for :func:`safe_wpm`), or ``{"refused": True}`` for a calibration that
+    produced no guard. ``reference`` (optional, e.g. the no-BCI WPM) adds
+    ``lower_above_reference``. Also returned: the law-of-total-variance
+    decomposition (within-draw and between-draw SD) and its normal interval
+    as a cross-check. It changes no adopted ``safe-wpm/0.1`` rule.
+    """
+    if not 0.0 < float(level) < 1.0:
+        raise ValueError("level must be a confidence level in (0, 1), e.g. 0.95")
+    if int(B) < 2:
+        raise ValueError("B must be >= 2")
+    if not draws:
+        raise ValueError("draws is empty: give at least one calibration draw")
+    ns = np.asarray(neural_s, float)
+    nw = np.asarray(n_words, float)
+    nc = np.asarray(n_chars, float)
+    n = len(ns)
+    if n == 0 or len(nw) != n or len(nc) != n:
+        raise ValueError("n_words, n_chars and neural_s must be non-empty and of the same length")
+    pen = rule.penalty(nc)
+    rng = np.random.default_rng(seed)
+    W = np.empty((int(B), n))
+    for b in range(int(B)):
+        W[b] = np.bincount(rng.integers(0, n, n), minlength=n)
+    t_neural = W @ ns
+    q = [(1.0 - level) / 2.0 * 100.0, (1.0 + level) / 2.0 * 100.0]
+    values, statuses, cond, per_draw = [], [], [], []
+    for k, d in enumerate(draws):
+        if d.get("refused"):
+            st, v, vals, info = "refused", 0.0, np.zeros(int(B)), {}
+        else:
+            for key in ("committed", "correct"):
+                if len(d.get(key, ())) != n:
+                    raise ValueError(f"draw {k}: {key!r} must have one value per evaluation trial ({n})")
+            r = safe_wpm(d["committed"], d["correct"], nw, nc, ns, guarantee=d.get("guarantee"), rule=rule,
+                         gaze_chars_per_min=None)
+            st = r["status"]
+            info = {"n_commits": r["n_commits"], "n_wrong_commits": r["n_wrong_commits"]}
+            if st in credit_statuses and r["value"] is not None:
+                cm = np.asarray(d["committed"], bool)
+                ok = cm & np.asarray(d["correct"], bool)
+                credit = W @ np.where(ok, nw, 0.0)
+                den = t_neural + W @ np.where(cm & ~ok, pen, 0.0)
+                vals = np.where(den > 0, 60.0 * credit / np.where(den > 0, den, 1.0), 0.0)
+                v = float(r["value"])
+            else:
+                v, vals = 0.0, np.zeros(int(B))
+        values.append(v)
+        statuses.append(st)
+        cond.append(vals)
+        per_draw.append({"value": v, "status": st, "conditional_interval": [float(x) for x in np.percentile(vals, q)],
+                         **info})
+    pooled = np.concatenate(cond)
+    lo, hi = (float(x) for x in np.percentile(pooled, q))
+    vals_arr = np.asarray(values)
+    K = len(values)
+    mean = float(vals_arr.mean())
+    sd_between = float(vals_arr.std(ddof=1)) if K > 1 else 0.0
+    var_within = float(np.mean([c.var(ddof=1) for c in cond]))
+    sd_total = math.sqrt(var_within + sd_between ** 2)
+    from statistics import NormalDist
+
+    z = NormalDist().inv_cdf((1.0 + level) / 2.0)
+    out: dict[str, Any] = {
+        "method": CALIBRATION_INTERVAL,
+        "description": ("two-level bootstrap: K calibration draws (outer) x B trial resamples of the fixed "
+                        "evaluation set (inner, the same resamples in every draw); percentile interval of the "
+                        "pooled values; non-credited draws add 0.0"),
+        "definition": DEFINITION, "level": float(level), "B": int(B), "seed": int(seed), "n_trials": n,
+        "n_draws": K, "credit_statuses": list(credit_statuses),
+        "n_credited": int(sum(s in credit_statuses for s in statuses)),
+        "statuses": {s: statuses.count(s) for s in sorted(set(statuses))},
+        "value": mean, "median_draw_value": float(np.median(vals_arr)),
+        "draw_value_range": [float(vals_arr.min()), float(vals_arr.max())],
+        "interval": [lo, hi],
+        "sd_between_draws": sd_between, "sd_within_draw": math.sqrt(var_within), "sd_total": sd_total,
+        "between_to_within_sd": (sd_between / math.sqrt(var_within)) if var_within > 0 else None,
+        "analytic_interval": [mean - z * sd_total, mean + z * sd_total],
+        "draws": per_draw,
+    }
+    if reference is not None:
+        out["reference"] = float(reference)
+        out["lower_above_reference"] = bool(lo > float(reference))
+        out["fraction_of_draws_above_reference"] = float(np.mean(vals_arr > float(reference)))
+    return out
+
+
 __all__ = ["DEFINITION", "DEFINITION_V02", "METRIC_VERSIONS", "RISK_SENTENCE", "RISK_PREFIX", "prefix_outcome",
            "CorrectionRule", "certification", "model_neural_s", "safe_wpm", "from_trial_scores",
-           "summarize_controls", "guarantee_from_sheet", "controls_from_sheet", "load_trials_jsonl", "format_line"]
+           "summarize_controls", "guarantee_from_sheet", "controls_from_sheet", "load_trials_jsonl", "format_line",
+           "CALIBRATION_INTERVAL", "calibration_draw_interval"]
