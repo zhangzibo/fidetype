@@ -1,0 +1,1050 @@
+{
+ "task": "P11-07",
+ "date": "2026-11-19 22:28",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "note": "aggregates only (no per-user value, no text, no id)",
+ "tune": {
+  "n_tune": 765,
+  "tune_digest": "96f175801d6ff225",
+  "F": {
+   "w": 0.5,
+   "beta": 1.0,
+   "lam": 0.0,
+   "cer": 0.14264130821187346
+  },
+  "FL": {
+   "w": 0.25,
+   "beta": 1.0,
+   "lam": 8.0,
+   "cer": 0.13717561322431568
+  },
+  "B0_cer": 0.18618912193387843,
+  "G_cer": 0.18801102026306435
+ },
+ "beam": {
+  "sweep": [
+   {
+    "B": 4,
+    "cer": 0.14726270885175968
+   },
+   {
+    "B": 8,
+    "cer": 0.14361891219338785
+   },
+   {
+    "B": 16,
+    "cer": 0.14268574475648774
+   },
+   {
+    "B": 32,
+    "cer": 0.14264130821187346
+   },
+   {
+    "B": 64,
+    "cer": 0.14410771418414503
+   }
+  ],
+  "chosen_B": 8,
+  "tol": 0.002
+ },
+ "published_table3_test_pct": {
+  "no_lm": 11.28,
+  "lm": 6.95
+ },
+ "p1101_greedy_mean_pct": 15.09,
+ "session_cer": {
+  "G": {
+   "mean_pct": 14.6573149401581,
+   "sd_pct": 5.760185525331452,
+   "pooled_pct": 14.720613335571784,
+   "hyp_over_ref": 0.9897311060745964,
+   "greedy": true,
+   "w": 0.0,
+   "beta": 0.0,
+   "lam": 0.0,
+   "B": 0
+  },
+  "B0": {
+   "mean_pct": 14.576997165326826,
+   "sd_pct": 5.703849901254913,
+   "pooled_pct": 14.639469487114917,
+   "hyp_over_ref": 0.9907384090209574,
+   "w": 0.0,
+   "beta": 0.0,
+   "lam": 0.0,
+   "B": 8
+  },
+  "F": {
+   "mean_pct": 10.103700609901514,
+   "sd_pct": 5.00082015675863,
+   "pooled_pct": 10.165365567027617,
+   "hyp_over_ref": 0.9901787962729791,
+   "w": 0.5,
+   "beta": 1.0,
+   "lam": 0.0,
+   "B": 8
+  },
+  "FL": {
+   "mean_pct": 10.878349290806755,
+   "sd_pct": 6.029197346937795,
+   "pooled_pct": 10.957217605417052,
+   "hyp_over_ref": 0.9965583815999328,
+   "w": 0.25,
+   "beta": 1.0,
+   "lam": 8.0,
+   "B": 8
+  },
+  "F@B4": {
+   "mean_pct": 11.17215673444648,
+   "sd_pct": 5.441931316562374,
+   "pooled_pct": 11.239822043146143,
+   "hyp_over_ref": 0.9850023783541789,
+   "w": 0.5,
+   "beta": 1.0,
+   "lam": 0.0,
+   "B": 4
+  },
+  "F@B8": {
+   "mean_pct": 10.103700609901514,
+   "sd_pct": 5.00082015675863,
+   "pooled_pct": 10.165365567027617,
+   "hyp_over_ref": 0.9901787962729791,
+   "w": 0.5,
+   "beta": 1.0,
+   "lam": 0.0,
+   "B": 8
+  },
+  "FL@B8": {
+   "mean_pct": 10.878349290806755,
+   "sd_pct": 6.029197346937795,
+   "pooled_pct": 10.957217605417052,
+   "hyp_over_ref": 0.9965583815999328,
+   "w": 0.25,
+   "beta": 1.0,
+   "lam": 8.0,
+   "B": 8
+  },
+  "F@B16": {
+   "mean_pct": 9.592670832371128,
+   "sd_pct": 4.892366767828016,
+   "pooled_pct": 9.65052183888749,
+   "hyp_over_ref": 0.9921934021657013,
+   "w": 0.5,
+   "beta": 1.0,
+   "lam": 0.0,
+   "B": 16
+  },
+  "F@B32": {
+   "mean_pct": 9.287895112168789,
+   "sd_pct": 4.747744972182847,
+   "pooled_pct": 9.345532891239262,
+   "hyp_over_ref": 0.9938162791348387,
+   "w": 0.5,
+   "beta": 1.0,
+   "lam": 0.0,
+   "B": 32
+  },
+  "F@B64": {
+   "mean_pct": 9.133914079521654,
+   "sd_pct": 4.688347054770885,
+   "pooled_pct": 9.188841321805311,
+   "hyp_over_ref": 0.9940401242340301,
+   "w": 0.5,
+   "beta": 1.0,
+   "lam": 0.0,
+   "B": 64
+  }
+ },
+ "prompt_pieces": {
+  "G": {
+   "key_cer_pooled": 0.1797651817313634,
+   "key_cer_mean_users": 0.17932709292218543,
+   "intended_cer_pooled": 0.1515818858560794,
+   "intended_cer_mean_users": 0.15183402352712694
+  },
+  "B0": {
+   "key_cer_pooled": 0.17852929610696028,
+   "key_cer_mean_users": 0.1780992119635632,
+   "intended_cer_pooled": 0.1509305210918114,
+   "intended_cer_mean_users": 0.15117886311775133
+  },
+  "F": {
+   "key_cer_pooled": 0.11519015785630021,
+   "key_cer_mean_users": 0.11469886534829515,
+   "intended_cer_pooled": 0.09745657568238214,
+   "intended_cer_mean_users": 0.09769759712766501
+  },
+  "FL": {
+   "key_cer_pooled": 0.1328857929329813,
+   "key_cer_mean_users": 0.13223704435866063,
+   "intended_cer_pooled": 0.10790942928039703,
+   "intended_cer_mean_users": 0.10817723130248823
+  },
+  "F@B4": {
+   "key_cer_pooled": 0.13122858266389528,
+   "key_cer_mean_users": 0.13068625042059756,
+   "intended_cer_pooled": 0.10961538461538461,
+   "intended_cer_mean_users": 0.10989159318205095
+  },
+  "F@B8": {
+   "key_cer_pooled": 0.11519015785630021,
+   "key_cer_mean_users": 0.11469886534829515,
+   "intended_cer_pooled": 0.09745657568238214,
+   "intended_cer_mean_users": 0.09769759712766501
+  },
+  "FL@B8": {
+   "key_cer_pooled": 0.1328857929329813,
+   "key_cer_mean_users": 0.13223704435866063,
+   "intended_cer_pooled": 0.10790942928039703,
+   "intended_cer_mean_users": 0.10817723130248823
+  },
+  "F@B16": {
+   "key_cer_pooled": 0.10771866749059042,
+   "key_cer_mean_users": 0.10726479297218257,
+   "intended_cer_pooled": 0.09125310173697271,
+   "intended_cer_mean_users": 0.09149969803076496
+  },
+  "F@B32": {
+   "key_cer_pooled": 0.10311218470872423,
+   "key_cer_mean_users": 0.10264488636954602,
+   "intended_cer_pooled": 0.08762406947890819,
+   "intended_cer_mean_users": 0.08785637379628575
+  },
+  "F@B64": {
+   "key_cer_pooled": 0.10005055895736195,
+   "key_cer_mean_users": 0.09961917128505655,
+   "intended_cer_pooled": 0.08604218362282878,
+   "intended_cer_mean_users": 0.08627400604715194
+  }
+ },
+ "C1_time_shuffled_key_cer_pooled": 0.9854484399048552,
+ "window_top1": {
+  "B0": {
+   "intended_cer_pooled": 0.14962779156327544,
+   "key_cer_pooled": 0.17816414808156844,
+   "intended_exact": 0.06306306306306306
+  },
+  "F": {
+   "intended_cer_pooled": 0.0859181141439206,
+   "key_cer_pooled": 0.13569462389753384,
+   "intended_exact": 0.3415233415233415
+  },
+  "FL": {
+   "intended_cer_pooled": 0.08995037220843673,
+   "key_cer_pooled": 0.13426212010561203,
+   "intended_exact": 0.32678132678132676
+  }
+ },
+ "C0_p1101_set": {
+  "sessions": 16,
+  "ref": 71476,
+  "mean_pct": 15.089762615370356,
+  "pooled_pct": 15.146342828361968
+ },
+ "users_FL_lt_F": 2,
+ "latency": {
+  "chunk_frames": 4,
+  "n_windows": 1221,
+  "threads": 1,
+  "configs": {
+   "F@B4": {
+    "w": 0.5,
+    "beta": 1.0,
+    "lam": 0.0,
+    "B": 4,
+    "offline_ms": {
+     "p50": 21.15879999473691,
+     "p95": 37.98959997948259
+    },
+    "chunk_push_ms": {
+     "p50": 0.10529998689889908,
+     "p95": 0.3030999796465039,
+     "max": 16.93439995869994
+    },
+    "added_ms": {
+     "p50": 28.29239994753152,
+     "p95": 61.358500039204955,
+     "max": 163.4089999133721
+    }
+   },
+   "F@B8": {
+    "w": 0.5,
+    "beta": 1.0,
+    "lam": 0.0,
+    "B": 8,
+    "offline_ms": {
+     "p50": 23.81949999835342,
+     "p95": 41.80930007714778
+    },
+    "chunk_push_ms": {
+     "p50": 0.11929997708648443,
+     "p95": 0.33030007034540176,
+     "max": 27.86630007904023
+    },
+    "added_ms": {
+     "p50": 29.556799912825227,
+     "p95": 67.61029991321266,
+     "max": 208.027399959974
+    }
+   },
+   "F@B16": {
+    "w": 0.5,
+    "beta": 1.0,
+    "lam": 0.0,
+    "B": 16,
+    "offline_ms": {
+     "p50": 26.796800084412098,
+     "p95": 46.10430006869137
+    },
+    "chunk_push_ms": {
+     "p50": 0.12949993833899498,
+     "p95": 0.3711000317707658,
+     "max": 26.710700010880828
+    },
+    "added_ms": {
+     "p50": 30.10029997676611,
+     "p95": 67.22720002289861,
+     "max": 197.94860004913062
+    }
+   },
+   "F@B32": {
+    "w": 0.5,
+    "beta": 1.0,
+    "lam": 0.0,
+    "B": 32,
+    "offline_ms": {
+     "p50": 31.304299947805703,
+     "p95": 51.20749992784113
+    },
+    "chunk_push_ms": {
+     "p50": 0.13189995661377907,
+     "p95": 0.4546799929812539,
+     "max": 25.913999998010695
+    },
+    "added_ms": {
+     "p50": 29.809499974362552,
+     "p95": 66.02329993620515,
+     "max": 235.84649991244078
+    }
+   },
+   "F@B64": {
+    "w": 0.5,
+    "beta": 1.0,
+    "lam": 0.0,
+    "B": 64,
+    "offline_ms": {
+     "p50": 45.653300010599196,
+     "p95": 72.26379995699972
+    },
+    "chunk_push_ms": {
+     "p50": 0.15430001076310873,
+     "p95": 0.6434000097215176,
+     "max": 23.19630002602935
+    },
+    "added_ms": {
+     "p50": 30.56700003799051,
+     "p95": 67.92129995301366,
+     "max": 222.22629992756993
+    }
+   },
+   "FL@B4": {
+    "w": 0.25,
+    "beta": 1.0,
+    "lam": 8.0,
+    "B": 4,
+    "offline_ms": {
+     "p50": 21.443999954499304,
+     "p95": 36.89449990633875
+    },
+    "chunk_push_ms": {
+     "p50": 0.10370009113103151,
+     "p95": 0.29829994309693575,
+     "max": 28.246500063687563
+    },
+    "added_ms": {
+     "p50": 30.180000001564622,
+     "p95": 66.1504000891,
+     "max": 193.43680003657937
+    }
+   },
+   "FL@B8": {
+    "w": 0.25,
+    "beta": 1.0,
+    "lam": 8.0,
+    "B": 8,
+    "offline_ms": {
+     "p50": 23.392200004309416,
+     "p95": 39.821599959395826
+    },
+    "chunk_push_ms": {
+     "p50": 0.11170003563165665,
+     "p95": 0.3239000216126442,
+     "max": 19.229099969379604
+    },
+    "added_ms": {
+     "p50": 30.407799989916384,
+     "p95": 67.18460004776716,
+     "max": 184.72969997674227
+    }
+   },
+   "FL@B16": {
+    "w": 0.25,
+    "beta": 1.0,
+    "lam": 8.0,
+    "B": 16,
+    "offline_ms": {
+     "p50": 25.134299998171628,
+     "p95": 42.31030005030334
+    },
+    "chunk_push_ms": {
+     "p50": 0.11059991084039211,
+     "p95": 0.3613999579101801,
+     "max": 23.92970002256334
+    },
+    "added_ms": {
+     "p50": 28.231500065885484,
+     "p95": 62.324399943463504,
+     "max": 172.57209995295852
+    }
+   },
+   "FL@B32": {
+    "w": 0.25,
+    "beta": 1.0,
+    "lam": 8.0,
+    "B": 32,
+    "offline_ms": {
+     "p50": 33.01259991712868,
+     "p95": 53.107600077055395
+    },
+    "chunk_push_ms": {
+     "p50": 0.13159995432943106,
+     "p95": 0.46730004251003265,
+     "max": 21.772299893200397
+    },
+    "added_ms": {
+     "p50": 29.56699999049306,
+     "p95": 64.93620004039258,
+     "max": 186.0238000517711
+    }
+   },
+   "FL@B64": {
+    "w": 0.25,
+    "beta": 1.0,
+    "lam": 8.0,
+    "B": 64,
+    "offline_ms": {
+     "p50": 51.17779993452132,
+     "p95": 78.21199996396899
+    },
+    "chunk_push_ms": {
+     "p50": 0.16199995297938585,
+     "p95": 0.6909799296408881,
+     "max": 22.8538999799639
+    },
+    "added_ms": {
+     "p50": 31.8960000295192,
+     "p95": 70.03519998397678,
+     "max": 179.87800005357713
+    }
+   }
+  },
+  "measurement_env": {}
+ },
+ "modellat": {
+  "receptive_field_frames": 121,
+  "chunk_frames": 4,
+  "n_chunks": 500,
+  "param_keys": [
+   "blocks.0.dw.bias",
+   "blocks.0.dw.weight",
+   "blocks.0.ff.0.bias",
+   "blocks.0.ff.0.weight",
+   "blocks.0.ff.3.bias",
+   "blocks.0.ff.3.weight",
+   "blocks.0.norm.bias",
+   "blocks.0.norm.weight",
+   "blocks.1.dw.bias",
+   "blocks.1.dw.weight",
+   "blocks.1.ff.0.bias",
+   "blocks.1.ff.0.weight",
+   "blocks.1.ff.3.bias",
+   "blocks.1.ff.3.weight",
+   "blocks.1.norm.bias",
+   "blocks.1.norm.weight",
+   "blocks.2.dw.bias",
+   "blocks.2.dw.weight",
+   "blocks.2.ff.0.bias",
+   "blocks.2.ff.0.weight",
+   "blocks.2.ff.3.bias",
+   "blocks.2.ff.3.weight",
+   "blocks.2.norm.bias",
+   "blocks.2.norm.weight",
+   "blocks.3.dw.bias",
+   "blocks.3.dw.weight",
+   "blocks.3.ff.0.bias",
+   "blocks.3.ff.0.weight",
+   "blocks.3.ff.3.bias",
+   "blocks.3.ff.3.weight",
+   "blocks.3.norm.bias",
+   "blocks.3.norm.weight",
+   "blocks.4.dw.bias",
+   "blocks.4.dw.weight",
+   "blocks.4.ff.0.bias",
+   "blocks.4.ff.0.weight",
+   "blocks.4.ff.3.bias",
+   "blocks.4.ff.3.weight",
+   "blocks.4.norm.bias",
+   "blocks.4.norm.weight",
+   "blocks.5.dw.bias",
+   "blocks.5.dw.weight",
+   "blocks.5.ff.0.bias",
+   "blocks.5.ff.0.weight",
+   "blocks.5.ff.3.bias",
+   "blocks.5.ff.3.weight",
+   "blocks.5.norm.bias",
+   "blocks.5.norm.weight",
+   "blocks.6.dw.bias",
+   "blocks.6.dw.weight",
+   "blocks.6.ff.0.bias",
+   "blocks.6.ff.0.weight",
+   "blocks.6.ff.3.bias",
+   "blocks.6.ff.3.weight",
+   "blocks.6.norm.bias",
+   "blocks.6.norm.weight",
+   "blocks.7.dw.bias",
+   "blocks.7.dw.weight",
+   "blocks.7.ff.0.bias",
+   "blocks.7.ff.0.weight",
+   "blocks.7.ff.3.bias",
+   "blocks.7.ff.3.weight",
+   "blocks.7.norm.bias",
+   "blocks.7.norm.weight",
+   "head.bias",
+   "head.weight",
+   "left.conv.bias",
+   "left.conv.weight",
+   "left.proj.bias",
+   "left.proj.weight",
+   "mean",
+   "out_norm.bias",
+   "out_norm.weight",
+   "right.conv.bias",
+   "right.conv.weight",
+   "right.proj.bias",
+   "right.proj.weight",
+   "std"
+  ],
+  "model_cfg": {
+   "ring_k": 5,
+   "kernel": 5,
+   "dilations": [
+    1,
+    2,
+    4,
+    8,
+    1,
+    2,
+    4,
+    8
+   ]
+  },
+  "cuda": {
+   "available": true,
+   "n": 500,
+   "threads": null,
+   "torch": "2.9.1+rocm7.2.1",
+   "p50_ms": 3.2403499935753644,
+   "p95_ms": 4.161465022480115,
+   "max_ms": 4.893300007097423,
+   "device_name": "AMD Radeon RX 7800 XT",
+   "out_shape": [
+    4,
+    98
+   ]
+  },
+  "cpu": {
+   "impl": "numpy fidetype.pretrained._crt (committed)",
+   "n": 500,
+   "threads_env": "4",
+   "p50_ms": 20.95849992474541,
+   "p95_ms": 47.07715002004983,
+   "max_ms": 100.73950001969934,
+   "check_max_prob_diff_vs_torch": 4.172325134277344e-07,
+   "check_argmax_agreement": 1.0
+  },
+  "cpu_torch_rocm_build": {
+   "available": true,
+   "n": 30,
+   "threads": 4,
+   "torch": "2.9.1+rocm7.2.1",
+   "p50_ms": 2592.2157000750303,
+   "p95_ms": 3004.4830899511,
+   "max_ms": 3044.247000012547,
+   "device_name": "cpu",
+   "out_shape": [
+    4,
+    98
+   ]
+  },
+  "measurement_env_cpu": {}
+ },
+ "H5": {
+  "F@B4": {
+   "added_p95_ms": 61.358500039204955,
+   "plus_cpu_model_p95_ms": 108.43565005925478,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "F@B8": {
+   "added_p95_ms": 67.61029991321266,
+   "plus_cpu_model_p95_ms": 114.68744993326249,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "F@B16": {
+   "added_p95_ms": 67.22720002289861,
+   "plus_cpu_model_p95_ms": 114.30435004294844,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "F@B32": {
+   "added_p95_ms": 66.02329993620515,
+   "plus_cpu_model_p95_ms": 113.10044995625498,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "F@B64": {
+   "added_p95_ms": 67.92129995301366,
+   "plus_cpu_model_p95_ms": 114.99844997306349,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "FL@B4": {
+   "added_p95_ms": 66.1504000891,
+   "plus_cpu_model_p95_ms": 113.22755010914983,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "FL@B8": {
+   "added_p95_ms": 67.18460004776716,
+   "plus_cpu_model_p95_ms": 114.26175006781699,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "FL@B16": {
+   "added_p95_ms": 62.324399943463504,
+   "plus_cpu_model_p95_ms": 109.40154996351333,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "FL@B32": {
+   "added_p95_ms": 64.93620004039258,
+   "plus_cpu_model_p95_ms": 112.0133500604424,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  },
+  "FL@B64": {
+   "added_p95_ms": 70.03519998397678,
+   "plus_cpu_model_p95_ms": 117.11235000402661,
+   "meets_50ms": false,
+   "chunk_realtime": false
+  }
+ },
+ "arms": {
+  "S": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "tcfg-60a1ffc45809f11f",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.7,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 2,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it."
+    ],
+    "confidence": null
+   },
+   "safe_v01": {
+    "value": 3.3710198389920367,
+    "ci": [
+     1.9248304824113167,
+     5.1791638751383235
+    ],
+    "status": "certified",
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "measured_wrong_commit": 0.03521703521703522,
+    "measured_wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 459,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 16.40701754385965,
+    "unguarded_wpm": 3.3710198389920367,
+    "wpm_no_penalty": 3.8328715180651494,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02": {
+    "value": 3.3710198389920367,
+    "ci": [
+     1.9248304824113167,
+     5.1791638751383235
+    ],
+    "status": "certified",
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "measured_wrong_commit": 0.03521703521703522,
+    "measured_wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 459,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 16.40701754385965,
+    "unguarded_wpm": 3.3710198389920367,
+    "wpm_no_penalty": 3.8328715180651494,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 3.2635611813206147,
+    "ci": [
+     1.8798633586942632,
+     4.957226941487125
+    ],
+    "status": "certified",
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "measured_wrong_commit": 0.03521703521703522,
+    "measured_wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 459,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 16.40701754385965,
+    "unguarded_wpm": 3.2635611813206147,
+    "wpm_no_penalty": 3.8328715180651494,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 4.483333333333333,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 3.3710198389920367,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "always_commit": {
+    "unguarded_wpm": 3.716864787649442,
+    "n_right": 396
+   },
+   "n_eval": 1221,
+   "n_commits": 154,
+   "n_wrong_commits": 43,
+   "wrong_commit_rate": 0.03521703521703522,
+   "wrong_commit_cp95": [
+    0.0256,
+    0.0471
+   ],
+   "commit_rate": 0.12612612612612611,
+   "error_among_commits": 0.2792207792207792,
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 154,
+    "offer": 931,
+    "withhold": 136
+   },
+   "decide_s": {
+    "p50": 0.05847,
+    "p95": 0.10584
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "pass"
+   },
+   "gate_cost": {
+    "real_eval_gated": 0.022113022113022112
+   }
+  },
+  "SL": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "tcfg-2314f933bc13ce43",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.8,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 2,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it."
+    ],
+    "confidence": {
+     "kind": "learned",
+     "schema": "fidetype.commit-score/0.1",
+     "model": "logistic regression, L2 on standardised features, features clipped to the fit range, sign-constrained weights (backward elimination)",
+     "features": [
+      "p_top1",
+      "logit_p_top1",
+      "margin",
+      "nbest_entropy",
+      "word_agreement",
+      "char_conf_mean",
+      "char_conf_min",
+      "guard_risk",
+      "log_n_words",
+      "acoustic_per_char",
+      "lm_per_word",
+      "acoustic_gap",
+      "frames_per_char"
+     ],
+     "dropped": [
+      "logit_p_top1",
+      "nbest_entropy"
+     ],
+     "n_used": 6,
+     "l2": 1.0,
+     "fit_items": 765,
+     "fit_positive": 230,
+     "certify_items": 459,
+     "threshold": 0.8,
+     "feasible": true,
+     "coef": {
+      "p_top1": 0.767707329555,
+      "logit_p_top1": 0.0,
+      "margin": 0.367888747046,
+      "nbest_entropy": 0.0,
+      "word_agreement": 0.41582241828,
+      "char_conf_mean": 0.0,
+      "char_conf_min": 0.0,
+      "guard_risk": -0.907144591043,
+      "log_n_words": -0.0318874532555,
+      "acoustic_per_char": 0.0,
+      "lm_per_word": 0.0,
+      "acoustic_gap": 0.0,
+      "frames_per_char": -0.33146840905
+     },
+     "intercept": -1.35887797647
+    }
+   },
+   "safe_v01": {
+    "value": 3.1558697668860605,
+    "ci": [
+     1.7921028325431498,
+     4.837173688764028
+    ],
+    "status": "certified",
+    "n_commits": 135,
+    "n_wrong_commits": 34,
+    "measured_wrong_commit": 0.027846027846027847,
+    "measured_wrong_commit_cp95": [
+     0.0194,
+     0.0387
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 419,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 13.014912280701754,
+    "unguarded_wpm": 3.1558697668860605,
+    "wpm_no_penalty": 3.4988522136586004,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02": {
+    "value": 3.1558697668860605,
+    "ci": [
+     1.7921028325431498,
+     4.837173688764028
+    ],
+    "status": "certified",
+    "n_commits": 135,
+    "n_wrong_commits": 34,
+    "measured_wrong_commit": 0.027846027846027847,
+    "measured_wrong_commit_cp95": [
+     0.0194,
+     0.0387
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 419,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 13.014912280701754,
+    "unguarded_wpm": 3.1558697668860605,
+    "wpm_no_penalty": 3.4988522136586004,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 3.0648040785973287,
+    "ci": [
+     1.7561174381383635,
+     4.649691755975386
+    ],
+    "status": "certified",
+    "n_commits": 135,
+    "n_wrong_commits": 34,
+    "measured_wrong_commit": 0.027846027846027847,
+    "measured_wrong_commit_cp95": [
+     0.0194,
+     0.0387
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 419,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 13.014912280701754,
+    "unguarded_wpm": 3.0648040785973287,
+    "wpm_no_penalty": 3.4988522136586004,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 3.945,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 3.1558697668860605,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "always_commit": {
+    "unguarded_wpm": 3.716864787649442,
+    "n_right": 396
+   },
+   "n_eval": 1221,
+   "n_commits": 135,
+   "n_wrong_commits": 34,
+   "wrong_commit_rate": 0.027846027846027847,
+   "wrong_commit_cp95": [
+    0.0194,
+    0.0387
+   ],
+   "commit_rate": 0.11056511056511056,
+   "error_among_commits": 0.2518518518518518,
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 135,
+    "offer": 950,
+    "withhold": 136
+   },
+   "decide_s": {
+    "p50": 0.02863,
+    "p95": 0.06309
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "pass"
+   },
+   "gate_cost": {
+    "real_eval_gated": 0.022113022113022112
+   }
+  }
+ },
+ "digests_match_p1109": true,
+ "verdicts": {
+  "H1": {
+   "F_mean_lt_G": true,
+   "users_F_lt_G": 8,
+   "pass": true
+  },
+  "H2_F_le_11.28": true,
+  "H3_FL_lt_F": false,
+  "H4_F_int_lt_G": true,
+  "C0_G_within_0.1_as_written": false,
+  "C0_G_within_0.1_p1101_16_sessions": true,
+  "C1_ge_0.90": true,
+  "H5_chosen_FL": false,
+  "H5_chosen_F": false
+ }
+}

@@ -769,6 +769,31 @@ def stage_modellat_np() -> dict:
 # --- stage score -------------------------------------------------------------------------------------
 
 
+def c0_p1101_set() -> dict:
+    """C0 on the P11-01 test set (both last sessions of each user, 16 sessions): greedy CER as P11-01 reports it.
+
+    Results note: the plan's C0 compared G on the 8 track-test sessions with the P11-01 value, but P11-01 scored
+    16 sessions (track val + track test). Greedy only; no tuned decoder runs on these sessions here.
+    """
+    f = own("c0-p1101-set.json")
+    if f.exists():
+        return load_json(f)  # type: ignore[return-value]
+    per: dict[int, list[int]] = {}
+    for s in p1111().p1109().sessions():
+        x = np.asarray(lp_arr(f"u{s['i']}-s{s['j']}-real.npy"))
+        am = x.argmax(1)
+        keep = np.concatenate([[True], am[1:] != am[:-1]])
+        ref = lab(s["session"])["key_tok"].astype(np.int64)
+        a = per.setdefault(s["i"], [0, 0])
+        a[0] += levenshtein(ref, am[keep & (am != 0)])
+        a[1] += len(ref)
+    cer = [e / n for e, n in per.values()]
+    out = {"sessions": 16, "ref": int(sum(n for _, n in per.values())), "mean_pct": 100 * float(np.mean(cer)),
+           "pooled_pct": 100 * sum(e for e, _ in per.values()) / sum(n for _, n in per.values())}
+    save_json(out, f)
+    return out
+
+
 def stage_score(tune: dict, beam: dict, cal: list[dict], ev: list[dict]) -> dict:
     from fidetype.benchmark.registry import keycodes_to_intended_text
 
@@ -826,9 +851,11 @@ def stage_score(tune: dict, beam: dict, cal: list[dict], ev: list[dict]) -> dict
          "H3_FL_lt_F": sc["FL"]["mean_pct"] < sc["F"]["mean_pct"],
          "H4_F_int_lt_G": res["prompt_pieces"]["F"]["intended_cer_pooled"] < res["prompt_pieces"]["G"][
              "intended_cer_pooled"],
-         "C0_G_within_0.1": abs(sc["G"]["mean_pct"] - 15.09) <= 0.1,
+         "C0_G_within_0.1_as_written": abs(sc["G"]["mean_pct"] - 15.09) <= 0.1,
+         "C0_G_within_0.1_p1101_16_sessions": abs(c0_p1101_set()["mean_pct"] - 15.09) <= 0.1,
          "C1_ge_0.90": res["C1_time_shuffled_key_cer_pooled"] >= 0.90}
     v["H1"]["pass"] = v["H1"]["F_mean_lt_G"] and v["H1"]["users_F_lt_G"] >= 7
+    res["C0_p1101_set"] = c0_p1101_set()
     res["users_FL_lt_F"] = int(sum(a < b for a, b in zip(FL, F)))
     # latency
     if own("latency.json").exists():
