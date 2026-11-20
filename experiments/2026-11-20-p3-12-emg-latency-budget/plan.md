@@ -71,5 +71,5 @@ Not in scope: the GPU path (P15-33 holds the GPU; P11-07 GPU chunk p95 4.2 ms st
 - Tests: `.venv\Scripts\python.exe -m pytest -q tests/test_p3_12_streaming_latency.py`
 - Full run (detached): `.venv\Scripts\python.exe experiments/2026-11-20-p3-12-emg-latency-budget/launch.py`; done when `C:\Users\zhang\bci-data\derived\p3-12\DONE` exists; stop: create `C:\Users\zhang\bci-data\derived\p3-12\STOP` (the stages stop between windows).
 
-## Amendment 1 (2026-11-20 05:25, before any timed measurement)
+## Amendment 1 (2026-11-20 05:20, before any timed measurement)
 At the first launch (05:19) the P15-34 agent ran two 4-thread background CPU jobs (machine load 82 %). The run was stopped after about one minute of the `check` stage (no timing had started). The driver now waits before each timing stage until no other registered CPU job (registered in the last 6 h) runs and the machine load over 20 s is below 25 %. It waits up to 3 h; then it writes `WAITING-NOT-QUIET` and stops before the timing stage. No metric, rule or candidate changes.
