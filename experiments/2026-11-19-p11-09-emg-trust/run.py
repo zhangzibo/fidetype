@@ -720,12 +720,15 @@ def stage_cards() -> list[str]:
         name = f"{TRACK}__p11-01-crt-subset8__{kind}"
         card = load_json(own("cards", f"{name}.json"))
         r = card["rerun"]
-        r["decoder"].pop("weights_sha256", None)
-        r["decoder"]["weights_sha256"] = None
-        r["decoder"]["weights_sha256_reason"] = (
-            "8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/"
-            "best.pt; research only, never shared); each SHA-256 is in the decoder.weights_sha256 of that user's "
-            "P11-01 NTS streams and is checked by the build step (run.py infer)")
+        # P13-11 convention for several files: weights_files (names under <runs>/) and weights_sha256 = SHA-256 of
+        # the sorted "sha256  name" manifest. One personal model per test user (research only, never shared).
+        files = sorted(({"name": f"<runs>/p11-01-emg-decoder/train/personal-u{i}/best.pt", "sha256": user_weights_sha(i)}
+                        for i in range(8)), key=lambda f: f["name"])
+        manifest_lines = "".join(f"{f['sha256']}  {f['name']}\n" for f in files)
+        r["decoder"].pop("weights_sha256_reason", None)
+        r["decoder"]["weights_files"] = files
+        r["decoder"]["weights_sha256"] = hashlib.sha256(manifest_lines.encode("utf-8")).hexdigest()
+        r["code_ref"] = "git e05b509 (commit that added this card, P11-09)"
         if kind == "guard":
             r["policy"].pop("config_id_reason", None)
             r["policy"]["config_id"] = st["config_id"]

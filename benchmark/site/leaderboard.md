@@ -392,7 +392,7 @@ No-BCI reference (gaze typing only, 20 chars/min): **2.93 eWPM**.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 
-- **fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] / drop-in guard (built-in CTC beam, no LM, key-code space)** (`emg2qwerty__p11-01-crt-subset8__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights: 8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/best.pt; policy config tcfg-4af5a234c1cf7826
+- **fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] / drop-in guard (built-in CTC beam, no LM, key-code space)** (`emg2qwerty__p11-01-crt-subset8__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights sha256 b87216922a6a; policy config tcfg-4af5a234c1cf7826; code git e05b509
 
   ```
   [truth] python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl
@@ -400,7 +400,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score emg2qwerty <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-01-crt-subset8__guard.json
   ```
 
-- **fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] / always commit top-1** (`emg2qwerty__p11-01-crt-subset8__always-commit.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights: 8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/best.pt; policy config: always commit the decoder top-1
+- **fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] / always commit top-1** (`emg2qwerty__p11-01-crt-subset8__always-commit.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights sha256 b87216922a6a; policy config: always commit the decoder top-1; code git e05b509
 
   ```
   [truth] python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl

@@ -256,11 +256,44 @@
    "name": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer",
    "version": "1",
    "url": "experiments/2026-11-16-p11-01-emg-decoder/",
+   "weights_sha256": "b87216922a6ac1c17900e434de56a30ee2d6d3785e12b10c7d5d8a9f59c5d89d",
    "training_data": [
     "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)"
    ],
-   "weights_sha256_reason": "8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/best.pt; research only, never shared); each SHA-256 is in the decoder.weights_sha256 of that user's P11-01 NTS streams and is checked by the build step (run.py infer)",
-   "weights_sha256": null
+   "weights_files": [
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u0/best.pt",
+     "sha256": "f89b46fe74313b776ef3b121856878a97d4123f87cd0c9860b12a31987972381"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u1/best.pt",
+     "sha256": "973c5bb0ba378e97ff3926a80b79c9f4ceedba2f0300c82cb660c4c80502d66f"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u2/best.pt",
+     "sha256": "27e4fe0721932c2f7b60510a59d9ed97f639192dc7cfb08759911832ab2bf42b"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u3/best.pt",
+     "sha256": "8fb22111f4c0413f717640655d58fe70206ea83f30617ca4ed9f015033f3f1e1"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u4/best.pt",
+     "sha256": "08f796679bf7ab43e3ca5c51c5881d92117a0adcadb1a2d42a49de8ce7a64d44"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u5/best.pt",
+     "sha256": "49336251a726ec2546e9067aa637d6e2e84bcd68af7ee505935099e69430f6ea"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u6/best.pt",
+     "sha256": "ca6410a84d98dfcd3e0309407615dda21c34bc813c4116686d8307c79d59787a"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u7/best.pt",
+     "sha256": "4ef7026fb8e6d7e3cf13834f1404b271b867de64dd65c04fa22463e91749d6d7"
+    }
+   ]
   },
   "policy": {
    "name": "drop-in guard (built-in CTC beam, no LM, key-code space)",
@@ -287,6 +320,7 @@
    "build": "the build step needs the P11-01 feature cache and personal weights (local, research only); see experiments/2026-11-19-p11-09-emg-trust/results.md",
    "derived": "<derived> = the local folder for per-unit files (never in git)"
   },
+  "code_ref": "git e05b509 (commit that added this card, P11-09)",
   "steps": [
    {
     "step": "truth",
