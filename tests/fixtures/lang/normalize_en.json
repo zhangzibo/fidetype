@@ -1,0 +1,166 @@
+{
+ "source": "fidetype commit dd4a367, recomputed by P14-34",
+ "cases": [
+  {
+   "text": "Hello, World!",
+   "char28_space": "hello world",
+   "char28_drop": "hello world",
+   "words_b2t25": "hello world",
+   "words_llm": "hello world"
+  },
+  {
+   "text": "  It's   a\ttest.\n",
+   "char28_space": "it s a test",
+   "char28_drop": "its a test",
+   "words_b2t25": "it's a test",
+   "words_llm": "it's a test"
+  },
+  {
+   "text": "café naïve résumé",
+   "char28_space": "cafe naive resume",
+   "char28_drop": "cafe naive resume",
+   "words_b2t25": "caf na ve r sum",
+   "words_llm": "caf na ve r sum"
+  },
+  {
+   "text": "¿Qué año es? ¡Sí, señor!",
+   "char28_space": "que ano es si senor",
+   "char28_drop": "que ano es si senor",
+   "words_b2t25": "qu a o es s se or",
+   "words_llm": "qu a o es s se or"
+  },
+  {
+   "text": "Pingüino ÑANDÚ",
+   "char28_space": "pinguino nandu",
+   "char28_drop": "pinguino nandu",
+   "words_b2t25": "ping ino and",
+   "words_llm": "ping ino and"
+  },
+  {
+   "text": "Straße ﬁnance",
+   "char28_space": "stra e finance",
+   "char28_drop": "strae finance",
+   "words_b2t25": "stra e nance",
+   "words_llm": "stra e nance"
+  },
+  {
+   "text": "ÆØÅ æøå œ",
+   "char28_space": "a a",
+   "char28_drop": "a a",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "x² ½ ①",
+   "char28_space": "x",
+   "char28_drop": "x",
+   "words_b2t25": "x",
+   "words_llm": "x"
+  },
+  {
+   "text": "中文 测试",
+   "char28_space": "",
+   "char28_drop": "",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "مرحبا بالعالم",
+   "char28_space": "",
+   "char28_drop": "",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "नमस्ते दुनिया",
+   "char28_space": "",
+   "char28_drop": "",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "émoji 🙂 here",
+   "char28_space": "emoji here",
+   "char28_drop": "emoji here",
+   "words_b2t25": "moji here",
+   "words_llm": "moji here"
+  },
+  {
+   "text": "tab\tand nbsp em-space",
+   "char28_space": "tab and nbsp em space",
+   "char28_drop": "tab and nbsp emspace",
+   "words_b2t25": "tab and nbsp em space",
+   "words_llm": "tab and nbsp em space"
+  },
+  {
+   "text": "",
+   "char28_space": "",
+   "char28_drop": "",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "   ",
+   "char28_space": "",
+   "char28_drop": "",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "MiXeD-CaSe_with_underscores",
+   "char28_space": "mixed case with underscores",
+   "char28_drop": "mixedcasewithunderscores",
+   "words_b2t25": "mixed case with underscores",
+   "words_llm": "mixed case with underscores"
+  },
+  {
+   "text": "don't can't won't",
+   "char28_space": "don t can t won t",
+   "char28_drop": "dont cant wont",
+   "words_b2t25": "don't can't won't",
+   "words_llm": "don't can't won't"
+  },
+  {
+   "text": "İstanbul ıi",
+   "char28_space": "istanbul i",
+   "char28_drop": "istanbul i",
+   "words_b2t25": "i stanbul i",
+   "words_llm": "i stanbul i"
+  },
+  {
+   "text": "Ελληνικά",
+   "char28_space": "",
+   "char28_drop": "",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "Ковальски",
+   "char28_space": "",
+   "char28_drop": "",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "áb̃c",
+   "char28_space": "abc",
+   "char28_drop": "abc",
+   "words_b2t25": "a b c",
+   "words_llm": "a b c"
+  },
+  {
+   "text": "123 456",
+   "char28_space": "",
+   "char28_drop": "",
+   "words_b2t25": "",
+   "words_llm": ""
+  },
+  {
+   "text": "é vs é",
+   "char28_space": "e vs e",
+   "char28_drop": "e vs e",
+   "words_b2t25": "e vs",
+   "words_llm": "e vs"
+  }
+ ]
+}

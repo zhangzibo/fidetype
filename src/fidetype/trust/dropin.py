@@ -596,12 +596,15 @@ class TrustGuard:
 
     def __init__(self, config: FrozenTrustConfig, codec: _Codec, sheet: GuaranteeSheet | None = None,
                  decode_fn: UserDecodeFn | None = None, audit_text: bool = True, *,
-                 halluc_gate: Any = None, grounding: Any = None) -> None:
+                 halluc_gate: Any = None, grounding: Any = None, language: str = "en") -> None:
+        from fidetype.lang import check_tag
         from fidetype.trust.streaming import StreamingConfig, StreamingTrustLayer
 
         if not config.commit_gate:
             raise ValueError("a drop-in guard needs a configuration with the commit gate on")
         self.config = config
+        #: BCP 47 tag of the calibration text (P14-34). Saved in the guard file only if it is not ``"en"``.
+        self.language = check_tag(language, "language")
         self._codec = codec
         self.sheet = sheet
         self._user_decode = decode_fn
@@ -942,6 +945,8 @@ class TrustGuard:
         if self.halluc_gate is not None:
             d["halluc_gate"] = self.halluc_gate.to_dict()
             d["grounding"] = getattr(self.grounding, "name", "?")
+        if self.language != "en":
+            d["language"] = self.language
         return d
 
     def save(self, path: str | PathLike[str]) -> Path:
@@ -1059,7 +1064,7 @@ def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
                              "(the same CommitGrounding), or the hallucination bound does not apply")
         grounding = _as_commit_grounding(grounding)
     return TrustGuard(FrozenTrustConfig.from_dict(d["config"]), codec, sheet, decode_fn, audit_text,
-                      halluc_gate=gate, grounding=grounding)
+                      halluc_gate=gate, grounding=grounding, language=d.get("language", "en"))
 
 
 def _as_commit_grounding(g: Any) -> Any:
@@ -1142,6 +1147,7 @@ def calibrate(
     confidence: str = "p_top1",
     confidence_l2: float = 1.0,
     commit_unit: str = "sentence",
+    language: str = "en",
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -1302,6 +1308,12 @@ def calibrate(
         committed words (``n_words_committed``) and ``complete``. The null
         controls count every prefix commit. Score prefix guards with
         ``safe-wpm/0.2`` (proposed), not v0.1.
+    language
+        BCP 47 tag of the true texts (P14-34, :mod:`fidetype.lang`). It
+        must resolve in the language registry. The guard keeps it
+        (:attr:`TrustGuard.language`) and its file stores it if it is not
+        ``"en"``. It changes no decision. ``commit_unit="prefix"`` needs a
+        language with words separated by spaces.
 
     Raises
     ------
@@ -1315,6 +1327,12 @@ def calibrate(
     from fidetype.eval.harness import Item, TrustPipeline
     from fidetype.trust.session_risk import min_ltt_items
 
+    from fidetype.lang import check_tag, get as _get_language
+
+    language = check_tag(language, "language")
+    if commit_unit == "prefix" and not _get_language(language).wpm_defined:
+        raise ValueError(f"commit_unit='prefix' needs word boundaries; language {language!r} has none "
+                         "(docs/language-support.md, follow-up P14-39)")
     inputs = list(inputs)
     texts = [_norm_text(t) for t in texts]
     if len(inputs) != len(texts):
@@ -1562,6 +1580,7 @@ def calibrate(
         guard = _precision_bound(guard, sheet, inputs, texts, order, n_fit, n_pol, kind, decode_fn, audit_text,
                                  float(target_precision), p_delta, precision_grid, rng_controls, null_trials, rate,
                                  null_inputs)
+    guard.language = language
     return guard
 
 

@@ -558,7 +558,7 @@ def from_trial_scores(scores: Sequence[Any], *, guarantee: Mapping[str, Any] | N
                     controls=controls, gaze_chars_per_min=gaze_chars_per_min, B=B, seed=seed)
 
 
-def load_trials_jsonl(path: str) -> dict[str, list]:
+def load_trials_jsonl(path: str, language: str | None = None) -> dict[str, list]:
     """Read a per-trial JSON Lines file for the CLI.
 
     One object per trial: ``committed`` (bool), ``correct`` (bool), and
@@ -571,8 +571,19 @@ def load_trials_jsonl(path: str) -> dict[str, list]:
     ``correct_v02``; ``correct`` then means the exact sentence, as in v0.1)
     or ``committed_words`` + ``penalty_chars``; ``speech_s``; ``n_commits`` (P5-27: the number of
     append-only commits of the trial; default 1 if committed).
+
+    ``language`` (P14-34, optional BCP 47 tag): count the words of ``truth``
+    with :mod:`fidetype.lang`. A language without word boundaries (``zh``)
+    raises :class:`fidetype.lang.WordsNotDefinedError`: safe WPM is not
+    defined for it. ``None`` (default) keeps the v0.1 rule (``str.split``).
     """
     import json
+
+    count_words: Any = lambda t: len(t.split())  # noqa: E731 (the v0.1 rule)
+    if language is not None:
+        from fidetype.lang import get as get_language
+
+        count_words = get_language(language).count_words
 
     cols: dict[str, list] = {k: [] for k in ("committed", "correct", "n_words", "n_chars", "neural_s", "cluster",
                                              "correct_v02", "committed_words", "complete", "penalty_chars",
@@ -584,7 +595,7 @@ def load_trials_jsonl(path: str) -> dict[str, list]:
             d = json.loads(line)
             if "truth" in d:
                 t = " ".join(str(d["truth"]).split())
-                nw, nc = len(t.split()), len(t)
+                nw, nc = count_words(t), len(t)
             else:
                 nw, nc = d["n_words"], d["n_chars"]
             cols["committed"].append(bool(d["committed"]))

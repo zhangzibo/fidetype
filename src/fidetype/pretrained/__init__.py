@@ -387,7 +387,7 @@ class GruCtcDecoder(PretrainedDecoder):
         extra = {**self._decoder_extra(), "device.invasive": True, "implant.bin_s": bin_s,
                  "fidetype.timing": f"frame k = end of input patch: ({a['stride']} k + {a['patch']}) x {bin_s} s"}
         dec = DecoderInfo(modality="intracortical", name=f"fidetype-{self.name}", version=self.manifest.version,
-                          causal=True, language="en", weights_sha256=self.weights_sha256, extra=extra)
+                          causal=True, language=self.manifest.language, weights_sha256=self.weights_sha256, extra=extra)
         return from_array(logits, v, dec, frame_period=float(o["frame_period_s"]), t0=int(a["patch"]) * bin_s,
                           latency=float(o.get("latency_s", 0.0)), input_kind="logits", source=f"fidetype-{self.name}",
                           id_parts=(id_part,))
@@ -474,7 +474,7 @@ class CrtCtcDecoder(PretrainedDecoder):
         extra = {**self._decoder_extra(), "device.invasive": False, "emg.placement": "wrist",
                  "fidetype.timing": "frame k = end of the 32 ms window: (20 k + 64) / 2000 s"}
         dec = DecoderInfo(modality="emg", name=f"fidetype-{self.name}", version=self.manifest.version, causal=True,
-                          language="en", weights_sha256=self.weights_sha256, extra=extra)
+                          language=self.manifest.language, weights_sha256=self.weights_sha256, extra=extra)
         return from_array(lp, v, dec, frame_period=float(self.manifest.output["frame_period_s"]), t0=t0, latency=0.0,
                           input_kind="log_probs", source=f"fidetype-{self.name}", id_parts=(id_part,))
 

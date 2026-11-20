@@ -1,0 +1,40 @@
+{"truth": "much call much cold thank over the dog family", "committed": false, "correct": false, "neural_s": 8.324, "cluster": "s0"}
+{"truth": "dog thank", "committed": true, "correct": true, "neural_s": 11.694, "cluster": "s1"}
+{"truth": "thank now", "committed": true, "correct": true, "neural_s": 9.736, "cluster": "s2"}
+{"truth": "  a\tthe lazy lazy now ", "committed": true, "correct": false, "neural_s": 6.793, "cluster": "s3"}
+{"truth": "much a", "committed": true, "correct": true, "neural_s": 5.54, "cluster": "s4"}
+{"truth": "quick help me thank lazy call", "committed": true, "correct": true, "neural_s": 10.326, "cluster": "s0"}
+{"truth": "water the quick brown me", "committed": true, "correct": true, "neural_s": 3.626, "cluster": "s1"}
+{"truth": "quick family lazy thank jumps very", "committed": false, "correct": false, "neural_s": 8.77, "cluster": "s2"}
+{"truth": "lazy help now jumps now the want quick", "committed": false, "correct": false, "neural_s": 4.533, "cluster": "s3"}
+{"truth": "fox i thank a call thank help very call", "committed": false, "correct": false, "neural_s": 7.926, "cluster": "s4"}
+{"truth": "  now\tcold much much much now i family thank ", "committed": true, "correct": true, "neural_s": 13.523, "cluster": "s0"}
+{"truth": "cold lazy please want family", "committed": false, "correct": false, "neural_s": 14.177, "cluster": "s1"}
+{"truth": "a a now i i i thank", "committed": false, "correct": false, "neural_s": 12.558, "cluster": "s2"}
+{"truth": "jumps my", "committed": true, "correct": false, "neural_s": 4.122, "cluster": "s3"}
+{"truth": "call the fox call now want please the", "committed": true, "correct": true, "neural_s": 3.814, "cluster": "s4"}
+{"truth": "my very jumps please please call thank want brown", "committed": true, "correct": false, "neural_s": 4.252, "cluster": "s0"}
+{"truth": "brown it's want it's", "committed": false, "correct": false, "neural_s": 10.936, "cluster": "s1"}
+{"truth": "  please\tyou call the much very the now thank ", "committed": false, "correct": false, "neural_s": 5.843, "cluster": "s2"}
+{"truth": "help you", "committed": true, "correct": true, "neural_s": 8.823, "cluster": "s3"}
+{"truth": "a family it's very a you", "committed": true, "correct": true, "neural_s": 3.483, "cluster": "s4"}
+{"truth": "cold want please help now fox lazy", "committed": true, "correct": true, "neural_s": 12.368, "cluster": "s0"}
+{"truth": "me a lazy dog jumps", "committed": true, "correct": true, "neural_s": 12.337, "cluster": "s1"}
+{"truth": "it's very you lazy now", "committed": false, "correct": false, "neural_s": 8.919, "cluster": "s2"}
+{"truth": "want i please fox my", "committed": true, "correct": true, "neural_s": 12.839, "cluster": "s3"}
+{"truth": "  me\tme fox jumps family ", "committed": true, "correct": false, "neural_s": 5.382, "cluster": "s4"}
+{"truth": "i dog the", "committed": true, "correct": false, "neural_s": 8.761, "cluster": "s0"}
+{"truth": "cold a i it's", "committed": false, "correct": false, "neural_s": 13.257, "cluster": "s1"}
+{"truth": "now call very a my me i water", "committed": true, "correct": true, "neural_s": 10.27, "cluster": "s2"}
+{"truth": "want me please water now the you call thank", "committed": false, "correct": false, "neural_s": 11.965, "cluster": "s3"}
+{"truth": "family family fox call now dog fox", "committed": true, "correct": true, "neural_s": 5.532, "cluster": "s4"}
+{"truth": "fox jumps thank help", "committed": true, "correct": false, "neural_s": 4.29, "cluster": "s0"}
+{"truth": "  thank\tcall it's me family water it's ", "committed": false, "correct": false, "neural_s": 11.86, "cluster": "s1"}
+{"truth": "it's water thank much it's", "committed": false, "correct": false, "neural_s": 11.1, "cluster": "s2"}
+{"truth": "you please thank jumps thank the over quick please", "committed": true, "correct": true, "neural_s": 7.353, "cluster": "s3"}
+{"truth": "call help lazy my", "committed": true, "correct": true, "neural_s": 7.742, "cluster": "s4"}
+{"truth": "my cold me want", "committed": true, "correct": true, "neural_s": 14.698, "cluster": "s0"}
+{"truth": "a call me call over family", "committed": true, "correct": true, "neural_s": 8.711, "cluster": "s1"}
+{"truth": "water very", "committed": false, "correct": false, "neural_s": 14.066, "cluster": "s2"}
+{"truth": "  fox\ti fox want i over ", "committed": true, "correct": true, "neural_s": 6.254, "cluster": "s3"}
+{"truth": "over now a cold brown please quick i now", "committed": true, "correct": true, "neural_s": 6.387, "cluster": "s4"}

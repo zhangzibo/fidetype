@@ -43,7 +43,7 @@ All Fidetype results so far are English: T15, T12, Willett handwriting, emg2qwer
 
 | # | Where | Assumes | Impact (es / zh / ar / hi) | Config key | Risk | State |
 |---|---|---|---|---|---|---|
-| B1 | `src/fidetype/benchmark/safe_wpm.py:16`, `:162`, `:586-587` (`words(y)`, `prefix_outcome`, `load_trials_jsonl`) | A word is a run of characters between spaces | es / hi: ok. ar: a clitic-joined word holds more meaning, so WPM is not comparable with English. zh: `len(text.split())` gives about 1 word per sentence, a silent wrong number | `Language.word_segmentation` (`spaces` / `none`), `Language.words()` | High (adopted safe-WPM v0.1; P15-29 edits this file now) | proposal (P14-38); the hook is ready (`fidetype.lang.wpm_counts`, section 4.3) |
+| B1 | `src/fidetype/benchmark/safe_wpm.py:16`, `:162`, `:586-587` (`words(y)`, `prefix_outcome`, `load_trials_jsonl`) | A word is a run of characters between spaces | es / hi: ok. ar: a clitic-joined word holds more meaning, so WPM is not comparable with English. zh: `len(text.split())` gives about 1 word per sentence, a silent wrong number | `Language.word_segmentation` (`spaces` / `none`), `Language.words()` | High (adopted safe-WPM v0.1; P15-29 edits this file now) | partly done: `load_trials_jsonl(path, language=...)` counts words with the language and raises for `zh` (default `None` = the v0.1 rule, unchanged); `prefix_outcome` and the score card: P14-38 |
 | B2 | `src/fidetype/benchmark/safe_wpm.py:119-120` (`DEFAULT_S_PER_CHAR = 2 * 60 / 152`, `GAZE_CHARS_PER_MIN = 20`) | The correction time and the no-BCI gaze rate (`aac-gaze-v1`) in characters per minute | 152 chars/min is the Brain2Qwerty v1 typing rate (Spanish participants). 20 chars/min is one English ALS gaze user ([Cai24]). A character is not the same unit of work in zh (one Han character = several pinyin keys + a choice) or hi (one grapheme = several code points) | `Language.correction_chars_per_min`, `Language.gaze_chars_per_min`, `Language.rates_source` | High (adopted v0.1 constants) | proposal (P14-38); `en` and `es` carry the current values as data |
 | B3 | `src/fidetype/interact/simulated_user.py:21`, `:165`, `:268`, `:279-283`, `:294` | Same rates; reading time per word by `split()` | Same as B1, B2 | Same as B1, B2 | Medium (eWPM simulator) | proposal (P14-38) |
 | B4 | `src/fidetype/benchmark/registry.py:59`, `:177-190`; `src/fidetype/benchmark/scorecard.py:125`, `:141`; `src/fidetype/benchmark/scoring.py:138`, `:161` | `aac-gaze-v1 @ 152 chars/min`; WER by `split()`; gaze time `nchar * 60 / gaze_cpm` | Same as B1, B2 | Same as B1, B2 | High (benchmark scorer; P11-13 edits it) | proposal (P14-38) |
@@ -105,8 +105,9 @@ The `en` entry does not copy the English rules. It calls the existing objects (`
 
 - the 28-symbol charset and `vocab is VOCAB`;
 - `normalize_text` on a committed list of hard strings (`tests/fixtures/lang/normalize_en.json`);
-- safe WPM v0.1 on a committed fixture of 40 trials (`tests/fixtures/lang/safe_wpm_en.json`): `point`, `ci95`, `no_bci_wpm` and the word and character counts are equal (`==`, not approximately) to the values that commit `dd4a367` gives;
-- the guard file of an English guard has no `language` key, and the packaged manifests load with `language == "en"`.
+- safe WPM v0.1 on a committed fixture of 40 trials (`tests/fixtures/lang/safe_wpm_en.jsonl`, expected values in `safe_wpm_en.expected.json`): `value`, `ci`, `status`, `no_bci_wpm`, the minutes and the word and character counts are equal (`==`, not approximately) to the values that commit `dd4a367` gives, through both `load_trials_jsonl` and `fidetype.lang.wpm_counts`;
+- the guard file of an English guard has no `language` key, and the packaged manifests load with `language == "en"`;
+- the Spanish config runs end to end on synthetic CTC input: `es` normalisation and vocabulary, calibration with `language="es"`, commits with `ñ` / accents, safe WPM through `wpm_counts`, save and load of the guard file with `"language": "es"`.
 
 ### 4.3 Words per minute without spaces
 
@@ -124,12 +125,13 @@ The reason: a Mandarin sentence has no spaces between words. Splitting at spaces
 | `fidetype.pretrained` manifest | optional `language` key (BCP 47, must resolve in the registry); `Manifest.language` (default `en`); both runtimes write it into the stream meta | none: no packaged manifest changed, and `en` is the old hand-written value |
 | `fidetype.trust` guard | `calibrate(..., language="en")`, `TrustGuard.language`, `load()` reads it; the file has the key only when it is not `en` | none: English guard files are byte-identical |
 | safe-WPM inputs | `fidetype.lang.wpm_counts` computes `n_words`, `n_chars` before `safe_wpm()` | none: same `split()` and `len()` as `load_trials_jsonl` |
+| `safe_wpm.load_trials_jsonl` | optional `language=` (added after P15-29 committed the file); a `zh` tag raises `WordsNotDefinedError` | none: the default `None` keeps `len(t.split())` |
 
 ## 5. Proposals for files that other work owns now
 
 These files were in active edits by other items during P14-34 (P15-29: `safe_wpm.py`, `docs/safe-wpm.md`, `tests/test_safe_wpm.py`; P11-13: the benchmark scorer and track docs). P14-34 did not change them. Follow-up P14-38 does the changes below after those items commit.
 
-1. **`safe_wpm.py`**: `load_trials_jsonl(path, language="en")` and `prefix_outcome(..., language="en")` call `fidetype.lang.get(language).words()` in place of `str.split()`. `safe_wpm(..., language=None)`: if given and the language has no word segmentation, return a refusal (`status = "not-defined"`, with the reason) in place of a number. The defaults of `DEFAULT_S_PER_CHAR` and `GAZE_CHARS_PER_MIN` stay; the score card reports `language` and `rates_source`. English output stays bit-identical (pin with `tests/fixtures/lang/safe_wpm_en.json`).
+1. **`safe_wpm.py`** (the `load_trials_jsonl` part is done): `prefix_outcome(..., language="en")` and the CLI `--language` call `fidetype.lang.get(language).words()` in place of `str.split()`. `safe_wpm(..., language=None)`: if given and the language has no word segmentation, return a refusal (`status = "not-defined"`, with the reason) in place of a number. The defaults of `DEFAULT_S_PER_CHAR` and `GAZE_CHARS_PER_MIN` stay; the score card reports `language` and `rates_source`. English output stays bit-identical (pin with `tests/fixtures/lang/safe_wpm_en.jsonl`).
 2. **`docs/safe-wpm.md`**: one paragraph: "`words(y)` is defined only for languages that separate words with spaces (`word_segmentation = spaces`). For other languages safe WPM is not defined (P14-39)."
 3. **Benchmark registry and scorer** (`registry.py`, `scoring.py`, `scorecard.py`): a track normaliser `lang:<tag>` that calls `Language.normalize`; WER and `n_w` through `Language.words()`; the user model takes its rates from the language. The existing tracks keep `char28` / `words` / `keycodes`.
 4. **Hallucination protocol**: fluency normalised per word only for `word_segmentation = spaces`; per character otherwise (`Language.fluency_unit`).

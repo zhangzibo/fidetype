@@ -26,6 +26,7 @@ The sections follow the plan for the future documentation site ([docs site plan]
 | Benchmark submission | [benchmark-submission.md](benchmark-submission.md) | Submission format v0.2 (unit rows keyed by split hashes, required shuffled and null controls) and the one-command scorer with the full score card |
 | Safe WPM | [safe-wpm.md](safe-wpm.md) | The headline metric: words per minute that the system types right by itself, at a certified wrong-commit rate |
 | Hallucination benchmark | [hallucination-benchmark.md](hallucination-benchmark.md) | Null, scrambled and swapped-signal tracks and the fluent-wrong metric: does your decoder invent text? |
+| Language support | [language-support.md](language-support.md) | Which parts assume English (audit with file and line), the per-language config `fidetype.lang` (`en` default, `es` provisional, `zh` stub: WPM not defined) |
 | Specification | [../spec/README.md](../spec/README.md) | All spec versions; the current draft is [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) |
 | Proposals (FEPs) | [../spec/README.md#proposals-feps](../spec/README.md#proposals-feps) | Enhancement proposals and how to write one |
 | Releasing | [RELEASING.md](RELEASING.md) | Versioning policy and the release checklist of each SDK (maintainers) |

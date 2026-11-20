@@ -91,6 +91,11 @@ class Manifest:
         return bool(self.licence[META_RESEARCH_ONLY])
 
     @property
+    def language(self) -> str:
+        """BCP 47 tag of the decoded text (manifest key ``language``; absent = ``en``, P14-34)."""
+        return str(self.raw.get("language") or "en")
+
+    @property
     def input(self) -> dict[str, Any]:
         return dict(self.raw.get("input") or {})
 
@@ -203,6 +208,13 @@ def parse_manifest(doc: Mapping[str, Any], where: str = "<manifest>") -> Manifes
         files.append(FileEntry(role, fname, sha, int(size), url))
     if status == "available" and not any(f.role == "weights" for f in files):
         raise ManifestError(f"{where}: an available model needs a weights file")
+    if "language" in doc:
+        from fidetype.lang import check_tag
+
+        try:
+            check_tag(doc["language"], f"{where}: language")
+        except ValueError as e:
+            raise ManifestError(str(e)) from None
     lic = _req(doc, "licence", Mapping, where)
     spdx = _req(lic, META_LICENCE, str, f"{where}: licence")
     if normalise(spdx) != spdx:
