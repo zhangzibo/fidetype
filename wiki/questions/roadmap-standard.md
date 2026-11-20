@@ -429,6 +429,21 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P4-01, P4-02 (done).
 - **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" Adapters exist for six dataset replays, LSL, BrainFlow (OpenBCI and other boards) and WebSocket. No adapter is tested on a real device (the user has no EEG or MEG hardware). No page tells a user which devices work. Real-device tests stay P4-06 and M6-12 (`externally_blocked`, hardware); consumer-device adapters stay P4-05 and M6-02 (wristband demo: P14-07). This item adds no new device item.
 - **Done when:** Each adapter declares in metadata its support level (tested on a real device / replay only / synthetic only / untested) and the devices it was tested on. A script generates `docs/device-support.md` from the metadata. CI fails when the page and the metadata differ. The README links the page.
+- **Progress (2026-11-20, P14-42):** the P14-42 registry gives each adapter `status` (tested / experimental / planned) and `hardware_tested` (empty for all) in its `ADAPTER_INFO`; [docs/adapters.md](../../docs/adapters.md) is generated with a CI check. Left for P4-15: the four-level support field (real device / replay only / synthetic only / untested) or a decision that `status` + `hardware_tested` replace it, `docs/device-support.md` (or accept `docs/adapters.md`), and the README link.
+
+#### P4-16 Real-file check of the EDF and OpenBCI GUI readers
+- **Gap:** 134 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-42). Follow-up of P14-42.
+- **Status:** `todo`.
+- **Depends on:** P14-42 (done); public files with a licence that allows the test.
+- **Source:** P14-42: the `edf` and `openbci-gui` readers pass the conformance helper on synthetic files only. The synthetic files follow the format descriptions as we know them. No real EDF / BDF file and no real OpenBCI GUI recording has been read, so both are `experimental`.
+- **Done when:** each reader reads at least one real public file (for example a PhysioNet EDF+ recording and an OpenBCI GUI sample file; licences checked and recorded) outside the repository, the values match a second reader (for example MNE) within the format resolution, and the registry status becomes `tested`. No real file is committed.
+
+#### P4-17 File-reader sources in the `fidetype live` command
+- **Gap:** 135 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-42). Follow-up of P14-42, P14-04.
+- **Status:** `todo`.
+- **Depends on:** P14-42 (done), P14-04 (done).
+- **Source:** P14-42: `edf.open_source()` and `openbci_gui.open_source()` return `fidetype live` signal sources, but `fidetype live --source` accepts only `synthetic`, `brainflow` and `lsl`. A user cannot replay a recording file from the command line.
+- **Done when:** `fidetype live --source file --path <file>` (or one option per reader) picks the reader from the registry, with a test on a synthetic file; the template and CONTRIBUTING 7.1 say how a new reader joins.
 
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
@@ -1428,12 +1443,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-42 Device and dataset adapter catalogue and contributor template
 - **Gap:** 127 of the [open-gap list](open-gaps.md) (added 2026-11-20, user decision). Follow-up of P4-15, P4-01, P4-02.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20).
 - **Serves:** BCI companies, research labs, small teams (contributors).
 - **Depends on:** P4-15 (gap 110: device support matrix from adapter metadata), P4-01, P4-02, P4-05 (consumer-device adapters), P8-05 (docs site).
 - **Source:** User decision (2026-11-20) after a comparison with LangChain history (17,256 commits: about 38 % integrations, 31 % docs, 11 % core; 3,748 contributors). Fidetype has 395 commits and 1 author. The two largest gaps are integrations and docs.
 - **Goal:** A catalogue page and a machine-readable registry list every adapter and reader in the repo. Each entry gives the device or dataset, the signal type, the status (tested, experimental or planned), the licence notes and the test coverage. Planned entries cover the common non-invasive devices and public BCI datasets (from P4-05, P4-15 and P18-01). A cookiecutter-style template and a new CONTRIBUTING.md section make a new adapter a PR of about 50 lines. Each new adapter must pass a standard conformance test on synthetic data (no real recordings).
 - **Done when:** The registry and the catalogue page exist and list all current adapters and readers with the five fields. CI fails when the page and the registry differ. The template and the CONTRIBUTING.md section exist. The template is used to add at least 2 new adapters, and both pass the conformance test in CI.
+- **Result (2026-11-20):** done. Code `8167853`, CI run 44722287677 green. Registry `fidetype.adapters.registry`: built from the `ADAPTER_INFO` dict of each adapter module (all of `fidetype.adapters` plus `fidetype.live.sources`, `fidetype.live.replay`, `fidetype.data.spanishbcbl`) and `fidetype/adapters/planned.py`. Fields: id, kind, target (device / dataset / format), signal, status (tested / experimental / planned), real devices tested (none for all), licence notes, tests, docs. Generated [docs/adapters.md](../../docs/adapters.md) and `docs/adapters.json`: 14 tested, 3 experimental, 16 planned (devices: Muse, Unicorn, Emotiv, Neurosity, Brain Products LSL, OpenBCI real board, EMG wristbands, fNIRS, OPM-MEG; formats / datasets: XDF, BrainVision, BIDS-EEG / MOABB, GDF, inner-speech EEG, ZuCo). `python -m fidetype.adapters.registry --check`; `tests/test_adapter_registry.py` runs it in the normal pytest job, so CI fails on a stale page (no workflow change). Conformance helpers `fidetype.adapters.testing` (`assert_source_conforms` for the `fidetype live` source protocol with NTS 4.1 / 4.2 meta rules; `assert_nts_conforms` wraps the NTS conformance suite; both check `ValueError` on bad input). Template `templates/adapter/` + `python -m fidetype.adapters.registry new <id>`; the scaffolded copy passes its own conformance test (test). [CONTRIBUTING.md 7.1](../../CONTRIBUTING.md#71-add-a-new-adapter-in-about-50-lines). Two new adapters from the template, synthetic files only: `edf` (EDF / EDF+ / BDF, 96 lines, 70 code lines; test 87 / 67) and `openbci-gui` (OpenBCI GUI v5 text, 67 lines, 43 code lines; test 61 / 45). EDF is above the 50-line goal. Both are `experimental` (no real file read yet: gap 134 = [P4-16](#p4-16-real-file-check-of-the-edf-and-openbci-gui-readers)); the `fidetype live` CLI cannot select them yet (gap 135 = [P4-17](#p4-17-file-reader-sources-in-the-fidetype-live-command)). Gap 127 closed.
 
 #### P14-43 10-minute tutorials
 - **Gap:** 128 of the [open-gap list](open-gaps.md) (added 2026-11-20, user decision). Follow-up of P14-01, P14-03, P13-06.

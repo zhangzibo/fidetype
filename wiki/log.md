@@ -1458,3 +1458,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - No paper draft makes the claim (papers/ checked), so no correction note. docs/safe-wpm.md section 6b already states P15-29 correctly.
 - New gaps: 132 = [P15-34](questions/roadmap-standard.md#p15-34-calibration-inclusive-t15-safe-wpm-lower-end-above-gaze-typing) (calibration-inclusive T15 lower end above 4.0153), 133 = [P11-17](questions/roadmap-standard.md#p11-17-calibration-inclusive-safe-wpm-interval-for-the-emg-p11-14-l-fl-guard) (same interval for the EMG L-FL guard). Open gaps, roadmap, tracker, dashboard updated.
 - The user decides at the weekend whether to adopt docs/safe-wpm.md section 6b (calibration-inclusive reporting), together with safe-wpm v0.2.
+
+## [2026-11-20] setup | P14-42: adapter catalogue, conformance helpers, template; new EDF/BDF and OpenBCI GUI readers (gap 127 closed; new gaps 134-135)
+- Registry `fidetype.adapters.registry`: built from the `ADAPTER_INFO` of each adapter module and `planned.py` (no hand-kept copy). Generated [docs/adapters.md](../docs/adapters.md) and `docs/adapters.json`; `--check` runs in pytest, so CI fails on drift. 17 adapters in the repository (14 tested, 3 experimental, none tested on a real device), 16 planned rows.
+- Conformance helpers `fidetype.adapters.testing`: `assert_source_conforms` (the `fidetype live` source protocol; NTS 4.1 / 4.2 meta rules; LSL-binding channel labels and units; times; markers; end; `ValueError` on bad input) and `assert_nts_conforms` (the NTS conformance suite at a level).
+- Template `templates/adapter/` + `python -m fidetype.adapters.registry new <id>`; [CONTRIBUTING.md 7.1](../CONTRIBUTING.md#71-add-a-new-adapter-in-about-50-lines).
+- New adapters from the template (synthetic files only): `edf` (EDF / EDF+ / BDF; 96 lines, 70 code lines) and `openbci-gui` (67 lines, 43 code lines). EDF is above the 50-line goal.
+- Code `8167853`, CI run 44722287677. Updated: roadmap (P14-42 done, P4-15 progress note, P4-16, P4-17), open gaps (127 closed, 134-135 added), tracker, HANDOFF, dashboard.
