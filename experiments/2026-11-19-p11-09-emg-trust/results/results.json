@@ -1,0 +1,489 @@
+{
+ "task": "P11-09",
+ "date": "2026-11-19 17:14",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "note": "aggregates only (no per-user value, no text, no id)",
+ "arms": {
+  "P": {
+   "status": "guard",
+   "n_cal": 1224,
+   "n_eval": 1221,
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "tcfg-4af5a234c1cf7826",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.3,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "only 0 of 459 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds."
+    ],
+    "frame_temperature": null
+   },
+   "n_commits": 0,
+   "n_wrong_commits": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.0006
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": null,
+   "top1_exact": 0.001638001638001638,
+   "actions": {
+    "commit": 0,
+    "offer": 1221,
+    "withhold": 0
+   },
+   "decide_s": {
+    "p50": 0.0584,
+    "p95": 0.12235
+   },
+   "safe_wpm_direct": {
+    "v0.1": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.003
+     ],
+     "no_bci_wpm": 2.931857760799955
+    },
+    "v0.2": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.003
+     ],
+     "no_bci_wpm": 2.931857760799955
+    },
+    "v0.2+read": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.003
+     ],
+     "no_bci_wpm": 2.931857760799955
+    }
+   },
+   "control_shuffled_commits": 0,
+   "control_zeros_commits": 0,
+   "card": {
+    "file": "emg2qwerty__p11-01-crt-subset8__guard.json",
+    "status": "scored",
+    "certification": "vacuous",
+    "cer": {
+     "value": 0.1794281220156171,
+     "ci": [
+      0.1447110239354704,
+      0.21446002821982613
+     ]
+    },
+    "ewpm": {
+     "value": 3.44255701197519,
+     "ci": [
+      3.259192230403075,
+      3.6976458125129956
+     ]
+    },
+    "gaze_ewpm": {
+     "value": 2.9318577607999554,
+     "ci": [
+      2.856581657199271,
+      3.0404407724687017
+     ]
+    },
+    "controls": {
+     "shuffled": {
+      "status": "pass",
+      "cer_control": 0.9953935172181338,
+      "cer_gap": 0.8159653952025168,
+      "cer_gap_ci": [
+       0.7772879827417981,
+       0.8518727989902704
+      ]
+     },
+     "zeros": {
+      "status": "pass",
+      "cer_control": 1.0,
+      "cer_gap": 0.8205718779843829,
+      "cer_gap_ci": [
+       0.7841546306384745,
+       0.8545141538303724
+      ]
+     },
+     "null_commit": {
+      "status": "pass",
+      "commit_rate_zeros": 0.0,
+      "max": 0.05
+     },
+     "passed": true
+    },
+    "safe_wpm": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_trials": 1221,
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.003
+     ],
+     "no_bci_wpm": 2.931857760799955,
+     "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+     "committed_correct_words": 0,
+     "total_words": 5219,
+     "minutes_neural": 119.75355757077536,
+     "minutes_correction": 0.0
+    },
+    "coverage": {
+     "n_scored_units": 15867,
+     "n_covered": 1221,
+     "partial": true,
+     "subset": "declared subset: the track test sessions of the 8 P11-01 test users only. The P11-01 generic model trained on 96 of the other 104 track test sessions, so only these 8 sessions are clean (P11-01 results, benchmark section)."
+    }
+   },
+   "card_always": {
+    "file": "emg2qwerty__p11-01-crt-subset8__always-commit.json",
+    "status": "scored: controls failed",
+    "certification": "not-certified",
+    "cer": {
+     "value": 0.1794281220156171,
+     "ci": [
+      0.1447110239354704,
+      0.21446002821982613
+     ]
+    },
+    "ewpm": {
+     "value": 3.1242720035990565,
+     "ci": [
+      2.910236630288641,
+      3.4111337001009883
+     ]
+    },
+    "gaze_ewpm": {
+     "value": 2.9318577607999554,
+     "ci": [
+      2.856581657199271,
+      3.0404407724687017
+     ]
+    },
+    "controls": {
+     "shuffled": {
+      "status": "pass",
+      "cer_control": 0.9953935172181338,
+      "cer_gap": 0.8159653952025168,
+      "cer_gap_ci": [
+       0.7772879827417981,
+       0.8518727989902704
+      ]
+     },
+     "zeros": {
+      "status": "pass",
+      "cer_control": 1.0,
+      "cer_gap": 0.8205718779843829,
+      "cer_gap_ci": [
+       0.7841546306384745,
+       0.8545141538303724
+      ]
+     },
+     "null_commit": {
+      "status": "fail",
+      "commit_rate_zeros": 1.0,
+      "max": 0.05
+     },
+     "passed": false
+    },
+    "safe_wpm": {
+     "value": null,
+     "ci": null,
+     "status": "not-certified",
+     "n_trials": 1221,
+     "n_commits": 1221,
+     "n_wrong_commits": 1219,
+     "measured_wrong_commit": 0.9983619983619983,
+     "measured_wrong_commit_cp95": [
+      0.9941,
+      0.9998
+     ],
+     "no_bci_wpm": 2.931857760799955,
+     "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+     "committed_correct_words": 8,
+     "total_words": 5219,
+     "minutes_neural": 119.75355757077536,
+     "minutes_correction": 508.6070175438597
+    },
+    "coverage": {
+     "n_scored_units": 15867,
+     "n_covered": 1221,
+     "partial": true,
+     "subset": "declared subset: the track test sessions of the 8 P11-01 test users only. The P11-01 generic model trained on 96 of the other 104 track test sessions, so only these 8 sessions are clean (P11-01 results, benchmark section)."
+    }
+   }
+  },
+  "L": {
+   "status": "guard",
+   "n_cal": 1224,
+   "n_eval": 1221,
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "tcfg-f68bc1dbd7d0ea3a",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.01,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "only 0 of 459 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds."
+    ],
+    "frame_temperature": null
+   },
+   "n_commits": 0,
+   "n_wrong_commits": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.0006
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": null,
+   "top1_exact": 0.001638001638001638,
+   "actions": {
+    "commit": 0,
+    "offer": 1221,
+    "withhold": 0
+   },
+   "decide_s": {
+    "p50": 0.04371,
+    "p95": 0.09318
+   },
+   "safe_wpm_direct": {
+    "v0.1": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.003
+     ],
+     "no_bci_wpm": 2.931857760799955
+    },
+    "v0.2": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.003
+     ],
+     "no_bci_wpm": 2.931857760799955
+    },
+    "v0.2+read": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.003
+     ],
+     "no_bci_wpm": 2.931857760799955
+    }
+   }
+  },
+  "H": {
+   "status": "guard",
+   "n_cal": 1254,
+   "n_eval": 1191,
+   "cal_digest": "134d1f3f7e48e3e8",
+   "eval_digest": "4a0ded73d64ef73a",
+   "config_id": "tcfg-d105b0436ee08ce0",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1254,
+    "n_fit": 314,
+    "n_policy": 470,
+    "n_ltt": 470,
+    "feasible": true,
+    "commit_threshold": 0.3,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "only 0 of 470 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds."
+    ],
+    "frame_temperature": null
+   },
+   "n_commits": 0,
+   "n_wrong_commits": 0,
+   "wrong_commit_rate": 0.0,
+   "wrong_commit_cp95": [
+    0.0,
+    0.0006
+   ],
+   "commit_rate": 0.0,
+   "error_among_commits": null,
+   "top1_exact": 0.0025188916876574307,
+   "actions": {
+    "commit": 0,
+    "offer": 1191,
+    "withhold": 0
+   },
+   "decide_s": {
+    "p50": 0.04461,
+    "p95": 0.091665
+   },
+   "safe_wpm_direct": {
+    "v0.1": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.0031
+     ],
+     "no_bci_wpm": 2.9332250391599466
+    },
+    "v0.2": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.0031
+     ],
+     "no_bci_wpm": 2.9332250391599466
+    },
+    "v0.2+read": {
+     "value": 0.0,
+     "ci": null,
+     "status": "vacuous",
+     "n_commits": 0,
+     "n_wrong_commits": 0,
+     "measured_wrong_commit": 0.0,
+     "measured_wrong_commit_cp95": [
+      0.0,
+      0.0031
+     ],
+     "no_bci_wpm": 2.9332250391599466
+    }
+   }
+  }
+ }
+}

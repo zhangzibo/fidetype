@@ -1,0 +1,20 @@
+2026-11-19 15:01:21 prompts: {'n_rows': 2445, 'n_cal': 1224, 'n_eval': 1221, 'truth_units_8_sessions': 1221, 'mismatch_vs_truth': 0, 'missing_vs_truth': 0, 'short_window': 0}
+2026-11-19 16:25:00 infer: done (2483 s)
+2026-11-19 16:28:20 guards P: tcfg-4af5a234c1cf7826 (199 s)
+2026-11-19 16:33:04 guards L: tcfg-f68bc1dbd7d0ea3a (284 s)
+2026-11-19 16:37:54 guards H: tcfg-d105b0436ee08ce0 (290 s)
+2026-11-19 16:39:14 decide P real: 1221 prompts (81 s)
+2026-11-19 16:40:02 decide P shuffled: 1221 prompts (128 s)
+2026-11-19 16:41:49 decide P zeros: 1221 prompts (236 s)
+2026-11-19 16:42:50 decide L real: 1221 prompts (61 s)
+2026-11-19 16:43:50 decide H real: 1191 prompts (60 s)
+2026-11-19 16:43:52 score P: commits 0 wrong 0 of 1221
+2026-11-19 16:43:52 score L: commits 0 wrong 0 of 1221
+2026-11-19 16:43:52 score H: commits 0 wrong 0 of 1191
+2026-11-19 17:14:35 replay: added p50 (median over runs) 58.554 ms, p95 (max over runs) 222.019 ms; actions {'OFFER': 240}
+2026-11-19 17:14:35 all: DONE
+2026-11-19 17:14:58 score P: commits 0 wrong 0 of 1221
+2026-11-19 17:14:59 score L: commits 0 wrong 0 of 1221
+2026-11-19 17:14:59 score H: commits 0 wrong 0 of 1191
+2026-11-19 17:15:16 cards: wrote emg2qwerty__p11-01-crt-subset8__guard.json
+2026-11-19 17:15:16 cards: wrote emg2qwerty__p11-01-crt-subset8__always-commit.json

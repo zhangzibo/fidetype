@@ -5,9 +5,9 @@
  "cards": {
   "b2t25-t15-copytask__ours__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -23,7 +23,7 @@
     "ewpm": 11.449637382561223,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -44,7 +44,7 @@
     "ewpm": 11.449637382561223,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -65,7 +65,7 @@
     "ewpm": 11.449637382561223,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -86,7 +86,7 @@
     "ewpm": 11.449637382561223,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -103,14 +103,14 @@
     "ewpm": 11.449637382561223,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "b2t25-t15-copytask__ours__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -126,7 +126,7 @@
     "ewpm": 11.553005605711514,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -147,7 +147,7 @@
     "ewpm": 11.553005605711514,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -168,7 +168,7 @@
     "ewpm": 11.553005605711514,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -190,7 +190,7 @@
     "ewpm": 11.553005605711514,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -211,7 +211,7 @@
     "ewpm": 11.553005605711514,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -228,14 +228,14 @@
     "ewpm": 11.553005605711514,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "b2t25-t15-copytask__ours__ltt.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -251,7 +251,7 @@
     "ewpm": 11.51463409412569,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -272,7 +272,7 @@
     "ewpm": 11.51463409412569,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -293,7 +293,7 @@
     "ewpm": 11.51463409412569,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -315,7 +315,7 @@
     "ewpm": 11.51463409412569,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -336,7 +336,7 @@
     "ewpm": 11.51463409412569,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -353,14 +353,14 @@
     "ewpm": 11.51463409412569,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "b2t25-t15-copytask__ours__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -376,7 +376,7 @@
     "ewpm": 11.545649629165746,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -397,7 +397,7 @@
     "ewpm": 11.545649629165746,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -418,7 +418,7 @@
     "ewpm": 11.545649629165746,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -439,7 +439,7 @@
     "ewpm": 11.545649629165746,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -456,14 +456,14 @@
     "ewpm": 11.545649629165746,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "b2t25-t15-copytask__published__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -479,7 +479,7 @@
     "ewpm": 19.553301122360153,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -500,7 +500,7 @@
     "ewpm": 19.553301122360153,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -521,7 +521,7 @@
     "ewpm": 19.553301122360153,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -542,7 +542,7 @@
     "ewpm": 19.553301122360153,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -559,14 +559,14 @@
     "ewpm": 19.553301122360153,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "b2t25-t15-copytask__published__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -582,7 +582,7 @@
     "ewpm": 18.7985492726047,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -603,7 +603,7 @@
     "ewpm": 18.7985492726047,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -624,7 +624,7 @@
     "ewpm": 18.7985492726047,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -646,7 +646,7 @@
     "ewpm": 18.7985492726047,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -667,7 +667,7 @@
     "ewpm": 18.7985492726047,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -684,14 +684,14 @@
     "ewpm": 18.7985492726047,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "b2t25-t15-copytask__published__ltt.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -707,7 +707,7 @@
     "ewpm": 18.729233593282384,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -728,7 +728,7 @@
     "ewpm": 18.729233593282384,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -749,7 +749,7 @@
     "ewpm": 18.729233593282384,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -771,7 +771,7 @@
     "ewpm": 18.729233593282384,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -792,7 +792,7 @@
     "ewpm": 18.729233593282384,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -809,14 +809,14 @@
     "ewpm": 18.729233593282384,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "b2t25-t15-copytask__published__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -832,7 +832,7 @@
     "ewpm": 18.767072914257195,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -853,7 +853,7 @@
     "ewpm": 18.767072914257195,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -874,7 +874,7 @@
     "ewpm": 18.767072914257195,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -895,7 +895,7 @@
     "ewpm": 18.767072914257195,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -912,14 +912,14 @@
     "ewpm": 18.767072914257195,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "spanishbcbl-meg-async__convctc-m-async__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -935,7 +935,7 @@
     "ewpm": 2.580462165433796,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -956,7 +956,7 @@
     "ewpm": 2.580462165433796,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -977,7 +977,7 @@
     "ewpm": 2.580462165433796,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -998,7 +998,7 @@
     "ewpm": 2.580462165433796,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1015,14 +1015,14 @@
     "ewpm": 2.580462165433796,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "spanishbcbl-meg-async__convctc-m-async__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1038,7 +1038,7 @@
     "ewpm": 3.1978330883464774,
     "safe_wpm": 0.029275959301280442,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1059,7 +1059,7 @@
     "ewpm": 3.1978330883464774,
     "safe_wpm": 0.029275959301280442,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1080,7 +1080,7 @@
     "ewpm": 3.1978330883464774,
     "safe_wpm": 0.029275959301280442,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -1102,7 +1102,7 @@
     "ewpm": 3.1978330883464774,
     "safe_wpm": 0.029275959301280442,
     "safe_wpm_status": "certified",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -1123,7 +1123,7 @@
     "ewpm": 3.1978330883464774,
     "safe_wpm": 0.029275959301280442,
     "safe_wpm_status": "certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1140,14 +1140,14 @@
     "ewpm": 3.1978330883464774,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "spanishbcbl-meg-async__convctc-m-async__ltt.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1163,7 +1163,7 @@
     "ewpm": 3.197898124879401,
     "safe_wpm": 0.029166901195842948,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1184,7 +1184,7 @@
     "ewpm": 3.197898124879401,
     "safe_wpm": 0.029166901195842948,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1205,7 +1205,7 @@
     "ewpm": 3.197898124879401,
     "safe_wpm": 0.029166901195842948,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -1227,7 +1227,7 @@
     "ewpm": 3.197898124879401,
     "safe_wpm": 0.029166901195842948,
     "safe_wpm_status": "certified",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -1248,7 +1248,7 @@
     "ewpm": 3.197898124879401,
     "safe_wpm": 0.029166901195842948,
     "safe_wpm_status": "certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1265,14 +1265,14 @@
     "ewpm": 3.197898124879401,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "spanishbcbl-meg-async__convctc-m-async__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1288,7 +1288,7 @@
     "ewpm": 3.202971571465368,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1309,7 +1309,7 @@
     "ewpm": 3.202971571465368,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1330,7 +1330,7 @@
     "ewpm": 3.202971571465368,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -1351,7 +1351,7 @@
     "ewpm": 3.202971571465368,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1368,14 +1368,14 @@
     "ewpm": 3.202971571465368,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-calib__commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1391,7 +1391,7 @@
     "ewpm": 7.809276586628506,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1412,7 +1412,7 @@
     "ewpm": 7.809276586628506,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1433,7 +1433,7 @@
     "ewpm": 7.809276586628506,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -1454,7 +1454,7 @@
     "ewpm": 7.809276586628506,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1471,14 +1471,14 @@
     "ewpm": 7.809276586628506,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-calib__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1494,7 +1494,7 @@
     "ewpm": 7.976984532053387,
     "safe_wpm": 0.5473422892202503,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1515,7 +1515,7 @@
     "ewpm": 7.976984532053387,
     "safe_wpm": 0.5473422892202503,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1536,7 +1536,7 @@
     "ewpm": 7.976984532053387,
     "safe_wpm": 0.5473422892202503,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -1557,7 +1557,7 @@
     "ewpm": 7.976984532053387,
     "safe_wpm": 0.5473422892202503,
     "safe_wpm_status": "certified",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -1578,7 +1578,7 @@
     "ewpm": 7.976984532053387,
     "safe_wpm": 0.5785423261020857,
     "safe_wpm_status": "certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1595,14 +1595,14 @@
     "ewpm": 7.976984532053387,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-calib__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1618,7 +1618,7 @@
     "ewpm": 8.02440661976506,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1639,7 +1639,7 @@
     "ewpm": 8.02440661976506,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1660,7 +1660,7 @@
     "ewpm": 8.02440661976506,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -1681,7 +1681,7 @@
     "ewpm": 8.02440661976506,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1698,14 +1698,14 @@
     "ewpm": 8.02440661976506,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-xsession__commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1721,7 +1721,7 @@
     "ewpm": 4.102092009154984,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1742,7 +1742,7 @@
     "ewpm": 4.102092009154984,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1763,7 +1763,7 @@
     "ewpm": 4.102092009154984,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -1784,7 +1784,7 @@
     "ewpm": 4.102092009154984,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1801,14 +1801,14 @@
     "ewpm": 4.102092009154984,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-xsession__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1824,7 +1824,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": 0.25189348854789406,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1845,7 +1845,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": 0.25189348854789406,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1866,7 +1866,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": 0.25189348854789406,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -1887,7 +1887,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": 0.25189348854789406,
     "safe_wpm_status": "certified",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -1908,7 +1908,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": 0.2738139253307581,
     "safe_wpm_status": "certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -1925,14 +1925,14 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-xsession__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -1948,7 +1948,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -1969,7 +1969,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -1990,7 +1990,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -2011,7 +2011,7 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -2028,14 +2028,14 @@
     "ewpm": 4.676921023830239,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-xsubject__commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2051,7 +2051,7 @@
     "ewpm": 3.5312246360482913,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2072,7 +2072,7 @@
     "ewpm": 3.5312246360482913,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2093,7 +2093,7 @@
     "ewpm": 3.5312246360482913,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -2114,7 +2114,7 @@
     "ewpm": 3.5312246360482913,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -2131,14 +2131,14 @@
     "ewpm": 3.5312246360482913,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-xsubject__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2154,7 +2154,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2175,7 +2175,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2196,7 +2196,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "1d4ff8c",
@@ -2217,7 +2217,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 5
+    "seq": 6
    },
    {
     "commit": "7d74c0f",
@@ -2238,7 +2238,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -2255,14 +2255,14 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "toronto-semg-composed__cnn-xsubject__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2278,7 +2278,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2299,7 +2299,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2320,7 +2320,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "7d74c0f",
@@ -2341,7 +2341,7 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 6
+    "seq": 7
    },
    {
     "commit": "bff3f35",
@@ -2358,14 +2358,14 @@
     "ewpm": 4.0800135493987755,
     "safe_wpm": null,
     "safe_wpm_status": null,
-    "seq": 7
+    "seq": 8
    }
   ],
   "b2t24-t12__t12v2__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2381,7 +2381,7 @@
     "ewpm": 5.955468693192656,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2402,7 +2402,7 @@
     "ewpm": 5.955468693192656,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2423,7 +2423,7 @@
     "ewpm": 5.955468693192656,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "5133e04",
@@ -2442,14 +2442,14 @@
     "ewpm": 5.955468693192656,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 4
+    "seq": 5
    }
   ],
   "b2t24-t12__t12v2__guard.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2465,7 +2465,7 @@
     "ewpm": 6.361786588540457,
     "safe_wpm": 0.475882726405761,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2486,7 +2486,7 @@
     "ewpm": 6.361786588540457,
     "safe_wpm": 0.475882726405761,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2507,7 +2507,7 @@
     "ewpm": 6.361786588540457,
     "safe_wpm": 0.475882726405761,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "5133e04",
@@ -2526,14 +2526,14 @@
     "ewpm": 6.361786588540457,
     "safe_wpm": 0.475882726405761,
     "safe_wpm_status": "certified",
-    "seq": 4
+    "seq": 5
    }
   ],
   "b2t25-t15__m4-12__guard.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2549,7 +2549,7 @@
     "ewpm": 7.329787309339323,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2570,7 +2570,7 @@
     "ewpm": 7.329787309339323,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2591,7 +2591,7 @@
     "ewpm": 7.329787309339323,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -2610,14 +2610,14 @@
     "ewpm": 7.329787309339323,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 3
+    "seq": 4
    }
   ],
   "b2t25-t15__m4-13__guard.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2633,7 +2633,7 @@
     "ewpm": 12.834725635147173,
     "safe_wpm": 4.065168084942968,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2654,7 +2654,7 @@
     "ewpm": 12.834725635147173,
     "safe_wpm": 4.065168084942968,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2675,7 +2675,7 @@
     "ewpm": 12.834725635147173,
     "safe_wpm": 4.065168084942968,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "da2981a",
@@ -2694,14 +2694,14 @@
     "ewpm": 12.834725635147173,
     "safe_wpm": 4.065168084942968,
     "safe_wpm_status": "certified",
-    "seq": 2
+    "seq": 3
    }
   ],
   "b2t25-t15__ours__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2717,7 +2717,7 @@
     "ewpm": 11.345276639444181,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2738,7 +2738,7 @@
     "ewpm": 11.345276639444181,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2759,7 +2759,7 @@
     "ewpm": 11.345276639444181,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -2778,14 +2778,14 @@
     "ewpm": 11.345276639444181,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "b2t25-t15__ours__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2801,7 +2801,7 @@
     "ewpm": 11.238716639032663,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2822,7 +2822,7 @@
     "ewpm": 11.238716639032663,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2843,7 +2843,7 @@
     "ewpm": 11.238716639032663,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -2862,14 +2862,14 @@
     "ewpm": 11.238716639032663,
     "safe_wpm": 4.900806083076966,
     "safe_wpm_status": "above-alpha",
-    "seq": 3
+    "seq": 4
    }
   ],
   "b2t25-t15__ours__ltt.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2885,7 +2885,7 @@
     "ewpm": 11.168567365404328,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2906,7 +2906,7 @@
     "ewpm": 11.168567365404328,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -2927,7 +2927,7 @@
     "ewpm": 11.168567365404328,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -2946,14 +2946,14 @@
     "ewpm": 11.168567365404328,
     "safe_wpm": 4.047852720654133,
     "safe_wpm_status": "certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "b2t25-t15__ours__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -2969,7 +2969,7 @@
     "ewpm": 11.233809455394123,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -2990,7 +2990,7 @@
     "ewpm": 11.233809455394123,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3011,7 +3011,7 @@
     "ewpm": 11.233809455394123,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -3030,14 +3030,14 @@
     "ewpm": 11.233809455394123,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "b2t25-t15__published__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3053,7 +3053,7 @@
     "ewpm": 19.59965089479602,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3074,7 +3074,7 @@
     "ewpm": 19.59965089479602,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3095,7 +3095,7 @@
     "ewpm": 19.59965089479602,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -3114,14 +3114,14 @@
     "ewpm": 19.59965089479602,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "b2t25-t15__published__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3137,7 +3137,7 @@
     "ewpm": 17.06245654702212,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3158,7 +3158,7 @@
     "ewpm": 17.06245654702212,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3179,7 +3179,7 @@
     "ewpm": 17.06245654702212,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -3198,14 +3198,14 @@
     "ewpm": 17.06245654702212,
     "safe_wpm": 13.422448647918946,
     "safe_wpm_status": "certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "b2t25-t15__published__ltt.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3221,7 +3221,7 @@
     "ewpm": 16.78149249277393,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3242,7 +3242,7 @@
     "ewpm": 16.78149249277393,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3263,7 +3263,7 @@
     "ewpm": 16.78149249277393,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -3282,14 +3282,14 @@
     "ewpm": 16.78149249277393,
     "safe_wpm": 12.241472849274949,
     "safe_wpm_status": "certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "b2t25-t15__published__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3305,7 +3305,7 @@
     "ewpm": 16.929380303760855,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3326,7 +3326,7 @@
     "ewpm": 16.929380303760855,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3347,7 +3347,7 @@
     "ewpm": 16.929380303760855,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -3366,14 +3366,14 @@
     "ewpm": 16.929380303760855,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "emg2qwerty__lda-oracle__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3389,7 +3389,7 @@
     "ewpm": 2.256169615169197,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3410,7 +3410,7 @@
     "ewpm": 2.256169615169197,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3431,7 +3431,7 @@
     "ewpm": 2.256169615169197,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "5133e04",
@@ -3450,14 +3450,14 @@
     "ewpm": 2.256169615169197,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 4
+    "seq": 5
    }
   ],
   "emg2qwerty__lda-oracle__guard.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3473,7 +3473,7 @@
     "ewpm": 2.5735319432303974,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3494,7 +3494,7 @@
     "ewpm": 2.5735319432303974,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3515,7 +3515,7 @@
     "ewpm": 2.5735319432303974,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "5133e04",
@@ -3534,14 +3534,56 @@
     "ewpm": 2.5735319432303974,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 4
+    "seq": 5
+   }
+  ],
+  "emg2qwerty__p11-01-crt-subset8__always-commit.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "added",
+    "changed": [],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 3.1242720035990565,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   }
+  ],
+  "emg2qwerty__p11-01-crt-subset8__guard.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "added",
+    "changed": [],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 3.44255701197519,
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "seq": -1
    }
   ],
   "kt-semg__lda-oracle__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3557,7 +3599,7 @@
     "ewpm": 0.5474475918874354,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3578,7 +3620,7 @@
     "ewpm": 0.5474475918874354,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3599,7 +3641,7 @@
     "ewpm": 0.5474475918874354,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "5133e04",
@@ -3618,14 +3660,14 @@
     "ewpm": 0.5474475918874354,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 4
+    "seq": 5
    }
   ],
   "kt-semg__lda-oracle__guard.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3641,7 +3683,7 @@
     "ewpm": 3.3747341294361437,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3662,7 +3704,7 @@
     "ewpm": 3.3747341294361437,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3683,7 +3725,7 @@
     "ewpm": 3.3747341294361437,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "5133e04",
@@ -3702,14 +3744,14 @@
     "ewpm": 3.3747341294361437,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 4
+    "seq": 5
    }
   ],
   "spanishbcbl-meg__convctc-m-async__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3725,7 +3767,7 @@
     "ewpm": 2.513839218051613,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3746,7 +3788,7 @@
     "ewpm": 2.513839218051613,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3767,7 +3809,7 @@
     "ewpm": 2.513839218051613,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -3786,14 +3828,14 @@
     "ewpm": 2.513839218051613,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "spanishbcbl-meg__convctc-m-async__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3809,7 +3851,7 @@
     "ewpm": 3.1128806371568642,
     "safe_wpm": 0.029275959301280435,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3830,7 +3872,7 @@
     "ewpm": 3.1128806371568642,
     "safe_wpm": 0.029275959301280435,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3851,7 +3893,7 @@
     "ewpm": 3.1128806371568642,
     "safe_wpm": 0.029275959301280435,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -3870,14 +3912,14 @@
     "ewpm": 3.1128806371568642,
     "safe_wpm": 0.029275959301280435,
     "safe_wpm_status": "certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "spanishbcbl-meg__convctc-m-async__ltt.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3893,7 +3935,7 @@
     "ewpm": 3.1131757179306496,
     "safe_wpm": 0.029166901195842945,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3914,7 +3956,7 @@
     "ewpm": 3.1131757179306496,
     "safe_wpm": 0.029166901195842945,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -3935,7 +3977,7 @@
     "ewpm": 3.1131757179306496,
     "safe_wpm": 0.029166901195842945,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -3954,14 +3996,14 @@
     "ewpm": 3.1131757179306496,
     "safe_wpm": 0.029166901195842945,
     "safe_wpm_status": "certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "spanishbcbl-meg__convctc-m-async__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -3977,7 +4019,7 @@
     "ewpm": 3.11436890624909,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -3998,7 +4040,7 @@
     "ewpm": 3.11436890624909,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4019,7 +4061,7 @@
     "ewpm": 3.11436890624909,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4038,14 +4080,14 @@
     "ewpm": 3.11436890624909,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-calib__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4061,7 +4103,7 @@
     "ewpm": 7.774779521910749,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4082,7 +4124,7 @@
     "ewpm": 7.774779521910749,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4103,7 +4145,7 @@
     "ewpm": 7.774779521910749,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4122,14 +4164,14 @@
     "ewpm": 7.774779521910749,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-calib__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4145,7 +4187,7 @@
     "ewpm": 7.869594592455035,
     "safe_wpm": 0.5473422892202501,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4166,7 +4208,7 @@
     "ewpm": 7.869594592455035,
     "safe_wpm": 0.5473422892202501,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4187,7 +4229,7 @@
     "ewpm": 7.869594592455035,
     "safe_wpm": 0.5473422892202501,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4206,14 +4248,14 @@
     "ewpm": 7.869594592455035,
     "safe_wpm": 0.5473422892202501,
     "safe_wpm_status": "certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-calib__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4229,7 +4271,7 @@
     "ewpm": 7.869594592455035,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4250,7 +4292,7 @@
     "ewpm": 7.869594592455035,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4271,7 +4313,7 @@
     "ewpm": 7.869594592455035,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4290,14 +4332,14 @@
     "ewpm": 7.869594592455035,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-xsession__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4313,7 +4355,7 @@
     "ewpm": 4.063183893399767,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4334,7 +4376,7 @@
     "ewpm": 4.063183893399767,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4355,7 +4397,7 @@
     "ewpm": 4.063183893399767,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4374,14 +4416,14 @@
     "ewpm": 4.063183893399767,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-xsession__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4397,7 +4439,7 @@
     "ewpm": 4.63363533729744,
     "safe_wpm": 0.251893488547894,
     "safe_wpm_status": "certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4418,7 +4460,7 @@
     "ewpm": 4.63363533729744,
     "safe_wpm": 0.251893488547894,
     "safe_wpm_status": "certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4439,7 +4481,7 @@
     "ewpm": 4.63363533729744,
     "safe_wpm": 0.251893488547894,
     "safe_wpm_status": "certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4458,14 +4500,14 @@
     "ewpm": 4.63363533729744,
     "safe_wpm": 0.251893488547894,
     "safe_wpm_status": "certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-xsession__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4481,7 +4523,7 @@
     "ewpm": 4.63363533729744,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4502,7 +4544,7 @@
     "ewpm": 4.63363533729744,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4523,7 +4565,7 @@
     "ewpm": 4.63363533729744,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4542,14 +4584,14 @@
     "ewpm": 4.63363533729744,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-xsubject__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4565,7 +4607,7 @@
     "ewpm": 3.4052010456574533,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4586,7 +4628,7 @@
     "ewpm": 3.4052010456574533,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4607,7 +4649,7 @@
     "ewpm": 3.4052010456574533,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4626,14 +4668,14 @@
     "ewpm": 3.4052010456574533,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-xsubject__crc.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4649,7 +4691,7 @@
     "ewpm": 4.034756948981316,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4670,7 +4712,7 @@
     "ewpm": 4.034756948981316,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4691,7 +4733,7 @@
     "ewpm": 4.034756948981316,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4710,14 +4752,14 @@
     "ewpm": 4.034756948981316,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 3
+    "seq": 4
    }
   ],
   "toronto-semg__cnn-xsubject__trust.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4733,7 +4775,7 @@
     "ewpm": 4.034756948981316,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4754,7 +4796,7 @@
     "ewpm": 4.034756948981316,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4775,7 +4817,7 @@
     "ewpm": 4.034756948981316,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "b9fa645",
@@ -4794,14 +4836,14 @@
     "ewpm": 4.034756948981316,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 3
+    "seq": 4
    }
   ],
   "willett-hw__rnn-published__always-commit.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4817,7 +4859,7 @@
     "ewpm": 4.709429841589539,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4838,7 +4880,7 @@
     "ewpm": 4.709429841589539,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4859,7 +4901,7 @@
     "ewpm": 4.709429841589539,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "5133e04",
@@ -4878,14 +4920,14 @@
     "ewpm": 4.709429841589539,
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
-    "seq": 4
+    "seq": 5
    }
   ],
   "willett-hw__rnn-published__guard.json": [
    {
-    "commit": null,
-    "date": null,
-    "subject": "in the commit that holds this page",
+    "commit": "a7f0b6b",
+    "date": "2026-11-19",
+    "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
     "action": "changed",
     "changed": [
      "rerun"
@@ -4901,7 +4943,7 @@
     "ewpm": 3.471506462369315,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": -1
+    "seq": 0
    },
    {
     "commit": "46eaf7a",
@@ -4922,7 +4964,7 @@
     "ewpm": 3.471506462369315,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 0
+    "seq": 1
    },
    {
     "commit": "81df2af",
@@ -4943,7 +4985,7 @@
     "ewpm": 3.471506462369315,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 1
+    "seq": 2
    },
    {
     "commit": "5133e04",
@@ -4962,7 +5004,7 @@
     "ewpm": 3.471506462369315,
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
-    "seq": 4
+    "seq": 5
    }
   ]
  },

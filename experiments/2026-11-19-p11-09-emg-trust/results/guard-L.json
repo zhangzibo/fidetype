@@ -1,0 +1,125 @@
+{
+ "config_id": "tcfg-f68bc1dbd7d0ea3a",
+ "sheet": {
+  "config_id": "tcfg-f68bc1dbd7d0ea3a",
+  "input_kind": "logits",
+  "decoder": "builtin:ctc-prefix-beam-16",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "method": "Learn then Test on the learned commit score (fitted on the fit + policy-grid items), exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, on the LTT items only",
+  "n_items": 1224,
+  "n_fit": 306,
+  "n_policy": 459,
+  "n_ltt": 459,
+  "n_ltt_min": 45,
+  "lambda_hat": 0.01,
+  "feasible": true,
+  "commit_threshold": 0.01,
+  "commit_gate": {
+   "min_chars": 1,
+   "min_words": 0,
+   "max_guard_risk": 1.0
+  },
+  "ltt_commits": 0,
+  "ltt_wrong_commits": 0,
+  "controls": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   },
+   {
+    "name": "user",
+    "description": "your decoder output on null input (null_inputs)",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true
+   }
+  ],
+  "null_max_commit_rate": 0.05,
+  "seed": 0,
+  "created_utc": "2026-11-20T00:33:04+00:00",
+  "assumptions": [
+   "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+   "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+   "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+   "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+  ],
+  "not_guaranteed": [
+   "Any single utterance: the bound is on the rate over many utterances.",
+   "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+   "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+   "The error rate among commits (precision): with few commits it can be high.",
+   "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+   "Correctness of the text that the guard withholds or offers.",
+   "Any medical or legal claim. Fidetype is research software, not a medical device."
+  ],
+  "warnings": [
+   "only 0 of 459 LTT items commit in-sample (fewer than 45): expect few or no commits on new data. The bound still holds."
+  ],
+  "ltt_median_guard_risk": 0.7965018763985836,
+  "ltt_gate_blocked": 0,
+  "confidence": {
+   "kind": "learned",
+   "schema": "fidetype.commit-score/0.1",
+   "model": "logistic regression, L2 on standardised features, features clipped to the fit range, sign-constrained weights (backward elimination)",
+   "features": [
+    "p_top1",
+    "logit_p_top1",
+    "margin",
+    "nbest_entropy",
+    "word_agreement",
+    "char_conf_mean",
+    "char_conf_min",
+    "guard_risk",
+    "log_n_words",
+    "acoustic_per_char",
+    "lm_per_word",
+    "acoustic_gap",
+    "frames_per_char"
+   ],
+   "dropped": [
+    "nbest_entropy",
+    "char_conf_min",
+    "guard_risk"
+   ],
+   "n_used": 7,
+   "l2": 1.0,
+   "fit_items": 765,
+   "fit_positive": 1,
+   "certify_items": 459,
+   "threshold": 0.01,
+   "feasible": true,
+   "coef": {
+    "p_top1": 0.113673556205,
+    "logit_p_top1": 0.122083710307,
+    "margin": 0.0449697040041,
+    "nbest_entropy": 0.0,
+    "word_agreement": 0.113673556205,
+    "char_conf_mean": 0.322144343691,
+    "char_conf_min": 0.0,
+    "guard_risk": 0.0,
+    "log_n_words": 0.0,
+    "acoustic_per_char": 0.0377222841464,
+    "lm_per_word": 0.0,
+    "acoustic_gap": 0.0,
+    "frames_per_char": 0.0517980193485
+   },
+   "intercept": -6.85042146848
+  }
+ },
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true
+}

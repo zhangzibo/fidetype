@@ -433,10 +433,21 @@ def guard_row(unit: str, d: dict) -> dict:
                        score_semantics="calibrated_prob", offer_k=3)
 
 
+def top1_text(d: dict) -> str:
+    """The decoder top-1 of one decision. With logits input the guard decodes inside, so the input events hold
+    no hypothesis and ``nbest`` is empty; the top-1 is then the committed text or the first offered choice
+    (fix after the run, see results.md)."""
+    if d["action"] == "commit" and d["text"] is not None:
+        return d["text"]
+    if d["choices"]:
+        return d["choices"][0]
+    return d["nbest"][0] if d["nbest"] else ""
+
+
 def always_row(unit: str, d: dict) -> dict:
     from fidetype.benchmark import scorecard as SC
 
-    return SC.unit_row(unit, [A.key_text_to_codes(d["nbest"][0] if d["nbest"] else "")], action="commit")
+    return SC.unit_row(unit, [A.key_text_to_codes(top1_text(d))], action="commit")
 
 
 def manifest(guard_status: dict, n_cal: int, always: bool) -> dict:
@@ -521,7 +532,7 @@ def stage_score(rows: list[dict]) -> dict:
         truths = [A.codes_to_key_text(r["codes"]) for r in ev]
         com = [x["action"] == "commit" for x in d["real"]]
         wrong = sum(c and (x["text"] or "").split() != t.split() for c, x, t in zip(com, d["real"], truths))
-        top1 = sum((x["nbest"][0] if x["nbest"] else "").split() == t.split() for x, t in zip(d["real"], truths))
+        top1 = sum(top1_text(x).split() == t.split() for x, t in zip(d["real"], truths))
         lo, hi = clopper_pearson(wrong, len(ev), 0.05)
         a.update(n_commits=int(sum(com)), n_wrong_commits=int(wrong), wrong_commit_rate=wrong / len(ev),
                  wrong_commit_cp95=[lo, hi], commit_rate=sum(com) / len(ev),
@@ -696,12 +707,63 @@ def stage_replay(rows: list[dict], n: int = REPLAY_PROMPTS) -> dict:
 
 
 
+# --- stage cards (main repo only) -------------------------------------------------------------------------
+
+
+def stage_cards() -> list[str]:
+    """Copy the two declared-subset score cards into benchmark/results/v0.2/ with a full rerun recipe."""
+    from fidetype.benchmark.hub.recipe import card_json, check_recipe
+
+    st = load_json(own("guard-P.status.json"))
+    out = []
+    for kind in ("guard", "always-commit"):
+        name = f"{TRACK}__p11-01-crt-subset8__{kind}"
+        card = load_json(own("cards", f"{name}.json"))
+        r = card["rerun"]
+        r["decoder"].pop("weights_sha256", None)
+        r["decoder"]["weights_sha256"] = None
+        r["decoder"]["weights_sha256_reason"] = (
+            "8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/"
+            "best.pt; research only, never shared); each SHA-256 is in the decoder.weights_sha256 of that user's "
+            "P11-01 NTS streams and is checked by the build step (run.py infer)")
+        if kind == "guard":
+            r["policy"].pop("config_id_reason", None)
+            r["policy"]["config_id"] = st["config_id"]
+            r["policy"]["config_id_source"] = "experiments/2026-11-19-p11-09-emg-trust/results/guard-P.json"
+        else:
+            r["policy"]["config_id"] = None
+            r["policy"]["config_id_reason"] = "always commit the decoder top-1: no trust config"
+        r["level"] = "rescore"
+        sub = f"<derived>/p11-09/submissions/{name}"
+        r["steps"] = [
+            {"step": "truth", "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out "
+                                         "<derived>/p6-02-scorer/truth/emg2qwerty.jsonl"},
+            {"step": "build", "command": "python experiments/2026-11-19-p11-09-emg-trust/launch.py "
+                                         "(stages infer [torch venv, CPU], prompts, guards, decide, score)"},
+            {"step": "score", "command": f"python -m fidetype.benchmark score emg2qwerty {sub} --truth "
+                                         f"<derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out "
+                                         f"benchmark/results/v0.2/{name}.json"}]
+        r["inputs"] = {"outputs": f"submission folder {sub} (decoded key codes; local only, never in git)",
+                       "build": "the build step needs the P11-01 feature cache and personal weights (local, research "
+                                "only); see experiments/2026-11-19-p11-09-emg-trust/results.md",
+                       "derived": "<derived> = the local folder for per-unit files (never in git)"}
+        r["recorded"] = "2026-11-19, P11-09 (run.py cards)"
+        errs = check_recipe(r)
+        if errs:
+            raise SystemExit(f"p11-09: recipe of {name}: {errs}")
+        f = REPO / "benchmark" / "results" / "v0.2" / f"{name}.json"
+        f.write_text(card_json(card), encoding="utf-8", newline="\n")
+        out.append(str(f))
+        log(f"cards: wrote {f.name}")
+    return out
+
+
 # --- main -----------------------------------------------------------------------------------------------
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("stages", nargs="+", choices=("infer", "prompts", "guards", "decide", "score", "replay", "all"))
+    ap.add_argument("stages", nargs="+", choices=("infer", "prompts", "guards", "decide", "score", "replay", "cards", "all"))
     ap.add_argument("--arms", default=",".join(ARMS))
     ap.add_argument("--replay-prompts", type=int, default=REPLAY_PROMPTS)
     a = ap.parse_args()
@@ -711,6 +773,8 @@ def main() -> int:
         st = set(a.stages)
         if "infer" in st:
             stage_infer()
+        if "cards" in st:
+            stage_cards()
         if st & {"prompts", "all", "guards", "decide", "score", "replay"}:
             rows = stage_prompts()
             if st & {"guards", "all"}:

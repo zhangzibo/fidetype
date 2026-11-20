@@ -1,0 +1,306 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer/drop-in guard (built-in CTC beam, no LM, key-code space)",
+ "track": "emg2qwerty",
+ "decoder": {
+  "name": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer",
+  "version": "1",
+  "url": "experiments/2026-11-16-p11-01-emg-decoder/",
+  "weights_licence": "not released (CC BY-NC-SA data: research only)",
+  "training_data": [
+   "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)"
+  ],
+  "training_regime": "personalised (fine-tuned on earlier sessions of the same user)"
+ },
+ "policy": {
+  "name": "drop-in guard (built-in CTC beam, no LM, key-code space)",
+  "description": "fidetype.trust.calibrate on 1224 track-val prompts of the same 8 users, alpha 0.05, delta 0.1, decision window = prompt + 0.20 s"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "emg2qwerty__p11-01-crt-subset8__guard"
+ ],
+ "n_trials": 1221,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "user"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.1794281220156171,
+   "ci": [
+    0.1447110239354704,
+    0.21446002821982613
+   ]
+  },
+  "wer": {
+   "value": 0.6805901513699942,
+   "ci": [
+    0.614551367126368,
+    0.7348861551443194
+   ]
+  },
+  "ewpm": {
+   "value": 3.44255701197519,
+   "ci": [
+    3.259192230403075,
+    3.6976458125129956
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 2.9318577607999554,
+   "ci": [
+    2.856581657199271,
+    3.0404407724687017
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 0.5106992511752346,
+   "ci": [
+    0.28857822245643644,
+    0.8007844044058088
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "commit_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "error_among_commits": {
+   "value": null,
+   "ci": [
+    null,
+    null
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "key_error_rate": {
+   "value": 0.1794281220156171,
+   "ci": [
+    0.1447110239354704,
+    0.21446002821982613
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 0.9953935172181338,
+   "cer_gap": 0.8159653952025168,
+   "cer_gap_ci": [
+    0.7772879827417981,
+    0.8518727989902704
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 1.0,
+   "cer_gap": 0.8205718779843829,
+   "cer_gap_ci": [
+    0.7841546306384745,
+    0.8545141538303724
+   ]
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "max": 0.05
+  },
+  "passed": true,
+  "basis": {
+   "shuffled": "input level: the test session EMG features time-shuffled (seeded per session), then the same decoder, writer and policy",
+   "zeros": "input level: zero EMG (every band at log(1e-6)), then the same decoder, writer and policy"
+  }
+ },
+ "guarantee": {
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 459,
+  "scope": "marginal over test prompts pooled over the 8 users; exchangeable val / test sessions",
+  "calibration_split": "val",
+  "measured_wrong_commit": 0.0,
+  "measured_wrong_commit_ci": [
+   0.0,
+   0.0
+  ],
+  "met_on_test": true
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": 0.0,
+  "ci": null,
+  "status": "vacuous",
+  "unguarded_wpm": 0.0,
+  "wpm_no_penalty": 0.0,
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 459,
+  "calibration": "val",
+  "confidence": "probability >= 0.9 over calibration draws",
+  "measured_wrong_commit": 0.0,
+  "measured_wrong_commit_cp95": [
+   0.0,
+   0.003
+  ],
+  "n_trials": 1221,
+  "n_commits": 0,
+  "n_wrong_commits": 0,
+  "n_correct_commits": 0,
+  "error_among_commits": null,
+  "committed_correct_words": 0,
+  "total_words": 5219,
+  "minutes_neural": 119.75355757077536,
+  "minutes_correction": 0.0,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 2.931857760799955,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 301.33 keys/min",
+  "config": {
+   "chars_per_min": 301.3306670286988
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Track-conformant: the decoder sees only the EMG (no key times). Causal, no lookahead; the decision waits 0.20 s after the prompt end. P11-09.",
+  "Key track: one character per key, so CER = key error rate.",
+  "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+  "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Wrist sEMG touch typing (emg2qwerty, Meta) - RESEARCH ONLY",
+  "licence": "CC BY-NC-SA 4.0",
+  "research_only": true,
+  "modality": "emg",
+  "ci_unit": "user",
+  "split_digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+  "rate_source": "measured: keys / (first to last key-down time) over the 15867 scored test prompts",
+  "key_track": true
+ },
+ "coverage": {
+  "n_scored_units": 15867,
+  "n_covered": 1221,
+  "partial": true,
+  "subset": "declared subset: the track test sessions of the 8 P11-01 test users only. The P11-01 generic model trained on 96 of the other 104 track test sessions, so only these 8 sessions are clean (P11-01 results, benchmark section)."
+ },
+ "regime": "personalised",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 1221,
+  "n_parent_units": 104,
+  "n_parent_covered": 8
+ },
+ "status": "scored",
+ "certification": "vacuous",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": null,
+  "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+  "track": {
+   "track": "emg2qwerty",
+   "split_version": "tracks-v0.2",
+   "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+   "digest_kind": "entries"
+  },
+  "adapter": {
+   "module": "fidetype.adapters.emg2qwerty",
+   "package_version": "0.0.1",
+   "sha256": "2dd56a4a1841a00c8bcfef64e15f6432c36fb9cbf5dc2fd97543ed8b210bf605"
+  },
+  "decoder": {
+   "name": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer",
+   "version": "1",
+   "url": "experiments/2026-11-16-p11-01-emg-decoder/",
+   "training_data": [
+    "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)"
+   ],
+   "weights_sha256_reason": "8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/best.pt; research only, never shared); each SHA-256 is in the decoder.weights_sha256 of that user's P11-01 NTS streams and is checked by the build step (run.py infer)",
+   "weights_sha256": null
+  },
+  "policy": {
+   "name": "drop-in guard (built-in CTC beam, no LM, key-code space)",
+   "config_id": "tcfg-4af5a234c1cf7826",
+   "guarantee": "ltt",
+   "config_id_source": "experiments/2026-11-19-p11-09-emg-trust/results/guard-P.json"
+  },
+  "scorer": {
+   "scorer_version": "0.2",
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.2",
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark score emg2qwerty <submission> --truth <truth.jsonl> --B 2000 --seed 0",
+  "inputs": {
+   "outputs": "submission folder <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__guard (decoded key codes; local only, never in git)",
+   "build": "the build step needs the P11-01 feature cache and personal weights (local, research only); see experiments/2026-11-19-p11-09-emg-trust/results.md",
+   "derived": "<derived> = the local folder for per-unit files (never in git)"
+  },
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python experiments/2026-11-19-p11-09-emg-trust/launch.py (stages infer [torch venv, CPU], prompts, guards, decide, score)"
+   },
+   {
+    "step": "score",
+    "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-01-crt-subset8__guard.json"
+   }
+  ],
+  "recorded": "2026-11-19, P11-09 (run.py cards)"
+ }
+}

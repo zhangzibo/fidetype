@@ -1,0 +1,123 @@
+{
+ "task": "P11-09",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "date": "2026-11-19 17:14",
+ "note": "pooled over the per-user runs; no per-user value",
+ "guard": {
+  "config_id": "tcfg-4af5a234c1cf7826",
+  "input_kind": "logits (built-in CTC beam inside the collector)",
+  "online": "aci",
+  "profile": "one per-user profile per run (the pooled arm-P guard)"
+ },
+ "runs": 8,
+ "budget_ms": 50.0,
+ "within_budget_all_runs": false,
+ "v5_rule": "p95 of added < 50 ms in every run (the bench keeps no pooled samples)",
+ "added_ms": {
+  "n": 240,
+  "p50_median_over_runs": 58.554,
+  "p95_max_over_runs": 222.019,
+  "p95_median_over_runs": 110.16499999999999,
+  "max": 338.037
+ },
+ "latency_ms": {
+  "added": {
+   "n": 240,
+   "p50_median_over_runs": 58.554,
+   "p95_max_over_runs": 222.019,
+   "p95_median_over_runs": 110.16499999999999,
+   "max": 338.037
+  },
+  "e2e": {
+   "n": 240,
+   "p50_median_over_runs": 58.837500000000006,
+   "p95_max_over_runs": 222.278,
+   "p95_median_over_runs": 110.4505,
+   "max": 338.39
+  },
+  "exporter.aac": {
+   "n": 240,
+   "p50_median_over_runs": 0.0055,
+   "p95_max_over_runs": 0.011,
+   "p95_median_over_runs": 0.008,
+   "max": 0.257
+  },
+  "exporter.log": {
+   "n": 240,
+   "p50_median_over_runs": 0.0295,
+   "p95_max_over_runs": 0.126,
+   "p95_median_over_runs": 0.091,
+   "max": 0.201
+  },
+  "exporter.nts": {
+   "n": 240,
+   "p50_median_over_runs": 0.046,
+   "p95_max_over_runs": 0.083,
+   "p95_median_over_runs": 0.0755,
+   "max": 0.659
+  },
+  "exporter.typing": {
+   "n": 240,
+   "p50_median_over_runs": 0.003,
+   "p95_max_over_runs": 0.005,
+   "p95_median_over_runs": 0.004,
+   "max": 0.171
+  },
+  "pipeline": {
+   "n": 240,
+   "p50_median_over_runs": 58.485,
+   "p95_max_over_runs": 221.964,
+   "p95_median_over_runs": 110.0815,
+   "max": 337.96
+  },
+  "processor.check": {
+   "n": 240,
+   "p50_median_over_runs": 0.007,
+   "p95_max_over_runs": 0.066,
+   "p95_median_over_runs": 0.056999999999999995,
+   "max": 0.097
+  },
+  "processor.guard": {
+   "n": 240,
+   "p50_median_over_runs": 58.3905,
+   "p95_max_over_runs": 221.736,
+   "p95_median_over_runs": 109.9505,
+   "max": 337.867
+  },
+  "processor.seg": {
+   "n": 240,
+   "p50_median_over_runs": 0.002,
+   "p95_max_over_runs": 0.005,
+   "p95_median_over_runs": 0.004,
+   "max": 0.008
+  },
+  "receive": {
+   "n": 240,
+   "p50_median_over_runs": 0.062,
+   "p95_max_over_runs": 0.144,
+   "p95_median_over_runs": 0.115,
+   "max": 0.228
+  }
+ },
+ "tail_wait_s": 0.2,
+ "producer_levels": [
+  "trust-ready"
+ ],
+ "commit_agreement_with_offline": {
+  "same": 240,
+  "of": 240
+ },
+ "prompts": 240,
+ "frames": 171452,
+ "stream_seconds": 1834.6,
+ "decisions": 240,
+ "committed": 0,
+ "typed": 0,
+ "wrong_commits": 0,
+ "actions": {
+  "OFFER": 240
+ },
+ "typed_only_commits": true,
+ "producer_errors": 0
+}

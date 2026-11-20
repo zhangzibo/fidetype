@@ -381,14 +381,32 @@ Track page and entry history: [tracks/emg2qwerty.html](tracks/emg2qwerty.html).
 
 Track `emg2qwerty`. Data: emg2qwerty-data-2021-08 (CC BY-NC-SA 4.0, **research only**). CI unit: user. User model: aac-gaze-v1 @ 301.33 keys/min.
 
-No-BCI reference (gaze typing only, 20 chars/min): **2.82 eWPM**.
+No-BCI reference (gaze typing only, 20 chars/min): **2.93 eWPM**.
 
 | Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] | drop-in guard (built-in CTC beam, no LM, key-code space) | 0.179 | 3.44 [3.26, 3.70] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=459; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (CC BY-NC-SA data: research only) | submission/0.2 (units-jsonl) | rescore |
+| fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] | always commit top-1 | 0.179 | 3.12 [2.91, 3.41] | n/a (no certified bound) | 0.998 | 0.998 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (CC BY-NC-SA data: research only) | submission/0.2 (units-jsonl) | rescore |
 | shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] | drop-in guard (built-in CTC beam, no LM) | 0.490 | 2.57 [2.55, 2.60] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=1125; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (would be CC BY-NC-SA: research only) | submission/0.2 (units-jsonl) | rescore |
 | shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] | always commit top-1 | 0.490 | 2.26 [2.23, 2.29] | n/a (no certified bound) | 1.000 | 1.000 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (would be CC BY-NC-SA: research only) | submission/0.2 (units-jsonl) | rescore |
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] / drop-in guard (built-in CTC beam, no LM, key-code space)** (`emg2qwerty__p11-01-crt-subset8__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights: 8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/best.pt; policy config tcfg-4af5a234c1cf7826
+
+  ```
+  [truth] python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl
+  [build] python experiments/2026-11-19-p11-09-emg-trust/launch.py (stages infer [torch venv, CPU], prompts, guards, decide, score)
+  [score] python -m fidetype.benchmark score emg2qwerty <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-01-crt-subset8__guard.json
+  ```
+
+- **fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] / always commit top-1** (`emg2qwerty__p11-01-crt-subset8__always-commit.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights: 8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/best.pt; policy config: always commit the decoder top-1
+
+  ```
+  [truth] python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl
+  [build] python experiments/2026-11-19-p11-09-emg-trust/launch.py (stages infer [torch venv, CPU], prompts, guards, decide, score)
+  [score] python -m fidetype.benchmark score emg2qwerty <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__always-commit --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-01-crt-subset8__always-commit.json
+  ```
 
 - **shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] / drop-in guard (built-in CTC beam, no LM)** (`emg2qwerty__lda-oracle__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 fe238f494228; scorer 0.2 B=2000 seed=0; weights: no weights file; policy config tcfg-7f4b483e5d258b75; code git 5133e04
 

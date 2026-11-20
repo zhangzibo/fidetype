@@ -5760,6 +5760,216 @@
   ],
   "emg2qwerty": [
    {
+    "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer/drop-in guard (built-in CTC beam, no LM, key-code space)",
+    "track": "emg2qwerty",
+    "decoder": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY]",
+    "policy": "drop-in guard (built-in CTC beam, no LM, key-code space)",
+    "cer": 0.1794281220156171,
+    "wer": 0.6805901513699942,
+    "ewpm": 3.44255701197519,
+    "ewpm_ci": [
+     3.259192230403075,
+     3.6976458125129956
+    ],
+    "gaze_ewpm": 2.9318577607999554,
+    "wrong_commit_rate": 0.0,
+    "error_among_commits": null,
+    "commit_rate": 0.0,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=459; test 0.000 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (CC BY-NC-SA data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 1221,
+    "ci_unit": "group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Track-conformant: the decoder sees only the EMG (no key times). Causal, no lookahead; the decision waits 0.20 s after the prompt end. P11-09.",
+     "Key track: one character per key, so CER = key error rate.",
+     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+    ],
+    "file": "emg2qwerty__p11-01-crt-subset8__guard.json",
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+     "track": {
+      "track": "emg2qwerty",
+      "split_version": "tracks-v0.2",
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+      "digest_kind": "entries"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.emg2qwerty",
+      "package_version": "0.0.1",
+      "sha256": "2dd56a4a1841a00c8bcfef64e15f6432c36fb9cbf5dc2fd97543ed8b210bf605"
+     },
+     "decoder": {
+      "name": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer",
+      "version": "1",
+      "url": "experiments/2026-11-16-p11-01-emg-decoder/",
+      "training_data": [
+       "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)"
+      ],
+      "weights_sha256_reason": "8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/best.pt; research only, never shared); each SHA-256 is in the decoder.weights_sha256 of that user's P11-01 NTS streams and is checked by the build step (run.py infer)",
+      "weights_sha256": null
+     },
+     "policy": {
+      "name": "drop-in guard (built-in CTC beam, no LM, key-code space)",
+      "config_id": "tcfg-4af5a234c1cf7826",
+      "guarantee": "ltt",
+      "config_id_source": "experiments/2026-11-19-p11-09-emg-trust/results/guard-P.json"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score emg2qwerty <submission> --truth <truth.jsonl> --B 2000 --seed 0",
+     "inputs": {
+      "outputs": "submission folder <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__guard (decoded key codes; local only, never in git)",
+      "build": "the build step needs the P11-01 feature cache and personal weights (local, research only); see experiments/2026-11-19-p11-09-emg-trust/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python experiments/2026-11-19-p11-09-emg-trust/launch.py (stages infer [torch venv, CPU], prompts, guards, decide, score)"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-01-crt-subset8__guard.json"
+      }
+     ],
+     "recorded": "2026-11-19, P11-09 (run.py cards)"
+    },
+    "anchor": "e-emg2qwerty__p11-01-crt-subset8__guard",
+    "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-01-crt-subset8__guard"
+   },
+   {
+    "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer/always commit top-1",
+    "track": "emg2qwerty",
+    "decoder": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY]",
+    "policy": "always commit top-1",
+    "cer": 0.1794281220156171,
+    "wer": 0.6805901513699942,
+    "ewpm": 3.1242720035990565,
+    "ewpm_ci": [
+     2.910236630288641,
+     3.4111337001009883
+    ],
+    "gaze_ewpm": 2.9318577607999554,
+    "wrong_commit_rate": 0.9983619983619983,
+    "error_among_commits": 0.9983619983619983,
+    "commit_rate": 1.0,
+    "controls_passed": false,
+    "controls": "no (shuf pass, zeros pass, null fail)",
+    "guarantee": "none",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (CC BY-NC-SA data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 1221,
+    "ci_unit": "group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Track-conformant: the decoder sees only the EMG (no key times). Causal, no lookahead; the decision waits 0.20 s after the prompt end. P11-09.",
+     "Key track: one character per key, so CER = key error rate.",
+     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+    ],
+    "file": "emg2qwerty__p11-01-crt-subset8__always-commit.json",
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "safe_wpm_s": "n/a (no certified bound)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+     "track": {
+      "track": "emg2qwerty",
+      "split_version": "tracks-v0.2",
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+      "digest_kind": "entries"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.emg2qwerty",
+      "package_version": "0.0.1",
+      "sha256": "2dd56a4a1841a00c8bcfef64e15f6432c36fb9cbf5dc2fd97543ed8b210bf605"
+     },
+     "decoder": {
+      "name": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer",
+      "version": "1",
+      "url": "experiments/2026-11-16-p11-01-emg-decoder/",
+      "training_data": [
+       "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)"
+      ],
+      "weights_sha256_reason": "8 weight files, one personal model per test user (derived/p11-01-emg-decoder/train/personal-u<i>/best.pt; research only, never shared); each SHA-256 is in the decoder.weights_sha256 of that user's P11-01 NTS streams and is checked by the build step (run.py infer)",
+      "weights_sha256": null
+     },
+     "policy": {
+      "name": "always commit top-1",
+      "config_id": null,
+      "guarantee": "none",
+      "config_id_reason": "always commit the decoder top-1: no trust config"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score emg2qwerty <submission> --truth <truth.jsonl> --B 2000 --seed 0",
+     "inputs": {
+      "outputs": "submission folder <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__always-commit (decoded key codes; local only, never in git)",
+      "build": "the build step needs the P11-01 feature cache and personal weights (local, research only); see experiments/2026-11-19-p11-09-emg-trust/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python experiments/2026-11-19-p11-09-emg-trust/launch.py (stages infer [torch venv, CPU], prompts, guards, decide, score)"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p11-09/submissions/emg2qwerty__p11-01-crt-subset8__always-commit --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-01-crt-subset8__always-commit.json"
+      }
+     ],
+     "recorded": "2026-11-19, P11-09 (run.py cards)"
+    },
+    "anchor": "e-emg2qwerty__p11-01-crt-subset8__always-commit",
+    "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-01-crt-subset8__always-commit"
+   },
+   {
     "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/drop-in guard (built-in CTC beam, no LM)",
     "track": "emg2qwerty",
     "decoder": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY]",
