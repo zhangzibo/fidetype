@@ -1383,3 +1383,9 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Leaderboard: each target in its own table with its own no-BCI row; `[target: intended_text]` in the entry name.
 - Cards (`ca73b5c`, declared subset, research only): P11-12 arm S certified safe WPM v0.1 4.10 [1.99, 6.56] vs no-BCI 3.09; SL 5.08 [2.54, 7.95]; controls pass. Same value, commits and words as P11-12; CI differs only by the bootstrap cluster label order. [results](../experiments/2026-11-20-p11-13-intended-text-cards/results.md)
 - Also: the closed-gaps table in open-gaps had its `|---|` separator in the middle of the table; moved under the header (no content change). Tracker: P11-12 agent run added (2382.304 s, 182,033 tokens, 61 tool uses).
+
+## [2026-11-19] setup | P14-34: language audit and per-language config (gap 106 closed; new gaps 117-119)
+- Audit `857dcf1`: [docs/language-support.md](../docs/language-support.md) lists about 40 English assumptions (file:line, impact for es / zh / ar / hi, config key, risk, state).
+- Code `2b5c80f`: `fidetype.lang` (registry by BCP 47 tag). `en` default reuses `VOCAB` / `normalize_text` / `str.split`, so English outputs are bit-identical (pinned by `tests/test_lang.py` and `tests/fixtures/lang/`). `es` provisional (ñ, accents, ¿ ¡). `zh` stub: words and WPM raise `WordsNotDefinedError`, never a silent number.
+- Language tag in the model manifest and the trust guard (saved only if not `en`); `safe_wpm.load_trials_jsonl(language=)`. Spanish config runs end to end on synthetic input.
+- Updated: open-gaps (106 closed; 117 P14-38, 118 P14-39, 119 P14-40 added), roadmap, tracker, HANDOFF, docs index, dashboard.

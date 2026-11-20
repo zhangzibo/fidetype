@@ -3,7 +3,7 @@ title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
 tags: [planning, roadmap, north-star, frontier, write-side, affect, memory, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-16
+updated: 2026-11-19
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -1045,6 +1045,9 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-35** | End-user typing UI (open gap 111, [details](#p14-35-end-user-typing-ui)) | P14-06, P14-09, P8-05 | AAC app makers, small teams |
 | **P14-36** | Usability study of the typing UI (open gap 112, [details](#p14-36-usability-study-of-the-typing-ui)) | P14-35, M6-04 | AAC app makers, small teams |
 | **P14-37** | Packaged installer for end users (open gap 115, [details](#p14-37-packaged-installer-for-end-users)) | P2-08, P14-35 | AAC app makers, small teams |
+| **P14-38** | Language hook in safe WPM, the benchmark scorer and the hallucination protocol (open gap 117, [details](#p14-38-language-hook-in-safe-wpm-the-benchmark-scorer-and-the-hallucination-protocol)) | P14-34 | research labs, BCI companies |
+| **P14-39** | Words per minute for scripts without spaces (open gap 118, [details](#p14-39-words-per-minute-for-scripts-without-spaces)) | P14-34 | research labs, BCI companies |
+| **P14-40** | Per-language models and vocabulary registry (open gap 119, [details](#p14-40-per-language-models-and-vocabulary-registry)) | P14-34, P15-31, P15-32 | research labs, BCI companies, AAC app makers |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1318,7 +1321,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-34 Language-agnostic pipeline audit (per-language config)
 - **Gap:** 106 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P14-01, P14-03, P14-05.
-- **Status:** `todo`.
+- **Status (2026-11-19): done** (gap 106 closed). Audit `857dcf1`, code `2b5c80f`, page [docs/language-support.md](../../docs/language-support.md). The audit lists about 40 English assumptions (file:line, impact for es / zh / ar / hi, config key, risk). `fidetype.lang` ([code](../../src/fidetype/lang.py)) is a registry of `Language` objects by BCP 47 tag (`en-US` -> `en`). `en` is the default and calls the existing `VOCAB`, `normalize_text` and `str.split`, so English outputs are bit-identical; `tests/test_lang.py` pins the charset, the normalisation of 23 hard strings (also `b2t25.normalize_words` and the LLM normaliser) and safe WPM v0.1 on a committed 40-trial fixture (exact `==`). `es` (provisional): 37-class vocabulary with `ñ á é í ó ú ü ¿ ¡`, Spanish normalisation, words by spaces, rates copied from `en`. `zh` (stub): `words()`, `wpm_counts()` and `load_trials_jsonl(language="zh")` raise `WordsNotDefinedError` (or report `not-defined`); no silent WPM. The tag is in the model manifest (optional `language`, default `en`, checked) and in the trust guard (`calibrate(language=)`, `TrustGuard.language`, saved only if not `en`, so English guard files are byte-identical). A Spanish config runs end to end on synthetic CTC input (calibrate, commits with `ñ`, safe WPM, save / load). Follow-ups (config keys in files of other items or in the spec): P14-38 (gap 117), P14-39 (gap 118), P14-40 (gap 119).
 - **Depends on:** — (CPU only).
 - **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" All language results so far are English: T15, T12, Willett handwriting, emg2qwerty, KT-sEMG. Only the SpanishBCBL MEG replay adapter reads non-English data (research only). English assumptions are spread over the code, for example: character sets and CTC vocabularies, word lexicons, character and word LMs, safe WPM (`words(y)` counts words separated by spaces; the correction time uses 152 characters per minute), the hallucination benchmark protocol and the no-BCI gaze reference (`aac-gaze-v1`).
 - **Done when:** An audit page lists each English assumption with its file and a fix. Each assumption becomes a per-language config value (a language tag, for example BCP 47, in the trust config and the model manifest). The English defaults give the same outputs as now (tests). A Spanish config loads end to end on synthetic input.
@@ -1343,6 +1346,26 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-35; code-signing certificates may be needed (user-owned, as P2-07).
 - **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" Today a user installs Fidetype with `pip` or `uv`. No one-click installer exists for a person who is not a developer (an AAC user or a carer).
 - **Done when:** A Windows installer (first; macOS and Linux later) installs the collector, the typing UI and a pretrained model with no Python setup and adds a start-menu entry. An install test on a clean virtual machine passes. If code signing needs certificates, the page names that user step.
+#### P14-38 Language hook in safe WPM, the benchmark scorer and the hallucination protocol
+- **Gap:** 117 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-34). Follow-up of P14-34.
+- **Status:** `todo`.
+- **Depends on:** P14-34 (done: `fidetype.lang`).
+- **Source:** [Language audit](../../docs/language-support.md), rows A3, A5, B1-B8 and section 5. These files were in edits by P15-29 and P11-13 during P14-34, so P14-34 added only `load_trials_jsonl(language=)`.
+- **Done when:** `prefix_outcome`, the safe-WPM CLI, the benchmark scorer (track normaliser `lang:<tag>`, WER and `n_w`, user-model rates), the eWPM simulator and the hallucination fluency unit (per word with spaces, per character otherwise) take the language from `fidetype.lang`. A score card states `language` and `rates_source`. A language without word boundaries gives `not-defined`, not a number. All English cards and the `tests/fixtures/lang` pins stay bit-identical; `docs/safe-wpm.md` says where `words(y)` is defined.
+
+#### P14-39 Words per minute for scripts without spaces
+- **Gap:** 118 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-34). Follow-up of P14-34.
+- **Status:** `todo`.
+- **Depends on:** P14-34 (done).
+- **Source:** [Language audit](../../docs/language-support.md), section 4.3. Mandarin (also Japanese, Thai) has no spaces between words. `len(text.split())` gives about one word per sentence. `fidetype.lang` now refuses (`WordsNotDefinedError`), but no definition exists.
+- **Done when:** a written proposal (docs page) defines the rate for such scripts: a fixed, versioned word segmenter (licence-clean, its version in the score card) or a characters-per-minute metric with a stated cross-language conversion. It gives the no-BCI reference for the unit, implements it for `zh` in `fidetype.lang` with tests, and the user decides adoption (like safe WPM v0.2).
+
+#### P14-40 Per-language models and vocabulary registry
+- **Gap:** 119 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-34). Follow-up of P14-34, P15-31, P15-32.
+- **Status:** `todo`.
+- **Depends on:** P14-34 (done); a FEP for spec 12.4 vocabulary ids and the `NTS-VT-CHAR` grapheme rule (all three SDKs).
+- **Source:** [Language audit](../../docs/language-support.md), rows A4, A6-A8, C1-C5, D7, D8. The char n-gram LM indexes 28 byte symbols; lexicons are CMUdict; LLM prompts say "English"; the simulator uses English letter frequencies and a US layout; the only registered `vocab_id` is `char.b2q-28`; `NTS-VT-CHAR` counts code points, so a Hindi grapheme vocabulary fails.
+- **Done when:** the char LM takes its symbol table from `Language.vocab` (English LM files unchanged), a Spanish char LM trains from Tatoeba `spa` (CC BY 2.0 FR) with tests, `Language` holds the lexicon / grapheme-to-phoneme, LLM prompt language, letter frequencies and keyboard layout keys, and a FEP registers per-language `vocab_id`s (for example `char.es-37`) and states the code-point vs. grapheme rule, with validator vectors in all three SDKs.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
