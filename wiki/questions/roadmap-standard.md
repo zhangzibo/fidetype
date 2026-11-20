@@ -1,14 +1,14 @@
 ---
 title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
-tags: [planning, roadmap, north-star, frontier, write-side, affect, memory, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit]
+tags: [planning, roadmap, north-star, frontier, write-side, affect, memory, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit, daily-use, aac-app, privacy, federated-learning, emg-hardware, foundation-model, multilingual, regulatory]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-19
+updated: 2026-11-20
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
 
-> **North star changed (2026-11-15).** The project now aims at a new frontier: a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth ([north star](north-star.md)). **[P15 Frontier](#p15-frontier-added-2026-11-15-leads) leads.** P1–P14 below stay as they are: no item moved, renumbered or removed. The standard work (spec, SDKs, collector) is now internal plumbing with a lower priority.
+> **North star changed (2026-11-15).** The project now aims at a new frontier: a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth ([north star](north-star.md)). **[P15 Frontier](#p15-frontier-added-2026-11-15-leads) leads.** P1–P14 below stay as they are: no item moved, renumbered or removed. The standard work (spec, SDKs, collector) is now internal plumbing with a lower priority. **After the roadmap (added 2026-11-20):** [P17 daily use](#p17-daily-use-product-people-and-privacy-added-2026-11-20-after-the-roadmap) and [P18 reach](#p18-reach-hardware-models-languages-outputs-standards-added-2026-11-20-after-the-roadmap) start in 2028.
 >
 > **Later: [P16 write side](#p16-write-side-emotion-and-memory-exploration-added-2026-11-15-later)** (user idea, 2026-11-15): explore emotion and memory stimulation. It starts after the P15 core work. Real stimulation is externally blocked.
 
@@ -1786,6 +1786,174 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 **Effort:** 10–20 agent-days (our estimate); user: about 6 h (review of the ethics page; decisions on partners). **Depends on:** the P15 core work; trust layer (P5, P14-03). **Window:** 2027-07-01 → 2027-12-31 for P16-01 … P16-04. P16-05 has no date.
 
+## P17. Daily use: product, people and privacy (added 2026-11-20, after the roadmap)
+**Goal:** turn the toolkit into a product that real people use every day, collect our own data under ethics approval, keep learning private, and find a clinical and regulatory path.
+
+**Source:** user approval (2026-11-20) of the orchestrator's post-roadmap list ("P17+"). P17 and P18 come **after** the current roadmap (P1–P16). No existing item moves, changes its ID or changes its priority. P17 and P18 build on existing items and do not repeat them: P14-35 (typing UI), P14-37 (installer), P14-36 (usability study), P12 (intent and control profiles), P13 (benchmark hub), P15-30 … P15-32 (first non-English work), P5-04 (privacy) and P5-05 (on-device trust core) stay where they are.
+
+**Rules:**
+- The product never commits a word that the guard does not commit. The no-false-words guarantee is the product contract.
+- Work with people (volunteers, users, patients) waits for ethics approval. Those items are **`externally_blocked`**. The user owns ethics boards, volunteers, partners and legal review.
+- Publishing (a public service, a dataset, an app store entry) is the user's action. Agents prepare; the user publishes.
+- Never commit raw recordings or participant data. Commit aggregate results only.
+- No medical claims before P17-10 says which claims are allowed.
+
+### Deliverables
+| ID | Item | Depends on | Status |
+|---|---|---|---|
+| **P17-00** | Roadmap scope: add P17 and P18 | — | done |
+| **P17-01** | Daily-use AAC app on the trust guard (installable, end-to-end UX) | P14-35, P14-37, P14-09, P14-03, P14-04, P5-05 | todo |
+| **P17-02** | Multi-week home use of the app with real users | P17-01, P17-04 | **externally blocked** |
+| **P17-03** | Own data-collection protocol, consent form and data plan | P5-04, P14-36, P18-01 | todo |
+| **P17-04** | Ethics approval for our own data collection | P17-03, an ethics board | **externally blocked** |
+| **P17-05** | Volunteer recordings under our protocol; consented public dataset | P17-04, P18-03 or P4-06 | **externally blocked** |
+| **P17-06** | On-device learning: the F1 loop runs on the user's device | P15-02, P15-03, P15-13, P15-23, P15-24, P5-05 | todo |
+| **P17-07** | Federated and self-supervised adaptation from daily use | P17-06, P18-04 | todo |
+| **P17-08** | Hosted hub and leaderboard service: build and staging (not published) | P13-03, P13-08, P13-10, P6-03 | todo |
+| **P17-09** | Hosted hub launch (user-owned) | P17-08, accounts and domain | **externally blocked** |
+| **P17-10** | Regulatory map for a daily-use AAC BCI (desk study) | P17-01 (scope) | todo |
+| **P17-11** | Clinical study or regulatory filing | P17-10, P17-04, partners, legal review | **externally blocked** |
+
+#### P17-00 Roadmap scope: add P17 and P18
+- **Status:** `done` (2026-11-20).
+- **Done when:** P17 and P18 exist in the tracker, on this page and in diagram 11.
+
+#### P17-01 Daily-use AAC app on the trust guard
+- **Serves:** people who cannot speak or type easily; AAC developers.
+- **Goal:** one installable app that joins live decode, the trust guard, an AAC-style screen, correction and settings. Today these parts exist as separate tools (P14-04, P14-03, P14-35, P14-37).
+- **Depends on:** P14-35 (typing UI), P14-37 (installer), P14-09 (AAC integration), P14-03 (drop-in guard), P14-04 (live decode), P5-05 (on-device trust core).
+- **Done when:** one installer per desktop OS (Windows, macOS, Linux) runs a full session from a replayed public recording and from an LSL source: decode → guard → COMMIT / OFFER / WITHHOLD shown → user correction logged. An end-to-end test runs in CI. A scripted accessibility check (keyboard-only use, screen-reader labels, switch access) passes. A test shows that no withheld text reaches the output.
+
+#### P17-02 Multi-week home use of the app with real users
+- **Goal:** measure daily use, not lab use.
+- **Depends on:** P17-01, P17-04 (ethics approval); volunteers.
+- **Done when:** at least 5 users use the app for at least 2 weeks each, with consent. A results page reports safe WPM, the measured wrong-commit rate against the bound, and use time per user (aggregates only). **`externally_blocked`** (ethics approval, volunteers).
+
+#### P17-03 Own data-collection protocol, consent form and data plan
+- **Goal:** be ready to record our own data the day ethics approval and a device exist.
+- **Deliverable:** a protocol (tasks, device, session length, NTS format), a consent form (with withdrawal and data deletion), and a data management plan (de-identification, storage, access, licence of any release).
+- **Depends on:** P5-04 (consent records, erasure), P14-36 (usability study plan), P18-01 (device).
+- **Done when:** the three documents are in the repo; a fresh-agent review against a checklist (Declaration of Helsinki items, GDPR and neural-data law points) finds no open item; the package is ready to send to an ethics board.
+
+#### P17-04 Ethics approval for our own data collection
+- **Depends on:** P17-03; an ethics board (IRB or equivalent).
+- **Done when:** an approval exists and its protocol number is recorded (no personal data in the repo). **`externally_blocked`** (the user owns this step).
+
+#### P17-05 Volunteer recordings under our protocol
+- **Goal:** data that we control, for gaps that public data does not fill (daily-use EMG, more languages).
+- **Depends on:** P17-04; a working device (P18-03 or P4-06).
+- **Done when:** at least 10 consented volunteers are recorded under the approved protocol. If the consent allows a release, a de-identified dataset with a data card and licence is ready, and the user publishes it. **`externally_blocked`** (ethics approval, volunteers, hardware).
+
+#### P17-06 On-device learning
+- **Goal:** the F1 self-improving loop runs on the user's device. Raw signals and text never leave the device. Only the update gate decides if a new decoder goes live.
+- **Depends on:** P15-02, P15-03 (F1 loop and runs), P15-13, P15-23, P15-24 (update gate), P5-05 (on-device trust core).
+- **Done when:** the app adapts on a laptop CPU from replayed public sessions (T12, T15 or EMG) with network access blocked in the test; the update gate and the wrong-commit bound hold as in P15-03; the adaptation cost per session is reported against a stated budget (our target: 10 CPU minutes).
+
+#### P17-07 Federated and self-supervised adaptation from daily use
+- **Goal:** find out if many users can improve a shared decoder without sharing raw data, and if unlabelled daily-use signal helps.
+- **Depends on:** P17-06, P18-04.
+- **Done when:** a pre-registered simulation on at least 2 public datasets compares local-only, federated (secure aggregation or differential privacy) and self-supervised arms. It reports CER and the guarantee per simulated user, a privacy budget (epsilon) or the reason none applies, and passing null controls.
+
+#### P17-08 Hosted hub and leaderboard service: build and staging
+- **Goal:** the P13 hub runs as a service, not only as a local build.
+- **Depends on:** P13-03 (submission by pull request), P13-08 (project site), P13-10 (replay command), P6-03 (static leaderboard).
+- **Done when:** one command deploys the hub to a local container; a staging dry run scores a sample submission end to end; a run book and a cost estimate are in `docs/`. Nothing is published.
+
+#### P17-09 Hosted hub launch
+- **Depends on:** P17-08; accounts, domain and hosting (user-owned).
+- **Done when:** the user makes the service public and the first outside submission is scored (see P6-04). **`externally_blocked`** (the user publishes).
+
+#### P17-10 Regulatory map for a daily-use AAC BCI
+- **Goal:** know which rules apply before any clinical claim.
+- **Deliverable:** a wiki question page: medical-device rules (for example FDA, EU MDR) and neural-data laws, per jurisdiction; wellness versus medical claims; the evidence a filing needs.
+- **Depends on:** P17-01 (product scope).
+- **Done when:** the page has a table per jurisdiction with citations, lists the claims we may and may not make, and marks legal review as user-owned.
+
+#### P17-11 Clinical study or regulatory filing
+- **Depends on:** P17-10, P17-04; clinical partners; legal review.
+- **Done when:** a partner clinical study is registered, or a regulatory filing is made. **`externally_blocked`**; it never counts as late.
+
+### Exit criteria
+- The app installs on three desktop OSs and runs end to end with the guard (P17-01).
+- On-device learning keeps the bound with no network (P17-06).
+- The federated / self-supervised simulation has a pre-registered result (P17-07).
+- The hosted hub runs in staging (P17-08).
+- The protocol package and the regulatory map exist (P17-03, P17-10).
+- P17-02, P17-04, P17-05, P17-09 and P17-11 stay externally blocked until outside people act.
+
+**Effort:** 40–70 agent-days (our estimate); user: ethics, volunteers, partners, legal review, publishing. **Window:** 2028-01-01 → 2028-12-31 for the agent items. The externally blocked items have no date.
+
+## P18. Reach: hardware, models, languages, outputs, standards (added 2026-11-20, after the roadmap)
+**Goal:** widen the north star: more body signals (our own open EMG band), one model across bodies, more languages, outputs beyond text, and a formal standard. Every new output keeps the same no-false-words guarantee.
+
+**Rules:** the same as P17. Hardware purchase and fabrication are user-owned. A standards body needs outside sponsors.
+
+### Deliverables
+| ID | Item | Depends on | Status |
+|---|---|---|---|
+| **P18-01** | Open low-cost EMG wristband reference design | P4-05, P4-10, P15-08 | todo |
+| **P18-02** | Wristband driver and adapter (NTS over LSL) | P18-01, P4-02, P4-15 | todo |
+| **P18-03** | Build and bench-test wristband prototypes | P18-01, P18-02, hardware purchase | **externally blocked** |
+| **P18-04** | Cross-body foundation model pre-trained on public data | P15-08, P15-09, P15-25, P15-33 | todo |
+| **P18-05** | Multilingual decoding beyond en / es (zh and others) | P15-30, P15-31, P15-32, P14-38, P14-39, P14-40 | todo |
+| **P18-06** | Commands and cursor under a no-false-action guarantee | P12-02, P12-03, P12-06, P13-04 | todo |
+| **P18-07** | Speech synthesis output under the guard | P12-04, P17-01, P14-03 | todo |
+| **P18-08** | Standards submission package for NTS | P1 (1.0 Stable), P7-02, P9-01, P9-03 | todo |
+| **P18-09** | Standards body work item | P18-08, outside sponsors | **externally blocked** |
+
+#### P18-01 Open low-cost EMG wristband reference design
+- **Goal:** a wristband that anyone can build, so EMG typing does not depend on one vendor.
+- **Deliverable:** schematic, PCB layout, bill of materials and firmware under an open hardware licence (for example CERN-OHL-S).
+- **Depends on:** P4-05 (EMG band adapters), P4-10 (onset detector), P15-08 (channel and sample-rate needs).
+- **Done when:** KiCad files, a bill of materials with a total under a stated target (our target: US$150), and firmware that streams at least 8 channels at at least 1 kHz over BLE or USB are in the repo; ERC and DRC checks pass in CI; the licence is recorded.
+
+#### P18-02 Wristband driver and adapter
+- **Depends on:** P18-01, P4-02 (LSL / BrainFlow), P4-15 (device matrix).
+- **Done when:** the driver emits NTS over LSL and passes the conformance kit against a firmware simulator (no hardware); replay and synthetic tests run in CI; the device appears in the device support matrix.
+
+#### P18-03 Build and bench-test wristband prototypes
+- **Depends on:** P18-01, P18-02; parts and fabrication (user-owned).
+- **Done when:** at least 2 units are built; noise floor, signal-to-noise ratio and battery life are measured; the P14-07 live demo runs on the band. **`externally_blocked`** (hardware purchase).
+
+#### P18-04 Cross-body foundation model
+- **Goal:** one model, pre-trained on public EMG, handwriting, speech-BCI and EEG data, that a new user or a new body signal can fine-tune with minutes of data (F3 at scale).
+- **Depends on:** P15-08 (E1a), P15-09 (new-modality benchmark), P15-25, P15-33 (low-data recipe).
+- **Done when:** a pre-registered evaluation on the P15-09 benchmark shows that the model beats a per-modality baseline with the same labelled minutes on at least 3 of 4 modalities, with shuffled and label-deranged controls passing; the weights from licence-clean data are listed with their licences.
+
+#### P18-05 Multilingual decoding beyond en / es
+- **Goal:** decode Mandarin Chinese and at least one more language with another script, end to end, with a per-language guard.
+- **Depends on:** P15-30 (Spanish), P15-31 (non-Latin scan), P15-32 (multilingual LM grounding), P14-38, P14-39, P14-40 (language hooks, WPM without spaces, per-language registry); `fidetype.lang` and [`docs/language-support.md`](../../docs/language-support.md).
+- **Done when:** `zh` in `fidetype.lang` moves from stub to supported; one public non-Latin dataset runs through decoder and guard with a per-language wrong-commit bound and safe WPM (character-based for `zh`); `docs/language-support.md` reports the results. If no public dataset exists, the page says so and the item waits for P17-05.
+
+#### P18-06 Commands and cursor under a no-false-action guarantee
+- **Goal:** carry the guarantee from text to actions: a bound on wrong actions, with abstention as the default.
+- **Depends on:** P12-02 (discrete intent), P12-03 (continuous control), P12-06 (dataset survey), P13-04 (intent tracks).
+- **Done when:** on at least one public cursor or click dataset, a calibrated guard keeps the wrong-action rate at or below the stated alpha, with an interval and null controls; the result is an intent track in the hub.
+
+#### P18-07 Speech synthesis output under the guard
+- **Goal:** speak the user's words aloud, but only words the guard commits.
+- **Depends on:** P12-04 (decoded-speech profile), P17-01 (app), P14-03 (guard).
+- **Done when:** the app speaks only COMMIT decisions, and an OFFER only after the user confirms it; a test over the replay suite finds 0 spoken withheld items; the latency from commit to audio start is reported.
+
+#### P18-08 Standards submission package for NTS
+- **Goal:** prepare NeuralTextStream for a formal standards body (for example IEEE SA, ISO/IEC JTC 1, or a W3C or Linux Foundation group).
+- **Depends on:** P1 (1.0 Stable), P7-02 (conformance levels), P9-01 (licence and patents), P9-03 (neutral home).
+- **Done when:** a wiki page compares the candidate bodies and names one, with its process; the package (spec text in that body's template, conformance kit, implementer list, IPR statement) is in the repo and ready for the user.
+
+#### P18-09 Standards body work item
+- **Depends on:** P18-08; outside sponsors and members.
+- **Done when:** the body accepts a work item (a PAR or equivalent). **`externally_blocked`**; it never counts as late.
+
+### Exit criteria
+- The wristband design and driver pass their CI checks (P18-01, P18-02).
+- The foundation model has a pre-registered result (P18-04).
+- One non-Latin language runs end to end with a per-language bound (P18-05).
+- Actions and speech output keep the guarantee (P18-06, P18-07).
+- The standards package is ready (P18-08).
+- P18-03 and P18-09 stay externally blocked until outside people act.
+
+**Effort:** 60–100 agent-days (our estimate); user: hardware, sponsors, publishing. **Window:** 2028-01-01 → 2029-06-30 for the agent items. The externally blocked items have no date.
+
 ## Sequencing
 | Window | First (critical path) | In parallel |
 |---|---|---|
@@ -1793,6 +1961,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | 2027-01 → 02 | P2 Python, TS, Rust 1.0-rc; P1 1.0 RC | P3 collector skeleton; P8 quickstarts; P10 step 2 (Paper 1) |
 | 2027-03 → 06 | P3 collector + OS exporter; P8 three-device demo; P7 conformance kit | P2 C core (after 1.0), C#, Kotlin; P4 LSL, BrainFlow, MNE, toolkits; P10 steps 3–4 (user) |
 | 2027-07 → 12 | P5 product grade; P7 certification list | P10 steps 5–6; P11 papers; 1.0 Stable when outside reviewers exist; P12 intent profiles and P13 benchmark hub (added 2026-11-11, after the text work) |
+| 2028 → 2029-06 (added 2026-11-20) | P17-01 daily-use app; P17-06 on-device learning; P18-04 foundation model | P17-03 protocol, P17-08 hub staging, P17-10 regulatory map; P18-01 / P18-02 wristband; P18-05 languages; P18-06 / P18-07 outputs; P18-08 standards package; externally blocked: P17-02, P17-04, P17-05, P17-09, P17-11, P18-03, P18-09 |
 
 Rules:
 - **Replay before hardware.** Every adapter has a replay test before anyone buys a device.
@@ -1834,6 +2003,6 @@ These steps need the user or outside people. They are tracked as `externally_blo
 - [Spec v0.1](../../spec/neuraltextstream-v0.1.md)
 - [North star](north-star.md) (the reason for P15: frontier first)
 - [Open gaps](open-gaps.md) (2026-11-16: known gaps registered as items)
-- [Progress dashboard](../progress/index.html) (milestones P1–P16)
+- [Progress dashboard](../progress/index.html) (milestones P1–P18)
 - [Apple BCI HID](../entities/apple-bci-hid.md)
 - [Diagrams](../diagrams/index.html) (diagram 11: long-term roadmap)
