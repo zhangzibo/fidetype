@@ -8,7 +8,7 @@ Process tree: this launcher (exits at once) -> a hidden driver (this file, ``--d
    -- python -I run.py latency`` (if its record is not clean: once more as ``--tag latency2``)
 3. ``... --class timing --threads 4 --env-json derived/p3-12/iso-latency4.json -- python -I run.py latency4``
 4. ``... --class background --threads 1 -- python -I run.py score``, then the DONE file.
-Before each timing stage the driver waits (up to 3 h, log in launcher.log) until no other registered CPU job runs
+Before each timing stage the driver waits (up to 8 h, log in launcher.log) until no other registered CPU job runs
 and the machine load is below 25 %; if not, it writes WAITING-NOT-QUIET and stops (resume later).
 Flags: CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP | CREATE_BREAKAWAY_FROM_JOB (no window). run.py holds a
 keep-awake (SetThreadExecutionState).
@@ -60,7 +60,7 @@ def _run(cls: str, threads: int, args: list[str], env_json: str | None = None) -
 
 
 QUIET_LOAD_PCT = 25.0  # machine CPU load over a 20 s sample (P15-33 GPU feeder: about 1 core = 6 %)
-QUIET_MAX_WAIT_S = 3 * 3600
+QUIET_MAX_WAIT_S = 8 * 3600
 
 
 def _recent(job: dict, hours: float = 6.0) -> bool:

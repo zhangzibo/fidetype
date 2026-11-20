@@ -73,3 +73,6 @@ Not in scope: the GPU path (P15-33 holds the GPU; P11-07 GPU chunk p95 4.2 ms st
 
 ## Amendment 1 (2026-11-20 05:20, before any timed measurement)
 At the first launch (05:19) the P15-34 agent ran two 4-thread background CPU jobs (machine load 82 %). The run was stopped after about one minute of the `check` stage (no timing had started). The driver now waits before each timing stage until no other registered CPU job (registered in the last 6 h) runs and the machine load over 20 s is below 25 %. It waits up to 3 h; then it writes `WAITING-NOT-QUIET` and stops before the timing stage. No metric, rule or candidate changes.
+
+## Amendment 2 (2026-11-20 06:00, before any timed measurement)
+The P15-34 CPU run is expected to end about 11:00 (HANDOFF). That is after the 3 h wait limit of amendment 1, so the wait limit is now 8 h. The `check` stage had finished (05:28); it is not run again. No metric, rule or candidate changes.

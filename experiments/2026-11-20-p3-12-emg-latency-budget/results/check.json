@@ -1,0 +1,121 @@
+{
+ "n_eval": 1221,
+ "crt_stream": {
+  "n_windows": 49,
+  "max_abs_logp_diff": 0.0005931854248046875,
+  "max_abs_prob_diff": 3.081722424436162e-05,
+  "min_argmax_agreement": 1.0,
+  "pass": false
+ },
+ "decisions": {
+  "real": {
+   "n": 1221,
+   "same_as_offline_guard": 1221,
+   "same_nbest_as_offline": 1221,
+   "same_as_p1107_stored": 1221
+  },
+  "shuffled": {
+   "n": 1221,
+   "same_as_offline_guard": 1221,
+   "same_nbest_as_offline": 1221,
+   "same_as_p1107_stored": 1221
+  },
+  "zeros": {
+   "n": 1221,
+   "same_as_offline_guard": 1221,
+   "same_nbest_as_offline": 1221,
+   "same_as_p1107_stored": 1221
+  }
+ },
+ "A1_pass": true,
+ "accuracy": {
+  "window_top1_intended_cer_pooled_stream_FL@B8": 0.08985732009925558,
+  "p1107_FL_window_intended_cer_pooled": 0.08995037220843673,
+  "stream": {
+   "n_commits": 154,
+   "n_wrong_commits": 43,
+   "commit_rate": 0.12612612612612611,
+   "wrong_commit_rate": 0.03521703521703522,
+   "wrong_commit_cp95": [
+    0.0256,
+    0.0471
+   ],
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 154,
+    "offer": 931,
+    "withhold": 136
+   },
+   "control_shuffled_commits": 0,
+   "control_zeros_commits": 0,
+   "safe_v01": {
+    "value": 3.3710198389920367,
+    "ci": [
+     1.9248304824113167,
+     5.1791638751383235
+    ],
+    "status": "certified",
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "measured_wrong_commit": 0.03521703521703522,
+    "measured_wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 459,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 16.40701754385965,
+    "unguarded_wpm": 3.3710198389920367,
+    "wpm_no_penalty": 3.8328715180651494,
+    "reading_cost": null,
+    "status_note": null
+   }
+  },
+  "p1107_stored_rescored": {
+   "n_commits": 154,
+   "n_wrong_commits": 43,
+   "commit_rate": 0.12612612612612611,
+   "wrong_commit_rate": 0.03521703521703522,
+   "wrong_commit_cp95": [
+    0.0256,
+    0.0471
+   ],
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 154,
+    "offer": 931,
+    "withhold": 136
+   },
+   "control_shuffled_commits": 0,
+   "control_zeros_commits": 0,
+   "safe_v01": {
+    "value": 3.3710198389920367,
+    "ci": [
+     1.9248304824113167,
+     5.1791638751383235
+    ],
+    "status": "certified",
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "measured_wrong_commit": 0.03521703521703522,
+    "measured_wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 459,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 16.40701754385965,
+    "unguarded_wpm": 3.3710198389920367,
+    "wpm_no_penalty": 3.8328715180651494,
+    "reading_cost": null,
+    "status_note": null
+   }
+  }
+ },
+ "A2_pass": true,
+ "seconds": 483.6
+}

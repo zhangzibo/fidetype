@@ -1,0 +1,22 @@
+2026-11-20 05:19:24 start check (OMP_NUM_THREADS=1)
+2026-11-20 05:20:39 start check (OMP_NUM_THREADS=1)
+2026-11-20 05:21:41 check crt: {'n_windows': 49, 'max_abs_logp_diff': 0.0005931854248046875, 'max_abs_prob_diff': 3.081722424436162e-05, 'min_argmax_agreement': 1.0, 'pass': False}
+2026-11-20 05:22:23 check real: 300 windows (103 s); same as offline 300
+2026-11-20 05:23:13 check real: 600 windows (153 s); same as offline 600
+2026-11-20 05:24:03 check real: 900 windows (204 s); same as offline 900
+2026-11-20 05:24:42 check real: 1200 windows (242 s); same as offline 1200
+2026-11-20 05:24:44 check real: {'n': 1221, 'same_as_offline_guard': 1221, 'same_nbest_as_offline': 1221, 'same_as_p1107_stored': 1221}
+2026-11-20 05:25:05 check shuffled: 300 windows (265 s); same as offline 300
+2026-11-20 05:25:33 check shuffled: 600 windows (294 s); same as offline 600
+2026-11-20 05:26:01 check shuffled: 900 windows (322 s); same as offline 900
+2026-11-20 05:26:20 check shuffled: 1200 windows (341 s); same as offline 1200
+2026-11-20 05:26:21 check shuffled: {'n': 1221, 'same_as_offline_guard': 1221, 'same_nbest_as_offline': 1221, 'same_as_p1107_stored': 1221}
+2026-11-20 05:26:55 check zeros: 300 windows (375 s); same as offline 300
+2026-11-20 05:27:28 check zeros: 600 windows (408 s); same as offline 600
+2026-11-20 05:28:09 check zeros: 900 windows (449 s); same as offline 900
+2026-11-20 05:28:40 check zeros: 1200 windows (481 s); same as offline 1200
+2026-11-20 05:28:42 check zeros: {'n': 1221, 'same_as_offline_guard': 1221, 'same_nbest_as_offline': 1221, 'same_as_p1107_stored': 1221}
+2026-11-20 05:28:43 check: A1 True, A2 True; accuracy {"window_top1_intended_cer_pooled_stream_FL@B8": 0.08985732009925558, "p1107_FL_window_intended_cer_pooled": 0.08995037220843673, "stream": {"n_commits": 154, "n_wrong_commits": 43, "commit_rate": 0.12612612612612611, "wrong_commit_rate": 0.03521703521703522, "wrong_commit_cp95": [0.0256, 0.0471], "top1_exact": 0.32432432432432434, "actions": {"commit": 154, "offer": 931, "withhold": 136}, "control_shuffled_commits": 0, "control_zeros_commits": 0, "safe_v01": {"value": 3.3710198389920367, "ci": [1.9248304824113167, 5.1791638751383235], "status": "certified", "n_commits": 154, "n_wrong_commits"
+2026-11-20 05:28:43 end check
+2026-11-20 06:00:11 start check (OMP_NUM_THREADS=1)
+2026-11-20 06:00:11 end check
