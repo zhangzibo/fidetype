@@ -1,0 +1,640 @@
+{
+ "task": "P11-12",
+ "date": "2026-11-19 19:38",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "note": "aggregates only (no per-user value, no text, no id)",
+ "tune": {
+  "w": 0.5,
+  "c": 4,
+  "rate": 0.21568627450980393,
+  "n_tune": 765,
+  "tune_digest": "96f175801d6ff225"
+ },
+ "gate": {
+  "k_min": 15,
+  "r_min": 1.842374616171955,
+  "r_max": 17.275747508305646,
+  "m": 7,
+  "n_fit_real": 765,
+  "n_fit_shuffled_check": 572,
+  "real_fit_gated": 0.01699346405228758,
+  "shuffled_fit_pass": 0.0,
+  "tune_digest": "96f175801d6ff225"
+ },
+ "eval": {
+  "n_prompts": 1221,
+  "n_words_intended": 4985,
+  "minutes_neural": 119.75355757077536
+ },
+ "arms": {
+  "S": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "tcfg-3875f995e4c256fb",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.55,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 1,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it."
+    ],
+    "confidence": null
+   },
+   "safe_v01": {
+    "value": 4.095207259181112,
+    "ci": [
+     1.9885949095477,
+     6.604376887259816
+    ],
+    "status": "certified",
+    "n_commits": 167,
+    "n_wrong_commits": 35,
+    "measured_wrong_commit": 0.028665028665028666,
+    "measured_wrong_commit_cp95": [
+     0.02,
+     0.0396
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 548,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 14.061403508771928,
+    "unguarded_wpm": 4.095207259181112,
+    "wpm_no_penalty": 4.576064470369721,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02": {
+    "value": 4.095207259181112,
+    "ci": [
+     1.9885949095477,
+     6.604376887259816
+    ],
+    "status": "certified",
+    "n_commits": 167,
+    "n_wrong_commits": 35,
+    "measured_wrong_commit": 0.028665028665028666,
+    "measured_wrong_commit_cp95": [
+     0.02,
+     0.0396
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 548,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 14.061403508771928,
+    "unguarded_wpm": 4.095207259181112,
+    "wpm_no_penalty": 4.576064470369721,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 3.9517816939663177,
+    "ci": [
+     1.9505892143080448,
+     6.246193622852244
+    ],
+    "status": "certified",
+    "n_commits": 167,
+    "n_wrong_commits": 35,
+    "measured_wrong_commit": 0.028665028665028666,
+    "measured_wrong_commit_cp95": [
+     0.02,
+     0.0396
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 548,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 14.061403508771928,
+    "unguarded_wpm": 3.9517816939663177,
+    "wpm_no_penalty": 4.576064470369721,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 4.8566666666666665,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 4.095207259181112,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "always_commit": {
+    "unguarded_wpm": 2.487311604894382,
+    "n_right": 293
+   },
+   "n_eval": 1221,
+   "n_commits": 167,
+   "n_wrong_commits": 35,
+   "wrong_commit_rate": 0.028665028665028666,
+   "wrong_commit_cp95": [
+    0.02,
+    0.0396
+   ],
+   "commit_rate": 0.13677313677313677,
+   "error_among_commits": 0.20958083832335328,
+   "top1_exact": 0.23996723996723995,
+   "actions": {
+    "commit": 167,
+    "offer": 822,
+    "withhold": 232
+   },
+   "decide_s": {
+    "p50": 0.02005,
+    "p95": 0.03973
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "pass"
+   },
+   "gate_cost": {
+    "real_eval_gated": 0.022113022113022112,
+    "shuffled_eval_gated": 1.0,
+    "zeros_eval_gated": 1.0,
+    "top1_exact_nogate": 0.24488124488124488,
+    "top1_exact_gated": 0.23996723996723995
+   }
+  },
+  "SL": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "tcfg-0cd6e9578e965f42",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.61,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 1,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it."
+    ],
+    "confidence": {
+     "kind": "learned",
+     "schema": "fidetype.commit-score/0.1",
+     "model": "logistic regression, L2 on standardised features, features clipped to the fit range, sign-constrained weights (backward elimination)",
+     "features": [
+      "p_top1",
+      "logit_p_top1",
+      "margin",
+      "nbest_entropy",
+      "word_agreement",
+      "char_conf_mean",
+      "char_conf_min",
+      "guard_risk",
+      "log_n_words",
+      "acoustic_per_char",
+      "lm_per_word",
+      "acoustic_gap",
+      "frames_per_char"
+     ],
+     "dropped": [
+      "margin",
+      "nbest_entropy"
+     ],
+     "n_used": 6,
+     "l2": 1.0,
+     "fit_items": 765,
+     "fit_positive": 162,
+     "certify_items": 459,
+     "threshold": 0.61,
+     "feasible": true,
+     "coef": {
+      "p_top1": 0.525356162184,
+      "logit_p_top1": 0.566951196158,
+      "margin": 0.0,
+      "nbest_entropy": 0.0,
+      "word_agreement": 1.93468888792,
+      "char_conf_mean": 0.0,
+      "char_conf_min": 0.0,
+      "guard_risk": -1.07133560578,
+      "log_n_words": -0.228209623118,
+      "acoustic_per_char": 0.0,
+      "lm_per_word": 0.0,
+      "acoustic_gap": 0.0,
+      "frames_per_char": -0.197324174134
+     },
+     "intercept": -3.03826896279
+    }
+   },
+   "safe_v01": {
+    "value": 5.084473094135909,
+    "ci": [
+     2.6696683480510153,
+     7.960595560435001
+    ],
+    "status": "certified",
+    "n_commits": 194,
+    "n_wrong_commits": 31,
+    "measured_wrong_commit": 0.025389025389025387,
+    "measured_wrong_commit_cp95": [
+     0.0173,
+     0.0358
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 670,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 12.02017543859649,
+    "unguarded_wpm": 5.084473094135909,
+    "wpm_no_penalty": 5.594823348809696,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02": {
+    "value": 5.084473094135909,
+    "ci": [
+     2.6696683480510153,
+     7.960595560435001
+    ],
+    "status": "certified",
+    "n_commits": 194,
+    "n_wrong_commits": 31,
+    "measured_wrong_commit": 0.025389025389025387,
+    "measured_wrong_commit_cp95": [
+     0.0173,
+     0.0358
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 670,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 12.02017543859649,
+    "unguarded_wpm": 5.084473094135909,
+    "wpm_no_penalty": 5.594823348809696,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 4.876791868567496,
+    "ci": [
+     2.6129884862678594,
+     7.455744185446892
+    ],
+    "status": "certified",
+    "n_commits": 194,
+    "n_wrong_commits": 31,
+    "measured_wrong_commit": 0.025389025389025387,
+    "measured_wrong_commit_cp95": [
+     0.0173,
+     0.0358
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 670,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 12.02017543859649,
+    "unguarded_wpm": 4.876791868567496,
+    "wpm_no_penalty": 5.594823348809696,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 5.611666666666667,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 5.084473094135909,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "always_commit": {
+    "unguarded_wpm": 2.487311604894382,
+    "n_right": 293
+   },
+   "n_eval": 1221,
+   "n_commits": 194,
+   "n_wrong_commits": 31,
+   "wrong_commit_rate": 0.025389025389025387,
+   "wrong_commit_cp95": [
+    0.0173,
+    0.0358
+   ],
+   "commit_rate": 0.1588861588861589,
+   "error_among_commits": 0.15979381443298968,
+   "top1_exact": 0.23996723996723995,
+   "actions": {
+    "commit": 194,
+    "offer": 795,
+    "withhold": 232
+   },
+   "decide_s": {
+    "p50": 0.01809,
+    "p95": 0.03834
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "pass"
+   },
+   "gate_cost": {
+    "real_eval_gated": 0.022113022113022112,
+    "shuffled_eval_gated": 1.0,
+    "zeros_eval_gated": 1.0,
+    "top1_exact_nogate": 0.24488124488124488,
+    "top1_exact_gated": 0.23996723996723995
+   }
+  },
+  "X": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "tcfg-bea10a2046878c8d",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.89,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 7,
+      "allowed": 15,
+      "passed": true
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true
+     }
+    ],
+    "warnings": [
+     "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it."
+    ],
+    "confidence": {
+     "kind": "learned",
+     "unit": "prefix",
+     "schema": "fidetype.prefix-commit-score/0.1",
+     "model": "logistic regression, L2 on standardised features, features clipped to the fit range, sign-constrained weights (backward elimination)",
+     "features": [
+      "prefix_mass",
+      "prefix_agree_min",
+      "prefix_agree_mean",
+      "prefix_char_conf_mean",
+      "prefix_char_conf_min",
+      "prefix_log_words",
+      "prefix_share",
+      "complete",
+      "p_top1",
+      "nbest_entropy",
+      "guard_risk",
+      "acoustic_per_char",
+      "lm_per_word",
+      "acoustic_gap",
+      "frames_per_char",
+      "log_n_words"
+     ],
+     "dropped": [],
+     "n_used": 11,
+     "l2": 1.0,
+     "fit_items": 765,
+     "fit_positive": 1167,
+     "fit_rows": 2525,
+     "certify_items": 459,
+     "threshold": 0.89,
+     "feasible": true,
+     "risk": "wrong-prefix-commit: the committed words are not the first words of the true text (a complete prefix, i.e. the whole top-1 text, is wrong unless it equals the true text); rate over all utterances",
+     "coef": {
+      "prefix_mass": 0.557111087498,
+      "prefix_agree_min": 0.114657284431,
+      "prefix_agree_mean": 0.629804879342,
+      "prefix_char_conf_mean": 0.0,
+      "prefix_char_conf_min": 0.0,
+      "prefix_log_words": -0.517226983981,
+      "prefix_share": -0.253425907306,
+      "complete": 0.152711019699,
+      "p_top1": 0.444040291603,
+      "nbest_entropy": -0.103284036205,
+      "guard_risk": -0.163181103838,
+      "acoustic_per_char": 0.0,
+      "lm_per_word": 0.0,
+      "acoustic_gap": 0.0,
+      "frames_per_char": -0.209077630992,
+      "log_n_words": -0.0174314632662
+     },
+     "intercept": -0.255656146912
+    }
+   },
+   "safe_v02": {
+    "value": 4.252918183346778,
+    "ci": [
+     2.68868176545895,
+     6.304342854338059
+    ],
+    "status": "certified",
+    "n_commits": 423,
+    "n_wrong_commits": 34,
+    "measured_wrong_commit": 0.027846027846027847,
+    "measured_wrong_commit_cp95": [
+     0.0194,
+     0.0387
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 528,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 4.396491228070175,
+    "unguarded_wpm": 4.252918183346778,
+    "wpm_no_penalty": 4.409054818166447,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 4.0448906623817775,
+    "ci": [
+     2.595871896340128,
+     5.876748664792545
+    ],
+    "status": "certified",
+    "n_commits": 423,
+    "n_wrong_commits": 34,
+    "measured_wrong_commit": 0.027846027846027847,
+    "measured_wrong_commit_cp95": [
+     0.0194,
+     0.0387
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 528,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 4.396491228070175,
+    "unguarded_wpm": 4.0448906623817775,
+    "wpm_no_penalty": 4.409054818166447,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 6.385000000000001,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 4.252918183346778,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "safe_v01_complete_only": {
+    "value": 0.0668038608813098,
+    "ci": [
+     0.0,
+     0.1676769698310331
+    ],
+    "status": "certified",
+    "n_commits": 2,
+    "n_wrong_commits": 0,
+    "measured_wrong_commit": 0.0,
+    "measured_wrong_commit_cp95": [
+     0.0,
+     0.003
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 8,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 0.0,
+    "unguarded_wpm": 0.0668038608813098,
+    "wpm_no_penalty": 0.0668038608813098,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "n_prefix_commits": 421,
+   "n_complete_commits": 2,
+   "committed_right_words": 528,
+   "n_eval": 1221,
+   "n_commits": 423,
+   "n_wrong_commits": 34,
+   "wrong_commit_rate": 0.027846027846027847,
+   "wrong_commit_cp95": [
+    0.0194,
+    0.0387
+   ],
+   "commit_rate": 0.3464373464373464,
+   "error_among_commits": 0.08037825059101655,
+   "top1_exact": 0.23996723996723995,
+   "actions": {
+    "commit": 423,
+    "offer": 566,
+    "withhold": 232
+   },
+   "decide_s": {
+    "p50": 0.01833,
+    "p95": 0.03879
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "pass"
+   },
+   "gate_cost": {
+    "real_eval_gated": 0.022113022113022112,
+    "shuffled_eval_gated": 1.0,
+    "zeros_eval_gated": 1.0,
+    "top1_exact_nogate": 0.24488124488124488,
+    "top1_exact_gated": 0.23996723996723995
+   }
+  }
+ },
+ "digests_match_p1109": true
+}
