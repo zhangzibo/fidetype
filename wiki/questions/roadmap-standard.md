@@ -659,7 +659,7 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 #### P6-06 Input-level controls for the T12 and Willett entries
 - **Gap:** 28 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P6-02.
 - **Status:** `todo`.
-- **Depends on:** P6-02 (done); for T12: the T12 v2 checkpoint + CPU decode; for Willett: a decoder of our own (P14-12 / P15-08).
+- **Depends on:** P6-02 (done); for T12: the T12 v2 checkpoint + CPU decode; for Willett: a decoder of our own (P14-12 / P15-08). 2026-11-19: P14-33 (done) packages `willett-hw` (runs on the neural cube, so time-shuffled and zero inputs are possible); same split caveat as P14-12.
 - **Source:** Commit `5133e04` (P6-02: T12 and Willett controls are decoder-output stand-ins: permuted frames / uniform log-probs, not neural input re-run through the decoder).
 - **Gap detail:** The shuffled and zeros controls of the b2t24-t12 and willett-hw entries change the decoder output (frames permuted, uniform rows). They do not pass shuffled or zero neural input through the network. The manifests say so, but an input-level control is the stronger test.
 - **Done when:** The b2t24-t12 entry has controls made by running the T12 v2 network on time-shuffled and on all-zero neural features of each test trial (CPU decode, no GPU), and the card shows both control results. The willett-hw entry gets input-level controls when it uses a decoder that we can rerun (P14-12 / P15-08); until then the manifest keeps the stand-in note.
@@ -1048,6 +1048,7 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-38** | Language hook in safe WPM, the benchmark scorer and the hallucination protocol (open gap 117, [details](#p14-38-language-hook-in-safe-wpm-the-benchmark-scorer-and-the-hallucination-protocol)) | P14-34 | research labs, BCI companies |
 | **P14-39** | Words per minute for scripts without spaces (open gap 118, [details](#p14-39-words-per-minute-for-scripts-without-spaces)) | P14-34 | research labs, BCI companies |
 | **P14-40** | Per-language models and vocabulary registry (open gap 119, [details](#p14-40-per-language-models-and-vocabulary-registry)) | P14-34, P15-31, P15-32 | research labs, BCI companies, AAC app makers |
+| **P14-41** | Trust guard for `willett-hw` (open gap 121, [details](#p14-41-trust-guard-for-willett-hw)) | P14-33 | research labs |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1162,7 +1163,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 #### P14-12 Willett-hw: word LM for exact-sentence commits and full test coverage
 - **Gap:** 26 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the P6-02 report). Follow-up of P14-10, P6-02.
 - **Status:** `todo`.
-- **Depends on:** P6-02 (done); a word LM (for example the Tatoeba word LM of the T12 v2 recipe, or the published 50k-word n-gram); P15-08 (Willett decoder of our own, for full coverage).
+- **Depends on:** P6-02 (done); a word LM (for example the Tatoeba word LM of the T12 v2 recipe, or the published 50k-word n-gram); P15-08 (Willett decoder of our own, for full coverage). 2026-11-19: P14-33 (done) packages one, `willett-hw` (greedy CER 0.305, local weights). Its training pool holds 193 of the 254 track test trials, so full coverage needs a retrain on the track train split (or a scoring on the P14-33 test blocks).
 - **Source:** Commit `5133e04` (P6-02: 3 of 81 raw RNN sentences exactly right; the built-in word-list beam keeps no candidate on 59 of 81 trials; published RNN output covers only 81 of 254 test trials).
 - **Gap detail:** The Willett entry uses the published real-time RNN output. Without a word LM only 3 of 81 sentences are exactly right, so the guard finds no certified threshold. The published output exists for only 81 of the 254 test trials (closed-loop trials), so the entry is partial.
 - **Done when:** A willett-hw entry decodes with a word LM and reports exact-sentence accuracy and the guard result (certified or vacuous, with numbers). Full coverage of the 254 test trials needs our own decoder on the neural data (P15-08 or later); until then the entry stays marked `[partial: 81/254]` and the results say so.
@@ -1314,7 +1315,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-33 Willett handwriting decoder of our own in the pretrained registry
 - **Gap:** 101 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-01). Follow-up of P14-01.
-- **Status:** `todo`.
+- **Status (2026-11-19): done** (gap 101 closed). Commit `b6dd77c`, [results](../../experiments/2026-11-19-p14-33-willett-hw/results.md), [docs](../../docs/pretrained-decoders.md). `willett-hw` v1 is `available`: P15-08 run R-all-s0 (random init, Willett CC0 data only, final step 3000), exported to `willett-hw.weights.npz` (34 MB, SHA-256 `66ac6590...`, local only; the exporter refuses a run whose `licence.json` is not clean). Runtime `xbody-ctc` (NumPy: per-session z-score -> linear stem -> the shared P11-01 causal trunk); reader `read_willett_session` (`t5.*` folder or `sentences.mat`). Weights licence CC0-1.0 **provisional** (user decision D11); language `en`; not hosted (gap 98). Card metric rerun with `load("willett-hw")` on CPU: test greedy CER **0.3051** (1,052 / 3,448), equal to the PyTorch value on 80 / 80 sentences (0 edits difference; tolerance 0.002). The card states: CER 0.305 is weak, seed 1 failed (0.920), no LM, descriptive only, and the split differs from the benchmark track `willett-hw` (193 of its 254 test trials are in this model's training pool). Guard not packaged: calibration on the val blocks was stopped by low machine memory -> P14-41 (gap 121). The PyTorch-on-CPU log-prob comparison did not run (same reason). P14-12 (gap 26) and P6-06 (gap 28) can now use this decoder.
 - **Depends on:** P15-08 E1a (done 2026-11-19: a Willett decoder of our own exists; the clean-track run R-all-s0 is best on val 0.258 and test 0.305 greedy CER, CC0 data only; the same recipe fails on seed 1, 0.920; [results](../../experiments/2026-11-19-p15-08-e1-cross-body/results.md)); P14-01 (done part). **Can start.**
 - **Source:** P14-01 ([results](../../experiments/2026-11-19-p14-01-pretrained/results.md)): the manifest `willett-hw` is `planned`: we have no trained Willett handwriting decoder yet.
 - **Done when:** a `willett-hw` manifest with weights, a runtime and a reader; its card metric reruns with `load("willett-hw")`.
@@ -1366,6 +1367,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P14-34 (done); a FEP for spec 12.4 vocabulary ids and the `NTS-VT-CHAR` grapheme rule (all three SDKs).
 - **Source:** [Language audit](../../docs/language-support.md), rows A4, A6-A8, C1-C5, D7, D8. The char n-gram LM indexes 28 byte symbols; lexicons are CMUdict; LLM prompts say "English"; the simulator uses English letter frequencies and a US layout; the only registered `vocab_id` is `char.b2q-28`; `NTS-VT-CHAR` counts code points, so a Hindi grapheme vocabulary fails.
 - **Done when:** the char LM takes its symbol table from `Language.vocab` (English LM files unchanged), a Spanish char LM trains from Tatoeba `spa` (CC BY 2.0 FR) with tests, `Language` holds the lexicon / grapheme-to-phoneme, LLM prompt language, letter frequencies and keyboard layout keys, and a FEP registers per-language `vocab_id`s (for example `char.es-37`) and states the code-point vs. grapheme rule, with validator vectors in all three SDKs.
+
+#### P14-41 Trust guard for willett-hw
+- **Gap:** 121 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-33). Follow-up of P14-33.
+- **Status:** `todo`.
+- **Depends on:** P14-33 (done); free machine memory (CPU only).
+- **Source:** P14-33 ([results](../../experiments/2026-11-19-p14-33-willett-hw/results.md)): the `guard` stage (`fidetype.trust.calibrate` on the 106 val sentences, 106 time-shuffled nulls, alpha 0.05, delta 0.1) was stopped because the machine was critically low on memory while other jobs ran. `willett-hw` has `trust: null`.
+- **Done when:** a guard calibrated on the val blocks is a release file of `willett-hw` (SHA-256 in the manifest, `trust` set), with its decisions on the test blocks (real and time-shuffled input) reported; or a written refusal (null control) with numbers. With greedy CER 0.305 a guard that only offers is an acceptable result. Run it on a quiet machine or with a lower-memory calibration.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.

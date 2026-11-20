@@ -1395,3 +1395,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Verdicts: V1 pass (E at all 0.395); H1 fail (0 of 3; T better than E at 10 and 30 min); H2 fail; H3 fail; H4 partial; C1 pass; C2 fail (0.836 vs 0.810). Roadmap rule passes as written only by ≤ 1 CER point (CI includes 0).
 - Mean test CER R / T / E / S at 3, 10, 30, 100 min, all: R 0.865, 1.327, 0.851, 0.837, 0.613; T 0.960, 0.863, 0.786, 0.777, 0.805; E 0.957, 0.884, 0.812, 0.767, 0.395; S 0.919, 0.922, 1.003, 0.919, 0.925.
 - Records: P15-08 stays `in_progress` (KT-sEMG arm); new gap 120 = [P15-33](questions/roadmap-standard.md#p15-33-e1-low-data-recipe-that-reads-the-target-signal-before-more-source-arms); P14-33 (gap 101) can start; README F3 row and north-star E1 row updated.
+
+## [2026-11-19] setup | P14-33: Willett handwriting decoder `willett-hw` in the pretrained registry (gap 101 closed; new gap 121)
+- Code `b6dd77c`, [results](../experiments/2026-11-19-p14-33-willett-hw/results.md), [docs](../docs/pretrained-decoders.md). `willett-hw` v1 `available`: P15-08 run R-all-s0 (random init, Willett CC0 data only, final step 3000); runtime `xbody-ctc` (NumPy), reader `read_willett_session`; weights local only (CC0-1.0 provisional, D11; not hosted, gap 98); language `en`.
+- Card metric rerun with `load("willett-hw")` on CPU: test greedy CER 0.3051 (1,052 / 3,448), equal to the PyTorch value on 80 / 80 sentences. Card: weak, seed 1 failed (0.920), no LM, descriptive only; its split differs from the benchmark track `willett-hw` (193 of 254 track test trials in its training pool).
+- Guard calibration stopped by low machine memory: new gap 121 = [P14-41](questions/roadmap-standard.md#p14-41-trust-guard-for-willett-hw). PyTorch-on-CPU comparison not run (same reason).
+- P14-12 (gap 26) and P6-06 (gap 28) can now use this decoder (noted in their rows; not done). `fidetype decoders list` shows the proposed weights licence.
+- Updated: open-gaps (101 closed, 121 added), roadmap, tracker, HANDOFF, publishing checklist section J, dashboard.
