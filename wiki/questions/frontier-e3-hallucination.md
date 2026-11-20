@@ -3,7 +3,7 @@ title: "Frontier write-up E3 (F2): LLM decoding with a grounding check, a halluc
 type: question
 tags: [frontier, f2, e3, llm, hallucination, grounding, ltt, benchmark, write-up, negative-result, pre-registration]
 sources: []
-updated: 2026-11-19
+updated: 2026-11-20
 ---
 
 # E3 (F2): can an LLM improve decoded text without putting words in the user's mouth?
@@ -19,7 +19,7 @@ An LLM rescores or rewrites the decoder n-best. A run-time check compares the te
 - **The grounding check stops every swapped-signal commit** (wrong neural data for the sentence) in every grounded arm, on T15 and T12. It does **not** stop fluent text on the true signal.
 - **A certified fluent-wrong bound exists** on T15 (P15-06) and on T12 (P15-14, V-single). On M4-12 it was vacuous (0 commits). On M4-13 it commits 36 sentences, 34 right.
 - **First system that passes all tracks** of the hallucination benchmark under protocol 0.2: the M4-13 P15-06 guard (36 real commits, 0 swapped).
-- **P15-22 (2026-11-19): the grounded LLM arm is also useful.** B1 + the learned commit score commits 196 of 701 (13 wrong) and gives 4.91 [4.25, 5.57] safe WPM v0.1, above gaze typing (4.02). It passes all protocol 0.2 tracks (0 swapped commits, null 0 / 300, scrambled 0 / 300), with 5 fluent-wrong commits (not certified).
+- **P15-22 (2026-11-19): the grounded LLM arm is also useful.** B1 + the learned commit score commits 196 of 701 (13 wrong) and gives 4.91 [4.25, 5.57] safe WPM v0.1 for one calibration draw, above gaze typing (4.02). With calibration variation (P15-29, [results](../../experiments/2026-11-20-p15-29-calibration-ci/results.md)) it is 5.18 [0.00, 6.99]: above 4.02 on average, but not reliably. It passes all protocol 0.2 tracks (0 swapped commits, null 0 / 300, scrambled 0 / 300), with 5 fluent-wrong commits (not certified).
 
 ## Steps at a glance
 
