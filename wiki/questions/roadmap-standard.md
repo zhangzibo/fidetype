@@ -832,18 +832,27 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-11 Non-vacuous EMG safe WPM (commit unit or LM)
 - **Gap:** 102 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-09; reopened 2026-11-19 by the orchestrator). Follow-up of P11-09, P11-07.
-- **Status:** `in_progress` (partial, 2026-11-19). Reason: arm X non-vacuous under proposed v0.2 but fails null control V6 (6.2 % > 5 %); v0.1 still 0.07; closes after P11-12 (gap 104) no-signal gate passes controls.
-- **Depends on:** P11-09 (done); P11-12 (gap 104); P11-07 (character LM + beam) optional.
+- **Status:** `done` (2026-11-19, closed by P11-12). Before: `in_progress` (partial): arm X non-vacuous under proposed v0.2 but failed null control V6 (6.2 % > 5 %); v0.1 0.07.
+- **Depends on:** P11-09 (done); P11-12 (gap 104, done); P11-07 (character LM + beam) optional.
 - **Source:** P11-09 ([results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)): the certified guard on the P11-01 EMG decoder never commits. A COMMIT must equal the whole prompt key sequence, with the user's own errors and Backspace keys; at 17.9 % key errors the top-1 is exactly right on 2 / 1,221 prompts.
 - **Done when:** a pre-registered EMG guard gives a non-vacuous certified safe WPM on held-out emg2qwerty prompts, with a commit unit the decoder can get right (word or key-prefix commits under the proposed v0.2, or the intended text after Backspace as the target) or with LM / lexicon decoding (P11-07), and the same controls as P11-09; or the result states with numbers why it stays vacuous.
 - **Result (2026-11-19):** [results](../../experiments/2026-11-19-p11-11-emg-nonvacuous/results.md). Pre-registration `b412c76`, amendment 1 + code `5f54a45` (out-of-lexicon gate), results `766b2b3`. Target = intended text after Backspace; key CTC beam 64 n-best rescored with a leak-free Tatoeba 6-gram LM and a track-train lexicon. Word-prefix arm (learned prefix score, LTT alpha 0.05, delta 0.1): certified, **non-vacuous proposed-v0.2 safe WPM 4.23 [2.60, 6.34]** on the 1,221 track-test prompts (420 commits, 35 wrong, CP95 [0.020, 0.040]) > no-BCI 3.09 / 2.93, not clearly above; adopted v0.1 only 0.07. Sentence-level arms refused (time-shuffled null 19-20 / 300); the prefix arm fails the evaluation null control (6.2 %); raw-key track arm vacuous (no card). New gap 104 = P11-12.
+- **Closed (2026-11-19) by P11-12** ([results](../../experiments/2026-11-20-p11-12-emg-nosignal-gate/results.md)): with the acoustic no-signal gate, the primary sentence arm S passes every P11-09 control and gives a certified, non-vacuous safe WPM v0.1 **4.10 [1.99, 6.60]** > no-BCI 3.09 (167 commits, 35 wrong = 0.029); test time-shuffled and zero-EMG commits 0 / 1,221.
 
 #### P11-12 No-signal detector for the EMG intended-text guard
-- **Gap:** 104 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-11). Follow-up of P11-11.
-- **Status:** `todo`.
-- **Depends on:** P11-11 (done); the P11-09 / P11-11 local files (`derived/p11-09`, `derived/p11-11`); CPU.
+- **Gap:** 104 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-11; closed 2026-11-19). Follow-up of P11-11.
+- **Status:** `done` (2026-11-19).
+- **Depends on:** P11-11 (partial; gap 102 reopened, closes with this item); the P11-09 / P11-11 local files (`derived/p11-09`, `derived/p11-11`); CPU.
 - **Source:** P11-11 ([results](../../experiments/2026-11-19-p11-11-emg-nonvacuous/results.md)): time-shuffled EMG decodes to one confident real word after the LM / lexicon rescoring (245 of 246 non-gated null outputs are one word). So the sentence-level guards are refused (19 and 20 / 300 null commits, allowed 15), and the certified prefix guard commits on 6.2 % of the null test inputs.
 - **Done when:** a pre-registered no-signal gate that does not use the language side (for example a minimum word count, a decoded-words-per-second check against the user's calibration range, or an acoustic-only evidence score) makes the sentence-level guard pass all controls and keeps the prefix guard's evaluation null-commit rate at or below 5 %, on the same split; v0.1 and proposed v0.2 values reported.
+- **Result (2026-11-19):** [results](../../experiments/2026-11-20-p11-12-emg-nosignal-gate/results.md). Pre-registration `f63da8a`, code `3a0572b`, results `a93aa50`. Gate (decoder argmax path only): greedy CTC key emissions >= 15 and 1.84 <= keys/s <= 17.28, fitted by a fixed rule on the 765-item calibration tuning part; it gates 0 % of time-shuffled tuning windows and 2.2 % of real test windows. All arms certified, safe, non-vacuous, all controls pass (calibrate input-level null 0 / 300; test time-shuffled and zero EMG 0 / 1,221): sentence S v0.1 **4.10 [1.99, 6.60]**, learned SL v0.1 5.08 [2.67, 7.96], prefix X proposed v0.2 4.25 [2.69, 6.30] (P11-11 null 6.2 % -> 0 %); no-BCI 3.09; none clearly above. Gaps 104 and 102 closed. No card (intended-text target): new gap 105 = P11-13.
+
+#### P11-13 Intended-text scoring for the emg2qwerty track
+- **Gap:** 105 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-12). Follow-up of P11-12, P6-02.
+- **Status:** `todo`.
+- **Depends on:** P11-12 (done); `fidetype.benchmark.scorecard` (submission v0.2); CPU.
+- **Source:** P11-12 ([results](../../experiments/2026-11-20-p11-12-emg-nosignal-gate/results.md)): the certified EMG guards commit the intended text (Backspace applied), but the emg2qwerty track scorer compares commits to the raw key sequence. So the first non-vacuous certified EMG safe WPM (4.10 v0.1) has no score card and no leaderboard row.
+- **Done when:** the emg2qwerty track (or a declared variant) can score an `intended` target (truth = key sequence with Backspace applied, the P11-11 `resolve` rule) in `fidetype.benchmark`, with tests; the P11-12 arm S gets a declared-subset card with a rerun recipe (code_ref); `python -m fidetype.benchmark.leaderboard --check` passes.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
