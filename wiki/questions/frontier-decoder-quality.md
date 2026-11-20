@@ -91,7 +91,7 @@ The same question for wrist EMG. P11-01 trained our own causal CTC decoder on [e
 
 - Pre-registered primary rule S1 (<= 20.0 %) **passes**. The stretch rule S1+ (<= 11.28 %) **fails**.
 - The generic model overfits after step 30,000 of 150,000. A longer run would not help (gap 88).
-- No trust result exists yet on these streams. A trust config (gap 89) is the next step. It tests whether the M4-13 effect (a stronger decoder makes the guarantees useful) also holds on EMG.
+- Trust result (P11-09, 2026-11-19, [results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)): the guard is certified and safe (0 wrong commits / 1,221 track-test prompts) but vacuous (0 commits; safe WPM 0.00 < no-BCI 2.93). Whole-prompt key sequences are exactly right on only 2 / 1,221 prompts at 17.9 % key errors. So the M4-13 effect does not yet hold on EMG; the next step is a commit unit the decoder can get right, or an LM (gap 102).
 
 > **Our take:** a second modality now has a decoder in the useful range. The trust-layer claims can be tested on EMG, not only on T15. The EMG weights cannot ship (NC data); a licence-clean decoder is gap 86.
 
@@ -100,7 +100,7 @@ The same question for wrist EMG. P11-01 trained our own causal CTC decoder on [e
 | 86 | [P11-06](roadmap-standard.md#p11-06-licence-clean-causal-convctc-on-kt-semg-and-toronto) | licence-clean EMG decoder |
 | 87 | [P11-07](roadmap-standard.md#p11-07-ctc-beam-search-with-a-character-lm-for-the-emg-decoder) | LM + beam search for EMG |
 | 88 | [P11-08](roadmap-standard.md#p11-08-emg-decoder-accuracy-to-the-published-fine-tuned-no-lm-cer) | accuracy to 11.28 % |
-| 89 | [P11-09](roadmap-standard.md#p11-09-trust-config-and-streaming-replay-for-the-p11-01-emg-streams) | trust config + streaming replay on EMG |
+| 102 | [P11-11](roadmap-standard.md#p11-11-non-vacuous-emg-safe-wpm-commit-unit-or-lm) | non-vacuous EMG safe WPM (P11-09 was vacuous) |
 
 ## Related pages
 [Lookahead vs accuracy and latency](lookahead-latency-accuracy.md), [M4-13 trust reruns](m4-13-trust-reruns.md), [Brain-to-Text '25 copy task](../sources/brain-to-text-25-copytask.md), [north star](north-star.md), [emg2qwerty](../entities/emg2qwerty.md).

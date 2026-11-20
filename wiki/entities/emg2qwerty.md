@@ -123,7 +123,7 @@ Our own causal CTC decoder (ring-TCN, 8.75 M parameters, no lookahead) was train
 - The conditions differ from the paper: other test users and splits, 12 log bands at 100 Hz, no lookahead, greedy decoding. The comparison is indicative.
 - The generic model is best at step 30,000 of 150,000 (val CER 0.5457). After that it overfits.
 - Weights and per-user values stay local in `C:\Users\zhang\bci-data\derived\p11-01-emg-decoder\train\`. They are research only (NC data).
-- Open: licence-clean decoder (gap 86), LM + beam search (gap 87), accuracy to 11.28 % (gap 88), trust config + streaming replay (gap 89), paper ingest (gap 90). See [open gaps](../questions/open-gaps.md).
+- Open: licence-clean decoder (gap 86), LM + beam search (gap 87), accuracy to 11.28 % (gap 88), trust config + streaming replay (gap 89, done 2026-11-19: certified but vacuous, see [P11-09 results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)), non-vacuous EMG safe WPM (gap 102), paper ingest (gap 90). See [open gaps](../questions/open-gaps.md).
 
 > **Our take:** about 15 % key errors after 18 min of fine-tuning per user, with no lookahead and no LM. This is our first non-implant decoder that is strong enough to make trust-layer tests useful.
 

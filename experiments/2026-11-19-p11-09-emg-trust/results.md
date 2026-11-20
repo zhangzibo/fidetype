@@ -67,7 +67,7 @@ Always-commit card of the same decoder (reference, no bound): key error rate 0.1
 | Agreement with the offline decisions (COMMIT vs not) | 240 / 240 |
 | Producer level of the outputs (`nts-conform`) | NTS Trust-ready (all 8 runs); producer errors 0 |
 
-> **Our take:** almost all of the decision latency is the CTC prefix beam over a whole prompt (median about 500 frames x 33 keys) at the segment end, in Python. The collector itself adds well under 1 ms (receive + validate + segment + exporters). The P3-08 T15 replay met the budget (p95 2 ms) because its word decoder ran before the collector. Two fixes: run the beam incrementally while frames arrive (the decision then needs only the last frames), or move the beam to the decoder side, as in P3-08, and gate the collector on the n-best guard only. This is new gap 102 (P3-11).
+> **Our take:** almost all of the decision latency is the CTC prefix beam over a whole prompt (median about 500 frames x 33 keys) at the segment end, in Python. The collector itself adds well under 1 ms (receive + validate + segment + exporters). The P3-08 T15 replay met the budget (p95 2 ms) because its word decoder ran before the collector. Two fixes: run the beam incrementally while frames arrive (the decision then needs only the last frames), or move the beam to the decoder side, as in P3-08, and gate the collector on the n-best guard only. This is the known open gap 37 ([P3-06](../../wiki/questions/roadmap-standard.md#p3-06-logits-guard-inside-the-latency-budget-incremental-decoding)); P11-09 adds real EMG evidence to it. No new gap.
 
 ## Checks
 | Check | Result |
@@ -90,8 +90,9 @@ Two **declared-subset** cards in the research-only section (8 of 104 track test 
 ## New gaps
 | Gap | Item | What |
 |---|---|---|
-| 102 | P3-11 | Decision latency of logits guards: incremental CTC beam (or decoder-side beam + n-best guard) so the EMG replay meets the 50 ms budget |
-| 103 | P11-11 | Non-vacuous EMG safe WPM: a commit unit that the decoder can get right (word or key-prefix commits, an intended-text target after Backspace), or LM / lexicon decoding (P11-07), then re-run this protocol |
+| 102 | P11-11 | Non-vacuous EMG safe WPM: a commit unit that the decoder can get right (word or key-prefix commits, an intended-text target after Backspace), or LM / lexicon decoding (P11-07), then the same protocol |
+
+The latency failure goes to the existing gap 37 (P3-06, logits guard inside the latency budget).
 
 ## Rerun
 | Step | Command (repo root) |
