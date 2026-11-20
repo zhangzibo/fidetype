@@ -79,7 +79,7 @@ None from the plan. The post-hoc CER check above is extra and marked.
 - **Gap 102 closes:** arm S (v0.1) is certified, safe, non-vacuous and passes V6 (the primary path; arm X also qualifies under v0.2).
 
 ## Benchmark entry
-None (plan rule). The track target is the raw key sequence, and the track scorer compares commits to it. The arms commit intended text, so the track scorer cannot score them. The P11-09 declared-subset cards keep the track-conformant (vacuous) result. A track variant that scores intended text is a new item (gap 105, P11-13).
+None (plan rule). The track target is the raw key sequence, and the track scorer compares commits to it. The arms commit intended text, so the track scorer cannot score them. The P11-09 declared-subset cards keep the track-conformant (vacuous) result. A track variant that scores intended text is a new item (gap 105, P11-13). **Later (P11-13):** the track scorer got the target `intended_text`; arms S and SL now have declared-subset cards ([P11-13 results](../2026-11-20-p11-13-intended-text-cards/results.md)).
 
 ## New gaps
 | Gap | Item | What |

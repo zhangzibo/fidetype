@@ -1,0 +1,359 @@
+{
+ "schema": "fidetype.benchmark.result/0.2",
+ "benchmark_version": "0.2",
+ "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate/intended-text guard, sentence commits, p_top1 (adopted sentence guard) (P11-12 arm S)",
+ "track": "emg2qwerty",
+ "decoder": {
+  "name": "fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate",
+  "version": "1-k15-r1.8424-17.2757",
+  "url": "experiments/2026-11-20-p11-12-emg-nosignal-gate/",
+  "weights_licence": "not released (CC BY-NC-SA data: research only)",
+  "training_data": [
+   "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)",
+   "LM: Tatoeba English (no emg2qwerty text); lexicon: words of the track-train sessions; LM weight and length bonus tuned on the calibration tuning part (P11-11)"
+  ],
+  "training_regime": "personalised (fine-tuned on earlier sessions of the same user)"
+ },
+ "policy": {
+  "name": "intended-text guard, sentence commits, p_top1 (adopted sentence guard) (P11-12 arm S)",
+  "description": "fidetype.trust.calibrate on 1224 track-val prompts of the same 8 users, alpha 0.05, delta 0.1, commit threshold 0.55; acoustic no-signal gate (greedy keys >= 15, 1.84 <= keys/s <= 17.28) fitted on the calibration tuning part"
+ },
+ "scored_from": "submission/0.2 (units-jsonl)",
+ "sources": [
+  "emg2qwerty__p11-12-intended-s-subset8__guard"
+ ],
+ "n_trials": 1221,
+ "ci": {
+  "unit": "group",
+  "method": "percentile cluster bootstrap",
+  "B": 2000,
+  "seed": 0,
+  "level": 0.95,
+  "unit_name": "user"
+ },
+ "metrics": {
+  "cer": {
+   "value": 0.276954094292804,
+   "ci": [
+    0.16841426834968548,
+    0.39197809519840765
+   ]
+  },
+  "wer": {
+   "value": 0.42487462387161484,
+   "ci": [
+    0.31247757177033497,
+    0.5383095707788804
+   ]
+  },
+  "ewpm": {
+   "value": 5.276566746978384,
+   "ci": [
+    4.367537357022001,
+    6.673450722901912
+   ]
+  },
+  "gaze_ewpm": {
+   "value": 3.0924317617866004,
+   "ci": [
+    3.0690313548565507,
+    3.1163634089914334
+   ]
+  },
+  "ewpm_minus_gaze": {
+   "value": 2.1841349851917835,
+   "ci": [
+    1.2720032547847346,
+    3.589798603146683
+   ]
+  },
+  "wrong_commit_rate": {
+   "value": 0.028665028665028666,
+   "ci": [
+    0.01636081999681017,
+    0.04330065359477124
+   ]
+  },
+  "commit_rate": {
+   "value": 0.13677313677313677,
+   "ci": [
+    0.06732072195752242,
+    0.21932406827979414
+   ]
+  },
+  "error_among_commits": {
+   "value": 0.20958083832335328,
+   "ci": [
+    0.16666666666666666,
+    0.29411764705882354
+   ]
+  },
+  "silent_error_rate": {
+   "value": 0.004914004914004914,
+   "ci": [
+    0.0016366612111292963,
+    0.00900163666121113
+   ]
+  }
+ },
+ "controls": {
+  "shuffled": {
+   "status": "pass",
+   "cer_control": 1.0,
+   "cer_gap": 0.7230459057071961,
+   "cer_gap_ci": [
+    0.6045687359233941,
+    0.8313316575117152
+   ]
+  },
+  "zeros": {
+   "status": "pass",
+   "cer_control": 1.0,
+   "cer_gap": 0.7230459057071961,
+   "cer_gap_ci": [
+    0.6045687359233941,
+    0.8313316575117152
+   ]
+  },
+  "null_commit": {
+   "status": "pass",
+   "commit_rate_zeros": 0.0,
+   "max": 0.05
+  },
+  "passed": true,
+  "basis": {
+   "shuffled": "input level: the test session EMG features time-shuffled (seeded per session, P11-09 windows), then the same decoder, gate and guard",
+   "zeros": "input level: zero EMG (every band at log(1e-6)), then the same decoder, gate and guard"
+  }
+ },
+ "guarantee": {
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 459,
+  "scope": "marginal over test prompts pooled over the 8 users; exchangeable val / test sessions; wrong = committed intended text differs from the truth intended text",
+  "calibration_split": "val",
+  "measured_wrong_commit": 0.028665028665028666,
+  "measured_wrong_commit_ci": [
+   0.01636081999681017,
+   0.04330065359477124
+  ],
+  "met_on_test": true
+ },
+ "safe_wpm": {
+  "definition": "safe-wpm/0.1",
+  "value": 4.095207259181112,
+  "ci": [
+   1.9869768024027037,
+   6.564462680853268
+  ],
+  "status": "certified",
+  "unguarded_wpm": 4.095207259181112,
+  "wpm_no_penalty": 4.576064470369721,
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 459,
+  "calibration": "val",
+  "confidence": "probability >= 0.9 over calibration draws",
+  "measured_wrong_commit": 0.028665028665028666,
+  "measured_wrong_commit_cp95": [
+   0.02,
+   0.0396
+  ],
+  "n_trials": 1221,
+  "n_commits": 167,
+  "n_wrong_commits": 35,
+  "n_correct_commits": 132,
+  "error_among_commits": 0.20958083832335328,
+  "committed_correct_words": 548,
+  "total_words": 4985,
+  "minutes_neural": 119.75355757077536,
+  "minutes_correction": 14.061403508771928,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 3.0924317617866004,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0
+  }
+ },
+ "conformance": {
+  "level": "not checked (units JSONL: NTS-derived rows)"
+ },
+ "user_model": {
+  "name": "aac-gaze-v1 @ 301.33 keys/min",
+  "config": {
+   "chars_per_min": 301.3306670286988
+  },
+  "gaze_chars_per_min": 20.0
+ },
+ "notes": [
+  "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Target intended_text (intended-text/1): the guard commits the intended text, so truth and outputs are compared after Backspace is applied. Offline decisions on full prompt windows (no latency claim). P11-12 decisions, scored by P11-13.",
+  "Target intended_text (intended-text/1): truth and outputs are compared after Backspace is applied, so CER is the character error rate of the intended text and the no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.",
+  "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+  "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+ ],
+ "scorer_version": "0.2",
+ "track_info": {
+  "title": "Wrist sEMG touch typing (emg2qwerty, Meta) - RESEARCH ONLY",
+  "licence": "CC BY-NC-SA 4.0",
+  "research_only": true,
+  "modality": "emg",
+  "ci_unit": "user",
+  "split_digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+  "rate_source": "measured: keys / (first to last key-down time) over the 15867 scored test prompts",
+  "key_track": true
+ },
+ "target": {
+  "name": "intended_text",
+  "version": "intended-text/1",
+  "normalizer": "keycodes_intended",
+  "rule": "Backspace applied (registry.keycodes_to_intended_text, rule intended-text/1): a character key appends, Backspace removes the last character if any, Enter is ignored, then runs of spaces are joined and the ends stripped"
+ },
+ "coverage": {
+  "n_scored_units": 15867,
+  "n_covered": 1221,
+  "partial": true,
+  "subset": "declared subset: the track test sessions of the 8 P11-01 test users only. The P11-01 generic model trained on 96 of the other 104 track test sessions, so only these 8 sessions are clean (P11-01 results, benchmark section)."
+ },
+ "regime": "personalised",
+ "latency": null,
+ "timing": "measured per unit (truth neural_s)",
+ "submitter": {},
+ "check": {
+  "format": "units-jsonl",
+  "n_rows": 1221,
+  "n_parent_units": 104,
+  "n_parent_covered": 8
+ },
+ "status": "scored",
+ "certification": "certified",
+ "rerun": {
+  "schema": "fidetype.hub.recipe/0.1",
+  "level": "rescore",
+  "dataset": null,
+  "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+  "track": {
+   "track": "emg2qwerty",
+   "split_version": "tracks-v0.2",
+   "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+   "digest_kind": "entries"
+  },
+  "adapter": {
+   "module": "fidetype.adapters.emg2qwerty",
+   "package_version": "0.0.1",
+   "sha256": "2dd56a4a1841a00c8bcfef64e15f6432c36fb9cbf5dc2fd97543ed8b210bf605"
+  },
+  "decoder": {
+   "name": "fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate",
+   "version": "1-k15-r1.8424-17.2757",
+   "url": "experiments/2026-11-20-p11-12-emg-nosignal-gate/",
+   "weights_sha256": "b87216922a6ac1c17900e434de56a30ee2d6d3785e12b10c7d5d8a9f59c5d89d",
+   "training_data": [
+    "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)",
+    "LM: Tatoeba English (no emg2qwerty text); lexicon: words of the track-train sessions; LM weight and length bonus tuned on the calibration tuning part (P11-11)"
+   ],
+   "weights_files": [
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u0/best.pt",
+     "sha256": "f89b46fe74313b776ef3b121856878a97d4123f87cd0c9860b12a31987972381"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u1/best.pt",
+     "sha256": "973c5bb0ba378e97ff3926a80b79c9f4ceedba2f0300c82cb660c4c80502d66f"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u2/best.pt",
+     "sha256": "27e4fe0721932c2f7b60510a59d9ed97f639192dc7cfb08759911832ab2bf42b"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u3/best.pt",
+     "sha256": "8fb22111f4c0413f717640655d58fe70206ea83f30617ca4ed9f015033f3f1e1"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u4/best.pt",
+     "sha256": "08f796679bf7ab43e3ca5c51c5881d92117a0adcadb1a2d42a49de8ce7a64d44"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u5/best.pt",
+     "sha256": "49336251a726ec2546e9067aa637d6e2e84bcd68af7ee505935099e69430f6ea"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u6/best.pt",
+     "sha256": "ca6410a84d98dfcd3e0309407615dda21c34bc813c4116686d8307c79d59787a"
+    },
+    {
+     "name": "<runs>/p11-01-emg-decoder/train/personal-u7/best.pt",
+     "sha256": "4ef7026fb8e6d7e3cf13834f1404b271b867de64dd65c04fa22463e91749d6d7"
+    }
+   ],
+   "lm_files": [
+    {
+     "name": "<derived>/p11-11/eng_tatoeba_6gram_mkn_noE2Q.npz",
+     "sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8"
+    },
+    {
+     "name": "<derived>/p11-11/lexicon.json",
+     "sha256": "b239d7b7d9d9c8188ba80bdc8c564b1ab37aace9bdf9c287eace11417ff2bfce"
+    },
+    {
+     "name": "<derived>/p11-11/tune.json",
+     "sha256": "a69225b81781f230904f4099c12555e6110723e1a2b3f36a09b0758eea1d1a57"
+    }
+   ]
+  },
+  "policy": {
+   "name": "intended-text guard, sentence commits, p_top1 (adopted sentence guard) (P11-12 arm S)",
+   "config_id": "tcfg-3875f995e4c256fb",
+   "guarantee": "ltt",
+   "config_id_source": "experiments/2026-11-20-p11-12-emg-nosignal-gate/results/guard-S.json"
+  },
+  "scorer": {
+   "scorer_version": "0.2",
+   "metrics": {
+    "safe_wpm": "safe-wpm/0.1"
+   },
+   "B": 2000,
+   "seed": 0,
+   "target": "intended-text/1"
+  },
+  "versions": {
+   "fidetype": "0.0.1",
+   "benchmark": "0.2",
+   "python": "3.12"
+  },
+  "command": "python -m fidetype.benchmark score emg2qwerty <submission> --truth <truth.jsonl> --B 2000 --seed 0",
+  "inputs": {
+   "outputs": "submission folder <derived>/p11-13/submissions/emg2qwerty__p11-12-intended-s-subset8__guard (decoded key codes, target intended_text; local only, never in git)",
+   "build": "the build step needs the P11-01 feature cache and personal weights, the P11-11 LM, lexicon and beam cache (local, research only); see experiments/2026-11-20-p11-12-emg-nosignal-gate/results.md",
+   "derived": "<derived> = the local folder for per-unit files (never in git)"
+  },
+  "code_ref": "git 698bbe8 (P11-13 scorer target option and this card script)",
+  "steps": [
+   {
+    "step": "truth",
+    "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+   },
+   {
+    "step": "build",
+    "command": "python experiments/2026-11-20-p11-12-emg-nosignal-gate/launch.py (P11-12 decisions; needs the P11-09 and P11-11 local files), then python experiments/2026-11-20-p11-13-intended-text-cards/cards.py score"
+   },
+   {
+    "step": "score",
+    "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p11-13/submissions/emg2qwerty__p11-12-intended-s-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-12-intended-s-subset8__guard.json"
+   }
+  ],
+  "recorded": "2026-11-19, P11-13 (cards.py cards)"
+ }
+}

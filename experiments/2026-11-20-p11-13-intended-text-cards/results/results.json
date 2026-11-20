@@ -1,0 +1,361 @@
+{
+ "task": "P11-13",
+ "date": "2026-11-19 20:16",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "note": "aggregates only (no per-user value, no text, no id)",
+ "target": {
+  "name": "intended_text",
+  "version": "intended-text/1",
+  "normalizer": "keycodes_intended",
+  "rule": "Backspace applied (registry.keycodes_to_intended_text, rule intended-text/1): a character key appends, Backspace removes the last character if any, Enter is ignored, then runs of spaces are joined and the ends stripped"
+ },
+ "arms": {
+  "S": {
+   "card": "emg2qwerty__p11-12-intended-s-subset8__guard.json",
+   "status": "scored",
+   "certification": "certified",
+   "cer_intended": {
+    "value": 0.276954094292804,
+    "ci": [
+     0.16841426834968548,
+     0.39197809519840765
+    ]
+   },
+   "ewpm": {
+    "value": 5.276566746978384,
+    "ci": [
+     4.367537357022001,
+     6.673450722901912
+    ]
+   },
+   "gaze_ewpm": {
+    "value": 3.0924317617866004,
+    "ci": [
+     3.0690313548565507,
+     3.1163634089914334
+    ]
+   },
+   "wrong_commit_rate": {
+    "value": 0.028665028665028666,
+    "ci": [
+     0.01636081999681017,
+     0.04330065359477124
+    ]
+   },
+   "error_among_commits": {
+    "value": 0.20958083832335328,
+    "ci": [
+     0.16666666666666666,
+     0.29411764705882354
+    ]
+   },
+   "commit_rate": {
+    "value": 0.13677313677313677,
+    "ci": [
+     0.06732072195752242,
+     0.21932406827979414
+    ]
+   },
+   "controls": {
+    "shuffled": {
+     "status": "pass",
+     "cer_control": 1.0,
+     "cer_gap": 0.7230459057071961,
+     "cer_gap_ci": [
+      0.6045687359233941,
+      0.8313316575117152
+     ]
+    },
+    "zeros": {
+     "status": "pass",
+     "cer_control": 1.0,
+     "cer_gap": 0.7230459057071961,
+     "cer_gap_ci": [
+      0.6045687359233941,
+      0.8313316575117152
+     ]
+    },
+    "null_commit": {
+     "status": "pass",
+     "commit_rate_zeros": 0.0,
+     "max": 0.05
+    },
+    "passed": true
+   },
+   "guarantee": {
+    "method": "ltt",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_cal": 459,
+    "scope": "marginal over test prompts pooled over the 8 users; exchangeable val / test sessions; wrong = committed intended text differs from the truth intended text",
+    "calibration_split": "val",
+    "measured_wrong_commit": 0.028665028665028666,
+    "measured_wrong_commit_ci": [
+     0.01636081999681017,
+     0.04330065359477124
+    ],
+    "met_on_test": true
+   },
+   "safe_wpm": {
+    "value": 4.095207259181112,
+    "ci": [
+     1.9869768024027037,
+     6.564462680853268
+    ],
+    "status": "certified",
+    "n_trials": 1221,
+    "n_commits": 167,
+    "n_wrong_commits": 35,
+    "measured_wrong_commit": 0.028665028665028666,
+    "measured_wrong_commit_cp95": [
+     0.02,
+     0.0396
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 548,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 14.061403508771928
+   },
+   "coverage": {
+    "n_scored_units": 15867,
+    "n_covered": 1221,
+    "partial": true,
+    "subset": "declared subset: the track test sessions of the 8 P11-01 test users only. The P11-01 generic model trained on 96 of the other 104 track test sessions, so only these 8 sessions are clean (P11-01 results, benchmark section)."
+   },
+   "vs_p11_12": {
+    "safe_wpm_value": [
+     4.095207259181112,
+     4.095207259181112
+    ],
+    "safe_wpm_ci": [
+     [
+      1.9869768024027037,
+      6.564462680853268
+     ],
+     [
+      1.9885949095477,
+      6.604376887259816
+     ]
+    ],
+    "n_commits": [
+     167,
+     167
+    ],
+    "n_wrong_commits": [
+     35,
+     35
+    ],
+    "committed_correct_words": [
+     548,
+     548
+    ],
+    "total_words": [
+     4985,
+     4985
+    ],
+    "no_bci_wpm": [
+     3.0924317617866004,
+     3.0924317617866004
+    ],
+    "minutes_correction": [
+     14.061403508771928,
+     14.061403508771928
+    ],
+    "minutes_neural": [
+     119.75355757077536,
+     119.75355757077536
+    ],
+    "status": [
+     "certified",
+     "certified"
+    ]
+   },
+   "same_as_p11_12": {
+    "safe_wpm_value": true,
+    "n_commits": true,
+    "n_wrong_commits": true,
+    "committed_correct_words": true,
+    "total_words": true,
+    "no_bci_wpm": true,
+    "minutes_correction": true,
+    "minutes_neural": true,
+    "status": true
+   }
+  },
+  "SL": {
+   "card": "emg2qwerty__p11-12-intended-sl-subset8__guard.json",
+   "status": "scored",
+   "certification": "certified",
+   "cer_intended": {
+    "value": 0.276954094292804,
+    "ci": [
+     0.16841426834968548,
+     0.39197809519840765
+    ]
+   },
+   "ewpm": {
+    "value": 5.280966041012486,
+    "ci": [
+     4.368879725054546,
+     6.6826095719591185
+    ]
+   },
+   "gaze_ewpm": {
+    "value": 3.0924317617866004,
+    "ci": [
+     3.0690313548565507,
+     3.1163634089914334
+    ]
+   },
+   "wrong_commit_rate": {
+    "value": 0.025389025389025387,
+    "ci": [
+     0.009023789991796555,
+     0.04330153872669263
+    ]
+   },
+   "error_among_commits": {
+    "value": 0.15979381443298968,
+    "ci": [
+     0.1007014388489209,
+     0.20454545454545456
+    ]
+   },
+   "commit_rate": {
+    "value": 0.1588861588861589,
+    "ci": [
+     0.07619158658375737,
+     0.25554348612859246
+    ]
+   },
+   "controls": {
+    "shuffled": {
+     "status": "pass",
+     "cer_control": 1.0,
+     "cer_gap": 0.7230459057071961,
+     "cer_gap_ci": [
+      0.6045687359233941,
+      0.8313316575117152
+     ]
+    },
+    "zeros": {
+     "status": "pass",
+     "cer_control": 1.0,
+     "cer_gap": 0.7230459057071961,
+     "cer_gap_ci": [
+      0.6045687359233941,
+      0.8313316575117152
+     ]
+    },
+    "null_commit": {
+     "status": "pass",
+     "commit_rate_zeros": 0.0,
+     "max": 0.05
+    },
+    "passed": true
+   },
+   "guarantee": {
+    "method": "ltt",
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_cal": 459,
+    "scope": "marginal over test prompts pooled over the 8 users; exchangeable val / test sessions; wrong = committed intended text differs from the truth intended text",
+    "calibration_split": "val",
+    "measured_wrong_commit": 0.025389025389025387,
+    "measured_wrong_commit_ci": [
+     0.009023789991796555,
+     0.04330153872669263
+    ],
+    "met_on_test": true
+   },
+   "safe_wpm": {
+    "value": 5.084473094135909,
+    "ci": [
+     2.5384551766628896,
+     7.950505623544387
+    ],
+    "status": "certified",
+    "n_trials": 1221,
+    "n_commits": 194,
+    "n_wrong_commits": 31,
+    "measured_wrong_commit": 0.025389025389025387,
+    "measured_wrong_commit_cp95": [
+     0.0173,
+     0.0358
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 670,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 12.02017543859649
+   },
+   "coverage": {
+    "n_scored_units": 15867,
+    "n_covered": 1221,
+    "partial": true,
+    "subset": "declared subset: the track test sessions of the 8 P11-01 test users only. The P11-01 generic model trained on 96 of the other 104 track test sessions, so only these 8 sessions are clean (P11-01 results, benchmark section)."
+   },
+   "vs_p11_12": {
+    "safe_wpm_value": [
+     5.084473094135909,
+     5.084473094135909
+    ],
+    "safe_wpm_ci": [
+     [
+      2.5384551766628896,
+      7.950505623544387
+     ],
+     [
+      2.6696683480510153,
+      7.960595560435001
+     ]
+    ],
+    "n_commits": [
+     194,
+     194
+    ],
+    "n_wrong_commits": [
+     31,
+     31
+    ],
+    "committed_correct_words": [
+     670,
+     670
+    ],
+    "total_words": [
+     4985,
+     4985
+    ],
+    "no_bci_wpm": [
+     3.0924317617866004,
+     3.0924317617866004
+    ],
+    "minutes_correction": [
+     12.02017543859649,
+     12.02017543859649
+    ],
+    "minutes_neural": [
+     119.75355757077536,
+     119.75355757077536
+    ],
+    "status": [
+     "certified",
+     "certified"
+    ]
+   },
+   "same_as_p11_12": {
+    "safe_wpm_value": true,
+    "n_commits": true,
+    "n_wrong_commits": true,
+    "committed_correct_words": true,
+    "total_words": true,
+    "no_bci_wpm": true,
+    "minutes_correction": true,
+    "minutes_neural": true,
+    "status": true
+   }
+  }
+ }
+}

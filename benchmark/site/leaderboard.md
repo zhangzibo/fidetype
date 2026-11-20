@@ -381,7 +381,9 @@ Track page and entry history: [tracks/emg2qwerty.html](tracks/emg2qwerty.html).
 
 Track `emg2qwerty`. Data: emg2qwerty-data-2021-08 (CC BY-NC-SA 4.0, **research only**). CI unit: user. User model: aac-gaze-v1 @ 301.33 keys/min.
 
-No-BCI reference (gaze typing only, 20 chars/min): **2.93 eWPM**.
+**Target raw_keys (raw-keys/1): the key sequence as typed: one character per key code; Backspace and Enter are keys.**
+
+No-BCI reference (gaze typing only, 20 chars/min, target raw_keys): **2.93 eWPM**.
 
 | Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -390,7 +392,32 @@ No-BCI reference (gaze typing only, 20 chars/min): **2.93 eWPM**.
 | shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] | drop-in guard (built-in CTC beam, no LM) | 0.490 | 2.57 [2.55, 2.60] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=1125; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released (would be CC BY-NC-SA: research only) | submission/0.2 (units-jsonl) | rescore |
 | shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY] | always commit top-1 | 0.490 | 2.26 [2.23, 2.29] | n/a (no certified bound) | 1.000 | 1.000 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (would be CC BY-NC-SA: research only) | submission/0.2 (units-jsonl) | rescore |
 
+**Target intended_text (intended-text/1): Backspace applied (registry.keycodes_to_intended_text, rule intended-text/1): a character key appends, Backspace removes the last character if any, Enter is ignored, then runs of spaces are joined and the ends stripped.**
+
+No-BCI reference (gaze typing only, 20 chars/min, target intended_text): **3.09 eWPM**.
+
+| Decoder | Policy | CER | eWPM [95% CI] | Safe WPM @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] [target: intended_text] | intended-text guard, sentence commits, learned score (P11-12 arm SL) | 0.277 | 5.28 [4.37, 6.68] | 5.08 [2.54, 7.95] (LTT a=0.05 d=0.1) | 0.025 | 0.160 | 0.159 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=459; test 0.025 (met) | not checked (units JSONL: NTS-derived rows) | not released (CC BY-NC-SA data: research only) | submission/0.2 (units-jsonl) | rescore |
+| fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] [target: intended_text] | intended-text guard, sentence commits, p_top1 (adopted sentence guard) (P11-12 arm S) | 0.277 | 5.28 [4.37, 6.67] | 4.10 [1.99, 6.56] (LTT a=0.05 d=0.1) | 0.029 | 0.210 | 0.137 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=459; test 0.029 (met) | not checked (units JSONL: NTS-derived rows) | not released (CC BY-NC-SA data: research only) | submission/0.2 (units-jsonl) | rescore |
+
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
+
+- **fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] [target: intended_text] / intended-text guard, sentence commits, learned score (P11-12 arm SL)** (`emg2qwerty__p11-12-intended-sl-subset8__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights sha256 b87216922a6a; policy config tcfg-0cd6e9578e965f42; code git 698bbe8
+
+  ```
+  [truth] python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl
+  [build] python experiments/2026-11-20-p11-12-emg-nosignal-gate/launch.py (P11-12 decisions; needs the P11-09 and P11-11 local files), then python experiments/2026-11-20-p11-13-intended-text-cards/cards.py score
+  [score] python -m fidetype.benchmark score emg2qwerty <derived>/p11-13/submissions/emg2qwerty__p11-12-intended-sl-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-12-intended-sl-subset8__guard.json
+  ```
+
+- **fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] [target: intended_text] / intended-text guard, sentence commits, p_top1 (adopted sentence guard) (P11-12 arm S)** (`emg2qwerty__p11-12-intended-s-subset8__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights sha256 b87216922a6a; policy config tcfg-3875f995e4c256fb; code git 698bbe8
+
+  ```
+  [truth] python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl
+  [build] python experiments/2026-11-20-p11-12-emg-nosignal-gate/launch.py (P11-12 decisions; needs the P11-09 and P11-11 local files), then python experiments/2026-11-20-p11-13-intended-text-cards/cards.py score
+  [score] python -m fidetype.benchmark score emg2qwerty <derived>/p11-13/submissions/emg2qwerty__p11-12-intended-s-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-12-intended-s-subset8__guard.json
+  ```
 
 - **fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] / drop-in guard (built-in CTC beam, no LM, key-code space)** (`emg2qwerty__p11-01-crt-subset8__guard.json`): level rescore; dataset not in the hub registry; split tracks-v0.2 digest 26cd638d6222; adapter fidetype.adapters.emg2qwerty 0.0.1 sha256 2dd56a4a1841; scorer 0.2 B=2000 seed=0; weights sha256 b87216922a6a; policy config tcfg-4af5a234c1cf7826; code git e05b509
 

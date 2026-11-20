@@ -58,6 +58,7 @@
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/trust",
     "track": "spanishbcbl-meg-async",
     "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.5216521251901065,
     "wer": 0.9023090586145648,
@@ -175,6 +176,7 @@
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/ltt",
     "track": "spanishbcbl-meg-async",
     "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+    "target": null,
     "policy": "trust gate + LTT",
     "cer": 0.5216521251901065,
     "wer": 0.9023090586145648,
@@ -292,6 +294,7 @@
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/crc",
     "track": "spanishbcbl-meg-async",
     "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.5216521251901065,
     "wer": 0.9023090586145648,
@@ -409,6 +412,7 @@
     "entry_id": "spanishbcbl-meg-async/convctc-m-async/always-commit",
     "track": "spanishbcbl-meg-async",
     "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.5216521251901065,
     "wer": 0.9023090586145648,
@@ -527,6 +531,7 @@
     "entry_id": "b2t25-t15-copytask/published/always-commit",
     "track": "b2t25-t15-copytask",
     "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.03091552938367883,
     "wer": 0.04312195121951219,
@@ -638,6 +643,7 @@
     "entry_id": "b2t25-t15-copytask/published/crc",
     "track": "b2t25-t15-copytask",
     "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.03091552938367883,
     "wer": 0.04312195121951219,
@@ -748,6 +754,7 @@
     "entry_id": "b2t25-t15-copytask/published/trust",
     "track": "b2t25-t15-copytask",
     "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.03091552938367883,
     "wer": 0.04312195121951219,
@@ -858,6 +865,7 @@
     "entry_id": "b2t25-t15-copytask/published/ltt",
     "track": "b2t25-t15-copytask",
     "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "target": null,
     "policy": "trust gate + LTT",
     "cer": 0.03091552938367883,
     "wer": 0.04312195121951219,
@@ -968,6 +976,7 @@
     "entry_id": "b2t25-t15-copytask/ours/crc",
     "track": "b2t25-t15-copytask",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.09533282934786934,
     "wer": 0.1490731707317073,
@@ -1078,6 +1087,7 @@
     "entry_id": "b2t25-t15-copytask/ours/trust",
     "track": "b2t25-t15-copytask",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.09533282934786934,
     "wer": 0.1490731707317073,
@@ -1188,6 +1198,7 @@
     "entry_id": "b2t25-t15-copytask/ours/ltt",
     "track": "b2t25-t15-copytask",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+    "target": null,
     "policy": "trust gate + LTT",
     "cer": 0.09533282934786934,
     "wer": 0.1490731707317073,
@@ -1298,6 +1309,7 @@
     "entry_id": "b2t25-t15-copytask/ours/always-commit",
     "track": "b2t25-t15-copytask",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.09533282934786934,
     "wer": 0.1490731707317073,
@@ -1408,6 +1420,7 @@
     "entry_id": "toronto-semg-composed/cnn-calib/trust",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.12254930649031427,
     "wer": 0.21358159912376778,
@@ -1529,6 +1542,7 @@
     "entry_id": "toronto-semg-composed/cnn-calib/crc",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.12254930649031427,
     "wer": 0.21358159912376778,
@@ -1650,6 +1664,7 @@
     "entry_id": "toronto-semg-composed/cnn-calib/commit",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.12254930649031427,
     "wer": 0.21358159912376778,
@@ -1771,6 +1786,7 @@
     "entry_id": "toronto-semg-composed/cnn-xsession/crc",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.39772926786445834,
     "wer": 0.5791347207009858,
@@ -1887,6 +1903,7 @@
     "entry_id": "toronto-semg-composed/cnn-xsession/trust",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.39772926786445834,
     "wer": 0.5791347207009858,
@@ -2003,6 +2020,7 @@
     "entry_id": "toronto-semg-composed/cnn-xsession/commit",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.39772926786445834,
     "wer": 0.5791347207009858,
@@ -2119,6 +2137,7 @@
     "entry_id": "toronto-semg-composed/cnn-xsubject/crc",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.4789606133317727,
     "wer": 0.6809967141292442,
@@ -2248,6 +2267,7 @@
     "entry_id": "toronto-semg-composed/cnn-xsubject/trust",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.4789606133317727,
     "wer": 0.6809967141292442,
@@ -2377,6 +2397,7 @@
     "entry_id": "toronto-semg-composed/cnn-xsubject/commit",
     "track": "toronto-semg-composed",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.4789606133317727,
     "wer": 0.6809967141292442,
@@ -2508,6 +2529,7 @@
     "entry_id": "b2t25-t15/published/always-commit",
     "track": "b2t25-t15",
     "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.03091552938367883,
     "wer": 0.04312195121951219,
@@ -2615,6 +2637,7 @@
     "entry_id": "b2t25-t15/published/crc",
     "track": "b2t25-t15",
     "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.03091552938367883,
     "wer": 0.04312195121951219,
@@ -2722,6 +2745,7 @@
     "entry_id": "b2t25-t15/published/trust",
     "track": "b2t25-t15",
     "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.03091552938367883,
     "wer": 0.04312195121951219,
@@ -2829,6 +2853,7 @@
     "entry_id": "b2t25-t15/published/ltt",
     "track": "b2t25-t15",
     "decoder": "Card et al. 2024 online decoder (published sentence) (online, per-user)",
+    "target": null,
     "policy": "trust gate + LTT",
     "cer": 0.03091552938367883,
     "wer": 0.04312195121951219,
@@ -2936,6 +2961,7 @@
     "entry_id": "b2t25-t15/m4-13/guard",
     "track": "b2t25-t15",
     "decoder": "M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units]",
+    "target": null,
     "policy": "drop-in guard (P14-03 recipe)",
     "cer": 0.06704260651629072,
     "wer": 0.1126331811263318,
@@ -3048,6 +3074,7 @@
     "entry_id": "b2t25-t15/ours/always-commit",
     "track": "b2t25-t15",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.09533282934786934,
     "wer": 0.1490731707317073,
@@ -3155,6 +3182,7 @@
     "entry_id": "b2t25-t15/ours/crc",
     "track": "b2t25-t15",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.09533282934786934,
     "wer": 0.1490731707317073,
@@ -3262,6 +3290,7 @@
     "entry_id": "b2t25-t15/ours/trust",
     "track": "b2t25-t15",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.09533282934786934,
     "wer": 0.1490731707317073,
@@ -3369,6 +3398,7 @@
     "entry_id": "b2t25-t15/ours/ltt",
     "track": "b2t25-t15",
     "decoder": "Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0))",
+    "target": null,
     "policy": "trust gate + LTT",
     "cer": 0.09533282934786934,
     "wer": 0.1490731707317073,
@@ -3476,6 +3506,7 @@
     "entry_id": "b2t25-t15/m4-12/guard",
     "track": "b2t25-t15",
     "decoder": "M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units]",
+    "target": null,
     "policy": "drop-in guard (P14-03 recipe)",
     "cer": 0.20363408521303258,
     "wer": 0.2998477929984779,
@@ -3590,6 +3621,7 @@
     "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/drop-in guard (P14-03 recipe)",
     "track": "b2t24-t12",
     "decoder": "t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions))",
+    "target": null,
     "policy": "drop-in guard (P14-03 recipe)",
     "cer": 0.3042671614100185,
     "wer": 0.42929843693202474,
@@ -3699,6 +3731,7 @@
     "entry_id": "b2t24-t12/t12-v2 GRU + word LM (ours)/always commit top-1",
     "track": "b2t24-t12",
     "decoder": "t12-v2 GRU + word LM (ours) (cross-session (one participant; test sessions are also train sessions))",
+    "target": null,
     "policy": "always commit top-1",
     "cer": 0.3042671614100185,
     "wer": 0.42929843693202474,
@@ -3810,6 +3843,7 @@
     "entry_id": "willett-hw/Willett 2021 real-time RNN (published output) + CTC beam with word list/always commit the real-time RNN text (as typed on screen in the study)",
     "track": "willett-hw",
     "decoder": "Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units]",
+    "target": null,
     "policy": "always commit the real-time RNN text (as typed on screen in the study)",
     "cer": 0.08015267175572519,
     "wer": 0.35081967213114756,
@@ -3914,6 +3948,7 @@
     "entry_id": "willett-hw/Willett 2021 real-time RNN (published output) + CTC beam with word list/drop-in guard (built-in CTC beam + word list)",
     "track": "willett-hw",
     "decoder": "Willett 2021 real-time RNN (published output) + CTC beam with word list (as published (real-time decoder of the study)) [partial: 81/254 units]",
+    "target": null,
     "policy": "drop-in guard (built-in CTC beam + word list)",
     "cer": 0.07729007633587787,
     "wer": 0.3344262295081967,
@@ -4020,6 +4055,7 @@
     "entry_id": "toronto-semg/cnn-calib/crc",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.12254930649031427,
     "wer": 0.21358159912376778,
@@ -4138,6 +4174,7 @@
     "entry_id": "toronto-semg/cnn-calib/trust",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.12254930649031427,
     "wer": 0.21358159912376778,
@@ -4256,6 +4293,7 @@
     "entry_id": "toronto-semg/cnn-calib/always-commit",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.12254930649031427,
     "wer": 0.21358159912376778,
@@ -4374,6 +4412,7 @@
     "entry_id": "toronto-semg/cnn-xsession/crc",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.39772926786445834,
     "wer": 0.5791347207009858,
@@ -4487,6 +4526,7 @@
     "entry_id": "toronto-semg/cnn-xsession/trust",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.39772926786445834,
     "wer": 0.5791347207009858,
@@ -4600,6 +4640,7 @@
     "entry_id": "toronto-semg/cnn-xsession/always-commit",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-session)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.39772926786445834,
     "wer": 0.5791347207009858,
@@ -4713,6 +4754,7 @@
     "entry_id": "toronto-semg/cnn-xsubject/crc",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.4789606133317727,
     "wer": 0.6809967141292442,
@@ -4839,6 +4881,7 @@
     "entry_id": "toronto-semg/cnn-xsubject/trust",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.4789606133317727,
     "wer": 0.6809967141292442,
@@ -4965,6 +5008,7 @@
     "entry_id": "toronto-semg/cnn-xsubject/always-commit",
     "track": "toronto-semg",
     "decoder": "Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject)",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.4789606133317727,
     "wer": 0.6809967141292442,
@@ -5093,6 +5137,7 @@
     "entry_id": "kt-semg/shrinkage-LDA key decoder (adapter reference, oracle key timing)/drop-in guard (built-in CTC beam, no LM)",
     "track": "kt-semg",
     "decoder": "shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist))",
+    "target": null,
     "policy": "drop-in guard (built-in CTC beam, no LM)",
     "cer": 0.5533381838339743,
     "wer": 1.1715930902111324,
@@ -5198,6 +5243,7 @@
     "entry_id": "kt-semg/shrinkage-LDA key decoder (adapter reference, oracle key timing)/always commit top-1",
     "track": "kt-semg",
     "decoder": "shrinkage-LDA key decoder (adapter reference, oracle key timing) (cross-session (one typist))",
+    "target": null,
     "policy": "always commit top-1",
     "cer": 0.5533381838339743,
     "wer": 1.1715930902111324,
@@ -5305,6 +5351,7 @@
     "entry_id": "spanishbcbl-meg/convctc-m-async/trust",
     "track": "spanishbcbl-meg",
     "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY]",
+    "target": null,
     "policy": "trust gate (plug-in fit)",
     "cer": 0.5216521251901065,
     "wer": 0.9023090586145648,
@@ -5419,6 +5466,7 @@
     "entry_id": "spanishbcbl-meg/convctc-m-async/ltt",
     "track": "spanishbcbl-meg",
     "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY]",
+    "target": null,
     "policy": "trust gate + LTT",
     "cer": 0.5216521251901065,
     "wer": 0.9023090586145648,
@@ -5533,6 +5581,7 @@
     "entry_id": "spanishbcbl-meg/convctc-m-async/crc",
     "track": "spanishbcbl-meg",
     "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY]",
+    "target": null,
     "policy": "trust gate + CRC",
     "cer": 0.5216521251901065,
     "wer": 0.9023090586145648,
@@ -5647,6 +5696,7 @@
     "entry_id": "spanishbcbl-meg/convctc-m-async/always-commit",
     "track": "spanishbcbl-meg",
     "decoder": "ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY]",
+    "target": null,
     "policy": "always-commit",
     "cer": 0.5216521251901065,
     "wer": 0.9023090586145648,
@@ -5760,9 +5810,322 @@
   ],
   "emg2qwerty": [
    {
+    "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate/intended-text guard, sentence commits, learned score (P11-12 arm SL)",
+    "track": "emg2qwerty",
+    "decoder": "fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] [target: intended_text]",
+    "target": "intended_text",
+    "policy": "intended-text guard, sentence commits, learned score (P11-12 arm SL)",
+    "cer": 0.276954094292804,
+    "wer": 0.42487462387161484,
+    "ewpm": 5.280966041012486,
+    "ewpm_ci": [
+     4.368879725054546,
+     6.6826095719591185
+    ],
+    "gaze_ewpm": 3.0924317617866004,
+    "wrong_commit_rate": 0.025389025389025387,
+    "error_among_commits": 0.15979381443298968,
+    "commit_rate": 0.1588861588861589,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=459; test 0.025 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (CC BY-NC-SA data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 1221,
+    "ci_unit": "group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Target intended_text (intended-text/1): the guard commits the intended text, so truth and outputs are compared after Backspace is applied. Offline decisions on full prompt windows (no latency claim). P11-12 decisions, scored by P11-13.",
+     "Target intended_text (intended-text/1): truth and outputs are compared after Backspace is applied, so CER is the character error rate of the intended text and the no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.",
+     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+    ],
+    "file": "emg2qwerty__p11-12-intended-sl-subset8__guard.json",
+    "safe_wpm": 5.084473094135909,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "5.08 [2.54, 7.95] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+     "track": {
+      "track": "emg2qwerty",
+      "split_version": "tracks-v0.2",
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+      "digest_kind": "entries"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.emg2qwerty",
+      "package_version": "0.0.1",
+      "sha256": "2dd56a4a1841a00c8bcfef64e15f6432c36fb9cbf5dc2fd97543ed8b210bf605"
+     },
+     "decoder": {
+      "name": "fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate",
+      "version": "1-k15-r1.8424-17.2757",
+      "url": "experiments/2026-11-20-p11-12-emg-nosignal-gate/",
+      "weights_sha256": "b87216922a6ac1c17900e434de56a30ee2d6d3785e12b10c7d5d8a9f59c5d89d",
+      "training_data": [
+       "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)",
+       "LM: Tatoeba English (no emg2qwerty text); lexicon: words of the track-train sessions; LM weight and length bonus tuned on the calibration tuning part (P11-11)"
+      ],
+      "weights_files": [
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u0/best.pt",
+        "sha256": "f89b46fe74313b776ef3b121856878a97d4123f87cd0c9860b12a31987972381"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u1/best.pt",
+        "sha256": "973c5bb0ba378e97ff3926a80b79c9f4ceedba2f0300c82cb660c4c80502d66f"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u2/best.pt",
+        "sha256": "27e4fe0721932c2f7b60510a59d9ed97f639192dc7cfb08759911832ab2bf42b"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u3/best.pt",
+        "sha256": "8fb22111f4c0413f717640655d58fe70206ea83f30617ca4ed9f015033f3f1e1"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u4/best.pt",
+        "sha256": "08f796679bf7ab43e3ca5c51c5881d92117a0adcadb1a2d42a49de8ce7a64d44"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u5/best.pt",
+        "sha256": "49336251a726ec2546e9067aa637d6e2e84bcd68af7ee505935099e69430f6ea"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u6/best.pt",
+        "sha256": "ca6410a84d98dfcd3e0309407615dda21c34bc813c4116686d8307c79d59787a"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u7/best.pt",
+        "sha256": "4ef7026fb8e6d7e3cf13834f1404b271b867de64dd65c04fa22463e91749d6d7"
+       }
+      ],
+      "lm_files": [
+       {
+        "name": "<derived>/p11-11/eng_tatoeba_6gram_mkn_noE2Q.npz",
+        "sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8"
+       },
+       {
+        "name": "<derived>/p11-11/lexicon.json",
+        "sha256": "b239d7b7d9d9c8188ba80bdc8c564b1ab37aace9bdf9c287eace11417ff2bfce"
+       },
+       {
+        "name": "<derived>/p11-11/tune.json",
+        "sha256": "a69225b81781f230904f4099c12555e6110723e1a2b3f36a09b0758eea1d1a57"
+       }
+      ]
+     },
+     "policy": {
+      "name": "intended-text guard, sentence commits, learned score (P11-12 arm SL)",
+      "config_id": "tcfg-0cd6e9578e965f42",
+      "guarantee": "ltt",
+      "config_id_source": "experiments/2026-11-20-p11-12-emg-nosignal-gate/results/guard-SL.json"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0,
+      "target": "intended-text/1"
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score emg2qwerty <submission> --truth <truth.jsonl> --B 2000 --seed 0",
+     "inputs": {
+      "outputs": "submission folder <derived>/p11-13/submissions/emg2qwerty__p11-12-intended-sl-subset8__guard (decoded key codes, target intended_text; local only, never in git)",
+      "build": "the build step needs the P11-01 feature cache and personal weights, the P11-11 LM, lexicon and beam cache (local, research only); see experiments/2026-11-20-p11-12-emg-nosignal-gate/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 698bbe8 (P11-13 scorer target option and this card script)",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python experiments/2026-11-20-p11-12-emg-nosignal-gate/launch.py (P11-12 decisions; needs the P11-09 and P11-11 local files), then python experiments/2026-11-20-p11-13-intended-text-cards/cards.py score"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p11-13/submissions/emg2qwerty__p11-12-intended-sl-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-12-intended-sl-subset8__guard.json"
+      }
+     ],
+     "recorded": "2026-11-19, P11-13 (cards.py cards)"
+    },
+    "anchor": "e-emg2qwerty__p11-12-intended-sl-subset8__guard",
+    "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-12-intended-sl-subset8__guard"
+   },
+   {
+    "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate/intended-text guard, sentence commits, p_top1 (adopted sentence guard) (P11-12 arm S)",
+    "track": "emg2qwerty",
+    "decoder": "fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY] [target: intended_text]",
+    "target": "intended_text",
+    "policy": "intended-text guard, sentence commits, p_top1 (adopted sentence guard) (P11-12 arm S)",
+    "cer": 0.276954094292804,
+    "wer": 0.42487462387161484,
+    "ewpm": 5.276566746978384,
+    "ewpm_ci": [
+     4.367537357022001,
+     6.673450722901912
+    ],
+    "gaze_ewpm": 3.0924317617866004,
+    "wrong_commit_rate": 0.028665028665028666,
+    "error_among_commits": 0.20958083832335328,
+    "commit_rate": 0.13677313677313677,
+    "controls_passed": true,
+    "controls": "yes (shuf pass, zeros pass, null pass)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=459; test 0.029 (met)",
+    "conformance": "not checked (units JSONL: NTS-derived rows)",
+    "weights_licence": "not released (CC BY-NC-SA data: research only)",
+    "scored_from": "submission/0.2 (units-jsonl)",
+    "n_trials": 1221,
+    "ci_unit": "group",
+    "notes": [
+     "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Target intended_text (intended-text/1): the guard commits the intended text, so truth and outputs are compared after Backspace is applied. Offline decisions on full prompt windows (no latency claim). P11-12 decisions, scored by P11-13.",
+     "Target intended_text (intended-text/1): truth and outputs are compared after Backspace is applied, so CER is the character error rate of the intended text and the no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.",
+     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+    ],
+    "file": "emg2qwerty__p11-12-intended-s-subset8__guard.json",
+    "safe_wpm": 4.095207259181112,
+    "safe_wpm_status": "certified",
+    "safe_wpm_s": "4.10 [1.99, 6.56] (LTT a=0.05 d=0.1)",
+    "rerun_level": "rescore",
+    "rerun": {
+     "schema": "fidetype.hub.recipe/0.1",
+     "level": "rescore",
+     "dataset": null,
+     "dataset_note": "dataset 'emg2qwerty' is not yet in the hub registry (gap 79, P13-07); source: https://github.com/facebookresearch/emg2qwerty",
+     "track": {
+      "track": "emg2qwerty",
+      "split_version": "tracks-v0.2",
+      "digest": "26cd638d6222281e9936b246cee372928aec6002efdf3319c6a6bec1a066459f",
+      "digest_kind": "entries"
+     },
+     "adapter": {
+      "module": "fidetype.adapters.emg2qwerty",
+      "package_version": "0.0.1",
+      "sha256": "2dd56a4a1841a00c8bcfef64e15f6432c36fb9cbf5dc2fd97543ed8b210bf605"
+     },
+     "decoder": {
+      "name": "fidetype P11-01 causal ring-TCN CTC (personalised) + P11-11 intended-text decoder (key beam 64, Tatoeba 6-gram LM, train lexicon, OOV gate) + P11-12 no-signal gate",
+      "version": "1-k15-r1.8424-17.2757",
+      "url": "experiments/2026-11-20-p11-12-emg-nosignal-gate/",
+      "weights_sha256": "b87216922a6ac1c17900e434de56a30ee2d6d3785e12b10c7d5d8a9f59c5d89d",
+      "training_data": [
+       "emg2qwerty: generic model on 100 other users; personal fine-tuning on the train sessions of each of the 8 users (never the track val or test session)",
+       "LM: Tatoeba English (no emg2qwerty text); lexicon: words of the track-train sessions; LM weight and length bonus tuned on the calibration tuning part (P11-11)"
+      ],
+      "weights_files": [
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u0/best.pt",
+        "sha256": "f89b46fe74313b776ef3b121856878a97d4123f87cd0c9860b12a31987972381"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u1/best.pt",
+        "sha256": "973c5bb0ba378e97ff3926a80b79c9f4ceedba2f0300c82cb660c4c80502d66f"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u2/best.pt",
+        "sha256": "27e4fe0721932c2f7b60510a59d9ed97f639192dc7cfb08759911832ab2bf42b"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u3/best.pt",
+        "sha256": "8fb22111f4c0413f717640655d58fe70206ea83f30617ca4ed9f015033f3f1e1"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u4/best.pt",
+        "sha256": "08f796679bf7ab43e3ca5c51c5881d92117a0adcadb1a2d42a49de8ce7a64d44"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u5/best.pt",
+        "sha256": "49336251a726ec2546e9067aa637d6e2e84bcd68af7ee505935099e69430f6ea"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u6/best.pt",
+        "sha256": "ca6410a84d98dfcd3e0309407615dda21c34bc813c4116686d8307c79d59787a"
+       },
+       {
+        "name": "<runs>/p11-01-emg-decoder/train/personal-u7/best.pt",
+        "sha256": "4ef7026fb8e6d7e3cf13834f1404b271b867de64dd65c04fa22463e91749d6d7"
+       }
+      ],
+      "lm_files": [
+       {
+        "name": "<derived>/p11-11/eng_tatoeba_6gram_mkn_noE2Q.npz",
+        "sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8"
+       },
+       {
+        "name": "<derived>/p11-11/lexicon.json",
+        "sha256": "b239d7b7d9d9c8188ba80bdc8c564b1ab37aace9bdf9c287eace11417ff2bfce"
+       },
+       {
+        "name": "<derived>/p11-11/tune.json",
+        "sha256": "a69225b81781f230904f4099c12555e6110723e1a2b3f36a09b0758eea1d1a57"
+       }
+      ]
+     },
+     "policy": {
+      "name": "intended-text guard, sentence commits, p_top1 (adopted sentence guard) (P11-12 arm S)",
+      "config_id": "tcfg-3875f995e4c256fb",
+      "guarantee": "ltt",
+      "config_id_source": "experiments/2026-11-20-p11-12-emg-nosignal-gate/results/guard-S.json"
+     },
+     "scorer": {
+      "scorer_version": "0.2",
+      "metrics": {
+       "safe_wpm": "safe-wpm/0.1"
+      },
+      "B": 2000,
+      "seed": 0,
+      "target": "intended-text/1"
+     },
+     "versions": {
+      "fidetype": "0.0.1",
+      "benchmark": "0.2",
+      "python": "3.12"
+     },
+     "command": "python -m fidetype.benchmark score emg2qwerty <submission> --truth <truth.jsonl> --B 2000 --seed 0",
+     "inputs": {
+      "outputs": "submission folder <derived>/p11-13/submissions/emg2qwerty__p11-12-intended-s-subset8__guard (decoded key codes, target intended_text; local only, never in git)",
+      "build": "the build step needs the P11-01 feature cache and personal weights, the P11-11 LM, lexicon and beam cache (local, research only); see experiments/2026-11-20-p11-12-emg-nosignal-gate/results.md",
+      "derived": "<derived> = the local folder for per-unit files (never in git)"
+     },
+     "code_ref": "git 698bbe8 (P11-13 scorer target option and this card script)",
+     "steps": [
+      {
+       "step": "truth",
+       "command": "python -m fidetype.benchmark truth emg2qwerty --data <data> --out <derived>/p6-02-scorer/truth/emg2qwerty.jsonl"
+      },
+      {
+       "step": "build",
+       "command": "python experiments/2026-11-20-p11-12-emg-nosignal-gate/launch.py (P11-12 decisions; needs the P11-09 and P11-11 local files), then python experiments/2026-11-20-p11-13-intended-text-cards/cards.py score"
+      },
+      {
+       "step": "score",
+       "command": "python -m fidetype.benchmark score emg2qwerty <derived>/p11-13/submissions/emg2qwerty__p11-12-intended-s-subset8__guard --truth <derived>/p6-02-scorer/truth/emg2qwerty.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/emg2qwerty__p11-12-intended-s-subset8__guard.json"
+      }
+     ],
+     "recorded": "2026-11-19, P11-13 (cards.py cards)"
+    },
+    "anchor": "e-emg2qwerty__p11-12-intended-s-subset8__guard",
+    "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-12-intended-s-subset8__guard"
+   },
+   {
     "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer/drop-in guard (built-in CTC beam, no LM, key-code space)",
     "track": "emg2qwerty",
     "decoder": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY]",
+    "target": "raw_keys",
     "policy": "drop-in guard (built-in CTC beam, no LM, key-code space)",
     "cer": 0.1794281220156171,
     "wer": 0.6805901513699942,
@@ -5902,6 +6265,7 @@
     "entry_id": "emg2qwerty/fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer/always commit top-1",
     "track": "emg2qwerty",
     "decoder": "fidetype P11-01 causal ring-TCN CTC (personalised, no LM) + key-code writer (personalised (fine-tuned on earlier sessions of the same user)) [partial: 1221/15867 units] [RESEARCH ONLY]",
+    "target": "raw_keys",
     "policy": "always commit top-1",
     "cer": 0.1794281220156171,
     "wer": 0.6805901513699942,
@@ -6041,6 +6405,7 @@
     "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/drop-in guard (built-in CTC beam, no LM)",
     "track": "emg2qwerty",
     "decoder": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY]",
+    "target": "raw_keys",
     "policy": "drop-in guard (built-in CTC beam, no LM)",
     "cer": 0.48951581283212786,
     "wer": 1.031480439482335,
@@ -6147,6 +6512,7 @@
     "entry_id": "emg2qwerty/shrinkage-LDA key decoder per user (adapter reference, oracle key timing)/always commit top-1",
     "track": "emg2qwerty",
     "decoder": "shrinkage-LDA key decoder per user (adapter reference, oracle key timing) (personalised (fit on one earlier session of the same user)) [RESEARCH ONLY]",
+    "target": "raw_keys",
     "policy": "always commit top-1",
     "cer": 0.48951581283212786,
     "wer": 1.031480439482335,
