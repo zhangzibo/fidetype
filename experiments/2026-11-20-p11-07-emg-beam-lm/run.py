@@ -22,7 +22,7 @@ from __future__ import annotations
 import os
 import sys
 
-_MODELLAT = len(sys.argv) > 1 and sys.argv[1] == "modellat"
+_MODELLAT = len(sys.argv) > 1 and sys.argv[1] == "modellat"  # GPU stage (ROCm venv)
 for _v in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
     os.environ.setdefault(_v, "1")
 if not _MODELLAT:
@@ -661,8 +661,12 @@ def stage_latency(ev: list[dict], gd: GuardDecoder, tune: dict, beam: dict) -> d
 # --- stage modellat (ROCm venv) ---------------------------------------------------------------------
 
 
+N_TORCH_CPU = 30  # amendment 1: the ROCm torch CPU build is BLAS-bound (about 0.7 s per call); a short reference
+
+
 def stage_modellat() -> dict:
-    f = own("modellat.json")
+    """ROCm venv: GPU chunk forward (500), torch-CPU reference (30), params + reference output for modellat_np."""
+    f = own("modellat-gpu.json")
     if f.exists():
         return load_json(f)  # type: ignore[return-value]
     import torch
@@ -677,18 +681,30 @@ def stage_modellat() -> dict:
     rf = mc.receptive_field()
     w = P1101 / "train" / "personal-u0" / "best.pt"
     res: dict = {"receptive_field_frames": rf, "chunk_frames": CHUNK, "n_chunks": N_MODEL_CHUNKS}
-    for dev in ("cpu", "cuda"):
+    sd = torch.load(w, map_location="cpu", weights_only=True)["model"]
+    m0 = E.CRT(mc, store.mean, store.std)
+    m0.load_state_dict(sd)
+    m0.eval()
+    params = {k: v.detach().cpu().numpy().astype(np.float32) for k, v in m0.state_dict().items()}
+    with torch.no_grad():
+        ref = m0(torch.from_numpy(feat[:rf + CHUNK]).unsqueeze(0))[0].float().numpy()
+    np.savez(own("modellat-params-u0.npz"), **params)  # local only (research-only weights)
+    np.savez(own("modellat-ref.npz"), feat=feat[:rf + CHUNK], ref=ref)
+    res["param_keys"] = sorted(params)
+    res["model_cfg"] = {"ring_k": mc.ring_k, "kernel": mc.kernel, "dilations": list(mc.dilations)}
+    for dev in ("cuda", "cpu"):
         if dev == "cuda" and not torch.cuda.is_available():
             res[dev] = {"available": False}
             continue
         if dev == "cpu":
             torch.set_num_threads(4)
         m = E.CRT(mc, store.mean, store.std)
-        m.load_state_dict(torch.load(w, map_location="cpu", weights_only=True)["model"])
+        m.load_state_dict(sd)
         m.eval().to(dev)
         ts = []
+        n_rep = N_MODEL_CHUNKS if dev == "cuda" else N_TORCH_CPU
         with torch.no_grad():
-            for k in range(N_MODEL_CHUNKS + 50):
+            for k in range(n_rep + (50 if dev == "cuda" else 3)):
                 a = rf + 4 * k
                 xx = torch.from_numpy(feat[a - rf:a + CHUNK]).unsqueeze(0).to(dev)
                 if dev == "cuda":
@@ -696,12 +712,56 @@ def stage_modellat() -> dict:
                 t0 = time.perf_counter()
                 y = m(xx)[0, -CHUNK:].float().cpu().numpy()
                 ts.append(time.perf_counter() - t0)
-        ts = np.asarray(ts[50:]) * 1e3
-        res[dev] = {"available": True, "threads": torch.get_num_threads() if dev == "cpu" else None,
+        ts = np.asarray(ts[(50 if dev == "cuda" else 3):]) * 1e3
+        res[dev] = {"available": True, "n": int(len(ts)), "threads": torch.get_num_threads() if dev == "cpu" else None,
+                    "torch": torch.__version__,
                     "p50_ms": float(np.percentile(ts, 50)), "p95_ms": float(np.percentile(ts, 95)),
                     "max_ms": float(ts.max()), "device_name": torch.cuda.get_device_name(0) if dev == "cuda" else
                     "cpu", "out_shape": list(y.shape)}
         log(f"modellat {dev}: {res[dev]}")
+    save_json(res, f)
+    return res
+
+
+def stage_modellat_np() -> dict:
+    """.venv, isolation class timing, 4 threads: NumPy CRT chunk forward (committed fidetype.pretrained._crt).
+
+    Amendment 1: the CPU number of the gap-37 rule comes from this stage (same maths as the torch model; the
+    output is checked against the torch reference chunk).
+    """
+    f = own("modellat.json")
+    if f.exists():
+        return load_json(f)  # type: ignore[return-value]
+    import fidetype.pretrained._crt as C
+    from fidetype.utils.isolation import isolated
+
+    g = load_json(own("modellat-gpu.json"))
+    with np.load(own("modellat-params-u0.npz")) as z:
+        p = {k: np.asarray(z[k]) for k in z.files}
+    with np.load(own("modellat-ref.npz")) as z:
+        feat, ref = np.asarray(z["feat"]), np.asarray(z["ref"])
+    mc = g["model_cfg"]
+    kw = dict(ring_k=mc["ring_k"], kernel=mc["kernel"], dilations=tuple(mc["dilations"]))
+    out = C._forward(p, feat, **kw)
+    diff = float(np.abs(np.exp(out) - np.exp(ref)).max())
+    agree = float((out.argmax(1) == ref.argmax(1)).mean())
+    rf = g["receptive_field_frames"]
+    ts = []
+    with isolated("timing") as iso:
+        for k in range(N_MODEL_CHUNKS + 50):
+            x = np.ascontiguousarray(np.roll(feat, k, axis=0)[:rf + CHUNK])
+            t0 = time.perf_counter()
+            C._forward(p, x, **kw)[-CHUNK:]
+            ts.append(time.perf_counter() - t0)
+        env = iso.record
+    ts = np.asarray(ts[50:]) * 1e3
+    res = {**g, "cpu_torch_rocm_build": g.get("cpu"),
+           "cpu": {"impl": "numpy fidetype.pretrained._crt (committed)", "n": int(len(ts)),
+                   "threads_env": os.environ.get("OMP_NUM_THREADS"), "p50_ms": float(np.percentile(ts, 50)),
+                   "p95_ms": float(np.percentile(ts, 95)), "max_ms": float(ts.max()),
+                   "check_max_prob_diff_vs_torch": diff, "check_argmax_agreement": agree},
+           "measurement_env_cpu": env}
+    log(f"modellat_np: cpu {res['cpu']}")
     save_json(res, f)
     return res
 
@@ -822,11 +882,14 @@ def stage_score(tune: dict, beam: dict, cal: list[dict], ev: list[dict]) -> dict
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("stages", nargs="+", choices=("tune", "beam", "test", "guards", "decide", "latency",
-                                                  "modellat", "score", "all"))
+                                                  "modellat", "modellat_np", "score", "all"))
     a = ap.parse_args()
     st = set(a.stages)
     if "modellat" in st:
         stage_modellat()
+        return 0
+    if "modellat_np" in st:
+        stage_modellat_np()
         return 0
     if "all" in st:
         st |= {"tune", "beam", "test", "guards", "decide", "latency", "score"}

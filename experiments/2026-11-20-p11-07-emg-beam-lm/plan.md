@@ -98,4 +98,7 @@ Only if arm S or SL is certified, non-vacuous, passes V6, **and** its safe WPM v
 2. Stages (detached, keep-awake, log `results/run.log`, per-unit files in `derived\p11-07\` so a stop loses minutes only, `DONE` at the end): `tune` -> `beam` -> `test` -> `guards` -> `decide` -> `latency` (CPU, timing class) -> `modellat` (ROCm venv, GPU) -> `score`.
 3. No change of split, window, LM, grid, criterion, metric or controls after this commit. Any variant is a new item.
 
+## Amendment 1 (2026-11-19 21:50, before any test decode and before any latency result)
+The first `modellat` run did not finish: the ROCm torch build (2.9.1+rocm7.2.1) runs CPU matrix products without a fast BLAS (profile: `aten::mm` 78 ms per call for a 125 x 512 x 1024 product; about 0.7 s per 4-frame chunk forward). That is a property of this torch build, not of the model. Change: the **CPU** model-chunk number of the gap-37 rule now comes from the committed NumPy CRT (`fidetype.pretrained._crt`, the same maths as the P11-01 torch model) in the main venv, isolation class `timing`, 4 threads, 500 chunks; its output on one chunk is checked against the torch output (max probability difference and argmax agreement reported). The ROCm stage keeps the GPU timing (500 chunks) and a 30-chunk torch-CPU reference, which is reported as is. No other change.
+
 Write-up: `results.md` in this folder with the verdicts and numbers as computed, including failures.
