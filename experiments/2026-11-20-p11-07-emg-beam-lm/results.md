@@ -111,7 +111,7 @@ Same gate (`gate.json`: k_min 15, r_min 1.842, r_max 17.276), same calibration (
 
 Always-commit reference (gated top-1, no bound): 396 right of 1,221, unguarded WPM 3.72 (P11-12: 293 right, 2.49).
 
-> **Our take:** the new decoder gets more prompts exactly right (top-1 32.4 % vs 24.0 %), but its confidence separates right from wrong less well. The in-beam LM makes the n-best list narrower and more confident on wrong texts too, so the guard commits fewer prompts and more of them are wrong. The certified value goes down (S 3.37 vs 4.10, SL 3.16 vs 5.08). A better accuracy does not give a better guarded value by itself; the confidence needs its own work (new gap 122).
+> **Our take:** the new decoder gets more prompts exactly right (top-1 32.4 % vs 24.0 %), but its confidence separates right from wrong less well. The in-beam LM makes the n-best list narrower and more confident on wrong texts too, so the guard commits fewer prompts and more of them are wrong. The certified value goes down (S 3.37 vs 4.10, SL 3.16 vs 5.08). A better accuracy does not give a better guarded value by itself; the confidence needs its own work (new gap 123).
 
 ## Benchmark entry
 No new card (plan rule): neither arm is above the best `intended_text` entry (5.08, P11-12 SL).
@@ -130,8 +130,8 @@ No new card (plan rule): neither arm is above the best `intended_text` entry (5.
 ## New gaps
 | Gap | Item | What |
 |---|---|---|
-| 121 | P3-12 | Guard end-of-window cost and CPU acoustic model inside the 50 ms budget: the in-beam beam costs < 1 ms per chunk, but the end-of-window work (n-best, gates, `guard.decide`) is 61-70 ms p95 and the NumPy model chunk 47 ms p95. Done when a profiled, incremental guard decision plus a faster CPU model (or the GPU path) gives p95 <= 50 ms on the same windows |
-| 122 | P11-14 | Guard confidence for the in-beam LM decoder: better top-1 (32.4 % vs 24.0 %) but lower certified safe WPM (S 3.37 vs 4.10). Done when a pre-registered confidence (for example an LM-weight temperature, acoustic-only features, or a learned score with beam features) gives a certified value at least the P11-12 value with the same controls |
+| 122 | P3-12 | Guard end-of-window cost and CPU acoustic model inside the 50 ms budget: the in-beam beam costs < 1 ms per chunk, but the end-of-window work (n-best, gates, `guard.decide`) is 61-70 ms p95 and the NumPy model chunk 47 ms p95. Done when a profiled, incremental guard decision plus a faster CPU model (or the GPU path) gives p95 <= 50 ms on the same windows |
+| 123 | P11-14 | Guard confidence for the in-beam LM decoder: better top-1 (32.4 % vs 24.0 %) but lower certified safe WPM (S 3.37 vs 4.10). Done when a pre-registered confidence (for example an LM-weight temperature, acoustic-only features, or a learned score with beam features) gives a certified value at least the P11-12 value with the same controls |
 
 ## Rerun
 | Step | Command (repo root) |

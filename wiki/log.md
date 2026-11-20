@@ -1402,3 +1402,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Guard calibration stopped by low machine memory: new gap 121 = [P14-41](questions/roadmap-standard.md#p14-41-trust-guard-for-willett-hw). PyTorch-on-CPU comparison not run (same reason).
 - P14-12 (gap 26) and P6-06 (gap 28) can now use this decoder (noted in their rows; not done). `fidetype decoders list` shows the proposed weights licence.
 - Updated: open-gaps (101 closed, 121 added), roadmap, tracker, HANDOFF, publishing checklist section J, dashboard.
+
+## [2026-11-19] setup | P11-07: character LM inside the CTC beam for the emg2qwerty EMG decoder (gap 87 closed; new gaps 122-123)
+- Pre-registration `d168c51`, code `9e12a97`, amendment 1 `27f6d08` (CPU model chunk timed with the NumPy CRT; the ROCm torch CPU build is BLAS-bound), results `1bd41d9`, [results](../experiments/2026-11-20-p11-07-emg-beam-lm/results.md). Research only, aggregates only.
+- Own causal CTC prefix beam with shallow fusion of the leak-free Tatoeba 6-gram on the intended text; tuned on the 765 track-val tuning prompts (w 0.5, beta 1, beam 8). Session CER (8 track-test sessions, mean over users): greedy 14.66 % -> 10.10 % (8 / 8 users); beam 64 9.13 %; Table 3 fine-tuned no LM 11.28 %, LM 6.95 %. Intended-text CER 15.16 % -> 9.75 %. Lexicon term no help. C1 0.985. Greedy reproduces P11-01 on its 16 sessions (15.0898 %).
+- Latency: beam push p95 <= 0.7 ms per 40 ms chunk; end-of-window guard work p95 61-70 ms for every beam; CPU model chunk p95 47 ms (GPU 4 ms). The 50 ms CPU rule fails (evidence for gap 37; new gap 122 = [P3-12](questions/roadmap-standard.md#p3-12-guard-end-of-window-cost-and-cpu-acoustic-model-inside-the-50-ms-budget)).
+- P11-12 arm S with the new decoder: certified 3.37 [1.92, 5.18] (P11-12: 4.10); SL 3.16. No new card. New gap 123 = [P11-14](questions/roadmap-standard.md#p11-14-guard-confidence-for-the-in-beam-lm-decoder).
+- Updated: open-gaps (87 closed, 37 evidence, 122-123 added), roadmap (P11-07 done, P3-06 evidence, P3-12, P11-14), tracker, HANDOFF, dashboard.

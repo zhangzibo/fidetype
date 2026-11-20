@@ -296,6 +296,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P3-04 (2026-11-17): profile `implant-logits` (the drop-in guard with input kind `logits` decodes with its built-in CTC prefix beam search, beam 64, lexicon, n-best marginal confidences, at each segment end): p95 added latency 104.1 ms (WebSocket), 108.0 ms (file), 107.3 ms (LSL); the search is about 95 % of it (`_nbest_marginal` / `align_pairs`).
 - **Done when:** a logits guard in the collector decides within the 50 ms budget at p95 on the `implant-logits` bench profile (for example: decode incrementally while frames arrive, with the same decisions as the offline search on the same input, checked by a test), and the profile joins the CI gate.
 - **Evidence (2026-11-19, P11-09):** real EMG replay (emg2qwerty, P11-01 decoder, beam 16, no lexicon, about 500 frames x 33 keys per prompt): `added` p50 58.6 ms, p95 110 ms (median over 8 runs), 222 ms (max); `processor.guard` is almost all of it ([results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)).
+- **Evidence (2026-11-19, P11-07):** in-beam character LM, streaming in 40 ms chunks (emg2qwerty, 1,221 windows, 1 thread): beam `push` p95 0.3-0.7 ms per chunk for beams 4-64; added time at the window end (last chunk, n-best, intended merge, gates, `guard.decide`) p95 61-70 ms, almost the same for every beam; CPU acoustic model chunk (NumPy CRT, 4 threads) p95 47 ms, GPU 4 ms. So the 50 ms CPU rule fails at every beam (108-117 ms); the beam is not the bottleneck ([results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md#latency-1221-evaluation-windows-1-thread-chunk-4-frames--40-ms)). Follow-up: P3-12 (gap 122).
 
 #### P3-07 Receive stamps for LSL input (merge-window wait in the latency)
 - **Gap:** 38 of the [open-gap list](open-gaps.md). Follow-up of P3-04, P3-01.
@@ -331,6 +332,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P3-04 (done); the M6-15 soak harness (done).
 - **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" M6-13 (1 h+) and M6-15 (7 h) soak-tested the live path (BrainFlow -> LSL -> trust). No soak test covers the collector (receivers, guard processor, exporters, WebSocket clients that connect and drop).
 - **Done when:** A pre-registered 24 h collector run (replay input over WebSocket and LSL, guard on, file and WebSocket exporters, forced client and source reconnects) meets written criteria: no crash, bounded memory growth, no lost or duplicate decisions, p95 added latency inside the 50 ms budget. A results page gives the check, stop and resume commands.
+
+#### P3-12 Guard end-of-window cost and CPU acoustic model inside the 50 ms budget
+- **Gap:** 122 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-07). Follow-up of P3-06, P11-07.
+- **Status:** `todo`.
+- **Depends on:** P11-07 (done); P3-06 (gap 37); `fidetype.pretrained._crt` (NumPy CRT); CPU.
+- **Source:** P11-07 ([results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md)): the in-beam LM beam costs at most 0.7 ms p95 per 40 ms chunk, but the end-of-window work (n-best to intended texts, OOV and no-signal gates, `guard.decide`) is 61-70 ms p95 for every beam 4-64, and the CPU model chunk (NumPy, 4 threads) is 47 ms p95 (GPU 4 ms). Beam 8: 67.6 + 47.1 = 114.7 ms > 50 ms.
+- **Done when:** a profile names the end-of-window costs; an incremental guard decision (features kept up to date while frames arrive) plus a faster CPU acoustic model (or the GPU path, stated as such) gives p95 <= 50 ms on the same 1,221 windows, with the same decisions as the offline guard (test).
 
 ## P4. Device and toolkit adapters
 **Goal:** NTS comes out of the tools that people already use. Dataset replay stands in for devices we do not own.
@@ -833,10 +841,11 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-07 CTC beam search with a character LM for the EMG decoder
 - **Gap:** 87 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P11-01.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-19).
 - **Depends on:** P11-01 (done); a licence-clean text corpus for a character n-gram LM; CPU or GPU.
 - **Source:** P11-01 ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): P11-01 decodes greedily with no LM (personalised test CER 15.09 %). The published Table 3 LM column (6-gram char LM) is 6.95 % for the fine-tuned model, 4.33 points better than its no-LM column.
 - **Done when:** The P11-01 personalised models are decoded with a CTC prefix beam search and a character n-gram LM trained on licence-clean text (no emg2qwerty prompts from the test sessions), causally (no future frames beyond the LM step); the test CER (mean over 8 users) is reported against the Table 3 LM column, with a plan written before the test decode.
+- **Result (2026-11-19):** [results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md). Pre-registration `d168c51`, code `9e12a97`, amendment 1 `27f6d08`, results `1bd41d9`. Own CTC prefix beam with shallow fusion of the leak-free Tatoeba 6-gram on the intended text (Backspace pops, Enter resets), tuned on the 765 track-val tuning prompts (w 0.5, beta 1, beam 8). Session CER on the 8 track-test sessions, mean over users: greedy 14.66 % -> **10.10 %** (8 of 8 users better; pooled 10.17 %); beam 64 9.13 %; published fine-tuned no LM 11.28 %, LM 6.95 %. Intended-text CER 15.16 % -> 9.75 %. Lexicon term did not help (10.88 %). Time-shuffled control 0.985. Greedy reproduces P11-01 on its 16-session set (15.0898 %). 50 ms on CPU: fails at every beam (gap 37; new P3-12). P11-12 arm S with the new decoder: certified, 3.37 [1.92, 5.18] (P11-12: 4.10); new P11-14. Gap 87 closed.
 
 #### P11-08 EMG decoder accuracy to the published fine-tuned no-LM CER
 - **Gap:** 88 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P11-01.
@@ -884,6 +893,13 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Source:** P11-12 ([results](../../experiments/2026-11-20-p11-12-emg-nosignal-gate/results.md)): the certified EMG guards commit the intended text (Backspace applied), but the emg2qwerty track scorer compares commits to the raw key sequence. So the first non-vacuous certified EMG safe WPM (4.10 v0.1) has no score card and no leaderboard row.
 - **Done when:** the emg2qwerty track (or a declared variant) can score an `intended` target (truth = key sequence with Backspace applied, the P11-11 `resolve` rule) in `fidetype.benchmark`, with tests; the P11-12 arm S gets a declared-subset card with a rerun recipe (code_ref); `python -m fidetype.benchmark.leaderboard --check` passes.
 - **Result (2026-11-19):** [results](../../experiments/2026-11-20-p11-13-intended-text-cards/results.md). Code `698bbe8`, cards `ca73b5c`. Manifest field `target` (emg2qwerty only): `raw_keys` (default, `raw-keys/1`; old cards rescore equal) or `intended_text` (`intended-text/1`: Backspace applied by `registry.keycodes_to_intended_text`, tested equal to the P11-11 `resolve`; truth, outputs and the no-BCI reference all use the target text). Cards declare their target; the leaderboard shows each target in its own table with its own no-BCI row. Declared-subset cards (8 users, 1,221 prompts): arm S certified safe WPM v0.1 **4.10 [1.99, 6.56]** vs no-BCI 3.09; arm SL 5.08 [2.54, 7.95]; controls pass. Same value, commits and words as P11-12; CI differs only by cluster label order. Gap 105 closed.
+
+#### P11-14 Guard confidence for the in-beam LM decoder
+- **Gap:** 123 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-07). Follow-up of P11-07, P11-12.
+- **Status:** `todo`.
+- **Depends on:** P11-07 (done); P11-12 (done); CPU.
+- **Source:** P11-07 ([results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md)): with the in-beam LM decoder the top-1 intended text is right more often (32.4 % vs 24.0 %), but the certified safe WPM is lower (arm S 3.37 vs 4.10; SL 3.16 vs 5.08; error among commits 0.28 vs 0.21). The fused n-best is confident on wrong texts too.
+- **Done when:** a pre-registered confidence for the in-beam decoder (for example an n-best temperature or LM-weight split, acoustic-only features, or a learned score with beam features) gives a certified, non-vacuous safe WPM v0.1 at least the P11-12 value on the same split, with the same gate and controls; or the result states with numbers why not.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
