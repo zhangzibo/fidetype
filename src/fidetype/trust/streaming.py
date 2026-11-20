@@ -706,7 +706,55 @@ class StreamingTrustLayer:
             raise StreamEventError("frame needs a finite numeric t")
         if not t > s.last_t:
             raise StreamEventError(f"frame t {t} does not increase (last {s.last_t}; spec 6.2 rule 4)")
-        row = frame_row(ev, s.V)
+        return self._frame_value(s, float(t), frame_row(ev, s.V), t0)
+
+    def push_frames(self, times: Any, rows: Any, session_id: str = "default") -> list[StreamDecision]:
+        """Consume ``n`` dense frames at once (P3-12): the same result as ``n`` ``frame`` events.
+
+        ``times`` is ``(n,)``, ``rows`` is ``(n, V)`` natural-log probabilities (each row log-sum-exp 0).
+        It skips the JSON form of each frame, so a long utterance costs far less than ``n`` :meth:`push`
+        calls. The checks are the same (finite increasing ``t``, the row length, no NaN or +inf, each row
+        normalised). The header must come first, through :meth:`push`.
+        """
+        t0 = self.clock()
+        s = self._session(session_id)
+        if s.header is None:
+            raise StreamEventError("'frame' event before the header (spec 6.2 rule 1)")
+        if s.ended:
+            s.ignored_events += len(times)
+            s.n_events += len(times)
+            return []
+        ts = np.asarray(times, dtype=np.float64).reshape(-1)
+        a = np.array(rows, dtype=np.float64)  # a copy: the session keeps the rows
+        if a.ndim != 2 or a.shape[0] != ts.shape[0]:
+            raise StreamEventError(f"rows must be (n, V) with n = len(times), got {a.shape} for {ts.shape[0]} times")
+        if a.shape[1] != s.V:
+            raise StreamEventError(f"frame has {a.shape[1]} log-probabilities, vocab has {s.V}")
+        if a.size and (np.isnan(a).any() or np.isposinf(a).any()):
+            raise StreamEventError("log_probs must not contain NaN or +inf")
+        if a.shape[0] and s.V:
+            m = a.max(axis=1)
+            fin = np.isfinite(m)
+            lse = np.full(a.shape[0], -math.inf)
+            if fin.any():
+                mf = m[fin]
+                lse[fin] = mf + np.log(np.exp(a[fin] - mf[:, None]).sum(axis=1))
+            if not np.all(np.abs(lse) <= NORM_TOL):
+                bad = float(lse[~(np.abs(lse) <= NORM_TOL)][0])
+                raise StreamEventError(f"frame log_probs must log-sum-exp to 0 (got {bad:.4g})")
+        out: list[StreamDecision] = []
+        for i in range(ts.shape[0]):
+            t = float(ts[i])
+            if not math.isfinite(t):
+                raise StreamEventError("frame needs a finite numeric t")
+            if not t > s.last_t:
+                raise StreamEventError(f"frame t {t} does not increase (last {s.last_t}; spec 6.2 rule 4)")
+            out += self._frame_value(s, t, a[i], t0)
+            s.n_events += 1
+        return out
+
+    def _frame_value(self, s: _Session, t: float, row: np.ndarray, t0: float) -> list[StreamDecision]:
+        """One checked frame row at time ``t`` (shared by :meth:`push` and :meth:`push_frames`)."""
         s.last_t = float(t)
         if s.overflow:
             s.dropped_frames += 1

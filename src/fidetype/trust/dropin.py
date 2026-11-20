@@ -86,6 +86,7 @@ __all__ = [
     "GuaranteeSheet",
     "TrustResult",
     "TrustGuard",
+    "GuardSession",
     "calibrate",
     "wrap",
     "load",
@@ -536,7 +537,7 @@ class _Codec:
                           input_kind=input_scale or self.input_scale)
 
     @staticmethod
-    def stream_events(st: NeuralTextStream) -> list[dict[str, Any]]:
+    def header_event(st: NeuralTextStream) -> dict[str, Any]:
         head: dict[str, Any] = {"type": "header", "spec_version": st.version, "vocab": list(st.vocab),
                                 "vocab_type": st.vocab_type, "blank_id": st.blank_id, "source": st.source,
                                 "meta": dict(st.meta)}
@@ -544,9 +545,16 @@ class _Codec:
             head["frame_period"] = st.frame_period
         if st.latency is not None:
             head["latency"] = st.latency
-        ev = [head]
-        ev += [{"type": "frame", "t": float(t), "log_probs": [None if v == -math.inf else float(v) for v in row]}
-               for t, row in zip(st.frame_times, st.log_probs)]
+        return head
+
+    @staticmethod
+    def frame_event(t: Any, row: Any) -> dict[str, Any]:
+        return {"type": "frame", "t": float(t), "log_probs": [None if v == -math.inf else float(v) for v in row]}
+
+    @staticmethod
+    def stream_events(st: NeuralTextStream) -> list[dict[str, Any]]:
+        ev = [_Codec.header_event(st)]
+        ev += [_Codec.frame_event(t, row) for t, row in zip(st.frame_times, st.log_probs)]
         ev.append({"type": "end"})
         return ev
 
@@ -775,7 +783,10 @@ class TrustGuard:
 
     def _final_gated(self, events: Sequence[Mapping[str, Any]]) -> tuple[Any, str | None]:
         """The final decision, with the P15-06 grounding gate applied to a COMMIT (reason or None)."""
-        sd = self._run_layer(self._layer, events)
+        return self._gate_final(self._run_layer(self._layer, events), events)
+
+    def _gate_final(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[Any, str | None]:
+        """The steps of :meth:`_final_gated` after the layer's final decision ``sd``."""
         self._last_score = None
         self._last_prefix = None
         if self.commit_score is not None:
@@ -864,8 +875,11 @@ class TrustGuard:
         return c == t
 
     def _log(self, r: TrustResult, events: Sequence[Mapping[str, Any]], utterance_id: str | None,
-             extra: Mapping[str, Any] | None = None) -> None:
-        """Append the audit record of one decision (``extra``: more keys, e.g. the online threshold)."""
+             extra: Mapping[str, Any] | None = None, input_sha: str | None = None) -> None:
+        """Append the audit record of one decision (``extra``: more keys, e.g. the online threshold).
+
+        ``input_sha``: the hash of ``events`` if the caller has it already (:class:`GuardSession`).
+        """
         rec: dict[str, Any] = dict(r.event)
         rec["seq"] = r.seq
         if not self.audit_text:
@@ -873,7 +887,7 @@ class TrustGuard:
         rec["user_action"] = r.action
         rec["time_utc"] = _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="milliseconds")
         rec["input_kind"] = self.input_kind
-        rec["input_sha256"] = _input_sha(events)
+        rec["input_sha256"] = _input_sha(events) if input_sha is None else input_sha
         if utterance_id is not None:
             rec["utterance_id"] = str(utterance_id)
         if extra:
@@ -882,6 +896,15 @@ class TrustGuard:
         self._seq += 1
 
     __call__ = decide
+
+    def session(self, *, utterance_id: str | None = None) -> "GuardSession":
+        """An incremental decision for one utterance (logits input; P3-12).
+
+        Push the rows while they arrive (``s.push(chunk)``), then call ``s.end()``.
+        The result and the audit record are those of :meth:`decide` on all rows,
+        but most of the work is done before the end of the utterance.
+        """
+        return GuardSession(self, utterance_id)
 
     def decide_many(self, xs: Iterable[Any]) -> list[TrustResult]:
         """:meth:`decide` for each input, in order."""
@@ -1026,13 +1049,110 @@ def _user_reason(raw: str, p_top1: float, guard_risk: float, commit_p: float) ->
     return f"{lead}; {tail}" if lead else tail
 
 
+def _event_line(e: Mapping[str, Any]) -> bytes:
+    """The canonical JSON form of one event, as the audit hash reads it."""
+    return json.dumps(e, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
+
+
 def _input_sha(events: Sequence[Mapping[str, Any]]) -> str:
     h = hashlib.sha256()
     for e in events:
-        h.update(json.dumps(e, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
-                            allow_nan=False).encode("utf-8"))
+        h.update(_event_line(e))
         h.update(b"\n")
     return h.hexdigest()
+
+
+class GuardSession:
+    """One utterance, decided incrementally while its frames arrive (P3-12). Make it with :meth:`TrustGuard.session`.
+
+    ``push(chunk)`` takes the next ``(n, V)`` rows of the score matrix. It does the per-frame work at once:
+    the row normalisation, the frame event and its part of the audit hash. ``end()`` then gives the
+    :class:`TrustResult` of ``guard.decide(all rows)`` and writes the same audit record (only
+    ``time_utc`` differs), but it costs far less at the end of the utterance: the frames go to the trust layer
+    in one batch (:meth:`~fidetype.trust.streaming.StreamingTrustLayer.push_frames`).
+
+    ``push`` returns the normalised rows as the guard's stream carries them (float32 values as float64). With
+    your own ``decode_fn`` (frame temperature 1.0) these are the rows that ``decode_fn`` gets at ``end()``,
+    so a streaming decoder fed with them gives the same n-best list as the offline guard.
+
+    Not incremental (``end()`` falls back to ``guard.decide``, the same result): a guard with
+    ``input_scale="auto"`` (the scale is detected on the whole matrix) or with a P15-06 commit grounding gate.
+    """
+
+    def __init__(self, guard: "TrustGuard", utterance_id: str | None = None) -> None:
+        if guard.input_kind != "logits":
+            raise ValueError("a guard session is for logits input only")
+        self._g = guard
+        self._uid = utterance_id
+        c = guard._codec
+        self._V = len(c.vocab.tokens)
+        self._incremental = c.input_scale != "auto" and guard.halluc_gate is None
+        self._raw: list[np.ndarray] = []
+        self._rows: list[np.ndarray] = []
+        self._lines: list[bytes] = []
+        self._n = 0
+        self._closed = False
+
+    @property
+    def n_frames(self) -> int:
+        return self._n
+
+    def push(self, chunk: Any) -> np.ndarray:
+        """Add the next ``(n, V)`` rows. Returns the normalised rows (see the class text)."""
+        from fidetype.adapters.ctc_logits import to_log_probs
+
+        if self._closed:
+            raise RuntimeError("this session has ended")
+        a = np.asarray(chunk)
+        if a.ndim != 2 or a.shape[1] != self._V:
+            raise ValueError(f"a chunk must be (n, {self._V}), got shape {a.shape}")
+        self._raw.append(a)
+        c = self._g._codec
+        scale = c.input_scale if c.input_scale != "auto" else "auto"
+        lp32 = to_log_probs(a, scale).astype(np.float32)
+        if self._incremental:
+            p = float(c.frame_period)
+            ts = p + p * np.arange(self._n, self._n + a.shape[0])  # from_array: t0 = frame_period
+            self._lines += [_event_line(_Codec.frame_event(t, row)) for t, row in zip(ts, lp32)]
+            self._rows.append(lp32)
+        self._n += a.shape[0]
+        return lp32.astype(np.float64)
+
+    def end(self) -> TrustResult:
+        """The decision on all pushed rows (the same as ``guard.decide``); the session closes."""
+        if self._closed:
+            raise RuntimeError("this session has ended")
+        self._closed = True
+        g = self._g
+        x = np.concatenate(self._raw, axis=0) if self._raw else np.zeros((0, self._V))
+        if not self._incremental:
+            return g.decide(x, utterance_id=self._uid)
+        st = g._codec.stream(x)
+        rows = np.concatenate(self._rows, axis=0) if self._rows else np.zeros((0, self._V), np.float32)
+        p = float(g._codec.frame_period)
+        if (len(self._lines) != st.log_probs.shape[0] or not np.array_equal(rows, st.log_probs)
+                or not np.array_equal(p + p * np.arange(self._n), st.frame_times)):
+            return g.decide(x, utterance_id=self._uid)  # safety net: never a different result
+        head = _Codec.header_event(st)
+        end = {"type": "end"}
+        layer = g._layer
+        layer.new_item("default")
+        out = layer.push(dict(head), "default")
+        out += layer.push_frames(st.frame_times, st.log_probs, "default")
+        out += layer.push(dict(end), "default")
+        out += layer.end_of_utterance("default", final_attempt=True)
+        fin = [d for d in out if d.final]
+        if len(fin) != 1:
+            raise RuntimeError(f"expected one final decision, got {len(fin)}")
+        events: list[dict[str, Any]] = [head, end]  # only the header is read on the logits path
+        r = g._result(*g._gate_final(fin[0], events))
+        h = hashlib.sha256()
+        for line in [_event_line(head), *self._lines, _event_line(end)]:
+            h.update(line)
+            h.update(b"\n")
+        g._log(r, events, self._uid, None if r.commit_score is None else {"commit_score": r.commit_score},
+               input_sha=h.hexdigest())
+        return r
 
 
 def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,

@@ -19,6 +19,7 @@ from typing import Mapping, Sequence
 import numpy as np
 
 __all__ = ["WIN", "HOP", "FS", "N_BANDS", "N_CH", "VOCAB", "BAND_EDGES", "n_frames", "frames_from_block",
+           "TrunkStream", "CRTStream",
            "receptive_field", "crt_log_probs", "trunk_log_probs", "trunk_keys", "required_keys", "erf",
            "gelu"]
 
@@ -168,3 +169,93 @@ def crt_log_probs(p: Mapping[str, np.ndarray], feat: np.ndarray, *, ring_k: int,
         c = max(0, a - rf)
         out[a:b] = _forward(p, feat[c:b], ring_k=ring_k, kernel=kernel, dilations=dilations)[a - c:]
     return out
+
+
+class TrunkStream:
+    """Streaming form of :func:`trunk_log_probs` (P3-12): push stem frames in chunks, get their log-probs.
+
+    Each residual block keeps the last ``(kernel - 1) * dilation`` LayerNorm outputs, so a chunk of ``n``
+    frames costs ``n`` frames of work (the batch form recomputes the whole receptive field for each chunk).
+    The state starts at zeros, the same as the zero left padding of :func:`trunk_log_probs`. The maths is the
+    same; float32 sums can differ in the last bits because the matrix products run on fewer rows.
+    """
+
+    def __init__(self, p: Mapping[str, np.ndarray], *, kernel: int, dilations: Sequence[int]) -> None:
+        self.kernel = int(kernel)
+        self.dilations = tuple(int(d) for d in dilations)
+        self._blocks = []
+        for i, dil in enumerate(self.dilations):
+            q = f"blocks.{i}."
+            d = p[q + "norm.weight"].shape[0]
+            self._blocks.append({
+                "dil": dil, "pad": (self.kernel - 1) * dil,
+                "nw": np.asarray(p[q + "norm.weight"], np.float32), "nb": np.asarray(p[q + "norm.bias"], np.float32),
+                "w": np.ascontiguousarray(p[q + "dw.weight"][:, 0, :], np.float32),
+                "b": np.asarray(p[q + "dw.bias"], np.float32),
+                "f0": np.ascontiguousarray(np.asarray(p[q + "ff.0.weight"], np.float32).T),
+                "f0b": np.asarray(p[q + "ff.0.bias"], np.float32),
+                "f3": np.ascontiguousarray(np.asarray(p[q + "ff.3.weight"], np.float32).T),
+                "f3b": np.asarray(p[q + "ff.3.bias"], np.float32),
+                "hist": np.zeros(((self.kernel - 1) * dil, d), np.float32)})
+        self._onw = np.asarray(p["out_norm.weight"], np.float32)
+        self._onb = np.asarray(p["out_norm.bias"], np.float32)
+        self._hw = np.ascontiguousarray(np.asarray(p["head.weight"], np.float32).T)
+        self._hb = np.asarray(p["head.bias"], np.float32)
+        self.t = 0
+
+    def reset(self) -> None:
+        """Back to the zero state (a new stream)."""
+        for blk in self._blocks:
+            blk["hist"][:] = 0.0
+        self.t = 0
+
+    def push(self, h: np.ndarray) -> np.ndarray:
+        """(n, d) stem output of the next ``n`` frames -> (n, V) log-probs."""
+        h = np.asarray(h, np.float32)
+        T = h.shape[0]
+        if T == 0:
+            return np.zeros((0, self._hw.shape[1]), np.float32)
+        k = self.kernel
+        for blk in self._blocks:
+            n = _layer_norm(h, blk["nw"], blk["nb"])
+            pad, dil = blk["pad"], blk["dil"]
+            npad = np.concatenate([blk["hist"], n], 0)
+            w = blk["w"]
+            c = np.broadcast_to(blk["b"], n.shape).astype(np.float32).copy()
+            for j in range(k):
+                c += w[:, j] * npad[j * dil:j * dil + T]
+            blk["hist"] = npad[-pad:].copy() if pad else blk["hist"]
+            f = gelu(c) @ blk["f0"] + blk["f0b"]
+            f = gelu(f.astype(np.float32)) @ blk["f3"] + blk["f3b"]
+            h = (h + f).astype(np.float32)
+        o = _layer_norm(h, self._onw, self._onb) @ self._hw + self._hb
+        m = o.max(axis=1, keepdims=True)
+        self.t += T
+        return (o - m - np.log(np.exp(o - m).sum(axis=1, keepdims=True))).astype(np.float32)
+
+
+class CRTStream:
+    """Streaming form of the CRT EMG model (P3-12): ``push(feat_chunk)`` -> log-probs of those frames.
+
+    The ring stem works frame by frame (no state); the trunk is a :class:`TrunkStream`. A stream that starts
+    at frame ``a`` gives the same log-probs (up to float32 rounding) as :func:`_forward` on ``feat[a:]``.
+    """
+
+    def __init__(self, p: Mapping[str, np.ndarray], *, ring_k: int, kernel: int, dilations: Sequence[int]) -> None:
+        self.p = p
+        self.ring_k = int(ring_k)
+        self._mean = np.asarray(p["mean"], np.float32).reshape(N_CH, N_BANDS)
+        self._std = np.asarray(p["std"], np.float32).reshape(N_CH, N_BANDS)
+        self.trunk = TrunkStream(p, kernel=kernel, dilations=dilations)
+
+    def reset(self) -> None:
+        self.trunk.reset()
+
+    def push(self, feat: np.ndarray) -> np.ndarray:
+        """(n, 32, 12) raw features of the next ``n`` frames -> (n, V) log-probs."""
+        if len(feat) == 0:
+            return self.trunk.push(np.zeros((0, 0), np.float32))
+        x = (np.asarray(feat, np.float32) - self._mean) / self._std
+        h = np.concatenate([_ring(self.p, "left", x[:, :N_EL], self.ring_k),
+                            _ring(self.p, "right", x[:, N_EL:], self.ring_k)], axis=-1)
+        return self.trunk.push(h)
