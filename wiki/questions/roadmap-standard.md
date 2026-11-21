@@ -263,7 +263,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P2-13 CI latency-budget tests flake on shared runners
 - **Gap:** 124 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a CI failure). Follow-up of P2-09.
-- **Status:** `in_progress` (2026-11-21; commit `4f74ca2`). CI gate mode in `src/fidetype/collector/latency.py`: strict locally; on CI (`GITHUB_ACTIONS` / `CI`) the median is strict in every run and the p95 is the best of up to 3 fresh runs, only after a tail-only failure (`FIDETYPE_LATENCY_GATE` overrides). The gate report names the tail stage (receive or pipeline). Docs: docs/collector.md "Gate modes (P2-13)". Cause evidence: run 44913077810 attempt 1, receive p95 52.8 ms (max 117.2 ms) vs pipeline p95 1.27 ms, so a runner stall, not our code. Green `tests` runs since the change: 4 of 20 needed (44915291894, 44915895663, 44915904168, 44919622175).
+- **Status:** `done` (2026-11-21). Gap 124 closed: 20 consecutive green `tests` runs since the change (44915291894 to 44928984469, `d3511df`); no run in the streak had a failed attempt 1 and no collector gate failed. Progress before (commit `4f74ca2`): CI gate mode in `src/fidetype/collector/latency.py`: strict locally; on CI (`GITHUB_ACTIONS` / `CI`) the median is strict in every run and the p95 is the best of up to 3 fresh runs, only after a tail-only failure (`FIDETYPE_LATENCY_GATE` overrides). The gate report names the tail stage (receive or pipeline). Docs: docs/collector.md "Gate modes (P2-13)". Cause evidence: run 44913077810 attempt 1, receive p95 52.8 ms (max 117.2 ms) vs pipeline p95 1.27 ms, so a runner stall, not our code. Green `tests` runs since the change: 4 of 20 needed (44915291894, 44915895663, 44915904168, 44919622175).
 - **Depends on:** P2-09 (done: CI matrix; `FIDETYPE_LATENCY_TOLERANCE` is 4 on macOS only).
 - **Source:** CI run 44673291448 (2026-11-20 UTC, commit `8180a30`) failed. The test `tests/test_collector_pipeline.py` measured the emg-key WebSocket latency at p95 320 ms. The budget is 50 ms. The runner was windows-latest with Python 3.12. The rerun passed. Wall-clock budget checks on shared CI runners depend on the runner load, not only on our code.
 - **Done when:** The wall-clock budget assertions in CI are either marked as performance tests that run only under the isolation runner or locally, or use a CI-specific tolerance with the strict budget checked in a dedicated performance job. The flake does not recur in 20 consecutive CI runs.
@@ -288,7 +288,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P2-16 hybrid_setup margin under 25 s on windows CI
 - **Gap:** 162 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P2-15). Follow-up of P2-15.
-- **Status:** `todo`. Low priority.
+- **Status:** `done` (2026-11-21; commits `24b7cc7`, `873f068`). Gap 162 closed. Exact speed-ups: `PrefixReuseSearch` + `IncrementalPrefixBeam.fork()` in the trust drop-in decoders (about 35 % of the frames pushed); faster `_align_group` Viterbi (`_viterbi_fast`, same tie choice, NaN / +inf fallback). Same config ids, sheets, views and events as HEAD; 16,488 randomised comparisons, 0 mismatches; assertions unchanged. CI windows py3.12 `hybrid_setup`: 21.06 s (run 44931534102), 14.58 s (run 44932516115), 20.99 s (run 44932516115 attempt 2); was 27.5 s. `tests/shard_weights.json` refreshed from run 44931534102.
 - **Depends on:** P2-15 (done). CPU.
 - **Source:** P2-15 (2026-11-21, commits `ee590af`, `03d2308`): `hybrid_setup` takes 27.53 s (run 44912022087) and 27.31 s (run 44913077810) on windows py3.12. This is under the 30 s target, but the margin is small.
 - **Ideas:** the beam push, `_align_group`.
@@ -490,10 +490,25 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P4-18 OpenBCI GUI reader on a real GUI v5+ recording and packet drops
 - **Gap:** 157 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P4-16). Follow-up of P4-16.
-- **Status:** `todo`. Low priority.
+- **Status:** `done` (2026-11-21; commit `300d44f`; CI `tests` run 44935694762 green). Gap 157 closed by orchestrator decision: the met parts close, the rest is split. Packet drops: the reader checks the Cyton Sample Index (wrap 0-255 is not a drop; step 1 Cyton, 2 Daisy). Default `on_drop="gap"`: rows are kept, later times are corrected, `Chunk.gap` with cause `sample_index`, and the live runner writes `gap_abort`. `on_drop="error"` is available. Reason for the gap default: real files often have drops (Nepali file: 20 drops). Real GUI v5 files with time stamps in seconds (not committed; licences in references/README.md): Bot-Ro-Bot/Silent-Speech-Recognition-in-Nepali `OpenBCI-RAW-2021-05-13_15-21-21.txt` (GPL-3.0; Cyton 8 ch 250 Hz, GUI v5.0, Unix seconds; 20 drops / 30 samples lost, same as a plain-loop check) and Mendeley Data cp586sfzrt v4 `OpenBCI-RAW-2026-05-07_14-48-12.txt` (CC BY 4.0; Cyton + Daisy 16 ch 125 Hz, seconds; Marker Channel present but all zero). Tests: 9 synthetic in `tests/test_adapter_openbci_gui.py`; local `tests/test_adapter_openbci_gui_real.py` (env `FIDETYPE_P4_18_DATA`). Not met: non-zero markers on a real file.
+- **Follow-ups:** gap 167 = [P4-19](#p4-19-openbci-gui-reader-on-a-real-recording-with-non-zero-marker-channel-values) (non-zero markers, externally blocked); gap 168 = [P4-20](#p4-20-sample-index-check-on-ganglion) (Ganglion index rule, low priority).
 - **Depends on:** P4-16 (done); an openly licensed real OpenBCI GUI v5+ recording.
 - **Source:** P4-16 (2026-11-21, commit `b73d9a7`): the only real OpenBCI GUI file read (OpenBCI_GUI-v6-blinks-jawClench-alpha.txt, MIT) has millisecond time stamps and no non-zero markers. The reader does not check the Sample Index for jumps (packet drops).
 - **Done when:** the `openbci-gui` reader is checked on an openly licensed real OpenBCI GUI v5+ recording with time stamps in seconds and non-zero markers (licence recorded, file not committed), and a Sample Index jump (packet drop) raises an error or is recorded as a gap, with a test.
+
+#### P4-19 OpenBCI GUI reader on a real recording with non-zero Marker Channel values
+- **Gap:** 167 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P4-18). Follow-up of P4-18.
+- **Status:** `externally_blocked` (needs an openly licensed file from outside people).
+- **Depends on:** P4-18 (done); an openly licensed real OpenBCI GUI v5.1+ recording with non-zero Marker Channel values.
+- **Source:** P4-18 (2026-11-21, commit `300d44f`): both real GUI v5 files read have time stamps in seconds, but no non-zero marker (Nepali file GUI v5.0, no Marker Channel; Mendeley cp586sfzrt v4 file: Marker Channel present but all zero). Search done: GitHub code search 85 repos (54 without a licence); Zenodo API 403; Mendeley 3 datasets; OSF and Figshare not searched directly.
+- **Done when:** an openly licensed real OpenBCI GUI v5.1+ file with non-zero Marker Channel values is read, its marker times match a csv parse, the licence is recorded, and the file is not committed.
+
+#### P4-20 Sample Index check on Ganglion
+- **Gap:** 168 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P4-18). Follow-up of P4-18.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P4-18 (done); a real or documented Ganglion GUI file. CPU.
+- **Source:** P4-18 (2026-11-21, commit `300d44f`): the packet-drop check knows the Sample Index rule for Cyton (step 1, wrap 0-255) and Cyton + Daisy (step 2) only. No Ganglion file was read.
+- **Done when:** a real or documented Ganglion GUI file gives the index rule, and drops are detected with a test.
 
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
@@ -733,7 +748,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-35 Native calibrate path for external per-prefix scores
 - **Gap:** 165 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-16). Follow-up of P11-16, P5-24.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; commit `c1f14e0`, [results](../../experiments/2026-11-21-p5-35-external-prefix-score/results.md); CI `tests` run 44930128741 green). Gap 165 closed. `fidetype.trust.FrozenPrefixScore` + `calibrate(..., commit_unit="prefix", prefix_score=...)`; the score digest enters the `config_id`; `ft.load(path, prefix_score=...)` refuses a missing or other score. LX-FL reproduced exactly: threshold 0.86; LTT record equal (459 items, risk 0.03268, p 0.04882); controls 0 / 5 / 0 of 300; 671 commits (592 prefix), 46 wrong; same decisions 1,221 / 1,221 for real, time-shuffled and zero EMG; `config_id` `tcfg-618d4ca57bb9326b`. The 4 old guard types keep their `config_id` and dicts (vs `9e039c7`). The P5-31 offer null control fails in warn mode (shuffled 60 / 300 offers vs real 157 / 459), as for the other EMG guards. Tests: `tests/test_trust_external_prefix_score.py` (8 fast + 1 local). Docs: docs/trust-guarantee.md 10b.1; CHANGELOG.
 - **Depends on:** P11-16 (done); `calibrate(commit_unit="prefix")` (P5-24); CPU.
 - **Source:** P11-16 ([results](../../experiments/2026-11-21-p11-16-emg-prefix-confidence/results.md)): LX-FL and LS-FL are certified outside `calibrate` (library function `ltt_prefix_threshold` and the library controls). So they have no `TrustGuard` file, no frame temperature, no guard-risk gate and no `config_id`.
 - **Done when:** `calibrate` accepts a frozen external per-prefix score, and LX-FL is reproduced through it (same threshold and decisions) with tests, giving a `TrustGuard` with a `config_id`.
