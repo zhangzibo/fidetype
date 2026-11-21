@@ -56,6 +56,7 @@
  "trust": {
   "config": "file:kt-semg-lda.guard.json",
   "config_id": "tcfg-d8a73194fe539e72",
+  "offer_control": {"verdict": "fail", "mode": "warn", "checked": "2026-11-21", "rule": "P5-31, docs/trust-guarantee.md section 5a: a control passes if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 n) or one-sided Fisher exact p <= 0.05); real = the LTT items", "real": {"n": 65, "n_offer": 65}, "controls": [{"name": "uniform", "label": "uniform n-best lists", "n": 300, "n_offer": 300, "p_value": 1.0, "passed": false}, {"name": "shuffled", "label": "user nulls: key windows drawn at random", "n": 173, "n_offer": 173, "p_value": 1.0, "passed": false}], "ltt_commits": 0, "commits_match_sheet": true, "effect": "warn mode: no change to the guard, its config_id or its status. The offer list is not evidence that the signal was read", "source": "experiments/2026-11-21-p5-31-offer-control/results/recheck-kt.json"},
   "alpha": 0.05,
   "delta": 0.1,
   "input": "the key n-best list of a stream: guard.decide(model.nbest(stream))",

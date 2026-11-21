@@ -16,7 +16,12 @@ Manifest keys (schema ``fidetype.pretrained-manifest/0.1``)::
     training     {data, doi, split, run, checkpoint_sha256}
     metrics      [{name, split, value, source}]
     limits       [str]
-    trust        {config (packaged file or file role), decode, alpha, ...} | null
+    trust        {config (packaged file or file role), decode, alpha, ..., offer_control} | null
+                 offer_control (optional, P14-56): the P5-31 offer null control of the saved guard,
+                 {verdict "pass" | "fail", mode, checked, rule, real {n, n_offer},
+                  controls [{name, label, n, n_offer, p_value, passed}], ltt_commits,
+                  commits_match_sheet, effect, source}; a readout guard has its own copy in
+                 readouts.<name>.trust.offer_control
     hosting      {host, release, notes}   (the download URL slot; null until P14-02)
 
 ``licence["data.licence"]`` and ``licence["data.research_only"]`` use the stream keys of FEP-0010
@@ -38,12 +43,14 @@ from typing import Any, Mapping
 
 from fidetype.trust.licence import META_LICENCE, META_RESEARCH_ONLY, combine, normalise, source_summary
 
-__all__ = ["MANIFEST_SCHEMA", "FILE_ROLES", "STATUSES", "ManifestError", "FileEntry", "Manifest", "manifest_dir",
+__all__ = ["MANIFEST_SCHEMA", "FILE_ROLES", "STATUSES", "OFFER_VERDICTS",
+           "ManifestError", "FileEntry", "Manifest", "manifest_dir",
            "load_manifest", "all_manifests", "parse_manifest"]
 
 MANIFEST_SCHEMA = "fidetype.pretrained-manifest/0.1"
 FILE_ROLES = ("weights", "card", "guard", "text")
 STATUSES = ("available", "planned")
+OFFER_VERDICTS = ("pass", "fail")
 _NAME = re.compile(r"^[a-z0-9][a-z0-9.-]{1,63}$")
 _SHA = re.compile(r"^[0-9a-f]{64}$")
 _FILE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
@@ -113,6 +120,15 @@ class Manifest:
         return dict(t) if t else None
 
     @property
+    def offer_controls(self) -> dict[str, dict[str, Any]]:
+        """The P5-31 offer null control of each packaged guard (P14-56).
+
+        Key ``"default"`` is the guard of ``trust``; key ``"<readout>"`` is the guard of
+        ``readouts.<readout>.trust``. A guard without a recorded check is not in the dict.
+        """
+        return {k: dict(v) for k, v in _offer_blocks(self.raw)}
+
+    @property
     def metrics(self) -> list[dict[str, Any]]:
         return list(self.raw.get("metrics") or [])
 
@@ -159,9 +175,58 @@ class Manifest:
             lines.append(f"  trust:    {self.trust.get('config')} (decode: {self.trust.get('decode')})")
         else:
             lines.append("  trust:    no committed trust config")
+        for key, oc in self.offer_controls.items():
+            where = "" if key == "default" else f" (readout {key})"
+            parts = [f"{c.get('label') or c['name']} {c['n_offer']}/{c['n']} {'pass' if c['passed'] else 'FAIL'}"
+                     for c in oc.get("controls", [])]
+            real = oc.get("real") or {}
+            lines.append(f"  offer control{where}: {str(oc.get('verdict')).upper()} ({oc.get('mode')} mode, "
+                         f"P5-31, checked {oc.get('checked')}): real {real.get('n_offer')}/{real.get('n')}; "
+                         + ", ".join(parts))
         if r.get("status_note"):
             lines.append(f"  note:     {r['status_note']}")
         return "\n".join(lines)
+
+
+def _offer_blocks(doc: Mapping[str, Any]) -> list[tuple[str, Any]]:
+    out = []
+    t = doc.get("trust")
+    if isinstance(t, Mapping) and "offer_control" in t:
+        out.append(("default", t["offer_control"]))
+    ro = doc.get("readouts")
+    if isinstance(ro, Mapping):
+        for name, r in ro.items():
+            rt = r.get("trust") if isinstance(r, Mapping) else None
+            if isinstance(rt, Mapping) and "offer_control" in rt:
+                out.append((str(name), rt["offer_control"]))
+    return out
+
+
+def _check_offer_control(oc: Any, where: str) -> None:
+    """Check one ``offer_control`` block: types, counts and verdict = all controls passed."""
+    if not isinstance(oc, Mapping):
+        raise ManifestError(f"{where}: an object is needed")
+    verdict = _req(oc, "verdict", str, where)
+    if verdict not in OFFER_VERDICTS:
+        raise ManifestError(f"{where}: verdict must be one of {OFFER_VERDICTS}")
+    _req(oc, "mode", str, where)
+    _req(oc, "source", str, where)
+    for i, (tag, c) in enumerate([("real", _req(oc, "real", Mapping, where))]
+                                 + [(f"controls[{j}]", c) for j, c in enumerate(_req(oc, "controls", list, where))]):
+        w = f"{where}: {tag}"
+        if not isinstance(c, Mapping):
+            raise ManifestError(f"{w}: an object is needed")
+        n, k = _req(c, "n", int, w), _req(c, "n_offer", int, w)
+        if not 0 <= k <= n:
+            raise ManifestError(f"{w}: n_offer must be in [0, n]")
+        if i:
+            _req(c, "name", str, w)
+            _req(c, "passed", bool, w)
+    ctr = oc["controls"]
+    if not ctr:
+        raise ManifestError(f"{where}: controls must not be empty")
+    if (verdict == "pass") != all(c["passed"] for c in ctr):
+        raise ManifestError(f"{where}: verdict {verdict!r} does not match the passed flags of the controls")
 
 
 def _req(d: Mapping[str, Any], key: str, typ: type | tuple[type, ...], where: str) -> Any:
@@ -225,6 +290,9 @@ def parse_manifest(doc: Mapping[str, Any], where: str = "<manifest>") -> Manifes
     needed = bool(combine([source_summary(spdx)])["research_only"])
     if needed and not ro:
         raise ManifestError(f"{where}: data licence {spdx} needs data.research_only = true")
+    for key, oc in _offer_blocks(doc):
+        _check_offer_control(oc, f"{where}: {'trust' if key == 'default' else 'readouts.' + key + '.trust'}"
+                                 f".offer_control")
     return Manifest(
         name=name, version=str(_req(doc, "version", str, where)), title=str(_req(doc, "title", str, where)),
         status=status, task=str(_req(doc, "task", str, where)), modality=str(_req(doc, "modality", str, where)),

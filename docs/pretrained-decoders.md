@@ -87,6 +87,33 @@ Each stream reaches the conformance level `provenance`. Its `meta` has `decoder.
 - `willett-hw` with the LM readout: `m.guard(readout="lm")` loads a second release file (`willett-hw.lm2.guard.json`, `tcfg-26ae951a20a0cddd`, alpha 0.05, delta 0.1; decoder = P14-49 gate + LM readout with the Willett-blocked LM; [P14-49](../experiments/2026-11-20-p14-49-willett-gate-blocked-lm/results.md)). **It also never commits** (the same 40 < 45 LTT limit). Test: 0 commits, 77 offers (top-1 exact 12 / 77, CER 0.172), 3 withholds; safe WPM v0.1 0 (vacuous). Commit controls pass (0 commits on every null input). Offers on null input: time-shuffled 2 / 80, zero 0 / 80, uniform 0 / 80, but frame-shuffled 77 / 80 (as often as real input). `m.decide(stream)` keeps the P14-41 guard.
 - `t12-v2`, `emg2qwerty-p11-01`: no packaged trust config yet (`NoTrustConfig`). Calibrate your own with [`fidetype.trust.calibrate`](trust-quickstart.md).
 
+### The offer null control in the manifest (`trust.offer_control`)
+
+The guarantee covers commits only. An OFFER is a suggestion list, and it has no bound. The offer null control (P5-31, [trust guarantee](trust-guarantee.md) section 5a) asks one question: does the guard offer less often on null input (no signal) than on real input? Each packaged guard has the result of this check in its manifest, in `trust.offer_control`. A readout guard has its own copy in `readouts.<name>.trust.offer_control` (today: `willett-hw` `readouts.lm`). `m.manifest.offer_controls` gives the blocks (key `"default"` or the readout name). `fidetype decoders info <name>` prints one `offer control` line for each guard.
+
+| Key | Meaning |
+|---|---|
+| `verdict` | `"pass"` if every control passes, else `"fail"`. The parser refuses a verdict that does not agree with the `passed` flags |
+| `mode` | The `offer_control` mode of the check. `"warn"`: a failure changes no guard, `config_id`, certified status or commit |
+| `checked` | Date of the check |
+| `rule` | The pre-stated rule: a control passes if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 n) or one-sided Fisher exact p <= 0.05). Real = the LTT items |
+| `real` | `n` and `n_offer` on the real LTT items |
+| `controls` | One entry per null control: `name` (as in the guarantee sheet), `label` (what the input is), `n`, `n_offer`, `p_value`, `passed` |
+| `ltt_commits`, `commits_match_sheet` | Check of the method: the re-check gives the same commit counts as the stored sheet |
+| `effect` | What the result means for the user of the guard |
+| `source` | The re-check result file in the source tree (`recheck_offer_control` on the saved guard, no new calibration) |
+
+The values today (2026-11-21, [results](../experiments/2026-11-21-p5-31-offer-control/results.md)). **Every packaged guard fails**, in warn mode:
+
+| Guard | Real offers | Null offers | Verdict |
+|---|---|---|---|
+| `willett-hw` (`tcfg-39aac48688b8bd12`) | 40 / 40 | uniform 0 / 300 (pass); frame-shuffled 297 / 300 (FAIL); time-shuffled input 6 / 106 (pass) | FAIL |
+| `willett-hw` LM readout (`tcfg-26ae951a20a0cddd`) | 40 / 40 | uniform 0 / 300 (pass); frame-shuffled 289 / 300 (FAIL); time-shuffled input 0 / 106 (pass) | FAIL |
+| `t15-m4-13` (`tcfg-1016759f08a3f9a1`) | 217 / 271 | uniform 300 / 300 (FAIL); frame-shuffled 300 / 300 (FAIL) | FAIL |
+| `kt-semg-lda` (`tcfg-d8a73194fe539e72`) | 65 / 65 | uniform 300 / 300 (FAIL); user nulls (random key windows) 173 / 173 (FAIL) | FAIL |
+
+So do not show the offer list of these guards as evidence that the signal was read. The commits of `t15-m4-13` stay certified: the offer control does not change the commit bound. A guard that passes needs a policy that WITHHOLDs on no-evidence input (gap 152 = P5-33; for `willett-hw`, gap 150 = P14-54). `tests/test_pretrained_offer_control.py` checks that the manifest values equal the re-check files.
+
 ## `willett-hw`: read this before you use it
 
 `willett-hw` is our own Willett handwriting decoder: P15-08 run `R-all-s0` (random init, all 506 minutes of the CC0 data, seed 0, final step). It is clean-track: Willett CC0 data only, no emg2qwerty-derived trunk.
@@ -170,7 +197,8 @@ m = ftp.load(str(path), weights="my-folder")            # ... and load them as a
 1. Train the model. Export its weights as plain arrays (`.npz`, no pickle) or JSON.
 2. Write `src/fidetype/pretrained/manifests/<name>.json` (schema `fidetype.pretrained-manifest/0.1`; see [`manifest.py`](../src/fidetype/pretrained/manifest.py)). Give each file its SHA-256 and size, and leave `url` null until the file is hosted.
 3. Use an existing runtime (`gru-ctc`, `crt-ctc`, `key-lda`, `xbody-ctc`) or add one to `RUNTIMES` in [`__init__.py`](../src/fidetype/pretrained/__init__.py).
-4. Add a test with tiny fake weights ([`tests/test_pretrained.py`](../tests/test_pretrained.py)), and rerun the metric of the model card with the real weights.
+4. If the model has a trust guard, run `fidetype.trust.recheck_offer_control` on it and copy the counts into `trust.offer_control` (see above).
+5. Add a test with tiny fake weights ([`tests/test_pretrained.py`](../tests/test_pretrained.py)), and rerun the metric of the model card with the real weights.
 
 ## Limits
 

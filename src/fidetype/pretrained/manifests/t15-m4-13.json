@@ -71,6 +71,7 @@
   "config": "guards/t15-m4-13.guard.json",
   "config_source": "experiments/2026-11-16-p14-05-safe-wpm/results/guard-t15-m4-13.json",
   "config_id": "tcfg-1016759f08a3f9a1",
+  "offer_control": {"verdict": "fail", "mode": "warn", "checked": "2026-11-21", "rule": "P5-31, docs/trust-guarantee.md section 5a: a control passes if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 n) or one-sided Fisher exact p <= 0.05); real = the LTT items", "real": {"n": 271, "n_offer": 217}, "controls": [{"name": "uniform", "label": "uniform score matrices", "n": 300, "n_offer": 300, "p_value": 1.0, "passed": false}, {"name": "shuffled", "label": "frame-shuffled decoder frames", "n": 300, "n_offer": 300, "p_value": 1.0, "passed": false}], "ltt_commits": 54, "commits_match_sheet": true, "effect": "warn mode: no change to the guard, its config_id or its status; the commits stay certified (54 LTT commits). The offer list is not evidence that the signal was read", "source": "experiments/2026-11-21-p5-31-offer-control/results/recheck-t15.json"},
   "alpha": 0.05,
   "delta": 0.1,
   "input": "the log_probs (T, 41) of a decode() stream: guard.decide(stream.log_probs)",
