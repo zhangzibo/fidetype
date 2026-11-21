@@ -1137,6 +1137,7 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-45** | TrustGuard decisions to safe WPM in one call (open gap 130, [details](#p14-45-trustguard-decisions-to-safe-wpm-in-one-call)) | P14-43 | research labs, small teams |
 | **P14-46** | Benchmark glue for custom splits and pretrained decoders (open gap 131, [details](#p14-46-benchmark-glue-for-custom-splits-and-pretrained-decoders)) | P14-43 | research labs, small teams |
 | **P14-47** | Certified, non-vacuous trust guard for `willett-hw` (commits > 0) (open gap 138, [details](#p14-47-certified-non-vacuous-trust-guard-for-willett-hw-commits--0)) | P14-41 | research labs |
+| **P14-48** | `willett-hw` with the same-LM readout and a no-signal gate (open gap 144, [details](#p14-48-willett-hw-with-the-same-lm-readout-and-a-no-signal-gate)) | P14-33, P15-25 | research labs |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1510,6 +1511,15 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P14-41 ([results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)): the packaged `willett-hw` guard never commits. It is not certified: with 106 val sentences the LTT half has 40 items, and 45 are needed at alpha 0.05. Test safe WPM v0.1 is 0.00 (vacuous). Gap 121 closed under its pre-registered rule (an offer-only guard was acceptable). The user's standing rule keeps the gap tracked until it is truly met.
 - **Done when:** a pre-registered run packages a `willett-hw` guard that is certified (LTT feasible) and commits on the test blocks (commits > 0) with a non-vacuous safe WPM v0.1, with the null controls passing (commits and, after P5-31, offers); or numbers say why not.
 
+
+#### P14-48 willett-hw with the same-LM readout and a no-signal gate
+- **Gap:** 144 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-25). Follow-up of P14-33 and P15-25.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P15-25 (done); P14-33 (`willett-hw` package, R-ball-s0 weights); the P14-41 guard; feeds gap 138 = [P14-47](#p14-47-certified-non-vacuous-trust-guard-for-willett-hw-commits--0).
+- **Source:** P15-25 ([results](../../experiments/2026-11-20-p15-25-e1-same-lm/results.md)): with decoder F (Tatoeba 6-gram, w 0.5, beta 1, beam 8) the packaged decoder falls from test CER 0.305 (greedy) to 0.173. On uniform log-probs F emits one token per frame (4,100 of 4,100), so the LM readout needs a no-signal gate before any commit.
+- **Done when:** `willett-hw` offers the F readout with a no-signal gate (null controls pass), the card states the LM licence (CC BY 2.0 FR, attribution) and the test overlap, and the P14-41 guard is re-calibrated on the new readout with its numbers reported.
+
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
 
@@ -1568,6 +1578,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-37** | Lower-variance calibration for the calibration-inclusive safe WPM (open gap 141, [details](#p15-37-lower-variance-calibration-for-the-calibration-inclusive-safe-wpm)) | F1 / F2 | P15-34 |
 | **P15-35** | E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2) (open gap 139, [details](#p15-35-e1-synthetic-sentence-augmentation-for-the-minutes-scale-recipe-test-c2)) | F3 | P15-33 |
 | **P15-36** | E1 budget-matched recipe so that V1 and H1-H4 are valid (open gap 140, [details](#p15-36-e1-budget-matched-recipe-so-that-v1-and-h1-h4-are-valid)) | F3 | P15-33, P15-35 |
+| **P15-38** | E1 LM readout with the Willett texts blocked from the LM (open gap 143, [details](#p15-38-e1-lm-readout-with-the-willett-texts-blocked-from-the-lm)) | F3 | P15-25 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1758,7 +1769,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-25 E1 readout with the same character LM
 - **Gap:** 91 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-08). Follow-up of P15-08.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20; pre-registration `885f9c5`, code `29798a7`, results `44c2d8a`, [results](../../experiments/2026-11-20-p15-25-e1-same-lm/results.md)). F (Tatoeba 6-gram, w 0.5, beta 1, beam 8, fixed in advance) on all 41 E1a runs; C0 exact (greedy edits equal on every sentence). H1 still **fails** (0 / 3; T better than E at 3, 10, 30 min); H2, H3 fail; H4 partial -> fail (30 min: Δ 0.075 < spread 0.077); V1 pass (0.271); C1 pass; C2 fails (0.811 vs 0.887). Full data: E 0.395 -> **0.271**, T 0.805 -> 0.783 (new H5 E beats T at all: pass, robust); R-ball-s0 0.305 -> **0.173**. L1 (LM helps decoders that read the signal) pass. FL (research-only lexicon) gives the same verdicts except H3 partial. F is primary (licence-clean; CER, not guarded commits), FL secondary: a stated deviation from the note below. New gaps 143 = [P15-38](#p15-38-e1-lm-readout-with-the-willett-texts-blocked-from-the-lm), 144 = [P14-48](#p14-48-willett-hw-with-the-same-lm-readout-and-a-no-signal-gate).
 - **Depends on:** P15-08 E1a (weights local in `C:/Users/zhang/bci-data/derived/p15-08/runs/`); a licence-clean character LM and CTC beam search (P11-07, gap 87); CPU.
 - **Source:** [E1a plan](../../experiments/2026-11-19-p15-08-e1-cross-body/plan.md#deviations-from-the-roadmap-item): the roadmap and the north star ask for "greedy CER and CER with the same character LM" (the same-LM rule), so that a gain cannot come from English character statistics alone. E1a reads out greedy CTC only, because no licence-clean character LM exists yet.
 - **Done when:** every E1a arm and budget is re-scored with one character LM and one beam setting (fixed before the re-score), and the H1-H4 rules of the E1a plan are evaluated again on the LM CER next to the greedy CER.
@@ -1844,6 +1855,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P15-34 ([results](../../experiments/2026-11-20-p15-34-margin-guard/results.md)): on T15 the between-draw SD of the safe WPM (0.63-0.91) is 2-3 times the within-draw SD (0.34). A safety margin lowers every draw and widens the spread (A1 4.90 [3.11, 6.44]). The lower end of the P15-29 settings depends on the draw set: 0.00 in P15-29 (2 / 40 above-alpha draws), 4.05 on 40 new draws (none).
 - **Options:** (1) more labelled calibration data that is not in `val_eval` (more T15-like sessions, other participants, other datasets); (2) a calibration procedure with lower variance, for example cross-fitting so that more of the 722 items take part in certification, with a proof that the guarantee still holds; (3) a pre-registered larger K (80 or more) for the P15-29 settings, so that the interval does not depend on one or two rare draws. Choose before any number is computed.
 - **Done when:** a pre-registered run shows a calibration-inclusive T15 lower end above 4.0153 with the P15-29 credit rule, or shows with numbers which calibration size would be needed.
+
+#### P15-38 E1 LM readout with the Willett texts blocked from the LM
+- **Gap:** 143 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-25). Follow-up of P15-25.
+- **Status:** `todo`.
+- **Depends on:** P15-25 (done; log-probs local in `C:/Users/zhang/bci-data/derived/p15-25/lp/`); the P11-11 LM build rule (`stage_lm`); CPU.
+- **Source:** P15-25 ([results](../../experiments/2026-11-20-p15-25-e1-same-lm/results.md)): 13 of 80 Willett test sentences (5 of 47 unique texts), 9 of 106 val and 97 of 781 pool sentences occur in the Tatoeba English export. The P11-11 LM blocked only emg2qwerty texts. The arm comparison is fair (same LM for all), but the absolute LM CER can be optimistic.
+- **Done when:** the Tatoeba 6-gram is rebuilt with every Willett sentence blocked (exact and containment, the P11-11 rule), the 41 E1a runs are re-scored with decoder F, and the change of each H verdict and of the full-data E / R CER is reported.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).

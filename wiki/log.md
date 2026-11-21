@@ -1497,3 +1497,10 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Clean timed run (21:45-22:10, class timing, 1 thread): decision p95 **6.39 ms** (budget 50 ms), chunk p95 3.48 ms; the clean re-measured P11-07 path is 32.6 ms at the end + 20.5 ms model. Same decisions as the offline guard 3,663 / 3,663; safe WPM v0.1 3.37 unchanged.
 - The pre-registered streaming-model tolerance (1e-5) failed (3.1e-5; float32 rounding; float64 forms agree to 3e-15) -> gap 142 = [P3-13](questions/roadmap-standard.md#p3-13-streaming-crt-model-in-the-decision-loop). Gap 37 (P3-06, collector profile) stays open with an evidence line.
 - [Results](../experiments/2026-11-20-p3-12-emg-latency-budget/results.md).
+
+## [2026-11-20] query | P15-25: E1a readout with the same character LM (gap 91 closed; new gaps 143-144)
+- pre-registration `885f9c5`, code `29798a7`, results `44c2d8a`. All 41 E1a `final.pt` runs re-scored with one LM and one beam setting, fixed before the re-score: decoder F (P11-07, Tatoeba 6-gram, w 0.5, beta 1, beam 8) primary; FL (research-only lexicon), B0, Fv (val-tuned) secondary.
+- C0: our GPU log-probs reproduce the E1a greedy edits exactly. H1 fails again (0 / 3); H4 partial -> fail; V1 pass (0.271); C1 pass; C2 fails. The minutes-scale null is not an LM artefact.
+- Full data: E 0.395 -> 0.271, R-ball-s0 0.305 -> 0.173, T 0.805 -> 0.783 (H5 E beats T at all: pass, robust). The LM helps where the decoder reads the signal.
+- LM overlap: 13 of 80 test sentences are in the Tatoeba export -> gap 143 = [P15-38](questions/roadmap-standard.md#p15-38-e1-lm-readout-with-the-willett-texts-blocked-from-the-lm). `willett-hw` with the F readout + no-signal gate -> gap 144 = [P14-48](questions/roadmap-standard.md#p14-48-willett-hw-with-the-same-lm-readout-and-a-no-signal-gate).
+- [Results](../experiments/2026-11-20-p15-25-e1-same-lm/results.md).
