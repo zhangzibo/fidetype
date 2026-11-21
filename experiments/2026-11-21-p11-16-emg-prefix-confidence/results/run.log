@@ -1,0 +1,120 @@
+2026-11-21 08:17:52 feat: 250/5187 windows (28 s)
+2026-11-21 08:18:22 feat: 500/5187 windows (59 s)
+2026-11-21 08:18:54 feat: 750/5187 windows (90 s)
+2026-11-21 08:19:26 feat: 1000/5187 windows (122 s)
+2026-11-21 08:19:48 feat: 1250/5187 windows (145 s)
+2026-11-21 08:19:49 feat: 1500/5187 windows (145 s)
+2026-11-21 08:20:13 feat: 1750/5187 windows (169 s)
+2026-11-21 08:20:40 feat: 2000/5187 windows (196 s)
+2026-11-21 08:21:11 feat: 2250/5187 windows (227 s)
+2026-11-21 08:21:39 feat: 2500/5187 windows (256 s)
+2026-11-21 08:22:03 feat: 2750/5187 windows (279 s)
+2026-11-21 08:22:03 feat: 3000/5187 windows (279 s)
+2026-11-21 08:22:03 feat: 3250/5187 windows (280 s)
+2026-11-21 08:22:04 feat: 3500/5187 windows (280 s)
+2026-11-21 08:22:04 feat: 3750/5187 windows (280 s)
+2026-11-21 08:22:04 feat: 4000/5187 windows (280 s)
+2026-11-21 08:22:05 feat: 4250/5187 windows (281 s)
+2026-11-21 08:22:05 feat: 4500/5187 windows (281 s)
+2026-11-21 08:22:06 feat: 4750/5187 windows (282 s)
+2026-11-21 08:22:06 feat: 5000/5187 windows (282 s)
+2026-11-21 08:22:09 feat: {'windows': 5187, 'seconds': 285.5, 'memo': 5066, 'C0a': {'compared': 1524, 'mismatch': 0, 'kinds_of_first_mismatches': [], 'pass': True}}
+2026-11-21 08:22:31 guards LX-FL: thr 0.86 ltt {'threshold': 0.86, 'feasible': True, 'empirical_risk': 0.032679738562091505, 'p_value': 0.04882009467067894, 'commit_rate': 0.5446623093681917, 'n': 459} controls [('uniform', 0), ('shuffled', 5), ('user', 0)]
+2026-11-21 08:22:45 guards LS-FL: thr 0.66 ltt {'threshold': 0.66, 'feasible': True, 'empirical_risk': 0.034858387799564274, 'p_value': 0.0782385242061039, 'commit_rate': 0.24183006535947713, 'n': 459} controls [('uniform', 0), ('shuffled', 0), ('user', 0)]
+2026-11-21 08:26:11 guards BX-FL: tcfg-c3bd8355830a342c
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-c3bd8355830a342c
+input                logits (custom:p1114run.p11_14_BL_FL)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+                     a COMMIT of a prefix is wrong if its words are not the first words of the true text; a COMMIT of all top-1 words is wrong unless it equals the true text
+method               Learn then Test on the learned prefix score (fitted on the fit + policy-grid items, one row per word prefix), loss = wrong prefix commit, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, on the LTT items only
+calibration items    1224 = 306 fit + 459 policy grid + 459 LTT
+LTT items needed     >= 45 LTT items (utterances, not commits) to certify any COMMIT
+lambda_hat           0.91 (feasible: True)
+commit threshold     learned prefix score >= 0.91
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 188 commits, 16 wrong (of 459; 0 blocked by the commit gate; median guard risk 0.158263)
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           2/300 commits (allowed 15): PASS
+  user               0/300 commits (allowed 15): PASS
+offer null control   pass if null offer rate <= 0.5 x real rate and (few offers or Fisher p <= 0.05); mode warn
+  real (LTT items)   219/459 offers
+  uniform            0/300 offers (p 9.49e-61): PASS
+  shuffled           63/300 offers (p 2.75e-14): PASS
+  user               0/300 offers (p 9.49e-61): PASS
+commit unit          the longest word prefix of the top-1 text whose score passes (prefix scores never rise with length)
+commit score         learned (logistic regression, L2 on standardised features, features clipped to the fit range, sign-constrained weights (backward elimination); 10 of 16 features used, L2 1)
+  fitted on          765 items (fit + policy grid; 2824 prefix rows, 1504 right)
+  certified on       459 LTT items, disjoint from the fit items
+  features           prefix_mass, prefix_agree_min, prefix_agree_mean, prefix_char_conf_mean, prefix_char_conf_min, prefix_log_words, prefix_share, complete, p_top1, nbest_entropy, guard_risk, acoustic_per_char, lm_per_word, acoustic_gap, frames_per_char, log_n_words
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+warnings
+  ! frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.
+Details: docs/trust-guarantee.md
+2026-11-21 08:28:26 decide LX-FL: done (134 s)
+2026-11-21 08:30:40 decide LS-FL: done (134 s)
+2026-11-21 08:34:35 decide BX-FL: done (234 s)
+2026-11-21 08:34:35 score: C0b {'value': 4.252918183346778, 'commits': 423, 'wrong': 34, 'pass': True}
+2026-11-21 08:34:35 score LX-FL: commits 671 (592 prefix) wrong 46 v0.2 9.469118837441778 v0.1c 2.5999698000721505; {'V1_guard': 'certified', 'V2_safety': 'holds', 'V3_value': 'non-vacuous', 'V4_vs_no_bci': 'clearly above', 'V4_vs_p1109_2.93': 'above', 'V6_controls': 'pass'}
+2026-11-21 08:34:36 score LS-FL: commits 292 (0 prefix) wrong 52 v0.2 7.003386109417929 v0.1c 7.003386109417929; {'V1_guard': 'certified', 'V2_safety': 'holds', 'V3_value': 'non-vacuous', 'V4_vs_no_bci': 'clearly above', 'V4_vs_p1109_2.93': 'above', 'V6_controls': 'pass'}
+2026-11-21 08:34:36 score BX-FL: commits 474 (427 prefix) wrong 25 v0.2 6.622350274788907 v0.1c 1.422353186466454; {'V1_guard': 'certified', 'V2_safety': 'holds', 'V3_value': 'non-vacuous', 'V4_vs_no_bci': 'clearly above', 'V4_vs_p1109_2.93': 'above', 'V6_controls': 'pass'}
+2026-11-21 08:34:38 score: verdicts {'primary': 'LX-FL', 'H1': {'core': True, 'value_v02': 9.469118837441778, 'gt_4.25': True, 'pass': True}, 'H2_gt_6.80': True, 'H3_gt_BX': True, 'H4': 'clearly above'}
+2026-11-21 08:34:59 draw z0: thr 0.86 commits 671 (592 prefix) wrong 46 status certified raw 9.469118837441778 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 5, 0] kept 11 (20.9 s)
+2026-11-21 08:34:59 z0: PASS {'model_digest': 'a5789186a678', 'ref_model_digest': 'a5789186a678', 'threshold': 0.86, 'ref_threshold': 0.86, 'same_decisions': {'real': 1221, 'shuffled': 1221, 'zeros': 1221}, 'n_eval': 1221, 'unit_weight_value': 9.469118837441778, 'safe_wpm_value': 9.469118837441778, 'pass': True}
+2026-11-21 08:35:25 draw k01: thr 0.95 commits 505 (467 prefix) wrong 21 status certified raw 6.7303493607948255 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 2, 0] kept 10 (25.8 s)
+2026-11-21 08:35:51 draw k02: thr 0.96 commits 595 (569 prefix) wrong 35 status certified raw 7.3530826517028425 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 3, 0] kept 11 (26.1 s)
+2026-11-21 08:36:15 draw k03: thr 0.87 commits 663 (571 prefix) wrong 53 status certified raw 9.858929463498855 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 1, 0] kept 11 (23.6 s)
+2026-11-21 08:36:41 draw k04: thr 0.9 commits 639 (582 prefix) wrong 41 status certified raw 8.95448423411019 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 4, 0] kept 10 (25.8 s)
+2026-11-21 08:37:05 draw k05: thr 0.84 commits 680 (586 prefix) wrong 56 status certified raw 9.91257887205204 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 4, 0] kept 11 (24.2 s)
+2026-11-21 08:37:33 draw k06: thr 0.91 commits 655 (591 prefix) wrong 39 status certified raw 8.8639684194245 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 2, 0] kept 11 (28.2 s)
+2026-11-21 08:37:58 draw k07: thr 0.83 commits 693 (570 prefix) wrong 62 status above-alpha raw 10.16621719907616 credited False eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 6, 0] kept 10 (24.5 s)
+2026-11-21 08:38:27 draw k08: thr 0.82 commits 682 (561 prefix) wrong 56 status certified raw 10.283987168785867 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 7, 0] kept 11 (28.6 s)
+2026-11-21 08:38:53 draw k09: thr 0.94 commits 589 (543 prefix) wrong 37 status certified raw 7.979641749486428 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 3, 0] kept 11 (26.0 s)
+2026-11-21 08:39:20 draw k10: thr 0.91 commits 582 (517 prefix) wrong 34 status certified raw 8.226620481746133 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 4, 0] kept 11 (27.1 s)
+2026-11-21 08:39:46 draw k11: thr 0.9 commits 623 (545 prefix) wrong 38 status certified raw 8.869992347983464 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 2, 0] kept 11 (26.5 s)
+2026-11-21 08:40:13 draw k12: thr 0.9 commits 628 (571 prefix) wrong 38 status certified raw 8.785497948317552 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 5, 0] kept 11 (26.5 s)
+2026-11-21 08:40:40 draw k13: thr 0.92 commits 649 (575 prefix) wrong 43 status certified raw 9.02819288661916 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 3, 0] kept 11 (26.7 s)
+2026-11-21 08:41:00 draw k14: thr 0.89 commits 603 (525 prefix) wrong 40 status certified raw 8.781852437991136 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 2, 0] kept 10 (20.5 s)
+2026-11-21 08:41:26 draw k15: thr 0.86 commits 674 (623 prefix) wrong 46 status certified raw 9.199165126435945 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 7, 0] kept 10 (25.5 s)
+2026-11-21 08:41:48 draw k16: thr 0.91 commits 614 (564 prefix) wrong 39 status certified raw 8.490679886747246 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 1, 0] kept 11 (21.9 s)
+2026-11-21 08:42:12 draw k17: thr 0.88 commits 667 (562 prefix) wrong 53 status certified raw 9.889724018229176 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 3, 0] kept 11 (23.5 s)
+2026-11-21 08:42:38 draw k18: thr 0.91 commits 600 (542 prefix) wrong 36 status certified raw 8.104149295107625 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 4, 0] kept 11 (26.5 s)
+2026-11-21 08:43:00 draw k19: thr 0.81 commits 695 (586 prefix) wrong 65 status above-alpha raw 10.28237250729115 credited False eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 1, 0] kept 11 (21.4 s)
+2026-11-21 08:43:23 draw k20: thr 0.88 commits 662 (529 prefix) wrong 61 status certified raw 9.901913044172135 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 3, 0] kept 10 (23.4 s)
+2026-11-21 08:43:44 draw k21: thr 0.8 commits 694 (544 prefix) wrong 69 status above-alpha raw 10.764282932543669 credited False eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 3, 0] kept 11 (20.7 s)
+2026-11-21 08:44:08 draw k22: thr 0.86 commits 643 (591 prefix) wrong 41 status certified raw 8.707223613975145 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 4, 0] kept 11 (24.0 s)
+2026-11-21 08:44:29 draw k23: thr 0.85 commits 672 (552 prefix) wrong 55 status certified raw 9.766756215238045 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 5, 0] kept 11 (20.7 s)
+2026-11-21 08:44:52 draw k24: thr 0.91 commits 615 (582 prefix) wrong 34 status certified raw 8.165272914904222 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 4, 0] kept 10 (23.7 s)
+2026-11-21 08:45:14 draw k25: thr 0.88 commits 651 (606 prefix) wrong 37 status certified raw 8.671883060703726 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 3, 0] kept 11 (21.2 s)
+2026-11-21 08:45:37 draw k26: thr 0.98 commits 491 (471 prefix) wrong 16 status certified raw 6.2078899304642885 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 5, 0] kept 10 (23.0 s)
+2026-11-21 08:46:01 draw k27: thr 0.82 commits 682 (586 prefix) wrong 56 status certified raw 9.828368289057048 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 1, 0] kept 11 (24.0 s)
+2026-11-21 08:46:26 draw k28: thr 0.81 commits 691 (574 prefix) wrong 61 status certified raw 10.163898504935245 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 5, 0] kept 11 (24.8 s)
+2026-11-21 08:46:49 draw k29: thr 0.93 commits 603 (556 prefix) wrong 37 status certified raw 8.05880201357754 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 7, 0] kept 10 (23.5 s)
+2026-11-21 08:47:09 draw k30: thr 0.95 commits 521 (507 prefix) wrong 25 status certified raw 6.555053794311227 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 2, 0] kept 10 (19.8 s)
+2026-11-21 08:47:35 draw k31: thr 0.9 commits 616 (576 prefix) wrong 36 status certified raw 8.142173107791276 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 2, 0] kept 11 (25.6 s)
+2026-11-21 08:47:56 draw k32: thr 0.8 commits 699 (563 prefix) wrong 62 status above-alpha raw 10.596340799727901 credited False eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 5, 0] kept 11 (21.3 s)
+2026-11-21 08:48:20 draw k33: thr 0.92 commits 610 (572 prefix) wrong 37 status certified raw 8.159579084957599 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 5, 0] kept 10 (24.0 s)
+2026-11-21 08:48:42 draw k34: thr 0.88 commits 657 (582 prefix) wrong 44 status certified raw 9.130547381667737 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 9, 0] kept 10 (21.5 s)
+2026-11-21 08:49:05 draw k35: thr 0.78 commits 725 (579 prefix) wrong 69 status above-alpha raw 11.05806786079299 credited False eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 6, 0] kept 11 (22.7 s)
+2026-11-21 08:49:26 draw k36: thr 0.79 commits 727 (600 prefix) wrong 69 status above-alpha raw 10.61676078452935 credited False eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 5, 0] kept 11 (21.3 s)
+2026-11-21 08:49:49 draw k37: thr 0.9 commits 638 (566 prefix) wrong 47 status certified raw 9.084620059317249 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 2, 0] kept 11 (23.3 s)
+2026-11-21 08:50:15 draw k38: thr 0.86 commits 614 (537 prefix) wrong 43 status certified raw 8.73339015195679 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 1, 0] kept 11 (25.3 s)
+2026-11-21 08:50:37 draw k39: thr 0.83 commits 715 (625 prefix) wrong 65 status above-alpha raw 10.3755929208327 credited False eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 2, 0] kept 11 (22.7 s)
+2026-11-21 08:51:02 draw k40: thr 0.89 commits 633 (589 prefix) wrong 43 status certified raw 8.590578591614845 credited True eval ctl {'shuffled': 0, 'zeros': 0} cal ctl [0, 6, 0] kept 11 (24.9 s)
+2026-11-21 08:51:03 analyse: 7.180 [0.00, 12.13] 'above, but inside the combined interval'; statuses {'certified': 33, 'above-alpha': 7}
+2026-11-21 08:51:03 all: DONE

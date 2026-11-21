@@ -1,0 +1,57 @@
+{
+ "config_id": "p1116-f04b4e5de2fa9d93",
+ "sheet": {
+  "config_id": "p1116-f04b4e5de2fa9d93",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_items": 1224,
+  "n_fit": 306,
+  "n_policy": 459,
+  "n_ltt": 459,
+  "feasible": true,
+  "commit_threshold": 0.66,
+  "method": "commit_score.ltt_prefix_threshold on the LTT items (outside calibrate)",
+  "ltt": {
+   "empirical_risk": 0.034858387799564274,
+   "p_value": 0.0782385242061039,
+   "commit_rate": 0.24183006535947713,
+   "n": 459
+  },
+  "controls": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true,
+    "n_offer": 0
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true,
+    "n_offer": 65
+   },
+   {
+    "name": "user",
+    "description": "your decoder output on null input (null_inputs)",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true,
+    "n_offer": 0
+   }
+  ],
+  "confidence": {
+   "kind": "external learned prefix score",
+   "unit": "prefix",
+   "risk": "wrong-prefix-commit: the committed words are not the first words of the true text (a complete prefix, i.e. the whole top-1 text, is wrong unless it equals the true text); rate over all utterances"
+  }
+ },
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true
+}

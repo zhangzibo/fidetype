@@ -1,0 +1,1768 @@
+{
+ "task": "P11-16",
+ "date": "2026-11-21 08:34",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "note": "aggregates only (no per-user value, no text, no id); safe-wpm/0.2 is PROPOSED, not adopted",
+ "decoder": {
+  "w": 0.25,
+  "beta": 1.0,
+  "lam": 8.0,
+  "B": 8
+ },
+ "references": {
+  "arm_X_v02": 4.25,
+  "L_FL": 6.8,
+  "no_bci": 3.09
+ },
+ "C0a": {
+  "compared": 1524,
+  "mismatch": 0,
+  "kinds_of_first_mismatches": [],
+  "pass": true
+ },
+ "C0b": {
+  "value": 4.252918183346778,
+  "commits": 423,
+  "wrong": 34,
+  "pass": true
+ },
+ "arms": {
+  "LX-FL": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "p1116-3c038fbf1b470f69",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.86,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 0
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 5,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 60
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 0
+     }
+    ],
+    "warnings": null,
+    "ltt": {
+     "empirical_risk": 0.032679738562091505,
+     "p_value": 0.04882009467067894,
+     "commit_rate": 0.5446623093681917,
+     "n": 459
+    }
+   },
+   "model": {
+    "features": [
+     "lg_pm_fU",
+     "lg_pm_nb",
+     "lm_pc_k",
+     "lg_p_fU",
+     "lm_pc",
+     "dist_g",
+     "kps",
+     "log_nw",
+     "log_k",
+     "share",
+     "complete"
+    ],
+    "coef": [
+     1.23573612389,
+     0.148956222611,
+     1.18448718077,
+     0.455289284532,
+     0.165827749383,
+     -0.351949292545,
+     0.148348734282,
+     0.123697458884,
+     -0.827811901669,
+     0.19809050134,
+     0.113339102355
+    ],
+    "intercept": 0.351242153214,
+    "dropped": [],
+    "digest": "a5789186a678",
+    "n_fit_items": 686,
+    "n_fit_rows": 2824,
+    "source": null
+   },
+   "safe_v02": {
+    "value": 9.469118837441778,
+    "ci": [
+     6.971824905782185,
+     12.750372322215743
+    ],
+    "status": "certified",
+    "n_commits": 671,
+    "n_wrong_commits": 46,
+    "measured_wrong_commit": 0.03767403767403767,
+    "measured_wrong_commit_cp95": [
+     0.0277,
+     0.0499
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 1219,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 8.980701754385965,
+    "unguarded_wpm": 9.469118837441778,
+    "wpm_no_penalty": 10.17923830178958,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 8.654540191455503,
+    "ci": [
+     6.494977820684116,
+     11.382646611869355
+    ],
+    "status": "certified",
+    "n_commits": 671,
+    "n_wrong_commits": 46,
+    "measured_wrong_commit": 0.03767403767403767,
+    "measured_wrong_commit_cp95": [
+     0.0277,
+     0.0499
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 1219,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 8.980701754385965,
+    "unguarded_wpm": 8.654540191455503,
+    "wpm_no_penalty": 10.17923830178958,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 12.116666666666667,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 9.469118837441778,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "safe_v01_complete_only": {
+    "value": 2.5999698000721505,
+    "ci": [
+     1.3491756143036462,
+     4.27483442123525
+    ],
+    "status": "certified",
+    "n_commits": 79,
+    "n_wrong_commits": 2,
+    "measured_wrong_commit": 0.001638001638001638,
+    "measured_wrong_commit_cp95": [
+     0.0002,
+     0.0059
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 313,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 0.6324561403508772,
+    "unguarded_wpm": 2.5999698000721505,
+    "wpm_no_penalty": 2.6137010569812458,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "n_prefix_commits": 592,
+   "n_complete_commits": 79,
+   "committed_right_words": 1219,
+   "n_eval": 1221,
+   "n_commits": 671,
+   "n_wrong_commits": 46,
+   "wrong_commit_rate": 0.03767403767403767,
+   "wrong_commit_cp95": [
+    0.0277,
+    0.0499
+   ],
+   "commit_rate": 0.5495495495495496,
+   "error_among_commits": 0.06855439642324888,
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 671,
+    "offer": 414,
+    "withhold": 136
+   },
+   "decide_s": {
+    "p50": 0.09306,
+    "p95": 0.24026
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "clearly above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "pass"
+   }
+  },
+  "LS-FL": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "p1116-f04b4e5de2fa9d93",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.66,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 0
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 65
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 0
+     }
+    ],
+    "warnings": null,
+    "ltt": {
+     "empirical_risk": 0.034858387799564274,
+     "p_value": 0.0782385242061039,
+     "commit_rate": 0.24183006535947713,
+     "n": 459
+    }
+   },
+   "model": {
+    "features": [
+     "lg_p_nb",
+     "lg_p_fU",
+     "lg_p_aU",
+     "agree_b0",
+     "agree_g",
+     "dist_g",
+     "ac_gap",
+     "lm_pc",
+     "log_nw",
+     "kps"
+    ],
+    "coef": [
+     0.26837221492,
+     1.65834790253,
+     0.0,
+     0.0,
+     0.0,
+     -0.265293732777,
+     0.0,
+     1.12871089329,
+     -0.108292802772,
+     0.183372084873
+    ],
+    "intercept": -1.29229479154,
+    "dropped": [
+     "ac_gap",
+     "agree_b0",
+     "lg_p_aU",
+     "agree_g"
+    ],
+    "digest": "c71fc7ed44fa",
+    "n_fit_items": null,
+    "n_fit_rows": null,
+    "source": "P11-14 model-L-FL.json (frozen)"
+   },
+   "safe_v02": {
+    "value": 7.003386109417929,
+    "ci": [
+     4.6202691142137615,
+     9.993142073345759
+    ],
+    "status": "certified",
+    "n_commits": 292,
+    "n_wrong_commits": 52,
+    "measured_wrong_commit": 0.042588042588042586,
+    "measured_wrong_commit_cp95": [
+     0.032,
+     0.0555
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 979,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 20.0359649122807,
+    "unguarded_wpm": 7.003386109417929,
+    "wpm_no_penalty": 8.175122475350287,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 6.606033498979485,
+    "ci": [
+     4.429055186070111,
+     9.216444850287983
+    ],
+    "status": "certified",
+    "n_commits": 292,
+    "n_wrong_commits": 52,
+    "measured_wrong_commit": 0.042588042588042586,
+    "measured_wrong_commit_cp95": [
+     0.032,
+     0.0555
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 979,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 20.0359649122807,
+    "unguarded_wpm": 6.606033498979485,
+    "wpm_no_penalty": 8.175122475350287,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 8.408333333333333,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 7.003386109417929,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "safe_v01_complete_only": {
+    "value": 7.003386109417929,
+    "ci": [
+     4.6202691142137615,
+     9.993142073345759
+    ],
+    "status": "certified",
+    "n_commits": 292,
+    "n_wrong_commits": 52,
+    "measured_wrong_commit": 0.042588042588042586,
+    "measured_wrong_commit_cp95": [
+     0.032,
+     0.0555
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 979,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 20.0359649122807,
+    "unguarded_wpm": 7.003386109417929,
+    "wpm_no_penalty": 8.175122475350287,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "n_prefix_commits": 0,
+   "n_complete_commits": 292,
+   "committed_right_words": 979,
+   "n_eval": 1221,
+   "n_commits": 292,
+   "n_wrong_commits": 52,
+   "wrong_commit_rate": 0.042588042588042586,
+   "wrong_commit_cp95": [
+    0.032,
+    0.0555
+   ],
+   "commit_rate": 0.23914823914823916,
+   "error_among_commits": 0.1780821917808219,
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 292,
+    "offer": 793,
+    "withhold": 136
+   },
+   "decide_s": {
+    "p50": 0.09287,
+    "p95": 0.23712
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "clearly above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "pass"
+   }
+  },
+  "BX-FL": {
+   "status": "guard",
+   "cal_digest": "5c47f441c5fc370f",
+   "eval_digest": "889054516bbeb637",
+   "config_id": "tcfg-c3bd8355830a342c",
+   "sheet": {
+    "alpha": 0.05,
+    "delta": 0.1,
+    "n_items": 1224,
+    "n_fit": 306,
+    "n_policy": 459,
+    "n_ltt": 459,
+    "feasible": true,
+    "commit_threshold": 0.91,
+    "controls": [
+     {
+      "name": "uniform",
+      "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 0
+     },
+     {
+      "name": "shuffled",
+      "description": "calibration frames in a random time order",
+      "n": 300,
+      "n_commit": 2,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 63
+     },
+     {
+      "name": "user",
+      "description": "your decoder output on null input (null_inputs)",
+      "n": 300,
+      "n_commit": 0,
+      "allowed": 15,
+      "passed": true,
+      "n_offer": 0
+     }
+    ],
+    "warnings": [
+     "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it."
+    ],
+    "ltt": null
+   },
+   "model": {
+    "features": [
+     "prefix_mass",
+     "prefix_agree_min",
+     "prefix_agree_mean",
+     "prefix_char_conf_mean",
+     "prefix_char_conf_min",
+     "prefix_log_words",
+     "prefix_share",
+     "complete",
+     "p_top1",
+     "nbest_entropy",
+     "guard_risk",
+     "acoustic_per_char",
+     "lm_per_word",
+     "acoustic_gap",
+     "frames_per_char",
+     "log_n_words"
+    ],
+    "dropped": [
+     "prefix_agree_min",
+     "p_top1",
+     "guard_risk",
+     "acoustic_gap"
+    ],
+    "n_used": 10,
+    "coef": {
+     "prefix_mass": 0.659981983259,
+     "prefix_agree_min": 0.0,
+     "prefix_agree_mean": 0.624301446461,
+     "prefix_char_conf_mean": 0.0,
+     "prefix_char_conf_min": 0.0,
+     "prefix_log_words": -0.795685788902,
+     "prefix_share": 0.141257652278,
+     "complete": 0.201847572206,
+     "p_top1": 0.0,
+     "nbest_entropy": -0.131570360321,
+     "guard_risk": 0.0,
+     "acoustic_per_char": 0.476952310779,
+     "lm_per_word": 1.04154080461,
+     "acoustic_gap": 0.0,
+     "frames_per_char": -0.187297853464,
+     "log_n_words": -0.157116408267
+    },
+    "intercept": 0.185389903307,
+    "fit_rows": 2824
+   },
+   "safe_v02": {
+    "value": 6.622350274788907,
+    "ci": [
+     4.581878316351637,
+     9.115987607266433
+    ],
+    "status": "certified",
+    "n_commits": 474,
+    "n_wrong_commits": 25,
+    "measured_wrong_commit": 0.020475020475020474,
+    "measured_wrong_commit_cp95": [
+     0.0133,
+     0.0301
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 818,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 3.7675438596491233,
+    "unguarded_wpm": 6.622350274788907,
+    "wpm_no_penalty": 6.830694775113927,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "safe_v02_read": {
+    "value": 6.2065568793157695,
+    "ci": [
+     4.369625002564978,
+     8.364884885745925
+    ],
+    "status": "certified",
+    "n_commits": 474,
+    "n_wrong_commits": 25,
+    "measured_wrong_commit": 0.020475020475020474,
+    "measured_wrong_commit_cp95": [
+     0.0133,
+     0.0301
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 818,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 3.7675438596491233,
+    "unguarded_wpm": 6.2065568793157695,
+    "wpm_no_penalty": 6.830694775113927,
+    "reading_cost": {
+     "read_s_per_commit": 0.5,
+     "read_s_per_word": 0.3,
+     "min_prefix_words": 1,
+     "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+     "minutes_reading": 8.274999999999999,
+     "n_prefix_commits_dropped": 0,
+     "wpm_without_reading": 6.622350274788907,
+     "note": "P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the proposal as committed"
+    },
+    "status_note": null
+   },
+   "safe_v01_complete_only": {
+    "value": 1.422353186466454,
+    "ci": [
+     0.7280828448804958,
+     2.2085527306915695
+    ],
+    "status": "certified",
+    "n_commits": 47,
+    "n_wrong_commits": 4,
+    "measured_wrong_commit": 0.003276003276003276,
+    "measured_wrong_commit_cp95": [
+     0.0009,
+     0.0084
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 172,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 1.1728070175438599,
+    "unguarded_wpm": 1.422353186466454,
+    "wpm_no_penalty": 1.4362830089481606,
+    "reading_cost": null,
+    "status_note": null
+   },
+   "n_prefix_commits": 427,
+   "n_complete_commits": 47,
+   "committed_right_words": 818,
+   "n_eval": 1221,
+   "n_commits": 474,
+   "n_wrong_commits": 25,
+   "wrong_commit_rate": 0.020475020475020474,
+   "wrong_commit_cp95": [
+    0.0133,
+    0.0301
+   ],
+   "commit_rate": 0.3882063882063882,
+   "error_among_commits": 0.052742616033755275,
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 474,
+    "offer": 611,
+    "withhold": 136
+   },
+   "decide_s": {
+    "p50": 0.10943,
+    "p95": 0.29056
+   },
+   "control_shuffled_commits": 0,
+   "control_shuffled_rate": 0.0,
+   "control_zeros_commits": 0,
+   "control_zeros_rate": 0.0,
+   "verdicts": {
+    "V1_guard": "certified",
+    "V2_safety": "holds",
+    "V3_value": "non-vacuous",
+    "V4_vs_no_bci": "clearly above",
+    "V4_vs_p1109_2.93": "above",
+    "V6_controls": "pass"
+   }
+  }
+ },
+ "digests_match_p1109": true,
+ "test_auroc_prefix_rows": {
+  "n_rows": 4413,
+  "n_right_rows": 2523,
+  "lg_pm_fU": 0.871754462123071,
+  "lm_pc_k": 0.7916441751756853,
+  "LX_raw": 0.9067902283122259
+ },
+ "verdicts": {
+  "primary": "LX-FL",
+  "H1": {
+   "core": true,
+   "value_v02": 9.469118837441778,
+   "gt_4.25": true,
+   "pass": true
+  },
+  "H2_gt_6.80": true,
+  "H3_gt_BX": true,
+  "H4": "clearly above"
+ },
+ "calibration_inclusive": {
+  "arm": "LX-FL",
+  "metric": "safe-wpm/0.2 (PROPOSED)",
+  "K": 40,
+  "B": 2000,
+  "level": 0.95,
+  "z0": {
+   "model_digest": "a5789186a678",
+   "ref_model_digest": "a5789186a678",
+   "threshold": 0.86,
+   "ref_threshold": 0.86,
+   "same_decisions": {
+    "real": 1221,
+    "shuffled": 1221,
+    "zeros": 1221
+   },
+   "n_eval": 1221,
+   "unit_weight_value": 9.469118837441778,
+   "safe_wpm_value": 9.469118837441778,
+   "pass": true
+  },
+  "statuses": {
+   "certified": 33,
+   "above-alpha": 7
+  },
+  "primary_user_cluster": {
+   "n_draws": 40,
+   "n_credited": 33,
+   "value": 7.179521152691928,
+   "median_draw_value": 8.631230826159285,
+   "sd_draw_values": 3.4710465332817964,
+   "draw_value_range": [
+    0.0,
+    10.283987168785867
+   ],
+   "interval": [
+    0.0,
+    12.128384231642126
+   ],
+   "zero_fraction_pooled": 0.175,
+   "sd_between_draws": 3.4710465332817964,
+   "sd_within_draw": 1.2387147922376518,
+   "sd_total": 3.685454974995075,
+   "between_to_within_sd": 2.802135370492826,
+   "analytic_interval": [
+    -0.04383786494238251,
+    14.402880170326238
+   ],
+   "reference": 3.09,
+   "lower_above_reference": false,
+   "fraction_of_draws_above_reference": 0.825,
+   "verdict": "above, but inside the combined interval"
+  },
+  "variant_a_keep_above_alpha": {
+   "n_draws": 40,
+   "n_credited": 40,
+   "value": 9.026012027811776,
+   "median_draw_value": 8.912238291046826,
+   "sd_draw_values": 1.1638179475218993,
+   "draw_value_range": [
+    6.2078899304642885,
+    11.05806786079299
+   ],
+   "interval": [
+    5.818402522633876,
+    12.856238294480342
+   ],
+   "zero_fraction_pooled": 0.0,
+   "sd_between_draws": 1.1638179475218993,
+   "sd_within_draw": 1.39900271317289,
+   "sd_total": 1.8198024086255062,
+   "between_to_within_sd": 0.8318911297051028,
+   "analytic_interval": [
+    5.4592648479265415,
+    12.59275920769701
+   ],
+   "reference": 3.09,
+   "lower_above_reference": true,
+   "fraction_of_draws_above_reference": 1.0,
+   "verdict": "clearly above after calibration uncertainty"
+  },
+  "mean_commits": 639.875,
+  "mean_wrong": 45.975,
+  "threshold_range": [
+   0.78,
+   0.98
+  ],
+  "vs_p11_17_same_draw": {
+   "n": 40,
+   "lx_higher": 32,
+   "equal": 1,
+   "mean_difference": 2.176308397972656
+  },
+  "verdict_H5": "above, but inside the combined interval",
+  "draws": [
+   {
+    "name": "k01",
+    "k": 1,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 6.7303493607948255,
+    "raw_value": 6.7303493607948255,
+    "n_commits": 505,
+    "n_prefix_commits": 467,
+    "n_wrong": 21,
+    "threshold": 0.95,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 25.8,
+    "cal_controls": [
+     0,
+     2,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 6.109538412002355
+   },
+   {
+    "name": "k02",
+    "k": 2,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 7.3530826517028425,
+    "raw_value": 7.3530826517028425,
+    "n_commits": 595,
+    "n_prefix_commits": 569,
+    "n_wrong": 35,
+    "threshold": 0.96,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 26.1,
+    "cal_controls": [
+     0,
+     3,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k03",
+    "k": 3,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.858929463498855,
+    "raw_value": 9.858929463498855,
+    "n_commits": 663,
+    "n_prefix_commits": 571,
+    "n_wrong": 53,
+    "threshold": 0.87,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 23.6,
+    "cal_controls": [
+     0,
+     1,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 5.494507865347234
+   },
+   {
+    "name": "k04",
+    "k": 4,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.95448423411019,
+    "raw_value": 8.95448423411019,
+    "n_commits": 639,
+    "n_prefix_commits": 582,
+    "n_wrong": 41,
+    "threshold": 0.9,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 25.8,
+    "cal_controls": [
+     0,
+     4,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 7.183214606465972
+   },
+   {
+    "name": "k05",
+    "k": 5,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.91257887205204,
+    "raw_value": 9.91257887205204,
+    "n_commits": 680,
+    "n_prefix_commits": 586,
+    "n_wrong": 56,
+    "threshold": 0.84,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 24.2,
+    "cal_controls": [
+     0,
+     4,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.84556637755768
+   },
+   {
+    "name": "k06",
+    "k": 6,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.8639684194245,
+    "raw_value": 8.8639684194245,
+    "n_commits": 655,
+    "n_prefix_commits": 591,
+    "n_wrong": 39,
+    "threshold": 0.91,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 28.2,
+    "cal_controls": [
+     0,
+     2,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.488194853465583
+   },
+   {
+    "name": "k07",
+    "k": 7,
+    "safe_status": "above-alpha",
+    "credited": false,
+    "value": 0.0,
+    "raw_value": 10.16621719907616,
+    "n_commits": 693,
+    "n_prefix_commits": 570,
+    "n_wrong": 62,
+    "threshold": 0.83,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 24.5,
+    "cal_controls": [
+     0,
+     6,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k08",
+    "k": 8,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 10.283987168785867,
+    "raw_value": 10.283987168785867,
+    "n_commits": 682,
+    "n_prefix_commits": 561,
+    "n_wrong": 56,
+    "threshold": 0.82,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 28.6,
+    "cal_controls": [
+     0,
+     7,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.245071346782196
+   },
+   {
+    "name": "k09",
+    "k": 9,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 7.979641749486428,
+    "raw_value": 7.979641749486428,
+    "n_commits": 589,
+    "n_prefix_commits": 543,
+    "n_wrong": 37,
+    "threshold": 0.94,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 26.0,
+    "cal_controls": [
+     0,
+     3,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k10",
+    "k": 10,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.226620481746133,
+    "raw_value": 8.226620481746133,
+    "n_commits": 582,
+    "n_prefix_commits": 517,
+    "n_wrong": 34,
+    "threshold": 0.91,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 27.1,
+    "cal_controls": [
+     0,
+     4,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.759963108824133
+   },
+   {
+    "name": "k11",
+    "k": 11,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.869992347983464,
+    "raw_value": 8.869992347983464,
+    "n_commits": 623,
+    "n_prefix_commits": 545,
+    "n_wrong": 38,
+    "threshold": 0.9,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 26.5,
+    "cal_controls": [
+     0,
+     2,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.959903590466737
+   },
+   {
+    "name": "k12",
+    "k": 12,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.785497948317552,
+    "raw_value": 8.785497948317552,
+    "n_commits": 628,
+    "n_prefix_commits": 571,
+    "n_wrong": 38,
+    "threshold": 0.9,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 26.5,
+    "cal_controls": [
+     0,
+     5,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.267160046019778
+   },
+   {
+    "name": "k13",
+    "k": 13,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.02819288661916,
+    "raw_value": 9.02819288661916,
+    "n_commits": 649,
+    "n_prefix_commits": 575,
+    "n_wrong": 43,
+    "threshold": 0.92,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 26.7,
+    "cal_controls": [
+     0,
+     3,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.701175185094851
+   },
+   {
+    "name": "k14",
+    "k": 14,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.781852437991136,
+    "raw_value": 8.781852437991136,
+    "n_commits": 603,
+    "n_prefix_commits": 525,
+    "n_wrong": 40,
+    "threshold": 0.89,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 20.5,
+    "cal_controls": [
+     0,
+     2,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k15",
+    "k": 15,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.199165126435945,
+    "raw_value": 9.199165126435945,
+    "n_commits": 674,
+    "n_prefix_commits": 623,
+    "n_wrong": 46,
+    "threshold": 0.86,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 25.5,
+    "cal_controls": [
+     0,
+     7,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k16",
+    "k": 16,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.490679886747246,
+    "raw_value": 8.490679886747246,
+    "n_commits": 614,
+    "n_prefix_commits": 564,
+    "n_wrong": 39,
+    "threshold": 0.91,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 21.9,
+    "cal_controls": [
+     0,
+     1,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.919616430661584
+   },
+   {
+    "name": "k17",
+    "k": 17,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.889724018229176,
+    "raw_value": 9.889724018229176,
+    "n_commits": 667,
+    "n_prefix_commits": 562,
+    "n_wrong": 53,
+    "threshold": 0.88,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 23.5,
+    "cal_controls": [
+     0,
+     3,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k18",
+    "k": 18,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.104149295107625,
+    "raw_value": 8.104149295107625,
+    "n_commits": 600,
+    "n_prefix_commits": 542,
+    "n_wrong": 36,
+    "threshold": 0.91,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 26.5,
+    "cal_controls": [
+     0,
+     4,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k19",
+    "k": 19,
+    "safe_status": "above-alpha",
+    "credited": false,
+    "value": 0.0,
+    "raw_value": 10.28237250729115,
+    "n_commits": 695,
+    "n_prefix_commits": 586,
+    "n_wrong": 65,
+    "threshold": 0.81,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 21.4,
+    "cal_controls": [
+     0,
+     1,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.019423717135747
+   },
+   {
+    "name": "k20",
+    "k": 20,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.901913044172135,
+    "raw_value": 9.901913044172135,
+    "n_commits": 662,
+    "n_prefix_commits": 529,
+    "n_wrong": 61,
+    "threshold": 0.88,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 23.4,
+    "cal_controls": [
+     0,
+     3,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 6.892189505066066
+   },
+   {
+    "name": "k21",
+    "k": 21,
+    "safe_status": "above-alpha",
+    "credited": false,
+    "value": 0.0,
+    "raw_value": 10.764282932543669,
+    "n_commits": 694,
+    "n_prefix_commits": 544,
+    "n_wrong": 69,
+    "threshold": 0.8,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 20.7,
+    "cal_controls": [
+     0,
+     3,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 5.415291778642133
+   },
+   {
+    "name": "k22",
+    "k": 22,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.707223613975145,
+    "raw_value": 8.707223613975145,
+    "n_commits": 643,
+    "n_prefix_commits": 591,
+    "n_wrong": 41,
+    "threshold": 0.86,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 24.0,
+    "cal_controls": [
+     0,
+     4,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 5.933839007594485
+   },
+   {
+    "name": "k23",
+    "k": 23,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.766756215238045,
+    "raw_value": 9.766756215238045,
+    "n_commits": 672,
+    "n_prefix_commits": 552,
+    "n_wrong": 55,
+    "threshold": 0.85,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 20.7,
+    "cal_controls": [
+     0,
+     5,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.076431189429985
+   },
+   {
+    "name": "k24",
+    "k": 24,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.165272914904222,
+    "raw_value": 8.165272914904222,
+    "n_commits": 615,
+    "n_prefix_commits": 582,
+    "n_wrong": 34,
+    "threshold": 0.91,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 23.7,
+    "cal_controls": [
+     0,
+     4,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k25",
+    "k": 25,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.671883060703726,
+    "raw_value": 8.671883060703726,
+    "n_commits": 651,
+    "n_prefix_commits": 606,
+    "n_wrong": 37,
+    "threshold": 0.88,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 21.2,
+    "cal_controls": [
+     0,
+     3,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.918469882899455
+   },
+   {
+    "name": "k26",
+    "k": 26,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 6.2078899304642885,
+    "raw_value": 6.2078899304642885,
+    "n_commits": 491,
+    "n_prefix_commits": 471,
+    "n_wrong": 16,
+    "threshold": 0.98,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 23.0,
+    "cal_controls": [
+     0,
+     5,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 7.203699729602567
+   },
+   {
+    "name": "k27",
+    "k": 27,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.828368289057048,
+    "raw_value": 9.828368289057048,
+    "n_commits": 682,
+    "n_prefix_commits": 586,
+    "n_wrong": 56,
+    "threshold": 0.82,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 24.0,
+    "cal_controls": [
+     0,
+     1,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.7756924724694185
+   },
+   {
+    "name": "k28",
+    "k": 28,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 10.163898504935245,
+    "raw_value": 10.163898504935245,
+    "n_commits": 691,
+    "n_prefix_commits": 574,
+    "n_wrong": 61,
+    "threshold": 0.81,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 24.8,
+    "cal_controls": [
+     0,
+     5,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.187537906985481
+   },
+   {
+    "name": "k29",
+    "k": 29,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.05880201357754,
+    "raw_value": 8.05880201357754,
+    "n_commits": 603,
+    "n_prefix_commits": 556,
+    "n_wrong": 37,
+    "threshold": 0.93,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 23.5,
+    "cal_controls": [
+     0,
+     7,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 6.8377923325813414
+   },
+   {
+    "name": "k30",
+    "k": 30,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 6.555053794311227,
+    "raw_value": 6.555053794311227,
+    "n_commits": 521,
+    "n_prefix_commits": 507,
+    "n_wrong": 25,
+    "threshold": 0.95,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 19.8,
+    "cal_controls": [
+     0,
+     2,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 6.311886436327068
+   },
+   {
+    "name": "k31",
+    "k": 31,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.142173107791276,
+    "raw_value": 8.142173107791276,
+    "n_commits": 616,
+    "n_prefix_commits": 576,
+    "n_wrong": 36,
+    "threshold": 0.9,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 25.6,
+    "cal_controls": [
+     0,
+     2,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 0.0
+   },
+   {
+    "name": "k32",
+    "k": 32,
+    "safe_status": "above-alpha",
+    "credited": false,
+    "value": 0.0,
+    "raw_value": 10.596340799727901,
+    "n_commits": 699,
+    "n_prefix_commits": 563,
+    "n_wrong": 62,
+    "threshold": 0.8,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 21.3,
+    "cal_controls": [
+     0,
+     5,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.0492444861544366
+   },
+   {
+    "name": "k33",
+    "k": 33,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.159579084957599,
+    "raw_value": 8.159579084957599,
+    "n_commits": 610,
+    "n_prefix_commits": 572,
+    "n_wrong": 37,
+    "threshold": 0.92,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 24.0,
+    "cal_controls": [
+     0,
+     5,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 6.329225408699957
+   },
+   {
+    "name": "k34",
+    "k": 34,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.130547381667737,
+    "raw_value": 9.130547381667737,
+    "n_commits": 657,
+    "n_prefix_commits": 582,
+    "n_wrong": 44,
+    "threshold": 0.88,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 21.5,
+    "cal_controls": [
+     0,
+     9,
+     0
+    ],
+    "model_kept": 10,
+    "p11_17_lfl_value": 6.794083436397923
+   },
+   {
+    "name": "k35",
+    "k": 35,
+    "safe_status": "above-alpha",
+    "credited": false,
+    "value": 0.0,
+    "raw_value": 11.05806786079299,
+    "n_commits": 725,
+    "n_prefix_commits": 579,
+    "n_wrong": 69,
+    "threshold": 0.78,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 22.7,
+    "cal_controls": [
+     0,
+     6,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 3.3779834185061155
+   },
+   {
+    "name": "k36",
+    "k": 36,
+    "safe_status": "above-alpha",
+    "credited": false,
+    "value": 0.0,
+    "raw_value": 10.61676078452935,
+    "n_commits": 727,
+    "n_prefix_commits": 600,
+    "n_wrong": 69,
+    "threshold": 0.79,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 21.3,
+    "cal_controls": [
+     0,
+     5,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 6.665550574358522
+   },
+   {
+    "name": "k37",
+    "k": 37,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 9.084620059317249,
+    "raw_value": 9.084620059317249,
+    "n_commits": 638,
+    "n_prefix_commits": 566,
+    "n_wrong": 47,
+    "threshold": 0.9,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 23.3,
+    "cal_controls": [
+     0,
+     2,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.01742410493007
+   },
+   {
+    "name": "k38",
+    "k": 38,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.73339015195679,
+    "raw_value": 8.73339015195679,
+    "n_commits": 614,
+    "n_prefix_commits": 537,
+    "n_wrong": 43,
+    "threshold": 0.86,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 25.3,
+    "cal_controls": [
+     0,
+     1,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.09018599541395
+   },
+   {
+    "name": "k39",
+    "k": 39,
+    "safe_status": "above-alpha",
+    "credited": false,
+    "value": 0.0,
+    "raw_value": 10.3755929208327,
+    "n_commits": 715,
+    "n_prefix_commits": 625,
+    "n_wrong": 65,
+    "threshold": 0.83,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 22.7,
+    "cal_controls": [
+     0,
+     2,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 7.114630865295602
+   },
+   {
+    "name": "k40",
+    "k": 40,
+    "safe_status": "certified",
+    "credited": true,
+    "value": 8.590578591614845,
+    "raw_value": 8.590578591614845,
+    "n_commits": 633,
+    "n_prefix_commits": 589,
+    "n_wrong": 43,
+    "threshold": 0.89,
+    "eval_controls": {
+     "shuffled": 0,
+     "zeros": 0
+    },
+    "v6_eval": true,
+    "seconds": 24.9,
+    "cal_controls": [
+     0,
+     6,
+     0
+    ],
+    "model_kept": 11,
+    "p11_17_lfl_value": 1.1440161175924302
+   }
+  ]
+ }
+}
