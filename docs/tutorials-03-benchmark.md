@@ -59,7 +59,35 @@ python tutorials/03_score_benchmark.py --data <kt-semg folder> --weights <kt-sem
 
 The script decodes the test runs that you name (default: the first one) and declares a partial entry (`coverage.subset`). Each row has the top 3 of `model.track_nbest(stream)` (key codes, the track text space) and the guard action of `model.decide(stream)`. The guarantee block is `guarantee_from_sheet(guard, calibration_split="cal")`. Controls: the EMG circularly shifted by half the run (`shuffled`) and all-zero EMG (`zeros`).
 
-Output on the project machine (2026-11-20, 47 s, before the P14-46 changes: greedy keys only, the same top-1 text): 22 of 172 units (run28), key error 0.748, eWPM 2.55 (no-BCI 2.82), 0 commits, safe WPM 0.00 `vacuous`, all controls pass, status `scored`. The CIs are one point wide, because one run is one CI cluster. The decoder is weak (about one key in four is right); the guard offers and never commits, which is correct for this decoder. Step 6 also prints the committed `kt-semg` entries, so you see your row next to them with the mark `[partial: 22/172 units]`.
+Output on the project machine (2026-11-21, after the P14-46 changes, roadmap P14-53; 48.2 s, pinned to 2 CPUs):
+
+```text
+kt-semg  kt-semg/kt-semg-lda (tutorial 3)/packaged guard  (22 units; CI unit run)
+  key error 0.748 [0.748, 0.748]
+  eWPM 2.40 [2.40, 2.40]   no-BCI 2.82 [2.82, 2.82]   difference -0.42 [-0.42, -0.42]
+  safe WPM @ 0.05: 0.00 (vacuous)
+  wrong-commit 0.000 [0.000, 0.000]   error among commits n/a   commit rate 0.000 [0.000, 0.000]
+  controls: shuffled pass, zeros pass, null-commit pass (0.000)
+  coverage 22/172 (partial)   status: scored
+```
+
+| Value | Result |
+|---|---|
+| Truth | 172 scored test units in runs 24-29, rebuilt from the key logs and start times only |
+| Decoded | run28: 22 bursts, 22 scored units covered |
+| Actions | 22 offers (top 3 key-code texts each), 0 commits, 0 withholds |
+| Offers with the true text in the list | 0 / 22 |
+| Controls | shuffled key error 0.877, zeros 0.882 (both higher than 0.748: pass); commit rate on zeros 0.000 (pass) |
+| Guarantee | LTT, alpha 0.05, delta 0.1, 65 calibration items, `scope` and `calibration_split` set |
+
+The CIs are one point wide, because one run is one CI cluster. The decoder is weak (about one key in four is right). The guard offers and never commits, which is correct for this decoder. Step 6 also prints the committed `kt-semg` entries, so you see your row next to them with the mark `[partial: 22/172 units]`.
+
+Checks of this run against the committed cards (P14-53):
+
+- The new truth (key logs only) is equal to the truth file that made the committed `kt-semg` cards: the same 172 units, and no row differs in any field.
+- With the new truth, the committed submissions `kt-semg__lda-oracle__guard` and `kt-semg__lda-oracle__always-commit` rescore to their committed cards (metrics, controls, safe WPM, coverage, status: equal).
+- The key error (0.748) is the same as before P14-46. The eWPM went from 2.55 to 2.40. Reason: the rows now offer the top 3 texts of `track_nbest()`, not only the greedy text. All 3 are wrong, and the simulated user reads each one before it types the text. When we cut the same submission to the top 1 text, the eWPM is 2.55 again. So the change is expected, not a bug.
+- Bug found and fixed: `card.json` held the token `NaN` (error among commits, no commits), which is not valid JSON. The tutorial now writes the card as the scorer CLI does (`to_jsonable`: NaN becomes `null`). Test: `tutorials/test_tutorials.py::test_tutorial3_card_json_is_strict_json`.
 
 To submit from the command line instead of Python, see [benchmark submission](benchmark-submission.md) (`python -m fidetype.benchmark check | truth | score`).
 

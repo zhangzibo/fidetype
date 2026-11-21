@@ -60,3 +60,33 @@ def _record(script: str, wall: float, rc: int) -> None:
                 f.write(f"### Tutorials (synthetic mode), {platform.system()} py{platform.python_version()}\n\n"
                         "| Tutorial | Wall time | Under 10 min |\n|---|---|---|\n")
             f.write(line + "\n")
+
+
+def test_tutorial3_card_json_is_strict_json(tmp_path: Path) -> None:
+    """P14-53: a card with no commits has error_among_commits = NaN; card.json must still be strict JSON (null)."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("tut3", HERE / "03_score_benchmark.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    card = {"metrics": {"error_among_commits": {"value": float("nan"), "ci": [float("nan"), float("inf")]},
+                        "cer": {"value": 0.5, "ci": [0.4, 0.6]}}, "status": "scored"}
+    out = tmp_path / "card.json"
+    mod.write_card(card, out)
+
+    def no_constant(tok: str) -> None:
+        raise AssertionError(f"non-strict JSON token {tok}")
+
+    back = json.loads(out.read_text(encoding="utf-8"), parse_constant=no_constant)
+    assert back["metrics"]["error_among_commits"] == {"value": None, "ci": [None, None]}
+    assert back["metrics"]["cer"]["value"] == 0.5
+
+
+def test_tutorial3_synthetic_card_json_is_strict_json(tmp_path: Path) -> None:
+    """P14-53: the card.json that the synthetic run writes parses as strict JSON."""
+    p = subprocess.run([sys.executable, str(HERE / "03_score_benchmark.py"), "--out", str(tmp_path)],
+                       capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=LIMIT_S,
+                       env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+    assert p.returncode == 0, p.stdout[-2000:] + p.stderr[-2000:]
+    json.loads((tmp_path / "card.json").read_text(encoding="utf-8"),
+               parse_constant=lambda t: (_ for _ in ()).throw(AssertionError(t)))

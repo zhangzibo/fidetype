@@ -59,7 +59,7 @@ Real-data modes on the project desktop (local data and weights; not in CI):
 |---|---|---|---|
 | 1 | `--model t15-m4-13 --data t15.2023.08.13/data_val.hdf5 --n 5` | 5 trials | 12.4 s |
 | 2 | `--model t15-m4-13 --data` 3 sessions (08.13, 08.18, 08.20) | 65 trials | 48.3 s |
-| 3 | `--data <kt-semg> --runs run28` | 22 units | 47.4 s |
+| 3 | `--data <kt-semg> --runs run28` | 22 units | 48.2 s (2026-11-21, after P14-46; pinned to 2 CPUs) |
 
 ## Where the weights come from
 

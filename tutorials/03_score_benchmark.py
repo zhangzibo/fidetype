@@ -33,6 +33,7 @@ import numpy as np
 from fidetype.benchmark import leaderboard as LB
 from fidetype.benchmark import scorecard as SC
 from fidetype.benchmark import tracks as TR
+from fidetype.benchmark.scoring import to_jsonable
 
 TRACK = "kt-semg"
 
@@ -185,7 +186,7 @@ def score_and_rank(sub: Path, truth: dict, split: dict | None, out: Path, compar
     step(first + 1, "score it: the score card")
     card = SC.score(TRACK, sub, truth, B=500, split=split)
     print("  " + SC.score_card_text(card).replace("\n", "\n  "))
-    (out / "card.json").write_text(json.dumps(card, indent=1), encoding="utf-8")
+    write_card(card, out / "card.json")
 
     step(first + 2, "the leaderboard row of this card")
     card["_file"] = "card.json"
@@ -196,6 +197,14 @@ def score_and_rank(sub: Path, truth: dict, split: dict | None, out: Path, compar
     for r in rows:
         print("  | " + " | ".join(LB.cells(r)[:9]) + " |")
     return {"status": card["status"], "card": card}
+
+
+def write_card(card: dict, path: Path) -> None:
+    """Write the card as strict JSON, like `python -m fidetype.benchmark score`: NaN / inf become null.
+
+    (A card with no commits has error_among_commits = NaN; json.dumps would write the invalid token NaN.)
+    """
+    path.write_text(json.dumps(to_jsonable(card), indent=1, allow_nan=False, ensure_ascii=False), encoding="utf-8")
 
 
 def main(argv: list[str] | None = None) -> int:
