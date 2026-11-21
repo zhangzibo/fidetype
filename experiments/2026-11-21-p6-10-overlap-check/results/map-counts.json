@@ -1,0 +1,26 @@
+{
+ "test_units": 816,
+ "match_quality": {
+  "no-match": 36,
+  "strict": 675,
+  "possible": 105
+ },
+ "units_strict_by_partition": {
+  "train": 366,
+  "val_select": 102,
+  "val_eval": 98,
+  "test": 109
+ },
+ "units_any_by_partition": {
+  "train": 368,
+  "val_select": 106,
+  "val_eval": 103,
+  "test": 214
+ },
+ "units_sentence_in_partition": {
+  "train": 428,
+  "val": 209,
+  "val_select": 106,
+  "val_eval": 103
+ }
+}

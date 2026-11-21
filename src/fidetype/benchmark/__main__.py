@@ -25,6 +25,12 @@ Sub-commands:
     v0.2 tracks (P6-02): validate, check the required controls and print
     the full score card (``docs/benchmark-submission.md``). Exit code 0
     only if all required controls pass.
+``overlap-hashes TRACK [--ids FILE] [--texts FILE] --use USE [--out FILE]``
+    P6-10: salted unit hashes and text hashes for the ``training_data``
+    declaration of a v0.2 manifest (one id or one sentence per line).
+``overlap-list --hdf5 DIR``
+    P6-10, track ``b2t25-t15``: list the local B2T '25 HDF5 trials that
+    match a scored test unit (leave them out of training). Local output only.
 ``safe-wpm --trials trials.jsonl (--guard guard.json | --guarantee g.json | --method ltt --alpha A ...)``
     Safe WPM at a certified wrong-commit rate (P14-05; ``docs/safe-wpm.md``)
     from a per-trial JSON Lines file.
@@ -166,6 +172,13 @@ def cmd_score(a) -> int:
             return 2
         _dump(res, a.out)
         print(SC.score_card_text(res), file=sys.stderr)
+        ov = res.get("overlap_check") or {}
+        if ov.get("status") == "overlap":
+            print(f"WARNING: train / test overlap: {ov['message']}", file=sys.stderr)
+            if a.fail_on_overlap:
+                return 1
+        elif ov.get("status") == "not checked":
+            print(f"WARNING: train / test overlap not checked: {ov['message']}", file=sys.stderr)
         return 0 if res["status"] == "scored" else 1
     a.submission = a.submission[0]
     if not a.truth:
@@ -179,6 +192,57 @@ def cmd_score(a) -> int:
           f"(no-BCI {m['gaze_ewpm']['value']:.2f})  wrong-commit {m['wrong_commit_rate']['value']:.3f}  "
           f"controls {'passed' if res['controls']['passed'] else 'NOT passed'}  status {res['status']}", file=sys.stderr)
     return 0 if res["status"] == "scored" else 1
+
+
+def _lines(path: str | None) -> list[str]:
+    if not path:
+        return []
+    return [x.strip() for x in Path(path).read_text(encoding="utf-8").splitlines() if x.strip()]
+
+
+def cmd_overlap_hashes(a) -> int:
+    from fidetype.benchmark import overlap as OV
+    from fidetype.benchmark.tracks import TRACKS as V02
+
+    if a.track not in V02:
+        raise SystemExit(f"track must be one of {sorted(V02)}")
+    ids, texts = _lines(a.ids), _lines(a.texts)
+    if not ids and not texts:
+        raise SystemExit("give --ids and / or --texts")
+    out: dict = {}
+    if ids:
+        out["unit_ids"] = {a.use: sorted({OV.unit_hash(a.track, x) for x in ids})}
+    if texts:
+        out["text_hashes"] = {a.use: sorted({OV.text_hash(a.track, x) for x in texts})}
+    _dump(out, a.out)
+    print(f"{a.track}: {len(ids)} ids, {len(texts)} texts -> hashes for training_data ({a.use})", file=sys.stderr)
+    return 0
+
+
+def cmd_overlap_list(a) -> int:
+    import h5py
+
+    from fidetype.benchmark import overlap as OV
+
+    m = OV.load_map("b2t25-t15", "b2t25-hdf5")
+    q = {r["t"]: r["q"] for r in m["trials"] if r["q"] == "strict" or not a.strict_only}
+    n = 0
+    print("session	partition	block_num	trial_num	match")
+    for sd in sorted(p for p in Path(a.hdf5).iterdir() if p.is_dir()):
+        for part in ("train", "val", "test"):
+            fp = sd / f"data_{part}.hdf5"
+            if not fp.exists():
+                continue
+            with h5py.File(fp, "r") as f:
+                for k in sorted(f.keys()):
+                    at = f[k].attrs
+                    t = OV.hdf5_trial_hash(sd.name, int(at["block_num"]), int(at["trial_num"]))
+                    if t in q:
+                        n += 1
+                        print(f"{sd.name}	{part}	{int(at['block_num'])}	{int(at['trial_num'])}	{q[t]}")
+    print(f"{n} local HDF5 trials match a b2t25-t15 test unit (map: {len(q)}); leave them out of train, tune and "
+          "calibration", file=sys.stderr)
+    return 0 if n == len(q) else 1
 
 
 def cmd_leaderboard(a) -> int:
@@ -280,7 +344,20 @@ def main(argv=None) -> int:
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--no-gate", action="store_true", help="v0.1: score even if the conformance gate fails")
     p.add_argument("--gate", action="store_true", help="v0.2 stream submissions: reject below trust-ready")
+    p.add_argument("--fail-on-overlap", action="store_true",
+                   help="v0.2: exit code 1 when the train / test overlap check finds overlap (P6-10)")
     p.set_defaults(fn=cmd_score)
+    p = sub.add_parser("overlap-hashes", help="P6-10: unit and text hashes for the training_data declaration")
+    p.add_argument("track")
+    p.add_argument("--ids", default=None, help="file: one local unit id per line")
+    p.add_argument("--texts", default=None, help="file: one sentence per line (local file: never commit it)")
+    p.add_argument("--use", required=True, choices=("train", "tune", "calibration"))
+    p.add_argument("--out", default=None)
+    p.set_defaults(fn=cmd_overlap_hashes)
+    p = sub.add_parser("overlap-list", help="P6-10: local B2T '25 HDF5 trials that match a b2t25-t15 test unit")
+    p.add_argument("--hdf5", required=True, help="folder hdf5_data_final (one sub-folder per session)")
+    p.add_argument("--strict-only", action="store_true", help="only strict matches (default: strict + possible)")
+    p.set_defaults(fn=cmd_overlap_list)
     p = sub.add_parser("safe-wpm", help="safe WPM at a certified wrong-commit rate (P14-05; docs/safe-wpm.md)")
     p.add_argument("--trials", required=True, help="per-trial JSON Lines: committed, correct, truth (or n_words + "
                    "n_chars), neural_s, optional cluster")

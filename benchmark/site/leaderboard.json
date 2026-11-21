@@ -169,6 +169,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-spanishbcbl-meg-async__convctc-m-async__trust",
     "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__trust"
    },
@@ -287,6 +288,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-spanishbcbl-meg-async__convctc-m-async__ltt",
     "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__ltt"
    },
@@ -405,6 +407,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-spanishbcbl-meg-async__convctc-m-async__crc",
     "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__crc"
    },
@@ -522,6 +525,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-spanishbcbl-meg-async__convctc-m-async__always-commit",
     "link": "tracks/spanishbcbl-meg-async.html#e-spanishbcbl-meg-async__convctc-m-async__always-commit"
    }
@@ -636,6 +640,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15-copytask__published__always-commit",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__always-commit"
    },
@@ -747,6 +752,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15-copytask__published__crc",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__crc"
    },
@@ -858,6 +864,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15-copytask__published__trust",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__trust"
    },
@@ -969,6 +976,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15-copytask__published__ltt",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__published__ltt"
    },
@@ -1080,6 +1088,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15-copytask__ours__crc",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__crc"
    },
@@ -1191,6 +1200,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15-copytask__ours__trust",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__trust"
    },
@@ -1302,6 +1312,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15-copytask__ours__ltt",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__ltt"
    },
@@ -1411,6 +1422,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15-copytask__ours__always-commit",
     "link": "tracks/b2t25-t15-copytask.html#e-b2t25-t15-copytask__ours__always-commit"
    }
@@ -1535,6 +1547,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-calib__trust",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__trust"
    },
@@ -1657,6 +1670,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-calib__crc",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__crc"
    },
@@ -1779,6 +1793,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-calib__commit",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-calib__commit"
    },
@@ -1896,6 +1911,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-xsession__crc",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__crc"
    },
@@ -2013,6 +2029,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-xsession__trust",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__trust"
    },
@@ -2130,6 +2147,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-xsession__commit",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsession__commit"
    },
@@ -2260,6 +2278,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-xsubject__crc",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__crc"
    },
@@ -2390,6 +2409,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-xsubject__trust",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__trust"
    },
@@ -2520,6 +2540,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg-composed__cnn-xsubject__commit",
     "link": "tracks/toronto-semg-composed.html#e-toronto-semg-composed__cnn-xsubject__commit"
    }
@@ -2630,6 +2651,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__published__always-commit",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__always-commit"
    },
@@ -2738,6 +2760,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__published__crc",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__crc"
    },
@@ -2846,6 +2869,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__published__trust",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__trust"
    },
@@ -2954,6 +2978,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__published__ltt",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__published__ltt"
    },
@@ -3067,6 +3092,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__m4-13__guard",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__m4-13__guard"
    },
@@ -3175,6 +3201,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__ours__always-commit",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__always-commit"
    },
@@ -3283,6 +3310,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__ours__crc",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__crc"
    },
@@ -3391,6 +3419,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__ours__trust",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__trust"
    },
@@ -3499,6 +3528,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__ours__ltt",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__ours__ltt"
    },
@@ -3612,6 +3642,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t25-t15__m4-12__guard",
     "link": "tracks/b2t25-t15.html#e-b2t25-t15__m4-12__guard"
    }
@@ -3724,6 +3755,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t24-t12__t12v2__guard",
     "link": "tracks/b2t24-t12.html#e-b2t24-t12__t12v2__guard"
    },
@@ -3834,6 +3866,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-b2t24-t12__t12v2__always-commit",
     "link": "tracks/b2t24-t12.html#e-b2t24-t12__t12v2__always-commit"
    }
@@ -3941,6 +3974,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-willett-hw__rnn-published__always-commit",
     "link": "tracks/willett-hw.html#e-willett-hw__rnn-published__always-commit"
    },
@@ -4046,6 +4080,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-willett-hw__rnn-published__guard",
     "link": "tracks/willett-hw.html#e-willett-hw__rnn-published__guard"
    }
@@ -4167,6 +4202,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-calib__crc",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__crc"
    },
@@ -4286,6 +4322,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-calib__trust",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__trust"
    },
@@ -4405,6 +4442,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-calib__always-commit",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-calib__always-commit"
    },
@@ -4519,6 +4557,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-xsession__crc",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__crc"
    },
@@ -4633,6 +4672,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-xsession__trust",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__trust"
    },
@@ -4747,6 +4787,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-xsession__always-commit",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsession__always-commit"
    },
@@ -4874,6 +4915,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-xsubject__crc",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__crc"
    },
@@ -5001,6 +5043,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-xsubject__trust",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__trust"
    },
@@ -5128,6 +5171,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-toronto-semg__cnn-xsubject__always-commit",
     "link": "tracks/toronto-semg.html#e-toronto-semg__cnn-xsubject__always-commit"
    }
@@ -5236,6 +5280,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-kt-semg__lda-oracle__guard",
     "link": "tracks/kt-semg.html#e-kt-semg__lda-oracle__guard"
    },
@@ -5342,6 +5387,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-kt-semg__lda-oracle__always-commit",
     "link": "tracks/kt-semg.html#e-kt-semg__lda-oracle__always-commit"
    }
@@ -5459,6 +5505,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-spanishbcbl-meg__convctc-m-async__trust",
     "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__trust"
    },
@@ -5574,6 +5621,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-spanishbcbl-meg__convctc-m-async__ltt",
     "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__ltt"
    },
@@ -5689,6 +5737,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-spanishbcbl-meg__convctc-m-async__crc",
     "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__crc"
    },
@@ -5804,6 +5853,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-spanishbcbl-meg__convctc-m-async__always-commit",
     "link": "tracks/spanishbcbl-meg.html#e-spanishbcbl-meg__convctc-m-async__always-commit"
    }
@@ -5962,6 +6012,7 @@
      ],
      "recorded": "2026-11-19, P11-13 (cards.py cards)"
     },
+    "overlap_status": null,
     "anchor": "e-emg2qwerty__p11-12-intended-sl-subset8__guard",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-12-intended-sl-subset8__guard"
    },
@@ -6118,6 +6169,7 @@
      ],
      "recorded": "2026-11-19, P11-13 (cards.py cards)"
     },
+    "overlap_status": null,
     "anchor": "e-emg2qwerty__p11-12-intended-s-subset8__guard",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-12-intended-s-subset8__guard"
    },
@@ -6274,6 +6326,7 @@
      ],
      "recorded": "2026-11-20, P11-14 (cards.py cards)"
     },
+    "overlap_status": null,
     "anchor": "e-emg2qwerty__p11-14-intended-lfl-subset8__guard",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-14-intended-lfl-subset8__guard"
    },
@@ -6414,6 +6467,7 @@
      ],
      "recorded": "2026-11-19, P11-09 (run.py cards)"
     },
+    "overlap_status": null,
     "anchor": "e-emg2qwerty__p11-01-crt-subset8__guard",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-01-crt-subset8__guard"
    },
@@ -6554,6 +6608,7 @@
      ],
      "recorded": "2026-11-19, P11-09 (run.py cards)"
     },
+    "overlap_status": null,
     "anchor": "e-emg2qwerty__p11-01-crt-subset8__always-commit",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__p11-01-crt-subset8__always-commit"
    },
@@ -6661,6 +6716,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-emg2qwerty__lda-oracle__guard",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__lda-oracle__guard"
    },
@@ -6768,6 +6824,7 @@
      "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
      "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
     },
+    "overlap_status": null,
     "anchor": "e-emg2qwerty__lda-oracle__always-commit",
     "link": "tracks/emg2qwerty.html#e-emg2qwerty__lda-oracle__always-commit"
    }

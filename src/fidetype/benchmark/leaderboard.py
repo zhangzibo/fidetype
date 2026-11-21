@@ -242,6 +242,12 @@ def row(d: dict[str, Any]) -> dict[str, Any]:
         name += f" [partial: {cov.get('n_covered')}/{cov.get('n_scored_units')} units]"
     if (d.get("track_info") or {}).get("research_only"):
         name += " [RESEARCH ONLY]"
+    # P6-10: train / test overlap check (cards scored before P6-10 have no block and get no mark).
+    ov = d.get("overlap_check")
+    if ov and ov.get("status") == "overlap":
+        name += f" [TRAIN/TEST OVERLAP: {ov.get('n_overlapping_units')}/{ov.get('n_scored_units')} units]"
+    elif ov and ov.get("status") == "not checked":
+        name += " [overlap not checked]"
     tgt = card_target(d)
     if tgt is not None and tgt != _default_target(str(d.get("track"))):
         name += f" [target: {tgt}]"
@@ -261,6 +267,7 @@ def row(d: dict[str, Any]) -> dict[str, Any]:
         "safe_wpm_s": safe_wpm_text(d.get("safe_wpm")),
         # P13-06: rerun level (design section 5.2) and the full recipe; "no" when the card has none.
         "rerun_level": rerun_level(d), "rerun": d.get("rerun"),
+        "overlap_status": (ov or {}).get("status"),
         # P13-09: stable link of this entry (relative to the leaderboard folder).
         "anchor": entry_anchor(d.get("_file")),
         "link": f"{track_page(d.get('track', '?'))}#{entry_anchor(d.get('_file'))}",
@@ -325,7 +332,10 @@ def markdown(by: dict[str, list[dict[str, Any]]]) -> str:
          "Tracks v0.1 (three tracks) and tracks v0.2 (seven tracks, P6-01). v0.2 entries are scored by "
          "`python -m fidetype.benchmark score <track> <submission>` (P6-02, "
          "[docs/benchmark-submission.md](../../docs/benchmark-submission.md)). `[RESEARCH ONLY]` marks entries on "
-         "non-commercial data; `[partial]` marks entries that cover only part of the scored units.", "",
+         "non-commercial data; `[partial]` marks entries that cover only part of the scored units. "
+         "`[TRAIN/TEST OVERLAP]` marks entries whose declared training data hold scored units, and "
+         "`[overlap not checked]` marks entries without a `training_data` declaration (P6-10). Entries scored "
+         "before P6-10 have no overlap check and no mark.", "",
          "Safe WPM @ alpha (P14-05): committed, exactly right words per minute, with a time penalty per wrong "
          "commit, only under a certified CRC / LTT bound. `! ABOVE alpha` marks a measured test wrong-commit rate "
          "above the stated alpha. Definition: [docs/safe-wpm.md](../../docs/safe-wpm.md).", "",
@@ -456,7 +466,10 @@ def page(by: dict[str, list[dict[str, Any]]]) -> str:
              "<p>Tracks v0.1 (three tracks) and tracks v0.2 (seven tracks). v0.2 entries are scored by "
              "<code>python -m fidetype.benchmark score &lt;track&gt; &lt;submission&gt;</code> "
              "(<code>docs/benchmark-submission.md</code>). <b>[RESEARCH ONLY]</b> marks entries on non-commercial "
-             "data; <b>[partial]</b> marks entries that cover only part of the scored units.</p>",
+             "data; <b>[partial]</b> marks entries that cover only part of the scored units. "
+             "<b>[TRAIN/TEST OVERLAP]</b> marks entries whose declared training data hold scored units, and "
+             "<b>[overlap not checked]</b> marks entries without a <code>training_data</code> declaration (P6-10). "
+             "Entries scored before P6-10 have no overlap check and no mark.</p>",
              "<p>Rerun (P13-06): the rerun level of each entry (<code>rescore</code>, <code>replay</code>, "
              "<code>full</code> or <code>no</code>). Each track lists the exact rerun recipe of every entry: "
              "dataset version, split digest, adapter hash, scorer version and commands. Local paths are "

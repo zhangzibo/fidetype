@@ -66,6 +66,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Sequence
 
+from fidetype.benchmark import overlap as OV
 from fidetype.benchmark import tracks as TR
 from fidetype.benchmark.registry import Track, UserModel
 from fidetype.benchmark.scoring import DEFAULT_B, build_result, score_trials
@@ -200,6 +201,8 @@ class ManifestV02:
     raw: dict[str, Any] = field(default_factory=dict)
     #: The declared scoring target (P11-13), or None (the track default).
     target: str | None = None
+    #: The parsed ``training_data`` declaration (P6-10): None (missing), {"none": True} or the listed sources.
+    training_data: dict[str, Any] | None = None
 
     @property
     def track(self) -> str:
@@ -209,8 +212,11 @@ class ManifestV02:
 def manifest_dict(track: str, decoder: dict[str, Any], *, policy: dict[str, Any] | None = None,
                   guarantee: dict[str, Any] | None = None, regime: str, controls: dict[str, str] | None = None,
                   coverage: dict[str, Any] | None = None, submitter: dict[str, Any] | None = None,
-                  notes: str = "", target: str | None = None) -> dict[str, Any]:
-    """Build a v0.2 manifest dict (validated by :func:`parse_manifest`)."""
+                  notes: str = "", target: str | None = None, training_data: Any = None) -> dict[str, Any]:
+    """Build a v0.2 manifest dict (validated by :func:`parse_manifest`).
+
+    ``training_data`` (P6-10): ``"none"`` or a declaration dict (:mod:`fidetype.benchmark.overlap`).
+    Without it the score card says the overlap check was ``not checked``."""
     d = {"schema": SUBMISSION_SCHEMA, "track": track, "benchmark_version": TR.TRACKS_VERSION, "decoder": decoder,
          "policy": policy or {}, "guarantee": guarantee or {"method": "none"}, "regime": regime,
          "controls": controls or {}, "submitter": submitter or {}, "notes": notes}
@@ -218,11 +224,13 @@ def manifest_dict(track: str, decoder: dict[str, Any], *, policy: dict[str, Any]
         d["coverage"] = coverage
     if target is not None:
         d["target"] = target
+    if training_data is not None:
+        d["training_data"] = training_data
     parse_manifest(d)
     return d
 
 
-def parse_manifest(d: dict[str, Any]) -> ManifestV02:
+def parse_manifest(d: dict[str, Any], folder: str | PathLike[str] | None = None) -> ManifestV02:
     if d.get("schema") != SUBMISSION_SCHEMA:
         raise SubmissionError(f"submission.json: schema must be {SUBMISSION_SCHEMA!r}")
     if d.get("track") not in TR.TRACKS:
@@ -242,14 +250,15 @@ def parse_manifest(d: dict[str, Any]) -> ManifestV02:
     tgt = d.get("target")
     if tgt is not None:
         resolve_target(d["track"], tgt)
-    return ManifestV02(base, regime, dict(ctl), dict(cov), dict(d), tgt)
+    td = OV.parse_declaration(d.get("training_data"), folder)
+    return ManifestV02(base, regime, dict(ctl), dict(cov), dict(d), tgt, td)
 
 
 def load_manifest(folder: str | PathLike[str]) -> ManifestV02:
     p = Path(folder) / "submission.json"
     if not p.is_file():
         raise SubmissionError(f"no submission.json in {folder}")
-    return parse_manifest(json.loads(p.read_text(encoding="utf-8")))
+    return parse_manifest(json.loads(p.read_text(encoding="utf-8")), folder)
 
 
 # ---------------------------------------------------------------------------
@@ -433,6 +442,8 @@ def check_submission(track: str, folder: str | PathLike[str], split: dict[str, A
                      "basis": man.controls.get(kind, "not stated")}
     rep["controls"] = ctl
     rep["controls_complete"] = all(c["present"] and c["missing_units"] == 0 for c in ctl.values())
+    # P6-10: train / test overlap by unit id and partition (the text check needs the truth: `score`).
+    rep["overlap_check"] = OV.check_overlap(track, man.training_data, list(outs), None, split=split)
     rep["ok"] = True
     return rep
 
@@ -702,6 +713,15 @@ def score(track: str, folder: str | PathLike[str], truth: dict[str, dict[str, An
                      else f"track rate model ({spec.chars_per_min:.2f} per min)")
     res["submitter"] = man.base.submitter
     res["check"] = {k: chk[k] for k in ("format", "n_rows", "n_parent_units", "n_parent_covered")}
+    # P6-10: train / test overlap (ids, committed maps and text hashes of the scored units). It warns; it does
+    # not change any number or the status.
+    ov = OV.check_overlap(track, man.training_data, ids, {k: OV.text_hash(track, texts[k]) for k in ids},
+                          split=split)
+    res["overlap_check"] = ov
+    if ov["status"] == "overlap":
+        res["notes"].append(f"WARNING (train / test overlap, P6-10): {ov['message']}")
+    elif ov["status"] == "not checked":
+        res["notes"].append(f"Train / test overlap not checked (P6-10): {ov['message']}")
     ctl = res["controls"]
     missing = [k for k in ("shuffled", "zeros", "null_commit") if ctl[k]["status"] in ("missing", "incomplete")]
     res["status"] = ("scored" if ctl["passed"] else
@@ -754,6 +774,7 @@ def score_card_text(res: dict[str, Any]) -> str:
         + (f" ({c['null_commit'].get('commit_rate_zeros'):.3f})" if c['null_commit'].get('commit_rate_zeros') is not None else ""),
         f"  coverage {res['coverage']['n_covered']}/{res['coverage']['n_scored_units']}"
         + (" (partial)" if res["coverage"]["partial"] else "") + f"   status: {res['status']}",
+        f"  {OV.overlap_text(res.get('overlap_check'))}",
     ]
     return "\n".join(lines)
 

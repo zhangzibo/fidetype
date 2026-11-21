@@ -95,6 +95,31 @@ for u in units:          # u.ref = {"file", "index", ...}: the input of the adap
 
 Each track names its adapter call (`info <track>`, field `adapter`).
 
+## Train / test overlap: b2t25-t15 and the HDF5 files
+
+The `b2t25-t15` track scores trials of `t15_copyTask.pkl`. The B2T '25 neural data (`t15_copyTask_neuralData.zip`, HDF5 files `data_train.hdf5`, `data_val.hdf5`, `data_test.hdf5` per session) hold the **same trials** in another form ([T15 split audit](../wiki/questions/t15-split-audit.md)). The normal B2T '25 recipe trains on HDF5 `train`. That partition holds 366 of the 816 test trials (368 with the less exact matches). So a decoder trained on all of HDF5 `train` is trained on about 45 % of the test set.
+
+**Rule.** Before you train, tune or calibrate on the HDF5 files for a `b2t25-t15` entry, leave out every HDF5 trial that matches a test unit. Then declare it in `submission.json` with `"exclude": "track-test-matches"` ([submission format](benchmark-submission.md#train--test-overlap-check-p6-10)).
+
+| HDF5 file | Trials to leave out | Strict match | Possible match (one of several candidates) |
+|---|---|---|---|
+| `data_train.hdf5` | 368 | 366 | 2 |
+| `data_val.hdf5` | 209 | 200 | 9 |
+| `data_test.hdf5` (no labels) | 233 | 100 | 133 |
+| All | **810** | 666 | 144 |
+
+The list is the committed hash-only map [`splits/overlap-maps/b2t25-t15__b2t25-hdf5.json`](../src/fidetype/benchmark/splits/overlap-maps/b2t25-t15__b2t25-hdf5.json). It holds salted hashes of (session, `block_num`, `trial_num`), the partition, the matched unit hash and the match quality. It holds no text and no plain trial ids. This command prints the trials of your own copy (local output):
+
+```bash
+python -m fidetype.benchmark overlap-list --hdf5 <path>/hdf5_data_final > leave_out.tsv   # session, partition, block_num, trial_num, match
+```
+
+Exit code 0 means that all 810 trials of the map were found in your copy.
+
+**Same sentence, other trial.** The copy task repeats sentences across days. 428 of the 816 test units have a sentence that also occurs in HDF5 `train` (any day), and 209 in HDF5 `val`. If you leave out only the matched trials, the overlap check still reports these units as `text` overlap. The map holds this per unit, so `score` reports it without your text.
+
+Build script and counts: [`experiments/2026-11-21-p6-10-overlap-check/`](../experiments/2026-11-21-p6-10-overlap-check/results.md). The map uses the match rule of the audit (session date, normalised sentence, frame count).
+
 ## Checks we ran on the local copies (2026-11-16)
 
 All seven tracks: `verify` OK on the maintainer copies (Brain-to-Text '24 from the Zenodo 8047896 copy of the Dryad DOI). The three v0.1-equivalent tracks: 0 mismatches against the v0.1 split files.

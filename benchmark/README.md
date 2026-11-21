@@ -53,6 +53,10 @@ python -m fidetype.benchmark score <track> <submission> --truth truth.jsonl --ou
 
 The score card holds CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha with its certification status, wrong-commit rate, error among commits and commit rate, all with cluster-bootstrap CIs over the track CI unit, plus the control results. Exit code 0 only if the shuffled, zeros and null-commit (<= 5 %) controls pass. Baseline score cards: [`results/v0.2/`](results/v0.2/). All seven v0.2 tracks have entries: the four new tracks from P6-02, and b2t25-t15, toronto-semg and spanishbcbl-meg (the v0.1 decoders and policies rerun in the v0.2 format, same numbers where the definitions agree) from [P6-08](../experiments/2026-11-17-p6-02b-v02-entries/results.md).
 
+### Train / test overlap check (P6-10)
+
+Declare the data that your decoder, its tuning and its calibration used in the `training_data` field of `submission.json`. The scorer compares it with the scored units by id, by the committed B2T '25 HDF5 map, and by sentence text. The card gets an `overlap_check` block: `pass`, `overlap` or `not checked` (no declaration). An overlap gives a warning, and the board marks the entry `[TRAIN/TEST OVERLAP]`. Rules: [docs/benchmark-submission.md](../docs/benchmark-submission.md#train--test-overlap-check-p6-10). The B2T '25 HDF5 trials to leave out for `b2t25-t15`: [docs/benchmark-tracks.md](../docs/benchmark-tracks.md#train--test-overlap-b2t25-t15-and-the-hdf5-files).
+
 ### Hub: datasets and rerun recipes (P13-06)
 
 The hub command line reads the dataset registry. It prints the official source of each dataset and checks your local copy. It never downloads or re-hosts data. Every score card carries a rerun recipe (key `rerun`): the dataset version, the split digest, the adapter hash, the scorer version and the exact commands. Guide: [docs/hub-design.md section 12](../docs/hub-design.md#12-hub-command-line-and-rerun-recipes-p13-06).

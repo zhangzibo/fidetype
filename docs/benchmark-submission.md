@@ -3,7 +3,8 @@
 This page defines how you submit a result on a [v0.2 benchmark track](benchmark-tracks.md) and how one command scores it (roadmap item P6-02).
 
 - Code: [`src/fidetype/benchmark/scorecard.py`](../src/fidetype/benchmark/scorecard.py) (format, truth, scorer). The metrics come from [`scoring.py`](../src/fidetype/benchmark/scoring.py) and [`safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py).
-- Tests: [`tests/test_benchmark_scorer.py`](../tests/test_benchmark_scorer.py) (synthetic data only).
+- Tests: [`tests/test_benchmark_scorer.py`](../tests/test_benchmark_scorer.py) and [`tests/test_benchmark_overlap.py`](../tests/test_benchmark_overlap.py) (synthetic data only).
+- Train / test overlap check (P6-10): [`src/fidetype/benchmark/overlap.py`](../src/fidetype/benchmark/overlap.py). See [Train / test overlap check](#train--test-overlap-check-p6-10).
 - Baselines: [`experiments/2026-11-16-p6-02-scorer/results.md`](../experiments/2026-11-16-p6-02-scorer/results.md). v0.2 entries for b2t25-t15, toronto-semg and spanishbcbl-meg (v0.1 decoders rerun in this format): [`experiments/2026-11-17-p6-02b-v02-entries/results.md`](../experiments/2026-11-17-p6-02b-v02-entries/results.md). Score cards: [`benchmark/results/v0.2/`](../benchmark/results/v0.2/). Board: [`benchmark/site/`](../benchmark/site/).
 
 ## The three commands
@@ -111,7 +112,7 @@ Known limit: the eWPM user model keeps the track rate (301.33 keys/min) for the 
 
 ### `submission.json`
 
-Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `regime` and `controls` (required), `coverage` and `target` (optional).
+Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `regime` and `controls` (required), `training_data` (required for a checked entry, P6-10), `coverage` and `target` (optional).
 
 ```json
 {
@@ -126,6 +127,8 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
  "regime": "cross-session",
  "controls": {"shuffled": "how the shuffled input was made", "zeros": "how the null input was made"},
  "coverage": {"subset": "why some units have no output"},
+ "training_data": {"sources": [{"dataset": "b2t24-t12", "partitions": ["train"], "use": "train"},
+                               {"dataset": "b2t24-t12", "partitions": ["cal"], "use": "calibration"}]},
  "submitter": {"name": "...", "contact": "..."},
  "notes": "..."
 }
@@ -138,6 +141,7 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
 | `coverage` | Leave it out if you cover every scored unit. With `{"subset": "<reason>"}` the scorer accepts missing units, scores only the covered ones, and the board marks the entry `[partial: n/N units]` |
 | `guarantee` | As v0.1. Safe WPM is certified only for `crc` or `ltt` with `alpha` |
 | `target` | `emg2qwerty` only: `raw_keys` (default) or `intended_text` (see the text space above). Leave it out on every other track |
+| `training_data` | `"none"`, or the data that the decoder, its tuning and its calibration used. See [Train / test overlap check](#train--test-overlap-check-p6-10). Without it the card says `overlap: not checked` and the board marks the entry `[overlap not checked]` |
 
 ## What the scorer checks
 
@@ -146,6 +150,7 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
 3. Every scored unit has an output, unless `coverage.subset` is declared.
 4. The truth matches the split: for every truth row, the id hash, the fingerprint and the group hash must equal the split entry. A changed or other dataset version is refused.
 5. The controls: present, complete (same units as the real run), and passing.
+6. The train / test overlap (P6-10): the declared `training_data` against the scored units. `check` compares unit ids and partitions. `score` also compares the text. An overlap gives a warning. It does not change a number or the status.
 
 ## The score card
 
@@ -161,6 +166,7 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
 | Controls | `shuffled` and `zeros` pass if their top-1 CER is higher than on real input (lower 95 % bound of the paired gap > 0). `null_commit` passes if the commit rate on zeros is at most 5 % |
 | Timing | Measured per unit from the truth where the track has it (speech duration, neural bins, key times). Else the track rate model. The submission cannot set it |
 | Status | `scored` only if all three controls pass; else `scored: controls missing` or `scored: controls failed` |
+| Overlap check | Key `overlap_check`: `status` (`pass`, `overlap` or `not checked`), `passed` (true, false or null), `n_overlapping_units`, `by_kind`, `by_use` and one finding per source and partition. See below |
 
 The card holds no text. Research-only tracks (`spanishbcbl-meg`, `emg2qwerty`) carry a `RESEARCH ONLY` note, and the board marks them.
 
@@ -175,6 +181,78 @@ The card holds no text. Research-only tracks (`spanishbcbl-meg`, `emg2qwerty`) c
 | `kt-semg` | 390.56 keys/min | measured key times of the 172 test bursts |
 | `spanishbcbl-meg` | 152 chars/min | Brain2Qwerty v1 typing rate (v0.1) |
 | `emg2qwerty` | 301.33 keys/min | measured: keys / (first to last key-down time), 15 867 test prompts |
+
+## Train / test overlap check (P6-10)
+
+An entry must not be scored on units that it trained on, tuned on or calibrated on. The scorer checks this from the `training_data` field of `submission.json`. The check is version `overlap-check/1`.
+
+### The declaration
+
+```json
+"training_data": "none"
+```
+
+Use `"none"` only if the decoder, its tuning and its calibration used no data of this dataset.
+
+```json
+"training_data": {
+ "sources": [
+  {"dataset": "b2t25-hdf5", "partitions": ["train"], "use": "train", "exclude": "track-test-matches"},
+  {"dataset": "b2t25-t15", "partitions": ["cal"], "use": "calibration"},
+  {"dataset": "tatoeba-en", "use": "train", "note": "char LM"}
+ ],
+ "unit_ids": {"tune": ["<16-hex unit hash>"]},
+ "text_hashes": {"train": ["<16-hex text hash>"]},
+ "file": "training_data.json"
+}
+```
+
+| Key | Rule |
+|---|---|
+| `sources[].dataset` | The track slug or its dataset id: `partitions` are split names of the track split file (`train`, `val`, `cal`, `test`, `holdout`). `b2t25-hdf5` (track `b2t25-t15` only): the B2T '25 HDF5 neural files, partitions `train`, `val`, `test`, and our M4 halves `val_select`, `val_eval`. Any other name is *external* data |
+| `sources[].use` | `train`, `tune` (model choice, hyper-parameters, checkpoints) or `calibration` (guard, CRC, LTT) |
+| `sources[].exclude` | `b2t25-hdf5` only: `"track-test-matches"` (you left out every HDF5 trial that matches a test unit) or a list of HDF5 trial hashes |
+| `unit_ids` | Unit hashes (the split `h`) per use. Use it for single trials |
+| `text_hashes` | Salted hashes of the normalised sentences per use. Use it for text corpora, for example the text of a language model |
+| `file` | Optional JSON file next to `submission.json` with more `unit_ids` and `text_hashes` (long lists) |
+
+Make the hashes with one command. The input files are local. Never commit them.
+
+```bash
+python -m fidetype.benchmark overlap-hashes <track> --ids my_ids.txt --texts my_sentences.txt --use train --out hashes.json
+```
+
+### What the check compares
+
+| Kind | How | Needs |
+|---|---|---|
+| `id` | Declared unit hashes, and the units of declared partitions, against the scored unit keys | nothing (`check` and `score`) |
+| `possible id` | A declared HDF5 trial matches a test unit, but the match has more than one candidate | the committed map |
+| `text` | The same normalised sentence: declared text hashes against the text hashes of the scored units (from the truth); for `b2t25-hdf5`, the committed map | the truth (`score`) or the map |
+
+A track partition (for example `cal`) is checked by id only. To check its sentences too, add their `text_hashes`.
+
+### The result
+
+| `status` | `passed` | When |
+|---|---|---|
+| `pass` | true | No scored unit is in the declared data. `"none"` also gives `pass` |
+| `overlap` | false | At least one scored unit is in the declared data. The card gets a `WARNING` note. The board marks the entry `[TRAIN/TEST OVERLAP: n/N units]` |
+| `not checked` | null | No `training_data` field, or a source of this dataset does not resolve (an unknown partition). Never `pass` |
+
+External sources (another dataset) do not stop a `pass`. The block lists them under `unchecked`. The check does not change any metric or the status. `score --fail-on-overlap` gives exit code 1 on `overlap`.
+
+Example line of the card text:
+
+```
+  overlap: FAIL, 4/18 units (tune unit_ids id 4)
+```
+
+The B2T '25 HDF5 trials to leave out are in [benchmark tracks](benchmark-tracks.md#train--test-overlap-b2t25-t15-and-the-hdf5-files).
+
+### Committed entries (checked 2026-11-21)
+
+The cards in `benchmark/results/v0.2/` were scored before P6-10, so they have no `overlap_check` block. We ran the check on them with declarations that we wrote from their `decoder.training_data` text ([P6-10 results](../experiments/2026-11-21-p6-10-overlap-check/results.md)). By id, no entry overlaps. By text, the M4-12 and M4-13 entries on `b2t25-t15` overlap: 16 of their 103 scored units have the same sentence as a trial in the HDF5 `train` partition. The cards stay as they are.
 
 > **Our take:** the controls are the part that makes a number believable. A decoder that commits on zero input, or whose CER does not get worse on shuffled input, does not decode the signal. So the exit code is 1 until both controls are there and pass.
 
