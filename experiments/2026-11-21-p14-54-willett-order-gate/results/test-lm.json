@@ -1,0 +1,168 @@
+{
+ "guard": "lm",
+ "config_id": "tcfg-26ae951a20a0cddd",
+ "gates": [
+  {
+   "schema": "fidetype.offer-gate/0.1",
+   "feature": "coherence",
+   "threshold": 0.002820748898623049,
+   "note": "P14-54 val-only selection (tier1)"
+  }
+ ],
+ "information_only": false,
+ "test": {
+  "real": {
+   "n": 80,
+   "commit": 0,
+   "offer": 77,
+   "withhold": 3,
+   "gated_by_offer_gate": 0,
+   "ungated_offer": 77,
+   "ungated_commit": 0,
+   "ungated_matches_record": 80,
+   "decided": 80,
+   "emit": 77
+  },
+  "timeshuf": {
+   "n": 80,
+   "commit": 0,
+   "offer": 1,
+   "withhold": 79,
+   "gated_by_offer_gate": 1,
+   "ungated_offer": 2,
+   "ungated_commit": 0,
+   "ungated_matches_record": 80,
+   "decided": 80,
+   "emit": 1
+  },
+  "zero": {
+   "n": 80,
+   "commit": 0,
+   "offer": 0,
+   "withhold": 80,
+   "gated_by_offer_gate": 0,
+   "ungated_offer": 0,
+   "ungated_commit": 0,
+   "ungated_matches_record": 80,
+   "decided": 80,
+   "emit": 0
+  },
+  "frameshuf": {
+   "n": 80,
+   "commit": 0,
+   "offer": 0,
+   "withhold": 80,
+   "gated_by_offer_gate": 77,
+   "ungated_offer": 77,
+   "ungated_commit": 0,
+   "ungated_matches_record": 80,
+   "decided": 80,
+   "emit": 0
+  },
+  "uniform": {
+   "n": 80,
+   "commit": 0,
+   "offer": 0,
+   "withhold": 80,
+   "gated_by_offer_gate": 0,
+   "ungated_offer": 0,
+   "ungated_commit": 0,
+   "ungated_matches_record": 80,
+   "decided": 5,
+   "emit": 0
+  }
+ },
+ "uniform_fast_path": {
+  "checked": 5,
+  "check_equal": true,
+  "n": 80
+ },
+ "rules": {
+  "R1": {
+   "pass": true,
+   "value": [
+    [
+     "uniform",
+     0,
+     300,
+     true
+    ],
+    [
+     "shuffled",
+     0,
+     300,
+     true
+    ],
+    [
+     "user",
+     0,
+     106,
+     true
+    ]
+   ]
+  },
+  "R2": {
+   "pass": true,
+   "value": {
+    "commits_match_sheet": true,
+    "ltt_commits": 0
+   }
+  },
+  "R3": {
+   "pass": true,
+   "value": "40 / 40 (limit >= 36)"
+  },
+  "R4": {
+   "pass": true,
+   "value": {
+    "timeshuf": "1 / 80",
+    "zero": "0 / 80",
+    "uniform": "0 / 80"
+   }
+  },
+  "R5": {
+   "pass": true,
+   "value": "0 / 80"
+  },
+  "R6": {
+   "pass": true,
+   "value": {
+    "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+    "mode": "warn",
+    "max_ratio": 0.5,
+    "p_max": 0.05,
+    "real": {
+     "n": 80,
+     "n_offer": 77,
+     "offer_rate": 0.9625
+    },
+    "controls": [
+     {
+      "name": "shuffled",
+      "n": 80,
+      "n_offer": 0,
+      "offer_rate": 0.0,
+      "ratio_to_real": 0.0,
+      "allowed_without_test": 4,
+      "p_value": 9.98217e-43,
+      "passed": true
+     }
+    ],
+    "passed": true
+   }
+  },
+  "R7": {
+   "pass": true,
+   "value": {
+    "real": 0,
+    "timeshuf": 0,
+    "zero": 0,
+    "frameshuf": 0,
+    "uniform": 0
+   }
+  }
+ },
+ "all_pass": true,
+ "seconds_recheck": 191.5,
+ "seconds_test": 93.4
+}

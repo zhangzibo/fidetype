@@ -1,0 +1,440 @@
+{
+ "guard": "builtin",
+ "config_id": "tcfg-39aac48688b8bd12",
+ "S_n": 66,
+ "S_real_offers": 66,
+ "selection_seed": 5454,
+ "uniform_fast_path": {
+  "checked": 5,
+  "check_equal": true,
+  "n": 300
+ },
+ "ungated_null_offers": {
+  "uniform": 0,
+  "shuffled": 299,
+  "user": 4
+ },
+ "features_min_median_max": {
+  "coherence": {
+   "real_offers": [
+    0.004183090472992479,
+    0.012496742562163099,
+    0.01816096558175473
+   ],
+   "uniform": [
+    -8.840761726337798e-08,
+    1.8023582470244603e-09,
+    8.054559086367874e-08
+   ],
+   "shuffled": [
+    -0.0006020859508661935,
+    -3.169079050746593e-05,
+    0.002304493097696314
+   ],
+   "user": [
+    0.0013899960131682487,
+    0.002794699773200904,
+    0.00468508185371308
+   ]
+  },
+  "coherence_ratio": {
+   "real_offers": [
+    0.004343578751247135,
+    0.013100496576380127,
+    0.019243534617854108
+   ],
+   "uniform": [
+    -8.663947144382789e-06,
+    1.7663110318810737e-07,
+    7.893469616382376e-06
+   ],
+   "shuffled": [
+    -0.0006368935387698338,
+    -3.336739605275252e-05,
+    0.002423218055451093
+   ],
+   "user": [
+    0.0014309421080742624,
+    0.002905367578202256,
+    0.004867780103928299
+   ]
+  },
+  "nb_coherence": {
+   "real_offers": [
+    0.001292301802873944,
+    0.0056243494380105,
+    0.008507046880048582
+   ],
+   "uniform": [
+    -9.239458878193552e-08,
+    2.424296303635276e-09,
+    7.083661652217133e-08
+   ],
+   "shuffled": [
+    -5.177156686428193e-05,
+    -1.5176436380041204e-05,
+    0.00134911744644544
+   ],
+   "user": [
+    0.00018055862912931835,
+    0.0006240643594962121,
+    0.0015771148946369872
+   ]
+  },
+  "peak": {
+   "real_offers": [
+    0.5722251529803805,
+    0.7285582617851485,
+    0.8240873140869346
+   ],
+   "uniform": [
+    0.011078994515982075,
+    0.011089125385237673,
+    0.011103765740220007
+   ],
+   "shuffled": [
+    0.5722251529803805,
+    0.7266322479344056,
+    0.8240873140869345
+   ],
+   "user": [
+    0.0,
+    0.46335399397876975,
+    0.7057584980563174
+   ]
+  },
+  "neg_entropy": {
+   "real_offers": [
+    -1.436201165337702,
+    -0.8687278426341217,
+    -0.6049777696957797
+   ],
+   "uniform": [
+    -4.584418097732309,
+    -4.584413747547169,
+    -4.584406603423417
+   ],
+   "shuffled": [
+    -1.436201165337702,
+    -0.8662210141968998,
+    -0.6049777696957795
+   ],
+   "user": [
+    -4.584967478670572,
+    -1.666414379147389,
+    -1.1085857965584545
+   ]
+  },
+  "nb_share": {
+   "real_offers": [
+    0.0048520135856380394,
+    0.01641220287383078,
+    0.02278410669630453
+   ],
+   "uniform": [
+    0.982373678025852,
+    0.9897189896146426,
+    0.9952996474735605
+   ],
+   "shuffled": [
+    0.0048520135856380394,
+    0.016387602422515142,
+    0.02278410669630453
+   ],
+   "user": [
+    0.0,
+    0.0031532410997883076,
+    0.007050528789659225
+   ]
+  }
+ },
+ "tier1": {
+  "coherence": {
+   "threshold": 0.004183090472992479,
+   "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+   "mode": "warn",
+   "max_ratio": 0.5,
+   "p_max": 0.05,
+   "real": {
+    "n": 66,
+    "n_offer": 66,
+    "offer_rate": 1.0
+   },
+   "controls": [
+    {
+     "name": "uniform",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 1.81322e-74,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 1.81322e-74,
+     "passed": true
+    },
+    {
+     "name": "user",
+     "n": 66,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 3,
+     "p_value": 2.64978e-39,
+     "passed": true
+    }
+   ],
+   "passed": true,
+   "largest_null_rate": 0.0
+  },
+  "coherence_ratio": {
+   "threshold": 0.004343578751247135,
+   "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+   "mode": "warn",
+   "max_ratio": 0.5,
+   "p_max": 0.05,
+   "real": {
+    "n": 66,
+    "n_offer": 66,
+    "offer_rate": 1.0
+   },
+   "controls": [
+    {
+     "name": "uniform",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 1.81322e-74,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 1.81322e-74,
+     "passed": true
+    },
+    {
+     "name": "user",
+     "n": 66,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 3,
+     "p_value": 2.64978e-39,
+     "passed": true
+    }
+   ],
+   "passed": true,
+   "largest_null_rate": 0.0
+  },
+  "nb_coherence": {
+   "threshold": 0.001292301802873944,
+   "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+   "mode": "warn",
+   "max_ratio": 0.5,
+   "p_max": 0.05,
+   "real": {
+    "n": 66,
+    "n_offer": 66,
+    "offer_rate": 1.0
+   },
+   "controls": [
+    {
+     "name": "uniform",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 1.81322e-74,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "n": 300,
+     "n_offer": 1,
+     "offer_rate": 0.003333,
+     "ratio_to_real": 0.003333,
+     "allowed_without_test": 15,
+     "p_value": 1.21486e-72,
+     "passed": true
+    },
+    {
+     "name": "user",
+     "n": 66,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 3,
+     "p_value": 2.64978e-39,
+     "passed": true
+    }
+   ],
+   "passed": true,
+   "largest_null_rate": 0.003333
+  },
+  "peak": {
+   "threshold": 0.5722251529803805,
+   "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+   "mode": "warn",
+   "max_ratio": 0.5,
+   "p_max": 0.05,
+   "real": {
+    "n": 66,
+    "n_offer": 66,
+    "offer_rate": 1.0
+   },
+   "controls": [
+    {
+     "name": "uniform",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 1.81322e-74,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "n": 300,
+     "n_offer": 299,
+     "offer_rate": 0.996667,
+     "ratio_to_real": 0.996667,
+     "allowed_without_test": 15,
+     "p_value": 0.819672,
+     "passed": false
+    },
+    {
+     "name": "user",
+     "n": 66,
+     "n_offer": 2,
+     "offer_rate": 0.030303,
+     "ratio_to_real": 0.030303,
+     "allowed_without_test": 3,
+     "p_value": 6.0362e-36,
+     "passed": true
+    }
+   ],
+   "passed": false,
+   "largest_null_rate": 0.996667
+  },
+  "neg_entropy": {
+   "threshold": -1.436201165337702,
+   "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+   "mode": "warn",
+   "max_ratio": 0.5,
+   "p_max": 0.05,
+   "real": {
+    "n": 66,
+    "n_offer": 66,
+    "offer_rate": 1.0
+   },
+   "controls": [
+    {
+     "name": "uniform",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 1.81322e-74,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "n": 300,
+     "n_offer": 299,
+     "offer_rate": 0.996667,
+     "ratio_to_real": 0.996667,
+     "allowed_without_test": 15,
+     "p_value": 0.819672,
+     "passed": false
+    },
+    {
+     "name": "user",
+     "n": 66,
+     "n_offer": 2,
+     "offer_rate": 0.030303,
+     "ratio_to_real": 0.030303,
+     "allowed_without_test": 3,
+     "p_value": 6.0362e-36,
+     "passed": true
+    }
+   ],
+   "passed": false,
+   "largest_null_rate": 0.996667
+  },
+  "nb_share": {
+   "threshold": 0.0048520135856380394,
+   "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+   "mode": "warn",
+   "max_ratio": 0.5,
+   "p_max": 0.05,
+   "real": {
+    "n": 66,
+    "n_offer": 66,
+    "offer_rate": 1.0
+   },
+   "controls": [
+    {
+     "name": "uniform",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 1.81322e-74,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "n": 300,
+     "n_offer": 299,
+     "offer_rate": 0.996667,
+     "ratio_to_real": 0.996667,
+     "allowed_without_test": 15,
+     "p_value": 0.819672,
+     "passed": false
+    },
+    {
+     "name": "user",
+     "n": 66,
+     "n_offer": 3,
+     "offer_rate": 0.045455,
+     "ratio_to_real": 0.045455,
+     "allowed_without_test": 3,
+     "p_value": 1.38833e-34,
+     "passed": true
+    }
+   ],
+   "passed": false,
+   "largest_null_rate": 0.996667
+  }
+ },
+ "chosen": {
+  "tier": "tier1",
+  "gates": [
+   [
+    "coherence",
+    0.004183090472992479
+   ]
+  ],
+  "information_only": false
+ },
+ "seconds": 5218.5
+}

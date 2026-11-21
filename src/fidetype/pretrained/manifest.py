@@ -173,12 +173,15 @@ class Manifest:
             lines.append(f"  limit:    {lim}")
         if self.trust:
             lines.append(f"  trust:    {self.trust.get('config')} (decode: {self.trust.get('decode')})")
-            g = self.trust.get("offer_gate")
-            if isinstance(g, Mapping):
-                lines.append(f"  offer gate: withhold an offer if {g.get('feature')} < {g.get('threshold'):.6g} "
-                             "(P5-33; on by default, guard(offer_gate=False) switches it off; commits unchanged)")
         else:
             lines.append("  trust:    no committed trust config")
+        for key, t in _trust_blocks(r):
+            g = t.get("offer_gate")
+            if isinstance(g, Mapping):
+                where = "" if key == "default" else f" (readout {key})"
+                lines.append(f"  offer gate{where}: withhold an offer if {g.get('feature')} < "
+                             f"{g.get('threshold'):.6g} (P5-33; on by default, guard(offer_gate=False) switches it "
+                             "off; commits unchanged)")
         for key, oc in self.offer_controls.items():
             where = "" if key == "default" else f" (readout {key})"
             parts = [f"{c.get('label') or c['name']} {c['n_offer']}/{c['n']} {'pass' if c['passed'] else 'FAIL'}"
@@ -190,6 +193,20 @@ class Manifest:
         if r.get("status_note"):
             lines.append(f"  note:     {r['status_note']}")
         return "\n".join(lines)
+
+
+def _trust_blocks(doc: Mapping[str, Any]) -> list[tuple[str, Mapping[str, Any]]]:
+    """``("default", trust)`` and ``("<readout>", readouts.<readout>.trust)`` of a manifest document."""
+    out: list[tuple[str, Mapping[str, Any]]] = []
+    t = doc.get("trust")
+    if isinstance(t, Mapping):
+        out.append(("default", t))
+    ro = doc.get("readouts")
+    if isinstance(ro, Mapping):
+        for k, v in ro.items():
+            if isinstance(v, Mapping) and isinstance(v.get("trust"), Mapping):
+                out.append((str(k), v["trust"]))
+    return out
 
 
 def _offer_blocks(doc: Mapping[str, Any]) -> list[tuple[str, Any]]:
@@ -294,14 +311,15 @@ def parse_manifest(doc: Mapping[str, Any], where: str = "<manifest>") -> Manifes
     needed = bool(combine([source_summary(spdx)])["research_only"])
     if needed and not ro:
         raise ManifestError(f"{where}: data licence {spdx} needs data.research_only = true")
-    tr = doc.get("trust")
-    if isinstance(tr, Mapping) and "offer_gate" in tr:
-        from fidetype.trust.offer_gate import OfferGate
+    for key, tr in _trust_blocks(doc):
+        if "offer_gate" in tr:
+            from fidetype.trust.offer_gate import OfferGate
 
-        try:
-            OfferGate.from_dict(tr["offer_gate"])
-        except (KeyError, TypeError, ValueError) as e:
-            raise ManifestError(f"{where}: trust.offer_gate: {e}") from None
+            try:
+                OfferGate.from_dict(tr["offer_gate"])
+            except (KeyError, TypeError, ValueError) as e:
+                block = "trust" if key == "default" else f"readouts.{key}.trust"
+                raise ManifestError(f"{where}: {block}.offer_gate: {e}") from None
     for key, oc in _offer_blocks(doc):
         _check_offer_control(oc, f"{where}: {'trust' if key == 'default' else 'readouts.' + key + '.trust'}"
                                  f".offer_control")

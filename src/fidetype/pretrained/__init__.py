@@ -655,10 +655,16 @@ class XBodyCtcDecoder(PretrainedDecoder):
 
         return readout_for(self, gate)
 
-    def guard(self, decode_fn: Callable[..., Any] | None = None, readout: str = "greedy", **kwargs: Any) -> Any:
-        """The committed trust config. ``readout="lm"``: the guard calibrated on the LM readout (P14-48)."""
+    def guard(self, decode_fn: Callable[..., Any] | None = None, readout: str = "greedy", *,
+              offer_gate: Any = None, **kwargs: Any) -> Any:
+        """The committed trust config. ``readout="lm"``: the guard calibrated on the LM readout (P14-48).
+
+        ``offer_gate`` (P5-33 / P14-54): None (default) uses the manifest gate of that readout's trust block
+        (``trust.offer_gate`` or ``readouts.lm.trust.offer_gate``); ``False`` switches it off; an
+        :class:`~fidetype.trust.OfferGate` replaces it. Commits and ``config_id`` do not change.
+        """
         if readout == "greedy":
-            return super().guard(decode_fn=decode_fn, **kwargs)
+            return super().guard(decode_fn=decode_fn, offer_gate=offer_gate, **kwargs)
         if readout != "lm":
             raise ValueError(f"{self.name}: readout must be 'greedy' or 'lm', got {readout!r}")
         import fidetype.trust as ft
@@ -666,8 +672,12 @@ class XBodyCtcDecoder(PretrainedDecoder):
         t = ((self.manifest.raw.get("readouts") or {}).get("lm") or {}).get("trust")
         if not t:
             raise NoTrustConfig(f"{self.name}: no trust config for the LM readout")
+        if offer_gate is None and t.get("offer_gate"):
+            from fidetype.trust.offer_gate import OfferGate
+
+            offer_gate = OfferGate.from_dict(t["offer_gate"])
         return ft.load(self.files[str(t["config"]).removeprefix("file:")],
-                       decode_fn=decode_fn or self.lm_readout().decode_fn(), **kwargs)
+                       decode_fn=decode_fn or self.lm_readout().decode_fn(), offer_gate=offer_gate, **kwargs)
 
 
 class KeyLdaDecoder(PretrainedDecoder):

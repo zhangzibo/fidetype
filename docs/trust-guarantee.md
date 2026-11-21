@@ -125,6 +125,8 @@ guard.set_offer_gate(OfferGate("coherence", 0.187))   # or ft.load(path, offer_g
 
 Packaged guards: `t15-m4-13` has the gate `coherence >= 0.187` in its manifest (`trust.offer_gate`). It is on by default, and `model.guard(offer_gate=False)` switches it off. With the gate, the guard passes the offer null control (uniform 0 / 300, frame-shuffled 0 / 300, real 212 / 271). The 54 LTT commits do not change. Results: [P5-33](../experiments/2026-11-21-p5-33-withhold/results.md).
 
+Both `willett-hw` guards have the gate too (P14-54): `coherence >= 0.00418` in `trust.offer_gate` (built-in readout) and `coherence >= 0.00282` in `readouts.lm.trust.offer_gate` (LM readout). With the gate, both pass the offer null control (uniform, frame-shuffled and time-shuffled input 0 offers each; real 40 / 40); without it, they offered on 297 / 300 and 289 / 300 frame-shuffled inputs. The thresholds differ because the built-in guard applies its frame temperature (1.49) before the feature is computed. Results: [P14-54](../experiments/2026-11-21-p14-54-willett-order-gate/results.md).
+
 ## 6. Reading the sheet
 
 | Line | Meaning | Look for |
