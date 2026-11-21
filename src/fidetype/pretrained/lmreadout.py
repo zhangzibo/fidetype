@@ -21,7 +21,10 @@ Score of a key prefix::
 The no-signal gate (:class:`NoSignalGate`, the P11-12 design) reads only the acoustic output: the number
 of greedy CTC emissions and their rate per second. On flat or empty frames the LM and the length bonus
 alone decide the beam (P15-25: uniform frames give one token per frame), so the gate runs first and an
-input that fails it gives no text.
+input that fails it gives no text. P14-49 adds :class:`ScoreGate`: a gate on one posterior feature (the share
+of non-blank frames, the peak probability of the emissions, the entropy of the non-blank frames, the LM text
+length per emission) or on a small logistic score of these features; :func:`gate_from_dict` reads either kind
+from a manifest.
 
 :class:`LmReadout` joins the two: ``text(log_probs)``, ``nbest(log_probs)`` and ``decode_fn()`` (the user
 decoder form of :func:`fidetype.trust.calibrate`).
@@ -380,12 +383,185 @@ class NoSignalGate:
         return cls(int(ks[m]), float(rs[m]), float(r_max_factor * rs[-1]), float(frame_s), int(blank))
 
 
+# --- score gates (P14-49) ----------------------------------------------------------------------------------
+
+#: Features of :func:`posterior_features` that a :class:`ScoreGate` can read (higher = more like real input).
+SCORE_FEATURES = ("nb_share", "peak", "neg_entropy", "lm_ratio", "logit")
+#: Inputs of the learned score (``feature = "logit"``), in this order.
+LOGIT_INPUTS = ("peak", "neg_entropy", "nb_share", "kps", "log_n_keys")
+
+
+def posterior_features(lp: np.ndarray, frame_s: float, blank: int = 0) -> dict[str, float]:
+    """Posterior features of one input (natural-log frame probabilities, T x V).
+
+    - ``n_keys``, ``kps``: as :func:`gate_features`;
+    - ``nb_share``: the share of frames whose argmax is not blank;
+    - ``peak``: the mean, over the greedy emissions, of the largest probability of the emitted token in its run
+      (0.0 when there is no emission);
+    - ``neg_entropy``: minus the mean entropy (nats) of the frames whose argmax is not blank
+      (``-log V`` when there is no such frame);
+    - ``log_n_keys``: ``log(1 + n_keys)``.
+    """
+    x = np.asarray(lp, np.float64)
+    T, V = x.shape
+    a = x.argmax(1) if T else np.zeros(0, np.int64)
+    nb = a != blank
+    n_keys = 0
+    peaks: list[float] = []
+    if T:
+        start = np.concatenate([[True], a[1:] != a[:-1]])
+        idx = np.nonzero(start)[0]
+        ends = np.concatenate([idx[1:], [T]])
+        for s, e in zip(idx.tolist(), ends.tolist()):
+            tok = int(a[s])
+            if tok == blank:
+                continue
+            n_keys += 1
+            peaks.append(float(np.exp(x[s:e, tok].max())))
+    if nb.any():
+        xn = x[nb]
+        p = np.exp(xn)
+        ent = float(np.mean(-(p * np.where(p > 0, xn, 0.0)).sum(1)))
+    else:
+        ent = math.log(V)
+    return {"n_keys": float(n_keys), "kps": (n_keys / (frame_s * T) if T else 0.0),
+            "nb_share": float(nb.mean()) if T else 0.0, "peak": float(np.mean(peaks)) if peaks else 0.0,
+            "neg_entropy": -ent, "log_n_keys": math.log1p(n_keys)}
+
+
+@dataclass(frozen=True)
+class ScoreGate:
+    """Pass iff ``n_keys >= k_min``, ``kps <= r_max`` and ``lo <= score <= hi`` (P14-49).
+
+    ``feature``: one of :data:`SCORE_FEATURES`. ``lm_ratio`` = the number of tokens of the ungated LM top-1
+    divided by ``max(1, n_keys)`` (it needs the LM search: :attr:`needs_lm`). ``logit`` = a logistic score
+    ``intercept + coef . (z - mean) / scale`` over :data:`LOGIT_INPUTS`.
+    """
+
+    feature: str
+    lo: float
+    hi: float
+    k_min: int
+    r_max: float
+    frame_s: float
+    blank: int = 0
+    mean: tuple[float, ...] = ()
+    scale: tuple[float, ...] = ()
+    coef: tuple[float, ...] = ()
+    intercept: float = 0.0
+
+    @property
+    def needs_lm(self) -> bool:
+        return self.feature == "lm_ratio"
+
+    def score(self, lp: np.ndarray, lm_tokens: int | None = None) -> float:
+        f = posterior_features(lp, self.frame_s, self.blank)
+        if self.feature == "lm_ratio":
+            if lm_tokens is None:
+                raise ValueError("the lm_ratio gate needs the token count of the LM top-1 (lm_tokens=)")
+            return float(lm_tokens) / max(1.0, f["n_keys"])
+        if self.feature == "logit":
+            z = np.array([f[k] for k in LOGIT_INPUTS])
+            return float(self.intercept + np.dot(self.coef, (z - np.array(self.mean)) / np.array(self.scale)))
+        return float(f[self.feature])
+
+    def passes(self, lp: np.ndarray, lm_tokens: int | None = None) -> bool:
+        n, r = gate_features(lp, self.frame_s, self.blank)
+        if n < self.k_min or r > self.r_max:
+            return False
+        s = self.score(lp, lm_tokens)
+        return bool(self.lo <= s <= self.hi)
+
+    def to_dict(self) -> dict[str, Any]:
+        d: dict[str, Any] = {"kind": "score", "feature": self.feature, "lo": float(self.lo),
+                             "hi": (float(self.hi) if math.isfinite(self.hi) else None), "k_min": int(self.k_min),
+                             "r_max": float(self.r_max), "frame_s": float(self.frame_s), "blank": int(self.blank)}
+        if self.feature == "logit":
+            d.update(inputs=list(LOGIT_INPUTS), mean=[float(v) for v in self.mean],
+                     scale=[float(v) for v in self.scale], coef=[float(v) for v in self.coef],
+                     intercept=float(self.intercept))
+        return d
+
+    @classmethod
+    def from_dict(cls, d: Mapping[str, Any]) -> "ScoreGate":
+        if d.get("feature") not in SCORE_FEATURES:
+            raise ValueError(f"unknown gate feature {d.get('feature')!r} (known: {SCORE_FEATURES})")
+        if d.get("feature") == "logit" and list(d.get("inputs", LOGIT_INPUTS)) != list(LOGIT_INPUTS):
+            raise ValueError(f"logit gate inputs {d.get('inputs')} differ from {LOGIT_INPUTS}")
+        hi = d.get("hi")
+        return cls(str(d["feature"]), float(d["lo"]), math.inf if hi is None else float(hi), int(d["k_min"]),
+                   float(d["r_max"]), float(d["frame_s"]), int(d.get("blank", 0)),
+                   tuple(float(v) for v in d.get("mean", ())), tuple(float(v) for v in d.get("scale", ())),
+                   tuple(float(v) for v in d.get("coef", ())), float(d.get("intercept", 0.0)))
+
+    @classmethod
+    def fit(cls, feature: str, real: Sequence[np.ndarray], frame_s: float, blank: int = 0,
+            null: Sequence[np.ndarray] = (), real_lm_tokens: Sequence[int] | None = None, tail: float = 0.01,
+            r_max_factor: float = 2.0, ridge: float = 1.0) -> "ScoreGate":
+        """The P14-49 fit rule (real calibration inputs; ``null`` only for ``logit``).
+
+        With ``m = floor(tail * n)``: ``k_min`` = 1; ``r_max`` = ``r_max_factor`` x the largest real ``kps``;
+        ``lo`` = the (m + 1)-th smallest real score; ``hi`` = the (m + 1)-th largest real score for
+        ``lm_ratio`` (a two-sided band), else no upper bound. ``logit``: an L2 logistic regression
+        (``ridge`` on the coefficients, Newton steps) of real (1) against ``null`` (0) on the standardised
+        :data:`LOGIT_INPUTS`, fitted before ``lo`` is set.
+        """
+        if feature not in SCORE_FEATURES:
+            raise ValueError(f"unknown gate feature {feature!r}")
+        if not real:
+            raise ValueError("the gate needs at least one real fit input")
+        fr = [posterior_features(x, frame_s, blank) for x in real]
+        m = int(math.floor(tail * len(fr) + 1e-9))
+        r_max = float(r_max_factor * max(f["kps"] for f in fr))
+        mean: tuple[float, ...] = ()
+        scale: tuple[float, ...] = ()
+        coef: tuple[float, ...] = ()
+        icpt = 0.0
+        if feature == "logit":
+            fn = [posterior_features(x, frame_s, blank) for x in null]
+            if not fn:
+                raise ValueError("the logit gate needs null fit inputs")
+            Z = np.array([[f[k] for k in LOGIT_INPUTS] for f in fr + fn])
+            y = np.concatenate([np.ones(len(fr)), np.zeros(len(fn))])
+            mu, sd = Z.mean(0), Z.std(0)
+            sd = np.where(sd > 1e-12, sd, 1.0)
+            X = np.column_stack([np.ones(len(Z)), (Z - mu) / sd])
+            w = np.zeros(X.shape[1])
+            pen = np.full(X.shape[1], float(ridge))
+            pen[0] = 0.0
+            for _ in range(100):
+                p = 1.0 / (1.0 + np.exp(-(X @ w)))
+                g = X.T @ (p - y) + pen * w
+                H = (X * (p * (1 - p))[:, None]).T @ X + np.diag(pen) + 1e-9 * np.eye(len(w))
+                step = np.linalg.solve(H, g)
+                w = w - step
+                if float(np.abs(step).max()) < 1e-10:
+                    break
+            mean, scale, coef, icpt = tuple(mu.tolist()), tuple(sd.tolist()), tuple(w[1:].tolist()), float(w[0])
+        g0 = cls(feature, -math.inf, math.inf, 1, r_max, float(frame_s), int(blank), mean, scale, coef, icpt)
+        toks = list(real_lm_tokens) if real_lm_tokens is not None else [None] * len(real)
+        sc = sorted(g0.score(x, t) for x, t in zip(real, toks))
+        hi = sc[-1 - m] if feature == "lm_ratio" else math.inf
+        return cls(feature, float(sc[m]), float(hi), 1, r_max, float(frame_s), int(blank), mean, scale, coef, icpt)
+
+
+def gate_from_dict(d: Mapping[str, Any]) -> "NoSignalGate | ScoreGate":
+    """A gate of a manifest block: ``kind: "score"`` -> :class:`ScoreGate`; no kind or ``"count"`` -> :class:`NoSignalGate`."""
+    kind = d.get("kind", "count")
+    if kind == "score":
+        return ScoreGate.from_dict(d)
+    if kind == "count":
+        return NoSignalGate.from_dict(d)
+    raise ValueError(f"unknown gate kind {kind!r}")
+
+
 class LmReadout:
     """Gated LM readout: the gate, then :class:`LMBeam` on the same log-probs.
 
     ``vocab``: the token of each column. ``lm``: a :class:`fidetype.lm.ngram.CharNgramLM` (or ``None``).
     ``settings``: ``lm_weight``, ``bonus``, ``beam``, ``prune_logp`` (optional ``n_best``; no lexicon).
-    ``gate``: a :class:`NoSignalGate`, or ``None`` for no gate.
+    ``gate``: a :class:`NoSignalGate` or a :class:`ScoreGate`, or ``None`` for no gate. A gate with
+    ``needs_lm`` (``lm_ratio``) reads the ungated search first.
     """
 
     def __init__(self, vocab: Sequence[str], lm: Any, settings: Mapping[str, Any], gate: NoSignalGate | None,
@@ -402,17 +578,33 @@ class LmReadout:
                       bonus=float(s.get("bonus", 0.0)), beam=int(s.get("beam", 8)),
                       prune_logp=float(s.get("prune_logp", -8.0)), lexicon=None, lam=0.0)
 
-    def gated(self, log_probs: np.ndarray) -> bool:
-        """True when the gate stops this input (no text)."""
-        return self.gate is not None and not self.gate.passes(np.asarray(log_probs))
+    def _needs_lm(self) -> bool:
+        return bool(getattr(self.gate, "needs_lm", False))
 
-    def hyps(self, log_probs: np.ndarray, n: int | None = None, use_gate: bool = True) -> list[Hyp]:
-        lp = np.asarray(log_probs, np.float64)
-        if use_gate and self.gated(lp):
-            return []
+    def _search(self, lp: np.ndarray, n: int | None) -> list[Hyp]:
         d = self._beam()
         d.push(lp)
         return d.nbest(n)
+
+    def gated(self, log_probs: np.ndarray) -> bool:
+        """True when the gate stops this input (no text)."""
+        if self.gate is None:
+            return False
+        lp = np.asarray(log_probs, np.float64)
+        if self._needs_lm():
+            hs = self._search(lp, 1)
+            return not self.gate.passes(lp, lm_tokens=len(hs[0].tokens) if hs else 0)
+        return not self.gate.passes(lp)
+
+    def hyps(self, log_probs: np.ndarray, n: int | None = None, use_gate: bool = True) -> list[Hyp]:
+        lp = np.asarray(log_probs, np.float64)
+        if use_gate and self.gate is not None and self._needs_lm():
+            hs = self._search(lp, n)
+            top = len(hs[0].tokens) if hs else 0
+            return hs if self.gate.passes(lp, lm_tokens=top) else []
+        if use_gate and self.gated(lp):
+            return []
+        return self._search(lp, n)
 
     def tokens_text(self, tokens: Sequence[int]) -> str:
         return "".join(self.vocab[t] for t in tokens)
@@ -451,7 +643,7 @@ class LmReadout:
 def readout_for(model: Any, gate: Any = None) -> LmReadout:
     """The packaged LM readout of a pretrained character model (manifest block ``readouts.lm``).
 
-    ``gate``: ``None`` = the gate of the manifest; a :class:`NoSignalGate` = this gate; ``False`` = no
+    ``gate``: ``None`` = the gate of the manifest; a :class:`NoSignalGate` or :class:`ScoreGate` = this gate; ``False`` = no
     gate (research use only: the raw LM readout emits text on flat input). The LM file has the manifest
     role ``text`` and loads from the model folder or ``<cache>/text/`` (local, SHA-256 checked).
     """
@@ -470,7 +662,7 @@ def readout_for(model: Any, gate: Any = None) -> LmReadout:
     if gate is None:
         if not cfg.get("gate"):
             raise PretrainedError(f"{model.name}: the no-signal gate of the LM readout is not fitted yet")
-        gate = NoSignalGate.from_dict(cfg["gate"])
+        gate = gate_from_dict(cfg["gate"])
     elif gate is False:
         gate = None
     from fidetype.pretrained import _xbody

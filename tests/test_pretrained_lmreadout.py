@@ -102,16 +102,19 @@ def test_manifest_lm_readout_block():
     assert cfg["settings"] == {"lm_weight": 0.5, "bonus": 1.0, "beam": 8, "prune_logp": -8.0, "n_best": 8}
     f = next(f for f in m.files if f.name == cfg["lm_file"])
     assert f.role == "text" and f.url is None
-    assert f.sha256 == "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8"
+    assert f.sha256 == "d7f6e829b827d1f7d09f5927eb51ec33fd79df29201d7e722a0878a503059261"  # P14-50: Willett-blocked LM
+    assert cfg["lm_file"] == "eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz"
+    assert [x.name for x in m.files if x.role == "text"] == [cfg["lm_file"]]  # one LM: the default
     assert "CC-BY-2.0-FR" in m.licence["text_files"][cfg["lm_file"]]
-    assert "13 of the 80 test sentences" in cfg["test_overlap"]
+    assert cfg["test_overlap"].startswith("none")
+    assert "research-only emg2qwerty" in m.licence["text_files"][cfg["lm_file"]]
 
 
 WILLETT_DIR = Path(r"C:\Users\zhang\bci-data\pretrained")
 
 
 @pytest.mark.skipif(not (WILLETT_DIR / "willett-hw" / "willett-hw.weights.npz").is_file()
-                    or not (WILLETT_DIR / "text" / "eng_tatoeba_6gram_mkn_noE2Q.npz").is_file(),
+                    or not (WILLETT_DIR / "text" / "eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz").is_file(),
                     reason="willett-hw weights and the LM file are local only (not hosted, P14-02)")
 def test_willett_hw_lm_readout_local():
     m = ftp.load("willett-hw", cache_dir=WILLETT_DIR)
@@ -131,3 +134,71 @@ def test_willett_hw_lm_readout_local():
         assert guard.decide(np.full((150, 98), -np.log(98.0))).action == "withhold"  # gated: empty n-best
     with pytest.raises(ValueError):
         m.text(m._stream(flat.astype(np.float32), "flat"), readout="other")
+
+
+# --- P14-49: score gates ----------------------------------------------------------------------------------
+
+def _emit(T: int, n: int, peak: float, V: int = 5) -> np.ndarray:
+    lp = np.full((T, V), -8.0)
+    lp[:, 0] = 0.0
+    for j in range(n):
+        t = 10 + 15 * j
+        lp[t, 0], lp[t, 1 + j % (V - 1)] = np.log(1 - peak), np.log(peak)
+    return lp - np.log(np.exp(lp).sum(1, keepdims=True))
+
+
+def test_posterior_features():
+    x = _emit(400, 10, 0.9)
+    f = LR.posterior_features(x, 0.01)
+    assert f["n_keys"] == 10 and abs(f["kps"] - 2.5) < 1e-12 and abs(f["nb_share"] - 10 / 400) < 1e-12
+    assert abs(f["peak"] - 0.9) < 1e-3 and f["neg_entropy"] < 0 and abs(f["log_n_keys"] - np.log(11)) < 1e-12
+    blank = np.zeros((50, 5)) - 20.0
+    blank[:, 0] = 0.0
+    fb = LR.posterior_features(blank, 0.01)
+    assert fb["n_keys"] == 0 and fb["peak"] == 0.0 and fb["neg_entropy"] == -np.log(5)
+
+
+@pytest.mark.parametrize("feature", ["nb_share", "peak", "neg_entropy", "logit"])
+def test_score_gate_fit_rule_round_trip(feature):
+    real = [_emit(400, n, 0.9) for n in (10, 12, 14, 20)]
+    null = [_emit(400, n, 0.55) for n in (10, 12, 14, 20)]
+    g = LR.ScoreGate.fit(feature, real, 0.01, null=null)
+    assert g.k_min == 1 and g.r_max == 2 * 20 / 4.0 and g.hi == np.inf
+    assert g.lo == min(g.score(x) for x in real)  # floor(0.01 x 4) = 0: the smallest real score
+    assert all(g.passes(x) for x in real)
+    if feature != "nb_share":  # the same counts: only the confidence features see the weak peaks
+        assert not any(g.passes(x) for x in null)
+    blank = np.full((400, 5), -20.0)
+    blank[:, 0] = 0.0
+    assert not g.passes(blank)  # no emission
+    assert not g.passes(np.random.default_rng(0).standard_normal((400, 5)))  # too fast
+    d = json.loads(json.dumps(g.to_dict()))
+    assert d["kind"] == "score" and LR.gate_from_dict(d) == g
+
+
+def test_lm_ratio_gate_in_the_readout():
+    lm = _lm()
+    s = {"lm_weight": 0.5, "bonus": 1.0, "beam": 8, "prune_logp": -8.0, "n_best": 8}
+    lp = _lp(np.random.default_rng(3), 200)
+    raw = LR.LmReadout(VOCAB, lm, s, None)
+    nt = len(raw.hyps(lp, 1)[0].tokens)
+    n = LR.gate_features(lp, 0.01)[0]
+    g = LR.ScoreGate.fit("lm_ratio", [lp], 0.01, real_lm_tokens=[nt])
+    assert g.needs_lm and g.lo == g.hi == nt / max(1, n)
+    r = LR.LmReadout(VOCAB, lm, s, g)
+    assert not r.gated(lp) and r.text(lp) == raw.text(lp)
+    narrow = LR.ScoreGate(**{**g.__dict__, "lo": g.lo + 1.0, "hi": g.lo + 2.0})
+    r2 = LR.LmReadout(VOCAB, lm, s, narrow)
+    assert r2.gated(lp) and r2.text(lp) == "" and r2.nbest(lp) == []
+    with pytest.raises(ValueError):
+        g.passes(lp)  # lm_ratio needs the LM token count
+
+
+def test_gate_from_dict_kinds():
+    c = {"k_min": 7, "r_min": 0.4, "r_max": 2.8, "frame_s": 0.01, "blank": 0}
+    assert isinstance(LR.gate_from_dict(c), LR.NoSignalGate)
+    assert isinstance(LR.gate_from_dict({**c, "kind": "count"}), LR.NoSignalGate)
+    with pytest.raises(ValueError):
+        LR.gate_from_dict({**c, "kind": "other"})
+    with pytest.raises(ValueError):
+        LR.ScoreGate.from_dict({"feature": "nope", "lo": 0, "hi": None, "k_min": 1, "r_max": 1, "frame_s": 0.01})
