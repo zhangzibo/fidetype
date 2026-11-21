@@ -50,10 +50,10 @@ def test_toy_model_loads_decodes_and_checks_files(tmp_path):
     w.write_bytes(bytes(b))
     with pytest.raises(ftp.WeightsMismatch):
         ftp.load(str(path), weights=tmp_path)
-    t = ftp.toy_model(tmp_path / "t2")
+    t = ftp.toy_model(folder=tmp_path / "t2")
     assert t.name == "toy-gru" and t.sessions == ("toy.2026.01.01", "toy.2026.01.02")
     with pytest.raises(ValueError, match="toy runtimes"):
-        ftp.make_toy_manifest(tmp_path, runtime="key-lda")
+        ftp.make_toy_manifest(tmp_path, runtime="no-such-runtime")
 
 
 def _hdf5(folder: Path, n: int, n_in: int = 16) -> Path:
@@ -70,7 +70,7 @@ def _hdf5(folder: Path, n: int, n_in: int = 16) -> Path:
 
 
 def test_n_items_and_clear_index_error(tmp_path):
-    m = ftp.toy_model(tmp_path / "m", sessions=["toy.2026.01.01"])
+    m = ftp.toy_model(folder=tmp_path / "m", sessions=["toy.2026.01.01"])
     p = _hdf5(tmp_path / "toy.2026.01.01", 3)
     assert m.n_items(p) == 3 == R.count_items("b2t25-hdf5", p)
     assert len(m.decode_file(p, indices=[0, 2, -1])) == 3  # -n .. n-1 stays valid
@@ -83,7 +83,7 @@ def test_n_items_and_clear_index_error(tmp_path):
 
 
 def test_decode_path_is_deprecated_but_unchanged(tmp_path):
-    m = ftp.toy_model(tmp_path / "m", sessions=["toy.2026.01.01"])
+    m = ftp.toy_model(folder=tmp_path / "m", sessions=["toy.2026.01.01"])
     p = _hdf5(tmp_path / "toy.2026.01.01", 2)
     with pytest.warns(DeprecationWarning, match="decode_file"):
         old = m.decode(str(p))
@@ -133,7 +133,7 @@ def test_one_guard_entry_point_per_model(tmp_path):
     assert g.audit_log[-1]["utterance_id"] == "u0"
     c = m.decide(st)  # default guard: built once, then kept
     assert m.decide(st).action == c.action and m._default_guard is not None
-    toy = ftp.toy_model(tmp_path / "toy")
+    toy = ftp.toy_model(folder=tmp_path / "toy")
     s2 = toy.decode(np.zeros((30, 16), np.float32), session=0)
     assert toy.guard_input(s2) is s2.log_probs  # score-matrix models
 

@@ -13,7 +13,7 @@ r = m.decide(streams[0])                          # the committed trust guard of
 print(r.action, r.text or r.choices[:1])          # commit / offer / withhold
 ```
 
-No weights yet? `ftp.toy_model()` gives a tiny random model with the same runtime as `t15-m4-13` (see [toy model](#try-the-api-without-weights-the-toy-model)).
+No weights yet? `ftp.toy_model(runtime)` gives a tiny random model with the runtime of a real model (`gru-ctc` by default, the runtime of `t15-m4-13`; see [toy model](#try-the-api-without-weights-the-toy-model)).
 
 Code: [`src/fidetype/pretrained/`](../src/fidetype/pretrained/__init__.py). Roadmap task P14-01. The weights are **not** in the package and **not** in the git repository. Hosting is a separate user step (P14-02, [publishing checklist section J](publishing-checklist.md#j-pretrained-weights-optional-45-min-roadmap-p14-02)).
 
@@ -170,26 +170,41 @@ Full reruns of the model-card metrics ([results](../experiments/2026-11-19-p14-0
 
 ## Try the API without weights: the toy model
 
-The release weights are not hosted yet (P14-02). To learn the API, use a toy model:
+The release weights are not hosted yet (P14-02). To learn the API, use a toy model. There is one toy model for each runtime (P14-51):
 
 ```python
 import numpy as np
 import fidetype.pretrained as ftp
 
-toy = ftp.toy_model()                                   # files in a new temporary folder
+toy = ftp.toy_model()                                   # gru-ctc; files in a new temporary folder
 st = toy.decode(np.zeros((200, 16), np.float32), session=toy.sessions[0])
 print(st.log_probs.shape, toy.text(st))                 # (99, 41), noise
 
-path = ftp.make_toy_manifest("my-folder")               # or write the files yourself ...
-m = ftp.load(str(path), weights="my-folder")            # ... and load them as any model
+hw = ftp.toy_model("xbody-ctc")                         # the runtime of willett-hw
+st = hw.decode(np.zeros((150, 192), np.float32), session=hw.sessions[0])   # (150, 98)
+emg = ftp.toy_model("crt-ctc")                          # the runtime of emg2qwerty-p11-01
+st = emg.decode(np.random.randn(2000, 32))              # 1 s of 2 kHz EMG -> (97, 98)
+keys = ftp.toy_model("key-lda")                         # the runtime of kt-semg-lda
+st = keys.decode(np.random.randn(6000, 32), times=[0.5, 1.0, 1.5])         # one frame per key press
+
+path = ftp.make_toy_manifest("my-folder", runtime="crt-ctc")   # or write the files yourself ...
+m = ftp.load(str(path), weights="my-folder")                   # ... and load them as any model
 ```
+
+| Runtime | Real model | Toy name | Input of `decode` | Default `n_in` |
+|---|---|---|---|---|
+| `gru-ctc` | `t15-m4-13`, `t12-v2` | `toy-gru` | (T, `n_in`) 20 ms binned features, `session=` | 16 |
+| `xbody-ctc` | `willett-hw` | `toy-xbody` | (T, `n_in`) threshold crossings in 10 ms bins, `session=` | 192 |
+| `crt-ctc` | `emg2qwerty-p11-01` | `toy-crt` | (n, 32) raw EMG at 2 kHz, n >= 84 | 32 (fixed) |
+| `key-lda` | `kt-semg-lda` | `toy-lda` | (n, `n_in`) raw EMG at 2 kHz, `times=` (key onsets, s) | 32 |
 
 | Fact | Value |
 |---|---|
-| Runtime | `gru-ctc` (the runtime of `t15-m4-13` and `t12-v2`); the only toy runtime today |
+| Call | `toy_model(runtime="gru-ctc", folder=None, **options)`. The first argument is the runtime; give the folder as `folder=` |
 | Weights | random numbers (`seed=`). **The output is noise**: the model has learned nothing |
-| Options | `n_in` (input channels, default 16), `hidden`, `layers`, `sessions`, `name`, `seed` |
-| Files | `<name>.weights.npz` and `<name>.json`; `load()` checks the SHA-256 and the size, as for a real model |
+| Options | `n_in` (input channels), `hidden`, `layers` (not used by `key-lda`), `sessions` (`gru-ctc` and `xbody-ctc` only), `name`, `seed` |
+| Files | `<name>.weights.npz` (`key-lda`: `<name>.model.json` and `<name>.weights.json`) and `<name>.json`; `load()` checks the SHA-256 and the size, as for a real model |
+| Licence | CC0-1.0, not research-only (random numbers; no data) |
 | Trust | none: `toy.decide(stream)` raises `NoTrustConfig`. Calibrate a guard with [`fidetype.trust.calibrate`](trust-quickstart.md) |
 
 ## Add a model
