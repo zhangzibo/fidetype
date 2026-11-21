@@ -99,7 +99,8 @@ def watcher() -> None:
 def save_json(obj, p: Path) -> None:
     p.parent.mkdir(parents=True, exist_ok=True)
     tmp = p.with_suffix(p.suffix + ".tmp")
-    tmp.write_text(json.dumps(obj, indent=1), encoding="utf-8")
+    tmp.write_text(json.dumps(obj, indent=1, default=lambda o: o.item() if hasattr(o, "item") else str(o)),
+                   encoding="utf-8")
     tmp.replace(p)
 
 
@@ -240,9 +241,12 @@ def stage_neural(E: Env, K: Sink) -> None:
     for si, sess in enumerate(E.sessions):
         test_i = [i for i, r in enumerate(mt["test"]) if r["session"] == sess]
         val_i = [i for i, r in enumerate(mt["val"]) if r["session"] == sess and i in S]
+        # only some singleLetters.mat files hold doNothing trials (run-time finding: t5.2019.05.08 only)
+        dn = [w for w in scipy.io.whosmat(str(RAW / sess / "singleLetters.mat")) if w[0] == "neuralActivityCube_doNothing"]
+        n_dn = int(dn[0][1][0]) if dn else 0
         todo = ([("ts", d, i) for i in test_i for d in DRAWS] + [("zero", 0, i) for i in test_i]
                 + [("rev_in", 0, i) for i in test_i] + [("val_ts", d, i) for i in val_i for d in DRAWS]
-                + [("do_nothing", 0, si * 27 + k) for k in range(27)])
+                + [("do_nothing", 0, si * 27 + k) for k in range(n_dn)])
         if all(K.has(*t) for t in todo) and sess in checks:
             continue
         items = {it.key: it for it in R.read_willett_session(RAW / sess)
@@ -277,13 +281,14 @@ def stage_neural(E: Env, K: Sink) -> None:
                     K.put("val_ts", d, i, c5_part(E, E.m.log_probs(xs, sess), lm=False))
         del items
         gc.collect()
-        cube = scipy.io.loadmat(str(RAW / sess / "singleLetters.mat"),
-                                variable_names=["neuralActivityCube_doNothing"])["neuralActivityCube_doNothing"]
-        assert cube.shape == (27, 201, 192), cube.shape
-        for k in range(27):
-            if not K.has("do_nothing", 0, si * 27 + k):
-                K.put("do_nothing", 0, si * 27 + k, full(E, E.m.log_probs(np.asarray(cube[k]), sess)))
-        del cube
+        if n_dn:
+            cube = scipy.io.loadmat(str(RAW / sess / "singleLetters.mat"),
+                                    variable_names=["neuralActivityCube_doNothing"])["neuralActivityCube_doNothing"]
+            assert cube.shape == (n_dn, 201, 192) and n_dn <= 27, cube.shape
+            for k in range(n_dn):
+                if not K.has("do_nothing", 0, si * 27 + k):
+                    K.put("do_nothing", 0, si * 27 + k, full(E, E.m.log_probs(np.asarray(cube[k]), sess)))
+            del cube
         gc.collect()
         log(f"neural: session {si + 1}/10 {sess} done ({time.time() - t0:.0f} s)")
 
@@ -410,7 +415,11 @@ def stage_score(E: Env) -> None:
                  "checks": json.loads((OWN / "checks.json").read_text(encoding="utf-8"))}
 
     def recs(s, ds=(0,), n=n_test):
+        if s == "do_nothing":  # keys si * 27 + k of the sessions that have doNothing trials
+            return [rows[k] for k in sorted(k for k in rows if k[0] == s)]
         return [rows[(s, d, i)] for d in ds for i in range(n)]
+
+    n_dn = len(recs("do_nothing"))
 
     # ---- part A: C5 emits on the new draws
     rng = np.random.default_rng(BOOT_SEED)
@@ -427,7 +436,7 @@ def stage_score(E: Env) -> None:
                 "c5_pass": sum(r["c5_pass"] for r in recs(s, DRAWS)),
                 "sentences_ever_emit": int((M.sum(1) > 0).sum())}
     for s, n in (("zero", n_test), ("real", n_test), ("rev_in", n_test), ("rev_out", n_test), ("lines", n_test),
-                 ("do_nothing", 270)):
+                 ("do_nothing", n_dn)):
         rr = recs(s, n=n)
         A[s] = {"emit": sum(r["c5_emit"] for r in rr), "c5_pass": sum(r["c5_pass"] for r in rr), "n": len(rr)}
     vts = [rows[("val_ts", d, i)] for d in DRAWS for i in s_positions()]
@@ -510,7 +519,7 @@ def stage_score(E: Env) -> None:
         rules = {}
         for rid, s, ds, n, kind in (("C1", "ts", DRAWS, n_test, "pooled"), ("C2", "fs", DRAWS, n_test, "pooled"),
                                     ("C3", "uni", DRAWS, n_test, "pooled"), ("C4", "rev_in", (0,), n_test, "count"),
-                                    ("C5r", "do_nothing", (0,), 270, "count"), ("C6", "lines", (0,), n_test, "count"),
+                                    ("C5r", "do_nothing", (0,), n_dn, "count"), ("C6", "lines", (0,), n_test, "count"),
                                     ("C7", "rev_out", (0,), n_test, "none")):
             rr = recs(s, ds, n)
             g = [r["guards"][k] for r in rr]

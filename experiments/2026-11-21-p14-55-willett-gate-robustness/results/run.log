@@ -1,0 +1,87 @@
+[2026-11-21 11:02:27] (rss 31 MB, peak 31 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-21 11:02:27] (rss 101 MB, peak 103 MB) start all; offer-gate thresholds {'builtin': 0.004183090472992479, 'lm': 0.002820748898623049}; C5 lo -1.1697116125105564
+[2026-11-21 11:11:40] (rss 491 MB, peak 826 MB) neural: session 1/10 t5.2019.05.08 done (553 s)
+[2026-11-21 11:12:27] (rss 663 MB, peak 826 MB) heartbeat
+[2026-11-21 11:17:36] (rss 503 MB, peak 826 MB) keep_awake: cleared
+[2026-11-21 11:17:36] (rss 503 MB, peak 826 MB) FAILED
+Traceback (most recent call last):
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-21-p14-55-willett-gate-robustness\run.py", line 572, in main
+    stage_neural(E, K)
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-21-p14-55-willett-gate-robustness\run.py", line 280, in stage_neural
+    cube = scipy.io.loadmat(str(RAW / sess / "singleLetters.mat"),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'neuralActivityCube_doNothing'
+
+[2026-11-21 11:18:12] (rss 30 MB, peak 30 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-21 11:18:12] (rss 101 MB, peak 103 MB) start all; offer-gate thresholds {'builtin': 0.004183090472992479, 'lm': 0.002820748898623049}; C5 lo -1.1697116125105564
+[2026-11-21 11:26:17] (rss 484 MB, peak 783 MB) neural: session 3/10 t5.2019.12.09 done (484 s)
+[2026-11-21 11:28:13] (rss 617 MB, peak 783 MB) heartbeat
+[2026-11-21 11:30:21] (rss 482 MB, peak 783 MB) neural: session 4/10 t5.2019.12.11 done (729 s)
+[2026-11-21 11:34:29] (rss 480 MB, peak 783 MB) neural: session 5/10 t5.2019.12.18 done (977 s)
+[2026-11-21 11:38:13] (rss 586 MB, peak 783 MB) heartbeat
+[2026-11-21 11:38:27] (rss 484 MB, peak 783 MB) neural: session 6/10 t5.2019.12.20 done (1215 s)
+[2026-11-21 11:42:23] (rss 481 MB, peak 783 MB) neural: session 7/10 t5.2020.01.06 done (1451 s)
+[2026-11-21 11:45:24] (rss 481 MB, peak 783 MB) neural: session 8/10 t5.2020.01.08 done (1632 s)
+[2026-11-21 11:48:15] (rss 620 MB, peak 783 MB) heartbeat
+[2026-11-21 11:49:42] (rss 482 MB, peak 783 MB) neural: session 9/10 t5.2020.01.13 done (1890 s)
+[2026-11-21 11:53:58] (rss 491 MB, peak 783 MB) neural: session 10/10 t5.2020.01.15 done (2146 s)
+[2026-11-21 11:56:26] (rss 294 MB, peak 783 MB) lines: 80 segments from 8 blocks (148 s)
+[2026-11-21 11:58:02] (rss 360 MB, peak 783 MB) frames: real + rev_out done (96 s)
+[2026-11-21 11:58:15] (rss 366 MB, peak 783 MB) heartbeat
+[2026-11-21 11:58:51] (rss 363 MB, peak 783 MB) frames: frame-shuffled draw 1 done (145 s)
+[2026-11-21 11:59:40] (rss 387 MB, peak 783 MB) frames: frame-shuffled draw 2 done (194 s)
+[2026-11-21 12:00:29] (rss 395 MB, peak 783 MB) frames: frame-shuffled draw 3 done (243 s)
+[2026-11-21 12:01:20] (rss 403 MB, peak 783 MB) frames: frame-shuffled draw 4 done (294 s)
+[2026-11-21 12:02:11] (rss 412 MB, peak 783 MB) frames: frame-shuffled draw 5 done (345 s)
+[2026-11-21 12:02:59] (rss 419 MB, peak 783 MB) frames: frame-shuffled draw 6 done (393 s)
+[2026-11-21 12:03:50] (rss 434 MB, peak 783 MB) frames: frame-shuffled draw 7 done (444 s)
+[2026-11-21 12:04:40] (rss 444 MB, peak 783 MB) frames: frame-shuffled draw 8 done (493 s)
+[2026-11-21 12:05:28] (rss 451 MB, peak 783 MB) frames: frame-shuffled draw 9 done (542 s)
+[2026-11-21 12:06:21] (rss 459 MB, peak 783 MB) frames: frame-shuffled draw 10 done (594 s)
+[2026-11-21 12:07:24] (rss 495 MB, peak 783 MB) frames: uniform draw 1 done (658 s)
+[2026-11-21 12:07:28] (rss 496 MB, peak 783 MB) frames: uniform draw 2 done (662 s)
+[2026-11-21 12:07:32] (rss 496 MB, peak 783 MB) frames: uniform draw 3 done (666 s)
+[2026-11-21 12:07:36] (rss 495 MB, peak 783 MB) frames: uniform draw 4 done (670 s)
+[2026-11-21 12:07:40] (rss 496 MB, peak 783 MB) frames: uniform draw 5 done (674 s)
+[2026-11-21 12:07:45] (rss 496 MB, peak 783 MB) frames: uniform draw 6 done (679 s)
+[2026-11-21 12:07:50] (rss 496 MB, peak 783 MB) frames: uniform draw 7 done (684 s)
+[2026-11-21 12:07:56] (rss 496 MB, peak 783 MB) frames: uniform draw 8 done (690 s)
+[2026-11-21 12:08:02] (rss 496 MB, peak 783 MB) frames: uniform draw 9 done (695 s)
+[2026-11-21 12:08:07] (rss 496 MB, peak 783 MB) frames: uniform draw 10 done (701 s)
+[2026-11-21 12:08:09] (rss 364 MB, peak 783 MB) keep_awake: cleared
+[2026-11-21 12:08:09] (rss 364 MB, peak 783 MB) FAILED
+Traceback (most recent call last):
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-21-p14-55-willett-gate-robustness\run.py", line 587, in main
+    stage_score(E)
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-21-p14-55-willett-gate-robustness\run.py", line 558, in stage_score
+    save_json(res, OUT / "results.json")
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-21-p14-55-willett-gate-robustness\run.py", line 102, in save_json
+    tmp.write_text(json.dumps(obj, indent=1), encoding="utf-8")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\zhang\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "C:\Users\zhang\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "C:\Users\zhang\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "C:\Users\zhang\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\zhang\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\zhang\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  [Previous line repeated 2 more times]
+  File "C:\Users\zhang\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "C:\Users\zhang\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type int64 is not JSON serializable
+
+[2026-11-21 12:08:26] (rss 30 MB, peak 30 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-21 12:08:26] (rss 101 MB, peak 104 MB) start score; offer-gate thresholds {'builtin': 0.004183090472992479, 'lm': 0.002820748898623049}; C5 lo -1.1697116125105564
+[2026-11-21 12:08:28] (rss 169 MB, peak 504 MB) score: written results/results.json; A {"A1": {"pass": true, "value": 0.0448107681859527}, "A2": {"pass": true, "value": 0.0037376628261006077}, "A3": {"pass": true, "value": "0 / 80"}}; C {"builtin": {"C1": {"set": "ts", "pass": true}, "C2": {"set": "fs", "pass": true}, "C3": {"set": "uni", "pass": true}, "C4": {"set": "rev_in", "pass": true}, "C5r": {"set": "do_nothing", "pass": true}, "C6": {"set": "lines", "pass": true}, "C7": {"set": "rev_out", "pass": null}}, "lm": {"C1": {"set": "ts", "pass": true}, "C2": {"set": "fs", "pass": true}, "C3": {"set": "uni", "pass": true}, "C4": {"set": "rev_in", "pass": true}, "C5r": {"set": "do_nothing", "pass": true}, "C6": {"set": "lines", "pass": true}, "C7": {"set": "rev_out", "pass": null}}}
+[2026-11-21 12:08:28] (rss 167 MB, peak 504 MB) keep_awake: cleared
+[2026-11-21 12:08:28] (rss 167 MB, peak 504 MB) end of score (2 s); peak 504 MB
