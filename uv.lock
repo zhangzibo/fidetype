@@ -442,6 +442,9 @@ dev = [
 emg2qwerty = [
     { name = "h5py" },
 ]
+hdf5 = [
+    { name = "h5py" },
+]
 llm = [
     { name = "llama-cpp-python" },
 ]
@@ -462,6 +465,7 @@ requires-dist = [
     { name = "cryptography", marker = "extra == 'sign'", specifier = ">=43" },
     { name = "h5py", marker = "extra == 'dev'", specifier = ">=3.10" },
     { name = "h5py", marker = "extra == 'emg2qwerty'", specifier = ">=3.10" },
+    { name = "h5py", marker = "extra == 'hdf5'", specifier = ">=3.10" },
     { name = "llama-cpp-python", marker = "extra == 'llm'", specifier = ">=0.3.36" },
     { name = "mne", marker = "extra == 'data'", specifier = ">=1.8" },
     { name = "numpy" },
@@ -471,7 +475,7 @@ requires-dist = [
     { name = "websockets", marker = "extra == 'dev'", specifier = "==17.4" },
     { name = "websockets", marker = "extra == 'ws'", specifier = "==17.4" },
 ]
-provides-extras = ["brainflow", "data", "dev", "emg2qwerty", "llm", "lsl", "sign", "ws"]
+provides-extras = ["brainflow", "data", "dev", "emg2qwerty", "hdf5", "llm", "lsl", "sign", "ws"]
 
 [[package]]
 name = "fonttools"
