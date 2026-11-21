@@ -53,6 +53,11 @@ What calibration does
    wrapper commits on more than ``null_max_commit_rate`` of the control
    inputs (default: ``alpha``), :func:`calibrate` raises
    :class:`NullControlError` and returns no guard.
+4. The **offer null control** (P5-31) counts the OFFERs on the same
+   control inputs. It passes if the null offer rate is clearly below the
+   real offer rate (the rate on the LTT items): see
+   :func:`offer_control`. Default ``offer_control="warn"``: the result
+   is on the sheet and a failure is a sheet warning only.
 
 The guarantee is stated in :class:`GuaranteeSheet`. Read
 ``docs/trust-guarantee.md`` before you rely on it.
@@ -90,6 +95,10 @@ __all__ = [
     "calibrate",
     "wrap",
     "load",
+    "offer_control",
+    "recheck_offer_control",
+    "OFFER_NULL_MAX_RATIO",
+    "OFFER_NULL_P",
 ]
 
 #: Schema name of a saved guard file (:meth:`TrustGuard.save`).
@@ -111,6 +120,13 @@ _ACTION_MAP: dict[Action, UserAction] = {
     Action.ASK: "withhold",
     Action.ABSTAIN: "withhold",
 }
+
+#: Offer null control (P5-31): a control passes if its offer rate is at most this share of the real offer
+#: rate ...
+OFFER_NULL_MAX_RATIO = 0.5
+#: ... and (if it offers on more control inputs than the commit allowance) a one-sided Fisher exact test
+#: "null offer rate < real offer rate" gives a p-value of at most this value.
+OFFER_NULL_P = 0.05
 
 # Split of the labelled items (fractions of n): temperatures + conformal, policy grid, LTT.
 _FIT_FRACTION = 0.25
@@ -142,14 +158,20 @@ class ControlResult:
     n_commit: int
     #: Largest number of commits that passes (``floor(rate * n)``).
     allowed: int
+    #: OFFERs on the control inputs (P5-31), or None (not counted: an older sheet or ``offer_control="off"``).
+    #: ``passed`` counts commits only; the offer verdict is in ``GuaranteeSheet.offers``.
+    n_offer: int | None = None
 
     @property
     def passed(self) -> bool:
         return self.n_commit <= self.allowed
 
     def to_dict(self) -> dict[str, Any]:
-        return {"name": self.name, "description": self.description, "n": self.n, "n_commit": self.n_commit,
-                "allowed": self.allowed, "passed": self.passed}
+        d = {"name": self.name, "description": self.description, "n": self.n, "n_commit": self.n_commit,
+             "allowed": self.allowed, "passed": self.passed}
+        if self.n_offer is not None:
+            d["n_offer"] = self.n_offer  # pre-P5-31 sheets keep their bytes
+        return d
 
 
 @dataclass(frozen=True)
@@ -199,6 +221,9 @@ class GuaranteeSheet:
     #: The learned commit score of P5-23 (``calibrate(confidence="learned")``), or None (the score is
     #: ``p_top1``). See :mod:`fidetype.trust.commit_score`.
     confidence: dict[str, Any] | None = None
+    #: The offer null control of P5-31 (:func:`offer_control`), or None (not run). It never changes
+    #: ``feasible`` or the commit controls; with ``calibrate(offer_control="warn")`` a failure is a warning.
+    offers: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         d = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -213,6 +238,8 @@ class GuaranteeSheet:
             d.pop("precision", None)  # pre-P5-02 sheets keep their bytes
         if d.get("confidence") is None:
             d.pop("confidence", None)  # pre-P5-23 sheets keep their bytes
+        if d.get("offers") is None:
+            d.pop("offers", None)  # pre-P5-31 sheets keep their bytes
         return d
 
     @classmethod
@@ -254,6 +281,8 @@ class GuaranteeSheet:
         for c in self.controls:
             lines.append(f"  {c.name:<18} {c.n_commit}/{c.n} commits (allowed {c.allowed}): "
                          f"{'PASS' if c.passed else 'FAIL'}")
+        if self.offers:
+            lines += _offer_lines(self.offers)
         if self.confidence:
             cf = self.confidence
             if prefix:
@@ -1268,6 +1297,7 @@ def calibrate(
     confidence_l2: float = 1.0,
     commit_unit: str = "sentence",
     language: str = "en",
+    offer_control: str = "warn",
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -1334,6 +1364,15 @@ def calibrate(
         A control passes if the guard commits on at most
         ``floor(rate * n)`` control inputs. Default: ``alpha`` (every
         commit on null input is a wrong commit). The target is 0.
+    offer_control
+        The offer null control of P5-31 (:func:`offer_control`): the
+        share of control inputs on which the guard OFFERs, against the
+        offer rate on the LTT items. ``"warn"`` (default): the result is
+        in ``sheet.offers`` and a failure adds a sheet warning; the guard
+        and its status do not change. ``"refuse"``: a failure raises
+        :class:`NullControlError`. ``"off"``: not run (the sheet bytes of
+        a guard before P5-31). The counts come from the same control
+        decisions as the commit controls (no extra decoding).
     decoder_name, decoder_version, modality
         Stream metadata (NTS ``meta``). ``modality`` is one of ``meg``,
         ``eeg``, ``emg``, ``ecog``, ``intracortical``, ``fnirs``, ``other``.
@@ -1438,8 +1477,9 @@ def calibrate(
     Raises
     ------
     NullControlError
-        The calibrated guard commits on null input more often than allowed.
-        No guard is returned.
+        The calibrated guard commits on null input more often than allowed
+        (or, with ``offer_control="refuse"``, offers on null input about as
+        often as on real input). No guard is returned.
     ValueError
         Bad input (lengths differ, too few items, unknown kind, missing
         ``vocab`` or ``null_inputs``).
@@ -1470,6 +1510,8 @@ def calibrate(
         raise ValueError("null_max_commit_rate must be in [0, 1)")
     if null_trials < 1:
         raise ValueError("null_trials must be >= 1")
+    if offer_control not in ("off", "warn", "refuse"):
+        raise ValueError("offer_control must be 'off', 'warn' or 'refuse'")
     if kind == "nbest" and not null_inputs:
         raise ValueError(
             "n-best input needs null_inputs=: your decoder's n-best output on null input, for example on "
@@ -1614,13 +1656,14 @@ def calibrate(
     # --- in-sample LTT check -------------------------------------------
     ltt_inputs = [inputs[i] for i in order[n_fit + n_pol:]]
     ltt_texts = [texts[i] for i in order[n_fit + n_pol:]]
-    n_com = n_wrong = 0
+    n_com = n_wrong = n_off = 0
     risks: list[float] = []
     n_blocked = 0
     for x, t in zip(ltt_inputs, ltt_texts):
         r = guard._decide_quiet(x)
         risks.append(r.guard_risk)
         n_blocked += r.reason.startswith(_GATE_RISK_REASON)
+        n_off += r.action == "offer"
         if r.action == "commit":
             n_com += 1
             n_wrong += int(not guard.is_right(r, t))
@@ -1630,6 +1673,11 @@ def calibrate(
 
     rng_controls = copy.deepcopy(rng)  # the same control inputs again for a P15-06 guard
     controls = _run_controls(guard, inputs, kind, rng, null_trials, rate, null_inputs)
+    offers = None
+    if offer_control == "off":
+        controls = [replace(c, n_offer=None) for c in controls]
+    else:
+        offers = _offer_control(len(ltt_inputs), n_off, controls, rate=rate, mode=offer_control)
 
     rc = frozen.risk_control
     warnings: list[str] = []
@@ -1657,6 +1705,7 @@ def calibrate(
         warnings.append(
             f"only {n_com} of {n_ltt} LTT items commit in-sample (fewer than {n_min}): expect few or no commits on "
             "new data. The bound still holds.")
+    warnings = _with_offers(offers, warnings)
     sheet = GuaranteeSheet(
         config_id=frozen.config_id, input_kind=kind,
         decoder=_decoder_name(decode_fn, lex) if kind == "logits" else "your n-best lists",
@@ -1674,7 +1723,7 @@ def calibrate(
         ltt_commits=n_com, ltt_wrong_commits=n_wrong, controls=tuple(controls), null_max_commit_rate=rate,
         seed=int(seed), created_utc=_dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
         assumptions=_ASSUMPTIONS, not_guaranteed=_NOT_GUARANTEED, warnings=tuple(warnings),
-        ltt_median_guard_risk=med_risk, ltt_gate_blocked=int(n_blocked), confidence=score_info,
+        ltt_median_guard_risk=med_risk, ltt_gate_blocked=int(n_blocked), confidence=score_info, offers=offers,
     )
     failed = [c for c in controls if not c.passed]
     if failed:
@@ -1689,6 +1738,9 @@ def calibrate(
             "signal does not depend on your decoder's evidence." + hint + " Other checks: the inputs are per-frame "
             "scores (logits) or real n-best scores; the decoder's confidence drops on noise. "
             "No configuration was produced.", controls)
+    if offers is not None and offer_control == "refuse" and not offers["passed"]:
+        raise NullControlError("calibration refused (offer_control='refuse'): " + _offer_warning(offers)
+                               + " No configuration was produced.", controls)
     guard.sheet = sheet
     if halluc_on:
         guard = _halluc_bound(guard, sheet, inputs, texts, order, n_fit, n_pol, kind, decode_fn, audit_text,
@@ -1862,18 +1914,20 @@ def _precision_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[
     final = replace(frozen.with_policy(commit_p=sel), recipe=recipe)
     new = TrustGuard(final, codec, None, user_fn, audit_text)
     # in-sample LTT check and null controls of the final guard (same control inputs as before)
-    n_com = n_wrong = n_blocked = 0
+    n_com = n_wrong = n_blocked = n_off = 0
     risks = []
     for i in order[n_fit + n_pol:]:
         r = new._decide_quiet(inputs[int(i)])
         risks.append(r.guard_risk)
         n_blocked += r.reason.startswith(_GATE_RISK_REASON)
+        n_off += r.action == "offer"
         if r.action == "commit":
             n_com += 1
             n_wrong += int(r.text != texts[int(i)])
     controls = _run_controls(new, inputs, kind, rng_controls, null_trials, rate, null_inputs)
+    controls, offers = _final_offers(sheet, controls, len(order) - n_fit - n_pol, n_off, rate)
     info["controls_final"] = [c.to_dict() for c in controls]
-    warnings = list(sheet.warnings)
+    warnings = _with_offers(offers, list(sheet.warnings))
     if res.selected is None:
         warnings.append(f"precision bound: no threshold certified for precision {target_precision:g}, so the guard "
                         f"never commits. About {info['min_commits']} or more right commits on the LTT part are needed.")
@@ -1886,7 +1940,7 @@ def _precision_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[
     new.sheet = replace(sheet, config_id=final.config_id, commit_threshold=float(sel), ltt_commits=n_com,
                         ltt_wrong_commits=n_wrong, ltt_gate_blocked=int(n_blocked),
                         ltt_median_guard_risk=float(np.median(risks)) if risks else math.nan,
-                        controls=tuple(controls), warnings=tuple(warnings), precision=info,
+                        controls=tuple(controls), warnings=tuple(warnings), precision=info, offers=offers,
                         assumptions=sheet.assumptions + _PRECISION_ASSUMPTIONS,
                         not_guaranteed=tuple(a for a in sheet.not_guaranteed if not a.startswith(
                             "The error rate among commits")) + _PRECISION_NOT_GUARANTEED)
@@ -1994,18 +2048,20 @@ def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any
                      grounding=grounding if gate is not None else None)
     # in-sample LTT check and null controls of the final guard (same control inputs as before)
     ltt_idx = order[n_fit + n_pol:]
-    n_com = n_wrong = n_blocked = 0
+    n_com = n_wrong = n_blocked = n_off = 0
     risks = []
     for i in ltt_idx:
         r = new._decide_quiet(inputs[int(i)])
         risks.append(r.guard_risk)
         n_blocked += r.reason.startswith(_GATE_RISK_REASON)
+        n_off += r.action == "offer"
         if r.action == "commit":
             n_com += 1
             n_wrong += int(r.text != texts[int(i)])
     controls = _run_controls(new, inputs, kind, rng_controls, null_trials, rate, null_inputs)
+    controls, offers = _final_offers(sheet, controls, len(ltt_idx), n_off, rate)
     info["controls_final"] = [c.to_dict() for c in controls]
-    warnings = list(sheet.warnings)
+    warnings = _with_offers(offers, list(sheet.warnings))
     if res.selected is None:
         warnings.append("hallucination bound: no configuration certified, so the guard never commits.")
     assumptions = sheet.assumptions + _HALLUC_ASSUMPTIONS
@@ -2019,6 +2075,7 @@ def _halluc_bound(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any
                         ltt_commits=n_com, ltt_wrong_commits=n_wrong, ltt_gate_blocked=int(n_blocked),
                         ltt_median_guard_risk=float(np.median(risks)) if risks else math.nan,
                         controls=tuple(controls), warnings=tuple(warnings), halluc=info, precision=prec_info,
+                        offers=offers,
                         assumptions=assumptions, not_guaranteed=not_guaranteed)
     new.halluc_items = {"order": o_items, "test": t_items}  # per-item statistics (not saved)
     return new
@@ -2074,14 +2131,32 @@ _HALLUC_NOT_GUARANTEED = (
 )
 
 
+def _final_offers(sheet: GuaranteeSheet, controls: list[ControlResult], n_real: int, n_real_offer: int,
+                  rate: float) -> tuple[list[ControlResult], dict[str, Any] | None]:
+    """The offer null control of a final (P5-02 / P15-06) guard, in the mode of the base sheet."""
+    if sheet.offers is None:
+        return [replace(c, n_offer=None) for c in controls], None
+    offers = offer_control(n_real, n_real_offer, controls, rate=rate, mode=sheet.offers["mode"])
+    if offers["mode"] == "refuse" and not offers["passed"]:
+        raise NullControlError("calibration refused (offer_control='refuse'): " + _offer_warning(offers)
+                               + " No configuration was produced.", controls)
+    return controls, offers
+
+
 def _run_controls(guard: TrustGuard, inputs: Sequence[Any], kind: str, rng: np.random.Generator, n_trials: int,
                   rate: float, null_inputs: Sequence[Any] | None) -> list[ControlResult]:
     idx = rng.integers(0, len(inputs), size=n_trials)
     allowed = int(math.floor(rate * n_trials + 1e-9))
     out: list[ControlResult] = []
 
-    def count(xs: Iterable[Any], input_scale: str | None = None) -> int:
-        return sum(guard._decide_quiet(x, input_scale).action == "commit" for x in xs)
+    def count(xs: Iterable[Any], input_scale: str | None = None) -> tuple[int, int]:
+        """(commits, offers) on the control inputs (P5-31: offers are counted in the same pass)."""
+        n_c = n_o = 0
+        for x in xs:
+            a = guard._decide_quiet(x, input_scale).action
+            n_c += a == "commit"
+            n_o += a == "offer"
+        return n_c, n_o
 
     if kind == "logits":
         from fidetype.adapters.ctc_logits import to_log_probs
@@ -2098,11 +2173,12 @@ def _run_controls(guard: TrustGuard, inputs: Sequence[Any], kind: str, rng: np.r
             lp = to_log_probs(x, scale)
             return lp[rng.permutation(lp.shape[0])]
 
-        n_u = count((uniform(inputs[i]) for i in idx), "logits")
-        n_s = count((shuffled(inputs[i]) for i in idx), "log_probs")
+        n_u, o_u = count((uniform(inputs[i]) for i in idx), "logits")
+        n_s, o_s = count((shuffled(inputs[i]) for i in idx), "log_probs")
         out.append(ControlResult("uniform", "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths", n_trials,
-                                 n_u, allowed))
-        out.append(ControlResult("shuffled", "calibration frames in a random time order", n_trials, n_s, allowed))
+                                 n_u, allowed, o_u))
+        out.append(ControlResult("shuffled", "calibration frames in a random time order", n_trials, n_s, allowed,
+                                 o_s))
     else:
         def flat(x: Any) -> list[dict[str, Any]]:
             from fidetype.adapters.text_nbest import normalise_item
@@ -2110,14 +2186,132 @@ def _run_controls(guard: TrustGuard, inputs: Sequence[Any], kind: str, rng: np.r
             its = [normalise_item(it) for it in _nbest_items(x)]
             return [{"text": it["text"], "score": 0.0} for it in its]
 
-        n_u = count(flat(inputs[i]) for i in idx)
+        n_u, o_u = count(flat(inputs[i]) for i in idx)
         out.append(ControlResult("uniform", "calibration n-best lists with equal scores and no character "
-                                 "confidences (no evidence)", n_trials, n_u, allowed))
+                                 "confidences (no evidence)", n_trials, n_u, allowed, o_u))
     if null_inputs:
         nl = list(null_inputs)
         a_user = int(math.floor(rate * len(nl) + 1e-9))
+        n_n, o_n = count(nl)
         out.append(ControlResult("shuffled" if kind == "nbest" else "user",
-                                 "your decoder output on null input (null_inputs)", len(nl), count(nl), a_user))
+                                 "your decoder output on null input (null_inputs)", len(nl), n_n, a_user, o_n))
+    return out
+
+
+def _fisher_less_p(k_null: int, n_null: int, k_real: int, n_real: int) -> float:
+    """One-sided Fisher exact p-value of "the null offer rate is lower than the real offer rate".
+
+    P(X <= k_null) for X ~ Hypergeometric(population n_null + n_real, successes k_null + k_real,
+    draws n_null). Exact, with integer binomial coefficients.
+    """
+    K, N = k_null + k_real, n_null + n_real
+    lo = max(0, n_null - (N - K))
+    num = sum(math.comb(K, x) * math.comb(N - K, n_null - x) for x in range(lo, min(k_null, K) + 1))
+    return min(1.0, num / math.comb(N, n_null))
+
+
+def offer_control(n_real: int, n_real_offer: int, controls: Sequence[ControlResult], *, rate: float,
+                  mode: str = "warn", max_ratio: float = OFFER_NULL_MAX_RATIO,
+                  p_max: float = OFFER_NULL_P) -> dict[str, Any]:
+    """The offer null control of P5-31: does the guard offer less on null input than on real input?
+
+    ``n_real_offer`` of ``n_real`` real utterances get an OFFER (in :func:`calibrate`: the LTT items).
+    Each control in ``controls`` must carry ``n_offer``. A control passes if both hold:
+
+    1. null offer rate <= ``max_ratio`` x real offer rate (pre-stated: 0.5), and
+    2. the control offers on at most ``floor(rate * n)`` inputs (the commit allowance), **or** the
+       one-sided Fisher exact test "null offer rate < real offer rate" gives p <= ``p_max`` (0.05).
+
+    Rule 1 asks for a clear drop, not only a significant one. Rule 2 asks for evidence when the null
+    offers are more than a few. A guard that never offers passes (0 <= 0). The result is a JSON-ready
+    dict (``GuaranteeSheet.offers``). It checks the offer list only: it does not change the commit
+    guarantee.
+    """
+    if mode not in ("warn", "refuse"):
+        raise ValueError("mode must be 'warn' or 'refuse'")
+    real_rate = n_real_offer / n_real if n_real else 0.0
+    rows = []
+    for c in controls:
+        if c.n_offer is None:
+            raise ValueError(f"control {c.name!r} has no offer count (n_offer)")
+        null_rate = c.n_offer / c.n if c.n else 0.0
+        allowed = int(math.floor(rate * c.n + 1e-9))
+        p = _fisher_less_p(c.n_offer, c.n, n_real_offer, n_real) if (n_real and c.n) else 1.0
+        ratio_ok = null_rate <= max_ratio * real_rate + 1e-12
+        ok = bool(ratio_ok and (c.n_offer <= allowed or p <= p_max))
+        rows.append({"name": c.name, "n": c.n, "n_offer": c.n_offer, "offer_rate": round(null_rate, 6),
+                     "ratio_to_real": round(null_rate / real_rate, 6) if real_rate > 0 else None,
+                     "allowed_without_test": allowed, "p_value": float(f"{p:.6g}"), "passed": ok})
+    return {
+        "rule": (f"pass if null offer rate <= {max_ratio:g} x real offer rate, and (null offers <= floor("
+                 f"{rate:g} x n) or one-sided Fisher exact p <= {p_max:g}); real = the LTT items"),
+        "mode": mode, "max_ratio": max_ratio, "p_max": p_max,
+        "real": {"n": n_real, "n_offer": n_real_offer, "offer_rate": round(real_rate, 6)},
+        "controls": rows,
+        "passed": all(r["passed"] for r in rows),
+    }
+
+
+def _offer_lines(o: Mapping[str, Any]) -> list[str]:
+    real = o.get("real") or {}
+    lines = [f"offer null control   pass if null offer rate <= {o.get('max_ratio'):g} x real rate and "
+             f"(few offers or Fisher p <= {o.get('p_max'):g}); mode {o.get('mode')}",
+             f"  {'real (LTT items)':<18} {real.get('n_offer')}/{real.get('n')} offers"]
+    for r in o.get("controls", ()):
+        lines.append(f"  {r['name']:<18} {r['n_offer']}/{r['n']} offers (p {r['p_value']:.3g}): "
+                     f"{'PASS' if r['passed'] else 'FAIL'}")
+    return lines
+
+
+def _offer_warning(o: Mapping[str, Any]) -> str:
+    bad = [f"{r['name']} {r['n_offer']}/{r['n']}" for r in o["controls"] if not r["passed"]]
+    real = o["real"]
+    return (f"offer null control (P5-31) FAILED: the guard offers on null input about as often as on real input "
+            f"({', '.join(bad)} vs real {real['n_offer']}/{real['n']}). The offer list does not depend on the "
+            "signal: do not show it as a suggestion of the user's intent. The commit guarantee is not affected.")
+
+
+def _with_offers(offers: Mapping[str, Any] | None, warnings: list[str]) -> list[str]:
+    """``warnings`` without an old offer warning, plus the new one if ``offers`` fails."""
+    out = [w for w in warnings if not w.startswith("offer null control (P5-31)")]
+    if offers is not None and not offers["passed"]:
+        out.append(_offer_warning(offers))
+    return out
+
+
+def recheck_offer_control(guard: TrustGuard, inputs: Sequence[Any], *, null_inputs: Sequence[Any] | None = None,
+                          null_trials: int | None = None) -> dict[str, Any]:
+    """Run the P5-31 offer null control on a saved guard, without a new calibration.
+
+    ``inputs`` must be the calibration inputs of the guard, in the same order (and ``null_inputs`` the
+    same user null inputs, if it had them). The function makes the same split and the same control
+    inputs as :func:`calibrate` from ``guard.sheet.seed``, so the commit counts must equal the sheet
+    (``commits_match_sheet``). Returns :func:`offer_control` plus ``commits_match_sheet``, the LTT
+    commit count and the control commit counts. The guard is not changed.
+    """
+    sh = guard.sheet
+    if sh is None:
+        raise ValueError("the guard has no guarantee sheet")
+    inputs = list(inputs)
+    if len(inputs) != sh.n_items:
+        raise ValueError(f"inputs ({len(inputs)}) must be the {sh.n_items} calibration inputs of the guard")
+    n_trials = int(null_trials if null_trials is not None else next(
+        (c.n for c in sh.controls if c.name == "uniform"), 300))
+    rng = np.random.default_rng(sh.seed)
+    order = rng.permutation(len(inputs))
+    n_com = n_off = 0
+    ltt = order[sh.n_fit + sh.n_policy:]
+    for i in ltt:
+        a = guard._decide_quiet(inputs[int(i)]).action
+        n_com += a == "commit"
+        n_off += a == "offer"
+    controls = _run_controls(guard, inputs, sh.input_kind, rng, n_trials, sh.null_max_commit_rate, null_inputs)
+    out = offer_control(len(ltt), n_off, controls, rate=sh.null_max_commit_rate)
+    out["commits_match_sheet"] = (n_com == sh.ltt_commits and
+                                  [(c.name, c.n, c.n_commit) for c in controls] ==
+                                  [(c.name, c.n, c.n_commit) for c in sh.controls])
+    out["ltt_commits"] = n_com
+    out["control_commits"] = {c.name: f"{c.n_commit}/{c.n}" for c in controls}
     return out
 
 
@@ -2134,3 +2328,7 @@ def wrap(calibration_set: Iterable[tuple[Any, str]], *, alpha: float = 0.05, **k
         raise ValueError("calibration_set is empty")
     xs, ts = zip(*pairs)
     return calibrate(list(xs), list(ts), alpha=alpha, **kwargs)
+
+
+#: :func:`calibrate` has a parameter named ``offer_control``; it reaches the function by this name.
+_offer_control = offer_control

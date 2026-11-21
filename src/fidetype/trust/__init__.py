@@ -177,6 +177,8 @@ _DROPIN = (
     "GuaranteeSheet",
     "ControlResult",
     "NullControlError",
+    "offer_control",
+    "recheck_offer_control",
 )
 __all__ += list(_DROPIN)
 

@@ -279,8 +279,9 @@ class PolicySheet:
         if self.controls:
             lines.append("null controls")
             for c in self.controls:
+                offers = f", {c.get('n_offer')}/{c.get('n')} offers" if c.get("n_offer") is not None else ""
                 lines.append(f"  {str(c.get('name')):<14} {c.get('n_commit')}/{c.get('n')} commits (allowed "
-                             f"{c.get('allowed')}): {'PASS' if c.get('passed') else 'FAIL'}")
+                             f"{c.get('allowed')}): {'PASS' if c.get('passed') else 'FAIL'}{offers}")
         else:
             lines.append("null controls    none run for this policy")
         lines.append("assumptions")
@@ -382,6 +383,12 @@ def sheets_from_guarantee_sheet(gs: Any) -> list[PolicySheet]:
     base_status = {"feasible": bool(gs.feasible), "lambda_hat": _f(gs.lambda_hat),
                    "commit_threshold": _f(gs.commit_threshold), "ltt_commits": gs.ltt_commits,
                    "ltt_wrong_commits": gs.ltt_wrong_commits, "commit_gate": dict(gs.commit_gate)}
+    of = getattr(gs, "offers", None)
+    if of:  # P5-31: the offer null control (a check of the offer list; it does not change the bound)
+        base_status["offer_null_control"] = {"passed": bool(of.get("passed")), "mode": of.get("mode"),
+                                             "real": of.get("real"),
+                                             "controls": {r["name"]: f"{r['n_offer']}/{r['n']}"
+                                                          for r in of.get("controls", ())}}
     cf = getattr(gs, "confidence", None)
     if cf:  # P5-23: the learned commit score (fit items disjoint from the LTT items); absent = p_top1
         base_status["commit_score"] = "learned"

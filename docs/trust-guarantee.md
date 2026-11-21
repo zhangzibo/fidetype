@@ -77,6 +77,37 @@ Every calibration runs two null controls. This follows the project rule of 2026-
 - For very short utterances (one or two letters), a shuffle can give a real word ("no" → "on"). Then a commit on the shuffled control is not always a hallucination.
 - The controls are a sanity check, not a proof. They do not test drift, a new user or other failures.
 
+### 5a. Offer null control (P5-31)
+
+The commit controls count only COMMITs. A guard can also OFFER a list of choices. An offer list that the guard shows as often on null input as on real input does not depend on the signal. P14-41 found this case: the offer-only `willett-hw` guard offers on 77 of 80 frame-shuffled test inputs, and on 77 of 80 real test inputs.
+
+The offer null control counts the OFFERs on the same control inputs (no extra decoding). It compares each control with the **real offer rate**: the OFFERs of the final guard on the LTT items.
+
+**Pass rule (pre-stated).** A control with n inputs and k offers passes if both are true:
+
+1. k / n ≤ 0.5 × (real offer rate) (`OFFER_NULL_MAX_RATIO`). This asks for a clear drop, not only a significant one.
+2. k ≤ floor(r · n) (the commit allowance), **or** a one-sided Fisher exact test of "null offer rate < real offer rate" gives p ≤ 0.05 (`OFFER_NULL_P`). This asks for evidence when the null offers are more than a few.
+
+A guard that never offers passes (0 ≤ 0). A guard that offers on null input but never on real input fails.
+
+**Mode: a warning first (`calibrate(offer_control=...)`).**
+
+| Mode | What happens on a failure |
+|---|---|
+| `"warn"` (default) | The result is in `sheet.offers`. The sheet gets a warning that starts with `offer null control (P5-31) FAILED`. The guard, its `config_id`, `feasible`, the commit threshold and the commit controls do not change |
+| `"refuse"` | `calibrate` raises `NullControlError` and returns no guard |
+| `"off"` | The control does not run. The sheet has the bytes of a guard before P5-31 |
+
+Why a warning first:
+
+- The commit guarantee (section 1) does not use the offer list. An offer failure does not make the bound false.
+- Many existing guards fail this rule by design: the policy offers when it is not sure, and null input is the least sure input. For example, the n-best test guard of `tests/test_trust_offer_control.py` offers on 60 of 60 equal-score lists and on 33 of 112 real LTT items. A refusal would turn these calibrations into errors without notice.
+- The rule (0.5, 0.05) is new. It is validated on few guards. A refusal rule must not change the status of packaged guards in silence.
+
+What a failure means for you: do not show the offer list as a suggestion of the user's intent. Show it as "no reliable reading", or withhold it. Use `offer_control="refuse"` if your product shows offers as suggestions.
+
+**Check a saved guard.** `fidetype.trust.recheck_offer_control(guard, inputs, null_inputs=...)` runs the control on a saved guard without a new calibration. Give it the calibration inputs in the same order (and the same `null_inputs`). It makes the same split and the same control inputs from `sheet.seed`, so the commit counts must equal the sheet (`commits_match_sheet: True`).
+
 ## 6. Reading the sheet
 
 | Line | Meaning | Look for |
@@ -91,6 +122,7 @@ Every calibration runs two null controls. This follows the project rule of 2026-
 | `commit gate` | The gate settings | `min_chars 1`, `max_guard_risk 1.0` |
 | `LTT items (in-sample)` | Commits and wrong commits of the final guard on the LTT part, the commits that the commit gate blocked (guard risk 1.00), and the median guard risk. In-sample: a sanity check, **not** a test | Wrong commits / `n_ltt` near or below α; more commits than gate blocks (else the guard will rarely commit) |
 | `null controls` | Commits / n per control and the allowed number | All `PASS` (else there is no sheet) |
+| `offer null control` | Offers / n on the real LTT items and on each control, with the Fisher p-value (section 5a) | All `PASS`; on `FAIL`, do not show offers as suggestions |
 | `assumptions`, `not guaranteed` | Sections 3 and 4 of this page | — |
 | `warnings` | For example "only 30 LTT items", "never commits", "the commit gate blocked N in-sample commits", "only N of M LTT items commit in-sample", "frame temperature not fitted" | No warnings, or warnings that you understand |
 
