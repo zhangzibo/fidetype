@@ -1,0 +1,46 @@
+{
+  "_comment": "P15-35 pre-registered configuration (see plan.md). Frozen with plan.md before any result of this task.",
+  "p15_33_config": "experiments/2026-11-20-p15-33-low-data-recipe/config.json",
+  "base_recipe": "A",
+  "budget": "30",
+  "search_seed": 0,
+  "search_arms": ["R", "E"],
+  "descriptive_seed": 1,
+  "candidates": {
+    "U50": {"code": 3501, "align": "uniform", "synth_frac": 0.5},
+    "F50": {"code": 3502, "align": "forced", "synth_frac": 0.5},
+    "F80": {"code": 3503, "align": "forced", "synth_frac": 0.8}
+  },
+  "aligner_sources": {
+    "R-b30-s0": "C:/Users/zhang/bci-data/derived/p15-33/search/A/R-b30-s0/final.pt",
+    "E-b30-s0": "C:/Users/zhang/bci-data/derived/p15-33/search/A/E-b30-s0/final.pt",
+    "E-b30-s0-labelshuf": "C:/Users/zhang/bci-data/derived/p15-33/search/A/E-b30-s0-labelshuf/final.pt",
+    "R-b30-s1": "C:/Users/zhang/bci-data/derived/p15-33/grid/R-b30-s1/final.pt",
+    "E-b30-s1": "C:/Users/zhang/bci-data/derived/p15-33/grid/E-b30-s1/final.pt"
+  },
+  "text": {
+    "tatoeba": "C:/Users/zhang/bci-data/corpora/tatoeba/eng_sentences.tsv.bz2",
+    "chars": "abcdefghijklmnopqrstuvwxyz ,.'?",
+    "min_len": 10,
+    "max_len": 90,
+    "shuffle_seed": 20261121,
+    "n_pool": 100000,
+    "ngram_block": 5,
+    "contain_min_len": 15
+  },
+  "blocklists": {
+    "willett_meta": "C:/Users/zhang/bci-data/derived/p15-08/willett/meta.json",
+    "t15_copytask_pkl": "C:/Users/zhang/bci-data/brain-to-text-25/t15_copyTask.pkl"
+  },
+  "synth": {"tail_frames": 100},
+  "rules": {
+    "eligible_max_val_cer": 0.80,
+    "c2_min_cer": 0.75,
+    "c2_min_gap": 0.10,
+    "val_margin": 0.03,
+    "length_guard": 0.30,
+    "shuffle_seed": 12345
+  },
+  "gpu_cap_hours": 9.0,
+  "seed1_start_max_hours": 7.0
+}
