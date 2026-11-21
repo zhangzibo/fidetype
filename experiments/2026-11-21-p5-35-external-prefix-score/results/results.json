@@ -1,0 +1,137 @@
+{
+ "task": "P5-35",
+ "date": "2026-11-21 09:20",
+ "research_only": "emg2qwerty, CC BY-NC-SA 4.0",
+ "note": "counts only (no text, no per-user value, no id)",
+ "config_id": "tcfg-618d4ca57bb9326b",
+ "score_digest": "pfx-1b156e8ff596d88c22840bd2",
+ "threshold": {
+  "native": 0.86,
+  "p11_16": 0.86
+ },
+ "ltt": {
+  "native": {
+   "n": 459,
+   "empirical_risk": 0.032679738562091505,
+   "p_value": 0.04882009467067894,
+   "commit_rate": 0.5446623093681917,
+   "no_score": 52,
+   "gate_blocked": 0
+  },
+  "p11_16": {
+   "empirical_risk": 0.032679738562091505,
+   "p_value": 0.04882009467067894,
+   "commit_rate": 0.5446623093681917,
+   "n": 459
+  }
+ },
+ "in_sample_ltt": {
+  "commits": 250,
+  "wrong": 15,
+  "gate_blocked": 0
+ },
+ "controls": {
+  "native": {
+   "uniform": 0,
+   "shuffled": 5,
+   "user": 0
+  },
+  "p11_16": {
+   "uniform": 0,
+   "shuffled": 5,
+   "user": 0
+  },
+  "limit": 15
+ },
+ "offer_control": {
+  "passed": false
+ },
+ "frame_temperature": 1.0,
+ "decisions": {
+  "real": {
+   "n": 1221,
+   "commits_native": 671,
+   "commits_p11_16": 671,
+   "same_commit_or_not": 1221,
+   "same_commit_text": 1221,
+   "same_action_3way": 1221,
+   "commit_decisions_equal": true
+  },
+  "shuffled": {
+   "n": 1221,
+   "commits_native": 0,
+   "commits_p11_16": 0,
+   "same_commit_or_not": 1221,
+   "same_commit_text": 1221,
+   "same_action_3way": 1221,
+   "commit_decisions_equal": true
+  },
+  "zeros": {
+   "n": 1221,
+   "commits_native": 0,
+   "commits_p11_16": 0,
+   "same_commit_or_not": 1221,
+   "same_commit_text": 1221,
+   "same_action_3way": 1221,
+   "commit_decisions_equal": true
+  }
+ },
+ "outcomes_native": {
+  "real": {
+   "commits": 671,
+   "prefix_commits": 592,
+   "wrong": 46
+  },
+  "shuffled": {
+   "commits": 0,
+   "prefix_commits": 0,
+   "wrong": 0
+  },
+  "zeros": {
+   "commits": 0,
+   "prefix_commits": 0,
+   "wrong": 0
+  }
+ },
+ "reference": {
+  "threshold": 0.86,
+  "commits": 671,
+  "prefix_commits": 592,
+  "wrong": 46,
+  "n_eval": 1221,
+  "controls": {
+   "uniform": 0,
+   "shuffled": 5,
+   "user": 0
+  }
+ },
+ "reload": {
+  "n": 1221,
+  "commits_native": 671,
+  "commits_p11_16": 671,
+  "same_commit_or_not": 1221,
+  "same_commit_text": 1221,
+  "same_action_3way": 1221,
+  "commit_decisions_equal": true
+ },
+ "score_calls_during_calibrate": {
+  "calls": 879,
+  "no_analysis": 0,
+  "word_mismatch": 0
+ },
+ "checks": {
+  "threshold_equal": true,
+  "ltt_equal": true,
+  "decisions_equal": true,
+  "real_counts_equal": true,
+  "controls_pass": true,
+  "reload_equal": true,
+  "load_refused_without_score": true,
+  "config_id": true
+ },
+ "pass": true,
+ "seconds": {
+  "calibrate": 57.1,
+  "total": 145.6
+ }
+}

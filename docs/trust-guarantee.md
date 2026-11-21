@@ -275,6 +275,23 @@ Not guaranteed: anything beyond section 1. A learned score can commit more often
 
 Not in this version: `online()`, `target_precision=`, `grounding=`, `llm=`. A plain n-best prefix posterior is not offered: when all candidates share a prefix its mass is 1.0, also when the truth is not in the list, so LTT finds no feasible threshold (P14-23). Score a prefix guard with [safe WPM v0.2 (proposed)](safe-wpm-v0.2-proposal.md); v0.1 gives a right prefix 0 words.
 
+### 10b.1 A frozen external prefix score (P5-35)
+
+`calibrate(..., commit_unit="prefix", prefix_score=score)` certifies a prefix score that you fitted elsewhere (for example from a second decoder, a language model or a wide competitor set). `score` is a `fidetype.trust.FrozenPrefixScore(fn, name=, version=, spec=)`.
+
+| Step | What happens |
+|---|---|
+| Your function | `fn(ctx)` gets a `PrefixContext`: `words` (the guard's top-1 words), `texts` and `posteriors` (the calibrated n-best), `candidates`, `log_probs` (logits input: the frame-calibrated `(T, V)` log-probabilities that the decoder saw; `None` for n-best), `p_top1`, `guard_risk`, `n_frames`, `builtin_rows` (the 10b prefix features). It returns `len(words)` scores (higher = surer, normally in [0, 1]) or `None` (no commit for this item). A wrong length or NaN raises `ValueError`. |
+| Fit | None. Calibrate fits no score. |
+| Certify, loss, guarantee, decide, controls | As in 10b: the library makes the scores monotone (running minimum), applies the commit gate, certifies the threshold by LTT on the LTT items only, and runs the null controls on the final guard. |
+| Identity | `spec` is a JSON object that describes the score completely (weights, features, decoder identity). The digest of `name`, `version` and `spec` (`pfx-...`) is in the frozen configuration (`recipe.commit_score`, schema `fidetype.external-prefix-score/0.1`), so `config_id` changes when the score changes. A spec that is not JSON (NaN, infinity, arrays, objects) raises `TypeError`. A bare function raises `TypeError`: it has no stable identity. |
+| Guard file | Keeps `name`, `version`, `spec` and the digest, not the function. `ft.load(path, prefix_score=score)` needs the same score again: no score or another digest raises `ValueError`. Files of other guards do not change (no new keys). |
+| Sheet | `commit threshold  external prefix score >= ...`; a `commit score  external, frozen` block with the name, version and digest; one more assumption: the score was frozen before calibration and was not fitted, tuned or selected on the LTT items. The `offline_ltt` policy sheet has `status.commit_score = "external"`. |
+
+The LTT guarantee needs a score that did not see the LTT items. The library cannot check this. Fit the score on other data, or on the fit + policy-grid items of the same `seed` split (P11-16 did this). Not combined with `target_precision=`, `grounding=`, `llm=`, `online()`, or the hybrid guard (P5-26).
+
+Validated (P5-35, [results](../experiments/2026-11-21-p5-35-external-prefix-score/results.md)): the P11-16 LX-FL prefix guard (EMG, research only) reproduced through `prefix_score=`: same threshold 0.86, same null-control counts (uniform 0, shuffled 5, user 0 of 300) and the same decisions on 3 x 1,221 test prompts (real: 671 commits, 592 prefix, 46 wrong; time-shuffled and zero EMG: 0 commits), now with a guard file and `config_id`.
+
 ## 10c. Optional: streaming word-by-word prefix commits (P5-27)
 
 `fidetype.trust.stream_commit.calibrate_streaming(base, inputs, texts, step_frames=...)` builds a guard that decides at checkpoints while an utterance goes on, not only at its end. `base` is a calibrated prefix guard (10b) with logits input from a **causal** decoder: the first n frames of a stored output must be what the decoder emits live.

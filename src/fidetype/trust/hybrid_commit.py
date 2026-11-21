@@ -156,6 +156,9 @@ class HybridPrefixGuard:
         cs = getattr(base, "commit_score", None)
         if cs is None or cs.unit != "prefix":
             raise ValueError("a hybrid guard needs a base prefix guard (commit_unit='prefix')")
+        if not isinstance(cs, LearnedCommitScore):
+            raise ValueError("a hybrid guard needs a learned base prefix score; an external prefix score (P5-35) "
+                             "is not supported here")
         if int(step_frames) < 1:
             raise ValueError("step_frames must be >= 1")
         self.base = base

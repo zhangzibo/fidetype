@@ -257,7 +257,9 @@ class GuaranteeSheet:
         thr = "never commits (no threshold certified)" if not math.isfinite(self.commit_threshold) \
             else f"{self.commit_threshold:g}"
         prefix = bool(self.confidence) and self.confidence.get("unit") == "prefix"
-        score_name = ("learned prefix score" if prefix else "learned commit score") if self.confidence else "p_top1"
+        external = bool(self.confidence) and self.confidence.get("kind") == "external"  # P5-35
+        score_name = ("external prefix score" if external else "learned prefix score" if prefix else
+                      "learned commit score") if self.confidence else "p_top1"
         lines = [
             "Fidetype trust guarantee sheet",
             "==============================",
@@ -288,6 +290,16 @@ class GuaranteeSheet:
             if prefix:
                 lines.append("commit unit          the longest word prefix of the top-1 text whose score passes "
                              "(prefix scores never rise with length)")
+            if external:
+                lines += [
+                    f"commit score         external, frozen: {cf['name']!r} version {cf['version']!r} "
+                    f"({cf['digest']}; in config_id)",
+                    f"  fitted on          not by calibrate (frozen before calibration; see the assumptions)",
+                    f"  certified on       {cf['certify_items']} LTT items ({cf.get('certify_no_score', 0)} without "
+                    f"a score, {cf.get('certify_gate_blocked', 0)} blocked by the commit gate)",
+                ]
+        if self.confidence and not external:
+            cf = self.confidence
             lines += [
                 f"commit score         learned ({cf['model']}; {cf.get('n_used', '?')} of {len(cf['features'])} "
                 f"features used, L2 {cf['l2']:g})",
@@ -637,7 +649,7 @@ class TrustGuard:
     def __init__(self, config: FrozenTrustConfig, codec: _Codec, sheet: GuaranteeSheet | None = None,
                  decode_fn: UserDecodeFn | None = None, audit_text: bool = True, *,
                  halluc_gate: Any = None, grounding: Any = None, language: str = "en",
-                 offer_gate: Any = None) -> None:
+                 offer_gate: Any = None, prefix_score: Any = None) -> None:
         from fidetype.lang import check_tag
         from fidetype.trust.streaming import StreamingConfig, StreamingTrustLayer
 
@@ -670,12 +682,19 @@ class TrustGuard:
         cs = (config.recipe or {}).get("commit_score")
         if cs:
             from fidetype.trust.commit_score import LearnedCommitScore
+            from fidetype.trust.external_score import EXTERNAL_PREFIX_SCHEMA, ExternalPrefixCommit
 
             if math.isfinite(float(config.policy.get("commit_p", math.inf))):
                 raise ValueError("a configuration with a learned commit score must have commit_p = inf")
             if self.halluc_gate is not None:
                 raise ValueError("a learned commit score cannot be combined with a commit grounding gate (yet)")
-            self.commit_score = LearnedCommitScore.from_dict(cs)
+            if cs.get("schema") == EXTERNAL_PREFIX_SCHEMA:
+                # P5-35: a frozen external prefix score; the file holds its digest, the caller gives the function
+                self.commit_score = ExternalPrefixCommit.from_dict(cs, prefix_score)
+            else:
+                self.commit_score = LearnedCommitScore.from_dict(cs)
+        if prefix_score is not None and not _is_external(self.commit_score):
+            raise ValueError("prefix_score= is only for a guard calibrated with an external prefix score (P5-35)")
         #: ``"sentence"`` or ``"prefix"`` (P5-24: commit the longest certified word prefix of the top-1 text).
         self.commit_unit = self.commit_score.unit if self.commit_score is not None else "sentence"
         self._last_nb: NBest | None = None
@@ -771,18 +790,44 @@ class TrustGuard:
         words = str(cands[0].text).split() if len(cands) else []
         return rows, words
 
+    def _prefix_context(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> Any:
+        """P5-35: the :class:`~fidetype.trust.external_score.PrefixContext` of one decision."""
+        from fidetype.trust.commit_score import commit_features, prefix_features
+        from fidetype.trust.external_score import PrefixContext
+
+        post, cands, n_frames = self._nb_parts(events)
+        f = commit_features(float(sd.inputs.p_top1), float(sd.inputs.guard_risk), post, cands, n_frames)
+        lp = self._last_lp if self.input_kind == "logits" else None
+        return PrefixContext(words=tuple(str(cands[0].text).split()) if len(cands) else (),
+                             texts=tuple(str(c.text) for c in cands), posteriors=np.asarray(post, dtype=np.float64),
+                             candidates=tuple(cands), log_probs=lp, p_top1=float(sd.inputs.p_top1),
+                             guard_risk=float(sd.inputs.guard_risk), n_frames=n_frames,
+                             builtin_rows=prefix_features(f, post, cands))
+
+    def _prefix_mono(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[np.ndarray | None, list[str]]:
+        """The monotone prefix scores of the top-1 words (None: no commit possible) and the words."""
+        from fidetype.trust.commit_score import monotone_prefix_scores
+
+        cs = self.commit_score
+        if _is_external(cs):  # P5-35
+            ctx = self._prefix_context(sd, events)
+            words = list(ctx.words)
+            raw = cs.score.scores(ctx) if words else None
+            return (None if raw is None or not len(raw) else monotone_prefix_scores(raw)), words
+        rows, words = self._prefix_rows(sd, events)
+        return (monotone_prefix_scores(cs.scores(rows)) if len(rows) else None), words
+
     def _prefix_commit(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[Any, float | None]:
         """Commit the longest prefix of the top-1 text whose monotone score passes (P5-24). (decision, score)."""
-        from fidetype.trust.commit_score import longest_prefix, monotone_prefix_scores
+        from fidetype.trust.commit_score import longest_prefix
         from fidetype.trust.content import REASON_PREFIX
         from fidetype.trust.policy import Decision
 
         cs = self.commit_score
         self._last_prefix = None
-        rows, words = self._prefix_rows(sd, events)
-        if not len(rows) or not sd.inputs.texts:
+        mono, words = self._prefix_mono(sd, events)
+        if mono is None or not sd.inputs.texts:
             return sd, None
-        mono = monotone_prefix_scores(cs.scores(rows))
         thr = cs.threshold
         k = longest_prefix(mono, thr)
         m = len(words)
@@ -799,7 +844,8 @@ class TrustGuard:
         prov = dict(sd.provenance)
         prov["commit_threshold"] = float(thr)
         self._last_prefix = (k, m)
-        d = Decision(Action.COMMIT, (text,), f"learned prefix score {s:.2f} >= {thr:.2f} ({k} of {m} words)")
+        kind = "external" if _is_external(cs) else "learned"
+        d = Decision(Action.COMMIT, (text,), f"{kind} prefix score {s:.2f} >= {thr:.2f} ({k} of {m} words)")
         return replace(sd, decision=d, provenance=prov), s
 
     def _learned_commit(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[Any, float]:
@@ -913,7 +959,8 @@ class TrustGuard:
         if self.commit_score is not None and (score is not None or prefix):
             reason = _learned_reason(d.reason, math.nan if score is None else score,
                                      float(self.commit_score.threshold), float(sd.inputs.p_top1),
-                                     float(sd.inputs.guard_risk), unit=self.commit_unit)
+                                     float(sd.inputs.guard_risk), unit=self.commit_unit,
+                                     external=_is_external(self.commit_score))
         else:
             reason = _user_reason(d.reason, float(sd.inputs.p_top1), float(sd.inputs.guard_risk),
                                   float(self.config.policy.get("commit_p", math.inf)))
@@ -1092,18 +1139,25 @@ class TrustGuard:
 _GATE_RISK_REASON = "commit blocked: low acoustic evidence"
 
 
+def _is_external(cs: Any) -> bool:
+    """True for a P5-35 external prefix score (:class:`~fidetype.trust.external_score.ExternalPrefixCommit`)."""
+    return str(getattr(cs, "schema", "")).startswith("fidetype.external-prefix-score/")
+
+
 def _learned_reason(raw: str, score: float, thr: float, p_top1: float, guard_risk: float,
-                    unit: str = "sentence") -> str:
-    """:attr:`TrustResult.reason` for a guard with a learned commit score (P5-23) or prefix score (P5-24)."""
+                    unit: str = "sentence", external: bool = False) -> str:
+    """:attr:`TrustResult.reason` for a guard with a learned commit score (P5-23) or prefix score (P5-24), or a
+    frozen external prefix score (P5-35, ``external=True``)."""
     from fidetype.trust.content import REASON_PREFIX
 
     t = f"{thr:.2f}" if math.isfinite(thr) else "none (never commits)"
     if raw.startswith("learned commit score"):
         return f"commit: learned commit score {score:.2f} >= threshold {t} (p_top1 {p_top1:.2f})"
-    if raw.startswith("learned prefix score"):
+    if raw.startswith(("learned prefix score", "external prefix score")):
         words = raw[raw.rfind("(") + 1:raw.rfind(")")] if raw.endswith(")") else ""
-        return f"commit {words}: learned prefix score {score:.2f} >= threshold {t} (p_top1 {p_top1:.2f})"
-    name = "learned prefix score" if unit == "prefix" else "learned commit score"
+        kind = raw.split(" ", 1)[0]
+        return f"commit {words}: {kind} prefix score {score:.2f} >= threshold {t} (p_top1 {p_top1:.2f})"
+    name = ("external prefix score" if external else "learned prefix score") if unit == "prefix" else         "learned commit score"
     if raw.startswith(REASON_PREFIX):
         why, _, rest = raw[len(REASON_PREFIX):].partition("; ")
         if why.startswith("guard risk"):
@@ -1261,7 +1315,8 @@ class GuardSession:
 
 
 def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
-         audit_text: bool = True, grounding: Any = None, offer_gate: Any = None, lm: Any = None) -> TrustGuard:
+         audit_text: bool = True, grounding: Any = None, offer_gate: Any = None, lm: Any = None,
+         prefix_score: Any = None) -> TrustGuard:
     """Load a guard saved with :meth:`TrustGuard.save`.
 
     If the guard was calibrated with your own ``decode_fn``, pass the
@@ -1273,6 +1328,10 @@ def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
     ``offer_gate`` (P5-33): None (default) uses the gate in the file, if there is one; an
     :class:`~fidetype.trust.offer_gate.OfferGate` (or a list) replaces it; ``False`` switches it off.
     ``lm``: the character LM of a ``char_lm`` gate.
+
+    ``prefix_score`` (P5-35): a guard calibrated with a frozen external prefix score needs the same
+    :class:`~fidetype.trust.external_score.FrozenPrefixScore` again (the file keeps its digest and spec, not the
+    function). A missing or different score (other digest) raises ``ValueError``.
     """
     d = json.loads(Path(path).read_text(encoding="utf-8"))
     if d.get("schema") != GUARD_SCHEMA:
@@ -1299,7 +1358,7 @@ def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
         offer_gate = [OfferGate.from_dict(x, lm=lm) for x in (raw if isinstance(raw, list) else [raw])]
     return TrustGuard(FrozenTrustConfig.from_dict(d["config"]), codec, sheet, decode_fn, audit_text,
                       halluc_gate=gate, grounding=grounding, language=d.get("language", "en"),
-                      offer_gate=offer_gate)
+                      offer_gate=offer_gate, prefix_score=prefix_score)
 
 
 def _as_commit_grounding(g: Any) -> Any:
@@ -1324,6 +1383,9 @@ _ASSUMPTIONS = (
     "(the wrapper joins runs of spaces and strips the ends; nothing else).",
     "Each utterance is decided once (no repeats), and the calibration items were used for nothing else.",
 )
+#: P5-35: the extra assumption of a guard with a frozen external prefix score.
+_EXTERNAL_ASSUMPTION = ("The external prefix score was frozen before calibration and was not fitted, tuned or "
+                        "selected on the LTT items of this calibration.")
 _NOT_GUARANTEED = (
     "Any single utterance: the bound is on the rate over many utterances.",
     "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
@@ -1384,6 +1446,7 @@ def calibrate(
     commit_unit: str = "sentence",
     language: str = "en",
     offer_control: str = "warn",
+    prefix_score: Any = None,
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -1553,6 +1616,21 @@ def calibrate(
         committed words (``n_words_committed``) and ``complete``. The null
         controls count every prefix commit. Score prefix guards with
         ``safe-wpm/0.2`` (proposed), not v0.1.
+    prefix_score
+        Optional frozen external per-prefix score (P5-35): a
+        :class:`~fidetype.trust.external_score.FrozenPrefixScore` (your
+        function ``fn(ctx) -> one score per word prefix | None``, plus a
+        name, a version and a JSON ``spec``). Needs
+        ``commit_unit="prefix"``. The library fits no score; it certifies
+        the threshold of your score by the same Learn then Test on the LTT
+        items only (loss "wrong prefix commit"), with the same commit gate
+        and null controls. The score must not have been fitted or tuned on
+        the LTT items of this calibration (for example fit it on the fit +
+        policy-grid items of the same ``seed`` split, or on other data).
+        The digest of the score enters ``config_id``; the guard file keeps
+        the digest and the spec, and :func:`load` needs the same score
+        again (``prefix_score=``). Not combined with ``grounding``,
+        ``llm`` or ``target_precision``.
     language
         BCP 47 tag of the true texts (P14-34, :mod:`fidetype.lang`). It
         must resolve in the language registry. The guard keeps it
@@ -1652,7 +1730,17 @@ def calibrate(
 
     if confidence not in CONFIDENCE_KINDS:
         raise ValueError(f"confidence must be one of {CONFIDENCE_KINDS}, not {confidence!r}")
-    learned = confidence == "learned"
+    ext_score = None
+    if prefix_score is not None:  # P5-35: a frozen external prefix score (certified here, not fitted here)
+        from fidetype.trust.external_score import as_prefix_score
+
+        ext_score = as_prefix_score(prefix_score)
+        if commit_unit != "prefix":
+            raise ValueError('prefix_score= needs commit_unit="prefix"')
+        if halluc_on or prec_on:
+            raise ValueError("prefix_score= cannot be combined with grounding=, llm= or target_precision= in this "
+                             "version")
+    learned = confidence == "learned" or ext_score is not None
     if learned and (halluc_on or prec_on):
         raise ValueError('confidence="learned" cannot be combined with grounding=, llm= or target_precision= '
                          "in this version")
@@ -1735,9 +1823,10 @@ def calibrate(
     if learned:
         frozen, score_info = _fit_commit_score(frozen, codec, decode_fn if kind == "logits" else None, audit_text,
                                                inputs, texts, order, n_fit, n_pol, alpha, delta,
-                                               float(confidence_l2), unit=commit_unit)
+                                               float(confidence_l2), unit=commit_unit, external=ext_score)
 
-    guard = TrustGuard(frozen, codec, None, decode_fn if kind == "logits" else None, audit_text)
+    guard = TrustGuard(frozen, codec, None, decode_fn if kind == "logits" else None, audit_text,
+                       prefix_score=ext_score)
 
     # --- in-sample LTT check -------------------------------------------
     ltt_inputs = [inputs[i] for i in order[n_fit + n_pol:]]
@@ -1796,7 +1885,11 @@ def calibrate(
         config_id=frozen.config_id, input_kind=kind,
         decoder=_decoder_name(decode_fn, lex) if kind == "logits" else "your n-best lists",
         alpha=float(alpha), delta=float(delta),
-        method=("Learn then Test on the learned prefix score (fitted on the fit + policy-grid items, one row per "
+        method=(f"Learn then Test on the frozen external prefix score {ext_score.name!r} version "
+                f"{ext_score.version!r} ({ext_score.digest}; not fitted by calibrate), loss = wrong prefix commit, "
+                "exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, on the LTT items only"
+                if ext_score is not None else
+                "Learn then Test on the learned prefix score (fitted on the fit + policy-grid items, one row per "
                 "word prefix), loss = wrong prefix commit, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 "
                 "step 0.01, on the LTT items only" if prefix_on else
                 "Learn then Test on the learned commit score (fitted on the fit + policy-grid items), exact "
@@ -1808,7 +1901,8 @@ def calibrate(
         commit_threshold=commit_thr, commit_gate=dict(frozen.commit_gate),
         ltt_commits=n_com, ltt_wrong_commits=n_wrong, controls=tuple(controls), null_max_commit_rate=rate,
         seed=int(seed), created_utc=_dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
-        assumptions=_ASSUMPTIONS, not_guaranteed=_NOT_GUARANTEED, warnings=tuple(warnings),
+        assumptions=_ASSUMPTIONS + ((_EXTERNAL_ASSUMPTION,) if ext_score is not None else ()),
+        not_guaranteed=_NOT_GUARANTEED, warnings=tuple(warnings),
         ltt_median_guard_risk=med_risk, ltt_gate_blocked=int(n_blocked), confidence=score_info, offers=offers,
     )
     failed = [c for c in controls if not c.passed]
@@ -1845,7 +1939,7 @@ def calibrate(
 def _fit_commit_score(frozen: FrozenTrustConfig, codec: _Codec, decode_fn: UserDecodeFn | None, audit_text: bool,
                       inputs: Sequence[Any], texts: Sequence[str], order: np.ndarray, n_fit: int, n_pol: int,
                       alpha: float, delta: float, l2: float,
-                      unit: str = "sentence") -> tuple[FrozenTrustConfig, dict[str, Any]]:
+                      unit: str = "sentence", external: Any = None) -> tuple[FrozenTrustConfig, dict[str, Any]]:
     """P5-23: fit the learned commit score on the fit + policy-grid items; certify it by LTT on the LTT items.
 
     Returns the configuration with ``commit_p = inf`` (the trust layer alone never commits), the score in
@@ -1858,6 +1952,9 @@ def _fit_commit_score(frozen: FrozenTrustConfig, codec: _Codec, decode_fn: UserD
     base = frozen.with_policy(commit_p=math.inf)
     g0 = TrustGuard(base, codec, None, decode_fn, audit_text)
     gate = base.gate
+    if unit == "prefix" and external is not None:
+        return _certify_external_prefix(frozen, base, g0, codec, inputs, texts, order, n_fit, n_pol, alpha, delta,
+                                        external)
     if unit == "prefix":
         return _fit_prefix_score(frozen, base, g0, codec, inputs, texts, order, n_fit, n_pol, alpha, delta, l2)
     feats, right, gate_ok = [], [], []
@@ -1953,6 +2050,59 @@ def _fit_prefix_score(frozen: FrozenTrustConfig, base: FrozenTrustConfig, g0: Tr
             "certify_items": int(len(order) - k), "threshold": _json_float(res["threshold"]),
             "feasible": bool(res["feasible"]), "risk": RISK_PREFIX,
             "coef": {f: float(c) for f, c in zip(PREFIX_FEATURES, model.coef)}, "intercept": float(model.intercept)}
+    return out, info
+
+
+def _certify_external_prefix(frozen: FrozenTrustConfig, base: FrozenTrustConfig, g0: TrustGuard, codec: _Codec,
+                             inputs: Sequence[Any], texts: Sequence[str], order: np.ndarray, n_fit: int, n_pol: int,
+                             alpha: float, delta: float, score: Any) -> tuple[FrozenTrustConfig, dict[str, Any]]:
+    """P5-35: certify the threshold of a frozen external prefix score by LTT on the LTT items (nothing is fitted).
+
+    Same loss, grid, commit gate and test as the P5-24 learned prefix score (:func:`_fit_prefix_score`).
+    """
+    from fidetype.trust.commit_score import RISK_PREFIX, ltt_prefix_threshold, monotone_prefix_scores, prefix_right
+    from fidetype.trust.external_score import ExternalPrefixCommit
+    from fidetype.trust.risk_control import DEFAULT_LTT_GRID
+
+    gate = base.gate
+    k = n_fit + n_pol
+    s_ltt: list[np.ndarray] = []
+    r_ltt: list[np.ndarray] = []
+    n_none = n_blocked = 0
+    for i in order[k:]:
+        events, _ = codec.events(inputs[i])
+        sd = g0._run_layer(g0._layer, events)
+        ctx = g0._prefix_context(sd, events)
+        words = list(ctx.words)
+        raw = score.scores(ctx) if (words and sd.inputs.texts) else None
+        n_none += raw is None
+        ok = raw is not None and len(raw) > 0 and (gate is None or gate.violation(
+            sd.inputs.texts[0], float(sd.inputs.guard_risk) if base.use_guard else None) is None)
+        n_blocked += raw is not None and not ok
+        s_ltt.append(monotone_prefix_scores(raw) if ok else np.zeros(0))
+        r_ltt.append(prefix_right(words, texts[i].split()) if words else np.zeros(0, bool))
+    res = ltt_prefix_threshold(s_ltt, r_ltt, alpha=alpha, delta=delta, grid=DEFAULT_LTT_GRID)
+    cert = {"method": "ltt-binomial (prefix loss)", "alpha": float(alpha), "delta": float(delta), "n": int(res["n"]),
+            "feasible": bool(res["feasible"]),
+            "empirical_risk": None if math.isnan(res["empirical_risk"]) else float(res["empirical_risk"]),
+            "p_value": None if math.isnan(res["p_value"]) else float(res["p_value"]),
+            "ltt_commit_rate": float(res["commit_rate"]), "grid": "1.00 -> 0.00 step 0.01", "risk": RISK_PREFIX}
+    ext = ExternalPrefixCommit(score=score).with_threshold(res["threshold"], cert)
+    rc = {"method": "ltt-binomial", "alpha": float(alpha), "delta": float(delta), "threshold": res["threshold"],
+          "feasible": bool(res["feasible"]), "n": int(res["n"]),
+          "bound": res["p_value"], "combine": "none (external prefix score, P5-35)", "score": "external-prefix",
+          "risk": "wrong-prefix-commit"}
+    recipe = dict(frozen.recipe)
+    recipe.update({"commit_score": ext.to_dict(),
+                   "commit_score_split": {"fit": "none (frozen external score)", "n_fit": 0,
+                                          "certify": "ltt items", "n_certify": int(len(order) - k)},
+                   "commit_unit": "prefix",
+                   "fitted_by": str(recipe.get("fitted_by", "")) + " + P5-35 external prefix score"})
+    out = replace(base, recipe=recipe, risk_control=rc)
+    info = {"kind": "external", "unit": "prefix", "schema": ext.schema, "name": score.name,
+            "version": score.version, "digest": score.digest, "certify_items": int(len(order) - k),
+            "certify_no_score": int(n_none), "certify_gate_blocked": int(n_blocked),
+            "threshold": _json_float(res["threshold"]), "feasible": bool(res["feasible"]), "risk": RISK_PREFIX}
     return out, info
 
 

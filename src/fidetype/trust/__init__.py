@@ -190,6 +190,8 @@ _P5_02 = {
     "load_sheets": "fidetype.trust.guarantee_sheet",
     "OnlineGuard": "fidetype.trust.online_guard",
     "OfferGate": "fidetype.trust.offer_gate",
+    "FrozenPrefixScore": "fidetype.trust.external_score",
+    "PrefixContext": "fidetype.trust.external_score",
 }
 __all__ += list(_P5_02)
 

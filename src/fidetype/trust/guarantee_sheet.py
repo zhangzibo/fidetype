@@ -391,13 +391,14 @@ def sheets_from_guarantee_sheet(gs: Any) -> list[PolicySheet]:
                                                           for r in of.get("controls", ())}}
     cf = getattr(gs, "confidence", None)
     if cf:  # P5-23: the learned commit score (fit items disjoint from the LTT items); absent = p_top1
-        base_status["commit_score"] = "learned"
+        base_status["commit_score"] = cf.get("kind", "learned")  # "external": P5-35 frozen external prefix score
         if cf.get("unit") == "prefix":  # P5-24: the longest certified word prefix; loss = wrong prefix commit
             base_status["commit_unit"] = "prefix"
             base_status["risk"] = cf.get("risk")
         cal = dict(cal, score_fit_items=cf.get("fit_items"), score_certify_items=cf.get("certify_items"))
-        base_status["commit_score_model"] = {k: cf.get(k) for k in ("schema", "model", "features", "l2", "coef",
-                                                                    "intercept")}
+        keys = (("schema", "name", "version", "digest") if cf.get("kind") == "external" else
+                ("schema", "model", "features", "l2", "coef", "intercept"))
+        base_status["commit_score_model"] = {k: cf.get(k) for k in keys}
     # the base statement (assumptions / not-guaranteed lines that belong to other bounds are left out)
     base_ass = tuple(a for a in gs.assumptions if not a.startswith(("Precision bound", "Hallucination bound")))
     base_not = tuple(a for a in gs.not_guaranteed if not a.startswith(("Precision bound", "Hallucination bound")))
