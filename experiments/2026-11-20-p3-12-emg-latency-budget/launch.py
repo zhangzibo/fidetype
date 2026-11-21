@@ -104,6 +104,9 @@ def drive() -> int:
     rc = _run("background", 1, ["check"])
     if rc:
         return rc
+    rc = _run("background", 1, ["latency", "--smoke", "12"])  # amendment 3: dry run first (fresh process)
+    if rc:
+        return rc
     if not wait_quiet("latency"):
         return 4
     rc = _run("timing", 1, ["latency"], "iso-latency.json")

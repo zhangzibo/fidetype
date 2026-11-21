@@ -76,3 +76,6 @@ At the first launch (05:19) the P15-34 agent ran two 4-thread background CPU job
 
 ## Amendment 2 (2026-11-20 06:00, before any timed measurement)
 The P15-34 CPU run is expected to end about 11:00 (HANDOFF). That is after the 3 h wait limit of amendment 1, so the wait limit is now 8 h. The `check` stage had finished (05:28); it is not run again. No metric, rule or candidate changes.
+
+## Amendment 3 (2026-11-20 21:18, bug fix, before any timed measurement counted)
+The first `latency` stage started at 09:52:32 (machine quiet) and crashed at 09:52:33, before any window was timed: `gate_pass` read `k_min = None`. Cause: the P11-12 gate thresholds and the P11-11 OOV lexicon are set only when a P11-07 `GuardDecoder` is built. The `check` stage builds one, the `latency` stage did not (the plan-time smoke run hid it because `check` ran first in the same process). Fix: `Ctx` builds one non-writing decoder for every stage and asserts that the gate and the lexicon are loaded. New: `run.py latency --smoke N` (a dry run on N windows into `derived\p3-12\smoke\`, not counted). The driver runs it in a fresh process before the timed stage. No metric, rule or candidate changes. The decisions of the `check` stage are not affected (it had the gate and lexicon loaded).

@@ -120,6 +120,12 @@ class Ctx:
         self.gate = P.p1112()
         self.st_S = P.load_json(P1107 / "guard-S.status.json")
         assert self.st_S["status"] == "guard"
+        # Amendment 3 (bug fix): GuardDecoder.__init__ loads the P11-12 gate thresholds (GATE) and the P11-11 OOV
+        # lexicon (DEC.lex). Build one here so every stage has them (the latency stage built none: k_min None).
+        self.fresh_decoder()
+        g = self.gate.GATE
+        assert all(g[k] is not None for k in ("k_min", "r_min", "r_max")), g
+        assert self.R.DEC.lex, "OOV lexicon not loaded"
 
     def fresh_decoder(self):
         """An un-memoised FL GuardDecoder that never writes (the P11-07 class saves its memo to derived/p11-07)."""
@@ -528,15 +534,26 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("stage", choices=("check", "latency", "latency4", "score"))
     ap.add_argument("--tag", default="latency")
+    ap.add_argument("--smoke", type=int, default=0,
+                    help="dry run on the first N windows into derived/p3-12/smoke/ (not counted; amendment 3)")
     a = ap.parse_args()
+    global OWN, WARMUP, N_MODEL_CHUNKS
+    if a.smoke:
+        OWN, WARMUP, N_MODEL_CHUNKS = OWN / "smoke", 2, 20
+        for f in OWN.glob("*.json"):
+            f.unlink()
     OWN.mkdir(parents=True, exist_ok=True)
     keep_awake(True)
     try:
-        log(f"start {a.stage} (OMP_NUM_THREADS={os.environ.get('OMP_NUM_THREADS')})")
+        log(f"start {a.stage}{' SMOKE ' + str(a.smoke) + ' windows (not counted)' if a.smoke else ''} "
+            f"(OMP_NUM_THREADS={os.environ.get('OMP_NUM_THREADS')})")
         if a.stage == "check":
             stage_check(Ctx())
         elif a.stage == "latency":
-            stage_latency(Ctx(), a.tag)
+            cx = Ctx()
+            if a.smoke:
+                cx.ev = cx.ev[:a.smoke]
+            stage_latency(cx, a.tag)
         elif a.stage == "latency4":
             stage_latency4()
         else:
