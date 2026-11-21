@@ -193,9 +193,30 @@ The bench now runs LSL input at the **receiver default** window (0.05 s; `LSL_ME
 
 ### The CI gate and its tolerance
 
-- The test `test_pipeline_websocket_at_50_hz_within_budget` (both gated profiles, WebSocket input, 8 segments) and the file and LSL tests fail when the p95 `added` latency is not below **50 ms x `FIDETYPE_LATENCY_TOLERANCE`**.
-- The default tolerance is **1.0** (the budget itself). CI does not set it. Our local p95 is 1 to 3 ms for WebSocket and file input, so a CI runner that is 10 times slower still passes. For LSL input the p95 is about 1 to 3 ms at the receiver default window (0.05 s), because the producer sends heartbeats (P3-10). The LSL test runs both gated profiles. Set `FIDETYPE_LATENCY_TOLERANCE=2` only on a machine that is known to be slow, and say so in the report.
+- The test `test_pipeline_websocket_at_50_hz_within_budget` (both gated profiles, WebSocket input, 8 segments), the file and LSL tests, and the bench step of the `collector` job check the gated profiles against the **limit = 50 ms x `FIDETYPE_LATENCY_TOLERANCE`**.
+- The default tolerance is **1.0** (the budget itself). CI sets it to 4 on macOS only (job `conformance-os`; larger scheduler jitter). Our local p95 is 1 to 3 ms for WebSocket and file input. For LSL input the p95 is about 1 to 3 ms at the receiver default window (0.05 s), because the producer sends heartbeats (P3-10). The LSL test runs both gated profiles. Set `FIDETYPE_LATENCY_TOLERANCE=2` only on a machine that is known to be slow, and say so in the report.
 - The guard imports its parts when it starts, so the first decision has no import cost.
+
+#### Gate modes (P2-13)
+
+The gate has two modes (`fidetype.collector.latency.gate_mode`, `gate_verdict`; bench `run_gated`, option `--gate`):
+
+| Mode | Default when | Median rule (p50 of `added` and of `pipeline` < limit) | Tail rule (p95 of `added` < limit) |
+|---|---|---|---|
+| `strict` | not on CI (local machine) | the one run | the same one run; no repeat (the P3-04 rule) |
+| `ci` | `GITHUB_ACTIONS=true` or `CI=true` / `1` | **every** run; a median failure is never repeated | at least **one of 3** runs; a new run (fresh collector, folder `attempt-<k>`) only after a tail-only failure |
+
+- `FIDETYPE_LATENCY_GATE=strict` or `=ci` overrides the default. Use `strict` to check a quiet CI machine as strictly as a local one.
+- Why: a gated run has only 8 to 12 decision steps. Then the p95 is in practice the slowest step. One thread stall of the shared runner in one step moves the p95 above 50 ms, while our own processing stays near 1 ms. Two CI failures had this cause:
+
+| CI run | Job | Profile / input | `receive` p95 | `pipeline` p95 | `added` p50 | `added` p95 | Rerun |
+|---|---|---|---|---|---|---|---|
+| 44673291448 (commit `8180a30`) | pytest windows-latest py3.12 | emg-key / websocket (8 steps) | not printed | not printed | not printed | 320.7 | green |
+| 44913077810 attempt 1 (commit `03d2308`) | collector (ubuntu) | implant-speech / websocket (12 steps) | 52.8 (max 117.2) | 1.27 | 1.09 | 54.1 | green |
+
+- The second failure shows the split: `receive` (the trigger event waits in the receiver queue: thread wake-up under runner load) holds the tail; the guard p95 was 0.93 ms. The gate report now prints which stage holds the tail (`receive` or `pipeline`) and the numbers of each run.
+- What the `ci` mode still catches: a slow step of our code, or a wait in our receive path that happens on each decision, moves the median (strict on every run). A slow path in a part of the steps repeats in each independent run, so 3 runs fail. Only a rare stall that does not repeat passes.
+- What it does not catch: a rare slow path of our code that hits fewer than about 1 in 12 steps and only in some runs. The local `strict` gate and the bench tables above are the check for it.
 - The CI job `collector` runs the pipeline tests with the `lsl` extra (so the LSL test runs), prints the bench report, and runs the kit against the collector consumer (next section).
 
 ## The collector as a consumer: the conformance kit (P7-05, P7-07)

@@ -6,6 +6,8 @@ receiver (WebSocket, file; LSL if pylsl is installed) -> validate -> segment -> 
 online ACI) -> exporters (NTS stream file, decision log, os_text stub, WebSocket /decisions). The outputs
 must reach producer level NTS Trust-ready with ``nts-conform``, and the p95 added latency of the gated
 profiles must stay below the budget (50 ms) times ``FIDETYPE_LATENCY_TOLERANCE`` (default 1.0).
+P2-13: the gate mode (``strict`` locally, ``ci`` on CI runners: median strict, p95 best of 3 runs) is
+:func:`fidetype.collector.latency.gate_mode`; see docs/collector.md.
 """
 
 from __future__ import annotations
@@ -24,6 +26,7 @@ from fidetype.collector.config import ConfigError, parse
 from fidetype.collector.consume import consume, kit_validator
 from fidetype.collector.consume import main as consume_main
 from fidetype.collector.exporters import OsTextExporter, committed_text
+from fidetype.collector import latency as L
 from fidetype.collector.latency import BUDGET_MS, LatencyRecorder, quantiles, trigger_stamps
 from fidetype.collector.processors import GuardProcessor, SegmenterProcessor, decision_errors, strip_binding_keys
 from fidetype.collector.receivers import FileReceiver, status
@@ -225,6 +228,93 @@ def test_latency_recorder_and_trigger_stamps():
     assert s["stages"]["added"]["n"] == 3 and s["within_budget"] is True
 
 
+# --- the latency gate (P2-13) ----------------------------------------------------------------------
+
+
+def _summary(added: list[float], pipeline: list[float] | None = None, receive: list[float] | None = None) -> dict:
+    rec = LatencyRecorder()
+    for v in added:
+        rec.add("added", v / 1000.0)
+    for v in pipeline if pipeline is not None else [min(a, 1.0) for a in added]:
+        rec.add("pipeline", v / 1000.0)
+    for v in receive if receive is not None else [max(0.0, a - 1.0) for a in added]:
+        rec.add("receive", v / 1000.0)
+    return rec.summary()
+
+
+QUIET = [1.0] * 12
+STALL = [1.0] * 11 + [118.0]  # CI run 44913077810: one receive stall of 117 ms in 12 steps (p95 54 ms)
+SLOW_CODE = [60.0] * 12  # a slow guard: every step is over the budget
+
+
+def test_gate_mode_from_environment():
+    assert L.gate_mode({}) == "strict"
+    assert L.gate_mode({"GITHUB_ACTIONS": "true"}) == "ci"
+    assert L.gate_mode({"CI": "1"}) == "ci" and L.gate_mode({"CI": "false"}) == "strict"
+    assert L.gate_mode({"GITHUB_ACTIONS": "true", "FIDETYPE_LATENCY_GATE": "strict"}) == "strict"
+    assert L.gate_mode({"FIDETYPE_LATENCY_GATE": "CI"}) == "ci"
+    with pytest.raises(ValueError, match="FIDETYPE_LATENCY_GATE"):
+        L.gate_mode({"FIDETYPE_LATENCY_GATE": "loose"})
+    assert L.gate_attempts("strict") == 1 and L.gate_attempts("ci") == L.CI_ATTEMPTS == 3
+
+
+def test_gate_check_separates_receive_stall_from_our_processing():
+    c = L.gate_check(_summary(STALL), 50.0)
+    assert c["median_ok"] and not c["tail_ok"] and c["tail_stage"] == "receive"
+    assert c["added_p95"] > 50.0 and c["pipeline_p95"] == 1.0
+    slow = L.gate_check(_summary(SLOW_CODE, pipeline=SLOW_CODE, receive=[0.1] * 12), 50.0)
+    assert not slow["median_ok"] and slow["tail_stage"] == "pipeline"
+    assert L.gate_check(_summary(QUIET), 50.0)["tail_ok"]
+    assert not L.gate_check({"stages": {}}, 50.0)["median_ok"]  # no decision step: no pass
+
+
+def test_strict_gate_is_the_p3_04_rule():
+    """Local default: one run, no repeat; one stall fails (a quiet machine must meet the budget as measured)."""
+    stall = L.gate_check(_summary(STALL), 50.0)
+    assert L.gate_verdict([L.gate_check(_summary(QUIET), 50.0)], "strict")[0] is True
+    ok, why = L.gate_verdict([stall], "strict")
+    assert not ok and "tail in receive" in why
+    assert not L.gate_needs_repeat([stall], "strict")
+    with pytest.raises(ValueError):
+        L.gate_verdict([stall, stall], "strict")
+
+
+def test_ci_gate_repeats_only_tail_failures_and_takes_the_best_run():
+    stall, quiet = L.gate_check(_summary(STALL), 50.0), L.gate_check(_summary(QUIET), 50.0)
+    slow = L.gate_check(_summary(SLOW_CODE, pipeline=SLOW_CODE), 50.0)
+    assert L.gate_needs_repeat([stall], "ci") and L.gate_needs_repeat([stall, stall], "ci")
+    assert not L.gate_needs_repeat([stall, stall, stall], "ci")  # at most 3 runs
+    assert not L.gate_needs_repeat([quiet], "ci") and not L.gate_needs_repeat([slow], "ci")
+    assert L.gate_verdict([stall, quiet], "ci")[0] is True
+    ok, why = L.gate_verdict([stall, stall, stall], "ci")  # the tail repeats: a real tail of our code
+    assert not ok and "all 3 runs" in why
+    ok, why = L.gate_verdict([slow], "ci")  # a slow median is never repeated away
+    assert not ok and "median rule" in why
+    assert L.gate_verdict([stall, slow], "ci")[0] is False
+    with pytest.raises(ValueError):
+        L.gate_verdict([stall] * 4, "ci")
+
+
+def test_run_gated_repeats_in_fresh_folders(tmp_path, monkeypatch):
+    """The bench repeat loop: a tail-only failure gives a new run in ``attempt-<k>``; a pass stops the loop."""
+    seq = iter([_summary(STALL), _summary(STALL), _summary(QUIET)])
+    calls = []
+
+    def fake_run(profile, receiver, out_dir, **kw):
+        calls.append(Path(out_dir))
+        return B.BenchResult(profile, receiver, Path(out_dir), {"latency_ms": next(seq)})
+
+    monkeypatch.setattr(B, "run", fake_run)
+    res, gate = B.run_gated("emg-key", "websocket", tmp_path, mode="ci", tolerance=1.0)
+    assert gate["ok"] and len(gate["attempts"]) == 3 and res.report["gate"] is gate
+    assert calls == [tmp_path, tmp_path / "attempt-2", tmp_path / "attempt-3"]
+    assert "run 3 of 3" in gate["reason"] and "run 1:" in B.format_gate(gate)
+    seq = iter([_summary(STALL)])
+    calls.clear()
+    res, gate = B.run_gated("emg-key", "websocket", tmp_path, mode="strict", tolerance=4.0)
+    assert len(calls) == 1 and gate["limit_ms"] == 200.0 and gate["ok"]  # 118 ms tail < 50 x 4
+
+
 # --- NPZ input and the consumer (P7-05) ---------------------------------------------------------
 
 
@@ -315,6 +405,7 @@ def test_trigger_stamps_use_the_lsl_receive_stamp():
 
 
 def _check_run(r: dict, gated: bool) -> None:
+    """The output checks of one run; ``gated``: the latency gate of :func:`B.run_gated` passed."""
     assert r["producer_errors"] == []
     assert r["stop_reason"] in ("max_streams", "input done")  # LSL: stop_at_end ends the receiver
     conf = r["conformance"]
@@ -329,14 +420,18 @@ def _check_run(r: dict, gated: bool) -> None:
               "exporter.typing", "pipeline"):
         assert lat["stages"][k]["n"] > 0, k
     if gated:
-        assert added["p95"] < BUDGET_MS * TOLERANCE, (
-            f"{r['profile']}/{r['receiver']}: p95 added latency {added['p95']} ms >= budget "
-            f"{BUDGET_MS} ms x tolerance {TOLERANCE}")
+        g = r["gate"]
+        assert g["ok"], (f"{r['profile']}/{r['receiver']}: latency gate {g['mode']} (budget {BUDGET_MS} ms x "
+                         f"tolerance {TOLERANCE}): {g['reason']}; runs: {g['attempts']}")
+
+
+def _gated(profile: str, receiver: str, tmp_path: Path, **kw) -> dict:
+    return B.run_gated(profile, receiver, tmp_path, tolerance=TOLERANCE, **kw)[0].report
 
 
 @pytest.mark.parametrize("profile", B.GATED_PROFILES)
 def test_pipeline_websocket_at_50_hz_within_budget(tmp_path, profile):
-    r = B.run(profile, "websocket", tmp_path, n_utterances=8).report
+    r = _gated(profile, "websocket", tmp_path, n_utterances=8)
     _check_run(r, gated=True)
     assert r["latency_ms"]["stages"]["e2e"]["n"] > 0 and r["latency_ms"]["stages"]["receive"]["n"] > 0
     metrics = json.loads((tmp_path / f"{profile}-websocket" / "metrics.json").read_text(encoding="utf-8"))
@@ -344,7 +439,7 @@ def test_pipeline_websocket_at_50_hz_within_budget(tmp_path, profile):
 
 
 def test_pipeline_file_input(tmp_path):
-    r = B.run("implant-speech", "file", tmp_path, n_utterances=6).report
+    r = _gated("implant-speech", "file", tmp_path, n_utterances=6)
     _check_run(r, gated=True)
     files = B.stream_files(tmp_path / "implant-speech-file")
     assert len(files) == 1  # P5-17: one file per stream ({session} path)
@@ -360,7 +455,7 @@ def test_pipeline_lsl_input(tmp_path, profile):
 
     if not pylsl_available():
         pytest.skip("pylsl is not installed (extra 'lsl')")
-    r = B.run(profile, "lsl", tmp_path, n_utterances=6).report
+    r = _gated(profile, "lsl", tmp_path, n_utterances=6)
     _check_run(r, gated=True)
 
 

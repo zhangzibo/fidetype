@@ -57,7 +57,7 @@ from typing import Any, Sequence
 
 import numpy as np
 
-from fidetype.collector.latency import BUDGET_MS
+from fidetype.collector.latency import BUDGET_MS, gate_attempts, gate_check, gate_mode, gate_needs_repeat, gate_verdict
 
 PROFILES = ("implant-speech", "emg-key", "implant-logits")
 #: Profiles whose p95 added latency must stay below the budget (the CI gate).
@@ -419,6 +419,48 @@ def run(profile: str, receiver: str, out_dir: str | Path, *, n_utterances: int =
     return BenchResult(profile, receiver, work, report)
 
 
+def tolerance_from_env() -> float:
+    """``FIDETYPE_LATENCY_TOLERANCE`` (default 1.0): the limit of the gate is ``BUDGET_MS`` times this number."""
+    import os
+
+    return float(os.environ.get("FIDETYPE_LATENCY_TOLERANCE", "1.0"))
+
+
+def run_gated(profile: str, receiver: str, out_dir: str | Path, *, mode: str | None = None,
+              tolerance: float = 1.0, **kw: Any) -> tuple[BenchResult, dict[str, Any]]:
+    """:func:`run` with the budget gate of P2-13 (:func:`fidetype.collector.latency.gate_verdict`).
+
+    ``mode`` None = :func:`~fidetype.collector.latency.gate_mode` (``strict`` locally, ``ci`` on CI). The limit
+    is ``BUDGET_MS * tolerance``. In mode ``ci`` a run that fails only the p95 rule is repeated in a fresh
+    collector (``<out_dir>/attempt-<k>``), at most :data:`~fidetype.collector.latency.CI_ATTEMPTS` runs.
+    Returns the last result and ``{"mode", "limit_ms", "attempts": [gate_check ...], "ok", "reason"}``.
+    """
+    mode = gate_mode() if mode is None else mode
+    limit = BUDGET_MS * float(tolerance)
+    checks: list[dict[str, Any]] = []
+    res: BenchResult | None = None
+    for k in range(1, gate_attempts(mode) + 1):
+        res = run(profile, receiver, Path(out_dir) if k == 1 else Path(out_dir) / f"attempt-{k}", **kw)
+        checks.append(gate_check(res.report["latency_ms"], limit))
+        if not gate_needs_repeat(checks, mode):
+            break
+    assert res is not None
+    ok, reason = gate_verdict(checks, mode)
+    gate = {"mode": mode, "limit_ms": limit, "attempts": checks, "ok": ok, "reason": reason}
+    res.report["gate"] = gate
+    return res, gate
+
+
+def format_gate(gate: dict[str, Any]) -> str:
+    lines = [f"  gate ({gate['mode']}, limit {gate['limit_ms']:g} ms): {'PASS' if gate['ok'] else 'FAIL'} - "
+             f"{gate['reason']}"]
+    if len(gate["attempts"]) > 1:
+        for i, c in enumerate(gate["attempts"], 1):
+            lines.append(f"    run {i}: added p50 {c['added_p50']} p95 {c['added_p95']}; pipeline p95 "
+                         f"{c['pipeline_p95']}; receive p95 {c['receive_p95']} ms (tail in {c['tail_stage']})")
+    return "\n".join(lines)
+
+
 def stream_files(work: Path) -> list[Path]:
     """The NTS stream exports of a run (one file per stream, P5-17 ``{session}`` path)."""
     return sorted((work / "out" / "streams").glob("*.nts.jsonl"))
@@ -465,7 +507,7 @@ def format_report(r: dict[str, Any]) -> str:
         if q["n"]:
             lines.append(f"  {k:<22} n={q['n']:<4} p50 {q['p50']:8.3f}  p95 {q['p95']:8.3f}  p99 {q['p99']:8.3f}"
                          f"  max {q['max']:8.3f} ms")
-    lines.append(f"  budget: p95 added < {lat['budget_ms']:g} ms -> {'PASS' if lat['within_budget'] else 'FAIL'}")
+    lines.append(f"  this run: p95 added < {lat['budget_ms']:g} ms -> {'PASS' if lat['within_budget'] else 'over'}")
     return "\n".join(lines)
 
 
@@ -483,7 +525,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                     help="LSL inlet merge window in seconds (default: the receiver default, 0.05)")
     ap.add_argument("--no-lsl-heartbeat", action="store_true",
                     help="LSL producer without heartbeats (LSL-C7), as before P3-10 (for comparison)")
+    ap.add_argument("--gate", choices=("strict", "ci"), default=None,
+                    help="latency gate mode (default: FIDETYPE_LATENCY_GATE, else ci on CI, else strict; "
+                         "docs/collector.md)")
     a = ap.parse_args(argv)
+    tolerance = tolerance_from_env()
     reports = []
     ok = True
     for prof in a.profile or list(PROFILES):
@@ -494,13 +540,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if not pylsl_available():
                     print(f"{prof} / lsl: skipped (pylsl is not installed)")
                     continue
-            r = run(prof, rec, a.out, n_utterances=a.utterances, merge_window_s=a.lsl_merge_window,
-                    lsl_heartbeat=not a.no_lsl_heartbeat).report
+            kw = dict(n_utterances=a.utterances, merge_window_s=a.lsl_merge_window,
+                      lsl_heartbeat=not a.no_lsl_heartbeat)
+            if prof in GATED_PROFILES:
+                res, gate = run_gated(prof, rec, a.out, mode=a.gate, tolerance=tolerance, **kw)
+                r = res.report
+            else:
+                r, gate = run(prof, rec, a.out, **kw).report, None
             reports.append(r)
             print(format_report(r))
             ok = ok and r["conformance"]["producer_level"] == "trust-ready"
-            if prof in GATED_PROFILES:
-                ok = ok and bool(r["latency_ms"]["within_budget"])
+            if gate is not None:
+                print(format_gate(gate))
+                ok = ok and bool(gate["ok"])
     if a.json:
         Path(a.json).write_text(json.dumps(reports, indent=2) + "\n", encoding="utf-8", newline="\n")
     return 0 if ok else 1
