@@ -194,6 +194,65 @@ def test_forced_align_many_groups_equal_one_pass(monkeypatch):
         assert one == [ctc_forced_align(lp, s, 0) if s else [] for s in seqs]
 
 
+@pytest.mark.parametrize("block", [1, 3, 1 << 18])
+def test_forced_align_fast_viterbi_keeps_ties(monkeypatch, block):
+    """P2-16: the fast Viterbi step makes the same choices as argmax, also with ties, -inf, -0.0 and NaN."""
+    import fidetype.lm.beam as B
+
+    monkeypatch.setattr(B, "_ALIGN_BLOCK_CELLS", block)
+    rng = np.random.default_rng(6)
+    V = 5
+    for case in range(80):
+        T = int(rng.integers(1, 25))
+        lp = rng.integers(-3, 1, (T, V)).astype(float)  # many equal path scores
+        lp[rng.random((T, V)) < 0.2] = -np.inf
+        lp[rng.random((T, V)) < 0.2] = -0.0
+        if case % 10 == 0:
+            lp[rng.integers(0, T), rng.integers(0, V)] = np.nan  # the argmax path is used
+        seqs = [tuple(int(c) for c in rng.integers(1, V, int(rng.integers(0, 10)))) for _ in range(5)]
+        seqs.append((2, 2))
+        assert B.ctc_forced_align_many(lp, seqs, 0) == [ctc_forced_align(lp, s, 0) if s else [] for s in seqs]
+
+
+@pytest.mark.parametrize("kw", [dict(beam=8, n_best=5), dict(beam=64, n_best=64, prune_topk=None, search="vector"),
+                                dict(beam=16, n_best=10, confidence="frame", frame_only=True, space_rules=True),
+                                dict(beam_logp=6.0, max_per_stem=2, search="vector")])
+def test_prefix_reuse_search_equals_batch(setup, kw):
+    """P2-16: PrefixReuseSearch gives ctc_prefix_beam_search exactly, on growing checkpoints and on other streams."""
+    from fidetype.lm.beam import PrefixReuseSearch
+
+    _, lm, _, streams = setup
+    search = PrefixReuseSearch(**kw)
+    rng = np.random.default_rng(7)
+    for st in streams[:4]:
+        lp = np.asarray(st.log_probs)
+        cuts = sorted({int(c) for c in rng.integers(0, st.n_frames + 1, 5)} | {st.n_frames})
+        for n in cuts + [cuts[0], st.n_frames, st.n_frames]:  # growing, then shorter, then the same twice
+            ref = ctc_prefix_beam_search(lp[:n], **kw)
+            assert _reuse_key(search(lp[:n])) == _reuse_key(ref)
+        other = lp.copy()
+        other[0, 0] += 1e-9  # not an extension of the last call: a new search
+        assert _reuse_key(search(other)) == _reuse_key(ctc_prefix_beam_search(other, **kw))
+    with pytest.raises(ValueError):
+        PrefixReuseSearch(lm=lm)
+    dec = IncrementalPrefixBeam(list(VOCAB), 0, None, beam=8)
+    dec.push(np.asarray(streams[0].log_probs)[:10])
+    before = _reuse_key(dec.fork().finalize())
+    f = dec.fork()
+    f.push(np.asarray(streams[0].log_probs)[10:20])
+    f.finalize()
+    assert _reuse_key(dec.finalize()) == before  # a fork does not change the original
+    with pytest.raises(RuntimeError):
+        dec.fork()
+
+
+def _reuse_key(hs):
+    """All fields of the hypotheses, with the float arrays as bytes (NaN-safe, bit-exact)."""
+    return [(h.text, h.score, h.logp_acoustic, h.logp_lm, h.frame_spans, h.ids,
+             np.asarray(h.char_frame_posteriors).tobytes(),
+             {k: np.asarray(v).tobytes() for k, v in h.confidence_variants.items()}) for h in hs]
+
+
 def _hyp_key(hs):
     return [(h.text, h.score, h.logp_acoustic, h.logp_lm, h.frame_spans, np.asarray(h.char_confidences).tolist())
             for h in hs]

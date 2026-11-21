@@ -468,14 +468,23 @@ def _nbest_from_user(items: Sequence[Any]) -> NBest:
     return from_lm_hypotheses([normalise_item(it) for it in items], confidence_variant=None)
 
 
+def _builtin_search() -> Any:
+    from fidetype.lm.beam import PrefixReuseSearch
+
+    # frame_only: only the "frame" variant is read (P2-15: the same NBest, faster). PrefixReuseSearch (P2-16):
+    # the same hypotheses as ctc_prefix_beam_search; a growing checkpoint of one utterance pushes only its new frames.
+    return PrefixReuseSearch(beam=16, n_best=10, prune_topk=None, confidence="frame", frame_only=True)
+
+
+_BUILTIN_SEARCH: Any = None
+
+
 def _builtin_decode(stream: NeuralTextStream) -> NBest:
     """CTC prefix beam search (beam 16, 10-best, no LM); character confidences = frame posteriors."""
-    from fidetype.lm.beam import ctc_prefix_beam_search
-
-    # frame_only: only the "frame" variant is read below (P2-15: the same NBest, faster)
-    hyps = ctc_prefix_beam_search(stream, lm=None, beam=16, n_best=10, prune_topk=None, confidence="frame",
-                                  frame_only=True)
-    return from_lm_hypotheses(hyps, confidence_variant="frame")
+    global _BUILTIN_SEARCH
+    if _BUILTIN_SEARCH is None:
+        _BUILTIN_SEARCH = _builtin_search()
+    return from_lm_hypotheses(_BUILTIN_SEARCH(stream), confidence_variant="frame")
 
 
 def _lexicon_decode(lexicon: frozenset[str]) -> Callable[[NeuralTextStream], NBest]:
@@ -484,12 +493,16 @@ def _lexicon_decode(lexicon: frozenset[str]) -> Callable[[NeuralTextStream], NBe
     Up to 10 texts are kept. If no text is left, the n-best list is
     empty: the guard risk is 1 and the guard withholds.
     """
-    from fidetype.lm.beam import ctc_prefix_beam_search
+    from fidetype.lm.beam import PrefixReuseSearch
+
+    # frame_only: only the "frame" variant is read below (P2-15: the same NBest, faster). PrefixReuseSearch
+    # (P2-16): the same hypotheses as ctc_prefix_beam_search; a growing checkpoint of one utterance (stream views,
+    # streaming calibration) pushes only its new frames.
+    search = PrefixReuseSearch(beam=64, n_best=64, prune_topk=None, confidence="frame", search="vector",
+                               frame_only=True)
 
     def decode(stream: NeuralTextStream) -> NBest:
-        # frame_only: only the "frame" variant is read below (P2-15: the same NBest, faster)
-        hyps = ctc_prefix_beam_search(stream, lm=None, beam=64, n_best=64, prune_topk=None, confidence="frame",
-                                      search="vector", frame_only=True)
+        hyps = search(stream)
         nb = from_lm_hypotheses(hyps, confidence_variant="frame")
         keep = [c for c in nb.candidates if c.text and all(w in lexicon for w in c.text.split())][:10]
         return NBest(keep, dict(nb.stream_meta))

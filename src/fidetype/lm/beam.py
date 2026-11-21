@@ -250,6 +250,51 @@ def ctc_prefix_beam_search(
     return dec.finalize()
 
 
+class PrefixReuseSearch:
+    """:func:`ctc_prefix_beam_search` with fixed options that reuses the search of the last call (P2-16).
+
+    ``search = PrefixReuseSearch(beam=64, n_best=64, ...)`` then ``search(stream)`` returns
+    ``ctc_prefix_beam_search(stream, **options)``. If the frames of ``stream`` start with all
+    the frames of the last call (byte-identical float64 values, same vocabulary and blank), the
+    search continues from the saved state of the last call (:meth:`IncrementalPrefixBeam.fork`)
+    and pushes only the new frames. The chunked search gives exactly the same hypotheses
+    (M4-08), so the result does not change; only the cost does. This helps when the same
+    utterance is decoded at growing checkpoints. Otherwise the search starts again.
+
+    It keeps one saved state (and a copy of its frames) per thread. ``lm`` is not allowed: it
+    keeps the state small and needs no LM cache rules.
+    """
+
+    def __init__(self, **options: Any) -> None:
+        if options.get("lm") is not None:
+            raise ValueError("PrefixReuseSearch does not take an LM")
+        options.pop("lm", None)
+        self.options = options
+        import threading
+
+        self._local = threading.local()
+
+    def __call__(self, stream_or_logprobs: NeuralTextStream | np.ndarray) -> list[Hypothesis]:
+        opts = dict(self.options)
+        lp_arr, vocab, blank = _unpack(stream_or_logprobs, opts.pop("blank_id", None))
+        lp64 = np.array(lp_arr, dtype=np.float64)  # a copy: the saved state must not see later changes
+        saved = getattr(self._local, "saved", None)
+        dec = None
+        n0 = 0
+        if saved is not None and lp64.ndim == 2:
+            s_lp, s_vocab, s_blank, s_dec = saved
+            n = s_lp.shape[0]
+            if (s_vocab == vocab and s_blank == blank and s_lp.shape[1] == lp64.shape[1] and n <= lp64.shape[0]
+                    and lp64[:n].tobytes() == s_lp.tobytes()):
+                dec, n0 = s_dec.fork(), n
+        if dec is None:
+            dec = IncrementalPrefixBeam(vocab, blank, **opts)
+        if n0 == 0 or lp64.shape[0] > n0:
+            dec.push(lp64[n0:])  # checks the shape (as ctc_prefix_beam_search)
+        self._local.saved = (lp64, vocab, blank, dec.fork())
+        return dec.finalize()
+
+
 class IncrementalPrefixBeam:
     """The CTC prefix beam search of :func:`ctc_prefix_beam_search`, one chunk at a time (M4-08).
 
@@ -505,6 +550,38 @@ class IncrementalPrefixBeam:
         if self.search == "vector":
             return self._vs.beams()
         return {p: list(v) for p, v in self._beams.items()}
+
+    def fork(self) -> "IncrementalPrefixBeam":
+        """An independent copy of the search state before :meth:`finalize` (P2-16).
+
+        ``fork().push(more)`` then ``finalize()`` gives the same hypotheses as one
+        search over all frames, and the original is not changed. The LM is shared
+        (it is read only). The per-prefix caches are copied (their values are never
+        changed in place).
+        """
+        if self._final is not None:
+            raise RuntimeError("fork after finalize")
+        new = object.__new__(IncrementalPrefixBeam)
+        new.__dict__.update(self.__dict__)
+        new._chunks = list(self._chunks)
+        new._pairs = dict(self._pairs)
+        new.lm_score = dict(self.lm_score)
+        new._lm_rows = dict(self._lm_rows)
+        if self.search == "loop":
+            new._beams = {p: list(v) for p, v in self._beams.items()}
+            new._last_id = dict(self._last_id)
+            new._lm_tops = dict(self._lm_tops)
+        else:
+            vs = object.__new__(_VectorState)
+            vs.__dict__.update(self._vs.__dict__)
+            vs.lm_score = new.lm_score
+            vs.lm_arr = dict(self._vs.lm_arr)
+            vs.extra_caches = (new._lm_rows,)
+            vs.texts = list(self._vs.texts)
+            for k in ("pb", "pnb", "lms", "ln", "last", "L", "LT", "nosp"):
+                setattr(vs, k, getattr(self._vs, k).copy())
+            new._vs = vs
+        return new
 
     def partial(self, n: int | None = None) -> list[Hypothesis]:
         """The current best prefixes, best first, as provisional hypotheses.
@@ -1295,19 +1372,22 @@ def _align_group(lp: np.ndarray, group: list[tuple[int, np.ndarray]],
     delta[offs] = e0[offs]
     delta[offs + 1] = e0[offs + 1]
     bp = np.zeros((T, S), dtype=np.int8)
-    ar = np.arange(S)
-    head = np.array([NEG_INF])
-    head2 = np.array([NEG_INF, NEG_INF])
-    for t in range(1, T):
-        c0 = delta
-        c1 = np.concatenate((head, delta[:-1]))
-        c1[start] = NEG_INF
-        c2 = np.concatenate((head2, delta[:-2]))
-        c2 = np.where(skip, c2, NEG_INF)
-        stack = np.stack([c0, c1, c2])
-        arg = np.argmax(stack, axis=0)
-        bp[t] = arg
-        delta = stack[arg, ar] + lp[t, ext_all]
+    if T > 1 and _align_plain(lp, ext_all):
+        delta = _viterbi_fast(lp, ext_all, delta, start, skip, bp)
+    else:
+        ar = np.arange(S)
+        head = np.array([NEG_INF])
+        head2 = np.array([NEG_INF, NEG_INF])
+        for t in range(1, T):
+            c0 = delta
+            c1 = np.concatenate((head, delta[:-1]))
+            c1[start] = NEG_INF
+            c2 = np.concatenate((head2, delta[:-2]))
+            c2 = np.where(skip, c2, NEG_INF)
+            stack = np.stack([c0, c1, c2])
+            arg = np.argmax(stack, axis=0)
+            bp[t] = arg
+            delta = stack[arg, ar] + lp[t, ext_all]
     # End state of each sequence: the last label or the final blank (ties: the later state).
     s_loc = np.empty(len(segs), dtype=np.int64)
     ok = np.ones(len(segs), dtype=bool)
@@ -1332,6 +1412,55 @@ def _align_group(lp: np.ndarray, group: list[tuple[int, np.ndarray]],
         if np.any(last < first):
             continue  # a label with no frame
         out[k] = [(int(a), int(b)) for a, b in zip(first, last)]
+
+
+#: Frames per block of gathered frame scores in :func:`_viterbi_fast` (bounded memory: block * S float64).
+_ALIGN_BLOCK_CELLS = 1 << 18
+
+
+def _align_plain(lp: np.ndarray, ext_all: np.ndarray) -> bool:
+    """True if the used frame scores have no NaN and no +inf (then :func:`_viterbi_fast` gives the same result)."""
+    cols = np.unique(ext_all)
+    sub = lp[:, cols]
+    return not (np.isnan(sub).any() or np.isposinf(sub).any())
+
+
+def _viterbi_fast(lp: np.ndarray, ext_all: np.ndarray, delta: np.ndarray, start: np.ndarray, skip: np.ndarray,
+                  bp: np.ndarray) -> np.ndarray:
+    """The Viterbi recursion of :func:`_align_group` with fewer array operations (P2-16, exact).
+
+    The old step took ``argmax`` over the stack (stay, step, skip); ties go to the first. Here
+    ``step`` wins only if it is strictly larger than ``stay`` (and the state is not a start state),
+    and ``skip`` wins only if it is strictly larger than the better of the two (and a skip is
+    allowed). Without NaN and +inf scores this is the same choice, and the chosen value is the
+    same element, so ``bp`` and the final ``delta`` are bit-identical. Writes ``bp`` and returns the
+    final ``delta``.
+    """
+    T = lp.shape[0]
+    S = ext_all.shape[0]
+    nstart = ~start
+    buf = np.full(S + 2, NEG_INF)
+    c1 = buf[1:-1]
+    c2 = buf[:-2]
+    block = max(1, _ALIGN_BLOCK_CELLS // max(S, 1))
+    em = None
+    b0 = 0
+    for t in range(1, T):
+        if em is None or t - b0 >= em.shape[0]:
+            b0 = t
+            em = lp[t : t + block][:, ext_all]
+        buf[2:] = delta
+        g1 = c1 > delta
+        g1 &= nstart
+        b01 = np.where(g1, c1, delta)
+        g2 = c2 > b01
+        g2 &= skip
+        row = bp[t]
+        row[g1] = 1
+        row[g2] = 2
+        delta = np.where(g2, c2, b01)
+        delta += em[t - b0]
+    return delta
 
 
 def ctc_forced_align(log_probs: np.ndarray, ids, blank: int = BLANK_ID) -> list[tuple[int, int]] | None:
