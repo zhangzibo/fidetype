@@ -1489,3 +1489,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Main run 2026-11-20 05:15-09:51, CPU, 40 new calibration draws x 4 arms, peak 2.87 GB per worker. X4 passes (z0 = P15-22 701 / 701, 4.91, [4.25, 5.57]).
 - Primary A1 (alpha 0.05, delta 0.025): **4.90 [3.11, 6.44]**, 40 / 40 certified; the lower end is below 4.0153, so the criterion is not met. A2 (0.04, 0.1) identical; A3 (0.05, 0.01) 4.58 [2.47, 6.17]. Reference A0 (P15-29 settings, new draws) 5.35 [4.05, 6.81], 40 / 40 certified (descriptive). The margin costs 0.45-0.77 per draw and widens the between-draw spread. [Results](../experiments/2026-11-20-p15-34-margin-guard/results.md), commit `f17647e`.
 - New gap 141 = [P15-37](questions/roadmap-standard.md#p15-37-lower-variance-calibration-for-the-calibration-inclusive-safe-wpm) (lower-variance calibration or more labelled data). No public claim changes (README, overview, north-star, frontier-safe-wpm unchanged).
+
+## [2026-11-20] query | P3-12: in-beam LM EMG decoder plus guard inside the 50 ms CPU budget (gap 122 closed; new gap 142)
+- Pre-registration `cfbc26e`; amendments `a3d9f10` (wait for a quiet machine), `b32faab` (time stamp), `eaa8152` (wait up to 8 h), `6d4fdbd` (bug fix: the latency stage did not load the P11-12 gate; crash at 09:52:33 before any timing; smoke dry run added); results `3a0fd49`.
+- Profile: `guard.decide` was almost all of the end-of-window cost (per-frame JSON events and audit hash); the P11-07 model chunk recomputed its 121-frame receptive field.
+- New code: `fidetype.pretrained._crt.CRTStream` (streaming model); `TrustGuard.session()` -> `GuardSession` and `StreamingTrustLayer.push_frames` (incremental guard decision); 13 targeted tests.
+- Clean timed run (21:45-22:10, class timing, 1 thread): decision p95 **6.39 ms** (budget 50 ms), chunk p95 3.48 ms; the clean re-measured P11-07 path is 32.6 ms at the end + 20.5 ms model. Same decisions as the offline guard 3,663 / 3,663; safe WPM v0.1 3.37 unchanged.
+- The pre-registered streaming-model tolerance (1e-5) failed (3.1e-5; float32 rounding; float64 forms agree to 3e-15) -> gap 142 = [P3-13](questions/roadmap-standard.md#p3-13-streaming-crt-model-in-the-decision-loop). Gap 37 (P3-06, collector profile) stays open with an evidence line.
+- [Results](../experiments/2026-11-20-p3-12-emg-latency-budget/results.md).

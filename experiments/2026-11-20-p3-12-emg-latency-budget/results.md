@@ -92,7 +92,7 @@ The pre-registered C1 tolerance fails: max probability difference 3.08e-5 > 1e-5
 | float32 streaming vs float32 batch | 2.31e-5 |
 | argmax agreement with float64 (both float32 forms) | 1.0 |
 
-> **Our take:** the streaming CRT has the same maths as the batch model. The difference is float32 rounding, and the batch form has more of it than the streaming form. The 1e-5 limit was below the batch model's own float32 error. The decisions here use the P11-09 log-probs, so C1 does not touch A1 or A2. A test with the streaming model's own output in the decision loop is still open (new gap 139).
+> **Our take:** the streaming CRT has the same maths as the batch model. The difference is float32 rounding, and the batch form has more of it than the streaming form. The 1e-5 limit was below the batch model's own float32 error. The decisions here use the P11-09 log-probs, so C1 does not touch A1 or A2. A test with the streaming model's own output in the decision loop is still open (new gap 142).
 
 ## What changed in the code
 | Change | Where | Exact |
@@ -120,7 +120,7 @@ Not used: fallback F1 (beam 4) and F2 (ONNX Runtime / numba). The core stays Num
 ## New gaps
 | Gap | Item | What |
 |---|---|---|
-| 139 | P3-13 | Streaming CRT model in the decision loop: same decisions as the batch log-probs. Done when the streaming model output (per-user weights) feeds the guard session and the beam on the 1,221 windows, and the decisions match those from the batch log-probs (or the differences are counted and the safe WPM stays within the P3-12 tolerance) |
+| 142 | P3-13 | Streaming CRT model in the decision loop: same decisions as the batch log-probs. Done when the streaming model output (per-user weights) feeds the guard session and the beam on the 1,221 windows, and the decisions match those from the batch log-probs (or the differences are counted and the safe WPM stays within the P3-12 tolerance) |
 
 ## Rerun
 | Step | Command (repo root) |

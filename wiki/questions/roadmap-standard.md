@@ -304,6 +304,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Done when:** a logits guard in the collector decides within the 50 ms budget at p95 on the `implant-logits` bench profile (for example: decode incrementally while frames arrive, with the same decisions as the offline search on the same input, checked by a test), and the profile joins the CI gate.
 - **Evidence (2026-11-19, P11-09):** real EMG replay (emg2qwerty, P11-01 decoder, beam 16, no lexicon, about 500 frames x 33 keys per prompt): `added` p50 58.6 ms, p95 110 ms (median over 8 runs), 222 ms (max); `processor.guard` is almost all of it ([results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)).
 - **Evidence (2026-11-19, P11-07):** in-beam character LM, streaming in 40 ms chunks (emg2qwerty, 1,221 windows, 1 thread): beam `push` p95 0.3-0.7 ms per chunk for beams 4-64; added time at the window end (last chunk, n-best, intended merge, gates, `guard.decide`) p95 61-70 ms, almost the same for every beam; CPU acoustic model chunk (NumPy CRT, 4 threads) p95 47 ms, GPU 4 ms. So the 50 ms CPU rule fails at every beam (108-117 ms); the beam is not the bottleneck ([results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md#latency-1221-evaluation-windows-1-thread-chunk-4-frames--40-ms)). Follow-up: P3-12 (gap 122).
+- **Evidence (2026-11-20, P3-12):** with the streaming CRT model and the incremental guard decision (`TrustGuard.session()`, `StreamingTrustLayer.push_frames`), the same EMG decoder + guard decides in p95 6.39 ms on CPU with the same decisions as the offline guard ([results](../../experiments/2026-11-20-p3-12-emg-latency-budget/results.md)). The collector guard processor and the `implant-logits` bench profile do not use them yet, so this item stays open.
 
 #### P3-07 Receive stamps for LSL input (merge-window wait in the latency)
 - **Gap:** 38 of the [open-gap list](open-gaps.md). Follow-up of P3-04, P3-01.
@@ -342,10 +343,17 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P3-12 Guard end-of-window cost and CPU acoustic model inside the 50 ms budget
 - **Gap:** 122 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-07). Follow-up of P3-06, P11-07.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20; pre-registration `cfbc26e`, amendments `a3d9f10`, `b32faab`, `eaa8152`, `6d4fdbd`, results `3a0fd49`). Gap 122 closed. On the same 1,221 evaluation windows (CPU, isolation class timing, 1 thread, clean record) the in-beam LM decoder FL@B8 + arm S guard decides in **p95 6.39 ms** (last 40 ms chunk in -> decision out, model included; p50 4.93 ms); a 40 ms chunk costs p95 3.48 ms. Changes: streaming CRT model (`fidetype.pretrained._crt.CRTStream`, 2.9 ms vs 20.5 ms per chunk), incremental guard decision (`TrustGuard.session()` -> `GuardSession`; `StreamingTrustLayer.push_frames`). Same decisions as the offline guard on 3,663 / 3,663 windows (real, shuffled, zeros); safe WPM v0.1 3.37 unchanged. The pre-registered streaming-model tolerance (1e-5) failed (3.1e-5; float32 rounding; float64 forms agree to 3e-15) -> new gap 142 = [P3-13](#p3-13-streaming-crt-model-in-the-decision-loop). [Results](../../experiments/2026-11-20-p3-12-emg-latency-budget/results.md).
 - **Depends on:** P11-07 (done); P3-06 (gap 37); `fidetype.pretrained._crt` (NumPy CRT); CPU.
 - **Source:** P11-07 ([results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md)): the in-beam LM beam costs at most 0.7 ms p95 per 40 ms chunk, but the end-of-window work (n-best to intended texts, OOV and no-signal gates, `guard.decide`) is 61-70 ms p95 for every beam 4-64, and the CPU model chunk (NumPy, 4 threads) is 47 ms p95 (GPU 4 ms). Beam 8: 67.6 + 47.1 = 114.7 ms > 50 ms.
 - **Done when:** a profile names the end-of-window costs; an incremental guard decision (features kept up to date while frames arrive) plus a faster CPU acoustic model (or the GPU path, stated as such) gives p95 <= 50 ms on the same 1,221 windows, with the same decisions as the offline guard (test).
+
+#### P3-13 Streaming CRT model in the decision loop
+- **Gap:** 142 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P3-12). Follow-up of P3-12.
+- **Status:** `todo`.
+- **Depends on:** P3-12 (done); the P11-01 per-user weights (research only); CPU.
+- **Source:** P3-12 ([results](../../experiments/2026-11-20-p3-12-emg-latency-budget/results.md)): the decisions used the P11-09 log-probs; the streaming CRT ran as a cost stand-in (u0 weights). Its float32 output differs from the batch model by up to 3.1e-5 in probability (the pre-registered 1e-5 failed; the float64 forms agree to 3e-15).
+- **Done when:** the streaming model output with the per-user weights feeds the guard session and the beam on the 1,221 evaluation windows, and the decisions match those from the batch log-probs, or the differences are counted and the safe WPM v0.1 stays within the P3-12 tolerance (>= 3.32, certified, controls 0).
 
 ## P4. Device and toolkit adapters
 **Goal:** NTS comes out of the tools that people already use. Dataset replay stands in for devices we do not own.
