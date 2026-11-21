@@ -17,7 +17,8 @@ only; it never goes into a stream.
   sentence: threshold crossings (T x 192, 10 ms bins) from the go cue to the sentence end plus up to
   1 s of tail. Needs ``scipy`` (``pip install fidetype[data]``).
 - KT-sEMG (CC BY 4.0, Nokia): ``runN.csv`` + ``runN_keys.txt`` + ``runN_ts.txt``; one item per
-  typing burst (key times from the key log, as the ``kt-semg`` benchmark track).
+  typing burst (key times from the key log, as the ``kt-semg`` benchmark track). The item count
+  needs only the key log and the start-time file (:func:`count_kt_run`).
 
 These readers treat every file as untrusted data: no pickle, read-only access.
 
@@ -34,7 +35,7 @@ from typing import Any
 
 import numpy as np
 
-__all__ = ["Item", "count_items", "count_b2t25_hdf5", "check_indices", "read_b2t25_hdf5", "read_b2t24_session", "b2t24_normalise", "read_emg2qwerty_session",
+__all__ = ["Item", "count_items", "count_kt_run", "count_b2t25_hdf5", "check_indices", "read_b2t25_hdf5", "read_b2t24_session", "b2t24_normalise", "read_emg2qwerty_session",
            "read_kt_run", "read_willett_session", "willett_test_block", "T15_SESSION", "T12_SESSION",
            "T5_SESSION"]
 
@@ -217,6 +218,28 @@ def read_kt_run(csv: str | PathLike[str], max_gap_s: float = 2.0, min_keys: int 
     return rec.emg, items
 
 
+def count_kt_run(csv: str | PathLike[str], max_gap_s: float = 2.0, min_keys: int = 5) -> int:
+    """The number of typing bursts of one KT-sEMG run from ``runN_keys.txt`` + ``runN_ts.txt`` only (P14-52).
+
+    ``csv`` is the ``runN.csv`` path, as for :func:`read_kt_run`; the file is not opened and may be
+    absent. The count is the one of :func:`read_kt_run` when (a) the typing starts within one hour
+    of the recording start (:func:`~fidetype.adapters.kt_semg.infer_utc_offset_from_keys`) and
+    (b) no key press falls in the last 0.15 s of the recording or after it (the EMG length is not
+    known without the CSV). Both are true on all 29 KT-sEMG runs.
+    """
+    from fidetype.adapters import kt_semg as K
+    from fidetype.live.build import kt_segments
+
+    c = Path(csv)
+    if not re.fullmatch(r"run\d+", c.stem):
+        raise ValueError(f"{c.name}: expected runN.csv")
+    keys = K.read_keys(c.with_name(f"{c.stem}_keys.txt"))
+    start_local = K.read_start_time(c.with_name(f"{c.stem}_ts.txt"))
+    off = K.infer_utc_offset_from_keys(start_local, [k.unix_s for k in keys])
+    events = K.key_events(keys, K.start_unix(start_local, off), float("inf"), margin_s=K.WINDOW_PRE_S)
+    return len(kt_segments(events, max_gap_s=max_gap_s, min_keys=min_keys))
+
+
 #: Variables read from a Willett ``sentences.mat`` (MATLAB 5 file: plain arrays, no code).
 WILLETT_VARS = ("intendedText", "numTimeBinsPerSentence", "sentenceCondition", "sentenceBlockNums",
                 "excludedSentences", "neuralActivityTimeSeries", "blockNumsTimeSeries", "goCueOnsetTimeBin")
@@ -289,7 +312,8 @@ def count_items(file_format: str, path: str | PathLike[str], **kw: Any) -> int:
 
     ``file_format`` is the ``input.file_format`` of a model manifest. ``kw`` are the reader options
     that change the count (``blocks=`` for Willett files). B2T '25 counts the HDF5 groups without
-    reading data. The other formats run the reader (the KT-sEMG reader also reads the EMG file).
+    reading data. KT-sEMG reads only the key log and the start-time file (:func:`count_kt_run`,
+    P14-52); the ``runN.csv`` is not opened. The other formats run the reader.
     """
     if file_format == "b2t25-hdf5":
         return count_b2t25_hdf5(path)
@@ -304,5 +328,5 @@ def count_items(file_format: str, path: str | PathLike[str], **kw: Any) -> int:
         sess.close()
         return len(items)
     if file_format == "kt-semg-run":
-        return len(read_kt_run(path)[1])
+        return count_kt_run(path)
     raise ValueError(f"unknown input file format {file_format!r}")

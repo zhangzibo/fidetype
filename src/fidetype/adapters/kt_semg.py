@@ -216,6 +216,29 @@ def infer_utc_offset_hours(
     return h
 
 
+def infer_utc_offset_from_keys(
+    start_local: datetime,
+    key_unix: Sequence[float],
+    candidates: Sequence[int] = tuple(range(-12, 15)),
+    min_inside: float = 0.95,
+) -> int:
+    """The whole-hour UTC offset from the key log alone, without the recording length (P14-52).
+
+    Returns the smallest offset that puts at least ``min_inside`` of the key presses at or after
+    the recording start. A smaller offset moves the start one hour later. So this offset is the
+    one of :func:`infer_utc_offset_hours` if the typing starts within one hour of the recording
+    start. This is true on all 29 KT-sEMG runs (they last 77 s to 2173 s). Raises ``ValueError``
+    if there are no key presses or no offset fits.
+    """
+    k = np.asarray(key_unix, dtype=np.float64)
+    if k.size == 0:
+        raise ValueError("no key presses")
+    for h in sorted(candidates):
+        if float(np.mean(k >= start_unix(start_local, h))) >= min_inside:
+            return h
+    raise ValueError(f"no UTC offset puts {min_inside:.0%} of the key presses after the recording start")
+
+
 def start_unix(start_local: datetime, utc_offset_hours: int) -> float:
     return start_local.replace(tzinfo=timezone(timedelta(hours=utc_offset_hours))).timestamp()
 
