@@ -1068,13 +1068,15 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Done when:** a pre-registered run applies the P15-37 multi-split method (BMED-3 or AND arms, chosen on calibration data only) or a safety-margin guard (P15-34) to EMG L-FL and reports a calibration-inclusive interval whose lower end is above 3.09, or numbers show why that is not reachable.
 - **Evidence (2026-11-21, P15-37, results `105c5d0`):** on T15 the guarantee-keeping multi-split rules (AND, Bonferroni + selection) do not lift the calibration-inclusive lower end (primary BMED-3 4.73 [2.60, 6.24]; between-draw SD only 4-15 % lower). This item stays open: EMG differs, because its zero draws come from above-alpha draws (9 / 40). Gap 158 = [P11-18](#p11-18-why-225--of-the-emg-calibration-draws-are-above-alpha) diagnoses that first.
 - **Evidence (2026-11-21, P11-18, results `0a75695`):** the val / test session shift is a separate failure source (optimism gap arm P +0.0126 vs pooled arm E -0.0016, Welch p = 3.6e-10). Lower-variance methods do not remove it. The shift part is gap 164 = [P11-20](#p11-20-shift-robust-calibration-for-the-emg-l-fl-guard).
+- **Note (2026-11-21, P11-20, results `8cbd7b7`):** with the shift margin (LTT at alpha' 0.0455) no EMG draw earns 0. The calibration-inclusive lower end is 2.62 < 3.09 (6.13 [2.62, 9.47]). The within-draw user-cluster spread and one low-commit draw (2.25) limit it. This item stays open.
 
 #### P11-20 Shift-robust calibration for the EMG L-FL guard
 - **Gap:** 164 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-18). Follow-up of P11-18, P11-17.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; plan `20b5993` before any number, code `d3511df`, results `8cbd7b7`, [results](../../experiments/2026-11-21-p11-20-emg-shift-robust/results.md)). Gap 164 closed. Margin m from the P11-01 personal-val sessions a -> b only (never track val / test): m = 0.0045, LTT at alpha' = 0.0455; the guarantee holds under the stated bounded-shift assumption (A). Arm S (40 partition-only draws, same partitions as P11-18): 0 / 40 above alpha on test (P11-18: 3 / 40); pre-registered conclusions "margin removes the excess" and "(A) not contradicted on test" (mean test rate 0.0331). McNemar vs P11-18 p = 0.25 (not significant); optimism gap still +0.0126. Interval **6.13 [2.62, 9.47]** vs no-BCI 3.09: "above, but inside the combined interval" (library 6.13 [2.85, 7.76]). No draw earns 0; the lower end is now limited by the user-cluster spread and one low-commit draw (2.25). Two-step gap a -> track val -0.0044 (the shift changes by session). Secondary K = 80: 8 / 80 above alpha; Fisher 9 / 40 vs 8 / 80 p = 0.060, so "partly duplicates" is not firm (reasons in results.md). Checks C1, C2, X5 pass. The EMG public wording does not change.
 - **Depends on:** P11-18 (done; `experiments/2026-11-21-p11-18-emg-above-alpha/run.py`); CPU.
 - **Source:** P11-18 ([results](../../experiments/2026-11-21-p11-18-emg-above-alpha/results.md)): on a new session the wrong-commit rate is about 1.3 points above the LTT in-sample rate (optimism gap arm P +0.0126 vs pooled arm E -0.0016, Welch p = 3.6e-10). 3 / 40 partition-only draws are above alpha; 0 / 40 without the shift. The "partly duplicates" verdict is not firm at K = 40 (Fisher p = 0.057).
 - **Done when:** a pre-registered run tests a shift-robust calibration for the L-FL guard (for example a tighter alpha, a margin from the val / test gap, or calibration that includes data from a second session) and reports the above-alpha fraction on test with 40 partition-only draws and the calibration-inclusive interval against 3.09. Secondary: K >= 80 arm P draws to make the "partly duplicates" verdict firm (Fisher p < 0.05), or numbers say why not.
+- **Follow-ups:** gap 169 = [P11-22](#p11-22-firm-duplicates-verdict-for-the-emg-l-fl-calibration-draws) (firm "duplicates" verdict, low priority); gap 170 = [P11-23](#p11-23-robustness-of-the-emg-shift-margin-across-session-steps) (shift margin across session steps).
 
 #### P11-21 Calibration-inclusive lower end above 3.09 for the LX-FL prefix guard
 - **Gap:** 166 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-16). Follow-up of P11-16, P11-18, P11-19.
@@ -1082,6 +1084,20 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Depends on:** P11-16 (done); gap 159 methods; the user decision on safe-wpm/0.2 (for headline use only); CPU.
 - **Source:** P11-16 ([results](../../experiments/2026-11-21-p11-16-emg-prefix-confidence/results.md)): calibration-inclusive proposed v0.2 7.18 [0.00, 12.13]; 7 / 40 draws above alpha earn 0; between-draw SD 3.47 against within-draw 1.24.
 - **Done when:** a pre-registered run (for example partition-only draws, a margin below alpha, or gap 159 methods) reports the calibration-inclusive interval against 3.09 for the prefix guard: lower end above 3.09, or numbers say why not. Headline use depends on the v0.2 decision.
+
+#### P11-22 Firm duplicates verdict for the EMG L-FL calibration draws
+- **Gap:** 169 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-20). Follow-up of P11-20, P11-18, P11-17.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P11-20 (done; `experiments/2026-11-21-p11-20-emg-shift-robust/run.py`); P11-17 bootstrap draws; CPU.
+- **Source:** P11-20 ([results](../../experiments/2026-11-21-p11-20-emg-shift-robust/results.md)): K = 80 partition-only draws give 8 / 80 above alpha (exactly delta); one-sided Fisher 9 / 40 (P11-17 bootstrap) vs 8 / 80, p = 0.060, so "partly duplicates" is not firm. The fixed 40-draw bootstrap side limits the power: with 18 / 80 bootstrap draws (same rate) p would be 0.026.
+- **Done when:** a pre-registered run adds >= 40 P11-17-style bootstrap draws (K_B >= 80) and tests bootstrap vs the 80 partition-only draws with a one-sided Fisher test (p < 0.05 = firm "duplicates"), or numbers say why not.
+
+#### P11-23 Robustness of the EMG shift margin across session steps
+- **Gap:** 170 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-20). Follow-up of P11-20.
+- **Status:** `todo`.
+- **Depends on:** P11-20 (done); P11-01 sessions outside track val / test; CPU.
+- **Source:** P11-20 ([results](../../experiments/2026-11-21-p11-20-emg-shift-robust/results.md)): m = 0.0045 comes from one session step per user (sessions a -> b, the checkpoint-selection sessions of the personal models). The two-step gap a -> track val is -0.0044, so the step size changes between sessions (results limits a, b).
+- **Done when:** a pre-registered run estimates m from several session steps per user (for example train-session pairs that the personal models do not use, or a -> b plus leave-one-user-out), reports the spread of the step sizes, and re-checks the arm S above-alpha fraction on test with a margin rule that covers that spread (for example an upper quantile).
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
@@ -1260,8 +1276,10 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-52** | KT-sEMG item count from the key log alone (gap 148, done 2026-11-21, [details](#p14-52-kt-semg-item-count-from-the-key-log-alone)) | P14-44, P14-46 | small teams, research labs |
 | **P14-53** | Tutorial 3 real mode re-run after the P14-46 changes (gap 149, done 2026-11-21, [details](#p14-53-tutorial-3-real-mode-re-run-after-the-p14-46-changes)) | P14-43, P14-46 | small teams, newcomers |
 | **P14-54** | Frame-order-aware no-signal gate or offer check for `willett-hw` (gap 150, done 2026-11-21, [details](#p14-54-frame-order-aware-no-signal-gate-or-offer-check-for-willett-hw)) | P14-49, P5-31 | research labs |
-| **P14-55** | Robustness check of the `willett-hw` gate C5 (open gap 151, [details](#p14-55-robustness-check-of-the-willett-hw-gate-c5)) | P14-49 | research labs |
+| **P14-55** | Robustness check of the `willett-hw` gate C5 (gap 151, done 2026-11-21, [details](#p14-55-robustness-check-of-the-willett-hw-gate-c5)) | P14-49 | research labs |
 | **P14-56** | Offer-control result in the packaged manifests and model cards (gap 153, done 2026-11-21, [details](#p14-56-offer-control-result-in-the-packaged-manifests-and-model-cards)) | P5-31, P14-01 | research labs, small teams |
+| **P14-57** | Direction-aware offer check for `willett-hw` (open gap 171, [details](#p14-57-direction-aware-offer-check-for-willett-hw)) | P14-55, P14-54 | research labs |
+| **P14-58** | C5 threshold rule that does not use the minimum real score (open gap 172, [details](#p14-58-c5-threshold-rule-without-the-minimum-real-score)) | P14-55, P14-49 | research labs |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1633,6 +1651,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Evidence:** 2026-11-20 (P14-48, results `28870eb`): the LM-readout guard `tcfg-8fa3866deec917f3` is still offer-only (40 < 45 LTT); the offered top-1 improved from 0 / 80 to 12 / 77 exact.
 - **Evidence:** 2026-11-21 (P14-49, results `dcc344b`): the guard on the Willett-blocked LM with gate C5, `tcfg-26ae951a20a0cddd`, is still offer-only (40 < 45 LTT), 0 commits; offered top-1 12 / 77 exact. 2026-11-21 (P5-31, `367ad72`): the dependency P5-31 is now available; both `willett-hw` guards fail the offer null control only on frame-shuffled frames (297 / 300 and 289 / 300); see gap 150 = [P14-54](#p14-54-frame-order-aware-no-signal-gate-or-offer-check-for-willett-hw).
 - **Evidence:** 2026-11-21 (P14-54, results `2c0692f`): both `willett-hw` guards' offer lists now pass the offer null control with the `coherence` offer gate. Still 0 commits, so this item stays open.
+- **Evidence:** 2026-11-21 (P14-55, results `0188deb`): gate robustness confirmed (C5 and both offer gates pass on 10 new null draws and new null types). Still 0 commits.
 - **Serves:** research labs.
 - **Depends on:** about 120 or more calibration sentences (more Willett handwriting data or a different split design); a stronger decoder (gap 26 = [P14-12](#p14-12-willett-hw-word-lm-for-exact-sentence-commits-and-full-test-coverage), gap 120 = [P15-33](#p15-33-e1-low-data-recipe-that-reads-the-target-signal-before-more-source-arms)); gap 136 = [P5-31](#p5-31-null-control-for-offers) (null control for offers).
 - **Source:** P14-41 ([results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)): the packaged `willett-hw` guard never commits. It is not certified: with 106 val sentences the LTT half has 40 items, and 45 are needed at alpha 0.05. Test safe WPM v0.1 is 0.00 (vacuous). Gap 121 closed under its pre-registered rule (an offer-only guard was acceptable). The user's standing rule keeps the gap tracked until it is truly met.
@@ -1701,7 +1720,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-55 Robustness check of the willett-hw gate C5
 - **Gap:** 151 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P14-49). Follow-up of P14-49.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; pre-registration `34f3553`, results `0188deb`, [results](../../experiments/2026-11-21-p14-55-willett-gate-robustness/results.md)). Gap 151 closed. Every pre-registered rule passes. C5 over 10 new draws x 80: time-shuffled 26 / 800 emit, one-sided CP95 0.0448 (pass, small margin; cluster bootstrap 0.0475; one draw 5 / 80); near-uniform 0 / 800 (bound 0.0037); zero 0 / 80 (deterministic). Re-fit spread: no coefficient sign change over 200 half-splits and 10 re-fits; threshold `lo` ranges -1.43 to 2.00 (shipped -1.17). `coherence` offer gate, both guards, rules C1-C6 pass: time-shuffled 14 / 800 and 13 / 800, frame-shuffled 0, near-uniform 0, input time-reversed 2 / 80 and 1 / 80, real T5 `doNothing` 0 / 27, real T5 unseen straight-line session 0 / 80. Limit: log-prob frames reversed after the decoder (`rev_out`, software-fault-only input) get the same `coherence`, so the guards offer on 77 / 80 and 78 / 80. T15 / T12 data are not usable (different array and bin width). Deviation: `doNothing` has only 27 inputs (rule limit 1), stated. Nothing shipped changed; `config_id`s unchanged. No CI needed (experiment files only).
+- **Follow-ups:** gap 171 = [P14-57](#p14-57-direction-aware-offer-check-for-willett-hw) (direction-aware offer check, low priority); gap 172 = [P14-58](#p14-58-c5-threshold-rule-without-the-minimum-real-score) (C5 threshold rule without the minimum real score, low priority).
 - **Serves:** research labs.
 - **Depends on:** P14-49 (done); CPU. Low priority.
 - **Source:** P14-49 (2026-11-21, results `dcc344b`, limits): one participant, one draw of each null input, no CI. The test margin of N1' is 2 of 4. The fit used one draw of the time-shuffled input.
@@ -1714,6 +1734,22 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P5-31 (done); can be done before gap 152 = P5-33; CPU.
 - **Source:** P5-31 (2026-11-21, `367ad72`): the re-check results are only in `experiments/2026-11-21-p5-31-offer-control/results/recheck-*.json`. The manifests and model cards do not show them.
 - **Done when:** each packaged manifest and model card shows the offer-control verdict and the offer counts per control (from `recheck_offer_control`), a test checks that the card values equal the result files, and docs/pretrained-decoders.md explains the field.
+
+#### P14-57 Direction-aware offer check for willett-hw
+- **Gap:** 171 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P14-55). Follow-up of P14-55, P14-54.
+- **Status:** `todo`. Low priority.
+- **Serves:** research labs.
+- **Depends on:** P14-55 (done); val blocks only; CPU.
+- **Source:** P14-55 ([results](../../experiments/2026-11-21-p14-55-willett-gate-robustness/results.md)): `coherence` is symmetric in time, so log-prob frames reversed after the decoder (`rev_out`) get the same `coherence` as real input (80 / 80); the guards offer on 77 / 80 (built-in) and 78 / 80 (LM). Only a software fault can make this input; it is outside the gap 150 null set, so no rule failed.
+- **Done when:** a val-only pre-registered check stops log-prob-reversed input (`rev_out`) at <= 4 / 80 offers on test for both guards, removes <= 4 / 80 real offers, and keeps the P14-54 / P14-55 null results; or numbers say why not.
+
+#### P14-58 C5 threshold rule without the minimum real score
+- **Gap:** 172 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P14-55). Follow-up of P14-55, P14-49.
+- **Status:** `todo`. Low priority.
+- **Serves:** research labs.
+- **Depends on:** P14-55 (done); val blocks only; CPU.
+- **Source:** P14-55 ([results](../../experiments/2026-11-21-p14-55-willett-gate-robustness/results.md)): C5 time-shuffled emits 26 / 800, CP95 0.0448 (pass with a small margin; cluster bootstrap 0.0475; one draw 5 / 80). The threshold `lo` is the smallest real fit score: over 200 half-splits `lo` ranges from -1.43 to 2.00 (shipped -1.17), and the held-out real loss goes up to 9 / 33.
+- **Done when:** a pre-registered C5 threshold rule gives time-shuffled emits with a CP95 upper bound <= 0.04 over >= 10 draws and real input gated <= 4 / 80 on test; or numbers say why not.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
