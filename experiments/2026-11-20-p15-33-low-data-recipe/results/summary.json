@@ -1,0 +1,1461 @@
+{
+ "note": "aggregate only; CER = total edits / total reference characters over the 80 test sentences (last block of each Willett session), greedy CTC, no LM, final step; recipe chosen on the val block only (selection.json); plan.md",
+ "recipe": {
+  "name": "A",
+  "freeze_trunk": false,
+  "lr": 0.0005,
+  "warmup": 100,
+  "weight_decay": 0.05,
+  "dropout": 0.3,
+  "offset_sd": 0.3,
+  "noise_sd": 0.5,
+  "time_masks": 5,
+  "time_mask_max": 40,
+  "chan_drop": 0.2,
+  "stretch_lo": 0.8,
+  "stretch_hi": 1.25,
+  "lr_min": 1e-06,
+  "clip": 1.0,
+  "max_frames": 24000,
+  "val_every": 100,
+  "ckpt_minutes": 4.0,
+  "steps": {
+   "3": 600,
+   "10": 1000,
+   "30": 2000,
+   "100": 2000,
+   "all": 3000
+  }
+ },
+ "selection": {
+  "note": "val block only (no test-block number); plan.md rule",
+  "rows": [
+   {
+    "candidate": "A",
+    "arm": "R",
+    "val_cer": 0.8818897637795275,
+    "val_shuffled_cer": 0.8901782014090344,
+    "best_val_cer": 0.8818897637795275,
+    "trainable_params": 8583778,
+    "eligible": false,
+    "c2_val_pass": false
+   },
+   {
+    "candidate": "A",
+    "arm": "E",
+    "val_cer": 0.7687525901367592,
+    "val_shuffled_cer": 0.9140074595938665,
+    "best_val_cer": 0.7644011603812682,
+    "trainable_params": 8583778,
+    "eligible": true,
+    "deranged_val_cer": 0.8711147948611687,
+    "needed": 0.8687525901367592,
+    "c2_val_pass": true
+   },
+   {
+    "candidate": "B",
+    "arm": "R",
+    "val_cer": 0.853916286779942,
+    "val_shuffled_cer": 0.8506009117281392,
+    "best_val_cer": 0.8418980522171571,
+    "trainable_params": 150114,
+    "eligible": false,
+    "c2_val_pass": false
+   },
+   {
+    "candidate": "B",
+    "arm": "E",
+    "val_cer": 0.9090343970161624,
+    "val_shuffled_cer": 0.9465395772896809,
+    "best_val_cer": 0.8978450062163282,
+    "trainable_params": 150114,
+    "eligible": false,
+    "c2_val_pass": false
+   },
+   {
+    "candidate": "C",
+    "arm": "R",
+    "val_cer": 0.9492333195192706,
+    "val_shuffled_cer": 0.952134272689598,
+    "best_val_cer": 0.9388727724823871,
+    "trainable_params": 150114,
+    "eligible": false,
+    "c2_val_pass": false
+   },
+   {
+    "candidate": "C",
+    "arm": "E",
+    "val_cer": 0.9883961873186904,
+    "val_shuffled_cer": 0.9991711562370493,
+    "best_val_cer": 0.9871529216742644,
+    "trainable_params": 150114,
+    "eligible": false,
+    "c2_val_pass": false
+   },
+   {
+    "candidate": "D",
+    "arm": "R",
+    "val_cer": 0.8085370907583921,
+    "val_shuffled_cer": 0.8081226688769167,
+    "best_val_cer": 0.789059262329051,
+    "trainable_params": 8583778,
+    "eligible": false,
+    "c2_val_pass": false
+   },
+   {
+    "candidate": "D",
+    "arm": "E",
+    "val_cer": 0.8064649813510153,
+    "val_shuffled_cer": 0.8578532946539578,
+    "best_val_cer": 0.7975549108992955,
+    "trainable_params": 8583778,
+    "eligible": false,
+    "c2_val_pass": false
+   }
+  ],
+  "selected": "A",
+  "selected_arm": "E",
+  "time": "2026-11-20T00:26:34"
+ },
+ "runs": [
+  {
+   "run": "R-b3-s0",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "3",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 600,
+   "skipped": 0,
+   "n_train": 4,
+   "minutes": 3.713,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8497679814385151,
+   "val_cer_final": 0.8385826771653543,
+   "best_val_step": 400,
+   "best_val_cer": 0.8331951927061749,
+   "test_cer_bestval": 0.8732598607888631
+  },
+  {
+   "run": "T-b3-s0",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "3",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 600,
+   "skipped": 0,
+   "n_train": 4,
+   "minutes": 3.713,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8596287703016241,
+   "val_cer_final": 0.8808537090758392,
+   "best_val_step": 600,
+   "best_val_cer": 0.8808537090758392,
+   "test_cer_bestval": 0.8596287703016241
+  },
+  {
+   "run": "E-b3-s0",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "3",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 600,
+   "skipped": 0,
+   "n_train": 4,
+   "minutes": 3.713,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8448375870069605,
+   "val_cer_final": 0.8555739743058434,
+   "best_val_step": 600,
+   "best_val_cer": 0.8555739743058434,
+   "test_cer_bestval": 0.8448375870069605
+  },
+  {
+   "run": "S-b3-s0",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "3",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 600,
+   "skipped": 0,
+   "n_train": 4,
+   "minutes": 3.713,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9524361948955916,
+   "val_cer_final": 0.952134272689598,
+   "best_val_step": 600,
+   "best_val_cer": 0.952134272689598,
+   "test_cer_bestval": 0.9524361948955916
+  },
+  {
+   "run": "R-b10-s0",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "10",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 1000,
+   "skipped": 0,
+   "n_train": 14,
+   "minutes": 10.836,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8709396751740139,
+   "val_cer_final": 0.8725652714463323,
+   "best_val_step": 800,
+   "best_val_cer": 0.8680066307501036,
+   "test_cer_bestval": 0.8607888631090487
+  },
+  {
+   "run": "T-b10-s0",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "10",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 1000,
+   "skipped": 0,
+   "n_train": 14,
+   "minutes": 10.836,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8004640371229699,
+   "val_cer_final": 0.7859510982179859,
+   "best_val_step": 1000,
+   "best_val_cer": 0.7859510982179859,
+   "test_cer_bestval": 0.8004640371229699
+  },
+  {
+   "run": "E-b10-s0",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "10",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 1000,
+   "skipped": 0,
+   "n_train": 14,
+   "minutes": 10.836,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7633410672853829,
+   "val_cer_final": 0.7809780356402818,
+   "best_val_step": 600,
+   "best_val_cer": 0.7755905511811023,
+   "test_cer_bestval": 0.7485498839907193
+  },
+  {
+   "run": "S-b10-s0",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "10",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 1000,
+   "skipped": 0,
+   "n_train": 14,
+   "minutes": 10.836,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9466357308584686,
+   "val_cer_final": 0.9452963116452548,
+   "best_val_step": 800,
+   "best_val_cer": 0.9452963116452548,
+   "test_cer_bestval": 0.9483758700696056
+  },
+  {
+   "run": "R-b30-s0",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "30",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.549,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8999419953596288,
+   "val_cer_final": 0.8818897637795275,
+   "best_val_step": 2000,
+   "best_val_cer": 0.8818897637795275,
+   "test_cer_bestval": 0.8999419953596288,
+   "c1_shuffled_cer": 0.896461716937355
+  },
+  {
+   "run": "T-b30-s0",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "30",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.549,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8210556844547564,
+   "val_cer_final": 0.8062577704102777,
+   "best_val_step": 1700,
+   "best_val_cer": 0.7952755905511811,
+   "test_cer_bestval": 0.8169953596287703,
+   "c1_shuffled_cer": 0.8285962877030162
+  },
+  {
+   "run": "E-b30-s0",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "30",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.549,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7726218097447796,
+   "val_cer_final": 0.7687525901367592,
+   "best_val_step": 1700,
+   "best_val_cer": 0.7644011603812682,
+   "test_cer_bestval": 0.7737819025522041,
+   "c1_shuffled_cer": 0.9208236658932715
+  },
+  {
+   "run": "S-b30-s0",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "30",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.549,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9559164733178654,
+   "val_cer_final": 0.9560712805636138,
+   "best_val_step": 1900,
+   "best_val_cer": 0.9560712805636138,
+   "test_cer_bestval": 0.9562064965197216,
+   "c1_shuffled_cer": 0.955046403712297
+  },
+  {
+   "run": "R-b100-s0",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "100",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 147,
+   "minutes": 100.699,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9243039443155452,
+   "val_cer_final": 0.9330708661417323,
+   "best_val_step": 2000,
+   "best_val_cer": 0.9330708661417323,
+   "test_cer_bestval": 0.9243039443155452
+  },
+  {
+   "run": "T-b100-s0",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "100",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 147,
+   "minutes": 100.699,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.742169373549884,
+   "val_cer_final": 0.722958972233734,
+   "best_val_step": 2000,
+   "best_val_cer": 0.722958972233734,
+   "test_cer_bestval": 0.742169373549884
+  },
+  {
+   "run": "E-b100-s0",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "100",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 147,
+   "minutes": 100.699,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7790023201856149,
+   "val_cer_final": 0.7789059262329051,
+   "best_val_step": 1900,
+   "best_val_cer": 0.778284293410692,
+   "test_cer_bestval": 0.7784222737819025
+  },
+  {
+   "run": "S-b100-s0",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "100",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 147,
+   "minutes": 100.699,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9820185614849188,
+   "val_cer_final": 0.983008702859511,
+   "best_val_step": 2000,
+   "best_val_cer": 0.983008702859511,
+   "test_cer_bestval": 0.9820185614849188
+  },
+  {
+   "run": "R-ball-s0",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "all",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 3000,
+   "skipped": 0,
+   "n_train": 781,
+   "minutes": 506.027,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9791183294663574,
+   "val_cer_final": 0.9792789059262329,
+   "best_val_step": 2200,
+   "best_val_cer": 0.9776212184003316,
+   "test_cer_bestval": 0.978538283062645,
+   "c1_shuffled_cer": 0.9767981438515081
+  },
+  {
+   "run": "T-ball-s0",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "all",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 3000,
+   "skipped": 0,
+   "n_train": 781,
+   "minutes": 506.027,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7856728538283063,
+   "val_cer_final": 0.7834645669291339,
+   "best_val_step": 2400,
+   "best_val_cer": 0.7784915043514298,
+   "test_cer_bestval": 0.7853828306264501,
+   "c1_shuffled_cer": 0.8248259860788864
+  },
+  {
+   "run": "E-ball-s0",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "all",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 3000,
+   "skipped": 0,
+   "n_train": 781,
+   "minutes": 506.027,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.6890951276102089,
+   "val_cer_final": 0.6748860339825943,
+   "best_val_step": 3000,
+   "best_val_cer": 0.6748860339825943,
+   "test_cer_bestval": 0.6890951276102089,
+   "c1_shuffled_cer": 0.9306844547563805
+  },
+  {
+   "run": "S-ball-s0",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "all",
+   "seed": 0,
+   "label_shuffle": false,
+   "steps": 3000,
+   "skipped": 0,
+   "n_train": 781,
+   "minutes": 506.027,
+   "trainable_params": 8583778,
+   "test_cer_final": 1.0,
+   "val_cer_final": 1.0,
+   "best_val_step": 100,
+   "best_val_cer": 1.0,
+   "test_cer_bestval": 1.0,
+   "c1_shuffled_cer": 1.0
+  },
+  {
+   "run": "R-b3-s1",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "3",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 600,
+   "skipped": 0,
+   "n_train": 5,
+   "minutes": 3.271,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8013341067285383,
+   "val_cer_final": 0.8309158723580605,
+   "best_val_step": 100,
+   "best_val_cer": 0.8145462080397845,
+   "test_cer_bestval": 0.7848027842227379
+  },
+  {
+   "run": "T-b3-s1",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "3",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 600,
+   "skipped": 0,
+   "n_train": 5,
+   "minutes": 3.271,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9115429234338747,
+   "val_cer_final": 0.9131786158309159,
+   "best_val_step": 600,
+   "best_val_cer": 0.9131786158309159,
+   "test_cer_bestval": 0.9115429234338747
+  },
+  {
+   "run": "E-b3-s1",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "3",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 600,
+   "skipped": 0,
+   "n_train": 5,
+   "minutes": 3.271,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8720997679814385,
+   "val_cer_final": 0.8006630750103605,
+   "best_val_step": 500,
+   "best_val_cer": 0.8006630750103605,
+   "test_cer_bestval": 0.8735498839907193
+  },
+  {
+   "run": "S-b3-s1",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "3",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 600,
+   "skipped": 0,
+   "n_train": 5,
+   "minutes": 3.271,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8213457076566125,
+   "val_cer_final": 0.8356817239950269,
+   "best_val_step": 500,
+   "best_val_cer": 0.8344384583506009,
+   "test_cer_bestval": 0.8230858468677494
+  },
+  {
+   "run": "R-b10-s1",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "10",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 1000,
+   "skipped": 0,
+   "n_train": 16,
+   "minutes": 10.381,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8181554524361949,
+   "val_cer_final": 0.8315375051802735,
+   "best_val_step": 1000,
+   "best_val_cer": 0.8315375051802735,
+   "test_cer_bestval": 0.8181554524361949
+  },
+  {
+   "run": "T-b10-s1",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "10",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 1000,
+   "skipped": 0,
+   "n_train": 16,
+   "minutes": 10.381,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.941415313225058,
+   "val_cer_final": 0.9372150849564858,
+   "best_val_step": 900,
+   "best_val_cer": 0.9349357646083714,
+   "test_cer_bestval": 0.9411252900232019
+  },
+  {
+   "run": "E-b10-s1",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "10",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 1000,
+   "skipped": 0,
+   "n_train": 16,
+   "minutes": 10.381,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7961136890951276,
+   "val_cer_final": 0.7820140903439702,
+   "best_val_step": 900,
+   "best_val_cer": 0.7797347699958558,
+   "test_cer_bestval": 0.7932134570765661
+  },
+  {
+   "run": "S-b10-s1",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "10",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 1000,
+   "skipped": 0,
+   "n_train": 16,
+   "minutes": 10.381,
+   "trainable_params": 8583778,
+   "test_cer_final": 1.131090487238979,
+   "val_cer_final": 0.9573145462080398,
+   "best_val_step": 100,
+   "best_val_cer": 0.8945296311645254,
+   "test_cer_bestval": 0.8784802784222738
+  },
+  {
+   "run": "R-b30-s1",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "30",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.23,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8451276102088167,
+   "val_cer_final": 0.8172399502693742,
+   "best_val_step": 1200,
+   "best_val_cer": 0.8089515126398674,
+   "test_cer_bestval": 0.8773201856148491,
+   "c1_shuffled_cer": 0.8196055684454756
+  },
+  {
+   "run": "T-b30-s1",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "30",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.23,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7848027842227379,
+   "val_cer_final": 0.77579776212184,
+   "best_val_step": 2000,
+   "best_val_cer": 0.77579776212184,
+   "test_cer_bestval": 0.7848027842227379,
+   "c1_shuffled_cer": 0.904292343387471
+  },
+  {
+   "run": "E-b30-s1",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "30",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.23,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7595707656612529,
+   "val_cer_final": 0.7654372150849564,
+   "best_val_step": 1500,
+   "best_val_cer": 0.7600497306257771,
+   "test_cer_bestval": 0.7592807424593968,
+   "c1_shuffled_cer": 0.9283642691415314
+  },
+  {
+   "run": "S-b30-s1",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "30",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.23,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9504060324825986,
+   "val_cer_final": 0.8912142561127228,
+   "best_val_step": 1400,
+   "best_val_cer": 0.8787815996684625,
+   "test_cer_bestval": 0.9187935034802784,
+   "c1_shuffled_cer": 0.9994199535962877
+  },
+  {
+   "run": "R-b100-s1",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "100",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 160,
+   "minutes": 100.433,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9535962877030162,
+   "val_cer_final": 0.9637380853709075,
+   "best_val_step": 300,
+   "best_val_cer": 0.868421052631579,
+   "test_cer_bestval": 0.8564385150812065
+  },
+  {
+   "run": "T-b100-s1",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "100",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 160,
+   "minutes": 100.433,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7555104408352669,
+   "val_cer_final": 0.7540406133443845,
+   "best_val_step": 1800,
+   "best_val_cer": 0.7517612929962703,
+   "test_cer_bestval": 0.7543503480278422
+  },
+  {
+   "run": "E-b100-s1",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "100",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 160,
+   "minutes": 100.433,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7926334106728539,
+   "val_cer_final": 0.7921674264401161,
+   "best_val_step": 2000,
+   "best_val_cer": 0.7921674264401161,
+   "test_cer_bestval": 0.7926334106728539
+  },
+  {
+   "run": "S-b100-s1",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "100",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 160,
+   "minutes": 100.433,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9669373549883991,
+   "val_cer_final": 0.9709904682967261,
+   "best_val_step": 100,
+   "best_val_cer": 0.8984666390385412,
+   "test_cer_bestval": 0.8915313225058005
+  },
+  {
+   "run": "R-ball-s1",
+   "recipe": "A",
+   "arm": "R",
+   "budget": "all",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 3000,
+   "skipped": 0,
+   "n_train": 781,
+   "minutes": 506.027,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.972737819025522,
+   "val_cer_final": 0.9753418980522172,
+   "best_val_step": 100,
+   "best_val_cer": 0.8740157480314961,
+   "test_cer_bestval": 0.8976218097447796,
+   "c1_shuffled_cer": 0.9759280742459396
+  },
+  {
+   "run": "T-ball-s1",
+   "recipe": "A",
+   "arm": "T",
+   "budget": "all",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 3000,
+   "skipped": 0,
+   "n_train": 781,
+   "minutes": 506.027,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9103828306264501,
+   "val_cer_final": 0.8943224202237878,
+   "best_val_step": 1800,
+   "best_val_cer": 0.8510153336096146,
+   "test_cer_bestval": 0.8657192575406032,
+   "c1_shuffled_cer": 0.9112529002320185
+  },
+  {
+   "run": "E-ball-s1",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "all",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 3000,
+   "skipped": 0,
+   "n_train": 781,
+   "minutes": 506.027,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.7366589327146171,
+   "val_cer_final": 0.7148777455449647,
+   "best_val_step": 3000,
+   "best_val_cer": 0.7148777455449647,
+   "test_cer_bestval": 0.7366589327146171,
+   "c1_shuffled_cer": 0.9013921113689095
+  },
+  {
+   "run": "S-ball-s1",
+   "recipe": "A",
+   "arm": "S",
+   "budget": "all",
+   "seed": 1,
+   "label_shuffle": false,
+   "steps": 3000,
+   "skipped": 0,
+   "n_train": 781,
+   "minutes": 506.027,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.9680974477958236,
+   "val_cer_final": 0.9751346871114794,
+   "best_val_step": 300,
+   "best_val_cer": 0.8443845835060091,
+   "test_cer_bestval": 0.834106728538283,
+   "c1_shuffled_cer": 0.9773781902552204
+  },
+  {
+   "run": "E-b30-s0-labelshuf",
+   "recipe": "A",
+   "arm": "E",
+   "budget": "30",
+   "seed": 0,
+   "label_shuffle": true,
+   "steps": 2000,
+   "skipped": 0,
+   "n_train": 47,
+   "minutes": 30.549,
+   "trainable_params": 8583778,
+   "test_cer_final": 0.8468677494199536,
+   "val_cer_final": 0.8711147948611687,
+   "best_val_step": 1700,
+   "best_val_cer": 0.8702859510982179,
+   "test_cer_bestval": 0.8462877030162413
+  }
+ ],
+ "table": {
+  "R": {
+   "3": {
+    "mean": 0.8255510440835268,
+    "seeds": [
+     0.8497679814385151,
+     0.8013341067285383
+    ],
+    "minutes": 3.492,
+    "bestval_mean": 0.8290313225058005
+   },
+   "10": {
+    "mean": 0.8445475638051044,
+    "seeds": [
+     0.8709396751740139,
+     0.8181554524361949
+    ],
+    "minutes": 10.6085,
+    "bestval_mean": 0.8394721577726219
+   },
+   "30": {
+    "mean": 0.8725348027842228,
+    "seeds": [
+     0.8999419953596288,
+     0.8451276102088167
+    ],
+    "minutes": 30.389499999999998,
+    "bestval_mean": 0.888631090487239
+   },
+   "100": {
+    "mean": 0.9389501160092807,
+    "seeds": [
+     0.9243039443155452,
+     0.9535962877030162
+    ],
+    "minutes": 100.566,
+    "bestval_mean": 0.8903712296983759
+   },
+   "all": {
+    "mean": 0.9759280742459397,
+    "seeds": [
+     0.9791183294663574,
+     0.972737819025522
+    ],
+    "minutes": 506.027,
+    "bestval_mean": 0.9380800464037122
+   }
+  },
+  "T": {
+   "3": {
+    "mean": 0.8855858468677493,
+    "seeds": [
+     0.8596287703016241,
+     0.9115429234338747
+    ],
+    "minutes": 3.492,
+    "bestval_mean": 0.8855858468677493
+   },
+   "10": {
+    "mean": 0.8709396751740139,
+    "seeds": [
+     0.8004640371229699,
+     0.941415313225058
+    ],
+    "minutes": 10.6085,
+    "bestval_mean": 0.8707946635730859
+   },
+   "30": {
+    "mean": 0.8029292343387471,
+    "seeds": [
+     0.8210556844547564,
+     0.7848027842227379
+    ],
+    "minutes": 30.389499999999998,
+    "bestval_mean": 0.800899071925754
+   },
+   "100": {
+    "mean": 0.7488399071925754,
+    "seeds": [
+     0.742169373549884,
+     0.7555104408352669
+    ],
+    "minutes": 100.566,
+    "bestval_mean": 0.7482598607888631
+   },
+   "all": {
+    "mean": 0.8480278422273781,
+    "seeds": [
+     0.7856728538283063,
+     0.9103828306264501
+    ],
+    "minutes": 506.027,
+    "bestval_mean": 0.8255510440835266
+   }
+  },
+  "E": {
+   "3": {
+    "mean": 0.8584686774941995,
+    "seeds": [
+     0.8448375870069605,
+     0.8720997679814385
+    ],
+    "minutes": 3.492,
+    "bestval_mean": 0.8591937354988399
+   },
+   "10": {
+    "mean": 0.7797273781902552,
+    "seeds": [
+     0.7633410672853829,
+     0.7961136890951276
+    ],
+    "minutes": 10.6085,
+    "bestval_mean": 0.7708816705336428
+   },
+   "30": {
+    "mean": 0.7660962877030162,
+    "seeds": [
+     0.7726218097447796,
+     0.7595707656612529
+    ],
+    "minutes": 30.389499999999998,
+    "bestval_mean": 0.7665313225058005
+   },
+   "100": {
+    "mean": 0.7858178654292344,
+    "seeds": [
+     0.7790023201856149,
+     0.7926334106728539
+    ],
+    "minutes": 100.566,
+    "bestval_mean": 0.7855278422273781
+   },
+   "all": {
+    "mean": 0.712877030162413,
+    "seeds": [
+     0.6890951276102089,
+     0.7366589327146171
+    ],
+    "minutes": 506.027,
+    "bestval_mean": 0.712877030162413
+   }
+  },
+  "S": {
+   "3": {
+    "mean": 0.8868909512761021,
+    "seeds": [
+     0.9524361948955916,
+     0.8213457076566125
+    ],
+    "minutes": 3.492,
+    "bestval_mean": 0.8877610208816705
+   },
+   "10": {
+    "mean": 1.038863109048724,
+    "seeds": [
+     0.9466357308584686,
+     1.131090487238979
+    ],
+    "minutes": 10.6085,
+    "bestval_mean": 0.9134280742459397
+   },
+   "30": {
+    "mean": 0.953161252900232,
+    "seeds": [
+     0.9559164733178654,
+     0.9504060324825986
+    ],
+    "minutes": 30.389499999999998,
+    "bestval_mean": 0.9375
+   },
+   "100": {
+    "mean": 0.974477958236659,
+    "seeds": [
+     0.9820185614849188,
+     0.9669373549883991
+    ],
+    "minutes": 100.566,
+    "bestval_mean": 0.9367749419953597
+   },
+   "all": {
+    "mean": 0.9840487238979119,
+    "seeds": [
+     1.0,
+     0.9680974477958236
+    ],
+    "minutes": 506.027,
+    "bestval_mean": 0.9170533642691415
+   }
+  }
+ },
+ "V1": {
+  "best_cer_all": 0.712877030162413,
+  "pass": false
+ },
+ "H1": {
+  "claim": "E beats T",
+  "per_budget": [
+   {
+    "a": "E",
+    "b": "T",
+    "budget": "3",
+    "cer_a": 0.8584686774941995,
+    "cer_b": 0.8855858468677493,
+    "delta": 0.0271171693735498,
+    "spread": 0.05191415313225056,
+    "ci95": [
+     0.015832291082646884,
+     0.038283830996485364
+    ],
+    "win": false
+   },
+   {
+    "a": "E",
+    "b": "T",
+    "budget": "10",
+    "cer_a": 0.7797273781902552,
+    "cer_b": 0.8709396751740139,
+    "delta": 0.09121229698375877,
+    "spread": 0.14095127610208813,
+    "ci95": [
+     0.080258924015352,
+     0.10298832811838328
+    ],
+    "win": false
+   },
+   {
+    "a": "E",
+    "b": "T",
+    "budget": "30",
+    "cer_a": 0.7660962877030162,
+    "cer_b": 0.8029292343387471,
+    "delta": 0.03683294663573089,
+    "spread": 0.03625290023201855,
+    "ci95": [
+     0.0262102666287124,
+     0.047435958254269446
+    ],
+    "win": true
+   }
+  ],
+  "wins": 1,
+  "status": "inconclusive"
+ },
+ "H2": {
+  "claim": "E beats R",
+  "per_budget": [
+   {
+    "a": "E",
+    "b": "R",
+    "budget": "3",
+    "cer_a": 0.8584686774941995,
+    "cer_b": 0.8255510440835268,
+    "delta": -0.032917633410672775,
+    "spread": 0.04843387470997673,
+    "ci95": [
+     -0.054164410764846134,
+     -0.006751079970704712
+    ],
+    "win": false
+   },
+   {
+    "a": "E",
+    "b": "R",
+    "budget": "10",
+    "cer_a": 0.7797273781902552,
+    "cer_b": 0.8445475638051044,
+    "delta": 0.06482018561484926,
+    "spread": 0.05278422273781902,
+    "ci95": [
+     0.051971874044634665,
+     0.07882359710282272
+    ],
+    "win": true
+   },
+   {
+    "a": "E",
+    "b": "R",
+    "budget": "30",
+    "cer_a": 0.7660962877030162,
+    "cer_b": 0.8725348027842228,
+    "delta": 0.10643851508120661,
+    "spread": 0.05481438515081216,
+    "ci95": [
+     0.07557275201668276,
+     0.15405135449242502
+    ],
+    "win": true
+   }
+  ],
+  "wins": 2,
+  "status": "inconclusive"
+ },
+ "H3": {
+  "claim": "T beats R",
+  "per_budget": [
+   {
+    "a": "T",
+    "b": "R",
+    "budget": "3",
+    "cer_a": 0.8855858468677493,
+    "cer_b": 0.8255510440835268,
+    "delta": -0.060034802784222574,
+    "spread": 0.05191415313225056,
+    "ci95": [
+     -0.08114423886995391,
+     -0.034303547487303035
+    ],
+    "win": false
+   },
+   {
+    "a": "T",
+    "b": "R",
+    "budget": "10",
+    "cer_a": 0.8709396751740139,
+    "cer_b": 0.8445475638051044,
+    "delta": -0.02639211136890951,
+    "spread": 0.14095127610208813,
+    "ci95": [
+     -0.04196567234702101,
+     -0.010231270606280938
+    ],
+    "win": false
+   },
+   {
+    "a": "T",
+    "b": "R",
+    "budget": "30",
+    "cer_a": 0.8029292343387471,
+    "cer_b": 0.8725348027842228,
+    "delta": 0.06960556844547572,
+    "spread": 0.05481438515081216,
+    "ci95": [
+     0.03674757036302175,
+     0.1184526315380077
+    ],
+    "win": true
+   }
+  ],
+  "wins": 1,
+  "status": "inconclusive"
+ },
+ "H4": {
+  "claim": "E beats S",
+  "per_budget": [
+   {
+    "a": "E",
+    "b": "S",
+    "budget": "3",
+    "cer_a": 0.8584686774941995,
+    "cer_b": 0.8868909512761021,
+    "delta": 0.02842227378190254,
+    "spread": 0.1310904872389791,
+    "ci95": [
+     0.017637743201636857,
+     0.039442901462259664
+    ],
+    "win": false
+   },
+   {
+    "a": "E",
+    "b": "S",
+    "budget": "10",
+    "cer_a": 0.7797273781902552,
+    "cer_b": 1.038863109048724,
+    "delta": 0.25913573085846875,
+    "spread": 0.18445475638051045,
+    "ci95": [
+     0.1942501234382086,
+     0.3341196755730726
+    ],
+    "win": true
+   },
+   {
+    "a": "E",
+    "b": "S",
+    "budget": "30",
+    "cer_a": 0.7660962877030162,
+    "cer_b": 0.953161252900232,
+    "delta": 0.18706496519721583,
+    "spread": 0.013051044083526642,
+    "ci95": [
+     0.1698059340056287,
+     0.2083080533084422
+    ],
+    "win": true
+   }
+  ],
+  "wins": 2,
+  "status": "inconclusive"
+ },
+ "roadmap_rule": {
+  "per_budget": [
+   {
+    "a": "E",
+    "b": "T",
+    "budget": "3",
+    "cer_a": 0.8584686774941995,
+    "cer_b": 0.8855858468677493,
+    "delta": 0.0271171693735498,
+    "spread": 0.05191415313225056,
+    "ci95": [
+     0.015832291082646884,
+     0.038283830996485364
+    ],
+    "win": false
+   },
+   {
+    "a": "E",
+    "b": "T",
+    "budget": "10",
+    "cer_a": 0.7797273781902552,
+    "cer_b": 0.8709396751740139,
+    "delta": 0.09121229698375877,
+    "spread": 0.14095127610208813,
+    "ci95": [
+     0.080258924015352,
+     0.10298832811838328
+    ],
+    "win": false
+   },
+   {
+    "a": "E",
+    "b": "T",
+    "budget": "30",
+    "cer_a": 0.7660962877030162,
+    "cer_b": 0.8029292343387471,
+    "delta": 0.03683294663573089,
+    "spread": 0.03625290023201855,
+    "ci95": [
+     0.0262102666287124,
+     0.047435958254269446
+    ],
+    "win": true
+   },
+   {
+    "a": "E",
+    "b": "T",
+    "budget": "100",
+    "cer_a": 0.7858178654292344,
+    "cer_b": 0.7488399071925754,
+    "delta": -0.03697795823665895,
+    "spread": 0.013631090487238984,
+    "ci95": [
+     -0.04901180151967975,
+     -0.023683335825226644
+    ],
+    "win": false
+   }
+  ],
+  "pass": true
+ },
+ "C1": {
+  "runs": [
+   {
+    "run": "E-ball-s0",
+    "cer": 0.6890951276102089,
+    "shuffled": 0.9306844547563805,
+    "pass": true
+   }
+  ],
+  "pass": true,
+  "n_applicable": 1
+ },
+ "C2": {
+  "run": "E-b30-s0-labelshuf",
+  "cer": 0.8468677494199536,
+  "normal_cer": 0.7726218097447796,
+  "needed": 0.8726218097447795,
+  "pass": false
+ },
+ "curve": {
+  "threshold": 0.6,
+  "arms": {
+   "R": {
+    "points": [
+     [
+      3.492,
+      0.8255510440835268
+     ],
+     [
+      10.6085,
+      0.8445475638051044
+     ],
+     [
+      30.389499999999998,
+      0.8725348027842228
+     ],
+     [
+      100.566,
+      0.9389501160092807
+     ],
+     [
+      506.027,
+      0.9759280742459397
+     ]
+    ],
+    "minutes_to_cer": null
+   },
+   "T": {
+    "points": [
+     [
+      3.492,
+      0.8855858468677493
+     ],
+     [
+      10.6085,
+      0.8709396751740139
+     ],
+     [
+      30.389499999999998,
+      0.8029292343387471
+     ],
+     [
+      100.566,
+      0.7488399071925754
+     ],
+     [
+      506.027,
+      0.8480278422273781
+     ]
+    ],
+    "minutes_to_cer": null
+   },
+   "E": {
+    "points": [
+     [
+      3.492,
+      0.8584686774941995
+     ],
+     [
+      10.6085,
+      0.7797273781902552
+     ],
+     [
+      30.389499999999998,
+      0.7660962877030162
+     ],
+     [
+      100.566,
+      0.7858178654292344
+     ],
+     [
+      506.027,
+      0.712877030162413
+     ]
+    ],
+    "minutes_to_cer": null
+   },
+   "S": {
+    "points": [
+     [
+      3.492,
+      0.8868909512761021
+     ],
+     [
+      10.6085,
+      1.038863109048724
+     ],
+     [
+      30.389499999999998,
+      0.953161252900232
+     ],
+     [
+      100.566,
+      0.974477958236659
+     ],
+     [
+      506.027,
+      0.9840487238979119
+     ]
+    ],
+    "minutes_to_cer": null
+   }
+  }
+ },
+ "C2_all": [
+  {
+   "run": "E-b30-s0-labelshuf",
+   "cer": 0.8468677494199536,
+   "normal_cer": 0.7726218097447796,
+   "needed": 0.8726218097447795,
+   "pass": false
+  }
+ ],
+ "time": "2026-11-20T07:24:34"
+}

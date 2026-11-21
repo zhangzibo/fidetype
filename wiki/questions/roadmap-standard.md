@@ -1557,6 +1557,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-29** | Safe WPM interval that includes the calibration draw (open gap 103, [details](#p15-29-safe-wpm-interval-that-includes-the-calibration-draw)) | F1 | P15-26 |
 | **P15-33** | E1 low-data recipe that reads the target signal before more source arms (open gap 120, [details](#p15-33-e1-low-data-recipe-that-reads-the-target-signal-before-more-source-arms)) | F3 | P15-08 (E1a) |
 | **P15-34** | Calibration-inclusive T15 safe WPM lower end above gaze typing (open gap 132, [details](#p15-34-calibration-inclusive-t15-safe-wpm-lower-end-above-gaze-typing)) | F1 / F2 | P15-29 |
+| **P15-35** | E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2) (open gap 139, [details](#p15-35-e1-synthetic-sentence-augmentation-for-the-minutes-scale-recipe-test-c2)) | F3 | P15-33 |
+| **P15-36** | E1 budget-matched recipe so that V1 and H1-H4 are valid (open gap 140, [details](#p15-36-e1-budget-matched-recipe-so-that-v1-and-h1-h4-are-valid)) | F3 | P15-33, P15-35 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1618,7 +1620,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** GPU (after P11-01), P11-01 weights for the emg2qwerty arm, CPU caches at a common frame rate.
 - **Done when:** all arms run and the rule "an EMG-pretrained arm beats text-only by more than the seed spread at ≤ 25 % data" is evaluated. A null result is a valid outcome. Cost about 20–45 GPU-h.
 - **Progress (2026-11-19, `in_progress`):** part 1 **E1a** pre-registered (`60620ab`, [plan](../../experiments/2026-11-19-p15-08-e1-cross-body/plan.md)), code `75c92a6`, GPU run launched 2026-11-19 10:28 (detached, about 10 h). Target Willett handwriting (new sensor + new user); shared output space = the P11-01 98-token character head; arms R random / T text-only (synthetic key renderings, 30,000 steps) / E P11-01 EMG trunk / S shuffled-weight control; labelled budgets 3, 10, 30, 100 min and all (506 min); 2 seeds; final-step test CER on the last block of each session, no LM. Primary H1: E beats T at ≥ 2 of {3, 10, 30} min (seed spread + paired bootstrap); V1 gate, C1 time-shuffle, C2 label-shuffle. Left after E1a: the clean-track KT-sEMG arm (needs a KT-sEMG trunk, P11-06 / gap 86), the optional T15 arm, and the same-LM readout (P15-25, gap 91).
-- **Result E1a (2026-11-19, [results](../../experiments/2026-11-19-p15-08-e1-cross-body/results.md)): null for F3 at minutes scale.** V1 pass (E at all 0.395); **H1 fails** (E beats T at 0 of {3, 10, 30} min; at 10 and 30 min T is better, CI95 below 0); H2 and H3 fail; H4 partial (30 min only); C1 pass; **C2 fails** (label-deranged E at 30 min 0.836 vs normal 0.810), so at ≤ 30 min the decoders mostly output the label prior. Mean test CER R / T / E / S: 3 min 0.865 / 0.960 / 0.957 / 0.919; 10 min 1.327 / 0.863 / 0.884 / 0.922; 30 min 0.851 / 0.786 / 0.812 / 1.003; 100 min 0.837 / 0.777 / 0.767 / 0.919; all (506 min) 0.613 / 0.805 / 0.395 / 0.925. Descriptive: at full data the EMG trunk is the best and most stable arm (0.360 / 0.431; R 0.305 / 0.920; T fails at 0.80). One machine-sleep interrupt (S-b30-s0, resume at step 1000) lost or repeated no step. P15-08 stays `in_progress` (KT-sEMG arm); first fix the low-data recipe (P15-33, gap 120).
+- **Result E1a (2026-11-19, [results](../../experiments/2026-11-19-p15-08-e1-cross-body/results.md)): null for F3 at minutes scale.** V1 pass (E at all 0.395); **H1 fails** (E beats T at 0 of {3, 10, 30} min; at 10 and 30 min T is better, CI95 below 0); H2 and H3 fail; H4 partial (30 min only); C1 pass; **C2 fails** (label-deranged E at 30 min 0.836 vs normal 0.810), so at ≤ 30 min the decoders mostly output the label prior. Mean test CER R / T / E / S: 3 min 0.865 / 0.960 / 0.957 / 0.919; 10 min 1.327 / 0.863 / 0.884 / 0.922; 30 min 0.851 / 0.786 / 0.812 / 1.003; 100 min 0.837 / 0.777 / 0.767 / 0.919; all (506 min) 0.613 / 0.805 / 0.395 / 0.925. Descriptive: at full data the EMG trunk is the best and most stable arm (0.360 / 0.431; R 0.305 / 0.920; T fails at 0.80). One machine-sleep interrupt (S-b30-s0, resume at step 1000) lost or repeated no step. P15-08 stays `in_progress` (KT-sEMG arm); first fix the low-data recipe (P15-33, gap 120). 2026-11-20: P15-33 partial (recipe A: val-C2 pass, test C2 and V1 fail); next P15-35 / P15-36 (gaps 139, 140).
 
 #### P15-09 New-modality benchmark and reverse transfer
 - **Goal:** a public test of "new sensor or new user with minutes of data".
@@ -1798,10 +1800,11 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-33 E1 low-data recipe that reads the target signal before more source arms
 - **Gap:** 120 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-08 E1a). Follow-up of P15-08.
-- **Status:** `todo`.
+- **Status:** `in_progress` (partial, 2026-11-20: val-C2 pass, test C2 and V1 fail; see Result).
 - **Depends on:** P15-08 E1a (done part; local weights and cache in `C:/Users/zhang/bci-data/derived/p15-08/`); GPU.
 - **Source:** [E1a results](../../experiments/2026-11-19-p15-08-e1-cross-body/results.md): C2 fails (label-deranged E at 30 min 0.836 vs normal 0.810) and the time-shuffled CER equals the normal CER at 30 min for every arm, so with ≤ 100 labelled minutes no arm reads the implant signal with the E1a recipe. Random init is unstable (R-b10-s1 1.839, R-all-s1 0.920). A KT-sEMG arm run with the same recipe would hit the same floor.
 - **Done when:** a pre-registered pilot on the val block only (no test) picks a low-data recipe (for example frozen trunk + stem-only or low-LR fine-tuning, longer schedules, Willett-style synthetic sentences) under which at least one arm passes C2 at 30 min; then E1a's H1-H4 are rerun with that recipe (same splits, 2+ seeds) before the KT-sEMG arm.
+- **Result (2026-11-20, [results](../../experiments/2026-11-20-p15-33-low-data-recipe/results.md)): partial, gap stays open.** Pre-registration `a2906d8`. Val-only search (recipes A-D x arms R, E, 30 min, seed 0) selected **A** (full fine-tune + strong regularisation and augmentation): arm E val CER 0.769, deranged 0.871 vs needed 0.869 (pass by 0.002); B / C (frozen trunk) and D (low LR) had no eligible arm. Test grid with A: **C2 fails** (deranged E 30 min 0.847 vs needed 0.873; normal 0.773); **V1 fails** (best at all = E 0.713 > 0.50; A over-regularises at full data, R 0.976); so **H1-H4 are inconclusive** (raw wins H1 1, H2 2, H3 1, H4 2). C1 pass. Descriptive: E at 3 / 10 / 30 min 0.858 / 0.780 / 0.766 (E1a 0.957 / 0.884 / 0.812); E time-shuffled at 30 min 0.92 vs 0.77 normal. GPU 8.75 h (≤ 10 h). New gaps 139 = [P15-35](#p15-35-e1-synthetic-sentence-augmentation-for-the-minutes-scale-recipe-test-c2), 140 = [P15-36](#p15-36-e1-budget-matched-recipe-so-that-v1-and-h1-h4-are-valid).
 
 #### P15-34 Calibration-inclusive T15 safe WPM lower end above gaze typing
 - **Gap:** 132 of the [open-gap list](open-gaps.md) (added 2026-11-20 after P15-29). Follow-up of P15-29.
@@ -1810,6 +1813,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P15-29 ([results](../../experiments/2026-11-20-p15-29-calibration-ci/results.md)): with 40 calibration draws the T15 L1 safe WPM v0.1 is 5.18 [0.00, 6.99]. 2 of 40 draws are above alpha on the test set and earn 0. Certified draws give 3.50-6.82. Variants that were not pre-registered give lower ends of about 3.6. So the lower end is not above the no-BCI 4.0153.
 - **Options:** (1) a larger calibration set, so fewer draws commit too much and the between-draw spread falls; (2) a guard with a safety margin, for example a lower target alpha or a smaller delta, so that fewer draws are above alpha on the test set; (3) both. Choose the option and the rule before any number is computed.
 - **Done when:** a pre-registered T15 run with `calibration_draw_interval` (K >= 40, same credit rule as P15-29) reports a calibration-inclusive safe WPM v0.1 interval whose lower end is above 4.0153, with the P15-22 controls passing; or the numbers say why no such guard exists with the T15 data.
+
+#### P15-35 E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2)
+- **Gap:** 139 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-33). Follow-up of P15-33.
+- **Status:** `todo`.
+- **Depends on:** P15-33 (done part; local weights in `C:/Users/zhang/bci-data/derived/p15-33/`); GPU.
+- **Source:** P15-33 ([results](../../experiments/2026-11-20-p15-33-low-data-recipe/results.md)): recipe A passed val-C2 by 0.002 only (0.871 vs 0.869); on test the deranged run is 0.847 vs needed 0.873 (normal 0.773), so C2 fails at 30 min.
+- **Done when:** a pre-registered val-only pilot adds Willett-style synthetic sentences (character snippets of the budget sentences, cut at character times from a forced alignment of the budget data only, spliced into new sentences) and passes val-C2 with a margin set in advance; then test C2 passes at 30 min for at least one arm.
+
+#### P15-36 E1 budget-matched recipe so that V1 and H1-H4 are valid
+- **Gap:** 140 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-33). Follow-up of P15-33.
+- **Status:** `todo`.
+- **Depends on:** P15-33, P15-35 (a minutes-scale recipe that passes test C2); GPU.
+- **Source:** P15-33 ([results](../../experiments/2026-11-20-p15-33-low-data-recipe/results.md)): one recipe for all budgets; recipe A (picked for 30 min) over-regularises at 100 min and all (R 0.976, E 0.713 at all), so V1 fails and H1-H4 are inconclusive.
+- **Done when:** a pre-registered budget-matched recipe rule (for example the minutes-scale recipe up to 30 min, the E1a recipe at 100 min and all), fixed before any test number, gives V1 pass and test C2 pass; H1-H4 of E1a are then evaluated under it (same splits, 2 seeds).
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).

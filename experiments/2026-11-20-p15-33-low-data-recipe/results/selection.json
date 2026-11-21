@@ -1,0 +1,90 @@
+{
+ "note": "val block only (no test-block number); plan.md rule",
+ "rows": [
+  {
+   "candidate": "A",
+   "arm": "R",
+   "val_cer": 0.8818897637795275,
+   "val_shuffled_cer": 0.8901782014090344,
+   "best_val_cer": 0.8818897637795275,
+   "trainable_params": 8583778,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "A",
+   "arm": "E",
+   "val_cer": 0.7687525901367592,
+   "val_shuffled_cer": 0.9140074595938665,
+   "best_val_cer": 0.7644011603812682,
+   "trainable_params": 8583778,
+   "eligible": true,
+   "deranged_val_cer": 0.8711147948611687,
+   "needed": 0.8687525901367592,
+   "c2_val_pass": true
+  },
+  {
+   "candidate": "B",
+   "arm": "R",
+   "val_cer": 0.853916286779942,
+   "val_shuffled_cer": 0.8506009117281392,
+   "best_val_cer": 0.8418980522171571,
+   "trainable_params": 150114,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "B",
+   "arm": "E",
+   "val_cer": 0.9090343970161624,
+   "val_shuffled_cer": 0.9465395772896809,
+   "best_val_cer": 0.8978450062163282,
+   "trainable_params": 150114,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "C",
+   "arm": "R",
+   "val_cer": 0.9492333195192706,
+   "val_shuffled_cer": 0.952134272689598,
+   "best_val_cer": 0.9388727724823871,
+   "trainable_params": 150114,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "C",
+   "arm": "E",
+   "val_cer": 0.9883961873186904,
+   "val_shuffled_cer": 0.9991711562370493,
+   "best_val_cer": 0.9871529216742644,
+   "trainable_params": 150114,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "D",
+   "arm": "R",
+   "val_cer": 0.8085370907583921,
+   "val_shuffled_cer": 0.8081226688769167,
+   "best_val_cer": 0.789059262329051,
+   "trainable_params": 8583778,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "D",
+   "arm": "E",
+   "val_cer": 0.8064649813510153,
+   "val_shuffled_cer": 0.8578532946539578,
+   "best_val_cer": 0.7975549108992955,
+   "trainable_params": 8583778,
+   "eligible": false,
+   "c2_val_pass": false
+  }
+ ],
+ "selected": "A",
+ "selected_arm": "E",
+ "time": "2026-11-20T00:26:34"
+}
