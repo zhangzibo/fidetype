@@ -90,3 +90,18 @@ The multi-split arms can remove only the split part of the spread and the rare u
 6. No change of the methods, the arm rule, K, the reference or the decision rule after this commit. Any later variant is a new item.
 
 Known limits (stated before any result): the P15-29 limits (a) pinned pipeline values, (b) duplicates inside a resampled part (a single draw's certificate is not a valid certificate; the draws show the sampling variation), (c) one participant and one decoder checkpoint, (d) the same evaluation set in every draw; (e) the group rule of splits 2-4 puts large groups (trials with many bootstrap copies) a little more often into later parts; it uses no label, so the parts stay independent of the outcomes; (f) splits 2-4 run their own controls with 20 trials only; the arm controls use the 300 + 300 inputs of split 1.
+
+## Addendum (2026-11-21 01:05): stage S result and the primary arm (before the main run)
+Stage S ran on `val_select` only (12 pairs, B = 200; 00:21-01:03, peak 2.65 GB; [results/selection.json](results/selection.json)). The check (recomputed LTT threshold = guard threshold) passed for all 48 split guards. No split guard was refused.
+
+| arm | predicted mean [2.5 %, 97.5 %] | SD between pairs | zero fraction |
+|---|---|---|---|
+| S1 (P15-29 settings) | 4.89 [0.00, 7.37] | 1.79 | 1 / 12 |
+| AND-2 | 4.67 [2.66, 6.97] | 0.99 | 0 |
+| AND-3 | 4.55 [2.66, 6.42] | 0.83 | 0 |
+| AND-4 | 4.49 [2.66, 6.33] | 0.80 | 0 |
+| BMAX-2 | 4.55 [0.00, 7.11] | 1.66 | 1 / 12 |
+| BMAX-3 | 4.74 [0.00, 7.35] | 1.72 | 1 / 12 |
+| **BMED-3** | **4.82 [2.84, 6.55]** | 0.81 | 0 |
+
+By the arm rule, the primary arm is **M = BMED-3** (3 splits, each LTT at (0.05, 0.1/3); deploy the guard with the median in-sample value). S1 does not have a higher predicted lower end. **No arm has a predicted lower end above 4.0153** (best 2.84, at the smaller stage-S sizes). The main run goes on as pre-registered. Nothing else changes.

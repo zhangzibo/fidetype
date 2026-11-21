@@ -1,0 +1,885 @@
+{
+ "fidetype_version": "0.0.1",
+ "plan": "plan.md (pre-registration)",
+ "stage": "S (val_select only; val_eval not used)",
+ "repeats": 4,
+ "B": 200,
+ "pairs": [
+  {
+   "q": 0,
+   "f": 0,
+   "n_C": 481,
+   "n_E": 241,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.74
+    },
+    {
+     "j": 2,
+     "threshold": 0.77
+    },
+    {
+     "j": 3,
+     "threshold": 0.53
+    },
+    {
+     "j": 4,
+     "threshold": 0.77
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 5.123613402620025,
+     "rate": 0.02074688796680498,
+     "commits": 70,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 4.726539762033316,
+     "rate": 0.016597510373443983,
+     "commits": 64,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 4.726539762033316,
+     "rate": 0.016597510373443983,
+     "commits": 64,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 4.648211534868638,
+     "rate": 0.012448132780082987,
+     "commits": 62,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 4.570112702876249,
+     "rate": 0.02074688796680498,
+     "commits": 63,
+     "chosen": 1
+    },
+    "BMAX-3": {
+     "value": 4.570112702876249,
+     "rate": 0.02074688796680498,
+     "commits": 63,
+     "chosen": 1
+    },
+    "BMED-3": {
+     "value": 5.459928020018349,
+     "rate": 0.029045643153526972,
+     "commits": 77,
+     "chosen": 2
+    }
+   }
+  },
+  {
+   "q": 0,
+   "f": 1,
+   "n_C": 481,
+   "n_E": 241,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.7
+    },
+    {
+     "j": 2,
+     "threshold": 0.69
+    },
+    {
+     "j": 3,
+     "threshold": 0.82
+    },
+    {
+     "j": 4,
+     "threshold": 0.82
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 6.753454480828187,
+     "rate": 0.029045643153526972,
+     "commits": 91,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 6.450076642822233,
+     "rate": 0.029045643153526972,
+     "commits": 87,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 5.44530820714691,
+     "rate": 0.012448132780082987,
+     "commits": 69,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 5.2156053795501425,
+     "rate": 0.012448132780082987,
+     "commits": 66,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 6.675478512628985,
+     "rate": 0.03319502074688797,
+     "commits": 90,
+     "chosen": 1
+    },
+    "BMAX-3": {
+     "value": 6.675478512628985,
+     "rate": 0.03319502074688797,
+     "commits": 90,
+     "chosen": 1
+    },
+    "BMED-3": {
+     "value": 5.5804275174979505,
+     "rate": 0.012448132780082987,
+     "commits": 70,
+     "chosen": 2
+    }
+   }
+  },
+  {
+   "q": 0,
+   "f": 2,
+   "n_C": 482,
+   "n_E": 240,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.78
+    },
+    {
+     "j": 2,
+     "threshold": 0.75
+    },
+    {
+     "j": 3,
+     "threshold": 0.79
+    },
+    {
+     "j": 4,
+     "threshold": 0.75
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 4.96122814411238,
+     "rate": 0.04583333333333333,
+     "commits": 77,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 4.774155263652466,
+     "rate": 0.03333333333333333,
+     "commits": 71,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 4.734915631348473,
+     "rate": 0.03333333333333333,
+     "commits": 70,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 4.734915631348473,
+     "rate": 0.03333333333333333,
+     "commits": 70,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 5.104991872598992,
+     "rate": 0.041666666666666664,
+     "commits": 78,
+     "chosen": 1
+    },
+    "BMAX-3": {
+     "value": 5.0104309968097835,
+     "rate": 0.0375,
+     "commits": 75,
+     "chosen": 1
+    },
+    "BMED-3": {
+     "value": 4.916530813270761,
+     "rate": 0.041666666666666664,
+     "commits": 75,
+     "chosen": 2
+    }
+   }
+  },
+  {
+   "q": 1,
+   "f": 0,
+   "n_C": 481,
+   "n_E": 241,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.71
+    },
+    {
+     "j": 2,
+     "threshold": 0.87
+    },
+    {
+     "j": 3,
+     "threshold": 0.71
+    },
+    {
+     "j": 4,
+     "threshold": 0.57
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 5.322808758972248,
+     "rate": 0.04979253112033195,
+     "commits": 81,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 4.346930633409555,
+     "rate": 0.024896265560165973,
+     "commits": 62,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 4.212766107687038,
+     "rate": 0.024896265560165973,
+     "commits": 61,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 4.212766107687038,
+     "rate": 0.024896265560165973,
+     "commits": 61,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 5.322808758972248,
+     "rate": 0.04979253112033195,
+     "commits": 81,
+     "chosen": 0
+    },
+    "BMAX-3": {
+     "value": 5.322808758972248,
+     "rate": 0.04979253112033195,
+     "commits": 81,
+     "chosen": 0
+    },
+    "BMED-3": {
+     "value": 4.6634569999055975,
+     "rate": 0.029045643153526972,
+     "commits": 67,
+     "chosen": 2
+    }
+   }
+  },
+  {
+   "q": 1,
+   "f": 1,
+   "n_C": 481,
+   "n_E": 241,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.79
+    },
+    {
+     "j": 2,
+     "threshold": 0.65
+    },
+    {
+     "j": 3,
+     "threshold": 0.76
+    },
+    {
+     "j": 4,
+     "threshold": 0.75
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 5.881311878181749,
+     "rate": 0.03734439834024896,
+     "commits": 84,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 5.881311878181749,
+     "rate": 0.03734439834024896,
+     "commits": 84,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 5.649640731962495,
+     "rate": 0.029045643153526972,
+     "commits": 78,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 5.649640731962495,
+     "rate": 0.029045643153526972,
+     "commits": 78,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 5.650632352383067,
+     "rate": 0.04149377593360996,
+     "commits": 83,
+     "chosen": 1
+    },
+    "BMAX-3": {
+     "value": 5.650632352383067,
+     "rate": 0.04149377593360996,
+     "commits": 83,
+     "chosen": 1
+    },
+    "BMED-3": {
+     "value": 5.584459687314747,
+     "rate": 0.02074688796680498,
+     "commits": 75,
+     "chosen": 0
+    }
+   }
+  },
+  {
+   "q": 1,
+   "f": 2,
+   "n_C": 482,
+   "n_E": 240,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.89
+    },
+    {
+     "j": 2,
+     "threshold": 0.93
+    },
+    {
+     "j": 3,
+     "threshold": 0.82
+    },
+    {
+     "j": 4,
+     "threshold": 0.85
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 3.9784789105368645,
+     "rate": 0.004166666666666667,
+     "commits": 51,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 3.0204505441199605,
+     "rate": 0.004166666666666667,
+     "commits": 39,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 3.0204505441199605,
+     "rate": 0.004166666666666667,
+     "commits": 39,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 3.0204505441199605,
+     "rate": 0.004166666666666667,
+     "commits": 39,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 3.9784789105368645,
+     "rate": 0.004166666666666667,
+     "commits": 51,
+     "chosen": 0
+    },
+    "BMAX-3": {
+     "value": 4.018396759137569,
+     "rate": 0.004166666666666667,
+     "commits": 53,
+     "chosen": 2
+    },
+    "BMED-3": {
+     "value": 3.193427888056346,
+     "rate": 0.004166666666666667,
+     "commits": 41,
+     "chosen": 0
+    }
+   }
+  },
+  {
+   "q": 2,
+   "f": 0,
+   "n_C": 481,
+   "n_E": 241,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.61
+    },
+    {
+     "j": 2,
+     "threshold": 0.8
+    },
+    {
+     "j": 3,
+     "threshold": 0.58
+    },
+    {
+     "j": 4,
+     "threshold": 0.81
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 0.0,
+     "rate": 0.06639004149377593,
+     "commits": 106,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 5.256562783788921,
+     "rate": 0.03319502074688797,
+     "commits": 78,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 5.256562783788921,
+     "rate": 0.03319502074688797,
+     "commits": 78,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 5.033017520416089,
+     "rate": 0.029045643153526972,
+     "commits": 73,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 0.0,
+     "rate": 0.058091286307053944,
+     "commits": 100,
+     "chosen": 0
+    },
+    "BMAX-3": {
+     "value": 0.0,
+     "rate": 0.058091286307053944,
+     "commits": 100,
+     "chosen": 0
+    },
+    "BMED-3": {
+     "value": 5.730755949570476,
+     "rate": 0.03319502074688797,
+     "commits": 81,
+     "chosen": 2
+    }
+   }
+  },
+  {
+   "q": 2,
+   "f": 1,
+   "n_C": 481,
+   "n_E": 241,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.79
+    },
+    {
+     "j": 2,
+     "threshold": 0.77
+    },
+    {
+     "j": 3,
+     "threshold": 0.71
+    },
+    {
+     "j": 4,
+     "threshold": 0.7
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 3.953361926702828,
+     "rate": 0.016597510373443983,
+     "commits": 55,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 3.5774684976064934,
+     "rate": 0.016597510373443983,
+     "commits": 51,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 3.5774684976064934,
+     "rate": 0.016597510373443983,
+     "commits": 51,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 3.5774684976064934,
+     "rate": 0.016597510373443983,
+     "commits": 51,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 3.607040273704656,
+     "rate": 0.016597510373443983,
+     "commits": 52,
+     "chosen": 1
+    },
+    "BMAX-3": {
+     "value": 4.596801919768527,
+     "rate": 0.03319502074688797,
+     "commits": 67,
+     "chosen": 2
+    },
+    "BMED-3": {
+     "value": 3.607040273704656,
+     "rate": 0.016597510373443983,
+     "commits": 52,
+     "chosen": 1
+    }
+   }
+  },
+  {
+   "q": 2,
+   "f": 2,
+   "n_C": 482,
+   "n_E": 240,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.82
+    },
+    {
+     "j": 2,
+     "threshold": 0.85
+    },
+    {
+     "j": 3,
+     "threshold": 0.76
+    },
+    {
+     "j": 4,
+     "threshold": 0.73
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 5.976546828827826,
+     "rate": 0.016666666666666666,
+     "commits": 78,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 5.5343559136292075,
+     "rate": 0.0125,
+     "commits": 70,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 5.5343559136292075,
+     "rate": 0.0125,
+     "commits": 70,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 5.5343559136292075,
+     "rate": 0.0125,
+     "commits": 70,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 5.737824881042046,
+     "rate": 0.0125,
+     "commits": 72,
+     "chosen": 1
+    },
+    "BMAX-3": {
+     "value": 6.49996574320409,
+     "rate": 0.029166666666666667,
+     "commits": 88,
+     "chosen": 2
+    },
+    "BMED-3": {
+     "value": 5.181676370113621,
+     "rate": 0.0125,
+     "commits": 68,
+     "chosen": 0
+    }
+   }
+  },
+  {
+   "q": 3,
+   "f": 0,
+   "n_C": 481,
+   "n_E": 241,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.76
+    },
+    {
+     "j": 2,
+     "threshold": 0.83
+    },
+    {
+     "j": 3,
+     "threshold": 0.84
+    },
+    {
+     "j": 4,
+     "threshold": 0.88
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 6.505298867421477,
+     "rate": 0.012448132780082987,
+     "commits": 78,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 4.453727567915302,
+     "rate": 0.012448132780082987,
+     "commits": 57,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 4.453727567915302,
+     "rate": 0.012448132780082987,
+     "commits": 57,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 4.453727567915302,
+     "rate": 0.012448132780082987,
+     "commits": 57,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 4.453727567915302,
+     "rate": 0.012448132780082987,
+     "commits": 57,
+     "chosen": 1
+    },
+    "BMAX-3": {
+     "value": 4.453727567915302,
+     "rate": 0.012448132780082987,
+     "commits": 57,
+     "chosen": 1
+    },
+    "BMED-3": {
+     "value": 4.505666081826851,
+     "rate": 0.012448132780082987,
+     "commits": 58,
+     "chosen": 2
+    }
+   }
+  },
+  {
+   "q": 3,
+   "f": 1,
+   "n_C": 481,
+   "n_E": 241,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.77
+    },
+    {
+     "j": 2,
+     "threshold": 0.89
+    },
+    {
+     "j": 3,
+     "threshold": 0.72
+    },
+    {
+     "j": 4,
+     "threshold": 0.91
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 5.763808509069406,
+     "rate": 0.016597510373443983,
+     "commits": 80,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 4.004285044421968,
+     "rate": 0.008298755186721992,
+     "commits": 56,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 4.004285044421968,
+     "rate": 0.008298755186721992,
+     "commits": 56,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 3.8103058381177894,
+     "rate": 0.008298755186721992,
+     "commits": 54,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 5.202785733655331,
+     "rate": 0.012448132780082987,
+     "commits": 73,
+     "chosen": 0
+    },
+    "BMAX-3": {
+     "value": 5.824090795501285,
+     "rate": 0.03319502074688797,
+     "commits": 86,
+     "chosen": 2
+    },
+    "BMED-3": {
+     "value": 5.202785733655331,
+     "rate": 0.012448132780082987,
+     "commits": 73,
+     "chosen": 0
+    }
+   }
+  },
+  {
+   "q": 3,
+   "f": 2,
+   "n_C": 482,
+   "n_E": 240,
+   "guards": [
+    {
+     "j": 1,
+     "threshold": 0.84
+    },
+    {
+     "j": 2,
+     "threshold": 0.86
+    },
+    {
+     "j": 3,
+     "threshold": 0.86
+    },
+    {
+     "j": 4,
+     "threshold": 0.67
+    }
+   ],
+   "arms": {
+    "S1": {
+     "value": 4.497395175448082,
+     "rate": 0.020833333333333332,
+     "commits": 63,
+     "chosen": null
+    },
+    "AND-2": {
+     "value": 4.015168573802093,
+     "rate": 0.016666666666666666,
+     "commits": 55,
+     "chosen": null
+    },
+    "AND-3": {
+     "value": 4.015168573802093,
+     "rate": 0.016666666666666666,
+     "commits": 55,
+     "chosen": null
+    },
+    "AND-4": {
+     "value": 4.015168573802093,
+     "rate": 0.016666666666666666,
+     "commits": 55,
+     "chosen": null
+    },
+    "BMAX-2": {
+     "value": 4.331827746143742,
+     "rate": 0.025,
+     "commits": 61,
+     "chosen": 1
+    },
+    "BMAX-3": {
+     "value": 4.220483037195028,
+     "rate": 0.0125,
+     "commits": 55,
+     "chosen": 1
+    },
+    "BMED-3": {
+     "value": 4.258875721862817,
+     "rate": 0.025,
+     "commits": 59,
+     "chosen": 2
+    }
+   }
+  }
+ ],
+ "grid": [
+  {
+   "arm": "S1",
+   "pred_lower": 0.0,
+   "pred_upper": 7.370528098681041,
+   "pred_mean": 4.893108906893422,
+   "sd_between_pairs": 1.7845226972895394,
+   "zero_fraction": 0.08333333333333333
+  },
+  {
+   "arm": "AND-2",
+   "pred_lower": 2.663333739831523,
+   "pred_upper": 6.9715561329692095,
+   "pred_mean": 4.670086092115272,
+   "sd_between_pairs": 0.9852977404379996,
+   "zero_fraction": 0.0
+  },
+  {
+   "arm": "AND-3",
+   "pred_lower": 2.663333739831523,
+   "pred_upper": 6.421349078841647,
+   "pred_mean": 4.5525991137885145,
+   "sd_between_pairs": 0.8277261667593331,
+   "zero_fraction": 0.0
+  },
+  {
+   "arm": "AND-4",
+   "pred_lower": 2.6604710814822714,
+   "pred_upper": 6.328827624873155,
+   "pred_mean": 4.4921361534186435,
+   "sd_between_pairs": 0.8033842960090221,
+   "zero_fraction": 0.0
+  },
+  {
+   "arm": "BMAX-2",
+   "pred_lower": 0.0,
+   "pred_upper": 7.106141726006659,
+   "pred_mean": 4.5529757760381235,
+   "sd_between_pairs": 1.6636988411365592,
+   "zero_fraction": 0.08333333333333333
+  },
+  {
+   "arm": "BMAX-3",
+   "pred_lower": 0.0,
+   "pred_upper": 7.349631539555512,
+   "pred_mean": 4.7369107621993445,
+   "sd_between_pairs": 1.722848420447654,
+   "zero_fraction": 0.08333333333333333
+  },
+  {
+   "arm": "BMED-3",
+   "pred_lower": 2.8350281742315993,
+   "pred_upper": 6.54602044167714,
+   "pred_mean": 4.8237525880664585,
+   "sd_between_pairs": 0.8114687544731345,
+   "zero_fraction": 0.0
+  }
+ ],
+ "primary": "BMED-3",
+ "S1_higher_than_primary": false
+}
