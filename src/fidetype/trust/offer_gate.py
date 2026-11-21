@@ -18,6 +18,8 @@ name               input   value
 ``coherence``      logits  mean ``P_t . P_(t+1)`` minus the mean ``P_s . P_t`` over all pairs s != t of
                            the frame probabilities (expected value 0 under a random frame order)
 ``coherence_ratio`` logits (adjacent mean) / (all-pairs mean) - 1
+``nb_coherence``   logits  ``coherence`` of the non-blank columns only (the blank column is left out, the
+                           rows are not normalised again); P14-54
 ``peak``           logits  mean largest frame probability over the non-blank-argmax frames (0 if none)
 ``neg_entropy``    logits  minus the mean frame entropy over the non-blank-argmax frames (-log V if none)
 ``nb_share``       logits  share of frames whose argmax is not blank
@@ -41,16 +43,25 @@ import numpy as np
 #: Schema tag of a saved gate.
 OFFER_GATE_SCHEMA = "fidetype.offer-gate/0.1"
 
-LOGIT_FEATURES = ("coherence", "coherence_ratio", "peak", "neg_entropy", "nb_share", "p_top1", "safety")
+LOGIT_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share", "p_top1", "safety")
 NBEST_FEATURES = ("p_top1", "safety", "margin", "conf_mean", "char_lm", "char_lm_best")
 FEATURES = tuple(dict.fromkeys(LOGIT_FEATURES + NBEST_FEATURES))
 #: Features that need a character language model (``OfferGate(..., lm=...)``).
 LM_FEATURES = ("char_lm", "char_lm_best")
 
 
-def coherence(lp: np.ndarray) -> tuple[float, float]:
-    """``(coherence, coherence_ratio)`` of a (T, V) matrix of natural-log frame probabilities."""
+#: The logits features that :func:`frame_features` computes.
+FRAME_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share")
+
+
+def coherence(lp: np.ndarray, drop: int | None = None) -> tuple[float, float]:
+    """``(coherence, coherence_ratio)`` of a (T, V) matrix of natural-log frame probabilities.
+
+    ``drop``: a column to leave out (the blank, for ``nb_coherence``).
+    """
     P = np.exp(np.asarray(lp, dtype=np.float64))
+    if drop is not None and P.ndim == 2 and P.shape[1] > 1:
+        P = np.delete(P, int(drop), axis=1)
     T = P.shape[0]
     if T < 2:
         return 0.0, 0.0
@@ -61,13 +72,14 @@ def coherence(lp: np.ndarray) -> tuple[float, float]:
 
 
 def frame_features(lp: np.ndarray, blank: int = 0) -> dict[str, float]:
-    """The logits features of one input (``coherence``, ``coherence_ratio``, ``peak``, ``neg_entropy``,
-    ``nb_share``)."""
+    """The logits features of one input (:data:`FRAME_FEATURES`)."""
     lp = np.asarray(lp, dtype=np.float64)
     T, V = lp.shape
     c, cr = coherence(lp)
+    nbc = coherence(lp, drop=blank)[0]
     if T == 0:
-        return {"coherence": c, "coherence_ratio": cr, "peak": 0.0, "neg_entropy": -math.log(V), "nb_share": 0.0}
+        return {"coherence": c, "coherence_ratio": cr, "nb_coherence": nbc, "peak": 0.0,
+                "neg_entropy": -math.log(V), "nb_share": 0.0}
     am = lp.argmax(axis=1)
     nb = am != blank
     P = np.exp(lp)
@@ -78,7 +90,7 @@ def frame_features(lp: np.ndarray, blank: int = 0) -> dict[str, float]:
         neg_ent = -float(ent.mean())
     else:
         peak, neg_ent = 0.0, -math.log(V)
-    return {"coherence": c, "coherence_ratio": cr, "peak": peak, "neg_entropy": neg_ent,
+    return {"coherence": c, "coherence_ratio": cr, "nb_coherence": nbc, "peak": peak, "neg_entropy": neg_ent,
             "nb_share": float(nb.mean())}
 
 

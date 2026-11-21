@@ -848,7 +848,7 @@ class TrustGuard:
         out: dict[str, float] = {"p_top1": float(sd.inputs.p_top1), "safety": 1.0 - float(sd.inputs.guard_risk)}
         want = set(names) if names is not None else None
         if self.input_kind == "logits":
-            if want is None or want & {"coherence", "coherence_ratio", "peak", "neg_entropy", "nb_share"}:
+            if want is None or want & set(og.FRAME_FEATURES):
                 lp = self._last_lp
                 if lp is None:
                     lp = np.zeros((0, len(self._codec.vocab)))

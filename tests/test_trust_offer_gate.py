@@ -37,6 +37,26 @@ def test_coherence_reads_the_frame_order():
     assert og.coherence(np.log(u[:1])) == (0.0, 0.0)
 
 
+def test_nb_coherence_ignores_the_blank_column():
+    """P14-54: nb_coherence = coherence without the blank column (CTC frames are mostly blank)."""
+    rng = np.random.default_rng(1)
+    T, V = 600, 6
+    P = np.zeros((T, V))
+    P[:, 0] = 0.97  # mostly blank
+    for t in range(T):
+        P[t, 1 + (t // 3) % (V - 1)] += 0.03  # short runs of 3 frames of one character
+    P /= P.sum(1, keepdims=True)
+    lp = _lp(P)
+    want = og.coherence(lp[:, 1:])[0]
+    assert og.coherence(lp, drop=0)[0] == pytest.approx(want)
+    f = og.frame_features(lp, blank=0)
+    assert f["nb_coherence"] == pytest.approx(want) and want > 0
+    fs = og.frame_features(lp[rng.permutation(T)], blank=0)
+    assert abs(fs["nb_coherence"]) < 0.25 * want
+    assert set(f) == set(og.FRAME_FEATURES) and "nb_coherence" in og.LOGIT_FEATURES
+    assert OfferGate("nb_coherence", 0.0).label() == "nb_coherence >= 0"
+
+
 def test_nbest_features():
     f = og.nbest_features([{"text": "ab", "score": -1.0, "char_confidences": [0.5, 1.0]},
                            {"text": "ac", "score": -3.0}])
