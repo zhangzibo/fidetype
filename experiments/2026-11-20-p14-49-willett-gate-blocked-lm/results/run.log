@@ -1,0 +1,74 @@
+[2026-11-20 23:52:19] (rss 31 MB, peak 31 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-20 23:52:19] (rss 31 MB, peak 31 MB) start ['check', 'lmval', 'select', 'readout', 'guard', 'decide', 'score'] (pid 31784)
+[2026-11-20 23:52:20] (rss 85 MB, peak 88 MB) check: {'split_equal_p15_08': True, 'n_val': 106, 'n_test': 80, 'p14_48_lp_sha256': {'lp_val_real': '1c7849afee586ec49ec974ef137d9fd66e9a917cff534e701e729ed1a684a3c4', 'lp_val_timeshuf': 'd69b7f07e06538b19d21a503a53f95027ba63cbccdb303dc74adeba7de4edc45', 'lp_val_zero': '14c8a65f552e6c0d6dd71b8b9568f74b04bc9cc4a6e834716fdf0a0c2c68bca4', 'lp_test_real': 'ef571b3de839328b3eda9a7db3164e9a0343940c407cda58449b6a02f48891e4', 'lp_test_timeshuf': '67b101936206739a810d36cdb9dd8e61cce53eebc3c132ab07b6cef4f1f308c8', 'lp_test_zero': '5fb202a5738bfd4542835e46c7b337bb323b5a185718e2b689e4f3ae78ca3d35'}, 'manifest_lm_file': 'eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz', 'manifest_lm_sha256': 'd7f6e829b827d1f7d09f5927eb51ec33fd79df29201d7e722a0878a503059261', 'lm_file_sha256': 'd7f6e829b827d1f7d09f5927eb51ec33fd79df29201d7e722a0878a503059261', 'lm_file_size': 3348904, 'lm_file_readonly': True, 'lm_order': 6, 'settings': {'lm_weight': 0.5, 'bonus': 1.0, 'beam': 8, 'prune_logp': -8.0, 'n_best': 8}}
+[2026-11-20 23:52:20] (rss 72 MB, peak 88 MB) stage check finished
+[2026-11-20 23:52:26] (rss 591 MB, peak 596 MB) val: real done (6 s)
+[2026-11-20 23:52:32] (rss 591 MB, peak 599 MB) val: timeshuf done (12 s)
+[2026-11-20 23:52:34] (rss 590 MB, peak 599 MB) val: zero done (15 s)
+[2026-11-20 23:52:41] (rss 602 MB, peak 612 MB) val: frameshuf done (21 s)
+[2026-11-20 23:53:21] (rss 613 MB, peak 645 MB) val: uniform done (61 s)
+[2026-11-20 23:53:21] (rss 81 MB, peak 645 MB) stage lmval finished
+[2026-11-20 23:53:22] (rss 1555 MB, peak 1565 MB) select: C0: G 1, E_ts 4, E_zero 0, E_uni 0, frameshuf 66, eligible True
+[2026-11-20 23:53:22] (rss 1555 MB, peak 1565 MB) select: C1: G 1, E_ts 4, E_zero 0, E_uni 0, frameshuf 65, eligible True
+[2026-11-20 23:53:22] (rss 1555 MB, peak 1565 MB) select: C2: G 1, E_ts 3, E_zero 0, E_uni 0, frameshuf 63, eligible True
+[2026-11-20 23:53:22] (rss 1555 MB, peak 1565 MB) select: C3: G 3, E_ts 3, E_zero 0, E_uni 0, frameshuf 63, eligible True
+[2026-11-20 23:53:22] (rss 1555 MB, peak 1565 MB) select: C4: G 3, E_ts 32, E_zero 0, E_uni 0, frameshuf 38, eligible True
+[2026-11-20 23:53:22] (rss 1555 MB, peak 1565 MB) select: C5: G 2, E_ts 0, E_zero 0, E_uni 0, frameshuf 64, eligible True
+[2026-11-20 23:53:23] (rss 1555 MB, peak 1565 MB) select: chosen C5 (eligible, smallest E_ts, then G, then order); gate {'kind': 'score', 'feature': 'logit', 'lo': -1.1697116125105564, 'hi': None, 'k_min': 1, 'r_max': 2.8341205890525143, 'frame_s': 0.01, 'blank': 0, 'inputs': ['peak', 'neg_entropy', 'nb_share', 'kps', 'log_n_keys'], 'mean': [0.721229490905637, -0.7751456804416097, 0.009525419203591607, 0.6451203821970972, 2.8780015208328], 'scale': [0.14949540773784878, 0.45883367758945126, 0.007011353248192092, 0.40557320589063134, 0.9289044543950082], 'coef': [1.7726535510820793, 1.0447799596569138, 1.2517341377270468, 1.1445503008919289, 0.9197467575876155], 'intercept': 0.5441830430410218}; refit check on S {'real': 66, 'timeshuf': 0, 'zero': 0, 'frameshuf': 65, 'uniform': 0}
+[2026-11-20 23:53:23] (rss 82 MB, peak 1565 MB) stage select finished
+[2026-11-20 23:53:28] (rss 485 MB, peak 1565 MB) test: real done (5 s)
+[2026-11-20 23:53:32] (rss 485 MB, peak 1565 MB) test: timeshuf done (10 s)
+[2026-11-20 23:53:34] (rss 485 MB, peak 1565 MB) test: zero done (11 s)
+[2026-11-20 23:53:39] (rss 489 MB, peak 1565 MB) test: frameshuf done (16 s)
+[2026-11-20 23:54:09] (rss 491 MB, peak 1565 MB) test: uniform done (46 s)
+[2026-11-20 23:54:10] (rss 479 MB, peak 1565 MB) readout: packaged path equal on first 10: {'real': 10, 'timeshuf': 10}
+[2026-11-20 23:54:10] (rss 85 MB, peak 1565 MB) stage readout finished
+[2026-11-20 23:54:10] (rss 428 MB, peak 1565 MB) guard: calibrate on 106 val sentences, 106 nulls
+[2026-11-20 23:56:31] (rss 495 MB, peak 1565 MB) guard: tcfg-26ae951a20a0cddd (141 s)
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-26ae951a20a0cddd
+input                logits (custom:fidetype.pretrained.lmreadout.LmReadout.decode_fn.<locals>.gated_lm_readout)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    106 = 26 fit + 40 policy grid + 40 LTT
+LTT items needed     >= 45 LTT items (utterances, not commits) to certify any COMMIT
+lambda_hat           inf (feasible: False)
+commit threshold     p_top1 >= never commits (no threshold certified)
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 0 commits, 0 wrong (of 40; 0 blocked by the commit gate; median guard risk 0.0979015)
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           0/300 commits (allowed 15): PASS
+  user               0/106 commits (allowed 5): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+warnings
+  ! only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.
+  ! frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.
+  ! the guard never commits (no certified threshold). It still offers and withholds.
+Details: docs/trust-guarantee.md
+[2026-11-20 23:56:31] (rss 130 MB, peak 1565 MB) stage guard finished
+[2026-11-20 23:57:02] (rss 544 MB, peak 1565 MB) decide: real done (31 s)
+[2026-11-20 23:57:27] (rss 543 MB, peak 1565 MB) decide: timeshuf done (56 s)
+[2026-11-20 23:57:54] (rss 544 MB, peak 1565 MB) decide: zero done (83 s)
+[2026-11-20 23:58:29] (rss 535 MB, peak 1565 MB) decide: frameshuf done (118 s)
+[2026-11-20 23:59:01] (rss 535 MB, peak 1565 MB) decide: uniform done (150 s)
+[2026-11-20 23:59:01] (rss 129 MB, peak 1565 MB) stage decide finished
+[2026-11-20 23:59:13] (rss 131 MB, peak 1565 MB) score: R0 {'cer_raw': 0.1743, 'p15_38': 0.1743, 'abs_diff': 0.0, 'pass': True, 'same_text_as_p15_38': 80}; chosen {'uniform': {'emit': 0, 'allowed': 4, 'pass': True}, 'timeshuf': {'emit': 2, 'allowed': 4, 'pass': True}, 'zero': {'emit': 0, 'allowed': 4, 'pass': True}, 'pass': True} H 1 N2 {'cer_gated': 0.8814, 'min': 0.85, 'pass': True, 'emit_gated': 79}; P14-49 pass True; count gate {'uniform': {'emit': 0, 'allowed': 4, 'pass': True}, 'timeshuf': {'emit': 13, 'allowed': 4, 'pass': False}, 'zero': {'emit': 0, 'allowed': 4, 'pass': True}, 'pass': False} H 3
+[2026-11-20 23:59:13] (rss 131 MB, peak 1565 MB) score: guard tcfg-26ae951a20a0cddd V1 guard returned, LTT not feasible (no certified commit threshold); V2 holds; V3 vacuous; V6 True; V8 {'timeshuf': {'offer_rate': 0.025, 'real_offer_rate': 0.9625, 'offer_null_passes': True}, 'zero': {'offer_rate': 0.0, 'real_offer_rate': 0.9625, 'offer_null_passes': True}, 'frameshuf': {'offer_rate': 0.9625, 'real_offer_rate': 0.9625, 'offer_null_passes': False}, 'uniform': {'offer_rate': 0.0, 'real_offer_rate': 0.9625, 'offer_null_passes': True}}; safe WPM 0.00 (vacuous; LTT a=0.05 d=0.1 n_cal=40; test wrong-commit 0/80 = 0.0000; commits 0; unguarded 0.00; no-BCI 4.05)
+[2026-11-20 23:59:13] (rss 131 MB, peak 1565 MB) stage score finished
+[2026-11-20 23:59:13] (rss 131 MB, peak 1565 MB) keep_awake: cleared
+[2026-11-20 23:59:13] (rss 131 MB, peak 1565 MB) end; peak RSS of this run 1565 MB

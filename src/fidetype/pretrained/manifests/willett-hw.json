@@ -36,6 +36,7 @@
  "files": [
   {"role": "weights", "name": "willett-hw.weights.npz", "sha256": "66ac659066340c70fac58a1dd16c4b81f3806ba3e5bb8daf04169b79b66bc4a9", "size": 34369716, "url": null},
   {"role": "guard", "name": "willett-hw.guard.json", "sha256": "b16963ed5d2ba09ed0525fc8193b8b8a0a1d0ec7814faf12ee8b6174e93c33fc", "size": 6751, "url": null},
+  {"role": "guard", "name": "willett-hw.lm2.guard.json", "sha256": "97a6c219f0bc8ed6c4483b79ece4a10a128c270ff2e0b0c0574022a5434f144e", "size": 7111, "url": null},
   {"role": "text", "name": "eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz", "sha256": "d7f6e829b827d1f7d09f5927eb51ec33fd79df29201d7e722a0878a503059261", "size": 3348904, "url": null}
  ],
  "licence": {
@@ -62,7 +63,7 @@
  "limits": [
   "Weak decoder: greedy test CER 0.305. The published Willett et al. 2021 real-time decoder is much better (other recipe).",
   "Unstable recipe: the same recipe on seed 1 gives test CER 0.920 (training failed). One good seed is not a reliable method.",
-  "No language model in the default readout (greedy CTC). The opt-in LM readout (readouts.lm, P14-48) uses a Tatoeba 6-gram (CC BY 2.0 FR, attribution: the Tatoeba contributors); 13 of the 80 test sentences (5 of 47 unique texts) are in the Tatoeba export, so its CER 0.176 can be a little optimistic; its no-signal gate lets 13 / 80 time-shuffled test inputs through.",
+  "No language model in the default readout (greedy CTC). The opt-in LM readout (readouts.lm, P14-48 / P14-49 / P14-50) uses a Tatoeba 6-gram with every Willett text blocked (CC BY 2.0 FR, attribution: the Tatoeba contributors; local only, because its blocklist holds research-only emg2qwerty texts): test CER 0.175 with the gate, no test overlap. Its no-signal gate stops flat, empty and time-shuffled input (time-shuffled 2 / 80 emit text), but not frame-shuffled decoder frames.",
   "Descriptive only: an offline replay of one participant (T5); not a user study and not a clinical claim.",
   "Only the 10 sessions of the dataset: a new session or participant needs its own z-score statistics and probably retraining.",
   "Other split than the benchmark track willett-hw (last 3 sessions): 193 of that track's 254 test trials were in this model's training pool. Score this model only on its own test blocks (the last block of each session), or retrain it on the track's train split first."
@@ -88,14 +89,15 @@
    "settings": {"lm_weight": 0.5, "bonus": 1.0, "beam": 8, "prune_logp": -8.0, "n_best": 8},
    "settings_source": "P15-25 decoder F (fixed before its run; experiments/2026-11-20-p15-25-e1-same-lm/config.json)",
    "code": "fidetype.pretrained.lmreadout (the P11-07 LMBeam, NumPy)",
-   "gate": {"k_min": 7, "r_min": 0.42480883602378927, "r_max": 2.8341205890525143, "frame_s": 0.01, "blank": 0},
-   "gate_rule": "pass iff greedy CTC emissions n_keys >= k_min and r_min <= n_keys / (0.01 T) <= r_max; fitted on the 66 non-LTT val sentences (calibrate order, seed 0): k_min, r_min = their smallest values, r_max = 2 x their largest rate",
-   "gate_source": "experiments/2026-11-20-p14-48-willett-lm-readout (P11-12 rule, fitted on val only)",
+   "gate": {"kind": "score", "feature": "logit", "lo": -1.1697116125105564, "hi": null, "k_min": 1, "r_max": 2.8341205890525143, "frame_s": 0.01, "blank": 0, "inputs": ["peak", "neg_entropy", "nb_share", "kps", "log_n_keys"], "mean": [0.721229490905637, -0.7751456804416097, 0.009525419203591607, 0.6451203821970972, 2.8780015208328], "scale": [0.14949540773784878, 0.45883367758945126, 0.007011353248192092, 0.40557320589063134, 0.9289044543950082], "coef": [1.7726535510820793, 1.0447799596569138, 1.2517341377270468, 1.1445503008919289, 0.9197467575876155], "intercept": 0.5441830430410218},
+   "gate_rule": "kind score, feature logit (P14-49 candidate C5): pass iff greedy CTC emissions n_keys >= 1, n_keys / (0.01 T) <= r_max, and intercept + coef . (z - mean) / scale >= lo, with z = (peak, neg_entropy, nb_share, kps, log(1 + n_keys)) of fidetype.pretrained.lmreadout.posterior_features. Fitted on the 66 non-LTT val sentences (calibrate order, seed 0): L2 logistic regression of real vs time-shuffled input (ridge 1), lo = the smallest real score, r_max = 2 x the largest real rate. Chosen among 6 candidates by a pre-registered 2-fold rule on the same 66 val sentences (test never used)",
+   "gate_source": "experiments/2026-11-20-p14-49-willett-gate-blocked-lm (val only; the P14-48 count gate k_min 7, 0.425 <= kps <= 2.834 is replaced)",
    "licence": "LM text CC BY 2.0 FR (Tatoeba contributors, attribution required); see licence.text_files",
-   "metrics": {"test_cer_ungated": 0.1734, "test_cer_gated": 0.1760, "test_cer_greedy": 0.3051, "val_cer_gated": 0.1274, "real_test_gated": "3 / 80", "split": "test blocks (80 sentences, 3,448 characters)", "source": "experiments/2026-11-20-p14-48-willett-lm-readout/results.md"},
-   "null_controls": "test, gated readout emits text on: uniform 0 / 80, zero 0 / 80, time-shuffled input 13 / 80 (FAILS the 4 / 80 limit; the 13 texts are short: 201 characters in all, CER 0.967), frame-shuffled frames 78 / 80 (CER 0.883 >= 0.85: passes the order control)",
-   "warning": "P14-49 in progress: the gate below is the P14-48 count gate, which does not stop all time-shuffled neural input (13 / 80 emit text with the P14-48 LM). Treat a text from this readout as a suggestion, not as evidence that the signal was read",
-   "test_overlap": "none: the LM is built with every Willett text blocked (P15-38: 0 exact, 0 containment matches in its train and held-out text). The P14-48 LM held 13 of the 80 test sentences (5 of 47 unique texts)"
+   "metrics": {"test_cer_ungated": 0.1743, "test_cer_gated": 0.1746, "test_cer_greedy": 0.3051, "val_cer_ungated": 0.1272, "real_test_gated": "1 / 80", "split": "test blocks (80 sentences, 3,448 characters)", "source": "experiments/2026-11-20-p14-49-willett-gate-blocked-lm/results.md"},
+   "null_controls": "test, gated readout emits text on: uniform 0 / 80, zero 0 / 80, time-shuffled input 2 / 80 (limit 4: pass; 39 characters in all), frame-shuffled frames 79 / 80 (CER 0.881 >= 0.85: passes the order control; the gate cannot see the frame order)",
+   "warning": "the gate reads only per-frame posterior statistics: it stops flat, empty and time-shuffled input on test, but frame-shuffled decoder frames pass it (79 / 80). Treat a text from this readout as a suggestion, not as evidence that the signal was read",
+   "test_overlap": "none: the LM is built with every Willett text blocked (P15-38: 0 exact, 0 containment matches in its train and held-out text). The P14-48 LM held 13 of the 80 test sentences (5 of 47 unique texts)",
+   "trust": {"config": "file:willett-hw.lm2.guard.json", "config_id": "tcfg-26ae951a20a0cddd", "alpha": 0.05, "delta": 0.1, "input": "guard.decide(stream.log_probs); m.guard(readout=\"lm\") builds the gated LM readout as decode_fn", "commits": "never: OFFER / WITHHOLD only (40 LTT items < 45 needed; feasible: false). Test: 0 commits, 77 offers (top-1 exact 12, CER 0.1724), 3 withholds of 80; safe WPM v0.1 0.00 (vacuous)", "null_controls": "calibrate: uniform 0/300, frame-shuffled 0/300, time-shuffled input 0/106 commits (pass); test commits 0/80 on every null input. Offers on null input: time-shuffled 2/80, zero 0/80, uniform 0/80, frame-shuffled 77/80 (as often as real)", "source": "experiments/2026-11-20-p14-49-willett-gate-blocked-lm/results.md"}
   }
  },
  "hosting": {"host": null, "release": null, "notes": "no download URL yet; hosting is the user step P14-02 (gap 98, docs/publishing-checklist.md)"}

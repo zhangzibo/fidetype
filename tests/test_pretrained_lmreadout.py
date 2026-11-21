@@ -202,3 +202,14 @@ def test_gate_from_dict_kinds():
         LR.gate_from_dict({**c, "kind": "other"})
     with pytest.raises(ValueError):
         LR.ScoreGate.from_dict({"feature": "nope", "lo": 0, "hi": None, "k_min": 1, "r_max": 1, "frame_s": 0.01})
+
+
+def test_manifest_default_gate_is_the_p14_49_score_gate():
+    cfg = ftp.info("willett-hw").raw["readouts"]["lm"]
+    g = LR.gate_from_dict(cfg["gate"])
+    assert isinstance(g, LR.ScoreGate) and g.feature == "logit" and not g.needs_lm
+    assert g.k_min == 1 and len(g.coef) == len(LR.LOGIT_INPUTS) == len(g.mean) == len(g.scale)
+    assert cfg["trust"]["config"] == "file:willett-hw.lm2.guard.json"
+    blank = np.full((300, len(VOCAB)), -20.0)
+    blank[:, 0] = 0.0
+    assert not g.passes(blank) and not g.passes(np.full((300, len(VOCAB)), -np.log(len(VOCAB))))

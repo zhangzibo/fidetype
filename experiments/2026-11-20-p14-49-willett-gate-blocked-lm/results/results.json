@@ -1,0 +1,1352 @@
+{
+ "check": {
+  "split_equal_p15_08": true,
+  "n_val": 106,
+  "n_test": 80,
+  "p14_48_lp_sha256": {
+   "lp_val_real": "1c7849afee586ec49ec974ef137d9fd66e9a917cff534e701e729ed1a684a3c4",
+   "lp_val_timeshuf": "d69b7f07e06538b19d21a503a53f95027ba63cbccdb303dc74adeba7de4edc45",
+   "lp_val_zero": "14c8a65f552e6c0d6dd71b8b9568f74b04bc9cc4a6e834716fdf0a0c2c68bca4",
+   "lp_test_real": "ef571b3de839328b3eda9a7db3164e9a0343940c407cda58449b6a02f48891e4",
+   "lp_test_timeshuf": "67b101936206739a810d36cdb9dd8e61cce53eebc3c132ab07b6cef4f1f308c8",
+   "lp_test_zero": "5fb202a5738bfd4542835e46c7b337bb323b5a185718e2b689e4f3ae78ca3d35"
+  },
+  "manifest_lm_file": "eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz",
+  "manifest_lm_sha256": "d7f6e829b827d1f7d09f5927eb51ec33fd79df29201d7e722a0878a503059261",
+  "lm_file_sha256": "d7f6e829b827d1f7d09f5927eb51ec33fd79df29201d7e722a0878a503059261",
+  "lm_file_size": 3348904,
+  "lm_file_readonly": true,
+  "lm_order": 6,
+  "settings": {
+   "lm_weight": 0.5,
+   "bonus": 1.0,
+   "beam": 8,
+   "prune_logp": -8.0,
+   "n_best": 8
+  }
+ },
+ "select": {
+  "chosen": "C5",
+  "rule": "eligible, smallest E_ts, then G, then order",
+  "eligible": [
+   "C0",
+   "C1",
+   "C2",
+   "C3",
+   "C4",
+   "C5"
+  ],
+  "gate": {
+   "kind": "score",
+   "feature": "logit",
+   "lo": -1.1697116125105564,
+   "hi": null,
+   "k_min": 1,
+   "r_max": 2.8341205890525143,
+   "frame_s": 0.01,
+   "blank": 0,
+   "inputs": [
+    "peak",
+    "neg_entropy",
+    "nb_share",
+    "kps",
+    "log_n_keys"
+   ],
+   "mean": [
+    0.721229490905637,
+    -0.7751456804416097,
+    0.009525419203591607,
+    0.6451203821970972,
+    2.8780015208328
+   ],
+   "scale": [
+    0.14949540773784878,
+    0.45883367758945126,
+    0.007011353248192092,
+    0.40557320589063134,
+    0.9289044543950082
+   ],
+   "coef": [
+    1.7726535510820793,
+    1.0447799596569138,
+    1.2517341377270468,
+    1.1445503008919289,
+    0.9197467575876155
+   ],
+   "intercept": 0.5441830430410218
+  },
+  "gate_p14_48": {
+   "k_min": 7,
+   "r_min": 0.42480883602378927,
+   "r_max": 2.8341205890525143,
+   "frame_s": 0.01,
+   "blank": 0
+  },
+  "n_S": 66,
+  "S_digest": "5b1dfd323c7fc94f",
+  "A_digest": "146818fe5f5314ca",
+  "refit_check_pass_counts_on_S": {
+   "real": 66,
+   "timeshuf": 0,
+   "zero": 0,
+   "frameshuf": 65,
+   "uniform": 0
+  },
+  "refit_check_real_gated_on_S": 0,
+  "table": {
+   "C0": {
+    "G_real_gated": 1,
+    "E_ts": 4,
+    "E_zero": 0,
+    "E_uni": 0,
+    "E_frameshuf_report": 66,
+    "n_eval": 66,
+    "folds": [
+     {
+      "gate": {
+       "k_min": 7,
+       "r_min": 0.42480883602378927,
+       "r_max": 2.696132596685083,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 33,
+       "timeshuf": 2,
+       "zero": 0,
+       "frameshuf": 33,
+       "uniform": 0
+      }
+     },
+     {
+      "gate": {
+       "k_min": 7,
+       "r_min": 0.4366812227074236,
+       "r_max": 2.8341205890525143,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 32,
+       "timeshuf": 2,
+       "zero": 0,
+       "frameshuf": 33,
+       "uniform": 0
+      }
+     }
+    ],
+    "eligible": true
+   },
+   "C1": {
+    "G_real_gated": 1,
+    "E_ts": 4,
+    "E_zero": 0,
+    "E_uni": 0,
+    "E_frameshuf_report": 65,
+    "n_eval": 66,
+    "folds": [
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "nb_share",
+       "lo": 0.00594732370433305,
+       "hi": null,
+       "k_min": 1,
+       "r_max": 2.696132596685083,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 32,
+       "timeshuf": 1,
+       "zero": 0,
+       "frameshuf": 32,
+       "uniform": 0
+      }
+     },
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "nb_share",
+       "lo": 0.0048520135856380394,
+       "hi": null,
+       "k_min": 1,
+       "r_max": 2.8341205890525143,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 33,
+       "timeshuf": 3,
+       "zero": 0,
+       "frameshuf": 33,
+       "uniform": 0
+      }
+     }
+    ],
+    "eligible": true
+   },
+   "C2": {
+    "G_real_gated": 1,
+    "E_ts": 3,
+    "E_zero": 0,
+    "E_uni": 0,
+    "E_frameshuf_report": 63,
+    "n_eval": 66,
+    "folds": [
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "peak",
+       "lo": 0.754848863744123,
+       "hi": null,
+       "k_min": 1,
+       "r_max": 2.696132596685083,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 32,
+       "timeshuf": 3,
+       "zero": 0,
+       "frameshuf": 31,
+       "uniform": 0
+      }
+     },
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "peak",
+       "lo": 0.7538168300112755,
+       "hi": null,
+       "k_min": 1,
+       "r_max": 2.8341205890525143,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 33,
+       "timeshuf": 0,
+       "zero": 0,
+       "frameshuf": 32,
+       "uniform": 0
+      }
+     }
+    ],
+    "eligible": true
+   },
+   "C3": {
+    "G_real_gated": 3,
+    "E_ts": 3,
+    "E_zero": 0,
+    "E_uni": 0,
+    "E_frameshuf_report": 63,
+    "n_eval": 66,
+    "folds": [
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "neg_entropy",
+       "lo": -0.6350441633853503,
+       "hi": null,
+       "k_min": 1,
+       "r_max": 2.696132596685083,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 30,
+       "timeshuf": 1,
+       "zero": 0,
+       "frameshuf": 30,
+       "uniform": 0
+      }
+     },
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "neg_entropy",
+       "lo": -0.8225712819249213,
+       "hi": null,
+       "k_min": 1,
+       "r_max": 2.8341205890525143,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 33,
+       "timeshuf": 2,
+       "zero": 0,
+       "frameshuf": 33,
+       "uniform": 0
+      }
+     }
+    ],
+    "eligible": true
+   },
+   "C4": {
+    "G_real_gated": 3,
+    "E_ts": 32,
+    "E_zero": 0,
+    "E_uni": 0,
+    "E_frameshuf_report": 38,
+    "n_eval": 66,
+    "folds": [
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "lm_ratio",
+       "lo": 0.8076923076923077,
+       "hi": 1.625,
+       "k_min": 1,
+       "r_max": 2.696132596685083,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 33,
+       "timeshuf": 19,
+       "zero": 0,
+       "frameshuf": 21,
+       "uniform": 0
+      }
+     },
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "lm_ratio",
+       "lo": 0.8085106382978723,
+       "hi": 1.2195121951219512,
+       "k_min": 1,
+       "r_max": 2.8341205890525143,
+       "frame_s": 0.01,
+       "blank": 0
+      },
+      "pass_counts": {
+       "real": 30,
+       "timeshuf": 13,
+       "zero": 0,
+       "frameshuf": 17,
+       "uniform": 0
+      }
+     }
+    ],
+    "eligible": true
+   },
+   "C5": {
+    "G_real_gated": 2,
+    "E_ts": 0,
+    "E_zero": 0,
+    "E_uni": 0,
+    "E_frameshuf_report": 64,
+    "n_eval": 66,
+    "folds": [
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "logit",
+       "lo": 1.4209854372191566,
+       "hi": null,
+       "k_min": 1,
+       "r_max": 2.696132596685083,
+       "frame_s": 0.01,
+       "blank": 0,
+       "inputs": [
+        "peak",
+        "neg_entropy",
+        "nb_share",
+        "kps",
+        "log_n_keys"
+       ],
+       "mean": [
+        0.7147571562189826,
+        -0.769280347983545,
+        0.009373719407994155,
+        0.6357933144713387,
+        2.947285641994675
+       ],
+       "scale": [
+        0.13761853405183136,
+        0.32297697703632844,
+        0.006903861869752538,
+        0.40085103311234754,
+        0.8944657518049299
+       ],
+       "coef": [
+        1.3232917453530133,
+        1.244993700242186,
+        0.9272751372981293,
+        0.8342946737014253,
+        0.6490937984319769
+       ],
+       "intercept": 0.26141342907663895
+      },
+      "pass_counts": {
+       "real": 31,
+       "timeshuf": 0,
+       "zero": 0,
+       "frameshuf": 31,
+       "uniform": 0
+      }
+     },
+     {
+      "gate": {
+       "kind": "score",
+       "feature": "logit",
+       "lo": -1.205838904037464,
+       "hi": null,
+       "k_min": 1,
+       "r_max": 2.8341205890525143,
+       "frame_s": 0.01,
+       "blank": 0,
+       "inputs": [
+        "peak",
+        "neg_entropy",
+        "nb_share",
+        "kps",
+        "log_n_keys"
+       ],
+       "mean": [
+        0.727701825592292,
+        -0.7810110128996748,
+        0.009677118999189062,
+        0.6544474499228558,
+        2.8087173996709267
+       ],
+       "scale": [
+        0.16023454909052576,
+        0.5627377323721138,
+        0.007113987234264341,
+        0.4100289154935915,
+        0.9571088813439516
+       ],
+       "coef": [
+        1.3917487298701265,
+        0.7153729937602439,
+        1.1660267216736608,
+        1.0908725684205376,
+        0.7785145487839845
+       ],
+       "intercept": 0.40208304672120543
+      },
+      "pass_counts": {
+       "real": 33,
+       "timeshuf": 0,
+       "zero": 0,
+       "frameshuf": 33,
+       "uniform": 0
+      }
+     }
+    ],
+    "eligible": true
+   }
+  },
+  "seconds": 1.7,
+  "feature_percentiles_0_5_50_95_100_on_S": {
+   "real": {
+    "n_keys": [
+     7.0,
+     7.25,
+     44.0,
+     67.5,
+     72.0
+    ],
+    "kps": [
+     0.4248,
+     0.5608,
+     1.0666,
+     1.3189,
+     1.4171
+    ],
+    "nb_share": [
+     0.0049,
+     0.0091,
+     0.0164,
+     0.0212,
+     0.0228
+    ],
+    "peak": [
+     0.7538,
+     0.772,
+     0.8491,
+     0.9201,
+     0.9322
+    ],
+    "neg_entropy": [
+     -0.8226,
+     -0.6307,
+     -0.4401,
+     -0.3427,
+     -0.2687
+    ],
+    "lm_ratio": [
+     0.8077,
+     0.8616,
+     1.022,
+     1.208,
+     1.625
+    ]
+   },
+   "timeshuf": {
+    "n_keys": [
+     0.0,
+     2.0,
+     12.0,
+     22.25,
+     30.0
+    ],
+    "kps": [
+     0.0,
+     0.0783,
+     0.3083,
+     0.4637,
+     0.5875
+    ],
+    "nb_share": [
+     0.0,
+     0.0008,
+     0.0032,
+     0.0052,
+     0.0071
+    ],
+    "peak": [
+     0.0,
+     0.482,
+     0.5917,
+     0.7395,
+     0.8473
+    ],
+    "neg_entropy": [
+     -4.585,
+     -1.3118,
+     -1.0703,
+     -0.7309,
+     -0.4851
+    ],
+    "lm_ratio": [
+     0.5385,
+     0.6,
+     1.0,
+     2.0,
+     3.0
+    ]
+   },
+   "zero": {
+    "n_keys": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "kps": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "nb_share": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "peak": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "neg_entropy": [
+     -4.585,
+     -4.585,
+     -4.585,
+     -4.585,
+     -4.585
+    ],
+    "lm_ratio": [
+     1.0,
+     1.0,
+     1.0,
+     2.0,
+     2.0
+    ]
+   },
+   "frameshuf": {
+    "n_keys": [
+     10.0,
+     11.5,
+     68.0,
+     109.5,
+     116.0
+    ],
+    "kps": [
+     0.4852,
+     0.9138,
+     1.6412,
+     2.1095,
+     2.2784
+    ],
+    "nb_share": [
+     0.0049,
+     0.0091,
+     0.0164,
+     0.0212,
+     0.0228
+    ],
+    "peak": [
+     0.7308,
+     0.7586,
+     0.8295,
+     0.8716,
+     0.907
+    ],
+    "neg_entropy": [
+     -0.8226,
+     -0.6307,
+     -0.4401,
+     -0.3427,
+     -0.2687
+    ],
+    "lm_ratio": [
+     0.6364,
+     0.7079,
+     0.8209,
+     0.956,
+     1.0556
+    ]
+   },
+   "uniform": {
+    "n_keys": [
+     572.0,
+     851.0,
+     3699.5,
+     6837.25,
+     10569.0
+    ],
+    "kps": [
+     97.0496,
+     97.5017,
+     97.9621,
+     98.3945,
+     99.2009
+    ],
+    "nb_share": [
+     0.9861,
+     0.9871,
+     0.9895,
+     0.9932,
+     0.9951
+    ],
+    "peak": [
+     0.0115,
+     0.0115,
+     0.0116,
+     0.0116,
+     0.0116
+    ],
+    "neg_entropy": [
+     -4.5837,
+     -4.5837,
+     -4.5837,
+     -4.5837,
+     -4.5837
+    ],
+    "lm_ratio": [
+     1.0081,
+     1.0163,
+     1.0208,
+     1.0256,
+     1.0304
+    ]
+   }
+  }
+ },
+ "readout_path_check_10": {
+  "real": 10,
+  "timeshuf": 10
+ },
+ "guard": {
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 106,
+  "n_null": 106,
+  "cal": "val blocks",
+  "null": "time-shuffled input of the val sentences",
+  "lm_file": "eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz",
+  "decode": "gate + F (new LM, 8-best)",
+  "gate": {
+   "kind": "score",
+   "feature": "logit",
+   "lo": -1.1697116125105564,
+   "hi": null,
+   "k_min": 1,
+   "r_max": 2.8341205890525143,
+   "frame_s": 0.01,
+   "blank": 0,
+   "inputs": [
+    "peak",
+    "neg_entropy",
+    "nb_share",
+    "kps",
+    "log_n_keys"
+   ],
+   "mean": [
+    0.721229490905637,
+    -0.7751456804416097,
+    0.009525419203591607,
+    0.6451203821970972,
+    2.8780015208328
+   ],
+   "scale": [
+    0.14949540773784878,
+    0.45883367758945126,
+    0.007011353248192092,
+    0.40557320589063134,
+    0.9289044543950082
+   ],
+   "coef": [
+    1.7726535510820793,
+    1.0447799596569138,
+    1.2517341377270468,
+    1.1445503008919289,
+    0.9197467575876155
+   ],
+   "intercept": 0.5441830430410218
+  },
+  "status": "guard",
+  "config_id": "tcfg-26ae951a20a0cddd",
+  "guard_file": "willett-hw.lm2.guard.json",
+  "guard_sha256": "97a6c219f0bc8ed6c4483b79ece4a10a128c270ff2e0b0c0574022a5434f144e",
+  "guard_size": 7111,
+  "sheet": {
+   "config_id": "tcfg-26ae951a20a0cddd",
+   "input_kind": "logits",
+   "decoder": "custom:fidetype.pretrained.lmreadout.LmReadout.decode_fn.<locals>.gated_lm_readout",
+   "alpha": 0.05,
+   "delta": 0.1,
+   "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+   "n_items": 106,
+   "n_fit": 26,
+   "n_policy": 40,
+   "n_ltt": 40,
+   "n_ltt_min": 45,
+   "lambda_hat": "inf",
+   "feasible": false,
+   "commit_threshold": "inf",
+   "commit_gate": {
+    "min_chars": 1,
+    "min_words": 0,
+    "max_guard_risk": 1.0
+   },
+   "ltt_commits": 0,
+   "ltt_wrong_commits": 0,
+   "controls": [
+    {
+     "name": "uniform",
+     "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "description": "calibration frames in a random time order",
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    {
+     "name": "user",
+     "description": "your decoder output on null input (null_inputs)",
+     "n": 106,
+     "n_commit": 0,
+     "allowed": 5,
+     "passed": true
+    }
+   ],
+   "null_max_commit_rate": 0.05,
+   "seed": 0,
+   "created_utc": "2026-11-21T07:56:31+00:00",
+   "assumptions": [
+    "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+    "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+    "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+    "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+   ],
+   "not_guaranteed": [
+    "Any single utterance: the bound is on the rate over many utterances.",
+    "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+    "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+    "The error rate among commits (precision): with few commits it can be high.",
+    "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+    "Correctness of the text that the guard withholds or offers.",
+    "Any medical or legal claim. Fidetype is research software, not a medical device."
+   ],
+   "warnings": [
+    "only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.",
+    "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.",
+    "the guard never commits (no certified threshold). It still offers and withholds."
+   ],
+   "ltt_median_guard_risk": 0.09790152581979933,
+   "ltt_gate_blocked": 0
+  },
+  "seconds": 141.1,
+  "peak_rss_mb": 1565
+ },
+ "decide_run": {
+  "seconds": 149.7
+ },
+ "readout": {
+  "chosen": {
+   "by_input": {
+    "real": {
+     "n": 80,
+     "gated": 1,
+     "emit_nonempty_gated": 79,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 3182,
+     "chars_raw": 3187,
+     "cer_gated": 0.1746,
+     "cer_raw": 0.1743,
+     "cer_greedy": 0.3051,
+     "exact_gated": 10,
+     "feature_min_med_max": {
+      "n_keys": [
+       4.0,
+       39.0,
+       92.0
+      ],
+      "kps": [
+       0.1406,
+       0.935,
+       1.4981
+      ],
+      "nb_share": [
+       0.0018,
+       0.0143,
+       0.023
+      ],
+      "peak": [
+       0.6533,
+       0.839,
+       0.9303
+      ],
+      "neg_entropy": [
+       -0.8447,
+       -0.4713,
+       -0.2817
+      ]
+     },
+     "decode_seconds_p50_p95": [
+      0.057,
+      0.094
+     ]
+    },
+    "timeshuf": {
+     "n": 80,
+     "gated": 78,
+     "emit_nonempty_gated": 2,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 39,
+     "chars_raw": 731,
+     "cer_gated": 0.9942,
+     "cer_raw": 0.8576,
+     "cer_greedy": 0.8672,
+     "exact_gated": 0,
+     "feature_min_med_max": {
+      "n_keys": [
+       0.0,
+       10.0,
+       28.0
+      ],
+      "kps": [
+       0.0,
+       0.2293,
+       0.7786
+      ],
+      "nb_share": [
+       0.0,
+       0.0025,
+       0.0097
+      ],
+      "peak": [
+       0.0,
+       0.6104,
+       0.8078
+      ],
+      "neg_entropy": [
+       -4.585,
+       -1.0141,
+       -0.5815
+      ]
+     },
+     "decode_seconds_p50_p95": [
+      0.056,
+      0.088
+     ]
+    },
+    "zero": {
+     "n": 80,
+     "gated": 80,
+     "emit_nonempty_gated": 0,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 0,
+     "chars_raw": 87,
+     "cer_gated": 1.0,
+     "cer_raw": 0.982,
+     "cer_greedy": 1.0,
+     "exact_gated": 0,
+     "feature_min_med_max": {
+      "n_keys": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "kps": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "nb_share": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "peak": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "neg_entropy": [
+       -4.585,
+       -4.585,
+       -4.585
+      ]
+     },
+     "decode_seconds_p50_p95": [
+      0.022,
+      0.034
+     ]
+    },
+    "frameshuf": {
+     "n": 80,
+     "gated": 1,
+     "emit_nonempty_gated": 79,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 3973,
+     "chars_raw": 3978,
+     "cer_gated": 0.8814,
+     "cer_raw": 0.8808,
+     "cer_greedy": 1.0206,
+     "exact_gated": 0,
+     "feature_min_med_max": {
+      "n_keys": [
+       5.0,
+       60.5,
+       138.0
+      ],
+      "kps": [
+       0.1757,
+       1.4341,
+       2.2996
+      ],
+      "nb_share": [
+       0.0018,
+       0.0143,
+       0.023
+      ],
+      "peak": [
+       0.6678,
+       0.8216,
+       0.9023
+      ],
+      "neg_entropy": [
+       -0.8447,
+       -0.4713,
+       -0.2817
+      ]
+     },
+     "decode_seconds_p50_p95": [
+      0.057,
+      0.085
+     ]
+    },
+    "uniform": {
+     "n": 80,
+     "gated": 80,
+     "emit_nonempty_gated": 0,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 0,
+     "chars_raw": 335829,
+     "cer_gated": 1.0,
+     "cer_raw": 97.2091,
+     "cer_greedy": 94.4287,
+     "exact_gated": 0,
+     "feature_min_med_max": {
+      "n_keys": [
+       1229.0,
+       3712.0,
+       9358.0
+      ],
+      "kps": [
+       97.2984,
+       97.9464,
+       98.4145
+      ],
+      "nb_share": [
+       0.9848,
+       0.9898,
+       0.9936
+      ],
+      "peak": [
+       0.0115,
+       0.0116,
+       0.0116
+      ],
+      "neg_entropy": [
+       -4.5837,
+       -4.5837,
+       -4.5837
+      ]
+     },
+     "decode_seconds_p50_p95": [
+      0.343,
+      0.564
+     ]
+    }
+   },
+   "N1": {
+    "uniform": {
+     "emit": 0,
+     "allowed": 4,
+     "pass": true
+    },
+    "timeshuf": {
+     "emit": 2,
+     "allowed": 4,
+     "pass": true
+    },
+    "zero": {
+     "emit": 0,
+     "allowed": 4,
+     "pass": true
+    },
+    "pass": true
+   },
+   "N2": {
+    "cer_gated": 0.8814,
+    "min": 0.85,
+    "pass": true,
+    "emit_gated": 79
+   },
+   "real_gated": 1,
+   "H_cost_pass": true,
+   "cer_gated": 0.1746
+  },
+  "count_p14_48": {
+   "by_input": {
+    "real": {
+     "n": 80,
+     "gated": 3,
+     "emit_nonempty_gated": 77,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 3171,
+     "chars_raw": 3187,
+     "cer_gated": 0.1769,
+     "cer_raw": 0.1743,
+     "cer_greedy": 0.3051,
+     "exact_gated": 9
+    },
+    "timeshuf": {
+     "n": 80,
+     "gated": 67,
+     "emit_nonempty_gated": 13,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 201,
+     "chars_raw": 731,
+     "cer_gated": 0.9666,
+     "cer_raw": 0.8576,
+     "cer_greedy": 0.8672,
+     "exact_gated": 0
+    },
+    "zero": {
+     "n": 80,
+     "gated": 80,
+     "emit_nonempty_gated": 0,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 0,
+     "chars_raw": 87,
+     "cer_gated": 1.0,
+     "cer_raw": 0.982,
+     "cer_greedy": 1.0,
+     "exact_gated": 0
+    },
+    "frameshuf": {
+     "n": 80,
+     "gated": 2,
+     "emit_nonempty_gated": 78,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 3968,
+     "chars_raw": 3978,
+     "cer_gated": 0.8817,
+     "cer_raw": 0.8808,
+     "cer_greedy": 1.0206,
+     "exact_gated": 0
+    },
+    "uniform": {
+     "n": 80,
+     "gated": 80,
+     "emit_nonempty_gated": 0,
+     "emit_nonempty_raw": 80,
+     "chars_gated": 0,
+     "chars_raw": 335829,
+     "cer_gated": 1.0,
+     "cer_raw": 97.2091,
+     "cer_greedy": 94.4287,
+     "exact_gated": 0
+    }
+   },
+   "N1": {
+    "uniform": {
+     "emit": 0,
+     "allowed": 4,
+     "pass": true
+    },
+    "timeshuf": {
+     "emit": 13,
+     "allowed": 4,
+     "pass": false
+    },
+    "zero": {
+     "emit": 0,
+     "allowed": 4,
+     "pass": true
+    },
+    "pass": false
+   },
+   "N2": {
+    "cer_gated": 0.8817,
+    "min": 0.85,
+    "pass": true,
+    "emit_gated": 78
+   },
+   "real_gated": 3,
+   "H_cost_pass": true,
+   "cer_gated": 0.1769
+  },
+  "R0": {
+   "cer_raw": 0.1743,
+   "p15_38": 0.1743,
+   "abs_diff": 0.0,
+   "pass": true,
+   "same_text_as_p15_38": 80
+  },
+  "P14_49_pass": true,
+  "chosen_no_worse_than_count": true,
+  "val_real_cer_raw": 0.1272,
+  "val_real_cer_greedy": 0.2603
+ },
+ "score": {
+  "guard_status": "guard",
+  "config_id": "tcfg-26ae951a20a0cddd",
+  "guard_file": "willett-hw.lm2.guard.json",
+  "guard_sha256": "97a6c219f0bc8ed6c4483b79ece4a10a128c270ff2e0b0c0574022a5434f144e",
+  "guard_size": 7111,
+  "V1": "guard returned, LTT not feasible (no certified commit threshold)",
+  "V1_detail": {
+   "feasible": false,
+   "n_ltt": 40,
+   "n_ltt_min": 45,
+   "commit_threshold": "inf",
+   "lambda_hat": "inf",
+   "ltt_commits": 0,
+   "ltt_wrong_commits": 0,
+   "warnings": [
+    "only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.",
+    "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.",
+    "the guard never commits (no certified threshold). It still offers and withholds."
+   ]
+  },
+  "V2": "holds",
+  "V3": "vacuous",
+  "V6": {
+   "calibrate_controls": {
+    "uniform": {
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    "shuffled": {
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    "user": {
+     "n": 106,
+     "n_commit": 0,
+     "allowed": 5,
+     "passed": true
+    }
+   },
+   "calibrate_controls_pass": true,
+   "test_timeshuf_commit_rate": 0.0,
+   "test_zero_commit_rate": 0.0,
+   "pass": true
+  },
+  "V7_offer_top1": {
+   "offers": 77,
+   "exact": 12,
+   "cer": 0.1724
+  },
+  "V8_offer_null": {
+   "timeshuf": {
+    "offer_rate": 0.025,
+    "real_offer_rate": 0.9625,
+    "offer_null_passes": true
+   },
+   "zero": {
+    "offer_rate": 0.0,
+    "real_offer_rate": 0.9625,
+    "offer_null_passes": true
+   },
+   "frameshuf": {
+    "offer_rate": 0.9625,
+    "real_offer_rate": 0.9625,
+    "offer_null_passes": false
+   },
+   "uniform": {
+    "offer_rate": 0.0,
+    "real_offer_rate": 0.9625,
+    "offer_null_passes": true
+   }
+  },
+  "test": {
+   "real": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 77,
+    "withhold": 3,
+    "commit_rate": 0.0,
+    "offer_rate": 0.9625,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "timeshuf": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 2,
+    "withhold": 78,
+    "commit_rate": 0.0,
+    "offer_rate": 0.025,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "zero": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "commit_rate": 0.0,
+    "offer_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "frameshuf": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 77,
+    "withhold": 3,
+    "commit_rate": 0.0,
+    "offer_rate": 0.9625,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "uniform": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "commit_rate": 0.0,
+    "offer_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   }
+  },
+  "safe_wpm": {
+   "definition": "safe-wpm/0.1",
+   "value": 0.0,
+   "ci": null,
+   "status": "vacuous",
+   "unguarded_wpm": 0.0,
+   "wpm_no_penalty": 0.0,
+   "method": "ltt",
+   "alpha": 0.05,
+   "delta": 0.1,
+   "n_cal": 40,
+   "calibration": "106 items: 26 fit + 40 grid + 40 LTT (fidetype.trust.calibrate)",
+   "confidence": "probability >= 0.9 over calibration draws",
+   "measured_wrong_commit": 0.0,
+   "measured_wrong_commit_cp95": [
+    0.0,
+    0.0451
+   ],
+   "n_trials": 80,
+   "n_commits": 0,
+   "n_wrong_commits": 0,
+   "n_correct_commits": 0,
+   "error_among_commits": null,
+   "committed_correct_words": 0,
+   "total_words": 698,
+   "minutes_neural": 55.971500000000006,
+   "minutes_correction": 0.0,
+   "timing": "neural time = 10 ms bins of the sentence window (go cue to sentence end + up to 1 s tail, P15-08 cut)",
+   "correction_rule": {
+    "name": "rewrite",
+    "overhead_s": 2.0,
+    "s_per_char": 0.7894736842105263,
+    "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+   },
+   "no_bci_wpm": 4.048723897911833,
+   "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+   "note": "the calibration found no certified threshold (policy never commits)",
+   "controls": {
+    "shuffled": "pass",
+    "zeros": "pass",
+    "null_commit": "pass",
+    "passed": true,
+    "commit_rate_zeros": 0.0,
+    "basis": {
+     "shuffled": "drop-in null control 'shuffled': 0/300 commits (allowed 15)",
+     "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+     "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+    }
+   },
+   "ci_note": "no CI: one participant (T5)"
+  },
+  "safe_wpm_line": "safe WPM 0.00 (vacuous; LTT a=0.05 d=0.1 n_cal=40; test wrong-commit 0/80 = 0.0000; commits 0; unguarded 0.00; no-BCI 4.05)"
+ },
+ "peak_rss_mb_last_run": 1565
+}
