@@ -442,3 +442,54 @@ def test_word_alternatives_on_beam_output(lm):
     slots = word_alternatives(hyps)
     assert [s.word for s in slots] == hyps[0].text.split()
     assert all(1 <= len(s.alternatives) <= 5 for s in slots)
+
+
+# --- P2-15: the faster n-best marginal and frame_only give the same values -------------------------------
+
+
+def _rand_texts(rng, k):
+    al = rng.choice(["ab", "abc ", "xyzé ", "the cat sat on a mat "])
+    out = ["".join(rng.choice(list(al), size=int(rng.choice([0, 1, 3, 8, 20, 45])))) for _ in range(k)]
+    stem = "".join(rng.choice(list("abc d"), size=12))
+    out += [stem[: int(rng.integers(0, 12))] + "".join(rng.choice(list("abd"), size=2)) + stem[int(rng.integers(0, 12)):]
+            for _ in range(k)]
+    return list(dict.fromkeys(out))
+
+
+@pytest.mark.parametrize("cells", [1 << 22, 200, 30])
+def test_nbest_marginals_equal_the_scalar_marginal(monkeypatch, cells):
+    """The batched n-best marginal gives the same floats as the per-text one (also in small groups, with a
+    partial memo, and for pairs above the group bound)."""
+    import fidetype.lm.beam as B
+
+    monkeypatch.setattr(B, "MATCH_MAX_DP_CELLS", cells)
+    rng = np.random.default_rng(cells)
+    for trial in range(40):
+        texts = _rand_texts(rng, int(rng.integers(1, 12)))
+        w = rng.random(len(texts))
+        post = w / w.sum()
+        top = texts[: int(rng.integers(1, len(texts) + 1))]
+        memo = None
+        if trial % 2:
+            memo = {(a, b): B._matched(a, b) for a in top for b in texts if a != b and rng.random() < 0.3}
+        ref = [B._nbest_marginal(a, texts, post, None) for a in top]
+        new = B._nbest_marginals(top, texts, post, memo)
+        assert [r.tobytes() for r in ref] == [n.tobytes() for n in new]
+        m = B._matched_masks(texts, np.arange(len(texts)), np.arange(len(texts))[::-1].copy())
+        for k, (a, b) in enumerate(zip(texts, texts[::-1])):
+            assert tuple(np.flatnonzero(m[k, : len(a)]).tolist()) == B._matched(a, b)
+
+
+def test_frame_only_gives_the_same_texts_and_frame_posteriors():
+    rng = np.random.default_rng(5)
+    for search in ("loop", "vector"):
+        lp = rng.normal(0, 2, (40, len(VOCAB)))
+        lp -= np.log(np.exp(lp).sum(1, keepdims=True))
+        full = ctc_prefix_beam_search(lp, beam=32, n_best=32, prune_topk=None, confidence="frame", search=search)
+        fo = ctc_prefix_beam_search(lp, beam=32, n_best=32, prune_topk=None, confidence="frame", search=search,
+                                    frame_only=True)
+        assert [(h.text, h.score, h.frame_spans) for h in full] == [(h.text, h.score, h.frame_spans) for h in fo]
+        assert all(set(h.confidence_variants) == {"frame"} for h in fo)
+        assert all(a.char_confidences.tobytes() == b.char_confidences.tobytes() for a, b in zip(full, fo))
+    with pytest.raises(ValueError):
+        ctc_prefix_beam_search(lp, confidence="nbest", frame_only=True)

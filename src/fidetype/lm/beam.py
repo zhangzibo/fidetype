@@ -182,6 +182,7 @@ def ctc_prefix_beam_search(
     stem_drop: int = 1,
     space_rules: bool = False,
     search: str = "loop",
+    frame_only: bool = False,
 ) -> list[Hypothesis]:
     """Decode a CTC stream. Return up to ``n_best`` hypotheses, best first.
 
@@ -227,6 +228,11 @@ def ctc_prefix_beam_search(
 
     The ``"nbest"`` confidence uses the 64 best final texts only.
 
+    ``frame_only=True`` (P2-15; needs ``confidence="frame"``) computes only the ``"frame"`` variant:
+    ``confidence_variants`` then holds ``"frame"`` only, and the n-best marginal and the fused posterior
+    are not computed. Texts, scores, spans and frame posteriors are the same as with ``frame_only=False``.
+    Use it when only the frame posteriors are read (the trust drop-in decoders do this).
+
     This function is :class:`IncrementalPrefixBeam` with all frames in
     one chunk: ``push(log_probs)`` then ``finalize()``. The search state
     of each frame depends only on the earlier frames, so a chunked push
@@ -238,6 +244,7 @@ def ctc_prefix_beam_search(
         prune_logp=prune_logp, prune_topk=prune_topk, align=align, confidence_temperature=confidence_temperature,
         confidence=confidence, lm_candidates=lm_candidates, lm_candidate_logp=lm_candidate_logp, beam_logp=beam_logp,
         max_per_stem=max_per_stem, stem_drop=stem_drop, space_rules=space_rules, search=search,
+        frame_only=frame_only,
     )
     dec.push(lp_arr)
     return dec.finalize()
@@ -288,9 +295,12 @@ class IncrementalPrefixBeam:
         stem_drop: int = 1,
         space_rules: bool = False,
         search: str = "loop",
+        frame_only: bool = False,
     ) -> None:
         if confidence not in ("fused", "nbest", "frame"):
             raise ValueError("confidence must be 'fused', 'nbest' or 'frame'")
+        if frame_only and confidence != "frame":
+            raise ValueError("frame_only=True needs confidence='frame'")
         vocab = list(vocab)
         if beam < 1 or n_best < 1:
             raise ValueError("beam and n_best must be at least 1")
@@ -328,6 +338,8 @@ class IncrementalPrefixBeam:
         self.stem_drop = stem_drop
         self.space_id = vocab.index(" ") if (space_rules and " " in vocab) else -1
         self.search = search
+        #: Only the ``"frame"`` confidence variant (see :func:`ctc_prefix_beam_search`).
+        self.frame_only = bool(frame_only)
         self.n_frames = 0
         self._chunks: list[np.ndarray] = []
         self._final: list[Hypothesis] | None = None
@@ -548,9 +560,10 @@ class IncrementalPrefixBeam:
         the memo is filled now, never a value in it. Entries for
         texts that left the candidates are dropped (bounded memory). The
         result of :meth:`finalize` does not change; only its cost does.
-        Returns the number of new alignments.
+        Returns the number of new alignments. With ``frame_only`` there is no
+        n-best marginal, so there is nothing to do (0).
         """
-        if self._final is not None:
+        if self._final is not None or self.frame_only:
             return 0
         now = _perf_counter if clock is None else clock
         top, m_texts = self.end_candidates()
@@ -612,8 +625,11 @@ class IncrementalPrefixBeam:
         # One Viterbi pass for all texts (the same spans as ctc_forced_align on each text).
         aligned = ctc_forced_align_many(lp64, [ids if self.align else () for ids in all_ids], blank)
         out: list[Hypothesis] = []
-        for (score, text, ac, lmt), ids, got in zip(top, all_ids, aligned):
-            conf = _nbest_marginal(text, m_texts, m_post, self._pairs)
+        if self.frame_only:
+            confs = [None] * len(top)
+        else:
+            confs = _nbest_marginals([f[1] for f in top], m_texts, m_post, self._pairs)
+        for (score, text, ac, lmt), ids, got, conf in zip(top, all_ids, aligned, confs):
             spans: list[tuple[int, int]] = []
             fpost = np.full(len(text), np.nan)
             fused = conf
@@ -622,8 +638,9 @@ class IncrementalPrefixBeam:
                     spans = got
                     peak = [max(range(s, e + 1), key=lambda t, i=i: (rows[t][i], -t)) for (s, e), i in zip(spans, ids)]
                     fpost = np.array([math.exp(rows[t][i]) for t, i in zip(peak, ids)])
-                    fused = _fused(rows, peak, ids, text, lm if w else None, w, blank)
-            variants = {"nbest": conf, "frame": fpost, "fused": fused}
+                    if not self.frame_only:
+                        fused = _fused(lp64, peak, ids, text, lm if w else None, w, blank)
+            variants = {"frame": fpost} if self.frame_only else {"nbest": conf, "frame": fpost, "fused": fused}
             out.append(
                 Hypothesis(
                     text=text,
@@ -1026,13 +1043,177 @@ def _matched(text: str, other: str) -> tuple[int, ...]:
     return tuple(i for i, j in align_pairs(text, other) if i is not None and j is not None and text[i] == other[j])
 
 
-def _fused(rows, peak, ids, text, lm, w, blank) -> np.ndarray:
-    """Local fused posterior of each character (see the module docstring)."""
-    V = len(rows[0])
+#: Upper bound on the DP cells (int32) of one group of :func:`_matched_masks` (memory: 4 bytes per cell).
+MATCH_MAX_DP_CELLS = 1 << 22
+
+
+def _matched_masks(texts: list[str], ia: np.ndarray, ib: np.ndarray) -> np.ndarray:
+    """:func:`_matched` for many pairs at once, as boolean masks over the first text of each pair.
+
+    Pair ``k`` is ``(texts[ia[k]], texts[ib[k]])``. Row ``k`` of the result (shape ``(len(ia), L)``, ``L``
+    the longest text) is True exactly at the positions of ``_matched(texts[ia[k]], texts[ib[k]])`` (P2-15:
+    the same values, only faster). The common prefix and suffix are cut as in :func:`align_pairs`. The
+    Levenshtein tables of a group of pairs are filled row by row with numpy (``d[i][j] = min(t[j],
+    d[i][j-1] + 1)`` is a running minimum of ``t[j] - j``, plus ``j``), and the traceback of
+    :func:`align_pairs` (same tie order) runs on all pairs of the group at once. A group holds at most
+    :data:`MATCH_MAX_DP_CELLS` cells; a pair larger than that uses :func:`_matched`.
+    """
+    lens = np.array([len(t) for t in texts], dtype=np.int64)
+    L = max(int(lens.max()) if len(lens) else 0, 1)
+    ia = np.asarray(ia, dtype=np.int64)
+    ib = np.asarray(ib, dtype=np.int64)
+    P = len(ia)
+    masks = np.zeros((P, L), dtype=bool)
+    if P == 0:
+        return masks
+    codes = np.full((len(texts), L), -1, dtype=np.int32)
+    rcodes = np.full((len(texts), L), -1, dtype=np.int32)
+    for u, t in enumerate(texts):
+        if t:
+            c = np.fromiter(map(ord, t), dtype=np.int32, count=len(t))
+            codes[u, : len(t)] = c
+            rcodes[u, : len(t)] = c[::-1]
+    n, m = lens[ia], lens[ib]
+    mn = np.minimum(n, m)
+    q = np.arange(L)
+    p = np.empty(P, dtype=np.int64)
+    s = np.empty(P, dtype=np.int64)
+    step = max(1, MATCH_MAX_DP_CELLS // L)  # pairs per block: bounded temporaries
+    for a in range(0, P, step):
+        sl = slice(a, a + step)
+        x, y = ia[sl], ib[sl]
+        p[sl] = (np.logical_and.accumulate(codes[x] == codes[y], axis=1) & (q < mn[sl, None])).sum(axis=1)
+        s[sl] = (np.logical_and.accumulate(rcodes[x] == rcodes[y], axis=1) & (q < (mn[sl] - p[sl])[:, None])).sum(axis=1)
+    na, nb = n - p - s, m - p - s
+    masks[:] = (q[None, :] < p[:, None]) | ((q[None, :] >= (n - s)[:, None]) & (q[None, :] < n[:, None]))
+    todo = np.flatnonzero((na > 0) & (nb > 0))
+    if not len(todo):
+        return masks
+    cells = (na[todo] + 1) * (nb[todo] + 1)
+    big = todo[cells > MATCH_MAX_DP_CELLS]
+    for k in big.tolist():
+        masks[k, :] = False
+        masks[k, list(_matched(texts[int(ia[k])], texts[int(ib[k])]))] = True
+    todo = todo[cells <= MATCH_MAX_DP_CELLS]
+    if not len(todo):
+        return masks
+    if len(todo) * (int(na[todo].max()) + 1) * (int(nb[todo].max()) + 1) <= MATCH_MAX_DP_CELLS:
+        groups = [todo]
+    else:  # groups of similar size, each within the cell bound
+        todo = todo[np.lexsort((nb[todo], na[todo]))]
+        groups, group, ga, gb = [], [], 0, 0
+        for k in todo.tolist():
+            A, B = max(ga, int(na[k])), max(gb, int(nb[k]))
+            if group and (len(group) + 1) * (A + 1) * (B + 1) > MATCH_MAX_DP_CELLS:
+                groups.append(np.array(group))
+                group, A, B = [], int(na[k]), int(nb[k])
+            group.append(k)
+            ga, gb = A, B
+        groups.append(np.array(group))
+    for g in groups:
+        _match_group(g, codes, ia, ib, p, na, nb, masks)
+    return masks
+
+
+def _match_group(g: np.ndarray, codes: np.ndarray, ia: np.ndarray, ib: np.ndarray, p: np.ndarray,
+                 na: np.ndarray, nb: np.ndarray, masks: np.ndarray) -> None:
+    """Levenshtein tables and traceback of :func:`align_pairs` for the pairs ``g`` (writes ``masks``)."""
+    G = len(g)
+    pg, nag, nbg = p[g], na[g], nb[g]
+    La, Lb = int(nag.max()), int(nbg.max())
+    ca, cb = np.arange(La), np.arange(Lb)
+    top = codes.shape[1] - 1
+    am = np.where(ca[None, :] < nag[:, None], codes[ia[g][:, None], np.minimum(pg[:, None] + ca[None, :], top)], -2)
+    bm = np.where(cb[None, :] < nbg[:, None], codes[ib[g][:, None], np.minimum(pg[:, None] + cb[None, :], top)], -3)
+    d = np.empty((G, La + 1, Lb + 1), dtype=np.int32)
+    jj = np.arange(Lb + 1, dtype=np.int32)
+    d[:, 0, :] = jj[None, :]
+    full = np.empty((G, Lb + 1), dtype=np.int32)
+    for i in range(1, La + 1):
+        dp = d[:, i - 1, :]
+        full[:, 0] = i
+        np.minimum(dp[:, :-1] + (am[:, i - 1, None] != bm), dp[:, 1:] + 1, out=full[:, 1:])
+        full -= jj
+        np.minimum.accumulate(full, axis=1, out=d[:, i, :])
+        d[:, i, :] += jj
+    # traceback on the flat table: cell (r, i, j) is r * (La + 1) * (Lb + 1) + i * (Lb + 1) + j
+    W = Lb + 1
+    df = d.ravel()
+    base_d = np.arange(G, dtype=np.int64) * ((La + 1) * W)
+    amf, bmf = am.ravel(), bm.ravel()
+    base_a, base_b = np.arange(G, dtype=np.int64) * max(La, 1), np.arange(G, dtype=np.int64) * max(Lb, 1)
+    i, j = nag.astype(np.int64), nbg.astype(np.int64)
+    hit = np.zeros(G * max(La, 1), dtype=bool)
+    live = np.flatnonzero((i > 0) | (j > 0))
+    while len(live):
+        il, jl = i[live], j[live]
+        ip, jp = il > 0, jl > 0
+        im1, jm1 = np.maximum(il - 1, 0), np.maximum(jl - 1, 0)
+        cell = base_d[live] + il * W + jl
+        dij = df[cell]
+        same = amf[base_a[live] + im1] == bmf[base_b[live] + jm1]
+        diag = ip & jp & (dij == df[cell - W - 1] + (~same))
+        dele = ~diag & ip & (dij == df[cell - W] + 1)
+        mt = diag & same
+        hit[base_a[live[mt]] + im1[mt]] = True
+        i[live] = il - (diag | dele)
+        j[live] = jl - (diag | ~dele)
+        live = live[(i[live] > 0) | (j[live] > 0)]
+    r, c = np.nonzero(hit.reshape(G, max(La, 1)))
+    masks[g[r], pg[r] + c] = True
+
+
+def _nbest_marginals(top: list[str], texts: list[str], post: np.ndarray,
+                     cache: dict | None = None) -> list[np.ndarray]:
+    """:func:`_nbest_marginal` of each text of ``top`` (the same values; P2-15: faster).
+
+    The alignments that ``cache`` does not hold are computed together (:func:`_matched_masks`). For each
+    text of ``texts`` in order, its weight is added at the matched positions and ``0.0`` elsewhere (adding
+    ``0.0`` to a value >= 0 does not change it), so each value is the same float as in
+    :func:`_nbest_marginal`.
+    """
+    T, O = len(top), len(texts)
+    if not T:
+        return []
+    allt = list(dict.fromkeys(list(top) + list(texts)))
+    pos = {t: u for u, t in enumerate(allt)}
+    L = max(max(len(t) for t in allt), 1)
+    ut = np.array([pos[a] for a in top], dtype=np.int64)
+    uo = np.array([pos[b] for b in texts], dtype=np.int64)
+    match = np.zeros((O, T, L), dtype=bool)
+    tt, oo = np.meshgrid(np.arange(T), np.arange(O), indexing="ij")
+    tt, oo = tt.ravel(), oo.ravel()
+    self_ = ut[tt] == uo[oo]
+    lens = np.array([len(a) for a in top], dtype=np.int64)
+    match[oo[self_], tt[self_]] = np.arange(L)[None, :] < lens[tt[self_], None]
+    need = ~self_
+    if cache:
+        for k in np.flatnonzero(need).tolist():
+            got = cache.get((top[tt[k]], texts[oo[k]]))
+            if got is not None:
+                need[k] = False
+                match[oo[k], tt[k], list(got)] = True
+    k = np.flatnonzero(need)
+    if len(k):
+        match[oo[k], tt[k]] = _matched_masks(allt, ut[tt[k]], uo[oo[k]])[:, :L]
+    conf = np.zeros((T, L))
+    for o, wgt in enumerate(post.tolist()[:O]):
+        conf += wgt * match[o]
+    return [np.clip(conf[t, : len(a)], 0.0, 1.0) for t, a in enumerate(top)]
+
+
+def _fused(lp, peak, ids, text, lm, w, blank) -> np.ndarray:
+    """Local fused posterior of each character (see the module docstring).
+
+    ``lp``: the (T, V) float64 frame log-probabilities. P2-15: the non-blank values of each peak frame are
+    read in one gather (the same float64 values and the same operations as before, so the same result).
+    """
+    V = lp.shape[1]
     nb = [c for c in range(V) if c != blank]
     out = np.empty(len(ids))
+    sub = lp[np.asarray(peak, dtype=np.int64)[:, None], np.asarray(nb, dtype=np.int64)[None, :]] if len(ids) else None
     for j, (t, i) in enumerate(zip(peak, ids)):
-        ac = np.array([rows[t][c] for c in nb])
+        ac = sub[j].copy()
         if lm is not None:
             ac = ac + w * lm.logprobs_vocab(text[:j])[nb]
         ac -= ac.max()

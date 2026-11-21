@@ -460,7 +460,9 @@ def _builtin_decode(stream: NeuralTextStream) -> NBest:
     """CTC prefix beam search (beam 16, 10-best, no LM); character confidences = frame posteriors."""
     from fidetype.lm.beam import ctc_prefix_beam_search
 
-    hyps = ctc_prefix_beam_search(stream, lm=None, beam=16, n_best=10, prune_topk=None, confidence="frame")
+    # frame_only: only the "frame" variant is read below (P2-15: the same NBest, faster)
+    hyps = ctc_prefix_beam_search(stream, lm=None, beam=16, n_best=10, prune_topk=None, confidence="frame",
+                                  frame_only=True)
     return from_lm_hypotheses(hyps, confidence_variant="frame")
 
 
@@ -473,8 +475,9 @@ def _lexicon_decode(lexicon: frozenset[str]) -> Callable[[NeuralTextStream], NBe
     from fidetype.lm.beam import ctc_prefix_beam_search
 
     def decode(stream: NeuralTextStream) -> NBest:
+        # frame_only: only the "frame" variant is read below (P2-15: the same NBest, faster)
         hyps = ctc_prefix_beam_search(stream, lm=None, beam=64, n_best=64, prune_topk=None, confidence="frame",
-                                      search="vector")
+                                      search="vector", frame_only=True)
         nb = from_lm_hypotheses(hyps, confidence_variant="frame")
         keep = [c for c in nb.candidates if c.text and all(w in lexicon for w in c.text.split())][:10]
         return NBest(keep, dict(nb.stream_meta))
