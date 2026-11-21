@@ -24,6 +24,7 @@ from fidetype.live.sources import ArraySource
 
 ADAPTER_INFO = {
     "id": "edf", "kind": "file-reader", "signal": "any", "status": "experimental",
+    "file_patterns": ["*.edf", "*.bdf"],
     "target": "EDF, EDF+ (continuous) and BDF files (many EEG, EMG and sleep systems)",
     "licence": "Code Apache-2.0; open format, no third-party code. Data: the licence of each file.",
     "tests": ["tests/test_adapter_edf.py"], "docs": "docs/adapters.md#edf",

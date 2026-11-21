@@ -11,6 +11,9 @@ Template rules (delete this block when done):
 - Bad input raises ``ValueError`` with a clear message.
 - Never put truth text or personal data (names, birth dates, ...) in ``meta``.
 - Then run: ``python -m fidetype.adapters.registry`` (updates docs/adapters.md).
+- A file reader keeps ``open_source(path, modality=..., speed=..., ...)``:
+  ``fidetype live --source file`` calls it with ``speed`` (and ``modality``
+  when the user gives ``--modality``).
 """
 
 from __future__ import annotations
@@ -23,9 +26,12 @@ import numpy as np
 from fidetype.live.sources import ArraySource
 
 # The registry reads this dict. Fields: see fidetype/adapters/registry.py. Status: "experimental" until
-# the adapter has read real files or a real device; then "tested".
+# the adapter has read real files or a real device; then "tested". A "file-reader" also gives
+# "file_patterns": the file-name globs (case-insensitive) with which `fidetype live --source file --path FILE`
+# picks this reader (`--reader my-format` picks it by id). A device source has no file_patterns.
 ADAPTER_INFO = {
     "id": "my-format", "kind": "file-reader", "signal": "eeg", "status": "experimental",
+    "file_patterns": ["*.my-format.npz"],
     "target": "TODO: the device, file format or dataset",
     "licence": "Code Apache-2.0. TODO: licence of the format, SDK or data.",
     "tests": ["tests/test_adapter_my_format.py"], "docs": "docs/adapters.md",

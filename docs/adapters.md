@@ -71,6 +71,15 @@ Module of each adapter:
 - `willett-handwriting`: `fidetype.adapters.willett_handwriting`
 - `ws`: `fidetype.adapters.ws`
 
+## File readers for `fidetype live`
+
+`fidetype live --source file --path FILE` picks the reader whose file-name pattern matches FILE (case-insensitive). `--reader ID` picks a reader by its id (for a renamed file, or when more than one pattern matches). See [live-decode.md, section 3a](live-decode.md#3a-recording-files---source-file).
+
+| Id | File names | Example |
+|---|---|---|
+| `edf` | `*.edf`, `*.bdf` | `fidetype live --source file --reader edf --path FILE` |
+| `openbci-gui` | `OpenBCI-RAW-*.txt` | `fidetype live --source file --reader openbci-gui --path FILE` |
+
 ## Planned (not supported)
 
 These rows have **no code**. They are not supported. Each row names its roadmap item.

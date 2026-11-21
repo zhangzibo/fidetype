@@ -83,6 +83,10 @@
       "hardware_tested": [],
       "extra": null,
       "roadmap": null,
+      "file_patterns": [
+        "*.edf",
+        "*.bdf"
+      ],
       "module": "fidetype.adapters.edf"
     },
     {
@@ -185,6 +189,9 @@
       "hardware_tested": [],
       "extra": null,
       "roadmap": null,
+      "file_patterns": [
+        "OpenBCI-RAW-*.txt"
+      ],
       "module": "fidetype.adapters.openbci_gui"
     },
     {

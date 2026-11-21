@@ -23,6 +23,7 @@ from fidetype.live.sources import ArraySource
 
 ADAPTER_INFO = {
     "id": "openbci-gui", "kind": "file-reader", "signal": "eeg", "status": "experimental",
+    "file_patterns": ["OpenBCI-RAW-*.txt"],
     "target": "OpenBCI GUI v5+ raw recordings (Cyton, Cyton + Daisy, Ganglion)",
     "licence": "Code Apache-2.0; no OpenBCI code used. Data: the licence of each recording.",
     "tests": ["tests/test_adapter_openbci_gui.py"], "docs": "docs/adapters.md#openbci-gui",

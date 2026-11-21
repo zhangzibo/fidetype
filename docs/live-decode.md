@@ -65,6 +65,23 @@ fidetype live --source brainflow --board ganglion --serial-port COM4            
 
 The NTS header carries the board as vendor keys `brainflow.board_id` and `brainflow.board_name` (NTS MET-3; roadmap P4-09).
 
+## 3a. Recording files: `--source file`
+
+```bash
+fidetype live --source file --path rec.edf --speed 0                       # EDF / EDF+ / BDF: reader edf
+fidetype live --source file --path OpenBCI-RAW-2026-11-21.txt --speed 1     # OpenBCI GUI v5: reader openbci-gui
+fidetype live --source file --reader openbci-gui --path renamed.txt         # pick the reader by its id
+```
+
+- The command picks the **file reader from the adapter registry** ([`registry.py`](../src/fidetype/adapters/registry.py)). Each `file-reader` adapter declares `file_patterns` (file-name globs, case-insensitive) in its `ADAPTER_INFO`. The command uses the one reader whose pattern matches the file name. `--reader ID` picks a reader by id: use it for a renamed file, or when more than one pattern matches. The list of readers and patterns is in [the adapter catalogue](adapters.md#file-readers-for-fidetype-live).
+- No match, two matches, an unknown id, a missing file or no `--path`: the command stops with exit code 2 and a message. A file that the reader cannot read (bad header, truncated file): exit code 3.
+- `--speed 1` (default) plays the file in real time. `--speed 0` reads it as fast as possible. `--modality` sets the NTS `device.modality` (default: the reader's).
+- Timing: the file markers (for example EDF+ annotations `keypress` and `segment_end`) drive the windows as with `--source synthetic`. A file with no markers gets **fixed timing** and a note; give `--segment-s` to end segments.
+- The model must have the same channel count and sample rate as the file; else the command stops with a clear message.
+- The NTS header has `fidetype.live.source = "file"`, `fidetype.file_reader` (the reader id) and the reader's own meta keys (for example `edf.format`). The readers never copy personal header fields (EDF "patient", "recording") into `meta`.
+- Both readers are `experimental`: tested on synthetic files only, not on a real recording yet (roadmap P4-16).
+- A new reader joins with no change to the command: see [CONTRIBUTING.md 7.1](../CONTRIBUTING.md#71-add-a-new-adapter-in-about-50-lines).
+
 ## 4. LSL streams
 
 ```bash
@@ -215,5 +232,6 @@ nts-conform capture --lsl fidetype.live --out live.capture.json                 
 - BrainFlow boards have no reconnect in `fidetype live` (only `--source lsl`).
 - `--publish`: one NTS stream per run; a WebSocket target has no token or TLS option in `fidetype live` yet.
 - Real OpenBCI boards: untested (P4-06, hardware).
+- File readers (`--source file`): tested on synthetic files only (P4-16). A file is read into memory at the start; very long recordings need enough RAM.
 - The CI replay of KT-sEMG run3 uses an in-sample model: it checks plumbing, not accuracy.
 - The trust guarantee holds only for the decoder, device, user and session type of the calibration data ([trust guarantee](trust-guarantee.md)).

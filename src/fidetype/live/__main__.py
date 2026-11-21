@@ -10,6 +10,8 @@
     fidetype live --source brainflow --board-id 0 --serial-port COM3   # OpenBCI Cyton (untested: P4-06)
     fidetype live --source lsl --stream-name fidetype.replay.kt-semg \\
         --model kt.model.json --guard kt.guard.json                    # any raw-signal LSL stream ([lsl])
+    fidetype live --source file --path rec.edf --speed 0               # a recording file (reader from the registry)
+    fidetype live --source file --reader openbci-gui --path my.txt     # pick the file reader by id (P4-17)
     fidetype live make-synthetic --out DIR                             # rebuild builtin:synthetic-keys
     fidetype live train-kt --data ~/bci-data/raw/kt-semg --out DIR     # KT-sEMG demo model + guard (local)
     fidetype live replay-kt --data ~/bci-data/raw/kt-semg --run run28  # KT-sEMG recording -> LSL ([lsl])
@@ -33,7 +35,7 @@ import sys
 from pathlib import Path
 from typing import Any, Sequence
 
-SOURCES = ("synthetic", "brainflow", "lsl")
+SOURCES = ("synthetic", "brainflow", "lsl", "file")
 
 
 def _err(msg: str) -> None:
@@ -91,7 +93,8 @@ def _run_parser() -> argparse.ArgumentParser:
     g = ap.add_argument_group("synthetic source")
     g.add_argument("--utterances", type=int, default=10, help="number of synthetic utterances (default 10)")
     g.add_argument("--seed", type=int, default=7)
-    g.add_argument("--speed", type=float, default=1.0, help="1 = real time, 0 = as fast as possible")
+    g.add_argument("--speed", type=float, default=1.0, help="synthetic and file sources: 1 = real time, "
+                   "0 = as fast as possible")
     g.add_argument("--null", action="store_true", help="no key bursts in the signal (no-signal control)")
     b = ap.add_argument_group("brainflow source (OpenBCI boards use their BrainFlow board id)")
     b.add_argument("--board-id", type=int, default=-1, help="BrainFlow board id (-1 Synthetic, 0 Cyton, 1 Ganglion)")
@@ -104,6 +107,11 @@ def _run_parser() -> argparse.ArgumentParser:
     b.add_argument("--mac-address", default="")
     b.add_argument("--serial-number", default="")
     b.add_argument("--other-info", default="")
+    fg = ap.add_argument_group("file source (a recording file; reader from the adapter registry; P4-17)")
+    fg.add_argument("--path", help="the recording file")
+    fg.add_argument("--reader", metavar="ID", help="file reader id (default: the reader whose file-name pattern "
+                    "matches --path; list: docs/adapters.md, section 'File readers')")
+    fg.add_argument("--modality", help="NTS device.modality of the file signal (default: the reader's)")
     lg = ap.add_argument_group("lsl source")
     lg.add_argument("--stream-name")
     lg.add_argument("--stream-type")
@@ -131,6 +139,13 @@ def _open_source(a: Any) -> Any:
         return S.BrainFlowSource(bid, a.kind, a.trial_s, serial_port=a.serial_port, ip_address=a.ip_address,
                                  ip_port=a.ip_port, mac_address=a.mac_address, serial_number=a.serial_number,
                                  other=a.other_info)
+    if a.source == "file":
+        from fidetype.adapters.registry import open_file_source
+
+        entry, src = open_file_source(a.path, a.reader, modality=a.modality, speed=a.speed)
+        src.info.setdefault("meta", {})["fidetype.file_reader"] = entry["id"]
+        _err(f"file reader {entry['id']} ({entry['status']}; {entry['module']})")
+        return src
     return S.LSLSource(a.stream_name, a.stream_type, a.source_id, a.markers, a.resolve_timeout,
                        max_reconnects=a.max_reconnects, reconnect_timeout=a.reconnect_timeout,
                        backoff=a.reconnect_backoff, log=_err)
@@ -151,6 +166,20 @@ def run_main(argv: Sequence[str]) -> int:
     if guard.input_kind != "nbest":
         _err("the guard must be calibrated on n-best input (input_kind nbest)")
         return 2
+    if a.source == "file":
+        if not a.path:
+            _err("--source file needs --path FILE")
+            return 2
+        if not Path(a.path).is_file():
+            _err(f"no such file: {a.path}")
+            return 2
+        from fidetype.adapters.registry import pick_file_reader
+
+        try:
+            pick_file_reader(a.path, a.reader)
+        except ValueError as e:
+            _err(str(e))
+            return 2
     try:
         src = _open_source(a)
     except ImportError as e:  # LSLUnavailableError / BrainFlowUnavailableError
@@ -161,6 +190,9 @@ def run_main(argv: Sequence[str]) -> int:
         return 3
     info = src.info
     timing = a.timing or ("fixed" if a.source == "brainflow" else model.timing)
+    if a.source == "file" and not a.timing and timing == "markers" and not getattr(src, "markers", None):
+        timing = "fixed"
+        _err("note: the file has no markers; fixed timing (give --timing to change it)")
     _err(f"source {info['name']} ({info['channels']} ch, {info['sample_rate']:g} Hz); model {model.name} "
          f"({model.channels} ch, {model.sample_rate:g} Hz, timing {timing}); guard {guard.config_id} "
          f"(alpha {guard.alpha:g}, delta {guard.delta:g})")

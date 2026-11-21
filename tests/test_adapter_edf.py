@@ -14,22 +14,22 @@ from fidetype.adapters import edf as A
 from fidetype.adapters.testing import assert_source_conforms
 
 
-def _write_edf(path, sig, fs=256.0, rec_s=1.0, bdf=False, ann=(), reserved="EDF+C"):
-    """Write (N, C) microvolts as EDF+ (16 bit) or BDF (24 bit), plus an annotation signal."""
+def _write_edf(path, sig, fs=256.0, rec_s=1.0, bdf=False, ann=(), reserved="EDF+C", phys=1000.0, ann_n=None):
+    """Write (N, C) microvolts in [-phys, phys] as EDF+ (16 bit) or BDF (24 bit), plus an annotation signal."""
     n_rec, spr, ch = sig.shape[0] // int(fs * rec_s), int(fs * rec_s), sig.shape[1]
     dmax = 2 ** 23 - 1 if bdf else 32767
-    ann_n = 30 if bdf else 60  # samples per record of the annotation signal (90 / 120 bytes)
+    ann_n = ann_n or (30 if bdf else 60)  # samples per record of the annotation signal (90 / 120 bytes)
     labels = [f"EEG C{k}" for k in range(ch)] + ["BDF Annotations" if bdf else "EDF Annotations"]
     f = lambda v, w: str(v).ljust(w)[:w].encode("ascii")  # noqa: E731
     head = (b"\xffBIOSEMI" if bdf else f("0", 8)) + f("X X X X", 80) + f("Startdate X X X X", 80)
     head += f("01.01.00", 8) + f("00.00.00", 8) + f(256 * (ch + 2), 8) + f("24BIT" if bdf else reserved, 44)
     head += f(n_rec, 8) + f(rec_s, 8) + f(ch + 1, 4)
-    cols = [(16, labels), (80, [""] * (ch + 1)), (8, ["uV"] * ch + [""]), (8, [-1000] * ch + [-1]),
-            (8, [1000] * ch + [1]), (8, [-dmax - 1] * (ch + 1)), (8, [dmax] * (ch + 1)), (80, [""] * (ch + 1)),
+    cols = [(16, labels), (80, [""] * (ch + 1)), (8, ["uV"] * ch + [""]), (8, [-phys] * ch + [-1]),
+            (8, [phys] * ch + [1]), (8, [-dmax - 1] * (ch + 1)), (8, [dmax] * (ch + 1)), (80, [""] * (ch + 1)),
             (8, [spr] * ch + [ann_n]), (32, [""] * (ch + 1))]
     for w, vals in cols:
         head += b"".join(f(v, w) for v in vals)
-    dig = np.round((sig + 1000) / 2000 * (2 * dmax + 1) - dmax - 1).astype(np.int64)
+    dig = np.round((sig + phys) / (2 * phys) * (2 * dmax + 1) - dmax - 1).astype(np.int64)
     body = b""
     for r in range(n_rec):
         for k in range(ch):

@@ -8,7 +8,7 @@
     fidetype control replay --config ccfg.json s.jsonl   # FEP-0005 control trust layer -> trust_decision JSON Lines
     fidetype demo                                        # offline demo (synthetic streams)
     fidetype demo live                                   # browser replay demo (recorded data, P14-06)
-    fidetype live --source synthetic|brainflow|lsl       # live decode + trust guard -> decisions, NTS (P14-04)
+    fidetype live --source synthetic|brainflow|lsl|file  # live decode + trust guard -> decisions, NTS (P14-04)
     fidetype decoders list|info|path|verify|decode       # pretrained decoders: load, decode -> NTS (P14-01)
     fidetype conformance ...                             # full conformance suite (check, consumer, vectors, ...)
     fidetype lsl run|replay-to-lsl|list ...              # Lab Streaming Layer input (needs the [lsl] extra)

@@ -21,7 +21,13 @@ Fields of one entry:
 ``extra``   optional: the pip extra that the adapter needs
 ``hardware_tested`` optional: real devices it ran on (default: none)
 ``roadmap`` planned rows: the roadmap item
+``file_patterns`` file readers: file-name globs (case-insensitive) that
+            ``fidetype live --source file`` matches to pick the reader
 ========== ==============================================================
+
+A ``file-reader`` module also has ``open_source(path, ...)`` (the source
+protocol of ``fidetype live``). :func:`pick_file_reader` and
+:func:`open_file_source` choose the reader for a file from the registry.
 
 Command line (CI runs the check through ``tests/test_adapter_registry.py``)::
 
@@ -35,7 +41,9 @@ Our own code (Apache-2.0).
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import importlib
+import inspect
 import json
 import pkgutil
 import re
@@ -95,7 +103,7 @@ def collect() -> list[dict[str, Any]]:
 def _ordered(e: dict[str, Any]) -> dict[str, Any]:
     """Fixed key order (the JSON stays diff-friendly); defaults for the optional fields; unknown keys last."""
     base = {"extra": None, "hardware_tested": [], "roadmap": None, **e}
-    keys = (*REQUIRED, "hardware_tested", "extra", "roadmap", "module")
+    keys = (*REQUIRED, "hardware_tested", "extra", "roadmap", "file_patterns", "module")
     return {**{k: base[k] for k in keys if k in base}, **{k: v for k, v in base.items() if k not in keys}}
 
 
@@ -123,12 +131,74 @@ def validate(entries: list[dict[str, Any]], root: Path = ROOT) -> list[str]:
             errs.append(f"{tag}: an implemented adapter needs at least one test")
         if st == "planned" and not e.get("roadmap"):
             errs.append(f"{tag}: a planned entry names its roadmap item")
+        if e.get("kind") == "file-reader" and st != "planned":
+            pats = e.get("file_patterns")
+            if not pats or not isinstance(pats, list) or not all(isinstance(x, str) and x for x in pats):
+                errs.append(f"{tag}: a file reader needs file_patterns (a list of file-name globs)")
+            if e.get("module") and not callable(getattr(importlib.import_module(e["module"]), "open_source", None)):
+                errs.append(f"{tag}: a file reader module needs open_source(path, ...)")
         for p in [*e.get("tests", []), str(e.get("docs", "")).split("#")[0]]:
             if p and p != DOC_MD.as_posix() and not (root / p).exists():  # the catalogue is generated
                 errs.append(f"{tag}: path {p!r} does not exist")
     declared = {e["module"] for e in entries if e.get("module")}
     errs += [f"{m}: module declares no ADAPTER_INFO" for m in adapter_modules() if m not in declared]
     return errs
+
+
+def file_readers(entries: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    """The implemented ``file-reader`` entries (the readers that ``fidetype live --source file`` can use)."""
+    return [e for e in (collect() if entries is None else entries)
+            if e.get("kind") == "file-reader" and e.get("status") != "planned"]
+
+
+def _patterns(readers: list[dict[str, Any]]) -> str:
+    return "; ".join(f"{e['id']}: {', '.join(e.get('file_patterns') or [])}" for e in readers)
+
+
+def match_file_readers(path: str | Path, entries: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    """The file readers whose ``file_patterns`` match the file name (case-insensitive)."""
+    name = Path(path).name.lower()
+    return [e for e in file_readers(entries)
+            if any(fnmatch.fnmatchcase(name, p.lower()) for p in e.get("file_patterns") or [])]
+
+
+def pick_file_reader(path: str | Path, reader: str | None = None,
+                     entries: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """The registry entry of the reader for ``path``: ``reader`` (an id) if given, else the one name match.
+
+    Raises ``ValueError`` for an unknown id, for no match and for more than one match.
+    """
+    readers = file_readers(entries)
+    if reader:
+        for e in readers:
+            if e["id"] == reader:
+                return e
+        raise ValueError(f"no file reader with id {reader!r}; file readers: {', '.join(e['id'] for e in readers)}")
+    hits = match_file_readers(path, readers)
+    if len(hits) == 1:
+        return hits[0]
+    if not hits:
+        raise ValueError(f"no file reader matches the file name {Path(path).name!r} ({_patterns(readers)}); "
+                         "give the reader id (--reader ID)")
+    raise ValueError(f"more than one file reader matches {Path(path).name!r} ({_patterns(hits)}); "
+                     "give the reader id (--reader ID)")
+
+
+def open_file_source(path: str | Path, reader: str | None = None, **options: Any) -> tuple[dict[str, Any], Any]:
+    """Pick the reader (:func:`pick_file_reader`) and call its ``open_source(path, **options)``.
+
+    Options with the value None are not passed. An option that ``open_source`` does not take raises
+    ``ValueError``. Returns (registry entry, source).
+    """
+    e = pick_file_reader(path, reader)
+    fn = importlib.import_module(e["module"]).open_source
+    opts = {k: v for k, v in options.items() if v is not None}
+    params = inspect.signature(fn).parameters
+    if not any(p.kind == p.VAR_KEYWORD for p in params.values()):
+        bad = sorted(k for k in opts if k not in params)
+        if bad:
+            raise ValueError(f"the {e['id']} reader does not take the option(s) {', '.join(bad)}")
+    return e, fn(path, **opts)
 
 
 def _link(path: str) -> str:
@@ -190,6 +260,16 @@ def render_md(entries: list[dict[str, Any]]) -> str:
                  f"[docs]({_link(e['docs'])}) |")
     L += ["", "Module of each adapter:", ""]
     L += [f"- `{e['id']}`: `{e['module']}`" for e in impl]
+    readers = file_readers(entries)
+    if readers:
+        L += ["", "## File readers for `fidetype live`", "",
+              "`fidetype live --source file --path FILE` picks the reader whose file-name pattern matches FILE "
+              "(case-insensitive). `--reader ID` picks a reader by its id (for a renamed file, or when more than "
+              "one pattern matches). See "
+              "[live-decode.md, section 3a](live-decode.md#3a-recording-files---source-file).",
+              "", "| Id | File names | Example |", "|---|---|---|"]
+        L += [f"| `{e['id']}` | {', '.join(f'`{p}`' for p in e['file_patterns'])} | "
+              f"`fidetype live --source file --reader {e['id']} --path FILE` |" for e in readers]
     L += ["", "## Planned (not supported)", "",
           "These rows have **no code**. They are not supported. Each row names its roadmap item.", "",
           "| Id | Kind | Device, dataset or format | Signal | Roadmap | Licence notes | Docs |",

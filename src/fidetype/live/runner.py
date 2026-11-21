@@ -468,6 +468,8 @@ def make_writer(target: str | IO[str], model: KeyWindowModel, source_info: dict[
     for k, v in (source_info.get("meta") or {}).items():
         if k.startswith(("brainflow.", "device.model", "fidetype.synthetic", "fidetype.replay")):
             extra[k] = v
+        elif source_kind == "file" and k not in extra and k != "device.modality":
+            extra[k] = v  # a file reader's meta passed the NTS 4.1 / 4.2 meta rules (adapters.testing; P4-17)
     meta = stream_meta(modality=str(source_info.get("modality") or model.modality),
                        decoder_name=model.name, decoder_version=model.version, causal=True,
                        lookahead_s=model.post_s, weights_sha256=model.weights_sha256 or None, stream_id="auto",
