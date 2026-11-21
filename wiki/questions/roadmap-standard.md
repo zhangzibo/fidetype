@@ -1557,6 +1557,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-29** | Safe WPM interval that includes the calibration draw (open gap 103, [details](#p15-29-safe-wpm-interval-that-includes-the-calibration-draw)) | F1 | P15-26 |
 | **P15-33** | E1 low-data recipe that reads the target signal before more source arms (open gap 120, [details](#p15-33-e1-low-data-recipe-that-reads-the-target-signal-before-more-source-arms)) | F3 | P15-08 (E1a) |
 | **P15-34** | Calibration-inclusive T15 safe WPM lower end above gaze typing (open gap 132, [details](#p15-34-calibration-inclusive-t15-safe-wpm-lower-end-above-gaze-typing)) | F1 / F2 | P15-29 |
+| **P15-37** | Lower-variance calibration for the calibration-inclusive safe WPM (open gap 141, [details](#p15-37-lower-variance-calibration-for-the-calibration-inclusive-safe-wpm)) | F1 / F2 | P15-34 |
 | **P15-35** | E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2) (open gap 139, [details](#p15-35-e1-synthetic-sentence-augmentation-for-the-minutes-scale-recipe-test-c2)) | F3 | P15-33 |
 | **P15-36** | E1 budget-matched recipe so that V1 and H1-H4 are valid (open gap 140, [details](#p15-36-e1-budget-matched-recipe-so-that-v1-and-h1-h4-are-valid)) | F3 | P15-33, P15-35 |
 
@@ -1808,7 +1809,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-34 Calibration-inclusive T15 safe WPM lower end above gaze typing
 - **Gap:** 132 of the [open-gap list](open-gaps.md) (added 2026-11-20 after P15-29). Follow-up of P15-29.
-- **Status:** `in_progress` (2026-11-20 05:15: pre-registered in [experiments/2026-11-20-p15-34-margin-guard](../../experiments/2026-11-20-p15-34-margin-guard/plan.md); main CPU run running).
+- **Status:** `done` (2026-11-20; criterion **not met**, gap 132 stays open; [results](../../experiments/2026-11-20-p15-34-margin-guard/results.md)). Primary A1 (alpha 0.05, delta 0.025) gives 4.90 [3.11, 6.44] with 40 / 40 draws certified; the lower end is below 4.0153. A safety margin removes no zero draw here and costs 0.45-0.77 WPM per draw; the between-draw spread grows. The P15-29 settings on 40 new draws give 5.35 [4.05, 6.81] (reference, descriptive). Follow-up: [P15-37](#p15-37-lower-variance-calibration-for-the-calibration-inclusive-safe-wpm) (gap 141).
 - **Depends on:** P15-29 (done; `fidetype.benchmark.safe_wpm.calibration_draw_interval`); the P15-22 L1 pipeline (LLM rescoring + learned commit score); CPU.
 - **Source:** P15-29 ([results](../../experiments/2026-11-20-p15-29-calibration-ci/results.md)): with 40 calibration draws the T15 L1 safe WPM v0.1 is 5.18 [0.00, 6.99]. 2 of 40 draws are above alpha on the test set and earn 0. Certified draws give 3.50-6.82. Variants that were not pre-registered give lower ends of about 3.6. So the lower end is not above the no-BCI 4.0153.
 - **Options:** (1) a larger calibration set, so fewer draws commit too much and the between-draw spread falls; (2) a guard with a safety margin, for example a lower target alpha or a smaller delta, so that fewer draws are above alpha on the test set; (3) both. Choose the option and the rule before any number is computed.
@@ -1827,6 +1828,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P15-33, P15-35 (a minutes-scale recipe that passes test C2); GPU.
 - **Source:** P15-33 ([results](../../experiments/2026-11-20-p15-33-low-data-recipe/results.md)): one recipe for all budgets; recipe A (picked for 30 min) over-regularises at 100 min and all (R 0.976, E 0.713 at all), so V1 fails and H1-H4 are inconclusive.
 - **Done when:** a pre-registered budget-matched recipe rule (for example the minutes-scale recipe up to 30 min, the E1a recipe at 100 min and all), fixed before any test number, gives V1 pass and test C2 pass; H1-H4 of E1a are then evaluated under it (same splits, 2 seeds).
+
+#### P15-37 Lower-variance calibration for the calibration-inclusive safe WPM
+- **Gap:** 141 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-34). Follow-up of P15-34 and P15-29.
+- **Status:** `todo`.
+- **Depends on:** P15-29 / P15-34 (done; `calibration_draw_interval`); new labelled data or a calibration-procedure change; CPU.
+- **Source:** P15-34 ([results](../../experiments/2026-11-20-p15-34-margin-guard/results.md)): on T15 the between-draw SD of the safe WPM (0.63-0.91) is 2-3 times the within-draw SD (0.34). A safety margin lowers every draw and widens the spread (A1 4.90 [3.11, 6.44]). The lower end of the P15-29 settings depends on the draw set: 0.00 in P15-29 (2 / 40 above-alpha draws), 4.05 on 40 new draws (none).
+- **Options:** (1) more labelled calibration data that is not in `val_eval` (more T15-like sessions, other participants, other datasets); (2) a calibration procedure with lower variance, for example cross-fitting so that more of the 722 items take part in certification, with a proof that the guarantee still holds; (3) a pre-registered larger K (80 or more) for the P15-29 settings, so that the interval does not depend on one or two rare draws. Choose before any number is computed.
+- **Done when:** a pre-registered run shows a calibration-inclusive T15 lower end above 4.0153 with the P15-29 credit rule, or shows with numbers which calibration size would be needed.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
