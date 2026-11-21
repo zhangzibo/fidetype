@@ -819,18 +819,33 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 #### P6-09 Full-coverage M4-x entry on b2t25-t15 without train / test overlap
 - **Gap:** 32 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the T15 split audit). Follow-up of P6-08.
 - **Status:** `todo`.
-- **Depends on:** P6-08 (done); the GPU queue (one retrain of the M4-13 recipe); P6-10 (the overlap check) helps.
+- **Depends on:** P6-08 (done); the GPU queue (one retrain of the M4-13 recipe); P6-10 (done; the overlap check) helps; gap 174 = [P6-11](#p6-11-text-overlap-rule-for-tracks-whose-sentences-repeat-by-design) (text-overlap rule: a retrain would still overlap by text on about 428 units).
 - **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)). Commit `b9fa645` first saw it.
 - **Gap detail:** The B2T '25 HDF5 `train` partition holds 366 (strict match; up to 368) of the 816 `b2t25-t15` test trials. Our M4-x decoders train on it. So no M4-x decoder can have a full-coverage entry: the P6-08 entry covers only the 103 test trials in `val_eval`.
 - **Done when:** (a) An M4-x decoder is retrained on HDF5 `train` minus every trial that matches a `b2t25-t15` test trial (strict or possible match of the audit), and its full 816-unit entry is scored with `python -m fidetype.benchmark score`, with the removed-trial count in the manifest. Or (b) a new track variant built on the HDF5 `val_eval` partition is defined (split file, digest, version note), and the M4-x entries move there. The [audit](t15-split-audit.md) script then shows 0 decoder-train trials among the scored units.
 
 #### P6-10 Train / test overlap check for benchmark entries
 - **Gap:** 33 of the [open-gap list](open-gaps.md) (added 2026-11-17 from the T15 split audit). Follow-up of P6-02, P6-08.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; commit `ddb0be3`, [results](../../experiments/2026-11-21-p6-10-overlap-check/results.md)). Gap 33 closed. `training_data` declaration in the v0.2 manifest. The scorer checks overlap by id, by the committed hash-only HDF5 map (possible id) and by text hash. The card gets `overlap_check` = pass / overlap / not checked, with a warning and an optional `--fail-on-overlap`. The board marks overlapping and unchecked entries. The map reproduces the T15 audit (366 / 102 / 98 / 109 strict; 810 HDF5 trials to leave out). New CLI commands `overlap-hashes` and `overlap-list`. Docs (docs/benchmark-submission.md, docs/benchmark-tracks.md, benchmark/README.md) and 9 tests. Retro check on 36 committed cards (none changed): no id overlap anywhere; M4-12 / M4-13 overlap by text on 16 / 103 units; 8 b2t25-t15 ours / published entries are not checked; 24 pass by id only. Deviation: a missing declaration reads "not checked" and is not refused, so older submissions stay scorable.
+- **Follow-ups:** gap 174 = [P6-11](#p6-11-text-overlap-rule-for-tracks-whose-sentences-repeat-by-design) (text-overlap rule for tracks whose sentences repeat by design); gap 175 = [P6-12](#p6-12-training-data-of-the-published-card-et-al-2024-decoder-for-the-overlap-check) (training data of the published Card et al. 2024 decoder).
 - **Depends on:** P6-02 (done); P6-01 (done).
 - **Source:** T15 split audit, 2026-11-17 ([page](t15-split-audit.md)).
 - **Gap detail:** The pkl track units and the HDF5 neural trials are the same trials in two forms. Anyone who trains on the public HDF5 `train` partition (the normal B2T '25 recipe) trains on about 45 % of the `b2t25-t15` test set. No tool checks this. The P6-08 agent found the overlap by chance.
 - **Done when:** (1) The v0.2 submission manifest has a required `training_data` field (dataset + partitions, or "none"). (2) The repo has a hash-only map from B2T '25 HDF5 trials (session, block, trial) to `b2t25-t15` units, built by the audit match (no text). (3) `python -m fidetype.benchmark score` warns, and the board marks the entry, when the declared training data overlap the scored units. (4) docs/benchmark-tracks.md says which HDF5 trials an outside team must leave out. (5) A test checks the warning.
+
+#### P6-11 Text-overlap rule for tracks whose sentences repeat by design
+- **Gap:** 174 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P6-10). Follow-up of P6-10.
+- **Status:** `todo`.
+- **Depends on:** P6-10 (done); P9 governance (who decides benchmark rules).
+- **Source:** P6-10 (commit `ddb0be3`, [results](../../experiments/2026-11-21-p6-10-overlap-check/results.md)): on b2t25-t15, 428 of 816 test sentences occur in HDF5 train. M4-12 / M4-13 overlap by text on 16 / 103 units, and a P6-09 retrain would still overlap on about 428 units.
+- **Done when:** the benchmark rule says whether same-sentence / other-trial overlap disqualifies, only warns, or needs a track variant; the scorer applies that rule per track; and the M4 entries are re-marked to match. P6-09 depends on this item.
+
+#### P6-12 Training data of the published Card et al. 2024 decoder for the overlap check
+- **Gap:** 175 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P6-10). Follow-up of P6-10.
+- **Status:** `todo`. May be externally limited (needs the paper's block lists).
+- **Depends on:** P6-10 (done); the block lists of Card et al. 2024.
+- **Source:** P6-10 (commit `ddb0be3`, [results](../../experiments/2026-11-21-p6-10-overlap-check/results.md)): the 8 b2t25-t15 ours / published entries read `overlap_check` "not checked", because the training data of the published Card et al. 2024 online decoder are not mapped. The mapping needs the paper's block lists.
+- **Done when:** the training data of the published decoder are mapped to b2t25-t15 units (hash-only) or declared in the 8 manifests, and these entries get `overlap_check` pass or overlap; or the docs say with reasons why no mapping is possible.
 
 ## P7. Conformance + certification
 **Goal:** anyone can prove that an implementation speaks NTS correctly.
@@ -1094,10 +1109,18 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-23 Robustness of the EMG shift margin across session steps
 - **Gap:** 170 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-20). Follow-up of P11-20.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; plan `a03b20c` before any number, code `75e9689`, results `8c2298a`, [results](../../experiments/2026-11-21-p11-23-shift-margin-steps/results.md)). Gap 170 closed. Check X6 passes (40 / 40 draws reproduce P11-20). m2 = 0.0185 (upper 95 % bound over users, worse direction a -> b; b -> a is -0.0018), so alpha'' = 0.0314. Spread verdict: "the one-step margin of P11-20 under-states the spread". Arm S2: 0 / 40 test draws above alpha, so "the margin removes the excess" and "(A2) is not contradicted on test". Interval 5.47 [2.44, 8.77] vs no-BCI 3.09: "above, but inside the combined interval". The EMG public wording does not change. The cost: commits 245 -> 206, safe WPM 6.13 -> 5.47.
+- **Follow-ups:** gap 173 = [P11-24](#p11-24-tell-the-two-emg-shift-margins-apart-on-held-out-users-or-new-sessions) (tell the two margins apart on held-out users or new sessions).
 - **Depends on:** P11-20 (done); P11-01 sessions outside track val / test; CPU.
 - **Source:** P11-20 ([results](../../experiments/2026-11-21-p11-20-emg-shift-robust/results.md)): m = 0.0045 comes from one session step per user (sessions a -> b, the checkpoint-selection sessions of the personal models). The two-step gap a -> track val is -0.0044, so the step size changes between sessions (results limits a, b).
 - **Done when:** a pre-registered run estimates m from several session steps per user (for example train-session pairs that the personal models do not use, or a -> b plus leave-one-user-out), reports the spread of the step sizes, and re-checks the arm S above-alpha fraction on test with a margin rule that covers that spread (for example an upper quantile).
+
+#### P11-24 Tell the two EMG shift margins apart on held-out users or new sessions
+- **Gap:** 173 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-23). Follow-up of P11-23, P11-20.
+- **Status:** `todo`. May be externally limited by data (held-out users or new sessions outside the current track val / test).
+- **Depends on:** P11-23 (done; `experiments/2026-11-21-p11-23-shift-margin-steps/run.py`); held-out-user or new-session EMG data; CPU.
+- **Source:** P11-23 ([results](../../experiments/2026-11-21-p11-23-shift-margin-steps/results.md)): on the current test set both margins (m = 0.0045 of P11-20 and m2 = 0.0185 of P11-23) give 0 / 40 draws above alpha, so this test cannot show that the larger margin is needed.
+- **Done when:** a held-out-user or new-session check of (A2) is pre-registered and run, and it reports which margin keeps the test error at or below alpha.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
@@ -2068,7 +2091,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-35 E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2)
 - **Gap:** 139 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-33). Follow-up of P15-33.
-- **Status:** `todo`.
+- **Status:** `in_progress`. P15-35 attempt 1 (2026-11-21, pre-registration `218d889`, results `6cf8466`): no synthetic candidate eligible on val (best E U50 0.813 vs recipe A 0.769), `no_recipe`, no test readout; 1.08 GPU h. Attempt 2 = P15-35b (pre-registration `3a95935`: synthetic sentences on top of recipe A, 4,000 steps, arm E, GPU cap 8.0 h) runs since 2026-11-21.
 - **Depends on:** P15-33 (done part; local weights in `C:/Users/zhang/bci-data/derived/p15-33/`); GPU.
 - **Source:** P15-33 ([results](../../experiments/2026-11-20-p15-33-low-data-recipe/results.md)): recipe A passed val-C2 by 0.002 only (0.871 vs 0.869); on test the deranged run is 0.847 vs needed 0.873 (normal 0.773), so C2 fails at 30 min.
 - **Done when:** a pre-registered val-only pilot adds Willett-style synthetic sentences (character snippets of the budget sentences, cut at character times from a forced alignment of the budget data only, spliced into new sentences) and passes val-C2 with a margin set in advance; then test C2 passes at 30 min for at least one arm.
@@ -2096,10 +2119,11 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** about 1,600-2,800 labelled T15-like trials outside `val_eval`, or another participant or dataset with the same task; the P15-22 L1 pipeline; `calibration_draw_interval`; CPU.
 - **Source:** P15-37 ([results](../../experiments/2026-11-21-p15-37-multi-split/results.md)): with the 722 `val_select` items no guarantee-keeping guard lifts the T15 calibration-inclusive lower end above 4.0153 (primary BMED-3 4.73 [2.60, 6.24]; R120 5.26 [2.94, 6.91]). The pre-registered projection needs about 2,760 calibration items (3.8 x 722); the exploratory certified-only figure is about 1,580.
 - **Done when:** a pre-registered calibration-inclusive run on that data (P15-29 credit rule, K stated in advance) reports a lower end above 4.0153, or numbers say why not. The run also tests the projection.
+- **Evidence (2026-11-21, P15-40, results `23ae9bd`):** the 1/sqrt(n) check gives b_D2 = 0.48 [0.12, 0.83] and a revised n* about 2,520 [1,080, 460,000] (P15-37: 2,764). A tighter exponent needs new data, so that part folds into this item.
 
 #### P15-40 Check the 1/n assumption of the calibration-size projection
 - **Gap:** 161 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P15-37). Follow-up of P15-37.
-- **Status:** `todo`. Low priority.
+- **Status:** `done` (2026-11-21; plan `f83397a`, code and plan addendum `1d64217`, results `23ae9bd`, [results](../../experiments/2026-11-21-p15-40-sqrt-n-check/results.md)). Gap 161 closed. D2 between-draw SDs 1.234 / 1.089 / 0.884 at n = 361 / 481 / 722. Fitted exponent b_D2 = 0.48 [0.12, 0.83], consistent with 1/sqrt(n). Revised n* about 2,520 [1,080, 460,000] (P15-37: 2,764). D1 b = 0.75 gives n*_A about 1,770. The mean is not fixed below 722 (4.64 / 4.70 / 5.19). The design effect is not confirmed on certified-only draws. The P15-37 decision stands. A tighter exponent needs new data, so it folds into gap 160 (P15-39).
 - **Depends on:** P15-37 (done; `experiments/2026-11-21-p15-37-multi-split/run.py`); CPU.
 - **Source:** P15-37 ([results](../../experiments/2026-11-21-p15-37-multi-split/results.md)): the projection n* about 2,760 assumes that the between-draw SD falls as 1/sqrt(n) and that the mean and the within-draw SD stay fixed. Both assumptions are unverified.
 - **Done when:** sub-sampling `val_select` (n = 361 / 481 / 722) on CPU reports the between-draw SD at each n, the fitted exponent and the revised n*.
