@@ -1,0 +1,54 @@
+{
+ "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+ "mode": "warn",
+ "max_ratio": 0.5,
+ "p_max": 0.05,
+ "real": {
+  "n": 40,
+  "n_offer": 40,
+  "offer_rate": 1.0
+ },
+ "controls": [
+  {
+   "name": "uniform",
+   "n": 300,
+   "n_offer": 0,
+   "offer_rate": 0.0,
+   "ratio_to_real": 0.0,
+   "allowed_without_test": 15,
+   "p_value": 4.89558e-53,
+   "passed": true
+  },
+  {
+   "name": "shuffled",
+   "n": 300,
+   "n_offer": 297,
+   "offer_rate": 0.99,
+   "ratio_to_real": 0.99,
+   "allowed_without_test": 15,
+   "p_value": 0.686141,
+   "passed": false
+  },
+  {
+   "name": "user",
+   "n": 106,
+   "n_offer": 6,
+   "offer_rate": 0.056604,
+   "ratio_to_real": 0.056604,
+   "allowed_without_test": 5,
+   "p_value": 7.45575e-30,
+   "passed": true
+  }
+ ],
+ "passed": false,
+ "commits_match_sheet": true,
+ "ltt_commits": 0,
+ "control_commits": {
+  "uniform": "0/300",
+  "shuffled": "0/300",
+  "user": "0/106"
+ },
+ "guard": "builtin",
+ "config_id": "tcfg-39aac48688b8bd12",
+ "seconds": 3767.6
+}
