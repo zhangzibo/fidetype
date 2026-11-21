@@ -36,6 +36,7 @@
  "files": [
   {"role": "weights", "name": "willett-hw.weights.npz", "sha256": "66ac659066340c70fac58a1dd16c4b81f3806ba3e5bb8daf04169b79b66bc4a9", "size": 34369716, "url": null},
   {"role": "guard", "name": "willett-hw.guard.json", "sha256": "b16963ed5d2ba09ed0525fc8193b8b8a0a1d0ec7814faf12ee8b6174e93c33fc", "size": 6751, "url": null},
+  {"role": "guard", "name": "willett-hw.lm.guard.json", "sha256": "eaebd93e3d9d941d6fb742dbcad9a3465f025b39dd5ce35323e9b1ac74717b2a", "size": 7111, "url": null},
   {"role": "text", "name": "eng_tatoeba_6gram_mkn_noE2Q.npz", "sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8", "size": 3348165, "url": null}
  ],
  "licence": {
@@ -62,7 +63,7 @@
  "limits": [
   "Weak decoder: greedy test CER 0.305. The published Willett et al. 2021 real-time decoder is much better (other recipe).",
   "Unstable recipe: the same recipe on seed 1 gives test CER 0.920 (training failed). One good seed is not a reliable method.",
-  "No language model: greedy CTC only.",
+  "No language model in the default readout (greedy CTC). The opt-in LM readout (readouts.lm, P14-48) uses a Tatoeba 6-gram (CC BY 2.0 FR, attribution: the Tatoeba contributors); 13 of the 80 test sentences (5 of 47 unique texts) are in the Tatoeba export, so its CER 0.176 can be a little optimistic; its no-signal gate lets 13 / 80 time-shuffled test inputs through.",
   "Descriptive only: an offline replay of one participant (T5); not a user study and not a clinical claim.",
   "Only the 10 sessions of the dataset: a new session or participant needs its own z-score statistics and probably retraining.",
   "Other split than the benchmark track willett-hw (last 3 sessions): 193 of that track's 254 test trials were in this model's training pool. Score this model only on its own test blocks (the last block of each session), or retrain it on the track's train split first."
@@ -87,9 +88,14 @@
    "settings": {"lm_weight": 0.5, "bonus": 1.0, "beam": 8, "prune_logp": -8.0, "n_best": 8},
    "settings_source": "P15-25 decoder F (fixed before its run; experiments/2026-11-20-p15-25-e1-same-lm/config.json)",
    "code": "fidetype.pretrained.lmreadout (the P11-07 LMBeam, NumPy)",
-   "gate": null,
+   "gate": {"k_min": 7, "r_min": 0.42480883602378927, "r_max": 2.8341205890525143, "frame_s": 0.01, "blank": 0},
+   "gate_rule": "pass iff greedy CTC emissions n_keys >= k_min and r_min <= n_keys / (0.01 T) <= r_max; fitted on the 66 non-LTT val sentences (calibrate order, seed 0): k_min, r_min = their smallest values, r_max = 2 x their largest rate",
    "gate_source": "experiments/2026-11-20-p14-48-willett-lm-readout (P11-12 rule, fitted on val only)",
    "licence": "LM text CC BY 2.0 FR (Tatoeba contributors, attribution required); see licence.text_files",
+   "metrics": {"test_cer_ungated": 0.1734, "test_cer_gated": 0.1760, "test_cer_greedy": 0.3051, "val_cer_gated": 0.1274, "real_test_gated": "3 / 80", "split": "test blocks (80 sentences, 3,448 characters)", "source": "experiments/2026-11-20-p14-48-willett-lm-readout/results.md"},
+   "null_controls": "test, gated readout emits text on: uniform 0 / 80, zero 0 / 80, time-shuffled input 13 / 80 (FAILS the 4 / 80 limit; the 13 texts are short: 201 characters in all, CER 0.967), frame-shuffled frames 78 / 80 (CER 0.883 >= 0.85: passes the order control)",
+   "warning": "the no-signal gate does not stop all time-shuffled neural input (13 / 80 emit text; gap open). Treat a text from this readout as a suggestion, not as evidence that the signal was read",
+   "trust": {"config": "file:willett-hw.lm.guard.json", "config_id": "tcfg-8fa3866deec917f3", "alpha": 0.05, "delta": 0.1, "input": "guard.decide(stream.log_probs); m.guard(readout=\"lm\") builds the gated LM readout as decode_fn", "commits": "never: OFFER / WITHHOLD only (40 LTT items < 45 needed; feasible: false). Test: 0 commits, 77 offers (top-1 exact 12, CER 0.1715), 3 withholds of 80; safe WPM v0.1 0.00 (vacuous)", "null_controls": "calibrate: uniform 0/300, frame-shuffled 0/300, time-shuffled input 0/106 commits (pass); test commits 0/80 on every null input. Offers on null input: time-shuffled 13/80, frame-shuffled 77/80 (as often as real), zero 0/80, uniform 0/80"},
    "test_overlap": "13 of the 80 test sentences (5 of 47 unique texts) and 9 of the 106 val sentences occur in the Tatoeba English export (2,032,357 sentences, an upper bound of the LM training text): the LM CER can be a little optimistic (P15-25)"
   }
  },

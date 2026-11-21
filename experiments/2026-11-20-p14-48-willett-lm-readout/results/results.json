@@ -1,0 +1,553 @@
+{
+ "lp": {
+  "n_val": 106,
+  "n_test": 80,
+  "val_frames": 436356,
+  "test_frames": 335829,
+  "split_equal_p15_08": true,
+  "max_abs_diff_vs_p14_41": {
+   "val_real": 0.0,
+   "val_timeshuf": 0.0,
+   "val_zero": 0.0,
+   "test_real": 0.0,
+   "test_timeshuf": 0.0,
+   "test_zero": 0.0
+  },
+  "seconds": 806.9,
+  "peak_rss_mb": 1307
+ },
+ "gate": {
+  "gate": {
+   "k_min": 7,
+   "r_min": 0.42480883602378927,
+   "r_max": 2.8341205890525143,
+   "frame_s": 0.01,
+   "blank": 0
+  },
+  "n_fit": 66,
+  "fit_positions_digest": "5b1dfd323c7fc94f",
+  "fit_real_gated": 0,
+  "check_timeshuf_fit_pass": 4,
+  "fit_real_n_keys_min_med_max": [
+   7,
+   44.0,
+   72
+  ],
+  "fit_real_kps_min_med_max": [
+   0.42480883602378927,
+   1.0665904292751582,
+   1.4170602945262571
+  ],
+  "fit_timeshuf_n_keys_min_med_max": [
+   0,
+   12.0,
+   30
+  ],
+  "fit_timeshuf_kps_min_med_max": [
+   0.0,
+   0.3082724074285256,
+   0.5875440658049353
+  ]
+ },
+ "guard": {
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 106,
+  "n_null": 106,
+  "cal": "val blocks",
+  "null": "time-shuffled input of the val sentences (decoder run on the shuffled bins)",
+  "decode": "gate + F (fidetype.pretrained.lmreadout, 8-best)",
+  "gate": {
+   "k_min": 7,
+   "r_min": 0.42480883602378927,
+   "r_max": 2.8341205890525143,
+   "frame_s": 0.01,
+   "blank": 0
+  },
+  "status": "guard",
+  "config_id": "tcfg-8fa3866deec917f3",
+  "guard_sha256": "eaebd93e3d9d941d6fb742dbcad9a3465f025b39dd5ce35323e9b1ac74717b2a",
+  "guard_size": 7111,
+  "sheet": {
+   "config_id": "tcfg-8fa3866deec917f3",
+   "input_kind": "logits",
+   "decoder": "custom:fidetype.pretrained.lmreadout.LmReadout.decode_fn.<locals>.gated_lm_readout",
+   "alpha": 0.05,
+   "delta": 0.1,
+   "method": "Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max",
+   "n_items": 106,
+   "n_fit": 26,
+   "n_policy": 40,
+   "n_ltt": 40,
+   "n_ltt_min": 45,
+   "lambda_hat": "inf",
+   "feasible": false,
+   "commit_threshold": "inf",
+   "commit_gate": {
+    "min_chars": 1,
+    "min_words": 0,
+    "max_guard_risk": 1.0
+   },
+   "ltt_commits": 0,
+   "ltt_wrong_commits": 0,
+   "controls": [
+    {
+     "name": "uniform",
+     "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "description": "calibration frames in a random time order",
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    {
+     "name": "user",
+     "description": "your decoder output on null input (null_inputs)",
+     "n": 106,
+     "n_commit": 0,
+     "allowed": 5,
+     "passed": true
+    }
+   ],
+   "null_max_commit_rate": 0.05,
+   "seed": 0,
+   "created_utc": "2026-11-21T07:06:52+00:00",
+   "assumptions": [
+    "Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.",
+    "The decoder, its weights, the vocabulary and the decode settings do not change after calibration.",
+    "The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).",
+    "Each utterance is decided once (no repeats), and the calibration items were used for nothing else."
+   ],
+   "not_guaranteed": [
+    "Any single utterance: the bound is on the rate over many utterances.",
+    "A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.",
+    "Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).",
+    "The error rate among commits (precision): with few commits it can be high.",
+    "The quality of offered choices, or how often the guard commits (it may commit rarely or never).",
+    "Correctness of the text that the guard withholds or offers.",
+    "Any medical or legal claim. Fidetype is research software, not a medical device."
+   ],
+   "warnings": [
+    "only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.",
+    "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.",
+    "the guard never commits (no certified threshold). It still offers and withholds."
+   ],
+   "ltt_median_guard_risk": 0.09787295638821297,
+   "ltt_gate_blocked": 0
+  },
+  "seconds": 151.9,
+  "peak_rss_mb": 1307
+ },
+ "decide_run": {
+  "seconds": 126.2,
+  "new_decisions": 400,
+  "peak_rss_mb": 1307
+ },
+ "readout": {
+  "by_input": {
+   "test_frameshuf": {
+    "n": 80,
+    "gated": 2,
+    "emit_nonempty_gated": 78,
+    "emit_nonempty_raw": 80,
+    "chars_gated": 3969,
+    "chars_raw": 3979,
+    "chars_truth": 3448,
+    "cer_gated": 0.8828,
+    "cer_raw": 0.882,
+    "cer_greedy": 1.0206,
+    "exact_gated": 0,
+    "n_keys_min_med_max": [
+     5,
+     60.5,
+     138
+    ],
+    "kps_min_med_max": [
+     0.176,
+     1.434,
+     2.3
+    ],
+    "decode_seconds_p50_p95": [
+     0.066,
+     0.108
+    ]
+   },
+   "test_real": {
+    "n": 80,
+    "gated": 3,
+    "emit_nonempty_gated": 77,
+    "emit_nonempty_raw": 80,
+    "chars_gated": 3174,
+    "chars_raw": 3190,
+    "chars_truth": 3448,
+    "cer_gated": 0.176,
+    "cer_raw": 0.1734,
+    "cer_greedy": 0.3051,
+    "exact_gated": 9,
+    "n_keys_min_med_max": [
+     4,
+     39.0,
+     92
+    ],
+    "kps_min_med_max": [
+     0.141,
+     0.935,
+     1.498
+    ],
+    "decode_seconds_p50_p95": [
+     0.066,
+     0.106
+    ]
+   },
+   "test_timeshuf": {
+    "n": 80,
+    "gated": 67,
+    "emit_nonempty_gated": 13,
+    "emit_nonempty_raw": 80,
+    "chars_gated": 201,
+    "chars_raw": 728,
+    "chars_truth": 3448,
+    "cer_gated": 0.9666,
+    "cer_raw": 0.8585,
+    "cer_greedy": 0.8672,
+    "exact_gated": 0,
+    "n_keys_min_med_max": [
+     0,
+     10.0,
+     28
+    ],
+    "kps_min_med_max": [
+     0.0,
+     0.229,
+     0.779
+    ],
+    "decode_seconds_p50_p95": [
+     0.058,
+     0.092
+    ]
+   },
+   "test_uniform": {
+    "n": 80,
+    "gated": 80,
+    "emit_nonempty_gated": 0,
+    "emit_nonempty_raw": 80,
+    "chars_gated": 0,
+    "chars_raw": 335829,
+    "chars_truth": 3448,
+    "cer_gated": 1.0,
+    "cer_raw": 97.2091,
+    "cer_greedy": 94.4287,
+    "exact_gated": 0,
+    "n_keys_min_med_max": [
+     1229,
+     3712.0,
+     9358
+    ],
+    "kps_min_med_max": [
+     97.298,
+     97.946,
+     98.414
+    ],
+    "decode_seconds_p50_p95": [
+     0.377,
+     0.616
+    ]
+   },
+   "test_zero": {
+    "n": 80,
+    "gated": 80,
+    "emit_nonempty_gated": 0,
+    "emit_nonempty_raw": 80,
+    "chars_gated": 0,
+    "chars_raw": 87,
+    "chars_truth": 3448,
+    "cer_gated": 1.0,
+    "cer_raw": 0.982,
+    "cer_greedy": 1.0,
+    "exact_gated": 0,
+    "n_keys_min_med_max": [
+     0,
+     0.0,
+     0
+    ],
+    "kps_min_med_max": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "decode_seconds_p50_p95": [
+     0.021,
+     0.037
+    ]
+   },
+   "val_real": {
+    "n": 106,
+    "gated": 0,
+    "emit_nonempty_gated": 106,
+    "emit_nonempty_raw": 106,
+    "chars_gated": 4548,
+    "chars_raw": 4548,
+    "chars_truth": 4826,
+    "cer_gated": 0.1274,
+    "cer_raw": 0.1274,
+    "cer_greedy": 0.2603,
+    "exact_gated": 14,
+    "n_keys_min_med_max": [
+     7,
+     44.5,
+     95
+    ],
+    "kps_min_med_max": [
+     0.425,
+     1.078,
+     1.46
+    ],
+    "decode_seconds_p50_p95": [
+     0.066,
+     0.118
+    ]
+   }
+  },
+  "R0": {
+   "cer_raw": 0.1734,
+   "p15_25": 0.1734,
+   "abs_diff": 0.0,
+   "pass": true,
+   "same_text_as_p15_25": 80
+  },
+  "R1_cer_gated": 0.176,
+  "R1_cer_greedy": 0.3051,
+  "R2_gated_real": 3,
+  "H_cost_pass": true,
+  "N1": {
+   "uniform": {
+    "emit": 0,
+    "allowed": 4,
+    "pass": true
+   },
+   "timeshuf": {
+    "emit": 13,
+    "allowed": 4,
+    "pass": false
+   },
+   "zero": {
+    "emit": 0,
+    "allowed": 4,
+    "pass": true
+   },
+   "pass": false
+  },
+  "N2": {
+   "cer_gated": 0.8828,
+   "min": 0.85,
+   "pass": true,
+   "emit_gated": 78,
+   "gated": 2
+  },
+  "D1_controls_pass": false
+ },
+ "score": {
+  "guard_status": "guard",
+  "V1": "guard returned, LTT not feasible (no certified commit threshold)",
+  "V1_detail": {
+   "feasible": false,
+   "n_ltt": 40,
+   "n_ltt_min": 45,
+   "commit_threshold": "inf",
+   "lambda_hat": "inf",
+   "ltt_commits": 0,
+   "ltt_wrong_commits": 0,
+   "warnings": [
+    "only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.",
+    "frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.",
+    "the guard never commits (no certified threshold). It still offers and withholds."
+   ]
+  },
+  "V2": "holds",
+  "V3": "vacuous",
+  "V6": {
+   "calibrate_controls": {
+    "uniform": {
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    "shuffled": {
+     "n": 300,
+     "n_commit": 0,
+     "allowed": 15,
+     "passed": true
+    },
+    "user": {
+     "n": 106,
+     "n_commit": 0,
+     "allowed": 5,
+     "passed": true
+    }
+   },
+   "calibrate_controls_pass": true,
+   "test_timeshuf_commit_rate": 0.0,
+   "test_zero_commit_rate": 0.0,
+   "pass": true
+  },
+  "V7_offer_top1": {
+   "offers": 77,
+   "exact": 12,
+   "cer": 0.1715
+  },
+  "V8_offer_null": {
+   "timeshuf": {
+    "offer_rate": 0.1625,
+    "real_offer_rate": 0.9625,
+    "offer_null_passes": false
+   },
+   "zero": {
+    "offer_rate": 0.0,
+    "real_offer_rate": 0.9625,
+    "offer_null_passes": true
+   },
+   "frameshuf": {
+    "offer_rate": 0.9625,
+    "real_offer_rate": 0.9625,
+    "offer_null_passes": false
+   },
+   "uniform": {
+    "offer_rate": 0.0,
+    "real_offer_rate": 0.9625,
+    "offer_null_passes": true
+   }
+  },
+  "test": {
+   "real": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 77,
+    "withhold": 3,
+    "commit_rate": 0.0,
+    "offer_rate": 0.9625,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "timeshuf": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 13,
+    "withhold": 67,
+    "commit_rate": 0.0,
+    "offer_rate": 0.1625,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "zero": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "commit_rate": 0.0,
+    "offer_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "frameshuf": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 77,
+    "withhold": 3,
+    "commit_rate": 0.0,
+    "offer_rate": 0.9625,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   },
+   "uniform": {
+    "n": 80,
+    "commit": 0,
+    "wrong_commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "commit_rate": 0.0,
+    "offer_rate": 0.0,
+    "wrong_commit_rate": 0.0,
+    "wrong_commit_cp95": [
+     0.0,
+     0.0451
+    ]
+   }
+  },
+  "safe_wpm": {
+   "definition": "safe-wpm/0.1",
+   "value": 0.0,
+   "ci": null,
+   "status": "vacuous",
+   "unguarded_wpm": 0.0,
+   "wpm_no_penalty": 0.0,
+   "method": "ltt",
+   "alpha": 0.05,
+   "delta": 0.1,
+   "n_cal": 40,
+   "calibration": "106 items: 26 fit + 40 grid + 40 LTT (fidetype.trust.calibrate)",
+   "confidence": "probability >= 0.9 over calibration draws",
+   "measured_wrong_commit": 0.0,
+   "measured_wrong_commit_cp95": [
+    0.0,
+    0.0451
+   ],
+   "n_trials": 80,
+   "n_commits": 0,
+   "n_wrong_commits": 0,
+   "n_correct_commits": 0,
+   "error_among_commits": null,
+   "committed_correct_words": 0,
+   "total_words": 698,
+   "minutes_neural": 55.971500000000006,
+   "minutes_correction": 0.0,
+   "timing": "neural time = 10 ms bins of the sentence window (go cue to sentence end + up to 1 s tail, P15-08 cut)",
+   "correction_rule": {
+    "name": "rewrite",
+    "overhead_s": 2.0,
+    "s_per_char": 0.7894736842105263,
+    "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit"
+   },
+   "no_bci_wpm": 4.048723897911833,
+   "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+   "note": "the calibration found no certified threshold (policy never commits)",
+   "controls": {
+    "shuffled": "pass",
+    "zeros": "pass",
+    "null_commit": "pass",
+    "passed": true,
+    "commit_rate_zeros": 0.0,
+    "basis": {
+     "shuffled": "drop-in null control 'shuffled': 0/300 commits (allowed 15)",
+     "zeros": "drop-in null control 'uniform': 0/300 commits (allowed 15)",
+     "null_commit": "drop-in null control 'uniform': 0/300 commits (allowed 15)"
+    }
+   },
+   "ci_note": "no CI: one participant (T5)"
+  }
+ },
+ "peak_rss_mb_last_run": 1307
+}

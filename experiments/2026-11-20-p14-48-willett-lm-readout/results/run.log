@@ -1,0 +1,74 @@
+[2026-11-20 22:49:52] (rss 30 MB, peak 30 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-20 22:49:52] (rss 30 MB, peak 30 MB) start ['lp', 'gate', 'readout', 'guard', 'decide', 'score'] (pid 53116)
+[2026-11-20 22:51:54] (rss 248 MB, peak 464 MB) lp: session 1/10 t5.2019.05.08: 12 val, 10 test so far
+[2026-11-20 22:53:11] (rss 326 MB, peak 537 MB) lp: session 2/10 t5.2019.11.25: 22 val, 17 test so far
+[2026-11-20 22:55:01] (rss 457 MB, peak 671 MB) lp: session 3/10 t5.2019.12.09: 32 val, 27 test so far
+[2026-11-20 22:56:13] (rss 534 MB, peak 743 MB) lp: session 4/10 t5.2019.12.11: 42 val, 33 test so far
+[2026-11-20 22:57:37] (rss 627 MB, peak 844 MB) lp: session 5/10 t5.2019.12.18: 52 val, 40 test so far
+[2026-11-20 22:58:55] (rss 702 MB, peak 906 MB) lp: session 6/10 t5.2019.12.20: 62 val, 47 test so far
+[2026-11-20 22:59:52] (rss 881 MB, peak 971 MB) heartbeat
+[2026-11-20 23:00:00] (rss 764 MB, peak 971 MB) lp: session 7/10 t5.2020.01.06: 72 val, 53 test so far
+[2026-11-20 23:01:07] (rss 837 MB, peak 1040 MB) lp: session 8/10 t5.2020.01.08: 82 val, 60 test so far
+[2026-11-20 23:02:10] (rss 898 MB, peak 1081 MB) lp: session 9/10 t5.2020.01.13: 101 val, 70 test so far
+[2026-11-20 23:03:17] (rss 978 MB, peak 1196 MB) lp: session 10/10 t5.2020.01.15: 106 val, 80 test so far
+[2026-11-20 23:03:19] (rss 1109 MB, peak 1307 MB) lp: 106 val, 80 test; split equal to P15-08: True; max abs diff vs P14-41 {'val_real': 0.0, 'val_timeshuf': 0.0, 'val_zero': 0.0, 'test_real': 0.0, 'test_timeshuf': 0.0, 'test_zero': 0.0} (807 s)
+[2026-11-20 23:03:19] (rss 72 MB, peak 1307 MB) stage lp finished
+[2026-11-20 23:03:19] (rss 400 MB, peak 1307 MB) gate: {'gate': {'k_min': 7, 'r_min': 0.42480883602378927, 'r_max': 2.8341205890525143, 'frame_s': 0.01, 'blank': 0}, 'n_fit': 66, 'fit_positions_digest': '5b1dfd323c7fc94f', 'fit_real_gated': 0, 'check_timeshuf_fit_pass': 4, 'fit_real_n_keys_min_med_max': [7, 44.0, 72], 'fit_real_kps_min_med_max': [0.42480883602378927, 1.0665904292751582, 1.4170602945262571], 'fit_timeshuf_n_keys_min_med_max': [0, 12.0, 30], 'fit_timeshuf_kps_min_med_max': [0.0, 0.3082724074285256, 0.5875440658049353]}
+[2026-11-20 23:03:19] (rss 72 MB, peak 1307 MB) stage gate finished
+[2026-11-20 23:03:25] (rss 474 MB, peak 1307 MB) readout: test real done (6 s)
+[2026-11-20 23:03:30] (rss 475 MB, peak 1307 MB) readout: test timeshuf done (11 s)
+[2026-11-20 23:03:33] (rss 476 MB, peak 1307 MB) readout: test zero done (13 s)
+[2026-11-20 23:03:39] (rss 482 MB, peak 1307 MB) readout: test frameshuf done (19 s)
+[2026-11-20 23:04:12] (rss 491 MB, peak 1307 MB) readout: test uniform done (53 s)
+[2026-11-20 23:04:20] (rss 603 MB, peak 1307 MB) readout: val real done (60 s)
+[2026-11-20 23:04:20] (rss 78 MB, peak 1307 MB) stage readout finished
+[2026-11-20 23:04:20] (rss 422 MB, peak 1307 MB) guard: calibrate on 106 val sentences, 106 time-shuffled nulls, decode_fn = gate + F
+[2026-11-20 23:06:52] (rss 488 MB, peak 1307 MB) guard: tcfg-8fa3866deec917f3 (152 s)
+Fidetype trust guarantee sheet
+==============================
+config_id            tcfg-8fa3866deec917f3
+input                logits (custom:fidetype.pretrained.lmreadout.LmReadout.decode_fn.<locals>.gated_lm_readout)
+guarantee            P( wrong-commit rate <= 0.05 ) >= 0.9
+                     wrong-commit rate = wrong COMMITs / all utterances
+method               Learn then Test, exact binomial p-values, fixed-sequence grid 1.00 -> 0.00 step 0.01, combined with the policy-grid threshold by max
+calibration items    106 = 26 fit + 40 policy grid + 40 LTT
+LTT items needed     >= 45 LTT items (utterances, not commits) to certify any COMMIT
+lambda_hat           inf (feasible: False)
+commit threshold     p_top1 >= never commits (no threshold certified)
+commit gate          {"max_guard_risk": 1.0, "min_chars": 1, "min_words": 0}
+LTT items (in-sample) 0 commits, 0 wrong (of 40; 0 blocked by the commit gate; median guard risk 0.097873)
+null controls        pass if commits <= floor(0.05 x n)
+  uniform            0/300 commits (allowed 15): PASS
+  shuffled           0/300 commits (allowed 15): PASS
+  user               0/106 commits (allowed 5): PASS
+assumptions
+  - Exchangeable data: the calibration utterances and the live utterances come from the same distribution (same user, device, decoder, task and session type). Use a random sample, not a hand-picked one.
+  - The decoder, its weights, the vocabulary and the decode settings do not change after calibration.
+  - The true texts are right, and they use the same text normalisation as the decoder output (the wrapper joins runs of spaces and strips the ends; nothing else).
+  - Each utterance is decided once (no repeats), and the calibration items were used for nothing else.
+not guaranteed
+  - Any single utterance: the bound is on the rate over many utterances.
+  - A bound per session, per user or per sentence type: the bound is on the mix of the calibration data.
+  - Data that differ from the calibration data (a new day, a new electrode position, a new user, drift).
+  - The error rate among commits (precision): with few commits it can be high.
+  - The quality of offered choices, or how often the guard commits (it may commit rarely or never).
+  - Correctness of the text that the guard withholds or offers.
+  - Any medical or legal claim. Fidetype is research software, not a medical device.
+warnings
+  ! only 40 LTT items (< 45): no threshold can be certified, so the guard never commits. Give more labelled utterances.
+  ! frame temperature not fitted (1.0): with your own decode_fn, pass stream_texts= (the truth in the decoder's token space) to fit it. The guarantee does not depend on it.
+  ! the guard never commits (no certified threshold). It still offers and withholds.
+Details: docs/trust-guarantee.md
+[2026-11-20 23:06:52] (rss 123 MB, peak 1307 MB) stage guard finished
+[2026-11-20 23:07:20] (rss 541 MB, peak 1307 MB) decide: real done (29 s)
+[2026-11-20 23:07:45] (rss 535 MB, peak 1307 MB) decide: timeshuf done (53 s)
+[2026-11-20 23:08:08] (rss 542 MB, peak 1307 MB) decide: zero done (76 s)
+[2026-11-20 23:08:35] (rss 538 MB, peak 1307 MB) decide: frameshuf done (103 s)
+[2026-11-20 23:08:58] (rss 549 MB, peak 1307 MB) decide: uniform done (126 s)
+[2026-11-20 23:08:58] (rss 549 MB, peak 1307 MB) decide: 400 new decisions (126 s)
+[2026-11-20 23:08:58] (rss 122 MB, peak 1307 MB) stage decide finished
+[2026-11-20 23:09:02] (rss 122 MB, peak 1307 MB) score: readout R0 {'cer_raw': 0.1734, 'p15_25': 0.1734, 'abs_diff': 0.0, 'pass': True, 'same_text_as_p15_25': 80}; R1 gated CER 0.176; gated real 3; N1 {'uniform': {'emit': 0, 'allowed': 4, 'pass': True}, 'timeshuf': {'emit': 13, 'allowed': 4, 'pass': False}, 'zero': {'emit': 0, 'allowed': 4, 'pass': True}, 'pass': False}; N2 {'cer_gated': 0.8828, 'min': 0.85, 'pass': True, 'emit_gated': 78, 'gated': 2}
+[2026-11-20 23:09:02] (rss 122 MB, peak 1307 MB) score: V1 guard returned, LTT not feasible (no certified commit threshold); V2 holds; V3 vacuous; V6 pass True; counts {'real': {'n': 80, 'commit': 0, 'wrong_commit': 0, 'offer': 77, 'withhold': 3, 'commit_rate': 0.0, 'offer_rate': 0.9625, 'wrong_commit_rate': 0.0, 'wrong_commit_cp95': [0.0, 0.0451]}, 'timeshuf': {'n': 80, 'commit': 0, 'wrong_commit': 0, 'offer': 13, 'withhold': 67, 'commit_rate': 0.0, 'offer_rate': 0.1625, 'wrong_commit_rate': 0.0, 'wrong_commit_cp95': [0.0, 0.0451]}, 'zero': {'n': 80, 'commit': 0, 'wrong_commit': 0, 'offer': 0, 'withhold': 80, 'commit_rate': 0.0, 'offer_rate': 0.0, 'wrong_commit_rate': 0.0, 'wrong_commit_cp95': [0.0, 0.0451]}, 'frameshuf': {'n': 80, 'commit': 0, 'wrong_commit': 0, 'offer': 77, 'withhold': 3, 'commit_rate': 0.0, 'offer_rate': 0.9625, 'wrong_commit_rate': 0.0, 'wrong_commit_cp95': [0.0, 0.0451]}, 'uniform': {'n': 80, 'commit': 0, 'wrong_commit': 0, 'offer': 0, 'withhold': 80, 'commit_rate': 0.0, 'offer_rate': 0.0, 'wrong_commit_rate': 0.0, 'wrong_commit_cp95': [0.0, 0.0451]}}; V8 {'timeshuf': {'offer_rate': 0.1625, 'real_offer_rate': 0.9625, 'offer_null_passes': False}, 'zero': {'offer_rate': 0.0, 'real_offer_rate': 0.9625, 'offer_null_passes': True}, 'frameshuf': {'offer_rate': 0.9625, 'real_offer_rate': 0.9625, 'offer_null_passes': False}, 'uniform': {'offer_rate': 0.0, 'real_offer_rate': 0.9625, 'offer_null_passes': True}}; safe WPM 0.00 (vacuous; LTT a=0.05 d=0.1 n_cal=40; test wrong-commit 0/80 = 0.0000; commits 0; unguarded 0.00; no-BCI 4.05)
+[2026-11-20 23:09:02] (rss 122 MB, peak 1307 MB) stage score finished
+[2026-11-20 23:09:02] (rss 122 MB, peak 1307 MB) keep_awake: cleared
+[2026-11-20 23:09:02] (rss 122 MB, peak 1307 MB) end; peak RSS of this run 1307 MB

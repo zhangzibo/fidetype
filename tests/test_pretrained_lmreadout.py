@@ -124,5 +124,10 @@ def test_willett_hw_lm_readout_local():
         assert g.text(flat) == ""
         st = m._stream(flat.astype(np.float32), "flat")
         assert m.text(st, readout="lm") == "" and isinstance(m.text(st), str)
+    t = m.manifest.raw["readouts"]["lm"].get("trust")
+    if t:
+        guard = m.guard(readout="lm")
+        assert guard.config_id == t["config_id"] != m.guard().config_id
+        assert guard.decide(np.full((150, 98), -np.log(98.0))).action == "withhold"  # gated: empty n-best
     with pytest.raises(ValueError):
         m.text(m._stream(flat.astype(np.float32), "flat"), readout="other")
