@@ -75,6 +75,54 @@ Same 40 calibration draws as P11-17 (seeds, bootstrap and split order from P11-1
 
 The 7 above-alpha draws have 62 to 69 wrong commits (rate 0.051 to 0.057) and are the draws with the most commits (693 to 727). Their raw values (10.17 to 11.06) are the highest. As in P11-17, the guards that spend their risk budget most are the ones that cross alpha on the test set.
 
+### Per-draw statuses (40 draws; values are proposed v0.2; "credited value" = 0.00 for an above-alpha draw)
+| Draw | Status | Credited | Threshold | Commits (prefix) | Wrong (rate) | Proposed v0.2 raw | Credited value | P11-17 L-FL same draw |
+|---|---|---|---|---|---|---|---|---|
+| 1 | certified | yes | 0.95 | 505 (467) | 21 (0.0172) | 6.73 | 6.73 | 6.11 |
+| 2 | certified | yes | 0.96 | 595 (569) | 35 (0.0287) | 7.35 | 7.35 | 0.00 |
+| 3 | certified | yes | 0.87 | 663 (571) | 53 (0.0434) | 9.86 | 9.86 | 5.49 |
+| 4 | certified | yes | 0.90 | 639 (582) | 41 (0.0336) | 8.95 | 8.95 | 7.18 |
+| 5 | certified | yes | 0.84 | 680 (586) | 56 (0.0459) | 9.91 | 9.91 | 6.85 |
+| 6 | certified | yes | 0.91 | 655 (591) | 39 (0.0319) | 8.86 | 8.86 | 6.49 |
+| 7 | above-alpha | no | 0.83 | 693 (570) | 62 (0.0508) | 10.17 | 0.00 | 0.00 |
+| 8 | certified | yes | 0.82 | 682 (561) | 56 (0.0459) | 10.28 | 10.28 | 7.25 |
+| 9 | certified | yes | 0.94 | 589 (543) | 37 (0.0303) | 7.98 | 7.98 | 0.00 |
+| 10 | certified | yes | 0.91 | 582 (517) | 34 (0.0278) | 8.23 | 8.23 | 6.76 |
+| 11 | certified | yes | 0.90 | 623 (545) | 38 (0.0311) | 8.87 | 8.87 | 6.96 |
+| 12 | certified | yes | 0.90 | 628 (571) | 38 (0.0311) | 8.79 | 8.79 | 7.27 |
+| 13 | certified | yes | 0.92 | 649 (575) | 43 (0.0352) | 9.03 | 9.03 | 6.70 |
+| 14 | certified | yes | 0.89 | 603 (525) | 40 (0.0328) | 8.78 | 8.78 | 0.00 |
+| 15 | certified | yes | 0.86 | 674 (623) | 46 (0.0377) | 9.20 | 9.20 | 0.00 |
+| 16 | certified | yes | 0.91 | 614 (564) | 39 (0.0319) | 8.49 | 8.49 | 6.92 |
+| 17 | certified | yes | 0.88 | 667 (562) | 53 (0.0434) | 9.89 | 9.89 | 0.00 |
+| 18 | certified | yes | 0.91 | 600 (542) | 36 (0.0295) | 8.10 | 8.10 | 0.00 |
+| 19 | above-alpha | no | 0.81 | 695 (586) | 65 (0.0532) | 10.28 | 0.00 | 7.02 |
+| 20 | certified | yes | 0.88 | 662 (529) | 61 (0.0500) | 9.90 | 9.90 | 6.89 |
+| 21 | above-alpha | no | 0.80 | 694 (544) | 69 (0.0565) | 10.76 | 0.00 | 5.42 |
+| 22 | certified | yes | 0.86 | 643 (591) | 41 (0.0336) | 8.71 | 8.71 | 5.93 |
+| 23 | certified | yes | 0.85 | 672 (552) | 55 (0.0450) | 9.77 | 9.77 | 7.08 |
+| 24 | certified | yes | 0.91 | 615 (582) | 34 (0.0278) | 8.17 | 8.17 | 0.00 |
+| 25 | certified | yes | 0.88 | 651 (606) | 37 (0.0303) | 8.67 | 8.67 | 6.92 |
+| 26 | certified | yes | 0.98 | 491 (471) | 16 (0.0131) | 6.21 | 6.21 | 7.20 |
+| 27 | certified | yes | 0.82 | 682 (586) | 56 (0.0459) | 9.83 | 9.83 | 6.78 |
+| 28 | certified | yes | 0.81 | 691 (574) | 61 (0.0500) | 10.16 | 10.16 | 7.19 |
+| 29 | certified | yes | 0.93 | 603 (556) | 37 (0.0303) | 8.06 | 8.06 | 6.84 |
+| 30 | certified | yes | 0.95 | 521 (507) | 25 (0.0205) | 6.56 | 6.56 | 6.31 |
+| 31 | certified | yes | 0.90 | 616 (576) | 36 (0.0295) | 8.14 | 8.14 | 0.00 |
+| 32 | above-alpha | no | 0.80 | 699 (563) | 62 (0.0508) | 10.60 | 0.00 | 7.05 |
+| 33 | certified | yes | 0.92 | 610 (572) | 37 (0.0303) | 8.16 | 8.16 | 6.33 |
+| 34 | certified | yes | 0.88 | 657 (582) | 44 (0.0360) | 9.13 | 9.13 | 6.79 |
+| 35 | above-alpha | no | 0.78 | 725 (579) | 69 (0.0565) | 11.06 | 0.00 | 3.38 |
+| 36 | above-alpha | no | 0.79 | 727 (600) | 69 (0.0565) | 10.62 | 0.00 | 6.67 |
+| 37 | certified | yes | 0.90 | 638 (566) | 47 (0.0385) | 9.08 | 9.08 | 7.02 |
+| 38 | certified | yes | 0.86 | 614 (537) | 43 (0.0352) | 8.73 | 8.73 | 7.09 |
+| 39 | above-alpha | no | 0.83 | 715 (625) | 65 (0.0532) | 10.38 | 0.00 | 7.11 |
+| 40 | certified | yes | 0.89 | 633 (589) | 43 (0.0352) | 8.59 | 8.59 | 1.14 |
+
+Above-alpha draws: k = 7, 19, 21, 32, 35, 36, 39. Every draw passed all calibration and test controls.
+
+**Link to P11-18 (gap 158, commit `0a75695`).** P11-18 studied the same 40 calibration draws for L-FL. It found that the above-alpha excess comes partly from the bootstrap duplicates in the LTT part (partition-only draws without duplicates: 3 / 40 above alpha, against 9 / 40 with duplicates; Fisher p = 0.057). It also found a clear session shift between the calibration (val) and test sessions (primary test p = 3.6e-10; pooled exchangeable split: 0 / 40 above alpha). The P11-16 draws use the same bootstrap with duplicates and the same val -> test split. So the 7 / 40 above-alpha draws here probably also over-state the calibration-sample variation in part, and in part show the val / test session shift. This item did not run the P11-18 partition-only or pooled variants for LX-FL. The interval above stays the pre-registered value.
+
 > **Our take:** the single-calibration value (9.47, CI fully above 3.09) is not a public claim. With the calibration draw counted, LX-FL is above no-BCI on average (7.18; P11-17 L-FL: 5.00) and higher than L-FL in 32 of the same 40 draws. But 17.5 % of the draws earn 0, so the lower end is 0. A reliable lower end needs a lower-variance guard (gap 159, P11-19) or a margin below alpha. All of this holds only under the proposed v0.2.
 
 ## Deviations
