@@ -731,6 +731,13 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P5-33 (2026-11-21, pre-registration `a7abc11`, code and results `9ce8006`, [results](../../experiments/2026-11-21-p5-33-withhold/results.md)): no candidate gate passed the calibration-only selection for `kt-semg-lda` (`char_lm_best`: 100 / 108 user nulls against 103 / 108 real; `char_lm_best` AND margin: 0 / 300 uniform but 100 / 108 user nulls). Info-only evaluation FAIL: uniform 289 / 300, user nulls 165 / 173, real 63 / 65. The user nulls are real key windows at random times, and the key accuracy is 0.248.
 - **Done when:** a pre-registered gate, chosen on calibration data only, passes the P5-31 offer null control against both the uniform and the user-null controls, keeps at least 0.85 x the real LTT offers, and leaves the commits unchanged. Then refresh the manifest `offer_control` block from the new re-check.
 
+#### P5-35 Native calibrate path for external per-prefix scores
+- **Gap:** 165 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-16). Follow-up of P11-16, P5-24.
+- **Status:** `todo`.
+- **Depends on:** P11-16 (done); `calibrate(commit_unit="prefix")` (P5-24); CPU.
+- **Source:** P11-16 ([results](../../experiments/2026-11-21-p11-16-emg-prefix-confidence/results.md)): LX-FL and LS-FL are certified outside `calibrate` (library function `ltt_prefix_threshold` and the library controls). So they have no `TrustGuard` file, no frame temperature, no guard-risk gate and no `config_id`.
+- **Done when:** `calibrate` accepts a frozen external per-prefix score, and LX-FL is reproduced through it (same threshold and decisions) with tests, giving a `TrustGuard` with a `config_id`.
+
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
 
@@ -1017,10 +1024,11 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-16 P11-14 confidence signals for prefix commits
 - **Gap:** 126 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P11-14). Follow-up of P11-14, P11-12.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; plan `ded01cf` before any number, code and tests `0575c8a`, results `82a96bc` + `0d0107c`, [results](../../experiments/2026-11-21-p11-16-emg-prefix-confidence/results.md)). Gap 126 closed. Primary arm LX-FL (learned prefix score from the P11-14 signals, FL decoder, certified with `ltt_prefix_threshold` outside `calibrate`): **proposed v0.2** 9.47 [6.97, 12.75] with one calibration (671 commits, 592 prefix, 46 wrong); adopted v0.1 only 2.60 [1.35, 4.27]. Calibration-inclusive (40 draws, proposed v0.2): 7.18 [0.00, 12.13], "above, but inside the combined interval" (33 certified, 7 above alpha: draws 7, 19, 21, 32, 35, 36, 39 with 62-69 wrong). BX-FL 6.62 [4.58, 9.12]; LS-FL 7.00. H1, H2, H3 pass (vs arm X 4.25 and L-FL 6.80); all controls pass; C0a, C0b, z0 pass. LX-FL beats L-FL in 32 / 40 same draws (mean +2.18). safe-wpm/0.2 is a proposal: the proposed v0.2 values are not headlines. No score card now; if the user adopts v0.2, a v0.2 card + rerun recipe for EMG LX-FL follows.
 - **Depends on:** P11-14 (done); safe-wpm/0.2 (proposed, P14-26); CPU.
 - **Source:** P11-14 ([results](../../experiments/2026-11-20-p11-14-emg-lm-confidence/results.md)): the wide-set fused posterior `p_fU` and the LM log-prob per character carry the confidence gain for sentence commits. Word-prefix commits (P11-12 arm X, proposed v0.2 4.25) still use the built-in learned prefix score on the old decoder.
 - **Done when:** a pre-registered prefix guard on the in-beam decoder uses the P11-14 signals (per prefix: the wide-set fused mass of the prefix and the LM per character) and reports a certified proposed-v0.2 value with the P11-12 controls, compared with arm X (4.25) and with L-FL (6.80 v0.1); or the result states with numbers why not.
+- **Follow-ups:** gap 165 = [P5-35](#p5-35-native-calibrate-path-for-external-per-prefix-scores) (native `calibrate` path for external per-prefix scores); gap 166 = [P11-21](#p11-21-calibration-inclusive-lower-end-above-309-for-the-lx-fl-prefix-guard) (calibration-inclusive lower end above 3.09 for the LX-FL prefix guard).
 
 #### P11-17 Calibration-inclusive safe WPM interval for the EMG P11-14 L-FL guard
 - **Gap:** 133 of the [open-gap list](open-gaps.md) (added 2026-11-20 after P15-29). Follow-up of P11-14, P15-29.
@@ -1028,10 +1036,11 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Depends on:** P11-14 (done); P15-29 method (done; `fidetype.benchmark.safe_wpm.calibration_draw_interval`); CPU.
 - **Source:** P11-14 ([results](../../experiments/2026-11-20-p11-14-emg-lm-confidence/results.md)) gives the L-FL guard a certified safe WPM v0.1 of 6.80 [4.49, 9.63]. This CI resamples trials with the decisions fixed. P15-29 showed on T15 that calibration-draw variation can be larger than the trial variation (ratio 4.1). P15-29 measured T15 and T12 only.
 - **Done when:** a pre-registered run applies `calibration_draw_interval` to the P11-14 L-FL guard (same split, gate, LTT and controls; K stated in advance) and reports the calibration-inclusive interval against the EMG no-BCI reference 3.09.
+- **Note (2026-11-21, P11-18, results `0a75695`):** limit (b) confirmed: the bootstrap draws over-state the failures (9 / 40 above alpha vs 3 / 40 with partition-only draws). Partition-only interval 5.65 [0.00, 9.45]. The EMG public wording does not change.
 
 #### P11-18 Why 22.5 % of the EMG calibration draws are above alpha
 - **Gap:** 158 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-17). Follow-up of P11-17.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; plan `6ce4245` before any number, code and synthetic tests `7537199`, launcher fix `b70aac7`, results `0a75695`, [results](../../experiments/2026-11-21-p11-18-emg-above-alpha/results.md)). Gap 158 closed. Partition-only arm P (40 draws, val -> test): 3 / 40 above alpha (7.5 %, inside delta), all three at 62 / 1,221 wrong. Interval **5.65 [0.00, 9.45]** vs 3.09: "above, but inside the combined interval" (library 5.65 [0.00, 7.76]; V-a 6.19 [2.62, 9.61]; V-b 6.10 [2.56, 9.51]). Pooled val + test arm E (no session shift): 0 / 40 above alpha. P11-17 bootstrap: 9 / 40. Pre-registered verdict: "partly duplicates" (Fisher 9 / 40 vs 3 / 40, p = 0.057). Session shift present: optimism gap arm P +0.0126 vs arm E -0.0016 (Welch p = 3.6e-10). 0 significant exceedances (consistent with test-rate noise). X4 reproduction exact. Between-draw SD 1.98, within 1.26. Follow-up: gap 164 = [P11-20](#p11-20-shift-robust-calibration-for-the-emg-l-fl-guard).
 - **Depends on:** P11-17 (done; `experiments/2026-11-21-p11-17-emg-calibration-ci/run.py`); CPU.
 - **Source:** P11-17 ([results](../../experiments/2026-11-21-p11-17-emg-calibration-ci/results.md)): 9 of 40 calibration draws (22.5 %) of the L-FL guard are above alpha on the test set. LTT allows at most delta = 10 %. Three causes can add up: bootstrap duplicates in the resampled LTT part (459 entries, about 290 distinct prompts), sampling noise of the test rate (SD about 0.006 near 0.05 with 1,221 prompts), and the val / test session shift. On T15 (P15-29) only 2 / 40 draws failed.
 - **Done when:** a pre-registered run of the L-FL guard with K >= 40 partition-only draws (new splits of the 1,224 calibration prompts, no resampling) reports the above-alpha fraction and the calibration-inclusive interval against 3.09, and says whether the excess over delta comes from bootstrap duplicates in the LTT part or from test-rate noise plus the val / test session shift.
@@ -1043,6 +1052,21 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Source:** P11-17 ([results](../../experiments/2026-11-21-p11-17-emg-calibration-ci/results.md)): 5.00 [0.00, 9.55]; between-draw SD 2.94 against within-draw 1.19. EMG shows the same calibration-variance problem as T15 (gaps 132, 141).
 - **Done when:** a pre-registered run applies the P15-37 multi-split method (BMED-3 or AND arms, chosen on calibration data only) or a safety-margin guard (P15-34) to EMG L-FL and reports a calibration-inclusive interval whose lower end is above 3.09, or numbers show why that is not reachable.
 - **Evidence (2026-11-21, P15-37, results `105c5d0`):** on T15 the guarantee-keeping multi-split rules (AND, Bonferroni + selection) do not lift the calibration-inclusive lower end (primary BMED-3 4.73 [2.60, 6.24]; between-draw SD only 4-15 % lower). This item stays open: EMG differs, because its zero draws come from above-alpha draws (9 / 40). Gap 158 = [P11-18](#p11-18-why-225--of-the-emg-calibration-draws-are-above-alpha) diagnoses that first.
+- **Evidence (2026-11-21, P11-18, results `0a75695`):** the val / test session shift is a separate failure source (optimism gap arm P +0.0126 vs pooled arm E -0.0016, Welch p = 3.6e-10). Lower-variance methods do not remove it. The shift part is gap 164 = [P11-20](#p11-20-shift-robust-calibration-for-the-emg-l-fl-guard).
+
+#### P11-20 Shift-robust calibration for the EMG L-FL guard
+- **Gap:** 164 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-18). Follow-up of P11-18, P11-17.
+- **Status:** `todo`.
+- **Depends on:** P11-18 (done; `experiments/2026-11-21-p11-18-emg-above-alpha/run.py`); CPU.
+- **Source:** P11-18 ([results](../../experiments/2026-11-21-p11-18-emg-above-alpha/results.md)): on a new session the wrong-commit rate is about 1.3 points above the LTT in-sample rate (optimism gap arm P +0.0126 vs pooled arm E -0.0016, Welch p = 3.6e-10). 3 / 40 partition-only draws are above alpha; 0 / 40 without the shift. The "partly duplicates" verdict is not firm at K = 40 (Fisher p = 0.057).
+- **Done when:** a pre-registered run tests a shift-robust calibration for the L-FL guard (for example a tighter alpha, a margin from the val / test gap, or calibration that includes data from a second session) and reports the above-alpha fraction on test with 40 partition-only draws and the calibration-inclusive interval against 3.09. Secondary: K >= 80 arm P draws to make the "partly duplicates" verdict firm (Fisher p < 0.05), or numbers say why not.
+
+#### P11-21 Calibration-inclusive lower end above 3.09 for the LX-FL prefix guard
+- **Gap:** 166 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-16). Follow-up of P11-16, P11-18, P11-19.
+- **Status:** `todo`.
+- **Depends on:** P11-16 (done); gap 159 methods; the user decision on safe-wpm/0.2 (for headline use only); CPU.
+- **Source:** P11-16 ([results](../../experiments/2026-11-21-p11-16-emg-prefix-confidence/results.md)): calibration-inclusive proposed v0.2 7.18 [0.00, 12.13]; 7 / 40 draws above alpha earn 0; between-draw SD 3.47 against within-draw 1.24.
+- **Done when:** a pre-registered run (for example partition-only draws, a margin below alpha, or gap 159 methods) reports the calibration-inclusive interval against 3.09 for the prefix guard: lower end above 3.09, or numbers say why not. Headline use depends on the v0.2 decision.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
