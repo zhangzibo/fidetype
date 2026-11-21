@@ -17,18 +17,28 @@ jobs:
   # the conformance-os job: GitHub's macOS arm64 runners have "capacity constraints", and separate macOS jobs queued
   # for 20 min and were then cancelled ("not acquired by Runner"). One macOS job per push keeps the queue short.
   # fail-fast is off, so one red platform does not hide the others.
+  # P2-14 (gap 154): the full suite took 21-25 min on windows-latest (py3.12, py3.13) and 23 min on ubuntu py3.12,
+  # and four Windows py3.12 runs hit the 30-min timeout. These three entries run as 2 shards (`--shard K/N` in
+  # tests/conftest.py: whole test files, balanced by tests/shard_weights.json). Each file runs in exactly one shard,
+  # so the coverage is the same. The timeout stays at 30 min. `--file-durations` prints the time of each file;
+  # copy its "json:" line into tests/shard_weights.json when the shards get unbalanced. `--durations=30` lists the
+  # slowest tests.
   pytest:
-    name: pytest (${{ matrix.os }}, py${{ matrix.python }})
+    name: pytest (${{ matrix.os }}, py${{ matrix.python }}, shard ${{ matrix.shard }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        python: ["3.12", "3.13", "3.14"]
         include:
-          - { os: windows-latest, python: "3.12" }
-          - { os: windows-latest, python: "3.13" }
+          - { os: ubuntu-latest, python: "3.12", shard: "1/2" }
+          - { os: ubuntu-latest, python: "3.12", shard: "2/2" }
+          - { os: ubuntu-latest, python: "3.13", shard: "1/1" }
+          - { os: ubuntu-latest, python: "3.14", shard: "1/1" }
+          - { os: windows-latest, python: "3.12", shard: "1/2" }
+          - { os: windows-latest, python: "3.12", shard: "2/2" }
+          - { os: windows-latest, python: "3.13", shard: "1/2" }
+          - { os: windows-latest, python: "3.13", shard: "2/2" }
     steps:
       - uses: actions/checkout@v7
 
@@ -41,7 +51,7 @@ jobs:
       # Dev extra only: the "data" extra (mne, scipy) is not needed, and CI has no MEG data.
       - run: uv sync --extra dev
 
-      - run: uv run pytest -q
+      - run: uv run pytest -q --shard ${{ matrix.shard }} --durations=30 --file-durations
 
   # P2-09: the conformance suites of the three SDKs (Python, TypeScript, Rust) and the Python wheel smoke test
   # on Windows and macOS. Linux runs the same steps in the packaging, typescript and rust jobs.
