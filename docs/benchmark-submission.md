@@ -22,6 +22,16 @@ python -m fidetype.benchmark score <track> <submission> --data <path>          #
 
 `<track>` is one of `b2t25-t15`, `b2t24-t12`, `willett-hw`, `toronto-semg`, `kt-semg`, `spanishbcbl-meg`, `emg2qwerty`. `--data` is the same path as for `verify` ([benchmark tracks](benchmark-tracks.md)). The v0.1 form `score <submission> --truth ...` still works for the v0.1 tracks.
 
+From Python (P14-46):
+
+| Need | Call |
+|---|---|
+| Truth for your own split (a new dataset, a synthetic test) | `scorecard.build_truth(track, data, split=my_split)`; pass the same split to `check_submission` and `score` |
+| `kt-semg` truth without the EMG files | `build_truth("kt-semg", data)` needs only `runN_keys.txt` and `runN_ts.txt` (the CLI `truth` too). `verify` still needs every `runN.csv` |
+| A guarantee block from a drop-in guard | `safe_wpm.guarantee_from_sheet(guard, calibration_split="cal")`: it has `scope` (default "marginal over decisions exchangeable with the calibration items"), so it is valid in `submission.json` |
+| `kt-semg` rows from `kt-semg-lda` | `model.track_nbest(stream)`: n-best texts in key codes (the track text space) |
+| The committed cards, offline | `leaderboard.committed_results("v0.2")` (they ship in the wheel; `leaderboard.results_dir()` gives the folder) |
+
 | Exit code | Meaning |
 |---|---|
 | 0 | Scored. All required controls are present and pass |

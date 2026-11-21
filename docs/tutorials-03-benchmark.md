@@ -20,13 +20,13 @@ It uses the track `kt-semg` (forearm sEMG typing; the text is W3C `KeyboardEvent
 
 | Step | Code | What you see |
 |---|---|---|
-| 1. Fake data and split | `write_fake_kt()`, `TR.local_units()`, `TR.make_split()` | 12 fake runs (key logs only, no EMG): 3 train, 3 cal, 6 test runs; 60 scored test units |
-| 2. Truth | rows from `TR.select_units(split, units, "test")` and `TR.id_hash()` | One row per scored unit, keyed by the salted unit hash. Local only: never commit or share it |
+| 1. Fake data and split | `write_fake_kt()`, `TR.local_units(track, folder, keys_only=True)`, `TR.make_split()` | 12 fake runs (key logs and start times only, no EMG files): 3 train, 3 cal, 6 test runs; 60 scored test units |
+| 2. Truth | `SC.build_truth(track, folder, split=split)` | One row per scored unit, keyed by the salted unit hash. Local only: never commit or share it |
 | 3. Decode | `SC.unit_row(key, [top1, top2], scores, action=...)` | One row per unit on real input, on time-shuffled input and on all-zero input |
 | 4. Submission | `SC.manifest_dict(...)`, `SC.write_submission(...)` | `submission.json`, `units.jsonl`, `controls/shuffled.jsonl`, `controls/zeros.jsonl` |
 | 5. Check | `SC.check_submission(track, folder, split)` | Format, unit keys and controls are complete. No truth needed |
 | 6. Score | `SC.score(track, folder, truth, split=split)`, `SC.score_card_text(card)` | Key error, eWPM vs the no-BCI reference (with CIs), safe WPM, wrong-commit rate, error among commits, commit rate, controls, coverage, status `scored` |
-| 7. Rank | `leaderboard.row(card)`, `leaderboard.cells(row)` | The row that the leaderboard would show |
+| 7. Rank | `leaderboard.row(card)`, `leaderboard.cells(row)` | The row that the leaderboard would show. Real mode adds the committed cards: `leaderboard.committed_results("v0.2")` (in the package, so it also works after `pip install`) |
 
 Synthetic score card (2026-11-20; toy numbers):
 
@@ -49,26 +49,28 @@ The required controls: `shuffled` and `zeros` must each give a higher top-1 CER 
 | What | Value |
 |---|---|
 | Dataset | KT-sEMG v1.1, copyright 2021 Nokia, CC BY 4.0 ([doi:10.7910/DVN/AV6XIR](https://doi.org/10.7910/DVN/AV6XIR)) |
-| Download size | the full dataset, about 20 GB (all `runN.csv`, `runN_keys.txt`, `runN_ts.txt`) |
+| Download size | the truth needs only `runN_keys.txt` and `runN_ts.txt` (small). Decoding needs the `runN.csv` EMG file of each run that you decode (the full dataset is about 20 GB) |
 | Model | `kt-semg-lda` and its guard (release files, not hosted yet: gap 98) |
-| Split | the committed `kt-semg` split; the truth is rebuilt from your download with `SC.build_truth()` and checked against it |
+| Split | the committed `kt-semg` split; the truth is rebuilt from your download with `SC.build_truth()` (key logs only) and checked against it |
 
 ```sh
 python tutorials/03_score_benchmark.py --data <kt-semg folder> --weights <kt-semg-lda folder> --runs run28
 ```
 
-The script decodes the test runs that you name (default: the first one) and declares a partial entry (`coverage.subset`). Controls: the EMG circularly shifted by half the run (`shuffled`) and all-zero EMG (`zeros`).
+The script decodes the test runs that you name (default: the first one) and declares a partial entry (`coverage.subset`). Each row has the top 3 of `model.track_nbest(stream)` (key codes, the track text space) and the guard action of `model.decide(stream)`. The guarantee block is `guarantee_from_sheet(guard, calibration_split="cal")`. Controls: the EMG circularly shifted by half the run (`shuffled`) and all-zero EMG (`zeros`).
 
-Output on the project machine (2026-11-20, 47 s): 22 of 172 units (run28), key error 0.748, eWPM 2.55 (no-BCI 2.82), 0 commits, safe WPM 0.00 `vacuous`, all controls pass, status `scored`. The CIs are one point wide, because one run is one CI cluster. The decoder is weak (about one key in four is right); the guard offers and never commits, which is correct for this decoder. In a clone, step 6 also prints the committed `kt-semg` entries, so you see your row next to them with the mark `[partial: 22/172 units]`.
+Output on the project machine (2026-11-20, 47 s, before the P14-46 changes: greedy keys only, the same top-1 text): 22 of 172 units (run28), key error 0.748, eWPM 2.55 (no-BCI 2.82), 0 commits, safe WPM 0.00 `vacuous`, all controls pass, status `scored`. The CIs are one point wide, because one run is one CI cluster. The decoder is weak (about one key in four is right); the guard offers and never commits, which is correct for this decoder. Step 6 also prints the committed `kt-semg` entries, so you see your row next to them with the mark `[partial: 22/172 units]`.
 
 To submit from the command line instead of Python, see [benchmark submission](benchmark-submission.md) (`python -m fidetype.benchmark check | truth | score`).
 
 ## API friction (found while writing this tutorial)
 
-These points are open gap 131 (roadmap P14-46).
+Gap 131 (roadmap P14-46) listed these points. The API now has a fix for each one, and this tutorial uses them:
 
-- `build_truth()` always reads the committed split. With your own split (a new dataset, or this synthetic mode) you build the truth rows by hand; the tests monkeypatch `load_split`.
-- The pretrained decoder and the benchmark use different text spaces: `kt-semg-lda` gives screen text in its n-best, and the track wants key codes. No converter exists, so the tutorial submits the greedy keys only.
-- The guarantee from a guard sheet (`guarantee_from_sheet`) is not a valid submission guarantee: the manifest also needs `scope` and `calibration_split`.
-- `build_truth("kt-semg")` needs every `runN.csv` file (about 20 GB), although the truth uses only the key logs and the start times.
-- The committed leaderboard cards are in the git repository, not in the package, so `pip install` users cannot compare their row with the leaderboard offline.
+| Friction | Fix |
+|---|---|
+| `build_truth()` always read the committed split | `SC.build_truth(track, data, split=...)` (default: the committed split) |
+| `kt-semg-lda` gives screen text in its n-best; the track wants key codes | `model.track_nbest(stream)` (key codes, `Backspace` kept); `fidetype.adapters.kt_semg.code_nbest(stream)` for any key stream; `codes_from_text(text)` converts screen text (lossy: no `Backspace`) |
+| `guarantee_from_sheet()` gave no `scope` | it adds `scope` (default "marginal over decisions exchangeable with the calibration items"); `calibration_split=` names the benchmark split; it also takes the guard itself |
+| `build_truth("kt-semg")` needed every `runN.csv` (about 20 GB) | the truth reads only `runN_keys.txt` and `runN_ts.txt` (`keys_only=True` is the default in `build_truth`; `verify` still checks the CSVs) |
+| The committed leaderboard cards were not in the package | they ship in the wheel: `leaderboard.committed_results("v0.2")`, `leaderboard.results_dir()` |

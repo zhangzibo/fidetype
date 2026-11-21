@@ -51,7 +51,7 @@ KEYS = [f"Key{c}" for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"] + ["Space"]
 
 
 def write_fake_kt(root: Path, n_runs: int = 12, bursts: int = 10, seed: int = 0) -> Path:
-    """A fake KT-sEMG folder: runN_ts.txt + runN_keys.txt + a tiny runN.csv (no EMG content)."""
+    """A fake KT-sEMG folder: runN_ts.txt + runN_keys.txt only (no EMG files: the truth needs only the key logs)."""
     rng = np.random.default_rng(seed)
     root.mkdir(parents=True, exist_ok=True)
     for r in range(1, n_runs + 1):
@@ -64,7 +64,6 @@ def write_fake_kt(root: Path, n_runs: int = 12, bursts: int = 10, seed: int = 0)
                 t += float(rng.uniform(0.2, 0.4))
             t += 5.0  # a pause > 2 s ends a typing burst (one scored unit)
         (root / f"run{r}_keys.txt").write_bytes(("\n".join(lines) + "\n").encode("latin-1"))
-        (root / f"run{r}.csv").write_text("Time\tc1\n0\t1\n", encoding="ascii")
     return root
 
 
@@ -76,15 +75,12 @@ def simulated_decoder(codes: list[str], error_rate: float, rng: np.random.Genera
 def run_synthetic(out: Path) -> dict:
     step(1, "make a fake KT-sEMG folder and its split (a real entry uses the committed split)")
     data = write_fake_kt(out / "fake-kt")
-    units = TR.local_units(TRACK, data)
+    units = TR.local_units(TRACK, data, keys_only=True)  # keys_only: no runN.csv EMG files needed
     split = TR.make_split(TRACK, units)
     print(f"  {split['counts']}")
 
     step(2, "the truth of the scored test units (local only: never commit or share it)")
-    # build_truth() always reads the committed split, so with our own split we build the rows here.
-    test = TR.select_units(split, units, "test")
-    truth = {TR.id_hash(TRACK, u.id): {"unit": TR.id_hash(TRACK, u.id), "id": u.id, "payload": u.payload,
-                                       "group": u.group, "text": u.payload, "neural_s": None} for u in test}
+    truth = {r["unit"]: r for r in SC.build_truth(TRACK, data, split=split)}  # default split: the committed one
     print(f"  {len(truth)} test units; unit key example {next(iter(truth))}")
 
     step(3, "run the decoder on real input and on the two control inputs")
@@ -121,10 +117,10 @@ def run_synthetic(out: Path) -> dict:
 
 def run_real(a: argparse.Namespace, out: Path) -> dict:
     import fidetype.pretrained as ftp
-    from fidetype.adapters.kt_semg import greedy_codes
+    from fidetype.benchmark.safe_wpm import guarantee_from_sheet
     from fidetype.pretrained.readers import read_kt_run
 
-    step(1, "rebuild the truth from your download (checked against the committed split)")
+    step(1, "rebuild the truth from your download (key logs + start times only; checked against the split)")
     truth_rows = SC.build_truth(TRACK, a.data)
     truth = {r["unit"]: r for r in truth_rows}
     by_id = {r["id"]: r for r in truth_rows}
@@ -145,30 +141,21 @@ def run_real(a: argparse.Namespace, out: Path) -> dict:
             r = by_id.get(f"{run}#{it.extra['segment']}")
             if r is None or r["payload"] != " ".join(c or "?" for c in it.extra["codes"]):
                 continue  # this burst is not a scored unit
-            # The track text space is key codes; the model n-best is screen text, so we submit the greedy keys.
-            action = {"commit": "commit", "offer": "offer"}.get(guard.decide(model.nbest(st)).action, "abstain")
-            rows.append(SC.unit_row(r["unit"], [" ".join(greedy_codes(st))], action=action))
+            # track_nbest(): the n-best in the track text space (key codes); the guard reads model.nbest() itself.
+            rows.append(_row(r["unit"], guard, model, st))
             t = it.extra["times"]
-            s_sh = model.decode_array(shifted, times=t)
-            shuffled.append(SC.unit_row(r["unit"], [" ".join(greedy_codes(s_sh))],
-                                        action=_act(guard, model, s_sh)))
-            s_z = model.decode_array(np.zeros_like(emg), times=t)
-            zeros.append(SC.unit_row(r["unit"], [" ".join(greedy_codes(s_z))], action=_act(guard, model, s_z)))
+            shuffled.append(_row(r["unit"], guard, model, model.decode_array(shifted, times=t)))
+            zeros.append(_row(r["unit"], guard, model, model.decode_array(np.zeros_like(emg), times=t)))
         del emg, shifted
         print(f"  {run}: {len(pairs)} bursts decoded")
     print(f"  {len(rows)} scored units covered")
 
     step(3, "write the submission folder (a partial entry: declared with coverage.subset)")
-    from fidetype.benchmark.safe_wpm import guarantee_from_sheet
-
-    g = guarantee_from_sheet(guard.sheet.to_dict())
     manifest = SC.manifest_dict(
         TRACK, decoder={"name": "kt-semg-lda (tutorial 3)", "version": model.manifest.version,
                         "weights_licence": "not released", "weights_sha256": model.weights_sha256},
         policy={"name": "packaged guard", "config_id": guard.config_id},
-        # guarantee_from_sheet() gives the sheet numbers; a submission also needs scope and calibration_split.
-        guarantee={k: g[k] for k in ("method", "alpha", "delta", "n_cal")}
-        | {"calibration_split": "cal", "scope": "marginal over test units, exchangeable"},
+        guarantee=guarantee_from_sheet(guard, calibration_split="cal"),  # a valid submission guarantee
         regime="cross-session",
         controls={"shuffled": "EMG circularly shifted by half the run", "zeros": "all-zero EMG"},
         coverage={"subset": f"tutorial: test runs {', '.join(runs)} only"} if len(runs) < len(test_runs) else None,
@@ -177,8 +164,12 @@ def run_real(a: argparse.Namespace, out: Path) -> dict:
     return score_and_rank(sub, truth, None, out, compare=True, first=4)
 
 
-def _act(guard, model, st) -> str:
-    return {"commit": "commit", "offer": "offer"}.get(guard.decide(model.nbest(st)).action, "abstain")
+def _row(unit: str, guard, model, st) -> dict:
+    """One units.jsonl row: the track-space n-best and the guard action (withhold -> abstain)."""
+    nb = model.track_nbest(st, n_best=3)
+    act = {"commit": "commit", "offer": "offer"}.get(model.decide(st, guard=guard).action, "abstain")
+    return SC.unit_row(unit, [c["text"] for c in nb], [c["score"] for c in nb], action=act, offer_k=3,
+                       score_semantics="logprob")
 
 
 # ------------------------------------------------------------------------------------------
@@ -199,9 +190,8 @@ def score_and_rank(sub: Path, truth: dict, split: dict | None, out: Path, compar
     step(first + 2, "the leaderboard row of this card")
     card["_file"] = "card.json"
     rows = [LB.row(card)]
-    repo_results = Path(__file__).resolve().parents[1] / "benchmark" / "results" / "v0.2"
-    if compare and repo_results.is_dir():  # a git clone has the committed cards; a pip install has not
-        rows = LB.build_rows(LB.load_results(repo_results) + [card])[TRACK]
+    if compare:  # the committed cards ship in the package: LB.results_dir() works after pip install too
+        rows = LB.build_rows(LB.committed_results("v0.2") + [card])[TRACK]
     print("  | " + " | ".join(LB.COLUMNS[:9]) + " |")
     for r in rows:
         print("  | " + " | ".join(LB.cells(r)[:9]) + " |")

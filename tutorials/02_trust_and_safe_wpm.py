@@ -22,6 +22,7 @@ Licence: Apache-2.0. Synthetic data only, unless you pass --data.
 from __future__ import annotations
 
 import argparse
+import json
 import string
 import sys
 import tempfile
@@ -91,6 +92,9 @@ def run_synthetic(out: Path) -> dict:
     step(4, "compute the safe WPM from the decisions")
     neural_s = [x.shape[0] * FRAME_S for x in test_logits]
     rep = safe_wpm_of(results, test_texts, neural_s, guard, timing="toy: 4 rows x 100 ms per character")
+    manual = manual_safe_wpm(results, test_texts, neural_s, guard, timing="toy: 4 rows x 100 ms per character")
+    same = json.dumps(rep, sort_keys=True, default=str) == json.dumps(manual, sort_keys=True, default=str)
+    print(f"  same report as the manual route (five lists + two sheet functions): {same}")
 
     step(5, "keep the audit log and the guard")
     guard.write_audit(out / "audit.jsonl")
@@ -98,7 +102,7 @@ def run_synthetic(out: Path) -> dict:
     again = ft.load(out / "guard.json")
     print(f"  wrote audit.jsonl and guard.json; reloaded config {again.config_id} "
           f"(same: {again.config_id == guard.config_id})")
-    return {"mode": "synthetic", "report": rep}
+    return {"mode": "synthetic", "report": rep, "same_as_manual": same}
 
 
 # ------------------------------------------------------------------------------------------
@@ -106,16 +110,10 @@ def run_synthetic(out: Path) -> dict:
 # ------------------------------------------------------------------------------------------
 
 
-def safe_wpm_of(results, truths, neural_s, guard, *, timing: str, normalise=lambda t: t) -> dict:
-    committed = [r.action == "commit" for r in results]
-    correct = [c and normalise(r.text or "") == normalise(t) for c, r, t in zip(committed, results, truths)]
-    sheet = guard.sheet.to_dict()
-    rep = sw.safe_wpm(committed, correct,
-                      n_words=[len(normalise(t).split()) for t in truths],
-                      n_chars=[len(normalise(t)) for t in truths],
-                      neural_s=neural_s,
-                      guarantee=sw.guarantee_from_sheet(sheet), controls=sw.controls_from_sheet(sheet),
-                      timing=timing)
+def safe_wpm_of(results, truths, neural_s, guard, *, timing: str, normalizer=None) -> dict:
+    # One call: the guarantee and the controls come from the guard sheet; a commit is right when
+    # normalizer(text) == normalizer(truth) (None: whitespace only; "words": the T15 track rule).
+    rep = sw.from_decisions(results, truths, neural_s, guard, normalizer=normalizer, timing=timing)
     print("  " + sw.format_line(rep))
     print(f"  status {rep['status']}: value {rep['value']}, unguarded {rep['unguarded_wpm']:.2f}, "
           f"no-BCI reference {rep['no_bci_wpm']:.2f} WPM")
@@ -124,9 +122,18 @@ def safe_wpm_of(results, truths, neural_s, guard, *, timing: str, normalise=lamb
     return rep
 
 
+def manual_safe_wpm(results, truths, neural_s, guard, *, timing: str) -> dict:
+    """The route before sw.from_decisions (P14-45). Kept only to check that both give the same report."""
+    committed = [r.action == "commit" for r in results]
+    correct = [c and r.text == t for c, r, t in zip(committed, results, truths)]
+    sheet = guard.sheet.to_dict()
+    return sw.safe_wpm(committed, correct, n_words=[len(t.split()) for t in truths], n_chars=[len(t) for t in truths],
+                       neural_s=neural_s, guarantee=sw.guarantee_from_sheet(sheet),
+                       controls=sw.controls_from_sheet(sheet), timing=timing)
+
+
 def run_real(a: argparse.Namespace, out: Path) -> dict:
     import fidetype.pretrained as ftp
-    from fidetype.benchmark.registry import normalize
 
     step(1, f"load {a.model} and its committed guard")
     model = ftp.load(a.model, weights=a.weights)
@@ -134,18 +141,15 @@ def run_real(a: argparse.Namespace, out: Path) -> dict:
     print(f"  {model!r}; guard {guard.config_id}, alpha {guard.alpha}, delta {guard.delta}")
 
     step(2, "decode the odd 'val' trials (val_eval: not used to calibrate the guard)")
-    import h5py  # the API has no trial count, and an index past the end raises a bare IndexError
-
     pairs = []
     for path in a.data:
-        with h5py.File(path, "r") as f:
-            n_trials = len(f.keys())
+        n_trials = model.n_items(path)  # no decoding
         odd = list(range(1, n_trials, 2))[: a.n]
         pairs += model.decode_file(path, with_items=True, indices=odd)
         print(f"  {Path(path).parent.name}: {len(odd)} of {n_trials} trials")
 
     step(3, "decide on each trial")
-    results = [guard.decide(st.log_probs, utterance_id=it.key) for it, st in pairs]
+    results = [model.decide(st, guard=guard, utterance_id=it.key) for it, st in pairs]
     counts = {k: sum(r.action == k for r in results) for k in ("commit", "offer", "withhold")}
     print(f"  {counts}")
 
@@ -153,7 +157,7 @@ def run_real(a: argparse.Namespace, out: Path) -> dict:
     truths = [it.truth or "" for it, _ in pairs]
     neural_s = [it.x.shape[0] * 0.02 for it, _ in pairs]
     rep = safe_wpm_of(results, truths, neural_s, guard, timing="measured: trial length (20 ms bins)",
-                      normalise=lambda t: normalize(t, "words"))
+                      normalizer="words")
     guard.write_audit(out / "audit.jsonl")
     print(f"  wrote {out / 'audit.jsonl'}")
     return {"mode": "real", "report": rep}
@@ -175,7 +179,8 @@ def main(argv: list[str] | None = None) -> int:
         out.mkdir(parents=True, exist_ok=True)
         res = run_real(a, out) if a.model else run_synthetic(out)
     r = res["report"]
-    ok = r["status"] in ("certified", "vacuous", "above-alpha") and r["controls"]["passed"]
+    ok = (r["status"] in ("certified", "vacuous", "above-alpha") and r["controls"]["passed"]
+          and res.get("same_as_manual", True))
     print(f"\nTUTORIAL 2 {'PASS' if ok else 'FAIL'} ({res['mode']}): safe WPM status {r['status']}, "
           f"{time.perf_counter() - t0:.1f} s")
     return 0 if ok else 1

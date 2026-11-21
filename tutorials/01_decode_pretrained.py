@@ -18,8 +18,6 @@ Licence: Apache-2.0. Synthetic data only, unless you pass --data.
 from __future__ import annotations
 
 import argparse
-import hashlib
-import json
 import sys
 import tempfile
 import time
@@ -37,41 +35,9 @@ def step(n: int, text: str) -> None:
 
 # ------------------------------------------------------------------------------------------
 # Synthetic mode: a tiny random GRU-CTC model in a temporary folder.
-# The packaged models need weights that are not hosted yet (roadmap P14-02), so this
-# mode writes its own small weights file and a manifest that lists its SHA-256.
+# The packaged models need weights that are not hosted yet (roadmap P14-02), so this mode uses
+# ftp.make_toy_manifest(): it writes random weights and a manifest that lists their SHA-256.
 # ------------------------------------------------------------------------------------------
-
-TOY_SESSIONS = ["toy.2026.01.01", "toy.2026.01.02"]
-
-
-def make_toy_model(folder: Path) -> Path:
-    """Write tiny random weights + a manifest (same runtime as t15-m4-13). Return the manifest path."""
-    from fidetype.decoders.lookahead_gru import LookaheadGRUConfig, NumpyLookaheadGRU
-
-    cfg = LookaheadGRUConfig(n_in=16, n_out=41, n_sessions=len(TOY_SESSIONS), hidden=32, layers=2, patch=4,
-                             stride=2, smooth_sd=1.0, la_max=3, la_proj=4)
-    params = {k: v for k, v in NumpyLookaheadGRU.random(cfg, seed=0).params.items() if not k.startswith("la_")}
-    weights = folder / "toy-gru.weights.npz"
-    np.savez(weights, **params)
-    manifest = {
-        "schema": "fidetype.pretrained-manifest/0.1", "name": "toy-gru", "version": "1",
-        "title": "Tutorial toy: random GRU-CTC phoneme decoder (learned nothing)", "status": "available",
-        "task": "tutorial", "modality": "intracortical", "runtime": "gru-ctc",
-        "input": {"bin_s": 0.02, "file_format": "b2t25-hdf5"},
-        "output": {"vocab_type": "phoneme", "vocab_id": "phoneme.arpabet-39-sil", "frame_period_s": 0.04,
-                   "latency_s": 0.0},
-        "architecture": {"patch": 4, "stride": 2, "layers": 2, "hidden": 32, "smooth_sd": 1.0, "lookahead": None,
-                         "input_round": "float16", "sessions": TOY_SESSIONS},
-        "files": [{"role": "weights", "name": weights.name,
-                   "sha256": hashlib.sha256(weights.read_bytes()).hexdigest(),
-                   "size": weights.stat().st_size, "url": None}],
-        "licence": {"data.licence": "CC0-1.0", "data.research_only": False, "weights": "CC0-1.0",
-                    "weights_status": "tutorial toy, random numbers"},
-        "trust": None, "trust_note": "toy model: no trust config",
-    }
-    path = folder / "toy-gru.json"
-    path.write_text(json.dumps(manifest, indent=1), encoding="utf-8")
-    return path
 
 
 def run_synthetic(out: Path) -> dict:
@@ -80,7 +46,7 @@ def run_synthetic(out: Path) -> dict:
         print(f"  {m.name:<20} {m.status:<10} research_only={str(m.research_only).lower()}")
 
     step(2, "make a toy model (the real weights are not hosted yet)")
-    manifest = make_toy_model(out)
+    manifest = ftp.make_toy_manifest(out)  # or in one line: model = ftp.toy_model()
     print(f"  wrote {manifest.name} and its weights file into {out}")
 
     step(3, "load it: load() checks the size and the SHA-256 of every file")
@@ -92,7 +58,7 @@ def run_synthetic(out: Path) -> dict:
     streams = []
     for i in range(3):
         x = rng.standard_normal((200, 16)).astype(np.float32)  # 4 s of fake neural features
-        streams.append(model.decode(x, session=TOY_SESSIONS[0]))
+        streams.append(model.decode(x, session=model.sessions[0]))
     s = streams[0]
     print(f"  log_probs {s.log_probs.shape} (frames x tokens), vocab_type {s.vocab_type}, "
           f"frame period {s.frame_period} s")
@@ -112,9 +78,9 @@ def run_synthetic(out: Path) -> dict:
     paths = model.save(streams, out / "streams")
     print(f"  wrote {len(paths)} files, e.g. {paths[0].name}")
 
-    step(8, "the trust guard")
+    step(8, "the trust guard: model.decide(stream) is the same call for every model")
     try:
-        model.guard()
+        model.decide(s)
     except ftp.NoTrustConfig as e:
         print(f"  NoTrustConfig: {e}")
         print("  (expected: the toy model has no trust config; tutorial 2 calibrates one)")
@@ -135,7 +101,12 @@ def run_real(a: argparse.Namespace, out: Path) -> dict:
     print(f"  {model!r}")
 
     step(3, f"decode {a.n} items of {Path(a.data).name}")
-    kw = {"indices": [2 * i + 1 for i in range(a.n)]} if a.model.startswith("t15") else {"limit": a.n}
+    if a.model.startswith("t15"):  # the odd trials (val_eval half); n_items() counts them without decoding
+        n = model.n_items(a.data)
+        kw = {"indices": list(range(1, n, 2))[: a.n]}
+        print(f"  the file has {n} trials")
+    else:
+        kw = {"limit": a.n}
     pairs = model.decode_file(a.data, with_items=True, **kw)
     print(f"  {len(pairs)} streams")
 
@@ -154,11 +125,7 @@ def run_real(a: argparse.Namespace, out: Path) -> dict:
 
     step(6, "the trust guard of the model (if one is packaged)")
     try:
-        guard = model.guard()
-        acts = []
-        for _, st in pairs:
-            x = model.nbest(st) if hasattr(model, "nbest") else st.log_probs
-            acts.append(guard.decide(x).action)
+        acts = [model.decide(st, utterance_id=it.key).action for it, st in pairs]  # the right guard input per model
         print(f"  actions: {acts}")
     except ftp.NoTrustConfig as e:
         print(f"  NoTrustConfig: {e}")

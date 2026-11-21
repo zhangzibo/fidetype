@@ -6,11 +6,14 @@ Fidetype has a small registry of pretrained decoders for public datasets. One li
 import fidetype.pretrained as ftp                 # fidetype.decoders.load is the same function
 
 m = ftp.load("t15-m4-13")                         # checks the SHA-256 and the size of the weights
-streams = m.decode("t15.2023.08.13/data_val.hdf5")     # one NTS stream per trial
-guard = m.guard()                                 # the committed trust config of this model
-r = guard.decide(streams[0].log_probs)
+path = "t15.2023.08.13/data_val.hdf5"
+print(m.n_items(path))                            # number of trials, no decoding
+streams = m.decode_file(path)                     # a list: one NTS stream per trial
+r = m.decide(streams[0])                          # the committed trust guard of this model
 print(r.action, r.text or r.choices[:1])          # commit / offer / withhold
 ```
+
+No weights yet? `ftp.toy_model()` gives a tiny random model with the same runtime as `t15-m4-13` (see [toy model](#try-the-api-without-weights-the-toy-model)).
 
 Code: [`src/fidetype/pretrained/`](../src/fidetype/pretrained/__init__.py). Roadmap task P14-01. The weights are **not** in the package and **not** in the git repository. Hosting is a separate user step (P14-02, [publishing checklist section J](publishing-checklist.md#j-pretrained-weights-optional-45-min-roadmap-p14-02)).
 
@@ -29,7 +32,7 @@ Code: [`src/fidetype/pretrained/`](../src/fidetype/pretrained/__init__.py). Road
 
 Each model card (`fidetype decoders info <name>`) gives the input spec, the architecture, the release files with SHA-256 and size, the licence of the data and the proposed licence of the weights, the training run, the metrics and the limits.
 
-All runtimes are NumPy only. They need no PyTorch and no GPU. The readers need `h5py` (`pip install fidetype[emg2qwerty]`) for HDF5 files and `scipy` (`pip install fidetype[data]`) for the T12 and Willett `.mat` files.
+All runtimes are NumPy only. They need no PyTorch and no GPU. The readers need `h5py` (`pip install fidetype[hdf5]`; the old extra name `emg2qwerty` also works) for HDF5 files and `scipy` (`pip install fidetype[data]`) for the T12 and Willett `.mat` files.
 
 ## Where the weights come from
 
@@ -56,12 +59,15 @@ m = ftp.load("emg2qwerty-p11-01", accept_research_only=True)   # explicit opt-in
 
 On the command line the opt-in is `--accept-research-only`. Use it only for non-commercial research, and only if you accept the licence. The weights keep the share-alike terms of the data. Every stream from such a model carries `data.research_only = true`, so the Collector option `refuse_research_only = true` drops it downstream ([provenance and privacy](provenance-and-privacy.md)). A manifest cannot be looser than its data licence: the parser rejects an NC licence with `data.research_only = false`.
 
-## What `decode()` returns
+## What `decode()` and `decode_file()` return
 
-| Input | Result |
+| Call | Result |
 |---|---|
-| A file path (str or `Path`) | A list of streams, one per trial (T15, T12), text prompt (emg2qwerty), typing burst (KT-sEMG) or sentence (Willett; a session folder or its `sentences.mat`; `blocks=` keeps some blocks) |
-| An array | One stream. T15 / T12: `(T, 512)` features of one trial plus `session=` (the session name). emg2qwerty: `(n, 32)` raw EMG at 2 kHz. KT-sEMG: `(n, 32)` EMG plus `times=` (key onsets in seconds). Willett: `(T, 192)` threshold crossings in 10 ms bins from the go cue, plus `session=` (one of the 10 `t5.*` sessions) |
+| `m.decode_file(path)` | Always a list of streams, one per trial (T15, T12), text prompt (emg2qwerty), typing burst (KT-sEMG) or sentence (Willett; a session folder or its `sentences.mat`; `blocks=` keeps some blocks) |
+| `m.decode(array)` (= `m.decode_array(array)`) | One stream. T15 / T12: `(T, 512)` features of one trial plus `session=` (the session name, see `m.sessions`). emg2qwerty: `(n, 32)` raw EMG at 2 kHz. KT-sEMG: `(n, 32)` EMG plus `times=` (key onsets in seconds). Willett: `(T, 192)` threshold crossings in 10 ms bins from the go cue, plus `session=` (one of the 10 `t5.*` sessions) |
+| `m.decode(path)` | **Deprecated** (P14-44). It still returns the list of `decode_file(path)`, with a `DeprecationWarning`. Use `decode_file()` for files |
+
+`m.n_items(path)` counts the items of a file without decoding (`blocks=` for Willett). For T15 it reads only the HDF5 group names; for KT-sEMG it also reads the EMG file. `decode_file(path, indices=[...])` (T15, T12) takes positions `0 .. n_items(path) - 1` (negative positions count from the end). A position outside this range raises `IndexError` with the item count of the file.
 
 `decode_file(path, with_items=True)` returns `(item, stream)` pairs. `item.key` is a pseudonymous key (file name and index). `item.truth` holds the text of the file for your own evaluation. It never goes into a stream.
 
@@ -71,10 +77,10 @@ Each stream reaches the conformance level `provenance`. Its `meta` has `decoder.
 
 ## The trust guard
 
-`m.guard()` loads the trust config that we committed for the model (`fidetype.trust.load`). The guarantee holds only for the decoder and the text decoder that the config was calibrated with:
+`m.guard()` loads the trust config that we committed for the model (`fidetype.trust.load`). The guard input differs per model. So use one call for every model: `m.decide(stream)` (the default guard is built at the first call and then kept; pass `guard=` to use your own, and `utterance_id=` for the audit log). `m.guard_input(stream)` gives the guard input, so `m.decide(stream)` is `m.guard().decide(m.guard_input(stream))`. The guarantee holds only for the decoder and the text decoder that the config was calibrated with:
 
 - `t15-m4-13`: the P14-05 guard (`tcfg-1016759f08a3f9a1`, alpha 0.05, delta 0.1) is in the package. Its text decoder (phoneme beam -> lexicon words -> character LM) is built automatically from three text files (CMU dictionary, Tatoeba character 6-gram LM, Tatoeba word counts). Input: `guard.decide(stream.log_probs)`.
-- `kt-semg-lda`: the guard is a release file next to the weights. Input: the key n-best list, `guard.decide(m.nbest(stream))`. This decoder is weak; its guard offers and never commits (correct behaviour).
+- `kt-semg-lda`: the guard is a release file next to the weights. Input: the key n-best list in screen text, `guard.decide(m.nbest(stream))` (this is `m.guard_input(stream)`). This decoder is weak; its guard offers and never commits (correct behaviour). For the `kt-semg` benchmark track, use `m.track_nbest(stream)`: the same n-best idea, but in the track text space (one W3C `KeyboardEvent.code` per key press, `Backspace` included). `fidetype.adapters.kt_semg.codes_from_text(text)` converts screen text to codes; it is lossy (screen text has no `Backspace`).
 - `willett-hw`: the guard is a release file next to the weights (`tcfg-39aac48688b8bd12`, alpha 0.05, delta 0.1, built-in CTC beam, no LM; [P14-41](../experiments/2026-11-20-p14-41-willett-guard/results.md)). Input: `guard.decide(stream.log_probs)`. **It never commits.** The 106 val sentences give 40 LTT items, and alpha 0.05 with delta 0.1 needs at least 45, so no commit threshold is certified. On the 80 test sentences it offers 77 and withholds 3; safe WPM v0.1 is 0 (vacuous). All null controls pass (0 commits). The offers are not certified: the guard offers as often on frame-shuffled decoder frames (77 / 80) as on real input.
 - `t12-v2`, `emg2qwerty-p11-01`: no packaged trust config yet (`NoTrustConfig`). Calibrate your own with [`fidetype.trust.calibrate`](trust-quickstart.md).
 
@@ -128,6 +134,30 @@ Output on the project machine (2026-11-19, CPU; aggregate lines only):
 | `emg2qwerty-p11-01`, one test session `--n 3` | refused without the opt-in; with `--accept-research-only`: 3 prompts | all `provenance`, `data.research_only = true`; greedy CER 0.695 (82 / 118) |
 
 Full reruns of the model-card metrics ([results](../experiments/2026-11-19-p14-01-pretrained/results.md)): T15 val_eval greedy PER 0.1210 (card 0.1210), guard decisions equal to P14-05 on 701 / 701 trials; T12 test PER 0.2695 (card 0.269); emg2qwerty generic prompt CER 0.5831 (card 0.5832); KT-sEMG run28 key accuracy 0.242 (card 0.248, other timing path); Willett test greedy CER 0.3051 (card 0.3051, [P14-33](../experiments/2026-11-19-p14-33-willett-hw/results.md)).
+
+## Try the API without weights: the toy model
+
+The release weights are not hosted yet (P14-02). To learn the API, use a toy model:
+
+```python
+import numpy as np
+import fidetype.pretrained as ftp
+
+toy = ftp.toy_model()                                   # files in a new temporary folder
+st = toy.decode(np.zeros((200, 16), np.float32), session=toy.sessions[0])
+print(st.log_probs.shape, toy.text(st))                 # (99, 41), noise
+
+path = ftp.make_toy_manifest("my-folder")               # or write the files yourself ...
+m = ftp.load(str(path), weights="my-folder")            # ... and load them as any model
+```
+
+| Fact | Value |
+|---|---|
+| Runtime | `gru-ctc` (the runtime of `t15-m4-13` and `t12-v2`); the only toy runtime today |
+| Weights | random numbers (`seed=`). **The output is noise**: the model has learned nothing |
+| Options | `n_in` (input channels, default 16), `hidden`, `layers`, `sessions`, `name`, `seed` |
+| Files | `<name>.weights.npz` and `<name>.json`; `load()` checks the SHA-256 and the size, as for a real model |
+| Trust | none: `toy.decide(stream)` raises `NoTrustConfig`. Calibrate a guard with [`fidetype.trust.calibrate`](trust-quickstart.md) |
 
 ## Add a model
 

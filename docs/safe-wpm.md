@@ -73,6 +73,17 @@ r = safe_wpm(committed, correct, n_words, n_chars, neural_s,
 print(r["value"], r["status"])
 ```
 
+From the decisions of a drop-in `TrustGuard`, one call builds the five lists, the guarantee and the controls (P14-45):
+
+```python
+from fidetype.benchmark.safe_wpm import from_decisions
+
+results = [guard.decide(x) for x in outputs]              # TrustResult per utterance
+r = from_decisions(results, truths, neural_s, guard,      # guard, guard.sheet or the sheet dict
+                   normalizer="words",                    # None (whitespace only), a track normaliser, or a callable
+                   timing="measured trial durations")
+```
+
 Command line (one JSON object per trial: `committed`, `correct`, `truth` or `n_words` + `n_chars`, `neural_s`, optional `cluster`):
 
 ```bash

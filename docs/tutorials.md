@@ -27,7 +27,7 @@ cd fidetype
 pip install .          # numpy is the only dependency of the synthetic mode
 ```
 
-For the real-data modes, also install `h5py` (`pip install ".[emg2qwerty]"`; tutorials 1 and 2 read HDF5 files).
+For the real-data modes, also install `h5py` (`pip install ".[hdf5]"`; tutorials 1 and 2 read HDF5 files).
 
 ## Run all three
 
