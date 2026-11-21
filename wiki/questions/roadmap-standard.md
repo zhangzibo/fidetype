@@ -270,10 +270,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P2-14 Windows pytest CI job within its job timeout
 - **Gap:** 154 of the [open-gap list](open-gaps.md) (added 2026-11-21 from CI runs). Follow-up of P2-09.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-21; commits `d0f0d34`, `2af928f`). The pytest jobs are sharded by whole test files with measured weights (`tests/conftest.py` `--shard K/N` and `--file-durations`; `tests/shard_weights.json`; `tests/test_shard_split.py`): 3 shards per Windows Python, 2 per ubuntu Python. `timeout-minutes` stays 30; coverage unchanged. 5 consecutive green runs (44889116085, 44889286346, 44892071579, 44892213002, 44892707275); slowest job in the final setup 12.3 min. Remaining: 5 more consecutive green runs with job times.
+- **Maintenance:** refresh `tests/shard_weights.json` from the `json:` line of `--file-durations` when a shard goes above about 20 min.
+- **Follow-up:** gap 156 = [P2-15](#p2-15-faster-slow-test-fixtures-hybrid_setup-and-streaming-calibration) (faster slow fixtures, low priority).
 - **Depends on:** P2-09 (done: CI matrix). Not the same issue as gap 124 = [P2-13](#p2-13-ci-latency-budget-tests-flake-on-shared-runners): P2-13 is a latency-assertion flake; this item is the total job time.
 - **Source:** CI runs 44881145511 (`96cec56`), 44882224116 (`76747e8`), 44882979465 (`dcc344b`) and 44883759336 (`534feae`), 2026-11-21 UTC. The job `pytest (windows-latest, py3.12)` stopped at the 30-min `timeout-minutes` of `.github/workflows/tests.yml` (status cancelled). The tests passed until the stop. The `all-green` check failed. Run 44884477288 (`6de1779`) passed in about 22 min; in that run `pytest (windows-latest, py3.13)` took about 25 min.
 - **Done when:** the Windows pytest jobs finish within their timeout (a raised timeout with a stated reason, or a sharded suite) in 10 consecutive CI runs, and the job times are reported.
+
+#### P2-15 Faster slow test fixtures (hybrid_setup and streaming calibration)
+- **Gap:** 156 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P2-14). Follow-up of P2-14.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P2-14 (in progress). CPU.
+- **Source:** P2-14 (2026-11-21, `--file-durations` on CI, windows py3.12): the module fixture `hybrid_setup` in `tests/test_trust_hybrid_commit.py` takes 121 s; the setup of `test_calibrate_streaming_end_to_end` in `tests/test_trust_stream_commit.py` takes 91 s.
+- **Ideas:** a cached or precomputed calibration.
+- **Done when:** both take less than 30 s on windows py3.12 CI, with all assertions unchanged, and `tests/shard_weights.json` is refreshed.
 
 ## P3. Collector (pipeline)
 **Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a TOML/JSON file (FEP-0006; [decision 2026-11-17](collector-decisions-2026-11.md)).
@@ -680,11 +690,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-33 Offer policy that withholds on no-evidence input, and the offer-control default
 - **Gap:** 152 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P5-31). Follow-up of P5-31.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; pre-registration `a7abc11`, code and results `9ce8006`, [results](../../experiments/2026-11-21-p5-33-withhold/results.md)). `t15-m4-13` passes the offer null control with the offer gate `coherence >= 0.1869751254594959` (a frame-order feature), on by default: E1 uniform 0 / 300 and frame-shuffled 0 / 300 offers (were 300 / 300); E2 54 LTT commits, unchanged; E3 real LTT offers 212 / 271 (limit >= 185; 217 before); E4 val_eval 104 commits (identical to P14-05), offers 568 / 597 (limit >= 508), nulls 0 / 300 and 0 / 300. `kt-semg-lda`: negative. No candidate passed the selection (`char_lm_best` 100 / 108 user nulls against 103 / 108 real; `char_lm_best` AND margin 0 / 300 uniform but 100 / 108 user nulls); info-only evaluation FAIL (uniform 289 / 300, user nulls 165 / 173, real 63 / 65). Reason: the user nulls are real key windows at random times; key accuracy 0.248.
+- **Default decision:** the orchestrator recommends to keep `offer_control="warn"` for now (1 of 4 packaged guards passes) and to revisit after gap 150. The decision itself moved to the user's decision list in HANDOFF.md and is tracked there.
+- **Follow-up:** gap 155 = [P5-34](#p5-34-offer-gate-for-kt-semg-lda) (`kt-semg-lda` part, split from this gap); gap 150 = [P14-54](#p14-54-frame-order-aware-no-signal-gate-or-offer-check-for-willett-hw) (`willett-hw`, still open).
 - **Depends on:** P5-31 (done); gap 150 = [P14-54](#p14-54-frame-order-aware-no-signal-gate-or-offer-check-for-willett-hw) for `willett-hw`; local calibration inputs of `t15-m4-13` and `kt-semg-lda`. CPU.
 - **Source:** P5-31 re-check (2026-11-21, `367ad72`, [results](../../experiments/2026-11-21-p5-31-offer-control/results.md)): every packaged guard fails the offer null control. `t15-m4-13` offers on 300 / 300 uniform and 300 / 300 frame-shuffled inputs (real 217 / 271). `kt-semg-lda` offers on 300 / 300 uniform inputs and 173 / 173 user nulls (real 65 / 65). `willett-hw` offers on 297 / 300 and 289 / 300 frame-shuffled inputs (real 40 / 40). The mode is `warn`, so no status changed.
 - **Overlap:** the `willett-hw` part has the same done-when as gap 150 (P14-54) and closes there. This item keeps `t15-m4-13` and `kt-semg-lda` (they fail on uniform input too, so they need a gate before the offer list) and the default decision.
 - **Done when:** each packaged guard has a policy (for example a no-signal gate before the offer list) under which `recheck_offer_control` passes, or numbers say why not; then a recorded decision whether `offer_control="refuse"` becomes the default, with a test.
+
+#### P5-34 Offer gate for kt-semg-lda
+- **Gap:** 155 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P5-33; split from gap 152). Follow-up of P5-33.
+- **Status:** `todo`.
+- **Depends on:** P5-33 (done); a stronger key decoder (key accuracy 0.248) or a feature that reads the key order across keys; local KT-sEMG calibration inputs. CPU.
+- **Source:** P5-33 (2026-11-21, pre-registration `a7abc11`, code and results `9ce8006`, [results](../../experiments/2026-11-21-p5-33-withhold/results.md)): no candidate gate passed the calibration-only selection for `kt-semg-lda` (`char_lm_best`: 100 / 108 user nulls against 103 / 108 real; `char_lm_best` AND margin: 0 / 300 uniform but 100 / 108 user nulls). Info-only evaluation FAIL: uniform 289 / 300, user nulls 165 / 173, real 63 / 65. The user nulls are real key windows at random times, and the key accuracy is 0.248.
+- **Done when:** a pre-registered gate, chosen on calibration data only, passes the P5-31 offer null control against both the uniform and the user-null controls, keeps at least 0.85 x the real LTT offers, and leaves the commits unchanged. Then refresh the manifest `offer_control` block from the new re-check.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
@@ -1159,10 +1178,10 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-50** | Willett-blocked Tatoeba LM as the `willett-hw` LM readout (gap 146, done 2026-11-21, [details](#p14-50-willett-blocked-tatoeba-lm-as-the-willett-hw-lm-readout)) | P14-48, P15-38 | research labs |
 | **P14-51** | Toy models for the xbody-ctc, crt-ctc and key-lda runtimes (open gap 147, [details](#p14-51-toy-models-for-the-xbody-ctc-crt-ctc-and-key-lda-runtimes)) | P14-44 | small teams, newcomers |
 | **P14-52** | KT-sEMG item count from the key log alone (open gap 148, [details](#p14-52-kt-semg-item-count-from-the-key-log-alone)) | P14-44, P14-46 | small teams, research labs |
-| **P14-53** | Tutorial 3 real mode re-run after the P14-46 changes (open gap 149, [details](#p14-53-tutorial-3-real-mode-re-run-after-the-p14-46-changes)) | P14-43, P14-46 | small teams, newcomers |
+| **P14-53** | Tutorial 3 real mode re-run after the P14-46 changes (gap 149, done 2026-11-21, [details](#p14-53-tutorial-3-real-mode-re-run-after-the-p14-46-changes)) | P14-43, P14-46 | small teams, newcomers |
 | **P14-54** | Frame-order-aware no-signal gate or offer check for `willett-hw` (open gap 150, [details](#p14-54-frame-order-aware-no-signal-gate-or-offer-check-for-willett-hw)) | P14-49, P5-31 | research labs |
 | **P14-55** | Robustness check of the `willett-hw` gate C5 (open gap 151, [details](#p14-55-robustness-check-of-the-willett-hw-gate-c5)) | P14-49 | research labs |
-| **P14-56** | Offer-control result in the packaged manifests and model cards (open gap 153, [details](#p14-56-offer-control-result-in-the-packaged-manifests-and-model-cards)) | P5-31, P14-01 | research labs, small teams |
+| **P14-56** | Offer-control result in the packaged manifests and model cards (gap 153, done 2026-11-21, [details](#p14-56-offer-control-result-in-the-packaged-manifests-and-model-cards)) | P5-31, P14-01 | research labs, small teams |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1583,7 +1602,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-53 Tutorial 3 real mode re-run after the P14-46 changes
 - **Gap:** 149 of the [open-gap list](open-gaps.md) (added 2026-11-20). Follow-up of P14-43, P14-46.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; commit `f797f0f`, [tutorial](../../docs/tutorials-03-benchmark.md); tutorials CI run 44888427226 green). Real mode on KT-sEMG run28 passes: 22 / 172 units, key error 0.748, eWPM 2.40 (no-BCI 2.82), 22 offers, 0 commits, safe WPM 0.00 (vacuous), all controls pass, status `scored`, 48.2 s on 2 CPUs. The key-log-only truth equals the committed truth file in all 172 rows; both committed `kt-semg` cards rescore exactly. eWPM 2.55 -> 2.40 because the tutorial now offers the top 3 instead of the top 1 (expected). Bug fixed: NaN in `card.json` -> strict JSON (null), with a test.
 - **Serves:** small teams, newcomers.
 - **Depends on:** P14-46 (done); local KT-sEMG data; CPU only.
 - **Source:** P14-46 (2026-11-20): tutorial 3 now uses `build_truth(split=)`, key-log-only KT truth and track-space n-best; its real mode (KT-sEMG run28) was not re-run on the project machine.
@@ -1591,11 +1610,12 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-54 Frame-order-aware no-signal gate or offer check for willett-hw
 - **Gap:** 150 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P14-49 and P5-31). Follow-up of P14-49, P5-31.
-- **Status:** `todo`.
+- **Status:** `todo` (an agent works on it, 2026-11-21; pre-registration `09def1e`).
+- **Evidence:** 2026-11-21 (P5-33, `9ce8006`, [results](../../experiments/2026-11-21-p5-33-withhold/results.md)): on `t15-m4-13` the frame-order feature `coherence` stopped frame-shuffled input fully (0 / 300 offers), against 275-287 / 300 for the per-frame features. Gap 152 closed; this `willett-hw` part stays open here.
 - **Serves:** research labs.
 - **Depends on:** P14-49, P5-31 (done); val blocks only; CPU. This is the `willett-hw` part of gap 152 = [P5-33](#p5-33-offer-policy-that-withholds-on-no-evidence-input-and-the-offer-control-default).
 - **Source:** P14-49 (2026-11-21, results `dcc344b`, [results](../../experiments/2026-11-20-p14-49-willett-gate-blocked-lm/results.md)): frame-shuffled frames pass gate C5 on 79 / 80 test inputs and get offers on 77 / 80 (real 77 / 80). P5-31 re-check (`367ad72`): both `willett-hw` guards fail the offer null control only on frame-shuffled frames (297 / 300 and 289 / 300; real 40 / 40). The C5 features are per-frame statistics, so they cannot see the frame order.
-- **Done when:** a separately pre-registered, val-only gate or offer check that reads the frame order makes both `willett-hw` guards pass `recheck_offer_control` on frame-shuffled frames (the P5-31 rule), with time-shuffled, zero and uniform input each still at most 4 / 80 emitting and real input gated at most 4 / 80; or numbers say why not.
+- **Done when:** a separately pre-registered, val-only gate or offer check that reads the frame order makes both `willett-hw` guards pass `recheck_offer_control` on frame-shuffled frames (the P5-31 rule), with time-shuffled, zero and uniform input each still at most 4 / 80 emitting and real input gated at most 4 / 80; or numbers say why not. Then refresh the manifest `offer_control` blocks from the new re-check.
 
 #### P14-55 Robustness check of the willett-hw gate C5
 - **Gap:** 151 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P14-49). Follow-up of P14-49.
@@ -1607,7 +1627,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-56 Offer-control result in the packaged manifests and model cards
 - **Gap:** 153 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P5-31). Follow-up of P5-31, P14-01.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; commit `f2eb771`, updated by `9ce8006`). All four packaged guards carry the P5-31 offer-control result in their manifest (`trust.offer_control`; the `willett-hw` LM readout in `readouts.lm.trust.offer_control`) and in the `Manifest.card()` output. `tests/test_pretrained_offer_control.py` checks the values against the re-check JSON files; section in docs/pretrained-decoders.md; CHANGELOG entry. Since `9ce8006` the `t15-m4-13` block shows the gated re-check (pass) with the `before_gate` counts. The blocks are copied by hand: gaps 150 and 155 refresh them from their new re-checks.
 - **Serves:** research labs, small teams.
 - **Depends on:** P5-31 (done); can be done before gap 152 = P5-33; CPU.
 - **Source:** P5-31 (2026-11-21, `367ad72`): the re-check results are only in `experiments/2026-11-21-p5-31-offer-control/results/recheck-*.json`. The manifests and model cards do not show them.

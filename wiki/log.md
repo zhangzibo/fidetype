@@ -1530,3 +1530,28 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Open-gaps list, roadmap, tracker and HANDOFF updated. Gap 138 (P14-47) has new evidence (still offer-only; P5-31 now available).
 - Tracker: agent runs for P14-49/50, P5-31/32 and the earlier records run (commit `96cec56`, on M0-12).
 - HANDOFF: GPU paused (the user is gaming); P15-37 CPU job running; publishing weekend has begun. Written 2026-11-21 01:11.
+
+## [2026-11-21] query | P14-53: tutorial 3 real mode re-run after P14-46 (gap 149 closed)
+- Commit `f797f0f`; [tutorial 3](../docs/tutorials-03-benchmark.md); tutorials CI run 44888427226 green.
+- KT-sEMG run28: 22 / 172 units, key error 0.748, eWPM 2.40 (no-BCI 2.82), 22 offers, 0 commits, safe WPM 0.00 (vacuous), all controls pass, 48.2 s on 2 CPUs.
+- Key-log-only truth = committed truth file in all 172 rows; both committed `kt-semg` cards rescore exactly. eWPM 2.55 -> 2.40 from the top-3 offers (expected). NaN in `card.json` -> strict JSON, with a test.
+
+## [2026-11-21] query | P14-56: offer-control result in the packaged manifests and cards (gap 153 closed)
+- Commit `f2eb771`, updated by `9ce8006`. `trust.offer_control` and `readouts.lm.trust.offer_control` in all four packaged manifests and in `Manifest.card()`; test against the re-check JSON; docs/pretrained-decoders.md; CHANGELOG.
+- The blocks are copied by hand: gaps 150 and 155 refresh them from their new re-checks (no new gap).
+
+## [2026-11-21] query | P5-33: offer gate that withholds on no-evidence input (gap 152 closed; new gap 155)
+- Pre-registration `a7abc11`, code and results `9ce8006`. `t15-m4-13` passes with the gate `coherence >= 0.1869751254594959` (frame-order feature, default on): uniform and frame-shuffled 0 / 300 offers (were 300 / 300); 54 LTT commits unchanged; real LTT offers 212 / 271; val_eval 104 commits identical to P14-05.
+- `kt-semg-lda` negative: no candidate passed the selection; info-only uniform 289 / 300, user nulls 165 / 173, real 63 / 65 (key accuracy 0.248). New gap 155 = [P5-34](questions/roadmap-standard.md#p5-34-offer-gate-for-kt-semg-lda).
+- `offer_control` default: orchestrator recommendation "keep warn for now (1 of 4 guards passes); revisit after gap 150"; the decision moved to the user decision list in HANDOFF.md.
+- [Results](../experiments/2026-11-21-p5-33-withhold/results.md).
+
+## [2026-11-21] query | P2-14: sharded pytest CI jobs (gap 154 in progress; new gap 156)
+- Commits `d0f0d34`, `2af928f`: file-level shards with measured weights (`--shard K/N`, `--file-durations`, `tests/shard_weights.json`); 3 shards per Windows Python, 2 per ubuntu; timeout 30 min; coverage unchanged.
+- 5 consecutive green runs (44889116085, 44889286346, 44892071579, 44892213002, 44892707275); slowest job 12.3 min. 5 more needed.
+- New gap 156 = [P2-15](questions/roadmap-standard.md#p2-15-faster-slow-test-fixtures-hybrid_setup-and-streaming-calibration): fixtures `hybrid_setup` (121 s) and the streaming calibration setup (91 s), low priority.
+
+## [2026-11-21] setup | Records: gaps 149, 152, 153 closed; gap 154 in progress; new gaps 155-156
+- Open-gaps list, roadmap, tracker and HANDOFF updated. Gap 150 (P14-54) has new evidence from P5-33 and a done-when addition (refresh the manifest `offer_control` blocks).
+- Tracker: agent runs for P14-53, P14-56, P5-33 and P2-14. New items P5-34 and P2-15 (todo).
+- HANDOFF: user decision list (`offer_control` default); P15-37 at 9 of 41 draws; shard-weights maintenance note. `uv.lock` hdf5 extra committed separately. Written 2026-11-21 02:34.
