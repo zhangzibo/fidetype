@@ -173,6 +173,10 @@ class Manifest:
             lines.append(f"  limit:    {lim}")
         if self.trust:
             lines.append(f"  trust:    {self.trust.get('config')} (decode: {self.trust.get('decode')})")
+            g = self.trust.get("offer_gate")
+            if isinstance(g, Mapping):
+                lines.append(f"  offer gate: withhold an offer if {g.get('feature')} < {g.get('threshold'):.6g} "
+                             "(P5-33; on by default, guard(offer_gate=False) switches it off; commits unchanged)")
         else:
             lines.append("  trust:    no committed trust config")
         for key, oc in self.offer_controls.items():
@@ -290,6 +294,14 @@ def parse_manifest(doc: Mapping[str, Any], where: str = "<manifest>") -> Manifes
     needed = bool(combine([source_summary(spdx)])["research_only"])
     if needed and not ro:
         raise ManifestError(f"{where}: data licence {spdx} needs data.research_only = true")
+    tr = doc.get("trust")
+    if isinstance(tr, Mapping) and "offer_gate" in tr:
+        from fidetype.trust.offer_gate import OfferGate
+
+        try:
+            OfferGate.from_dict(tr["offer_gate"])
+        except (KeyError, TypeError, ValueError) as e:
+            raise ManifestError(f"{where}: trust.offer_gate: {e}") from None
     for key, oc in _offer_blocks(doc):
         _check_offer_control(oc, f"{where}: {'trust' if key == 'default' else 'readouts.' + key + '.trust'}"
                                  f".offer_control")

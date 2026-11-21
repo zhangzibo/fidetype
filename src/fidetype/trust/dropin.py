@@ -633,7 +633,8 @@ class TrustGuard:
 
     def __init__(self, config: FrozenTrustConfig, codec: _Codec, sheet: GuaranteeSheet | None = None,
                  decode_fn: UserDecodeFn | None = None, audit_text: bool = True, *,
-                 halluc_gate: Any = None, grounding: Any = None, language: str = "en") -> None:
+                 halluc_gate: Any = None, grounding: Any = None, language: str = "en",
+                 offer_gate: Any = None) -> None:
         from fidetype.lang import check_tag
         from fidetype.trust.streaming import StreamingConfig, StreamingTrustLayer
 
@@ -675,6 +676,16 @@ class TrustGuard:
         #: ``"sentence"`` or ``"prefix"`` (P5-24: commit the longest certified word prefix of the top-1 text).
         self.commit_unit = self.commit_score.unit if self.commit_score is not None else "sentence"
         self._last_nb: NBest | None = None
+        #: P5-33 offer gates (:class:`~fidetype.trust.offer_gate.OfferGate`, all must pass), or ``()`` (off).
+        #: They change OFFER to WITHHOLD only; commits and ``config_id`` do not change.
+        self.offer_gates: tuple[Any, ...] = ()
+        self.set_offer_gate(offer_gate)
+        #: If True, :attr:`last_offer_features` holds the offer-gate features of every decision (P5-33 analysis).
+        self.collect_offer_features = False
+        self.last_offer_features: dict[str, float] | None = None
+        #: A character LM for the ``char_lm`` features when no gate carries one (P5-33 analysis).
+        self.offer_lm: Any = None
+        self._offer_gate_why: str | None = None
         self._last_score: float | None = None
         self._last_prefix: tuple[int, int] | None = None
         decode = _decode_fn_for(decode_fn, codec.lexicon) if frames else None
@@ -814,8 +825,63 @@ class TrustGuard:
         """The final decision, with the P15-06 grounding gate applied to a COMMIT (reason or None)."""
         return self._gate_final(self._run_layer(self._layer, events), events)
 
+    # --- P5-33 offer gate ---------------------------------------------------
+
+    def set_offer_gate(self, gate: Any) -> None:
+        """Set the P5-33 offer gate: an :class:`~fidetype.trust.offer_gate.OfferGate`, a sequence of them
+        (all must pass) or None (off). Commits and ``config_id`` do not change."""
+        if gate is None or gate is False:
+            gates: tuple[Any, ...] = ()
+        elif isinstance(gate, (list, tuple)):
+            gates = tuple(gate)
+        else:
+            gates = (gate,)
+        for g in gates:
+            g.check_kind(self.input_kind)
+        self.offer_gates = gates
+
+    def _offer_features(self, sd: Any, events: Sequence[Mapping[str, Any]],
+                        names: Sequence[str] | None = None) -> dict[str, float]:
+        """The P5-33 offer-gate features of one decision (all features of this input kind, or ``names``)."""
+        from fidetype.trust import offer_gate as og
+
+        out: dict[str, float] = {"p_top1": float(sd.inputs.p_top1), "safety": 1.0 - float(sd.inputs.guard_risk)}
+        want = set(names) if names is not None else None
+        if self.input_kind == "logits":
+            if want is None or want & {"coherence", "coherence_ratio", "peak", "neg_entropy", "nb_share"}:
+                lp = self._last_lp
+                if lp is None:
+                    lp = np.zeros((0, len(self._codec.vocab)))
+                out.update(og.frame_features(lp, int(self._codec.vocab.blank_id or 0)))
+        elif want is None or want & {"margin", "conf_mean", "char_lm", "char_lm_best"}:
+            lm = next((g.lm for g in self.offer_gates if g.lm is not None), self.offer_lm)
+            out.update(og.nbest_features(list(_nbest_of_events(events).candidates), lm))
+        return out
+
+    def _apply_offer_gate(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> Any:
+        from fidetype.trust.policy import Decision
+
+        self._offer_gate_why = None
+        self.last_offer_features = None
+        is_offer = sd.decision.action in (Action.OFFER, Action.OFFER_WORDS)
+        if self.collect_offer_features:
+            self.last_offer_features = self._offer_features(sd, events)
+        if not (self.offer_gates and is_offer):
+            return sd
+        feats = self.last_offer_features or self._offer_features(sd, events, [g.feature for g in self.offer_gates])
+        for g in self.offer_gates:
+            why = g.violation(float(feats[g.feature]))
+            if why is not None:
+                self._offer_gate_why = why
+                return replace(sd, decision=Decision(Action.ABSTAIN, (), f"{why}; {sd.decision.reason}"))
+        return sd
+
     def _gate_final(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[Any, str | None]:
-        """The steps of :meth:`_final_gated` after the layer's final decision ``sd``."""
+        """The steps of :meth:`_final_gated` after the layer's final decision ``sd`` (last: the P5-33 offer gate)."""
+        sd, why = self._gate_final_commit(sd, events)
+        return self._apply_offer_gate(sd, events), why
+
+    def _gate_final_commit(self, sd: Any, events: Sequence[Mapping[str, Any]]) -> tuple[Any, str | None]:
         self._last_score = None
         self._last_prefix = None
         if self.commit_score is not None:
@@ -852,6 +918,9 @@ class TrustGuard:
             ev["config_id"] = self.config_id
             ev["reason"] = f"{_HALLUC_REASON} ({halluc_why}); {d.reason}"
             reason = f"{_HALLUC_REASON} ({halluc_why}); {reason}"
+        if self._offer_gate_why is not None and d.action == Action.ABSTAIN:
+            reason = f"withhold: no evidence of signal for an offer ({self._offer_gate_why})"
+            ev["offer_gate"] = self._offer_gate_why
         text = shown[0] if act == "commit" and shown else None
         n_words = len(text.split()) if text is not None else None
         complete = None if text is None else True
@@ -977,7 +1046,8 @@ class TrustGuard:
 
         return {"type": "audit_header", "schema": "fidetype.trust-audit/0.1", "fidetype_version": __version__,
                 "config_id": self.config_id, "input_kind": self.input_kind,
-                "guarantee": self.sheet.to_dict() if self.sheet is not None else None}
+                "guarantee": self.sheet.to_dict() if self.sheet is not None else None,
+                **({"offer_gate": [g.to_dict() for g in self.offer_gates]} if self.offer_gates else {})}
 
     def write_audit(self, path: str | PathLike[str]) -> Path:
         """Write the audit log as JSON Lines: :meth:`audit_header`, then one record per decision."""
@@ -999,6 +1069,9 @@ class TrustGuard:
             d["grounding"] = getattr(self.grounding, "name", "?")
         if self.language != "en":
             d["language"] = self.language
+        if self.offer_gates:
+            gs = [g.to_dict() for g in self.offer_gates]
+            d["offer_gate"] = gs[0] if len(gs) == 1 else gs
         return d
 
     def save(self, path: str | PathLike[str]) -> Path:
@@ -1185,7 +1258,7 @@ class GuardSession:
 
 
 def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
-         audit_text: bool = True, grounding: Any = None) -> TrustGuard:
+         audit_text: bool = True, grounding: Any = None, offer_gate: Any = None, lm: Any = None) -> TrustGuard:
     """Load a guard saved with :meth:`TrustGuard.save`.
 
     If the guard was calibrated with your own ``decode_fn``, pass the
@@ -1193,6 +1266,10 @@ def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
     different decoder voids the guarantee. The same holds for
     ``grounding`` (P15-06): a guard with a commit grounding gate needs the
     same :class:`~fidetype.trust.halluc_bound.CommitGrounding` again.
+
+    ``offer_gate`` (P5-33): None (default) uses the gate in the file, if there is one; an
+    :class:`~fidetype.trust.offer_gate.OfferGate` (or a list) replaces it; ``False`` switches it off.
+    ``lm``: the character LM of a ``char_lm`` gate.
     """
     d = json.loads(Path(path).read_text(encoding="utf-8"))
     if d.get("schema") != GUARD_SCHEMA:
@@ -1212,8 +1289,14 @@ def load(path: str | PathLike[str], decode_fn: UserDecodeFn | None = None, *,
             raise ValueError(f"this guard has a commit grounding gate ({d.get('grounding')}); pass grounding= "
                              "(the same CommitGrounding), or the hallucination bound does not apply")
         grounding = _as_commit_grounding(grounding)
+    if offer_gate is None and d.get("offer_gate"):
+        from fidetype.trust.offer_gate import OfferGate
+
+        raw = d["offer_gate"]
+        offer_gate = [OfferGate.from_dict(x, lm=lm) for x in (raw if isinstance(raw, list) else [raw])]
     return TrustGuard(FrozenTrustConfig.from_dict(d["config"]), codec, sheet, decode_fn, audit_text,
-                      halluc_gate=gate, grounding=grounding, language=d.get("language", "en"))
+                      halluc_gate=gate, grounding=grounding, language=d.get("language", "en"),
+                      offer_gate=offer_gate)
 
 
 def _as_commit_grounding(g: Any) -> Any:

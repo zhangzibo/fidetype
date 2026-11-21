@@ -108,6 +108,23 @@ What a failure means for you: do not show the offer list as a suggestion of the 
 
 **Check a saved guard.** `fidetype.trust.recheck_offer_control(guard, inputs, null_inputs=...)` runs the control on a saved guard without a new calibration. Give it the calibration inputs in the same order (and the same `null_inputs`). It makes the same split and the same control inputs from `sheet.seed`, so the commit counts must equal the sheet (`commits_match_sheet: True`).
 
+### 5b. Offer gate (P5-33)
+
+An offer gate makes a guard WITHHOLD an offer when the input shows no evidence of signal.
+
+```python
+from fidetype.trust import OfferGate
+guard.set_offer_gate(OfferGate("coherence", 0.187))   # or ft.load(path, offer_gate=...)
+```
+
+- It acts **only on OFFER decisions**. A COMMIT and a WITHHOLD never change. So the commit bound, the commit threshold, the commit null controls and `config_id` stay the same.
+- It reads one feature of the decision (`fidetype.trust.offer_gate`). An example is `coherence`: the mean dot product of adjacent frame probabilities, minus the mean over all frame pairs. Its expected value is 0 when the frame order is random, and also on flat input. Per-frame statistics (`peak`, `neg_entropy`) cannot see a frame-shuffled input.
+- `OfferGate.fit(feature, values, keep=0.95)` sets the threshold from the feature values of the real calibration OFFERs. Fit it on items that the offer null control does not use as real items.
+- A guard file stores the gate under `offer_gate`, but only when a gate is set. Old files keep their bytes. `ft.load(path, offer_gate=False)` switches a stored gate off.
+- `recheck_offer_control` sees the gate.
+
+Packaged guards: `t15-m4-13` has the gate `coherence >= 0.187` in its manifest (`trust.offer_gate`). It is on by default, and `model.guard(offer_gate=False)` switches it off. With the gate, the guard passes the offer null control (uniform 0 / 300, frame-shuffled 0 / 300, real 212 / 271). The 54 LTT commits do not change. Results: [P5-33](../experiments/2026-11-21-p5-33-withhold/results.md).
+
 ## 6. Reading the sheet
 
 | Line | Meaning | Look for |

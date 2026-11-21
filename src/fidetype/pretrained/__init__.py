@@ -341,11 +341,23 @@ class PretrainedDecoder:
             raise NoTrustConfig(f"{self.name}: packaged trust config {cfg} is missing")
         return p
 
-    def guard(self, decode_fn: Callable[..., Any] | None = None, **kwargs: Any) -> Any:
-        """The committed trust config of this model as a TrustGuard (``fidetype.trust.load``)."""
+    def guard(self, decode_fn: Callable[..., Any] | None = None, *, offer_gate: Any = None,
+              **kwargs: Any) -> Any:
+        """The committed trust config of this model as a TrustGuard (``fidetype.trust.load``).
+
+        ``offer_gate`` (P5-33): None (default) uses the manifest gate ``trust.offer_gate`` if there is one
+        (it withholds offers on no-evidence input; commits do not change); ``False`` switches it off; an
+        :class:`~fidetype.trust.OfferGate` replaces it.
+        """
         import fidetype.trust as ft
 
-        return ft.load(self.guard_path(), decode_fn=decode_fn, **kwargs)
+        if offer_gate is None:
+            og = (self.manifest.trust or {}).get("offer_gate")
+            if og:
+                from fidetype.trust.offer_gate import OfferGate
+
+                offer_gate = OfferGate.from_dict(og)
+        return ft.load(self.guard_path(), decode_fn=decode_fn, offer_gate=offer_gate, **kwargs)
 
     def guard_input(self, stream: Any) -> Any:
         """The input of this model's guard for one stream: ``guard.decide(model.guard_input(stream))``.

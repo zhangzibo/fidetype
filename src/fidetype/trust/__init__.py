@@ -189,6 +189,7 @@ _P5_02 = {
     "save_sheets": "fidetype.trust.guarantee_sheet",
     "load_sheets": "fidetype.trust.guarantee_sheet",
     "OnlineGuard": "fidetype.trust.online_guard",
+    "OfferGate": "fidetype.trust.offer_gate",
 }
 __all__ += list(_P5_02)
 
