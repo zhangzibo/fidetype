@@ -8,6 +8,11 @@ BDF); EDF+D (discontinuous) raises ``ValueError``. The ``EDF/BDF
 Annotations`` signal becomes markers. Samples are in physical units
 (``channel_units``: the file's physical dimension, for example ``uV``).
 
+Checked on real files (P4-16): PhysioNet EEGMMIDB EDF+C (ODC-By 1.0) and
+the MNE-Python test EDF+C / BDF files (BSD-3-Clause) give the same values
+as MNE within one digital step (``tests/test_adapter_files_real.py``,
+local data only).
+
 Privacy: the header fields "patient" and "recording" can hold personal
 data. The reader never copies them into ``meta``.
 """
@@ -23,11 +28,11 @@ import numpy as np
 from fidetype.live.sources import ArraySource
 
 ADAPTER_INFO = {
-    "id": "edf", "kind": "file-reader", "signal": "any", "status": "experimental",
+    "id": "edf", "kind": "file-reader", "signal": "any", "status": "tested",
     "file_patterns": ["*.edf", "*.bdf"],
     "target": "EDF, EDF+ (continuous) and BDF files (many EEG, EMG and sleep systems)",
     "licence": "Code Apache-2.0; open format, no third-party code. Data: the licence of each file.",
-    "tests": ["tests/test_adapter_edf.py"], "docs": "docs/adapters.md#edf",
+    "tests": ["tests/test_adapter_edf.py", "tests/test_adapter_files_real.py"], "docs": "docs/adapters.md#edf",
 }
 
 

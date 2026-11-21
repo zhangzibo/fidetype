@@ -59,3 +59,28 @@ def test_openbci_gui_ganglion_and_bad_inputs(tmp_path):
         (tmp_path / name).write_text("\n".join(ls) + "\n", encoding="utf-8")
         with pytest.raises(ValueError):
             A.read_openbci_gui(tmp_path / name)
+
+
+def test_openbci_gui_millisecond_stamps(tmp_path):
+    """P4-16: the GUI sample files write Unix milliseconds; t0 must be seconds (else float64 spacing breaks)."""
+    p = tmp_path / "OpenBCI-RAW-ms.txt"
+    _write_gui(p, n=500)
+    lines = p.read_text(encoding="utf-8").splitlines()
+    out = lines[:5]
+    for ln in lines[5:]:
+        v = ln.split(", ")
+        v[-2] = f"{float(v[-2]) * 1000:.0f}"  # Timestamp column in ms, as OpenBCI_GUI-v6-*.txt
+        out.append(", ".join(v))
+    p.write_text("\n".join(out) + "\n", encoding="utf-8")
+    assert A.read_openbci_gui(p)["t0"] == T0
+    res = assert_source_conforms(lambda: A.open_source(p), require_units=True, expect_rate=250.0)
+    assert res.n_samples == 500
+
+
+def test_openbci_gui_v4_file_has_a_clear_message(tmp_path):
+    """P4-16: a GUI v4 file (no column-name line; last column a clock time) names the layout in the error."""
+    p = tmp_path / "v4.txt"
+    p.write_text("%OpenBCI Raw EEG Data\n%Sample Rate = 250 Hz\n0, 1.0, 2.0, 1557936053329, 12:00:53.329\n",
+                 encoding="utf-8")
+    with pytest.raises(ValueError, match="no column-name line"):
+        A.read_openbci_gui(p)

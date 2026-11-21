@@ -5,7 +5,7 @@
 
 An **adapter** connects a device, a recording file, a public dataset or a decoder to Fidetype. This page lists every adapter in the repository and the adapters that we plan. The machine-readable registry is [adapters.json](adapters.json) (schema `fidetype.adapter-registry/0.1`).
 
-**Counts:** 14 tested, 3 experimental, 16 planned. **No adapter is tested on a real device yet** (column "Real device"; roadmap P4-06, externally blocked).
+**Counts:** 16 tested, 1 experimental, 16 planned. **No adapter is tested on a real device yet** (column "Real device"; roadmap P4-06, externally blocked).
 
 To add an adapter, read [CONTRIBUTING.md, section 7](../CONTRIBUTING.md#7-adapters-add-a-decoder-or-a-device). The template is in [templates/adapter/](../templates/adapter/).
 
@@ -36,13 +36,13 @@ To add an adapter, read [CONTRIBUTING.md, section 7](../CONTRIBUTING.md#7-adapte
 | `b2t25` | dataset-replay | Brain-to-Text '25 (Card et al. 2024, participant T15, attempted speech): phoneme CTC logits | intracortical | `tested` | none | Code Apache-2.0. Data CC0 (Dryad). | [test_adapter_b2t25.py](../tests/test_adapter_b2t25.py), [test_conformance.py](../tests/test_conformance.py) | [docs](../wiki/entities/brain-to-text-25.md) |
 | `brainflow` | device-source | BrainFlow boards (OpenBCI Cyton, Ganglion and others) -> LSL, and in-process in fidetype live (BrainFlowSource). CI uses the BrainFlow Synthetic board and a fake board only (extra `[brainflow]`) | any | `experimental` | none | Code Apache-2.0. brainflow is MIT. Real boards untested (roadmap P4-06, needs hardware). | [test_brainflow_bridge.py](../tests/test_brainflow_bridge.py), [test_live.py](../tests/test_live.py), [test_adapter_conformance.py](../tests/test_adapter_conformance.py) | [docs](../wiki/entities/brainflow.md) |
 | `ctc-logits` | decoder-output | Any CTC decoder: (T, V) logits, probabilities or log-probabilities (.npy / .npz, batches) | any | `tested` | none | Code Apache-2.0. No dependency beyond NumPy. | [test_adapter_ctc_logits.py](../tests/test_adapter_ctc_logits.py), [test_conformance.py](../tests/test_conformance.py), [test_adapter_conformance.py](../tests/test_adapter_conformance.py) | [docs](../wiki/concepts/ctc-logits-adapter.md) |
-| `edf` | file-reader | EDF, EDF+ (continuous) and BDF files (many EEG, EMG and sleep systems) | any | `experimental` | none | Code Apache-2.0; open format, no third-party code. Data: the licence of each file. | [test_adapter_edf.py](../tests/test_adapter_edf.py) | [docs](#edf) |
+| `edf` | file-reader | EDF, EDF+ (continuous) and BDF files (many EEG, EMG and sleep systems) | any | `tested` | none | Code Apache-2.0; open format, no third-party code. Data: the licence of each file. | [test_adapter_edf.py](../tests/test_adapter_edf.py), [test_adapter_files_real.py](../tests/test_adapter_files_real.py) | [docs](#edf) |
 | `emg2qwerty` | dataset-replay | emg2qwerty (Meta, wrist sEMG during touch typing, 108 users): key presses per prompt (extra `[emg2qwerty]`) | emg | `tested` | none | Code Apache-2.0. Data CC BY-NC-SA 4.0: research only, streams carry data.research_only = true. | [test_adapter_emg2qwerty.py](../tests/test_adapter_emg2qwerty.py), [test_conformance.py](../tests/test_conformance.py) | [docs](../wiki/entities/emg2qwerty.md) |
 | `kt-semg` | dataset-replay | KT-sEMG (Nokia, forearm sEMG during natural typing): key presses, LDA reference decoder | emg | `tested` | none | Code Apache-2.0. Data CC BY 4.0 (copyright 2021 Nokia). | [test_adapter_kt_semg.py](../tests/test_adapter_kt_semg.py), [test_conformance.py](../tests/test_conformance.py) | [docs](../wiki/entities/kt-semg-dataset.md) |
 | `kt-semg-lsl-replay` | dataset-replay | KT-sEMG recording replayed as live raw-signal LSL streams (fidetype live replay-kt) (extra `[lsl]`) | emg | `tested` | none | Code Apache-2.0. Data CC BY 4.0 (copyright 2021 Nokia). pylsl is MIT. | [test_live.py](../tests/test_live.py), [kt_lsl_replay.py](../tools/ci/kt_lsl_replay.py) | [docs](live-decode.md) |
 | `lsl` | transport | Lab Streaming Layer: NTS in (LSL inlets -> trust layer) and out (NTS files -> LSL outlets) (extra `[lsl]`) | any | `tested` | none | Code Apache-2.0. pylsl and liblsl are MIT. No LSL code copied. | [test_adapter_lsl.py](../tests/test_adapter_lsl.py), [test_lsl_reconnect.py](../tests/test_lsl_reconnect.py), [test_lsl_open_timeout.py](../tests/test_lsl_open_timeout.py) | [docs](../wiki/concepts/lsl-input.md) |
 | `lsl-signal-source` | device-source | Any raw-signal LSL stream and its marker stream (LSLSource of fidetype live; reconnect P4-11) (extra `[lsl]`) | any | `tested` | none | Code Apache-2.0. pylsl is MIT. | [test_live_reconnect.py](../tests/test_live_reconnect.py), [test_live.py](../tests/test_live.py) | [docs](live-decode.md) |
-| `openbci-gui` | file-reader | OpenBCI GUI v5+ raw recordings (Cyton, Cyton + Daisy, Ganglion) | eeg | `experimental` | none | Code Apache-2.0; no OpenBCI code used. Data: the licence of each recording. | [test_adapter_openbci_gui.py](../tests/test_adapter_openbci_gui.py) | [docs](#openbci-gui) |
+| `openbci-gui` | file-reader | OpenBCI GUI v5+ raw recordings (Cyton, Cyton + Daisy, Ganglion) | eeg | `tested` | none | Code Apache-2.0; no OpenBCI code used. Data: the licence of each recording. | [test_adapter_openbci_gui.py](../tests/test_adapter_openbci_gui.py), [test_adapter_files_real.py](../tests/test_adapter_files_real.py) | [docs](#openbci-gui) |
 | `spanishbcbl-meg` | dataset-replay | SpanishBCBL typing MEG (Brain2Qwerty data): ConvCTC output per typing segment | meg | `tested` | none | Code Apache-2.0. Data CC BY-NC 4.0: research only, streams carry data.research_only = true. | [test_conformance.py](../tests/test_conformance.py), [test_restamp_meg.py](../tests/test_restamp_meg.py) | [docs](../wiki/entities/spanishbcbl-dataset.md) |
 | `spanishbcbl-reader` | dataset-reader | SpanishBCBL typing MEG: file discovery, behavioural logs, clock alignment, typed text (extra `[data]`) | meg | `tested` | none | Code Apache-2.0. Data CC BY-NC 4.0 (research only). Brain2Qwerty loader (CC BY-NC): not copied. | [test_data_spanishbcbl.py](../tests/test_data_spanishbcbl.py) | [docs](../wiki/entities/spanishbcbl-dataset.md) |
 | `synthetic-typist` | synthetic-source | Synthetic typist signal with key-press markers (SyntheticSource; no real data) | other | `tested` | none | Code Apache-2.0. Synthetic data, no licence needed. | [test_live.py](../tests/test_live.py), [test_adapter_conformance.py](../tests/test_adapter_conformance.py) | [docs](live-decode.md) |
@@ -78,7 +78,7 @@ Module of each adapter:
 | Id | File names | Example |
 |---|---|---|
 | `edf` | `*.edf`, `*.bdf` | `fidetype live --source file --reader edf --path FILE` |
-| `openbci-gui` | `OpenBCI-RAW-*.txt` | `fidetype live --source file --reader openbci-gui --path FILE` |
+| `openbci-gui` | `OpenBCI-RAW-*.txt`, `OpenBCI_GUI-*.txt` | `fidetype live --source file --reader openbci-gui --path FILE` |
 
 ## Planned (not supported)
 
@@ -113,6 +113,8 @@ EDF / EDF+ / BDF file reader -> a signal source for `fidetype live` (P14-42, fro
 
 EDF (European Data Format, 16-bit) and BDF (BioSemi, 24-bit) are open, documented formats (https://www.edfplus.info/specs/). Many EEG, EMG and sleep systems export them. This reader is our own code (Apache-2.0), with no dependency beyond NumPy. It reads continuous files (EDF, EDF+C, BDF); EDF+D (discontinuous) raises `ValueError`. The `EDF/BDF Annotations` signal becomes markers. Samples are in physical units (`channel_units`: the file's physical dimension, for example `uV`).
 
+Checked on real files (P4-16): PhysioNet EEGMMIDB EDF+C (ODC-By 1.0) and the MNE-Python test EDF+C / BDF files (BSD-3-Clause) give the same values as MNE within one digital step (`tests/test_adapter_files_real.py`, local data only).
+
 Privacy: the header fields "patient" and "recording" can hold personal data. The reader never copies them into `meta`.
 
 ### openbci-gui
@@ -121,4 +123,4 @@ Module `fidetype.adapters.openbci_gui`.
 
 OpenBCI GUI recording reader -> a signal source for `fidetype live` (P14-42, from the adapter template).
 
-The OpenBCI GUI (v5 and later) saves a text file `OpenBCI-RAW-*.txt`: `%` header lines (`Sample Rate = 250 Hz`, `Board = ...`), one column-name line (`Sample Index, EXG Channel 0, ..., Timestamp, ...`) and one comma-separated row per sample. EXG values are microvolts. The reader keeps the EXG channels; a `Marker Channel` column (non-zero values) becomes markers. Times: the first `Timestamp` (Unix seconds) plus `index / sample_rate`. The packet stamps of the file are not used, because they repeat inside a packet. Older GUI files (v3, no column-name line) raise `ValueError`. We wrote the reader from the GUI file layout; it has not read a real GUI file yet. Our own code (Apache-2.0), NumPy only.
+The OpenBCI GUI (v5 and later) saves a text file `OpenBCI-RAW-*.txt` (the sample files of the GUI: `OpenBCI_GUI-*.txt`): `%` header lines (`Sample Rate = 250 Hz`, `Board = ...`), one column-name line (`Sample Index, EXG Channel 0, ..., Timestamp, ...`) and one comma-separated row per sample. EXG values are microvolts. The reader keeps the EXG channels; a `Marker Channel` column (non-zero values) becomes markers. Times: the first `Timestamp` plus `index / sample_rate`. GUI v5 writes Unix seconds; the sample files of the GUI (v6 layout) write Unix milliseconds, so a first stamp above `1e11` is read as milliseconds (P4-16). The packet stamps of the file are not used, because they repeat inside a packet. Older GUI files (v4 and before, no column-name line) raise `ValueError`. Checked on the GUI sample file `OpenBCI_GUI-v6-blinks-jawClench-alpha.txt` (P4-16). Our own code (Apache-2.0), NumPy only.

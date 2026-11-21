@@ -74,10 +74,11 @@
       "kind": "file-reader",
       "target": "EDF, EDF+ (continuous) and BDF files (many EEG, EMG and sleep systems)",
       "signal": "any",
-      "status": "experimental",
+      "status": "tested",
       "licence": "Code Apache-2.0; open format, no third-party code. Data: the licence of each file.",
       "tests": [
-        "tests/test_adapter_edf.py"
+        "tests/test_adapter_edf.py",
+        "tests/test_adapter_files_real.py"
       ],
       "docs": "docs/adapters.md#edf",
       "hardware_tested": [],
@@ -180,17 +181,19 @@
       "kind": "file-reader",
       "target": "OpenBCI GUI v5+ raw recordings (Cyton, Cyton + Daisy, Ganglion)",
       "signal": "eeg",
-      "status": "experimental",
+      "status": "tested",
       "licence": "Code Apache-2.0; no OpenBCI code used. Data: the licence of each recording.",
       "tests": [
-        "tests/test_adapter_openbci_gui.py"
+        "tests/test_adapter_openbci_gui.py",
+        "tests/test_adapter_files_real.py"
       ],
       "docs": "docs/adapters.md#openbci-gui",
       "hardware_tested": [],
       "extra": null,
       "roadmap": null,
       "file_patterns": [
-        "OpenBCI-RAW-*.txt"
+        "OpenBCI-RAW-*.txt",
+        "OpenBCI_GUI-*.txt"
       ],
       "module": "fidetype.adapters.openbci_gui"
     },

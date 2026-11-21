@@ -156,6 +156,7 @@ def run_main(argv: Sequence[str]) -> int:
     import fidetype.trust as ft
     from fidetype.live.model import load_model, resolve_asset
     from fidetype.live.runner import LiveDecoder, make_writer, print_decision
+    from fidetype.live.synthetic import KEYPRESS
 
     model = load_model(a.model)
     gspec = a.guard or (a.model if str(a.model).startswith("builtin:") else None)
@@ -190,9 +191,11 @@ def run_main(argv: Sequence[str]) -> int:
         return 3
     info = src.info
     timing = a.timing or ("fixed" if a.source == "brainflow" else model.timing)
-    if a.source == "file" and not a.timing and timing == "markers" and not getattr(src, "markers", None):
-        timing = "fixed"
-        _err("note: the file has no markers; fixed timing (give --timing to change it)")
+    file_mk = getattr(src, "markers", None) or []
+    if a.source == "file" and not a.timing and timing == "markers" and not any(m == KEYPRESS for _, m in file_mk):
+        timing = "fixed"  # P4-16: real files carry other markers (EDF+ "T0", "start"), which open no window
+        _err(f"note: the file has no '{KEYPRESS}' markers ({len(file_mk)} other markers); fixed timing "
+             "(give --timing to change it)")
     _err(f"source {info['name']} ({info['channels']} ch, {info['sample_rate']:g} Hz); model {model.name} "
          f"({model.channels} ch, {model.sample_rate:g} Hz, timing {timing}); guard {guard.config_id} "
          f"(alpha {guard.alpha:g}, delta {guard.delta:g})")

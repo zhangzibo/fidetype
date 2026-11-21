@@ -36,6 +36,7 @@ def test_registry_picks_the_reader_by_file_name():
     assert R.pick_file_reader("a/rec.EDF")["id"] == "edf"
     assert R.pick_file_reader("rec.bdf")["id"] == "edf"
     assert R.pick_file_reader("OpenBCI-RAW-2026-11-21_10-00-00.txt")["id"] == "openbci-gui"
+    assert R.pick_file_reader("OpenBCI_GUI-v6-blinks-jawClench-alpha.txt")["id"] == "openbci-gui"  # GUI sample file
     assert R.pick_file_reader("renamed.txt", "openbci-gui")["id"] == "openbci-gui"  # by id: no name match needed
     with pytest.raises(ValueError, match="no file reader matches"):
         R.pick_file_reader("rec.xyz")
@@ -109,3 +110,18 @@ def test_cli_bad_file_is_a_clear_error(tmp_path, capsys):
     bad.write_bytes(b"0       " + b"x" * 300)
     assert live_main(["--source", "file", "--path", str(bad), "--speed", "0"]) == 3
     assert "cannot open the file source" in capsys.readouterr().err
+
+
+def test_cli_file_without_keypress_markers_uses_fixed_timing(tmp_path, capsys):
+    """P4-16: real EDF+ files carry other markers (PhysioNet "T0" / "T1"); they must not leave the run empty."""
+    rec = tmp_path / "events.edf"
+    src = SyntheticSource(2, seed=7)
+    n = int(np.ceil(src.x.shape[0] / src.fs) * src.fs)
+    sig = np.zeros((n, src.x.shape[1]))
+    sig[: src.x.shape[0]] = src.x
+    _write_edf(rec, sig, fs=src.fs, ann=[(0.0, "T0"), (1.0, "T1")], phys=4000.0, ann_n=200)
+    rc = live_main(["--source", "file", "--path", str(rec), "--speed", "0", "--segment-s", "1", "--json"])
+    cap = capsys.readouterr()
+    assert rc == 0, cap.err
+    assert "no 'keypress' markers (2 other markers); fixed timing" in cap.err
+    assert len(cap.out.splitlines()) >= 2  # one decision per 1 s segment

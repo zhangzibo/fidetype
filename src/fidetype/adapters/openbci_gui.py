@@ -1,15 +1,19 @@
 """OpenBCI GUI recording reader -> a signal source for ``fidetype live`` (P14-42, from the adapter template).
 
-The OpenBCI GUI (v5 and later) saves a text file ``OpenBCI-RAW-*.txt``:
-``%`` header lines (``Sample Rate = 250 Hz``, ``Board = ...``), one
-column-name line (``Sample Index, EXG Channel 0, ..., Timestamp, ...``)
-and one comma-separated row per sample. EXG values are microvolts. The
+The OpenBCI GUI (v5 and later) saves a text file ``OpenBCI-RAW-*.txt``
+(the sample files of the GUI: ``OpenBCI_GUI-*.txt``): ``%`` header lines
+(``Sample Rate = 250 Hz``, ``Board = ...``), one column-name line
+(``Sample Index, EXG Channel 0, ..., Timestamp, ...``) and one
+comma-separated row per sample. EXG values are microvolts. The
 reader keeps the EXG channels; a ``Marker Channel`` column (non-zero
-values) becomes markers. Times: the first ``Timestamp`` (Unix seconds)
-plus ``index / sample_rate``. The packet stamps of the file are not used,
-because they repeat inside a packet. Older GUI files (v3, no column-name
-line) raise ``ValueError``. We wrote the reader from the GUI file layout;
-it has not read a real GUI file yet. Our own code (Apache-2.0), NumPy only.
+values) becomes markers. Times: the first ``Timestamp`` plus
+``index / sample_rate``. GUI v5 writes Unix seconds; the sample files of
+the GUI (v6 layout) write Unix milliseconds, so a first stamp above
+``1e11`` is read as milliseconds (P4-16). The packet stamps of the file
+are not used, because they repeat inside a packet. Older GUI files (v4 and
+before, no column-name line) raise ``ValueError``. Checked on the GUI
+sample file ``OpenBCI_GUI-v6-blinks-jawClench-alpha.txt`` (P4-16). Our
+own code (Apache-2.0), NumPy only.
 """
 
 from __future__ import annotations
@@ -22,12 +26,25 @@ import numpy as np
 from fidetype.live.sources import ArraySource
 
 ADAPTER_INFO = {
-    "id": "openbci-gui", "kind": "file-reader", "signal": "eeg", "status": "experimental",
-    "file_patterns": ["OpenBCI-RAW-*.txt"],
+    "id": "openbci-gui", "kind": "file-reader", "signal": "eeg", "status": "tested",
+    "file_patterns": ["OpenBCI-RAW-*.txt", "OpenBCI_GUI-*.txt"],
     "target": "OpenBCI GUI v5+ raw recordings (Cyton, Cyton + Daisy, Ganglion)",
     "licence": "Code Apache-2.0; no OpenBCI code used. Data: the licence of each recording.",
-    "tests": ["tests/test_adapter_openbci_gui.py"], "docs": "docs/adapters.md#openbci-gui",
+    "tests": ["tests/test_adapter_openbci_gui.py", "tests/test_adapter_files_real.py"],
+    "docs": "docs/adapters.md#openbci-gui",
 }
+
+
+#: A first ``Timestamp`` above this is Unix milliseconds (1e11 s is year 5138; 1e11 ms is 1973).
+MS_STAMP_ABOVE = 1e11
+
+
+def _is_number(v: str) -> bool:
+    try:
+        float(v)
+    except ValueError:
+        return False
+    return True
 
 
 def read_openbci_gui(path: str | PathLike[str]) -> dict:
@@ -39,6 +56,8 @@ def read_openbci_gui(path: str | PathLike[str]) -> dict:
     try:
         fs = float(head["Sample Rate"].split()[0])
         names = [c.strip() for c in body[0].split(",")]
+        if names and _is_number(names[0]):
+            raise ValueError("no column-name line (GUI v4 or older file); only the GUI v5+ layout is read")
         exg = [i for i, c in enumerate(names) if c.startswith("EXG Channel")]
         num = [c != "Timestamp (Formatted)" for c in names]
         rows = np.array([[float(v) if ok and v.strip() else np.nan for v, ok in zip(ln.split(","), num, strict=True)]
@@ -48,6 +67,7 @@ def read_openbci_gui(path: str | PathLike[str]) -> dict:
     if not exg or rows.ndim != 2 or rows.shape[0] == 0 or fs <= 0:
         raise ValueError("not an OpenBCI GUI v5 file: no 'EXG Channel' columns, no samples or bad sample rate")
     t0 = float(rows[0, names.index("Timestamp")]) if "Timestamp" in names else 0.0
+    t0 = t0 / 1000.0 if t0 > MS_STAMP_ABOVE else t0  # milliseconds (GUI sample files), else seconds
     mk = []
     if "Marker Channel" in names:
         col = rows[:, names.index("Marker Channel")]
