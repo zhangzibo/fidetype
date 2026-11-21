@@ -97,12 +97,10 @@ def chain() -> int:
                                               stderr=subprocess.STDOUT, creationflags=flags).returncode
         chain_log(f"analyse exit {codes['analyse']}")
     if "analyse" in codes and all(c == 0 for c in codes.values()):
-        (OWN / "DONE").write_text(time.strftime("%Y-%m-%dT%H:%M:%S") + "
-", encoding="utf-8")
+        (OWN / "DONE").write_text(time.strftime("%Y-%m-%dT%H:%M:%S") + "\n", encoding="utf-8")
         chain_log("all exit 0; DONE written")
     else:
-        (OWN / "FAILED").write_text(f"{codes}
-", encoding="utf-8")
+        (OWN / "FAILED").write_text(f"{codes}\n", encoding="utf-8")
         chain_log(f"chain end without DONE: {codes}")
     return 0
 
