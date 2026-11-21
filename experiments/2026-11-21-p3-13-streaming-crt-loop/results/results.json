@@ -1,0 +1,309 @@
+{
+ "task": "P3-13",
+ "date": "2026-11-21 07:45",
+ "data.licence": "CC-BY-NC-SA-4.0",
+ "data.research_only": true,
+ "note": "aggregates only (no per-user value, no text, no id)",
+ "rules": {
+  "ptop1_tol": 0.001,
+  "prob_tol": 0.001,
+  "safe_min": 3.32,
+  "budget_ms": 50.0,
+  "chunk_budget_ms": 40.0
+ },
+ "check": {
+  "n_eval": 1221,
+  "receptive_field_frames": 121,
+  "kinds": {
+   "real": {
+    "n": 1221,
+    "same_action_text_choices": 1221,
+    "same_decision_rule": 1221,
+    "same_action": 1221,
+    "max_abs_p_top1_diff": 2.1273028964374774e-05,
+    "exact_p_top1": 148,
+    "same_nbest_exact": 136,
+    "same_nbest_texts": 1221,
+    "same_gate": 1221,
+    "batch_ref_same_as_p3_12_stored": 1221,
+    "max_abs_prob_diff": 0.00022035298819045313,
+    "max_abs_logp_diff": 0.0009899139404296875,
+    "min_argmax_agreement": 1.0,
+    "mean_argmax_agreement": 1.0,
+    "commits_stream": 154,
+    "commits_batch": 154,
+    "diff_windows_actions": []
+   },
+   "shuffled": {
+    "n": 1221,
+    "same_action_text_choices": 1221,
+    "same_decision_rule": 1221,
+    "same_action": 1221,
+    "max_abs_p_top1_diff": 0.0,
+    "exact_p_top1": 1221,
+    "same_nbest_exact": 1221,
+    "same_nbest_texts": 1221,
+    "same_gate": 1221,
+    "batch_ref_same_as_p3_12_stored": 1221,
+    "max_abs_prob_diff": 1.227470875658776e-05,
+    "max_abs_logp_diff": 0.0003986358642578125,
+    "min_argmax_agreement": 1.0,
+    "mean_argmax_agreement": 1.0,
+    "commits_stream": 0,
+    "commits_batch": 0,
+    "diff_windows_actions": []
+   },
+   "zeros": {
+    "n": 1221,
+    "same_action_text_choices": 1221,
+    "same_decision_rule": 1221,
+    "same_action": 1221,
+    "max_abs_p_top1_diff": 0.0,
+    "exact_p_top1": 1221,
+    "same_nbest_exact": 1221,
+    "same_nbest_texts": 1221,
+    "same_gate": 1221,
+    "batch_ref_same_as_p3_12_stored": 1221,
+    "max_abs_prob_diff": 0.0009699286475521873,
+    "max_abs_logp_diff": 2.2345943450927734,
+    "min_argmax_agreement": 1.0,
+    "mean_argmax_agreement": 1.0,
+    "commits_stream": 0,
+    "commits_batch": 0,
+    "diff_windows_actions": []
+   }
+  },
+  "safe_rule_pass": true,
+  "accuracy": {
+   "stream_model": {
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "commit_rate": 0.12612612612612611,
+    "wrong_commit_rate": 0.03521703521703522,
+    "wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "top1_exact": 0.32432432432432434,
+    "actions": {
+     "commit": 154,
+     "offer": 931,
+     "withhold": 136
+    },
+    "control_shuffled_commits": 0,
+    "control_zeros_commits": 0,
+    "safe_v01": {
+     "value": 3.3710198389920367,
+     "ci": [
+      1.9248304824113167,
+      5.1791638751383235
+     ],
+     "status": "certified",
+     "n_commits": 154,
+     "n_wrong_commits": 43,
+     "measured_wrong_commit": 0.03521703521703522,
+     "measured_wrong_commit_cp95": [
+      0.0256,
+      0.0471
+     ],
+     "no_bci_wpm": 3.0924317617866004,
+     "committed_correct_words": 459,
+     "total_words": 4985,
+     "minutes_neural": 119.75355757077536,
+     "minutes_correction": 16.40701754385965,
+     "unguarded_wpm": 3.3710198389920367,
+     "wpm_no_penalty": 3.8328715180651494,
+     "reading_cost": null,
+     "status_note": null
+    }
+   },
+   "batch_lp": {
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "commit_rate": 0.12612612612612611,
+    "wrong_commit_rate": 0.03521703521703522,
+    "wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "top1_exact": 0.32432432432432434,
+    "actions": {
+     "commit": 154,
+     "offer": 931,
+     "withhold": 136
+    },
+    "control_shuffled_commits": 0,
+    "control_zeros_commits": 0,
+    "safe_v01": {
+     "value": 3.3710198389920367,
+     "ci": [
+      1.9248304824113167,
+      5.1791638751383235
+     ],
+     "status": "certified",
+     "n_commits": 154,
+     "n_wrong_commits": 43,
+     "measured_wrong_commit": 0.03521703521703522,
+     "measured_wrong_commit_cp95": [
+      0.0256,
+      0.0471
+     ],
+     "no_bci_wpm": 3.0924317617866004,
+     "committed_correct_words": 459,
+     "total_words": 4985,
+     "minutes_neural": 119.75355757077536,
+     "minutes_correction": 16.40701754385965,
+     "unguarded_wpm": 3.3710198389920367,
+     "wpm_no_penalty": 3.8328715180651494,
+     "reading_cost": null,
+     "status_note": null
+    }
+   },
+   "window_top1_intended_cer_pooled_stream_model": 0.18343672456575683
+  },
+  "same_decisions_total": 3663,
+  "n_total": 3663,
+  "M1_same_decisions": true,
+  "C2_prob_tol_pass": true,
+  "seconds": 3584.7
+ },
+ "latency": {
+  "latency": {
+   "path": "S FL@B8 (streaming per-user CRT -> merge -> session -> beam)",
+   "n_windows": 1221,
+   "warmup_windows": 20,
+   "threads_env": "1",
+   "isolation_class_env": "timing",
+   "isolation_cpus_env": "8,10,12,14",
+   "decision": {
+    "n": 1221,
+    "p50": 5.413000006228685,
+    "p95": 8.01560003310442,
+    "max": 13.747100019827485
+   },
+   "end_work": {
+    "n": 1221,
+    "p50": 2.138499985449016,
+    "p95": 4.152600071392953,
+    "max": 10.269099962897599
+   },
+   "last_chunk": {
+    "n": 1221,
+    "p50": 3.3425999572500587,
+    "p95": 4.750199965201318,
+    "max": 5.715499981306493
+   },
+   "chunk": {
+    "n": 212805,
+    "p50": 3.5524999257177114,
+    "p95": 4.9365999875590205,
+    "max": 12.75069999974221
+   },
+   "chunk_parts": {
+    "feat": {
+     "n": 212805,
+     "p50": 0.08899997919797897,
+     "p95": 0.13990001752972603,
+     "max": 0.7734999526292086
+    },
+    "model": {
+     "n": 212805,
+     "p50": 3.0819999519735575,
+     "p95": 4.2681999038904905,
+     "max": 11.935299960896373
+    },
+    "merge": {
+     "n": 212805,
+     "p50": 0.1305999467149377,
+     "p95": 0.2090999623760581,
+     "max": 0.7810000097379088
+    },
+    "session_push": {
+     "n": 212805,
+     "p50": 0.1094000181183219,
+     "p95": 0.16960001084953547,
+     "max": 0.5172999808564782
+    },
+    "beam_push": {
+     "n": 212805,
+     "p50": 0.11270004324615002,
+     "p95": 0.35089999437332153,
+     "max": 5.824799998663366
+    }
+   },
+   "seconds": 950.9
+  }
+ },
+ "isolation": {
+  "iso-latency": {
+   "schema": "fidetype.isolation/0.1",
+   "class": "timing",
+   "cpus": [
+    8,
+    10,
+    12,
+    14
+   ],
+   "affinity_set": true,
+   "priority": "above_normal",
+   "priority_set": true,
+   "timing_lock_held": true,
+   "plan": {
+    "timing": [
+     8,
+     10,
+     12,
+     14
+    ],
+    "background": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "idle_smt_siblings": [
+     9,
+     11,
+     13,
+     15
+    ],
+    "smt": true
+   },
+   "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+   "logical_cpus": 16,
+   "platform": "Windows-11-10.0.26200-SP0",
+   "wall_s": 951.305,
+   "own_cpu_s": 949.062,
+   "class_cpu_load_pct": 28.94,
+   "foreign_load_pct": 4.0,
+   "idle_sibling_load_pct": 8.08,
+   "machine_load_pct": 30.02,
+   "background_cpu_load_pct": 41.53,
+   "clean": true,
+   "clean_reasons": [],
+   "job_object": true,
+   "note": "own_cpu_s = CPU time of all processes of the job (Windows job object).",
+   "command": [
+    "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\.venv\\Scripts\\python.exe",
+    "-I",
+    "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\experiments\\2026-11-21-p3-13-streaming-crt-loop\\run.py",
+    "latency"
+   ],
+   "exit_code": 0
+  }
+ },
+ "latency_run_used": "latency",
+ "verdicts": {
+  "M1_same_decisions": true,
+  "safe_rule_pass": true,
+  "C2_prob_tol": true,
+  "V1_primary": true,
+  "L1_latency": true,
+  "decision_p95_ms": 8.01560003310442,
+  "chunk_p95_ms": 4.9365999875590205
+ }
+}

@@ -1,0 +1,156 @@
+{
+ "n_eval": 1221,
+ "receptive_field_frames": 121,
+ "kinds": {
+  "real": {
+   "n": 1221,
+   "same_action_text_choices": 1221,
+   "same_decision_rule": 1221,
+   "same_action": 1221,
+   "max_abs_p_top1_diff": 2.1273028964374774e-05,
+   "exact_p_top1": 148,
+   "same_nbest_exact": 136,
+   "same_nbest_texts": 1221,
+   "same_gate": 1221,
+   "batch_ref_same_as_p3_12_stored": 1221,
+   "max_abs_prob_diff": 0.00022035298819045313,
+   "max_abs_logp_diff": 0.0009899139404296875,
+   "min_argmax_agreement": 1.0,
+   "mean_argmax_agreement": 1.0,
+   "commits_stream": 154,
+   "commits_batch": 154,
+   "diff_windows_actions": []
+  },
+  "shuffled": {
+   "n": 1221,
+   "same_action_text_choices": 1221,
+   "same_decision_rule": 1221,
+   "same_action": 1221,
+   "max_abs_p_top1_diff": 0.0,
+   "exact_p_top1": 1221,
+   "same_nbest_exact": 1221,
+   "same_nbest_texts": 1221,
+   "same_gate": 1221,
+   "batch_ref_same_as_p3_12_stored": 1221,
+   "max_abs_prob_diff": 1.227470875658776e-05,
+   "max_abs_logp_diff": 0.0003986358642578125,
+   "min_argmax_agreement": 1.0,
+   "mean_argmax_agreement": 1.0,
+   "commits_stream": 0,
+   "commits_batch": 0,
+   "diff_windows_actions": []
+  },
+  "zeros": {
+   "n": 1221,
+   "same_action_text_choices": 1221,
+   "same_decision_rule": 1221,
+   "same_action": 1221,
+   "max_abs_p_top1_diff": 0.0,
+   "exact_p_top1": 1221,
+   "same_nbest_exact": 1221,
+   "same_nbest_texts": 1221,
+   "same_gate": 1221,
+   "batch_ref_same_as_p3_12_stored": 1221,
+   "max_abs_prob_diff": 0.0009699286475521873,
+   "max_abs_logp_diff": 2.2345943450927734,
+   "min_argmax_agreement": 1.0,
+   "mean_argmax_agreement": 1.0,
+   "commits_stream": 0,
+   "commits_batch": 0,
+   "diff_windows_actions": []
+  }
+ },
+ "safe_rule_pass": true,
+ "accuracy": {
+  "stream_model": {
+   "n_commits": 154,
+   "n_wrong_commits": 43,
+   "commit_rate": 0.12612612612612611,
+   "wrong_commit_rate": 0.03521703521703522,
+   "wrong_commit_cp95": [
+    0.0256,
+    0.0471
+   ],
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 154,
+    "offer": 931,
+    "withhold": 136
+   },
+   "control_shuffled_commits": 0,
+   "control_zeros_commits": 0,
+   "safe_v01": {
+    "value": 3.3710198389920367,
+    "ci": [
+     1.9248304824113167,
+     5.1791638751383235
+    ],
+    "status": "certified",
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "measured_wrong_commit": 0.03521703521703522,
+    "measured_wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 459,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 16.40701754385965,
+    "unguarded_wpm": 3.3710198389920367,
+    "wpm_no_penalty": 3.8328715180651494,
+    "reading_cost": null,
+    "status_note": null
+   }
+  },
+  "batch_lp": {
+   "n_commits": 154,
+   "n_wrong_commits": 43,
+   "commit_rate": 0.12612612612612611,
+   "wrong_commit_rate": 0.03521703521703522,
+   "wrong_commit_cp95": [
+    0.0256,
+    0.0471
+   ],
+   "top1_exact": 0.32432432432432434,
+   "actions": {
+    "commit": 154,
+    "offer": 931,
+    "withhold": 136
+   },
+   "control_shuffled_commits": 0,
+   "control_zeros_commits": 0,
+   "safe_v01": {
+    "value": 3.3710198389920367,
+    "ci": [
+     1.9248304824113167,
+     5.1791638751383235
+    ],
+    "status": "certified",
+    "n_commits": 154,
+    "n_wrong_commits": 43,
+    "measured_wrong_commit": 0.03521703521703522,
+    "measured_wrong_commit_cp95": [
+     0.0256,
+     0.0471
+    ],
+    "no_bci_wpm": 3.0924317617866004,
+    "committed_correct_words": 459,
+    "total_words": 4985,
+    "minutes_neural": 119.75355757077536,
+    "minutes_correction": 16.40701754385965,
+    "unguarded_wpm": 3.3710198389920367,
+    "wpm_no_penalty": 3.8328715180651494,
+    "reading_cost": null,
+    "status_note": null
+   }
+  },
+  "window_top1_intended_cer_pooled_stream_model": 0.18343672456575683
+ },
+ "same_decisions_total": 3663,
+ "n_total": 3663,
+ "M1_same_decisions": true,
+ "C2_prob_tol_pass": true,
+ "seconds": 3584.7
+}

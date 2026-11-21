@@ -1,0 +1,48 @@
+2026-11-21 05:32:13 start check (OMP_NUM_THREADS=2)
+2026-11-21 05:33:44 check real: 100 windows (90 s)
+2026-11-21 05:35:12 check real: 200 windows (179 s)
+2026-11-21 05:36:39 check real: 300 windows (266 s)
+2026-11-21 05:38:20 check real: 400 windows (366 s)
+2026-11-21 05:40:03 check real: 500 windows (470 s)
+2026-11-21 05:42:12 check real: 600 windows (598 s)
+2026-11-21 05:44:00 check real: 700 windows (707 s)
+2026-11-21 05:45:42 check real: 800 windows (809 s)
+2026-11-21 05:47:50 check real: 900 windows (936 s)
+2026-11-21 05:49:14 check real: 1000 windows (1020 s)
+2026-11-21 05:50:32 check real: 1100 windows (1098 s)
+2026-11-21 05:52:14 check real: 1200 windows (1201 s)
+2026-11-21 05:52:30 check real: {'n': 1221, 'same_action_text_choices': 1221, 'same_decision_rule': 1221, 'same_action': 1221, 'max_abs_p_top1_diff': 2.1273028964374774e-05, 'exact_p_top1': 148, 'same_nbest_exact': 136, 'same_nbest_texts': 1221, 'same_gate': 1221, 'batch_ref_same_as_p3_12_stored': 1221, 'max_abs_prob_diff': 0.00022035298819045313, 'max_abs_logp_diff': 0.0009899139404296875, 'min_argmax_agreement': 1.0, 'mean_argmax_agreement': 1.0, 'commits_stream': 154, 'commits_batch': 154, 'diff_windows_actions': []}
+2026-11-21 05:54:01 check shuffled: 100 windows (1308 s)
+2026-11-21 05:55:30 check shuffled: 200 windows (1397 s)
+2026-11-21 05:56:54 check shuffled: 300 windows (1481 s)
+2026-11-21 05:58:38 check shuffled: 400 windows (1584 s)
+2026-11-21 06:00:24 check shuffled: 500 windows (1690 s)
+2026-11-21 06:02:30 check shuffled: 600 windows (1816 s)
+2026-11-21 06:04:00 check shuffled: 700 windows (1907 s)
+2026-11-21 06:05:30 check shuffled: 800 windows (1996 s)
+2026-11-21 06:07:30 check shuffled: 900 windows (2117 s)
+2026-11-21 06:08:49 check shuffled: 1000 windows (2196 s)
+2026-11-21 06:10:01 check shuffled: 1100 windows (2268 s)
+2026-11-21 06:11:36 check shuffled: 1200 windows (2363 s)
+2026-11-21 06:11:50 check shuffled: {'n': 1221, 'same_action_text_choices': 1221, 'same_decision_rule': 1221, 'same_action': 1221, 'max_abs_p_top1_diff': 0.0, 'exact_p_top1': 1221, 'same_nbest_exact': 1221, 'same_nbest_texts': 1221, 'same_gate': 1221, 'batch_ref_same_as_p3_12_stored': 1221, 'max_abs_prob_diff': 1.227470875658776e-05, 'max_abs_logp_diff': 0.0003986358642578125, 'min_argmax_agreement': 1.0, 'mean_argmax_agreement': 1.0, 'commits_stream': 0, 'commits_batch': 0, 'diff_windows_actions': []}
+2026-11-21 06:13:26 check zeros: 100 windows (2472 s)
+2026-11-21 06:15:00 check zeros: 200 windows (2567 s)
+2026-11-21 06:16:32 check zeros: 300 windows (2659 s)
+2026-11-21 06:18:18 check zeros: 400 windows (2765 s)
+2026-11-21 06:19:59 check zeros: 500 windows (2865 s)
+2026-11-21 06:21:59 check zeros: 600 windows (2986 s)
+2026-11-21 06:23:34 check zeros: 700 windows (3080 s)
+2026-11-21 06:25:05 check zeros: 800 windows (3171 s)
+2026-11-21 06:27:14 check zeros: 900 windows (3301 s)
+2026-11-21 06:28:39 check zeros: 1000 windows (3386 s)
+2026-11-21 06:29:57 check zeros: 1100 windows (3464 s)
+2026-11-21 06:31:42 check zeros: 1200 windows (3569 s)
+2026-11-21 06:31:57 check zeros: {'n': 1221, 'same_action_text_choices': 1221, 'same_decision_rule': 1221, 'same_action': 1221, 'max_abs_p_top1_diff': 0.0, 'exact_p_top1': 1221, 'same_nbest_exact': 1221, 'same_nbest_texts': 1221, 'same_gate': 1221, 'batch_ref_same_as_p3_12_stored': 1221, 'max_abs_prob_diff': 0.0009699286475521873, 'max_abs_logp_diff': 2.2345943450927734, 'min_argmax_agreement': 1.0, 'mean_argmax_agreement': 1.0, 'commits_stream': 0, 'commits_batch': 0, 'diff_windows_actions': []}
+2026-11-21 06:31:58 check: same decisions 3663 / 3663; M1 True; safe rule True; prob tol True
+2026-11-21 06:31:58 end check
+2026-11-21 07:29:34 start latency (OMP_NUM_THREADS=1)
+2026-11-21 07:45:25 latency: decision p50 5.41 p95 8.02 max 13.7 ms; chunk p95 4.94 ms
+2026-11-21 07:45:25 end latency
+2026-11-21 07:45:26 start score (OMP_NUM_THREADS=1)
+2026-11-21 07:45:26 score: {'M1_same_decisions': True, 'safe_rule_pass': True, 'C2_prob_tol': True, 'V1_primary': True, 'L1_latency': True, 'decision_p95_ms': 8.01560003310442, 'chunk_p95_ms': 4.9365999875590205}
+2026-11-21 07:45:26 end score
