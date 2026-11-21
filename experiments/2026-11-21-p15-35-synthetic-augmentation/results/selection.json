@@ -1,0 +1,62 @@
+{
+ "note": "val block only (no test-block number); plan.md rule",
+ "rows": [
+  {
+   "candidate": "U50",
+   "arm": "R",
+   "val_cer": 0.9386655615416494,
+   "val_shuffled_cer": 0.9508910070451719,
+   "best_val_cer": 0.934521342726896,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "U50",
+   "arm": "E",
+   "val_cer": 0.8133029423953585,
+   "val_shuffled_cer": 0.9040613344384584,
+   "best_val_cer": 0.8128885205138832,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "F50",
+   "arm": "R",
+   "val_cer": 0.9399088271860754,
+   "val_shuffled_cer": 0.9484044757563199,
+   "best_val_cer": 0.936386241193535,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "F50",
+   "arm": "E",
+   "val_cer": 0.83630335681724,
+   "val_shuffled_cer": 0.9231247409863241,
+   "best_val_cer": 0.83630335681724,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "F80",
+   "arm": "R",
+   "val_cer": 0.9608371322005802,
+   "val_shuffled_cer": 0.9608371322005802,
+   "best_val_cer": 0.9587650227932035,
+   "eligible": false,
+   "c2_val_pass": false
+  },
+  {
+   "candidate": "F80",
+   "arm": "E",
+   "val_cer": 0.9125569830087028,
+   "val_shuffled_cer": 0.9513054289266474,
+   "best_val_cer": 0.9125569830087028,
+   "eligible": false,
+   "c2_val_pass": false
+  }
+ ],
+ "selected": null,
+ "passing_arms": [],
+ "time": "2026-11-21T13:00:31"
+}
