@@ -333,13 +333,17 @@ jobs:
                        "fidetype/_spec/conformance/v0.1/manifest.json", "fidetype/_spec/conformance/kit/kit.json",
                        "fidetype/_spec/conformance/kit/rule-map.json", "fidetype/_spec/conformance/levels.json",
                        "fidetype/_spec/conformance/certified.json",
-                       "fidetype/pretrained/manifests/t15-m4-13.json", "fidetype/pretrained/guards/t15-m4-13.guard.json"]:
+                       "fidetype/pretrained/manifests/t15-m4-13.json", "fidetype/pretrained/guards/t15-m4-13.guard.json",
+                       "fidetype/_benchmark/results/v0.2/kt-semg__lda-oracle__guard.json"]:  # P14-46: committed cards
               assert need in whl, f"missing in the wheel: {need}"
           sd = [m.name.split("/", 1)[1] for m in tarfile.open(glob.glob(f"{d}/*.tar.gz")[0]).getmembers() if "/" in m.name]
           tops = {n.split("/")[0] for n in sd}
-          extra = tops - {"src", "tests", "examples", "spec", "README.md", "LICENSE", "CHANGELOG.md", "CITATION.cff",
+          extra = tops - {"src", "tests", "examples", "spec", "benchmark", "README.md", "LICENSE", "CHANGELOG.md", "CITATION.cff",
                           "pyproject.toml", "PKG-INFO", ".gitignore"}
           assert not extra, f"unexpected top-level entries in the sdist: {sorted(extra)}"
+          bench = {n for n in sd if n.startswith("benchmark/")}  # P14-46: only the committed cards
+          odd = [n for n in bench if not re.fullmatch(r"benchmark/results(/v0\.[12](/[^/]+\.json)?)?", n)]
+          assert not odd, f"unexpected benchmark files in the sdist: {sorted(odd)[:10]}"
           print(f"wheel {len(whl)} files, sdist {len(sd)} files: OK")
           PY
       - name: Python wheel in a clean venv (outside the checkout)

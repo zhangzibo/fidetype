@@ -490,10 +490,22 @@ def _e2q_prompts(path: str) -> list[tuple[int, str, float]]:
     return out
 
 
-def build_truth(track: str, data: str | PathLike[str], **kw: Any) -> list[dict[str, Any]]:
-    """Rebuild the truth rows of the scored units from a local dataset copy. Local only: never commit them."""
+def build_truth(track: str, data: str | PathLike[str], *, split: dict[str, Any] | None = None,
+                **kw: Any) -> list[dict[str, Any]]:
+    """Rebuild the truth rows of the scored units from a local dataset copy. Local only: never commit them.
+
+    ``split``: a split dict (:func:`fidetype.benchmark.tracks.make_split` or a split file); default:
+    the committed split of ``track``. Pass the same split to :func:`score` and :func:`check_submission`.
+    ``kw``: options of the track loader. For ``kt-semg`` the truth needs only the key logs and the
+    start-time files (``runN_keys.txt``, ``runN_ts.txt``): the ``runN.csv`` EMG files may be absent
+    (``keys_only=True`` is the default here; P14-46).
+    """
     t = TR.get_track(track)
-    split = TR.load_split(track)
+    split = TR.load_split(track) if split is None else split
+    if split.get("track") != track:
+        raise ValueError(f"the split is of track {split.get('track')!r}, not {track!r}")
+    if track == "kt-semg":
+        kw.setdefault("keys_only", True)
     all_units = TR.local_units(track, data, **kw)
     units = TR.select_units(split, all_units, t.scored_split)
     rows: list[dict[str, Any]] = []

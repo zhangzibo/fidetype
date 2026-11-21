@@ -50,6 +50,7 @@ import argparse
 import hashlib
 import json
 import math
+import re
 import sys
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, field
@@ -500,12 +501,33 @@ def units_toronto(data: str | PathLike[str], cache: str | None = None, sentences
 KT_TEST_RUNS, KT_CAL_RUNS, KT_MAX_GAP_S, KT_MIN_KEYS = 6, 3, 2.0, 5
 
 
-def units_kt(data: str | PathLike[str], **_: Any) -> list[LocalUnit]:
+def _kt_runs_keys_only(data: str | PathLike[str]) -> list[Any]:
+    """KT-sEMG runs found by their key log and start-time file; the ``runN.csv`` may be absent."""
+    from fidetype.adapters.kt_semg import RunFiles
+
+    r = Path(data)
+    out = []
+    for k in r.glob("run*_keys.txt"):
+        m = re.fullmatch(r"run(\d+)_keys", k.stem)
+        t = r / f"run{m.group(1)}_ts.txt" if m else None
+        if m and t is not None and t.is_file():
+            out.append(RunFiles(int(m.group(1)), r / f"run{m.group(1)}.csv", k, t))
+    return sorted(out, key=lambda x: x.run)
+
+
+def units_kt(data: str | PathLike[str], keys_only: bool = False, **_: Any) -> list[LocalUnit]:
+    """KT-sEMG units: runs and typing bursts (segments).
+
+    ``keys_only=True`` (P14-46): find the runs by ``runN_keys.txt`` + ``runN_ts.txt`` and do not
+    need ``runN.csv`` (about 20 GB in all). The segment units are the same. A run unit whose CSV is
+    absent gets the payload ``?|<key-log hash>``, so ``verify`` reports it (verify needs the CSVs).
+    """
     from fidetype.adapters.kt_semg import key_code, list_runs, parse_keys, read_start_time, segment_events
 
-    runs = list_runs(data)
+    runs = _kt_runs_keys_only(data) if keys_only else list_runs(data)
     if not runs:
-        raise FileNotFoundError(f"no run*.csv + _keys.txt + _ts.txt under {data}")
+        need = "run*_keys.txt + _ts.txt" if keys_only else "run*.csv + _keys.txt + _ts.txt"
+        raise FileNotFoundError(f"no {need} under {data}")
     info = []
     for r in runs:
         raw = r.keys.read_bytes()
@@ -516,7 +538,8 @@ def units_kt(data: str | PathLike[str], **_: Any) -> list[LocalUnit]:
     for k, (start, r, raw) in enumerate(info):
         split = "test" if k >= n - KT_TEST_RUNS else ("cal" if k >= n - KT_TEST_RUNS - KT_CAL_RUNS else "train")
         rid = f"run{r.run}"
-        payload = f"{r.csv.stat().st_size}|{hashlib.sha256(raw).hexdigest()[:16]}"
+        size = r.csv.stat().st_size if r.csv.is_file() else "?"
+        payload = f"{size}|{hashlib.sha256(raw).hexdigest()[:16]}"
         out.append(LocalUnit("run", rid, start.strftime("%Y-%m-%d"), payload, split,
                              {"csv": str(r.csv), "keys": str(r.keys), "ts": str(r.ts)}))
         if split == "train":

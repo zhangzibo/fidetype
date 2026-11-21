@@ -48,7 +48,9 @@ lsl = ["pylsl>=1.16"]
 brainflow = ["brainflow>=5.10"]
 # WebSocket adapter (fidetype.adapters.ws, FEP-0004). websockets is BSD-3-Clause; pinned (sync API).
 ws = ["websockets==17.4"]
-# emg2qwerty replay adapter (fidetype.adapters.emg2qwerty): reads the HDF5 sessions. h5py is BSD-3-Clause.
+# HDF5 files (h5py is BSD-3-Clause): the B2T '25 / T15 files of fidetype.pretrained and the emg2qwerty sessions.
+hdf5 = ["h5py>=3.10"]
+# The old name of [hdf5] (emg2qwerty replay adapter, fidetype.adapters.emg2qwerty); kept for compatibility.
 emg2qwerty = ["h5py>=3.10"]
 # Local LLM rescoring / rewrite (fidetype.lm.llm.LlamaCppLLM, P15-05). llama-cpp-python is MIT. On Windows use the
 # prebuilt CPU wheel: uv pip install llama-cpp-python --only-binary llama-cpp-python
@@ -101,13 +103,18 @@ exclude = ["__pycache__", "*.pyc", "*.pt", "*.ckpt", "*.npy", "*.fif", "*.edf", 
 # `fidetype conformance --profile <name>` works without a checkout.
 [tool.hatch.build.targets.wheel.force-include]
 "spec/conformance" = "fidetype/_spec/conformance"
+# The committed leaderboard cards (our own aggregate results, no participant data, about 0.7 MB), so that
+# `fidetype.benchmark.leaderboard.results_dir()` works without a checkout (P14-46).
+"benchmark/results/v0.1" = "fidetype/_benchmark/results/v0.1"
+"benchmark/results/v0.2" = "fidetype/_benchmark/results/v0.2"
 
 # The sdist holds the package, its tests, examples and the spec; not the research files.
 # Leading "/" anchors each pattern at the repository root (unanchored "examples" also matched
 # sdk/rust/target/*/examples).
 [tool.hatch.build.targets.sdist]
 include = ["/src/fidetype", "/tests", "/examples/*.py", "/examples/collector/*.toml", "/examples/collector/*.json",
-           "/examples/ws-browser", "/spec", "/README.md", "/LICENSE", "/CHANGELOG.md", "/CITATION.cff"]
+           "/examples/ws-browser", "/spec", "/benchmark/results/v0.1/*.json", "/benchmark/results/v0.2/*.json",
+           "/README.md", "/LICENSE", "/CHANGELOG.md", "/CITATION.cff"]
 exclude = ["__pycache__", "*.pyc", "/examples/collector/out"]
 
 [tool.pytest.ini_options]

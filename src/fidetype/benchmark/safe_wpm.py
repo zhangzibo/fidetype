@@ -512,24 +512,48 @@ def summarize_controls(c: Mapping[str, Any]) -> dict[str, Any]:
     return out
 
 
-def guarantee_from_sheet(sheet: Mapping[str, Any]) -> dict[str, Any]:
-    """The guarantee of a drop-in ``TrustGuard`` (``guard.sheet.to_dict()`` or the ``sheet`` of a saved guard)."""
+#: The default ``scope`` of a guarantee from a drop-in guard sheet (a submission guarantee needs one).
+SHEET_SCOPE = "marginal over decisions exchangeable with the calibration items"
+
+
+def _sheet_dict(sheet: Any) -> Mapping[str, Any]:
+    """A sheet dict from a TrustGuard, a GuaranteeSheet, a saved guard dict or a sheet dict."""
+    sh = getattr(sheet, "sheet", sheet)  # a TrustGuard has .sheet
+    if hasattr(sh, "to_dict"):
+        sh = sh.to_dict()
+    if not isinstance(sh, Mapping):
+        raise TypeError(f"expected a TrustGuard, a GuaranteeSheet or a sheet dict, got {type(sheet).__name__}")
+    return sh.get("sheet", sh) if "alpha" not in sh and isinstance(sh.get("sheet"), Mapping) else sh
+
+
+def guarantee_from_sheet(sheet: Any, *, scope: str = SHEET_SCOPE,
+                         calibration_split: str | None = None) -> dict[str, Any]:
+    """The guarantee of a drop-in ``TrustGuard`` (``guard.sheet.to_dict()`` or the ``sheet`` of a saved guard).
+
+    The result is a valid submission guarantee (P14-46): it has ``scope`` (default
+    :data:`SHEET_SCOPE`). ``calibration_split``: the benchmark split that calibrated the guard
+    (for example ``"cal"``); default: a text with the item counts of the sheet. ``sheet`` may
+    also be a TrustGuard or a GuaranteeSheet.
+    """
+    sheet = _sheet_dict(sheet)
     n_ltt = sheet.get("n_ltt")
+    cal = calibration_split or (f"{sheet.get('n_items')} items: {sheet.get('n_fit')} fit + {sheet.get('n_policy')} "
+                                f"grid + {n_ltt} LTT (fidetype.trust.calibrate)")
     return {"method": "ltt", "alpha": sheet.get("alpha"), "delta": sheet.get("delta"), "n_cal": n_ltt,
-            "calibration_split": (f"{sheet.get('n_items')} items: {sheet.get('n_fit')} fit + {sheet.get('n_policy')} "
-                                  f"grid + {n_ltt} LTT (fidetype.trust.calibrate)"),
+            "scope": scope, "calibration_split": cal,
             "feasible": sheet.get("feasible", True), "config_id": sheet.get("config_id"),
             "commit_threshold": sheet.get("commit_threshold"),
             **({"risk": RISK_PREFIX} if (sheet.get("confidence") or {}).get("unit") == "prefix" else
                {"risk": RISK_STREAM} if (sheet.get("confidence") or {}).get("unit") == "stream-prefix" else {})}
 
 
-def controls_from_sheet(sheet: Mapping[str, Any]) -> dict[str, Any]:
+def controls_from_sheet(sheet: Any) -> dict[str, Any]:
     """Map the drop-in null controls (uniform, shuffled: commit rate <= allowed) to the benchmark control keys.
 
     The drop-in controls test commit refusal, not a CER gap: ``shuffled`` = time-shuffled calibration frames,
-    ``zeros`` and ``null_commit`` = near-uniform frames (no signal).
+    ``zeros`` and ``null_commit`` = near-uniform frames (no signal). ``sheet``: as :func:`guarantee_from_sheet`.
     """
+    sheet = _sheet_dict(sheet)
     by = {c.get("name"): c for c in sheet.get("controls", [])}
     out: dict[str, Any] = {}
     for key, name in (("shuffled", "shuffled"), ("zeros", "uniform"), ("null_commit", "uniform")):
@@ -556,6 +580,52 @@ def from_trial_scores(scores: Sequence[Any], *, guarantee: Mapping[str, Any] | N
                     guarantee=guarantee, rule=rule, timing=timing,
                     clusters=[s.clusters for s in scores] if ci_unit else None, ci_unit=ci_unit,
                     controls=controls, gaze_chars_per_min=gaze_chars_per_min, B=B, seed=seed)
+
+
+def _normalizer(normalizer: Any) -> Any:
+    if normalizer is None:
+        return lambda t: " ".join(str(t).split())
+    if isinstance(normalizer, str):
+        from fidetype.benchmark.registry import normalize
+
+        normalize("", normalizer)  # raises ValueError on an unknown name
+        return lambda t: normalize(str(t), normalizer)
+    if callable(normalizer):
+        return normalizer
+    raise TypeError("normalizer must be None, a track normaliser name (for example 'words') or a callable")
+
+
+def from_decisions(results: Sequence[Any], truths: Sequence[str], neural_s: Sequence[float], sheet: Any, *,
+                   normalizer: Any = None, timing: str = "unspecified", controls: Mapping[str, Any] | None = None,
+                   **kwargs: Any) -> dict[str, Any]:
+    """Safe WPM from the decisions of a drop-in ``TrustGuard`` in one call (P14-45).
+
+    - ``results``: the ``TrustResult`` of each utterance (``guard.decide(...)``), in order;
+    - ``truths``: the true text of each utterance;
+    - ``neural_s``: the seconds of neural signal of each utterance (say how in ``timing``);
+    - ``sheet``: the guard itself, its ``GuaranteeSheet``, or the sheet dict. It gives the
+      guarantee (:func:`guarantee_from_sheet`) and, unless ``controls`` is given, the controls
+      (:func:`controls_from_sheet`);
+    - ``normalizer``: how a commit and its truth are compared, and how words and characters are
+      counted. ``None``: whitespace only (the guard's own rule); a track normaliser name of
+      :func:`fidetype.benchmark.registry.normalize` (for example ``"words"``); or a callable.
+
+    A commit is right when ``normalizer(result.text) == normalizer(truth)``. Other keyword
+    arguments go to :func:`safe_wpm` (for example ``B``, ``seed``, ``rule``). The result is the
+    same report as :func:`safe_wpm` with the five lists built by hand.
+    """
+    results, truths, neural_s = list(results), list(truths), list(neural_s)
+    if not len(results) == len(truths) == len(neural_s):
+        raise ValueError(f"results, truths and neural_s must have the same length "
+                         f"({len(results)}, {len(truths)}, {len(neural_s)})")
+    norm = _normalizer(normalizer)
+    sh = _sheet_dict(sheet)
+    committed = [r.action == "commit" for r in results]
+    nt = [norm(t) for t in truths]
+    correct = [c and norm(r.text or "") == t for c, r, t in zip(committed, results, nt)]
+    return safe_wpm(committed, correct, n_words=[len(t.split()) for t in nt], n_chars=[len(t) for t in nt],
+                    neural_s=neural_s, guarantee=guarantee_from_sheet(sh),
+                    controls=controls_from_sheet(sh) if controls is None else controls, timing=timing, **kwargs)
 
 
 def load_trials_jsonl(path: str, language: str | None = None) -> dict[str, list]:
@@ -761,5 +831,6 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
 
 __all__ = ["DEFINITION", "DEFINITION_V02", "METRIC_VERSIONS", "RISK_SENTENCE", "RISK_PREFIX", "prefix_outcome",
            "CorrectionRule", "certification", "model_neural_s", "safe_wpm", "from_trial_scores",
-           "summarize_controls", "guarantee_from_sheet", "controls_from_sheet", "load_trials_jsonl", "format_line",
+           "summarize_controls", "SHEET_SCOPE", "guarantee_from_sheet", "controls_from_sheet", "from_decisions",
+           "load_trials_jsonl", "format_line",
            "CALIBRATION_INTERVAL", "calibration_draw_interval"]

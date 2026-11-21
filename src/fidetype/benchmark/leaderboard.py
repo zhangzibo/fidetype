@@ -96,6 +96,34 @@ def load_results(folder: str | PathLike[str] | list) -> list[dict[str, Any]]:
     return out
 
 
+#: Versions of the committed leaderboard cards that ship in the wheel (``fidetype/_benchmark/results/<v>``).
+CARD_VERSIONS = ("v0.1", "v0.2")
+
+
+def results_dir(version: str = "v0.2") -> Path:
+    """The folder of the committed leaderboard cards of one benchmark version (P14-46).
+
+    A wheel install has a copy in the package (``fidetype/_benchmark/results/<version>``); a git
+    checkout reads ``benchmark/results/<version>``. So ``pip install`` users can compare their card
+    with the leaderboard offline: ``build_rows(load_results(results_dir()) + [card])``.
+    """
+    if version not in CARD_VERSIONS:
+        raise ValueError(f"unknown card version {version!r}; known: {list(CARD_VERSIONS)}")
+    here = Path(__file__).resolve()
+    packaged = here.parents[1] / "_benchmark" / "results" / version
+    if packaged.is_dir():
+        return packaged
+    checkout = here.parents[3] / "benchmark" / "results" / version
+    if checkout.is_dir():
+        return checkout
+    raise FileNotFoundError(f"no committed cards of {version}: looked in {packaged} and {checkout}")
+
+
+def committed_results(version: str = "v0.2") -> list[dict[str, Any]]:
+    """The committed leaderboard cards of one version (:func:`load_results` of :func:`results_dir`)."""
+    return load_results(results_dir(version))
+
+
 def _v(m: dict[str, Any], key: str) -> float | None:
     x = (m.get(key) or {}).get("value")
     return None if x is None or (isinstance(x, float) and not math.isfinite(x)) else x
