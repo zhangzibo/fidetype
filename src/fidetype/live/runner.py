@@ -33,7 +33,8 @@ markers it also drops the first segment after the gap, up to the next
 ``segment_end`` (its start may be inside the gap; compare WS-Q5). The NTS
 output gets one ``lsl_status`` record with ``status = "gap_abort"`` and
 the LSL-G3 fields (``t_start``, ``t_end``, ``missing_frames``,
-``stream``) plus ``lsl_cause`` (``lost`` or ``timestamp``). A consumer
+``stream``) plus ``lsl_cause`` (``lost``, ``timestamp``, or
+``sample_index`` for a packet drop in a recording file, P4-18). A consumer
 drops its open utterance there. A run that ends while the stream is
 lost writes ``lsl_status`` with ``status = "lost"``. The file keeps its
 one header (JSONL rule 6.2.1); the source checks that a reconnected

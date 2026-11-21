@@ -77,12 +77,18 @@ class ArraySource:
     """Replay a recorded signal (N, C) with marker strings, in real time (``speed`` 1) or faster (0: no pacing).
 
     ``t0`` is the time of sample 0. The synthetic source and the tests use it.
+    ``gaps`` (P4-18): ``(row, missing_frames)`` pairs of a recording with lost
+    samples (for example OpenBCI packet drops). Row ``row`` comes
+    ``missing_frames`` sample periods later than without the gap, a chunk never
+    spans a gap, and the first chunk after it carries ``gap`` (the LSL-G3 fields,
+    ``cause`` = ``gap_cause``).
     """
 
     def __init__(self, signal: np.ndarray, sample_rate: float, markers: Sequence[tuple[float, str]] = (),
                  speed: float = 1.0, chunk_s: float = 0.02, t0: float = 0.0, name: str = "array",
                  modality: str = "other", meta: dict[str, Any] | None = None,
-                 clock: Callable[[], float] = time.perf_counter) -> None:
+                 clock: Callable[[], float] = time.perf_counter, gaps: Sequence[tuple[int, int]] = (),
+                 gap_cause: str = "sample_index") -> None:
         self.x = np.asarray(signal, dtype=np.float32)
         self.fs = float(sample_rate)
         self.markers = deque(sorted(markers))
@@ -92,6 +98,18 @@ class ArraySource:
         self.i = 0
         self.clock = clock
         self._wall0: float | None = None
+        n = self.x.shape[0]
+        self.gaps = {int(r): int(m) for r, m in gaps}
+        if any(not 0 < r < n or m < 1 for r, m in self.gaps.items()):
+            raise ValueError("gaps: each row must be in 1..N-1 and each missing_frames >= 1")
+        self.gap_cause = gap_cause
+        #: Frame number of each row (row number plus the frames lost before it), and one past the end.
+        add = np.zeros(n + 1, np.int64)
+        for r, m in self.gaps.items():
+            add[r] += m
+        self._frame = np.arange(n + 1, dtype=np.int64) + np.cumsum(add)
+        self._gap_rows = sorted(self.gaps)
+        self._name = name
         self.info = {"name": name, "sample_rate": self.fs, "channels": int(self.x.shape[1]), "modality": modality,
                      "meta": dict(meta or {})}
 
@@ -104,26 +122,35 @@ class ArraySource:
         n = self.x.shape[0]
         if self.i >= n:
             return None
+        fr = self._frame
         if self.speed > 0:
             due = int((self.clock() - self._wall0) * self.speed * self.fs)  # type: ignore[operator]
-            if due <= self.i:
-                wait = (self.i + self.step - due) / (self.fs * self.speed)
+            if due <= fr[self.i]:
+                wait = (fr[self.i] + self.step - due) / (self.fs * self.speed)
                 time.sleep(min(max(wait, 0.0), timeout))
                 due = int((self.clock() - self._wall0) * self.speed * self.fs)  # type: ignore[operator]
-            j = min(n, max(due, self.i))
+            j = min(n, max(int(np.searchsorted(fr[:n], due, "left")), self.i))
         else:
             j = min(n, self.i + self.step)
+        if self._gap_rows:  # a chunk never spans a gap: stop at the next gap row
+            k = int(np.searchsorted(self._gap_rows, self.i, "right"))
+            if k < len(self._gap_rows):
+                j = min(j, self._gap_rows[k])
+        gap = None
+        if j > self.i and self.i in self.gaps:  # the first samples after a gap
+            gap = {"t_start": self.t0 + fr[self.i - 1] / self.fs, "t_end": self.t0 + fr[self.i] / self.fs,
+                   "missing_frames": self.gaps[self.i], "stream": self._name, "cause": self.gap_cause}
         x = self.x[self.i:j]
-        t = self.t0 + np.arange(self.i, j) / self.fs
+        t = self.t0 + fr[self.i:j] / self.fs
         self.i = j
-        t_hi = self.t0 + j / self.fs
+        t_hi = self.t0 + fr[j] / self.fs
         mk = []
         while self.markers and self.markers[0][0] < t_hi:
             mk.append(self.markers.popleft())
         if self.i >= n:  # flush the markers after the last sample
             mk += list(self.markers)
             self.markers.clear()
-        return Chunk(x, t, mk)
+        return Chunk(x, t, mk, gap=gap)
 
     def close(self) -> None:
         pass

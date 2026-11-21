@@ -185,7 +185,8 @@
       "licence": "Code Apache-2.0; no OpenBCI code used. Data: the licence of each recording.",
       "tests": [
         "tests/test_adapter_openbci_gui.py",
-        "tests/test_adapter_files_real.py"
+        "tests/test_adapter_files_real.py",
+        "tests/test_adapter_openbci_gui_real.py"
       ],
       "docs": "docs/adapters.md#openbci-gui",
       "hardware_tested": [],

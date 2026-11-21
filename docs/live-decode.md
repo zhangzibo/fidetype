@@ -101,7 +101,7 @@ fidetype live --source lsl --stream-name MyEMG --model my.model.json --guard my.
    "stream": "MyEMG", "lsl_cause": "lost"}
   ```
 
-  `t_start` = last sample before the gap, `t_end` = first sample after it, `missing_frames` = missing samples, `lsl_cause` = `lost` or `timestamp`. A consumer drops its open utterance there. A run that ends while the stream is lost writes `{"type": "lsl_status", "status": "lost", ...}`. The file keeps its one header (JSONL rule 6.2.1); the run summary counts `losses`, `gaps`, `dropped_segments` and `dropped_frames`.
+  `t_start` = last sample before the gap, `t_end` = first sample after it, `missing_frames` = missing samples, `lsl_cause` = `lost` or `timestamp` (a file reader can give `sample_index`: an OpenBCI GUI packet drop, P4-18). A consumer drops its open utterance there. A run that ends while the stream is lost writes `{"type": "lsl_status", "status": "lost", ...}`. The file keeps its one header (JSONL rule 6.2.1); the run summary counts `losses`, `gaps`, `dropped_segments` and `dropped_frames`.
 
 Test the LSL path on one machine with no data:
 
