@@ -17,7 +17,7 @@
 Only ``synthetic`` and ``keystroke`` work without torch. This file does not import torch.
 
 Pretrained decoders (P14-01): :func:`load` (same as :func:`fidetype.pretrained.load`) and
-:func:`list_models`, for example ``fidetype.decoders.load("t15-m4-13").decode(path)``.
+:func:`list_models`, for example ``fidetype.decoders.load("t15-m4-13").decode_file(path)``.
 """
 
 from typing import Any

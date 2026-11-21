@@ -60,8 +60,7 @@ def main(argv: list[str] | None = None) -> int:
         line = f"{it.key}: {st.n_frames} frames, NTS level {rep.level}"
         r = None
         if guard is not None:
-            x = m.nbest(st) if isinstance(m, ftp.KeyLdaDecoder) else st.log_probs
-            r = guard.decide(x)
+            r = m.decide(st, guard=guard)  # the right guard input for each model (m.guard_input)
             line += f", guard {r.action} (p_top1 {r.p_top1:.2f})"
         hyp = m.text(st)
         if isinstance(m, ftp.KeyLdaDecoder):  # key accuracy: argmax key per press vs the logged key

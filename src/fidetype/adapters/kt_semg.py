@@ -557,3 +557,33 @@ def greedy_codes(stream: NeuralTextStream) -> list[str]:
     if tuple(stream.vocab) != KEY_VOCAB:
         raise ValueError("greedy_codes needs a stream with the KT-sEMG KEY_VOCAB")
     return [KEY_VOCAB[i] for i in np.argmax(stream.log_probs, axis=1)]
+
+
+def code_nbest(stream: NeuralTextStream, top_per_frame: int = 3, beam: int = 16,
+               n_best: int = 8) -> list[dict[str, Any]]:
+    """The n-best key-code sequences of a key-press stream, in the ``kt-semg`` track text space (P14-46).
+
+    A beam search over the per-frame key posteriors (no language model). Each candidate is
+    ``{"text": "KeyH KeyI Space ...", "score": <sum of log-probs>}``: one W3C code per key press,
+    ``Backspace`` included, best first. The first candidate is :func:`greedy_codes`.
+    """
+    if tuple(stream.vocab) != KEY_VOCAB:
+        raise ValueError("code_nbest needs a stream with the KT-sEMG KEY_VOCAB")
+    lp = np.asarray(stream.log_probs, dtype=np.float64)
+    beams: list[tuple[float, tuple[int, ...]]] = [(0.0, ())]
+    for row in lp:
+        top = np.argsort(-row, kind="stable")[:max(1, int(top_per_frame))]
+        nxt = [(s + float(row[j]), seq + (int(j),)) for s, seq in beams for j in top]
+        nxt.sort(key=lambda x: -x[0])
+        beams = nxt[:max(1, int(beam))]
+    return [{"text": " ".join(KEY_VOCAB[j] for j in seq), "score": float(s)} for s, seq in beams[:max(1, int(n_best))]]
+
+
+def codes_from_text(text: str, unknown: str = "?") -> list[str]:
+    """Screen text -> one W3C ``KeyboardEvent.code`` per character (P14-46).
+
+    Lossy: screen text has no ``Backspace`` presses, so a burst with corrections maps to
+    fewer keys than were typed. Use :func:`code_nbest` (or ``KeyLdaDecoder.track_nbest``) to
+    keep every key press. Characters without a code give ``unknown`` (the track truth uses ``?``).
+    """
+    return [key_code(ch) or unknown for ch in str(text)]

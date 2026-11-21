@@ -6,13 +6,13 @@ only; it never goes into a stream.
 
 - Brain-to-Text '25 (T15, CC0): ``data_*.hdf5`` of one session folder (``t15.YYYY.MM.DD``); one
   HDF5 group per trial with ``input_features`` (T x 512) and the attribute ``sentence_label``.
-  Needs ``h5py`` (``pip install fidetype[emg2qwerty]``).
+  Needs ``h5py`` (``pip install fidetype[hdf5]``; the old extra name ``emg2qwerty`` also works).
 - Brain-to-Text '24 (T12, CC0): ``competitionData/{train,test}/t12.YYYY.MM.DD.mat``. The decoder
   input is ``tx1`` + ``spikePow`` (T x 512), z-scored per trial with the statistics of the 20
   previous trials of the session (train file first, then test file; T12 v2 recipe). So a test file
   needs its train file (found next to it). Needs ``scipy`` (``pip install fidetype[data]``).
 - emg2qwerty (CC BY-NC-SA 4.0, research only): one ``*.hdf5`` session; one item per text prompt.
-  Needs ``h5py``.
+  Needs ``h5py`` (``pip install fidetype[hdf5]``).
 - Willett handwriting 2021 (T5, CC0): ``Datasets/t5.YYYY.MM.DD/sentences.mat``; one item per
   sentence: threshold crossings (T x 192, 10 ms bins) from the go cue to the sentence end plus up to
   1 s of tail. Needs ``scipy`` (``pip install fidetype[data]``).
@@ -20,6 +20,8 @@ only; it never goes into a stream.
   typing burst (key times from the key log, as the ``kt-semg`` benchmark track).
 
 These readers treat every file as untrusted data: no pickle, read-only access.
+
+:func:`count_items` gives the number of items of a file without decoding it (P14-44).
 """
 
 from __future__ import annotations
@@ -32,7 +34,7 @@ from typing import Any
 
 import numpy as np
 
-__all__ = ["Item", "read_b2t25_hdf5", "read_b2t24_session", "b2t24_normalise", "read_emg2qwerty_session",
+__all__ = ["Item", "count_items", "count_b2t25_hdf5", "check_indices", "read_b2t25_hdf5", "read_b2t24_session", "b2t24_normalise", "read_emg2qwerty_session",
            "read_kt_run", "read_willett_session", "willett_test_block", "T15_SESSION", "T12_SESSION",
            "T5_SESSION"]
 
@@ -52,15 +54,42 @@ class Item:
     extra: dict[str, Any] = field(default_factory=dict)
 
 
+def _h5py() -> Any:
+    try:
+        import h5py  # optional dependency
+    except ImportError as e:  # pragma: no cover - depends on the environment
+        raise ImportError("reading HDF5 files needs h5py: pip install \"fidetype[hdf5]\"") from e
+    return h5py
+
+
+def check_indices(indices: Any, n: int, where: str) -> None:
+    """Raise a clear ``IndexError`` if an index is outside ``-n .. n-1`` (P14-44)."""
+    bad = [i for i in indices if not -n <= int(i) < n]
+    if bad:
+        raise IndexError(f"{where}: index {bad[0]} is out of range: the file has {n} items (indices 0..{n - 1}); "
+                         f"count them with n_items()")
+
+
+def count_b2t25_hdf5(path: str | PathLike[str]) -> int:
+    """The number of trials of one B2T '25 HDF5 file (no data is read)."""
+    with _h5py().File(Path(path), "r") as f:
+        return len(f.keys())
+
+
 def read_b2t25_hdf5(path: str | PathLike[str], limit: int | None = None, indices: list[int] | None = None) -> list[Item]:
-    """Trials of one B2T '25 HDF5 file. ``indices``: trial positions in sorted group order (default all)."""
-    import h5py  # optional dependency
+    """Trials of one B2T '25 HDF5 file. ``indices``: trial positions in sorted group order (default all).
+
+    An index outside ``-n .. n-1`` raises ``IndexError`` with the trial count of the file.
+    """
+    h5py = _h5py()
 
     p = Path(path)
     sess = p.parent.name
     out: list[Item] = []
     with h5py.File(p, "r") as f:
         keys = sorted(f.keys())
+        if indices is not None:
+            check_indices(indices, len(keys), p.name)
         sel = range(len(keys)) if indices is None else indices
         for i in sel:
             g = f[keys[i]]
@@ -253,3 +282,27 @@ def willett_test_block(items: list[Item]) -> int:
     if not ok:
         raise ValueError("no usable sentence in these items")
     return max(ok)
+
+
+def count_items(file_format: str, path: str | PathLike[str], **kw: Any) -> int:
+    """The number of decodable items (trials, prompts, typing bursts) of one data file (P14-44).
+
+    ``file_format`` is the ``input.file_format`` of a model manifest. ``kw`` are the reader options
+    that change the count (``blocks=`` for Willett files). B2T '25 counts the HDF5 groups without
+    reading data. The other formats run the reader (the KT-sEMG reader also reads the EMG file).
+    """
+    if file_format == "b2t25-hdf5":
+        return count_b2t25_hdf5(path)
+    if file_format == "b2t24-mat":
+        import scipy.io  # optional dependency
+
+        return int(scipy.io.loadmat(str(path), variable_names=["sentenceText"])["sentenceText"].shape[0])
+    if file_format == "willett-hw-mat":
+        return len(read_willett_session(path, blocks=kw.get("blocks")))
+    if file_format == "emg2qwerty-hdf5":
+        sess, items = read_emg2qwerty_session(path)
+        sess.close()
+        return len(items)
+    if file_format == "kt-semg-run":
+        return len(read_kt_run(path)[1])
+    raise ValueError(f"unknown input file format {file_format!r}")

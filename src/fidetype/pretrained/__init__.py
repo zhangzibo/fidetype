@@ -5,10 +5,13 @@
     import fidetype.pretrained as ftp
 
     m = ftp.load("t15-m4-13")                      # checks SHA-256 and size of the weights
-    streams = m.decode("t15.2023.08.13/data_val.hdf5")   # one NTS stream per trial
+    path = "t15.2023.08.13/data_val.hdf5"
+    print(m.n_items(path))                         # number of trials (no decoding)
+    streams = m.decode_file(path, limit=5)         # a list: one NTS stream per trial
     print(m.text(streams[0]))                      # greedy readout (phonemes, characters or keys)
-    guard = m.guard()                              # the committed trust config (TrustGuard)
-    print(guard.decide(streams[0].log_probs).action)
+    print(m.decide(streams[0]).action)             # the committed trust guard, right input per model
+
+    toy = ftp.toy_model()                          # a tiny random model to try the API (no download)
 
 ``fidetype.decoders.load`` is the same function. Command line: ``fidetype decoders list|info|path|
 verify|decode``.
@@ -42,6 +45,7 @@ import os
 import shutil
 import tempfile
 import urllib.request
+import warnings
 from os import PathLike
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
@@ -53,7 +57,7 @@ from fidetype.pretrained.manifest import FileEntry, Manifest, ManifestError, all
 
 __all__ = ["PretrainedError", "ModelNotAvailable", "WeightsNotFound", "WeightsMismatch", "ResearchOnlyRefused",
            "NoTrustConfig", "Manifest", "ManifestError", "PretrainedDecoder", "default_cache_dir", "list_models",
-           "info", "load", "resolve_files", "download", "sha256_file"]
+           "info", "load", "resolve_files", "download", "sha256_file", "toy_model", "make_toy_manifest"]
 
 ENV_DIR = "FIDETYPE_PRETRAINED_DIR"
 ENV_CACHE = "FIDETYPE_CACHE"
@@ -232,12 +236,15 @@ def _npz(path: Path, keys: Sequence[str]) -> dict[str, np.ndarray]:
 class PretrainedDecoder:
     """A loaded pretrained decoder. Use :func:`load`; do not build it directly.
 
-    - :meth:`decode`: an input array -> one :class:`~fidetype.streams.spec.NeuralTextStream`; a data
-      file path -> a list of streams (one per trial, prompt or typing burst).
-    - :meth:`decode_file`: the same for a file, with the items (keys, and the ground truth for
-      evaluation) when ``with_items=True``.
+    - :meth:`decode` (= :meth:`decode_array`): one input array -> one
+      :class:`~fidetype.streams.spec.NeuralTextStream`.
+    - :meth:`decode_file`: a data file -> a list of streams (one per trial, prompt or typing
+      burst), with the items (keys, and the ground truth for evaluation) when ``with_items=True``.
+    - :meth:`n_items`: the number of items of a data file (no decoding).
     - :meth:`text`: a greedy readout of a stream (no LM).
     - :meth:`guard`: the committed trust config as a :class:`~fidetype.trust.dropin.TrustGuard`.
+    - :meth:`guard_input` / :meth:`decide`: the guard input of a stream for this model, and the
+      guard decision on a stream (one call for every model).
     - :meth:`save`: write streams as NTS JSON Lines files.
     """
 
@@ -262,6 +269,11 @@ class PretrainedDecoder:
     def research_only(self) -> bool:
         return self.manifest.research_only
 
+    @property
+    def sessions(self) -> tuple[str, ...]:
+        """The recording sessions that the day layer of this model knows (empty if it has none)."""
+        return tuple(str(s) for s in (self.manifest.architecture.get("sessions") or []))
+
     def card(self) -> str:
         return self.manifest.card()
 
@@ -277,10 +289,26 @@ class PretrainedDecoder:
     # --- decoding -----------------------------------------------------------------------------------
 
     def decode(self, x: Any, **kwargs: Any) -> Any:
-        """An array -> one stream; a path (str or PathLike) -> a list of streams (see the model card)."""
+        """One input array -> one stream (the same as :meth:`decode_array`).
+
+        Deprecated (P14-44): a path (str or PathLike) still gives a list of streams, with a
+        ``DeprecationWarning``. Use :meth:`decode_file` for files: it always returns a list.
+        """
         if isinstance(x, (str, PathLike)):
+            warnings.warn("decode(path) is deprecated: use decode_file(path) for a data file (it returns a list); "
+                          "decode(array) returns one stream", DeprecationWarning, stacklevel=2)
             return self.decode_file(x, **kwargs)
         return self.decode_array(x, **kwargs)
+
+    def n_items(self, path: str | PathLike[str], **kwargs: Any) -> int:
+        """The number of items (trials, prompts, typing bursts) of a data file, without decoding.
+
+        Valid ``decode_file(indices=...)`` values are ``0 .. n_items(path) - 1``. ``kwargs``: the
+        reader options that change the count (``blocks=`` for ``willett-hw``).
+        """
+        from fidetype.pretrained import readers as R
+
+        return R.count_items(str(self.manifest.input.get("file_format")), path, **kwargs)
 
     def decode_array(self, x: Any, **kwargs: Any) -> Any:  # pragma: no cover - overridden
         raise NotImplementedError
@@ -318,6 +346,26 @@ class PretrainedDecoder:
         import fidetype.trust as ft
 
         return ft.load(self.guard_path(), decode_fn=decode_fn, **kwargs)
+
+    def guard_input(self, stream: Any) -> Any:
+        """The input of this model's guard for one stream: ``guard.decide(model.guard_input(stream))``.
+
+        The default is the score matrix ``stream.log_probs``. A model whose guard reads an n-best
+        list (``kt-semg-lda``) overrides it (P14-44).
+        """
+        return stream.log_probs
+
+    def decide(self, stream: Any, *, guard: Any = None, utterance_id: str | None = None) -> Any:
+        """The guard decision (a ``TrustResult``) on one stream of this model: the same call for every model.
+
+        ``guard``: a TrustGuard; default: :meth:`guard` (built at the first call, then kept).
+        Raises :class:`NoTrustConfig` if the model has no committed trust config.
+        """
+        if guard is None:
+            guard = getattr(self, "_default_guard", None)
+            if guard is None:
+                guard = self._default_guard = self.guard()
+        return guard.decide(self.guard_input(stream), utterance_id=utterance_id)
 
     # --- output -------------------------------------------------------------------------------------
 
@@ -408,6 +456,7 @@ class GruCtcDecoder(PretrainedDecoder):
             items = R.read_b2t24_session(path, window=int(n.get("window_trials", 20)),
                                          clip=float(n.get("clip_abs_z", 10.0)), limit=limit)
             if indices is not None:
+                R.check_indices(indices, len(items), Path(path).name)
                 items = [items[i] for i in indices]
         else:
             raise ValueError(f"{self.name}: unknown input file format {fmt!r}")
@@ -662,10 +711,25 @@ class KeyLdaDecoder(PretrainedDecoder):
         return render_keys(greedy_codes(stream))[0]
 
     def nbest(self, stream: Any) -> list[dict[str, Any]]:
-        """The key n-best list of a stream: the input of this model's guard (n-best kind)."""
+        """The key n-best list of a stream (screen text): the input of this model's guard (n-best kind)."""
         from fidetype.live.runner import nbest_of_frames
 
         return nbest_of_frames(stream.log_probs, np.asarray(stream.frame_times))
+
+    def guard_input(self, stream: Any) -> Any:
+        """The guard of this model reads the screen-text n-best list: :meth:`nbest`."""
+        return self.nbest(stream)
+
+    def track_nbest(self, stream: Any, n_best: int = 8) -> list[dict[str, Any]]:
+        """The n-best list in the text space of the ``kt-semg`` benchmark track (P14-46).
+
+        Each text is the space-separated W3C ``KeyboardEvent.code`` names, one per key press
+        (``Backspace`` included), as in the track truth. Feed it to ``scorecard.unit_row``. The
+        :meth:`nbest` list is screen text (the guard input), not track text.
+        """
+        from fidetype.adapters.kt_semg import code_nbest
+
+        return code_nbest(stream, n_best=n_best)
 
     def guard(self, decode_fn: Callable[..., Any] | None = None, **kwargs: Any) -> Any:
         """The guard of the model release (n-best input: ``guard.decide(model.nbest(stream))``)."""
@@ -701,6 +765,20 @@ def load(name: str, *, weights: str | PathLike[str] | None = None, cache_dir: st
     files = resolve_files(m, weights=weights, cache_dir=cache, download_missing=download, verify=verify,
                           accept_research_only=accept_research_only)
     return rt(m, files, cache_dir=cache, weights=weights)
+
+
+def toy_model(*args: Any, **kwargs: Any) -> PretrainedDecoder:
+    """A tiny random decoder to try the API without weights (see :func:`fidetype.pretrained.toy.toy_model`)."""
+    from fidetype.pretrained.toy import toy_model as _toy
+
+    return _toy(*args, **kwargs)
+
+
+def make_toy_manifest(*args: Any, **kwargs: Any) -> Path:
+    """Write the weights and the manifest of a toy model (see :func:`fidetype.pretrained.toy.make_toy_manifest`)."""
+    from fidetype.pretrained.toy import make_toy_manifest as _make
+
+    return _make(*args, **kwargs)
 
 
 def _manifest_json(m: Manifest) -> str:
