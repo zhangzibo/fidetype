@@ -80,3 +80,11 @@ Same target formula as P15-37: the needed between-draw SD is σ_b* = √(((μ �
 5. No change of the designs, seeds, K rule, fit, n* formula or reading after this commit. Any later variant is a new item.
 
 Known limits (stated before any result): (a) pinned pipeline values; (b) one participant, one decoder checkpoint, the same 701 evaluation trials in every draw; (c) a bootstrap from 722 trials cannot show the behaviour above n = 722, so n* > 722 is an extrapolation of a three-point line; (d) duplicates inside a part (both designs) make a single draw's certificate not valid; the draws show sampling variation only; (e) the grouped first-fit rule of D2 puts trials with many copies a little more often into later parts (no label is used); (f) `null_trials` 20 instead of 300 (decisions unchanged by X1; refusal chance slightly different).
+
+## Addendum (2026-11-21, before the main run and before any `val_eval` number): K for D2 and the time limit
+A synthetic check of the fit code (normal draw values with a true exponent 0.5, K = 40 per cell) gave a 95 % bootstrap interval of b of about [−0.10, 0.78]: with only a factor 2 in n (361 to 722), K = 40 per cell estimates the exponent poorly. Rough rule: the standard error of b is about 1 / √(2 (K − 1) × 0.2425), so ±0.45 (95 %) at K = 40 and ±0.28 at K = 100. To use the CPU budget for the primary design, the following changes are made now (no draw on `val_eval` has run):
+- **K target: D2 cells 100 each, D1 cells 40 each** (D1 is secondary; its 722 cell already has K = 120).
+- Order: for k = 1..100: D2-361, D2-481, D2-722, then D1-361, D1-481 only while k ≤ 40. X1 first, as before.
+- **Time limit: launch + 8 h** (was 9 h), kept in `derived/p15-40/deadline.txt` so a resume keeps it. The rule for K_d (the smallest finished count over the new cells of a design) and the minimum K_d = 20 do not change.
+- Expected: the smoke run (calibration subsets of 200 trials, 40 evaluation trials) took 40-60 s per draw. At full size about 1-2 min per draw: all 200 draws of k ≤ 40, then D2 to about k = 60-100 in the rest of the 8 h. The reached K and the resulting precision of b are reported. If K_d(D2) < 100, the interval of b is wider than ±0.28.
+- Smoke only: K target 3 (D2) and 2 (D1).
