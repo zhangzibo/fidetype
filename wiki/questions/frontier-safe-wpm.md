@@ -175,6 +175,11 @@ Pre-registered ([plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md)
 
 > **Our take:** EMG now shows the same calibration-variance problem as T15, and more strongly (22.5 % vs 5 % of draws above alpha). Possible causes are bootstrap duplicates in the LTT part, test-rate noise and the val / test session shift. Gap 158 ([P11-18](roadmap-standard.md#p11-18-why-225--of-the-emg-calibration-draws-are-above-alpha)) separates them with partition-only draws. Gap 159 ([P11-19](roadmap-standard.md#p11-19-lower-variance-emg-l-fl-guard-with-a-calibration-inclusive-lower-end-above-no-bci)) tries a lower-variance guard.
 
+## P15-34 and P15-37: can the guard lower the calibration variance?
+- P15-37 (2026-11-21): guarantee-keeping multi-split guards (AND, Bonferroni + selection) do not lift the T15 lower end (primary BMED-3 4.73 [2.60, 6.24]); K = 120 of the P15-29 settings gives 5.26 [2.94, 6.91]; about 2,760 calibration items (3.8 x `val_select`) would be needed ([results](../../experiments/2026-11-21-p15-37-multi-split/results.md)).
+- The multi-split rules cut the between-draw SD by only 4-15 %. With K = 40, the same P15-29 settings gave lower ends of 0.00 (P15-29), 4.05 (P15-34) and 2.95 (P15-37).
+- Gaps 132 and 141 are closed on their "numbers say why" branches. The criterion (lower end above 4.0153) was not met. The goal continues in gap 160 ([P15-39](roadmap-standard.md#p15-39-labelled-t15-like-calibration-data-for-the-calibration-inclusive-safe-wpm), new labelled data, externally blocked).
+
 ## What changed in the library
 | change | commit |
 |---|---|
@@ -197,7 +202,8 @@ Pre-registered ([plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md)
 ## Still open
 | gap | item | what |
 |---|---|---|
-| 132 | [P15-34](roadmap-standard.md#p15-34-calibration-inclusive-t15-safe-wpm-lower-end-above-gaze-typing) | calibration-inclusive T15 lower end above 4.0153 (gap 103 closed by P15-29) |
+| 160 | [P15-39](roadmap-standard.md#p15-39-labelled-t15-like-calibration-data-for-the-calibration-inclusive-safe-wpm) | calibration-inclusive T15 lower end above 4.0153 with new labelled calibration data (externally blocked; gap 103 closed by P15-29, gaps 132 and 141 closed by P15-34 / P15-37 on their "numbers say why" branches, criterion not met) |
+| 161 | [P15-40](roadmap-standard.md#p15-40-check-the-1n-assumption-of-the-calibration-size-projection) | check the 1/sqrt(n) assumption of the P15-37 calibration-size projection (low priority) |
 | 158 | [P11-18](roadmap-standard.md#p11-18-why-225--of-the-emg-calibration-draws-are-above-alpha) | why 22.5 % of the EMG calibration draws are above alpha (partition-only draws; gap 133 closed by P11-17) |
 | 159 | [P11-19](roadmap-standard.md#p11-19-lower-variance-emg-l-fl-guard-with-a-calibration-inclusive-lower-end-above-no-bci) | lower-variance EMG L-FL guard: calibration-inclusive lower end above 3.09 |
 | 62 | [P14-24](roadmap-standard.md#p14-24-f2-and-m4-13-trust-rerun-rows-with-word-decoder-edit-penalty-8) | LLM-arm rows with edit 8 |

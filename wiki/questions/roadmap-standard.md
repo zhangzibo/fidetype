@@ -263,7 +263,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P2-13 CI latency-budget tests flake on shared runners
 - **Gap:** 124 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a CI failure). Follow-up of P2-09.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-21; commit `4f74ca2`). CI gate mode in `src/fidetype/collector/latency.py`: strict locally; on CI (`GITHUB_ACTIONS` / `CI`) the median is strict in every run and the p95 is the best of up to 3 fresh runs, only after a tail-only failure (`FIDETYPE_LATENCY_GATE` overrides). The gate report names the tail stage (receive or pipeline). Docs: docs/collector.md "Gate modes (P2-13)". Cause evidence: run 44913077810 attempt 1, receive p95 52.8 ms (max 117.2 ms) vs pipeline p95 1.27 ms, so a runner stall, not our code. Green `tests` runs since the change: 4 of 20 needed (44915291894, 44915895663, 44915904168, 44919622175).
 - **Depends on:** P2-09 (done: CI matrix; `FIDETYPE_LATENCY_TOLERANCE` is 4 on macOS only).
 - **Source:** CI run 44673291448 (2026-11-20 UTC, commit `8180a30`) failed. The test `tests/test_collector_pipeline.py` measured the emg-key WebSocket latency at p95 320 ms. The budget is 50 ms. The runner was windows-latest with Python 3.12. The rerun passed. Wall-clock budget checks on shared CI runners depend on the runner load, not only on our code.
 - **Done when:** The wall-clock budget assertions in CI are either marked as performance tests that run only under the isolation runner or locally, or use a CI-specific tolerance with the strict budget checked in a dedicated performance job. The flake does not recur in 20 consecutive CI runs.
@@ -279,11 +279,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P2-15 Faster slow test fixtures (hybrid_setup and streaming calibration)
 - **Gap:** 156 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P2-14). Follow-up of P2-14.
-- **Status:** `todo`. Low priority.
+- **Status:** `done` (2026-11-21; commits `ee590af`, `03d2308`). Exact CTC beam finalize speed-up: batched numpy n-best marginals (same floats as before) and `frame_only=True` in the trust drop-in decoders. Config ids, sheets, views and events are identical to HEAD; assertions unchanged. CI windows py3.12: `hybrid_setup` 27.53 s (run 44912022087) and 27.31 s (run 44913077810), was 121 s; streaming setup 22.85 s and 20.88 s, was 91 s. `tests/shard_weights.json` refreshed from run 44912022087.
+- **Follow-ups:** gap 162 = [P2-16](#p2-16-hybrid_setup-margin-under-25-s-on-windows-ci) (`hybrid_setup` margin); gap 163 = [P3-14](#p3-14-re-measure-the-implant-logits-latency-after-p2-15) (`implant-logits` latency tables).
 - **Depends on:** P2-14 (done). CPU.
 - **Source:** P2-14 (2026-11-21, `--file-durations` on CI, windows py3.12): the module fixture `hybrid_setup` in `tests/test_trust_hybrid_commit.py` takes 121 s; the setup of `test_calibrate_streaming_end_to_end` in `tests/test_trust_stream_commit.py` takes 91 s.
 - **Ideas:** a cached or precomputed calibration.
 - **Done when:** both take less than 30 s on windows py3.12 CI, with all assertions unchanged, and `tests/shard_weights.json` is refreshed.
+
+#### P2-16 hybrid_setup margin under 25 s on windows CI
+- **Gap:** 162 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P2-15). Follow-up of P2-15.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P2-15 (done). CPU.
+- **Source:** P2-15 (2026-11-21, commits `ee590af`, `03d2308`): `hybrid_setup` takes 27.53 s (run 44912022087) and 27.31 s (run 44913077810) on windows py3.12. This is under the 30 s target, but the margin is small.
+- **Ideas:** the beam push, `_align_group`.
+- **Done when:** `hybrid_setup` stays under 25 s on windows py3.12 CI in 3 runs, with all assertions unchanged.
 
 ## P3. Collector (pipeline)
 **Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a TOML/JSON file (FEP-0006; [decision 2026-11-17](collector-decisions-2026-11.md)).
@@ -367,10 +376,17 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P3-13 Streaming CRT model in the decision loop
 - **Gap:** 142 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P3-12). Follow-up of P3-12.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; pre-registration `f7f66b0`, results `09d9eb7`, [results](../../experiments/2026-11-21-p3-13-streaming-crt-loop/results.md)). Gap 142 closed: the streaming per-user CRT (P11-01 weights, CPU) in the decision loop gives the same decisions as the P11-09 batch log-probs on 3,663 / 3,663 windows (1,221 evaluation windows x real / time-shuffled / zero); max p_top1 difference 2.1e-5 (tolerance 1e-3); n-best texts and gates identical; commits 154 / 154; controls 0 / 0; safe WPM v0.1 3.37 [1.92, 5.18] certified, 43 wrong (same as P3-12). Decision p95 8.02 ms (p50 5.41, max 13.7), chunk p95 4.94 ms (model 4.27), clean timing run, 1 thread: about 6 x under the 50 ms budget. C2 log-prob check passes (max probability difference 9.7e-4 on zero EMG; small margin). Stated deviation: gated CER computed instead of no-gate CER. No new gap.
 - **Depends on:** P3-12 (done); the P11-01 per-user weights (research only); CPU.
 - **Source:** P3-12 ([results](../../experiments/2026-11-20-p3-12-emg-latency-budget/results.md)): the decisions used the P11-09 log-probs; the streaming CRT ran as a cost stand-in (u0 weights). Its float32 output differs from the batch model by up to 3.1e-5 in probability (the pre-registered 1e-5 failed; the float64 forms agree to 3e-15).
 - **Done when:** the streaming model output with the per-user weights feeds the guard session and the beam on the 1,221 evaluation windows, and the decisions match those from the batch log-probs, or the differences are counted and the safe WPM v0.1 stays within the P3-12 tolerance (>= 3.32, certified, controls 0).
+
+#### P3-14 Re-measure the implant-logits latency after P2-15
+- **Gap:** 163 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P2-15). Follow-up of P3-04, P2-15.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P2-15 (done; faster CTC beam finalize); CPU.
+- **Source:** P2-15 (2026-11-21, commit `ee590af`): after the faster finalize, `implant-logits` takes about 13.3-17.6 ms. The latency tables in docs/collector.md still show about 104-124 ms p95 and "over (not gated)".
+- **Done when:** `implant-logits` is re-measured locally, the tables in docs/collector.md are updated, and `implant-logits` is gated if it meets the 50 ms budget.
 
 ## P4. Device and toolkit adapters
 **Goal:** NTS comes out of the tools that people already use. Dataset replay stands in for devices we do not own.
@@ -1026,6 +1042,7 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Depends on:** P11-17 (done); the P15-37 result (gap 141; multi-split method); P15-34 (done; safety-margin guard); CPU.
 - **Source:** P11-17 ([results](../../experiments/2026-11-21-p11-17-emg-calibration-ci/results.md)): 5.00 [0.00, 9.55]; between-draw SD 2.94 against within-draw 1.19. EMG shows the same calibration-variance problem as T15 (gaps 132, 141).
 - **Done when:** a pre-registered run applies the P15-37 multi-split method (BMED-3 or AND arms, chosen on calibration data only) or a safety-margin guard (P15-34) to EMG L-FL and reports a calibration-inclusive interval whose lower end is above 3.09, or numbers show why that is not reachable.
+- **Evidence (2026-11-21, P15-37, results `105c5d0`):** on T15 the guarantee-keeping multi-split rules (AND, Bonferroni + selection) do not lift the calibration-inclusive lower end (primary BMED-3 4.73 [2.60, 6.24]; between-draw SD only 4-15 % lower). This item stays open: EMG differs, because its zero draws come from above-alpha draws (9 / 40). Gap 158 = [P11-18](#p11-18-why-225--of-the-emg-calibration-draws-are-above-alpha) diagnoses that first.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
@@ -1967,7 +1984,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-34 Calibration-inclusive T15 safe WPM lower end above gaze typing
 - **Gap:** 132 of the [open-gap list](open-gaps.md) (added 2026-11-20 after P15-29). Follow-up of P15-29.
-- **Status:** `done` (2026-11-20; criterion **not met**, gap 132 stays open; [results](../../experiments/2026-11-20-p15-34-margin-guard/results.md)). Primary A1 (alpha 0.05, delta 0.025) gives 4.90 [3.11, 6.44] with 40 / 40 draws certified; the lower end is below 4.0153. A safety margin removes no zero draw here and costs 0.45-0.77 WPM per draw; the between-draw spread grows. The P15-29 settings on 40 new draws give 5.35 [4.05, 6.81] (reference, descriptive). Follow-up: [P15-37](#p15-37-lower-variance-calibration-for-the-calibration-inclusive-safe-wpm) (gap 141).
+- **Status:** `done` (2026-11-20; criterion **not met**; [results](../../experiments/2026-11-20-p15-34-margin-guard/results.md)). **Gap 132 closed 2026-11-21** (orchestrator decision) on the branch "or the numbers say why no such guard exists with the T15 data": P15-34 margin arms and the six guarantee-keeping multi-split rules of P15-37 plus R120 give lower ends of about 2.1-3.2; about 3.8 x more labelled calibration data would be needed. The criterion branch (lower end above 4.0153) was **not met**. The goal continues in gap 160 = [P15-39](#p15-39-labelled-t15-like-calibration-data-for-the-calibration-inclusive-safe-wpm). Primary A1 (alpha 0.05, delta 0.025) gives 4.90 [3.11, 6.44] with 40 / 40 draws certified; the lower end is below 4.0153. A safety margin removes no zero draw here and costs 0.45-0.77 WPM per draw; the between-draw spread grows. The P15-29 settings on 40 new draws give 5.35 [4.05, 6.81] (reference, descriptive). Follow-up: [P15-37](#p15-37-lower-variance-calibration-for-the-calibration-inclusive-safe-wpm) (gap 141).
 - **Depends on:** P15-29 (done; `fidetype.benchmark.safe_wpm.calibration_draw_interval`); the P15-22 L1 pipeline (LLM rescoring + learned commit score); CPU.
 - **Source:** P15-29 ([results](../../experiments/2026-11-20-p15-29-calibration-ci/results.md)): with 40 calibration draws the T15 L1 safe WPM v0.1 is 5.18 [0.00, 6.99]. 2 of 40 draws are above alpha on the test set and earn 0. Certified draws give 3.50-6.82. Variants that were not pre-registered give lower ends of about 3.6. So the lower end is not above the no-BCI 4.0153.
 - **Options:** (1) a larger calibration set, so fewer draws commit too much and the between-draw spread falls; (2) a guard with a safety margin, for example a lower target alpha or a smaller delta, so that fewer draws are above alpha on the test set; (3) both. Choose the option and the rule before any number is computed.
@@ -1990,12 +2007,27 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-37 Lower-variance calibration for the calibration-inclusive safe WPM
 - **Gap:** 141 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-34). Follow-up of P15-34 and P15-29.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; gap 141 closed on the branch "shows with numbers which calibration size would be needed"; method + plan `4e81f16` before any number, code `6de1779`, stage S + addendum `77c3df6` before the main run, results `105c5d0`, [results](../../experiments/2026-11-21-p15-37-multi-split/results.md)). primary BMED-3 (3 splits at delta / 3, median guard; named before the main run) T15 calibration-inclusive safe WPM v0.1 **4.73 [2.60, 6.24]** (K = 40, all certified), below 4.0153: criterion not met. Same 40 draws: A0 (P15-29 settings) 5.26 [2.95, 6.89]; AND-2 4.82 [2.83, 6.29]; AND-3 4.55 [2.75, 5.89]; AND-4 4.37 [2.45, 5.78]; BMAX-2 5.39 [3.20, 6.83] (descriptive); BMAX-3 5.29 [2.10, 6.77] (1 above-alpha draw). R120 (P15-29 + P15-34 A0 + this A0, not blind) 5.26 [2.94, 6.91], 2 / 120 above alpha. Multi-split cuts the between-draw SD only 4-15 % (AND-3 0.78 vs A0 0.92; within-draw 0.34) and costs 0.44-0.89 WPM in the mean for AND / BMED. The P15-34 lower end 4.05 did not replicate (2.95 on the new draws). Projection (pre-registered, rough, assumes 1/sqrt(n)): about **2,760 calibration items** (3.8 x the 722 of `val_select`) are needed; exploratory certified-only SD gives about 1,580. method.md: only AND and Bonferroni + selection keep the LTT guarantee exactly (cross-fitting, jackknife+, CV+, cross-conformal and CRC do not at this size). Library: do not ship a multi-split `calibrate` now.
+- **Follow-ups:** gap 160 = [P15-39](#p15-39-labelled-t15-like-calibration-data-for-the-calibration-inclusive-safe-wpm) (labelled T15-like calibration data, externally blocked); gap 161 = [P15-40](#p15-40-check-the-1n-assumption-of-the-calibration-size-projection) (check the 1/sqrt(n) assumption). Gap 159 = [P11-19](#p11-19-lower-variance-emg-l-fl-guard-with-a-calibration-inclusive-lower-end-above-no-bci) gets this result as evidence.
 - **Depends on:** P15-29 / P15-34 (done; `calibration_draw_interval`); new labelled data or a calibration-procedure change; CPU.
 - **Source:** P15-34 ([results](../../experiments/2026-11-20-p15-34-margin-guard/results.md)): on T15 the between-draw SD of the safe WPM (0.63-0.91) is 2-3 times the within-draw SD (0.34). A safety margin lowers every draw and widens the spread (A1 4.90 [3.11, 6.44]). The lower end of the P15-29 settings depends on the draw set: 0.00 in P15-29 (2 / 40 above-alpha draws), 4.05 on 40 new draws (none).
 - **Options:** (1) more labelled calibration data that is not in `val_eval` (more T15-like sessions, other participants, other datasets); (2) a calibration procedure with lower variance, for example cross-fitting so that more of the 722 items take part in certification, with a proof that the guarantee still holds; (3) a pre-registered larger K (80 or more) for the P15-29 settings, so that the interval does not depend on one or two rare draws. Choose before any number is computed.
 - **Done when:** a pre-registered run shows a calibration-inclusive T15 lower end above 4.0153 with the P15-29 credit rule, or shows with numbers which calibration size would be needed.
 - **Note (2026-11-21, P11-17):** EMG shows the same calibration-variance problem (between-draw SD 2.94 vs within-draw 1.19). Gap 159 = [P11-19](#p11-19-lower-variance-emg-l-fl-guard-with-a-calibration-inclusive-lower-end-above-no-bci) applies this item's method to EMG L-FL when the result is in.
+
+#### P15-39 Labelled T15-like calibration data for the calibration-inclusive safe WPM
+- **Gap:** 160 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P15-37). Follow-up of P15-37, P15-34. Continues the goal of gaps 132 and 141 (closed).
+- **Status:** `externally_blocked` (needs new labelled data).
+- **Depends on:** about 1,600-2,800 labelled T15-like trials outside `val_eval`, or another participant or dataset with the same task; the P15-22 L1 pipeline; `calibration_draw_interval`; CPU.
+- **Source:** P15-37 ([results](../../experiments/2026-11-21-p15-37-multi-split/results.md)): with the 722 `val_select` items no guarantee-keeping guard lifts the T15 calibration-inclusive lower end above 4.0153 (primary BMED-3 4.73 [2.60, 6.24]; R120 5.26 [2.94, 6.91]). The pre-registered projection needs about 2,760 calibration items (3.8 x 722); the exploratory certified-only figure is about 1,580.
+- **Done when:** a pre-registered calibration-inclusive run on that data (P15-29 credit rule, K stated in advance) reports a lower end above 4.0153, or numbers say why not. The run also tests the projection.
+
+#### P15-40 Check the 1/n assumption of the calibration-size projection
+- **Gap:** 161 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P15-37). Follow-up of P15-37.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P15-37 (done; `experiments/2026-11-21-p15-37-multi-split/run.py`); CPU.
+- **Source:** P15-37 ([results](../../experiments/2026-11-21-p15-37-multi-split/results.md)): the projection n* about 2,760 assumes that the between-draw SD falls as 1/sqrt(n) and that the mean and the within-draw SD stay fixed. Both assumptions are unverified.
+- **Done when:** sub-sampling `val_select` (n = 361 / 481 / 722) on CPU reports the between-draw SD at each n, the fitted exponent and the revised n*.
 
 #### P15-38 E1 LM readout with the Willett texts blocked from the LM
 - **Gap:** 143 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-25). Follow-up of P15-25.
