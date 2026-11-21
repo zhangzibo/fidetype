@@ -100,8 +100,8 @@ fidetype collector --config examples/collector/collector.toml --check
 import fidetype.pretrained as ftp                         # same as fidetype.decoders.load
 
 m = ftp.load("t15-m4-13")                                 # T15 speech (CC0 data); SHA-256 checked
-streams = m.decode("t15.2023.08.13/data_val.hdf5")        # Brain-to-Text '25 file -> one NTS stream per trial
-print(m.guard().decide(streams[0].log_probs).action)      # committed trust config: commit / offer / withhold
+streams = m.decode_file("t15.2023.08.13/data_val.hdf5")   # Brain-to-Text '25 file -> one NTS stream per trial
+print(m.decide(streams[0]).action)                        # one guard call for every model: commit / offer / withhold
 ```
 
 `fidetype decoders list` shows the models and their licence flags. A research-only model (emg2qwerty, CC BY-NC-SA 4.0) loads only with `accept_research_only=True`.

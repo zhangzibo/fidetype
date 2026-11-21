@@ -658,6 +658,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 #### P5-31 Null control for offers
 - **Gap:** 136 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-41). Follow-up of P14-41, P14-03.
 - **Status:** `todo`.
+- **Evidence:** 2026-11-20 (P14-48, results `28870eb`): LM-readout guard offer rates on null inputs: frame-shuffled 77 / 80 (equal to real input), time-shuffled 13 / 80, zero 0 / 80, uniform 0 / 80.
 - **Depends on:** P14-41 (done). CPU.
 - **Source:** P14-41 ([results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)): the offer-only `willett-hw` guard offers on 77 / 80 frame-shuffled test inputs, as often as on real input (77 / 80), and the offered top-1 is never exact. The drop-in null controls of `fidetype.trust.calibrate` count only commits.
 - **Done when:** the guarantee sheet reports the offer rate on the null controls next to the commit rate, with a stated rule (for example: the offer rate on frame-shuffled input clearly below the real offer rate, or a warning on the sheet), a test, and a rerun on `willett-hw` and one other packaged guard.
@@ -1133,11 +1134,16 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-41** | Trust guard for `willett-hw` (gap 121, done 2026-11-20, offer-only, [details](#p14-41-trust-guard-for-willett-hw)) | P14-33 | research labs |
 | **P14-42** | Device and dataset adapter catalogue and contributor template (open gap 127, [details](#p14-42-device-and-dataset-adapter-catalogue-and-contributor-template)) | P4-15, P4-01, P4-02 | BCI companies, research labs, small teams (contributors) |
 | **P14-43** | 10-minute tutorials (gap 128, done 2026-11-20, [details](#p14-43-10-minute-tutorials)) | P14-01, P14-03, P13-06 | small teams, research labs, newcomers |
-| **P14-44** | Pretrained API newcomer ergonomics (open gap 129, [details](#p14-44-pretrained-api-newcomer-ergonomics)) | P14-43 | small teams, newcomers |
-| **P14-45** | TrustGuard decisions to safe WPM in one call (open gap 130, [details](#p14-45-trustguard-decisions-to-safe-wpm-in-one-call)) | P14-43 | research labs, small teams |
-| **P14-46** | Benchmark glue for custom splits and pretrained decoders (open gap 131, [details](#p14-46-benchmark-glue-for-custom-splits-and-pretrained-decoders)) | P14-43 | research labs, small teams |
+| **P14-44** | Pretrained API newcomer ergonomics (gap 129, done 2026-11-20, [details](#p14-44-pretrained-api-newcomer-ergonomics)) | P14-43 | small teams, newcomers |
+| **P14-45** | TrustGuard decisions to safe WPM in one call (gap 130, done 2026-11-20, [details](#p14-45-trustguard-decisions-to-safe-wpm-in-one-call)) | P14-43 | research labs, small teams |
+| **P14-46** | Benchmark glue for custom splits and pretrained decoders (gap 131, done 2026-11-20, [details](#p14-46-benchmark-glue-for-custom-splits-and-pretrained-decoders)) | P14-43 | research labs, small teams |
 | **P14-47** | Certified, non-vacuous trust guard for `willett-hw` (commits > 0) (open gap 138, [details](#p14-47-certified-non-vacuous-trust-guard-for-willett-hw-commits--0)) | P14-41 | research labs |
 | **P14-48** | `willett-hw` with the same-LM readout and a no-signal gate (open gap 144, [details](#p14-48-willett-hw-with-the-same-lm-readout-and-a-no-signal-gate)) | P14-33, P15-25 | research labs |
+| **P14-49** | No-signal gate for `willett-hw` that stops time-shuffled input (open gap 145, [details](#p14-49-no-signal-gate-for-willett-hw-that-stops-time-shuffled-input)) | P14-48, P11-12 | research labs |
+| **P14-50** | Willett-blocked Tatoeba LM as the `willett-hw` LM readout (open gap 146, [details](#p14-50-willett-blocked-tatoeba-lm-as-the-willett-hw-lm-readout)) | P14-48, P15-38 | research labs |
+| **P14-51** | Toy models for the xbody-ctc, crt-ctc and key-lda runtimes (open gap 147, [details](#p14-51-toy-models-for-the-xbody-ctc-crt-ctc-and-key-lda-runtimes)) | P14-44 | small teams, newcomers |
+| **P14-52** | KT-sEMG item count from the key log alone (open gap 148, [details](#p14-52-kt-semg-item-count-from-the-key-log-alone)) | P14-44, P14-46 | small teams, research labs |
+| **P14-53** | Tutorial 3 real mode re-run after the P14-46 changes (open gap 149, [details](#p14-53-tutorial-3-real-mode-re-run-after-the-p14-46-changes)) | P14-43, P14-46 | small teams, newcomers |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1460,7 +1466,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-41 Trust guard for willett-hw
 - **Gap:** 121 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P14-33). Follow-up of P14-33.
-- **Status:** `done` (2026-11-20). Done 2026-11-20 (pre-registration + memory fix `4565cc1`, results `b26341c`, [results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)). Memory: the CTC prefix beam search kept every prefix ever made (`lm_score`, `_last_id`; T^2 growth on flat null frames, 17.9 GB in a synthetic probe) and the forced alignment held a (T, S) float64 array; both fixed exactly in `fidetype.lm.beam` (caches cut to the beam; frame-wise alignment in groups); run peak 1,194 MB. Guard `tcfg-39aac48688b8bd12` (106 val sentences, alpha 0.05, delta 0.1) returned but LTT not feasible (40 LTT items < 45): offer-only, as pre-stated. Test (80 sentences): 0 commits, 77 offers, 3 withholds; safe WPM v0.1 0.00 (vacuous). Controls pass: calibrate 0/300 uniform, 0/300 frame-shuffled, 0/106 time-shuffled input; test time-shuffled and zero 0/80. Packaged as a release file (local, SHA-256 in the manifest, `trust` set, commits: never). Offers on frame-shuffled frames 77/80 (new gap 136 = P5-31); vector beam path memory (new gap 137 = P5-32).
+- **Status:** `done` (2026-11-20; pre-registration + memory fix `4565cc1`, results `b26341c`, [results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)). Memory: the CTC prefix beam search kept every prefix ever made (`lm_score`, `_last_id`; T^2 growth on flat null frames, 17.9 GB in a synthetic probe) and the forced alignment held a (T, S) float64 array; both fixed exactly in `fidetype.lm.beam` (caches cut to the beam; frame-wise alignment in groups); run peak 1,194 MB. Guard `tcfg-39aac48688b8bd12` (106 val sentences, alpha 0.05, delta 0.1) returned but LTT not feasible (40 LTT items < 45): offer-only, as pre-stated. Test (80 sentences): 0 commits, 77 offers, 3 withholds; safe WPM v0.1 0.00 (vacuous). Controls pass: calibrate 0/300 uniform, 0/300 frame-shuffled, 0/106 time-shuffled input; test time-shuffled and zero 0/80. Packaged as a release file (local, SHA-256 in the manifest, `trust` set, commits: never). Offers on frame-shuffled frames 77/80 (new gap 136 = P5-31); vector beam path memory (new gap 137 = P5-32).
 - **Follow-up:** the guard never commits (not certified, safe WPM vacuous). A certified, non-vacuous guard is tracked as gap 138 = [P14-47](#p14-47-certified-non-vacuous-trust-guard-for-willett-hw-commits--0).
 - **Depends on:** P14-33 (done); free machine memory (CPU only).
 - **Source:** P14-33 ([results](../../experiments/2026-11-19-p14-33-willett-hw/results.md)): the `guard` stage (`fidetype.trust.calibrate` on the 106 val sentences, 106 time-shuffled nulls, alpha 0.05, delta 0.1) was stopped because the machine was critically low on memory while other jobs ran. `willett-hw` has `trust: null`.
@@ -1487,25 +1493,26 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-44 Pretrained API newcomer ergonomics
 - **Gap:** 129 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-43). Follow-up of P14-43, P14-01.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20; commits `6f7fade`, `7c455b7`, `9ebf38a`; CI: tests run 44878237413 and tutorials run 44878237441, green): `toy_model` / `make_toy_manifest`, `n_items` plus a clear `IndexError`, `decode` / `decode_file` with deprecation (`decode(path)` warns), one guard entry point `model.decide(stream)`, the `[hdf5]` extra; tutorial 1 uses them. Follow-ups: gaps 147 = [P14-51](#p14-51-toy-models-for-the-xbody-ctc-crt-ctc-and-key-lda-runtimes), 148 = [P14-52](#p14-52-kt-semg-item-count-from-the-key-log-alone).
 - **Source:** P14-43 ([tutorial 1](../../docs/tutorials-01-decode.md#api-friction-found-while-writing-this-tutorial)): (1) no toy-model helper: to try the API without weights, a user must know the GRU parameter names and write a manifest with a SHA-256 by hand; (2) no item count, and `decode_file(indices=...)` past the end raises a bare `IndexError`; (3) `decode()` returns one stream for an array and a list for a file; (4) the guard input differs per model (`stream.log_probs` vs `model.nbest(stream)`); (5) `h5py` comes with the extra `emg2qwerty`, also for T15 / T12 files.
 - **Done when:** `fidetype.pretrained` has a documented toy model (for example `toy_model(runtime)`), an item count or a clear error for bad indices, one guard entry point per stream (for example `model.decide(stream)`), and an `h5py` extra with a neutral name; tutorial 1 uses them and still passes the P14-43 smoke test.
 
 #### P14-45 TrustGuard decisions to safe WPM in one call
 - **Gap:** 130 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-43). Follow-up of P14-43, P14-03, P14-05.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20; commits `6f7fade`, `7c455b7`, `9ebf38a`; CI: tests run 44878237413 and tutorials run 44878237441, green): `fidetype.benchmark.safe_wpm.from_decisions(...)` gives exactly the report of the manual route (equality test in CI); tutorial 2 uses it. Module path: `fidetype.benchmark.safe_wpm`.
 - **Source:** P14-43 ([tutorial 2](../../docs/tutorials-02-trust.md#api-friction-found-while-writing-this-tutorial)): from `TrustResult`s to safe WPM a user builds five parallel lists by hand, passes `guard.sheet.to_dict()` through two benchmark functions (`guarantee_from_sheet`, `controls_from_sheet`), and must pick the benchmark text normaliser for the correct / wrong test.
 - **Done when:** one documented call (for example `fidetype.trust.safe_wpm(guard, results, truths, neural_s, normalizer=...)`) gives the same report as the manual route on the tutorial 2 data (exact equality test in CI), and tutorial 2 uses it.
 
 #### P14-46 Benchmark glue for custom splits and pretrained decoders
 - **Gap:** 131 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P14-43). Follow-up of P14-43, P6-02, P14-01.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20; commits `6f7fade`, `7c455b7`, `9ebf38a`; CI: tests run 44878237413 and tutorials run 44878237441, green): `build_truth(split=)`, `KeyLdaDecoder.track_nbest` / `code_nbest` / `codes_from_text`, `scope` in `guarantee_from_sheet`, KT truth from the key logs only, and the cards in the package (`leaderboard.results_dir`, `committed_results`); tutorial 3 uses them. Follow-up: gap 149 = [P14-53](#p14-53-tutorial-3-real-mode-re-run-after-the-p14-46-changes).
 - **Source:** P14-43 ([tutorial 3](../../docs/tutorials-03-benchmark.md#api-friction-found-while-writing-this-tutorial)): (1) `build_truth()` has no `split=` (custom or synthetic splits need hand-built truth rows; the tests monkeypatch `load_split`); (2) `kt-semg-lda` n-best text is screen text, the `kt-semg` track wants key codes, and no converter exists; (3) `guarantee_from_sheet()` output is not a valid submission guarantee (no `scope`, `calibration_split`); (4) `build_truth("kt-semg")` needs every `runN.csv` (about 20 GB) although the truth uses only key logs and start times; (5) the committed leaderboard cards are not in the package.
 - **Done when:** `build_truth(..., split=)` exists; a pretrained model can give track-space n-best text (at least `kt-semg-lda`); a guard sheet converts to a valid submission guarantee in one call; KT truth needs only the key logs and start-time files; tutorial 3 uses these and still passes the P14-43 smoke test.
 
 #### P14-47 Certified, non-vacuous trust guard for willett-hw (commits > 0)
 - **Gap:** 138 of the [open-gap list](open-gaps.md) (added 2026-11-20 after P14-41). Follow-up of P14-41.
 - **Status:** `todo`.
+- **Evidence:** 2026-11-20 (P14-48, results `28870eb`): the LM-readout guard `tcfg-8fa3866deec917f3` is still offer-only (40 < 45 LTT); the offered top-1 improved from 0 / 80 to 12 / 77 exact.
 - **Serves:** research labs.
 - **Depends on:** about 120 or more calibration sentences (more Willett handwriting data or a different split design); a stronger decoder (gap 26 = [P14-12](#p14-12-willett-hw-word-lm-for-exact-sentence-commits-and-full-test-coverage), gap 120 = [P15-33](#p15-33-e1-low-data-recipe-that-reads-the-target-signal-before-more-source-arms)); gap 136 = [P5-31](#p5-31-null-control-for-offers) (null control for offers).
 - **Source:** P14-41 ([results](../../experiments/2026-11-20-p14-41-willett-guard/results.md)): the packaged `willett-hw` guard never commits. It is not certified: with 106 val sentences the LTT half has 40 items, and 45 are needed at alpha 0.05. Test safe WPM v0.1 is 0.00 (vacuous). Gap 121 closed under its pre-registered rule (an offer-only guard was acceptable). The user's standing rule keeps the gap tracked until it is truly met.
@@ -1514,11 +1521,53 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-48 willett-hw with the same-LM readout and a no-signal gate
 - **Gap:** 144 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-25). Follow-up of P14-33 and P15-25.
-- **Status:** `todo`.
+- **Status:** `todo` (run 2026-11-20; done-when not met: N1 fails).
+- **Evidence:** P14-48 run 2026-11-20 (pre-registration `59c32ea`, code `f14b5b4`, results `28870eb`, [results](../../experiments/2026-11-20-p14-48-willett-lm-readout/results.md)): opt-in F readout packaged (`m.text(stream, readout="lm")`, `fidetype.pretrained.lmreadout`); test CER 0.1734 ungated (= P15-25, 80 / 80 same text), 0.1760 gated; D2 and D3 met. N1 fails: the gate lets 13 / 80 time-shuffled test inputs emit text (limit 4); uniform and zero 0 / 80; N2 pass (frame-shuffled CER 0.883). Guard `tcfg-8fa3866deec917f3` re-calibrated: not certified (40 < 45 LTT), 0 commits, 77 offers (12 exact), safe WPM 0.00 vacuous; commit controls pass. Blocked by gap 145 = [P14-49](#p14-49-no-signal-gate-for-willett-hw-that-stops-time-shuffled-input); the Willett-blocked LM is gap 146 = [P14-50](#p14-50-willett-blocked-tatoeba-lm-as-the-willett-hw-lm-readout).
 - **Serves:** research labs.
 - **Depends on:** P15-25 (done); P14-33 (`willett-hw` package, R-ball-s0 weights); the P14-41 guard; feeds gap 138 = [P14-47](#p14-47-certified-non-vacuous-trust-guard-for-willett-hw-commits--0).
 - **Source:** P15-25 ([results](../../experiments/2026-11-20-p15-25-e1-same-lm/results.md)): with decoder F (Tatoeba 6-gram, w 0.5, beta 1, beam 8) the packaged decoder falls from test CER 0.305 (greedy) to 0.173. On uniform log-probs F emits one token per frame (4,100 of 4,100), so the LM readout needs a no-signal gate before any commit.
 - **Done when:** `willett-hw` offers the F readout with a no-signal gate (null controls pass), the card states the LM licence (CC BY 2.0 FR, attribution) and the test overlap, and the P14-41 guard is re-calibrated on the new readout with its numbers reported.
+
+#### P14-49 No-signal gate for willett-hw that stops time-shuffled input
+- **Gap:** 145 of the [open-gap list](open-gaps.md) (added 2026-11-20). Follow-up of P14-48, P11-12.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P14-48 (done run, gate failed N1); val blocks only; CPU. Blocks gap 144 = P14-48.
+- **Source:** P14-48 ([results](../../experiments/2026-11-20-p14-48-willett-lm-readout/results.md)): the P11-12 count gate (n_keys >= 7, kps 0.425-2.834) lets 13 / 80 time-shuffled test inputs emit text (limit 4).
+- **Ideas:** the share of non-blank frames, or the emission rate against the length of the LM text.
+- **Done when:** a separately pre-registered, val-only gate gets time-shuffled, zero and uniform input each to at most 4 / 80 emitting, with real input gated at most 5 %.
+
+#### P14-50 Willett-blocked Tatoeba LM as the willett-hw LM readout
+- **Gap:** 146 of the [open-gap list](open-gaps.md) (added 2026-11-20). Follow-up of P14-48, P15-38.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P15-38 (done; local `derived\p15-38\eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz`, sha256 d7f6e829...); can be done with P14-49; CPU.
+- **Source:** P14-48 and P15-38 (2026-11-20): the packaged readout uses `eng_tatoeba_6gram_mkn_noE2Q.npz`, which holds 13 of 80 Willett test sentences; P15-38 built an LM with every Willett text blocked.
+- **Done when:** the Willett-blocked LM is the `willett-hw` LM readout (local release file with a SHA-256 row, no test overlap), and the CER, the null controls and the guard are re-measured.
+
+#### P14-51 Toy models for the xbody-ctc, crt-ctc and key-lda runtimes
+- **Gap:** 147 of the [open-gap list](open-gaps.md) (added 2026-11-20). Follow-up of P14-44.
+- **Status:** `todo`.
+- **Serves:** small teams, newcomers.
+- **Depends on:** P14-44 (done). Low priority.
+- **Source:** P14-44 (2026-11-20, commits `6f7fade`, `9ebf38a`): `toy_model` exists only for the `gru-ctc` runtime.
+- **Done when:** `toy_model(runtime)` works for `xbody-ctc`, `crt-ctc` and `key-lda`, with a test for each.
+
+#### P14-52 KT-sEMG item count from the key log alone
+- **Gap:** 148 of the [open-gap list](open-gaps.md) (added 2026-11-20). Follow-up of P14-44, P14-46.
+- **Status:** `todo`.
+- **Serves:** small teams, research labs.
+- **Depends on:** P14-44, P14-46 (done). Low priority.
+- **Source:** P14-44 / P14-46 (2026-11-20): KT-sEMG `n_items()` reads the whole `runN.csv`, although the count needs only the key log.
+- **Done when:** KT-sEMG `n_items()` reads only the key log (and start-time file), with a test that it gives the same count.
+
+#### P14-53 Tutorial 3 real mode re-run after the P14-46 changes
+- **Gap:** 149 of the [open-gap list](open-gaps.md) (added 2026-11-20). Follow-up of P14-43, P14-46.
+- **Status:** `todo`.
+- **Serves:** small teams, newcomers.
+- **Depends on:** P14-46 (done); local KT-sEMG data; CPU only.
+- **Source:** P14-46 (2026-11-20): tutorial 3 now uses `build_truth(split=)`, key-log-only KT truth and track-space n-best; its real mode (KT-sEMG run28) was not re-run on the project machine.
+- **Done when:** tutorial 3 real mode (KT-sEMG run28) runs on the project machine after the P14-46 changes, and its numbers are written in docs/tutorials-03-benchmark.md (same or explained).
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
@@ -1578,7 +1627,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-37** | Lower-variance calibration for the calibration-inclusive safe WPM (open gap 141, [details](#p15-37-lower-variance-calibration-for-the-calibration-inclusive-safe-wpm)) | F1 / F2 | P15-34 |
 | **P15-35** | E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2) (open gap 139, [details](#p15-35-e1-synthetic-sentence-augmentation-for-the-minutes-scale-recipe-test-c2)) | F3 | P15-33 |
 | **P15-36** | E1 budget-matched recipe so that V1 and H1-H4 are valid (open gap 140, [details](#p15-36-e1-budget-matched-recipe-so-that-v1-and-h1-h4-are-valid)) | F3 | P15-33, P15-35 |
-| **P15-38** | E1 LM readout with the Willett texts blocked from the LM (open gap 143, [details](#p15-38-e1-lm-readout-with-the-willett-texts-blocked-from-the-lm)) | F3 | P15-25 |
+| **P15-38** | E1 LM readout with the Willett texts blocked from the LM (gap 143, done 2026-11-20, [details](#p15-38-e1-lm-readout-with-the-willett-texts-blocked-from-the-lm)) | F3 | P15-25 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1858,7 +1907,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-38 E1 LM readout with the Willett texts blocked from the LM
 - **Gap:** 143 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-25). Follow-up of P15-25.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-20; pre-registration and code `1dd2a1a`, results `fe3e564`, [results](../../experiments/2026-11-20-p15-38-e1-lm-willett-blocked/results.md)). Done 2026-11-20: the Tatoeba 6-gram rebuilt with all 907 Willett texts blocked (LM0 recipe check exact; LMa / LMb 0). F re-score of the 41 E1a runs: no verdict changes (H1 fail, H4 fail, H5 pass robust, V1 pass 0.273); max per-run CER change 0.0015; E full data 0.271 -> 0.273, R-ball-s0 0.1734 -> 0.1743. emg2qwerty: no Willett text overlaps; the P11-11 LM already blocks the EMG test texts, so no EMG re-measure. The `willett-hw` readout with this LM is gap 146 = [P14-50](#p14-50-willett-blocked-tatoeba-lm-as-the-willett-hw-lm-readout).
 - **Depends on:** P15-25 (done; log-probs local in `C:/Users/zhang/bci-data/derived/p15-25/lp/`); the P11-11 LM build rule (`stage_lm`); CPU.
 - **Source:** P15-25 ([results](../../experiments/2026-11-20-p15-25-e1-same-lm/results.md)): 13 of 80 Willett test sentences (5 of 47 unique texts), 9 of 106 val and 97 of 781 pool sentences occur in the Tatoeba English export. The P11-11 LM blocked only emg2qwerty texts. The arm comparison is fair (same LM for all), but the absolute LM CER can be optimistic.
 - **Done when:** the Tatoeba 6-gram is rebuilt with every Willett sentence blocked (exact and containment, the P11-11 rule), the 41 E1a runs are re-scored with decoder F, and the change of each H verdict and of the full-data E / R CER is reported.
