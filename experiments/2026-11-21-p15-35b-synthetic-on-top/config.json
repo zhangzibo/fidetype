@@ -1,0 +1,41 @@
+{
+  "_comment": "P15-35b (gap 139, attempt 2) pre-registered configuration (see plan.md). Frozen with plan.md before any result of this attempt.",
+  "p15_33_config": "experiments/2026-11-20-p15-33-low-data-recipe/config.json",
+  "base_recipe": "A",
+  "budget": "30",
+  "search_seed": 0,
+  "search_arms": ["E"],
+  "descriptive_seed": 1,
+  "candidates": {
+    "U+50":  {"code": 3521, "align": "uniform", "mode": "ontop",   "extra": 0.5, "steps": 4000},
+    "F+50":  {"code": 3522, "align": "forced",  "mode": "ontop",   "extra": 0.5, "steps": 4000},
+    "F+100": {"code": 3523, "align": "forced",  "mode": "ontop",   "extra": 1.0, "steps": 4000},
+    "F-R20": {"code": 3524, "align": "forced",  "mode": "replace", "synth_frac": 0.2, "steps": 4000}
+  },
+  "control": {
+    "A4K":   {"code": 3530, "align": null,      "mode": "none",    "steps": 4000}
+  },
+  "aligner_sources": {
+    "R-b30-s0": "C:/Users/zhang/bci-data/derived/p15-33/search/A/R-b30-s0/final.pt",
+    "E-b30-s0": "C:/Users/zhang/bci-data/derived/p15-33/search/A/E-b30-s0/final.pt",
+    "E-b30-s0-labelshuf": "C:/Users/zhang/bci-data/derived/p15-33/search/A/E-b30-s0-labelshuf/final.pt",
+    "R-b30-s1": "C:/Users/zhang/bci-data/derived/p15-33/grid/R-b30-s1/final.pt",
+    "E-b30-s1": "C:/Users/zhang/bci-data/derived/p15-33/grid/E-b30-s1/final.pt"
+  },
+  "text_pool": {
+    "path": "C:/Users/zhang/bci-data/derived/p15-35/text_pool.txt",
+    "report": "C:/Users/zhang/bci-data/derived/p15-35/text_pool_report.json",
+    "sha256": "2360dc0559fd03420efbc432de81c01694c6dd27c474047f020b4add8dba63c9"
+  },
+  "synth": {"tail_frames": 100},
+  "rules": {
+    "eligible_max_val_cer": 0.80,
+    "c2_min_cer": 0.75,
+    "c2_min_gap": 0.10,
+    "val_margin": 0.03,
+    "length_guard": 0.30,
+    "shuffle_seed": 12345
+  },
+  "gpu_cap_hours": 8.0,
+  "seed1_start_max_hours": 6.0
+}
