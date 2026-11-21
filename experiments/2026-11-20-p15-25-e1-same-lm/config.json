@@ -1,0 +1,24 @@
+{
+  "_comment": "P15-25 pre-registered configuration (see plan.md). Frozen with plan.md before any LM result.",
+  "e1a_config": "experiments/2026-11-19-p15-08-e1-cross-body/config.json",
+  "e1a_runs": "C:/Users/zhang/bci-data/derived/p15-08/runs",
+  "checkpoint": "final.pt",
+  "lm": "C:/Users/zhang/bci-data/derived/p11-11/eng_tatoeba_6gram_mkn_noE2Q.npz",
+  "lm_sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8",
+  "lexicon": "C:/Users/zhang/bci-data/derived/p11-11/lexicon.json",
+  "prune_logp": -8.0,
+  "decoders": {
+    "G":  {"greedy": true},
+    "B0": {"w": 0.0,  "beta": 0.0, "lam": 0.0, "B": 8},
+    "F":  {"w": 0.5,  "beta": 1.0, "lam": 0.0, "B": 8},
+    "FL": {"w": 0.25, "beta": 1.0, "lam": 8.0, "B": 8}
+  },
+  "primary_decoder": "F",
+  "fv_tuning": {"w": [0.25, 0.5, 0.75, 1.0, 1.5], "beta": [0.0, 1.0, 2.0], "lam": 0.0, "B": 8,
+                "split": "val", "budgets": ["30", "all"], "arms": ["R", "T", "E", "S"], "seeds": [0, 1]},
+  "c0_max_abs_diff": 0.005,
+  "c1_shuffle_seed": 12345,
+  "secondary_k": 13,
+  "workers": 6,
+  "rules_from_e1a": true
+}
