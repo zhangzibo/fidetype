@@ -3,7 +3,7 @@ title: "Frontier write-up: the path to safe WPM above gaze typing (P14-05 to P15
 type: question
 tags: [frontier, safe-wpm, trust, t15, t12, learned-confidence, prefix-commit, streaming, llm, metric, write-up, negative-result, pre-registration]
 sources: []
-updated: 2026-11-20
+updated: 2026-11-21
 ---
 
 # Safe WPM: can a certified guard beat gaze typing (4.02 WPM) on T15?
@@ -22,7 +22,7 @@ With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_ev
 - **Streaming word-by-word commits (P5-27) do not help safe WPM:** 2.34 [2.11, 2.57] against 4.67 for the one-commit prefix guard (both v0.2 + reading cost). They commit right words about 10 s earlier.
 - **A hybrid guard (P5-28) keeps the words and most of the latency gain:** stream commits mid-trial + the P5-24 end decision that can extend them, certified jointly, give 4.89 [4.49, 5.27] against 4.67 (v0.2 + reading cost; Δ +0.22 [+0.14, +0.31], pre-registered verdict **hybrid beats single**). The first right word appears a median 2.7 s after it ends, against 14.0 s. Caution: with δ split over three mid thresholds the WPM gain disappears (4.63).
 - **Replication (P15-26, pre-registered):** on T15 the result **replicates** over four new calibration draws: 5.58, 6.00, 5.23 and 5.83 safe WPM v0.1, all certified, all with the CI lower end above the no-BCI reference. The P15-22 value (4.91) is the lowest of the five T15 draws (mean 5.51, SD 0.44). **On T12 it does not replicate:** 2.37 [1.34, 3.62] against 4.11. The T12 decoder gets only 35 of 400 top-1 texts exactly right (WER 0.385). P15-29 (40 draws) later showed a wider spread than these four draws. So the claim is now: **above gaze typing on T15 on average (about 5.2), but not reliably once calibration variation is counted (interval 0.0–7.0); not on T12.**
-- The EMG result of P11-14 (6.80 [4.49, 9.63]) is a separate result and stays valid. Its interval also does not include the calibration variation; P15-29 measured T15 and T12 only (gap 133, [P11-17](roadmap-standard.md#p11-17-calibration-inclusive-safe-wpm-interval-for-the-emg-p11-14-l-fl-guard)).
+- **EMG (P11-14, P11-17):** the P11-14 L-FL guard gives 6.80 [4.49, 9.63] with one calibration draw. Once the calibration draw is counted (P11-17, pre-registered, K = 40) it gives **5.00 [0.00, 9.55]** against no-BCI 3.09 ([P11-17 results](../../experiments/2026-11-21-p11-17-emg-calibration-ci/results.md)). So EMG is above no-BCI on average, but **not reliably**: 9 of 40 draws are above alpha on the test set and earn 0. See the P11-17 section below.
 
 ## Steps at a glance
 
@@ -166,6 +166,15 @@ Pre-registered ([plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md)
 - The single-draw CI 4.91 [4.25, 5.57] is still a correct number for that one guard. It does not answer "what does a new calibration give?".
 - Reporting rule: [docs/safe-wpm.md](../../docs/safe-wpm.md) section 6b proposes calibration-inclusive reporting. It is **proposed, not adopted**; the user decides with v0.2.
 
+## P11-17: the same interval for the EMG guard
+- Same two-level method on the EMG P11-14 L-FL guard: K = 40 calibration draws (new splits and resamples of the 1,224 calibration prompts) x user-cluster bootstrap over the 8 test users ([results](../../experiments/2026-11-21-p11-17-emg-calibration-ci/results.md); pre-registration `7922ecf`, code `eecbac8`, results `a0993be`).
+- **EMG: 5.00 [0.00, 9.55]**, against no-BCI 3.09. Pre-registered verdict: "above, but inside the combined interval". The single-calibration P11-14 CI was 6.80 [4.49, 9.63]. The code check reproduces P11-14 exactly (285 commits, 52 wrong, 6.8031).
+- 9 of 40 draws (22.5 %) are above alpha on the test set (62–76 wrong commits, rate 0.051–0.062). They are the draws that commit the most (301–339 commits). Each earns 0. LTT allows this in at most delta = 10 % of draws. The 31 certified draws: mean 6.46, range 1.14–7.27. All null controls pass in every draw.
+- Between-draw SD 2.94, within-draw SD 1.19. Library `calibration_draw_interval` (prompt-level inner level): 5.00 [0.00, 7.84]. Variants that were not pre-registered: above-alpha draws keep their value 6.63 [1.87, 9.88]; certified draws only 6.46 [1.42, 9.74]. No lower end is above 3.09.
+- The benchmark card `emg2qwerty__p11-14-intended-lfl-subset8__guard` is unchanged. It is a correct single-calibration value under the adopted v0.1.
+
+> **Our take:** EMG now shows the same calibration-variance problem as T15, and more strongly (22.5 % vs 5 % of draws above alpha). Possible causes are bootstrap duplicates in the LTT part, test-rate noise and the val / test session shift. Gap 158 ([P11-18](roadmap-standard.md#p11-18-why-225--of-the-emg-calibration-draws-are-above-alpha)) separates them with partition-only draws. Gap 159 ([P11-19](roadmap-standard.md#p11-19-lower-variance-emg-l-fl-guard-with-a-calibration-inclusive-lower-end-above-no-bci)) tries a lower-variance guard.
+
 ## What changed in the library
 | change | commit |
 |---|---|
@@ -178,7 +187,7 @@ Pre-registered ([plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md)
 | no library change in P15-22 (experiment script only: P15-05 pipeline + `calibrate(confidence="learned")`) | `9643804` |
 
 ## Limits
-- The P15-22 / P15-26 intervals are conditional on the calibration (decisions fixed). P15-29 includes the calibration draw: T15 5.18 [0.00, 6.99], so the T15 headline holds on average only, not reliably. T12 does not replicate.
+- The P15-22 / P15-26 intervals are conditional on the calibration (decisions fixed). P15-29 includes the calibration draw: T15 5.18 [0.00, 6.99], so the T15 headline holds on average only, not reliably. T12 does not replicate. The same holds for EMG (P11-17): 5.00 [0.00, 9.55] against 3.09.
 - The prefix feature set was designed after the exploratory analysis, which looked at `val_eval`. The score was fitted and certified on `val_select` only.
 - The reading costs come from literature values, not from measured BCI users (gap 77).
 - Word-by-word streaming commits (P5-27) and the hybrid guard (P5-28) were tested on T15 only; no T12 checkpoint views exist (gap 95). The P5-28 mid threshold came from P5-27 on the same certify items.
@@ -189,7 +198,8 @@ Pre-registered ([plan](../../experiments/2026-11-19-p5-28-hybrid-prefix/plan.md)
 | gap | item | what |
 |---|---|---|
 | 132 | [P15-34](roadmap-standard.md#p15-34-calibration-inclusive-t15-safe-wpm-lower-end-above-gaze-typing) | calibration-inclusive T15 lower end above 4.0153 (gap 103 closed by P15-29) |
-| 133 | [P11-17](roadmap-standard.md#p11-17-calibration-inclusive-safe-wpm-interval-for-the-emg-p11-14-l-fl-guard) | calibration-inclusive interval for the EMG P11-14 L-FL guard |
+| 158 | [P11-18](roadmap-standard.md#p11-18-why-225--of-the-emg-calibration-draws-are-above-alpha) | why 22.5 % of the EMG calibration draws are above alpha (partition-only draws; gap 133 closed by P11-17) |
+| 159 | [P11-19](roadmap-standard.md#p11-19-lower-variance-emg-l-fl-guard-with-a-calibration-inclusive-lower-end-above-no-bci) | lower-variance EMG L-FL guard: calibration-inclusive lower end above 3.09 |
 | 62 | [P14-24](roadmap-standard.md#p14-24-f2-and-m4-13-trust-rerun-rows-with-word-decoder-edit-penalty-8) | LLM-arm rows with edit 8 |
 | 95, 96 | [P5-29](roadmap-standard.md#p5-29-t12-replication-of-the-streaming-and-hybrid-prefix-guards), [P5-30](roadmap-standard.md#p5-30-safe_wpm-refuse-certified-for-an-infeasible-guarantee-when-the-policy-commits) | T12 replication of the stream + hybrid guards (λ_mid fixed in advance); scorer status for an infeasible guarantee that commits (gaps 76, 92 closed) |
 | 77 | [P14-29](roadmap-standard.md#p14-29-measured-checking-time-per-commit-for-aac-and-bci-users) | measured checking time per commit |
