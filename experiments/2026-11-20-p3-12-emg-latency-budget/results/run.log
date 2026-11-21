@@ -20,3 +20,40 @@
 2026-11-20 05:28:43 end check
 2026-11-20 06:00:11 start check (OMP_NUM_THREADS=1)
 2026-11-20 06:00:11 end check
+2026-11-20 09:52:32 start latency (OMP_NUM_THREADS=1)
+2026-11-20 21:18:03 start latency (OMP_NUM_THREADS=1)
+2026-11-20 21:18:04 latency B:FL@B8: added p50 16.60 p95 22.02 ms
+2026-11-20 21:18:04 latency B:F@B8: added p50 16.96 p95 22.97 ms
+2026-11-20 21:18:06 latency model alone: {'batch_rf_chunk': {'n': 20, 'p50': 25.83449997473508, 'p95': 27.26933996891603, 'max': 28.123200056143105}, 'stream_chunk': {'n': 20, 'p50': 2.953949908260256, 'p95': 3.212234989041463, 'max': 3.5682000452652574}, 'features_chunk': {'n': 20, 'p50': 0.054800009820610285, 'p95': 0.10010004043579104, 'max': 0.14189991634339094}, 'receptive_field_frames': 121}
+2026-11-20 21:18:14 latency N:FL@B8: decision p50 5.29 p95 6.41 max 6.6 ms; chunk p95 4.34 ms
+2026-11-20 21:18:23 latency N:F@B8: decision p50 5.42 p95 6.01 max 6.1 ms; chunk p95 4.51 ms
+2026-11-20 21:18:23 end latency
+2026-11-20 21:18:44 start check (OMP_NUM_THREADS=1)
+2026-11-20 21:18:44 end check
+2026-11-20 21:18:44 start latency SMOKE 12 windows (not counted) (OMP_NUM_THREADS=1)
+2026-11-20 21:18:45 latency B:FL@B8: added p50 16.84 p95 26.68 ms
+2026-11-20 21:18:45 latency B:F@B8: added p50 16.92 p95 24.20 ms
+2026-11-20 21:18:48 latency model alone: {'batch_rf_chunk': {'n': 20, 'p50': 27.35769998980686, 'p95': 28.48821992520243, 'max': 28.794500045478344}, 'stream_chunk': {'n': 20, 'p50': 2.860850014258176, 'p95': 3.254094976000488, 'max': 3.267299965955317}, 'features_chunk': {'n': 20, 'p50': 0.05355000030249357, 'p95': 0.055204954696819186, 'max': 0.05719996988773346}, 'receptive_field_frames': 121}
+2026-11-20 21:18:56 latency N:FL@B8: decision p50 5.06 p95 6.49 max 6.8 ms; chunk p95 4.41 ms
+2026-11-20 21:19:04 latency N:F@B8: decision p50 5.48 p95 6.17 max 6.2 ms; chunk p95 4.46 ms
+2026-11-20 21:19:04 end latency
+2026-11-20 21:19:24 start latency (OMP_NUM_THREADS=1)
+2026-11-20 21:20:08 latency B:FL@B8: added p50 15.55 p95 32.97 ms
+2026-11-20 21:20:48 latency B:F@B8: added p50 15.74 p95 34.02 ms
+2026-11-20 21:21:01 latency model alone: {'batch_rf_chunk': {'n': 500, 'p50': 20.32010001130402, 'p95': 20.87203002301976, 'max': 22.81660004518926}, 'stream_chunk': {'n': 500, 'p50': 2.8520000050775707, 'p95': 3.158469952177256, 'max': 3.8609999464824796}, 'features_chunk': {'n': 500, 'p50': 0.053699943237006664, 'p95': 0.05942998686805365, 'max': 0.1631000777706504}, 'receptive_field_frames': 121}
+2026-11-20 21:33:02 latency N:FL@B8: decision p50 4.97 p95 6.44 max 12.0 ms; chunk p95 3.62 ms
+2026-11-20 21:44:56 latency N:F@B8: decision p50 4.88 p95 6.44 max 13.5 ms; chunk p95 3.58 ms
+2026-11-20 21:44:56 end latency
+2026-11-20 21:45:16 start latency (OMP_NUM_THREADS=1)
+2026-11-20 21:45:59 latency2 B:FL@B8: added p50 15.55 p95 32.61 ms
+2026-11-20 21:46:39 latency2 B:F@B8: added p50 15.42 p95 32.75 ms
+2026-11-20 21:46:52 latency2 model alone: {'batch_rf_chunk': {'n': 500, 'p50': 19.85555002465844, 'p95': 20.466214953921735, 'max': 21.118099917657673}, 'stream_chunk': {'n': 500, 'p50': 2.7273499872535467, 'p95': 2.927819942124188, 'max': 3.3639000030234456}, 'features_chunk': {'n': 500, 'p50': 0.052999937906861305, 'p95': 0.05729997646994889, 'max': 0.1732999226078391}, 'receptive_field_frames': 121}
+2026-11-20 21:58:44 latency2 N:FL@B8: decision p50 4.93 p95 6.39 max 11.0 ms; chunk p95 3.48 ms
+2026-11-20 22:10:28 latency2 N:F@B8: decision p50 4.90 p95 6.31 max 15.5 ms; chunk p95 3.46 ms
+2026-11-20 22:10:28 end latency
+2026-11-20 22:10:48 start latency4 (OMP_NUM_THREADS=4)
+2026-11-20 22:11:01 latency4: {'threads_env': '4', 'batch_rf_chunk': {'n': 500, 'p50': 18.156750011257827, 'p95': 20.312745019327842, 'max': 143.1057999143377}, 'stream_chunk': {'n': 500, 'p50': 1.7736000008881092, 'p95': 2.0313550892751655, 'max': 59.670799993909895}}
+2026-11-20 22:11:01 end latency4
+2026-11-20 22:11:01 start score (OMP_NUM_THREADS=1)
+2026-11-20 22:11:01 score: {'FL@B8': {'decision_p95_ms': 6.392400013282895, 'chunk_p95_ms': 3.484399989247322, 'latency_rule': True, 'h5_form_ms': 6.3135198841337115}, 'F@B8': {'decision_p95_ms': 6.308000069111586, 'chunk_p95_ms': 3.4633000614121556, 'latency_rule': True, 'h5_form_ms': 6.295419862726703}, 'V1_primary_FL@B8': True, 'V3_F@B8': True, 'V4_4thr_faster_stream': True}
+2026-11-20 22:11:01 end score

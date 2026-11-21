@@ -1,0 +1,62 @@
+{
+  "schema": "fidetype.isolation/0.1",
+  "class": "timing",
+  "cpus": [
+    8,
+    10,
+    12,
+    14
+  ],
+  "affinity_set": true,
+  "priority": "above_normal",
+  "priority_set": true,
+  "timing_lock_held": true,
+  "plan": {
+    "timing": [
+      8,
+      10,
+      12,
+      14
+    ],
+    "background": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "idle_smt_siblings": [
+      9,
+      11,
+      13,
+      15
+    ],
+    "smt": true
+  },
+  "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+  "logical_cpus": 16,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_s": 1531.652,
+  "own_cpu_s": 1526.672,
+  "class_cpu_load_pct": 30.24,
+  "foreign_load_pct": 5.32,
+  "idle_sibling_load_pct": 5.98,
+  "machine_load_pct": 20.89,
+  "background_cpu_load_pct": 23.68,
+  "clean": false,
+  "clean_reasons": [
+    "other load on the class CPUs 5.32% >= 5.0%"
+  ],
+  "job_object": true,
+  "note": "own_cpu_s = CPU time of all processes of the job (Windows job object).",
+  "command": [
+    "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\.venv\\Scripts\\python.exe",
+    "-I",
+    "C:\\Users\\zhang\\OneDrive\\Documents\\GitHub\\stealth-project\\experiments\\2026-11-20-p3-12-emg-latency-budget\\run.py",
+    "latency"
+  ],
+  "exit_code": 0
+}
