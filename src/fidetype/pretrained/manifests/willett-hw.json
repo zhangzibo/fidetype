@@ -35,7 +35,8 @@
  },
  "files": [
   {"role": "weights", "name": "willett-hw.weights.npz", "sha256": "66ac659066340c70fac58a1dd16c4b81f3806ba3e5bb8daf04169b79b66bc4a9", "size": 34369716, "url": null},
-  {"role": "guard", "name": "willett-hw.guard.json", "sha256": "b16963ed5d2ba09ed0525fc8193b8b8a0a1d0ec7814faf12ee8b6174e93c33fc", "size": 6751, "url": null}
+  {"role": "guard", "name": "willett-hw.guard.json", "sha256": "b16963ed5d2ba09ed0525fc8193b8b8a0a1d0ec7814faf12ee8b6174e93c33fc", "size": 6751, "url": null},
+  {"role": "text", "name": "eng_tatoeba_6gram_mkn_noE2Q.npz", "sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8", "size": 3348165, "url": null}
  ],
  "licence": {
   "data.licence": "CC0-1.0",
@@ -43,7 +44,8 @@
   "weights": "CC0-1.0",
   "weights_status": "provisional: CC0 1.0 proposed (data CC0, our own code and training); final choice is the user's decision D11. Never in the wheel or the git repository; hosting is the user step P14-02 (gap 98)",
   "attribution": "Data: Willett, Avansino, Hochberg, Henderson, Shenoy, Nature 593, 249-254 (2021), handwriting BCI dataset (CC0 1.0, Dryad doi:10.5061/dryad.wh70rxwmv)",
-  "notes": "clean track: random init, trained on Willett CC0 data only (run licence.json: research_only false). The research-only T / E / S trunks of P15-08 (emg2qwerty-derived) are not used."
+  "notes": "clean track: random init, trained on Willett CC0 data only (run licence.json: research_only false). The research-only T / E / S trunks of P15-08 (emg2qwerty-derived) are not used.",
+  "text_files": {"eng_tatoeba_6gram_mkn_noE2Q.npz": "CC-BY-2.0-FR (6-gram character LM built from Tatoeba English sentences, emg2qwerty prompts removed (P11-11); attribution: Sentences from Tatoeba (https://tatoeba.org), by the Tatoeba contributors, CC BY 2.0 FR). Used only by the opt-in LM readout. Local file, not in the wheel or the git repository"}
  },
  "training": {
   "data": "Willett handwriting 2021 (T5), sentences.mat of 10 sessions: all 781 pool sentences (506.0 min of writing time)",
@@ -77,5 +79,19 @@
   "null_controls": "calibrate: uniform 0/300, frame-shuffled 0/300, time-shuffled input 0/106 commits (all pass); test: time-shuffled and zero input 0/80 commits each"
  },
  "trust_note": "Offer-only guard (P14-41): it never commits. A guard that can commit needs about 120 or more calibration sentences and a stronger text decoder (word LM: gap 26 = P14-12; stronger decoder: gap 120 = P15-33). The offer list is not certified: on frame-shuffled decoder frames it offers as often as on real input (77 / 80).",
+ "readouts": {
+  "lm": {
+   "decode": "ctc-lmbeam-ngram-gated-v1",
+   "status": "opt-in: m.text(stream, readout=\"lm\"); m.text(stream) stays greedy",
+   "lm_file": "eng_tatoeba_6gram_mkn_noE2Q.npz",
+   "settings": {"lm_weight": 0.5, "bonus": 1.0, "beam": 8, "prune_logp": -8.0, "n_best": 8},
+   "settings_source": "P15-25 decoder F (fixed before its run; experiments/2026-11-20-p15-25-e1-same-lm/config.json)",
+   "code": "fidetype.pretrained.lmreadout (the P11-07 LMBeam, NumPy)",
+   "gate": null,
+   "gate_source": "experiments/2026-11-20-p14-48-willett-lm-readout (P11-12 rule, fitted on val only)",
+   "licence": "LM text CC BY 2.0 FR (Tatoeba contributors, attribution required); see licence.text_files",
+   "test_overlap": "13 of the 80 test sentences (5 of 47 unique texts) and 9 of the 106 val sentences occur in the Tatoeba English export (2,032,357 sentences, an upper bound of the LM training text): the LM CER can be a little optimistic (P15-25)"
+  }
+ },
  "hosting": {"host": null, "release": null, "notes": "no download URL yet; hosting is the user step P14-02 (gap 98, docs/publishing-checklist.md)"}
 }

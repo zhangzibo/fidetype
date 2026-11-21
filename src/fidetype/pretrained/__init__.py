@@ -569,9 +569,44 @@ class XBodyCtcDecoder(PretrainedDecoder):
         streams = [self._stream(self.log_probs(it.x, it.session), it.key) for it in items]
         return list(zip(items, streams)) if with_items else streams
 
-    def text(self, stream: Any) -> str:
-        """Greedy CTC characters (no LM)."""
-        return super().text(stream)
+    def text(self, stream: Any, readout: str = "greedy") -> str:
+        """The text of a stream. ``readout="greedy"`` (default): greedy CTC characters, no LM.
+
+        ``readout="lm"`` (opt-in, P14-48): the gated LM readout of :meth:`lm_readout` (the empty text
+        when the no-signal gate stops the stream).
+        """
+        if readout == "greedy":
+            return super().text(stream)
+        if readout == "lm":
+            r = getattr(self, "_lm_readout", None)
+            if r is None:
+                r = self._lm_readout = self.lm_readout()
+            return r.text(np.asarray(stream.log_probs))
+        raise ValueError(f"{self.name}: readout must be 'greedy' or 'lm', got {readout!r}")
+
+    def lm_readout(self, gate: Any = None) -> Any:
+        """The opt-in LM readout (P14-48): no-signal gate + CTC beam with the character LM of the manifest.
+
+        Returns a :class:`fidetype.pretrained.lmreadout.LmReadout` (``text``, ``nbest``, ``decode_fn``).
+        The LM file (manifest role ``text``) is local: model folder or ``<cache>/text/``.
+        """
+        from fidetype.pretrained.lmreadout import readout_for
+
+        return readout_for(self, gate)
+
+    def guard(self, decode_fn: Callable[..., Any] | None = None, readout: str = "greedy", **kwargs: Any) -> Any:
+        """The committed trust config. ``readout="lm"``: the guard calibrated on the LM readout (P14-48)."""
+        if readout == "greedy":
+            return super().guard(decode_fn=decode_fn, **kwargs)
+        if readout != "lm":
+            raise ValueError(f"{self.name}: readout must be 'greedy' or 'lm', got {readout!r}")
+        import fidetype.trust as ft
+
+        t = ((self.manifest.raw.get("readouts") or {}).get("lm") or {}).get("trust")
+        if not t:
+            raise NoTrustConfig(f"{self.name}: no trust config for the LM readout")
+        return ft.load(self.files[str(t["config"]).removeprefix("file:")],
+                       decode_fn=decode_fn or self.lm_readout().decode_fn(), **kwargs)
 
 
 class KeyLdaDecoder(PretrainedDecoder):
