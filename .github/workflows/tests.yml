@@ -17,12 +17,12 @@ jobs:
   # the conformance-os job: GitHub's macOS arm64 runners have "capacity constraints", and separate macOS jobs queued
   # for 20 min and were then cancelled ("not acquired by Runner"). One macOS job per push keeps the queue short.
   # fail-fast is off, so one red platform does not hide the others.
-  # P2-14 (gap 154): the full suite took 21-25 min on windows-latest (py3.12, py3.13) and 23 min on ubuntu py3.12,
-  # and four Windows py3.12 runs hit the 30-min timeout. These three entries run as 2 shards (`--shard K/N` in
-  # tests/conftest.py: whole test files, balanced by tests/shard_weights.json). Each file runs in exactly one shard,
-  # so the coverage is the same. The timeout stays at 30 min. `--file-durations` prints the time of each file;
-  # copy its "json:" line into tests/shard_weights.json when the shards get unbalanced. `--durations=30` lists the
-  # slowest tests.
+  # P2-14 (gap 154): the full suite took 21-25 min on windows-latest (py3.12, py3.13) and 11-23 min on ubuntu, and
+  # four Windows py3.12 runs hit the 30-min timeout. So each entry runs as shards (`--shard K/N` in tests/conftest.py:
+  # whole test files, balanced by tests/shard_weights.json): 3 shards on Windows, 2 on ubuntu. Each file runs in
+  # exactly one shard, so the coverage is the same as one full run. The timeout stays at 30 min. `--file-durations`
+  # prints the time of each file; copy its "json:" line into tests/shard_weights.json when the shards get
+  # unbalanced. `--durations=30` lists the slowest tests.
   pytest:
     name: pytest (${{ matrix.os }}, py${{ matrix.python }}, shard ${{ matrix.shard }})
     runs-on: ${{ matrix.os }}
@@ -33,12 +33,16 @@ jobs:
         include:
           - { os: ubuntu-latest, python: "3.12", shard: "1/2" }
           - { os: ubuntu-latest, python: "3.12", shard: "2/2" }
-          - { os: ubuntu-latest, python: "3.13", shard: "1/1" }
-          - { os: ubuntu-latest, python: "3.14", shard: "1/1" }
-          - { os: windows-latest, python: "3.12", shard: "1/2" }
-          - { os: windows-latest, python: "3.12", shard: "2/2" }
-          - { os: windows-latest, python: "3.13", shard: "1/2" }
-          - { os: windows-latest, python: "3.13", shard: "2/2" }
+          - { os: ubuntu-latest, python: "3.13", shard: "1/2" }
+          - { os: ubuntu-latest, python: "3.13", shard: "2/2" }
+          - { os: ubuntu-latest, python: "3.14", shard: "1/2" }
+          - { os: ubuntu-latest, python: "3.14", shard: "2/2" }
+          - { os: windows-latest, python: "3.12", shard: "1/3" }
+          - { os: windows-latest, python: "3.12", shard: "2/3" }
+          - { os: windows-latest, python: "3.12", shard: "3/3" }
+          - { os: windows-latest, python: "3.13", shard: "1/3" }
+          - { os: windows-latest, python: "3.13", shard: "2/3" }
+          - { os: windows-latest, python: "3.13", shard: "3/3" }
     steps:
       - uses: actions/checkout@v7
 
