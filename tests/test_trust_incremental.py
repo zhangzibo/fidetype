@@ -199,9 +199,11 @@ def _hyp_key(hs):
             for h in hs]
 
 
+@pytest.mark.parametrize("search", ["loop", "vector"])
 @pytest.mark.parametrize("use_lm", [False, True])
-def test_prefix_cache_pruning_is_exact(monkeypatch, use_lm):
-    """P14-41: cutting the per-prefix caches to the beam keeps every hypothesis, score and partial result."""
+def test_prefix_cache_pruning_is_exact(monkeypatch, use_lm, search):
+    """P14-41 (loop), P5-32 (vector): cutting the per-prefix caches to the beam keeps every hypothesis,
+    score and partial result."""
     import fidetype.lm.beam as B
 
     sents = sentences(60, seed=9)
@@ -213,7 +215,8 @@ def test_prefix_cache_pruning_is_exact(monkeypatch, use_lm):
         flat = trial % 2 == 0  # near-uniform frames: every token passes prune_logp (the null-control case)
         x = rng.normal(0, 0.05 if flat else 2.0, (T, V))
         lp = x - np.log(np.exp(x).sum(1, keepdims=True))
-        kw = dict(lm=lm, beam=6, n_best=5, prune_topk=None, space_rules=trial % 3 == 0)
+        kw = dict(lm=lm, beam=6, n_best=5, prune_topk=None, space_rules=trial % 3 == 0, search=search,
+                  lm_candidates=2 if (use_lm and trial % 2) else 0)
         out = {}
         for cap in (1 << 30, 1):
             monkeypatch.setattr(B, "PREFIX_CACHE_MAX", cap)
@@ -223,9 +226,46 @@ def test_prefix_cache_pruning_is_exact(monkeypatch, use_lm):
                 dec.push(lp[a:b])
                 parts.append([(h.text, h.score) for h in dec.partial(4)])
             out[cap] = (_hyp_key(dec.finalize()), parts, dec.end_candidates())
-            if cap == 1:
+            if cap == 1 and search == "loop":
                 assert len(dec.lm_score) <= 6 * V + 2 * 6 + 2  # cut at each frame start: one frame of new prefixes
+            if cap == 1 and search == "vector":
+                # Cut at each frame start (beam + texts without trailing space), then one frame adds <= beam.
+                assert len(dec.lm_score) <= 3 * 6 + 1
+                assert len(dec._vs.lm_arr) <= 3 * 6 + 1
+                assert len(dec._lm_rows) <= 3 * 6 + 1
         assert out[1] == out[1 << 30]
+
+
+#: P5-32 memory limit of the search on a long null input: a multiple of the (T, V) float64 frames plus a
+#: constant. Linear in T. Before P5-32 the vector search held every prefix that entered the beam (T^2:
+#: 59 MB at T = 10,000, V = 98; with the cut 22 MB; frames 7.8 MB).
+NULL_MEM_FRAMES_FACTOR = 4
+NULL_MEM_CONST_BYTES = 8 << 20
+
+
+def test_long_null_input_memory_is_bounded():
+    """P5-32: a long near-uniform (null-control) input decodes under a stated memory limit (vector search)."""
+    import tracemalloc
+
+    import fidetype.lm.beam as B
+
+    T, V = 10_000, 98
+    lp = np.full((T, V), -np.log(V))
+    tracemalloc.start()
+    try:
+        dec = IncrementalPrefixBeam([str(i) for i in range(V)], 0, search="vector", align=False)
+        dec.push(lp)
+        _, peak_push = tracemalloc.get_traced_memory()
+        hyps = dec.finalize()
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert hyps and len(hyps[0].text) > 1_000  # garbage texts grow with T: the worst case for the caches
+    assert len(dec.lm_score) <= B.PREFIX_CACHE_MAX + dec.beam
+    assert len(dec._vs.lm_arr) <= B.PREFIX_CACHE_MAX + dec.beam
+    assert peak_push <= NULL_MEM_FRAMES_FACTOR * lp.nbytes + NULL_MEM_CONST_BYTES, peak_push
+    # finalize holds the frames as a list of floats too (about 5 x the array) for the confidences.
+    assert peak <= 3 * NULL_MEM_FRAMES_FACTOR * lp.nbytes + NULL_MEM_CONST_BYTES, peak
 
 
 # --- the streaming layer -------------------------------------------------------

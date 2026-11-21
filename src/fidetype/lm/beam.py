@@ -344,6 +344,7 @@ class IncrementalPrefixBeam:
         else:
             self._vs = _VectorState(vocab, blank, lm, w, self.bonus, self.beam, self.k, prune_logp, self.n_lmc,
                                     lm_candidate_logp, beam_logp, max_per_stem, stem_drop, self.space_id, self.lm_score)
+            self._vs.extra_caches = (self._lm_rows,)
 
     # --- search ---------------------------------------------------------------
 
@@ -680,6 +681,28 @@ class _VectorState:
         self.nosp = np.array([True])  # no space allowed next (empty or ends in space)
         self.cols = np.arange(V)
         self.n_ext = 4 * beam if max_per_stem is not None else beam
+        #: Other per-prefix caches that :meth:`_prune_caches` cuts too (the owner's LM rows).
+        self.extra_caches: tuple[dict, ...] = ()
+
+    def _prune_caches(self, texts: list[str]) -> None:
+        """Keep the per-prefix caches of the current beam only (P5-32, exact).
+
+        ``lm_score`` and ``lm_arr`` held every prefix that ever entered the
+        beam: on flat null frames the texts grow by about one character
+        every few frames, so the memory grew as T^2. The search itself
+        reads only the beam arrays (``lms``, ``L``, ``LT``). A dropped
+        prefix that comes back is made again from its parent in the beam,
+        with the same values (one parent per text; the same LM row). The
+        text of each prefix without its trailing spaces is kept too (the
+        end terms read it).
+        """
+        keep = set(texts)
+        if self.space_id >= 0:
+            keep |= {q.rstrip(" ") for q in texts}
+        for cache in (self.lm_score, self.lm_arr, *self.extra_caches):
+            kept = {k: cache[k] for k in keep if k in cache}
+            cache.clear()
+            cache.update(kept)
 
     def lrow(self, text: str) -> tuple[np.ndarray, np.ndarray]:
         """LM row and LM top-``n_lmc`` mask of ``text``."""
@@ -725,6 +748,8 @@ class _VectorState:
         texts, pb, pnb, lms, ln, last, L, LT, nosp = (self.texts, self.pb, self.pnb, self.lms, self.ln, self.last,
                                                       self.L, self.LT, self.nosp)
         for t in range(T):
+            if len(lm_score) > PREFIX_CACHE_MAX or len(self.lm_arr) > PREFIX_CACHE_MAX:
+                self._prune_caches(texts)
             row = lp64[t]
             B = len(texts)
             ptot = np.logaddexp(pb, pnb)
@@ -1016,7 +1041,9 @@ def _fused(rows, peak, ids, text, lm, w, blank) -> np.ndarray:
     return out
 
 
-#: Loop search: the per-prefix caches are cut to the current beam when they pass this size (P14-41).
+#: Both searches: the per-prefix caches (LM scores, last tokens, LM rows) are cut to the current beam
+#: when they pass this size (loop: P14-41; vector: P5-32). The cut never changes a result. Memory of the
+#: prefix state per utterance: O((PREFIX_CACHE_MAX + beam * V) * L) characters, L the longest prefix (L <= T).
 PREFIX_CACHE_MAX = 4096
 
 #: Upper bound on the back-pointer cells (int8) of one Viterbi pass of :func:`ctc_forced_align_many`.
