@@ -1,0 +1,46 @@
+2026-11-20 22:47:12 start blocks
+2026-11-20 22:47:12 blocks: {'willett_files': {'t5.2019.05.08': 102, 't5.2019.11.25': 84, 't5.2019.12.09': 84, 't5.2019.12.11': 84, 't5.2019.12.18': 84, 't5.2019.12.20': 84, 't5.2020.01.06': 84, 't5.2020.01.08': 84, 't5.2020.01.13': 155, 't5.2020.01.15': 155}, 'willett_trials': 1000, 'willett_unique_raw': 907, 'willett_unique_meta': 907, 'willett_meta_not_in_raw': 0, 'willett_unique': 907, 'willett_long': 738, 'e2q_unique': 2399, 'e2q_long': 2348, 'willett_in_e2q_exact': 0, 'block_min_len': 15}
+2026-11-20 22:47:12 end blocks (main peak 60 MB)
+2026-11-20 22:47:12 start lm0
+2026-11-20 22:47:42 P15-38 LM0 (P11-11 recipe check) lm lm0_eng_tatoeba_6gram_mkn_noE2Q.npz: {'n_kept0': 2032347, 'n_block': 2399, 'n_long_block': 2348, 'n_removed_extra': 1445, 'n_train': 600000, 'n_heldout': 5000, 'ppl_heldout_2000': 3.1578027454153936, 'sha256': 'c5f120450eaa3c5820e5d61594b83a5c803ab76a86e5848f52c396ae5bea60d5', 'seconds': 29.6, 'peak_mb': 1158.4}
+2026-11-20 22:47:42 lm0: pass True (30 arrays, different [], header equal True); old sha ok True
+2026-11-20 22:47:42 end lm0 (main peak 1158 MB)
+2026-11-20 22:47:42 start lm
+2026-11-20 22:48:35 P15-38 lm eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz: {'n_kept0': 2032347, 'n_block': 3306, 'n_long_block': 3086, 'n_removed_extra': 3387, 'n_train': 600000, 'n_heldout': 5000, 'ppl_heldout_2000': 3.158210010109225, 'sha256': 'd7f6e829b827d1f7d09f5927eb51ec33fd79df29201d7e722a0878a503059261', 'seconds': 37.2, 'peak_mb': 1208.3, 'LMa_exact_in_lm_text': 0, 'LMb_containment_in_lm_text': 0, 'old_lm_train_willett_exact': 30, 'old_lm_heldout_willett_exact': 1, 'old_lm_train_willett_containment': 609}
+2026-11-20 22:48:35 end lm (main peak 1208 MB)
+2026-11-20 22:48:35 start overlap
+2026-11-20 22:48:52 overlap: {'tatoeba_unique': 2032357, 'tatoeba_sentences_hit_by_willett_containment': 1873, 'test': {'sentences': 80, 'in_tatoeba': 13, 'in_tatoeba_or_containment': 29, 'unique': 47, 'unique_in_tatoeba': 5, 'unique_in_tatoeba_or_containment': 11}, 'val': {'sentences': 106, 'in_tatoeba': 9, 'in_tatoeba_or_containment': 20, 'unique': 106, 'unique_in_tatoeba': 9, 'unique_in_tatoeba_or_containment': 20}, 'pool': {'sentences': 781, 'in_tatoeba': 97, 'in_tatoeba_or_containment': 157, 'unique': 734, 'unique_in_tatoeba': 83, 'unique_in_tatoeba_or_containment': 130}, 'all_willett_unique': {'unique': 907, 'in_tatoeba': 100, 'in_tatoeba_or_containment': 164}, 'e2q': {'unique': 2399, 'in_tatoeba': 3, 'willett_in_e2q_exact': 0}}
+2026-11-20 22:48:52 end overlap (main peak 333 MB)
+2026-11-20 22:48:52 start check
+2026-11-20 22:48:52 check: 43 units, 43 to do
+2026-11-20 22:48:54 check: 10/43 (last G test T-b3-s0 cer 0.9582, 0.27 s; worker peak 164 MB; 2 s)
+2026-11-20 22:48:55 check: 20/43 (last G test T-ball-s1 cer 0.8031, 0.38 s; worker peak 164 MB; 3 s)
+2026-11-20 22:48:56 check: 30/43 (last G test E-ball-s1 cer 0.4307, 0.71 s; worker peak 164 MB; 4 s)
+2026-11-20 22:48:57 check: 40/43 (last G test S-ball-s1 cer 0.9443, 0.34 s; worker peak 164 MB; 5 s)
+2026-11-20 22:49:03 check: 43/43 (last R0-F-oldLM test R-ball-s0 cer 0.1734, 5.7 s; worker peak 186 MB; 11 s)
+2026-11-20 22:49:03 check: C0' {'pass': True, 'n_same': 41, 'n': 41}; R0 {'pass': True, 'runs': [{'run': 'E-ball-s0', 'cer': 0.23520881670533642, 'p1525_cer': 0.23520881670533642, 'same': True}, {'run': 'R-ball-s0', 'cer': 0.1734338747099768, 'p1525_cer': 0.1734338747099768, 'same': True}]}
+2026-11-20 22:49:03 end check (main peak 333 MB)
+2026-11-20 22:49:03 start lmonly
+2026-11-20 22:49:04 lmonly: all_blank 0 tokens, uniform 4100 tokens
+2026-11-20 22:49:04 end lmonly (main peak 333 MB)
+2026-11-20 22:49:04 start test
+2026-11-20 22:49:04 test: 139 units, 139 to do
+2026-11-20 22:50:03 test: 10/139 (last F test R-b10-s1 cer 1.2303, 20.76 s; worker peak 187 MB; 59 s)
+2026-11-20 22:50:47 test: 20/139 (last FL test R-b100-s0 cer 0.8176, 20.28 s; worker peak 197 MB; 103 s)
+2026-11-20 22:51:16 test: 30/139 (last F test R-ball-s1 cer 0.8271, 22.55 s; worker peak 202 MB; 132 s)
+2026-11-20 22:51:29 test: 40/139 (last F test T-b10-s1 cer 0.8765, 9.32 s; worker peak 203 MB; 146 s)
+2026-11-20 22:51:57 test: 50/139 (last FL test T-b100-s0 cer 0.7802, 10.73 s; worker peak 207 MB; 173 s)
+2026-11-20 22:52:17 test: 60/139 (last F test E-b3-s0 cer 0.9487, 2.67 s; worker peak 207 MB; 193 s)
+2026-11-20 22:52:25 test: 70/139 (last F test E-b10-s1 cer 0.8912, 3.68 s; worker peak 207 MB; 202 s)
+2026-11-20 22:52:49 test: 80/139 (last FL test E-b100-s0 cer 0.7303, 11.14 s; worker peak 209 MB; 225 s)
+2026-11-20 22:53:08 test: 90/139 (last FL test E-ball-s1 cer 0.2981, 7.18 s; worker peak 213 MB; 245 s)
+2026-11-20 22:53:39 test: 100/139 (last F test S-b30-s0 cer 0.8277, 9.1 s; worker peak 214 MB; 275 s)
+2026-11-20 22:54:20 test: 110/139 (last FL test S-b100-s0 cer 0.8721, 13.09 s; worker peak 216 MB; 317 s)
+2026-11-20 22:55:04 test: 120/139 (last FL test E-b30-s0-labelshuf cer 0.8013, 9.42 s; worker peak 217 MB; 361 s)
+2026-11-20 22:55:28 test: 130/139 (last F shuf T-ball-s1 cer 0.7981, 7.44 s; worker peak 217 MB; 384 s)
+2026-11-20 22:56:00 test: 139/139 (last F shuf S-ball-s1 cer 0.8283, 21.84 s; worker peak 217 MB; 417 s)
+2026-11-20 22:56:01 end test (main peak 333 MB)
+2026-11-20 22:56:01 start summary
+2026-11-20 22:56:03 summary: M1 holds True changed [] comparable True; F new: V1 {'best_cer_all': 0.2727668213457077, 'pass': True}, H1 fail; old verdicts match P15-25 True
+2026-11-20 22:56:03 end summary (main peak 333 MB)
+2026-11-20 22:56:03 ALL DONE (448 s)
