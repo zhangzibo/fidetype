@@ -1,0 +1,29 @@
+{
+  "_comment": "P15-38 pre-registered configuration (see plan.md). Frozen with plan.md before any re-score result.",
+  "p1525_dir": "experiments/2026-11-20-p15-25-e1-same-lm",
+  "p1525_derived": "C:/Users/zhang/bci-data/derived/p15-25",
+  "p1111_dir": "experiments/2026-11-19-p11-11-emg-nonvacuous",
+  "old_lm": "C:/Users/zhang/bci-data/derived/p11-11/eng_tatoeba_6gram_mkn_noE2Q.npz",
+  "old_lm_sha256": "7c4f133c1eb5b46d67d185eb61b6ec282b009b652112591274c3c865757a06b8",
+  "new_lm": "eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz",
+  "lm0": "lm0_eng_tatoeba_6gram_mkn_noE2Q.npz",
+  "willett_root": "C:/Users/zhang/bci-data/raw/willett-handwriting/extracted/handwritingBCIData",
+  "willett_meta": "C:/Users/zhang/bci-data/derived/p15-08/willett/meta.json",
+  "willett_splits": "C:/Users/zhang/bci-data/derived/p15-08/willett/splits.json",
+  "e2q_prompts": "C:/Users/zhang/bci-data/derived/p11-09/prompts.json",
+  "lexicon": "C:/Users/zhang/bci-data/derived/p11-11/lexicon.json",
+  "prune_logp": -8.0,
+  "decoders": {
+    "F":  {"w": 0.5,  "beta": 1.0, "lam": 0.0, "B": 8},
+    "FL": {"w": 0.25, "beta": 1.0, "lam": 8.0, "B": 8},
+    "Fv": {"w": 0.5,  "beta": 2.0, "lam": 0.0, "B": 8}
+  },
+  "reused_from_p1525": ["G", "B0"],
+  "primary_decoder": "F",
+  "r0_runs": ["E-ball-s0", "R-ball-s0"],
+  "m3_runs": ["E-ball-s0", "E-ball-s1", "R-ball-s0", "T-ball-s0"],
+  "m4_runs": ["E-ball-s0", "E-ball-s1", "R-ball-s0"],
+  "secondary_k": 13,
+  "workers": 4,
+  "max_peak_mb": 6000
+}
