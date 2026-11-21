@@ -1511,3 +1511,22 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Gap 144 = [P14-48](questions/roadmap-standard.md#p14-48-willett-hw-with-the-same-lm-readout-and-a-no-signal-gate) stays open: LM readout packaged (opt-in, test CER 0.1760 gated); N1 fails (13 / 80 time-shuffled inputs emit text); guard `tcfg-8fa3866deec917f3` offer-only ([results](../experiments/2026-11-20-p14-48-willett-lm-readout/results.md)). Evidence added to gaps 138 (P14-47) and 136 (P5-31).
 - New gaps 145 = [P14-49](questions/roadmap-standard.md#p14-49-no-signal-gate-for-willett-hw-that-stops-time-shuffled-input) (gate), 146 = [P14-50](questions/roadmap-standard.md#p14-50-willett-blocked-tatoeba-lm-as-the-willett-hw-lm-readout) (Willett-blocked LM readout), 147 = [P14-51](questions/roadmap-standard.md#p14-51-toy-models-for-the-xbody-ctc-crt-ctc-and-key-lda-runtimes), 148 = [P14-52](questions/roadmap-standard.md#p14-52-kt-semg-item-count-from-the-key-log-alone), 149 = [P14-53](questions/roadmap-standard.md#p14-53-tutorial-3-real-mode-re-run-after-the-p14-46-changes).
 - Tracker: agent runs for P3-12, P15-33 write-up, P15-34, P15-25, P15-38, P14-48, P14-44/45/46 (one run), M0-12 records. README: `m.decode_file(...)` and `m.decide(stream)` (no deprecated call). HANDOFF: finished background rows removed. Written 2026-11-20 23:37.
+
+## [2026-11-21] query | P14-49 + P14-50: no-signal gate C5 and the Willett-blocked LM for `willett-hw` (gaps 144-146 closed; new gaps 150-151)
+- Pre-registration and code `76747e8`, results `dcc344b`. Val-only selection over six candidates chose C5, a logistic score of five posterior features.
+- Test (80 sentences): time-shuffled 2 / 80, zero 0 / 80, uniform 0 / 80 emit; real gated 1 / 80; N2 pass (frame-shuffled CER 0.881). CER 0.1743 ungated (= P15-38), 0.1746 gated.
+- Guard `tcfg-26ae951a20a0cddd`: not certified (40 < 45 LTT), offer-only, safe WPM 0.00 (vacuous). Gap 144 (P14-48) closed: D1 is now met (orchestrator decision).
+- Frame-shuffled frames pass C5 (79 / 80) -> gap 150 = [P14-54](questions/roadmap-standard.md#p14-54-frame-order-aware-no-signal-gate-or-offer-check-for-willett-hw); C5 robustness -> gap 151 = [P14-55](questions/roadmap-standard.md#p14-55-robustness-check-of-the-willett-hw-gate-c5).
+- [Results](../experiments/2026-11-20-p14-49-willett-gate-blocked-lm/results.md).
+
+## [2026-11-21] query | P5-31 + P5-32: offer null control and bounded vector beam memory (gaps 136-137 closed; new gaps 152-154)
+- Code `5a44e1b` (P5-32), `534feae` (P5-31), re-check `367ad72`. `calibrate(offer_control="warn" | "refuse" | "off")`, default warn; `sheet.offers`; `recheck_offer_control`.
+- All four packaged guards fail the offer null control; warn mode, so no status changes; commit counts equal the sheets. `t15-m4-13` stays certified for commits.
+- P5-32: vector beam prefix caches and LM row caches bounded, exact; T = 10,000, V = 98: push peak 59 -> 22 MB.
+- New gaps 152 = [P5-33](questions/roadmap-standard.md#p5-33-offer-policy-that-withholds-on-no-evidence-input-and-the-offer-control-default), 153 = [P14-56](questions/roadmap-standard.md#p14-56-offer-control-result-in-the-packaged-manifests-and-model-cards), 154 = [P2-14](questions/roadmap-standard.md#p2-14-windows-pytest-ci-job-within-its-job-timeout) (CI Windows py3.12 job timeout).
+- [Results](../experiments/2026-11-21-p5-31-offer-control/results.md).
+
+## [2026-11-21] setup | Records: gaps 136, 137, 144, 145, 146 closed; new gaps 150-154
+- Open-gaps list, roadmap, tracker and HANDOFF updated. Gap 138 (P14-47) has new evidence (still offer-only; P5-31 now available).
+- Tracker: agent runs for P14-49/50, P5-31/32 and the earlier records run (commit `96cec56`, on M0-12).
+- HANDOFF: GPU paused (the user is gaming); P15-37 CPU job running; publishing weekend has begun. Written 2026-11-21 01:11.
