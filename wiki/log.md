@@ -1555,3 +1555,11 @@ An append-only history. Each entry is formatted `## [YYYY-MM-DD] <ingest|query|l
 - Open-gaps list, roadmap, tracker and HANDOFF updated. Gap 150 (P14-54) has new evidence from P5-33 and a done-when addition (refresh the manifest `offer_control` blocks).
 - Tracker: agent runs for P14-53, P14-56, P5-33 and P2-14. New items P5-34 and P2-15 (todo).
 - HANDOFF: user decision list (`offer_control` default); P15-37 at 9 of 41 draws; shard-weights maintenance note. `uv.lock` hdf5 extra committed separately. Written 2026-11-21 02:34.
+
+## [2026-11-21] setup | Records: gaps 148, 147, 135, 134, 150, 154 closed; new gap 157
+- Closed with green CI `tests` runs: 148 = P14-52 (`05a3f08`, KT count from the key log), 147 = P14-51 (`8ab2cb2`, toy models), 135 = P4-17 (`ae50049`, `fidetype live --source file`), 134 = P4-16 (`b73d9a7`, `edf` / `openbci-gui` readers `tested` on real files).
+- 150 = P14-54 closed (pre-registration `09def1e`, results `2c0692f`): `coherence` offer gates for both `willett-hw` guards; gated offer control PASS (frame-shuffled 0 / 300, were 297 / 300 and 289 / 300; real 40 / 40); test real 77 / 80 offers kept. 3 of 4 packaged guards now pass the offer null control. [Results](../experiments/2026-11-21-p14-54-willett-order-gate/results.md).
+- 154 = P2-14 closed: 13 consecutive green `tests` runs; slowest pytest job per run 11.4-12.9 min.
+- Gap 151 = P14-55 done-when extended (new null types for the `coherence` gate). Gap 138 = P14-47: offers pass, still 0 commits. Gap 152 note: its `willett-hw` part met by gap 150. Roadmap P4-15 progress: catalogue 16 tested, 1 experimental.
+- New gap 157 = [P4-18](questions/roadmap-standard.md#p4-18-openbci-gui-reader-on-a-real-gui-v5-recording-and-packet-drops) (OpenBCI GUI v5+ real recording, packet drops; low priority).
+- Tracker: agent runs for P14-52, P14-51, P4-17, P4-16, P14-54 and the records passes `abc7781` and `774cbd9` (on M0-12). HANDOFF: offer_control recommendation updated (user decides); P15-37 at 25 of 41 draws; P11-17 agent working. Written 2026-11-21 05:24.
