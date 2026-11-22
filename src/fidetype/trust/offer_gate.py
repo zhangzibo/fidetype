@@ -29,6 +29,10 @@ name               input   value
 ``nb_decay_asym``  logits  ``sum P_t P_(t+1) (P_t - P_(t+1)) / sum P_t P_(t+1) |P_t - P_(t+1)|`` over the
                            non-blank columns: > 0 when a high probability falls more slowly than it rises;
                            it changes sign when the frame order is reversed (P14-57)
+``lm_direction``   logits  (forward minus backward) character-LM log-probability per character of the
+                           greedy CTC text of the frames: ``(log p(s) - log p(reverse(s))) / (len(s) + 1)``,
+                           ``s`` = the normalised greedy text, end marker included (``lm=``). It changes sign
+                           exactly when the frame order is reversed; 0 for an empty text (P5-36)
 ``p_top1``         both    calibrated top-1 probability of the decision
 ``safety``         both    1 - guard risk of the decision
 ``margin``         nbest   (score 1 - score 2) / max(1, characters of item 1); 0 for one item
@@ -54,11 +58,11 @@ import numpy as np
 OFFER_GATE_SCHEMA = "fidetype.offer-gate/0.1"
 
 LOGIT_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share", "time_asym",
-                  "nb_time_asym", "nb_decay_asym", "p_top1", "safety")
+                  "nb_time_asym", "nb_decay_asym", "lm_direction", "p_top1", "safety")
 NBEST_FEATURES = ("p_top1", "safety", "margin", "conf_mean", "char_lm", "char_lm_best")
 FEATURES = tuple(dict.fromkeys(LOGIT_FEATURES + NBEST_FEATURES))
 #: Features that need a character language model (``OfferGate(..., lm=...)``).
-LM_FEATURES = ("char_lm", "char_lm_best")
+LM_FEATURES = ("char_lm", "char_lm_best", "lm_direction")
 
 
 #: The logits features that :func:`frame_features` computes.
@@ -136,6 +140,34 @@ def frame_features(lp: np.ndarray, blank: int = 0) -> dict[str, float]:
         peak, neg_ent = 0.0, -math.log(V)
     return {"coherence": c, "coherence_ratio": cr, "nb_coherence": nbc, "peak": peak, "neg_entropy": neg_ent,
             "nb_share": float(nb.mean()), **direction}
+
+
+def greedy_text(lp: np.ndarray, vocab: Sequence[str], blank: int = 0) -> str:
+    """The greedy CTC text of a (T, V) matrix: per-frame argmax, runs joined, blank removed, tokens joined."""
+    a = np.asarray(lp).argmax(axis=1) if np.asarray(lp).shape[0] else np.zeros(0, np.int64)
+    if a.size == 0:
+        return ""
+    keep = np.concatenate([[True], a[1:] != a[:-1]])
+    a = a[keep]
+    return "".join(str(vocab[int(i)]) for i in a[a != blank])
+
+
+def lm_direction(lp: np.ndarray, vocab: Sequence[str], lm: Any, blank: int = 0) -> float:
+    """The ``lm_direction`` feature (P5-36): ``(log p(s) - log p(reverse(s))) / (len(s) + 1)``.
+
+    ``s`` = :func:`fidetype.streams.vocab.normalize_text` of :func:`greedy_text`; ``lm``: a character LM with
+    ``score_sentence(text, eos=True, normalize=False)`` (for example :class:`fidetype.lm.CharNgramLM`). The
+    greedy text of the reversed frames is the reversed text, and the normalisation keeps that, so the value
+    changes sign exactly when the frame order is reversed. > 0: the text reads better forward than backward.
+    """
+    from fidetype.streams.vocab import normalize_text
+
+    s = normalize_text(greedy_text(lp, vocab, blank))
+    if not s:
+        return 0.0
+    f = float(lm.score_sentence(s, eos=True, normalize=False))
+    r = float(lm.score_sentence(s[::-1], eos=True, normalize=False))
+    return (f - r) / (len(s) + 1)
 
 
 def _lm_per_char(lm: Any, text: str) -> float:

@@ -721,6 +721,12 @@ class TrustGuard:
         #: A character LM for the ``char_lm`` features when no gate carries one (P5-33 analysis).
         self.offer_lm: Any = None
         self._offer_gate_why: str | None = None
+        #: P5-36 frame-order check (:func:`~fidetype.trust.integrity.check_frame_times`) settings. It runs only
+        #: when the caller gives the producer's frame times (``decide(x, frame_times=...)``). Not part of the
+        #: frozen configuration: it changes no decision on a stream whose times increase strictly.
+        self.frame_check: dict[str, Any] = {"min_step": 0.0, "max_step": None}
+        #: The P5-36 report of the last decision with frame times (None: no times given).
+        self.last_integrity: Any = None
         self._last_score: float | None = None
         self._last_prefix: tuple[int, int] | None = None
         decode = _decode_fn_for(decode_fn, codec.lexicon) if frames else None
@@ -910,11 +916,17 @@ class TrustGuard:
         out: dict[str, float] = {"p_top1": float(sd.inputs.p_top1), "safety": 1.0 - float(sd.inputs.guard_risk)}
         want = set(names) if names is not None else None
         if self.input_kind == "logits":
+            lp = self._last_lp
+            if lp is None:
+                lp = np.zeros((0, len(self._codec.vocab)))
+            blank = int(self._codec.vocab.blank_id or 0)
             if want is None or want & set(og.FRAME_FEATURES):
-                lp = self._last_lp
-                if lp is None:
-                    lp = np.zeros((0, len(self._codec.vocab)))
-                out.update(og.frame_features(lp, int(self._codec.vocab.blank_id or 0)))
+                out.update(og.frame_features(lp, blank))
+            lm = next((g.lm for g in self.offer_gates if g.lm is not None), self.offer_lm)
+            if (want is None and lm is not None) or (want is not None and "lm_direction" in want):
+                if lm is None:
+                    raise ValueError("the offer-gate feature 'lm_direction' needs a character LM (lm=)")
+                out["lm_direction"] = og.lm_direction(lp, list(self._codec.vocab.tokens), lm, blank)
         elif want is None or want & {"margin", "conf_mean", "char_lm", "char_lm_best"}:
             lm = next((g.lm for g in self.offer_gates if g.lm is not None), self.offer_lm)
             out.update(og.nbest_features(list(_nbest_of_events(events).candidates), lm))
@@ -962,7 +974,29 @@ class TrustGuard:
             return sd, None
         return self._run_layer(self._nocommit_layer, events), why
 
-    def _result(self, sd: Any, halluc_why: str | None = None) -> TrustResult:
+    def _check_times(self, frame_times: Any, n_frames: int) -> Any:
+        """The P5-36 report for the producer's frame times (None if no times are given)."""
+        if frame_times is None:
+            self.last_integrity = None
+            return None
+        if self.input_kind != "logits":
+            raise ValueError("frame_times= is for logits input only")
+        from fidetype.trust.integrity import check_frame_times
+
+        self.last_integrity = check_frame_times(frame_times, n_frames, **self.frame_check)
+        return self.last_integrity
+
+    def _integrity_gate(self, sd: Any, rep: Any) -> Any:
+        """P5-36: a stream that fails the frame-order check gets ABSTAIN (any action; nothing is shown)."""
+        if rep is None or rep.ok:
+            return sd
+        from fidetype.trust.policy import Decision
+
+        return replace(sd, decision=Decision(Action.ABSTAIN, (), f"{rep.reason()}; {sd.decision.reason}"))
+
+    def _result(self, sd: Any, halluc_why: str | None = None, integrity: Any = None) -> TrustResult:
+        if integrity is not None and not integrity.ok:
+            sd = self._integrity_gate(sd, integrity)
         d = sd.decision
         act = _ACTION_MAP[d.action]
         shown = tuple(d.shown_candidates)
@@ -984,6 +1018,10 @@ class TrustGuard:
         if self._offer_gate_why is not None and d.action == Action.ABSTAIN:
             reason = f"withhold: no evidence of signal for an offer ({self._offer_gate_why})"
             ev["offer_gate"] = self._offer_gate_why
+        if integrity is not None:
+            ev["integrity"] = integrity.to_dict()
+            if not integrity.ok:
+                reason = integrity.reason()
         text = shown[0] if act == "commit" and shown else None
         n_words = len(text.split()) if text is not None else None
         complete = None if text is None else True
@@ -1006,7 +1044,7 @@ class TrustGuard:
         events, _ = self._codec.events(x, input_scale)
         return self._result(*self._final_gated(events))
 
-    def decide(self, x: Any, *, utterance_id: str | None = None) -> TrustResult:
+    def decide(self, x: Any, *, utterance_id: str | None = None, frame_times: Any = None) -> TrustResult:
         """Decide what to do with one decoded utterance.
 
         ``x`` has the input kind of the calibration: a ``(T, V)`` score
@@ -1014,9 +1052,18 @@ class TrustGuard:
         reference; it goes into the audit log only. Returns a
         :class:`TrustResult`. Use ``result.text`` only if
         ``result.action == "commit"``.
+
+        ``frame_times`` (logits only, P5-36): the producer's time of each
+        row, in the order the rows arrived. If given, the frame-order check
+        (:mod:`fidetype.trust.integrity`, settings :attr:`frame_check`)
+        runs; if the times do not increase strictly, the result is a
+        WITHHOLD with a ``stream integrity`` reason, and the audit record
+        holds the report (key ``integrity``). The times are not used for
+        the decision itself.
         """
         events, st = self._codec.events(x)
-        r = self._result(*self._final_gated(events))
+        rep = self._check_times(frame_times, 0 if st is None else int(st.log_probs.shape[0]))
+        r = self._result(*self._final_gated(events), integrity=rep)
         self._log(r, events, utterance_id, None if r.commit_score is None else {"commit_score": r.commit_score})
         return r
 
@@ -1262,6 +1309,7 @@ class GuardSession:
         self._raw: list[np.ndarray] = []
         self._rows: list[np.ndarray] = []
         self._lines: list[bytes] = []
+        self._times: list[np.ndarray] | None = None
         self._n = 0
         self._closed = False
 
@@ -1269,8 +1317,13 @@ class GuardSession:
     def n_frames(self) -> int:
         return self._n
 
-    def push(self, chunk: Any) -> np.ndarray:
-        """Add the next ``(n, V)`` rows. Returns the normalised rows (see the class text)."""
+    def push(self, chunk: Any, times: Any = None) -> np.ndarray:
+        """Add the next ``(n, V)`` rows. Returns the normalised rows (see the class text).
+
+        ``times`` (P5-36): the producer's ``(n,)`` frame times of the rows. Give them for every chunk or for
+        none. With times, :meth:`end` runs the frame-order check over all times (``guard.decide(...,
+        frame_times=...)``).
+        """
         from fidetype.adapters.ctc_logits import to_log_probs
 
         if self._closed:
@@ -1278,6 +1331,13 @@ class GuardSession:
         a = np.asarray(chunk)
         if a.ndim != 2 or a.shape[1] != self._V:
             raise ValueError(f"a chunk must be (n, {self._V}), got shape {a.shape}")
+        if self._raw and (times is None) != (self._times is None):
+            raise ValueError("give times= for every chunk of a session or for none")
+        if times is not None:
+            tt = np.asarray(times, dtype=np.float64).reshape(-1)
+            if tt.shape[0] != a.shape[0]:
+                raise ValueError(f"times must have one value per row ({a.shape[0]}), got {tt.shape[0]}")
+            self._times = (self._times or []) + [tt]
         self._raw.append(a)
         c = self._g._codec
         scale = c.input_scale if c.input_scale != "auto" else "auto"
@@ -1297,8 +1357,9 @@ class GuardSession:
         self._closed = True
         g = self._g
         x = np.concatenate(self._raw, axis=0) if self._raw else np.zeros((0, self._V))
-        if not self._incremental:
-            return g.decide(x, utterance_id=self._uid)
+        times = None if self._times is None else np.concatenate(self._times)
+        if not self._incremental or times is not None:
+            return g.decide(x, utterance_id=self._uid, frame_times=times)
         st = g._codec.stream(x)
         rows = np.concatenate(self._rows, axis=0) if self._rows else np.zeros((0, self._V), np.float32)
         p = float(g._codec.frame_period)
