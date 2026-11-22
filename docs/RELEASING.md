@@ -66,14 +66,16 @@ Do these steps for each SDK that you release. `X.Y.Z` is the new version.
 ## 3. One-time setup (maintainer only)
 These steps need registry accounts. Only the maintainer can do them. Use **trusted publishing**: the registry trusts a GitHub Actions run of this repository through OpenID Connect (OIDC), so no long-lived token is stored in GitHub.
 
-### 3.1 Names (state on 2026-11-21, read-only checks)
+### 3.1 Names (state on 2026-11-21, after the first release)
 | Registry | Name | State |
 |---|---|---|
-| PyPI | `fidetype` | free (`https://pypi.org/pypi/fidetype/json` gives 404) |
-| npm | `@fidetype/sdk` | free (`npm view @fidetype/sdk` gives 404). The scope `@fidetype` needs an npm organization named `fidetype`. |
-| crates.io | `fidetype` | free (`https://crates.io/api/v1/crates/fidetype` gives 404) |
+| PyPI | `fidetype` | taken by us (0.1.0, 2026-11-21): https://pypi.org/project/fidetype/ |
+| npm | `@fidetype/sdk` | taken by us (0.1.0, 2026-11-21): https://www.npmjs.com/package/@fidetype/sdk (npm organization `fidetype`) |
+| crates.io | `fidetype` | taken by us (0.1.0, 2026-11-21): https://crates.io/crates/fidetype |
 
-A name is not reserved until the first publish. Check again just before the first release.
+Before 2026-11-21 the three names were free (read-only checks: each registry API gave 404). The first publish reserved them.
+
+**Next release (note from 2026-11-21):** PyPI uses trusted publishing (OIDC). The npm and crates.io trusted publishers are not set yet. The first npm and crates.io uploads used one-time tokens in the environments `release-npm` and `release-crates`. These tokens expire on 2026-11-28. So the next npm or crates.io release needs a trusted publisher (sections 3.4, 3.5) or a new token.
 
 ### 3.2 GitHub
 1. Create three **environments** in the repository settings: `release-pypi`, `release-npm` and `release-crates`. For each, add a **required reviewer** (yourself). Then no publish job runs without your click.
