@@ -615,8 +615,8 @@ def analyse() -> int:
         pr = [(x["n_wrong"], y["n_wrong"]) for x, y in zip(a, b)]
         return {"n_pairs": len(pr), "wrong_down": sum(x < y for x, y in pr), "wrong_same": sum(x == y for x, y in pr),
                 "wrong_up": sum(x > y for x, y in pr),
-                "mcnemar_above_alpha": T.p20().mcnemar_exact([bool(x["above_alpha"]) for x in a],
-                                                             [bool(y["above_alpha"]) for y in b]),
+                "mcnemar_above_alpha": T.p20().mcnemar_exact([x["n_wrong"] / 1221 > ALPHA for x in a],
+                                                             [y["n_wrong"] / 1221 > ALPHA for y in b]),
                 "value_higher": sum(x["value"] > y["value"] for x, y in zip(a, b)),
                 "mean_value_difference": float(np.mean([x["value"] - y["value"] for x, y in zip(a, b)]))}
 
