@@ -472,6 +472,14 @@ class ScoreGate:
         s = self.score(lp, lm_tokens)
         return bool(self.lo <= s <= self.hi)
 
+    def with_lo(self, lo: float) -> "ScoreGate":
+        """The same gate with another lower bound (for example from :func:`quantile_lo`, P14-58)."""
+        from dataclasses import replace
+
+        if not math.isfinite(float(lo)):
+            raise ValueError("lo must be finite")
+        return replace(self, lo=float(lo))
+
     def to_dict(self) -> dict[str, Any]:
         d: dict[str, Any] = {"kind": "score", "feature": self.feature, "lo": float(self.lo),
                              "hi": (float(self.hi) if math.isfinite(self.hi) else None), "k_min": int(self.k_min),
@@ -543,6 +551,41 @@ class ScoreGate:
         sc = sorted(g0.score(x, t) for x, t in zip(real, toks))
         hi = sc[-1 - m] if feature == "lm_ratio" else math.inf
         return cls(feature, float(sc[m]), float(hi), 1, r_max, float(frame_s), int(blank), mean, scale, coef, icpt)
+
+
+def hd_quantile(values: Sequence[float], q: float) -> float:
+    """The Harrell-Davis estimate of the ``q`` quantile (P14-58): a weighted mean of all order statistics,
+    with the weights of a Beta((n + 1) q, (n + 1)(1 - q)) distribution. Unlike one order statistic (for
+    example the minimum), it moves little when one value changes."""
+    from scipy.stats import beta
+
+    x = np.sort(np.asarray([float(v) for v in values], np.float64))
+    n = len(x)
+    if n == 0:
+        raise ValueError("hd_quantile needs at least one value")
+    if not 0.0 < q < 1.0:
+        raise ValueError("q must be in (0, 1)")
+    if n == 1:
+        return float(x[0])
+    cdf = beta.cdf(np.arange(n + 1) / n, (n + 1) * q, (n + 1) * (1.0 - q))
+    return float(np.dot(np.diff(cdf), x))
+
+
+def quantile_lo(real_scores: Sequence[float], null_scores: Sequence[float] = (), q: float = 0.03,
+                null_q: float = 0.99) -> tuple[float, dict[str, float]]:
+    """The P14-58 threshold rule for the lower bound ``lo`` of a :class:`ScoreGate`.
+
+    ``lo = max(hd_quantile(real_scores, q), the empirical null_q quantile of null_scores)`` (the null part
+    only when ``null_scores`` is not empty; ``numpy.quantile``, linear). Returns ``(lo, parts)``.
+    """
+    lo_real = hd_quantile(real_scores, q)
+    parts = {"lo_real_hd": lo_real}
+    lo = lo_real
+    if len(null_scores):
+        lo_null = float(np.quantile(np.asarray([float(v) for v in null_scores], np.float64), null_q))
+        parts["lo_null"] = lo_null
+        lo = max(lo, lo_null)
+    return float(lo), parts
 
 
 def gate_from_dict(d: Mapping[str, Any]) -> "NoSignalGate | ScoreGate":

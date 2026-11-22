@@ -23,6 +23,12 @@ name               input   value
 ``peak``           logits  mean largest frame probability over the non-blank-argmax frames (0 if none)
 ``neg_entropy``    logits  minus the mean frame entropy over the non-blank-argmax frames (-log V if none)
 ``nb_share``       logits  share of frames whose argmax is not blank
+``time_asym``      logits  ``sum D^3 / sum |D|^3`` of the frame differences ``D = P_(t+1) - P_t`` (all
+                           columns); it changes sign when the frame order is reversed (P14-57)
+``nb_time_asym``   logits  ``time_asym`` of the non-blank columns only (P14-57)
+``nb_decay_asym``  logits  ``sum P_t P_(t+1) (P_t - P_(t+1)) / sum P_t P_(t+1) |P_t - P_(t+1)|`` over the
+                           non-blank columns: > 0 when a high probability falls more slowly than it rises;
+                           it changes sign when the frame order is reversed (P14-57)
 ``p_top1``         both    calibrated top-1 probability of the decision
 ``safety``         both    1 - guard risk of the decision
 ``margin``         nbest   (score 1 - score 2) / max(1, characters of item 1); 0 for one item
@@ -30,6 +36,10 @@ name               input   value
 ``char_lm``        nbest   mean log-probability per character of item 1 under a character LM (``lm=``)
 ``char_lm_best``   nbest   the largest ``char_lm`` over the n-best items
 =================  ======  ===========================================================================
+
+A feature name with a leading ``-`` (for example ``-time_asym``) is the negated feature: the gate withholds
+an offer when ``-value < threshold`` (P14-57; for the time-direction features the sign of a decoder is a
+property of the decoder and is chosen on calibration data).
 """
 
 from __future__ import annotations
@@ -43,7 +53,8 @@ import numpy as np
 #: Schema tag of a saved gate.
 OFFER_GATE_SCHEMA = "fidetype.offer-gate/0.1"
 
-LOGIT_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share", "p_top1", "safety")
+LOGIT_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share", "time_asym",
+                  "nb_time_asym", "nb_decay_asym", "p_top1", "safety")
 NBEST_FEATURES = ("p_top1", "safety", "margin", "conf_mean", "char_lm", "char_lm_best")
 FEATURES = tuple(dict.fromkeys(LOGIT_FEATURES + NBEST_FEATURES))
 #: Features that need a character language model (``OfferGate(..., lm=...)``).
@@ -51,7 +62,37 @@ LM_FEATURES = ("char_lm", "char_lm_best")
 
 
 #: The logits features that :func:`frame_features` computes.
-FRAME_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share")
+FRAME_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share", "time_asym",
+                  "nb_time_asym", "nb_decay_asym")
+#: The frame features that change sign when the frame order is reversed (P14-57).
+DIRECTION_FEATURES = ("time_asym", "nb_time_asym", "nb_decay_asym")
+
+
+def base_feature(name: str) -> tuple[str, float]:
+    """``(feature, sign)`` of a gate feature name: ``"-x"`` -> ``("x", -1.0)``, ``"x"`` -> ``("x", 1.0)``."""
+    return (name[1:], -1.0) if name.startswith("-") else (name, 1.0)
+
+
+def time_asymmetry(lp: np.ndarray, drop: int | None = None) -> tuple[float, float]:
+    """``(time_asym, decay_asym)`` of a (T, V) matrix of natural-log frame probabilities (P14-57).
+
+    ``time_asym`` = ``sum D^3 / sum |D|^3`` with ``D = P[1:] - P[:-1]``; ``decay_asym`` =
+    ``sum P_t P_(t+1) (P_t - P_(t+1)) / sum P_t P_(t+1) |P_t - P_(t+1)|``. Both are in [-1, 1], both are 0
+    when no frame changes, and both change sign (exactly) when the frame order is reversed. ``drop``: a
+    column to leave out (the blank).
+    """
+    P = np.exp(np.asarray(lp, dtype=np.float64))
+    if drop is not None and P.ndim == 2 and P.shape[1] > 1:
+        P = np.delete(P, int(drop), axis=1)
+    if P.shape[0] < 2:
+        return 0.0, 0.0
+    D = P[1:] - P[:-1]
+    den = float((np.abs(D) ** 3).sum())
+    ta = float((D ** 3).sum()) / den if den > 0 else 0.0
+    W = P[:-1] * P[1:]
+    den2 = float((W * np.abs(D)).sum())
+    da = float((W * -D).sum()) / den2 if den2 > 0 else 0.0
+    return ta, da
 
 
 def coherence(lp: np.ndarray, drop: int | None = None) -> tuple[float, float]:
@@ -77,9 +118,12 @@ def frame_features(lp: np.ndarray, blank: int = 0) -> dict[str, float]:
     T, V = lp.shape
     c, cr = coherence(lp)
     nbc = coherence(lp, drop=blank)[0]
+    ta = time_asymmetry(lp)[0]
+    nbta, nbda = time_asymmetry(lp, drop=blank)
+    direction = {"time_asym": ta, "nb_time_asym": nbta, "nb_decay_asym": nbda}
     if T == 0:
         return {"coherence": c, "coherence_ratio": cr, "nb_coherence": nbc, "peak": 0.0,
-                "neg_entropy": -math.log(V), "nb_share": 0.0}
+                "neg_entropy": -math.log(V), "nb_share": 0.0, **direction}
     am = lp.argmax(axis=1)
     nb = am != blank
     P = np.exp(lp)
@@ -91,7 +135,7 @@ def frame_features(lp: np.ndarray, blank: int = 0) -> dict[str, float]:
     else:
         peak, neg_ent = 0.0, -math.log(V)
     return {"coherence": c, "coherence_ratio": cr, "nb_coherence": nbc, "peak": peak, "neg_entropy": neg_ent,
-            "nb_share": float(nb.mean())}
+            "nb_share": float(nb.mean()), **direction}
 
 
 def _lm_per_char(lm: Any, text: str) -> float:
@@ -145,19 +189,29 @@ class OfferGate:
     lm: Any = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
-        if self.feature not in FEATURES:
+        if base_feature(self.feature)[0] not in FEATURES:
             raise ValueError(f"unknown offer-gate feature {self.feature!r}; use one of {FEATURES}")
         if not math.isfinite(float(self.threshold)):
             raise ValueError("the offer-gate threshold must be finite")
         self.threshold = float(self.threshold)
-        if self.feature in LM_FEATURES and self.lm_name is None:
+        if self.base in LM_FEATURES and self.lm_name is None:
             raise ValueError(f"feature {self.feature!r} needs lm_name= (the character LM it was fitted with)")
+
+    @property
+    def base(self) -> str:
+        """The feature name without a leading ``-``."""
+        return base_feature(self.feature)[0]
+
+    def value(self, features: Mapping[str, float]) -> float:
+        """The gate value of one decision from its feature dict (negated for a ``-`` feature)."""
+        name, sign = base_feature(self.feature)
+        return sign * float(features[name])
 
     def check_kind(self, kind: str) -> None:
         ok = LOGIT_FEATURES if kind == "logits" else NBEST_FEATURES
-        if self.feature not in ok:
+        if self.base not in ok:
             raise ValueError(f"offer-gate feature {self.feature!r} does not apply to {kind} input")
-        if self.feature in LM_FEATURES and self.lm is None:
+        if self.base in LM_FEATURES and self.lm is None:
             raise ValueError(f"offer-gate feature {self.feature!r} needs the character LM {self.lm_name!r}: "
                              "pass lm= (for example fidetype.lm.CharNgramLM.load(path))")
 

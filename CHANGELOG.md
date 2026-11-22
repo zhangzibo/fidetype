@@ -12,6 +12,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Ver
 
 ## [Unreleased]
 
+### Added
+- `fidetype.trust.offer_gate`: time-direction frame features `time_asym`, `nb_time_asym`, `nb_decay_asym` (they change sign when the frame order is reversed; `DIRECTION_FEATURES`, `time_asymmetry`), and negated gate features (`OfferGate("-nb_time_asym", 0.0)`; `OfferGate.base`, `OfferGate.value`). No packaged gate changes (P14-57).
+- `fidetype.pretrained.lmreadout`: `hd_quantile` (Harrell-Davis quantile), `quantile_lo` (a `ScoreGate` lower-bound rule that does not use the smallest real score) and `ScoreGate.with_lo`. No packaged gate changes (P14-58).
+
 ## [0.1.0] - 2026-11-21
 
 First public release (PyPI). Version 0.0.1 was a development version and was never published.

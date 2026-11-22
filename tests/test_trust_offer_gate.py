@@ -152,3 +152,80 @@ def test_recheck_sees_the_gate(data, guard):
     assert rc["ltt_commits"] == rc0["ltt_commits"]
     assert rc["real"]["n_offer"] == 0 and all(c["n_offer"] == 0 for c in rc["controls"]) and rc["passed"]
     assert rc0["controls"][0]["n_offer"] > 0
+
+
+def _rise_fall(T=600, V=6, rise=6, fall=1, seed=0):
+    """CTC-like frames: each character probability rises over ``rise`` frames and falls over ``fall``."""
+    rng = np.random.default_rng(seed)
+    P = np.zeros((T, V))
+    P[:, 0] = 1.0
+    t = 5
+    while t + rise + fall + 3 < T:
+        c = 1 + int(rng.integers(V - 1))
+        up = np.linspace(0, 0.9, rise + 1)[1:]
+        down = np.linspace(0.9, 0, fall + 1)[1:]
+        prof = np.concatenate([up, down])
+        P[t:t + len(prof), c] = prof
+        P[t:t + len(prof), 0] = 1.0 - prof
+        t += len(prof) + 3
+    P = 0.99 * P + 0.01 / V
+    return _lp(P / P.sum(1, keepdims=True))
+
+
+def test_direction_features_change_sign_on_reversal():
+    """P14-57: the direction features are antisymmetric in time; coherence is symmetric."""
+    lp = _rise_fall()
+    f, fr = og.frame_features(lp, blank=0), og.frame_features(np.ascontiguousarray(lp[::-1]), blank=0)
+    for k in og.DIRECTION_FEATURES:
+        assert f[k] == pytest.approx(-fr[k], abs=1e-12) and -1.0 <= f[k] <= 1.0, k
+    # all columns: when only the blank and one character trade mass, their cubes cancel (time_asym ~ 0)
+    assert abs(f["time_asym"]) < 1e-9
+    assert f["coherence"] == pytest.approx(fr["coherence"], abs=1e-12)
+    # slow rise, sharp fall: the character columns fall in large steps (time_asym < 0) and a high
+    # probability rises more slowly than it falls (decay_asym < 0)
+    assert f["nb_time_asym"] < 0 and f["nb_decay_asym"] < 0
+    g = og.frame_features(_rise_fall(rise=1, fall=6), blank=0)
+    assert g["nb_time_asym"] > 0 and g["nb_decay_asym"] > 0
+    # constant frames and one frame: 0
+    u = np.log(np.full((50, 6), 1 / 6))
+    assert all(og.frame_features(u)[k] == 0.0 for k in og.DIRECTION_FEATURES)
+    assert og.time_asymmetry(u[:1]) == (0.0, 0.0)
+    assert set(og.DIRECTION_FEATURES) <= set(og.LOGIT_FEATURES)
+
+
+def test_negated_feature_gate():
+    g = OfferGate("-nb_time_asym", 0.0)
+    assert g.base == "nb_time_asym" and g.value({"nb_time_asym": 0.25}) == -0.25
+    assert g.violation(g.value({"nb_time_asym": 0.25})) is not None
+    assert g.violation(g.value({"nb_time_asym": -0.25})) is None
+    assert OfferGate.from_dict(json.loads(json.dumps(g.to_dict()))) == g
+    g.check_kind("logits")
+    with pytest.raises(ValueError, match="unknown"):
+        OfferGate("-nope", 0.0)
+    with pytest.raises(ValueError, match="logits"):
+        OfferGate("-margin", 0.0).check_kind("logits")
+    # an offer passes a plain gate iff it fails the negated gate at threshold 0 (the P14-57 sign rule)
+    for v in (-0.3, 0.2):
+        a, b = OfferGate("time_asym", 0.0), OfferGate("-time_asym", 0.0)
+        assert (a.violation(a.value({"time_asym": v})) is None) != (b.violation(b.value({"time_asym": v})) is None)
+
+
+def test_negated_gate_in_the_guard(data, guard):
+    xs, _, _ = data
+    base = [guard._decide_quiet(x) for x in xs]
+    guard.collect_offer_features = True
+    p = []
+    for x in xs:
+        guard._decide_quiet(x)
+        p.append(guard.last_offer_features["p_top1"])
+    guard.collect_offer_features = False
+    cut = float(np.median([v for r, v in zip(base, p) if r.action == "offer"]))
+    plain = ft.TrustGuard(guard.config, guard._codec, guard.sheet, offer_gate=OfferGate("p_top1", cut))
+    neg = ft.TrustGuard(guard.config, guard._codec, guard.sheet, offer_gate=OfferGate("-p_top1", -cut))
+    for x, r, v in zip(xs, base, p):
+        a, b = plain._decide_quiet(x).action, neg._decide_quiet(x).action
+        if r.action != "offer":
+            assert a == b == r.action
+        else:
+            assert a == ("offer" if v >= cut else "withhold")
+            assert b == ("offer" if v <= cut else "withhold")

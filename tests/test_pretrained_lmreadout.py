@@ -213,3 +213,27 @@ def test_manifest_default_gate_is_the_p14_49_score_gate():
     blank = np.full((300, len(VOCAB)), -20.0)
     blank[:, 0] = 0.0
     assert not g.passes(blank) and not g.passes(np.full((300, len(VOCAB)), -np.log(len(VOCAB))))
+
+
+def test_hd_quantile_and_quantile_lo():
+    """P14-58: the Harrell-Davis quantile moves little when the smallest value moves; quantile_lo."""
+    rng = np.random.default_rng(0)
+    x = rng.normal(size=200)
+    assert LR.hd_quantile(x, 0.5) == pytest.approx(float(np.median(x)), abs=0.05)
+    assert LR.hd_quantile([3.0], 0.03) == 3.0
+    assert LR.hd_quantile([1.0, 2.0, 3.0], 0.5) == pytest.approx(2.0)
+    y = x.copy()
+    y[np.argmin(y)] -= 10.0  # one much weaker value
+    assert abs(LR.hd_quantile(y, 0.03) - LR.hd_quantile(x, 0.03)) < 0.5 < abs(y.min() - x.min())
+    with pytest.raises(ValueError):
+        LR.hd_quantile([], 0.5)
+    with pytest.raises(ValueError):
+        LR.hd_quantile([1.0], 0.0)
+    lo, parts = LR.quantile_lo(x, q=0.03)
+    assert lo == parts["lo_real_hd"] and "lo_null" not in parts
+    lo2, parts2 = LR.quantile_lo(x, null_scores=np.full(100, 5.0), q=0.03)
+    assert lo2 == pytest.approx(5.0) and parts2["lo_real_hd"] == pytest.approx(lo)
+    g = LR.ScoreGate("peak", -1.0, np.inf, 1, 10.0, 0.01)
+    assert g.with_lo(0.5).lo == 0.5 and g.with_lo(0.5).to_dict()["lo"] == 0.5 and g.lo == -1.0
+    with pytest.raises(ValueError):
+        g.with_lo(float("nan"))

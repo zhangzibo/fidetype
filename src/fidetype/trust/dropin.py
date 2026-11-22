@@ -930,9 +930,9 @@ class TrustGuard:
             self.last_offer_features = self._offer_features(sd, events)
         if not (self.offer_gates and is_offer):
             return sd
-        feats = self.last_offer_features or self._offer_features(sd, events, [g.feature for g in self.offer_gates])
+        feats = self.last_offer_features or self._offer_features(sd, events, [g.base for g in self.offer_gates])
         for g in self.offer_gates:
-            why = g.violation(float(feats[g.feature]))
+            why = g.violation(g.value(feats))
             if why is not None:
                 self._offer_gate_why = why
                 return replace(sd, decision=Decision(Action.ABSTAIN, (), f"{why}; {sd.decision.reason}"))
