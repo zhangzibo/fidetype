@@ -3,7 +3,7 @@ title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
 tags: [planning, roadmap, north-star, frontier, write-side, affect, memory, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit, daily-use, aac-app, privacy, federated-learning, emg-hardware, foundation-model, multilingual, regulatory]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-21
+updated: 2026-11-22
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -517,17 +517,40 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P4-21 NTS-over-LSL transport on real decoder output
 - **Gap:** 176 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P4-15). Follow-up of P4-15.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-22). Gap 176 closed. (plan `6039ad0`, results `bd597d7`, [results](../../experiments/2026-11-22-p4-21-lsl-replay/results.md)): 816 real B2T '25 trials over a real pylsl loopback (pylsl 1.18.6, one machine). Decisions over LSL = in-process = batch on 816 / 816; 161,503 `double64` frames bit-equal; 0 faults. The `lsl` matrix row is now `replay-only`. Matrix: 0 real device / 15 replay-only / 2 synthetic-only / 16 untested. Limits: one host, unpaced, hypothesis route only for trust decisions.
+- **Follow-ups:** gap 186 = [P4-23](#p4-23-nts-over-lsl-across-two-hosts-with-a-paced-latency-run); gap 187 = [P4-24](#p4-24-frames-route-trust-decisions-over-lsl-on-real-streams).
 - **Depends on:** P4-15 (done); the local B2T '25 NTS streams; CPU.
 - **Source:** P4-15 (2026-11-21, commit `ffc74f4`, [docs/device-support.md](../../docs/device-support.md)): the `lsl` transport is `tested` only through a synthetic loopback (support level `synthetic-only`). The NTS-over-LSL path has not carried real decoder output yet (the raw-signal LSL path has: `lsl-signal-source`).
 - **Done when:** real B2T '25 NTS streams are replayed over LSL (as M6-11 did for WebSocket), the evidence is recorded, and the matrix row cites it.
 
 #### P4-22 `text-nbest` CSV and JSON Lines readers on real decoder output files
 - **Gap:** 177 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P4-15). Follow-up of P4-15.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-22). Gap 177 closed. (plan `6039ad0`, results `bd597d7`, [results](../../experiments/2026-11-22-p4-22-nbest-readers/results.md)): `read_csv` / `read_jsonl` on real decoder output (1,718 online 1-best texts of the Card et al. 2024 decoder; 816 M4-06 10-best lists with 8,158 items). Exact round trip, 0 conformance failures. Honest scope: no local tool writes these forms, so a converter made the files (the decoders are real, the layout is ours); the real texts have 0 CSV quoting cases.
+- **Follow-ups:** gap 188 = [P4-25](#p4-25-text-nbest-csv-reader-on-a-third-party-file-and-real-quoting-cases).
 - **Depends on:** P4-15 (done); output files of a real decoder; CPU.
 - **Source:** P4-15 (2026-11-21, commit `ffc74f4`, [docs/device-support.md](../../docs/device-support.md)): only `normalise_item` has seen real n-best lists (the KT-sEMG LDA lists of P5-33). The CSV and JSON Lines file readers ran on synthetic files only.
 - **Done when:** both readers parse real decoder output files in a test or experiment, and the matrix row cites it.
+
+#### P4-23 NTS over LSL across two hosts with a paced latency run
+- **Gap:** 186 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P4-21). Follow-up of P4-21.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P4-21 (done); a second machine on the same network; CPU. Low priority.
+- **Source:** P4-21 (2026-11-22, results `bd597d7`, [results](../../experiments/2026-11-22-p4-21-lsl-replay/results.md)): one machine, localhost, unpaced replay. The clock correction between hosts and the real-time latency are not tested.
+- **Done when:** the P4-21 hypothesis route runs between two hosts with the same pass checks (decisions = in-process on every trial, 0 faults), and a paced (real-time) replay of real streams reports the end-to-end latency (median, p95) against the collector latency budget.
+
+#### P4-24 Frames-route trust decisions over LSL on real streams
+- **Gap:** 187 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P4-21). Follow-up of P4-21.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P4-21 (done); the M4-06 decode function (fresh decodes); CPU. Low priority.
+- **Source:** P4-21 (2026-11-22, results `bd597d7`, [results](../../experiments/2026-11-22-p4-21-lsl-replay/results.md)): part B checks the `double64` frames transport only (bit-equal); the trust decisions over LSL used the hypothesis route only.
+- **Done when:** real B2T '25 frame streams sent over LSL give trust decisions equal to the in-process frames route (and the batch harness) on every trial, with 0 faults.
+
+#### P4-25 `text-nbest` CSV reader on a third-party file and real quoting cases
+- **Gap:** 188 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P4-22). Follow-up of P4-22.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P4-22 (done); a third-party decoder output file (for example a Kaggle submission writer); CPU. Low priority.
+- **Source:** P4-22 (2026-11-22, results `bd597d7`, [results](../../experiments/2026-11-22-p4-22-nbest-readers/results.md)): our converter made the CSV and JSON Lines files, and the real texts have 0 commas, 0 double quotes and 0 edge spaces, so the real files do not exercise CSV quoting.
+- **Done when:** `read_csv` parses a file that a third-party tool writes (its own column names through `id_col`, `text_col`, `score_col`) and real texts with commas, quotes and edge spaces, with an exact round trip and 0 conformance failures.
 
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
@@ -771,6 +794,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P11-16 (done); `calibrate(commit_unit="prefix")` (P5-24); CPU.
 - **Source:** P11-16 ([results](../../experiments/2026-11-21-p11-16-emg-prefix-confidence/results.md)): LX-FL and LS-FL are certified outside `calibrate` (library function `ltt_prefix_threshold` and the library controls). So they have no `TrustGuard` file, no frame temperature, no guard-risk gate and no `config_id`.
 - **Done when:** `calibrate` accepts a frozen external per-prefix score, and LX-FL is reproduced through it (same threshold and decisions) with tests, giving a `TrustGuard` with a `config_id`.
+
+#### P5-36 Frame-order integrity check in the trust layer
+- **Gap:** 181 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P14-57). Follow-up of P14-57, P5-31.
+- **Status:** `todo`.
+- **Serves:** research labs, small teams.
+- **Depends on:** P14-57 (done); the P14-57 `rev_out` test set; CPU.
+- **Source:** P14-57 (2026-11-21, results `71f954e`, [results](../../experiments/2026-11-21-p14-57-direction-aware-offer/results.md)): a per-sentence time-direction statistic cannot stop log-prob frames reversed after the decoder (`rev_out`) at an acceptable real cost (real offers removed 11 / 80 and 17 / 80). `rev_out` can only come from a software fault, so a stream integrity check is the direct fix.
+- **Done when:** frame indices or timestamps in the NTS stream must increase, and the trust layer rejects or flags a stream otherwise. The check is in the trust layer, it is tested on synthetic reversed streams, and the P14-57 `rev_out` test set gives <= 4 / 80 offers with <= 4 / 80 real offers removed. Optional second route: a forward-vs-reverse character-LM direction score.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
@@ -1099,7 +1130,8 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-19 Lower-variance EMG L-FL guard with a calibration-inclusive lower end above no-BCI
 - **Gap:** 159 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-17). Follow-up of P11-17, P15-37, P15-34.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-22). Gap 159 closed. (plan `c71c9bc`, code `1a281e6`, amendment 1 `445c714` + code `fca492e`, amendment 2 + code `c3df8ad`, results `749f192`, [results](../../experiments/2026-11-21-p11-19-multi-split/results.md)): primary arm BX3 (3 split guards per draw, partition-only draws, P11-23 L-FL margin alpha'' 0.0314, each at delta / 3 = Bonferroni / P15-37 rule B; deploy the guard with the highest in-sample safe WPM, on calibration data only). Calibration-inclusive safe WPM v0.1 5.90 [3.45, 8.89] vs no-BCI 3.09: the lower end is above by 0.36 (narrow; normal approximation [3.10, 8.70]). 0 / 40 draws above alpha; C-null 0 commits. Whole-sentence commits, so v0.1 = v0.2 here. Honest note: the done-when names BMED-3 or AND arms in its parenthesis. The median arm BD3 gives 5.19 [2.90, 8.19] and AND (AN3) 4.37 [2.17, 7.28]; both are NOT above 3.09. BX3 is the pre-registered primary, a Bonferroni + selection rule of P15-37, chosen on calibration data only. The why-not branch is also met: floor F_w BX3 3.35 (S2 3.05); a normal lower end of 3.09 needs 7.9 users (8 exist) and 1,182 calibration prompts (1,224 exist). Safety cost: BX3 test rate mean 0.028, max 0.0434; 13 / 40 draws above 0.0314, none above 0.05. It holds under assumption (A2), on 8 users and one test set; the interval method (safe-wpm.md 6b) is still proposed. Disclosed: two amendments before any phase-2 number; two wrong header times; a smoke run before the code commit (X01 only). CPU run 21:35 -> 01:07 (3.5 h, 2 workers x 1 thread).
+- **Follow-ups:** gap 183 = [P11-28](#p11-28-safety-headroom-of-the-emg-bx3-guard) (BX3 headroom, low priority). Gap 180 = [P11-27](#p11-27-native-n-best-score-differences-in-the-p11-20--p11-23-analyser-memos) got new evidence.
 - **Depends on:** P11-17 (done); the P15-37 result (gap 141; multi-split method); P15-34 (done; safety-margin guard); CPU.
 - **Source:** P11-17 ([results](../../experiments/2026-11-21-p11-17-emg-calibration-ci/results.md)): 5.00 [0.00, 9.55]; between-draw SD 2.94 against within-draw 1.19. EMG shows the same calibration-variance problem as T15 (gaps 132, 141).
 - **Done when:** a pre-registered run applies the P15-37 multi-split method (BMED-3 or AND arms, chosen on calibration data only) or a safety-margin guard (P15-34) to EMG L-FL and reports a calibration-inclusive interval whose lower end is above 3.09, or numbers show why that is not reachable.
@@ -1155,7 +1187,7 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-26 Check the CTRL-labs 2024 generic neuromotor paper
 - **Gap:** 179 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-10). Follow-up of P11-10.
-- **Status:** `todo`. Low priority.
+- **Status:** `done` (2026-11-22). Gap 179 closed. (commit `aab52bd`, [source](../sources/generic-neuromotor-interface.md)): the CTRL-labs generic neuromotor interface paper is ingested (Kaifosh, Reardon & CTRL-labs, Nature 645, 702-711, 2025; paper CC BY-NC-ND 4.0; the 2024 bioRxiv preprint was not read: HTTP 429). Verdict: confusion confirmed. Brain2Qwerty v2 (p. 10) cites emg2qwerty (Sivakumar et al., 2024) for "a causal Conformer with low-latency to decode handwriting". That model is the CTRL-labs 15-layer causal Conformer (past-only local attention, FastEmit; Methods, PDF pp. 15-16). emg2qwerty uses a TDS ConvNet for typing. Contradiction notes updated on 4 pages. New licence contradiction recorded: the paper says data / code CC BY-NC-SA 4.0, the repo says CC BY-NC 4.0 (both non-commercial). No new gap.
 - **Depends on:** P11-10 (done); the paper (bioRxiv 10.1101/2024.02.23.581779).
 - **Source:** P11-10 (2026-11-21, commit `70807b0`, [source](../sources/emg2qwerty.md)): the contradiction notes record that Brain2Qwerty v2 calls the emg2qwerty model a "causal Conformer", but the emg2qwerty paper uses a TDS ConvNet with 100 ms future context in training. Brain2Qwerty v2 may have confused emg2qwerty with the CTRL-labs 2024 generic neuromotor paper (bioRxiv 10.1101/2024.02.23.581779).
 - **Done when:** that paper is ingested or checked, and the contradiction notes are updated.
@@ -1166,6 +1198,14 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Depends on:** P11-21 (done; `experiments/2026-11-21-p11-21-lx-margin/x2_fresh.py`); the P11-20 / P11-23 analyser memos; CPU.
 - **Source:** P11-21 (2026-11-21, results `ecbc7b1`, [results](../../experiments/2026-11-21-p11-21-lx-margin/results.md)): check X2 found 203 of 2,442 session a / b windows whose native n-best scores in the P11-20 / P11-23 analyser memos differ by up to 8e-5 from fresh decodes (fresh decodes match under both the current code and the P11-20 code snapshot `d3511df`). The cause is not known.
 - **Done when:** the cause is found, or the memos are rebuilt and the P11-20 / P11-23 draws are shown to be unchanged.
+- **Evidence (2026-11-22, P11-19, results `749f192`):** memo-vs-fresh differences also occur in track val / test windows and between processes (signals up to 3e-8, native scores up to 3.8e-5). They changed no action in check X1' (2 x 3 x 1,221 actions). This item stays open.
+
+#### P11-28 Safety headroom of the EMG BX3 guard
+- **Gap:** 183 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P11-19). Follow-up of P11-19.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P11-19 (done; `experiments/2026-11-21-p11-19-multi-split/run.py`); more draws or a new session; CPU. Low priority.
+- **Source:** P11-19 (2026-11-22, results `749f192`, [results](../../experiments/2026-11-21-p11-19-multi-split/results.md)): BX3 has the highest test rate of the arms (mean 0.028, max 0.0434); 13 / 40 draws are above the margin level 0.0314 on test, none above 0.05.
+- **Done when:** a pre-registered check with more draws or a new session reports the BX3 test-rate headroom against 0.05, or shows whether J = 2 / 4 or a lower `commit_p` grid floor keeps the pass with more margin; or numbers say why not.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
@@ -1347,8 +1387,9 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-54** | Frame-order-aware no-signal gate or offer check for `willett-hw` (gap 150, done 2026-11-21, [details](#p14-54-frame-order-aware-no-signal-gate-or-offer-check-for-willett-hw)) | P14-49, P5-31 | research labs |
 | **P14-55** | Robustness check of the `willett-hw` gate C5 (gap 151, done 2026-11-21, [details](#p14-55-robustness-check-of-the-willett-hw-gate-c5)) | P14-49 | research labs |
 | **P14-56** | Offer-control result in the packaged manifests and model cards (gap 153, done 2026-11-21, [details](#p14-56-offer-control-result-in-the-packaged-manifests-and-model-cards)) | P5-31, P14-01 | research labs, small teams |
-| **P14-57** | Direction-aware offer check for `willett-hw` (open gap 171, [details](#p14-57-direction-aware-offer-check-for-willett-hw)) | P14-55, P14-54 | research labs |
-| **P14-58** | C5 threshold rule that does not use the minimum real score (open gap 172, [details](#p14-58-c5-threshold-rule-without-the-minimum-real-score)) | P14-55, P14-49 | research labs |
+| **P14-57** | Direction-aware offer check for `willett-hw` (gap 171, done 2026-11-21, negative result, [details](#p14-57-direction-aware-offer-check-for-willett-hw)) | P14-55, P14-54 | research labs |
+| **P14-58** | C5 threshold rule that does not use the minimum real score (gap 172, done 2026-11-21, [details](#p14-58-c5-threshold-rule-without-the-minimum-real-score)) | P14-55, P14-49 | research labs |
+| **P14-59** | Ship the P14-58 C5 threshold in the `willett-hw` manifest: user decision (open gap 182, [details](#p14-59-ship-the-p14-58-c5-threshold-in-the-willett-hw-manifest)) | P14-58, P14-56 | research labs |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1806,7 +1847,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-57 Direction-aware offer check for willett-hw
 - **Gap:** 171 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P14-55). Follow-up of P14-55, P14-54.
-- **Status:** `todo`. Low priority.
+- **Status:** `done` (2026-11-21; negative result). Gap 171 closed. negative result, "numbers say why not" (pre-registration `e1f8573` 21:14, results `71f954e` 23:12, [results](../../experiments/2026-11-21-p14-57-direction-aware-offer/results.md)): the 0-threshold time-direction gate (`-nb_decay_asym`) fails its val limit (it removes 14 / 66 built-in and 19 / 66 LM real val offers; limit 3). Test (information only): `rev_out` offers 77 -> 11 and 78 -> 18 (limit <= 4); real offers removed 11 / 80 and 17 / 80 (limit 4); the P14-55 nulls keep their results (D3 pass); real LTT offers 33 and 32 of 40 (limit >= 36). Why: the per-sentence time direction is weak (79 % / 71 % majority sign). Nothing shipped. Deviations: run stopped with a STOP file at 22:49 and relaunched in the order p58 p57 score (no input or rule changed); a bug in the D3 repeat check was fixed after the first score run (no count changed).
+- **Follow-ups:** gap 181 = [P5-36](#p5-36-frame-order-integrity-check-in-the-trust-layer) (frame-order integrity check in the trust layer).
 - **Serves:** research labs.
 - **Depends on:** P14-55 (done); val blocks only; CPU.
 - **Source:** P14-55 ([results](../../experiments/2026-11-21-p14-55-willett-gate-robustness/results.md)): `coherence` is symmetric in time, so log-prob frames reversed after the decoder (`rev_out`) get the same `coherence` as real input (80 / 80); the guards offer on 77 / 80 (built-in) and 78 / 80 (LM). Only a software fault can make this input; it is outside the gap 150 null set, so no rule failed.
@@ -1814,11 +1856,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-58 C5 threshold rule without the minimum real score
 - **Gap:** 172 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P14-55). Follow-up of P14-55, P14-49.
-- **Status:** `todo`. Low priority.
+- **Status:** `done` (2026-11-21; pass). Gap 172 closed. (pre-registration `e1f8573`, results `71f954e`, [results](../../experiments/2026-11-21-p14-57-direction-aware-offer/results.md)): quantile_lo rule lo_new = max(HD_0.03(real S scores), Q_0.99(726 val time-shuffled scores)) = 0.5659 (shipped -1.1697). E1: new test time-shuffled draws d = 11..20 emit 0 / 800, CP95 0.0037 (limit 0.04); the shipped `lo` gives 18 / 800, CP95 0.0332. E2: real test gated 3 / 80 (limit 4; shipped 1 / 80). Nothing shipped. P14-58 stage 22:49:14-23:08:32.
+- **Follow-ups:** gap 182 = [P14-59](#p14-59-ship-the-p14-58-c5-threshold-in-the-willett-hw-manifest) (ship `lo_new`: user decision).
 - **Serves:** research labs.
 - **Depends on:** P14-55 (done); val blocks only; CPU.
 - **Source:** P14-55 ([results](../../experiments/2026-11-21-p14-55-willett-gate-robustness/results.md)): C5 time-shuffled emits 26 / 800, CP95 0.0448 (pass with a small margin; cluster bootstrap 0.0475; one draw 5 / 80). The threshold `lo` is the smallest real fit score: over 200 half-splits `lo` ranges from -1.43 to 2.00 (shipped -1.17), and the held-out real loss goes up to 9 / 33.
 - **Done when:** a pre-registered C5 threshold rule gives time-shuffled emits with a CP95 upper bound <= 0.04 over >= 10 draws and real input gated <= 4 / 80 on test; or numbers say why not.
+
+#### P14-59 Ship the P14-58 C5 threshold in the willett-hw manifest
+- **Gap:** 182 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P14-58). Follow-up of P14-58, P14-56.
+- **Status:** `todo`. User decision.
+- **Serves:** research labs.
+- **Depends on:** P14-58 (done); the user decision (the real cost goes up); CPU.
+- **Source:** P14-58 (2026-11-21, results `71f954e`, [results](../../experiments/2026-11-21-p14-57-direction-aware-offer/results.md)): `lo_new` 0.5659 gives 0 / 800 time-shuffled emits (CP95 0.0037) but gates 3 / 80 real test inputs (shipped `lo` -1.1697: 1 / 80). Shipping it changes the LM readout, the LM guard decoder, its `coherence` offer gate (fitted with the shipped C5) and the P14-56 offer-control block.
+- **Done when:** the user decides. If yes: re-check the LM guard, its `coherence` offer gate (fitted with the shipped C5) and the P14-56 offer-control block of the LM readout, then change the manifest (new `config_id`). If no: record the reason.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
@@ -1876,9 +1927,11 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-33** | E1 low-data recipe that reads the target signal before more source arms (open gap 120, [details](#p15-33-e1-low-data-recipe-that-reads-the-target-signal-before-more-source-arms)) | F3 | P15-08 (E1a) |
 | **P15-34** | Calibration-inclusive T15 safe WPM lower end above gaze typing (open gap 132, [details](#p15-34-calibration-inclusive-t15-safe-wpm-lower-end-above-gaze-typing)) | F1 / F2 | P15-29 |
 | **P15-37** | Lower-variance calibration for the calibration-inclusive safe WPM (open gap 141, [details](#p15-37-lower-variance-calibration-for-the-calibration-inclusive-safe-wpm)) | F1 / F2 | P15-34 |
-| **P15-35** | E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2) (open gap 139, [details](#p15-35-e1-synthetic-sentence-augmentation-for-the-minutes-scale-recipe-test-c2)) | F3 | P15-33 |
-| **P15-36** | E1 budget-matched recipe so that V1 and H1-H4 are valid (open gap 140, [details](#p15-36-e1-budget-matched-recipe-so-that-v1-and-h1-h4-are-valid)) | F3 | P15-33, P15-35 |
+| **P15-35** | E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2) (gap 139, done 2026-11-21, [details](#p15-35-e1-synthetic-sentence-augmentation-for-the-minutes-scale-recipe-test-c2)) | F3 | P15-33 |
+| **P15-36** | E1 budget-matched recipe so that V1 and H1-H4 are valid (gap 140, done 2026-11-22, [details](#p15-36-e1-budget-matched-recipe-so-that-v1-and-h1-h4-are-valid)) | F3 | P15-33, P15-35 |
 | **P15-38** | E1 LM readout with the Willett texts blocked from the LM (gap 143, done 2026-11-20, [details](#p15-38-e1-lm-readout-with-the-willett-texts-blocked-from-the-lm)) | F3 | P15-25 |
+| **P15-41** | More seeds of the F-R20 recipe at minutes scale (open gap 184, [details](#p15-41-more-seeds-of-the-f-r20-recipe-at-minutes-scale)) | F3 | P15-36 |
+| **P15-42** | Better forced aligners for arms R and S (open gap 185, [details](#p15-42-better-forced-aligners-for-arms-r-and-s)) | F3 | P15-36 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -1941,6 +1994,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Done when:** all arms run and the rule "an EMG-pretrained arm beats text-only by more than the seed spread at ≤ 25 % data" is evaluated. A null result is a valid outcome. Cost about 20–45 GPU-h.
 - **Progress (2026-11-19, `in_progress`):** part 1 **E1a** pre-registered (`60620ab`, [plan](../../experiments/2026-11-19-p15-08-e1-cross-body/plan.md)), code `75c92a6`, GPU run launched 2026-11-19 10:28 (detached, about 10 h). Target Willett handwriting (new sensor + new user); shared output space = the P11-01 98-token character head; arms R random / T text-only (synthetic key renderings, 30,000 steps) / E P11-01 EMG trunk / S shuffled-weight control; labelled budgets 3, 10, 30, 100 min and all (506 min); 2 seeds; final-step test CER on the last block of each session, no LM. Primary H1: E beats T at ≥ 2 of {3, 10, 30} min (seed spread + paired bootstrap); V1 gate, C1 time-shuffle, C2 label-shuffle. Left after E1a: the clean-track KT-sEMG arm (needs a KT-sEMG trunk, P11-06 / gap 86), the optional T15 arm, and the same-LM readout (P15-25, gap 91).
 - **Result E1a (2026-11-19, [results](../../experiments/2026-11-19-p15-08-e1-cross-body/results.md)): null for F3 at minutes scale.** V1 pass (E at all 0.395); **H1 fails** (E beats T at 0 of {3, 10, 30} min; at 10 and 30 min T is better, CI95 below 0); H2 and H3 fail; H4 partial (30 min only); C1 pass; **C2 fails** (label-deranged E at 30 min 0.836 vs normal 0.810), so at ≤ 30 min the decoders mostly output the label prior. Mean test CER R / T / E / S: 3 min 0.865 / 0.960 / 0.957 / 0.919; 10 min 1.327 / 0.863 / 0.884 / 0.922; 30 min 0.851 / 0.786 / 0.812 / 1.003; 100 min 0.837 / 0.777 / 0.767 / 0.919; all (506 min) 0.613 / 0.805 / 0.395 / 0.925. Descriptive: at full data the EMG trunk is the best and most stable arm (0.360 / 0.431; R 0.305 / 0.920; T fails at 0.80). One machine-sleep interrupt (S-b30-s0, resume at step 1000) lost or repeated no step. P15-08 stays `in_progress` (KT-sEMG arm); first fix the low-data recipe (P15-33, gap 120). 2026-11-20: P15-33 partial (recipe A: val-C2 pass, test C2 and V1 fail); next P15-35 / P15-36 (gaps 139, 140).
+- **Note (2026-11-22, P15-36, results `01ee3b9`):** E1 is now valid under the budget-matched rule (F-R20 at 3 / 10 / 30 min, E1a at 100 min and all): V1 pass, C2 pass on 2 seeds. H1-H4 are each partial (1 win of 3 budgets; H1 wins at 3 min only). P15-08 stays `in_progress` (the KT-sEMG arm is missing).
 
 #### P15-09 New-modality benchmark and reverse transfer
 - **Goal:** a public test of "new sensor or new user with minutes of data".
@@ -2137,14 +2191,16 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-35 E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2)
 - **Gap:** 139 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-33). Follow-up of P15-33.
-- **Status:** `in_progress`. P15-35 attempt 1 (2026-11-21, pre-registration `218d889`, results `6cf8466`): no synthetic candidate eligible on val (best E U50 0.813 vs recipe A 0.769), `no_recipe`, no test readout; 1.08 GPU h. Attempt 2 = P15-35b (pre-registration `3a95935`: synthetic sentences on top of recipe A, 4,000 steps, arm E, GPU cap 8.0 h) runs since 2026-11-21. Paused at the user's request at 15:49:08 on 2026-11-21 (`latest.pt` at step 1347 of arm F-R20/E-b30-s0; arm F+100 finished all 4000 steps; 2.54 GPU h so far); exact resume. Resumed at 16:16 on 2026-11-21 after the user allowed the GPU again (exactly at step 1347); at 17:30 arm F+50/E-b30-s0-labelshuf, step 2500 / 4000, 3.78 GPU h.
+- **Status:** `done` (2026-11-21). Gap 139 closed. (attempt 1 pre-registration `218d889`, results `6cf8466`; attempt 2 = P15-35b pre-registration `3a95935`, results `e9699a7`, [results](../../experiments/2026-11-21-p15-35b-synthetic-on-top/results.md)): the val-only rule picked F-R20 (forced cut, 20 % of the batch items replaced by synthetic sentences, 4,000 steps, arm E). F-R20 is the only candidate that passes val-C2 with the margin (deranged 0.897 vs needed 0.875). Test C2 passes: deranged 0.877 vs needed 0.847 (normal 0.747). The control A4K (recipe A, 4,000 steps, no synthetic items) has normal val 0.738 but fails val-C2 with the margin (0.859 < 0.868). Seed 1 was skipped by the pre-set GPU-clock rule (6.20 h > 6.0 h). GPU 6.20 h (+ about 0.15 h smoke runs). Evidence 2026-11-22 (P15-36, results `01ee3b9`): the seed-1 F-R20 C2 run passes (deranged 0.870 vs needed 0.803, normal 0.703), so no separate replication gap is needed.
+- **History:** P15-35 attempt 1 (2026-11-21, pre-registration `218d889`, results `6cf8466`): no synthetic candidate eligible on val (best E U50 0.813 vs recipe A 0.769), `no_recipe`, no test readout; 1.08 GPU h. Attempt 2 = P15-35b (pre-registration `3a95935`: synthetic sentences on top of recipe A, 4,000 steps, arm E, GPU cap 8.0 h) runs since 2026-11-21. Paused at the user's request at 15:49:08 on 2026-11-21 (`latest.pt` at step 1347 of arm F-R20/E-b30-s0; arm F+100 finished all 4000 steps; 2.54 GPU h so far); exact resume. Resumed at 16:16 on 2026-11-21 after the user allowed the GPU again (exactly at step 1347); at 17:30 arm F+50/E-b30-s0-labelshuf, step 2500 / 4000, 3.78 GPU h.
 - **Depends on:** P15-33 (done part; local weights in `C:/Users/zhang/bci-data/derived/p15-33/`); GPU.
 - **Source:** P15-33 ([results](../../experiments/2026-11-20-p15-33-low-data-recipe/results.md)): recipe A passed val-C2 by 0.002 only (0.871 vs 0.869); on test the deranged run is 0.847 vs needed 0.873 (normal 0.773), so C2 fails at 30 min.
 - **Done when:** a pre-registered val-only pilot adds Willett-style synthetic sentences (character snippets of the budget sentences, cut at character times from a forced alignment of the budget data only, spliced into new sentences) and passes val-C2 with a margin set in advance; then test C2 passes at 30 min for at least one arm.
 
 #### P15-36 E1 budget-matched recipe so that V1 and H1-H4 are valid
 - **Gap:** 140 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-33). Follow-up of P15-33.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-22). Gap 140 closed. (plan `8790238`, code + addendum 1 (file names only) `81ba625`, results `01ee3b9`, [results](../../experiments/2026-11-22-p15-36-budget-matched/results.md)): a val-only rule, fixed before any test number, chose F-R20 at 3 / 10 / 30 min and E1a at 100 min and all (`selection.json` 04:30:59, first new test readout 04:31:13). V1 pass (E at all 0.395). C1 pass. C2 pass on seed 0 (0.877 vs 0.847) and seed 1 (0.870 vs 0.803). H1 (E vs T, primary) partial: a win at 3 min only (0.808 vs 0.888). H2 / H3 / H4 partial: a win at 30 min only. Arm E test CER at 3 / 10 / 30 / 100 min / all: 0.808 / 0.777 / 0.725 / 0.767 / 0.395, the best arm at every budget. Limits: 2 seeds; at 10 and 30 min E beats T by less than the seed spread; the R / S aligners are weak (lag at the 99-frame clip in 6 / 12 libraries); F-R20 not run at 100 min / all. GPU 6.00 h of the 8.0 h cap (launch 1 21:15:16-21:17:05, stopped at step 311 for the user's GPU pause; launch 2 23:15:44-05:13:44, exact resume at step 311). P15-08 stays `in_progress` (KT-sEMG arm).
+- **Follow-ups:** gap 184 = [P15-41](#p15-41-more-seeds-of-the-f-r20-recipe-at-minutes-scale) (more seeds); gap 185 = [P15-42](#p15-42-better-forced-aligners-for-arms-r-and-s) (better R / S aligners).
 - **Depends on:** P15-33, P15-35 (a minutes-scale recipe that passes test C2); GPU.
 - **Source:** P15-33 ([results](../../experiments/2026-11-20-p15-33-low-data-recipe/results.md)): one recipe for all budgets; recipe A (picked for 30 min) over-regularises at 100 min and all (R 0.976, E 0.713 at all), so V1 fails and H1-H4 are inconclusive.
 - **Done when:** a pre-registered budget-matched recipe rule (for example the minutes-scale recipe up to 30 min, the E1a recipe at 100 min and all), fixed before any test number, gives V1 pass and test C2 pass; H1-H4 of E1a are then evaluated under it (same splits, 2 seeds).
@@ -2180,6 +2236,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P15-25 (done; log-probs local in `C:/Users/zhang/bci-data/derived/p15-25/lp/`); the P11-11 LM build rule (`stage_lm`); CPU.
 - **Source:** P15-25 ([results](../../experiments/2026-11-20-p15-25-e1-same-lm/results.md)): 13 of 80 Willett test sentences (5 of 47 unique texts), 9 of 106 val and 97 of 781 pool sentences occur in the Tatoeba English export. The P11-11 LM blocked only emg2qwerty texts. The arm comparison is fair (same LM for all), but the absolute LM CER can be optimistic.
 - **Done when:** the Tatoeba 6-gram is rebuilt with every Willett sentence blocked (exact and containment, the P11-11 rule), the 41 E1a runs are re-scored with decoder F, and the change of each H verdict and of the full-data E / R CER is reported.
+
+#### P15-41 More seeds of the F-R20 recipe at minutes scale
+- **Gap:** 184 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P15-36). Follow-up of P15-36, P15-08.
+- **Status:** `todo`.
+- **Depends on:** P15-36 (done; local weights in `C:/Users/zhang/bci-data/derived/p15-36/`); GPU.
+- **Source:** P15-36 (2026-11-22, results `01ee3b9`, [results](../../experiments/2026-11-22-p15-36-budget-matched/results.md)): H1 wins at 3 min only. At 10 and 30 min E beats T on average (0.777 vs 0.783, 0.725 vs 0.743), but by less than the seed spread (0.042, 0.044). Two seeds give a weak spread estimate.
+- **Done when:** a pre-registered run with 3-5 seeds of F-R20 at 3 / 10 / 30 min (arms R, T, E, S) re-evaluates H1-H4 with the E1a rule; optionally F-R20 at 100 min checks the recipe boundary.
+
+#### P15-42 Better forced aligners for arms R and S
+- **Gap:** 185 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P15-36). Follow-up of P15-36, P15-35.
+- **Status:** `todo`.
+- **Depends on:** P15-36 (done); GPU.
+- **Source:** P15-36 (2026-11-22, results `01ee3b9`, [results](../../experiments/2026-11-22-p15-36-budget-matched/results.md)): the forced-aligner lag hit the 99-frame clip in 6 of 12 R / S libraries, so for R and S the synthetic sentences may be close to noise. H2-H4 win only at 30 min, where R and S are poor and unstable.
+- **Done when:** a pre-registered rule gives R and S usable aligners (lag inside the clip in every library), or uses the uniform cut for weak aligners, and H2-H4 are re-checked under it.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
