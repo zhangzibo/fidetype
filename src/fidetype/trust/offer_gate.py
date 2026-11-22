@@ -33,6 +33,12 @@ name               input   value
                            greedy CTC text of the frames: ``(log p(s) - log p(reverse(s))) / (len(s) + 1)``,
                            ``s`` = the normalised greedy text, end marker included (``lm=``). It changes sign
                            exactly when the frame order is reversed; 0 for an empty text (P5-36)
+``lm_beam_direction`` logits (forward minus reversed) best-beam score of the LM-beam readout:
+                           ``(S(x) - S(rev x)) / ((n(x) + n(rev x)) / 2 + 1)``, ``S`` = the total score of
+                           the best beam (acoustic + LM + length bonus, end marker included), ``n`` = its
+                           tokens, ``rev x`` = the frames in reverse order (``readout=``). It changes sign
+                           exactly when the frame order is reversed; 0 for no frames. It costs two beam
+                           searches per scored decision (P5-36b)
 ``p_top1``         both    calibrated top-1 probability of the decision
 ``safety``         both    1 - guard risk of the decision
 ``margin``         nbest   (score 1 - score 2) / max(1, characters of item 1); 0 for one item
@@ -58,11 +64,13 @@ import numpy as np
 OFFER_GATE_SCHEMA = "fidetype.offer-gate/0.1"
 
 LOGIT_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share", "time_asym",
-                  "nb_time_asym", "nb_decay_asym", "lm_direction", "p_top1", "safety")
+                  "nb_time_asym", "nb_decay_asym", "lm_direction", "lm_beam_direction", "p_top1", "safety")
 NBEST_FEATURES = ("p_top1", "safety", "margin", "conf_mean", "char_lm", "char_lm_best")
 FEATURES = tuple(dict.fromkeys(LOGIT_FEATURES + NBEST_FEATURES))
 #: Features that need a character language model (``OfferGate(..., lm=...)``).
-LM_FEATURES = ("char_lm", "char_lm_best", "lm_direction")
+LM_FEATURES = ("char_lm", "char_lm_best", "lm_direction", "lm_beam_direction")
+#: Features that need an LM-beam readout (``OfferGate(..., readout=...)``), P5-36b.
+BEAM_FEATURES = ("lm_beam_direction",)
 
 
 #: The logits features that :func:`frame_features` computes.
@@ -170,6 +178,39 @@ def lm_direction(lp: np.ndarray, vocab: Sequence[str], lm: Any, blank: int = 0) 
     return (f - r) / (len(s) + 1)
 
 
+def beam_score(lp: np.ndarray, readout: Any) -> tuple[float, int]:
+    """``(score, tokens)`` of the best beam of ``readout`` on a (T, V) matrix (no gate; P5-36b).
+
+    ``readout``: an object with ``hyps(log_probs, n, use_gate=False)`` that returns hypotheses with ``score``
+    and ``tokens`` (for example :class:`fidetype.pretrained.lmreadout.LmReadout`). ``(-inf, 0)`` if the search
+    gives no hypothesis.
+    """
+    hs = readout.hyps(np.asarray(lp, dtype=np.float64), 1, use_gate=False)
+    if not hs:
+        return -math.inf, 0
+    return float(hs[0].score), len(hs[0].tokens)
+
+
+def lm_beam_direction(lp: np.ndarray, readout: Any, *, details: bool = False) -> Any:
+    """The ``lm_beam_direction`` feature (P5-36b): ``(S(x) - S(rev x)) / ((n(x) + n(rev x)) / 2 + 1)``.
+
+    ``S``, ``n``: :func:`beam_score` of the frames ``x`` and of the frames in reverse order. The normaliser is
+    the same for ``x`` and ``rev x``, so the value changes sign exactly when the frame order is reversed.
+    > 0: the frames decode better forward than backward. 0 for no frames (and if neither search gives a
+    hypothesis). ``details=True`` returns ``(value, {"s_fwd", "s_rev", "n_fwd", "n_rev", "T"})``.
+    """
+    lp = np.asarray(lp, dtype=np.float64)
+    T = int(lp.shape[0]) if lp.ndim == 2 else 0
+    if T == 0:
+        v, d = 0.0, {"s_fwd": 0.0, "s_rev": 0.0, "n_fwd": 0, "n_rev": 0, "T": 0}
+    else:
+        sf, nf = beam_score(lp, readout)
+        sr, nr = beam_score(np.ascontiguousarray(lp[::-1]), readout)
+        v = 0.0 if sf == sr else (sf - sr) / ((nf + nr) / 2.0 + 1.0)  # sf == sr: also both -inf
+        d = {"s_fwd": sf, "s_rev": sr, "n_fwd": nf, "n_rev": nr, "T": T}
+    return (float(v), d) if details else float(v)
+
+
 def _lm_per_char(lm: Any, text: str) -> float:
     t = str(text)
     if not t:
@@ -210,8 +251,10 @@ class OfferGate:
     """Withhold an OFFER when ``feature < threshold`` (P5-33). See the module text.
 
     ``lm``: a character LM with ``score_sentence(text, eos=False)`` (for example
-    :class:`fidetype.lm.CharNgramLM`); needed for ``char_lm`` and ``char_lm_best`` only. It is not saved;
-    ``lm_name`` names it in the file.
+    :class:`fidetype.lm.CharNgramLM`); needed for ``char_lm``, ``char_lm_best`` and ``lm_direction``. It is
+    not saved; ``lm_name`` names it in the file. ``readout``: an LM-beam readout (for example
+    :class:`fidetype.pretrained.lmreadout.LmReadout`); needed for ``lm_beam_direction`` only (P5-36b). It is
+    not saved; ``lm_name`` names its LM in the file.
     """
 
     feature: str
@@ -219,6 +262,7 @@ class OfferGate:
     lm_name: str | None = None
     note: str = ""
     lm: Any = field(default=None, repr=False, compare=False)
+    readout: Any = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if base_feature(self.feature)[0] not in FEATURES:
@@ -243,7 +287,11 @@ class OfferGate:
         ok = LOGIT_FEATURES if kind == "logits" else NBEST_FEATURES
         if self.base not in ok:
             raise ValueError(f"offer-gate feature {self.feature!r} does not apply to {kind} input")
-        if self.base in LM_FEATURES and self.lm is None:
+        if self.base in BEAM_FEATURES:
+            if self.readout is None:
+                raise ValueError(f"offer-gate feature {self.feature!r} needs an LM-beam readout with the LM "
+                                 f"{self.lm_name!r}: pass readout= (for example model.lm_readout())")
+        elif self.base in LM_FEATURES and self.lm is None:
             raise ValueError(f"offer-gate feature {self.feature!r} needs the character LM {self.lm_name!r}: "
                              "pass lm= (for example fidetype.lm.CharNgramLM.load(path))")
 
@@ -265,10 +313,11 @@ class OfferGate:
         return d
 
     @classmethod
-    def from_dict(cls, d: Mapping[str, Any], lm: Any = None) -> "OfferGate":
+    def from_dict(cls, d: Mapping[str, Any], lm: Any = None, readout: Any = None) -> "OfferGate":
         if d.get("schema", OFFER_GATE_SCHEMA) != OFFER_GATE_SCHEMA:
             raise ValueError(f"not an offer gate (schema {d.get('schema')!r})")
-        return cls(str(d["feature"]), float(d["threshold"]), d.get("lm_name"), str(d.get("note", "")), lm=lm)
+        return cls(str(d["feature"]), float(d["threshold"]), d.get("lm_name"), str(d.get("note", "")), lm=lm,
+                   readout=readout)
 
     @classmethod
     def fit(cls, feature: str, real_offer_values: Sequence[float], keep: float = 0.95, **kw: Any) -> "OfferGate":

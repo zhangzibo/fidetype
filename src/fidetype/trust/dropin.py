@@ -720,6 +720,9 @@ class TrustGuard:
         self.last_offer_features: dict[str, float] | None = None
         #: A character LM for the ``char_lm`` features when no gate carries one (P5-33 analysis).
         self.offer_lm: Any = None
+        #: An LM-beam readout for ``lm_beam_direction`` when no gate carries one (P5-36b analysis). With
+        #: ``collect_offer_features`` it costs two beam searches per decision.
+        self.offer_readout: Any = None
         self._offer_gate_why: str | None = None
         #: P5-36 frame-order check (:func:`~fidetype.trust.integrity.check_frame_times`) settings. It runs only
         #: when the caller gives the producer's frame times (``decide(x, frame_times=...)``). Not part of the
@@ -927,6 +930,12 @@ class TrustGuard:
                 if lm is None:
                     raise ValueError("the offer-gate feature 'lm_direction' needs a character LM (lm=)")
                 out["lm_direction"] = og.lm_direction(lp, list(self._codec.vocab.tokens), lm, blank)
+            ro = next((g.readout for g in self.offer_gates if getattr(g, "readout", None) is not None),
+                      self.offer_readout)
+            if (want is None and ro is not None) or (want is not None and "lm_beam_direction" in want):
+                if ro is None:
+                    raise ValueError("the offer-gate feature 'lm_beam_direction' needs an LM-beam readout (readout=)")
+                out["lm_beam_direction"] = og.lm_beam_direction(lp, ro)
         elif want is None or want & {"margin", "conf_mean", "char_lm", "char_lm_best"}:
             lm = next((g.lm for g in self.offer_gates if g.lm is not None), self.offer_lm)
             out.update(og.nbest_features(list(_nbest_of_events(events).candidates), lm))
@@ -942,8 +951,10 @@ class TrustGuard:
             self.last_offer_features = self._offer_features(sd, events)
         if not (self.offer_gates and is_offer):
             return sd
-        feats = self.last_offer_features or self._offer_features(sd, events, [g.base for g in self.offer_gates])
+        feats = dict(self.last_offer_features or {})
         for g in self.offer_gates:
+            if g.base not in feats:  # lazy: a later (costly) feature is computed only if the earlier gates pass
+                feats.update(self._offer_features(sd, events, [g.base]))
             why = g.violation(g.value(feats))
             if why is not None:
                 self._offer_gate_why = why
