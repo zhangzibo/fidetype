@@ -124,3 +124,6 @@ P15-35b measured about 0.36 s/step for F-R20 including val (4,000 steps in about
 | Stop (saves latest.pt) | `New-Item C:\Users\zhang\bci-data\derived\p15-36\stop` |
 | Resume | delete the `stop` file, then run the launcher again |
 | Summary only | `C:\venvs\fidetype-rocm\Scripts\python.exe experiments\2026-11-22-p15-36-budget-matched\run.py summary` |
+
+## Addendum 1 (code commit, before the launch and before any number of this task)
+- File names only: the runner is `p36.py` and the tests are `test_p36.py`, not `run.py` / `test_run.py`. A file named `run.py` would hide the P15-08 module `run` that `p33.py` imports. The commands in "Rerun" read `p36.py` and `test_p36.py` in place of `run.py` and `test_run.py`. No rule, number or order changes.
