@@ -2,8 +2,8 @@
 title: What could this project do? (candidate directions)
 type: question
 tags: [planning, directions]
-sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-07
+sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, emg2qwerty]
+updated: 2026-11-21
 ---
 
 # Candidate directions (as of 2026-11-07)
@@ -38,6 +38,9 @@ The rest of this page keeps the earlier candidate directions for reference.
 
 ## 3. Something buildable today
 - [emg2qwerty](../entities/emg2qwerty.md): wrist-EMG typing with a large public dataset and affordable hardware. It is not strictly brain-based.
+
+  > **Contradiction:** the [emg2qwerty paper](../sources/emg2qwerty.md) says its recording device (sEMG-RD) is proprietary and not widely available (Sec. 6, p. 9). Consumer EMG bands exist, but the [Meta Neural Band](../entities/meta-neural-band.md) gives no raw EMG. So "affordable hardware" holds for EMG in general, not for the device behind this dataset.
+
 - Consumer [EEG](../concepts/eeg.md): accessible, but v1 shows 65% CER, so it is weak for typing.
 
 ## Open questions back to the user
@@ -46,7 +49,7 @@ The rest of this page keeps the earlier candidate directions for reference.
 
 ## Next sources to ingest
 1. Défossez et al. 2023 (BrainModule)
-2. [emg2qwerty](../entities/emg2qwerty.md)
+2. [emg2qwerty](../entities/emg2qwerty.md) (ingested 2026-11-21: [source page](../sources/emg2qwerty.md))
 3. LibriBrain / PNPL 2025 (large public MEG)
 4. Willett 2021 / 2023 and Jude 2026 (the invasive state of the art)
 5. d'Ascoli 2025

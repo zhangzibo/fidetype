@@ -2,8 +2,8 @@
 title: Meta FAIR Brain & AI team
 type: entity
 tags: [lab, meta]
-sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code]
-updated: 2026-11-07
+sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, emg2qwerty]
+updated: 2026-11-21
 ---
 
 # Meta FAIR Brain & AI (Paris)
@@ -19,6 +19,6 @@ The Brain & AI team at Meta AI (FAIR) in Paris. It is led by **Jean-Rémi King**
 
 ## Collaborators
 - Data collection: [BCBL](bcbl.md), with Svetlana Pinet (Univ. Lille / BCBL).
-- [emg2qwerty](emg2qwerty.md) comes from a different Meta group (Reality Labs, wrist EMG).
+- [emg2qwerty](emg2qwerty.md) comes from a different Meta group: the CTRL-labs team at Reality Labs, wrist EMG ([paper](../sources/emg2qwerty.md); A. Gramfort is a co-author).
 
 Related: [BCBL](bcbl.md)

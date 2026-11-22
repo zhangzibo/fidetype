@@ -2,8 +2,8 @@
 title: Meta Neural Band (wrist sEMG)
 type: entity
 tags: [device, emg, consumer, meta, wearable]
-sources: [neural-input-landscape-2026]
-updated: 2026-11-08
+sources: [neural-input-landscape-2026, emg2qwerty]
+updated: 2026-11-21
 ---
 
 # Meta Neural Band
@@ -21,7 +21,9 @@ The Meta Neural Band is a consumer wrist sEMG band. It works with the Ray-Ban Di
 - Sources: https://wearables.developer.meta.com/docs/develop/webapps/build/ and https://developers.meta.com/wearables/faq/
 
 ## Related datasets
-Meta's public EMG datasets are all NC: [emg2qwerty](emg2qwerty.md) and generic-neuromotor-interface (CC-BY-NC-4.0), emg2pose (CC-BY-NC-SA-4.0). All are HDF5 at 2 kHz. **None is commercially usable.**
+Meta's public EMG datasets are all NC: [emg2qwerty](emg2qwerty.md) (CC-BY-NC-SA-4.0 per the [paper](../sources/emg2qwerty.md) and the `LICENSE` file; the README says CC-BY-NC-4.0), generic-neuromotor-interface (CC-BY-NC-4.0), emg2pose (CC-BY-NC-SA-4.0). All are HDF5 at 2 kHz. **None is commercially usable.**
+
+- The emg2qwerty data was recorded with the sEMG-RD research device, not with this band. The paper says the sEMG-RD is proprietary and not widely available ([paper](../sources/emg2qwerty.md), Sec. 6 p. 9). A decoder trained on emg2qwerty needs raw EMG, and this band gives none.
 
 ## Market
 - EssilorLuxottica sold 7M+ Meta glasses in 2025 (all models).

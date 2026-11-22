@@ -2,8 +2,8 @@
 title: "Brain2Qwerty v2: Accurate Decoding of Natural Sentences from Non-Invasive Brain Recordings"
 type: source
 tags: [meg, typing, decoding, asynchronous, ctc, llm, scaling]
-sources: [brain2qwerty-v2]
-updated: 2026-11-07
+sources: [brain2qwerty-v2, emg2qwerty]
+updated: 2026-11-21
 ---
 
 # Brain2Qwerty v2 (Meta preprint, June 2026)
@@ -132,6 +132,11 @@ The LLM produces **fluent but wrong** sentences when the encoder signal is weak.
 
 ## Limitations / future work (authors)
 1. The model is **not causal** and outputs a sentence only at its end. The authors suggest a causal Conformer, as in [emg2qwerty](../entities/emg2qwerty.md).
+
+   > **Contradiction:** v2 says Sivakumar et al. (2024) used "a causal Conformer with low-latency to decode handwriting" (Discussion, p. 10). The [emg2qwerty paper](emg2qwerty.md) describes a **TDS ConvNet** for **typing**, trained with 100 ms of future context and tested on whole sessions (Sec. 5.1–5.2, pp. 7–8). It does not mention a Conformer. We keep both claims.
+
+   > **Our take:** v2 may mix up emg2qwerty with the CTRL-labs 2024 generic neuromotor interface paper, which covers handwriting. We have not checked that paper.
+
 2. **Inter-subject variability** is large (N-gram CER ranges from 17.1% to 41.0%). The authors' stated priority is better encoders through cross-subject transfer or self-supervised pretraining.
 3. Participants are healthy and typing overtly. Patients have no key presses, so there are no labels for training or fine-tuning.
 4. A cryogenic 306-sensor MEG is required. Possible remedies are [OPM-MEG](../concepts/opm-meg.md) and optimised sensor selection.

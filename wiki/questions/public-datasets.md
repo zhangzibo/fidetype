@@ -2,8 +2,8 @@
 title: Public datasets for Fidetype (survey 2026-11-10)
 type: question
 tags: [dataset, licence, emg, eeg, meg, implant, ecog, survey]
-sources: [neural-input-landscape-2026, brain2qwerty-v1, brain2qwerty-code]
-updated: 2026-11-10
+sources: [neural-input-landscape-2026, brain2qwerty-v1, brain2qwerty-code, emg2qwerty]
+updated: 2026-11-21
 ---
 
 # Public datasets for Fidetype
@@ -27,7 +27,7 @@ Fit columns: **(a)** decoder training, **(b)** trust-layer / eWPM evaluation (ne
 | Dataset | Modality | Task | Participants | Size / hours | Rate, channels | Labels | Access | Licence (Comm.) | a | b | c | d |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | [SpanishBCBL](../entities/spanishbcbl-dataset.md) | MEG + EEG | typing | 19 usable MEG, 20 EEG | 280.4 GB on HF (API); MEG 21.5 h, EEG 17.7 h | MEG 1000 Hz, 306 ch; EEG 1 kHz, 64 ch | keystrokes + times, sentences | open (HF, not gated) | CC BY-NC 4.0 (no) | ✔ | ✔ | ✔ | ~ |
-| [emg2qwerty](../entities/emg2qwerty.md) | wrist sEMG (2 bands) | typing | 108 | 308.4 GB tar.gz (HTTP header); 346 h, 1,135 sessions | 2 kHz, 2 × 16 ch | prompts, keylogger keys + timestamps | open (S3) | CC BY-NC 4.0 (no) | ✔ | ✔ | ✔ | ✔ |
+| [emg2qwerty](../entities/emg2qwerty.md) | wrist sEMG (2 bands) | typing | 108 | 308.4 GB tar.gz (HTTP header); 346 h, 1,135 sessions | 2 kHz, 2 × 16 ch | prompts, keylogger keys + timestamps | open (S3) | CC BY-NC-SA 4.0 (no; README says CC BY-NC 4.0) | ✔ | ✔ | ✔ | ✔ |
 | [KT-sEMG (Nokia)](../entities/kt-semg-dataset.md) | forearm sEMG | free typing | 1 typist | 21.0 GB (88 files, API); >148,000 keystrokes | 2000 Hz, 2 × 16 ch | keystrokes, ms timestamps | open (Harvard Dataverse) | CC BY 4.0 (yes, attribution) | ✔ | ~ | ✔ | ~ |
 | [Toronto sEMG typing](../entities/toronto-semg-typing-dataset.md) | forearm sEMG | typing (letters + space) | 19 | 2.77 GB (1 zip, API); 2 sessions each | 2 kHz, 16 ch | keylogger letters + timestamps | open (Borealis) | CC BY 4.0 (yes, attribution) | ✔ | ~ | ✔ | ~ |
 | generic-neuromotor-interface (Meta) | wrist sEMG | handwriting, gestures, wrist | 100 per task | handwriting 98.8 / 31.5 / 10.4 h (train/val/test) | 2 kHz | prompt start/end times; text labels unclear | open (script) | CC BY-NC 4.0 (no) | ✔ | ~ | ✔ | ✔ |
@@ -77,7 +77,7 @@ Model-scale context (secondary sources): LaBraM used about 2,500 h from about 20
 |---|---|---|---|---|---|
 | 1 | [Brain-to-Text '25](../entities/brain-to-text-25.md) | intracortical speech | 11.59 GB (or 58 MB for the logits file alone) | CC0 | Real decoded text with RNN logits per trial and cue sentences. A pretrained RNN is included. Best licence-clean data for trust-layer (b) evaluation. |
 | 2 | [KT-sEMG (Nokia)](../entities/kt-semg-dataset.md) | forearm sEMG | 21.0 GB | CC BY 4.0 | Commercially usable EMG typing with ms keystroke timestamps. Plain CSV format: a good second adapter. One typist only. |
-| 3 | [emg2qwerty](../entities/emg2qwerty.md) | wrist sEMG | 308.4 GB | CC BY-NC 4.0 | Largest typing dataset of any modality (108 users, 346 h). The research benchmark for causal EMG typing. NC: research only. |
+| 3 | [emg2qwerty](../entities/emg2qwerty.md) | wrist sEMG | 308.4 GB | CC BY-NC-SA 4.0 | Largest typing dataset of any modality (108 users, 346 h). The research benchmark for causal EMG typing. NC: research only. |
 | 4 | [Willett 2021 handwriting](../entities/willett-handwriting-2021.md) | intracortical handwriting | 1.41 GB | CC0 | Small and clean. Character output with real-time BCI outputs. A second decoder type for the spec (characters, not phonemes). |
 | 5 | [Toronto sEMG typing](../entities/toronto-semg-typing-dataset.md) | forearm sEMG | 2.77 GB | CC BY 4.0 | 19 participants, 2 sessions each: the only commercially clean cross-subject EMG typing data. Small. |
 
@@ -89,8 +89,10 @@ Close runners-up: MEG-MASC (CC0 MEG, pretraining), Chisco (CC0 imagined speech, 
 
 > Intent and cursor-control datasets (P12-06, 2026-11-13) are in [intent and control datasets](intent-datasets-survey.md). That survey re-read the emg2qwerty licence: the `LICENSE` file is CC BY-NC-SA 4.0, the README says CC BY-NC 4.0.
 
+> **Contradiction:** this survey first listed emg2qwerty as CC BY-NC 4.0, from the repo README. The [emg2qwerty paper](../sources/emg2qwerty.md) (App. C, p. 17), the repo `LICENSE` file and the arXiv page say CC BY-NC-SA 4.0. The README is the outlier. We follow CC BY-NC-SA 4.0 (checked 2026-11-21).
+
 ## Licence warnings
-1. **All Meta EMG data is NC.** emg2qwerty and generic-neuromotor-interface are CC BY-NC 4.0. emg2pose is CC BY-NC-SA 4.0 (share-alike too). LibriBrain and SpanishBCBL are CC BY-NC 4.0. Research only ([licence rule](project-plan.md#licence-rule)).
+1. **All Meta EMG data is NC.** emg2qwerty is CC BY-NC-SA 4.0 (share-alike too). generic-neuromotor-interface is CC BY-NC 4.0. emg2pose is CC BY-NC-SA 4.0. LibriBrain and SpanishBCBL are CC BY-NC 4.0. Research only ([licence rule](project-plan.md#licence-rule)).
 2. **BNCI P300 sets are CC BY-NC-ND 4.0.** "No derivatives" forbids sharing converted files. Use them only by download-and-convert on the user's machine.
 3. **CC0 data, unlicensed code.** The Dryad data and the pretrained RNN are CC0. But `Neuroprosthetics-Lab/nejm-brain-to-text` and `fwillett/speechBCI` have **no licence** on GitHub (API: `null`), and `fwillett/handwritingBCI` is `NOASSERTION`. We must write our own loaders. Do not copy their code.
 4. **CC BY needs attribution, and CC BY-SA spreads.** KT-sEMG and the Toronto set need attribution in the provenance ledger. The Toronto baseline code (`ANSLab-UHN/sEMG-TypingDatabase`) is CC BY-SA 4.0: do not copy it into Apache/MIT code.

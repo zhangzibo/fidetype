@@ -2,8 +2,8 @@
 title: Electroencephalography (EEG)
 type: concept
 tags: [modality, hardware, eeg]
-sources: [brain2qwerty-v1]
-updated: 2026-11-07
+sources: [brain2qwerty-v1, emg2qwerty]
+updated: 2026-11-21
 ---
 
 # Electroencephalography (EEG)
@@ -18,5 +18,7 @@ EEG uses scalp electrodes to measure the brain's electric fields. It is cheap, p
 - v2 dropped EEG and used MEG only.
 
 > **Our take:** If you want something that works now with affordable hardware, EEG typing decoding is weak. Wrist EMG ([emg2qwerty](../entities/emg2qwerty.md)) or MEG-class signals look like better bets. Where EEG still makes sense is for cheap experiments and for pretraining.
+
+> **Contradiction:** the [emg2qwerty paper](../sources/emg2qwerty.md) says its wrist-EMG device (sEMG-RD) is proprietary and not widely available (Sec. 6, p. 9). So this source does not back "affordable" for wrist-EMG typing. The accuracy claim stands (Table 3, p. 9).
 
 Related: [MEG](meg.md) · [OPM-MEG](opm-meg.md)

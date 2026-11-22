@@ -1,34 +1,41 @@
 ---
 title: emg2qwerty (wrist-EMG typing dataset)
 type: entity
-tags: [dataset, emg, typing, public, nc-licence, downloaded, replay-adapter, paper-not-ingested, p11-01-decoder]
-sources: [brain2qwerty-v1, brain2qwerty-v2, neural-input-landscape-2026]
-updated: 2026-11-19
+tags: [dataset, emg, typing, public, nc-licence, downloaded, replay-adapter, p11-01-decoder]
+sources: [emg2qwerty, brain2qwerty-v1, brain2qwerty-v2, neural-input-landscape-2026]
+updated: 2026-11-21
 ---
 
 # emg2qwerty
 
-> **Partial page.** Facts below were checked on the repo page and the download server on 2026-11-10 ([public datasets survey](../questions/public-datasets.md)). The data is downloaded (2026-11-15). The file facts and the replay adapter below come from our own checks (2026-11-15). The paper itself is not ingested yet.
+> The paper is ingested (2026-11-21): [emg2qwerty source page](../sources/emg2qwerty.md). Facts marked "(paper)" come from it. The file facts and the replay adapter below come from our own checks (2026-11-15).
 
-- **Citation**: Sivakumar et al., *emg2qwerty: A large dataset with baselines for touch typing using surface electromyography*, NeurIPS 2024 (arXiv 2410.20081).
+- **Citation**: Sivakumar et al., *emg2qwerty: A large dataset with baselines for touch typing using surface electromyography*, NeurIPS 2024 Datasets and Benchmarks (arXiv 2410.20081). Authors: Reality Labs, Meta (CTRL-labs group).
 - **Code and data**: https://github.com/facebookresearch/emg2qwerty (archived, read-only). Data: `https://fb-ctrl-oss.s3.amazonaws.com/emg2qwerty/emg2qwerty-data-2021-08.tar.gz`.
-- **Licence**: non-commercial. The repo README says "emg2qwerty is CC-BY-NC-4.0 licensed". The `LICENSE` file in the same repo is **Attribution-NonCommercial-ShareAlike 4.0 International** (checked 2026-11-14). It is not commercially usable. Use it only for research and benchmarks ([landscape report](../sources/neural-input-landscape-2026.md#data-warning)).
+- **Licence**: non-commercial, research only. The paper says the dataset and code are "CC-BY-NC-SA 4.0 licensed, as found in the emg2qwerty/LICENSE file" ([paper](../sources/emg2qwerty.md), App. C p. 17). The `LICENSE` file in the repo is **Attribution-NonCommercial-ShareAlike 4.0 International** (checked 2026-11-14). The arXiv paper is also CC BY-NC-SA 4.0. The paper also says the data "are not intended to be used in conjunction with any other data types" (App. A, p. 16). Use it only for research and benchmarks ([landscape report](../sources/neural-input-landscape-2026.md#data-warning)).
 
-> **Contradiction:** README = CC BY-NC 4.0; `LICENSE` file = CC BY-NC-SA 4.0. We follow the stricter one (BY-NC-SA): no commercial use, and derived data that we share must keep the same licence. Research use is fine under both.
-- **Size**: 108 users, 1,135 session files, 346 hours (repo). The archive is **308.4 GB** (HTTP `Content-Length` 308,382,645,571 bytes). A BIDS copy on NEMAR (NM000104) is said to be about 239 GB (unverified).
-- **Format**: one HDF5 file per session. Each has left and right sEMG, the prompted text, keylogger ground truth and their timestamps (repo). Exact layout: [replay adapter](#replay-adapter-p4-01-2026-11-15).
-- **Signal**: 2 kHz. Two wristbands with 16 differential channels each, 32 in total (secondary sources). About 5.26 million keystrokes (secondary, unverified).
+> **Contradiction:** the repo README says CC BY-NC 4.0. The paper, the `LICENSE` file and the arXiv page say CC BY-NC-SA 4.0. The README is the outlier. We follow CC BY-NC-SA 4.0: no commercial use, and derived data that we share must keep the same licence. Research use is fine under both.
+- **Size**: 108 users, 1,135 session files, 346.4 hours, 5,262,671 keystrokes ([paper](../sources/emg2qwerty.md), Table 2 p. 5; our `metadata.csv` gives the same numbers). The archive is **308.4 GB** (HTTP `Content-Length` 308,382,645,571 bytes). A BIDS copy on NEMAR (NM000104) is said to be about 239 GB (unverified).
+- **Format**: one HDF5 file per session. Each has left and right sEMG, the prompted text, keylogger ground truth and their timestamps (paper, App. C p. 17). Exact layout: [replay adapter](#replay-adapter-p4-01-2026-11-15).
+- **Signal**: 2 kHz, 12 bits. Two wristbands with 16 differential channels each, 32 in total. Dry gold electrodes, analogue band-pass 20–850 Hz, then a 40 Hz high-pass in post-processing (paper, pp. 5–6).
+- **Labels**: keylogger key-down and key-up times only. No other labelling (paper, App. A p. 16).
+- **Benchmark**: 8 held-out test users (2 val + 2 test sessions each); the generic model trains on the other 100 users. Published test CER, fine-tuned personal model: **11.28 %** without LM, **6.95 %** with a character 6-gram LM. Generic model: 55.38 % / 51.78 % (paper, Table 3 p. 9). Usable at "approximately 10% or less" (p. 9).
+- **Hardware caveat**: the recording device (sEMG-RD) is **proprietary and not widely available** (paper, Sec. 6 p. 9). No one outside Meta can record new data with the same device.
 - **What it measures**: surface EMG from the **wrist** while people type. This is muscle activity, not brain activity, so it is not a BCI in the strict sense.
 - **Relevance**:
-  - Both Brain2Qwerty papers cite it as the model for **continuous, causal decoding**. v2 points to its low-latency causal Conformer as a template for real-time decoding ([v1](../sources/brain2qwerty-v1.md), [v2](../sources/brain2qwerty-v2.md)).
-  - It is the *largest public* typing dataset of any modality. It can be decoded with the same CTC machinery, and the hardware (EMG wristbands) is affordable.
+  - Both Brain2Qwerty papers cite it as the model for **continuous, causal decoding** ([v1](../sources/brain2qwerty-v1.md) ref. 42, [v2](../sources/brain2qwerty-v2.md)).
+  - It is the *largest public* typing dataset of any modality. It can be decoded with the same CTC machinery.
+
+> **Contradiction:** v2 says this work used "a causal Conformer with low-latency to decode handwriting". The paper describes a **TDS ConvNet** for **typing**, trained with 900 ms past and **100 ms future** context, and tested on whole sessions ([paper](../sources/emg2qwerty.md), Sec. 5.1–5.2 pp. 7–8). It mentions Conformers nowhere.
+
+> **Contradiction:** earlier wiki text called the hardware "affordable". That holds for consumer EMG bands (for example the [Meta Neural Band](meta-neural-band.md), which gives no raw EMG). It does not hold for the sEMG-RD that recorded this data (paper, p. 9).
 
 ## Sibling Meta datasets
 All Meta EMG datasets are NC. All are HDF5 at 2 kHz.
 
 | Dataset | Content | Size | Licence |
 |---|---|---|---|
-| emg2qwerty | typing, 108 users, 346 h | 308.4 GB archive, 339.4 GB extracted | CC-BY-NC-4.0 (README) / CC-BY-NC-SA-4.0 (LICENSE file) |
+| emg2qwerty | typing, 108 users, 346 h | 308.4 GB archive, 339.4 GB extracted | CC-BY-NC-SA-4.0 (paper, LICENSE file); README says CC-BY-NC-4.0 |
 | generic-neuromotor-interface | discrete gestures, handwriting (98.8 / 31.5 / 10.4 h train/val/test), wrist; 100 users per task | not checked | CC-BY-NC-4.0 |
 | emg2pose | hand pose, 193 users, 370 h | 462.8 GB (431 GiB) | CC-BY-NC-SA-4.0 |
 
@@ -109,10 +116,10 @@ Full dataset summary from `metadata.csv` (command `summary`): 1,135 sessions, 10
 
 > **Our take:** A simple windowed LDA reaches 0.54 on 32 keys with oracle timing. The same-user cross-session number (0.51) is much better than on KT-sEMG (0.13 cross-run). The emg2qwerty bands seem to sit in a more repeatable place. The real benchmark task (continuous CTC decoding without key times, across users) is much harder. This baseline exists only so that the trust layer has real-data streams to replay.
 
-**Next step:** ingest the paper and repo (read only; the code is NC, do not copy it; gap 90). The continuous CTC decoder (output through the [CTC-logits adapter](../concepts/ctc-logits-adapter.md)) is done: see the next section.
+**Next step:** the paper is ingested ([source page](../sources/emg2qwerty.md), gap 90, 2026-11-21). The repo code stays unread (NC, do not copy it). The continuous CTC decoder (output through the [CTC-logits adapter](../concepts/ctc-logits-adapter.md)) is done: see the next section.
 
 ## Continuous decoder (P11-01, done 2026-11-19)
-Our own causal CTC decoder (ring-TCN, 8.75 M parameters, no lookahead) was trained on one GPU (2026-11-17 to 2026-11-19). Plan and pre-registered criteria: [P11-01 plan](../../experiments/2026-11-16-p11-01-emg-decoder/plan.md). Results: [P11-01 results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md). All our numbers: test sessions of our own split (8 users), greedy CTC, no LM. Published numbers: paper Table 3 (checked against the paper on 2026-11-19).
+Our own causal CTC decoder (ring-TCN, 8.75 M parameters, no lookahead) was trained on one GPU (2026-11-17 to 2026-11-19). Plan and pre-registered criteria: [P11-01 plan](../../experiments/2026-11-16-p11-01-emg-decoder/plan.md). Results: [P11-01 results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md). All our numbers: test sessions of our own split (8 users), greedy CTC, no LM. Published numbers: paper Table 3, p. 9 ([source page](../sources/emg2qwerty.md); checked against the paper on 2026-11-19 and 2026-11-21).
 
 | Model | Ours, no LM, test CER (mean ± SD over 8 users) | Published, no LM, test | Published, 6-gram char LM, test |
 |---|---|---|---|
@@ -123,7 +130,7 @@ Our own causal CTC decoder (ring-TCN, 8.75 M parameters, no lookahead) was train
 - The conditions differ from the paper: other test users and splits, 12 log bands at 100 Hz, no lookahead, greedy decoding. The comparison is indicative.
 - The generic model is best at step 30,000 of 150,000 (val CER 0.5457). After that it overfits.
 - Weights and per-user values stay local in `C:\Users\zhang\bci-data\derived\p11-01-emg-decoder\train\`. They are research only (NC data).
-- Open: licence-clean decoder (gap 86), LM + beam search (gap 87), accuracy to 11.28 % (gap 88), trust config + streaming replay (gap 89, done 2026-11-19: certified but vacuous, see [P11-09 results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)), non-vacuous EMG safe WPM (gap 102), paper ingest (gap 90). See [open gaps](../questions/open-gaps.md).
+- Open: licence-clean decoder (gap 86), LM + beam search (gap 87), accuracy to 11.28 % (gap 88), trust config + streaming replay (gap 89, done 2026-11-19: certified but vacuous, see [P11-09 results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)), non-vacuous EMG safe WPM (gap 102), paper ingest (gap 90, done 2026-11-21: [source page](../sources/emg2qwerty.md)). See [open gaps](../questions/open-gaps.md).
 
 > **Our take:** about 15 % key errors after 18 min of fine-tuning per user, with no lookahead and no LM. This is our first non-implant decoder that is strong enough to make trust-layer tests useful.
 

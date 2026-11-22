@@ -2,8 +2,8 @@
 title: "Neural input landscape 2026 (devices, SDKs, standards, regulation)"
 type: source
 tags: [landscape, standards, devices, sdk, emg, eeg, implant, hid, licence, regulation, market]
-sources: [neural-input-landscape-2026]
-updated: 2026-11-08
+sources: [neural-input-landscape-2026, emg2qwerty]
+updated: 2026-11-21
 ---
 
 # Neural input landscape 2026
@@ -44,7 +44,7 @@ The positioning is: **NTS = "EMMA for neural input, OpenTelemetry-style"** ([Ope
 | [Meta Neural Band](../entities/meta-neural-band.md), Web Apps (developer preview, May 2026) | sEMG (wrist) | Gestures as arrow-key and Enter DOM events. Opt-in pinch-and-drag. Text from the on-glasses handwriting composer | No. No confidence, no n-best | DOM events in a web app | No. Processing is on the band. No raw EMG | Proprietary | wearables.developer.meta.com/docs/develop/webapps/build/ |
 | Meta Device Access Toolkit v1.0 (Sept 2026) | — | No band gestures | No | — | No | Proprietary | developers.meta.com/wearables/faq/ |
 | "Lumen" (Oct 2026), unofficial reverse-engineered client | sEMG | **UNVERIFIED** | **UNVERIFIED** | **UNVERIFIED** | **UNVERIFIED** | **UNVERIFIED** | — |
-| Meta datasets: [emg2qwerty](../entities/emg2qwerty.md), generic-neuromotor-interface, emg2pose | sEMG | Raw EMG, HDF5 at 2 kHz | Not applicable (data) | HDF5 | Yes (research) | CC-BY-NC-4.0; emg2pose CC-BY-NC-SA-4.0. **Not commercially usable** | — |
+| Meta datasets: [emg2qwerty](../entities/emg2qwerty.md), generic-neuromotor-interface, emg2pose | sEMG | Raw EMG, HDF5 at 2 kHz | Not applicable (data) | HDF5 | Yes (research) | CC-BY-NC-4.0; emg2pose CC-BY-NC-SA-4.0 (emg2qwerty: CC-BY-NC-SA-4.0 per its paper, see [Data warning](#data-warning)). **Not commercially usable** | — |
 | Synchron | Implant (endovascular) | Switch Control through [Apple BCI HID](../entities/apple-bci-hid.md) (Aug 2025 demo) | No | Apple BCI HID | No SDK | Proprietary | businesswire.com/news/home/20250804537175/en |
 | Neuralink, Precision, Paradromics | Implant | No public SDK found | — | — | No | Proprietary | — |
 | [BrainFlow](../entities/brainflow.md) | EEG and other biosignals | Uniform API for raw data across many boards (OpenBCI, Muse, Unicorn; Neurosity per the board list, **UNVERIFIED**) | ML module gives scalar scores only | Library API | Yes | MIT | github.com/brainflow-dev/brainflow |
@@ -84,6 +84,9 @@ These are being folded into [NeuralTextStream v0.1](../../spec/neuraltextstream-
 
 ## Data warning
 - All Meta EMG data is NC: [emg2qwerty](../entities/emg2qwerty.md) and generic-neuromotor-interface are CC-BY-NC-4.0; emg2pose is CC-BY-NC-SA-4.0.
+
+  > **Contradiction:** this report gives emg2qwerty as CC-BY-NC-4.0 (from the repo README). The [emg2qwerty paper](emg2qwerty.md) (App. C, p. 17), the repo `LICENSE` file and the arXiv page say CC-BY-NC-SA-4.0. The README is the outlier. The wiki follows CC-BY-NC-SA-4.0 (2026-11-21).
+
 - LibriBrain is CC-BY-NC-4.0.
 - The BNCI P300 and ErrP sets that were checked are CC-BY-NC-ND-4.0.
 - The OpenBMI licence listings conflict.

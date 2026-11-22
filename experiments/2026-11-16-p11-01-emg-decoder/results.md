@@ -128,3 +128,9 @@ This stays in [P14-13](../../wiki/questions/roadmap-standard.md#p14-13-conforman
 | Tests (CPU) | `C:\venvs\fidetype-rocm\Scripts\python.exe -m pytest -q experiments/2026-11-16-p11-01-emg-decoder/test_p11_01.py` |
 | Full run | `.venv\Scripts\python.exe experiments\2026-11-16-p11-01-emg-decoder\launch_train.py` (needs the 95.7 GB cache of `launch_prep.py`) |
 | Eval / NTS only | `C:\venvs\fidetype-rocm\Scripts\python.exe experiments/2026-11-16-p11-01-emg-decoder/train.py eval` (then `nts`); about 8 min on the GPU |
+
+## Correction 2026-11-21 (P11-10)
+- The emg2qwerty paper is now a wiki source page: [emg2qwerty (paper)](../../wiki/sources/emg2qwerty.md).
+- The paper says models "tend to become usable at a CER of approximately 10% or less" (p. 9). Our personalised CER (15.09 %) is above that line. So the sentence "It has no lookahead, so it is usable for live typing as is" in "Points to note" is wrong. Correct reading: the decoder has no lookahead, so it **can run** live, but at 15.09 % it is **not usable** for live typing as is.
+- The published Table 3 values used above are unchanged and confirmed on the paper (Table 3, p. 9): fine-tuned test CER 11.28 ± 4.45 % without LM, 6.95 ± 3.61 % with the character 6-gram LM. The published model trains with 100 ms of future context (Sec. 5.2, p. 8).
+- The paper gives the data licence as CC-BY-NC-SA 4.0 (App. C, p. 17). This agrees with the "Licence" section above.

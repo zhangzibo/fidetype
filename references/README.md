@@ -29,6 +29,7 @@ PDFs and cloned repos are git-ignored because this repo is public and they carry
 | corteg-eeg-to-ecog | paper | Yang, Sun, Van Dyck, Calvo Merino, Van Hulle, arXiv:2605.10337 (v2, 2026-10-14): https://arxiv.org/abs/2605.10337 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract + HTML full text read 2026-11-15) |
 | conformal-gating-mi-bci | paper | Xing, Nagarajan, J. Neural Eng. (2026): https://doi.org/10.1088/1741-2552/aead26 | journal copyright (not open access) | not downloaded (PubMed / Europe PMC abstract read 2026-11-15) |
 | conformal-covariate-shift | paper | Tibshirani, Barber, Candès, Ramdas, arXiv:1904.06019 (v3, 2020-07-06): https://arxiv.org/abs/1904.06019 | arXiv non-exclusive distribution 1.0 | not downloaded (abstract page read 2026-11-11) |
+| emg2qwerty | paper | Sivakumar, Seely, Du, Bittner, Berenzweig, Bolarinwa, Gramfort, Mandel, NeurIPS 2024 Datasets and Benchmarks, arXiv:2410.20081 (v3, 2025-03-20): https://arxiv.org/abs/2410.20081 | CC BY-NC-SA 4.0 (arXiv abs page, checked 2026-11-21). The paper states that the dataset and code are CC-BY-NC-SA 4.0 (App. A p. 16, App. C p. 17) | `papers/emg2qwerty_sivakumar_2024_arxiv_2410.20081.pdf` (17 pages, SHA-256 `8268bb5afda87cdf8fa09678f16b5dad496eacfe41b5d68a77c49824e4903e54`, downloaded 2026-11-21) + `.txt` (pdftotext -enc UTF-8) |
 
 ## Datasets (not stored here)
 | Dataset | Access |

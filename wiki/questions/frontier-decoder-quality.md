@@ -2,8 +2,8 @@
 title: "Frontier write-up: decoder quality, M4-12 to M4-13, and what it did to the guarantees"
 type: question
 tags: [frontier, decoder, t15, emg, p11-01, m4-12, m4-13, trust, usefulness, write-up, negative-result, pre-registration]
-sources: [brain-to-text-25-copytask]
-updated: 2026-11-19
+sources: [brain-to-text-25-copytask, emg2qwerty]
+updated: 2026-11-21
 ---
 
 # Decoder quality: did a stronger decoder turn safe-but-useless guarantees into useful ones?
@@ -80,7 +80,7 @@ All rows use methods fixed before M4-13 existed (pre-registration `97a2fc4` for 
 | 32 | [P6-09](roadmap-standard.md#p6-09-full-coverage-m4-x-entry-on-b2t25-t15-without-train--test-overlap) | M4-x benchmark entry without train / test overlap |
 
 ## Second modality: the EMG decoder (P11-01, 2026-11-19)
-The same question for wrist EMG. P11-01 trained our own causal CTC decoder on [emg2qwerty](../entities/emg2qwerty.md) (research only, NC data). Pre-registration: [plan](../../experiments/2026-11-16-p11-01-emg-decoder/plan.md); results: [P11-01 results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md).
+The same question for wrist EMG. P11-01 trained our own causal CTC decoder on [emg2qwerty](../entities/emg2qwerty.md) (research only, NC data). Published numbers: [emg2qwerty paper](../sources/emg2qwerty.md), Table 3 p. 9. Pre-registration: [plan](../../experiments/2026-11-16-p11-01-emg-decoder/plan.md); results: [P11-01 results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md).
 
 | measure (test, greedy CTC, no LM, our 8-user split) | ours | published, no LM (Table 3) |
 |---|---|---|
@@ -90,6 +90,7 @@ The same question for wrist EMG. P11-01 trained our own causal CTC decoder on [e
 | emission delay, median / p90 | 70 / 110 ms (no lookahead) | - (their model uses 100 ms of future input) |
 
 - Pre-registered primary rule S1 (<= 20.0 %) **passes**. The stretch rule S1+ (<= 11.28 %) **fails**.
+- The paper says models "tend to become usable at a CER of approximately 10% or less" ([paper](../sources/emg2qwerty.md), p. 9). Our 15.09 % is above that line. The published fine-tuned model is 11.28 % without an LM and 6.95 % with a character 6-gram LM.
 - The generic model overfits after step 30,000 of 150,000. A longer run would not help (gap 88).
 - Trust result (P11-09, 2026-11-19, [results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)): the guard is certified and safe (0 wrong commits / 1,221 track-test prompts) but vacuous (0 commits; safe WPM 0.00 < no-BCI 2.93). Whole-prompt key sequences are exactly right on only 2 / 1,221 prompts at 17.9 % key errors. So the M4-13 effect does not yet hold on EMG; the next step is a commit unit the decoder can get right, or an LM (gap 102).
 
