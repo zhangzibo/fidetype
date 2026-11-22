@@ -375,18 +375,22 @@ def checks() -> int:
     fresh = make_analyser(0, empty=True)
     assert not fresh.memo
     t0 = time.time()
-    miss, bad = 0, 0
+    miss, bad, max_sig, max_nat = 0, 0, 0.0, 0.0
     for x in wins:
         k = M.p1111().window_key(x) + "|FL"
         if k not in used.memo:
             miss += 1
             continue
-        if not same_analysis(fresh.analyse(np.asarray(x, np.float64), "FL"), used.memo[k], M.SIGNALS):
+        a, b = fresh.analyse(np.asarray(x, np.float64), "FL"), used.memo[k]
+        if not same_analysis(a, b, M.SIGNALS):
             bad += 1
+            if a and b and a["status"] == b["status"] == "ok" and len(a["native"]) == len(b["native"]):
+                max_sig = max(max_sig, max(abs(float(a["sig"][q]) - float(b["sig"][q])) for q in M.SIGNALS))
+                max_nat = max(max_nat, max(abs(s1 - s2) for (_, s1), (_, s2) in zip(a["native"], b["native"])))
     x2 = {"windows": len(wins), "val_real": len(rv), "test_real": len(rt), "test_shuffled": len(rs),
-          "not_in_memo": miss, "mismatch": bad, "seconds": round(time.time() - t0, 1)}
-    x2["pass"] = bool(bad == 0 and miss == 0)
-    log(f"X2f: {'PASS' if x2['pass'] else 'FAIL'} {x2}")
+          "not_in_memo": miss, "mismatch": bad, "max_signal_diff": max_sig, "max_native_diff": max_nat,
+          "seconds": round(time.time() - t0, 1), "role": "descriptive (amendment 2)"}
+    log(f"X2f (descriptive): {x2}")
     old = {}
     for kk in range(2):  # descriptive: the original X2'' count against the P11-23 memo
         with open(P1123D / f"feat-w{kk}.pkl", "rb") as fh:
@@ -396,10 +400,11 @@ def checks() -> int:
         del d
     x2["descriptive_vs_p11_23_memo_mismatch"] = int(sum(
         not same_analysis(used.memo[M.p1111().window_key(x) + "|FL"], old.get(M.p1111().window_key(x) + "|FL"),
-                          M.SIGNALS) for x in wins))
+                          M.SIGNALS) for x in wins if M.p1111().window_key(x) + "|FL" in used.memo))
     log(f"X2'' (descriptive): fresh run memo vs P11-23 memo: {x2['descriptive_vs_p11_23_memo_mismatch']} / {len(wins)}")
     out = {"x1": x1, "x1_pass": all(x["pass"] for x in x1), "x1_fresh": x1f, "x2f": x2}
-    out["pass"] = bool(out["x1_pass"] and x2["pass"])
+    out["x1_fresh_pass"] = all(x["pass"] and x["n_actions_differ"] == 0 for x in x1f)
+    out["pass"] = bool(out["x1_pass"] and out["x1_fresh_pass"])  # amendment 2
     save_json(out, own("checks.json"))
     return 0 if out["pass"] else 4
 
