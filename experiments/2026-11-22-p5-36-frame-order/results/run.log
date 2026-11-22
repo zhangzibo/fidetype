@@ -1,0 +1,9 @@
+[2026-11-22 09:41:47] (rss 29 MB, peak 29 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-22 09:41:47] (rss 98 MB, peak 101 MB) start ['val', 'test', 'score']; coherence {'builtin': 0.004183090472992479, 'lm': 0.002820748898623049}; lm eng_tatoeba_6gram_mkn_noE2Q_noWillett
+[2026-11-22 09:43:18] (rss 337 MB, peak 438 MB) val: builtin done (90 s)
+[2026-11-22 09:44:28] (rss 354 MB, peak 438 MB) val: lm done (160 s)
+[2026-11-22 09:51:57] (rss 342 MB, peak 438 MB) test: builtin done (449 s)
+[2026-11-22 09:58:02] (rss 346 MB, peak 438 MB) test: lm done (814 s)
+[2026-11-22 09:58:02] (rss 212 MB, peak 438 MB) score: {"builtin": {"L0": false, "L1": false, "L2": false, "L3": true, "I1": true, "I2": true, "I3": true}, "lm": {"L0": false, "L1": false, "L2": false, "L3": true, "I1": true, "I2": true, "I3": true}}
+[2026-11-22 09:58:02] (rss 212 MB, peak 438 MB) keep_awake: cleared
+[2026-11-22 09:58:02] (rss 212 MB, peak 438 MB) end of ['val', 'test', 'score'] (975 s); peak 438 MB

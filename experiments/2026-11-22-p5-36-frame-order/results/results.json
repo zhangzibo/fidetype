@@ -1,0 +1,215 @@
+{
+ "objects": {
+  "config_id": {
+   "builtin": "tcfg-39aac48688b8bd12",
+   "lm": "tcfg-26ae951a20a0cddd"
+  },
+  "lm": "eng_tatoeba_6gram_mkn_noE2Q_noWillett",
+  "threshold": 0.0,
+  "jitter_of_period": 0.4
+ },
+ "builtin": {
+  "val": {
+   "n": 66,
+   "m_real_offers": 66,
+   "loss": 10,
+   "limit": 3,
+   "L0_pass": false,
+   "rev_out_offers_coherence": 66,
+   "rev_out_offers_with_lm_direction": 10,
+   "lm_dir_real_offers": [
+    -2.07015,
+    -0.281904,
+    0.666454,
+    1.771799,
+    2.889345
+   ],
+   "antisym_1e-9": 66,
+   "coherence_equal_1e-9": 66
+  },
+  "L0": {
+   "pass": false,
+   "loss": 10,
+   "limit": 3,
+   "m": 66
+  },
+  "L1": {
+   "rev_out_offers": 10,
+   "coherence_only": 77,
+   "limit": 4,
+   "pass": false
+  },
+  "L2": {
+   "real_offers_removed": 10,
+   "real_offers_coherence": 77,
+   "real_offers_both": 67,
+   "limit": 4,
+   "pass": false
+  },
+  "L3": {
+   "ltt_real_offers": 40,
+   "n": 40,
+   "limit": 36,
+   "pass": true
+  },
+  "I1": {
+   "rev_events": {
+    "flagged": 80,
+    "n": 80,
+    "codes": [
+     "frame_order_reversed"
+    ]
+   },
+   "reordered": {
+    "flagged": 80,
+    "n": 80,
+    "codes": [
+     "frame_order"
+    ]
+   },
+   "duplicated": {
+    "flagged": 80,
+    "n": 80,
+    "codes": [
+     "frame_duplicate"
+    ]
+   },
+   "pass": true
+  },
+  "I2": {
+   "real_times": {
+    "flagged": 0,
+    "n": 80
+   },
+   "real_jitter": {
+    "flagged": 0,
+    "n": 80
+   },
+   "pass": true
+  },
+  "I3": {
+   "same_action_and_reason": 80,
+   "n": 80,
+   "pass": true
+  },
+  "R1_rev_out_p14_57_form": {
+   "flagged": 0,
+   "n": 80,
+   "offers": 10
+  },
+  "check_equivalence": {
+   "equal": 160,
+   "n": 160
+  },
+  "check_antisym_test_1e-9": 80,
+  "lm_dir_real_test_offers": [
+   -1.157823,
+   -0.272535,
+   0.61081,
+   1.497273,
+   2.092618
+  ]
+ },
+ "lm": {
+  "val": {
+   "n": 66,
+   "m_real_offers": 66,
+   "loss": 10,
+   "limit": 3,
+   "L0_pass": false,
+   "rev_out_offers_coherence": 66,
+   "rev_out_offers_with_lm_direction": 10,
+   "lm_dir_real_offers": [
+    -2.07015,
+    -0.281904,
+    0.666454,
+    1.771799,
+    2.889345
+   ],
+   "antisym_1e-9": 66,
+   "coherence_equal_1e-9": 66
+  },
+  "L0": {
+   "pass": false,
+   "loss": 10,
+   "limit": 3,
+   "m": 66
+  },
+  "L1": {
+   "rev_out_offers": 10,
+   "coherence_only": 78,
+   "limit": 4,
+   "pass": false
+  },
+  "L2": {
+   "real_offers_removed": 10,
+   "real_offers_coherence": 77,
+   "real_offers_both": 67,
+   "limit": 4,
+   "pass": false
+  },
+  "L3": {
+   "ltt_real_offers": 40,
+   "n": 40,
+   "limit": 36,
+   "pass": true
+  },
+  "I1": {
+   "rev_events": {
+    "flagged": 80,
+    "n": 80,
+    "codes": [
+     "frame_order_reversed"
+    ]
+   },
+   "reordered": {
+    "flagged": 80,
+    "n": 80,
+    "codes": [
+     "frame_order"
+    ]
+   },
+   "duplicated": {
+    "flagged": 80,
+    "n": 80,
+    "codes": [
+     "frame_duplicate"
+    ]
+   },
+   "pass": true
+  },
+  "I2": {
+   "real_times": {
+    "flagged": 0,
+    "n": 80
+   },
+   "real_jitter": {
+    "flagged": 0,
+    "n": 80
+   },
+   "pass": true
+  },
+  "I3": {
+   "same_action_and_reason": 80,
+   "n": 80,
+   "pass": true
+  },
+  "R1_rev_out_p14_57_form": {
+   "flagged": 0,
+   "n": 80,
+   "offers": 10
+  },
+  "check_equivalence": {
+   "equal": 160,
+   "n": 160
+  },
+  "check_antisym_test_1e-9": 80,
+  "lm_dir_real_test_offers": [
+   -1.157823,
+   -0.272535,
+   0.61081,
+   1.497273,
+   2.092618
+  ]
+ }
+}
