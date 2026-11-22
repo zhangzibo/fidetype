@@ -96,6 +96,8 @@ CER in %, mean ± SD over the 8 test users. Every gain from personalisation and 
 
 ## How the wiki uses it
 - Our P11-01 causal decoder: personalised 15.09 % vs 11.28 % (no LM), generic 53.52 % vs 55.38 % ([P11-01 results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md), [frontier decoder quality](../questions/frontier-decoder-quality.md#second-modality-the-emg-decoder-p11-01-2026-11-19)).
+- Our P11-07 causal decoder with an in-beam char LM: 10.10 % ([P11-07 results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md)). The matched reference is 6.95 % (with LM), not 11.28 %.
+- Matched-target rule (P11-25, 2026-11-21): a CER is compared only with the published number of the same condition (LM or no LM; causal or 100 ms lookahead). The usability line (about 10 %, p. 9) is a second, separate bar. See [frontier decoder quality](../questions/frontier-decoder-quality.md#matched-emg-decoder-target-p11-25-2026-11-21).
 - Brain2Qwerty v2 cites this paper for a "causal Conformer". The paper does not describe one. See the contradiction note on [Brain2Qwerty v2](brain2qwerty-v2.md#limitations--future-work-authors).
 
 ## Feeds

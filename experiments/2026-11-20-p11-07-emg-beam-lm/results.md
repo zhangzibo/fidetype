@@ -146,3 +146,9 @@ No new card (plan rule): neither arm is above the best `intended_text` entry (5.
 - The LM is Tatoeba English (CC BY 2.0 FR), short everyday sentences; the lexicon term uses research-only words from the track-train sessions.
 - Latency is an offline component measurement on one machine (no collector replay, no end-to-end stream).
 - The time-shuffled control uses the 33-class key form (the 98-token shuffled log-probs do not exist on disk).
+
+## Correction 2026-11-21 (P11-25)
+- H2 compares a decoder with an LM (F, 10.10 %) with the published fine-tuned value **without** an LM (11.28 %). That is not a matched comparison. The H2 verdict "pass" stays as recorded, but it does not show that we beat the published decoder. The summary sentence "This is below the published fine-tuned no-LM value (11.28 %)" has the same problem.
+- Matched reference: the published fine-tuned value **with** the 6-gram character LM, 6.95 ± 3.61 % (paper Table 3, p. 9; [source page](../../wiki/sources/emg2qwerty.md)). The published model also sees 100 ms of future input; F is causal. So no published number has the same condition as F. Against the easier 6.95 % reference, F is 3.15 points higher (indicative only: other users, splits, features and LM).
+- Usability line: the paper says models "tend to become usable at a CER of approximately 10% or less" (p. 9). F at beam 8 (10.10 %) is at that line, not clearly below it. Beam 64 (9.13 %) is below it.
+- The full rule: [matched EMG decoder target](../../wiki/questions/frontier-decoder-quality.md#matched-emg-decoder-target-p11-25-2026-11-21).

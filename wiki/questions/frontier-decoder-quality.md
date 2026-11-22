@@ -95,12 +95,41 @@ The same question for wrist EMG. P11-01 trained our own causal CTC decoder on [e
 - Trust result (P11-09, 2026-11-19, [results](../../experiments/2026-11-19-p11-09-emg-trust/results.md)): the guard is certified and safe (0 wrong commits / 1,221 track-test prompts) but vacuous (0 commits; safe WPM 0.00 < no-BCI 2.93). Whole-prompt key sequences are exactly right on only 2 / 1,221 prompts at 17.9 % key errors. So the M4-13 effect does not yet hold on EMG; the next step is a commit unit the decoder can get right, or an LM (gap 102).
 
 > **Our take:** a second modality now has a decoder in the useful range. The trust-layer claims can be tested on EMG, not only on T15. The EMG weights cannot ship (NC data); a licence-clean decoder is gap 86.
+>
+> **Correction 2026-11-21 (P11-25):** "useful range" means useful for trust-layer tests. It does not mean usable for typing. At 15.09 % the decoder is above the paper's usability line (about 10 % CER). See the matched-target rule below.
+
+### Matched EMG decoder target (P11-25, 2026-11-21)
+Compare an EMG CER only with a published number from the same condition. Two conditions matter: an LM or no LM, and how much future input the decoder sees. Published numbers: [paper](../sources/emg2qwerty.md), Table 3 p. 9, test CER of the fine-tuned (personalised) model, mean ± SD over 8 users. The paper's model trains with 100 ms of future context (900 ms past) and decodes whole test sessions. So every published number below is "100 ms lookahead, whole session".
+
+**Bar 1: matched published number**
+
+| Condition | Published number to compare against | Our best number under the same condition | Gap |
+|---|---|---|---|
+| No LM, 100 ms lookahead, whole session | **11.28 ± 4.45 %** | **none yet**. A bounded 100 ms lookahead decoder is one option of [P11-08](roadmap-standard.md#p11-08-emg-decoder-accuracy-to-the-published-fine-tuned-no-lm-cer). | no matched number |
+| No LM, causal (no lookahead), whole session decoded in causal chunks | **none published** | **15.09 ± 6.54 %** (P11-01, greedy, 16 test sessions; [results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)) | no matched number. 11.28 % is only a reference: it is easier, because that model sees 100 ms of future input. Indicative difference +3.81 points. |
+| No LM, causal, streaming per prompt (each prompt from its own frames) | none published | 21.48 % pooled prompt-level CER (P11-01) | no matched number |
+| 6-gram char LM, 100 ms lookahead, whole session | **6.95 ± 3.61 %** | **none yet** | no matched number |
+| Char LM, causal (no future frames beyond the LM step), whole session | **none published** | **10.10 ± 5.00 %** (P11-07, beam 8, Tatoeba 6-gram, 8 track-test sessions; beam 64: 9.13 %; [results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md)) | no matched number. 6.95 % is the reference (easier: lookahead). Indicative difference +3.15 points. **Never compare 10.10 % with 11.28 %.** |
+
+- All our numbers use our own 8 users and splits (salted hash, last sessions as test), 12 log bands at 100 Hz and our own model. The paper uses its own 8 users, 33 bins at 125 Hz and a WikiText LM. So even a row with a matched condition stays **indicative**, not a replication.
+- P11-07's 10.10 % is on 8 sessions (one per user). Its greedy value on the same 8 sessions is 14.66 %, not 15.09 %. Compare the LM gain on the same sessions: ours 4.56 points (beam 8), published 4.33 points.
+
+**Bar 2: usability (separate criterion)**
+
+| Criterion | Source | P11-01 (no LM, causal) | P11-07 (LM, causal) |
+|---|---|---|---|
+| CER ≤ about 10 % | "models tend to become usable at a CER of approximately 10% or less" ([paper](../sources/emg2qwerty.md), p. 9) | 15.09 %: **not met** | 10.10 % (beam 8): **at the line, not clearly below**. Beam 64: 9.13 %, below. |
+
+- Bar 2 applies to the text the user sees. So an LM is allowed for Bar 2, but the report must state the decoder condition (LM, lookahead, causal).
+- Bar 1 and Bar 2 are separate. A decoder can meet one and fail the other.
+
+> **Our take:** the most useful next number is a matched one. The cheapest is a 100 ms lookahead run without an LM (P11-08), which is directly comparable with 11.28 %. A causal decoder will need its own published reference or a run of the paper's model without future context; none exists now.
 
 | gap | item | what |
 |---|---|---|
 | 86 | [P11-06](roadmap-standard.md#p11-06-licence-clean-causal-convctc-on-kt-semg-and-toronto) | licence-clean EMG decoder |
 | 87 | [P11-07](roadmap-standard.md#p11-07-ctc-beam-search-with-a-character-lm-for-the-emg-decoder) | LM + beam search for EMG |
-| 88 | [P11-08](roadmap-standard.md#p11-08-emg-decoder-accuracy-to-the-published-fine-tuned-no-lm-cer) | accuracy to 11.28 % |
+| 88 | [P11-08](roadmap-standard.md#p11-08-emg-decoder-accuracy-to-the-published-fine-tuned-no-lm-cer) | accuracy against the matched target ([rule](#matched-emg-decoder-target-p11-25-2026-11-21); 11.28 % only for no LM + 100 ms lookahead) |
 | 102 | [P11-11](roadmap-standard.md#p11-11-non-vacuous-emg-safe-wpm-commit-unit-or-lm) | non-vacuous EMG safe WPM (P11-09 was vacuous) |
 
 ## Related pages
