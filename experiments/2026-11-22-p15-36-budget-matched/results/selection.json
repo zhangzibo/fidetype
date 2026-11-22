@@ -1,0 +1,124 @@
+{
+ "note": "val block only (no test-block number); plan.md rule",
+ "chosen": {
+  "3": "F-R20",
+  "10": "F-R20",
+  "30": "F-R20",
+  "100": "E1a",
+  "all": "E1a"
+ },
+ "per_budget": {
+  "3": [
+   {
+    "candidate": "F-R20",
+    "mean_val_cer": 0.8506268130957315,
+    "n_runs": 8,
+    "admissible": true
+   },
+   {
+    "candidate": "A",
+    "mean_val_cer": 0.8634479900538748,
+    "n_runs": 8,
+    "admissible": true
+   },
+   {
+    "candidate": "E1a",
+    "mean_val_cer": 0.9208195192706176,
+    "n_runs": 8,
+    "admissible": true
+   }
+  ],
+  "10": [
+   {
+    "candidate": "F-R20",
+    "mean_val_cer": 0.8253729796933278,
+    "n_runs": 8,
+    "admissible": true
+   },
+   {
+    "candidate": "A",
+    "mean_val_cer": 0.8616089929548281,
+    "n_runs": 8,
+    "admissible": true
+   },
+   {
+    "candidate": "E1a",
+    "mean_val_cer": 0.906625569830087,
+    "n_runs": 8,
+    "admissible": true
+   }
+  ],
+  "30": [
+   {
+    "candidate": "F-R20",
+    "mean_val_cer": 0.8022171570658931,
+    "n_runs": 8,
+    "admissible": true
+   },
+   {
+    "candidate": "A",
+    "mean_val_cer": 0.8328325735598839,
+    "n_runs": 8,
+    "admissible": false
+   },
+   {
+    "candidate": "E1a",
+    "mean_val_cer": 0.8337132200580191,
+    "n_runs": 8,
+    "admissible": false
+   }
+  ],
+  "100": [
+   {
+    "candidate": "A",
+    "mean_val_cer": 0.8623601326150021,
+    "n_runs": 8,
+    "admissible": true
+   },
+   {
+    "candidate": "E1a",
+    "mean_val_cer": 0.810764608371322,
+    "n_runs": 8,
+    "admissible": true
+   }
+  ],
+  "all": [
+   {
+    "candidate": "A",
+    "mean_val_cer": 0.8746632822213013,
+    "n_runs": 8,
+    "admissible": true
+   },
+   {
+    "candidate": "E1a",
+    "mean_val_cer": 0.6659759635308744,
+    "n_runs": 8,
+    "admissible": true
+   }
+  ]
+ },
+ "val_c2_30min_arm_E_seed0": {
+  "F-R20": {
+   "normal_val_cer": 0.7449233319519271,
+   "deranged_val_cer": 0.8968089515126398,
+   "needed_with_margin": 0.8749233319519271,
+   "length_ratio": 0.7356,
+   "length_guard_pass": true,
+   "val_c2_with_margin_pass": true
+  },
+  "A": {
+   "normal_val_cer": 0.7687525901367592,
+   "deranged_val_cer": 0.8711147948611687,
+   "needed_with_margin": 0.8987525901367592,
+   "val_c2_with_margin_pass": false
+  },
+  "E1a": {
+   "normal_val_cer": 0.8213841690841276,
+   "deranged_val_cer": 0.8441773725652715,
+   "needed_with_margin": 0.9513841690841276,
+   "val_c2_with_margin_pass": false
+  }
+ },
+ "no_recipe": false,
+ "time": "2026-11-22T04:30:59"
+}
