@@ -1,0 +1,34 @@
+{
+ "builtin": {
+  "threshold": 0.3258946546027608,
+  "m_real_offers": 66,
+  "n": 66,
+  "index": 3,
+  "val_real_removed": 3,
+  "val_rev_out_offers_coherence": 66,
+  "val_rev_out_offers_both": 0,
+  "D_real_offers": [
+   -0.01037,
+   0.337539,
+   0.901844,
+   1.350531,
+   1.447934
+  ]
+ },
+ "lm": {
+  "threshold": 0.1344378685883178,
+  "m_real_offers": 66,
+  "n": 66,
+  "index": 3,
+  "val_real_removed": 3,
+  "val_rev_out_offers_coherence": 66,
+  "val_rev_out_offers_both": 0,
+  "D_real_offers": [
+   -0.063955,
+   0.161546,
+   0.910264,
+   1.319863,
+   1.627106
+  ]
+ }
+}

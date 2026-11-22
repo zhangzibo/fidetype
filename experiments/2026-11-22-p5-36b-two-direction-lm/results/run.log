@@ -1,0 +1,16 @@
+[2026-11-22 14:17:13] (rss 30 MB, peak 30 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-22 14:17:13] (rss 99 MB, peak 103 MB) start ['val', 'test', 'nulls', 'score']; coherence {'builtin': 0.004183090472992479, 'lm': 0.002820748898623049}; lm eng_tatoeba_6gram_mkn_noE2Q_noWillett; readout settings {'lm_weight': 0.5, 'bonus': 1.0, 'beam': 8, 'prune_logp': -8.0, 'n_best': 8}
+[2026-11-22 14:18:19] (rss 332 MB, peak 441 MB) val: builtin done (66 s)
+[2026-11-22 14:19:07] (rss 347 MB, peak 441 MB) val: lm done (114 s)
+[2026-11-22 14:19:07] (rss 347 MB, peak 441 MB) val fit: {"builtin": [0.3258946546027608, 3, 0], "lm": [0.1344378685883178, 3, 0]}
+[2026-11-22 14:22:19] (rss 332 MB, peak 441 MB) test: builtin done (192 s)
+[2026-11-22 14:24:11] (rss 348 MB, peak 441 MB) test: lm done (304 s)
+[2026-11-22 14:24:49] (rss 391 MB, peak 464 MB) test: builtin LTT done (342 s)
+[2026-11-22 14:25:13] (rss 386 MB, peak 464 MB) test: lm LTT done (366 s)
+[2026-11-22 14:25:13] (rss 212 MB, peak 464 MB) nulls: P14-54 offered inputs to make again: [('timeshuf', 50)]
+[2026-11-22 14:25:13] (rss 218 MB, peak 464 MB) nulls: P14-54 done (1 s)
+[2026-11-22 14:25:13] (rss 219 MB, peak 464 MB) nulls: P14-55 offered null inputs to make again: 22 (['rev_in', 'ts'])
+[2026-11-22 14:25:52] (rss 237 MB, peak 519 MB) nulls: P14-55 done (40 s)
+[2026-11-22 14:25:53] (rss 258 MB, peak 519 MB) score: {"builtin": {"B1": true, "B2": false, "B3": true, "B4": true, "B5": true}, "lm": {"B1": true, "B2": true, "B3": true, "B4": true, "B5": true}}
+[2026-11-22 14:25:53] (rss 258 MB, peak 519 MB) keep_awake: cleared
+[2026-11-22 14:25:53] (rss 258 MB, peak 519 MB) end of ['val', 'test', 'nulls', 'score'] (520 s); peak 519 MB
