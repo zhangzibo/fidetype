@@ -40,9 +40,9 @@ The sections follow the plan for the future documentation site ([docs site plan]
 | Part | State |
 |---|---|
 | NTS spec | 0.1 is the current release (Development). 1.0 RC4 is a **draft** for public comment |
-| Python SDK `fidetype` | Reference SDK, trust layer, Collector, adapters. Version 0.0.1, **not on PyPI yet** |
-| TypeScript SDK `@fidetype/sdk` | Ready, **not on npm yet** |
-| Rust SDK `fidetype` (crate) | Ready (`no_std` core), **not on crates.io yet** |
+| Python SDK `fidetype` | Reference SDK, trust layer, Collector, adapters. Version 0.1.0 (from 0.1.0: `pip install fidetype`) |
+| TypeScript SDK `@fidetype/sdk` | Ready. Version 0.1.0 (from 0.1.0: `npm install @fidetype/sdk`) |
+| Rust SDK `fidetype` (crate) | Ready (`no_std` core). Version 0.1.0 (from 0.1.0: `cargo add fidetype`) |
 | C SDK | Planned **after** NTS 1.0 (for embedded devices and FFI). Not started |
 | Medical use | None. Fidetype is research software, not a medical device |
 

@@ -39,7 +39,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 #: public name -> (module, attribute)
 _LAZY: dict[str, tuple[str, str]] = {

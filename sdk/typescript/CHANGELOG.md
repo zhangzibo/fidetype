@@ -4,6 +4,23 @@ This file lists the changes of the TypeScript SDK (npm package `@fidetype/sdk`).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-21
+
+First public release (npm). The 0.1.0 development version (M7-06) was never published; this entry includes it.
+
+Spec support (rule SDK-V1; matrix in spec section 11.7):
+- NeuralTextStream v0.1 streams: read, write, check. The default written `spec_version` is `"0.1"`.
+- NTS 1.0 RC4 (draft): decision `spec_version` and TD-9 (RC1); header `spec_version` (RC2; reads `"1.<minor>"`); RC3 rules (VER-8, GEN-10, TD-F2 `declaration`); RC4 rules (GEN-11 optional field types, MET-3 planned namespaces, TD-4 check `NTS-TD-INPUT`, MET-12 advisory check `NTS-LICENCE-MATCH`).
+- Profiles: `v0.1`, `fep-0001` … `fep-0005` (`fep-0002` structural).
+
+Install: `npm install @fidetype/sdk`. ESM only; Node 18 or later, and browsers.
+
+### Base (development version, M7-06)
+- Writer, reader, reference consumer (JSON Lines and NPZ), the 59 v0.1 checks, JSON Schema validation and generated types.
+- `DecisionTracker` and `trust_decision` helpers for the text, intent and control profiles; NTS 1.0 RC2 header `spec_version` support.
+- Conformance runner for v0.1 and fep-0001 … fep-0005 (Node entry `@fidetype/sdk/node`); WebSocket client (FEP-0004).
+- CLI `fidetype-ts` (conformance, validate, consume, decisions). ESM only; Node >= 18 and browsers.
+
 ### Added
 - **MET-12 advisory check `NTS-LICENCE-MATCH` (P5-19, NTS 1.0 RC4 amendment 7)** and `noCommercialId`, `LICENCE_UNKNOWN`: `data.research_only = false` with a Creative Commons `NC` id or `LicenseRef-unknown` is a warning, never a reject (same table and warning as Python and Rust; vectors V101-V104).
 - **Data licence keys (P5-13, NTS 1.0 RC4 amendment 6, FEP-0010).** `DEFINED_KEYS` has `data.licence` (non-empty string) and `data.research_only` (boolean). Vectors V98 (accept), V99, V100 (reject); 100 v0.1 vectors. Same verdicts as Python and Rust.
@@ -35,11 +52,3 @@ This file lists the changes of the TypeScript SDK (npm package `@fidetype/sdk`).
 - `segmentEnd(t, unit)` checks `unit` at run time (`utterance`, `word`, `trial`; SEG-5).
 - The `files` whitelist ships only `dist/**/*.js`, `dist/**/*.d.ts`, `bin/`, `README.md`, `CHANGELOG.md` and `LICENSE`.
 - `private: true` is removed. Publishing is still a maintainer decision (see docs/RELEASING.md).
-
-## [0.1.0] - not published
-
-First development version (M7-06). It was never published to npm. It has:
-- Writer, reader, reference consumer (JSON Lines and NPZ), the 59 v0.1 checks, JSON Schema validation and generated types.
-- `DecisionTracker` and `trust_decision` helpers for the text, intent and control profiles; NTS 1.0 RC2 header `spec_version` support.
-- Conformance runner for v0.1 and fep-0001 … fep-0005 (Node entry `@fidetype/sdk/node`); WebSocket client (FEP-0004).
-- CLI `fidetype-ts` (conformance, validate, consume, decisions). ESM only; Node >= 18 and browsers.

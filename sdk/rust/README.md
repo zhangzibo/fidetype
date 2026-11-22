@@ -1,6 +1,6 @@
 # Fidetype Rust SDK (`fidetype` crate)
 
-> Part of [Fidetype](https://github.com/zhangzibo/fidetype/blob/main/README.md). Status: NTS 1.0 is a draft RC ([RC4](https://github.com/zhangzibo/fidetype/blob/main/spec/nts-1.0-rc4.md)); this SDK is ready but not published yet. All three SDKs side by side: [docs/sdks.md](https://github.com/zhangzibo/fidetype/blob/main/docs/sdks.md).
+> Part of [Fidetype](https://github.com/zhangzibo/fidetype/blob/main/README.md). Status: NTS 1.0 is a draft RC ([RC4](https://github.com/zhangzibo/fidetype/blob/main/spec/nts-1.0-rc4.md)); this SDK is at version 0.1.0 (from 0.1.0: `cargo add fidetype`). All three SDKs side by side: [docs/sdks.md](https://github.com/zhangzibo/fidetype/blob/main/docs/sdks.md).
 
 Rust SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. The core is **`no_std` + `alloc`**: it parses, checks, writes and decides without an operating system. So it can run in device firmware, for example on a Cortex-M microcontroller. The `std` feature (on by default) adds file helpers, the CLI `fidetype-rs` and the example program.
 
@@ -28,7 +28,7 @@ cargo run --bin fidetype-rs -- conformance        # all profiles in spec/conform
 cargo build --no-default-features --lib           # the no_std core alone
 ```
 
-Not yet published to crates.io; the crate is ready ([docs/RELEASING.md](https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md)). After the first release: `fidetype = "0.1"` in `Cargo.toml`, or `fidetype = { version = "0.1", default-features = false }` for firmware (`no_std` + `alloc`). Until then, in another local project: `fidetype = { path = "../path/to/sdk/rust" }`.
+From 0.1.0: `cargo add fidetype`, or `fidetype = "0.1"` in `Cargo.toml`, or `fidetype = { version = "0.1", default-features = false }` for firmware (`no_std` + `alloc`) (release rules: [docs/RELEASING.md](https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md)). For development, use a clone; in another local project: `fidetype = { path = "../path/to/sdk/rust" }`.
 
 Minimum supported Rust version (MSRV): **1.81** (`rust-version` in `Cargo.toml`; CI job `rust-msrv`). The published crate contains only `src/`, `README.md`, `CHANGELOG.md` and `LICENSE`. It does not contain the golden vectors: outside the repository, run `fidetype-rs conformance --vectors DIR` with `spec/conformance/` of a checkout. Changes: [CHANGELOG.md](https://github.com/zhangzibo/fidetype/blob/main/sdk/rust/CHANGELOG.md).
 

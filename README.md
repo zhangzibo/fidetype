@@ -8,7 +8,7 @@
 
 *Name:* *fides* (Latin: trust) + type.
 
-> **Status:** NTS 1.0 is a **draft release candidate** ([RC4](spec/nts-1.0-rc4.md), open for comment). The Python, TypeScript and Rust SDKs pass the full conformance suite in CI, but **no package is published yet** (version 0.0.1). Fidetype is research software. **It is not a medical device.** APIs can change.
+> **Status:** NTS 1.0 is a **draft release candidate** ([RC4](spec/nts-1.0-rc4.md), open for comment). The Python, TypeScript and Rust SDKs pass the full conformance suite in CI. Release 0.1.0 is the first release of all three packages. Fidetype is research software. **It is not a medical device.** APIs can change.
 
 ## Where we are going
 
@@ -76,7 +76,7 @@ More: [docs/concepts.md](docs/concepts.md) and the [diagram page](wiki/diagrams/
 
 ## Quick start
 
-The packages are not on PyPI, npm or crates.io yet. Use a clone:
+From 0.1.0: `pip install fidetype`, `npm install @fidetype/sdk`, `cargo add fidetype`. For development, or to run the examples and tests below, use a clone:
 
 ```sh
 git clone https://github.com/zhangzibo/fidetype.git

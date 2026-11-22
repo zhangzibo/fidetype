@@ -1,10 +1,10 @@
 # SDKs
 
-Fidetype has three reference SDKs. All three read, write and check NeuralTextStream (NTS) and give the same conformance verdict on every golden vector. None of them is published to a registry yet. A C SDK is planned after NTS 1.0.
+Fidetype has three reference SDKs. All three read, write and check NeuralTextStream (NTS) and give the same conformance verdict on every golden vector. All three are at version 0.1.0, the first registry release. A C SDK is planned after NTS 1.0.
 
 | | Python | TypeScript | Rust |
 |---|---|---|---|
-| Package (when published) | `fidetype` (PyPI) | `@fidetype/sdk` (npm) | `fidetype` (crates.io) |
+| Package (from 0.1.0) | `pip install fidetype` (PyPI) | `npm install @fidetype/sdk` (npm) | `cargo add fidetype` (crates.io) |
 | Folder | [`src/fidetype/`](../src/fidetype/) | [`sdk/typescript/`](../sdk/typescript/README.md) | [`sdk/rust/`](../sdk/rust/README.md) |
 | Runtime | Python 3.12+ | Node 18+ and browsers (ESM) | Rust 1.81+; `no_std` + `alloc` core for firmware |
 | Runtime dependencies | `numpy` (extras optional) | none | `libm` |

@@ -4,7 +4,7 @@ This page takes you from a clone to your first NeuralTextStream (NTS) file and y
 
 ## 1. Install
 
-You need Python 3.12 or later. The package is not on PyPI yet, so install it from a clone:
+You need Python 3.12 or later. From 0.1.0: `pip install fidetype`. This page uses the example files of the repository, so install it from a clone:
 
 ```sh
 git clone https://github.com/zhangzibo/fidetype.git

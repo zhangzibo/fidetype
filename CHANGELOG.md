@@ -12,6 +12,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Ver
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-21
+
+First public release (PyPI). Version 0.0.1 was a development version and was never published.
+
+Spec support (rule SDK-V1; matrix in spec section 11.7):
+- NeuralTextStream v0.1 streams: read, write, check. The default written `spec_version` is `"0.1"`.
+- NTS 1.0 RC4 (draft): decision `spec_version` and TD-9 (RC1); header `spec_version` (RC2; reads `"1.<minor>"`); RC3 rules (VER-8, GEN-10, TD-F2 `declaration`); RC4 rules (GEN-11 optional field types, MET-3 planned namespaces, TD-4 check `NTS-TD-INPUT`, MET-12 advisory check `NTS-LICENCE-MATCH`).
+- Profiles: `v0.1`, `fep-0001` … `fep-0005`.
+
+Install: `pip install fidetype`. Extras: `[hdf5]` (`pip install "fidetype[hdf5]"`: h5py for the HDF5 files of `fidetype.pretrained` and the emg2qwerty sessions; `[emg2qwerty]` stays as an alias of `[hdf5]`), `[lsl]`, `[brainflow]`, `[ws]`, `[data]`, `[llm]`, `[sign]`. Python 3.12 or later.
+
+### Base (development version 0.0.1)
+- NeuralTextStream v0.1 reader, writer and validator; NTS 1.0 RC2 header and decision `spec_version` support.
+- Trust core and streaming trust layer (calibration, conformal sets, COMMIT / OFFER / ASK / ABSTAIN), intent (FEP-0003) and control (FEP-0005) trust layers.
+- Conformance suite with the v0.1 and fep-0001 … fep-0005 profiles.
+- Adapters: Lab Streaming Layer (`[lsl]`), BrainFlow bridge (`[brainflow]`), WebSocket (`[ws]`).
+- Open benchmark v0.1 harness, provenance ledger, collector v0 (FEP-0006), offline demo.
+- Console script `fidetype`.
+
 ### Added
 
 - **Frozen trust configs for the pre-P5-23 trust cards (P13-13, gap 85).** The 30 plug-in, CRC and LTT cards of `b2t25-t15`, `spanishbcbl-meg` and `toronto-semg` (v0.1 and v0.2) now record `rerun.policy.config_id` and `config_id_source` (15 frozen configs in `experiments/2026-11-21-p13-13-refreeze-cards/results/configs/`). Each config comes from a refit with the build-step settings; a pipeline built from the loaded file gives the same decisions as the card (30 of 30). No metric changed. New check `fidetype.benchmark.hub.recipe.config_id_problems`: a trust card needs a `config_id` (or an accepted reason, `TRUST_CARD_REASONS`), and a `config_id` must match its committed source file. New tool mode `tools/benchmark/add_rerun_recipes.py --refrozen`. Tests: `tests/test_hub_cli.py`. Text: docs/hub-design.md section 12.8.
@@ -89,13 +108,3 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Ver
 
 ### Deprecated
 - **`PretrainedDecoder.decode(path)` (P14-44).** `decode()` is for one input array (one stream). A path still returns the list of `decode_file(path)`, with a `DeprecationWarning`; use `decode_file()` for files.
-
-## [0.0.1] - not published
-
-First development version. It was never published to PyPI. It has:
-- NeuralTextStream v0.1 reader, writer and validator; NTS 1.0 RC2 header and decision `spec_version` support.
-- Trust core and streaming trust layer (calibration, conformal sets, COMMIT / OFFER / ASK / ABSTAIN), intent (FEP-0003) and control (FEP-0005) trust layers.
-- Conformance suite with the v0.1 and fep-0001 … fep-0005 profiles.
-- Adapters: Lab Streaming Layer (`[lsl]`), BrainFlow bridge (`[brainflow]`), WebSocket (`[ws]`).
-- Open benchmark v0.1 harness, provenance ledger, collector v0 (FEP-0006), offline demo.
-- Console script `fidetype`.

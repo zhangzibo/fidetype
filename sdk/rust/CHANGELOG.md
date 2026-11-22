@@ -4,6 +4,22 @@ This file lists the changes of the Rust SDK (crate `fidetype`). The format follo
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-21
+
+First public release (crates.io). The 0.1.0 development version (M7-07) was never published; this entry includes it.
+
+Spec support (rule SDK-V1; matrix in spec section 11.7):
+- NeuralTextStream v0.1 streams: read, write, check. The default written `spec_version` is `"0.1"`.
+- NTS 1.0 RC4 (draft): decision `spec_version` and TD-9 (RC1); header `spec_version` (RC2; reads `"1.<minor>"`); RC3 rules (VER-8, GEN-10, TD-F2 `declaration`); RC4 rules (GEN-11 optional field types, MET-3 planned namespaces, TD-4 check `NTS-TD-INPUT`, MET-12 advisory check `NTS-LICENCE-MATCH`).
+- Profiles: `v0.1`, `fep-0001` … `fep-0005` (`fep-0002`, `fep-0004` structural / sans-IO).
+
+Install: `cargo add fidetype` (`fidetype = "0.1"`). MSRV 1.81. `no_std` + `alloc` core with `default-features = false`.
+
+### Base (development version, M7-07)
+- `no_std` + `alloc` core: parse, check, write, decide. Feature `std` (default): file and stream I/O, the CLI `fidetype-rs` and the example.
+- Readers for JSON Lines and NPZ, the v0.1 checks, `trust_decision` rules of FEP-0001 / 0003 / 0005, `DecisionTracker`, NTS 1.0 RC2 header `spec_version` support.
+- Conformance runner for v0.1 and fep-0001 … fep-0005.
+
 ### Added
 - **MET-12 advisory check `NTS-LICENCE-MATCH` (P5-19, NTS 1.0 RC4 amendment 7)** and `checks::no_commercial_id`: `data.research_only = false` with a Creative Commons `NC` id or `LicenseRef-unknown` is a warning, never a reject (same table and warning as Python and TypeScript; vectors V101-V104; 62 checks).
 - **Data licence keys (P5-13, NTS 1.0 RC4 amendment 6, FEP-0010).** `DEFINED_KEYS` has `data.licence` (non-empty string) and `data.research_only` (boolean). Vectors V98 (accept), V99, V100 (reject); test count v0.1 100. Same verdicts as Python and TypeScript.
@@ -32,10 +48,3 @@ This file lists the changes of the Rust SDK (crate `fidetype`). The format follo
 - `extra_header` must not hold a key that the writer sets itself (`writer::HEADER_KEYS`). Before, it could overwrite them and so skip the checks.
 - `SDK_VERSION` comes from `CARGO_PKG_VERSION`, so `Cargo.toml` is the one source of the version.
 - `publish = false` is removed. Publishing is still a maintainer decision (see docs/RELEASING.md).
-
-## [0.1.0] - not published
-
-First development version (M7-07). It was never published to crates.io. It has:
-- `no_std` + `alloc` core: parse, check, write, decide. Feature `std` (default): file and stream I/O, the CLI `fidetype-rs` and the example.
-- Readers for JSON Lines and NPZ, the v0.1 checks, `trust_decision` rules of FEP-0001 / 0003 / 0005, `DecisionTracker`, NTS 1.0 RC2 header `spec_version` support.
-- Conformance runner for v0.1 and fep-0001 … fep-0005.

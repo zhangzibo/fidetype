@@ -38,7 +38,7 @@ SDK versions are separate from spec versions (spec section 11.7). The rules:
 ### 1.3 What goes into each package
 | Package | Contains | Does not contain |
 |---|---|---|
-| Python wheel | `fidetype` package, `py.typed`, benchmark split files, demo config, golden vectors (`fidetype/_spec/conformance`, about 1.5 MB, synthetic) | tests, data, `.pt` files, participant data, research experiments |
+| Python wheel | `fidetype` package, `py.typed`, benchmark split files, demo config, golden vectors (`fidetype/_spec/conformance`, about 1.5 MB, synthetic), aggregate benchmark results, pretrained manifests and guard (no weights), hub dataset registry | tests, data, `.pt` files, participant data, research experiments |
 | Python sdist | package, tests, examples, `spec/`, README, LICENSE, CHANGELOG, CITATION.cff | `sdk/`, `wiki/`, `experiments/`, `data/` |
 | npm tarball | `dist/**/*.js`, `dist/**/*.d.ts`, `bin/`, README, CHANGELOG, LICENSE (about 120 kB) | tests, golden vectors, scripts, sources |
 | Rust `.crate` | `src/**/*.rs`, `Cargo.toml`, `Cargo.lock`, README, CHANGELOG, LICENSE (about 110 KiB) | tests, examples, golden vectors |
@@ -66,7 +66,7 @@ Do these steps for each SDK that you release. `X.Y.Z` is the new version.
 ## 3. One-time setup (maintainer only)
 These steps need registry accounts. Only the maintainer can do them. Use **trusted publishing**: the registry trusts a GitHub Actions run of this repository through OpenID Connect (OIDC), so no long-lived token is stored in GitHub.
 
-### 3.1 Names (state on 2026-11-14, read-only checks)
+### 3.1 Names (state on 2026-11-21, read-only checks)
 | Registry | Name | State |
 |---|---|---|
 | PyPI | `fidetype` | free (`https://pypi.org/pypi/fidetype/json` gives 404) |

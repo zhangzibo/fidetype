@@ -1160,7 +1160,7 @@ SDK versions are separate from spec versions.
 
 | SDK | Version | v0.1 streams | 1.x decision `spec_version` + TD-9 | 1.0 header `spec_version` | RC3 (VER-8, GEN-10, TD-F2 `declaration`) | RC4 (GEN-11 optional field types, MET-3 planned namespaces) | Profiles |
 |---|---|---|---|---|---|---|---|
-| Python `fidetype` | 0.0.1 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | yes | yes | v0.1, fep-0001 … fep-0005 |
+| Python `fidetype` | 0.1.0 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | yes | yes | v0.1, fep-0001 … fep-0005 |
 | TypeScript `@fidetype/sdk` | 0.1.0 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | yes | yes | v0.1, fep-0001 … fep-0005 |
 | Rust `fidetype` | 0.1.0 | yes | yes (RC1) | yes (RC2; reads `"1.<minor>"`, writes `"0.1"` by default) | yes | yes | v0.1, fep-0001 … fep-0005 |
 

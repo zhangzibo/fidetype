@@ -23,11 +23,13 @@ You do not change your decoder. You do not need to learn the NeuralTextStream (N
 
 ## Step 1 (3-4 min): install
 
-The package is not on PyPI yet. Install it from GitHub:
+From 0.1.0, install it from PyPI:
 
 ```sh
-pip install "git+https://github.com/zhangzibo/fidetype.git"
+pip install fidetype
 ```
+
+Or install the newest code from GitHub: `pip install "git+https://github.com/zhangzibo/fidetype.git"`.
 
 Or from a clone: `git clone https://github.com/zhangzibo/fidetype.git`, then `cd fidetype` and `pip install .`.
 

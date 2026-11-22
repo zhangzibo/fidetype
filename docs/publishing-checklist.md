@@ -2,20 +2,20 @@
 
 This page is for the maintainer. It lists every step to publish Fidetype for the first time: the Python package, the TypeScript SDK, the Rust crate, the GitHub Pages site and the GitHub releases. Do the steps in order. Each step has a time estimate, the exact commands, a check and a rollback.
 
-Prepared on 2026-11-18 (task P2-08). Nothing is published yet. The release rules (semver, SDK and spec versions) are in [RELEASING.md](RELEASING.md).
+Prepared on 2026-11-18 (task P2-08). Rechecked on 2026-11-21 (pre-flight). Nothing is published yet. The release rules (semver, SDK and spec versions) are in [RELEASING.md](RELEASING.md).
 
 ## Summary
-| What | Registry or host | Name | Version now | State on 2026-11-18 |
+| What | Registry or host | Name | Version now | State on 2026-11-21 |
 |---|---|---|---|---|
-| Python package | PyPI | `fidetype` | 0.0.1 | Built and checked (`twine check --strict` PASS, wheel 2.2 MB, sdist 2.4 MB). Name free. |
-| TypeScript SDK | npm | `@fidetype/sdk` | 0.1.0 | `npm pack --dry-run` and `npm publish --dry-run` PASS (53 files, 129.5 kB). Name free; the npm organization `fidetype` must exist first. |
-| Rust crate | crates.io | `fidetype` | 0.1.0 | `cargo publish --dry-run --locked` PASS (31 files, 121 KiB compressed). Name free. |
+| Python package | PyPI | `fidetype` | 0.1.0 | Built and checked (`twine check --strict` PASS, wheel 2.7 MB, sdist 2.7 MB). Name free. |
+| TypeScript SDK | npm | `@fidetype/sdk` | 0.1.0 | `npm pack --dry-run` and `npm publish --dry-run` PASS (53 files, 130.5 kB). Name free; the npm organization `fidetype` must exist first. |
+| Rust crate | crates.io | `fidetype` | 0.1.0 | `cargo publish --dry-run --locked` PASS (31 files, 122 KiB compressed). Name free. |
 | Static site | GitHub Pages | `https://zhangzibo.github.io/fidetype/` | n/a | Builds with `node tools/site/build.js` into `_site/` (git-ignored). All local links OK. |
 | Release notes | GitHub releases | tags `py-v…`, `ts-v…`, `rs-v…` | n/a | Not created. |
 
-Name checks (read-only, no account, 2026-11-18): `https://pypi.org/pypi/fidetype/json` 404, `https://test.pypi.org/pypi/fidetype/json` 404, `https://crates.io/api/v1/crates/fidetype` 404, `https://registry.npmjs.org/@fidetype%2fsdk` 404, `https://registry.npmjs.org/fidetype` 404 (unscoped name also free). A name is not reserved until the first publish. Check again on the day.
+Name checks (read-only, no account, 2026-11-18; again 2026-11-21: all 404): `https://pypi.org/pypi/fidetype/json` 404, `https://test.pypi.org/pypi/fidetype/json` 404, `https://crates.io/api/v1/crates/fidetype` 404, `https://registry.npmjs.org/@fidetype%2fsdk` 404, `https://registry.npmjs.org/fidetype` 404 (unscoped name also free). A name is not reserved until the first publish. Check again on the day.
 
-Package content checks (2026-11-18): no e-mail address except `@example.org` placeholders in test fixtures; no private keys or tokens; no PDFs, recordings, model weights or per-trial texts. The only data files are the synthetic golden vectors (`.npz`, `.jsonl`) and the benchmark split files (hashed ids and public truth words).
+Package content checks (2026-11-18; again 2026-11-21): no e-mail address except `@example.org` placeholders in test fixtures; no private keys or tokens; no PDFs, recordings, model weights or per-trial texts. The only data files are the synthetic golden vectors (`.npz`, `.jsonl`), the benchmark split files and overlap maps (hashed ids; the research-only splits carry no text), the aggregate benchmark results and the pretrained manifests (no weights).
 
 ## Total time
 | Part | Minutes |
@@ -65,6 +65,7 @@ C1. **Release commit.** You can ask Claude: "cut release 0.1.0 for all three SDK
 2. In each changelog (`CHANGELOG.md`, `sdk/typescript/CHANGELOG.md`, `sdk/rust/CHANGELOG.md`): merge `[Unreleased]` and the old "not published" entry into `## [0.1.0] - 2026-11-21`. List the spec versions and profiles (rule SDK-V1 in RELEASING.md). Add an empty `## [Unreleased]` above it.
 3. TypeScript and Rust are already 0.1.0. If you change them: `version` in `sdk/typescript/package.json` and `SDK_VERSION` in `sdk/typescript/src/index.ts` (`npm run check:version`); `version` in `sdk/rust/Cargo.toml`, then `cargo update -p fidetype` in `sdk/rust`.
 4. Update the matrix in spec section 11.7 (`spec/nts-1.0-rc4.md`) if a version changed.
+4b. Install text in the READMEs and docs. Each registry page keeps the README of its upload, so the text must be true before and after the upload: "From 0.1.0: `pip install fidetype`" (`npm install @fidetype/sdk`, `cargo add fidetype`). Keep the clone path for development. **Done** in the release commit of 2026-11-21 (`README.md`, `sdk/typescript/README.md`, `sdk/rust/README.md`, `docs/sdks.md`, `docs/README.md`, `docs/getting-started.md`, `docs/trust-quickstart.md`).
 5. Run the tests: `uv run pytest -q`. Commit, push, wait for CI to be green (all jobs, `packaging` included).
 
 C2. **Local dry run** (optional; CI job `packaging` does the same):
@@ -130,7 +131,7 @@ The first upload is manual too.
 **Rollback:** `cargo yank --version 0.1.0 fidetype` (new projects can no longer depend on it; `cargo yank --version 0.1.0 --undo fidetype` reverses it). A crate cannot be deleted, except in narrow cases of the crates.io policy.
 
 ## G. GitHub Pages (10 min)
-The project site (hub decision Q6, built locally on 2026-11-18, P13-08): a landing page (what Fidetype is, the north star, quick start), the benchmark overview and leaderboard (safe WPM v0.2 marked PROPOSED), the hub dataset registry, the docs and the NTS spec rendered from Markdown, the certified conformance list, the synthetic trust demo, the diagrams and the progress dashboard. `node tools/site/build.js` generates every page from repository files. It has no trackers and no external scripts. A fuller docs site is roadmap P8-05.
+The project site (hub decision Q6, built locally on 2026-11-18, rebuilt 2026-11-21: 77 files, includes `docs/device-support.md` and the tutorials; P13-08): a landing page (what Fidetype is, the north star, quick start), the benchmark overview and leaderboard (safe WPM v0.2 marked PROPOSED), the hub dataset registry, the docs and the NTS spec rendered from Markdown, the certified conformance list, the synthetic trust demo, the diagrams and the progress dashboard. `node tools/site/build.js` generates every page from repository files. It has no trackers and no external scripts. A fuller docs site is roadmap P8-05.
 
 | Step | Do this | Check |
 |---|---|---|
@@ -153,7 +154,7 @@ Optional: attach the Python files (`gh release upload py-v0.1.0 dist/*`). Mark t
 ## I. Final checks (10 min)
 - [ ] The README badge and install lines work: `pip install fidetype`, `npm install @fidetype/sdk`, `cargo add fidetype`.
 - [ ] The PyPI, npm and crates.io pages show the README with working links (the SDK READMEs use absolute GitHub links since 2026-11-18).
-- [ ] No page shows an e-mail address.
+- [ ] No page shows an e-mail address. (The vendored draw.io viewer JS, `diagrams/viewer-static.min.js`, holds the jgraph support address in its code. It is not shown on any page.)
 - [ ] Ask Claude to record the release: tracker items P2-07 and M7-09 `done`, `## [Unreleased]` headings back in the changelogs, RELEASING.md section 3.1 (names: taken by us), HANDOFF.md.
 
 ## J. Pretrained weights (optional, 45 min; roadmap P14-02)
