@@ -1,0 +1,37 @@
+{
+  "_comment": "P15-36 (gap 140) pre-registered configuration (see plan.md). Frozen with plan.md before any result of this task.",
+  "p15_33_config": "experiments/2026-11-20-p15-33-low-data-recipe/config.json",
+  "base_recipe": "A",
+  "seeds": [0, 1],
+  "arms": ["R", "T", "E", "S"],
+  "budgets_min": ["3", "10", "30", "100", "all"],
+  "frr20_budgets": ["3", "10", "30"],
+  "frr20": {"code": 3524, "align": "forced", "mode": "replace", "synth_frac": 0.2,
+            "steps": {"3": 1200, "10": 2000, "30": 4000}},
+  "candidate_order": ["F-R20", "A", "E1a"],
+  "sources": {
+    "E1a_runs": "C:/Users/zhang/bci-data/derived/p15-08/runs",
+    "A_runs": "C:/Users/zhang/bci-data/derived/p15-33/grid",
+    "aligners": "C:/Users/zhang/bci-data/derived/p15-33/grid",
+    "reuse_frr20_search": "C:/Users/zhang/bci-data/derived/p15-35b/search/F-R20",
+    "reuse_frr20_test": "C:/Users/zhang/bci-data/derived/p15-35b/test/F-R20",
+    "reuse_runs": ["E-b30-s0", "E-b30-s0-labelshuf"]
+  },
+  "admissible_budget": "30",
+  "c2": {"arm": "E", "budget": "30", "seed": 0},
+  "seed1_c2": {"arm": "E", "budget": "30", "seed": 1, "start_max_hours": 6.5},
+  "text_pool": {
+    "path": "C:/Users/zhang/bci-data/derived/p15-35/text_pool.txt",
+    "report": "C:/Users/zhang/bci-data/derived/p15-35/text_pool_report.json",
+    "sha256": "2360dc0559fd03420efbc432de81c01694c6dd27c474047f020b4add8dba63c9"
+  },
+  "synth": {"tail_frames": 100},
+  "rules": {
+    "c2_min_cer": 0.75,
+    "c2_min_gap": 0.10,
+    "val_margin": 0.03,
+    "length_guard": 0.30,
+    "shuffle_seed": 12345
+  },
+  "gpu_cap_hours": 8.0
+}
