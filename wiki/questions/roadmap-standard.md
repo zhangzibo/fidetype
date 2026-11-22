@@ -230,6 +230,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P2-08 Publishing prep for the first release
 - **Status:** `done` (2026-11-18). Publishing itself waits for the user (P2-07, M7-09).
+- **Release progress (2026-11-21):** the user chose "all recommended" for decisions D1-D9 (D6 had no recommendation, so it stays as is: the dashboard is included). Release commit `6579534` (0.1.0 for Python, TypeScript and Rust; CI 31 / 31 green). Tags `py-v0.1.0`, `ts-v0.1.0` and `rs-v0.1.0` on `6579534` were pushed at the user's request. P2-07 and M7-09 are in progress: the uploads (accounts, PyPI, npm, crates.io, Pages, GitHub releases) are the user's steps.
 - **Result:** dry runs of the three packages pass (`twine check --strict`, `npm publish --dry-run`, `cargo publish --dry-run --locked`); a clean install of the wheel runs `fidetype conformance --profile fep-0001` (66/66). The names `fidetype` (PyPI, crates.io) and `@fidetype/sdk` (npm) were free on 2026-11-18. Author `Zibo Zhang` in all manifests and `CITATION.cff`; crate `homepage`; SDK READMEs with absolute links (npm and crates.io pages). The release workflow is now `.github/workflows/release.yml` (manual trigger only). New manual-only `.github/workflows/pages.yml` and `tools/site/build.js` (assembles `_site/` from the existing pages and checks local links). Step-by-step guide with time per step and the user decisions: [docs/publishing-checklist.md](../../docs/publishing-checklist.md).
 
 #### P2-09 CI matrix: Python 3.13+ and Windows and macOS for the three SDKs
@@ -1102,6 +1103,7 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Evidence (2026-11-21, P15-37, results `105c5d0`):** on T15 the guarantee-keeping multi-split rules (AND, Bonferroni + selection) do not lift the calibration-inclusive lower end (primary BMED-3 4.73 [2.60, 6.24]; between-draw SD only 4-15 % lower). This item stays open: EMG differs, because its zero draws come from above-alpha draws (9 / 40). Gap 158 = [P11-18](#p11-18-why-225--of-the-emg-calibration-draws-are-above-alpha) diagnoses that first.
 - **Evidence (2026-11-21, P11-18, results `0a75695`):** the val / test session shift is a separate failure source (optimism gap arm P +0.0126 vs pooled arm E -0.0016, Welch p = 3.6e-10). Lower-variance methods do not remove it. The shift part is gap 164 = [P11-20](#p11-20-shift-robust-calibration-for-the-emg-l-fl-guard).
 - **Note (2026-11-21, P11-20, results `8cbd7b7`):** with the shift margin (LTT at alpha' 0.0455) no EMG draw earns 0. The calibration-inclusive lower end is 2.62 < 3.09 (6.13 [2.62, 9.47]). The within-draw user-cluster spread and one low-commit draw (2.25) limit it. This item stays open.
+- **Note (2026-11-21, P11-21, results `ecbc7b1`):** the LX-FL prefix guard (PROPOSED v0.2, partition-only draws, LX shift margin m_LX 0.0288) reaches 5.67 [3.43, 8.26] > 3.09 (gap 166 closed). This item is about the L-FL guard under the adopted v0.1, so it stays open.
 
 #### P11-20 Shift-robust calibration for the EMG L-FL guard
 - **Gap:** 164 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-18). Follow-up of P11-18, P11-17.
@@ -1113,7 +1115,8 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-21 Calibration-inclusive lower end above 3.09 for the LX-FL prefix guard
 - **Gap:** 166 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-16). Follow-up of P11-16, P11-18, P11-19.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; plan `95b1a91` before any number, code `beac437`, amendment 1 + code `99b7eb6`, analysis fix `fef0abb`, results `ecbc7b1`, [results](../../experiments/2026-11-21-p11-21-lx-margin/results.md)). Gap 166 closed. EMG LX-FL prefix guard with partition-only draws and an LX-specific shift margin (m_LX 0.0288, alpha_LX 0.0212). Calibration-inclusive proposed v0.2 safe WPM **5.67 [3.43, 8.26]** vs no-BCI 3.09: "clearly above after calibration uncertainty", the first EMG lower end above 3.09. 0 / 40 draws above alpha, all certified, null controls 0. Narrow: the lower end clears 3.09 by 0.34, and one draw is 2.96. LX-T (L-FL margin) 7.21 [4.78, 10.43]. LX-P (no margin) 8.80 [4.89, 12.26], 1 / 40 above alpha, fragile. H3: LX-P 1 / 40 vs P11-16 7 / 40, Fisher p = 0.028. It holds only under the PROPOSED safe-wpm v0.2 (the user decides adoption) and under assumption (A2). Disclosed deviation: check X2 failed (203 / 2,442 session a / b windows had native n-best scores up to 8e-5 off the P11-20 / P11-23 memo); Amendment 1 replaced it with the fresh-decode check X2' before any margin or arm number existed, and X2' passes. Some stage-1 log lines had been seen, and the amendment header says 18:20 but it was written at about 18:08; results.md states all of this. The public EMG wording ("above on average, not reliably") does not change; that is a user decision.
+- **Follow-ups:** gap 180 = [P11-27](#p11-27-native-n-best-score-differences-in-the-p11-20--p11-23-analyser-memos) (memo score differences; low priority). Gap 159 = P11-19 stays open.
 - **Depends on:** P11-16 (done); gap 159 methods; the user decision on safe-wpm/0.2 (for headline use only); CPU.
 - **Source:** P11-16 ([results](../../experiments/2026-11-21-p11-16-emg-prefix-confidence/results.md)): calibration-inclusive proposed v0.2 7.18 [0.00, 12.13]; 7 / 40 draws above alpha earn 0; between-draw SD 3.47 against within-draw 1.24.
 - **Done when:** a pre-registered run (for example partition-only draws, a margin below alpha, or gap 159 methods) reports the calibration-inclusive interval against 3.09 for the prefix guard: lower end above 3.09, or numbers say why not. Headline use depends on the v0.2 decision.
@@ -1153,6 +1156,13 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Depends on:** P11-10 (done); the paper (bioRxiv 10.1101/2024.02.23.581779).
 - **Source:** P11-10 (2026-11-21, commit `70807b0`, [source](../sources/emg2qwerty.md)): the contradiction notes record that Brain2Qwerty v2 calls the emg2qwerty model a "causal Conformer", but the emg2qwerty paper uses a TDS ConvNet with 100 ms future context in training. Brain2Qwerty v2 may have confused emg2qwerty with the CTRL-labs 2024 generic neuromotor paper (bioRxiv 10.1101/2024.02.23.581779).
 - **Done when:** that paper is ingested or checked, and the contradiction notes are updated.
+
+#### P11-27 Native n-best score differences in the P11-20 / P11-23 analyser memos
+- **Gap:** 180 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-21). Follow-up of P11-21, P11-20, P11-23.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P11-21 (done; `experiments/2026-11-21-p11-21-lx-margin/x2_fresh.py`); the P11-20 / P11-23 analyser memos; CPU.
+- **Source:** P11-21 (2026-11-21, results `ecbc7b1`, [results](../../experiments/2026-11-21-p11-21-lx-margin/results.md)): check X2 found 203 of 2,442 session a / b windows whose native n-best scores in the P11-20 / P11-23 analyser memos differ by up to 8e-5 from fresh decodes (fresh decodes match under both the current code and the P11-20 code snapshot `d3511df`). The cause is not known.
+- **Done when:** the cause is found, or the memos are rebuilt and the P11-20 / P11-23 draws are shown to be unchanged.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
