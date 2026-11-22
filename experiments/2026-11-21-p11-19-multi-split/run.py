@@ -4,8 +4,8 @@ Pre-registration: plan.md (this folder, commit c71c9bc). RESEARCH ONLY: emg2qwer
 Per-prompt files stay in C:/Users/zhang/bci-data/derived/p11-19/. All other derived folders are read only. The repo
 gets aggregates and per-draw pooled counts only (no per-user value, no text, no id).
 
-    run.py worker 1 <w> <n>  X1 draws X01 (= P11-23 S01) and X13 (= P11-23 S13)
-    run.py checks            X2'' (fresh decodes with an empty memo) and the X1 comparison
+    run.py worker 1 <w> <n>  X1' draws XF01 (= P11-23 S01) and XF13 (= P11-23 S13), fresh memo (amendment 1)
+    run.py checks            X1 (first run, P11-23 memo copy), X1' (fresh), X2f (second empty memo = run memo)
     run.py worker 2 <w> <n>  the 120 split guards (k = 1..40, j = 1..3) at (alpha'' 0.0314, delta / 3)
     run.py analyse           X3, X4, arms BX3 / BD3 / AN3 / J1, intervals, why-not analysis -> results/results.json
 
@@ -130,7 +130,7 @@ def split_seed(k: int, j: int) -> int:
 
 def jobs(phase: int) -> list[dict]:
     if phase == 1:  # X1: reruns of P11-23 S01 / S13 at (alpha'', delta)
-        return [{"name": f"X{k:02d}", "k": k, "j": 1, "seed": split_seed(k, 1), "null_seed": split_seed(k, 1),
+        return [{"name": f"XF{k:02d}", "k": k, "j": 1, "seed": split_seed(k, 1), "null_seed": split_seed(k, 1),
                  "ltt_alpha": ALPHA_PP, "delta": DELTA, "gname": f"p11-23-S{k:02d}"} for k in X1_DRAWS]
     return [{"name": f"k{k:02d}-j{j}", "k": k, "j": j, "seed": split_seed(k, j), "null_seed": split_seed(k, 1),
              "ltt_alpha": ALPHA_PP, "delta": SPLIT_DELTA, "gname": f"p11-19-k{k:02d}-j{j}"}
@@ -220,13 +220,9 @@ def make_analyser(w: int, empty: bool = False):
         def load(self) -> None:
             if empty:
                 return
-            f = own(f"feat-w{w}.pkl")
+            f = own(f"feat-w{w}.pkl")  # amendment 1: fresh decodes only; the memo starts empty
             if f.exists():
                 with open(f, "rb") as fh:
-                    self.memo.update(pickle.load(fh))
-                return
-            for k in range(2):  # union of the P11-23 memos (read only; window-content keys)
-                with open(P1123D / f"feat-w{k}.pkl", "rb") as fh:
                     self.memo.update(pickle.load(fh))
 
         def save(self) -> None:
@@ -358,10 +354,19 @@ def checks() -> int:
     M = p17().m14()
     R, cal, ev = M.setup()
     W = p23().Windows(R)
-    x1 = [x1_compare(load_json(own(f"split-X{k:02d}.json")), load_json(P1123D / f"draw-S{k:02d}.json"))  # type: ignore[arg-type]
+    first = own("memo-p1123-copy")
+    x1 = [x1_compare(load_json(first / f"split-X{k:02d}.json"), load_json(P1123D / f"draw-S{k:02d}.json"))  # type: ignore[arg-type]
           for k in X1_DRAWS]
-    log(f"X1: {'PASS' if all(x['pass'] for x in x1) else 'FAIL'} {x1}")
-    # X2'': fresh decodes (empty memo) vs the memo entries this item uses (worker-0 memo = P11-23 union + new)
+    log(f"X1 (first run, P11-23 memo copy): {'PASS' if all(x['pass'] for x in x1) else 'FAIL'} {x1}")
+    x1f = []
+    for k in X1_DRAWS:  # X1' (descriptive): fresh memo vs P11-23
+        a, b = load_json(own(f"split-XF{k:02d}.json")), load_json(P1123D / f"draw-S{k:02d}.json")
+        c = x1_compare(a, b)  # type: ignore[arg-type]
+        c["n_actions_differ"] = int(sum(x != y for kd in ("real", "shuffled", "zeros")
+                                        for x, y in zip(a["decisions"][kd], b["decisions"][kd])))  # type: ignore[index]
+        x1f.append(c)
+    log(f"X1' (fresh memo, descriptive): {x1f}")
+    # X2f: a second empty-memo analyser vs this item's fresh run memo (worker-0 memo after phase 1)
     rv = sorted(np.random.default_rng(1919).choice(len(cal), 100, replace=False).tolist())
     rt = sorted(np.random.default_rng(1919).choice(len(ev), 100, replace=False).tolist())
     rs = sorted(np.random.default_rng(1920).choice(len(ev), 50, replace=False).tolist())
@@ -381,8 +386,19 @@ def checks() -> int:
     x2 = {"windows": len(wins), "val_real": len(rv), "test_real": len(rt), "test_shuffled": len(rs),
           "not_in_memo": miss, "mismatch": bad, "seconds": round(time.time() - t0, 1)}
     x2["pass"] = bool(bad == 0 and miss == 0)
-    log(f"X2'': {'PASS' if x2['pass'] else 'FAIL'} {x2}")
-    out = {"x1": x1, "x1_pass": all(x["pass"] for x in x1), "x2pp": x2}
+    log(f"X2f: {'PASS' if x2['pass'] else 'FAIL'} {x2}")
+    old = {}
+    for kk in range(2):  # descriptive: the original X2'' count against the P11-23 memo
+        with open(P1123D / f"feat-w{kk}.pkl", "rb") as fh:
+            d = pickle.load(fh)
+        old.update({M.p1111().window_key(x) + "|FL": d.get(M.p1111().window_key(x) + "|FL") for x in wins
+                    if M.p1111().window_key(x) + "|FL" in d})
+        del d
+    x2["descriptive_vs_p11_23_memo_mismatch"] = int(sum(
+        not same_analysis(used.memo[M.p1111().window_key(x) + "|FL"], old.get(M.p1111().window_key(x) + "|FL"),
+                          M.SIGNALS) for x in wins))
+    log(f"X2'' (descriptive): fresh run memo vs P11-23 memo: {x2['descriptive_vs_p11_23_memo_mismatch']} / {len(wins)}")
+    out = {"x1": x1, "x1_pass": all(x["pass"] for x in x1), "x1_fresh": x1f, "x2f": x2}
     out["pass"] = bool(out["x1_pass"] and x2["pass"])
     save_json(out, own("checks.json"))
     return 0 if out["pass"] else 4
@@ -549,6 +565,8 @@ def analyse() -> int:
                                                   "n_commits", "n_wrong", "test_rate", "above_alpha", "ltt_rate",
                                                   "threshold", "j_hat", "v_in", "eval_controls")} for d in dd]
     res["arms"] = out
+    res["s2_pairing"] = ("exact (X1' equal)" if all(x["n_actions_differ"] == 0 for x in ck["x1_fresh"])  # type: ignore[index]
+                         else "approximate (memo world vs fresh world)")
     bx = out["BX3"]
     prim = bx["interval"]["primary"]
     c_null = bx["summary"]["c_null_all_zero"]

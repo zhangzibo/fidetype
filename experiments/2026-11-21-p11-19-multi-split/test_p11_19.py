@@ -36,7 +36,7 @@ def test_constants(run):
 
 def test_jobs_and_seeds(run):
     x = run.jobs(1)
-    assert [j["name"] for j in x] == ["X01", "X13"]
+    assert [j["name"] for j in x] == ["XF01", "XF13"]
     assert x[1]["seed"] == sha("p11-18|emg|cal|13") and x[1]["delta"] == 0.1 and x[1]["gname"] == "p11-23-S13"
     j2 = run.jobs(2)
     assert len(j2) == 120 and [j["name"] for j in j2[:4]] == ["k01-j1", "k01-j2", "k01-j3", "k02-j1"]
