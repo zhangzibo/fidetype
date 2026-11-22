@@ -234,14 +234,16 @@
         "tests/test_lsl_open_timeout.py"
       ],
       "docs": "wiki/concepts/lsl-input.md",
-      "support": "synthetic-only",
+      "support": "replay-only",
       "hardware_tested": [],
-      "real_data_evidence": [],
+      "real_data_evidence": [
+        "experiments/2026-11-22-p4-21-lsl-replay/results.md"
+      ],
       "transport": [
         "lsl"
       ],
-      "test_covers": "CI: fake inlets (header mapping, clock correction, gaps, loss, reconnect) and a real pylsl outlet -> inlet loopback with synthetic streams.",
-      "limits": "The NTS-over-LSL path has not carried real decoder output yet (the raw-signal LSL path has: lsl-signal-source). One machine only (localhost).",
+      "test_covers": "CI: fake inlets (header mapping, clock correction, gaps, loss, reconnect) and a real pylsl outlet -> inlet loopback with synthetic streams. Real (P4-21, local): the 816 B2T '25 M4-06 test trials over a real pylsl loopback; hypothesis route decisions equal the in-process replay and the batch harness (816 / 816); 161,503 double64 frames bit-equal.",
+      "limits": "One machine only (localhost). The real replay is local (not in CI), unpaced, and does not run the frames-route trust decisions. No live device.",
       "extra": "lsl",
       "roadmap": null,
       "module": "fidetype.adapters.lsl"
@@ -394,14 +396,15 @@
       "support": "replay-only",
       "hardware_tested": [],
       "real_data_evidence": [
-        "experiments/2026-11-21-p5-33-withhold/results.md"
+        "experiments/2026-11-21-p5-33-withhold/results.md",
+        "experiments/2026-11-22-p4-22-nbest-readers/results.md"
       ],
       "transport": [
         "file",
         "in-process"
       ],
-      "test_covers": "CI: synthetic CSV and JSON Lines n-best files. Real: the item check (normalise_item) on the KT-sEMG LDA n-best lists through the trust drop-in (P5-33, local).",
-      "limits": "The CSV and JSON Lines file readers ran on synthetic files only.",
+      "test_covers": "CI: synthetic CSV and JSON Lines n-best files. Real: the item check (normalise_item) on the KT-sEMG LDA n-best lists through the trust drop-in (P5-33, local); read_csv and read_jsonl on real B2T '25 decoder output (1,718 online 1-best texts, 816 M4-06 10-best lists with evidence): exact round trip, 0 conformance failures (P4-22, local).",
+      "limits": "The real CSV / JSON Lines files come from our converter (no local tool writes these forms); the real texts have no CSV quoting cases. One dataset family.",
       "extra": null,
       "roadmap": null,
       "module": "fidetype.adapters.text_nbest"

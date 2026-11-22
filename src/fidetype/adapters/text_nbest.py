@@ -77,11 +77,15 @@ ADAPTER_INFO = {
     "licence": "Code Apache-2.0. No dependency beyond the standard library and NumPy.",
     "tests": ["tests/test_adapter_text_nbest.py"], "docs": "wiki/concepts/text-nbest-adapter.md",
     "support": "replay-only", "transport": ["file", "in-process"],
-    "real_data_evidence": ["experiments/2026-11-21-p5-33-withhold/results.md"],
+    "real_data_evidence": ["experiments/2026-11-21-p5-33-withhold/results.md",
+                           "experiments/2026-11-22-p4-22-nbest-readers/results.md"],
     "test_covers": "CI: synthetic CSV and JSON Lines n-best files. Real: the item check "
                    "(normalise_item) on the KT-sEMG LDA n-best lists through the trust drop-in "
-                   "(P5-33, local).",
-    "limits": "The CSV and JSON Lines file readers ran on synthetic files only.",
+                   "(P5-33, local); read_csv and read_jsonl on real B2T '25 decoder output (1,718 "
+                   "online 1-best texts, 816 M4-06 10-best lists with evidence): exact round trip, "
+                   "0 conformance failures (P4-22, local).",
+    "limits": "The real CSV / JSON Lines files come from our converter (no local tool writes these "
+              "forms); the real texts have no CSV quoting cases. One dataset family.",
 }
 
 ADAPTER_NAME = "fidetype.adapters.text_nbest"

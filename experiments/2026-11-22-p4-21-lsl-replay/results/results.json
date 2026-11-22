@@ -1,0 +1,68 @@
+{
+ "pylsl": "1.18.6",
+ "liblsl": 118,
+ "A": {
+  "config_id": "tcfg-f5ca0020b3b8fce2",
+  "trials": 816,
+  "sessions": 14,
+  "events_sent": 2434,
+  "wall_s": 10.98,
+  "final_decisions": 816,
+  "days_with_one_final_per_trial": "14/14",
+  "extra_final_decisions": 0,
+  "lsl_equal_in_process_exact": "816/816",
+  "lsl_equal_batch_harness": "816/816",
+  "in_process_equal_batch_harness": "816/816",
+  "received_hypotheses": 816,
+  "file_hypotheses": 816,
+  "received_nbest_equal_file": "816/816",
+  "rejected": 0,
+  "aborted": 0,
+  "lost": 0,
+  "bad_markers": 0,
+  "late_releases": 0,
+  "actions": {
+   "COMMIT": 82,
+   "OFFER": 734
+  },
+  "pass": {
+   "A1": true,
+   "A2": true,
+   "A3": true,
+   "A4": true,
+   "A5": true
+  }
+ },
+ "B": {
+  "trials": 816,
+  "sessions": 14,
+  "channel_format": "double64",
+  "wall_s": 18.09,
+  "frames_per_s": 8925.8,
+  "frames_sent": 161503,
+  "frames_received": 161503,
+  "rows_bit_equal": 161503,
+  "trials_frame_count_equal": 816,
+  "trials_rows_all_equal": 816,
+  "nonframe_sent": 1618,
+  "nonframe_received_after_first_header": 1618,
+  "nonframe_order_ok_days": 14,
+  "headers_equal": 802,
+  "headers_compared": 802,
+  "ends_received": 816,
+  "gaps": 0,
+  "clamped": 0,
+  "dropped": 0,
+  "lost": 0,
+  "late_releases": 0,
+  "bad_markers": 0,
+  "pass": {
+   "B1": true,
+   "B2": true,
+   "B3": true,
+   "B4": true
+  }
+ },
+ "all_pass": true,
+ "note": "aggregate counts only; the trial files and texts stay outside the repo"
+}

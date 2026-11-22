@@ -16,6 +16,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Ver
 - `fidetype.trust.offer_gate`: time-direction frame features `time_asym`, `nb_time_asym`, `nb_decay_asym` (they change sign when the frame order is reversed; `DIRECTION_FEATURES`, `time_asymmetry`), and negated gate features (`OfferGate("-nb_time_asym", 0.0)`; `OfferGate.base`, `OfferGate.value`). No packaged gate changes (P14-57).
 - `fidetype.pretrained.lmreadout`: `hd_quantile` (Harrell-Davis quantile), `quantile_lo` (a `ScoreGate` lower-bound rule that does not use the smallest real score) and `ScoreGate.with_lo`. No packaged gate changes (P14-58).
 
+### Changed
+- Device-support matrix: the `lsl` transport is now `replay-only` (was `synthetic-only`). The 816 real B2T '25 test trials of M4-06 went over a real pylsl loopback: decisions equal the in-process replay and the batch harness (816 / 816), 161,503 `double64` frames bit-equal (P4-21, [results](experiments/2026-11-22-p4-21-lsl-replay/results.md)).
+- Device-support matrix: the `text-nbest` row cites real CSV and JSON Lines reads of B2T '25 decoder output (1,718 online 1-best texts, 816 10-best lists): exact round trip, 0 conformance failures. The files come from a converter, because no local tool writes these forms (P4-22, [results](experiments/2026-11-22-p4-22-nbest-readers/results.md)).
+
 ## [0.1.0] - 2026-11-21
 
 First public release (PyPI). Version 0.0.1 was a development version and was never published.

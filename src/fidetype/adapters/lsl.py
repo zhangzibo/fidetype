@@ -154,12 +154,15 @@ ADAPTER_INFO = {
     "licence": "Code Apache-2.0. pylsl and liblsl are MIT. No LSL code copied.",
     "tests": ["tests/test_adapter_lsl.py", "tests/test_lsl_reconnect.py", "tests/test_lsl_open_timeout.py"],
     "docs": "wiki/concepts/lsl-input.md",
-    "support": "synthetic-only", "transport": ["lsl"],
-    "real_data_evidence": [],
+    "support": "replay-only", "transport": ["lsl"],
+    "real_data_evidence": ["experiments/2026-11-22-p4-21-lsl-replay/results.md"],
     "test_covers": "CI: fake inlets (header mapping, clock correction, gaps, loss, reconnect) and a "
-                   "real pylsl outlet -> inlet loopback with synthetic streams.",
-    "limits": "The NTS-over-LSL path has not carried real decoder output yet (the raw-signal LSL path"
-              " has: lsl-signal-source). One machine only (localhost).",
+                   "real pylsl outlet -> inlet loopback with synthetic streams. Real (P4-21, local): the "
+                   "816 B2T '25 M4-06 test trials over a real pylsl loopback; hypothesis route decisions "
+                   "equal the in-process replay and the batch harness (816 / 816); 161,503 double64 "
+                   "frames bit-equal.",
+    "limits": "One machine only (localhost). The real replay is local (not in CI), unpaced, and does "
+              "not run the frames-route trust decisions. No live device.",
 }
 
 ADAPTER_VERSION = "0.1"

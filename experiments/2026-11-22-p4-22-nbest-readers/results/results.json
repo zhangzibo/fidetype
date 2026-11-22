@@ -1,0 +1,117 @@
+{
+ "inputs": {
+  "r1-online-1best.csv": {
+   "bytes": 79770,
+   "sha256": "1c83fcda7c71fcecbb6037d7a8d9fe3bc9dd21ac5ac7a08a7ea564e9db0ea5fa",
+   "stream_sha256": "cb0d7cbb2b930a555f11a196573d4204518976f14ede093c416427062395048a",
+   "texts_with_comma": 0,
+   "texts_with_quote": 0,
+   "texts_with_edge_space": 0,
+   "empty_texts": 0
+  },
+  "r1-online-1best.jsonl": {
+   "bytes": 114121,
+   "sha256": "f6951a12c646a87091f4aa48f8321b06dc3a4d4552eed3d4abd69b4e8caf42fc",
+   "stream_sha256": "cb0d7cbb2b930a555f11a196573d4204518976f14ede093c416427062395048a",
+   "texts_with_comma": 0,
+   "texts_with_quote": 0,
+   "texts_with_edge_space": 0,
+   "empty_texts": 0
+  },
+  "r2-ours-nbest.csv": {
+   "bytes": 509136,
+   "sha256": "f8f1b336231a6d7d7ea098f09a1245d22f25d99ab807690d8cfe46ac8986104b",
+   "stream_sha256": "a03c5f5086a6256797500bd95dc5fffb95aa132db8c853ec7c8fcdd17618da28",
+   "texts_with_comma": 0,
+   "texts_with_quote": 0,
+   "texts_with_edge_space": 0,
+   "empty_texts": 0
+  },
+  "r2-ours-nbest.jsonl": {
+   "bytes": 6375801,
+   "sha256": "81c93ec63285cd53315ad69709b9c02fc8e1d4c9790d6158d437ffef38abdf27",
+   "stream_sha256": "dc5d17f0d5bcb484ad174c19685717506061ab9c2512e28914dad05914fbf792",
+   "texts_with_comma": 0,
+   "texts_with_quote": 0,
+   "texts_with_edge_space": 0,
+   "empty_texts": 0
+  }
+ },
+ "checks": {
+  "r1-online-1best.csv": {
+   "utterances": 1718,
+   "source_utterances": 1718,
+   "items": 1718,
+   "source_items": 1718,
+   "id_order_equal": 1718,
+   "exact_equal": 1718,
+   "read_nbest_same": true,
+   "stream_check_failures": 0,
+   "stream_check_failure_ids": []
+  },
+  "r1-online-1best.jsonl": {
+   "utterances": 1718,
+   "source_utterances": 1718,
+   "items": 1718,
+   "source_items": 1718,
+   "id_order_equal": 1718,
+   "exact_equal": 1718,
+   "read_nbest_same": true,
+   "stream_check_failures": 0,
+   "stream_check_failure_ids": []
+  },
+  "r2-ours-nbest.csv": {
+   "utterances": 816,
+   "source_utterances": 816,
+   "items": 8158,
+   "source_items": 8158,
+   "id_order_equal": 816,
+   "exact_equal": 816,
+   "read_nbest_same": true,
+   "stream_check_failures": 0,
+   "stream_check_failure_ids": []
+  },
+  "r2-ours-nbest.jsonl": {
+   "utterances": 816,
+   "source_utterances": 816,
+   "items": 8158,
+   "source_items": 8158,
+   "id_order_equal": 816,
+   "exact_equal": 816,
+   "read_nbest_same": true,
+   "stream_check_failures": 0,
+   "stream_check_failure_ids": [],
+   "stream_nbest_equal_source": 816,
+   "stream_hypotheses": 816
+  }
+ },
+ "verdict": {
+  "r1-online-1best.csv": {
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true
+  },
+  "r1-online-1best.jsonl": {
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true
+  },
+  "r2-ours-nbest.csv": {
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true
+  },
+  "r2-ours-nbest.jsonl": {
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "C5": true
+  }
+ },
+ "all_pass": true,
+ "note": "aggregate counts and hashes only; the derived files and texts stay outside the repo"
+}
