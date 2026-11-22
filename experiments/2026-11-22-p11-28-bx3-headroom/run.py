@@ -238,6 +238,18 @@ def n_actions_differ(a: dict, b: dict) -> int:
     return int(sum(x != y for kd in ("real", "shuffled", "zeros") for x, y in zip(a["decisions"][kd], b["decisions"][kd])))
 
 
+def model_param_diff(a: dict, b: dict) -> float | None:
+    """Largest absolute difference of the numeric L-model parameters (None if the structure differs)."""
+    d = 0.0
+    for k in ("coef", "intercept", "mean", "scale", "lo", "hi"):
+        x, y = np.asarray(a.get(k), float), np.asarray(b.get(k), float)
+        if x.shape != y.shape:
+            return None
+        if x.size:
+            d = max(d, float(np.nanmax(np.abs(x - y))))
+    return d
+
+
 def checks() -> int:
     P19 = p19()
     out: dict = {"x1_fresh": [], "x5": []}
@@ -253,6 +265,12 @@ def checks() -> int:
         ref = load_json(P1119D / f"split-k{k:02d}-j{j}.json")
         c = P19.x1_compare(a, ref)
         c["fields"]["v_in"] = a.get("v_in") == ref.get("v_in")  # type: ignore[union-attr]
+        # amendment 1: decision-level fields must pass; the model digest (full-precision floats) is descriptive
+        c["model_digest_equal"] = c["fields"].pop("model_digest")
+        c["model_max_param_diff"] = model_param_diff(a["model"], ref["model"])  # type: ignore[index]
+        c["fields"]["model_structure"] = all(a["model"].get(q) == ref["model"].get(q)  # type: ignore[index, union-attr]
+                                             for q in ("features", "dropped", "signs", "n_fit", "n_kept", "l2"))
+        c["fields"]["model_params_1e-6"] = c["model_max_param_diff"] is not None and c["model_max_param_diff"] <= 1e-6
         c["pass"] = all(c["fields"].values())
         c.update(name=f"R-k{k:02d}-j{j}", n_actions_differ=n_actions_differ(a, ref),  # type: ignore[arg-type]
                  config_id_equal=a.get("config_id") == ref.get("config_id"))  # type: ignore[union-attr]
