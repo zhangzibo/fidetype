@@ -1,0 +1,13 @@
+{
+ "note": "aggregate counts only; the text stays local (Tatoeba, CC BY 2.0 FR, Tatoeba contributors)",
+ "raw_lines": 2040567,
+ "candidates_after_charset_length_dedupe": 1893103,
+ "blocked_while_sampling": 525,
+ "pool": 100000,
+ "willett_texts": 1000,
+ "t15_cue_texts": 1718,
+ "unique_blocked": 2624,
+ "sha256_pool": "2360dc0559fd03420efbc432de81c01694c6dd27c474047f020b4add8dba63c9",
+ "mean_len": 36.29,
+ "reused_from": "P15-35 attempt 1 (derived/p15-35/text_pool.txt, read-only); SHA-256 verified"
+}
