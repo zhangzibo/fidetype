@@ -466,7 +466,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P4-15 Device support matrix generated from adapter metadata
 - **Gap:** 110 of the [open-gap list](open-gaps.md) (added 2026-11-19 from a user question). Follow-up of P4-01, P4-02, P4-06.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; commit `ffc74f4`; CI `tests` and `tutorials` green on `ffc74f4`). Gap 110 closed. Each `ADAPTER_INFO` declares `support` (real-device / replay-only / synthetic-only; planned = untested), `real_data_evidence`, `transport`, `test_covers` and `limits`. The registry refuses unbacked claims. `python -m fidetype.adapters.registry` generates [docs/device-support.md](../../docs/device-support.md) (0 real device, 14 replay only, 3 synthetic only, 16 untested), and `--check` plus `tests/test_adapter_registry.py` (21 tests) fail when it is stale. Registry schema 0.2.
+- **Follow-ups:** gap 176 = [P4-21](#p4-21-nts-over-lsl-transport-on-real-decoder-output) (NTS over LSL on real decoder output); gap 177 = [P4-22](#p4-22-text-nbest-csv-and-json-lines-readers-on-real-decoder-output-files) (`text-nbest` file readers on real decoder output).
 - **Depends on:** P4-01, P4-02 (done).
 - **Source:** User question (2026-11-19): "is this for every language, all devices, UI, SDK, production integration?" Adapters exist for six dataset replays, LSL, BrainFlow (OpenBCI and other boards) and WebSocket. No adapter is tested on a real device (the user has no EEG or MEG hardware). No page tells a user which devices work. Real-device tests stay P4-06 and M6-12 (`externally_blocked`, hardware); consumer-device adapters stay P4-05 and M6-02 (wristband demo: P14-07). This item adds no new device item.
 - **Done when:** Each adapter declares in metadata its support level (tested on a real device / replay only / synthetic only / untested) and the devices it was tested on. A script generates `docs/device-support.md` from the metadata. CI fails when the page and the metadata differ. The README links the page.
@@ -509,6 +510,20 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P4-18 (done); a real or documented Ganglion GUI file. CPU.
 - **Source:** P4-18 (2026-11-21, commit `300d44f`): the packet-drop check knows the Sample Index rule for Cyton (step 1, wrap 0-255) and Cyton + Daisy (step 2) only. No Ganglion file was read.
 - **Done when:** a real or documented Ganglion GUI file gives the index rule, and drops are detected with a test.
+
+#### P4-21 NTS-over-LSL transport on real decoder output
+- **Gap:** 176 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P4-15). Follow-up of P4-15.
+- **Status:** `todo`.
+- **Depends on:** P4-15 (done); the local B2T '25 NTS streams; CPU.
+- **Source:** P4-15 (2026-11-21, commit `ffc74f4`, [docs/device-support.md](../../docs/device-support.md)): the `lsl` transport is `tested` only through a synthetic loopback (support level `synthetic-only`). The NTS-over-LSL path has not carried real decoder output yet (the raw-signal LSL path has: `lsl-signal-source`).
+- **Done when:** real B2T '25 NTS streams are replayed over LSL (as M6-11 did for WebSocket), the evidence is recorded, and the matrix row cites it.
+
+#### P4-22 `text-nbest` CSV and JSON Lines readers on real decoder output files
+- **Gap:** 177 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P4-15). Follow-up of P4-15.
+- **Status:** `todo`.
+- **Depends on:** P4-15 (done); output files of a real decoder; CPU.
+- **Source:** P4-15 (2026-11-21, commit `ffc74f4`, [docs/device-support.md](../../docs/device-support.md)): only `normalise_item` has seen real n-best lists (the KT-sEMG LDA lists of P5-33). The CSV and JSON Lines file readers ran on synthetic files only.
+- **Done when:** both readers parse real decoder output files in a test or experiment, and the matrix row cites it.
 
 ## P5. Trust layer to product grade
 **Goal:** the trust layer works for one person, gives stated guarantees, records where each output came from, respects consent, and runs on the device.
@@ -993,6 +1008,7 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 #### P11-08 EMG decoder accuracy to the published fine-tuned no-LM CER
 - **Gap:** 88 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P11-01.
 - **Status:** `todo`.
+- **Follow-up:** gap 178 = [P11-25](#p11-25-revisit-the-p11-08-decoder-target-framing) restates the target of this item (P11-10, 2026-11-21: 11.28 % is a no-LM number with 100 ms future context in training; with LM the paper gives 6.95 %; the paper calls about 10 % CER or less usable).
 - **Depends on:** P11-01 (done); GPU; the 95.7 GB feature cache (or a new one).
 - **Source:** P11-01 ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): P11-01 stretch criterion S1+ failed: personalised test CER 15.09 % vs 11.28 % published. The generic model is best at step 30,000 of 150,000 (val CER 0.5457) and overfits after that, so a longer run does not help.
 - **Done when:** A pre-registered run tests at least one of: stronger regularisation or a shorter schedule for the generic model, 33 bins at 125 Hz (on a subset if the cache budget needs it), a bounded 100 ms lookahead (reported as non-causal by 100 ms); it reports the personalised test CER on the same 8 users, or a stated null result.
@@ -1007,7 +1023,8 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 
 #### P11-10 Ingest the emg2qwerty paper as a wiki source page
 - **Gap:** 90 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P11-01). Follow-up of P4-01, P11-01.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-21; commit `70807b0`). Gap 90 closed. emg2qwerty paper ingested ([source page](../sources/emg2qwerty.md)). 108 users, 346.4 h, keylogger labels. Table 3 p. 9: fine-tuned 11.28 % no LM / 6.95 % with LM; the paper calls about 10 % CER or less usable. Contradictions recorded: the Brain2Qwerty v2 "causal Conformer" (the paper uses a TDS ConvNet with 100 ms future context in training), the licence (the paper says CC BY-NC-SA 4.0; the repo README says CC BY-NC 4.0), and "affordable hardware" (the sEMG-RD is proprietary). The P11-01 "usable as is" claim got a dated correction note. The P11-07 comparison in the open-gap list now uses 6.95 % for with-LM.
+- **Follow-ups:** gap 178 = [P11-25](#p11-25-revisit-the-p11-08-decoder-target-framing) (matched decoder target for P11-08 / gap 88); gap 179 = [P11-26](#p11-26-check-the-ctrl-labs-2024-generic-neuromotor-paper) (check the CTRL-labs 2024 generic neuromotor paper; low priority).
 - **Depends on:** the paper PDF (references/papers, git-ignored).
 - **Source:** P11-01 ([results](../../experiments/2026-11-16-p11-01-emg-decoder/results.md)): The P11-01 comparison cites Table 3 through the plan and the entity page; the wiki has no source page for the paper (entity tag `paper-not-ingested`). Table 3 was checked against arXiv HTML on 2026-11-19.
 - **Done when:** wiki/sources/emg2qwerty.md exists with citation, licence, TL;DR, Table 3 numbers with page / table, the split scheme and limits; the entity page, the P11-01 results and the frontier decoder page link it.
@@ -1121,6 +1138,20 @@ Also externally blocked: ethics approval, volunteers, user studies, peer review.
 - **Depends on:** P11-23 (done; `experiments/2026-11-21-p11-23-shift-margin-steps/run.py`); held-out-user or new-session EMG data; CPU.
 - **Source:** P11-23 ([results](../../experiments/2026-11-21-p11-23-shift-margin-steps/results.md)): on the current test set both margins (m = 0.0045 of P11-20 and m2 = 0.0185 of P11-23) give 0 / 40 draws above alpha, so this test cannot show that the larger margin is needed.
 - **Done when:** a held-out-user or new-session check of (A2) is pre-registered and run, and it reports which margin keeps the test error at or below alpha.
+
+#### P11-25 Revisit the P11-08 decoder target framing
+- **Gap:** 178 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-10). Follow-up of P11-10, P11-08.
+- **Status:** `todo`.
+- **Depends on:** P11-10 (done); text only (no compute).
+- **Source:** P11-10 (2026-11-21, commit `70807b0`, [source](../sources/emg2qwerty.md)): 11.28 % (Table 3, p. 9) is a no-LM number, and the paper's model has 100 ms future context in training. Any with-LM decoder must compare with 6.95 %. The paper calls about 10 % CER or less usable; this line should be a criterion.
+- **Done when:** P11-08 and gap 88 state the matched target (no-LM vs LM, lookahead) and the usability criterion, and the frontier pages agree.
+
+#### P11-26 Check the CTRL-labs 2024 generic neuromotor paper
+- **Gap:** 179 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P11-10). Follow-up of P11-10.
+- **Status:** `todo`. Low priority.
+- **Depends on:** P11-10 (done); the paper (bioRxiv 10.1101/2024.02.23.581779).
+- **Source:** P11-10 (2026-11-21, commit `70807b0`, [source](../sources/emg2qwerty.md)): the contradiction notes record that Brain2Qwerty v2 calls the emg2qwerty model a "causal Conformer", but the emg2qwerty paper uses a TDS ConvNet with 100 ms future context in training. Brain2Qwerty v2 may have confused emg2qwerty with the CTRL-labs 2024 generic neuromotor paper (bioRxiv 10.1101/2024.02.23.581779).
+- **Done when:** that paper is ingested or checked, and the contradiction notes are updated.
 
 ## Publications (no deadline)
 Added 2026-11-13 (user decision). Review and publishing run on outside timelines. The user expects them to take 50 to 60 times longer than planned. So the papers are a separate track, **PUB**.
@@ -2091,7 +2122,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-35 E1 synthetic-sentence augmentation for the minutes-scale recipe (test C2)
 - **Gap:** 139 of the [open-gap list](open-gaps.md) (added 2026-11-20 by P15-33). Follow-up of P15-33.
-- **Status:** `in_progress`. P15-35 attempt 1 (2026-11-21, pre-registration `218d889`, results `6cf8466`): no synthetic candidate eligible on val (best E U50 0.813 vs recipe A 0.769), `no_recipe`, no test readout; 1.08 GPU h. Attempt 2 = P15-35b (pre-registration `3a95935`: synthetic sentences on top of recipe A, 4,000 steps, arm E, GPU cap 8.0 h) runs since 2026-11-21. Paused at the user's request at 15:49:08 on 2026-11-21 (`latest.pt` at step 1347 of arm F-R20/E-b30-s0; arm F+100 finished all 4000 steps; 2.54 GPU h so far); exact resume.
+- **Status:** `in_progress`. P15-35 attempt 1 (2026-11-21, pre-registration `218d889`, results `6cf8466`): no synthetic candidate eligible on val (best E U50 0.813 vs recipe A 0.769), `no_recipe`, no test readout; 1.08 GPU h. Attempt 2 = P15-35b (pre-registration `3a95935`: synthetic sentences on top of recipe A, 4,000 steps, arm E, GPU cap 8.0 h) runs since 2026-11-21. Paused at the user's request at 15:49:08 on 2026-11-21 (`latest.pt` at step 1347 of arm F-R20/E-b30-s0; arm F+100 finished all 4000 steps; 2.54 GPU h so far); exact resume. Resumed at 16:16 on 2026-11-21 after the user allowed the GPU again (exactly at step 1347); at 17:30 arm F+50/E-b30-s0-labelshuf, step 2500 / 4000, 3.78 GPU h.
 - **Depends on:** P15-33 (done part; local weights in `C:/Users/zhang/bci-data/derived/p15-33/`); GPU.
 - **Source:** P15-33 ([results](../../experiments/2026-11-20-p15-33-low-data-recipe/results.md)): recipe A passed val-C2 by 0.002 only (0.871 vs 0.869); on test the deranged run is 0.847 vs needed 0.873 (normal 0.773), so C2 fails at 30 min.
 - **Done when:** a pre-registered val-only pilot adds Willett-style synthetic sentences (character snippets of the budget sentences, cut at character times from a forced alignment of the budget data only, spliced into new sentences) and passes val-C2 with a margin set in advance; then test C2 passes at 30 min for at least one arm.
