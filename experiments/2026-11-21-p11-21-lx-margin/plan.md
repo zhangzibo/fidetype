@@ -126,3 +126,13 @@ Reading of the gap 166 and 159 entries, the roadmap row, the P11-16 / P11-17 / P
 - (e) All draws share the same 1,224 calibration and 1,221 test prompts; the spread is split variation only.
 - (f) 8 users: the within-draw user-cluster spread is fixed by the data.
 - (g) Proposed v0.2 only; the adopted v0.1 value of LX-FL is much lower (P11-16: 2.60).
+
+## Amendment 1 (2026-11-21 18:20, before any m_LX, alpha_LX or arm number existed)
+**What happened.** The first run (code `beac437`) finished stage 1 and then stopped at the margin stage, as the plan requires, because X2 failed: 203 of 2,442 session a / b windows did not match the P11-23 memo. X1, X3 and X4 passed. No margin, no arm draw and no interval was computed. The per-draw stage-1 lines (threshold, LTT and evaluation counts, gap) were printed to `results/run.log`, and the last few lines were seen.
+
+**Diagnosis (read-only scripts in the agent scratch folder).** In all 203 windows, only the native n-best **scores** differ (maximum 8.0e-5). Status, top-1, n-best texts and all 10 signals are equal. Fresh analyses with an empty memo give exactly this item's values (difference 0.0) under both the current code and the P11-20 code snapshot (`d3511df`). So this item's analyses are reproducible from scratch, and the stored P11-20 / P11-23 memo entries carry a small, state-dependent difference whose cause is not known. The P11-23 memo is therefore not a valid exact reference for the native scores.
+
+**Change (check definition only; no lever, arm, seed, margin rule, metric or decision rule changes).**
+- **X2' (must pass, replaces X2):** for every one of the 203 windows where the memos differ, plus 100 other a / b windows (`default_rng(2121).choice`, sorted), a fresh analysis with an empty memo equals this item's memo entry exactly (status, top-1, native texts and scores within 1e-9, the 10 signals within 1e-9, fU texts and scores within 1e-9). This holds under **both** the run code and the P11-20 code snapshot. Script: `x2_fresh.py`, outputs `derived\p11-21\x2-fresh-<tag>.json`.
+- The original X2 comparison with the P11-23 memo is still reported, as a descriptive count (203 / 2,442 native-score mismatches, maximum difference).
+- Then the chain is run again from a new code snapshot. Finished stage-1 draws are reused unchanged (the files exist; they do not depend on the check).

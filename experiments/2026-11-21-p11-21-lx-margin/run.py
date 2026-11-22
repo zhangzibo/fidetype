@@ -62,6 +62,7 @@ M2_LFL = 0.0185
 DIRS = {"A": ("a", "b"), "B": ("b", "a")}
 X1_DRAWS = (1, 7)  # P11-16 k01 (certified) and k07 (above alpha)
 ARMS = {"M": "LX-M", "P": "LX-P", "T": "LX-T"}
+X2P_TAGS = ("run", "p1120")  # plan amendment 1: x2_fresh.py under the run code and the P11-20 code snapshot
 
 
 def log(*a: object) -> None:
@@ -500,8 +501,16 @@ def margin() -> int:
     x4 = {"n": sum(len(v) for v in dd.values()), "n_pass": sum(bool(d["x4"]) for v in dd.values() for d in v)}
     x4["pass"] = x4["n"] == x4["n_pass"]
     log(f"X4 (stage 1): {x4}")
-    checks = bool(x1["pass"] and x2["pass"] and x3["pass"] and x4["pass"])
-    mg: dict = {"x1": x1, "x2": x2, "x3": x3, "x4_stage1": x4, "checks_pass": checks}
+    # Plan amendment 1: X2 (vs the P11-23 memo) is descriptive; X2' (fresh analyses, run code and P11-20 code)
+    # is the must-pass check.
+    x2p: dict = {}
+    for tag in X2P_TAGS:
+        f = own(f"x2-fresh-{tag}.json")
+        x2p[tag] = load_json(f) if f.exists() else {"pass": False, "reason": "missing"}
+    x2p["pass"] = all(bool(x2p[t].get("pass")) for t in X2P_TAGS)
+    log(f"X2' (amendment 1): {'PASS' if x2p['pass'] else 'FAIL'} {x2p}")
+    checks = bool(x1["pass"] and x2p["pass"] and x3["pass"] and x4["pass"])
+    mg: dict = {"x1": x1, "x2_descriptive": x2, "x2_prime": x2p, "x3": x3, "x4_stage1": x4, "checks_pass": checks}
     if checks:
         T = p23()
         dirs = {}
@@ -515,7 +524,7 @@ def margin() -> int:
     else:
         mg.update(run_arm_m=False, reason="a must-pass check failed (plan)")
     save_json(mg, own("margin.json"))
-    log(f"margin: { {k: v for k, v in mg.items() if k not in ('x1', 'x2', 'x3', 'x4_stage1')} }")
+    log(f"margin: { {k: v for k, v in mg.items() if k not in ('x1', 'x2_descriptive', 'x2_prime', 'x3', 'x4_stage1')} }")
     return 0
 
 
@@ -536,7 +545,7 @@ def analyse() -> int:
                          "no text, no id); safe-wpm/0.2 is PROPOSED, not adopted",
                  "alpha_claim": ALPHA, "delta": DELTA, "reference_no_bci": NO_BCI, "alpha_T": ALPHA_T,
                  "m2_lfl_p1123": M2_LFL,
-                 "checks": {k: mg.get(k) for k in ("x1", "x2", "x3", "x4_stage1", "checks_pass")},  # type: ignore[union-attr]
+                 "checks": {k: mg.get(k) for k in ("x1", "x2_descriptive", "x2_prime", "x3", "x4_stage1", "checks_pass")},  # type: ignore[union-attr]
                  "margin": {k: mg.get(k) for k in ("n_guard", "U", "m_lx", "alpha_lx", "run_arm_m", "reason",  # type: ignore[union-attr]
                                                    "steps", "arm_plan")}}
     if not mg.get("checks_pass"):  # type: ignore[union-attr]
