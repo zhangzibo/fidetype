@@ -1,0 +1,41 @@
+{
+  "_comment": "P15-41 (gap 184) pre-registered configuration (see plan.md). Frozen with plan.md before any result of this task. Recipe keys are copied unchanged from experiments/2026-11-22-p15-36-budget-matched/config.json.",
+  "p15_33_config": "experiments/2026-11-20-p15-33-low-data-recipe/config.json",
+  "base_recipe": "A",
+  "seeds": [2, 3, 4],
+  "old_seeds": [0, 1],
+  "arms": ["T", "E"],
+  "budgets_min": ["3", "10", "30"],
+  "frr20_budgets": ["3", "10", "30"],
+  "frr20": {"code": 3524, "align": "forced", "mode": "replace", "synth_frac": 0.2,
+            "steps": {"3": 1200, "10": 2000, "30": 4000}},
+  "candidate_order": ["F-R20"],
+  "sources": {
+    "aligners": "C:/Users/zhang/bci-data/derived/p15-41/aligners",
+    "reuse_runs": [],
+    "old_test": {
+      "p15_36": "C:/Users/zhang/bci-data/derived/p15-36/test/F-R20",
+      "p15_35b": "C:/Users/zhang/bci-data/derived/p15-35b/test/F-R20",
+      "p15_35b_runs": ["E-b30-s0"]
+    }
+  },
+  "c2": {"arm": "E", "budget": "10"},
+  "text_pool": {
+    "path": "C:/Users/zhang/bci-data/derived/p15-35/text_pool.txt",
+    "report": "C:/Users/zhang/bci-data/derived/p15-35/text_pool_report.json",
+    "sha256": "2360dc0559fd03420efbc432de81c01694c6dd27c474047f020b4add8dba63c9"
+  },
+  "synth": {"tail_frames": 100},
+  "rules": {
+    "c2_min_cer": 0.75,
+    "c2_min_gap": 0.10,
+    "val_margin": 0.03,
+    "length_guard": 0.30,
+    "shuffle_seed": 12345,
+    "ci_level": 0.95,
+    "primary_budgets": ["10", "30"],
+    "secondary_budgets": ["3"]
+  },
+  "gpu_cap_hours": 8.0,
+  "block_start_max_hours": 5.4
+}
