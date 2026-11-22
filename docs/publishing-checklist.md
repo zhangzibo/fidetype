@@ -137,10 +137,10 @@ The project site (hub decision Q6, built locally on 2026-11-18, rebuilt 2026-11-
 |---|---|---|
 | G-1 (2 min) | Local preview: `node tools/site/build.js`, then open `_site/index.html` in a browser. Click Home, Benchmark, Hub, Docs, Spec and Conformance. Make the browser narrow (phone width) once. | "local links: all OK". Safe WPM v0.2 shows PROPOSED (or ADOPTED, if you adopt it this weekend and the docs say so). D6: set `INCLUDE_PROGRESS = false` in `tools/site/build.js` if you do not want the dashboard public. |
 | G-2 (2 min) | Settings → Pages → Build and deployment → Source: **GitHub Actions**. | The page shows "GitHub Actions" as the source. |
-| G-3 (5 min) | Actions → `pages` → Run workflow (branch `main`). The workflow [.github/workflows/pages.yml](../.github/workflows/pages.yml) never runs by itself. | The `deploy` job shows the URL `https://zhangzibo.github.io/fidetype/`. Open it and click each page. |
+| G-3 (5 min) | Actions → `pages` → Run workflow (branch `main`). Since 2026-11-21 the workflow [.github/workflows/pages.yml](../.github/workflows/pages.yml) also runs by itself on every push to `main` (never from a pull request). | The `deploy` job shows the URL `https://zhangzibo.github.io/fidetype/`. Open it and click each page. |
 | G-4 (1 min) | Optional: add the URL to the repository "About" box (Website). | The link shows on the repository page. |
 
-To update the site later, run the `pages` workflow again. **Rollback:** Settings → Pages → "Unpublish site", or run the workflow from an older commit.
+The site updates by itself on every push to `main`. You can also run the `pages` workflow by hand. **Rollback:** Settings → Pages → "Unpublish site", or run the workflow from an older commit.
 
 ## H. GitHub releases (10 min)
 One release per tag, with the changelog entry as the text:
@@ -190,6 +190,6 @@ Licence check per model (do this before any upload):
 |---|---|
 | [RELEASING.md](RELEASING.md) | Release rules: semver, SDK and spec versions, package contents. |
 | [.github/workflows/release.yml](../.github/workflows/release.yml) | Manual-only release workflow (PyPI with OIDC and attestations, npm with provenance, crates.io with OIDC). |
-| [.github/workflows/pages.yml](../.github/workflows/pages.yml) | Manual-only Pages deploy of `node tools/site/build.js`. |
+| [.github/workflows/pages.yml](../.github/workflows/pages.yml) | Pages deploy of `node tools/site/build.js`: on every push to `main`, or by hand. |
 | `tools/site/build.js` | Assembles the site into `_site/` and checks every local link offline (exit 1 on a broken link). |
 | `tests/test_publishing_metadata.py` | Checks the author, URLs, licence, versions, no e-mail, manual-only workflows and the site build. |

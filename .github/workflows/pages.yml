@@ -1,13 +1,17 @@
 # Deploys the static site (node tools/site/build.js) to GitHub Pages.
 #
-# It NEVER runs by itself: the only trigger is workflow_dispatch (a maintainer clicks "Run workflow"
-# in the Actions tab). It has no push, schedule or pull_request trigger.
-# Before the first run, turn on Pages: Settings -> Pages -> Source: "GitHub Actions".
-# Until then, the deploy job fails and nothing is published.
+# It runs on every push to main (the maintainer decided on 2026-11-21 that the site deploys
+# automatically), and by hand with "Run workflow" in the Actions tab. It has no pull_request or
+# schedule trigger, so a fork or a PR can never deploy. Packages (release.yml) stay manual-only.
+# A newer push cancels a deploy that has not finished, so only the newest main is published.
+# The build checks every local link; a broken link fails the build and nothing is deployed.
+# Pages must be on: Settings -> Pages -> Source: "GitHub Actions".
 # Step-by-step guide: docs/publishing-checklist.md.
 name: pages
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -15,7 +19,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:

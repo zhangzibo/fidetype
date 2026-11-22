@@ -95,13 +95,26 @@ def test_changelogs_have_an_unreleased_section():
         assert "## [Unreleased]" in (ROOT / rel).read_text(encoding="utf-8"), rel
 
 
-@pytest.mark.parametrize("name", ["release.yml", "pages.yml"])
-def test_publishing_workflows_never_run_by_themselves(name):
-    # The release and Pages workflows run only when the maintainer clicks "Run workflow".
+def _on_block(name):
     wf = (ROOT / ".github/workflows" / name).read_text(encoding="utf-8")
-    on_block = wf.split("\non:", 1)[1].split("\npermissions:", 1)[0]
+    return wf.split("\non:", 1)[1].split("\npermissions:", 1)[0]
+
+
+def test_release_workflow_never_runs_by_itself():
+    # Package uploads run only when the maintainer clicks "Run workflow".
+    on_block = _on_block("release.yml")
     assert "workflow_dispatch" in on_block
     for trigger in ("push", "pull_request", "schedule", "release:", "workflow_run", "workflow_call"):
+        assert trigger not in on_block, trigger
+
+
+def test_pages_workflow_deploys_only_from_main():
+    # Maintainer decision 2026-11-21: the site deploys on every push to main, and by hand.
+    # Never from a pull request, a fork, a schedule or another workflow.
+    on_block = _on_block("pages.yml")
+    assert "workflow_dispatch" in on_block
+    assert "push:" in on_block and "branches: [main]" in on_block
+    for trigger in ("pull_request", "schedule", "release:", "workflow_run", "workflow_call", "tags:"):
         assert trigger not in on_block, trigger
 
 
